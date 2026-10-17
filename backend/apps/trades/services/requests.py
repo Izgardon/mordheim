@@ -6,7 +6,11 @@ from typing import Any
 from django.db.models import Q
 from django.utils import timezone
 
+from apps.campaigns.models import CampaignMembership
+from apps.notifications.models import Notification
+from apps.notifications.utils import create_notification
 from apps.trades.models import TradeRequest
+from apps.trades.serializers import serialize_trade_request
 from apps.warbands.models import Warband
 
 from .errors import TradeError
@@ -52,3 +56,37 @@ def start_trade(campaign_id: int, sender: Any, recipient: Any) -> TradeRequest:
         to_warband=to_warband,
         expires_at=timezone.now() + REQUEST_LIFETIME,
     )
+
+
+def _recipient(campaign_id: int, sender: Any, target_user_id: Any) -> Any:
+    """The player a request is for: TradeError 400 when the id is missing, not a whole number or the sender's own;
+    404 when that player isn't in the campaign."""
+    if not target_user_id:
+        raise TradeError("target_user_id is required")
+    try:
+        target_user_id = int(target_user_id)
+    except (TypeError, ValueError):
+        raise TradeError("Invalid target_user_id") from None
+    if target_user_id == sender.id:
+        raise TradeError("Cannot trade with yourself")
+    membership = CampaignMembership.objects.select_related("user").filter(
+        campaign_id=campaign_id, user_id=target_user_id
+    )
+    found = membership.first()
+    if found is None:
+        raise TradeError("Player not found", status=404)
+    return found.user
+
+
+def request_trade(campaign_id: int, sender: Any, target_user_id: Any) -> tuple[TradeRequest, Notification]:
+    """A new pending request from the sender to the player `target_user_id` names, and the recipient's
+    notification carrying its payload, in the caller's transaction; TradeError when it can't be sent."""
+    trade = start_trade(campaign_id, sender, _recipient(campaign_id, sender, target_user_id))
+    notification = create_notification(
+        user_id=trade.to_user_id,
+        notification_type=Notification.TYPE_TRADE_REQUEST,
+        reference_id=str(trade.id),
+        campaign_id=campaign_id,
+        payload=serialize_trade_request(trade),
+    )
+    return trade, notification

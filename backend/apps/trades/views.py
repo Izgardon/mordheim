@@ -1,29 +1,26 @@
-"""Player-to-player trades: request, answer, offers, locks and completion, close (logic in services/).
+"""Player-to-player trades: request, answer, offers, locks and completion, close.
 
-Every write locks the trade row (select_for_update) and makes all its changes in that one transaction, so two
-players acting at once can't erase each other's lock or offer (BUG-08). Realtime events go out after commit.
+Each write runs one service (services/) on the trade locked for its player (actions.run_trade_action); realtime
+events go out after commit, skipping the sender's own socket when it names it (ECON-PERF-02).
 """
 
-from collections.abc import Callable
 from typing import Any
 
 from django.db import transaction
-from django.db.models import Q
 from django.utils import timezone
 from rest_framework import permissions, status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.models import CampaignMembership
-from apps.campaigns.permissions import get_membership
 from apps.core.throttling import TRADE_WRITE_THROTTLE_CLASSES, MethodScopedThrottleMixin
 from apps.notifications.models import Notification
-from apps.notifications.utils import create_notification, resolve_notification
+from apps.notifications.utils import resolve_notification
 from apps.realtime.services import send_trade_event, send_user_notification, sender_socket_id
 
+from .actions import run_trade_action
 from .models import TradeRequest
-from .selectors import get_trade_for_participant, require_partner, trade_requests
+from .selectors import get_trade_for_participant, player_trades, require_member, trade_requests
 from .serializers import serialize_completed_trade, serialize_trade_request
 from .services.errors import TradeError
 from .services.lifecycle import (
@@ -36,46 +33,14 @@ from .services.lifecycle import (
     expire_due,
     is_due,
     lock_side,
-    side_of,
     unlock_side,
     update_offer,
 )
-from .services.requests import start_trade
-
-TradeAction = Callable[[TradeRequest, str], Response]
-LISTED_STATUSES = {status for status, _label in TradeRequest.STATUS_CHOICES}
+from .services.requests import request_trade
 
 
 def _broadcast(request: Request, trade: TradeRequest, event: str, payload: dict[str, Any]) -> None:
-    """A trade-channel event after commit, skipping the sender's own socket when it names it (ECON-PERF-02)."""
     send_trade_event(trade.id, event, payload, socket_id=sender_socket_id(request))
-
-
-def _act(
-    request: Request,
-    campaign_id: int,
-    request_id: Any,
-    action: TradeAction,
-    *,
-    recipient_only: bool = False,
-    needs_partner: bool = False,
-) -> Response:
-    """Run `action(trade, side)` on the locked trade. An open trade past due is expired instead (that is kept and
-    answered 400); a TradeError rolls the action back and answers its status. With `needs_partner` the other
-    player must still be in the campaign (409); backing out (unlock, decline, close) needs only the caller."""
-    try:
-        with transaction.atomic():
-            trade = get_trade_for_participant(
-                request.user, campaign_id, request_id, lock=True, recipient_only=recipient_only
-            )
-            if is_due(trade):
-                expire(trade)
-                return Response({"detail": "Trade request expired"}, status=400)
-            if needs_partner:
-                require_partner(trade, request.user)
-            return action(trade, side_of(trade, request.user))
-    except TradeError as refused:
-        return Response(refused.body(), status=refused.status)
 
 
 class UserPendingTradeRequestListView(APIView):
@@ -100,14 +65,11 @@ class CampaignTradeRequestListCreateView(MethodScopedThrottleMixin, APIView):
     throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
 
     def get(self, request, campaign_id):
-        membership = get_membership(request.user, campaign_id)
-        if not membership:
-            return Response({"detail": "Not found"}, status=404)
-
-        status_filter = request.query_params.get("status")
-        if status_filter and status_filter not in LISTED_STATUSES:
-            return Response({"detail": "Invalid status"}, status=400)
-
+        require_member(request.user, campaign_id)
+        try:
+            trades = player_trades(request.user, campaign_id, request.query_params.get("status"))
+        except TradeError as refused:
+            return Response(refused.body(), status=refused.status)
         # BUG-69 (decision 8): reading the list still expires the campaign's open trades that are past due
         due = TradeRequest.objects.filter(
             campaign_id=campaign_id, status=TradeRequest.STATUS_ACCEPTED, expires_at__lte=timezone.now()
@@ -115,67 +77,19 @@ class CampaignTradeRequestListCreateView(MethodScopedThrottleMixin, APIView):
         due_ids = list(due.values_list("id", flat=True))
         if due_ids:
             expire_due(TradeRequest.objects.filter(id__in=due_ids))
-
-        # only the caller's own trades, as the detail view (BUG-116)
-        mine = Q(from_user=request.user) | Q(to_user=request.user)
-        queryset = trade_requests().filter(mine, campaign_id=campaign_id)
-        if status_filter:
-            queryset = queryset.filter(status=status_filter)
-        queryset = queryset.order_by("-responded_at", "-created_at")
-        return Response([serialize_trade_request(entry) for entry in queryset])
+        return Response([serialize_trade_request(entry) for entry in trades])
 
     def post(self, request, campaign_id):
-        membership = get_membership(request.user, campaign_id)
-        if not membership:
-            return Response({"detail": "Not found"}, status=404)
-
-        target_user_id = request.data.get("target_user_id")
-        if not target_user_id:
-            return Response({"detail": "target_user_id is required"}, status=400)
-
-        try:
-            target_user_id = int(target_user_id)
-        except (TypeError, ValueError):
-            return Response({"detail": "Invalid target_user_id"}, status=400)
-
-        if target_user_id == request.user.id:
-            return Response({"detail": "Cannot trade with yourself"}, status=400)
-
-        target_membership = (
-            CampaignMembership.objects.select_related("user").filter(campaign_id=campaign_id, user_id=target_user_id)
-        ).first()
-        if not target_membership:
-            return Response({"detail": "Player not found"}, status=404)
-
+        require_member(request.user, campaign_id)
         try:
             with transaction.atomic():  # one open trade per pair of warbands (BUG-114)
-                trade_request = start_trade(campaign_id, request.user, target_membership.user)
-                payload = serialize_trade_request(trade_request)
-                notif = create_notification(
-                    user_id=target_user_id,
-                    notification_type=Notification.TYPE_TRADE_REQUEST,
-                    reference_id=str(trade_request.id),
-                    campaign_id=campaign_id,
-                    payload=payload,
+                trade, notice = request_trade(campaign_id, request.user, request.data.get("target_user_id"))
+                send_user_notification(
+                    trade.to_user_id, "trade_request", {**notice.payload, "notification_id": notice.id}
                 )
-                send_user_notification(target_user_id, "trade_request", {**payload, "notification_id": notif.id})
         except TradeError as refused:
             return Response(refused.body(), status=refused.status)
-        return Response(payload, status=status.HTTP_201_CREATED)
-
-
-class CampaignTradeOfferUpdateView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
-
-    def post(self, request, campaign_id, request_id):
-        def offer(trade: TradeRequest, side: str) -> Response:
-            update_offer(trade, side, request.data)
-            payload = serialize_trade_request(trade)
-            _broadcast(request, trade, "trade.offer_updated", payload)
-            return Response(payload)
-
-        return _act(request, campaign_id, request_id, offer, needs_partner=True)
+        return Response(notice.payload, status=status.HTTP_201_CREATED)
 
 
 class CampaignTradeRequestDetailView(APIView):
@@ -191,10 +105,12 @@ class CampaignTradeRequestDetailView(APIView):
         return Response(serialize_trade_request(trade))
 
 
-class CampaignTradeRequestAcceptView(APIView):
+class TradeWriteView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
 
+
+class CampaignTradeRequestAcceptView(TradeWriteView):
     def post(self, request, campaign_id, request_id):
         def accept(trade: TradeRequest, side: str) -> Response:
             answer_request(trade, accept=True)
@@ -204,31 +120,41 @@ class CampaignTradeRequestAcceptView(APIView):
             send_user_notification(trade.from_user_id, "trade_accepted", payload)
             return Response(payload)
 
-        return _act(request, campaign_id, request_id, accept, recipient_only=True, needs_partner=True)
+        return run_trade_action(request, campaign_id, request_id, accept, recipient_only=True, needs_partner=True)
 
 
-def _shown_offer_version(request: Request) -> int | None:
-    """The `offer_version` a lock was sent with: None when absent; TradeError (400) when not a whole number."""
-    shown = request.data.get("offer_version") if isinstance(request.data, dict) else None
-    if shown is None:
-        return None
-    if isinstance(shown, bool) or not str(shown).strip().isdigit():
-        raise TradeError("offer_version must be a whole number.", code="invalid")
-    return int(shown)
+class CampaignTradeRequestDeclineView(TradeWriteView):
+    def post(self, request, campaign_id, request_id):
+        def decline(trade: TradeRequest, side: str) -> Response:
+            answer_request(trade, accept=False)
+            resolve_notification(request.user.id, Notification.TYPE_TRADE_REQUEST, str(trade.id))
+            payload = serialize_trade_request(trade)
+            send_user_notification(trade.from_user_id, "trade_declined", payload)
+            return Response(payload)
+
+        return run_trade_action(request, campaign_id, request_id, decline, recipient_only=True)
 
 
-class CampaignTradeOfferAcceptView(APIView):
+class CampaignTradeOfferUpdateView(TradeWriteView):
+    def post(self, request, campaign_id, request_id):
+        def offer(trade: TradeRequest, side: str) -> Response:
+            update_offer(trade, side, request.data)
+            payload = serialize_trade_request(trade)
+            _broadcast(request, trade, "trade.offer_updated", payload)
+            return Response(payload)
+
+        return run_trade_action(request, campaign_id, request_id, offer, needs_partner=True)
+
+
+class CampaignTradeOfferAcceptView(TradeWriteView):
     """Lock: the caller accepts both offers as they stand, at the `offer_version` it was shown when it sends one
     (409 `offer_changed` otherwise; without one, older clients lock whatever stands). The second lock completes
     the trade in the same transaction, or unlocks both sides with a 409 when it can't (BUG-41)."""
 
-    permission_classes = [permissions.IsAuthenticated]
-    throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
-
     def post(self, request, campaign_id, request_id):
         def lock(trade: TradeRequest, side: str) -> Response:
             try:
-                check_offer_version(trade, _shown_offer_version(request))
+                check_offer_version(trade, request.data)
             except TradeError as changed:
                 return Response({**changed.body(), "trade": serialize_trade_request(trade)}, status=changed.status)
             lock_side(trade, side)
@@ -238,21 +164,18 @@ class CampaignTradeOfferAcceptView(APIView):
                 return Response(locked)
             failure = complete_or_reopen(trade)
             if failure is not None:
-                payload = serialize_trade_request(trade)
-                _broadcast(request, trade, "trade.offer_updated", {**payload, "error": failure.body()})
-                return Response({**failure.body(), "trade": payload}, status=failure.status)
+                reopened = serialize_trade_request(trade)
+                _broadcast(request, trade, "trade.offer_updated", {**reopened, "error": failure.body()})
+                return Response({**failure.body(), "trade": reopened}, status=failure.status)
             completed = serialize_completed_trade(trade)
             _broadcast(request, trade, "trade.locked", locked)
             _broadcast(request, trade, "trade.completed", completed)
             return Response(completed)
 
-        return _act(request, campaign_id, request_id, lock, needs_partner=True)
+        return run_trade_action(request, campaign_id, request_id, lock, needs_partner=True)
 
 
-class CampaignTradeOfferUnlockView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
-
+class CampaignTradeOfferUnlockView(TradeWriteView):
     def post(self, request, campaign_id, request_id):
         def unlock(trade: TradeRequest, side: str) -> Response:
             unlock_side(trade, side)
@@ -260,28 +183,10 @@ class CampaignTradeOfferUnlockView(APIView):
             _broadcast(request, trade, "trade.offer_updated", payload)
             return Response(payload)
 
-        return _act(request, campaign_id, request_id, unlock)
+        return run_trade_action(request, campaign_id, request_id, unlock)
 
 
-class CampaignTradeRequestDeclineView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
-
-    def post(self, request, campaign_id, request_id):
-        def decline(trade: TradeRequest, side: str) -> Response:
-            answer_request(trade, accept=False)
-            resolve_notification(request.user.id, Notification.TYPE_TRADE_REQUEST, str(trade.id))
-            payload = serialize_trade_request(trade)
-            send_user_notification(trade.from_user_id, "trade_declined", payload)
-            return Response(payload)
-
-        return _act(request, campaign_id, request_id, decline, recipient_only=True)
-
-
-class CampaignTradeRequestCloseView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
-
+class CampaignTradeRequestCloseView(TradeWriteView):
     def post(self, request, campaign_id, request_id):
         def close_trade(trade: TradeRequest, side: str) -> Response:
             close(trade, side)
@@ -289,4 +194,4 @@ class CampaignTradeRequestCloseView(APIView):
             _broadcast(request, trade, "trade.closed", payload)
             return Response(payload)
 
-        return _act(request, campaign_id, request_id, close_trade)
+        return run_trade_action(request, campaign_id, request_id, close_trade)

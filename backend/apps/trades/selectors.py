@@ -3,13 +3,15 @@
 from typing import Any
 from uuid import UUID
 
-from django.db.models import Exists, OuterRef, QuerySet
+from django.db.models import Exists, OuterRef, Q, QuerySet
 from rest_framework.exceptions import NotFound, PermissionDenied
 
 from apps.campaigns.models import CampaignMembership
 
 from .models import TradeRequest
 from .services.errors import TradeError
+
+LISTED_STATUSES = {status for status, _label in TradeRequest.STATUS_CHOICES}
 
 
 def trade_requests() -> QuerySet[TradeRequest]:
@@ -66,3 +68,20 @@ def get_trade_for_participant(
     if not is_member(trade, "from" if user.id == trade.from_user_id else "to"):
         raise NotFound("Not found")
     return trade
+
+
+def require_member(user: Any, campaign_id: int) -> None:
+    """The campaign-level trade endpoints are for its members only: 404 for anyone else."""
+    if not CampaignMembership.objects.filter(campaign_id=campaign_id, user_id=user.id).exists():
+        raise NotFound("Not found")
+
+
+def player_trades(user: Any, campaign_id: int, status: str | None = None) -> QuerySet[TradeRequest]:
+    """The campaign's trades the user sent or received (BUG-116), optionally of one status (TradeError 400 for
+    an unknown one); unanswered first ("-responded_at" puts NULLs first on Postgres), then newest."""
+    if status and status not in LISTED_STATUSES:
+        raise TradeError("Invalid status")
+    rows = trade_requests().filter(Q(from_user=user) | Q(to_user=user), campaign_id=campaign_id)
+    if status:
+        rows = rows.filter(status=status)
+    return rows.order_by("-responded_at", "-created_at")
