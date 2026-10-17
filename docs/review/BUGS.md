@@ -311,6 +311,11 @@ No defect was graded P0 by its reviewer. Treat these as P0 until verified:
 | BUG-95 | The hero and henchmen XP-threshold parsers disagree on values like `3.0` | Pass 1 characterisation | Roster | Confirmed | 1 |
 | BUG-96 | A henchman hire `cost` of `"inf"` (or a number that overflows) returns 500; a huge finite cost (1e10) overflows `WarbandTrade.price` after the member is already created, because the view isn't atomic | Pass 1 PR A | Roster | Confirmed | 1 (PR C, with the decision 7 hire-cost rewrite: non-finite or out-of-range costs are a 400, and the hire is atomic) |
 | BUG-97 | A thresholds setting stored as a non-list (e.g. an int set through Django admin) makes PATCH `xp` and postbattle return 500: `normalize_*` raises `TypeError`, `resolve_*` catches only `ValueError` | Pass 1 PR A | Roster | Confirmed (only reachable outside the API) | 1 (PR C, `services/xp.py`) |
+| BUG-98 | The level-up dialog refetches the unit in a loop (about one GET per round trip while open) when the unit has no race or the fetch fails (`hooks/levelup/useHeroLevelUp.ts:67-75`, `useHiredSwordLevelUp.ts:65-73`, `useHenchmenLevelUp.ts:110-118`) | Pass 1 frontend characterisation (pinned test) | Roster | Confirmed (test) | 1 (PR C, `useUnitLevelUp`) |
+| BUG-99 | Confirming a trade on the expanded hero card reports the update twice (`HeroExpandedCard.tsx:75-77`) | Pass 1 frontend characterisation | Roster | Confirmed (test) | 1 (PR C) |
+| BUG-100 | A hired sword created from a preset loses its armour save: the create sends `null`, the form keeps the preset value, so Save never sends it (`WarbandHiredSwordsSection.tsx:165`, `:182`) | Pass 1 frontend characterisation | Roster | Confirmed (test) | 1 (PR C, with BUG-87) |
+| BUG-101 | Hero and hired-sword creates store `available_skills` in the legacy checkbox dict, while every save sends a list (`routes/Warband.tsx:234`, `WarbandHiredSwordsSection.tsx:171`) | Pass 1 frontend characterisation | Roster | Confirmed (code) | 1 (PR C) |
+| BUG-102 | A blood-pacted hired sword can't be added at the hired-sword cap: the add form has no blood-pact option, so the exemption is unreachable (`useHiredSwordCreationForm.ts:54-55`). Workaround: create, then tick the pact | Pass 1 frontend characterisation | Roster | Confirmed (test) | 1 (PR C, ROST-TWEAK-05) |
 
 ## By plan phase
 
@@ -327,6 +332,7 @@ Each pass's bug checklist. IDs marked "(part)" are shared between passes; the no
 - P3: BUG-62, BUG-63, BUG-64, BUG-65, BUG-66, BUG-67, BUG-85 (decided: whole-XP hire cost), BUG-86, BUG-87
 - Found by the characterisation tests (expected-failure tests mark the 500s): BUG-88, BUG-89, BUG-90, BUG-91 (500s), BUG-92, BUG-93, BUG-94 (henchmen member sync), BUG-95 (threshold parsing)
 - Found during PR A, fixed in PR C: BUG-96 (hire cost overflow), BUG-97 (non-list thresholds)
+- Found by the frontend characterisation tests, fixed in PR C on the shared components: BUG-98 to BUG-102. Hero PATCH turning `"5+"` into null is part of BUG-87.
 - **Status:** PR A fixed BUG-03, BUG-04 and BUG-88 to BUG-95 (see [Fix log](#fix-log))
 - Security: SEC-07 (part: unit serializers), SEC-14
 - Re-verify BUG-24 once ROST-PERF-07's effect loop is fixed.
