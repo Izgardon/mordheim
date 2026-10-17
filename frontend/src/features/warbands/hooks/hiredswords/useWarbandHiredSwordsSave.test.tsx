@@ -2,11 +2,13 @@ import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useWarbandHiredSwordsSave } from "./useWarbandHiredSwordsSave";
+import { mapHiredSwordToForm } from "@/features/warbands/utils/warband-utils";
 
 import type {
   HiredSwordFormEntry,
   WarbandHiredSword,
 } from "@/features/warbands/types/warband-types";
+import { makeVeteranHiredSword } from "@/test/warband-fixtures";
 
 const apiMocks = vi.hoisted(() => ({
   createWarbandHiredSword: vi.fn(),
@@ -222,5 +224,224 @@ describe("useWarbandHiredSwordsSave", () => {
     const payload = apiMocks.updateWarbandHiredSword.mock.calls[0][2];
     expect(payload).toMatchObject({ xp: 5, no_level_ups: false });
     expect(payload).not.toHaveProperty("level_up");
+  });
+});
+
+describe("useWarbandHiredSwordsSave characterisation", () => {
+  const veteran = makeVeteranHiredSword();
+  const second = makeVeteranHiredSword({ id: 32, name: "Sister Ilse" });
+
+  type SaveParams = Parameters<typeof useWarbandHiredSwordsSave>[0];
+
+  const snapshotOf = (forms: HiredSwordFormEntry[]) =>
+    new Map(forms.map((form) => [form.id as number, JSON.stringify(form)]));
+
+  const renderSave = (overrides: Partial<SaveParams> = {}) => {
+    const forms = [veteran, second].map(mapHiredSwordToForm);
+    const params: SaveParams = {
+      warbandId: 9,
+      canEdit: true,
+      currentHiredSwords: [veteran, second],
+      hiredSwordForms: forms,
+      removedHiredSwordIds: [],
+      isAddingHiredSwordForm: false,
+      newHiredSwordForm: blankNewHiredSwordForm,
+      raceQuery: "",
+      originalHiredSwordFormsRef: { current: snapshotOf(forms) },
+      sessionInitialHiredSwordIds: [31, 32],
+      onSuccess: vi.fn(),
+      pendingPurchases: [],
+      onPendingCleared: vi.fn(),
+      ...overrides,
+    };
+    const hook = renderHook(() => useWarbandHiredSwordsSave(params));
+    const save = () =>
+      act(async () => {
+        await hook.result.current.handleSaveChanges();
+      });
+    return { ...hook, params, save };
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    apiMocks.updateWarbandHiredSword.mockImplementation(
+      async (_w: number, id: number, body: object) => ({
+        ...(id === veteran.id ? veteran : second),
+        ...body,
+      })
+    );
+    apiMocks.deleteWarbandHiredSword.mockResolvedValue(undefined);
+    apiMocks.getWarbandSummary.mockResolvedValue({ gold: 80 });
+  });
+
+  it("round-trips a loaded hired sword into its PATCH body; armour save stays a string (BUG-87, pinned)", async () => {
+    const forms = [veteran].map(mapHiredSwordToForm);
+    const { save } = renderSave({
+      currentHiredSwords: [veteran],
+      hiredSwordForms: forms,
+      originalHiredSwordFormsRef: { current: new Map() },
+    });
+
+    await save();
+
+    expect(apiMocks.updateWarbandHiredSword).toHaveBeenCalledWith(9, 31, {
+      name: "Brother Hal",
+      unit_type: "Warrior Priest",
+      race: 1,
+      price: 40,
+      upkeep_price: 15,
+      rating: 25,
+      xp: 4,
+      deeds: "Blessed the warband before the storm.",
+      armour_save: "4",
+      large: false,
+      caster: "Priest",
+      half_rate: false,
+      no_level_ups: false,
+      blood_pacted: false,
+      available_skills: ["Combat", "Academic"],
+      movement: 4,
+      weapon_skill: 4,
+      ballistic_skill: 3,
+      strength: 3,
+      toughness: 3,
+      wounds: 1,
+      initiative: 3,
+      attacks: 1,
+      leadership: 8,
+      items: [
+        { id: 105, cost: 3 },
+        { id: 103, cost: 20 },
+      ],
+      skill_ids: [203],
+      special_ids: [403],
+      spell_ids: [302],
+    });
+  });
+
+  it("sends a typed armour save verbatim, '5+' included (BUG-87, pinned)", async () => {
+    const forms = [veteran].map(mapHiredSwordToForm);
+    const { save } = renderSave({
+      currentHiredSwords: [veteran],
+      hiredSwordForms: [{ ...forms[0], armour_save: " 5+ " }],
+    });
+
+    await save();
+
+    expect(apiMocks.updateWarbandHiredSword.mock.calls[0][2].armour_save).toBe("5+");
+  });
+
+  it("PATCHes only changed hired swords and GETs the summary once", async () => {
+    const forms = [veteran, second].map(mapHiredSwordToForm);
+    const { save } = renderSave({
+      hiredSwordForms: [forms[0], { ...forms[1], blood_pacted: true }],
+    });
+
+    await save();
+
+    expect(apiMocks.updateWarbandHiredSword).toHaveBeenCalledTimes(1);
+    expect(apiMocks.updateWarbandHiredSword).toHaveBeenCalledWith(
+      9,
+      32,
+      expect.objectContaining({ blood_pacted: true })
+    );
+    expect(apiMocks.getWarbandSummary).toHaveBeenCalledTimes(1);
+  });
+
+  it("DELETEs dismissed hired swords and broadcasts the refreshed summary", async () => {
+    const { save, params } = renderSave({
+      hiredSwordForms: [mapHiredSwordToForm(veteran)],
+      removedHiredSwordIds: [32],
+    });
+
+    await save();
+
+    expect(apiMocks.deleteWarbandHiredSword).toHaveBeenCalledWith(9, 32, { emitUpdate: false });
+    expect(apiMocks.getWarbandSummary).toHaveBeenCalledTimes(1);
+    expect(params.onSuccess).toHaveBeenCalledWith([veteran]);
+    expect(eventMocks.emitWarbandUpdate).toHaveBeenCalledWith(9, { summary: { gold: 80 } });
+  });
+
+  it("commits purchases for kept hired swords only, naming them in the log", async () => {
+    apiMocks.createWarbandTrade.mockResolvedValue({ id: 1 });
+    apiMocks.createWarbandLog.mockResolvedValue({});
+    const purchase = {
+      unitType: "hiredswords" as const,
+      itemId: 101,
+      itemName: "Sword",
+      quantity: 1,
+      unitPrice: 10,
+      isBuying: true,
+    };
+    const { save, params } = renderSave({
+      hiredSwordForms: [mapHiredSwordToForm(veteran)],
+      removedHiredSwordIds: [32],
+      pendingPurchases: [
+        { ...purchase, unitId: "31" },
+        { ...purchase, unitId: "32" },
+      ],
+    });
+
+    await save();
+
+    expect(apiMocks.createWarbandTrade).toHaveBeenCalledTimes(1);
+    expect(apiMocks.createWarbandLog).toHaveBeenCalledWith(
+      9,
+      expect.objectContaining({
+        entry_type: "hired_sword_item",
+        payload: { hero: "Brother Hal", item: "Sword", price: 10 },
+      }),
+      { emitUpdate: false }
+    );
+    expect(params.onPendingCleared).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not require any particular unit to be marked (no leader rule)", async () => {
+    const { save, result } = renderSave({ currentHiredSwords: [], hiredSwordForms: [] });
+
+    await save();
+
+    expect(result.current.saveError).toBe("");
+  });
+
+  it("blocks the save while the add form has a loadout queued", async () => {
+    const { save, result } = renderSave({
+      isAddingHiredSwordForm: true,
+      newHiredSwordForm: { ...blankNewHiredSwordForm, items: [veteran.items[0]] },
+    });
+
+    await save();
+
+    expect(result.current.saveError).toBe(
+      "Finish creating the new hired sword or cancel it before saving."
+    );
+  });
+
+  it("POSTs hired swords without an id with numeric armour save (create-on-Save branch; ROST-CQ-05)", async () => {
+    apiMocks.createWarbandHiredSword.mockResolvedValue({ ...veteran, id: 33 });
+    const draft = { ...mapHiredSwordToForm(veteran), id: undefined, armour_save: "4" };
+    const { save } = renderSave({ hiredSwordForms: [draft] });
+
+    await save();
+
+    expect(apiMocks.createWarbandHiredSword).toHaveBeenCalledWith(
+      9,
+      expect.objectContaining({
+        armour_save: 4,
+        level_up: 0,
+        available_skills: ["Combat", "Academic"],
+      }),
+      { emitUpdate: false }
+    );
+  });
+
+  it("shows the error when a write fails", async () => {
+    apiMocks.deleteWarbandHiredSword.mockRejectedValue(new Error("Not found"));
+    const { save, result, params } = renderSave({ removedHiredSwordIds: [32] });
+
+    await save();
+
+    expect(result.current.saveError).toBe("Not found");
+    expect(params.onSuccess).not.toHaveBeenCalled();
   });
 });
