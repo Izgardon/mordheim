@@ -14,13 +14,11 @@ import {
   getWarbandHiredSwordDetail,
   listWarbandHenchmenGroups,
   listWarbandHeroes,
-  listWarbandTrades,
   updateWarbandHenchmenGroup,
   updateWarbandHiredSword,
   updateWarbandHero,
 } from "@/features/warbands/api/warbands-api";
 import { useWarbandCacheUpdate } from "@/features/warbands/api/warband-cache";
-import { getSignedTradePrice } from "@/features/warbands/utils/warband-utils";
 
 import type { Item, ItemAvailability } from "../types/item-types";
 import { buildAcquiredItemEntries, getPersistedItemCost } from "../utils/acquire-item-costs";
@@ -139,8 +137,6 @@ export type AcquireItemDialogState = {
   actionDisabledReason: string;
   isSubmitting: boolean;
   handleAcquire: () => Promise<void> | void;
-  isGoldLoading: boolean;
-  goldFetchError: string;
   goldValidationError: string;
   availabilities: ItemAvailability[];
   selectedAvailabilityId: number | null;
@@ -185,11 +181,7 @@ export function useAcquireItemDialogShared({
   const [heroRarityRolls, setHeroRarityRolls] = useState<Record<string, HeroRarityRoll>>({});
   const [spentHeroIds, setSpentHeroIds] = useState<string[]>([]);
   const [savingHeroIds, setSavingHeroIds] = useState<string[]>([]);
-  const [availableGold, setAvailableGold] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [isGoldLoading, setIsGoldLoading] = useState(false);
-  const [goldFetchError, setGoldFetchError] = useState("");
-  const [goldValidationError, setGoldValidationError] = useState("");
   const [quantityTouched, setQuantityTouched] = useState(false);
   const [isUnitSelectionCollapsed, setIsUnitSelectionCollapsed] = useState(
     defaultUnitSectionCollapsed ?? false
@@ -325,12 +317,8 @@ export function useAcquireItemDialogShared({
       setHeroRarityRolls({});
       setSpentHeroIds([]);
       setSavingHeroIds([]);
-      setAvailableGold(null);
       setQuantity(1);
       setQuantityTouched(false);
-      setIsGoldLoading(false);
-      setGoldFetchError("");
-      setGoldValidationError("");
       setHenchmenGroups([]);
       resetSectionState();
       setSelectedAvailabilityId(initialAvailabilityId ?? null);
@@ -459,30 +447,19 @@ export function useAcquireItemDialogShared({
   const hasAvailableSearcher = selectedSearchingHero?.trading_action !== false;
   const requiresGoldCheck = isBuying && totalPrice > 0;
 
-  const goldFromResources = useMemo(() => {
-    if (!warband?.resources?.length) {
-      return null;
-    }
-    const goldResource = warband.resources.find(
-      (resource) => resource.name.trim().toLowerCase() === "gold crowns"
-    );
-    if (!goldResource) {
-      return null;
-    }
-    const amount = Number(goldResource.amount ?? 0);
-    return Number.isFinite(amount) ? amount : 0;
-  }, [warband?.resources]);
-
+  // The server's gold, from the warband sheet's summary (BUG-37): never re-derived here.
+  const availableGold = typeof warband?.gold === "number" ? warband.gold : null;
   const reservedGoldValue = Math.max(0, Number(reservedGold) || 0);
   const effectiveGold =
     availableGold === null ? null : Math.max(0, availableGold - reservedGoldValue);
-  const resolvedGold = effectiveGold ?? 0;
-  const isGoldBlocked =
-    requiresGoldCheck &&
-    (isGoldLoading ||
-      Boolean(goldFetchError) ||
-      effectiveGold === null ||
-      totalPrice > resolvedGold);
+  const goldValidationError = !requiresGoldCheck
+    ? ""
+    : effectiveGold === null
+      ? "Gold crowns unknown for this warband."
+      : totalPrice > effectiveGold
+        ? `Not enough gold crowns. Available: ${effectiveGold} gc.`
+        : "";
+  const isGoldBlocked = Boolean(goldValidationError);
   const actionDisabled = !canProceed || isSubmitting || isGoldBlocked;
 
   const actionDisabledReason = useMemo(() => {
@@ -508,16 +485,7 @@ export function useAcquireItemDialogShared({
       return isBuying ? "Processing purchase..." : "Processing...";
     }
     if (isGoldBlocked) {
-      if (isGoldLoading) {
-        return "Checking gold crowns...";
-      }
-      if (goldFetchError) {
-        return goldFetchError;
-      }
-      if (goldValidationError) {
-        return goldValidationError;
-      }
-      return "Not enough gold crowns.";
+      return goldValidationError;
     }
     return "Unable to proceed.";
   }, [
@@ -528,44 +496,8 @@ export function useAcquireItemDialogShared({
     isSubmitting,
     isBuying,
     isGoldBlocked,
-    isGoldLoading,
-    goldFetchError,
     goldValidationError,
   ]);
-
-  useEffect(() => {
-    if (!resolvedSelectOpen) {
-      return;
-    }
-    if (!warband || !isBuying) {
-      setAvailableGold(null);
-      setGoldFetchError("");
-      setIsGoldLoading(false);
-      return;
-    }
-    if (goldFromResources !== null) {
-      setAvailableGold(goldFromResources);
-      setGoldFetchError("");
-      return;
-    }
-
-    setIsGoldLoading(true);
-    setGoldFetchError("");
-    listWarbandTrades(warband.id)
-      .then((trades) => {
-        const total = trades.reduce((sum, trade) => sum + getSignedTradePrice(trade), 0);
-        setAvailableGold(total);
-      })
-      .catch((errorResponse) => {
-        if (errorResponse instanceof Error) {
-          setGoldFetchError(errorResponse.message || "Unable to load gold crowns.");
-        } else {
-          setGoldFetchError("Unable to load gold crowns.");
-        }
-        setAvailableGold(null);
-      })
-      .finally(() => setIsGoldLoading(false));
-  }, [resolvedSelectOpen, warband, isBuying, goldFromResources]);
 
   useEffect(() => {
     if (!resolvedSelectOpen) {
@@ -623,22 +555,6 @@ export function useAcquireItemDialogShared({
     item.id,
     quantityTouched,
   ]);
-
-  useEffect(() => {
-    if (!requiresGoldCheck) {
-      setGoldValidationError("");
-      return;
-    }
-    if (effectiveGold === null) {
-      setGoldValidationError("");
-      return;
-    }
-    if (totalPrice > effectiveGold) {
-      setGoldValidationError(`Not enough gold crowns. Available: ${effectiveGold} gc.`);
-      return;
-    }
-    setGoldValidationError("");
-  }, [requiresGoldCheck, totalPrice, effectiveGold]);
 
   useEffect(() => {
     if (!canProceed) {
@@ -741,13 +657,7 @@ export function useAcquireItemDialogShared({
   };
 
   const handleAcquire = async () => {
-    if (!warband || !resolvedUnitType || !canProceed) {
-      return;
-    }
-    if (isGoldBlocked) {
-      if (!goldFetchError && !goldValidationError) {
-        setGoldValidationError("Not enough gold crowns.");
-      }
+    if (!warband || !resolvedUnitType || !canProceed || isGoldBlocked) {
       return;
     }
     setIsSubmitting(true);
@@ -971,8 +881,6 @@ export function useAcquireItemDialogShared({
     actionDisabledReason,
     isSubmitting,
     handleAcquire,
-    isGoldLoading,
-    goldFetchError,
     goldValidationError,
     disableUnitSelection,
     availabilities,

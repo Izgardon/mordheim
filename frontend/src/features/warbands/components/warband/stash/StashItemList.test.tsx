@@ -320,7 +320,7 @@ describe("StashItemList: Move", () => {
 });
 
 describe("StashItemList: Buy again", () => {
-  it("loads the item by id and buys another copy into the stash: nine requests (ECON-PERF-01, pinned; flips in PR B)", async () => {
+  it("loads the item by id and buys another copy into the stash: eight requests (ECON-PERF-01, pinned; flips in PR B)", async () => {
     const user = setupUser();
     fakeApi.on(
       "GET /items/120/",
@@ -332,9 +332,6 @@ describe("StashItemList: Buy again", () => {
       })
     );
     fakeApi.on(`GET /warbands/${MY_WARBAND}/heroes/`, [aldric]);
-    fakeApi.on(`GET /warbands/${MY_WARBAND}/trades/`, [
-      { id: 1, action: "Starting gold", price: 500, children: [] },
-    ]);
     fakeApi.on(`POST /warbands/${MY_WARBAND}/items/`, { ...rope, quantity: 2 });
     fakeApi.on(`POST /warbands/${MY_WARBAND}/trades/`, { id: 900 });
     fakeApi.on(`POST /warbands/${MY_WARBAND}/logs/`, { id: 800 });
@@ -355,7 +352,6 @@ describe("StashItemList: Buy again", () => {
       "GET /items/120/",
       `GET /warbands/${MY_WARBAND}/henchmen-groups/`,
       `GET /warbands/${MY_WARBAND}/heroes/`,
-      `GET /warbands/${MY_WARBAND}/trades/`,
       `POST /warbands/${MY_WARBAND}/items/`,
       `GET /warbands/${MY_WARBAND}/items/`,
       `POST /warbands/${MY_WARBAND}/trades/`,
@@ -376,9 +372,6 @@ describe("StashItemList: Buy again", () => {
       })
     );
     fakeApi.on(`GET /warbands/${MY_WARBAND}/heroes/`, [aldric]);
-    fakeApi.on(`GET /warbands/${MY_WARBAND}/trades/`, [
-      { id: 1, action: "Starting gold", price: 500, children: [] },
-    ]);
     fakeApi.on(`POST /warbands/${MY_WARBAND}/items/`, { ...rope, quantity: 1 });
     fakeApi.on(`POST /warbands/${MY_WARBAND}/trades/`, { id: 900 });
     fakeApi.on(`POST /warbands/${MY_WARBAND}/logs/`, { id: 800 });
@@ -398,7 +391,6 @@ describe("StashItemList: Buy again", () => {
       `POST /warbands/${MY_WARBAND}/trades/`,
       `POST /warbands/${MY_WARBAND}/logs/`,
     ]);
-    expect(fakeApi.calls()).toContain(`GET /warbands/${MY_WARBAND}/trades/`);
     expect(
       fakeApi.calls().some((call) => call.includes(`/warbands/${THEIR_WARBAND}/trades/`))
     ).toBe(false);

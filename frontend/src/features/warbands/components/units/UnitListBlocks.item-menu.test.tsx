@@ -287,12 +287,9 @@ describe("unit item menu: Buy again", () => {
   beforeEach(() => {
     fakeApi.on("GET /items/102/", daggerItem);
     fakeApi.on(`GET /warbands/${MY_WARBAND}/heroes/`, [aldric]);
-    fakeApi.on(`GET /warbands/${MY_WARBAND}/trades/`, [
-      { id: 1, action: "Starting gold", price: 500, children: [] },
-    ]);
   });
 
-  it("buys another copy for the hero in nine requests and writes the PATCH's answer to the card (ECON-PERF-01, pinned; flips in PR B)", async () => {
+  it("buys another copy for the hero in eight requests and writes the PATCH's answer to the card (ECON-PERF-01, pinned; flips in PR B)", async () => {
     const user = setupUser();
     const rearmed = { ...aldric, items: [...aldric.items, { ...dagger }] };
     fakeApi.on(`GET /warbands/${MY_WARBAND}/heroes/11/`, aldric);
@@ -313,7 +310,6 @@ describe("unit item menu: Buy again", () => {
       "GET /items/102/",
       `GET /warbands/${MY_WARBAND}/henchmen-groups/`,
       `GET /warbands/${MY_WARBAND}/heroes/`,
-      `GET /warbands/${MY_WARBAND}/trades/`,
       `GET /warbands/${MY_WARBAND}/heroes/11/`,
       `PATCH /warbands/${MY_WARBAND}/heroes/11/`,
       `POST /warbands/${MY_WARBAND}/trades/`,
@@ -331,12 +327,11 @@ describe("unit item menu: Buy again", () => {
     await waitFor(() => expect(within(dialog).getByRole("button", { name: "Buy" })).toBeEnabled());
     await user.click(within(dialog).getByRole("button", { name: "Buy" }));
 
-    // Gold came from your own ledger; the Buy click sent nothing and the dialog stays.
+    // The lists came from your own warband; the Buy click sent nothing and the dialog stays.
     expect(fakeApi.calls()).toEqual([
       "GET /items/102/",
       `GET /warbands/${MY_WARBAND}/henchmen-groups/`,
       `GET /warbands/${MY_WARBAND}/heroes/`,
-      `GET /warbands/${MY_WARBAND}/trades/`,
     ]);
     expect(screen.getByRole("dialog", { name: "Acquire item" })).toBeInTheDocument();
     expect(within(dialog).getByRole("button", { name: "Buy" })).toBeEnabled();

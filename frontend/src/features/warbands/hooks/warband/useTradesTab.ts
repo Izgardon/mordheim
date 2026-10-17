@@ -7,10 +7,9 @@ import type { WarbandTrade, WarbandTradePayload } from "../../types/warband-type
 
 type UseTradesTabOptions = {
   warbandId: number;
-  onTradeCreated?: (trade: WarbandTrade) => void;
 };
 
-export default function useTradesTab({ warbandId, onTradeCreated }: UseTradesTabOptions) {
+export default function useTradesTab({ warbandId }: UseTradesTabOptions) {
   const [trades, setTrades] = useState<WarbandTrade[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -101,9 +100,9 @@ export default function useTradesTab({ warbandId, onTradeCreated }: UseTradesTab
 
     try {
       const newTrade = await createWarbandTrade(warbandId, payload);
+      // The answer is the row, not the gold: the header reads the re-read summary (BUG-37).
       updateWarbandCache(warbandId);
       setTrades((prev) => [newTrade, ...prev]);
-      onTradeCreated?.(newTrade);
       handleCloseForm();
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
@@ -120,7 +119,6 @@ export default function useTradesTab({ warbandId, onTradeCreated }: UseTradesTab
     formPrice,
     formNotes,
     warbandId,
-    onTradeCreated,
     handleCloseForm,
     updateWarbandCache,
   ]);

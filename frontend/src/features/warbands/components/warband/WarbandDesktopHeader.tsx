@@ -40,7 +40,6 @@ type WarbandDesktopHeaderProps = {
   warband: Warband;
   activeTab: WarbandTab;
   onTabChange: (tabId: string) => void;
-  tradeTotal: number;
   /** Gold the open edit session will spend on Save (queued recruits and purchases). */
   pendingGold?: number;
   warbandRating: number;
@@ -61,7 +60,6 @@ export default function WarbandDesktopHeader({
   warband,
   activeTab,
   onTabChange,
-  tradeTotal,
   pendingGold = 0,
   warbandRating,
   heroes,
@@ -94,7 +92,7 @@ export default function WarbandDesktopHeader({
           />
           <HeaderIconButton
             icon={greedIcon}
-            label={<GoldLabel gold={tradeTotal} pending={pendingGold} />}
+            label={<GoldLabel gold={warband.gold ?? 0} pending={pendingGold} />}
             tooltip={pendingGold > 0 ? "Gold coins left after Save" : "Gold coins"}
             ariaLabel="Gold coins"
             buttonClassName={`${transparentButton}${pendingGold > 0 ? " !w-auto" : ""}`}

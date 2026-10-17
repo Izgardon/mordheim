@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
 import "../styles/warband.css";
@@ -22,7 +22,7 @@ import { WARBAND_TABS, useWarbandPage } from "../hooks/warband/useWarbandPage";
 import { useAppStore } from "@/stores/app-store";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { createWarband } from "../api/warbands-api";
-import { calculateWarbandRating, getSignedTradePrice } from "../utils/warband-utils";
+import { calculateWarbandRating } from "../utils/warband-utils";
 
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
 import type { WarbandCreatePayload, WarbandHero } from "../types/warband-types";
@@ -33,7 +33,6 @@ export default function Warband() {
     useOutletContext<CampaignLayoutContext>();
   const { tradeSession } = useAppStore();
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const [tradeTotal, setTradeTotal] = useState(0);
 
   const campaignId = useMemo(() => Number(id), [id]);
   const resolvedWarbandId = useMemo(() => (warbandId ? Number(warbandId) : null), [warbandId]);
@@ -66,12 +65,6 @@ export default function Warband() {
     warbandId: warband?.id,
     loadWarchestItems: warchest.loadWarchestItems,
   });
-
-  useEffect(() => {
-    if (warband?.gold !== undefined) {
-      setTradeTotal(warband.gold);
-    }
-  }, [warband?.gold]);
 
   const roster = { heroes, hiredSwords, henchmenGroups };
   const replaceHero = useCallback(
@@ -117,9 +110,10 @@ export default function Warband() {
     onItemsChanged: warchest.loadWarchestItems,
     onHeroUpdated: replaceHero,
   };
+  // Gold is the server's, from the sheet's summary (BUG-37); nothing on the page adds to it.
+  const gold = warband.gold ?? 0;
   const header = {
     warband,
-    tradeTotal,
     warbandRating,
     ...roster,
     canManageItems: capabilities.manage_items,
@@ -158,7 +152,7 @@ export default function Warband() {
         warchestItems={warchest.warchestItems}
         isWarchestLoading={warchest.isWarchestLoading}
         warchestError={warchest.warchestError}
-        availableGold={tradeTotal}
+        availableGold={gold}
         onRequestUpdated={trade.setTradeRequest}
         onClose={trade.handleTradeSessionClose}
       />
@@ -181,7 +175,7 @@ export default function Warband() {
               editors={page.editors}
               {...roster}
               levelThresholds={page.levelThresholds}
-              availableGold={tradeTotal}
+              availableGold={gold}
               layoutVariant={isMobile ? "mobile" : "default"}
               sectionActionsHidden={page.sectionActionsHidden}
               sizeWarning={page.sizeWarning}
@@ -189,12 +183,7 @@ export default function Warband() {
             />
           </WarbandCatalogueProvider>
         ) : page.activeTab === "treasury" ? (
-          <TradesTab
-            warband={warband}
-            canEdit={canEdit}
-            isMobile={isMobile}
-            onTradeCreated={(t) => setTradeTotal((prev) => prev + getSignedTradePrice(t))}
-          />
+          <TradesTab warband={warband} canEdit={canEdit} isMobile={isMobile} />
         ) : page.activeTab === "backstory" ? (
           <BackstoryTab
             warband={warband}

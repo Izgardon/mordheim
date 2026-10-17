@@ -163,6 +163,10 @@ type User = ReturnType<typeof setupUser>;
 
 const buyButton = () => screen.getByRole("button", { name: /^(Buy|Give|Buying\.\.\.)$/ });
 
+/** Waits for the dialog's loads on open (the unit lists) to have gone out. */
+const openLoadsSent = () =>
+  waitFor(() => expect(fakeApi.countOf("GET /warbands/9/heroes/")).toBe(1));
+
 /** Waits for the gold check to settle with Buy enabled, then clicks it. */
 const clickBuy = async (user: User) => {
   await waitFor(() => expect(buyButton()).toBeEnabled());
@@ -189,12 +193,11 @@ beforeEach(() => {
   store.warband = storeWarband();
   fakeApi.on("GET /warbands/9/henchmen-groups/", [group]);
   fakeApi.on("GET /warbands/9/heroes/", [{ ...hero, items: undefined }]);
-  fakeApi.on("GET /warbands/9/trades/", [trade({})]);
   answerWrites();
 });
 
 describe("AcquireItemDialog: requests per purchase (ECON-PERF-01)", () => {
-  it("buys into the stash: three GETs on open, then the item, the Bought trade, the log and a summary GET (ECON-PERF-01, pinned; flips in PR B)", async () => {
+  it("buys into the stash: two GETs on open, then the item, the Bought trade, the log and a summary GET (ECON-PERF-01, pinned; flips in PR B)", async () => {
     const user = setupUser();
     fakeApi.on("POST /warbands/9/items/", { id: 120, name: "Rope", cost: 5, quantity: 1 });
     const { onAcquire, onClosed } = renderDialog({ presetUnitType: "stash" });
@@ -206,7 +209,6 @@ describe("AcquireItemDialog: requests per purchase (ECON-PERF-01)", () => {
     expect(fakeApi.calls()).toEqual([
       "GET /warbands/9/henchmen-groups/",
       "GET /warbands/9/heroes/",
-      "GET /warbands/9/trades/",
       "POST /warbands/9/items/",
       "POST /warbands/9/trades/",
       "POST /warbands/9/logs/",
@@ -247,7 +249,7 @@ describe("AcquireItemDialog: requests per purchase (ECON-PERF-01)", () => {
       presetUnitId: 11,
       disableUnitSelection: true,
     });
-    await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/trades/")).toBe(1));
+    await openLoadsSent();
     fakeApi.clearRequests();
 
     await clickBuy(user);
@@ -283,7 +285,7 @@ describe("AcquireItemDialog: requests per purchase (ECON-PERF-01)", () => {
     fakeApi.on("GET /warbands/9/hired-swords/31/", hiredSword);
     fakeApi.on("PATCH /warbands/9/hired-swords/31/", hiredSword);
     renderDialog({ presetUnitType: "hiredswords", presetUnitId: 31, disableUnitSelection: true });
-    await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/trades/")).toBe(1));
+    await openLoadsSent();
     fakeApi.clearRequests();
 
     await clickBuy(user);
@@ -313,7 +315,7 @@ describe("AcquireItemDialog: requests per purchase (ECON-PERF-01)", () => {
     const user = setupUser();
     fakeApi.on("PATCH /warbands/9/henchmen-groups/21/", group);
     renderDialog({ presetUnitType: "henchmen", presetUnitId: 21, disableUnitSelection: true });
-    await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/trades/")).toBe(1));
+    await openLoadsSent();
     fakeApi.clearRequests();
 
     await clickBuy(user);
@@ -406,7 +408,7 @@ describe("AcquireItemDialog: requests per purchase (ECON-PERF-01)", () => {
       emitWarbandUpdate: false,
       reservedGold: 0,
     });
-    await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/trades/")).toBe(1));
+    await openLoadsSent();
     fakeApi.clearRequests();
 
     await clickBuy(user);
@@ -426,7 +428,7 @@ describe("AcquireItemDialog: requests per purchase (ECON-PERF-01)", () => {
 
 describe("AcquireItemDialog: gold", () => {
   it("blocks Buy over the available gold and names the amount", async () => {
-    fakeApi.on("GET /warbands/9/trades/", [trade({ price: 4 })]);
+    store.warband = storeWarband({ gold: 4 });
     renderDialog({ presetUnitType: "stash" });
 
     expect(await screen.findByText("Not enough gold crowns. Available: 4 gc.")).toBeInTheDocument();
@@ -440,65 +442,37 @@ describe("AcquireItemDialog: gold", () => {
     expect(buyButton()).toBeDisabled();
   });
 
-  it("reads gold from the ledger's top-level rows only, so a group's purchases don't count (BUG-37, pinned; flips in PR A)", async () => {
+  it("reads gold from the sheet's summary, so a group's recruits count and no ledger is loaded (BUG-37)", async () => {
     const user = setupUser();
-    // The server's gold (and the sheet's summary) is 200 - 75 - 75 = 50.
+    // The server's gold (the sheet's summary) is 200 - 75 - 75 = 50; the ledger isn't read.
     store.warband = storeWarband({ gold: 50 });
-    fakeApi.on("GET /warbands/9/trades/", [
-      trade({ price: 200 }),
-      trade({
-        id: 2,
-        action: "Group",
-        description: "Recruited Black Knives (2)",
-        price: 0,
-        children: [
-          {
-            id: 3,
-            action: "Recruited",
-            description: "Blade One",
-            price: -75,
-            notes: "",
-            created_at: "",
-          },
-          {
-            id: 4,
-            action: "Recruited",
-            description: "Blade Two",
-            price: -75,
-            notes: "",
-            created_at: "",
-          },
-        ],
-      }),
-    ]);
-    fakeApi.on("POST /warbands/9/items/", { id: 120, name: "Rope", cost: 120, quantity: 1 });
+    fakeApi.on("POST /warbands/9/items/", { id: 120, name: "Rope", cost: 40, quantity: 1 });
     renderDialog({
       presetUnitType: "stash",
-      item: { ...rope, availabilities: [{ id: 7, cost: 250, rarity: 2, restrictions: [] }] },
+      item: { ...rope, availabilities: [{ id: 7, cost: 120, rarity: 2, restrictions: [] }] },
     });
 
-    expect(
-      await screen.findByText("Not enough gold crowns. Available: 200 gc.")
-    ).toBeInTheDocument();
-    fireEvent.change(within(screen.getByRole("dialog")).getByDisplayValue("250"), {
-      target: { value: "120" },
+    expect(await screen.findByText("Not enough gold crowns. Available: 50 gc.")).toBeVisible();
+    expect(buyButton()).toBeDisabled();
+    fireEvent.change(within(screen.getByRole("dialog")).getByDisplayValue("120"), {
+      target: { value: "40" },
     });
 
-    // 120 gc against 50 gc of real gold goes through.
     await clickBuy(user);
     await waitFor(() => expect(fakeApi.countOf("POST /warbands/9/trades/")).toBe(1));
-    expect(fakeApi.bodyOf("POST /warbands/9/trades/")).toMatchObject({ price: 120 });
+    expect(fakeApi.bodyOf("POST /warbands/9/trades/")).toMatchObject({ price: 40 });
+    expect(fakeApi.countOf("GET /warbands/9/trades/")).toBe(0);
   });
 
-  it('takes gold from a hidden "Gold Crowns" resource instead of the ledger (BUG-37, pinned; flips in PR A)', async () => {
+  it("ignores a Gold Crowns resource: gold is the summary's (BUG-37)", async () => {
     store.warband = storeWarband({
       gold: 500,
       resources: [{ id: 3, warband_id: 9, name: "Gold Crowns", amount: 0 }],
     });
     renderDialog({ presetUnitType: "stash" });
 
-    expect(await screen.findByText("Not enough gold crowns. Available: 0 gc.")).toBeInTheDocument();
-    expect(buyButton()).toBeDisabled();
+    await waitFor(() => expect(buyButton()).toBeEnabled());
+    expect(screen.queryByText(/Not enough gold crowns/)).not.toBeInTheDocument();
     expect(fakeApi.countOf("GET /warbands/9/trades/")).toBe(0);
   });
 

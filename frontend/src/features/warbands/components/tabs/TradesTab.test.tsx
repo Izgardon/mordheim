@@ -88,13 +88,7 @@ function SheetObserver() {
 }
 
 /** The tab as the page mounts it: only while Treasury is the active tab. */
-function TreasuryTab({
-  canEdit,
-  onTradeCreated,
-}: {
-  canEdit: boolean;
-  onTradeCreated: () => void;
-}) {
+function TreasuryTab({ canEdit }: { canEdit: boolean }) {
   const [shown, setShown] = useState(true);
   return (
     <>
@@ -102,20 +96,12 @@ function TreasuryTab({
       <button type="button" onClick={() => setShown((value) => !value)}>
         Switch tab
       </button>
-      {shown ? (
-        <TradesTab warband={warband} canEdit={canEdit} onTradeCreated={onTradeCreated} />
-      ) : null}
+      {shown ? <TradesTab warband={warband} canEdit={canEdit} /> : null}
     </>
   );
 }
 
-const renderTab = (canEdit = true) => {
-  const onTradeCreated = vi.fn();
-  return {
-    ...renderWithQueryClient(<TreasuryTab canEdit={canEdit} onTradeCreated={onTradeCreated} />),
-    onTradeCreated,
-  };
-};
+const renderTab = (canEdit = true) => renderWithQueryClient(<TreasuryTab canEdit={canEdit} />);
 
 beforeAll(() => {
   Element.prototype.hasPointerCapture = vi.fn(() => false);
@@ -178,12 +164,12 @@ describe("TradesTab: the ledger", () => {
 });
 
 describe("TradesTab: a manual entry", () => {
-  it("POSTs the entry, puts it on top, re-reads the summary and hands it to the page's gold total (ECON-PERF-08, pinned; flips in PR A)", async () => {
+  it("POSTs the entry, puts it on top and re-reads the summary for the header gold, with no local total (BUG-37; the summary GET is ECON-PERF-08, pinned until the answer carries it)", async () => {
     const user = setupUser();
     const created = row({ id: 7, action: "Buy", description: "Lantern", price: 10 });
     fakeApi.on("POST /warbands/9/trades/", created);
     fakeApi.on("GET /warbands/9/summary/", { gold: 425 });
-    const { onTradeCreated } = renderTab();
+    const { queryClient } = renderTab();
     await screen.findByText("Rope");
 
     await user.click(screen.getByRole("button", { name: "Add Trade Entry" }));
@@ -204,7 +190,14 @@ describe("TradesTab: a manual entry", () => {
       price: 10,
       notes: "",
     });
-    expect(onTradeCreated).toHaveBeenCalledWith(created);
+    // The page's gold is the sheet's summary, which the re-read replaced.
+    await waitFor(() =>
+      expect(
+        queryClient.getQueryData<{ summary: { gold: number } }>(
+          queryKeys.campaign.warbandSheet(7, 9)
+        )?.summary.gold
+      ).toBe(425)
+    );
     expect(screen.getAllByText(/^(Lantern|Recruited Black Knives \(2\))$/)[0]).toHaveTextContent(
       "Lantern"
     );

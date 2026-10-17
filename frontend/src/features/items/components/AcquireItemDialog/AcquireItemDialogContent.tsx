@@ -79,8 +79,6 @@ export default function AcquireItemDialogContent({
   actionDisabledReason,
   isSubmitting,
   handleAcquire,
-  isGoldLoading,
-  goldFetchError,
   goldValidationError,
   availabilities,
   selectedAvailabilityId,
@@ -392,11 +390,7 @@ export default function AcquireItemDialogContent({
             )}
           </div>
           <p className="min-h-[1rem] text-xs text-muted-foreground" aria-live="polite">
-            {isBuying
-              ? isGoldLoading
-                ? "Checking gold crowns..."
-                : goldFetchError || goldValidationError || " "
-              : " "}
+            {(isBuying && goldValidationError) || " "}
           </p>
         </div>
       </DialogContent>

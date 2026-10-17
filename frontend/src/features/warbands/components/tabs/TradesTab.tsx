@@ -42,7 +42,6 @@ type TradesTabProps = {
   warband: Warband;
   canEdit?: boolean;
   isMobile?: boolean;
-  onTradeCreated?: (trade: WarbandTrade) => void;
 };
 
 const formatSignedPrice = (trade: Pick<WarbandTrade | WarbandTradeChild, "action" | "price">) => {
@@ -68,12 +67,7 @@ const formatTradeDateShort = (value: string) => {
   });
 };
 
-export default function TradesTab({
-  warband,
-  canEdit = false,
-  isMobile = false,
-  onTradeCreated,
-}: TradesTabProps) {
+export default function TradesTab({ warband, canEdit = false, isMobile = false }: TradesTabProps) {
   const [expandedGroups, setExpandedGroups] = useState<Set<number>>(new Set());
 
   const toggleGroup = useCallback((id: number) => {
@@ -103,7 +97,7 @@ export default function TradesTab({
     isSubmitting,
     submitError,
     handleSubmit,
-  } = useTradesTab({ warbandId: warband.id, onTradeCreated });
+  } = useTradesTab({ warbandId: warband.id });
 
   const descriptionPlaceholder =
     DESCRIPTION_PLACEHOLDERS[formAction] ?? "Describe this ledger entry";
