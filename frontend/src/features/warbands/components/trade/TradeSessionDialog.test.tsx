@@ -84,6 +84,9 @@ function SheetObserver() {
 /** Lets a test deliver a new copy of the request, as a partner's realtime event does. */
 const partner = { send: (_next: TradeRequest) => undefined as void };
 
+/** Lets a test change the page's gold, as a summary refresh does. */
+const page = { setGold: (_gold: number) => undefined as void };
+
 /** The dialog as the page holds it: answers and events replace `tradeRequest`. */
 function TradeHarness({
   initial,
@@ -95,7 +98,9 @@ function TradeHarness({
   onClose: () => void;
 }) {
   const [tradeRequest, setTradeRequest] = useState<TradeRequest | null>(initial);
+  const [gold, setGold] = useState(120);
   partner.send = setTradeRequest;
+  page.setGold = setGold;
   return (
     <>
       <SheetObserver />
@@ -105,7 +110,7 @@ function TradeHarness({
         heroes={[aldric, gunther]}
         warbandId={9}
         warchestItems={stash}
-        availableGold={120}
+        availableGold={gold}
         onRequestUpdated={setTradeRequest}
         onClose={onClose}
       />
@@ -202,22 +207,32 @@ describe("TradeSessionDialog: offer autosave", () => {
     ]);
   });
 
-  it("drops a click made during the 300 ms wait when the partner's change arrives (BUG-42, pinned; flips in PR A)", async () => {
+  it("keeps a click made during the wait when the partner's change arrives, then saves it (BUG-42)", async () => {
+    // The server keeps Bob's 15 gc in every later copy.
+    const bobsOffer = { ...emptyOffer, gold: 15 };
+    fakeApi.on(OFFER, (body: unknown) =>
+      request({ from_offer: body as TradeOffer, to_offer: bobsOffer })
+    );
     renderDialog();
 
     fireEvent.click(screen.getByRole("button", { name: "Rope 1/1" }));
     expect(within(myOffer()).getByRole("button", { name: "Rope x1" })).toBeInTheDocument();
     // Bob adds gold: the event carries the server's copy of Ann's offer, still empty.
-    act(() => partner.send(request({ to_offer: { ...emptyOffer, gold: 15 } })));
+    act(() => partner.send(request({ to_offer: bobsOffer })));
     await act(() => vi.advanceTimersByTimeAsync(1000));
 
-    expect(within(myOffer()).getByText("No items added.")).toBeInTheDocument();
-    expect(fakeApi.calls()).toEqual([]);
+    expect(within(myOffer()).getByRole("button", { name: "Rope x1" })).toBeInTheDocument();
+    expect(within(theirOffer()).getByText("15 gc")).toBeInTheDocument();
+    expect(fakeApi.bodyOf(OFFER)).toEqual({
+      trader_id: null,
+      gold: 0,
+      items: [{ id: 120, name: "Rope", quantity: 1 }],
+    });
   });
 
-  it("drops a click made while the save is in flight when the save's answer arrives (BUG-42, pinned; flips in PR A)", async () => {
-    let answer!: (value: TradeRequest) => void;
-    fakeApi.on(OFFER, () => new Promise<TradeRequest>((resolve) => (answer = resolve)));
+  it("keeps a click made while the save is in flight when the save's answer arrives, then saves it too (BUG-42)", async () => {
+    const answers: ((value: TradeRequest) => void)[] = [];
+    fakeApi.on(OFFER, () => new Promise<TradeRequest>((resolve) => answers.push(resolve)));
     renderDialog();
 
     fireEvent.click(screen.getByRole("button", { name: "Sword 2/2" }));
@@ -225,12 +240,54 @@ describe("TradeSessionDialog: offer autosave", () => {
     fireEvent.click(screen.getByRole("button", { name: "Sword 1/2" }));
     expect(within(myOffer()).getByRole("button", { name: "Sword x2" })).toBeInTheDocument();
     await act(async () => {
-      answer(withMyOffer({ gold: 0, items: [{ id: 101, name: "Sword", quantity: 1, cost: 10 }] }));
+      answers[0](
+        withMyOffer({ gold: 0, items: [{ id: 101, name: "Sword", quantity: 1, cost: 10 }] })
+      );
     });
     await act(() => vi.advanceTimersByTimeAsync(1000));
 
+    expect(within(myOffer()).getByRole("button", { name: "Sword x2" })).toBeInTheDocument();
+    // One save at a time: the second goes out after the first answered, with the newer draft.
+    expect(fakeApi.countOf(OFFER)).toBe(2);
+    expect(fakeApi.bodyOf(OFFER)).toMatchObject({ items: [{ id: 101, quantity: 2 }] });
+  });
+
+  it("keeps an unsent click when the page's gold changes (BUG-42)", async () => {
+    renderDialog();
+
+    fireEvent.click(screen.getByRole("button", { name: "Rope 1/1" }));
+    act(() => page.setGold(100));
+
+    expect(within(myOffer()).getByRole("button", { name: "Rope x1" })).toBeInTheDocument();
+    expect(screen.getByText("Available: 100 gc")).toBeInTheDocument();
+  });
+
+  it("shows the server's copy of your offer when nothing local is unsent", async () => {
+    renderDialog();
+
+    act(() =>
+      partner.send(withMyOffer({ gold: 5, items: [{ id: 101, name: "Sword", quantity: 1 }] }))
+    );
+    await act(() => vi.advanceTimersByTimeAsync(1000));
+
     expect(within(myOffer()).getByRole("button", { name: "Sword x1" })).toBeInTheDocument();
-    expect(fakeApi.countOf(OFFER)).toBe(1);
+    expect(fakeApi.countOf(OFFER)).toBe(0);
+  });
+
+  it("keeps Accept off until your changes are saved, since it locks the server's copy (BUG-42)", async () => {
+    let answer!: (value: TradeRequest) => void;
+    fakeApi.on(OFFER, () => new Promise<TradeRequest>((resolve) => (answer = resolve)));
+    renderDialog();
+
+    fireEvent.click(screen.getByRole("button", { name: "Rope 1/1" }));
+    expect(screen.getByRole("button", { name: "Accept" })).toBeDisabled();
+    await act(() => vi.advanceTimersByTimeAsync(300));
+    expect(screen.getByRole("button", { name: "Accept" })).toBeDisabled();
+    await act(async () => {
+      answer(withMyOffer({ gold: 0, items: [{ id: 120, name: "Rope", quantity: 1, cost: 5 }] }));
+    });
+
+    expect(screen.getByRole("button", { name: "Accept" })).toBeEnabled();
   });
 });
 

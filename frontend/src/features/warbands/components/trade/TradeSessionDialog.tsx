@@ -1,5 +1,5 @@
 import type { ChangeEvent } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { Button } from "@components/button";
 import { NumberInput } from "@components/number-input";
@@ -14,39 +14,22 @@ import {
 } from "@components/dialog";
 import { cn } from "@/lib/utils";
 
-import {
-  lockTradeOffer,
-  unlockTradeOffer,
-  updateTradeOffer,
-} from "@/features/campaigns/api/campaigns-api";
+import { lockTradeOffer, unlockTradeOffer } from "@/features/campaigns/api/campaigns-api";
 import { useWarbandCacheUpdate } from "@/features/warbands/api/warband-cache";
+import {
+  normalizeOffer,
+  useTradeOfferDraft,
+  type DraftOffer,
+} from "@/features/warbands/hooks/warband/useTradeOfferDraft";
 import { ConfirmDialog } from "@components/confirm-dialog";
 import type { WarbandHero, WarbandItemSummary } from "@/features/warbands/types/warband-types";
 import type {
-  TradeOffer,
   TradeOfferItem,
   TradeRequest,
   TradeSession,
 } from "@/features/warbands/types/trade-request-types";
 
-const normalizeOffer = (offer?: TradeOffer): Required<TradeOffer> => ({
-  trader_id: offer?.trader_id ?? null,
-  trader_name: offer?.trader_name ?? null,
-  gold: Math.max(0, Number(offer?.gold ?? 0)),
-  items: Array.isArray(offer?.items) ? (offer?.items ?? []) : [],
-});
-
-const buildOfferPayload = (offer: Required<TradeOffer>, maxGold: number) => ({
-  trader_id: offer.trader_id ?? null,
-  gold: Math.min(Math.max(0, Number(offer.gold || 0)), maxGold),
-  items: offer.items.map((item) => ({
-    id: item.id,
-    name: item.name,
-    quantity: Math.max(0, Number(item.quantity) || 0),
-  })),
-});
-
-const calculateOfferValue = (offer: Required<TradeOffer>) => {
+const calculateOfferValue = (offer: DraftOffer) => {
   const gold = Math.max(0, Number(offer.gold ?? 0));
   const itemTotal = offer.items.reduce((sum, item) => {
     const quantity = Math.max(0, Number(item.quantity ?? 0));
@@ -98,50 +81,20 @@ export default function TradeSessionDialog({
     isInitiator ? tradeRequest?.to_accepted : tradeRequest?.from_accepted
   );
 
-  const [draftOffer, setDraftOffer] = useState<Required<TradeOffer>>(myOffer);
-  const [isSaving, setIsSaving] = useState(false);
+  const offer = useTradeOfferDraft({
+    session: tradeRequest ? session : null,
+    serverOffer: myOffer,
+    maxGold,
+    locked: myAccepted,
+    onSaved: onRequestUpdated,
+  });
+  const { draft: draftOffer, edit: editOffer, isDirty, isSaving } = offer;
   const [isLocking, setIsLocking] = useState(false);
   const [isUnlocking, setIsUnlocking] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
-  const [error, setError] = useState("");
+  const [actionError, setActionError] = useState("");
+  const error = actionError || offer.error;
   const updateWarbandCache = useWarbandCacheUpdate();
-  const lastSentRef = useRef<string>("");
-
-  useEffect(() => {
-    setDraftOffer(myOffer);
-    lastSentRef.current = JSON.stringify(buildOfferPayload(myOffer, maxGold));
-    setError("");
-  }, [maxGold, myOffer]);
-
-  useEffect(() => {
-    if (!session || !tradeRequest || myAccepted) {
-      return;
-    }
-    const payload = buildOfferPayload(draftOffer, maxGold);
-    const serialized = JSON.stringify(payload);
-    if (serialized === lastSentRef.current) {
-      return;
-    }
-    const timeout = window.setTimeout(() => {
-      setIsSaving(true);
-      updateTradeOffer(session.campaignId, session.requestId, payload)
-        .then((request) => {
-          lastSentRef.current = serialized;
-          onRequestUpdated(request);
-          setError("");
-        })
-        .catch((err) => {
-          if (err instanceof Error) {
-            setError(err.message || "Unable to update offer.");
-          } else {
-            setError("Unable to update offer.");
-          }
-        })
-        .finally(() => setIsSaving(false));
-    }, 300);
-
-    return () => window.clearTimeout(timeout);
-  }, [draftOffer, maxGold, myAccepted, onRequestUpdated, session, tradeRequest]);
 
   const offeredCounts = useMemo(() => {
     const map = new Map<number, number>();
@@ -169,7 +122,7 @@ export default function TradeSessionDialog({
     if (myAccepted || item.available <= 0) {
       return;
     }
-    setDraftOffer((prev) => {
+    editOffer((prev) => {
       const nextItems = [...prev.items];
       const idx = nextItems.findIndex((entry) => entry.id === item.id);
       if (idx === -1) {
@@ -189,7 +142,7 @@ export default function TradeSessionDialog({
     if (myAccepted) {
       return;
     }
-    setDraftOffer((prev) => {
+    editOffer((prev) => {
       const nextItems = prev.items
         .map((entry) => (entry.id === item.id ? { ...entry, quantity: entry.quantity - 1 } : entry))
         .filter((entry) => entry.quantity > 0);
@@ -203,7 +156,7 @@ export default function TradeSessionDialog({
     }
     const value = Number(event.target.value || 0);
     const nextGold = Math.min(Math.max(0, value), maxGold);
-    setDraftOffer((prev) => ({ ...prev, gold: nextGold }));
+    editOffer((prev) => ({ ...prev, gold: nextGold }));
   };
 
   const handleTraderChange = (value: string) => {
@@ -211,7 +164,7 @@ export default function TradeSessionDialog({
       return;
     }
     const nextTrader = value === "none" ? null : Number(value);
-    setDraftOffer((prev) => ({ ...prev, trader_id: Number.isNaN(nextTrader) ? null : nextTrader }));
+    editOffer((prev) => ({ ...prev, trader_id: Number.isNaN(nextTrader) ? null : nextTrader }));
   };
 
   const handleAccept = async () => {
@@ -219,16 +172,16 @@ export default function TradeSessionDialog({
       return;
     }
     setIsLocking(true);
-    setError("");
+    setActionError("");
     try {
       const request = await lockTradeOffer(session.campaignId, session.requestId);
       onRequestUpdated(request);
       updateWarbandCache(warbandId);
     } catch (err) {
       if (err instanceof Error) {
-        setError(err.message || "Unable to accept trade.");
+        setActionError(err.message || "Unable to accept trade.");
       } else {
-        setError("Unable to accept trade.");
+        setActionError("Unable to accept trade.");
       }
     } finally {
       setIsLocking(false);
@@ -240,16 +193,16 @@ export default function TradeSessionDialog({
       return;
     }
     setIsUnlocking(true);
-    setError("");
+    setActionError("");
     try {
       const request = await unlockTradeOffer(session.campaignId, session.requestId);
       onRequestUpdated(request);
       updateWarbandCache(warbandId);
     } catch (err) {
       if (err instanceof Error) {
-        setError(err.message || "Unable to unaccept trade.");
+        setActionError(err.message || "Unable to unaccept trade.");
       } else {
-        setError("Unable to unaccept trade.");
+        setActionError("Unable to unaccept trade.");
       }
     } finally {
       setIsUnlocking(false);
@@ -471,7 +424,12 @@ export default function TradeSessionDialog({
               {isUnlocking ? "Unaccepting..." : "Unaccept"}
             </Button>
           ) : (
-            <Button type="button" onClick={handleAccept} disabled={isSaving || isLocking}>
+            // Accept locks the server's copy, so it waits until your changes are saved.
+            <Button
+              type="button"
+              onClick={handleAccept}
+              disabled={isDirty || isSaving || isLocking}
+            >
               {isLocking ? "Accepting..." : "Accept"}
             </Button>
           )}
