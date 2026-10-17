@@ -183,7 +183,6 @@ export default function WarbandDiceSettingsCard({ campaignRole }: WarbandDiceSet
               showResultBox={false}
               showRollButton={false}
               rollSignal={rollSignal}
-              fullScreen
             />
           </div>
 

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 
 import DiceRoller from "@/components/dice/DiceRoller";
+import { parseDiceValues } from "@/components/dice/dice-utils";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -35,45 +36,6 @@ const MAX_DICE_COUNT = 10;
 const DICE_SIDES = [3, 4, 6, 8, 10, 12, 20, 100] as const;
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
-
-const parseDiceValues = (results: unknown): number[] => {
-  const extractValues = (entry: unknown): number[] => {
-    if (!entry) {
-      return [];
-    }
-    if (typeof entry === "number") {
-      return Number.isFinite(entry) ? [entry] : [];
-    }
-    if (entry && typeof entry === "object" && "rolls" in entry) {
-      const rolls = (entry as { rolls?: unknown }).rolls;
-      if (Array.isArray(rolls)) {
-        return rolls
-          .map((roll) => {
-            if (typeof roll === "number") {
-              return roll;
-            }
-            if (roll && typeof roll === "object" && "value" in roll) {
-              const value = Number((roll as { value?: unknown }).value);
-              return Number.isFinite(value) ? value : null;
-            }
-            return null;
-          })
-          .filter((value): value is number => Number.isFinite(value));
-      }
-    }
-    if (entry && typeof entry === "object" && "value" in entry) {
-      const value = Number((entry as { value?: unknown }).value);
-      return Number.isFinite(value) ? [value] : [];
-    }
-    return [];
-  };
-
-  if (Array.isArray(results)) {
-    return results.flatMap(extractValues);
-  }
-
-  return extractValues(results);
-};
 
 export default function CampaignDiceRollerMenu({
   className,
@@ -243,7 +205,6 @@ export default function CampaignDiceRollerMenu({
 
         <DiceRoller
           fixedNotation={notation}
-          fullScreen
           variant="button-only"
           showRollButton={false}
           themeColor={diceColor}

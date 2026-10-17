@@ -100,7 +100,6 @@ export default function PriceSection({
           <DiceRoller
             mode="fixed"
             fixedNotation={`${increaseDiceCount}d6`}
-            fullScreen
             variant="button-only"
             showRollButton={false}
             rollSignal={increaseRollSignal}
@@ -140,7 +139,6 @@ export default function PriceSection({
           <DiceRoller
             mode="fixed"
             fixedNotation={`${decreaseDiceCount}d6`}
-            fullScreen
             variant="button-only"
             showRollButton={false}
             rollSignal={decreaseRollSignal}

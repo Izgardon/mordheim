@@ -67,7 +67,6 @@ export default function HiredSwordLevelUpDialog({
                 <DiceRoller
                   mode="fixed"
                   fixedNotation="2d6"
-                  fullScreen
                   themeColor={diceColor}
                   showRollButton={false}
                   resultMode="total"
@@ -89,7 +88,6 @@ export default function HiredSwordLevelUpDialog({
                 <DiceRoller
                   mode="fixed"
                   fixedNotation="1d6"
-                  fullScreen
                   themeColor={diceColor}
                   showRollButton={false}
                   resultMode="total"

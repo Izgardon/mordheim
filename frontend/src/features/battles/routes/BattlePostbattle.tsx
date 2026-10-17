@@ -201,7 +201,6 @@ function SeriousInjuryRollDialog({
           <DiceRoller
             mode="fixed"
             fixedNotation={notation}
-            fullScreen
             themeColor={themeColor}
             resultMode={notation === "2d6" ? "both" : "total"}
             showResultBox
@@ -1309,7 +1308,6 @@ export default function BattlePostbattle() {
         <DiceRoller
           mode="fixed"
           fixedNotation={`${Math.max(1, localExploration?.diceCount ?? 1)}d6`}
-          fullScreen
           variant="button-only"
           showRollButton={false}
           themeColor={diceColor}
@@ -1320,7 +1318,6 @@ export default function BattlePostbattle() {
         <DiceRoller
           mode="fixed"
           fixedNotation="1d6"
-          fullScreen
           variant="button-only"
           showRollButton={false}
           themeColor={diceColor}

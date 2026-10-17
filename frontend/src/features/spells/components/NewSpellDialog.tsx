@@ -248,7 +248,6 @@ export default function NewSpellDialog({
             <DiceRoller
               mode="fixed"
               fixedNotation="1d6"
-              fullScreen
               variant="button-only"
               showResultBox={false}
               themeColor={diceColor}

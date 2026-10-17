@@ -2,6 +2,9 @@ import type { PropsWithChildren } from "react";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 
+// components
+import { DiceProvider } from "../components/dice/DiceProvider";
+
 // stores
 import { AuthProvider } from "../features/auth/stores/auth-store";
 import { AppStoreProvider } from "../stores/app-store";
@@ -38,7 +41,9 @@ export default function AppProvider({ children }: PropsWithChildren) {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <AppStoreProvider>{children}</AppStoreProvider>
+        <AppStoreProvider>
+          <DiceProvider>{children}</DiceProvider>
+        </AppStoreProvider>
       </AuthProvider>
       {ReactQueryDevtools ? (
         <Suspense fallback={null}>

@@ -132,7 +132,6 @@ export default function RaritySection({
           ) : null}
           <DiceRoller
             fixedNotation="2d6"
-            fullScreen
             variant="button-only"
             showResultBox={false}
             rollButtonPrefix=""
