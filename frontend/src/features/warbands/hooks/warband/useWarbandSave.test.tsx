@@ -2,7 +2,8 @@ import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useWarbandSave } from "./useWarbandSave";
-import { mapHeroToForm, type NewHeroForm } from "@/features/warbands/utils/warband-utils";
+import { type NewHeroForm } from "@/features/warbands/utils/warband-utils";
+import { mapHeroToForm } from "@/features/warbands/units/kinds/hero";
 
 import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 import type { HeroFormEntry, Warband, WarbandHero } from "@/features/warbands/types/warband-types";
@@ -378,30 +379,6 @@ describe("useWarbandSave (heroes, ROST-TEST-15)", () => {
       expect(api.updateWarbandHero.mock.calls[0][2].armour_save).toBe(sent);
     }
   );
-
-  it("POSTs heroes without an id (create-on-Save branch, unreachable while the route creates immediately; ROST-CQ-05)", async () => {
-    const created = makeVeteranHero({ id: 14, name: "Late Recruit", is_leader: false });
-    api.createWarbandHero.mockResolvedValue(created);
-    const draft: HeroFormEntry = {
-      ...mapHeroToForm(created),
-      id: undefined,
-      armour_save: "5+",
-    };
-    const { save, params } = renderSave({
-      heroes: [leader],
-      heroForms: [mapHeroToForm(leader), draft],
-    });
-
-    await save();
-
-    expect(api.createWarbandHero).toHaveBeenCalledWith(
-      9,
-      expect.objectContaining({ name: "Late Recruit", armour_save: null, xp: 7, price: 60 }),
-      { emitUpdate: false }
-    );
-    expect(api.createWarbandHero.mock.calls[0][1]).not.toHaveProperty("level_up");
-    expect(params.onSuccess).toHaveBeenCalledWith(expect.anything(), [leader, created]);
-  });
 
   it("shows the error and keeps the session when a write fails", async () => {
     api.updateWarbandHero.mockRejectedValue(new Error("Hero not found"));

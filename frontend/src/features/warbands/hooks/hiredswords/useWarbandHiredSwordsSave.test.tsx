@@ -2,7 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useWarbandHiredSwordsSave } from "./useWarbandHiredSwordsSave";
-import { mapHiredSwordToForm } from "@/features/warbands/utils/warband-utils";
+import { mapHiredSwordToForm } from "@/features/warbands/units/kinds/hired-sword";
 
 import type {
   HiredSwordFormEntry,
@@ -121,40 +121,6 @@ describe("useWarbandHiredSwordsSave", () => {
     apiMocks.updateWarbandHiredSword.mockResolvedValue(baseHiredSword);
     apiMocks.deleteWarbandHiredSword.mockResolvedValue(undefined);
     apiMocks.getWarbandSummary.mockResolvedValue({});
-  });
-
-  it("sends level_up 0 when creating a new hired sword", async () => {
-    const onSuccess = vi.fn();
-    const originalRef = { current: new Map<number, string>() };
-
-    const { result } = renderHook(() =>
-      useWarbandHiredSwordsSave({
-        warbandId: 9,
-        canEdit: true,
-        currentHiredSwords: [],
-        hiredSwordForms: [{ ...baseForm, id: undefined, xp: "5" }],
-        removedHiredSwordIds: [],
-        isAddingHiredSwordForm: false,
-        newHiredSwordForm: blankNewHiredSwordForm,
-        raceQuery: "",
-        originalHiredSwordFormsRef: originalRef,
-        onSuccess,
-      })
-    );
-
-    await act(async () => {
-      await result.current.handleSaveChanges();
-    });
-
-    expect(apiMocks.createWarbandHiredSword).toHaveBeenCalledWith(
-      9,
-      expect.objectContaining({
-        xp: 5,
-        level_up: 0,
-        no_level_ups: false,
-      }),
-      { emitUpdate: false }
-    );
   });
 
   it("suppresses first-save level ups for hired swords created during the current edit session", async () => {
@@ -414,24 +380,6 @@ describe("useWarbandHiredSwordsSave characterisation", () => {
 
     expect(result.current.saveError).toBe(
       "Finish creating the new hired sword or cancel it before saving."
-    );
-  });
-
-  it("POSTs hired swords without an id with numeric armour save (create-on-Save branch; ROST-CQ-05)", async () => {
-    apiMocks.createWarbandHiredSword.mockResolvedValue({ ...veteran, id: 33 });
-    const draft = { ...mapHiredSwordToForm(veteran), id: undefined, armour_save: "4" };
-    const { save } = renderSave({ hiredSwordForms: [draft] });
-
-    await save();
-
-    expect(apiMocks.createWarbandHiredSword).toHaveBeenCalledWith(
-      9,
-      expect.objectContaining({
-        armour_save: 4,
-        level_up: 0,
-        available_skills: ["Combat", "Academic"],
-      }),
-      { emitUpdate: false }
     );
   });
 

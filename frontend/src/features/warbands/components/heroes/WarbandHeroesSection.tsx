@@ -13,7 +13,8 @@ import type { Special } from "../../../special/types/special-types";
 import type { Race } from "../../../races/types/race-types";
 import type { Skill } from "../../../skills/types/skill-types";
 import type { HeroFormEntry, WarbandHero } from "../../types/warband-types";
-import type { HeroValidationError, NewHeroForm } from "../../utils/warband-utils";
+import type { NewHeroForm } from "../../utils/warband-utils";
+import type { UnitValidationError } from "../../units/unit-form-helpers";
 import type {
   PendingChangeItem,
   PendingPurchase,
@@ -74,7 +75,7 @@ type WarbandHeroesSectionProps = {
   setExpandedHeroId: Dispatch<SetStateAction<number | null>>;
   onToggleHero?: (heroId: number) => void;
   onHeroLevelUp?: (updatedHero: WarbandHero) => void;
-  heroErrors?: (HeroValidationError | null)[];
+  heroErrors?: (UnitValidationError | null)[];
   heroSaveError?: string;
   canEdit?: boolean;
   layoutVariant?: "default" | "mobile";

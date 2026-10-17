@@ -12,7 +12,7 @@ import type { Special } from "../../../../special/types/special-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { HeroFormEntry } from "../../../types/warband-types";
 import { skillAbbrevToType } from "../../../utils/warband-utils";
-import type { HeroValidationError, HeroValidationField } from "../../../utils/warband-utils";
+import type { UnitValidationError, UnitValidationField } from "../../../units/unit-form-helpers";
 
 const CASTER_SPECIAL_NAMES: Record<string, string> = { Wizard: "wizard", Priest: "priest" };
 const BASE_SKILL_TYPES = new Set(Object.values(skillAbbrevToType));
@@ -146,7 +146,7 @@ type UnitBasicInfoProps<T extends UnitFormBase> = {
   inputClassName: string;
   onUpdate: (index: number, updater: (unit: T) => T) => void;
   onRaceCreated: (race: Race) => void;
-  error?: HeroValidationError | null;
+  error?: UnitValidationError | null;
   priceLabel?: string;
   showUpkeepPrice?: boolean;
   upkeepLabel?: string;
@@ -219,7 +219,7 @@ export default function UnitBasicInfo<T extends UnitFormBase>({
     setRaceQuery(unit.race_name ?? "");
   }, [unit.race_name, unit.race_id]);
 
-  const hasFieldError = (field: HeroValidationField) => Boolean(error?.fields?.includes(field));
+  const hasFieldError = (field: UnitValidationField) => Boolean(error?.fields?.includes(field));
 
   const matchingRaces = availableRaces.filter(
     (race) =>

@@ -1,18 +1,12 @@
 import { useState, type RefObject } from "react";
 
 import {
-  createWarbandHiredSword,
   deleteWarbandHiredSword,
   getWarbandSummary,
   updateWarbandHiredSword,
 } from "@/features/warbands/api/warbands-api";
 import { emitWarbandUpdate } from "@/features/warbands/api/warbands-events";
-import {
-  buildAvailableSkillsPayload,
-  buildStatPayload,
-  toNullableNumber,
-  validateHiredSwordForm,
-} from "@/features/warbands/utils/warband-utils";
+import { hiredSwordKind } from "@/features/warbands/units/kinds/hired-sword";
 import {
   commitPendingPurchases,
   type PendingPurchase,
@@ -61,14 +55,13 @@ export function useWarbandHiredSwordsSave({
 
   const mergeHiredSwords = (
     current: WarbandHiredSword[],
-    created: WarbandHiredSword[],
     updated: WarbandHiredSword[],
     removedIds: number[]
   ) => {
     const removed = new Set(removedIds);
     const next = current.filter((entry) => !removed.has(entry.id));
     const byId = new Map(next.map((entry) => [entry.id, entry]));
-    for (const entry of [...updated, ...created]) {
+    for (const entry of updated) {
       byId.set(entry.id, entry);
     }
     return Array.from(byId.values());
@@ -97,7 +90,7 @@ export function useWarbandHiredSwordsSave({
       return;
     }
 
-    const currentErrors = hiredSwordForms.map((entry) => validateHiredSwordForm(entry));
+    const currentErrors = hiredSwordForms.map((entry) => hiredSwordKind.validate(entry));
     const hasErrors = currentErrors.some(Boolean);
     if (hasErrors) {
       setHasAttemptedSave(true);
@@ -110,38 +103,6 @@ export function useWarbandHiredSwordsSave({
     setSaveError("");
 
     try {
-      const createPromises = hiredSwordForms
-        .filter((entry) => !entry.id)
-        .map((entry) =>
-          createWarbandHiredSword(
-            warbandId,
-            {
-              name: entry.name.trim() || null,
-              unit_type: entry.unit_type.trim() || null,
-              race: entry.race_id ?? null,
-              price: toNullableNumber(entry.price) ?? 0,
-              upkeep_price: toNullableNumber(entry.upkeep_price) ?? 0,
-              rating: toNullableNumber(entry.rating) ?? 0,
-              xp: toNullableNumber(entry.xp) ?? 0,
-              level_up: 0,
-              deeds: entry.deeds.trim() || null,
-              armour_save: toNullableNumber(entry.armour_save),
-              large: entry.large,
-              caster: entry.caster,
-              half_rate: entry.half_rate,
-              no_level_ups: entry.no_level_ups,
-              blood_pacted: entry.blood_pacted,
-              available_skills: buildAvailableSkillsPayload(entry.available_skills),
-              ...buildStatPayload(entry),
-              items: entry.items.map((item) => ({ id: item.id, cost: item.cost ?? null })),
-              skill_ids: entry.skills.map((skill) => skill.id),
-              special_ids: entry.specials.map((entry) => entry.id),
-              spell_ids: entry.spells.map((spell) => spell.id),
-            },
-            { emitUpdate: false }
-          )
-        );
-
       const updatePromises = hiredSwordForms
         .filter((entry) => {
           if (!entry.id) return false;
@@ -150,39 +111,18 @@ export function useWarbandHiredSwordsSave({
         })
         .map((entry) => {
           const isSessionCreated = !sessionInitialHiredSwordIds.includes(entry.id as number);
-          return updateWarbandHiredSword(warbandId, entry.id as number, {
-            name: entry.name.trim() || null,
-            unit_type: entry.unit_type.trim() || null,
-            race: entry.race_id ?? null,
-            price: toNullableNumber(entry.price) ?? 0,
-            upkeep_price: toNullableNumber(entry.upkeep_price) ?? 0,
-            rating: toNullableNumber(entry.rating) ?? 0,
-            xp: toNullableNumber(entry.xp) ?? 0,
-            deeds: entry.deeds.trim() || null,
-            armour_save: entry.armour_save.trim() || null,
-            large: entry.large,
-            caster: entry.caster,
-            half_rate: entry.half_rate,
-            no_level_ups: entry.no_level_ups,
-            blood_pacted: entry.blood_pacted,
-            available_skills: buildAvailableSkillsPayload(entry.available_skills),
-            ...buildStatPayload(entry),
-            ...(isSessionCreated ? { level_up: 0 } : {}),
-            items: entry.items.map((item) => ({ id: item.id, cost: item.cost ?? null })),
-            skill_ids: entry.skills.map((skill) => skill.id),
-            special_ids: entry.specials.map((entry) => entry.id),
-            spell_ids: entry.spells.map((spell) => spell.id),
-          });
+          return updateWarbandHiredSword(
+            warbandId,
+            entry.id as number,
+            hiredSwordKind.buildPayload(entry, { isSessionCreated })
+          );
         });
 
       const deletePromises = removedHiredSwordIds.map((entryId) =>
         deleteWarbandHiredSword(warbandId, entryId, { emitUpdate: false })
       );
 
-      const [createdHiredSwords, updatedHiredSwords] = await Promise.all([
-        Promise.all(createPromises),
-        Promise.all(updatePromises),
-      ]);
+      const updatedHiredSwords = await Promise.all(updatePromises);
       await Promise.all(deletePromises);
 
       const hiredSwordPurchases = pendingPurchases.filter(
@@ -199,12 +139,10 @@ export function useWarbandHiredSwordsSave({
 
       const refreshed = mergeHiredSwords(
         currentHiredSwords,
-        createdHiredSwords,
         updatedHiredSwords,
         removedHiredSwordIds
       );
       const shouldRefreshSummary =
-        createdHiredSwords.length > 0 ||
         updatedHiredSwords.length > 0 ||
         removedHiredSwordIds.length > 0 ||
         hiredSwordPurchases.length > 0;

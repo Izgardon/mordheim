@@ -1,77 +1,12 @@
-import { apiRequest } from "../../../lib/api-client";
+import { unitApi } from "../units/unit-api";
 
-import type { HenchmenGroup, HenchmenGroupPayload, NamedKillHistory } from "../types/warband-types";
-import { emitWarbandUpdate, type WarbandUpdateOptions } from "./warbands-events";
+const groups = unitApi("henchmen_group");
 
-export function listWarbandHenchmenGroups(warbandId: number) {
-  return apiRequest<HenchmenGroup[]>(`/warbands/${warbandId}/henchmen-groups/`);
-}
-
-export function listWarbandHenchmenGroupDetails(warbandId: number) {
-  return apiRequest<HenchmenGroup[]>(`/warbands/${warbandId}/henchmen-groups/detail/`);
-}
-
-export function getWarbandHenchmenGroupDetail(warbandId: number, groupId: number) {
-  return apiRequest<HenchmenGroup>(`/warbands/${warbandId}/henchmen-groups/${groupId}/`);
-}
-
-export function getWarbandHenchmenGroupKillHistory(warbandId: number, groupId: number) {
-  return apiRequest<NamedKillHistory>(
-    `/warbands/${warbandId}/henchmen-groups/${groupId}/kill-history/`
-  );
-}
-
-export function levelUpWarbandHenchmenGroup(
-  warbandId: number,
-  groupId: number,
-  payload: Record<string, unknown>
-) {
-  return apiRequest<HenchmenGroup>(`/warbands/${warbandId}/henchmen-groups/${groupId}/level-up/`, {
-    method: "POST",
-    body: { payload },
-  });
-}
-
-export function createWarbandHenchmenGroup(
-  warbandId: number,
-  payload: HenchmenGroupPayload,
-  options: WarbandUpdateOptions = {}
-) {
-  const { emitUpdate = true } = options;
-  return apiRequest<HenchmenGroup>(`/warbands/${warbandId}/henchmen-groups/`, {
-    method: "POST",
-    body: payload,
-  }).then((data) => {
-    if (emitUpdate) {
-      emitWarbandUpdate(warbandId);
-    }
-    return data;
-  });
-}
-
-export function updateWarbandHenchmenGroup(
-  warbandId: number,
-  groupId: number,
-  payload: Partial<HenchmenGroupPayload>
-) {
-  return apiRequest<HenchmenGroup>(`/warbands/${warbandId}/henchmen-groups/${groupId}/`, {
-    method: "PATCH",
-    body: payload,
-  });
-}
-
-export function deleteWarbandHenchmenGroup(
-  warbandId: number,
-  groupId: number,
-  options: WarbandUpdateOptions = {}
-) {
-  const { emitUpdate = true } = options;
-  return apiRequest<void>(`/warbands/${warbandId}/henchmen-groups/${groupId}/`, {
-    method: "DELETE",
-  }).then((data) => {
-    if (emitUpdate) {
-      emitWarbandUpdate(warbandId);
-    }
-    return data;
-  });
-}
+export const listWarbandHenchmenGroups = groups.list;
+export const listWarbandHenchmenGroupDetails = groups.listDetails;
+export const getWarbandHenchmenGroupDetail = groups.detail;
+export const getWarbandHenchmenGroupKillHistory = groups.killHistory;
+export const createWarbandHenchmenGroup = groups.create;
+export const updateWarbandHenchmenGroup = groups.update;
+export const deleteWarbandHenchmenGroup = groups.remove;
+export const levelUpWarbandHenchmenGroup = groups.levelUp;

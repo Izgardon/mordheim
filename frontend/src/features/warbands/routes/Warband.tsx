@@ -63,15 +63,14 @@ import { emitWarbandUpdate } from "../api/warbands-events";
 
 // utils
 import {
-  buildStatPayload,
   calculateWarbandRating,
   getSignedTradePrice,
-  mapHeroToForm,
   skillFields,
   statFields,
   toNullableNumber,
-  validateHeroForm,
 } from "../utils/warband-utils";
+import { buildStatPayload } from "../units/unit-form-helpers";
+import { mapHeroToForm, validateHeroForm } from "../units/kinds/hero";
 import { isPendingByType } from "../components/heroes/utils/pending-entries";
 
 // types

@@ -6,7 +6,8 @@ import {
   getWarbandHiredSwordDetail,
   getWarbandHiredSwordKillHistory,
 } from "../../../api/warbands-api";
-import { createHiredSwordXpSaver } from "../../../utils/warband-utils";
+import { createUnitXpSaver } from "../../../units/unit-xp";
+import { hiredSwordKind } from "../../../units/kinds/hired-sword";
 import type { WarbandHiredSword } from "../../../types/warband-types";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
 import UnitKillHistoryTooltip from "@/features/warbands/components/shared/unit_details/UnitKillHistoryTooltip";
@@ -105,7 +106,7 @@ export default function HiredSwordExpandedCard({
   }, 0);
   const totalPrice = basePrice + itemsPrice;
   const killCount = hiredSword.kills ?? 0;
-  const xpSaver = createHiredSwordXpSaver(warbandId, hiredSword, handleHiredSwordUpdated);
+  const xpSaver = createUnitXpSaver(hiredSwordKind, warbandId, hiredSword, handleHiredSwordUpdated);
   return (
     <motion.div
       initial={{ opacity: 0 }}

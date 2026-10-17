@@ -12,13 +12,9 @@ import { useHiredSwordCreationForm } from "../../hooks/hiredswords/useHiredSword
 import { useWarbandHiredSwordsSave } from "../../hooks/hiredswords/useWarbandHiredSwordsSave";
 import { createWarbandHiredSword, listWarbandHiredSwordDetails } from "../../api/warbands-api";
 import { emitWarbandUpdate } from "../../api/warbands-events";
-import {
-  buildStatPayload,
-  mapHiredSwordToForm,
-  parseAvailableSkills,
-  toNullableNumber,
-  validateHiredSwordForm,
-} from "../../utils/warband-utils";
+import { parseAvailableSkills, toNullableNumber } from "../../utils/warband-utils";
+import { buildStatPayload } from "../../units/unit-form-helpers";
+import { mapHiredSwordToForm, validateHiredSwordForm } from "../../units/kinds/hired-sword";
 import { getHiredSwordProfile } from "../../../bestiary/api/bestiary-api";
 import {
   buildPendingChanges,

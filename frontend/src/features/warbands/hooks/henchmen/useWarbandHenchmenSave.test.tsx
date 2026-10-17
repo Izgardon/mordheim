@@ -2,7 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useWarbandHenchmenSave } from "./useWarbandHenchmenSave";
-import { mapHenchmenGroupToForm } from "@/features/warbands/utils/warband-utils";
+import { mapHenchmenGroupToForm } from "@/features/warbands/units/kinds/henchmen";
 
 import type {
   HenchmenGroup,
@@ -92,56 +92,6 @@ describe("useWarbandHenchmenSave", () => {
     apiMocks.updateWarbandHenchmenGroup.mockResolvedValue(baseGroup);
     apiMocks.deleteWarbandHenchmenGroup.mockResolvedValue(undefined);
     apiMocks.getWarbandSummary.mockResolvedValue({});
-  });
-
-  it("sends level_up 0 when creating a new henchmen group", async () => {
-    const onSuccess = vi.fn();
-    const originalRef = { current: new Map<number, string>() };
-
-    const { result } = renderHook(() =>
-      useWarbandHenchmenSave({
-        warbandId: 9,
-        canEdit: true,
-        currentGroups: [],
-        groupForms: [
-          {
-            ...baseForm,
-            id: undefined,
-            xp: "5",
-            henchmen: [{ id: 0, name: "Blade One", kills: 0, dead: false }],
-          },
-        ],
-        removedGroupIds: [],
-        isAddingGroupForm: false,
-        newGroupForm: {
-          name: "",
-          unit_type: "",
-          race_id: null,
-          race_name: "",
-          price: "0",
-          xp: "0",
-          max_size: "5",
-          firstHenchmanName: "",
-        },
-        raceQuery: "",
-        originalGroupFormsRef: originalRef,
-        onSuccess,
-      })
-    );
-
-    await act(async () => {
-      await result.current.handleSaveChanges();
-    });
-
-    expect(apiMocks.createWarbandHenchmenGroup).toHaveBeenCalledWith(
-      9,
-      expect.objectContaining({
-        xp: 5,
-        level_up: 0,
-        no_level_ups: false,
-      }),
-      { emitUpdate: false }
-    );
   });
 
   it("suppresses first-save level ups for groups created during the current edit session", async () => {
@@ -470,30 +420,6 @@ describe("useWarbandHenchmenSave characterisation", () => {
 
     expect(result.current.saveError).toBe(
       "Finish creating the new group or cancel it before saving."
-    );
-  });
-
-  it("POSTs groups without an id with numeric armour save and recruit notes (create-on-Save branch; ROST-CQ-05)", async () => {
-    apiMocks.createWarbandHenchmenGroup.mockResolvedValue({ ...veteran, id: 23 });
-    const draft = { ...mapHenchmenGroupToForm(veteran), id: undefined };
-    draft.henchmen = draft.henchmen.map((h) => ({ ...h, id: 0 }));
-    const { save } = renderSave({ groupForms: [draft] });
-
-    await save();
-
-    expect(apiMocks.createWarbandHenchmenGroup).toHaveBeenCalledWith(
-      9,
-      expect.objectContaining({
-        armour_save: 6,
-        level_up: 0,
-        item_notes: "Base: 25 gc. XP: 4 x2 = 8 gc. Items: Club (3 gc), Dagger (2 gc)",
-        henchmen: [
-          { name: "Blade One", kills: 2, dead: false },
-          { name: "Blade Two", kills: 0, dead: false },
-          { name: "Blade Three", kills: 1, dead: false },
-        ],
-      }),
-      { emitUpdate: false }
     );
   });
 

@@ -7,7 +7,9 @@ import {
   getWarbandHeroKillHistory,
   updateWarbandHero,
 } from "../../../api/warbands-api";
-import { calculateHeroTotalPrice, createHeroXpSaver } from "../../../utils/warband-utils";
+import { calculateHeroTotalPrice } from "../../../utils/warband-utils";
+import { createUnitXpSaver } from "../../../units/unit-xp";
+import { heroKind } from "../../../units/kinds/hero";
 import type { WarbandHero } from "../../../types/warband-types";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
 import UnitKillHistoryTooltip from "@/features/warbands/components/shared/unit_details/UnitKillHistoryTooltip";
@@ -118,7 +120,7 @@ export default function HeroExpandedCard({
     ...new Set((hero.spells ?? []).map((s) => s.type).filter((t) => t && t !== "Pending")),
   ] as string[];
   const { basePrice, totalPrice } = calculateHeroTotalPrice(hero);
-  const xpSaver = createHeroXpSaver(warbandId, hero, handleHeroUpdated);
+  const xpSaver = createUnitXpSaver(heroKind, warbandId, hero, handleHeroUpdated);
   return (
     <motion.div
       initial={{ opacity: 0 }}

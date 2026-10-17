@@ -11,7 +11,8 @@ import UnitStatsTable from "@/features/warbands/components/shared/unit_details/U
 import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "@/features/warbands/components/shared/unit_details/warband-tooltip-styles";
 import { toUnitStats } from "../../shared/utils/unit-stats-mapper";
 import { getHenchmenLevelInfo } from "../../henchmen/utils/henchmen-level";
-import { createHiredSwordXpSaver } from "../../../utils/warband-utils";
+import { createUnitXpSaver } from "../../../units/unit-xp";
+import { hiredSwordKind } from "../../../units/kinds/hired-sword";
 import NewHiredSwordSpellDialog from "@/features/spells/components/NewHiredSwordSpellDialog";
 import NewHiredSwordSkillDialog from "@/features/skills/components/NewHiredSwordSkillDialog";
 
@@ -117,7 +118,7 @@ export default function HiredSwordSummaryCard({
               xp={hiredSword.xp}
               halfRate={hiredSword.half_rate ?? false}
               getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
-              onSave={createHiredSwordXpSaver(warbandId, hiredSword, onHiredSwordUpdated)}
+              onSave={createUnitXpSaver(hiredSwordKind, warbandId, hiredSword, onHiredSwordUpdated)}
             />
           )}
           {layoutVariant !== "mobile" || showLoadoutOnMobile ? (

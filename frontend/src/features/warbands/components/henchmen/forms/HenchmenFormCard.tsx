@@ -23,7 +23,7 @@ import type { Special } from "../../../../special/types/special-types";
 import type { Race } from "../../../../races/types/race-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { HenchmenGroupFormEntry } from "../../../types/warband-types";
-import type { HenchmenGroupValidationError } from "../../../utils/warband-utils";
+import type { UnitValidationError, UnitValidationField } from "../../../units/unit-form-helpers";
 import { statFieldMap } from "../../../utils/warband-utils";
 import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 import type { UnitTypeOption } from "@components/unit-selection-section";
@@ -60,7 +60,7 @@ type HenchmenFormCardProps = {
     unitId: string;
     itemId: number;
   }) => void;
-  error?: HenchmenGroupValidationError | null;
+  error?: UnitValidationError | null;
   isUnitLimitReached?: boolean;
 };
 
@@ -144,8 +144,7 @@ export default function HenchmenFormCard({
     setRaceQuery(group.race_name ?? "");
   }, [group.race_name, group.race_id]);
 
-  const hasFieldError = (field: string) =>
-    Boolean(error?.fields?.includes(field as HenchmenGroupValidationError["fields"][number]));
+  const hasFieldError = (field: UnitValidationField) => Boolean(error?.fields?.includes(field));
 
   const matchingRaces = availableRaces.filter(
     (race) =>

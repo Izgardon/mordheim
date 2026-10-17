@@ -11,7 +11,8 @@ import UnitStatsTable from "@/features/warbands/components/shared/unit_details/U
 import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "@/features/warbands/components/shared/unit_details/warband-tooltip-styles";
 import { toUnitStats } from "../../shared/utils/unit-stats-mapper";
 import { getHeroLevelInfo } from "../utils/hero-level";
-import { createHeroXpSaver } from "../../../utils/warband-utils";
+import { createUnitXpSaver } from "../../../units/unit-xp";
+import { heroKind } from "../../../units/kinds/hero";
 import NewSpellDialog from "@/features/spells/components/NewSpellDialog";
 import NewSkillDialog from "@/features/skills/components/NewSkillDialog";
 
@@ -121,7 +122,7 @@ export default function HeroSummaryCard({
             xp={hero.xp}
             halfRate={hero.half_rate ?? false}
             getLevelInfo={(xp) => getHeroLevelInfo(xp, levelThresholds)}
-            onSave={createHeroXpSaver(warbandId, hero, onHeroUpdated)}
+            onSave={createUnitXpSaver(heroKind, warbandId, hero, onHeroUpdated)}
           />
           {layoutVariant !== "mobile" || showLoadoutOnMobile ? (
             <HeroListBlocks

@@ -15,12 +15,9 @@ import {
   listWarbandHenchmenGroupDetails,
 } from "../../api/warbands-api";
 import { emitWarbandUpdate } from "../../api/warbands-events";
-import {
-  buildHenchmenGroupStatPayload,
-  mapHenchmenGroupToForm,
-  toNullableNumber,
-  validateHenchmenGroupForm,
-} from "../../utils/warband-utils";
+import { toNullableNumber } from "../../utils/warband-utils";
+import { buildStatPayload } from "../../units/unit-form-helpers";
+import { mapHenchmenGroupToForm, validateHenchmenGroupForm } from "../../units/kinds/henchmen";
 import {
   buildHenchmenPendingChanges,
   removePendingPurchase,
@@ -153,7 +150,7 @@ export default function WarbandHenchmenSection({
           large: formEntry.large,
           half_rate: formEntry.half_rate,
           no_level_ups: formEntry.no_level_ups,
-          ...buildHenchmenGroupStatPayload(formEntry),
+          ...buildStatPayload(formEntry),
           items: [],
           skill_ids: [],
           special_ids: [],

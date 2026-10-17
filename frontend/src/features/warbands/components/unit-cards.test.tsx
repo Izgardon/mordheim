@@ -44,6 +44,9 @@ const api = vi.hoisted(() => ({
 }));
 
 vi.mock("@/features/warbands/api/warbands-api", () => api);
+vi.mock("@/features/warbands/units/unit-api", async () =>
+  (await import("@/test/unit-api-mock")).unitApiModuleMock(api)
+);
 vi.mock("@/features/warbands/api/warbands-events", () => ({ emitWarbandUpdate: vi.fn() }));
 vi.mock("@/stores/app-store", () => ({
   useAppStore: () => ({ warband: null, diceColor: "#2e8555", campaignStarted: true }),

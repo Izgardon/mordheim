@@ -6,7 +6,8 @@ import {
   getWarbandHenchmenGroupDetail,
   getWarbandHenchmenGroupKillHistory,
 } from "../../../api/warbands-api";
-import { createHenchmenGroupXpSaver } from "../../../utils/warband-utils";
+import { createUnitXpSaver } from "../../../units/unit-xp";
+import { henchmenKind } from "../../../units/kinds/henchmen";
 import type { HenchmenGroup } from "../../../types/warband-types";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
 import UnitKillHistoryTooltip from "@/features/warbands/components/shared/unit_details/UnitKillHistoryTooltip";
@@ -109,7 +110,7 @@ export default function HenchmenExpandedCard({
         return acc;
       }, {})
     ).some((count) => count % rosterCount !== 0);
-  const xpSaver = createHenchmenGroupXpSaver(warbandId, group, handleGroupUpdated);
+  const xpSaver = createUnitXpSaver(henchmenKind, warbandId, group, handleGroupUpdated);
   return (
     <motion.div
       initial={{ opacity: 0 }}

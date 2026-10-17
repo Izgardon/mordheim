@@ -5,7 +5,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Tooltip } from "@/components/ui/tooltip";
 
 import { getHenchmenLevelInfo } from "../utils/henchmen-level";
-import { createHenchmenGroupXpSaver } from "../../../utils/warband-utils";
+import { createUnitXpSaver } from "../../../units/unit-xp";
+import { henchmenKind } from "../../../units/kinds/henchmen";
 import ExperienceBar from "../../shared/unit_details/ExperienceBar";
 import HenchmenListBlocks from "../blocks/HenchmenListBlocks";
 import HenchmenExpandedCard from "./HenchmenExpandedCard";
@@ -134,7 +135,7 @@ export default function HenchmenSummaryCard({
             <ExperienceBar
               xp={group.xp}
               getLevelInfo={(xp) => getHenchmenLevelInfo(xp, levelThresholds)}
-              onSave={createHenchmenGroupXpSaver(warbandId, group, onGroupUpdated)}
+              onSave={createUnitXpSaver(henchmenKind, warbandId, group, onGroupUpdated)}
             />
           )}
           {layoutVariant !== "mobile" || showLoadoutOnMobile ? (

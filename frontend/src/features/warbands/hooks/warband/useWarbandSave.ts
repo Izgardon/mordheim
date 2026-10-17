@@ -1,18 +1,12 @@
 import { useState, type RefObject } from "react";
 
 import {
-  createWarbandHero,
   deleteWarbandHero,
   getWarbandSummary,
   updateWarband,
   updateWarbandHero,
 } from "@/features/warbands/api/warbands-api";
-import {
-  buildAvailableSkillsPayload,
-  buildStatPayload,
-  toNullableNumber,
-  validateHeroForm,
-} from "@/features/warbands/utils/warband-utils";
+import { heroKind } from "@/features/warbands/units/kinds/hero";
 import {
   commitPendingPurchases,
   type PendingPurchase,
@@ -61,16 +55,11 @@ export function useWarbandSave({
   const [saveError, setSaveError] = useState("");
   const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
 
-  const mergeHeroes = (
-    current: WarbandHero[],
-    created: WarbandHero[],
-    updated: WarbandHero[],
-    removedIds: number[]
-  ) => {
+  const mergeHeroes = (current: WarbandHero[], updated: WarbandHero[], removedIds: number[]) => {
     const removed = new Set(removedIds);
     const next = current.filter((hero) => !removed.has(hero.id));
     const byId = new Map(next.map((hero) => [hero.id, hero]));
-    for (const hero of [...updated, ...created]) {
+    for (const hero of updated) {
       byId.set(hero.id, hero);
     }
     return Array.from(byId.values());
@@ -100,7 +89,7 @@ export function useWarbandSave({
       return;
     }
 
-    const currentHeroErrors = heroForms.map((hero) => validateHeroForm(hero));
+    const currentHeroErrors = heroForms.map((hero) => heroKind.validate(hero));
     const hasHeroErrors = currentHeroErrors.some(Boolean);
     if (hasHeroErrors) {
       setHasAttemptedSave(true);
@@ -132,35 +121,6 @@ export function useWarbandSave({
           )
         : warband;
 
-      const createPromises = heroForms
-        .filter((hero) => !hero.id)
-        .map((hero) =>
-          createWarbandHero(
-            warband.id,
-            {
-              name: hero.name.trim() || null,
-              unit_type: hero.unit_type.trim() || null,
-              race: hero.race_id ?? null,
-              price: toNullableNumber(hero.price) ?? 0,
-              xp: toNullableNumber(hero.xp) ?? 0,
-              deeds: hero.deeds.trim() || null,
-              is_leader: hero.is_leader,
-              trading_action: hero.trading_action,
-              armour_save: toNullableNumber(hero.armour_save),
-              large: hero.large,
-              caster: hero.caster,
-              half_rate: hero.half_rate,
-              available_skills: buildAvailableSkillsPayload(hero.available_skills),
-              ...buildStatPayload(hero),
-              items: hero.items.map((item) => ({ id: item.id, cost: item.cost ?? null })),
-              skill_ids: hero.skills.map((skill) => skill.id),
-              special_ids: hero.specials.map((entry) => entry.id),
-              spell_ids: hero.spells.map((spell) => spell.id),
-            },
-            { emitUpdate: false }
-          )
-        );
-
       const updatePromises = heroForms
         .filter((hero) => {
           if (!hero.id) return false;
@@ -168,36 +128,18 @@ export function useWarbandSave({
           return !original || original !== JSON.stringify(hero);
         })
         .map((hero) =>
-          updateWarbandHero(warband.id, hero.id as number, {
-            name: hero.name.trim() || null,
-            unit_type: hero.unit_type.trim() || null,
-            race: hero.race_id ?? null,
-            price: toNullableNumber(hero.price) ?? 0,
-            xp: toNullableNumber(hero.xp) ?? 0,
-            deeds: hero.deeds.trim() || null,
-            is_leader: hero.is_leader,
-            trading_action: hero.trading_action,
-            armour_save: Number(hero.armour_save.trim()) || null,
-            large: hero.large,
-            caster: hero.caster,
-            half_rate: hero.half_rate,
-            available_skills: buildAvailableSkillsPayload(hero.available_skills),
-            ...buildStatPayload(hero),
-            items: hero.items.map((item) => ({ id: item.id, cost: item.cost ?? null })),
-            skill_ids: hero.skills.map((skill) => skill.id),
-            special_ids: hero.specials.map((entry) => entry.id),
-            spell_ids: hero.spells.map((spell) => spell.id),
-          })
+          updateWarbandHero(
+            warband.id,
+            hero.id as number,
+            heroKind.buildPayload(hero, { isSessionCreated: false })
+          )
         );
 
       const deletePromises = removedHeroIds.map((heroId) =>
         deleteWarbandHero(warband.id, heroId, { emitUpdate: false })
       );
 
-      const [createdHeroes, updatedHeroes] = await Promise.all([
-        Promise.all(createPromises),
-        Promise.all(updatePromises),
-      ]);
+      const updatedHeroes = await Promise.all(updatePromises);
       await Promise.all(deletePromises);
 
       const heroPurchases = pendingPurchases.filter(
@@ -211,12 +153,9 @@ export function useWarbandSave({
         });
       }
 
-      const refreshedHeroes = mergeHeroes(heroes, createdHeroes, updatedHeroes, removedHeroIds);
+      const refreshedHeroes = mergeHeroes(heroes, updatedHeroes, removedHeroIds);
       const shouldRefreshSummary =
-        createdHeroes.length > 0 ||
-        updatedHeroes.length > 0 ||
-        removedHeroIds.length > 0 ||
-        heroPurchases.length > 0;
+        updatedHeroes.length > 0 || removedHeroIds.length > 0 || heroPurchases.length > 0;
       const summary = shouldRefreshSummary ? await getWarbandSummary(warband.id) : null;
 
       onSuccess(summary ? { ...updatedWarband, ...summary } : updatedWarband, refreshedHeroes);

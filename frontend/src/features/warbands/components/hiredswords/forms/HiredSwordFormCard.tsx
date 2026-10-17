@@ -11,7 +11,7 @@ import type { Special } from "../../../../special/types/special-types";
 import type { Race } from "../../../../races/types/race-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { HiredSwordFormEntry } from "../../../types/warband-types";
-import type { HeroValidationError } from "../../../utils/warband-utils";
+import type { UnitValidationError } from "../../../units/unit-form-helpers";
 import { statFieldMap } from "../../../utils/warband-utils";
 import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 import type { UnitTypeOption } from "@components/unit-selection-section";
@@ -46,7 +46,7 @@ type HiredSwordFormCardProps = {
     unitId: string;
     itemId: number;
   }) => void;
-  error?: HeroValidationError | null;
+  error?: UnitValidationError | null;
   initialTab?: "items" | "skills" | "spells" | "special";
 };
 
