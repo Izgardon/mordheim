@@ -8,15 +8,17 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from apps.warbands.models import not_dismissed
-from apps.warbands.serializers import UNIT_SERIALIZERS
+from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandSummarySerializer
 from apps.warbands.views.base import WarbandScopedView
 
-from .kinds import UnitKindSpec
-from .serializers import UnitLevelUpSerializer, UnitSerializers
+from .errors import validation_error
+from .kinds import HERO, UnitKindSpec
+from .serializers import HenchmanPromoteSerializer, UnitLevelUpSerializer, UnitSerializers
 from .services.create import create_unit
 from .services.dismiss import dismiss_unit
 from .services.kill_history import kill_history
 from .services.level_up import LevelUpRejected, apply_advance
+from .services.promote import promote_henchman
 from .services.update import update_unit
 
 NOT_FOUND = {"detail": "Not found"}
@@ -115,3 +117,24 @@ class UnitKillHistoryView(UnitView):
         if unit is None:
             return Response(NOT_FOUND, status=404)
         return Response(kill_history(self.kind, self.warband, unit))
+
+
+# Lad's Got Talent, henchmen groups only (decision 9, BUG-28). No docstring: DRF serves it on OPTIONS.
+class UnitPromoteView(UnitView):
+    def post(self, request: Request, warband_id: int, **kwargs: Any) -> Response:
+        units = self.kind.objects.filter(id=self.unit_id(kwargs), warband=self.warband)
+        group = self.kind.visible(units).select_related("race").first()
+        if group is None:
+            return Response(NOT_FOUND, status=404)
+        body = HenchmanPromoteSerializer(data=request.data)
+        if not body.is_valid():
+            raise validation_error(body.errors)
+        promotion = promote_henchman(self.warband, group, body.validated_data)
+        hero = HERO.detail_queryset().get(id=promotion.hero.pk)
+        kept = self.kind.detail_queryset().get(id=group.pk) if promotion.group else None
+        payload = {
+            "hero": UNIT_SERIALIZERS[HERO.key].detail(hero).data,
+            "group": self.serializers.detail(kept).data if kept else None,
+            "summary": WarbandSummarySerializer(self.warband).data,
+        }
+        return Response(payload, status=status.HTTP_201_CREATED)

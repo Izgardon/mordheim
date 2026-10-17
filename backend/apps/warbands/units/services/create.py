@@ -33,16 +33,17 @@ def cap_count(kind: "UnitKindSpec", warband: Warband) -> int:
     return int(kind.cap.counted(kind.objects.filter(warband=warband)).count())
 
 
-def check_cap(kind: "UnitKindSpec", warband: Warband, data: Mapping[str, Any]) -> None:
+def check_cap(kind: "UnitKindSpec", warband: Warband, data: Mapping[str, Any], *, locked: bool = False) -> None:
     """Raise `<kind>_cap_reached` if a new unit with validated body `data` would go over the kind's cap.
 
     Runs inside the create's transaction with the warband row locked, so two concurrent creates can't both
-    take the last place (BUG-105).
+    take the last place (BUG-105); `locked` says the caller already holds that lock.
     """
     cap, limit = kind.cap, cap_limit(kind, warband)
     if cap is None or limit is None or cap.exempt(data):
         return
-    lock_warband(warband.id)
+    if not locked:
+        lock_warband(warband.id)
     if cap_count(kind, warband) >= limit:
         raise RosterError(f"Warband already has {limit} {cap.noun}", cap.code)
 

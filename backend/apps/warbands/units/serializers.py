@@ -28,8 +28,9 @@ from .catalogue import (
 )
 from .catalogue_scope import CampaignCatalogueScopeMixin
 from .hooks import Recruit
-from .kinds import LinkSpec, UnitKindSpec
+from .kinds import HERO, LinkSpec, UnitKindSpec
 from .services.create import apply_create
+from .services.level_up import LevelUpRejected, valid_advance_id
 from .services.update import apply_update
 
 STAT_FIELDS = (
@@ -195,3 +196,30 @@ class UnitLevelUpSerializer(serializers.Serializer):
     """POST .../level-up/: the advance arrives as `payload.advance` and the payload is logged as sent."""
 
     payload = serializers.DictField(required=False)  # a non-object payload is a 400, not a 500 (BUG-89)
+
+
+class HenchmanPromoteSerializer(serializers.Serializer):
+    """POST .../henchmen-groups/<id>/promote/ (Lad's Got Talent, decision 9).
+
+    `advance` is the hero advance the re-roll gave, as the level-up endpoint takes it ({"id": "WS",
+    "label": ...}) or just its code ("WS"); `roll1` / `roll2` are logged with it, as the level-up dialog
+    sends them. `dismiss_hero_id` names a hero to dismiss to make room at the hero cap.
+    """
+
+    henchman_id = serializers.IntegerField()
+    advance = serializers.JSONField()
+    dismiss_hero_id = serializers.IntegerField(required=False, allow_null=True)
+    roll1 = serializers.DictField(required=False)
+    roll2 = serializers.DictField(required=False)
+
+    def validate_advance(self, value: Any) -> dict[str, Any]:
+        advance = {"id": value} if isinstance(value, str) else value
+        try:
+            valid_advance_id(HERO, {"advance": advance})
+        except LevelUpRejected as rejected:
+            raise serializers.ValidationError(rejected.detail) from None
+        return dict(advance)
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        attrs["rolls"] = {name: attrs.pop(name) for name in ("roll1", "roll2") if name in attrs}
+        return attrs

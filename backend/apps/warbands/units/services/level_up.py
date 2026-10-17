@@ -93,7 +93,8 @@ def pending_placeholder(model: type[Skill] | type[Spell] | type[Special], name: 
     return placeholder
 
 
-def _advance_id(kind: "UnitKindSpec", payload: Mapping[str, Any]) -> str:
+def valid_advance_id(kind: "UnitKindSpec", payload: Mapping[str, Any]) -> str:
+    """The advance code in `payload["advance"]` if the kind may take it; LevelUpRejected otherwise."""
     advance = payload.get("advance", {})
     advance_id = advance.get("id") if isinstance(advance, dict) else None
     if not isinstance(advance_id, str):
@@ -103,7 +104,9 @@ def _advance_id(kind: "UnitKindSpec", payload: Mapping[str, Any]) -> str:
     return advance_id
 
 
-def apply_advance(kind: "UnitKindSpec", warband: Warband, unit: RosterUnit, payload: dict[str, Any]) -> None:
+def apply_advance(
+    kind: "UnitKindSpec", warband: Warband, unit: RosterUnit, payload: dict[str, Any], *, savepoint: bool = True
+) -> None:
     """Spend one of `unit`'s level-ups on `payload["advance"]` and log the payload as sent, in one transaction.
 
     Raises LevelUpRejected when the unit has none to spend (or the kind's `no_level_ups` flag is set) and when
@@ -111,9 +114,9 @@ def apply_advance(kind: "UnitKindSpec", warband: Warband, unit: RosterUnit, payl
     """
     if (kind.has_no_level_ups and getattr(unit, "no_level_ups", False)) or (unit.level_up or 0) <= 0:
         raise LevelUpRejected("No level ups available")
-    advance_id = _advance_id(kind, payload)
+    advance_id = valid_advance_id(kind, payload)
     record = advance_record(payload["advance"], STAT_LABELS)
-    with transaction.atomic():
+    with transaction.atomic(savepoint=savepoint):  # a caller already in a transaction may skip the savepoint
         if not spend_level_up(unit, stat_field=kind.stat_advances.get(advance_id), record=record):
             raise LevelUpRejected("No level ups available")  # spent by another request meanwhile
         if advance_id in PLACEHOLDERS:
