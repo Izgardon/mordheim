@@ -1,7 +1,9 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { invalidateOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import {
   approveReportedBattleResult,
   declineReportedBattleResult,
@@ -24,6 +26,7 @@ import { toTradeSession } from "../utils/notification-mappers";
 /** The notification lists and their actions (accept, decline, dismiss, clear). */
 export function useNotifications() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { user } = useAuth();
   const {
     tradeRequestNotifications,
@@ -65,22 +68,14 @@ export function useNotifications() {
       const updatedBattle = await joinBattle(notification.campaignId, notification.battleId);
       setCurrentBattleSession(toCurrentBattleSession(updatedBattle));
       removeBattleInviteNotification(notification.id);
-      window.dispatchEvent(
-        new CustomEvent("battle:status-updated", {
-          detail: {
-            campaign_id: notification.campaignId,
-            battle_id: notification.battleId,
-            status: updatedBattle.battle.status,
-          },
-        })
-      );
+      void invalidateOpenBattles(queryClient, notification.campaignId);
       if (updatedBattle.battle.status === "prebattle") {
         navigate(
           `/campaigns/${notification.campaignId}/battles/${notification.battleId}/prebattle`
         );
       }
     },
-    [navigate, removeBattleInviteNotification, setCurrentBattleSession]
+    [navigate, queryClient, removeBattleInviteNotification, setCurrentBattleSession]
   );
 
   const dismissBattleInviteNotification = useCallback(
@@ -97,34 +92,18 @@ export function useNotifications() {
     async (notification: BattleResultRequestNotification) => {
       await approveReportedBattleResult(notification.campaignId, notification.battleId);
       removeBattleResultRequestNotification(notification.id);
-      window.dispatchEvent(
-        new CustomEvent("battle:status-updated", {
-          detail: {
-            campaign_id: notification.campaignId,
-            battle_id: notification.battleId,
-            status: "reported_result_pending",
-          },
-        })
-      );
+      void invalidateOpenBattles(queryClient, notification.campaignId);
     },
-    [removeBattleResultRequestNotification]
+    [queryClient, removeBattleResultRequestNotification]
   );
 
   const declineBattleResultRequestNotification = useCallback(
     async (notification: BattleResultRequestNotification) => {
       await declineReportedBattleResult(notification.campaignId, notification.battleId);
       removeBattleResultRequestNotification(notification.id);
-      window.dispatchEvent(
-        new CustomEvent("battle:status-updated", {
-          detail: {
-            campaign_id: notification.campaignId,
-            battle_id: notification.battleId,
-            status: "canceled",
-          },
-        })
-      );
+      void invalidateOpenBattles(queryClient, notification.campaignId);
     },
-    [removeBattleResultRequestNotification]
+    [queryClient, removeBattleResultRequestNotification]
   );
 
   const clearNotifications = useCallback(() => {

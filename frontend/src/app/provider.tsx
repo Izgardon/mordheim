@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 
 // components
 import { DiceProvider } from "../components/dice/DiceProvider";
+import { AppToaster } from "../components/ui/toaster";
 
 // stores
 import { AuthProvider } from "../features/auth/stores/auth-store";
@@ -45,6 +46,7 @@ export default function AppProvider({ children }: PropsWithChildren) {
           <DiceProvider>{children}</DiceProvider>
         </AppStoreProvider>
       </AuthProvider>
+      <AppToaster />
       {ReactQueryDevtools ? (
         <Suspense fallback={null}>
           <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />

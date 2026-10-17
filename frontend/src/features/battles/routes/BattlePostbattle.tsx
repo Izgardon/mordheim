@@ -54,6 +54,7 @@ import {
 } from "@/features/battles/components/postbattle/postbattle-utils";
 import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
 import { useBattleState } from "@/features/battles/hooks/useBattleState";
+import { useRefreshOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import {
   HELPER_DIALOG_CONTENT_CLASS,
   HELPER_NATIVE_SELECT_CLASS,
@@ -398,6 +399,7 @@ export default function BattlePostbattle() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignId = Number(id);
   const numericBattleId = Number(battleId);
+  const refreshOpenBattles = useRefreshOpenBattles(campaignId);
   const { battleState, isLoading, error, applyBattleResponse } = useBattleState({
     campaignId,
     battleId: numericBattleId,
@@ -802,17 +804,9 @@ export default function BattlePostbattle() {
 
   const handleExitPostbattle = useCallback(() => {
     clearCurrentBattleSession();
-    window.dispatchEvent(
-      new CustomEvent("battle:status-updated", {
-        detail: {
-          campaign_id: campaignId,
-          battle_id: numericBattleId,
-          status: "postbattle",
-        },
-      })
-    );
+    void refreshOpenBattles();
     navigate(`/campaigns/${campaignId}/warband`, { replace: true });
-  }, [campaignId, clearCurrentBattleSession, navigate, numericBattleId]);
+  }, [campaignId, clearCurrentBattleSession, navigate, refreshOpenBattles]);
 
   const handleFinalize = useCallback(async () => {
     if (!draft || !currentParticipant || !localExploration) return;

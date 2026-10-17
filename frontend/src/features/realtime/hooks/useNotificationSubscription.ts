@@ -1,7 +1,10 @@
 import { useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { invalidateOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import type {
   BattleInviteNotification,
   BattleResultRequestNotification,
@@ -25,12 +28,17 @@ import {
   type BattleNotificationPayload,
 } from "../utils/notification-mappers";
 
+/** Long enough to read and act on; the Rejoin Battle button and the bell remain afterwards. */
+const ACTIONABLE_TOAST_MS = 12_000;
+
 /**
  * Loads the signed-in user's pending notifications, listens on their notification channel and
  * reloads the list after a reconnect. Mounted once, by RealtimeProvider.
  */
 export function useNotificationSubscription() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryClient = useQueryClient();
   const { user } = useAuth();
   const {
     tradeSession,
@@ -135,7 +143,22 @@ export function useNotificationSubscription() {
         return;
       }
       setTradeSession(toTradeSession(request, userId, "active"));
-      navigate(`/campaigns/${request.campaign_id}/warband?trade=${request.id}`);
+      // Offer the trade instead of navigating: the user may be mid-edit elsewhere (BUG-26).
+      const isTradeOpen =
+        location.pathname === `/campaigns/${request.campaign_id}/warband` &&
+        new URLSearchParams(location.search).get("trade") === request.id;
+      if (!isTradeOpen) {
+        const partner = request.from_user.id === userId ? request.to_user : request.from_user;
+        toast(`${partner.label} accepted your trade`, {
+          id: `trade-accepted-${request.id}`,
+          duration: ACTIONABLE_TOAST_MS,
+          action: {
+            label: "Open trade",
+            onClick: () =>
+              navigate(`/campaigns/${request.campaign_id}/warband?trade=${request.id}`),
+          },
+        });
+      }
       return;
     }
 
@@ -163,7 +186,7 @@ export function useNotificationSubscription() {
         campaignId: notification.campaignId,
         status: payload.status === "prebattle" ? "prebattle" : "inviting",
       });
-      window.dispatchEvent(new CustomEvent("battle:invite", { detail: payload }));
+      void invalidateOpenBattles(queryClient, notification.campaignId);
       return;
     }
 
@@ -174,7 +197,6 @@ export function useNotificationSubscription() {
         return;
       }
       addBattleResultRequestNotification(notification);
-      window.dispatchEvent(new CustomEvent("battle:result-request", { detail: payload }));
       return;
     }
 
@@ -190,7 +212,7 @@ export function useNotificationSubscription() {
         clearCurrentBattleSession();
       }
       removeBattleResultRequestNotification(`battle-result-${payload.battle_id}`);
-      window.dispatchEvent(new CustomEvent("battle:status-updated", { detail: payload }));
+      void invalidateOpenBattles(queryClient, payload.campaign_id);
       return;
     }
 
@@ -205,8 +227,16 @@ export function useNotificationSubscription() {
         status: "prebattle",
       });
       removeBattleInviteNotification(`battle-${payload.battle_id}`);
-      window.dispatchEvent(new CustomEvent("battle:prebattle-opened", { detail: payload }));
-      navigate(`/campaigns/${payload.campaign_id}/battles/${payload.battle_id}/prebattle`);
+      void invalidateOpenBattles(queryClient, payload.campaign_id);
+      // Offer the battle instead of navigating away from whatever the user is doing (BUG-26).
+      const battlePath = `/campaigns/${payload.campaign_id}/battles/${payload.battle_id}`;
+      if (!location.pathname.startsWith(`${battlePath}/`)) {
+        toast(`Prebattle is open for ${payload.title?.trim() || `Battle #${payload.battle_id}`}`, {
+          id: `battle-prebattle-${payload.battle_id}`,
+          duration: ACTIONABLE_TOAST_MS,
+          action: { label: "Go", onClick: () => navigate(`${battlePath}/prebattle`) },
+        });
+      }
     }
   });
 }

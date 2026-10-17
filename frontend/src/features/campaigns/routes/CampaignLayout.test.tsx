@@ -9,6 +9,7 @@ import CampaignLayout from "./CampaignLayout";
 import BattleActionPanel from "../components/overview/BattleActionPanel";
 import { getCampaign } from "../api/campaigns-api";
 import { listOpenCampaignBattles } from "@/features/battles/api/battles-api";
+import { invalidateOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import { listItems } from "@/features/items/api/items-api";
 import { listRaces } from "@/features/races/api/races-api";
 import { listSkills } from "@/features/skills/api/skills-api";
@@ -189,13 +190,13 @@ describe("CampaignLayout", () => {
   it("offers Rejoin Battle and refetches when a realtime battle event arrives", async () => {
     vi.mocked(getCampaign).mockResolvedValue(campaign);
     vi.mocked(listOpenCampaignBattles).mockResolvedValueOnce([openBattle]);
-    renderLayout({ path: "/campaigns/7/skills", page: <p>Skills page</p> });
+    const { queryClient } = renderLayout({ path: "/campaigns/7/skills", page: <p>Skills page</p> });
 
     expect(await screen.findByRole("button", { name: "Rejoin Battle" })).toBeInTheDocument();
 
-    // The battle ended elsewhere; the realtime handler fires battle:status-updated.
+    // The battle ended elsewhere; the realtime handler invalidates the open battles.
     act(() => {
-      window.dispatchEvent(new CustomEvent("battle:status-updated"));
+      void invalidateOpenBattles(queryClient, 7);
     });
 
     await waitFor(() =>

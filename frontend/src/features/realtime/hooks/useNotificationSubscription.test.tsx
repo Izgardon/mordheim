@@ -1,11 +1,13 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { act, fireEvent, screen, waitFor } from "@testing-library/react";
+import { MemoryRouter, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { listNotifications } from "@/features/notifications/api/notifications-api";
 import type { TradeRequest, TradeSession } from "@/features/warbands/types/trade-request-types";
 import { subscribe } from "@/lib/realtime/client";
+import { AppToaster } from "@/components/ui/toaster";
 import { AppStoreProvider, useAppStore } from "@/stores/app-store";
+import { renderWithQueryClient } from "@/test/query-test-utils";
 import { useNotificationSubscription } from "./useNotificationSubscription";
 
 const { auth } = vi.hoisted(() => ({ auth: { user: { id: 1, email: "raider@example.com" } } }));
@@ -44,6 +46,11 @@ const tradeSession: TradeSession = {
   role: "recipient",
 };
 
+function CurrentLocation() {
+  const location = useLocation();
+  return <p data-testid="location">{`${location.pathname}${location.search}`}</p>;
+}
+
 function Harness() {
   useNotificationSubscription();
   const { setCurrentBattleSession, setTradeSession, tradeRequestNotifications } = useAppStore();
@@ -60,11 +67,13 @@ function Harness() {
   );
 }
 
-const renderHarness = () =>
-  render(
+const renderHarness = (path = "/campaigns/7/skills") =>
+  renderWithQueryClient(
     <AppStoreProvider>
-      <MemoryRouter>
+      <MemoryRouter initialEntries={[path]}>
         <Harness />
+        <CurrentLocation />
+        <AppToaster />
       </MemoryRouter>
     </AppStoreProvider>
   );
@@ -106,5 +115,62 @@ describe("useNotificationSubscription", () => {
     act(() => notificationHandler()({ type: "trade_request", payload: tradeRequest }));
 
     expect(screen.getByText("1 trade requests")).toBeInTheDocument();
+  });
+
+  it("offers an accepted trade in a toast instead of navigating away (BUG-26)", async () => {
+    renderHarness();
+    await waitFor(() => expect(notificationHandler()).toBeDefined());
+
+    act(() =>
+      notificationHandler()({
+        type: "trade_accepted",
+        payload: {
+          ...tradeRequest,
+          from_user: { id: 1, label: "Raider" },
+          to_user: { id: 2, label: "Mira" },
+        },
+      })
+    );
+
+    expect(await screen.findByText("Mira accepted your trade")).toBeInTheDocument();
+    expect(screen.getByTestId("location")).toHaveTextContent("/campaigns/7/skills");
+
+    fireEvent.click(screen.getByRole("button", { name: "Open trade" }));
+    expect(screen.getByTestId("location")).toHaveTextContent("/campaigns/7/warband?trade=trade-9");
+  });
+
+  it("offers an opened prebattle in a toast instead of navigating away (BUG-26)", async () => {
+    const { queryClient } = renderHarness("/campaigns/7/warband");
+    await waitFor(() => expect(notificationHandler()).toBeDefined());
+    const invalidate = vi.spyOn(queryClient, "invalidateQueries");
+
+    act(() =>
+      notificationHandler()({
+        type: "battle_prebattle_opened",
+        payload: { battle_id: 41, campaign_id: 7, title: "Ambush at the Well" },
+      })
+    );
+
+    expect(await screen.findByText("Prebattle is open for Ambush at the Well")).toBeInTheDocument();
+    expect(screen.getByTestId("location")).toHaveTextContent("/campaigns/7/warband");
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ["campaign", 7, "battles", "open"] });
+
+    fireEvent.click(screen.getByRole("button", { name: "Go" }));
+    expect(screen.getByTestId("location")).toHaveTextContent("/campaigns/7/battles/41/prebattle");
+  });
+
+  it("refreshes the open battles when a battle result changes", async () => {
+    const { queryClient } = renderHarness();
+    await waitFor(() => expect(notificationHandler()).toBeDefined());
+    const invalidate = vi.spyOn(queryClient, "invalidateQueries");
+
+    act(() =>
+      notificationHandler()({
+        type: "battle_result_updated",
+        payload: { battle_id: 41, campaign_id: 7, status: "ended" },
+      })
+    );
+
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ["campaign", 7, "battles", "open"] });
   });
 });

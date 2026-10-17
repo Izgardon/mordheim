@@ -1,5 +1,5 @@
-import { useCallback, useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback } from "react";
+import { useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
 
 // api
 import { listOpenCampaignBattles } from "../api/battles-api";
@@ -13,12 +13,9 @@ import type { BattleState } from "../types/battle-types";
 
 export const OPEN_BATTLES_STALE_TIME_MS = 30_000;
 
-/** Window events (dispatched by the realtime handlers) that mean the caller's battles changed. */
-const BATTLE_CHANGE_EVENTS = ["battle:invite", "battle:prebattle-opened", "battle:status-updated"];
-
 /**
  * The caller's open battles in a campaign, shared by the layout (Rejoin Battle) and the overview's
- * battle panel. Refetches on focus and reconnect once stale.
+ * battle panel. Refetches on focus and reconnect once stale, and when a battle event marks it stale.
  */
 export function useOpenCampaignBattles(campaignId: number, { enabled = true } = {}) {
   return useQuery({
@@ -29,22 +26,15 @@ export function useOpenCampaignBattles(campaignId: number, { enabled = true } = 
   });
 }
 
-/** Refetches the open battles when a realtime battle event arrives. Mount once per campaign. */
-export function useOpenBattlesEventRefresh(campaignId: number) {
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    if (!isCampaignId(campaignId)) {
-      return;
-    }
-    const invalidate = () =>
-      void queryClient.invalidateQueries({ queryKey: queryKeys.campaign.openBattles(campaignId) });
-
-    BATTLE_CHANGE_EVENTS.forEach((type) => window.addEventListener(type, invalidate));
-    return () => {
-      BATTLE_CHANGE_EVENTS.forEach((type) => window.removeEventListener(type, invalidate));
-    };
-  }, [campaignId, queryClient]);
+/**
+ * Marks a campaign's open battles stale after a battle changed (a realtime event or the caller's
+ * own action); screens showing them refetch. Replaces the old window "battle:*" event bus.
+ */
+export function invalidateOpenBattles(queryClient: QueryClient, campaignId: number) {
+  if (!isCampaignId(campaignId)) {
+    return Promise.resolve();
+  }
+  return queryClient.invalidateQueries({ queryKey: queryKeys.campaign.openBattles(campaignId) });
 }
 
 /** Writes a battle returned by a join/cancel call into the cached open battles. */
@@ -66,7 +56,7 @@ export function useReplaceOpenBattle(campaignId: number) {
 export function useRefreshOpenBattles(campaignId: number) {
   const queryClient = useQueryClient();
   return useCallback(
-    () => queryClient.invalidateQueries({ queryKey: queryKeys.campaign.openBattles(campaignId) }),
+    () => invalidateOpenBattles(queryClient, campaignId),
     [campaignId, queryClient]
   );
 }

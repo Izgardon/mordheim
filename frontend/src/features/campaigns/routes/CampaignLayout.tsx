@@ -31,10 +31,7 @@ import CampaignDiceRollerMenu from "@/features/realtime/components/CampaignDiceR
 import CampaignChatMenu from "@/features/realtime/components/CampaignChatMenu";
 import NotificationsMenu from "@/features/realtime/components/NotificationsMenu";
 import { useNotifications } from "@/features/realtime/hooks/useNotifications";
-import {
-  useOpenBattlesEventRefresh,
-  useOpenCampaignBattles,
-} from "@/features/battles/hooks/useOpenCampaignBattles";
+import { useOpenCampaignBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import {
   getBattleRouteForStatus,
   getResumableBattleForUser,
@@ -327,11 +324,10 @@ export default function CampaignLayout() {
   ]);
 
   // The open battles query is shared with the overview's battle panel; it refetches on focus,
-  // on reconnect and when a realtime battle event arrives.
+  // on reconnect and when a realtime battle event invalidates it.
   const openBattlesQuery = useOpenCampaignBattles(campaignId, {
     enabled: !isBattleRoute && Boolean(user?.id),
   });
-  useOpenBattlesEventRefresh(campaignId);
   const openBattles = openBattlesQuery.data;
   const sessionCampaignId = currentBattleSession?.campaignId;
 

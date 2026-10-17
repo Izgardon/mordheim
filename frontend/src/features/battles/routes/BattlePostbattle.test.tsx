@@ -211,6 +211,7 @@ const mocks = vi.hoisted(() => {
       },
     ]),
     useBattleEvents: vi.fn(),
+    refreshOpenBattles: vi.fn(async () => undefined),
     clearCurrentBattleSession: vi.fn(),
   };
 });
@@ -348,6 +349,10 @@ vi.mock("@/features/battles/components/postbattle/postbattle-utils", () => ({
   updateGroupXp: vi.fn((draft: unknown) => draft),
   updatePostbattleUpkeepEntry: vi.fn((draft: unknown) => draft),
   updateUnitResult: vi.fn((draft: unknown) => draft),
+}));
+
+vi.mock("@/features/battles/hooks/useOpenCampaignBattles", () => ({
+  useRefreshOpenBattles: () => mocks.refreshOpenBattles,
 }));
 
 vi.mock("@/components/dice/DiceRoller", () => ({
