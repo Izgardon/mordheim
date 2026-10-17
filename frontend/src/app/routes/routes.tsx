@@ -5,6 +5,7 @@ import { Navigate, Outlet, type RouteObject } from "react-router-dom";
 
 // components
 import ScrollToTop from "../../components/ScrollToTop";
+import RouteError from "../../components/errors/RouteError";
 import { LoadingScreen } from "../../components/ui/loading-screen";
 
 // Route modules load on demand, so the entry chunk carries only the shell (PERF-17).
@@ -46,6 +47,7 @@ function RootLayout() {
 export const routes: RouteObject[] = [
   {
     element: <RootLayout />,
+    errorElement: <RouteError />,
     children: [
       {
         path: "/",
@@ -71,27 +73,33 @@ export const routes: RouteObject[] = [
             path: "/campaigns/:id",
             element: <CampaignLayout />,
             children: [
-              { index: true, element: <CampaignOverview /> },
-              { path: "warband", element: <Warband /> },
-              { path: "warbands/:warbandId", element: <Warband /> },
-              { path: "warbands", element: <PlaceholderPage title="Warbands" /> },
-              { path: "skills", element: <Skills /> },
-              { path: "spells", element: <Spells /> },
-              { path: "items", element: <Items /> },
-              { path: "bestiary", element: <Bestiary /> },
-              { path: "hired-swords", element: <HiredSwords /> },
-              { path: "locations", element: <Locations /> },
-              { path: "encampments", element: <Encampments /> },
-              { path: "rules", element: <Rules /> },
-              { path: "house-rules", element: <HouseRules /> },
-              { path: "settings", element: <CampaignSettings /> },
               {
-                path: "battles/:battleId",
-                element: <BattleLayout />,
+                // A page that throws is replaced in place; the campaign shell stays usable.
+                errorElement: <RouteError variant="inline" />,
                 children: [
-                  { path: "prebattle", element: <BattlePrebattle /> },
-                  { path: "active", element: <BattleActive /> },
-                  { path: "postbattle", element: <BattlePostbattle /> },
+                  { index: true, element: <CampaignOverview /> },
+                  { path: "warband", element: <Warband /> },
+                  { path: "warbands/:warbandId", element: <Warband /> },
+                  { path: "warbands", element: <PlaceholderPage title="Warbands" /> },
+                  { path: "skills", element: <Skills /> },
+                  { path: "spells", element: <Spells /> },
+                  { path: "items", element: <Items /> },
+                  { path: "bestiary", element: <Bestiary /> },
+                  { path: "hired-swords", element: <HiredSwords /> },
+                  { path: "locations", element: <Locations /> },
+                  { path: "encampments", element: <Encampments /> },
+                  { path: "rules", element: <Rules /> },
+                  { path: "house-rules", element: <HouseRules /> },
+                  { path: "settings", element: <CampaignSettings /> },
+                  {
+                    path: "battles/:battleId",
+                    element: <BattleLayout />,
+                    children: [
+                      { path: "prebattle", element: <BattlePrebattle /> },
+                      { path: "active", element: <BattleActive /> },
+                      { path: "postbattle", element: <BattlePostbattle /> },
+                    ],
+                  },
                 ],
               },
             ],

@@ -13,6 +13,7 @@ import { RouteSkeleton } from "@/components/ui/route-skeleton";
 import { Button } from "@/components/ui/button";
 import WarbandMobileNav from "@/features/warbands/components/warband/WarbandMobileNav";
 import { useMediaQuery } from "@/lib/use-media-query";
+import { getErrorMessage } from "@/lib/get-error-message";
 import {
   Book,
   Castle,
@@ -369,7 +370,7 @@ export default function CampaignLayout() {
   const campaignError = !isCampaignId(campaignId)
     ? "Invalid campaign id."
     : campaignQuery.error
-      ? campaignQuery.error.message || "Unable to load campaign"
+      ? getErrorMessage(campaignQuery.error, "Unable to load campaign")
       : "";
 
   if (!campaignError && campaignQuery.isPending) {
