@@ -56,6 +56,24 @@ export const getStatCheckbox = (table: HTMLElement, stat: string) => {
 };
 
 /**
+ * The text field next to a visible label. The roster forms' labels aren't tied to their inputs,
+ * so this climbs from the label to the nearest container holding an input (checkboxes skipped).
+ */
+export const getFieldNear = (labelText: string, root: HTMLElement = document.body) => {
+  let node: HTMLElement | null = within(root).getByText(labelText);
+  while (node && node !== root.parentElement) {
+    const field = node.querySelector<HTMLInputElement>(
+      "input:not([type=checkbox]), textarea, select"
+    );
+    if (field) {
+      return field;
+    }
+    node = node.parentElement;
+  }
+  throw new Error(`No field next to "${labelText}"`);
+};
+
+/**
  * Hovers every tooltip trigger beside `element` (e.g. the badges next to a unit's name) and
  * returns the tooltip texts, in order.
  */
