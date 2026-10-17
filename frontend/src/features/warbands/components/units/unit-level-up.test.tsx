@@ -221,6 +221,28 @@ describe.each(kinds)("$kind level-up control", (kind) => {
     expect(readStatsGrid(advanceTable(dialog)).WS).toBe(`${Number(before.split("/")[0]) + 1}/6`);
   });
 
+  it("names each advance checkbox after its characteristic (UX-04)", async () => {
+    const user = setupUser();
+    const dialog = await openDialog(user, kind.control({ weapon_skill: 4 }));
+
+    await user.click(within(dialog).getByRole("checkbox", { name: "Weapon Skill" }));
+
+    expect(getStatCheckbox(advanceTable(dialog), "WS")).toBeChecked();
+    expect(within(dialog).getByRole("button", { name: "Advance roll table" })).toBeInTheDocument();
+  });
+
+  it("marks a stat already at its race maximum as max (UX-04)", async () => {
+    const user = setupUser();
+    const dialog = await openDialog(user, kind.control({ weapon_skill: 6, leadership: 7 }));
+
+    const atMax = within(dialog).getByRole("checkbox", {
+      name: "Weapon Skill (at the race maximum)",
+    });
+    expect(atMax.closest("td")).toHaveTextContent("max");
+    expect(getStatCheckbox(advanceTable(dialog), "Ld")).toHaveAccessibleName("Leadership");
+    expect(getStatCheckbox(advanceTable(dialog), "Ld").closest("td")).not.toHaveTextContent("max");
+  });
+
   it("warns, without blocking, when the pick passes the race maximum (decision 10, BUG-32)", async () => {
     const user = setupUser();
     kind.levelUpApi.mockResolvedValue({ id: kind.unitId, level_up: 0 });

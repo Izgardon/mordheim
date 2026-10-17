@@ -24,6 +24,18 @@ export function statsOverRaceMax(
   });
 }
 
+/** The stats (by label) already at or above the race maximum: one more would pass it. */
+export const statsAtRaceMax = (
+  labels: readonly string[],
+  values: Record<string, unknown>,
+  maxima: Record<string, unknown> | null | undefined
+) =>
+  statsOverRaceMax(
+    labels,
+    Object.fromEntries(labels.map((label) => [label, (toNumber(values[label]) ?? NaN) + 1])),
+    maxima
+  ).map((entry) => entry.label);
+
 /** "WS 7 (max 6), S 5 (max 4)" */
 export const describeOverRaceMax = (over: readonly OverRaceMax[]) =>
   over.map(({ label, value, max }) => `${label} ${value} (max ${max})`).join(", ");

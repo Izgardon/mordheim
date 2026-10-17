@@ -6,11 +6,19 @@ import {
   UNIT_STAT_FIELDS_RACE,
   type UnitStats,
 } from "../../components/shared/unit_details/UnitStatsTable";
-import { statsOverRaceMax } from "../../utils/race-max";
+import { statsAtRaceMax, statsOverRaceMax } from "../../utils/race-max";
 
 import type { Unit, UnitKindKey } from "../../types/units";
 import type { UnitKindConfig } from "../../units/unit-kind-types";
 import type { UnitLevelUpOptions, UnitLevelUpState } from "./level-up-types";
+
+const RACE_FIELDS = UNIT_STAT_FIELDS_RACE.filter((field) => field.raceKey);
+const STAT_LABELS = RACE_FIELDS.map((field) => field.label);
+/** Stat values keyed by their column label ("WS"), as the advance table shows them. */
+const byLabel = (stats: UnitStats | null) =>
+  stats
+    ? Object.fromEntries(RACE_FIELDS.map((field) => [field.label, stats[field.statKey]]))
+    : null;
 
 /** Decision 10 (BUG-32): taking a stat past the race maximum is allowed, with a warning. */
 function raceMaxWarningFor<K extends UnitKindKey>(
@@ -89,6 +97,7 @@ export function useUnitLevelUp<K extends UnitKindKey>(
     unitStats,
     raceStats,
     raceMaxWarning: raceMaxWarningFor(unit, statDelta, unitStats, raceStats),
+    statsAtMax: new Set(statsAtRaceMax(STAT_LABELS, byLabel(unitStats) ?? {}, byLabel(raceStats))),
     selectableStatSet,
     levelUpError,
     isSubmitting,

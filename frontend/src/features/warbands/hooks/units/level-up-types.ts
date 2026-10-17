@@ -67,6 +67,8 @@ export type UnitLevelUpState = Omit<UnitAdvance, "isConfirmBlocked"> & {
   raceStats: UnitStats | null;
   /** The picked stat would pass the race maximum (shown, never blocking: decision 10). */
   raceMaxWarning: string;
+  /** Stats (by label) already at the race maximum, marked in the advance table (UX-04). */
+  statsAtMax: ReadonlySet<string>;
   selectableStatSet: ReadonlySet<string>;
   levelUpError: string;
   isSubmitting: boolean;

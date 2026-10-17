@@ -30,10 +30,7 @@ export const readStatsGrid = (table: HTMLElement) => {
   return Object.fromEntries(headers.map((header, index) => [header, cells[index]]));
 };
 
-/**
- * Lists the stat columns that have a checkbox in the row under the values (the level-up
- * dialog's advance picker, whose checkboxes have no labels: UX-04).
- */
+/** Lists the stat columns that have a checkbox in the row under the values (the advance picker). */
 export const readStatsWithCheckbox = (table: HTMLElement) => {
   const headers = within(table)
     .getAllByRole("columnheader")

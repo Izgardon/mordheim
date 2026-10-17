@@ -1,12 +1,12 @@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@components/dialog";
 import { Button } from "@components/button";
-import { Checkbox } from "@components/checkbox";
 import { Tooltip } from "@components/tooltip";
 import { Info } from "lucide-react";
 
 import { useUnitLevelUp } from "../../hooks/units/useUnitLevelUp";
 import UnitStatsTable from "../shared/unit_details/UnitStatsTable";
 import {
+  AdvanceCheckbox,
   AdvanceOptionsRow,
   LadsGotTalentPanel,
   RollPanel,
@@ -66,7 +66,15 @@ export default function UnitLevelUpDialog<K extends UnitKindKey>({
               <div className="flex items-center gap-1.5">
                 <h3 className="text-lg font-semibold text-foreground">Advance</h3>
                 <Tooltip
-                  trigger={<Info className="h-4 w-4 cursor-help text-muted-foreground" />}
+                  trigger={
+                    <button
+                      type="button"
+                      aria-label="Advance roll table"
+                      className="flex rounded-sm text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8e7549]"
+                    >
+                      <Info className="h-4 w-4 cursor-help" aria-hidden="true" />
+                    </button>
+                  }
                   maxWidth={rollTable.maxWidth}
                   content={
                     <div className="space-y-0.5 text-xs">
@@ -90,14 +98,13 @@ export default function UnitLevelUpDialog<K extends UnitKindKey>({
                 valueDelta={levelUp.statDelta}
                 wrapperClassName="w-full"
                 renderExtraRow={(statLabel) => (
-                  <div className="flex justify-center">
-                    {levelUp.selectableStatSet.has(statLabel) ? (
-                      <Checkbox
-                        checked={levelUp.selectedStat === statLabel}
-                        onChange={() => levelUp.handleSelectStat(statLabel)}
-                      />
-                    ) : null}
-                  </div>
+                  <AdvanceCheckbox
+                    statLabel={statLabel}
+                    isSelectable={levelUp.selectableStatSet.has(statLabel)}
+                    isAtMax={levelUp.statsAtMax.has(statLabel)}
+                    checked={levelUp.selectedStat === statLabel}
+                    onToggle={() => levelUp.handleSelectStat(statLabel)}
+                  />
                 )}
               />
             </div>

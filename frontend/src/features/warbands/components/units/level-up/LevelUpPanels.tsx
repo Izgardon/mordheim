@@ -2,6 +2,7 @@ import { Button } from "@components/button";
 import { Checkbox } from "@components/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import DiceRoller from "@/components/dice/DiceRoller";
+import { UNIT_STAT_FIELDS_RACE } from "../../shared/unit_details/UnitStatsTable";
 
 import type { FollowUpAdvance, LadsGotTalentAdvance } from "../../../hooks/units/level-up-types";
 
@@ -126,5 +127,46 @@ export function LadsGotTalentPanel({ advance }: { advance: LadsGotTalentAdvance 
         </p>
       ) : null}
     </>
+  );
+}
+
+/**
+ * The advance table's pick for one stat column, labelled with the characteristic (UX-04); a stat
+ * already at the race maximum is marked "max" (it can still be taken: decision 10).
+ */
+export function AdvanceCheckbox({
+  statLabel,
+  isSelectable,
+  isAtMax,
+  checked,
+  onToggle,
+}: {
+  statLabel: string;
+  isSelectable: boolean;
+  isAtMax: boolean;
+  checked: boolean;
+  onToggle: () => void;
+}) {
+  if (!isSelectable) {
+    return <div className="flex justify-center" />;
+  }
+  const fullName =
+    UNIT_STAT_FIELDS_RACE.find((field) => field.label === statLabel)?.fullName ?? statLabel;
+  return (
+    <div className="flex flex-col items-center gap-0.5">
+      <Checkbox
+        aria-label={isAtMax ? `${fullName} (at the race maximum)` : fullName}
+        checked={checked}
+        onChange={onToggle}
+      />
+      {isAtMax ? (
+        <span
+          aria-hidden="true"
+          className="text-[0.55rem] font-semibold uppercase tracking-wider text-amber-400"
+        >
+          max
+        </span>
+      ) : null}
+    </div>
   );
 }
