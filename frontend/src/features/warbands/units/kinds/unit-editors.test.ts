@@ -178,22 +178,45 @@ describe("add form draft detection", () => {
   });
 });
 
-describe("henchmen formAfterCreate", () => {
-  it("keeps the server's member ids on the new group's form", () => {
-    const created = makeVeteranHenchmenGroup({
-      id: 23,
-      henchmen: [{ id: 81, name: "Bolt", kills: 0, dead: false }],
-    });
-    const entry = henchmenKind.editor.creation.toFormEntry(
-      { ...henchmenKind.editor.creation.initialForm, firstHenchmanName: "Bolt" },
+describe("queued recruits (decision 1)", () => {
+  it("queue as forms without an id, each with its own draft key", () => {
+    const hero = heroKind.editor.creation.toFormEntry(
+      { ...heroKind.editor.creation.initialForm, price: "35" },
+      "Gunther",
+      "Champion"
+    );
+    const second = heroKind.editor.creation.toFormEntry(
+      heroKind.editor.creation.initialForm,
+      "Otto",
+      "Champion"
+    );
+
+    expect(hero.id).toBeUndefined();
+    expect(hero.draftKey).toMatch(/^draft-heroes-/);
+    expect(second.draftKey).not.toBe(hero.draftKey);
+  });
+
+  it("cost their price, and a new group its price per member", () => {
+    const group = henchmenKind.editor.creation.toFormEntry(
+      { ...henchmenKind.editor.creation.initialForm, price: "25", firstHenchmanName: "Bolt" },
       "Crossbowmen",
       "Marksmen"
     );
+    const twoMembers = {
+      ...group,
+      henchmen: [...group.henchmen, { id: 0, name: "Quarrel", kills: 0, dead: false }],
+    };
 
-    const form = henchmenKind.editor.creation.formAfterCreate(entry, created);
-
-    expect(form.id).toBe(23);
-    expect(form.henchmen).toEqual([{ id: 81, name: "Bolt", kills: 0, dead: false }]);
-    expect(form.name).toBe("Crossbowmen");
+    expect(henchmenKind.editor.creation.recruitCost(group)).toBe(25);
+    expect(henchmenKind.editor.creation.recruitCost(twoMembers)).toBe(50);
+    expect(
+      heroKind.editor.creation.recruitCost(
+        heroKind.editor.creation.toFormEntry(
+          { ...heroKind.editor.creation.initialForm, price: "35" },
+          "Gunther",
+          "Champion"
+        )
+      )
+    ).toBe(35);
   });
 });

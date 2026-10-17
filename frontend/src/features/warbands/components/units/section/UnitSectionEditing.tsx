@@ -21,7 +21,7 @@ export default function UnitSectionEditing<K extends UnitKindKey>({
     <div className="space-y-5">
       {forms.forms.map((form, index) => (
         <div
-          key={form.id ?? `new-${index}`}
+          key={form.id ?? form.draftKey ?? `new-${index}`}
           id={getWarbandMobileEditItemId(
             kind.section,
             form.id ? `${kind.labels.formIdPrefix}-${form.id}` : `draft-${index}`
@@ -49,6 +49,8 @@ export default function UnitSectionEditing<K extends UnitKindKey>({
             onPendingPurchaseAdd={purchases.addPendingPurchase}
             onPendingPurchaseRemove={purchases.removePendingPurchase}
             error={save.hasAttemptedSave ? kind.validate(form) : null}
+            serverErrors={save.formErrors.get(form)}
+            recruitCost={form.id ? undefined : kind.editor.creation.recruitCost(form)}
             initialTab={
               pendingEditFocus && form.id === pendingEditFocus.unitId
                 ? pendingEditFocus.tab

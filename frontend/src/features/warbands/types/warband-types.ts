@@ -284,6 +284,8 @@ export type WarbandHiredSwordPayload = {
 
 export type HeroFormEntry = {
   id?: number;
+  /** A recruit queued in this edit session (no id yet): keys its queued purchases. */
+  draftKey?: string;
   name: string;
   unit_type: string;
   race_id: number | null;
@@ -462,6 +464,8 @@ export type HenchmenGroupPayload = {
 
 export type HenchmenGroupFormEntry = {
   id?: number;
+  /** A recruit queued in this edit session (no id yet): keys its queued purchases. */
+  draftKey?: string;
   name: string;
   unit_type: string;
   race_id: number | null;

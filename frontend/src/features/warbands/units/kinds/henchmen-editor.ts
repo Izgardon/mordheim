@@ -3,8 +3,7 @@ import HenchmenAddFields from "../../components/units/kinds/henchmen/HenchmenAdd
 import { useHenchmenStash } from "../../components/units/kinds/henchmen/useHenchmenStash";
 import { buildHenchmenPendingChanges } from "../../utils/pending-purchases";
 import { toNullableNumber } from "../../utils/warband-utils";
-import { buildStatPayload } from "../unit-form-helpers";
-import { appendSkill, blankStats, isSet } from "./editor-helpers";
+import { appendSkill, blankStats, isSet, nextDraftKey } from "./editor-helpers";
 import { collectStashRemovals } from "./henchmen-members";
 
 import type { UnitEditorConfig } from "../unit-kind-types";
@@ -23,10 +22,10 @@ export const henchmenEditor: UnitEditorConfig<"henchmen_group"> = {
       firstHenchmanName: "",
     },
     blockedError: "",
-    failureError: "Failed to create group.",
     extraError: (form) =>
       form.firstHenchmanName.trim() ? null : "First henchman name is required.",
     toFormEntry: (form, name, unitType) => ({
+      draftKey: nextDraftKey("henchmen"),
       name,
       unit_type: unitType,
       race_id: form.race_id,
@@ -55,41 +54,8 @@ export const henchmenEditor: UnitEditorConfig<"henchmen_group"> = {
           isSet(form.xp) ||
           isSet(form.max_size, "5")
       ),
-    buildPayload: (entry) => ({
-      name: entry.name.trim() || null,
-      unit_type: entry.unit_type.trim() || null,
-      race: entry.race_id ?? null,
-      price: toNullableNumber(entry.price) ?? 0,
-      xp: toNullableNumber(entry.xp) ?? 0,
-      level_up: 0,
-      max_size: toNullableNumber(entry.max_size) ?? 5,
-      deeds: null,
-      armour_save: null,
-      large: entry.large,
-      half_rate: entry.half_rate,
-      no_level_ups: entry.no_level_ups,
-      ...buildStatPayload(entry),
-      items: [],
-      skill_ids: [],
-      special_ids: [],
-      henchmen: entry.henchmen.map((h) => ({
-        ...(h.id ? { id: h.id } : {}),
-        name: h.name,
-        kills: h.kills,
-        dead: h.dead,
-      })),
-    }),
-    // The form keeps the server's member ids.
-    formAfterCreate: (entry, created) => ({
-      ...entry,
-      id: created.id,
-      henchmen: created.henchmen.map((h) => ({
-        id: h.id,
-        name: h.name,
-        kills: h.kills,
-        dead: h.dead,
-      })),
-    }),
+    // A new group pays its price for each member.
+    recruitCost: (form) => (toNullableNumber(form.price) ?? 0) * form.henchmen.length,
   },
   limits: ({ units, forms, isEditing, roster }) => {
     const henchmenCount = (isEditing ? forms : units).reduce(

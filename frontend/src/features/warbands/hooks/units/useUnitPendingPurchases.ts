@@ -6,7 +6,10 @@ import type { UnitTypeOption } from "@components/unit-selection-section";
 import type { UnitForm, UnitKindKey } from "../../types/units";
 import type { UnitKindConfig } from "../../units/unit-kind-types";
 
-/** Item purchases queued in edit mode, committed on Save (one trade and log each). */
+/**
+ * What Save will spend: item purchases queued in edit mode (one trade and log each) and the
+ * recruits queued in the section (charged by the batch).
+ */
 export function useUnitPendingPurchases<K extends UnitKindKey>(
   kind: UnitKindConfig<K>,
   forms: UnitForm<K>[]
@@ -14,7 +17,21 @@ export function useUnitPendingPurchases<K extends UnitKindKey>(
   const [pendingPurchases, setPendingPurchases] = useState<PendingPurchase[]>([]);
 
   const pendingChanges = useMemo(
-    () => kind.editor.buildPendingChanges(pendingPurchases, forms),
+    () => [
+      ...forms
+        .filter((form) => !form.id)
+        .map((form) => {
+          const cost = kind.editor.creation.recruitCost(form);
+          return {
+            label: `${form.name.trim() || kind.labels.newUnit} (recruit)`,
+            category: "recruit" as const,
+            quantity: 1,
+            unitCost: cost,
+            amount: cost,
+          };
+        }),
+      ...kind.editor.buildPendingChanges(pendingPurchases, forms),
+    ],
     [forms, kind, pendingPurchases]
   );
   const pendingSpend = useMemo(
@@ -33,9 +50,9 @@ export function useUnitPendingPurchases<K extends UnitKindKey>(
     []
   );
 
-  /** A dismissed unit takes its queued purchases with it. */
-  const dropUnitPurchases = useCallback((unitId: number) => {
-    setPendingPurchases((prev) => prev.filter((entry) => entry.unitId !== String(unitId)));
+  /** A dismissed unit or dropped recruit takes its queued purchases with it. */
+  const dropUnitPurchases = useCallback((unitKey: number | string) => {
+    setPendingPurchases((prev) => prev.filter((entry) => entry.unitId !== String(unitKey)));
   }, []);
 
   return {

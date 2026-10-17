@@ -6,11 +6,11 @@ import type { UnitKindConfig } from "../../units/unit-kind-types";
 type UseUnitCreationFormOptions<K extends UnitKindKey> = {
   /** The kind's cap is reached for this add form ("Hero limit reached."). */
   isCreateBlocked: (newForm: UnitNewForm<K>) => boolean;
-  /** Creates the unit (today's "Create <unit>" POSTs at once) and adds its form. */
-  appendForm: (form: UnitForm<K>) => Promise<void> | void;
+  /** Queues the new unit's form; it is recruited and charged on Save (decision 1). */
+  appendForm: (form: UnitForm<K>) => void;
 };
 
-/** The "Add <unit>" form: its fields, race search text, error and the create action. */
+/** The "Add <unit>" form: its fields, race search text, error and the add-to-queue action. */
 export function useUnitCreationForm<K extends UnitKindKey>(
   kind: UnitKindConfig<K>,
   { isCreateBlocked, appendForm }: UseUnitCreationFormOptions<K>
@@ -28,7 +28,7 @@ export function useUnitCreationForm<K extends UnitKindKey>(
     setRaceQuery("");
   }, [creation]);
 
-  const handleAdd = useCallback(async () => {
+  const handleAdd = useCallback(() => {
     if (isCreateBlocked(newForm)) {
       setNewError(creation.blockedError);
       return;
@@ -46,18 +46,11 @@ export function useUnitCreationForm<K extends UnitKindKey>(
       return;
     }
 
+    appendForm(creation.toFormEntry(newForm, name, unitType));
+    setNewForm(creation.initialForm);
+    setRaceQuery("");
     setNewError("");
-    try {
-      await appendForm(creation.toFormEntry(newForm, name, unitType));
-      setNewForm(creation.initialForm);
-      setRaceQuery("");
-      setNewError("");
-      setIsAdding(false);
-    } catch (err) {
-      setNewError(
-        err instanceof Error ? err.message || creation.failureError : creation.failureError
-      );
-    }
+    setIsAdding(false);
   }, [appendForm, creation, isCreateBlocked, newForm]);
 
   return {

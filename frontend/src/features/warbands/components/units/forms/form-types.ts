@@ -72,6 +72,10 @@ export type UnitFormSlotProps<K extends UnitKindKey> = UnitFormCatalogue & {
   onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
   onPendingPurchaseRemove?: (match: PendingPurchaseRemoval) => void;
   error: UnitValidationError | null;
+  /** The server's messages for this form after a refused Save (UX-05). */
+  serverErrors?: string[];
+  /** A recruit queued until Save: what Save will charge for it. */
+  recruitCost?: number;
   hasFieldError: (field: UnitValidationField) => boolean;
   initialTab?: "items" | "skills" | "spells" | "special";
   /** Henchmen: remaining stash quantities for the add-henchman dialog. */

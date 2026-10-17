@@ -85,7 +85,8 @@ export function useUnitLoadout<T extends HeroFormEntry>({
     const unitKey = unitType ?? "unit";
     draftUnitIdRef.current = `draft-${unitKey}-${Date.now()}-${index}`;
   }
-  const draftUnitId = draftUnitIdRef.current;
+  // A queued recruit files its purchases under its draft key, so Save charges them.
+  const draftUnitId = unit.draftKey ?? draftUnitIdRef.current;
 
   // Tab reset logic - switching tabs clears search state
   useEffect(() => {

@@ -1,16 +1,15 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useWarbandCacheUpdate } from "../../api/warband-cache";
 import { getWarbandMobileEditItemId } from "../warband/useWarbandMobileTopBar";
 import { useUnitCreationForm } from "./useUnitCreationForm";
 import { useUnitForms } from "./useUnitForms";
-import { useUnitCreate } from "./useUnitMutations";
 import { useUnitPendingPurchases } from "./useUnitPendingPurchases";
 import { useUnitSave } from "./useUnitSave";
 
 import type { Skill } from "@/features/skills/types/skill-types";
 import type { PendingTab } from "../../components/units/UnitListBlocks";
-import type { Unit, UnitForm, UnitKindKey } from "../../types/units";
+import type { Unit, UnitKindKey } from "../../types/units";
 import type { Warband, WarbandUpdatePayload } from "../../types/warband-types";
 import type { RosterLimits, UnitKindConfig } from "../../units/unit-kind-types";
 import type { ConfirmDiscard } from "../warband/useDiscardGuard";
@@ -32,8 +31,8 @@ export type UnitSectionEditorOptions<K extends UnitKindKey> = {
 export type PendingEditFocus = { unitId: number; tab: PendingTab };
 
 /**
- * One roster section's edit session (design 0.28 §5.3): forms, the add form and its immediate
- * create, dismissals, queued purchases, Save and Cancel. Replaces the nine per-kind hooks.
+ * One roster section's edit session (design 0.28 §5.3): forms, the add form, recruits queued
+ * until Save (decision 1), dismissals, queued purchases, Save and Cancel.
  */
 export function useUnitSectionEditor<K extends UnitKindKey>(
   kind: UnitKindConfig<K>,
@@ -51,7 +50,6 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
   const [isEditing, setIsEditing] = useState(false);
   const [pendingEditFocus, setPendingEditFocus] = useState<PendingEditFocus | null>(null);
   const [warbandForm, setWarbandForm] = useState<WarbandUpdatePayload>({ name: "", faction: "" });
-  const sessionInitialIdsRef = useRef<number[]>([]);
   const updateWarbandCache = useWarbandCacheUpdate();
   const forms = useUnitForms(kind);
   const purchases = useUnitPendingPurchases(kind, forms.forms);
@@ -65,22 +63,10 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
     }
   }, [warband, isEditing]);
 
-  const { mutateAsync: createUnit } = useUnitCreate(kind, warbandId);
-  const appendFormAsync = useCallback(
-    async (formEntry: UnitForm<K>) => {
-      const created = await createUnit(kind.editor.creation.buildPayload(formEntry));
-      const createdForm = kind.editor.creation.formAfterCreate(formEntry, created);
-      forms.appendForm(createdForm);
-      forms.originalFormsRef.current?.set(created.id, JSON.stringify(createdForm));
-      onUnitsChange([...units, created]);
-      forms.setExpandedId(created.id);
-    },
-    [createUnit, forms, kind, onUnitsChange, units]
-  );
-
+  // A new unit is only queued: Save recruits and charges it, Cancel drops it (decision 1).
   const creation = useUnitCreationForm(kind, {
     isCreateBlocked: (newForm) => limitsFor(newForm).isCreateBlocked,
-    appendForm: appendFormAsync,
+    appendForm: forms.appendForm,
   });
   const limits = limitsFor(creation.newForm);
 
@@ -90,7 +76,7 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
     setIsEditing(false);
     setPendingEditFocus(null);
     purchases.setPendingPurchases([]);
-    sessionInitialIdsRef.current = [];
+    save.clearFormErrors();
   };
 
   const save = useUnitSave(kind, {
@@ -103,7 +89,6 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
     newForm: creation.newForm,
     raceQuery: creation.raceQuery,
     originalFormsRef: forms.originalFormsRef,
-    sessionInitialIds: sessionInitialIdsRef.current,
     warbandHeader:
       kind.flags.savesWarbandHeader && warband ? { warband, form: warbandForm } : undefined,
     onSuccess: (refreshed, updatedWarband) => {
@@ -128,7 +113,6 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
       setWarbandForm({ name: warband.name, faction: warband.faction });
     }
     extras.onStartEditing?.();
-    sessionInitialIdsRef.current = units.map((unit) => unit.id);
     forms.initializeForms(units);
     creation.resetCreationForm();
     setIsEditing(true);
@@ -176,10 +160,12 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
     startEditing();
   };
 
+  /** Dismiss an existing unit (on Save) or drop a queued recruit, with its queued purchases. */
   const removeForm = (index: number) => {
-    const unitId = forms.forms[index]?.id;
-    if (unitId) {
-      purchases.dropUnitPurchases(unitId);
+    const form = forms.forms[index];
+    const purchaseKey = form?.id ?? form?.draftKey;
+    if (purchaseKey) {
+      purchases.dropUnitPurchases(purchaseKey);
     }
     forms.removeForm(index);
   };

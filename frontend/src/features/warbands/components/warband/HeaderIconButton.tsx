@@ -1,9 +1,11 @@
+import type { ReactNode } from "react";
+
 import { Tooltip } from "@components/tooltip";
 import { Button } from "@components/button";
 
 type HeaderIconButtonProps = {
   icon: string;
-  label?: string | number;
+  label?: ReactNode;
   tooltip: string;
   onClick?: () => void;
   ariaLabel: string;
@@ -24,7 +26,7 @@ export default function HeaderIconButton({
   const content = (
     <>
       <img src={icon} alt="" className={iconClassName} />
-      {label !== undefined && label !== "" && <span>{label}</span>}
+      {label !== undefined && label !== null && label !== "" && <span>{label}</span>}
     </>
   );
 

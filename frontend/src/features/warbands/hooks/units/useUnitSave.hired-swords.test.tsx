@@ -12,14 +12,19 @@ import type {
 import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 import { makeVeteranHiredSword } from "@/test/warband-fixtures";
 import { createQueryWrapper } from "@/test/query-test-utils";
+import {
+  answerBatch,
+  batchCreates,
+  batchDismissals,
+  batchUpdate,
+  batchUpdates,
+} from "@/test/batch-mock";
 
 /** Save runs as a mutation, so the hook needs a QueryClient. */
 const renderHook = <R,>(hook: () => R) => renderBareHook(hook, { wrapper: createQueryWrapper() });
 
 const apiMocks = vi.hoisted(() => ({
-  createWarbandHiredSword: vi.fn(),
-  updateWarbandHiredSword: vi.fn(),
-  deleteWarbandHiredSword: vi.fn(),
+  batchWarbandHiredSwords: vi.fn(),
   getWarbandSummary: vi.fn(),
   createWarbandLog: vi.fn(),
   createWarbandTrade: vi.fn(),
@@ -49,7 +54,6 @@ type SaveParams = {
   newHiredSwordForm: NewHiredSwordForm;
   raceQuery: string;
   originalHiredSwordFormsRef: { current: Map<number, string> };
-  sessionInitialHiredSwordIds?: readonly number[];
   onSuccess: (refreshed: WarbandHiredSword[]) => void;
   pendingPurchases?: PendingPurchase[];
   onPendingCleared?: () => void;
@@ -65,7 +69,6 @@ const hiredParams = (params: SaveParams): UseUnitSaveParams<"hired_sword"> => ({
   newForm: params.newHiredSwordForm,
   raceQuery: params.raceQuery,
   originalFormsRef: params.originalHiredSwordFormsRef,
-  sessionInitialIds: params.sessionInitialHiredSwordIds,
   onSuccess: (refreshed) => params.onSuccess(refreshed),
   pendingPurchases: params.pendingPurchases,
   onPendingCleared: params.onPendingCleared,
@@ -162,13 +165,12 @@ const blankNewHiredSwordForm = {
 describe("useUnitSave: hired swords", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    apiMocks.createWarbandHiredSword.mockResolvedValue(baseHiredSword);
-    apiMocks.updateWarbandHiredSword.mockResolvedValue(baseHiredSword);
-    apiMocks.deleteWarbandHiredSword.mockResolvedValue(undefined);
+    apiMocks.batchWarbandHiredSwords.mockImplementation(answerBatch([baseHiredSword]));
+    apiMocks.getWarbandSummary.mockResolvedValue({});
     apiMocks.getWarbandSummary.mockResolvedValue({});
   });
 
-  it("suppresses first-save level ups for hired swords created during the current edit session", async () => {
+  it("creates a queued recruit in the batch with level_up 0, so its starting XP mints none (decision 1)", async () => {
     const onSuccess = vi.fn();
     const originalRef = {
       current: new Map<number, string>([[7, JSON.stringify(baseForm)]]),
@@ -181,13 +183,12 @@ describe("useUnitSave: hired swords", () => {
           warbandId: 9,
           canEdit: true,
           currentHiredSwords: [baseHiredSword],
-          hiredSwordForms: [{ ...baseForm, xp: "5" }],
+          hiredSwordForms: [{ ...baseForm, id: undefined, draftKey: "draft-1", xp: "5" }],
           removedHiredSwordIds: [],
           isAddingHiredSwordForm: false,
           newHiredSwordForm: blankNewHiredSwordForm,
           raceQuery: "",
           originalHiredSwordFormsRef: originalRef,
-          sessionInitialHiredSwordIds: [],
           onSuccess,
         })
       )
@@ -197,16 +198,10 @@ describe("useUnitSave: hired swords", () => {
       await result.current.handleSaveChanges();
     });
 
-    // update* takes no options argument (it never emits a warband update itself).
-    expect(apiMocks.updateWarbandHiredSword).toHaveBeenCalledWith(
-      9,
-      7,
-      expect.objectContaining({
-        xp: 5,
-        level_up: 0,
-        no_level_ups: false,
-      })
-    );
+    expect(batchUpdates(apiMocks.batchWarbandHiredSwords)).toEqual([]);
+    expect(batchCreates(apiMocks.batchWarbandHiredSwords)).toEqual([
+      expect.objectContaining({ xp: 5, level_up: 0, no_level_ups: false }),
+    ]);
   });
 
   it("does not force level_up when updating an existing hired sword from the initial edit set", async () => {
@@ -228,7 +223,6 @@ describe("useUnitSave: hired swords", () => {
           newHiredSwordForm: blankNewHiredSwordForm,
           raceQuery: "",
           originalHiredSwordFormsRef: originalRef,
-          sessionInitialHiredSwordIds: [7],
           onSuccess,
         })
       )
@@ -238,7 +232,7 @@ describe("useUnitSave: hired swords", () => {
       await result.current.handleSaveChanges();
     });
 
-    const payload = apiMocks.updateWarbandHiredSword.mock.calls[0][2];
+    const payload = batchUpdate(apiMocks.batchWarbandHiredSwords, 7);
     expect(payload).toMatchObject({ xp: 5, no_level_ups: false });
     expect(payload).not.toHaveProperty("level_up");
   });
@@ -263,7 +257,6 @@ describe("useUnitSave: hired swords characterisation", () => {
       newHiredSwordForm: blankNewHiredSwordForm,
       raceQuery: "",
       originalHiredSwordFormsRef: { current: snapshotOf(forms) },
-      sessionInitialHiredSwordIds: [31, 32],
       onSuccess: vi.fn(),
       pendingPurchases: [],
       onPendingCleared: vi.fn(),
@@ -279,13 +272,9 @@ describe("useUnitSave: hired swords characterisation", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    apiMocks.updateWarbandHiredSword.mockImplementation(
-      async (_w: number, id: number, body: object) => ({
-        ...(id === veteran.id ? veteran : second),
-        ...body,
-      })
+    apiMocks.batchWarbandHiredSwords.mockImplementation(
+      answerBatch([veteran, second], { gold: 80 })
     );
-    apiMocks.deleteWarbandHiredSword.mockResolvedValue(undefined);
     apiMocks.getWarbandSummary.mockResolvedValue({ gold: 80 });
   });
 
@@ -299,7 +288,7 @@ describe("useUnitSave: hired swords characterisation", () => {
 
     await save();
 
-    expect(apiMocks.updateWarbandHiredSword).toHaveBeenCalledWith(9, 31, {
+    expect(batchUpdate(apiMocks.batchWarbandHiredSwords, 31)).toEqual({
       name: "Brother Hal",
       unit_type: "Warrior Priest",
       race: 1,
@@ -343,10 +332,10 @@ describe("useUnitSave: hired swords characterisation", () => {
 
     await save();
 
-    expect(apiMocks.updateWarbandHiredSword.mock.calls[0][2].armour_save).toBe("5+");
+    expect(batchUpdate(apiMocks.batchWarbandHiredSwords, 31)?.armour_save).toBe("5+");
   });
 
-  it("PATCHes only changed hired swords and GETs the summary once", async () => {
+  it("updates only changed hired swords in one batch, using its summary", async () => {
     const forms = [veteran, second].map(mapHiredSwordToForm);
     const { save } = renderSave({
       hiredSwordForms: [forms[0], { ...forms[1], blood_pacted: true }],
@@ -354,16 +343,14 @@ describe("useUnitSave: hired swords characterisation", () => {
 
     await save();
 
-    expect(apiMocks.updateWarbandHiredSword).toHaveBeenCalledTimes(1);
-    expect(apiMocks.updateWarbandHiredSword).toHaveBeenCalledWith(
-      9,
-      32,
+    expect(batchUpdates(apiMocks.batchWarbandHiredSwords).map((entry) => entry.id)).toEqual([32]);
+    expect(batchUpdate(apiMocks.batchWarbandHiredSwords, 32)).toEqual(
       expect.objectContaining({ blood_pacted: true })
     );
-    expect(apiMocks.getWarbandSummary).toHaveBeenCalledTimes(1);
+    expect(apiMocks.getWarbandSummary).not.toHaveBeenCalled();
   });
 
-  it("DELETEs dismissed hired swords and broadcasts the refreshed summary", async () => {
+  it("dismisses hired swords in the batch and writes its summary", async () => {
     const { save, params } = renderSave({
       hiredSwordForms: [mapHiredSwordToForm(veteran)],
       removedHiredSwordIds: [32],
@@ -371,8 +358,8 @@ describe("useUnitSave: hired swords characterisation", () => {
 
     await save();
 
-    expect(apiMocks.deleteWarbandHiredSword).toHaveBeenCalledWith(9, 32);
-    expect(apiMocks.getWarbandSummary).toHaveBeenCalledTimes(1);
+    expect(batchDismissals(apiMocks.batchWarbandHiredSwords)).toEqual([32]);
+    expect(apiMocks.getWarbandSummary).not.toHaveBeenCalled();
     expect(params.onSuccess).toHaveBeenCalledWith([veteran]);
     expect(eventMocks.emitWarbandUpdate).toHaveBeenCalledWith(9, { summary: { gold: 80 } });
   });
@@ -432,7 +419,7 @@ describe("useUnitSave: hired swords characterisation", () => {
   });
 
   it("shows the error when a write fails", async () => {
-    apiMocks.deleteWarbandHiredSword.mockRejectedValue(new Error("Not found"));
+    apiMocks.batchWarbandHiredSwords.mockRejectedValue(new Error("Not found"));
     const { save, result, params } = renderSave({ removedHiredSwordIds: [32] });
 
     await save();

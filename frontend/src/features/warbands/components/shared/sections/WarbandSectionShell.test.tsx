@@ -44,4 +44,29 @@ describe("WarbandSectionShell", () => {
 
     expect(screen.queryByTestId("warband-section-floating-actions")).not.toBeInTheDocument();
   });
+
+  it("shows gold after pending below zero in red, not clamped at zero (decision 1)", () => {
+    render(
+      <WarbandSectionShell
+        title="Heroes"
+        isEditing
+        canEdit
+        availableGold={40}
+        pendingChanges={[
+          {
+            label: "Gunther (recruit)",
+            category: "recruit",
+            quantity: 1,
+            unitCost: 60,
+            amount: 60,
+          },
+        ]}
+      >
+        <div>Hero form</div>
+      </WarbandSectionShell>
+    );
+
+    expect(screen.getByText(/Pending spend: 60 gc/)).toBeInTheDocument();
+    expect(screen.getByText("-20 gc")).toHaveClass("text-red-400");
+  });
 });

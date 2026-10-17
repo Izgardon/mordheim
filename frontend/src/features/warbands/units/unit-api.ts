@@ -1,6 +1,6 @@
 import { apiRequest } from "@/lib/api-client";
 
-import type { NamedKillHistory } from "../types/warband-types";
+import type { NamedKillHistory, WarbandUnitsSummary } from "../types/warband-types";
 import type { Unit, UnitKindKey, UnitPayload } from "../types/units";
 
 /** URL segment per kind: `/warbands/<id>/<segment>/...`. */
@@ -9,6 +9,20 @@ export const UNIT_URL_SEGMENTS = {
   henchmen_group: "henchmen-groups",
   hired_sword: "hired-swords",
 } as const satisfies Record<UnitKindKey, string>;
+
+/** One Save of a section (decision 1): applied all or nothing, in one request. */
+export type UnitBatch<K extends UnitKindKey> = {
+  /** Each a create body (what `create` takes), built from a queued recruit's form. */
+  create?: Partial<UnitPayload<K>>[];
+  update?: (Partial<UnitPayload<K>> & { id: number })[];
+  dismiss?: number[];
+};
+
+/** Every visible unit of the kind after the batch (detail shape), and the new summary. */
+export type UnitBatchResult<K extends UnitKindKey> = {
+  units: Unit<K>[];
+  summary: WarbandUnitsSummary;
+};
 
 export type UnitApi<K extends UnitKindKey> = {
   list(warbandId: number): Promise<Unit<K>[]>;
@@ -19,6 +33,7 @@ export type UnitApi<K extends UnitKindKey> = {
   update(warbandId: number, unitId: number, payload: Partial<UnitPayload<K>>): Promise<Unit<K>>;
   remove(warbandId: number, unitId: number): Promise<void>;
   levelUp(warbandId: number, unitId: number, payload: Record<string, unknown>): Promise<Unit<K>>;
+  batch(warbandId: number, body: UnitBatch<K>): Promise<UnitBatchResult<K>>;
 };
 
 function createUnitApi<K extends UnitKindKey>(kind: K): UnitApi<K> {
@@ -41,6 +56,8 @@ function createUnitApi<K extends UnitKindKey>(kind: K): UnitApi<K> {
         method: "POST",
         body: { payload },
       }),
+    batch: (warbandId, body) =>
+      apiRequest<UnitBatchResult<K>>(`${base(warbandId)}batch/`, { method: "POST", body }),
   };
 }
 

@@ -2,7 +2,7 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { QueryObserver } from "@tanstack/react-query";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { useUnitAdvance, useUnitCreate, useUnitPatch, useUnitXp } from "./useUnitMutations";
+import { useUnitAdvance, useUnitPatch, useUnitXp } from "./useUnitMutations";
 import { heroKind } from "@/features/warbands/units/kinds/hero";
 import { henchmenKind } from "@/features/warbands/units/kinds/henchmen";
 import { queryKeys } from "@/lib/query-keys";
@@ -13,7 +13,6 @@ import type { WarbandSheet } from "@/features/warbands/types/warband-sheet";
 
 const api = vi.hoisted(() => ({
   getWarbandSummary: vi.fn(),
-  createWarbandHero: vi.fn(),
   updateWarbandHero: vi.fn(),
   updateWarbandHenchmenGroup: vi.fn(),
   levelUpWarbandHenchmenGroup: vi.fn(),
@@ -88,18 +87,5 @@ describe("unit mutations write the sheet from the response", () => {
 
     expect(sheet().heroes[0].trading_action).toBe(false);
     expect(api.getWarbandSummary).not.toHaveBeenCalled();
-  });
-
-  it("a recruit: adds the unit and re-reads the summary, since gold was spent", async () => {
-    const { sheet, wrapper } = showSheet();
-    const recruit = makeVeteranHero({ id: 12, name: "Gunther", is_leader: false });
-    api.createWarbandHero.mockResolvedValue(recruit);
-    api.getWarbandSummary.mockResolvedValue({ gold: 60, rating: 66 });
-    const { result } = renderHook(() => useUnitCreate(heroKind, 9), { wrapper });
-
-    await act(() => result.current.mutateAsync({ name: "Gunther" } as never));
-
-    expect(sheet().heroes.map((h) => h.name)).toEqual(["Aldric the Bold", "Gunther"]);
-    await waitFor(() => expect(sheet().summary.gold).toBe(60));
   });
 });

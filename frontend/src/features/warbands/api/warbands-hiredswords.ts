@@ -10,3 +10,4 @@ export const createWarbandHiredSword = hiredSwords.create;
 export const updateWarbandHiredSword = hiredSwords.update;
 export const deleteWarbandHiredSword = hiredSwords.remove;
 export const levelUpWarbandHiredSword = hiredSwords.levelUp;
+export const batchWarbandHiredSwords = hiredSwords.batch;

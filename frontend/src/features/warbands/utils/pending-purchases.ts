@@ -15,7 +15,7 @@ export type PendingPurchase = {
 
 export type PendingChangeItem = {
   label: string;
-  category: "buy_item" | "new_henchman" | "stash_consume";
+  category: "recruit" | "buy_item" | "new_henchman" | "stash_consume";
   quantity: number;
   unitCost: number;
   amount: number;

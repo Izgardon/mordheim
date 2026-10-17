@@ -81,7 +81,19 @@ export default function UnitFormCard<K extends UnitKindKey>({
         <span className="text-lg font-bold leading-tight text-foreground">{unitName}</span>
       </p>
 
+      {props.recruitCost !== undefined ? (
+        <p className="text-xs text-muted-foreground">
+          New recruit: {props.recruitCost} gc, paid when you save.
+        </p>
+      ) : null}
       {error && <p className="text-xs font-semibold text-red-500">{error.message}</p>}
+      {props.serverErrors?.length ? (
+        <ul role="alert" className="space-y-0.5 text-xs font-semibold text-red-500">
+          {props.serverErrors.map((message) => (
+            <li key={message}>{message}</li>
+          ))}
+        </ul>
+      ) : null}
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
         <div className="space-y-3">

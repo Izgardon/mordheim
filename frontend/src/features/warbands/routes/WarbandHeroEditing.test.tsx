@@ -14,12 +14,11 @@ import { renderWithQueryClient } from "@/test/query-test-utils";
 import { getFieldNear, hoverTooltipsBeside } from "@/test/roster-queries";
 import { setupUser } from "@/test/user-event";
 import { humanRace, makeVeteranHero } from "@/test/warband-fixtures";
+import { answerBatch, batchCreates, batchDismissals, batchUpdate } from "@/test/batch-mock";
 
 const api = vi.hoisted(() => ({
   createWarband: vi.fn(),
-  createWarbandHero: vi.fn(),
-  updateWarbandHero: vi.fn(),
-  deleteWarbandHero: vi.fn(),
+  batchWarbandHeroes: vi.fn(),
   updateWarband: vi.fn(),
   getWarbandSummary: vi.fn(),
   getWarbandHeroDetail: vi.fn(),
@@ -221,23 +220,6 @@ vi.mock("@/components/ui/page-subnav", () => ({
 }));
 
 const leader = makeVeteranHero();
-const recruit = makeVeteranHero({
-  id: 15,
-  name: "Gunther",
-  unit_type: "Champion",
-  price: 35,
-  xp: 0,
-  level_up: 0,
-  is_leader: true,
-  trading_action: true,
-  caster: "No",
-  available_skills: [],
-  items: [],
-  skills: [],
-  spells: [],
-  specials: [],
-});
-
 const startEditing = async (user: ReturnType<typeof setupUser>) => {
   await user.click(screen.getAllByRole("button", { name: "Edit Heroes" })[0]);
   await screen.findByRole("button", { name: "Add hero" });
@@ -278,15 +260,14 @@ describe("Warband route: hero editing", () => {
     loader.heroes = [];
     viewer.userId = 7;
     viewer.role = "owner";
-    api.createWarbandHero.mockResolvedValue(recruit);
-    api.updateWarbandHero.mockImplementation(async (_w: number, id: number, body: object) => ({
-      ...(id === recruit.id ? recruit : leader),
-      ...body,
-    }));
+    api.batchWarbandHeroes.mockImplementation(
+      (...args: Parameters<ReturnType<typeof answerBatch>>) =>
+        answerBatch(loader.heroes, { gold: 85 })(...args)
+    );
     api.getWarbandSummary.mockResolvedValue({ gold: 85 });
   });
 
-  it("POSTs a new hero at once from Add hero, with level_up 0 and skill access as a list (BUG-101)", async () => {
+  it("queues a new hero until Save, then creates it in one batch with skill access as a list (decision 1, BUG-101)", async () => {
     const user = setupUser();
     renderWithQueryClient(<Warband />);
     await startEditing(user);
@@ -294,47 +275,35 @@ describe("Warband route: hero editing", () => {
     await fillNewHero(user, { leader: true });
     await user.click(screen.getByRole("button", { name: "Create hero" }));
 
-    await waitFor(() => expect(api.createWarbandHero).toHaveBeenCalledTimes(1));
-    expect(api.listWarbandHeroDetails).not.toHaveBeenCalled();
-    expect(api.createWarbandHero).toHaveBeenCalledWith(9, {
-      name: "Gunther",
-      unit_type: "Champion",
-      race: 1,
-      price: 35,
-      xp: 0,
-      level_up: 0,
-      deeds: null,
-      is_leader: true,
-      armour_save: null,
-      large: false,
-      caster: "No",
-      half_rate: false,
-      available_skills: [],
-      items: [],
-      skill_ids: [],
-      special_ids: [],
-      spell_ids: [],
-    });
-    expect(events.emitWarbandUpdate).toHaveBeenCalledWith(9, { heroes: [recruit] });
     expect(await screen.findByDisplayValue("Gunther")).toBeInTheDocument();
-  });
-
-  it("sends nothing more on Save right after Create", async () => {
-    const user = setupUser();
-    renderWithQueryClient(<Warband />);
-    await startEditing(user);
-    await fillNewHero(user, { leader: true });
-    await user.click(screen.getByRole("button", { name: "Create hero" }));
-    await screen.findByDisplayValue("Gunther");
+    expect(screen.getByText("New recruit: 35 gc, paid when you save.")).toBeInTheDocument();
+    expect(api.batchWarbandHeroes).not.toHaveBeenCalled();
+    expect(api.listWarbandHeroDetails).not.toHaveBeenCalled();
 
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(screen.getByText("Gunther")).toBeInTheDocument());
-    expect(api.updateWarbandHero).not.toHaveBeenCalled();
+    await waitFor(() => expect(api.batchWarbandHeroes).toHaveBeenCalledTimes(1));
+    expect(api.batchWarbandHeroes).toHaveBeenCalledWith(9, {
+      create: [
+        expect.objectContaining({
+          name: "Gunther",
+          unit_type: "Champion",
+          race: 1,
+          price: 35,
+          xp: 0,
+          level_up: 0,
+          is_leader: true,
+          available_skills: [],
+          items: [],
+        }),
+      ],
+    });
     expect(api.getWarbandSummary).not.toHaveBeenCalled();
+    await waitFor(() => expect(screen.getByText("Gunther")).toBeInTheDocument());
+    expect(screen.queryByRole("button", { name: "Save" })).not.toBeInTheDocument();
   });
 
-  it("PATCHes typed starting XP of a hero created this session with level_up 0 (BUG-65)", async () => {
+  it("creates a queued hero with its typed starting XP and level_up 0 (BUG-65)", async () => {
     const user = setupUser();
     renderWithQueryClient(<Warband />);
     await startEditing(user);
@@ -347,12 +316,10 @@ describe("Warband route: hero editing", () => {
     await user.type(xp, "6");
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(api.updateWarbandHero).toHaveBeenCalledTimes(1));
-    const body = api.updateWarbandHero.mock.calls[0][2];
-    expect(api.updateWarbandHero.mock.calls[0][1]).toBe(15);
-    expect(body.xp).toBe(6);
-    expect(body.level_up).toBe(0);
-    expect(api.getWarbandSummary).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(api.batchWarbandHeroes).toHaveBeenCalledTimes(1));
+    expect(batchCreates(api.batchWarbandHeroes)).toEqual([
+      expect.objectContaining({ name: "Gunther", xp: 6, level_up: 0 }),
+    ]);
   });
 
   it("saves a warband with no heroes without asking for a leader (BUG-64)", async () => {
@@ -377,34 +344,53 @@ describe("Warband route: hero editing", () => {
     await user.click(screen.getByRole("button", { name: "Create hero" }));
 
     expect(screen.getByText("Name, type, and race are required.")).toBeInTheDocument();
-    expect(api.createWarbandHero).not.toHaveBeenCalled();
+    expect(screen.queryByText(/New recruit/)).not.toBeInTheDocument();
   });
 
-  it("keeps the new hero and both crowns after Cancel when a second leader was created (BUG-30 and BUG-34, pinned; flip in PR C)", async () => {
+  it("drops a queued second leader on Cancel: no request and one crown (decision 1, BUG-30, BUG-34)", async () => {
     const user = setupUser();
     loader.heroes = [leader];
     renderWithQueryClient(<Warband />);
     await startEditing(user);
     await fillNewHero(user, { leader: true });
     await user.click(screen.getByRole("button", { name: "Create hero" }));
-    await waitFor(() => expect(api.createWarbandHero).toHaveBeenCalledTimes(1));
+    await screen.findByDisplayValue("Gunther");
 
     await user.click(screen.getByRole("button", { name: "Cancel" }));
-    // The crown moved in the forms: an unsaved change, so Cancel asks first (decision 2).
     await user.click(await screen.findByRole("button", { name: "Discard changes" }));
 
-    expect(api.deleteWarbandHero).not.toHaveBeenCalled();
+    expect(api.batchWarbandHeroes).not.toHaveBeenCalled();
     expect(await hoverTooltipsBeside(await screen.findByText("Aldric the Bold"))).toEqual([
       "Leader",
     ]);
-    expect(await hoverTooltipsBeside(screen.getByText("Gunther"))).toEqual(["Leader"]);
+    expect(screen.queryByText("Gunther")).not.toBeInTheDocument();
+  });
+
+  it("moves the crown to a queued leader in the forms only, then saves both in one batch", async () => {
+    const user = setupUser();
+    loader.heroes = [leader];
+    renderWithQueryClient(<Warband />);
+    await startEditing(user);
+    await fillNewHero(user, { leader: true });
+    await user.click(screen.getByRole("button", { name: "Create hero" }));
+    await screen.findByDisplayValue("Gunther");
+
+    expect(api.batchWarbandHeroes).not.toHaveBeenCalled();
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(api.batchWarbandHeroes).toHaveBeenCalledTimes(1));
+    expect(batchUpdate(api.batchWarbandHeroes, 11)).toEqual(
+      expect.objectContaining({ is_leader: false })
+    );
+    expect(batchCreates(api.batchWarbandHeroes)).toEqual([
+      expect.objectContaining({ name: "Gunther", is_leader: true }),
+    ]);
   });
 
   it("dismisses a hero only on Save, though the dialog says it can't be undone (BUG-34, pinned; flips in PR C)", async () => {
     const user = setupUser();
     const champion = makeVeteranHero({ id: 12, name: "Champion Otto", is_leader: false });
     loader.heroes = [leader, champion];
-    api.deleteWarbandHero.mockResolvedValue(undefined);
     renderWithQueryClient(<Warband />);
     await startEditing(user);
 
@@ -414,12 +400,12 @@ describe("Warband route: hero editing", () => {
     expect(dialog).toHaveTextContent("This action cannot be undone.");
     await user.click(within(dialog).getByRole("button", { name: "Dismiss hero" }));
 
-    expect(api.deleteWarbandHero).not.toHaveBeenCalled();
+    expect(api.batchWarbandHeroes).not.toHaveBeenCalled();
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(api.deleteWarbandHero).toHaveBeenCalledWith(9, 12));
-    expect(api.getWarbandSummary).toHaveBeenCalledTimes(1);
-    expect(api.updateWarbandHero).not.toHaveBeenCalled();
+    await waitFor(() => expect(batchDismissals(api.batchWarbandHeroes)).toEqual([12]));
+    expect(api.batchWarbandHeroes).toHaveBeenCalledWith(9, { dismiss: [12] });
+    expect(api.getWarbandSummary).not.toHaveBeenCalled();
   });
 
   it("asks before Cancel discards unsaved changes, and keeps them on Keep editing (decision 2)", async () => {
@@ -445,7 +431,7 @@ describe("Warband route: hero editing", () => {
     await waitFor(() =>
       expect(screen.queryByRole("button", { name: "Save" })).not.toBeInTheDocument()
     );
-    expect(api.updateWarbandHero).not.toHaveBeenCalled();
+    expect(api.batchWarbandHeroes).not.toHaveBeenCalled();
   });
 
   it("cancels at once when nothing changed (decision 2)", async () => {
@@ -479,7 +465,7 @@ describe("Warband route: hero editing", () => {
 
     expect(router.setSearchParams).toHaveBeenCalledTimes(1);
     expect(router.setSearchParams.mock.calls[0][0].get("tab")).toBe("treasury");
-    expect(api.deleteWarbandHero).not.toHaveBeenCalled();
+    expect(api.batchWarbandHeroes).not.toHaveBeenCalled();
   });
 
   it("switches tabs at once when nothing changed (decision 2)", async () => {

@@ -9,9 +9,9 @@ import type { UnitKindConfig } from "../../units/unit-kind-types";
 
 /*
  * The roster's single-unit writes (design 0.28 §5.3). Each writes the returned unit into the
- * cached sheet. The summary is re-read only where gold or rating can change: creating a unit
- * spends gold and XP counts towards the rating; a level-up, a trading action or a learned
- * skill changes neither.
+ * cached sheet. The summary is re-read only where gold or rating can change: XP counts towards
+ * the rating; a level-up, a trading action or a learned skill changes neither. (Recruits are
+ * queued and saved with the section's batch: useUnitSave.)
  */
 
 type RowWrite = { summaryUnchanged: boolean };
@@ -63,15 +63,6 @@ export function useUnitAdvance<K extends UnitKindKey>(kind: KindRef<K>, warbandI
     onSuccess: (updated) => {
       if (updated) writeUnit(updated, { summaryUnchanged: true });
     },
-  });
-}
-
-/** "Create <unit>": recruits at once (the gold is spent, so the summary is re-read). */
-export function useUnitCreate<K extends UnitKindKey>(kind: KindRef<K>, warbandId: number) {
-  const writeUnit = useUnitRowWriter(kind, warbandId);
-  return useMutation({
-    mutationFn: (payload: UnitPayload<K>) => unitApi(kind.key).create(warbandId, payload),
-    onSuccess: (created) => writeUnit(created, { summaryUnchanged: false }),
   });
 }
 

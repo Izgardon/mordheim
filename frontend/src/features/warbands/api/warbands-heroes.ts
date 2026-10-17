@@ -10,3 +10,4 @@ export const createWarbandHero = heroes.create;
 export const updateWarbandHero = heroes.update;
 export const deleteWarbandHero = heroes.remove;
 export const levelUpWarbandHero = heroes.levelUp;
+export const batchWarbandHeroes = heroes.batch;

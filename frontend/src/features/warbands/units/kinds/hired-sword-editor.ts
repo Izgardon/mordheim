@@ -1,8 +1,14 @@
 import HiredSwordAddFields from "../../components/units/kinds/hired-sword/HiredSwordAddFields";
 import { buildPendingChanges } from "../../utils/pending-purchases";
-import { buildAvailableSkillsPayload, toNullableNumber } from "../../utils/warband-utils";
-import { buildStatPayload } from "../unit-form-helpers";
-import { appendSkill, blankStats, isSet, noSkillAccess, useNoFormExtras } from "./editor-helpers";
+import { toNullableNumber } from "../../utils/warband-utils";
+import {
+  appendSkill,
+  blankStats,
+  isSet,
+  nextDraftKey,
+  noSkillAccess,
+  useNoFormExtras,
+} from "./editor-helpers";
 
 import type { UnitEditorConfig } from "../unit-kind-types";
 
@@ -10,7 +16,7 @@ const notBloodPacted = (entry: { blood_pacted?: boolean | null }) => !entry.bloo
 
 /**
  * Hired swords: the hired-sword cap counts those without a blood pact and ignores the warband
- * unit limit; the add form's preset, blood pact and loadout go into the POST.
+ * unit limit; the add form's preset, blood pact and loadout go into the queued recruit.
  */
 export const hiredSwordEditor: UnitEditorConfig<"hired_sword"> = {
   creation: {
@@ -36,8 +42,8 @@ export const hiredSwordEditor: UnitEditorConfig<"hired_sword"> = {
       specials: [],
     },
     blockedError: "Hired sword limit reached.",
-    failureError: "Failed to create hired sword.",
     toFormEntry: (form, name, unitType) => ({
+      draftKey: nextDraftKey("hiredswords"),
       name,
       unit_type: unitType,
       race_id: form.race_id,
@@ -76,33 +82,7 @@ export const hiredSwordEditor: UnitEditorConfig<"hired_sword"> = {
           form.spells.length > 0 ||
           form.specials.length > 0
       ),
-    // The add form's armour save (a preset's included: BUG-100) and skill access as the list
-    // Save sends (BUG-101).
-    buildPayload: (entry) => ({
-      name: entry.name.trim() || null,
-      unit_type: entry.unit_type.trim() || null,
-      race: entry.race_id ?? null,
-      price: toNullableNumber(entry.price) ?? 0,
-      upkeep_price: toNullableNumber(entry.upkeep_price) ?? 0,
-      rating: toNullableNumber(entry.rating) ?? 0,
-      xp: toNullableNumber(entry.xp) ?? 0,
-      level_up: 0,
-      deeds: null,
-      armour_save: toNullableNumber(entry.armour_save),
-      large: entry.large,
-      caster: entry.caster,
-      half_rate: entry.half_rate,
-      no_level_ups: entry.no_level_ups,
-      blood_pacted: entry.blood_pacted,
-      available_skills: buildAvailableSkillsPayload(entry.available_skills),
-      ...buildStatPayload(entry),
-      items: entry.items.map((item) => ({ id: item.id, cost: item.cost ?? null })),
-      skill_ids: entry.skills.map((skill) => skill.id),
-      special_ids: entry.specials?.map((s) => s.id) ?? [],
-      spell_ids: entry.spells.map((spell) => spell.id),
-    }),
-    // The form is the add form's entry, not the server copy.
-    formAfterCreate: (entry, created) => ({ ...entry, id: created.id }),
+    recruitCost: (form) => toNullableNumber(form.price) ?? 0,
   },
   // At the cap the add form still opens: a blood-pacted hired sword doesn't count (decision 12),
   // so only "Create" is refused, and only for one without a blood pact (BUG-102).

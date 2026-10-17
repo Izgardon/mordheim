@@ -39,7 +39,7 @@ export default function HenchmenFormLoadout(props: UnitFormSlotProps<"henchmen_g
   if (!draftGroupIdRef.current) {
     draftGroupIdRef.current = `draft-henchmen-${Date.now()}-${index}`;
   }
-  const draftGroupId = draftGroupIdRef.current;
+  const draftGroupId = group.draftKey ?? draftGroupIdRef.current;
   const draftUnit = !group.id
     ? {
         unitType: "henchmen" as const,
@@ -118,7 +118,7 @@ export default function HenchmenFormLoadout(props: UnitFormSlotProps<"henchmen_g
           deferCommit={props.deferItemCommit}
           reservedGold={props.reservedGold}
           onPendingPurchaseAdd={props.onPendingPurchaseAdd}
-          pendingPurchaseUnitId={group.id ?? undefined}
+          pendingPurchaseUnitId={group.id ?? draftGroupId}
           onAcquire={(item, resolvedUnitType, unitId, meta) => {
             const targetUnitId = group.id ? String(group.id) : (draftGroupId ?? "");
             if (resolvedUnitType === "henchmen" && targetUnitId === unitId) {

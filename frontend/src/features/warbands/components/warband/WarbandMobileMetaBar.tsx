@@ -4,6 +4,7 @@ import { BookOpen, Handshake } from "lucide-react";
 import greedIcon from "@/assets/icons/greed.webp";
 import ratingIcon from "@/assets/icons/Menu.webp";
 import { ChestClosedIcon, ChestOpenIcon } from "./chest-icons";
+import GoldLabel from "./GoldLabel";
 import WarbandRecordIndicator from "./WarbandRecordIndicator";
 
 import { Tooltip } from "@components/tooltip";
@@ -30,6 +31,8 @@ import type {
 type WarbandMobileMetaBarProps = {
   warband: Warband;
   tradeTotal: number;
+  /** Gold the open edit session will spend on Save (queued recruits and purchases). */
+  pendingGold?: number;
   warbandRating: number;
   heroes: WarbandHero[];
   hiredSwords: WarbandHiredSword[];
@@ -46,6 +49,7 @@ type WarbandMobileMetaBarProps = {
 export default function WarbandMobileMetaBar({
   warband,
   tradeTotal,
+  pendingGold = 0,
   warbandRating,
   heroes,
   hiredSwords,
@@ -70,7 +74,7 @@ export default function WarbandMobileMetaBar({
             trigger={
               <div className="flex items-center gap-2">
                 <img src={greedIcon} alt="" className="h-4 w-4" />
-                <span>{tradeTotal}</span>
+                <GoldLabel gold={tradeTotal} pending={pendingGold} />
               </div>
             }
             content="Gold coins"

@@ -173,10 +173,18 @@ export function useWarbandPage({
     SECTIONS.map((s) => [s, isMobileEditing || (activeSection !== null && activeSection !== s)])
   ) as Record<WarbandRosterEditSection, boolean>;
 
+  // What the section being edited will spend on Save: queued recruits and purchases.
+  const pendingGold = SECTIONS.reduce(
+    (sum, section) =>
+      sum + (editors[section].isEditing ? editors[section].purchases.pendingSpend : 0),
+    0
+  );
+
   return {
     activeTab,
     handleTabChange,
     discardDialog,
+    pendingGold,
     editors,
     sectionActionsHidden,
     levelThresholds: {

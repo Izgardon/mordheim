@@ -102,16 +102,14 @@ export type UnitLimits = {
 export type UnitCreationConfig<K extends UnitKindKey> = {
   initialForm: UnitNewForm<K>;
   blockedError: string;
-  failureError: string;
   /** A check beyond name, type and race (henchmen need a first member). */
   extraError?: (form: UnitNewForm<K>) => string | null;
+  /** The add form's entry, queued as a new unit's edit form until Save (decision 1). */
   toFormEntry: (form: UnitNewForm<K>, name: string, unitType: string) => UnitForm<K>;
   /** The add form has content, so Save asks to finish or cancel it first. */
   isDraftDirty: (form: UnitNewForm<K>, raceQuery: string) => boolean;
-  /** The POST body of "Create <unit>". */
-  buildPayload: (entry: UnitForm<K>) => UnitPayload<K>;
-  /** The edit form kept for the created unit. */
-  formAfterCreate: (entry: UnitForm<K>, created: Unit<K>) => UnitForm<K>;
+  /** What recruiting a queued unit costs on Save (henchmen: the price per member). */
+  recruitCost: (form: UnitForm<K>) => number;
 };
 
 export type UnitEditorConfig<K extends UnitKindKey> = {
@@ -149,7 +147,7 @@ export type UnitLevelUpConfig<K extends UnitKindKey> = {
 };
 
 export type UnitPayloadContext = {
-  /** The unit was created in this edit session (henchmen and hired swords then send level_up 0). */
+  /** A queued recruit's create body (level_up 0: its starting XP mints no level-ups). */
   isSessionCreated: boolean;
 };
 
@@ -180,7 +178,7 @@ export type UnitKindConfig<K extends UnitKindKey> = {
   killCount: (unit: Unit<K>) => number;
   mapToForm: (unit: Unit<K>) => UnitForm<K>;
   validate: (form: UnitForm<K>) => UnitValidationError | null;
-  /** The PATCH body Save sends for a changed form. */
+  /** The body Save sends for a form: a batch update, or a queued recruit's create. */
   buildPayload: (form: UnitForm<K>, context: UnitPayloadContext) => Partial<UnitPayload<K>>;
   /** The PATCH body the XP bar sends (the whole unit today: BUG-63). */
   buildXpPayload: (unit: Unit<K>, xp: number) => Partial<UnitPayload<K>>;

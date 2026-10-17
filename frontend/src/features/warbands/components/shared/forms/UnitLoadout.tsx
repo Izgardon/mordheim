@@ -225,7 +225,7 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
           deferCommit={deferItemCommit}
           reservedGold={reservedGold}
           onPendingPurchaseAdd={onPendingPurchaseAdd}
-          pendingPurchaseUnitId={unit.id ?? undefined}
+          pendingPurchaseUnitId={unit.id ?? draftUnitId}
           onAcquire={(item, resolvedUnitType, unitId, meta) => {
             const targetUnitId = unit.id ? String(unit.id) : (draftUnitId ?? "");
             if (resolvedUnitType === unitType && targetUnitId === unitId) {

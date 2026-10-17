@@ -134,7 +134,11 @@ export default function WarbandSectionShell({
           >
             <span>
               Pending spend: {pendingSpend} gc &mdash; Gold after pending:{" "}
-              {Math.max(availableGold - pendingSpend, 0)} gc
+              <span
+                className={availableGold - pendingSpend < 0 ? "font-semibold text-red-400" : ""}
+              >
+                {availableGold - pendingSpend} gc
+              </span>
             </span>
             {pendingChanges ? (
               <ChevronDown

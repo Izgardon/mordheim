@@ -12,12 +12,12 @@ import type { HenchmenGroup } from "@/features/warbands/types/warband-types";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { getFieldNear } from "@/test/roster-queries";
 import { setupUser } from "@/test/user-event";
+import { ApiError } from "@/lib/api-client";
+import { answerBatch, batchCreates, batchDismissals } from "@/test/batch-mock";
 import { humanRace, makeVeteranHenchmenGroup } from "@/test/warband-fixtures";
 
 const api = vi.hoisted(() => ({
-  createWarbandHenchmenGroup: vi.fn(),
-  updateWarbandHenchmenGroup: vi.fn(),
-  deleteWarbandHenchmenGroup: vi.fn(),
+  batchWarbandHenchmenGroups: vi.fn(),
   listWarbandHenchmenGroupDetails: vi.fn(),
   getWarbandHenchmenGroupDetail: vi.fn(),
   getWarbandSummary: vi.fn(),
@@ -117,20 +117,6 @@ function Section({
   );
 }
 
-const created = makeVeteranHenchmenGroup({
-  id: 23,
-  name: "Crossbowmen",
-  unit_type: "Marksmen",
-  price: 25,
-  xp: 0,
-  level_up: 0,
-  max_size: 4,
-  items: [],
-  skills: [],
-  specials: [],
-  henchmen: [{ id: 81, name: "Bolt", kills: 0, dead: false }],
-});
-
 const startEditing = async (user: ReturnType<typeof setupUser>) => {
   await user.click(screen.getAllByRole("button", { name: "Edit Henchmen" })[0]);
   await screen.findByRole("button", { name: "Add group" });
@@ -154,10 +140,7 @@ const fillNewGroup = async (user: ReturnType<typeof setupUser>) => {
 describe("UnitSection: henchmen create and save", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    api.createWarbandHenchmenGroup.mockResolvedValue(created);
-    api.updateWarbandHenchmenGroup.mockImplementation(
-      async (_w: number, _id: number, body: object) => ({ ...created, ...body })
-    );
+    api.batchWarbandHenchmenGroups.mockImplementation(answerBatch([], { gold: 175 }));
     api.getWarbandSummary.mockResolvedValue({ gold: 175 });
   });
 
@@ -172,7 +155,7 @@ describe("UnitSection: henchmen create and save", () => {
     expect(api.getWarbandHenchmenGroupDetail).not.toHaveBeenCalled();
   });
 
-  it("POSTs a new group at once with its first henchman and level_up 0", async () => {
+  it("queues a new group until Save, then creates it in one batch with level_up 0 (decision 1)", async () => {
     const user = setupUser();
     renderWithQueryClient(<Section initialGroups={[]} />);
     await startEditing(user);
@@ -180,70 +163,66 @@ describe("UnitSection: henchmen create and save", () => {
     await fillNewGroup(user);
     await user.click(screen.getByRole("button", { name: "Create group" }));
 
-    await waitFor(() => expect(api.createWarbandHenchmenGroup).toHaveBeenCalledTimes(1));
-    expect(api.createWarbandHenchmenGroup).toHaveBeenCalledWith(9, {
-      name: "Crossbowmen",
-      unit_type: "Marksmen",
-      race: 1,
-      price: 25,
-      xp: 0,
-      level_up: 0,
-      max_size: 4,
-      deeds: null,
-      armour_save: null,
-      large: false,
-      half_rate: false,
-      no_level_ups: false,
-      items: [],
-      skill_ids: [],
-      special_ids: [],
-      henchmen: [{ name: "Bolt", kills: 0, dead: false }],
-    });
-    expect(events.emitWarbandUpdate).toHaveBeenCalledWith(9, { henchmenGroups: [created] });
-    expect(onGroupsChanged).toHaveBeenLastCalledWith([created]);
     expect(await screen.findByDisplayValue("Crossbowmen")).toBeInTheDocument();
-  });
-
-  it("sends nothing more on Save right after Create", async () => {
-    const user = setupUser();
-    renderWithQueryClient(<Section initialGroups={[]} />);
-    await startEditing(user);
-    await fillNewGroup(user);
-    await user.click(screen.getByRole("button", { name: "Create group" }));
-    await screen.findByDisplayValue("Crossbowmen");
-
-    await user.click(screen.getByRole("button", { name: "Save" }));
-
-    await waitFor(() =>
-      expect(screen.queryByRole("button", { name: "Save" })).not.toBeInTheDocument()
+    expect(screen.getByText("New recruit: 25 gc, paid when you save.")).toBeInTheDocument();
+    expect(screen.getByText(/Pending spend: 25 gc/)).toHaveTextContent(
+      "Pending spend: 25 gc — Gold after pending: 175 gc"
     );
-    expect(api.updateWarbandHenchmenGroup).not.toHaveBeenCalled();
-    expect(api.getWarbandSummary).not.toHaveBeenCalled();
-  });
-
-  it("sends level_up 0 when a group created this session gets starting XP before Save", async () => {
-    const user = setupUser();
-    renderWithQueryClient(<Section initialGroups={[]} />);
-    await startEditing(user);
-    await fillNewGroup(user);
-    await user.click(screen.getByRole("button", { name: "Create group" }));
-    await screen.findByDisplayValue("Crossbowmen");
+    expect(api.batchWarbandHenchmenGroups).not.toHaveBeenCalled();
 
     const xp = getFieldNear("Experience");
     await user.clear(xp);
     await user.type(xp, "6");
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(api.updateWarbandHenchmenGroup).toHaveBeenCalledTimes(1));
-    expect(api.updateWarbandHenchmenGroup).toHaveBeenCalledWith(
-      9,
-      23,
-      expect.objectContaining({ xp: 6, level_up: 0 })
-    );
-    expect(api.getWarbandSummary).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(api.batchWarbandHenchmenGroups).toHaveBeenCalledTimes(1));
+    expect(batchCreates(api.batchWarbandHenchmenGroups)).toEqual([
+      expect.objectContaining({
+        name: "Crossbowmen",
+        unit_type: "Marksmen",
+        race: 1,
+        price: 25,
+        xp: 6,
+        level_up: 0,
+        max_size: 4,
+        items: [],
+        henchmen: [expect.objectContaining({ name: "Bolt", kills: 0, dead: false })],
+      }),
+    ]);
+    expect(api.getWarbandSummary).not.toHaveBeenCalled();
+    expect(events.emitWarbandUpdate).toHaveBeenCalledWith(9, { summary: { gold: 175 } });
+    expect(onGroupsChanged).toHaveBeenLastCalledWith([
+      expect.objectContaining({ id: 900, name: "Crossbowmen" }),
+    ]);
   });
 
-  it("keeps a group created this session when the edit is cancelled (BUG-34, pinned; flips in PR C)", async () => {
+  it("shows a refused field on the queued group's card and saves nothing (UX-05)", async () => {
+    const user = setupUser();
+    api.batchWarbandHenchmenGroups.mockRejectedValue(
+      new ApiError("Some of the changes are invalid; nothing was saved.", 400, {
+        detail: "Some of the changes are invalid; nothing was saved.",
+        code: "invalid",
+        fields: { "create.0.max_size": ["Ensure this value is less than or equal to 20."] },
+      })
+    );
+    renderWithQueryClient(<Section initialGroups={[]} />);
+    await startEditing(user);
+    await fillNewGroup(user);
+    await user.click(screen.getByRole("button", { name: "Create group" }));
+    await screen.findByDisplayValue("Crossbowmen");
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Max size: Ensure this value is less than or equal to 20."
+    );
+    expect(
+      screen.getByText("Some of the changes are invalid; nothing was saved.")
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
+  });
+
+  it("drops a queued group on Cancel without any request (decision 1, BUG-34)", async () => {
     const user = setupUser();
     renderWithQueryClient(<Section initialGroups={[]} />);
     await startEditing(user);
@@ -253,8 +232,9 @@ describe("UnitSection: henchmen create and save", () => {
 
     await user.click(screen.getByRole("button", { name: "Cancel" }));
 
-    expect(api.deleteWarbandHenchmenGroup).not.toHaveBeenCalled();
-    expect(screen.getByText("Crossbowmen")).toBeInTheDocument();
+    expect(api.batchWarbandHenchmenGroups).not.toHaveBeenCalled();
+    expect(screen.queryByText("Crossbowmen")).not.toBeInTheDocument();
+    expect(screen.getByText("No henchmen groups yet.")).toBeInTheDocument();
   });
 
   it("asks for name, type and race before creating", async () => {
@@ -266,7 +246,7 @@ describe("UnitSection: henchmen create and save", () => {
     await user.click(screen.getByRole("button", { name: "Create group" }));
 
     expect(screen.getByText("Name, type, and race are required.")).toBeInTheDocument();
-    expect(api.createWarbandHenchmenGroup).not.toHaveBeenCalled();
+    expect(screen.queryByText(/New recruit/)).not.toBeInTheDocument();
   });
 
   it("asks for the first henchman's name before creating", async () => {
@@ -279,7 +259,7 @@ describe("UnitSection: henchmen create and save", () => {
     await user.click(screen.getByRole("button", { name: "Create group" }));
 
     expect(screen.getByText("First henchman name is required.")).toBeInTheDocument();
-    expect(api.createWarbandHenchmenGroup).not.toHaveBeenCalled();
+    expect(screen.queryByText(/New recruit/)).not.toBeInTheDocument();
   });
 
   it("disables Add group at the warband unit limit", async () => {
@@ -301,7 +281,7 @@ describe("UnitSection: henchmen create and save", () => {
   it("disbands a group only on Save, though the dialog says it can't be undone (BUG-34, pinned; flips in PR C)", async () => {
     const user = setupUser();
     const group = makeVeteranHenchmenGroup();
-    api.deleteWarbandHenchmenGroup.mockResolvedValue(undefined);
+    api.batchWarbandHenchmenGroups.mockImplementation(answerBatch([group], { gold: 175 }));
     renderWithQueryClient(<Section initialGroups={[group]} />);
     await startEditing(user);
 
@@ -312,10 +292,10 @@ describe("UnitSection: henchmen create and save", () => {
     );
     await user.click(within(dialog).getByRole("button", { name: "Disband group" }));
 
-    expect(api.deleteWarbandHenchmenGroup).not.toHaveBeenCalled();
+    expect(api.batchWarbandHenchmenGroups).not.toHaveBeenCalled();
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(api.deleteWarbandHenchmenGroup).toHaveBeenCalledWith(9, 21));
+    await waitFor(() => expect(batchDismissals(api.batchWarbandHenchmenGroups)).toEqual([21]));
     expect(events.emitWarbandUpdate).toHaveBeenCalledWith(9, { summary: { gold: 175 } });
   });
 
@@ -329,7 +309,7 @@ describe("UnitSection: henchmen create and save", () => {
     await user.click(await screen.findByRole("button", { name: "Disband group" }));
     await user.click(screen.getByRole("button", { name: "Cancel" }));
 
-    expect(api.deleteWarbandHenchmenGroup).not.toHaveBeenCalled();
+    expect(api.batchWarbandHenchmenGroups).not.toHaveBeenCalled();
     expect(screen.getByText("Black Knives")).toBeInTheDocument();
   });
 

@@ -22,6 +22,7 @@ const ENDPOINT_NAMES: Record<UnitKindKey, Record<UnitApiMethod, string>> = {
     update: "updateWarbandHero",
     remove: "deleteWarbandHero",
     levelUp: "levelUpWarbandHero",
+    batch: "batchWarbandHeroes",
   },
   henchmen_group: {
     list: "listWarbandHenchmenGroups",
@@ -32,6 +33,7 @@ const ENDPOINT_NAMES: Record<UnitKindKey, Record<UnitApiMethod, string>> = {
     update: "updateWarbandHenchmenGroup",
     remove: "deleteWarbandHenchmenGroup",
     levelUp: "levelUpWarbandHenchmenGroup",
+    batch: "batchWarbandHenchmenGroups",
   },
   hired_sword: {
     list: "listWarbandHiredSwords",
@@ -42,6 +44,7 @@ const ENDPOINT_NAMES: Record<UnitKindKey, Record<UnitApiMethod, string>> = {
     update: "updateWarbandHiredSword",
     remove: "deleteWarbandHiredSword",
     levelUp: "levelUpWarbandHiredSword",
+    batch: "batchWarbandHiredSwords",
   },
 };
 

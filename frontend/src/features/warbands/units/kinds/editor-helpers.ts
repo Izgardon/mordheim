@@ -30,3 +30,10 @@ export const replacePendingSkill = <F extends { skills: Skill[] }>(form: F, skil
 export function useNoFormExtras() {
   return { cardProps: {} };
 }
+
+let draftCounter = 0;
+/** A key for a recruit queued until Save (decision 1): its queued purchases are filed under it. */
+export const nextDraftKey = (section: string) => {
+  draftCounter += 1;
+  return `draft-${section}-${draftCounter}`;
+};

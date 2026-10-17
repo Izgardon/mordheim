@@ -10,3 +10,4 @@ export const createWarbandHenchmenGroup = groups.create;
 export const updateWarbandHenchmenGroup = groups.update;
 export const deleteWarbandHenchmenGroup = groups.remove;
 export const levelUpWarbandHenchmenGroup = groups.levelUp;
+export const batchWarbandHenchmenGroups = groups.batch;

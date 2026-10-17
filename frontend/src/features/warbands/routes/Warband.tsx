@@ -124,6 +124,7 @@ export default function Warband() {
     ...roster,
     canManageItems: capabilities.manage_items,
     canInitiateTrade,
+    pendingGold: page.pendingGold,
   };
   return (
     <div className="min-h-0 space-y-6">

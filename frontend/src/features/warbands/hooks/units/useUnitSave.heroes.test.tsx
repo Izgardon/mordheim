@@ -15,14 +15,20 @@ import type {
 import { heroKind } from "@/features/warbands/units/kinds/hero";
 import { makeVeteranHero } from "@/test/warband-fixtures";
 import { createQueryWrapper } from "@/test/query-test-utils";
+import {
+  answerBatch,
+  batchCreates,
+  batchDismissals,
+  batchUpdate,
+  batchUpdates,
+} from "@/test/batch-mock";
+import { ApiError } from "@/lib/api-client";
 
 /** Save runs as a mutation, so the hook needs a QueryClient. */
 const renderHook = <R,>(hook: () => R) => renderBareHook(hook, { wrapper: createQueryWrapper() });
 
 const api = vi.hoisted(() => ({
-  createWarbandHero: vi.fn(),
-  updateWarbandHero: vi.fn(),
-  deleteWarbandHero: vi.fn(),
+  batchWarbandHeroes: vi.fn(),
   getWarbandSummary: vi.fn(),
   updateWarband: vi.fn(),
   createWarbandTrade: vi.fn(),
@@ -84,8 +90,6 @@ type SaveParams = {
   newHeroForm: NewHeroForm;
   raceQuery: string;
   originalHeroFormsRef: { current: Map<number, string> };
-  /** Heroes the edit session started with (default: `heroes`). */
-  sessionInitialHeroIds?: readonly number[];
   onSuccess: (updatedWarband: Warband, refreshedHeroes: WarbandHero[]) => void;
   pendingPurchases?: PendingPurchase[];
   onPendingCleared?: () => void;
@@ -101,7 +105,6 @@ const heroParams = (params: SaveParams): UseUnitSaveParams<"hero"> => ({
   newForm: params.newHeroForm,
   raceQuery: params.raceQuery,
   originalFormsRef: params.originalHeroFormsRef,
-  sessionInitialIds: params.sessionInitialHeroIds ?? params.heroes.map((hero) => hero.id),
   warbandHeader: { warband: params.warband, form: params.warbandForm },
   onSuccess: (heroes, updatedWarband) => params.onSuccess(updatedWarband as Warband, heroes),
   pendingPurchases: params.pendingPurchases,
@@ -138,7 +141,7 @@ const renderSave = (overrides: Partial<SaveParams> = {}) => {
   return { ...hook, params, save };
 };
 
-/** The PATCH body for the veteran hero, as `mapHeroToForm → save` builds it. */
+/** The update entry for the veteran hero, as `mapHeroToForm → save` builds it. */
 const veteranPatchBody = {
   name: "Aldric the Bold",
   unit_type: "Captain",
@@ -174,19 +177,17 @@ const veteranPatchBody = {
 };
 
 describe("useUnitSave: heroes (ROST-TEST-15)", () => {
+  const batch = api.batchWarbandHeroes;
+
   beforeEach(() => {
     vi.clearAllMocks();
-    api.updateWarbandHero.mockImplementation(async (_w: number, id: number, body: object) => ({
-      ...(id === leader.id ? leader : champion),
-      ...body,
-    }));
-    api.deleteWarbandHero.mockResolvedValue(undefined);
-    api.getWarbandSummary.mockResolvedValue({ gold: 120, rating: 99 });
+    batch.mockImplementation(answerBatch([leader, champion], { gold: 120, rating: 99 }));
+    api.getWarbandSummary.mockResolvedValue({ gold: 110, rating: 99 });
     api.createWarbandTrade.mockResolvedValue({ id: 700 });
     api.createWarbandLog.mockResolvedValue({});
   });
 
-  it("PATCHes only the heroes whose form changed, with the full mapped hero", async () => {
+  it("sends only the heroes whose form changed, each with the full mapped hero, in one batch", async () => {
     const forms = [leader, champion].map(mapHeroToForm);
     const { save } = renderSave({
       heroForms: [{ ...forms[0], deeds: "Slew the Possessed at the well." }, { ...forms[1] }],
@@ -197,10 +198,8 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
 
     await save();
 
-    expect(api.updateWarbandHero).toHaveBeenCalledTimes(1);
-    expect(api.updateWarbandHero).toHaveBeenCalledWith(9, 11, veteranPatchBody);
-    expect(api.createWarbandHero).not.toHaveBeenCalled();
-    expect(api.deleteWarbandHero).not.toHaveBeenCalled();
+    expect(batch).toHaveBeenCalledTimes(1);
+    expect(batch).toHaveBeenCalledWith(9, { update: [{ id: 11, ...veteranPatchBody }] });
   });
 
   it("round-trips an untouched hero to the same values it was loaded with", async () => {
@@ -213,10 +212,10 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
 
     await save();
 
-    expect(api.updateWarbandHero).toHaveBeenCalledWith(9, 11, veteranPatchBody);
+    expect(batchUpdate(batch, 11)).toEqual(veteranPatchBody);
   });
 
-  it("DELETEs dismissed heroes, then GETs the summary once and hands back the merged roster", async () => {
+  it("dismisses heroes in the batch and hands back the server's roster and summary", async () => {
     const forms = [leader].map(mapHeroToForm);
     const { save, params } = renderSave({
       heroForms: forms,
@@ -225,20 +224,39 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
 
     await save();
 
-    expect(api.deleteWarbandHero).toHaveBeenCalledWith(9, 12);
-    expect(api.updateWarbandHero).not.toHaveBeenCalled();
-    expect(api.getWarbandSummary).toHaveBeenCalledTimes(1);
+    expect(batch).toHaveBeenCalledWith(9, { dismiss: [12] });
+    expect(api.getWarbandSummary).not.toHaveBeenCalled();
     expect(params.onSuccess).toHaveBeenCalledWith({ ...warband, gold: 120, rating: 99 }, [leader]);
   });
 
-  it("commits pending purchases for kept heroes after the unit writes, then GETs the summary", async () => {
+  it("queues recruits until Save, then creates them in the same batch with level_up 0 (decision 1, BUG-65)", async () => {
+    const recruit = {
+      ...mapHeroToForm(makeVeteranHero({ is_leader: false, xp: 5 })),
+      id: undefined,
+      draftKey: "draft-heroes-1",
+      name: "Recruit",
+    };
+    const forms = [mapHeroToForm(leader), recruit];
+    batch.mockImplementation(answerBatch([leader], { gold: 120, rating: 99 }));
+    const { save, params } = renderSave({ heroes: [leader], heroForms: forms });
+
+    await save();
+
+    expect(batchUpdates(batch)).toEqual([]);
+    expect(batchCreates(batch)).toEqual([
+      expect.objectContaining({ name: "Recruit", xp: 5, level_up: 0, price: 60 }),
+    ]);
+    expect(params.onSuccess).toHaveBeenCalledWith({ ...warband, gold: 120, rating: 99 }, [
+      leader,
+      expect.objectContaining({ id: 900, name: "Recruit" }),
+    ]);
+  });
+
+  it("commits pending purchases after the batch, recruits' included, then GETs the summary", async () => {
     const order: string[] = [];
-    api.updateWarbandHero.mockImplementation(async () => {
-      order.push("PATCH hero");
-      return leader;
-    });
-    api.deleteWarbandHero.mockImplementation(async () => {
-      order.push("DELETE hero");
+    batch.mockImplementation(async (...args: Parameters<ReturnType<typeof answerBatch>>) => {
+      order.push("POST batch");
+      return answerBatch([leader])(...args);
     });
     api.createWarbandTrade.mockImplementation(async (_w: number, body: { description: string }) => {
       order.push(`POST trade ${body.description}`);
@@ -252,38 +270,27 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
       order.push("GET summary");
       return {};
     });
+    const purchase = { unitType: "heroes" as const, quantity: 1, isBuying: true };
     const pendingPurchases: PendingPurchase[] = [
+      { ...purchase, unitId: "11", itemId: 101, itemName: "Sword", unitPrice: 10 },
+      { ...purchase, unitId: "12", itemId: 102, itemName: "Dagger", unitPrice: 2 },
+      { ...purchase, unitId: "draft-heroes-7", itemId: 104, itemName: "Club", unitPrice: 3 },
       {
-        unitType: "heroes",
-        unitId: "11",
-        itemId: 101,
-        itemName: "Sword",
-        quantity: 1,
-        unitPrice: 10,
-        isBuying: true,
-      },
-      {
-        unitType: "heroes",
-        unitId: "12",
-        itemId: 102,
-        itemName: "Dagger",
-        quantity: 1,
-        unitPrice: 2,
-        isBuying: true,
-      },
-      {
+        ...purchase,
         unitType: "henchmen",
         unitId: "21",
         itemId: 104,
         itemName: "Club",
-        quantity: 1,
         unitPrice: 3,
-        isBuying: true,
       },
     ];
     const forms = [leader].map(mapHeroToForm);
+    const recruit = { ...forms[0], id: undefined, draftKey: "draft-heroes-7", name: "Otto" };
     const { save, params } = renderSave({
-      heroForms: [{ ...forms[0], name: "Aldric" }],
+      heroForms: [
+        { ...forms[0], name: "Aldric" },
+        { ...recruit, is_leader: false },
+      ],
       removedHeroIds: [12],
       pendingPurchases,
     });
@@ -291,21 +298,23 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
     await save();
 
     expect(order).toEqual([
-      "PATCH hero",
-      "DELETE hero",
+      "POST batch",
+      "POST trade Equipped Aldric (2 items, 13 gc)",
       "POST trade Sword",
       'POST log {"hero":"Aldric","item":"Sword","price":10}',
+      "POST trade Club",
+      'POST log {"hero":"Otto","item":"Club","price":3}',
       "GET summary",
     ]);
     expect(params.onPendingCleared).toHaveBeenCalledTimes(1);
   });
 
-  it("skips the summary GET when nothing changed", async () => {
+  it("sends nothing when nothing changed", async () => {
     const { save, params } = renderSave();
 
     await save();
 
-    expect(api.updateWarbandHero).not.toHaveBeenCalled();
+    expect(batch).not.toHaveBeenCalled();
     expect(api.getWarbandSummary).not.toHaveBeenCalled();
     expect(params.onSuccess).toHaveBeenCalledWith(warband, [leader, champion]);
   });
@@ -338,7 +347,7 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
     await save();
 
     expect(result.current.saveError).toBe("");
-    expect(api.deleteWarbandHero).toHaveBeenCalledWith(9, 11);
+    expect(batchDismissals(batch)).toEqual([11]);
     expect(params.onSuccess).toHaveBeenCalled();
   });
 
@@ -352,7 +361,7 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
 
     expect(result.current.saveError).toBe("Select a leader before saving.");
     expect(result.current.hasAttemptedSave).toBe(true);
-    expect(api.deleteWarbandHero).not.toHaveBeenCalled();
+    expect(batch).not.toHaveBeenCalled();
   });
 
   it("blocks the save while a hero form is invalid", async () => {
@@ -363,7 +372,7 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
 
     expect(result.current.saveError).toBe("Fix hero details before saving.");
     expect(result.current.hasAttemptedSave).toBe(true);
-    expect(api.updateWarbandHero).not.toHaveBeenCalled();
+    expect(batch).not.toHaveBeenCalled();
   });
 
   it("blocks the save while the add-hero draft has content", async () => {
@@ -392,29 +401,8 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
 
     await save();
 
-    expect(api.deleteWarbandHero).not.toHaveBeenCalled();
+    expect(batch).not.toHaveBeenCalled();
     expect(params.onSuccess).not.toHaveBeenCalled();
-  });
-
-  it("sends level_up 0 for a hero created this session, like the other kinds (BUG-65)", async () => {
-    // "Create hero" POSTs at once and snapshots the form, so typing a starting XP afterwards is
-    // an ordinary change; level_up 0 stops that XP minting level-ups.
-    const recruit = makeVeteranHero({ id: 13, name: "Recruit", is_leader: false, xp: 0 });
-    const recruitForm = mapHeroToForm(recruit);
-    const forms = [mapHeroToForm(leader), { ...recruitForm, xp: "5" }];
-    const { save } = renderSave({
-      heroes: [leader, recruit],
-      heroForms: forms,
-      sessionInitialHeroIds: [11],
-      originalHeroFormsRef: { current: snapshotOf([forms[0], recruitForm]) },
-    });
-
-    await save();
-
-    const body = api.updateWarbandHero.mock.calls[0][2];
-    expect(api.updateWarbandHero.mock.calls[0][1]).toBe(13);
-    expect(body.xp).toBe(5);
-    expect(body.level_up).toBe(0);
   });
 
   it("leaves level_up alone for a hero the session started with", async () => {
@@ -427,7 +415,7 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
 
     await save();
 
-    expect(api.updateWarbandHero.mock.calls[0][2]).not.toHaveProperty("level_up");
+    expect(batchUpdate(batch, 11)).not.toHaveProperty("level_up");
   });
 
   it.each([
@@ -447,12 +435,39 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
 
       await save();
 
-      expect(api.updateWarbandHero.mock.calls[0][2].armour_save).toBe(sent);
+      expect(batchUpdate(batch, 11)?.armour_save).toBe(sent);
     }
   );
 
+  it("puts each refused field on its unit's form and saves nothing (UX-05)", async () => {
+    const recruit = { ...mapHeroToForm(champion), id: undefined, draftKey: "draft-heroes-2" };
+    const renamed = { ...mapHeroToForm(leader), name: "Aldric" };
+    batch.mockRejectedValue(
+      new ApiError("Some of the changes are invalid; nothing was saved.", 400, {
+        detail: "Some of the changes are invalid; nothing was saved.",
+        code: "invalid",
+        fields: {
+          "create.0.weapon_skill": ["Ensure this value is less than or equal to 10."],
+          "update.0.xp": ["Ensure that there are no more than 1 decimal places."],
+        },
+      })
+    );
+    const { save, result, params } = renderSave({ heroForms: [renamed, recruit] });
+
+    await save();
+
+    expect(result.current.saveError).toBe("Some of the changes are invalid; nothing was saved.");
+    expect(result.current.formErrors.get(recruit)).toEqual([
+      "Weapon skill: Ensure this value is less than or equal to 10.",
+    ]);
+    expect(result.current.formErrors.get(renamed)).toEqual([
+      "Xp: Ensure that there are no more than 1 decimal places.",
+    ]);
+    expect(params.onSuccess).not.toHaveBeenCalled();
+  });
+
   it("shows the error and keeps the session when a write fails", async () => {
-    api.updateWarbandHero.mockRejectedValue(new Error("Hero not found"));
+    batch.mockRejectedValue(new Error("Hero not found"));
     const forms = [leader].map(mapHeroToForm);
     const { save, result, params } = renderSave({
       heroes: [leader],

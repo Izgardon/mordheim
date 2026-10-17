@@ -5,6 +5,7 @@ import { Button } from "@components/button";
 import { PageSubnav } from "@/components/ui/page-subnav";
 import greedIcon from "@/assets/icons/greed.webp";
 import ratingIcon from "@/assets/icons/Menu.webp";
+import GoldLabel from "./GoldLabel";
 import HeaderIconButton from "./HeaderIconButton";
 import StashItemList from "./stash/StashItemList";
 import WarbandPdfViewerDialog from "./WarbandPdfViewerDialog";
@@ -40,6 +41,8 @@ type WarbandDesktopHeaderProps = {
   activeTab: WarbandTab;
   onTabChange: (tabId: string) => void;
   tradeTotal: number;
+  /** Gold the open edit session will spend on Save (queued recruits and purchases). */
+  pendingGold?: number;
   warbandRating: number;
   heroes: WarbandHero[];
   hiredSwords: WarbandHiredSword[];
@@ -59,6 +62,7 @@ export default function WarbandDesktopHeader({
   activeTab,
   onTabChange,
   tradeTotal,
+  pendingGold = 0,
   warbandRating,
   heroes,
   hiredSwords,
@@ -90,10 +94,10 @@ export default function WarbandDesktopHeader({
           />
           <HeaderIconButton
             icon={greedIcon}
-            label={tradeTotal}
-            tooltip="Gold coins"
+            label={<GoldLabel gold={tradeTotal} pending={pendingGold} />}
+            tooltip={pendingGold > 0 ? "Gold coins left after Save" : "Gold coins"}
             ariaLabel="Gold coins"
-            buttonClassName={transparentButton}
+            buttonClassName={`${transparentButton}${pendingGold > 0 ? " !w-auto" : ""}`}
           />
           <HeaderIconButton
             icon={ratingIcon}
