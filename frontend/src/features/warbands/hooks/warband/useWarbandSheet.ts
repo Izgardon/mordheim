@@ -10,7 +10,7 @@ import {
 } from "../../api/warband-queries";
 
 import type { Unit, UnitKindKey } from "../../types/units";
-import type { WarbandSheet } from "../../types/warband-sheet";
+import { readCapabilities, type WarbandSheet } from "../../types/warband-sheet";
 import type { Warband } from "../../types/warband-types";
 
 type UseWarbandSheetOptions = {
@@ -59,6 +59,8 @@ export function useWarbandSheet({ campaignId, hasCampaignId, warbandId }: UseWar
   const data = id !== null ? sheet.data : undefined;
 
   const warband = useMemo(() => (data ? sheetWarband(data) : null), [data]);
+  const rawCapabilities = data?.capabilities;
+  const capabilities = useMemo(() => readCapabilities(rawCapabilities), [rawCapabilities]);
   const mineFailed = warbandId === null && mine.isError && mine.data === undefined;
   const sheetFailed = id !== null && sheet.isError && data === undefined;
   const isLoading =
@@ -104,7 +106,8 @@ export function useWarbandSheet({ campaignId, hasCampaignId, warbandId }: UseWar
 
   return {
     warband,
-    capabilities: data?.capabilities ?? null,
+    /** What the viewer may do, from the server; all false until the sheet has loaded. */
+    capabilities,
     heroes: data?.heroes ?? NO_HEROES,
     henchmenGroups: data?.henchmen_groups ?? NO_GROUPS,
     hiredSwords: data?.hired_swords ?? NO_HIRED_SWORDS,

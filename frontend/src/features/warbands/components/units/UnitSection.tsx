@@ -11,7 +11,12 @@ type UnitSectionProps<K extends UnitKindKey> = {
   editor: UnitSectionEditor<K>;
   units: Unit<K>[];
   warbandId: number;
+  /** `edit`: Edit, XP +/-, the trading action and pending skill and spell picks. */
   canEdit: boolean;
+  /** `level_up`: the Level Up! control (defaults to canEdit; the server grants them together). */
+  canLevelUp?: boolean;
+  /** `manage_items`: the item menus (defaults to canEdit). */
+  canManageItems?: boolean;
   layoutVariant?: "default" | "mobile";
   actionsHidden?: boolean;
   levelThresholds?: readonly number[];
@@ -25,6 +30,8 @@ export default function UnitSection<K extends UnitKindKey>({
   units,
   warbandId,
   canEdit,
+  canLevelUp = canEdit,
+  canManageItems = canEdit,
   layoutVariant = "default",
   actionsHidden = false,
   levelThresholds,
@@ -89,6 +96,8 @@ export default function UnitSection<K extends UnitKindKey>({
             units={units}
             warbandId={warbandId}
             canEdit={canEdit}
+            canLevelUp={canLevelUp}
+            canManageItems={canManageItems}
             isMobileLayout={isMobileLayout}
             visuallyExpandedId={visuallyExpandedId}
             availableSpells={catalogue.availableSpells}

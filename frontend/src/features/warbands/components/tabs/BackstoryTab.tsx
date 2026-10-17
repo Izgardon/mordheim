@@ -7,16 +7,13 @@ import type { Warband } from "../../types/warband-types";
 
 type BackstoryTabProps = {
   warband: Warband;
-  isWarbandOwner: boolean;
+  /** The sheet's `edit_backstory` capability. */
+  canEdit: boolean;
   isMobile?: boolean;
   onWarbandUpdated: (warband: Warband) => void;
 };
 
-export default function BackstoryTab({
-  warband,
-  isWarbandOwner,
-  onWarbandUpdated,
-}: BackstoryTabProps) {
+export default function BackstoryTab({ warband, canEdit, onWarbandUpdated }: BackstoryTabProps) {
   const {
     backstoryDraft,
     setBackstoryDraft,
@@ -27,7 +24,7 @@ export default function BackstoryTab({
     handleSaveBackstory,
     startEditing,
     cancelEditing,
-  } = useBackstory({ warband, isWarbandOwner, onWarbandUpdated });
+  } = useBackstory({ warband, canEdit, onWarbandUpdated });
 
   const warbandName = warband.name || "this warband";
 
@@ -42,7 +39,7 @@ export default function BackstoryTab({
             <span className="text-2xl font-semibold">{warbandName}</span>
           </h2>
         </div>
-        {isWarbandOwner ? (
+        {canEdit ? (
           <div className="flex items-center justify-end gap-2">
             {isEditingBackstory ? (
               <>

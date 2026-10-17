@@ -6,11 +6,11 @@ import type { Warband } from "../../types/warband-types";
 
 type UseBackstoryParams = {
   warband: Warband;
-  isWarbandOwner: boolean;
+  canEdit: boolean;
   onWarbandUpdated: (warband: Warband) => void;
 };
 
-export function useBackstory({ warband, isWarbandOwner, onWarbandUpdated }: UseBackstoryParams) {
+export function useBackstory({ warband, canEdit, onWarbandUpdated }: UseBackstoryParams) {
   const [backstoryDraft, setBackstoryDraft] = useState(warband.backstory ?? "");
   const [isEditingBackstory, setIsEditingBackstory] = useState(false);
   const [isSavingBackstory, setIsSavingBackstory] = useState(false);
@@ -25,7 +25,7 @@ export function useBackstory({ warband, isWarbandOwner, onWarbandUpdated }: UseB
   }, [warband, isEditingBackstory]);
 
   const handleSaveBackstory = async () => {
-    if (!isWarbandOwner) {
+    if (!canEdit) {
       return;
     }
 

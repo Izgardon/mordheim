@@ -34,7 +34,8 @@ type WarbandMobileMetaBarProps = {
   heroes: WarbandHero[];
   hiredSwords: WarbandHiredSword[];
   henchmenGroups: HenchmenGroup[];
-  canEdit: boolean;
+  /** The sheet's `manage_items` capability: the stash's item menus. */
+  canManageItems: boolean;
   canInitiateTrade: boolean;
   campaignId: number;
   userId: number | undefined;
@@ -49,7 +50,7 @@ export default function WarbandMobileMetaBar({
   heroes,
   hiredSwords,
   henchmenGroups,
-  canEdit,
+  canManageItems,
   canInitiateTrade,
   campaignId,
   userId,
@@ -145,7 +146,7 @@ export default function WarbandMobileMetaBar({
                 <DialogTitle>Warband Stash</DialogTitle>
                 <DialogDescription />
               </DialogHeader>
-              <StashItemList {...stash} warbandId={warband.id} canEdit={canEdit} inSheet />
+              <StashItemList {...stash} warbandId={warband.id} canEdit={canManageItems} inSheet />
             </DialogContent>
           </Dialog>
         </div>

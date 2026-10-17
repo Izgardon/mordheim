@@ -192,6 +192,24 @@ describe("useWarbandSheet", () => {
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.warband).toMatchObject({ id: 9, gold: 55, rating: 140 });
     expect(result.current.capabilities).toEqual(capabilities);
+  });
+
+  it("reads missing or unknown capabilities as not allowed", async () => {
+    apiMocks.getWarbandSheet.mockResolvedValue(
+      sheetOf({ capabilities: { edit: "yes", level_up: true } as never })
+    );
+
+    const { result } = renderSheet();
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.capabilities).toEqual({
+      edit: false,
+      level_up: true,
+      manage_items: false,
+      edit_backstory: false,
+      delete: false,
+      add_custom: false,
+    });
     expect(result.current.heroes).toEqual([richHero]);
     expect(result.current.hiredSwords).toEqual([richHiredSword]);
     expect(result.current.henchmenGroups).toEqual([richGroup]);
@@ -268,7 +286,7 @@ describe("useWarbandSheet", () => {
     rerender({ resolvedWarbandId: null });
 
     expect(result.current.warband).toBeNull();
-    expect(result.current.capabilities).toBeNull();
+    expect(Object.values(result.current.capabilities)).not.toContain(true);
     expect(result.current.heroes).toEqual([]);
     expect(result.current.hiredSwords).toEqual([]);
     expect(result.current.henchmenGroups).toEqual([]);

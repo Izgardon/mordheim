@@ -10,6 +10,8 @@ type ExperienceBarProps = {
   halfRate?: boolean;
   getLevelInfo: (xp: number) => LevelInfo;
   onSave: (newXp: number) => Promise<number>;
+  /** Viewers see the bar and its label but get no +/- (BUG-31). */
+  readOnly?: boolean;
 };
 
 const DRAIN_STEP_MS = 200;
@@ -19,6 +21,7 @@ export default function ExperienceBar({
   halfRate,
   getLevelInfo,
   onSave,
+  readOnly = false,
 }: ExperienceBarProps) {
   const [isHovered, setIsHovered] = useState(false);
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -34,11 +37,12 @@ export default function ExperienceBar({
     fullSegments,
     partialFill,
     handleXpChange,
+    saveError,
     campaignStarted,
   } = useExperienceBar({ xp: initialXp, halfRate, getLevelInfo, onSave });
 
   const currentLevelAt = getLevelInfo(xp).currentLevelAt;
-  const showControls = isMobile || isHovered;
+  const showControls = !readOnly && (isMobile || isHovered);
   const showLabel = isMobile || isHovered;
   const disableAdjust = !campaignStarted;
 
@@ -47,7 +51,7 @@ export default function ExperienceBar({
       className="relative py-2"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      title={!campaignStarted ? "Campaign hasn't started yet" : undefined}
+      title={!campaignStarted && !readOnly ? "Campaign hasn't started yet" : undefined}
     >
       {showLabel && (
         <p
@@ -124,6 +128,11 @@ export default function ExperienceBar({
           </button>
         )}
       </div>
+      {saveError ? (
+        <p role="alert" className="mt-1 text-center text-[10px] text-red-400">
+          {saveError}
+        </p>
+      ) : null}
     </div>
   );
 }

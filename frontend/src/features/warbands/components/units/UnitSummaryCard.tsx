@@ -25,7 +25,10 @@ export type UnitCardProps<K extends UnitKindKey> = {
   levelUpControl?: ReactNode;
   levelThresholds?: readonly number[];
   layoutVariant?: "default" | "mobile";
+  /** `edit`: XP +/-, the trading action and pending skill and spell picks (BUG-31). */
   canEdit?: boolean;
+  /** `manage_items`: the item menus (defaults to canEdit). */
+  canManageItems?: boolean;
 };
 
 type UnitSummaryCardProps<K extends UnitKindKey> = UnitCardProps<K> & {
@@ -58,6 +61,7 @@ export default function UnitSummaryCard<K extends UnitKindKey>({
   layoutVariant = "default",
   showLoadoutOnMobile = false,
   canEdit = false,
+  canManageItems = canEdit,
 }: UnitSummaryCardProps<K>) {
   const [isHovered, setIsHovered] = useState(false);
   const [newSpellOpen, setNewSpellOpen] = useState(false);
@@ -87,6 +91,7 @@ export default function UnitSummaryCard<K extends UnitKindKey>({
       spellLookup={spellLookup}
       fullWidthItems={fullWidthItems}
       canEdit={canEdit}
+      canManageItems={canManageItems}
     />
   );
 
@@ -105,6 +110,7 @@ export default function UnitSummaryCard<K extends UnitKindKey>({
           levelThresholds={levelThresholds}
           layoutVariant={layoutVariant}
           canEdit={canEdit}
+          canManageItems={canManageItems}
         />
       ) : (
         <motion.div
@@ -123,6 +129,7 @@ export default function UnitSummaryCard<K extends UnitKindKey>({
               unit={unit}
               warbandId={warbandId}
               level={kind.getLevelInfo(unit.xp, levelThresholds).level}
+              canEdit={canEdit}
               onUnitUpdated={onUnitUpdated}
             />
           </div>
@@ -139,6 +146,7 @@ export default function UnitSummaryCard<K extends UnitKindKey>({
               halfRate={kind.flags.xpBarHalfRate ? (unit.half_rate ?? false) : undefined}
               getLevelInfo={(xp) => kind.getLevelInfo(xp, levelThresholds)}
               onSave={saveXp}
+              readOnly={!canEdit}
             />
           ) : null}
           {layoutVariant !== "mobile" || showLoadoutOnMobile ? (

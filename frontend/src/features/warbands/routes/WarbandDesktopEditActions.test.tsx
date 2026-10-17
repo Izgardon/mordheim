@@ -69,10 +69,6 @@ vi.mock("../hooks/campaign/useCampaignCatalogues", () => ({
   }),
 }));
 
-vi.mock("../../campaigns/hooks/useCampaignQuery", () => ({
-  useCampaignPermissions: () => [],
-}));
-
 // One loaded warband for the whole render: the hero editor syncs its name/faction form from it.
 const loaded = vi.hoisted(() => ({
   warband: {
@@ -93,6 +89,14 @@ const loaded = vi.hoisted(() => ({
   heroes: [],
   hiredSwords: [],
   henchmenGroups: [],
+  capabilities: {
+    edit: true,
+    level_up: true,
+    manage_items: true,
+    edit_backstory: true,
+    delete: true,
+    add_custom: false,
+  },
   setUnits: {
     hero: mocks.setHeroes,
     henchmen_group: mocks.setHenchmenGroups,
@@ -108,6 +112,7 @@ vi.mock("../hooks/warband/useWarbandSheet", () => ({
     heroes: loaded.heroes,
     hiredSwords: loaded.hiredSwords,
     henchmenGroups: loaded.henchmenGroups,
+    capabilities: loaded.capabilities,
     setUnits: loaded.setUnits,
     isLoading: false,
     error: "",

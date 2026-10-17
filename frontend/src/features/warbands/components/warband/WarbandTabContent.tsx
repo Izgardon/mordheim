@@ -2,6 +2,7 @@
 import WarbandResourceBar from "./resources/WarbandResourceBar";
 
 import type { WarbandEditors } from "../../hooks/warband/useWarbandPage";
+import type { WarbandCapabilities } from "../../types/warband-sheet";
 import type { WarbandRosterEditSection } from "../../hooks/warband/useWarbandMobileTopBar";
 import type {
   HenchmenGroup,
@@ -14,7 +15,7 @@ type WarbandTabContentProps = {
   warbandId: number;
   resources: WarbandResource[];
   onResourcesUpdated: (resources: WarbandResource[]) => void;
-  canEdit: boolean;
+  capabilities: WarbandCapabilities;
   editors: WarbandEditors;
   heroes: WarbandHero[];
   henchmenGroups: HenchmenGroup[];
@@ -30,12 +31,15 @@ type WarbandTabContentProps = {
   showLoadoutOnMobile?: boolean;
 };
 
-/** The Warband tab: resources, then the Heroes, Henchmen and Hired Swords sections. */
+/**
+ * The Warband tab: resources, then the Heroes, Henchmen and Hired Swords sections, each control
+ * gated on the sheet's capabilities (BUG-31).
+ */
 export default function WarbandTabContent({
   warbandId,
   resources,
   onResourcesUpdated,
-  canEdit,
+  capabilities,
   editors,
   heroes,
   henchmenGroups,
@@ -46,14 +50,22 @@ export default function WarbandTabContent({
   sectionActionsHidden,
   showLoadoutOnMobile = false,
 }: WarbandTabContentProps) {
-  const shared = { warbandId, canEdit, layoutVariant, availableGold, showLoadoutOnMobile };
+  const shared = {
+    warbandId,
+    canEdit: capabilities.edit,
+    canLevelUp: capabilities.level_up,
+    canManageItems: capabilities.manage_items,
+    layoutVariant,
+    availableGold,
+    showLoadoutOnMobile,
+  };
   return (
     <>
       <WarbandResourceBar
         warbandId={warbandId}
         resources={resources}
         onResourcesUpdated={onResourcesUpdated}
-        canEdit={canEdit}
+        canEdit={capabilities.manage_items}
         variant={layoutVariant === "mobile" ? "plain" : "card"}
       />
       <UnitSection

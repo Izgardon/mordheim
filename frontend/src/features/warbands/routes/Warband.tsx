@@ -13,7 +13,7 @@ import WarbandMobileMetaBar from "../components/warband/WarbandMobileMetaBar";
 import WarbandDesktopHeader from "../components/warband/WarbandDesktopHeader";
 import WarbandPageStatus from "../components/warband/WarbandPageStatus";
 import { WarbandCatalogueProvider } from "../components/units/catalogue-context";
-import { useWarbandAccess } from "../hooks/warband/useWarbandAccess";
+import { useAuth } from "../../auth/hooks/use-auth";
 import { useWarbandSheet } from "../hooks/warband/useWarbandSheet";
 import { useWarbandWarchest } from "../hooks/warband/useWarbandWarchest";
 import { useWarbandTradeSession } from "../hooks/warband/useWarbandTradeSession";
@@ -41,9 +41,9 @@ export default function Warband() {
 
   const sheet = useWarbandSheet({ campaignId, hasCampaignId, warbandId: resolvedWarbandId });
   const { warband, heroes, hiredSwords, henchmenGroups, setUnits, mergeWarband } = sheet;
-
-  const access = useWarbandAccess(campaignId, campaign?.role, warband);
-  const { user, isWarbandOwner, canEdit } = access;
+  const { capabilities } = sheet;
+  const canEdit = capabilities.edit;
+  const { user } = useAuth();
 
   const page = useWarbandPage({
     campaign,
@@ -116,7 +116,14 @@ export default function Warband() {
     onItemsChanged: warchest.loadWarchestItems,
     onHeroUpdated: replaceHero,
   };
-  const header = { warband, tradeTotal, warbandRating, ...roster, canEdit, canInitiateTrade };
+  const header = {
+    warband,
+    tradeTotal,
+    warbandRating,
+    ...roster,
+    canManageItems: capabilities.manage_items,
+    canInitiateTrade,
+  };
   return (
     <div className="min-h-0 space-y-6">
       {isMobile ? (
@@ -162,12 +169,12 @@ export default function Warband() {
         contentClassName={isMobile ? "space-y-4 pt-2" : "pt-0"}
       >
         {page.activeTab === "warband" ? (
-          <WarbandCatalogueProvider campaignId={campaignId} canAddCustom={access.canAddCustom}>
+          <WarbandCatalogueProvider campaignId={campaignId} canAddCustom={capabilities.add_custom}>
             <WarbandTabContent
               warbandId={warband.id}
               resources={warband.resources ?? []}
               onResourcesUpdated={(resources) => mergeWarband({ resources })}
-              canEdit={canEdit}
+              capabilities={capabilities}
               editors={page.editors}
               {...roster}
               levelThresholds={page.levelThresholds}
@@ -187,7 +194,7 @@ export default function Warband() {
         ) : page.activeTab === "backstory" ? (
           <BackstoryTab
             warband={warband}
-            isWarbandOwner={isWarbandOwner}
+            canEdit={capabilities.edit_backstory}
             isMobile={isMobile}
             onWarbandUpdated={mergeWarband}
           />

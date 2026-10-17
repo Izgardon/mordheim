@@ -29,7 +29,10 @@ type UnitListBlocksProps<K extends UnitKindKey> = {
   onPendingSpellClick?: () => void;
   onPendingSkillClick?: () => void;
   spellLookup?: Record<number, { dc?: string | number | null }>;
+  /** `edit`: pending "New Skill/Spell/Special" entries open their pickers (BUG-31). */
   canEdit?: boolean;
+  /** `manage_items`: the item menus (defaults to canEdit). */
+  canManageItems?: boolean;
 };
 
 const isUnit = (entry: unknown): entry is WarbandUnitDetail =>
@@ -50,6 +53,7 @@ export default function UnitListBlocks<K extends UnitKindKey>({
   onPendingSkillClick,
   spellLookup,
   canEdit = false,
+  canManageItems = canEdit,
 }: UnitListBlocksProps<K>) {
   const [openPopups, setOpenPopups] = useState<UnitListPopup[]>([]);
   const [activeTab, setActiveTab] = useState<string | null>(null);
@@ -60,7 +64,7 @@ export default function UnitListBlocks<K extends UnitKindKey>({
     warbandId,
     unit,
     unitType: kind.section,
-    canEdit,
+    canEdit: canManageItems,
     onSourceUpdated: onUnitUpdated,
     onMutationComplete: (result) => {
       const sameKindTarget = result.targetUnitType === kind.section ? result.target : null;
@@ -95,15 +99,17 @@ export default function UnitListBlocks<K extends UnitKindKey>({
     if (entry.type === "roster") {
       return;
     }
-    if (entry.pending && entry.type === "spell" && onPendingSpellClick) {
+    // Viewers see a pending entry like any other; only editors resolve it.
+    const resolvesPending = entry.pending && canEdit;
+    if (resolvesPending && entry.type === "spell" && onPendingSpellClick) {
       onPendingSpellClick();
       return;
     }
-    if (entry.pending && entry.type === "skill" && onPendingSkillClick) {
+    if (resolvesPending && entry.type === "skill" && onPendingSkillClick) {
       onPendingSkillClick();
       return;
     }
-    if (entry.pending && onPendingEntryClick && entry.type !== "item") {
+    if (resolvesPending && onPendingEntryClick && entry.type !== "item") {
       onPendingEntryClick(
         unit.id,
         entry.type === "skill" ? "skills" : entry.type === "spell" ? "spells" : "special"
@@ -154,7 +160,7 @@ export default function UnitListBlocks<K extends UnitKindKey>({
             memberCount={
               hasMembers ? ("henchmen" in unit ? (unit.henchmen ?? []).length : 0) : null
             }
-            canEdit={canEdit}
+            canEdit={canManageItems}
             onClick={(event) => handleEntryClick(entry, event)}
             onMenuClick={(event) => itemMenu.handleMenuToggle(entry, event)}
           />
@@ -173,7 +179,7 @@ export default function UnitListBlocks<K extends UnitKindKey>({
       />
       <UnitItemDialogs
         {...itemMenu}
-        canEdit={canEdit}
+        canEdit={canManageItems}
         selfExcludeType={kind.section}
         selfId={unit.id}
         presetUnitType={kind.section}

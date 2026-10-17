@@ -33,6 +33,7 @@ type UnitExpandedCardProps<K extends UnitKindKey> = {
   layoutVariant?: "default" | "mobile";
   levelThresholds?: readonly number[];
   canEdit?: boolean;
+  canManageItems?: boolean;
 };
 
 /** The expanded roster card (the sheet's units carry the race profile, deeds and kills). */
@@ -47,6 +48,7 @@ export default function UnitExpandedCard<K extends UnitKindKey>({
   layoutVariant = "default",
   levelThresholds,
   canEdit = false,
+  canManageItems = canEdit,
 }: UnitExpandedCardProps<K>) {
   const [newSpellOpen, setNewSpellOpen] = useState(false);
   const [newSkillOpen, setNewSkillOpen] = useState(false);
@@ -63,6 +65,7 @@ export default function UnitExpandedCard<K extends UnitKindKey>({
       halfRate={kind.flags.xpBarHalfRate ? (unit.half_rate ?? false) : undefined}
       getLevelInfo={(xp) => kind.getLevelInfo(xp, levelThresholds)}
       onSave={saveXp}
+      readOnly={!canEdit}
     />
   ) : null;
   const identity = (
@@ -111,6 +114,7 @@ export default function UnitExpandedCard<K extends UnitKindKey>({
       onPendingSpellClick={() => setNewSpellOpen(true)}
       onPendingSkillClick={() => setNewSkillOpen(true)}
       canEdit={canEdit}
+      canManageItems={canManageItems}
     />
   );
 

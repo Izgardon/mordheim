@@ -10,6 +10,8 @@ type UnitSectionRosterProps<K extends UnitKindKey> = {
   units: Unit<K>[];
   warbandId: number;
   canEdit: boolean;
+  canLevelUp: boolean;
+  canManageItems: boolean;
   isMobileLayout: boolean;
   visuallyExpandedId: number | null;
   availableSpells: Spell[];
@@ -23,6 +25,8 @@ export default function UnitSectionRoster<K extends UnitKindKey>({
   units,
   warbandId,
   canEdit,
+  canLevelUp,
+  canManageItems,
   isMobileLayout,
   visuallyExpandedId,
   availableSpells,
@@ -33,7 +37,7 @@ export default function UnitSectionRoster<K extends UnitKindKey>({
 
   const card = (unit: Unit<K>) => {
     const isExpanded = editor.forms.expandedId === unit.id;
-    const levelUpControl = canEdit ? (
+    const levelUpControl = canLevelUp ? (
       <UnitLevelUpControl
         kind={kind}
         unit={unit}
@@ -68,6 +72,7 @@ export default function UnitSectionRoster<K extends UnitKindKey>({
         layoutVariant={isMobileLayout ? "mobile" : "default"}
         showLoadoutOnMobile={isMobileLayout ? showLoadoutOnMobile : undefined}
         canEdit={canEdit}
+        canManageItems={canManageItems}
         onToggle={() => editor.toggleExpanded(unit.id)}
       />
     );

@@ -62,6 +62,7 @@ vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => true }));
 type Overrides = Record<string, unknown>;
 type CardProps = {
   canEdit?: boolean;
+  canManageItems?: boolean;
   onUpdated?: (unit: unknown) => void;
   onToggle?: () => void;
   onClose?: () => void;
@@ -144,6 +145,7 @@ const kinds: KindCase[] = [
         unit={heroCard(overrides)}
         warbandId={9}
         canEdit={props.canEdit}
+        canManageItems={props.canManageItems}
         onUnitUpdated={props.onUpdated}
         onToggle={props.onToggle}
         isExpanded={props.isExpanded}
@@ -210,6 +212,7 @@ const kinds: KindCase[] = [
         unit={groupCard(overrides)}
         warbandId={9}
         canEdit={props.canEdit}
+        canManageItems={props.canManageItems}
         onUnitUpdated={props.onUpdated}
         onToggle={props.onToggle}
         isExpanded={props.isExpanded}
@@ -276,6 +279,7 @@ const kinds: KindCase[] = [
         unit={hiredCard(overrides)}
         warbandId={9}
         canEdit={props.canEdit}
+        canManageItems={props.canManageItems}
         onUnitUpdated={props.onUpdated}
         onToggle={props.onToggle}
         isExpanded={props.isExpanded}
@@ -365,7 +369,7 @@ describe.each(kinds)("$kind summary card", (kind) => {
   });
 
   it("shows XP progress towards the next level from the kind's default table", () => {
-    renderWithQueryClient(kind.summary());
+    renderWithQueryClient(kind.summary({}, { canEdit: true }));
 
     expect(screen.getByText(kind.xpLabel)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "+" })).toBeEnabled();
@@ -406,10 +410,23 @@ describe.each(kinds)("$kind summary card", (kind) => {
     expect(onUpdated).toHaveBeenCalledWith({ id: kind.unitId, xp: kind.xpAfterPlus });
   });
 
-  it("shows XP +/- to viewers who can't edit (BUG-31, pinned; flips in PR C)", () => {
+  it("shows viewers who can't edit a read-only XP bar (BUG-31)", () => {
     renderWithQueryClient(kind.summary({}, { canEdit: false }));
 
-    expect(screen.getByRole("button", { name: "+" })).toBeEnabled();
+    expect(screen.getByText(kind.xpLabel)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "+" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "-" })).not.toBeInTheDocument();
+  });
+
+  it("puts the XP back and says why when the save fails (BUG-31)", async () => {
+    const user = setupUser();
+    kind.updateApi.mockRejectedValue(new Error("You can't edit this warband."));
+    renderWithQueryClient(kind.summary({}, { canEdit: true }));
+
+    await user.click(screen.getByRole("button", { name: "+" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("You can't edit this warband.");
+    expect(screen.getByText(kind.xpLabel)).toBeInTheDocument();
   });
 
   it("lists the loadout behind one tab per non-empty block, the first tab open", async () => {
@@ -441,12 +458,14 @@ describe.each(kinds)("$kind summary card", (kind) => {
     expect(screen.queryByRole("button", { name: "Spells" })).not.toBeInTheDocument();
   });
 
-  it("offers item menus only to editors", () => {
-    const { unmount } = renderWithQueryClient(kind.summary({ henchmen: [] }, { canEdit: false }));
+  it("offers item menus only to those who may manage items", () => {
+    const { unmount } = renderWithQueryClient(
+      kind.summary({ henchmen: [] }, { canEdit: true, canManageItems: false })
+    );
     const viewerButtons = screen.getAllByRole("button").length;
     unmount();
 
-    renderWithQueryClient(kind.summary({ henchmen: [] }, { canEdit: true }));
+    renderWithQueryClient(kind.summary({ henchmen: [] }, { canEdit: true, canManageItems: true }));
 
     expect(screen.getAllByRole("button").length).toBe(viewerButtons + kind.itemEntries.length);
   });
@@ -614,7 +633,7 @@ describe("hero card extras", () => {
   it("steps half-rate XP by 0.5", async () => {
     const user = setupUser();
     api.updateWarbandHero.mockResolvedValue(heroCard({ xp: 7.5 }));
-    renderWithQueryClient(hero.summary({ half_rate: true }));
+    renderWithQueryClient(hero.summary({ half_rate: true }, { canEdit: true }));
 
     await user.click(screen.getByRole("button", { name: "+" }));
 
@@ -672,28 +691,47 @@ describe("hero card extras", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("offers the Trade badge to viewers too (BUG-31, pinned; flips in PR C)", () => {
+  it("shows viewers the Trade badge without letting them mark it (BUG-31)", () => {
     renderWithQueryClient(hero.summary({}, { canEdit: false }));
 
+    expect(screen.getByTitle("Trading action available")).toHaveTextContent("Trade");
     expect(
+      screen.queryByRole("button", {
+        name: "Mark Aldric the Bold as having used their trading action",
+      })
+    ).not.toBeInTheDocument();
+  });
+
+  it("keeps the trade dialog open with the error when marking fails (BUG-31)", async () => {
+    const user = setupUser();
+    api.updateWarbandHero.mockRejectedValue(new Error("Forbidden"));
+    renderWithQueryClient(hero.summary({}, { canEdit: true }));
+
+    await user.click(
       screen.getByRole("button", {
         name: "Mark Aldric the Bold as having used their trading action",
       })
-    ).toBeInTheDocument();
+    );
+    await user.click(await screen.findByRole("button", { name: "Confirm Trade" }));
+
+    const dialog = screen.getByRole("dialog");
+    expect(await within(dialog).findByRole("alert")).toHaveTextContent("Forbidden");
+    expect(within(dialog).getByRole("button", { name: "Confirm Trade" })).toBeEnabled();
   });
 
-  it("opens 'Learn New Skill' from a pending skill, for viewers too (BUG-31, pinned; flips in PR C)", async () => {
+  it("opens 'Learn New Skill' from a pending skill for editors only (BUG-31)", async () => {
     const user = setupUser();
-    renderWithQueryClient(
-      hero.summary(
-        { skills: [makeSkill({ id: 299, name: "New Skill", type: "Pending" })] },
-        { canEdit: false }
-      )
-    );
+    const pending = { skills: [makeSkill({ id: 299, name: "New Skill", type: "Pending" })] };
+    const { unmount } = renderWithQueryClient(hero.summary(pending, { canEdit: false }));
 
     await user.click(screen.getByRole("button", { name: "Skills" }));
     await user.click(screen.getByRole("button", { name: "New Skill" }));
+    expect(screen.queryByRole("dialog", { name: "Learn New Skill" })).not.toBeInTheDocument();
+    unmount();
 
+    renderWithQueryClient(hero.summary(pending, { canEdit: true }));
+    await user.click(screen.getByRole("button", { name: "Skills" }));
+    await user.click(screen.getByRole("button", { name: "New Skill" }));
     expect(await screen.findByRole("dialog", { name: "Learn New Skill" })).toBeInTheDocument();
   });
 
@@ -755,7 +793,7 @@ describe("henchmen card extras", () => {
   it("ignores half-rate on the XP bar (BUG-33, pinned; flips in PR C)", async () => {
     const user = setupUser();
     api.updateWarbandHenchmenGroup.mockResolvedValue(groupCard({ xp: 5 }));
-    renderWithQueryClient(henchmen.summary({ half_rate: true }));
+    renderWithQueryClient(henchmen.summary({ half_rate: true }, { canEdit: true }));
 
     await user.click(screen.getByRole("button", { name: "+" }));
 
@@ -828,7 +866,7 @@ describe("hired sword card extras", () => {
   it("steps half-rate XP by 0.5", async () => {
     const user = setupUser();
     api.updateWarbandHiredSword.mockResolvedValue(hiredCard({ xp: 4.5 }));
-    renderWithQueryClient(hired.summary({ half_rate: true }));
+    renderWithQueryClient(hired.summary({ half_rate: true }, { canEdit: true }));
 
     await user.click(screen.getByRole("button", { name: "+" }));
 

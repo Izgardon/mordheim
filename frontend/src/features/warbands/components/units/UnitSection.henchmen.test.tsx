@@ -73,11 +73,13 @@ function Section({
   maxUnits,
   heroAndBloodPactedCount,
   canEdit = true,
+  canLevelUp,
 }: {
   initialGroups: HenchmenGroup[];
   maxUnits?: number;
   heroAndBloodPactedCount?: number;
   canEdit?: boolean;
+  canLevelUp?: boolean;
 }) {
   const [groups, setGroups] = useState(initialGroups);
   const editor = useUnitSectionEditor(henchmenKind, {
@@ -104,6 +106,7 @@ function Section({
         units={groups}
         warbandId={9}
         canEdit={canEdit}
+        canLevelUp={canLevelUp}
         availableGold={200}
       />
     </WarbandCatalogueContext.Provider>
@@ -338,6 +341,15 @@ describe("UnitSection: henchmen create and save", () => {
     expect(screen.getByText("Black Knives")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Level Up!" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Edit Henchmen" })).not.toBeInTheDocument();
+  });
+
+  it("shows Level Up! from the level_up capability, not from edit (BUG-31)", () => {
+    renderWithQueryClient(
+      <Section initialGroups={[makeVeteranHenchmenGroup()]} canEdit canLevelUp={false} />
+    );
+
+    expect(screen.getAllByRole("button", { name: "Edit Henchmen" })).toHaveLength(2);
+    expect(screen.queryByRole("button", { name: "Level Up!" })).not.toBeInTheDocument();
   });
 
   it("says when there are no groups yet", () => {

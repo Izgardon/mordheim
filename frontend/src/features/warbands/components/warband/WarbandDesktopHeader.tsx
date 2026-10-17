@@ -45,7 +45,8 @@ type WarbandDesktopHeaderProps = {
   hiredSwords: WarbandHiredSword[];
   henchmenGroups: HenchmenGroup[];
   stash: WarbandStashControls;
-  canEdit: boolean;
+  /** The sheet's `manage_items` capability: the stash's item menus. */
+  canManageItems: boolean;
   canInitiateTrade: boolean;
   campaignId: number;
   userId?: number;
@@ -63,7 +64,7 @@ export default function WarbandDesktopHeader({
   hiredSwords,
   henchmenGroups,
   stash: { isOpen: isStashOpen, onToggle: onToggleStash, ...stash },
-  canEdit,
+  canManageItems,
   canInitiateTrade,
   campaignId,
   userId,
@@ -132,7 +133,7 @@ export default function WarbandDesktopHeader({
               className={`warchest-float ${isStashOpen ? "is-open" : ""}`}
               aria-hidden={!isStashOpen}
             >
-              <StashItemList {...stash} warbandId={warband.id} canEdit={canEdit} />
+              <StashItemList {...stash} warbandId={warband.id} canEdit={canManageItems} />
             </section>
           </div>
           {canInitiateTrade ? (

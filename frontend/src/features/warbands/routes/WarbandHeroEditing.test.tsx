@@ -84,7 +84,6 @@ vi.mock("../hooks/campaign/useCampaignCatalogues", () => ({
     handleRaceCreated: vi.fn(),
   }),
 }));
-vi.mock("../../campaigns/hooks/useCampaignQuery", () => ({ useCampaignPermissions: () => [] }));
 vi.mock("@/lib/catalogue-queries", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/catalogue-queries")>()),
   useCatalogue: () => ({ data: [], isLoading: false, error: "" }),
@@ -117,8 +116,19 @@ vi.mock("../hooks/warband/useWarbandSheet", async () => {
         (patch: object) => setWarband((current) => ({ ...current, ...patch })),
         []
       );
+      // The server's answer for this viewer: the warband's owner (user 7) or a campaign owner.
+      const allowed = viewer.userId === 7 || viewer.role === "owner";
+      const capabilities = {
+        edit: allowed,
+        level_up: allowed,
+        manage_items: allowed,
+        edit_backstory: allowed,
+        delete: viewer.userId === 7,
+        add_custom: allowed,
+      };
       return {
         warband,
+        capabilities,
         mergeWarband,
         showCreated: vi.fn(),
         heroes,

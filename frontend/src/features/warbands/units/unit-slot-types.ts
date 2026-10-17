@@ -10,6 +10,8 @@ export type SummaryHeaderProps<K extends UnitKindKey> = {
   warbandId: number;
   /** The unit's level from the kind's table and the campaign thresholds. */
   level: number;
+  /** `edit`: the hero's Trade badge marks the trading action (BUG-31). */
+  canEdit: boolean;
   onUnitUpdated?: (updated: Unit<K>) => void;
 };
 

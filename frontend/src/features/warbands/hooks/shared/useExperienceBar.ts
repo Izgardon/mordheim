@@ -17,6 +17,7 @@ type DrainInfo = {
 };
 
 const DRAIN_STEP_MS = 200;
+const SAVE_ERROR = "Unable to save XP.";
 
 const normalizeHalfStep = (value: number) => Math.round(value * 2) / 2;
 
@@ -36,6 +37,7 @@ export function useExperienceBar({
   const [isUpdating, setIsUpdating] = useState(false);
   const [isGlowing, setIsGlowing] = useState(false);
   const [draining, setDraining] = useState<DrainInfo | null>(null);
+  const [saveError, setSaveError] = useState("");
   const glowTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const drainTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -110,6 +112,7 @@ export function useExperienceBar({
     triggerGlow();
     setXp(newXp);
     setIsUpdating(true);
+    setSaveError("");
 
     const newInfo = getLevelInfo(newXp);
     if (newInfo.currentLevelAt !== currentInfo.currentLevelAt) {
@@ -120,8 +123,13 @@ export function useExperienceBar({
       setDraining({ oldFilled: oldFilled + 1, oldTotal });
     }
 
+    // A failed save puts the XP back and says why (it used to be an unhandled rejection).
     onSave(newXp)
       .then((resolvedXp) => setXp(resolvedXp))
+      .catch((error: unknown) => {
+        setXp(xp);
+        setSaveError(error instanceof Error && error.message ? error.message : SAVE_ERROR);
+      })
       .finally(() => setIsUpdating(false));
   };
 
@@ -145,6 +153,7 @@ export function useExperienceBar({
     fullSegments,
     partialFill,
     handleXpChange,
+    saveError,
     campaignStarted,
   };
 }
