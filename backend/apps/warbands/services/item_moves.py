@@ -25,7 +25,7 @@ def _get_unit_instance(warband: Warband, unit_type: str, unit_id: int | None) ->
     # Transfers and sales answer with the detail payload, but henchmen list every member here, dead ones too.
     members = ("henchmen",) if kind.has_members else ()
     units = kind.visible(kind.objects.filter(id=unit_id, warband=warband)).select_related("race")
-    return units.prefetch_related(*kind.detail_prefetch, *members).first()
+    return kind.with_loadout(units, detail=True, living_members=False).prefetch_related(*members).first()
 
 
 def _unit_payload(warband: Warband, unit_type: str, unit_id: int | None) -> Any:

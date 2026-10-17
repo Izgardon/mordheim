@@ -41,22 +41,22 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     # Warband sheet
     "warband_detail": ("/api/warbands/{warband}/", 3),
     "warband_summary": ("/api/warbands/{warband}/summary/", 7),
-    "warband_sheet": ("/api/warbands/{warband}/sheet/", 23),  # constant in units (test below); one request for 5
-    "warband_heroes": ("/api/warbands/{warband}/heroes/", 7),  # constant in units
-    "warband_henchmen": ("/api/warbands/{warband}/henchmen-groups/", 7),  # constant in units
-    "warband_hired_swords": ("/api/warbands/{warband}/hired-swords/", 7),  # constant in units
-    "warband_hero": ("/api/warbands/{warband}/heroes/{hero}/", 10),
-    "warband_henchmen_group": ("/api/warbands/{warband}/henchmen-groups/{group}/", 10),
-    "warband_hired_sword": ("/api/warbands/{warband}/hired-swords/{sword}/", 10),
+    "warband_sheet": ("/api/warbands/{warband}/sheet/", 15),  # constant in units (test below); one request for 5
+    "warband_heroes": ("/api/warbands/{warband}/heroes/", 4),  # constant in units
+    "warband_henchmen": ("/api/warbands/{warband}/henchmen-groups/", 5),  # constant in units
+    "warband_hired_swords": ("/api/warbands/{warband}/hired-swords/", 4),  # constant in units
+    "warband_hero": ("/api/warbands/{warband}/heroes/{hero}/", 7),
+    "warband_henchmen_group": ("/api/warbands/{warband}/henchmen-groups/{group}/", 8),
+    "warband_hired_sword": ("/api/warbands/{warband}/hired-swords/{sword}/", 7),
     "warband_hero_kill_history": ("/api/warbands/{warband}/heroes/{hero}/kill-history/", 4),
-    "warband_heroes_detail": ("/api/warbands/{warband}/heroes/detail/", 10),  # constant in units (test below)
+    "warband_heroes_detail": ("/api/warbands/{warband}/heroes/detail/", 7),  # constant in units (test below)
     "warband_henchmen_detail": (
         "/api/warbands/{warband}/henchmen-groups/detail/",
-        10,
+        8,
     ),  # constant in units
     "warband_hired_swords_detail": (
         "/api/warbands/{warband}/hired-swords/detail/",
-        10,
+        7,
     ),  # constant in units
     "warband_items": ("/api/warbands/{warband}/items/", 3),
     "warband_logs": ("/api/warbands/{warband}/logs/", 3),
@@ -79,26 +79,26 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
 # count doesn't grow with the unit's items (test below). Every write runs in transaction.atomic(), which
 # inside the test's own transaction is a SAVEPOINT and a RELEASE (2 queries).
 WRITE_QUERY_BUDGETS: dict[str, tuple[str, str, dict[str, Any], int]] = {
-    "hero_patch_xp": ("patch", "/api/warbands/{warband}/heroes/{hero}/", {"xp": 3}, 14),
-    "henchmen_group_patch_xp": ("patch", "/api/warbands/{warband}/henchmen-groups/{group}/", {"xp": 3}, 14),
-    "hired_sword_patch_xp": ("patch", "/api/warbands/{warband}/hired-swords/{sword}/", {"xp": 3}, 14),
+    "hero_patch_xp": ("patch", "/api/warbands/{warband}/heroes/{hero}/", {"xp": 3}, 11),
+    "henchmen_group_patch_xp": ("patch", "/api/warbands/{warband}/henchmen-groups/{group}/", {"xp": 3}, 12),
+    "hired_sword_patch_xp": ("patch", "/api/warbands/{warband}/hired-swords/{sword}/", {"xp": 3}, 11),
     "hero_level_up": (
         "post",
         "/api/warbands/{warband}/heroes/{hero}/level-up/",
         {"payload": {"advance": {"id": "WS"}}},
-        15,
+        12,
     ),
     "henchmen_group_level_up": (
         "post",
         "/api/warbands/{warband}/henchmen-groups/{group}/level-up/",
         {"payload": {"advance": {"id": "WS"}}},
-        15,
+        13,
     ),
     "hired_sword_level_up": (
         "post",
         "/api/warbands/{warband}/hired-swords/{sword}/level-up/",
         {"payload": {"advance": {"id": "WS"}}},
-        15,
+        12,
     ),
 }
 

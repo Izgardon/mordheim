@@ -31,13 +31,11 @@ from apps.warbands.models import (
     Warband,
 )
 from apps.warbands.prefetches import (
-    HENCHMEN_GROUP_DETAIL_PREFETCH,
-    HENCHMEN_GROUP_SUMMARY_PREFETCH,
-    HERO_DETAIL_PREFETCH,
-    HERO_SUMMARY_PREFETCH,
-    HIRED_SWORD_DETAIL_PREFETCH,
-    HIRED_SWORD_SUMMARY_PREFETCH,
     alive_henchmen_prefetch,
+    entries_array,
+    entries_attr,
+    item_detail_prefetches,
+    links_prefetch,
 )
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
 from apps.warbands.utils.hero_level import count_new_level_ups
@@ -45,7 +43,6 @@ from apps.warbands.utils.hero_level import count_new_level_ups
 from .hooks import HenchmenHooks, LeaderHooks, UnitHooks
 
 UnitKindKey = Literal["hero", "henchmen_group", "hired_sword"]  # also the item-transfer source/target types
-Prefetches = tuple[str | Prefetch, ...]
 
 # Level-up advance code -> stat field.
 STAT_FIELD_BY_ADVANCE: Mapping[str, str] = {
@@ -116,8 +113,6 @@ class UnitKindSpec:
     skills: LinkSpec
     specials: LinkSpec
     spells: LinkSpec | None  # henchmen groups have no spells
-    summary_prefetch: Prefetches  # the loadout, for list rows
-    detail_prefetch: Prefetches  # the loadout with item details, for detail payloads
     has_members: bool  # henchmen groups list their living members in every payload
     thresholds_setting: str  # CampaignSettings attribute holding the kind's XP table
     count_level_ups: Callable[[Any, Any, Any], int]  # (previous xp, new xp, thresholds) -> thresholds crossed
@@ -145,18 +140,33 @@ class UnitKindSpec:
         """The units the roster shows: the one place the "visible units" rule lives."""
         return units.filter(dead=False)
 
-    def member_prefetch(self) -> Prefetches:
-        return (alive_henchmen_prefetch(),) if self.has_members else ()
+    def with_loadout(self, units: QuerySet[Any], *, detail: bool, living_members: bool = True) -> QuerySet[Any]:
+        """`units` read for their payloads in a fixed number of queries, whatever the roster and loadout size.
+
+        Skills, specials and spells come with each unit's row (ordered JSON arrays); items are prefetched,
+        with their properties and availabilities for the detail payload; henchmen groups' living members too.
+        """
+        entries = {
+            entries_attr(link.relation): entries_array(link.model, self.parent_field, link.target)
+            for link in self.links()
+            if link is not self.items
+        }
+        prefetch: list[str | Prefetch] = [links_prefetch(self.items.relation, self.items.model, "item")]
+        if detail:
+            prefetch += item_detail_prefetches(f"{self.items.relation}__item__")
+        if self.has_members and living_members:
+            prefetch.append(alive_henchmen_prefetch())
+        loaded: QuerySet[Any] = units.annotate(**entries).prefetch_related(*prefetch)
+        return loaded
 
     def roster(self, warband: Warband, *, detail: bool) -> QuerySet[Any]:
-        """The warband's visible units in id order, prefetched for the summary or the detail payload."""
-        prefetch = self.detail_prefetch if detail else self.summary_prefetch
+        """The warband's visible units in id order, read for the summary or the detail payload."""
         units = self.visible(self.objects.filter(warband=warband)).select_related("race")
-        return units.prefetch_related(*prefetch, *self.member_prefetch()).order_by("id")
+        return self.with_loadout(units, detail=detail).order_by("id")
 
     def detail_queryset(self) -> QuerySet[Any]:
-        """Units read for a detail payload: one query per table, whatever the loadout size (PERF-23)."""
-        return self.objects.select_related("race").prefetch_related(*self.detail_prefetch, *self.member_prefetch())
+        """Units read for a detail payload (PERF-23)."""
+        return self.with_loadout(self.objects.select_related("race"), detail=True)
 
 
 def _counted_hired_swords(units: QuerySet[Any]) -> QuerySet[Any]:
@@ -175,8 +185,6 @@ HERO = UnitKindSpec(
     skills=LinkSpec("hero_skills", HeroSkill, "skill", "skill_ids", log_entry="hero_skill"),
     specials=LinkSpec("hero_specials", HeroSpecial, "special", "special_ids", log_entry="hero_special"),
     spells=LinkSpec("hero_spells", HeroSpell, "spell", "spell_ids", log_entry="hero_spell"),
-    summary_prefetch=HERO_SUMMARY_PREFETCH,
-    detail_prefetch=HERO_DETAIL_PREFETCH,
     has_members=False,
     thresholds_setting="hero_level_thresholds",
     count_level_ups=count_new_level_ups,
@@ -204,8 +212,6 @@ HENCHMEN_GROUP = UnitKindSpec(
     skills=LinkSpec("henchmen_group_skills", HenchmenGroupSkill, "skill", "skill_ids"),  # no loadout logs
     specials=LinkSpec("henchmen_group_specials", HenchmenGroupSpecial, "special", "special_ids"),
     spells=None,
-    summary_prefetch=HENCHMEN_GROUP_SUMMARY_PREFETCH,
-    detail_prefetch=HENCHMEN_GROUP_DETAIL_PREFETCH,
     has_members=True,
     thresholds_setting="henchmen_level_thresholds",
     count_level_ups=count_new_henchmen_level_ups,
@@ -235,8 +241,6 @@ HIRED_SWORD = UnitKindSpec(
         "hired_sword_specials", HiredSwordSpecial, "special", "special_ids", log_entry="hired_sword_special"
     ),
     spells=LinkSpec("hired_sword_spells", HiredSwordSpell, "spell", "spell_ids", log_entry="hired_sword_spell"),
-    summary_prefetch=HIRED_SWORD_SUMMARY_PREFETCH,
-    detail_prefetch=HIRED_SWORD_DETAIL_PREFETCH,
     has_members=False,
     thresholds_setting="hired_sword_level_thresholds",  # its defaults are the henchmen table (decision 8, PR C)
     count_level_ups=count_new_henchmen_level_ups,

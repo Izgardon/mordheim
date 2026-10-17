@@ -11,6 +11,7 @@ from typing import Any, ClassVar
 from rest_framework import serializers
 
 from apps.warbands.models import RosterUnit
+from apps.warbands.prefetches import entries_attr
 
 from .catalogue import (
     ItemDetailSerializer,
@@ -71,6 +72,10 @@ class UnitReadSerializer(serializers.ModelSerializer):
         if link is None:
             return []
         serializer = self.catalogue_serializers[link.target]
+        folded = getattr(unit, entries_attr(link.relation), None)
+        if folded is not None:  # read with the unit's row (UnitKindSpec.with_loadout): the serializer's fields
+            columns = serializer.Meta.fields
+            return [{column: entry[column] for column in columns} for entry in folded]
         rows = self._entries(unit, link)
         return [serializer(getattr(row, link.target)).data for row in rows if getattr(row, f"{link.target}_id")]
 

@@ -1,34 +1,45 @@
-"""Prefetches for unit payloads, shared by every view that serializes units.
+"""How unit payloads are read: a fixed number of queries however many units and items a warband has.
 
-The detail serializers render each item with its properties and its availabilities
-(cost, rarity, restriction links). Prefetching all of it keeps the query count
-constant however many units and items a warband has. Each join table is read with its
-target in one query (`select_related`), in id order, which is the order the player set
-(ROST-PERF-11).
+A unit's skills, specials and spells come with the unit's own row, each list as an ordered JSON array
+(`loadout_entries`); its items are prefetched, and for the detail payload their properties and
+availabilities too (cost, rarity, restriction links). Join rows are always in id order, which is the
+order the player set (ROST-PERF-11).
 """
 
-from django.db.models import Model, Prefetch
+from typing import Any
+
+from django.contrib.postgres.expressions import ArraySubquery
+from django.db.models import Model, OuterRef, Prefetch
+from django.db.models.functions import JSONObject
 
 from apps.items.models import ItemAvailability, ItemAvailabilityRestriction, ItemPropertyLink
-from apps.warbands.models import (
-    Henchman,
-    HenchmenGroupItem,
-    HenchmenGroupSkill,
-    HenchmenGroupSpecial,
-    HeroItem,
-    HeroSkill,
-    HeroSpecial,
-    HeroSpell,
-    HiredSwordItem,
-    HiredSwordSkill,
-    HiredSwordSpecial,
-    HiredSwordSpell,
-)
+from apps.warbands.models import Henchman
+from apps.warbands.units.catalogue import SkillDetailSerializer, SpecialDetailSerializer, SpellDetailSerializer
+
+# The catalogue columns a unit payload shows for each kind of entry: the detail serializers' fields, which
+# include the summary ones.
+ENTRY_COLUMNS: dict[str, tuple[str, ...]] = {
+    "skill": tuple(SkillDetailSerializer.Meta.fields),
+    "special": tuple(SpecialDetailSerializer.Meta.fields),
+    "spell": tuple(SpellDetailSerializer.Meta.fields),
+}
 
 
-def _links(relation: str, join_model: type[Model], target: str) -> Prefetch:
+def links_prefetch(relation: str, join_model: type[Model], target: str) -> Prefetch:
     """A unit's join rows with their catalogue entry: one query instead of two."""
     return Prefetch(relation, queryset=join_model._default_manager.select_related(target).order_by("id"))
+
+
+def entries_attr(relation: str) -> str:
+    """The attribute holding a unit's entries read by `entries_array`, e.g. "hero_skills_entries"."""
+    return f"{relation}_entries"
+
+
+def entries_array(join_model: type[Model], parent_field: str, target: str) -> Any:
+    """A unit's skills (or specials, spells) as one ordered array of JSON objects, read with the unit's row."""
+    rows = join_model._default_manager.filter(**{parent_field: OuterRef("pk")}).order_by("id")
+    columns = {column: f"{target}__{column}" for column in ENTRY_COLUMNS[target]}
+    return ArraySubquery(rows.values(entry=JSONObject(**columns)))
 
 
 def item_detail_prefetches(prefix: str = "") -> tuple[Prefetch, ...]:
@@ -47,36 +58,6 @@ def item_detail_prefetches(prefix: str = "") -> tuple[Prefetch, ...]:
             queryset=ItemAvailability.objects.prefetch_related(Prefetch("restriction_links", queryset=restrictions)),
         ),
     )
-
-
-HERO_SUMMARY_PREFETCH = (
-    _links("hero_items", HeroItem, "item"),
-    _links("hero_skills", HeroSkill, "skill"),
-    _links("hero_specials", HeroSpecial, "special"),
-    _links("hero_spells", HeroSpell, "spell"),
-)
-
-HIRED_SWORD_SUMMARY_PREFETCH = (
-    _links("hired_sword_items", HiredSwordItem, "item"),
-    _links("hired_sword_skills", HiredSwordSkill, "skill"),
-    _links("hired_sword_specials", HiredSwordSpecial, "special"),
-    _links("hired_sword_spells", HiredSwordSpell, "spell"),
-)
-
-HENCHMEN_GROUP_SUMMARY_PREFETCH = (
-    _links("henchmen_group_items", HenchmenGroupItem, "item"),
-    _links("henchmen_group_skills", HenchmenGroupSkill, "skill"),
-    _links("henchmen_group_specials", HenchmenGroupSpecial, "special"),
-)
-
-HERO_DETAIL_PREFETCH = (*HERO_SUMMARY_PREFETCH, *item_detail_prefetches("hero_items__item__"))
-
-HIRED_SWORD_DETAIL_PREFETCH = (*HIRED_SWORD_SUMMARY_PREFETCH, *item_detail_prefetches("hired_sword_items__item__"))
-
-HENCHMEN_GROUP_DETAIL_PREFETCH = (
-    *HENCHMEN_GROUP_SUMMARY_PREFETCH,
-    *item_detail_prefetches("henchmen_group_items__item__"),
-)
 
 
 def alive_henchmen_prefetch() -> Prefetch:
