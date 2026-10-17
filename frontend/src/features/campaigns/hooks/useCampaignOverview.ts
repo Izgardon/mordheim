@@ -50,9 +50,16 @@ export type RosterUnit = {
 type UseCampaignOverviewParams = {
   campaignId: number;
   campaign: CampaignSummary | null;
+  /** The bulletin tab's data (bulletin, top killers) loads only while that tab is open. */
+  activeTab: "overview" | "bulletin";
 };
 
-export function useCampaignOverview({ campaignId, campaign }: UseCampaignOverviewParams) {
+export function useCampaignOverview({
+  campaignId,
+  campaign,
+  activeTab,
+}: UseCampaignOverviewParams) {
+  const isBulletinOpen = activeTab === "bulletin";
   const [players, setPlayers] = useState<CampaignPlayer[]>([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -180,6 +187,9 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
   }, [campaignId]);
 
   useEffect(() => {
+    if (!isBulletinOpen) {
+      return; // PERF-43: the bulletin tab has no entry point; don't fetch for it unseen.
+    }
     if (Number.isNaN(campaignId)) {
       setTopKillersError("Invalid campaign id.");
       setIsTopKillersLoading(false);
@@ -199,9 +209,12 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
         }
       })
       .finally(() => setIsTopKillersLoading(false));
-  }, [campaignId]);
+  }, [campaignId, isBulletinOpen]);
 
   useEffect(() => {
+    if (!isBulletinOpen) {
+      return;
+    }
     if (Number.isNaN(campaignId)) {
       setBulletinError("Invalid campaign id.");
       setIsBulletinLoading(false);
@@ -221,7 +234,7 @@ export function useCampaignOverview({ campaignId, campaign }: UseCampaignOvervie
         }
       })
       .finally(() => setIsBulletinLoading(false));
-  }, [campaignId]);
+  }, [campaignId, isBulletinOpen]);
 
   const canStartCampaign = campaign?.role === "owner" || campaign?.role === "admin";
 

@@ -85,7 +85,7 @@ export default function CampaignOverview() {
     handleStartCampaign,
     handleCreateBulletinEntry,
     handleDeleteBulletinEntry,
-  } = useCampaignOverview({ campaignId, campaign });
+  } = useCampaignOverview({ campaignId, campaign, activeTab });
 
   if (!campaign) {
     return <p className="text-sm text-muted-foreground">No record of this campaign.</p>;
