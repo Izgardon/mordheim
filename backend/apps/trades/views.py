@@ -126,8 +126,7 @@ class CampaignTradeRequestAcceptView(TradeWriteView):
 class CampaignTradeRequestDeclineView(TradeWriteView):
     def post(self, request, campaign_id, request_id):
         def decline(trade: TradeRequest, side: str) -> Response:
-            answer_request(trade, accept=False)
-            resolve_notification(request.user.id, Notification.TYPE_TRADE_REQUEST, str(trade.id))
+            answer_request(trade, accept=False)  # resolves the request's notification (closing.close_out)
             payload = serialize_trade_request(trade)
             send_user_notification(trade.from_user_id, "trade_declined", payload)
             return Response(payload)

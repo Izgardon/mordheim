@@ -44,8 +44,8 @@ class TradeExpiryTests(TradeTestCase):
                 self.assertEqual(self.state(trade), ("expired", False, False))
                 self.assertTrue(self.trading_action(hero))
 
-    def test_answering_an_expired_request_leaves_its_notification_open(self):
-        # Characterises current behaviour (BUG-69, pinned; flips in PR A; ECON-TEST-10)
+    def test_answering_an_expired_request_resolves_its_notification(self):
+        # BUG-69, ECON-TEST-10: answering after expiry used to leave the recipient's notification open
         for action in ("accept", "decline"):
             with self.subTest(action=action):
                 trade = self.request_trade()
@@ -55,7 +55,7 @@ class TradeExpiryTests(TradeTestCase):
 
                 self.assertEqual((response.status_code, response.json()), (400, {"detail": "Trade request expired"}))
                 self.assertEqual(self.state(trade)[0], "expired")
-                self.assertFalse(self.notification(self.viewer, trade).is_resolved)
+                self.assertTrue(self.notification(self.viewer, trade).is_resolved)
 
     def test_the_campaign_list_expires_open_trades_but_not_pending_requests(self):
         # Characterises current behaviour (BUG-69, pinned; flips in PR A): a GET writes; expired open trades

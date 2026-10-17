@@ -3,7 +3,8 @@
 Every function takes a trade loaded with `get_trade_for_participant(..., lock=True)` inside the caller's
 transaction and saves only the fields it changes, so two players acting at once can't erase each other's lock or
 offer. A refused action raises TradeError, which rolls its transaction back. Accepting starts the session's clock
-and every applied offer, lock or unlock extends it (decision 8, `timing.py`).
+and every applied offer, lock or unlock extends it; every way a trade ends goes through `closing.close_out`
+(decision 8).
 """
 
 from typing import Any
@@ -14,6 +15,7 @@ from django.utils import timezone
 
 from apps.trades.models import TradeRequest
 
+from .closing import close_out
 from .completion import complete_trade
 from .errors import TradeError
 from .offers import build_offer
@@ -28,12 +30,13 @@ def side_of(trade: TradeRequest, user: Any) -> str:
 
 
 def _finish(trade: TradeRequest, status: str) -> None:
-    """End an open trade: unlock both sides, give back the traders it spent."""
+    """End an open trade: unlock both sides, give back the traders it spent, close it out."""
     restore_spent_traders(trade)
     trade.from_accepted = trade.to_accepted = False
     trade.status = status
     trade.responded_at = timezone.now()
     trade.save(update_fields=["status", "responded_at", "from_accepted", "to_accepted", *SPENT_FIELDS])
+    close_out(trade)
 
 
 def expire(trade: TradeRequest) -> None:
@@ -58,6 +61,8 @@ def answer_request(trade: TradeRequest, accept: bool) -> None:
     if accept:
         extend(trade)
     trade.save(update_fields=["status", "responded_at", "expires_at"])
+    if not accept:
+        close_out(trade)
 
 
 def close(trade: TradeRequest, side: str) -> None:
@@ -126,6 +131,7 @@ def complete_or_reopen(trade: TradeRequest) -> TradeError | None:
         trade.from_accepted = trade.to_accepted = False
         trade.save(update_fields=["from_accepted", "to_accepted", *SPENT_FIELDS])
         return failure
+    close_out(trade)
     return None
 
 

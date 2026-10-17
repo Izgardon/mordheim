@@ -297,8 +297,8 @@ class QueryBudgetTests(TestCase):
         self._count_writes(owner, [("lock", f"{base}lock/", {}, 4), ("unlock", f"{base}unlock/", {}, 4)])
         self._count_writes(owner, [("lock again", f"{base}lock/", {}, 4)])
         # + both warbands' summaries in the answer and the event (7 queries for both; ECON-PERF-02), which saves
-        # each browser its summary GET
-        self._count_writes(player, [("lock that completes the trade", f"{base}lock/", {}, 24)])
+        # each browser its summary GET; + resolving the trade's notifications as it ends (1; decision 8, BUG-69)
+        self._count_writes(player, [("lock that completes the trade", f"{base}lock/", {}, 25)])
         trade.refresh_from_db()
         self.assertEqual(trade.status, TradeRequest.STATUS_COMPLETED)
 

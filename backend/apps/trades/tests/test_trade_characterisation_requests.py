@@ -168,13 +168,13 @@ class TradeRequestCloseTests(TradeTestCase):
                 self.assertEqual((body["status"], self.state(trade)), (closed, (closed, False, False)))
                 self.trade_events.assert_called_once_with(trade.id, "trade.closed", body, socket_id=None)
 
-    def test_closing_a_pending_request_leaves_the_recipients_notification_open(self):
-        # Characterises current behaviour (BUG-69, pinned; flips in PR A)
+    def test_closing_a_pending_request_resolves_the_recipients_notification(self):
+        # BUG-69: the recipient's notification used to stay open after the sender closed the request
         trade = self.request_trade()
 
         self.assertEqual(self.post_as(self.player, self.trade_url(trade, "close")).status_code, 200)
 
-        self.assertFalse(self.notification(self.viewer, trade).is_resolved)
+        self.assertTrue(self.notification(self.viewer, trade).is_resolved)
 
     def test_closing_an_open_trade_unlocks_both_sides_and_gives_the_traders_back(self):
         trade = self.open_trade()
