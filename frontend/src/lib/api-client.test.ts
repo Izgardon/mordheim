@@ -1,7 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { getRefreshToken, getToken, setRefreshToken, setToken } from "../utils/storage";
-import { ApiError, apiRequest, SERVER_UNAVAILABLE_MESSAGE } from "./api-client";
+import {
+  ApiError,
+  apiRequest,
+  REQUEST_ABORTED_MESSAGE,
+  REQUEST_TIMEOUT_MESSAGE,
+  REQUEST_TIMEOUT_MS,
+  SERVER_UNAVAILABLE_MESSAGE,
+} from "./api-client";
 
 function jsonResponse(status: number, body: unknown) {
   return new Response(JSON.stringify(body), {
@@ -90,5 +97,119 @@ describe("apiRequest token refresh", () => {
     await Promise.all([apiRequest("/a/"), apiRequest("/b/"), apiRequest("/c/")]);
 
     expect(fetchMock.mock.calls.filter(([input]) => isRefreshCall(input))).toHaveLength(1);
+  });
+});
+
+/** A fetch that never answers, but rejects like the browser once its signal aborts. */
+function hangingFetch(_input: Parameters<typeof fetch>[0], init?: RequestInit) {
+  return new Promise<Response>((_resolve, reject) => {
+    init?.signal?.addEventListener("abort", () =>
+      reject(new DOMException("The operation was aborted.", "AbortError"))
+    );
+  });
+}
+
+function trackSettlement(promise: Promise<unknown>) {
+  const state: { error?: unknown; settled: boolean } = { settled: false };
+  promise.then(
+    () => (state.settled = true),
+    (error: unknown) => {
+      state.settled = true;
+      state.error = error;
+    }
+  );
+  return state;
+}
+
+describe("apiRequest timeout and abort (BUG-59)", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    setToken("access");
+    fetchMock.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  it("gives up on a hung request after the default timeout", async () => {
+    fetchMock.mockImplementation(hangingFetch);
+
+    const state = trackSettlement(apiRequest("/campaigns/"));
+    await vi.advanceTimersByTimeAsync(REQUEST_TIMEOUT_MS - 1);
+    expect(state.settled).toBe(false);
+
+    await vi.advanceTimersByTimeAsync(1);
+
+    expect(state.error).toBeInstanceOf(ApiError);
+    expect(state.error).toMatchObject({ status: 0, message: REQUEST_TIMEOUT_MESSAGE });
+  });
+
+  it("rejects with status 0 when the caller aborts", async () => {
+    fetchMock.mockImplementation(hangingFetch);
+    const controller = new AbortController();
+
+    const state = trackSettlement(apiRequest("/campaigns/", { signal: controller.signal }));
+    controller.abort();
+    await vi.advanceTimersByTimeAsync(0);
+
+    expect(state.error).toBeInstanceOf(ApiError);
+    expect(state.error).toMatchObject({ status: 0, message: REQUEST_ABORTED_MESSAGE });
+  });
+
+  it("hands fetch a signal and clears its timer once the response arrives", async () => {
+    fetchMock.mockResolvedValue(jsonResponse(200, { ok: true }));
+
+    await expect(apiRequest("/campaigns/")).resolves.toEqual({ ok: true });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0][1]?.signal).toBeInstanceOf(AbortSignal);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it("keeps the session when the refresh call times out", async () => {
+    setRefreshToken("refresh-token");
+    fetchMock.mockImplementation(async (input, init) =>
+      isRefreshCall(input) ? hangingFetch(input, init) : jsonResponse(401, {})
+    );
+
+    const state = trackSettlement(apiRequest("/campaigns/"));
+    await vi.advanceTimersByTimeAsync(REQUEST_TIMEOUT_MS);
+
+    expect(state.error).toMatchObject({ status: 0, message: SERVER_UNAVAILABLE_MESSAGE });
+    expect(getToken()).toBe("access");
+    expect(getRefreshToken()).toBe("refresh-token");
+  });
+});
+
+describe("apiRequest abort after a refresh", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    setToken("expired-access");
+    setRefreshToken("refresh-token");
+    fetchMock.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("keeps the caller's signal on the retried request", async () => {
+    const controller = new AbortController();
+    fetchMock.mockImplementation(async (input, init) => {
+      if (isRefreshCall(input)) return jsonResponse(200, { access: "new-access" });
+      const auth = new Headers(init?.headers).get("Authorization");
+      return auth === "Bearer new-access" ? hangingFetch(input, init) : jsonResponse(401, {});
+    });
+
+    const request = apiRequest("/campaigns/", { signal: controller.signal });
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+    controller.abort();
+
+    await expect(request).rejects.toMatchObject({ status: 0, message: REQUEST_ABORTED_MESSAGE });
   });
 });

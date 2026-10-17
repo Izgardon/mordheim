@@ -21,25 +21,64 @@ type ApiRequestOptions = {
   body?: unknown;
   token?: string | null;
   headers?: Record<string, string>;
+  /** Cancels the request (TanStack Query passes one to every query function). */
+  signal?: AbortSignal;
 };
 
 export const SERVER_UNAVAILABLE_MESSAGE = "Can't reach the server right now. Please try again.";
+export const REQUEST_TIMEOUT_MESSAGE = "The server took too long to respond. Please try again.";
+export const REQUEST_ABORTED_MESSAGE = "The request was cancelled.";
+
+/** A hung request gives up after this long instead of leaving spinners up forever. */
+export const REQUEST_TIMEOUT_MS = 20_000;
 
 /** True only when the server has definitively rejected the session (not for outages). */
 export function isSessionExpiredError(error: unknown) {
   return error instanceof ApiError && error.status === 401;
 }
 
+/**
+ * One AbortSignal for a request: aborts on the default timeout or when the caller's signal
+ * aborts. Built by hand because AbortSignal.any/timeout are missing on older iOS Safari.
+ */
+function createRequestSignal(callerSignal?: AbortSignal) {
+  const controller = new AbortController();
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, REQUEST_TIMEOUT_MS);
+  const abortFromCaller = () => controller.abort();
+
+  if (callerSignal?.aborted) {
+    controller.abort();
+  } else {
+    callerSignal?.addEventListener("abort", abortFromCaller, { once: true });
+  }
+
+  return {
+    signal: controller.signal,
+    hasTimedOut: () => timedOut,
+    dispose: () => {
+      clearTimeout(timer);
+      callerSignal?.removeEventListener("abort", abortFromCaller);
+    },
+  };
+}
+
 type RefreshOutcome =
   | { kind: "refreshed"; access: string }
   | { kind: "invalid" }
-  // Network failure, 5xx or 429: the session may still be valid, so keep the tokens.
+  // Network failure, timeout, 5xx or 429: the session may still be valid, so keep the tokens.
   | { kind: "unavailable"; status: number };
 
 let refreshPromise: Promise<RefreshOutcome> | null = null;
 
 async function requestNewAccessToken(refreshToken: string): Promise<RefreshOutcome> {
+  // Shared by every waiting request, so only the timeout (never one caller) may abort it.
+  const request = createRequestSignal();
   let response: Response;
+  let data: { access?: string } | null = null;
   try {
     response = await fetch(`${API_BASE_URL}/auth/refresh/`, {
       method: "POST",
@@ -47,9 +86,15 @@ async function requestNewAccessToken(refreshToken: string): Promise<RefreshOutco
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ refresh: refreshToken }),
+      signal: request.signal,
     });
+    if (response.ok) {
+      data = (await response.json().catch(() => null)) as { access?: string } | null;
+    }
   } catch {
     return { kind: "unavailable", status: 0 };
+  } finally {
+    request.dispose();
   }
 
   if (response.status === 400 || response.status === 401) {
@@ -60,7 +105,6 @@ async function requestNewAccessToken(refreshToken: string): Promise<RefreshOutco
     return { kind: "unavailable", status: response.status };
   }
 
-  const data = (await response.json().catch(() => null)) as { access?: string } | null;
   if (!data?.access) {
     return { kind: "unavailable", status: response.status };
   }
@@ -77,9 +121,27 @@ function refreshAccessToken(refreshToken: string) {
   return refreshPromise;
 }
 
+/** Sends the request and reads the body, turning a timeout or abort into ApiError status 0. */
+async function sendRequest(url: string, init: RequestInit, callerSignal?: AbortSignal) {
+  const request = createRequestSignal(callerSignal);
+  try {
+    const response = await fetch(url, { ...init, signal: request.signal });
+    const text = await response.text();
+    return { response, text };
+  } catch (error) {
+    if (request.signal.aborted) {
+      const message = request.hasTimedOut() ? REQUEST_TIMEOUT_MESSAGE : REQUEST_ABORTED_MESSAGE;
+      throw new ApiError(message, 0, null);
+    }
+    throw error;
+  } finally {
+    request.dispose();
+  }
+}
+
 async function apiRequestInternal<T>(
   path: string,
-  { method = "GET", body, token, headers: customHeaders }: ApiRequestOptions = {},
+  { method = "GET", body, token, headers: customHeaders, signal }: ApiRequestOptions = {},
   hasRetried = false
 ): Promise<T> {
   const headers: Record<string, string> = {
@@ -92,13 +154,16 @@ async function apiRequestInternal<T>(
     headers.Authorization = `Bearer ${resolvedToken}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  const { response, text } = await sendRequest(
+    `${API_BASE_URL}${path}`,
+    {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
+    },
+    signal
+  );
 
-  const text = await response.text();
   let data: unknown = null;
 
   if (text) {
@@ -116,7 +181,7 @@ async function apiRequestInternal<T>(
       if (outcome.kind === "refreshed") {
         return apiRequestInternal(
           path,
-          { method, body, token: outcome.access, headers: customHeaders },
+          { method, body, token: outcome.access, headers: customHeaders, signal },
           true
         );
       }
@@ -155,7 +220,7 @@ async function apiRequestInternal<T>(
 
 export async function apiRequest<T>(
   path: string,
-  { method = "GET", body, token, headers: customHeaders }: ApiRequestOptions = {}
+  { method = "GET", body, token, headers: customHeaders, signal }: ApiRequestOptions = {}
 ): Promise<T> {
-  return apiRequestInternal(path, { method, body, token, headers: customHeaders });
+  return apiRequestInternal(path, { method, body, token, headers: customHeaders, signal });
 }
