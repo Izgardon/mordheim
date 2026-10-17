@@ -207,9 +207,10 @@ class WarbandHenchmenGroupDetailView(WarbandObjectMixin, APIView):
         serializer.save()
 
         # The validated entries carry int ids, so this matches members exactly as the serializer did (BUG-93).
+        # Every member counts, dead ones too: an entry naming a dead member is ignored, not recruited (BUG-92).
         member_entries = serializer.validated_data.get("henchmen")
         if member_entries is not None:
-            existing_ids = set(group.henchmen.values_list("id", flat=True))
+            existing_ids = set(Henchman.objects.filter(group=group).values_list("id", flat=True))
             new_henchmen_entries = [entry for entry in member_entries if entry.get("id") not in existing_ids]
 
             if new_henchmen_entries:

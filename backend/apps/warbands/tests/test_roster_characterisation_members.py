@@ -4,6 +4,7 @@ from decimal import Decimal
 from typing import Any
 
 from apps.warbands.models import Henchman, HenchmenGroup
+from apps.warbands.serializers import HenchmenGroupUpdateSerializer
 
 from .roster_support import HENCHMEN, RosterTestCase, log_rows, make_unit, trade_rows, unit_url
 
@@ -39,21 +40,20 @@ class HenchmenMemberSyncCharacterisationTests(RosterTestCase):
         )
         self.assertEqual(sorted(m["name"] for m in response.json()["henchmen"]), ["Alpha Prime", "Gamma"])
 
-    def test_fields_missing_from_a_member_entry_are_reset(self):
+    def test_fields_missing_from_a_member_entry_keep_their_values(self):
+        # BUG-94: missing fields used to be reset (name to "", kills to 0, dead to False)
         Henchman.objects.filter(id=self.alpha.id).update(kills=3)
-        self._patch({"henchmen": [{"id": self.alpha.id}, {"id": self.beta.id, "name": "Beta"}]})
-        alpha = Henchman.objects.get(id=self.alpha.id)
-        self.assertEqual((alpha.name, alpha.kills, alpha.dead), ("", 0, False))
+        self._patch({"henchmen": [{"id": self.alpha.id}, {"id": self.beta.id, "kills": 1}]})
+        self.assertEqual(self._members(), [("Alpha", 3, False), ("Beta", 1, False)])
 
     def test_omitting_the_members_list_leaves_members_alone(self):
         self._patch({"name": "Renamed"})
         self.assertEqual(self._members(), [("Alpha", 0, False), ("Beta", 0, False)])
 
     def test_dead_members_missing_from_the_payload_survive(self):
-        # BUG-04 as filed (dead members deleted on save) does not reproduce through this endpoint:
-        # the view's living-only Prefetch also scopes `group.henchmen.values_list(...)` in the
-        # serializer, so only living members are candidates for deletion. This is accidental
-        # (dropping that prefetch, e.g. for PERF-23, would bring the data loss back), so lock it.
+        # BUG-04: only living members are candidates for removal. This used to hold only because the
+        # view's living-only prefetch also scoped the serializer's member query; it is now explicit
+        # (see the test below).
         fallen = Henchman.objects.create(group=self.group, name="Fallen", kills=3, dead=True)
         living = [{"id": self.alpha.id, "name": "Alpha"}]
 
@@ -64,20 +64,35 @@ class HenchmenMemberSyncCharacterisationTests(RosterTestCase):
         kill_history = self.client.get(unit_url(HENCHMEN, self.warband.id, self.group.id, "kill-history/"))
         self.assertEqual(kill_history.json()["total_kills"], 3)
 
-    def test_a_dead_member_sent_back_with_its_id_is_duplicated(self):
-        # Characterises current behaviour (not yet in BUGS.md); update when fixed. The dead id isn't
-        # among the living ids the serializer matches against, so the entry is created as a new member.
+    def test_member_sync_keeps_dead_members_however_the_group_was_loaded(self):
+        # BUG-04: without the view's living-only prefetch the old sync saw the dead member and deleted it
+        Henchman.objects.create(group=self.group, name="Fallen", kills=3, dead=True)
+        group = HenchmenGroup.objects.get(id=self.group.id)
+        serializer = HenchmenGroupUpdateSerializer(group, data={"henchmen": [{"id": self.alpha.id}]}, partial=True)
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save()
+
+        self.assertEqual(self._members(), [("Alpha", 0, False), ("Fallen", 3, True)])
+
+    def test_a_dead_member_sent_back_with_its_id_is_left_alone(self):
+        # BUG-92: the dead id used to miss the living ids the serializer matched against, so the entry
+        # was created as a second (dead) member. Dead members are records: this path doesn't edit them.
         fallen = Henchman.objects.create(group=self.group, name="Fallen", kills=3, dead=True)
-        members = [{"id": self.alpha.id, "name": "Alpha"}, {"id": fallen.id, "name": "Fallen", "dead": True}]
+        for entry in (
+            {"id": fallen.id, "name": "Fallen", "dead": True},
+            {"id": fallen.id, "name": "Risen", "dead": False},
+        ):
+            with self.subTest(entry=entry):
+                patched = self._patch({"henchmen": [{"id": self.alpha.id, "name": "Alpha"}, entry]})
+                fetched = self.client.get(unit_url(HENCHMEN, self.warband.id, self.group.id))
 
-        patched = self._patch({"henchmen": members})
-        fetched = self.client.get(unit_url(HENCHMEN, self.warband.id, self.group.id))
-
-        self.assertEqual(self._members(), [("Alpha", 0, False), ("Fallen", 0, True), ("Fallen", 3, True)])
-        self.assertEqual(trade_rows(self.warband), [])  # no recruit charge for the copy
-        # the PATCH response drops the living-only prefetch, so dead members appear in it (GET hides them)
-        self.assertEqual(sorted(m["name"] for m in patched.json()["henchmen"]), ["Alpha", "Fallen", "Fallen"])
-        self.assertEqual([m["name"] for m in fetched.json()["henchmen"]], ["Alpha"])
+                self.assertEqual(patched.status_code, 200)
+                self.assertEqual(self._members(), [("Alpha", 0, False), ("Fallen", 3, True)])
+                self.assertEqual(trade_rows(self.warband), [])
+                # the PATCH response drops the living-only prefetch, so dead members appear in it (GET hides them)
+                self.assertEqual(sorted(m["name"] for m in patched.json()["henchmen"]), ["Alpha", "Fallen"])
+                self.assertEqual([m["name"] for m in fetched.json()["henchmen"]], ["Alpha"])
 
     def test_members_can_be_marked_dead_without_the_group_dying(self):
         response = self._patch(

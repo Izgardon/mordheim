@@ -1,3 +1,5 @@
+from typing import Any
+
 from rest_framework import serializers
 
 from apps.skills.models import Skill
@@ -264,6 +266,45 @@ class HenchmenGroupCreateSerializer(serializers.ModelSerializer):
         return group
 
 
+MEMBER_FIELDS = ("name", "kills", "dead")
+
+
+def _sync_members(group: HenchmenGroup, entries: list[dict[str, Any]]) -> None:
+    """Apply a PATCH's member list to `group`.
+
+    An entry naming a living member updates only the fields it carries (BUG-94); an entry without a
+    known id is a new member. Living members left out of the list are removed. Dead members are
+    records (BUG-04): this path never edits, duplicates (BUG-92) or deletes them, however the caller
+    loaded the group, so an entry naming one is ignored.
+    """
+    members = dict(Henchman.objects.filter(group=group).values_list("id", "dead"))
+    living_ids = {member_id for member_id, dead in members.items() if not dead}
+    kept_ids: set[int] = set()
+    to_create = []
+    for entry in entries:
+        member_id = entry.get("id")
+        if member_id in members:
+            if member_id in living_ids:
+                kept_ids.add(member_id)
+                fields = {name: entry[name] for name in MEMBER_FIELDS if name in entry}
+                if fields:
+                    Henchman.objects.filter(id=member_id).update(**fields)
+            continue
+        to_create.append(
+            Henchman(
+                group=group,
+                name=entry.get("name", ""),
+                kills=entry.get("kills", 0),
+                dead=entry.get("dead", False),
+            )
+        )
+    removed_ids = living_ids - kept_ids
+    if removed_ids:
+        Henchman.objects.filter(group=group, id__in=removed_ids, dead=False).delete()
+    if to_create:
+        Henchman.objects.bulk_create(to_create)
+
+
 class HenchmenGroupUpdateSerializer(serializers.ModelSerializer):
     xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
     items = serializers.ListField(
@@ -376,32 +417,7 @@ class HenchmenGroupUpdateSerializer(serializers.ModelSerializer):
             group.save(update_fields=["large"])
 
         if henchmen_data is not None:
-            existing_ids = set(group.henchmen.values_list("id", flat=True))
-            incoming_ids = set()
-            to_create = []
-            for entry in henchmen_data:
-                henchman_id = entry.get("id")
-                if henchman_id and henchman_id in existing_ids:
-                    incoming_ids.add(henchman_id)
-                    Henchman.objects.filter(id=henchman_id, group=group).update(
-                        name=entry.get("name", ""),
-                        kills=entry.get("kills", 0),
-                        dead=entry.get("dead", False),
-                    )
-                else:
-                    to_create.append(
-                        Henchman(
-                            group=group,
-                            name=entry.get("name", ""),
-                            kills=entry.get("kills", 0),
-                            dead=entry.get("dead", False),
-                        )
-                    )
-            ids_to_delete = existing_ids - incoming_ids
-            if ids_to_delete:
-                Henchman.objects.filter(id__in=ids_to_delete, group=group).delete()
-            if to_create:
-                Henchman.objects.bulk_create(to_create)
+            _sync_members(group, henchmen_data)
 
         if hasattr(group, "_prefetched_objects_cache"):
             group._prefetched_objects_cache.pop("henchmen_group_items", None)
