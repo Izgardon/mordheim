@@ -191,18 +191,14 @@ class RosterCreateCharacterisationTests(RosterTestCase):
                 body = self.client.post(unit_url(kind, self.warband.id), payload, format="json").json()
                 self.assertTrue(body["large"])
 
-    @unittest.expectedFailure
-    def test_a_json_array_body_is_a_400_for_heroes(self):
-        # Bug: POST heroes/ with a JSON array body raises TypeError in the view (data.pop with a
-        # default on a list) and returns 500. Henchmen and hired swords answer 400.
-        response = self.client.post(unit_url(HERO, self.warband.id), [{"name": "x"}], format="json")
-        self.assertEqual(response.status_code, 400)
-
-    def test_a_json_array_body_is_a_400_for_henchmen_and_hired_swords(self):
-        for kind in (HENCHMEN, HIRED_SWORD):
+    def test_a_json_array_body_is_a_400_for_every_kind(self):
+        # BUG-91: heroes used to answer 500 (the view popped a key off the list before validating)
+        for kind in KINDS:
             with self.subTest(kind=kind.key):
                 response = self.client.post(unit_url(kind, self.warband.id), [{"name": "x"}], format="json")
                 self.assertEqual(response.status_code, 400)
+                self.assertEqual(list(response.json()), ["non_field_errors"])
+                self.assertFalse(kind.model.objects.filter(warband=self.warband).exists())
 
 
 class HeroCreateCharacterisationTests(RosterTestCase):

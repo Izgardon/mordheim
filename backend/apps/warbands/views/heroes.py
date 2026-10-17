@@ -63,9 +63,10 @@ class WarbandHeroListCreateView(WarbandObjectMixin, APIView):
         if not CanEditWarband().has_object_permission(request, self, warband):
             return Response({"detail": "Forbidden"}, status=403)
 
-        data = request.data.copy()
-        ignore_max_heroes = data.pop("ignore_max_heroes", False)
-        ignore_max_heroes = str(ignore_max_heroes).lower() in ("1", "true", "yes")
+        # Validate before reading any key, so a non-object body is a 400 like the other kinds (BUG-91).
+        serializer = HeroCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        ignore_max_heroes = str(request.data.get("ignore_max_heroes", False)).lower() in ("1", "true", "yes")
 
         if not ignore_max_heroes:
             campaign_settings = CampaignSettings.objects.filter(campaign=warband.campaign).first()
@@ -76,8 +77,6 @@ class WarbandHeroListCreateView(WarbandObjectMixin, APIView):
             if Hero.objects.filter(warband=warband).count() >= max_heroes:
                 return Response({"detail": f"Warband already has {max_heroes} heroes"}, status=400)
 
-        serializer = HeroCreateSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
         with transaction.atomic():
             hero = serializer.save(warband=warband)
             log_warband_event(
