@@ -54,6 +54,14 @@ class TradeRequest(models.Model):
     to_offer = models.JSONField(default=dict, blank=True)
     from_accepted = models.BooleanField(default=False)
     to_accepted = models.BooleanField(default=False)
+    # The hero whose trading action this trade spent when the side locked, so that unlocking, a new offer,
+    # closing and expiry give back exactly that one (BUG-08)
+    from_trader_spent = models.ForeignKey(
+        "warbands.Hero", null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    to_trader_spent = models.ForeignKey(
+        "warbands.Hero", null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     responded_at = models.DateTimeField(null=True, blank=True)
     expires_at = models.DateTimeField()

@@ -274,9 +274,10 @@ class QueryBudgetTests(TestCase):
 
     @override_settings(RATE_LIMIT_ENABLED=False)  # trade writes are throttled; the throttle itself runs no SQL
     def test_trade_writes_stay_within_query_budget(self):
-        # ECON-TEST-14 at today's counts (pass 2, step 0), without traders (a trader adds his lookup and spend).
-        # Offer re-reads the ledger for the gold cap. The completing lock re-validates both offers and still
-        # grows with the trade: 4 queries per offered item and 1 per gold row (here 1 item and 2 x 2 gold rows).
+        # ECON-TEST-14 (pass 2), without traders (a trader adds his guarded spend). Every write locks the request in
+        # a transaction (BUG-08): SAVEPOINT and RELEASE inside the test's transaction, 2 of each count. Offer re-reads
+        # the ledger for the gold cap. The completing lock also locks both warbands and grows with the trade: 3-6
+        # queries per offered item (a new stash row on the receiver adds a savepoint) and 1 per side with gold.
         owner, player = self.ref.owner_client, APIClient()
         owner.force_authenticate(user=self.ref.owner)
         player.force_authenticate(user=self.ref.player)
@@ -291,10 +292,10 @@ class QueryBudgetTests(TestCase):
         )
         base = self._url(f"/api/campaigns/{{campaign}}/trade-requests/{trade.id}/")
         item = Item.objects.get(name="Sword 0").id
-        self._count_writes(owner, [("offer", f"{base}offer/", {"gold": 10, "items": [{"id": item, "quantity": 1}]}, 4)])
-        self._count_writes(player, [("offer back", f"{base}offer/", {"gold": 5}, 3)])
-        self._count_writes(owner, [("lock", f"{base}lock/", {}, 2), ("unlock", f"{base}unlock/", {}, 2)])
-        self._count_writes(owner, [("lock again", f"{base}lock/", {}, 2)])
+        self._count_writes(owner, [("offer", f"{base}offer/", {"gold": 10, "items": [{"id": item, "quantity": 1}]}, 6)])
+        self._count_writes(player, [("offer back", f"{base}offer/", {"gold": 5}, 5)])
+        self._count_writes(owner, [("lock", f"{base}lock/", {}, 4), ("unlock", f"{base}unlock/", {}, 4)])
+        self._count_writes(owner, [("lock again", f"{base}lock/", {}, 4)])
         self._count_writes(player, [("lock that completes the trade", f"{base}lock/", {}, 17)])
         trade.refresh_from_db()
         self.assertEqual(trade.status, TradeRequest.STATUS_COMPLETED)

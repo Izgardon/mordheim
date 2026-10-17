@@ -195,28 +195,26 @@ class TradeCompletionTests(TradeTestCase):
             [("Trade sent", "Gold sent to Rats", 30), ("Trade received", "Gold received from Rats", 10)],
         )
 
-    def test_a_trader_blocks_completion(self):
-        # Characterises current behaviour (BUG-05, pinned; flips in PR A): the lock spends the trader, then
-        # completion re-validates the offer and refuses him as unavailable; the trade stays locked
+    def test_a_trader_spent_by_the_lock_does_not_block_completion(self):
+        # BUG-05: completion used to re-check the trader's trading action, which the lock had just spent, so
+        # a trade with a trader never completed. It now only checks that he is still on the roster.
         hero = self.trader(self.warband)
         self._offer_both_ways(trader_id=hero.id)
         self.assertEqual(self.lock(self.player, self.trade).status_code, 200)
+        self.trade_events.reset_mock()
 
         response = self.lock(self.viewer, self.trade)
 
-        self.assertEqual((response.status_code, response.json()), (400, {"detail": "Selected trader is unavailable."}))
-        self.assertEqual(self.state(self.trade), ("accepted", True, True))
-        self.assertFalse(self.trading_action(hero))
-        self.assertEqual(self.stash_rows(self.warband), [("Axe", 1, 7), ("Sword", 3, 9)])
-        self.assertEqual(self.ledger(self.warband), [("Reward", "Purse", 100)])
-        self.assertNotIn("trade.completed", self.event_names())
-        # Locking again just repeats the failed completion
-        again = self.lock(self.player, self.trade)
-        self.assertEqual((again.status_code, self.state(self.trade)), (400, ("accepted", True, True)))
+        self.assertEqual((response.status_code, response.json()["status"]), (200, "completed"))
+        self.assertEqual(self.state(self.trade), ("completed", True, True))
+        self.assertEqual((self.trading_action(hero), self.trade.from_trader_spent_id), (False, hero.id))
+        self.assertEqual(self.stash_rows(self.warband), [("Axe", 2, 7), ("Sword", 1, 9)])
+        self.assertEqual(self.event_names(), ["trade.locked", "trade.completed"])
 
-    def test_a_failed_completion_leaves_both_sides_locked(self):
-        # Characterises current behaviour (BUG-41, pinned; flips in PR A; ECON-TEST-08): the flags are saved
-        # before the completion transaction, so a completion error answers 400 and the trade is stuck
+    def test_a_failed_completion_unlocks_both_sides_and_says_why(self):
+        # BUG-41, ECON-TEST-08: the flags used to be saved before the completion transaction, so a completion
+        # error answered 400 and left both sides locked. Lock and completion now share one transaction: a side
+        # that can no longer pay unlocks both sides, gives the traders back, answers 409 and tells the other.
         def sell_two_swords() -> None:
             WarbandItem.objects.filter(warband=self.warband, item=self.sword).update(quantity=1)
 
@@ -230,15 +228,32 @@ class TradeCompletionTests(TradeTestCase):
             with self.subTest(change=change.__name__):
                 WarbandItem.objects.filter(warband=self.warband, item=self.sword).update(quantity=3)
                 self.trade = self.open_trade()
-                self._offer_both_ways()
+                hero, theirs = self.trader(self.warband), self.trader(self.rival, name="Fence")
+                self._offer_both_ways(trader_id=hero.id)
+                self.assertEqual(self.offer(self.viewer, self.trade, trader_id=theirs.id, gold=10).status_code, 200)
                 self.lock(self.player, self.trade)
                 change()
+                self.trade_events.reset_mock()
 
                 response = self.lock(self.viewer, self.trade)
 
-                self.assertEqual((response.status_code, response.json()), (400, {"detail": detail}))
-                self.assertEqual(self.state(self.trade), ("accepted", True, True))
+                body = response.json()
+                self.assertEqual(response.status_code, 409)
+                self.assertEqual(
+                    {key: body[key] for key in ("detail", "code", "warband_id")},
+                    {"detail": detail, "code": "trade_completion_failed", "warband_id": self.warband.id},
+                )
+                self.assertEqual(self.state(self.trade), ("accepted", False, False))
+                self.assertEqual((body["trade"]["from_accepted"], body["trade"]["to_accepted"]), (False, False))
+                self.assertEqual((self.trading_action(hero), self.trading_action(theirs)), (True, True))
                 self.assertEqual(self.stash_rows(self.rival), [("Axe", 2, 5)])
+                self.assertEqual(self.ledger(self.rival), [("Reward", "Purse", 50)])
+                self.trade_events.assert_called_once_with(
+                    self.trade.id,
+                    "trade.offer_updated",
+                    {**body["trade"], "error": {key: body[key] for key in body if key != "trade"}},
+                )
+                self.assertEqual(self.post_as(self.player, self.trade_url(self.trade, "close")).status_code, 200)
 
     def test_items_in_the_other_campaign_are_traded_too(self):
         # SEC-07 context: stash rows aren't scoped, so whatever the stash holds can be offered and traded

@@ -1,13 +1,12 @@
-"""Concurrency: two trade writes at once (pass 2, step 0; ECON-TEST-06, BUG-08).
+"""Concurrency: two trade writes at once (pass 2; ECON-TEST-06, BUG-08).
 
-Each test runs two real requests on two threads (two database connections) and holds both at a
-`Rendezvous` patched in between the view's read of the trade request and its write, so both read before
-either writes. Today the views load the request unlocked and save both sides' fields, so one write is
-lost: these are expected failures, and PR A (select_for_update, each write saving only its own side)
-flips them. If PR A renames the patched helper, move the rendezvous to the new read-to-write gap.
+Each test runs two real requests on two threads (two database connections) with a `Rendezvous` patched in
+between a write's read of the trade request and its write. The views used to load the request unlocked and
+save both sides' fields, so both read before either wrote and one write was lost. Now each write locks the
+request first: the second request waits at the lock while the first holds the rendezvous, which gives up
+after its timeout, and each write saves only its own side.
 """
 
-import unittest
 from datetime import timedelta
 from typing import Any
 from unittest import mock
@@ -20,17 +19,17 @@ from rest_framework.test import APIClient
 from apps.campaigns.models import Campaign, CampaignMembership, CampaignRole
 from apps.core.testing import Rendezvous, run_concurrently
 from apps.items.models import Item
-from apps.trades import views as trade_views
 from apps.trades.models import TradeRequest
-from apps.warbands.models import Warband, WarbandItem
+from apps.trades.services import lifecycle
+from apps.warbands.models import Hero, Warband, WarbandItem
 from apps.warbands.utils.trades import TradeHelper
 
 
 @override_settings(RATE_LIMIT_ENABLED=False)
 class TradeConcurrencyTests(TransactionTestCase):
     def setUp(self) -> None:
-        role = CampaignRole.objects.get_or_create(slug="player", defaults={"name": "Player"})[0]
-        campaign = Campaign.objects.create(name="Shards", join_code="RACE01")
+        self.role = role = CampaignRole.objects.get_or_create(slug="player", defaults={"name": "Player"})[0]
+        self.campaign = campaign = Campaign.objects.create(name="Shards", join_code="RACE01")
         users = [
             get_user_model().objects.create_user(username=email, email=email, password=None)
             for email in ("player@example.com", "viewer@example.com")
@@ -56,26 +55,25 @@ class TradeConcurrencyTests(TransactionTestCase):
         )
         self.base = f"/api/campaigns/{campaign.id}/trade-requests/{self.trade.id}/"
 
-    def _post(self, user: Any, action: str, body: dict[str, Any] | None = None) -> Any:
+    def _post(self, user: Any, action: str, body: dict[str, Any] | None = None, base: str | None = None) -> Any:
         def call() -> tuple[int, Any]:
             client = APIClient()
             client.force_authenticate(user=user)
-            response = client.post(f"{self.base}{action}/", body or {}, format="json")
+            response = client.post(f"{base or self.base}{action}/", body or {}, format="json")
             return response.status_code, response.json()
 
         return call
 
-    @unittest.expectedFailure
     def test_two_locks_at_once_complete_the_trade(self):
-        # ECON-TEST-06 (BUG-08): both read the request with neither side locked; each saves both flags, so
-        # the second save erases the first lock and neither request sees both locks to complete the trade
+        # ECON-TEST-06 (BUG-08): unlocked, both read the request with neither side locked and the second save
+        # erased the first lock; locked, the second sees the first lock and completes the trade
         self.trade.from_offer = {"gold": 5, "items": [{"id": self.sword.id, "quantity": 1}]}
         self.trade.to_offer = {"gold": 3, "items": []}
         self.trade.save(update_fields=["from_offer", "to_offer"])
         rendezvous = Rendezvous()
-        real = trade_views._consume_offer_trader
+        real = lifecycle.spend_trader
 
-        with mock.patch.object(trade_views, "_consume_offer_trader", side_effect=rendezvous.before(real)):
+        with mock.patch.object(lifecycle, "spend_trader", side_effect=rendezvous.before(real)):
             results = run_concurrently(self._post(self.player, "lock"), self._post(self.viewer, "lock"))
 
         self.assertEqual(sorted(status for status, _ in results), [200, 200])
@@ -85,13 +83,12 @@ class TradeConcurrencyTests(TransactionTestCase):
         )
         self.assertEqual(WarbandItem.objects.get(warband=self.rival).quantity, 1)
 
-    @unittest.expectedFailure
     def test_two_offers_at_once_keep_both_sides(self):
-        # BUG-08: each offer saves both sides' offers, so the second save puts back the stale other side
+        # BUG-08: each offer used to save both sides' offers, so the second save put back the stale other side
         rendezvous = Rendezvous()
-        real = trade_views._build_offer_payload
+        real = lifecycle.build_offer
 
-        with mock.patch.object(trade_views, "_build_offer_payload", side_effect=rendezvous.before(real)):
+        with mock.patch.object(lifecycle, "build_offer", side_effect=rendezvous.before(real)):
             results = run_concurrently(
                 self._post(self.player, "offer", {"gold": 10}), self._post(self.viewer, "offer", {"gold": 7})
             )
@@ -99,3 +96,34 @@ class TradeConcurrencyTests(TransactionTestCase):
         self.assertEqual([status for status, _ in results], [200, 200])
         self.trade.refresh_from_db()
         self.assertEqual((self.trade.from_offer.get("gold"), self.trade.to_offer.get("gold")), (10, 7))
+
+    def test_two_trades_cannot_both_spend_one_trader(self):
+        # BUG-08: the spend was read-modify-write, so two trades naming the same hero could both spend him; it
+        # is now one guarded UPDATE, and the second trade's lock is refused
+        hero = Hero.objects.create(warband=self.warband, name="Haggler", unit_type="Champion")
+        third = get_user_model().objects.create_user(username="c@example.com", email="c@example.com", password=None)
+        CampaignMembership.objects.create(campaign=self.campaign, user=third, role=self.role)
+        crows = Warband.objects.create(campaign=self.campaign, user=third, name="Crows", faction="Any")
+        other = TradeRequest.objects.create(
+            campaign=self.campaign,
+            from_user=self.player,
+            to_user=third,
+            from_warband=self.warband,
+            to_warband=crows,
+            status=TradeRequest.STATUS_ACCEPTED,
+            expires_at=timezone.now() + timedelta(minutes=5),
+        )
+        TradeRequest.objects.filter(id__in=[self.trade.id, other.id]).update(from_offer={"trader_id": hero.id})
+        other_base = f"/api/campaigns/{self.campaign.id}/trade-requests/{other.id}/"
+        rendezvous = Rendezvous()
+        real = lifecycle.spend_trader
+
+        with mock.patch.object(lifecycle, "spend_trader", side_effect=rendezvous.before(real)):
+            results = run_concurrently(
+                self._post(self.player, "lock"), self._post(self.player, "lock", base=other_base)
+            )
+
+        self.assertEqual(sorted(status for status, _ in results), [200, 400])
+        spent = TradeRequest.objects.filter(from_trader_spent=hero).count()
+        locked = TradeRequest.objects.filter(from_accepted=True).count()
+        self.assertEqual((spent, locked), (1, 1))

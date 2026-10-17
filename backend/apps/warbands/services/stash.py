@@ -18,7 +18,11 @@ from apps.warbands.models import Warband, WarbandItem
 
 
 class StashShortage(ValueError):
-    """The stash holds fewer copies than asked for; nothing was taken."""
+    """The stash holds fewer copies than asked for (`held`, 0 without a row); nothing was taken."""
+
+    def __init__(self, message: str, held: int = 0) -> None:
+        super().__init__(message)
+        self.held = held
 
 
 @dataclass(frozen=True)
@@ -54,7 +58,7 @@ def remove_from_stash(warband_id: int, item_id: int, quantity: int) -> StashTake
         .first()
     )
     if row is None or row.quantity < quantity:
-        raise StashShortage("Item not found in stash.")
+        raise StashShortage("Item not found in stash.", held=row.quantity if row else 0)
     cost = row.cost
     if row.quantity <= quantity:
         row.delete()
