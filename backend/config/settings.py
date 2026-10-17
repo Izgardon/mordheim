@@ -71,6 +71,9 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    # Content ETags + 304s for unchanged GET responses (see apps.core.middleware).
+    "django.middleware.http.ConditionalGetMiddleware",
+    "apps.core.middleware.ApiRevalidateMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
