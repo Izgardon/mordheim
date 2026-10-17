@@ -43,17 +43,19 @@ function Section({
   initialGroups,
   maxUnits,
   heroAndBloodPactedCount,
+  canEdit = true,
 }: {
   initialGroups: HenchmenGroup[];
   maxUnits?: number;
   heroAndBloodPactedCount?: number;
+  canEdit?: boolean;
 }) {
   const [groups, setGroups] = useState(initialGroups);
   return (
     <WarbandHenchmenSection
       warbandId={9}
       groups={groups}
-      canEdit
+      canEdit={canEdit}
       availableItems={[]}
       availableSkills={[]}
       availableSpecials={[]}
@@ -303,5 +305,25 @@ describe("WarbandHenchmenSection create and save", () => {
 
     expect(api.deleteWarbandHenchmenGroup).not.toHaveBeenCalled();
     expect(screen.getByText("Black Knives")).toBeInTheDocument();
+  });
+
+  it("shows the roster with Level Up! and Edit only to editors", () => {
+    const group = makeVeteranHenchmenGroup();
+    const { unmount } = renderWithQueryClient(<Section initialGroups={[group]} />);
+    expect(screen.getByRole("button", { name: "Level Up!" })).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Edit Henchmen" })).toHaveLength(2);
+    expect(screen.getByText("[3]")).toBeInTheDocument();
+    unmount();
+
+    renderWithQueryClient(<Section initialGroups={[group]} canEdit={false} />);
+    expect(screen.getByText("Black Knives")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Level Up!" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Edit Henchmen" })).not.toBeInTheDocument();
+  });
+
+  it("says when there are no groups yet", () => {
+    renderWithQueryClient(<Section initialGroups={[]} />);
+
+    expect(screen.getByText("No henchmen groups yet.")).toBeInTheDocument();
   });
 });
