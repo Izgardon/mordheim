@@ -91,8 +91,9 @@ class BattleConcurrencyTests(TransactionTestCase):
         return f"/api/campaigns/{self.campaign.id}/battles/{battle.id}/{action}/"
 
     def test_two_players_finalising_at_once_end_the_battle_once(self):
-        # BATL-TEST-16: both confirmed, one battle_ended, pivotal moments and the trading reset once. The rendezvous
-        # sits before the "has everyone finished?" check, where two unlocked finalises would each miss the other.
+        # BATL-TEST-16: both confirmed, one battle_ended, pivotal moments once, and no trading reset (End battle did
+        # it, BUG-122). The rendezvous sits before the "has everyone finished?" check, where two unlocked finalises
+        # would each miss the other.
         battle = self.battle(Battle.STATUS_POSTBATTLE, BattleParticipant.STATUS_FINISHED_BATTLE)
         Hero.objects.update(trading_action=False)
         rendezvous = Rendezvous()
@@ -120,8 +121,8 @@ class BattleConcurrencyTests(TransactionTestCase):
         self.assertEqual(BattleEvent.objects.filter(battle=battle, type="battle_ended").count(), 1)
         moments = PivotalMoment.objects.filter(battle=battle).values_list("warband_id", "kind")
         self.assertEqual(list(moments), [(self.warband.id, "untouched_triumph")])
-        self.assertEqual(resets.call_count, 1)
-        self.assertEqual(list(Hero.objects.values_list("trading_action", flat=True).distinct()), [True])
+        self.assertEqual(resets.call_count, 0)
+        self.assertEqual(list(Hero.objects.values_list("trading_action", flat=True).distinct()), [False])
 
     def test_finalise_and_a_leader_patch_on_the_same_warband_both_succeed(self):
         # BUG-106: finalise locks the warband row itself (since PERF-37 the participant join no longer does) before

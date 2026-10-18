@@ -664,7 +664,7 @@ def _finalize_battle(battle: Battle, actor_user, events: list[dict]) -> None:
             payload={"winner_warband_ids": battle.winner_warband_ids_json or []},
         )
     )
-    _reset_trading_actions_for_battle_participants(battle)
+    # trading actions were reset at End battle, once (BUG-122)
     from apps.campaigns.pivotal_moments import generate_pivotal_moments_for_battle
 
     generate_pivotal_moments_for_battle(battle)

@@ -141,13 +141,13 @@ class BattleQueryBudgetTests(BattleTestCase):
         self.within("finalise_first", queries, 66)
 
     def test_finalising_the_fixture_warband_last_stays_within_budget(self):
-        # + ending the battle: its event, the trading reset and the pivotal moments
+        # + ending the battle: its event and the pivotal moments (the trading reset went to End only, BUG-122)
         battle_id, postbattle = self._fixture_postbattle()
         self.ok(self.post_as(self.viewer, self.url(battle_id, "confirm")))
         body = {"postbattle_json": postbattle}
         queries, _ = self.count(self.player, "post", self.url(battle_id, "finalize-postbattle"), body)
         self.assertEqual(self.battle(battle_id).status, "ended")
-        self.within("finalise_last", queries, 75)
+        self.within("finalise_last", queries, 72)
 
     def test_a_locked_battle_write_locks_only_the_battle_and_participant_rows(self):
         # PERF-37, BATL-TEST-19: the battle row first, then the participant, whose query joins its user and warband

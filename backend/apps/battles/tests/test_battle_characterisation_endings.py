@@ -1,8 +1,8 @@
 """Ending a battle characterised: End battle, cancels, skipping postbattle and the trading reset (pass 3, step 0).
 
 Pinned: wins and losses added at End and a postbattle cancel rewriting confirmed rows (BUG-09, BATL-TEST-03/04),
-a cancelled participant blocking start (BUG-45), the trading actions reset twice (BUG-122); a skip uses up the items
-used in battle (BUG-72, fixed; test_battle_item_use.py); End needing a winner is decision 8's and creator-only End decision 4's.
+a cancelled participant blocking start (BUG-45). Fixed: the trading actions reset once, at End (BUG-122); a skip
+uses up the items used in battle (BUG-72; test_battle_item_use.py); End needing a winner is decision 8's and creator-only End decision 4's.
 """
 
 from collections.abc import Callable
@@ -65,8 +65,8 @@ class BattleFinishTests(BattleTestCase):
         self.assertEqual((again["events"], again["battle"]["winner_warband_ids_json"]), ([], [self.warband.id]))
         self.assertEqual((self.record(self.warband), self.record(self.rival)), ((1, None), (None, 1)))
 
-    def test_trading_actions_reset_at_end_and_again_when_the_last_player_finalises(self):
-        # Characterises current behaviour (BUG-122, pinned; flips in PR A: reset once, at End)
+    def test_trading_actions_reset_once_at_end(self):
+        # BUG-122: they were reset again when the last player finalised, giving back an action spent in between
         hero = Hero.objects.create(warband=self.warband, name="Haggler", unit_type="Champion", trading_action=False)
         battle_id = self.to_active()
 
@@ -80,7 +80,7 @@ class BattleFinishTests(BattleTestCase):
         self.assertFalse(hero.trading_action)
         self.ok(self.finalize(self.viewer, battle_id, draft({})))
         hero.refresh_from_db()
-        self.assertTrue(hero.trading_action)  # and has it back
+        self.assertFalse(hero.trading_action)  # still spent
         self.assertEqual(self.battle(battle_id).status, "ended")
         self.assertEqual(self.event_types(battle_id)[-2:], ["participant_confirmed_postbattle", "battle_ended"])
 
