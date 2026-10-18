@@ -154,6 +154,7 @@ export default function Warband() {
             campaignId={campaignId}
             userId={user?.id}
             session={trade.session}
+            openTradeId={trade.openTradeId}
             onResume={trade.resumeTrade}
           />
         ) : null}

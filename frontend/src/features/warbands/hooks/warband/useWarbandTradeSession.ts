@@ -31,6 +31,8 @@ type UseWarbandTradeSessionParams = {
 type UseWarbandTradeSessionReturn = {
   /** The open trade, from `?trade=` and the trade query; null when none is open. */
   session: TradeSession | null;
+  /** The trade `?trade=` names, already while it is being read. */
+  openTradeId: string | null;
   tradeRequest: TradeRequest | null;
   /** A write's answer (offer, lock, unlock); a completing lock also ends the session. */
   handleRequestUpdated: (request: TradeRequest) => void;
@@ -58,7 +60,7 @@ export function useWarbandTradeSession({
   // Off another player's warband (BUG-43): no trade is read, shown or listened to there.
   const canLoad = enabled && hasCampaignId && !Number.isNaN(campaignId);
   const userId = user?.id;
-  const { setTradeParam, request } = useTradeInUrl({
+  const { tradeParam, setTradeParam, request } = useTradeInUrl({
     campaignId,
     enabled: canLoad && Boolean(user),
   });
@@ -224,6 +226,7 @@ export function useWarbandTradeSession({
 
   return {
     session,
+    openTradeId: canLoad ? tradeParam : null,
     tradeRequest: session ? request : null,
     resumeTrade,
     handleRequestUpdated,

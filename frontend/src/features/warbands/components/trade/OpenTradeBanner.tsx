@@ -11,6 +11,8 @@ type OpenTradeBannerProps = {
   userId: number | undefined;
   /** The trade open on the page (from `?trade=`), if any. */
   session: TradeSession | null;
+  /** The trade `?trade=` names: once Resume put it there, the banner makes way for it. */
+  openTradeId: string | null;
   onResume: (requestId: string) => void;
 };
 
@@ -27,6 +29,7 @@ export default function OpenTradeBanner({
   campaignId,
   userId,
   session,
+  openTradeId,
   onResume,
 }: OpenTradeBannerProps) {
   const openTrades = useQuery(openTradesQuery(campaignId));
@@ -41,7 +44,7 @@ export default function OpenTradeBanner({
       </p>
     );
   }
-  if (session) {
+  if (session || openTradeId) {
     return null;
   }
 

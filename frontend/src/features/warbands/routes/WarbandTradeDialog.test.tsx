@@ -217,6 +217,19 @@ describe("Warband page: resuming an open trade", () => {
     expect(fakeApi.calls()).toContain(`GET /campaigns/7/trade-requests/${TRADE}/`);
   });
 
+  it("makes way for the trade at once when Resume is pressed, while it is being read", async () => {
+    const user = setupUser();
+    fakeApi.on(OPEN_ACCEPTED, [request()]);
+    fakeApi.on(OPEN_PENDING, []);
+    fakeApi.on(`GET /campaigns/7/trade-requests/${TRADE}/`, () => new Promise(() => undefined));
+    renderPage("/campaigns/7/warband");
+
+    const banner = await screen.findByRole("region", { name: "Open trade" });
+    await user.click(within(banner).getByRole("button", { name: "Resume" }));
+
+    expect(screen.queryByRole("region", { name: "Open trade" })).not.toBeInTheDocument();
+  });
+
   it("offers a request you sent and says it is waiting once resumed, with its time left", async () => {
     const user = setupUser();
     fakeApi.on(OPEN_ACCEPTED, []);
