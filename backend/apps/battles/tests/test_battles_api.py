@@ -195,7 +195,7 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data.get("detail"), "scenario is required")
 
-    def test_create_battle_rejects_busy_participant(self):
+    def test_create_battle_warns_about_a_busy_participant(self):
         self.client.force_authenticate(user=self.player)
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/",
@@ -216,11 +216,8 @@ class BattleApiTests(APITestCase):
             },
             format="json",
         )
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(
-            response.data.get("detail"),
-            "One or more participants are already in another battle: Player",
-        )
+        self.assertEqual(response.status_code, 201)  # decision 1: warn and allow
+        self.assertEqual([warning["user_id"] for warning in response.data["warnings"]], [self.player.id])
 
     def test_create_reported_result_initial_state(self):
         data = self._create_reported_result(

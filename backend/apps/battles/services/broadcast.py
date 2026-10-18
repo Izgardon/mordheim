@@ -33,11 +33,13 @@ Changed = Collection[int] | str
 
 
 def bump_state_version(battle: Battle) -> int:
-    """Raise the battle's state_version for this write (call inside its transaction, with the battle locked) and
-    return the new version; the write broadcasts it after commit."""
+    """Raise the battle's state_version for this write (call inside its transaction, with the battle locked),
+    record the activity (BUG-10) and return the new version; the write broadcasts it after commit."""
     battle.state_version = (battle.state_version or 0) + 1
-    battle.updated_at = timezone.now()
-    Battle.objects.filter(id=battle.id).update(state_version=battle.state_version, updated_at=battle.updated_at)
+    battle.updated_at = battle.last_activity_at = timezone.now()
+    Battle.objects.filter(id=battle.id).update(
+        state_version=battle.state_version, updated_at=battle.updated_at, last_activity_at=battle.last_activity_at
+    )
     return battle.state_version
 
 

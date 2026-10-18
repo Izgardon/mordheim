@@ -18,6 +18,7 @@ from apps.warbands.models import Warband
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.broadcast import ALL, bump_state_version
 from ..services.errors import BattleError, field_error
+from ..services.timing import invite_deadline, record_activity
 from ..services.unit_information import apply_patch, apply_whole_map, is_empty
 from .shared import (
     _all_participants_accepted,
@@ -60,6 +61,42 @@ _BUSY_PARTICIPANT_STATUSES = (
     BattleParticipant.STATUS_IN_BATTLE,
     BattleParticipant.STATUS_FINISHED_BATTLE,
 )
+
+
+def _busy_player_warnings(campaign_id: int, user_ids: list[int], creator_id: int) -> list[dict]:
+    """One warning per player already in an unfinished battle of the campaign (the most recent one): decision 1
+    warns and allows (BATL-TWEAK-01); the creator is told about his own (BATL-NEW-01)."""
+    busy = (
+        BattleParticipant.objects.filter(
+            user_id__in=user_ids,
+            battle__campaign_id=campaign_id,
+            battle__flow_type=Battle.FLOW_TYPE_NORMAL,
+            battle__status__in=_BUSY_BATTLE_STATUSES,
+            status__in=_BUSY_PARTICIPANT_STATUSES,
+        )
+        .select_related("user", "battle")
+        .order_by("user__first_name", "user__email", "-battle__created_at")
+    )
+    warnings: dict[int, dict] = {}
+    for entry in busy:
+        if entry.user_id in warnings:
+            continue
+        battle = entry.battle
+        where = f"#{battle.id}, {battle.status}"
+        message = (
+            f"You already have an unfinished battle ({where})."
+            if entry.user_id == creator_id
+            else f"{_display_name(entry.user)} is already in an unfinished battle ({where})."
+        )
+        warnings[entry.user_id] = {
+            "code": "player_busy",
+            "message": message,
+            "user_id": entry.user_id,
+            "battle_id": battle.id,
+            "battle_status": battle.status,
+            "last_activity_at": battle.last_activity_at.isoformat(),
+        }
+    return list(warnings.values())
 
 
 class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
@@ -131,29 +168,7 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
         if missing_warbands:
             return Response({"detail": "All participants need a warband"}, status=400)
 
-        busy_participants = list(
-            BattleParticipant.objects.filter(
-                user_id__in=participant_user_ids,
-                battle__campaign_id=campaign_id,
-                battle__flow_type=Battle.FLOW_TYPE_NORMAL,
-                battle__status__in=_BUSY_BATTLE_STATUSES,
-                status__in=_BUSY_PARTICIPANT_STATUSES,
-            )
-            .select_related("user")
-            .order_by("user__first_name", "user__email")
-        )
-        if busy_participants:
-            busy_labels = []
-            seen_user_ids = set()
-            for entry in busy_participants:
-                if entry.user_id in seen_user_ids:
-                    continue
-                seen_user_ids.add(entry.user_id)
-                busy_labels.append(_display_name(entry.user))
-            return Response(
-                {"detail": ("One or more participants are already in another battle: " + ", ".join(busy_labels))},
-                status=400,
-            )
+        warnings = _busy_player_warnings(campaign_id, participant_user_ids, request.user.id)
 
         raw_scenario_link = request.data.get("scenario_link")
         scenario_link = raw_scenario_link.strip() if isinstance(raw_scenario_link, str) else None
@@ -205,6 +220,7 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
                     scenario=scenario,
                     scenario_link=scenario_link,
                     state_version=1,
+                    closes_at=invite_deadline(),  # 72 hours to answer (decision 2)
                 )
                 logger.info("Battle row created battle_id=%s campaign_id=%s", battle.id, campaign_id)
                 events.append(
@@ -298,7 +314,13 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
             raise
 
         return _broadcast_response(
-            request, battle.id, events, battle.state_version, changed=ALL, response_status=status.HTTP_201_CREATED
+            request,
+            battle.id,
+            events,
+            battle.state_version,
+            changed=ALL,
+            response_status=status.HTTP_201_CREATED,
+            warnings=warnings,
         )
 
 
@@ -597,6 +619,7 @@ class CampaignBattleConfigView(APIView):
                 setattr(participant, field, value)
             participant.save(update_fields=[*changes, "updated_at"])
             if not shared_change:  # notes only (or nothing): nobody else needs it (PERF-34)
+                record_activity(battle)
                 return _response_with_snapshot(battle.id, events)
             version = bump_state_version(battle)
         return _broadcast_response(
@@ -633,7 +656,8 @@ class CampaignBattleJoinView(APIView):
 
                 if _all_participants_accepted(battle.id):
                     battle.status = Battle.STATUS_PREBATTLE
-                    battle.save(update_fields=["status", "updated_at"])
+                    battle.closes_at = None  # no deadline before postbattle
+                    battle.save(update_fields=["status", "closes_at", "updated_at"])
                     state_changed = opened = True
                     participant_entries = list(
                         BattleParticipant.objects.select_for_update().filter(battle_id=battle.id)

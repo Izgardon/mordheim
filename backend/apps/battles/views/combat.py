@@ -10,6 +10,7 @@ from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.broadcast import ALL, bump_state_version
 from ..services.errors import BattleError
 from ..services.item_use import check_payload_size, item_use_payload
+from ..services.timing import postbattle_deadline, record_activity
 from .closing import skip_postbattle
 from .shared import (
     INGAME_EVENT_TYPES,
@@ -377,7 +378,8 @@ class CampaignBattleFinishView(APIView):
 
             battle.status = Battle.STATUS_POSTBATTLE
             battle.winner_warband_ids_json = normalized_winner_ids
-            battle.save(update_fields=["status", "winner_warband_ids_json", "updated_at"])
+            battle.closes_at = postbattle_deadline(now)  # 72 hours of postbattle (decision 2)
+            battle.save(update_fields=["status", "winner_warband_ids_json", "closes_at", "updated_at"])
             _reset_trading_actions_for_battle_participants(battle)
             event = _append_battle_event(
                 battle,
@@ -434,6 +436,7 @@ class CampaignBattlePostbattleSaveView(APIView):
                 "unit_results": postbattle_json.get("unit_results", {}),
             }
             participant.save(update_fields=["postbattle_json", "updated_at"])
+            record_activity(battle)  # a draft is the player's own: activity, but no broadcast (PERF-34)
             _log_new_serious_injury_rolls(
                 participant,
                 previous_postbattle_json,

@@ -30,6 +30,9 @@ BATTLE_KEYS = [
     "post_processed_at",
     "channel",
     "state_version",
+    "last_activity_at",
+    "closes_at",
+    "overdue",
 ]
 PARTICIPANT_KEYS = [
     "id",
@@ -90,8 +93,9 @@ class BattleCreateTests(BattleTestCase):
         self.assertEqual(self.user_events.call_args.args[2]["notification_id"], invite.id)
         self.assertEqual(self.sent(), ["battle_created"])
 
-    def test_create_refuses_a_player_who_is_in_any_open_battle(self):
-        # Characterises current behaviour (BUG-10, decision 1, pinned; flips in PR A: busy players warn, not refuse)
+    def test_create_warns_about_players_in_an_open_battle(self):
+        # BUG-10, decision 1 (BATL-TWEAK-01, BATL-NEW-01): busy players were refused; now the battle is created and
+        # the answer says who is busy where, the creator included
         for battle_status, participant_status in (
             (Battle.STATUS_INVITING, BattleParticipant.STATUS_INVITED),
             (Battle.STATUS_PREBATTLE, BattleParticipant.STATUS_READY),
@@ -101,13 +105,28 @@ class BattleCreateTests(BattleTestCase):
             with self.subTest(phase=battle_status):
                 old = self._open_battle(battle_status, participant_status)
                 body = {"participant_user_ids": [self.viewer.id], "scenario": "Bridge"}
-                response = self.post_as(self.player, self.battles_url(), body)
+                data = self.ok(self.post_as(self.player, self.battles_url(), body), 201).data
                 self.assertEqual(
-                    (response.status_code, response.data),
-                    (400, {"detail": "One or more participants are already in another battle: viewe"}),
+                    data["warnings"],
+                    [
+                        {
+                            "code": "player_busy",
+                            "message": f"viewe is already in an unfinished battle (#{old.id}, {battle_status}).",
+                            "user_id": self.viewer.id,
+                            "battle_id": old.id,
+                            "battle_status": battle_status,
+                            "last_activity_at": old.last_activity_at.isoformat(),
+                        }
+                    ],
                 )
+                Battle.objects.filter(scenario="Bridge").delete()
                 old.delete()
-        self.assertFalse(Battle.objects.filter(scenario="Bridge").exists())
+
+        mine = self._open_battle(Battle.STATUS_POSTBATTLE, BattleParticipant.STATUS_FINISHED_BATTLE)
+        data = self.ok(self.post_as(self.viewer, self.battles_url(), {"participant_user_ids": [self.player.id], "scenario": "Ford"}), 201).data  # fmt: skip
+        self.assertEqual(
+            data["warnings"][0]["message"], f"You already have an unfinished battle (#{mine.id}, postbattle)."
+        )
 
     def test_finished_cancelled_and_reported_battles_do_not_make_a_player_busy(self):
         self._open_battle(Battle.STATUS_POSTBATTLE, BattleParticipant.STATUS_CONFIRMED_POSTBATTLE)

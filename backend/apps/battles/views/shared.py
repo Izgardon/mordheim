@@ -41,6 +41,7 @@ from apps.warbands.utils.leaders import ensure_single_living_leader
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.broadcast import Changed, publish
 from ..services.lifecycle import record_wins_and_losses
+from ..services.timing import is_overdue
 from ..services.unit_information import ARMOUR_SAVE_STAT_KEY, NUMERIC_STAT_KEYS, clean_editable_fields
 from ..services.warnings import Warning, unit_left_warband
 
@@ -77,6 +78,9 @@ def _serialize_battle(battle: Battle) -> dict:
         "post_processed_at": (battle.post_processed_at.isoformat() if battle.post_processed_at else None),
         "channel": get_battle_channel_name(battle.id),
         "state_version": battle.state_version,
+        "last_activity_at": battle.last_activity_at.isoformat(),
+        "closes_at": battle.closes_at.isoformat() if battle.closes_at else None,
+        "overdue": is_overdue(battle),
     }
 
 

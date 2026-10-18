@@ -584,6 +584,15 @@ class JoinCampaignView(APIView):
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
 
+def _busy_battle_fields(busy: tuple | None) -> dict:
+    battle_id, battle_status, last_activity_at = busy or (None, None, None)
+    return {
+        "battle_busy_status": battle_status,
+        "battle_busy_battle_id": battle_id,
+        "battle_busy_last_activity_at": last_activity_at,
+    }
+
+
 class CampaignPlayersView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -634,18 +643,18 @@ class CampaignPlayersView(APIView):
                 ),
             )
             .order_by("-battle__created_at")
-            .values_list("user_id", "battle__status")
+            .values_list("user_id", "battle_id", "battle__status", "battle__last_activity_at")
         )
-        busy_status_by_user: dict[int, str] = {}
-        for user_id, battle_status in busy_entries:
-            busy_status_by_user.setdefault(user_id, battle_status)
+        busy_by_user: dict[int, tuple] = {}  # the most recent unfinished battle: id, status, last activity (BUG-10)
+        for user_id, *battle in busy_entries:
+            busy_by_user.setdefault(user_id, tuple(battle))
         players = [
             {
                 "id": member.user_id,
                 "name": member.user.first_name or member.user.email,
                 "warband": warband_by_user.get(member.user_id),
-                "battle_busy": member.user_id in busy_status_by_user,
-                "battle_busy_status": busy_status_by_user.get(member.user_id),
+                "battle_busy": member.user_id in busy_by_user,
+                **_busy_battle_fields(busy_by_user.get(member.user_id)),
             }
             for member in memberships
         ]
