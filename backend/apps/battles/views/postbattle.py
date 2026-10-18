@@ -1,12 +1,16 @@
 """A player's postbattle: saving the draft, finalising it, or skipping it."""
 
+from django.db import transaction
 from rest_framework.response import Response
 
 from ..models import Battle, BattleParticipant
+from ..serializers import snapshot
 from ..services.broadcast import ALL
 from ..services.closing import skip
-from ..services.postbattle.finalise import finalise_postbattle, save_draft
-from .base import BattleWriteView, Scope, Unchanged, Written
+from ..services.errors import Refused
+from ..services.postbattle.finalise import apply_player_postbattle, confirm_postbattle, save_draft
+from .base import LOCK_PLAYER, BattleWriteView, Scope, Unchanged, Written
+from .responses import answer, publish_snapshot
 from .rules import only, only_player, refuse, refused, snapshot_when_player
 
 CONFIRMED = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
@@ -46,16 +50,31 @@ class CampaignBattleFinalizePostbattleView(BattleWriteView):
         only_player((BattleParticipant.STATUS_FINISHED_BATTLE,), "You must enter postbattle before finalizing"),
     )
 
+    battle_related = ("campaign__settings",)
+
     def post(self, request, campaign_id, battle_id, **kwargs):
         try:
-            return super().post(request, campaign_id, battle_id, **kwargs)
-        except ValueError as exc:  # raised inside the transaction, so nothing it wrote is kept (BUG-124)
+            return self.finalise(request, campaign_id, battle_id)
+        except ValueError as exc:  # raised inside the first transaction, so nothing it wrote is kept (BUG-124)
             return Response({"detail": str(exc)}, status=400)
 
-    def act(self, scope: Scope):
-        raw_draft = scope.request.data.get("postbattle_json", scope.player.postbattle_json)
-        events, warnings = finalise_postbattle(scope.battle, scope.player, raw_draft, scope.user)
-        return Written(events, changed=_changed(scope), warnings=warnings)
+    def finalise(self, request, campaign_id: int, battle_id: int) -> Response:
+        """His results under his own participant lock, then the battle row for the last step only (PERF-36)."""
+        with transaction.atomic():
+            try:
+                scope = self.load_scope(request, campaign_id, battle_id, lock=LOCK_PLAYER)
+            except Refused as refused:
+                return refused.response()
+            if (refusal := self.refusal(scope)) is not None:
+                return refusal
+            raw_draft = request.data.get("postbattle_json", scope.player.postbattle_json)
+            warnings = apply_player_postbattle(scope.battle, scope.player, raw_draft)
+        with transaction.atomic():
+            confirmed = confirm_postbattle(scope.battle.id, scope.player, request.user)
+        changed = ALL if confirmed.battle.status == Battle.STATUS_ENDED else [scope.player.id]
+        payload = snapshot(confirmed.battle, confirmed.participants)
+        publish_snapshot(request, payload, confirmed.events, confirmed.version, changed, "")
+        return answer(payload, confirmed.events, warnings=warnings)
 
 
 class CampaignBattleConfirmView(BattleWriteView):

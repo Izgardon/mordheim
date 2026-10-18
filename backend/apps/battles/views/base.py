@@ -34,6 +34,8 @@ from ..services.warnings import Warning
 from .responses import broadcast_response, response_with_snapshot
 from .rules import Rule
 
+READ, LOCK_BATTLE, LOCK_PLAYER = "", "battle", "player"
+
 
 def not_found() -> Refused:
     return Refused("Not found", status=404)
@@ -96,10 +98,18 @@ class BattleScopedView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     rules: tuple[Rule, ...] = ()
     in_battle = True  # the caller must be one of the battle's participants
+    battle_related: tuple[str, ...] = ()  # read with an unlocked battle (finalise: the campaign's settings)
 
-    def load_scope(self, request: Request, campaign_id: int, battle_id: int, *, lock: bool = False) -> Scope:
+    def load_scope(self, request: Request, campaign_id: int, battle_id: int, *, lock: str = READ) -> Scope:
+        """The battle and the caller's participant: `READ` locks nothing; `LOCK_BATTLE` (a write) locks the battle,
+        then the participant; `LOCK_PLAYER` (finalise, PERF-36) locks only the participant. A write to an overdue
+        battle settles it first, under the battle lock (decision 2)."""
         battles = scoped_battles(request.user, campaign_id).filter(id=battle_id)
-        battle = (battles.select_for_update(of=("self",)) if lock else battles).first()
+        if lock == LOCK_BATTLE:
+            battles = battles.select_for_update(of=("self",))
+        elif self.battle_related:
+            battles = battles.select_related(*self.battle_related)
+        battle = battles.first()
         if battle is None or not is_member(battle):
             raise not_found()
         if not self.in_battle:
@@ -107,7 +117,9 @@ class BattleScopedView(APIView):
         rows = participant_rows(battle, request.user)
         if lock:
             rows = rows.select_for_update(of=("self",))  # not the user or warband rows (PERF-37)
-            if is_overdue(battle):  # a write to an overdue battle settles it first (decision 2)
+            if is_overdue(battle):
+                if lock == LOCK_PLAYER:  # the battle first, as every write locks it
+                    battle = scoped_battles(request.user, campaign_id).select_for_update(of=("self",)).get(id=battle_id)
                 settle_during_write(battle)
         participant = rows.first()
         if participant is None:
@@ -151,7 +163,7 @@ class BattleWriteView(BattleScopedView):
     def write(self, request: Request, campaign_id: int, battle_id: int, act: Callable[[Scope], Outcome]) -> Response:
         with transaction.atomic():
             try:
-                scope = self.load_scope(request, campaign_id, battle_id, lock=True)
+                scope = self.load_scope(request, campaign_id, battle_id, lock=LOCK_BATTLE)
                 refusal = self.refusal(scope)
                 outcome = refusal if refusal is not None else act(scope)
             except (Refused, BattleError) as refused:

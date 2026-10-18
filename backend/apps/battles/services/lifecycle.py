@@ -5,6 +5,7 @@ Wins and losses count once, when the battle ends: when the last player finishes 
 its status as the guard, so it runs once per battle; PR C's automatic end (decision 4) calls the same function.
 """
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 
 from django.db.models import Count, F, Q, Value
@@ -52,6 +53,17 @@ def everyone_accepted(battle_id: int) -> bool:
     return headcount.total > 0 and headcount.accepted == headcount.total
 
 
+def still_in(participants: Iterable[BattleParticipant]) -> list[BattleParticipant]:
+    """The participants who haven't declined or been cancelled."""
+    return [entry for entry in participants if entry.status not in BattleParticipant.LEFT_STATUSES]
+
+
+def all_finished(participants: Iterable[BattleParticipant]) -> bool:
+    """Every participant still in the battle has finished postbattle (of participants read under the battle lock)."""
+    playing = still_in(participants)
+    return bool(playing) and all(entry.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE for entry in playing)
+
+
 def everyone_confirmed(battle_id: int) -> bool:
     """Every participant still in the battle has finished postbattle (finalised or skipped)."""
     participants = BattleParticipant.objects.filter(battle_id=battle_id).exclude(
@@ -63,17 +75,15 @@ def everyone_confirmed(battle_id: int) -> bool:
     )
 
 
-def record_wins_and_losses(battle: Battle) -> None:
+def record_wins_and_losses(battle: Battle, participants: Iterable[BattleParticipant] | None = None) -> None:
     """A win for each winning warband still in the battle and a loss for every other one; nothing at all when
-    nobody won ("No winner", decision 8)."""
+    nobody won ("No winner", decision 8). `participants`: all of them, when the caller has read them."""
     winner_ids = set(battle.winner_warband_ids_json or [])
     if not winner_ids:
         return
-    warband_ids = set(
-        BattleParticipant.objects.filter(battle_id=battle.id)
-        .exclude(status__in=BattleParticipant.LEFT_STATUSES)
-        .values_list("warband_id", flat=True)
-    )
+    if participants is None:
+        participants = BattleParticipant.objects.filter(battle_id=battle.id).only("warband_id", "status")
+    warband_ids = {entry.warband_id for entry in still_in(participants)}
     winners, losers = warband_ids & winner_ids, warband_ids - winner_ids
     if winners:
         Warband.objects.filter(id__in=winners).update(wins=Coalesce(F("wins"), Value(0)) + 1)
@@ -81,9 +91,16 @@ def record_wins_and_losses(battle: Battle) -> None:
         Warband.objects.filter(id__in=losers).update(losses=Coalesce(F("losses"), Value(0)) + 1)
 
 
-def end_battle(battle: Battle, actor_user, events: list[dict], **ended: object) -> None:
+def end_battle(
+    battle: Battle,
+    actor_user,
+    events: list[dict],
+    participants: Iterable[BattleParticipant] | None = None,
+    **ended: object,
+) -> None:
     """End the battle (the battle is locked; its status guards against a second end): wins and losses recorded
-    once (decision 3), the battle_ended event (with `ended`, e.g. who closed postbattle) and pivotal moments."""
+    once (decision 3), the battle_ended event (with `ended`, e.g. who closed postbattle) and pivotal moments.
+    PR C's automatic end when the last player finishes (decision 4) calls this too."""
     if battle.status == Battle.STATUS_ENDED:
         return
     now = timezone.now()
@@ -94,7 +111,7 @@ def end_battle(battle: Battle, actor_user, events: list[dict], **ended: object) 
     battle.save(update_fields=["status", "ended_at", "post_processed_at", "updated_at"])
     payload = {"winner_warband_ids": battle.winner_warband_ids_json or [], **ended}
     events.append(append_event(battle, BattleEvent.TYPE_BATTLE_ENDED, actor_user=actor_user, payload=payload))
-    record_wins_and_losses(battle)
+    record_wins_and_losses(battle, participants)
     # trading actions were reset at End battle, once (BUG-122)
     from apps.campaigns.pivotal_moments import generate_pivotal_moments_for_battle
 

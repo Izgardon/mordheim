@@ -20,11 +20,5 @@ def henchman_takes_his_share(group: HenchmenGroup) -> list[str]:
     return [row.item.name for row in share.values()]
 
 
-def carried_item_names(unit: Any) -> list[str]:
-    """What a dead hero or hired sword carries (it stays on his record)."""
-    links = unit.hero_items if hasattr(unit, "hero_items") else unit.hired_sword_items
-    return list(links.order_by("id").values_list("item__name", flat=True))
-
-
 def lost_entry(unit_name: str, items: list[str]) -> dict[str, Any] | None:
     return {"unit_name": unit_name, "items": items} if items else None

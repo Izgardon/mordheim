@@ -139,24 +139,28 @@ class BattleQueryBudgetTests(BattleTestCase):
         )
 
     def test_finalising_the_fixture_warband_stays_within_budget(self):
-        # BATL-TEST-07 baseline (target 30, PERF-36): the first of two players to finalise. It validates once, reads
-        # the battle's kill events (decision 5), saves each unit and every henchman one by one, reads what a dead unit
-        # carried (pass 2 decision 7), checks each group's survivors, and writes each log singly.
+        # BATL-TEST-07 (PERF-36): the first of two players to finalise, in two transactions. His own (the battle row
+        # not held): the battle with his membership and the campaign settings, his participant, the warband (with the
+        # exploration resource), heroes, hired swords and henchmen (with what each carries), their groups, the kill
+        # events and his item uses in one read; one UPDATE per unit kind, the resource, the ledger's one INSERT and
+        # balance UPDATE, the find (its cost read once, the stash row added), the result log's opponents, every log
+        # in one INSERT, his status. Then the battle row for the last step: the participants, his event, the
+        # state_version. The answer is built from those reads (was 67).
         battle_id, postbattle = self._fixture_postbattle()
         body = {"postbattle_json": postbattle}
         queries, _ = self.count(self.player, "post", self.url(battle_id, "finalize-postbattle"), body)
-        self.within("finalise_first", queries, 66)
+        self.within("finalise_first", queries, 30)
 
     def test_finalising_the_fixture_warband_last_stays_within_budget(self):
-        # + ending the battle: its event, the wins and losses (the warbands in it, then one UPDATE each for winners
-        # and losers; decision 3 moved them here from End) and the pivotal moments (the trading reset went to End
-        # only, BUG-122)
+        # + ending the battle: its UPDATE and event, the wins and losses (one UPDATE each for winners and losers, from
+        # the participants already read; decision 3 moved them here from End) and the pivotal moments (the trading
+        # reset went to End only, BUG-122). Was 76.
         battle_id, postbattle = self._fixture_postbattle()
         self.ok(self.post_as(self.viewer, self.url(battle_id, "confirm")))
         body = {"postbattle_json": postbattle}
         queries, _ = self.count(self.player, "post", self.url(battle_id, "finalize-postbattle"), body)
         self.assertEqual(self.battle(battle_id).status, "ended")
-        self.within("finalise_last", queries, 75)
+        self.within("finalise_last", queries, 38)
 
     def test_a_locked_battle_write_locks_only_the_battle_and_participant_rows(self):
         # PERF-37, BATL-TEST-19: the battle row first, then the participant, whose query joins its user and warband

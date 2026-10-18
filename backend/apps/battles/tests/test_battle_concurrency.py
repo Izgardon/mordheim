@@ -99,13 +99,13 @@ class BattleConcurrencyTests(TransactionTestCase):
         battle = self.battle(Battle.STATUS_POSTBATTLE, BattleParticipant.STATUS_FINISHED_BATTLE)
         Hero.objects.update(trading_action=False)
         rendezvous = Rendezvous()
-        real_check = lifecycle_services.everyone_confirmed
+        real_check = finalise_services.all_finished
         real_reset = lifecycle_services.reset_trading_actions
         url = self.battle_url(battle, "finalize-postbattle")
         sides = ((self.player, self.a), (self.viewer, self.r))
 
         with (
-            mock.patch.object(lifecycle_services, "everyone_confirmed", side_effect=rendezvous.before(real_check)),
+            mock.patch.object(finalise_services, "all_finished", side_effect=rendezvous.before(real_check)),
             mock.patch.object(lifecycle_services, "reset_trading_actions", wraps=real_reset) as resets,
         ):
             statuses = run_concurrently(
@@ -132,11 +132,11 @@ class BattleConcurrencyTests(TransactionTestCase):
         # nothing deadlocks, and exactly one living leader is left.
         battle = self.battle(Battle.STATUS_POSTBATTLE, BattleParticipant.STATUS_FINISHED_BATTLE)
         rendezvous = Rendezvous()
-        real_validate = finalise_services.validate_postbattle
+        real_validate = finalise_services.check_draft_against
         finalise = {"postbattle_json": draft({self.a: unit_result(self.a, dead=True)})}
 
         with (
-            mock.patch.object(finalise_services, "validate_postbattle", side_effect=rendezvous.before(real_validate)),
+            mock.patch.object(finalise_services, "check_draft_against", side_effect=rendezvous.before(real_validate)),
             mock.patch.object(hooks, "lock_warband", side_effect=rendezvous.before(hooks.lock_warband)),
         ):
             statuses = run_concurrently(

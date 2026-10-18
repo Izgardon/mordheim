@@ -5,6 +5,8 @@ has a result, injury rolls use the campaign's hero death roll (d6 for everyone e
 exploration resource is the warband's and each upkeep entry names one of its hired swords. ValueError otherwise.
 """
 
+from collections.abc import Callable
+
 from django.db.models import Q
 
 from apps.campaigns.models import CampaignSettings
@@ -54,23 +56,44 @@ def upkeep_hired_sword_ids(draft: dict) -> list[int]:
     return ids
 
 
-def validate_postbattle(battle: Battle, participant: BattleParticipant, raw_draft: object) -> dict:
-    """The normalised draft, checked (ValueError for the first problem)."""
-    draft: dict = normalize_postbattle(raw_draft)
+def check_draft(
+    draft: dict,
+    participant: BattleParticipant,
+    campaign_id: int,
+    hero_roll_type: str,
+    *,
+    resource_found: Callable[[int], bool],
+    hired_sword_ids: Callable[[list[int]], set[int]],
+) -> None:
+    """Check a normalised draft in the order its refusals have always come in; the warband's exploration resource
+    and hired swords are looked up through `resource_found` and `hired_sword_ids` (ValueError for the first
+    problem)."""
     unit_results = draft["unit_results"]
-    check_unit_results(participant, unit_results, hero_death_roll(battle.campaign_id))
-    check_special_ids(battle.campaign_id, unit_results)
+    check_unit_results(participant, unit_results, hero_roll_type)
+    check_special_ids(campaign_id, unit_results)
     resource_id = draft["exploration"].get("resource_id")
-    if (
-        resource_id is not None
-        and not WarbandResource.objects.filter(id=resource_id, warband_id=participant.warband_id).exists()
-    ):
+    if resource_id is not None and not resource_found(resource_id):
         raise ValueError("Selected exploration resource is invalid")
     sword_ids = upkeep_hired_sword_ids(draft)
-    if sword_ids:  # the warband's own; one dismissed since is charged nothing (BUG-73)
-        valid = HiredSword.objects.filter(id__in=sword_ids, warband_id=participant.warband_id).values_list(
-            "id", flat=True
-        )
-        if len(set(valid)) != len(set(sword_ids)):
-            raise ValueError("One or more upkeep hired swords are invalid")
+    if sword_ids and len(hired_sword_ids(sword_ids)) != len(set(sword_ids)):
+        # the warband's own, dismissed or not; one dismissed since is charged nothing (BUG-73)
+        raise ValueError("One or more upkeep hired swords are invalid")
+
+
+def validate_postbattle(battle: Battle, participant: BattleParticipant, raw_draft: object) -> dict:
+    """A draft save's draft, normalised and checked against the database (ValueError for the first problem)."""
+    draft: dict = normalize_postbattle(raw_draft)
+    warband_id = participant.warband_id
+    check_draft(
+        draft,
+        participant,
+        battle.campaign_id,
+        hero_death_roll(battle.campaign_id),
+        resource_found=lambda resource_id: WarbandResource.objects.filter(
+            id=resource_id, warband_id=warband_id
+        ).exists(),
+        hired_sword_ids=lambda ids: set(
+            HiredSword.objects.filter(id__in=ids, warband_id=warband_id).values_list("id", flat=True)
+        ),
+    )
     return draft

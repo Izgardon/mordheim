@@ -1,7 +1,8 @@
-"""The warband log entries a finalise writes, in this order: the battle's result, exploration, finds, each unit's
-serious injury, kept stat changes, items lost with dead units and the unusual values that were allowed."""
+"""The warband log entries a finalise writes, in one INSERT and in this order: the battle's result, exploration,
+finds, each unit's serious injury, kept stat changes, items lost with dead units and the unusual values that were
+allowed (PERF-36: they were written one by one)."""
 
-from apps.logs.utils import log_warband_event
+from apps.warbands.models import WarbandLog
 
 from ...models import Battle, BattleParticipant
 from ..lifecycle import battle_result_log
@@ -19,8 +20,7 @@ def write_battle_logs(
     units: UnitOutcome,
     unusual: list[Warning],
 ) -> None:
-    warband_id = participant.warband_id
-    log_warband_event(warband_id, "battle", "complete", battle_result_log(battle, participant))
+    entries: list[tuple[str, str, dict]] = [("battle", "complete", battle_result_log(battle, participant))]
     exploration_log = {
         "dice": exploration.get("dice_values", []),
         "amount": explored.amount,
@@ -28,14 +28,17 @@ def write_battle_logs(
         "resource": explored.resource_name,
         "rerolls": exploration.get("previous_rolls", []),  # kept by the server (services/exploration.py)
     }
-    log_warband_event(warband_id, "battle", "exploration", exploration_log)
+    entries.append(("battle", "exploration", exploration_log))
     if finds.gold_crowns > 0 or finds.items:
-        log_warband_event(warband_id, "battle", "finds", {"gold_crowns": finds.gold_crowns, "items": finds.items})
-    for injury_log in filter(None, units.injury_logs):  # one per unit: the final roll, re-rolls, what was applied
-        log_warband_event(warband_id, "personnel", "serious_injury", injury_log)
-    for stat_log in units.stat_logs:  # the kept stat changes, before and after (decision 6)
-        log_warband_event(warband_id, "personnel", "stats_kept", stat_log)
+        entries.append(("battle", "finds", {"gold_crowns": finds.gold_crowns, "items": finds.items}))
+    # one injury log per unit: the final roll, re-rolls, what was applied; kept stat changes before and after
+    entries += [("personnel", "serious_injury", injury_log) for injury_log in units.injury_logs if injury_log]
+    entries += [("personnel", "stats_kept", stat_log) for stat_log in units.stat_logs]
     if any(units.items_lost):
-        log_warband_event(warband_id, "battle", "items_lost", {"units": list(filter(None, units.items_lost))})
+        entries.append(("battle", "items_lost", {"units": [entry for entry in units.items_lost if entry]}))
     if unusual:  # allowed, answered and logged (decision 9)
-        log_warband_event(warband_id, "battle", "warnings", {"warnings": unusual})
+        entries.append(("battle", "warnings", {"warnings": unusual}))
+    WarbandLog.objects.bulk_create(
+        WarbandLog(warband_id=participant.warband_id, feature=feature, entry_type=entry_type, payload=payload)
+        for feature, entry_type, payload in entries
+    )
