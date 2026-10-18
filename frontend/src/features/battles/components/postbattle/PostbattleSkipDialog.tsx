@@ -79,7 +79,8 @@ export default function PostbattleSkipDialog({
           <DialogTitle>Skip postbattle</DialogTitle>
           <DialogDescription className="block text-sm text-muted-foreground">
             {warbandName} leaves this battle without its postbattle. You can&apos;t come back to it,
-            and nothing from this page will be applied.
+            and nothing from this page will be applied. Single-use items used in the battle are
+            still used up.
           </DialogDescription>
         </DialogHeader>
         {lines.length > 0 ? (

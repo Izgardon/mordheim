@@ -148,7 +148,7 @@ describe("BattlePostbattle requests", () => {
 
     const dialog = screen.getByRole("dialog", { name: "Skip postbattle" });
     expect(dialog).toHaveAccessibleDescription(
-      "Iron Vultures leaves this battle without its postbattle. You can't come back to it, and nothing from this page will be applied."
+      "Iron Vultures leaves this battle without its postbattle. You can't come back to it, and nothing from this page will be applied. Single-use items used in the battle are still used up."
     );
     expect(
       within(dialog)

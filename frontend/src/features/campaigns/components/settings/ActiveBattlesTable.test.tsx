@@ -60,6 +60,10 @@ describe("ActiveBattlesTable (BUG-09, BUG-10)", () => {
     const dialog = screen.getByRole("dialog", { name: "Close postbattle" });
     // The battle ended with No winner, so closing records none (decision 8).
     expect(dialog).toHaveAccessibleDescription(/no wins or losses are recorded/);
+    // A skip still uses up the single-use items a player used in the battle (BUG-72).
+    expect(dialog).toHaveAccessibleDescription(
+      /single-use items they used in the battle are still used up/
+    );
     // You finalised; the other player hasn't.
     expect(
       within(dialog)

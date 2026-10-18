@@ -47,7 +47,7 @@ export default function ClosePostbattleDialog({
           <DialogTitle>Close postbattle</DialogTitle>
           <DialogDescription className="block text-sm text-muted-foreground">
             {unfinished.length > 0
-              ? `${ends} These players haven't finished, so they are skipped and nothing from their postbattle is applied:`
+              ? `${ends} These players haven't finished, so they are skipped: nothing from their postbattle is applied, and single-use items they used in the battle are still used up:`
               : `Everyone has finished. ${ends}`}
           </DialogDescription>
         </DialogHeader>
