@@ -1,17 +1,16 @@
 from django.db import transaction
-from django.db.models import F
 from django.utils import timezone
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
-from apps.warbands.models import Warband
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.broadcast import ALL, bump_state_version
 from ..services.errors import BattleError
 from ..services.item_use import check_payload_size, item_use_payload
+from .closing import skip_postbattle
 from .shared import (
     INGAME_EVENT_TYPES,
     KILLER_UNIT_TYPES,
@@ -27,7 +26,6 @@ from .shared import (
     _normalize_unit_information,
     _parse_unit_key,
     _participant_selected_unit_keys,
-    _remove_used_single_use_items,
     _reset_trading_actions_for_battle_participants,
     _response_with_snapshot,
     _upsert_unit_information,
@@ -367,24 +365,7 @@ class CampaignBattleFinishView(APIView):
             participants = list(
                 BattleParticipant.objects.select_for_update().filter(battle_id=battle.id).order_by("id")
             )
-            resolved_winner_ids = set(normalized_winner_ids)
-            resolved_loser_ids: set[int] = set()
-            for entry in participants:
-                if entry.status == BattleParticipant.STATUS_CANCELED_PREBATTLE:
-                    continue
-                if entry.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE:
-                    continue
-                if entry.warband_id in resolved_winner_ids:
-                    continue
-                resolved_loser_ids.add(entry.warband_id)
-
-            if resolved_winner_ids:
-                Warband.objects.filter(id__in=resolved_winner_ids).update(wins=F("wins") + 1)
-                Warband.objects.filter(id__in=resolved_winner_ids, wins__isnull=True).update(wins=1)
-            if resolved_loser_ids:
-                Warband.objects.filter(id__in=resolved_loser_ids).update(losses=F("losses") + 1)
-                Warband.objects.filter(id__in=resolved_loser_ids, losses__isnull=True).update(losses=1)
-
+            # wins and losses count when the battle ends, not here (decision 3, BUG-09)
             for entry in participants:
                 if entry.status == BattleParticipant.STATUS_CANCELED_PREBATTLE:
                     continue
@@ -480,6 +461,9 @@ class CampaignBattleFinalizePostbattleView(APIView):
                 return Response({"detail": "Not found"}, status=404)
             if battle.status == Battle.STATUS_CANCELED:
                 return Response({"detail": "Battle was canceled"}, status=400)
+            if participant.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE and participant.skipped_postbattle:
+                detail = "Your postbattle was skipped, so its results can't be applied now"
+                return Response({"detail": detail, "code": "postbattle_skipped"}, status=400)
             if participant.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE:
                 return _response_with_snapshot(battle.id, events)
             if battle.status != Battle.STATUS_POSTBATTLE:
@@ -529,32 +513,7 @@ class CampaignBattleConfirmView(CampaignBattleFinalizePostbattleView):
             if participant.status != BattleParticipant.STATUS_FINISHED_BATTLE:
                 return Response({"detail": "You must enter postbattle before leaving"}, status=400)
 
-            _remove_used_single_use_items(battle, participant)  # a skip still uses up what was used (BUG-72)
-            participant.postbattle_json = {
-                "exploration": {
-                    "dice_values": [],
-                    "resource_id": None,
-                },
-                "finds": {
-                    "gold_crowns": 0,
-                    "items": [],
-                },
-                "upkeep": {
-                    "pay_upkeep": True,
-                    "entries": {},
-                },
-                "unit_results": {},
-            }
-            participant.status = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
-            participant.confirmed_at = timezone.now()
-            participant.save(update_fields=["postbattle_json", "status", "confirmed_at", "updated_at"])
-            event = _append_battle_event(
-                battle,
-                BattleEvent.TYPE_PARTICIPANT_CONFIRMED_POSTBATTLE,
-                actor_user=request.user,
-                payload={"participant_user_id": request.user.id, "skipped_postbattle": True},
-            )
-            events.append(event)
+            events.append(skip_postbattle(battle, participant, actor_user=request.user))
 
             if battle.status != Battle.STATUS_ENDED and _all_started_participants_confirmed(battle.id):
                 _finalize_battle(battle, request.user, events)

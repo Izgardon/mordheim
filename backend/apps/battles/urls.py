@@ -2,6 +2,7 @@ from django.urls import path
 
 from .views import (
     CampaignBattleCancelView,
+    CampaignBattleClosePostbattleView,
     CampaignBattleConfigView,
     CampaignBattleConfirmView,
     CampaignBattleCreatorCancelView,
@@ -130,6 +131,11 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/winner/",
         CampaignBattleWinnerView.as_view(),
         name="campaigns-battles-winner",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/close-postbattle/",
+        CampaignBattleClosePostbattleView.as_view(),
+        name="campaigns-battles-close-postbattle",
     ),
     path(
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/confirm/",

@@ -53,6 +53,7 @@ PARTICIPANT_KEYS = [
     "battle_joined_at",
     "finished_at",
     "confirmed_at",
+    "skipped_postbattle",
     "declared_rating",
     "postbattle_json",
 ]

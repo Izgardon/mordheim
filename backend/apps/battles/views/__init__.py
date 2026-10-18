@@ -1,3 +1,4 @@
+from .closing import CampaignBattleClosePostbattleView
 from .combat import (
     CampaignBattleConfirmView,
     CampaignBattleEventCreateView,
@@ -25,6 +26,7 @@ from .lifecycle import (
 from .results import CampaignBattleWithdrawResultView, CampaignPendingResultsView
 
 __all__ = [
+    "CampaignBattleClosePostbattleView",
     "CampaignPendingResultsView",
     "CampaignBattleWithdrawResultView",
     "CampaignBattleListCreateView",

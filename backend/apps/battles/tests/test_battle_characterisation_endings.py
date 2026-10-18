@@ -1,12 +1,11 @@
 """Ending a battle characterised: End battle, cancels, skipping postbattle and the trading reset (pass 3, step 0).
 
-Pinned: wins and losses added at End and a postbattle cancel rewriting confirmed rows (BUG-09, BATL-TEST-03/04),
-a cancelled participant blocking start (BUG-45). Fixed: the trading actions reset once, at End (BUG-122); a skip
-uses up the items used in battle (BUG-72; test_battle_item_use.py); End needing a winner is decision 8's and creator-only End decision 4's.
+Pinned: a cancelled participant blocking start (BUG-45). Fixed: wins and losses count once, when the battle ends,
+and cancels refuse postbattle (BUG-09, BATL-TEST-03/04; close-postbattle in test_battle_close_postbattle.py); the
+trading actions reset once, at End (BUG-122); a skip uses up the items used in battle (BUG-72); End needing a winner is decision 8's and creator-only End decision 4's.
 """
 
 from collections.abc import Callable
-from decimal import Decimal
 from typing import Any
 
 from apps.battles.models import Battle, BattleEvent
@@ -43,8 +42,8 @@ class BattleFinishTests(BattleTestCase):
         response = self.post_as(self.player, self.url(battle_id, "finish"), {"winner_warband_ids": [self.warband.id]})
         self.assertEqual((response.status_code, response.data), (400, {"detail": "Battle has not started"}))
 
-    def test_wins_and_losses_are_added_when_the_battle_is_ended(self):
-        # Characterises current behaviour (BUG-09, pinned; flips in PR A: added once, when the battle finishes)
+    def test_wins_and_losses_count_once_when_the_battle_ends(self):
+        # BUG-09, decision 3: they were added at End battle, and kept by a later cancel
         battle_id = self.to_active()
 
         data = self.ok(
@@ -53,7 +52,7 @@ class BattleFinishTests(BattleTestCase):
             )
         ).data
 
-        self.assertEqual((self.record(self.warband), self.record(self.rival)), ((1, None), (None, 1)))
+        self.assertEqual((self.record(self.warband), self.record(self.rival)), ((None, None), (None, None)))
         self.assertEqual(
             (data["battle"]["status"], data["battle"]["winner_warband_ids_json"]), ("postbattle", [self.warband.id])
         )
@@ -63,6 +62,11 @@ class BattleFinishTests(BattleTestCase):
 
         again = self.ok(self.finish(battle_id, [self.rival])).data  # a second End is ignored
         self.assertEqual((again["events"], again["battle"]["winner_warband_ids_json"]), ([], [self.warband.id]))
+        self.ok(self.finalize(self.player, battle_id, draft({})))
+        self.assertEqual((self.record(self.warband), self.record(self.rival)), ((None, None), (None, None)))
+        self.ok(self.post_as(self.viewer, self.url(battle_id, "confirm")))  # the last one ends the battle
+        self.assertEqual((self.record(self.warband), self.record(self.rival)), ((1, None), (None, 1)))
+        self.ok(self.post_as(self.viewer, self.url(battle_id, "confirm")))
         self.assertEqual((self.record(self.warband), self.record(self.rival)), ((1, None), (None, 1)))
 
     def test_trading_actions_reset_once_at_end(self):
@@ -104,8 +108,8 @@ class BattleCancelTests(BattleTestCase):
         self.assertEqual((event.type, event.payload_json), expected)
         self.assertFalse(Notification.objects.filter(reference_id=str(battle_id), is_resolved=False).exists())
 
-    def test_the_creator_cancels_in_every_phase_until_the_battle_ends(self):
-        for phase in ("inviting", "prebattle", "active", "postbattle"):
+    def test_the_creator_cancels_in_every_phase_before_postbattle(self):
+        for phase in ("inviting", "prebattle", "active"):
             with self.subTest(phase=phase):
                 battle_id = self._battle_in(phase)
                 url = self.url(battle_id, "cancel-battle")
@@ -121,11 +125,11 @@ class BattleCancelTests(BattleTestCase):
         response = self.post_as(self.player, self.url(battle_id, "cancel-battle"))
         self.assertEqual((response.status_code, response.data), (400, {"detail": "Battle is already ended"}))
 
-    def test_the_campaign_owner_cancels_in_every_phase_until_the_battle_ends(self):
+    def test_the_campaign_owner_cancels_in_every_phase_before_postbattle(self):
         def owner_url(battle_id: int) -> str:
             return f"/api/campaigns/{self.campaign.id}/active-battles/{battle_id}/cancel/"
 
-        for phase in ("inviting", "prebattle", "active", "postbattle"):
+        for phase in ("inviting", "prebattle", "active"):
             with self.subTest(phase=phase):
                 battle_id = self._battle_in(phase)
                 self.assertEqual(self.post_as(self.player, owner_url(battle_id)).status_code, 403)
@@ -137,33 +141,31 @@ class BattleCancelTests(BattleTestCase):
         response = self.post_as(self.campaign_owner, owner_url(battle_id))
         self.assertEqual((response.status_code, response.data), (400, {"detail": "Battle is already ended"}))
 
-    def _finalised_then_cancelled(self, cancel_as: Any, url: str) -> tuple[int, Hero]:
+    def _cancel_after_one_finalised(self, cancel_as: Any, url: str) -> tuple[int, Any]:
         hero = Hero.objects.create(warband=self.warband, name="Abbess", unit_type="Matriarch")
         battle_id = self.to_postbattle({self.player: [f"hero:{hero.id}"], self.viewer: []})
         self.ok(self.finalize(self.player, battle_id, draft({f"hero:{hero.id}": unit_result(f"hero:{hero.id}", xp=3)})))
         self.assertEqual(self.statuses(battle_id), ["confirmed_postbattle", "finished_battle"])
+        return battle_id, self.post_as(cancel_as, url.format(battle=battle_id))
 
-        self.ok(self.post_as(cancel_as, url.format(battle=battle_id)))
-        hero.refresh_from_db()
-        return battle_id, hero
+    def assert_refused_in_postbattle(self, battle_id: int, response: Any) -> None:
+        expected = {"detail": "Postbattle can't be cancelled; close it instead", "code": "use_close_postbattle"}
+        self.assertEqual((response.status_code, response.data), (400, expected))
+        self.assertEqual(self.battle(battle_id).status, "postbattle")
+        self.assertEqual(self.statuses(battle_id), ["confirmed_postbattle", "finished_battle"])
 
-    def test_a_creator_cancel_in_postbattle_rewrites_confirmed_rows_and_keeps_results(self):
-        # Characterises current behaviour (BUG-09, BATL-TEST-03, pinned; flips in PR A: cancel refuses postbattle)
-        url = f"{self.battles_url()}{{battle}}/cancel-battle/"
-        battle_id, hero = self._finalised_then_cancelled(self.player, url)
+    def test_a_creator_cancel_in_postbattle_is_refused(self):
+        # BUG-09, BATL-TEST-03: it rewrote confirmed rows as cancelled while their XP, gold and items stayed applied
+        battle_id, response = self._cancel_after_one_finalised(
+            self.player, f"{self.battles_url()}{{battle}}/cancel-battle/"
+        )
+        self.assert_refused_in_postbattle(battle_id, response)
 
-        self.assertEqual(self.statuses(battle_id), ["canceled_prebattle", "canceled_prebattle"])
-        self.assertEqual(hero.xp, Decimal(3))
-        self.assertEqual((self.record(self.warband), self.record(self.rival)), ((1, None), (None, 1)))
-
-    def test_an_owner_cancel_in_postbattle_rewrites_confirmed_rows_and_keeps_results(self):
-        # Characterises current behaviour (BUG-09, BATL-TEST-04, pinned; flips in PR A: cancel refuses postbattle)
+    def test_an_owner_cancel_in_postbattle_is_refused(self):
+        # BUG-09, BATL-TEST-04
         url = f"/api/campaigns/{self.campaign.id}/active-battles/{{battle}}/cancel/"
-        battle_id, hero = self._finalised_then_cancelled(self.campaign_owner, url)
-
-        self.assertEqual(self.statuses(battle_id), ["canceled_prebattle", "canceled_prebattle"])
-        self.assertEqual(hero.xp, Decimal(3))
-        self.assertEqual((self.record(self.warband), self.record(self.rival)), ((1, None), (None, 1)))
+        battle_id, response = self._cancel_after_one_finalised(self.campaign_owner, url)
+        self.assert_refused_in_postbattle(battle_id, response)
 
     def test_a_cancelled_participant_blocks_start_for_ever(self):
         # Characterises current behaviour (BUG-45, pinned; flips in PR A: declined and cancelled rows are ignored)
@@ -229,8 +231,12 @@ class BattleSkipTests(BattleTestCase):
     def test_a_skip_or_finalise_after_finishing_changes_nothing(self):
         battle_id = self.to_postbattle()
         self.ok(self.post_as(self.player, self.url(battle_id, "confirm")))
+        self.assertTrue(self.participant(battle_id, self.player).skipped_postbattle)
         events = self.event_types(battle_id)
-        for action in ("confirm", "finalize-postbattle"):
-            with self.subTest(action=action):
-                self.assertEqual(self.ok(self.post_as(self.player, self.url(battle_id, action))).data["events"], [])
+        self.assertEqual(self.ok(self.post_as(self.player, self.url(battle_id, "confirm"))).data["events"], [])
+        response = self.post_as(self.player, self.url(battle_id, "finalize-postbattle"))  # skipped: too late
+        self.assertEqual((response.status_code, response.data["code"]), (400, "postbattle_skipped"))
         self.assertEqual(self.event_types(battle_id), events)
+
+        self.ok(self.finalize(self.viewer, battle_id, draft({})))
+        self.assertEqual(self.ok(self.finalize(self.viewer, battle_id, draft({}))).data["events"], [])  # retried

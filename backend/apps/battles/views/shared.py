@@ -40,6 +40,7 @@ from apps.warbands.utils.leaders import ensure_single_living_leader
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.broadcast import Changed, publish
+from ..services.lifecycle import record_wins_and_losses
 from ..services.unit_information import ARMOUR_SAVE_STAT_KEY, NUMERIC_STAT_KEYS, clean_editable_fields
 from ..services.warnings import Warning, unit_left_warband
 
@@ -118,6 +119,7 @@ def _serialize_participant(participant: BattleParticipant, participant_view: str
                 ),
                 "finished_at": participant.finished_at.isoformat() if participant.finished_at else None,
                 "confirmed_at": participant.confirmed_at.isoformat() if participant.confirmed_at else None,
+                "skipped_postbattle": participant.skipped_postbattle,
             }
         )
 
@@ -412,7 +414,11 @@ def _cancel_battle_for_all_participants(
     participants = list(BattleParticipant.objects.select_for_update().filter(battle_id=battle.id))
     if battle.flow_type == Battle.FLOW_TYPE_NORMAL:
         for entry in participants:
-            if entry.status == BattleParticipant.STATUS_CANCELED_PREBATTLE:
+            # a finished postbattle is a record, never rewritten (BUG-09; cancels refuse postbattle anyway)
+            if entry.status in (
+                BattleParticipant.STATUS_CANCELED_PREBATTLE,
+                BattleParticipant.STATUS_CONFIRMED_POSTBATTLE,
+            ):
                 continue
             entry.status = BattleParticipant.STATUS_CANCELED_PREBATTLE
             entry.canceled_at = entry.canceled_at or now
@@ -633,7 +639,9 @@ def _apply_kill_aggregation(battle_id: int) -> None:
         Henchman.objects.filter(id=unit_id).update(kills=F("kills") + count)
 
 
-def _finalize_battle(battle: Battle, actor_user, events: list[dict]) -> None:
+def _finalize_battle(battle: Battle, actor_user, events: list[dict], **ended: object) -> None:
+    """End the battle (the battle is locked; its status guards against a second end): wins and losses recorded
+    once (decision 3), the battle_ended event (with `ended`, e.g. who closed postbattle) and pivotal moments."""
     if battle.status == Battle.STATUS_ENDED:
         return
 
@@ -649,9 +657,10 @@ def _finalize_battle(battle: Battle, actor_user, events: list[dict]) -> None:
             battle,
             BattleEvent.TYPE_BATTLE_ENDED,
             actor_user=actor_user,
-            payload={"winner_warband_ids": battle.winner_warband_ids_json or []},
+            payload={"winner_warband_ids": battle.winner_warband_ids_json or [], **ended},
         )
     )
+    record_wins_and_losses(battle)
     # trading actions were reset at End battle, once (BUG-122)
     from apps.campaigns.pivotal_moments import generate_pivotal_moments_for_battle
 

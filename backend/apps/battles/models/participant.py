@@ -81,6 +81,8 @@ class BattleParticipant(models.Model):
     battle_joined_at = models.DateTimeField(null=True, blank=True)
     finished_at = models.DateTimeField(null=True, blank=True)
     confirmed_at = models.DateTimeField(null=True, blank=True)
+    # finished postbattle without applying it: skipped, or closed for him (decision 3)
+    skipped_postbattle = models.BooleanField(default=False)
     last_event_id = models.BigIntegerField(default=0)
     last_seen_at = models.DateTimeField(null=True, blank=True)
     selected_unit_keys_json = models.JSONField(default=list, blank=True)

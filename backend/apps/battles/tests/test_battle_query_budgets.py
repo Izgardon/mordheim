@@ -86,7 +86,8 @@ class BattleQueryBudgetTests(BattleTestCase):
         # Each: membership, the battle and participant locked, the write, its event, the battle's state_version
         # (PERF-34; the realtime sends go after commit) and the answer's fresh snapshot (2); no presence write since
         # PERF-35. A kill also locks every participant and reads both units; an item use checks the unit carries the
-        # item (BUG-72); End also locks every participant, adds wins and losses and resets trading actions.
+        # item (BUG-72); End also locks every participant and resets trading actions (wins and losses count when the
+        # battle ends, decision 3).
         cases: list[tuple[str, str, dict[str, Any], int]] = [
             ("config", "config", info, 9),
             ("unit_ooa", "unit-ooa", {"unit_key": f"hero:{self.fixture.heroes[2].id}", "out_of_action": True}, 10),
@@ -97,7 +98,7 @@ class BattleQueryBudgetTests(BattleTestCase):
                 {"type": "item_used", "payload_json": {"unit_key": h, "item_id": self.rope.id}},
                 10,
             ),
-            ("finish", "finish", {"winner_warband_ids": [self.warband.id]}, 21),
+            ("finish", "finish", {"winner_warband_ids": [self.warband.id]}, 17),
         ]
         for name, action, body, budget in cases:
             with self.subTest(write=name):
@@ -146,13 +147,15 @@ class BattleQueryBudgetTests(BattleTestCase):
         self.within("finalise_first", queries, 67)
 
     def test_finalising_the_fixture_warband_last_stays_within_budget(self):
-        # + ending the battle: its event and the pivotal moments (the trading reset went to End only, BUG-122)
+        # + ending the battle: its event, the wins and losses (the warbands in it, then one UPDATE each for winners
+        # and losers; decision 3 moved them here from End) and the pivotal moments (the trading reset went to End
+        # only, BUG-122)
         battle_id, postbattle = self._fixture_postbattle()
         self.ok(self.post_as(self.viewer, self.url(battle_id, "confirm")))
         body = {"postbattle_json": postbattle}
         queries, _ = self.count(self.player, "post", self.url(battle_id, "finalize-postbattle"), body)
         self.assertEqual(self.battle(battle_id).status, "ended")
-        self.within("finalise_last", queries, 73)
+        self.within("finalise_last", queries, 76)
 
     def test_a_locked_battle_write_locks_only_the_battle_and_participant_rows(self):
         # PERF-37, BATL-TEST-19: the battle row first, then the participant, whose query joins its user and warband

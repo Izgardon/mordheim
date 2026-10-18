@@ -757,6 +757,11 @@ class CampaignActiveBattleCancelView(APIView):
                 return _response_with_snapshot(battle.id, events)
             if battle.status == Battle.STATUS_ENDED:
                 return Response({"detail": "Battle is already ended"}, status=400)
+            if battle.status == Battle.STATUS_POSTBATTLE:  # decision 3, BUG-09
+                return Response(
+                    {"detail": "Postbattle can't be cancelled; close it instead", "code": "use_close_postbattle"},
+                    status=400,
+                )
 
             event = _cancel_battle_for_all_participants(
                 battle,

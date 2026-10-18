@@ -499,10 +499,6 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["battle"]["status"], "postbattle")
         self.assertEqual(response.data["battle"]["winner_warband_ids_json"], [self.owner_warband.id])
-        self.owner_warband.refresh_from_db()
-        self.player_warband.refresh_from_db()
-        self.assertEqual(self.owner_warband.wins, 1)
-        self.assertEqual(self.player_warband.losses, 1)
 
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/postbattle/",
@@ -2377,7 +2373,7 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data.get("detail"), "Only the battle creator can end the active battle")
 
-    def test_finish_commits_wins_and_losses_once(self):
+    def test_wins_and_losses_count_when_the_battle_ends(self):
         data = self._create_battle()
         battle_id = data["battle"]["id"]
         self._ready_both_and_start(battle_id)
@@ -2389,6 +2385,13 @@ class BattleApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, 200)
+        self.owner_warband.refresh_from_db()
+        self.assertIsNone(self.owner_warband.wins)  # decision 3: not at End
+
+        for user in (self.owner, self.player):
+            self.client.force_authenticate(user=user)
+            response = self.client.post(f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/confirm/")
+            self.assertEqual(response.status_code, 200)
 
         self.owner_warband.refresh_from_db()
         self.player_warband.refresh_from_db()
@@ -2579,11 +2582,7 @@ class BattleApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, 200)
-
-        self.owner_warband.refresh_from_db()
-        self.player_warband.refresh_from_db()
-        self.assertEqual(self.owner_warband.wins, 1)
-        self.assertEqual(self.player_warband.losses, 1)
+        self.assertEqual(response.data["battle"]["winner_warband_ids_json"], [self.owner_warband.id])
 
     def test_cancel_all_moves_battle_to_canceled(self):
         data = self._create_battle()
