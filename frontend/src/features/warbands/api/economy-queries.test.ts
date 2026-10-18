@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  itemMutationUpdate,
   patchSheetResources,
   prependTreasuryRow,
   readTradeData,
@@ -12,6 +13,7 @@ import {
 } from "./economy-queries";
 import { queryKeys } from "@/lib/query-keys";
 import { createTestQueryClient } from "@/test/query-test-utils";
+import { makeHenchmenGroup, makeHero, makeStashItem } from "@/test/warband-fixtures";
 
 import type { TradeRequest } from "../types/trade-request-types";
 import type { WarbandSheet } from "../types/warband-sheet";
@@ -155,5 +157,59 @@ describe("patchSheetResources", () => {
     patchSheetResources(queryClient, 9, (resources) => resources.filter((entry) => entry.id !== 3));
 
     expect(resourcesOf(queryClient)).toEqual([]);
+  });
+});
+
+describe("itemMutationUpdate", () => {
+  const ids = (units?: unknown[]) =>
+    (units as { id: number }[] | undefined)?.map((unit) => unit.id);
+
+  it("takes the summary and the stash row, and puts a receiving unit in its own kind's list", () => {
+    const stashRow = makeStashItem({ id: 101 });
+    const group = makeHenchmenGroup({ id: 5 });
+    const update = itemMutationUpdate({
+      summary: { gold: 10 },
+      source: stashRow,
+      target: group,
+      stash_item: stashRow,
+      targetUnitType: "henchmen",
+    });
+
+    expect(update.summary).toEqual({ gold: 10 });
+    expect(update.stashItems).toEqual([stashRow]);
+    expect(update.henchmenGroups).toEqual([group]);
+    expect(update).not.toHaveProperty("heroes");
+  });
+
+  it("merges a unit source over the card's copy, with a same-kind receiver after it", () => {
+    const update = itemMutationUpdate(
+      {
+        summary: {},
+        source: makeHero({ id: 3 }),
+        target: makeHero({ id: 4 }),
+        targetUnitType: "heroes",
+      },
+      { listKey: "heroes", units: [makeHero({ id: 3 })] }
+    );
+
+    expect(ids(update.heroes)).toEqual([3, 3, 4]);
+  });
+
+  it("drops a stash receiver and a removed stash row from the unit lists (BUG-86)", () => {
+    const update = itemMutationUpdate(
+      {
+        summary: {},
+        source: makeHero({ id: 3 }),
+        target: makeStashItem(),
+        removed_stash_item_id: 120,
+        targetUnitType: "stash",
+      },
+      { listKey: "heroes", units: [makeHero({ id: 3 })] }
+    );
+
+    expect(ids(update.heroes)).toEqual([3, 3]);
+    expect(update.removedStashItemIds).toEqual([120]);
+    expect(update).not.toHaveProperty("henchmenGroups");
+    expect(update).not.toHaveProperty("hiredSwords");
   });
 });

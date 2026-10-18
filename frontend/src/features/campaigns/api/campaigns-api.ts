@@ -213,12 +213,6 @@ export function listCampaignTradeRequests(campaignId: number, status?: TradeRequ
   });
 }
 
-export function listPendingTradeRequests() {
-  return apiRequest<TradeRequest[]>(`/trade-requests/pending/`, {
-    method: "GET",
-  });
-}
-
 export function getTradeRequest(campaignId: number, requestId: string) {
   return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/`, {
     method: "GET",
