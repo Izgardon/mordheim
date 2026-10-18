@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import TreasuryEntryForm from "./treasury/TreasuryEntryForm";
@@ -65,7 +65,7 @@ export default function TreasuryTab({
   canEdit = false,
   isMobile = false,
 }: TreasuryTabProps) {
-  const treasury = useQuery(warbandTreasuryQuery(warband.campaign_id, warband.id));
+  const treasury = useInfiniteQuery(warbandTreasuryQuery(warband.campaign_id, warband.id));
   const form = useTreasuryEntryForm(warband.id);
   const [expandedGroups, setExpandedGroups] = useState<Set<number>>(new Set());
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -79,7 +79,10 @@ export default function TreasuryTab({
     });
   }, []);
 
-  const rows = useMemo(() => treasury.data ?? [], [treasury.data]);
+  const rows = useMemo(
+    () => treasury.data?.pages.flatMap((page) => page.results) ?? [],
+    [treasury.data]
+  );
   // What a correction's row says about the row it corrects (when that row is loaded).
   const descriptions = useMemo(
     () => new Map(rows.flatMap((row) => [row, ...row.children]).map((r) => [r.id, r.description])),
@@ -133,6 +136,18 @@ export default function TreasuryTab({
                 }
               />
             ))}
+            {treasury.hasNextPage ? (
+              <div className="flex justify-center p-3">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => void treasury.fetchNextPage()}
+                  disabled={treasury.isFetchingNextPage}
+                >
+                  {treasury.isFetchingNextPage ? "Loading..." : "Load more"}
+                </Button>
+              </div>
+            ) : null}
           </div>
         )}
       </div>

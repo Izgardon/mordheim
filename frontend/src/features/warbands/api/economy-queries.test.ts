@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { InfiniteData } from "@tanstack/react-query";
 
 import {
   itemMutationUpdate,
@@ -11,6 +12,7 @@ import {
   warbandStashQuery,
   warbandTreasuryQuery,
 } from "./economy-queries";
+import { applyWarbandUpdate } from "./warband-cache";
 import { queryKeys } from "@/lib/query-keys";
 import { createTestQueryClient } from "@/test/query-test-utils";
 import { makeHenchmenGroup, makeHero, makeStashItem } from "@/test/warband-fixtures";
@@ -47,35 +49,70 @@ describe("economy query keys", () => {
 
   it("give each read its key", () => {
     expect(warbandTreasuryQuery(7, 9).queryKey).toEqual(queryKeys.campaign.warbandTreasury(7, 9));
-    expect(warbandLogsQuery(7, 9).queryKey).toEqual(queryKeys.campaign.warbandLogs(7, 9));
+    expect(warbandLogsQuery(7, 9).queryKey).toEqual([...queryKeys.campaign.warbandLogs(7, 9), ""]);
+    expect(warbandLogsQuery(7, 9, "battle").queryKey).toEqual([
+      ...queryKeys.campaign.warbandLogs(7, 9),
+      "battle",
+    ]);
     expect(warbandStashQuery(7, 9).queryKey).toEqual(queryKeys.campaign.warbandStash(7, 9));
   });
 
-  it("read the ledger and the logs on every visit, and keep the stash while it is closed", () => {
+  it("keep the ledger's and the log's pages 30 s (ECON-PERF-08), and the stash while it is closed", () => {
     for (const read of [warbandTreasuryQuery(7, 9), warbandLogsQuery(7, 9)]) {
-      expect(read).toMatchObject({ staleTime: 0, gcTime: 0, retry: false });
+      expect(read).toMatchObject({ staleTime: 30_000, refetchOnWindowFocus: false });
+      expect(read).not.toHaveProperty("gcTime");
+      expect(read.getNextPageParam({ results: [], next_cursor: "c2" }, [], null, [])).toBe("c2");
+      expect(
+        read.getNextPageParam({ results: [], next_cursor: null }, [], null, [])
+      ).toBeUndefined();
     }
     expect(warbandStashQuery(7, 9).staleTime).toBe(0);
     expect(warbandStashQuery(7, 9)).not.toHaveProperty("gcTime");
   });
 });
 
+type Ledger = InfiniteData<{ results: WarbandTrade[]; next_cursor: string | null }>;
+const ledgerOf = (...pages: WarbandTrade[][]): Ledger => ({
+  pages: pages.map((results, index) => ({
+    results,
+    next_cursor: index < pages.length - 1 ? "c" : null,
+  })),
+  pageParams: pages.map((_, index) => (index === 0 ? null : "c")),
+});
+const descriptionsIn = (queryClient: ReturnType<typeof createTestQueryClient>, warbandId: number) =>
+  queryClient
+    .getQueryData<Ledger>(queryKeys.campaign.warbandTreasury(7, warbandId))
+    ?.pages.map((page) => page.results.map((entry) => entry.description));
+
 describe("prependTreasuryRow", () => {
-  it("puts a new row on top of every cached ledger of the warband, and of no other", () => {
+  it("puts a new row on top of the first page of every cached ledger of the warband, and of no other", () => {
     const queryClient = createTestQueryClient();
-    queryClient.setQueryData(queryKeys.campaign.warbandTreasury(7, 9), [row(1, "Rope")]);
-    queryClient.setQueryData(queryKeys.campaign.warbandTreasury(7, 12), [row(2, "Sword")]);
+    queryClient.setQueryData(
+      queryKeys.campaign.warbandTreasury(7, 9),
+      ledgerOf([row(1, "Rope")], [row(4, "Club")])
+    );
+    queryClient.setQueryData(
+      queryKeys.campaign.warbandTreasury(7, 12),
+      ledgerOf([row(2, "Sword")])
+    );
 
     prependTreasuryRow(queryClient, 9, row(3, "Lantern"));
 
-    expect(
-      queryClient
-        .getQueryData<WarbandTrade[]>(queryKeys.campaign.warbandTreasury(7, 9))
-        ?.map((entry) => entry.description)
-    ).toEqual(["Lantern", "Rope"]);
-    expect(
-      queryClient.getQueryData<WarbandTrade[]>(queryKeys.campaign.warbandTreasury(7, 12))
-    ).toEqual([row(2, "Sword")]);
+    expect(descriptionsIn(queryClient, 9)).toEqual([["Lantern", "Rope"], ["Club"]]);
+    expect(descriptionsIn(queryClient, 12)).toEqual([["Sword"]]);
+  });
+
+  it("marks the ledger and the log stale after a write the page applied, reading nothing now", () => {
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(queryKeys.campaign.warbandTreasury(7, 9), ledgerOf([row(1, "Rope")]));
+    queryClient.setQueryData([...queryKeys.campaign.warbandLogs(7, 9), ""], ledgerOf([]));
+    const stateOf = (key: readonly unknown[]) => queryClient.getQueryState(key)?.isInvalidated;
+
+    applyWarbandUpdate(queryClient, 9, { summary: { gold: 80 } });
+
+    expect(stateOf(queryKeys.campaign.warbandTreasury(7, 9))).toBe(true);
+    expect(stateOf([...queryKeys.campaign.warbandLogs(7, 9), ""])).toBe(true);
+    expect(descriptionsIn(queryClient, 9)).toEqual([["Rope"]]);
   });
 
   it("creates no ledger that isn't cached", () => {

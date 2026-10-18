@@ -1,9 +1,14 @@
 import { apiRequest } from "../../../lib/api-client";
+import { pagePath, type CursorPage } from "./cursor-pages";
 
 import type { WarbandTrade, WarbandTradeEdit, WarbandTradePayload } from "../types/warband-types";
 
-export function listWarbandTrades(warbandId: number) {
-  return apiRequest<WarbandTrade[]>(`/warbands/${warbandId}/trades/`);
+/** One page of the ledger, newest first: top-level rows with their children (ECON-PERF-06). */
+export function listWarbandTradePage(
+  warbandId: number,
+  page: { limit: number; cursor?: string | null }
+) {
+  return apiRequest<CursorPage<WarbandTrade>>(pagePath(`/warbands/${warbandId}/trades/`, page));
 }
 
 export function createWarbandTrade(warbandId: number, payload: WarbandTradePayload) {

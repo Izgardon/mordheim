@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { apiRequest } from "@/lib/api-client";
 import {
   applyWarbandUpdate,
+  markLedgerStale,
   setHeroTradingAction,
   type WarbandUpdate,
 } from "@/features/warbands/api/warband-cache";
@@ -155,6 +156,7 @@ export async function saveRarityRoll(
     { method: "POST", body: roll }
   );
   setHeroTradingAction(queryClient, warbandId, answer.hero_id, false);
+  markLedgerStale(queryClient, warbandId);
   toastPurchaseWarnings(answer.warnings);
   return answer;
 }

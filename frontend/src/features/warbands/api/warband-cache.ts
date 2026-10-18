@@ -135,8 +135,23 @@ export function readCachedSheet(queryClient: QueryClient, warbandId: number) {
 }
 
 /**
+ * The ledger and the log after a write the server recorded rows for (purchases, sales, moves,
+ * recruits, level-ups...): marked stale, so a tab shown later reads them again. Nothing is read
+ * now; a tab on screen keeps what it shows (ECON-PERF-08).
+ */
+export function markLedgerStale(queryClient: QueryClient, warbandId: number) {
+  for (const path of ["treasury", "logs"]) {
+    void queryClient.invalidateQueries({
+      predicate: isWarbandQuery(warbandId, path),
+      refetchType: "none",
+    });
+  }
+}
+
+/**
  * Applies a write's result to the cached warband sheet: unit and stash rows merge by id, and the
- * summary is merged when the write returned one, otherwise re-read (see `WarbandUpdate`).
+ * summary is merged when the write returned one, otherwise re-read (see `WarbandUpdate`). The
+ * ledger and the log are marked stale (`markLedgerStale`).
  */
 export function applyWarbandUpdate(
   queryClient: QueryClient,
@@ -157,6 +172,7 @@ export function applyWarbandUpdate(
   if (!update.summary && !update.summaryUnchanged) {
     refreshSheetSummary(queryClient, warbandId);
   }
+  markLedgerStale(queryClient, warbandId);
 }
 
 /**

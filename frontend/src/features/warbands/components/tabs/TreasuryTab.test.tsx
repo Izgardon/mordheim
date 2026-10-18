@@ -3,12 +3,13 @@
  * (decision 4), what a manual entry and an Adjustment send (decision 5), and editing a row
  * entered by hand (decision 6). `apiRequest` is answered by a fake server.
  */
-import { fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import TreasuryTab from "./TreasuryTab";
+import { applyWarbandUpdate } from "@/features/warbands/api/warband-cache";
 import { queryKeys } from "@/lib/query-keys";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
@@ -119,9 +120,16 @@ beforeAll(() => {
   Element.prototype.releasePointerCapture = vi.fn();
 });
 
+/** The ledger's first page (25 rows; the server pages it, ECON-PERF-06). */
+const LEDGER = "GET /warbands/9/trades/?limit=25";
+const page = (results: WarbandTrade[], next_cursor: string | null = null) => ({
+  results,
+  next_cursor,
+});
+
 beforeEach(() => {
   fakeApi.reset();
-  fakeApi.on("GET /warbands/9/trades/", ledger);
+  fakeApi.on(LEDGER, page(ledger));
 });
 
 describe("TreasuryTab: the ledger", () => {
@@ -138,7 +146,7 @@ describe("TreasuryTab: the ledger", () => {
     expect(within(rowOf("Gold sent to Rats")).getByText("Trade").className).toContain("red");
     expect(within(rowOf("Starting Gold")).getByText("+500 gc")).toBeInTheDocument();
     expect(within(rowOf("Starting Gold")).getByText("Starting gold")).toBeInTheDocument();
-    expect(fakeApi.calls()).toEqual(["GET /warbands/9/trades/"]);
+    expect(fakeApi.calls()).toEqual([LEDGER]);
   });
 
   it("says who entered a row by hand and which row an Adjustment corrects (decisions 5, 6)", async () => {
@@ -170,15 +178,18 @@ describe("TreasuryTab: the ledger", () => {
   });
 
   it("signs a group of sales by its total as well: +8 gc on a green badge (BUG-38)", async () => {
-    fakeApi.on("GET /warbands/9/trades/", [
-      row({
-        id: 8,
-        action: "Group",
-        description: "Sold the loot (2)",
-        price: 0,
-        children: [child(9, "Sell", "Sword", 5), child(10, "Sell", "Dagger", 3)],
-      }),
-    ]);
+    fakeApi.on(
+      LEDGER,
+      page([
+        row({
+          id: 8,
+          action: "Group",
+          description: "Sold the loot (2)",
+          price: 0,
+          children: [child(9, "Sell", "Sword", 5), child(10, "Sell", "Dagger", 3)],
+        }),
+      ])
+    );
     renderTab();
 
     await screen.findByText("Sold the loot (2)");
@@ -187,7 +198,7 @@ describe("TreasuryTab: the ledger", () => {
     expect(within(header).getByText("Group").className).toContain("emerald");
   });
 
-  it("loads the whole ledger again every time the tab is shown (ECON-PERF-08, pinned; flips in PR C)", async () => {
+  it("keeps the ledger while the tab is hidden: showing it again reads nothing (ECON-PERF-08)", async () => {
     const user = setupUser();
     renderTab();
     await screen.findByText("Rope");
@@ -196,11 +207,40 @@ describe("TreasuryTab: the ledger", () => {
     await user.click(screen.getByRole("button", { name: "Switch tab" }));
 
     await screen.findByText("Rope");
-    expect(fakeApi.calls()).toEqual(["GET /warbands/9/trades/", "GET /warbands/9/trades/"]);
+    expect(fakeApi.calls()).toEqual([LEDGER]);
+  });
+
+  it("reads it again when shown after a write the page applied (the server wrote rows)", async () => {
+    const user = setupUser();
+    const { queryClient } = renderTab();
+    await screen.findByText("Rope");
+    await user.click(screen.getByRole("button", { name: "Switch tab" }));
+
+    // A purchase or sale elsewhere on the page went into the sheet.
+    act(() => applyWarbandUpdate(queryClient, 9, { summary: { gold: 420 } }));
+    await user.click(screen.getByRole("button", { name: "Switch tab" }));
+
+    await waitFor(() => expect(fakeApi.countOf(LEDGER)).toBe(2));
+  });
+
+  it("reads 25 rows a page and loads the next with the cursor (ECON-PERF-06)", async () => {
+    const user = setupUser();
+    fakeApi.on(LEDGER, page(ledger.slice(0, 3), "c2"));
+    fakeApi.on(`${LEDGER}&cursor=c2`, page(ledger.slice(3)));
+    renderTab();
+    await screen.findByText("Gold sent to Rats");
+    expect(screen.queryByText("Rope")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Load more" }));
+
+    expect(await screen.findByText("Rope")).toBeInTheDocument();
+    expect(screen.getByText("Gold sent to Rats")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Load more" })).not.toBeInTheDocument();
+    expect(fakeApi.calls()).toEqual([LEDGER, `${LEDGER}&cursor=c2`]);
   });
 
   it("shows the server's message when the ledger can't be loaded", async () => {
-    fakeApi.fail("GET /warbands/9/trades/", new Error("Server error"));
+    fakeApi.fail(LEDGER, new Error("Server error"));
     renderTab();
 
     expect(await screen.findByText("Server error")).toBeInTheDocument();
@@ -230,7 +270,7 @@ describe("TreasuryTab: a manual entry", () => {
 
     await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/summary/")).toBe(1));
     expect(fakeApi.calls()).toEqual([
-      "GET /warbands/9/trades/",
+      LEDGER,
       "POST /warbands/9/trades/",
       "GET /warbands/9/summary/",
     ]);

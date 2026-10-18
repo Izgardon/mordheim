@@ -1,9 +1,9 @@
 /**
- * Characterisation of the Logs tab before pass 2 moves paging and the feature filter to the
- * server (ECON-PERF-06): today it GETs every log once, pages 12 at a time in the browser and
- * filters there. `apiRequest` is answered by a fake server.
+ * The Logs tab: it reads the log a server page of 12 at a time, follows the cursor, filters on
+ * the server (ECON-PERF-06) and keeps the pages it read while hidden (ECON-PERF-08).
+ * `apiRequest` is answered by a fake server.
  */
-import { screen, within } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { useState } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -73,16 +73,31 @@ function LogsPanel() {
 
 const itemLines = () => screen.getAllByText(/^Aldric received: /).map((line) => line.textContent);
 
+const FIRST = "GET /warbands/9/logs/?limit=12";
+const FEATURES = ["trading_action", "loadout"];
+const page = (results: WarbandLog[], next_cursor: string | null, first = false) => ({
+  results,
+  next_cursor,
+  ...(first ? { features: FEATURES } : {}),
+});
+
 beforeEach(() => {
   fakeApi.reset();
-  fakeApi.on("GET /warbands/9/logs/", logs);
+  fakeApi.on(FIRST, page(logs.slice(0, 12), "c2", true));
+  fakeApi.on(`${FIRST}&cursor=c2`, page(logs.slice(12, 24), "c3"));
+  fakeApi.on(`${FIRST}&cursor=c3`, page(logs.slice(24), null));
 });
 
 describe("LogsTab", () => {
   it("reads a stash purchase as a stash entry, not as a hero named Stash (BUG-110)", async () => {
-    fakeApi.on("GET /warbands/9/logs/", [
-      log(1, { entry_type: "stash_item", payload: { item: "Rope", price: 15, quantity: 3 } }),
-    ]);
+    fakeApi.on(
+      FIRST,
+      page(
+        [log(1, { entry_type: "stash_item", payload: { item: "Rope", price: 15, quantity: 3 } })],
+        null,
+        true
+      )
+    );
     renderWithQueryClient(<LogsPanel />);
 
     const line = await screen.findByText("Added to the stash: Rope x 3");
@@ -90,30 +105,38 @@ describe("LogsTab", () => {
     expect(screen.queryByText(/received:/)).not.toBeInTheDocument();
   });
 
-  it("GETs every log once and shows them 12 to a page (ECON-PERF-06, pinned; flips in PR C)", async () => {
+  it("reads the log 12 entries a page from the server, following the cursor (ECON-PERF-06)", async () => {
     const user = setupUser();
     renderWithQueryClient(<LogsPanel />);
 
-    expect(await screen.findByText("Page 1 of 3")).toBeInTheDocument();
+    expect(await screen.findByText("Page 1")).toBeInTheDocument();
     expect(itemLines()).toHaveLength(12);
     expect(itemLines()[0]).toBe("Aldric received: Item 100");
     expect(screen.getByRole("button", { name: "Previous page" })).toBeDisabled();
+    expect(fakeApi.calls()).toEqual([FIRST]);
 
     await user.click(screen.getByRole("button", { name: "Next page" }));
+    expect(await screen.findByText("Page 2")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Next page" }));
-
-    expect(screen.getByText("Page 3 of 3")).toBeInTheDocument();
+    expect(await screen.findByText("Page 3")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Next page" })).toBeDisabled();
-    expect(fakeApi.calls()).toEqual(["GET /warbands/9/logs/"]);
+
+    // Back to a page already read: no request.
+    await user.click(screen.getByRole("button", { name: "Previous page" }));
+    expect(screen.getByText("Page 2")).toBeInTheDocument();
+    expect(fakeApi.calls()).toEqual([FIRST, `${FIRST}&cursor=c2`, `${FIRST}&cursor=c3`]);
   });
 
-  it("filters by feature in the browser and goes back to page 1 (ECON-PERF-06, pinned; flips in PR C)", async () => {
+  it("filters on the server, with the whole log's features, and goes back to page 1 (ECON-PERF-06)", async () => {
     const user = setupUser();
+    const rolls = logs.filter((entry) => entry.feature === "trading_action");
+    fakeApi.on(`${FIRST}&feature=trading_action`, page(rolls, null, true));
     renderWithQueryClient(<LogsPanel />);
-    await screen.findByText("Page 1 of 3");
+    await screen.findByText("Page 1");
     await user.click(screen.getByRole("button", { name: "Next page" }));
+    await screen.findByText("Page 2");
 
-    // The filter has no label (ECON-UX-04); its options are the features present, sorted.
+    // The filter has no label (ECON-UX-04); its options are the log's features, sorted.
     const filter = screen.getByRole("combobox");
     expect(
       within(filter)
@@ -122,41 +145,49 @@ describe("LogsTab", () => {
     ).toEqual(["All features", "Loadout", "Trading Action"]);
     await user.selectOptions(filter, "trading_action");
 
-    expect(screen.queryByText(/^Page \d/)).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByText(/^Page \d/)).not.toBeInTheDocument());
     expect(screen.getAllByText("Trading Action").length).toBeGreaterThanOrEqual(5);
     expect(screen.queryByText(/^Aldric received: /)).not.toBeInTheDocument();
-    expect(fakeApi.calls()).toEqual(["GET /warbands/9/logs/"]);
+    expect(fakeApi.calls()).toEqual([
+      FIRST,
+      `${FIRST}&cursor=c2`,
+      `${FIRST}&feature=trading_action`,
+    ]);
 
-    await user.selectOptions(filter, "loadout");
-    expect(screen.getByText("Page 1 of 2")).toBeInTheDocument();
+    // Back to every feature: the pages read before are still there.
+    await user.selectOptions(filter, "all");
+    expect(await screen.findByText("Page 1")).toBeInTheDocument();
+    expect(fakeApi.countOf(FIRST)).toBe(1);
   });
 
   it("lists a child entry as a row of its own, with the purchase's quantity and price (ECON-UX-04, pinned; flips in PR C)", async () => {
     const user = setupUser();
     renderWithQueryClient(<LogsPanel />);
-    await screen.findByText("Page 1 of 3");
+    await screen.findByText("Page 1");
 
     await user.click(screen.getByRole("button", { name: "Next page" }));
+    await screen.findByText("Page 2");
     await user.click(screen.getByRole("button", { name: "Next page" }));
+    await screen.findByText("Page 3");
 
     expect(screen.getByText("Aldric received: Lucky Charm x 3")).toBeInTheDocument();
     expect(screen.getByText("40 gc")).toBeInTheDocument();
   });
 
-  it("GETs every log again each time the tab is shown (ECON-PERF-08, pinned; flips in PR C)", async () => {
+  it("keeps the pages it read while the tab is hidden: showing it again reads nothing (ECON-PERF-08)", async () => {
     const user = setupUser();
     renderWithQueryClient(<LogsPanel />);
-    await screen.findByText("Page 1 of 3");
+    await screen.findByText("Page 1");
 
     await user.click(screen.getByRole("button", { name: "Switch tab" }));
     await user.click(screen.getByRole("button", { name: "Switch tab" }));
 
-    await screen.findByText("Page 1 of 3");
-    expect(fakeApi.calls()).toEqual(["GET /warbands/9/logs/", "GET /warbands/9/logs/"]);
+    await screen.findByText("Page 1");
+    expect(fakeApi.calls()).toEqual([FIRST]);
   });
 
   it("shows the server's message when the logs can't be loaded", async () => {
-    fakeApi.fail("GET /warbands/9/logs/", new Error("Server error"));
+    fakeApi.fail(FIRST, new Error("Server error"));
     renderWithQueryClient(<LogsPanel />);
 
     expect(await screen.findByText("Server error")).toBeInTheDocument();

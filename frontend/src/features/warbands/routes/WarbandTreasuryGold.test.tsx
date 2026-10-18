@@ -93,7 +93,7 @@ beforeEach(() => {
     henchmen_groups: [],
     hired_swords: [],
   });
-  fakeApi.on("GET /warbands/9/trades/", []);
+  fakeApi.on("GET /warbands/9/trades/?limit=25", { results: [], next_cursor: null });
 });
 
 describe("Warband page: gold after a Treasury entry (BUG-37)", () => {

@@ -80,7 +80,10 @@ describe("applyPurchaseAnswer", () => {
       henchmen_groups: [],
       hired_swords: [],
     });
-    queryClient.setQueryData(queryKeys.campaign.warbandTreasury(7, 9), []);
+    queryClient.setQueryData(queryKeys.campaign.warbandTreasury(7, 9), {
+      pages: [{ results: [], next_cursor: null }],
+      pageParams: [null],
+    });
     const row = { id: 3, action: "Buy", price: -20 } as PurchaseAnswer["trade"];
 
     applyPurchaseAnswer(
@@ -99,7 +102,10 @@ describe("applyPurchaseAnswer", () => {
       summary: { gold: 80 },
       heroes: [{ id: 11, name: "Aldric", items: [rope], updated_at: "2026-10-18T10:00:00Z" }],
     });
-    expect(queryClient.getQueryData(queryKeys.campaign.warbandTreasury(7, 9))).toEqual([row]);
+    expect(queryClient.getQueryData(queryKeys.campaign.warbandTreasury(7, 9))).toEqual({
+      pages: [{ results: [row], next_cursor: null }],
+      pageParams: [null],
+    });
   });
 
   it("merges the stash entry into the cached stash", () => {
