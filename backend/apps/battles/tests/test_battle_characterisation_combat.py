@@ -1,13 +1,12 @@
 """Live battle state characterised: config, kills, out of action and item use (pass 3, step 0).
 
 Config merges what it is sent and never changes kills or out of action (BUG-44, BATL-TEST-11, fixed) and parses
-armour saves when they are entered (BUG-123, fixed). Pinned: item use with another player's unit or item, or a
-50 KB payload, accepted (BUG-72, SEC-09, BATL-TEST-17).
+armour saves when they are entered (BUG-123, fixed). Item use is in test_battle_item_use.py.
 """
 
 from typing import Any
 
-from apps.battles.models import Battle, BattleEvent, BattleParticipant
+from apps.battles.models import Battle, BattleParticipant
 from apps.warbands.models import Henchman, HenchmenGroup, Hero
 from apps.warbands.utils.armour_save import ARMOUR_SAVE_ERROR
 
@@ -300,96 +299,3 @@ class BattleKillAndOoaTests(BattleTestCase):
             with self.subTest(detail=detail):
                 response = self.post_as(self.player, url, body)
                 self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
-
-
-class BattleItemUseTests(BattleTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        self.abbess = Hero.objects.create(warband=self.warband, name="Abbess", unit_type="Matriarch")
-        self.rat = Hero.objects.create(warband=self.rival, name="Rat", unit_type="Assassin")
-        self.a, self.r = f"hero:{self.abbess.id}", f"hero:{self.rat.id}"
-
-    def test_item_use_is_stored_and_replayed_as_sent(self):
-        battle_id = self.to_active({self.player: [self.a], self.viewer: [self.r]})
-        payload = {"unit_key": self.a, "item_id": self.sword.id, "item_name": "Sword", "extra": [1, 2]}
-
-        data = self.ok(self.use_item(self.player, battle_id, payload), 201).data
-
-        self.assertEqual((data["events"][0]["type"], data["events"][0]["payload_json"]), ("item_used", payload))
-        self.assertEqual(self.sent()[-1], "item_used")
-        events = self.events_url(battle_id)
-        response = self.post_as(self.player, events, {"type": "item_used", "payload_json": None})
-        self.assertEqual(self.ok(response, 201).data["events"][0]["payload_json"], {})
-        for body, detail in (
-            ({"type": "battle_ended", "payload_json": {}}, "Unsupported event type"),
-            ({"type": "item_used", "payload_json": [1]}, "payload_json must be an object"),
-        ):
-            with self.subTest(detail=detail):
-                response = self.post_as(self.player, events, body)
-                self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
-
-    def events_url(self, battle_id: int) -> str:
-        return self.url(battle_id, "events")
-
-    def test_item_use_in_each_phase(self):
-        battle_id = self.to_prebattle()
-        use = {"unit_key": self.a, "item_id": self.sword.id}
-        self.ok(self.use_item(self.player, battle_id, use), 201)  # prebattle: joined or ready players
-        BattleParticipant.objects.filter(battle_id=battle_id, user=self.player).update(status="canceled_prebattle")
-        response = self.use_item(self.player, battle_id, use)
-        self.assertEqual((response.status_code, response.data), (400, {"detail": "You are not currently in prebattle"}))
-        for battle_status, detail in (
-            (Battle.STATUS_ACTIVE, "You are not currently in battle"),
-            (Battle.STATUS_INVITING, "Items can only be used in prebattle or active battle"),
-            (Battle.STATUS_POSTBATTLE, "Items can only be used in prebattle or active battle"),
-        ):
-            with self.subTest(status=battle_status):
-                Battle.objects.filter(id=battle_id).update(status=battle_status)
-                response = self.use_item(self.player, battle_id, use)
-                self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
-
-    def test_item_use_accepts_another_players_unit_and_an_item_nobody_carries(self):
-        # Characterises current behaviour (BUG-72, BATL-TEST-17, pinned; flips in PR A: the unit must be one of the
-        # player's selected units and carry the item)
-        battle_id = self.to_active({self.player: [self.a], self.viewer: [self.r]})
-        for payload in (
-            {"unit_key": self.r, "item_id": self.sword.id},
-            {"unit_key": self.a, "item_id": self.axe.id},
-            {},
-        ):
-            with self.subTest(payload=payload):
-                self.ok(self.use_item(self.player, battle_id, payload), 201)
-        self.assertEqual(BattleEvent.objects.filter(battle_id=battle_id, type="item_used").count(), 3)
-
-    def test_item_use_accepts_a_50_kb_payload_and_every_state_read_replays_it(self):
-        # Characterises current behaviour (SEC-09, BATL-TEST-17, pinned; flips in PR A: whitelisted keys, at most 2 KB)
-        battle_id = self.to_active({self.player: [self.a], self.viewer: [self.r]})
-        payload = {"unit_key": self.a, "item_id": self.sword.id, "note": "x" * 50_000}
-
-        self.ok(self.use_item(self.player, battle_id, payload), 201)
-
-        state = self.ok(self.get_as(self.viewer, self.url(battle_id, "state"))).data
-        self.assertEqual(state["events"][-1]["payload_json"], payload)
-
-    def test_the_winner_endpoint_always_refuses_and_legacy_events_still_record(self):
-        battle_id = self.to_active({self.player: [self.a], self.viewer: [self.r]})
-        response = self.post_as(self.player, self.url(battle_id, "winner"), {"winner_warband_ids": [self.warband.id]})
-        detail = "Winner selection happens when the active battle ends"
-        self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
-
-        # BATL-CQ-06: legacy kill_recorded and death_recorded events, unused by the frontend, are still accepted
-        legacy = {"type": "kill_recorded", "payload_json": {"killer_unit_type": " HERO ", "killer_unit_id": "7"}}
-        data = self.ok(self.post_as(self.player, self.events_url(battle_id), legacy), 201).data
-        self.assertEqual(data["events"][0]["payload_json"], {"killer_unit_type": "hero", "killer_unit_id": 7})
-        for payload, detail in (
-            ({"killer_unit_type": "dragon"}, "killer_unit_type is invalid"),
-            ({"killer_unit_type": "custom"}, "killer_unit_key is required for custom/bestiary units"),
-            ({"killer_unit_type": "hero", "killer_unit_id": 0}, "killer_unit_id is required"),
-        ):
-            with self.subTest(detail=detail):
-                response = self.post_as(
-                    self.player, self.events_url(battle_id), {"type": "kill_recorded", "payload_json": payload}
-                )
-                self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
-        death = {"type": "death_recorded", "payload_json": {"anything": True}}
-        self.ok(self.post_as(self.player, self.events_url(battle_id), death), 201)

@@ -3654,14 +3654,17 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["battle"]["status"], "prebattle")
 
+        herbs = Item.objects.create(name="Healing Herbs", type="Misc", single_use=True)
+        hero = Hero.objects.create(warband=self.owner_warband, name="Captain Wolf", unit_type="Captain")
+        HeroItem.objects.create(hero=hero, item=herbs, cost=10)
         self.client.force_authenticate(user=self.owner)
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/events/",
             {
                 "type": "item_used",
                 "payload_json": {
-                    "unit_key": "hero:1",
-                    "item_id": 100,
+                    "unit_key": f"hero:{hero.id}",
+                    "item_id": herbs.id,
                     "item_name": "Healing Herbs",
                 },
             },

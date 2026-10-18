@@ -77,12 +77,13 @@ class BattleQueryBudgetTests(BattleTestCase):
         info = {"unit_information_json": {h: {"current_wounds": 1}}}
         # Each: membership, the battle and participant locked, the write, its event (sent after commit) and the
         # answer's fresh snapshot (2); no presence write since PERF-35. A kill also locks every participant and reads
-        # both units; End also locks every participant, adds wins and losses and resets trading actions.
+        # both units; an item use checks the unit carries the item (BUG-72); End also locks every participant, adds
+        # wins and losses and resets trading actions.
         cases: list[tuple[str, str, dict[str, Any], int]] = [
             ("config", "config", info, 8),
             ("unit_ooa", "unit-ooa", {"unit_key": f"hero:{self.fixture.heroes[2].id}", "out_of_action": True}, 9),
             ("unit_kill", "unit-kill", {"killer_unit_key": h, "victim_unit_key": self.r}, 12),
-            ("item_used", "events", {"type": "item_used", "payload_json": {"unit_key": h, "item_id": self.rope.id}}, 8),
+            ("item_used", "events", {"type": "item_used", "payload_json": {"unit_key": h, "item_id": self.rope.id}}, 9),
             ("finish", "finish", {"winner_warband_ids": [self.warband.id]}, 20),
         ]
         for name, action, body, budget in cases:

@@ -1,8 +1,8 @@
 """Ending a battle characterised: End battle, cancels, skipping postbattle and the trading reset (pass 3, step 0).
 
 Pinned: wins and losses added at End and a postbattle cancel rewriting confirmed rows (BUG-09, BATL-TEST-03/04),
-a cancelled participant blocking start (BUG-45), a skip keeping used items (BUG-72), the trading actions reset
-twice (BUG-122); End needing a winner is decision 8's and creator-only End decision 4's.
+a cancelled participant blocking start (BUG-45), the trading actions reset twice (BUG-122); a skip uses up the items
+used in battle (BUG-72, fixed; test_battle_item_use.py); End needing a winner is decision 8's and creator-only End decision 4's.
 """
 
 from collections.abc import Callable
@@ -11,9 +11,9 @@ from typing import Any
 
 from apps.battles.models import Battle, BattleEvent
 from apps.notifications.models import Notification
-from apps.warbands.models import Hero, HeroItem
+from apps.warbands.models import Hero
 
-from .battle_support import BattleTestCase, catalogue_item, draft, unit_result
+from .battle_support import BattleTestCase, draft, unit_result
 
 
 class BattleFinishTests(BattleTestCase):
@@ -212,32 +212,6 @@ class BattleCancelTests(BattleTestCase):
 
 
 class BattleSkipTests(BattleTestCase):
-    def test_a_skipped_postbattle_keeps_used_single_use_items(self):
-        # Characterises current behaviour (BUG-72, pinned; flips in PR A: a skip consumes used single-use items)
-        potion = catalogue_item("Healing Draught", 10, single_use=True)
-        hero = Hero.objects.create(warband=self.warband, name="Abbess", unit_type="Matriarch")
-        HeroItem.objects.create(hero=hero, item=potion, cost=10)
-        battle_id = self.to_active({self.player: [f"hero:{hero.id}"], self.viewer: []})
-        self.ok(self.use_item(self.player, battle_id, {"unit_key": f"hero:{hero.id}", "item_id": potion.id}), 201)
-        self.finish(battle_id, [self.warband])
-
-        data = self.ok(self.post_as(self.player, self.url(battle_id, "confirm"))).data
-
-        self.assertTrue(HeroItem.objects.filter(hero=hero, item=potion).exists())
-        self.assertEqual(self.participant(battle_id, self.player).status, "confirmed_postbattle")
-        self.assertEqual(
-            data["events"][0]["payload_json"], {"participant_user_id": self.player.id, "skipped_postbattle": True}
-        )
-        self.assertEqual(
-            self.participant(battle_id, self.player).postbattle_json,
-            {
-                "exploration": {"dice_values": [], "resource_id": None},
-                "finds": {"gold_crowns": 0, "items": []},
-                "upkeep": {"pay_upkeep": True, "entries": {}},
-                "unit_results": {},
-            },
-        )
-
     def test_skip_and_finalise_outside_postbattle(self):
         battle_id = self.to_active()
         for action in ("confirm", "finalize-postbattle"):

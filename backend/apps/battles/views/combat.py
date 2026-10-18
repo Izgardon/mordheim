@@ -9,6 +9,8 @@ from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 from apps.warbands.models import Warband
 
 from ..models import Battle, BattleEvent, BattleParticipant
+from ..services.errors import BattleError
+from ..services.item_use import check_payload_size, item_use_payload
 from .shared import (
     INGAME_EVENT_TYPES,
     KILLER_UNIT_TYPES,
@@ -23,11 +25,31 @@ from .shared import (
     _normalize_unit_information,
     _parse_unit_key,
     _participant_selected_unit_keys,
+    _remove_used_single_use_items,
     _reset_trading_actions_for_battle_participants,
     _response_with_snapshot,
     _upsert_unit_information,
     _validate_postbattle_json_for_participant,
 )
+
+
+def _item_use_refusal(battle: Battle, participant: BattleParticipant) -> Response | None:
+    if battle.status not in (Battle.STATUS_PREBATTLE, Battle.STATUS_ACTIVE):
+        return Response({"detail": "Items can only be used in prebattle or active battle"}, status=400)
+    if battle.status == Battle.STATUS_PREBATTLE and participant.status not in (
+        BattleParticipant.STATUS_JOINED_PREBATTLE,
+        BattleParticipant.STATUS_READY,
+    ):
+        return Response({"detail": "You are not currently in prebattle"}, status=400)
+    if battle.status == Battle.STATUS_ACTIVE and participant.status != BattleParticipant.STATUS_IN_BATTLE:
+        return Response({"detail": "You are not currently in battle"}, status=400)
+    return None
+
+
+def _checked_item_use(battle: Battle, participant: BattleParticipant, payload_json: dict) -> dict:
+    """The item use to store: a unit of the player's (selected, once the battle is active) carrying the item."""
+    selected = _participant_selected_unit_keys(participant) if battle.status == Battle.STATUS_ACTIVE else None
+    return item_use_payload(participant, payload_json, selected)
 
 
 class CampaignBattleEventCreateView(APIView):
@@ -43,6 +65,10 @@ class CampaignBattleEventCreateView(APIView):
             payload_json = {}
         if not isinstance(payload_json, dict):
             return Response({"detail": "payload_json must be an object"}, status=400)
+        try:
+            check_payload_size(payload_json)
+        except BattleError as refused:
+            return refused.response()
 
         if event_type == BattleEvent.TYPE_KILL_RECORDED:
             unit_type = str(payload_json.get("killer_unit_type", "")).strip().lower()
@@ -69,15 +95,12 @@ class CampaignBattleEventCreateView(APIView):
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
             if event_type == BattleEvent.TYPE_ITEM_USED:
-                if battle.status not in (Battle.STATUS_PREBATTLE, Battle.STATUS_ACTIVE):
-                    return Response({"detail": "Items can only be used in prebattle or active battle"}, status=400)
-                if battle.status == Battle.STATUS_PREBATTLE and participant.status not in (
-                    BattleParticipant.STATUS_JOINED_PREBATTLE,
-                    BattleParticipant.STATUS_READY,
-                ):
-                    return Response({"detail": "You are not currently in prebattle"}, status=400)
-                if battle.status == Battle.STATUS_ACTIVE and participant.status != BattleParticipant.STATUS_IN_BATTLE:
-                    return Response({"detail": "You are not currently in battle"}, status=400)
+                if (refusal := _item_use_refusal(battle, participant)) is not None:
+                    return refusal
+                try:
+                    payload_json = _checked_item_use(battle, participant, payload_json)
+                except BattleError as refused:
+                    return refused.response()
             else:
                 if battle.status != Battle.STATUS_ACTIVE:
                     return Response({"detail": "Battle is not active"}, status=400)
@@ -494,6 +517,7 @@ class CampaignBattleConfirmView(CampaignBattleFinalizePostbattleView):
             if participant.status != BattleParticipant.STATUS_FINISHED_BATTLE:
                 return Response({"detail": "You must enter postbattle before leaving"}, status=400)
 
+            _remove_used_single_use_items(battle, participant)  # a skip still uses up what was used (BUG-72)
             participant.postbattle_json = {
                 "exploration": {
                     "dice_values": [],
