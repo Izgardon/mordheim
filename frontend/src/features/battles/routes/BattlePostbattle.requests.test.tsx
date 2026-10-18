@@ -207,6 +207,29 @@ describe("BattlePostbattle requests", () => {
     expect(screen.getByRole("button", { name: "Finalise Postbattle" })).toBeEnabled();
   });
 
+  it("says what a dead unit loses once its Dead tick is on (pass 2 decision 7)", async () => {
+    const user = setupUser();
+    await renderPostbattle();
+    // A unit's Dead tick sits in the same block as its name, for heroes, hired swords and henchmen.
+    const deadTick = (unitName: string) =>
+      within(screen.getAllByText(unitName)[0].closest(".space-y-3") as HTMLElement).getByRole(
+        "checkbox",
+        { name: "Dead" }
+      );
+    expect(screen.queryByText(/items are lost|items is lost/)).not.toBeInTheDocument();
+
+    await user.click(deadTick("Ogre Bodyguard"));
+    expect(deadTick("Ogre Bodyguard")).toHaveAccessibleDescription(
+      "All carried items are lost; move them to the stash first to keep them."
+    );
+
+    await user.click(deadTick("Youngblood A"));
+    expect(deadTick("Youngblood A")).toHaveAccessibleDescription(
+      "One of each of the group's items is lost with him; move them to the stash first to keep them."
+    );
+    expect(deadTick("Captain Wolf")).not.toHaveAccessibleDescription();
+  });
+
   it("saves drafts with the exploration emptied, so a reload loses the roll and allows another (BUG-71, pinned; flips in PR C)", async () => {
     const user = setupUser();
     const { unmount } = await renderPostbattle();

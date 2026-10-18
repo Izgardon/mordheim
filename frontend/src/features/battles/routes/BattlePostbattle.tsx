@@ -64,6 +64,7 @@ import {
 import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesktopSubnav";
 import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesDialog";
 import BattleOverflowMenu from "@/features/battles/components/shared/BattleOverflowMenu";
+import PostbattleDeadTick from "@/features/battles/components/postbattle/PostbattleDeadTick";
 import PostbattleSkipDialog from "@/features/battles/components/postbattle/PostbattleSkipDialog";
 import type { Item } from "@/features/items/types/item-types";
 import type { BattlePostbattleState } from "@/features/battles/types/battle-types";
@@ -1392,16 +1393,13 @@ export default function BattlePostbattle() {
                                   }
                                 />
                               </label>
-                              <label className="flex h-9 items-center gap-2 text-sm text-foreground">
-                                <Checkbox
-                                  checked={row.dead}
-                                  disabled={isFinalized}
-                                  onChange={(event) =>
-                                    void handleToggleDead(row, event.target.checked)
-                                  }
-                                />
-                                Dead
-                              </label>
+                              <PostbattleDeadTick
+                                unitKey={row.unitKey}
+                                unitKind={row.unitKind}
+                                checked={row.dead}
+                                disabled={isFinalized}
+                                onChange={(checked) => void handleToggleDead(row, checked)}
+                              />
                             </div>
                             {row.seriousInjuryRolls.length > 0 ? (
                               <div className="flex flex-wrap gap-2">
@@ -1491,14 +1489,13 @@ export default function BattlePostbattle() {
                           />
                         </label>
                       </div>
-                      <label className="flex h-9 items-center gap-2 text-sm text-foreground">
-                        <Checkbox
-                          checked={row.dead}
-                          disabled={isFinalized}
-                          onChange={(event) => void handleToggleDead(row, event.target.checked)}
-                        />
-                        Dead
-                      </label>
+                      <PostbattleDeadTick
+                        unitKey={row.unitKey}
+                        unitKind={row.unitKind}
+                        checked={row.dead}
+                        disabled={isFinalized}
+                        onChange={(checked) => void handleToggleDead(row, checked)}
+                      />
                     </div>
                   </div>
                   {row.seriousInjuryRolls.length > 0 ? (
