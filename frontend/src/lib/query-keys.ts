@@ -23,6 +23,9 @@ export const queryKeys = {
     catalogue: (campaignId: number, kind: CatalogueKind) =>
       ["campaign", campaignId, "catalogue", kind] as const,
     openBattles: (campaignId: number) => ["campaign", campaignId, "battles", "open"] as const,
+    /** Your reported results still waiting for answers (the overview's card). */
+    pendingResults: (campaignId: number) =>
+      ["campaign", campaignId, "battles", "pending-results"] as const,
     /** Your own warband in the campaign (the list endpoint's first row, or null). */
     myWarband: (campaignId: number) => ["campaign", campaignId, "warband", "mine"] as const,
     /** Prefix of everything cached for one warband. */

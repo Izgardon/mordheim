@@ -9,6 +9,7 @@ import type {
   BattleRosterMap,
   BattleState,
   BattleStateView,
+  PendingReportedResult,
 } from "@/features/battles/types/battle-types";
 import type { UnitInformationPatch } from "@/features/battles/utils/unit-information-patch";
 
@@ -200,6 +201,24 @@ export function approveReportedBattleResult(campaignId: number, battleId: number
 
 export function declineReportedBattleResult(campaignId: number, battleId: number) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/decline-result/`, {
+    method: "POST",
+    headers: battleWriteHeaders(),
+  });
+}
+
+/** Your reported results in the campaign still waiting for answers, newest first (BUG-46). */
+export function listPendingReportedResults(
+  campaignId: number,
+  { signal }: { signal?: AbortSignal } = {}
+) {
+  return apiRequest<PendingReportedResult[]>(`/campaigns/${campaignId}/battles/pending-results/`, {
+    signal,
+  });
+}
+
+/** The submitter takes a reported result back; it is cancelled for everyone. */
+export function withdrawReportedBattleResult(campaignId: number, battleId: number) {
+  return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/withdraw-result/`, {
     method: "POST",
     headers: battleWriteHeaders(),
   });

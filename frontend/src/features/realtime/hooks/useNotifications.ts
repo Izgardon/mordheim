@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { invalidateOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
+import { invalidatePendingResults } from "@/features/battles/hooks/usePendingReportedResults";
 import {
   approveReportedBattleResult,
   declineReportedBattleResult,
@@ -101,6 +102,7 @@ export function useNotifications() {
       await approveReportedBattleResult(notification.campaignId, notification.battleId);
       removeBattleResultRequestNotification(notification.id);
       void invalidateOpenBattles(queryClient, notification.campaignId);
+      void invalidatePendingResults(queryClient, notification.campaignId);
     },
     [queryClient, removeBattleResultRequestNotification]
   );
@@ -110,6 +112,7 @@ export function useNotifications() {
       await declineReportedBattleResult(notification.campaignId, notification.battleId);
       removeBattleResultRequestNotification(notification.id);
       void invalidateOpenBattles(queryClient, notification.campaignId);
+      void invalidatePendingResults(queryClient, notification.campaignId);
     },
     [queryClient, removeBattleResultRequestNotification]
   );

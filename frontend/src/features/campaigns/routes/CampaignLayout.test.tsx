@@ -61,6 +61,7 @@ vi.mock("@/features/warbands/api/warbands-api", () => ({
 }));
 vi.mock("@/features/battles/api/battles-api", () => ({
   listOpenCampaignBattles: vi.fn(),
+  listPendingReportedResults: vi.fn(async () => []),
   joinBattle: vi.fn(),
   cancelBattleAsCreator: vi.fn(),
 }));

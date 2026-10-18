@@ -264,6 +264,29 @@ export type ReportBattleResultPayload = {
   winner_warband_ids: number[];
 };
 
+/** A reported result still waiting for answers, as `pending-results/` lists it (BUG-46). */
+export type PendingReportedResult = {
+  battle_id: number;
+  campaign_id: number;
+  status: BattleStatus;
+  scenario: string;
+  battle_date: string | null;
+  winner_warband_ids: number[];
+  winner_warband_names: string[];
+  created_by_user_id: number;
+  created_by_user_label: string;
+  created_at: string;
+  participants: {
+    user_id: number;
+    user_label: string;
+    warband_id: number;
+    warband_name: string;
+    status: BattleParticipantStatus;
+  }[];
+  awaiting_my_answer: boolean;
+  can_withdraw: boolean;
+};
+
 export type BattleInviteNotification = {
   id: string;
   notificationDbId: number;

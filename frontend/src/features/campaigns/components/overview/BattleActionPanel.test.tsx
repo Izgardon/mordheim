@@ -1,12 +1,13 @@
 /**
- * A reported battle result waiting for your approval, seen from the campaign overview: the battle
- * panel ignores it, and only the notification bell can approve or decline it (BUG-46).
+ * A reported battle result waiting for your approval, seen from the campaign overview: a card
+ * offers Approve and Decline (and Withdraw to the submitter), and clearing the bell leaves it
+ * there to answer (BUG-46).
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { BattleState } from "@/features/battles/types/battle-types";
+import type { BattleState, PendingReportedResult } from "@/features/battles/types/battle-types";
 import NotificationsMenu from "@/features/realtime/components/NotificationsMenu";
 import { useNotificationSubscription } from "@/features/realtime/hooks/useNotificationSubscription";
 import { useNotifications } from "@/features/realtime/hooks/useNotifications";
@@ -41,6 +42,43 @@ const pendingResult: BattleState = battleState({
   me: { status: "reported_result_pending" },
   opponent: { status: "reported_result_approved" },
 });
+
+/** The same result as `pending-results/` lists it. */
+const pendingRow = (overrides: Partial<PendingReportedResult> = {}): PendingReportedResult => ({
+  battle_id: REPORTED_BATTLE_ID,
+  campaign_id: 1,
+  status: "reported_result_pending",
+  scenario: "Skirmish at the Market Square",
+  battle_date: "2026-10-17",
+  winner_warband_ids: [OPPONENT.warband.id],
+  winner_warband_names: [OPPONENT.warband.name],
+  created_by_user_id: OPPONENT.id,
+  created_by_user_label: "Mira",
+  created_at: "2026-10-17T20:00:00Z",
+  participants: [
+    {
+      user_id: 7,
+      user_label: "Owner",
+      warband_id: 101,
+      warband_name: "Iron Vultures",
+      status: "reported_result_pending",
+    },
+    {
+      user_id: OPPONENT.id,
+      user_label: "Mira",
+      warband_id: OPPONENT.warband.id,
+      warband_name: OPPONENT.warband.name,
+      status: "reported_result_approved",
+    },
+  ],
+  awaiting_my_answer: true,
+  can_withdraw: false,
+  ...overrides,
+});
+
+/** What `pending-results/` answers; an answer or a withdraw empties it, as the server does. */
+let pending: PendingReportedResult[] = [];
+const PENDING_ROUTE = "GET /campaigns/1/battles/pending-results/";
 
 const answeredResult = (status: "ended" | "canceled"): BattleState => ({
   ...pendingResult,
@@ -91,6 +129,8 @@ function OverviewWithBell() {
   );
 }
 
+const card = () => screen.getByRole("region", { name: /Results awaiting/ });
+
 async function renderOverview() {
   renderWithQueryClient(
     <AppStoreProvider>
@@ -113,27 +153,100 @@ describe("BattleActionPanel with a reported result awaiting you", () => {
     fakeRealtime.reset();
     fakeApi.on("GET /notifications/", [resultRequest]);
     fakeApi.on("GET /campaigns/1/battles/?open=1", [pendingResult]);
+    pending = [pendingRow()];
+    fakeApi.on(PENDING_ROUTE, () => pending);
   });
 
-  it("shows only Start battle on the overview; Approve and Decline live in the bell alone (BUG-46, pinned; flips in PR A)", async () => {
+  it("answers a reported result from the overview's card: Approve sends approve-result/ (BUG-46)", async () => {
     const user = setupUser();
-    fakeApi.on(`POST ${resultPath("approve-result")}`, answeredResult("ended"));
+    fakeApi.on(`POST ${resultPath("approve-result")}`, () => {
+      pending = [];
+      return answeredResult("ended");
+    });
     const overview = await renderOverview();
 
-    expect(
-      within(overview)
-        .getAllByRole("button")
-        .map((button) => button.textContent)
-    ).toEqual(["Start battle"]);
-    expect(within(overview).queryByText(/Skirmish at the Market Square/)).not.toBeInTheDocument();
+    const results = await within(overview).findByRole("region", {
+      name: "Results awaiting your approval",
+    });
+    expect(results).toHaveTextContent("Skirmish at the Market Square");
+    expect(results).toHaveTextContent("Reported by Mira");
+    expect(results).toHaveTextContent("Winners: Night Razors");
+    expect(results).toHaveTextContent("Waiting for your answer");
+    expect(within(results).queryByRole("button", { name: "Withdraw" })).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Notifications" }));
-    const bell = screen.getByRole("dialog", { name: "Notifications" });
-    expect(bell).toHaveTextContent("Battle result request");
-    await user.click(within(bell).getByRole("button", { name: "Approve reported battle result" }));
+    await user.click(within(results).getByRole("button", { name: "Approve" }));
 
-    await waitFor(() => expect(fakeApi.calls()).toContain(`POST ${resultPath("approve-result")}`));
+    await waitFor(() => expect(within(overview).queryByRole("region")).not.toBeInTheDocument());
     expect(fakeApi.bodyOf(`POST ${resultPath("approve-result")}`)).toBeUndefined();
+    // The bell's request went with it.
+    expect(screen.getByRole("button", { name: "Notifications" })).not.toHaveTextContent("1");
+  });
+
+  it("declines from the card only after saying the result is cancelled for everyone (BUG-46)", async () => {
+    const user = setupUser();
+    fakeApi.on(`POST ${resultPath("decline-result")}`, () => {
+      pending = [];
+      return answeredResult("canceled");
+    });
+    await renderOverview();
+    await screen.findByRole("region", { name: "Results awaiting your approval" });
+
+    await user.click(within(card()).getByRole("button", { name: "Decline" }));
+    const confirm = screen.getByRole("dialog", { name: "Decline" });
+    expect(confirm).toHaveAccessibleDescription(
+      "Decline this result? It is cancelled for every player and records nothing."
+    );
+    expect(fakeApi.calls()).not.toContain(`POST ${resultPath("decline-result")}`);
+    await user.click(within(confirm).getByRole("button", { name: "Decline" }));
+
+    await waitFor(() => expect(fakeApi.calls()).toContain(`POST ${resultPath("decline-result")}`));
+    await waitFor(() => expect(screen.queryByRole("region")).not.toBeInTheDocument());
+  });
+
+  it("lets the submitter withdraw a result still waiting for others (BUG-46)", async () => {
+    const user = setupUser();
+    pending = [
+      pendingRow({
+        created_by_user_id: 7,
+        created_by_user_label: "Owner",
+        awaiting_my_answer: false,
+        can_withdraw: true,
+        participants: [
+          {
+            user_id: 7,
+            user_label: "Owner",
+            warband_id: 101,
+            warband_name: "Iron Vultures",
+            status: "reported_result_approved",
+          },
+          {
+            user_id: OPPONENT.id,
+            user_label: "Mira",
+            warband_id: OPPONENT.warband.id,
+            warband_name: OPPONENT.warband.name,
+            status: "reported_result_pending",
+          },
+        ],
+      }),
+    ];
+    fakeApi.on(`POST ${resultPath("withdraw-result")}`, () => {
+      pending = [];
+      return answeredResult("canceled");
+    });
+    await renderOverview();
+
+    const results = await screen.findByRole("region", { name: "Results awaiting approval" });
+    expect(results).toHaveTextContent("Waiting for Mira");
+    expect(within(results).queryByRole("button", { name: "Approve" })).not.toBeInTheDocument();
+    await user.click(within(results).getByRole("button", { name: "Withdraw" }));
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Withdraw" })).getByRole("button", {
+        name: "Withdraw",
+      })
+    );
+
+    await waitFor(() => expect(fakeApi.calls()).toContain(`POST ${resultPath("withdraw-result")}`));
+    await waitFor(() => expect(screen.queryByRole("region")).not.toBeInTheDocument());
   });
 
   it("declines from the bell with decline-result/", async () => {
@@ -148,22 +261,23 @@ describe("BattleActionPanel with a reported result awaiting you", () => {
     expect(screen.getByRole("button", { name: "Notifications" })).not.toHaveTextContent("1");
   });
 
-  it("leaves nowhere to answer the result once the bell is cleared (BUG-46, pinned; flips in PR A)", async () => {
+  it("keeps the result to answer on the overview once the bell is cleared (BUG-46)", async () => {
     const user = setupUser();
     fakeApi.on("POST /notifications/clear-all/", { ok: true });
     const overview = await renderOverview();
+    await within(overview).findByRole("region", { name: "Results awaiting your approval" });
 
     await user.click(screen.getByRole("button", { name: "Notifications" }));
     await user.click(screen.getByRole("button", { name: "Clear" }));
 
-    // The server declines the result on clear-all (backend half); the page only clears the bell.
+    // Clearing only resolves the notification (the server no longer declines the result).
     await waitFor(() => expect(fakeApi.calls()).toContain("POST /notifications/clear-all/"));
     expect(fakeApi.calls()).not.toContain(`POST ${resultPath("decline-result")}`);
     expect(
-      within(overview)
+      within(card())
         .getAllByRole("button")
         .map((button) => button.textContent)
-    ).toEqual(["Start battle"]);
+    ).toEqual(["Decline", "Approve"]);
     await user.click(screen.getByRole("button", { name: "Notifications" }));
     expect(screen.getByRole("dialog", { name: "Notifications" })).toHaveTextContent(
       "You are all caught up."

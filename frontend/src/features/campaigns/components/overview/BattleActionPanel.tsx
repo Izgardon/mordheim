@@ -25,6 +25,7 @@ import {
   getResumableBattleForUser,
 } from "@/features/battles/utils/battle-session";
 import type { CampaignPlayer } from "../../types/campaign-types";
+import PendingResultsCard from "./PendingResultsCard";
 import StartBattleDialog from "./StartBattleDialog";
 
 const NO_BATTLES: BattleState[] = [];
@@ -182,6 +183,8 @@ export default function BattleActionPanel({
       </div>
 
       {battleError ? <p className="text-center text-sm text-red-600">{battleError}</p> : null}
+
+      <PendingResultsCard campaignId={campaignId} />
 
       {resumableBattle && battleIsInviting ? (
         <BattleInviteStatusDialog

@@ -21,6 +21,7 @@ import {
   setBattleReady,
   setUnitOutOfAction,
   startBattle,
+  withdrawReportedBattleResult,
 } from "./battles-api";
 import type {
   BattleCreatePayload,
@@ -68,6 +69,7 @@ describe("battles-api: battle writes name this browser's socket (BUG-75)", () =>
       () => finishBattle(1, 5, { winner_warband_ids: [101] }),
       () => approveReportedBattleResult(1, 5),
       () => declineReportedBattleResult(1, 5),
+      () => withdrawReportedBattleResult(1, 5),
       () => saveBattlePostbattleDraft(1, 5, { postbattle_json: draft }),
       () => finalizeBattlePostbattle(1, 5, { postbattle_json: draft }),
       () => confirmBattlePostbattle(1, 5),

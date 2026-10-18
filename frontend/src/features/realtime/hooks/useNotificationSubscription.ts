@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { invalidateOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
+import { invalidatePendingResults } from "@/features/battles/hooks/usePendingReportedResults";
 import type {
   BattleInviteNotification,
   BattleResultRequestNotification,
@@ -154,6 +155,7 @@ export function useNotificationSubscription() {
         return;
       }
       addBattleResultRequestNotification(notification);
+      void invalidatePendingResults(queryClient, notification.campaignId);
       return;
     }
 
@@ -170,6 +172,7 @@ export function useNotificationSubscription() {
       }
       removeBattleResultRequestNotification(`battle-result-${payload.battle_id}`);
       void invalidateOpenBattles(queryClient, payload.campaign_id);
+      void invalidatePendingResults(queryClient, payload.campaign_id);
       return;
     }
 
