@@ -383,6 +383,22 @@ describe("unit item menu: Buy again", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
+  it("starts at the copy's current price, house rule included, rather than the item's own (decision 11)", async () => {
+    const user = setupUser();
+    const housePriced = {
+      ...aldric,
+      items: aldric.items.map((item) => (item.id === 102 ? { ...item, current_price: 5 } : item)),
+    };
+    renderCard(MY_WARBAND, housePriced);
+
+    await openMenu(user, "Dagger x 2", "Buy again");
+
+    const dialog = await screen.findByRole("dialog", { name: "Acquire item" });
+    await waitFor(() => expect(within(dialog).getByRole("button", { name: "Buy" })).toBeEnabled());
+    expect(within(dialog).getByDisplayValue("5")).toBeInTheDocument();
+    expect(within(dialog).queryByDisplayValue("2")).not.toBeInTheDocument();
+  });
+
   it("buys another copy for another player's hero, on his warband (BUG-107)", async () => {
     const user = setupUser();
     const rearmed = [...zorn.items, { ...dagger }];

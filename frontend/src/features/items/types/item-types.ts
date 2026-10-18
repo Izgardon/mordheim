@@ -50,6 +50,8 @@ export type Item = {
   cost?: number | null;
   /** A unit's copy in a detail payload: one copy's suggested sale price (null: none known). */
   suggested_sale_price?: number | null;
+  /** A unit's copy: what Buy again charges, the campaign's current price (null: unknown). */
+  current_price?: number | null;
   sale_price_basis?: SalePriceBasis | null;
   single_use?: boolean;
   description: string;

@@ -29,7 +29,7 @@ export type OpenMenu = { entryId: string; entry: MenuEntry; rect: DOMRect };
 /** The item a row shows: its cost, suggested sale price and (stash) copies by cost. */
 type MenuItem = Pick<
   WarbandItemSummary,
-  "id" | "name" | "cost" | "costs" | "suggested_sale_price" | "sale_price_basis"
+  "id" | "name" | "cost" | "costs" | "current_price" | "suggested_sale_price" | "sale_price_basis"
 >;
 
 export type ItemDialogState = { action: "sell" | "move"; item: MenuItem; count: number } | null;
@@ -89,6 +89,8 @@ export default function useItemActionMenu<U extends WarbandUnitDetail>({
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null);
   const [itemDialog, setItemDialog] = useState<ItemDialogState>(null);
   const [buyAgainItem, setBuyAgainItem] = useState<Item | null>(null);
+  // What Buy again will charge (the row's current_price, decision 11); null: the item's own price.
+  const [buyAgainPrice, setBuyAgainPrice] = useState<number | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const warband = useActingWarband();
   const { mutateAsync: sell } = useItemSale(warbandId);
@@ -135,6 +137,7 @@ export default function useItemActionMenu<U extends WarbandUnitDetail>({
       return;
     }
     if (action === "Buy again") {
+      setBuyAgainPrice(target.item.current_price ?? null);
       void getItem(target.item.id)
         .then(setBuyAgainItem)
         .catch((err: unknown) => {
@@ -184,6 +187,7 @@ export default function useItemActionMenu<U extends WarbandUnitDetail>({
     setItemDialog,
     buyAgainItem,
     setBuyAgainItem,
+    buyAgainPrice,
     warband,
     handleMenuToggle,
     handleMenuAction,

@@ -38,6 +38,8 @@ type AcquireItemDialogProps = {
   defaultRaritySectionCollapsed?: boolean;
   defaultPriceSectionCollapsed?: boolean;
   variant?: "items" | "buy-again" | "unit-edit";
+  /** Buy again: what the server will charge (the row's current_price); null: the item's price. */
+  currentPrice?: number | null;
   onAcquire?: (
     item: Item,
     unitType: UnitTypeOption,
@@ -64,6 +66,7 @@ export default function AcquireItemDialog({
   defaultRaritySectionCollapsed,
   defaultPriceSectionCollapsed,
   variant = "items",
+  currentPrice,
   onAcquire,
   deferCommit = false,
   reservedGold = 0,
@@ -83,6 +86,7 @@ export default function AcquireItemDialog({
     defaultUnitSectionCollapsed,
     defaultRaritySectionCollapsed,
     defaultPriceSectionCollapsed,
+    currentPrice,
     onAcquire,
     deferCommit,
     reservedGold,

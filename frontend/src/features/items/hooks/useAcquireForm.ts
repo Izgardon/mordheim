@@ -6,6 +6,8 @@ import type { AcquireItemMeta } from "../types/acquire-types";
 type UseAcquireFormOptions = {
   item: Item;
   initialAvailabilityId?: number | null;
+  /** The price to start from instead of the availability's (Buy again's current_price). */
+  currentPrice?: number | null;
   open: boolean;
   /** Who receives the item ("type:id"): picking another one resets a typed quantity. */
   targetKey: string;
@@ -25,6 +27,7 @@ type UseAcquireFormOptions = {
 export function useAcquireForm({
   item,
   initialAvailabilityId,
+  currentPrice,
   open,
   targetKey,
   canProceed,
@@ -56,7 +59,7 @@ export function useAcquireForm({
     return availabilities[0];
   }, [availabilities, selectedAvailabilityId]);
 
-  const resolvedCost = resolvedAvailability?.cost ?? 0;
+  const resolvedCost = currentPrice ?? resolvedAvailability?.cost ?? 0;
   const rarity = resolvedAvailability?.rarity ?? 2;
   const variableCost = resolvedAvailability?.variable_cost ?? null;
   const [finalPrice, setFinalPrice] = useState(resolvedCost);
@@ -153,6 +156,8 @@ export function useAcquireForm({
     setIsBuying,
     itemReason,
     setItemReason,
+    /** The price a copy starts at: Buy again's current price, or the availability's cost. */
+    basePrice: resolvedCost,
     finalPrice,
     setFinalPrice,
     count,

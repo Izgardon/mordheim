@@ -567,6 +567,8 @@ export type WarbandItemSummary = {
   costs?: StashCost[];
   /** One copy's suggested sale price (decision 3; null: none known). */
   suggested_sale_price?: number | null;
+  /** What Buy again charges: the campaign's current price, house rule included (null: unknown). */
+  current_price?: number | null;
   sale_price_basis?: SalePriceBasis | null;
 };
 

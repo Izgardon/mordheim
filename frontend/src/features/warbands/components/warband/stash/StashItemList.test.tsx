@@ -591,6 +591,56 @@ describe("StashItemList: Buy again", () => {
     expect(fakeApi.calls().some((call) => call.includes(`/warbands/${MY_WARBAND}/`))).toBe(false);
   });
 
+  it("shows and checks the gold against the house-rule price Buy again charges, not the item's own (decision 11)", async () => {
+    const user = setupUser();
+    // The campaign's house rule prices a Dagger at 5 gc; the global item lists 2 gc.
+    fakeApi.on(`GET /warbands/${MY_WARBAND}/items/`, [
+      makeStashItem({ id: 17, name: "Dagger", cost: 2, quantity: 1, current_price: 5 }),
+    ]);
+    fakeApi.on(
+      "GET /items/17/",
+      makeItem({
+        id: 17,
+        name: "Dagger",
+        cost: null,
+        availabilities: [{ id: 3, cost: 2, rarity: 2, restrictions: [] }],
+      })
+    );
+    fakeApi.on(`GET /warbands/${MY_WARBAND}/heroes/`, [aldric]);
+    fakeApi.on(`POST /warbands/${MY_WARBAND}/purchases/`, {
+      target_type: "stash",
+      target_id: null,
+      updated_at: null,
+      items: null,
+      stash_item: makeStashItem({ id: 17, name: "Dagger", cost: 2, quantity: 2 }),
+      trade: null,
+      summary: { gold: -1, rating: 99 },
+      warnings: [],
+    });
+    renderStash(MY_WARBAND, { gold: 4 });
+
+    await openMenu(user, "Dagger", "Buy again");
+    const dialog = await screen.findByRole("dialog", { name: "Acquire item" });
+    await waitFor(() => expect(within(dialog).getByRole("button", { name: "Buy" })).toBeEnabled());
+    expect(within(dialog).getByDisplayValue("5")).toBeInTheDocument();
+    // 4 gc less 5 gc: the dialog warns and asks, as the server will charge 5.
+    expect(within(dialog).getByText("This leaves the warband at -1 gc.")).toBeVisible();
+    await user.click(within(dialog).getByRole("button", { name: "Buy" }));
+    expect(fakeApi.countOf(`POST /warbands/${MY_WARBAND}/purchases/`)).toBe(0);
+    expect(
+      screen.getByText("This leaves the warband at -1 gc. Buy it anyway?")
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Buy anyway" }));
+
+    await waitFor(() => expect(fakeApi.countOf(`POST /warbands/${MY_WARBAND}/purchases/`)).toBe(1));
+    expect(fakeApi.bodyOf(`POST /warbands/${MY_WARBAND}/purchases/`)).toEqual({
+      item_id: 17,
+      quantity: 1,
+      is_buying: true,
+      target_type: "stash",
+    });
+  });
+
   it("says so when the item can't be loaded for Buy again (ECON-UX-05)", async () => {
     const user = setupUser();
     fakeApi.fail("GET /items/120/", new ApiError("Not found.", 404, { detail: "Not found." }));

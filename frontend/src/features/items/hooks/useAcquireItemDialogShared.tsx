@@ -39,6 +39,8 @@ export type AcquireItemDialogSharedParams = {
   /** "Buy again" (decision 11): unless the player changes the price, the server charges the
    * item's current campaign price, house rules included. */
   atCurrentPrice?: boolean;
+  /** Buy again: that price, shown and checked against the gold (null: the item's own price). */
+  currentPrice?: number | null;
   reservedGold: number;
   enableHenchmenAutoQuantity?: boolean;
 };
@@ -72,6 +74,7 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
   const form = useAcquireForm({
     item,
     initialAvailabilityId: params.initialAvailabilityId,
+    currentPrice: params.currentPrice,
     open,
     targetKey: `${resolvedUnitType}:${resolvedUnitId}`,
     canProceed,
@@ -218,6 +221,7 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
     modifierReason: rarity.modifierReason,
     setModifierReason: rarity.setModifierReason,
     handleRarityRollTotalChange: rarity.handleRarityRollTotalChange,
+    basePrice: form.basePrice,
     finalPrice,
     setFinalPrice: form.setFinalPrice,
     quantity: count,

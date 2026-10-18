@@ -70,6 +70,7 @@ export default function AcquireItemDialogContent({
   modifierReason,
   setModifierReason,
   handleRarityRollTotalChange,
+  basePrice,
   finalPrice,
   setFinalPrice,
   quantity,
@@ -218,7 +219,7 @@ export default function AcquireItemDialogContent({
                 onToggle={() => setIsPriceCollapsed((prev) => !prev)}
               >
                 <PriceSection
-                  cost={resolvedAvailability?.cost ?? 0}
+                  cost={basePrice}
                   variable={resolvedAvailability?.variable_cost}
                   finalPrice={finalPrice}
                   onFinalPriceChange={setFinalPrice}

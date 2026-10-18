@@ -93,6 +93,7 @@ export default function ItemActionDialogs({
           }}
           trigger={null}
           variant="buy-again"
+          currentPrice={menu.buyAgainPrice}
           {...(owner
             ? {
                 presetUnitType: owner.kind,
