@@ -109,8 +109,16 @@ export function toUnitInformationMap(raw: unknown): Record<string, BattleUnitInf
         ? (value.stats_override as BattleUnitInformationEntry["stats_override"])
         : {};
     const outOfAction = Boolean(value.out_of_action);
-    const currentWounds = Number.isFinite(Number(value.current_wounds))
-      ? Math.max(0, Math.trunc(Number(value.current_wounds)))
+    // null means "at the profile value"; Number(null) is 0, so parse numbers and numeric text only.
+    const rawWounds = value.current_wounds;
+    const parsedWounds =
+      typeof rawWounds === "number"
+        ? rawWounds
+        : typeof rawWounds === "string" && rawWounds.trim() !== ""
+          ? Number(rawWounds)
+          : Number.NaN;
+    const currentWounds = Number.isFinite(parsedWounds)
+      ? Math.max(0, Math.trunc(parsedWounds))
       : null;
     const killCount = Number.isFinite(Number(value.kill_count))
       ? Math.max(0, Math.trunc(Number(value.kill_count)))
