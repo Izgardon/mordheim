@@ -15,6 +15,7 @@ from apps.battles.serializers import serialize_battle, serialize_participant
 from apps.battles.services.broadcast import ALL, bump_state_version
 from apps.battles.services.expiry import expire_overdue
 from apps.battles.services.lifecycle import cancel_battle
+from apps.battles.services.setup import busy_participations
 from apps.battles.views.responses import broadcast_response, response_with_snapshot
 from apps.core.throttling import (
     BATTLE_WRITE_THROTTLE_CLASSES,
@@ -620,25 +621,7 @@ class CampaignPlayersView(APIView):
         }
         member_user_ids = [member.user_id for member in memberships]
         busy_entries = (
-            BattleParticipant.objects.filter(
-                user_id__in=member_user_ids,
-                battle__campaign_id=campaign_id,
-                battle__flow_type=Battle.FLOW_TYPE_NORMAL,
-                battle__status__in=(
-                    Battle.STATUS_INVITING,
-                    Battle.STATUS_PREBATTLE,
-                    Battle.STATUS_ACTIVE,
-                    Battle.STATUS_POSTBATTLE,
-                ),
-                status__in=(
-                    BattleParticipant.STATUS_INVITED,
-                    BattleParticipant.STATUS_ACCEPTED,
-                    BattleParticipant.STATUS_JOINED_PREBATTLE,
-                    BattleParticipant.STATUS_READY,
-                    BattleParticipant.STATUS_IN_BATTLE,
-                    BattleParticipant.STATUS_FINISHED_BATTLE,
-                ),
-            )
+            busy_participations(campaign_id, member_user_ids)  # the busy rule battles warn with (decision 1)
             .order_by("-battle__created_at")
             .values_list("user_id", "battle_id", "battle__status", "battle__last_activity_at")
         )

@@ -101,6 +101,12 @@ def end_battle(battle: Battle, actor_user, events: list[dict], **ended: object) 
     generate_pivotal_moments_for_battle(battle)
 
 
+def end_if_everyone_finished(battle: Battle, actor_user, events: list[dict]) -> None:
+    """After a player finalised or skipped: the battle ends when he was the last one still in postbattle."""
+    if battle.status != Battle.STATUS_ENDED and everyone_confirmed(battle.id):
+        end_battle(battle, actor_user, events)
+
+
 def _cancel_rows(battle: Battle, participants: list[BattleParticipant], now) -> None:
     for entry in participants:
         # a finished postbattle is a record, never rewritten (BUG-09; cancels refuse postbattle anyway)

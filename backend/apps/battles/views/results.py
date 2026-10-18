@@ -1,4 +1,5 @@
-"""Reported results waiting for answers: the campaign's list and the submitter's withdraw (BUG-46).
+"""Reported results: reporting one, approving or declining it, the campaign's pending list and the submitter's
+withdraw (BUG-46).
 
 A reported result ends when every other player approves it (approve-result/) and is cancelled when one declines
 (decline-result/) or the submitter withdraws it. Clearing its notification only resolves the notification.
@@ -6,7 +7,7 @@ A reported result ends when every other player approves it (approve-result/) and
 
 from django.db import transaction
 from django.utils import timezone
-from rest_framework import permissions
+from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -15,10 +16,81 @@ from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 
 from ..models import Battle, BattleParticipant
 from ..serializers import display_name, participants_prefetch
-from ..services.broadcast import ALL, bump_state_version
+from ..services.broadcast import ALL
+from ..services.errors import BattleError, Refused
 from ..services.lifecycle import cancel_battle
-from .responses import broadcast_response, response_with_snapshot
-from .shared import _get_user_battle_participant
+from ..services.reported import approve, create_reported_result, decline, reported_result
+from .base import BattleWriteView, Scope, Written
+from .responses import broadcast_response
+from .rules import refuse, refuse_player, refused, reported_flow, snapshot_when
+
+NOT_REPORTED = "This battle is not a reported result"
+COMMITTED = "Reported result has already been committed"
+
+
+class CampaignBattleReportedResultCreateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
+
+    def post(self, request, campaign_id):
+        if not get_membership(request.user, campaign_id):
+            return Response({"detail": "Not found"}, status=404)
+        try:
+            result = reported_result(request.data, campaign_id, request.user)
+        except (Refused, BattleError) as refusal:
+            return refusal.response()
+        with transaction.atomic():
+            battle, events = create_reported_result(campaign_id, request.user, result)
+        return broadcast_response(
+            request, battle.id, events, battle.state_version, changed=ALL, response_status=status.HTTP_201_CREATED
+        )
+
+
+class CampaignBattleReportedResultApproveView(BattleWriteView):
+    rules = (
+        reported_flow(NOT_REPORTED),
+        refuse((Battle.STATUS_CANCELED,), "Reported result has already been canceled"),
+        snapshot_when(Battle.STATUS_ENDED),
+        refuse_player(
+            (BattleParticipant.STATUS_REPORTED_RESULT_DECLINED,), "You already declined this reported result"
+        ),
+    )
+
+    def act(self, scope: Scope):
+        approve(scope.battle, scope.player)
+        return Written([], changed=ALL, reason="reported_result_approved")
+
+
+class CampaignBattleReportedResultDeclineView(BattleWriteView):
+    rules = (
+        reported_flow(NOT_REPORTED),
+        refuse((Battle.STATUS_ENDED,), COMMITTED),
+        snapshot_when(Battle.STATUS_CANCELED),
+    )
+
+    def act(self, scope: Scope):
+        decline(scope.battle, scope.player)
+        return Written([], changed=ALL, reason="reported_result_declined")
+
+
+def _submitter_only(scope: Scope) -> Response | None:
+    if scope.is_creator:
+        return None
+    return refused("Only the player who reported this result can withdraw it", code="not_submitter", status=403)
+
+
+class CampaignBattleWithdrawResultView(BattleWriteView):
+    """POST: the submitter takes back a reported result nobody has finished answering; it is cancelled for all."""
+
+    rules = (
+        reported_flow(NOT_REPORTED),
+        _submitter_only,
+        snapshot_when(Battle.STATUS_CANCELED),
+        refuse((Battle.STATUS_ENDED,), COMMITTED),
+    )
+
+    def act(self, scope: Scope):
+        return Written([cancel_battle(scope.battle, actor_user=scope.user, mode="withdrawn")], changed=ALL)
 
 
 def _pending_result_payload(battle: Battle, user_id: int) -> dict:
@@ -74,29 +146,3 @@ class CampaignPendingResultsView(APIView):
             .order_by("-created_at", "-id")
         )
         return Response([_pending_result_payload(battle, request.user.id) for battle in battles])
-
-
-class CampaignBattleWithdrawResultView(APIView):
-    """POST: the submitter takes back a reported result nobody has finished answering; it is cancelled for all."""
-
-    permission_classes = [permissions.IsAuthenticated]
-    throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
-
-    def post(self, request, campaign_id, battle_id):
-        events: list[dict] = []
-        with transaction.atomic():
-            battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
-            if not battle or not participant:
-                return Response({"detail": "Not found"}, status=404)
-            if battle.flow_type != Battle.FLOW_TYPE_REPORTED_RESULT:
-                return Response({"detail": "This battle is not a reported result"}, status=400)
-            if battle.created_by_user_id != request.user.id:
-                detail = "Only the player who reported this result can withdraw it"
-                return Response({"detail": detail, "code": "not_submitter"}, status=403)
-            if battle.status == Battle.STATUS_CANCELED:
-                return response_with_snapshot(battle.id, events)
-            if battle.status == Battle.STATUS_ENDED:
-                return Response({"detail": "Reported result has already been committed"}, status=400)
-            events.append(cancel_battle(battle, actor_user=request.user, mode="withdrawn"))
-            version = bump_state_version(battle)
-        return broadcast_response(request, battle.id, events, version, changed=ALL)

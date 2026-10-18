@@ -37,10 +37,10 @@ class BattleQueryBudgetTests(BattleTestCase):
         self.assertLessEqual(queries, budget, f"{name} ran {queries} queries (budget {budget}).")
 
     def test_state_costs_the_same_for_any_number_of_players_and_events(self):
-        # BATL-TEST-05 baseline (target 4): membership, battle, the reader's participant, every participant, the new
-        # events; constant in players and events. Presence is written by the reader's first read in a minute (writes
-        # no longer touch it, PERF-35), so each battle is read once first; the reference campaign's budget, 6 in
-        # apps/core/tests/test_query_budgets.py, includes that write.
+        # BATL-TEST-05 (target 4): the battle with the reader's membership, his participant, every participant, the
+        # new events; constant in players and events. Presence is written by the reader's first read in a minute
+        # (writes no longer touch it, PERF-35), so each battle is read once first; the reference campaign's budget, 5
+        # in apps/core/tests/test_query_budgets.py, includes that write.
         small = self.to_active({self.player: [], self.viewer: [self.r]})
         self.ok(self.get_as(self.player, self.url(small, "state")))
         small_count, _ = self.count(self.player, "get", self.url(small, "state"))
@@ -56,13 +56,13 @@ class BattleQueryBudgetTests(BattleTestCase):
         big_count, _ = self.count(self.player, "get", self.url(big, "state"))
 
         self.assertEqual(small_count, big_count)
-        self.within("state", big_count, 5)
+        self.within("state", big_count, 4)
 
     def test_rosters_cost_the_same_for_any_number_of_units(self):
-        # PERF-38: before the battle starts, membership, battle, participant, participants, then each kind and its
-        # link tables. A nested prefetch is skipped when its link table has no rows: 22 here (items only), up to 30
+        # PERF-38: before the battle starts, battle (with membership), participant, participants, then each kind and its
+        # link tables. A nested prefetch is skipped when its link table has no rows: 21 here (items only), up to 29
         # with skills, specials and spells everywhere, but never more for more units. From the start on, the snapshot
-        # start/ stored: membership, battle, participant and participants. The first read in a minute also writes
+        # start/ stored: battle (with membership), participant and participants. The first read in a minute also writes
         # presence (PERF-35), so each is read once first.
         battle_id = self.to_prebattle()
         self.ok(self.get_as(self.viewer, self.url(battle_id, "rosters")))
@@ -70,35 +70,35 @@ class BattleQueryBudgetTests(BattleTestCase):
         build_fixture_warband(self.rival, self.rope)
         many, _ = self.count(self.viewer, "get", self.url(battle_id, "rosters"))
         self.assertEqual(few, many)
-        self.within("rosters_live", many, 22)
+        self.within("rosters_live", many, 21)
 
         for user in (self.player, self.viewer):
             self.ok(self.post_as(user, self.url(battle_id, "ready"), {"ready": True}))
         self.ok(self.post_as(self.player, self.url(battle_id, "start")))
         snapshot, _ = self.count(self.viewer, "get", self.url(battle_id, "rosters"))
-        self.within("rosters_snapshot", snapshot, 4)
+        self.within("rosters_snapshot", snapshot, 3)
 
     def test_live_writes_stay_within_budget(self):
         hero = self.fixture.heroes[1]
         h = f"hero:{hero.id}"
         battle_id = self.to_active({self.player: self.fixture.keys, self.viewer: [self.r]})
         info = {"unit_information_json": {h: {"current_wounds": 1}}}
-        # Each: membership, the battle and participant locked, the write, its event, the battle's state_version
-        # (PERF-34; the realtime sends go after commit) and the answer's fresh snapshot (2); no presence write since
-        # PERF-35. A kill also locks every participant and reads both units; an item use checks the unit carries the
-        # item (BUG-72); End also locks every participant and resets trading actions (wins and losses count when the
-        # battle ends, decision 3).
+        # Each: the battle (with the caller's membership) and participant locked, the write, its event, the battle's
+        # state_version (PERF-34; the realtime sends go after commit) and the answer's fresh snapshot (2); no presence
+        # write since PERF-35. A kill also locks every participant and reads both units; an item use checks the unit
+        # carries the item (BUG-72); End also locks every participant and resets trading actions (wins and losses
+        # count when the battle ends, decision 3).
         cases: list[tuple[str, str, dict[str, Any], int]] = [
-            ("config", "config", info, 9),
-            ("unit_ooa", "unit-ooa", {"unit_key": f"hero:{self.fixture.heroes[2].id}", "out_of_action": True}, 10),
-            ("unit_kill", "unit-kill", {"killer_unit_key": h, "victim_unit_key": self.r}, 13),
+            ("config", "config", info, 8),
+            ("unit_ooa", "unit-ooa", {"unit_key": f"hero:{self.fixture.heroes[2].id}", "out_of_action": True}, 9),
+            ("unit_kill", "unit-kill", {"killer_unit_key": h, "victim_unit_key": self.r}, 12),
             (
                 "item_used",
                 "events",
                 {"type": "item_used", "payload_json": {"unit_key": h, "item_id": self.rope.id}},
-                10,
+                9,
             ),
-            ("finish", "finish", {"winner_warband_ids": [self.warband.id]}, 17),
+            ("finish", "finish", {"winner_warband_ids": [self.warband.id]}, 16),
         ]
         for name, action, body, budget in cases:
             with self.subTest(write=name):
@@ -145,7 +145,7 @@ class BattleQueryBudgetTests(BattleTestCase):
         battle_id, postbattle = self._fixture_postbattle()
         body = {"postbattle_json": postbattle}
         queries, _ = self.count(self.player, "post", self.url(battle_id, "finalize-postbattle"), body)
-        self.within("finalise_first", queries, 67)
+        self.within("finalise_first", queries, 66)
 
     def test_finalising_the_fixture_warband_last_stays_within_budget(self):
         # + ending the battle: its event, the wins and losses (the warbands in it, then one UPDATE each for winners
@@ -156,7 +156,7 @@ class BattleQueryBudgetTests(BattleTestCase):
         body = {"postbattle_json": postbattle}
         queries, _ = self.count(self.player, "post", self.url(battle_id, "finalize-postbattle"), body)
         self.assertEqual(self.battle(battle_id).status, "ended")
-        self.within("finalise_last", queries, 76)
+        self.within("finalise_last", queries, 75)
 
     def test_a_locked_battle_write_locks_only_the_battle_and_participant_rows(self):
         # PERF-37, BATL-TEST-19: the battle row first, then the participant, whose query joins its user and warband

@@ -36,3 +36,21 @@ class BattleError(Exception):
 def field_error(field: str, detail: str, message: str) -> BattleError:
     """A 400 for one invalid input field."""
     return BattleError(detail, fields={field: [message]})
+
+
+class Refused(Exception):
+    """A refusal in the older battle body, `{"detail": str}` (with `code` when it has one), which the current
+    pages read as they are. Raised before the action writes anything, and answered inside its transaction, so
+    what an overdue battle's settling wrote first is kept."""
+
+    def __init__(self, detail: str, *, code: str | None = None, status: int = 400) -> None:
+        super().__init__(detail)
+        self.detail = detail
+        self.code = code
+        self.status = status
+
+    def response(self) -> Response:
+        body: dict[str, Any] = {"detail": self.detail}
+        if self.code:
+            body["code"] = self.code
+        return Response(body, status=self.status)

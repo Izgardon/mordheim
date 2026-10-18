@@ -20,8 +20,10 @@ from django.test import TransactionTestCase, override_settings
 from rest_framework.test import APIClient
 
 from apps.battles.models import Battle, BattleEvent, BattleParticipant
+from apps.battles.services import combat as combat_services
 from apps.battles.services import lifecycle as lifecycle_services
-from apps.battles.views import combat, lifecycle
+from apps.battles.services.postbattle import finalise as finalise_services
+from apps.battles.views.setup import CampaignBattleConfigView
 from apps.campaigns.models import Campaign, CampaignMembership, CampaignRole, PivotalMoment
 from apps.core.testing import Rendezvous, run_concurrently
 from apps.notifications.models import Notification
@@ -97,13 +99,13 @@ class BattleConcurrencyTests(TransactionTestCase):
         battle = self.battle(Battle.STATUS_POSTBATTLE, BattleParticipant.STATUS_FINISHED_BATTLE)
         Hero.objects.update(trading_action=False)
         rendezvous = Rendezvous()
-        real_check = combat.everyone_confirmed
+        real_check = lifecycle_services.everyone_confirmed
         real_reset = lifecycle_services.reset_trading_actions
         url = self.battle_url(battle, "finalize-postbattle")
         sides = ((self.player, self.a), (self.viewer, self.r))
 
         with (
-            mock.patch.object(combat, "everyone_confirmed", side_effect=rendezvous.before(real_check)),
+            mock.patch.object(lifecycle_services, "everyone_confirmed", side_effect=rendezvous.before(real_check)),
             mock.patch.object(lifecycle_services, "reset_trading_actions", wraps=real_reset) as resets,
         ):
             statuses = run_concurrently(
@@ -130,11 +132,11 @@ class BattleConcurrencyTests(TransactionTestCase):
         # nothing deadlocks, and exactly one living leader is left.
         battle = self.battle(Battle.STATUS_POSTBATTLE, BattleParticipant.STATUS_FINISHED_BATTLE)
         rendezvous = Rendezvous()
-        real_validate = combat.validate_postbattle
+        real_validate = finalise_services.validate_postbattle
         finalise = {"postbattle_json": draft({self.a: unit_result(self.a, dead=True)})}
 
         with (
-            mock.patch.object(combat, "validate_postbattle", side_effect=rendezvous.before(real_validate)),
+            mock.patch.object(finalise_services, "validate_postbattle", side_effect=rendezvous.before(real_validate)),
             mock.patch.object(hooks, "lock_warband", side_effect=rendezvous.before(hooks.lock_warband)),
         ):
             statuses = run_concurrently(
@@ -158,15 +160,17 @@ class BattleConcurrencyTests(TransactionTestCase):
         # merges its wound into what is stored and keeps the kill (it wrote back the stale kill_count 0 before).
         battle = self.battle(Battle.STATUS_ACTIVE, BattleParticipant.STATUS_IN_BATTLE)
         rendezvous = Rendezvous()
-        real_payload = combat._build_battle_unit_event_payload
-        real_load = lifecycle._get_user_battle_participant
+        real_payload = combat_services.unit_event_payload
+        real_load = CampaignBattleConfigView.load_scope
         stale = {"unit_information_json": {self.a: {"current_wounds": 1, "kill_count": 0}}}
 
         with (
             mock.patch.object(
-                combat, "_build_battle_unit_event_payload", side_effect=first_call_waits(rendezvous, real_payload)
+                combat_services, "unit_event_payload", side_effect=first_call_waits(rendezvous, real_payload)
             ),
-            mock.patch.object(lifecycle, "_get_user_battle_participant", side_effect=rendezvous.before(real_load)),
+            mock.patch.object(
+                CampaignBattleConfigView, "load_scope", autospec=True, side_effect=rendezvous.before(real_load)
+            ),
         ):
             statuses = run_concurrently(
                 self.request(

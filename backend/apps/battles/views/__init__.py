@@ -1,30 +1,33 @@
+from .battles import CampaignBattleListCreateView, CampaignBattleRosterView, CampaignBattleStateView
 from .closing import CampaignBattleClosePostbattleView
 from .combat import (
-    CampaignBattleConfirmView,
     CampaignBattleEventCreateView,
-    CampaignBattleFinalizePostbattleView,
     CampaignBattleFinishView,
-    CampaignBattlePostbattleSaveView,
     CampaignBattleUnitKillView,
     CampaignBattleUnitOoaView,
     CampaignBattleWinnerView,
 )
 from .invites import CampaignBattleDeclineView
-from .lifecycle import (
+from .postbattle import (
+    CampaignBattleConfirmView,
+    CampaignBattleFinalizePostbattleView,
+    CampaignBattlePostbattleSaveView,
+)
+from .results import (
+    CampaignBattleReportedResultApproveView,
+    CampaignBattleReportedResultCreateView,
+    CampaignBattleReportedResultDeclineView,
+    CampaignBattleWithdrawResultView,
+    CampaignPendingResultsView,
+)
+from .setup import (
     CampaignBattleCancelView,
     CampaignBattleConfigView,
     CampaignBattleCreatorCancelView,
     CampaignBattleJoinView,
-    CampaignBattleListCreateView,
     CampaignBattleReadyView,
-    CampaignBattleReportedResultApproveView,
-    CampaignBattleReportedResultCreateView,
-    CampaignBattleReportedResultDeclineView,
-    CampaignBattleRosterView,
     CampaignBattleStartView,
-    CampaignBattleStateView,
 )
-from .results import CampaignBattleWithdrawResultView, CampaignPendingResultsView
 from .undo import CampaignBattleEventVoidView
 
 __all__ = [

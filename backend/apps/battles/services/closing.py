@@ -10,7 +10,7 @@ from django.utils import timezone
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..validation.postbattle import empty_draft
 from .events import append_event
-from .lifecycle import end_battle
+from .lifecycle import end_battle, end_if_everyone_finished
 from .postbattle.items import consume_single_use_items
 
 
@@ -40,4 +40,11 @@ def close_postbattle(battle: Battle, *, actor_user, mode: str) -> list[dict]:
     events = [skip_postbattle(battle, entry, actor_user=actor_user, closed_by=actor_user) for entry in unfinished]
     closed_by_user_id = actor_user.id if actor_user else None
     end_battle(battle, actor_user, events, closed_by_user_id=closed_by_user_id, mode=mode)
+    return events
+
+
+def skip(battle: Battle, participant: BattleParticipant, actor_user) -> list[dict]:
+    """The participant skips his postbattle (`skip-postbattle/`); the battle ends if he was the last one in it."""
+    events = [skip_postbattle(battle, participant, actor_user=actor_user)]
+    end_if_everyone_finished(battle, actor_user, events)
     return events

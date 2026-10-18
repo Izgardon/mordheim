@@ -80,9 +80,9 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     "bestiary": ("/api/bestiary/?campaign_id={campaign}", 4),
     "hired_sword_profiles": ("/api/hired-swords/?campaign_id={campaign}", 4),
     # Battles
-    "battle_state": ("/api/campaigns/{campaign}/battles/{battle}/state/", 6),  # first read writes presence once
+    "battle_state": ("/api/campaigns/{campaign}/battles/{battle}/state/", 5),  # first read writes presence once
     # constant in units (pass 3; apps/battles/tests/test_battle_query_budgets.py); first read writes presence once
-    "battle_rosters": ("/api/campaigns/{campaign}/battles/{battle}/rosters/", 25),
+    "battle_rosters": ("/api/campaigns/{campaign}/battles/{battle}/rosters/", 24),
 }
 
 # Unit writes the roster screen sends on every XP click and level-up: name -> (method, url, body, budget).
