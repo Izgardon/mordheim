@@ -8,6 +8,8 @@ save built before a kill or an out-of-action tap can't undo it, even from an old
 
 from typing import Any
 
+from apps.warbands.utils.armour_save import ARMOUR_SAVE_ERROR, parse_armour_save
+
 NUMERIC_STAT_KEYS = {
     "movement",
     "weapon_skill",
@@ -24,6 +26,19 @@ ALL_OVERRIDE_STAT_KEYS = NUMERIC_STAT_KEYS | {ARMOUR_SAVE_STAT_KEY}
 EDITABLE_FIELDS = ("stats_override", "notes", "current_wounds")
 
 
+def clean_armour_save(value: Any) -> str:
+    """An override armour save parsed as every unit write parses it (BUG-123), kept as text: "N+", or "" / "-" for
+    no save. ValueError (ARMOUR_SAVE_ERROR) for anything else, so a typo is refused here, not at finalise."""
+    text = "" if value is None else str(value).strip()
+    if text in ("", "-"):
+        return text
+    try:
+        save = parse_armour_save(value if isinstance(value, int | float) else text)
+    except ValueError:
+        raise ValueError(f"unit information armour_save: {ARMOUR_SAVE_ERROR}") from None
+    return "" if save is None else f"{save}+"
+
+
 def _clean_stats_override(stats_override: Any) -> dict[str, int | str]:
     if stats_override is None:
         return {}
@@ -37,10 +52,7 @@ def _clean_stats_override(stats_override: Any) -> dict[str, int | str]:
         if key not in ALL_OVERRIDE_STAT_KEYS:
             raise ValueError(f"Unsupported unit information stat key '{key}'")
         if key == ARMOUR_SAVE_STAT_KEY:
-            text = "" if stat_value is None else str(stat_value).strip()
-            if len(text) > 20:
-                raise ValueError("armour_save must be at most 20 characters")
-            cleaned[key] = text
+            cleaned[key] = clean_armour_save(stat_value)
             continue
         try:
             value = int(stat_value)

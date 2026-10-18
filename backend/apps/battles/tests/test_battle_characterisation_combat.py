@@ -1,7 +1,7 @@
 """Live battle state characterised: config, kills, out of action and item use (pass 3, step 0).
 
-Config merges what it is sent and never changes kills or out of action (BUG-44, BATL-TEST-11, fixed). Pinned: an
-armour-save typo accepted until finalise answers 400 (BUG-123); item use with another player's unit or item, or a
+Config merges what it is sent and never changes kills or out of action (BUG-44, BATL-TEST-11, fixed) and parses
+armour saves when they are entered (BUG-123, fixed). Pinned: item use with another player's unit or item, or a
 50 KB payload, accepted (BUG-72, SEC-09, BATL-TEST-17).
 """
 
@@ -114,7 +114,8 @@ class BattleConfigTests(BattleTestCase):
             ({"unit_information_json": {a: {"stats_override": []}}}, "unit information stats_override must be an object"),
             ({"unit_information_json": {a: {"stats_override": {"luck": 3}}}}, "Unsupported unit information stat key 'luck'"),
             ({"unit_information_json": {a: {"stats_override": {"strength": "x"}}}}, "unit information stat 'strength' must be an integer"),
-            ({"unit_information_json": {a: {"stats_override": {"armour_save": "x" * 21}}}}, "armour_save must be at most 20 characters"),
+            ({"unit_information_json": {a: {"stats_override": {"armour_save": "x" * 21}}}}, f"unit information armour_save: {ARMOUR_SAVE_ERROR}"),
+            ({"unit_information_patch": {a: {"stats_override": {"armour_save": "7+"}}}}, f"unit information armour_save: {ARMOUR_SAVE_ERROR}"),
             ({"unit_information_json": {a: {"notes": 5}}}, "unit information notes must be a string"),
             ({"unit_information_json": {a: {"notes": "x" * 501}}}, "unit information notes must be at most 500 characters"),
             ({"unit_information_json": {a: {"current_wounds": "x"}}}, "unit information current_wounds must be an integer"),
@@ -142,19 +143,24 @@ class BattleConfigTests(BattleTestCase):
                     (response.status_code, response.data), (400, {"detail": "Battle configuration is locked"})
                 )
 
-    def test_an_armour_save_typo_is_accepted_and_finalise_then_answers_400(self):
-        # Characterises current behaviour (BUG-123, pinned; flips in PR A: parsed when entered)
-        self.ok(self.config({"unit_information_json": {self.a: {"stats_override": {"armour_save": "7+"}}}}))
-        self.assertEqual(self.stored_info()[self.a]["stats_override"], {"armour_save": "7+"})
-        self.finish(self.battle_id, [self.warband])
-
-        results = {key: unit_result(key) for key in (self.a, self.n)}
-        response = self.finalize(self.player, self.battle_id, draft(results))
-
+    def test_an_armour_save_is_parsed_when_entered(self):
+        # BUG-123: a typo is refused by config (it used to be stored, then made finalise answer 400)
+        response = self.config({"unit_information_json": {self.a: {"stats_override": {"armour_save": "7+"}}}})
         detail = f"unit information armour_save: {ARMOUR_SAVE_ERROR}"
         self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
-        self.assertEqual(self.participant(self.battle_id, self.player).status, "finished_battle")
-        self.ok(self.post_as(self.player, self.url(self.battle_id, "confirm")))  # skipping is the only way out
+        self.assertEqual(self.stored_info(), {})
+
+        for entered, stored in ((5, "5+"), ("3", "3+"), (" -1+ ", "-1+"), ("-", "-"), ("", "")):
+            with self.subTest(entered=entered):
+                patch = {self.a: {"stats_override": {"armour_save": entered}}}
+                self.ok(self.config({"unit_information_patch": patch}))
+                self.assertEqual(self.stored_info()[self.a]["stats_override"], {"armour_save": stored})
+
+        self.finish(self.battle_id, [self.warband])
+        results = {key: unit_result(key) for key in (self.a, self.n)}
+        self.ok(self.finalize(self.player, self.battle_id, draft(results)))
+        self.abbess.refresh_from_db()
+        self.assertIsNone(self.abbess.armour_save)  # "" is no save
 
 
 class BattleKillAndOoaTests(BattleTestCase):
