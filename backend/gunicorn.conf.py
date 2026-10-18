@@ -35,20 +35,21 @@ accesslog = "-"
 access_log_format = '%(h)s xff="%({x-forwarded-for}i)s" "%(r)s" %(s)s %(b)s %(M)sms'
 
 
-def on_starting(server: Any) -> None:
-    """Before the workers start, load the catalogue if the database has none (after a wipe, for example).
+def when_ready(server: Any) -> None:
+    """Once the server is listening, load the catalogue in a separate process if it is missing or incomplete.
 
-    Runs `manage.py seed_catalogue_if_empty`, which does nothing once items exist. A failure is logged and the
-    server starts anyway, so a seeding problem never takes the site down.
+    `manage.py seed_catalogue_if_empty` does nothing when the catalogue is complete. It runs in the background so a
+    slow seed (minutes, over the Frankfurt to London link) never delays the port Render waits for, and a failure only
+    shows in the log: the site keeps serving.
     """
-    try:
-        import django
-        from django.core.management import call_command
-        from django.db import connections
+    import subprocess
+    import sys
 
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
-        django.setup()
-        call_command("seed_catalogue_if_empty")
-        connections.close_all()  # the workers fork from this process and open their own connections
+    try:
+        subprocess.Popen(
+            [sys.executable, "manage.py", "seed_catalogue_if_empty"],
+            cwd=os.path.dirname(os.path.abspath(__file__)),
+            start_new_session=True,
+        )
     except Exception:
-        server.log.exception("Catalogue check on startup failed; starting without it")
+        server.log.exception("Couldn't start the catalogue check; serving without it")
