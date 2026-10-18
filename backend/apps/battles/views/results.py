@@ -14,7 +14,9 @@ from apps.campaigns.permissions import get_membership
 from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 
 from ..models import Battle, BattleParticipant
+from ..services.broadcast import ALL, bump_state_version
 from .shared import (
+    _broadcast_response,
     _cancel_battle_for_all_participants,
     _display_name,
     _get_user_battle_participant,
@@ -100,4 +102,5 @@ class CampaignBattleWithdrawResultView(APIView):
             if battle.status == Battle.STATUS_ENDED:
                 return Response({"detail": "Reported result has already been committed"}, status=400)
             events.append(_cancel_battle_for_all_participants(battle, actor_user=request.user, mode="withdrawn"))
-        return _response_with_snapshot(battle.id, events)
+            version = bump_state_version(battle)
+        return _broadcast_response(request, battle.id, events, version, changed=ALL)

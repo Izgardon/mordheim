@@ -79,17 +79,19 @@ class BattleConfigTests(BattleTestCase):
         detail = "Send unit_information_patch or unit_information_json, not both"
         self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
 
-    def test_config_keeps_what_it_is_not_sent_and_broadcasts_every_save(self):
+    def test_config_keeps_what_it_is_not_sent_and_broadcasts_what_others_see(self):
         self.ok(self.config({"unit_information_json": {self.a: {"notes": " wounded "}}}))
         sent = len(self.sent())
+        self.ok(self.config({"battle_notes": "  ambush at the bridge  "}))
+        self.assertEqual(len(self.sent()), sent)  # PERF-34: notes are the player's own, never broadcast
 
-        self.ok(self.config({"battle_notes": "  ambush at the bridge  ", "declared_rating": "120"}))
+        self.ok(self.config({"declared_rating": "120"}))
 
         participant = self.participant(self.battle_id, self.player)
         self.assertEqual(participant.selected_unit_keys_json, [self.a, self.n])
         self.assertEqual(participant.unit_information_json, {self.a: info(notes="wounded")})
         self.assertEqual((participant.battle_notes, participant.declared_rating), ("ambush at the bridge", 120))
-        self.assertEqual(self.sent()[sent:], ["battle_state_updated"])  # PERF-34: notes saves broadcast too
+        self.assertEqual(self.sent()[sent:], ["battle_state_updated"])
         self.assertEqual(self.battle_events.call_args.args[2]["reason"], "participant_config_updated")
 
     def test_config_normalises_unit_information(self):

@@ -16,8 +16,9 @@ from apps.notifications.utils import resolve_notification, resolve_notifications
 from apps.warbands.models import Warband
 
 from ..models import Battle, BattleEvent, BattleParticipant
+from ..services.broadcast import ALL, bump_state_version
 from ..services.errors import BattleError, field_error
-from ..services.unit_information import apply_patch, apply_whole_map
+from ..services.unit_information import apply_patch, apply_whole_map, is_empty
 from .shared import (
     _all_participants_accepted,
     _all_participants_canceled_prebattle,
@@ -26,6 +27,7 @@ from .shared import (
     _append_battle_event,
     _battle_rosters_payload,
     _battle_state_payload,
+    _broadcast_response,
     _cancel_battle_for_all_participants,
     _commit_reported_result_battle,
     _display_name,
@@ -35,7 +37,6 @@ from .shared import (
     _normalize_custom_units,
     _normalize_unit_information,
     _normalize_unit_keys,
-    _notify_battle_state_changed,
     _notify_user,
     _participants_prefetch,
     _reset_trading_actions_for_battle_participants,
@@ -203,6 +204,7 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
                     status=Battle.STATUS_INVITING,
                     scenario=scenario,
                     scenario_link=scenario_link,
+                    state_version=1,
                 )
                 logger.info("Battle row created battle_id=%s campaign_id=%s", battle.id, campaign_id)
                 events.append(
@@ -295,7 +297,9 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
             )
             raise
 
-        return _response_with_snapshot(battle.id, events, response_status=status.HTTP_201_CREATED)
+        return _broadcast_response(
+            request, battle.id, events, battle.state_version, changed=ALL, response_status=status.HTTP_201_CREATED
+        )
 
 
 class CampaignBattleReportedResultCreateView(APIView):
@@ -391,6 +395,7 @@ class CampaignBattleReportedResultCreateView(APIView):
                 scenario=scenario,
                 ended_at=ended_at,
                 winner_warband_ids_json=winner_warband_ids,
+                state_version=1,
             )
             events.append(
                 _append_battle_event(
@@ -463,7 +468,9 @@ class CampaignBattleReportedResultCreateView(APIView):
                     {**notif_payload, "notification_id": notif.id},
                 )
 
-        return _response_with_snapshot(battle.id, events, response_status=status.HTTP_201_CREATED)
+        return _broadcast_response(
+            request, battle.id, events, battle.state_version, changed=ALL, response_status=status.HTTP_201_CREATED
+        )
 
 
 class CampaignBattleStateView(APIView):
@@ -529,6 +536,23 @@ def _declared_rating(raw_value) -> int | None:
     return declared_rating
 
 
+def _without_notes(unit_information: dict) -> dict:
+    stripped = {key: {**entry, "notes": ""} for key, entry in (unit_information or {}).items()}
+    return {key: entry for key, entry in stripped.items() if not is_empty(entry)}
+
+
+def _changes_others_see(participant, changes: dict) -> bool:
+    """Whether a config save changes anything but notes (battle notes and unit notes are the player's own)."""
+    for field, value in changes.items():
+        before = getattr(participant, field)
+        if field == "battle_notes" or before == value:
+            continue
+        if field == "unit_information_json" and _without_notes(before) == _without_notes(value):
+            continue
+        return True
+    return False
+
+
 def _config_changes(data, participant) -> dict:
     """The participant fields a config save sets: only those the request sends (ValueError when one is invalid)."""
     changes: dict = {}
@@ -570,15 +594,16 @@ class CampaignBattleConfigView(APIView):
             except BattleError as refused:
                 return refused.response()
 
+            shared_change = _changes_others_see(participant, changes)
             for field, value in changes.items():
                 setattr(participant, field, value)
             participant.save(update_fields=[*changes, "updated_at"])
-            _notify_battle_state_changed(
-                battle,
-                actor_user_id=request.user.id,
-                reason="participant_config_updated",
-            )
-        return _response_with_snapshot(battle.id, events)
+            if not shared_change:  # notes only (or nothing): nobody else needs it (PERF-34)
+                return _response_with_snapshot(battle.id, events)
+            version = bump_state_version(battle)
+        return _broadcast_response(
+            request, battle.id, events, version, changed=[participant.id], reason="participant_config_updated"
+        )
 
 
 class CampaignBattleJoinView(APIView):
@@ -598,6 +623,7 @@ class CampaignBattleJoinView(APIView):
 
             now = timezone.now()
             state_changed = False
+            opened = False  # the last acceptance opened prebattle for everyone
             event_type = None
 
             if battle.status == Battle.STATUS_INVITING:
@@ -610,7 +636,7 @@ class CampaignBattleJoinView(APIView):
                 if _all_participants_accepted(battle.id):
                     battle.status = Battle.STATUS_PREBATTLE
                     battle.save(update_fields=["status", "updated_at"])
-                    state_changed = True
+                    state_changed = opened = True
                     participant_entries = list(
                         BattleParticipant.objects.select_for_update().filter(battle_id=battle.id)
                     )
@@ -666,15 +692,14 @@ class CampaignBattleJoinView(APIView):
                     },
                 )
                 events.append(event)
+            if not (state_changed or event_type):
+                return _response_with_snapshot(battle.id, events)
+            version = bump_state_version(battle)
+            changed = ALL if battle.status == Battle.STATUS_PREBATTLE and opened else [participant.id]
 
-            if state_changed and not event_type:
-                _notify_battle_state_changed(
-                    battle,
-                    actor_user_id=request.user.id,
-                    reason="participant_joined_or_updated",
-                )
-
-        return _response_with_snapshot(battle.id, events)
+        return _broadcast_response(
+            request, battle.id, events, version, changed=changed, reason="participant_joined_or_updated"
+        )
 
 
 class CampaignBattleReportedResultApproveView(APIView):
@@ -729,8 +754,9 @@ class CampaignBattleReportedResultApproveView(APIView):
                         "status": battle.status,
                     },
                 )
+            version = bump_state_version(battle)
 
-        return _response_with_snapshot(battle.id, events)
+        return _broadcast_response(request, battle.id, events, version, changed=ALL, reason="reported_result_approved")
 
 
 class CampaignBattleReportedResultDeclineView(APIView):
@@ -774,8 +800,9 @@ class CampaignBattleReportedResultDeclineView(APIView):
                         "status": battle.status,
                     },
                 )
+            version = bump_state_version(battle)
 
-        return _response_with_snapshot(battle.id, events)
+        return _broadcast_response(request, battle.id, events, version, changed=ALL, reason="reported_result_declined")
 
 
 class CampaignBattleReadyView(APIView):
@@ -848,14 +875,13 @@ class CampaignBattleReadyView(APIView):
                     participant.save(update_fields=["status", "responded_at", "updated_at"])
                     state_changed = True
 
-            if state_changed:
-                _notify_battle_state_changed(
-                    battle,
-                    actor_user_id=request.user.id,
-                    reason="participant_ready_changed",
-                )
+            if not state_changed:
+                return _response_with_snapshot(battle.id, events)
+            version = bump_state_version(battle)
 
-        return _response_with_snapshot(battle.id, events)
+        return _broadcast_response(
+            request, battle.id, events, version, changed=[participant.id], reason="participant_ready_changed"
+        )
 
 
 class CampaignBattleCancelView(APIView):
@@ -898,14 +924,14 @@ class CampaignBattleCancelView(APIView):
                     )
                 )
 
-            if state_changed and not events:
-                _notify_battle_state_changed(
-                    battle,
-                    actor_user_id=request.user.id,
-                    reason="participant_canceled_prebattle",
-                )
+            if not state_changed:
+                return _response_with_snapshot(battle.id, events)
+            version = bump_state_version(battle)
+            changed = ALL if events else [participant.id]
 
-        return _response_with_snapshot(battle.id, events)
+        return _broadcast_response(
+            request, battle.id, events, version, changed=changed, reason="participant_canceled_prebattle"
+        )
 
 
 class CampaignBattleCreatorCancelView(APIView):
@@ -933,8 +959,9 @@ class CampaignBattleCreatorCancelView(APIView):
                 mode="creator",
             )
             events.append(event)
+            version = bump_state_version(battle)
 
-        return _response_with_snapshot(battle.id, events)
+        return _broadcast_response(request, battle.id, events, version, changed=ALL)
 
 
 class CampaignBattleStartView(APIView):
@@ -983,5 +1010,6 @@ class CampaignBattleStartView(APIView):
                 payload={"participant_user_ids": [entry.user_id for entry in participants]},
             )
             events.append(event)
+            version = bump_state_version(battle)
 
-        return _response_with_snapshot(battle.id, events)
+        return _broadcast_response(request, battle.id, events, version, changed=ALL)

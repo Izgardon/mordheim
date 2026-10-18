@@ -11,7 +11,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.battles.models import Battle, BattleParticipant
+from apps.battles.services.broadcast import ALL, bump_state_version
 from apps.battles.views.shared import (
+    _broadcast_response,
     _cancel_battle_for_all_participants,
     _response_with_snapshot,
     _serialize_battle,
@@ -761,8 +763,9 @@ class CampaignActiveBattleCancelView(APIView):
                 mode="campaign_owner",
             )
             events.append(event)
+            version = bump_state_version(battle)
 
-        return _response_with_snapshot(battle.id, events)
+        return _broadcast_response(request, battle.id, events, version, changed=ALL)
 
 
 class CampaignPivotalMomentsView(APIView):

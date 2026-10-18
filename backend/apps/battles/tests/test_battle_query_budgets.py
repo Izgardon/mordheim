@@ -83,16 +83,21 @@ class BattleQueryBudgetTests(BattleTestCase):
         h = f"hero:{hero.id}"
         battle_id = self.to_active({self.player: self.fixture.keys, self.viewer: [self.r]})
         info = {"unit_information_json": {h: {"current_wounds": 1}}}
-        # Each: membership, the battle and participant locked, the write, its event (sent after commit) and the
-        # answer's fresh snapshot (2); no presence write since PERF-35. A kill also locks every participant and reads
-        # both units; an item use checks the unit carries the item (BUG-72); End also locks every participant, adds
-        # wins and losses and resets trading actions.
+        # Each: membership, the battle and participant locked, the write, its event, the battle's state_version
+        # (PERF-34; the realtime sends go after commit) and the answer's fresh snapshot (2); no presence write since
+        # PERF-35. A kill also locks every participant and reads both units; an item use checks the unit carries the
+        # item (BUG-72); End also locks every participant, adds wins and losses and resets trading actions.
         cases: list[tuple[str, str, dict[str, Any], int]] = [
-            ("config", "config", info, 8),
-            ("unit_ooa", "unit-ooa", {"unit_key": f"hero:{self.fixture.heroes[2].id}", "out_of_action": True}, 9),
-            ("unit_kill", "unit-kill", {"killer_unit_key": h, "victim_unit_key": self.r}, 12),
-            ("item_used", "events", {"type": "item_used", "payload_json": {"unit_key": h, "item_id": self.rope.id}}, 9),
-            ("finish", "finish", {"winner_warband_ids": [self.warband.id]}, 20),
+            ("config", "config", info, 9),
+            ("unit_ooa", "unit-ooa", {"unit_key": f"hero:{self.fixture.heroes[2].id}", "out_of_action": True}, 10),
+            ("unit_kill", "unit-kill", {"killer_unit_key": h, "victim_unit_key": self.r}, 13),
+            (
+                "item_used",
+                "events",
+                {"type": "item_used", "payload_json": {"unit_key": h, "item_id": self.rope.id}},
+                10,
+            ),
+            ("finish", "finish", {"winner_warband_ids": [self.warband.id]}, 21),
         ]
         for name, action, body, budget in cases:
             with self.subTest(write=name):
@@ -138,7 +143,7 @@ class BattleQueryBudgetTests(BattleTestCase):
         battle_id, postbattle = self._fixture_postbattle()
         body = {"postbattle_json": postbattle}
         queries, _ = self.count(self.player, "post", self.url(battle_id, "finalize-postbattle"), body)
-        self.within("finalise_first", queries, 66)
+        self.within("finalise_first", queries, 67)
 
     def test_finalising_the_fixture_warband_last_stays_within_budget(self):
         # + ending the battle: its event and the pivotal moments (the trading reset went to End only, BUG-122)
@@ -147,7 +152,7 @@ class BattleQueryBudgetTests(BattleTestCase):
         body = {"postbattle_json": postbattle}
         queries, _ = self.count(self.player, "post", self.url(battle_id, "finalize-postbattle"), body)
         self.assertEqual(self.battle(battle_id).status, "ended")
-        self.within("finalise_last", queries, 72)
+        self.within("finalise_last", queries, 73)
 
     def test_a_locked_battle_write_locks_only_the_battle_and_participant_rows(self):
         # PERF-37, BATL-TEST-19: the battle row first, then the participant, whose query joins its user and warband

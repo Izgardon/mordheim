@@ -13,8 +13,8 @@ from apps.notifications.models import Notification
 from apps.notifications.utils import resolve_notifications_for_reference
 from apps.realtime.services import (
     get_battle_channel_name,
-    send_battle_event,
     send_user_notification,
+    sender_socket_id,
 )
 from apps.special.models import Special
 from apps.warbands.models import (
@@ -39,6 +39,7 @@ from apps.warbands.utils.armour_save import ARMOUR_SAVE_ERROR, parse_armour_save
 from apps.warbands.utils.leaders import ensure_single_living_leader
 
 from ..models import Battle, BattleEvent, BattleParticipant
+from ..services.broadcast import Changed, publish
 from ..services.unit_information import ARMOUR_SAVE_STAT_KEY, NUMERIC_STAT_KEYS, clean_editable_fields
 from ..services.warnings import Warning, unit_left_warband
 
@@ -74,6 +75,7 @@ def _serialize_battle(battle: Battle) -> dict:
         "ended_at": battle.ended_at.isoformat() if battle.ended_at else None,
         "post_processed_at": (battle.post_processed_at.isoformat() if battle.post_processed_at else None),
         "channel": get_battle_channel_name(battle.id),
+        "state_version": battle.state_version,
     }
 
 
@@ -382,32 +384,18 @@ def _append_battle_event(
     actor_user=None,
     payload: dict | None = None,
 ) -> dict:
+    """Add an event to the battle's timeline; the write broadcasts it after commit (_broadcast_response)."""
     event = BattleEvent.objects.create(
         battle=battle,
         actor_user=actor_user,
         type=event_type,
         payload_json=payload or {},
     )
-    serialized = _serialize_event(event)
-    send_battle_event(battle.id, event_type, serialized)
-    return serialized
+    return _serialize_event(event)
 
 
 def _notify_user(user_id: int, event: str, payload: dict) -> None:
     send_user_notification(user_id, event, payload)
-
-
-def _notify_battle_state_changed(battle: Battle, *, actor_user_id: int | None = None, reason: str = "") -> None:
-    payload = {
-        "battle_id": battle.id,
-        "campaign_id": battle.campaign_id,
-        "status": battle.status,
-    }
-    if actor_user_id is not None:
-        payload["actor_user_id"] = actor_user_id
-    if reason:
-        payload["reason"] = reason
-    send_battle_event(battle.id, "battle_state_updated", payload)
 
 
 def _cancel_battle_for_all_participants(
@@ -733,7 +721,38 @@ def _reset_trading_actions_for_battle_participants(
 
 
 def _response_with_snapshot(battle_id: int, events: list[dict], response_status=200, warnings=None):
+    """Answer with the fresh snapshot, broadcasting nothing (a write that changed nothing others see)."""
     payload = _battle_snapshot(battle_id)
+    payload["events"] = events
+    if warnings:
+        payload["warnings"] = warnings
+    return Response(payload, status=response_status)
+
+
+def _broadcast_response(
+    request,
+    battle_id: int,
+    events: list[dict],
+    version: int,
+    *,
+    changed: Changed = (),
+    reason: str = "",
+    response_status=200,
+    warnings=None,
+):
+    """Answer a write that raised the battle's state_version (`version`) with the fresh snapshot, and send its
+    events, or a battle_state_updated, to the other players with the snapshots of the participants it `changed`
+    (services/broadcast.py). Called after the write's transaction; the sends go out in the background."""
+    payload = _battle_snapshot(battle_id)
+    publish(
+        payload,
+        events,
+        version=version,
+        changed=changed,
+        reason=reason,
+        actor_user_id=request.user.id,
+        socket_id=sender_socket_id(request),
+    )
     payload["events"] = events
     if warnings:
         payload["warnings"] = warnings

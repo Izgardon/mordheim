@@ -9,6 +9,7 @@ from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 from apps.warbands.models import Warband
 
 from ..models import Battle, BattleEvent, BattleParticipant
+from ..services.broadcast import ALL, bump_state_version
 from ..services.errors import BattleError
 from ..services.item_use import check_payload_size, item_use_payload
 from .shared import (
@@ -17,6 +18,7 @@ from .shared import (
     _all_started_participants_confirmed,
     _append_battle_event,
     _apply_participant_postbattle_results,
+    _broadcast_response,
     _build_battle_unit_event_payload,
     _coerce_bool,
     _finalize_battle,
@@ -113,7 +115,8 @@ class CampaignBattleEventCreateView(APIView):
                 actor_user=request.user,
                 payload=payload_json,
             )
-        return _response_with_snapshot(battle.id, [event], response_status=status.HTTP_201_CREATED)
+            version = bump_state_version(battle)
+        return _broadcast_response(request, battle.id, [event], version, response_status=status.HTTP_201_CREATED)
 
 
 class CampaignBattleUnitOoaView(APIView):
@@ -178,8 +181,11 @@ class CampaignBattleUnitOoaView(APIView):
                 },
             )
             events.append(event)
+            version = bump_state_version(battle)
 
-        return _response_with_snapshot(battle.id, events, response_status=status.HTTP_201_CREATED)
+        return _broadcast_response(
+            request, battle.id, events, version, changed=[participant.id], response_status=status.HTTP_201_CREATED
+        )
 
 
 class CampaignBattleUnitKillView(APIView):
@@ -309,8 +315,11 @@ class CampaignBattleUnitKillView(APIView):
                 payload=event_payload,
             )
             events.append(event)
+            version = bump_state_version(battle)
 
-        return _response_with_snapshot(battle.id, events, response_status=status.HTTP_201_CREATED)
+        return _broadcast_response(
+            request, battle.id, events, version, changed=[participant.id], response_status=status.HTTP_201_CREATED
+        )
 
 
 class CampaignBattleFinishView(APIView):
@@ -396,8 +405,9 @@ class CampaignBattleFinishView(APIView):
                 payload={"winner_warband_ids": normalized_winner_ids},
             )
             events.append(event)
+            version = bump_state_version(battle)
 
-        return _response_with_snapshot(battle.id, events)
+        return _broadcast_response(request, battle.id, events, version, changed=ALL)
 
 
 class CampaignBattleWinnerView(APIView):
@@ -497,8 +507,10 @@ class CampaignBattleFinalizePostbattleView(APIView):
 
             if battle.status != Battle.STATUS_ENDED and _all_started_participants_confirmed(battle.id):
                 _finalize_battle(battle, request.user, events)
+            version = bump_state_version(battle)
+            changed = ALL if battle.status == Battle.STATUS_ENDED else [participant.id]
 
-        return _response_with_snapshot(battle.id, events, warnings=warnings)
+        return _broadcast_response(request, battle.id, events, version, changed=changed, warnings=warnings)
 
 
 class CampaignBattleConfirmView(CampaignBattleFinalizePostbattleView):
@@ -546,5 +558,7 @@ class CampaignBattleConfirmView(CampaignBattleFinalizePostbattleView):
 
             if battle.status != Battle.STATUS_ENDED and _all_started_participants_confirmed(battle.id):
                 _finalize_battle(battle, request.user, events)
+            version = bump_state_version(battle)
+            changed = ALL if battle.status == Battle.STATUS_ENDED else [participant.id]
 
-        return _response_with_snapshot(battle.id, events)
+        return _broadcast_response(request, battle.id, events, version, changed=changed)

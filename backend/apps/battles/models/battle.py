@@ -56,6 +56,8 @@ class Battle(models.Model):
     started_at = models.DateTimeField(null=True, blank=True)
     ended_at = models.DateTimeField(null=True, blank=True)
     post_processed_at = models.DateTimeField(null=True, blank=True)
+    # raised by every write other players see; carried by the snapshot and each realtime message (PERF-34)
+    state_version = models.PositiveIntegerField(default=0)
 
     class Meta:
         db_table = "battle"

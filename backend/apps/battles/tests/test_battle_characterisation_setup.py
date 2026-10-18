@@ -29,6 +29,7 @@ BATTLE_KEYS = [
     "ended_at",
     "post_processed_at",
     "channel",
+    "state_version",
 ]
 PARTICIPANT_KEYS = [
     "id",
