@@ -129,11 +129,17 @@ export function useRarityRoll({
   /** The searcher's roll, to save with the purchase. */
   const rollForPurchase = () => (searchingHeroId ? lineOf(searchingHeroId) : null);
 
-  /** The roll went with a purchase: the server spent the hero, so it isn't saved again. */
-  const markRollSent = (heroId: number) => {
-    sentRolls.current.add(String(heroId));
-    if (warband) {
-      setHeroTradingAction(queryClient, warband.id, heroId, false);
+  /**
+   * The roll went with a purchase, so it isn't saved again; `spent` once the server has spent
+   * the hero (a purchase queued for the roster Save leaves the sheet alone until then).
+   */
+  const markRollSent = (roll: RarityRollLine | null, spent = true) => {
+    if (!roll) {
+      return;
+    }
+    sentRolls.current.add(String(roll.hero_id));
+    if (warband && spent) {
+      setHeroTradingAction(queryClient, warband.id, roll.hero_id, false);
     }
   };
 

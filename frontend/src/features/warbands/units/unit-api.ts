@@ -1,5 +1,6 @@
 import { apiRequest } from "@/lib/api-client";
 
+import type { PurchaseLine, PurchaseWarning } from "@/features/items/api/purchase";
 import type { NamedKillHistory, WarbandUnitsSummary } from "../types/warband-types";
 import type { Unit, UnitKindKey, UnitPayload } from "../types/units";
 
@@ -10,18 +11,30 @@ export const UNIT_URL_SEGMENTS = {
   hired_sword: "hired-swords",
 } as const satisfies Record<UnitKindKey, string>;
 
-/** One Save of a section (decision 1): applied all or nothing, in one request. */
+/** Which unit a batch line is for: a saved one, or one of the batch's creates (`create.N`). */
+export type BatchItemTarget = { unit_id: number } | { create_index: number };
+
+/**
+ * One Save of a section (decision 1): applied all or nothing, in one request. The copies its
+ * `purchases` and `stash_takes` add are appended by the server, so they are not in `items`.
+ */
 export type UnitBatch<K extends UnitKindKey> = {
   /** Each a create body (what `create` takes), built from a queued recruit's form. */
   create?: Partial<UnitPayload<K>>[];
-  update?: (Partial<UnitPayload<K>> & { id: number })[];
+  /** `updated_at`: the version the form was loaded at; a unit saved since is refused (409). */
+  update?: (Partial<UnitPayload<K>> & { id: number; updated_at?: string })[];
   dismiss?: number[];
+  /** Purchases queued in edit mode (BUG-07): charged and logged by the server. */
+  purchases?: (BatchItemTarget & PurchaseLine)[];
+  /** Copies taken out of the stash, with their costs (BUG-108). */
+  stash_takes?: (BatchItemTarget & { item_id: number; quantity: number })[];
 };
 
-/** Every visible unit of the kind after the batch (detail shape), and the new summary. */
+/** Every visible unit of the kind after the batch (detail shape), the summary and any warnings. */
 export type UnitBatchResult<K extends UnitKindKey> = {
   units: Unit<K>[];
   summary: WarbandUnitsSummary;
+  warnings?: PurchaseWarning[];
 };
 
 export type UnitApi<K extends UnitKindKey> = {

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { acquireTriggerNode } from "../components/AcquireItemDialog/acquire-trigger";
-import { purchase } from "../api/purchase";
+import { purchase, purchaseLine } from "../api/purchase";
 import { acquireBlockers } from "../utils/acquire-blockers";
 import { useAcquireForm } from "./useAcquireForm";
 import { usePurchaseTarget, UNIT_TYPES } from "./usePurchaseTarget";
@@ -134,8 +134,17 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
     let didClose = false;
     try {
       const meta = form.meta();
+      // A rare item's roll goes with it, spending the searcher's trading action.
+      const rarityRoll = isBuying && !form.isCommonRarity ? rarity.rollForPurchase() : null;
+      const availabilityId = form.resolvedAvailability?.id ?? null;
+      const choice = { item, meta, availabilityId, rarityRoll };
       if (deferCommit) {
-        onAcquire?.(item, resolvedUnitType, resolvedUnitId, meta);
+        // Queued: the roster Save sends the line in its batch (decision 1), roll included.
+        rarity.markRollSent(rarityRoll, false);
+        onAcquire?.(item, resolvedUnitType, resolvedUnitId, {
+          ...meta,
+          line: purchaseLine(choice),
+        });
         handleSelectOpenChange(false);
         return;
       }
@@ -148,24 +157,13 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
         return;
       }
       // One request; the answer goes into the cache (the unit's items, the stash, gold, the row).
-      // A rare item's roll is saved with it, spending the searcher's trading action.
-      const rarityRoll = isBuying && !form.isCommonRarity ? rarity.rollForPurchase() : null;
+      const atCurrentPrice = Boolean(params.atCurrentPrice) && !form.priceEdited;
       await purchase(
-        {
-          warbandId: warband.id,
-          target: resolved.target,
-          item,
-          meta,
-          availabilityId: form.resolvedAvailability?.id ?? null,
-          atCurrentPrice: Boolean(params.atCurrentPrice) && !form.priceEdited,
-          rarityRoll,
-        },
+        { ...choice, warbandId: warband.id, target: resolved.target, atCurrentPrice },
         queryClient
       );
       didCommit = true;
-      if (rarityRoll) {
-        rarity.markRollSent(rarityRoll.hero_id);
-      }
+      rarity.markRollSent(rarityRoll);
       onAcquire?.(item, resolvedUnitType, resolvedUnitId, meta);
       handleSelectOpenChange(false);
       didClose = true;

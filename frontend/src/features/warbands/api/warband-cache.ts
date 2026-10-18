@@ -184,6 +184,17 @@ export function setHeroTradingAction(
   );
 }
 
+/** Marks the warband's cached reads under each path stale; the ones on screen are read again. */
+export function invalidateWarbandReads(
+  queryClient: QueryClient,
+  warbandId: number,
+  ...paths: string[]
+) {
+  for (const path of paths) {
+    void queryClient.invalidateQueries({ predicate: isWarbandQuery(warbandId, path) });
+  }
+}
+
 /** `updateWarbandCache(warbandId, update?)` for components and hooks. */
 export function useWarbandCacheUpdate() {
   const queryClient = useQueryClient();

@@ -431,6 +431,8 @@ export type HenchmenGroup = {
   initiative: number | null;
   attacks: number | null;
   leadership: number | null;
+  /** The group's version: a roster Save sends it back and is refused if it moved (409). */
+  updated_at?: string;
   race?: {
     name: string;
     movement: number;

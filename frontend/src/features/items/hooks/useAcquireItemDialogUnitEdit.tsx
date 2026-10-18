@@ -1,5 +1,8 @@
 import { useCallback } from "react";
 
+import { purchaseLine } from "../api/purchase";
+
+import type { Item } from "../types/item-types";
 import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 import type {
   AcquireItemDialogSharedParams,
@@ -19,20 +22,20 @@ export type AcquireItemDialogUnitEditParams = Omit<
 type AcquireItemHandler = NonNullable<AcquireItemDialogSharedParams["onAcquire"]>;
 
 const buildPendingPurchase = (
-  itemId: number,
-  itemName: string,
+  item: Item,
   unitType: PendingPurchase["unitType"],
   unitId: string,
   meta: AcquireItemMeta
 ): PendingPurchase => ({
   unitType,
   unitId,
-  itemId,
-  itemName,
+  itemId: item.id,
+  itemName: item.name,
   quantity: Math.max(1, meta.quantity),
   unitPrice: Math.max(0, meta.unitPrice),
   isBuying: meta.isBuying,
   reason: meta.reason,
+  line: meta.line ?? purchaseLine({ item, meta }),
 });
 
 export function useAcquireItemDialogUnitEdit(
@@ -68,7 +71,7 @@ export function useAcquireItemDialogUnitEdit(
       }
 
       onPendingPurchaseAdd(
-        buildPendingPurchase(item.id, item.name, unitType, String(pendingPurchaseUnitId), meta)
+        buildPendingPurchase(item, unitType, String(pendingPurchaseUnitId), meta)
       );
     },
     [deferCommit, onAcquire, onPendingPurchaseAdd, pendingPurchaseUnitId, presetUnitType]

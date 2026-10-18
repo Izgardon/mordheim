@@ -1,11 +1,14 @@
 import { useState, type RefObject } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { apiErrorCode, getErrorMessage } from "@/lib/get-error-message";
-import { useWarbandCacheUpdate } from "@/features/warbands/api/warband-cache";
+import { toastPurchaseWarnings } from "@/features/items/api/purchase";
+import {
+  invalidateWarbandReads,
+  useWarbandCacheUpdate,
+} from "@/features/warbands/api/warband-cache";
 import { sortBatchErrors } from "@/features/warbands/units/batch-errors";
 import { type PendingPurchase } from "@/features/warbands/utils/pending-purchases";
-import { useSaveFollowUps } from "./useSaveFollowUps";
 import { writeSection, type SectionWrite } from "./write-section";
 
 import type { Unit, UnitForm, UnitKindKey, UnitNewForm } from "../../types/units";
@@ -22,6 +25,8 @@ export type UseUnitSaveParams<K extends UnitKindKey> = {
   newForm: UnitNewForm<K>;
   raceQuery: string;
   originalFormsRef: RefObject<Map<number, string>>;
+  /** Each unit's `updated_at` when the edit began: a unit saved elsewhere since is refused. */
+  versionsRef?: RefObject<Map<number, string>>;
   /** The saved roster; heroes also get the warband merged with the new summary. */
   onSuccess: (refreshed: Unit<K>[], updatedWarband?: Warband) => void;
   pendingPurchases?: PendingPurchase[];
@@ -32,6 +37,7 @@ export type UseUnitSaveParams<K extends UnitKindKey> = {
 
 const NO_FORM_ERRORS = new Map<never, string[]>();
 const CAP_CODES = new Set(["hero_cap_reached", "hired_sword_cap_reached"]);
+export const UNIT_CHANGED_MESSAGE = "This unit was changed elsewhere; reload it.";
 
 /** Save and its checks for one section; the writes run as one mutation. */
 export function useUnitSave<K extends UnitKindKey>(
@@ -43,7 +49,7 @@ export function useUnitSave<K extends UnitKindKey>(
   /** The server's messages for each form after a refused Save (UX-05). */
   const [formErrors, setFormErrors] = useState<Map<UnitForm<K>, string[]>>(NO_FORM_ERRORS);
   const updateWarbandCache = useWarbandCacheUpdate();
-  const followUps = useSaveFollowUps();
+  const queryClient = useQueryClient();
   const { labels, editor } = kind;
   const save = useMutation({
     mutationFn: (input: SectionWrite<K>) => writeSection(kind, input),
@@ -93,6 +99,7 @@ export function useUnitSave<K extends UnitKindKey>(
       purchases: pendingPurchases.filter(
         (entry) => entry.unitType === kind.section && !removedIds.includes(Number(entry.unitId))
       ),
+      versions: params.versionsRef?.current ?? undefined,
       header: warbandHeader
         ? { warband: warbandHeader.warband, name: trimmedName, faction: trimmedFaction }
         : undefined,
@@ -105,8 +112,8 @@ export function useUnitSave<K extends UnitKindKey>(
       return;
     }
 
-    // The batch is in: the sheet gets its units and summary and the edit ends, so the queue is
-    // gone and no retry can create or charge a recruit twice. What follows runs on its own.
+    // The batch is in, purchases and stash takes with it: the sheet gets its units and summary
+    // and the edit ends, so the queue is gone.
     const { units, updatedWarband, summary } = written;
     const refreshed = units ?? params.units;
     // Heroes merge the summary into the warband they hand back; the others write it.
@@ -121,14 +128,29 @@ export function useUnitSave<K extends UnitKindKey>(
     if (pendingPurchases.length > 0) {
       params.onPendingCleared?.();
     }
-    await followUps.finish(warbandId, written.followUps);
+    if (written.movedItems) {
+      invalidateWarbandReads(queryClient, warbandId, "stash", "treasury", "logs");
+    }
+    toastPurchaseWarnings(written.warnings);
   };
 
   /** A refused batch: nothing was saved, and the forms stay for another go. */
   const showSaveError = (errorResponse: unknown, input: SectionWrite<K>) => {
-    const sorted = sortBatchErrors(errorResponse, input.createForms, input.updateForms);
-    // A cap refusal (decision 12): the server applies dismissals first, so one can make room.
-    if (CAP_CODES.has(apiErrorCode(errorResponse) ?? "")) {
+    const formOf = (unitKey: string) =>
+      input.forms.find((form) => String(form.id ?? form.draftKey) === unitKey);
+    const sorted = sortBatchErrors(errorResponse, input.createForms, input.updateForms, {
+      purchases: input.purchases.map((entry) => formOf(entry.unitId)),
+      stash_takes: (editor.stashTakes?.(input.forms) ?? []).map((take) =>
+        formOf(String(take.unitId))
+      ),
+    });
+    const code = apiErrorCode(errorResponse) ?? "";
+    if (code === "unit_changed") {
+      // Saved in another tab since this edit began (409): nothing was saved here.
+      setFormErrors(sorted?.byForm ?? NO_FORM_ERRORS);
+      setSaveError(UNIT_CHANGED_MESSAGE);
+    } else if (CAP_CODES.has(code)) {
+      // A cap refusal (decision 12): the server applies dismissals first, so one can make room.
       setSaveError(
         `${getErrorMessage(errorResponse)}. Dismiss one in this Save or remove a queued recruit.`
       );
@@ -151,9 +173,5 @@ export function useUnitSave<K extends UnitKindKey>(
     hasAttemptedSave,
     setHasAttemptedSave,
     handleSaveChanges,
-    /** What the last Save couldn't finish after its batch, with its retry. */
-    followUpNotice: followUps.notice,
-    isRetryingFollowUps: followUps.isRetrying,
-    retryFollowUps: () => (params.warbandId ? followUps.retry(params.warbandId) : undefined),
   };
 }

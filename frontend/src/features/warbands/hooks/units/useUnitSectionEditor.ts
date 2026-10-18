@@ -87,6 +87,7 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
     newForm: creation.newForm,
     raceQuery: creation.raceQuery,
     originalFormsRef: forms.originalFormsRef,
+    versionsRef: forms.versionsRef,
     warbandHeader:
       kind.flags.savesWarbandHeader && warband ? { warband, form: warbandForm } : undefined,
     onSuccess: (refreshed, updatedWarband) => {

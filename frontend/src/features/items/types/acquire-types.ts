@@ -1,4 +1,5 @@
 import type { UnitTypeOption } from "@components/unit-selection-section";
+import type { PurchaseLine } from "../api/purchase";
 import type {
   HenchmenGroup,
   WarbandHero,
@@ -13,6 +14,8 @@ export type AcquireItemMeta = {
   totalPrice: number;
   reason: string;
   baseCost: number; // Persisted on item join rows.
+  /** Queued in roster edit mode: the purchase line the Save's batch sends, roll included. */
+  line?: PurchaseLine;
 };
 
 /** A unit being created in the roster editor, offered as a receiver before it is saved. */

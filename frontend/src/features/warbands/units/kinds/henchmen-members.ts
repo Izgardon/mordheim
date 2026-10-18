@@ -6,6 +6,7 @@ import { getHenchmenItemMultiplier } from "../../components/henchmen/utils/hench
 import { toNullableNumber } from "../../utils/warband-utils";
 
 import type { Item } from "@/features/items/types/item-types";
+import type { StashTake } from "../unit-kind-types";
 import type {
   HenchmanItemChoice,
   HenchmenGroupFormEntry,
@@ -120,11 +121,9 @@ export const computeItemsWithNewHenchmen = (group: {
   return items.map(toEntry);
 };
 
-/** Stash items picked "from stash" in the add-henchman dialog, to remove after the writes. */
-export const collectStashRemovals = (
-  groupForms: HenchmenGroupFormEntry[]
-): { itemId: number; quantity: number }[] => {
-  const removals: { itemId: number; quantity: number }[] = [];
+/** Stash items picked "from stash" in the add-henchman dialog, per saved group and member. */
+export const collectStashRemovals = (groupForms: HenchmenGroupFormEntry[]): StashTake[] => {
+  const removals: StashTake[] = [];
   for (const group of groupForms) {
     if (!group.id) continue;
     const baseCount = group.henchmen.filter((h) => !!h.id).length;
@@ -142,7 +141,7 @@ export const collectStashRemovals = (
         }
       }
       for (const [itemIdStr, qty] of Object.entries(stashCounts)) {
-        removals.push({ itemId: Number(itemIdStr), quantity: qty });
+        removals.push({ unitId: group.id, itemId: Number(itemIdStr), quantity: qty });
       }
       // Advance the items for the next member, as computeItemsWithNewHenchmen does.
       const toAdd: Item[] = [];

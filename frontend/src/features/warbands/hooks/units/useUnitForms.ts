@@ -12,6 +12,8 @@ export function useUnitForms<K extends UnitKindKey>(kind: UnitKindConfig<K>) {
   const [removedIds, setRemovedIds] = useState<number[]>([]);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const originalFormsRef = useRef<Map<number, string>>(new Map());
+  // Each unit's version when the edit began, which Save sends back (a 409 if it moved since).
+  const versionsRef = useRef<Map<number, string>>(new Map());
 
   const initializeForms = useCallback(
     (units: Unit<K>[]) => {
@@ -23,6 +25,9 @@ export function useUnitForms<K extends UnitKindKey>(kind: UnitKindConfig<K>) {
         if (form.id) snapshot.set(form.id, JSON.stringify(form));
       }
       originalFormsRef.current = snapshot;
+      versionsRef.current = new Map(
+        units.flatMap((unit) => (unit.updated_at ? [[unit.id, unit.updated_at] as const] : []))
+      );
     },
     [kind]
   );
@@ -32,6 +37,7 @@ export function useUnitForms<K extends UnitKindKey>(kind: UnitKindConfig<K>) {
     setRemovedIds([]);
     setExpandedId(null);
     originalFormsRef.current = new Map();
+    versionsRef.current = new Map();
   }, []);
 
   const updateForm = useCallback((index: number, updater: (form: UnitForm<K>) => UnitForm<K>) => {
@@ -85,5 +91,6 @@ export function useUnitForms<K extends UnitKindKey>(kind: UnitKindConfig<K>) {
     initializeForms,
     resetForms,
     originalFormsRef,
+    versionsRef,
   };
 }

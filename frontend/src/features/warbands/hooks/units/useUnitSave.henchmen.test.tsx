@@ -12,10 +12,13 @@ import type {
 import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
 import { makeVeteranHenchmenGroup } from "@/test/warband-fixtures";
 import { createQueryWrapper } from "@/test/query-test-utils";
+import { ApiError } from "@/lib/api-client";
 import {
   answerBatch,
   batchCreates,
   batchDismissals,
+  batchPurchases,
+  batchStashTakes,
   batchUpdate,
   batchUpdates,
 } from "@/test/batch-mock";
@@ -42,11 +45,24 @@ vi.mock("@/features/warbands/api/warband-cache", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/features/warbands/api/warband-cache")>()),
   useWarbandCacheUpdate: () => eventMocks.emitWarbandUpdate,
 }));
-const itemMocks = vi.hoisted(() => ({
-  removeWarbandItem: vi.fn(),
-}));
-
-vi.mock("@/features/warbands/api/warbands-items", () => itemMocks);
+/** A purchase queued for a group in edit mode, as the acquire dialog builds it. */
+const queued = (unitId: string, itemId: number, itemName: string, unitPrice: number) =>
+  ({
+    unitType: "henchmen",
+    unitId,
+    itemId,
+    itemName,
+    quantity: 1,
+    unitPrice,
+    isBuying: true,
+    line: {
+      item_id: itemId,
+      quantity: 1,
+      price: unitPrice,
+      availability_id: null,
+      is_buying: true,
+    },
+  }) satisfies PendingPurchase;
 
 /** The group save's inputs as the tests name them; `groupParams` maps them onto useUnitSave. */
 type SaveParams = {
@@ -292,7 +308,6 @@ describe("useUnitSave: henchmen characterisation", () => {
       answerBatch([veteran, second], { gold: 50 })
     );
     apiMocks.getWarbandSummary.mockResolvedValue({ gold: 50 });
-    itemMocks.removeWarbandItem.mockResolvedValue(undefined);
   });
 
   it("round-trips a loaded group into its PATCH body, armour save as a number (decision 11, BUG-87)", async () => {
@@ -362,7 +377,7 @@ describe("useUnitSave: henchmen characterisation", () => {
     expect(itemIds(body)).toEqual([104, 104, 104, 102, 102, 102, 102, 104]);
   });
 
-  it("takes items picked from the stash out of the stash after the group writes", async () => {
+  it("takes items picked from the stash in the batch, not in the group's items (BUG-108)", async () => {
     const { save } = renderSave(
       withNewMember({
         id: 0,
@@ -379,68 +394,20 @@ describe("useUnitSave: henchmen characterisation", () => {
 
     await save();
 
-    expect(itemMocks.removeWarbandItem).toHaveBeenCalledWith(9, 104, 1);
+    expect(batchStashTakes(apiMocks.batchWarbandHenchmenGroups)).toEqual([
+      { unit_id: 21, item_id: 104, quantity: 1 },
+    ]);
     const body = batchUpdate(apiMocks.batchWarbandHenchmenGroups, 21) as GroupBody;
-    expect(itemIds(body)).toEqual([104, 104, 104, 102, 102, 102, 104]);
+    // The server moves the Club over from the stash with its cost.
+    expect(itemIds(body)).toEqual([104, 104, 104, 102, 102, 102]);
     expect(body.henchmen[3].item_notes).toBe(
       "Base: 25 gc. XP: 4 x2 = 8 gc. Items: Club (from stash), Dagger (ignored)"
     );
+    expect(apiMocks.batchWarbandHenchmenGroups).toHaveBeenCalledTimes(1);
   });
 
-  it("retries a failed stash removal on its own, never the batch (BUG-108)", async () => {
-    itemMocks.removeWarbandItem.mockRejectedValueOnce(new Error("Server error"));
-    const { save, params, result } = renderSave(
-      withNewMember({
-        id: 0,
-        name: "Blade Four",
-        kills: 0,
-        dead: false,
-        cost: 25,
-        itemChoices: [{ itemId: 104, action: "stash" }],
-      })
-    );
-
-    await save();
-
-    expect(apiMocks.batchWarbandHenchmenGroups).toHaveBeenCalledTimes(1);
-    expect(params.onSuccess).toHaveBeenCalledTimes(1);
-    expect(result.current.followUpNotice).toMatch(
-      /^Saved, but not done yet: taking Club x 1 from the stash\./
-    );
-
-    itemMocks.removeWarbandItem.mockResolvedValue(undefined);
-    await act(async () => {
-      await result.current.retryFollowUps();
-    });
-
-    expect(itemMocks.removeWarbandItem).toHaveBeenCalledTimes(2);
-    expect(apiMocks.batchWarbandHenchmenGroups).toHaveBeenCalledTimes(1);
-    expect(result.current.followUpNotice).toBe("");
-  });
-
-  it("holds the purchases back behind a failed stash removal, then Retry sends both in order", async () => {
-    const order: string[] = [];
-    itemMocks.removeWarbandItem
-      .mockImplementationOnce(async () => {
-        order.push("DELETE stash Club");
-        throw new Error("Server error");
-      })
-      .mockImplementationOnce(async () => {
-        order.push("DELETE stash Club");
-      });
-    apiMocks.createWarbandTrade.mockImplementationOnce(
-      async (_w: number, body: { description: string }) => {
-        order.push(`POST trade ${body.description}`);
-        return { id: 700 };
-      }
-    );
-    apiMocks.createWarbandLog.mockImplementationOnce(
-      async (_w: number, body: { payload: { item: string } }) => {
-        order.push(`POST log ${body.payload.item}`);
-        return {};
-      }
-    );
-    const { save, result } = renderSave({
+  it("sends the stash take and a purchase in the one batch, with nothing after it", async () => {
+    const { save, params } = renderSave({
       ...withNewMember({
         id: 0,
         name: "Blade Four",
@@ -449,38 +416,47 @@ describe("useUnitSave: henchmen characterisation", () => {
         cost: 25,
         itemChoices: [{ itemId: 104, action: "stash" }],
       }),
-      pendingPurchases: [
-        {
-          unitType: "henchmen",
-          unitId: "21",
-          itemId: 120,
-          itemName: "Rope",
-          quantity: 1,
-          unitPrice: 5,
-          isBuying: true,
-        },
-      ],
+      pendingPurchases: [queued("21", 120, "Rope", 5)],
     });
 
     await save();
 
-    expect(order).toEqual(["DELETE stash Club"]);
-    expect(result.current.followUpNotice).toMatch(
-      /^Saved, but not done yet: taking Club x 1 from the stash, buying Rope \(5 gc\), the loadout log for Rope \(Black Knives\)\./
-    );
-
-    await act(async () => {
-      await result.current.retryFollowUps();
-    });
-
-    expect(order).toEqual([
-      "DELETE stash Club",
-      "DELETE stash Club",
-      "POST trade Rope",
-      "POST log Rope",
+    expect(batchStashTakes(apiMocks.batchWarbandHenchmenGroups)).toEqual([
+      { unit_id: 21, item_id: 104, quantity: 1 },
     ]);
-    expect(apiMocks.batchWarbandHenchmenGroups).toHaveBeenCalledTimes(1);
-    expect(result.current.followUpNotice).toBe("");
+    expect(batchPurchases(apiMocks.batchWarbandHenchmenGroups)).toEqual([
+      { unit_id: 21, item_id: 120, quantity: 1, price: 5, availability_id: null, is_buying: true },
+    ]);
+    expect(apiMocks.createWarbandTrade).not.toHaveBeenCalled();
+    expect(apiMocks.createWarbandLog).not.toHaveBeenCalled();
+    expect(params.onSuccess).toHaveBeenCalledTimes(1);
+  });
+
+  it("says how many the stash holds when it ran short, and saves nothing", async () => {
+    apiMocks.batchWarbandHenchmenGroups.mockRejectedValue(
+      new ApiError("The stash holds 0 of these.", 400, {
+        detail: "The stash holds 0 of these.",
+        code: "not_enough_in_stash",
+        fields: { "stash_takes.0.quantity": ["The stash holds 0 of these."] },
+      })
+    );
+    const setup = withNewMember({
+      id: 0,
+      name: "Blade Four",
+      kills: 0,
+      dead: false,
+      cost: 25,
+      itemChoices: [{ itemId: 104, action: "stash" }],
+    });
+    const { save, params, result } = renderSave(setup);
+
+    await save();
+
+    expect(result.current.saveError).toBe("The stash holds 0 of these.");
+    expect(result.current.formErrors.get(setup.groupForms[0])).toEqual([
+      "Quantity: The stash holds 0 of these.",
+    ]);
+    expect(params.onSuccess).not.toHaveBeenCalled();
   });
 
   it("updates only changed groups in one batch and writes its summary", async () => {
@@ -503,36 +479,18 @@ describe("useUnitSave: henchmen characterisation", () => {
   });
 
   it("dismisses groups in the batch and drops their pending purchases", async () => {
-    apiMocks.createWarbandTrade.mockResolvedValue({ id: 1 });
-    apiMocks.createWarbandLog.mockResolvedValue({});
-    const purchase = {
-      unitType: "henchmen" as const,
-      itemId: 101,
-      itemName: "Sword",
-      quantity: 1,
-      unitPrice: 10,
-      isBuying: true,
-    };
     const { save, params } = renderSave({
       groupForms: [mapHenchmenGroupToForm(veteran)],
       removedGroupIds: [22],
-      pendingPurchases: [
-        { ...purchase, unitId: "21" },
-        { ...purchase, unitId: "22" },
-      ],
+      pendingPurchases: [queued("21", 101, "Sword", 10), queued("22", 101, "Sword", 10)],
     });
 
     await save();
 
     expect(batchDismissals(apiMocks.batchWarbandHenchmenGroups)).toEqual([22]);
-    expect(apiMocks.createWarbandTrade).toHaveBeenCalledTimes(1);
-    expect(apiMocks.createWarbandLog).toHaveBeenCalledWith(
-      9,
-      expect.objectContaining({
-        entry_type: "henchmen_item",
-        payload: { hero: "Black Knives", item: "Sword", price: 10 },
-      })
-    );
+    expect(batchPurchases(apiMocks.batchWarbandHenchmenGroups)).toEqual([
+      expect.objectContaining({ unit_id: 21, item_id: 101 }),
+    ]);
     expect(params.onSuccess).toHaveBeenCalledWith([veteran]);
   });
 

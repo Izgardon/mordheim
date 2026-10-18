@@ -1,4 +1,5 @@
 import { act, renderHook as renderBareHook } from "@testing-library/react";
+import { toast } from "sonner";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useUnitSave, type UseUnitSaveParams } from "./useUnitSave";
@@ -19,6 +20,7 @@ import {
   answerBatch,
   batchCreates,
   batchDismissals,
+  batchPurchases,
   batchUpdate,
   batchUpdates,
 } from "@/test/batch-mock";
@@ -93,6 +95,7 @@ type SaveParams = {
   onSuccess: (updatedWarband: Warband, refreshedHeroes: WarbandHero[]) => void;
   pendingPurchases?: PendingPurchase[];
   onPendingCleared?: () => void;
+  versions?: Map<number, string>;
 };
 
 const heroParams = (params: SaveParams): UseUnitSaveParams<"hero"> => ({
@@ -105,6 +108,7 @@ const heroParams = (params: SaveParams): UseUnitSaveParams<"hero"> => ({
   newForm: params.newHeroForm,
   raceQuery: params.raceQuery,
   originalFormsRef: params.originalHeroFormsRef,
+  versionsRef: params.versions ? { current: params.versions } : undefined,
   warbandHeader: { warband: params.warband, form: params.warbandForm },
   onSuccess: (heroes, updatedWarband) => params.onSuccess(updatedWarband as Warband, heroes),
   pendingPurchases: params.pendingPurchases,
@@ -175,6 +179,22 @@ const veteranPatchBody = {
   special_ids: [401],
   spell_ids: [301],
 };
+
+/** A purchase queued in edit mode, as the acquire dialog builds it. */
+const queued = (
+  entry: Omit<PendingPurchase, "line" | "quantity" | "isBuying">
+): PendingPurchase => ({
+  ...entry,
+  quantity: 1,
+  isBuying: true,
+  line: {
+    item_id: entry.itemId,
+    quantity: 1,
+    price: entry.unitPrice,
+    availability_id: null,
+    is_buying: true,
+  },
+});
 
 describe("useUnitSave: heroes (ROST-TEST-15)", () => {
   const batch = api.batchWarbandHeroes;
@@ -252,37 +272,18 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
     ]);
   });
 
-  it("commits pending purchases after the batch, recruits' included, then GETs the summary", async () => {
-    const order: string[] = [];
-    batch.mockImplementation(async (...args: Parameters<ReturnType<typeof answerBatch>>) => {
-      order.push("POST batch");
-      return answerBatch([leader])(...args);
-    });
-    api.createWarbandTrade.mockImplementation(async (_w: number, body: { description: string }) => {
-      order.push(`POST trade ${body.description}`);
-      return { id: 700 };
-    });
-    api.createWarbandLog.mockImplementation(async (_w: number, body: { payload: object }) => {
-      order.push(`POST log ${JSON.stringify(body.payload)}`);
-      return {};
-    });
-    api.getWarbandSummary.mockImplementation(async () => {
-      order.push("GET summary");
-      return {};
-    });
-    const purchase = { unitType: "heroes" as const, quantity: 1, isBuying: true };
+  it("sends the pending purchases in the batch, recruits' included, with nothing after it (decision 1, BUG-07)", async () => {
     const pendingPurchases: PendingPurchase[] = [
-      { ...purchase, unitId: "11", itemId: 101, itemName: "Sword", unitPrice: 10 },
-      { ...purchase, unitId: "12", itemId: 102, itemName: "Dagger", unitPrice: 2 },
-      { ...purchase, unitId: "draft-heroes-7", itemId: 104, itemName: "Club", unitPrice: 3 },
-      {
-        ...purchase,
-        unitType: "henchmen",
-        unitId: "21",
+      queued({ unitType: "heroes", unitId: "11", itemId: 101, itemName: "Sword", unitPrice: 10 }),
+      queued({ unitType: "heroes", unitId: "12", itemId: 102, itemName: "Dagger", unitPrice: 2 }),
+      queued({
+        unitType: "heroes",
+        unitId: "draft-heroes-7",
         itemId: 104,
         itemName: "Club",
         unitPrice: 3,
-      },
+      }),
+      queued({ unitType: "henchmen", unitId: "21", itemId: 104, itemName: "Club", unitPrice: 3 }),
     ];
     const forms = [leader].map(mapHeroToForm);
     const recruit = { ...forms[0], id: undefined, draftKey: "draft-heroes-7", name: "Otto" };
@@ -297,72 +298,112 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
 
     await save();
 
-    expect(order).toEqual([
-      "POST batch",
-      "POST trade Equipped Aldric and Otto (2 items, 13 gc)",
-      "POST trade Sword",
-      'POST log {"hero":"Aldric","item":"Sword","price":10}',
-      "POST trade Club",
-      'POST log {"hero":"Otto","item":"Club","price":3}',
-      "GET summary",
+    // Gunther's is dropped with him, and the henchmen's goes with their own Save.
+    expect(batch).toHaveBeenCalledTimes(1);
+    expect(batchPurchases(batch)).toEqual([
+      { unit_id: 11, item_id: 101, quantity: 1, price: 10, availability_id: null, is_buying: true },
+      {
+        create_index: 0,
+        item_id: 104,
+        quantity: 1,
+        price: 3,
+        availability_id: null,
+        is_buying: true,
+      },
     ]);
+    expect(api.createWarbandTrade).not.toHaveBeenCalled();
+    expect(api.createWarbandLog).not.toHaveBeenCalled();
+    expect(api.getWarbandSummary).not.toHaveBeenCalled();
     expect(params.onPendingCleared).toHaveBeenCalledTimes(1);
   });
 
-  it("never re-runs the batch or a done purchase when a purchase fails after it (retry)", async () => {
-    batch.mockImplementation(answerBatch([leader], { gold: 60 }));
-    api.createWarbandTrade.mockRejectedValueOnce(new Error("Server error"));
-    api.createWarbandLog.mockResolvedValue({});
-    api.getWarbandSummary.mockResolvedValue({ gold: 57 });
-    const recruit = {
-      ...mapHeroToForm(champion),
-      id: undefined,
-      draftKey: "draft-heroes-9",
-      name: "Otto",
-    };
-    const { save, params, result } = renderSave({
-      heroes: [leader],
-      heroForms: [mapHeroToForm(leader), recruit],
+  it("shows the batch's purchase warnings once the Save is in", async () => {
+    const warn = vi.spyOn(toast, "warning");
+    batch.mockResolvedValue({
+      units: [leader, champion],
+      summary: { gold: -3 },
+      warnings: [{ code: "gold_negative", message: "The warband is at -3 gc.", gold: -3 }],
+    });
+    const { save, params } = renderSave({
+      heroForms: [leader, champion].map(mapHeroToForm),
       pendingPurchases: [
-        {
-          unitType: "heroes",
-          unitId: "draft-heroes-9",
-          itemId: 104,
-          itemName: "Club",
-          quantity: 1,
-          unitPrice: 3,
-          isBuying: true,
-        },
+        queued({ unitType: "heroes", unitId: "11", itemId: 101, itemName: "Sword", unitPrice: 10 }),
       ],
     });
 
     await save();
 
-    // The batch's result is in the sheet and the edit is over: the queue is gone.
-    expect(batch).toHaveBeenCalledTimes(1);
-    expect(params.onSuccess).toHaveBeenCalledWith({ ...warband, gold: 60 }, [
-      leader,
-      expect.objectContaining({ id: 900, name: "Otto" }),
+    expect(params.onSuccess).toHaveBeenCalledTimes(1);
+    expect(warn).toHaveBeenCalledWith("The warband is at -3 gc.", {
+      id: "purchase-warning-gold_negative",
+    });
+    warn.mockRestore();
+  });
+
+  it("sends the version each hero was loaded at with his update", async () => {
+    const forms = [leader, champion].map(mapHeroToForm);
+    const { save } = renderSave({
+      heroForms: [{ ...forms[0], name: "Aldric" }, forms[1]],
+      versions: new Map([
+        [11, "2026-10-18T09:41:02.123456Z"],
+        [12, "2026-10-18T09:00:00Z"],
+      ]),
+    });
+
+    await save();
+
+    expect(batchUpdates(batch)).toEqual([
+      expect.objectContaining({ id: 11, updated_at: "2026-10-18T09:41:02.123456Z" }),
     ]);
-    expect(params.onPendingCleared).toHaveBeenCalledTimes(1);
-    expect(result.current.saveError).toBe("");
-    expect(result.current.followUpNotice).toBe(
-      "Saved, but not done yet: buying Club (3 gc), the loadout log for Club (Otto). Server error Retry finishes these without saving the roster again."
+  });
+
+  it("asks for a reload when a hero was changed elsewhere, and saves nothing (409)", async () => {
+    const renamed = { ...mapHeroToForm(leader), name: "Aldric" };
+    batch.mockRejectedValue(
+      new ApiError("A unit was changed in another tab; nothing was saved.", 409, {
+        detail: "A unit was changed in another tab; nothing was saved.",
+        code: "unit_changed",
+        fields: {
+          "update.0.updated_at": ["This unit was changed in another tab; reload it and try again."],
+        },
+      })
     );
-
-    await act(async () => {
-      await result.current.retryFollowUps();
+    const { save, result, params } = renderSave({
+      heroForms: [renamed, mapHeroToForm(champion)],
+      versions: new Map([[11, "2026-10-18T09:41:02.123456Z"]]),
     });
 
-    expect(batch).toHaveBeenCalledTimes(1);
-    expect(api.createWarbandTrade).toHaveBeenCalledTimes(2);
-    expect(api.createWarbandLog).toHaveBeenCalledTimes(1);
-    expect(api.createWarbandLog).toHaveBeenCalledWith(9, {
-      feature: "loadout",
-      entry_type: "hero_item",
-      payload: { hero: "Otto", item: "Club", price: 3 },
+    await save();
+
+    expect(result.current.saveError).toBe("This unit was changed elsewhere; reload it.");
+    expect(result.current.formErrors.get(renamed)).toEqual([
+      "This unit was changed in another tab; reload it and try again.",
+    ]);
+    expect(params.onSuccess).not.toHaveBeenCalled();
+    expect(params.onPendingCleared).not.toHaveBeenCalled();
+  });
+
+  it("puts a refused purchase's message on the unit that queued it", async () => {
+    const renamed = { ...mapHeroToForm(leader), name: "Aldric" };
+    batch.mockRejectedValue(
+      new ApiError("Some of the changes are invalid; nothing was saved.", 400, {
+        detail: "Some of the changes are invalid; nothing was saved.",
+        code: "invalid",
+        fields: { "purchases.0.price": ["Ensure this value is less than or equal to 100000."] },
+      })
+    );
+    const { save, result } = renderSave({
+      heroForms: [renamed, mapHeroToForm(champion)],
+      pendingPurchases: [
+        queued({ unitType: "heroes", unitId: "11", itemId: 101, itemName: "Sword", unitPrice: 10 }),
+      ],
     });
-    expect(result.current.followUpNotice).toBe("");
+
+    await save();
+
+    expect(result.current.formErrors.get(renamed)).toEqual([
+      "Price: Ensure this value is less than or equal to 100000.",
+    ]);
   });
 
   it("sends nothing when nothing changed", async () => {
@@ -551,15 +592,7 @@ describe("useUnitSave: heroes (ROST-TEST-15)", () => {
       heroes: [leader],
       heroForms: [{ ...forms[0], name: "Renamed" }],
       pendingPurchases: [
-        {
-          unitType: "heroes",
-          unitId: "11",
-          itemId: 101,
-          itemName: "Sword",
-          quantity: 1,
-          unitPrice: 10,
-          isBuying: true,
-        },
+        queued({ unitType: "heroes", unitId: "11", itemId: 101, itemName: "Sword", unitPrice: 10 }),
       ],
     });
 

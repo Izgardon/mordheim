@@ -439,6 +439,7 @@ describe("AcquireItemDialog: one request per purchase (BUG-07, ECON-PERF-01)", (
 
   it("queues a purchase without any request in roster edit mode (deferred commit)", async () => {
     const user = setupUser();
+    const onPendingPurchaseAdd = vi.fn();
     const { onAcquire, onClosed } = renderDialog({
       presetUnitType: "heroes",
       presetUnitId: 11,
@@ -446,6 +447,8 @@ describe("AcquireItemDialog: one request per purchase (BUG-07, ECON-PERF-01)", (
       variant: "unit-edit",
       deferCommit: true,
       reservedGold: 0,
+      onPendingPurchaseAdd,
+      pendingPurchaseUnitId: 11,
     });
     await openLoadsSent();
     fakeApi.clearRequests();
@@ -461,6 +464,19 @@ describe("AcquireItemDialog: one request per purchase (BUG-07, ECON-PERF-01)", (
       totalPrice: 5,
       reason: "",
       baseCost: 5,
+      // What the roster Save sends in its batch (decision 1).
+      line: { item_id: 120, quantity: 1, price: 5, availability_id: 7, is_buying: true },
+    });
+    expect(onPendingPurchaseAdd).toHaveBeenCalledWith({
+      unitType: "heroes",
+      unitId: "11",
+      itemId: 120,
+      itemName: "Rope",
+      quantity: 1,
+      unitPrice: 5,
+      isBuying: true,
+      reason: "",
+      line: { item_id: 120, quantity: 1, price: 5, availability_id: 7, is_buying: true },
     });
   });
 });
@@ -733,6 +749,34 @@ describe("AcquireItemDialog: rare items", () => {
     });
     expect(fakeApi.calls()).not.toContain("POST /warbands/9/logs/");
     expect(fakeApi.calls()).not.toContain("PATCH /warbands/9/heroes/11/");
+  });
+
+  it("queues a rare item with the searcher's roll for the roster Save, and posts no roll on close", async () => {
+    const user = setupUser();
+    const { onAcquire, onClosed } = renderDialog({
+      item: luckyCharm,
+      presetUnitType: "heroes",
+      presetUnitId: 11,
+      disableUnitSelection: true,
+      variant: "unit-edit",
+      deferCommit: true,
+      reservedGold: 0,
+    });
+    await openLoadsSent();
+    await chooseOption(user, selectNear("Availability:"), /Rarity 9/);
+    await chooseOption(user, selectNear("Searching hero"), "Aldric the Bold");
+    await user.click(screen.getByRole("button", { name: "2d6" }));
+    await screen.findByText(/Rolled 7/);
+
+    await clickBuy(user);
+
+    expect(onClosed).toHaveBeenCalledTimes(1);
+    expect(onAcquire.mock.calls[0][3].line).toMatchObject({
+      item_id: 55,
+      rarity_roll: { hero_id: 11, roll: 7, modifier: 0, rarity: "9", success: false },
+    });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(fakeApi.calls().filter((call) => !call.startsWith("GET"))).toEqual([]);
   });
 
   it("queues one copy of a rare item after quantity 3 in roster edit mode", async () => {

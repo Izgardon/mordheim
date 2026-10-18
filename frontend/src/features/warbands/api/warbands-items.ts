@@ -11,13 +11,6 @@ export function listWarbandItems(warbandId: number) {
   return apiRequest<WarbandItemSummary[]>(`/warbands/${warbandId}/items/`);
 }
 
-export function removeWarbandItem(warbandId: number, itemId: number, quantity = 1) {
-  return apiRequest<void>(`/warbands/${warbandId}/items/${itemId}/`, {
-    method: "DELETE",
-    body: { quantity },
-  });
-}
-
 export function addWarbandItem(
   warbandId: number,
   itemId: number,

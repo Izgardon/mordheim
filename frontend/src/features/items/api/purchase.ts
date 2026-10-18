@@ -93,6 +93,8 @@ export function purchaseLine({
   };
 }
 
+export type PurchaseLine = ReturnType<typeof purchaseLine>;
+
 /** The answer into the cache: the unit's items and version, or the stash entry; gold; the row. */
 export function applyPurchaseAnswer(
   queryClient: QueryClient,
