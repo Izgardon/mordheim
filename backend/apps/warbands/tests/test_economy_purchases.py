@@ -12,7 +12,7 @@ from apps.warbands.services import ledger
 
 from .roster_support import HENCHMEN, HERO, RosterTestCase, log_rows, make_unit, trade_rows, unit_url
 
-ANSWER_KEYS = ["target_type", "target_id", "items", "stash_item", "trade", "summary", "warnings"]
+ANSWER_KEYS = ["target_type", "target_id", "updated_at", "items", "stash_item", "trade", "summary", "warnings"]
 
 
 class PurchaseTestCase(RosterTestCase):

@@ -8,6 +8,8 @@ the purchase; each is a warning. A hero who isn't on the warband's roster is ref
 from collections.abc import Mapping
 from typing import Any
 
+from django.utils import timezone
+
 from apps.items.models import Item
 from apps.warbands.models import Hero, Warband, on_roster
 
@@ -30,7 +32,7 @@ def record_roll(warband: Warband, item: Item, roll: Mapping[str, Any]) -> list[d
         raise RollRefused("Not a hero on this warband's roster.")
     name = hero.name or f"Hero {hero.id}"
     warnings = []
-    if not heroes.filter(trading_action=True).update(trading_action=False):
+    if not heroes.filter(trading_action=True).update(trading_action=False, updated_at=timezone.now()):
         message = f"{name} already used his trading action this round."
         warnings.append({"code": TRADING_ACTION_SPENT, "message": message, "hero_id": hero.id})
     payload: dict[str, Any] = {"hero": name, "item": item.name, "rarity": roll.get("rarity", "")}

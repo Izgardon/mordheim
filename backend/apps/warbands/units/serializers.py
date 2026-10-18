@@ -242,4 +242,7 @@ class UnitBatchSerializer(serializers.Serializer):
             "create": serializers.ListField(child=serializers.DictField(), required=False, default=list),
             "update": serializers.ListField(child=serializers.DictField(), required=False, default=list),  # with "id"
             "dismiss": serializers.ListField(child=serializers.IntegerField(), required=False, default=list),
+            # pass 2, decision 1 and BUG-108: copies bought or taken from the stash for the batch's units
+            "purchases": serializers.ListField(child=serializers.DictField(), required=False, default=list),
+            "stash_takes": serializers.ListField(child=serializers.DictField(), required=False, default=list),
         }

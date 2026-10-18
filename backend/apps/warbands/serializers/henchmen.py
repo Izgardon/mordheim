@@ -150,6 +150,7 @@ class HenchmenGroupDetailSerializer(HenchmenMembersMixin, UnitDetailSerializer):
             "skills",
             "specials",
             "henchmen",
+            "updated_at",  # the version a roster Save sends back (409 when it changed)
         )
 
 

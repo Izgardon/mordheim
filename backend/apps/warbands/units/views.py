@@ -148,10 +148,11 @@ class UnitBatchView(UnitView):
         if not shape.is_valid():
             raise validation_error(shape.errors)
         plan = plan_batch(self.kind, self.serializers, self.warband, shape.validated_data)
-        apply_batch(self.kind, self.warband, plan)
+        warnings = apply_batch(self.kind, self.warband, plan)
         units = self.kind.roster(self.warband, detail=True)
         payload = {
             "units": self.serializers.detail(units, many=True).data,
             "summary": WarbandSummarySerializer(self.warband).data,
+            "warnings": warnings,
         }
         return Response(payload)

@@ -3,7 +3,7 @@
 from typing import Any
 
 from django.db import transaction
-from rest_framework import status
+from rest_framework import serializers, status
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -38,6 +38,7 @@ def purchase_answer(warband: Any, item: Item, bought: Purchase) -> dict[str, Any
     return {
         "target_type": line.target_type,
         "target_id": unit.pk if unit is not None else None,
+        "updated_at": serializers.DateTimeField().to_representation(unit.updated_at) if unit is not None else None,
         "items": detail_item_entries(unit_item_rows(line.target_type, unit)) if unit is not None else None,
         "stash_item": WarbandItemSummarySerializer(stash).data if stash else None,
         "trade": WarbandTradeSerializer(bought.trade).data if bought.trade else None,

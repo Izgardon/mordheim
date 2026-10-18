@@ -187,6 +187,7 @@ class QueryBudgetTests(TestCase):
         client.force_authenticate(user=self.ref.owner)
         url = self._url("/api/warbands/{warband}/heroes/batch/")
         heroes = list(Hero.objects.filter(warband=self.ref.warband).order_by("id").values_list("id", flat=True))
+        sword = Item.objects.get(name="Sword 0").id
         cases: list[tuple[str, dict[str, Any], int]] = [
             ("empty", {}, 13),
             ("one update", {"update": [{"id": heroes[0], "xp": 5}]}, 15),
@@ -194,6 +195,13 @@ class QueryBudgetTests(TestCase):
             # the recruit's gold: its row and the stored balance (decision 4)
             ("one create", {"create": [{"name": "New", "unit_type": "Champion", "price": 5}]}, 23),
             ("one dismissal", {"dismiss": [heroes[-1]]}, 21),
+            # pass 2: a purchase adds the roster ids, its item, the charge, the copies and new updated_at, the log
+            ("one purchase", {"purchases": [{"unit_id": heroes[0], "item_id": sword, "price": 5}]}, 22),
+            (
+                "two purchases",
+                {"purchases": [{"unit_id": hero, "item_id": sword, "price": 5} for hero in heroes[:2]]},
+                26,  # + the Group header; each line its copies, updated_at and log
+            ),
         ]
         for name, body, budget in cases:
             with self.subTest(batch=name):
@@ -243,7 +251,8 @@ class QueryBudgetTests(TestCase):
         # ECON-TEST-14 (pass 2). Each answers with both units' detail payloads and the summary, built inside the
         # transaction (ECON-PERF-03). Source and target are resolved with one id-only query each (BUG-06); a stash
         # row is locked and changed in two queries, without re-reading it (BUG-36). Each writes its log entry (+1,
-        # ECON-CQ-02); a sale also writes its gold to the stored balance (+1, decision 4).
+        # ECON-CQ-02); a sale also writes its gold to the stored balance (+1, decision 4); each unit whose copies
+        # change gets a new updated_at, the version a roster Save sends back (+1 per unit, pass 2 decision 1).
         client = self.ref.owner_client
         client.force_authenticate(user=self.ref.owner)
         heroes = list(Hero.objects.filter(warband=self.ref.warband).order_by("id").values_list("id", flat=True))
@@ -258,9 +267,9 @@ class QueryBudgetTests(TestCase):
         self._count_writes(
             client,
             [
-                ("move stash to hero", moves, {**stash_to_hero, "quantity": 1}, 19),
-                ("move hero to hero", moves, {**hero_to_hero, "item_id": items[1], "quantity": 1}, 25),
-                ("move hero to stash", moves, {**hero_to_stash, "quantity": 1}, 20),  # onto an existing stash row
+                ("move stash to hero", moves, {**stash_to_hero, "quantity": 1}, 20),
+                ("move hero to hero", moves, {**hero_to_hero, "item_id": items[1], "quantity": 1}, 27),
+                ("move hero to stash", moves, {**hero_to_stash, "quantity": 1}, 21),  # onto an existing stash row
                 (
                     "sell from the stash",
                     sales,
@@ -271,7 +280,7 @@ class QueryBudgetTests(TestCase):
                     "sell from a hero",
                     sales,
                     {"source_type": "hero", "source_id": heroes[2], "item_id": items[1], "quantity": 1, "price": 5},
-                    20,
+                    21,
                 ),
             ],
         )
@@ -279,7 +288,8 @@ class QueryBudgetTests(TestCase):
     def test_purchases_stay_within_query_budget(self):
         # BUG-07 (pass 2): one request where a purchase used to take about 8. Access, the item and its prices, the
         # transaction, the "Buy" row and the stored balance, the copies, the log, then the answer: the stash entry
-        # or the unit's items (constant in its items), and the summary. A rarity roll adds its hero and log.
+        # or the unit's items (constant in its items) and its new updated_at, and the summary. A rarity roll adds its
+        # hero and log.
         client = self.ref.owner_client
         client.force_authenticate(user=self.ref.owner)
         url = self._url("/api/warbands/{warband}/purchases/")
@@ -288,11 +298,11 @@ class QueryBudgetTests(TestCase):
         cases: list[tuple[str, dict[str, Any], int]] = [
             ("to the stash", {"item_id": item, "price": 5, "target_type": "stash"}, 19),
             ("at the current campaign price", {"item_id": item, "target_type": "stash"}, 20),
-            ("to a hero", {"item_id": item, "price": 5, "target_type": "hero", "target_id": hero}, 20),
+            ("to a hero", {"item_id": item, "price": 5, "target_type": "hero", "target_id": hero}, 21),
             (
                 "with a rarity roll",
                 {"item_id": item, "price": 5, "target_type": "hero", "target_id": hero, "rarity_roll": roll},
-                23,
+                24,
             ),
         ]
         for name, body, budget in cases:

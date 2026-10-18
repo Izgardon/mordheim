@@ -100,6 +100,7 @@ HERO_SUMMARY = {
 }
 HERO_DETAIL = {
     **HERO_SUMMARY,
+    "updated_at": "str",  # pass 2: the version a roster Save sends back
     "race": RACE,
     "kills": "int",
     "deeds": "str",
@@ -125,6 +126,7 @@ HENCHMEN_SUMMARY = {
 }
 HENCHMEN_DETAIL = {
     **HENCHMEN_SUMMARY,
+    "updated_at": "str",
     "race": RACE,
     "deeds": "str",
     "items": [ITEM_DETAIL],
@@ -152,6 +154,7 @@ HIRED_SWORD_SUMMARY = {
 }
 HIRED_SWORD_DETAIL = {
     **HIRED_SWORD_SUMMARY,
+    "updated_at": "str",
     "race": RACE,
     "kills": "int",
     "deeds": "str",

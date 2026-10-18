@@ -2,11 +2,13 @@
 
 A unit is named by kind and id and must be on the warband's roster (alive, not dismissed): anything else is a
 404 before anything is written (BUG-06). Copies are taken newest first and checked by the delete count (BUG-36)
-and appended without touching the others, so no list is ever replaced.
+and appended without touching the others, so no list is ever replaced. Either moves the unit's `updated_at`,
+the version a roster Save sends back (a stale one is a 409).
 """
 
 from typing import Any, cast
 
+from django.utils import timezone
 from rest_framework.exceptions import NotFound
 
 from apps.items.models import Item
@@ -39,6 +41,7 @@ def take_unit_copies(unit_type: str, unit: RosterUnit, item_id: int, quantity: i
     deleted, _ = links.filter(id__in=[row_id for row_id, _cost in rows]).delete()
     if deleted != quantity:
         raise ValueError("Item not found.")
+    touch_unit(unit_type, unit)
     return [cost for _row_id, cost in rows]
 
 
@@ -54,6 +57,14 @@ def add_unit_copies(unit_type: str, unit: RosterUnit, item: Item, costs: list[in
             kwargs["cost"] = cost
         rows.append(kind.items.model(**kwargs))
     kind.items.model._default_manager.bulk_create(rows)
+    touch_unit(unit_type, unit)
+
+
+def touch_unit(unit_type: str, unit: RosterUnit) -> None:
+    """Move the unit's `updated_at` to now (its loadout changed), on the row and on `unit`."""
+    now = timezone.now()
+    KINDS[cast(UnitKindKey, unit_type)].objects.filter(pk=unit.pk).update(updated_at=now)
+    unit.updated_at = now
 
 
 def unit_item_rows(unit_type: str, unit: RosterUnit) -> list[Any]:

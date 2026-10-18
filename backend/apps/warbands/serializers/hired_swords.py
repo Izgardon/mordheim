@@ -111,6 +111,7 @@ class HiredSwordDetailSerializer(UnitDetailSerializer):
             "skills",
             "specials",
             "spells",
+            "updated_at",  # the version a roster Save sends back (409 when it changed)
         )
 
 

@@ -51,3 +51,21 @@ class RarityRollRequestSerializer(RarityRollSerializer):
     """POST rarity-rolls/: a roll that ended without a purchase; it still spends the searcher's trading action."""
 
     item_id = serializers.IntegerField()
+
+
+class BatchTargetSerializer(serializers.Serializer):
+    """Which unit of a roster Save a line is for: one on the roster (`unit_id`) or one it creates (`create_index`)."""
+
+    unit_id = serializers.IntegerField(required=False, allow_null=True)
+    create_index = serializers.IntegerField(required=False, allow_null=True, min_value=0)
+
+
+class BatchPurchaseSerializer(BatchTargetSerializer, PurchaseLineSerializer):
+    """A roster Save's `purchases` entry: a purchase line for one of the batch's units."""
+
+
+class StashTakeSerializer(BatchTargetSerializer):
+    """A roster Save's `stash_takes` entry: copies taken out of the stash for one of the batch's units (BUG-108)."""
+
+    item_id = serializers.IntegerField()
+    quantity = serializers.IntegerField(required=False, default=1, min_value=1, max_value=100)
