@@ -3,12 +3,10 @@ import type { BattleEvent } from "@/features/battles/types/battle-types";
 /** Events still counting: an undone kill or item use stays in the timeline, voided (BUG-11). */
 const isLive = (event: BattleEvent) => !event.voided_at;
 
-const payloadOf = (event: BattleEvent) => (event.payload_json ?? {}) as Record<string, unknown>;
-
 /** The unit a kill event credits (`payload.killer.unit_key`). */
 export function killerUnitKey(event: BattleEvent) {
-  const killer = payloadOf(event).killer as { unit_key?: unknown } | undefined;
-  return typeof killer?.unit_key === "string" ? killer.unit_key : null;
+  const unitKey = event.type === "unit_kill_recorded" ? event.payload_json?.killer?.unit_key : null;
+  return typeof unitKey === "string" ? unitKey : null;
 }
 
 /** A unit's kills that still count, oldest first; only the actor can undo his own. */
@@ -29,7 +27,7 @@ export function usedSingleUseItemCounts(events: BattleEvent[]) {
     if (event.type !== "item_used" || !isLive(event)) {
       continue;
     }
-    const payload = payloadOf(event);
+    const payload = event.payload_json ?? {};
     const unitKey = typeof payload.unit_key === "string" ? payload.unit_key.trim() : "";
     const itemId = Number(payload.item_id);
     if (!unitKey || !Number.isFinite(itemId) || itemId <= 0) {
@@ -55,8 +53,8 @@ export function latestItemUseEvent(
         (event) =>
           event.type === "item_used" &&
           isLive(event) &&
-          payloadOf(event).unit_key === unitKey &&
-          Number(payloadOf(event).item_id) === itemId &&
+          event.payload_json?.unit_key === unitKey &&
+          Number(event.payload_json?.item_id) === itemId &&
           event.actor_user_id === actorUserId
       ) ?? null
   );

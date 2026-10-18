@@ -32,6 +32,7 @@ import { deadlineLabel } from "@/features/battles/utils/battle-timing";
 import type { CampaignPlayer } from "../../types/campaign-types";
 import PendingResultsCard from "./PendingResultsCard";
 import StartBattleDialog from "./StartBattleDialog";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 const NO_BATTLES: BattleState[] = [];
 
@@ -121,11 +122,7 @@ export default function BattleActionPanel({
       const updatedBattle = await joinBattle(campaignId, resumableBattle.battle.id);
       replaceOpenBattle(updatedBattle);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setInviteActionError(errorResponse.message || "Unable to accept invitation");
-      } else {
-        setInviteActionError("Unable to accept invitation");
-      }
+      setInviteActionError(getErrorMessage(errorResponse, "Unable to accept invitation"));
     } finally {
       setIsAcceptingInvite(false);
     }
@@ -143,11 +140,7 @@ export default function BattleActionPanel({
       setIsCancelBattleDialogOpen(false);
       setIsStatusDialogOpen(false);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setCancelBattleError(errorResponse.message || "Unable to cancel battle");
-      } else {
-        setCancelBattleError("Unable to cancel battle");
-      }
+      setCancelBattleError(getErrorMessage(errorResponse, "Unable to cancel battle"));
     } finally {
       setIsCancelingBattle(false);
     }

@@ -4,8 +4,6 @@ import type {
   BattleState,
 } from "@/features/battles/types/battle-types";
 
-const VOID_EVENT_TYPES = new Set<BattleEvent["type"]>(["unit_kill_voided", "item_used_voided"]);
-
 /**
  * A write's answer carries only the events it added, so an undo (`unit_kill_voided`,
  * `item_used_voided`) names the event it voided rather than resending it: mark that one voided
@@ -14,8 +12,11 @@ const VOID_EVENT_TYPES = new Set<BattleEvent["type"]>(["unit_kill_voided", "item
 function applyVoids(events: BattleEvent[]) {
   const voidedAt = new Map<number, string>();
   for (const event of events) {
-    const voidedId = Number((event.payload_json as { voided_event_id?: unknown }).voided_event_id);
-    if (VOID_EVENT_TYPES.has(event.type) && Number.isFinite(voidedId)) {
+    if (event.type !== "unit_kill_voided" && event.type !== "item_used_voided") {
+      continue;
+    }
+    const voidedId = Number(event.payload_json?.voided_event_id);
+    if (Number.isFinite(voidedId)) {
       voidedAt.set(voidedId, event.created_at);
     }
   }

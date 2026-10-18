@@ -26,8 +26,8 @@ type PostbattleKillsControlProps = {
 };
 
 const victimOf = (event: BattleEvent | undefined) => {
-  const victim = (event?.payload_json as { victim?: { name?: unknown } } | undefined)?.victim;
-  return typeof victim?.name === "string" && victim.name.trim() ? victim.name.trim() : null;
+  const name = event?.type === "unit_kill_recorded" ? event.payload_json?.victim?.name : null;
+  return typeof name === "string" && name.trim() ? name.trim() : null;
 };
 
 const STEP_CLASS =

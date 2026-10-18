@@ -17,6 +17,7 @@ import { normalizeWebUrl } from "@/lib/url-utils";
 import type { CampaignPlayer } from "../../types/campaign-types";
 import { idleLabel } from "@/features/battles/utils/battle-timing";
 import { toastBattleWarnings } from "@/features/battles/utils/battle-warnings";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 /** "In battle #40 (postbattle), idle 6 days" from the players' busy fields (decision 1). */
 function battleBusyLabel(player: CampaignPlayer) {
@@ -180,11 +181,7 @@ export default function StartBattleDialog({
         onOpenChange(false);
         onBattleCreated?.();
       } catch (errorResponse) {
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to report battle result");
-        } else {
-          setError("Unable to report battle result");
-        }
+        setError(getErrorMessage(errorResponse, "Unable to report battle result"));
       } finally {
         setIsSubmitting(false);
       }
@@ -224,11 +221,7 @@ export default function StartBattleDialog({
       onOpenChange(false);
       onBattleCreated?.();
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setError(errorResponse.message || "Unable to create battle");
-      } else {
-        setError("Unable to create battle");
-      }
+      setError(getErrorMessage(errorResponse, "Unable to create battle"));
     } finally {
       setIsSubmitting(false);
     }

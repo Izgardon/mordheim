@@ -4,11 +4,14 @@ import { realtimeSocketId } from "@/lib/realtime/client";
 import type {
   BattleCustomUnit,
   BattleCreatePayload,
+  BattleParticipantForView,
   BattlePostbattleState,
   ReportBattleResultPayload,
   BattleRosterMap,
   BattleState,
+  BattleStateOf,
   BattleStateView,
+  FullViewParticipant,
   PendingReportedResult,
 } from "@/features/battles/types/battle-types";
 import type { UnitInformationPatch } from "@/features/battles/utils/unit-information-patch";
@@ -28,12 +31,15 @@ const battleWriteHeaders = () => {
 const battlePath = (campaignId: number, battleId: number, suffix: string) =>
   `/campaigns/${campaignId}/battles/${battleId}/${suffix}`;
 
+/** What a battle write answers with: the battle, every participant in full, the events it added. */
+type BattleWriteAnswer = BattleStateOf<FullViewParticipant>;
+
 /**
  * A POST to one battle's `suffix` (`"start/"`), answered with the battle's state. A refusal
  * because the battle moved on (`battle_status_changed`) also has the pages read its state (BUG-19).
  */
 function battleWrite(campaignId: number, battleId: number, suffix: string, body?: unknown) {
-  return apiRequest<BattleState>(battlePath(campaignId, battleId, suffix), {
+  return apiRequest<BattleWriteAnswer>(battlePath(campaignId, battleId, suffix), {
     method: "POST",
     headers: battleWriteHeaders(),
     ...(body === undefined ? {} : { body }),
@@ -49,7 +55,7 @@ export function listOpenCampaignBattles(
 }
 
 export function createBattle(campaignId: number, payload: BattleCreatePayload) {
-  return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/`, {
+  return apiRequest<BattleWriteAnswer>(`/campaigns/${campaignId}/battles/`, {
     method: "POST",
     headers: battleWriteHeaders(),
     body: payload,
@@ -57,7 +63,7 @@ export function createBattle(campaignId: number, payload: BattleCreatePayload) {
 }
 
 export function reportBattleResult(campaignId: number, payload: ReportBattleResultPayload) {
-  return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/report-result/`, {
+  return apiRequest<BattleWriteAnswer>(`/campaigns/${campaignId}/battles/report-result/`, {
     method: "POST",
     headers: battleWriteHeaders(),
     body: payload,
@@ -65,16 +71,18 @@ export function reportBattleResult(campaignId: number, payload: ReportBattleResu
 }
 
 /** The battle with its events after `sinceEventId`, participants in the `view` shape. */
-export function getBattleState(
+export function getBattleState<View extends BattleStateView = "full">(
   campaignId: number,
   battleId: number,
-  { sinceEventId = 0, view }: { sinceEventId?: number; view?: BattleStateView } = {}
+  { sinceEventId = 0, view }: { sinceEventId?: number; view?: View } = {}
 ) {
   const params = new URLSearchParams({ sinceEventId: String(sinceEventId) });
   if (view) {
     params.set("view", view);
   }
-  return apiRequest<BattleState>(battlePath(campaignId, battleId, `state/?${params.toString()}`));
+  return apiRequest<BattleStateOf<BattleParticipantForView[View]>>(
+    battlePath(campaignId, battleId, `state/?${params.toString()}`)
+  );
 }
 
 export function getBattleRosters(campaignId: number, battleId: number) {

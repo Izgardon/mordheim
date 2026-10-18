@@ -176,27 +176,17 @@ export type BattleSummary = {
   overdue?: boolean;
 };
 
-export type BattleParticipant = {
+/** The fields every participant view has; `?view=active` sends only these (IMP-54). */
+export type BattleParticipantCore = {
   id: number;
   battle_id: number;
   status: BattleParticipantStatus;
   connection_state: "online" | "offline";
   last_event_id: number;
-  invited_by_user_id?: number | null;
-  invited_at?: string | null;
-  responded_at?: string | null;
-  joined_at?: string | null;
-  ready_at?: string | null;
-  canceled_at?: string | null;
-  battle_joined_at?: string | null;
-  finished_at?: string | null;
-  confirmed_at?: string | null;
   last_seen_at: string | null;
   selected_unit_keys_json: string[];
   unit_information_json: Record<string, BattleUnitInformationEntry>;
   custom_units_json: BattleCustomUnit[];
-  postbattle_json?: BattlePostbattleState | Record<string, never>;
-  declared_rating?: number | null;
   battle_notes: string;
   user: {
     id: number;
@@ -208,24 +198,114 @@ export type BattleParticipant = {
   };
 };
 
-export type BattleEvent = {
+/** When the participant was invited, answered, joined, readied and finished; not in `active`. */
+export type BattleParticipantTimeline = {
+  invited_by_user_id: number | null;
+  invited_at: string | null;
+  responded_at: string | null;
+  joined_at: string | null;
+  ready_at: string | null;
+  canceled_at: string | null;
+  battle_joined_at: string | null;
+  finished_at: string | null;
+  confirmed_at: string | null;
+  /** Postbattle closed or expired before this player finished it (BUG-09). */
+  skipped_postbattle: boolean;
+};
+
+export type BattlePostbattleDraftJson = BattlePostbattleState | Record<string, never>;
+
+/** `?view=active`: the core only. */
+export type ActiveViewParticipant = BattleParticipantCore;
+
+/** `?view=prebattle`: the timeline and the declared rating. */
+export type PrebattleViewParticipant = BattleParticipantCore &
+  BattleParticipantTimeline & { declared_rating: number | null };
+
+/** `?view=postbattle`: the timeline and the postbattle draft. */
+export type PostbattleViewParticipant = BattleParticipantCore &
+  BattleParticipantTimeline & { postbattle_json: BattlePostbattleDraftJson };
+
+/** `?view=full`: what every write answers with and every socket snapshot carries. */
+export type FullViewParticipant = PrebattleViewParticipant & PostbattleViewParticipant;
+
+/** The participant shape each `state/` view returns. */
+export type BattleParticipantForView = {
+  full: FullViewParticipant;
+  prebattle: PrebattleViewParticipant;
+  active: ActiveViewParticipant;
+  postbattle: PostbattleViewParticipant;
+};
+
+/**
+ * A participant as the battle pages cache it: reads ask for the shown page's view while writes
+ * and socket snapshots carry the full one, so anything beyond the core may be missing.
+ */
+export type BattleParticipant = BattleParticipantCore &
+  Partial<BattleParticipantTimeline> & {
+    declared_rating?: number | null;
+    postbattle_json?: BattlePostbattleDraftJson;
+  };
+
+/** What a kill event says (`unit-kill/`): who took whom out, and whether it earns XP. */
+export type UnitKillPayload = {
+  killer?: { unit_key?: string; warband_id?: number; name?: string };
+  victim?: { unit_key?: string; name?: string };
+  earned_xp?: boolean;
+  source?: "battle" | "postbattle";
+  [field: string]: unknown;
+};
+
+/** What an item use says: the unit and the single-use item (BUG-72's whitelisted fields). */
+export type ItemUsedPayload = {
+  participant_user_id?: number;
+  unit_key?: string;
+  unit_id?: number | null;
+  unit_type?: string;
+  item_id?: number;
+  item_name?: string;
+  [field: string]: unknown;
+};
+
+/** What an undo says: the event it voided (BUG-11). */
+export type VoidPayload = {
+  voided_event_id?: number;
+  unit_key?: string;
+  [field: string]: unknown;
+};
+
+type BattleEventBase = {
   id: number;
   battle_id: number;
-  type: BattleEventType;
   actor_user_id: number | null;
-  payload_json: Record<string, unknown>;
   created_at: string;
   /** Set when a kill or item use was undone; the event stays in the timeline (BUG-11). */
   voided_at?: string | null;
 };
 
-export type BattleState = {
+type TypedEventType = "unit_kill_recorded" | "item_used" | "unit_kill_voided" | "item_used_voided";
+
+/** A timeline event, typed by `type` for the events the pages read (IMP-54). */
+export type BattleEvent =
+  | (BattleEventBase & { type: "unit_kill_recorded"; payload_json: UnitKillPayload })
+  | (BattleEventBase & { type: "item_used"; payload_json: ItemUsedPayload })
+  | (BattleEventBase & { type: "unit_kill_voided" | "item_used_voided"; payload_json: VoidPayload })
+  | (BattleEventBase & {
+      type: Exclude<BattleEventType, TypedEventType>;
+      payload_json: Record<string, unknown>;
+    });
+
+/** A battle with its participants in one view's shape. */
+export type BattleStateOf<Participant extends BattleParticipantCore> = {
   battle: BattleSummary;
-  participants: BattleParticipant[];
+  participants: Participant[];
   events: BattleEvent[];
   /** Only in the acting player's answer, only when there are any. */
   warnings?: BattleWarning[];
 };
+
+/** The battle as the pages cache it. */
+export type BattleState = BattleStateOf<BattleParticipant>;
 
 export type BattleRosterItem = {
   id: number;
