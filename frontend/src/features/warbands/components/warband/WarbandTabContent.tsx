@@ -1,4 +1,4 @@
-﻿import UnitSection from "../units/UnitSection";
+import UnitSection from "../units/UnitSection";
 import WarbandResourceBar from "./resources/WarbandResourceBar";
 
 import type { WarbandEditors } from "../../hooks/warband/useWarbandPage";
@@ -14,7 +14,6 @@ import type {
 type WarbandTabContentProps = {
   warbandId: number;
   resources: WarbandResource[];
-  onResourcesUpdated: (resources: WarbandResource[]) => void;
   capabilities: WarbandCapabilities;
   editors: WarbandEditors;
   heroes: WarbandHero[];
@@ -40,7 +39,6 @@ type WarbandTabContentProps = {
 export default function WarbandTabContent({
   warbandId,
   resources,
-  onResourcesUpdated,
   capabilities,
   editors,
   heroes,
@@ -67,7 +65,6 @@ export default function WarbandTabContent({
       <WarbandResourceBar
         warbandId={warbandId}
         resources={resources}
-        onResourcesUpdated={onResourcesUpdated}
         canEdit={capabilities.manage_items}
         variant={layoutVariant === "mobile" ? "plain" : "card"}
       />

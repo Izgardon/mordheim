@@ -9,15 +9,21 @@ import {
 } from "@/features/campaigns/api/campaigns-api";
 import { tradeFromError } from "../utils/trade-errors";
 import { applyWarbandUpdate, isWarbandQuery } from "./warband-cache";
+import { sheetWarband } from "./warband-queries";
 import {
+  createWarbandResource,
   createWarbandTrade,
+  deleteWarbandResource,
   listWarbandItems,
   listWarbandLogs,
   listWarbandTrades,
+  sellWarbandResource,
+  updateWarbandResource,
 } from "./warbands-api";
 
 import type { TradeRequest } from "../types/trade-request-types";
-import type { WarbandTrade, WarbandTradePayload } from "../types/warband-types";
+import type { WarbandSheet } from "../types/warband-sheet";
+import type { WarbandResource, WarbandTrade, WarbandTradePayload } from "../types/warband-types";
 
 /*
  * A warband's economy as server state: its stash, its ledger (the Treasury tab) and its logs, each
@@ -88,6 +94,80 @@ export function useLedgerEntry(warbandId: number) {
       applyWarbandUpdate(queryClient, warbandId);
       prependTreasuryRow(queryClient, warbandId, row);
     },
+  });
+}
+
+/**
+ * The warband's resources as each cached sheet holds them (in its summary, which the page reads),
+ * changed by `update`: what the resource writes below answer.
+ */
+export function patchSheetResources(
+  queryClient: QueryClient,
+  warbandId: number,
+  update: (resources: WarbandResource[]) => WarbandResource[]
+) {
+  queryClient.setQueriesData<WarbandSheet>(
+    { predicate: isWarbandQuery(warbandId, "sheet") },
+    (sheet: WarbandSheet | undefined) =>
+      sheet && {
+        ...sheet,
+        summary: { ...sheet.summary, resources: update(sheetWarband(sheet).resources ?? []) },
+      }
+  );
+}
+
+const replaceResource = (saved: WarbandResource) => (resources: WarbandResource[]) =>
+  resources.map((entry) => (entry.id === saved.id ? saved : entry));
+
+/** +/- on a resource: the change (`delta`), which the server adds to what it stores (BUG-68). */
+export function useResourceChange(warbandId: number) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ resourceId, delta }: { resourceId: number; delta: number }) =>
+      updateWarbandResource(warbandId, resourceId, { delta }),
+    onSuccess: (saved) => patchSheetResources(queryClient, warbandId, replaceResource(saved)),
+  });
+}
+
+/** A sale in one request: the resource, the new gold and the "Sell" ledger row come back. */
+export function useResourceSale(warbandId: number) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      resourceId,
+      ...sale
+    }: {
+      resourceId: number;
+      quantity: number;
+      price: number;
+    }) => sellWarbandResource(warbandId, resourceId, sale),
+    onSuccess: ({ resource, summary, trade }) => {
+      patchSheetResources(queryClient, warbandId, replaceResource(resource));
+      applyWarbandUpdate(queryClient, warbandId, { summary });
+      prependTreasuryRow(queryClient, warbandId, trade);
+    },
+  });
+}
+
+/** A new named resource, at 0. */
+export function useResourceCreate(warbandId: number) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (name: string) => createWarbandResource(warbandId, { name }),
+    onSuccess: (created) =>
+      patchSheetResources(queryClient, warbandId, (resources) => [...resources, created]),
+  });
+}
+
+/** Deletes a resource (PR C asks first, ECON-UX-03). */
+export function useResourceDelete(warbandId: number) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (resourceId: number) => deleteWarbandResource(warbandId, resourceId),
+    onSuccess: (_answer, resourceId) =>
+      patchSheetResources(queryClient, warbandId, (resources) =>
+        resources.filter((entry) => entry.id !== resourceId)
+      ),
   });
 }
 

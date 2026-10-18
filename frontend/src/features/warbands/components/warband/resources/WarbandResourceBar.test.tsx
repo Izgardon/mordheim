@@ -4,9 +4,8 @@
  * that answers the resource and the new summary. `apiRequest` is answered by a fake server.
  */
 import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { notifyManager, useQuery } from "@tanstack/react-query";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import WarbandResourceBar from "./WarbandResourceBar";
 import { ApiError } from "@/lib/api-client";
@@ -27,27 +26,25 @@ const treasure: WarbandResource = { id: 3, warband_id: 9, name: "Treasure", amou
 const wyrdstone: WarbandResource = { id: 4, warband_id: 9, name: "Wyrdstone", amount: 5 };
 const goldCrowns: WarbandResource = { id: 5, warband_id: 9, name: "Gold Crowns", amount: 40 };
 
-/** The page's sheet query (its gold shown), so a write's summary refresh has an observer. */
-function SheetObserver() {
-  const sheet = useQuery<{ summary: { gold: number } }>({
+type Sheet = { warband: object; summary: { gold: number; resources: WarbandResource[] } };
+
+/**
+ * The bar as the page holds it: its resources and the header gold come from the page's cached
+ * sheet, which every resource write updates.
+ */
+function Bar({ initial, canEdit }: { initial: WarbandResource[]; canEdit: boolean }) {
+  const sheet = useQuery<Sheet>({
     queryKey: queryKeys.campaign.warbandSheet(7, 9),
     queryFn: () => new Promise<never>(() => undefined),
-    initialData: { summary: { gold: 100 } },
+    initialData: { warband: {}, summary: { gold: 100, resources: initial } },
     staleTime: Infinity,
   });
-  return <p>Header gold: {sheet.data?.summary.gold}</p>;
-}
-
-/** The bar as the page holds it: the resources it writes back come round as its props. */
-function Bar({ initial, canEdit }: { initial: WarbandResource[]; canEdit: boolean }) {
-  const [resources, setResources] = useState(initial);
   return (
     <>
-      <SheetObserver />
+      <p>Header gold: {sheet.data?.summary.gold}</p>
       <WarbandResourceBar
         warbandId={9}
-        resources={resources}
-        onResourcesUpdated={setResources}
+        resources={sheet.data?.summary.resources ?? []}
         canEdit={canEdit}
       />
     </>
@@ -65,6 +62,11 @@ const amountOf = (name: string) => {
 
 /** The server's treasure: what another tab may have saved meanwhile, plus each delta it gets. */
 let storedTreasure = treasure.amount;
+
+// The resources live in the query cache, which tells the bar on a timer by default; on a
+// microtask it tells it at once, also under the fake clock the +/- tests run on.
+beforeAll(() => notifyManager.setScheduler((callback) => queueMicrotask(callback)));
+afterAll(() => notifyManager.setScheduler((callback) => setTimeout(callback, 0)));
 
 beforeEach(() => {
   fakeApi.reset();
