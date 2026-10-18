@@ -111,7 +111,22 @@ describe("BattlePostbattle requests", () => {
     routeServer();
   });
 
-  it("makes the phone's back chevron skip postbattle through confirm/ (BUG-48, BATL-TEST-20, pinned; flips in PR A)", async () => {
+  it("makes the phone's back chevron go to the overview and skip nothing (BUG-48, BATL-TEST-20)", async () => {
+    media.mobile = true;
+    const user = setupUser();
+    await renderPostbattle();
+    // The bottom bar offers only Finalise; nothing next to it leaves the postbattle.
+    expect(screen.queryByRole("button", { name: /leave|skip/i })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Back" }));
+
+    expect(await screen.findByText("Campaign overview")).toBeInTheDocument();
+    expect(screen.getByLabelText("Current path")).toHaveTextContent(/^\/campaigns\/1$/);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(fakeApi.requests()).toEqual([]);
+  });
+
+  it("skips postbattle only from More actions, after a confirm listing what won't be applied (BUG-48)", async () => {
     media.mobile = true;
     const user = setupUser();
     fakeApi.on(`POST ${battlePath("confirm/")}`, () =>
@@ -119,15 +134,40 @@ describe("BattlePostbattle requests", () => {
     );
     await renderPostbattle();
 
-    await user.click(screen.getByRole("button", { name: "Back" }));
-    const dialog = screen.getByRole("dialog", { name: "Leave Battle" });
-    expect(dialog).toHaveTextContent(
-      "You will not be able to rejoin, and changes from this page will not be applied."
+    await user.click(screen.getByRole("button", { name: "More actions" }));
+    const menu = screen.getByRole("dialog", { name: "More actions" });
+    const skip = within(menu).getByRole("button", { name: "Skip postbattle" });
+    expect(skip).toHaveClass("btn-destructive");
+    await user.click(skip);
+
+    const dialog = screen.getByRole("dialog", { name: "Skip postbattle" });
+    expect(dialog).toHaveAccessibleDescription(
+      "Iron Vultures leaves this battle without its postbattle. You can't come back to it, and nothing from this page will be applied."
     );
-    await user.click(within(dialog).getByRole("button", { name: "Leave" }));
+    expect(
+      within(dialog)
+        .getAllByRole("listitem")
+        .map((item) => item.textContent)
+    ).toEqual([
+      "XP: Captain Wolf +3, Rolf +1, Youngblood A +1, Ogre Bodyguard +1",
+      "Kills: Captain Wolf 2 kills",
+      "Upkeep: 15 gc",
+    ]);
+    expect(fakeApi.requests()).toEqual([]);
+
+    await user.click(within(dialog).getByRole("button", { name: "Skip postbattle" }));
 
     expect(await screen.findByLabelText("Current path")).toHaveTextContent("/campaigns/1/warband");
     expect(fakeApi.requests()).toEqual([{ method: "POST", path: battlePath("confirm/") }]);
+  });
+
+  it("keeps Skip postbattle out of the desktop action panel, beside Finalise (BUG-48)", async () => {
+    await renderPostbattle();
+
+    expect(screen.queryByRole("button", { name: /leave/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Skip postbattle" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Finalise Postbattle" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "More actions" })).toBeInTheDocument();
   });
 
   it("sends each draft edit at once, unqueued, and lets an older answer undo a newer edit (BUG-44, pinned; flips in PR A)", async () => {

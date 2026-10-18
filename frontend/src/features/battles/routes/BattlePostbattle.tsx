@@ -62,6 +62,8 @@ import {
 } from "@/features/battles/components/shared/battle-dialog-styles";
 import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesktopSubnav";
 import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesDialog";
+import BattleOverflowMenu from "@/features/battles/components/shared/BattleOverflowMenu";
+import PostbattleSkipDialog from "@/features/battles/components/postbattle/PostbattleSkipDialog";
 import { listItems } from "@/features/items/api/items-api";
 import type { Item } from "@/features/items/types/item-types";
 import type { BattlePostbattleState } from "@/features/battles/types/battle-types";
@@ -69,6 +71,7 @@ import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { listWarbandResources } from "@/features/warbands/api/warbands-resources";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
+import { getErrorMessage } from "@/lib/get-error-message";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
@@ -413,10 +416,10 @@ export default function BattlePostbattle() {
   const [localExplorationKey, setLocalExplorationKey] = useState<string | null>(null);
   const [draftError, setDraftError] = useState("");
   const [isSavingDraft, setIsSavingDraft] = useState(false);
-  const [isLeaving, setIsLeaving] = useState(false);
+  const [isSkipping, setIsSkipping] = useState(false);
   const [isFinalizing, setIsFinalizing] = useState(false);
   const [isFinalizeModalOpen, setIsFinalizeModalOpen] = useState(false);
-  const [isLeaveConfirmOpen, setIsLeaveConfirmOpen] = useState(false);
+  const [isSkipConfirmOpen, setIsSkipConfirmOpen] = useState(false);
   const [isBattleNotesOpen, setIsBattleNotesOpen] = useState(false);
   const [rollTarget, setRollTarget] = useState<RollTarget>(null);
   const [isSeriousInjuryRolling, setIsSeriousInjuryRolling] = useState(false);
@@ -839,24 +842,25 @@ export default function BattlePostbattle() {
     numericBattleId,
   ]);
 
-  const handleLeaveWithoutSaving = useCallback(async () => {
+  const handleSkipPostbattle = useCallback(async () => {
     if (!currentParticipant) return;
-    setIsLeaving(true);
+    setIsSkipping(true);
     setDraftError("");
     try {
       await confirmBattlePostbattle(campaignId, numericBattleId);
-      setIsFinalizeModalOpen(false);
+      setIsSkipConfirmOpen(false);
       handleExitPostbattle();
     } catch (errorResponse) {
-      setDraftError(
-        errorResponse instanceof Error
-          ? errorResponse.message || "Unable to leave postbattle"
-          : "Unable to leave postbattle"
-      );
+      setDraftError(getErrorMessage(errorResponse, "Unable to skip postbattle"));
     } finally {
-      setIsLeaving(false);
+      setIsSkipping(false);
     }
   }, [campaignId, currentParticipant, handleExitPostbattle, numericBattleId]);
+
+  // The back chevron only leaves the page: the draft is saved and the overview resumes it (BUG-48).
+  const handleBack = useCallback(() => {
+    navigate(`/campaigns/${campaignId}`);
+  }, [campaignId, navigate]);
 
   const handleSaveBattleNotes = useCallback(
     async (battleNotes: string) => {
@@ -912,9 +916,13 @@ export default function BattlePostbattle() {
     const xpAwards = rows
       .filter((row) => row.canGainXp && row.xpEarned > 0)
       .map((row) => ({ unitKey: row.unitKey, unitName: row.unitName, xpEarned: row.xpEarned }));
+    const kills = rows
+      .filter((row) => row.killCount > 0)
+      .map((row) => ({ unitKey: row.unitKey, unitName: row.unitName, killCount: row.killCount }));
     return {
       deaths,
       xpAwards,
+      kills,
       findsGoldCrowns: draft?.finds.gold_crowns ?? 0,
       findsItems: draft?.finds.items ?? [],
       resourceAmount: explorationAmount,
@@ -945,18 +953,32 @@ export default function BattlePostbattle() {
     ],
     [upkeepRows.length]
   );
+  const overflowActions = useMemo(
+    () => [
+      {
+        label: "Skip postbattle",
+        onSelect: () => setIsSkipConfirmOpen(true),
+        disabled: isFinalized || isFinalizing || isSkipping || isSavingDraft,
+        destructive: true,
+      },
+    ],
+    [isFinalized, isFinalizing, isSavingDraft, isSkipping]
+  );
   const mobileTopBarExtraActions = useMemo(
     () => (
-      <button
-        type="button"
-        onClick={() => setIsBattleNotesOpen(true)}
-        className="icon-button flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
-        aria-label="Battle Notes"
-      >
-        <PenLine className="theme-heading-soft h-5 w-5" aria-hidden="true" />
-      </button>
+      <>
+        <button
+          type="button"
+          onClick={() => setIsBattleNotesOpen(true)}
+          className="icon-button flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
+          aria-label="Battle Notes"
+        >
+          <PenLine className="theme-heading-soft h-5 w-5" aria-hidden="true" />
+        </button>
+        <BattleOverflowMenu actions={overflowActions} />
+      </>
     ),
-    []
+    [overflowActions]
   );
 
   const handleSectionChange = useCallback((nextSectionValue: string) => {
@@ -1048,7 +1070,7 @@ export default function BattlePostbattle() {
 
     setBattleMobileTopBar?.({
       title: "Postbattle",
-      onBack: () => setIsLeaveConfirmOpen(true),
+      onBack: handleBack,
       extraActions: mobileTopBarExtraActions,
       unitTypeOptions: mobileSectionOptions,
       selectedUnitTypeValue: selectedSection,
@@ -1059,14 +1081,8 @@ export default function BattlePostbattle() {
       primaryAction: {
         label: isFinalizing ? "Finalising..." : isFinalized ? "Finalised" : "Finalise",
         onClick: () => setIsFinalizeModalOpen(true),
-        disabled: isFinalized || isFinalizing || isLeaving || isSavingDraft || !canFinalize,
+        disabled: isFinalized || isFinalizing || isSkipping || isSavingDraft || !canFinalize,
         variant: "default",
-      },
-      secondaryAction: {
-        label: isLeaving ? "Leaving..." : "Leave",
-        onClick: () => setIsLeaveConfirmOpen(true),
-        disabled: isFinalized || isFinalizing || isLeaving || isSavingDraft,
-        variant: "secondary",
       },
     });
 
@@ -1076,10 +1092,11 @@ export default function BattlePostbattle() {
     };
   }, [
     currentParticipant,
+    handleBack,
     handleSectionChange,
     isFinalized,
     isFinalizing,
-    isLeaving,
+    isSkipping,
     isMobile,
     isSavingDraft,
     canFinalize,
@@ -1120,14 +1137,17 @@ export default function BattlePostbattle() {
           selectedParticipantUserId={currentParticipant.user.id}
           onSelectParticipant={() => undefined}
           actions={
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              onClick={() => setIsBattleNotesOpen(true)}
-            >
-              Battle Notes
-            </Button>
+            <>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => setIsBattleNotesOpen(true)}
+              >
+                Battle Notes
+              </Button>
+              <BattleOverflowMenu actions={overflowActions} appearance="button" />
+            </>
           }
         />
       ) : null}
@@ -1734,15 +1754,9 @@ export default function BattlePostbattle() {
             <div className="flex flex-wrap justify-end gap-2">
               <Button
                 type="button"
-                variant="destructive"
-                disabled={isFinalized || isFinalizing || isLeaving || isSavingDraft}
-                onClick={() => setIsLeaveConfirmOpen(true)}
-              >
-                {isLeaving ? "Leaving..." : "Leave Without Saving"}
-              </Button>
-              <Button
-                type="button"
-                disabled={isFinalized || isFinalizing || isLeaving || isSavingDraft || !canFinalize}
+                disabled={
+                  isFinalized || isFinalizing || isSkipping || isSavingDraft || !canFinalize
+                }
                 onClick={() => setIsFinalizeModalOpen(true)}
               >
                 {isFinalizing ? "Finalising..." : isFinalized ? "Finalised" : "Finalise Postbattle"}
@@ -1861,43 +1875,22 @@ export default function BattlePostbattle() {
             <Button
               type="button"
               onClick={() => void handleFinalize()}
-              disabled={isFinalized || isFinalizing || isLeaving || isSavingDraft || !canFinalize}
+              disabled={isFinalized || isFinalizing || isSkipping || isSavingDraft || !canFinalize}
             >
               {isFinalizing ? "Finalising..." : "Confirm"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <Dialog open={isLeaveConfirmOpen} onOpenChange={setIsLeaveConfirmOpen}>
-        <DialogContent className={`max-w-lg ${HELPER_DIALOG_CONTENT_CLASS}`}>
-          <DialogHeader>
-            <DialogTitle>Leave Battle</DialogTitle>
-            <DialogDescription>
-              Leave this battle? You will not be able to rejoin, and changes from this page will not
-              be applied.
-            </DialogDescription>
-          </DialogHeader>
-          {draftError ? <p className="text-sm text-red-600">{draftError}</p> : null}
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => setIsLeaveConfirmOpen(false)}
-              disabled={isLeaving}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={() => void handleLeaveWithoutSaving()}
-              disabled={isLeaving}
-            >
-              {isLeaving ? "Leaving..." : "Leave"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <PostbattleSkipDialog
+        open={isSkipConfirmOpen}
+        onOpenChange={setIsSkipConfirmOpen}
+        warbandName={currentParticipant.warband.name}
+        summary={finalizeSummary}
+        isSkipping={isSkipping}
+        error={draftError}
+        onConfirm={() => void handleSkipPostbattle()}
+      />
       <BattleNotesDialog
         open={isBattleNotesOpen}
         notes={currentParticipant.battle_notes ?? ""}

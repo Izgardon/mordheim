@@ -534,10 +534,13 @@ describe("BattlePostbattle", () => {
     });
 
     await act(async () => {
-      await user.click(screen.getByRole("button", { name: "Leave Without Saving" }));
+      await user.click(screen.getByRole("button", { name: "More actions" }));
+    });
+    await act(async () => {
+      await user.click(screen.getByRole("button", { name: "Skip postbattle" }));
     });
     expect(screen.getByRole("dialog")).toHaveClass("!rounded-none");
-    expect(screen.getByRole("heading", { name: "Leave Battle" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Skip postbattle" })).toBeInTheDocument();
   });
 
   it("hides xp controls and xp awards for units that cannot gain xp", async () => {
