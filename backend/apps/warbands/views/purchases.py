@@ -2,14 +2,16 @@
 
 from typing import Any
 
+from django.db import transaction
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 
 from apps.items.models import Item
 from apps.warbands.serializers import WarbandItemSummarySerializer, WarbandSummarySerializer, WarbandTradeSerializer
-from apps.warbands.serializers.purchases import PurchaseSerializer
+from apps.warbands.serializers.purchases import PurchaseSerializer, RarityRollRequestSerializer
 from apps.warbands.services.purchases import Purchase, purchase
+from apps.warbands.services.rarity_rolls import RollRefused, record_roll
 from apps.warbands.services.stash import stash_entry
 from apps.warbands.services.unit_items import unit_item_rows
 from apps.warbands.units.catalogue_scope import in_campaign_scope
@@ -54,3 +56,21 @@ class WarbandPurchaseView(WarbandScopedView):
         item = scoped_item(self.warband, body.validated_data["item_id"])
         bought = purchase(self.warband, item, body.validated_data)
         return Response(purchase_answer(self.warband, item, bought), status=status.HTTP_201_CREATED)
+
+
+class WarbandRarityRollView(WarbandScopedView):
+    """POST rarity-rolls/: save a rarity roll that ended without a purchase (decision 9). The searching hero spends
+    his trading action, or is warned that he already had."""
+
+    def post(self, request: Request, warband_id: int) -> Response:
+        body = RarityRollRequestSerializer(data=request.data)
+        if not body.is_valid():
+            raise validation_error(body.errors)
+        item = scoped_item(self.warband, body.validated_data["item_id"])
+        try:
+            with transaction.atomic():
+                warnings = record_roll(self.warband, item, body.validated_data)
+        except RollRefused as refusal:
+            raise RosterError(str(refusal), "invalid", {"hero_id": [str(refusal)]}) from None
+        answer = {"hero_id": body.validated_data["hero_id"], "trading_action": False, "warnings": warnings}
+        return Response(answer, status=status.HTTP_201_CREATED)

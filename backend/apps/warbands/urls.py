@@ -13,6 +13,7 @@ from .views import (
     WarbandListCreateView,
     WarbandLogListView,
     WarbandPurchaseView,
+    WarbandRarityRollView,
     WarbandResourceDetailView,
     WarbandResourceListCreateView,
     WarbandResourceSaleView,
@@ -60,6 +61,11 @@ urlpatterns = [
         "warbands/<int:warband_id>/purchases/",
         WarbandPurchaseView.as_view(),
         name="warbands-purchases",
+    ),
+    path(
+        "warbands/<int:warband_id>/rarity-rolls/",
+        WarbandRarityRollView.as_view(),
+        name="warbands-rarity-rolls",
     ),
     *unit_urlpatterns(HERO),
     path(

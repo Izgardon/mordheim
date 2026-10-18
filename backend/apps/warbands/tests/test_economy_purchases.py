@@ -187,3 +187,43 @@ class RarityRollPurchaseTests(PurchaseTestCase):
 
         self.assertEqual(body["fields"], {"rarity_roll.hero_id": ["Not a hero on this warband's roster."]})
         self.assertFalse(WarbandTrade.objects.exists() or WarbandItem.objects.exists())
+
+
+class RarityRollWithoutPurchaseTests(PurchaseTestCase):
+    """POST rarity-rolls/: a search that found nothing (or wasn't bought) still spends the searcher's action."""
+
+    def _post(self, status: int = 201, **body: Any) -> Any:
+        response = self.client.post(f"/api/warbands/{self.warband.id}/rarity-rolls/", body, format="json")
+        self.assertEqual(response.status_code, status, response.content)
+        return response.json()
+
+    def test_a_failed_search_is_saved_and_spends_the_action(self):
+        ana = make_unit(HERO, self.warband, name="Ana")
+
+        body = self._post(item_id=self.sword.id, hero_id=ana.id, roll=4, rarity="Rare 9", success=False)
+
+        ana.refresh_from_db()
+        self.assertEqual((body["hero_id"], body["trading_action"], ana.trading_action), (ana.id, False, False))
+        self.assertEqual([warning["code"] for warning in body["warnings"]], ["rarity_roll_failed"])
+        roll = {"hero": "Ana", "item": "Sword", "rarity": "Rare 9", "roll": 4, "modifier": 0, "success": False}
+        self.assertEqual(log_rows(self.warband), [("trading_action", "rarity roll", roll, None)])
+        self.assertEqual((trade_rows(self.warband), WarbandItem.objects.exists()), ([], False))
+
+    def test_a_second_search_in_a_round_warns(self):
+        ana = make_unit(HERO, self.warband, name="Ana", trading_action=False)
+
+        body = self._post(item_id=self.sword.id, hero_id=ana.id, roll=11, success=True)
+
+        self.assertEqual([warning["code"] for warning in body["warnings"]], ["trading_action_spent"])
+
+    def test_refusals(self):
+        dead = make_unit(HERO, self.warband, dead=True)
+        theirs = make_unit(HERO, self.rival)
+        for hero, status in ((dead, 400), (theirs, 400)):
+            with self.subTest(hero=hero.id):
+                body = self._post(status=status, item_id=self.sword.id, hero_id=hero.id, roll=4, success=True)
+                self.assertEqual(body["fields"], {"hero_id": ["Not a hero on this warband's roster."]})
+        self._post(status=400, item_id=self.sword.id, roll=4, success=True)  # no hero
+        self.client.force_authenticate(user=self.viewer)
+        self._post(status=403, item_id=self.sword.id, hero_id=dead.id, roll=4, success=True)
+        self.assertEqual(log_rows(self.warband), [])

@@ -45,3 +45,9 @@ class PurchaseSerializer(PurchaseLineSerializer):
         elif attrs.get("target_id") is None:
             raise serializers.ValidationError({"target_id": ["target_id is required for a unit."]})
         return attrs
+
+
+class RarityRollRequestSerializer(RarityRollSerializer):
+    """POST rarity-rolls/: a roll that ended without a purchase; it still spends the searcher's trading action."""
+
+    item_id = serializers.IntegerField()
