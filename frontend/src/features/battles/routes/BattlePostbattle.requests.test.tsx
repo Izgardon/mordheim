@@ -281,28 +281,105 @@ describe("BattlePostbattle requests", () => {
     expect(deadTick("Captain Wolf")).not.toHaveAccessibleDescription();
   });
 
-  it("saves drafts with the exploration emptied, so a reload loses the roll and allows another (BUG-71, pinned; flips in PR C)", async () => {
+  it("saves the roll with the draft, so a reload shows it and allows no second roll (BUG-71)", async () => {
     const user = setupUser();
     const { unmount } = await renderPostbattle();
+    const dice = () =>
+      screen.getAllByPlaceholderText("-").map((die) => (die as HTMLInputElement).value);
 
     await user.click(screen.getByRole("button", { name: "Roll" }));
-    expect(
-      screen.getAllByPlaceholderText("-").map((die) => (die as HTMLInputElement).value)
-    ).toEqual(["3", "4"]);
-    expect(screen.getByRole("button", { name: "Roll" })).toBeDisabled();
+    expect(dice()).toEqual(["3", "4"]);
+    await waitFor(() => expect(draftBodies()).toHaveLength(1));
+    expect(draftBodies()[0].exploration).toEqual({
+      dice_values: [3, 4],
+      resource_id: 9,
+      amount_override: undefined,
+    });
 
     await commit(user, stepper("Captain Wolf", "XP"), "4");
-    await waitFor(() => expect(draftBodies()).toHaveLength(1));
-    expect(draftBodies()[0].exploration).toEqual({ dice_values: [], resource_id: null });
+    await waitFor(() => expect(draftBodies()).toHaveLength(2));
+    expect(draftBodies()[1].exploration.dice_values).toEqual([3, 4]);
 
     unmount();
     await renderPostbattle();
 
-    expect(
-      screen.getAllByPlaceholderText("-").map((die) => (die as HTMLInputElement).value)
-    ).toEqual(["", ""]);
-    expect(screen.getByRole("button", { name: "Roll" })).toBeEnabled();
+    expect(dice()).toEqual(["3", "4"]);
+    expect(screen.getByRole("button", { name: "Roll" })).toBeDisabled();
     expect(stepper("Captain Wolf", "XP")).toHaveValue(4);
+  });
+
+  it("shows the warning a draft answers when a saved roll is rolled again (BUG-71, decision 9)", async () => {
+    const user = setupUser();
+    fakeApi.on(DRAFT_ROUTE, (body: unknown) => {
+      const before = server.participants.find((entry) => entry.user.id === ME.id)!.postbattle_json;
+      const stored = storeDraft(body);
+      const previous =
+        (before as BattlePostbattleState | undefined)?.exploration?.dice_values ?? [];
+      const next = (body as { postbattle_json: BattlePostbattleState }).postbattle_json.exploration;
+      return previous.length > 0 && previous.join() !== next.dice_values.join()
+        ? {
+            ...stored,
+            warnings: [
+              {
+                code: "exploration_rerolled",
+                message: "You rolled exploration again; the earlier roll is logged.",
+              },
+            ],
+          }
+        : stored;
+    });
+    await renderPostbattle();
+
+    await user.click(screen.getByRole("button", { name: "Roll" }));
+    await waitFor(() => expect(draftBodies()).toHaveLength(1));
+    // The test dice roll 3 then 4, so a single die comes up 3: die 2 changes from 4.
+    await user.click(screen.getByRole("button", { name: "Reroll die 2" }));
+
+    await waitFor(() => expect(draftBodies()).toHaveLength(2));
+    expect(
+      await screen.findByText("You rolled exploration again; the earlier roll is logged.")
+    ).toBeInTheDocument();
+  });
+
+  it("keeps battle stat changes only when ticked, and shows what finalise warns about (SEC-10)", async () => {
+    const user = setupUser();
+    fakeApi.on(`POST ${battlePath("finalize-postbattle/")}`, () => ({
+      ...battleState({ status: "postbattle", me: { status: "confirmed_postbattle" } }),
+      warnings: [
+        {
+          code: "unit_left_warband",
+          message: "Rolf has left the warband, so his results were not applied.",
+          unit_key: "hero:3",
+        },
+      ],
+    }));
+    await renderPostbattle();
+
+    // Captain Wolf fought with WS 5 (his profile says 4); kept only if ticked.
+    expect(
+      within(row("Captain Wolf")).getByText(/Stat changes this battle: WS 4 → 5/)
+    ).toBeInTheDocument();
+    const keep = screen.getByRole("checkbox", { name: "Keep Captain Wolf's stat changes" });
+    expect(keep).not.toBeChecked();
+    expect(screen.queryByRole("checkbox", { name: "Keep Rolf's stat changes" })).toBeNull();
+    await user.click(keep);
+    await waitFor(() => expect(draftBodies()).toHaveLength(1));
+    expect(draftBodies()[0].unit_results["hero:1"].keep_stats).toBe(true);
+
+    await user.click(screen.getByRole("button", { name: "Finalise Postbattle" }));
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Finalise Postbattle" })).getByRole("button", {
+        name: "Confirm",
+      })
+    );
+
+    expect(
+      await screen.findByText("Rolf has left the warband, so his results were not applied.")
+    ).toBeInTheDocument();
+    const finalised = fakeApi.bodyOf(`POST ${battlePath("finalize-postbattle/")}`) as {
+      postbattle_json: BattlePostbattleState;
+    };
+    expect(finalised.postbattle_json.unit_results["hero:1"].keep_stats).toBe(true);
   });
 
   it("shows the kills that still count: Minus undoes the latest, Plus records one in postbattle (BUG-11)", async () => {

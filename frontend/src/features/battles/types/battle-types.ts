@@ -74,11 +74,17 @@ export type BattlePostbattleUnitResult = {
   dead: boolean;
   special_ids: number[];
   serious_injury_rolls: BattlePostbattleSeriousInjuryRoll[];
+  /** Battle stat changes become permanent only when ticked (SEC-10, decision 6). */
+  keep_stats?: boolean;
 };
 
 export type BattlePostbattleExploration = {
   dice_values: number[];
   resource_id: number | null;
+  amount_override?: number | null;
+  /** Server-computed (the chart, or the override) and server-kept; ignored on input. */
+  amount?: number;
+  previous_rolls?: number[][];
 };
 
 export type BattlePostbattleUpkeepEntry = {

@@ -306,6 +306,8 @@ vi.mock("@/features/battles/components/postbattle/postbattle-utils", () => ({
   buildLocalExplorationState: vi.fn(() => ({ ...mocks.localExploration })),
   buildPostbattleDraft: vi.fn(() => ({ ...mocks.draft })),
   buildRenderableGroups: vi.fn(() => mocks.groups),
+  // No settled roll in these tests, so nothing saves on its own.
+  settledExplorationPayload: vi.fn(() => null),
   getExplorationResourceAmount: vi.fn(() => 2),
   getPostbattleUpkeepTotal: vi.fn(() => 15),
   getSelectedExplorationDiceValues: vi.fn(() => [4, 5]),

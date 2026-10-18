@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import type {
+  BattlePostbattleState,
   BattleEvent,
   BattleParticipant,
   BattleSummary,
@@ -9,6 +10,7 @@ import type { ParticipantRoster } from "@/features/battles/components/prebattle/
 
 import {
   buildLocalExplorationState,
+  settledExplorationPayload,
   buildPostbattleDraft,
   buildRenderableGroups,
   getPostbattleUpkeepTotal,
@@ -447,6 +449,34 @@ describe("postbattle-utils", () => {
     expect(
       groups.find((group) => group.unitKind === "henchman")?.rows.every((row) => !row.canGainXp)
     ).toBe(true);
+  });
+
+  it("restores a roll saved with the draft, and calls it settled only once every die is set (BUG-71)", () => {
+    const saved = buildLocalExplorationState(
+      {
+        ...participant,
+        postbattle_json: {
+          ...(participant.postbattle_json as BattlePostbattleState),
+          exploration: { dice_values: [5, 2, 6], resource_id: 8, amount_override: 4 },
+        },
+      },
+      roster,
+      battle,
+      [{ id: 7, warband_id: 10, name: "Shards", amount: 0 }]
+    );
+    expect(saved).toMatchObject({
+      diceCount: 3,
+      diceValues: [5, 2, 6],
+      resourceId: 8,
+      amountOverride: 4,
+      hasRolledAllDice: true,
+    });
+    expect(settledExplorationPayload(saved)).toEqual({
+      dice_values: [5, 2, 6],
+      resource_id: 8,
+      amount_override: 4,
+    });
+    expect(settledExplorationPayload({ ...saved, diceValues: [5, null, 6] })).toBeNull();
   });
 
   it("builds local exploration defaults and preserves values when count changes", () => {

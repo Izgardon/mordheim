@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { Info, PenLine, RotateCcw, X } from "lucide-react";
 
@@ -34,6 +34,7 @@ import {
   buildLocalExplorationState,
   buildPostbattleDraft,
   buildRenderableGroups,
+  settledExplorationPayload,
   removePostbattleFindItem,
   setPostbattleFindsGold,
   getExplorationResourceAmount,
@@ -67,6 +68,11 @@ import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesD
 import BattleOverflowMenu from "@/features/battles/components/shared/BattleOverflowMenu";
 import PostbattleDeadTick from "@/features/battles/components/postbattle/PostbattleDeadTick";
 import PostbattleKillsControl from "@/features/battles/components/postbattle/PostbattleKillsControl";
+import PostbattleKeepStatsTick, {
+  statChanges,
+} from "@/features/battles/components/postbattle/PostbattleKeepStatsTick";
+import { flattenRosterUnits } from "@/features/battles/components/prebattle/prebattle-utils";
+import { toastBattleWarnings } from "@/features/battles/utils/battle-warnings";
 import { buildBattleUnitOptions } from "@/features/battles/components/active/active-utils";
 import { useEventUndo } from "@/features/battles/hooks/useEventUndo";
 import { liveKillEvents } from "@/features/battles/utils/battle-events";
@@ -495,9 +501,16 @@ export default function BattlePostbattle() {
     }
     const ownerKey = `${battleState.battle.id}:${currentParticipant.id}`;
     if (localExplorationKey !== ownerKey) {
-      setLocalExploration(
-        buildLocalExplorationState(currentParticipant, currentRoster, battleState.battle, resources)
+      const restored = buildLocalExplorationState(
+        currentParticipant,
+        currentRoster,
+        battleState.battle,
+        resources
       );
+      const saved = settledExplorationPayload(restored);
+      savedExplorationKeyRef.current = saved ? JSON.stringify(saved) : null;
+      lastSettledExplorationRef.current = saved;
+      setLocalExploration(restored);
       setLocalExplorationKey(ownerKey);
       return;
     }
@@ -516,14 +529,14 @@ export default function BattlePostbattle() {
     resources,
   ]);
 
+  // Drafts keep the exploration roll (BUG-71): the latest one with every die set.
+  const lastSettledExplorationRef = useRef<ReturnType<typeof settledExplorationPayload>>(null);
+  const savedExplorationKeyRef = useRef<string | null>(null);
   const sendDraft = useCallback(
     (nextDraft: BattlePostbattleState) =>
       saveBattlePostbattleDraft(campaignId, numericBattleId, {
         postbattle_json: {
-          exploration: {
-            dice_values: [],
-            resource_id: null,
-          },
+          exploration: lastSettledExplorationRef.current ?? { dice_values: [], resource_id: null },
           finds: nextDraft.finds,
           upkeep: nextDraft.upkeep,
           unit_results: nextDraft.unit_results,
@@ -531,11 +544,18 @@ export default function BattlePostbattle() {
       }),
     [campaignId, numericBattleId]
   );
+  const applyDraftAnswer = useCallback(
+    (next: BattleState) => {
+      applyBattleResponse(next);
+      toastBattleWarnings(next.warnings); // a re-roll or an unusual number went ahead
+    },
+    [applyBattleResponse]
+  );
   // One draft save at a time, newest last, as active config does: an older answer can't undo a
   // newer edit (BUG-44).
   const { save: queueDraftSave, isSaving: isSavingDraft } = useSerializedSave(
     sendDraft,
-    applyBattleResponse
+    applyDraftAnswer
   );
 
   const persistDraft = useCallback(
@@ -550,6 +570,58 @@ export default function BattlePostbattle() {
     },
     [queueDraftSave]
   );
+
+  // A settled roll (every die set) is saved at once, so a reload keeps it and allows no free
+  // re-roll; changing saved dice is a re-roll the server warns about and logs (decision 9).
+  const settledExploration = useMemo(
+    () => settledExplorationPayload(localExploration),
+    [localExploration]
+  );
+  const settledExplorationKey = settledExploration ? JSON.stringify(settledExploration) : null;
+  useEffect(() => {
+    if (!settledExploration) {
+      return;
+    }
+    lastSettledExplorationRef.current = settledExploration;
+    if (!draft || settledExplorationKey === savedExplorationKeyRef.current) {
+      return;
+    }
+    savedExplorationKeyRef.current = settledExplorationKey;
+    void persistDraft(draft);
+  }, [draft, persistDraft, settledExploration, settledExplorationKey]);
+
+  // Battle stat changes are kept only when ticked (SEC-10, decision 6); one tick per henchmen group.
+  const baseStatsByUnitKey = useMemo(
+    () =>
+      Object.fromEntries(flattenRosterUnits(currentRoster).map((unit) => [unit.key, unit.stats])),
+    [currentRoster]
+  );
+  const keepStatsTick = (unitKeys: string[], unitName: string) => {
+    const unitInformation = currentParticipant?.unit_information_json ?? {};
+    const changesOf = (unitKey: string) =>
+      statChanges(baseStatsByUnitKey[unitKey], unitInformation[unitKey]?.stats_override);
+    const changedKey = unitKeys.find((unitKey) => changesOf(unitKey).length > 0);
+    if (!changedKey || !draft) {
+      return null;
+    }
+    return (
+      <PostbattleKeepStatsTick
+        unitName={unitName}
+        changes={changesOf(changedKey)}
+        checked={unitKeys.some((unitKey) => draft.unit_results[unitKey]?.keep_stats)}
+        disabled={isFinalized}
+        onChange={(keep) =>
+          void persistDraft(
+            unitKeys.reduce(
+              (next, unitKey) =>
+                updateUnitResult(next, unitKey, (current) => ({ ...current, keep_stats: keep })),
+              draft
+            )
+          )
+        }
+      />
+    );
+  };
 
   // The finds picker filters the campaign's cached item catalogue (loaded when it first opens,
   // shared with the warband pages): no request per keystroke (PERF-40).
@@ -805,12 +877,13 @@ export default function BattlePostbattle() {
     setIsFinalizing(true);
     setDraftError("");
     try {
-      await finalizeBattlePostbattle(campaignId, numericBattleId, {
+      const finalised = await finalizeBattlePostbattle(campaignId, numericBattleId, {
         postbattle_json: {
           ...draft,
           exploration: toPostbattleExplorationPayload(localExploration),
         },
       });
+      toastBattleWarnings(finalised.warnings);
       setIsFinalizeModalOpen(false);
       handleExitPostbattle();
     } catch (errorResponse) {
@@ -1400,6 +1473,10 @@ export default function BattlePostbattle() {
                         </label>
                       ) : null}
                     </div>
+                    {keepStatsTick(
+                      group.rows.map((member) => member.unitKey),
+                      group.label
+                    )}
                     <div className="space-y-3 border-t border-border/40 pt-3">
                       {group.rows.map((row, index) => (
                         <div
@@ -1522,6 +1599,7 @@ export default function BattlePostbattle() {
                         onChange={(checked) => void handleToggleDead(row, checked)}
                       />
                     </div>
+                    {keepStatsTick([row.unitKey], row.unitName)}
                   </div>
                   {row.seriousInjuryRolls.length > 0 ? (
                     <div className="mt-3 flex flex-wrap gap-2">

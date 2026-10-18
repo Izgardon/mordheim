@@ -239,15 +239,42 @@ export function buildLocalExplorationState(
   battle: BattleSummary,
   resources: WarbandResource[]
 ): LocalExplorationState {
+  // A roll saved with the draft comes back as it was (BUG-71): the chosen dice, resource and
+  // override; the dice that weren't chosen aren't kept.
+  const saved = (participant.postbattle_json as Partial<BattlePostbattleState> | undefined)
+    ?.exploration;
+  const savedDice = Array.isArray(saved?.dice_values)
+    ? saved.dice_values.filter((value): value is number => typeof value === "number")
+    : [];
+  const savedResourceId = saved?.resource_id ?? findTreasureResourceId(resources);
+  const savedOverride = typeof saved?.amount_override === "number" ? saved.amount_override : null;
+  if (savedDice.length > 0) {
+    return {
+      diceCount: savedDice.length,
+      diceValues: savedDice,
+      selectedDice: savedDice.map((_, index) => index < 6),
+      resourceId: savedResourceId,
+      amountOverride: savedOverride,
+      hasRolledAllDice: true,
+    };
+  }
   const diceCount = getDefaultExplorationDiceCount(participant, roster, battle);
   return {
     diceCount,
     diceValues: Array.from({ length: diceCount }, () => null),
     selectedDice: Array.from({ length: diceCount }, (_, index) => index < 6),
-    resourceId: findTreasureResourceId(resources),
-    amountOverride: null,
+    resourceId: savedResourceId,
+    amountOverride: savedOverride,
     hasRolledAllDice: false,
   };
+}
+
+/** The exploration a draft save carries, once every die has a value (else null: not settled). */
+export function settledExplorationPayload(state: LocalExplorationState | null) {
+  if (!state || state.diceValues.some((value) => value === null)) {
+    return null;
+  }
+  return toPostbattleExplorationPayload(state);
 }
 
 export function setLocalExplorationDiceCount(
