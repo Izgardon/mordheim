@@ -299,6 +299,57 @@ describe("BattleActionPanel with a reported result awaiting you", () => {
     await waitFor(() => expect(screen.queryByRole("region")).not.toBeInTheDocument());
   });
 
+  it("shows a result you just reported on the card, with Withdraw (BUG-46)", async () => {
+    const user = setupUser();
+    pending = [];
+    fakeApi.on("POST /campaigns/1/battles/report-result/", () => {
+      pending = [pendingRow({ awaiting_my_answer: false, can_withdraw: true })];
+      return answeredResult("canceled");
+    });
+    const players = [
+      {
+        id: 7,
+        name: "Owner",
+        warband: { id: 101, name: "Iron Vultures", faction: "Reiklanders", wins: 0, losses: 0 },
+      },
+      {
+        id: OPPONENT.id,
+        name: "Mira",
+        warband: {
+          id: OPPONENT.warband.id,
+          name: OPPONENT.warband.name,
+          faction: "Skaven",
+          wins: 0,
+          losses: 0,
+        },
+      },
+    ];
+    renderWithQueryClient(
+      <AppStoreProvider>
+        <MemoryRouter initialEntries={["/campaigns/1"]}>
+          <BattleActionPanel campaignId={1} players={players} campaignStarted />
+        </MemoryRouter>
+      </AppStoreProvider>
+    );
+
+    const start = await screen.findByRole("button", { name: "Start battle" });
+    await waitFor(() => expect(start).toBeEnabled());
+    await user.click(start);
+    await user.click(screen.getByRole("button", { name: "Report" }));
+    const dialog = screen.getByRole("dialog", { name: "Report Battle Result" });
+    await user.type(
+      within(dialog).getByPlaceholderText("Skirmish at the Market Square..."),
+      "Ambush"
+    );
+    const ticks = within(dialog).getAllByRole("checkbox");
+    await user.click(ticks[1]);
+    await user.click(within(dialog).getByRole("checkbox", { name: "No winner" }));
+    await user.click(within(dialog).getByRole("button", { name: "Submit result" }));
+
+    const results = await screen.findByRole("region", { name: "Results awaiting approval" });
+    expect(within(results).getByRole("button", { name: "Withdraw" })).toBeInTheDocument();
+  });
+
   it("lets the submitter withdraw a result still waiting for others (BUG-46)", async () => {
     const user = setupUser();
     pending = [

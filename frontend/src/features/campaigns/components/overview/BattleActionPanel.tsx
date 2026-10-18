@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@components/button";
 import { ConfirmDialog } from "@components/confirm-dialog";
@@ -16,6 +17,7 @@ import { useAuth } from "@/features/auth/hooks/use-auth";
 import { cancelBattleAsCreator, joinBattle } from "@/features/battles/api/battles-api";
 import { DECLINE_INVITE_QUESTION } from "@/features/battles/components/prebattle/PrebattleInviteGate";
 import { useDeclineInvite } from "@/features/battles/hooks/useDeclineInvite";
+import { invalidatePendingResults } from "@/features/battles/hooks/usePendingReportedResults";
 import {
   useOpenCampaignBattles,
   useRefreshOpenBattles,
@@ -64,6 +66,7 @@ export default function BattleActionPanel({
   const isBattlesLoading = battlesQuery.isPending;
   const replaceOpenBattle = useReplaceOpenBattle(campaignId);
   const refreshOpenBattles = useRefreshOpenBattles(campaignId);
+  const queryClient = useQueryClient();
 
   const resumableBattle = useMemo(
     () => getResumableBattleForUser(battleStates, user?.id),
@@ -195,7 +198,11 @@ export default function BattleActionPanel({
             campaignId={campaignId}
             creatorUserId={user?.id ?? 0}
             players={players}
-            onBattleCreated={refreshOpenBattles}
+            onBattleCreated={() => {
+              void refreshOpenBattles();
+              // A reported result waits on the card, with Withdraw for you (BUG-46).
+              void invalidatePendingResults(queryClient, campaignId);
+            }}
           />
         ) : null}
       </div>
