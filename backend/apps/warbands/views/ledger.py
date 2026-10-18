@@ -1,5 +1,6 @@
 """A warband's log, resources and trade ledger."""
 
+from django.db.models import Prefetch
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -103,9 +104,11 @@ class WarbandResourceSaleView(WarbandScopedView):
 
 class WarbandTradeListCreateView(WarbandScopedView):
     def get(self, request: Request, warband_id: int) -> Response:
+        children = Prefetch("children", queryset=WarbandTrade.objects.select_related("created_by"))
         trades = (
             WarbandTrade.objects.filter(warband=self.warband, parent__isnull=True)
-            .prefetch_related("children")
+            .select_related("created_by")
+            .prefetch_related(children)
             .order_by("-created_at")
         )
         return Response(WarbandTradeSerializer(trades, many=True).data)
@@ -127,5 +130,6 @@ class WarbandTradeListCreateView(WarbandScopedView):
             entry["description"],
             notes=entry.get("notes", ""),
             parent=parent,
+            created_by=request.user,  # decision 6: who entered it
         )
         return Response(WarbandTradeSerializer(trade).data, status=status.HTTP_201_CREATED)

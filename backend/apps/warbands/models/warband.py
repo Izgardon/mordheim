@@ -142,6 +142,10 @@ class WarbandTrade(models.Model):
     description = models.CharField(max_length=500)
     price = models.IntegerField(default=0)
     notes = models.TextField(max_length=2000, blank=True, default="")
+    # who entered a row by hand (decision 6); None for automatic rows and rows from before pass 2
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, related_name="+", on_delete=models.SET_NULL
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

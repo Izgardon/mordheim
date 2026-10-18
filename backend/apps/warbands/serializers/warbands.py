@@ -267,7 +267,16 @@ class WarbandItemSummarySerializer(serializers.ModelSerializer):
         fields = ("id", "name", "cost", "quantity")
 
 
+class LedgerAuthorSerializer(serializers.Serializer):
+    """Who entered a ledger row by hand (decision 6)."""
+
+    id = serializers.IntegerField()
+    name = serializers.CharField(source="first_name")
+
+
 class WarbandTradeChildSerializer(serializers.ModelSerializer):
+    created_by = LedgerAuthorSerializer(read_only=True, allow_null=True)
+
     class Meta:
         model = WarbandTrade
         fields = (
@@ -276,12 +285,14 @@ class WarbandTradeChildSerializer(serializers.ModelSerializer):
             "description",
             "price",
             "notes",
+            "created_by",
             "created_at",
         )
 
 
 class WarbandTradeSerializer(serializers.ModelSerializer):
     warband_id = serializers.IntegerField(read_only=True)
+    created_by = LedgerAuthorSerializer(read_only=True, allow_null=True)
     children = WarbandTradeChildSerializer(many=True, read_only=True)
 
     class Meta:
@@ -294,6 +305,7 @@ class WarbandTradeSerializer(serializers.ModelSerializer):
             "description",
             "price",
             "notes",
+            "created_by",
             "children",
             "created_at",
             "updated_at",

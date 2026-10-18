@@ -16,11 +16,12 @@ TREASURY_KEYS = [
     "description",
     "price",
     "notes",
+    "created_by",
     "children",
     "created_at",
     "updated_at",
 ]
-CHILD_KEYS = ["id", "action", "description", "price", "notes", "created_at"]
+CHILD_KEYS = ["id", "action", "description", "price", "notes", "created_by", "created_at"]
 LOG_KEYS = ["id", "warband_id", "parent_id", "feature", "entry_type", "payload", "created_at"]
 START = datetime(2026, 10, 1, tzinfo=UTC)
 
@@ -98,9 +99,26 @@ class TreasuryTests(RosterTestCase):
                 "description": "Found coins",
                 "price": 0,  # price is optional
                 "notes": "In a well",
+                "created_by": {"id": self.player.id, "name": self.player.first_name},  # decision 6
                 "children": [],
             },
         )
+
+    def test_each_manual_row_records_who_entered_it_and_automatic_rows_nobody(self):
+        self.client.force_authenticate(user=self.admin)  # a campaign admin writing on the player's warband
+        header = self._entry(action="Group", description="Purchases").json()
+        self.client.force_authenticate(user=self.player)
+        self._entry(action="Buy", description="Axe", price=5, parent_id=header["id"])
+        stock = {"source_type": "stash", "item_id": self.sword.id, "quantity": 1, "price": 3}
+        self.warband.warband_items.create(item=self.sword, quantity=1, cost=10)
+        self.assertEqual(self.client.post(f"/api/warbands/{self.warband.id}/item-sales/", stock).status_code, 200)
+
+        rows = {row["description"]: row for row in self.client.get(self._url()).json()}
+
+        self.assertEqual(rows["Purchases"]["created_by"], {"id": self.admin.id, "name": self.admin.first_name})
+        child = rows["Purchases"]["children"][0]
+        self.assertEqual(child["created_by"], {"id": self.player.id, "name": self.player.first_name})
+        self.assertIsNone(rows["Sword"]["created_by"])  # the sale was written by the server
 
     def test_invalid_entries(self):
         cases = [
