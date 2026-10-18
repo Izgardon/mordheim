@@ -41,25 +41,26 @@ def unit_name(unit_type: str, unit: RosterUnit | None) -> str | None:
     return unit.name or unit.unit_type or KINDS[cast(UnitKindKey, unit_type)].unknown_name
 
 
-def _log(warband: Warband, feature: str, entry_type: str, payload: dict[str, Any]) -> WarbandLog:
+def write(warband: Warband, feature: str, entry_type: str, payload: dict[str, Any]) -> WarbandLog:
+    """One log entry for the warband, in the caller's transaction."""
     return WarbandLog.objects.create(warband=warband, feature=feature, entry_type=entry_type, payload=payload)
 
 
 def log_sale(warband: Warband, item: str, quantity: int, price: int, source: tuple[str, str | None]) -> None:
     source_type, source_name = source
     payload = {"item": item, "quantity": quantity, "price": price}
-    _log(warband, "items", "sold", payload | {"source_type": source_type, "source_name": source_name})
+    write(warband, "items", "sold", payload | {"source_type": source_type, "source_name": source_name})
 
 
 def log_move(
     warband: Warband, item: str, quantity: int, source: tuple[str, str | None], target: tuple[str, str | None]
 ) -> None:
     payload = {"item": item, "quantity": quantity, "source_type": source[0], "source_name": source[1]}
-    _log(warband, "items", "moved", payload | {"target_type": target[0], "target_name": target[1]})
+    write(warband, "items", "moved", payload | {"target_type": target[0], "target_name": target[1]})
 
 
 def log_discard(warband: Warband, item: str, quantity: int) -> None:
-    _log(warband, "items", "discarded", {"item": item, "quantity": quantity})
+    write(warband, "items", "discarded", {"item": item, "quantity": quantity})
 
 
 def _offered(offer: dict[str, Any]) -> dict[str, Any]:

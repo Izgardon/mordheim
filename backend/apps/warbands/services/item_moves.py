@@ -11,13 +11,13 @@ from typing import Any, cast
 
 from django.db import transaction
 from django.db.models import Prefetch
-from rest_framework.exceptions import NotFound
 
 from apps.items.models import Item
-from apps.warbands.models import Henchman, LedgerAction, RosterUnit, Warband, not_dismissed
+from apps.warbands.models import Henchman, LedgerAction, Warband, not_dismissed
 from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandItemSummarySerializer, WarbandSummarySerializer
 from apps.warbands.services import economy_log, ledger
 from apps.warbands.services.stash import add_to_stash, remove_from_stash, stash_row
+from apps.warbands.services.unit_items import add_unit_copies, resolve_unit, take_unit_copies
 from apps.warbands.units.kinds import KINDS, UnitKindKey
 
 Outcome = tuple[int, dict[str, Any]]
@@ -33,51 +33,11 @@ def _get_unit_instance(warband: Warband, unit_type: str, unit_id: int | None) ->
     return kind.with_loadout(units, detail=True, living_members=False).prefetch_related(*members).first()
 
 
-def _resolve_unit(warband: Warband, unit_type: str, unit_id: int | None, role: str) -> Any:
-    """The unit a move or sale names, if it is on the warband's roster; NotFound (404) otherwise."""
-    kind = KINDS[cast(UnitKindKey, unit_type)]  # validated against the kind keys
-    unit = kind.visible(kind.objects.filter(id=unit_id, warband=warband)).only("id", "name", "unit_type").first()
-    if unit is None:
-        raise NotFound(f"{role} not found")
-    return unit
-
-
 def _unit_payload(warband: Warband, unit_type: str, unit_id: int | None) -> Any:
     instance = _get_unit_instance(warband, unit_type, unit_id)
     if instance is None:
         return None
     return UNIT_SERIALIZERS[cast(UnitKindKey, unit_type)].detail(instance).data
-
-
-def _remove_unit_items(unit_type: str, unit: RosterUnit, item_id: int, quantity: int) -> list[int | None]:
-    """Take the unit's newest `quantity` copies; ValueError when it carries fewer, or when another request took
-    some of them first (the delete count is checked, BUG-36)."""
-    kind = KINDS[cast(UnitKindKey, unit_type)]
-    links: Any = kind.items.model._default_manager  # HeroItem, HenchmenGroupItem or HiredSwordItem
-    rows = list(
-        links.filter(**{kind.parent_field: unit, "item_id": item_id})
-        .order_by("-id")
-        .values_list("id", "cost")[:quantity]
-    )
-    if len(rows) < quantity:
-        raise ValueError("Item not found.")
-    deleted, _ = links.filter(id__in=[row_id for row_id, _cost in rows]).delete()
-    if deleted != quantity:
-        raise ValueError("Item not found.")
-    return [cost for _row_id, cost in rows]
-
-
-def _add_unit_items(unit_type: str, unit: RosterUnit, item: Item, costs: list[int | None]) -> None:
-    if not costs:
-        return
-    kind = KINDS[cast(UnitKindKey, unit_type)]
-    rows = []
-    for cost in costs:
-        kwargs: dict[str, Any] = {kind.parent_field: unit, "item": item}
-        if cost is not None:
-            kwargs["cost"] = cost
-        rows.append(kind.items.model(**kwargs))
-    kind.items.model._default_manager.bulk_create(rows)
 
 
 def _remove_stash_items(warband: Warband, item_id: int, quantity: int) -> tuple[list[int | None], Any]:
@@ -108,8 +68,8 @@ def transfer_item(warband: Warband, item: Item, data: Mapping[str, Any]) -> Outc
     source_type, source_id = data["source_type"], data.get("source_id")
     target_type, target_id = data["target_type"], data.get("target_id")
     # both ends first: a missing, dead or dismissed one must not cost the source its copies (BUG-06)
-    source_unit = None if source_type == "stash" else _resolve_unit(warband, source_type, source_id, "Source")
-    target_unit = None if target_type == "stash" else _resolve_unit(warband, target_type, target_id, "Target")
+    source_unit = None if source_type == "stash" else resolve_unit(warband, source_type, source_id, "Source")
+    target_unit = None if target_type == "stash" else resolve_unit(warband, target_type, target_id, "Target")
     with transaction.atomic():
         stash_item = removed = None
         if source_unit is None:
@@ -117,12 +77,12 @@ def transfer_item(warband: Warband, item: Item, data: Mapping[str, Any]) -> Outc
             if stash_item is None:
                 removed = item_id
         else:
-            costs = _remove_unit_items(source_type, source_unit, item_id, quantity)
+            costs = take_unit_copies(source_type, source_unit, item_id, quantity)
 
         if target_unit is None:
             stash_item = _add_stash_items(warband, item, costs)
         else:
-            _add_unit_items(target_type, target_unit, item, costs)
+            add_unit_copies(target_type, target_unit, item, costs)
         source_end = (source_type, economy_log.unit_name(source_type, source_unit))
         target_end = (target_type, economy_log.unit_name(target_type, target_unit))
         economy_log.log_move(warband, item.name, quantity, source_end, target_end)
@@ -139,7 +99,7 @@ def sell_item(warband: Warband, item: Item, data: Mapping[str, Any]) -> Outcome:
     """Sell `quantity` copies of `item` from the source of a validated sale body, with a "Sell" ledger row."""
     item_id, quantity = data["item_id"], data["quantity"]
     source_type, source_id = data["source_type"], data.get("source_id")
-    source_unit = None if source_type == "stash" else _resolve_unit(warband, source_type, source_id, "Source")
+    source_unit = None if source_type == "stash" else resolve_unit(warband, source_type, source_id, "Source")
     with transaction.atomic():
         # the gold first: it locks the warband before the stash row, as postbattle and trade completion do
         description = f"{item.name} x {quantity}" if quantity > 1 else item.name
@@ -151,7 +111,7 @@ def sell_item(warband: Warband, item: Item, data: Mapping[str, Any]) -> Outcome:
                 removed = item_id
             source = WarbandItemSummarySerializer(stash_item).data if stash_item else None
         else:
-            _remove_unit_items(source_type, source_unit, item_id, quantity)
+            take_unit_copies(source_type, source_unit, item_id, quantity)
             source = _unit_payload(warband, source_type, source_id)
         source_end = (source_type, economy_log.unit_name(source_type, source_unit))
         economy_log.log_sale(warband, item.name, quantity, data["price"], source_end)
