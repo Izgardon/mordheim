@@ -87,6 +87,7 @@ class WarbandLog(models.Model):
     class Meta:
         db_table = "warband_log"
         ordering = ["-created_at"]
+        indexes = [models.Index(fields=["warband", "-created_at", "-id"], name="warband_log_recent_idx")]
 
     def __str__(self):
         return f"{self.warband_id}:{self.feature}:{self.entry_type}"
@@ -154,6 +155,7 @@ class WarbandTrade(models.Model):
     class Meta:
         db_table = "warband_trades"
         ordering = ["-created_at"]
+        indexes = [models.Index(fields=["warband", "-created_at", "-id"], name="warband_trades_recent_idx")]
 
     def __str__(self):
         return f"{self.warband_id}:{self.action}"

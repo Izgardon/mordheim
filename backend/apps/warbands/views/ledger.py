@@ -1,11 +1,13 @@
 """A warband's log, resources and trade ledger."""
 
+from typing import Any
+
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 
 from apps.logs.utils import log_warband_event
-from apps.warbands.models import WarbandLog, WarbandResource
+from apps.warbands.models import WarbandResource
 from apps.warbands.serializers import (
     WarbandLogCreateSerializer,
     WarbandLogSerializer,
@@ -18,7 +20,9 @@ from apps.warbands.serializers import (
     WarbandTradeEditSerializer,
     WarbandTradeSerializer,
 )
-from apps.warbands.services.ledger_manual import NotEditable, edit_row, enter_row, treasury_rows
+from apps.warbands.services.ledger_manual import NotEditable, edit_row, enter_row
+from apps.warbands.services.ledger_reads import action_filter, log_features, log_rows, treasury_top_rows
+from apps.warbands.services.pagination import newest_first, paginate, requested_page
 from apps.warbands.services.resources import ResourceShortage, change_resource, sell_resource
 
 from .base import WarbandScopedView
@@ -31,12 +35,20 @@ NOT_EDITABLE = {
 
 
 class WarbandLogListView(WarbandScopedView):
+    """GET logs/[?feature=][&limit=&cursor=]: the whole log, or cursor pages (services/pagination.py) whose first
+    page also lists the log's features."""
+
     def get(self, request: Request, warband_id: int) -> Response:
-        logs = WarbandLog.objects.filter(warband=self.warband)
-        feature = request.query_params.get("feature")
-        if feature:
-            logs = logs.filter(feature__iexact=feature.strip())
-        return Response(WarbandLogSerializer(logs.order_by("-created_at"), many=True).data)
+        logs = log_rows(self.warband, request.query_params.get("feature"))
+        page = requested_page(request.query_params)
+        if page is None:
+            return Response(WarbandLogSerializer(newest_first(logs), many=True).data)
+        shown = paginate(logs, page)
+        body: dict[str, Any] = {"results": WarbandLogSerializer(shown.rows, many=True).data}
+        body["next_cursor"] = shown.next_cursor
+        if page.after is None:
+            body["features"] = log_features(self.warband)
+        return Response(body)
 
     def post(self, request: Request, warband_id: int) -> Response:
         serializer = WarbandLogCreateSerializer(data=request.data)
@@ -101,9 +113,19 @@ class WarbandResourceSaleView(WarbandScopedView):
 
 
 class WarbandTradeListCreateView(WarbandScopedView):
+    """GET trades/[?action=Buy,Sell][&limit=&cursor=]: top-level rows with their nested rows, whole or in cursor
+    pages (services/pagination.py)."""
+
     def get(self, request: Request, warband_id: int) -> Response:
-        trades = treasury_rows(self.warband).filter(parent__isnull=True).order_by("-created_at")
-        return Response(WarbandTradeSerializer(trades, many=True).data)
+        actions = action_filter(request.query_params.getlist("action"))
+        trades = treasury_top_rows(self.warband, actions)
+        page = requested_page(request.query_params)
+        if page is None:
+            return Response(WarbandTradeSerializer(newest_first(trades), many=True).data)
+        shown = paginate(trades, page)
+        return Response(
+            {"results": WarbandTradeSerializer(shown.rows, many=True).data, "next_cursor": shown.next_cursor}
+        )
 
     def post(self, request: Request, warband_id: int) -> Response:
         serializer = WarbandTradeCreateSerializer(data=request.data)

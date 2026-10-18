@@ -65,7 +65,9 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     ),  # constant in units
     "warband_items": ("/api/warbands/{warband}/items/", 3),
     "warband_logs": ("/api/warbands/{warband}/logs/", 3),
+    "warband_logs_page": ("/api/warbands/{warband}/logs/?limit=25", 4),  # + the features (first page only)
     "warband_trades": ("/api/warbands/{warband}/trades/", 4),
+    "warband_trades_page": ("/api/warbands/{warband}/trades/?limit=25", 4),
     "warband_resources": ("/api/warbands/{warband}/resources/", 3),
     # Trades (constant in trades: test below)
     "campaign_trade_requests": ("/api/campaigns/{campaign}/trade-requests/", 2),  # reads no longer expire (BUG-69)
