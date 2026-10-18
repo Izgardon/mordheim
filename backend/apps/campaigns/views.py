@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 
 from apps.battles.models import Battle, BattleParticipant
 from apps.battles.services.broadcast import ALL, bump_state_version
+from apps.battles.views.expiry import expire_overdue
 from apps.battles.views.shared import (
     _broadcast_response,
     _cancel_battle_for_all_participants,
@@ -733,6 +734,8 @@ class CampaignActiveBattlesView(APIView):
             )
             .order_by("-created_at", "-id")
         )
+        if expire_overdue(battles):  # settle what is past its deadline (decision 2), then read again
+            battles = battles.all()
 
         payload = []
         for battle in battles:

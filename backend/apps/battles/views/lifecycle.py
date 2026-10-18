@@ -20,6 +20,7 @@ from ..services.broadcast import ALL, bump_state_version
 from ..services.errors import BattleError, field_error
 from ..services.timing import invite_deadline, record_activity
 from ..services.unit_information import apply_patch, apply_whole_map, is_empty
+from .expiry import expire_overdue
 from .invites import open_prebattle, settle_after_leaving
 from .shared import (
     _all_participants_accepted,
@@ -118,6 +119,8 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
         # don't need every battle the user has ever played.
         if request.query_params.get("open") in {"1", "true"}:
             battles = battles.exclude(status__in=(Battle.STATUS_ENDED, Battle.STATUS_CANCELED))
+        if expire_overdue(battles):  # settle what is past its deadline (decision 2), then read again
+            battles = battles.all()
         return Response([_snapshot_from_battle(battle) for battle in battles])
 
     def post(self, request, campaign_id):

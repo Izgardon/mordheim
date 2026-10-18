@@ -461,7 +461,7 @@ def _cancel_battle_for_all_participants(
         battle,
         BattleEvent.TYPE_BATTLE_CANCELED,
         actor_user=actor_user,
-        payload={"canceled_by_user_id": actor_user.id, "mode": mode},
+        payload={"canceled_by_user_id": actor_user.id if actor_user else None, "mode": mode},
     )
 
 
@@ -506,6 +506,10 @@ def _get_user_battle_participant(campaign_id: int, battle_id: int, user, for_upd
     )
     if for_update:
         participant_qs = participant_qs.select_for_update(of=("self",))  # not the user or warband rows (PERF-37)
+    if for_update and is_overdue(battle):  # a write to an overdue battle settles it first (decision 2)
+        from .expiry import settle_during_write
+
+        settle_during_write(battle)
     participant = participant_qs.first()
     return battle, participant
 
