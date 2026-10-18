@@ -194,6 +194,52 @@ describe("BattleActionPanel with a battle invite", () => {
     await waitFor(() =>
       expect(screen.queryByRole("dialog", { name: "Battle Status" })).not.toBeInTheDocument()
     );
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog", { name: "Decline battle" })).not.toBeInTheDocument()
+    );
+  });
+
+  it("takes the invite out of the bell once declined on the overview (BUG-45)", async () => {
+    const user = setupUser();
+    fakeApi.on("GET /notifications/", [
+      {
+        id: 32,
+        notification_type: "battle_invite",
+        campaign_id: 1,
+        reference_id: "5",
+        payload: { battle_id: 5, campaign_id: 1, title: "Ambush", created_by_user_label: "Mira" },
+        created_at: "2026-10-18T10:00:00Z",
+      },
+    ]);
+    fakeApi.on("POST /campaigns/1/battles/5/decline/", () =>
+      battleState({ status: "canceled", me: { status: "declined" } })
+    );
+    renderWithQueryClient(
+      <AppStoreProvider>
+        <MemoryRouter initialEntries={["/campaigns/1"]}>
+          <OverviewWithBell />
+        </MemoryRouter>
+      </AppStoreProvider>
+    );
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Notifications" })).toHaveTextContent("1")
+    );
+
+    await user.click(await screen.findByRole("button", { name: "See Status" }));
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Battle Status" })).getByRole("button", {
+        name: "Decline",
+      })
+    );
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Decline battle" })).getByRole("button", {
+        name: "Decline",
+      })
+    );
+
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Notifications" })).not.toHaveTextContent("1")
+    );
   });
 });
 

@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { AppStoreProvider } from "@/stores/app-store";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 
 import BattlePrebattle from "./BattlePrebattle";
@@ -306,7 +307,11 @@ describe("BattlePrebattle", () => {
   it("shows Battle Notes only for the current user's selected warband and saves through participant config", async () => {
     const user = userEvent.setup();
 
-    renderWithQueryClient(<BattlePrebattle />);
+    renderWithQueryClient(
+      <AppStoreProvider>
+        <BattlePrebattle />
+      </AppStoreProvider>
+    );
 
     await screen.findByText("Roster for Iron Vultures");
 

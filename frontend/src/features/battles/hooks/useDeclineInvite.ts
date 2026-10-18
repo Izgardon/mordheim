@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { declineBattleInvite } from "@/features/battles/api/battles-api";
 import type { BattleState } from "@/features/battles/types/battle-types";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { useAppStore } from "@/stores/app-store";
 
 /** Declining a battle invite (BUG-45), with its pending and error state. Final once sent. */
 export function useDeclineInvite({
@@ -16,6 +17,8 @@ export function useDeclineInvite({
 }) {
   const [isDeclining, setIsDeclining] = useState(false);
   const [error, setError] = useState("");
+  const { currentBattleSession, clearCurrentBattleSession, removeBattleInviteNotification } =
+    useAppStore();
 
   const decline = useCallback(async () => {
     if (battleId === null) {
@@ -24,13 +27,26 @@ export function useDeclineInvite({
     setIsDeclining(true);
     setError("");
     try {
-      onDeclined(await declineBattleInvite(campaignId, battleId));
+      const next = await declineBattleInvite(campaignId, battleId);
+      // The server resolved the invite: the bell and the Rejoin button let it go too.
+      removeBattleInviteNotification(`battle-${battleId}`);
+      if (currentBattleSession?.battleId === battleId) {
+        clearCurrentBattleSession();
+      }
+      onDeclined(next);
     } catch (errorResponse) {
       setError(getErrorMessage(errorResponse, "Unable to decline the invitation"));
     } finally {
       setIsDeclining(false);
     }
-  }, [battleId, campaignId, onDeclined]);
+  }, [
+    battleId,
+    campaignId,
+    clearCurrentBattleSession,
+    currentBattleSession,
+    onDeclined,
+    removeBattleInviteNotification,
+  ]);
 
   return { decline, isDeclining, error };
 }
