@@ -94,6 +94,29 @@ class TradeClosingTests(TradeTestCase):
 
                 self._assert_closed(trade, status)
 
+    def test_either_player_closing_an_open_trade_ends_it_for_both(self):
+        # the sender's close cancels it, the recipient's declines it; either way both players are told and the
+        # other one can no longer act on it
+        for closer, partner, status in (
+            (self.player, self.viewer, "cancelled"),
+            (self.viewer, self.player, "declined"),
+        ):
+            with self.subTest(closer=closer.email):
+                trade = self.open_trade()
+                self.assertEqual(self.offer(partner, trade, gold=0).status_code, 200)
+                self.closing_events.reset_mock()
+                self.trade_events.reset_mock()
+
+                response = self.post_as(closer, self.trade_url(trade, "close"))
+
+                self.assertEqual((response.status_code, response.json()["status"]), (200, status))
+                self._assert_closed(trade, status)
+                self.assertEqual(self.event_names(), ["trade.closed"])
+                for action in ("offer", "lock"):
+                    late = self.post_as(partner, self.trade_url(trade, action), {"gold": 0})
+                    self.assertEqual((late.status_code, late.json()), (400, {"detail": "Trade is not active"}))
+                self.assertEqual(self.get_as(partner, self.trade_url(trade)).json()["status"], status)
+
     def test_nothing_is_closed_out_while_the_trade_goes_on_or_when_a_close_is_refused(self):
         trade = self.request_trade()
         self.assertEqual(self.post_as(self.viewer, self.trade_url(trade, "accept")).status_code, 200)
