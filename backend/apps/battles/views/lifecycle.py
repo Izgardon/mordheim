@@ -379,8 +379,6 @@ class CampaignBattleReportedResultCreateView(APIView):
                 return Response({"detail": "winner_warband_ids must be integers"}, status=400)
         winner_warband_ids = list(dict.fromkeys(winner_warband_ids))
         participant_warband_ids = {warband.id for warband in warbands.values()}
-        if not winner_warband_ids:
-            return Response({"detail": "Select at least one winner"}, status=400)
         if not set(winner_warband_ids).issubset(participant_warband_ids):
             return Response({"detail": "winner_warband_ids must belong to selected participants"}, status=400)
 

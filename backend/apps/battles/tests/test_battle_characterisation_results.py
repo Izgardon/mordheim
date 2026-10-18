@@ -35,8 +35,8 @@ class ReportedResultTests(BattleTestCase):
             user=self.viewer, notification_type=Notification.TYPE_BATTLE_RESULT_REQUEST, reference_id=str(battle_id)
         )
 
-    def test_a_future_battle_date_is_refused_and_a_winner_is_required(self):
-        # BATL-TEST-18 (BUG-46): a future date was accepted. Decision 8 (pinned; flips in PR A: no winner allowed)
+    def test_a_future_battle_date_is_refused_and_no_winner_is_allowed(self):
+        # BATL-TEST-18 (BUG-46): a future date was accepted. Decision 8: "No winner" records no wins or losses
         tomorrow = (timezone.localdate() + timedelta(days=1)).isoformat()
         response = self.report(battle_date=tomorrow)
         expected: dict[str, Any] = {"detail": "battle_date can't be in the future", "code": "invalid"}
@@ -49,8 +49,12 @@ class ReportedResultTests(BattleTestCase):
         )
         self.assertEqual(self.statuses(data["battle"]["id"]), ["reported_result_approved", "reported_result_pending"])
 
-        response = self.report(winner_warband_ids=[])
-        self.assertEqual((response.status_code, response.data), (400, {"detail": "Select at least one winner"}))
+        battle_id = self.ok(self.report(winner_warband_ids=[]), 201).data["battle"]["id"]
+        self.ok(self.post_as(self.viewer, self.url(battle_id, "approve-result")))
+        self.assertEqual(self.battle(battle_id).status, "ended")
+        self.assertEqual((self.record(self.warband), self.record(self.rival)), ((None, None), (None, None)))
+        complete = self.rival.logs.get(entry_type="complete")
+        self.assertEqual(complete.payload, {"result": "no_winner", "with": [], "against": ["Monks"]})
 
     def test_clear_all_only_resolves_a_pending_results_notification(self):
         # BUG-46: Clear all declined the result for everyone, without saying so

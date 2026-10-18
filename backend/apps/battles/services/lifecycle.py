@@ -14,8 +14,11 @@ from ..models import Battle, BattleParticipant
 
 
 def record_wins_and_losses(battle: Battle) -> None:
-    """A win for each winning warband still in the battle and a loss for every other one."""
+    """A win for each winning warband still in the battle and a loss for every other one; nothing at all when
+    nobody won ("No winner", decision 8)."""
     winner_ids = set(battle.winner_warband_ids_json or [])
+    if not winner_ids:
+        return
     warband_ids = set(
         BattleParticipant.objects.filter(battle_id=battle.id)
         .exclude(status__in=BattleParticipant.LEFT_STATUSES)

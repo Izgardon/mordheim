@@ -674,16 +674,7 @@ def _commit_reported_result_battle(battle: Battle) -> None:
         .exclude(status=BattleParticipant.STATUS_REPORTED_RESULT_DECLINED)
         .order_by("id")
     )
-    winner_ids = set(battle.winner_warband_ids_json or [])
-    loser_ids = {entry.warband_id for entry in participants if entry.warband_id not in winner_ids}
-
-    if winner_ids:
-        Warband.objects.filter(id__in=winner_ids).update(wins=F("wins") + 1)
-        Warband.objects.filter(id__in=winner_ids, wins__isnull=True).update(wins=1)
-    if loser_ids:
-        Warband.objects.filter(id__in=loser_ids).update(losses=F("losses") + 1)
-        Warband.objects.filter(id__in=loser_ids, losses__isnull=True).update(losses=1)
-
+    record_wins_and_losses(battle)  # none when nobody won (decision 8)
     for participant in participants:
         log_warband_event(
             participant.warband_id,
@@ -1509,18 +1500,17 @@ def _build_battle_complete_log_payload(battle: Battle, participant: BattlePartic
     )
     winner_ids = set(battle.winner_warband_ids_json or [])
     participant_won = participant.warband_id in winner_ids
+    others = [entry for entry in participants if entry.warband_id != participant.warband_id]
+    if not winner_ids:  # "No winner" (decision 8): everyone fought everyone
+        return {"result": "no_winner", "with": [], "against": [entry.warband.name for entry in others]}
 
     with_names: list[str] = []
     against_names: list[str] = []
-    for entry in participants:
-        warband_name = entry.warband.name
-        if entry.warband_id == participant.warband_id:
-            continue
-        entry_won = entry.warband_id in winner_ids
-        if entry_won == participant_won:
-            with_names.append(warband_name)
+    for entry in others:
+        if (entry.warband_id in winner_ids) == participant_won:
+            with_names.append(entry.warband.name)
         else:
-            against_names.append(warband_name)
+            against_names.append(entry.warband.name)
 
     return {
         "result": "won" if participant_won else "lost",

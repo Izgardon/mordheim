@@ -16,13 +16,13 @@ from .battle_support import BattleTestCase, draft, unit_result
 
 
 class BattleFinishTests(BattleTestCase):
-    def test_end_needs_the_creator_and_a_winner_from_the_battle(self):
-        # Characterises current behaviour (decision 8, pinned; flips in PR A: an empty list is "No winner")
+    def test_end_needs_the_creator_and_winners_from_the_battle(self):
+        # Decision 8: an empty list is "No winner" (test_no_winner_records_no_wins_or_losses)
         battle_id = self.to_active()
         url = self.url(battle_id, "finish")
         cases = [
-            ([], "winner_warband_ids must be a non-empty list"),
-            ("x", "winner_warband_ids must be a non-empty list"),
+            (None, "winner_warband_ids must be a list"),
+            ("x", "winner_warband_ids must be a list"),
             (["x"], "winner_warband_ids must contain integers"),
             ([0], "winner_warband_ids must contain integers"),
             ([self.warband.id + 999], "winner_warband_ids must belong to this battle"),
@@ -87,6 +87,20 @@ class BattleFinishTests(BattleTestCase):
         self.assertFalse(hero.trading_action)  # still spent
         self.assertEqual(self.battle(battle_id).status, "ended")
         self.assertEqual(self.event_types(battle_id)[-2:], ["participant_confirmed_postbattle", "battle_ended"])
+
+    def test_no_winner_records_no_wins_or_losses(self):
+        # Decision 8: End battle with "No winner" (an empty list); the battle log says so
+        battle_id = self.to_active()
+
+        data = self.ok(self.post_as(self.player, self.url(battle_id, "finish"), {"winner_warband_ids": []})).data
+        self.ok(self.finalize(self.player, battle_id, draft({})))
+        self.ok(self.finalize(self.viewer, battle_id, draft({})))
+
+        self.assertEqual(data["battle"]["winner_warband_ids_json"], [])
+        self.assertEqual(self.battle(battle_id).status, "ended")
+        self.assertEqual((self.record(self.warband), self.record(self.rival)), ((None, None), (None, None)))
+        complete = self.warband.logs.get(entry_type="complete")
+        self.assertEqual(complete.payload, {"result": "no_winner", "with": [], "against": ["Rats"]})
 
 
 class BattleCancelTests(BattleTestCase):

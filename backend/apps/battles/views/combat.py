@@ -325,9 +325,9 @@ class CampaignBattleFinishView(APIView):
     throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, battle_id):
-        winner_warband_ids = request.data.get("winner_warband_ids", [])
-        if not isinstance(winner_warband_ids, list) or not winner_warband_ids:
-            return Response({"detail": "winner_warband_ids must be a non-empty list"}, status=400)
+        winner_warband_ids = request.data.get("winner_warband_ids")
+        if not isinstance(winner_warband_ids, list):  # [] is "No winner" (decision 8)
+            return Response({"detail": "winner_warband_ids must be a list"}, status=400)
         normalized_winner_ids: list[int] = []
         for raw_winner_id in winner_warband_ids:
             try:
