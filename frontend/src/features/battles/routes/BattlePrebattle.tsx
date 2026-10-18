@@ -1,5 +1,5 @@
-﻿import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
+﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { BookOpen, PenLine } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -30,8 +30,6 @@ import {
   usePrebattleMobileBottomBar,
   usePrebattleMobileTopBar,
 } from "@/features/battles/components/prebattle/usePrebattleMobileBars";
-import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
-import { useBattleState } from "@/features/battles/hooks/useBattleState";
 import { useDeclineInvite } from "@/features/battles/hooks/useDeclineInvite";
 import { useEventUndo } from "@/features/battles/hooks/useEventUndo";
 import {
@@ -57,32 +55,29 @@ import {
 } from "@/features/battles/components/prebattle/prebattle-utils";
 import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesktopSubnav";
 import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesDialog";
-import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
+import type { BattleLayoutContext } from "@/features/battles/components/layout/battle-shell-types";
+import { useBattle } from "@/features/battles/state/battle-context";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useMediaQuery } from "@/lib/use-media-query";
 import WarbandPdfViewerDialog from "@/features/warbands/components/warband/WarbandPdfViewerDialog";
 
 export default function BattlePrebattle() {
-  const { id, battleId } = useParams();
   const { campaign, setBattleMobileTopBar, setBattleMobileBottomBar } =
     useOutletContext<BattleLayoutContext>();
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 960px)");
 
-  const campaignId = Number(id);
-  const numericBattleId = Number(battleId);
-
-  const { battleState, isLoading, error, applyBattleResponse } = useBattleState({
+  const {
     campaignId,
     battleId: numericBattleId,
-    view: "prebattle",
-  });
-  const { rosters, rosterLoading, rosterErrors } = useBattleRosters(
-    campaignId,
-    numericBattleId,
-    battleState?.participants
-  );
+    battleState,
+    battleStateRef,
+    applyBattleResponse,
+    rosters,
+    rosterLoading,
+    rosterErrors,
+  } = useBattle();
 
   const [selectedUnitKeys, setSelectedUnitKeys] = useState<string[]>([]);
   const [overrides, setOverrides] = useState<Record<string, UnitOverride>>({});
@@ -116,36 +111,25 @@ export default function BattlePrebattle() {
 
   const configInitializedRef = useRef(false);
   const lastSavedConfigHashRef = useRef("");
-  // The statuses the page last showed, read by the unready-on-exit cleanup (BUG-74).
-  const exitStatusRef = useRef({ battle: "", participant: "" });
 
   const currentParticipant = useMemo(
     () => battleState?.participants.find((participant) => participant.user.id === user?.id) ?? null,
     [battleState?.participants, user?.id]
   );
 
-  useLayoutEffect(() => {
-    exitStatusRef.current = {
-      battle: battleState?.battle.status ?? "",
-      participant: currentParticipant?.status ?? "",
-    };
-  });
-
-  // Leaving prebattle while ready takes the ready back. Only on unmount: a status change (your own
-  // Undo Ready, or the battle starting) must not send another unready (BUG-74).
+  // Leaving prebattle while ready takes the ready back. Only on unmount, and only if the battle is
+  // still in prebattle with you ready: your own Undo Ready, or the battle starting, sends no other
+  // unready (BUG-74). The page unmounts as soon as the battle moves on, so it reads the latest state.
+  const userId = user?.id;
   useEffect(
     () => () => {
-      const { battle, participant } = exitStatusRef.current;
-      if (
-        battle === "prebattle" &&
-        participant === "ready" &&
-        !Number.isNaN(campaignId) &&
-        !Number.isNaN(numericBattleId)
-      ) {
+      const latest = battleStateRef.current;
+      const mine = latest?.participants.find((participant) => participant.user.id === userId);
+      if (latest?.battle.status === "prebattle" && mine?.status === "ready") {
         void setBattleReady(campaignId, numericBattleId, false).catch(() => undefined);
       }
     },
-    [campaignId, numericBattleId]
+    [battleStateRef, campaignId, numericBattleId, userId]
   );
 
   const buildUnitInformationPayload = useCallback(
@@ -954,28 +938,6 @@ export default function BattlePrebattle() {
     setShowAddCustomUnit(false);
     setCustomUnitFormError("");
   }, [currentUserReady]);
-
-  if (isLoading) {
-    return <LoadingScreen message="Loading prebattle..." />;
-  }
-
-  if (error || !battleState) {
-    return <p className="text-sm text-red-600">{error || "Unable to load prebattle."}</p>;
-  }
-
-  if (battleState.battle.status === "canceled" || battleState.battle.status === "ended") {
-    return <Navigate to={`/campaigns/${campaignId}`} replace />;
-  }
-
-  if (battleState.battle.status === "active") {
-    return <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/active`} replace />;
-  }
-
-  if (battleState.battle.status === "postbattle") {
-    return (
-      <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/postbattle`} replace />
-    );
-  }
 
   const participantIds = battleState.participants.map((participant) => participant.user.id);
   const hasRosterResultForAllParticipants = participantIds.every((participantUserId) =>

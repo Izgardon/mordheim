@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
+import type { BattleLayoutContext } from "@/features/battles/components/layout/battle-shell-types";
 import { useBattleMobileBottomBar } from "@/features/battles/components/shared/useBattleMobileBars";
 
 export {

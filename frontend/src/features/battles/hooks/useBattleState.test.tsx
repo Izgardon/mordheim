@@ -4,7 +4,8 @@
  * battle state into TanStack.
  */
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { notifyManager } from "@tanstack/react-query";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   BATTLE_CHANNEL,
@@ -21,6 +22,7 @@ import {
 } from "@/test/battle-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
+import { createQueryWrapper } from "@/test/query-test-utils";
 import type { BattleState } from "../types/battle-types";
 import { useBattleState } from "./useBattleState";
 
@@ -30,15 +32,22 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
 }));
 vi.mock("@/lib/realtime/client", async () => (await import("@/test/fake-realtime")).fakeClient);
 
+// The state is a TanStack query: tell the hook about cache changes at once, inside `act`, rather
+// than on TanStack's timer.
+beforeAll(() => notifyManager.setScheduler((callback) => callback()));
+afterAll(() => notifyManager.setScheduler((callback) => setTimeout(callback, 0)));
+
 const firstEvent = battleEvent(3, "battle_started", ME.id);
 
 const renderBattleState = () =>
-  renderHook(() =>
-    useBattleState({
-      campaignId: CAMPAIGN_ID,
-      battleId: BATTLE_ID,
-      view: "active",
-    })
+  renderHook(
+    () =>
+      useBattleState({
+        campaignId: CAMPAIGN_ID,
+        battleId: BATTLE_ID,
+        view: "active",
+      }),
+    { wrapper: createQueryWrapper() }
   );
 
 /** Renders the hook and waits for its first full read (`sinceEventId=0`). */

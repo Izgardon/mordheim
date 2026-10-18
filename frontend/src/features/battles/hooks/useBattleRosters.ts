@@ -1,123 +1,77 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-import { getBattleRosters } from "@/features/battles/api/battles-api";
-import type { BattleParticipant, BattleRosterMap } from "@/features/battles/types/battle-types";
+import { battleRostersQuery } from "@/features/battles/api/battle-queries";
 import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
+import type { BattleParticipant } from "@/features/battles/types/battle-types";
+import { getErrorMessage } from "@/lib/get-error-message";
 
-function toParticipantRosters(rosterMap: BattleRosterMap): Record<number, ParticipantRoster> {
-  const normalized: Record<number, ParticipantRoster> = {};
-  for (const [userIdRaw, roster] of Object.entries(rosterMap)) {
-    const userId = Number(userIdRaw);
-    if (!Number.isFinite(userId)) {
-      continue;
-    }
-    normalized[userId] = {
-      heroes: roster.heroes.map((hero) => ({
-        ...hero,
-        id: hero.id,
-      })),
-      hiredSwords: roster.hiredSwords.map((hiredSword) => ({
-        ...hiredSword,
-        id: hiredSword.id,
-      })),
-      henchmenGroups: roster.henchmenGroups.map((group) => ({
-        ...group,
-        members: group.members.map((member) => ({
-          ...member,
-          id: member.id,
-        })),
-      })),
-    };
-  }
-  return normalized;
-}
+const byUserId = <T>(userIds: number[], value: T) =>
+  Object.fromEntries(userIds.map((userId) => [userId, value])) as Record<number, T>;
 
+/**
+ * Every participant's roster (`['campaign', cid, 'battle', bid, 'rosters']`), read once the
+ * participants are known and again only when they change; a phase change reads nothing (PERF-38).
+ * Loading and errors are reported per participant user id, as the pages show them.
+ */
 export function useBattleRosters(
   campaignId: number,
   battleId: number,
   participants?: BattleParticipant[]
 ) {
-  const [rosters, setRosters] = useState<Record<number, ParticipantRoster>>({});
-  const [rosterLoading, setRosterLoading] = useState<Record<number, boolean>>({});
-  const [rosterErrors, setRosterErrors] = useState<Record<number, string>>({});
-
   const participantUserIds = useMemo(
     () => (participants ?? []).map((participant) => participant.user.id),
     [participants]
   );
   const participantUserIdsKey = participantUserIds.join(",");
+  const enabled =
+    Number.isFinite(campaignId) && Number.isFinite(battleId) && participantUserIds.length > 0;
 
+  const query = useQuery({ ...battleRostersQuery(campaignId, battleId), enabled });
+  const { refetch } = query;
+
+  // A different set of participants (someone joined or left) reads the rosters again.
+  const fetchedForRef = useRef<string | null>(null);
   useEffect(() => {
-    if (Number.isNaN(campaignId) || Number.isNaN(battleId)) {
-      setRosters({});
-      setRosterLoading({});
-      setRosterErrors({});
+    if (!enabled) {
       return;
     }
-    if (!participants?.length || participantUserIds.length === 0) {
-      setRosters({});
-      setRosterLoading({});
-      setRosterErrors({});
-      return;
+    if (fetchedForRef.current !== null && fetchedForRef.current !== participantUserIdsKey) {
+      void refetch();
     }
+    fetchedForRef.current = participantUserIdsKey;
+  }, [enabled, participantUserIdsKey, refetch]);
 
-    let active = true;
-    setRosters({});
-    setRosterLoading(
-      Object.fromEntries(participantUserIds.map((participantUserId) => [participantUserId, true]))
-    );
-    setRosterErrors(
-      Object.fromEntries(participantUserIds.map((participantUserId) => [participantUserId, ""]))
-    );
-
-    getBattleRosters(campaignId, battleId)
-      .then((payload) => {
-        if (!active) {
-          return;
-        }
-        const nextRosters = toParticipantRosters(payload);
-        const nextLoading: Record<number, boolean> = {};
-        const nextErrors: Record<number, string> = {};
-        for (const userId of Object.keys(nextRosters).map(Number)) {
-          nextLoading[userId] = false;
-          nextErrors[userId] = "";
-        }
-        setRosters(nextRosters);
-        setRosterLoading(nextLoading);
-        setRosterErrors(nextErrors);
-      })
-      .catch((errorResponse) => {
-        if (!active) {
-          return;
-        }
-        const message =
-          errorResponse instanceof Error
-            ? errorResponse.message || "Unable to load roster"
-            : "Unable to load roster";
-        setRosters({});
-        setRosterLoading(
-          Object.fromEntries(
-            participantUserIds.map((participantUserId) => [participantUserId, false])
-          )
-        );
-        setRosterErrors(
-          Object.fromEntries(
-            participantUserIds.map((participantUserId) => [participantUserId, message])
-          )
-        );
-      });
-
-    return () => {
-      active = false;
+  const { data, error, isPending } = query;
+  return useMemo(() => {
+    const userIds = participantUserIdsKey ? participantUserIdsKey.split(",").map(Number) : [];
+    if (!enabled) {
+      return { rosters: {}, rosterLoading: {}, rosterErrors: {} };
+    }
+    if (data) {
+      const loadedIds = Object.keys(data).map(Number);
+      return {
+        rosters: data,
+        rosterLoading: byUserId(loadedIds, false),
+        rosterErrors: byUserId(loadedIds, ""),
+      };
+    }
+    if (isPending) {
+      return {
+        rosters: {},
+        rosterLoading: byUserId(userIds, true),
+        rosterErrors: byUserId(userIds, ""),
+      };
+    }
+    const message = getErrorMessage(error, "Unable to load roster");
+    return {
+      rosters: {},
+      rosterLoading: byUserId(userIds, false),
+      rosterErrors: byUserId(userIds, message),
     };
-  }, [battleId, campaignId, participantUserIdsKey, participants?.length]);
-
-  return useMemo(
-    () => ({
-      rosters,
-      rosterLoading,
-      rosterErrors,
-    }),
-    [rosterErrors, rosterLoading, rosters]
-  );
+  }, [data, enabled, error, isPending, participantUserIdsKey]) as {
+    rosters: Record<number, ParticipantRoster>;
+    rosterLoading: Record<number, boolean>;
+    rosterErrors: Record<number, string>;
+  };
 }

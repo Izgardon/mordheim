@@ -6,6 +6,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AppStoreProvider } from "@/stores/app-store";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 
+import BattleProvider from "@/features/battles/components/layout/BattleProvider";
+
 import BattlePrebattle from "./BattlePrebattle";
 
 const mocks = vi.hoisted(() => {
@@ -309,7 +311,9 @@ describe("BattlePrebattle", () => {
 
     renderWithQueryClient(
       <AppStoreProvider>
-        <BattlePrebattle />
+        <BattleProvider phase="prebattle">
+          <BattlePrebattle />
+        </BattleProvider>
       </AppStoreProvider>
     );
 

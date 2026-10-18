@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { BookOpen, PenLine } from "lucide-react";
 
 import { CardBackground } from "@/components/ui/card-background";
@@ -56,8 +56,6 @@ import {
 import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesktopSubnav";
 import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesDialog";
 import BattleOverflowMenu from "@/features/battles/components/shared/BattleOverflowMenu";
-import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
-import { useBattleState } from "@/features/battles/hooks/useBattleState";
 import { useEventUndo } from "@/features/battles/hooks/useEventUndo";
 import { useSerializedSave } from "@/features/battles/hooks/useSerializedSave";
 import {
@@ -77,34 +75,32 @@ import {
   normalizeCustomUnits,
   toUnitRating,
 } from "@/features/battles/components/prebattle/prebattle-utils";
-import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
+import type { BattleLayoutContext } from "@/features/battles/components/layout/battle-shell-types";
+import { useBattle } from "@/features/battles/state/battle-context";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useMediaQuery } from "@/lib/use-media-query";
 import WarbandPdfViewerDialog from "@/features/warbands/components/warband/WarbandPdfViewerDialog";
 
 export default function BattleActive() {
-  const { id, battleId } = useParams();
+  const { battleId } = useParams();
   const { setBattleMobileTopBar, setBattleMobileBottomBar } =
     useOutletContext<BattleLayoutContext>();
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 960px)");
 
-  const campaignId = Number(id);
-  const numericBattleId = Number(battleId);
-
-  const { battleState, battleStateRef, isLoading, error, applyBattleResponse, updateBattleState } =
-    useBattleState({
-      campaignId,
-      battleId: numericBattleId,
-      view: "active",
-    });
-  const { rosters, rosterLoading, rosterErrors } = useBattleRosters(
+  const {
     campaignId,
-    numericBattleId,
-    battleState?.participants
-  );
+    battleId: numericBattleId,
+    battleState,
+    battleStateRef,
+    applyBattleResponse,
+    updateBattleState,
+    rosters,
+    rosterLoading,
+    rosterErrors,
+  } = useBattle();
   const [selectedParticipantUserId, setSelectedParticipantUserId] = useState<number | null>(null);
 
   const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
@@ -817,30 +813,6 @@ export default function BattleActive() {
       return;
     }
   }, [customUnitDraft, getCurrentParticipantSnapshot, saveCurrentParticipantConfig]);
-
-  if (isLoading) {
-    return <LoadingScreen message="Loading battle..." />;
-  }
-
-  if (error || !battleState) {
-    return <p className="text-sm text-red-600">{error || "Unable to load battle."}</p>;
-  }
-
-  if (battleState.battle.status === "canceled" || battleState.battle.status === "ended") {
-    return <Navigate to={`/campaigns/${campaignId}`} replace />;
-  }
-
-  if (battleState.battle.status === "prebattle") {
-    return (
-      <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/prebattle`} replace />
-    );
-  }
-
-  if (battleState.battle.status === "postbattle") {
-    return (
-      <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/postbattle`} replace />
-    );
-  }
 
   const participantIds = battleState.participants.map((participant) => participant.user.id);
   const hasRosterResultForAllParticipants = participantIds.every((participantUserId) =>

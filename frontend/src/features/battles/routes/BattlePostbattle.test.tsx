@@ -11,6 +11,8 @@ import type {
 
 import { renderWithQueryClient } from "@/test/query-test-utils";
 
+import BattleProvider from "@/features/battles/components/layout/BattleProvider";
+
 import BattlePostbattle from "./BattlePostbattle";
 
 const mocks = vi.hoisted(() => {
@@ -458,7 +460,11 @@ describe("BattlePostbattle", () => {
   });
 
   it("renders the postbattle battle shell on desktop", async () => {
-    const { container } = renderWithQueryClient(<BattlePostbattle />);
+    const { container } = renderWithQueryClient(
+      <BattleProvider phase="postbattle">
+        <BattlePostbattle />
+      </BattleProvider>
+    );
 
     await screen.findByTestId("battle-desktop-subnav");
 
@@ -471,7 +477,11 @@ describe("BattlePostbattle", () => {
   it("saves Battle Notes through participant config", async () => {
     const user = userEvent.setup();
 
-    renderWithQueryClient(<BattlePostbattle />);
+    renderWithQueryClient(
+      <BattleProvider phase="postbattle">
+        <BattlePostbattle />
+      </BattleProvider>
+    );
 
     await screen.findByTestId("battle-desktop-subnav");
 
@@ -488,7 +498,11 @@ describe("BattlePostbattle", () => {
   it("publishes mobile section navigation without warband selection", async () => {
     mocks.useMediaQuery.mockReturnValue(true);
 
-    renderWithQueryClient(<BattlePostbattle />);
+    renderWithQueryClient(
+      <BattleProvider phase="postbattle">
+        <BattlePostbattle />
+      </BattleProvider>
+    );
 
     await waitFor(() => expect(mocks.setBattleMobileTopBar).toHaveBeenCalled());
 
@@ -518,7 +532,11 @@ describe("BattlePostbattle", () => {
   it("opens battle-styled postbattle dialogs", async () => {
     const user = userEvent.setup();
 
-    renderWithQueryClient(<BattlePostbattle />);
+    renderWithQueryClient(
+      <BattleProvider phase="postbattle">
+        <BattlePostbattle />
+      </BattleProvider>
+    );
 
     await screen.findByRole("button", { name: "Serious Injury Roll" });
 
@@ -576,7 +594,11 @@ describe("BattlePostbattle", () => {
       },
     ];
 
-    renderWithQueryClient(<BattlePostbattle />);
+    renderWithQueryClient(
+      <BattleProvider phase="postbattle">
+        <BattlePostbattle />
+      </BattleProvider>
+    );
 
     await screen.findAllByText("Ogre Bodyguard");
 
@@ -592,7 +614,11 @@ describe("BattlePostbattle", () => {
   it("searches and saves found items through the inline dropdown", async () => {
     const user = userEvent.setup();
 
-    renderWithQueryClient(<BattlePostbattle />);
+    renderWithQueryClient(
+      <BattleProvider phase="postbattle">
+        <BattlePostbattle />
+      </BattleProvider>
+    );
 
     await screen.findByTestId("battle-desktop-subnav");
 

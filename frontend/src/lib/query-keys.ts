@@ -26,6 +26,15 @@ export const queryKeys = {
     /** Your reported results still waiting for answers (the overview's card). */
     pendingResults: (campaignId: number) =>
       ["campaign", campaignId, "battles", "pending-results"] as const,
+    /** Prefix of everything cached for one battle the pages are showing. */
+    battle: (campaignId: number, battleId: number) =>
+      ["campaign", campaignId, "battle", battleId] as const,
+    /** One battle's state (battle, participants, events), patched from its socket messages. */
+    battleState: (campaignId: number, battleId: number) =>
+      ["campaign", campaignId, "battle", battleId, "state"] as const,
+    /** Every participant's roster for one battle (the start snapshot once it has started). */
+    battleRosters: (campaignId: number, battleId: number) =>
+      ["campaign", campaignId, "battle", battleId, "rosters"] as const,
     /** Your own warband in the campaign (the list endpoint's first row, or null). */
     myWarband: (campaignId: number) => ["campaign", campaignId, "warband", "mine"] as const,
     /** Prefix of everything cached for one warband. */

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { BattleState } from "@/features/battles/types/battle-types";
 
-import { getBattleStateLastEventId, mergeBattleState } from "./battle-state";
+import { getBattleStateLastEventId, mergeBattleState } from "./battle-cache";
 
 const baseState: BattleState = {
   battle: {
@@ -42,7 +42,7 @@ const baseState: BattleState = {
   ],
 };
 
-describe("battle-state utils", () => {
+describe("battle-cache", () => {
   it("marks an undone event voided from the undo event a write answers with (BUG-11)", () => {
     const merged = mergeBattleState(baseState, {
       ...baseState,

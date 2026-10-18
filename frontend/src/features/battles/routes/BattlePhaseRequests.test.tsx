@@ -1,6 +1,6 @@
 /**
- * Requests a creator's walk through the three phase pages sends: each page loads the battle's
- * state and the rosters again, though neither changed in between (PERF-38).
+ * Requests a creator's walk through the three phase pages sends: `BattleLayout` reads the battle's
+ * state and the rosters once, and moving from page to page reads neither again (PERF-38).
  */
 import { act, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
@@ -30,17 +30,12 @@ vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => false }));
 vi.mock("@/features/realtime/components/CampaignDiceRollerMenu", () => ({ default: () => null }));
 
 describe("battle phase requests", () => {
-  it("reads rosters/ and the full state once per phase page: three times each from prebattle to postbattle (PERF-38, pinned; flips in PR B)", async () => {
+  it("reads rosters/ and the state once for the whole walk from prebattle to postbattle (PERF-38)", async () => {
     const user = setupUser();
     fakeApi.reset();
     fakeApi.on(
       `GET ${statePath("prebattle")}`,
       battleState({ status: "prebattle", me: { status: "ready" }, opponent: { status: "ready" } })
-    );
-    fakeApi.on(`GET ${statePath("active")}`, battleState({ status: "active" }));
-    fakeApi.on(
-      `GET ${statePath("postbattle")}`,
-      battleState({ status: "postbattle", winner_warband_ids_json: [ME.warband.id] })
     );
     fakeApi.on(`GET ${battlePath("rosters/")}`, battleRosters());
     fakeApi.on(`GET /warbands/${ME.warband.id}/sheet/`, mySheet());
@@ -60,15 +55,12 @@ describe("battle phase requests", () => {
     // Gives a late duplicate request the chance to start before counting.
     await act(() => new Promise((resolve) => setTimeout(resolve, 50)));
 
+    // Start's and End's answers move the cached state on; the pages read nothing again.
     expect(fakeApi.calls()).toEqual([
       `GET ${statePath("prebattle")}`,
       `GET ${battlePath("rosters/")}`,
       `POST ${battlePath("start/")}`,
-      `GET ${statePath("active")}`,
-      `GET ${battlePath("rosters/")}`,
       `POST ${battlePath("finish/")}`,
-      `GET ${statePath("postbattle")}`,
-      `GET ${battlePath("rosters/")}`,
       // Postbattle's resources come from the warband's sheet query (BUG-127).
       `GET /warbands/${ME.warband.id}/sheet/`,
     ]);

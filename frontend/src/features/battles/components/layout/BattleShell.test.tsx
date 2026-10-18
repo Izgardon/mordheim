@@ -2,7 +2,7 @@ import { act, render, screen } from "@testing-library/react";
 import { useEffect } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import BattleLayout from "./BattleLayout";
+import BattleShell from "./BattleShell";
 
 const mocks = vi.hoisted(() => ({
   useMediaQuery: vi.fn(),
@@ -36,7 +36,7 @@ vi.mock("@/features/realtime/components/CampaignDiceRollerMenu", () => ({
   default: () => <div data-testid="campaign-dice-menu" />,
 }));
 
-describe("BattleLayout", () => {
+describe("BattleShell (the battle layout's chrome)", () => {
   beforeEach(() => {
     mocks.latestOutletContext = null;
     mocks.useMediaQuery.mockReturnValue(true);
@@ -44,7 +44,7 @@ describe("BattleLayout", () => {
   });
 
   it("renders the unit type selector when only section options are provided", () => {
-    render(<BattleLayout />);
+    render(<BattleShell />);
 
     expect(mocks.latestOutletContext).toBeTruthy();
 
@@ -72,12 +72,12 @@ describe("BattleLayout", () => {
 
   it("keeps the battle page mounted when the viewport crosses 960 px (BUG-23)", () => {
     mocks.outletMounts.mockClear();
-    const { rerender } = render(<BattleLayout />);
+    const { rerender } = render(<BattleShell />);
 
     mocks.useMediaQuery.mockReturnValue(false);
-    rerender(<BattleLayout />);
+    rerender(<BattleShell />);
     mocks.useMediaQuery.mockReturnValue(true);
-    rerender(<BattleLayout />);
+    rerender(<BattleShell />);
 
     expect(screen.getByTestId("battle-layout-outlet")).toBeInTheDocument();
     expect(mocks.outletMounts).toHaveBeenCalledTimes(1);

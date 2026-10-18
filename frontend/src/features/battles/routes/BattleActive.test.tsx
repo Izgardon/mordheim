@@ -3,6 +3,10 @@ import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { renderWithQueryClient } from "@/test/query-test-utils";
+
+import BattleProvider from "@/features/battles/components/layout/BattleProvider";
+
 import BattleActive from "./BattleActive";
 
 const mocks = vi.hoisted(() => {
@@ -412,7 +416,11 @@ describe("BattleActive", () => {
   });
 
   it("publishes a mobile top bar action for Battle Notes on the current user's warband", async () => {
-    render(<BattleActive />);
+    renderWithQueryClient(
+      <BattleProvider phase="active">
+        <BattleActive />
+      </BattleProvider>
+    );
 
     await screen.findByText("Active roster");
 
@@ -435,7 +443,11 @@ describe("BattleActive", () => {
   it("queues rapid wound updates and saves the final hero current_wounds snapshot", async () => {
     const user = userEvent.setup();
 
-    render(<BattleActive />);
+    renderWithQueryClient(
+      <BattleProvider phase="active">
+        <BattleActive />
+      </BattleProvider>
+    );
 
     await screen.findByText("Active roster");
 
@@ -466,7 +478,11 @@ describe("BattleActive", () => {
   it("stores henchman wound changes in current_wounds instead of stats_override", async () => {
     const user = userEvent.setup();
 
-    render(<BattleActive />);
+    renderWithQueryClient(
+      <BattleProvider phase="active">
+        <BattleActive />
+      </BattleProvider>
+    );
 
     await screen.findByText("Active roster");
 

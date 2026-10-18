@@ -1,46 +1,74 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { getBattleState } from "@/features/battles/api/battles-api";
+import { battleStateQuery } from "@/features/battles/api/battle-queries";
+import { getBattleStateLastEventId, mergeBattleState } from "@/features/battles/state/battle-cache";
 import type { BattleState, BattleStateView } from "@/features/battles/types/battle-types";
+import { getErrorMessage } from "@/lib/get-error-message";
+import { queryKeys } from "@/lib/query-keys";
 import { useBattleEvents } from "@/lib/realtime";
-
-import { getBattleStateLastEventId, mergeBattleState } from "../utils/battle-state";
 
 type UseBattleStateOptions = {
   campaignId: number;
   battleId: number;
+  /** The participant shape reads ask for (the page being shown). */
   view: BattleStateView;
 };
 
+/** A ref-like view of the cache: always the latest state, including optimistic changes. */
+export type BattleStateRef = { readonly current: BattleState | null };
+
+/**
+ * The battle's state as a TanStack query (`['campaign', cid, 'battle', bid, 'state']`): one full
+ * read per visit, writes' answers merged in with `applyBattleResponse`, and a read of the newer
+ * events for each battle socket message.
+ */
 export function useBattleState({ campaignId, battleId, view }: UseBattleStateOptions) {
-  const [battleState, setBattleState] = useState<BattleState | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
-  const battleStateRef = useRef<BattleState | null>(null);
-  const lastEventIdRef = useRef(0);
+  const queryClient = useQueryClient();
+  const validRoute = Number.isFinite(campaignId) && Number.isFinite(battleId);
+  const queryKey = useMemo(
+    () => queryKeys.campaign.battleState(campaignId, battleId),
+    [battleId, campaignId]
+  );
 
-  const syncStateRefs = useCallback((nextState: BattleState | null) => {
-    battleStateRef.current = nextState;
-    lastEventIdRef.current = getBattleStateLastEventId(nextState);
-  }, []);
+  const viewRef = useRef(view);
+  useLayoutEffect(() => {
+    viewRef.current = view;
+  });
+  const query = useQuery({
+    ...battleStateQuery(queryClient, campaignId, battleId, () => viewRef.current),
+    enabled: validRoute,
+  });
 
-  const replaceBattleState = useCallback(
-    (nextState: BattleState | null) => {
-      syncStateRefs(nextState);
-      setBattleState(nextState);
-    },
-    [syncStateRefs]
+  const readState = useCallback(
+    () => queryClient.getQueryData<BattleState>(queryKey) ?? null,
+    [queryClient, queryKey]
+  );
+  const battleStateRef = useMemo<BattleStateRef>(
+    () => ({
+      get current() {
+        return readState();
+      },
+    }),
+    [readState]
+  );
+  const lastEventIdRef = useMemo(
+    () => ({
+      get current() {
+        return getBattleStateLastEventId(readState());
+      },
+    }),
+    [readState]
   );
 
   const updateBattleState = useCallback(
     (updater: (previous: BattleState | null) => BattleState | null) => {
-      setBattleState((previous) => {
-        const nextState = updater(previous);
-        syncStateRefs(nextState);
-        return nextState;
-      });
+      queryClient.setQueryData<BattleState>(
+        queryKey,
+        (previous: BattleState | undefined) => updater(previous ?? null) ?? undefined
+      );
     },
-    [syncStateRefs]
+    [queryClient, queryKey]
   );
 
   const applyBattleResponse = useCallback(
@@ -51,63 +79,24 @@ export function useBattleState({ campaignId, battleId, view }: UseBattleStateOpt
   );
 
   const refreshBattleState = useCallback(
-    async ({ forceFull = false }: { forceFull?: boolean } = {}) => {
-      if (Number.isNaN(campaignId) || Number.isNaN(battleId)) {
-        return null;
-      }
-      const nextState = await getBattleState(campaignId, battleId, {
-        sinceEventId: forceFull ? 0 : lastEventIdRef.current,
-        view,
-      });
-      applyBattleResponse(nextState);
-      return nextState;
-    },
-    [applyBattleResponse, battleId, campaignId, view]
+    () => queryClient.refetchQueries({ queryKey, exact: true }),
+    [queryClient, queryKey]
   );
-
-  useEffect(() => {
-    if (Number.isNaN(campaignId) || Number.isNaN(battleId)) {
-      setError("Invalid battle route.");
-      setIsLoading(false);
-      return;
-    }
-
-    let active = true;
-    setIsLoading(true);
-    setError("");
-    getBattleState(campaignId, battleId, { sinceEventId: 0, view })
-      .then((nextState) => {
-        if (!active) {
-          return;
-        }
-        replaceBattleState(nextState);
-      })
-      .catch((errorResponse) => {
-        if (!active) {
-          return;
-        }
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to load battle");
-        } else {
-          setError("Unable to load battle");
-        }
-      })
-      .finally(() => {
-        if (active) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [battleId, campaignId, replaceBattleState, view]);
 
   // Battle writes name this tab's socket, so the server never sends this tab its own events; any
   // event that arrives is news, even one your own user sent from another tab or device (BUG-75).
-  useBattleEvents(Number.isNaN(battleId) ? null : battleId, () => {
+  useBattleEvents(validRoute ? battleId : null, () => {
     void refreshBattleState();
   });
+
+  const battleState = query.data ?? null;
+  const isLoading = validRoute && query.isPending;
+  let error = "";
+  if (!validRoute) {
+    error = "Invalid battle route.";
+  } else if (!battleState && query.error) {
+    error = getErrorMessage(query.error, "Unable to load battle");
+  }
 
   return useMemo(
     () => ({
@@ -116,7 +105,6 @@ export function useBattleState({ campaignId, battleId, view }: UseBattleStateOpt
       isLoading,
       error,
       lastEventIdRef,
-      replaceBattleState,
       updateBattleState,
       applyBattleResponse,
       refreshBattleState,
@@ -124,10 +112,11 @@ export function useBattleState({ campaignId, battleId, view }: UseBattleStateOpt
     [
       applyBattleResponse,
       battleState,
+      battleStateRef,
       error,
       isLoading,
+      lastEventIdRef,
       refreshBattleState,
-      replaceBattleState,
       updateBattleState,
     ]
   );

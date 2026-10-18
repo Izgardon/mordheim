@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { Info, PenLine, RotateCcw, X } from "lucide-react";
 
 import DiceRoller from "@/components/dice/DiceRoller";
@@ -54,8 +54,6 @@ import {
   type LocalExplorationState,
   type PostbattleRenderableRow,
 } from "@/features/battles/components/postbattle/postbattle-utils";
-import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
-import { useBattleState } from "@/features/battles/hooks/useBattleState";
 import { useSerializedSave } from "@/features/battles/hooks/useSerializedSave";
 import { useRefreshOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import {
@@ -82,7 +80,8 @@ import ClosePostbattleDialog from "@/features/battles/components/shared/ClosePos
 import { useClosePostbattle } from "@/features/battles/hooks/useClosePostbattle";
 import type { Item } from "@/features/items/types/item-types";
 import type { BattlePostbattleState, BattleState } from "@/features/battles/types/battle-types";
-import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
+import type { BattleLayoutContext } from "@/features/battles/components/layout/battle-shell-types";
+import { useBattle } from "@/features/battles/state/battle-context";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { warbandSheetQuery } from "@/features/warbands/api/warband-queries";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
@@ -415,21 +414,23 @@ const getItemAvailabilityCostLabel = (item: Item) => {
 };
 
 export default function BattlePostbattle() {
-  const { id, battleId } = useParams();
+  const { battleId } = useParams();
   const navigate = useNavigate();
   const { campaign, setBattleMobileTopBar, setBattleMobileBottomBar } =
     useOutletContext<BattleLayoutContext>();
   const { user } = useAuth();
   const { diceColor, clearCurrentBattleSession } = useAppStore();
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const campaignId = Number(id);
-  const numericBattleId = Number(battleId);
-  const refreshOpenBattles = useRefreshOpenBattles(campaignId);
-  const { battleState, isLoading, error, applyBattleResponse } = useBattleState({
+  const {
     campaignId,
     battleId: numericBattleId,
-    view: "postbattle",
-  });
+    battleState,
+    applyBattleResponse,
+    rosters,
+    rosterLoading,
+    rosterErrors,
+  } = useBattle();
+  const refreshOpenBattles = useRefreshOpenBattles(campaignId);
   const [draft, setDraft] = useState<BattlePostbattleState | null>(null);
   const [localExploration, setLocalExploration] = useState<LocalExplorationState | null>(null);
   const [localExplorationKey, setLocalExplorationKey] = useState<string | null>(null);
@@ -448,11 +449,6 @@ export default function BattlePostbattle() {
   const [selectedSection, setSelectedSection] = useState<PostbattleSectionKey>("exploration");
   const [isFindItemDropdownOpen, setIsFindItemDropdownOpen] = useState(false);
   const [findItemSearch, setFindItemSearch] = useState("");
-  const { rosters, rosterLoading, rosterErrors } = useBattleRosters(
-    campaignId,
-    numericBattleId,
-    battleState?.participants
-  );
 
   const currentParticipant = useMemo(
     () => battleState?.participants.find((participant) => participant.user.id === user?.id) ?? null,
@@ -1245,17 +1241,6 @@ export default function BattlePostbattle() {
     setBattleMobileTopBar,
   ]);
 
-  if (isLoading) return <LoadingScreen message="Loading postbattle..." />;
-  if (error || !battleState)
-    return <p className="text-sm text-red-600">{error || "Unable to load postbattle."}</p>;
-  if (battleState.battle.status === "canceled" || battleState.battle.status === "ended")
-    return <Navigate to={`/campaigns/${campaignId}`} replace />;
-  if (battleState.battle.status === "prebattle")
-    return (
-      <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/prebattle`} replace />
-    );
-  if (battleState.battle.status === "active")
-    return <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/active`} replace />;
   if (!currentParticipant)
     return <p className="text-sm text-red-600">You are not part of this battle.</p>;
   if (
