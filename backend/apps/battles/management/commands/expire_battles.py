@@ -11,8 +11,8 @@ from django.utils import timezone
 
 from apps.battles.models import Battle
 from apps.battles.services.broadcast import bump_state_version
+from apps.battles.services.expiry import expire_locked_battle, publish_expired
 from apps.battles.services.timing import TIMED_STATUSES
-from apps.battles.views.expiry import _publish, expire_locked_battle
 
 
 class Command(BaseCommand):
@@ -35,7 +35,7 @@ class Command(BaseCommand):
                 events = expire_locked_battle(battle) if battle else []
                 version = bump_state_version(battle) if battle and events else 0
             if battle and events:
-                _publish(battle, events, version)
+                publish_expired(battle, events, version)
                 settled += 1
                 self.stdout.write(f"battle {battle_id}: {status} settled ({battle.status})")
         self.stdout.write(f"{settled} battle(s) settled" if not dry_run else "dry run: nothing changed")

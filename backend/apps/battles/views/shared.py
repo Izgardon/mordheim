@@ -7,18 +7,13 @@ from apps.campaigns.models import CampaignSettings
 from apps.campaigns.permissions import get_membership
 from apps.items.models import Item
 from apps.logs.utils import log_warband_event
-from apps.notifications.models import Notification
-from apps.notifications.utils import resolve_notifications_for_reference
 from apps.special.models import Special
 from apps.warbands.models import (
     Henchman,
     HenchmenGroup,
-    HenchmenGroupItem,
     Hero,
-    HeroItem,
     HeroSpecial,
     HiredSword,
-    HiredSwordItem,
     LedgerAction,
     Warband,
     WarbandResource,
@@ -31,12 +26,13 @@ from apps.warbands.units.services.xp import XP_FIELDS, apply_xp_gain
 from apps.warbands.utils.leaders import ensure_single_living_leader
 
 from ..models import Battle, BattleEvent, BattleParticipant
-from ..services.events import append_event, notify_user
+from ..services.expiry import settle_during_write
 from ..services.exploration import exploration_amount
 from ..services.injuries import apply_stat_and_special, injury_outcome
 from ..services.items_lost import carried_item_names, henchman_takes_his_share, lost_entry
 from ..services.kills import kill_counts_by_unit
-from ..services.lifecycle import participants_all_in, record_wins_and_losses
+from ..services.lifecycle import battle_result_log
+from ..services.postbattle.items import consume_single_use_items
 from ..services.selection import custom_unit_entry, permanent_unit_keys
 from ..services.timing import is_overdue
 from ..services.unit_information import (
@@ -57,67 +53,6 @@ INGAME_EVENT_TYPES = {
     BattleEvent.TYPE_DEATH_RECORDED,
     BattleEvent.TYPE_ITEM_USED,
 }
-
-
-def _cancel_battle_for_all_participants(
-    battle: Battle,
-    *,
-    actor_user,
-    mode: str,
-) -> dict:
-    now = timezone.now()
-    battle.status = Battle.STATUS_CANCELED
-    battle.ended_at = battle.ended_at or now
-    battle.save(update_fields=["status", "ended_at", "updated_at"])
-
-    participants = list(BattleParticipant.objects.select_for_update().filter(battle_id=battle.id))
-    if battle.flow_type == Battle.FLOW_TYPE_NORMAL:
-        for entry in participants:
-            # a finished postbattle is a record, never rewritten (BUG-09; cancels refuse postbattle anyway)
-            if entry.status in (*BattleParticipant.LEFT_STATUSES, BattleParticipant.STATUS_CONFIRMED_POSTBATTLE):
-                continue
-            entry.status = BattleParticipant.STATUS_CANCELED_PREBATTLE
-            entry.canceled_at = entry.canceled_at or now
-            entry.responded_at = entry.responded_at or now
-            entry.save(
-                update_fields=[
-                    "status",
-                    "canceled_at",
-                    "responded_at",
-                    "updated_at",
-                ]
-            )
-        resolve_notifications_for_reference(Notification.TYPE_BATTLE_INVITE, str(battle.id))
-    else:
-        for entry in participants:
-            update_fields = []
-            if entry.status != BattleParticipant.STATUS_REPORTED_RESULT_DECLINED:
-                entry.status = BattleParticipant.STATUS_REPORTED_RESULT_DECLINED
-                update_fields.append("status")
-            if entry.responded_at is None:
-                entry.responded_at = now
-                update_fields.append("responded_at")
-            if update_fields:
-                entry.save(update_fields=[*update_fields, "updated_at"])
-
-        resolve_notifications_for_reference(Notification.TYPE_BATTLE_RESULT_REQUEST, str(battle.id))
-        for user_id in [entry.user_id for entry in participants]:
-            notify_user(
-                user_id,
-                "battle_result_updated",
-                {
-                    "battle_id": battle.id,
-                    "campaign_id": battle.campaign_id,
-                    "status": battle.status,
-                },
-            )
-
-    return append_event(
-        battle,
-        BattleEvent.TYPE_BATTLE_CANCELED,
-        actor_user=actor_user,
-        payload={"canceled_by_user_id": actor_user.id if actor_user else None, "mode": mode},
-    )
 
 
 PRESENCE_REFRESH_SECONDS = 60
@@ -162,145 +97,9 @@ def _get_user_battle_participant(campaign_id: int, battle_id: int, user, for_upd
     if for_update:
         participant_qs = participant_qs.select_for_update(of=("self",))  # not the user or warband rows (PERF-37)
     if for_update and is_overdue(battle):  # a write to an overdue battle settles it first (decision 2)
-        from .expiry import settle_during_write
-
         settle_during_write(battle)
     participant = participant_qs.first()
     return battle, participant
-
-
-def _all_participants_ready(battle_id: int) -> bool:
-    headcount = participants_all_in(battle_id)
-    return headcount.total > 0 and headcount.ready == headcount.total
-
-
-def _all_participants_accepted(battle_id: int) -> bool:
-    headcount = participants_all_in(battle_id)
-    return headcount.total > 0 and headcount.accepted == headcount.total
-
-
-def _all_reported_result_participants_approved(battle_id: int) -> bool:
-    participants = BattleParticipant.objects.filter(battle_id=battle_id)
-    return (
-        participants.exists()
-        and not participants.exclude(status=BattleParticipant.STATUS_REPORTED_RESULT_APPROVED).exists()
-    )
-
-
-def _all_started_participants_finished(battle_id: int) -> bool:
-    participants = BattleParticipant.objects.filter(battle_id=battle_id).exclude(
-        status=BattleParticipant.STATUS_CANCELED_PREBATTLE
-    )
-    return (
-        participants.exists()
-        and not participants.exclude(
-            status__in=(
-                BattleParticipant.STATUS_FINISHED_BATTLE,
-                BattleParticipant.STATUS_CONFIRMED_POSTBATTLE,
-            )
-        ).exists()
-    )
-
-
-def _all_started_participants_confirmed(battle_id: int) -> bool:
-    participants = BattleParticipant.objects.filter(battle_id=battle_id).exclude(
-        status__in=BattleParticipant.LEFT_STATUSES
-    )
-    return (
-        participants.exists()
-        and not participants.exclude(status=BattleParticipant.STATUS_CONFIRMED_POSTBATTLE).exists()
-    )
-
-
-def _latest_finished_participant(battle_id: int):
-    return (
-        BattleParticipant.objects.filter(
-            battle_id=battle_id,
-            status__in=(
-                BattleParticipant.STATUS_FINISHED_BATTLE,
-                BattleParticipant.STATUS_CONFIRMED_POSTBATTLE,
-            ),
-            finished_at__isnull=False,
-        )
-        .order_by("-finished_at", "-id")
-        .first()
-    )
-
-
-def _finalize_battle(battle: Battle, actor_user, events: list[dict], **ended: object) -> None:
-    """End the battle (the battle is locked; its status guards against a second end): wins and losses recorded
-    once (decision 3), the battle_ended event (with `ended`, e.g. who closed postbattle) and pivotal moments."""
-    if battle.status == Battle.STATUS_ENDED:
-        return
-
-    now = timezone.now()
-    if not battle.post_processed_at:
-        battle.post_processed_at = now
-
-    battle.status = Battle.STATUS_ENDED
-    battle.ended_at = battle.ended_at or now
-    battle.save(update_fields=["status", "ended_at", "post_processed_at", "updated_at"])
-    events.append(
-        append_event(
-            battle,
-            BattleEvent.TYPE_BATTLE_ENDED,
-            actor_user=actor_user,
-            payload={"winner_warband_ids": battle.winner_warband_ids_json or [], **ended},
-        )
-    )
-    record_wins_and_losses(battle)
-    # trading actions were reset at End battle, once (BUG-122)
-    from apps.campaigns.pivotal_moments import generate_pivotal_moments_for_battle
-
-    generate_pivotal_moments_for_battle(battle)
-
-
-def _commit_reported_result_battle(battle: Battle) -> None:
-    participants = list(
-        BattleParticipant.objects.select_related("warband")
-        .filter(battle_id=battle.id)
-        .exclude(status=BattleParticipant.STATUS_REPORTED_RESULT_DECLINED)
-        .order_by("id")
-    )
-    record_wins_and_losses(battle)  # none when nobody won (decision 8)
-    for participant in participants:
-        log_warband_event(
-            participant.warband_id,
-            "battle",
-            "complete",
-            _build_battle_complete_log_payload(battle, participant),
-        )
-
-
-def _battle_is_most_recent_for_warband(battle: Battle, warband_id: int) -> bool:
-    latest_battle_id = (
-        Battle.objects.filter(
-            participants__warband_id=warband_id,
-            status=Battle.STATUS_ENDED,
-            ended_at__isnull=False,
-        )
-        .distinct()
-        .order_by("-ended_at", "-created_at", "-id")
-        .values_list("id", flat=True)
-        .first()
-    )
-    return latest_battle_id == battle.id
-
-
-def _reset_trading_actions_for_battle_participants(
-    battle: Battle,
-    *,
-    only_if_most_recent: bool = False,
-) -> None:
-    participant_warband_ids = list(
-        BattleParticipant.objects.filter(battle_id=battle.id)
-        .exclude(status__in=BattleParticipant.LEFT_STATUSES)
-        .values_list("warband_id", flat=True)
-    )
-    for warband_id in dict.fromkeys(participant_warband_ids):
-        if only_if_most_recent and not _battle_is_most_recent_for_warband(battle, warband_id):
-            continue
-        Hero.objects.filter(warband_id=warband_id).update(trading_action=True)
 
 
 def _kept_stats(unit, stats_override: dict[str, int | str], unit_name: str, stat_logs: list[dict]) -> list[str]:
@@ -458,127 +257,6 @@ def _validate_postbattle_json_for_participant(
             raise ValueError("One or more upkeep hired swords are invalid")
 
     return normalized
-
-
-def _build_battle_complete_log_payload(battle: Battle, participant: BattleParticipant) -> dict:
-    participants = list(
-        BattleParticipant.objects.select_related("warband")
-        .filter(battle_id=battle.id)
-        .exclude(status__in=BattleParticipant.LEFT_STATUSES)
-        .order_by("id")
-    )
-    winner_ids = set(battle.winner_warband_ids_json or [])
-    participant_won = participant.warband_id in winner_ids
-    others = [entry for entry in participants if entry.warband_id != participant.warband_id]
-    if not winner_ids:  # "No winner" (decision 8): everyone fought everyone
-        return {"result": "no_winner", "with": [], "against": [entry.warband.name for entry in others]}
-
-    with_names: list[str] = []
-    against_names: list[str] = []
-    for entry in others:
-        if (entry.warband_id in winner_ids) == participant_won:
-            with_names.append(entry.warband.name)
-        else:
-            against_names.append(entry.warband.name)
-
-    return {
-        "result": "won" if participant_won else "lost",
-        "with": with_names,
-        "against": against_names,
-    }
-
-
-def _remove_used_single_use_items(battle: Battle, participant: BattleParticipant) -> None:
-    usage_counts: defaultdict[tuple[str, int, int], int] = defaultdict(int)
-    item_ids: set[int] = set()
-    henchman_ids: set[int] = set()
-
-    item_events = BattleEvent.objects.filter(
-        battle_id=battle.id,
-        actor_user_id=participant.user_id,
-        type=BattleEvent.TYPE_ITEM_USED,
-        voided_at__isnull=True,  # an undone use keeps the item (decision 5)
-    ).values_list("payload_json", flat=True)
-
-    for payload in item_events:
-        if not isinstance(payload, dict):
-            continue
-        unit_key = payload.get("unit_key")
-        item_id_raw = payload.get("item_id")
-        if not isinstance(unit_key, str) or not unit_key.strip():
-            continue
-        try:
-            item_id = coerce_int(item_id_raw, field_name="item_id", minimum=1)
-            parsed_unit = parse_unit_key(unit_key)
-        except ValueError:
-            continue
-        if parsed_unit["unit_type"] not in {"hero", "hired_sword", "henchman"}:
-            continue
-        unit_id = parsed_unit["unit_id"]
-        if unit_id is None:
-            continue
-        usage_counts[(parsed_unit["unit_type"], unit_id, item_id)] += 1
-        item_ids.add(item_id)
-        if parsed_unit["unit_type"] == "henchman":
-            henchman_ids.add(unit_id)
-
-    if not usage_counts or not item_ids:
-        return
-
-    single_use_item_ids = set(Item.objects.filter(id__in=item_ids, single_use=True).values_list("id", flat=True))
-    if not single_use_item_ids:
-        return
-
-    henchman_group_ids = {
-        henchman_id: group_id
-        for henchman_id, group_id in Henchman.objects.filter(
-            id__in=henchman_ids,
-            group__warband_id=participant.warband_id,
-        ).values_list("id", "group_id")
-    }
-
-    for (unit_type, unit_id, item_id), count in usage_counts.items():
-        if item_id not in single_use_item_ids or count <= 0:
-            continue
-
-        if unit_type == "hero":
-            row_ids = list(
-                HeroItem.objects.select_for_update(of=("self",))
-                .filter(hero_id=unit_id, hero__warband_id=participant.warband_id, item_id=item_id)
-                .order_by("id")
-                .values_list("id", flat=True)[:count]
-            )
-            if row_ids:
-                HeroItem.objects.filter(id__in=row_ids).delete()
-            continue
-
-        if unit_type == "hired_sword":
-            row_ids = list(
-                HiredSwordItem.objects.select_for_update(of=("self",))
-                .filter(hired_sword_id=unit_id, hired_sword__warband_id=participant.warband_id, item_id=item_id)
-                .order_by("id")
-                .values_list("id", flat=True)[:count]
-            )
-            if row_ids:
-                HiredSwordItem.objects.filter(id__in=row_ids).delete()
-            continue
-
-        if unit_type == "henchman":
-            group_id = henchman_group_ids.get(unit_id)
-            if not group_id:
-                continue
-            row_ids = list(
-                HenchmenGroupItem.objects.select_for_update(of=("self",))
-                .filter(
-                    henchmen_group_id=group_id,
-                    henchmen_group__warband_id=participant.warband_id,
-                    item_id=item_id,
-                )
-                .order_by("id")
-                .values_list("id", flat=True)[:count]
-            )
-            if row_ids:
-                HenchmenGroupItem.objects.filter(id__in=row_ids).delete()
 
 
 def _apply_participant_postbattle_results(
@@ -856,13 +534,13 @@ def _apply_participant_postbattle_results(
         notes = f"Postbattle finds from {battle.scenario}"[:2000]
         ledger.record(warband, LedgerAction.REWARD, finds_gold_crowns, "Battle reward", notes=notes)
 
-    _remove_used_single_use_items(battle, participant)
+    consume_single_use_items(battle, participant)
 
     log_warband_event(
         participant.warband_id,
         "battle",
         "complete",
-        _build_battle_complete_log_payload(battle, participant),
+        battle_result_log(battle, participant),
     )
     previous_rolls = exploration.get("previous_rolls", [])  # kept by the server (services/exploration.py)
     log_warband_event(

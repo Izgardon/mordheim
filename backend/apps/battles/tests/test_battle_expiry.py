@@ -14,7 +14,7 @@ from django.test.utils import CaptureQueriesContext
 from django.utils import timezone
 
 from apps.battles.models import Battle
-from apps.battles.views import expiry
+from apps.battles.services import expiry
 from apps.warbands.models import HeroItem, Warband
 
 from .battle_support import BattleTestCase, catalogue_item, draft

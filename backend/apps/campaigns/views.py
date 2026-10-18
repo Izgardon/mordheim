@@ -13,9 +13,9 @@ from rest_framework.views import APIView
 from apps.battles.models import Battle, BattleParticipant
 from apps.battles.serializers import serialize_battle, serialize_participant
 from apps.battles.services.broadcast import ALL, bump_state_version
-from apps.battles.views.expiry import expire_overdue
+from apps.battles.services.expiry import expire_overdue
+from apps.battles.services.lifecycle import cancel_battle
 from apps.battles.views.responses import broadcast_response, response_with_snapshot
-from apps.battles.views.shared import _cancel_battle_for_all_participants
 from apps.core.throttling import (
     BATTLE_WRITE_THROTTLE_CLASSES,
     CAMPAIGN_CHAT_THROTTLE_CLASSES,
@@ -771,7 +771,7 @@ class CampaignActiveBattleCancelView(APIView):
                     status=400,
                 )
 
-            event = _cancel_battle_for_all_participants(
+            event = cancel_battle(
                 battle,
                 actor_user=request.user,
                 mode="campaign_owner" if is_owner(membership) else "campaign_manager",

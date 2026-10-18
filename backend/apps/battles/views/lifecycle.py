@@ -20,22 +20,15 @@ from ..serializers import battle_state_payload, display_name, participants_prefe
 from ..services.broadcast import ALL, bump_state_version
 from ..services.errors import BattleError, field_error
 from ..services.events import append_event, notify_user
+from ..services.expiry import expire_overdue
+from ..services.invites import open_prebattle, settle_after_leaving
+from ..services.lifecycle import cancel_battle, everyone_accepted, everyone_ready, reset_trading_actions
+from ..services.reported import commit_reported_result, everyone_approved
 from ..services.rosters import battle_rosters_payload
 from ..services.timing import invite_deadline, record_activity
 from ..validation.config import changes_others_see, config_changes
-from .expiry import expire_overdue
-from .invites import open_prebattle, settle_after_leaving
 from .responses import broadcast_response, response_with_snapshot
-from .shared import (
-    _all_participants_accepted,
-    _all_participants_ready,
-    _all_reported_result_participants_approved,
-    _cancel_battle_for_all_participants,
-    _commit_reported_result_battle,
-    _get_user_battle_participant,
-    _mark_participant_seen,
-    _reset_trading_actions_for_battle_participants,
-)
+from .shared import _get_user_battle_participant, _mark_participant_seen
 
 logger = logging.getLogger(__name__)
 
@@ -588,7 +581,7 @@ class CampaignBattleJoinView(APIView):
                     participant.save(update_fields=["status", "responded_at", "updated_at"])
                     state_changed = True
 
-                if _all_participants_accepted(battle.id):
+                if everyone_accepted(battle.id):
                     open_prebattle(battle)
                     state_changed = opened = True
             elif battle.status == Battle.STATUS_PREBATTLE:
@@ -664,12 +657,12 @@ class CampaignBattleReportedResultApproveView(APIView):
 
             resolve_notification(request.user.id, Notification.TYPE_BATTLE_RESULT_REQUEST, str(battle.id))
 
-            if _all_reported_result_participants_approved(battle.id):
-                _commit_reported_result_battle(battle)
+            if everyone_approved(battle.id):
+                commit_reported_result(battle)
                 battle.status = Battle.STATUS_ENDED
                 battle.ended_at = battle.ended_at or now
                 battle.save(update_fields=["status", "ended_at", "updated_at"])
-                _reset_trading_actions_for_battle_participants(
+                reset_trading_actions(
                     battle,
                     only_if_most_recent=True,
                 )
@@ -880,7 +873,7 @@ class CampaignBattleCreatorCancelView(APIView):
                     status=400,
                 )
 
-            event = _cancel_battle_for_all_participants(
+            event = cancel_battle(
                 battle,
                 actor_user=request.user,
                 mode="creator",
@@ -914,7 +907,7 @@ class CampaignBattleStartView(APIView):
                 )
             if battle.status == Battle.STATUS_CANCELED:
                 return Response({"detail": "Battle is canceled"}, status=400)
-            if not _all_participants_ready(battle.id):
+            if not everyone_ready(battle.id):
                 return Response({"detail": "All participants must be ready before starting"}, status=400)
 
             now = timezone.now()

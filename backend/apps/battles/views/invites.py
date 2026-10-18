@@ -6,80 +6,17 @@ A declined invitation can't be taken back by joining.
 """
 
 from django.db import transaction
-from django.utils import timezone
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
-from apps.notifications.models import Notification
-from apps.notifications.utils import resolve_notification, resolve_notifications_for_reference
 
-from ..models import Battle, BattleEvent, BattleParticipant
-from ..serializers import display_name
+from ..models import Battle, BattleParticipant
 from ..services.broadcast import ALL, bump_state_version
-from ..services.events import append_event, notify_user
-from ..services.lifecycle import participants_all_in
+from ..services.invites import decline_invitation
 from .responses import broadcast_response, response_with_snapshot
-from .shared import _cancel_battle_for_all_participants, _get_user_battle_participant
-
-
-def open_prebattle(battle: Battle) -> None:
-    """Everyone still in has accepted: prebattle opens for them (no deadline until postbattle)."""
-    now = timezone.now()
-    battle.status = Battle.STATUS_PREBATTLE
-    battle.closes_at = None
-    battle.save(update_fields=["status", "closes_at", "updated_at"])
-    entries = list(BattleParticipant.objects.select_for_update().filter(battle_id=battle.id))
-    for entry in entries:
-        if entry.status == BattleParticipant.STATUS_ACCEPTED:
-            entry.status = BattleParticipant.STATUS_JOINED_PREBATTLE
-            entry.joined_at = entry.joined_at or now
-            entry.save(update_fields=["status", "joined_at", "updated_at"])
-    payload = {"battle_id": battle.id, "campaign_id": battle.campaign_id, "status": battle.status}
-    for entry in entries:
-        if entry.status not in BattleParticipant.LEFT_STATUSES:
-            notify_user(entry.user_id, "battle_prebattle_opened", payload)
-    resolve_notifications_for_reference(Notification.TYPE_BATTLE_INVITE, str(battle.id))
-
-
-def settle_after_leaving(battle: Battle, *, actor_user, mode: str) -> list[dict]:
-    """After a participant declined or cancelled before the battle started: cancel it when fewer than two players
-    are left, or open prebattle once everyone left has accepted. Returns the events added."""
-    headcount = participants_all_in(battle.id)
-    if headcount.total < 2:
-        return [_cancel_battle_for_all_participants(battle, actor_user=actor_user, mode=mode)]
-    if battle.status == Battle.STATUS_INVITING and headcount.accepted == headcount.total:
-        open_prebattle(battle)
-    return []
-
-
-def decline_invitation(battle: Battle, participant: BattleParticipant, *, actor_user, reason: str) -> list[dict]:
-    """The participant declines (or, `reason="expired"`, his 72 hours ran out): his invitation is resolved and the
-    creator told. Returns the events added, the battle's cancel among them when too few are left."""
-    participant.status = BattleParticipant.STATUS_DECLINED
-    participant.responded_at = timezone.now()
-    participant.save(update_fields=["status", "responded_at", "updated_at"])
-    resolve_notification(participant.user_id, Notification.TYPE_BATTLE_INVITE, str(battle.id))
-    label = display_name(participant.user)
-    notify_user(
-        battle.created_by_user_id,
-        "battle_invite_declined",
-        {
-            "battle_id": battle.id,
-            "campaign_id": battle.campaign_id,
-            "user_id": participant.user_id,
-            "user_label": label,
-            "reason": reason,
-        },  # fmt: skip
-    )
-    event = append_event(
-        battle,
-        BattleEvent.TYPE_PARTICIPANT_DECLINED,
-        actor_user=actor_user,
-        payload={"participant_user_id": participant.user_id, "reason": reason},
-    )
-    return [event, *settle_after_leaving(battle, actor_user=actor_user, mode="declined")]
+from .shared import _get_user_battle_participant
 
 
 class CampaignBattleDeclineView(APIView):

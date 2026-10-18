@@ -16,8 +16,9 @@ from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 from ..models import Battle, BattleParticipant
 from ..serializers import display_name, participants_prefetch
 from ..services.broadcast import ALL, bump_state_version
+from ..services.lifecycle import cancel_battle
 from .responses import broadcast_response, response_with_snapshot
-from .shared import _cancel_battle_for_all_participants, _get_user_battle_participant
+from .shared import _get_user_battle_participant
 
 
 def _pending_result_payload(battle: Battle, user_id: int) -> dict:
@@ -96,6 +97,6 @@ class CampaignBattleWithdrawResultView(APIView):
                 return response_with_snapshot(battle.id, events)
             if battle.status == Battle.STATUS_ENDED:
                 return Response({"detail": "Reported result has already been committed"}, status=400)
-            events.append(_cancel_battle_for_all_participants(battle, actor_user=request.user, mode="withdrawn"))
+            events.append(cancel_battle(battle, actor_user=request.user, mode="withdrawn"))
             version = bump_state_version(battle)
         return broadcast_response(request, battle.id, events, version, changed=ALL)

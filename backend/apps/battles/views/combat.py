@@ -8,10 +8,12 @@ from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.broadcast import ALL, bump_state_version
+from ..services.closing import skip_postbattle
 from ..services.errors import BattleError
 from ..services.events import append_event
 from ..services.exploration import keep_exploration
 from ..services.item_use import check_payload_size, item_use_payload
+from ..services.lifecycle import end_battle, everyone_confirmed, reset_trading_actions
 from ..services.selection import selected_unit_keys
 from ..services.timing import postbattle_deadline, record_activity
 from ..services.unit_information import unit_entry
@@ -19,17 +21,13 @@ from ..services.unusual import unusual_value_warnings
 from ..validation.coerce import coerce_bool
 from ..validation.config import normalize_unit_information
 from ..validation.unit_keys import parse_unit_key
-from .closing import skip_postbattle
 from .responses import broadcast_response, response_with_snapshot
 from .shared import (
     INGAME_EVENT_TYPES,
     KILLER_UNIT_TYPES,
-    _all_started_participants_confirmed,
     _apply_participant_postbattle_results,
     _build_battle_unit_event_payload,
-    _finalize_battle,
     _get_user_battle_participant,
-    _reset_trading_actions_for_battle_participants,
     _validate_postbattle_json_for_participant,
 )
 
@@ -395,7 +393,7 @@ class CampaignBattleFinishView(APIView):
             battle.winner_warband_ids_json = normalized_winner_ids
             battle.closes_at = postbattle_deadline(now)  # 72 hours of postbattle (decision 2)
             battle.save(update_fields=["status", "winner_warband_ids_json", "closes_at", "updated_at"])
-            _reset_trading_actions_for_battle_participants(battle)
+            reset_trading_actions(battle)
             event = append_event(
                 battle,
                 BattleEvent.TYPE_BATTLE_ENTERED_POSTBATTLE,
@@ -504,8 +502,8 @@ class CampaignBattleFinalizePostbattleView(APIView):
             )
             events.append(event)
 
-            if battle.status != Battle.STATUS_ENDED and _all_started_participants_confirmed(battle.id):
-                _finalize_battle(battle, request.user, events)
+            if battle.status != Battle.STATUS_ENDED and everyone_confirmed(battle.id):
+                end_battle(battle, request.user, events)
             version = bump_state_version(battle)
             changed = ALL if battle.status == Battle.STATUS_ENDED else [participant.id]
 
@@ -530,8 +528,8 @@ class CampaignBattleConfirmView(CampaignBattleFinalizePostbattleView):
 
             events.append(skip_postbattle(battle, participant, actor_user=request.user))
 
-            if battle.status != Battle.STATUS_ENDED and _all_started_participants_confirmed(battle.id):
-                _finalize_battle(battle, request.user, events)
+            if battle.status != Battle.STATUS_ENDED and everyone_confirmed(battle.id):
+                end_battle(battle, request.user, events)
             version = bump_state_version(battle)
             changed = ALL if battle.status == Battle.STATUS_ENDED else [participant.id]
 

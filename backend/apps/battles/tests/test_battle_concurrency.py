@@ -20,7 +20,8 @@ from django.test import TransactionTestCase, override_settings
 from rest_framework.test import APIClient
 
 from apps.battles.models import Battle, BattleEvent, BattleParticipant
-from apps.battles.views import combat, lifecycle, shared
+from apps.battles.services import lifecycle as lifecycle_services
+from apps.battles.views import combat, lifecycle
 from apps.campaigns.models import Campaign, CampaignMembership, CampaignRole, PivotalMoment
 from apps.core.testing import Rendezvous, run_concurrently
 from apps.notifications.models import Notification
@@ -96,14 +97,14 @@ class BattleConcurrencyTests(TransactionTestCase):
         battle = self.battle(Battle.STATUS_POSTBATTLE, BattleParticipant.STATUS_FINISHED_BATTLE)
         Hero.objects.update(trading_action=False)
         rendezvous = Rendezvous()
-        real_check = combat._all_started_participants_confirmed
-        real_reset = shared._reset_trading_actions_for_battle_participants
+        real_check = combat.everyone_confirmed
+        real_reset = lifecycle_services.reset_trading_actions
         url = self.battle_url(battle, "finalize-postbattle")
         sides = ((self.player, self.a), (self.viewer, self.r))
 
         with (
-            mock.patch.object(combat, "_all_started_participants_confirmed", side_effect=rendezvous.before(real_check)),
-            mock.patch.object(shared, "_reset_trading_actions_for_battle_participants", wraps=real_reset) as resets,
+            mock.patch.object(combat, "everyone_confirmed", side_effect=rendezvous.before(real_check)),
+            mock.patch.object(lifecycle_services, "reset_trading_actions", wraps=real_reset) as resets,
         ):
             statuses = run_concurrently(
                 *(

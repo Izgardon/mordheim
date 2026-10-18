@@ -13,10 +13,10 @@ from django.db import transaction
 
 from ..models import Battle, BattleParticipant
 from ..serializers import battle_snapshot
-from ..services.broadcast import ALL, bump_state_version, publish
-from ..services.timing import is_overdue
+from .broadcast import ALL, bump_state_version, publish
 from .closing import close_postbattle
 from .invites import decline_invitation
+from .timing import is_overdue
 
 EXPIRY_BATCH = 5  # overdue battles settled by one list read; the rest wait for the next
 
@@ -41,7 +41,7 @@ def settle_during_write(battle: Battle) -> None:
     The write then answers from the battle's new state."""
     events = expire_locked_battle(battle)
     if events:
-        _publish(battle, events, bump_state_version(battle))
+        publish_expired(battle, events, bump_state_version(battle))
 
 
 def expire_overdue(battles: Iterable[Battle]) -> bool:
@@ -57,12 +57,13 @@ def expire_overdue(battles: Iterable[Battle]) -> bool:
             if not events:
                 continue
             version = bump_state_version(battle)
-        _publish(battle, events, version)
+        publish_expired(battle, events, version)
         changed = True
     return changed
 
 
-def _publish(battle: Battle, events: list[dict], version: int) -> None:
+def publish_expired(battle: Battle, events: list[dict], version: int) -> None:
+    """Send what the deadline settled to every player (nobody's socket is skipped: no one asked for it)."""
     publish(
         battle_snapshot(battle.id),
         events,
