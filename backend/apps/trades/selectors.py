@@ -53,7 +53,8 @@ def get_trade_for_participant(
     hidden: bool = False,
 ) -> TradeRequest:
     """The campaign's trade if `user` may act on it: an unknown trade is 404; anyone else 403 (404 if `hidden`);
-    a player who has left the campaign 404, as for its other endpoints (SEC-08).
+    a player who has left the campaign 404, as for its other endpoints (SEC-08). Only the owner of a side's
+    warband acts for that side (decision 10; `WARBAND_RULES["trade"]`), whoever else may edit the warband.
 
     `recipient_only` admits only the player the request was sent to. With `lock`, the trade row (only) stays
     locked until the caller's transaction ends.
@@ -65,9 +66,10 @@ def get_trade_for_participant(
     if trade is None:
         raise NotFound("Not found")
     allowed = (trade.to_user_id,) if recipient_only else (trade.from_user_id, trade.to_user_id)
-    if user.id not in allowed:
+    side = "from" if user.id == trade.from_user_id else "to"
+    if user.id not in allowed or getattr(trade, f"{side}_warband").user_id != user.id:
         raise NotFound("Not found") if hidden else PermissionDenied("Forbidden")
-    if not is_member(trade, "from" if user.id == trade.from_user_id else "to"):
+    if not is_member(trade, side):
         raise NotFound("Not found")
     return trade
 
