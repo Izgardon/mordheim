@@ -217,7 +217,7 @@ describe("BattlePostbattle requests", () => {
     expect(dialog).toHaveTextContent("No units are marked dead.");
     expect(dialog).toHaveTextContent("Captain Wolf will gain 3 XP.");
     expect(dialog).toHaveTextContent("You will be paying 15gc in upkeep.");
-    // Captain Wolf's WS 5, his two kills, a level-up and the Healing Draught go unmentioned.
+    // Captain Wolf's WS 5, his two kills and the Healing Draught go unmentioned; nor do level-ups.
     expect(dialog).not.toHaveTextContent(/kill|weapon|WS|level|Healing Draught|injur/i);
 
     await user.click(within(dialog).getByRole("button", { name: "Confirm" }));
