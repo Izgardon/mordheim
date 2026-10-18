@@ -3,11 +3,13 @@ import { queryOptions, useMutation, useQueryClient, type QueryClient } from "@ta
 import { queryKeys } from "@/lib/query-keys";
 import {
   getTradeRequest,
+  listCampaignTradeRequests,
   lockTradeOffer,
   unlockTradeOffer,
   updateTradeOffer,
 } from "@/features/campaigns/api/campaigns-api";
 import { toastTradeWarnings, tradeFromError } from "../utils/trade-errors";
+import { isTradeOver } from "../utils/trade-status";
 import { setHeroTradingAction } from "./warband-cache";
 
 import type { TradeRequest } from "../types/trade-request-types";
@@ -58,12 +60,44 @@ function syncTraderSpends(
   }
 }
 
+const OPEN_STATUSES = ["accepted", "pending"] as const;
+
+/**
+ * Your open trades in the campaign: the campaign list (only your trades) read for each open
+ * status. One open trade per pair of players keeps it short; the page reads it once per visit.
+ */
+export const openTradesQuery = (campaignId: number) =>
+  queryOptions({
+    queryKey: queryKeys.campaign.openTrades(campaignId),
+    queryFn: async () =>
+      (
+        await Promise.all(
+          OPEN_STATUSES.map((status) => listCampaignTradeRequests(campaignId, status))
+        )
+      ).flat(),
+  });
+
+/** A trade's newest copy in the cached open-trade list: it joins, moves or (once over) leaves. */
+function patchOpenTrades(queryClient: QueryClient, request: TradeRequest) {
+  queryClient.setQueryData<TradeRequest[]>(
+    queryKeys.campaign.openTrades(request.campaign_id),
+    (trades: TradeRequest[] | undefined) => {
+      if (!trades) {
+        return trades;
+      }
+      const others = trades.filter((trade) => trade.id !== request.id);
+      return isTradeOver(request) ? others : [request, ...others];
+    }
+  );
+}
+
 /** The trade as the server last sent it (a write's answer or a realtime event's payload). */
 export function setTradeData(queryClient: QueryClient, request: TradeRequest) {
   const key = queryKeys.campaign.trade(request.campaign_id, request.id);
   const before = queryClient.getQueryData<TradeRequest>(key);
   queryClient.setQueryData(key, request);
   syncTraderSpends(queryClient, before, request);
+  patchOpenTrades(queryClient, request);
 }
 
 /** The cached copy of a trade, if this browser holds one. */

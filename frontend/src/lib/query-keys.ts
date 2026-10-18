@@ -45,5 +45,7 @@ export const queryKeys = {
     /** One trade request between two players of the campaign. */
     trade: (campaignId: number, requestId: string) =>
       ["campaign", campaignId, "trade", requestId] as const,
+    /** Your open trades in the campaign (pending or accepted), for resuming one. */
+    openTrades: (campaignId: number) => ["campaign", campaignId, "trades", "open"] as const,
   },
 };

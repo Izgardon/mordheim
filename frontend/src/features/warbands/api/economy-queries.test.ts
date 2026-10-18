@@ -280,3 +280,33 @@ describe("setTradeData keeps the traders' spent flags (decision 9)", () => {
     expect(flagsOf(queryClient, 9).heroes).toEqual([true]);
   });
 });
+
+describe("setTradeData keeps the open-trade list", () => {
+  const trade = (id: string, status: TradeRequest["status"]) =>
+    ({ id, campaign_id: 7, status }) as TradeRequest;
+  const openIds = (queryClient: ReturnType<typeof createTestQueryClient>) =>
+    queryClient
+      .getQueryData<TradeRequest[]>(queryKeys.campaign.openTrades(7))
+      ?.map((entry) => `${entry.id}:${entry.status}`);
+
+  it("adds a trade that opens, updates one that moves and drops one that ends", () => {
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(queryKeys.campaign.openTrades(7), [trade("t-1", "pending")]);
+
+    setTradeData(queryClient, trade("t-1", "accepted"));
+    setTradeData(queryClient, trade("t-2", "pending"));
+    expect(openIds(queryClient)).toEqual(["t-2:pending", "t-1:accepted"]);
+
+    setTradeData(queryClient, trade("t-1", "completed"));
+    setTradeData(queryClient, trade("t-2", "expired"));
+    expect(openIds(queryClient)).toEqual([]);
+  });
+
+  it("starts no list that isn't cached", () => {
+    const queryClient = createTestQueryClient();
+
+    setTradeData(queryClient, trade("t-1", "accepted"));
+
+    expect(queryClient.getQueryData(queryKeys.campaign.openTrades(7))).toBeUndefined();
+  });
+});

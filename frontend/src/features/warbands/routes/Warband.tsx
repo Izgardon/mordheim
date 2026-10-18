@@ -8,6 +8,7 @@ import BackstoryTab from "../components/tabs/BackstoryTab";
 import LogsTab from "../components/tabs/LogsTab";
 import TreasuryTab from "../components/tabs/TreasuryTab";
 import TradeSessionDialog from "../components/trade/TradeSessionDialog";
+import OpenTradeBanner from "../components/trade/OpenTradeBanner";
 import WarbandTabContent from "../components/warband/WarbandTabContent";
 import WarbandMobileMetaBar from "../components/warband/WarbandMobileMetaBar";
 import WarbandDesktopHeader from "../components/warband/WarbandDesktopHeader";
@@ -148,6 +149,14 @@ export default function Warband() {
           />
         )}
         <DiscardChangesDialog {...page.discardDialog} />
+        {canTrade ? (
+          <OpenTradeBanner
+            campaignId={campaignId}
+            userId={user?.id}
+            session={trade.session}
+            onResume={trade.resumeTrade}
+          />
+        ) : null}
         {canTrade ? (
           <TradeSessionDialog
             session={trade.session}

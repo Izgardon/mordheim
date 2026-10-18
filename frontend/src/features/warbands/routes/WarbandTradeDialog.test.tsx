@@ -4,7 +4,7 @@
  * player's warband never offers its heroes, stash or gold (BUG-43). The real page, app store and
  * router run; `apiRequest` is answered by a fake server and the trade channel is stubbed.
  */
-import { act, screen, within } from "@testing-library/react";
+import { act, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -190,5 +190,68 @@ describe("Warband page: the trade dialog", () => {
     renderPage("/campaigns/7/warband");
 
     expect(await screen.findByRole("button", { name: "Start trade" })).toBeInTheDocument();
+  });
+});
+
+describe("Warband page: resuming an open trade", () => {
+  const OPEN_ACCEPTED = "GET /campaigns/7/trade-requests/?status=accepted";
+  const OPEN_PENDING = "GET /campaigns/7/trade-requests/?status=pending";
+  const pending = (overrides: Partial<TradeRequest> = {}): TradeRequest => ({
+    ...request(),
+    status: "pending",
+    ...overrides,
+  });
+
+  it("offers to resume your open trade, and Resume opens it", async () => {
+    const user = setupUser();
+    fakeApi.on(OPEN_ACCEPTED, [request()]);
+    fakeApi.on(OPEN_PENDING, []);
+    renderPage("/campaigns/7/warband");
+
+    const banner = await screen.findByRole("region", { name: "Open trade" });
+    expect(banner).toHaveTextContent("You have an open trade with Bob");
+    await user.click(within(banner).getByRole("button", { name: "Resume" }));
+
+    expect(await screen.findByRole("dialog", { name: "Trading with Bob" })).toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Open trade" })).not.toBeInTheDocument();
+    expect(fakeApi.calls()).toContain(`GET /campaigns/7/trade-requests/${TRADE}/`);
+  });
+
+  it("offers a request you sent and says it is waiting once resumed, with its time left", async () => {
+    const user = setupUser();
+    fakeApi.on(OPEN_ACCEPTED, []);
+    fakeApi.on(OPEN_PENDING, [pending()]);
+    fakeApi.on(`GET /campaigns/7/trade-requests/${TRADE}/`, pending());
+    renderPage("/campaigns/7/warband");
+
+    const banner = await screen.findByRole("region", { name: "Open trade" });
+    await user.click(within(banner).getByRole("button", { name: "Resume" }));
+
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      /^Waiting for Bob to answer your trade · \d+:\d\d left$/
+    );
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("leaves a request sent to you to the bell", async () => {
+    fakeApi.on(OPEN_ACCEPTED, []);
+    fakeApi.on(OPEN_PENDING, [
+      pending({ from_user: { id: 2, label: "Bob" }, to_user: { id: 1, label: "Ann" } }),
+    ]);
+    renderPage("/campaigns/7/warband");
+
+    await waitFor(() => expect(fakeApi.countOf(OPEN_PENDING)).toBe(1));
+    await act(() => new Promise((resolve) => setTimeout(resolve, 50)));
+
+    expect(screen.queryByRole("region", { name: "Open trade" })).not.toBeInTheDocument();
+  });
+
+  it("reads no trades on another player's warband", async () => {
+    renderPage("/campaigns/7/warbands/15");
+
+    expect(await screen.findByText("Grave Robbers")).toBeInTheDocument();
+    await act(() => new Promise((resolve) => setTimeout(resolve, 50)));
+
+    expect(fakeApi.countOf(OPEN_ACCEPTED) + fakeApi.countOf(OPEN_PENDING)).toBe(0);
   });
 });

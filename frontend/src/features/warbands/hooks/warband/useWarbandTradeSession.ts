@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { useSearchParams } from "react-router-dom";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { useAuth } from "../../../auth/hooks/use-auth";
@@ -9,13 +8,14 @@ import {
   createTradeRequest,
   getTradeRequest,
 } from "../../../campaigns/api/campaigns-api";
-import { setTradeData, tradeQuery } from "../../api/economy-queries";
+import { setTradeData } from "../../api/economy-queries";
 import { queryKeys } from "@/lib/query-keys";
 import { useWarbandCacheUpdate } from "../../api/warband-cache";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { openTradeIdFromError } from "../../utils/trade-errors";
 import { describeTradeEnd, isTradeOver, toTradeSession } from "../../utils/trade-status";
 import { useTradeChannel } from "./useTradeChannel";
+import { useTradeInUrl } from "./useTradeInUrl";
 
 import type { TradeCompletion, TradeRequest, TradeSession } from "../../types/trade-request-types";
 
@@ -36,6 +36,8 @@ type UseWarbandTradeSessionReturn = {
   handleRequestUpdated: (request: TradeRequest) => void;
   handleTradeRequestCreated: (targetUserId: number) => Promise<void>;
   handleTradeSessionClose: () => void;
+  /** Opens one of your open trades again (`?trade=`), read afresh. */
+  resumeTrade: (requestId: string) => void;
 };
 
 /**
@@ -53,22 +55,15 @@ export function useWarbandTradeSession({
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const updateWarbandCache = useWarbandCacheUpdate();
-  const [searchParams, setSearchParams] = useSearchParams();
   // Off another player's warband (BUG-43): no trade is read, shown or listened to there.
   const canLoad = enabled && hasCampaignId && !Number.isNaN(campaignId);
   const userId = user?.id;
-  const tradeParam = searchParams.get("trade");
-  // The latest URL, for callbacks that must not change with every ?tab= (ECON-PERF-02).
-  const latest = useRef({ searchParams, setSearchParams });
-  latest.current = { searchParams, setSearchParams };
+  const { setTradeParam, request } = useTradeInUrl({
+    campaignId,
+    enabled: canLoad && Boolean(user),
+  });
   // The trade whose end this page has already handled (it says nothing more about it).
   const handledEnd = useRef<string | null>(null);
-
-  const trade = useQuery({
-    ...tradeQuery(campaignId, tradeParam ?? ""),
-    enabled: canLoad && Boolean(user) && Boolean(tradeParam),
-  });
-  const request = canLoad && tradeParam && trade.data?.id === tradeParam ? trade.data : null;
   const session = useMemo(
     () =>
       request && userId !== undefined && !isTradeOver(request)
@@ -76,16 +71,6 @@ export function useWarbandTradeSession({
         : null,
     [request, userId]
   );
-
-  const setTradeParam = useCallback((requestId: string | null) => {
-    const next = new URLSearchParams(latest.current.searchParams);
-    if (requestId) {
-      next.set("trade", requestId);
-    } else {
-      next.delete("trade");
-    }
-    latest.current.setSearchParams(next, { replace: true });
-  }, []);
 
   /** Says how a trade ended: cancelled by its sender, declined, expired or completed. */
   const announceEnd = useCallback(
@@ -107,16 +92,6 @@ export function useWarbandTradeSession({
       }
     }
   }, [announceEnd, request, setTradeParam]);
-
-  const failure = trade.isError ? trade.error : null;
-  const hasCopy = trade.data !== undefined;
-  useEffect(() => {
-    if (failure) {
-      toast.error(hasCopy ? "Couldn't load the trade." : "Couldn't open the trade.", {
-        description: getErrorMessage(failure),
-      });
-    }
-  }, [failure, hasCopy]);
 
   // The warchest is offered once the trade is open.
   const sessionStatus = session?.status;
@@ -234,9 +209,23 @@ export function useWarbandTradeSession({
     },
   });
 
+  const resumeTrade = useCallback(
+    (requestId: string) => {
+      // A copy cached earlier missed the events sent while this page was away: read it again.
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.campaign.trade(campaignId, requestId),
+        exact: true,
+        refetchType: "none",
+      });
+      setTradeParam(requestId);
+    },
+    [campaignId, queryClient, setTradeParam]
+  );
+
   return {
     session,
     tradeRequest: session ? request : null,
+    resumeTrade,
     handleRequestUpdated,
     handleTradeRequestCreated,
     handleTradeSessionClose,
