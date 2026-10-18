@@ -216,6 +216,71 @@ describe("BattlePostbattle requests", () => {
     ).toBeEnabled();
   });
 
+  it("shows a saved injury's server effect, ticked to apply, and saves the untick (BUG-47)", async () => {
+    const user = setupUser();
+    const mine = server.participants.find((entry) => entry.user.id === ME.id)!;
+    mine.postbattle_json = {
+      exploration: { dice_values: [], resource_id: null },
+      finds: { gold_crowns: 0, items: [] },
+      upkeep: { pay_upkeep: true, entries: {} },
+      unit_results: {
+        "hero:3": {
+          serious_injury_rolls: [
+            {
+              roll_type: "d66",
+              rolls: [3, 2],
+              result_code: "32",
+              result_label: "Nervous Condition",
+              dead_suggestion: false,
+              apply: true,
+              effect: { kind: "stat", stat: "initiative", change: -1 },
+            },
+          ],
+        },
+      },
+    } as unknown as BattlePostbattleState;
+    await renderPostbattle();
+
+    const apply = screen.getByRole("checkbox", { name: "Apply Nervous Condition to Rolf" });
+    expect(apply).toBeChecked();
+    expect(
+      screen.getByText(/Apply at finalise: Nervous Condition \(-1 Initiative\)/)
+    ).toBeInTheDocument();
+    await user.click(apply);
+
+    await waitFor(() => expect(draftBodies()).toHaveLength(1));
+    expect(draftBodies()[0].unit_results["hero:3"].serious_injury_rolls[0]).toMatchObject({
+      result_code: "32",
+      apply: false,
+    });
+  });
+
+  it("flags a complex injury result to apply by hand (BUG-47)", async () => {
+    const user = setupUser();
+    // The server fills in each roll's effect from its table: 34 is Arm Wound, applied by hand.
+    fakeApi.on(DRAFT_ROUTE, (body: unknown) => {
+      const draft = structuredClone(body) as { postbattle_json: BattlePostbattleState };
+      for (const result of Object.values(draft.postbattle_json.unit_results)) {
+        result.serious_injury_rolls = result.serious_injury_rolls.map((roll) => ({
+          ...roll,
+          result_label: "Arm Wound",
+          effect: { kind: "manual" },
+        }));
+      }
+      return storeDraft(draft);
+    });
+    await renderPostbattle();
+
+    await user.click(within(row("Rolf")).getByRole("button", { name: "Serious Injury Roll" }));
+    const dialog = screen.getByRole("dialog", { name: "Serious Injury Roll" });
+    await user.click(within(dialog).getByRole("button", { name: /^Roll/ }));
+
+    expect(
+      await screen.findByText("Arm Wound: apply by hand on the warband sheet.")
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("checkbox", { name: /^Apply Arm Wound/ })).toBeNull();
+  });
+
   it("keeps Skip postbattle out of the desktop action panel, beside Finalise (BUG-48)", async () => {
     await renderPostbattle();
 

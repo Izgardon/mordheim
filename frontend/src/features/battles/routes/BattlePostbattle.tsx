@@ -68,6 +68,7 @@ import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesD
 import BattleOverflowMenu from "@/features/battles/components/shared/BattleOverflowMenu";
 import PostbattleDeadTick from "@/features/battles/components/postbattle/PostbattleDeadTick";
 import PostbattleKillsControl from "@/features/battles/components/postbattle/PostbattleKillsControl";
+import PostbattleInjuryResult from "@/features/battles/components/postbattle/PostbattleInjuryResult";
 import PostbattleKeepStatsTick, {
   statChanges,
 } from "@/features/battles/components/postbattle/PostbattleKeepStatsTick";
@@ -620,6 +621,48 @@ export default function BattlePostbattle() {
           )
         }
       />
+    );
+  };
+
+  // Serious injuries (BUG-47, decision 7): only the last roll counts; its server effect is applied at
+  // finalise when ticked, or flagged to apply by hand.
+  const injuryRolls = (row: PostbattleRenderableRow, className?: string) => {
+    if (row.seriousInjuryRolls.length === 0 || !draft) {
+      return null;
+    }
+    const lastIndex = row.seriousInjuryRolls.length - 1;
+    return (
+      <div className={cn("space-y-2", className)}>
+        <div className="flex flex-wrap gap-2">
+          {row.seriousInjuryRolls.map((roll, index) => (
+            <div
+              key={`${row.unitKey}-roll-${index}`}
+              className={cn(
+                "battle-chip px-3 py-1 text-xs text-muted-foreground",
+                index < lastIndex && "line-through opacity-60"
+              )}
+              title={index < lastIndex ? "Re-rolled" : undefined}
+            >
+              {`${roll.roll_type.toUpperCase()} ${roll.result_code}: ${roll.result_label}`}
+            </div>
+          ))}
+        </div>
+        <PostbattleInjuryResult
+          unitName={row.unitName}
+          roll={row.seriousInjuryRolls[lastIndex]}
+          disabled={isFinalized}
+          onToggleApply={(apply) =>
+            void persistDraft(
+              updateUnitResult(draft, row.unitKey, (current) => ({
+                ...current,
+                serious_injury_rolls: current.serious_injury_rolls.map((roll, index) =>
+                  index === lastIndex ? { ...roll, apply } : roll
+                ),
+              }))
+            )
+          }
+        />
+      </div>
     );
   };
 
@@ -1515,18 +1558,7 @@ export default function BattlePostbattle() {
                                 onChange={(checked) => void handleToggleDead(row, checked)}
                               />
                             </div>
-                            {row.seriousInjuryRolls.length > 0 ? (
-                              <div className="flex flex-wrap gap-2">
-                                {row.seriousInjuryRolls.map((roll, index) => (
-                                  <div
-                                    key={`${row.unitKey}-roll-${index}`}
-                                    className="battle-chip px-3 py-1 text-xs text-muted-foreground"
-                                  >
-                                    {`${roll.roll_type.toUpperCase()} ${roll.result_code}: ${roll.result_label}`}
-                                  </div>
-                                ))}
-                              </div>
-                            ) : null}
+                            {injuryRolls(row)}
                           </div>
                         </div>
                       ))}
@@ -1601,18 +1633,7 @@ export default function BattlePostbattle() {
                     </div>
                     {keepStatsTick([row.unitKey], row.unitName)}
                   </div>
-                  {row.seriousInjuryRolls.length > 0 ? (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {row.seriousInjuryRolls.map((roll, index) => (
-                        <div
-                          key={`${row.unitKey}-roll-${index}`}
-                          className="battle-chip px-3 py-1 text-xs text-muted-foreground"
-                        >
-                          {`${roll.roll_type.toUpperCase()} ${roll.result_code}: ${roll.result_label}`}
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
+                  {injuryRolls(row, "mt-3")}
                 </div>
               ))}
             </div>

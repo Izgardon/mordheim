@@ -61,6 +61,15 @@ export type BattlePostbattleSeriousInjuryRoll = {
   result_code: string;
   result_label: string;
   dead_suggestion: boolean;
+  /** Ticked to apply at finalise (default true); only the unit's last roll counts (BUG-47). */
+  apply?: boolean;
+  /** What the server's table says the result does. */
+  effect?: {
+    kind: "dead" | "stat" | "special" | "none" | "manual";
+    stat?: string;
+    change?: number;
+    special?: string;
+  };
 };
 
 export type BattlePostbattleUnitResult = {
