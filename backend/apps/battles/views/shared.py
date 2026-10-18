@@ -523,7 +523,7 @@ def _get_user_battle_participant(campaign_id: int, battle_id: int, user, for_upd
 
     participant_qs = BattleParticipant.objects.select_related("user", "warband").filter(battle_id=battle.id, user=user)
     if for_update:
-        participant_qs = participant_qs.select_for_update()
+        participant_qs = participant_qs.select_for_update(of=("self",))  # not the user or warband rows (PERF-37)
     participant = participant_qs.first()
     return battle, participant
 
@@ -1620,7 +1620,7 @@ def _remove_used_single_use_items(battle: Battle, participant: BattleParticipant
 
         if unit_type == "hero":
             row_ids = list(
-                HeroItem.objects.select_for_update()
+                HeroItem.objects.select_for_update(of=("self",))
                 .filter(hero_id=unit_id, hero__warband_id=participant.warband_id, item_id=item_id)
                 .order_by("id")
                 .values_list("id", flat=True)[:count]
@@ -1631,7 +1631,7 @@ def _remove_used_single_use_items(battle: Battle, participant: BattleParticipant
 
         if unit_type == "hired_sword":
             row_ids = list(
-                HiredSwordItem.objects.select_for_update()
+                HiredSwordItem.objects.select_for_update(of=("self",))
                 .filter(hired_sword_id=unit_id, hired_sword__warband_id=participant.warband_id, item_id=item_id)
                 .order_by("id")
                 .values_list("id", flat=True)[:count]
@@ -1645,7 +1645,7 @@ def _remove_used_single_use_items(battle: Battle, participant: BattleParticipant
             if not group_id:
                 continue
             row_ids = list(
-                HenchmenGroupItem.objects.select_for_update()
+                HenchmenGroupItem.objects.select_for_update(of=("self",))
                 .filter(
                     henchmen_group_id=group_id,
                     henchmen_group__warband_id=participant.warband_id,
@@ -1697,7 +1697,7 @@ def _apply_participant_postbattle_results(
     }
     henchmen = {
         henchman.id: henchman
-        for henchman in not_dismissed(Henchman.objects.select_for_update())
+        for henchman in not_dismissed(Henchman.objects.select_for_update(of=("self",)))
         .select_related("group")
         .filter(
             id__in=henchman_ids,

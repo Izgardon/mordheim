@@ -124,8 +124,8 @@ class BattleConcurrencyTests(TransactionTestCase):
         self.assertEqual(list(Hero.objects.values_list("trading_action", flat=True).distinct()), [True])
 
     def test_finalise_and_a_leader_patch_on_the_same_warband_both_succeed(self):
-        # BUG-106: expected to pass today. Finalise holds the warband row (through the participant join) before it
-        # touches a hero, the same order as the hero PATCH (warband, then heroes): the PATCH waits for the finalise,
+        # BUG-106: finalise locks the warband row itself (since PERF-37 the participant join no longer does) before
+        # it touches a hero, the same order as the hero PATCH (warband, then heroes): one waits for the other,
         # nothing deadlocks, and exactly one living leader is left.
         battle = self.battle(Battle.STATUS_POSTBATTLE, BattleParticipant.STATUS_FINISHED_BATTLE)
         rendezvous = Rendezvous()

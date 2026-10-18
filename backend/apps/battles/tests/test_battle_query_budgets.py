@@ -86,11 +86,17 @@ class BattleQueryBudgetTests(BattleTestCase):
                 queries, _ = self.count(self.player, "post", self.url(battle_id, action), body)
                 self.within(name, queries, budget)
 
-    def _fixture_postbattle(self) -> tuple[int, dict[str, Any]]:
-        """The fixture in postbattle, and its finalise: XP for every unit, a death, exploration, upkeep, a find."""
+    def _fixture_postbattle(
+        self, active_writes: list[tuple[str, dict[str, Any]]] | None = None
+    ) -> tuple[int, dict[str, Any]]:
+        """The fixture in postbattle, and its finalise: XP for every unit, a death, exploration, upkeep, a find.
+        `active_writes` are (action, body) posts the player makes before the battle ends."""
         charm = catalogue_item("Lucky Charm", 10)
         resource = WarbandResource.objects.create(warband=self.warband, name="Wyrdstone")
-        battle_id = self.to_postbattle({self.player: self.fixture.keys, self.viewer: [self.r]})
+        battle_id = self.to_active({self.player: self.fixture.keys, self.viewer: [self.r]})
+        for action, body in active_writes or []:
+            self.ok(self.post_as(self.player, self.url(battle_id, action), body), 201)
+        self.finish(battle_id, [self.warband])
         results = {key: unit_result(key, xp=1) for key in self.fixture.keys}
         results[f"hero:{self.fixture.heroes[4].id}"]["dead"] = True
         sword = f"hired_sword:{self.fixture.hired_swords[0].id}"
@@ -118,9 +124,9 @@ class BattleQueryBudgetTests(BattleTestCase):
         self.assertEqual(self.battle(battle_id).status, "ended")
         self.within("finalise_last", queries, 76)
 
-    def test_a_locked_battle_write_also_locks_the_players_user_and_warband_rows(self):
-        # Characterises current behaviour (PERF-37, BATL-TEST-19, pinned; flips in PR A: FOR UPDATE OF the
-        # participant only). The battle row is locked first, then the participant joined to its user and warband.
+    def test_a_locked_battle_write_locks_only_the_battle_and_participant_rows(self):
+        # PERF-37, BATL-TEST-19: the battle row first, then the participant, whose query joins its user and warband
+        # but locks only its own row (FOR UPDATE OF)
         battle_id = self.to_active({self.player: [], self.viewer: [self.r]})
         _, captured = self.count(self.player, "post", self.url(battle_id, "config"), {"battle_notes": "x"})
         locks = [query["sql"] for query in captured if "FOR UPDATE" in query["sql"]]
@@ -128,17 +134,40 @@ class BattleQueryBudgetTests(BattleTestCase):
         self.assertEqual(len(locks), 2)
         self.assertIn('FROM "battle" WHERE', locks[0])
         self.assertIn('FROM "battle_participant" INNER JOIN "auth_user"', locks[1])
-        self.assertIn('INNER JOIN "warband"', locks[1])
-        self.assertTrue(locks[1].rstrip().endswith("FOR UPDATE"), locks[1])
+        self.assertTrue(locks[1].rstrip().endswith('FOR UPDATE OF "battle_participant"'), locks[1])
+
+    def test_no_locked_query_locks_the_rows_it_joins(self):
+        # PERF-37: every FOR UPDATE that joins another table names its own (finalise locks units, item rows and
+        # henchmen through joins)
+        potion = catalogue_item("Potion", 5, single_use=True)
+        hero = self.fixture.heroes[0]
+        hero.hero_items.create(item=potion, cost=5)
+        battle_id, postbattle = self._fixture_postbattle(
+            active_writes=[
+                (
+                    "events",
+                    {"type": "item_used", "payload_json": {"unit_key": f"hero:{hero.id}", "item_id": potion.id}},
+                ),
+            ]
+        )
+        _, captured = self.count(
+            self.player, "post", self.url(battle_id, "finalize-postbattle"), {"postbattle_json": postbattle}
+        )
+
+        joined_locks = [query["sql"] for query in captured if "FOR UPDATE" in query["sql"] and " JOIN " in query["sql"]]
+        self.assertGreaterEqual(len(joined_locks), 3)  # participant, henchmen, the potion's item row
+        for sql in joined_locks:
+            with self.subTest(sql=sql[:80]):
+                self.assertRegex(sql.rstrip(), r'FOR UPDATE OF "[a-z_]+"$')
 
     def test_finalise_locks_the_warband_before_any_unit(self):
-        # BUG-106: today's order is the roster paths' order (warband, then units), so a leader PATCH can't deadlock
-        # with a finalise; PR B keeps it explicit when PERF-37 drops the participant join's implicit lock
+        # BUG-106: the roster paths' order (warband, then units), so a leader PATCH can't deadlock with a finalise.
+        # Since PERF-37 the participant join no longer locks the warband; finalise locks it itself, before any unit.
         battle_id, postbattle = self._fixture_postbattle()
         body = {"postbattle_json": postbattle}
         _, captured = self.count(self.player, "post", self.url(battle_id, "finalize-postbattle"), body)
         sql = [query["sql"] for query in captured]
 
-        warband = next(i for i, text in enumerate(sql) if "FOR UPDATE" in text and 'INNER JOIN "warband"' in text)
+        warband = next(i for i, text in enumerate(sql) if "FOR UPDATE" in text and 'FROM "warband" WHERE' in text)
         hero = next(i for i, text in enumerate(sql) if "FOR UPDATE" in text and 'FROM "hero"' in text)
         self.assertLess(warband, hero)
