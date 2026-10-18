@@ -11,6 +11,7 @@ from rest_framework.exceptions import NotFound
 
 from apps.items.models import Item
 from apps.warbands.models import RosterUnit, Warband
+from apps.warbands.prefetches import item_detail_prefetches
 from apps.warbands.units.kinds import KINDS, UnitKindKey
 
 
@@ -53,3 +54,10 @@ def add_unit_copies(unit_type: str, unit: RosterUnit, item: Item, costs: list[in
             kwargs["cost"] = cost
         rows.append(kind.items.model(**kwargs))
     kind.items.model._default_manager.bulk_create(rows)
+
+
+def unit_item_rows(unit_type: str, unit: RosterUnit) -> list[Any]:
+    """The unit's copies in id order with their items' details (properties, availabilities), for an answer."""
+    kind = KINDS[cast(UnitKindKey, unit_type)]
+    links: Any = kind.items.model._default_manager.filter(**{kind.parent_field: unit}).select_related("item")
+    return list(links.prefetch_related(*item_detail_prefetches("item__")).order_by("id"))

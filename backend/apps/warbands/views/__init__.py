@@ -8,6 +8,7 @@ from .ledger import (
     WarbandTradeDetailView,
     WarbandTradeListCreateView,
 )
+from .purchases import WarbandPurchaseView
 from .sheet import WarbandSheetView
 from .warbands import WarbandDetailView, WarbandListCreateView, WarbandRestrictionsView, WarbandSummaryView
 
@@ -21,6 +22,7 @@ __all__ = [
     "WarbandItemSaleView",
     "WarbandItemTransferView",
     "WarbandLogListView",
+    "WarbandPurchaseView",
     "WarbandResourceDetailView",
     "WarbandResourceListCreateView",
     "WarbandResourceSaleView",

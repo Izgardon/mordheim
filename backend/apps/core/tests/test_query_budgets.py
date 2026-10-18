@@ -276,6 +276,32 @@ class QueryBudgetTests(TestCase):
             ],
         )
 
+    def test_purchases_stay_within_query_budget(self):
+        # BUG-07 (pass 2): one request where a purchase used to take about 8. Access, the item and its prices, the
+        # transaction, the "Buy" row and the stored balance, the copies, the log, then the answer: the stash entry
+        # or the unit's items (constant in its items), and the summary. A rarity roll adds its hero and log.
+        client = self.ref.owner_client
+        client.force_authenticate(user=self.ref.owner)
+        url = self._url("/api/warbands/{warband}/purchases/")
+        hero, item = self.unit_ids["hero"], Item.objects.get(name="Sword 0").id
+        roll = {"hero_id": hero, "roll": 8, "success": True}
+        cases: list[tuple[str, dict[str, Any], int]] = [
+            ("to the stash", {"item_id": item, "price": 5, "target_type": "stash"}, 19),
+            ("at the current campaign price", {"item_id": item, "target_type": "stash"}, 20),
+            ("to a hero", {"item_id": item, "price": 5, "target_type": "hero", "target_id": hero}, 20),
+            (
+                "with a rarity roll",
+                {"item_id": item, "price": 5, "target_type": "hero", "target_id": hero, "rarity_roll": roll},
+                23,
+            ),
+        ]
+        for name, body, budget in cases:
+            with self.subTest(purchase=name):
+                with CaptureQueriesContext(connection) as captured:
+                    response = client.post(url, body, format="json")
+                self.assertEqual(response.status_code, 201, response.data)
+                self.assertLessEqual(len(captured), budget, f"{name} ran {len(captured)} queries (budget {budget}).")
+
     @override_settings(RATE_LIMIT_ENABLED=False)  # trade writes are throttled; the throttle itself runs no SQL
     def test_trade_writes_stay_within_query_budget(self):
         # ECON-TEST-14 (pass 2), without traders (a trader adds his guarded spend). Every write locks the request in

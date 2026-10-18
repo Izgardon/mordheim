@@ -5,6 +5,7 @@ serializers (apps/warbands/serializers/<kind>.py) set `kind` and list their fiel
 keeps today's payloads key for key, including the differences between kinds.
 """
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Any, ClassVar
 
@@ -118,14 +119,19 @@ class UnitDetailSerializer(UnitReadSerializer):
     race = RaceSummarySerializer(read_only=True)
 
     def get_items(self, unit: RosterUnit) -> list[Any]:
-        items = []
-        for row in self._entries(unit, self.kind.items):
-            if not row.item_id:
-                continue
-            data = ItemDetailSerializer(row.item).data
-            data["cost"] = getattr(row, "cost", None)
-            items.append(data)
-        return items
+        return detail_item_entries(self._entries(unit, self.kind.items))
+
+
+def detail_item_entries(rows: Iterable[Any]) -> list[Any]:
+    """A unit's copies as detail payloads list them: the item's detail plus what this copy cost."""
+    items = []
+    for row in rows:
+        if not row.item_id:
+            continue
+        data = ItemDetailSerializer(row.item).data
+        data["cost"] = getattr(row, "cost", None)
+        items.append(data)
+    return items
 
 
 class UnitItemEntrySerializer(serializers.Serializer):
