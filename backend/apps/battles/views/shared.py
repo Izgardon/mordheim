@@ -477,16 +477,6 @@ def _cancel_battle_for_all_participants(
     )
 
 
-def _touch_participant(participant: BattleParticipant, *, last_event_id: int | None = None) -> None:
-    participant.connection_state = BattleParticipant.CONNECTION_ONLINE
-    participant.last_seen_at = timezone.now()
-    update_fields = ["connection_state", "last_seen_at"]
-    if last_event_id is not None:
-        participant.last_event_id = last_event_id
-        update_fields.append("last_event_id")
-    participant.save(update_fields=update_fields)
-
-
 PRESENCE_REFRESH_SECONDS = 60
 
 

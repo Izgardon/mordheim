@@ -25,7 +25,6 @@ from .shared import (
     _participant_selected_unit_keys,
     _reset_trading_actions_for_battle_participants,
     _response_with_snapshot,
-    _touch_participant,
     _upsert_unit_information,
     _validate_postbattle_json_for_participant,
 )
@@ -91,7 +90,6 @@ class CampaignBattleEventCreateView(APIView):
                 actor_user=request.user,
                 payload=payload_json,
             )
-            _touch_participant(participant, last_event_id=event["id"])
         return _response_with_snapshot(battle.id, [event], response_status=status.HTTP_201_CREATED)
 
 
@@ -128,7 +126,6 @@ class CampaignBattleUnitOoaView(APIView):
             unit_information = _normalize_unit_information(participant.unit_information_json)
             info = _upsert_unit_information(unit_information, unit["unit_key"])
             if info["out_of_action"] == out_of_action:
-                _touch_participant(participant)
                 return _response_with_snapshot(battle.id, events)
 
             info["out_of_action"] = out_of_action
@@ -158,7 +155,6 @@ class CampaignBattleUnitOoaView(APIView):
                 },
             )
             events.append(event)
-            _touch_participant(participant, last_event_id=event["id"])
 
         return _response_with_snapshot(battle.id, events, response_status=status.HTTP_201_CREATED)
 
@@ -290,7 +286,6 @@ class CampaignBattleUnitKillView(APIView):
                 payload=event_payload,
             )
             events.append(event)
-            _touch_participant(participant, last_event_id=event["id"])
 
         return _response_with_snapshot(battle.id, events, response_status=status.HTTP_201_CREATED)
 
@@ -378,7 +373,6 @@ class CampaignBattleFinishView(APIView):
                 payload={"winner_warband_ids": normalized_winner_ids},
             )
             events.append(event)
-            _touch_participant(participant, last_event_id=event["id"])
 
         return _response_with_snapshot(battle.id, events)
 
@@ -431,7 +425,6 @@ class CampaignBattlePostbattleSaveView(APIView):
                 previous_postbattle_json,
                 participant.postbattle_json,
             )
-            _touch_participant(participant)
 
         return _response_with_snapshot(battle.id, events)
 
@@ -482,11 +475,6 @@ class CampaignBattleFinalizePostbattleView(APIView):
             if battle.status != Battle.STATUS_ENDED and _all_started_participants_confirmed(battle.id):
                 _finalize_battle(battle, request.user, events)
 
-            _touch_participant(
-                participant,
-                last_event_id=events[-1]["id"] if events else participant.last_event_id,
-            )
-
         return _response_with_snapshot(battle.id, events)
 
 
@@ -534,10 +522,5 @@ class CampaignBattleConfirmView(CampaignBattleFinalizePostbattleView):
 
             if battle.status != Battle.STATUS_ENDED and _all_started_participants_confirmed(battle.id):
                 _finalize_battle(battle, request.user, events)
-
-            _touch_participant(
-                participant,
-                last_event_id=events[-1]["id"] if events else participant.last_event_id,
-            )
 
         return _response_with_snapshot(battle.id, events)

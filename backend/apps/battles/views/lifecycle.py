@@ -39,7 +39,6 @@ from .shared import (
     _reset_trading_actions_for_battle_participants,
     _response_with_snapshot,
     _snapshot_from_battle,
-    _touch_participant,
 )
 
 logger = logging.getLogger(__name__)
@@ -608,7 +607,6 @@ class CampaignBattleConfigView(APIView):
                     "updated_at",
                 ]
             )
-            _touch_participant(participant)
             _notify_battle_state_changed(
                 battle,
                 actor_user_id=request.user.id,
@@ -691,7 +689,6 @@ class CampaignBattleJoinView(APIView):
                     participant.save(update_fields=["status", "finished_at", "updated_at"])
                     state_changed = True
 
-            last_event_id = None
             if event_type:
                 event = _append_battle_event(
                     battle,
@@ -703,11 +700,7 @@ class CampaignBattleJoinView(APIView):
                     },
                 )
                 events.append(event)
-                last_event_id = event["id"]
-            elif events:
-                last_event_id = events[-1]["id"]
 
-            _touch_participant(participant, last_event_id=last_event_id)
             if state_changed and not event_type:
                 _notify_battle_state_changed(
                     battle,
@@ -746,7 +739,6 @@ class CampaignBattleReportedResultApproveView(APIView):
                 participant.save(update_fields=["status", "responded_at", "confirmed_at", "updated_at"])
 
             resolve_notification(request.user.id, Notification.TYPE_BATTLE_RESULT_REQUEST, str(battle.id))
-            _touch_participant(participant)
 
             if _all_reported_result_participants_approved(battle.id):
                 _commit_reported_result_battle(battle)
@@ -890,10 +882,6 @@ class CampaignBattleReadyView(APIView):
                     participant.save(update_fields=["status", "responded_at", "updated_at"])
                     state_changed = True
 
-            _touch_participant(
-                participant,
-                last_event_id=events[-1]["id"] if events else participant.last_event_id,
-            )
             if state_changed:
                 _notify_battle_state_changed(
                     battle,
@@ -944,10 +932,6 @@ class CampaignBattleCancelView(APIView):
                     )
                 )
 
-            _touch_participant(
-                participant,
-                last_event_id=events[-1]["id"] if events else participant.last_event_id,
-            )
             if state_changed and not events:
                 _notify_battle_state_changed(
                     battle,
@@ -983,7 +967,6 @@ class CampaignBattleCreatorCancelView(APIView):
                 mode="creator",
             )
             events.append(event)
-            _touch_participant(participant, last_event_id=event["id"])
 
         return _response_with_snapshot(battle.id, events)
 
@@ -1032,6 +1015,5 @@ class CampaignBattleStartView(APIView):
                 payload={"participant_user_ids": [entry.user_id for entry in participants]},
             )
             events.append(event)
-            _touch_participant(participant, last_event_id=event["id"])
 
         return _response_with_snapshot(battle.id, events)
