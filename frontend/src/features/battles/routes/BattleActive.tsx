@@ -106,6 +106,8 @@ export default function BattleActive() {
   const [isFinishingBattle, setIsFinishingBattle] = useState(false);
   const [finishError, setFinishError] = useState("");
   const [selectedWinnerWarbandIds, setSelectedWinnerWarbandIds] = useState<number[]>([]);
+  // "No winner" records no wins or losses (decision 8).
+  const [noWinner, setNoWinner] = useState(false);
 
   const [isCancelBattleDialogOpen, setIsCancelBattleDialogOpen] = useState(false);
   const [isCancelingBattle, setIsCancelingBattle] = useState(false);
@@ -466,15 +468,15 @@ export default function BattleActive() {
   }, [campaignId, navigate]);
 
   const handleFinishBattle = useCallback(async () => {
-    if (selectedWinnerWarbandIds.length === 0) {
-      setFinishError("Select at least one winning warband.");
+    if (selectedWinnerWarbandIds.length === 0 && !noWinner) {
+      setFinishError("Pick the winners, or No winner.");
       return;
     }
     setIsFinishingBattle(true);
     setFinishError("");
     try {
       const next = await finishBattle(campaignId, numericBattleId, {
-        winner_warband_ids: selectedWinnerWarbandIds,
+        winner_warband_ids: noWinner ? [] : selectedWinnerWarbandIds,
       });
       applyBattleResponse(next);
       setIsFinishDialogOpen(false);
@@ -487,7 +489,7 @@ export default function BattleActive() {
     } finally {
       setIsFinishingBattle(false);
     }
-  }, [applyBattleResponse, campaignId, numericBattleId, selectedWinnerWarbandIds]);
+  }, [applyBattleResponse, campaignId, noWinner, numericBattleId, selectedWinnerWarbandIds]);
 
   useEffect(() => {
     if (!isFinishDialogOpen) {
@@ -495,6 +497,7 @@ export default function BattleActive() {
     }
     setFinishError("");
     setSelectedWinnerWarbandIds([]);
+    setNoWinner(false);
   }, [isFinishDialogOpen]);
 
   useEffect(() => {
@@ -1005,12 +1008,12 @@ export default function BattleActive() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>End Active Battle</DialogTitle>
-            <DialogDescription>
-              Declare which warband or warbands won this battle, then move everyone into postbattle.
+            <DialogDescription className="block text-sm text-muted-foreground">
+              Pick the winning warband or warbands, or No winner, then move everyone into
+              postbattle. Wins and losses are recorded when everyone has finished postbattle.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">Select the winners of this battle.</p>
             {(battleState?.participants ?? []).map((participant) => {
               const checked = selectedWinnerWarbandIds.includes(participant.warband.id);
               return (
@@ -1022,6 +1025,7 @@ export default function BattleActive() {
                     checked={checked}
                     onChange={(event) => {
                       const isChecked = event.target.checked;
+                      setNoWinner(false);
                       setSelectedWinnerWarbandIds((current) => {
                         if (isChecked) {
                           return current.includes(participant.warband.id)
@@ -1036,6 +1040,16 @@ export default function BattleActive() {
                 </label>
               );
             })}
+            <label className="battle-inline-panel flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-foreground">
+              <Checkbox
+                checked={noWinner}
+                onChange={(event) => {
+                  setNoWinner(event.target.checked);
+                  setSelectedWinnerWarbandIds([]);
+                }}
+              />
+              <span>No winner</span>
+            </label>
             {finishError ? <p className="text-sm text-red-600">{finishError}</p> : null}
           </div>
           <DialogFooter>
@@ -1045,7 +1059,7 @@ export default function BattleActive() {
             <Button
               type="button"
               onClick={() => void handleFinishBattle()}
-              disabled={isFinishingBattle || selectedWinnerWarbandIds.length === 0}
+              disabled={isFinishingBattle || (selectedWinnerWarbandIds.length === 0 && !noWinner)}
             >
               {isFinishingBattle ? "Ending..." : "End battle"}
             </Button>

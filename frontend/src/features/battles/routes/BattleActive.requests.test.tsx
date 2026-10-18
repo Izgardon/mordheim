@@ -111,7 +111,43 @@ describe("BattleActive requests", () => {
     fakeApi.reset();
   });
 
-  it("can't end the battle without a winner: no 'No winner', Confirm disabled until one is ticked (decision 8, pinned; flips in PR A)", async () => {
+  it("offers No winner, which ends the battle with an empty winner list (decision 8)", async () => {
+    const user = setupUser();
+    await renderActive();
+    fakeApi.on(`POST ${battlePath("finish/")}`, () => battleState({ status: "postbattle" }));
+
+    await user.click(screen.getByRole("button", { name: "End Battle" }));
+    const dialog = screen.getByRole("dialog", { name: "End Active Battle" });
+    expect(dialog).toHaveAccessibleDescription(
+      /Wins and losses are recorded when everyone has finished postbattle\.$/
+    );
+    expect(
+      within(dialog)
+        .getAllByRole("checkbox")
+        .map((box) => box.closest("label")?.textContent)
+    ).toEqual(["Iron Vultures", "Night Razors", "No winner"]);
+    const confirm = within(dialog).getByRole("button", { name: "End battle" });
+    expect(confirm).toBeDisabled();
+
+    // Ticking a warband after No winner takes No winner off, and the other way round.
+    await user.click(within(dialog).getByRole("checkbox", { name: "No winner" }));
+    await user.click(within(dialog).getByRole("checkbox", { name: "Night Razors" }));
+    expect(within(dialog).getByRole("checkbox", { name: "No winner" })).not.toBeChecked();
+    await user.click(within(dialog).getByRole("checkbox", { name: "No winner" }));
+    expect(within(dialog).getByRole("checkbox", { name: "Night Razors" })).not.toBeChecked();
+    await user.click(confirm);
+
+    expect(fakeApi.requests()[0]).toEqual({
+      method: "POST",
+      path: battlePath("finish/"),
+      body: { winner_warband_ids: [] },
+    });
+    expect(await screen.findByLabelText("Current path")).toHaveTextContent(
+      "/campaigns/1/battles/5/postbattle"
+    );
+  });
+
+  it("ends the battle with the ticked winners", async () => {
     const user = setupUser();
     await renderActive();
     fakeApi.on(`POST ${battlePath("finish/")}`, () =>
@@ -121,14 +157,6 @@ describe("BattleActive requests", () => {
     await user.click(screen.getByRole("button", { name: "End Battle" }));
     const dialog = screen.getByRole("dialog", { name: "End Active Battle" });
     const confirm = within(dialog).getByRole("button", { name: "End battle" });
-
-    expect(
-      within(dialog)
-        .getAllByRole("checkbox")
-        .map((box) => box.closest("label")?.textContent)
-    ).toEqual(["Iron Vultures", "Night Razors"]);
-    expect(within(dialog).queryByText(/no winner/i)).not.toBeInTheDocument();
-    expect(confirm).toBeDisabled();
 
     await user.click(within(dialog).getByRole("checkbox", { name: "Night Razors" }));
     expect(confirm).toBeEnabled();

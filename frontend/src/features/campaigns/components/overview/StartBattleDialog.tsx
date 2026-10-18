@@ -51,6 +51,8 @@ export default function StartBattleDialog({
   const [mode, setMode] = useState<BattleDialogMode>("start_battle");
   const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
   const [selectedWinnerWarbandIds, setSelectedWinnerWarbandIds] = useState<number[]>([]);
+  // A reported result can record "No winner" too (decision 8): no wins or losses.
+  const [noWinner, setNoWinner] = useState(false);
   const [scenario, setScenario] = useState("");
   const [scenarioLink, setScenarioLink] = useState("");
   const [battleDate, setBattleDate] = useState(getTodayInputValue);
@@ -98,6 +100,7 @@ export default function StartBattleDialog({
     setMode("start_battle");
     setSelectedUserIds([]);
     setSelectedWinnerWarbandIds([]);
+    setNoWinner(false);
     setError("");
     setScenario("");
     setScenarioLink("");
@@ -129,6 +132,7 @@ export default function StartBattleDialog({
   };
 
   const toggleWinner = (warbandId: number) => {
+    setNoWinner(false);
     setSelectedWinnerWarbandIds((prev) =>
       prev.includes(warbandId) ? prev.filter((entry) => entry !== warbandId) : [...prev, warbandId]
     );
@@ -156,8 +160,8 @@ export default function StartBattleDialog({
         setError("Select at least two players.");
         return;
       }
-      if (selectedWinnerWarbandIds.length < 1) {
-        setError("Select at least one winner.");
+      if (selectedWinnerWarbandIds.length < 1 && !noWinner) {
+        setError("Select the winners, or No winner.");
         return;
       }
       if (!scenario.trim()) {
@@ -176,7 +180,7 @@ export default function StartBattleDialog({
           scenario: scenario.trim(),
           battle_date: battleDate,
           participant_user_ids: participantUserIds,
-          winner_warband_ids: selectedWinnerWarbandIds,
+          winner_warband_ids: noWinner ? [] : selectedWinnerWarbandIds,
         });
         onOpenChange(false);
         onBattleCreated?.();
@@ -255,7 +259,7 @@ export default function StartBattleDialog({
         !scenario.trim() ||
         !battleDate ||
         participantUserIds.length < 2 ||
-        selectedWinnerWarbandIds.length < 1);
+        (selectedWinnerWarbandIds.length < 1 && !noWinner));
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -417,6 +421,18 @@ export default function StartBattleDialog({
                       </div>
                     ))
                   )}
+                  {selectableWinners.length > 0 ? (
+                    <label className="flex items-center justify-between gap-3 rounded-lg border border-border/40 bg-black/30 px-3 py-2 text-sm font-semibold text-foreground">
+                      No winner
+                      <Checkbox
+                        checked={noWinner}
+                        onChange={(event) => {
+                          setNoWinner(event.target.checked);
+                          setSelectedWinnerWarbandIds([]);
+                        }}
+                      />
+                    </label>
+                  ) : null}
                 </div>
               </div>
 
@@ -429,12 +445,14 @@ export default function StartBattleDialog({
                   : "-"}
                 <br />
                 Winners:{" "}
-                {selectedWinnerWarbandIds.length > 0
-                  ? selectableWinners
-                      .filter((warband) => selectedWinnerWarbandIds.includes(warband.id))
-                      .map((warband) => warband.name)
-                      .join(", ")
-                  : "-"}
+                {noWinner
+                  ? "No winner"
+                  : selectedWinnerWarbandIds.length > 0
+                    ? selectableWinners
+                        .filter((warband) => selectedWinnerWarbandIds.includes(warband.id))
+                        .map((warband) => warband.name)
+                        .join(", ")
+                    : "-"}
                 <br />
                 Date: {battleDate || "-"}
               </div>
