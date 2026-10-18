@@ -75,7 +75,7 @@ export default function CampaignLayout() {
     acceptTradeNotification,
     declineTradeNotification,
     acceptBattleInviteNotification,
-    dismissBattleInviteNotification,
+    declineBattleInviteNotification,
     acceptBattleResultRequestNotification,
     declineBattleResultRequestNotification,
     clearNotifications,
@@ -152,7 +152,7 @@ export default function CampaignLayout() {
         onAcceptTrade={acceptTradeNotification}
         onDeclineTrade={declineTradeNotification}
         onAcceptBattleInvite={acceptBattleInviteNotification}
-        onDismissBattleInvite={dismissBattleInviteNotification}
+        onDeclineBattleInvite={declineBattleInviteNotification}
         onAcceptBattleResultRequest={acceptBattleResultRequestNotification}
         onDeclineBattleResultRequest={declineBattleResultRequestNotification}
         onClear={clearNotifications}
@@ -167,7 +167,7 @@ export default function CampaignLayout() {
       clearNotifications,
       declineTradeNotification,
       declineBattleResultRequestNotification,
-      dismissBattleInviteNotification,
+      declineBattleInviteNotification,
       tradeRequestNotifications,
     ]
   );

@@ -32,6 +32,8 @@ import {
 } from "@/features/battles/components/prebattle/usePrebattleMobileBars";
 import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
 import { useBattleState } from "@/features/battles/hooks/useBattleState";
+import { useDeclineInvite } from "@/features/battles/hooks/useDeclineInvite";
+import { useRefreshOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import { participantStatusLabel } from "@/features/battles/components/prebattle/prebattle-utils";
 import {
   toUnitInformationMap,
@@ -464,6 +466,18 @@ export default function BattlePrebattle() {
   const canAcceptInvite = invitePending && currentParticipant?.status === "invited";
   const waitingForOthers = invitePending && currentParticipant?.status === "accepted";
   const isBattleCreator = battleState?.battle.created_by_user_id === user?.id;
+  const canDeclineInvite = Boolean(
+    invitePending && !isBattleCreator && (canAcceptInvite || waitingForOthers)
+  );
+  const refreshOpenBattles = useRefreshOpenBattles(campaignId);
+  const declining = useDeclineInvite({
+    campaignId,
+    battleId: numericBattleId,
+    onDeclined: useCallback(() => {
+      void refreshOpenBattles();
+      navigate(`/campaigns/${campaignId}`);
+    }, [campaignId, navigate, refreshOpenBattles]),
+  });
   const canCreatorCancelBattle =
     isBattleCreator &&
     (battleState?.battle.status === "inviting" || battleState?.battle.status === "prebattle");
@@ -1029,6 +1043,10 @@ export default function BattlePrebattle() {
           isCancelingBattle={isCancelingBattle}
           onAcceptInvite={handleAcceptInvite}
           onOpenCancelBattle={() => setIsCancelBattleDialogOpen(true)}
+          canDeclineInvite={canDeclineInvite}
+          isDecliningInvite={declining.isDeclining}
+          declineError={declining.error}
+          onDeclineInvite={() => void declining.decline()}
         />
       ) : (
         <>

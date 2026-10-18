@@ -106,6 +106,14 @@ export function saveBattleParticipantConfig(
   });
 }
 
+/** An invitee declines before the battle starts (BUG-45); final, and fewer than two left cancels it. */
+export function declineBattleInvite(campaignId: number, battleId: number) {
+  return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/decline/`, {
+    method: "POST",
+    headers: battleWriteHeaders(),
+  });
+}
+
 export function setBattleReady(campaignId: number, battleId: number, ready: boolean) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/ready/`, {
     method: "POST",

@@ -19,6 +19,7 @@ export type BattleParticipantStatus =
   | "joined_prebattle"
   | "ready"
   | "canceled_prebattle"
+  | "declined"
   | "in_battle"
   | "finished_battle"
   | "confirmed_postbattle";

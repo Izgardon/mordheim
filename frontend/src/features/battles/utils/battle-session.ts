@@ -32,7 +32,8 @@ export function getResumableBattleForUser(battleStates: BattleState[], userId?: 
       const participant = state.participants.find((entry) => entry.user.id === userId);
       return (
         participant?.status !== "confirmed_postbattle" &&
-        participant?.status !== "canceled_prebattle"
+        participant?.status !== "canceled_prebattle" &&
+        participant?.status !== "declined"
       );
     }) ?? null
   );

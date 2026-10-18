@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/dialog";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { cancelBattleAsCreator, joinBattle } from "@/features/battles/api/battles-api";
+import { DECLINE_INVITE_QUESTION } from "@/features/battles/components/prebattle/PrebattleInviteGate";
+import { useDeclineInvite } from "@/features/battles/hooks/useDeclineInvite";
 import {
   useOpenCampaignBattles,
   useRefreshOpenBattles,
@@ -75,6 +77,21 @@ export default function BattleActionPanel({
 
   const battleIsInviting = resumableBattle?.battle.status === "inviting";
   const canAcceptInvite = battleIsInviting && currentUserParticipant?.status === "invited";
+  const canDeclineInvite =
+    battleIsInviting &&
+    resumableBattle?.battle.created_by_user_id !== user?.id &&
+    (currentUserParticipant?.status === "invited" || currentUserParticipant?.status === "accepted");
+  const [isDeclineConfirmOpen, setIsDeclineConfirmOpen] = useState(false);
+  const declining = useDeclineInvite({
+    campaignId,
+    battleId: resumableBattle?.battle.id ?? null,
+    onDeclined: (updatedBattle) => {
+      replaceOpenBattle(updatedBattle);
+      void refreshOpenBattles();
+      setIsDeclineConfirmOpen(false);
+      setIsStatusDialogOpen(false);
+    },
+  });
 
   const canCreatorCancelResumableBattle =
     Boolean(resumableBattle) &&
@@ -198,8 +215,25 @@ export default function BattleActionPanel({
           onAcceptInvite={handleAcceptInvite}
           onCancelBattle={() => setIsCancelBattleDialogOpen(true)}
           cancelBattleError={cancelBattleError}
+          canDeclineInvite={Boolean(canDeclineInvite)}
+          onDeclineInvite={() => setIsDeclineConfirmOpen(true)}
         />
       ) : null}
+
+      <ConfirmDialog
+        open={isDeclineConfirmOpen}
+        onOpenChange={setIsDeclineConfirmOpen}
+        title="Decline battle"
+        description={
+          <div className="space-y-2">
+            <p>{DECLINE_INVITE_QUESTION}</p>
+            {declining.error ? <p className="text-sm text-red-600">{declining.error}</p> : null}
+          </div>
+        }
+        confirmText={declining.isDeclining ? "Declining..." : "Decline"}
+        isConfirming={declining.isDeclining}
+        onConfirm={() => void declining.decline()}
+      />
 
       <ConfirmDialog
         open={isCancelBattleDialogOpen}
@@ -245,6 +279,8 @@ type BattleInviteStatusDialogProps = {
   onAcceptInvite: () => void;
   onCancelBattle: () => void;
   cancelBattleError: string;
+  canDeclineInvite: boolean;
+  onDeclineInvite: () => void;
 };
 
 function BattleInviteStatusDialog({
@@ -258,6 +294,8 @@ function BattleInviteStatusDialog({
   onAcceptInvite,
   onCancelBattle,
   cancelBattleError,
+  canDeclineInvite,
+  onDeclineInvite,
 }: BattleInviteStatusDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -310,6 +348,11 @@ function BattleInviteStatusDialog({
           {canAcceptInvite ? (
             <Button variant="default" onClick={onAcceptInvite} disabled={isAcceptingInvite}>
               {isAcceptingInvite ? "Accepting..." : "Accept invite"}
+            </Button>
+          ) : null}
+          {canDeclineInvite ? (
+            <Button variant="secondary" onClick={onDeclineInvite}>
+              Decline
             </Button>
           ) : null}
           {canCancelBattle ? (

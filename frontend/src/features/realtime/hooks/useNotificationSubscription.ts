@@ -176,6 +176,26 @@ export function useNotificationSubscription() {
       return;
     }
 
+    if (message.type === "battle_invite_declined") {
+      // An invitee declined your battle, or didn't answer in time (BUG-45, decision 2).
+      const payload = message.payload as BattleNotificationPayload & {
+        user_label?: string;
+        reason?: string;
+      };
+      if (!payload?.battle_id || !payload?.campaign_id) {
+        return;
+      }
+      const who = payload.user_label?.trim() || "A player";
+      toast(
+        payload.reason === "expired"
+          ? `${who} didn't answer your battle invite in time.`
+          : `${who} declined your battle invite.`,
+        { id: `battle-declined-${payload.battle_id}-${payload.user_label ?? ""}` }
+      );
+      void invalidateOpenBattles(queryClient, payload.campaign_id);
+      return;
+    }
+
     if (message.type === "battle_prebattle_opened") {
       const payload = message.payload as BattleNotificationPayload;
       if (!payload?.battle_id || !payload?.campaign_id) {

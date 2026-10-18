@@ -1,7 +1,9 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+import { renderWithQueryClient } from "@/test/query-test-utils";
 
 import BattlePrebattle from "./BattlePrebattle";
 
@@ -304,7 +306,7 @@ describe("BattlePrebattle", () => {
   it("shows Battle Notes only for the current user's selected warband and saves through participant config", async () => {
     const user = userEvent.setup();
 
-    render(<BattlePrebattle />);
+    renderWithQueryClient(<BattlePrebattle />);
 
     await screen.findByText("Roster for Iron Vultures");
 

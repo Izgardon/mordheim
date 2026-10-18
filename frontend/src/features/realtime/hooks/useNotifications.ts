@@ -8,6 +8,7 @@ import { invalidateOpenBattles } from "@/features/battles/hooks/useOpenCampaignB
 import { invalidatePendingResults } from "@/features/battles/hooks/usePendingReportedResults";
 import {
   approveReportedBattleResult,
+  declineBattleInvite,
   declineReportedBattleResult,
   joinBattle,
 } from "@/features/battles/api/battles-api";
@@ -16,10 +17,7 @@ import type {
   BattleResultRequestNotification,
 } from "@/features/battles/types/battle-types";
 import { acceptTradeRequest, declineTradeRequest } from "@/features/campaigns/api/campaigns-api";
-import {
-  clearAllNotifications as apiClearAllNotifications,
-  clearNotification as apiClearNotification,
-} from "@/features/notifications/api/notifications-api";
+import { clearAllNotifications as apiClearAllNotifications } from "@/features/notifications/api/notifications-api";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useAppStore } from "@/stores/app-store";
@@ -41,7 +39,9 @@ export function useNotifications() {
     clearBattleInviteNotifications,
     removeBattleResultRequestNotification,
     clearBattleResultRequestNotifications,
+    currentBattleSession,
     setCurrentBattleSession,
+    clearCurrentBattleSession,
   } = useAppStore();
 
   const acceptTradeNotification = useCallback(
@@ -85,16 +85,18 @@ export function useNotifications() {
     [navigate, queryClient, removeBattleInviteNotification, setCurrentBattleSession]
   );
 
-  const dismissBattleInviteNotification = useCallback(
+  // The invite's X declines it (BUG-45): final; the server resolves the notification. Removed once
+  // the server has it, so a failure shows on the card instead of the invite silently coming back.
+  const declineBattleInviteNotification = useCallback(
     async (notification: BattleInviteNotification) => {
-      // Removed once the server has it, so a failure shows on the card instead of the invite
-      // silently coming back on the next load.
-      if (notification.notificationDbId) {
-        await apiClearNotification(notification.notificationDbId);
-      }
+      await declineBattleInvite(notification.campaignId, notification.battleId);
       removeBattleInviteNotification(notification.id);
+      if (currentBattleSession?.battleId === notification.battleId) {
+        clearCurrentBattleSession();
+      }
+      void invalidateOpenBattles(queryClient, notification.campaignId);
     },
-    [removeBattleInviteNotification]
+    [clearCurrentBattleSession, currentBattleSession, queryClient, removeBattleInviteNotification]
   );
 
   const acceptBattleResultRequestNotification = useCallback(
@@ -139,7 +141,7 @@ export function useNotifications() {
     acceptTradeNotification,
     declineTradeNotification,
     acceptBattleInviteNotification,
-    dismissBattleInviteNotification,
+    declineBattleInviteNotification,
     acceptBattleResultRequestNotification,
     declineBattleResultRequestNotification,
     clearNotifications,

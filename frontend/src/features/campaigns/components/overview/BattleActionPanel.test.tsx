@@ -117,7 +117,7 @@ function OverviewWithBell() {
         onAcceptTrade={notifications.acceptTradeNotification}
         onDeclineTrade={notifications.declineTradeNotification}
         onAcceptBattleInvite={notifications.acceptBattleInviteNotification}
-        onDismissBattleInvite={notifications.dismissBattleInviteNotification}
+        onDeclineBattleInvite={notifications.declineBattleInviteNotification}
         onAcceptBattleResultRequest={notifications.acceptBattleResultRequestNotification}
         onDeclineBattleResultRequest={notifications.declineBattleResultRequestNotification}
         onClear={notifications.clearNotifications}
@@ -146,6 +146,52 @@ async function renderOverview() {
   );
   return overview;
 }
+
+describe("BattleActionPanel with a battle invite", () => {
+  beforeEach(() => {
+    fakeApi.reset();
+    fakeRealtime.reset();
+    fakeApi.on("GET /notifications/", []);
+    fakeApi.on(PENDING_ROUTE, []);
+    fakeApi.on("GET /campaigns/1/battles/?open=1", [
+      battleState({
+        status: "inviting",
+        created_by_user_id: OPPONENT.id,
+        me: { status: "invited" },
+        opponent: { status: "accepted" },
+      }),
+    ]);
+  });
+
+  it("lets an invitee decline from the status dialog, after a confirm (BUG-45)", async () => {
+    const user = setupUser();
+    fakeApi.on("POST /campaigns/1/battles/5/decline/", () =>
+      battleState({ status: "canceled", me: { status: "declined" } })
+    );
+    renderWithQueryClient(
+      <AppStoreProvider>
+        <MemoryRouter initialEntries={["/campaigns/1"]}>
+          <BattleActionPanel campaignId={1} players={[]} campaignStarted />
+        </MemoryRouter>
+      </AppStoreProvider>
+    );
+
+    await user.click(await screen.findByRole("button", { name: "See Status" }));
+    const status = screen.getByRole("dialog", { name: "Battle Status" });
+    expect(within(status).getByRole("button", { name: "Accept invite" })).toBeInTheDocument();
+    await user.click(within(status).getByRole("button", { name: "Decline" }));
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Decline battle" })).getByRole("button", {
+        name: "Decline",
+      })
+    );
+
+    await waitFor(() => expect(fakeApi.calls()).toContain("POST /campaigns/1/battles/5/decline/"));
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog", { name: "Battle Status" })).not.toBeInTheDocument()
+    );
+  });
+});
 
 describe("BattleActionPanel with a reported result awaiting you", () => {
   beforeEach(() => {

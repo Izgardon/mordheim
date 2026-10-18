@@ -147,7 +147,7 @@ export function BattleInviteCard({
     <NotificationCard
       title="Battle invite"
       {...state}
-      decline={{ label: "Dismiss battle invite", onClick: onDecline }}
+      decline={{ label: "Decline battle invite", onClick: onDecline }}
       accept={{ label: "Accept battle invite", onClick: onAccept }}
     >
       <BattleDetails notification={notification} />

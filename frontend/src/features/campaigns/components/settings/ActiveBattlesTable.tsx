@@ -62,6 +62,8 @@ const participantStatusLabel = (status: CampaignActiveBattle["participants"][num
       return "Ready";
     case "canceled_prebattle":
       return "Canceled";
+    case "declined":
+      return "Declined";
     case "in_battle":
       return "In battle";
     case "finished_battle":

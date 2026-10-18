@@ -31,7 +31,7 @@ type NotificationsMenuProps = {
   onAcceptTrade: (notification: TradeNotification) => NotificationAction;
   onDeclineTrade: (notification: TradeNotification) => NotificationAction;
   onAcceptBattleInvite: (notification: BattleInviteNotification) => NotificationAction;
-  onDismissBattleInvite: (notification: BattleInviteNotification) => NotificationAction;
+  onDeclineBattleInvite: (notification: BattleInviteNotification) => NotificationAction;
   onAcceptBattleResultRequest: (
     notification: BattleResultRequestNotification
   ) => NotificationAction;
@@ -51,7 +51,7 @@ export default function NotificationsMenu({
   onAcceptTrade,
   onDeclineTrade,
   onAcceptBattleInvite,
-  onDismissBattleInvite,
+  onDeclineBattleInvite,
   onAcceptBattleResultRequest,
   onDeclineBattleResultRequest,
   onClear,
@@ -180,7 +180,7 @@ export default function NotificationsMenu({
                   void runAction(notification.id, () => onAcceptBattleInvite(notification))
                 }
                 onDecline={() =>
-                  void runAction(notification.id, () => onDismissBattleInvite(notification))
+                  void runAction(notification.id, () => onDeclineBattleInvite(notification))
                 }
               />
             ))}

@@ -3,7 +3,7 @@
  * whenever the battle's or your own status changes, and its redirects once the battle moves on
  * (BUG-74).
  */
-import { act, screen, waitFor } from "@testing-library/react";
+import { act, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
@@ -121,6 +121,51 @@ describe("BattlePrebattle requests", () => {
     );
     expect(fakeApi.calls()[0]).toBe(`GET ${statePath("prebattle", 3)}`);
     expect(readyPosts()).toEqual([]);
+  });
+
+  it("lets an invitee decline from the invite gate, after saying it is final (BUG-45)", async () => {
+    const user = setupUser();
+    fakeApi.on(
+      `GET ${statePath("prebattle")}`,
+      battleState({
+        status: "inviting",
+        created_by_user_id: OPPONENT.id,
+        me: { status: "invited" },
+        opponent: { status: "accepted" },
+      })
+    );
+    fakeApi.on(`POST ${battlePath("decline/")}`, () =>
+      battleState({ status: "canceled", me: { status: "declined" } })
+    );
+    renderBattleRoute("prebattle");
+
+    await user.click(await screen.findByRole("button", { name: "Decline" }));
+    const confirm = screen.getByRole("dialog", { name: "Decline battle" });
+    expect(confirm).toHaveAccessibleDescription(
+      "Decline this battle? You can't rejoin it, and with fewer than two players left it is cancelled."
+    );
+    expect(fakeApi.calls()).not.toContain(`POST ${battlePath("decline/")}`);
+    await user.click(within(confirm).getByRole("button", { name: "Decline" }));
+
+    expect(await screen.findByText("Campaign overview")).toBeInTheDocument();
+    expect(fakeApi.requests()).toContainEqual({ method: "POST", path: battlePath("decline/") });
+  });
+
+  it("doesn't offer Decline to the battle's creator", async () => {
+    fakeApi.on(
+      `GET ${statePath("prebattle")}`,
+      battleState({
+        status: "inviting",
+        me: { status: "accepted" },
+        opponent: { status: "invited" },
+      })
+    );
+    renderBattleRoute("prebattle");
+
+    expect(
+      (await screen.findAllByRole("button", { name: "Cancel battle" })).length
+    ).toBeGreaterThan(0);
+    expect(screen.queryByRole("button", { name: "Decline" })).not.toBeInTheDocument();
   });
 
   it("redirects to postbattle when the battle is already there (BUG-74)", async () => {

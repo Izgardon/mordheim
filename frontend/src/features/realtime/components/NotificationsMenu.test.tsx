@@ -25,7 +25,7 @@ function renderMenu(onAcceptTrade: (notification: TradeNotification) => Promise<
       onAcceptTrade={onAcceptTrade}
       onDeclineTrade={vi.fn()}
       onAcceptBattleInvite={vi.fn()}
-      onDismissBattleInvite={vi.fn()}
+      onDeclineBattleInvite={vi.fn()}
       onAcceptBattleResultRequest={vi.fn()}
       onDeclineBattleResultRequest={vi.fn()}
     />

@@ -36,7 +36,7 @@ const { notifications } = vi.hoisted(() => ({
     acceptTradeNotification: () => undefined,
     declineTradeNotification: () => undefined,
     acceptBattleInviteNotification: () => undefined,
-    dismissBattleInviteNotification: () => undefined,
+    declineBattleInviteNotification: () => undefined,
     acceptBattleResultRequestNotification: () => undefined,
     declineBattleResultRequestNotification: () => undefined,
     clearNotifications: () => undefined,

@@ -5,10 +5,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AppToaster } from "@/components/ui/toaster";
 import type { BattleInviteNotification } from "@/features/battles/types/battle-types";
-import {
-  clearAllNotifications,
-  clearNotification,
-} from "@/features/notifications/api/notifications-api";
+import { declineBattleInvite } from "@/features/battles/api/battles-api";
+import { clearAllNotifications } from "@/features/notifications/api/notifications-api";
 import { AppStoreProvider, useAppStore } from "@/stores/app-store";
 import { createQueryWrapper } from "@/test/query-test-utils";
 import { useNotifications } from "./useNotifications";
@@ -17,9 +15,9 @@ const { auth } = vi.hoisted(() => ({ auth: { user: { id: 1, email: "raider@examp
 
 vi.mock("@/features/auth/hooks/use-auth", () => ({ useAuth: () => auth }));
 vi.mock("@/features/notifications/api/notifications-api", () => ({
-  clearNotification: vi.fn(),
   clearAllNotifications: vi.fn(),
 }));
+vi.mock("@/features/battles/api/battles-api", () => ({ declineBattleInvite: vi.fn() }));
 
 const invite: BattleInviteNotification = {
   id: "battle-41",
@@ -51,31 +49,39 @@ const renderNotifications = () =>
 
 describe("useNotifications", () => {
   beforeEach(() => {
-    vi.mocked(clearNotification).mockReset();
+    vi.mocked(declineBattleInvite).mockReset();
     vi.mocked(clearAllNotifications).mockReset();
   });
 
-  it("keeps a battle invite, and reports the failure, when dismissing it fails", async () => {
-    vi.mocked(clearNotification).mockRejectedValue(new TypeError("Failed to fetch"));
+  it("keeps a battle invite, and reports the failure, when declining it fails", async () => {
+    vi.mocked(declineBattleInvite).mockRejectedValue(new TypeError("Failed to fetch"));
     const { result } = renderNotifications();
     act(() => result.current.store.addBattleInviteNotification(invite));
 
     await act(async () => {
-      await expect(result.current.dismissBattleInviteNotification(invite)).rejects.toThrow();
+      await expect(result.current.declineBattleInviteNotification(invite)).rejects.toThrow();
     });
 
     expect(result.current.battleInviteNotifications).toEqual([invite]);
   });
 
-  it("removes a battle invite once the server has dismissed it", async () => {
-    vi.mocked(clearNotification).mockResolvedValue(undefined as never);
+  it("declines the battle through decline/, then removes the invite and its battle session (BUG-45)", async () => {
+    vi.mocked(declineBattleInvite).mockResolvedValue({} as never);
     const { result } = renderNotifications();
-    act(() => result.current.store.addBattleInviteNotification(invite));
+    act(() => {
+      result.current.store.addBattleInviteNotification(invite);
+      result.current.store.setCurrentBattleSession({
+        battleId: 41,
+        campaignId: 7,
+        status: "inviting",
+      });
+    });
 
-    await act(() => result.current.dismissBattleInviteNotification(invite));
+    await act(() => result.current.declineBattleInviteNotification(invite));
 
-    expect(clearNotification).toHaveBeenCalledWith(12);
+    expect(declineBattleInvite).toHaveBeenCalledWith(7, 41);
     expect(result.current.battleInviteNotifications).toEqual([]);
+    expect(result.current.store.currentBattleSession).toBeNull();
   });
 
   it("tells the user when clearing notifications fails on the server", async () => {
