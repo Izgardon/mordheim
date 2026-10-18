@@ -17,6 +17,7 @@ import {
   deferred,
   statePath,
 } from "@/test/battle-fixtures";
+import { ApiError } from "@/lib/api-client";
 import { renderBattleRoute } from "@/test/battle-routes";
 import { fakeApi } from "@/test/fake-api";
 import { setupUser } from "@/test/user-event";
@@ -322,6 +323,32 @@ describe("BattleActive requests", () => {
     expect(
       screen.queryByRole("button", { name: "Undo using Healing Draught" })
     ).not.toBeInTheDocument();
+  });
+
+  it("follows the battle to postbattle when a write is refused because it moved on (BUG-19)", async () => {
+    const user = setupUser();
+    await renderActive();
+    // This phone slept through End battle: the server has moved on and refuses the write.
+    server.battle.status = "postbattle";
+    fakeApi.fail(
+      `POST ${battlePath("unit-ooa/")}`,
+      new ApiError("Battle is not active", 400, {
+        detail: "Battle is not active",
+        code: "battle_status_changed",
+      })
+    );
+
+    await user.click(firstButton("Captain Wolf", "Set Captain Wolf out of action"));
+
+    await waitFor(() =>
+      expect(screen.getByLabelText("Current path")).toHaveTextContent(
+        "/campaigns/1/battles/5/postbattle"
+      )
+    );
+    expect(fakeApi.calls().slice(0, 2)).toEqual([
+      `POST ${battlePath("unit-ooa/")}`,
+      `GET ${statePath("active")}`,
+    ]);
   });
 
   it("sends out of action and kills straight to their own endpoints, outside the config queue", async () => {

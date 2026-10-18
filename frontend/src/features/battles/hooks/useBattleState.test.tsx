@@ -14,6 +14,7 @@ import {
   ME,
   OPPONENT,
   battleEvent,
+  battlePath,
   battleState,
   deferred,
   opponentParticipant,
@@ -22,6 +23,8 @@ import {
   stateUpdatedMessage,
   versionedMessage,
 } from "@/test/battle-fixtures";
+import { joinBattle } from "@/features/battles/api/battles-api";
+import { ApiError } from "@/lib/api-client";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
 import { createQueryWrapper } from "@/test/query-test-utils";
@@ -175,7 +178,7 @@ describe("useBattleState", () => {
     ]);
   });
 
-  it("refetches nothing when the connection comes back or the tab is shown again (BUG-19, BATL-TEST-22, pinned; flips in PR B)", async () => {
+  it("reads state/ once when the connection comes back and the tab is shown again (BUG-19, BATL-TEST-22)", async () => {
     const { result } = await renderLoaded();
     // Meanwhile the battle ended on the server.
     fakeApi.on(`GET ${statePath("active", 3)}`, battleState({ status: "postbattle" }));
@@ -189,8 +192,68 @@ describe("useBattleState", () => {
     });
     await act(() => new Promise((resolve) => setTimeout(resolve, 20)));
 
+    expect(fakeApi.calls()).toEqual([`GET ${statePath("active", 3)}`]);
+    expect(result.current.battleState?.battle.status).toBe("postbattle");
+  });
+
+  it("reads state/ when the tab is shown again, and not when it is hidden (BUG-19)", async () => {
+    const { result } = await renderLoaded();
+    fakeApi.on(`GET ${statePath("active", 3)}`, battleState({ status: "postbattle" }));
+    const visibility = vi.spyOn(document, "visibilityState", "get").mockReturnValue("hidden");
+
+    act(() => {
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
     expect(fakeApi.calls()).toEqual([]);
-    expect(result.current.battleState?.battle.status).toBe("active");
+
+    visibility.mockReturnValue("visible");
+    act(() => {
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+
+    await waitFor(() => expect(result.current.battleState?.battle.status).toBe("postbattle"));
+    expect(fakeApi.calls()).toEqual([`GET ${statePath("active", 3)}`]);
+  });
+
+  it("reads state/ when a write is refused because the battle moved on (BUG-19)", async () => {
+    const { result } = await renderLoaded();
+    fakeApi.on(`GET ${statePath("active", 3)}`, battleState({ status: "postbattle" }));
+    fakeApi.fail(
+      `POST ${battlePath("join/")}`,
+      new ApiError("Battle is not active", 400, {
+        detail: "Battle is not active",
+        code: "battle_status_changed",
+      })
+    );
+
+    await expect(joinBattle(CAMPAIGN_ID, BATTLE_ID)).rejects.toThrow("Battle is not active");
+
+    await waitFor(() => expect(result.current.battleState?.battle.status).toBe("postbattle"));
+    expect(fakeApi.calls()).toEqual([
+      `POST ${battlePath("join/")}`,
+      `GET ${statePath("active", 3)}`,
+    ]);
+  });
+
+  it("reads nothing for a write refused for another reason, or for another battle", async () => {
+    await renderLoaded();
+    fakeApi.fail(
+      `POST ${battlePath("join/")}`,
+      new ApiError("Nope", 400, { detail: "Nope", code: "invalid" })
+    );
+    fakeApi.fail(
+      `POST /campaigns/${CAMPAIGN_ID}/battles/99/join/`,
+      new ApiError("Moved on", 400, { detail: "Moved on", code: "battle_status_changed" })
+    );
+
+    await expect(joinBattle(CAMPAIGN_ID, BATTLE_ID)).rejects.toThrow("Nope");
+    await expect(joinBattle(CAMPAIGN_ID, 99)).rejects.toThrow("Moved on");
+    await act(() => new Promise((resolve) => setTimeout(resolve, 20)));
+
+    expect(fakeApi.calls()).toEqual([
+      `POST ${battlePath("join/")}`,
+      `POST /campaigns/${CAMPAIGN_ID}/battles/99/join/`,
+    ]);
   });
 
   it("keeps what a newer answer applied when a slower, older read lands (BUG-44)", async () => {

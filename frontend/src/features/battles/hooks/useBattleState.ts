@@ -1,7 +1,8 @@
-import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { battleStateQuery } from "@/features/battles/api/battle-queries";
+import { onBattleStatusChanged } from "@/features/battles/api/battle-status-changed";
 import { getBattleStateLastEventId, mergeBattleState } from "@/features/battles/state/battle-cache";
 import {
   createSingleFlight,
@@ -11,7 +12,7 @@ import type { BattleSocketMessage } from "@/features/battles/types/battle-messag
 import type { BattleState, BattleStateView } from "@/features/battles/types/battle-types";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { queryKeys } from "@/lib/query-keys";
-import { useBattleEvents } from "@/lib/realtime";
+import { useBattleEvents, useRealtimeReconnect } from "@/lib/realtime";
 
 type UseBattleStateOptions = {
   campaignId: number;
@@ -27,7 +28,9 @@ export type BattleStateRef = { readonly current: BattleState | null };
  * The battle's state as a TanStack query (`['campaign', cid, 'battle', bid, 'state']`): one full
  * read per visit; writes' answers merged in with `applyBattleResponse`; socket messages patch it
  * from their snapshot (PERF-34), reading `state/` only on a version gap, one read at a time.
- * Answers older than the cache never replace it (BUG-44).
+ * Answers older than the cache never replace it (BUG-44). It catches up after the socket comes
+ * back, when the tab is shown again, and when a write is refused because the battle moved on
+ * (BUG-19), so a phone that slept through End battle follows it.
  */
 export function useBattleState({ campaignId, battleId, view }: UseBattleStateOptions) {
   const queryClient = useQueryClient();
@@ -97,6 +100,32 @@ export function useBattleState({ campaignId, battleId, view }: UseBattleStateOpt
       ),
     [queryClient, queryKey]
   );
+
+  // Messages sent while the socket was down or the tab hidden are gone: read what changed (BUG-19).
+  // A read already running (the campaign's reconnect catch-up) is joined, not repeated.
+  const catchUp = useCallback(() => {
+    if (validRoute) {
+      void queryClient.invalidateQueries({ queryKey, exact: true }, { cancelRefetch: false });
+    }
+  }, [queryClient, queryKey, validRoute]);
+  useRealtimeReconnect(catchUp);
+  useEffect(() => {
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        catchUp();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    const stopListening = onBattleStatusChanged((changedCampaignId, changedBattleId) => {
+      if (changedCampaignId === campaignId && changedBattleId === battleId) {
+        catchUp();
+      }
+    });
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      stopListening();
+    };
+  }, [battleId, campaignId, catchUp]);
 
   // Battle writes name this tab's socket, so the server never sends this tab its own events; any
   // event that arrives is news, even one your own user sent from another tab or device (BUG-75).

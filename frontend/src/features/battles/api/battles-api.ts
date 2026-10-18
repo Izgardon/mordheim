@@ -13,6 +13,8 @@ import type {
 } from "@/features/battles/types/battle-types";
 import type { UnitInformationPatch } from "@/features/battles/utils/unit-information-patch";
 
+import { rethrowBattleWriteError } from "./battle-status-changed";
+
 /**
  * Battle writes name this browser's socket (BUG-75), so the server leaves only this tab out of the
  * event the write broadcasts; your other tabs and devices still get it. Needs
@@ -26,13 +28,16 @@ const battleWriteHeaders = () => {
 const battlePath = (campaignId: number, battleId: number, suffix: string) =>
   `/campaigns/${campaignId}/battles/${battleId}/${suffix}`;
 
-/** A POST to one battle's `suffix` (`"start/"`), answered with the battle's state. */
+/**
+ * A POST to one battle's `suffix` (`"start/"`), answered with the battle's state. A refusal
+ * because the battle moved on (`battle_status_changed`) also has the pages read its state (BUG-19).
+ */
 function battleWrite(campaignId: number, battleId: number, suffix: string, body?: unknown) {
   return apiRequest<BattleState>(battlePath(campaignId, battleId, suffix), {
     method: "POST",
     headers: battleWriteHeaders(),
     ...(body === undefined ? {} : { body }),
-  });
+  }).catch((error: unknown) => rethrowBattleWriteError(error, campaignId, battleId));
 }
 
 /** The caller's battles in this campaign that haven't ended or been canceled. */

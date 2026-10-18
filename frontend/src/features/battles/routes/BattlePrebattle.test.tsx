@@ -214,6 +214,7 @@ vi.mock("@/features/battles/api/battles-api", () => ({
 
 vi.mock("@/lib/realtime", () => ({
   useBattleEvents: mocks.useBattleEvents,
+  useRealtimeReconnect: vi.fn(),
 }));
 
 vi.mock("@/features/battles/hooks/useBattleRosters", () => ({
