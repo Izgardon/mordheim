@@ -22,7 +22,8 @@ class TradeLockTests(TradeTestCase):
         self.give_gold(self.rival, 50)
         self.trade_events.reset_mock()
 
-    def test_locking_one_side_spends_its_trader_and_waits_for_the_other(self):
+    def test_locking_one_side_waits_for_the_other_and_spends_nothing(self):
+        # decision 9 (simplified): locking used to spend the trader's trading action; only completion does now
         hero = self.trader(self.warband)
         self.assertEqual(self.offer(self.player, self.trade, trader_id=hero.id, gold=10).status_code, 200)
 
@@ -32,10 +33,11 @@ class TradeLockTests(TradeTestCase):
         body = response.json()
         self.assertEqual((body["status"], body["from_accepted"], body["to_accepted"]), ("accepted", True, False))
         self.assertEqual(self.state(self.trade), ("accepted", True, False))
-        self.assertFalse(self.trading_action(hero))
+        self.assertTrue(self.trading_action(hero))
+        self.assertIsNone(body["from_trader_spent_id"])
         self.assertEqual(self.trade_events.call_args_list[-1].args, (self.trade.id, "trade.locked", body))
 
-    def test_locking_twice_spends_the_trader_once(self):
+    def test_locking_twice_changes_nothing(self):
         hero = self.trader(self.warband)
         self.offer(self.player, self.trade, trader_id=hero.id)
         self.assertEqual(self.lock(self.player, self.trade).status_code, 200)
@@ -102,7 +104,7 @@ class TradeLockTests(TradeTestCase):
                 self.assertEqual((response.status_code, response.json()["code"]), (400, "invalid"))
         self.assertEqual(self.state(self.trade), ("accepted", False, True))
 
-    def test_unlocking_gives_the_trader_back(self):
+    def test_either_side_can_unlock(self):
         for user, warband in ((self.player, self.warband), (self.viewer, self.rival)):
             with self.subTest(user=user.email):
                 hero = self.trader(warband)
@@ -113,9 +115,7 @@ class TradeLockTests(TradeTestCase):
                 response = self.unlock(user, self.trade)
 
                 self.assertEqual(response.status_code, 200)
-                self.assertEqual(
-                    (self.state(self.trade), self.trading_action(hero)), (("accepted", False, False), True)
-                )
+                self.assertEqual(self.state(self.trade), ("accepted", False, False))
                 self.trade_events.assert_called_once_with(
                     self.trade.id, "trade.offer_updated", response.json(), socket_id=None
                 )
@@ -242,12 +242,13 @@ class TradeCompletionTests(TradeTestCase):
             [("Trade", "Gold sent to Rats", -30), ("Trade", "Gold received from Rats", 10)],
         )
 
-    def test_a_trader_spent_by_the_lock_does_not_block_completion(self):
+    def test_a_trade_with_a_trader_completes_and_spends_him(self):
         # BUG-05: completion used to re-check the trader's trading action, which the lock had just spent, so
-        # a trade with a trader never completed. It now only checks that he is still on the roster.
+        # a trade with a trader never completed. Locking spends nothing now; completion spends him (decision 9).
         hero = self.trader(self.warband)
         self._offer_both_ways(trader_id=hero.id)
         self.assertEqual(self.lock(self.player, self.trade).status_code, 200)
+        self.assertTrue(self.trading_action(hero))
         self.trade_events.reset_mock()
 
         response = self.lock(self.viewer, self.trade)
@@ -261,7 +262,7 @@ class TradeCompletionTests(TradeTestCase):
     def test_a_failed_completion_unlocks_both_sides_and_says_why(self):
         # BUG-41, ECON-TEST-08: the flags used to be saved before the completion transaction, so a completion
         # error answered 400 and left both sides locked. Lock and completion now share one transaction: a side
-        # that can no longer pay unlocks both sides, gives the traders back, answers 409 and tells the other.
+        # that can no longer pay unlocks both sides, spends no trader, answers 409 and tells the other.
         def sell_two_swords() -> None:
             WarbandItem.objects.filter(warband=self.warband, item=self.sword).update(quantity=1)
 

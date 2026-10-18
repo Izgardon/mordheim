@@ -24,11 +24,9 @@ class ExpireTradesCommandTests(TradeTestCase):
         )
         self.closing_events = patcher.start()
         self.addCleanup(patcher.stop)
-        # a request that ran out unanswered, and an open session that ran out with the sender's trader spent
+        # a request that ran out unanswered, and an open session that ran out with the sender's side locked
         self.pending = self.request_trade()
-        self.hero = self.trader(self.warband)
         self.session = self.make_trade("accepted")  # written directly: the API allows one open trade per pair
-        self.assertEqual(self.offer(self.player, self.session, trader_id=self.hero.id).status_code, 200)
         self.assertEqual(self.lock(self.player, self.session).status_code, 200)
         self.live = self.make_trade("accepted", from_user=self.viewer, to_user=self.player)
         self.finished = self.make_trade("completed")
@@ -41,14 +39,11 @@ class ExpireTradesCommandTests(TradeTestCase):
         call_command("expire_trades", *args, stdout=out)
         return out.getvalue()
 
-    def test_due_trades_expire_give_their_traders_back_and_are_closed_out(self):
-        self.assertFalse(self.trading_action(self.hero))
-
+    def test_due_trades_expire_and_are_closed_out(self):
         output = self.run_command()
 
         self.assertEqual(self.state(self.pending), ("expired", False, False))
         self.assertEqual(self.state(self.session), ("expired", False, False))
-        self.assertTrue(self.trading_action(self.hero))
         self.assertTrue(self.notification(self.viewer, self.pending).is_resolved)
         closed = sorted((str(call.args[2]["id"]), call.args[0]) for call in self.closing_events.call_args_list)
         expected = [(str(self.pending.id), self.player.id), (str(self.pending.id), self.viewer.id)]
@@ -71,7 +66,6 @@ class ExpireTradesCommandTests(TradeTestCase):
         self.assertIn(f"{self.pending.id} pending Monks -> Rats", output)
         self.assertIn(f"{self.session.id} accepted Monks -> Rats", output)
         self.assertEqual((self.state(self.pending)[0], self.state(self.session)[0]), ("pending", "accepted"))
-        self.assertFalse(self.trading_action(self.hero))
         self.closing_events.assert_not_called()
 
     def test_a_trade_extended_after_it_was_listed_stays_open(self):
@@ -82,4 +76,3 @@ class ExpireTradesCommandTests(TradeTestCase):
 
         self.assertEqual([trade.id for trade in expired], [self.pending.id])
         self.assertEqual(self.state(self.session), ("accepted", True, False))
-        self.assertFalse(self.trading_action(self.hero))

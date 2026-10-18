@@ -178,12 +178,13 @@ class TradeRequestCloseTests(TradeTestCase):
 
         self.assertTrue(self.notification(self.viewer, trade).is_resolved)
 
-    def test_closing_an_open_trade_unlocks_both_sides_and_gives_the_traders_back(self):
+    def test_closing_an_open_trade_unlocks_both_sides_and_leaves_trading_actions_untouched(self):
+        # decision 9 (simplified): the lock no longer spends the trader, so closing has nothing to give back
         trade = self.open_trade()
         hero = self.trader(self.warband)
         self.assertEqual(self.offer(self.player, trade, trader_id=hero.id).status_code, 200)
         self.assertEqual(self.lock(self.player, trade).status_code, 200)
-        self.assertFalse(self.trading_action(hero))
+        self.assertTrue(self.trading_action(hero))
 
         response = self.post_as(self.viewer, self.trade_url(trade, "close"))
 

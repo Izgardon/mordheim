@@ -1,7 +1,8 @@
 """Completing a trade once both sides have locked: both offers' stash items and gold change hands, or nothing.
 
-Runs in the lock's transaction with the trade row locked; both warbands are locked too (lowest id first). The
-trader is only checked to still be on the roster: locking spent his trading action (BUG-05).
+Runs in the lock's transaction with the trade row locked; both warbands are locked too (lowest id first). Each
+side's trader must still be on the roster (BUG-05); his trading action is spent here, once the trade can no longer
+fail (decision 9).
 """
 
 from typing import Any
@@ -17,7 +18,7 @@ from apps.warbands.services.summary import warband_gold
 
 from .errors import TradeError
 from .offers import requested_items, stored_offer
-from .traders import SIDES
+from .traders import SIDES, spend_traders
 
 FAILED = "trade_completion_failed"
 
@@ -77,7 +78,9 @@ def complete_trade(trade: TradeRequest) -> None:
                 _move_items(trade, side, offers[side])
     _record_gold(trade, offers)
     economy_log.log_completed_trade({side: (getattr(trade, f"{side}_warband"), offers[side]) for side in SIDES})
+    spend_traders(trade, offers)  # after every check and move: nothing can fail past this point
     trade.from_offer, trade.to_offer = offers["from"], offers["to"]
     trade.status = TradeRequest.STATUS_COMPLETED
     trade.responded_at = timezone.now()
-    trade.save(update_fields=["status", "responded_at", "from_offer", "to_offer"])
+    changed = ["status", "responded_at", "from_offer", "to_offer", "from_trader_spent", "to_trader_spent"]
+    trade.save(update_fields=changed)

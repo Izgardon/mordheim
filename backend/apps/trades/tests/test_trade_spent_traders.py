@@ -1,8 +1,8 @@
 """A trader who already used his trading action this round warns, never refuses (decision 9, ECON-TWEAK-01).
 
 The offer and the lock go ahead and the acting player's answer carries `warnings`; events never do. The hero
-stays spent, and because this trade didn't spend him it records nothing, so unlocking or closing never gives him
-an action back. Dead or dismissed heroes stay refused (BUG-109): that's data, not a game rule.
+stays spent: only completion spends a trading action, and it records only a hero it actually spent. Dead or
+dismissed heroes stay refused (BUG-109): that's data, not a game rule.
 """
 
 from typing import Any
@@ -49,7 +49,7 @@ class TradeSpentTraderTests(TradeTestCase):
                 self.assertNotIn("warnings", self.offer(self.player, self.trade, **body).json())
         self.assertNotIn("warnings", self.lock(self.player, self.trade).json())
 
-    def test_a_spent_hero_locks_with_a_warning_and_is_not_given_back(self):
+    def test_a_spent_hero_locks_with_a_warning_and_stays_spent(self):
         self.offer(self.player, self.trade, trader_id=self.hero.id)
 
         locked = self.lock(self.player, self.trade)
@@ -61,7 +61,7 @@ class TradeSpentTraderTests(TradeTestCase):
         self.assertNotIn("warnings", self.trade_events.call_args.args[2])  # trade.locked
 
         self.assertEqual(self.unlock(self.player, self.trade).status_code, 200)
-        self.assertFalse(self.trading_action(self.hero))  # still spent: no action farmed by lock and unlock
+        self.assertFalse(self.trading_action(self.hero))  # still spent
         self.lock(self.player, self.trade)
         self.assertEqual(self.post_as(self.player, self.trade_url(self.trade, "close")).status_code, 200)
         self.assertFalse(self.trading_action(self.hero))
@@ -91,8 +91,8 @@ class TradeSpentTraderTests(TradeTestCase):
 
 
 class TraderCandidateTests(TradeTestCase):
-    """The trader picker lists the sheet's heroes, whose `trading_action` is the spent flag; every trade payload
-    names the hero each side's lock spent, so the client can keep that flag right as the trade moves."""
+    """The trader picker lists the sheet's heroes, whose `trading_action` is the spent flag; a completed trade's
+    payload names the hero it spent on each side, so the client can mark him without re-reading the sheet."""
 
     def setUp(self) -> None:
         super().setUp()
@@ -108,7 +108,7 @@ class TraderCandidateTests(TradeTestCase):
     def test_the_sheet_says_which_candidates_are_spent(self):
         self.assertEqual(self.sheet_flags(), {"Fresh": True, "Spent": False})
 
-    def test_the_payload_names_the_trader_each_lock_spent(self):
+    def test_the_completed_payload_names_the_trader_it_spent(self):
         self.offer(self.player, self.trade, trader_id=self.fresh.id)
         self.assertIsNone(self.lock(self.viewer, self.trade).json()["to_trader_spent_id"])  # no trader: nothing spent
 
@@ -117,14 +117,17 @@ class TraderCandidateTests(TradeTestCase):
         self.assertEqual((locked["status"], locked["from_trader_spent_id"]), ("completed", self.fresh.id))
         self.assertEqual(self.sheet_flags(), {"Fresh": False, "Spent": False})
 
-    def test_unlocking_clears_it_and_a_hero_spent_elsewhere_is_never_named(self):
+    def test_nothing_before_completion_names_a_trader_and_a_hero_spent_elsewhere_never_is(self):
+        # decision 9 (simplified): the lock used to spend and name the trader; only completion does now
         self.offer(self.player, self.trade, trader_id=self.fresh.id)
-        self.assertEqual(self.lock(self.player, self.trade).json()["from_trader_spent_id"], self.fresh.id)
-        self.assertEqual(self.trade_events.call_args.args[2]["from_trader_spent_id"], self.fresh.id)
-
-        unlocked = self.unlock(self.player, self.trade).json()
-
-        self.assertIsNone(unlocked["from_trader_spent_id"])  # given back: Fresh is available again
-        self.offer(self.player, self.trade, trader_id=self.spent.id)
         self.assertIsNone(self.lock(self.player, self.trade).json()["from_trader_spent_id"])
+        self.assertIsNone(self.trade_events.call_args.args[2]["from_trader_spent_id"])
+        self.assertIsNone(self.unlock(self.player, self.trade).json()["from_trader_spent_id"])
+        self.assertEqual(self.sheet_flags(), {"Fresh": True, "Spent": False})
+
+        self.offer(self.player, self.trade, trader_id=self.spent.id)
+        self.lock(self.viewer, self.trade)
+        completed = self.lock(self.player, self.trade).json()
+
+        self.assertEqual((completed["status"], completed["from_trader_spent_id"]), ("completed", None))
         self.assertEqual(self.sheet_flags(), {"Fresh": True, "Spent": False})

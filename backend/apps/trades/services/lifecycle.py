@@ -22,7 +22,7 @@ from .completion import complete_trade
 from .errors import TradeError
 from .offers import TradeWarning, build_offer
 from .timing import OPEN_STATUSES, extend, is_due
-from .traders import SPENT_FIELDS, restore_spent_traders, spend_trader
+from .traders import check_trader
 
 NOT_ACTIVE = "Trade is not active"
 
@@ -32,12 +32,11 @@ def side_of(trade: TradeRequest, user: Any) -> str:
 
 
 def _finish(trade: TradeRequest, status: str) -> None:
-    """End an open trade: unlock both sides, give back the traders it spent, close it out."""
-    restore_spent_traders(trade)
+    """End an open trade: unlock both sides and close it out (it spent no trading action: only completion does)."""
     trade.from_accepted = trade.to_accepted = False
     trade.status = status
     trade.responded_at = timezone.now()
-    trade.save(update_fields=["status", "responded_at", "from_accepted", "to_accepted", *SPENT_FIELDS])
+    trade.save(update_fields=["status", "responded_at", "from_accepted", "to_accepted"])
     close_out(trade)
 
 
@@ -81,18 +80,15 @@ def close(trade: TradeRequest, side: str) -> None:
 
 
 def update_offer(trade: TradeRequest, side: str, payload: Any) -> list[TradeWarning]:
-    """Replace the side's offer and return its warnings. Any offer unlocks both sides and gives back the traders
-    they spent."""
+    """Replace the side's offer and return its warnings. Any offer unlocks both sides."""
     if trade.status != TradeRequest.STATUS_ACCEPTED:
         raise TradeError(NOT_ACTIVE)
-    restore_spent_traders(trade)  # first, so a trader this trade spent can be offered again
     offer, warnings = build_offer(payload, getattr(trade, f"{side}_warband_id"))
     setattr(trade, f"{side}_offer", offer)
     trade.from_accepted = trade.to_accepted = False
     trade.offer_version += 1  # under the row lock, so no two offers get the same version
     extend(trade)
-    changed = [f"{side}_offer", "from_accepted", "to_accepted", "offer_version", "expires_at", *SPENT_FIELDS]
-    trade.save(update_fields=changed)
+    trade.save(update_fields=[f"{side}_offer", "from_accepted", "to_accepted", "offer_version", "expires_at"])
     return warnings
 
 
@@ -117,16 +113,16 @@ def check_offer_version(trade: TradeRequest, data: Any) -> None:
 
 
 def lock_side(trade: TradeRequest, side: str) -> list[TradeWarning]:
-    """The side accepts the offers as they stand, spending its trader once (a second lock changes nothing), and
-    gets the warnings: a trader who already traded this round still locks (decision 9)."""
+    """The side accepts the offers as they stand (a second lock changes nothing) and gets the warnings: a trader
+    who already traded this round still locks (decision 9). Locking spends nothing; completion does."""
     if trade.status != TradeRequest.STATUS_ACCEPTED:
         raise TradeError(NOT_ACTIVE)
     if getattr(trade, f"{side}_accepted"):
         return []
-    warnings = spend_trader(trade, side)
+    warnings = check_trader(trade, side)
     setattr(trade, f"{side}_accepted", True)
     extend(trade)
-    trade.save(update_fields=[f"{side}_accepted", f"{side}_trader_spent", "expires_at"])
+    trade.save(update_fields=[f"{side}_accepted", "expires_at"])
     return warnings
 
 
@@ -136,23 +132,21 @@ def both_locked(trade: TradeRequest) -> bool:
 
 def complete_or_reopen(trade: TradeRequest) -> TradeError | None:
     """Complete a trade both sides have locked, in the lock's transaction (BUG-41). When it can't complete,
-    both sides are unlocked and their traders given back, and the reason is returned."""
+    both sides are unlocked and the reason is returned."""
     try:
         complete_trade(trade)
     except TradeError as failure:
-        restore_spent_traders(trade)
         trade.from_accepted = trade.to_accepted = False
-        trade.save(update_fields=["from_accepted", "to_accepted", *SPENT_FIELDS])
+        trade.save(update_fields=["from_accepted", "to_accepted"])
         return failure
     close_out(trade)
     return None
 
 
 def unlock_side(trade: TradeRequest, side: str) -> None:
-    """The side takes its acceptance back and gets back the trader its lock spent."""
+    """The side takes its acceptance back."""
     if trade.status != TradeRequest.STATUS_ACCEPTED:
         raise TradeError(NOT_ACTIVE)
-    restore_spent_traders(trade, (side,))
     setattr(trade, f"{side}_accepted", False)
     extend(trade)
-    trade.save(update_fields=[f"{side}_accepted", f"{side}_trader_spent", "expires_at"])
+    trade.save(update_fields=[f"{side}_accepted", "expires_at"])

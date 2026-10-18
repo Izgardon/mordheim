@@ -20,7 +20,7 @@ from apps.campaigns.models import Campaign, CampaignMembership, CampaignRole
 from apps.core.testing import Rendezvous, run_concurrently
 from apps.items.models import Item
 from apps.trades.models import TradeRequest
-from apps.trades.services import lifecycle, requests
+from apps.trades.services import completion, lifecycle, requests
 from apps.warbands.models import Hero, LedgerAction, Warband, WarbandItem
 from apps.warbands.services import ledger
 
@@ -71,9 +71,9 @@ class TradeConcurrencyTests(TransactionTestCase):
         self.trade.to_offer = {"gold": 3, "items": []}
         self.trade.save(update_fields=["from_offer", "to_offer"])
         rendezvous = Rendezvous()
-        real = lifecycle.spend_trader
+        real = lifecycle.check_trader
 
-        with mock.patch.object(lifecycle, "spend_trader", side_effect=rendezvous.before(real)):
+        with mock.patch.object(lifecycle, "check_trader", side_effect=rendezvous.before(real)):
             results = run_concurrently(self._post(self.player, "lock"), self._post(self.viewer, "lock"))
 
         self.assertEqual(sorted(status for status, _ in results), [200, 200])
@@ -98,9 +98,9 @@ class TradeConcurrencyTests(TransactionTestCase):
         self.assertEqual((self.trade.from_offer.get("gold"), self.trade.to_offer.get("gold")), (10, 7))
 
     def test_two_trades_naming_one_trader_spend_him_once(self):
-        # BUG-08: the spend was read-modify-write, so two trades naming the same hero could both spend him; it
-        # is now one guarded UPDATE. The second lock goes ahead with a warning (decision 9) and records nothing,
-        # so neither trade can give back an action the other spent
+        # BUG-08: the spend was read-modify-write, so two trades naming the same hero could both spend him. It is
+        # one guarded UPDATE, now made by completion (decision 9): both trades complete, and only the first to
+        # spend him records it
         hero = Hero.objects.create(warband=self.warband, name="Haggler", unit_type="Champion")
         third = get_user_model().objects.create_user(username="c@example.com", email="c@example.com", password=None)
         CampaignMembership.objects.create(campaign=self.campaign, user=third, role=self.role)
@@ -114,21 +114,21 @@ class TradeConcurrencyTests(TransactionTestCase):
             status=TradeRequest.STATUS_ACCEPTED,
             expires_at=timezone.now() + timedelta(minutes=5),
         )
-        TradeRequest.objects.filter(id__in=[self.trade.id, other.id]).update(from_offer={"trader_id": hero.id})
+        both = TradeRequest.objects.filter(id__in=[self.trade.id, other.id])
+        both.update(from_offer={"trader_id": hero.id}, to_accepted=True)  # each waits for the player's lock
         other_base = f"/api/campaigns/{self.campaign.id}/trade-requests/{other.id}/"
         rendezvous = Rendezvous()
-        real = lifecycle.spend_trader
+        real = completion.spend_traders
 
-        with mock.patch.object(lifecycle, "spend_trader", side_effect=rendezvous.before(real)):
+        with mock.patch.object(completion, "spend_traders", side_effect=rendezvous.before(real)):
             results = run_concurrently(
                 self._post(self.player, "lock"), self._post(self.player, "lock", base=other_base)
             )
 
-        self.assertEqual([status for status, _ in results], [200, 200])
-        self.assertEqual(sorted(len(body.get("warnings", [])) for _, body in results), [0, 1])
+        self.assertEqual([(status, body["status"]) for status, body in results], [(200, "completed")] * 2)
+        hero.refresh_from_db()
         spent = TradeRequest.objects.filter(from_trader_spent=hero).count()
-        locked = TradeRequest.objects.filter(from_accepted=True).count()
-        self.assertEqual((spent, locked), (1, 2))
+        self.assertEqual((hero.trading_action, spent), (False, 1))
 
     def test_two_requests_at_once_open_one_trade(self):
         # BUG-114: both warbands are locked before the check for an open trade, so the second request waits for

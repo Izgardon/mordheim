@@ -51,7 +51,7 @@ class TradeOfferTests(TradeTestCase):
         self.trade.refresh_from_db()
         self.assertEqual((body["from_offer"], body["to_offer"]), (offer, {}))
         self.assertEqual((self.trade.from_offer, self.trade.to_offer), (offer, {}))
-        self.assertTrue(self.trading_action(hero))  # choosing a trader doesn't spend him; locking does
+        self.assertTrue(self.trading_action(hero))  # choosing a trader doesn't spend him; completing does
         self.trade_events.assert_called_once_with(self.trade.id, "trade.offer_updated", body, socket_id=None)
 
     def test_the_recipients_offer_goes_on_the_to_side(self):
@@ -150,11 +150,11 @@ class TradeOfferTests(TradeTestCase):
             (response.status_code, response.json()), (400, {"detail": "One or more items are not in the warchest."})
         )
 
-    def test_a_new_offer_unlocks_both_sides_and_gives_a_locked_trader_back(self):
+    def test_a_new_offer_unlocks_both_sides(self):
         hero = self.trader(self.warband)
         self.assertEqual(self.offer(self.player, self.trade, trader_id=hero.id).status_code, 200)
         self.assertEqual(self.lock(self.player, self.trade).status_code, 200)
-        self.assertEqual((self.state(self.trade), self.trading_action(hero)), (("accepted", True, False), False))
+        self.assertEqual((self.state(self.trade), self.trading_action(hero)), (("accepted", True, False), True))
 
         response = self.offer(self.viewer, self.trade, gold=0)
 

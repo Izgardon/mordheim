@@ -20,12 +20,12 @@ def writes(captured: Any) -> list[str]:
 
 class TradeExpiryTests(TradeTestCase):
     def _locked_trade_with_trader(self) -> tuple[TradeRequest, Hero]:
-        """An open trade whose sender has locked an offer with a trader (so the trader is spent)."""
+        """An open trade whose sender has locked an offer with a trader (who keeps his trading action)."""
         trade = self.open_trade()
         hero = self.trader(self.warband)
         self.assertEqual(self.offer(self.player, trade, trader_id=hero.id).status_code, 200)
         self.assertEqual(self.lock(self.player, trade).status_code, 200)
-        self.assertFalse(self.trading_action(hero))
+        self.assertTrue(self.trading_action(hero))
         return trade, hero
 
     def test_reading_a_trade_that_ran_out_shows_it_expired_and_writes_nothing(self):
@@ -44,9 +44,9 @@ class TradeExpiryTests(TradeTestCase):
                 self.assertEqual(response.json()["status"], "expired")
                 self.assertEqual(self.state(entry), stored)
                 self.assertEqual(writes(captured), [])
-        self.assertFalse(self.trading_action(hero))
+        self.assertTrue(self.trading_action(hero))
 
-    def test_writes_to_an_expired_open_trade_expire_it_and_give_the_traders_back(self):
+    def test_writes_to_an_expired_open_trade_expire_it_and_leave_trading_actions_untouched(self):
         for action in ("offer", "lock", "unlock", "close"):
             with self.subTest(action=action):
                 trade, hero = self._locked_trade_with_trader()
@@ -94,7 +94,7 @@ class TradeExpiryTests(TradeTestCase):
             with self.subTest(status=status):
                 listed = self.get_as(self.player, f"{self.trades_url()}?status={status}").json()
                 self.assertEqual({row["id"] for row in listed}, {str(trade_id) for trade_id in expected})
-        self.assertFalse(self.trading_action(hero))  # given back when expire_trades or a write closes the trade
+        self.assertTrue(self.trading_action(hero))  # nothing spent: only completion spends a trader
 
 
 class TradeAccessTests(TradeTestCase):

@@ -58,8 +58,8 @@ class TradeRequest(models.Model):
     to_accepted = models.BooleanField(default=False)
     # Counts offer changes; a lock names the version its player was shown (BUG-35)
     offer_version = models.PositiveIntegerField(default=0)
-    # The hero whose trading action this trade spent when the side locked, so that unlocking, a new offer,
-    # closing and expiry give back exactly that one (BUG-08)
+    # The hero whose trading action this trade's completion spent on each side: null until it completes, and
+    # null for no trader or one who had already traded this round (decision 9)
     from_trader_spent = models.ForeignKey(
         "warbands.Hero", null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
     )

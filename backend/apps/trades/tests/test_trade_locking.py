@@ -1,7 +1,7 @@
 """Locks, traders and completion after pass 2 PR A (BUG-05, BUG-08, BUG-41).
 
-A side's lock spends its trader with one guarded UPDATE and records him on the request; whatever ends the lock
-(unlocking, a new offer, a failed completion, closing, expiry) gives back exactly the hero this trade spent.
+A trader's trading action is spent only when the trade completes (decision 9), so nothing that ends a lock has
+anything to give back (see test_trade_trading_actions.py).
 """
 
 from datetime import timedelta
@@ -24,37 +24,14 @@ class TradeTraderTests(TradeTestCase):
         self.give_gold(self.rival, 50)
         self.hero = self.trader(self.warband)
 
-    def test_a_locked_side_may_offer_again_with_the_trader_its_lock_spent(self):
-        self.assertEqual(self.offer(self.player, self.trade, trader_id=self.hero.id).status_code, 200)
-        self.assertEqual(self.lock(self.player, self.trade).status_code, 200)
-
-        response = self.offer(self.player, self.trade, trader_id=self.hero.id, gold=5)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual((self.state(self.trade), self.trading_action(self.hero)), (("accepted", False, False), True))
-        self.assertIsNone(self.trade.from_trader_spent_id)
-
-    def test_a_refused_offer_keeps_the_lock_and_the_spent_trader(self):
+    def test_a_refused_offer_keeps_the_lock(self):
         self.offer(self.player, self.trade, trader_id=self.hero.id)
         self.lock(self.player, self.trade)
 
         response = self.offer(self.player, self.trade, trader_id=self.hero.id, gold=500)
 
         self.assertEqual((response.status_code, response.json()), (400, {"detail": "Not enough gold."}))
-        self.assertEqual((self.state(self.trade), self.trading_action(self.hero)), (("accepted", True, False), False))
-        self.assertEqual(self.trade.from_trader_spent_id, self.hero.id)
-
-    def test_closing_gives_back_only_the_trader_this_trade_spent(self):
-        # the offer names a hero who had already traded elsewhere: this trade never spent him
-        self.offer(self.player, self.trade, trader_id=self.hero.id)
-        mine = self.trader(self.rival, name="Fence")
-        self.offer(self.viewer, self.trade, trader_id=mine.id)
-        self.lock(self.viewer, self.trade)
-        Hero.objects.filter(id=self.hero.id).update(trading_action=False)
-
-        self.assertEqual(self.post_as(self.player, self.trade_url(self.trade, "close")).status_code, 200)
-
-        self.assertEqual((self.trading_action(self.hero), self.trading_action(mine)), (False, True))
+        self.assertEqual((self.state(self.trade), self.trading_action(self.hero)), (("accepted", True, False), True))
 
     def test_a_trader_who_left_the_roster_since_the_lock_stops_the_completion(self):
         for change in ({"dead": True}, {"dismissed_at": timezone.now()}):
