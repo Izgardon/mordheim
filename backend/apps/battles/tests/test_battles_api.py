@@ -533,9 +533,15 @@ class BattleApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
         owner_participant = BattleParticipant.objects.get(battle_id=battle_id, user=self.owner)
-        self.assertEqual(
+        self.assertEqual(  # the draft keeps the roll (decision 9, BUG-71)
             owner_participant.postbattle_json.get("exploration"),
-            {"dice_values": [], "resource_id": None},
+            {
+                "dice_values": [5],
+                "resource_id": resource.id,
+                "amount_override": None,
+                "previous_rolls": [],
+                "amount": 1,
+            },
         )
         self.assertFalse(  # drafts log nothing (BUG-47)
             WarbandLog.objects.filter(
@@ -671,7 +677,10 @@ class BattleApiTests(APITestCase):
             entry_type="exploration",
         ).first()
         assert exploration_log is not None
-        self.assertEqual(exploration_log.payload, {"dice": [5]})
+        self.assertEqual(
+            exploration_log.payload,
+            {"dice": [5], "amount": 1, "amount_override": None, "resource": "Shards", "rerolls": []},
+        )
         self.assertFalse(
             WarbandLog.objects.filter(
                 warband=self.owner_warband,
@@ -806,9 +815,15 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
 
         owner_participant = BattleParticipant.objects.get(battle_id=battle_id, user=self.owner)
-        self.assertEqual(
+        self.assertEqual(  # the draft keeps the roll (decision 9, BUG-71)
             owner_participant.postbattle_json.get("exploration"),
-            {"dice_values": [], "resource_id": None},
+            {
+                "dice_values": [5],
+                "resource_id": resource.id,
+                "amount_override": None,
+                "previous_rolls": [],
+                "amount": 1,
+            },
         )
         self.assertEqual(
             owner_participant.postbattle_json.get("upkeep"),

@@ -40,6 +40,7 @@ from apps.warbands.utils.leaders import ensure_single_living_leader
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.broadcast import Changed, publish
+from ..services.exploration import exploration_amount
 from ..services.injuries import apply_stat_and_special, describe_roll, injury_outcome
 from ..services.kills import kill_counts_by_unit
 from ..services.lifecycle import participants_all_in, record_wins_and_losses
@@ -1289,25 +1290,6 @@ def _normalize_postbattle_json(raw_value):
     }
 
 
-def _exploration_resource_amount(dice_values: list[int]) -> int:
-    total = sum(dice_values)
-    if total <= 0:
-        return 0
-    if total <= 5:
-        return 1
-    if total <= 11:
-        return 2
-    if total <= 17:
-        return 3
-    if total <= 24:
-        return 4
-    if total <= 30:
-        return 5
-    if total <= 35:
-        return 6
-    return 7
-
-
 def _resolve_find_item_cost(item: Item) -> int | None:
     costs = [availability.cost for availability in item.availabilities.all() if availability.cost is not None]
     if not costs:
@@ -1669,8 +1651,8 @@ def _apply_participant_postbattle_results(
     exploration = normalized["exploration"]
     resource_id = exploration.get("resource_id")
     dice_values = exploration.get("dice_values", [])
-    amount_override = exploration.get("amount_override")
-    resource_amount = amount_override if amount_override is not None else _exploration_resource_amount(dice_values)
+    resource_amount = exploration_amount(exploration)  # the server's table, or the override (decision 9)
+    resource_name = None
     if resource_id is not None and resource_amount > 0:
         resource = (
             WarbandResource.objects.select_for_update()
@@ -1684,6 +1666,7 @@ def _apply_participant_postbattle_results(
             raise ValueError("Selected exploration resource is invalid")
         resource.amount += resource_amount
         resource.save(update_fields=["amount"])
+        resource_name = resource.name
 
     upkeep = normalized.get("upkeep", {})
     if upkeep.get("pay_upkeep", True):
@@ -1780,12 +1763,17 @@ def _apply_participant_postbattle_results(
         "complete",
         _build_battle_complete_log_payload(battle, participant),
     )
+    previous_rolls = (postbattle_json.get("exploration") or {}).get("previous_rolls", [])  # kept by the server
     log_warband_event(
         participant.warband_id,
         "battle",
         "exploration",
         {
             "dice": dice_values,
+            "amount": resource_amount,
+            "amount_override": exploration.get("amount_override"),
+            "resource": resource_name,
+            "rerolls": previous_rolls,
         },
     )
     if finds_gold_crowns > 0 or canonical_find_items:

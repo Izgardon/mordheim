@@ -1,7 +1,7 @@
 """Postbattle drafts, kills and finalise checks characterised (pass 3, step 0).
 
-Pinned: exploration cleared by every draft save (BUG-71). Fixed: drafts log nothing; finalise logs each unit's
-final injury roll once (BUG-47, BATL-TEST-14; the table's effects in test_battle_injuries.py). Fixed: finalise and pivotal moments count the kill events and kill history lists ended battles only
+Fixed: the draft keeps the exploration roll, re-rolls warn and are logged (BUG-71, decision 9); drafts log
+nothing and finalise logs each unit's final injury roll once (BUG-47, BATL-TEST-14; test_battle_injuries.py). Fixed: finalise and pivotal moments count the kill events and kill history lists ended battles only
 (BUG-11, BATL-TEST-10; undo in test_battle_kills.py); a unit dismissed mid-battle is left out of finalise with a
 warning (BUG-73).
 """
@@ -94,8 +94,8 @@ class PostbattleDraftTests(BattleTestCase):
         granted = HeroSpecial.objects.filter(hero=self.hero).order_by("id").values_list("special__name", flat=True)
         self.assertEqual(list(granted), ["Old Battle Wound", "Leg Wound"])
 
-    def test_a_draft_save_clears_exploration_and_keeps_the_rest(self):
-        # Characterises current behaviour (BUG-71, pinned; flips in PR A: the draft keeps the roll)
+    def test_a_draft_keeps_exploration_with_the_servers_amount(self):
+        # BUG-71, decision 9: every draft save cleared exploration, so a reload lost the roll (a free re-roll)
         battle_id = self.postbattle()
         saved = draft(
             self.results(**{self.h: {"xp": 2}}),
@@ -107,7 +107,16 @@ class PostbattleDraftTests(BattleTestCase):
         data = self.ok(self.save(battle_id, saved)).data
 
         stored = self.participant(battle_id, self.player).postbattle_json
-        self.assertEqual(stored["exploration"], {"dice_values": [], "resource_id": None})
+        self.assertEqual(
+            stored["exploration"],
+            {
+                "dice_values": [6, 6],
+                "resource_id": self.resource.id,
+                "amount_override": 3,
+                "previous_rolls": [],
+                "amount": 3,
+            },
+        )
         self.assertEqual(
             (stored["finds"], stored["upkeep"]),
             ({"gold_crowns": 12, "items": []}, {"pay_upkeep": False, "entries": {}}),
@@ -116,8 +125,28 @@ class PostbattleDraftTests(BattleTestCase):
         self.assertEqual(
             (data["events"], self.sent()[-1]), ([], "battle_entered_postbattle")
         )  # a draft broadcasts nothing
+        self.assertNotIn("warnings", data)
 
-    def test_exploration_adds_the_table_amount_and_logs_only_the_dice(self):
+    def test_a_reroll_goes_ahead_with_a_warning_and_is_logged(self):
+        # Decision 9: re-rolling saved dice warns and is logged, never refused; adding a die isn't a re-roll
+        battle_id = self.postbattle()
+        explore = {"resource_id": self.resource.id}
+        self.ok(self.save(battle_id, draft(self.results(), exploration={**explore, "dice_values": [2]})))
+        added = self.ok(self.save(battle_id, draft(self.results(), exploration={**explore, "dice_values": [2, 3]})))
+        self.assertNotIn("warnings", added.data)
+
+        rerolled = self.ok(self.save(battle_id, draft(self.results(), exploration={**explore, "dice_values": [6, 6]})))
+
+        message = "Exploration was re-rolled (it was 2, 3); the re-roll is logged."
+        self.assertEqual(
+            rerolled.data["warnings"], [{"code": "exploration_rerolled", "message": message, "previous": [2, 3]}]
+        )
+        sneaky = {**explore, "dice_values": [6, 6], "previous_rolls": []}  # the history is the server's
+        self.ok(self.finalize(self.player, battle_id, draft(self.results(), exploration=sneaky)))
+        log = WarbandLog.objects.get(warband=self.warband, entry_type="exploration")
+        self.assertEqual((log.payload["dice"], log.payload["rerolls"], log.payload["amount"]), ([6, 6], [[2, 3]], 3))
+
+    def test_exploration_adds_the_table_amount_and_logs_the_roll(self):
         battle_id = self.postbattle()
         exploration = {"dice_values": [{"value": 6}, 5, 6], "resource_id": self.resource.id}
 
@@ -126,7 +155,8 @@ class PostbattleDraftTests(BattleTestCase):
         self.resource.refresh_from_db()
         self.assertEqual(self.resource.amount, 3)  # total 17: 12 to 17 give 3
         log = WarbandLog.objects.get(warband=self.warband, entry_type="exploration")
-        self.assertEqual(log.payload, {"dice": [6, 5, 6]})
+        expected = {"dice": [6, 5, 6], "amount": 3, "amount_override": None, "resource": "Wyrdstone", "rerolls": []}
+        self.assertEqual(log.payload, expected)
 
     def test_finalise_validation(self):
         battle_id = self.postbattle()

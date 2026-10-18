@@ -9,6 +9,7 @@ from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.broadcast import ALL, bump_state_version
 from ..services.errors import BattleError
+from ..services.exploration import keep_exploration
 from ..services.item_use import check_payload_size, item_use_payload
 from ..services.timing import postbattle_deadline, record_activity
 from .closing import skip_postbattle
@@ -439,20 +440,17 @@ class CampaignBattlePostbattleSaveView(APIView):
             except ValueError as exc:
                 return Response({"detail": str(exc)}, status=400)
 
-            participant.postbattle_json = {
-                "exploration": {
-                    "dice_values": [],
-                    "resource_id": None,
-                },
-                "finds": postbattle_json.get("finds", {"gold_crowns": 0, "items": []}),
-                "upkeep": postbattle_json.get("upkeep", {"pay_upkeep": True, "entries": {}}),
-                "unit_results": postbattle_json.get("unit_results", {}),
-            }
+            # the draft keeps the exploration roll, with the server's amount (decision 9, BUG-71)
+            stored_exploration = (participant.postbattle_json or {}).get("exploration")
+            postbattle_json["exploration"], warnings = keep_exploration(
+                stored_exploration, postbattle_json["exploration"]
+            )
+            participant.postbattle_json = postbattle_json
             participant.save(update_fields=["postbattle_json", "updated_at"])
             record_activity(battle)  # a draft is the player's own: activity, but no broadcast (PERF-34)
             # and it logs nothing: finalise logs each unit's injury once (decision 7, BUG-47)
 
-        return _response_with_snapshot(battle.id, events)
+        return _response_with_snapshot(battle.id, events, warnings=warnings)
 
 
 class CampaignBattleFinalizePostbattleView(APIView):
@@ -488,7 +486,11 @@ class CampaignBattleFinalizePostbattleView(APIView):
                 participant,
                 request.data.get("postbattle_json", participant.postbattle_json),
             )
-            warnings = _apply_participant_postbattle_results(battle, participant, postbattle_json)
+            stored_exploration = (participant.postbattle_json or {}).get("exploration")
+            postbattle_json["exploration"], warnings = keep_exploration(
+                stored_exploration, postbattle_json["exploration"]
+            )
+            warnings += _apply_participant_postbattle_results(battle, participant, postbattle_json)
             participant.postbattle_json = postbattle_json
             participant.status = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
             participant.confirmed_at = timezone.now()

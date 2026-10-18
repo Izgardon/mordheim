@@ -99,7 +99,12 @@ class FixturePostbattleTests(BattleTestCase):
             log_rows(self.warband),
             [
                 ("battle", "complete", {"result": "won", "with": [], "against": ["Rats"]}, None),
-                ("battle", "exploration", {"dice": [3, 4]}, None),
+                (
+                    "battle",
+                    "exploration",
+                    {"dice": [3, 4], "amount": 2, "amount_override": None, "resource": "Wyrdstone", "rerolls": []},
+                    None,
+                ),  # fmt: skip
                 ("battle", "finds", {"gold_crowns": 25, "items": [find]}, None),
             ],
         )  # deaths and XP are not logged
@@ -166,7 +171,8 @@ class FixturePostbattleTests(BattleTestCase):
         self.resource.refresh_from_db()
         self.assertEqual((self.heroes[1].xp, self.resource.amount), (Decimal(9999), 501))
         self.assertEqual(trade_rows(self.warband), [("Reward", "Battle reward", 999_999, None)])
-        self.assertEqual(log_rows(self.warband)[1][2], {"dice": [1]})  # the override isn't logged
+        exploration = {"dice": [1], "amount": 500, "amount_override": 500, "resource": "Wyrdstone", "rerolls": []}
+        self.assertEqual(log_rows(self.warband)[1][2], exploration)  # the override is logged (decision 9)
 
     def test_dead_units_keep_their_items(self):
         # Characterises current behaviour (pass 2 decision 7, BATL-TWEAK-08; flips in PR A: a dead hero's or hired
