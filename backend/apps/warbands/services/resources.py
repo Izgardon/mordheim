@@ -4,7 +4,7 @@ from django.db import transaction
 from django.db.models import BigIntegerField, F, Value
 from django.db.models.functions import Cast, Greatest, Least
 
-from apps.warbands.models import Warband, WarbandResource, WarbandTrade
+from apps.warbands.models import LedgerAction, Warband, WarbandResource, WarbandTrade
 from apps.warbands.services import ledger
 
 MAX_AMOUNT = 2_147_483_647  # WarbandResource.amount is a 32-bit integer column
@@ -44,7 +44,7 @@ def sell_resource(
     with transaction.atomic():
         # the gold first: it locks the warband before the resource row, as postbattle does
         description = f"{name} x {quantity}" if quantity > 1 else name
-        trade = ledger.record(warband, "Sell", price, description)
+        trade = ledger.record(warband, LedgerAction.SELL, price, description)
         if not rows.filter(amount__gte=quantity).update(amount=F("amount") - quantity):
             raise ResourceShortage(f"Not enough {name} to sell.")  # rolls the gold back
         resource = rows.get()  # after the guarded UPDATE, which keeps the row locked until commit

@@ -32,33 +32,54 @@ class TreasuryTests(RosterTestCase):
     def _entry(self, **body: Any) -> Any:
         return self.client.post(self._url(), {"description": "Entry", **body}, format="json")
 
-    def test_a_manual_entry_is_signed_by_its_action(self):
-        # (action, stored price, change in gold) for an entry of 10 gc: the stored price is the change (BUG-37)
+    def test_a_manual_entry_is_named_from_the_vocabulary_and_signed_by_its_action(self):
+        # (action sent, price sent, action stored, price stored = change in gold); decision 4, BUG-37
         cases = [
-            ("Buy", -10, -10),
-            ("Recruit", -10, -10),
-            ("Recruited", -10, -10),
-            ("Hire", -10, -10),
-            ("Hired", -10, -10),
-            ("Upkeep", -10, -10),
-            ("Bought", -10, -10),  # BUG-37: used to be stored as income and counted as spending
-            ("Trade sent", -10, -10),
-            ("buy", -10, -10),  # signed by the gold rule, which ignores case (the sign used not to)
-            ("Sell", 10, 10),
-            ("Sold", 10, 10),
-            ("Reward", 10, 10),
-            ("Exploration", 10, 10),
-            ("Starting Gold", 10, 10),
-            ("Trade received", 10, 10),
-            ("Lost at dice", 10, 10),  # BUG-37: any text is accepted and counts as income
+            ("Buy", 10, "Buy", -10),
+            ("Recruit", 10, "Recruit", -10),
+            ("Hire", 10, "Hire", -10),
+            ("Upkeep", 10, "Upkeep", -10),
+            ("Sell", 10, "Sell", 10),
+            ("Reward", 10, "Reward", 10),
+            ("Exploration", 10, "Exploration", 10),
+            ("Starting gold", 10, "Starting gold", 10),
+            ("buy", 10, "Buy", -10),  # any case
+            ("Trade", 10, "Trade", 10),  # Trade and Adjustment go either way: the price carries the sign
+            ("Trade", -10, "Trade", -10),
+            ("Adjustment", 10, "Adjustment", 10),
+            ("adjustment", -10, "Adjustment", -10),
+            # older clients' names
+            ("Bought", 10, "Buy", -10),
+            ("Sold", 10, "Sell", 10),
+            ("Recruited", 10, "Recruit", -10),
+            ("Hired", 10, "Hire", -10),
+            ("Starting Gold", 10, "Starting gold", 10),
+            ("Trade sent", 10, "Trade", -10),
+            ("Trade received", 10, "Trade", 10),
         ]
-        for action, stored, change in cases:
-            with self.subTest(action=action):
+        for sent, price, action, stored in cases:
+            with self.subTest(action=sent, price=price):
                 clear_ledger(self.warband)
-                response = self._entry(action=action, price=10)
+                response = self._entry(action=sent, price=price)
                 self.assertEqual(response.status_code, 201)
-                self.assertEqual(response.json()["price"], stored)
-                self.assertEqual(warband_gold(self.warband.id), change)
+                self.assertEqual((response.json()["action"], response.json()["price"]), (action, stored))
+                self.assertEqual(warband_gold(self.warband.id), stored)
+
+    def test_an_action_outside_the_vocabulary_is_refused(self):
+        # BUG-37: any text used to be accepted and counted as income
+        response = self._entry(action="Lost at dice", price=10)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.json(),
+            {
+                "action": [
+                    "Unknown action. Use one of: Buy, Sell, Recruit, Hire, Upkeep, Reward, Exploration, Trade, "
+                    "Adjustment, Starting gold, Group."
+                ]
+            },
+        )
+        self.assertEqual(trade_rows(self.warband), [])
 
     def test_an_entry_answers_with_the_treasury_row(self):
         response = self._entry(action="  Reward ", description=" Found coins ", notes="In a well")
@@ -96,6 +117,12 @@ class TreasuryTests(RosterTestCase):
                 self.assertEqual((response.status_code, list(response.json())), (400, fields))
         negative = self.client.post(self._url(), {"action": "Buy", "description": "x", "price": -1}, format="json")
         self.assertEqual(negative.json(), {"price": ["Gold coins cannot be negative"]})
+        old_name = self.client.post(
+            self._url(), {"action": "Trade sent", "description": "x", "price": -1}, format="json"
+        )
+        self.assertEqual(old_name.json(), {"price": ["Gold coins cannot be negative"]})
+        header = self.client.post(self._url(), {"action": "Group", "description": "x", "price": 5}, format="json")
+        self.assertEqual(header.json(), {"price": ["A group header moves no gold."]})
         self.assertEqual(trade_rows(self.warband), [])
 
     def test_children_nest_under_their_parent_and_unknown_parents_are_ignored(self):

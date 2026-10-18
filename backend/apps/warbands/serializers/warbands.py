@@ -1,7 +1,10 @@
+from typing import Any
+
 from rest_framework import serializers
 
 from apps.restrictions.serializers import RestrictionSerializer
 from apps.warbands.models import (
+    LedgerAction,
     Warband,
     WarbandItem,
     WarbandLog,
@@ -10,6 +13,7 @@ from apps.warbands.models import (
 )
 from apps.warbands.restrictions import get_effective_restrictions_for_warband
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
+from apps.warbands.services.ledger_names import ParsedAction, parse_action
 from apps.warbands.services.resources import MAX_AMOUNT
 from apps.warbands.services.summary import WarbandUnits, load_warband_units
 from apps.warbands.units.kinds import HERO, HIRED_SWORD
@@ -298,17 +302,27 @@ class WarbandTradeSerializer(serializers.ModelSerializer):
 
 
 class WarbandTradeCreateSerializer(serializers.ModelSerializer):
+    """POST trades/: a hand-entered row (decision 4).
+
+    `action` is a vocabulary name in any case, or an older automatic name ("Bought", "Trade sent", ...) that maps
+    onto it. `price` is the gold moved: signed for Trade and Adjustment (negative leaves the warband); 0 or more
+    for every other action, which gives the sign; 0 for a Group header. Validated data carries the vocabulary
+    `action` and the signed `amount`.
+    """
+
+    action = serializers.CharField(max_length=120)
+    price = serializers.IntegerField(required=False, default=0, min_value=-MAX_TRADE_PRICE, max_value=MAX_TRADE_PRICE)
     parent_id = serializers.IntegerField(required=False, allow_null=True)
 
     class Meta:
         model = WarbandTrade
         fields = ("action", "description", "price", "notes", "parent_id")
 
-    def validate_action(self, value):
-        cleaned = str(value).strip()
-        if not cleaned:
-            raise serializers.ValidationError("Action is required")
-        return cleaned
+    def validate_action(self, value: str) -> ParsedAction:
+        parsed = parse_action(value)
+        if parsed is None:
+            raise serializers.ValidationError(f"Unknown action. Use one of: {', '.join(LedgerAction.values)}.")
+        return parsed
 
     def validate_description(self, value):
         cleaned = str(value).strip()
@@ -316,12 +330,15 @@ class WarbandTradeCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Description is required")
         return cleaned
 
-    def validate_price(self, value):
-        if value is None:
-            return 0
-        if value < 0:
-            raise serializers.ValidationError("Gold coins cannot be negative")
-        return value
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        parsed: ParsedAction = attrs["action"]
+        price = attrs["price"]
+        if parsed.action is LedgerAction.GROUP and price:
+            raise serializers.ValidationError({"price": ["A group header moves no gold."]})
+        if price < 0 and (parsed.sign is not None or not parsed.action.is_signed):
+            raise serializers.ValidationError({"price": ["Gold coins cannot be negative"]})
+        attrs["action"], attrs["amount"] = parsed.action, parsed.amount(price)
+        return attrs
 
 
 class WarbandItemTransferSerializer(serializers.Serializer):

@@ -302,7 +302,7 @@ class RosterItemSaleCharacterisationTests(RosterTestCase):
                 self.assertEqual(
                     (body["target"], body["stash_item"], body["removed_stash_item_id"]), (None, None, None)
                 )
-                self.assertEqual(trade_rows(self.warband), [("Sold", "Sword x 2", 15, None)])
+                self.assertEqual(trade_rows(self.warband), [("Sell", "Sword x 2", 15, None)])
                 self.assertEqual(
                     (body["summary"]["gold"], body["summary"]),
                     (15, self.client.get(f"/api/warbands/{self.warband.id}/summary/").json()),
@@ -321,7 +321,7 @@ class RosterItemSaleCharacterisationTests(RosterTestCase):
         self.assertEqual(
             (last["source"], last["stash_item"], last["removed_stash_item_id"]), (None, None, self.sword.id)
         )
-        self.assertEqual(trade_rows(self.warband), [("Sold", "Sword", 4, None), ("Sold", "Sword", 4, None)])
+        self.assertEqual(trade_rows(self.warband), [("Sell", "Sword", 4, None), ("Sell", "Sword", 4, None)])
 
     def test_a_sale_adds_exactly_its_price_to_the_gold(self):
         # ECON-TEST-04: from the stash and from a unit, starting from a warband that already has gold
@@ -339,8 +339,8 @@ class RosterItemSaleCharacterisationTests(RosterTestCase):
                 response = self._sell(**body, price=price)
                 gold += price
                 self.assertEqual(response.json()["summary"]["gold"], gold)
-        # any price is accepted, above the cost included (decision 3); one "Sold" row per sale
-        self.assertEqual(trade_rows(self.warband)[1:], [("Sold", "Sword", 3, None), ("Sold", "Axe", 30, None)])
+        # any price is accepted, above the cost included (decision 3); one "Sell" row per sale
+        self.assertEqual(trade_rows(self.warband)[1:], [("Sell", "Sword", 3, None), ("Sell", "Axe", 30, None)])
         self.assertEqual(WarbandItem.objects.get(warband=self.warband).quantity, 1)
 
     def test_a_sale_needs_a_price_of_zero_or_more(self):
@@ -350,7 +350,7 @@ class RosterItemSaleCharacterisationTests(RosterTestCase):
                 response = self._sell(source_type="stash", item_id=self.sword.id, quantity=1, price=price)
                 self.assertEqual((response.status_code, list(response.json())), (400, ["price"]))
         free = self._sell(source_type="stash", item_id=self.sword.id, quantity=1, price=0)
-        self.assertEqual((free.status_code, trade_rows(self.warband)), (200, [("Sold", "Sword", 0, None)]))
+        self.assertEqual((free.status_code, trade_rows(self.warband)), (200, [("Sell", "Sword", 0, None)]))
 
     def test_dead_or_foreign_sources_and_missing_items(self):
         for kind in KINDS:

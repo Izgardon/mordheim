@@ -7,7 +7,7 @@ from django.test.utils import CaptureQueriesContext
 
 from apps.campaigns.models import CampaignMembership, CampaignRole
 from apps.core.testing import ReferenceCampaign, build_reference_campaign
-from apps.warbands.models import Henchman, HenchmenGroup, Hero, HiredSword, Warband
+from apps.warbands.models import Henchman, HenchmenGroup, Hero, HiredSword, LedgerAction, Warband
 from apps.warbands.services import ledger
 from apps.warbands.services.summary import load_warband_units, warband_gold
 
@@ -23,7 +23,14 @@ class WarbandSummaryServiceTests(TestCase):
 
     def test_gold_is_the_stored_balance_the_ledger_keeps(self):
         # the warband was created with its starting gold (500, campaign default)
-        for action, amount in (("Buy", -25), ("Recruited", -40), ("Sell", 12), ("Trade sent", -7), ("Reward", 20)):
+        rows = [
+            (LedgerAction.BUY, -25),
+            (LedgerAction.RECRUIT, -40),
+            (LedgerAction.SELL, 12),
+            (LedgerAction.TRADE, -7),
+            (LedgerAction.REWARD, 20),
+        ]
+        for action, amount in rows:
             ledger.record(self.warband, action, amount, "x")
 
         self.assertEqual(warband_gold(self.warband.id), 500 - 25 - 40 + 12 - 7 + 20)

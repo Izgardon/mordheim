@@ -27,6 +27,7 @@ from apps.warbands.models import (
     HiredSwordSkill,
     HiredSwordSpecial,
     HiredSwordSpell,
+    LedgerAction,
     RosterUnit,
     Warband,
     on_roster,
@@ -80,7 +81,7 @@ class LinkSpec:
 class RecruitSpec:
     """How recruiting and dismissing the kind is written to the ledger and the log."""
 
-    trade_action: str  # "Recruited" | "Hired"
+    trade_action: LedgerAction  # Recruit | Hire
     log_new: str
     log_remove: str
     client_may_seed_level_up: bool = False  # Lad's Got Talent creates the promoted hero with level_up=2
@@ -195,7 +196,7 @@ HERO = UnitKindSpec(
     advance_log_type="hero",
     caster_traits=True,
     can_lead=True,
-    recruit=RecruitSpec("Recruited", "new_hero", "remove_hero", client_may_seed_level_up=True),
+    recruit=RecruitSpec(LedgerAction.RECRUIT, "new_hero", "remove_hero", client_may_seed_level_up=True),
     cap=CapSpec("max_heroes", 6, "heroes", "hero_cap_reached", counted=on_roster),  # living ones only (BUG-29)
     unknown_name="Unknown Hero",
     unknown_type="Unknown Type",
@@ -222,7 +223,7 @@ HENCHMEN_GROUP = UnitKindSpec(
     advance_log_type="henchmen",
     caster_traits=False,
     can_lead=False,
-    recruit=RecruitSpec("Recruited", "new_henchmen_group", "remove_henchmen_group"),
+    recruit=RecruitSpec(LedgerAction.RECRUIT, "new_henchmen_group", "remove_henchmen_group"),
     cap=None,  # group max_size and warband max_units only warn (decision 12, BUG-67)
     unknown_name="Unknown",
     unknown_type="Unknown",
@@ -251,7 +252,7 @@ HIRED_SWORD = UnitKindSpec(
     advance_log_type="hired_sword",
     caster_traits=True,
     can_lead=False,
-    recruit=RecruitSpec("Hired", "new_hired_sword", "remove_hired_sword"),
+    recruit=RecruitSpec(LedgerAction.HIRE, "new_hired_sword", "remove_hired_sword"),
     cap=CapSpec(
         "max_hired_swords",
         3,

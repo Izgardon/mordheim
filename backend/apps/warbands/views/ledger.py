@@ -119,13 +119,13 @@ class WarbandTradeListCreateView(WarbandScopedView):
         if parent_id:
             parent = WarbandTrade.objects.filter(id=parent_id, warband=self.warband).first()
 
-        action = serializer.validated_data["action"]
+        entry = serializer.validated_data
         trade = ledger.record(
             self.warband,
-            action,
-            ledger.sign_for(action, serializer.validated_data.get("price", 0)),
-            serializer.validated_data["description"],
-            notes=serializer.validated_data.get("notes", ""),
+            entry["action"],
+            entry["amount"],
+            entry["description"],
+            notes=entry.get("notes", ""),
             parent=parent,
         )
         return Response(WarbandTradeSerializer(trade).data, status=status.HTTP_201_CREATED)

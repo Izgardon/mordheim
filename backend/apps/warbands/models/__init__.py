@@ -14,9 +14,10 @@ from .hired_swords import (
     HiredSwordSpell,
 )
 from .shared import RosterUnit, not_dismissed, on_roster
-from .warband import Warband, WarbandItem, WarbandLog, WarbandResource, WarbandTrade
+from .warband import LedgerAction, Warband, WarbandItem, WarbandLog, WarbandResource, WarbandTrade
 
 __all__ = [
+    "LedgerAction",
     "RosterUnit",
     "not_dismissed",
     "on_roster",

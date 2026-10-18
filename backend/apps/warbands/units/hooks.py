@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Any, cast
 from django.utils import timezone
 
 from apps.logs.utils import log_warband_event
-from apps.warbands.models import Henchman, HenchmenGroup, RosterUnit, Warband, on_roster
+from apps.warbands.models import Henchman, HenchmenGroup, LedgerAction, RosterUnit, Warband, on_roster
 from apps.warbands.services import ledger
 from apps.warbands.utils.leaders import ensure_single_living_leader, lock_warband
 
@@ -276,7 +276,7 @@ class HenchmenHooks(UnitHooks):
             notes = str(entry.get("item_notes") or "")
             charges.append(
                 ledger.Entry(
-                    warband, "Recruited", -abs(cost), f"{henchman_name} into {group_name}", notes, trade_header
+                    warband, LedgerAction.RECRUIT, -abs(cost), f"{henchman_name} into {group_name}", notes, trade_header
                 )
             )
         ledger.record_entries(charges)

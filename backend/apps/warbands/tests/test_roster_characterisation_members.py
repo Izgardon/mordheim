@@ -38,7 +38,7 @@ class HenchmenMemberSyncCharacterisationTests(RosterTestCase):
         self.assertEqual(self._members(), [("Alpha Prime", 2, False), ("Gamma", 0, False)])
         self.assertIsNotNone(Henchman.objects.get(id=self.beta.id).dismissed_at)  # left out: dismissed (decision 4)
         self.assertEqual(Henchman.objects.get(id=self.alpha.id).name, "Alpha Prime")  # updated in place
-        self.assertEqual(trade_rows(self.warband), [("Recruited", "Gamma into Zealots", -30, None)])
+        self.assertEqual(trade_rows(self.warband), [("Recruit", "Gamma into Zealots", -30, None)])
         self.assertEqual(
             log_rows(self.warband), [("personnel", "new_henchman", {"name": "Gamma", "group": "Zealots"}, None)]
         )
@@ -133,7 +133,7 @@ class HenchmenMemberSyncCharacterisationTests(RosterTestCase):
         self._patch({"henchmen": members})
 
         # 20 (price) + 17 (one sword and one axe: each member's share) + 40 (2 x 20 whole XP)
-        self.assertEqual(trade_rows(self.warband), [("Recruited", "New into Zealots", -77, None)])
+        self.assertEqual(trade_rows(self.warband), [("Recruit", "New into Zealots", -77, None)])
 
     def test_an_explicit_cost_is_parsed_loosely(self):
         members = [{"name": "Cheap", "cost": "12.9"}, {"name": "Free", "cost": -5}, {"name": "Junk", "cost": "abc"}]
@@ -147,9 +147,9 @@ class HenchmenMemberSyncCharacterisationTests(RosterTestCase):
         self.assertEqual(
             sorted(trades[1:]),
             [
-                ("Recruited", "Cheap into Zealots", -12, header),
-                ("Recruited", "Free into Zealots", 0, header),
-                ("Recruited", "Junk into Zealots", -20, header),
+                ("Recruit", "Cheap into Zealots", -12, header),
+                ("Recruit", "Free into Zealots", 0, header),
+                ("Recruit", "Junk into Zealots", -20, header),
             ],
         )
 
@@ -162,8 +162,8 @@ class HenchmenMemberSyncCharacterisationTests(RosterTestCase):
         self.assertEqual(
             sorted(trades[1:]),
             [
-                ("Recruited", "Ana into Zealots", -20, header),
-                ("Recruited", "Unnamed Henchman into Zealots", -20, header),
+                ("Recruit", "Ana into Zealots", -20, header),
+                ("Recruit", "Unnamed Henchman into Zealots", -20, header),
             ],
         )
         self.assertEqual(self.warband.trades.get(description="Ana into Zealots").notes, "club")
@@ -186,7 +186,7 @@ class HenchmenMemberSyncCharacterisationTests(RosterTestCase):
     def test_an_unknown_member_id_is_treated_as_a_new_member(self):
         self._patch({"henchmen": [{"id": 999999, "name": "Ghost", "cost": 5}]})
         self.assertEqual(self._members(), [("Ghost", 0, False)])
-        self.assertEqual(trade_rows(self.warband), [("Recruited", "Ghost into Zealots", -5, None)])
+        self.assertEqual(trade_rows(self.warband), [("Recruit", "Ghost into Zealots", -5, None)])
 
     def test_invalid_member_entries_are_rejected_and_change_nothing(self):
         # BUG-90: the bad values used to reach the database and return 500 after the group fields
@@ -245,7 +245,7 @@ class HenchmanHireCostRangeTests(RosterTestCase):
 
     def test_the_largest_price_still_fits(self):
         self.assertEqual(self._patch_raw("2147483647").status_code, 200)
-        self.assertEqual(trade_rows(self.warband), [("Recruited", "Gamma into Renamed", -2147483647, None)])
+        self.assertEqual(trade_rows(self.warband), [("Recruit", "Gamma into Renamed", -2147483647, None)])
 
     def test_create_rejects_the_same_costs(self):
         payload = {"name": "New group", "price": 5, "henchmen": [{"name": "Ana", "cost": "inf"}]}

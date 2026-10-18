@@ -51,7 +51,7 @@ class StashConcurrencyTests(TransactionTestCase):
             statuses = run_concurrently(self._post("item-sales/", sale), self._post("item-sales/", sale))
 
         self.assertEqual(sorted(statuses), [200, 400])
-        self.assertEqual(WarbandTrade.objects.filter(warband=self.warband, action="Sold").count(), 1)
+        self.assertEqual(WarbandTrade.objects.filter(warband=self.warband, action="Sell").count(), 1)
         self.assertEqual(warband_gold(self.warband.id), 5)
         self.assertFalse(WarbandItem.objects.filter(warband=self.warband).exists())
 
@@ -80,5 +80,5 @@ class StashConcurrencyTests(TransactionTestCase):
             statuses = run_concurrently(self._post("item-sales/", sale), self._post("item-sales/", sale))
 
         self.assertEqual(sorted(statuses), [200, 400])
-        self.assertEqual(WarbandTrade.objects.filter(warband=self.warband, action="Sold").count(), 1)
+        self.assertEqual(WarbandTrade.objects.filter(warband=self.warband, action="Sell").count(), 1)
         self.assertFalse(HeroItem.objects.filter(hero=hero).exists())

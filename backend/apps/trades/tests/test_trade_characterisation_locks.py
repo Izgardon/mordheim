@@ -7,7 +7,7 @@ in the same request.
 from django.utils import timezone
 
 from apps.items.models import Item
-from apps.warbands.models import Hero, WarbandItem, WarbandLog
+from apps.warbands.models import Hero, LedgerAction, WarbandItem, WarbandLog
 from apps.warbands.services import ledger
 from apps.warbands.services.summary import warband_gold
 
@@ -171,21 +171,21 @@ class TradeCompletionTests(TradeTestCase):
         self.assertEqual(self.stash_rows(self.warband), [("Axe", 2, 7), ("Sword", 1, 9)])
         self.assertEqual(self.stash_rows(self.rival), [("Axe", 1, 5), ("Sword", 2, 9)])
 
-        # "Trade sent" is stored negative, as the gold rule counts it (BUG-37: it used to be stored positive)
+        # one "Trade" row per side and direction, signed (it used to be "Trade sent", stored positive: BUG-37)
         self.assertEqual(
             self.ledger(self.warband),
             [
                 ("Reward", "Purse", 100),
-                ("Trade sent", "Gold sent to Rats", -30),
-                ("Trade received", "Gold received from Rats", 10),
+                ("Trade", "Gold sent to Rats", -30),
+                ("Trade", "Gold received from Rats", 10),
             ],
         )
         self.assertEqual(
             self.ledger(self.rival),
             [
                 ("Reward", "Purse", 50),
-                ("Trade received", "Gold received from Monks", 30),
-                ("Trade sent", "Gold sent to Monks", -10),
+                ("Trade", "Gold received from Monks", 30),
+                ("Trade", "Gold sent to Monks", -10),
             ],
         )
         self.assertEqual((warband_gold(self.warband.id), warband_gold(self.rival.id)), (80, 70))
@@ -229,7 +229,7 @@ class TradeCompletionTests(TradeTestCase):
                 self.assertEqual((response.status_code, response.json()), (400, {"detail": "Trade is not active"}))
         self.assertEqual(
             self.ledger(self.warband)[1:],
-            [("Trade sent", "Gold sent to Rats", -30), ("Trade received", "Gold received from Rats", 10)],
+            [("Trade", "Gold sent to Rats", -30), ("Trade", "Gold received from Rats", 10)],
         )
 
     def test_a_trader_spent_by_the_lock_does_not_block_completion(self):
@@ -256,7 +256,7 @@ class TradeCompletionTests(TradeTestCase):
             WarbandItem.objects.filter(warband=self.warband, item=self.sword).update(quantity=1)
 
         def spend_the_gold() -> None:
-            ledger.record(self.warband, "Upkeep", -90, "Rent")
+            ledger.record(self.warband, LedgerAction.UPKEEP, -90, "Rent")
 
         self.assertEqual(self.post_as(self.player, self.trade_url(self.trade, "close")).status_code, 200)
         for change, detail in (

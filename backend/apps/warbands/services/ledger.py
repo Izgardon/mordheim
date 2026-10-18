@@ -16,33 +16,25 @@ from django.db import connection, transaction
 from django.db.models import BigIntegerField, F, OuterRef, Subquery, Sum, Value
 from django.db.models.functions import Coalesce
 
-from apps.warbands.models import Warband, WarbandTrade
+from apps.warbands.models import LedgerAction, Warband, WarbandTrade
 
 # WarbandTrade.price is a 32-bit integer column.
 MAX_TRADE_PRICE = 2_147_483_647
-
-# Ledger actions that spend gold, matched lower-cased and trimmed; a hand-entered row of any other action adds.
-EXPENSE_ACTIONS = frozenset({"buy", "bought", "recruit", "recruited", "hire", "hired", "upkeep", "trade sent"})
 
 
 @dataclass(frozen=True)
 class Entry:
     warband: Warband
-    action: str
+    action: LedgerAction
     amount: int  # the change in gold: negative for spending
     description: str
     notes: str = ""
     parent: WarbandTrade | None = None
 
 
-def sign_for(action: str, price: int) -> int:
-    """A hand-entered price as the change in gold: negative for a spending action."""
-    return -abs(price) if action.strip().lower() in EXPENSE_ACTIONS else abs(price)
-
-
 def record(
     warband: Warband,
-    action: str,
+    action: LedgerAction,
     amount: int,
     description: str,
     *,
@@ -55,7 +47,7 @@ def record(
 
 def group_header(warband: Warband, description: str) -> WarbandTrade:
     """A "Group" row that the rows of one action (a batch of recruits) nest under; it moves no gold."""
-    return record(warband, "Group", 0, description)
+    return record(warband, LedgerAction.GROUP, 0, description)
 
 
 def record_entries(entries: Sequence[Entry]) -> list[WarbandTrade]:
@@ -107,7 +99,7 @@ def _change_balances(changes: dict[int, int], warbands: Sequence[Warband]) -> No
 
 
 def rewrite_starting_gold(warband: Warband, starting_gold: int) -> None:
-    """Make the warband's oldest row "Starting Gold" at `starting_gold`, moving the balance by the difference.
+    """Make the warband's oldest row "Starting gold" at `starting_gold`, moving the balance by the difference.
 
     BUG-78 (pass 4): the oldest row of any action is rewritten, as before; a warband without rows gets one.
     """
@@ -115,11 +107,10 @@ def rewrite_starting_gold(warband: Warband, starting_gold: int) -> None:
     with transaction.atomic():
         row = WarbandTrade.objects.select_for_update().filter(warband=warband).order_by("created_at").first()
         if row is None:
-            record(warband, "Starting Gold", amount, "Starting Gold")
+            record(warband, LedgerAction.STARTING_GOLD, amount, "Starting Gold")
             return
         difference = amount - row.price
-        row.action = row.description = "Starting Gold"
-        row.price = amount
+        row.action, row.description, row.price = LedgerAction.STARTING_GOLD, "Starting Gold", amount
         row.save(update_fields=["action", "description", "price", "updated_at"])
         _change_balances({warband.id: difference}, [warband])
 

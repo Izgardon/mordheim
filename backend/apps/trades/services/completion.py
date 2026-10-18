@@ -10,7 +10,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from apps.trades.models import TradeRequest
-from apps.warbands.models import Hero, Warband, on_roster
+from apps.warbands.models import Hero, LedgerAction, Warband, on_roster
 from apps.warbands.services import ledger
 from apps.warbands.services.stash import StashShortage, add_to_stash, remove_from_stash
 from apps.warbands.services.summary import warband_gold
@@ -58,8 +58,8 @@ def _record_gold(trade: TradeRequest, offers: dict[str, dict[str, Any]]) -> None
         if not gold:
             continue
         sender, receiver = getattr(trade, f"{side}_warband"), getattr(trade, f"{_other(side)}_warband")
-        entries.append(ledger.Entry(sender, "Trade sent", -gold, f"Gold sent to {receiver.name}"))
-        entries.append(ledger.Entry(receiver, "Trade received", gold, f"Gold received from {sender.name}"))
+        entries.append(ledger.Entry(sender, LedgerAction.TRADE, -gold, f"Gold sent to {receiver.name}"))
+        entries.append(ledger.Entry(receiver, LedgerAction.TRADE, gold, f"Gold received from {sender.name}"))
     ledger.record_entries(entries)
 
 

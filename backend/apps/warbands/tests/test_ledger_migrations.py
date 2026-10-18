@@ -8,7 +8,7 @@ from importlib import import_module
 from django.db import connection
 from django.db.models import Sum
 
-from apps.warbands.models import Warband, WarbandTrade
+from apps.warbands.models import LedgerAction, Warband, WarbandTrade
 from apps.warbands.services import ledger
 
 from .roster_support import RosterTestCase
@@ -119,3 +119,68 @@ class BackfillGoldMigrationTests(RosterTestCase):
         self.assertEqual(self._gold(self.warband), sum(counted for _action, _price, counted in LEGACY_ROWS))
         self.assertEqual(self._gold(self.rival), -10 + -10 + -10)
         self.assertEqual(ledger.gold_drift(), [])
+
+
+class VocabularyMigrationTests(RosterTestCase):
+    """0030 renames every row into the vocabulary (decision 4) without changing a price."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        WarbandTrade.objects.bulk_create(
+            WarbandTrade(warband=self.warband, action=action, description="row", price=price)
+            for action, price, _counted in LEGACY_ROWS
+        )
+        _run("0027_signed_ledger_prices", "SIGN_PRICES")
+
+    def _rows(self) -> list[tuple[str, int, str]]:
+        return list(
+            WarbandTrade.objects.filter(warband=self.warband)
+            .order_by("id")
+            .values_list("action", "price", "description")
+        )
+
+    def _rename(self) -> None:
+        _run("0030_ledger_vocabulary", "RENAME_ACTIONS")
+        _run("0030_ledger_vocabulary", "FREE_TEXT_TO_ADJUSTMENTS")
+
+    def test_old_names_are_renamed_and_free_text_becomes_an_adjustment(self):
+        self._rename()
+
+        self.assertEqual(
+            self._rows(),
+            [
+                ("Buy", -10, "row"),
+                ("Buy", -10, "row"),
+                ("Recruit", -10, "row"),
+                ("Recruit", -10, "row"),
+                ("Hire", -10, "row"),
+                ("Hire", -10, "row"),
+                ("Upkeep", -10, "row"),
+                ("Trade", -10, "row"),
+                ("Buy", -10, "row"),
+                ("Buy", -10, "row"),
+                ("Adjustment", 10, "Buys: row"),
+                ("Sell", 10, "row"),
+                ("Sell", 10, "row"),
+                ("Reward", 10, "row"),
+                ("Reward", 10, "row"),
+                ("Trade", 10, "row"),
+                ("Starting gold", 500, "row"),
+                ("Exploration", 10, "row"),
+                ("Group", 0, "row"),
+                ("Adjustment", 10, "Found a chest: row"),
+            ],
+        )
+        self.assertFalse(WarbandTrade.objects.exclude(action__in=LedgerAction.values).exists())
+
+    def test_reversing_keeps_the_gold_the_previous_release_reads(self):
+        gold = _rule_gold(self.warband)
+        ledger.record(self.warband, LedgerAction.ADJUSTMENT, -25, "Correction")  # written by this release
+        self._rename()
+
+        _run("0030_ledger_vocabulary", "RESTORE_SPENDING_ADJUSTMENTS")
+        _run("0030_ledger_vocabulary", "RESTORE_TRADE_NAMES")
+
+        self.assertEqual(_rule_gold(self.warband), gold - 25)
+        self.assertEqual(self._rows()[-1], ("Buy", -25, "Adjustment: Correction"))
+        self.assertEqual([row[0] for row in self._rows() if "Trade" in row[0]], ["Trade sent", "Trade received"])

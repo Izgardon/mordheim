@@ -6,8 +6,9 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.db.models import Sum
 
-from apps.warbands.models import Warband, WarbandTrade
+from apps.warbands.models import LedgerAction, Warband, WarbandTrade
 from apps.warbands.services import ledger
+from apps.warbands.services.ledger_names import ParsedAction, parse_action
 
 from .roster_support import RosterTestCase, trade_rows
 
@@ -17,18 +18,18 @@ class LedgerRecordTests(RosterTestCase):
         return Warband.objects.values_list("gold", flat=True).get(id=warband.id)
 
     def test_a_row_and_its_change_to_the_balance_are_written_together(self):
-        row = ledger.record(self.warband, "Sold", 15, "Sword", notes="Half price")
-        ledger.record(self.warband, "Buy", -40, "Shield")
+        row = ledger.record(self.warband, LedgerAction.SELL, 15, "Sword", notes="Half price")
+        ledger.record(self.warband, LedgerAction.BUY, -40, "Shield")
 
-        self.assertEqual((row.action, row.description, row.price, row.notes), ("Sold", "Sword", 15, "Half price"))
+        self.assertEqual((row.action, row.description, row.price, row.notes), ("Sell", "Sword", 15, "Half price"))
         self.assertEqual(self._stored_gold(self.warband), -25)
         self.assertEqual(self.warband.gold, -25)  # the caller's instance shows the new balance
 
     def test_several_warbands_are_written_in_one_insert_and_one_update(self):
         entries = [
-            ledger.Entry(self.warband, "Trade sent", -30, "Gold sent"),
-            ledger.Entry(self.rival, "Trade received", 30, "Gold received"),
-            ledger.Entry(self.rival, "Trade sent", -10, "Gold sent back"),
+            ledger.Entry(self.warband, LedgerAction.TRADE, -30, "Gold sent"),
+            ledger.Entry(self.rival, LedgerAction.TRADE, 30, "Gold received"),
+            ledger.Entry(self.rival, LedgerAction.TRADE, -10, "Gold sent back"),
         ]
 
         with self.assertNumQueries(2):
@@ -42,7 +43,7 @@ class LedgerRecordTests(RosterTestCase):
         with self.assertNumQueries(1):
             header = ledger.group_header(self.warband, "Recruited 2 Zealots")
 
-        ledger.record(self.warband, "Recruited", -20, "Bo into Zealots", parent=header)
+        ledger.record(self.warband, LedgerAction.RECRUIT, -20, "Bo into Zealots", parent=header)
         self.assertEqual(trade_rows(self.warband)[0], ("Group", "Recruited 2 Zealots", 0, None))
         self.assertEqual(self._stored_gold(self.warband), -20)
 
@@ -50,48 +51,42 @@ class LedgerRecordTests(RosterTestCase):
         with self.assertNumQueries(0):
             self.assertEqual(ledger.record_entries([]), [])
 
-    def test_a_hand_entered_price_is_signed_by_its_action(self):
-        self.assertEqual(
-            [ledger.sign_for(action, 10) for action in ("Buy", " bought ", "Reward", "Found")], [-10, -10, 10, 10]
-        )
-        self.assertEqual(ledger.sign_for("Sell", -10), 10)
-
 
 class StartingGoldRewriteTests(RosterTestCase):
     """Until BUG-78 (pass 4) a new campaign starting gold rewrites the oldest row; the balance follows it."""
 
     def test_the_oldest_row_is_rewritten_and_the_balance_moves_by_the_difference(self):
-        ledger.record(self.warband, "Starting Gold", 500, "Starting Gold")
-        ledger.record(self.warband, "Buy", -40, "Shield")
+        ledger.record(self.warband, LedgerAction.STARTING_GOLD, 500, "Starting Gold")
+        ledger.record(self.warband, LedgerAction.BUY, -40, "Shield")
 
         ledger.rewrite_starting_gold(self.warband, 300)
 
         self.assertEqual(
             trade_rows(self.warband),
-            [("Starting Gold", "Starting Gold", 300, None), ("Buy", "Shield", -40, None)],
+            [("Starting gold", "Starting Gold", 300, None), ("Buy", "Shield", -40, None)],
         )
         self.assertEqual(Warband.objects.get(id=self.warband.id).gold, 260)
 
     def test_any_oldest_row_becomes_the_starting_gold_as_before(self):
         # BUG-78, pinned: the rewrite doesn't look at the row's action
-        ledger.record(self.warband, "Buy", -40, "Shield")
+        ledger.record(self.warband, LedgerAction.BUY, -40, "Shield")
 
         ledger.rewrite_starting_gold(self.warband, 500)
 
-        self.assertEqual(trade_rows(self.warband), [("Starting Gold", "Starting Gold", 500, None)])
+        self.assertEqual(trade_rows(self.warband), [("Starting gold", "Starting Gold", 500, None)])
         self.assertEqual(Warband.objects.get(id=self.warband.id).gold, 500)
 
     def test_a_warband_without_rows_gets_its_starting_gold(self):
         ledger.rewrite_starting_gold(self.warband, 500)
 
-        self.assertEqual(trade_rows(self.warband), [("Starting Gold", "Starting Gold", 500, None)])
+        self.assertEqual(trade_rows(self.warband), [("Starting gold", "Starting Gold", 500, None)])
         self.assertEqual(Warband.objects.get(id=self.warband.id).gold, 500)
 
 
 class StaleWarbandSaveTests(RosterTestCase):
     def test_saving_a_warband_loaded_earlier_keeps_the_gold_written_since(self):
         stale = Warband.objects.get(id=self.warband.id)
-        ledger.record(self.warband, "Reward", 50, "Purse")
+        ledger.record(self.warband, LedgerAction.REWARD, 50, "Purse")
 
         stale.name = "Renamed"
         stale.save()
@@ -99,7 +94,7 @@ class StaleWarbandSaveTests(RosterTestCase):
         self.assertEqual(Warband.objects.values_list("name", "gold").get(id=self.warband.id), ("Renamed", 50))
 
     def test_editing_a_warband_through_the_api_keeps_its_gold(self):
-        ledger.record(self.warband, "Reward", 50, "Purse")
+        ledger.record(self.warband, LedgerAction.REWARD, 50, "Purse")
 
         response = self.client.patch(f"/api/warbands/{self.warband.id}/", {"name": "Renamed"}, format="json")
 
@@ -114,12 +109,12 @@ class CheckGoldCommandTests(RosterTestCase):
         return out.getvalue()
 
     def test_matching_gold_is_reported_as_such(self):
-        ledger.record(self.warband, "Reward", 50, "Purse")
+        ledger.record(self.warband, LedgerAction.REWARD, 50, "Purse")
 
         self.assertIn("every stored gold matches its ledger", self._check())
 
     def test_a_difference_is_reported_and_is_an_error(self):
-        ledger.record(self.warband, "Reward", 50, "Purse")
+        ledger.record(self.warband, LedgerAction.REWARD, 50, "Purse")
         WarbandTrade.objects.create(warband=self.warband, action="Buy", description="Written around it", price=-20)
 
         out = StringIO()
@@ -139,3 +134,47 @@ class CheckGoldCommandTests(RosterTestCase):
         total = WarbandTrade.objects.filter(warband=self.warband).aggregate(total=Sum("price"))["total"]
         self.assertEqual(Warband.objects.get(id=self.warband.id).gold, total)
         self.assertEqual(ledger.gold_drift(), [])
+
+    def test_check_gold_reports_rows_with_an_old_name_and_fix_renames_them(self):
+        # a release from before the vocabulary writing while this one deploys: old name, old sign, no balance
+        WarbandTrade.objects.create(warband=self.warband, action="Trade sent", description="Gold sent", price=30)
+
+        out = StringIO()
+        with self.assertRaisesMessage(CommandError, "1 rows have an old action name"):
+            call_command("check_gold", stdout=out)
+        self.assertIn("1 ledger rows have an action name outside the vocabulary.", out.getvalue())
+
+        output = StringIO()
+        call_command("check_gold", "--fix", stdout=output)
+
+        self.assertIn("Renamed and signed 1 rows with an old action name.", output.getvalue())
+        self.assertEqual(trade_rows(self.warband), [("Trade", "Gold sent", -30, None)])
+        self.assertEqual(Warband.objects.get(id=self.warband.id).gold, -30)
+
+
+class LedgerNameTests(RosterTestCase):
+    """services/ledger_names.py: the vocabulary, the old names it takes, and how a hand-entered price is signed."""
+
+    def test_names_map_onto_the_vocabulary_in_any_case(self):
+        cases = {
+            " buy ": (LedgerAction.BUY, None),
+            "Bought": (LedgerAction.BUY, None),
+            "SOLD": (LedgerAction.SELL, None),
+            "Recruited": (LedgerAction.RECRUIT, None),
+            "Hired": (LedgerAction.HIRE, None),
+            "Trade sent": (LedgerAction.TRADE, -1),
+            "Trade received": (LedgerAction.TRADE, 1),
+            "starting gold": (LedgerAction.STARTING_GOLD, None),
+            "adjustment": (LedgerAction.ADJUSTMENT, None),
+        }
+        for name, (action, sign) in cases.items():
+            with self.subTest(name=name):
+                self.assertEqual(parse_action(name), ParsedAction(action, sign))
+        self.assertIsNone(parse_action("Found a chest"))
+
+    def test_a_price_is_signed_by_the_action_unless_the_action_goes_either_way(self):
+        amounts = [
+            (parse_action(name), price)
+            for name, price in (("Buy", 10), ("Sell", 10), ("Trade sent", 10), ("Trade", -10), ("Adjustment", 5))
+        ]
+        self.assertEqual([parsed.amount(price) for parsed, price in amounts if parsed], [-10, 10, -10, -10, 5])

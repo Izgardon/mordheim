@@ -36,6 +36,7 @@ from apps.warbands.models import (
     HeroSpell,
     HiredSword,
     HiredSwordItem,
+    LedgerAction,
     Warband,
     WarbandItem,
 )
@@ -120,7 +121,7 @@ def build_reference_campaign(unit_count: int = 3) -> ReferenceCampaign:
         HiredSwordItem.objects.create(hired_sword=sword, item=items[index])
 
         WarbandItem.objects.create(warband=warband, item=items[index], quantity=1)
-        ledger.record(warband, "Buy", -10, f"Sword {index}")
+        ledger.record(warband, LedgerAction.BUY, -10, f"Sword {index}")
 
     ended_battle = None
     for index in range(unit_count):

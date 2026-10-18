@@ -21,7 +21,7 @@ from apps.core.testing import Rendezvous, run_concurrently
 from apps.items.models import Item
 from apps.trades.models import TradeRequest
 from apps.trades.services import lifecycle, requests
-from apps.warbands.models import Hero, Warband, WarbandItem
+from apps.warbands.models import Hero, LedgerAction, Warband, WarbandItem
 from apps.warbands.services import ledger
 
 
@@ -39,7 +39,7 @@ class TradeConcurrencyTests(TransactionTestCase):
         for user, name in zip(users, ("Monks", "Rats"), strict=True):
             CampaignMembership.objects.create(campaign=campaign, user=user, role=role)
             warband = Warband.objects.create(campaign=campaign, user=user, name=name, faction="Any")
-            ledger.record(warband, "Reward", 50, "Purse")
+            ledger.record(warband, LedgerAction.REWARD, 50, "Purse")
             warbands.append(warband)
         self.warband, self.rival = warbands
         self.sword = Item.objects.create(name="Sword", type="Melee")

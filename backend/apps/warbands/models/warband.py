@@ -105,10 +105,40 @@ class WarbandResource(models.Model):
         return f"{self.warband_id}:{self.name}"
 
 
+class LedgerAction(models.TextChoices):
+    """What a ledger row records: one vocabulary for hand-entered and automatic rows (decision 4)."""
+
+    BUY = "Buy"
+    SELL = "Sell"
+    RECRUIT = "Recruit"
+    HIRE = "Hire"
+    UPKEEP = "Upkeep"
+    REWARD = "Reward"
+    EXPLORATION = "Exploration"
+    TRADE = "Trade"
+    ADJUSTMENT = "Adjustment"
+    STARTING_GOLD = "Starting gold"
+    GROUP = "Group"  # a header the rows of one batch nest under; it moves no gold
+
+    @property
+    def is_expense(self) -> bool:
+        """The action always spends gold: its rows are stored negative."""
+        return self in EXPENSE_ACTIONS
+
+    @property
+    def is_signed(self) -> bool:
+        """Gold may go either way (a trade sent or received, an adjustment up or down): the amount carries its sign."""
+        return self in SIGNED_ACTIONS
+
+
+EXPENSE_ACTIONS = frozenset({LedgerAction.BUY, LedgerAction.RECRUIT, LedgerAction.HIRE, LedgerAction.UPKEEP})
+SIGNED_ACTIONS = frozenset({LedgerAction.TRADE, LedgerAction.ADJUSTMENT})
+
+
 class WarbandTrade(models.Model):
     warband = models.ForeignKey(Warband, related_name="trades", on_delete=models.CASCADE)
     parent = models.ForeignKey("self", null=True, blank=True, related_name="children", on_delete=models.CASCADE)
-    action = models.CharField(max_length=120)
+    action = models.CharField(max_length=120, choices=LedgerAction.choices)
     description = models.CharField(max_length=500)
     price = models.IntegerField(default=0)
     notes = models.TextField(max_length=2000, blank=True, default="")

@@ -16,7 +16,7 @@ from apps.items.models import Item
 from apps.notifications.models import Notification
 from apps.realtime import services as realtime
 from apps.trades.models import TradeRequest
-from apps.warbands.models import Hero, Warband, WarbandItem, WarbandTrade
+from apps.warbands.models import Hero, LedgerAction, Warband, WarbandItem, WarbandTrade
 from apps.warbands.services import ledger
 from apps.warbands.tests.roster_support import RosterTestCase
 
@@ -125,7 +125,7 @@ class TradeTestCase(RosterTestCase):
     # Data
 
     def give_gold(self, warband: Warband, amount: int) -> None:
-        ledger.record(warband, "Reward", amount, "Purse")
+        ledger.record(warband, LedgerAction.REWARD, amount, "Purse")
 
     def stash(self, warband: Warband, item: Item, quantity: int, cost: int | None = None) -> WarbandItem:
         return WarbandItem.objects.create(warband=warband, item=item, quantity=quantity, cost=cost)

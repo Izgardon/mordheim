@@ -11,7 +11,7 @@ from typing import Any
 
 from django.db.models import Sum
 
-from apps.warbands.models import WarbandItem, WarbandTrade
+from apps.warbands.models import LedgerAction, WarbandItem, WarbandTrade
 from apps.warbands.services import ledger
 from apps.warbands.services.summary import warband_gold
 
@@ -28,7 +28,7 @@ class GoldTests(RosterTestCase):
     def test_group_children_count_once_and_the_header_not_at_all(self):
         header = ledger.group_header(self.warband, "Shopping")
         for price in (10, 5):
-            ledger.record(self.warband, "Bought", -price, "x", parent=header)
+            ledger.record(self.warband, LedgerAction.BUY, -price, "x", parent=header)
 
         self.assertEqual(warband_gold(self.warband.id), -15)
 
@@ -50,21 +50,22 @@ class MixedLedgerGoldTests(RosterTestCase):
         self._post("item-sales/", sale, status=200)
         self._post("heroes/", {"name": "Ana", "unit_type": "Champion", "price": 30})
         self._post("hired-swords/", {"name": "Ogre", "unit_type": "Ogre", "price": 60})
-        # two henchmen recruited together: a Group header with a Recruited child each (20 apiece)
+        # two henchmen recruited together: a Group header with a Recruit child each (20 apiece)
         self._post(
             "henchmen-groups/",
             {"name": "Zealots", "unit_type": "Zealot", "price": 20, "henchmen": [{"name": "Bo"}, {"name": "Cy"}]},
         )
-        ledger.record(self.warband, "Upkeep", -20, "Post-battle upkeep")  # postbattle
-        ledger.record(self.warband, "Reward", 50, "Battle reward")
+        ledger.record(self.warband, LedgerAction.UPKEEP, -20, "Post-battle upkeep")  # postbattle
+        ledger.record(self.warband, LedgerAction.REWARD, 50, "Battle reward")
         # a completed trade (trades/services/completion.py)
-        ledger.record(self.warband, "Trade sent", -35, "Gold sent to Rats")
-        ledger.record(self.warband, "Trade received", 45, "Gold received from Rats")
-        # the roster Save's queued purchases: a Group header, then a "Bought" child per purchase
+        ledger.record(self.warband, LedgerAction.TRADE, -35, "Gold sent to Rats")
+        ledger.record(self.warband, LedgerAction.TRADE, 45, "Gold received from Rats")
+        # the roster Save's queued purchases: a Group header, then a "Bought" child per purchase (old clients)
         header = self._post("trades/", {"action": "Group", "description": "Purchases", "price": 0})
         self._post("trades/", {"action": "Bought", "description": "Axe", "price": 10, "parent_id": header["id"]})
         self._post("trades/", {"action": "Bought", "description": "Shield", "price": 5, "parent_id": header["id"]})
-        self._post("trades/", {"action": "Found a chest", "description": "Free text", "price": 12})
+        # free text is refused now (decision 4); a hand-entered row of income outside the vocabulary is an adjustment
+        self._post("trades/", {"action": "Adjustment", "description": "Found a chest", "price": 12})
         self._post("trades/", {"action": " BUY ", "description": "Odd casing", "price": 7})
 
     def test_summary_gold_for_a_mixed_ledger(self):
@@ -75,24 +76,24 @@ class MixedLedgerGoldTests(RosterTestCase):
         self.assertEqual(
             rows[:7] + sorted(rows[7:9]) + rows[9:],
             [
-                ("Starting Gold", "Starting Gold", 500, None),
+                ("Starting gold", "Starting Gold", 500, None),
                 ("Buy", "Rope", -25, None),
-                ("Bought", "Sword", -40, None),  # used to be stored positive and counted as spending (BUG-37)
-                ("Sold", "Sword", 15, None),
-                ("Recruited", "Ana the Champion", -30, None),
-                ("Hired", "Ogre the Ogre", -60, None),
+                ("Buy", "Sword", -40, None),  # "Bought": stored positive until BUG-37, named "Buy" since decision 4
+                ("Sell", "Sword", 15, None),
+                ("Recruit", "Ana the Champion", -30, None),
+                ("Hire", "Ogre the Ogre", -60, None),
                 ("Group", "Recruited 2 Zealots", 0, None),
-                ("Recruited", "Bo into Zealots", -20, "Recruited 2 Zealots"),
-                ("Recruited", "Cy into Zealots", -20, "Recruited 2 Zealots"),
+                ("Recruit", "Bo into Zealots", -20, "Recruited 2 Zealots"),
+                ("Recruit", "Cy into Zealots", -20, "Recruited 2 Zealots"),
                 ("Upkeep", "Post-battle upkeep", -20, None),
                 ("Reward", "Battle reward", 50, None),
-                ("Trade sent", "Gold sent to Rats", -35, None),
-                ("Trade received", "Gold received from Rats", 45, None),
+                ("Trade", "Gold sent to Rats", -35, None),
+                ("Trade", "Gold received from Rats", 45, None),
                 ("Group", "Purchases", 0, None),
-                ("Bought", "Axe", -10, "Purchases"),
-                ("Bought", "Shield", -5, "Purchases"),
-                ("Found a chest", "Free text", 12, None),  # unknown text counts as income
-                ("BUY", "Odd casing", -7, None),  # stripped on save, signed and counted as "buy"
+                ("Buy", "Axe", -10, "Purchases"),
+                ("Buy", "Shield", -5, "Purchases"),
+                ("Adjustment", "Found a chest", 12, None),
+                ("Buy", "Odd casing", -7, None),  # " BUY ": any case and spacing
             ],
         )
         # 500 - 25 - 40 + 15 - 30 - 60 - 20 - 20 - 20 + 50 - 35 + 45 - 10 - 5 + 12 - 7
