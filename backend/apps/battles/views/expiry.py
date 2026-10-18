@@ -12,11 +12,11 @@ from collections.abc import Iterable
 from django.db import transaction
 
 from ..models import Battle, BattleParticipant
+from ..serializers import battle_snapshot
 from ..services.broadcast import ALL, bump_state_version, publish
 from ..services.timing import is_overdue
 from .closing import close_postbattle
 from .invites import decline_invitation
-from .shared import _battle_snapshot
 
 EXPIRY_BATCH = 5  # overdue battles settled by one list read; the rest wait for the next
 
@@ -64,7 +64,7 @@ def expire_overdue(battles: Iterable[Battle]) -> bool:
 
 def _publish(battle: Battle, events: list[dict], version: int) -> None:
     publish(
-        _battle_snapshot(battle.id),
+        battle_snapshot(battle.id),
         events,
         version=version,
         changed=ALL,

@@ -15,15 +15,11 @@ from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.broadcast import bump_state_version
+from ..services.events import append_event
 from ..services.kills import UNDOABLE_TYPES, killer_unit_key
 from ..services.unit_information import is_empty
-from .shared import (
-    _append_battle_event,
-    _broadcast_response,
-    _get_user_battle_participant,
-    _normalize_unit_information,
-    _response_with_snapshot,
-)
+from .responses import broadcast_response, response_with_snapshot
+from .shared import _get_user_battle_participant, _normalize_unit_information
 
 OPEN_STATUSES = (Battle.STATUS_PREBATTLE, Battle.STATUS_ACTIVE, Battle.STATUS_POSTBATTLE)
 
@@ -49,7 +45,7 @@ def void_event(battle: Battle, participant: BattleParticipant, event: BattleEven
         _take_back_kill(participant, unit_key)
     else:
         unit_key = (event.payload_json or {}).get("unit_key")
-    return _append_battle_event(
+    return append_event(
         battle,
         UNDOABLE_TYPES[event.type],
         actor_user=actor_user,
@@ -76,7 +72,7 @@ class CampaignBattleEventVoidView(APIView):
             if event.actor_user_id != request.user.id:
                 return Response({"detail": "You can only undo your own", "code": "not_your_event"}, status=403)
             if event.voided_at is not None:
-                return _response_with_snapshot(battle.id, [])
+                return response_with_snapshot(battle.id, [])
             if (
                 battle.status not in OPEN_STATUSES
                 or participant.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
@@ -85,4 +81,4 @@ class CampaignBattleEventVoidView(APIView):
                 return Response({"detail": detail, "code": "already_finalised"}, status=400)
             events = [void_event(battle, participant, event, actor_user=request.user)]
             version = bump_state_version(battle)
-        return _broadcast_response(request, battle.id, events, version, changed=[participant.id])
+        return broadcast_response(request, battle.id, events, version, changed=[participant.id])

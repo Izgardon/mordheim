@@ -124,7 +124,7 @@ class BattleTestCase(RosterTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.battle_events = self._record("apps.battles.services.broadcast", "send_battle_event")
-        self.user_events = self._record("apps.battles.views.shared", "send_user_notification")
+        self.user_events = self._record("apps.battles.services.events", "send_user_notification")
 
     def _record(self, module: str, name: str) -> mock.MagicMock:
         patcher = mock.patch(f"{module}.{name}", wraps=getattr(realtime, name))

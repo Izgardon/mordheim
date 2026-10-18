@@ -16,17 +16,12 @@ from apps.notifications.models import Notification
 from apps.notifications.utils import resolve_notification, resolve_notifications_for_reference
 
 from ..models import Battle, BattleEvent, BattleParticipant
+from ..serializers import display_name
 from ..services.broadcast import ALL, bump_state_version
+from ..services.events import append_event, notify_user
 from ..services.lifecycle import participants_all_in
-from .shared import (
-    _append_battle_event,
-    _broadcast_response,
-    _cancel_battle_for_all_participants,
-    _display_name,
-    _get_user_battle_participant,
-    _notify_user,
-    _response_with_snapshot,
-)
+from .responses import broadcast_response, response_with_snapshot
+from .shared import _cancel_battle_for_all_participants, _get_user_battle_participant
 
 
 def open_prebattle(battle: Battle) -> None:
@@ -44,7 +39,7 @@ def open_prebattle(battle: Battle) -> None:
     payload = {"battle_id": battle.id, "campaign_id": battle.campaign_id, "status": battle.status}
     for entry in entries:
         if entry.status not in BattleParticipant.LEFT_STATUSES:
-            _notify_user(entry.user_id, "battle_prebattle_opened", payload)
+            notify_user(entry.user_id, "battle_prebattle_opened", payload)
     resolve_notifications_for_reference(Notification.TYPE_BATTLE_INVITE, str(battle.id))
 
 
@@ -66,8 +61,8 @@ def decline_invitation(battle: Battle, participant: BattleParticipant, *, actor_
     participant.responded_at = timezone.now()
     participant.save(update_fields=["status", "responded_at", "updated_at"])
     resolve_notification(participant.user_id, Notification.TYPE_BATTLE_INVITE, str(battle.id))
-    label = _display_name(participant.user)
-    _notify_user(
+    label = display_name(participant.user)
+    notify_user(
         battle.created_by_user_id,
         "battle_invite_declined",
         {
@@ -78,7 +73,7 @@ def decline_invitation(battle: Battle, participant: BattleParticipant, *, actor_
             "reason": reason,
         },  # fmt: skip
     )
-    event = _append_battle_event(
+    event = append_event(
         battle,
         BattleEvent.TYPE_PARTICIPANT_DECLINED,
         actor_user=actor_user,
@@ -99,7 +94,7 @@ class CampaignBattleDeclineView(APIView):
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
             if participant.status == BattleParticipant.STATUS_DECLINED:
-                return _response_with_snapshot(battle.id, [])
+                return response_with_snapshot(battle.id, [])
             if battle.flow_type != Battle.FLOW_TYPE_NORMAL or battle.status != Battle.STATUS_INVITING:
                 detail = "Only an invitation can be declined, before the battle starts"
                 return Response({"detail": detail, "code": "not_inviting"}, status=400)
@@ -110,4 +105,4 @@ class CampaignBattleDeclineView(APIView):
                 return Response({"detail": "You are no longer invited", "code": "not_invited"}, status=400)
             events = decline_invitation(battle, participant, actor_user=request.user, reason="declined")
             version = bump_state_version(battle)
-        return _broadcast_response(request, battle.id, events, version, changed=ALL)
+        return broadcast_response(request, battle.id, events, version, changed=ALL)

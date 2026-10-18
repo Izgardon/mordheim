@@ -14,19 +14,14 @@ from apps.campaigns.permissions import get_membership
 from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 
 from ..models import Battle, BattleParticipant
+from ..serializers import display_name, participants_prefetch
 from ..services.broadcast import ALL, bump_state_version
-from .shared import (
-    _broadcast_response,
-    _cancel_battle_for_all_participants,
-    _display_name,
-    _get_user_battle_participant,
-    _participants_prefetch,
-    _response_with_snapshot,
-)
+from .responses import broadcast_response, response_with_snapshot
+from .shared import _cancel_battle_for_all_participants, _get_user_battle_participant
 
 
 def _pending_result_payload(battle: Battle, user_id: int) -> dict:
-    """One pending reported result, read with its participants (`_participants_prefetch`) and creator."""
+    """One pending reported result, read with its participants (`participants_prefetch`) and creator."""
     participants = list(battle.participants.all())
     winner_ids = set(battle.winner_warband_ids_json or [])
     mine = next((entry for entry in participants if entry.user_id == user_id), None)
@@ -40,12 +35,12 @@ def _pending_result_payload(battle: Battle, user_id: int) -> dict:
         "winner_warband_ids": battle.winner_warband_ids_json or [],
         "winner_warband_names": [entry.warband.name for entry in participants if entry.warband_id in winner_ids],
         "created_by_user_id": battle.created_by_user_id,
-        "created_by_user_label": _display_name(battle.created_by_user),
+        "created_by_user_label": display_name(battle.created_by_user),
         "created_at": battle.created_at.isoformat(),
         "participants": [
             {
                 "user_id": entry.user_id,
-                "user_label": _display_name(entry.user),
+                "user_label": display_name(entry.user),
                 "warband_id": entry.warband_id,
                 "warband_name": entry.warband.name,
                 "status": entry.status,
@@ -74,7 +69,7 @@ class CampaignPendingResultsView(APIView):
                 participants__user=request.user,
             )
             .select_related("created_by_user")
-            .prefetch_related(_participants_prefetch())
+            .prefetch_related(participants_prefetch())
             .order_by("-created_at", "-id")
         )
         return Response([_pending_result_payload(battle, request.user.id) for battle in battles])
@@ -98,9 +93,9 @@ class CampaignBattleWithdrawResultView(APIView):
                 detail = "Only the player who reported this result can withdraw it"
                 return Response({"detail": detail, "code": "not_submitter"}, status=403)
             if battle.status == Battle.STATUS_CANCELED:
-                return _response_with_snapshot(battle.id, events)
+                return response_with_snapshot(battle.id, events)
             if battle.status == Battle.STATUS_ENDED:
                 return Response({"detail": "Reported result has already been committed"}, status=400)
             events.append(_cancel_battle_for_all_participants(battle, actor_user=request.user, mode="withdrawn"))
             version = bump_state_version(battle)
-        return _broadcast_response(request, battle.id, events, version, changed=ALL)
+        return broadcast_response(request, battle.id, events, version, changed=ALL)

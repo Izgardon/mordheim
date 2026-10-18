@@ -11,15 +11,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.battles.models import Battle, BattleParticipant
+from apps.battles.serializers import serialize_battle, serialize_participant
 from apps.battles.services.broadcast import ALL, bump_state_version
 from apps.battles.views.expiry import expire_overdue
-from apps.battles.views.shared import (
-    _broadcast_response,
-    _cancel_battle_for_all_participants,
-    _response_with_snapshot,
-    _serialize_battle,
-    _serialize_participant,
-)
+from apps.battles.views.responses import broadcast_response, response_with_snapshot
+from apps.battles.views.shared import _cancel_battle_for_all_participants
 from apps.core.throttling import (
     BATTLE_WRITE_THROTTLE_CLASSES,
     CAMPAIGN_CHAT_THROTTLE_CLASSES,
@@ -741,8 +737,8 @@ class CampaignActiveBattlesView(APIView):
         for battle in battles:
             payload.append(
                 {
-                    "battle": _serialize_battle(battle),
-                    "participants": [_serialize_participant(participant) for participant in battle.participants.all()],
+                    "battle": serialize_battle(battle),
+                    "participants": [serialize_participant(participant) for participant in battle.participants.all()],
                 }
             )
 
@@ -766,7 +762,7 @@ class CampaignActiveBattleCancelView(APIView):
             if not battle:
                 return Response({"detail": "Not found"}, status=404)
             if battle.status == Battle.STATUS_CANCELED:
-                return _response_with_snapshot(battle.id, events)
+                return response_with_snapshot(battle.id, events)
             if battle.status == Battle.STATUS_ENDED:
                 return Response({"detail": "Battle is already ended"}, status=400)
             if battle.status == Battle.STATUS_POSTBATTLE:  # decision 3, BUG-09
@@ -783,7 +779,7 @@ class CampaignActiveBattleCancelView(APIView):
             events.append(event)
             version = bump_state_version(battle)
 
-        return _broadcast_response(request, battle.id, events, version, changed=ALL)
+        return broadcast_response(request, battle.id, events, version, changed=ALL)
 
 
 class CampaignPivotalMomentsView(APIView):

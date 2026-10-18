@@ -9,18 +9,18 @@ from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.broadcast import ALL, bump_state_version
 from ..services.errors import BattleError
+from ..services.events import append_event
 from ..services.exploration import keep_exploration
 from ..services.item_use import check_payload_size, item_use_payload
 from ..services.timing import postbattle_deadline, record_activity
 from ..services.unusual import unusual_value_warnings
 from .closing import skip_postbattle
+from .responses import broadcast_response, response_with_snapshot
 from .shared import (
     INGAME_EVENT_TYPES,
     KILLER_UNIT_TYPES,
     _all_started_participants_confirmed,
-    _append_battle_event,
     _apply_participant_postbattle_results,
-    _broadcast_response,
     _build_battle_unit_event_payload,
     _coerce_bool,
     _finalize_battle,
@@ -29,7 +29,6 @@ from .shared import (
     _parse_unit_key,
     _participant_selected_unit_keys,
     _reset_trading_actions_for_battle_participants,
-    _response_with_snapshot,
     _upsert_unit_information,
     _validate_postbattle_json_for_participant,
 )
@@ -109,14 +108,14 @@ class CampaignBattleEventCreateView(APIView):
                 if participant.status != BattleParticipant.STATUS_IN_BATTLE:
                     return Response({"detail": "You are not currently in battle"}, status=400)
 
-            event = _append_battle_event(
+            event = append_event(
                 battle,
                 event_type,
                 actor_user=request.user,
                 payload=payload_json,
             )
             version = bump_state_version(battle)
-        return _broadcast_response(request, battle.id, [event], version, response_status=status.HTTP_201_CREATED)
+        return broadcast_response(request, battle.id, [event], version, response_status=status.HTTP_201_CREATED)
 
 
 class CampaignBattleUnitOoaView(APIView):
@@ -152,7 +151,7 @@ class CampaignBattleUnitOoaView(APIView):
             unit_information = _normalize_unit_information(participant.unit_information_json)
             info = _upsert_unit_information(unit_information, unit["unit_key"])
             if info["out_of_action"] == out_of_action:
-                return _response_with_snapshot(battle.id, events)
+                return response_with_snapshot(battle.id, events)
 
             info["out_of_action"] = out_of_action
             if (
@@ -166,7 +165,7 @@ class CampaignBattleUnitOoaView(APIView):
             participant.unit_information_json = unit_information
             participant.save(update_fields=["unit_information_json", "updated_at"])
 
-            event = _append_battle_event(
+            event = append_event(
                 battle,
                 BattleEvent.TYPE_UNIT_OOA_SET if out_of_action else BattleEvent.TYPE_UNIT_OOA_UNSET,
                 actor_user=request.user,
@@ -183,7 +182,7 @@ class CampaignBattleUnitOoaView(APIView):
             events.append(event)
             version = bump_state_version(battle)
 
-        return _broadcast_response(
+        return broadcast_response(
             request, battle.id, events, version, changed=[participant.id], response_status=status.HTTP_201_CREATED
         )
 
@@ -323,7 +322,7 @@ class CampaignBattleUnitKillView(APIView):
             if notes:
                 event_payload["notes"] = notes
 
-            event = _append_battle_event(
+            event = append_event(
                 battle,
                 BattleEvent.TYPE_UNIT_KILL_RECORDED,
                 actor_user=request.user,
@@ -332,7 +331,7 @@ class CampaignBattleUnitKillView(APIView):
             events.append(event)
             version = bump_state_version(battle)
 
-        return _broadcast_response(
+        return broadcast_response(
             request, battle.id, events, version, changed=[participant.id], response_status=status.HTTP_201_CREATED
         )
 
@@ -364,9 +363,9 @@ class CampaignBattleFinishView(APIView):
             if battle.status in (Battle.STATUS_INVITING, Battle.STATUS_PREBATTLE, Battle.STATUS_CANCELED):
                 return Response({"detail": "Battle has not started"}, status=400)
             if battle.status == Battle.STATUS_ENDED:
-                return _response_with_snapshot(battle.id, events)
+                return response_with_snapshot(battle.id, events)
             if battle.status == Battle.STATUS_POSTBATTLE:
-                return _response_with_snapshot(battle.id, events)
+                return response_with_snapshot(battle.id, events)
             if battle.status != Battle.STATUS_ACTIVE:
                 return Response({"detail": "Battle is not active"}, status=400)
             if battle.created_by_user_id != request.user.id:
@@ -397,7 +396,7 @@ class CampaignBattleFinishView(APIView):
             battle.closes_at = postbattle_deadline(now)  # 72 hours of postbattle (decision 2)
             battle.save(update_fields=["status", "winner_warband_ids_json", "closes_at", "updated_at"])
             _reset_trading_actions_for_battle_participants(battle)
-            event = _append_battle_event(
+            event = append_event(
                 battle,
                 BattleEvent.TYPE_BATTLE_ENTERED_POSTBATTLE,
                 actor_user=request.user,
@@ -406,7 +405,7 @@ class CampaignBattleFinishView(APIView):
             events.append(event)
             version = bump_state_version(battle)
 
-        return _broadcast_response(request, battle.id, events, version, changed=ALL)
+        return broadcast_response(request, battle.id, events, version, changed=ALL)
 
 
 class CampaignBattleWinnerView(APIView):
@@ -430,7 +429,7 @@ class CampaignBattlePostbattleSaveView(APIView):
             if battle.status != Battle.STATUS_POSTBATTLE:
                 return Response({"detail": "Battle is not in postbattle"}, status=400)
             if participant.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE:
-                return _response_with_snapshot(battle.id, events)
+                return response_with_snapshot(battle.id, events)
 
             try:
                 postbattle_json = _validate_postbattle_json_for_participant(
@@ -452,7 +451,7 @@ class CampaignBattlePostbattleSaveView(APIView):
             record_activity(battle)  # a draft is the player's own: activity, but no broadcast (PERF-34)
             # and it logs nothing: finalise logs each unit's injury once (decision 7, BUG-47)
 
-        return _response_with_snapshot(battle.id, events, warnings=warnings)
+        return response_with_snapshot(battle.id, events, warnings=warnings)
 
 
 class CampaignBattleFinalizePostbattleView(APIView):
@@ -477,7 +476,7 @@ class CampaignBattleFinalizePostbattleView(APIView):
                 detail = "Your postbattle was skipped, so its results can't be applied now"
                 return Response({"detail": detail, "code": "postbattle_skipped"}, status=400)
             if participant.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE:
-                return _response_with_snapshot(battle.id, events)
+                return response_with_snapshot(battle.id, events)
             if battle.status != Battle.STATUS_POSTBATTLE:
                 return Response({"detail": "Battle is not in postbattle"}, status=400)
             if participant.status != BattleParticipant.STATUS_FINISHED_BATTLE:
@@ -497,7 +496,7 @@ class CampaignBattleFinalizePostbattleView(APIView):
             participant.status = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
             participant.confirmed_at = timezone.now()
             participant.save(update_fields=["postbattle_json", "status", "confirmed_at", "updated_at"])
-            event = _append_battle_event(
+            event = append_event(
                 battle,
                 BattleEvent.TYPE_PARTICIPANT_CONFIRMED_POSTBATTLE,
                 actor_user=request.user,
@@ -510,7 +509,7 @@ class CampaignBattleFinalizePostbattleView(APIView):
             version = bump_state_version(battle)
             changed = ALL if battle.status == Battle.STATUS_ENDED else [participant.id]
 
-        return _broadcast_response(request, battle.id, events, version, changed=changed, warnings=warnings)
+        return broadcast_response(request, battle.id, events, version, changed=changed, warnings=warnings)
 
 
 class CampaignBattleConfirmView(CampaignBattleFinalizePostbattleView):
@@ -523,7 +522,7 @@ class CampaignBattleConfirmView(CampaignBattleFinalizePostbattleView):
             if battle.status == Battle.STATUS_CANCELED:
                 return Response({"detail": "Battle was canceled"}, status=400)
             if participant.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE:
-                return _response_with_snapshot(battle.id, events)
+                return response_with_snapshot(battle.id, events)
             if battle.status != Battle.STATUS_POSTBATTLE:
                 return Response({"detail": "Battle is not in postbattle"}, status=400)
             if participant.status != BattleParticipant.STATUS_FINISHED_BATTLE:
@@ -536,4 +535,4 @@ class CampaignBattleConfirmView(CampaignBattleFinalizePostbattleView):
             version = bump_state_version(battle)
             changed = ALL if battle.status == Battle.STATUS_ENDED else [participant.id]
 
-        return _broadcast_response(request, battle.id, events, version, changed=changed)
+        return broadcast_response(request, battle.id, events, version, changed=changed)

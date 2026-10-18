@@ -16,13 +16,9 @@ from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.broadcast import ALL, bump_state_version
-from .shared import (
-    _append_battle_event,
-    _broadcast_response,
-    _finalize_battle,
-    _remove_used_single_use_items,
-    _response_with_snapshot,
-)
+from ..services.events import append_event
+from .responses import broadcast_response, response_with_snapshot
+from .shared import _finalize_battle, _remove_used_single_use_items
 
 
 def _empty_draft() -> dict:
@@ -46,7 +42,7 @@ def skip_postbattle(battle: Battle, participant: BattleParticipant, *, actor_use
     payload: dict = {"participant_user_id": participant.user_id, "skipped_postbattle": True}
     if closed_by is not None:
         payload["closed_by_user_id"] = closed_by.id
-    return _append_battle_event(
+    return append_event(
         battle, BattleEvent.TYPE_PARTICIPANT_CONFIRMED_POSTBATTLE, actor_user=actor_user, payload=payload
     )
 
@@ -83,9 +79,9 @@ class CampaignBattleClosePostbattleView(APIView):
                 detail = "Only the battle's creator or a battle manager can close postbattle"
                 return Response({"detail": detail, "code": "not_allowed"}, status=403)
             if battle.status == Battle.STATUS_ENDED:
-                return _response_with_snapshot(battle.id, [])
+                return response_with_snapshot(battle.id, [])
             if battle.status != Battle.STATUS_POSTBATTLE:
                 return Response({"detail": "Battle is not in postbattle"}, status=400)
             events = close_postbattle(battle, actor_user=request.user, mode="closed")
             version = bump_state_version(battle)
-        return _broadcast_response(request, battle.id, events, version, changed=ALL)
+        return broadcast_response(request, battle.id, events, version, changed=ALL)
