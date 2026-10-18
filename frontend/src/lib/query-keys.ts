@@ -42,5 +42,8 @@ export const queryKeys = {
     /** The warband's log entries, as the Logs tab lists them. */
     warbandLogs: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "logs"] as const,
+    /** One trade request between two players of the campaign. */
+    trade: (campaignId: number, requestId: string) =>
+      ["campaign", campaignId, "trade", requestId] as const,
   },
 };

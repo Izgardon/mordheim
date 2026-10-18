@@ -20,7 +20,6 @@ import { useWarbandSheet } from "../hooks/warband/useWarbandSheet";
 import { useWarbandWarchest } from "../hooks/warband/useWarbandWarchest";
 import { useWarbandTradeSession } from "../hooks/warband/useWarbandTradeSession";
 import { WARBAND_TABS, useWarbandPage } from "../hooks/warband/useWarbandPage";
-import { useAppStore } from "@/stores/app-store";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { createWarband } from "../api/warbands-api";
 import { calculateWarbandRating } from "../utils/warband-utils";
@@ -32,7 +31,6 @@ export default function Warband() {
   const { id, warbandId } = useParams();
   const { campaign, setMobileTopBar, showRejoinBattleButton } =
     useOutletContext<CampaignLayoutContext>();
-  const { tradeSession } = useAppStore();
   const isMobile = useMediaQuery("(max-width: 960px)");
 
   const campaignId = useMemo(() => Number(id), [id]);
@@ -148,7 +146,7 @@ export default function Warband() {
         )}
         <DiscardChangesDialog {...page.discardDialog} />
         <TradeSessionDialog
-          session={tradeSession}
+          session={trade.session}
           tradeRequest={trade.tradeRequest}
           heroes={heroes}
           warchestItems={warchest.warchestItems}

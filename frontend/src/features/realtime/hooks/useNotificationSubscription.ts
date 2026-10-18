@@ -19,13 +19,13 @@ import type {
 } from "@/features/warbands/types/trade-request-types";
 import { useRealtimeReconnect, useUserNotifications } from "@/lib/realtime";
 import { useAppStore } from "@/stores/app-store";
-import { describeTradeEnd } from "@/features/warbands/utils/trade-status";
+import { readTradeData, setTradeData } from "@/features/warbands/api/economy-queries";
+import { describeTradeEnd, isTradeOver } from "@/features/warbands/utils/trade-status";
 import {
   notificationFromApi,
   toBattleInviteNotification,
   toBattleResultRequestNotification,
   toTradeNotification,
-  toTradeSession,
   type BattleNotificationPayload,
 } from "../utils/notification-mappers";
 
@@ -42,7 +42,6 @@ export function useNotificationSubscription() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const {
-    tradeSession,
     currentBattleSession,
     addTradeRequestNotification,
     removeTradeRequestNotification,
@@ -55,7 +54,6 @@ export function useNotificationSubscription() {
     clearBattleResultRequestNotifications,
     setCurrentBattleSession,
     clearCurrentBattleSession,
-    setTradeSession,
   } = useAppStore();
   const userId = user?.id ?? null;
 
@@ -140,10 +138,11 @@ export function useNotificationSubscription() {
       if (!request?.id) {
         return;
       }
-      if (tradeSession?.requestId === request.id && tradeSession.status === "active") {
+      // The trade channel may have told us first: the trade is already open here.
+      if (readTradeData(queryClient, request.campaign_id, request.id)?.status === "accepted") {
         return;
       }
-      setTradeSession(toTradeSession(request, userId, "active"));
+      setTradeData(queryClient, request);
       // Offer the trade instead of navigating: the user may be mid-edit elsewhere (BUG-26).
       const isTradeOpen =
         location.pathname === `/campaigns/${request.campaign_id}/warband` &&
@@ -169,8 +168,10 @@ export function useNotificationSubscription() {
         return;
       }
       removeTradeRequestNotification(request.id);
-      if (tradeSession?.requestId === request.id) {
-        setTradeSession(null);
+      // Your open request ends; a warband page showing it drops ?trade= on its own.
+      const known = readTradeData(queryClient, request.campaign_id, request.id);
+      if (known && !isTradeOver(known)) {
+        setTradeData(queryClient, request);
         toast(describeTradeEnd(request, userId) ?? "The trade was declined.", {
           id: `trade-ended-${request.id}`,
         });

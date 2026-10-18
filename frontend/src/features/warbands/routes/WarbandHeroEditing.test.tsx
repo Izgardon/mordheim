@@ -62,7 +62,6 @@ vi.mock("@/stores/app-store", () => ({
   useAppStore: () => ({
     warband: null,
     setWarband: vi.fn(),
-    tradeSession: null,
     diceColor: "#2e8555",
     campaignStarted: true,
   }),
@@ -161,8 +160,8 @@ vi.mock("../hooks/warband/useWarbandWarchest", () => ({
 }));
 vi.mock("../hooks/warband/useWarbandTradeSession", () => ({
   useWarbandTradeSession: () => ({
+    session: null,
     tradeRequest: null,
-    setTradeRequest: vi.fn(),
     handleTradeRequestCreated: vi.fn(),
     handleTradeSessionClose: vi.fn(),
   }),

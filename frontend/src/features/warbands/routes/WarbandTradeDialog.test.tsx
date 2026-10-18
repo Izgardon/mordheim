@@ -1,23 +1,22 @@
 /**
  * Characterisation of where the trade dialog appears (BUG-43) before pass 2: the warband page
- * renders it from the app store's trade session on any warband, so opening another player's
- * warband mid-trade offers that warband's heroes, stash and gold. The real page, app store and
- * router run; `apiRequest` is answered by a fake server and the trade channel is stubbed.
+ * renders the trade named by `?trade=` on any warband, so opening another player's warband
+ * mid-trade offers that warband's heroes, stash and gold. The real page, app store and router
+ * run; `apiRequest` is answered by a fake server and the trade channel is stubbed.
  */
 import { act, screen, within } from "@testing-library/react";
-import { useEffect } from "react";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import Warband from "./Warband";
-import { AppStoreProvider, useAppStore } from "@/stores/app-store";
+import { AppStoreProvider } from "@/stores/app-store";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
 import { makeStashItem, makeVeteranHero } from "@/test/warband-fixtures";
 
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
-import type { TradeRequest, TradeSession } from "@/features/warbands/types/trade-request-types";
+import type { TradeRequest } from "@/features/warbands/types/trade-request-types";
 
 vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
@@ -36,17 +35,6 @@ const TRADE = "7b5c0d2e-trade";
 const expiresAt = () => new Date(Date.now() + 5 * 60_000).toISOString();
 
 /** Ann (warband 9) is trading with Bob (warband 12). */
-const session = (): TradeSession => ({
-  requestId: TRADE,
-  campaignId: 7,
-  partner: { id: 2, label: "Bob" },
-  fromWarband: { id: 9, name: "The Black Wolves" },
-  toWarband: { id: 12, name: "Reikland Rats" },
-  status: "active",
-  expiresAt: expiresAt(),
-  role: "initiator",
-});
-
 const request = (): TradeRequest => ({
   id: TRADE,
   campaign_id: 7,
@@ -91,17 +79,12 @@ const campaign = {
   permissions: [],
 } as unknown as CampaignLayoutContext["campaign"];
 
-/** A trade session started earlier, on Ann's own warband page. */
-function RunningTrade() {
-  const { setTradeSession } = useAppStore();
-  useEffect(() => setTradeSession(session()), [setTradeSession]);
-  return null;
-}
+/** The trade Ann started earlier is open: its id rides in the URL as `?trade=`. */
+const runningTrade = `?trade=${TRADE}`;
 
 const renderPage = (url: string) =>
   renderWithQueryClient(
     <AppStoreProvider>
-      <RunningTrade />
       <MemoryRouter initialEntries={[url]}>
         <Routes>
           <Route
@@ -160,7 +143,7 @@ beforeEach(() => {
 describe("Warband page: the trade dialog", () => {
   it("opens on your own warband with your heroes, stash and gold", async () => {
     const user = setupUser();
-    renderPage("/campaigns/7/warband");
+    renderPage(`/campaigns/7/warband${runningTrade}`);
 
     const dialog = await screen.findByRole("dialog", { name: "Trading with Bob" });
     expect(await within(dialog).findByRole("button", { name: "Sword 2/2" })).toBeInTheDocument();
@@ -175,7 +158,7 @@ describe("Warband page: the trade dialog", () => {
 
   it("opens on another player's warband, offering that warband's heroes, stash and gold (BUG-43, pinned; flips in PR A)", async () => {
     const user = setupUser();
-    renderPage("/campaigns/7/warbands/15");
+    renderPage(`/campaigns/7/warbands/15${runningTrade}`);
 
     const dialog = await screen.findByRole("dialog", { name: "Trading with Bob" });
     expect(
