@@ -3,13 +3,14 @@
  * server that keeps the participant's blob the way `/config/` does: `unit_information_patch`
  * changes only the units and fields it names, and never a kill or out of action (BUG-44).
  */
-import { act, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { BattleState } from "@/features/battles/types/battle-types";
 import {
   ME,
   OPPONENT,
+  battleEvent,
   battlePath,
   battleRosters,
   battleState,
@@ -40,6 +41,13 @@ const myRow = () => server.participants.find((entry) => entry.user.id === ME.id)
 const setMyUnitInformation = (next: UnitInformation) => {
   myRow().unit_information_json = next;
 };
+const myUnitWith = (killCount: number) => ({
+  stats_override: {},
+  notes: "",
+  current_wounds: null,
+  out_of_action: false,
+  kill_count: killCount,
+});
 const myUnit = (unitKey: string) =>
   myRow().unit_information_json[unitKey] ?? {
     stats_override: {},
@@ -81,6 +89,12 @@ function routeServer() {
       ...myRow().unit_information_json,
       [killer_unit_key]: { ...unit, kill_count: unit.kill_count + 1 },
     });
+    server.events = [
+      ...server.events,
+      battleEvent(100 + server.events.length, "unit_kill_recorded", ME.id, {
+        killer: { unit_key: killer_unit_key },
+      }),
+    ];
     return answer();
   });
 }
@@ -247,6 +261,67 @@ describe("BattleActive requests", () => {
       expect(screen.getAllByRole("button", { name }).length).toBeGreaterThan(0);
     }
     expect(screen.queryByRole("button", { name: /^(Record kill|Set unit .*)$/ })).toBeNull();
+  });
+
+  it("offers to undo a kill just recorded, through void/ (BUG-11)", async () => {
+    const user = setupUser();
+    await renderActive();
+    fakeApi.on(`POST ${battlePath("events/100/void/")}`, () => {
+      server.events = server.events.map((event) =>
+        event.id === 100 ? { ...event, voided_at: "2026-10-18T11:00:00Z" } : event
+      );
+      setMyUnitInformation({ ...myRow().unit_information_json, "hero:3": myUnitWith(0) });
+      return answer();
+    });
+
+    await user.click(killButton("Rolf"));
+    const dialog = screen.getByRole("dialog", { name: "Record Kill" });
+    await user.selectOptions(within(dialog).getByRole("combobox"), "hero:2");
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(killCountOn("Rolf")).toBe("1"));
+
+    expect(await screen.findByText("Kill recorded.")).toBeInTheDocument();
+    // A plain click: sonner captures the pointer on press, which jsdom lacks.
+    fireEvent.click(screen.getByRole("button", { name: "Undo" }));
+
+    await waitFor(() => expect(killCountOn("Rolf")).toBe("0"));
+    expect(fakeApi.calls()).toContain(`POST ${battlePath("events/100/void/")}`);
+  });
+
+  it("undoes your latest use of a single-use item from the unit's details (BUG-11)", async () => {
+    const user = setupUser();
+    routeServer();
+    const rosters = battleRosters();
+    rosters[String(ME.id)].heroes[0].items = [
+      { id: 40, name: "Healing Draught", count: 1, singleUse: true },
+    ];
+    fakeApi.on(`GET ${battlePath("rosters/")}`, rosters);
+    server.events = [
+      battleEvent(3, "item_used", ME.id, {
+        unit_key: "hero:1",
+        item_id: 40,
+        item_name: "Healing Draught",
+      }),
+    ];
+    fakeApi.on(`POST ${battlePath("events/3/void/")}`, () => {
+      server.events = server.events.map((event) => ({
+        ...event,
+        voided_at: "2026-10-18T11:00:00Z",
+      }));
+      return answer();
+    });
+    renderBattleRoute("active");
+    await screen.findByText("Captain Wolf");
+
+    await user.click(firstButton("Captain Wolf", "Details for Captain Wolf"));
+    expect(screen.getByText("0/1")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Undo using Healing Draught" }));
+
+    await waitFor(() => expect(screen.getByText("1/1")).toBeInTheDocument());
+    expect(fakeApi.calls()).toContain(`POST ${battlePath("events/3/void/")}`);
+    expect(
+      screen.queryByRole("button", { name: "Undo using Healing Draught" })
+    ).not.toBeInTheDocument();
   });
 
   it("sends out of action and kills straight to their own endpoints, outside the config queue", async () => {

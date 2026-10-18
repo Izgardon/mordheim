@@ -54,6 +54,7 @@ type ActiveHenchmenGroupCardProps = {
   }) => Promise<void>;
   onUseSingleUseItem: (unit: PrebattleUnit, item: UnitSingleUseItem) => Promise<void>;
   getUsedSingleUseItemCount: (unitKey: string, itemId: number) => number;
+  onUndoSingleUseItem?: (unit: PrebattleUnit, itemId: number) => Promise<void>;
   activeItemActionKey: string | null;
   savingUnitKeys?: Record<string, boolean>;
 };
@@ -71,6 +72,7 @@ export default function ActiveHenchmenGroupCard({
   onRecordKill,
   onUseSingleUseItem,
   getUsedSingleUseItemCount,
+  onUndoSingleUseItem,
   activeItemActionKey,
   savingUnitKeys = {},
 }: ActiveHenchmenGroupCardProps) {
@@ -271,6 +273,9 @@ export default function ActiveHenchmenGroupCard({
             }
             getUsedSingleUseItemCount={(itemId) =>
               getUsedSingleUseItemCount(detailUnit.key, itemId)
+            }
+            onUndoSingleUseItem={
+              onUndoSingleUseItem ? (itemId) => onUndoSingleUseItem(detailUnit, itemId) : undefined
             }
             activeItemActionKey={activeItemActionKey}
           />

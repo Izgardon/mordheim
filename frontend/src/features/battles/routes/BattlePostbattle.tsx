@@ -23,6 +23,7 @@ import { Tooltip } from "@/components/ui/tooltip";
 import {
   confirmBattlePostbattle,
   finalizeBattlePostbattle,
+  recordUnitKill,
   saveBattleParticipantConfig,
   saveBattlePostbattleDraft,
 } from "@/features/battles/api/battles-api";
@@ -65,6 +66,10 @@ import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesk
 import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesDialog";
 import BattleOverflowMenu from "@/features/battles/components/shared/BattleOverflowMenu";
 import PostbattleDeadTick from "@/features/battles/components/postbattle/PostbattleDeadTick";
+import PostbattleKillsControl from "@/features/battles/components/postbattle/PostbattleKillsControl";
+import { buildBattleUnitOptions } from "@/features/battles/components/active/active-utils";
+import { useEventUndo } from "@/features/battles/hooks/useEventUndo";
+import { liveKillEvents } from "@/features/battles/utils/battle-events";
 import PostbattleSkipDialog from "@/features/battles/components/postbattle/PostbattleSkipDialog";
 import ClosePostbattleDialog from "@/features/battles/components/shared/ClosePostbattleDialog";
 import { useClosePostbattle } from "@/features/battles/hooks/useClosePostbattle";
@@ -665,34 +670,48 @@ export default function BattlePostbattle() {
     [draft, persistDraft]
   );
 
-  const minimumUnitKillCounts = useMemo(() => {
-    const unitInformation = currentParticipant?.unit_information_json ?? {};
-    return Object.fromEntries(
-      Object.entries(unitInformation).map(([unitKey, info]) => [
-        unitKey,
-        Math.max(0, Math.trunc(Number(info?.kill_count ?? 0) || 0)),
-      ])
-    );
-  }, [currentParticipant?.unit_information_json]);
-
-  const handleCommitUnitKillCount = useCallback(
-    (unitKey: string, nextKillCount: number) => {
-      if (!draft) {
-        return;
-      }
-      const minimumKillCount = minimumUnitKillCounts[unitKey] ?? 0;
-      const normalizedKillCount = Math.max(minimumKillCount, nextKillCount);
-      if (draft.unit_results[unitKey]?.kill_count === normalizedKillCount) {
-        return;
-      }
-      void persistDraft(
-        updateUnitResult(draft, unitKey, (current) => ({
-          ...current,
-          kill_count: normalizedKillCount,
-        }))
-      );
+  // Kills are the kill events that still count, the number finalise applies (BUG-11): Plus records
+  // one more (source postbattle), Minus undoes the latest. The draft's kill_count is ignored.
+  const killTargetOptions = useMemo(
+    () =>
+      buildBattleUnitOptions(battleState?.participants ?? [], rosters).filter(
+        (option) => option.participantUserId !== user?.id
+      ),
+    [battleState?.participants, rosters, user?.id]
+  );
+  const { undo: undoEvent } = useEventUndo({
+    campaignId,
+    battleId: numericBattleId,
+    applyBattleResponse,
+  });
+  const handleAddKill = useCallback(
+    async (
+      unitKey: string,
+      kill: { victimUnitKey?: string; victimName?: string; notes?: string; earnedXp: boolean }
+    ) => {
+      const next = await recordUnitKill(campaignId, numericBattleId, {
+        killer_unit_key: unitKey,
+        victim_unit_key: kill.victimUnitKey,
+        victim_name: kill.victimName,
+        notes: kill.notes,
+        earned_xp: kill.earnedXp,
+        source: "postbattle",
+      });
+      applyBattleResponse(next);
     },
-    [draft, minimumUnitKillCounts, persistDraft]
+    [applyBattleResponse, campaignId, numericBattleId]
+  );
+  const killControl = (row: PostbattleRenderableRow) => (
+    <PostbattleKillsControl
+      unitKey={row.unitKey}
+      unitName={row.unitName}
+      unitKind={row.unitKind}
+      kills={liveKillEvents(battleState?.events ?? [], row.unitKey, user?.id)}
+      killTargetOptions={killTargetOptions}
+      disabled={isFinalized}
+      onAddKill={handleAddKill}
+      onUndoKill={undoEvent}
+    />
   );
 
   const handleCommitGroupXp = useCallback(
@@ -1410,19 +1429,7 @@ export default function BattlePostbattle() {
                               ) : null}
                             </div>
                             <div className="flex flex-wrap items-end justify-between gap-3">
-                              <label className="space-y-1">
-                                <span className="block text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
-                                  Kills
-                                </span>
-                                <PostbattleStepperInput
-                                  value={row.killCount}
-                                  min={minimumUnitKillCounts[row.unitKey] ?? 0}
-                                  disabled={isFinalized}
-                                  onCommit={(nextKillCount) =>
-                                    handleCommitUnitKillCount(row.unitKey, nextKillCount)
-                                  }
-                                />
-                              </label>
+                              {killControl(row)}
                               <PostbattleDeadTick
                                 unitKey={row.unitKey}
                                 unitKind={row.unitKind}
@@ -1505,19 +1512,7 @@ export default function BattlePostbattle() {
                             />
                           </label>
                         ) : null}
-                        <label className="space-y-1">
-                          <span className="block text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
-                            Kills
-                          </span>
-                          <PostbattleStepperInput
-                            value={row.killCount}
-                            min={minimumUnitKillCounts[row.unitKey] ?? 0}
-                            disabled={isFinalized}
-                            onCommit={(nextKillCount) =>
-                              handleCommitUnitKillCount(row.unitKey, nextKillCount)
-                            }
-                          />
-                        </label>
+                        {killControl(row)}
                       </div>
                       <PostbattleDeadTick
                         unitKey={row.unitKey}

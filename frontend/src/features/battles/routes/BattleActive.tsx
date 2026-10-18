@@ -58,7 +58,13 @@ import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesD
 import BattleOverflowMenu from "@/features/battles/components/shared/BattleOverflowMenu";
 import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
 import { useBattleState } from "@/features/battles/hooks/useBattleState";
+import { useEventUndo } from "@/features/battles/hooks/useEventUndo";
 import { useSerializedSave } from "@/features/battles/hooks/useSerializedSave";
+import {
+  latestItemUseEvent,
+  newestOwnEvent,
+  usedSingleUseItemCounts as countUsedSingleUseItems,
+} from "@/features/battles/utils/battle-events";
 import {
   applyConfigPatch,
   mergeConfigPatches,
@@ -125,6 +131,11 @@ export default function BattleActive() {
   const [isCriticalHitDialogOpen, setIsCriticalHitDialogOpen] = useState(false);
   const [actionError, setActionError] = useState("");
   const [activeItemActionKey, setActiveItemActionKey] = useState<string | null>(null);
+  const { undo, offerUndo } = useEventUndo({
+    campaignId,
+    battleId: numericBattleId,
+    applyBattleResponse,
+  });
   const sendConfig = useCallback(
     (payload: ParticipantConfigPatch) =>
       saveBattleParticipantConfig(campaignId, numericBattleId, payload),
@@ -245,33 +256,11 @@ export default function BattleActive() {
       ),
     [battleState?.participants, currentParticipant?.user.id, rosters]
   );
-  const usedSingleUseItemCounts = useMemo(() => {
-    const counts: Record<string, Record<number, number>> = {};
-    for (const event of battleState?.events ?? []) {
-      if (event.type !== "item_used") {
-        continue;
-      }
-      const payload = event.payload_json;
-      if (!payload || typeof payload !== "object") {
-        continue;
-      }
-      const unitKeyRaw = (payload as { unit_key?: unknown }).unit_key;
-      const itemIdRaw = (payload as { item_id?: unknown }).item_id;
-      if (typeof unitKeyRaw !== "string" || !unitKeyRaw.trim()) {
-        continue;
-      }
-      const itemId = Number(itemIdRaw);
-      if (!Number.isFinite(itemId) || itemId <= 0) {
-        continue;
-      }
-      const unitKey = unitKeyRaw.trim();
-      if (!counts[unitKey]) {
-        counts[unitKey] = {};
-      }
-      counts[unitKey][itemId] = (counts[unitKey][itemId] ?? 0) + 1;
-    }
-    return counts;
-  }, [battleState?.events]);
+  // Undone item uses don't count (BUG-11).
+  const usedSingleUseItemCounts = useMemo(
+    () => countUsedSingleUseItems(battleState?.events ?? []),
+    [battleState?.events]
+  );
   const getUsedSingleUseItemCount = useCallback(
     (unitKey: string, itemId: number) => usedSingleUseItemCounts[unitKey]?.[itemId] ?? 0,
     [usedSingleUseItemCounts]
@@ -642,8 +631,19 @@ export default function BattleActive() {
         earned_xp: payload.earnedXp,
       });
       applyBattleResponse(next);
+      // A mis-tapped kill can be undone at once, or from postbattle until you finalise (BUG-11).
+      offerUndo("Kill recorded.", newestOwnEvent(next.events, "unit_kill_recorded", user?.id)?.id);
     },
-    [applyBattleResponse, campaignId, numericBattleId]
+    [applyBattleResponse, campaignId, numericBattleId, offerUndo, user?.id]
+  );
+  const handleUndoSingleUseItem = useCallback(
+    async (unit: PrebattleUnit, itemId: number) => {
+      const event = latestItemUseEvent(battleState?.events ?? [], unit.key, itemId, user?.id);
+      if (event) {
+        await undo(event.id);
+      }
+    },
+    [battleState?.events, undo, user?.id]
   );
   const handleUseSingleUseItem = useCallback(
     async (unit: PrebattleUnit, item: UnitSingleUseItem) => {
@@ -666,17 +666,22 @@ export default function BattleActive() {
           },
         });
         applyBattleResponse(next);
+        offerUndo(`${item.name} used.`, newestOwnEvent(next.events, "item_used", user?.id)?.id);
       } catch (errorResponse) {
-        if (errorResponse instanceof Error) {
-          setActionError(errorResponse.message || "Unable to log item use");
-        } else {
-          setActionError("Unable to log item use");
-        }
+        setActionError(getErrorMessage(errorResponse, "Unable to log item use"));
       } finally {
         setActiveItemActionKey((prev) => (prev === actionKey ? null : prev));
       }
     },
-    [applyBattleResponse, battleState, campaignId, currentParticipant, numericBattleId]
+    [
+      applyBattleResponse,
+      battleState,
+      campaignId,
+      currentParticipant,
+      numericBattleId,
+      offerUndo,
+      user?.id,
+    ]
   );
 
   const desktopSubnavActions = useMemo(
@@ -915,6 +920,7 @@ export default function BattleActive() {
           onRecordKill={handleRecordUnitKill}
           onUseSingleUseItem={handleUseSingleUseItem}
           getUsedSingleUseItemCount={getUsedSingleUseItemCount}
+          onUndoSingleUseItem={handleUndoSingleUseItem}
           activeItemActionKey={activeItemActionKey}
           savingUnitKeys={savingUnitKeys}
           sectionIds={sectionIdByKey}

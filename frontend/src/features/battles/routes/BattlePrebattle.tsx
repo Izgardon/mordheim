@@ -33,6 +33,11 @@ import {
 import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
 import { useBattleState } from "@/features/battles/hooks/useBattleState";
 import { useDeclineInvite } from "@/features/battles/hooks/useDeclineInvite";
+import { useEventUndo } from "@/features/battles/hooks/useEventUndo";
+import {
+  newestOwnEvent,
+  usedSingleUseItemCounts as countUsedSingleUseItems,
+} from "@/features/battles/utils/battle-events";
 import { useRefreshOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import { participantStatusLabel } from "@/features/battles/components/prebattle/prebattle-utils";
 import {
@@ -413,33 +418,11 @@ export default function BattlePrebattle() {
     ? rosters[selectedParticipant.user.id]
     : undefined;
 
-  const usedSingleUseItemCounts = useMemo(() => {
-    const counts: Record<string, Record<number, number>> = {};
-    for (const event of battleState?.events ?? []) {
-      if (event.type !== "item_used") {
-        continue;
-      }
-      const payload = event.payload_json;
-      if (!payload || typeof payload !== "object") {
-        continue;
-      }
-      const unitKeyRaw = (payload as { unit_key?: unknown }).unit_key;
-      const itemIdRaw = (payload as { item_id?: unknown }).item_id;
-      if (typeof unitKeyRaw !== "string" || !unitKeyRaw.trim()) {
-        continue;
-      }
-      const itemId = Number(itemIdRaw);
-      if (!Number.isFinite(itemId) || itemId <= 0) {
-        continue;
-      }
-      const unitKey = unitKeyRaw.trim();
-      if (!counts[unitKey]) {
-        counts[unitKey] = {};
-      }
-      counts[unitKey][itemId] = (counts[unitKey][itemId] ?? 0) + 1;
-    }
-    return counts;
-  }, [battleState?.events]);
+  // Undone item uses don't count (BUG-11).
+  const usedSingleUseItemCounts = useMemo(
+    () => countUsedSingleUseItems(battleState?.events ?? []),
+    [battleState?.events]
+  );
 
   const getUsedSingleUseItemCount = useCallback(
     (unitKey: string, itemId: number) => usedSingleUseItemCounts[unitKey]?.[itemId] ?? 0,
@@ -470,6 +453,11 @@ export default function BattlePrebattle() {
     invitePending && !isBattleCreator && (canAcceptInvite || waitingForOthers)
   );
   const refreshOpenBattles = useRefreshOpenBattles(campaignId);
+  const { offerUndo } = useEventUndo({
+    campaignId,
+    battleId: numericBattleId,
+    applyBattleResponse,
+  });
   const declining = useDeclineInvite({
     campaignId,
     battleId: numericBattleId,
@@ -798,6 +786,7 @@ export default function BattlePrebattle() {
         },
       });
       applyBattleResponse(next);
+      offerUndo(`${item.name} used.`, newestOwnEvent(next.events, "item_used", user?.id)?.id);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
         setActionError(errorResponse.message || "Unable to log item use");

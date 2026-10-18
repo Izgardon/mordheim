@@ -179,6 +179,8 @@ export function recordUnitKill(
     victim_name?: string;
     notes?: string;
     earned_xp: boolean;
+    /** A kill added in your own postbattle (BUG-11); without it postbattle refuses. */
+    source?: "postbattle";
   }
 ) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/unit-kill/`, {
@@ -186,6 +188,14 @@ export function recordUnitKill(
     headers: battleWriteHeaders(),
     body: payload,
   });
+}
+
+/** Undoes your own kill or item use until you finalise (BUG-11); the event stays, voided. */
+export function voidBattleEvent(campaignId: number, battleId: number, eventId: number) {
+  return apiRequest<BattleState>(
+    `/campaigns/${campaignId}/battles/${battleId}/events/${eventId}/void/`,
+    { method: "POST", headers: battleWriteHeaders() }
+  );
 }
 
 export function finishBattle(

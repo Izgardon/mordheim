@@ -7,6 +7,8 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { MemoryRouter, Outlet, Route, Routes, useLocation } from "react-router-dom";
 
+import { AppToaster } from "@/components/ui/toaster";
+
 import BattleActive from "@/features/battles/routes/BattleActive";
 import BattleLayout from "@/features/battles/routes/BattleLayout";
 import BattlePostbattle from "@/features/battles/routes/BattlePostbattle";
@@ -66,6 +68,7 @@ export function renderBattleRoute(
             </Route>
           </Routes>
         </MemoryRouter>
+        <AppToaster />
       </TestDiceProvider>
     </AppStoreProvider>,
     { queryClient }

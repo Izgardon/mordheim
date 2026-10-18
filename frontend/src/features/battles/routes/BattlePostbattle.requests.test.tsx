@@ -305,18 +305,49 @@ describe("BattlePostbattle requests", () => {
     expect(stepper("Captain Wolf", "XP")).toHaveValue(4);
   });
 
-  it("floors kills at the live count: lower values snap back and send nothing (BUG-11, pinned; flips in PR C)", async () => {
+  it("shows the kills that still count: Minus undoes the latest, Plus records one in postbattle (BUG-11)", async () => {
     const user = setupUser();
+    fakeApi.on(`POST ${battlePath("events/5/void/")}`, () => {
+      server.events = server.events.map((event) =>
+        event.id === 5 ? { ...event, voided_at: "2026-10-18T11:00:00Z" } : event
+      );
+      return answer();
+    });
+    fakeApi.on(`POST ${battlePath("unit-kill/")}`, () => {
+      server.events = [...server.events, killBy(6, "hero:1")];
+      return answer();
+    });
     await renderPostbattle();
-    expect(stepper("Captain Wolf", "Kills")).toHaveValue(2);
+    const kills = () => screen.getByRole("status", { name: "Captain Wolf's kills" });
+    expect(kills()).toHaveTextContent("2");
 
-    await commit(user, stepper("Captain Wolf", "Kills"), "0");
-    expect(stepper("Captain Wolf", "Kills")).toHaveValue(2);
-    expect(fakeApi.calls()).toEqual([]);
+    await user.click(screen.getByRole("button", { name: "Undo Captain Wolf's latest kill" }));
+    const confirm = screen.getByRole("dialog", { name: "Undo kill" });
+    expect(confirm).toHaveAccessibleDescription(/marked undone/);
+    await user.click(within(confirm).getByRole("button", { name: "Undo kill" }));
+    await waitFor(() => expect(kills()).toHaveTextContent("1"));
 
-    await commit(user, stepper("Captain Wolf", "Kills"), "3");
-    await waitFor(() => expect(draftBodies()).toHaveLength(1));
-    expect(draftBodies()[0].unit_results["hero:1"].kill_count).toBe(3);
+    await user.click(screen.getByRole("button", { name: "Add a kill for Captain Wolf" }));
+    const dialog = screen.getByRole("dialog", { name: "Record Kill" });
+    await user.selectOptions(within(dialog).getByRole("combobox"), "hero:2");
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(kills()).toHaveTextContent("2"));
+
+    expect(fakeApi.requests()).toEqual([
+      { method: "POST", path: battlePath("events/5/void/") },
+      {
+        method: "POST",
+        path: battlePath("unit-kill/"),
+        body: {
+          killer_unit_key: "hero:1",
+          victim_unit_key: "hero:2",
+          victim_name: undefined,
+          notes: undefined,
+          earned_xp: true,
+          source: "postbattle",
+        },
+      },
+    ]);
   });
 
   it("sums up exploration, finds, deaths, XP and upkeep only, then finalises with the rolled dice (BATL-UX-04, BATL-TEST-27 baseline, pinned; flips in PR C)", async () => {

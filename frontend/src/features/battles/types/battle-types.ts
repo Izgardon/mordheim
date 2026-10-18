@@ -133,7 +133,10 @@ export type BattleEventType =
   | "winner_declared"
   | "participant_confirmed_postbattle"
   | "battle_ended"
-  | "battle_canceled";
+  | "battle_canceled"
+  | "participant_declined"
+  | "unit_kill_voided"
+  | "item_used_voided";
 
 export type BattleSummary = {
   id: number;
@@ -199,6 +202,8 @@ export type BattleEvent = {
   actor_user_id: number | null;
   payload_json: Record<string, unknown>;
   created_at: string;
+  /** Set when a kill or item use was undone; the event stays in the timeline (BUG-11). */
+  voided_at?: string | null;
 };
 
 export type BattleState = {

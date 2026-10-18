@@ -56,6 +56,7 @@ type ActiveUnitCardProps = {
   }) => Promise<void>;
   onUseSingleUseItem: (unit: PrebattleUnit, item: UnitSingleUseItem) => Promise<void>;
   getUsedSingleUseItemCount: (unitKey: string, itemId: number) => number;
+  onUndoSingleUseItem?: (unit: PrebattleUnit, itemId: number) => Promise<void>;
   activeItemActionKey: string | null;
   isSavingUnitConfig?: boolean;
 };
@@ -71,6 +72,7 @@ export default function ActiveUnitCard({
   onRecordKill,
   onUseSingleUseItem,
   getUsedSingleUseItemCount,
+  onUndoSingleUseItem,
   activeItemActionKey,
   isSavingUnitConfig = false,
 }: ActiveUnitCardProps) {
@@ -273,6 +275,9 @@ export default function ActiveUnitCard({
             })
           }
           getUsedSingleUseItemCount={(itemId) => getUsedSingleUseItemCount(unit.key, itemId)}
+          onUndoSingleUseItem={
+            onUndoSingleUseItem ? (itemId) => onUndoSingleUseItem(unit, itemId) : undefined
+          }
           activeItemActionKey={activeItemActionKey}
         />
       ) : null}

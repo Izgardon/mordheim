@@ -23,6 +23,7 @@ import {
   setBattleReady,
   setUnitOutOfAction,
   startBattle,
+  voidBattleEvent,
   withdrawReportedBattleResult,
 } from "./battles-api";
 import type {
@@ -77,6 +78,7 @@ describe("battles-api: battle writes name this browser's socket (BUG-75)", () =>
       () => finalizeBattlePostbattle(1, 5, { postbattle_json: draft }),
       () => confirmBattlePostbattle(1, 5),
       () => closePostbattle(1, 5),
+      () => voidBattleEvent(1, 5, 9),
     ];
     for (const write of writes) {
       await write();
