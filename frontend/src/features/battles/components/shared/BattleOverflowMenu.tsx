@@ -51,15 +51,18 @@ export default function BattleOverflowMenu({
         <EllipsisVertical className="theme-heading-soft h-5 w-5" aria-hidden="true" />
       </button>
     ) : (
+      // Icon-only beside the subnav's other small buttons, so the page title keeps its room.
       <Button
         type="button"
         variant="secondary"
         size="sm"
+        className="w-8 px-0"
         onClick={() => setIsOpen(true)}
+        aria-label="More actions"
         aria-haspopup="dialog"
+        title="More actions"
       >
         <EllipsisVertical aria-hidden="true" />
-        More actions
       </Button>
     );
 
