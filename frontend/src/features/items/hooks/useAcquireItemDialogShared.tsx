@@ -1,5 +1,6 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import type { ReactNode } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { acquireTriggerNode } from "../components/AcquireItemDialog/acquire-trigger";
 import { purchase } from "../api/purchase";
@@ -7,13 +8,12 @@ import { acquireBlockers } from "../utils/acquire-blockers";
 import { useAcquireForm } from "./useAcquireForm";
 import { usePurchaseTarget, UNIT_TYPES } from "./usePurchaseTarget";
 import { useRarityRoll } from "./useRarityRoll";
-import { useWarbandCacheUpdate } from "@/features/warbands/api/warband-cache";
 
 import type { Item } from "../types/item-types";
-import type { AcquiredUnit, AcquireItemMeta, DraftUnit } from "../types/acquire-types";
+import type { AcquireItemMeta, DraftUnit } from "../types/acquire-types";
 import type { UnitTypeOption } from "@components/unit-selection-section";
 
-export type { AcquiredUnit, AcquireItemMeta, DraftUnit } from "../types/acquire-types";
+export type { AcquireItemMeta, DraftUnit } from "../types/acquire-types";
 
 export type AcquireItemDialogSharedParams = {
   item: Item;
@@ -28,16 +28,17 @@ export type AcquireItemDialogSharedParams = {
   defaultUnitSectionCollapsed?: boolean;
   defaultRaritySectionCollapsed?: boolean;
   defaultPriceSectionCollapsed?: boolean;
+  /** After a purchase (written to the cache already), or a purchase queued for the roster Save. */
   onAcquire?: (
     item: Item,
     unitType: UnitTypeOption,
     unitId: string,
-    meta?: AcquireItemMeta,
-    updated?: AcquiredUnit
+    meta?: AcquireItemMeta
   ) => void;
-  /** After buying, refresh the cached warband's summary (gold, rating). */
-  emitWarbandUpdate: boolean;
   deferCommit: boolean;
+  /** "Buy again" (decision 11): unless the player changes the price, the server charges the
+   * item's current campaign price, house rules included. */
+  atCurrentPrice?: boolean;
   reservedGold: number;
   enableHenchmenAutoQuantity?: boolean;
 };
@@ -53,7 +54,9 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
   const [selectOpen, setSelectOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const updateWarbandCache = useWarbandCacheUpdate();
+  // Decision 2: spending more than the warband has is confirmed, never refused.
+  const [isConfirmingOverspend, setIsConfirmingOverspend] = useState(false);
+  const queryClient = useQueryClient();
   const isControlled = openProp !== undefined;
   const open = isControlled ? openProp : selectOpen;
 
@@ -89,7 +92,7 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
   });
 
   // The server's gold, from the warband sheet's summary (BUG-37): never re-derived here.
-  const { notice, actionDisabled, actionDisabledReason } = acquireBlockers({
+  const { notice, actionDisabled, actionDisabledReason, overspend } = acquireBlockers({
     hasWarband: warband !== null,
     gold: typeof warband?.gold === "number" ? warband.gold : null,
     reservedGold: params.reservedGold,
@@ -114,10 +117,16 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
     }
   };
 
-  const handleAcquire = async () => {
-    if (!warband || !resolvedUnitType || !canProceed || notice) {
+  /** Buy or Give: an overspend asks first (`confirmed` once it has). */
+  const handleAcquire = async (confirmed = false) => {
+    if (!warband || !resolvedUnitType || !canProceed) {
       return;
     }
+    if (overspend !== null && !confirmed) {
+      setIsConfirmingOverspend(true);
+      return;
+    }
+    setIsConfirmingOverspend(false);
     setIsSubmitting(true);
     setError("");
     let didCommit = false;
@@ -144,14 +153,20 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
         setError(resolved.error);
         return;
       }
-      await purchase({ warbandId: warband.id, target: resolved.target, item, meta }, (updated) => {
-        didCommit = true;
-        // The PATCH's answer is the unit as saved: callers write it, with no GET after.
-        onAcquire?.(item, resolvedUnitType, resolvedUnitId, meta, updated);
-      });
-      if (params.emitWarbandUpdate) {
-        updateWarbandCache(warband.id);
-      }
+      // One request; the answer goes into the cache (the unit's items, the stash, gold, the row).
+      await purchase(
+        {
+          warbandId: warband.id,
+          target: resolved.target,
+          item,
+          meta,
+          availabilityId: form.resolvedAvailability?.id ?? null,
+          atCurrentPrice: Boolean(params.atCurrentPrice) && !form.priceEdited,
+        },
+        queryClient
+      );
+      didCommit = true;
+      onAcquire?.(item, resolvedUnitType, resolvedUnitId, meta);
       handleSelectOpenChange(false);
       didClose = true;
     } catch (err) {
@@ -214,7 +229,13 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
     actionDisabled,
     actionDisabledReason,
     isSubmitting,
-    handleAcquire,
+    handleAcquire: () => handleAcquire(),
+    overspendConfirm: {
+      open: isConfirmingOverspend,
+      message: notice,
+      onOpenChange: setIsConfirmingOverspend,
+      onConfirm: () => handleAcquire(true),
+    },
     /** What stops Buy or Give, shown under the buttons and not only in their tooltip. */
     notice,
     availabilities: form.availabilities,

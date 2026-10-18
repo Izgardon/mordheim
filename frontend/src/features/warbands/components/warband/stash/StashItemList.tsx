@@ -15,7 +15,6 @@ type StashItemListProps = {
   isLoading?: boolean;
   error?: string;
   onClose?: () => void;
-  onItemsChanged?: () => void;
   onHeroUpdated?: (updatedHero: WarbandHero) => void;
   canEdit?: boolean;
   inSheet?: boolean;
@@ -28,7 +27,6 @@ export default function StashItemList({
   isLoading = false,
   error = "",
   onClose,
-  onItemsChanged,
   onHeroUpdated,
   canEdit = false,
   inSheet = false,
@@ -136,12 +134,7 @@ export default function StashItemList({
           )}
         </div>
       </div>
-      <ItemActionDialogs
-        menu={menu}
-        canEdit={canEdit}
-        menuInPlace={inSheet}
-        onAcquire={() => onItemsChanged?.()}
-      />
+      <ItemActionDialogs menu={menu} canEdit={canEdit} menuInPlace={inSheet} />
     </>
   );
 }

@@ -22,4 +22,10 @@ describe("GoldLabel (decision 1)", () => {
 
     expect(screen.getByText("-20 gc")).toHaveClass("text-red-400");
   });
+
+  it("shows gold below zero in red: a warband may overspend (decision 2)", () => {
+    render(<GoldLabel gold={-15} />);
+
+    expect(screen.getByText("-15")).toHaveClass("text-red-400");
+  });
 });

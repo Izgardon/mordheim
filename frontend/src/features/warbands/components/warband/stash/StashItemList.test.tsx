@@ -130,7 +130,6 @@ function PageStash({
           items={warchest.warchestItems}
           isLoading={warchest.isWarchestLoading}
           error={warchest.warchestError}
-          onItemsChanged={warchest.loadWarchestItems}
           onHeroUpdated={onHeroUpdated}
           warbandId={warbandId}
           canEdit={canEdit}
@@ -338,7 +337,7 @@ describe("StashItemList: Move", () => {
 });
 
 describe("StashItemList: Buy again", () => {
-  it("loads the item by id and buys another copy into the stash: eight requests (ECON-PERF-01, pinned; flips in PR C)", async () => {
+  it("loads the item by id and buys another copy into the stash in one request, at the current price (ECON-PERF-01, decision 11)", async () => {
     const user = setupUser();
     fakeApi.on(
       "GET /items/120/",
@@ -350,10 +349,16 @@ describe("StashItemList: Buy again", () => {
       })
     );
     fakeApi.on(`GET /warbands/${MY_WARBAND}/heroes/`, [aldric]);
-    fakeApi.on(`POST /warbands/${MY_WARBAND}/items/`, { ...rope, quantity: 2 });
-    fakeApi.on(`POST /warbands/${MY_WARBAND}/trades/`, { id: 900 });
-    fakeApi.on(`POST /warbands/${MY_WARBAND}/logs/`, { id: 800 });
-    fakeApi.on(`GET /warbands/${MY_WARBAND}/summary/`, { gold: 495, rating: 99 });
+    fakeApi.on(`POST /warbands/${MY_WARBAND}/purchases/`, {
+      target_type: "stash",
+      target_id: null,
+      updated_at: null,
+      items: null,
+      stash_item: { ...rope, quantity: 2 },
+      trade: null,
+      summary: { gold: 495, rating: 99 },
+      warnings: [],
+    });
     renderStash(MY_WARBAND);
     await waitFor(() => menuButtonOf("Rope"));
     fakeApi.clearRequests();
@@ -361,21 +366,23 @@ describe("StashItemList: Buy again", () => {
     await openMenu(user, "Rope", "Buy again");
     const dialog = await screen.findByRole("dialog", { name: "Acquire item" });
     await waitFor(() => expect(within(dialog).getByRole("button", { name: "Buy" })).toBeEnabled());
-    fakeApi.on(`GET /warbands/${MY_WARBAND}/items/`, [sword, { ...rope, quantity: 2 }]);
     await user.click(within(dialog).getByRole("button", { name: "Buy" }));
 
+    // The answer's stash entry and gold, with no stash or summary read after.
     expect(await screen.findByText("Rope x 2")).toBeInTheDocument();
     expect(await screen.findByText("Header gold: 495")).toBeInTheDocument();
     expect(fakeApi.calls()).toEqual([
       "GET /items/120/",
       `GET /warbands/${MY_WARBAND}/henchmen-groups/`,
       `GET /warbands/${MY_WARBAND}/heroes/`,
-      `POST /warbands/${MY_WARBAND}/items/`,
-      `GET /warbands/${MY_WARBAND}/items/`,
-      `POST /warbands/${MY_WARBAND}/trades/`,
-      `POST /warbands/${MY_WARBAND}/logs/`,
-      `GET /warbands/${MY_WARBAND}/summary/`,
+      `POST /warbands/${MY_WARBAND}/purchases/`,
     ]);
+    expect(fakeApi.bodyOf(`POST /warbands/${MY_WARBAND}/purchases/`)).toEqual({
+      item_id: 120,
+      quantity: 1,
+      is_buying: true,
+      target_type: "stash",
+    });
   });
 
   it("buys into the stash on screen with that warband's gold, not yours (BUG-107)", async () => {
@@ -391,10 +398,16 @@ describe("StashItemList: Buy again", () => {
     );
     fakeApi.on(`GET /warbands/${THEIR_WARBAND}/henchmen-groups/`, []);
     fakeApi.on(`GET /warbands/${THEIR_WARBAND}/heroes/`, [zorn]);
-    fakeApi.on(`POST /warbands/${THEIR_WARBAND}/items/`, { ...rope, quantity: 2 });
-    fakeApi.on(`POST /warbands/${THEIR_WARBAND}/trades/`, { id: 900 });
-    fakeApi.on(`POST /warbands/${THEIR_WARBAND}/logs/`, { id: 800 });
-    fakeApi.on(`GET /warbands/${THEIR_WARBAND}/summary/`, { gold: 75, rating: 40 });
+    fakeApi.on(`POST /warbands/${THEIR_WARBAND}/purchases/`, {
+      target_type: "stash",
+      target_id: null,
+      updated_at: null,
+      items: null,
+      stash_item: { ...rope, quantity: 2 },
+      trade: null,
+      summary: { gold: 75, rating: 40 },
+      warnings: [],
+    });
     // Your own warband (the app store's) has 500 gc; the warband on screen has 30.
     renderStash(THEIR_WARBAND, { heroes: [zorn], gold: 30 });
     await waitFor(() => menuButtonOf("Rope"));
@@ -403,18 +416,14 @@ describe("StashItemList: Buy again", () => {
     await openMenu(user, "Rope", "Buy again");
     const dialog = await screen.findByRole("dialog", { name: "Acquire item" });
     await chooseOption(user, selectNear("Qty", dialog), "10");
-    expect(within(dialog).getByText("Not enough gold crowns. Available: 30 gc.")).toBeVisible();
+    expect(within(dialog).getByText("This leaves the warband at -20 gc.")).toBeVisible();
     await chooseOption(user, selectNear("Qty", dialog), "1");
     await waitFor(() => expect(within(dialog).getByRole("button", { name: "Buy" })).toBeEnabled());
     await user.click(within(dialog).getByRole("button", { name: "Buy" }));
 
     expect(await screen.findByText("Header gold: 75")).toBeInTheDocument();
     const writes = fakeApi.calls().filter((call) => !call.startsWith("GET"));
-    expect(writes).toEqual([
-      `POST /warbands/${THEIR_WARBAND}/items/`,
-      `POST /warbands/${THEIR_WARBAND}/trades/`,
-      `POST /warbands/${THEIR_WARBAND}/logs/`,
-    ]);
+    expect(writes).toEqual([`POST /warbands/${THEIR_WARBAND}/purchases/`]);
     expect(fakeApi.calls().some((call) => call.includes(`/warbands/${MY_WARBAND}/`))).toBe(false);
   });
 

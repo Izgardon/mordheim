@@ -14,8 +14,8 @@ import CollapsibleSection from "@/components/ui/collapsible-section";
 import SummaryPill from "./SummaryPill";
 import PriceSection from "./PriceSection";
 import RaritySection from "./RaritySection";
+import AcquireActions from "./AcquireActions";
 import {
-  AcquireActions,
   AcquireModeToggle,
   AcquiringItemLabel,
   AvailabilitySelect,
@@ -80,6 +80,7 @@ export default function AcquireItemDialogContent({
   actionDisabledReason,
   isSubmitting,
   handleAcquire,
+  overspendConfirm,
   notice,
   availabilities,
   selectedAvailabilityId,
@@ -238,6 +239,7 @@ export default function AcquireItemDialogContent({
             notice={notice}
             onAcquire={handleAcquire}
             onCancel={() => handleSelectOpenChange(false)}
+            overspendConfirm={overspendConfirm}
           />
         </div>
       </DialogContent>

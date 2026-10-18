@@ -315,14 +315,19 @@ describe("unit item menu: Buy again", () => {
     fakeApi.on(`GET /warbands/${MY_WARBAND}/heroes/`, [aldric]);
   });
 
-  it("buys another copy for the hero in eight requests and writes the PATCH's answer to the card (ECON-PERF-01, pinned; flips in PR C)", async () => {
+  it("buys another copy for the hero in one request and shows the answer's items on the card (ECON-PERF-01, decision 11)", async () => {
     const user = setupUser();
-    const rearmed = { ...aldric, items: [...aldric.items, { ...dagger }] };
-    fakeApi.on(`GET /warbands/${MY_WARBAND}/heroes/11/`, aldric);
-    fakeApi.on(`PATCH /warbands/${MY_WARBAND}/heroes/11/`, rearmed);
-    fakeApi.on(`POST /warbands/${MY_WARBAND}/trades/`, { id: 900 });
-    fakeApi.on(`POST /warbands/${MY_WARBAND}/logs/`, { id: 800 });
-    fakeApi.on(`GET /warbands/${MY_WARBAND}/summary/`, { gold: 498, rating: 99 });
+    const rearmed = [...aldric.items, { ...dagger }];
+    fakeApi.on(`POST /warbands/${MY_WARBAND}/purchases/`, {
+      target_type: "hero",
+      target_id: 11,
+      updated_at: "2026-10-18T10:00:00Z",
+      items: rearmed,
+      stash_item: null,
+      trade: null,
+      summary: { gold: 498, rating: 99 },
+      warnings: [],
+    });
     renderCard(MY_WARBAND, aldric);
 
     await openMenu(user, "Dagger x 2", "Buy again");
@@ -339,12 +344,15 @@ describe("unit item menu: Buy again", () => {
       "GET /items/102/",
       `GET /warbands/${MY_WARBAND}/henchmen-groups/`,
       `GET /warbands/${MY_WARBAND}/heroes/`,
-      `GET /warbands/${MY_WARBAND}/heroes/11/`,
-      `PATCH /warbands/${MY_WARBAND}/heroes/11/`,
-      `POST /warbands/${MY_WARBAND}/trades/`,
-      `POST /warbands/${MY_WARBAND}/logs/`,
-      `GET /warbands/${MY_WARBAND}/summary/`,
+      `POST /warbands/${MY_WARBAND}/purchases/`,
     ]);
+    expect(fakeApi.bodyOf(`POST /warbands/${MY_WARBAND}/purchases/`)).toEqual({
+      item_id: 102,
+      quantity: 1,
+      is_buying: true,
+      target_type: "hero",
+      target_id: 11,
+    });
   });
 
   it("says so when the item can't be loaded for Buy again (ECON-UX-05)", async () => {
@@ -361,14 +369,19 @@ describe("unit item menu: Buy again", () => {
 
   it("buys another copy for another player's hero, on his warband (BUG-107)", async () => {
     const user = setupUser();
-    const rearmed = { ...zorn, items: [...zorn.items, { ...dagger }] };
+    const rearmed = [...zorn.items, { ...dagger }];
     fakeApi.on(`GET /warbands/${THEIR_WARBAND}/henchmen-groups/`, []);
     fakeApi.on(`GET /warbands/${THEIR_WARBAND}/heroes/`, [zorn, kurt]);
-    fakeApi.on(`GET /warbands/${THEIR_WARBAND}/heroes/41/`, zorn);
-    fakeApi.on(`PATCH /warbands/${THEIR_WARBAND}/heroes/41/`, rearmed);
-    fakeApi.on(`POST /warbands/${THEIR_WARBAND}/trades/`, { id: 900 });
-    fakeApi.on(`POST /warbands/${THEIR_WARBAND}/logs/`, { id: 800 });
-    fakeApi.on(`GET /warbands/${THEIR_WARBAND}/summary/`, { gold: 498, rating: 99 });
+    fakeApi.on(`POST /warbands/${THEIR_WARBAND}/purchases/`, {
+      target_type: "hero",
+      target_id: 41,
+      updated_at: "2026-10-18T10:00:00Z",
+      items: rearmed,
+      stash_item: null,
+      trade: null,
+      summary: { gold: 498, rating: 99 },
+      warnings: [],
+    });
     renderCard(THEIR_WARBAND, zorn, [zorn, kurt]);
 
     await openMenu(user, "Dagger x 2", "Buy again");
@@ -379,10 +392,12 @@ describe("unit item menu: Buy again", () => {
     expect(await screen.findByRole("button", { name: "Dagger x 3" })).toBeInTheDocument();
     expect(await screen.findByText("Header gold: 498")).toBeInTheDocument();
     expect(fakeApi.calls().filter((call) => !call.startsWith("GET"))).toEqual([
-      `PATCH /warbands/${THEIR_WARBAND}/heroes/41/`,
-      `POST /warbands/${THEIR_WARBAND}/trades/`,
-      `POST /warbands/${THEIR_WARBAND}/logs/`,
+      `POST /warbands/${THEIR_WARBAND}/purchases/`,
     ]);
+    expect(fakeApi.bodyOf(`POST /warbands/${THEIR_WARBAND}/purchases/`)).toMatchObject({
+      target_type: "hero",
+      target_id: 41,
+    });
     expect(fakeApi.calls().some((call) => call.includes(`/warbands/${MY_WARBAND}/`))).toBe(false);
   });
 });

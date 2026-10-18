@@ -61,7 +61,6 @@ function TestHarness() {
     presetUnitType: "heroes",
     presetUnitId: 99,
     disableUnitSelection: true,
-    emitWarbandUpdate: true,
     deferCommit: false,
     reservedGold: 0,
   });

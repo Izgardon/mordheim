@@ -20,14 +20,16 @@ describe("acquireBlockers", () => {
       notice: "",
       actionDisabled: false,
       actionDisabledReason: "",
+      overspend: null,
     });
   });
 
-  it("refuses a purchase over the gold left after queued purchases, naming what is left", () => {
-    const blocked = acquireBlockers({ ...ready, gold: 30, reservedGold: 15 });
-    expect(blocked.notice).toBe("Not enough gold crowns. Available: 15 gc.");
-    expect(blocked.actionDisabled).toBe(true);
-    expect(blocked.actionDisabledReason).toBe(blocked.notice);
+  it("warns, never refuses, when a purchase leaves the warband below zero, queued purchases counted (decision 2)", () => {
+    const over = acquireBlockers({ ...ready, gold: 30, reservedGold: 15 });
+    expect(over.notice).toBe("This leaves the warband at -5 gc.");
+    expect(over.overspend).toBe(-5);
+    expect(over.actionDisabled).toBe(false);
+    expect(acquireBlockers({ ...ready, gold: 20 }).overspend).toBeNull();
   });
 
   it("checks no gold for a gift or a free item, and says when gold is unknown", () => {

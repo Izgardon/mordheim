@@ -4,7 +4,6 @@ import FloatingItemMenu from "./FloatingItemMenu";
 import AcquireItemDialog from "../../../items/components/AcquireItemDialog/AcquireItemDialog";
 
 import type { UnitTypeOption } from "@components/unit-selection-section";
-import type { AcquiredUnit } from "../../../items/hooks/useAcquireItemDialogShared";
 import type { HenchmenGroup, WarbandHero, WarbandHiredSword } from "../../types/warband-types";
 import type { ItemActionMenu } from "../../hooks/useItemActionMenu";
 
@@ -17,8 +16,8 @@ type ItemActionDialogsProps = {
   owner?: { kind: Exclude<UnitTypeOption, "stash">; id: number };
   /** Render the menu in place (the stash inside a sheet) instead of on the page body. */
   menuInPlace?: boolean;
-  /** After Buy again: the unit as its PATCH answered (none for the stash). */
-  onAcquire: (updated?: AcquiredUnit) => void;
+  /** After Buy again (its answer is in the cache already). */
+  onAcquire?: () => void;
 };
 
 type MoveUnit = WarbandHero | WarbandHiredSword | HenchmenGroup;
@@ -100,7 +99,7 @@ export default function ItemActionDialogs({
                 defaultPriceSectionCollapsed: false,
               }
             : { presetUnitType: "stash" as const })}
-          onAcquire={(_item, _unitType, _unitId, _meta, updated) => onAcquire(updated)}
+          onAcquire={() => onAcquire?.()}
         />
       )}
     </>

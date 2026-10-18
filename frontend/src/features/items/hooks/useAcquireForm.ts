@@ -146,6 +146,8 @@ export function useAcquireForm({
     setFinalPrice,
     count,
     totalPrice,
+    /** The player changed the price the availability suggested. */
+    priceEdited: finalPrice !== resolvedCost,
     priceSummary,
     handleQuantityChange,
     isUnitSelectionCollapsed,

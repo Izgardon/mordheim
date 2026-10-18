@@ -221,7 +221,6 @@ export default function UnitLoadout<T extends UnitLoadoutEntry>({
           defaultUnitSectionCollapsed={Boolean(unitType)}
           defaultRaritySectionCollapsed={false}
           defaultPriceSectionCollapsed={false}
-          emitWarbandUpdate={false}
           deferCommit={deferItemCommit}
           reservedGold={reservedGold}
           onPendingPurchaseAdd={onPendingPurchaseAdd}

@@ -176,10 +176,6 @@ export default function UnitListBlocks<K extends UnitKindKey>({
         menu={itemMenu}
         canEdit={canManageItems}
         owner={{ kind: kind.section, id: unit.id }}
-        onAcquire={(updated) => {
-          // Buy again writes this unit; its PATCH answer is the unit as saved (no GET).
-          if (updated) onUnitUpdated?.(updated as Unit<K>);
-        }}
       />
     </>
   );

@@ -15,9 +15,6 @@ export type AcquireItemMeta = {
   baseCost: number; // Persisted on item join rows.
 };
 
-/** The unit an acquisition wrote, as its PATCH answered (none for the stash or a deferred buy). */
-export type AcquiredUnit = WarbandHero | WarbandHiredSword | HenchmenGroup;
-
 /** A unit being created in the roster editor, offered as a receiver before it is saved. */
 export type DraftUnit = {
   unitType: UnitTypeOption;

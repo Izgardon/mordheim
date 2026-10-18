@@ -23,8 +23,9 @@ type AcquireBlockerInput = {
 };
 
 /**
- * What stops Buy or Give: `notice` is shown under the buttons, `actionDisabledReason` in their
- * tooltip. A purchase over the gold left is refused today; decision 2 (PR C) makes it a warning.
+ * What stops Buy or Give, and what to warn about. `notice` shows under the buttons and
+ * `actionDisabledReason` in their tooltip. Spending more than the warband has is never a block
+ * (decision 2): `overspend` is the gold it would be left with, which the player confirms first.
  */
 export function acquireBlockers({
   hasWarband,
@@ -37,18 +38,18 @@ export function acquireBlockers({
   unitType,
   unitId,
 }: AcquireBlockerInput) {
-  const spendable =
-    gold === null ? null : Math.max(0, gold - Math.max(0, Number(reservedGold) || 0));
-  const goldNotice =
-    !isBuying || totalPrice <= 0
-      ? ""
-      : spendable === null
-        ? "Gold crowns unknown for this warband."
-        : totalPrice > spendable
-          ? `Not enough gold crowns. Available: ${spendable} gc.`
-          : "";
+  const charges = isBuying && totalPrice > 0;
+  const left = gold === null ? null : gold - Math.max(0, Number(reservedGold) || 0) - totalPrice;
+  const overspend = charges && left !== null && left < 0 ? left : null;
+  const goldNotice = !charges
+    ? ""
+    : gold === null
+      ? "Gold crowns unknown for this warband."
+      : overspend !== null
+        ? overspendMessage(overspend)
+        : "";
   const notice = hasWarband ? goldNotice : NO_WARBAND_NOTICE;
-  const actionDisabled = !canProceed || isSubmitting || Boolean(notice);
+  const actionDisabled = !hasWarband || !canProceed || isSubmitting;
 
   let actionDisabledReason = "";
   if (actionDisabled) {
@@ -58,11 +59,12 @@ export function acquireBlockers({
       actionDisabledReason = !unitType
         ? "Select who receives the item."
         : (!unitId && RECEIVER_PROMPTS[unitType]) || "Select a receiver to continue.";
-    } else if (isSubmitting) {
-      actionDisabledReason = isBuying ? "Processing purchase..." : "Processing...";
     } else {
-      actionDisabledReason = notice || "Unable to proceed.";
+      actionDisabledReason = isBuying ? "Processing purchase..." : "Processing...";
     }
   }
-  return { notice, actionDisabled, actionDisabledReason };
+  return { notice, actionDisabled, actionDisabledReason, overspend };
 }
+
+/** "This leaves the warband at -15 gc." (the server's wording for the same warning). */
+export const overspendMessage = (goldLeft: number) => `This leaves the warband at ${goldLeft} gc.`;

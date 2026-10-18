@@ -110,7 +110,6 @@ export default function Warband() {
     error: warchest.warchestError,
     onToggle: warchest.toggleWarchest,
     onClose: warchest.closeWarchest,
-    onItemsChanged: warchest.loadWarchestItems,
     onHeroUpdated: replaceHero,
   };
   // Gold is the server's, from the sheet's summary (BUG-37); nothing on the page adds to it.

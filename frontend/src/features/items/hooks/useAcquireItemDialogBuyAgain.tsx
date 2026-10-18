@@ -15,5 +15,6 @@ export function useAcquireItemDialogBuyAgain(
   return useAcquireItemDialogShared({
     ...params,
     enableHenchmenAutoQuantity: true,
+    atCurrentPrice: true,
   });
 }
