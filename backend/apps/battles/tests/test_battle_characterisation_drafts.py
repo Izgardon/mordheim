@@ -1,7 +1,7 @@
 """Postbattle drafts, kills and finalise checks characterised (pass 3, step 0).
 
-Pinned: a serious-injury log per draft re-roll (BUG-47, BATL-TEST-14); exploration cleared by every draft save
-(BUG-71). Fixed: finalise and pivotal moments count the kill events and kill history lists ended battles only
+Pinned: exploration cleared by every draft save (BUG-71). Fixed: drafts log nothing; finalise logs each unit's
+final injury roll once (BUG-47, BATL-TEST-14; the table's effects in test_battle_injuries.py). Fixed: finalise and pivotal moments count the kill events and kill history lists ended battles only
 (BUG-11, BATL-TEST-10; undo in test_battle_kills.py); a unit dismissed mid-battle is left out of finalise with a
 warning (BUG-73).
 """
@@ -41,18 +41,24 @@ class PostbattleDraftTests(BattleTestCase):
         rows = WarbandLog.objects.filter(warband=self.warband, entry_type="serious_injury").order_by("id")
         return [row.payload["rolls"] for row in rows]
 
-    def test_each_draft_save_with_a_new_roll_writes_a_permanent_log(self):
-        # Characterises current behaviour (BUG-47, BATL-TEST-14, pinned; flips in PR A: drafts log nothing, finalise
-        # writes one log per unit)
+    def test_drafts_log_nothing_and_a_skip_logs_nothing(self):
+        # BUG-47, BATL-TEST-14: each draft save with a new roll wrote a permanent log, even if the player then skipped
         battle_id = self.postbattle()
         first, reroll = injury_roll([1, 1], label="Dead"), injury_roll([4, 5], label="Full Recovery")
 
         self.ok(self.save(battle_id, draft(self.results(**{self.h: {"rolls": [first]}}))))
-        self.ok(self.save(battle_id, draft(self.results(**{self.h: {"rolls": [first]}}))))  # unchanged: no log
         self.ok(self.save(battle_id, draft(self.results(**{self.h: {"rolls": [first, reroll]}}))))
-        self.assertEqual(self.injury_logs(), [[1, 1], [4, 5]])
-        log = WarbandLog.objects.filter(entry_type="serious_injury").order_by("id").first()
-        assert log is not None
+        self.assertEqual(self.injury_logs(), [])
+        self.ok(self.post_as(self.player, self.url(battle_id, "confirm")))
+        self.assertEqual(self.injury_logs(), [])
+
+    def test_finalise_logs_each_units_final_roll_once(self):
+        # BUG-47: a roll that never went through a draft was never logged; finalise now logs every unit's last roll
+        battle_id = self.postbattle()
+        rolls = [injury_roll([1, 1], label="anything"), injury_roll([4, 5])]
+        self.ok(self.finalize(self.player, battle_id, draft(self.results(**{self.h: {"rolls": rolls}}))))
+
+        log = WarbandLog.objects.get(warband=self.warband, entry_type="serious_injury")
         self.assertEqual(
             (log.feature, log.payload),
             (
@@ -60,24 +66,19 @@ class PostbattleDraftTests(BattleTestCase):
                 {
                     "unit_name": self.h,
                     "roll_type": "d66",
-                    "rolls": [1, 1],
-                    "result_code": "11",
-                    "result_label": "Dead",
+                    "rolls": [4, 5],
+                    "result_code": "45",
+                    "result_label": "Sold to the Pits",
                     "dead_suggestion": False,
+                    "effect": {"kind": "manual"},
+                    "applied": False,
+                    "apply_by_hand": True,
+                    "rerolls": [[1, 1]],
                 },
             ),
         )
-
-        self.ok(self.save(battle_id, draft(self.results())))  # rolls removed: nothing is reverted
-        self.ok(self.post_as(self.player, self.url(battle_id, "confirm")))  # and the player skips
-        self.assertEqual(self.injury_logs(), [[1, 1], [4, 5]])
-
-    def test_a_roll_that_never_went_through_a_draft_is_never_logged(self):
-        battle_id = self.postbattle()
-        self.ok(
-            self.finalize(self.player, battle_id, draft(self.results(**{self.h: {"rolls": [injury_roll([2, 3])]}})))
-        )
-        self.assertEqual(self.injury_logs(), [])
+        self.hero.refresh_from_db()
+        self.assertFalse(self.hero.dead)  # the re-rolled Dead doesn't count
 
     def test_injury_specials_sent_with_the_draft_are_granted_once(self):
         # BUG-47: the frontend always sends special_ids: [], so this path is unreachable from the app today

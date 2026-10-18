@@ -40,6 +40,7 @@ from apps.warbands.utils.leaders import ensure_single_living_leader
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.broadcast import Changed, publish
+from ..services.injuries import apply_stat_and_special, describe_roll, injury_outcome
 from ..services.kills import kill_counts_by_unit
 from ..services.lifecycle import participants_all_in, record_wins_and_losses
 from ..services.timing import is_overdue
@@ -1253,19 +1254,13 @@ def _normalize_postbattle_json(raw_value):
                 raise ValueError("d66 serious_injury_roll must have exactly two rolls")
             if roll_type == "d100" and len(rolls) != 1:
                 raise ValueError("d100 serious_injury_roll must have exactly one roll")
-            result_code = roll.get("result_code", "")
-            result_label = roll.get("result_label", "")
-            if not isinstance(result_code, str):
-                raise ValueError("serious_injury_roll result_code must be a string")
-            if not isinstance(result_label, str):
-                raise ValueError("serious_injury_roll result_label must be a string")
+            # the server's table gives the result and its effect; `apply` is the tick (decision 7, BUG-47)
             serious_injury_rolls.append(
                 {
                     "roll_type": roll_type,
                     "rolls": rolls,
-                    "result_code": result_code.strip(),
-                    "result_label": result_label.strip(),
-                    "dead_suggestion": bool(roll.get("dead_suggestion", False)),
+                    **describe_roll(roll_type, rolls),
+                    "apply": _coerce_bool(roll.get("apply", True), field_name="serious_injury_roll apply"),
                 }
             )
 
@@ -1388,39 +1383,6 @@ def _validate_postbattle_json_for_participant(
             raise ValueError("One or more upkeep hired swords are invalid")
 
     return normalized
-
-
-def _log_new_serious_injury_rolls(
-    participant: BattleParticipant,
-    previous_postbattle_json: dict | None,
-    next_postbattle_json: dict,
-) -> None:
-    previous_normalized = _normalize_postbattle_json(previous_postbattle_json)
-    next_normalized = _normalize_postbattle_json(next_postbattle_json)
-    previous_unit_results = previous_normalized.get("unit_results", {})
-    next_unit_results = next_normalized.get("unit_results", {})
-
-    for unit_key, result in next_unit_results.items():
-        previous_result = previous_unit_results.get(unit_key, {})
-        previous_roll_count = len(previous_result.get("serious_injury_rolls", []))
-        next_rolls = result.get("serious_injury_rolls", [])
-        if len(next_rolls) <= previous_roll_count:
-            continue
-        unit_name = (result.get("unit_name") or unit_key)[:120]
-        for roll in next_rolls[previous_roll_count:]:
-            log_warband_event(
-                participant.warband_id,
-                "personnel",
-                "serious_injury",
-                {
-                    "unit_name": unit_name,
-                    "roll_type": roll.get("roll_type"),
-                    "rolls": roll.get("rolls", []),
-                    "result_code": roll.get("result_code"),
-                    "result_label": roll.get("result_label"),
-                    "dead_suggestion": bool(roll.get("dead_suggestion", False)),
-                },
-            )
 
 
 def _build_battle_complete_log_payload(battle: Battle, participant: BattleParticipant) -> dict:
@@ -1603,6 +1565,7 @@ def _apply_participant_postbattle_results(
     }
 
     warnings: list[Warning] = []
+    injury_logs: list[dict] = []
     kills_by_unit = kill_counts_by_unit(battle.id, participant.warband_id)  # the live kill events (decision 5)
     group_xp_by_id: dict[int, int] = {}
     group_stats_override_by_id: dict[int, dict[str, int | str]] = {}
@@ -1613,15 +1576,18 @@ def _apply_participant_postbattle_results(
         stats_override = info.get("stats_override", {})
         kill_count = kills_by_unit.get(unit_key, 0)
         xp_earned = _coerce_int(result.get("xp_earned", 0), field_name="xp_earned", minimum=0, maximum=9999)
-        dead = bool(result.get("dead", False))
         unit_name = result.get("unit_name", "") or unit_key
+        injury = injury_outcome(result, unit_name)  # the last roll, when ticked (decision 7)
+        dead = bool(result.get("dead", False)) or injury.dead
 
         if parsed["unit_type"] == "hero":
             hero = heroes.get(parsed["unit_id"])
             if not hero:
                 warnings.append(unit_left_warband(unit_key, unit_name))
                 continue
+            injury_logs.append(injury.log or {})
             update_fields = _apply_stats_override_to_unit(hero, stats_override)
+            update_fields += apply_stat_and_special(hero, injury, battle.campaign_id)
             if kill_count > 0:
                 hero.kills += kill_count
                 update_fields.append("kills")
@@ -1642,8 +1608,10 @@ def _apply_participant_postbattle_results(
             if not hired_sword:
                 warnings.append(unit_left_warband(unit_key, unit_name))
                 continue
+            injury_logs.append(injury.log or {})
             effective_xp_earned = 0 if hired_sword.no_level_ups else xp_earned
             update_fields = _apply_stats_override_to_unit(hired_sword, stats_override)
+            update_fields += apply_stat_and_special(hired_sword, injury, battle.campaign_id)
             if kill_count > 0:
                 hired_sword.kills += kill_count
                 update_fields.append("kills")
@@ -1662,6 +1630,7 @@ def _apply_participant_postbattle_results(
             if not henchman or not group:  # he, or his whole group, was dismissed
                 warnings.append(unit_left_warband(unit_key, unit_name))
                 continue
+            injury_logs.append(injury.log or {})
             effective_xp_earned = 0 if group.no_level_ups else xp_earned
             if stats_override:
                 existing_group_stats = group_stats_override_by_id.get(henchman.group_id)
@@ -1829,4 +1798,6 @@ def _apply_participant_postbattle_results(
                 "items": canonical_find_items,
             },
         )
+    for injury_log in filter(None, injury_logs):  # one per unit: the final roll, re-rolls, what was applied
+        log_warband_event(participant.warband_id, "personnel", "serious_injury", injury_log)
     return warnings

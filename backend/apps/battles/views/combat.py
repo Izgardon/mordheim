@@ -23,7 +23,6 @@ from .shared import (
     _coerce_bool,
     _finalize_battle,
     _get_user_battle_participant,
-    _log_new_serious_injury_rolls,
     _normalize_unit_information,
     _parse_unit_key,
     _participant_selected_unit_keys,
@@ -440,7 +439,6 @@ class CampaignBattlePostbattleSaveView(APIView):
             except ValueError as exc:
                 return Response({"detail": str(exc)}, status=400)
 
-            previous_postbattle_json = participant.postbattle_json
             participant.postbattle_json = {
                 "exploration": {
                     "dice_values": [],
@@ -452,11 +450,7 @@ class CampaignBattlePostbattleSaveView(APIView):
             }
             participant.save(update_fields=["postbattle_json", "updated_at"])
             record_activity(battle)  # a draft is the player's own: activity, but no broadcast (PERF-34)
-            _log_new_serious_injury_rolls(
-                participant,
-                previous_postbattle_json,
-                participant.postbattle_json,
-            )
+            # and it logs nothing: finalise logs each unit's injury once (decision 7, BUG-47)
 
         return _response_with_snapshot(battle.id, events)
 

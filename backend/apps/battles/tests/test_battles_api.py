@@ -537,29 +537,10 @@ class BattleApiTests(APITestCase):
             owner_participant.postbattle_json.get("exploration"),
             {"dice_values": [], "resource_id": None},
         )
-        self.assertEqual(
+        self.assertFalse(  # drafts log nothing (BUG-47)
             WarbandLog.objects.filter(
-                warband=self.owner_warband,
-                feature="personnel",
-                entry_type="serious_injury",
-            ).count(),
-            1,
-        )
-        serious_injury_log = WarbandLog.objects.get(
-            warband=self.owner_warband,
-            feature="personnel",
-            entry_type="serious_injury",
-        )
-        self.assertEqual(
-            serious_injury_log.payload,
-            {
-                "unit_name": owner_hero.name,
-                "roll_type": "d66",
-                "rolls": [1, 1],
-                "result_code": "11",
-                "result_label": "Dead",
-                "dead_suggestion": True,
-            },
+                warband=self.owner_warband, feature="personnel", entry_type="serious_injury"
+            ).exists()
         )
 
         response = self.client.post(
@@ -597,13 +578,10 @@ class BattleApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(
+        self.assertFalse(
             WarbandLog.objects.filter(
-                warband=self.owner_warband,
-                feature="personnel",
-                entry_type="serious_injury",
-            ).count(),
-            1,
+                warband=self.owner_warband, feature="personnel", entry_type="serious_injury"
+            ).exists()
         )
 
         response = self.client.post(
