@@ -441,6 +441,12 @@ class CampaignBattleFinalizePostbattleView(APIView):
     throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id, battle_id):
+        try:
+            return self._finalize(request, campaign_id, battle_id)
+        except ValueError as exc:  # raised inside the transaction, so nothing it wrote is kept (BUG-124)
+            return Response({"detail": str(exc)}, status=400)
+
+    def _finalize(self, request, campaign_id, battle_id):
         events: list[dict] = []
         with transaction.atomic():
             battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
@@ -455,15 +461,12 @@ class CampaignBattleFinalizePostbattleView(APIView):
             if participant.status != BattleParticipant.STATUS_FINISHED_BATTLE:
                 return Response({"detail": "You must enter postbattle before finalizing"}, status=400)
 
-            try:
-                postbattle_json = _validate_postbattle_json_for_participant(
-                    battle,
-                    participant,
-                    request.data.get("postbattle_json", participant.postbattle_json),
-                )
-                _apply_participant_postbattle_results(battle, participant, postbattle_json)
-            except ValueError as exc:
-                return Response({"detail": str(exc)}, status=400)
+            postbattle_json = _validate_postbattle_json_for_participant(
+                battle,
+                participant,
+                request.data.get("postbattle_json", participant.postbattle_json),
+            )
+            _apply_participant_postbattle_results(battle, participant, postbattle_json)
             participant.postbattle_json = postbattle_json
             participant.status = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
             participant.confirmed_at = timezone.now()

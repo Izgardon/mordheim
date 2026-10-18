@@ -2,8 +2,8 @@
 
 `warband` fields 5 heroes, 2 hired swords and 8 henchmen in 3 groups (each carrying a rope) against one rival
 hero, and finds a lucky charm. Pinned: stat overrides made permanent without a log and unusual numbers accepted
-silently (SEC-10, BUG-71); dead units keeping their items (pass 2 decision 7); a failed finalise keeping what it
-applied before failing (new, BUG-124).
+silently (SEC-10, BUG-71); dead units keeping their items (pass 2 decision 7). A failed finalise writes nothing
+(BUG-124, fixed; each trigger in test_battle_finalise_rollback.py).
 """
 
 from decimal import Decimal
@@ -205,10 +205,9 @@ class FixturePostbattleTests(BattleTestCase):
         leaders = [hero.is_leader for hero in self.warband.heroes.order_by("id")]
         self.assertEqual(leaders, [False, True, False, False, False])
 
-    def test_a_failed_finalise_keeps_what_it_applied_before_the_failure(self):
-        # Characterises current behaviour (BUG-124, new, pinned; flips with its fix: a finalise that answers 400
-        # writes nothing). The view returns the 400 from inside its transaction, so the units, exploration and
-        # upkeep written before finds are checked are committed, and a retry applies them again.
+    def test_a_failed_finalise_writes_nothing_and_a_retry_applies_once(self):
+        # BUG-124: the 400 rolls the whole finalise back, so the units, exploration and upkeep it wrote before the
+        # finds were checked are gone, and a retry applies them once
         no_price = catalogue_item("Strange Idol", None)
         battle_id = self.start()
         self.finish(battle_id, [self.warband])
@@ -228,12 +227,12 @@ class FixturePostbattleTests(BattleTestCase):
         self.assertEqual(self.participant(battle_id, self.player).status, "finished_battle")
         self.heroes[0].refresh_from_db()
         self.resource.refresh_from_db()
-        self.assertEqual((self.heroes[0].xp, self.resource.amount), (Decimal(3), 2))
-        self.assertEqual(trade_rows(self.warband), [("Upkeep", "Post-battle upkeep", -15, None)])
+        self.assertEqual((self.heroes[0].xp, self.resource.amount), (Decimal(0), 1))
+        self.assertEqual((trade_rows(self.warband), log_rows(self.warband)), ([], []))
 
         postbattle["finds"] = {"gold_crowns": 0, "items": []}
         self.ok(self.finalize(self.player, battle_id, postbattle))
         self.heroes[0].refresh_from_db()
         self.resource.refresh_from_db()
-        self.assertEqual((self.heroes[0].xp, self.resource.amount), (Decimal(6), 3))
-        self.assertEqual([price for _, _, price, _ in trade_rows(self.warband)], [-15, -15])
+        self.assertEqual((self.heroes[0].xp, self.resource.amount), (Decimal(3), 2))
+        self.assertEqual([price for _, _, price, _ in trade_rows(self.warband)], [-15])
