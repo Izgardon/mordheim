@@ -16,6 +16,7 @@ from apps.notifications.utils import resolve_notification, resolve_notifications
 from apps.warbands.models import Warband
 
 from ..models import Battle, BattleEvent, BattleParticipant
+from ..services.errors import BattleError, field_error
 from ..services.unit_information import apply_patch, apply_whole_map
 from .shared import (
     _all_participants_accepted,
@@ -553,11 +554,16 @@ def _unit_information_change(data, participant) -> dict | None:
 
 
 def _declared_rating(raw_value) -> int | None:
+    """A whole number from 0 to 9999, or None; a field error otherwise (BUG-125: "x" answered int()'s message)."""
     if raw_value in ("", None):
         return None
-    declared_rating = int(raw_value)
+    message = "Enter a whole number from 0 to 9999, or leave it empty."
+    try:
+        declared_rating = int(raw_value)
+    except (TypeError, ValueError):
+        raise field_error("declared_rating", "declared_rating must be a whole number", message) from None
     if declared_rating < 0 or declared_rating > 9999:
-        raise ValueError("declared_rating must be between 0 and 9999")
+        raise field_error("declared_rating", "declared_rating must be between 0 and 9999", message)
     return declared_rating
 
 
@@ -599,6 +605,8 @@ class CampaignBattleConfigView(APIView):
                 changes = _config_changes(request.data, participant)
             except ValueError as exc:
                 return Response({"detail": str(exc)}, status=400)
+            except BattleError as refused:
+                return refused.response()
 
             for field, value in changes.items():
                 setattr(participant, field, value)

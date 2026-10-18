@@ -125,14 +125,25 @@ class BattleConfigTests(BattleTestCase):
             ({"selected_unit_keys_json": a}, "selected_unit_keys_json must be a list"),
             ({"selected_unit_keys_json": [3]}, "selected_unit_keys_json must contain only strings"),
             ({"custom_units_json": [{"key": "orc:1"}]}, "custom unit key must start with 'custom:' or 'bestiary:'"),
-            ({"declared_rating": 10000}, "declared_rating must be between 0 and 9999"),
-            ({"declared_rating": "x"}, "invalid literal for int() with base 10: 'x'"),  # Python's own message
         ]  # fmt: skip
         for body, detail in cases:
             with self.subTest(detail=detail):
                 response = self.config(body)
                 self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
         self.assertEqual(self.stored_info(), {})
+
+    def test_a_bad_declared_rating_is_a_field_error(self):
+        # BUG-125: "x" answered Python's int() message; both refusals now name the field
+        message = ["Enter a whole number from 0 to 9999, or leave it empty."]
+        for rating, detail in (
+            ("x", "declared_rating must be a whole number"),
+            (10000, "declared_rating must be between 0 and 9999"),
+        ):
+            with self.subTest(rating=rating):
+                response = self.config({"declared_rating": rating})
+                expected = {"detail": detail, "code": "invalid", "fields": {"declared_rating": message}}
+                self.assertEqual((response.status_code, response.data), (400, expected))
+        self.assertIsNone(self.participant(self.battle_id, self.player).declared_rating)
 
     def test_config_is_locked_outside_prebattle_active_and_postbattle(self):
         for battle_status in (Battle.STATUS_INVITING, Battle.STATUS_ENDED, Battle.STATUS_CANCELED):
