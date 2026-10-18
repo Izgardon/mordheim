@@ -12,6 +12,7 @@ class BattleEvent(models.Model):
     TYPE_PARTICIPANT_READY_SET = "participant_ready_set"
     TYPE_PARTICIPANT_READY_UNSET = "participant_ready_unset"
     TYPE_PARTICIPANT_CANCELED_PREBATTLE = "participant_canceled_prebattle"
+    TYPE_PARTICIPANT_DECLINED = "participant_declined"
     TYPE_PARTICIPANT_REJOINED = "participant_rejoined"
     TYPE_BATTLE_STARTED = "battle_started"
     TYPE_BATTLE_PREBATTLE_OPENED = "battle_prebattle_opened"
@@ -37,6 +38,7 @@ class BattleEvent(models.Model):
         (TYPE_PARTICIPANT_READY_SET, "Participant ready set"),
         (TYPE_PARTICIPANT_READY_UNSET, "Participant ready unset"),
         (TYPE_PARTICIPANT_CANCELED_PREBATTLE, "Participant canceled prebattle"),
+        (TYPE_PARTICIPANT_DECLINED, "Participant declined"),
         (TYPE_PARTICIPANT_REJOINED, "Participant rejoined"),
         (TYPE_BATTLE_STARTED, "Battle started"),
         (TYPE_BATTLE_PREBATTLE_OPENED, "Battle prebattle opened"),

@@ -13,6 +13,7 @@ class BattleParticipant(models.Model):
     STATUS_JOINED_PREBATTLE = "joined_prebattle"
     STATUS_READY = "ready"
     STATUS_CANCELED_PREBATTLE = "canceled_prebattle"
+    STATUS_DECLINED = "declined"
     STATUS_IN_BATTLE = "in_battle"
     STATUS_FINISHED_BATTLE = "finished_battle"
     STATUS_CONFIRMED_POSTBATTLE = "confirmed_postbattle"
@@ -26,13 +27,15 @@ class BattleParticipant(models.Model):
         (STATUS_JOINED_PREBATTLE, "Joined prebattle"),
         (STATUS_READY, "Ready"),
         (STATUS_CANCELED_PREBATTLE, "Canceled prebattle"),
+        (STATUS_DECLINED, "Declined"),
         (STATUS_IN_BATTLE, "In battle"),
         (STATUS_FINISHED_BATTLE, "Finished battle"),
         (STATUS_CONFIRMED_POSTBATTLE, "Confirmed postbattle"),
     )
 
     # out of the battle: they don't count towards it and can't follow it (SEC-08)
-    LEFT_STATUSES = (STATUS_CANCELED_PREBATTLE, STATUS_REPORTED_RESULT_DECLINED)
+    LEFT_STATUSES = (STATUS_CANCELED_PREBATTLE, STATUS_DECLINED, STATUS_REPORTED_RESULT_DECLINED)
+    ACCEPTED_STATUSES = (STATUS_ACCEPTED, STATUS_JOINED_PREBATTLE, STATUS_READY)
 
     CONNECTION_ONLINE = "online"
     CONNECTION_OFFLINE = "offline"

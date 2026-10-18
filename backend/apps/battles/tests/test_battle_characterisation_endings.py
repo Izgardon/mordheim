@@ -1,6 +1,7 @@
 """Ending a battle characterised: End battle, cancels, skipping postbattle and the trading reset (pass 3, step 0).
 
-Pinned: a cancelled participant blocking start (BUG-45). Fixed: wins and losses count once, when the battle ends,
+Fixed: a cancelled participant no longer blocks start (BUG-45; decline in test_battle_decline.py); wins and losses
+count once, when the battle ends,
 and cancels refuse postbattle (BUG-09, BATL-TEST-03/04; close-postbattle in test_battle_close_postbattle.py); the
 trading actions reset once, at End (BUG-122); a skip uses up the items used in battle (BUG-72); End needing a winner is decision 8's and creator-only End decision 4's.
 """
@@ -10,7 +11,7 @@ from typing import Any
 
 from apps.battles.models import Battle, BattleEvent
 from apps.notifications.models import Notification
-from apps.warbands.models import Hero
+from apps.warbands.models import Hero, Warband
 
 from .battle_support import BattleTestCase, draft, unit_result
 
@@ -181,37 +182,37 @@ class BattleCancelTests(BattleTestCase):
         battle_id, response = self._cancel_after_one_finalised(self.campaign_owner, url)
         self.assert_refused_in_postbattle(battle_id, response)
 
-    def test_a_cancelled_participant_blocks_start_for_ever(self):
-        # Characterises current behaviour (BUG-45, pinned; flips in PR A: declined and cancelled rows are ignored)
-        battle_id = self.to_prebattle()
-        self.ok(self.post_as(self.viewer, self.url(battle_id, "cancel")))
+    def test_a_cancelled_participant_no_longer_blocks_start(self):
+        # BUG-45: the cancelled row counted, so start waited for ever; now only those still in must be ready
+        Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows", faction="X")
+        battle_id = self.to_prebattle([self.viewer, self.manager])
+        self.ok(self.post_as(self.manager, self.url(battle_id, "cancel")))
         self.assertEqual(
             (self.battle(battle_id).status, self.statuses(battle_id)),
-            ("prebattle", ["joined_prebattle", "canceled_prebattle"]),
+            ("prebattle", ["joined_prebattle", "canceled_prebattle", "joined_prebattle"]),
         )
         self.assertEqual(self.battle_events.call_args.args[2]["reason"], "participant_canceled_prebattle")
 
-        self.ok(self.post_as(self.player, self.url(battle_id, "ready"), {"ready": True}))
-        response = self.post_as(self.player, self.url(battle_id, "start"))
-        detail = "All participants must be ready before starting"
-        self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
+        for user in (self.player, self.viewer):
+            self.ok(self.post_as(user, self.url(battle_id, "ready"), {"ready": True}))
+        data = self.ok(self.post_as(self.player, self.url(battle_id, "start"))).data
 
-        self.ok(self.post_as(self.player, self.url(battle_id, "cancel")))  # the last one out cancels the battle
-        self.assertEqual(self.battle(battle_id).status, "canceled")
-        last = BattleEvent.objects.filter(battle_id=battle_id).last()
-        assert last is not None
-        self.assertEqual((last.type, last.payload_json), ("battle_canceled", {}))
+        self.assertEqual(self.statuses(battle_id), ["in_battle", "canceled_prebattle", "in_battle"])
+        self.assertEqual(sorted(data["events"][0]["payload_json"]["participant_user_ids"]), sorted([self.player.id, self.viewer.id]))  # fmt: skip
 
-    def test_an_invitee_who_cancels_leaves_the_battle_inviting(self):
-        # BUG-45: there is no decline; the invite stays open and the battle can never reach prebattle
+    def test_a_cancel_that_leaves_one_player_cancels_the_battle(self):
+        # BUG-45: an invitee's cancel left the battle inviting for ever; with fewer than two left it is cancelled
         battle_id = self.create_battle()
         self.ok(self.post_as(self.viewer, self.url(battle_id, "cancel")))
 
         self.assertEqual(
-            (self.battle(battle_id).status, self.statuses(battle_id)), ("inviting", ["accepted", "canceled_prebattle"])
+            (self.battle(battle_id).status, self.statuses(battle_id)),
+            ("canceled", ["canceled_prebattle", "canceled_prebattle"]),
         )
-        invite = Notification.objects.get(user=self.viewer, reference_id=str(battle_id))
-        self.assertFalse(invite.is_resolved)
+        last = BattleEvent.objects.filter(battle_id=battle_id).last()
+        assert last is not None
+        self.assertEqual((last.type, last.payload_json), ("battle_canceled", {"canceled_by_user_id": self.viewer.id, "mode": "participants_left"}))  # fmt: skip
+        self.assertFalse(Notification.objects.filter(reference_id=str(battle_id), is_resolved=False).exists())
 
     def test_participants_cannot_cancel_once_the_battle_starts(self):
         battle_id = self.to_active()

@@ -9,6 +9,7 @@ from .combat import (
     CampaignBattleUnitOoaView,
     CampaignBattleWinnerView,
 )
+from .invites import CampaignBattleDeclineView
 from .lifecycle import (
     CampaignBattleCancelView,
     CampaignBattleConfigView,
@@ -26,6 +27,7 @@ from .lifecycle import (
 from .results import CampaignBattleWithdrawResultView, CampaignPendingResultsView
 
 __all__ = [
+    "CampaignBattleDeclineView",
     "CampaignBattleClosePostbattleView",
     "CampaignPendingResultsView",
     "CampaignBattleWithdrawResultView",

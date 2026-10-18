@@ -368,7 +368,7 @@ class CampaignBattleFinishView(APIView):
             )
             # wins and losses count when the battle ends, not here (decision 3, BUG-09)
             for entry in participants:
-                if entry.status == BattleParticipant.STATUS_CANCELED_PREBATTLE:
+                if entry.status in BattleParticipant.LEFT_STATUSES:
                     continue
                 if entry.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE:
                     continue

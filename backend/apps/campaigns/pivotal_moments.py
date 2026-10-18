@@ -300,7 +300,7 @@ def generate_pivotal_moments_for_battle(battle: Battle) -> None:
     participants = list(
         BattleParticipant.objects.select_related("warband")
         .filter(battle_id=battle.id)
-        .exclude(status=BattleParticipant.STATUS_CANCELED_PREBATTLE)
+        .exclude(status__in=BattleParticipant.LEFT_STATUSES)
         .order_by("id")
     )
     if not participants:

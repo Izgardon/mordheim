@@ -2591,15 +2591,15 @@ class BattleApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertNotEqual(response.data["battle"]["status"], "canceled")
+        self.assertEqual(response.data["battle"]["status"], "canceled")  # one player left (BUG-45)
 
         self.client.force_authenticate(user=self.player)
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/cancel/",
             format="json",
         )
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["battle"]["status"], "canceled")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["detail"], "Battle is already canceled")
 
     def test_creator_can_cancel_battle_while_inviting(self):
         data = self._create_battle()

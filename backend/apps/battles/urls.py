@@ -6,6 +6,7 @@ from .views import (
     CampaignBattleConfigView,
     CampaignBattleConfirmView,
     CampaignBattleCreatorCancelView,
+    CampaignBattleDeclineView,
     CampaignBattleEventCreateView,
     CampaignBattleFinalizePostbattleView,
     CampaignBattleFinishView,
@@ -71,6 +72,11 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/join/",
         CampaignBattleJoinView.as_view(),
         name="campaigns-battles-join",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/decline/",
+        CampaignBattleDeclineView.as_view(),
+        name="campaigns-battles-decline",
     ),
     path(
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/config/",

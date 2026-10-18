@@ -40,7 +40,7 @@ from apps.warbands.utils.leaders import ensure_single_living_leader
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.broadcast import Changed, publish
-from ..services.lifecycle import record_wins_and_losses
+from ..services.lifecycle import participants_all_in, record_wins_and_losses
 from ..services.timing import is_overdue
 from ..services.unit_information import ARMOUR_SAVE_STAT_KEY, NUMERIC_STAT_KEYS, clean_editable_fields
 from ..services.warnings import Warning, unit_left_warband
@@ -419,10 +419,7 @@ def _cancel_battle_for_all_participants(
     if battle.flow_type == Battle.FLOW_TYPE_NORMAL:
         for entry in participants:
             # a finished postbattle is a record, never rewritten (BUG-09; cancels refuse postbattle anyway)
-            if entry.status in (
-                BattleParticipant.STATUS_CANCELED_PREBATTLE,
-                BattleParticipant.STATUS_CONFIRMED_POSTBATTLE,
-            ):
+            if entry.status in (*BattleParticipant.LEFT_STATUSES, BattleParticipant.STATUS_CONFIRMED_POSTBATTLE):
                 continue
             entry.status = BattleParticipant.STATUS_CANCELED_PREBATTLE
             entry.canceled_at = entry.canceled_at or now
@@ -514,22 +511,13 @@ def _get_user_battle_participant(campaign_id: int, battle_id: int, user, for_upd
 
 
 def _all_participants_ready(battle_id: int) -> bool:
-    participants = BattleParticipant.objects.filter(battle_id=battle_id)
-    return participants.exists() and not participants.exclude(status=BattleParticipant.STATUS_READY).exists()
+    headcount = participants_all_in(battle_id)
+    return headcount.total > 0 and headcount.ready == headcount.total
 
 
 def _all_participants_accepted(battle_id: int) -> bool:
-    participants = BattleParticipant.objects.filter(battle_id=battle_id)
-    return (
-        participants.exists()
-        and not participants.exclude(
-            status__in=(
-                BattleParticipant.STATUS_ACCEPTED,
-                BattleParticipant.STATUS_JOINED_PREBATTLE,
-                BattleParticipant.STATUS_READY,
-            )
-        ).exists()
-    )
+    headcount = participants_all_in(battle_id)
+    return headcount.total > 0 and headcount.accepted == headcount.total
 
 
 def _all_reported_result_participants_approved(battle_id: int) -> bool:
@@ -537,13 +525,6 @@ def _all_reported_result_participants_approved(battle_id: int) -> bool:
     return (
         participants.exists()
         and not participants.exclude(status=BattleParticipant.STATUS_REPORTED_RESULT_APPROVED).exists()
-    )
-
-
-def _all_participants_canceled_prebattle(battle_id: int) -> bool:
-    participants = BattleParticipant.objects.filter(battle_id=battle_id)
-    return (
-        participants.exists() and not participants.exclude(status=BattleParticipant.STATUS_CANCELED_PREBATTLE).exists()
     )
 
 
@@ -564,7 +545,7 @@ def _all_started_participants_finished(battle_id: int) -> bool:
 
 def _all_started_participants_confirmed(battle_id: int) -> bool:
     participants = BattleParticipant.objects.filter(battle_id=battle_id).exclude(
-        status=BattleParticipant.STATUS_CANCELED_PREBATTLE
+        status__in=BattleParticipant.LEFT_STATUSES
     )
     return (
         participants.exists()
@@ -710,12 +691,7 @@ def _reset_trading_actions_for_battle_participants(
 ) -> None:
     participant_warband_ids = list(
         BattleParticipant.objects.filter(battle_id=battle.id)
-        .exclude(
-            status__in=(
-                BattleParticipant.STATUS_CANCELED_PREBATTLE,
-                BattleParticipant.STATUS_REPORTED_RESULT_DECLINED,
-            )
-        )
+        .exclude(status__in=BattleParticipant.LEFT_STATUSES)
         .values_list("warband_id", flat=True)
     )
     for warband_id in dict.fromkeys(participant_warband_ids):
@@ -1494,12 +1470,7 @@ def _build_battle_complete_log_payload(battle: Battle, participant: BattlePartic
     participants = list(
         BattleParticipant.objects.select_related("warband")
         .filter(battle_id=battle.id)
-        .exclude(
-            status__in=(
-                BattleParticipant.STATUS_CANCELED_PREBATTLE,
-                BattleParticipant.STATUS_REPORTED_RESULT_DECLINED,
-            )
-        )
+        .exclude(status__in=BattleParticipant.LEFT_STATUSES)
         .order_by("id")
     )
     winner_ids = set(battle.winner_warband_ids_json or [])

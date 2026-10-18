@@ -20,9 +20,9 @@ from ..services.broadcast import ALL, bump_state_version
 from ..services.errors import BattleError, field_error
 from ..services.timing import invite_deadline, record_activity
 from ..services.unit_information import apply_patch, apply_whole_map, is_empty
+from .invites import open_prebattle, settle_after_leaving
 from .shared import (
     _all_participants_accepted,
-    _all_participants_canceled_prebattle,
     _all_participants_ready,
     _all_reported_result_participants_approved,
     _append_battle_event,
@@ -641,6 +641,8 @@ class CampaignBattleJoinView(APIView):
                 return Response({"detail": "Reported results cannot be joined"}, status=400)
             if battle.status in (Battle.STATUS_CANCELED, Battle.STATUS_ENDED):
                 return Response({"detail": "Battle is closed"}, status=400)
+            if participant.status == BattleParticipant.STATUS_DECLINED:  # BUG-45: a decline is final
+                return Response({"detail": "You declined this battle", "code": "invite_declined"}, status=400)
 
             now = timezone.now()
             state_changed = False
@@ -655,31 +657,8 @@ class CampaignBattleJoinView(APIView):
                     state_changed = True
 
                 if _all_participants_accepted(battle.id):
-                    battle.status = Battle.STATUS_PREBATTLE
-                    battle.closes_at = None  # no deadline before postbattle
-                    battle.save(update_fields=["status", "closes_at", "updated_at"])
+                    open_prebattle(battle)
                     state_changed = opened = True
-                    participant_entries = list(
-                        BattleParticipant.objects.select_for_update().filter(battle_id=battle.id)
-                    )
-                    for entry in participant_entries:
-                        if entry.status == BattleParticipant.STATUS_ACCEPTED:
-                            entry.status = BattleParticipant.STATUS_JOINED_PREBATTLE
-                            entry.joined_at = entry.joined_at or now
-                            entry.save(update_fields=["status", "joined_at", "updated_at"])
-                            state_changed = True
-
-                    for user_id in [entry.user_id for entry in participant_entries]:
-                        _notify_user(
-                            user_id,
-                            "battle_prebattle_opened",
-                            {
-                                "battle_id": battle.id,
-                                "campaign_id": battle.campaign_id,
-                                "status": battle.status,
-                            },
-                        )
-                    resolve_notifications_for_reference(Notification.TYPE_BATTLE_INVITE, str(battle.id))
             elif battle.status == Battle.STATUS_PREBATTLE:
                 if participant.status != BattleParticipant.STATUS_READY:
                     participant.status = BattleParticipant.STATUS_JOINED_PREBATTLE
@@ -932,19 +911,8 @@ class CampaignBattleCancelView(APIView):
                 participant.save(update_fields=["status", "canceled_at", "responded_at", "updated_at"])
                 state_changed = True
 
-            if _all_participants_canceled_prebattle(battle.id):
-                battle.status = Battle.STATUS_CANCELED
-                battle.ended_at = timezone.now()
-                battle.save(update_fields=["status", "ended_at", "updated_at"])
-                state_changed = True
-                events.append(
-                    _append_battle_event(
-                        battle,
-                        BattleEvent.TYPE_BATTLE_CANCELED,
-                        actor_user=request.user,
-                        payload={},
-                    )
-                )
+            if state_changed:  # BUG-45: the cancelled row no longer counts
+                events += settle_after_leaving(battle, actor_user=request.user, mode="participants_left")
 
             if not state_changed:
                 return _response_with_snapshot(battle.id, events)
@@ -1025,16 +993,18 @@ class CampaignBattleStartView(APIView):
             rosters = _battle_rosters_payload(battle.id)  # live now; the battle keeps this snapshot (BUG-73)
             participants = list(BattleParticipant.objects.select_for_update().filter(battle_id=battle.id))
             for entry in participants:
-                entry.status = BattleParticipant.STATUS_IN_BATTLE
-                entry.battle_joined_at = entry.battle_joined_at or now
+                if entry.status not in BattleParticipant.LEFT_STATUSES:  # a declined or cancelled row stays out
+                    entry.status = BattleParticipant.STATUS_IN_BATTLE
+                    entry.battle_joined_at = entry.battle_joined_at or now
                 entry.roster_json = rosters.get(str(entry.user_id), {})
                 entry.save(update_fields=["status", "battle_joined_at", "roster_json", "updated_at"])
 
+            playing = [entry.user_id for entry in participants if entry.status == BattleParticipant.STATUS_IN_BATTLE]
             event = _append_battle_event(
                 battle,
                 BattleEvent.TYPE_BATTLE_STARTED,
                 actor_user=request.user,
-                payload={"participant_user_ids": [entry.user_id for entry in participants]},
+                payload={"participant_user_ids": playing},
             )
             events.append(event)
             version = bump_state_version(battle)

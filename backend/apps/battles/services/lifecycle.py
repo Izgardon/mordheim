@@ -5,12 +5,37 @@ Wins and losses count once, when the battle ends: when the last player finishes 
 status as the guard, so this runs once per battle; PR C's automatic end (decision 4) calls the same end.
 """
 
-from django.db.models import F, Value
+from dataclasses import dataclass
+
+from django.db.models import Count, F, Q, Value
 from django.db.models.functions import Coalesce
 
 from apps.warbands.models import Warband
 
 from ..models import Battle, BattleParticipant
+
+
+@dataclass(frozen=True)
+class Headcount:
+    """The participants still in a battle (not declined or cancelled), and how many have accepted or are ready."""
+
+    total: int
+    accepted: int
+    ready: int
+
+
+def participants_all_in(battle_id: int) -> Headcount:
+    """One aggregate; declined and cancelled rows don't count (BUG-45: a cancelled row blocked start for ever)."""
+    counts = (
+        BattleParticipant.objects.filter(battle_id=battle_id)
+        .exclude(status__in=BattleParticipant.LEFT_STATUSES)
+        .aggregate(
+            total=Count("id"),
+            accepted=Count("id", filter=Q(status__in=BattleParticipant.ACCEPTED_STATUSES)),
+            ready=Count("id", filter=Q(status=BattleParticipant.STATUS_READY)),
+        )
+    )
+    return Headcount(total=counts["total"], accepted=counts["accepted"], ready=counts["ready"])
 
 
 def record_wins_and_losses(battle: Battle) -> None:
