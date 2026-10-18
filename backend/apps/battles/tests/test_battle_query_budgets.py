@@ -59,16 +59,24 @@ class BattleQueryBudgetTests(BattleTestCase):
         self.within("state", big_count, 5)
 
     def test_rosters_cost_the_same_for_any_number_of_units(self):
-        # PERF-38: membership, battle, participant, participants, then each kind and its link tables. A nested
-        # prefetch is skipped when its link table has no rows: 22 here (items only), up to 30 with skills, specials and
-        # spells everywhere, but never more for more units. The first read in a minute also writes presence (PERF-35).
-        battle_id = self.to_active({self.player: [], self.viewer: [self.r]})
+        # PERF-38: before the battle starts, membership, battle, participant, participants, then each kind and its
+        # link tables. A nested prefetch is skipped when its link table has no rows: 22 here (items only), up to 30
+        # with skills, specials and spells everywhere, but never more for more units. From the start on, the snapshot
+        # start/ stored: membership, battle, participant and participants. The first read in a minute also writes
+        # presence (PERF-35), so each is read once first.
+        battle_id = self.to_prebattle()
         self.ok(self.get_as(self.viewer, self.url(battle_id, "rosters")))
         few, _ = self.count(self.viewer, "get", self.url(battle_id, "rosters"))
         build_fixture_warband(self.rival, self.rope)
         many, _ = self.count(self.viewer, "get", self.url(battle_id, "rosters"))
         self.assertEqual(few, many)
-        self.within("rosters", many, 22)
+        self.within("rosters_live", many, 22)
+
+        for user in (self.player, self.viewer):
+            self.ok(self.post_as(user, self.url(battle_id, "ready"), {"ready": True}))
+        self.ok(self.post_as(self.player, self.url(battle_id, "start")))
+        snapshot, _ = self.count(self.viewer, "get", self.url(battle_id, "rosters"))
+        self.within("rosters_snapshot", snapshot, 4)
 
     def test_live_writes_stay_within_budget(self):
         hero = self.fixture.heroes[1]

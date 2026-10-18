@@ -1006,11 +1006,13 @@ class CampaignBattleStartView(APIView):
             battle.started_at = battle.started_at or now
             battle.save(update_fields=["status", "started_at", "updated_at"])
 
+            rosters = _battle_rosters_payload(battle.id)  # live now; the battle keeps this snapshot (BUG-73)
             participants = list(BattleParticipant.objects.select_for_update().filter(battle_id=battle.id))
             for entry in participants:
                 entry.status = BattleParticipant.STATUS_IN_BATTLE
                 entry.battle_joined_at = entry.battle_joined_at or now
-                entry.save(update_fields=["status", "battle_joined_at", "updated_at"])
+                entry.roster_json = rosters.get(str(entry.user_id), {})
+                entry.save(update_fields=["status", "battle_joined_at", "roster_json", "updated_at"])
 
             event = _append_battle_event(
                 battle,

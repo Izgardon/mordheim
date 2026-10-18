@@ -84,6 +84,8 @@ class BattleParticipant(models.Model):
     unit_information_json = models.JSONField(default=dict, blank=True)
     custom_units_json = models.JSONField(default=list, blank=True)
     postbattle_json = models.JSONField(default=dict, blank=True)
+    # each roster as it stood when the battle started (BUG-73, PERF-38); None until then
+    roster_json = models.JSONField(null=True, blank=True)
     declared_rating = models.PositiveIntegerField(null=True, blank=True)
     battle_notes = models.TextField(blank=True, default="")
     created_at = models.DateTimeField(auto_now_add=True)

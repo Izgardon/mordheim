@@ -6,6 +6,8 @@ creator-only start for decision 4 (any participant, after a confirm).
 
 from typing import Any
 
+from django.utils import timezone
+
 from apps.battles.models import Battle, BattleEvent, BattleParticipant
 from apps.notifications.models import Notification
 from apps.warbands.models import Hero, Warband
@@ -295,16 +297,27 @@ class BattleReadAccessTests(BattleTestCase):
         response = self.get_as(self.viewer, f"{self.url(battle_id, 'state')}?sinceEventId=-5")
         self.assertEqual([event["type"] for event in response.data["events"]], ["battle_created"])
 
-    def test_rosters_are_read_live_from_the_warbands(self):
-        # BUG-73 (context): a unit killed or dismissed on the sheet mid-battle leaves the battle's roster
+    def test_rosters_are_live_until_the_battle_starts_then_the_snapshot(self):
+        # BUG-73, PERF-38: start/ stores each roster; a unit killed or dismissed on the sheet mid-battle stays in it
         hero = Hero.objects.create(warband=self.warband, name="Abbess", unit_type="Matriarch")
-        battle_id = self.to_active({self.player: [f"hero:{hero.id}"], self.viewer: []})
+        battle_id = self.to_prebattle()
         url = self.url(battle_id, "rosters")
 
         rosters = self.ok(self.get_as(self.viewer, url)).data
         self.assertEqual(sorted(rosters), sorted([str(self.player.id), str(self.viewer.id)]))
         self.assertEqual(list(rosters[str(self.player.id)]), ["heroes", "hiredSwords", "henchmenGroups"])
-        self.assertEqual([entry["key"] for entry in rosters[str(self.player.id)]["heroes"]], [f"hero:{hero.id}"])
+        late = Hero.objects.create(warband=self.warband, name="Late", unit_type="Novice")  # prebattle: live
+        heroes = self.ok(self.get_as(self.viewer, url)).data[str(self.player.id)]["heroes"]
+        self.assertEqual([entry["key"] for entry in heroes], [f"hero:{hero.id}", f"hero:{late.id}"])
 
+        for user in (self.player, self.viewer):
+            self.ok(self.post_as(user, self.url(battle_id, "ready"), {"ready": True}))
+        self.ok(self.post_as(self.player, self.url(battle_id, "start")))
         Hero.objects.filter(id=hero.id).update(dead=True)
-        self.assertEqual(self.ok(self.get_as(self.viewer, url)).data[str(self.player.id)]["heroes"], [])
+        Hero.objects.filter(id=late.id).update(dismissed_at=timezone.now())
+
+        heroes = self.ok(self.get_as(self.viewer, url)).data[str(self.player.id)]["heroes"]
+        self.assertEqual([entry["key"] for entry in heroes], [f"hero:{hero.id}", f"hero:{late.id}"])
+        snapshot = self.participant(battle_id, self.player).roster_json
+        assert snapshot is not None
+        self.assertEqual(snapshot["heroes"], heroes)

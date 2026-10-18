@@ -2,8 +2,8 @@
 
 Pinned: a serious-injury log per draft re-roll (BUG-47, BATL-TEST-14); exploration cleared by every draft save
 (BUG-71); live kills applied over the postbattle stepper while pivotal moments use the stepper, and kill
-history listing a cancelled battle (BUG-11, BATL-TEST-10); a unit dismissed mid-battle making finalise
-impossible (BUG-73).
+history listing a cancelled battle (BUG-11, BATL-TEST-10). A unit dismissed mid-battle is left out of finalise with
+a warning (BUG-73, fixed).
 """
 
 from typing import Any
@@ -151,16 +151,24 @@ class PostbattleDraftTests(BattleTestCase):
                 self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
         self.assertEqual(self.participant(battle_id, self.player).status, "finished_battle")
 
-    def test_a_unit_dismissed_mid_battle_makes_finalise_impossible(self):
-        # Characterises current behaviour (BUG-73, pinned; flips in PR A: the unit is left out, with a warning)
+    def test_a_unit_dismissed_mid_battle_is_left_out_with_a_warning(self):
+        # BUG-73: it made finalise answer 400, leaving skip as the only way out
         battle_id = self.postbattle()
         self.warband.heroes.filter(id=self.hero.id).update(dismissed_at=timezone.now())
+        self.group.henchmen.filter(id=self.sister.id).update(dismissed_at=timezone.now())
 
-        response = self.finalize(self.player, battle_id, draft(self.results()))
+        response = self.ok(self.finalize(self.player, battle_id, draft(self.results(**{self.h: {"xp": 3}}))))
 
-        detail = "A selected hero is no longer available"
-        self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
-        self.ok(self.post_as(self.player, self.url(battle_id, "confirm")))  # skipping is the only way out
+        self.assertEqual(
+            response.data["warnings"],
+            [
+                {"code": "unit_left_warband", "message": f"{self.h} has left the warband, so his results were not applied.", "unit_key": self.h},
+                {"code": "unit_left_warband", "message": f"{self.s} has left the warband, so his results were not applied.", "unit_key": self.s},
+            ],
+        )  # fmt: skip
+        self.hero.refresh_from_db()
+        self.assertEqual(self.hero.xp, 0)
+        self.assertEqual(self.participant(battle_id, self.player).status, "confirmed_postbattle")
 
     def test_a_unit_killed_on_the_sheet_mid_battle_still_finalises(self):
         battle_id = self.postbattle()

@@ -40,6 +40,7 @@ from apps.warbands.utils.leaders import ensure_single_living_leader
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.unit_information import ARMOUR_SAVE_STAT_KEY, NUMERIC_STAT_KEYS, clean_editable_fields
+from ..services.warnings import Warning, unit_left_warband
 
 KILLER_UNIT_TYPES = {"hero", "hired_sword", "henchman", "custom", "bestiary"}
 AGGREGATED_KILLER_UNIT_TYPES = {"hero", "hired_sword", "henchman"}
@@ -142,7 +143,7 @@ def _participants_prefetch() -> Prefetch:
     """Prefetch everything _serialize_participant reads, so snapshots cost no extra queries."""
     return Prefetch(
         "participants",
-        queryset=BattleParticipant.objects.select_related("user", "warband").order_by("id"),
+        queryset=BattleParticipant.objects.select_related("user", "warband").defer("roster_json").order_by("id"),
     )
 
 
@@ -310,7 +311,11 @@ def _serialize_battle_henchmen_group_roster_entry(group: HenchmenGroup) -> dict:
 
 
 def _battle_rosters_payload(battle_id: int) -> dict:
-    participants = list(BattleParticipant.objects.select_related("warband").filter(battle_id=battle_id).order_by("id"))
+    """Each participant's roster by user id: read live until the battle starts, then the snapshot `start/` stored,
+    so a unit killed or dismissed on the sheet mid-battle stays in the battle (BUG-73, PERF-38)."""
+    participants = list(BattleParticipant.objects.filter(battle_id=battle_id).order_by("id"))
+    if participants and all(participant.roster_json is not None for participant in participants):
+        return {str(participant.user_id): participant.roster_json for participant in participants}
     warband_ids = [participant.warband_id for participant in participants]
     if not warband_ids:
         return {}
@@ -499,7 +504,11 @@ def _get_user_battle_participant(campaign_id: int, battle_id: int, user, for_upd
     if not battle:
         return None, None
 
-    participant_qs = BattleParticipant.objects.select_related("user", "warband").filter(battle_id=battle.id, user=user)
+    participant_qs = (
+        BattleParticipant.objects.select_related("user", "warband")
+        .defer("roster_json")
+        .filter(battle_id=battle.id, user=user)
+    )
     if for_update:
         participant_qs = participant_qs.select_for_update(of=("self",))  # not the user or warband rows (PERF-37)
     participant = participant_qs.first()
@@ -723,9 +732,11 @@ def _reset_trading_actions_for_battle_participants(
         Hero.objects.filter(warband_id=warband_id).update(trading_action=True)
 
 
-def _response_with_snapshot(battle_id: int, events: list[dict], response_status=200):
+def _response_with_snapshot(battle_id: int, events: list[dict], response_status=200, warnings=None):
     payload = _battle_snapshot(battle_id)
     payload["events"] = events
+    if warnings:
+        payload["warnings"] = warnings
     return Response(payload, status=response_status)
 
 
@@ -1411,11 +1422,11 @@ def _validate_postbattle_json_for_participant(
         if parsed_unit["unit_type"] == "hired_sword" and parsed_unit["unit_id"] is not None:
             upkeep_hired_sword_ids.append(parsed_unit["unit_id"])
 
-    if upkeep_hired_sword_ids:
+    if upkeep_hired_sword_ids:  # the warband's own; one dismissed since is charged nothing (BUG-73)
         valid_hired_sword_ids = set(
-            not_dismissed(
-                HiredSword.objects.filter(id__in=upkeep_hired_sword_ids, warband_id=participant.warband_id)
-            ).values_list("id", flat=True)
+            HiredSword.objects.filter(id__in=upkeep_hired_sword_ids, warband_id=participant.warband_id).values_list(
+                "id", flat=True
+            )
         )
         if len(valid_hired_sword_ids) != len(set(upkeep_hired_sword_ids)):
             raise ValueError("One or more upkeep hired swords are invalid")
@@ -1584,7 +1595,8 @@ def _remove_used_single_use_items(battle: Battle, participant: BattleParticipant
 
 def _apply_participant_postbattle_results(
     battle: Battle, participant: BattleParticipant, postbattle_json: dict
-) -> None:
+) -> list[Warning]:
+    """Apply a participant's postbattle; the warnings say which units were left out (BUG-73)."""
     normalized = _validate_postbattle_json_for_participant(battle, participant, postbattle_json)
     unit_information = _normalize_unit_information(participant.unit_information_json)
     unit_results = normalized["unit_results"]
@@ -1603,7 +1615,7 @@ def _apply_participant_postbattle_results(
         elif parsed["unit_type"] == "henchman":
             henchman_ids.append(parsed["unit_id"])
 
-    # Units dismissed since the battle was set up have left the warband: "no longer available" below.
+    # Units dismissed since the battle started have left the warband: left out below, with a warning (BUG-73).
     heroes = {
         hero.id: hero
         for hero in not_dismissed(
@@ -1639,6 +1651,7 @@ def _apply_participant_postbattle_results(
         )
     }
 
+    warnings: list[Warning] = []
     group_xp_by_id: dict[int, int] = {}
     group_stats_override_by_id: dict[int, dict[str, int | str]] = {}
     group_stats_update_fields_by_id: defaultdict[int, set[str]] = defaultdict(set)
@@ -1654,7 +1667,8 @@ def _apply_participant_postbattle_results(
         if parsed["unit_type"] == "hero":
             hero = heroes.get(parsed["unit_id"])
             if not hero:
-                raise ValueError("A selected hero is no longer available")
+                warnings.append(unit_left_warband(unit_key, unit_name))
+                continue
             update_fields = _apply_stats_override_to_unit(hero, stats_override)
             if kill_count > 0:
                 hero.kills += kill_count
@@ -1674,7 +1688,8 @@ def _apply_participant_postbattle_results(
         if parsed["unit_type"] == "hired_sword":
             hired_sword = hired_swords.get(parsed["unit_id"])
             if not hired_sword:
-                raise ValueError("A selected hired sword is no longer available")
+                warnings.append(unit_left_warband(unit_key, unit_name))
+                continue
             effective_xp_earned = 0 if hired_sword.no_level_ups else xp_earned
             update_fields = _apply_stats_override_to_unit(hired_sword, stats_override)
             if kill_count > 0:
@@ -1691,11 +1706,10 @@ def _apply_participant_postbattle_results(
 
         if parsed["unit_type"] == "henchman":
             henchman = henchmen.get(parsed["unit_id"])
-            if not henchman:
-                raise ValueError("A selected henchman is no longer available")
-            group = henchmen_groups.get(henchman.group_id)
-            if not group:
-                raise ValueError("A selected henchman group is no longer available")
+            group = henchmen_groups.get(henchman.group_id) if henchman else None
+            if not henchman or not group:  # he, or his whole group, was dismissed
+                warnings.append(unit_left_warband(unit_key, unit_name))
+                continue
             effective_xp_earned = 0 if group.no_level_ups else xp_earned
             if stats_override:
                 existing_group_stats = group_stats_override_by_id.get(henchman.group_id)
@@ -1863,3 +1877,4 @@ def _apply_participant_postbattle_results(
                 "items": canonical_find_items,
             },
         )
+    return warnings

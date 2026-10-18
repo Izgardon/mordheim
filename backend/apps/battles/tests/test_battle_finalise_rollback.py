@@ -2,15 +2,12 @@
 
 Each trigger the characterisation report lists fails after the first hero's XP has been written (and, for the
 finds triggers, after exploration and upkeep too); the 400 must roll all of it back, so a retry can't apply it
-twice. The henchman-group check (`A selected henchman group is no longer available`) can't fail on its own: the
-henchmen query already leaves out members of a dismissed group, which answers "henchman" instead.
+twice. Units that left the warband were triggers too, until BUG-73 left them out with a warning instead.
 """
 
 from collections.abc import Callable
 from decimal import Decimal
 from typing import Any
-
-from django.utils import timezone
 
 from apps.battles.models import Battle, BattleParticipant
 from apps.campaigns.models import Campaign
@@ -48,15 +45,10 @@ class FinaliseRollbackTests(BattleTestCase):
         BattleParticipant.objects.filter(battle_id=battle_id, user=self.player).update(unit_information_json=info)
 
     def triggers(self) -> list[tuple[str, Callable[[int], dict[str, Any]]]]:
-        heroes, swords, henchmen = self.fixture.heroes, self.fixture.hired_swords, self.fixture.henchmen
+        heroes, henchmen = self.fixture.heroes, self.fixture.henchmen
         other_campaign = Campaign.objects.create(name="Far away", join_code="FAR001")
         foreign = Item.objects.create(name="Foreign Idol", type="Misc", campaign=other_campaign)
         no_price = catalogue_item("Strange Idol", None)
-        dismissed = {"dismissed_at": timezone.now()}
-
-        def dismiss(rows: Any, unit: Any) -> dict[str, Any]:
-            rows.filter(id=unit.id).update(**dismissed)
-            return self.postbattle_draft([])
 
         def overrides(battle_id: int) -> dict[str, Any]:
             first, second = (self.key("henchman", member) for member in henchmen[:2])
@@ -71,9 +63,6 @@ class FinaliseRollbackTests(BattleTestCase):
 
         group_xp = {self.key("henchman", henchmen[0]): {"xp": 1}}
         return [
-            ("A selected hero is no longer available", lambda _: dismiss(self.warband.heroes, heroes[2])),
-            ("A selected hired sword is no longer available", lambda _: dismiss(self.warband.hired_swords, swords[1])),
-            ("A selected henchman is no longer available", lambda _: dismiss(henchmen[7].group.henchmen, henchmen[7])),
             ("All henchmen in a group must share the same stat overrides", overrides),
             ("All henchmen in a group must share the same xp_earned value", lambda _: self.postbattle_draft([], **group_xp)),
             (f"unit information armour_save: {ARMOUR_SAVE_ERROR}", armour_save),
@@ -92,8 +81,6 @@ class FinaliseRollbackTests(BattleTestCase):
                 self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
                 self.assert_nothing_applied(battle_id)
                 Battle.objects.filter(id=battle_id).update(status=Battle.STATUS_ENDED)  # free the players
-                for rows in (self.warband.heroes, self.warband.hired_swords, self.fixture.henchmen[7].group.henchmen):
-                    rows.update(dismissed_at=None)
 
     def assert_nothing_applied(self, battle_id: int) -> None:
         hero = self.fixture.heroes[0]

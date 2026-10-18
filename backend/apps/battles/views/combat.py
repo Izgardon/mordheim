@@ -482,7 +482,7 @@ class CampaignBattleFinalizePostbattleView(APIView):
                 participant,
                 request.data.get("postbattle_json", participant.postbattle_json),
             )
-            _apply_participant_postbattle_results(battle, participant, postbattle_json)
+            warnings = _apply_participant_postbattle_results(battle, participant, postbattle_json)
             participant.postbattle_json = postbattle_json
             participant.status = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
             participant.confirmed_at = timezone.now()
@@ -498,7 +498,7 @@ class CampaignBattleFinalizePostbattleView(APIView):
             if battle.status != Battle.STATUS_ENDED and _all_started_participants_confirmed(battle.id):
                 _finalize_battle(battle, request.user, events)
 
-        return _response_with_snapshot(battle.id, events)
+        return _response_with_snapshot(battle.id, events, warnings=warnings)
 
 
 class CampaignBattleConfirmView(CampaignBattleFinalizePostbattleView):
