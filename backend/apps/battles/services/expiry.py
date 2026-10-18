@@ -16,6 +16,7 @@ from ..serializers import battle_snapshot
 from .broadcast import ALL, bump_state_version, publish
 from .closing import close_postbattle
 from .invites import decline_invitation
+from .locks import locked
 from .timing import is_overdue
 
 EXPIRY_BATCH = 5  # overdue battles settled by one list read; the rest wait for the next
@@ -28,7 +29,7 @@ def expire_locked_battle(battle: Battle) -> list[dict]:
     if battle.status == Battle.STATUS_POSTBATTLE:
         return close_postbattle(battle, actor_user=None, mode="expired")
     events: list[dict] = []
-    unanswered = BattleParticipant.objects.select_for_update(of=("self",)).select_related("user")
+    unanswered = locked(BattleParticipant.objects.select_related("user"))
     for entry in unanswered.filter(battle_id=battle.id, status=BattleParticipant.STATUS_INVITED).order_by("id"):
         if battle.status != Battle.STATUS_INVITING:  # cancelled by the last decline
             break
@@ -50,7 +51,7 @@ def expire_overdue(battles: Iterable[Battle]) -> bool:
     changed = False
     for battle_id in [battle.id for battle in battles if is_overdue(battle)][:EXPIRY_BATCH]:
         with transaction.atomic():
-            battle = Battle.objects.select_for_update(skip_locked=True).filter(id=battle_id).first()
+            battle = locked(Battle.objects.filter(id=battle_id), skip_locked=True).first()
             if battle is None:
                 continue
             events = expire_locked_battle(battle)

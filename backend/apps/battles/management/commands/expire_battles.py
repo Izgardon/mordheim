@@ -12,6 +12,7 @@ from django.utils import timezone
 from apps.battles.models import Battle
 from apps.battles.services.broadcast import bump_state_version
 from apps.battles.services.expiry import expire_locked_battle, publish_expired
+from apps.battles.services.locks import locked
 from apps.battles.services.timing import TIMED_STATUSES
 
 
@@ -31,7 +32,7 @@ class Command(BaseCommand):
                 self.stdout.write(f"battle {battle_id}: {status}, overdue")
                 continue
             with transaction.atomic():
-                battle = Battle.objects.select_for_update(skip_locked=True).filter(id=battle_id).first()
+                battle = locked(Battle.objects.filter(id=battle_id), skip_locked=True).first()
                 events = expire_locked_battle(battle) if battle else []
                 version = bump_state_version(battle) if battle and events else 0
             if battle and events:

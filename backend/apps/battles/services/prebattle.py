@@ -13,6 +13,7 @@ from .errors import Refused
 from .events import append_event
 from .invites import open_prebattle, settle_after_leaving
 from .lifecycle import everyone_accepted, everyone_ready
+from .locks import locked
 from .rosters import battle_rosters_payload
 
 
@@ -110,7 +111,7 @@ def start(battle: Battle, actor_user) -> list[dict]:
     battle.started_at = battle.started_at or now
     battle.save(update_fields=["status", "started_at", "updated_at"])
     rosters = battle_rosters_payload(battle.id)  # live now; the battle keeps this snapshot (BUG-73)
-    participants = list(BattleParticipant.objects.select_for_update().filter(battle_id=battle.id))
+    participants = list(locked(BattleParticipant.objects.filter(battle_id=battle.id)))
     for entry in participants:
         if entry.status not in BattleParticipant.LEFT_STATUSES:  # a declined or cancelled row stays out
             entry.status = BattleParticipant.STATUS_IN_BATTLE

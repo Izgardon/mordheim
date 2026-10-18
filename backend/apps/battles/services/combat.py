@@ -15,6 +15,7 @@ from .errors import Refused
 from .events import append_event
 from .item_use import item_use_payload
 from .lifecycle import reset_trading_actions
+from .locks import locked
 from .selection import custom_unit_entry, selected_unit_keys
 from .timing import postbattle_deadline
 from .unit_information import unit_entry
@@ -104,7 +105,7 @@ def record_kill(battle: Battle, participant: BattleParticipant, kill: dict, acto
     killer_info = unit_entry(unit_information, killer["unit_key"])
     if killer_info["out_of_action"] and source == "battle":  # in postbattle he may have scored before
         raise Refused("Cannot record kills for a unit that is out of action")
-    participants = list(BattleParticipant.objects.select_for_update().filter(battle_id=battle.id).order_by("id"))
+    participants = list(locked(BattleParticipant.objects.filter(battle_id=battle.id).order_by("id")))
     victim_participant = _victim_participant(participants, victim) if victim is not None else None
     killer_info["kill_count"] = max(0, int(killer_info.get("kill_count", 0))) + 1
     participant.unit_information_json = unit_information
@@ -147,7 +148,7 @@ def enter_postbattle(battle: Battle, winner_ids: list[int], actor) -> list[dict]
     if any(winner_id not in warband_ids for winner_id in winner_ids):
         raise Refused("winner_warband_ids must belong to this battle")
     now = timezone.now()
-    for entry in BattleParticipant.objects.select_for_update().filter(battle_id=battle.id).order_by("id"):
+    for entry in locked(BattleParticipant.objects.filter(battle_id=battle.id).order_by("id")):
         # wins and losses count when the battle ends, not here (decision 3, BUG-09)
         if (
             entry.status in BattleParticipant.LEFT_STATUSES

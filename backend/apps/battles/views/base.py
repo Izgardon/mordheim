@@ -29,6 +29,7 @@ from ..services.access import is_member, manages_battles, participant_rows, scop
 from ..services.broadcast import Changed, bump_state_version
 from ..services.errors import BattleError, Refused
 from ..services.expiry import settle_during_write
+from ..services.locks import locked
 from ..services.timing import is_overdue, record_activity
 from ..services.warnings import Warning
 from .responses import broadcast_response, response_with_snapshot
@@ -106,7 +107,7 @@ class BattleScopedView(APIView):
         battle settles it first, under the battle lock (decision 2)."""
         battles = scoped_battles(request.user, campaign_id).filter(id=battle_id)
         if lock == LOCK_BATTLE:
-            battles = battles.select_for_update(of=("self",))
+            battles = locked(battles)
         elif self.battle_related:
             battles = battles.select_related(*self.battle_related)
         battle = battles.first()
@@ -116,10 +117,10 @@ class BattleScopedView(APIView):
             return Scope(request, battle, None)
         rows = participant_rows(battle, request.user)
         if lock:
-            rows = rows.select_for_update(of=("self",))  # not the user or warband rows (PERF-37)
+            rows = locked(rows)  # not the user or warband rows it joins (PERF-37)
             if is_overdue(battle):
                 if lock == LOCK_PLAYER:  # the battle first, as every write locks it
-                    battle = scoped_battles(request.user, campaign_id).select_for_update(of=("self",)).get(id=battle_id)
+                    battle = locked(scoped_battles(request.user, campaign_id)).get(id=battle_id)
                 settle_during_write(battle)
         participant = rows.first()
         if participant is None:

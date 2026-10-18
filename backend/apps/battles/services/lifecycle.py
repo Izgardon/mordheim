@@ -18,6 +18,7 @@ from apps.warbands.models import Hero, Warband
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from .events import append_event, notify_result_updated
+from .locks import locked
 
 
 @dataclass(frozen=True)
@@ -158,7 +159,7 @@ def cancel_battle(battle: Battle, *, actor_user, mode: str) -> dict:
     battle.status = Battle.STATUS_CANCELED
     battle.ended_at = battle.ended_at or now
     battle.save(update_fields=["status", "ended_at", "updated_at"])
-    participants = list(BattleParticipant.objects.select_for_update().filter(battle_id=battle.id))
+    participants = list(locked(BattleParticipant.objects.filter(battle_id=battle.id)))
     if battle.flow_type == Battle.FLOW_TYPE_NORMAL:
         _cancel_rows(battle, participants, now)
     else:

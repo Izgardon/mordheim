@@ -3,6 +3,7 @@
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.errors import Refused
 from ..services.kills import UNDOABLE_TYPES
+from ..services.locks import locked
 from ..services.undo import void_event
 from .base import BattleWriteView, Scope, Unchanged, Written, not_found
 
@@ -12,7 +13,7 @@ OPEN_STATUSES = (Battle.STATUS_PREBATTLE, Battle.STATUS_ACTIVE, Battle.STATUS_PO
 class CampaignBattleEventVoidView(BattleWriteView):
     def act(self, scope: Scope):
         event_id = self.kwargs["event_id"]
-        event = BattleEvent.objects.select_for_update().filter(id=event_id, battle_id=scope.battle.id).first()
+        event = locked(BattleEvent.objects.filter(id=event_id, battle_id=scope.battle.id)).first()
         if event is None:
             raise not_found()
         if event.type not in UNDOABLE_TYPES:

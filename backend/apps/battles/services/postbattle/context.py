@@ -27,6 +27,7 @@ from apps.warbands.models import (
 from ...models import Battle, BattleEvent, BattleParticipant
 from ...validation.unit_keys import parse_unit_key
 from ..kills import count_kills
+from ..locks import locked
 from .validate import upkeep_hired_sword_ids
 
 
@@ -62,7 +63,7 @@ def _ids(draft: dict, unit_type: str) -> list[int]:
 
 def _locked_warband(warband_id: int, resource_id: int | None) -> Warband:
     """The warband, locked, with the draft's exploration resource (`resource_found`, `resource_name`)."""
-    warbands = Warband.objects.select_for_update(of=("self",))
+    warbands = locked(Warband.objects.all())
     if resource_id is not None:
         resources = WarbandResource.objects.filter(id=resource_id, warband_id=OuterRef("pk"))
         warbands = warbands.annotate(
@@ -76,15 +77,14 @@ def _carried(links) -> ArraySubquery:
 
 
 def _locked_units(warband_id: int, draft: dict) -> tuple[list[Hero], dict[int, HiredSword], list[Henchman]]:
-    heroes = Hero.objects.select_for_update(of=("self",)).filter(warband_id=warband_id).order_by("id")
+    heroes = locked(Hero.objects.filter(warband_id=warband_id).order_by("id"))
     heroes = heroes.annotate(carried=_carried(HeroItem.objects.filter(hero_id=OuterRef("pk"))))
     sword_ids = {*_ids(draft, "hired_sword"), *upkeep_hired_sword_ids(draft)}
-    swords = HiredSword.objects.select_for_update(of=("self",)).filter(id__in=sword_ids, warband_id=warband_id)
+    swords = locked(HiredSword.objects.filter(id__in=sword_ids, warband_id=warband_id))
     swords = swords.annotate(carried=_carried(HiredSwordItem.objects.filter(hired_sword_id=OuterRef("pk"))))
     named_groups = Henchman.objects.filter(id__in=_ids(draft, "henchman")).values("group_id")
-    henchmen = (
-        Henchman.objects.select_for_update(of=("self",))
-        .select_related("group")
+    henchmen = locked(
+        Henchman.objects.select_related("group")
         .filter(group_id__in=named_groups, group__warband_id=warband_id)
         .order_by("id")
     )
@@ -101,8 +101,8 @@ def load_context(battle: Battle, participant: BattleParticipant, draft: dict) ->
         for member in henchmen
         if member.id in named and member.dismissed_at is None and member.group.dismissed_at is None
     }
-    groups = HenchmenGroup.objects.select_for_update(of=("self",)).filter(
-        id__in=group_ids, warband_id=participant.warband_id, dismissed_at__isnull=True
+    groups = locked(
+        HenchmenGroup.objects.filter(id__in=group_ids, warband_id=participant.warband_id, dismissed_at__isnull=True)
     )
     locked_groups = {group.id: group for group in groups}
     events = BattleEvent.objects.filter(battle_id=battle.id, voided_at__isnull=True).filter(

@@ -26,6 +26,7 @@ from ..broadcast import bump_state_version
 from ..events import append_event
 from ..exploration import keep_exploration
 from ..lifecycle import all_finished, end_battle
+from ..locks import lock_battle
 from ..unusual import unusual_value_warnings
 from ..warnings import Warning
 from .context import FinaliseContext, load_context
@@ -106,7 +107,7 @@ class Confirmed:
 
 def confirm_postbattle(battle_id: int, participant: BattleParticipant, actor_user) -> Confirmed:
     """Under the battle lock: the player's confirmation, and the battle's end if he was the last one in it."""
-    battle = Battle.objects.select_for_update().get(id=battle_id)
+    battle = lock_battle(battle_id)
     participants = list(snapshot_participants().filter(battle_id=battle_id))
     payload = {"participant_user_id": actor_user.id}
     event_type = BattleEvent.TYPE_PARTICIPANT_CONFIRMED_POSTBATTLE

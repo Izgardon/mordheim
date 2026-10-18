@@ -11,6 +11,7 @@ from ..models import Battle, BattleEvent, BattleParticipant
 from ..validation.postbattle import empty_draft
 from .events import append_event
 from .lifecycle import end_battle, end_if_everyone_finished
+from .locks import locked
 from .postbattle.items import consume_single_use_items
 
 
@@ -34,8 +35,8 @@ def skip_postbattle(battle: Battle, participant: BattleParticipant, *, actor_use
 def close_postbattle(battle: Battle, *, actor_user, mode: str) -> list[dict]:
     """Skip every participant still in postbattle and end the battle (wins and losses recorded); the battle is
     locked. `actor_user` is None when the deadline closed it (mode "expired"). Returns the events."""
-    unfinished = BattleParticipant.objects.select_for_update().filter(
-        battle_id=battle.id, status=BattleParticipant.STATUS_FINISHED_BATTLE
+    unfinished = locked(
+        BattleParticipant.objects.filter(battle_id=battle.id, status=BattleParticipant.STATUS_FINISHED_BATTLE)
     )
     events = [skip_postbattle(battle, entry, actor_user=actor_user, closed_by=actor_user) for entry in unfinished]
     closed_by_user_id = actor_user.id if actor_user else None

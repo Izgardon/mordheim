@@ -14,6 +14,7 @@ from ..models import Battle, BattleEvent, BattleParticipant
 from ..serializers import display_name
 from .events import append_event, notify_user
 from .lifecycle import cancel_battle, participants_all_in
+from .locks import locked
 
 
 def open_prebattle(battle: Battle) -> None:
@@ -22,7 +23,7 @@ def open_prebattle(battle: Battle) -> None:
     battle.status = Battle.STATUS_PREBATTLE
     battle.closes_at = None
     battle.save(update_fields=["status", "closes_at", "updated_at"])
-    entries = list(BattleParticipant.objects.select_for_update().filter(battle_id=battle.id))
+    entries = list(locked(BattleParticipant.objects.filter(battle_id=battle.id)))
     for entry in entries:
         if entry.status == BattleParticipant.STATUS_ACCEPTED:
             entry.status = BattleParticipant.STATUS_JOINED_PREBATTLE

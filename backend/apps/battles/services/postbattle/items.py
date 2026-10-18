@@ -13,6 +13,7 @@ from apps.warbands.models import Henchman, HenchmenGroupItem, HeroItem, HiredSwo
 from ...models import Battle, BattleEvent, BattleParticipant
 from ...validation.coerce import coerce_int
 from ...validation.unit_keys import parse_unit_key
+from ..locks import locked
 
 ITEM_UNIT_TYPES = {"hero", "hired_sword", "henchman"}
 
@@ -82,11 +83,6 @@ def consume_single_use_items(
         rows = _item_rows(unit_type, unit_id, participant.warband_id, group_ids)
         if rows is None:
             continue
-        row_ids = list(
-            rows.select_for_update(of=("self",))
-            .filter(item_id=item_id)
-            .order_by("id")
-            .values_list("id", flat=True)[:count]
-        )
+        row_ids = list(locked(rows.filter(item_id=item_id).order_by("id")).values_list("id", flat=True)[:count])
         if row_ids:
             rows.model.objects.filter(id__in=row_ids).delete()
