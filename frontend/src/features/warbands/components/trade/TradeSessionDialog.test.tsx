@@ -312,6 +312,29 @@ describe("TradeSessionDialog: offer autosave", () => {
   });
 });
 
+describe("TradeSessionDialog: time left (decision 8, ECON-UX-01)", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-10-18T12:00:00Z"));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("counts down to the trade's deadline and starts again when a change moves it", async () => {
+    renderDialog(request({ expires_at: "2026-10-18T12:05:00Z" }));
+    expect(screen.getByText("Time left: 5:00")).toBeInTheDocument();
+
+    await act(() => vi.advanceTimersByTimeAsync(2_000));
+    expect(screen.getByText("Time left: 4:58")).toBeInTheDocument();
+
+    // Bob's change gives the trade another 10 minutes; the event carries the new deadline.
+    act(() => partner.send(request({ expires_at: "2026-10-18T12:10:02Z" })));
+    expect(screen.getByText("Time left: 10:00")).toBeInTheDocument();
+  });
+});
+
 describe("TradeSessionDialog: Accept and Unaccept", () => {
   it("locks naming the offer version it showed (BUG-35) and reads no summary (ECON-PERF-02)", async () => {
     const user = setupUser();

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -14,29 +14,43 @@ type UseTradeChannelOptions = {
   onCompleted: (request: TradeCompletion, endsSession: boolean) => void;
   /** The partner closed the trade (the payload says how, when it has one). */
   onClosed: (request: TradeRequest | undefined) => void;
+  /** The trade's time ran out (the server's cron closes it up to 5 minutes later). */
+  onExpired: (requestId: string) => void;
 };
 
 /**
- * The open trade's realtime channel, one subscription per trade, dropped once the request expires
- * (BUG-69: the dialog stays open; PR C's countdown and `trade_closed` close it). Each event's
- * payload is the trade as it now is, so it goes straight into the trade query (ECON-PERF-02).
+ * The open trade's realtime channel, one subscription per trade, and its deadline: when
+ * `expires_at` passes (it moves with every event and answer), the page is told and the
+ * subscription drops (BUG-69). Each event's payload is the trade as it now is, so it goes
+ * straight into the trade query (ECON-PERF-02).
  */
-export function useTradeChannel({ session, onCompleted, onClosed }: UseTradeChannelOptions) {
+export function useTradeChannel({
+  session,
+  onCompleted,
+  onClosed,
+  onExpired,
+}: UseTradeChannelOptions) {
   const queryClient = useQueryClient();
   const [expiredRequestId, setExpiredRequestId] = useState<string | null>(null);
   const requestId = session?.requestId ?? null;
   const expiresAt = session?.expiresAt ?? null;
 
+  const onExpiredRef = useRef(onExpired);
+  onExpiredRef.current = onExpired;
   useEffect(() => {
     if (!requestId || !expiresAt) {
       return;
     }
+    const expire = () => {
+      setExpiredRequestId(requestId);
+      onExpiredRef.current(requestId);
+    };
     const timeoutMs = new Date(expiresAt).getTime() - Date.now();
     if (timeoutMs <= 0) {
-      setExpiredRequestId(requestId);
+      expire();
       return;
     }
-    const timer = window.setTimeout(() => setExpiredRequestId(requestId), timeoutMs);
+    const timer = window.setTimeout(expire, timeoutMs);
     return () => window.clearTimeout(timer);
   }, [expiresAt, requestId]);
 

@@ -10,6 +10,7 @@ import {
   getTradeRequest,
 } from "../../../campaigns/api/campaigns-api";
 import { setTradeData, tradeQuery } from "../../api/economy-queries";
+import { queryKeys } from "@/lib/query-keys";
 import { useWarbandCacheUpdate } from "../../api/warband-cache";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { openTradeIdFromError } from "../../utils/trade-errors";
@@ -185,8 +186,14 @@ export function useWarbandTradeSession({
     if (session && canLoad) {
       handledEnd.current = session.requestId;
       const partner = session.partner.label;
+      // This browser no longer shows it: the `trade_closed` the close sends says nothing here.
+      queryClient.removeQueries({
+        queryKey: queryKeys.campaign.trade(campaignId, session.requestId),
+        exact: true,
+      });
       // The dialog closes at once; a failed close is said, not swallowed (ECON-UX-05).
       closeTradeRequest(campaignId, session.requestId)
+        .then((closed) => setTradeData(queryClient, closed))
         .catch((error: unknown) => {
           toast.error(`Couldn't cancel the trade with ${partner}.`, {
             description: getErrorMessage(error, "It may stay open until it expires."),
@@ -199,7 +206,7 @@ export function useWarbandTradeSession({
         });
     }
     setTradeParam(null);
-  }, [campaignId, canLoad, session, setTradeParam, updateWarbandCache, warbandId]);
+  }, [campaignId, canLoad, queryClient, session, setTradeParam, updateWarbandCache, warbandId]);
 
   useTradeChannel({
     session,
@@ -213,6 +220,12 @@ export function useWarbandTradeSession({
         handledEnd.current = closed.id;
         setTradeData(queryClient, closed);
         announceEnd(closed);
+      }
+    },
+    // Time ran out: the trade reads as expired from now on, which closes it here with a toast.
+    onExpired: () => {
+      if (request && !isTradeOver(request)) {
+        setTradeData(queryClient, { ...request, status: "expired" });
       }
     },
   });

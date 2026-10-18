@@ -136,6 +136,43 @@ describe("useNotificationSubscription", () => {
     expect(await screen.findByText("Mira declined the trade.")).toBeInTheDocument();
   });
 
+  it("closes a trade shown here when trade_closed says how it ended, and drops its request (decision 8)", async () => {
+    const { queryClient } = renderHarness();
+    await waitFor(() => expect(notificationHandler()).toBeDefined());
+    act(() => notificationHandler()({ type: "trade_request", payload: tradeRequest }));
+    expect(screen.getByText("1 trade requests")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Start trade" }));
+
+    act(() =>
+      notificationHandler()({
+        type: "trade_closed",
+        payload: { ...tradeRequest, status: "cancelled" },
+      })
+    );
+
+    expect(await screen.findByText("Mira cancelled the trade.")).toBeInTheDocument();
+    expect(screen.getByText("0 trade requests")).toBeInTheDocument();
+    expect(
+      queryClient.getQueryData<TradeRequest>(queryKeys.campaign.trade(7, "trade-9"))?.status
+    ).toBe("cancelled");
+  });
+
+  it("says nothing on trade_closed for a trade this browser doesn't show", async () => {
+    const { queryClient } = renderHarness();
+    await waitFor(() => expect(notificationHandler()).toBeDefined());
+
+    act(() =>
+      notificationHandler()({
+        type: "trade_closed",
+        payload: { ...tradeRequest, status: "expired" },
+      })
+    );
+    await act(() => new Promise((resolve) => setTimeout(resolve, 20)));
+
+    expect(screen.queryByText("The trade request expired.")).not.toBeInTheDocument();
+    expect(queryClient.getQueryData(queryKeys.campaign.trade(7, "trade-9"))).toBeUndefined();
+  });
+
   it("offers an accepted trade in a toast instead of navigating away (BUG-26)", async () => {
     renderHarness();
     await waitFor(() => expect(notificationHandler()).toBeDefined());

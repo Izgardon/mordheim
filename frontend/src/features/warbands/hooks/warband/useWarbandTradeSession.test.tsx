@@ -7,6 +7,7 @@
 import { act, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes, useLocation, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useWarbandTradeSession } from "./useWarbandTradeSession";
@@ -126,7 +127,7 @@ function WarbandPageTrade({ loadWarchestItems }: { loadWarchestItems: () => void
 
 const renderPage = (url = `/campaigns/7/warband?trade=${TRADE}`) => {
   const loadWarchestItems = vi.fn();
-  renderWithQueryClient(
+  const { queryClient } = renderWithQueryClient(
     <AppStoreProvider>
       <AppToaster />
       <MemoryRouter initialEntries={[url]}>
@@ -139,7 +140,7 @@ const renderPage = (url = `/campaigns/7/warband?trade=${TRADE}`) => {
       </MemoryRouter>
     </AppStoreProvider>
   );
-  return { loadWarchestItems };
+  return { loadWarchestItems, queryClient };
 };
 
 /** Opens the page on an accepted trade (one read of the request). */
@@ -156,6 +157,8 @@ const deliver = async (message: TradeEventMessage) => {
 };
 
 beforeEach(() => {
+  // Toasts outlive a test (sonner keeps them and replays them to the next toaster): start clean.
+  toast.dismiss();
   fakeApi.reset();
   channel.requestId = null;
   fakeApi.on(GET_TRADE, () => request());
@@ -383,12 +386,53 @@ describe("useWarbandTradeSession: closing and expiry", () => {
     expect(screen.getByText("Session: none")).toBeInTheDocument();
   });
 
-  it("stops listening once the request expires but keeps the session open (BUG-69, pinned; flips in PR A)", async () => {
-    fakeApi.on(GET_TRADE, () => request({ expires_at: new Date(Date.now() - 1000).toISOString() }));
+  it("closes the trade with a toast once its time runs out, and stops listening (BUG-69, decision 8)", async () => {
+    fakeApi.on(GET_TRADE, () => request({ expires_at: new Date(Date.now() + 300).toISOString() }));
+    renderPage();
+    expect(await screen.findByText("Session: active (initiator)")).toBeInTheDocument();
+
+    expect(await screen.findByText("The trade request expired.")).toBeInTheDocument();
+    expect(screen.getByText("Session: none")).toBeInTheDocument();
+    expect(screen.getByText("URL: (none)")).toBeInTheDocument();
+    expect(channel.requestId).toBeNull();
+  });
+
+  it("keeps the trade open past its old deadline when an event moves it (decision 8)", async () => {
+    fakeApi.on(GET_TRADE, () => request({ expires_at: new Date(Date.now() + 400).toISOString() }));
+    await openOnTrade();
+
+    await deliver({
+      type: "trade.offer_updated",
+      payload: request({ expires_at: new Date(Date.now() + 5 * 60_000).toISOString() }),
+    });
+    await new Promise((resolve) => setTimeout(resolve, 600));
+
+    expect(screen.getByText("Session: active (initiator)")).toBeInTheDocument();
+    expect(channel.requestId).toBe(TRADE);
+    expect(screen.queryByText("The trade request expired.")).not.toBeInTheDocument();
+  });
+
+  it("says a trade read as expired ran out, and drops it", async () => {
+    fakeApi.on(GET_TRADE, () => request({ status: "expired" }));
     renderPage();
 
-    expect(await screen.findByText("Session: active (initiator)")).toBeInTheDocument();
-    await waitFor(() => expect(channel.requestId).toBeNull());
-    expect(screen.getByText(`URL: ?trade=${TRADE}`)).toBeInTheDocument();
+    expect(await screen.findByText("URL: (none)")).toBeInTheDocument();
+    expect(await screen.findByText("The trade request expired.")).toBeInTheDocument();
+  });
+
+  it("drops a trade it closes from the cache, so the trade_closed that follows says nothing", async () => {
+    const user = setupUser();
+    fakeApi.on(`POST /campaigns/7/trade-requests/${TRADE}/close/`, () =>
+      request({ status: "cancelled" })
+    );
+    const { queryClient } = await openOnTrade();
+
+    await user.click(screen.getByRole("button", { name: "Close trade" }));
+
+    await waitFor(() =>
+      expect(
+        queryClient.getQueryData<TradeRequest>(queryKeys.campaign.trade(7, TRADE))?.status
+      ).toBe("cancelled")
+    );
   });
 });

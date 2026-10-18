@@ -59,10 +59,14 @@ export function useNotifications() {
 
   const declineTradeNotification = useCallback(
     async (notification: TradeNotification) => {
-      await declineTradeRequest(notification.campaignId, notification.id);
+      // The answer is the declined trade: its `trade_closed` then says nothing more here.
+      setTradeData(
+        queryClient,
+        await declineTradeRequest(notification.campaignId, notification.id)
+      );
       removeTradeRequestNotification(notification.id);
     },
-    [removeTradeRequestNotification]
+    [queryClient, removeTradeRequestNotification]
   );
 
   const acceptBattleInviteNotification = useCallback(

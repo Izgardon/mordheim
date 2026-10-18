@@ -13,6 +13,7 @@ import TradeOfferEditor from "./TradeOfferEditor";
 import TradeOfferSummary from "./TradeOfferSummary";
 import { useTradeOfferDraft } from "@/features/warbands/hooks/warband/useTradeOfferDraft";
 import { useTradeLockActions } from "@/features/warbands/hooks/warband/useTradeLockActions";
+import { formatCountdown, useCountdown } from "@/features/warbands/hooks/warband/useCountdown";
 import {
   addOfferItem,
   normalizeOffer,
@@ -29,6 +30,9 @@ import type {
   TradeRequest,
   TradeSession,
 } from "@/features/warbands/types/trade-request-types";
+
+const TIME_LEFT_HINT =
+  "Any change by either of you gives the trade another 10 minutes, up to an hour after it opened. When time runs out, the trade closes and both offers are dropped.";
 
 type TradeSessionDialogProps = {
   session: TradeSession | null;
@@ -89,6 +93,8 @@ export default function TradeSessionDialog({
     onRequestUpdated,
   });
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  // The deadline moves with every change either player makes (decision 8): read it each time.
+  const timeLeft = useCountdown(tradeRequest?.expires_at ?? session?.expiresAt);
   const error = actions.actionError || offer.error;
   const warchest = useMemo(() => offerableStash(warchestItems, draft), [draft, warchestItems]);
 
@@ -125,6 +131,11 @@ export default function TradeSessionDialog({
           <DialogDescription className="sr-only">
             Offer stash items and gold; the trade completes when you both accept.
           </DialogDescription>
+          {timeLeft !== null ? (
+            <p className="text-xs text-muted-foreground" title={TIME_LEFT_HINT}>
+              Time left: {formatCountdown(timeLeft)}
+            </p>
+          ) : null}
         </DialogHeader>
 
         <div className="space-y-6">
