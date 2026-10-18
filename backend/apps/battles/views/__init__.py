@@ -5,7 +5,6 @@ from .combat import (
     CampaignBattleFinishView,
     CampaignBattleUnitKillView,
     CampaignBattleUnitOoaView,
-    CampaignBattleWinnerView,
 )
 from .invites import CampaignBattleDeclineView
 from .postbattle import (
@@ -52,7 +51,6 @@ __all__ = [
     "CampaignBattleUnitOoaView",
     "CampaignBattleUnitKillView",
     "CampaignBattleFinishView",
-    "CampaignBattleWinnerView",
     "CampaignBattlePostbattleSaveView",
     "CampaignBattleFinalizePostbattleView",
     "CampaignBattleConfirmView",

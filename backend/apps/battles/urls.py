@@ -23,7 +23,6 @@ from .views import (
     CampaignBattleStateView,
     CampaignBattleUnitKillView,
     CampaignBattleUnitOoaView,
-    CampaignBattleWinnerView,
     CampaignBattleWithdrawResultView,
     CampaignPendingResultsView,
 )
@@ -138,11 +137,6 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/finalize-postbattle/",
         CampaignBattleFinalizePostbattleView.as_view(),
         name="campaigns-battles-finalize-postbattle",
-    ),
-    path(
-        "campaigns/<int:campaign_id>/battles/<int:battle_id>/winner/",
-        CampaignBattleWinnerView.as_view(),
-        name="campaigns-battles-winner",
     ),
     path(
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/close-postbattle/",

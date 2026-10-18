@@ -101,34 +101,20 @@ class BattleItemUseTests(BattleTestCase):
         )
         extra = {"unit_key": self.a, "item_id": self.sword.id, "note": "hi"}
         self.refused(self.use_item(self.player, battle_id, extra), "payload_json has unsupported keys: note")
-        legacy = {"type": "death_recorded", "payload_json": {"anything": "x" * 3000}}  # every event type
-        self.refused(self.post_as(self.player, self.events_url(battle_id), legacy), "payload_json must be at most 2 KB", "payload_too_large")  # fmt: skip
 
         state = self.ok(self.get_as(self.viewer, self.url(battle_id, "state"))).data
         self.assertEqual([event["type"] for event in state["events"]][-1], "battle_started")
 
-    def test_the_winner_endpoint_always_refuses_and_legacy_events_still_record(self):
+    def test_the_winner_endpoint_and_the_legacy_events_are_gone(self):
+        # BATL-CQ-04/06, deleted in PR B: winner/ always refused, and kill_recorded and death_recorded were never sent
         battle_id = self.to_active({self.player: [self.a], self.viewer: [self.r]})
         response = self.post_as(self.player, self.url(battle_id, "winner"), {"winner_warband_ids": [self.warband.id]})
-        detail = "Winner selection happens when the active battle ends"
-        self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
-
-        # BATL-CQ-06: legacy kill_recorded and death_recorded events, unused by the frontend, are still accepted
-        legacy = {"type": "kill_recorded", "payload_json": {"killer_unit_type": " HERO ", "killer_unit_id": "7"}}
-        data = self.ok(self.post_as(self.player, self.events_url(battle_id), legacy), 201).data
-        self.assertEqual(data["events"][0]["payload_json"], {"killer_unit_type": "hero", "killer_unit_id": 7})
-        for payload, detail in (
-            ({"killer_unit_type": "dragon"}, "killer_unit_type is invalid"),
-            ({"killer_unit_type": "custom"}, "killer_unit_key is required for custom/bestiary units"),
-            ({"killer_unit_type": "hero", "killer_unit_id": 0}, "killer_unit_id is required"),
-        ):
-            with self.subTest(detail=detail):
-                response = self.post_as(
-                    self.player, self.events_url(battle_id), {"type": "kill_recorded", "payload_json": payload}
-                )
-                self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
-        death = {"type": "death_recorded", "payload_json": {"anything": True}}
-        self.ok(self.post_as(self.player, self.events_url(battle_id), death), 201)
+        self.assertEqual(response.status_code, 404)
+        for legacy in ("kill_recorded", "death_recorded"):
+            with self.subTest(type=legacy):
+                body = {"type": legacy, "payload_json": {"killer_unit_type": "hero", "killer_unit_id": 7}}
+                response = self.post_as(self.player, self.events_url(battle_id), body)
+                self.assertEqual((response.status_code, response.data), (400, {"detail": "Unsupported event type"}))
 
 
 class BattleSkipItemTests(BattleTestCase):

@@ -17,8 +17,6 @@ class BattleEvent(models.Model):
     TYPE_BATTLE_STARTED = "battle_started"
     TYPE_BATTLE_PREBATTLE_OPENED = "battle_prebattle_opened"
     TYPE_PARTICIPANT_JOINED_BATTLE = "participant_joined_battle"
-    TYPE_KILL_RECORDED = "kill_recorded"
-    TYPE_DEATH_RECORDED = "death_recorded"
     TYPE_ITEM_USED = "item_used"
     TYPE_UNIT_OOA_SET = "unit_ooa_set"
     TYPE_UNIT_OOA_UNSET = "unit_ooa_unset"
@@ -27,7 +25,6 @@ class BattleEvent(models.Model):
     TYPE_ITEM_USED_VOIDED = "item_used_voided"
     TYPE_PARTICIPANT_FINISHED_BATTLE = "participant_finished_battle"
     TYPE_BATTLE_ENTERED_POSTBATTLE = "battle_entered_postbattle"
-    TYPE_WINNER_DECLARED = "winner_declared"
     TYPE_PARTICIPANT_CONFIRMED_POSTBATTLE = "participant_confirmed_postbattle"
     TYPE_BATTLE_ENDED = "battle_ended"
     TYPE_BATTLE_CANCELED = "battle_canceled"
@@ -45,8 +42,6 @@ class BattleEvent(models.Model):
         (TYPE_BATTLE_STARTED, "Battle started"),
         (TYPE_BATTLE_PREBATTLE_OPENED, "Battle prebattle opened"),
         (TYPE_PARTICIPANT_JOINED_BATTLE, "Participant joined battle"),
-        (TYPE_KILL_RECORDED, "Kill recorded"),
-        (TYPE_DEATH_RECORDED, "Death recorded"),
         (TYPE_ITEM_USED, "Item used"),
         (TYPE_UNIT_OOA_SET, "Unit out of action set"),
         (TYPE_UNIT_OOA_UNSET, "Unit out of action unset"),
@@ -55,7 +50,6 @@ class BattleEvent(models.Model):
         (TYPE_ITEM_USED_VOIDED, "Item use voided"),
         (TYPE_PARTICIPANT_FINISHED_BATTLE, "Participant finished battle"),
         (TYPE_BATTLE_ENTERED_POSTBATTLE, "Battle entered postbattle"),
-        (TYPE_WINNER_DECLARED, "Winner declared"),
         (TYPE_PARTICIPANT_CONFIRMED_POSTBATTLE, "Participant confirmed postbattle"),
         (TYPE_BATTLE_ENDED, "Battle ended"),
         (TYPE_BATTLE_CANCELED, "Battle canceled"),

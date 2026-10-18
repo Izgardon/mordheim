@@ -1,4 +1,4 @@
-"""The fight: item use and other in-battle events, out of action, kills, End battle."""
+"""The fight: single-use items used, out of action, kills, End battle."""
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -6,41 +6,16 @@ from rest_framework.response import Response
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.broadcast import ALL
 from ..services.combat import enter_postbattle, record_item_use, record_kill, set_out_of_action
-from ..services.errors import BattleError, Refused
-from ..services.events import append_event
+from ..services.errors import BattleError
 from ..services.item_use import check_payload_size
 from ..validation.coerce import coerce_bool
 from ..validation.unit_keys import parse_unit_key
 from .base import BattleWriteView, Scope, Unchanged, Written
 from .rules import creator_only, only, only_player, refuse, snapshot_when
 
-KILLER_UNIT_TYPES = {"hero", "hired_sword", "henchman", "custom", "bestiary"}
-INGAME_EVENT_TYPES = {BattleEvent.TYPE_KILL_RECORDED, BattleEvent.TYPE_DEATH_RECORDED, BattleEvent.TYPE_ITEM_USED}
+INGAME_EVENT_TYPES = {BattleEvent.TYPE_ITEM_USED}  # kills go through unit-kill/ (the legacy types are gone)
 NOT_ACTIVE = "Battle is not active"
 NOT_IN_BATTLE = "You are not currently in battle"
-
-
-def _legacy_kill(payload: dict) -> Response | None:
-    """A legacy kill_recorded event's killer, cleaned in place (BATL-CQ-06)."""
-    unit_type = str(payload.get("killer_unit_type", "")).strip().lower()
-    if unit_type not in KILLER_UNIT_TYPES:
-        return Response({"detail": "killer_unit_type is invalid"}, status=400)
-    payload["killer_unit_type"] = unit_type
-    if unit_type in ("custom", "bestiary"):
-        killer_unit_key = payload.get("killer_unit_key")
-        if not isinstance(killer_unit_key, str) or not killer_unit_key.strip():
-            return Response({"detail": "killer_unit_key is required for custom/bestiary units"}, status=400)
-        payload["killer_unit_key"] = killer_unit_key.strip()
-        payload.pop("killer_unit_id", None)
-        return None
-    try:
-        killer_unit_id = int(payload.get("killer_unit_id", 0))
-    except (TypeError, ValueError):
-        return Response({"detail": "killer_unit_id is required"}, status=400)
-    if killer_unit_id <= 0:
-        return Response({"detail": "killer_unit_id is required"}, status=400)
-    payload["killer_unit_id"] = killer_unit_id
-    return None
 
 
 class CampaignBattleEventCreateView(BattleWriteView):
@@ -57,20 +32,10 @@ class CampaignBattleEventCreateView(BattleWriteView):
             check_payload_size(payload)
         except BattleError as refused:
             return refused.response()
-        if event_type == BattleEvent.TYPE_KILL_RECORDED and (refusal := _legacy_kill(payload)) is not None:
-            return refusal
-        return event_type, payload
+        return payload
 
     def act(self, scope: Scope):
-        event_type, payload = self.input
-        if event_type == BattleEvent.TYPE_ITEM_USED:
-            event = record_item_use(scope.battle, scope.player, payload, scope.user)
-        else:
-            if scope.battle.status != Battle.STATUS_ACTIVE:
-                raise Refused(NOT_ACTIVE)
-            if scope.player.status != BattleParticipant.STATUS_IN_BATTLE:
-                raise Refused(NOT_IN_BATTLE)
-            event = append_event(scope.battle, event_type, actor_user=scope.user, payload=payload)
+        event = record_item_use(scope.battle, scope.player, self.input, scope.user)
         return Written([event], status=status.HTTP_201_CREATED)
 
 
@@ -185,8 +150,3 @@ class CampaignBattleFinishView(BattleWriteView):
 
     def act(self, scope: Scope):
         return Written(enter_postbattle(scope.battle, self.input, scope.user), changed=ALL)
-
-
-class CampaignBattleWinnerView(BattleWriteView):
-    def post(self, request, campaign_id, battle_id, **kwargs):
-        return Response({"detail": "Winner selection happens when the active battle ends"}, status=400)
