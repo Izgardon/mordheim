@@ -1,5 +1,6 @@
 import { ADVANCE_FORMATTERS } from "./advance";
 import { BATTLE_FORMATTERS } from "./battle";
+import { ITEM_FORMATTERS } from "./items";
 import { LOADOUT_FORMATTERS } from "./loadout";
 import { PERSONNEL_FORMATTERS } from "./personnel";
 import { TRADING_FORMATTERS } from "./trading";
@@ -16,6 +17,8 @@ export const FEATURE_COLORS: Record<string, string> = {
   loadout: "bg-sky-500/20 text-sky-300 border-sky-500/30",
   personnel: "bg-lime-500/20 text-lime-300 border-lime-500/30",
   trading_action: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+  items: "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
+  trade: "bg-teal-500/20 text-teal-300 border-teal-500/30",
   dice_roll: "bg-orange-500/20 text-orange-300 border-orange-500/30",
   warband: "bg-purple-500/20 text-purple-300 border-purple-500/30",
   hero: "bg-rose-500/20 text-rose-300 border-rose-500/30",
@@ -31,4 +34,5 @@ export const LOG_FORMATTERS: Record<string, LogFormatter> = {
   ...PERSONNEL_FORMATTERS,
   ...BATTLE_FORMATTERS,
   ...LOADOUT_FORMATTERS,
+  ...ITEM_FORMATTERS,
 };

@@ -23,7 +23,7 @@ const textOf = (entry: WarbandLog) => {
 };
 
 describe("log formatters, by feature", () => {
-  it("cover the same entries as before the split", () => {
+  it("cover every entry that has its own formatter", () => {
     expect(Object.keys(LOG_FORMATTERS).sort()).toEqual(
       [
         "advance:hero",
@@ -42,6 +42,10 @@ describe("log formatters, by feature", () => {
         "loadout:henchmen_item",
         "loadout:stash_item",
         "loadout:hired_sword_item",
+        "items:sold",
+        "items:moved",
+        "items:discarded",
+        "trade:completed",
       ].sort()
     );
   });
@@ -75,6 +79,41 @@ describe("log formatters, by feature", () => {
     );
     expect(textOf(log("battle", "complete", { result: "lost", against: ["Rats"] }))).toBe(
       "Lost the battle against Rats."
+    );
+  });
+
+  it("read the server's entries for item sales, moves and discards", () => {
+    const sale = { item: "Sword", quantity: 2, price: 10, source_type: "stash", source_name: null };
+    expect(textOf(log("items", "sold", sale))).toBe("Sold Sword x 2 from the stash(10 gc)");
+    expect(
+      textOf(
+        log("items", "sold", { ...sale, quantity: 1, source_type: "hero", source_name: "Aldric" })
+      )
+    ).toBe("Sold Sword from Aldric(10 gc)");
+    const move = {
+      item: "Rope",
+      quantity: 1,
+      source_type: "stash",
+      source_name: null,
+      target_type: "henchmen_group",
+      target_name: null,
+    };
+    expect(textOf(log("items", "moved", move))).toBe(
+      "Moved Rope from the stash to a henchmen group"
+    );
+    expect(textOf(log("items", "discarded", { item: "Rope", quantity: 3 }))).toBe(
+      "Discarded Rope x 3"
+    );
+  });
+
+  it("say what a completed trade sent and received", () => {
+    const trade = {
+      partner: "Rats",
+      sent: { gold: 30, items: [{ item: "Sword", quantity: 2 }] },
+      received: { gold: 0, items: [] },
+    };
+    expect(textOf(log("trade", "completed", trade))).toBe(
+      "Traded with Rats: sent 30 gc, Sword x 2; received nothing"
     );
   });
 });
