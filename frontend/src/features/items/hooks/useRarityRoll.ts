@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
-import {
-  createWarbandLog,
-  listWarbandHeroes,
-  updateWarbandHero,
-} from "@/features/warbands/api/warbands-api";
+import { listWarbandHeroes } from "@/features/warbands/api/warbands-api";
+import { setHeroTradingAction } from "@/features/warbands/api/warband-cache";
+import { getErrorMessage } from "@/lib/get-error-message";
+import { saveRarityRoll, type RarityRollLine } from "../api/purchase";
 
 import type { Item } from "../types/item-types";
 import type { DraftUnit, HeroOption, HeroRarityRoll } from "../types/acquire-types";
@@ -18,15 +19,13 @@ type UseRarityRollOptions = {
   draftUnit?: DraftUnit;
   item: Item;
   rarity: number;
-  /** A failed trading-action spend, for the dialog's error line. */
-  onError: (message: string) => void;
 };
 
 /**
- * The rare-item search: which hero searches, his roll and its modifier. A roll spends the hero's
- * trading action and logs the search, from the browser (the purchase endpoint will save rolls);
- * a hero who already used his action can still search, with a warning (decision 9). The
- * warband's heroes are read when the dialog opens.
+ * The rare-item search: which hero searches, his roll and its modifier. The server saves a roll,
+ * spends the hero's trading action and logs the search: with the purchase, or through
+ * `rarity-rolls/` when the dialog closes without one (decision 9). A hero who already used his
+ * action can still search, with a warning. The warband's heroes are read when the dialog opens.
  */
 export function useRarityRoll({
   open,
@@ -35,13 +34,14 @@ export function useRarityRoll({
   draftUnit,
   item,
   rarity,
-  onError,
 }: UseRarityRollOptions) {
   const [searchingHeroId, setSearchingHeroId] = useState("");
   const [heroSearchUnits, setHeroSearchUnits] = useState<HeroOption[] | null>(null);
   const [heroRarityRolls, setHeroRarityRolls] = useState<Record<string, HeroRarityRoll>>({});
   const [spentHeroIds, setSpentHeroIds] = useState<string[]>([]);
-  const [savingHeroIds, setSavingHeroIds] = useState<string[]>([]);
+  // Heroes whose roll went with a purchase (the server spent them already).
+  const sentRolls = useRef(new Set<string>());
+  const queryClient = useQueryClient();
   const [modifierEnabled, setModifierEnabled] = useState(false);
   const [rarityModifier, setRarityModifier] = useState(0);
   const [modifierReason, setModifierReason] = useState("");
@@ -76,9 +76,7 @@ export function useRarityRoll({
     });
   }, [draftUnit, heroSearchUnits, heroUnits, open, spentHeroIds]);
 
-  const searcher = heroOptions.find((hero) => String(hero.id) === searchingHeroId) ?? null;
   const currentRarityRoll = searchingHeroId ? (heroRarityRolls[searchingHeroId] ?? null) : null;
-  const isSavingRarityRoll = searchingHeroId ? savingHeroIds.includes(searchingHeroId) : false;
   const isCommonRarity = rarity === 2;
   const roll = currentRarityRoll;
   const rollSummary =
@@ -94,73 +92,65 @@ export function useRarityRoll({
     }
   };
 
-  const stopSaving = (heroId: string) =>
-    setSavingHeroIds((current) => current.filter((entry) => entry !== heroId));
-
   // A spent searcher still rolls, with the picker's warning (decision 9): one roll per hero.
+  // The roll is kept here and saved on the server: with the purchase, or when the dialog closes.
   const handleRarityRollTotalChange = (total: number) => {
-    if (!warband || !searchingHeroId || isSavingRarityRoll) {
+    if (!warband || !searchingHeroId || heroRarityRolls[searchingHeroId]) {
       return;
     }
     const heroId = searchingHeroId;
-    if (heroRarityRolls[heroId]) {
-      return;
-    }
-    const heroName = searcher?.name?.trim() || "Unnamed Hero";
     const modifier = modifierEnabled ? rarityModifier : 0;
     const finalTotal = total + modifier;
-    const success = finalTotal >= rarity;
-    const parsedHeroId = Number(heroId);
-
+    const reason = modifierEnabled ? modifierReason.trim() || "No reason given" : undefined;
     setHeroRarityRolls((current) => ({
       ...current,
-      [heroId]: { total, modifier, finalTotal, success },
+      [heroId]: { total, modifier, finalTotal, success: finalTotal >= rarity, reason },
     }));
-    setSavingHeroIds((current) => (current.includes(heroId) ? current : [...current, heroId]));
-    if (Number.isNaN(parsedHeroId)) {
-      stopSaving(heroId);
+    setSpentHeroIds((current) => (current.includes(heroId) ? current : [...current, heroId]));
+  };
+
+  /** A stored roll as the server takes it (null for a draft hero, who can't search yet). */
+  const lineOf = (heroId: string): RarityRollLine | null => {
+    const stored = heroRarityRolls[heroId];
+    const id = Number(heroId);
+    if (!stored || Number.isNaN(id)) {
+      return null;
+    }
+    return {
+      hero_id: id,
+      roll: stored.total,
+      modifier: stored.modifier,
+      rarity: String(rarity),
+      ...(stored.reason ? { reason: stored.reason } : {}),
+      success: stored.success,
+    };
+  };
+
+  /** The searcher's roll, to save with the purchase. */
+  const rollForPurchase = () => (searchingHeroId ? lineOf(searchingHeroId) : null);
+
+  /** The roll went with a purchase: the server spent the hero, so it isn't saved again. */
+  const markRollSent = (heroId: number) => {
+    sentRolls.current.add(String(heroId));
+    if (warband) {
+      setHeroTradingAction(queryClient, warband.id, heroId, false);
+    }
+  };
+
+  /** Searches that ended without a purchase, saved as the dialog closes (decision 9). */
+  const saveUnsentRolls = () => {
+    if (!warband) {
       return;
     }
-
-    void updateWarbandHero(warband.id, parsedHeroId, { trading_action: false })
-      .then(async () => {
-        setHeroSearchUnits((current) =>
-          current
-            ? current.map((hero) =>
-                String(hero.id) === heroId ? { ...hero, trading_action: false } : hero
-              )
-            : current
+    for (const heroId of Object.keys(heroRarityRolls)) {
+      const line = sentRolls.current.has(heroId) ? null : lineOf(heroId);
+      if (line) {
+        void saveRarityRoll(queryClient, warband.id, { ...line, item_id: item.id }).catch(
+          (error: unknown) =>
+            toast.error("Couldn't save the rarity roll.", { description: getErrorMessage(error) })
         );
-        setSpentHeroIds((current) => (current.includes(heroId) ? current : [...current, heroId]));
-        try {
-          await createWarbandLog(warband.id, {
-            feature: "trading_action",
-            entry_type: "rarity roll",
-            payload: {
-              hero: heroName,
-              item: item.name,
-              rarity: isCommonRarity ? "Common" : String(rarity),
-              roll: total,
-              modifier,
-              ...(modifierEnabled ? { reason: modifierReason.trim() || "No reason given" } : {}),
-              success,
-            },
-          });
-        } catch (logError) {
-          console.error("Failed to log rarity roll", logError);
-        } finally {
-          stopSaving(heroId);
-        }
-      })
-      .catch(() => {
-        stopSaving(heroId);
-        setHeroRarityRolls((current) => {
-          const next = { ...current };
-          delete next[heroId];
-          return next;
-        });
-        onError("Unable to spend the selected hero's trading action.");
-      });
+      }
+    }
   };
 
   /** No search, as the dialog closes. */
@@ -172,15 +162,14 @@ export function useRarityRoll({
     setHeroSearchUnits(null);
     setHeroRarityRolls({});
     setSpentHeroIds([]);
-    setSavingHeroIds([]);
+    sentRolls.current = new Set();
   };
 
   return {
     heroOptions,
     searchingHeroId,
     handleSearchingHeroChange: setSearchingHeroId,
-    rollDisabled: !searchingHeroId || isSavingRarityRoll || currentRarityRoll !== null,
-    isSavingRarityRoll,
+    rollDisabled: !searchingHeroId || currentRarityRoll !== null,
     hasStoredRarityRoll: currentRarityRoll !== null,
     currentRarityRoll,
     modifierEnabled,
@@ -190,6 +179,9 @@ export function useRarityRoll({
     modifierReason,
     setModifierReason,
     handleRarityRollTotalChange,
+    rollForPurchase,
+    markRollSent,
+    saveUnsentRolls,
     raritySummary: {
       label: isCommonRarity ? "Common" : String(rarity),
       rollSummary,

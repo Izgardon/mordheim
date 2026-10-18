@@ -667,6 +667,74 @@ describe("AcquireItemDialog: rare items", () => {
     });
   });
 
+  it("saves the searcher's roll with the purchase, and shows a failed roll's warning (decision 9)", async () => {
+    const user = setupUser();
+    fakeApi.on(
+      PURCHASE,
+      purchaseAnswer({
+        target_type: "stash",
+        warnings: [
+          {
+            code: "rarity_roll_failed",
+            message: "Aldric the Bold's rarity roll for Lucky Charm failed.",
+            hero_id: 11,
+          },
+        ],
+      })
+    );
+    const { onClosed } = renderDialog({ item: luckyCharm, presetUnitType: "stash" });
+    await openLoadsSent();
+    await chooseOption(user, selectNear("Availability:"), /Rarity 9/);
+    await chooseOption(user, selectNear("Searching hero"), "Aldric the Bold");
+
+    await user.click(screen.getByRole("button", { name: "2d6" }));
+    expect(await screen.findByText(/Rolled 7/)).toBeInTheDocument();
+    // The roll is kept for the purchase: nothing is written yet.
+    expect(fakeApi.calls().filter((call) => !call.startsWith("GET"))).toEqual([]);
+    await clickBuy(user);
+
+    await waitFor(() => expect(onClosed).toHaveBeenCalledTimes(1));
+    expect(fakeApi.bodyOf(PURCHASE)).toMatchObject({
+      price: 40,
+      rarity_roll: { hero_id: 11, roll: 7, modifier: 0, rarity: "9", success: false },
+    });
+    expect(
+      await screen.findByText("Aldric the Bold's rarity roll for Lucky Charm failed.")
+    ).toBeInTheDocument();
+    // Saved once, with the purchase; no log from the browser.
+    expect(fakeApi.calls().filter((call) => !call.startsWith("GET"))).toEqual([PURCHASE]);
+  });
+
+  it("saves a search that ended without a purchase when the dialog closes (decision 9)", async () => {
+    const user = setupUser();
+    fakeApi.on("POST /warbands/9/rarity-rolls/", {
+      hero_id: 11,
+      trading_action: false,
+      warnings: [],
+    });
+    const { onClosed } = renderDialog({ item: luckyCharm, presetUnitType: "stash" });
+    await openLoadsSent();
+    await chooseOption(user, selectNear("Availability:"), /Rarity 9/);
+    await chooseOption(user, selectNear("Searching hero"), "Aldric the Bold");
+    await user.click(screen.getByRole("button", { name: "2d6" }));
+    await screen.findByText(/Rolled 7/);
+
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+    expect(onClosed).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(fakeApi.countOf("POST /warbands/9/rarity-rolls/")).toBe(1));
+    expect(fakeApi.bodyOf("POST /warbands/9/rarity-rolls/")).toEqual({
+      hero_id: 11,
+      roll: 7,
+      modifier: 0,
+      rarity: "9",
+      success: false,
+      item_id: 55,
+    });
+    expect(fakeApi.calls()).not.toContain("POST /warbands/9/logs/");
+    expect(fakeApi.calls()).not.toContain("PATCH /warbands/9/heroes/11/");
+  });
+
   it("queues one copy of a rare item after quantity 3 in roster edit mode", async () => {
     const user = setupUser();
     const { onAcquire } = renderDialog({

@@ -88,7 +88,6 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
     draftUnit: params.draftUnit,
     item,
     rarity: form.rarity,
-    onError: setError,
   });
 
   // The server's gold, from the warband sheet's summary (BUG-37): never re-derived here.
@@ -110,6 +109,8 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
     }
     onOpenChange?.(nextOpen);
     if (!nextOpen) {
+      // A search that ended without a purchase is still saved (decision 9).
+      rarity.saveUnsentRolls();
       setError("");
       target.reset();
       form.reset();
@@ -132,14 +133,7 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
     let didCommit = false;
     let didClose = false;
     try {
-      const meta: AcquireItemMeta = {
-        isBuying,
-        quantity: count,
-        unitPrice: finalPrice,
-        totalPrice,
-        reason: form.itemReason,
-        baseCost: form.resolvedAvailability?.cost ?? finalPrice,
-      };
+      const meta = form.meta();
       if (deferCommit) {
         onAcquire?.(item, resolvedUnitType, resolvedUnitId, meta);
         handleSelectOpenChange(false);
@@ -154,6 +148,8 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
         return;
       }
       // One request; the answer goes into the cache (the unit's items, the stash, gold, the row).
+      // A rare item's roll is saved with it, spending the searcher's trading action.
+      const rarityRoll = isBuying && !form.isCommonRarity ? rarity.rollForPurchase() : null;
       await purchase(
         {
           warbandId: warband.id,
@@ -162,10 +158,14 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
           meta,
           availabilityId: form.resolvedAvailability?.id ?? null,
           atCurrentPrice: Boolean(params.atCurrentPrice) && !form.priceEdited,
+          rarityRoll,
         },
         queryClient
       );
       didCommit = true;
+      if (rarityRoll) {
+        rarity.markRollSent(rarityRoll.hero_id);
+      }
       onAcquire?.(item, resolvedUnitType, resolvedUnitId, meta);
       handleSelectOpenChange(false);
       didClose = true;
@@ -209,8 +209,8 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
     heroOptions: rarity.heroOptions,
     searchingHeroId: rarity.searchingHeroId,
     handleSearchingHeroChange: rarity.handleSearchingHeroChange,
-    rollDisabled: rarity.rollDisabled,
-    isSavingRarityRoll: rarity.isSavingRarityRoll,
+    rollDisabled: rarity.rollDisabled || isSubmitting,
+    isSavingRarityRoll: isSubmitting,
     hasStoredRarityRoll: rarity.hasStoredRarityRoll,
     currentRarityRoll: rarity.currentRarityRoll,
     modifierEnabled: rarity.modifierEnabled,

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import type { Item, ItemAvailability } from "../types/item-types";
+import type { AcquireItemMeta } from "../types/acquire-types";
 
 type UseAcquireFormOptions = {
   item: Item;
@@ -118,6 +119,16 @@ export function useAcquireForm({
     setQuantityTouched(true);
   };
 
+  /** What the player chose, as the purchase (or the queued purchase) takes it. */
+  const meta = (): AcquireItemMeta => ({
+    isBuying,
+    quantity: count,
+    unitPrice: finalPrice,
+    totalPrice,
+    reason: itemReason,
+    baseCost: resolvedAvailability?.cost ?? finalPrice,
+  });
+
   /** Back to a fresh form, as the dialog closes. */
   const reset = () => {
     setItemReason("");
@@ -148,6 +159,7 @@ export function useAcquireForm({
     totalPrice,
     /** The player changed the price the availability suggested. */
     priceEdited: finalPrice !== resolvedCost,
+    meta,
     priceSummary,
     handleQuantityChange,
     isUnitSelectionCollapsed,

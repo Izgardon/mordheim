@@ -2,7 +2,11 @@ import type { QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { apiRequest } from "@/lib/api-client";
-import { applyWarbandUpdate, type WarbandUpdate } from "@/features/warbands/api/warband-cache";
+import {
+  applyWarbandUpdate,
+  setHeroTradingAction,
+  type WarbandUpdate,
+} from "@/features/warbands/api/warband-cache";
 import { prependTreasuryRow } from "@/features/warbands/api/economy-queries";
 import { getPersistedItemCost } from "../utils/acquire-item-costs";
 
@@ -131,6 +135,24 @@ export async function purchase(request: PurchaseRequest, queryClient: QueryClien
     },
   });
   applyPurchaseAnswer(queryClient, warbandId, answer);
+  toastPurchaseWarnings(answer.warnings);
+  return answer;
+}
+
+/**
+ * A search that ended without a purchase (decision 9): the server spends the hero's trading
+ * action and logs the roll. Its warnings (a spent searcher, a failed roll) show as toasts.
+ */
+export async function saveRarityRoll(
+  queryClient: QueryClient,
+  warbandId: number,
+  roll: RarityRollLine & { item_id: number }
+) {
+  const answer = await apiRequest<{ hero_id: number; warnings: PurchaseWarning[] }>(
+    `/warbands/${warbandId}/rarity-rolls/`,
+    { method: "POST", body: roll }
+  );
+  setHeroTradingAction(queryClient, warbandId, answer.hero_id, false);
   toastPurchaseWarnings(answer.warnings);
   return answer;
 }

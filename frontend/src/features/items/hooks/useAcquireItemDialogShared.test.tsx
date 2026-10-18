@@ -130,24 +130,10 @@ describe("useAcquireItemDialogShared", () => {
     expect(screen.getByTestId("roll-disabled")).toHaveTextContent("false");
     await user.click(screen.getByRole("button", { name: "Roll Four" }));
 
-    await waitFor(() => expect(apiMocks.updateWarbandHero).toHaveBeenCalledTimes(1));
-    await waitFor(() => expect(apiMocks.createWarbandLog).toHaveBeenCalledTimes(1));
-
-    expect(apiMocks.updateWarbandHero).toHaveBeenCalledWith(7, 1, { trading_action: false });
-    expect(apiMocks.createWarbandLog).toHaveBeenCalledWith(
-      7,
-      expect.objectContaining({
-        feature: "trading_action",
-        entry_type: "rarity roll",
-        payload: expect.objectContaining({
-          hero: "Hero One",
-          item: "Lucky Charm",
-          roll: 4,
-          modifier: 0,
-          success: false,
-        }),
-      })
-    );
+    // The roll is kept for the purchase (or saved when the dialog closes): the browser no longer
+    // spends the hero or logs the search itself (decision 9, ECON-CQ-02).
+    expect(apiMocks.updateWarbandHero).not.toHaveBeenCalled();
+    expect(apiMocks.createWarbandLog).not.toHaveBeenCalled();
     expect(eventMocks.emitWarbandUpdate).not.toHaveBeenCalled();
 
     await waitFor(() =>
@@ -158,9 +144,9 @@ describe("useAcquireItemDialogShared", () => {
     expect(screen.getByTestId("rarity-roll-summary")).toHaveTextContent("-> 4 + 0 = 4");
     expect(screen.getByTestId("rarity-success")).toHaveTextContent("false");
 
+    // One roll per hero.
     await user.click(screen.getByRole("button", { name: "Roll Four" }));
-    expect(apiMocks.updateWarbandHero).toHaveBeenCalledTimes(1);
-    expect(apiMocks.createWarbandLog).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId("rarity-roll-summary")).toHaveTextContent("-> 4 + 0 = 4");
 
     await user.click(screen.getByRole("button", { name: "Select Hero Two" }));
     expect(screen.getByTestId("roll-disabled")).toHaveTextContent("false");
@@ -187,7 +173,7 @@ describe("useAcquireItemDialogShared", () => {
     expect(screen.getByTestId("roll-disabled")).toHaveTextContent("false");
     await user.click(screen.getByRole("button", { name: "Roll Four" }));
 
-    await waitFor(() => expect(apiMocks.createWarbandLog).toHaveBeenCalledTimes(1));
+    expect(screen.getByTestId("rarity-roll-summary")).toHaveTextContent("-> 4 + 0 = 4");
     expect(screen.getByTestId("roll-disabled")).toHaveTextContent("true");
   });
 });

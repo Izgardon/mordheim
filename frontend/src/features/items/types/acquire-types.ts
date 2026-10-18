@@ -36,6 +36,8 @@ export type HeroRarityRoll = {
   modifier: number;
   finalTotal: number;
   success: boolean;
+  /** Why the modifier was added, when it was. */
+  reason?: string;
 };
 
 /** A hero offered as the searcher of a rare item. */
