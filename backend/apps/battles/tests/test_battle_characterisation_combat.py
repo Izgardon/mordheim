@@ -1,8 +1,8 @@
 """Live battle state characterised: config, kills, out of action and item use (pass 3, step 0).
 
-Pinned: config replacing the whole unit information and so undoing a kill (BUG-44, BATL-TEST-11) and taking any
-kill count (BUG-11); an armour-save typo accepted until finalise answers 400 (BUG-123); item use with another
-player's unit or item, or a 50 KB payload, accepted (BUG-72, SEC-09, BATL-TEST-17).
+Config merges what it is sent and never changes kills or out of action (BUG-44, BATL-TEST-11, fixed). Pinned: an
+armour-save typo accepted until finalise answers 400 (BUG-123); item use with another player's unit or item, or a
+50 KB payload, accepted (BUG-72, SEC-09, BATL-TEST-17).
 """
 
 from typing import Any
@@ -35,9 +35,8 @@ class BattleConfigTests(BattleTestCase):
         stored: dict[str, Any] = self.participant(self.battle_id, self.player).unit_information_json
         return stored
 
-    def test_config_replaces_the_unit_information_and_undoes_a_kill(self):
-        # Characterises current behaviour (BUG-44, BATL-TEST-11, pinned; flips in PR A: config merges a patch and
-        # never changes kill_count or out_of_action)
+    def test_a_whole_map_from_an_older_client_keeps_kills_and_out_of_action(self):
+        # BUG-44, BATL-TEST-11: a stale whole map replaces the editable fields but not the kill or the OOA
         self.ok(self.kill(self.player, self.battle_id, self.a, self.r), 201)
         self.ok(
             self.post_as(
@@ -50,19 +49,36 @@ class BattleConfigTests(BattleTestCase):
         stale = {self.a: {"current_wounds": 1, "kill_count": 0}}  # a wound save built before the kill and the OOA
         self.ok(self.config({"unit_information_json": stale}))
 
-        self.assertEqual(self.stored_info(), {self.a: info(current_wounds=1)})
+        expected = {self.a: info(current_wounds=1, kill_count=1), self.n: info(out_of_action=True)}
+        self.assertEqual(self.stored_info(), expected)
         self.assertEqual(self.event_types(self.battle_id)[-2:], ["unit_kill_recorded", "unit_ooa_set"])
 
-    def test_config_takes_any_kill_count_and_finalise_adds_it(self):
-        # Characterises current behaviour (BUG-11, pinned; flips in PR A: kill_count is derived and ignored on input)
-        self.ok(self.config({"unit_information_json": {self.a: {"kill_count": 50000}, self.n: {"kill_count": -3}}}))
-        self.assertEqual(self.stored_info(), {self.a: info(kill_count=9999), self.n: info()})
+    def test_config_ignores_kill_counts(self):
+        # BUG-11 (input half, with BUG-44): kill_count comes from the kill events, never from config
+        self.ok(self.config({"unit_information_json": {self.a: {"kill_count": 50000}, self.n: {"kill_count": "x"}}}))
+        self.ok(self.config({"unit_information_patch": {self.a: {"kill_count": 7, "out_of_action": True}}}))
+        self.assertEqual(self.stored_info(), {})
 
         self.finish(self.battle_id, [self.warband])
         results = {key: unit_result(key) for key in (self.a, self.n)}
         self.ok(self.finalize(self.player, self.battle_id, draft(results)))
         self.abbess.refresh_from_db()
-        self.assertEqual(self.abbess.kills, 9999)
+        self.assertEqual(self.abbess.kills, 0)
+
+    def test_a_patch_changes_only_the_fields_and_units_it_names(self):
+        # BUG-44: unit_information_patch merges into what is stored, under the participant's lock
+        self.ok(self.kill(self.player, self.battle_id, self.a, self.r), 201)
+        self.ok(self.config({"unit_information_patch": {self.a: {"notes": "brave"}, self.n: {"current_wounds": 2}}}))
+        self.ok(self.config({"unit_information_patch": {self.a: {"stats_override": {"strength": 4}}}}))
+
+        expected_a = info(notes="brave", stats_override={"strength": 4}, kill_count=1)
+        self.assertEqual(self.stored_info(), {self.a: expected_a, self.n: info(current_wounds=2)})
+
+        self.ok(self.config({"unit_information_patch": {self.n: {"current_wounds": None}}}))  # emptied: dropped
+        self.assertEqual(self.stored_info(), {self.a: expected_a})
+        response = self.config({"unit_information_patch": {}, "unit_information_json": {}})
+        detail = "Send unit_information_patch or unit_information_json, not both"
+        self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
 
     def test_config_keeps_what_it_is_not_sent_and_broadcasts_every_save(self):
         self.ok(self.config({"unit_information_json": {self.a: {"notes": " wounded "}}}))
@@ -81,18 +97,13 @@ class BattleConfigTests(BattleTestCase):
         entry = {
             "stats_override": {"weapon_skill": 14, "strength": -2, "armour_save": " 4+ "},
             "current_wounds": "12",
-            "out_of_action": "no",  # any non-empty value is true
+            "out_of_action": "no",  # ignored like kill_count (BUG-44); BUG-125 stored "no" as true
             "kill_count": "2",
             "unknown": "dropped",
         }
         self.ok(self.config({"unit_information_json": {f" {self.a} ": entry, " ": {}}}))
 
-        expected = info(
-            stats_override={"weapon_skill": 10, "strength": 0, "armour_save": "4+"},
-            current_wounds=10,
-            out_of_action=True,
-            kill_count=2,
-        )
+        expected = info(stats_override={"weapon_skill": 10, "strength": 0, "armour_save": "4+"}, current_wounds=10)
         self.assertEqual(self.stored_info(), {self.a: expected})
 
     def test_config_validation(self):
@@ -107,7 +118,9 @@ class BattleConfigTests(BattleTestCase):
             ({"unit_information_json": {a: {"notes": 5}}}, "unit information notes must be a string"),
             ({"unit_information_json": {a: {"notes": "x" * 501}}}, "unit information notes must be at most 500 characters"),
             ({"unit_information_json": {a: {"current_wounds": "x"}}}, "unit information current_wounds must be an integer"),
-            ({"unit_information_json": {a: {"kill_count": "x"}}}, "unit information kill_count must be an integer"),
+            ({"unit_information_patch": []}, "unit_information_patch must be an object"),
+            ({"unit_information_patch": {a: None}}, "Each unit information entry must be an object"),
+            ({"unit_information_patch": {a: {"current_wounds": "x"}}}, "unit information current_wounds must be an integer"),
             ({"selected_unit_keys_json": a}, "selected_unit_keys_json must be a list"),
             ({"selected_unit_keys_json": [3]}, "selected_unit_keys_json must contain only strings"),
             ({"custom_units_json": [{"key": "orc:1"}]}, "custom unit key must start with 'custom:' or 'bestiary:'"),

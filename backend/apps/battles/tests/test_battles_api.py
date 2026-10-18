@@ -127,6 +127,14 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 201)
         return response.data
 
+    def _live(self, user, battle_id, action, body):
+        """A unit-kill/ or unit-ooa/ post: kills and out of action change only through these (BUG-44)."""
+        self.client.force_authenticate(user=user)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/{action}/", body, format="json"
+        )
+        self.assertEqual(response.status_code, 201, response.data)
+
     def _ready_both_and_start(self, battle_id):
         self.client.force_authenticate(user=self.owner)
         response = self.client.post(
@@ -463,13 +471,6 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
                 "selected_unit_keys_json": [f"hero:{owner_hero.id}"],
-                "unit_information_json": {
-                    f"hero:{owner_hero.id}": {
-                        "kill_count": 2,
-                        "out_of_action": True,
-                        "stats_override": {},
-                    }
-                },
             },
             format="json",
         )
@@ -480,17 +481,14 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
                 "selected_unit_keys_json": [f"hero:{player_hero.id}"],
-                "unit_information_json": {
-                    f"hero:{player_hero.id}": {
-                        "kill_count": 0,
-                        "out_of_action": False,
-                        "stats_override": {},
-                    }
-                },
             },
             format="json",
         )
         self.assertEqual(response.status_code, 200)
+        kill = {"killer_unit_key": f"hero:{owner_hero.id}", "victim_unit_key": f"hero:{player_hero.id}"}
+        self._live(self.owner, battle_id, "unit-kill", kill)
+        self._live(self.owner, battle_id, "unit-kill", kill)
+        self._live(self.owner, battle_id, "unit-ooa", {"unit_key": f"hero:{owner_hero.id}", "out_of_action": True})
 
         self.client.force_authenticate(user=self.owner)
         response = self.client.post(
@@ -1914,13 +1912,6 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
                 "selected_unit_keys_json": [f"hero:{owner_hero.id}"],
-                "unit_information_json": {
-                    f"hero:{owner_hero.id}": {
-                        "kill_count": 2,
-                        "out_of_action": False,
-                        "stats_override": {},
-                    }
-                },
             },
             format="json",
         )
@@ -1931,17 +1922,14 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
                 "selected_unit_keys_json": [f"hero:{player_hero.id}"],
-                "unit_information_json": {
-                    f"hero:{player_hero.id}": {
-                        "kill_count": 0,
-                        "out_of_action": True,
-                        "stats_override": {},
-                    }
-                },
             },
             format="json",
         )
         self.assertEqual(response.status_code, 200)
+        kill = {"killer_unit_key": f"hero:{owner_hero.id}", "victim_unit_key": f"hero:{player_hero.id}"}
+        self._live(self.owner, battle_id, "unit-kill", kill)
+        self._live(self.owner, battle_id, "unit-kill", kill)
+        self._live(self.player, battle_id, "unit-ooa", {"unit_key": f"hero:{player_hero.id}", "out_of_action": True})
 
         self.client.force_authenticate(user=self.owner)
         response = self.client.post(

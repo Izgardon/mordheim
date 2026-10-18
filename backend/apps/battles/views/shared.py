@@ -39,6 +39,7 @@ from apps.warbands.utils.armour_save import ARMOUR_SAVE_ERROR, parse_armour_save
 from apps.warbands.utils.leaders import ensure_single_living_leader
 
 from ..models import Battle, BattleEvent, BattleParticipant
+from ..services.unit_information import ARMOUR_SAVE_STAT_KEY, NUMERIC_STAT_KEYS, clean_editable_fields
 
 KILLER_UNIT_TYPES = {"hero", "hired_sword", "henchman", "custom", "bestiary"}
 AGGREGATED_KILLER_UNIT_TYPES = {"hero", "hired_sword", "henchman"}
@@ -47,19 +48,6 @@ INGAME_EVENT_TYPES = {
     BattleEvent.TYPE_DEATH_RECORDED,
     BattleEvent.TYPE_ITEM_USED,
 }
-NUMERIC_STAT_KEYS = {
-    "movement",
-    "weapon_skill",
-    "ballistic_skill",
-    "strength",
-    "toughness",
-    "wounds",
-    "initiative",
-    "attacks",
-    "leadership",
-}
-ARMOUR_SAVE_STAT_KEY = "armour_save"
-ALL_OVERRIDE_STAT_KEYS = NUMERIC_STAT_KEYS | {ARMOUR_SAVE_STAT_KEY}
 
 
 def _display_name(user):
@@ -767,6 +755,7 @@ def _normalize_battle_notes(raw_value):
 
 
 def _normalize_unit_information(raw_value):
+    """A stored unit information map with every entry's fields filled in (services/unit_information.py)."""
     if raw_value is None:
         return {}
     if not isinstance(raw_value, dict):
@@ -783,70 +772,15 @@ def _normalize_unit_information(raw_value):
         if not normalized_unit_key:
             continue
 
-        stats_override = info.get("stats_override", {})
-        if stats_override is None:
-            stats_override = {}
-        if not isinstance(stats_override, dict):
-            raise ValueError("unit information stats_override must be an object")
-
-        cleaned_stats: dict[str, int | str] = {}
-        for stat_key, stat_value in stats_override.items():
-            if not isinstance(stat_key, str):
-                raise ValueError("unit information stat keys must be strings")
-            normalized_stat_key = stat_key.strip()
-            if normalized_stat_key not in ALL_OVERRIDE_STAT_KEYS:
-                raise ValueError(f"Unsupported unit information stat key '{normalized_stat_key}'")
-
-            if normalized_stat_key == ARMOUR_SAVE_STAT_KEY:
-                if stat_value is None:
-                    cleaned_str = ""
-                else:
-                    cleaned_str = str(stat_value).strip()
-                if len(cleaned_str) > 20:
-                    raise ValueError("armour_save must be at most 20 characters")
-                cleaned_stats[normalized_stat_key] = cleaned_str
-                continue
-
-            try:
-                cleaned_int = int(stat_value)
-            except (TypeError, ValueError):
-                raise ValueError(f"unit information stat '{normalized_stat_key}' must be an integer") from None
-            cleaned_stats[normalized_stat_key] = max(0, min(10, cleaned_int))
-
-        notes = info.get("notes", "")
-        if notes is None:
-            notes = ""
-        if not isinstance(notes, str):
-            raise ValueError("unit information notes must be a string")
-        notes = notes.strip()
-        if len(notes) > 500:
-            raise ValueError("unit information notes must be at most 500 characters")
-
-        out_of_action = bool(info.get("out_of_action", False))
-
-        current_wounds = info.get("current_wounds", None)
-        if current_wounds is None or current_wounds == "":
-            cleaned_current_wounds = None
-        else:
-            try:
-                cleaned_current_wounds = int(current_wounds)
-            except (TypeError, ValueError):
-                raise ValueError("unit information current_wounds must be an integer") from None
-            cleaned_current_wounds = max(0, min(10, cleaned_current_wounds))
-
-        kill_count = info.get("kill_count", 0)
         try:
-            kill_count = int(kill_count)
+            kill_count = int(info.get("kill_count", 0))
         except (TypeError, ValueError):
             raise ValueError("unit information kill_count must be an integer") from None
-        kill_count = max(0, min(9999, kill_count))
 
         normalized[normalized_unit_key] = {
-            "stats_override": cleaned_stats,
-            "notes": notes,
-            "current_wounds": cleaned_current_wounds,
-            "out_of_action": out_of_action,
-            "kill_count": kill_count,
+            **clean_editable_fields(info),
+            "out_of_action": bool(info.get("out_of_action", False)),
+            "kill_count": max(0, min(9999, kill_count)),
         }
 
     return normalized

@@ -16,6 +16,7 @@ from apps.notifications.utils import resolve_notification, resolve_notifications
 from apps.warbands.models import Warband
 
 from ..models import Battle, BattleEvent, BattleParticipant
+from ..services.unit_information import apply_patch, apply_whole_map
 from .shared import (
     _all_participants_accepted,
     _all_participants_canceled_prebattle,
@@ -537,6 +538,46 @@ class CampaignBattleRosterView(APIView):
         return Response(_battle_rosters_payload(battle.id))
 
 
+def _unit_information_change(data, participant) -> dict | None:
+    """The participant's unit information after a config save, or None when the save doesn't touch it: a patch, or
+    an older client's whole map, merged into what is stored (services/unit_information.py, BUG-44)."""
+    has_patch, has_whole_map = "unit_information_patch" in data, "unit_information_json" in data
+    if has_patch and has_whole_map:
+        raise ValueError("Send unit_information_patch or unit_information_json, not both")
+    if not (has_patch or has_whole_map):
+        return None
+    stored = _normalize_unit_information(participant.unit_information_json)
+    if has_patch:
+        return apply_patch(stored, data.get("unit_information_patch"))
+    return apply_whole_map(stored, data.get("unit_information_json"))
+
+
+def _declared_rating(raw_value) -> int | None:
+    if raw_value in ("", None):
+        return None
+    declared_rating = int(raw_value)
+    if declared_rating < 0 or declared_rating > 9999:
+        raise ValueError("declared_rating must be between 0 and 9999")
+    return declared_rating
+
+
+def _config_changes(data, participant) -> dict:
+    """The participant fields a config save sets: only those the request sends (ValueError when one is invalid)."""
+    changes: dict = {}
+    if "selected_unit_keys_json" in data:
+        changes["selected_unit_keys_json"] = _normalize_unit_keys(data.get("selected_unit_keys_json"))
+    unit_information = _unit_information_change(data, participant)
+    if unit_information is not None:
+        changes["unit_information_json"] = unit_information
+    if "custom_units_json" in data:
+        changes["custom_units_json"] = _normalize_custom_units(data.get("custom_units_json"))
+    if "declared_rating" in data:
+        changes["declared_rating"] = _declared_rating(data.get("declared_rating"))
+    if "battle_notes" in data:
+        changes["battle_notes"] = _normalize_battle_notes(data.get("battle_notes"))
+    return changes
+
+
 class CampaignBattleConfigView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
@@ -555,58 +596,13 @@ class CampaignBattleConfigView(APIView):
                 return Response({"detail": "Battle configuration is locked"}, status=400)
 
             try:
-                selected_unit_keys_raw = (
-                    request.data.get("selected_unit_keys_json")
-                    if "selected_unit_keys_json" in request.data
-                    else participant.selected_unit_keys_json
-                )
-                unit_information_raw = (
-                    request.data.get("unit_information_json")
-                    if "unit_information_json" in request.data
-                    else participant.unit_information_json
-                )
-                custom_units_raw = (
-                    request.data.get("custom_units_json")
-                    if "custom_units_json" in request.data
-                    else participant.custom_units_json
-                )
-                declared_rating_raw = (
-                    request.data.get("declared_rating")
-                    if "declared_rating" in request.data
-                    else participant.declared_rating
-                )
-                battle_notes_raw = (
-                    request.data.get("battle_notes") if "battle_notes" in request.data else participant.battle_notes
-                )
-
-                selected_unit_keys = _normalize_unit_keys(selected_unit_keys_raw)
-                unit_information = _normalize_unit_information(unit_information_raw)
-                custom_units = _normalize_custom_units(custom_units_raw)
-                battle_notes = _normalize_battle_notes(battle_notes_raw)
-                if declared_rating_raw in ("", None):
-                    declared_rating = None
-                else:
-                    declared_rating = int(declared_rating_raw)
-                    if declared_rating < 0 or declared_rating > 9999:
-                        raise ValueError("declared_rating must be between 0 and 9999")
+                changes = _config_changes(request.data, participant)
             except ValueError as exc:
                 return Response({"detail": str(exc)}, status=400)
 
-            participant.selected_unit_keys_json = selected_unit_keys
-            participant.unit_information_json = unit_information
-            participant.custom_units_json = custom_units
-            participant.declared_rating = declared_rating
-            participant.battle_notes = battle_notes
-            participant.save(
-                update_fields=[
-                    "selected_unit_keys_json",
-                    "unit_information_json",
-                    "custom_units_json",
-                    "declared_rating",
-                    "battle_notes",
-                    "updated_at",
-                ]
-            )
+            for field, value in changes.items():
+                setattr(participant, field, value)
+            participant.save(update_fields=[*changes, "updated_at"])
             _notify_battle_state_changed(
                 battle,
                 actor_user_id=request.user.id,

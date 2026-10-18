@@ -5,9 +5,9 @@ a `Rendezvous` patched in between a read and a write, or events that order one r
 other's read-to-write gap. Every battle write locks the battle row first, so today two finalises serialise
 (the second waits at the lock while the first holds the rendezvous, which gives up after its timeout).
 
-Two are expected failures until PR A: a config save racing a kill (BUG-44: the save writes back the stale kill
-count it was built with) and Clear racing Approve (BUG-121: the unlocked decline lands after the approval). If
-PR A renames a patched helper, move the hold point to the new read-to-write gap.
+A config save racing a kill keeps the kill (BUG-44, fixed in PR A: config merges into what is stored). Clear
+racing Approve is an expected failure until its fix (BUG-121: the unlocked decline lands after the approval). If a
+patched helper is renamed, move the hold point to the new read-to-write gap.
 """
 
 import threading
@@ -154,10 +154,9 @@ class BattleConcurrencyTests(TransactionTestCase):
         leaders = Hero.objects.filter(warband=self.warband, is_leader=True)
         self.assertEqual([(hero.dead, hero.dismissed_at) for hero in leaders], [(False, None)])
 
-    @unittest.expectedFailure
     def test_a_config_save_racing_a_kill_keeps_the_kill(self):
-        # BUG-44 (expected failure until PR A). The kill commits while the config save, built before it, waits for
-        # the battle lock; the save then writes back the whole blob with the stale kill_count 0.
+        # BUG-44: the kill commits while the config save, built before it, waits for the battle lock; the save then
+        # merges its wound into what is stored and keeps the kill (it wrote back the stale kill_count 0 before).
         battle = self.battle(Battle.STATUS_ACTIVE, BattleParticipant.STATUS_IN_BATTLE)
         rendezvous = Rendezvous()
         real_payload = combat._build_battle_unit_event_payload
@@ -182,7 +181,7 @@ class BattleConcurrencyTests(TransactionTestCase):
 
         self.assertEqual(statuses, [201, 200])
         info = BattleParticipant.objects.get(battle=battle, user=self.player).unit_information_json[self.a]
-        self.assertEqual((info["kill_count"], info["current_wounds"]), (1, 1))  # today (0, 1): the kill is lost
+        self.assertEqual((info["kill_count"], info["current_wounds"]), (1, 1))
 
     @unittest.expectedFailure
     def test_clearing_a_result_request_while_approving_it_leaves_a_consistent_battle(self):
