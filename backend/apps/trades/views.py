@@ -7,7 +7,6 @@ events go out after commit, skipping the sender's own socket when it names it (E
 from typing import Any
 
 from django.db import transaction
-from django.utils import timezone
 from rest_framework import permissions, status
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -20,7 +19,7 @@ from apps.realtime.services import send_trade_event, send_user_notification, sen
 
 from .actions import run_trade_action
 from .models import TradeRequest
-from .selectors import get_trade_for_participant, player_trades, require_member, trade_requests
+from .selectors import get_trade_for_participant, player_trades, require_member
 from .serializers import serialize_completed_trade, serialize_trade_request
 from .services.errors import TradeError
 from .services.lifecycle import (
@@ -38,23 +37,6 @@ from .services.requests import request_trade
 
 def _broadcast(request: Request, trade: TradeRequest, event: str, payload: dict[str, Any]) -> None:
     send_trade_event(trade.id, event, payload, socket_id=sender_socket_id(request))
-
-
-class UserPendingTradeRequestListView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request):
-        now = timezone.now()
-        waiting = TradeRequest.objects.filter(to_user=request.user, status=TradeRequest.STATUS_PENDING)
-        # pending requests have no traders to give back, so one guarded UPDATE expires them
-        waiting.filter(expires_at__lte=now).update(status=TradeRequest.STATUS_EXPIRED, responded_at=now)
-        requests = trade_requests().filter(
-            to_user=request.user,
-            status=TradeRequest.STATUS_PENDING,
-            expires_at__gt=now,
-            campaign__memberships__user=request.user,  # not from a campaign the player has left (SEC-08)
-        )
-        return Response([serialize_trade_request(entry) for entry in requests.order_by("-created_at")])
 
 
 class CampaignTradeRequestListCreateView(MethodScopedThrottleMixin, APIView):

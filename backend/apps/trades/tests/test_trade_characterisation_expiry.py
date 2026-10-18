@@ -96,16 +96,6 @@ class TradeExpiryTests(TradeTestCase):
                 self.assertEqual({row["id"] for row in listed}, {str(trade_id) for trade_id in expected})
         self.assertFalse(self.trading_action(hero))  # given back when expire_trades or a write closes the trade
 
-    def test_the_pending_list_expires_old_requests_and_hides_them(self):
-        trade = self.request_trade()
-        self.expire(trade)
-
-        response = self.get_as(self.viewer, "/api/trade-requests/pending/")
-
-        self.assertEqual((response.status_code, response.json()), (200, []))
-        self.assertEqual(self.state(trade)[0], "expired")
-        self.assertFalse(self.notification(self.viewer, trade).is_resolved)  # BUG-69: left open here too
-
 
 class TradeAccessTests(TradeTestCase):
     def test_only_the_two_players_may_change_a_trade(self):
@@ -174,7 +164,6 @@ class TradeAccessTests(TradeTestCase):
 
         accept = self.post_as(self.viewer, self.trade_url(to_viewer, "accept"))
         self.assertEqual((accept.status_code, accept.json()["code"]), (409, "trade_partner_left"))
-        self.assertEqual(self.get_as(self.player, "/api/trade-requests/pending/").json(), [])
         self.assertEqual(self.post_as(self.viewer, self.trade_url(to_viewer, "decline")).status_code, 200)
 
     def test_the_trade_channel_admits_the_two_players_while_the_trade_is_live(self):

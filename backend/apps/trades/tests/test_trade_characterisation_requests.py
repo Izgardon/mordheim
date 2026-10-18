@@ -253,12 +253,11 @@ class TradeRequestReadTests(TradeTestCase):
         response = self.get_as(self.player, self.trade_url(trade, campaign_id=other_campaign))
         self.assertEqual(response.status_code, 404)
 
-    def test_the_pending_list_shows_requests_waiting_for_me(self):
-        to_me = self.request_trade()
-        self.make_trade(from_user=self.viewer, to_user=self.player)  # sent by viewer: not waiting for viewer
-        self.make_trade("accepted")
+    def test_the_unused_pending_list_is_gone(self):
+        # BUG-69 (decision 8): GET /trade-requests/pending/ expired requests as it read them and no client called
+        # it; a player's waiting requests are their unresolved trade_request notifications
+        self.request_trade()
 
         response = self.get_as(self.viewer, "/api/trade-requests/pending/")
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual([row["id"] for row in response.json()], [str(to_me.id)])
+        self.assertEqual(response.status_code, 404)

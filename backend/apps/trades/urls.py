@@ -9,15 +9,9 @@ from .views import (
     CampaignTradeRequestDeclineView,
     CampaignTradeRequestDetailView,
     CampaignTradeRequestListCreateView,
-    UserPendingTradeRequestListView,
 )
 
 urlpatterns = [
-    path(
-        "trade-requests/pending/",
-        UserPendingTradeRequestListView.as_view(),
-        name="trade-requests-pending",
-    ),
     path(
         "campaigns/<int:campaign_id>/trade-requests/",
         CampaignTradeRequestListCreateView.as_view(),
