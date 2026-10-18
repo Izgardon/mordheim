@@ -1,8 +1,8 @@
 /**
- * Characterisation of where the trade dialog appears (BUG-43) before pass 2: the warband page
- * renders the trade named by `?trade=` on any warband, so opening another player's warband
- * mid-trade offers that warband's heroes, stash and gold. The real page, app store and router
- * run; `apiRequest` is answered by a fake server and the trade channel is stubbed.
+ * Where the trade dialog appears: the warband page renders the trade named by `?trade=` only on a
+ * warband its viewer may trade for (`capabilities.trade`, its owner: decision 10), so another
+ * player's warband never offers its heroes, stash or gold (BUG-43). The real page, app store and
+ * router run; `apiRequest` is answered by a fake server and the trade channel is stubbed.
  */
 import { act, screen, within } from "@testing-library/react";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
@@ -130,7 +130,7 @@ beforeEach(() => {
   fakeApi.on("GET /warbands/9/sheet/", {
     warband: annsWarband,
     summary: { gold: 120, rating: 99, resources: [] },
-    capabilities: { edit: true, manage_items: true },
+    capabilities: { edit: true, manage_items: true, trade: true },
     heroes: [aldric],
     henchmen_groups: [],
     hired_swords: [],
@@ -156,29 +156,39 @@ describe("Warband page: the trade dialog", () => {
     ]);
   });
 
-  it("opens on another player's warband, offering that warband's heroes, stash and gold (BUG-43, pinned; flips in PR A)", async () => {
-    const user = setupUser();
+  it("doesn't open or read the trade on another player's warband (BUG-43, decision 10)", async () => {
     renderPage(`/campaigns/7/warbands/15${runningTrade}`);
 
-    const dialog = await screen.findByRole("dialog", { name: "Trading with Bob" });
-    expect(
-      await within(dialog).findByRole("button", { name: "Wyrdstone 3/3" })
-    ).toBeInTheDocument();
-    expect(within(dialog).getByText("Available: 75 gc")).toBeInTheDocument();
-    expect(fakeApi.calls()).toEqual(
-      expect.arrayContaining([
-        "GET /warbands/15/sheet/",
-        `GET /campaigns/7/trade-requests/${TRADE}/`,
-        "GET /warbands/15/items/",
-      ])
-    );
+    expect(await screen.findByText("Grave Robbers")).toBeInTheDocument();
+    await act(() => new Promise((resolve) => setTimeout(resolve, 50)));
 
-    // Carl's hero is offered as Ann's trader.
-    act(() => within(dialog).getByRole("combobox").focus());
-    await user.keyboard("{Enter}");
-    expect(screen.getAllByRole("option").map((option) => option.textContent)).toEqual([
-      "None",
-      "Vargo",
-    ]);
+    expect(screen.queryByRole("dialog", { name: "Trading with Bob" })).not.toBeInTheDocument();
+    expect(fakeApi.calls()).not.toContain(`GET /campaigns/7/trade-requests/${TRADE}/`);
+    expect(fakeApi.calls()).not.toContain("GET /warbands/15/items/");
+    expect(screen.queryByRole("button", { name: "Start trade" })).not.toBeInTheDocument();
+  });
+
+  it("offers no Trade button to someone who may edit the warband but not trade for it (decision 10)", async () => {
+    fakeApi.on("GET /warbands/9/sheet/", {
+      warband: annsWarband,
+      summary: { gold: 120, rating: 99, resources: [] },
+      capabilities: { edit: true, manage_items: true, trade: false },
+      heroes: [aldric],
+      henchmen_groups: [],
+      hired_swords: [],
+    });
+    renderPage(`/campaigns/7/warband${runningTrade}`);
+
+    expect(await screen.findByText("The Black Wolves")).toBeInTheDocument();
+    await act(() => new Promise((resolve) => setTimeout(resolve, 50)));
+
+    expect(screen.queryByRole("button", { name: "Start trade" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog", { name: "Trading with Bob" })).not.toBeInTheDocument();
+  });
+
+  it("offers the Trade button to the warband's owner", async () => {
+    renderPage("/campaigns/7/warband");
+
+    expect(await screen.findByRole("button", { name: "Start trade" })).toBeInTheDocument();
   });
 });

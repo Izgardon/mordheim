@@ -58,9 +58,12 @@ export default function Warband() {
   });
 
   const warchest = useWarbandWarchest(campaignId, warband?.id);
+  // Only the warband's owner trades for it, so trades run on your own warband only (BUG-43).
+  const canTrade = capabilities.trade;
   const trade = useWarbandTradeSession({
     campaignId,
     hasCampaignId,
+    enabled: canTrade,
     warbandId: warband?.id,
     loadWarchestItems: warchest.loadWarchestItems,
   });
@@ -76,7 +79,7 @@ export default function Warband() {
     [heroes, hiredSwords, henchmenGroups, warband?.rating]
   );
   const canInitiateTrade = Boolean(
-    user && warband && !isViewingOtherWarband && hasCampaignId && !Number.isNaN(campaignId)
+    user && warband && canTrade && hasCampaignId && !Number.isNaN(campaignId)
   );
 
   const handleCreate = async (payload: WarbandCreatePayload) => {
@@ -145,17 +148,19 @@ export default function Warband() {
           />
         )}
         <DiscardChangesDialog {...page.discardDialog} />
-        <TradeSessionDialog
-          session={trade.session}
-          tradeRequest={trade.tradeRequest}
-          heroes={heroes}
-          warchestItems={warchest.warchestItems}
-          isWarchestLoading={warchest.isWarchestLoading}
-          warchestError={warchest.warchestError}
-          availableGold={gold}
-          onRequestUpdated={trade.handleRequestUpdated}
-          onClose={trade.handleTradeSessionClose}
-        />
+        {canTrade ? (
+          <TradeSessionDialog
+            session={trade.session}
+            tradeRequest={trade.tradeRequest}
+            heroes={heroes}
+            warchestItems={warchest.warchestItems}
+            isWarchestLoading={warchest.isWarchestLoading}
+            warchestError={warchest.warchestError}
+            availableGold={gold}
+            onRequestUpdated={trade.handleRequestUpdated}
+            onClose={trade.handleTradeSessionClose}
+          />
+        ) : null}
         <TabbedCard
           tabs={WARBAND_TABS}
           activeTab={page.activeTab}

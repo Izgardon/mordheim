@@ -88,6 +88,7 @@ function WarbandPageTrade({ loadWarchestItems }: { loadWarchestItems: () => void
   const trade = useWarbandTradeSession({
     campaignId: 7,
     hasCampaignId: true,
+    enabled: true,
     warbandId: 9,
     loadWarchestItems,
   });

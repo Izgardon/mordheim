@@ -14,6 +14,8 @@ export const WARBAND_CAPABILITIES = [
   "edit_backstory",
   "delete",
   "add_custom",
+  // Decision 10: only the warband's owner trades for it (campaign owners and admins don't).
+  "trade",
 ] as const;
 
 export type WarbandCapability = (typeof WARBAND_CAPABILITIES)[number];

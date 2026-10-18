@@ -95,6 +95,7 @@ const sheetOf = (warbandId: number, heroes: WarbandHero[]): WarbandSheet => ({
     edit_backstory: true,
     delete: true,
     add_custom: true,
+    trade: true,
   },
   heroes,
   henchmen_groups: warbandId === MY_WARBAND ? [myGroup] : [],

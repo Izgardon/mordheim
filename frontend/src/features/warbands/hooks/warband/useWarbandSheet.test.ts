@@ -162,6 +162,7 @@ const capabilities = {
   edit_backstory: true,
   delete: true,
   add_custom: false,
+  trade: true,
 };
 
 const sheetOf = (overrides: Partial<WarbandSheet> = {}): WarbandSheet => ({
@@ -209,6 +210,7 @@ describe("useWarbandSheet", () => {
       edit_backstory: false,
       delete: false,
       add_custom: false,
+      trade: false,
     });
     expect(result.current.heroes).toEqual([richHero]);
     expect(result.current.hiredSwords).toEqual([richHiredSword]);

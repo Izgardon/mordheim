@@ -22,6 +22,8 @@ import type { TradeCompletion, TradeRequest, TradeSession } from "../../types/tr
 type UseWarbandTradeSessionParams = {
   campaignId: number;
   hasCampaignId: boolean;
+  /** The sheet's `capabilities.trade`: only the warband's owner trades for it (decision 10). */
+  enabled: boolean;
   warbandId: number | undefined;
   loadWarchestItems: () => void;
 };
@@ -44,6 +46,7 @@ type UseWarbandTradeSessionReturn = {
 export function useWarbandTradeSession({
   campaignId,
   hasCampaignId,
+  enabled,
   warbandId,
   loadWarchestItems,
 }: UseWarbandTradeSessionParams): UseWarbandTradeSessionReturn {
@@ -51,7 +54,8 @@ export function useWarbandTradeSession({
   const queryClient = useQueryClient();
   const updateWarbandCache = useWarbandCacheUpdate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const canLoad = hasCampaignId && !Number.isNaN(campaignId);
+  // Off another player's warband (BUG-43): no trade is read, shown or listened to there.
+  const canLoad = enabled && hasCampaignId && !Number.isNaN(campaignId);
   const userId = user?.id;
   const tradeParam = searchParams.get("trade");
   // The latest URL, for callbacks that must not change with every ?tab= (ECON-PERF-02).
@@ -64,7 +68,7 @@ export function useWarbandTradeSession({
     ...tradeQuery(campaignId, tradeParam ?? ""),
     enabled: canLoad && Boolean(user) && Boolean(tradeParam),
   });
-  const request = tradeParam && trade.data?.id === tradeParam ? trade.data : null;
+  const request = canLoad && tradeParam && trade.data?.id === tradeParam ? trade.data : null;
   const session = useMemo(
     () =>
       request && userId !== undefined && !isTradeOver(request)
