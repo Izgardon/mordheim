@@ -3344,6 +3344,7 @@ class BattleApiTests(APITestCase):
                             "kill_count": 0,
                             "xp_earned": 1,
                             "dead": False,
+                            "keep_stats": True,  # battle stat changes are kept only when ticked (decision 6)
                             "special_ids": [],
                             "serious_injury_rolls": [],
                         },
@@ -3356,6 +3357,7 @@ class BattleApiTests(APITestCase):
                             "kill_count": 0,
                             "xp_earned": 1,
                             "dead": False,
+                            "keep_stats": True,  # battle stat changes are kept only when ticked (decision 6)
                             "special_ids": [],
                             "serious_injury_rolls": [],
                         },
@@ -3368,6 +3370,7 @@ class BattleApiTests(APITestCase):
                             "kill_count": 0,
                             "xp_earned": 1,
                             "dead": False,
+                            "keep_stats": True,  # battle stat changes are kept only when ticked (decision 6)
                             "special_ids": [],
                             "serious_injury_rolls": [],
                         },
@@ -3380,6 +3383,7 @@ class BattleApiTests(APITestCase):
                             "kill_count": 0,
                             "xp_earned": 1,
                             "dead": False,
+                            "keep_stats": True,  # battle stat changes are kept only when ticked (decision 6)
                             "special_ids": [],
                             "serious_injury_rolls": [],
                         },

@@ -28,9 +28,11 @@ def unit_result(
     rolls: list[dict[str, Any]] | None = None,
     specials: list[int] | None = None,
     name: str = "",
+    keep_stats: bool = False,
 ) -> dict[str, Any]:
     """One `postbattle_json.unit_results` entry as the postbattle page sends it."""
     return {
+        "keep_stats": keep_stats,
         "unit_name": name or unit_key,
         "unit_kind": unit_key.split(":")[0],
         "unit_type": "Trooper",

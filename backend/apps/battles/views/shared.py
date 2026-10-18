@@ -46,6 +46,7 @@ from ..services.kills import kill_counts_by_unit
 from ..services.lifecycle import participants_all_in, record_wins_and_losses
 from ..services.timing import is_overdue
 from ..services.unit_information import ARMOUR_SAVE_STAT_KEY, NUMERIC_STAT_KEYS, clean_editable_fields
+from ..services.unusual import unusual_value_warnings
 from ..services.warnings import Warning, unit_left_warband
 
 KILLER_UNIT_TYPES = {"hero", "hired_sword", "henchman", "custom", "bestiary"}
@@ -787,6 +788,17 @@ def _parse_armour_save_override(value) -> int | None:
         raise ValueError(f"unit information armour_save: {ARMOUR_SAVE_ERROR}") from None
 
 
+def _kept_stats(unit, stats_override: dict[str, int | str], unit_name: str, stat_logs: list[dict]) -> list[str]:
+    """Make a unit's battle stat changes permanent (its Keep tick, decision 6, SEC-10) and log them with before and
+    after; returns the changed fields."""
+    before = {key: getattr(unit, key) for key in (*NUMERIC_STAT_KEYS, ARMOUR_SAVE_STAT_KEY)}
+    fields = _apply_stats_override_to_unit(unit, stats_override)
+    if fields:
+        changes = {field: {"before": before[field], "after": getattr(unit, field)} for field in fields}
+        stat_logs.append({"unit_name": unit_name, "changes": changes})
+    return fields
+
+
 def _apply_stats_override_to_unit(unit, stats_override: dict[str, int | str]) -> list[str]:
     update_fields: list[str] = []
 
@@ -1278,6 +1290,8 @@ def _normalize_postbattle_json(raw_value):
                 entry.get("xp_earned", 0), field_name="postbattle xp_earned", minimum=0, maximum=9999
             ),
             "dead": bool(entry.get("dead", False)),
+            # battle stat changes are temporary unless kept (decision 6)
+            "keep_stats": _coerce_bool(entry.get("keep_stats", False), field_name="postbattle keep_stats"),
             "special_ids": special_ids,
             "serious_injury_rolls": serious_injury_rolls,
         }
@@ -1548,6 +1562,7 @@ def _apply_participant_postbattle_results(
 
     warnings: list[Warning] = []
     injury_logs: list[dict] = []
+    stat_logs: list[dict] = []
     kills_by_unit = kill_counts_by_unit(battle.id, participant.warband_id)  # the live kill events (decision 5)
     group_xp_by_id: dict[int, int] = {}
     group_stats_override_by_id: dict[int, dict[str, int | str]] = {}
@@ -1568,7 +1583,7 @@ def _apply_participant_postbattle_results(
                 warnings.append(unit_left_warband(unit_key, unit_name))
                 continue
             injury_logs.append(injury.log or {})
-            update_fields = _apply_stats_override_to_unit(hero, stats_override)
+            update_fields = _kept_stats(hero, stats_override, unit_name, stat_logs) if result["keep_stats"] else []
             update_fields += apply_stat_and_special(hero, injury, battle.campaign_id)
             if kill_count > 0:
                 hero.kills += kill_count
@@ -1592,7 +1607,9 @@ def _apply_participant_postbattle_results(
                 continue
             injury_logs.append(injury.log or {})
             effective_xp_earned = 0 if hired_sword.no_level_ups else xp_earned
-            update_fields = _apply_stats_override_to_unit(hired_sword, stats_override)
+            update_fields = (
+                _kept_stats(hired_sword, stats_override, unit_name, stat_logs) if result["keep_stats"] else []
+            )
             update_fields += apply_stat_and_special(hired_sword, injury, battle.campaign_id)
             if kill_count > 0:
                 hired_sword.kills += kill_count
@@ -1614,15 +1631,16 @@ def _apply_participant_postbattle_results(
                 continue
             injury_logs.append(injury.log or {})
             effective_xp_earned = 0 if group.no_level_ups else xp_earned
-            if stats_override:
+            if stats_override and result["keep_stats"]:  # one Keep for the group: any member's tick
                 existing_group_stats = group_stats_override_by_id.get(henchman.group_id)
                 if existing_group_stats is None:
                     group_stats_override_by_id[henchman.group_id] = stats_override
+                    group_name = group.name or group.unit_type or unit_name
+                    group_stats_update_fields_by_id[henchman.group_id].update(
+                        _kept_stats(group, stats_override, group_name, stat_logs)
+                    )
                 elif existing_group_stats != stats_override:
                     raise ValueError("All henchmen in a group must share the same stat overrides")
-                group_stats_update_fields_by_id[henchman.group_id].update(
-                    _apply_stats_override_to_unit(group, stats_override)
-                )
             if kill_count > 0:
                 henchman.kills += kill_count
             if dead and not henchman.dead:
@@ -1788,4 +1806,9 @@ def _apply_participant_postbattle_results(
         )
     for injury_log in filter(None, injury_logs):  # one per unit: the final roll, re-rolls, what was applied
         log_warband_event(participant.warband_id, "personnel", "serious_injury", injury_log)
-    return warnings
+    for stat_log in stat_logs:  # the kept stat changes, before and after (decision 6)
+        log_warband_event(participant.warband_id, "personnel", "stats_kept", stat_log)
+    unusual = unusual_value_warnings(normalized)  # allowed, answered and logged (decision 9)
+    if unusual:
+        log_warband_event(participant.warband_id, "battle", "warnings", {"warnings": unusual})
+    return warnings + unusual

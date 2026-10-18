@@ -54,12 +54,13 @@ class FinaliseRollbackTests(BattleTestCase):
             first, second = (self.key("henchman", member) for member in henchmen[:2])
             info = {first: {"stats_override": {"strength": 5}}, second: {"stats_override": {"strength": 4}}}
             self.unit_information(battle_id, info)
-            return self.postbattle_draft([])
+            return self.postbattle_draft([], **{first: {"keep_stats": True}, second: {"keep_stats": True}})
 
         def armour_save(battle_id: int) -> dict[str, Any]:
-            # stored before BUG-123 parsed saves on entry
-            self.unit_information(battle_id, {self.key("hero", heroes[1]): {"stats_override": {"armour_save": "7+"}}})
-            return self.postbattle_draft([])
+            # stored before BUG-123 parsed saves on entry, and kept (decision 6)
+            hero = self.key("hero", heroes[1])
+            self.unit_information(battle_id, {hero: {"stats_override": {"armour_save": "7+"}}})
+            return self.postbattle_draft([], **{hero: {"keep_stats": True}})
 
         group_xp = {self.key("henchman", henchmen[0]): {"xp": 1}}
         return [

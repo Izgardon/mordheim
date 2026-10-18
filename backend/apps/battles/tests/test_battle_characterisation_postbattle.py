@@ -15,6 +15,7 @@ from apps.warbands.models import (
     HiredSwordItem,
     Warband,
     WarbandItem,
+    WarbandLog,
     WarbandResource,
 )
 from apps.warbands.tests.roster_support import log_rows, trade_rows
@@ -122,30 +123,38 @@ class FixturePostbattleTests(BattleTestCase):
 
         self.assertEqual(trade_rows(self.warband), [])
 
-    def test_stat_overrides_become_permanent_without_a_log(self):
-        # Characterises current behaviour (SEC-10, pinned; flips in PR A: kept only with keep_stats, and logged)
-        h0, m0, m1 = self.key(self.heroes[0]), self.key(self.henchmen[0]), self.key(self.henchmen[1])
+    def test_stat_overrides_are_kept_only_when_ticked_and_logged(self):
+        # SEC-10, decision 6: every battle override became permanent, unlogged; now only with keep_stats (one tick
+        # for a henchmen group), logged with before and after
+        h0, h1 = self.key(self.heroes[0]), self.key(self.heroes[1])
+        m0, m1, m3 = (self.key(self.henchmen[n]) for n in (0, 1, 3))
         override = {"stats_override": {"strength": 5}}
         info: dict[str, dict[str, Any]] = {h0: {"stats_override": {"weapon_skill": 7, "armour_save": "4+"}}}
-        battle_id = self.start(**info, **{m0: override, m1: override})
+        info |= {h1: {"stats_override": {"toughness": 9}}, m0: override, m1: override, m3: override}
+        battle_id = self.start(**info)
         self.finish(battle_id, [self.warband])
 
-        self.ok(self.finalize(self.player, battle_id, draft(self.results())))
+        kept = {h0: {"keep_stats": True}, m1: {"keep_stats": True}}  # h1 and group 1 (m3) aren't kept
+        self.ok(self.finalize(self.player, battle_id, draft(self.results(**kept))))
 
-        hero, group = self.heroes[0], self.groups[0]
-        hero.refresh_from_db()
-        group.refresh_from_db()
-        self.assertEqual((hero.weapon_skill, hero.armour_save, group.strength), (7, 4, 5))
+        for unit in (*self.heroes[:2], *self.groups[:2]):
+            unit.refresh_from_db()
+        self.assertEqual((self.heroes[0].weapon_skill, self.heroes[0].armour_save, self.groups[0].strength), (7, 4, 5))
+        self.assertEqual((self.heroes[1].toughness, self.groups[1].strength), (0, 0))
         self.assertEqual(
-            [(feature, entry) for feature, entry, _, _ in log_rows(self.warband)],
-            [("battle", "complete"), ("battle", "exploration")],
-        )
+            [(feature, entry, payload) for feature, entry, payload, _ in log_rows(self.warband) if entry == "stats_kept"],
+            [
+                ("personnel", "stats_kept", {"unit_name": h0, "changes": {"weapon_skill": {"before": 0, "after": 7}, "armour_save": {"before": None, "after": 4}}}),
+                ("personnel", "stats_kept", {"unit_name": "Group 0", "changes": {"strength": {"before": 0, "after": 5}}}),
+            ],
+        )  # fmt: skip
 
     def test_henchmen_of_one_group_must_share_overrides_and_xp(self):
         m0, m1 = self.key(self.henchmen[0]), self.key(self.henchmen[1])
         battle_id = self.start(**{m0: {"stats_override": {"strength": 5}}, m1: {"stats_override": {"strength": 4}}})
         self.finish(battle_id, [self.warband])
-        response = self.finalize(self.player, battle_id, draft(self.results()))
+        kept = {m0: {"keep_stats": True}, m1: {"keep_stats": True}}  # differing overrides matter only when kept
+        response = self.finalize(self.player, battle_id, draft(self.results(**kept)))
         detail = "All henchmen in a group must share the same stat overrides"
         self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
 
@@ -154,8 +163,8 @@ class FixturePostbattleTests(BattleTestCase):
         detail = "All henchmen in a group must share the same xp_earned value"
         self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
 
-    def test_unusual_numbers_are_accepted_silently(self):
-        # Characterises current behaviour (SEC-10, BUG-71, pinned; flips in PR A: unusual values warn and are logged)
+    def test_unusual_numbers_warn_go_ahead_and_are_logged(self):
+        # SEC-10, decision 9: they were accepted silently; they still go ahead, but warn and are logged
         battle_id = self.start()
         self.finish(battle_id, [self.warband])
         h1 = self.key(self.heroes[1])
@@ -165,14 +174,35 @@ class FixturePostbattleTests(BattleTestCase):
             finds={"gold_crowns": 1_000_000, "items": []},
         )
 
-        self.ok(self.finalize(self.player, battle_id, postbattle))
+        data = self.ok(self.finalize(self.player, battle_id, postbattle)).data
 
         self.heroes[1].refresh_from_db()
         self.resource.refresh_from_db()
         self.assertEqual((self.heroes[1].xp, self.resource.amount), (Decimal(9999), 501))
         self.assertEqual(trade_rows(self.warband), [("Reward", "Battle reward", 999_999, None)])
+        codes = ["unusual_xp", "unusual_exploration_amount", "unusual_finds"]
+        self.assertEqual([warning["code"] for warning in data["warnings"]], codes)
+        logged = WarbandLog.objects.get(warband=self.warband, entry_type="warnings").payload["warnings"]
+        self.assertEqual(logged, data["warnings"])
+        self.assertEqual(data["warnings"][0]["message"], f"{h1} earned 9999 XP in one battle.")
         exploration = {"dice": [1], "amount": 500, "amount_override": 500, "resource": "Wyrdstone", "rerolls": []}
         self.assertEqual(log_rows(self.warband)[1][2], exploration)  # the override is logged (decision 9)
+
+    def test_a_draft_answers_unusual_values_and_logs_nothing(self):
+        # Decision 9: the draft says so straight away; only finalise logs
+        battle_id = self.start()
+        self.finish(battle_id, [self.warband])
+        postbattle = draft(
+            self.results(), exploration={"dice_values": [1] * 7}, finds={"gold_crowns": 101, "items": []}
+        )
+
+        data = self.ok(
+            self.post_as(self.player, self.url(battle_id, "postbattle"), {"postbattle_json": postbattle})
+        ).data
+
+        self.assertEqual([w["code"] for w in data["warnings"]], ["unusual_exploration_dice", "unusual_finds"])
+        self.assertEqual(data["warnings"][0]["message"], "7 exploration dice for 5 heroes.")
+        self.assertFalse(WarbandLog.objects.filter(warband=self.warband).exists())
 
     def test_dead_units_keep_their_items(self):
         # Characterises current behaviour (pass 2 decision 7, BATL-TWEAK-08; flips in PR A: a dead hero's or hired

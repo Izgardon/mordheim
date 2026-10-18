@@ -12,6 +12,7 @@ from ..services.errors import BattleError
 from ..services.exploration import keep_exploration
 from ..services.item_use import check_payload_size, item_use_payload
 from ..services.timing import postbattle_deadline, record_activity
+from ..services.unusual import unusual_value_warnings
 from .closing import skip_postbattle
 from .shared import (
     INGAME_EVENT_TYPES,
@@ -445,6 +446,7 @@ class CampaignBattlePostbattleSaveView(APIView):
             postbattle_json["exploration"], warnings = keep_exploration(
                 stored_exploration, postbattle_json["exploration"]
             )
+            warnings += unusual_value_warnings(postbattle_json)  # allowed; logged at finalise (decision 9)
             participant.postbattle_json = postbattle_json
             participant.save(update_fields=["postbattle_json", "updated_at"])
             record_activity(battle)  # a draft is the player's own: activity, but no broadcast (PERF-34)
