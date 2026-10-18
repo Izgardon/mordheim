@@ -16,21 +16,35 @@ class StashTests(RosterTestCase):
         return self.client.post(self._url(), body, format="json")
 
     def _rows(self) -> list[tuple[str, int, int | None]]:
-        rows = WarbandItem.objects.filter(warband=self.warband).select_related("item").order_by("item__name")
+        rows = WarbandItem.objects.filter(warband=self.warband).select_related("item").order_by("item__name", "cost")
         return [(row.item.name, row.quantity, row.cost) for row in rows]
 
-    def test_the_stash_lists_rows_by_item_name(self):
+    def test_the_stash_lists_one_entry_per_item_by_name_with_each_costs_count(self):
         WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=2, cost=9)
         WarbandItem.objects.create(warband=self.warband, item=self.axe, quantity=1)
+        WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=1, cost=12)
         WarbandItem.objects.create(warband=self.rival, item=self.axe, quantity=5)
 
         response = self.client.get(self._url())
 
+        # BUG-117: copies of one item at two costs are two rows; the entry's cost is the one that leaves first
         self.assertEqual(
             response.json(),
             [
-                {"id": self.axe.id, "name": "Axe", "cost": None, "quantity": 1},
-                {"id": self.sword.id, "name": "Sword", "cost": 9, "quantity": 2},
+                {
+                    "id": self.axe.id,
+                    "name": "Axe",
+                    "cost": None,
+                    "quantity": 1,
+                    "costs": [{"cost": None, "quantity": 1}],
+                },
+                {
+                    "id": self.sword.id,
+                    "name": "Sword",
+                    "cost": 12,
+                    "quantity": 3,
+                    "costs": [{"cost": 12, "quantity": 1}, {"cost": 9, "quantity": 2}],
+                },
             ],
         )
 
@@ -39,26 +53,32 @@ class StashTests(RosterTestCase):
         axe = self._add(item_id=self.axe.id, quantity=2)
         priced = self._add(item_id=Item.objects.create(name="Club", type="Melee").id, cost=4)
 
+        sword_entry = {"id": self.sword.id, "name": "Sword", "cost": 10, "quantity": 1}
         self.assertEqual(
-            (sword.status_code, sword.json()), (201, {"id": self.sword.id, "name": "Sword", "cost": 10, "quantity": 1})
+            (sword.status_code, sword.json()), (201, {**sword_entry, "costs": [{"cost": 10, "quantity": 1}]})
         )
-        self.assertEqual(axe.json(), {"id": self.axe.id, "name": "Axe", "cost": None, "quantity": 2})
+        self.assertEqual(axe.json()["costs"], [{"cost": None, "quantity": 2}])
         self.assertEqual(priced.json()["cost"], 4)
         # ECON-CQ-02 / BUG-07: adding to the stash writes no ledger row and no log; the buy dialog posts them
         self.assertEqual((trade_rows(self.warband), log_rows(self.warband)), ([], []))
 
-    def test_adding_to_an_existing_row_adds_copies_and_may_replace_its_cost(self):
+    def test_adding_copies_never_re_prices_the_ones_held(self):
+        # BUG-117: an add without a cost used to give the copies held the single availability's cost, and an add
+        # with a cost gave them that cost; each cost now keeps its own row
         WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=2, cost=4)
         WarbandItem.objects.create(warband=self.warband, item=self.axe, quantity=1, cost=6)
 
-        sword = self._add(item_id=self.sword.id, quantity=3)  # the single availability's 10 replaces 4
-        axe = self._add(item_id=self.axe.id)  # two availabilities: no default, the cost stays
+        sword = self._add(item_id=self.sword.id, quantity=3)  # the single availability's 10, beside the 4s
+        axe = self._add(item_id=self.axe.id)  # two availabilities: no default, an unknown cost
         explicit = self._add(item_id=self.axe.id, cost=8)
+        again = self._add(item_id=self.axe.id, cost=8)
 
         self.assertEqual((sword.status_code, sword.json()["quantity"], sword.json()["cost"]), (201, 5, 10))
-        self.assertEqual((axe.json()["quantity"], axe.json()["cost"]), (2, 6))
-        self.assertEqual((explicit.json()["quantity"], explicit.json()["cost"]), (3, 8))
-        self.assertEqual(self._rows(), [("Axe", 3, 8), ("Sword", 5, 10)])
+        self.assertEqual((axe.json()["quantity"], axe.json()["cost"]), (2, None))  # the newest copies leave first
+        self.assertEqual((explicit.json()["quantity"], again.json()["quantity"]), (3, 4))
+        self.assertEqual(
+            self._rows(), [("Axe", 1, 6), ("Axe", 2, 8), ("Axe", 1, None), ("Sword", 2, 4), ("Sword", 3, 10)]
+        )
 
     def test_loose_quantities_and_costs_are_coerced(self):
         for quantity, added in ((0, 1), (-2, 1), ("abc", 1), ("3", 3), (None, 1)):
@@ -159,7 +179,8 @@ class StashTests(RosterTestCase):
                 self.assertEqual(self.client.get(self._url()).status_code, read)
                 self.assertEqual(self._add(item_id=self.sword.id).status_code, write)
                 self.assertEqual(self.client.delete(self._url(self.sword.id)).status_code, delete)
-        self.assertEqual(self._rows(), [("Sword", 5, 10)])  # the manager added one and discarded one
+        # the manager added one at 10 (its own row) and discarded the newest
+        self.assertEqual(self._rows(), [("Sword", 5, None)])
 
 
 class ResourceTests(RosterTestCase):

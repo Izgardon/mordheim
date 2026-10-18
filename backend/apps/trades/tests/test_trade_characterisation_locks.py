@@ -167,8 +167,8 @@ class TradeCompletionTests(TradeTestCase):
         self.assertEqual(self.trade_events.call_args_list[-1].args, (self.trade.id, "trade.completed", body))
 
         # BUG-40: a new stash row for a traded item used to have no cost (it sold for 0); the copies now keep
-        # their cost, and a row the receiver already had keeps its own
-        self.assertEqual(self.stash_rows(self.warband), [("Axe", 2, 7), ("Sword", 1, 9)])
+        # their cost. BUG-117: they sit beside the receiver's own copies at another cost instead of joining them
+        self.assertEqual(self.stash_rows(self.warband), [("Axe", 1, 5), ("Axe", 1, 7), ("Sword", 1, 9)])
         self.assertEqual(self.stash_rows(self.rival), [("Axe", 1, 5), ("Sword", 2, 9)])
 
         # one "Trade" row per side and direction, signed (it used to be "Trade sent", stored positive: BUG-37)
@@ -209,13 +209,14 @@ class TradeCompletionTests(TradeTestCase):
 
         self.assertEqual(self.stash_rows(self.rival), [("Axe", 1, 5), ("Sword", 2, 9)])
 
-    def test_a_receivers_row_without_a_cost_takes_the_traded_copies_cost(self):
+    def test_a_receivers_copies_of_unknown_cost_stay_beside_the_traded_ones(self):
+        # BUG-117: the traded copy used to give its cost to the receiver's copies of unknown cost
         WarbandItem.objects.filter(warband=self.warband, item=self.axe).update(cost=None)
         self._offer_both_ways()
         self.lock(self.player, self.trade)
 
         self.assertEqual(self.lock(self.viewer, self.trade).json()["status"], "completed")
-        self.assertEqual(self.stash_rows(self.warband), [("Axe", 2, 5), ("Sword", 1, 9)])
+        self.assertEqual(self.stash_rows(self.warband), [("Axe", 1, 5), ("Axe", 1, None), ("Sword", 1, 9)])
 
     def test_an_item_only_offer_writes_no_gold_rows(self):
         self.offer(self.player, self.trade, items=[{"id": self.sword.id, "quantity": 3}])
@@ -254,7 +255,7 @@ class TradeCompletionTests(TradeTestCase):
         self.assertEqual((response.status_code, response.json()["status"]), (200, "completed"))
         self.assertEqual(self.state(self.trade), ("completed", True, True))
         self.assertEqual((self.trading_action(hero), self.trade.from_trader_spent_id), (False, hero.id))
-        self.assertEqual(self.stash_rows(self.warband), [("Axe", 2, 7), ("Sword", 1, 9)])
+        self.assertEqual(self.stash_rows(self.warband), [("Axe", 1, 5), ("Axe", 1, 7), ("Sword", 1, 9)])  # BUG-117
         self.assertEqual(self.event_names(), ["trade.locked", "trade.completed"])
 
     def test_a_failed_completion_unlocks_both_sides_and_says_why(self):

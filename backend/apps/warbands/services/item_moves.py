@@ -16,7 +16,7 @@ from apps.items.models import Item
 from apps.warbands.models import Henchman, LedgerAction, Warband, not_dismissed
 from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandItemSummarySerializer, WarbandSummarySerializer
 from apps.warbands.services import economy_log, ledger
-from apps.warbands.services.stash import add_to_stash, remove_from_stash, stash_row
+from apps.warbands.services.stash import ANY_COST, add_costs, remove_from_stash, stash_entry
 from apps.warbands.services.unit_items import add_unit_copies, resolve_unit, take_unit_copies
 from apps.warbands.units.kinds import KINDS, UnitKindKey
 
@@ -40,16 +40,18 @@ def _unit_payload(warband: Warband, unit_type: str, unit_id: int | None) -> Any:
     return UNIT_SERIALIZERS[cast(UnitKindKey, unit_type)].detail(instance).data
 
 
-def _remove_stash_items(warband: Warband, item_id: int, quantity: int) -> tuple[list[int | None], Any]:
-    take = remove_from_stash(warband.id, item_id, quantity)  # StashShortage is a ValueError: a 400
-    return [take.cost] * quantity, take.remaining
+def _remove_stash_items(warband: Warband, item_id: int, data: Mapping[str, Any]) -> tuple[list[int | None], Any]:
+    """Take the copies out of the stash, newest row first or only those of the cost sent; StashShortage is a
+    ValueError: a 400."""
+    cost = data["cost"] if "cost" in data else ANY_COST
+    take = remove_from_stash(warband.id, item_id, data["quantity"], cost)
+    return take.costs, take.remaining
 
 
 def _add_stash_items(warband: Warband, item: Item, costs: list[int | None]) -> Any:
-    """Copies moved into the stash share one cost: the last known one among them (BUG-117 keeps this for now)."""
-    next_cost = next((cost for cost in reversed(costs) if cost is not None), None)
-    add_to_stash(warband.id, item.id, len(costs), next_cost)
-    return stash_row(warband.id, item)
+    """Copies moved into the stash keep their costs (BUG-117)."""
+    add_costs(warband.id, item.id, costs)
+    return stash_entry(warband.id, item)
 
 
 def _item_change(warband: Warband, *, source: Any, target: Any = None, stash_item: Any, removed: Any) -> dict[str, Any]:
@@ -73,7 +75,7 @@ def transfer_item(warband: Warband, item: Item, data: Mapping[str, Any]) -> Outc
     with transaction.atomic():
         stash_item = removed = None
         if source_unit is None:
-            costs, stash_item = _remove_stash_items(warband, item_id, quantity)
+            costs, stash_item = _remove_stash_items(warband, item_id, data)
             if stash_item is None:
                 removed = item_id
         else:
@@ -106,7 +108,7 @@ def sell_item(warband: Warband, item: Item, data: Mapping[str, Any]) -> Outcome:
         ledger.record(warband, LedgerAction.SELL, data["price"], description)
         stash_item = removed = None
         if source_unit is None:
-            _costs, stash_item = _remove_stash_items(warband, item_id, quantity)
+            _costs, stash_item = _remove_stash_items(warband, item_id, data)
             if stash_item is None:
                 removed = item_id
             source = WarbandItemSummarySerializer(stash_item).data if stash_item else None

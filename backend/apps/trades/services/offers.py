@@ -63,19 +63,19 @@ def _offer_items(items: Any, warband_id: int) -> list[dict[str, Any]]:
     requested = requested_items(items)
     if not requested:
         return []
-    rows = {
-        row.item_id: row
-        for row in WarbandItem.objects.select_related("item").filter(warband_id=warband_id, item_id__in=requested)
-    }
+    stash = WarbandItem.objects.select_related("item").filter(warband_id=warband_id, item_id__in=requested)
+    rows: dict[int, list[WarbandItem]] = {}
+    for row in stash.order_by("-id"):  # the stash keeps a row per cost (BUG-117); the newest leaves first
+        rows.setdefault(row.item_id, []).append(row)
     offered = []
     for item_id, quantity in requested.items():
-        row = rows.get(item_id)
-        if row is None:
+        held = rows.get(item_id)
+        if not held:
             raise TradeError("One or more items are not in the warchest.")
-        if quantity > row.quantity:
+        if quantity > sum(row.quantity for row in held):
             raise TradeError("Not enough quantity for one or more items.")
-        # each copy is worth what the stash row says it cost (BUG-40); 0 when that isn't known
-        offered.append({"id": item_id, "name": row.item.name, "quantity": quantity, "cost": row.cost or 0})
+        # each copy is worth what its stash row says it cost (BUG-40), as the copies that leave first; 0 if unknown
+        offered.append({"id": item_id, "name": held[0].item.name, "quantity": quantity, "cost": held[0].cost or 0})
     return offered
 
 

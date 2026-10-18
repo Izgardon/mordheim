@@ -12,7 +12,7 @@ from django.utils import timezone
 from apps.trades.models import TradeRequest
 from apps.warbands.models import Hero, LedgerAction, Warband, on_roster
 from apps.warbands.services import economy_log, ledger
-from apps.warbands.services.stash import StashShortage, add_to_stash, remove_from_stash
+from apps.warbands.services.stash import StashShortage, add_costs, remove_from_stash
 from apps.warbands.services.summary import warband_gold
 
 from .errors import TradeError
@@ -46,8 +46,8 @@ def _move_items(trade: TradeRequest, side: str, offer: dict[str, Any]) -> None:
             if not shortage.held:
                 detail = "One or more items are not in the warchest."
             raise TradeError(detail, status=409, code=FAILED, warband_id=source) from shortage
-        # the copies keep their cost (BUG-40); a row the receiver already prices keeps its own
-        add_to_stash(target, item_id, quantity, taken.cost, keep_cost=True)
+        # each copy keeps its cost (BUG-40, BUG-117), beside the receiver's own copies
+        add_costs(target, item_id, taken.costs)
 
 
 def _record_gold(trade: TradeRequest, offers: dict[str, dict[str, Any]]) -> None:

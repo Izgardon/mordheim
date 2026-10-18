@@ -5,10 +5,11 @@ Rows are stored as the old writers stored them, then the migration's SQL runs on
 
 from importlib import import_module
 
+from django.apps import apps as django_apps
 from django.db import connection
 from django.db.models import Sum
 
-from apps.warbands.models import LedgerAction, Warband, WarbandTrade
+from apps.warbands.models import LedgerAction, Warband, WarbandItem, WarbandTrade
 from apps.warbands.services import ledger
 
 from .roster_support import RosterTestCase
@@ -184,3 +185,19 @@ class VocabularyMigrationTests(RosterTestCase):
         self.assertEqual(_rule_gold(self.warband), gold - 25)
         self.assertEqual(self._rows()[-1], ("Buy", -25, "Adjustment: Correction"))
         self.assertEqual([row[0] for row in self._rows() if "Trade" in row[0]], ["Trade sent", "Trade received"])
+
+
+class StashRowPerCostMigrationTests(RosterTestCase):
+    """0034's reverse merges each item's rows into one, at the newest row's cost, before the old constraint returns."""
+
+    def test_reversing_merges_an_items_rows(self):
+        WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=2, cost=5)
+        WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=1, cost=12)
+        WarbandItem.objects.create(warband=self.warband, item=self.axe, quantity=1)
+
+        import_module("apps.warbands.migrations.0034_stash_row_per_cost").merge_rows_per_item(django_apps, None)
+
+        rows = WarbandItem.objects.filter(warband=self.warband).order_by("item__name")
+        self.assertEqual(
+            [(row.item.name, row.quantity, row.cost) for row in rows], [("Axe", 1, None), ("Sword", 3, 12)]
+        )

@@ -28,12 +28,12 @@ from apps.warbands.models import (
     HiredSwordItem,
     LedgerAction,
     Warband,
-    WarbandItem,
     WarbandResource,
     not_dismissed,
     on_roster,
 )
 from apps.warbands.services import ledger
+from apps.warbands.services.stash import add_costs
 from apps.warbands.units.services.xp import XP_FIELDS, apply_xp_gain
 from apps.warbands.utils.armour_save import ARMOUR_SAVE_ERROR, parse_armour_save
 from apps.warbands.utils.leaders import ensure_single_living_leader
@@ -1429,29 +1429,9 @@ def _resolve_find_item_cost(item: Item) -> int | None:
     return int(min(costs))
 
 
-def _add_stash_items(warband: Warband, item: Item, costs: list[int | None]) -> WarbandItem | None:
-    quantity = len(costs)
-    if quantity <= 0:
-        return None
-
-    stash_item = (
-        WarbandItem.objects.select_for_update().filter(warband=warband, item=item).select_related("item").first()
-    )
-    next_cost = next((cost for cost in reversed(costs) if cost is not None), None)
-    if stash_item:
-        stash_item.quantity = (stash_item.quantity or 0) + quantity
-        if next_cost is not None:
-            stash_item.cost = next_cost
-            stash_item.save(update_fields=["quantity", "cost"])
-        else:
-            stash_item.save(update_fields=["quantity"])
-        stash_item.refresh_from_db()
-        return stash_item
-
-    create_kwargs = {"warband": warband, "item": item, "quantity": quantity}
-    if next_cost is not None:
-        create_kwargs["cost"] = next_cost
-    return WarbandItem.objects.create(**create_kwargs)
+def _add_stash_items(warband: Warband, item: Item, costs: list[int | None]) -> None:
+    """Battle finds join the stash at their own cost (services/stash.py; BUG-117: nothing is re-priced)."""
+    add_costs(warband.id, item.id, costs)
 
 
 def _validate_postbattle_json_for_participant(

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.restrictions.serializers import RestrictionSerializer
-from apps.warbands.models import Warband, WarbandItem, WarbandResource
+from apps.warbands.models import Warband, WarbandResource
 from apps.warbands.restrictions import get_effective_restrictions_for_warband
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.services.resources import MAX_AMOUNT
@@ -221,18 +221,26 @@ class WarbandResourceSaleSerializer(serializers.Serializer):
     price = serializers.IntegerField(min_value=0, max_value=MAX_TRADE_PRICE)
 
 
-class WarbandItemSummarySerializer(serializers.ModelSerializer):
+class StashCostSerializer(serializers.Serializer):
+    cost = serializers.IntegerField(allow_null=True)
+    quantity = serializers.IntegerField()
+
+
+class WarbandItemSummarySerializer(serializers.Serializer):
+    """A stash entry (services/stash.py StashEntry): the item, how many copies, the cost of the copies that leave
+    first, and how many copies of each cost (BUG-117), the copies that leave first first."""
+
     id = serializers.IntegerField(source="item.id")
     name = serializers.CharField(source="item.name")
-
-    class Meta:
-        model = WarbandItem
-        fields = ("id", "name", "cost", "quantity")
+    cost = serializers.IntegerField(allow_null=True)
+    quantity = serializers.IntegerField()
+    costs = StashCostSerializer(many=True)
 
 
 class WarbandItemTransferSerializer(serializers.Serializer):
     source_type = serializers.ChoiceField(choices=("hero", "hired_sword", "henchmen_group", "stash"))
     source_id = serializers.IntegerField(required=False, allow_null=True)
+    cost = serializers.IntegerField(required=False, allow_null=True)  # from the stash: only copies of this cost
     target_type = serializers.ChoiceField(choices=("hero", "hired_sword", "henchmen_group", "stash"))
     target_id = serializers.IntegerField(required=False, allow_null=True)
     item_id = serializers.IntegerField()
@@ -260,6 +268,7 @@ class WarbandItemTransferSerializer(serializers.Serializer):
 class WarbandItemSaleSerializer(serializers.Serializer):
     source_type = serializers.ChoiceField(choices=("hero", "hired_sword", "henchmen_group", "stash"))
     source_id = serializers.IntegerField(required=False, allow_null=True)
+    cost = serializers.IntegerField(required=False, allow_null=True)  # from the stash: only copies of this cost
     item_id = serializers.IntegerField()
     quantity = serializers.IntegerField(min_value=1)
     price = serializers.IntegerField(min_value=0)

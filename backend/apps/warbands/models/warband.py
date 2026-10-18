@@ -63,6 +63,8 @@ class Warband(models.Model):
 
 
 class WarbandItem(models.Model):
+    """Copies of an item in a warband's stash at one cost: one row per item and cost (BUG-117)."""
+
     warband = models.ForeignKey(Warband, related_name="warband_items", on_delete=models.CASCADE)
     item = models.ForeignKey("items.Item", related_name="warband_items", on_delete=models.CASCADE)
     cost = models.PositiveIntegerField(null=True, blank=True)
@@ -70,7 +72,12 @@ class WarbandItem(models.Model):
 
     class Meta:
         db_table = "warband_items"
-        constraints = [models.UniqueConstraint(fields=["warband", "item"], name="unique_warband_item")]
+        constraints = [
+            # an unknown cost (NULL) is one cost too: copies whose cost isn't known share a row
+            models.UniqueConstraint(
+                fields=["warband", "item", "cost"], name="unique_warband_item_cost", nulls_distinct=False
+            )
+        ]
 
     def __str__(self):
         return f"{self.warband_id}:{self.item_id} x{self.quantity}"

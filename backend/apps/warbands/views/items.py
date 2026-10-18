@@ -7,14 +7,13 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from apps.items.models import Item
-from apps.warbands.models import WarbandItem
 from apps.warbands.serializers import (
     WarbandItemSaleSerializer,
     WarbandItemSummarySerializer,
     WarbandItemTransferSerializer,
 )
 from apps.warbands.services.item_moves import Outcome, sell_item, transfer_item
-from apps.warbands.services.stash import discard_from_stash, stock_item
+from apps.warbands.services.stash import discard_from_stash, stash_entries, stock_item
 from apps.warbands.units.catalogue_scope import in_campaign_scope
 
 from .base import WarbandScopedView
@@ -29,10 +28,7 @@ def _int_or(value: Any, default: Any) -> Any:
 
 class WarbandItemListView(WarbandScopedView):
     def get(self, request: Request, warband_id: int) -> Response:
-        items = (
-            WarbandItem.objects.filter(warband=self.warband).select_related("item").order_by("item__name", "item__id")
-        )
-        return Response(WarbandItemSummarySerializer(items, many=True).data)
+        return Response(WarbandItemSummarySerializer(stash_entries(self.warband), many=True).data)
 
     def post(self, request: Request, warband_id: int) -> Response:
         item_id = _int_or(request.data.get("item_id"), None)

@@ -164,28 +164,18 @@ def _remap_campaign_owned_rows(campaign_id, item_id_map, cost_by_target_id):
         sword_item.cost = cost_by_target_id.get(target_item_id)
         sword_item.save(update_fields=["item", "cost"])
 
-    stash_rows = WarbandItem.objects.filter(
-        warband__campaign_id=campaign_id, item_id__in=item_id_map.keys()
-    ).select_related("warband")
-    for stash_item in stash_rows.iterator():
+    from apps.warbands.services.stash import add_to_stash  # the stash's row per item and cost (BUG-117)
+
+    stash_rows = WarbandItem.objects.filter(warband__campaign_id=campaign_id, item_id__in=item_id_map.keys())
+    for stash_item in list(stash_rows):
         target_item_id = item_id_map.get(stash_item.item_id)
         if target_item_id is None:
             continue
-        next_cost = cost_by_target_id.get(target_item_id)
-        existing = (
-            WarbandItem.objects.filter(warband=stash_item.warband, item_id=target_item_id)
-            .exclude(id=stash_item.id)
-            .first()
+        # the copies move to the target item at its catalogue cost, joining any copies already at that cost
+        stash_item.delete()
+        add_to_stash(
+            stash_item.warband_id, target_item_id, stash_item.quantity or 0, cost_by_target_id.get(target_item_id)
         )
-        if existing:
-            existing.quantity = (existing.quantity or 0) + (stash_item.quantity or 0)
-            existing.cost = next_cost
-            existing.save(update_fields=["quantity", "cost"])
-            stash_item.delete()
-            continue
-        stash_item.item_id = target_item_id
-        stash_item.cost = next_cost
-        stash_item.save(update_fields=["item", "cost"])
 
 
 def _revert_generated_items_for_campaign(campaign_id, effect_key):

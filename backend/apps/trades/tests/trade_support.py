@@ -131,8 +131,8 @@ class TradeTestCase(RosterTestCase):
         return WarbandItem.objects.create(warband=warband, item=item, quantity=quantity, cost=cost)
 
     def stash_rows(self, warband: Warband) -> list[tuple[str, int, int | None]]:
-        """(item name, quantity, cost) for each stash row, by item name."""
-        rows = WarbandItem.objects.filter(warband=warband).order_by("item__name", "item_id")
+        """(item name, quantity, cost) for each stash row (one per item and cost), by item name and cost."""
+        rows = WarbandItem.objects.filter(warband=warband).order_by("item__name", "item_id", "cost")
         return [(row.item.name, row.quantity, row.cost) for row in rows.select_related("item")]
 
     def ledger(self, warband: Warband) -> list[tuple[str, str, int]]:
