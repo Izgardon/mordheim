@@ -36,6 +36,8 @@ class TradeRequestCreateTests(TradeTestCase):
                 "from_accepted": False,
                 "to_accepted": False,
                 "offer_version": 0,
+                "from_trader_spent_id": None,
+                "to_trader_spent_id": None,
                 "from_user": {"id": self.player.id, "label": "playe"},
                 "to_user": {"id": self.viewer.id, "label": "viewe"},
                 "from_warband": {"id": self.warband.id, "name": "Monks"},

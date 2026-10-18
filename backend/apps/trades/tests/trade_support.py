@@ -33,6 +33,8 @@ PAYLOAD_KEYS = [
     "from_accepted",
     "to_accepted",
     "offer_version",
+    "from_trader_spent_id",
+    "to_trader_spent_id",
     "from_user",
     "to_user",
     "from_warband",

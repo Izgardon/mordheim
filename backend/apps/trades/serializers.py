@@ -30,6 +30,10 @@ def serialize_trade_request(trade: TradeRequest) -> dict[str, Any]:
         "from_accepted": trade.from_accepted,
         "to_accepted": trade.to_accepted,
         "offer_version": trade.offer_version,
+        # the hero whose trading action each side's lock spent, or null (decision 9): with the sheet's
+        # heroes[].trading_action it keeps the trader picker's "spent" marks right without re-reading the sheet
+        "from_trader_spent_id": trade.from_trader_spent_id,
+        "to_trader_spent_id": trade.to_trader_spent_id,
         "from_user": {"id": trade.from_user_id, "label": _display_name(trade.from_user)},
         "to_user": {"id": trade.to_user_id, "label": _display_name(trade.to_user)},
         "from_warband": {"id": trade.from_warband_id, "name": trade.from_warband.name},

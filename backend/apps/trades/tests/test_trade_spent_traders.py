@@ -88,3 +88,43 @@ class TradeSpentTraderTests(TradeTestCase):
                 response = self.offer(self.player, self.trade, trader_id=self.hero.id)
 
                 self.assertEqual((response.status_code, response.json()), (400, {"detail": "Trader not found."}))
+
+
+class TraderCandidateTests(TradeTestCase):
+    """The trader picker lists the sheet's heroes, whose `trading_action` is the spent flag; every trade payload
+    names the hero each side's lock spent, so the client can keep that flag right as the trade moves."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.trade = self.open_trade()
+        self.give_gold(self.warband, 100)
+        self.fresh = self.trader(self.warband, name="Fresh")
+        self.spent = self.trader(self.warband, name="Spent", trading_action=False)
+
+    def sheet_flags(self) -> dict[str, bool]:
+        heroes = self.get_as(self.player, f"/api/warbands/{self.warband.id}/sheet/").json()["heroes"]
+        return {hero["name"]: hero["trading_action"] for hero in heroes}
+
+    def test_the_sheet_says_which_candidates_are_spent(self):
+        self.assertEqual(self.sheet_flags(), {"Fresh": True, "Spent": False})
+
+    def test_the_payload_names_the_trader_each_lock_spent(self):
+        self.offer(self.player, self.trade, trader_id=self.fresh.id)
+        self.assertIsNone(self.lock(self.viewer, self.trade).json()["to_trader_spent_id"])  # no trader: nothing spent
+
+        locked = self.lock(self.player, self.trade).json()
+
+        self.assertEqual((locked["status"], locked["from_trader_spent_id"]), ("completed", self.fresh.id))
+        self.assertEqual(self.sheet_flags(), {"Fresh": False, "Spent": False})
+
+    def test_unlocking_clears_it_and_a_hero_spent_elsewhere_is_never_named(self):
+        self.offer(self.player, self.trade, trader_id=self.fresh.id)
+        self.assertEqual(self.lock(self.player, self.trade).json()["from_trader_spent_id"], self.fresh.id)
+        self.assertEqual(self.trade_events.call_args.args[2]["from_trader_spent_id"], self.fresh.id)
+
+        unlocked = self.unlock(self.player, self.trade).json()
+
+        self.assertIsNone(unlocked["from_trader_spent_id"])  # given back: Fresh is available again
+        self.offer(self.player, self.trade, trader_id=self.spent.id)
+        self.assertIsNone(self.lock(self.player, self.trade).json()["from_trader_spent_id"])
+        self.assertEqual(self.sheet_flags(), {"Fresh": True, "Spent": False})
