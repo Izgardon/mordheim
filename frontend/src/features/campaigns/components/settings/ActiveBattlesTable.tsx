@@ -409,6 +409,7 @@ export default function ActiveBattlesTable({
         open={Boolean(closeTarget)}
         onOpenChange={(open) => !open && !isClosing && setCloseTarget(null)}
         participants={closeTarget?.participants ?? []}
+        hasWinners={(closeTarget?.battle.winner_warband_ids_json ?? []).length > 0}
         isClosing={isClosing}
         error={closeError}
         onConfirm={() => void handleConfirmClose()}

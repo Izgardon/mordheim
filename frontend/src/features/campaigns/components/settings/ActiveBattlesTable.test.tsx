@@ -58,6 +58,8 @@ describe("ActiveBattlesTable (BUG-09, BUG-10)", () => {
     expect(screen.queryByRole("button", { name: "Cancel" })).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Close" }));
     const dialog = screen.getByRole("dialog", { name: "Close postbattle" });
+    // The battle ended with No winner, so closing records none (decision 8).
+    expect(dialog).toHaveAccessibleDescription(/no wins or losses are recorded/);
     // You finalised; the other player hasn't.
     expect(
       within(dialog)

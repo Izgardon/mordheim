@@ -1982,6 +1982,7 @@ export default function BattlePostbattle() {
         onOpenChange={closing.openChange}
         participants={battleState.participants}
         currentUserId={user?.id}
+        hasWinners={(battleState.battle.winner_warband_ids_json ?? []).length > 0}
         isClosing={closing.isClosing}
         error={closing.error}
         onConfirm={() => void closing.close()}

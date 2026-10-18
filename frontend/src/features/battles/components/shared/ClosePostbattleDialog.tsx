@@ -15,6 +15,8 @@ type ClosePostbattleDialogProps = {
   participants: Pick<BattleParticipant, "id" | "status" | "user" | "warband">[];
   /** The signed-in user, shown as "you" in the list. */
   currentUserId?: number | null;
+  /** End battle picked winners; with No winner nothing is recorded (decision 8). */
+  hasWinners?: boolean;
   isClosing: boolean;
   error: string;
   onConfirm: () => void;
@@ -29,11 +31,15 @@ export default function ClosePostbattleDialog({
   onOpenChange,
   participants,
   currentUserId,
+  hasWinners = true,
   isClosing,
   error,
   onConfirm,
 }: ClosePostbattleDialogProps) {
   const unfinished = participants.filter((participant) => participant.status === "finished_battle");
+  const ends = hasWinners
+    ? "This ends the battle now and records wins and losses."
+    : "This ends the battle now; with no winner, no wins or losses are recorded.";
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
@@ -41,8 +47,8 @@ export default function ClosePostbattleDialog({
           <DialogTitle>Close postbattle</DialogTitle>
           <DialogDescription className="block text-sm text-muted-foreground">
             {unfinished.length > 0
-              ? "This ends the battle now and records wins and losses. These players haven't finished, so they are skipped and nothing from their postbattle is applied:"
-              : "Everyone has finished. This ends the battle now and records wins and losses."}
+              ? `${ends} These players haven't finished, so they are skipped and nothing from their postbattle is applied:`
+              : `Everyone has finished. ${ends}`}
           </DialogDescription>
         </DialogHeader>
         {unfinished.length > 0 ? (
