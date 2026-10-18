@@ -9,9 +9,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { formatRowDate, formatSignedAmount, rowTotal } from "./treasury-format";
+
 import type { TreasuryEntryForm as EntryForm } from "../../../hooks/warband/useTreasuryEntryForm";
 
-/** The actions a manual entry can take (the server's vocabulary replaces these in PR C). */
+/** The actions a manual entry can take, in the server's vocabulary (decision 4). */
 const ENTRY_ACTIONS = [
   "Buy",
   "Sell",
@@ -20,6 +22,7 @@ const ENTRY_ACTIONS = [
   "Reward",
   "Recruit",
   "Hire",
+  "Adjustment",
 ] as const;
 
 // Looked up by the free-form action string, so a miss is possible (falls back below).
@@ -31,6 +34,7 @@ const DESCRIPTION_PLACEHOLDERS: Partial<Record<string, string>> = {
   Reward: "What reward was gained?",
   Recruit: "Who was recruited?",
   Hire: "Who was hired?",
+  Adjustment: "Why is the gold changing?",
 } satisfies Record<(typeof ENTRY_ACTIONS)[number], string>;
 
 type TreasuryEntryFormProps = {
@@ -38,10 +42,14 @@ type TreasuryEntryFormProps = {
   isMobile: boolean;
 };
 
-/** A manual ledger entry: action, gold, description and notes. */
+/**
+ * A manual ledger entry: action, gold, description and notes. An Adjustment's gold is signed as
+ * typed and its description is the reason; it can name the row it corrects (decision 5).
+ */
 export default function TreasuryEntryForm({ form, isMobile }: TreasuryEntryFormProps) {
   const descriptionPlaceholder =
     DESCRIPTION_PLACEHOLDERS[form.formAction] ?? "Describe this ledger entry";
+  const { correcting } = form;
 
   return (
     <div className="space-y-3 border border-border/60 bg-background/80 p-4">
@@ -70,7 +78,7 @@ export default function TreasuryEntryForm({ form, isMobile }: TreasuryEntryFormP
         <div>
           <label className="mb-1 block text-xs text-muted-foreground">Gold coins</label>
           <NumberInput
-            min={0}
+            min={form.isAdjustment ? undefined : 0}
             value={form.formPrice}
             onChange={(e) => form.setFormPrice(e.target.value)}
             placeholder="0"
@@ -81,8 +89,24 @@ export default function TreasuryEntryForm({ form, isMobile }: TreasuryEntryFormP
           />
         </div>
       </div>
+      {form.isAdjustment ? (
+        <p className="text-xs text-muted-foreground">A negative amount takes gold away.</p>
+      ) : null}
+      {correcting ? (
+        <p className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+          <span>
+            Corrects: {formatRowDate(correcting.created_at)} {correcting.description} (
+            {formatSignedAmount(rowTotal(correcting))})
+          </span>
+          <Button variant="secondary" size="sm" onClick={form.clearCorrection}>
+            Unlink
+          </Button>
+        </p>
+      ) : null}
       <div>
-        <label className="mb-1 block text-xs text-muted-foreground">Description</label>
+        <label className="mb-1 block text-xs text-muted-foreground">
+          {form.isAdjustment ? "Reason" : "Description"}
+        </label>
         <Input
           type="text"
           value={form.formDescription}

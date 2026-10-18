@@ -1,9 +1,9 @@
 /**
- * Characterisation of the Treasury tab (`TreasuryTab`) before pass 2: the ledger it loads, how
- * rows and group headers are signed and coloured, and what adding a manual entry sends.
- * `apiRequest` is answered by a fake server.
+ * The Treasury tab (`TreasuryTab`): the ledger it loads, rows signed as the server stores them
+ * (decision 4), what a manual entry and an Adjustment send (decision 5), and editing a row
+ * entered by hand (decision 6). `apiRequest` is answered by a fake server.
  */
-import { screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -37,7 +37,7 @@ const row = (overrides: Partial<WarbandTrade>): WarbandTrade => ({
   warband_id: 9,
   parent_id: null,
   action: "Starting gold",
-  description: "Starting gold",
+  description: "Starting Gold",
   price: 500,
   notes: "",
   children: [],
@@ -55,17 +55,28 @@ const child = (id: number, action: string, description: string, price: number) =
   created_at: "2026-10-02T10:00:00Z",
 });
 
-/** Newest first, as the server lists them. */
+const will = { id: 1, name: "Will" };
+
+/** Newest first, as the server lists them, every price signed (decision 4). */
 const ledger: WarbandTrade[] = [
+  row({
+    id: 12,
+    action: "Adjustment",
+    description: "Miscounted the rope",
+    price: 2,
+    created_by: will,
+    corrects_id: 3,
+  }),
+  row({ id: 11, action: "Trade", description: "Gold sent to Rats", price: -30 }),
   row({
     id: 4,
     action: "Group",
     description: "Recruited Black Knives (2)",
     price: 0,
-    children: [child(5, "Recruited", "Blade One", -60), child(6, "Recruited", "Blade Two", -60)],
+    children: [child(5, "Recruit", "Blade One", -60), child(6, "Recruit", "Blade Two", -60)],
   }),
-  row({ id: 3, action: "Bought", description: "Rope", price: 5 }),
-  row({ id: 2, action: "Sold", description: "Sword", price: 5, notes: "Half price" }),
+  row({ id: 3, action: "Buy", description: "Rope", price: -5 }),
+  row({ id: 2, action: "Sell", description: "Sword", price: 5, notes: "Half price" }),
   row({ id: 1 }),
 ];
 
@@ -114,17 +125,31 @@ beforeEach(() => {
 });
 
 describe("TreasuryTab: the ledger", () => {
-  it("signs each row by its action: expenses negative, everything else positive", async () => {
+  it("shows each row's gold as the server signs it, in the ledger's vocabulary (decision 4)", async () => {
     renderTab();
 
     expect(await screen.findByText("Rope")).toBeInTheDocument();
     expect(within(rowOf("Rope")).getByText("-5 gc")).toBeInTheDocument();
-    expect(within(rowOf("Rope")).getByText("Bought")).toBeInTheDocument();
+    expect(within(rowOf("Rope")).getByText("Buy")).toBeInTheDocument();
     expect(within(rowOf("Sword")).getByText("+5 gc")).toBeInTheDocument();
     expect(within(rowOf("Sword")).getByText("Half price")).toBeInTheDocument();
-    expect(within(rowOf("Starting gold")).getByText("+500 gc")).toBeInTheDocument();
-    expect(within(rowOf("Starting gold")).getByText("Starting Gold")).toBeInTheDocument();
+    // Gold sent in a trade is spending: once shown as income.
+    expect(within(rowOf("Gold sent to Rats")).getByText("-30 gc")).toBeInTheDocument();
+    expect(within(rowOf("Gold sent to Rats")).getByText("Trade").className).toContain("red");
+    expect(within(rowOf("Starting Gold")).getByText("+500 gc")).toBeInTheDocument();
+    expect(within(rowOf("Starting Gold")).getByText("Starting gold")).toBeInTheDocument();
     expect(fakeApi.calls()).toEqual(["GET /warbands/9/trades/"]);
+  });
+
+  it("says who entered a row by hand and which row an Adjustment corrects (decisions 5, 6)", async () => {
+    renderTab();
+
+    await screen.findByText("Miscounted the rope");
+    const adjustment = rowOf("Miscounted the rope");
+    expect(within(adjustment).getByText("+2 gc")).toBeInTheDocument();
+    expect(within(adjustment).getByText("Corrects: Rope")).toBeInTheDocument();
+    expect(within(adjustment).getByText("Entered by Will")).toBeInTheDocument();
+    expect(within(rowOf("Rope")).queryByText(/Entered by/)).not.toBeInTheDocument();
   });
 
   it("shows a group of purchases as an expense: -120 gc on a red badge (BUG-38)", async () => {
@@ -136,6 +161,7 @@ describe("TreasuryTab: the ledger", () => {
     expect(within(header).getByText("-120 gc")).toBeInTheDocument();
     // The expense style (the income badge is green).
     expect(within(header).getByText("Group").className).toContain("red");
+    expect(within(header).queryByRole("button", { name: /^Edit/ })).not.toBeInTheDocument();
 
     await user.click(within(header).getByRole("button", { expanded: false }));
 
@@ -150,7 +176,7 @@ describe("TreasuryTab: the ledger", () => {
         action: "Group",
         description: "Sold the loot (2)",
         price: 0,
-        children: [child(9, "Sold", "Sword", 5), child(10, "Sold", "Dagger", 3)],
+        children: [child(9, "Sell", "Sword", 5), child(10, "Sell", "Dagger", 3)],
       }),
     ]);
     renderTab();
@@ -184,7 +210,13 @@ describe("TreasuryTab: the ledger", () => {
 describe("TreasuryTab: a manual entry", () => {
   it("POSTs the entry, puts it on top and re-reads the summary for the header gold, with no local total (BUG-37; the summary GET is ECON-PERF-08, pinned until the answer carries it)", async () => {
     const user = setupUser();
-    const created = row({ id: 7, action: "Buy", description: "Lantern", price: 10 });
+    const created = row({
+      id: 7,
+      action: "Buy",
+      description: "Lantern",
+      price: -10,
+      created_by: will,
+    });
     fakeApi.on("POST /warbands/9/trades/", created);
     fakeApi.on("GET /warbands/9/summary/", { gold: 425 });
     const { queryClient } = renderTab();
@@ -220,7 +252,79 @@ describe("TreasuryTab: a manual entry", () => {
       "Lantern"
     );
     expect(within(rowOf("Lantern")).getByText("-10 gc")).toBeInTheDocument();
+    expect(within(rowOf("Lantern")).getByText("Entered by Will")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Save" })).not.toBeInTheDocument();
+  });
+
+  it("adds an Adjustment that takes gold away, with its reason (decision 5)", async () => {
+    const user = setupUser();
+    fakeApi.on("POST /warbands/9/trades/", (body: unknown) =>
+      row({ id: 20, ...(body as object), created_by: will })
+    );
+    fakeApi.on("GET /warbands/9/summary/", { gold: 420 });
+    renderTab();
+    await screen.findByText("Rope");
+
+    await user.click(screen.getByRole("button", { name: "Add Trade Entry" }));
+    await chooseOption(user, selectNear("Action", document.body), "Adjustment");
+    fireEvent.change(screen.getByPlaceholderText("0"), { target: { value: "-15" } });
+    expect(screen.getByText("A negative amount takes gold away.")).toBeInTheDocument();
+    await user.type(screen.getByPlaceholderText("Why is the gold changing?"), "Lost at dice");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(fakeApi.countOf("POST /warbands/9/trades/")).toBe(1));
+    expect(fakeApi.bodyOf("POST /warbands/9/trades/")).toEqual({
+      action: "Adjustment",
+      description: "Lost at dice",
+      price: -15,
+      notes: "",
+    });
+    expect(await screen.findByText("Lost at dice")).toBeInTheDocument();
+    expect(within(rowOf("Lost at dice")).getByText("-15 gc")).toBeInTheDocument();
+  });
+
+  it("asks an Adjustment for a reason and for gold to add or take away", async () => {
+    const user = setupUser();
+    renderTab();
+    await screen.findByText("Rope");
+
+    await user.click(screen.getByRole("button", { name: "Add Trade Entry" }));
+    await chooseOption(user, selectNear("Action", document.body), "Adjustment");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    expect(screen.getByText("A reason is required.")).toBeInTheDocument();
+
+    await user.type(screen.getByPlaceholderText("Why is the gold changing?"), "Recount");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    expect(
+      screen.getByText("Enter the gold this adjustment adds or takes away.")
+    ).toBeInTheDocument();
+    expect(fakeApi.countOf("POST /warbands/9/trades/")).toBe(0);
+  });
+
+  it("corrects a row with an Adjustment linked to it, never by changing its gold (decision 5)", async () => {
+    const user = setupUser();
+    fakeApi.on("POST /warbands/9/trades/", (body: unknown) =>
+      row({ id: 21, ...(body as object), created_by: will })
+    );
+    fakeApi.on("GET /warbands/9/summary/", { gold: 440 });
+    renderTab();
+    await screen.findByText("Rope");
+
+    await user.click(screen.getByRole("button", { name: "Correct Rope" }));
+    expect(screen.getByText(/Corrects: .*Rope \(-5 gc\)/)).toBeInTheDocument();
+    await user.type(screen.getByPlaceholderText("0"), "5");
+    await user.type(screen.getByPlaceholderText("Why is the gold changing?"), "Rope was free");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(fakeApi.countOf("POST /warbands/9/trades/")).toBe(1));
+    expect(fakeApi.bodyOf("POST /warbands/9/trades/")).toEqual({
+      action: "Adjustment",
+      description: "Rope was free",
+      price: 5,
+      notes: "",
+      corrects_id: 3,
+    });
+    expect(fakeApi.calls().some((call) => call.startsWith("DELETE"))).toBe(false);
   });
 
   it("asks for an action, then a description, before sending anything", async () => {
@@ -253,10 +357,57 @@ describe("TreasuryTab: a manual entry", () => {
     expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
   });
 
-  it("offers no entry form to a viewer", async () => {
+  it("offers no entry form, correction or edit to a viewer", async () => {
     renderTab(false);
 
     await screen.findByText("Rope");
     expect(screen.queryByRole("button", { name: "Add Trade Entry" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^(Correct|Edit) / })).not.toBeInTheDocument();
+  });
+});
+
+describe("TreasuryTab: a row entered by hand (decision 6)", () => {
+  it("edits its description and notes in place, and offers Edit only on such rows", async () => {
+    const user = setupUser();
+    fakeApi.on("PATCH /warbands/9/trades/12/", (body: unknown) => ({
+      ...ledger[0],
+      ...(body as object),
+    }));
+    renderTab();
+    await screen.findByText("Rope");
+    expect(screen.queryByRole("button", { name: "Edit Rope" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /delete/i })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Edit Miscounted the rope" }));
+    const notes = screen.getByLabelText("Notes");
+    await user.type(notes, "Two coins short");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(await screen.findByText("Two coins short")).toBeInTheDocument();
+    expect(fakeApi.bodyOf("PATCH /warbands/9/trades/12/")).toEqual({
+      description: "Miscounted the rope",
+      notes: "Two coins short",
+    });
+    expect(screen.queryByLabelText("Notes")).not.toBeInTheDocument();
+  });
+
+  it("keeps the editor open with the server's message when the edit is refused", async () => {
+    const user = setupUser();
+    fakeApi.fail(
+      "PATCH /warbands/9/trades/12/",
+      new Error("Only rows entered by hand can be edited. Correct this one with an adjustment.")
+    );
+    renderTab();
+    await screen.findByText("Rope");
+
+    await user.click(screen.getByRole("button", { name: "Edit Miscounted the rope" }));
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(
+      await screen.findByText(
+        "Only rows entered by hand can be edited. Correct this one with an adjustment."
+      )
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Description")).toHaveValue("Miscounted the rope");
   });
 });

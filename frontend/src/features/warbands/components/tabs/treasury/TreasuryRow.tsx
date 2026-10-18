@@ -1,11 +1,11 @@
+import type { ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 
-import { formatTradeAction } from "../../../utils/warband-utils";
 import {
-  actionBadgeClass,
   badgeClass,
   formatRowDate,
   formatSignedAmount,
+  formatTradeAction,
   rowAmount,
   rowTotal,
 } from "./treasury-format";
@@ -18,10 +18,53 @@ type TreasuryRowProps = {
   index: number;
   expanded: boolean;
   onToggle: (id: number) => void;
+  /** For editors: Correct, and Edit for a row entered by hand. */
+  actions?: ReactNode;
+  /** In place of the description and notes while the row is edited. */
+  editor?: ReactNode;
+  /** The row this Adjustment corrects, as the ledger describes it. */
+  corrects?: string;
 };
 
-/** One ledger row; a group row (purchases, recruits) unfolds its children. */
-export default function TreasuryRow({ row, index, expanded, onToggle }: TreasuryRowProps) {
+/** "Corrects: Rope", who entered the row by hand, and its notes (decision 6). */
+function RowDetails({
+  notes,
+  author,
+  corrects,
+}: {
+  notes: string;
+  author?: string;
+  corrects?: string;
+}) {
+  const lines = [
+    corrects ? `Corrects: ${corrects}` : "",
+    notes,
+    author ? `Entered by ${author}` : "",
+  ];
+  return (
+    <>
+      {lines.filter(Boolean).map((line) => (
+        <p
+          key={line}
+          className="mt-1 whitespace-normal break-words pl-[3.75rem] text-xs leading-snug text-muted-foreground"
+        >
+          {line}
+        </p>
+      ))}
+    </>
+  );
+}
+
+/** One ledger row, signed as the server stores it; a group row unfolds its children. */
+export default function TreasuryRow({
+  row,
+  index,
+  expanded,
+  onToggle,
+  actions,
+  editor,
+  corrects,
+}: TreasuryRowProps) {
   const hasChildren = row.children.length > 0;
   const signedTotal = rowTotal(row);
 
@@ -54,9 +97,7 @@ export default function TreasuryRow({ row, index, expanded, onToggle }: Treasury
           ) : null}
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
             {/* A group is signed by its children's total, not by "Group" (BUG-38). */}
-            <span
-              className={`shrink-0 ${hasChildren ? badgeClass(signedTotal < 0) : actionBadgeClass(row.action)}`}
-            >
+            <span className={`shrink-0 ${badgeClass(signedTotal < 0)}`}>
               {formatTradeAction(row.action)}
             </span>
             <span className="min-w-0 flex-1 whitespace-normal break-words leading-snug">
@@ -65,14 +106,11 @@ export default function TreasuryRow({ row, index, expanded, onToggle }: Treasury
             <span className="shrink-0 text-xs text-muted-foreground">
               {formatSignedAmount(signedTotal)}
             </span>
+            {actions}
           </div>
         </div>
       </div>
-      {row.notes ? (
-        <p className="mt-1 whitespace-normal break-words pl-[3.75rem] text-xs leading-snug text-muted-foreground">
-          {row.notes}
-        </p>
-      ) : null}
+      {editor ?? <RowDetails notes={row.notes} author={row.created_by?.name} corrects={corrects} />}
       {hasChildren && expanded ? (
         <div className="mt-2 space-y-0 border-t border-border/30 pt-2">
           {row.children.map((child, childIndex) => (
@@ -94,7 +132,7 @@ function TreasuryChildRow({ child, isFirst }: { child: WarbandTradeChild; isFirs
       </span>
       <div className="w-px shrink-0 self-stretch bg-border/20" aria-hidden="true" />
       <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-        <span className={`shrink-0 ${actionBadgeClass(child.action)}`}>
+        <span className={`shrink-0 ${badgeClass(rowAmount(child) < 0)}`}>
           {formatTradeAction(child.action)}
         </span>
         <span className="min-w-0 flex-1 whitespace-normal break-words leading-snug">
@@ -104,11 +142,16 @@ function TreasuryChildRow({ child, isFirst }: { child: WarbandTradeChild; isFirs
           {formatSignedAmount(rowAmount(child))}
         </span>
       </div>
-      {child.notes ? (
-        <p className="w-full whitespace-normal break-words pl-[3.75rem] text-xs leading-snug text-muted-foreground">
-          {child.notes}
-        </p>
-      ) : null}
+      {[child.notes, child.created_by ? `Entered by ${child.created_by.name}` : ""]
+        .filter(Boolean)
+        .map((line) => (
+          <p
+            key={line}
+            className="w-full whitespace-normal break-words pl-[3.75rem] text-xs leading-snug text-muted-foreground"
+          >
+            {line}
+          </p>
+        ))}
     </div>
   );
 }

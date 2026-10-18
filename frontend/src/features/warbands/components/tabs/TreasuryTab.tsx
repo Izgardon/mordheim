@@ -1,14 +1,15 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import TreasuryEntryForm from "./treasury/TreasuryEntryForm";
 import TreasuryRow from "./treasury/TreasuryRow";
+import TreasuryRowEditor from "./treasury/TreasuryRowEditor";
 
 import { warbandTreasuryQuery } from "../../api/economy-queries";
 import { useTreasuryEntryForm } from "../../hooks/warband/useTreasuryEntryForm";
 
-import type { Warband } from "../../types/warband-types";
+import type { Warband, WarbandTrade } from "../../types/warband-types";
 
 type TreasuryTabProps = {
   warband: Warband;
@@ -19,7 +20,46 @@ type TreasuryTabProps = {
 const loadErrorOf = (error: unknown) =>
   error instanceof Error ? error.message || "Unable to load trades" : "Unable to load trades";
 
-/** The Treasury tab: the warband's ledger, newest first, and a manual entry form for editors. */
+/** Correct (an Adjustment linked to the row) and, for a row entered by hand, Edit. */
+function RowActions({
+  row,
+  onCorrect,
+  onEdit,
+}: {
+  row: WarbandTrade;
+  onCorrect: (row: WarbandTrade) => void;
+  onEdit: (id: number) => void;
+}) {
+  const linkClass = "shrink-0 text-xs text-muted-foreground underline hover:text-foreground";
+  return (
+    <>
+      <button
+        type="button"
+        className={linkClass}
+        aria-label={`Correct ${row.description}`}
+        onClick={() => onCorrect(row)}
+      >
+        Correct
+      </button>
+      {row.created_by ? (
+        <button
+          type="button"
+          className={linkClass}
+          aria-label={`Edit ${row.description}`}
+          onClick={() => onEdit(row.id)}
+        >
+          Edit
+        </button>
+      ) : null}
+    </>
+  );
+}
+
+/**
+ * The Treasury tab: the warband's ledger, newest first, signed as the server stores it. Editors
+ * add entries and Adjustments (a row's gold is corrected, never changed or deleted: decision 5)
+ * and edit the description and notes of rows entered by hand (decision 6).
+ */
 export default function TreasuryTab({
   warband,
   canEdit = false,
@@ -28,6 +68,7 @@ export default function TreasuryTab({
   const treasury = useQuery(warbandTreasuryQuery(warband.campaign_id, warband.id));
   const form = useTreasuryEntryForm(warband.id);
   const [expandedGroups, setExpandedGroups] = useState<Set<number>>(new Set());
+  const [editingId, setEditingId] = useState<number | null>(null);
 
   const toggleGroup = useCallback((id: number) => {
     setExpandedGroups((prev) => {
@@ -38,7 +79,14 @@ export default function TreasuryTab({
     });
   }, []);
 
-  const rows = treasury.data ?? [];
+  const rows = useMemo(() => treasury.data ?? [], [treasury.data]);
+  // What a correction's row says about the row it corrects (when that row is loaded).
+  const descriptions = useMemo(
+    () => new Map(rows.flatMap((row) => [row, ...row.children]).map((r) => [r.id, r.description])),
+    [rows]
+  );
+  const correctsOf = (row: WarbandTrade) =>
+    row.corrects_id ? (descriptions.get(row.corrects_id) ?? "an earlier entry") : undefined;
 
   return (
     <div className="relative space-y-4">
@@ -68,6 +116,21 @@ export default function TreasuryTab({
                 index={index}
                 expanded={expandedGroups.has(row.id)}
                 onToggle={toggleGroup}
+                corrects={correctsOf(row)}
+                actions={
+                  canEdit ? (
+                    <RowActions row={row} onCorrect={form.startCorrection} onEdit={setEditingId} />
+                  ) : null
+                }
+                editor={
+                  editingId === row.id ? (
+                    <TreasuryRowEditor
+                      row={row}
+                      warbandId={warband.id}
+                      onDone={() => setEditingId(null)}
+                    />
+                  ) : undefined
+                }
               />
             ))}
           </div>

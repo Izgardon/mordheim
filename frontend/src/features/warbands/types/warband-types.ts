@@ -601,12 +601,19 @@ export type WarbandItemMutationResponse = {
   removed_stash_item_id?: number | null;
 };
 
+/** Who entered a ledger row by hand (decision 6); null for automatic and older rows. */
+export type TradeAuthor = { id: number; name: string };
+
+/** `price` is signed (decision 4): negative when gold left the warband. */
 export type WarbandTradeChild = {
   id: number;
   action: string;
   description: string;
   price: number;
   notes: string;
+  created_by?: TradeAuthor | null;
+  /** The row an Adjustment corrects (decision 5). */
+  corrects_id?: number | null;
   created_at: string;
 };
 
@@ -618,15 +625,22 @@ export type WarbandTrade = {
   description: string;
   price: number;
   notes: string;
+  created_by?: TradeAuthor | null;
+  corrects_id?: number | null;
   children: WarbandTradeChild[];
   created_at: string;
   updated_at: string;
 };
 
+/** A manual entry. `price`: signed for an Adjustment, otherwise 0 or more (the server signs it). */
 export type WarbandTradePayload = {
   action: string;
   description: string;
   price: number;
   notes?: string;
   parent_id?: number | null;
+  corrects_id?: number | null;
 };
+
+/** What can change on a row entered by hand: never its gold (decision 6). */
+export type WarbandTradeEdit = { description?: string; notes?: string };

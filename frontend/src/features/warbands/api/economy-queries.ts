@@ -37,6 +37,7 @@ import type {
  */
 
 export * from "./trade-queries";
+export * from "./ledger-queries";
 
 /**
  * The Treasury and Logs tabs read their list each time they are shown and drop it when they
