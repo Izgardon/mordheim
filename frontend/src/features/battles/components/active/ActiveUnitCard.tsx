@@ -24,10 +24,15 @@ import {
 
 const META_LABEL_CLASS =
   "text-center text-[0.5rem] uppercase tracking-[0.16em] text-muted-foreground";
+// Every action is a 44 px touch target (BATL-UX-05): the cards are tapped on a phone at the table.
+const WOUND_BUTTON_CLASS =
+  "icon-button flex h-11 w-11 items-center justify-center text-base text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50";
+const WOUND_VALUE_CLASS =
+  "flex h-11 min-w-9 items-center justify-center border-x border-border/50 px-2 text-xs font-semibold text-foreground";
 const DANGER_ACTION_BUTTON_CLASS =
-  "battle-toolbar-button icon-button flex h-8 w-8 items-center justify-center rounded-md text-red-400/85 transition hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50";
+  "battle-toolbar-button icon-button flex h-11 w-11 items-center justify-center rounded-md text-red-400/85 transition hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50";
 const DANGER_KILL_BUTTON_CLASS =
-  "battle-toolbar-button icon-button inline-flex h-8 items-center gap-1 rounded-md px-1.5 text-red-400/85 transition hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50";
+  "battle-toolbar-button icon-button inline-flex h-11 min-w-11 items-center justify-center gap-1 rounded-md px-2 text-red-400/85 transition hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50";
 
 type ActiveUnitCardProps = {
   unit: PrebattleUnit;
@@ -79,6 +84,8 @@ export default function ActiveUnitCard({
   const unitStats = getEffectiveUnitStats(unit, unitInformation);
   const woundsValue = getCurrentUnitWounds(unit, unitInformation);
   const themeStyle = getBattleCardThemeStyle(unit.kind);
+  const name = unit.displayName;
+  const killLabel = `Record kill for ${name}, ${killCount} so far`;
 
   const handleSetOutOfAction = async (nextOutOfAction: boolean) => {
     if (!canInteract || isUpdatingOutOfAction) {
@@ -104,38 +111,36 @@ export default function ActiveUnitCard({
       <div className="p-3">
         <div className="grid grid-cols-1 gap-2 md:grid-cols-[minmax(0,12rem)_1fr_auto] md:items-center md:gap-3">
           <div className="min-w-0">
-            <div className="flex items-start justify-between gap-2 md:block">
+            <div className="flex flex-wrap items-start justify-between gap-2 md:block">
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-foreground">{unit.displayName}</p>
                 <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
                   {unit.unitType}
                 </p>
               </div>
-              <div className="md:hidden">
+              <div className="ml-auto md:hidden">
                 <div className="flex items-center gap-2">
                   <div className="space-y-1">
                     <p className={META_LABEL_CLASS}>Wounds</p>
                     <div className="battle-metric-box inline-flex items-center overflow-hidden rounded-md">
                       <button
                         type="button"
-                        className="icon-button flex h-8 w-8 items-center justify-center text-sm text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                        className={WOUND_BUTTON_CLASS}
                         onClick={() => void onAdjustWounds(unit, -1)}
                         disabled={
                           !canInteract || outOfAction || isSavingUnitConfig || woundsValue <= 0
                         }
-                        aria-label="Decrease wounds"
+                        aria-label={`Decrease wounds for ${name}`}
                       >
                         -
                       </button>
-                      <div className="flex h-8 min-w-9 items-center justify-center border-x border-border/50 px-2 text-xs font-semibold text-foreground">
-                        {woundsValue}
-                      </div>
+                      <div className={WOUND_VALUE_CLASS}>{woundsValue}</div>
                       <button
                         type="button"
-                        className="icon-button flex h-8 w-8 items-center justify-center text-sm text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                        className={WOUND_BUTTON_CLASS}
                         onClick={() => void onAdjustWounds(unit, 1)}
                         disabled={!canInteract || outOfAction || isSavingUnitConfig}
-                        aria-label="Increase wounds"
+                        aria-label={`Increase wounds for ${name}`}
                       >
                         +
                       </button>
@@ -151,7 +156,7 @@ export default function ActiveUnitCard({
                         disabled={
                           !canInteract || outOfAction || isUpdatingOutOfAction || isSavingUnitConfig
                         }
-                        aria-label="Set unit out of action"
+                        aria-label={`Set ${name} out of action`}
                       >
                         <OutOfActionIcon className="h-5 w-5 text-red-400" />
                       </button>
@@ -163,7 +168,7 @@ export default function ActiveUnitCard({
                         className={DANGER_KILL_BUTTON_CLASS}
                         onClick={() => setIsKillDialogOpen(true)}
                         disabled={!canInteract || outOfAction || isSavingUnitConfig}
-                        aria-label="Record kill"
+                        aria-label={killLabel}
                       >
                         <KillTrophyIcon className="h-5 w-5" />
                         <span className="text-xs font-semibold">{killCount}</span>
@@ -190,22 +195,20 @@ export default function ActiveUnitCard({
                 <div className="battle-metric-box inline-flex items-center overflow-hidden rounded-md">
                   <button
                     type="button"
-                    className="icon-button flex h-8 w-8 items-center justify-center text-sm text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                    className={WOUND_BUTTON_CLASS}
                     onClick={() => void onAdjustWounds(unit, -1)}
                     disabled={!canInteract || outOfAction || isSavingUnitConfig || woundsValue <= 0}
-                    aria-label="Decrease wounds"
+                    aria-label={`Decrease wounds for ${name}`}
                   >
                     -
                   </button>
-                  <div className="flex h-8 min-w-9 items-center justify-center border-x border-border/50 px-2 text-xs font-semibold text-foreground">
-                    {woundsValue}
-                  </div>
+                  <div className={WOUND_VALUE_CLASS}>{woundsValue}</div>
                   <button
                     type="button"
-                    className="icon-button flex h-8 w-8 items-center justify-center text-sm text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                    className={WOUND_BUTTON_CLASS}
                     onClick={() => void onAdjustWounds(unit, 1)}
                     disabled={!canInteract || outOfAction || isSavingUnitConfig}
-                    aria-label="Increase wounds"
+                    aria-label={`Increase wounds for ${name}`}
                   >
                     +
                   </button>
@@ -220,7 +223,7 @@ export default function ActiveUnitCard({
                   disabled={
                     !canInteract || outOfAction || isUpdatingOutOfAction || isSavingUnitConfig
                   }
-                  aria-label="Set unit out of action"
+                  aria-label={`Set ${name} out of action`}
                 >
                   <OutOfActionIcon className="h-5 w-5 text-red-400" />
                 </button>
@@ -232,7 +235,7 @@ export default function ActiveUnitCard({
                   className={DANGER_KILL_BUTTON_CLASS}
                   onClick={() => setIsKillDialogOpen(true)}
                   disabled={!canInteract || outOfAction || isSavingUnitConfig}
-                  aria-label="Record kill"
+                  aria-label={killLabel}
                 >
                   <KillTrophyIcon className="h-5 w-5" />
                   <span className="text-xs font-semibold">{killCount}</span>
@@ -247,8 +250,9 @@ export default function ActiveUnitCard({
 
       <button
         type="button"
-        className="flex h-8 w-full items-center justify-center border-t border-border/30 bg-black/25 text-muted-foreground transition hover:text-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-        aria-label="Expand unit details"
+        className="flex h-11 w-full items-center justify-center border-t border-border/30 bg-black/25 text-muted-foreground transition hover:text-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+        aria-label={`Details for ${name}`}
+        aria-expanded={isExpanded}
         onClick={() => setIsExpanded((prev) => !prev)}
         disabled={outOfAction}
       >
@@ -281,7 +285,7 @@ export default function ActiveUnitCard({
               className="icon-button flex h-14 w-14 items-center justify-center rounded-full border-none bg-transparent text-[#d6c8aa] shadow-none transition hover:bg-transparent hover:text-foreground"
               onClick={() => void handleSetOutOfAction(false)}
               disabled={isUpdatingOutOfAction}
-              aria-label="Set unit back in action"
+              aria-label={`Set ${name} back in action`}
             >
               <img src={scull2Icon} alt="" className="h-10 w-10 object-contain" />
             </button>

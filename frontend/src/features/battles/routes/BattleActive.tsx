@@ -56,6 +56,7 @@ import {
 } from "@/features/battles/components/shared/useBattleMobileBars";
 import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesktopSubnav";
 import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesDialog";
+import BattleOverflowMenu from "@/features/battles/components/shared/BattleOverflowMenu";
 import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
 import { useBattleState } from "@/features/battles/hooks/useBattleState";
 import { useSerializedSave } from "@/features/battles/hooks/useSerializedSave";
@@ -413,9 +414,25 @@ export default function BattleActive() {
   );
   const showScenarioLinkAction = Boolean(battleState?.battle.scenario_link);
 
+  // Cancel battle sits in More actions, away from End battle, the normal path (BATL-UX-05).
+  const overflowActions = useMemo(
+    () =>
+      battleState?.battle.status === "active" && isBattleCreator
+        ? [
+            {
+              label: isCancelingBattle ? "Canceling..." : "Cancel battle",
+              onSelect: () => setIsCancelBattleDialogOpen(true),
+              disabled: isCancelingBattle,
+              destructive: true,
+            },
+          ]
+        : [],
+    [battleState?.battle.status, isBattleCreator, isCancelingBattle]
+  );
+
   const mobileTopBarExtraActions = useMemo(
     () =>
-      selectedParticipantIsCurrentUser || showScenarioLinkAction ? (
+      selectedParticipantIsCurrentUser || showScenarioLinkAction || overflowActions.length > 0 ? (
         <>
           {selectedParticipantIsCurrentUser ? (
             <button
@@ -437,9 +454,10 @@ export default function BattleActive() {
               <BookOpen className="theme-heading-soft h-5 w-5" aria-hidden="true" />
             </button>
           ) : null}
+          <BattleOverflowMenu actions={overflowActions} />
         </>
       ) : null,
-    [selectedParticipantIsCurrentUser, showScenarioLinkAction]
+    [overflowActions, selectedParticipantIsCurrentUser, showScenarioLinkAction]
   );
 
   const { sectionIdByKey } = useBattleMobileTopBar({
@@ -462,20 +480,14 @@ export default function BattleActive() {
       battleState?.battle.status === "active" && isBattleCreator
         ? {
             primaryAction: {
-              label: isCancelingBattle ? "Canceling..." : "Cancel battle",
-              onClick: () => setIsCancelBattleDialogOpen(true),
-              disabled: isCancelingBattle,
-              variant: "secondary" as const,
-            },
-            secondaryAction: {
               label: isFinishingBattle ? "Ending..." : "End Battle",
               onClick: () => setIsFinishDialogOpen(true),
               disabled: isFinishingBattle,
-              variant: "destructive" as const,
+              variant: "default" as const,
             },
           }
         : null,
-    [battleState?.battle.status, isBattleCreator, isCancelingBattle, isFinishingBattle]
+    [battleState?.battle.status, isBattleCreator, isFinishingBattle]
   );
 
   useBattleMobileBottomBar({
@@ -727,11 +739,18 @@ export default function BattleActive() {
           onOpenCriticalHits={() => setIsCriticalHitDialogOpen(true)}
           onOpenScenario={() => setIsScenarioLinkDialogOpen(true)}
         />
+        {overflowActions.length > 0 ? (
+          <>
+            <div className="mx-1 h-7 w-px bg-border/70" aria-hidden="true" />
+            <BattleOverflowMenu actions={overflowActions} appearance="button" />
+          </>
+        ) : null}
       </>
     ),
     [
       meleeUnitOptions.others.length,
       meleeUnitOptions.yours.length,
+      overflowActions,
       rangedUnitOptions.length,
       selectedParticipantIsCurrentUser,
       showScenarioLinkAction,
@@ -982,24 +1001,13 @@ export default function BattleActive() {
         <div className="fixed inset-x-0 bottom-4 z-20 px-3 min-[960px]:left-auto min-[960px]:right-4 min-[960px]:inset-x-auto min-[960px]:w-[520px]">
           <CardBackground className="battle-floating-panel space-y-2 p-3">
             <div className="flex flex-wrap justify-end gap-2">
-              {activeBottomBarConfig.primaryAction ? (
-                <Button
-                  variant={activeBottomBarConfig.primaryAction.variant ?? "secondary"}
-                  onClick={activeBottomBarConfig.primaryAction.onClick}
-                  disabled={activeBottomBarConfig.primaryAction.disabled}
-                >
-                  {activeBottomBarConfig.primaryAction.label}
-                </Button>
-              ) : null}
-              {activeBottomBarConfig.secondaryAction ? (
-                <Button
-                  variant={activeBottomBarConfig.secondaryAction.variant ?? "default"}
-                  onClick={activeBottomBarConfig.secondaryAction.onClick}
-                  disabled={activeBottomBarConfig.secondaryAction.disabled}
-                >
-                  {activeBottomBarConfig.secondaryAction.label}
-                </Button>
-              ) : null}
+              <Button
+                variant={activeBottomBarConfig.primaryAction.variant}
+                onClick={activeBottomBarConfig.primaryAction.onClick}
+                disabled={activeBottomBarConfig.primaryAction.disabled}
+              >
+                {activeBottomBarConfig.primaryAction.label}
+              </Button>
             </div>
           </CardBackground>
         </div>

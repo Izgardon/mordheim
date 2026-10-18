@@ -85,10 +85,10 @@ describe("ActiveUnitCard", () => {
     );
 
     expect(screen.getAllByText("3")[0]).toBeInTheDocument();
-    fireEvent.click(screen.getAllByLabelText("Increase wounds")[0]);
+    fireEvent.click(screen.getAllByLabelText("Increase wounds for Captain Wolf")[0]);
     expect(onAdjustWounds).toHaveBeenCalledWith(expect.objectContaining({ key: "hero:1" }), 1);
 
-    fireEvent.click(screen.getByLabelText("Expand unit details"));
+    fireEvent.click(screen.getByLabelText("Details for Captain Wolf"));
     fireEvent.change(screen.getByLabelText("Notes for Captain Wolf"), {
       target: { value: "Battle plan" },
     });
@@ -118,11 +118,11 @@ describe("ActiveUnitCard", () => {
       />
     );
 
-    for (const button of screen.getAllByLabelText("Increase wounds")) {
+    for (const button of screen.getAllByLabelText("Increase wounds for Captain Wolf")) {
       expect(button).toBeDisabled();
     }
 
-    fireEvent.click(screen.getByLabelText("Expand unit details"));
+    fireEvent.click(screen.getByLabelText("Details for Captain Wolf"));
     expect(await screen.findByLabelText("Notes for Captain Wolf")).toHaveAttribute("readonly");
   });
 });

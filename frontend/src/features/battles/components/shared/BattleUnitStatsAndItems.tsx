@@ -140,7 +140,7 @@ export default function BattleUnitStatsAndItems({
               <button
                 type="button"
                 aria-label={isEditing ? "Close stat editing" : "Edit stats"}
-                className="battle-toolbar-button icon-button flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition hover:text-foreground"
+                className="battle-toolbar-button icon-button flex h-11 w-11 items-center justify-center rounded text-muted-foreground transition hover:text-foreground"
                 onClick={onToggleEditing}
               >
                 <Pencil className="h-3.5 w-3.5" />
@@ -208,7 +208,7 @@ export default function BattleUnitStatsAndItems({
               {showApplyButton ? (
                 <button
                   type="button"
-                  className="battle-toolbar-button icon-button flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                  className="battle-toolbar-button icon-button flex h-11 w-11 items-center justify-center rounded text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                   onClick={onApplyStatChanges}
                   disabled={Boolean(isApplyingStatChanges)}
                   aria-label={
@@ -221,7 +221,7 @@ export default function BattleUnitStatsAndItems({
               ) : null}
               <button
                 type="button"
-                className="battle-toolbar-button icon-button flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition hover:text-foreground"
+                className="battle-toolbar-button icon-button flex h-11 w-11 items-center justify-center rounded text-muted-foreground transition hover:text-foreground"
                 onClick={() => {
                   setDraftStatValues(
                     Object.fromEntries(

@@ -86,7 +86,11 @@ const card = (unitName: string) =>
 const firstButton = (unitName: string, name: string | RegExp) =>
   within(card(unitName)).getAllByRole("button", { name })[0];
 
-const killCountOn = (unitName: string) => firstButton(unitName, "Record kill").textContent;
+/** "Record kill for Rolf, 1 so far": the label names the unit and the kills (BATL-UX-05). */
+const killButton = (unitName: string) =>
+  firstButton(unitName, new RegExp(`^Record kill for ${unitName}, \\d+ so far$`));
+
+const killCountOn = (unitName: string) => killButton(unitName).textContent;
 
 async function renderActive() {
   routeServer();
@@ -133,12 +137,50 @@ describe("BattleActive requests", () => {
     );
   });
 
+  it("makes End battle the default action and keeps Cancel battle in More actions (BATL-UX-05)", async () => {
+    const user = setupUser();
+    await renderActive();
+
+    // The action panel offers End battle alone, as the normal path.
+    expect(screen.getByRole("button", { name: "End Battle" })).toHaveClass("btn-primary");
+    expect(screen.queryByRole("button", { name: "Cancel battle" })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "More actions" }));
+    const cancel = within(screen.getByRole("dialog", { name: "More actions" })).getByRole(
+      "button",
+      { name: "Cancel battle" }
+    );
+    expect(cancel).toHaveClass("btn-destructive");
+    await user.click(cancel);
+
+    expect(screen.getByRole("dialog", { name: "Cancel Battle" })).toBeInTheDocument();
+    expect(fakeApi.requests()).toEqual([]);
+  });
+
+  it("names the unit in every card action (BATL-UX-05)", async () => {
+    await renderActive();
+
+    for (const name of [
+      "Decrease wounds for Captain Wolf",
+      "Increase wounds for Captain Wolf",
+      "Set Captain Wolf out of action",
+      "Record kill for Captain Wolf, 0 so far",
+      "Details for Captain Wolf",
+      "Set Youngblood A out of action",
+      "Record kill for Youngblood A, 0 so far",
+      "Details for Youngbloods",
+    ]) {
+      expect(screen.getAllByRole("button", { name }).length).toBeGreaterThan(0);
+    }
+    expect(screen.queryByRole("button", { name: /^(Record kill|Set unit .*)$/ })).toBeNull();
+  });
+
   it("sends out of action and kills straight to their own endpoints, outside the config queue", async () => {
     const user = setupUser();
     await renderActive();
 
-    await user.click(firstButton("Captain Wolf", "Set unit out of action"));
-    await user.click(firstButton("Rolf", "Record kill"));
+    await user.click(firstButton("Captain Wolf", "Set Captain Wolf out of action"));
+    await user.click(killButton("Rolf"));
     const dialog = screen.getByRole("dialog", { name: "Record Kill" });
     await user.selectOptions(within(dialog).getByRole("combobox"), "hero:2");
     await user.click(within(dialog).getByRole("button", { name: "Save" }));
@@ -164,7 +206,7 @@ describe("BattleActive requests", () => {
     ]);
     expect(killCountOn("Rolf")).toBe("1");
     expect(
-      within(card("Captain Wolf")).getByRole("button", { name: "Set unit back in action" })
+      within(card("Captain Wolf")).getByRole("button", { name: "Set Captain Wolf back in action" })
     ).toBeInTheDocument();
   });
 
@@ -178,9 +220,9 @@ describe("BattleActive requests", () => {
       return firstSave.promise.then(() => stored);
     });
 
-    await user.click(firstButton("Captain Wolf", "Decrease wounds"));
+    await user.click(firstButton("Captain Wolf", "Decrease wounds for Captain Wolf"));
     fakeApi.on(`POST ${battlePath("config/")}`, storeConfig);
-    await user.click(firstButton("Rolf", "Decrease wounds"));
+    await user.click(firstButton("Rolf", "Decrease wounds for Rolf"));
     await user.click(screen.getByRole("button", { name: "Increase wounds for Youngblood A" }));
 
     expect(fakeApi.countOf(`POST ${battlePath("config/")}`)).toBe(1);
@@ -227,27 +269,28 @@ describe("BattleActive requests", () => {
       answers.push(answer.resolve);
       return answer.promise.then(() => stored);
     });
-    const rolfWounds = () => firstButton("Rolf", "Decrease wounds").nextElementSibling?.textContent;
+    const rolfWounds = () =>
+      firstButton("Rolf", "Decrease wounds for Rolf").nextElementSibling?.textContent;
 
-    await user.click(firstButton("Captain Wolf", "Decrease wounds"));
+    await user.click(firstButton("Captain Wolf", "Decrease wounds for Captain Wolf"));
     // Queued behind Captain Wolf's save, built from Rolf's blob as it is now.
-    await user.click(firstButton("Rolf", "Decrease wounds"));
+    await user.click(firstButton("Rolf", "Decrease wounds for Rolf"));
 
     expect(fakeApi.countOf(`POST ${battlePath("config/")}`)).toBe(1);
-    for (const action of ["Record kill", "Set unit out of action", "Increase wounds"]) {
-      expect(firstButton("Rolf", action)).toBeDisabled();
-    }
+    expect(killButton("Rolf")).toBeDisabled();
+    expect(firstButton("Rolf", "Set Rolf out of action")).toBeDisabled();
+    expect(firstButton("Rolf", "Increase wounds for Rolf")).toBeDisabled();
     expect(rolfWounds()).toBe("0");
 
     // Captain Wolf's answer predates Rolf's change, so it doesn't put his wound back.
     await act(async () => answers[0]());
     await waitFor(() => expect(fakeApi.countOf(`POST ${battlePath("config/")}`)).toBe(2));
     expect(rolfWounds()).toBe("0");
-    expect(firstButton("Rolf", "Record kill")).toBeDisabled();
+    expect(killButton("Rolf")).toBeDisabled();
 
     await act(async () => answers[1]());
-    await waitFor(() => expect(firstButton("Rolf", "Record kill")).toBeEnabled());
-    await user.click(firstButton("Rolf", "Record kill"));
+    await waitFor(() => expect(killButton("Rolf")).toBeEnabled());
+    await user.click(killButton("Rolf"));
     const dialog = screen.getByRole("dialog", { name: "Record Kill" });
     await user.selectOptions(within(dialog).getByRole("combobox"), "hero:2");
     await user.click(within(dialog).getByRole("button", { name: "Save" }));

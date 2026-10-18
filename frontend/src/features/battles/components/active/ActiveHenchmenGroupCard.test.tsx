@@ -97,7 +97,7 @@ describe("ActiveHenchmenGroupCard", () => {
       />
     );
 
-    await user.click(screen.getByLabelText("Expand henchmen group details"));
+    await user.click(screen.getByLabelText("Details for Youngbloods"));
 
     expect(screen.queryByText("Member")).not.toBeInTheDocument();
     expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
