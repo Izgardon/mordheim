@@ -214,7 +214,7 @@ beforeEach(() => {
 });
 
 describe("AcquireItemDialog: requests per purchase (ECON-PERF-01)", () => {
-  it("buys into the stash: two GETs on open, then the item, the Bought trade, the log and a summary GET (ECON-PERF-01, pinned; flips in PR B)", async () => {
+  it("buys into the stash: two GETs on open, then the item, the Bought trade, the log and a summary GET (ECON-PERF-01, pinned; flips in PR C)", async () => {
     const user = setupUser();
     fakeApi.on("POST /warbands/9/items/", { id: 120, name: "Rope", cost: 5, quantity: 1 });
     const { onAcquire, onClosed } = renderDialog({ presetUnitType: "stash" });
@@ -256,7 +256,7 @@ describe("AcquireItemDialog: requests per purchase (ECON-PERF-01)", () => {
     );
   });
 
-  it("buys for a hero: GETs the hero, PATCHes his whole item list, then the trade, log and summary (ECON-PERF-01, pinned; flips in PR B)", async () => {
+  it("buys for a hero: GETs the hero, PATCHes his whole item list, then the trade, log and summary (ECON-PERF-01, pinned; flips in PR C)", async () => {
     const user = setupUser();
     fakeApi.on("GET /warbands/9/heroes/11/", hero);
     const saved = { ...hero, items: [...hero.items, { ...rope, cost: 5 }] };
@@ -297,7 +297,7 @@ describe("AcquireItemDialog: requests per purchase (ECON-PERF-01)", () => {
     expect(onAcquire).toHaveBeenCalledWith(rope, "heroes", "11", expect.anything(), saved);
   });
 
-  it("buys for a hired sword the same way, through its own endpoints (ECON-PERF-01, pinned; flips in PR B)", async () => {
+  it("buys for a hired sword the same way, through its own endpoints (ECON-PERF-01, pinned; flips in PR C)", async () => {
     const user = setupUser();
     fakeApi.on("GET /warbands/9/hired-swords/31/", hiredSword);
     fakeApi.on("PATCH /warbands/9/hired-swords/31/", hiredSword);
@@ -328,7 +328,7 @@ describe("AcquireItemDialog: requests per purchase (ECON-PERF-01)", () => {
     });
   });
 
-  it("buys for a henchmen group from the group list it loaded on open, no unit GET (ECON-PERF-01, pinned; flips in PR B)", async () => {
+  it("buys for a henchmen group from the group list it loaded on open, no unit GET (ECON-PERF-01, pinned; flips in PR C)", async () => {
     const user = setupUser();
     fakeApi.on("PATCH /warbands/9/henchmen-groups/21/", group);
     renderDialog({ presetUnitType: "henchmen", presetUnitId: 21, disableUnitSelection: true });
@@ -569,7 +569,7 @@ describe("AcquireItemDialog: failures", () => {
     expect(fakeApi.countOf("POST /warbands/9/logs/")).toBe(0);
   });
 
-  it("closes as a success when the Bought trade is refused, so the item is never paid for (BUG-07, pinned; flips in PR B)", async () => {
+  it("closes as a success when the Bought trade is refused, so the item is never paid for (BUG-07, pinned; flips in PR C)", async () => {
     const user = setupUser();
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
     fakeApi.on("GET /warbands/9/heroes/11/", hero);
@@ -595,7 +595,7 @@ describe("AcquireItemDialog: failures", () => {
     );
   });
 
-  it("PATCHes the item list it just read, so a copy moved off the hero in between comes back (BUG-07, pinned; flips in PR B)", async () => {
+  it("PATCHes the item list it just read, so a copy moved off the hero in between comes back (BUG-07, pinned; flips in PR C)", async () => {
     const user = setupUser();
     // The detail GET still shows the dagger another tab is moving off the hero.
     fakeApi.on("GET /warbands/9/heroes/11/", { ...hero, items: [hero.items[0], hero.items[1]] });

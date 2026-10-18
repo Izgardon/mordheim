@@ -161,7 +161,7 @@ describe("TreasuryTab: the ledger", () => {
     expect(within(header).getByText("Group").className).toContain("emerald");
   });
 
-  it("loads the whole ledger again every time the tab is shown (ECON-PERF-08, pinned; flips in PR B)", async () => {
+  it("loads the whole ledger again every time the tab is shown (ECON-PERF-08, pinned; flips in PR C)", async () => {
     const user = setupUser();
     renderTab();
     await screen.findByText("Rope");

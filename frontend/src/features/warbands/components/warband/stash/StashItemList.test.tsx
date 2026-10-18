@@ -337,7 +337,7 @@ describe("StashItemList: Move", () => {
 });
 
 describe("StashItemList: Buy again", () => {
-  it("loads the item by id and buys another copy into the stash: eight requests (ECON-PERF-01, pinned; flips in PR B)", async () => {
+  it("loads the item by id and buys another copy into the stash: eight requests (ECON-PERF-01, pinned; flips in PR C)", async () => {
     const user = setupUser();
     fakeApi.on(
       "GET /items/120/",

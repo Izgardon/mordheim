@@ -314,7 +314,7 @@ describe("unit item menu: Buy again", () => {
     fakeApi.on(`GET /warbands/${MY_WARBAND}/heroes/`, [aldric]);
   });
 
-  it("buys another copy for the hero in eight requests and writes the PATCH's answer to the card (ECON-PERF-01, pinned; flips in PR B)", async () => {
+  it("buys another copy for the hero in eight requests and writes the PATCH's answer to the card (ECON-PERF-01, pinned; flips in PR C)", async () => {
     const user = setupUser();
     const rearmed = { ...aldric, items: [...aldric.items, { ...dagger }] };
     fakeApi.on(`GET /warbands/${MY_WARBAND}/heroes/11/`, aldric);

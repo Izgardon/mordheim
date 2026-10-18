@@ -172,7 +172,7 @@ describe("writeSection: order of a Save's requests", () => {
     ]);
   });
 
-  it("saves the bought copy inside the batch and charges for it only in a later step (BUG-07, pinned; flips in PR B)", async () => {
+  it("saves the bought copy inside the batch and charges for it only in a later step (BUG-07, pinned; flips in PR C)", async () => {
     fakeApi.fail("POST /warbands/9/trades/", new Error("Server error"));
     const result = await writeSection(
       heroKind,
