@@ -1,3 +1,5 @@
+import type { BattleWarning } from "@/features/battles/utils/battle-warnings";
+
 export type BattleFlowType = "normal" | "reported_result";
 export type BattleStateView = "full" | "prebattle" | "active" | "postbattle";
 
@@ -148,6 +150,14 @@ export type BattleSummary = {
   ended_at: string | null;
   post_processed_at: string | null;
   channel: string;
+  /** Raised by every write others see (PERF-34; adopted in PR B). */
+  state_version?: number;
+  /** The last battle write (decision 2: "idle N days"). */
+  last_activity_at?: string;
+  /** When unanswered invites or an unfinished postbattle close; null otherwise. */
+  closes_at?: string | null;
+  /** Past `closes_at`, waiting to be settled by the next list read or write. */
+  overdue?: boolean;
 };
 
 export type BattleParticipant = {
@@ -195,6 +205,8 @@ export type BattleState = {
   battle: BattleSummary;
   participants: BattleParticipant[];
   events: BattleEvent[];
+  /** Only in the acting player's answer, only when there are any. */
+  warnings?: BattleWarning[];
 };
 
 export type BattleRosterItem = {

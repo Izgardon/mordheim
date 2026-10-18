@@ -33,7 +33,24 @@ const renderTable = (battle: CampaignActiveBattle) => {
   return { onCancelBattle, onCloseBattle };
 };
 
-describe("ActiveBattlesTable (BUG-09)", () => {
+describe("ActiveBattlesTable (BUG-09, BUG-10)", () => {
+  it("shows each battle's deadline and idle time beside its phase (decision 2)", () => {
+    const battle = inPhase("postbattle");
+    battle.battle.closes_at = new Date(Date.now() + 2 * 86_400_000 + 3_600_000).toISOString();
+    battle.battle.last_activity_at = new Date(Date.now() - 3 * 86_400_000 - 60_000).toISOString();
+    renderTable(battle);
+
+    expect(screen.getByText("Postbattle · closes in 2 days · idle 3 days")).toBeInTheDocument();
+  });
+
+  it("marks an overdue battle", () => {
+    const battle = inPhase("active");
+    battle.battle.overdue = true;
+    renderTable(battle);
+
+    expect(screen.getByText(/Active · Overdue/)).toBeInTheDocument();
+  });
+
   it("closes a battle in postbattle instead of cancelling it, naming who is skipped", async () => {
     const user = setupUser();
     const { onCancelBattle, onCloseBattle } = renderTable(inPhase("postbattle"));

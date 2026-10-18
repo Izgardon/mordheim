@@ -1,10 +1,11 @@
 /**
- * The Start battle dialog refuses players who are in another open battle (decision 1 changes this
- * to "greyed out but selectable, with a warning").
+ * The Start battle dialog: players in another open battle are greyed out but can be invited, with
+ * a warning, and the create answer's warnings show as toasts (BUG-10, decision 1).
  */
 import { render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { AppToaster } from "@/components/ui/toaster";
 import { fakeApi } from "@/test/fake-api";
 import { setupUser } from "@/test/user-event";
 import type { CampaignPlayer } from "../../types/campaign-types";
@@ -30,20 +31,27 @@ const player = (
 });
 
 const me = player(7, "Owner", "Iron Vultures", 120);
-const busyMira = player(9, "Mira", "Night Razors", 140, "active");
+const busyMira: CampaignPlayer = {
+  ...player(9, "Mira", "Night Razors", 140, "active"),
+  battle_busy_battle_id: 40,
+  battle_busy_last_activity_at: new Date(Date.now() - 6 * 86_400_000 - 60_000).toISOString(),
+};
 const bors = player(12, "Bors", "Grey Wardens", 150);
 
 function renderDialog(players: CampaignPlayer[]) {
   const onBattleCreated = vi.fn();
   render(
-    <StartBattleDialog
-      open
-      onOpenChange={vi.fn()}
-      campaignId={1}
-      creatorUserId={me.id}
-      players={players}
-      onBattleCreated={onBattleCreated}
-    />
+    <>
+      <StartBattleDialog
+        open
+        onOpenChange={vi.fn()}
+        campaignId={1}
+        creatorUserId={me.id}
+        players={players}
+        onBattleCreated={onBattleCreated}
+      />
+      <AppToaster />
+    </>
   );
   return { onBattleCreated };
 }
@@ -60,17 +68,31 @@ describe("StartBattleDialog", () => {
     fakeApi.reset();
   });
 
-  it("disables a player who is in another battle, so they can't be invited (BUG-10, decision 1, pinned; flips in PR C)", async () => {
+  it("greys out a player in another battle but lets them be invited, with a warning (BUG-10, decision 1)", async () => {
     const user = setupUser();
-    fakeApi.on("POST /campaigns/1/battles/", { battle: { id: 41 }, participants: [], events: [] });
+    fakeApi.on("POST /campaigns/1/battles/", {
+      battle: { id: 41 },
+      participants: [],
+      events: [],
+      warnings: [
+        {
+          code: "player_busy",
+          message: "Mira is in an unfinished battle (#40, active).",
+          user_id: 9,
+        },
+      ],
+    });
     const { onBattleCreated } = renderDialog([me, busyMira, bors]);
 
     const mira = rowOf("Mira");
-    expect(mira.nameButton).toHaveTextContent("In active battle");
-    expect(mira.nameButton).toBeDisabled();
-    expect(mira.tick).toBeDisabled();
+    expect(mira.nameButton).toHaveTextContent("In battle #40 (active), idle 6 days");
+    expect(mira.nameButton.parentElement).toHaveClass("opacity-60");
+    expect(mira.nameButton).toBeEnabled();
     await user.click(mira.tick);
-    expect(mira.tick).not.toBeChecked();
+    expect(mira.tick).toBeChecked();
+    expect(
+      screen.getByText(/Mira is in battle #40 \(active\), idle 6 days\. You can still invite them/)
+    ).toBeInTheDocument();
 
     await user.click(rowOf("Bors").tick);
     await user.type(screen.getByPlaceholderText("Breakthrough at the Old Gate..."), "Ambush");
@@ -84,21 +106,24 @@ describe("StartBattleDialog", () => {
         body: {
           scenario: "Ambush",
           scenario_link: null,
-          participant_user_ids: [bors.id, me.id],
-          participant_ratings: { "12": 150, "7": 120 },
+          participant_user_ids: [busyMira.id, bors.id, me.id],
+          participant_ratings: { "9": 140, "12": 150, "7": 120 },
         },
       },
     ]);
+    expect(
+      await screen.findByText("Mira is in an unfinished battle (#40, active).")
+    ).toBeInTheDocument();
   });
 
-  it("can't create a battle at all while every other player is busy (BUG-10, decision 1, pinned; flips in PR C)", async () => {
+  it("creates a battle even when every other player is busy (BUG-10, decision 1)", async () => {
     const user = setupUser();
     renderDialog([me, busyMira]);
 
+    await user.click(rowOf("Mira").tick);
     await user.type(screen.getByPlaceholderText("Breakthrough at the Old Gate..."), "Ambush");
 
-    expect(screen.getByRole("button", { name: "Create battle" })).toBeDisabled();
-    expect(fakeApi.calls()).toEqual([]);
+    expect(screen.getByRole("button", { name: "Create battle" })).toBeEnabled();
   });
 
   it("reports a result with No winner as an empty winner list (decision 8)", async () => {

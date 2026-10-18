@@ -26,6 +26,7 @@ import {
   getBattleRouteForStatus,
   getResumableBattleForUser,
 } from "@/features/battles/utils/battle-session";
+import { deadlineLabel } from "@/features/battles/utils/battle-timing";
 import type { CampaignPlayer } from "../../types/campaign-types";
 import PendingResultsCard from "./PendingResultsCard";
 import StartBattleDialog from "./StartBattleDialog";
@@ -199,6 +200,11 @@ export default function BattleActionPanel({
         ) : null}
       </div>
 
+      {resumableBattle && deadlineLabel(resumableBattle.battle) ? (
+        <p className="pt-1 text-center text-[0.62rem] uppercase tracking-[0.2em] text-amber-300">
+          {deadlineLabel(resumableBattle.battle)}
+        </p>
+      ) : null}
       {battleError ? <p className="text-center text-sm text-red-600">{battleError}</p> : null}
 
       <PendingResultsCard campaignId={campaignId} />
@@ -309,7 +315,12 @@ function BattleInviteStatusDialog({
 
         <div className="space-y-2">
           <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
-            {battleState.battle.scenario || `Session #${battleState.battle.id}`}
+            {[
+              battleState.battle.scenario || `Session #${battleState.battle.id}`,
+              deadlineLabel(battleState.battle),
+            ]
+              .filter(Boolean)
+              .join(" · ")}
           </p>
           <div className="rounded-xl border border-border/50 bg-black/30">
             <table className="w-full border-collapse">

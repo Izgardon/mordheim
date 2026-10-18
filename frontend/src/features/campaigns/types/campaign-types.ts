@@ -68,6 +68,9 @@ export type CampaignPlayer = {
   name: string;
   battle_busy?: boolean;
   battle_busy_status?: "inviting" | "prebattle" | "active" | "postbattle" | null;
+  /** The open battle a busy player is in, and its last write (decision 1). */
+  battle_busy_battle_id?: number | null;
+  battle_busy_last_activity_at?: string | null;
   warband?: {
     id: number;
     name: string;

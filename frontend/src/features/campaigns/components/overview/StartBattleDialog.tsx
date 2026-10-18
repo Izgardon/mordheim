@@ -15,6 +15,18 @@ import { Input } from "@/components/ui/input";
 import { createBattle, reportBattleResult } from "@/features/battles/api/battles-api";
 import { normalizeWebUrl } from "@/lib/url-utils";
 import type { CampaignPlayer } from "../../types/campaign-types";
+import { idleLabel } from "@/features/battles/utils/battle-timing";
+import { toastBattleWarnings } from "@/features/battles/utils/battle-warnings";
+
+/** "In battle #40 (postbattle), idle 6 days" from the players' busy fields (decision 1). */
+function battleBusyLabel(player: CampaignPlayer) {
+  const battle = player.battle_busy_battle_id
+    ? `battle #${player.battle_busy_battle_id}`
+    : "a battle";
+  const phase = player.battle_busy_status ? ` (${player.battle_busy_status})` : "";
+  const idle = idleLabel(player.battle_busy_last_activity_at);
+  return `In ${battle}${phase}${idle ? `, ${idle}` : ""}`;
+}
 
 type StartBattleDialogProps = {
   open: boolean;
@@ -60,10 +72,6 @@ export default function StartBattleDialog({
   const [error, setError] = useState("");
 
   const eligiblePlayers = useMemo(() => players.filter((player) => player.warband?.id), [players]);
-  const availablePlayers = useMemo(
-    () => eligiblePlayers.filter((player) => player.id === creatorUserId || !player.battle_busy),
-    [creatorUserId, eligiblePlayers]
-  );
   const participantUserIds = useMemo(
     () => Array.from(new Set([...selectedUserIds, creatorUserId])),
     [creatorUserId, selectedUserIds]
@@ -110,8 +118,7 @@ export default function StartBattleDialog({
   useEffect(() => {
     setSelectedUserIds((prev) =>
       prev.filter((userId) => {
-        const player = eligiblePlayerById[userId];
-        return Boolean(player && (player.id === creatorUserId || !player.battle_busy));
+        return Boolean(eligiblePlayerById[userId]);
       })
     );
   }, [creatorUserId, eligiblePlayerById]);
@@ -122,8 +129,7 @@ export default function StartBattleDialog({
   }, [selectableWinners]);
 
   const toggleUser = (userId: number) => {
-    const player = eligiblePlayerById[userId];
-    if (userId === creatorUserId || (mode === "start_battle" && player?.battle_busy)) {
+    if (userId === creatorUserId) {
       return;
     }
     setSelectedUserIds((prev) =>
@@ -138,21 +144,10 @@ export default function StartBattleDialog({
     );
   };
 
-  const getBattleBusyLabel = (status: CampaignPlayer["battle_busy_status"]) => {
-    if (status === "inviting") {
-      return "In inviting battle";
-    }
-    if (status === "prebattle") {
-      return "In prebattle";
-    }
-    if (status === "active") {
-      return "In active battle";
-    }
-    if (status === "postbattle") {
-      return "In postbattle";
-    }
-    return "In another battle";
-  };
+  // Busy players are greyed out but can be invited, with a warning (decision 1).
+  const busyInvitees = selectedParticipants.filter(
+    (player) => player.id !== creatorUserId && player.battle_busy
+  );
 
   const handleSubmit = async () => {
     if (mode === "report_result") {
@@ -219,12 +214,13 @@ export default function StartBattleDialog({
     setError("");
     try {
       const normalizedScenarioLink = normalizeWebUrl(scenarioLink);
-      await createBattle(campaignId, {
+      const created = await createBattle(campaignId, {
         scenario: trimmedScenario,
         scenario_link: normalizedScenarioLink || null,
         participant_user_ids: participantUserIds,
         participant_ratings: participantRatings,
       });
+      toastBattleWarnings(created.warnings);
       onOpenChange(false);
       onBattleCreated?.();
     } catch (errorResponse) {
@@ -254,7 +250,7 @@ export default function StartBattleDialog({
   const submitDisabled =
     isSubmitting ||
     (mode === "start_battle"
-      ? availablePlayers.length < 2 || !scenario.trim()
+      ? eligiblePlayers.length < 2 || !scenario.trim()
       : eligiblePlayers.length < 2 ||
         !scenario.trim() ||
         !battleDate ||
@@ -348,10 +344,7 @@ export default function StartBattleDialog({
                       type="button"
                       className="min-w-0 text-left"
                       onClick={() => toggleUser(player.id)}
-                      disabled={
-                        player.id === creatorUserId ||
-                        (mode === "start_battle" && Boolean(player.battle_busy))
-                      }
+                      disabled={player.id === creatorUserId}
                     >
                       <span className="block truncate text-sm font-semibold text-foreground">
                         {player.name}
@@ -361,7 +354,7 @@ export default function StartBattleDialog({
                       </span>
                       {player.battle_busy ? (
                         <span className="block truncate text-[0.65rem] uppercase tracking-[0.15em] text-amber-300">
-                          {getBattleBusyLabel(player.battle_busy_status)}
+                          {battleBusyLabel(player)}
                         </span>
                       ) : null}
                     </button>
@@ -378,10 +371,7 @@ export default function StartBattleDialog({
                       </div>
                       <Checkbox
                         checked={player.id === creatorUserId || selectedUserIds.includes(player.id)}
-                        disabled={
-                          player.id === creatorUserId ||
-                          (mode === "start_battle" && Boolean(player.battle_busy))
-                        }
+                        disabled={player.id === creatorUserId}
                         onChange={() => toggleUser(player.id)}
                       />
                     </div>
@@ -390,6 +380,15 @@ export default function StartBattleDialog({
               )}
             </div>
           </div>
+
+          {mode === "start_battle" && busyInvitees.length > 0 ? (
+            <p className="text-sm text-amber-300">
+              {busyInvitees
+                .map((player) => `${player.name} is ${battleBusyLabel(player).toLowerCase()}`)
+                .join("; ")}
+              . You can still invite them; they finish that battle when they can.
+            </p>
+          ) : null}
 
           {mode === "report_result" ? (
             <>

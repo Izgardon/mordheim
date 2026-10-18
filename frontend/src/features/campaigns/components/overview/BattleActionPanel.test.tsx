@@ -157,6 +157,7 @@ describe("BattleActionPanel with a battle invite", () => {
       battleState({
         status: "inviting",
         created_by_user_id: OPPONENT.id,
+        closes_at: new Date(Date.now() + 2 * 86_400_000 + 3_600_000).toISOString(),
         me: { status: "invited" },
         opponent: { status: "accepted" },
       }),
@@ -177,7 +178,10 @@ describe("BattleActionPanel with a battle invite", () => {
     );
 
     await user.click(await screen.findByRole("button", { name: "See Status" }));
+    // The invite's deadline shows by the button and in the dialog (BUG-10, decision 2).
+    expect(screen.getAllByText(/Invites close in 2 days/).length).toBeGreaterThan(0);
     const status = screen.getByRole("dialog", { name: "Battle Status" });
+    expect(status).toHaveTextContent("Invites close in 2 days");
     expect(within(status).getByRole("button", { name: "Accept invite" })).toBeInTheDocument();
     await user.click(within(status).getByRole("button", { name: "Decline" }));
     await user.click(

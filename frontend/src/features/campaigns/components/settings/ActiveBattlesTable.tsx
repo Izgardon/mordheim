@@ -6,6 +6,7 @@ import { Button } from "@components/button";
 import { ConfirmDialog } from "@components/confirm-dialog";
 import { RosterSkeleton } from "@components/card-skeleton";
 import ClosePostbattleDialog from "@/features/battles/components/shared/ClosePostbattleDialog";
+import { deadlineLabel, idleLabel } from "@/features/battles/utils/battle-timing";
 import { apiErrorCode, getErrorMessage } from "@/lib/get-error-message";
 import { useMediaQuery } from "@/lib/use-media-query";
 
@@ -88,6 +89,16 @@ const formatCreatedAt = (value: string) => {
     minute: "2-digit",
   });
 };
+
+/** "Postbattle · closes in 2 days · idle 3 days" (decision 2). */
+const battleStatusLine = (battle: CampaignActiveBattle["battle"]) =>
+  [
+    battleStatusLabel(battle.status),
+    deadlineLabel(battle, { short: true }),
+    idleLabel(battle.last_activity_at),
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
 const getCreatorLabel = (battle: CampaignActiveBattle) =>
   battle.participants.find(
@@ -275,7 +286,7 @@ export default function ActiveBattlesTable({
                         ) : null}
                         {!isMobile ? (
                           <td className="px-2 py-2 align-middle text-muted-foreground sm:px-4 sm:py-3">
-                            {battleStatusLabel(battle.status)}
+                            {battleStatusLine(battle)}
                           </td>
                         ) : null}
                         {!isMobile ? (
@@ -326,7 +337,7 @@ export default function ActiveBattlesTable({
                                   </p>
                                   <p>
                                     <span className="font-semibold text-foreground">Status:</span>{" "}
-                                    {battleStatusLabel(battle.status)}
+                                    {battleStatusLine(battle)}
                                   </p>
                                   <p>
                                     <span className="font-semibold text-foreground">Created:</span>{" "}
