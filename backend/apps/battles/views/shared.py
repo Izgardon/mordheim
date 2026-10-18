@@ -1504,10 +1504,10 @@ def _remove_used_single_use_items(battle: Battle, participant: BattleParticipant
 
 
 def _apply_participant_postbattle_results(
-    battle: Battle, participant: BattleParticipant, postbattle_json: dict
+    battle: Battle, participant: BattleParticipant, normalized: dict
 ) -> list[Warning]:
-    """Apply a participant's postbattle; the warnings say which units were left out (BUG-73)."""
-    normalized = _validate_postbattle_json_for_participant(battle, participant, postbattle_json)
+    """Apply a participant's postbattle, which the caller validated (_validate_postbattle_json_for_participant: once,
+    part of PERF-36); the warnings say which units were left out (BUG-73) and what was unusual (decision 9)."""
     unit_information = _normalize_unit_information(participant.unit_information_json)
     unit_results = normalized["unit_results"]
     warband = Warband.objects.select_for_update().get(id=participant.warband_id)
@@ -1786,7 +1786,7 @@ def _apply_participant_postbattle_results(
         "complete",
         _build_battle_complete_log_payload(battle, participant),
     )
-    previous_rolls = (postbattle_json.get("exploration") or {}).get("previous_rolls", [])  # kept by the server
+    previous_rolls = exploration.get("previous_rolls", [])  # kept by the server (services/exploration.py)
     log_warband_event(
         participant.warband_id,
         "battle",
