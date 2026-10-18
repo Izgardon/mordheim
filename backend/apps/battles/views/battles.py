@@ -16,6 +16,7 @@ from ..services.broadcast import ALL
 from ..services.capabilities import capabilities
 from ..services.errors import Refused
 from ..services.expiry import expire_overdue
+from ..services.postbattle.suggested import postbattle_guide
 from ..services.presence import mark_participant_seen
 from ..services.rosters import battle_rosters_payload
 from ..services.setup import create_battle, new_battle
@@ -84,6 +85,8 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
 
 
 class CampaignBattleStateView(BattleScopedView):
+    battle_related = ("campaign__settings",)  # the hero death roll in the postbattle rules
+
     def get(self, request, campaign_id, battle_id):
         scope = self.read(request, campaign_id, battle_id)
         if not isinstance(scope, Scope):
@@ -97,6 +100,8 @@ class CampaignBattleStateView(BattleScopedView):
             return Response({"detail": "Invalid view"}, status=400)
         payload = battle_state_payload(scope.battle, since_event_id, participant_view=view)
         payload["capabilities"] = capabilities(scope.battle, request.user.id, scope.battle.participants.all())
+        if view == "postbattle":  # the server's suggestions and rules (IMP-52)
+            payload.update(postbattle_guide(scope.battle, scope.player))
         mark_participant_seen(scope.player)
         return Response(payload)
 

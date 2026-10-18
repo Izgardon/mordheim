@@ -45,3 +45,9 @@ def keep_exploration(stored: Any, exploration: dict[str, Any]) -> tuple[dict[str
         warnings.append({"code": EXPLORATION_REROLLED, "message": message, "previous": before})
     kept = {**exploration, "previous_rolls": previous}
     return {**kept, "amount": exploration_amount(kept)}, warnings
+
+
+def exploration_table() -> list[dict[str, int | None]]:
+    """The chart as postbattle shows it (IMP-52): the shards for a dice total up to `max_total` (None: any more)."""
+    rows: list[dict[str, int | None]] = [{"max_total": highest, "amount": amount} for highest, amount in _TABLE]
+    return [*rows, {"max_total": None, "amount": 7}]
