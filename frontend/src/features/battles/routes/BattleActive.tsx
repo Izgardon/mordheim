@@ -1096,7 +1096,9 @@ export default function BattleActive() {
             <DialogTitle>Cancel Battle</DialogTitle>
           </DialogHeader>
           <div className="space-y-2">
-            <p>Cancel this battle for all participants?</p>
+            <DialogDescription asChild className="block">
+              <p>Cancel this battle for all participants?</p>
+            </DialogDescription>
             <label className="battle-inline-panel mt-3 flex items-start gap-3 rounded-xl px-3 py-2 text-sm text-foreground">
               <Checkbox
                 checked={cancelBattleConfirmed}

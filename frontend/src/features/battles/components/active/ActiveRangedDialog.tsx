@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { NumberInput } from "@/components/ui/number-input";
 import { Tooltip } from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
@@ -111,6 +117,9 @@ export default function ActiveRangedDialog({
       <DialogContent className={`max-w-2xl ${HELPER_DIALOG_CONTENT_CLASS}`}>
         <DialogHeader>
           <DialogTitle>Ranged</DialogTitle>
+          <DialogDescription className="sr-only">
+            Pick your unit and the shot&apos;s modifiers to see the roll needed to hit.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-3">

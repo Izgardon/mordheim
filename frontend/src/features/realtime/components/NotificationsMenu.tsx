@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -147,6 +148,9 @@ export default function NotificationsMenu({
               </button>
             ) : null}
           </div>
+          <DialogDescription className="sr-only">
+            Battle invites, battle results waiting for your answer, and trade requests.
+          </DialogDescription>
         </DialogHeader>
         {sortedTradeNotifications.length === 0 &&
         sortedBattleInvites.length === 0 &&

@@ -157,6 +157,45 @@ describe("BattleActive requests", () => {
     expect(fakeApi.requests()).toEqual([]);
   });
 
+  it("describes the Record Kill, Cancel Battle and helper dialogs to screen readers (BUG-126)", async () => {
+    const user = setupUser();
+    await renderActive();
+    const describedAs = async (opener: HTMLElement, dialogName: string, description: string) => {
+      await user.click(opener);
+      const dialog = screen.getByRole("dialog", { name: dialogName });
+      expect(dialog).toHaveAccessibleDescription(description);
+      await user.keyboard("{Escape}");
+      await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    };
+
+    await describedAs(
+      killButton("Rolf"),
+      "Record Kill",
+      "Pick the enemy unit Rolf took out, or type a name."
+    );
+    await user.click(screen.getByRole("button", { name: "More actions" }));
+    await describedAs(
+      screen.getByRole("button", { name: "Cancel battle" }),
+      "Cancel Battle",
+      "Cancel this battle for all participants?"
+    );
+    await describedAs(
+      screen.getByRole("button", { name: "Open melee helper" }),
+      "Melee",
+      "Pick your unit and an enemy unit to see the rolls needed to hit, to wound and to save in close combat."
+    );
+    await describedAs(
+      screen.getByRole("button", { name: "Open ranged helper" }),
+      "Ranged",
+      "Pick your unit and the shot's modifiers to see the roll needed to hit."
+    );
+    await describedAs(
+      screen.getByRole("button", { name: "Open critical hit reference" }),
+      "Critical Hits",
+      "The critical hit tables, one per weapon type."
+    );
+  });
+
   it("names the unit in every card action (BATL-UX-05)", async () => {
     await renderActive();
 

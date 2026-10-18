@@ -6,6 +6,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -92,10 +93,14 @@ export default function PrebattleDialogs({
             <DialogTitle>Cancel Battle</DialogTitle>
           </DialogHeader>
           <div className="space-y-2">
-            <p>Cancel this battle for all participants?</p>
-            <p className="text-xs text-muted-foreground">
-              This is only available before the battle starts.
-            </p>
+            <DialogDescription asChild className="block space-y-2">
+              <div>
+                <p>Cancel this battle for all participants?</p>
+                <p className="text-xs text-muted-foreground">
+                  This is only available before the battle starts.
+                </p>
+              </div>
+            </DialogDescription>
             <label className="battle-inline-panel mt-3 flex items-start gap-3 rounded-xl px-3 py-2 text-sm text-foreground">
               <Checkbox
                 checked={cancelConfirmed}

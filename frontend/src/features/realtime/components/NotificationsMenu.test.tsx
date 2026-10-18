@@ -34,6 +34,14 @@ function renderMenu(onAcceptTrade: (notification: TradeNotification) => Promise<
 }
 
 describe("NotificationsMenu", () => {
+  it("describes the bell's dialog to screen readers (BUG-126)", () => {
+    renderMenu(vi.fn());
+
+    expect(screen.getByRole("dialog", { name: "Notifications" })).toHaveAccessibleDescription(
+      "Battle invites, battle results waiting for your answer, and trade requests."
+    );
+  });
+
   it("stays open and shows why when an action fails", async () => {
     const onAcceptTrade = vi.fn(async () => {
       throw new ApiError("Bad request", 400, { detail: "This trade request has expired." });

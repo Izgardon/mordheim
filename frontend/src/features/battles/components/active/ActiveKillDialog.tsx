@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -128,6 +129,9 @@ export default function ActiveKillDialog({
       <DialogContent className="max-w-xl">
         <DialogHeader>
           <DialogTitle>Record Kill</DialogTitle>
+          <DialogDescription className="sr-only">
+            Pick the enemy unit {killerName} took out, or type a name.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-3">
