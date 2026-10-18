@@ -1,12 +1,11 @@
 """A warband's log, resources and trade ledger."""
 
-from django.db.models import Prefetch
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 
 from apps.logs.utils import log_warband_event
-from apps.warbands.models import WarbandLog, WarbandResource, WarbandTrade
+from apps.warbands.models import WarbandLog, WarbandResource
 from apps.warbands.serializers import (
     WarbandLogCreateSerializer,
     WarbandLogSerializer,
@@ -16,14 +15,19 @@ from apps.warbands.serializers import (
     WarbandResourceUpdateSerializer,
     WarbandSummarySerializer,
     WarbandTradeCreateSerializer,
+    WarbandTradeEditSerializer,
     WarbandTradeSerializer,
 )
-from apps.warbands.services import ledger
+from apps.warbands.services.ledger_manual import NotEditable, edit_row, enter_row, treasury_rows
 from apps.warbands.services.resources import ResourceShortage, change_resource, sell_resource
 
 from .base import WarbandScopedView
 
 NOT_FOUND = {"detail": "Not found"}
+NOT_EDITABLE = {
+    "detail": "Only rows entered by hand can be edited. Correct this one with an adjustment.",
+    "code": "not_editable",
+}
 
 
 class WarbandLogListView(WarbandScopedView):
@@ -104,32 +108,27 @@ class WarbandResourceSaleView(WarbandScopedView):
 
 class WarbandTradeListCreateView(WarbandScopedView):
     def get(self, request: Request, warband_id: int) -> Response:
-        children = Prefetch("children", queryset=WarbandTrade.objects.select_related("created_by"))
-        trades = (
-            WarbandTrade.objects.filter(warband=self.warband, parent__isnull=True)
-            .select_related("created_by")
-            .prefetch_related(children)
-            .order_by("-created_at")
-        )
+        trades = treasury_rows(self.warband).filter(parent__isnull=True).order_by("-created_at")
         return Response(WarbandTradeSerializer(trades, many=True).data)
 
     def post(self, request: Request, warband_id: int) -> Response:
         serializer = WarbandTradeCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        parent_id = serializer.validated_data.get("parent_id")
-        parent = None
-        if parent_id:
-            parent = WarbandTrade.objects.filter(id=parent_id, warband=self.warband).first()
-
-        entry = serializer.validated_data
-        trade = ledger.record(
-            self.warband,
-            entry["action"],
-            entry["amount"],
-            entry["description"],
-            notes=entry.get("notes", ""),
-            parent=parent,
-            created_by=request.user,  # decision 6: who entered it
-        )
+        trade = enter_row(self.warband, request.user, serializer.validated_data)  # records who entered it
         return Response(WarbandTradeSerializer(trade).data, status=status.HTTP_201_CREATED)
+
+
+class WarbandTradeDetailView(WarbandScopedView):
+    """PATCH trades/<id>/: a hand-entered row's description and notes. History is append-only (decision 5):
+    amounts change through adjustments, and no row is deleted."""
+
+    def patch(self, request: Request, warband_id: int, trade_id: int) -> Response:
+        serializer = WarbandTradeEditSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            trade = edit_row(self.warband, trade_id, serializer.validated_data)
+        except NotEditable:
+            return Response(NOT_EDITABLE, status=400)
+        if trade is None:
+            return Response(NOT_FOUND, status=404)
+        return Response(WarbandTradeSerializer(trade).data)

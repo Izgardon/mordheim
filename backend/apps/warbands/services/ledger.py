@@ -32,6 +32,7 @@ class Entry:
     notes: str = ""
     parent: WarbandTrade | None = None
     created_by: Any = None  # the user who entered the row by hand (decision 6); None for automatic rows
+    corrects: WarbandTrade | None = None  # the row an adjustment corrects (decision 5)
 
 
 def record(
@@ -43,9 +44,10 @@ def record(
     notes: str = "",
     parent: WarbandTrade | None = None,
     created_by: Any = None,
+    corrects: WarbandTrade | None = None,
 ) -> WarbandTrade:
     """Write one ledger row changing the warband's gold by `amount`; `created_by` for a row entered by hand."""
-    return record_entries([Entry(warband, action, amount, description, notes, parent, created_by)])[0]
+    return record_entries([Entry(warband, action, amount, description, notes, parent, created_by, corrects)])[0]
 
 
 def group_header(warband: Warband, description: str) -> WarbandTrade:
@@ -73,6 +75,7 @@ def _write(entries: Sequence[Entry]) -> list[WarbandTrade]:
             notes=entry.notes or "",
             parent=entry.parent,
             created_by=entry.created_by,
+            corrects=entry.corrects,
         )
         for entry in entries
     )

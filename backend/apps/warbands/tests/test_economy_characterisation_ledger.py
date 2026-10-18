@@ -17,11 +17,12 @@ TREASURY_KEYS = [
     "price",
     "notes",
     "created_by",
+    "corrects_id",
     "children",
     "created_at",
     "updated_at",
 ]
-CHILD_KEYS = ["id", "action", "description", "price", "notes", "created_by", "created_at"]
+CHILD_KEYS = ["id", "action", "description", "price", "notes", "created_by", "corrects_id", "created_at"]
 LOG_KEYS = ["id", "warband_id", "parent_id", "feature", "entry_type", "payload", "created_at"]
 START = datetime(2026, 10, 1, tzinfo=UTC)
 
@@ -100,6 +101,7 @@ class TreasuryTests(RosterTestCase):
                 "price": 0,  # price is optional
                 "notes": "In a well",
                 "created_by": {"id": self.player.id, "name": self.player.first_name},  # decision 6
+                "corrects_id": None,  # decision 5
                 "children": [],
             },
         )

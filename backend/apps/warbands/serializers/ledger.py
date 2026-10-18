@@ -55,6 +55,7 @@ class WarbandTradeChildSerializer(serializers.ModelSerializer):
             "price",
             "notes",
             "created_by",
+            "corrects_id",
             "created_at",
         )
 
@@ -75,6 +76,7 @@ class WarbandTradeSerializer(serializers.ModelSerializer):
             "price",
             "notes",
             "created_by",
+            "corrects_id",
             "children",
             "created_at",
             "updated_at",
@@ -87,17 +89,19 @@ class WarbandTradeCreateSerializer(serializers.ModelSerializer):
 
     `action` is a vocabulary name in any case, or an older automatic name ("Bought", "Trade sent", ...) that maps
     onto it. `price` is the gold moved: signed for Trade and Adjustment (negative leaves the warband); 0 or more
-    for every other action, which gives the sign; 0 for a Group header. Validated data carries the vocabulary
-    `action` and the signed `amount`.
+    for every other action, which gives the sign; 0 for a Group header. A correction is an Adjustment whose
+    description is the reason; `corrects_id` may name the row it corrects (decision 5). Validated data carries
+    the vocabulary `action` and the signed `amount`.
     """
 
     action = serializers.CharField(max_length=120)
     price = serializers.IntegerField(required=False, default=0, min_value=-MAX_TRADE_PRICE, max_value=MAX_TRADE_PRICE)
     parent_id = serializers.IntegerField(required=False, allow_null=True)
+    corrects_id = serializers.IntegerField(required=False, allow_null=True)
 
     class Meta:
         model = WarbandTrade
-        fields = ("action", "description", "price", "notes", "parent_id")
+        fields = ("action", "description", "price", "notes", "parent_id", "corrects_id")
 
     def validate_action(self, value: str) -> ParsedAction:
         parsed = parse_action(value)
@@ -118,5 +122,21 @@ class WarbandTradeCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"price": ["A group header moves no gold."]})
         if price < 0 and (parsed.sign is not None or not parsed.action.is_signed):
             raise serializers.ValidationError({"price": ["Gold coins cannot be negative"]})
+        if attrs.get("corrects_id") is not None and parsed.action is not LedgerAction.ADJUSTMENT:
+            raise serializers.ValidationError({"corrects_id": ["Only an adjustment corrects another row."]})
         attrs["action"], attrs["amount"] = parsed.action, parsed.amount(price)
+        return attrs
+
+
+class WarbandTradeEditSerializer(serializers.Serializer):
+    """PATCH trades/<id>/: a hand-entered row's description and notes, nothing else (decision 5)."""
+
+    description = serializers.CharField(max_length=500, required=False)
+    notes = serializers.CharField(max_length=2000, required=False, allow_blank=True)
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        fixed = sorted(set(self.initial_data) - set(self.fields))
+        if fixed:
+            message = "Only the description and notes can change; correct the gold with an adjustment."
+            raise serializers.ValidationError({name: [message] for name in fixed})
         return attrs

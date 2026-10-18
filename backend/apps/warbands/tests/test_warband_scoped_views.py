@@ -29,8 +29,9 @@ def _view_class(pattern: URLPattern) -> Any:
 class WarbandScopedViewStructureTests(SimpleTestCase):
     def test_every_route_under_a_warband_uses_the_scoped_base(self):
         scoped = [pattern for pattern in urlpatterns if "<int:warband_id>" in str(pattern.pattern)]
-        # + batch/ per kind (decision 1), henchmen-groups promote/ (decision 9) and resources sell/ (BUG-68)
-        self.assertEqual(len(scoped), 32)
+        # + batch/ per kind (decision 1), henchmen-groups promote/ (decision 9), resources sell/ (BUG-68) and
+        # trades/<id>/ (pass 2 decision 5)
+        self.assertEqual(len(scoped), 33)
         for pattern in scoped:
             with self.subTest(route=pattern.name):
                 self.assertTrue(issubclass(_view_class(pattern), WarbandScopedView))

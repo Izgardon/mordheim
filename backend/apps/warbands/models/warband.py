@@ -146,6 +146,8 @@ class WarbandTrade(models.Model):
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, related_name="+", on_delete=models.SET_NULL
     )
+    # the row an adjustment corrects (decision 5): history is append-only, so mistakes are corrected, not edited
+    corrects = models.ForeignKey("self", null=True, blank=True, related_name="corrections", on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
