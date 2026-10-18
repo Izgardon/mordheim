@@ -197,26 +197,43 @@ class LogTests(RosterTestCase):
         self.assertEqual(list(everything[0]), LOG_KEYS)
         self.assertEqual([row["id"] for row in trades], [new.id, old.id])  # case-insensitive, trimmed
 
-    def test_a_posted_entry_takes_any_feature_with_defaults(self):
-        # ECON-CQ-02: the client may write any feature, including ones the server owns
-        forged = self.client.post(
-            self._url(), {"feature": "battle", "entry_type": "complete", "payload": {"a": 1}}, format="json"
-        )
-        defaulted = self.client.post(self._url(), {"feature": " ", "payload": {"b": 2}, "parent_id": 1}, format="json")
-
-        self.assertEqual((forged.status_code, defaulted.status_code), (201, 201))
-        self.assertEqual(list(forged.json()), LOG_KEYS)
+    def test_the_client_logs_only_what_the_server_cannot(self):
+        # ECON-CQ-02: the client used to write any feature, including ones the server owns, with defaults
+        refused = {"feature": ["The server writes this kind of log entry itself."]}
+        for feature, entry_type in (("battle", "complete"), ("items", "sold"), ("personnel", "new_hero"), (" ", "x")):
+            with self.subTest(feature=feature):
+                body = {"feature": feature, "entry_type": entry_type, "payload": {"a": 1}}
+                response = self.client.post(self._url(), body, format="json")
+                self.assertEqual(response.status_code, 400)
+                if feature.strip():
+                    self.assertEqual(response.json(), refused)
+        dice = {"feature": "dice_roll", "entry_type": "dice_roll", "payload": {"dice": "2d6", "rolls": [3, 4]}}
+        roll = {"feature": "trading_action", "entry_type": "rarity roll", "payload": {"hero": "Ana", "roll": 9}}
+        bought = {"feature": "loadout", "entry_type": "stash_item", "payload": {"item": "Rope", "price": 5}}
+        for body in (dice, roll, bought):  # rarity rolls and purchases until purchases move to the server
+            self.assertEqual(self.client.post(self._url(), body, format="json").status_code, 201)
         self.assertEqual(
-            log_rows(self.warband), [("battle", "complete", {"a": 1}, None), ("trade", "summary", {"b": 2}, None)]
+            log_rows(self.warband),
+            [
+                ("dice_roll", "dice_roll", {"dice": "2d6", "rolls": [3, 4]}, None),
+                ("trading_action", "rarity roll", {"hero": "Ana", "roll": 9}, None),
+                ("loadout", "stash_item", {"item": "Rope", "price": 5}, None),
+            ],
         )
 
-    def test_a_posted_entry_needs_an_object_payload(self):
+    def test_a_posted_entry_needs_a_small_object_payload(self):
+        dice = {"feature": "dice_roll", "entry_type": "dice_roll"}
         cases: list[tuple[dict[str, Any], int, Any]] = [
-            ({"feature": "dice"}, 400, {"detail": "Payload is required"}),
-            ({"feature": "dice", "payload": {}}, 400, {"detail": "Payload is required"}),
-            ({"feature": "dice", "payload": None}, 400, {"payload": ["This field may not be null."]}),
-            ({"feature": "dice", "payload": [1]}, 400, {"payload": ["Payload must be an object."]}),
-            ({"feature": "x" * 81, "payload": {"a": 1}}, 400, None),
+            (dice, 400, {"payload": ["This field is required."]}),
+            ({**dice, "payload": {}}, 400, {"payload": ["Payload is required."]}),
+            ({**dice, "payload": None}, 400, {"payload": ["This field may not be null."]}),
+            ({**dice, "payload": [1]}, 400, {"payload": ["Payload must be an object."]}),
+            (
+                {**dice, "payload": {"rolls": [6] * 2000}},
+                400,
+                {"payload": ["Payload is too large (at most 4096 bytes)."]},
+            ),
+            ({"feature": "x" * 81, "entry_type": "dice_roll", "payload": {"a": 1}}, 400, None),
         ]
         for body, status_code, expected in cases:
             with self.subTest(body=body):
@@ -231,5 +248,6 @@ class LogTests(RosterTestCase):
             with self.subTest(user=user.email):
                 self.client.force_authenticate(user=user)
                 self.assertEqual(self.client.get(self._url()).status_code, read)
-                response = self.client.post(self._url(), {"payload": {"a": 1}}, format="json")
+                body = {"feature": "dice_roll", "entry_type": "dice_roll", "payload": {"a": 1}}
+                response = self.client.post(self._url(), body, format="json")
                 self.assertEqual(response.status_code, write)

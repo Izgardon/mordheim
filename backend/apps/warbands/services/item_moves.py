@@ -16,7 +16,7 @@ from rest_framework.exceptions import NotFound
 from apps.items.models import Item
 from apps.warbands.models import Henchman, LedgerAction, RosterUnit, Warband, not_dismissed
 from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandItemSummarySerializer, WarbandSummarySerializer
-from apps.warbands.services import ledger
+from apps.warbands.services import economy_log, ledger
 from apps.warbands.services.stash import add_to_stash, remove_from_stash, stash_row
 from apps.warbands.units.kinds import KINDS, UnitKindKey
 
@@ -36,7 +36,7 @@ def _get_unit_instance(warband: Warband, unit_type: str, unit_id: int | None) ->
 def _resolve_unit(warband: Warband, unit_type: str, unit_id: int | None, role: str) -> Any:
     """The unit a move or sale names, if it is on the warband's roster; NotFound (404) otherwise."""
     kind = KINDS[cast(UnitKindKey, unit_type)]  # validated against the kind keys
-    unit = kind.visible(kind.objects.filter(id=unit_id, warband=warband)).only("id").first()
+    unit = kind.visible(kind.objects.filter(id=unit_id, warband=warband)).only("id", "name", "unit_type").first()
     if unit is None:
         raise NotFound(f"{role} not found")
     return unit
@@ -123,6 +123,9 @@ def transfer_item(warband: Warband, item: Item, data: Mapping[str, Any]) -> Outc
             stash_item = _add_stash_items(warband, item, costs)
         else:
             _add_unit_items(target_type, target_unit, item, costs)
+        source_end = (source_type, economy_log.unit_name(source_type, source_unit))
+        target_end = (target_type, economy_log.unit_name(target_type, target_unit))
+        economy_log.log_move(warband, item.name, quantity, source_end, target_end)
 
         source = _unit_payload(warband, source_type, source_id) if source_type != "stash" else None
         if target_type != "stash":
@@ -150,4 +153,6 @@ def sell_item(warband: Warband, item: Item, data: Mapping[str, Any]) -> Outcome:
         else:
             _remove_unit_items(source_type, source_unit, item_id, quantity)
             source = _unit_payload(warband, source_type, source_id)
+        source_end = (source_type, economy_log.unit_name(source_type, source_unit))
+        economy_log.log_sale(warband, item.name, quantity, data["price"], source_end)
         return 200, _item_change(warband, source=source, stash_item=stash_item, removed=removed)

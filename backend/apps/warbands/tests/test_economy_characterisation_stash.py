@@ -116,7 +116,7 @@ class StashTests(RosterTestCase):
         self.assertEqual(self._add(item_id=self.axe.id).status_code, 201)
         self.assertEqual(self._rows(), [("Axe", 1, None), ("House Spear", 1, None)])
 
-    def test_discarding_removes_copies_and_logs_nothing(self):
+    def test_discarding_removes_copies_and_logs_what_went(self):
         WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=4, cost=9)
 
         one = self.client.delete(self._url(self.sword.id))
@@ -128,7 +128,16 @@ class StashTests(RosterTestCase):
         self.assertEqual((zero.status_code, self._rows()), (204, []))
         missing = self.client.delete(self._url(self.sword.id))
         self.assertEqual((missing.status_code, missing.json()), (404, {"detail": "Item not found in stash"}))
-        self.assertEqual((trade_rows(self.warband), log_rows(self.warband)), ([], []))
+        # ECON-CQ-02: discards used to leave no trace; the server logs each one with the copies that went
+        self.assertEqual(trade_rows(self.warband), [])
+        self.assertEqual(
+            log_rows(self.warband),
+            [
+                ("items", "discarded", {"item": "Sword", "quantity": 1}, None),
+                ("items", "discarded", {"item": "Sword", "quantity": 2}, None),
+                ("items", "discarded", {"item": "Sword", "quantity": 1}, None),
+            ],
+        )
 
     def test_discarding_more_than_the_stash_holds_deletes_the_row(self):
         WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=2)
@@ -136,6 +145,7 @@ class StashTests(RosterTestCase):
         response = self.client.delete(self._url(self.sword.id), {"quantity": 9}, format="json")
 
         self.assertEqual((response.status_code, self._rows()), (204, []))
+        self.assertEqual(log_rows(self.warband), [("items", "discarded", {"item": "Sword", "quantity": 2}, None)])
 
     def test_members_read_the_stash_and_editors_change_it(self):
         WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=5)

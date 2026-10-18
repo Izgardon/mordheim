@@ -54,7 +54,7 @@ class WarbandItemListView(WarbandScopedView):
 class WarbandItemDetailView(WarbandScopedView):
     def delete(self, request: Request, warband_id: int, item_id: int) -> Response:
         qty = max(1, _int_or(request.data.get("quantity", 1), 1))
-        if not discard_from_stash(self.warband.id, item_id, qty):  # more copies than held empties the row
+        if not discard_from_stash(self.warband, item_id, qty):  # more copies than held empties the row
             return Response({"detail": "Item not found in stash"}, status=404)
         return Response(status=status.HTTP_204_NO_CONTENT)
 

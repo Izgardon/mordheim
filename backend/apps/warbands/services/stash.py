@@ -4,8 +4,8 @@ Copies are added with one `F("quantity") + n` UPDATE; a first insert that races 
 to that increment instead of breaking `unique_warband_item`. Copies are taken out of a row locked with
 `select_for_update` (its cost and the answer need it) by a `quantity__gte`-guarded UPDATE, or by deleting
 the row with its last copy, so two requests can't both take the last copy. Call `remove_from_stash` inside
-a transaction: the row lock lasts until it commits. Discards (`discard_from_stash`) need no cost or answer,
-so they are two guarded statements without a lock.
+a transaction: the row lock lasts until it commits. A discard (`discard_from_stash`) locks the row the same
+way, in its own transaction with its log entry (ECON-CQ-02).
 """
 
 from dataclasses import dataclass
@@ -16,6 +16,7 @@ from django.db.models.functions import Coalesce
 
 from apps.items.models import Item
 from apps.warbands.models import Warband, WarbandItem
+from apps.warbands.services import economy_log
 
 
 class StashShortage(ValueError):
@@ -72,16 +73,21 @@ def remove_from_stash(warband_id: int, item_id: int, quantity: int) -> StashTake
     return StashTake(cost, row)
 
 
-def discard_from_stash(warband_id: int, item_id: int, quantity: int) -> bool:
-    """DELETE items/: take up to `quantity` copies out, emptying the row if it holds no more; False if none.
-
-    Two guarded statements, no lock: a copy added between them only turns this into a "not found".
-    """
-    rows = WarbandItem.objects.filter(warband_id=warband_id, item_id=item_id)
-    if rows.filter(quantity__gt=quantity).update(quantity=F("quantity") - quantity):
-        return True
-    deleted, _ = rows.filter(quantity__lte=quantity).delete()
-    return bool(deleted)
+def discard_from_stash(warband: Warband, item_id: int, quantity: int) -> int:
+    """DELETE items/: take up to `quantity` copies out, emptying the row if it holds no more, and log what went;
+    how many copies were discarded (0 when the stash has none)."""
+    with transaction.atomic():
+        rows = WarbandItem.objects.filter(warband_id=warband.id, item_id=item_id)
+        row = rows.select_for_update(of=("self",)).select_related("item").first()
+        if row is None:
+            return 0
+        taken = min(quantity, row.quantity)
+        if row.quantity > quantity:
+            rows.update(quantity=F("quantity") - quantity)
+        else:
+            row.delete()
+        economy_log.log_discard(warband, row.item.name, taken)
+    return taken
 
 
 def stash_row(warband_id: int, item: Item) -> WarbandItem:

@@ -189,8 +189,17 @@ class TradeCompletionTests(TradeTestCase):
             ],
         )
         self.assertEqual((warband_gold(self.warband.id), warband_gold(self.rival.id)), (80, 70))
-        # ECON-CQ-02: a completed trade writes no log on either side
-        self.assertFalse(WarbandLog.objects.exists())
+        # ECON-CQ-02: a completed trade used to leave no log; each side now logs what it sent and received
+        sent = {"gold": 30, "items": [{"item": "Sword", "quantity": 2}]}
+        received = {"gold": 10, "items": [{"item": "Axe", "quantity": 1}]}
+        logs = {log.warband_id: (log.feature, log.entry_type, log.payload) for log in WarbandLog.objects.all()}
+        self.assertEqual(
+            logs,
+            {
+                self.warband.id: ("trade", "completed", {"partner": "Rats", "sent": sent, "received": received}),
+                self.rival.id: ("trade", "completed", {"partner": "Monks", "sent": received, "received": sent}),
+            },
+        )
 
     def test_either_side_may_lock_first(self):
         self._offer_both_ways()

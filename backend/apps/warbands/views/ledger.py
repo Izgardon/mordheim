@@ -41,14 +41,8 @@ class WarbandLogListView(WarbandScopedView):
     def post(self, request: Request, warband_id: int) -> Response:
         serializer = WarbandLogCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        feature = serializer.validated_data.get("feature") or "trade"
-        entry_type = serializer.validated_data.get("entry_type") or "summary"
-        payload = serializer.validated_data.get("payload") or {}
-
-        if not payload:
-            return Response({"detail": "Payload is required"}, status=400)
-
-        log_entry = log_warband_event(self.warband.id, feature, entry_type, payload)
+        entry = serializer.validated_data
+        log_entry = log_warband_event(self.warband.id, entry["feature"], entry["entry_type"], entry["payload"])
         return Response(WarbandLogSerializer(log_entry).data, status=status.HTTP_201_CREATED)
 
 

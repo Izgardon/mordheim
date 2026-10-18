@@ -11,7 +11,7 @@ from django.utils import timezone
 
 from apps.trades.models import TradeRequest
 from apps.warbands.models import Hero, LedgerAction, Warband, on_roster
-from apps.warbands.services import ledger
+from apps.warbands.services import economy_log, ledger
 from apps.warbands.services.stash import StashShortage, add_to_stash, remove_from_stash
 from apps.warbands.services.summary import warband_gold
 
@@ -76,6 +76,7 @@ def complete_trade(trade: TradeRequest) -> None:
             for side in SIDES:
                 _move_items(trade, side, offers[side])
     _record_gold(trade, offers)
+    economy_log.log_completed_trade({side: (getattr(trade, f"{side}_warband"), offers[side]) for side in SIDES})
     trade.from_offer, trade.to_offer = offers["from"], offers["to"]
     trade.status = TradeRequest.STATUS_COMPLETED
     trade.responded_at = timezone.now()

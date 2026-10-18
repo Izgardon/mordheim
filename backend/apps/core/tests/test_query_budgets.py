@@ -240,7 +240,8 @@ class QueryBudgetTests(TestCase):
     def test_item_moves_and_sales_stay_within_query_budget(self):
         # ECON-TEST-14 (pass 2). Each answers with both units' detail payloads and the summary, built inside the
         # transaction (ECON-PERF-03). Source and target are resolved with one id-only query each (BUG-06); a stash
-        # row is locked and changed in two queries, without re-reading it (BUG-36).
+        # row is locked and changed in two queries, without re-reading it (BUG-36). Each writes its log entry (+1,
+        # ECON-CQ-02); a sale also writes its gold to the stored balance (+1, decision 4).
         client = self.ref.owner_client
         client.force_authenticate(user=self.ref.owner)
         heroes = list(Hero.objects.filter(warband=self.ref.warband).order_by("id").values_list("id", flat=True))
@@ -255,20 +256,20 @@ class QueryBudgetTests(TestCase):
         self._count_writes(
             client,
             [
-                ("move stash to hero", moves, {**stash_to_hero, "quantity": 1}, 18),
-                ("move hero to hero", moves, {**hero_to_hero, "item_id": items[1], "quantity": 1}, 24),
-                ("move hero to stash", moves, {**hero_to_stash, "quantity": 1}, 19),  # onto an existing stash row
+                ("move stash to hero", moves, {**stash_to_hero, "quantity": 1}, 19),
+                ("move hero to hero", moves, {**hero_to_hero, "item_id": items[1], "quantity": 1}, 25),
+                ("move hero to stash", moves, {**hero_to_stash, "quantity": 1}, 20),  # onto an existing stash row
                 (
                     "sell from the stash",
                     sales,
                     {"source_type": "stash", "item_id": items[2], "quantity": 1, "price": 5},
-                    13,
+                    14,
                 ),
                 (
                     "sell from a hero",
                     sales,
                     {"source_type": "hero", "source_id": heroes[2], "item_id": items[1], "quantity": 1, "price": 5},
-                    19,
+                    20,
                 ),
             ],
         )
@@ -299,8 +300,9 @@ class QueryBudgetTests(TestCase):
         self._count_writes(owner, [("lock", f"{base}lock/", {}, 4), ("unlock", f"{base}unlock/", {}, 4)])
         self._count_writes(owner, [("lock again", f"{base}lock/", {}, 4)])
         # + both warbands' summaries in the answer and the event (5 queries for both; ECON-PERF-02), which saves
-        # each browser its summary GET; + resolving the trade's notifications as it ends (1; decision 8, BUG-69)
-        self._count_writes(player, [("lock that completes the trade", f"{base}lock/", {}, 24)])
+        # each browser its summary GET; + resolving the trade's notifications as it ends (1; decision 8, BUG-69);
+        # + both sides' "trade completed" log entries in one INSERT (ECON-CQ-02)
+        self._count_writes(player, [("lock that completes the trade", f"{base}lock/", {}, 25)])
         trade.refresh_from_db()
         self.assertEqual(trade.status, TradeRequest.STATUS_COMPLETED)
 

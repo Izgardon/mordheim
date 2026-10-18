@@ -1,10 +1,12 @@
 """The warband log and the treasury ledger: rows out, hand-entered rows in."""
 
+import json
 from typing import Any
 
 from rest_framework import serializers
 
 from apps.warbands.models import LedgerAction, WarbandLog, WarbandTrade
+from apps.warbands.services.economy_log import CLIENT_LOG_ENTRIES, MAX_CLIENT_PAYLOAD
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.services.ledger_names import ParsedAction, parse_action
 
@@ -18,22 +20,29 @@ class WarbandLogSerializer(serializers.ModelSerializer):
 
 
 class WarbandLogCreateSerializer(serializers.Serializer):
-    feature = serializers.CharField(max_length=80, required=False, allow_blank=True)
-    entry_type = serializers.CharField(max_length=80, required=False, allow_blank=True)
-    payload = serializers.JSONField(required=False)
+    """POST logs/: only entries the server can't write itself (ECON-CQ-02): dice rolls, and until purchases move
+    to the server, purchase and rarity-roll entries (`CLIENT_LOG_ENTRIES`). The payload is an object of at most
+    `MAX_CLIENT_PAYLOAD` bytes of JSON."""
 
-    def validate_feature(self, value):
-        return str(value).strip()
+    feature = serializers.CharField(max_length=80)
+    entry_type = serializers.CharField(max_length=80)
+    payload = serializers.JSONField()
 
-    def validate_entry_type(self, value):
-        return str(value).strip()
-
-    def validate_payload(self, value):
-        if value is None:
-            return {}
+    def validate_payload(self, value: Any) -> dict[str, Any]:
         if not isinstance(value, dict):
             raise serializers.ValidationError("Payload must be an object.")
+        if not value:
+            raise serializers.ValidationError("Payload is required.")
+        if len(json.dumps(value)) > MAX_CLIENT_PAYLOAD:
+            raise serializers.ValidationError(f"Payload is too large (at most {MAX_CLIENT_PAYLOAD} bytes).")
         return value
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        if (attrs["feature"], attrs["entry_type"]) not in CLIENT_LOG_ENTRIES:
+            raise serializers.ValidationError(
+                {"feature": ["The server writes this kind of log entry itself."]}, code="server_log_entry"
+            )
+        return attrs
 
 
 class LedgerAuthorSerializer(serializers.Serializer):
