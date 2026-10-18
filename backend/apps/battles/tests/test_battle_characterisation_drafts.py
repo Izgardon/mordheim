@@ -1,15 +1,16 @@
 """Postbattle drafts, kills and finalise checks characterised (pass 3, step 0).
 
 Pinned: a serious-injury log per draft re-roll (BUG-47, BATL-TEST-14); exploration cleared by every draft save
-(BUG-71); live kills applied over the postbattle stepper while pivotal moments use the stepper, and kill
-history listing a cancelled battle (BUG-11, BATL-TEST-10). A unit dismissed mid-battle is left out of finalise with
-a warning (BUG-73, fixed).
+(BUG-71). Fixed: finalise and pivotal moments count the kill events and kill history lists ended battles only
+(BUG-11, BATL-TEST-10; undo in test_battle_kills.py); a unit dismissed mid-battle is left out of finalise with a
+warning (BUG-73).
 """
 
 from typing import Any
 
 from django.utils import timezone
 
+from apps.battles.models import Battle
 from apps.campaigns.models import PivotalMoment
 from apps.special.models import Special
 from apps.warbands.models import HeroSpecial, WarbandLog, WarbandResource
@@ -189,10 +190,11 @@ class PostbattleKillTests(BattleTestCase):
         self.battle_id = self.to_active({self.player: [self.h], self.viewer: [self.r]})
         self.ok(self.kill(self.player, self.battle_id, self.h, self.r), 201)
 
-    def test_live_kills_are_applied_and_the_stepper_is_ignored_but_pivotal_moments_use_it(self):
-        # Characterises current behaviour (BUG-11, BATL-TEST-10, pinned; flips in PR A: the postbattle number, from
-        # the kill events, is what's saved and what pivotal moments read)
+    def test_the_kill_events_are_what_finalise_and_pivotal_moments_count(self):
+        # BUG-11, BATL-TEST-10: finalise added the live counter while pivotal moments read the stepper (3 here);
+        # now both count the kill events: the one tapped, plus one added in postbattle
         self.finish(self.battle_id, [self.warband])
+        self.ok(self.kill(self.player, self.battle_id, self.h, victim_name="Ogre", source="postbattle"), 201)
 
         self.ok(
             self.finalize(self.player, self.battle_id, draft({self.h: unit_result(self.h, kills=3, name="Abbess")}))
@@ -200,29 +202,25 @@ class PostbattleKillTests(BattleTestCase):
         self.ok(self.finalize(self.viewer, self.battle_id, draft({self.r: unit_result(self.r)})))
 
         self.hero.refresh_from_db()
-        self.assertEqual(self.hero.kills, 1)
+        self.assertEqual(self.hero.kills, 2)
         moments = PivotalMoment.objects.filter(battle_id=self.battle_id).order_by("kind")
         self.assertEqual(
             list(moments.values_list("warband_id", "kind", "detail")),
             [
-                (self.warband.id, "carried_the_fight", "Abbess scored 3 of 3 recorded kills."),
+                (self.warband.id, "carried_the_fight", "Abbess scored 2 of 2 recorded kills."),
                 (self.warband.id, "untouched_triumph", "Monks won without a single selected unit going out of action."),
             ],
         )
 
-    def test_kill_history_lists_kills_from_a_cancelled_battle(self):
-        # Characterises current behaviour (BUG-11, pinned; flips in PR A: ended battles only)
+    def test_kill_history_lists_ended_battles_only(self):
+        # BUG-11: a cancelled battle's kills were listed
+        url = f"/api/warbands/{self.warband.id}/heroes/{self.hero.id}/kill-history/"
         self.ok(self.post_as(self.player, self.url(self.battle_id, "cancel-battle")))
 
-        history = self.ok(
-            self.get_as(self.player, f"/api/warbands/{self.warband.id}/heroes/{self.hero.id}/kill-history/")
-        )
+        self.assertEqual(self.ok(self.get_as(self.player, url)).data, {"total_kills": 0, "named_kills_count": 0, "named_kills": []})  # fmt: skip
 
+        Battle.objects.filter(id=self.battle_id).update(status=Battle.STATUS_ENDED)
         self.assertEqual(
-            history.data,
-            {
-                "total_kills": 0,
-                "named_kills_count": 1,
-                "named_kills": [{"victim_name": "Rat", "victim_warband_name": "Rats", "scenario_name": "Bridge"}],
-            },
+            self.ok(self.get_as(self.player, url)).data["named_kills"],
+            [{"victim_name": "Rat", "victim_warband_name": "Rats", "scenario_name": "Bridge"}],
         )

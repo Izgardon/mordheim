@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 from django.db import models
-from django.db.models import F, Prefetch, prefetch_related_objects
+from django.db.models import Prefetch, prefetch_related_objects
 from django.utils import timezone
 from rest_framework.response import Response
 
@@ -40,13 +40,13 @@ from apps.warbands.utils.leaders import ensure_single_living_leader
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.broadcast import Changed, publish
+from ..services.kills import kill_counts_by_unit
 from ..services.lifecycle import participants_all_in, record_wins_and_losses
 from ..services.timing import is_overdue
 from ..services.unit_information import ARMOUR_SAVE_STAT_KEY, NUMERIC_STAT_KEYS, clean_editable_fields
 from ..services.warnings import Warning, unit_left_warband
 
 KILLER_UNIT_TYPES = {"hero", "hired_sword", "henchman", "custom", "bestiary"}
-AGGREGATED_KILLER_UNIT_TYPES = {"hero", "hired_sword", "henchman"}
 INGAME_EVENT_TYPES = {
     BattleEvent.TYPE_KILL_RECORDED,
     BattleEvent.TYPE_DEATH_RECORDED,
@@ -144,6 +144,7 @@ def _serialize_event(event: BattleEvent) -> dict:
         "actor_user_id": event.actor_user_id,
         "payload_json": event.payload_json or {},
         "created_at": event.created_at.isoformat(),
+        "voided_at": event.voided_at.isoformat() if event.voided_at else None,
     }
 
 
@@ -578,54 +579,6 @@ def _participant_permanent_selected_unit_keys(participant: BattleParticipant) ->
         for key in _participant_selected_unit_keys(participant)
         if not key.startswith("custom:") and not key.startswith("bestiary:")
     }
-
-
-def _apply_kill_aggregation(battle_id: int) -> None:
-    totals: dict[str, defaultdict[int, int]] = {
-        "hero": defaultdict(int),
-        "hired_sword": defaultdict(int),
-        "henchman": defaultdict(int),
-    }
-    kill_events = BattleEvent.objects.filter(
-        battle_id=battle_id,
-        type__in=(
-            BattleEvent.TYPE_KILL_RECORDED,
-            BattleEvent.TYPE_UNIT_KILL_RECORDED,
-        ),
-    ).values_list("type", "payload_json")
-
-    for event_type, payload in kill_events:
-        if not isinstance(payload, dict):
-            continue
-        if event_type == BattleEvent.TYPE_UNIT_KILL_RECORDED:
-            killer_payload = payload.get("killer", {})
-            if not isinstance(killer_payload, dict):
-                continue
-            unit_type = str(killer_payload.get("unit_type", "")).strip().lower()
-            unit_id = killer_payload.get("unit_id")
-        else:
-            unit_type = str(payload.get("killer_unit_type", "")).strip().lower()
-            unit_id = payload.get("killer_unit_id")
-        if unit_type not in KILLER_UNIT_TYPES:
-            continue
-        if unit_type not in AGGREGATED_KILLER_UNIT_TYPES:
-            continue
-        if unit_id is None:
-            continue
-        try:
-            parsed_unit_id = int(unit_id)
-        except (TypeError, ValueError):
-            continue
-        if parsed_unit_id <= 0:
-            continue
-        totals[unit_type][parsed_unit_id] += 1
-
-    for unit_id, count in totals["hero"].items():
-        Hero.objects.filter(id=unit_id).update(kills=F("kills") + count)
-    for unit_id, count in totals["hired_sword"].items():
-        HiredSword.objects.filter(id=unit_id).update(kills=F("kills") + count)
-    for unit_id, count in totals["henchman"].items():
-        Henchman.objects.filter(id=unit_id).update(kills=F("kills") + count)
 
 
 def _finalize_battle(battle: Battle, actor_user, events: list[dict], **ended: object) -> None:
@@ -1507,6 +1460,7 @@ def _remove_used_single_use_items(battle: Battle, participant: BattleParticipant
         battle_id=battle.id,
         actor_user_id=participant.user_id,
         type=BattleEvent.TYPE_ITEM_USED,
+        voided_at__isnull=True,  # an undone use keeps the item (decision 5)
     ).values_list("payload_json", flat=True)
 
     for payload in item_events:
@@ -1649,6 +1603,7 @@ def _apply_participant_postbattle_results(
     }
 
     warnings: list[Warning] = []
+    kills_by_unit = kill_counts_by_unit(battle.id, participant.warband_id)  # the live kill events (decision 5)
     group_xp_by_id: dict[int, int] = {}
     group_stats_override_by_id: dict[int, dict[str, int | str]] = {}
     group_stats_update_fields_by_id: defaultdict[int, set[str]] = defaultdict(set)
@@ -1656,7 +1611,7 @@ def _apply_participant_postbattle_results(
         parsed = _parse_unit_key(unit_key)
         info = unit_information.get(unit_key, {})
         stats_override = info.get("stats_override", {})
-        kill_count = _coerce_int(info.get("kill_count", 0), field_name="kill_count", minimum=0, maximum=9999)
+        kill_count = kills_by_unit.get(unit_key, 0)
         xp_earned = _coerce_int(result.get("xp_earned", 0), field_name="xp_earned", minimum=0, maximum=9999)
         dead = bool(result.get("dead", False))
         unit_name = result.get("unit_name", "") or unit_key

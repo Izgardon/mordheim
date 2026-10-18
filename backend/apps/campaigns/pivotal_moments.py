@@ -1,4 +1,5 @@
 from apps.battles.models import Battle, BattleEvent, BattleParticipant
+from apps.battles.services.kills import count_kills, live_kill_events
 
 from .models import PivotalMoment
 
@@ -92,12 +93,8 @@ def _generate_event_driven_moments(
     participants_by_warband_id: dict[int, BattleParticipant],
     names_by_key: dict[str, str],
     rows: list[PivotalMoment],
+    kill_events: list[BattleEvent],
 ) -> None:
-    kill_events = BattleEvent.objects.filter(
-        battle_id=battle.id,
-        type=BattleEvent.TYPE_UNIT_KILL_RECORDED,
-    ).order_by("id")
-
     for event in kill_events:
         payload = event.payload_json if isinstance(event.payload_json, dict) else {}
         killer = payload.get("killer", {})
@@ -194,8 +191,10 @@ def _generate_warband_moments(
     battle: Battle,
     participants: list[BattleParticipant],
     rows: list[PivotalMoment],
+    kill_events: list[BattleEvent],
 ) -> None:
     winner_ids = set(battle.winner_warband_ids_json or [])
+    kills = count_kills(event.payload_json for event in kill_events)  # as finalise counts them (decision 5, BUG-11)
 
     for participant in participants:
         unit_results = _normalize_unit_results(participant)
@@ -203,8 +202,7 @@ def _generate_warband_moments(
         permanent_deaths = 0
 
         for unit_key, result in unit_results.items():
-            kill_count = int(result.get("kill_count", 0) or 0)
-            total_kills += max(0, kill_count)
+            total_kills += kills.get(unit_key, 0)
             if (
                 bool(result.get("dead", False))
                 and not unit_key.startswith("custom:")
@@ -217,7 +215,7 @@ def _generate_warband_moments(
                 continue
 
             unit_name = str(result.get("unit_name", "")).strip() or unit_key
-            kill_count = max(0, int(result.get("kill_count", 0) or 0))
+            kill_count = kills.get(unit_key, 0)
             dead = bool(result.get("dead", False))
 
             if kill_count >= 2 and total_kills > 0 and kill_count * 2 >= total_kills:
@@ -310,8 +308,9 @@ def generate_pivotal_moments_for_battle(battle: Battle) -> None:
     participants_by_warband_id = {participant.warband_id: participant for participant in participants}
     names_by_key = _build_unit_names_by_key(participants)
 
-    _generate_event_driven_moments(battle, participants_by_warband_id, names_by_key, rows)
-    _generate_warband_moments(battle, participants, rows)
+    kill_events = list(live_kill_events(battle.id).order_by("id"))  # undone kills don't count (decision 5)
+    _generate_event_driven_moments(battle, participants_by_warband_id, names_by_key, rows, kill_events)
+    _generate_warband_moments(battle, participants, rows, kill_events)
 
     if rows:
         PivotalMoment.objects.bulk_create(rows)

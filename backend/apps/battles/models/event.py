@@ -23,6 +23,8 @@ class BattleEvent(models.Model):
     TYPE_UNIT_OOA_SET = "unit_ooa_set"
     TYPE_UNIT_OOA_UNSET = "unit_ooa_unset"
     TYPE_UNIT_KILL_RECORDED = "unit_kill_recorded"
+    TYPE_UNIT_KILL_VOIDED = "unit_kill_voided"
+    TYPE_ITEM_USED_VOIDED = "item_used_voided"
     TYPE_PARTICIPANT_FINISHED_BATTLE = "participant_finished_battle"
     TYPE_BATTLE_ENTERED_POSTBATTLE = "battle_entered_postbattle"
     TYPE_WINNER_DECLARED = "winner_declared"
@@ -49,6 +51,8 @@ class BattleEvent(models.Model):
         (TYPE_UNIT_OOA_SET, "Unit out of action set"),
         (TYPE_UNIT_OOA_UNSET, "Unit out of action unset"),
         (TYPE_UNIT_KILL_RECORDED, "Unit kill recorded"),
+        (TYPE_UNIT_KILL_VOIDED, "Unit kill voided"),
+        (TYPE_ITEM_USED_VOIDED, "Item use voided"),
         (TYPE_PARTICIPANT_FINISHED_BATTLE, "Participant finished battle"),
         (TYPE_BATTLE_ENTERED_POSTBATTLE, "Battle entered postbattle"),
         (TYPE_WINNER_DECLARED, "Winner declared"),
@@ -72,6 +76,7 @@ class BattleEvent(models.Model):
     type = models.CharField(max_length=64, choices=TYPE_CHOICES)
     payload_json = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    voided_at = models.DateTimeField(null=True, blank=True)  # undone by its player (decision 5); kept in the timeline
 
     class Meta:
         db_table = "battle_event"

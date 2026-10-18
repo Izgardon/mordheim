@@ -139,12 +139,13 @@ class BattleQueryBudgetTests(BattleTestCase):
         )
 
     def test_finalising_the_fixture_warband_stays_within_budget(self):
-        # BATL-TEST-07 baseline (target 30, PERF-36): the first of two players to finalise. It validates twice, saves
-        # each unit and every henchman one by one, checks each group's survivors, and writes each log singly.
+        # BATL-TEST-07 baseline (target 30, PERF-36): the first of two players to finalise. It validates twice, reads
+        # the battle's kill events (decision 5), saves each unit and every henchman one by one, checks each group's
+        # survivors, and writes each log singly.
         battle_id, postbattle = self._fixture_postbattle()
         body = {"postbattle_json": postbattle}
         queries, _ = self.count(self.player, "post", self.url(battle_id, "finalize-postbattle"), body)
-        self.within("finalise_first", queries, 67)
+        self.within("finalise_first", queries, 68)
 
     def test_finalising_the_fixture_warband_last_stays_within_budget(self):
         # + ending the battle: its event, the wins and losses (the warbands in it, then one UPDATE each for winners
@@ -155,7 +156,7 @@ class BattleQueryBudgetTests(BattleTestCase):
         body = {"postbattle_json": postbattle}
         queries, _ = self.count(self.player, "post", self.url(battle_id, "finalize-postbattle"), body)
         self.assertEqual(self.battle(battle_id).status, "ended")
-        self.within("finalise_last", queries, 76)
+        self.within("finalise_last", queries, 77)
 
     def test_a_locked_battle_write_locks_only_the_battle_and_participant_rows(self):
         # PERF-37, BATL-TEST-19: the battle row first, then the participant, whose query joins its user and warband

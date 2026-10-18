@@ -1693,6 +1693,7 @@ class BattleApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 201)
 
+        Battle.objects.filter(id=battle_id).update(status=Battle.STATUS_ENDED)  # ended battles only (BUG-11)
         response = self.client.get(f"/api/warbands/{self.owner_warband.id}/heroes/{owner_hero.id}/kill-history/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["total_kills"], 2)
@@ -1759,6 +1760,7 @@ class BattleApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 201)
 
+        Battle.objects.filter(id=battle_id).update(status=Battle.STATUS_ENDED)  # ended battles only (BUG-11)
         response = self.client.get(
             f"/api/warbands/{self.owner_warband.id}/hired-swords/{owner_hired_sword.id}/kill-history/"
         )
@@ -1850,6 +1852,7 @@ class BattleApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 201)
 
+        Battle.objects.filter(id=battle_id).update(status=Battle.STATUS_ENDED)  # ended battles only (BUG-11)
         response = self.client.get(
             f"/api/warbands/{self.owner_warband.id}/henchmen-groups/{owner_group.id}/kill-history/"
         )

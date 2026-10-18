@@ -187,6 +187,21 @@ class CampaignBattleUnitOoaView(APIView):
         )
 
 
+def _kill_refusal(battle: Battle, participant: BattleParticipant, source: str) -> Response | None:
+    """Kills are tapped in an active battle, or added in the killer's own postbattle when the request says
+    `source: "postbattle"` (decision 5, BATL-NEW-06), so a phone that slept through End isn't taken for one."""
+    if source == "postbattle":
+        if battle.status == Battle.STATUS_POSTBATTLE and participant.status == BattleParticipant.STATUS_FINISHED_BATTLE:
+            return None
+        detail = "Kills can be added in postbattle only until you finalise"
+        return Response({"detail": detail, "code": "not_in_postbattle"}, status=400)
+    if battle.status != Battle.STATUS_ACTIVE:
+        return Response({"detail": "Battle is not active"}, status=400)
+    if participant.status != BattleParticipant.STATUS_IN_BATTLE:
+        return Response({"detail": "You are not currently in battle"}, status=400)
+    return None
+
+
 class CampaignBattleUnitKillView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
@@ -235,16 +250,15 @@ class CampaignBattleUnitKillView(APIView):
             earned_xp = _coerce_bool(request.data.get("earned_xp", True), field_name="earned_xp")
         except ValueError as exc:
             return Response({"detail": str(exc)}, status=400)
+        source = "postbattle" if request.data.get("source") == "postbattle" else "battle"
 
         events: list[dict] = []
         with transaction.atomic():
             battle, participant = _get_user_battle_participant(campaign_id, battle_id, request.user, for_update=True)
             if not battle or not participant:
                 return Response({"detail": "Not found"}, status=404)
-            if battle.status != Battle.STATUS_ACTIVE:
-                return Response({"detail": "Battle is not active"}, status=400)
-            if participant.status != BattleParticipant.STATUS_IN_BATTLE:
-                return Response({"detail": "You are not currently in battle"}, status=400)
+            if (refusal := _kill_refusal(battle, participant, source)) is not None:
+                return refusal
 
             killer_selected_keys = _participant_selected_unit_keys(participant)
             if killer["unit_key"] not in killer_selected_keys:
@@ -252,7 +266,7 @@ class CampaignBattleUnitKillView(APIView):
 
             unit_information = _normalize_unit_information(participant.unit_information_json)
             killer_info = _upsert_unit_information(unit_information, killer["unit_key"])
-            if killer_info["out_of_action"]:
+            if killer_info["out_of_action"] and source == "battle":  # in postbattle he may have scored before
                 return Response({"detail": "Cannot record kills for a unit that is out of action"}, status=400)
 
             participants = list(
@@ -303,6 +317,7 @@ class CampaignBattleUnitKillView(APIView):
                 "killer": killer_payload,
                 "victim": victim_payload,
                 "earned_xp": earned_xp,
+                "source": source,
             }
             if notes:
                 event_payload["notes"] = notes

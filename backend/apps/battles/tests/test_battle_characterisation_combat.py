@@ -210,6 +210,7 @@ class BattleKillAndOoaTests(BattleTestCase):
                 ),
                 "victim": self.unit(self.r, self.rival.id, name="Rat", is_large=True),
                 "earned_xp": False,
+                "source": "battle",  # or "postbattle", added in the killer's postbattle (decision 5)
                 "notes": "clean",
             },
         )
@@ -227,6 +228,7 @@ class BattleKillAndOoaTests(BattleTestCase):
                 "killer": self.unit(self.s, self.warband.id, name="Sister Ana", is_large=True),
                 "victim": {"unit_key": None, "unit_type": None, "unit_id": None, "warband_id": None, "name": "Ogre"},
                 "earned_xp": True,
+                "source": "battle",
             },
         )
         self.assertEqual(
