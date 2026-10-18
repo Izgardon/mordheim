@@ -6,6 +6,44 @@ type SeriousInjuryPayload = {
   rolls?: number[];
   result_code?: string | null;
   result_label?: string | null;
+  applied?: boolean;
+  apply_by_hand?: boolean;
+};
+
+type StatsKeptPayload = {
+  unit_name?: string;
+  changes?: Record<string, { before?: unknown; after?: unknown } | null>;
+};
+
+const STAT_ABBREVIATIONS: Record<string, string> = {
+  movement: "M",
+  weapon_skill: "WS",
+  ballistic_skill: "BS",
+  strength: "S",
+  toughness: "T",
+  wounds: "W",
+  initiative: "I",
+  attacks: "A",
+  leadership: "Ld",
+  armour_save: "AS",
+};
+
+const statValue = (value: unknown) =>
+  value === null || value === undefined || value === "" ? "-" : String(value);
+
+/** Battle stat changes made permanent by the Keep tick (SEC-10, decision 6). */
+const statsKept: LogFormatter = (log) => {
+  const payload = payloadOf<StatsKeptPayload>(log);
+  const changes = Object.entries(payload.changes ?? {})
+    .map(([stat, change]) =>
+      change
+        ? `${STAT_ABBREVIATIONS[stat] ?? stat} ${statValue(change.before)} → ${statValue(change.after)}`
+        : null
+    )
+    .filter((entry): entry is string => entry !== null);
+  return `${payload.unit_name || "Unknown unit"} kept the battle's stat changes${
+    changes.length > 0 ? `: ${changes.join(", ")}` : ""
+  }.`;
 };
 
 type HiredSwordPersonnelPayload = { name?: string; type?: string };
@@ -36,6 +74,8 @@ const seriousInjury: LogFormatter = (log) => {
       {resultCode || resultLabel ? (
         <span>= {[resultCode, resultLabel].filter(Boolean).join(": ")}</span>
       ) : null}
+      {payload.applied ? <span>(applied)</span> : null}
+      {payload.apply_by_hand ? <span>(apply by hand)</span> : null}
     </span>
   );
 };
@@ -51,6 +91,7 @@ const hiredSwordMove =
 /** Injuries, and hired swords joining or leaving (recruits use the templates). */
 export const PERSONNEL_FORMATTERS: Record<string, LogFormatter> = {
   "personnel:serious_injury": seriousInjury,
+  "personnel:stats_kept": statsKept,
   "personnel:new_hired_sword": hiredSwordMove("Hired"),
   "personnel:remove_hired_sword": hiredSwordMove("Dismissed"),
 };

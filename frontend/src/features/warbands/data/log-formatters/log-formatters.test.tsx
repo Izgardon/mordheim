@@ -23,6 +23,62 @@ const textOf = (entry: WarbandLog) => {
 };
 
 describe("log formatters, by feature", () => {
+  it("say what pass 3's battle entries record: no winner, kept stats, lost items, warnings", () => {
+    expect(
+      textOf(log("battle", "complete", { result: "no_winner", with: [], against: ["Rats"] }))
+    ).toBe("The battle against Rats ended with no winner.");
+    expect(
+      textOf(
+        log("personnel", "stats_kept", {
+          unit_name: "Captain Wolf",
+          changes: {
+            weapon_skill: { before: 4, after: 5 },
+            armour_save: { before: null, after: "4+" },
+          },
+        })
+      )
+    ).toBe("Captain Wolf kept the battle's stat changes: WS 4 → 5, AS - → 4+.");
+    expect(
+      textOf(
+        log("battle", "items_lost", {
+          units: [
+            { unit_name: "Rolf", items: ["Sword", "Shield"] },
+            { unit_name: "Youngblood A", items: ["Club"] },
+          ],
+        })
+      )
+    ).toBe("Lost with the dead: Rolf (Sword, Shield); Youngblood A (Club).");
+    expect(
+      textOf(
+        log("battle", "warnings", {
+          warnings: [{ code: "unusual_xp", message: "Captain Wolf earned 14 XP in one battle." }],
+        })
+      )
+    ).toBe("Went ahead despite: Captain Wolf earned 14 XP in one battle.");
+    expect(
+      textOf(
+        log("battle", "exploration", {
+          dice: [3, 4],
+          amount: 2,
+          resource: "Treasure",
+          rerolls: [[1, 2]],
+        })
+      )
+    ).toBe("Exploration rolls: 3, 4, finding 2 Treasure (rolled again once).");
+    expect(
+      textOf(
+        log("personnel", "serious_injury", {
+          unit_name: "Rolf",
+          roll_type: "d66",
+          rolls: [3, 4],
+          result_code: "34",
+          result_label: "Arm Wound",
+          apply_by_hand: true,
+        })
+      )
+    ).toContain("(apply by hand)");
+  });
+
   it("cover every entry that has its own formatter", () => {
     expect(Object.keys(LOG_FORMATTERS).sort()).toEqual(
       [
@@ -33,11 +89,14 @@ describe("log formatters, by feature", () => {
         "trading_action:custom_dice_roll",
         "dice_roll:dice_roll",
         "personnel:serious_injury",
+        "personnel:stats_kept",
         "personnel:new_hired_sword",
         "personnel:remove_hired_sword",
         "battle:complete",
         "battle:exploration",
         "battle:finds",
+        "battle:items_lost",
+        "battle:warnings",
         "loadout:hero_item",
         "loadout:henchmen_item",
         "loadout:stash_item",

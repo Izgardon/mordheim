@@ -1,12 +1,21 @@
 import { payloadOf, renderGoldBadge, type LogFormatter } from "./badges";
 
 type BattleCompletePayload = {
-  result?: "won" | "lost";
+  result?: "won" | "lost" | "no_winner";
   with?: string[];
   against?: string[];
 };
 
-type BattleExplorationPayload = { dice?: number[] };
+type BattleExplorationPayload = {
+  dice?: number[];
+  amount?: number | null;
+  resource?: string | null;
+  rerolls?: unknown[];
+};
+
+type ItemsLostPayload = { units?: Array<{ unit_name?: string; items?: unknown } | null> };
+
+type WarningsPayload = { warnings?: Array<{ message?: unknown } | null> };
 
 type BattleFindsPayload = {
   gold_crowns?: number;
@@ -22,9 +31,17 @@ const names = (values: unknown) =>
 
 const battleComplete: LogFormatter = (log) => {
   const payload = payloadOf<BattleCompletePayload>(log);
-  const verb = payload.result === "lost" ? "Lost" : "Won";
   const withNames = names(payload.with);
   const againstNames = names(payload.against);
+  if (payload.result === "no_winner") {
+    // "No winner" records no wins or losses (decision 8).
+    const sides = [
+      withNames.length > 0 ? ` with ${withNames.join(", ")}` : "",
+      againstNames.length > 0 ? ` against ${againstNames.join(", ")}` : "",
+    ].join("");
+    return `The battle${sides} ended with no winner.`;
+  }
+  const verb = payload.result === "lost" ? "Lost" : "Won";
   if (againstNames.length === 0) {
     return `${verb} the battle.`;
   }
@@ -41,7 +58,38 @@ const exploration: LogFormatter = (log) => {
         .filter((value): value is number => Number.isFinite(Number(value)))
         .map((value) => Number(value))
     : [];
-  return `Exploration rolls: ${dice.length > 0 ? dice.join(", ") : "-"}.`;
+  const amount = Number(payload.amount);
+  const found =
+    Number.isFinite(amount) && amount > 0 && payload.resource
+      ? `, finding ${amount} ${payload.resource}`
+      : "";
+  const rerolls = Array.isArray(payload.rerolls) ? payload.rerolls.length : 0;
+  const rerolled =
+    rerolls > 0 ? ` (rolled again ${rerolls === 1 ? "once" : `${rerolls} times`})` : "";
+  return `Exploration rolls: ${dice.length > 0 ? dice.join(", ") : "-"}${found}${rerolled}.`;
+};
+
+/** What dead units took with them (pass 2 decision 7). */
+const itemsLost: LogFormatter = (log) => {
+  const units = (payloadOf<ItemsLostPayload>(log).units ?? [])
+    .map((unit) => {
+      const items = names(unit?.items);
+      return unit?.unit_name && items.length > 0 ? `${unit.unit_name} (${items.join(", ")})` : null;
+    })
+    .filter((entry): entry is string => entry !== null);
+  return units.length > 0
+    ? `Lost with the dead: ${units.join("; ")}.`
+    : "Items lost with the dead.";
+};
+
+/** Unusual numbers finalise went ahead with (decision 9). */
+const warnings: LogFormatter = (log) => {
+  const messages = (payloadOf<WarningsPayload>(log).warnings ?? [])
+    .map((warning) => (typeof warning?.message === "string" ? warning.message.trim() : ""))
+    .filter(Boolean);
+  return messages.length > 0
+    ? `Went ahead despite: ${messages.join(" ")}`
+    : "Went ahead despite warnings.";
 };
 
 const finds: LogFormatter = (log) => {
@@ -82,4 +130,6 @@ export const BATTLE_FORMATTERS: Record<string, LogFormatter> = {
   "battle:complete": battleComplete,
   "battle:exploration": exploration,
   "battle:finds": finds,
+  "battle:items_lost": itemsLost,
+  "battle:warnings": warnings,
 };
