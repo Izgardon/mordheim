@@ -16,8 +16,8 @@ def _display_name(user: Any) -> str:
 
 def serialize_trade_request(trade: TradeRequest) -> dict[str, Any]:
     """A trade as every client sees it (read through `selectors.trade_requests()`, so both players and both
-    warbands are already loaded). An open trade past its deadline shows as expired: reads never write, and
-    `manage.py expire_trades` or the next write marks it (decision 8)."""
+    warbands are already loaded). An open trade past its deadline shows as expired: reads never write, and the
+    next write to it marks it (decision 8). Nothing else needs to: it spent no trading action."""
     return {
         "id": str(trade.id),
         "campaign_id": trade.campaign_id,

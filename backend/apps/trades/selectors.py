@@ -3,7 +3,8 @@
 from typing import Any
 from uuid import UUID
 
-from django.db.models import Exists, OuterRef, Q, QuerySet
+from django.db.models import CharField, Exists, OuterRef, Q, QuerySet
+from django.db.models.functions import Cast
 from django.utils import timezone
 from rest_framework.exceptions import NotFound, PermissionDenied
 
@@ -81,8 +82,8 @@ def require_member(user: Any, campaign_id: int) -> None:
 
 
 def _shown_as(status: str) -> Q:
-    """Trades whose payload shows `status`: an open trade past its deadline reads as expired before
-    `manage.py expire_trades` (or a write) marks it so (decision 8)."""
+    """Trades whose payload shows `status`: an open trade past its deadline reads as expired, whether or not a
+    write has marked it so yet (decision 8)."""
     if status == TradeRequest.STATUS_EXPIRED:
         return Q(status=status) | Q(status__in=OPEN_STATUSES, expires_at__lte=timezone.now())
     if status in OPEN_STATUSES:
@@ -101,6 +102,8 @@ def player_trades(user: Any, campaign_id: int, status: str | None = None) -> Que
     return rows.order_by("-responded_at", "-created_at")
 
 
-def due_trades() -> QuerySet[TradeRequest]:
-    """Open trades past their deadline, oldest deadline first: what `manage.py expire_trades` closes."""
-    return trade_requests().filter(status__in=OPEN_STATUSES, expires_at__lte=timezone.now()).order_by("expires_at")
+def answerable_request_refs() -> QuerySet[Any, dict[str, Any]]:
+    """The ids, as notification `reference_id` text, of requests that can still be answered: pending and not run
+    out. A subquery: a trade-request notification for anything else is no longer shown (decision 8)."""
+    answerable = TradeRequest.objects.filter(status=TradeRequest.STATUS_PENDING, expires_at__gt=timezone.now())
+    return answerable.annotate(ref=Cast("id", CharField())).values("ref")

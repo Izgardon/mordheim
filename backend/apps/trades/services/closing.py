@@ -1,8 +1,9 @@
 """What every finished trade does, however it finished (decision 8, BUG-69).
 
-Completed, declined, cancelled or expired, by a player, a cleared notification or `manage.py expire_trades`: the
-trade's notifications are resolved in the same transaction, and both players get a `trade_closed` user event
-after commit carrying the trade as it ended.
+Completed, declined, cancelled or expired (by a player, a late write or a cleared notification): the trade's
+notifications are resolved in the same transaction, and both players get a `trade_closed` user event after commit
+carrying the trade as it ended. A trade that simply runs out is never written to, so it sends nothing: clients
+count down to its `expires_at`.
 """
 
 from apps.notifications.models import Notification

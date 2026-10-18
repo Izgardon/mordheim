@@ -30,7 +30,7 @@ class TradeExpiryTests(TradeTestCase):
 
     def test_reading_a_trade_that_ran_out_shows_it_expired_and_writes_nothing(self):
         # BUG-69 (decision 8): reading used to expire the trade and give its traders back; reads no longer write
-        # (`manage.py expire_trades` or the next write closes it), but the payload already says "expired"
+        # (the next write closes it; there is nothing to give back), but the payload already says "expired"
         trade, hero = self._locked_trade_with_trader()
         pending = self.make_trade(from_user=self.viewer, to_user=self.player)
         self.expire(trade)

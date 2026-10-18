@@ -6,10 +6,7 @@ leave every hero's trading action as it was: there is nothing to give back.
 """
 
 from collections.abc import Callable
-from io import StringIO
 from typing import Any
-
-from django.core.management import call_command
 
 from apps.trades.models import TradeRequest
 from apps.warbands.models import Hero
@@ -51,17 +48,11 @@ class TradeTradingActionTests(TradeTestCase):
             self.expire(trade)
             return self.offer(self.player, trade, gold=1)
 
-        def expire_by_command(trade: TradeRequest) -> Any:
-            self.expire(trade)
-            call_command("expire_trades", stdout=StringIO())
-            return None
-
         endings: list[tuple[str, Callable[[TradeRequest], Any], str]] = [
             ("cancelled by the sender", lambda t: self.post_as(self.player, self.trade_url(t, "close")), "cancelled"),
             ("declined by the recipient", lambda t: self.post_as(self.viewer, self.trade_url(t, "close")), "declined"),
             ("unlocked", lambda t: self.unlock(self.viewer, t), "accepted"),
             ("expired on a write", expire_on_write, "expired"),
-            ("expired by expire_trades", expire_by_command, "expired"),
         ]
         for name, end, status in endings:
             with self.subTest(name):

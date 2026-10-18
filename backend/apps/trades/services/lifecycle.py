@@ -7,21 +7,17 @@ and every applied offer, lock or unlock extends it; every way a trade ends goes 
 (decision 8).
 """
 
-from collections.abc import Iterable
 from typing import Any
-from uuid import UUID
 
-from django.db import transaction
 from django.utils import timezone
 
 from apps.trades.models import TradeRequest
-from apps.trades.selectors import trade_requests
 
 from .closing import close_out
 from .completion import complete_trade
 from .errors import TradeError
 from .offers import TradeWarning, build_offer
-from .timing import OPEN_STATUSES, extend, is_due
+from .timing import OPEN_STATUSES, extend
 from .traders import check_trader
 
 NOT_ACTIVE = "Trade is not active"
@@ -42,20 +38,6 @@ def _finish(trade: TradeRequest, status: str) -> None:
 
 def expire(trade: TradeRequest) -> None:
     _finish(trade, TradeRequest.STATUS_EXPIRED)
-
-
-def expire_due_trades(trade_ids: Iterable[UUID]) -> list[TradeRequest]:
-    """Expire those of the trades that are still past due, each in its own transaction under its row lock, and
-    return them. A trade a player is writing to right now is skipped: that write expires or extends it."""
-    expired = []
-    for trade_id in trade_ids:
-        with transaction.atomic():
-            rows = trade_requests().select_for_update(of=("self",), skip_locked=True)
-            trade = rows.filter(id=trade_id).first()
-            if trade is not None and is_due(trade):
-                expire(trade)
-                expired.append(trade)
-    return expired
 
 
 def answer_request(trade: TradeRequest, accept: bool) -> None:

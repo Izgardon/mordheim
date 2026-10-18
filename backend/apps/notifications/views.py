@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import Q, QuerySet
 from django.utils import timezone
 from rest_framework import permissions
 from rest_framework.response import Response
@@ -18,11 +19,21 @@ def _serialize_notification(n: Notification) -> dict:
     }
 
 
+def _without_stale_trade_requests(rows: QuerySet[Notification]) -> QuerySet[Notification]:
+    """Trade-request notifications only while the request can still be answered: one that ran out reads as gone,
+    without a write (decision 8). Same single query."""
+    from apps.trades.selectors import answerable_request_refs
+
+    stale = Q(notification_type=Notification.TYPE_TRADE_REQUEST) & ~Q(reference_id__in=answerable_request_refs())
+    return rows.exclude(stale)
+
+
 class NotificationListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        notifications = Notification.objects.filter(user=request.user, is_resolved=False).order_by("-created_at")
+        unresolved = Notification.objects.filter(user=request.user, is_resolved=False)
+        notifications = _without_stale_trade_requests(unresolved).order_by("-created_at")
         return Response([_serialize_notification(n) for n in notifications])
 
 
