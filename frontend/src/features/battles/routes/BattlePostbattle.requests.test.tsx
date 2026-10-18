@@ -460,16 +460,17 @@ describe("BattlePostbattle requests", () => {
 
   it("shows the kills that still count: Minus undoes the latest, Plus records one in postbattle (BUG-11)", async () => {
     const user = setupUser();
-    fakeApi.on(`POST ${battlePath("events/5/void/")}`, () => {
-      server.events = server.events.map((event) =>
-        event.id === 5 ? { ...event, voided_at: "2026-10-18T11:00:00Z" } : event
-      );
-      return answer();
-    });
-    fakeApi.on(`POST ${battlePath("unit-kill/")}`, () => {
-      server.events = [...server.events, killBy(6, "hero:1")];
-      return answer();
-    });
+    // The answer carries only the new undo event, as the server's does.
+    fakeApi.on(`POST ${battlePath("events/5/void/")}`, () => ({
+      ...answer(),
+      events: [
+        battleEvent(6, "unit_kill_voided", ME.id, { voided_event_id: 5, unit_key: "hero:1" }),
+      ],
+    }));
+    fakeApi.on(`POST ${battlePath("unit-kill/")}`, () => ({
+      ...answer(),
+      events: [killBy(7, "hero:1")],
+    }));
     await renderPostbattle();
     const kills = () => screen.getByRole("status", { name: "Captain Wolf's kills" });
     expect(kills()).toHaveTextContent("2");

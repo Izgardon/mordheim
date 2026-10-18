@@ -303,13 +303,13 @@ describe("BattleActive requests", () => {
         item_name: "Healing Draught",
       }),
     ];
-    fakeApi.on(`POST ${battlePath("events/3/void/")}`, () => {
-      server.events = server.events.map((event) => ({
-        ...event,
-        voided_at: "2026-10-18T11:00:00Z",
-      }));
-      return answer();
-    });
+    // The answer carries only the new undo event, as the server's does.
+    fakeApi.on(`POST ${battlePath("events/3/void/")}`, () => ({
+      ...answer(),
+      events: [
+        battleEvent(4, "item_used_voided", ME.id, { voided_event_id: 3, unit_key: "hero:1" }),
+      ],
+    }));
     renderBattleRoute("active");
     await screen.findByText("Captain Wolf");
 

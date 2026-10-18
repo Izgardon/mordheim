@@ -43,6 +43,28 @@ const baseState: BattleState = {
 };
 
 describe("battle-state utils", () => {
+  it("marks an undone event voided from the undo event a write answers with (BUG-11)", () => {
+    const merged = mergeBattleState(baseState, {
+      ...baseState,
+      events: [
+        {
+          id: 3,
+          battle_id: 5,
+          type: "unit_kill_voided",
+          actor_user_id: 7,
+          payload_json: { voided_event_id: 2, unit_key: "hero:1" },
+          created_at: "2026-10-18T11:00:00Z",
+        },
+      ],
+    });
+
+    expect(merged.events.map((event) => [event.id, event.voided_at ?? null])).toEqual([
+      [1, null],
+      [2, "2026-10-18T11:00:00Z"],
+      [3, null],
+    ]);
+  });
+
   it("merges delta responses without dropping older events", () => {
     const merged = mergeBattleState(baseState, {
       ...baseState,
