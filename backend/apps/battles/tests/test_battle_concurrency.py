@@ -130,13 +130,11 @@ class BattleConcurrencyTests(TransactionTestCase):
         # nothing deadlocks, and exactly one living leader is left.
         battle = self.battle(Battle.STATUS_POSTBATTLE, BattleParticipant.STATUS_FINISHED_BATTLE)
         rendezvous = Rendezvous()
-        real_validate = combat._validate_postbattle_json_for_participant
+        real_validate = combat.validate_postbattle
         finalise = {"postbattle_json": draft({self.a: unit_result(self.a, dead=True)})}
 
         with (
-            mock.patch.object(
-                combat, "_validate_postbattle_json_for_participant", side_effect=rendezvous.before(real_validate)
-            ),
+            mock.patch.object(combat, "validate_postbattle", side_effect=rendezvous.before(real_validate)),
             mock.patch.object(hooks, "lock_warband", side_effect=rendezvous.before(hooks.lock_warband)),
         ):
             statuses = run_concurrently(

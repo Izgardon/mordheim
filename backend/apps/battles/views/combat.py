@@ -14,6 +14,8 @@ from ..services.events import append_event
 from ..services.exploration import keep_exploration
 from ..services.item_use import check_payload_size, item_use_payload
 from ..services.lifecycle import end_battle, everyone_confirmed, reset_trading_actions
+from ..services.postbattle.finalise import apply_postbattle
+from ..services.postbattle.validate import validate_postbattle
 from ..services.selection import selected_unit_keys
 from ..services.timing import postbattle_deadline, record_activity
 from ..services.unit_information import unit_entry
@@ -25,10 +27,8 @@ from .responses import broadcast_response, response_with_snapshot
 from .shared import (
     INGAME_EVENT_TYPES,
     KILLER_UNIT_TYPES,
-    _apply_participant_postbattle_results,
     _build_battle_unit_event_payload,
     _get_user_battle_participant,
-    _validate_postbattle_json_for_participant,
 )
 
 
@@ -430,7 +430,7 @@ class CampaignBattlePostbattleSaveView(APIView):
                 return response_with_snapshot(battle.id, events)
 
             try:
-                postbattle_json = _validate_postbattle_json_for_participant(
+                postbattle_json = validate_postbattle(
                     battle,
                     participant,
                     request.data.get("postbattle_json", participant.postbattle_json),
@@ -480,7 +480,7 @@ class CampaignBattleFinalizePostbattleView(APIView):
             if participant.status != BattleParticipant.STATUS_FINISHED_BATTLE:
                 return Response({"detail": "You must enter postbattle before finalizing"}, status=400)
 
-            postbattle_json = _validate_postbattle_json_for_participant(
+            postbattle_json = validate_postbattle(
                 battle,
                 participant,
                 request.data.get("postbattle_json", participant.postbattle_json),
@@ -489,7 +489,7 @@ class CampaignBattleFinalizePostbattleView(APIView):
             postbattle_json["exploration"], warnings = keep_exploration(
                 stored_exploration, postbattle_json["exploration"]
             )
-            warnings += _apply_participant_postbattle_results(battle, participant, postbattle_json)
+            warnings += apply_postbattle(battle, participant, postbattle_json)
             participant.postbattle_json = postbattle_json
             participant.status = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
             participant.confirmed_at = timezone.now()
