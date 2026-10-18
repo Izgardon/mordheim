@@ -1,6 +1,7 @@
 /**
  * What the active page sends for End battle, out of action, kills and wounds, against a fake
- * server that keeps the participant's blob the way `/config/` does today (whole-blob replace).
+ * server that keeps the participant's blob the way `/config/` does: `unit_information_patch`
+ * changes only the units and fields it names, and never a kill or out of action (BUG-44).
  */
 import { act, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -48,9 +49,15 @@ const myUnit = (unitKey: string) =>
     kill_count: 0,
   };
 
-/** `/config/` replaces the whole blob with the one sent (`lifecycle.py:564-568`). */
+/** `/config/` merges each named unit's fields (`services/unit_information.py`). */
 const storeConfig = (body: unknown) => {
-  setMyUnitInformation((body as { unit_information_json: UnitInformation }).unit_information_json);
+  const patch = (body as { unit_information_patch?: Record<string, object> })
+    .unit_information_patch;
+  const next = { ...myRow().unit_information_json };
+  for (const [unitKey, fields] of Object.entries(patch ?? {})) {
+    next[unitKey] = { ...myUnit(unitKey), ...fields };
+  }
+  setMyUnitInformation(next);
   return answer();
 };
 
@@ -249,7 +256,7 @@ describe("BattleActive requests", () => {
     ).toBeInTheDocument();
   });
 
-  it("queues wound saves: one config POST at a time, then only the latest whole blob", async () => {
+  it("queues wound saves: one config POST at a time, then one patch with the changes made meanwhile", async () => {
     const user = setupUser();
     await renderActive();
     // The server stores the first save at once; its answer is held back.
@@ -266,35 +273,72 @@ describe("BattleActive requests", () => {
 
     expect(fakeApi.countOf(`POST ${battlePath("config/")}`)).toBe(1);
     expect(fakeApi.bodyOf(`POST ${battlePath("config/")}`)).toEqual({
-      selected_unit_keys_json: ["hero:1", "hero:3", "henchman:2", "hired_sword:4"],
-      unit_information_json: {
-        "hero:1": {
-          stats_override: {},
-          notes: "",
-          current_wounds: 1,
-          out_of_action: false,
-          kill_count: 0,
-        },
-      },
-      custom_units_json: [],
-      battle_notes: "",
+      unit_information_patch: { "hero:1": { current_wounds: 1 } },
     });
 
     await act(async () => firstSave.resolve());
 
-    // Rolf's save was replaced by the henchman's, which carries both changes.
+    // Rolf's and the henchman's saves were merged into one patch.
     await waitFor(() => expect(fakeApi.countOf(`POST ${battlePath("config/")}`)).toBe(2));
-    const latest = fakeApi.bodyOf(`POST ${battlePath("config/")}`) as {
-      unit_information_json: UnitInformation;
-    };
-    expect(
-      Object.fromEntries(
-        Object.entries(latest.unit_information_json).map(([key, entry]) => [
-          key,
-          entry.current_wounds,
-        ])
-      )
-    ).toEqual({ "hero:1": 1, "hero:3": 0, "henchman:2": 2 });
+    expect(fakeApi.bodyOf(`POST ${battlePath("config/")}`)).toEqual({
+      unit_information_patch: {
+        "hero:3": { current_wounds: 0 },
+        "henchman:2": { current_wounds: 2 },
+      },
+    });
+  });
+
+  it("sends only the changed unit's fields, so a kill landing while a save waits survives (BUG-44)", async () => {
+    const user = setupUser();
+    await renderActive();
+    const answers: Array<() => void> = [];
+    fakeApi.on(`POST ${battlePath("config/")}`, (body: unknown) => {
+      const stored = storeConfig(body);
+      const answerLater = deferred<void>();
+      answers.push(answerLater.resolve);
+      return answerLater.promise.then(() => stored);
+    });
+
+    await user.click(firstButton("Captain Wolf", "Decrease wounds for Captain Wolf"));
+    // Queued behind Captain Wolf's save; then the henchman, who isn't locked, takes a kill.
+    await user.click(firstButton("Rolf", "Decrease wounds for Rolf"));
+    await user.click(killButton("Youngblood A"));
+    const dialog = screen.getByRole("dialog", { name: "Record Kill" });
+    await user.selectOptions(within(dialog).getByRole("combobox"), "hero:2");
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(killCountOn("Youngblood A")).toBe("1"));
+
+    await act(async () => answers[0]());
+    await waitFor(() => expect(fakeApi.countOf(`POST ${battlePath("config/")}`)).toBe(2));
+    await act(async () => answers[1]());
+
+    const configBodies = fakeApi
+      .requests()
+      .filter((request) => request.path === battlePath("config/"))
+      .map((request) => request.body);
+    expect(configBodies).toEqual([
+      { unit_information_patch: { "hero:1": { current_wounds: 1 } } },
+      { unit_information_patch: { "hero:3": { current_wounds: 0 } } },
+    ]);
+    expect(myUnit("henchman:2").kill_count).toBe(1);
+    expect(killCountOn("Youngblood A")).toBe("1");
+  });
+
+  it("saves a unit's notes as that unit's patch alone, without the global saving line", async () => {
+    const user = setupUser();
+    await renderActive();
+
+    await user.click(firstButton("Rolf", "Details for Rolf"));
+    await user.type(screen.getByLabelText("Notes for Rolf"), "Limping");
+
+    await waitFor(
+      () =>
+        expect(fakeApi.bodyOf(`POST ${battlePath("config/")}`)).toEqual({
+          unit_information_patch: { "hero:3": { notes: "Limping" } },
+        }),
+      { timeout: 3000 }
+    );
+    expect(myUnit("hero:3").notes).toBe("Limping");
   });
 
   it("locks a unit while its wound save waits in the queue, so no kill lands before it is sent (BUG-44)", async () => {

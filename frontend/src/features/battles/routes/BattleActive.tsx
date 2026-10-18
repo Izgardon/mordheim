@@ -48,7 +48,6 @@ import {
   setUnitCurrentWounds,
   toUnitInformationMap,
   updateUnitInformationOverride,
-  updateUnitInformationNotes,
 } from "@/features/battles/components/active/active-utils";
 import {
   useBattleMobileBottomBar,
@@ -61,6 +60,11 @@ import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
 import { useBattleState } from "@/features/battles/hooks/useBattleState";
 import { useSerializedSave } from "@/features/battles/hooks/useSerializedSave";
 import {
+  applyConfigPatch,
+  mergeConfigPatches,
+  type ParticipantConfigPatch,
+} from "@/features/battles/utils/unit-information-patch";
+import {
   serializeCustomUnits,
   toArmourSaveStat,
   toNumericStat,
@@ -72,14 +76,6 @@ import { useAuth } from "@/features/auth/hooks/use-auth";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useMediaQuery } from "@/lib/use-media-query";
 import WarbandPdfViewerDialog from "@/features/warbands/components/warband/WarbandPdfViewerDialog";
-
-/** What `/config/` gets from this page: the participant's whole blob (BUG-44's patch is next). */
-type ParticipantConfigPayload = {
-  selected_unit_keys_json: string[];
-  unit_information_json: Record<string, unknown>;
-  custom_units_json: ReturnType<typeof serializeCustomUnits>;
-  battle_notes: string;
-};
 
 export default function BattleActive() {
   const { id, battleId } = useParams();
@@ -128,17 +124,17 @@ export default function BattleActive() {
   const [actionError, setActionError] = useState("");
   const [activeItemActionKey, setActiveItemActionKey] = useState<string | null>(null);
   const sendConfig = useCallback(
-    (payload: ParticipantConfigPayload) =>
+    (payload: ParticipantConfigPatch) =>
       saveBattleParticipantConfig(campaignId, numericBattleId, payload),
     [campaignId, numericBattleId]
   );
-  // A unit stays locked while its save waits in the queue too: the queued blob was built before
-  // any kill or OOA that would land meanwhile, and would undo it (BUG-44).
+  // Saves send only the changed unit's fields (BUG-44), so a kill or OOA landing meanwhile is
+  // never undone; saves made while one is in flight merge into one.
   const {
     save: queueConfigSave,
     pendingKeys: savingUnitKeys,
     isSaving: isSavingConfig,
-  } = useSerializedSave(sendConfig, applyBattleResponse);
+  } = useSerializedSave(sendConfig, applyBattleResponse, { merge: mergeConfigPatches });
 
   const currentParticipant = useMemo(
     () => battleState?.participants.find((participant) => participant.user.id === user?.id) ?? null,
@@ -153,62 +149,30 @@ export default function BattleActive() {
     return state.participants.find((participant) => participant.user.id === user?.id) ?? null;
   }, [battleStateRef, user?.id]);
 
-  const applyLocalCurrentParticipantConfig = useCallback(
-    (payload: ParticipantConfigPayload) => {
-      updateBattleState((previous) => {
-        if (!previous) {
-          return previous;
-        }
-        return {
-          ...previous,
-          participants: previous.participants.map((participant) =>
-            participant.user.id === user?.id
-              ? {
-                  ...participant,
-                  selected_unit_keys_json: payload.selected_unit_keys_json,
-                  unit_information_json:
-                    payload.unit_information_json as typeof participant.unit_information_json,
-                  custom_units_json: payload.custom_units_json,
-                  battle_notes: payload.battle_notes,
-                }
-              : participant
-          ),
-        };
-      });
-    },
-    [updateBattleState, user?.id]
-  );
-
   const saveCurrentParticipantConfig = useCallback(
-    async ({
-      unitInformation,
-      selectedUnitKeys,
-      customUnits,
-      battleNotes,
-      savingUnitKey,
-      showGlobalSaving = true,
-    }: {
-      unitInformation?: ReturnType<typeof toUnitInformationMap>;
-      selectedUnitKeys?: string[];
-      customUnits?: ReturnType<typeof serializeCustomUnits>;
-      battleNotes?: string;
-      savingUnitKey?: string;
-      showGlobalSaving?: boolean;
-    }) => {
-      const participant = getCurrentParticipantSnapshot();
-      if (!participant) {
+    async (
+      payload: ParticipantConfigPatch,
+      {
+        savingUnitKey,
+        showGlobalSaving = true,
+      }: { savingUnitKey?: string; showGlobalSaving?: boolean } = {}
+    ) => {
+      if (!getCurrentParticipantSnapshot()) {
         return null;
       }
 
-      const payload: ParticipantConfigPayload = {
-        selected_unit_keys_json: selectedUnitKeys ?? participant.selected_unit_keys_json ?? [],
-        unit_information_json:
-          unitInformation ?? toUnitInformationMap(participant.unit_information_json),
-        custom_units_json: customUnits ?? participant.custom_units_json ?? [],
-        battle_notes: battleNotes ?? participant.battle_notes ?? "",
-      };
-
-      applyLocalCurrentParticipantConfig(payload);
+      updateBattleState((previous) =>
+        previous
+          ? {
+              ...previous,
+              participants: previous.participants.map((participant) =>
+                participant.user.id === user?.id
+                  ? applyConfigPatch(participant, payload)
+                  : participant
+              ),
+            }
+          : previous
+      );
       if (showGlobalSaving) {
         setActionError("");
       }
@@ -224,7 +188,7 @@ export default function BattleActive() {
         throw errorResponse;
       }
     },
-    [applyLocalCurrentParticipantConfig, getCurrentParticipantSnapshot, queueConfigSave]
+    [getCurrentParticipantSnapshot, queueConfigSave, updateBattleState, user?.id]
   );
 
   useEffect(() => {
@@ -586,11 +550,15 @@ export default function BattleActive() {
         return;
       }
 
-      const nextUnitInformation = setUnitCurrentWounds(unitInformation, unit, nextWounds);
-      await saveCurrentParticipantConfig({
-        unitInformation: nextUnitInformation,
-        savingUnitKey: unit.key,
-      });
+      const nextEntry = setUnitCurrentWounds(unitInformation, unit, nextWounds)[unit.key];
+      await saveCurrentParticipantConfig(
+        {
+          unit_information_patch: {
+            [unit.key]: { current_wounds: nextEntry?.current_wounds ?? null },
+          },
+        },
+        { savingUnitKey: unit.key }
+      );
     },
     [getCurrentParticipantSnapshot, saveCurrentParticipantConfig]
   );
@@ -616,31 +584,27 @@ export default function BattleActive() {
       }
 
       const unitInformation = toUnitInformationMap(participant.unit_information_json);
-      const nextUnitInformation = updateUnitInformationOverride(unitInformation, unit, override);
-      await saveCurrentParticipantConfig({
-        unitInformation: nextUnitInformation,
-        savingUnitKey: unitKey,
-      });
+      const nextEntry = updateUnitInformationOverride(unitInformation, unit, override)[unitKey];
+      await saveCurrentParticipantConfig(
+        {
+          unit_information_patch: {
+            [unitKey]: { stats_override: nextEntry?.stats_override ?? {} },
+          },
+        },
+        { savingUnitKey: unitKey }
+      );
     },
     [getCurrentParticipantSnapshot, rosters, saveCurrentParticipantConfig]
   );
 
   const handleSaveUnitNotes = useCallback(
     async (unitKey: string, notes: string) => {
-      const participant = getCurrentParticipantSnapshot();
-      if (!participant) {
-        return;
-      }
-
-      const unitInformation = toUnitInformationMap(participant.unit_information_json);
-      const nextUnitInformation = updateUnitInformationNotes(unitInformation, unitKey, notes);
-      await saveCurrentParticipantConfig({
-        unitInformation: nextUnitInformation,
-        savingUnitKey: unitKey,
-        showGlobalSaving: false,
-      });
+      await saveCurrentParticipantConfig(
+        { unit_information_patch: { [unitKey]: { notes } } },
+        { savingUnitKey: unitKey, showGlobalSaving: false }
+      );
     },
-    [getCurrentParticipantSnapshot, saveCurrentParticipantConfig]
+    [saveCurrentParticipantConfig]
   );
 
   useEffect(() => {
@@ -651,10 +615,10 @@ export default function BattleActive() {
 
   const handleSaveBattleNotes = useCallback(
     async (battleNotes: string) => {
-      await saveCurrentParticipantConfig({
-        battleNotes,
-        showGlobalSaving: false,
-      });
+      await saveCurrentParticipantConfig(
+        { battle_notes: battleNotes },
+        { showGlobalSaving: false }
+      );
     },
     [saveCurrentParticipantConfig]
   );
@@ -832,9 +796,8 @@ export default function BattleActive() {
 
     try {
       const next = await saveCurrentParticipantConfig({
-        selectedUnitKeys: nextSelectedUnitKeys,
-        unitInformation: toUnitInformationMap(participant.unit_information_json),
-        customUnits: serializeCustomUnits(nextCustomUnits),
+        selected_unit_keys_json: nextSelectedUnitKeys,
+        custom_units_json: serializeCustomUnits(nextCustomUnits),
       });
       if (!next) {
         return;

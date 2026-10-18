@@ -453,14 +453,10 @@ describe("BattleActive", () => {
       expect(mocks.saveBattleParticipantConfig).toHaveBeenCalledTimes(2);
     });
 
-    const secondPayload = mocks.saveBattleParticipantConfig.mock.calls[1]?.[2] as {
-      unit_information_json: Record<
-        string,
-        { current_wounds?: number | null; stats_override?: Record<string, unknown> }
-      >;
-    };
-    expect(secondPayload.unit_information_json["hero:1"]?.current_wounds).toBe(0);
-    expect(secondPayload.unit_information_json["hero:1"]?.stats_override?.wounds).toBeUndefined();
+    // Only the changed field of the changed unit (BUG-44): wounds, never stats_override.
+    expect(mocks.saveBattleParticipantConfig.mock.calls[1]?.[2]).toEqual({
+      unit_information_patch: { "hero:1": { current_wounds: 0 } },
+    });
 
     await act(async () => {
       mocks.resolveNextSave();
@@ -488,16 +484,9 @@ describe("BattleActive", () => {
       expect(mocks.saveBattleParticipantConfig).toHaveBeenCalledTimes(2);
     });
 
-    const secondPayload = mocks.saveBattleParticipantConfig.mock.calls[1]?.[2] as {
-      unit_information_json: Record<
-        string,
-        { current_wounds?: number | null; stats_override?: Record<string, unknown> }
-      >;
-    };
-    expect(secondPayload.unit_information_json["henchman:2"]?.current_wounds).toBe(3);
-    expect(
-      secondPayload.unit_information_json["henchman:2"]?.stats_override?.wounds
-    ).toBeUndefined();
+    expect(mocks.saveBattleParticipantConfig.mock.calls[1]?.[2]).toEqual({
+      unit_information_patch: { "henchman:2": { current_wounds: 3 } },
+    });
 
     await act(async () => {
       mocks.resolveNextSave();

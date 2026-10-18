@@ -10,6 +10,7 @@ import type {
   BattleState,
   BattleStateView,
 } from "@/features/battles/types/battle-types";
+import type { UnitInformationPatch } from "@/features/battles/utils/unit-information-patch";
 
 /**
  * Battle writes name this browser's socket (BUG-75), so the server leaves only this tab out of the
@@ -86,8 +87,11 @@ export function saveBattleParticipantConfig(
   campaignId: number,
   battleId: number,
   // Partial update: the server keeps its stored value for any key that is omitted.
+  // `unit_information_patch` changes only the units and fields it names (BUG-44);
+  // `unit_information_json` (prebattle's whole form) replaces every unit's editable fields.
   payload: {
     selected_unit_keys_json?: string[];
+    unit_information_patch?: UnitInformationPatch;
     unit_information_json?: Record<string, unknown>;
     custom_units_json?: BattleCustomUnit[];
     declared_rating?: number | null;

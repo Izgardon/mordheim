@@ -46,6 +46,22 @@ describe("useSerializedSave (BUG-44)", () => {
     await expect(third).resolves.toBe("saved c");
   });
 
+  it("merges the saves made meanwhile when given a merge, instead of keeping only the newest", async () => {
+    const { send, held } = heldServer();
+    const { result } = renderHook(() =>
+      useSerializedSave(send, vi.fn(), { merge: (queued, next) => `${queued}+${next}` })
+    );
+
+    act(() => {
+      void result.current.save("a");
+      void result.current.save("b");
+      void result.current.save("c");
+    });
+    await act(async () => held[0].answer.resolve("ok"));
+
+    expect(send.mock.calls.map(([payload]) => payload)).toEqual(["a", "b+c"]);
+  });
+
   it("keeps a key pending while its save waits in the queue, not just while it is sent", async () => {
     const { send, held } = heldServer();
     const { result } = renderSave(send);
