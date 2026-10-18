@@ -1,844 +1,75 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
-import { BookOpen, PenLine } from "lucide-react";
+import { useMemo } from "react";
+import { useOutletContext } from "react-router-dom";
 
-import { CardBackground } from "@/components/ui/card-background";
 import { Button } from "@/components/ui/button";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { Checkbox } from "@/components/ui/checkbox";
+import { CardBackground } from "@/components/ui/card-background";
 import { LoadingScreen } from "@/components/ui/loading-screen";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  appendBattleEvent,
-  cancelBattleAsCreator,
-  finishBattle,
-  recordUnitKill,
-  saveBattleParticipantConfig,
-  setUnitOutOfAction,
-} from "@/features/battles/api/battles-api";
 import ActiveBattleHelpers from "@/features/battles/components/active/ActiveBattleHelpers";
+import ActiveCancelBattleDialog from "@/features/battles/components/active/ActiveCancelBattleDialog";
+import ActiveFinishBattleDialog from "@/features/battles/components/active/ActiveFinishBattleDialog";
+import ActiveHelperDialogs from "@/features/battles/components/active/ActiveHelperDialogs";
+import ActiveLeaveDialog from "@/features/battles/components/active/ActiveLeaveDialog";
+import ActiveOwnTools from "@/features/battles/components/active/ActiveOwnTools";
 import ActiveParticipantRoster from "@/features/battles/components/active/ActiveParticipantRoster";
-import ActiveCriticalHitDialog from "@/features/battles/components/active/ActiveCriticalHitDialog";
-import ActiveMeleeDialog, {
-  type ActiveMeleeUnitOption,
-} from "@/features/battles/components/active/ActiveMeleeDialog";
-import ActiveRangedDialog, {
-  type ActiveRangedUnitOption,
-} from "@/features/battles/components/active/ActiveRangedDialog";
-import PrebattleCustomUnitBuilder from "@/features/battles/components/prebattle/PrebattleCustomUnitBuilder";
-import {
-  DEFAULT_CUSTOM_UNIT_DRAFT,
-  type CustomUnitDraft,
-  type PrebattleUnit,
-  type StatKey,
-  type UnitOverride,
-  type UnitSingleUseItem,
-} from "@/features/battles/components/prebattle/prebattle-types";
-import {
-  buildBattleUnitOptions,
-  getCurrentUnitWounds,
-  getParticipantSelectedUnits,
-  setUnitCurrentWounds,
-  toUnitInformationMap,
-  updateUnitInformationOverride,
-} from "@/features/battles/components/active/active-utils";
-import {
-  useBattleMobileBottomBar,
-  useBattleMobileTopBar,
-} from "@/features/battles/components/shared/useBattleMobileBars";
-import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesktopSubnav";
-import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesDialog";
-import BattleOverflowMenu from "@/features/battles/components/shared/BattleOverflowMenu";
-import { useEventUndo } from "@/features/battles/hooks/useEventUndo";
-import { useSerializedSave } from "@/features/battles/hooks/useSerializedSave";
-import {
-  latestItemUseEvent,
-  newestOwnEvent,
-  usedSingleUseItemCounts as countUsedSingleUseItems,
-} from "@/features/battles/utils/battle-events";
-import {
-  applyConfigPatch,
-  mergeConfigPatches,
-  type ParticipantConfigPatch,
-} from "@/features/battles/utils/unit-information-patch";
-import {
-  serializeCustomUnits,
-  toArmourSaveStat,
-  toNumericStat,
-  normalizeCustomUnits,
-  toUnitRating,
-} from "@/features/battles/components/prebattle/prebattle-utils";
+import ActiveSubnavActions from "@/features/battles/components/active/ActiveSubnavActions";
+import { toUnitInformationMap } from "@/features/battles/components/active/active-utils";
+import { useActiveMobileBars } from "@/features/battles/components/active/useActiveMobileBars";
 import type { BattleLayoutContext } from "@/features/battles/components/layout/battle-shell-types";
-import { useBattle } from "@/features/battles/state/battle-context";
-import { useAuth } from "@/features/auth/hooks/use-auth";
-import { getErrorMessage } from "@/lib/get-error-message";
-import { useMediaQuery } from "@/lib/use-media-query";
+import { normalizeCustomUnits } from "@/features/battles/components/prebattle/prebattle-utils";
+import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesktopSubnav";
+import BattleFloatingActionBar from "@/features/battles/components/shared/BattleFloatingActionBar";
+import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesDialog";
+import { useActivePage } from "@/features/battles/hooks/useActivePage";
+import { allRostersSettled, isRosterLoading } from "@/features/battles/utils/battle-rosters";
 import WarbandPdfViewerDialog from "@/features/warbands/components/warband/WarbandPdfViewerDialog";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 export default function BattleActive() {
-  const { battleId } = useParams();
   const { setBattleMobileTopBar, setBattleMobileBottomBar } =
     useOutletContext<BattleLayoutContext>();
-  const { user } = useAuth();
-  const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 960px)");
-
-  const {
-    campaignId,
-    battleId: numericBattleId,
-    battleState,
-    battleStateRef,
-    applyBattleResponse,
-    updateBattleState,
-    rosters,
-    rosterLoading,
-    rosterErrors,
-  } = useBattle();
-  const [selectedParticipantUserId, setSelectedParticipantUserId] = useState<number | null>(null);
-
-  const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
-  const [isFinishDialogOpen, setIsFinishDialogOpen] = useState(false);
-  const [isFinishingBattle, setIsFinishingBattle] = useState(false);
-  const [finishError, setFinishError] = useState("");
-  const [selectedWinnerWarbandIds, setSelectedWinnerWarbandIds] = useState<number[]>([]);
-  // "No winner" records no wins or losses (decision 8).
-  const [noWinner, setNoWinner] = useState(false);
-
-  const [isCancelBattleDialogOpen, setIsCancelBattleDialogOpen] = useState(false);
-  const [isCancelingBattle, setIsCancelingBattle] = useState(false);
-  const [cancelBattleError, setCancelBattleError] = useState("");
-  const [cancelBattleConfirmed, setCancelBattleConfirmed] = useState(false);
-  const [isScenarioLinkDialogOpen, setIsScenarioLinkDialogOpen] = useState(false);
-  const [isBattleNotesOpen, setIsBattleNotesOpen] = useState(false);
-  const [showAddCustomUnit, setShowAddCustomUnit] = useState(false);
-  const [customUnitDraft, setCustomUnitDraft] = useState<CustomUnitDraft>({
-    ...DEFAULT_CUSTOM_UNIT_DRAFT,
-  });
-  const [customUnitFormError, setCustomUnitFormError] = useState("");
-  const [isMeleeDialogOpen, setIsMeleeDialogOpen] = useState(false);
-  const [isRangedDialogOpen, setIsRangedDialogOpen] = useState(false);
-  const [isCriticalHitDialogOpen, setIsCriticalHitDialogOpen] = useState(false);
-  const [actionError, setActionError] = useState("");
-  const [activeItemActionKey, setActiveItemActionKey] = useState<string | null>(null);
-  const { undo, offerUndo } = useEventUndo({
-    campaignId,
-    battleId: numericBattleId,
-    applyBattleResponse,
-  });
-  const sendConfig = useCallback(
-    (payload: ParticipantConfigPatch) =>
-      saveBattleParticipantConfig(campaignId, numericBattleId, payload),
-    [campaignId, numericBattleId]
-  );
-  // Saves send only the changed unit's fields (BUG-44), so a kill or OOA landing meanwhile is
-  // never undone; saves made while one is in flight merge into one.
-  const {
-    save: queueConfigSave,
-    pendingKeys: savingUnitKeys,
-    isSaving: isSavingConfig,
-  } = useSerializedSave(sendConfig, applyBattleResponse, { merge: mergeConfigPatches });
-
-  const currentParticipant = useMemo(
-    () => battleState?.participants.find((participant) => participant.user.id === user?.id) ?? null,
-    [battleState?.participants, user?.id]
-  );
-
-  const getCurrentParticipantSnapshot = useCallback(() => {
-    const state = battleStateRef.current;
-    if (!state) {
-      return null;
-    }
-    return state.participants.find((participant) => participant.user.id === user?.id) ?? null;
-  }, [battleStateRef, user?.id]);
-
-  const saveCurrentParticipantConfig = useCallback(
-    async (
-      payload: ParticipantConfigPatch,
-      {
-        savingUnitKey,
-        showGlobalSaving = true,
-      }: { savingUnitKey?: string; showGlobalSaving?: boolean } = {}
-    ) => {
-      if (!getCurrentParticipantSnapshot()) {
-        return null;
-      }
-
-      updateBattleState((previous) =>
-        previous
-          ? {
-              ...previous,
-              participants: previous.participants.map((participant) =>
-                participant.user.id === user?.id
-                  ? applyConfigPatch(participant, payload)
-                  : participant
-              ),
-            }
-          : previous
-      );
-      if (showGlobalSaving) {
-        setActionError("");
-      }
-      try {
-        return await queueConfigSave(payload, {
-          keys: savingUnitKey ? [savingUnitKey] : [],
-          silent: !showGlobalSaving,
-        });
-      } catch (errorResponse) {
-        if (showGlobalSaving) {
-          setActionError(getErrorMessage(errorResponse, "Unable to save unit config"));
-        }
-        throw errorResponse;
-      }
-    },
-    [getCurrentParticipantSnapshot, queueConfigSave, updateBattleState, user?.id]
-  );
-
-  useEffect(() => {
-    const participants = battleState?.participants ?? [];
-    if (participants.length === 0) {
-      setSelectedParticipantUserId(null);
-      return;
-    }
-    if (
-      selectedParticipantUserId !== null &&
-      participants.some((participant) => participant.user.id === selectedParticipantUserId)
-    ) {
-      return;
-    }
-    setSelectedParticipantUserId(currentParticipant?.user.id ?? participants[0].user.id);
-  }, [battleState?.participants, currentParticipant, selectedParticipantUserId]);
-
-  const selectedParticipant = useMemo(() => {
-    const participants = battleState?.participants ?? [];
-    if (participants.length === 0) {
-      return null;
-    }
-    const bySelection = participants.find(
-      (participant) => participant.user.id === selectedParticipantUserId
-    );
-    if (bySelection) {
-      return bySelection;
-    }
-    if (currentParticipant) {
-      return currentParticipant;
-    }
-    return participants[0];
-  }, [battleState?.participants, currentParticipant, selectedParticipantUserId]);
-  const selectedParticipantIsCurrentUser = Boolean(
-    selectedParticipant &&
-      currentParticipant &&
-      selectedParticipant.user.id === currentParticipant.user.id
-  );
-
-  const selectedParticipantCustomUnits = useMemo(
+  const page = useActivePage();
+  const { battle, selection, config, items, finishing, creatorCancel, helper } = page;
+  const { campaignId, battleId, battleState, rosters, rosterLoading, rosterErrors } = battle;
+  const { participants } = battleState;
+  const { scenario, scenario_link: scenarioLink } = battleState.battle;
+  const { currentParticipant, selectedParticipant } = selection;
+  const isOwnSelected = selection.selectedParticipantIsCurrentUser;
+  const selectedCustomUnits = useMemo(
     () => normalizeCustomUnits(selectedParticipant?.custom_units_json),
     [selectedParticipant?.custom_units_json]
   );
-  const selectedParticipantUnitInformation = useMemo(
+  const selectedUnitInformation = useMemo(
     () => toUnitInformationMap(selectedParticipant?.unit_information_json),
     [selectedParticipant?.unit_information_json]
   );
-  const killTargetOptions = useMemo(
-    () =>
-      buildBattleUnitOptions(battleState?.participants ?? [], rosters).filter(
-        (option) => option.participantUserId !== currentParticipant?.user.id
-      ),
-    [battleState?.participants, currentParticipant?.user.id, rosters]
-  );
-  // Undone item uses don't count (BUG-11).
-  const usedSingleUseItemCounts = useMemo(
-    () => countUsedSingleUseItems(battleState?.events ?? []),
-    [battleState?.events]
-  );
-  const getUsedSingleUseItemCount = useCallback(
-    (unitKey: string, itemId: number) => usedSingleUseItemCounts[unitKey]?.[itemId] ?? 0,
-    [usedSingleUseItemCounts]
-  );
-
-  const statusParticipants = useMemo(() => {
-    const participants = battleState?.participants ?? [];
-    const currentUserId = user?.id;
-    if (!currentUserId) {
-      return participants;
-    }
-    const mine = participants.find((participant) => participant.user.id === currentUserId);
-    if (!mine) {
-      return participants;
-    }
-    return [mine, ...participants.filter((participant) => participant.user.id !== currentUserId)];
-  }, [battleState?.participants, user?.id]);
-
-  const meleeUnitOptions = useMemo(() => {
-    const options: { yours: ActiveMeleeUnitOption[]; others: ActiveMeleeUnitOption[] } = {
-      yours: [],
-      others: [],
-    };
-    const currentUserId = currentParticipant?.user.id;
-    if (!currentUserId) {
-      return options;
-    }
-
-    for (const participant of battleState?.participants ?? []) {
-      const participantRoster = rosters[participant.user.id];
-      const selectedUnits = getParticipantSelectedUnits(participant, participantRoster);
-      const unitInformation = toUnitInformationMap(participant.unit_information_json);
-      const units = [
-        ...selectedUnits.heroes.map((unit) => ({ unit, sectionLabel: "Heroes" })),
-        ...selectedUnits.henchmen.map((unit) => ({ unit, sectionLabel: "Henchmen" })),
-        ...selectedUnits.hiredSwords.map((unit) => ({ unit, sectionLabel: "Hired Swords" })),
-        ...selectedUnits.temporary.map((unit) => ({ unit, sectionLabel: "Temporary Units" })),
-      ];
-
-      for (const { unit, sectionLabel } of units) {
-        const entry = unitInformation[unit.key];
-        if (entry?.out_of_action) {
-          continue;
-        }
-        const mergedStats = {
-          ...unit.stats,
-          ...(entry?.stats_override ?? {}),
-        };
-        const option: ActiveMeleeUnitOption = {
-          value: `${participant.user.id}:${unit.key}`,
-          label: `${unit.displayName} (${participant.warband.name})`,
-          stats: mergedStats,
-          defaultWeaponSkill: Number(mergedStats.weapon_skill ?? 1),
-          sectionLabel,
-        };
-        if (participant.user.id === currentUserId) {
-          options.yours.push(option);
-        } else {
-          options.others.push(option);
-        }
-      }
-    }
-
-    return options;
-  }, [battleState?.participants, currentParticipant?.user.id, rosters]);
-  const rangedUnitOptions = useMemo(() => {
-    const options: ActiveRangedUnitOption[] = [];
-    if (!currentParticipant) {
-      return options;
-    }
-
-    const participantRoster = rosters[currentParticipant.user.id];
-    const selectedUnits = getParticipantSelectedUnits(currentParticipant, participantRoster);
-    const unitInformation = toUnitInformationMap(currentParticipant.unit_information_json);
-    const units = [
-      ...selectedUnits.heroes.map((unit) => ({ unit, sectionLabel: "Heroes" })),
-      ...selectedUnits.henchmen.map((unit) => ({ unit, sectionLabel: "Henchmen" })),
-      ...selectedUnits.hiredSwords.map((unit) => ({ unit, sectionLabel: "Hired Swords" })),
-      ...selectedUnits.temporary.map((unit) => ({ unit, sectionLabel: "Temporary Units" })),
-    ];
-
-    for (const { unit, sectionLabel } of units) {
-      const entry = unitInformation[unit.key];
-      if (entry?.out_of_action) {
-        continue;
-      }
-      const mergedStats = {
-        ...unit.stats,
-        ...(entry?.stats_override ?? {}),
-      };
-      options.push({
-        value: unit.key,
-        label: unit.displayName,
-        stats: mergedStats,
-        defaultBallisticSkill: Number(mergedStats.ballistic_skill ?? 1),
-        sectionLabel,
-      });
-    }
-
-    return options;
-  }, [currentParticipant, rosters]);
-
-  const isBattleCreator = useMemo(
-    () => battleState?.battle.created_by_user_id === user?.id,
-    [battleState?.battle.created_by_user_id, user?.id]
-  );
-  const showScenarioLinkAction = Boolean(battleState?.battle.scenario_link);
-
-  // Cancel battle sits in More actions, away from End battle, the normal path (BATL-UX-05).
-  const overflowActions = useMemo(
-    () =>
-      battleState?.battle.status === "active" && isBattleCreator
-        ? [
-            {
-              label: isCancelingBattle ? "Canceling..." : "Cancel battle",
-              onSelect: () => setIsCancelBattleDialogOpen(true),
-              disabled: isCancelingBattle,
-              destructive: true,
-            },
-          ]
-        : [],
-    [battleState?.battle.status, isBattleCreator, isCancelingBattle]
-  );
-
-  const mobileTopBarExtraActions = useMemo(
-    () =>
-      selectedParticipantIsCurrentUser || showScenarioLinkAction || overflowActions.length > 0 ? (
-        <>
-          {selectedParticipantIsCurrentUser ? (
-            <button
-              type="button"
-              onClick={() => setIsBattleNotesOpen(true)}
-              className="icon-button flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
-              aria-label="Battle Notes"
-            >
-              <PenLine className="theme-heading-soft h-5 w-5" aria-hidden="true" />
-            </button>
-          ) : null}
-          {showScenarioLinkAction ? (
-            <button
-              type="button"
-              onClick={() => setIsScenarioLinkDialogOpen(true)}
-              className="icon-button mr-1 flex h-9 w-9 items-center justify-center border-none bg-transparent p-0"
-              aria-label="View scenario link"
-            >
-              <BookOpen className="theme-heading-soft h-5 w-5" aria-hidden="true" />
-            </button>
-          ) : null}
-          <BattleOverflowMenu actions={overflowActions} />
-        </>
-      ) : null,
-    [overflowActions, selectedParticipantIsCurrentUser, showScenarioLinkAction]
-  );
-
-  const { sectionIdByKey } = useBattleMobileTopBar({
-    isMobile,
-    setBattleMobileTopBar,
-    title: "In Battle",
-    onBack: () => setIsLeaveDialogOpen(true),
-    extraActions: mobileTopBarExtraActions,
-    statusParticipants,
-    selectedParticipant,
-    selectedParticipantRoster: selectedParticipant
-      ? rosters[selectedParticipant.user.id]
-      : undefined,
-    selectedParticipantCustomUnits,
-    onSelectParticipantUserId: setSelectedParticipantUserId,
-  });
-
-  const activeBottomBarConfig = useMemo(
-    () =>
-      battleState?.battle.status === "active" && isBattleCreator
-        ? {
-            primaryAction: {
-              label: isFinishingBattle ? "Ending..." : "End Battle",
-              onClick: () => setIsFinishDialogOpen(true),
-              disabled: isFinishingBattle,
-              variant: "default" as const,
-            },
-          }
-        : null,
-    [battleState?.battle.status, isBattleCreator, isFinishingBattle]
-  );
-
-  useBattleMobileBottomBar({
-    isMobile,
-    setBattleMobileBottomBar,
-    config: activeBottomBarConfig,
-  });
-
-  const handleLeaveBattle = useCallback(() => {
-    setIsLeaveDialogOpen(false);
-    navigate(`/campaigns/${campaignId}`);
-  }, [campaignId, navigate]);
-
-  const handleFinishBattle = useCallback(async () => {
-    if (selectedWinnerWarbandIds.length === 0 && !noWinner) {
-      setFinishError("Pick the winners, or No winner.");
-      return;
-    }
-    setIsFinishingBattle(true);
-    setFinishError("");
-    try {
-      const next = await finishBattle(campaignId, numericBattleId, {
-        winner_warband_ids: noWinner ? [] : selectedWinnerWarbandIds,
-      });
-      applyBattleResponse(next);
-      setIsFinishDialogOpen(false);
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setFinishError(errorResponse.message || "Unable to end battle");
-      } else {
-        setFinishError("Unable to end battle");
-      }
-    } finally {
-      setIsFinishingBattle(false);
-    }
-  }, [applyBattleResponse, campaignId, noWinner, numericBattleId, selectedWinnerWarbandIds]);
-
-  useEffect(() => {
-    if (!isFinishDialogOpen) {
-      return;
-    }
-    setFinishError("");
-    setSelectedWinnerWarbandIds([]);
-    setNoWinner(false);
-  }, [isFinishDialogOpen]);
-
-  useEffect(() => {
-    if (!isCancelBattleDialogOpen) {
-      setCancelBattleConfirmed(false);
-    }
-  }, [isCancelBattleDialogOpen]);
-
-  const handleCancelBattle = useCallback(async () => {
-    setIsCancelingBattle(true);
-    setCancelBattleError("");
-    try {
-      const next = await cancelBattleAsCreator(campaignId, numericBattleId);
-      applyBattleResponse(next);
-      setIsCancelBattleDialogOpen(false);
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setCancelBattleError(errorResponse.message || "Unable to cancel battle");
-      } else {
-        setCancelBattleError("Unable to cancel battle");
-      }
-    } finally {
-      setIsCancelingBattle(false);
-    }
-  }, [applyBattleResponse, campaignId, numericBattleId]);
-
-  const handleSetUnitOutOfAction = useCallback(
-    async (unitKey: string, outOfAction: boolean) => {
-      const next = await setUnitOutOfAction(campaignId, numericBattleId, {
-        unit_key: unitKey,
-        out_of_action: outOfAction,
-      });
-      applyBattleResponse(next);
-    },
-    [applyBattleResponse, campaignId, numericBattleId]
-  );
-
-  const handleAdjustUnitWounds = useCallback(
-    async (unit: PrebattleUnit, delta: number) => {
-      if (delta === 0) {
-        return;
-      }
-
-      const participant = getCurrentParticipantSnapshot();
-      if (!participant) {
-        return;
-      }
-
-      const unitInformation = toUnitInformationMap(participant.unit_information_json);
-      const currentWounds = getCurrentUnitWounds(unit, unitInformation[unit.key]);
-      const nextWounds = Math.max(0, Math.min(10, currentWounds + delta));
-      if (nextWounds === currentWounds) {
-        return;
-      }
-
-      const nextEntry = setUnitCurrentWounds(unitInformation, unit, nextWounds)[unit.key];
-      await saveCurrentParticipantConfig(
-        {
-          unit_information_patch: {
-            [unit.key]: { current_wounds: nextEntry?.current_wounds ?? null },
-          },
-        },
-        { savingUnitKey: unit.key }
-      );
-    },
-    [getCurrentParticipantSnapshot, saveCurrentParticipantConfig]
-  );
-
-  const handleSaveUnitOverride = useCallback(
-    async (unitKey: string, override: UnitOverride | undefined) => {
-      const participant = getCurrentParticipantSnapshot();
-      if (!participant) {
-        return;
-      }
-
-      const participantRoster = rosters[participant.user.id];
-      const selectedUnits = getParticipantSelectedUnits(participant, participantRoster);
-      const unit = [
-        ...selectedUnits.heroes,
-        ...selectedUnits.henchmen,
-        ...selectedUnits.hiredSwords,
-        ...selectedUnits.temporary,
-      ].find((entry) => entry.key === unitKey);
-
-      if (!unit) {
-        throw new Error("Unable to find unit for active edit");
-      }
-
-      const unitInformation = toUnitInformationMap(participant.unit_information_json);
-      const nextEntry = updateUnitInformationOverride(unitInformation, unit, override)[unitKey];
-      await saveCurrentParticipantConfig(
-        {
-          unit_information_patch: {
-            [unitKey]: { stats_override: nextEntry?.stats_override ?? {} },
-          },
-        },
-        { savingUnitKey: unitKey }
-      );
-    },
-    [getCurrentParticipantSnapshot, rosters, saveCurrentParticipantConfig]
-  );
-
-  const handleSaveUnitNotes = useCallback(
-    async (unitKey: string, notes: string) => {
-      await saveCurrentParticipantConfig(
-        { unit_information_patch: { [unitKey]: { notes } } },
-        { savingUnitKey: unitKey, showGlobalSaving: false }
-      );
-    },
-    [saveCurrentParticipantConfig]
-  );
-
-  useEffect(() => {
-    if (!selectedParticipantIsCurrentUser && isBattleNotesOpen) {
-      setIsBattleNotesOpen(false);
-    }
-  }, [isBattleNotesOpen, selectedParticipantIsCurrentUser]);
-
-  const handleSaveBattleNotes = useCallback(
-    async (battleNotes: string) => {
-      await saveCurrentParticipantConfig(
-        { battle_notes: battleNotes },
-        { showGlobalSaving: false }
-      );
-    },
-    [saveCurrentParticipantConfig]
-  );
-
-  const handleRecordUnitKill = useCallback(
-    async (payload: {
-      killerUnitKey: string;
-      victimUnitKey?: string;
-      victimName?: string;
-      notes?: string;
-      earnedXp: boolean;
-    }) => {
-      const next = await recordUnitKill(campaignId, numericBattleId, {
-        killer_unit_key: payload.killerUnitKey,
-        victim_unit_key: payload.victimUnitKey,
-        victim_name: payload.victimName,
-        notes: payload.notes,
-        earned_xp: payload.earnedXp,
-      });
-      applyBattleResponse(next);
-      // A mis-tapped kill can be undone at once, or from postbattle until you finalise (BUG-11).
-      offerUndo("Kill recorded.", newestOwnEvent(next.events, "unit_kill_recorded", user?.id)?.id);
-    },
-    [applyBattleResponse, campaignId, numericBattleId, offerUndo, user?.id]
-  );
-  const handleUndoSingleUseItem = useCallback(
-    async (unit: PrebattleUnit, itemId: number) => {
-      const event = latestItemUseEvent(battleState?.events ?? [], unit.key, itemId, user?.id);
-      if (event) {
-        await undo(event.id);
-      }
-    },
-    [battleState?.events, undo, user?.id]
-  );
-  const handleUseSingleUseItem = useCallback(
-    async (unit: PrebattleUnit, item: UnitSingleUseItem) => {
-      if (!battleState || !currentParticipant) {
-        return;
-      }
-      const actionKey = `${unit.key}:${item.id}`;
-      setActiveItemActionKey(actionKey);
-      setActionError("");
-      try {
-        const next = await appendBattleEvent(campaignId, numericBattleId, {
-          type: "item_used",
-          payload_json: {
-            participant_user_id: currentParticipant.user.id,
-            unit_key: unit.key,
-            unit_id: typeof unit.id === "number" ? unit.id : null,
-            unit_type: unit.kind,
-            item_id: item.id,
-            item_name: item.name,
-          },
-        });
-        applyBattleResponse(next);
-        offerUndo(`${item.name} used.`, newestOwnEvent(next.events, "item_used", user?.id)?.id);
-      } catch (errorResponse) {
-        setActionError(getErrorMessage(errorResponse, "Unable to log item use"));
-      } finally {
-        setActiveItemActionKey((prev) => (prev === actionKey ? null : prev));
-      }
-    },
-    [
-      applyBattleResponse,
-      battleState,
-      campaignId,
-      currentParticipant,
-      numericBattleId,
-      offerUndo,
-      user?.id,
-    ]
-  );
-
-  const desktopSubnavActions = useMemo(
-    () => (
-      <>
-        {selectedParticipantIsCurrentUser ? (
-          <>
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              onClick={() => setIsBattleNotesOpen(true)}
-            >
-              Battle Notes
-            </Button>
-            <div className="mx-1 h-7 w-px bg-border/70" aria-hidden="true" />
-          </>
-        ) : null}
-        <ActiveBattleHelpers
-          rangedDisabled={rangedUnitOptions.length === 0}
-          meleeDisabled={
-            meleeUnitOptions.yours.length === 0 || meleeUnitOptions.others.length === 0
-          }
-          showScenarioAction={showScenarioLinkAction}
-          onOpenRanged={() => setIsRangedDialogOpen(true)}
-          onOpenMelee={() => setIsMeleeDialogOpen(true)}
-          onOpenCriticalHits={() => setIsCriticalHitDialogOpen(true)}
-          onOpenScenario={() => setIsScenarioLinkDialogOpen(true)}
-        />
-        {overflowActions.length > 0 ? (
-          <>
-            <div className="mx-1 h-7 w-px bg-border/70" aria-hidden="true" />
-            <BattleOverflowMenu actions={overflowActions} appearance="button" />
-          </>
-        ) : null}
-      </>
-    ),
-    [
-      meleeUnitOptions.others.length,
-      meleeUnitOptions.yours.length,
-      overflowActions,
-      rangedUnitOptions.length,
-      selectedParticipantIsCurrentUser,
-      showScenarioLinkAction,
-    ]
-  );
-
-  const updateCustomDraftStat = (key: StatKey, value: string) => {
-    setCustomUnitDraft((prev) => {
-      if (key === "armour_save") {
-        const normalized = value.replace(/[^\d-]/g, "");
-        const hasLeadingMinus = normalized.startsWith("-");
-        const digits = normalized.replace(/-/g, "");
-        const nextValue = hasLeadingMinus ? `-${digits.slice(0, 2)}` : digits.slice(0, 2);
-        return {
-          ...prev,
-          stats: {
-            ...prev.stats,
-            armour_save: nextValue,
-          },
-        };
-      }
-      return {
-        ...prev,
-        stats: {
-          ...prev.stats,
-          [key]: value.replace(/[^\d]/g, "").slice(0, 2),
-        },
-      };
+  const { sectionIdByKey, overflowActions, endBattleAction, openNotes, openScenario } =
+    useActiveMobileBars({
+      page,
+      isMobile,
+      selectedCustomUnits,
+      setBattleMobileTopBar,
+      setBattleMobileBottomBar,
     });
-  };
 
-  const makeCustomUnitKey = () => {
-    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-      return `custom:${crypto.randomUUID()}`;
-    }
-    return `custom:${Date.now()}-${Math.floor(Math.random() * 10000)}`;
-  };
-
-  const handleAddCustomUnit = useCallback(async () => {
-    const participant = getCurrentParticipantSnapshot();
-    if (!participant) {
-      return;
-    }
-
-    const name = customUnitDraft.name.trim();
-    const unitType = customUnitDraft.unitType.trim();
-    if (!name || !unitType) {
-      setCustomUnitFormError("Temporary units need a name and unit type.");
-      return;
-    }
-
-    const customUnitKey = makeCustomUnitKey();
-    const unit: PrebattleUnit = {
-      key: customUnitKey,
-      id: customUnitKey,
-      kind: "custom",
-      displayName: name,
-      unitType,
-      rating: toUnitRating(customUnitDraft.rating),
-      stats: {
-        movement: toNumericStat(customUnitDraft.stats.movement),
-        weapon_skill: toNumericStat(customUnitDraft.stats.weapon_skill),
-        ballistic_skill: toNumericStat(customUnitDraft.stats.ballistic_skill),
-        strength: toNumericStat(customUnitDraft.stats.strength),
-        toughness: toNumericStat(customUnitDraft.stats.toughness),
-        wounds: toNumericStat(customUnitDraft.stats.wounds),
-        initiative: toNumericStat(customUnitDraft.stats.initiative),
-        attacks: toNumericStat(customUnitDraft.stats.attacks),
-        leadership: toNumericStat(customUnitDraft.stats.leadership),
-        armour_save: toArmourSaveStat(customUnitDraft.stats.armour_save),
-      },
-    };
-
-    const existingCustomUnits = normalizeCustomUnits(participant.custom_units_json);
-    const nextCustomUnits = [...existingCustomUnits, unit];
-    const nextSelectedUnitKeys = Array.from(
-      new Set([...(participant.selected_unit_keys_json ?? []), unit.key])
-    );
-
-    try {
-      const next = await saveCurrentParticipantConfig({
-        selected_unit_keys_json: nextSelectedUnitKeys,
-        custom_units_json: serializeCustomUnits(nextCustomUnits),
-      });
-      if (!next) {
-        return;
-      }
-      setCustomUnitDraft({ ...DEFAULT_CUSTOM_UNIT_DRAFT });
-      setCustomUnitFormError("");
-      setShowAddCustomUnit(false);
-    } catch {
-      return;
-    }
-  }, [customUnitDraft, getCurrentParticipantSnapshot, saveCurrentParticipantConfig]);
-
-  const participantIds = battleState.participants.map((participant) => participant.user.id);
-  const hasRosterResultForAllParticipants = participantIds.every((participantUserId) =>
-    Boolean(rosters[participantUserId] || rosterErrors[participantUserId])
-  );
-  const hasPendingRosterRequests = participantIds.some((participantUserId) =>
-    Boolean(rosterLoading[participantUserId])
-  );
   if (
-    participantIds.length > 0 &&
-    (!hasRosterResultForAllParticipants || hasPendingRosterRequests || !selectedParticipant)
+    participants.length > 0 &&
+    (!allRostersSettled(participants, rosters, rosterLoading, rosterErrors) || !selectedParticipant)
   ) {
     return <LoadingScreen message="Loading battle..." />;
   }
 
-  const selectedParticipantRoster = selectedParticipant
-    ? rosters[selectedParticipant.user.id]
-    : undefined;
-  const isSelectedRosterLoading = Boolean(
+  const helpers = {
+    rangedDisabled: page.rangedOptions.length === 0,
+    meleeDisabled: page.meleeOptions.yours.length === 0 || page.meleeOptions.others.length === 0,
+    showScenarioAction: Boolean(scenarioLink),
+    onOpenHelper: helper.setOpen,
+    onOpenScenario: openScenario,
+  };
+  const selectedUserId = selectedParticipant?.user.id;
+  const canInteract = Boolean(
     selectedParticipant &&
-      rosterLoading[selectedParticipant.user.id] &&
-      !rosters[selectedParticipant.user.id]
-  );
-  const canInteractWithSelectedParticipant = Boolean(
-    selectedParticipant &&
-      selectedParticipant.user.id === user?.id &&
+      selectedUserId === page.user?.id &&
       selectedParticipant.status === "in_battle"
   );
 
@@ -847,11 +78,17 @@ export default function BattleActive() {
       {!isMobile ? (
         <BattleDesktopSubnav
           title="Battle"
-          subtitle={`Session #${battleId ?? "-"}${battleState.battle.scenario ? ` - ${battleState.battle.scenario}` : ""}`}
-          participants={statusParticipants}
-          selectedParticipantUserId={selectedParticipantUserId}
-          onSelectParticipant={setSelectedParticipantUserId}
-          actions={desktopSubnavActions}
+          subtitle={`Session #${battleId}${scenario ? ` - ${scenario}` : ""}`}
+          participants={selection.statusParticipants}
+          selectedParticipantUserId={selection.selectedParticipantUserId}
+          onSelectParticipant={selection.setSelectedParticipantUserId}
+          actions={
+            <ActiveSubnavActions
+              onOpenNotes={isOwnSelected ? openNotes : undefined}
+              helpers={helpers}
+              overflowActions={overflowActions}
+            />
+          }
         />
       ) : null}
 
@@ -859,42 +96,40 @@ export default function BattleActive() {
         <div className="flex flex-wrap items-center justify-center gap-2 px-2">
           <ActiveBattleHelpers
             showLabel={false}
-            rangedDisabled={rangedUnitOptions.length === 0}
-            meleeDisabled={
-              meleeUnitOptions.yours.length === 0 || meleeUnitOptions.others.length === 0
-            }
-            showScenarioAction={showScenarioLinkAction}
-            onOpenRanged={() => setIsRangedDialogOpen(true)}
-            onOpenMelee={() => setIsMeleeDialogOpen(true)}
-            onOpenCriticalHits={() => setIsCriticalHitDialogOpen(true)}
-            onOpenScenario={() => setIsScenarioLinkDialogOpen(true)}
+            rangedDisabled={helpers.rangedDisabled}
+            meleeDisabled={helpers.meleeDisabled}
+            showScenarioAction={helpers.showScenarioAction}
+            onOpenRanged={() => helper.setOpen("ranged")}
+            onOpenMelee={() => helper.setOpen("melee")}
+            onOpenCriticalHits={() => helper.setOpen("critical")}
+            onOpenScenario={openScenario}
           />
         </div>
       ) : null}
 
-      {isSelectedRosterLoading ? (
+      {isRosterLoading(selectedParticipant, rosters, rosterLoading) ? (
         <CardBackground className="p-4 sm:p-5">
           <p className="text-sm text-muted-foreground">Loading units...</p>
         </CardBackground>
-      ) : selectedParticipant ? (
+      ) : selectedParticipant && selectedUserId ? (
         <ActiveParticipantRoster
           participant={selectedParticipant}
-          participantRoster={selectedParticipantRoster}
-          rosterLoading={Boolean(rosterLoading[selectedParticipant.user.id])}
-          rosterError={rosterErrors[selectedParticipant.user.id]}
-          unitInformationByKey={selectedParticipantUnitInformation}
-          killTargetOptions={killTargetOptions}
-          canInteract={canInteractWithSelectedParticipant}
-          onSetOutOfAction={handleSetUnitOutOfAction}
-          onAdjustWounds={handleAdjustUnitWounds}
-          onSaveOverride={handleSaveUnitOverride}
-          onSaveUnitNotes={handleSaveUnitNotes}
-          onRecordKill={handleRecordUnitKill}
-          onUseSingleUseItem={handleUseSingleUseItem}
-          getUsedSingleUseItemCount={getUsedSingleUseItemCount}
-          onUndoSingleUseItem={handleUndoSingleUseItem}
-          activeItemActionKey={activeItemActionKey}
-          savingUnitKeys={savingUnitKeys}
+          participantRoster={rosters[selectedUserId]}
+          rosterLoading={Boolean(rosterLoading[selectedUserId])}
+          rosterError={rosterErrors[selectedUserId]}
+          unitInformationByKey={selectedUnitInformation}
+          killTargetOptions={page.killTargetOptions}
+          canInteract={canInteract}
+          onSetOutOfAction={page.setOutOfAction}
+          onAdjustWounds={config.adjustUnitWounds}
+          onSaveOverride={config.saveUnitOverride}
+          onSaveUnitNotes={config.saveUnitNotes}
+          onRecordKill={page.recordKill}
+          onUseSingleUseItem={items.logItemUse}
+          getUsedSingleUseItemCount={page.getUsedSingleUseItemCount}
+          onUndoSingleUseItem={items.undoItemUse}
+          activeItemActionKey={items.activeItemActionKey}
+          savingUnitKeys={config.savingUnitKeys}
           sectionIds={sectionIdByKey}
         />
       ) : (
@@ -903,203 +138,62 @@ export default function BattleActive() {
         </CardBackground>
       )}
 
-      {selectedParticipantIsCurrentUser && canInteractWithSelectedParticipant ? (
-        <>
-          {isSavingConfig ? (
-            <p className="text-[0.58rem] uppercase tracking-[0.2em] text-muted-foreground">
-              Saving unit config...
-            </p>
-          ) : null}
-          {actionError ? <p className="text-sm text-red-600">{actionError}</p> : null}
-          <PrebattleCustomUnitBuilder
-            open={showAddCustomUnit}
-            draft={customUnitDraft}
-            error={customUnitFormError}
-            showRatingField={false}
-            campaignId={campaignId}
-            onToggleOpen={() => {
-              setShowAddCustomUnit((prev) => !prev);
-              setCustomUnitFormError("");
-            }}
-            onDraftChange={(next) => {
-              setCustomUnitDraft(next);
-              if (customUnitFormError) {
-                setCustomUnitFormError("");
-              }
-            }}
-            onDraftStatChange={updateCustomDraftStat}
-            onSave={() => void handleAddCustomUnit()}
-          />
-        </>
+      {isOwnSelected && canInteract ? (
+        <ActiveOwnTools
+          campaignId={campaignId}
+          isSaving={config.isSavingConfig}
+          error={config.actionError}
+          customUnitDraft={config.customUnitDraft}
+          onAddCustomUnit={() => void config.addCustomUnit()}
+        />
       ) : null}
       {currentParticipant ? (
         <BattleNotesDialog
-          open={isBattleNotesOpen}
+          open={page.notesDialog.isOpen}
           notes={currentParticipant.battle_notes ?? ""}
-          onOpenChange={setIsBattleNotesOpen}
-          onSave={handleSaveBattleNotes}
+          onOpenChange={page.notesDialog.setIsOpen}
+          onSave={config.saveBattleNotes}
         />
       ) : null}
 
-      {!isMobile && activeBottomBarConfig ? (
-        <div className="fixed inset-x-0 bottom-4 z-20 px-3 min-[960px]:left-auto min-[960px]:right-4 min-[960px]:inset-x-auto min-[960px]:w-[520px]">
-          <CardBackground className="battle-floating-panel space-y-2 p-3">
-            <div className="flex flex-wrap justify-end gap-2">
-              <Button
-                variant={activeBottomBarConfig.primaryAction.variant}
-                onClick={activeBottomBarConfig.primaryAction.onClick}
-                disabled={activeBottomBarConfig.primaryAction.disabled}
-              >
-                {activeBottomBarConfig.primaryAction.label}
-              </Button>
-            </div>
-          </CardBackground>
-        </div>
+      {!isMobile && page.canEndBattle ? (
+        <BattleFloatingActionBar>
+          <Button
+            variant={endBattleAction.variant}
+            onClick={endBattleAction.onClick}
+            disabled={endBattleAction.disabled}
+          >
+            {endBattleAction.label}
+          </Button>
+        </BattleFloatingActionBar>
       ) : null}
 
-      <ConfirmDialog
-        open={isLeaveDialogOpen}
-        onOpenChange={setIsLeaveDialogOpen}
-        description={
-          <div className="space-y-2">
-            <p>Leave this battle session?</p>
-            <p className="text-xs text-muted-foreground">
-              You can return later from the campaign overview while the battle is still ongoing.
-            </p>
-          </div>
-        }
-        confirmText="Leave"
-        confirmVariant="secondary"
-        onConfirm={handleLeaveBattle}
-        onCancel={() => setIsLeaveDialogOpen(false)}
+      <ActiveLeaveDialog
+        open={page.leave.isOpen}
+        onOpenChange={page.leave.setIsOpen}
+        onConfirm={page.leave.confirm}
       />
-      {battleState.battle.scenario_link ? (
+      {scenarioLink ? (
         <WarbandPdfViewerDialog
-          open={isScenarioLinkDialogOpen}
-          onOpenChange={setIsScenarioLinkDialogOpen}
-          url={battleState.battle.scenario_link}
-          title={battleState.battle.scenario || "Scenario"}
+          open={page.scenarioDialog.isOpen}
+          onOpenChange={page.scenarioDialog.setIsOpen}
+          url={scenarioLink}
+          title={scenario || "Scenario"}
         />
       ) : null}
-
-      <Dialog open={isFinishDialogOpen} onOpenChange={setIsFinishDialogOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>End Active Battle</DialogTitle>
-            <DialogDescription className="block text-sm text-muted-foreground">
-              Pick the winning warband or warbands, or No winner, then move everyone into
-              postbattle. Wins and losses are recorded when everyone has finished postbattle.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-3">
-            {(battleState?.participants ?? []).map((participant) => {
-              const checked = selectedWinnerWarbandIds.includes(participant.warband.id);
-              return (
-                <label
-                  key={`winner-${participant.id}`}
-                  className="battle-inline-panel flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-foreground"
-                >
-                  <Checkbox
-                    checked={checked}
-                    onChange={(event) => {
-                      const isChecked = event.target.checked;
-                      setNoWinner(false);
-                      setSelectedWinnerWarbandIds((current) => {
-                        if (isChecked) {
-                          return current.includes(participant.warband.id)
-                            ? current
-                            : [...current, participant.warband.id];
-                        }
-                        return current.filter((entry) => entry !== participant.warband.id);
-                      });
-                    }}
-                  />
-                  <span>{participant.warband.name}</span>
-                </label>
-              );
-            })}
-            <label className="battle-inline-panel flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-foreground">
-              <Checkbox
-                checked={noWinner}
-                onChange={(event) => {
-                  setNoWinner(event.target.checked);
-                  setSelectedWinnerWarbandIds([]);
-                }}
-              />
-              <span>No winner</span>
-            </label>
-            {finishError ? <p className="text-sm text-red-600">{finishError}</p> : null}
-          </div>
-          <DialogFooter>
-            <Button type="button" variant="secondary" onClick={() => setIsFinishDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              onClick={() => void handleFinishBattle()}
-              disabled={isFinishingBattle || (selectedWinnerWarbandIds.length === 0 && !noWinner)}
-            >
-              {isFinishingBattle ? "Ending..." : "End battle"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isCancelBattleDialogOpen} onOpenChange={setIsCancelBattleDialogOpen}>
-        <DialogContent className="max-w-[520px]">
-          <DialogHeader>
-            <DialogTitle>Cancel Battle</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-2">
-            <DialogDescription asChild className="block">
-              <p>Cancel this battle for all participants?</p>
-            </DialogDescription>
-            <label className="battle-inline-panel mt-3 flex items-start gap-3 rounded-xl px-3 py-2 text-sm text-foreground">
-              <Checkbox
-                checked={cancelBattleConfirmed}
-                disabled={isCancelingBattle}
-                onChange={(event) => setCancelBattleConfirmed(event.target.checked)}
-                className="mt-0.5"
-              />
-              <span>I understand this will cancel the battle for all participants.</span>
-            </label>
-            {cancelBattleError ? <p className="text-sm text-red-600">{cancelBattleError}</p> : null}
-          </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => setIsCancelBattleDialogOpen(false)}
-              disabled={isCancelingBattle}
-            >
-              Back
-            </Button>
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={() => void handleCancelBattle()}
-              disabled={isCancelingBattle || !cancelBattleConfirmed}
-            >
-              {isCancelingBattle ? "Canceling..." : "Cancel battle"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <ActiveMeleeDialog
-        open={isMeleeDialogOpen}
-        onOpenChange={setIsMeleeDialogOpen}
-        yourUnitOptions={meleeUnitOptions.yours}
-        enemyUnitOptions={meleeUnitOptions.others}
+      <ActiveFinishBattleDialog finishing={finishing} participants={participants} />
+      <ActiveCancelBattleDialog
+        open={creatorCancel.isOpen}
+        onOpenChange={creatorCancel.setIsOpen}
+        isCanceling={creatorCancel.isCanceling}
+        error={creatorCancel.error}
+        onConfirm={() => void creatorCancel.cancel()}
       />
-      <ActiveRangedDialog
-        open={isRangedDialogOpen}
-        onOpenChange={setIsRangedDialogOpen}
-        yourUnitOptions={rangedUnitOptions}
-      />
-      <ActiveCriticalHitDialog
-        open={isCriticalHitDialogOpen}
-        onOpenChange={setIsCriticalHitDialogOpen}
+      <ActiveHelperDialogs
+        open={helper.open}
+        onOpenChange={helper.setOpen}
+        meleeOptions={page.meleeOptions}
+        rangedOptions={page.rangedOptions}
       />
     </div>
   );
