@@ -1,9 +1,12 @@
+from typing import Any
+
 from rest_framework import serializers
 
 from apps.restrictions.serializers import RestrictionSerializer
 from apps.warbands.models import Warband, WarbandResource
 from apps.warbands.restrictions import get_effective_restrictions_for_warband
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
+from apps.warbands.services.prices import sale_price
 from apps.warbands.services.resources import MAX_AMOUNT
 from apps.warbands.services.summary import WarbandUnits, load_warband_units
 from apps.warbands.units.kinds import HERO, HIRED_SWORD
@@ -235,6 +238,14 @@ class WarbandItemSummarySerializer(serializers.Serializer):
     cost = serializers.IntegerField(allow_null=True)
     quantity = serializers.IntegerField()
     costs = StashCostSerializer(many=True)
+    suggested_sale_price = serializers.SerializerMethodField()  # per copy, decision 3
+    sale_price_basis = serializers.SerializerMethodField()
+
+    def get_suggested_sale_price(self, entry: Any) -> int | None:
+        return sale_price(entry.current_price, entry.cost).price
+
+    def get_sale_price_basis(self, entry: Any) -> str | None:
+        return sale_price(entry.current_price, entry.cost).basis
 
 
 class WarbandItemTransferSerializer(serializers.Serializer):
@@ -271,7 +282,8 @@ class WarbandItemSaleSerializer(serializers.Serializer):
     cost = serializers.IntegerField(required=False, allow_null=True)  # from the stash: only copies of this cost
     item_id = serializers.IntegerField()
     quantity = serializers.IntegerField(min_value=1)
-    price = serializers.IntegerField(min_value=0)
+    # the gold for all the copies; without it, the suggested sale price of each (decision 3)
+    price = serializers.IntegerField(min_value=0, max_value=MAX_TRADE_PRICE, required=False, allow_null=True)
 
     def validate(self, attrs):
         source_type = attrs["source_type"]

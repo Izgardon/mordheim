@@ -27,6 +27,10 @@ from .roster_support import (
 from .test_roster_characterisation_shapes import SHAPES
 
 RESPONSE_KEYS = ["summary", "source", "target", "stash_item", "removed_stash_item_id"]
+
+# decision 3: half the item's current campaign price, rounded up (the Sword lists at 10, the Axe at 5 and 15)
+SWORD_SALE = {"suggested_sale_price": 5, "sale_price_basis": "campaign_price"}
+AXE_SALE = {"suggested_sale_price": 3, "sale_price_basis": "campaign_price"}
 # the other kind each kind hands an item to in the cross-kind test
 OTHER_KIND = {HERO.key: HENCHMEN, HENCHMEN.key: HIRED_SWORD, HIRED_SWORD.key: HERO}
 
@@ -63,7 +67,7 @@ class RosterItemTransferCharacterisationTests(RosterTestCase):
                 body = response.json()
                 self.assertEqual(list(body), RESPONSE_KEYS)
                 stash_row = {"id": self.sword.id, "name": "Sword", "cost": 12, "quantity": 1}
-                stash_row["costs"] = [{"cost": 12, "quantity": 1}]
+                stash_row |= {"costs": [{"cost": 12, "quantity": 1}], **SWORD_SALE}
                 self.assertEqual(
                     (body["target"], body["stash_item"], body["removed_stash_item_id"]), (stash_row,) * 2 + (None,)
                 )
@@ -83,7 +87,7 @@ class RosterItemTransferCharacterisationTests(RosterTestCase):
 
         # the row created last first: its copies leave first
         costs = [{"cost": 10, "quantity": 1}, {"cost": 12, "quantity": 1}, {"cost": 5, "quantity": 2}]
-        stash_item = {"id": self.sword.id, "name": "Sword", "cost": 10, "quantity": 4, "costs": costs}
+        stash_item = {"id": self.sword.id, "name": "Sword", "cost": 10, "quantity": 4, "costs": costs, **SWORD_SALE}
         self.assertEqual(body["stash_item"], stash_item)
         self.assertEqual(self._carried(HERO, hero), [(self.axe.id, 7)])
 
@@ -100,7 +104,9 @@ class RosterItemTransferCharacterisationTests(RosterTestCase):
                 self.assertEqual(list(first), RESPONSE_KEYS)
                 self.assertIsNone(first["source"])
                 stash_item = {"id": self.sword.id, "name": "Sword", "cost": 9, "quantity": 1}
-                self.assertEqual(first["stash_item"], {**stash_item, "costs": [{"cost": 9, "quantity": 1}]})
+                self.assertEqual(
+                    first["stash_item"], {**stash_item, "costs": [{"cost": 9, "quantity": 1}], **SWORD_SALE}
+                )
                 self.assertIsNone(first["removed_stash_item_id"])
                 self.assertEqual(first["target"], self.client.get(unit_url(kind, self.warband.id, unit.id)).json())
 
@@ -157,7 +163,7 @@ class RosterItemTransferCharacterisationTests(RosterTestCase):
         ).json()
 
         stash_item = {"id": self.axe.id, "name": "Axe", "cost": 6, "quantity": 1}
-        self.assertEqual(body["stash_item"], {**stash_item, "costs": [{"cost": 6, "quantity": 1}]})
+        self.assertEqual(body["stash_item"], {**stash_item, "costs": [{"cost": 6, "quantity": 1}], **AXE_SALE})
         self.assertEqual(self._carried(HERO, target)[2:], [(self.axe.id, 6), (self.axe.id, 6)])
 
     def test_copies_moved_into_the_stash_keep_their_costs(self):
@@ -344,6 +350,7 @@ class RosterItemSaleCharacterisationTests(RosterTestCase):
             "cost": 9,
             "quantity": 1,
             "costs": [{"cost": 9, "quantity": 1}],
+            **SWORD_SALE,
         }
         self.assertEqual(
             (first["source"], first["stash_item"], first["removed_stash_item_id"]), (stash_row, stash_row, None)
@@ -373,9 +380,9 @@ class RosterItemSaleCharacterisationTests(RosterTestCase):
         self.assertEqual(trade_rows(self.warband)[1:], [("Sell", "Sword", 3, None), ("Sell", "Axe", 30, None)])
         self.assertEqual(WarbandItem.objects.get(warband=self.warband).quantity, 1)
 
-    def test_a_sale_needs_a_price_of_zero_or_more(self):
+    def test_a_sale_price_is_zero_or_more(self):
         WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=1, cost=9)
-        for price in (-1, None, "free"):
+        for price in (-1, "free"):
             with self.subTest(price=price):
                 response = self._sell(source_type="stash", item_id=self.sword.id, quantity=1, price=price)
                 self.assertEqual((response.status_code, list(response.json())), (400, ["price"]))

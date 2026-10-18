@@ -17,11 +17,12 @@ from collections.abc import Iterable
 from dataclasses import dataclass, field
 
 from django.db import IntegrityError, transaction
-from django.db.models import F, Q
+from django.db.models import F, Q, QuerySet
 
 from apps.items.models import Item
 from apps.warbands.models import Warband, WarbandItem
 from apps.warbands.services import economy_log
+from apps.warbands.services.prices import annotated_current, house_rule_prices, own_price_of
 
 ANY_COST = object()  # remove_from_stash takes copies of every cost unless one is named
 
@@ -48,6 +49,7 @@ class StashEntry:
     quantity: int
     cost: int | None  # the cost of the copies that leave first (the newest row's)
     costs: list[CostCount] = field(default_factory=list)  # newest row first
+    current_price: int | None = None  # the item's current campaign price (services/prices.py)
 
 
 @dataclass(frozen=True)
@@ -81,12 +83,18 @@ def add_costs(warband_id: int, item_id: int, costs: Iterable[int | None]) -> Non
         add_to_stash(warband_id, item_id, quantity, cost)
 
 
+def _priced(rows: QuerySet[WarbandItem]) -> QuerySet[WarbandItem]:
+    """Stash rows with their item's current campaign price read in the same query."""
+    return rows.annotate(**house_rule_prices("warband__campaign_id", "item__name"), own_price=own_price_of("item_id"))
+
+
 def _entry(item: Item, rows: list[WarbandItem]) -> StashEntry | None:
+    current = annotated_current(rows[0], getattr(rows[0], "own_price", None)) if rows else None
     rows = [row for row in rows if row.quantity > 0]
     if not rows:
         return None
     costs = [CostCount(row.cost, row.quantity) for row in rows]
-    return StashEntry(item, sum(row.quantity for row in rows), rows[0].cost, costs)
+    return StashEntry(item, sum(row.quantity for row in rows), rows[0].cost, costs, current)
 
 
 def remove_from_stash(
@@ -94,7 +102,7 @@ def remove_from_stash(
 ) -> StashTake:
     """Take `quantity` copies out (of one cost when `cost` is given), newest row first. StashShortage when the
     stash holds fewer, unless `up_to`, which takes what there is."""
-    rows = WarbandItem.objects.select_for_update(of=("self",)).select_related("item")
+    rows = _priced(WarbandItem.objects.select_for_update(of=("self",)).select_related("item"))
     held_rows = list(rows.filter(warband_id=warband_id, item_id=item_id).order_by("-id"))
     takeable = held_rows if cost is ANY_COST else [row for row in held_rows if row.cost == cost]
     held = sum(row.quantity for row in takeable)
@@ -127,13 +135,14 @@ def discard_from_stash(warband: Warband, item_id: int, quantity: int) -> int:
 
 def stash_entry(warband_id: int, item: Item) -> StashEntry | None:
     """The item's stash entry as stored now, for an answer (None without copies)."""
-    rows = list(WarbandItem.objects.filter(warband_id=warband_id, item_id=item.id).order_by("-id"))
+    rows = list(_priced(WarbandItem.objects.filter(warband_id=warband_id, item_id=item.id)).order_by("-id"))
     return _entry(item, rows)
 
 
 def stash_entries(warband: Warband) -> list[StashEntry]:
     """The whole stash, one entry per item, by item name (one query)."""
-    rows = WarbandItem.objects.filter(warband=warband).select_related("item").order_by("item__name", "item__id", "-id")
+    rows = _priced(WarbandItem.objects.filter(warband=warband).select_related("item"))
+    rows = rows.order_by("item__name", "item__id", "-id")
     grouped: dict[int, list[WarbandItem]] = {}
     for row in rows:
         grouped.setdefault(row.item_id, []).append(row)

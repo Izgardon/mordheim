@@ -7,6 +7,10 @@ from apps.warbands.models import WarbandItem, WarbandResource
 
 from .roster_support import HERO, RosterTestCase, log_rows, make_unit, trade_rows
 
+# decision 3: half the item's current campaign price, rounded up (the Sword lists at 10, the Axe at 5 and 15)
+SWORD_SALE = {"suggested_sale_price": 5, "sale_price_basis": "campaign_price"}
+AXE_SALE = {"suggested_sale_price": 3, "sale_price_basis": "campaign_price"}
+
 
 class StashTests(RosterTestCase):
     def _url(self, item_id: int | None = None) -> str:
@@ -37,6 +41,7 @@ class StashTests(RosterTestCase):
                     "cost": None,
                     "quantity": 1,
                     "costs": [{"cost": None, "quantity": 1}],
+                    **AXE_SALE,
                 },
                 {
                     "id": self.sword.id,
@@ -44,6 +49,7 @@ class StashTests(RosterTestCase):
                     "cost": 12,
                     "quantity": 3,
                     "costs": [{"cost": 12, "quantity": 1}, {"cost": 9, "quantity": 2}],
+                    **SWORD_SALE,
                 },
             ],
         )
@@ -55,7 +61,8 @@ class StashTests(RosterTestCase):
 
         sword_entry = {"id": self.sword.id, "name": "Sword", "cost": 10, "quantity": 1}
         self.assertEqual(
-            (sword.status_code, sword.json()), (201, {**sword_entry, "costs": [{"cost": 10, "quantity": 1}]})
+            (sword.status_code, sword.json()),
+            (201, {**sword_entry, "costs": [{"cost": 10, "quantity": 1}], **SWORD_SALE}),
         )
         self.assertEqual(axe.json()["costs"], [{"cost": None, "quantity": 2}])
         self.assertEqual(priced.json()["cost"], 4)

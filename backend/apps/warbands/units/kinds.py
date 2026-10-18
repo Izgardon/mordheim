@@ -37,7 +37,7 @@ from apps.warbands.prefetches import (
     entries_array,
     entries_attr,
     item_detail_prefetches,
-    links_prefetch,
+    item_links_prefetch,
 )
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
 from apps.warbands.utils.hero_level import count_new_level_ups
@@ -153,7 +153,7 @@ class UnitKindSpec:
             for link in self.links()
             if link is not self.items
         }
-        prefetch: list[str | Prefetch] = [links_prefetch(self.items.relation, self.items.model, "item")]
+        prefetch: list[str | Prefetch] = [item_links_prefetch(self.items.relation, self.items.model, self.parent_field)]
         if detail:
             prefetch += item_detail_prefetches(f"{self.items.relation}__item__")
         if self.has_members and living_members:

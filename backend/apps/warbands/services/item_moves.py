@@ -13,9 +13,10 @@ from django.db import transaction
 from django.db.models import Prefetch
 
 from apps.items.models import Item
-from apps.warbands.models import Henchman, LedgerAction, Warband, not_dismissed
+from apps.warbands.models import Henchman, LedgerAction, RosterUnit, Warband, WarbandItem, not_dismissed
 from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandItemSummarySerializer, WarbandSummarySerializer
 from apps.warbands.services import economy_log, ledger
+from apps.warbands.services.prices import CampaignPrices
 from apps.warbands.services.stash import ANY_COST, add_costs, remove_from_stash, stash_entry
 from apps.warbands.services.unit_items import add_unit_copies, resolve_unit, take_unit_copies
 from apps.warbands.units.kinds import KINDS, UnitKindKey
@@ -52,6 +53,24 @@ def _add_stash_items(warband: Warband, item: Item, costs: list[int | None]) -> A
     """Copies moved into the stash keep their costs (BUG-117)."""
     add_costs(warband.id, item.id, costs)
     return stash_entry(warband.id, item)
+
+
+def _sale_total(warband: Warband, item: Item, data: Mapping[str, Any], unit: RosterUnit | None) -> int:
+    """The price sent, else the suggested sale price of each copy sold (decision 3): half the current campaign
+    price, or half the stored cost of the copies that leave first; ValueError (a 400) when neither is known."""
+    if data.get("price") is not None:
+        return int(data["price"])
+    if unit is None:
+        rows: Any = WarbandItem.objects.filter(warband=warband, item=item)
+        rows = rows.filter(cost=data["cost"]) if data.get("cost") is not None else rows
+    else:
+        kind = KINDS[cast(UnitKindKey, data["source_type"])]
+        rows = kind.items.model._default_manager.filter(**{kind.parent_field: unit, "item": item})
+    stored = rows.order_by("-id").values_list("cost", flat=True).first()
+    sale = CampaignPrices(warband.campaign_id).sale_price(item, stored)
+    if sale.price is None:
+        raise ValueError("No price is known for this item; send one.")
+    return int(sale.price) * int(data["quantity"])
 
 
 def _item_change(warband: Warband, *, source: Any, target: Any = None, stash_item: Any, removed: Any) -> dict[str, Any]:
@@ -102,10 +121,11 @@ def sell_item(warband: Warband, item: Item, data: Mapping[str, Any]) -> Outcome:
     item_id, quantity = data["item_id"], data["quantity"]
     source_type, source_id = data["source_type"], data.get("source_id")
     source_unit = None if source_type == "stash" else resolve_unit(warband, source_type, source_id, "Source")
+    price = _sale_total(warband, item, data, source_unit)
     with transaction.atomic():
         # the gold first: it locks the warband before the stash row, as postbattle and trade completion do
         description = f"{item.name} x {quantity}" if quantity > 1 else item.name
-        ledger.record(warband, LedgerAction.SELL, data["price"], description)
+        ledger.record(warband, LedgerAction.SELL, price, description)
         stash_item = removed = None
         if source_unit is None:
             _costs, stash_item = _remove_stash_items(warband, item_id, data)
@@ -116,5 +136,5 @@ def sell_item(warband: Warband, item: Item, data: Mapping[str, Any]) -> Outcome:
             take_unit_copies(source_type, source_unit, item_id, quantity)
             source = _unit_payload(warband, source_type, source_id)
         source_end = (source_type, economy_log.unit_name(source_type, source_unit))
-        economy_log.log_sale(warband, item.name, quantity, data["price"], source_end)
+        economy_log.log_sale(warband, item.name, quantity, price, source_end)
         return 200, _item_change(warband, source=source, stash_item=stash_item, removed=removed)

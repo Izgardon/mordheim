@@ -77,6 +77,8 @@ ITEM_DETAIL = {
         }
     ],
     "cost": "int",
+    "suggested_sale_price": "int",  # decision 3
+    "sale_price_basis": "str",
 }
 NAMED = {"id": "int", "name": "str"}
 SKILL_DETAIL = {"id": "int", "name": "str", "type": "str"}
