@@ -19,18 +19,9 @@ from apps.warbands.models import RosterUnit, Warband, WarbandLog
 from apps.warbands.units.kinds import KINDS, UnitKindKey
 
 STASH = "stash"
-# (feature, entry type) the client may still post to logs/. Dice rolls happen in the browser. The purchase and
-# rarity-roll entries stay until purchases are written by the server (pass 2, phase 2).
-CLIENT_LOG_ENTRIES = frozenset(
-    {
-        ("dice_roll", "dice_roll"),
-        ("loadout", "hero_item"),
-        ("loadout", "henchmen_item"),
-        ("loadout", "hired_sword_item"),
-        ("loadout", "stash_item"),
-        ("trading_action", "rarity roll"),
-    }
-)
+# (feature, entry type) the client may still post to logs/: dice rolls happen in the browser. Purchases and
+# rarity rolls are logged by the server (POST purchases/, rarity-rolls/ and the roster batch).
+CLIENT_LOG_ENTRIES = frozenset({("dice_roll", "dice_roll")})
 MAX_CLIENT_PAYLOAD = 4096  # bytes of JSON
 
 

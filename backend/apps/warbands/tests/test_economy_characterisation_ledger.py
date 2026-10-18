@@ -200,7 +200,10 @@ class LogTests(RosterTestCase):
     def test_the_client_logs_only_what_the_server_cannot(self):
         # ECON-CQ-02: the client used to write any feature, including ones the server owns, with defaults
         refused = {"feature": ["The server writes this kind of log entry itself."]}
-        for feature, entry_type in (("battle", "complete"), ("items", "sold"), ("personnel", "new_hero"), (" ", "x")):
+        server_owned = [("battle", "complete"), ("items", "sold"), ("personnel", "new_hero"), (" ", "x")]
+        # pass 2, phase 2: purchases and rarity rolls are logged by the server too (POST purchases/, rarity-rolls/)
+        server_owned += [("loadout", "stash_item"), ("loadout", "hero_item"), ("trading_action", "rarity roll")]
+        for feature, entry_type in server_owned:
             with self.subTest(feature=feature):
                 body = {"feature": feature, "entry_type": entry_type, "payload": {"a": 1}}
                 response = self.client.post(self._url(), body, format="json")
@@ -208,18 +211,8 @@ class LogTests(RosterTestCase):
                 if feature.strip():
                     self.assertEqual(response.json(), refused)
         dice = {"feature": "dice_roll", "entry_type": "dice_roll", "payload": {"dice": "2d6", "rolls": [3, 4]}}
-        roll = {"feature": "trading_action", "entry_type": "rarity roll", "payload": {"hero": "Ana", "roll": 9}}
-        bought = {"feature": "loadout", "entry_type": "stash_item", "payload": {"item": "Rope", "price": 5}}
-        for body in (dice, roll, bought):  # rarity rolls and purchases until purchases move to the server
-            self.assertEqual(self.client.post(self._url(), body, format="json").status_code, 201)
-        self.assertEqual(
-            log_rows(self.warband),
-            [
-                ("dice_roll", "dice_roll", {"dice": "2d6", "rolls": [3, 4]}, None),
-                ("trading_action", "rarity roll", {"hero": "Ana", "roll": 9}, None),
-                ("loadout", "stash_item", {"item": "Rope", "price": 5}, None),
-            ],
-        )
+        self.assertEqual(self.client.post(self._url(), dice, format="json").status_code, 201)
+        self.assertEqual(log_rows(self.warband), [("dice_roll", "dice_roll", {"dice": "2d6", "rolls": [3, 4]}, None)])
 
     def test_a_posted_entry_needs_a_small_object_payload(self):
         dice = {"feature": "dice_roll", "entry_type": "dice_roll"}

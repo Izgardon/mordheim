@@ -20,8 +20,8 @@ class WarbandLogSerializer(serializers.ModelSerializer):
 
 
 class WarbandLogCreateSerializer(serializers.Serializer):
-    """POST logs/: only entries the server can't write itself (ECON-CQ-02): dice rolls, and until purchases move
-    to the server, purchase and rarity-roll entries (`CLIENT_LOG_ENTRIES`). The payload is an object of at most
+    """POST logs/: only entries the server can't write itself (ECON-CQ-02): dice rolls (`CLIENT_LOG_ENTRIES`;
+    purchases and rarity rolls are logged by the server since pass 2, phase 2). The payload is an object of at most
     `MAX_CLIENT_PAYLOAD` bytes of JSON."""
 
     feature = serializers.CharField(max_length=80)
