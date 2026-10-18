@@ -230,6 +230,18 @@ export const stateUpdatedMessage = (status: BattleStatus, actorUserId: number) =
   },
 });
 
+/** Your warband's sheet (`GET warbands/101/sheet/`) as postbattle reads it: only its resources. */
+export const mySheet = (resources: { id: number; name: string; amount?: number }[] = []) => ({
+  warband: { id: ME.warband.id, name: ME.warband.name },
+  summary: {
+    resources: resources.map((resource) => ({ warband_id: ME.warband.id, amount: 0, ...resource })),
+  },
+  capabilities: {},
+  heroes: [],
+  henchmen_groups: [],
+  hired_swords: [],
+});
+
 /** A promise resolved from outside: holds a fake server's answer until the test releases it. */
 export function deferred<T>() {
   let resolve!: (value: T) => void;

@@ -6,7 +6,14 @@ import { act, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { createQueryClient } from "@/lib/query-client";
-import { ME, battlePath, battleRosters, battleState, statePath } from "@/test/battle-fixtures";
+import {
+  ME,
+  battlePath,
+  battleRosters,
+  battleState,
+  mySheet,
+  statePath,
+} from "@/test/battle-fixtures";
 import { renderBattleRoute } from "@/test/battle-routes";
 import { fakeApi } from "@/test/fake-api";
 import { setupUser } from "@/test/user-event";
@@ -36,7 +43,7 @@ describe("battle phase requests", () => {
       battleState({ status: "postbattle", winner_warband_ids_json: [ME.warband.id] })
     );
     fakeApi.on(`GET ${battlePath("rosters/")}`, battleRosters());
-    fakeApi.on(`GET /warbands/${ME.warband.id}/resources/`, []);
+    fakeApi.on(`GET /warbands/${ME.warband.id}/sheet/`, mySheet());
     fakeApi.on(`POST ${battlePath("start/")}`, battleState({ status: "active" }));
     fakeApi.on(`POST ${battlePath("finish/")}`, battleState({ status: "postbattle" }));
 
@@ -62,7 +69,8 @@ describe("battle phase requests", () => {
       `POST ${battlePath("finish/")}`,
       `GET ${statePath("postbattle")}`,
       `GET ${battlePath("rosters/")}`,
-      `GET /warbands/${ME.warband.id}/resources/`,
+      // Postbattle's resources come from the warband's sheet query (BUG-127).
+      `GET /warbands/${ME.warband.id}/sheet/`,
     ]);
   });
 });

@@ -14,6 +14,7 @@ import {
   battleRosters,
   battleState,
   deferred,
+  mySheet,
   statePath,
 } from "@/test/battle-fixtures";
 import { createQueryClient } from "@/lib/query-client";
@@ -76,7 +77,7 @@ function routeServer() {
   });
   fakeApi.on(`GET ${statePath("postbattle")}`, () => answer());
   fakeApi.on(`GET ${battlePath("rosters/")}`, battleRosters());
-  fakeApi.on(`GET /warbands/${ME.warband.id}/resources/`, RESOURCES);
+  fakeApi.on(`GET /warbands/${ME.warband.id}/sheet/`, mySheet(RESOURCES));
   fakeApi.on(DRAFT_ROUTE, storeDraft);
 }
 
@@ -279,6 +280,16 @@ describe("BattlePostbattle requests", () => {
       await screen.findByText("Arm Wound: apply by hand on the warband sheet.")
     ).toBeInTheDocument();
     expect(screen.queryByRole("checkbox", { name: /^Apply Arm Wound/ })).toBeNull();
+  });
+
+  it("reads the warband's resources from its cached sheet, with no request of its own (BUG-127)", async () => {
+    const queryClient = createQueryClient();
+    queryClient.setQueryData(queryKeys.campaign.warbandSheet(1, ME.warband.id), mySheet(RESOURCES));
+    renderBattleRoute("postbattle", { queryClient });
+
+    expect(await screen.findByText("Captain Wolf")).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "Treasure" })).toBeInTheDocument();
+    expect(fakeApi.calls().filter((call) => call.includes("/warbands/"))).toEqual([]);
   });
 
   it("keeps Skip postbattle out of the desktop action panel, beside Finalise (BUG-48)", async () => {

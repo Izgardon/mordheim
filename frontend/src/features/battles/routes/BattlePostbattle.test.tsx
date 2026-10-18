@@ -199,7 +199,9 @@ const mocks = vi.hoisted(() => {
     saveBattlePostbattleDraft: vi.fn(async () => battleState),
     finalizeBattlePostbattle: vi.fn(async () => battleState),
     confirmBattlePostbattle: vi.fn(async () => battleState),
-    listWarbandResources: vi.fn(async () => [{ id: 9, name: "Wyrdstone" }]),
+    getWarbandSheet: vi.fn(async () => ({
+      summary: { resources: [{ id: 9, name: "Wyrdstone" }] },
+    })),
     listItems: vi.fn(async () => [
       {
         id: 77,
@@ -264,8 +266,9 @@ vi.mock("@/features/battles/api/battles-api", () => ({
   confirmBattlePostbattle: mocks.confirmBattlePostbattle,
 }));
 
-vi.mock("@/features/warbands/api/warbands-resources", () => ({
-  listWarbandResources: mocks.listWarbandResources,
+vi.mock("@/features/warbands/api/warbands-api", () => ({
+  getWarband: vi.fn(),
+  getWarbandSheet: mocks.getWarbandSheet,
 }));
 
 vi.mock("@/features/items/api/items-api", () => ({

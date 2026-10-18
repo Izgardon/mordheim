@@ -84,14 +84,19 @@ import type { Item } from "@/features/items/types/item-types";
 import type { BattlePostbattleState, BattleState } from "@/features/battles/types/battle-types";
 import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { listWarbandResources } from "@/features/warbands/api/warbands-resources";
+import { warbandSheetQuery } from "@/features/warbands/api/warband-queries";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 import { useCatalogue } from "@/lib/catalogue-queries";
+import { queryKeys } from "@/lib/query-keys";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
+
+const NO_RESOURCES: WarbandResource[] = [];
 
 type RollTarget = {
   unitKey: string;
@@ -425,8 +430,6 @@ export default function BattlePostbattle() {
     battleId: numericBattleId,
     view: "postbattle",
   });
-  const [resources, setResources] = useState<WarbandResource[]>([]);
-  const [isResourcesLoading, setIsResourcesLoading] = useState(false);
   const [draft, setDraft] = useState<BattlePostbattleState | null>(null);
   const [localExploration, setLocalExploration] = useState<LocalExplorationState | null>(null);
   const [localExplorationKey, setLocalExplorationKey] = useState<string | null>(null);
@@ -463,22 +466,16 @@ export default function BattlePostbattle() {
     : false;
   const currentRosterError = currentParticipant ? rosterErrors[currentParticipant.user.id] : "";
 
-  useEffect(() => {
-    if (!currentParticipant) {
-      setResources([]);
-      setIsResourcesLoading(false);
-      return;
-    }
-    let active = true;
-    setIsResourcesLoading(true);
-    listWarbandResources(currentParticipant.warband.id)
-      .then((data) => active && setResources(data))
-      .catch(() => active && setResources([]))
-      .finally(() => active && setIsResourcesLoading(false));
-    return () => {
-      active = false;
-    };
-  }, [currentParticipant?.warband.id]);
+  // The warband's resources come from its cached sheet, the warband page's query (BUG-127),
+  // instead of a request of their own on every visit.
+  const queryClient = useQueryClient();
+  const warbandId = currentParticipant?.warband.id ?? null;
+  const sheetQuery = useQuery({
+    ...warbandSheetQuery(campaignId, warbandId ?? 0),
+    enabled: warbandId !== null,
+  });
+  const resources = sheetQuery.data?.summary.resources ?? NO_RESOURCES;
+  const isResourcesLoading = warbandId !== null && sheetQuery.isPending;
 
   useEffect(() => {
     if (!battleState || !currentParticipant || !currentRoster) return;
@@ -927,6 +924,12 @@ export default function BattlePostbattle() {
         },
       });
       toastBattleWarnings(finalised.warnings);
+      if (warbandId !== null) {
+        // Finalising changed the warband (XP, gold, items): its pages read it afresh.
+        void queryClient.invalidateQueries({
+          queryKey: queryKeys.campaign.warband(campaignId, warbandId),
+        });
+      }
       setIsFinalizeModalOpen(false);
       handleExitPostbattle();
     } catch (errorResponse) {
@@ -945,6 +948,8 @@ export default function BattlePostbattle() {
     localExploration,
     campaignId,
     numericBattleId,
+    queryClient,
+    warbandId,
   ]);
 
   const handleSkipPostbattle = useCallback(async () => {
