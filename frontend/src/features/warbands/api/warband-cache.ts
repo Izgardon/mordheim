@@ -159,6 +159,31 @@ export function applyWarbandUpdate(
   }
 }
 
+/**
+ * A hero's trading action as each cached sheet of his warband shows it (detail and summary rows):
+ * `available` false once a trade or search spent it. Rows not in the cache are left alone.
+ */
+export function setHeroTradingAction(
+  queryClient: QueryClient,
+  warbandId: number,
+  heroId: number,
+  available: boolean
+) {
+  const mark = <H extends { id: number; trading_action?: boolean | null }>(heroes?: H[]) =>
+    heroes?.map((hero) => (hero.id === heroId ? { ...hero, trading_action: available } : hero));
+  queryClient.setQueriesData<WarbandSheet>(
+    { predicate: isWarbandQuery(warbandId, "sheet") },
+    (sheet: WarbandSheet | undefined) =>
+      sheet && {
+        ...sheet,
+        heroes: mark(sheet.heroes) ?? sheet.heroes,
+        summary: sheet.summary.heroes
+          ? { ...sheet.summary, heroes: mark(sheet.summary.heroes) }
+          : sheet.summary,
+      }
+  );
+}
+
 /** `updateWarbandCache(warbandId, update?)` for components and hooks. */
 export function useWarbandCacheUpdate() {
   const queryClient = useQueryClient();

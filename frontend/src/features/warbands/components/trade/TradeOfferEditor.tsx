@@ -1,6 +1,7 @@
 import { NumberInput } from "@components/number-input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import { cn } from "@/lib/utils";
+import { SpentHeroWarning, TradingHeroOption } from "../shared/TradingHeroOption";
 
 import type { WarbandHero } from "@/features/warbands/types/warband-types";
 import type { DraftOffer, OfferableStashItem } from "@/features/warbands/utils/trade-offer";
@@ -11,6 +12,8 @@ type TradeOfferEditorProps = {
   maxGold: number;
   /** You have accepted: nothing can change until you unaccept. */
   locked: boolean;
+  /** The hero this trade's own lock spent: spent by this trade, so not "spent" for it. */
+  spentByThisTrade?: number | null;
   warchest: OfferableStashItem[];
   isWarchestLoading: boolean;
   warchestError: string;
@@ -20,14 +23,16 @@ type TradeOfferEditorProps = {
 };
 
 /**
- * What you put into a trade: the trader (heroes who spent their trading action are offered but
- * disabled; ECON-TWEAK-01 greys them instead in PR C), your gold and your stash's items.
+ * What you put into a trade: the trader (a hero who already used his trading action this round
+ * is greyed out but can still be picked, with a warning: decision 9), your gold and your stash's
+ * items.
  */
 export default function TradeOfferEditor({
   draft,
   heroes,
   maxGold,
   locked,
+  spentByThisTrade = null,
   warchest,
   isWarchestLoading,
   warchestError,
@@ -35,6 +40,11 @@ export default function TradeOfferEditor({
   onGoldChange,
   onAddItem,
 }: TradeOfferEditorProps) {
+  const isSpent = (hero: WarbandHero) =>
+    hero.trading_action === false && hero.id !== spentByThisTrade;
+  const nameOf = (hero: WarbandHero) => hero.name || `Hero ${hero.id}`;
+  const trader = heroes.find((hero) => hero.id === draft.trader_id);
+
   return (
     <>
       <div className="grid gap-4 min-[960px]:grid-cols-2">
@@ -53,17 +63,16 @@ export default function TradeOfferEditor({
             <SelectContent>
               <SelectItem value="none">None</SelectItem>
               {heroes.map((hero) => (
-                <SelectItem
+                <TradingHeroOption
                   key={hero.id}
-                  value={String(hero.id)}
-                  disabled={hero.trading_action === false}
-                >
-                  {hero.name || `Hero ${hero.id}`}
-                  {hero.trading_action === false ? " (spent)" : ""}
-                </SelectItem>
+                  id={hero.id}
+                  name={nameOf(hero)}
+                  spent={isSpent(hero)}
+                />
               ))}
             </SelectContent>
           </Select>
+          {trader && isSpent(trader) && !locked ? <SpentHeroWarning name={nameOf(trader)} /> : null}
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between">

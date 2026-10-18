@@ -1,3 +1,5 @@
+import { toast } from "sonner";
+
 import { ApiError } from "@/lib/api-client";
 import { apiErrorCode, getErrorMessage } from "@/lib/get-error-message";
 
@@ -60,4 +62,16 @@ export function lockErrorMessage(error: unknown): string {
     return partnerLeftMessage(error);
   }
   return getErrorMessage(error, "Unable to accept trade.");
+}
+
+/**
+ * What an offer or lock went ahead despite (decision 9: a spent trader warns, never refuses),
+ * shown as a toast. Only the acting player's answer carries warnings; most carry none.
+ */
+export function toastTradeWarnings(request: TradeRequest) {
+  for (const warning of request.warnings ?? []) {
+    toast.warning(warning.message, {
+      id: `trade-warning-${request.id}-${warning.code}-${warning.hero_id ?? ""}`,
+    });
+  }
 }

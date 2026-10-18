@@ -24,8 +24,9 @@ type UseRarityRollOptions = {
 
 /**
  * The rare-item search: which hero searches, his roll and its modifier. A roll spends the hero's
- * trading action and logs the search, from the browser (PR C saves rolls with the purchase and
- * greys spent heroes instead, ECON-TWEAK-01). The warband's heroes are read when the dialog opens.
+ * trading action and logs the search, from the browser (the purchase endpoint will save rolls);
+ * a hero who already used his action can still search, with a warning (decision 9). The
+ * warband's heroes are read when the dialog opens.
  */
 export function useRarityRoll({
   open,
@@ -78,7 +79,6 @@ export function useRarityRoll({
   const searcher = heroOptions.find((hero) => String(hero.id) === searchingHeroId) ?? null;
   const currentRarityRoll = searchingHeroId ? (heroRarityRolls[searchingHeroId] ?? null) : null;
   const isSavingRarityRoll = searchingHeroId ? savingHeroIds.includes(searchingHeroId) : false;
-  const hasAvailableSearcher = searcher?.trading_action !== false;
   const isCommonRarity = rarity === 2;
   const roll = currentRarityRoll;
   const rollSummary =
@@ -97,8 +97,9 @@ export function useRarityRoll({
   const stopSaving = (heroId: string) =>
     setSavingHeroIds((current) => current.filter((entry) => entry !== heroId));
 
+  // A spent searcher still rolls, with the picker's warning (decision 9): one roll per hero.
   const handleRarityRollTotalChange = (total: number) => {
-    if (!warband || !searchingHeroId || !hasAvailableSearcher || isSavingRarityRoll) {
+    if (!warband || !searchingHeroId || isSavingRarityRoll) {
       return;
     }
     const heroId = searchingHeroId;
@@ -178,7 +179,7 @@ export function useRarityRoll({
     heroOptions,
     searchingHeroId,
     handleSearchingHeroChange: setSearchingHeroId,
-    rollDisabled: !searchingHeroId || !hasAvailableSearcher || isSavingRarityRoll,
+    rollDisabled: !searchingHeroId || isSavingRarityRoll || currentRarityRoll !== null,
     isSavingRarityRoll,
     hasStoredRarityRoll: currentRarityRoll !== null,
     currentRarityRoll,

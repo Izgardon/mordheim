@@ -173,4 +173,22 @@ describe("useAcquireItemDialogShared", () => {
     expect(screen.getByTestId("rarity-roll-summary")).toHaveTextContent("-> 4 + 0 = 4");
     expect(screen.getByTestId("rarity-success")).toHaveTextContent("false");
   });
+
+  it("lets a hero who already used his trading action search, once (decision 9, ECON-TWEAK-01)", async () => {
+    const user = userEvent.setup();
+    mockWarband = { ...mockWarband!, heroes: [{ id: 1, name: "Hero One", trading_action: false }] };
+    apiMocks.listWarbandHeroes.mockResolvedValue(mockWarband.heroes);
+
+    render(<TestHarness />, { wrapper: createQueryWrapper() });
+    await waitFor(() =>
+      expect(screen.getByTestId("hero-options")).toHaveTextContent("Hero One:spent")
+    );
+
+    await user.click(screen.getByRole("button", { name: "Select Hero One" }));
+    expect(screen.getByTestId("roll-disabled")).toHaveTextContent("false");
+    await user.click(screen.getByRole("button", { name: "Roll Four" }));
+
+    await waitFor(() => expect(apiMocks.createWarbandLog).toHaveBeenCalledTimes(1));
+    expect(screen.getByTestId("roll-disabled")).toHaveTextContent("true");
+  });
 });

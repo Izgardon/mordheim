@@ -4,6 +4,10 @@ import { Label } from "@components/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import { useState } from "react";
 import DiceRoller from "@/components/dice/DiceRoller";
+import {
+  SpentHeroWarning,
+  TradingHeroOption,
+} from "@/features/warbands/components/shared/TradingHeroOption";
 type HeroOption = {
   id: number | string;
   name?: string | null;
@@ -59,6 +63,8 @@ export default function RaritySection({
   const isCommon = rarity === 2;
   const [isRolling, setIsRolling] = useState(false);
   const controlsDisabled = isRolling || isSavingRarityRoll || hasStoredRarityRoll;
+  // A spent hero can still search, with a warning (decision 9, ECON-TWEAK-01).
+  const searcher = heroes.find((hero) => String(hero.id) === searchingHeroId);
 
   return (
     <div className="space-y-4">
@@ -76,17 +82,18 @@ export default function RaritySection({
               </SelectTrigger>
               <SelectContent>
                 {heroes.map((hero) => (
-                  <SelectItem
+                  <TradingHeroOption
                     key={hero.id}
-                    value={String(hero.id)}
-                    disabled={hero.trading_action === false}
-                  >
-                    {hero.name || "Unnamed Hero"}
-                    {hero.trading_action === false ? " (spent)" : ""}
-                  </SelectItem>
+                    id={hero.id}
+                    name={hero.name || "Unnamed Hero"}
+                    spent={hero.trading_action === false}
+                  />
                 ))}
               </SelectContent>
             </Select>
+            {searcher?.trading_action === false && !hasStoredRarityRoll ? (
+              <SpentHeroWarning name={searcher.name || "Unnamed Hero"} />
+            ) : null}
           </div>
           <label className="flex items-center gap-2 text-sm text-foreground">
             <Checkbox

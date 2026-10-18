@@ -5,12 +5,13 @@
  * answer and partner event becomes the new `tradeRequest`. `apiRequest` is answered by a fake
  * server.
  */
-import { act, fireEvent, screen, within } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import TradeSessionDialog from "./TradeSessionDialog";
+import { AppToaster } from "@/components/ui/toaster";
 import { ApiError } from "@/lib/api-client";
 import { queryKeys } from "@/lib/query-keys";
 import { fakeApi } from "@/test/fake-api";
@@ -105,6 +106,7 @@ function TradeHarness({
   page.setGold = setGold;
   return (
     <>
+      <AppToaster />
       <SheetObserver />
       <TradeSessionDialog
         session={{ ...session, status: sessionStatus }}
@@ -462,20 +464,65 @@ describe("TradeSessionDialog: Accept and Unaccept", () => {
     expect(screen.getByRole("button", { name: "Accept" })).toBeEnabled();
   });
 
-  it("offers only heroes with their trading action as traders", async () => {
+  it("offers a spent hero as trader greyed out but selectable, and warns once he is picked (decision 9, ECON-TWEAK-01)", async () => {
     const user = setupUser();
+    fakeApi.on(OFFER, (body: unknown) => withMyOffer(body as TradeOffer));
     renderDialog();
 
     act(() => screen.getByRole("combobox").focus());
     await user.keyboard("{Enter}");
-
     expect(screen.getByRole("option", { name: "Aldric the Bold" })).not.toHaveAttribute(
       "aria-disabled"
     );
-    expect(screen.getByRole("option", { name: "Gunther (spent)" })).toHaveAttribute(
-      "aria-disabled",
-      "true"
+    const spent = screen.getByRole("option", {
+      name: "Gunther (used his trading action this round)",
+    });
+    expect(spent).not.toHaveAttribute("aria-disabled");
+    act(() => spent.focus());
+    await user.keyboard("{Enter}");
+
+    expect(
+      await screen.findByText("Gunther already used his trading action this round.")
+    ).toBeInTheDocument();
+    await waitFor(() => expect(fakeApi.bodyOf(OFFER)).toMatchObject({ trader_id: 12 }));
+  });
+
+  it("doesn't count the hero this trade's own lock spent as spent", async () => {
+    const user = setupUser();
+    renderDialog(
+      request({ from_trader_spent_id: 12, from_offer: { ...emptyOffer, trader_id: 12 } })
     );
+
+    act(() => screen.getByRole("combobox").focus());
+    await user.keyboard("{Enter}");
+
+    expect(screen.getByRole("option", { name: "Gunther" })).toBeInTheDocument();
+    expect(
+      screen.queryByText("Gunther already used his trading action this round.")
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows the server's warnings from an offer answer as a toast (decision 9)", async () => {
+    const user = setupUser();
+    fakeApi.on(OFFER, (body: unknown) => ({
+      ...withMyOffer(body as TradeOffer),
+      warnings: [
+        {
+          code: "trader_spent",
+          message: "Gunther already used his trading action this round.",
+          hero_id: 12,
+        },
+      ],
+    }));
+    renderDialog();
+
+    await user.click(screen.getByRole("button", { name: "Rope 1/1" }));
+
+    expect(
+      await screen.findByText("Gunther already used his trading action this round.", undefined, {
+        timeout: 2000,
+      })
+    ).toBeInTheDocument();
   });
 
   it("asks before Cancel ends the trade for both sides", async () => {

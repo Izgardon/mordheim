@@ -144,6 +144,9 @@ export default function TradeSessionDialog({
             heroes={heroes}
             maxGold={maxGold}
             locked={myAccepted}
+            spentByThisTrade={
+              isInitiator ? tradeRequest?.from_trader_spent_id : tradeRequest?.to_trader_spent_id
+            }
             warchest={warchest}
             isWarchestLoading={isWarchestLoading}
             warchestError={warchestError}

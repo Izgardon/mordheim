@@ -213,3 +213,70 @@ describe("itemMutationUpdate", () => {
     expect(update).not.toHaveProperty("hiredSwords");
   });
 });
+
+describe("setTradeData keeps the traders' spent flags (decision 9)", () => {
+  const heroRow = (id: number, tradingAction: boolean) => ({
+    id,
+    name: `Hero ${id}`,
+    trading_action: tradingAction,
+  });
+  const sheet = (heroes: ReturnType<typeof heroRow>[]) =>
+    ({
+      warband: {},
+      summary: { heroes },
+      capabilities: {},
+      heroes,
+      henchmen_groups: [],
+      hired_swords: [],
+    }) as unknown as WarbandSheet;
+  const trade = (overrides: Partial<TradeRequest>) =>
+    ({
+      id: "t-1",
+      campaign_id: 7,
+      status: "accepted",
+      from_warband: { id: 9, name: "Wolves" },
+      to_warband: { id: 12, name: "Rats" },
+      from_trader_spent_id: null,
+      to_trader_spent_id: null,
+      ...overrides,
+    }) as TradeRequest;
+  const flagsOf = (queryClient: ReturnType<typeof createTestQueryClient>, warbandId: number) => {
+    const cached = queryClient.getQueryData<WarbandSheet>(
+      queryKeys.campaign.warbandSheet(7, warbandId)
+    );
+    return {
+      heroes: cached?.heroes.map((hero) => hero.trading_action),
+      summary: cached?.summary.heroes?.map((hero) => hero.trading_action),
+    };
+  };
+
+  it("marks the hero a lock spent, gives him back on unlock, and keeps him spent on completion", () => {
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(
+      queryKeys.campaign.warbandSheet(7, 9),
+      sheet([heroRow(11, true), heroRow(12, true)])
+    );
+    queryClient.setQueryData(queryKeys.campaign.warbandSheet(7, 12), sheet([heroRow(31, true)]));
+
+    setTradeData(queryClient, trade({ from_trader_spent_id: 11, to_trader_spent_id: 31 }));
+    expect(flagsOf(queryClient, 9)).toEqual({ heroes: [false, true], summary: [false, true] });
+    expect(flagsOf(queryClient, 12).heroes).toEqual([false]);
+
+    setTradeData(queryClient, trade({ to_trader_spent_id: 31 }));
+    expect(flagsOf(queryClient, 9).heroes).toEqual([true, true]);
+
+    setTradeData(queryClient, trade({ from_trader_spent_id: 12, to_trader_spent_id: 31 }));
+    setTradeData(queryClient, trade({ status: "completed" }));
+    expect(flagsOf(queryClient, 9).heroes).toEqual([true, false]);
+    expect(flagsOf(queryClient, 12).heroes).toEqual([false]);
+  });
+
+  it("adds no hero to a sheet that doesn't list him", () => {
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(queryKeys.campaign.warbandSheet(7, 9), sheet([heroRow(11, true)]));
+
+    setTradeData(queryClient, trade({ from_trader_spent_id: 99 }));
+
+    expect(flagsOf(queryClient, 9).heroes).toEqual([true]);
+  });
+});
