@@ -23,8 +23,8 @@ vi.mock("@/features/warbands/api/warband-cache", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/features/warbands/api/warband-cache")>()),
   useWarbandCacheUpdate: () => mocks.emitWarbandUpdate,
 }));
-vi.mock("../../hooks/useUnitItemMenu", () => ({ default: mocks.useUnitItemMenu }));
-vi.mock("../shared/UnitItemDialogs", () => ({ default: () => null }));
+vi.mock("../../hooks/useItemActionMenu", () => ({ default: mocks.useUnitItemMenu }));
+vi.mock("../shared/ItemActionDialogs", () => ({ default: () => null }));
 
 type MutationResult = WarbandItemMutationResponse & { targetUnitType?: string };
 

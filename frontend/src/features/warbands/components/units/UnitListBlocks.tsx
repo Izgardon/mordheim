@@ -1,15 +1,16 @@
 import { useEffect, useState, type MouseEvent } from "react";
 
 import UnitListBlocksShell, { type UnitListPopup } from "../shared/blocks/UnitListBlocks";
-import UnitItemDialogs from "../shared/UnitItemDialogs";
+import ItemActionDialogs from "../shared/ItemActionDialogs";
 import LoadoutEntryRow from "./LoadoutEntryRow";
 
+import { itemMutationUpdate } from "../../api/economy-queries";
 import { useWarbandCacheUpdate } from "../../api/warband-cache";
-import useUnitItemMenu from "../../hooks/useUnitItemMenu";
+import useItemActionMenu from "../../hooks/useItemActionMenu";
 import { buildLoadoutBlocks, type LoadoutBlock, type LoadoutEntry } from "./loadout-blocks";
 
 import type { PopupPosition } from "../shared/unit_details/DetailPopup";
-import type { Unit, UnitKindKey, UnitListKey } from "../../types/units";
+import type { Unit, UnitKindKey } from "../../types/units";
 import type { WarbandUnitDetail } from "../../types/warband-types";
 import type { UnitKindConfig } from "../../units/unit-kind-types";
 
@@ -32,13 +33,6 @@ type UnitListBlocksProps<K extends UnitKindKey> = {
   canEdit?: boolean;
   /** `manage_items`: the item menus (defaults to canEdit). */
   canManageItems?: boolean;
-};
-
-/** The cache list of each item-transfer target type ("stash" has none). */
-const LIST_KEY_BY_SECTION: Partial<Record<string, UnitListKey>> = {
-  heroes: "heroes",
-  henchmen: "henchmenGroups",
-  hiredswords: "hiredSwords",
 };
 
 const isUnit = (entry: unknown): entry is WarbandUnitDetail =>
@@ -66,10 +60,9 @@ export default function UnitListBlocks<K extends UnitKindKey>({
   const { hasMembers } = kind.flags;
   const updateWarbandCache = useWarbandCacheUpdate();
 
-  const itemMenu = useUnitItemMenu({
+  const itemMenu = useItemActionMenu({
+    source: { kind: kind.section, unit },
     warbandId,
-    unit,
-    unitType: kind.section,
     canEdit: canManageItems,
     onSourceUpdated: onUnitUpdated,
     onMutationComplete: (result) => {
@@ -78,20 +71,10 @@ export default function UnitListBlocks<K extends UnitKindKey>({
         onUnitUpdated?.(sameKindTarget as Unit<K>);
       }
       // A unit of another kind that received the item goes into its own list (BUG-86).
-      const targetListKey = LIST_KEY_BY_SECTION[result.targetUnitType ?? ""];
-      const otherKindTarget =
-        targetListKey && targetListKey !== kind.listKey && isUnit(result.target)
-          ? { [targetListKey]: [result.target] }
-          : {};
-      updateWarbandCache(warbandId, {
-        summary: result.summary,
-        ...otherKindTarget,
-        [kind.listKey]: [unit, result.source, sameKindTarget].filter(isUnit),
-        stashItems: result.stash_item ? [result.stash_item] : undefined,
-        removedStashItemIds: result.removed_stash_item_id
-          ? [result.removed_stash_item_id]
-          : undefined,
-      });
+      updateWarbandCache(
+        warbandId,
+        itemMutationUpdate(result, { listKey: kind.listKey, units: [unit] })
+      );
     },
   });
 
@@ -189,12 +172,10 @@ export default function UnitListBlocks<K extends UnitKindKey>({
           )
         }
       />
-      <UnitItemDialogs
-        {...itemMenu}
+      <ItemActionDialogs
+        menu={itemMenu}
         canEdit={canManageItems}
-        selfExcludeType={kind.section}
-        selfId={unit.id}
-        presetUnitType={kind.section}
+        owner={{ kind: kind.section, id: unit.id }}
         onAcquire={(updated) => {
           // Buy again writes this unit; its PATCH answer is the unit as saved (no GET).
           if (updated) onUnitUpdated?.(updated as Unit<K>);
