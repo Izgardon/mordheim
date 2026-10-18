@@ -93,6 +93,7 @@ PERMISSION_SEED = [
     ("manage_encampments", "Manage encampments"),
     ("manage_locations", "Manage locations"),
     ("manage_bestiary", "Manage bestiary"),
+    ("manage_battles", "Manage battles"),  # close postbattle, Settings > Active Battles (BATL-NEW-04, -03)
 ]
 
 
@@ -701,7 +702,7 @@ class CampaignActiveBattlesView(APIView):
         membership = get_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not is_owner(membership):
+        if not has_campaign_permission(membership, "manage_battles"):
             return Response({"detail": "Forbidden"}, status=403)
 
         battles = (
@@ -744,7 +745,7 @@ class CampaignActiveBattleCancelView(APIView):
         membership = get_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not is_owner(membership):
+        if not has_campaign_permission(membership, "manage_battles"):
             return Response({"detail": "Forbidden"}, status=403)
 
         events: list[dict] = []
@@ -760,7 +761,7 @@ class CampaignActiveBattleCancelView(APIView):
             event = _cancel_battle_for_all_participants(
                 battle,
                 actor_user=request.user,
-                mode="campaign_owner",
+                mode="campaign_owner" if is_owner(membership) else "campaign_manager",
             )
             events.append(event)
             version = bump_state_version(battle)
