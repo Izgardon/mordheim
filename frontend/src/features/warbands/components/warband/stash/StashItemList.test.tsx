@@ -18,6 +18,7 @@ import { queryKeys } from "@/lib/query-keys";
 import { TestDiceProvider } from "@/test/dice";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
+import { getFieldNear } from "@/test/roster-queries";
 import { chooseOption, selectNear } from "@/test/select-option";
 import { setupUser } from "@/test/user-event";
 import {
@@ -257,7 +258,170 @@ describe("StashItemList: Sell", () => {
   });
 });
 
+describe("StashItemList: Sell at the suggested price (decision 3)", () => {
+  const SALE = `POST /warbands/${MY_WARBAND}/item-sales/`;
+  const saleAnswer = {
+    summary: { gold: 514, rating: 99 },
+    source: null,
+    target: null,
+    stash_item: null,
+    removed_stash_item_id: 101,
+  };
+  const pricedSword = makeStashItem({
+    id: 101,
+    name: "Sword",
+    cost: 10,
+    quantity: 2,
+    suggested_sale_price: 7,
+    sale_price_basis: "campaign_price",
+  });
+
+  it("starts at the suggestion for the quantity, says where it comes from, and sells at the typed price", async () => {
+    const user = setupUser();
+    fakeApi.on(`GET /warbands/${MY_WARBAND}/items/`, [pricedSword]);
+    fakeApi.on(SALE, saleAnswer);
+    renderStash(MY_WARBAND);
+
+    await openMenu(user, "Sword x 2", "Sell");
+    const dialog = screen.getByRole("dialog", { name: "Sell Sword" });
+    expect(getFieldNear("Sell Price", dialog)).toHaveDisplayValue("7");
+    expect(within(dialog).getByText("Suggested: half the current price.")).toBeInTheDocument();
+    await user.clear(getFieldNear("Quantity", dialog));
+    await user.type(getFieldNear("Quantity", dialog), "2");
+    expect(getFieldNear("Sell Price", dialog)).toHaveDisplayValue("14");
+    await user.clear(getFieldNear("Sell Price", dialog));
+    await user.type(getFieldNear("Sell Price", dialog), "12");
+    await user.click(within(dialog).getByRole("button", { name: "Sell" }));
+
+    await waitFor(() => expect(fakeApi.countOf(SALE)).toBe(1));
+    expect(fakeApi.bodyOf(SALE)).toEqual({
+      source_type: "stash",
+      source_id: null,
+      item_id: 101,
+      quantity: 2,
+      price: 12,
+    });
+  });
+
+  it("says when the suggestion comes from the stored cost of an item no longer in the catalogue", async () => {
+    const user = setupUser();
+    fakeApi.on(`GET /warbands/${MY_WARBAND}/items/`, [
+      { ...pricedSword, suggested_sale_price: 5, sale_price_basis: "stored_cost" },
+    ]);
+    renderStash(MY_WARBAND);
+
+    await openMenu(user, "Sword x 2", "Sell");
+
+    const dialog = screen.getByRole("dialog", { name: "Sell Sword" });
+    expect(getFieldNear("Sell Price", dialog)).toHaveDisplayValue("5");
+    expect(
+      within(dialog).getByText(
+        "Suggested: from the stored cost; this item is no longer in the catalogue."
+      )
+    ).toBeInTheDocument();
+  });
+
+  it("asks for a price when none is known, and sells only once one is typed", async () => {
+    const user = setupUser();
+    fakeApi.on(`GET /warbands/${MY_WARBAND}/items/`, [
+      { ...pricedSword, cost: null, suggested_sale_price: null, sale_price_basis: null },
+    ]);
+    fakeApi.on(SALE, saleAnswer);
+    renderStash(MY_WARBAND);
+
+    await openMenu(user, "Sword x 2", "Sell");
+    const dialog = screen.getByRole("dialog", { name: "Sell Sword" });
+    expect(getFieldNear("Sell Price", dialog)).toHaveDisplayValue("");
+    expect(
+      within(dialog).getByText("No price is known for this item; enter one.")
+    ).toBeInTheDocument();
+    expect(within(dialog).getByRole("button", { name: "Sell" })).toBeDisabled();
+    await user.type(getFieldNear("Sell Price", dialog), "4");
+    await user.click(within(dialog).getByRole("button", { name: "Sell" }));
+
+    await waitFor(() => expect(fakeApi.countOf(SALE)).toBe(1));
+    expect(fakeApi.bodyOf(SALE)).toMatchObject({ quantity: 1, price: 4 });
+  });
+
+  it("lists copies at several costs and sells only the picked ones, priced from their cost (BUG-117)", async () => {
+    const user = setupUser();
+    fakeApi.on(`GET /warbands/${MY_WARBAND}/items/`, [
+      {
+        ...pricedSword,
+        cost: 12,
+        quantity: 3,
+        costs: [
+          { cost: 12, quantity: 1 },
+          { cost: 9, quantity: 2 },
+        ],
+        suggested_sale_price: 6,
+        sale_price_basis: "stored_cost",
+      },
+    ]);
+    fakeApi.on(SALE, saleAnswer);
+    renderStash(MY_WARBAND);
+
+    expect(await screen.findByText("1 at 12 gc, 2 at 9 gc")).toBeInTheDocument();
+    await openMenu(user, "Sword x 3", "Sell");
+    const dialog = screen.getByRole("dialog", { name: "Sell Sword" });
+    expect(getFieldNear("Sell Price", dialog)).toHaveDisplayValue("6");
+    await chooseOption(user, selectNear("Copies", dialog), "2 at 9 gc");
+    expect(getFieldNear("Sell Price", dialog)).toHaveDisplayValue("5");
+    await user.click(within(dialog).getByRole("button", { name: "Sell" }));
+
+    await waitFor(() => expect(fakeApi.countOf(SALE)).toBe(1));
+    expect(fakeApi.bodyOf(SALE)).toEqual({
+      source_type: "stash",
+      source_id: null,
+      item_id: 101,
+      quantity: 1,
+      price: 5,
+      cost: 9,
+    });
+  });
+});
+
 describe("StashItemList: Move", () => {
+  it("moves only the copies of the picked cost (BUG-117)", async () => {
+    const user = setupUser();
+    fakeApi.on(`GET /warbands/${MY_WARBAND}/items/`, [
+      {
+        ...sword,
+        cost: 12,
+        quantity: 3,
+        costs: [
+          { cost: 12, quantity: 1 },
+          { cost: 9, quantity: 2 },
+        ],
+      },
+    ]);
+    fakeApi.on(`POST /warbands/${MY_WARBAND}/item-transfers/`, {
+      summary: { gold: 500, rating: 99 },
+      source: null,
+      target: aldric,
+      stash_item: { ...sword, quantity: 2 },
+      removed_stash_item_id: null,
+    });
+    renderStash(MY_WARBAND);
+
+    await openMenu(user, "Sword x 3", "Move");
+    const dialog = screen.getByRole("dialog", { name: "Move Sword" });
+    await chooseOption(user, selectNear("Copies", dialog), "1 at 12 gc");
+    await chooseOption(user, selectNear("Unit Type", dialog), "Heroes");
+    await chooseOption(user, selectNear("Hero", dialog), "Aldric the Bold - Captain");
+    await user.click(within(dialog).getByRole("button", { name: "Move" }));
+
+    await waitFor(() =>
+      expect(fakeApi.countOf(`POST /warbands/${MY_WARBAND}/item-transfers/`)).toBe(1)
+    );
+    expect(fakeApi.bodyOf(`POST /warbands/${MY_WARBAND}/item-transfers/`)).toMatchObject({
+      target_id: 11,
+      item_id: 101,
+      quantity: 1,
+      cost: 12,
+    });
+  });
+
   it("moves a copy to a hero picked from the sheet in one request, applying the answer (ECON-PERF-08)", async () => {
     const user = setupUser();
     const armedAldric = {

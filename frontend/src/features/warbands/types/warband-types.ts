@@ -1,5 +1,5 @@
 // types
-import type { Item, Restriction } from "../../items/types/item-types";
+import type { Item, Restriction, SalePriceBasis } from "../../items/types/item-types";
 import type { Skill } from "../../skills/types/skill-types";
 import type { Spell } from "../../spells/types/spell-types";
 import type { Special } from "../../special/types/special-types";
@@ -552,11 +552,22 @@ export type NamedKillHistory = {
   named_kills: NamedKillHistoryEntry[];
 };
 
+/** How many stash copies of an item have one cost (BUG-117); null: copies of unknown cost. */
+export type StashCost = { cost: number | null; quantity: number };
+
+/**
+ * A stash entry: one per item. `cost` is the cost of the copies that leave first, and `costs`
+ * lists each cost's count in the order copies leave.
+ */
 export type WarbandItemSummary = {
   id: number;
   name: string;
   cost?: number | null;
   quantity?: number | null;
+  costs?: StashCost[];
+  /** One copy's suggested sale price (decision 3; null: none known). */
+  suggested_sale_price?: number | null;
+  sale_price_basis?: SalePriceBasis | null;
 };
 
 export type WarbandUnitDetail = WarbandHero | WarbandHiredSword | HenchmenGroup;
@@ -568,6 +579,8 @@ export type WarbandItemTransferPayload = {
   target_id?: number | null;
   item_id: number;
   quantity: number;
+  /** From the stash: only copies of this cost (null: of unknown cost). */
+  cost?: number | null;
 };
 
 export type WarbandItemSalePayload = {
@@ -576,6 +589,8 @@ export type WarbandItemSalePayload = {
   item_id: number;
   quantity: number;
   price: number;
+  /** From the stash: only copies of this cost (null: of unknown cost). */
+  cost?: number | null;
 };
 
 export type WarbandItemMutationResponse = {

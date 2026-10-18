@@ -107,7 +107,14 @@ export default function StashItemList({
                   key={entry.id}
                   className="flex items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 transition-colors duration-150 hover:border-white/40"
                 >
-                  <span className="min-w-0 flex-1 truncate text-foreground">{entry.label}</span>
+                  <span className="min-w-0 flex-1 truncate text-foreground">
+                    {entry.label}
+                    {entry.costs ? (
+                      <span className="block truncate text-xs text-muted-foreground">
+                        {entry.costs}
+                      </span>
+                    ) : null}
+                  </span>
                   {canEdit ? (
                     <button
                       type="button"

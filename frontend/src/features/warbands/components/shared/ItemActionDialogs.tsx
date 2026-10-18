@@ -61,8 +61,11 @@ export default function ItemActionDialogs({
           }}
           itemName={itemDialog.item.name}
           itemCost={itemDialog.item.cost}
+          suggestedPrice={itemDialog.item.suggested_sale_price}
+          priceBasis={itemDialog.item.sale_price_basis}
+          costs={itemDialog.item.costs}
           maxQuantity={itemDialog.count}
-          onConfirm={({ quantity, price }) => menu.handleSell(itemDialog.item, quantity, price)}
+          onConfirm={(sale) => menu.handleSell(itemDialog.item, sale)}
         />
       )}
       {itemDialog?.action === "move" && (
@@ -73,10 +76,11 @@ export default function ItemActionDialogs({
           }}
           itemName={itemDialog.item.name}
           maxQuantity={itemDialog.count}
+          costs={itemDialog.item.costs}
           unitTypes={moveTypes}
           units={moveUnits}
-          onConfirm={({ quantity, unitType, unitId }) =>
-            menu.handleMove(itemDialog.item, quantity, unitType as string, unitId)
+          onConfirm={({ unitType, ...copies }) =>
+            menu.handleMove(itemDialog.item, { ...copies, unitType: unitType as string })
           }
         />
       )}

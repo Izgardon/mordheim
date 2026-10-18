@@ -5,6 +5,7 @@ import { getItem } from "../../items/api/items-api";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useActingWarband } from "../components/warband/shown-warband-context";
 import { useItemMove, useItemSale, type ItemMutationResult } from "../api/economy-queries";
+import { costsSummary } from "../utils/stash-costs";
 
 import type { Item } from "../../items/types/item-types";
 import type {
@@ -25,7 +26,11 @@ export type MenuEntry = { id: string; visibleId: number };
 
 export type OpenMenu = { entryId: string; entry: MenuEntry; rect: DOMRect };
 
-type MenuItem = { id: number; name: string; cost?: number | null };
+/** The item a row shows: its cost, suggested sale price and (stash) copies by cost. */
+type MenuItem = Pick<
+  WarbandItemSummary,
+  "id" | "name" | "cost" | "costs" | "suggested_sale_price" | "sale_price_basis"
+>;
 
 export type ItemDialogState = { action: "sell" | "move"; item: MenuItem; count: number } | null;
 
@@ -38,12 +43,13 @@ const API_TYPES: Record<string, ApiUnitType> = {
   stash: "stash",
 };
 
-/** The stash's rows as the list shows them ("Sword x 2"). */
+/** The stash's rows as the list shows them ("Sword x 3", "1 at 12 gc, 2 at 9 gc"). */
 export const stashEntries = (items: WarbandItemSummary[]) =>
   items.map((item) => ({
     id: `stash-item-${item.id}`,
     visibleId: item.id,
     label: item.quantity && item.quantity > 1 ? `${item.name} x ${item.quantity}` : item.name,
+    costs: costsSummary(item.costs),
   }));
 
 /** The item a row shows and how many copies the source holds. */
@@ -145,17 +151,28 @@ export default function useItemActionMenu<U extends WarbandUnitDetail>({
     onMutationComplete?.(result);
   };
 
-  const handleSell = async (item: MenuItem, quantity: number, price: number) => {
-    complete(await sell({ ...sourceRef, item_id: item.id, quantity, price }));
+  /** `cost`: only stash copies of that cost (BUG-117); left out, the copies that leave first. */
+  const handleSell = async (
+    item: MenuItem,
+    sale: { quantity: number; price: number; cost?: number | null }
+  ) => {
+    complete(await sell({ ...sourceRef, item_id: item.id, ...sale }));
   };
 
-  const handleMove = async (item: MenuItem, quantity: number, unitType: string, unitId: string) => {
+  const handleMove = async (
+    item: MenuItem,
+    {
+      unitType,
+      unitId,
+      ...copies
+    }: { quantity: number; unitType: string; unitId: string; cost?: number | null }
+  ) => {
     const result = await move({
       ...sourceRef,
       target_type: API_TYPES[unitType] ?? "henchmen_group",
       target_id: unitType === "stash" ? null : Number(unitId),
       item_id: item.id,
-      quantity,
+      ...copies,
     });
     complete({ ...result, targetUnitType: unitType });
   };

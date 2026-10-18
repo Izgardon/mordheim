@@ -219,6 +219,22 @@ describe("unit item menu: Sell", () => {
     expect(screen.getByText("Header gold: 501")).toBeInTheDocument();
     expect(heroIn(queryClient, MY_WARBAND, 11)?.items).toEqual(aldricWithOneDagger.items);
   });
+
+  it("starts at the copy's suggested sale price and says where it comes from (decision 3)", async () => {
+    const user = setupUser();
+    const pricedDagger = {
+      ...dagger,
+      suggested_sale_price: 3,
+      sale_price_basis: "campaign_price" as const,
+    };
+    renderCard(MY_WARBAND, { ...aldric, items: [pricedDagger, pricedDagger] });
+
+    await openMenu(user, "Dagger x 2", "Sell");
+
+    const dialog = screen.getByRole("dialog", { name: "Sell Dagger" });
+    expect(getFieldNear("Sell Price", dialog)).toHaveDisplayValue("3");
+    expect(within(dialog).getByText("Suggested: half the current price.")).toBeInTheDocument();
+  });
 });
 
 describe("unit item menu: Move", () => {

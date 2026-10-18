@@ -36,6 +36,9 @@ export type AvailabilityPayload = {
   restrictions?: { restriction_id: number; additional_note?: string }[];
 };
 
+/** Where a suggested sale price comes from (decision 3). */
+export type SalePriceBasis = "campaign_price" | "stored_cost";
+
 export type Item = {
   id: number;
   campaign_id?: number | null;
@@ -45,6 +48,9 @@ export type Item = {
   grade?: string;
   /** Cost from the join table (HeroItem.cost, WarbandItem.cost) when loaded via warband APIs. */
   cost?: number | null;
+  /** A unit's copy in a detail payload: one copy's suggested sale price (null: none known). */
+  suggested_sale_price?: number | null;
+  sale_price_basis?: SalePriceBasis | null;
   single_use?: boolean;
   description: string;
   strength?: string | null;

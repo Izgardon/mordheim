@@ -12,11 +12,14 @@ import { Button } from "@components/button";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
 import { UnitSelectionSection, type UnitTypeOption } from "@components/unit-selection-section";
+import CostPicker from "./CostPicker";
+import { ANY_COST, pickedCost } from "../../../utils/stash-costs";
 
 import type {
   WarbandHero,
   WarbandHiredSword,
   HenchmenGroup,
+  StashCost,
 } from "@/features/warbands/types/warband-types";
 
 type UnitsByType = Partial<
@@ -28,16 +31,20 @@ type ItemMoveDialogProps = {
   onOpenChange: (open: boolean) => void;
   itemName: string;
   maxQuantity: number;
+  /** The stash's copies by cost (BUG-117): with several, the player picks which to move. */
+  costs?: StashCost[];
   unitTypes: UnitTypeOption[];
   units: UnitsByType;
   defaultUnitType?: UnitTypeOption | "";
   disableUnitTypeSelect?: boolean;
   description?: string;
   errorMessage?: string;
+  /** `cost` only when the player picked copies of one cost. */
   onConfirm: (payload: {
     quantity: number;
     unitType: UnitTypeOption | "";
     unitId: string;
+    cost?: number | null;
   }) => Promise<void> | void;
 };
 
@@ -46,6 +53,7 @@ export default function ItemMoveDialog({
   onOpenChange,
   itemName,
   maxQuantity,
+  costs,
   unitTypes,
   units,
   defaultUnitType = "",
@@ -57,6 +65,9 @@ export default function ItemMoveDialog({
   const [selectedUnitType, setSelectedUnitType] = useState<UnitTypeOption | "">(defaultUnitType);
   const [selectedUnitId, setSelectedUnitId] = useState("");
   const [quantity, setQuantity] = useState("1");
+  const [costChoice, setCostChoice] = useState(ANY_COST);
+  const picked = pickedCost(costs, costChoice);
+  const maxCopies = picked ? Math.min(maxQuantity, picked.quantity) : maxQuantity;
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -83,6 +94,7 @@ export default function ItemMoveDialog({
       setSelectedUnitType(defaultUnitType);
       setSelectedUnitId("");
       setQuantity("1");
+      setCostChoice(ANY_COST);
       setError("");
       setIsSubmitting(false);
     }
@@ -92,13 +104,14 @@ export default function ItemMoveDialog({
     setError("");
     setIsSubmitting(true);
 
-    const moveQty = Math.max(1, Math.min(Number(quantity) || 1, maxQuantity));
+    const moveQty = Math.max(1, Math.min(Number(quantity) || 1, maxCopies));
 
     try {
       await onConfirm({
         quantity: moveQty,
         unitType: selectedUnitType,
         unitId: selectedUnitId,
+        ...(picked ? { cost: picked.cost } : {}),
       });
       handleOpenChange(false);
     } catch (err) {
@@ -119,12 +132,17 @@ export default function ItemMoveDialog({
           <DialogTitle>Move {itemName}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        {maxQuantity > 1 && (
+        {costs && costs.length > 1 ? (
+          <div className="px-2">
+            <CostPicker costs={costs} value={costChoice} onChange={setCostChoice} />
+          </div>
+        ) : null}
+        {maxCopies > 1 && (
           <div className="space-y-2 px-2">
             <Label className="text-sm font-semibold text-foreground">Quantity</Label>
             <NumberInput
               min={1}
-              max={maxQuantity}
+              max={maxCopies}
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
             />
