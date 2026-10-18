@@ -1,6 +1,7 @@
 /**
- * The prebattle page's "unready when you leave" cleanup, which runs whenever the battle's or your
- * own status changes rather than only when the page unmounts (BUG-74).
+ * The prebattle page's "unready when you leave" cleanup, which runs when the page unmounts and not
+ * whenever the battle's or your own status changes, and its redirects once the battle moves on
+ * (BUG-74).
  */
 import { act, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -43,7 +44,7 @@ describe("BattlePrebattle requests", () => {
     fakeApi.on(`GET ${battlePath("rosters/")}`, battleRosters());
   });
 
-  it("sends Undo Ready twice: once for the click and again from the exit cleanup (BUG-74, pinned; flips in PR A)", async () => {
+  it("sends Undo Ready once, with no second unready from the exit cleanup (BUG-74)", async () => {
     const user = setupUser();
     fakeApi.on(
       `GET ${statePath("prebattle")}`,
@@ -61,11 +62,26 @@ describe("BattlePrebattle requests", () => {
     await waitFor(() => expect(screen.getByRole("button", { name: "Ready Up" })).toBeEnabled());
     expect(readyPosts()).toEqual([
       { method: "POST", path: battlePath("ready/"), body: { ready: false } },
+    ]);
+  });
+
+  it("takes your ready back when you leave prebattle while ready (BUG-74)", async () => {
+    fakeApi.on(
+      `GET ${statePath("prebattle")}`,
+      battleState({ status: "prebattle", me: { status: "ready" } })
+    );
+    const { unmount } = renderBattleRoute("prebattle");
+    expect(await screen.findByRole("button", { name: "Undo Ready" })).toBeInTheDocument();
+    expect(readyPosts()).toEqual([]);
+
+    unmount();
+
+    expect(readyPosts()).toEqual([
       { method: "POST", path: battlePath("ready/"), body: { ready: false } },
     ]);
   });
 
-  it("sends an unready the server refuses when another player starts the battle (BUG-74, pinned; flips in PR A)", async () => {
+  it("follows another player's start to Active without sending an unready (BUG-74)", async () => {
     // The other player created the battle and starts it; this page hears it through the socket.
     fakeApi.on(
       `GET ${statePath("prebattle")}`,
@@ -98,22 +114,24 @@ describe("BattlePrebattle requests", () => {
       )
     );
 
-    expect(await screen.findByLabelText("Current path")).toHaveTextContent(
-      "/campaigns/1/battles/5/active"
+    await waitFor(() =>
+      expect(screen.getByLabelText("Current path")).toHaveTextContent(
+        "/campaigns/1/battles/5/active"
+      )
     );
-    expect(fakeApi.calls().slice(0, 2)).toEqual([`GET ${statePath("prebattle", 3)}`, READY_ROUTE]);
-    expect(readyPosts()).toEqual([
-      { method: "POST", path: battlePath("ready/"), body: { ready: false } },
-    ]);
+    expect(fakeApi.calls()[0]).toBe(`GET ${statePath("prebattle", 3)}`);
+    expect(readyPosts()).toEqual([]);
   });
 
-  it("stays on prebattle when the battle is already in postbattle (BUG-74, pinned; flips in PR A)", async () => {
+  it("redirects to postbattle when the battle is already there (BUG-74)", async () => {
     fakeApi.on(`GET ${statePath("prebattle")}`, battleState({ status: "postbattle" }));
     renderBattleRoute("prebattle");
 
-    expect(await screen.findByRole("button", { name: "Ready Up" })).toBeDisabled();
-    expect(screen.getByLabelText("Current path")).toHaveTextContent(
-      "/campaigns/1/battles/5/prebattle"
+    await waitFor(() =>
+      expect(screen.getByLabelText("Current path")).toHaveTextContent(
+        "/campaigns/1/battles/5/postbattle"
+      )
     );
+    expect(screen.queryByRole("button", { name: "Ready Up" })).not.toBeInTheDocument();
   });
 });

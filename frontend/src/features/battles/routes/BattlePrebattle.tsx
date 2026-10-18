@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { BookOpen, PenLine } from "lucide-react";
 
@@ -110,18 +110,37 @@ export default function BattlePrebattle() {
 
   const configInitializedRef = useRef(false);
   const lastSavedConfigHashRef = useRef("");
-  const suppressReadyResetOnExitRef = useRef(false);
+  // The statuses the page last showed, read by the unready-on-exit cleanup (BUG-74).
+  const exitStatusRef = useRef({ battle: "", participant: "" });
 
   const currentParticipant = useMemo(
     () => battleState?.participants.find((participant) => participant.user.id === user?.id) ?? null,
     [battleState?.participants, user?.id]
   );
 
-  useEffect(() => {
-    if (battleState?.battle.status && battleState.battle.status !== "prebattle") {
-      suppressReadyResetOnExitRef.current = true;
-    }
-  }, [battleState?.battle.status]);
+  useLayoutEffect(() => {
+    exitStatusRef.current = {
+      battle: battleState?.battle.status ?? "",
+      participant: currentParticipant?.status ?? "",
+    };
+  });
+
+  // Leaving prebattle while ready takes the ready back. Only on unmount: a status change (your own
+  // Undo Ready, or the battle starting) must not send another unready (BUG-74).
+  useEffect(
+    () => () => {
+      const { battle, participant } = exitStatusRef.current;
+      if (
+        battle === "prebattle" &&
+        participant === "ready" &&
+        !Number.isNaN(campaignId) &&
+        !Number.isNaN(numericBattleId)
+      ) {
+        void setBattleReady(campaignId, numericBattleId, false).catch(() => undefined);
+      }
+    },
+    [campaignId, numericBattleId]
+  );
 
   const buildUnitInformationPayload = useCallback(
     (
@@ -195,7 +214,6 @@ export default function BattlePrebattle() {
 
   useEffect(() => {
     configInitializedRef.current = false;
-    suppressReadyResetOnExitRef.current = false;
     setActiveItemActionKey(null);
     setUnitNotes({});
     setCustomUnits([]);
@@ -496,21 +514,6 @@ export default function BattlePrebattle() {
     [selectedParticipantIsCurrentUser, showScenarioLinkAction]
   );
 
-  useEffect(() => {
-    return () => {
-      if (
-        suppressReadyResetOnExitRef.current ||
-        Number.isNaN(campaignId) ||
-        Number.isNaN(numericBattleId) ||
-        battleState?.battle.status !== "prebattle" ||
-        currentParticipant?.status !== "ready"
-      ) {
-        return;
-      }
-      void setBattleReady(campaignId, numericBattleId, false).catch(() => undefined);
-    };
-  }, [battleState?.battle.status, campaignId, currentParticipant?.status, numericBattleId]);
-
   const currentDeclaredRating = useMemo(() => {
     if (!currentParticipant) {
       return null;
@@ -749,7 +752,6 @@ export default function BattlePrebattle() {
     setStartError("");
     try {
       const next = await startBattle(campaignId, numericBattleId);
-      suppressReadyResetOnExitRef.current = true;
       applyBattleResponse(next);
       setIsStartDialogOpen(false);
     } catch (errorResponse) {
@@ -965,6 +967,12 @@ export default function BattlePrebattle() {
 
   if (battleState.battle.status === "active") {
     return <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/active`} replace />;
+  }
+
+  if (battleState.battle.status === "postbattle") {
+    return (
+      <Navigate to={`/campaigns/${campaignId}/battles/${numericBattleId}/postbattle`} replace />
+    );
   }
 
   const participantIds = battleState.participants.map((participant) => participant.user.id);
