@@ -9,6 +9,8 @@ import type {
   BattlePostbattleState,
 } from "@/features/battles/types/battle-types";
 
+import { renderWithQueryClient } from "@/test/query-test-utils";
+
 import BattlePostbattle from "./BattlePostbattle";
 
 const mocks = vi.hoisted(() => {
@@ -451,7 +453,7 @@ describe("BattlePostbattle", () => {
   });
 
   it("renders the postbattle battle shell on desktop", async () => {
-    const { container } = render(<BattlePostbattle />);
+    const { container } = renderWithQueryClient(<BattlePostbattle />);
 
     await screen.findByTestId("battle-desktop-subnav");
 
@@ -464,7 +466,7 @@ describe("BattlePostbattle", () => {
   it("saves Battle Notes through participant config", async () => {
     const user = userEvent.setup();
 
-    render(<BattlePostbattle />);
+    renderWithQueryClient(<BattlePostbattle />);
 
     await screen.findByTestId("battle-desktop-subnav");
 
@@ -481,7 +483,7 @@ describe("BattlePostbattle", () => {
   it("publishes mobile section navigation without warband selection", async () => {
     mocks.useMediaQuery.mockReturnValue(true);
 
-    render(<BattlePostbattle />);
+    renderWithQueryClient(<BattlePostbattle />);
 
     await waitFor(() => expect(mocks.setBattleMobileTopBar).toHaveBeenCalled());
 
@@ -511,7 +513,7 @@ describe("BattlePostbattle", () => {
   it("opens battle-styled postbattle dialogs", async () => {
     const user = userEvent.setup();
 
-    render(<BattlePostbattle />);
+    renderWithQueryClient(<BattlePostbattle />);
 
     await screen.findByRole("button", { name: "Serious Injury Roll" });
 
@@ -569,7 +571,7 @@ describe("BattlePostbattle", () => {
       },
     ];
 
-    render(<BattlePostbattle />);
+    renderWithQueryClient(<BattlePostbattle />);
 
     await screen.findAllByText("Ogre Bodyguard");
 
@@ -585,7 +587,7 @@ describe("BattlePostbattle", () => {
   it("searches and saves found items through the inline dropdown", async () => {
     const user = userEvent.setup();
 
-    render(<BattlePostbattle />);
+    renderWithQueryClient(<BattlePostbattle />);
 
     await screen.findByTestId("battle-desktop-subnav");
 
@@ -593,18 +595,18 @@ describe("BattlePostbattle", () => {
       await user.click(screen.getByPlaceholderText("Search and add an item"));
     });
 
-    await waitFor(() => expect(mocks.listItems).toHaveBeenCalled());
+    await waitFor(() => expect(mocks.listItems).toHaveBeenCalledTimes(1));
+    expect(mocks.listItems).toHaveBeenCalledWith({
+      campaignId: 1,
+      signal: expect.any(AbortSignal),
+    });
 
     await act(async () => {
       await user.type(screen.getByPlaceholderText("Search and add an item"), "Charm");
     });
 
-    await waitFor(() =>
-      expect(mocks.listItems).toHaveBeenLastCalledWith({
-        campaignId: 1,
-        search: "Charm",
-      })
-    );
+    // Typing filters the loaded catalogue (PERF-40).
+    expect(mocks.listItems).toHaveBeenCalledTimes(1);
 
     await act(async () => {
       await user.click(screen.getByRole("button", { name: /Lucky Charm/i }));

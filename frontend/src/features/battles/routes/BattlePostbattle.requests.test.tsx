@@ -15,6 +15,8 @@ import {
   deferred,
   statePath,
 } from "@/test/battle-fixtures";
+import { createQueryClient } from "@/lib/query-client";
+import { queryKeys } from "@/lib/query-keys";
 import { renderBattleRoute } from "@/test/battle-routes";
 import { fakeApi } from "@/test/fake-api";
 import { setupUser } from "@/test/user-event";
@@ -32,6 +34,8 @@ vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => media.mobile }));
 vi.mock("@/features/realtime/components/CampaignDiceRollerMenu", () => ({ default: () => null }));
 
 const DRAFT_ROUTE = `POST ${battlePath("postbattle/")}`;
+const ROPE = { id: 77, name: "Rope & Hook", type: "Miscellaneous", availabilities: [] };
+const SWORD = { id: 78, name: "Sword", type: "Hand-to-hand", availabilities: [] };
 const RESOURCES = [{ id: 9, warband_id: ME.warband.id, name: "Treasure", amount: 0 }];
 
 const killBy = (id: number, killerKey: string) =>
@@ -75,8 +79,8 @@ function routeServer() {
   fakeApi.on(DRAFT_ROUTE, storeDraft);
 }
 
-async function renderPostbattle() {
-  const view = renderBattleRoute("postbattle");
+async function renderPostbattle(options: Parameters<typeof renderBattleRoute>[1] = {}) {
+  const view = renderBattleRoute("postbattle", options);
   expect(await screen.findByText("Captain Wolf")).toBeInTheDocument();
   fakeApi.clearRequests();
   return view;
@@ -281,28 +285,34 @@ describe("BattlePostbattle requests", () => {
     });
   });
 
-  it("requests the item catalogue when the finds picker opens and again after every keystroke (PERF-40, pinned; flips in PR A)", async () => {
+  it("loads the campaign's items once when the finds picker opens and filters them as you type (PERF-40)", async () => {
     const user = setupUser();
-    await renderPostbattle();
-    const rope = { id: 77, name: "Rope & Hook", type: "Miscellaneous", availabilities: [] };
-    for (const search of ["", "search=R&", "search=Ro&", "search=Rop&"]) {
-      fakeApi.on(`GET /items/?${search}campaign_id=1`, [rope]);
-    }
+    await renderPostbattle({ queryClient: createQueryClient() });
+    fakeApi.on("GET /items/?campaign_id=1", [ROPE, SWORD]);
     const picker = screen.getByPlaceholderText("Search and add an item");
 
     await user.click(picker);
-    await pause(200);
+    expect(await screen.findByRole("button", { name: /Sword/ })).toBeInTheDocument();
     for (const letter of ["R", "o", "p"]) {
       await user.type(picker, letter);
       await pause(200);
     }
 
-    expect(fakeApi.calls()).toEqual([
-      "GET /items/?campaign_id=1",
-      "GET /items/?search=R&campaign_id=1",
-      "GET /items/?search=Ro&campaign_id=1",
-      "GET /items/?search=Rop&campaign_id=1",
-    ]);
+    expect(fakeApi.calls()).toEqual(["GET /items/?campaign_id=1"]);
     expect(screen.getByRole("button", { name: /Rope & Hook/ })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Sword/ })).not.toBeInTheDocument();
+  });
+
+  it("sends no request at all when the campaign's items are already cached (PERF-40)", async () => {
+    const user = setupUser();
+    const queryClient = createQueryClient();
+    queryClient.setQueryData(queryKeys.campaign.catalogue(1, "items"), [ROPE, SWORD]);
+    await renderPostbattle({ queryClient });
+
+    await user.type(screen.getByPlaceholderText("Search and add an item"), "sw");
+
+    expect(screen.getByRole("button", { name: /Sword/ })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Rope & Hook/ })).not.toBeInTheDocument();
+    expect(fakeApi.calls()).toEqual([]);
   });
 });

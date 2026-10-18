@@ -65,14 +65,15 @@ import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesk
 import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesDialog";
 import BattleOverflowMenu from "@/features/battles/components/shared/BattleOverflowMenu";
 import PostbattleSkipDialog from "@/features/battles/components/postbattle/PostbattleSkipDialog";
-import { listItems } from "@/features/items/api/items-api";
 import type { Item } from "@/features/items/types/item-types";
 import type { BattlePostbattleState } from "@/features/battles/types/battle-types";
 import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { listWarbandResources } from "@/features/warbands/api/warbands-resources";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
+import { useCatalogue } from "@/lib/catalogue-queries";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
@@ -429,9 +430,6 @@ export default function BattlePostbattle() {
   const [selectedSection, setSelectedSection] = useState<PostbattleSectionKey>("exploration");
   const [isFindItemDropdownOpen, setIsFindItemDropdownOpen] = useState(false);
   const [findItemSearch, setFindItemSearch] = useState("");
-  const [findItemResults, setFindItemResults] = useState<Item[]>([]);
-  const [isFindItemLoading, setIsFindItemLoading] = useState(false);
-  const [findItemSearchError, setFindItemSearchError] = useState("");
   const { rosters, rosterLoading, rosterErrors } = useBattleRosters(
     campaignId,
     numericBattleId,
@@ -545,49 +543,15 @@ export default function BattlePostbattle() {
     [queueDraftSave]
   );
 
-  useEffect(() => {
-    if (!isFindItemDropdownOpen) {
-      return;
-    }
-
-    let active = true;
-    const searchTerm = findItemSearch.trim();
-    const timeoutHandle = window.setTimeout(() => {
-      setIsFindItemLoading(true);
-      setFindItemSearchError("");
-      listItems({
-        campaignId: Number.isNaN(campaignId) ? undefined : campaignId,
-        search: searchTerm || undefined,
-      })
-        .then((items) => {
-          if (!active) {
-            return;
-          }
-          setFindItemResults(items);
-        })
-        .catch((errorResponse) => {
-          if (!active) {
-            return;
-          }
-          setFindItemResults([]);
-          setFindItemSearchError(
-            errorResponse instanceof Error
-              ? errorResponse.message || "Unable to search items"
-              : "Unable to search items"
-          );
-        })
-        .finally(() => {
-          if (active) {
-            setIsFindItemLoading(false);
-          }
-        });
-    }, 150);
-
-    return () => {
-      active = false;
-      window.clearTimeout(timeoutHandle);
-    };
-  }, [campaignId, findItemSearch, isFindItemDropdownOpen]);
+  // The finds picker filters the campaign's cached item catalogue (loaded when it first opens,
+  // shared with the warband pages): no request per keystroke (PERF-40).
+  const findItemCatalogue = useCatalogue("items", campaignId, {
+    enabled: isFindItemDropdownOpen,
+  });
+  const findItemResults = useMemo(
+    () => findItemCatalogue.data.filter((item) => matchesSearchQuery(findItemSearch, item.name)),
+    [findItemCatalogue.data, findItemSearch]
+  );
 
   const handleToggleDead = useCallback(
     async (row: PostbattleRenderableRow, checked: boolean) => {
@@ -1611,12 +1575,14 @@ export default function BattlePostbattle() {
                   className="mt-1 !rounded-none border-[#5a3f24] bg-[#130d09]"
                 >
                   <div className="max-h-60 w-full overflow-y-auto">
-                    {isFindItemLoading ? (
+                    {findItemCatalogue.isLoading ? (
                       <div className="px-3 py-3 text-sm text-muted-foreground">
-                        Searching items...
+                        Loading items...
                       </div>
-                    ) : findItemSearchError ? (
-                      <div className="px-3 py-3 text-sm text-red-600">{findItemSearchError}</div>
+                    ) : findItemCatalogue.error ? (
+                      <div className="px-3 py-3 text-sm text-red-600">
+                        {findItemCatalogue.error}
+                      </div>
                     ) : findItemResults.length > 0 ? (
                       <div>
                         {findItemResults.map((item) => (
