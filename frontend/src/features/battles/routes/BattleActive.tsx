@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { BookOpen, PenLine } from "lucide-react";
 
@@ -58,6 +58,7 @@ import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesk
 import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesDialog";
 import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
 import { useBattleState } from "@/features/battles/hooks/useBattleState";
+import { useSerializedSave } from "@/features/battles/hooks/useSerializedSave";
 import {
   serializeCustomUnits,
   toArmourSaveStat,
@@ -65,11 +66,19 @@ import {
   normalizeCustomUnits,
   toUnitRating,
 } from "@/features/battles/components/prebattle/prebattle-utils";
-import type { BattleState } from "@/features/battles/types/battle-types";
 import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { getErrorMessage } from "@/lib/get-error-message";
 import { useMediaQuery } from "@/lib/use-media-query";
 import WarbandPdfViewerDialog from "@/features/warbands/components/warband/WarbandPdfViewerDialog";
+
+/** What `/config/` gets from this page: the participant's whole blob (BUG-44's patch is next). */
+type ParticipantConfigPayload = {
+  selected_unit_keys_json: string[];
+  unit_information_json: Record<string, unknown>;
+  custom_units_json: ReturnType<typeof serializeCustomUnits>;
+  battle_notes: string;
+};
 
 export default function BattleActive() {
   const { id, battleId } = useParams();
@@ -116,22 +125,19 @@ export default function BattleActive() {
   const [isRangedDialogOpen, setIsRangedDialogOpen] = useState(false);
   const [isCriticalHitDialogOpen, setIsCriticalHitDialogOpen] = useState(false);
   const [actionError, setActionError] = useState("");
-  const [isSavingConfig, setIsSavingConfig] = useState(false);
-  const [savingUnitKeys, setSavingUnitKeys] = useState<Record<string, boolean>>({});
   const [activeItemActionKey, setActiveItemActionKey] = useState<string | null>(null);
-  const queuedConfigRef = useRef<{
-    payload: {
-      selected_unit_keys_json: string[];
-      unit_information_json: Record<string, unknown>;
-      custom_units_json: ReturnType<typeof serializeCustomUnits>;
-      battle_notes: string;
-    };
-    savingUnitKey?: string;
-    showGlobalSaving: boolean;
-    resolve: (value: BattleState | null) => void;
-    reject: (reason?: unknown) => void;
-  } | null>(null);
-  const isFlushingConfigRef = useRef(false);
+  const sendConfig = useCallback(
+    (payload: ParticipantConfigPayload) =>
+      saveBattleParticipantConfig(campaignId, numericBattleId, payload),
+    [campaignId, numericBattleId]
+  );
+  // A unit stays locked while its save waits in the queue too: the queued blob was built before
+  // any kill or OOA that would land meanwhile, and would undo it (BUG-44).
+  const {
+    save: queueConfigSave,
+    pendingKeys: savingUnitKeys,
+    isSaving: isSavingConfig,
+  } = useSerializedSave(sendConfig, applyBattleResponse);
 
   const currentParticipant = useMemo(
     () => battleState?.participants.find((participant) => participant.user.id === user?.id) ?? null,
@@ -147,12 +153,7 @@ export default function BattleActive() {
   }, [battleStateRef, user?.id]);
 
   const applyLocalCurrentParticipantConfig = useCallback(
-    (payload: {
-      selected_unit_keys_json: string[];
-      unit_information_json: Record<string, unknown>;
-      custom_units_json: ReturnType<typeof serializeCustomUnits>;
-      battle_notes: string;
-    }) => {
+    (payload: ParticipantConfigPayload) => {
       updateBattleState((previous) => {
         if (!previous) {
           return previous;
@@ -177,61 +178,6 @@ export default function BattleActive() {
     [updateBattleState, user?.id]
   );
 
-  const flushQueuedConfig = useCallback(async () => {
-    if (isFlushingConfigRef.current) {
-      return;
-    }
-    isFlushingConfigRef.current = true;
-
-    while (queuedConfigRef.current) {
-      const nextRequest = queuedConfigRef.current;
-      queuedConfigRef.current = null;
-
-      if (nextRequest.savingUnitKey) {
-        setSavingUnitKeys((previous) => ({
-          ...previous,
-          [nextRequest.savingUnitKey as string]: true,
-        }));
-      }
-      if (nextRequest.showGlobalSaving) {
-        setIsSavingConfig(true);
-        setActionError("");
-      }
-
-      try {
-        const next = await saveBattleParticipantConfig(
-          campaignId,
-          numericBattleId,
-          nextRequest.payload
-        );
-        applyBattleResponse(next);
-        nextRequest.resolve(next);
-      } catch (errorResponse) {
-        if (nextRequest.showGlobalSaving) {
-          if (errorResponse instanceof Error) {
-            setActionError(errorResponse.message || "Unable to save unit config");
-          } else {
-            setActionError("Unable to save unit config");
-          }
-        }
-        nextRequest.reject(errorResponse);
-      } finally {
-        if (nextRequest.savingUnitKey) {
-          setSavingUnitKeys((previous) => {
-            const next = { ...previous };
-            delete next[nextRequest.savingUnitKey as string];
-            return next;
-          });
-        }
-        if (nextRequest.showGlobalSaving) {
-          setIsSavingConfig(false);
-        }
-      }
-    }
-
-    isFlushingConfigRef.current = false;
-  }, [applyBattleResponse, campaignId, numericBattleId]);
-
   const saveCurrentParticipantConfig = useCallback(
     async ({
       unitInformation,
@@ -253,7 +199,7 @@ export default function BattleActive() {
         return null;
       }
 
-      const payload = {
+      const payload: ParticipantConfigPayload = {
         selected_unit_keys_json: selectedUnitKeys ?? participant.selected_unit_keys_json ?? [],
         unit_information_json:
           unitInformation ?? toUnitInformationMap(participant.unit_information_json),
@@ -262,22 +208,22 @@ export default function BattleActive() {
       };
 
       applyLocalCurrentParticipantConfig(payload);
-
-      return await new Promise<BattleState | null>((resolve, reject) => {
-        if (queuedConfigRef.current) {
-          queuedConfigRef.current.resolve(null);
+      if (showGlobalSaving) {
+        setActionError("");
+      }
+      try {
+        return await queueConfigSave(payload, {
+          keys: savingUnitKey ? [savingUnitKey] : [],
+          silent: !showGlobalSaving,
+        });
+      } catch (errorResponse) {
+        if (showGlobalSaving) {
+          setActionError(getErrorMessage(errorResponse, "Unable to save unit config"));
         }
-        queuedConfigRef.current = {
-          payload,
-          savingUnitKey,
-          showGlobalSaving,
-          resolve,
-          reject,
-        };
-        void flushQueuedConfig();
-      });
+        throw errorResponse;
+      }
     },
-    [applyLocalCurrentParticipantConfig, flushQueuedConfig, getCurrentParticipantSnapshot]
+    [applyLocalCurrentParticipantConfig, getCurrentParticipantSnapshot, queueConfigSave]
   );
 
   useEffect(() => {

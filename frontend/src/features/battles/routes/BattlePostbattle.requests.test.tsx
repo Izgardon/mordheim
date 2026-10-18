@@ -170,7 +170,7 @@ describe("BattlePostbattle requests", () => {
     expect(screen.getByRole("button", { name: "More actions" })).toBeInTheDocument();
   });
 
-  it("sends each draft edit at once, unqueued, and lets an older answer undo a newer edit (BUG-44, pinned; flips in PR A)", async () => {
+  it("queues draft saves behind the one in flight, so an older answer can't undo a newer edit (BUG-44)", async () => {
     const user = setupUser();
     await renderPostbattle();
     const held: Array<{ body: unknown; release: () => void }> = [];
@@ -180,24 +180,27 @@ describe("BattlePostbattle requests", () => {
       held.push({ body, release: () => answerLater.resolve(stored) });
       return answerLater.promise;
     });
+    const dead = () => within(row("Ogre Bodyguard")).getByRole("checkbox", { name: "Dead" });
 
     await commit(user, stepper("Captain Wolf", "XP"), "5");
-    await user.click(within(row("Ogre Bodyguard")).getByRole("checkbox", { name: "Dead" }));
+    await user.click(dead());
 
-    // Both saves are out before either answers.
-    expect(draftBodies().map((draft) => draft.unit_results["hired_sword:4"].dead)).toEqual([
-      false,
-      true,
-    ]);
-    await act(async () => held[1].release());
-    expect(within(row("Ogre Bodyguard")).getByRole("checkbox", { name: "Dead" })).toBeChecked();
+    // The Dead tick waits for the XP save; Finalise waits for both.
+    expect(draftBodies()).toHaveLength(1);
+    expect(draftBodies()[0].unit_results["hired_sword:4"].dead).toBe(false);
+    expect(dead()).toBeChecked();
+    expect(screen.getByRole("button", { name: "Finalise Postbattle" })).toBeDisabled();
 
     await act(async () => held[0].release());
-    await waitFor(() =>
-      expect(
-        within(row("Ogre Bodyguard")).getByRole("checkbox", { name: "Dead" })
-      ).not.toBeChecked()
-    );
+    await waitFor(() => expect(draftBodies()).toHaveLength(2));
+    expect(draftBodies()[1].unit_results["hired_sword:4"].dead).toBe(true);
+    expect(draftBodies()[1].unit_results["hero:1"].xp_earned).toBe(5);
+    expect(dead()).toBeChecked();
+
+    await act(async () => held[1].release());
+    expect(dead()).toBeChecked();
+    expect(stepper("Captain Wolf", "XP")).toHaveValue(5);
+    expect(screen.getByRole("button", { name: "Finalise Postbattle" })).toBeEnabled();
   });
 
   it("saves drafts with the exploration emptied, so a reload loses the roll and allows another (BUG-71, pinned; flips in PR C)", async () => {

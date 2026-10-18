@@ -54,6 +54,7 @@ import {
 } from "@/features/battles/components/postbattle/postbattle-utils";
 import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
 import { useBattleState } from "@/features/battles/hooks/useBattleState";
+import { useSerializedSave } from "@/features/battles/hooks/useSerializedSave";
 import { useRefreshOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import {
   HELPER_DIALOG_CONTENT_CLASS,
@@ -414,7 +415,6 @@ export default function BattlePostbattle() {
   const [localExploration, setLocalExploration] = useState<LocalExplorationState | null>(null);
   const [localExplorationKey, setLocalExplorationKey] = useState<string | null>(null);
   const [draftError, setDraftError] = useState("");
-  const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [isSkipping, setIsSkipping] = useState(false);
   const [isFinalizing, setIsFinalizing] = useState(false);
   const [isFinalizeModalOpen, setIsFinalizeModalOpen] = useState(false);
@@ -510,35 +510,39 @@ export default function BattlePostbattle() {
     resources,
   ]);
 
+  const sendDraft = useCallback(
+    (nextDraft: BattlePostbattleState) =>
+      saveBattlePostbattleDraft(campaignId, numericBattleId, {
+        postbattle_json: {
+          exploration: {
+            dice_values: [],
+            resource_id: null,
+          },
+          finds: nextDraft.finds,
+          upkeep: nextDraft.upkeep,
+          unit_results: nextDraft.unit_results,
+        },
+      }),
+    [campaignId, numericBattleId]
+  );
+  // One draft save at a time, newest last, as active config does: an older answer can't undo a
+  // newer edit (BUG-44).
+  const { save: queueDraftSave, isSaving: isSavingDraft } = useSerializedSave(
+    sendDraft,
+    applyBattleResponse
+  );
+
   const persistDraft = useCallback(
     async (nextDraft: BattlePostbattleState) => {
       setDraft(nextDraft);
-      setIsSavingDraft(true);
       setDraftError("");
       try {
-        const next = await saveBattlePostbattleDraft(campaignId, numericBattleId, {
-          postbattle_json: {
-            exploration: {
-              dice_values: [],
-              resource_id: null,
-            },
-            finds: nextDraft.finds,
-            upkeep: nextDraft.upkeep,
-            unit_results: nextDraft.unit_results,
-          },
-        });
-        applyBattleResponse(next);
+        await queueDraftSave(nextDraft);
       } catch (errorResponse) {
-        setDraftError(
-          errorResponse instanceof Error
-            ? errorResponse.message || "Unable to save postbattle draft"
-            : "Unable to save postbattle draft"
-        );
-      } finally {
-        setIsSavingDraft(false);
+        setDraftError(getErrorMessage(errorResponse, "Unable to save postbattle draft"));
       }
     },
-    [applyBattleResponse, campaignId, numericBattleId]
+    [queueDraftSave]
   );
 
   useEffect(() => {

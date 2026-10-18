@@ -216,37 +216,43 @@ describe("BattleActive requests", () => {
     ).toEqual({ "hero:1": 1, "hero:3": 0, "henchman:2": 2 });
   });
 
-  it("sends a wound save queued before a kill without the kill, and its answer takes the kill away (BUG-44, pinned; flips in PR A)", async () => {
+  it("locks a unit while its wound save waits in the queue, so no kill lands before it is sent (BUG-44)", async () => {
     const user = setupUser();
     await renderActive();
-    // The server stores the first save at once; its answer is held back.
-    const firstSave = deferred<void>();
+    // The server stores each save at once; the test releases the answers.
+    const answers: Array<() => void> = [];
     fakeApi.on(`POST ${battlePath("config/")}`, (body: unknown) => {
       const stored = storeConfig(body);
-      return firstSave.promise.then(() => stored);
+      const answer = deferred<void>();
+      answers.push(answer.resolve);
+      return answer.promise.then(() => stored);
     });
+    const rolfWounds = () => firstButton("Rolf", "Decrease wounds").nextElementSibling?.textContent;
 
     await user.click(firstButton("Captain Wolf", "Decrease wounds"));
-    fakeApi.on(`POST ${battlePath("config/")}`, storeConfig);
-    // Queued behind the first save, built from Rolf's blob before his kill.
+    // Queued behind Captain Wolf's save, built from Rolf's blob as it is now.
     await user.click(firstButton("Rolf", "Decrease wounds"));
+
+    expect(fakeApi.countOf(`POST ${battlePath("config/")}`)).toBe(1);
+    for (const action of ["Record kill", "Set unit out of action", "Increase wounds"]) {
+      expect(firstButton("Rolf", action)).toBeDisabled();
+    }
+    expect(rolfWounds()).toBe("0");
+
+    // Captain Wolf's answer predates Rolf's change, so it doesn't put his wound back.
+    await act(async () => answers[0]());
+    await waitFor(() => expect(fakeApi.countOf(`POST ${battlePath("config/")}`)).toBe(2));
+    expect(rolfWounds()).toBe("0");
+    expect(firstButton("Rolf", "Record kill")).toBeDisabled();
+
+    await act(async () => answers[1]());
+    await waitFor(() => expect(firstButton("Rolf", "Record kill")).toBeEnabled());
     await user.click(firstButton("Rolf", "Record kill"));
     const dialog = screen.getByRole("dialog", { name: "Record Kill" });
     await user.selectOptions(within(dialog).getByRole("combobox"), "hero:2");
     await user.click(within(dialog).getByRole("button", { name: "Save" }));
+
     await waitFor(() => expect(killCountOn("Rolf")).toBe("1"));
-
-    await act(async () => firstSave.resolve());
-    await waitFor(() => expect(fakeApi.countOf(`POST ${battlePath("config/")}`)).toBe(2));
-
-    const queued = fakeApi.bodyOf(`POST ${battlePath("config/")}`) as {
-      unit_information_json: UnitInformation;
-    };
-    expect(queued.unit_information_json["hero:3"]).toMatchObject({
-      current_wounds: 0,
-      kill_count: 0,
-    });
-    await waitFor(() => expect(killCountOn("Rolf")).toBe("0"));
-    expect(myUnit("hero:3").kill_count).toBe(0);
+    expect(myUnit("hero:3")).toMatchObject({ current_wounds: 0, kill_count: 1 });
   });
 });
