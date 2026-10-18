@@ -2,7 +2,7 @@
 
 Fixed: clearing a pending reported result's notification only resolves it (BUG-46, BUG-121); a future battle date
 is refused (BATL-TEST-18); the pending results are a routed campaign endpoint (test_battle_reported_results.py).
-Pinned: a removed member or a cancelled participant still authorised on the battle channel (SEC-08).
+The battle channel authorises only current members still in the battle (SEC-08, fixed).
 """
 
 from datetime import timedelta
@@ -11,7 +11,7 @@ from unittest import mock
 
 from django.utils import timezone
 
-from apps.battles.models import Battle, BattleParticipant
+from apps.battles.models import BattleParticipant
 from apps.campaigns.models import CampaignMembership
 from apps.notifications.models import Notification
 from apps.realtime import services as realtime
@@ -96,9 +96,9 @@ class ReportedResultTests(BattleTestCase):
 
 
 class BattleChannelTests(BattleTestCase):
-    def test_a_removed_member_and_a_cancelled_participant_are_still_authorised(self):
-        # Characterises current behaviour (SEC-08 battle half, pinned; flips in PR A: current members whose
-        # participation wasn't declined or cancelled)
+    def test_only_current_members_still_in_the_battle_are_authorised(self):
+        # SEC-08 (battle half): a removed member and a cancelled participant were still authorised, even once the
+        # battle was cancelled
         battle_id = self.create_battle()
         channel = f"private-battle-{battle_id}"
         self.assertEqual(
@@ -113,7 +113,10 @@ class BattleChannelTests(BattleTestCase):
         CampaignMembership.objects.filter(campaign=self.campaign, user=self.viewer).delete()
 
         self.assertEqual(
-            [authorize_private_channel(user, channel) for user in (self.player, self.viewer)], [True, True]
+            [authorize_private_channel(user, channel) for user in (self.player, self.viewer)], [False, False]
         )
-        Battle.objects.filter(id=battle_id).update(status=Battle.STATUS_CANCELED)
-        self.assertTrue(authorize_private_channel(self.viewer, channel))  # even once the battle is over
+        BattleParticipant.objects.filter(battle_id=battle_id, user=self.player).update(
+            status="reported_result_declined"
+        )
+        self.assertFalse(authorize_private_channel(self.player, channel))
+        self.assertFalse(authorize_private_channel(self.player, f"private-battle-{battle_id + 99}"))

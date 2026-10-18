@@ -31,6 +31,9 @@ class BattleParticipant(models.Model):
         (STATUS_CONFIRMED_POSTBATTLE, "Confirmed postbattle"),
     )
 
+    # out of the battle: they don't count towards it and can't follow it (SEC-08)
+    LEFT_STATUSES = (STATUS_CANCELED_PREBATTLE, STATUS_REPORTED_RESULT_DECLINED)
+
     CONNECTION_ONLINE = "online"
     CONNECTION_OFFLINE = "offline"
     CONNECTION_CHOICES = (
