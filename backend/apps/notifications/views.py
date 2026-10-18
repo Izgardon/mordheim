@@ -71,9 +71,8 @@ class NotificationClearAllView(APIView):
 def _apply_clear_side_effects(notification: Notification, user, now) -> None:
     if notification.notification_type == Notification.TYPE_TRADE_REQUEST:
         _clear_trade_request(notification, user, now)
-    elif notification.notification_type == Notification.TYPE_BATTLE_RESULT_REQUEST:
-        _clear_battle_result_request(notification, user, now)
-    # TYPE_BATTLE_INVITE: just mark resolved, no game action needed
+    # Battle invites and reported-result requests: just resolved. A result is answered on the campaign overview
+    # (approve, decline, or withdraw for its submitter), never by clearing (BUG-46, BUG-121).
 
 
 def _clear_trade_request(notification: Notification, user, now) -> None:
@@ -102,57 +101,3 @@ def _clear_trade_request(notification: Notification, user, now) -> None:
     transaction.on_commit(
         lambda uid=from_user_id, data=payload: send_user_notification(uid, "trade_declined", data)  # type: ignore[misc]
     )
-
-
-def _clear_battle_result_request(notification: Notification, user, now) -> None:
-    from apps.battles.models import Battle, BattleParticipant
-
-    try:
-        battle_id = int(notification.reference_id)
-    except (TypeError, ValueError):
-        return
-
-    battle = Battle.objects.filter(
-        id=battle_id,
-        flow_type=Battle.FLOW_TYPE_REPORTED_RESULT,
-        status=Battle.STATUS_REPORTED_RESULT_PENDING,
-    ).first()
-    if not battle:
-        return
-
-    participant = BattleParticipant.objects.filter(
-        battle_id=battle_id,
-        user=user,
-        status=BattleParticipant.STATUS_REPORTED_RESULT_PENDING,
-    ).first()
-    if not participant:
-        return
-
-    participant.status = BattleParticipant.STATUS_REPORTED_RESULT_DECLINED
-    participant.responded_at = now
-    participant.save(update_fields=["status", "responded_at", "updated_at"])
-
-    battle.status = Battle.STATUS_CANCELED
-    battle.ended_at = battle.ended_at or now
-    battle.save(update_fields=["status", "ended_at", "updated_at"])
-
-    from .utils import resolve_notifications_for_reference
-
-    resolve_notifications_for_reference(Notification.TYPE_BATTLE_RESULT_REQUEST, str(battle_id))
-
-    participant_user_ids = list(BattleParticipant.objects.filter(battle_id=battle_id).values_list("user_id", flat=True))
-    campaign_id = battle.campaign_id
-    transaction.on_commit(
-        lambda ids=participant_user_ids, bid=battle_id, cid=campaign_id: _send_battle_result_updated(ids, bid, cid)  # type: ignore[misc]
-    )
-
-
-def _send_battle_result_updated(user_ids: list, battle_id: int, campaign_id: int) -> None:
-    from apps.realtime.services import send_user_notification
-
-    for uid in user_ids:
-        send_user_notification(
-            uid,
-            "battle_result_updated",
-            {"battle_id": battle_id, "campaign_id": campaign_id, "status": "canceled"},
-        )

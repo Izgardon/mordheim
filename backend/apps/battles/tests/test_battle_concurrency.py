@@ -5,13 +5,12 @@ a `Rendezvous` patched in between a read and a write, or events that order one r
 other's read-to-write gap. Every battle write locks the battle row first, so today two finalises serialise
 (the second waits at the lock while the first holds the rendezvous, which gives up after its timeout).
 
-A config save racing a kill keeps the kill (BUG-44, fixed in PR A: config merges into what is stored). Clear
-racing Approve is an expected failure until its fix (BUG-121: the unlocked decline lands after the approval). If a
-patched helper is renamed, move the hold point to the new read-to-write gap.
+Fixed in PR A: a config save racing a kill keeps the kill (BUG-44: config merges into what is stored), and Clear
+racing Approve leaves an ended battle (BUG-121: clearing no longer declines). If a patched helper is renamed, move
+the hold point to the new read-to-write gap.
 """
 
 import threading
-import unittest
 from collections.abc import Callable
 from typing import Any
 from unittest import mock
@@ -184,10 +183,10 @@ class BattleConcurrencyTests(TransactionTestCase):
         info = BattleParticipant.objects.get(battle=battle, user=self.player).unit_information_json[self.a]
         self.assertEqual((info["kill_count"], info["current_wounds"]), (1, 1))
 
-    @unittest.expectedFailure
     def test_clearing_a_result_request_while_approving_it_leaves_a_consistent_battle(self):
-        # BUG-121 (expected failure until PR A). Clear reads the pending result unlocked; the same player's Approve
-        # commits in between (wins and losses added, battle ended); Clear then declines and cancels the battle.
+        # BUG-121: Clear read the pending result unlocked, the same player's Approve committed in between (wins and
+        # losses added, battle ended), then Clear declined and cancelled the battle. Clearing now only resolves the
+        # notification, so it never writes the participant (the hold below times out) and Approve ends the battle.
         battle = self.battle(Battle.STATUS_REPORTED_RESULT_PENDING, BattleParticipant.STATUS_REPORTED_RESULT_PENDING)
         Battle.objects.filter(id=battle.id).update(flow_type=Battle.FLOW_TYPE_REPORTED_RESULT)
         BattleParticipant.objects.filter(battle=battle, user=self.player).update(
@@ -226,6 +225,4 @@ class BattleConcurrencyTests(TransactionTestCase):
 
         battle.refresh_from_db()
         wins, losses = Warband.objects.get(id=self.warband.id).wins, Warband.objects.get(id=self.rival.id).losses
-        self.assertIn(
-            (battle.status, wins, losses), [("ended", 1, 1), ("canceled", None, None)]
-        )  # today canceled, 1, 1
+        self.assertEqual((battle.status, wins, losses), ("ended", 1, 1))

@@ -22,8 +22,11 @@ from .lifecycle import (
     CampaignBattleStartView,
     CampaignBattleStateView,
 )
+from .results import CampaignBattleWithdrawResultView, CampaignPendingResultsView
 
 __all__ = [
+    "CampaignPendingResultsView",
+    "CampaignBattleWithdrawResultView",
     "CampaignBattleListCreateView",
     "CampaignBattleReportedResultCreateView",
     "CampaignBattleStateView",

@@ -21,6 +21,8 @@ from .views import (
     CampaignBattleUnitKillView,
     CampaignBattleUnitOoaView,
     CampaignBattleWinnerView,
+    CampaignBattleWithdrawResultView,
+    CampaignPendingResultsView,
 )
 
 urlpatterns = [
@@ -33,6 +35,16 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/battles/report-result/",
         CampaignBattleReportedResultCreateView.as_view(),
         name="campaigns-battles-report-result",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/pending-results/",
+        CampaignPendingResultsView.as_view(),
+        name="campaigns-battles-pending-results",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/withdraw-result/",
+        CampaignBattleWithdrawResultView.as_view(),
+        name="campaigns-battles-withdraw-result",
     ),
     path(
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/state/",

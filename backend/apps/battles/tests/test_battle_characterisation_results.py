@@ -1,42 +1,23 @@
 """Reported results, notifications and the battle channel characterised (pass 3, step 0).
 
-Pinned: Clear and Clear all declining a pending reported result for everyone (BUG-46); the pending-results view
-unrouted and N+1 (BUG-46, BATL-TEST-15's baseline); a future battle date accepted (BATL-TEST-18); a removed member
-or a cancelled participant still authorised on the battle channel (SEC-08).
+Fixed: clearing a pending reported result's notification only resolves it (BUG-46, BUG-121); a future battle date
+is refused (BATL-TEST-18); the pending results are a routed campaign endpoint (test_battle_reported_results.py).
+Pinned: a removed member or a cancelled participant still authorised on the battle channel (SEC-08).
 """
 
 from datetime import timedelta
 from typing import Any
 from unittest import mock
 
-from django.db import connection
-from django.test.utils import CaptureQueriesContext
-from django.urls import get_resolver
 from django.utils import timezone
-from rest_framework.test import APIRequestFactory, force_authenticate
 
 from apps.battles.models import Battle, BattleParticipant
-from apps.battles.views.lifecycle import PendingReportedBattleResultRequestsView
 from apps.campaigns.models import CampaignMembership
 from apps.notifications.models import Notification
 from apps.realtime import services as realtime
 from apps.realtime.channel_auth import authorize_private_channel
 
 from .battle_support import BattleTestCase
-
-
-def routed_view_classes() -> set[Any]:
-    classes: set[Any] = set()
-
-    def walk(patterns: list[Any]) -> None:
-        for pattern in patterns:
-            if hasattr(pattern, "url_patterns"):
-                walk(pattern.url_patterns)
-            else:
-                classes.add(getattr(pattern.callback, "view_class", None))
-
-    walk(get_resolver().url_patterns)
-    return classes
 
 
 class ReportedResultTests(BattleTestCase):
@@ -54,42 +35,46 @@ class ReportedResultTests(BattleTestCase):
             user=self.viewer, notification_type=Notification.TYPE_BATTLE_RESULT_REQUEST, reference_id=str(battle_id)
         )
 
-    def test_a_future_battle_date_is_accepted_and_a_winner_is_required(self):
-        # Characterises current behaviour (BATL-TEST-18, decision 8, pinned; flips in PR A: a future date is refused
-        # and an empty winner list means "No winner")
+    def test_a_future_battle_date_is_refused_and_a_winner_is_required(self):
+        # BATL-TEST-18 (BUG-46): a future date was accepted. Decision 8 (pinned; flips in PR A: no winner allowed)
         tomorrow = (timezone.localdate() + timedelta(days=1)).isoformat()
-        data = self.ok(self.report(battle_date=tomorrow), 201).data
+        response = self.report(battle_date=tomorrow)
+        expected: dict[str, Any] = {"detail": "battle_date can't be in the future", "code": "invalid"}
+        expected |= {"fields": {"battle_date": ["Pick today or an earlier date."]}}
+        self.assertEqual((response.status_code, response.data), (400, expected))
+        today = timezone.localdate().isoformat()
+        data = self.ok(self.report(battle_date=today), 201).data
         self.assertEqual(
-            (data["battle"]["status"], data["battle"]["ended_at"][:10]), ("reported_result_pending", tomorrow)
+            (data["battle"]["status"], data["battle"]["ended_at"][:10]), ("reported_result_pending", today)
         )
         self.assertEqual(self.statuses(data["battle"]["id"]), ["reported_result_approved", "reported_result_pending"])
 
         response = self.report(winner_warband_ids=[])
         self.assertEqual((response.status_code, response.data), (400, {"detail": "Select at least one winner"}))
 
-    def test_clear_all_declines_a_pending_result_for_everyone(self):
-        # Characterises current behaviour (BUG-46, pinned; flips in PR A: clearing only resolves the notification)
+    def test_clear_all_only_resolves_a_pending_results_notification(self):
+        # BUG-46: Clear all declined the result for everyone, without saying so
         battle_id = self.ok(self.report(), 201).data["battle"]["id"]
         sent = self._record_realtime()
 
         with self.captureOnCommitCallbacks(execute=True):
             self.ok(self.post_as(self.viewer, "/api/notifications/clear-all/"))
 
-        self.assertEqual(self.battle(battle_id).status, "canceled")
-        self.assertEqual(self.statuses(battle_id), ["reported_result_approved", "reported_result_declined"])
+        self.assertEqual(self.battle(battle_id).status, "reported_result_pending")
+        self.assertEqual(self.statuses(battle_id), ["reported_result_approved", "reported_result_pending"])
         self.assertTrue(self.result_notification(battle_id).is_resolved)
-        self.assertEqual((self.record(self.warband), self.record(self.rival)), ((None, None), (None, None)))
-        updates = sorted(call.args[0] for call in sent.call_args_list if call.args[1] == "battle_result_updated")
-        self.assertEqual(updates, sorted([self.player.id, self.viewer.id]))
+        self.assertFalse([call for call in sent.call_args_list if call.args[1] == "battle_result_updated"])
+        self.ok(self.post_as(self.viewer, self.url(battle_id, "approve-result")))  # still answerable
+        self.assertEqual(self.battle(battle_id).status, "ended")
 
-    def test_clearing_the_one_notification_declines_it_too(self):
-        # Characterises current behaviour (BUG-46, pinned; flips in PR A)
+    def test_clearing_the_one_notification_only_resolves_it(self):
+        # BUG-46
         battle_id = self.ok(self.report(), 201).data["battle"]["id"]
 
         self.ok(self.post_as(self.viewer, f"/api/notifications/{self.result_notification(battle_id).id}/clear/"))
 
-        self.assertEqual(self.battle(battle_id).status, "canceled")
-        self.assertEqual(self.participant(battle_id, self.viewer).status, "reported_result_declined")
+        self.assertEqual(self.battle(battle_id).status, "reported_result_pending")
+        self.assertEqual(self.participant(battle_id, self.viewer).status, "reported_result_pending")
 
     def test_clearing_a_battle_invite_only_resolves_it(self):
         battle_id = self.create_battle()
@@ -102,27 +87,6 @@ class ReportedResultTests(BattleTestCase):
         self.assertEqual(
             (self.battle(battle_id).status, self.statuses(battle_id)), ("inviting", ["accepted", "invited"])
         )
-
-    def test_the_pending_results_view_is_unrouted_and_costs_a_query_per_result(self):
-        # Characterises current behaviour (BUG-46, BATL-TEST-15 baseline, pinned; flips in PR A: a routed campaign
-        # endpoint with constant queries)
-        self.assertNotIn(PendingReportedBattleResultRequestsView, routed_view_classes())
-        view = PendingReportedBattleResultRequestsView.as_view()
-
-        def queries() -> tuple[int, list[int]]:
-            request = APIRequestFactory().get("/pending-results/")
-            force_authenticate(request, user=self.viewer)
-            with CaptureQueriesContext(connection) as captured:
-                response = view(request)
-            return len(captured), [entry["battle_id"] for entry in response.data]
-
-        first = self.ok(self.report(), 201).data["battle"]["id"]
-        one, listed = queries()
-        self.assertEqual(listed, [first])
-        for _ in range(2):
-            self.ok(self.report(), 201)
-        three, listed = queries()
-        self.assertEqual((len(listed), three - one), (3, 2))
 
     def _record_realtime(self) -> mock.MagicMock:
         patcher = mock.patch.object(realtime, "send_user_notification", wraps=realtime.send_user_notification)

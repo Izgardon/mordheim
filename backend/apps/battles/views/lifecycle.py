@@ -298,48 +298,6 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
         return _response_with_snapshot(battle.id, events, response_status=status.HTTP_201_CREATED)
 
 
-class PendingReportedBattleResultRequestsView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request):
-        pending_entries = (
-            BattleParticipant.objects.select_related("battle__created_by_user", "warband")
-            .filter(
-                user_id=request.user.id,
-                status=BattleParticipant.STATUS_REPORTED_RESULT_PENDING,
-                battle__flow_type=Battle.FLOW_TYPE_REPORTED_RESULT,
-                battle__status=Battle.STATUS_REPORTED_RESULT_PENDING,
-            )
-            .order_by("-battle__created_at")
-        )
-
-        payload = []
-        for entry in pending_entries:
-            battle = entry.battle
-            participants = list(
-                BattleParticipant.objects.select_related("warband").filter(battle_id=battle.id).order_by("id")
-            )
-            winner_ids = set(battle.winner_warband_ids_json or [])
-            winner_names = [
-                participant.warband.name for participant in participants if participant.warband_id in winner_ids
-            ]
-            payload.append(
-                {
-                    "battle_id": battle.id,
-                    "campaign_id": battle.campaign_id,
-                    "status": battle.status,
-                    "scenario": battle.scenario,
-                    "winner_warband_ids": battle.winner_warband_ids_json or [],
-                    "winner_warband_names": winner_names,
-                    "created_by_user_id": battle.created_by_user_id,
-                    "created_by_user_label": _display_name(battle.created_by_user),
-                    "created_at": battle.created_at.isoformat(),
-                }
-            )
-
-        return Response(payload)
-
-
 class CampaignBattleReportedResultCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
@@ -397,6 +355,10 @@ class CampaignBattleReportedResultCreateView(APIView):
         battle_date = parse_date(raw_battle_date.strip())
         if battle_date is None:
             return Response({"detail": "battle_date must be a valid date"}, status=400)
+        if battle_date > timezone.localdate():  # BATL-TEST-18
+            return field_error(
+                "battle_date", "battle_date can't be in the future", "Pick today or an earlier date."
+            ).response()
         ended_at = timezone.make_aware(
             datetime.combine(battle_date, time.min),
             timezone.get_current_timezone(),
