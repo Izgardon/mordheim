@@ -10,25 +10,12 @@ import type {
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
 import "@/features/warbands/styles/warband.css";
 import { getBattleCardThemeStyle } from "@/features/battles/components/shared/battle-card-theme";
+import { getErrorMessage } from "@/lib/get-error-message";
 
+import ActiveHenchmanRow from "./ActiveHenchmanRow";
 import ActiveKillDialog from "./ActiveKillDialog";
 import ActiveUnitExpandedDetails from "./ActiveUnitExpandedDetails";
-import { KillTrophyIcon, OutOfActionIcon } from "./ActiveBattleActionIcons";
-import {
-  getCurrentUnitWounds,
-  getEffectiveUnitStats,
-  type ActiveBattleUnitOption,
-} from "./active-utils";
-
-// Every action is a 44 px touch target (BATL-UX-05): the cards are tapped on a phone at the table.
-const WOUND_BUTTON_CLASS =
-  "icon-button flex h-11 w-11 items-center justify-center text-base text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50";
-const DANGER_ACTION_BUTTON_CLASS =
-  "battle-toolbar-button icon-button flex h-11 w-11 items-center justify-center rounded-md text-red-400/85 transition hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50";
-const BACK_IN_ACTION_BUTTON_CLASS =
-  "battle-toolbar-button icon-button flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50";
-const DANGER_KILL_BUTTON_CLASS =
-  "battle-toolbar-button icon-button inline-flex h-11 min-w-11 items-center justify-center gap-1 rounded-md px-2 text-red-400/85 transition hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50";
+import { getEffectiveUnitStats, type ActiveBattleUnitOption } from "./active-utils";
 
 type ActiveHenchmenGroupCardProps = {
   groupName: string;
@@ -117,11 +104,7 @@ export default function ActiveHenchmenGroupCard({
     try {
       await onSetOutOfAction(unitKey, nextOutOfAction);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setError(errorResponse.message || "Unable to update unit state");
-      } else {
-        setError("Unable to update unit state");
-      }
+      setError(getErrorMessage(errorResponse, "Unable to update unit state"));
     } finally {
       setUpdatingOutOfActionKeys((prev) => ({ ...prev, [unitKey]: false }));
     }
@@ -151,97 +134,21 @@ export default function ActiveHenchmenGroupCard({
         </div>
 
         <div className={`mt-2 grid gap-2 ${memberGridClass}`}>
-          {members.map((member) => {
-            const memberInfo = unitInformationByKey[member.key];
-            const outOfAction = Boolean(memberInfo?.out_of_action);
-            const killCount = memberInfo?.kill_count ?? 0;
-            const isUpdating = Boolean(updatingOutOfActionKeys[member.key]);
-            const woundsValue = getCurrentUnitWounds(member, memberInfo);
-            const isSavingConfig = Boolean(savingUnitKeys[member.key]);
-
-            return (
-              <div
-                key={member.key}
-                className={`battle-metric-box px-2.5 py-2 ${outOfAction ? "opacity-85" : ""}`}
-              >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p
-                        className={`truncate text-sm font-medium ${
-                          outOfAction ? "text-muted-foreground/80" : "text-foreground"
-                        }`}
-                      >
-                        {member.displayName}
-                      </p>
-                      {outOfAction ? (
-                        <span className="rounded-sm border border-red-900/50 bg-red-950/30 px-1.5 py-0.5 text-[0.52rem] uppercase tracking-[0.16em] text-red-300/85">
-                          OOA
-                        </span>
-                      ) : null}
-                    </div>
-                  </div>
-                  <div className="ml-auto flex shrink-0 items-center gap-1.5">
-                    <div className="battle-metric-box inline-flex h-11 items-center overflow-hidden">
-                      <span className="flex h-full items-center border-r border-border/50 px-1.5 text-[0.55rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                        W
-                      </span>
-                      <button
-                        type="button"
-                        className={WOUND_BUTTON_CLASS}
-                        onClick={() => void onAdjustWounds(member, -1)}
-                        disabled={!canInteract || outOfAction || isSavingConfig || woundsValue <= 0}
-                        aria-label={`Decrease wounds for ${member.displayName}`}
-                      >
-                        -
-                      </button>
-                      <div className="flex h-11 min-w-9 items-center justify-center border-x border-border/50 px-2 text-xs font-semibold text-foreground">
-                        {woundsValue}
-                      </div>
-                      <button
-                        type="button"
-                        className={WOUND_BUTTON_CLASS}
-                        onClick={() => void onAdjustWounds(member, 1)}
-                        disabled={!canInteract || outOfAction || isSavingConfig}
-                        aria-label={`Increase wounds for ${member.displayName}`}
-                      >
-                        +
-                      </button>
-                    </div>
-                    <button
-                      type="button"
-                      className={
-                        outOfAction ? BACK_IN_ACTION_BUTTON_CLASS : DANGER_ACTION_BUTTON_CLASS
-                      }
-                      onClick={() => void handleSetOutOfAction(member.key, !outOfAction)}
-                      disabled={!canInteract || isUpdating || isSavingConfig}
-                      aria-label={
-                        outOfAction
-                          ? `Set ${member.displayName} back in action`
-                          : `Set ${member.displayName} out of action`
-                      }
-                      title={outOfAction ? "Set back in action" : "Set out of action"}
-                    >
-                      <OutOfActionIcon
-                        className={outOfAction ? "h-6 w-6" : "h-5 w-5 text-red-400"}
-                      />
-                    </button>
-                    <button
-                      type="button"
-                      className={DANGER_KILL_BUTTON_CLASS}
-                      onClick={() => setKillDialogMember(member)}
-                      disabled={!canInteract || outOfAction || isSavingConfig}
-                      aria-label={`Record kill for ${member.displayName}, ${killCount} so far`}
-                      title="Record kill"
-                    >
-                      <KillTrophyIcon className="h-5 w-5" />
-                      <span className="text-xs font-semibold">{killCount}</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {members.map((member) => (
+            <ActiveHenchmanRow
+              key={member.key}
+              member={member}
+              memberInfo={unitInformationByKey[member.key]}
+              canInteract={canInteract}
+              isUpdating={Boolean(updatingOutOfActionKeys[member.key])}
+              isSavingConfig={Boolean(savingUnitKeys[member.key])}
+              onAdjustWounds={(delta) => void onAdjustWounds(member, delta)}
+              onToggleOutOfAction={(outOfAction) =>
+                void handleSetOutOfAction(member.key, outOfAction)
+              }
+              onRecordKill={() => setKillDialogMember(member)}
+            />
+          ))}
         </div>
 
         {error ? <p className="mt-2 text-xs text-red-500">{error}</p> : null}
