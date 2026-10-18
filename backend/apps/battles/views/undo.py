@@ -18,15 +18,16 @@ from ..services.broadcast import bump_state_version
 from ..services.events import append_event
 from ..services.kills import UNDOABLE_TYPES, killer_unit_key
 from ..services.unit_information import is_empty
+from ..validation.config import normalize_unit_information
 from .responses import broadcast_response, response_with_snapshot
-from .shared import _get_user_battle_participant, _normalize_unit_information
+from .shared import _get_user_battle_participant
 
 OPEN_STATUSES = (Battle.STATUS_PREBATTLE, Battle.STATUS_ACTIVE, Battle.STATUS_POSTBATTLE)
 
 
 def _take_back_kill(participant: BattleParticipant, unit_key: str | None) -> None:
     """The killer's live kill_count goes down by one (the kill and its undo are the only things that move it)."""
-    unit_information = _normalize_unit_information(participant.unit_information_json)
+    unit_information = normalize_unit_information(participant.unit_information_json)
     entry = unit_information.get(unit_key or "")
     if entry is None:
         return

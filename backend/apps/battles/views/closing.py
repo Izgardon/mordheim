@@ -17,24 +17,16 @@ from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.broadcast import ALL, bump_state_version
 from ..services.events import append_event
+from ..validation.postbattle import empty_draft
 from .responses import broadcast_response, response_with_snapshot
 from .shared import _finalize_battle, _remove_used_single_use_items
-
-
-def _empty_draft() -> dict:
-    return {
-        "exploration": {"dice_values": [], "resource_id": None},
-        "finds": {"gold_crowns": 0, "items": []},
-        "upkeep": {"pay_upkeep": True, "entries": {}},
-        "unit_results": {},
-    }
 
 
 def skip_postbattle(battle: Battle, participant: BattleParticipant, *, actor_user, closed_by=None) -> dict:
     """Mark the participant's postbattle skipped and return its event: nothing applied, the items used in battle
     used up, the draft cleared. `closed_by` is whoever closed postbattle for him."""
     _remove_used_single_use_items(battle, participant)
-    participant.postbattle_json = _empty_draft()
+    participant.postbattle_json = empty_draft()
     participant.status = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
     participant.skipped_postbattle = True
     participant.confirmed_at = timezone.now()

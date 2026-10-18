@@ -22,7 +22,7 @@ from ..services.errors import BattleError, field_error
 from ..services.events import append_event, notify_user
 from ..services.rosters import battle_rosters_payload
 from ..services.timing import invite_deadline, record_activity
-from ..services.unit_information import apply_patch, apply_whole_map, is_empty
+from ..validation.config import changes_others_see, config_changes
 from .expiry import expire_overdue
 from .invites import open_prebattle, settle_after_leaving
 from .responses import broadcast_response, response_with_snapshot
@@ -34,10 +34,6 @@ from .shared import (
     _commit_reported_result_battle,
     _get_user_battle_participant,
     _mark_participant_seen,
-    _normalize_battle_notes,
-    _normalize_custom_units,
-    _normalize_unit_information,
-    _normalize_unit_keys,
     _reset_trading_actions_for_battle_participants,
 )
 
@@ -526,68 +522,6 @@ class CampaignBattleRosterView(APIView):
         return Response(battle_rosters_payload(battle.id))
 
 
-def _unit_information_change(data, participant) -> dict | None:
-    """The participant's unit information after a config save, or None when the save doesn't touch it: a patch, or
-    an older client's whole map, merged into what is stored (services/unit_information.py, BUG-44)."""
-    has_patch, has_whole_map = "unit_information_patch" in data, "unit_information_json" in data
-    if has_patch and has_whole_map:
-        raise ValueError("Send unit_information_patch or unit_information_json, not both")
-    if not (has_patch or has_whole_map):
-        return None
-    stored = _normalize_unit_information(participant.unit_information_json)
-    if has_patch:
-        return apply_patch(stored, data.get("unit_information_patch"))
-    return apply_whole_map(stored, data.get("unit_information_json"))
-
-
-def _declared_rating(raw_value) -> int | None:
-    """A whole number from 0 to 9999, or None; a field error otherwise (BUG-125: "x" answered int()'s message)."""
-    if raw_value in ("", None):
-        return None
-    message = "Enter a whole number from 0 to 9999, or leave it empty."
-    try:
-        declared_rating = int(raw_value)
-    except (TypeError, ValueError):
-        raise field_error("declared_rating", "declared_rating must be a whole number", message) from None
-    if declared_rating < 0 or declared_rating > 9999:
-        raise field_error("declared_rating", "declared_rating must be between 0 and 9999", message)
-    return declared_rating
-
-
-def _without_notes(unit_information: dict) -> dict:
-    stripped = {key: {**entry, "notes": ""} for key, entry in (unit_information or {}).items()}
-    return {key: entry for key, entry in stripped.items() if not is_empty(entry)}
-
-
-def _changes_others_see(participant, changes: dict) -> bool:
-    """Whether a config save changes anything but notes (battle notes and unit notes are the player's own)."""
-    for field, value in changes.items():
-        before = getattr(participant, field)
-        if field == "battle_notes" or before == value:
-            continue
-        if field == "unit_information_json" and _without_notes(before) == _without_notes(value):
-            continue
-        return True
-    return False
-
-
-def _config_changes(data, participant) -> dict:
-    """The participant fields a config save sets: only those the request sends (ValueError when one is invalid)."""
-    changes: dict = {}
-    if "selected_unit_keys_json" in data:
-        changes["selected_unit_keys_json"] = _normalize_unit_keys(data.get("selected_unit_keys_json"))
-    unit_information = _unit_information_change(data, participant)
-    if unit_information is not None:
-        changes["unit_information_json"] = unit_information
-    if "custom_units_json" in data:
-        changes["custom_units_json"] = _normalize_custom_units(data.get("custom_units_json"))
-    if "declared_rating" in data:
-        changes["declared_rating"] = _declared_rating(data.get("declared_rating"))
-    if "battle_notes" in data:
-        changes["battle_notes"] = _normalize_battle_notes(data.get("battle_notes"))
-    return changes
-
-
 class CampaignBattleConfigView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
@@ -606,13 +540,13 @@ class CampaignBattleConfigView(APIView):
                 return Response({"detail": "Battle configuration is locked"}, status=400)
 
             try:
-                changes = _config_changes(request.data, participant)
+                changes = config_changes(request.data, participant)
             except ValueError as exc:
                 return Response({"detail": str(exc)}, status=400)
             except BattleError as refused:
                 return refused.response()
 
-            shared_change = _changes_others_see(participant, changes)
+            shared_change = changes_others_see(participant, changes)
             for field, value in changes.items():
                 setattr(participant, field, value)
             participant.save(update_fields=[*changes, "updated_at"])

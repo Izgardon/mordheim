@@ -28,20 +28,28 @@ from apps.warbands.models import (
 from apps.warbands.services import ledger
 from apps.warbands.services.stash import add_costs
 from apps.warbands.units.services.xp import XP_FIELDS, apply_xp_gain
-from apps.warbands.utils.armour_save import ARMOUR_SAVE_ERROR, parse_armour_save
 from apps.warbands.utils.leaders import ensure_single_living_leader
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.events import append_event, notify_user
 from ..services.exploration import exploration_amount
-from ..services.injuries import apply_stat_and_special, describe_roll, injury_outcome
+from ..services.injuries import apply_stat_and_special, injury_outcome
 from ..services.items_lost import carried_item_names, henchman_takes_his_share, lost_entry
 from ..services.kills import kill_counts_by_unit
 from ..services.lifecycle import participants_all_in, record_wins_and_losses
+from ..services.selection import custom_unit_entry, permanent_unit_keys
 from ..services.timing import is_overdue
-from ..services.unit_information import ARMOUR_SAVE_STAT_KEY, NUMERIC_STAT_KEYS, clean_editable_fields
+from ..services.unit_information import (
+    ARMOUR_SAVE_STAT_KEY,
+    NUMERIC_STAT_KEYS,
+    parse_armour_save_override,
+)
 from ..services.unusual import unusual_value_warnings
 from ..services.warnings import Warning, unit_left_warband
+from ..validation.coerce import coerce_int
+from ..validation.config import normalize_unit_information
+from ..validation.postbattle import normalize_postbattle
+from ..validation.unit_keys import parse_unit_key
 
 KILLER_UNIT_TYPES = {"hero", "hired_sword", "henchman", "custom", "bestiary"}
 INGAME_EVENT_TYPES = {
@@ -219,14 +227,6 @@ def _latest_finished_participant(battle_id: int):
     )
 
 
-def _participant_permanent_selected_unit_keys(participant: BattleParticipant) -> set[str]:
-    return {
-        key
-        for key in _participant_selected_unit_keys(participant)
-        if not key.startswith("custom:") and not key.startswith("bestiary:")
-    }
-
-
 def _finalize_battle(battle: Battle, actor_user, events: list[dict], **ended: object) -> None:
     """End the battle (the battle is locked; its status guards against a second end): wins and losses recorded
     once (decision 3), the battle_ended event (with `ended`, e.g. who closed postbattle) and pivotal moments."""
@@ -303,95 +303,6 @@ def _reset_trading_actions_for_battle_participants(
         Hero.objects.filter(warband_id=warband_id).update(trading_action=True)
 
 
-def _normalize_unit_keys(raw_value):
-    if raw_value is None:
-        return []
-    if not isinstance(raw_value, list):
-        raise ValueError("selected_unit_keys_json must be a list")
-
-    normalized = []
-    for entry in raw_value:
-        if not isinstance(entry, str):
-            raise ValueError("selected_unit_keys_json must contain only strings")
-        key = entry.strip()
-        if not key:
-            continue
-        normalized.append(key)
-    return list(dict.fromkeys(normalized))
-
-
-def _normalize_battle_notes(raw_value):
-    if raw_value is None:
-        return ""
-    if not isinstance(raw_value, str):
-        raw_value = str(raw_value)
-    return raw_value.strip()
-
-
-def _normalize_unit_information(raw_value):
-    """A stored unit information map with every entry's fields filled in (services/unit_information.py)."""
-    if raw_value is None:
-        return {}
-    if not isinstance(raw_value, dict):
-        raise ValueError("unit_information_json must be an object")
-
-    normalized = {}
-    for unit_key, info in raw_value.items():
-        if not isinstance(unit_key, str):
-            raise ValueError("unit_information_json keys must be strings")
-        if not isinstance(info, dict):
-            raise ValueError("Each unit information entry must be an object")
-
-        normalized_unit_key = unit_key.strip()
-        if not normalized_unit_key:
-            continue
-
-        try:
-            kill_count = int(info.get("kill_count", 0))
-        except (TypeError, ValueError):
-            raise ValueError("unit information kill_count must be an integer") from None
-
-        normalized[normalized_unit_key] = {
-            **clean_editable_fields(info),
-            "out_of_action": bool(info.get("out_of_action", False)),
-            "kill_count": max(0, min(9999, kill_count)),
-        }
-
-    return normalized
-
-
-def _upsert_unit_information(unit_information: dict[str, dict], unit_key: str, *, preserve_existing=True) -> dict:
-    existing = unit_information.get(unit_key, {}) if preserve_existing else {}
-    if not isinstance(existing, dict):
-        existing = {}
-    try:
-        existing_kill_count = int(existing.get("kill_count", 0) or 0)
-    except (TypeError, ValueError):
-        existing_kill_count = 0
-    merged = {
-        "stats_override": existing.get("stats_override", {}),
-        "notes": existing.get("notes", ""),
-        "current_wounds": existing.get("current_wounds", None),
-        "out_of_action": bool(existing.get("out_of_action", False)),
-        "kill_count": max(0, existing_kill_count),
-    }
-    unit_information[unit_key] = merged
-    return merged
-
-
-def _parse_armour_save_override(value) -> int | None:
-    """A postbattle armour save for the roster unit: as every unit write parses it (decision 11), "-" is none."""
-    if value is None:
-        return None
-    cleaned = str(value).strip()
-    if cleaned == "-":
-        return None
-    try:
-        return parse_armour_save(cleaned)
-    except ValueError:
-        raise ValueError(f"unit information armour_save: {ARMOUR_SAVE_ERROR}") from None
-
-
 def _kept_stats(unit, stats_override: dict[str, int | str], unit_name: str, stat_logs: list[dict]) -> list[str]:
     """Make a unit's battle stat changes permanent (its Keep tick, decision 6, SEC-10) and log them with before and
     after; returns the changed fields."""
@@ -409,179 +320,18 @@ def _apply_stats_override_to_unit(unit, stats_override: dict[str, int | str]) ->
     for stat_key in NUMERIC_STAT_KEYS:
         if stat_key not in stats_override:
             continue
-        next_value = _coerce_int(stats_override.get(stat_key), field_name=stat_key, minimum=0, maximum=10)
+        next_value = coerce_int(stats_override.get(stat_key), field_name=stat_key, minimum=0, maximum=10)
         if getattr(unit, stat_key) != next_value:
             setattr(unit, stat_key, next_value)
             update_fields.append(stat_key)
 
     if ARMOUR_SAVE_STAT_KEY in stats_override:
-        next_armour_save = _parse_armour_save_override(stats_override.get(ARMOUR_SAVE_STAT_KEY))
+        next_armour_save = parse_armour_save_override(stats_override.get(ARMOUR_SAVE_STAT_KEY))
         if getattr(unit, ARMOUR_SAVE_STAT_KEY) != next_armour_save:
             setattr(unit, ARMOUR_SAVE_STAT_KEY, next_armour_save)
             update_fields.append(ARMOUR_SAVE_STAT_KEY)
 
     return update_fields
-
-
-def _normalize_custom_units(raw_value):
-    if raw_value is None:
-        return []
-    if not isinstance(raw_value, list):
-        raise ValueError("custom_units_json must be a list")
-
-    normalized = []
-    seen_keys = set()
-    for entry in raw_value:
-        if not isinstance(entry, dict):
-            raise ValueError("Each custom unit must be an object")
-
-        key = entry.get("key")
-        name = entry.get("name")
-        unit_type = entry.get("unit_type")
-        rating = entry.get("rating", 0)
-        stats = entry.get("stats")
-
-        if not isinstance(key, str) or not key.strip():
-            raise ValueError("custom unit key is required")
-        key = key.strip()
-        if not key.startswith("custom:") and not key.startswith("bestiary:"):
-            raise ValueError("custom unit key must start with 'custom:' or 'bestiary:'")
-        if key in seen_keys:
-            raise ValueError("custom unit keys must be unique")
-        seen_keys.add(key)
-
-        if not isinstance(name, str) or not name.strip():
-            raise ValueError("custom unit name is required")
-        name = name.strip()
-        if len(name) > 120:
-            raise ValueError("custom unit name must be at most 120 characters")
-
-        if not isinstance(unit_type, str) or not unit_type.strip():
-            raise ValueError("custom unit unit_type is required")
-        unit_type = unit_type.strip()
-        if len(unit_type) > 120:
-            raise ValueError("custom unit unit_type must be at most 120 characters")
-
-        try:
-            rating = int(rating)
-        except (TypeError, ValueError):
-            raise ValueError("custom unit rating must be an integer") from None
-        rating = max(0, min(9999, rating))
-
-        if not isinstance(stats, dict):
-            raise ValueError("custom unit stats must be an object")
-
-        cleaned_stats: dict[str, int | str] = {}
-        for stat_key in NUMERIC_STAT_KEYS:
-            raw_stat = stats.get(stat_key, 0)
-            try:
-                parsed = int(raw_stat)
-            except (TypeError, ValueError):
-                raise ValueError(f"custom unit stat '{stat_key}' must be an integer") from None
-            cleaned_stats[stat_key] = max(0, min(10, parsed))
-
-        armour_save = stats.get(ARMOUR_SAVE_STAT_KEY, "")
-        if armour_save is None:
-            armour_save = ""
-        if not isinstance(armour_save, str):
-            armour_save = str(armour_save)
-        armour_save = armour_save.strip()
-        if len(armour_save) > 20:
-            raise ValueError("custom unit armour_save must be at most 20 characters")
-        cleaned_stats[ARMOUR_SAVE_STAT_KEY] = armour_save
-
-        normalized.append(
-            {
-                "key": key,
-                "name": name,
-                "unit_type": unit_type,
-                "rating": rating,
-                "stats": cleaned_stats,
-            }
-        )
-
-    return normalized
-
-
-def _participant_custom_unit_keys(participant: BattleParticipant) -> set[str]:
-    custom_units = participant.custom_units_json or []
-    keys: set[str] = set()
-    if not isinstance(custom_units, list):
-        return keys
-    for entry in custom_units:
-        if not isinstance(entry, dict):
-            continue
-        key = entry.get("key")
-        if isinstance(key, str) and key.strip():
-            keys.add(key.strip())
-    return keys
-
-
-def _participant_selected_unit_keys(participant: BattleParticipant) -> set[str]:
-    selected = participant.selected_unit_keys_json or []
-    if not isinstance(selected, list):
-        return set()
-    selected_keys = set()
-    custom_keys = _participant_custom_unit_keys(participant)
-    for raw_key in selected:
-        if not isinstance(raw_key, str):
-            continue
-        key = raw_key.strip()
-        if not key:
-            continue
-        if (key.startswith("custom:") or key.startswith("bestiary:")) and key not in custom_keys:
-            continue
-        selected_keys.add(key)
-    return selected_keys
-
-
-def _parse_unit_key(unit_key: str):
-    if not isinstance(unit_key, str):
-        raise ValueError("unit_key must be a string")
-    normalized = unit_key.strip()
-    if not normalized:
-        raise ValueError("unit_key is required")
-    if ":" not in normalized:
-        raise ValueError("unit_key must use <type>:<id> format")
-
-    unit_type, raw_identifier = normalized.split(":", 1)
-    unit_type = unit_type.strip().lower()
-    raw_identifier = raw_identifier.strip()
-    if not unit_type or not raw_identifier:
-        raise ValueError("unit_key must use <type>:<id> format")
-    if unit_type not in {"hero", "henchman", "hired_sword", "custom", "bestiary"}:
-        raise ValueError("unit_key type is invalid")
-
-    if unit_type in ("custom", "bestiary"):
-        return {
-            "unit_key": normalized,
-            "unit_type": unit_type,
-            "unit_id": None,
-            "custom_key": normalized,
-        }
-
-    try:
-        unit_id = int(raw_identifier)
-    except (TypeError, ValueError):
-        raise ValueError("unit_key id must be an integer") from None
-    if unit_id <= 0:
-        raise ValueError("unit_key id must be an integer")
-    return {
-        "unit_key": normalized,
-        "unit_type": unit_type,
-        "unit_id": unit_id,
-        "custom_key": None,
-    }
-
-
-def _find_custom_unit_entry(participant: BattleParticipant, unit_key: str) -> dict | None:
-    raw_custom_units = participant.custom_units_json if isinstance(participant.custom_units_json, list) else []
-    for entry in raw_custom_units:
-        if not isinstance(entry, dict):
-            continue
-        if str(entry.get("key", "")).strip() == unit_key:
-            return entry
-    return None
 
 
 def _build_battle_unit_event_payload(participant: BattleParticipant, unit: dict) -> dict:
@@ -627,285 +377,10 @@ def _build_battle_unit_event_payload(participant: BattleParticipant, unit: dict)
             payload["is_large"] = bool(getattr(henchman.group, "large", False))
         return payload
 
-    custom_unit = _find_custom_unit_entry(participant, unit["unit_key"])
+    custom_unit = custom_unit_entry(participant, unit["unit_key"])
     if custom_unit:
         payload["name"] = str(custom_unit.get("name", "")).strip() or None
     return payload
-
-
-def _coerce_bool(value, *, field_name: str):
-    if isinstance(value, bool):
-        return value
-    if isinstance(value, str):
-        lowered = value.strip().lower()
-        if lowered in {"true", "1", "yes"}:
-            return True
-        if lowered in {"false", "0", "no"}:
-            return False
-    raise ValueError(f"{field_name} must be true or false")
-
-
-def _coerce_int(value, *, field_name: str, minimum: int = 0, maximum: int | None = None) -> int:
-    try:
-        parsed = int(value)
-    except (TypeError, ValueError):
-        raise ValueError(f"{field_name} must be an integer") from None
-    parsed = max(minimum, parsed)
-    if maximum is not None:
-        parsed = min(maximum, parsed)
-    return parsed
-
-
-def _normalize_postbattle_json(raw_value):
-    if raw_value is None:
-        return {
-            "exploration": {"dice_values": [], "resource_id": None},
-            "finds": {"gold_crowns": 0, "items": []},
-            "upkeep": {"pay_upkeep": True, "entries": {}},
-            "unit_results": {},
-        }
-    if not isinstance(raw_value, dict):
-        raise ValueError("postbattle_json must be an object")
-
-    exploration_raw = raw_value.get("exploration", {})
-    if exploration_raw is None:
-        exploration_raw = {}
-    if not isinstance(exploration_raw, dict):
-        raise ValueError("postbattle exploration must be an object")
-
-    dice_values_raw = exploration_raw.get("dice_values")
-    if dice_values_raw is None:
-        dice_values_raw = exploration_raw.get("dice", [])
-    if dice_values_raw is None:
-        dice_values_raw = []
-    if not isinstance(dice_values_raw, list):
-        raise ValueError("postbattle exploration dice_values must be a list")
-    normalized_dice_values = []
-    for entry in dice_values_raw:
-        if isinstance(entry, dict):
-            entry = entry.get("value", 1)
-        normalized_dice_values.append(_coerce_int(entry, field_name="exploration die value", minimum=1, maximum=6))
-    if len(normalized_dice_values) > 10:
-        raise ValueError("postbattle exploration dice_values must contain at most 10 entries")
-
-    resource_id = exploration_raw.get("resource_id")
-    if resource_id in ("", None):
-        resource_id = None
-    elif resource_id is not None:
-        resource_id = _coerce_int(resource_id, field_name="exploration resource_id", minimum=1)
-
-    amount_override_raw = exploration_raw.get("amount_override")
-    amount_override: int | None = None
-    if amount_override_raw not in (None, ""):
-        amount_override = _coerce_int(amount_override_raw, field_name="exploration amount_override", minimum=0)
-
-    exploration = {
-        "dice_values": normalized_dice_values,
-        "resource_id": resource_id,
-        "amount_override": amount_override,
-    }
-
-    finds_raw = raw_value.get("finds", {})
-    if finds_raw is None:
-        finds_raw = {}
-    if not isinstance(finds_raw, dict):
-        raise ValueError("postbattle finds must be an object")
-
-    gold_crowns = _coerce_int(
-        finds_raw.get("gold_crowns", 0),
-        field_name="postbattle finds gold_crowns",
-        minimum=0,
-        maximum=999999,
-    )
-    find_items_raw = finds_raw.get("items", [])
-    if find_items_raw is None:
-        find_items_raw = []
-    if not isinstance(find_items_raw, list):
-        raise ValueError("postbattle finds items must be a list")
-
-    finds_items = []
-    for entry in find_items_raw:
-        if not isinstance(entry, dict):
-            raise ValueError("Each postbattle finds item must be an object")
-        item_id = _coerce_int(entry.get("item_id"), field_name="postbattle finds item_id", minimum=1)
-        item_name = entry.get("name", "")
-        item_type = entry.get("type")
-        if not isinstance(item_name, str):
-            raise ValueError("postbattle finds item name must be a string")
-        if item_type is not None and not isinstance(item_type, str):
-            raise ValueError("postbattle finds item type must be a string or null")
-        cost_raw = entry.get("cost")
-        if cost_raw in ("", None):
-            cost = None
-        else:
-            cost = _coerce_int(
-                cost_raw,
-                field_name="postbattle finds item cost",
-                minimum=0,
-                maximum=999999,
-            )
-        finds_items.append(
-            {
-                "item_id": item_id,
-                "name": item_name.strip()[:255],
-                "type": item_type.strip()[:80] if isinstance(item_type, str) else None,
-                "cost": cost,
-            }
-        )
-
-    finds = {
-        "gold_crowns": gold_crowns,
-        "items": finds_items,
-    }
-
-    upkeep_raw = raw_value.get("upkeep", {})
-    if upkeep_raw is None:
-        upkeep_raw = {}
-    if not isinstance(upkeep_raw, dict):
-        raise ValueError("postbattle upkeep must be an object")
-
-    upkeep_entries_raw = upkeep_raw.get("entries", {})
-    if upkeep_entries_raw is None:
-        upkeep_entries_raw = {}
-    if not isinstance(upkeep_entries_raw, dict):
-        raise ValueError("postbattle upkeep entries must be an object")
-
-    upkeep_entries = {}
-    for unit_key, entry in upkeep_entries_raw.items():
-        if not isinstance(unit_key, str) or not unit_key.strip():
-            raise ValueError("postbattle upkeep entry keys must be strings")
-        parsed_unit = _parse_unit_key(unit_key)
-        if parsed_unit["unit_type"] != "hired_sword":
-            continue
-        if not isinstance(entry, dict):
-            raise ValueError("Each postbattle upkeep entry must be an object")
-
-        unit_name = entry.get("unit_name", "")
-        if not isinstance(unit_name, str):
-            raise ValueError("postbattle upkeep unit_name must be a string")
-
-        cost_raw = entry.get("cost")
-        if cost_raw in ("", None):
-            cost = None
-        else:
-            cost = _coerce_int(
-                cost_raw,
-                field_name="postbattle upkeep cost",
-                minimum=0,
-                maximum=999999,
-            )
-
-        upkeep_entries[parsed_unit["unit_key"]] = {
-            "unit_name": unit_name.strip()[:120],
-            "cost": cost,
-        }
-
-    upkeep = {
-        "pay_upkeep": bool(upkeep_raw.get("pay_upkeep", True)),
-        "entries": upkeep_entries,
-    }
-
-    unit_results_raw = raw_value.get("unit_results", {})
-    if unit_results_raw is None:
-        unit_results_raw = {}
-    if not isinstance(unit_results_raw, dict):
-        raise ValueError("postbattle unit_results must be an object")
-
-    unit_results = {}
-    for unit_key, entry in unit_results_raw.items():
-        if not isinstance(unit_key, str) or not unit_key.strip():
-            raise ValueError("postbattle unit_result keys must be strings")
-        parsed_unit = _parse_unit_key(unit_key)
-        if parsed_unit["unit_type"] in {"custom", "bestiary"}:
-            continue
-        if not isinstance(entry, dict):
-            raise ValueError("Each postbattle unit_result must be an object")
-
-        unit_name = entry.get("unit_name", "")
-        unit_kind = entry.get("unit_kind", parsed_unit["unit_type"])
-        unit_type = entry.get("unit_type", parsed_unit["unit_type"])
-        group_name = entry.get("group_name", "")
-        if not isinstance(unit_name, str):
-            raise ValueError("postbattle unit_name must be a string")
-        if not isinstance(unit_kind, str):
-            raise ValueError("postbattle unit_kind must be a string")
-        if not isinstance(unit_type, str):
-            raise ValueError("postbattle unit_type must be a string")
-        if not isinstance(group_name, str):
-            raise ValueError("postbattle group_name must be a string")
-
-        special_ids_raw = entry.get("special_ids", [])
-        if special_ids_raw is None:
-            special_ids_raw = []
-        if not isinstance(special_ids_raw, list):
-            raise ValueError("postbattle special_ids must be a list")
-        special_ids: list[int] = []
-        for special_id in special_ids_raw:
-            parsed_special_id = _coerce_int(special_id, field_name="postbattle special_id", minimum=1)
-            if parsed_special_id not in special_ids:
-                special_ids.append(parsed_special_id)
-
-        serious_injury_rolls_raw = entry.get("serious_injury_rolls", entry.get("death_rolls", []))
-        if serious_injury_rolls_raw is None:
-            serious_injury_rolls_raw = []
-        if not isinstance(serious_injury_rolls_raw, list):
-            raise ValueError("postbattle serious_injury_rolls must be a list")
-        serious_injury_rolls = []
-        for roll in serious_injury_rolls_raw:
-            if not isinstance(roll, dict):
-                raise ValueError("Each serious_injury_roll must be an object")
-            roll_type = str(roll.get("roll_type", "")).strip().lower()
-            if roll_type not in {"d6", "d66", "d100"}:
-                raise ValueError("serious_injury_roll roll_type is invalid")
-            rolls_raw = roll.get("rolls", [])
-            if not isinstance(rolls_raw, list):
-                raise ValueError("serious_injury_roll rolls must be a list")
-            roll_max = 100 if roll_type == "d100" else 6
-            rolls = [
-                _coerce_int(value, field_name="serious_injury_roll roll", minimum=1, maximum=roll_max)
-                for value in rolls_raw
-            ]
-            if roll_type == "d6" and len(rolls) != 1:
-                raise ValueError("d6 serious_injury_roll must have exactly one roll")
-            if roll_type == "d66" and len(rolls) != 2:
-                raise ValueError("d66 serious_injury_roll must have exactly two rolls")
-            if roll_type == "d100" and len(rolls) != 1:
-                raise ValueError("d100 serious_injury_roll must have exactly one roll")
-            # the server's table gives the result and its effect; `apply` is the tick (decision 7, BUG-47)
-            serious_injury_rolls.append(
-                {
-                    "roll_type": roll_type,
-                    "rolls": rolls,
-                    **describe_roll(roll_type, rolls),
-                    "apply": _coerce_bool(roll.get("apply", True), field_name="serious_injury_roll apply"),
-                }
-            )
-
-        unit_results[parsed_unit["unit_key"]] = {
-            "unit_name": unit_name.strip()[:120],
-            "unit_kind": unit_kind.strip()[:40],
-            "unit_type": unit_type.strip()[:120],
-            "group_name": group_name.strip()[:120],
-            "out_of_action": bool(entry.get("out_of_action", False)),
-            "kill_count": _coerce_int(
-                entry.get("kill_count", 0), field_name="postbattle kill_count", minimum=0, maximum=9999
-            ),
-            "xp_earned": _coerce_int(
-                entry.get("xp_earned", 0), field_name="postbattle xp_earned", minimum=0, maximum=9999
-            ),
-            "dead": bool(entry.get("dead", False)),
-            # battle stat changes are temporary unless kept (decision 6)
-            "keep_stats": _coerce_bool(entry.get("keep_stats", False), field_name="postbattle keep_stats"),
-            "special_ids": special_ids,
-            "serious_injury_rolls": serious_injury_rolls,
-        }
-
-    return {
-        "exploration": exploration,
-        "finds": finds,
-        "upkeep": upkeep,
-        "unit_results": unit_results,
-    }
 
 
 def _resolve_find_item_cost(item: Item) -> int | None:
@@ -925,7 +400,7 @@ def _validate_postbattle_json_for_participant(
     participant: BattleParticipant,
     postbattle_json: dict,
 ) -> dict:
-    normalized: dict = _normalize_postbattle_json(postbattle_json)
+    normalized: dict = normalize_postbattle(postbattle_json)
     unit_results = normalized["unit_results"]
     hero_roll_type = (
         CampaignSettings.objects.filter(campaign_id=battle.campaign_id)
@@ -933,13 +408,13 @@ def _validate_postbattle_json_for_participant(
         .first()
         or "d66"
     )
-    required_unit_keys = _participant_permanent_selected_unit_keys(participant)
+    required_unit_keys = permanent_unit_keys(participant)
     missing_keys = sorted(required_unit_keys - set(unit_results.keys()))
     if missing_keys:
         raise ValueError("postbattle unit_results are missing selected units")
 
     for unit_key, result in unit_results.items():
-        parsed_unit = _parse_unit_key(unit_key)
+        parsed_unit = parse_unit_key(unit_key)
         expected_roll_type = hero_roll_type if parsed_unit["unit_type"] == "hero" else "d6"
         for roll in result.get("serious_injury_rolls", []):
             if roll.get("roll_type") != expected_roll_type:
@@ -969,7 +444,7 @@ def _validate_postbattle_json_for_participant(
     upkeep_entry_keys = normalized.get("upkeep", {}).get("entries", {}).keys()
     upkeep_hired_sword_ids = []
     for unit_key in upkeep_entry_keys:
-        parsed_unit = _parse_unit_key(unit_key)
+        parsed_unit = parse_unit_key(unit_key)
         if parsed_unit["unit_type"] == "hired_sword" and parsed_unit["unit_id"] is not None:
             upkeep_hired_sword_ids.append(parsed_unit["unit_id"])
 
@@ -1033,8 +508,8 @@ def _remove_used_single_use_items(battle: Battle, participant: BattleParticipant
         if not isinstance(unit_key, str) or not unit_key.strip():
             continue
         try:
-            item_id = _coerce_int(item_id_raw, field_name="item_id", minimum=1)
-            parsed_unit = _parse_unit_key(unit_key)
+            item_id = coerce_int(item_id_raw, field_name="item_id", minimum=1)
+            parsed_unit = parse_unit_key(unit_key)
         except ValueError:
             continue
         if parsed_unit["unit_type"] not in {"hero", "hired_sword", "henchman"}:
@@ -1111,7 +586,7 @@ def _apply_participant_postbattle_results(
 ) -> list[Warning]:
     """Apply a participant's postbattle, which the caller validated (_validate_postbattle_json_for_participant: once,
     part of PERF-36); the warnings say which units were left out (BUG-73) and what was unusual (decision 9)."""
-    unit_information = _normalize_unit_information(participant.unit_information_json)
+    unit_information = normalize_unit_information(participant.unit_information_json)
     unit_results = normalized["unit_results"]
     warband = Warband.objects.select_for_update().get(id=participant.warband_id)
     campaign_settings = CampaignSettings.objects.filter(campaign_id=battle.campaign_id).first()
@@ -1120,7 +595,7 @@ def _apply_participant_postbattle_results(
     hired_sword_ids = []
     henchman_ids = []
     for unit_key in unit_results.keys():
-        parsed = _parse_unit_key(unit_key)
+        parsed = parse_unit_key(unit_key)
         if parsed["unit_type"] == "hero":
             hero_ids.append(parsed["unit_id"])
         elif parsed["unit_type"] == "hired_sword":
@@ -1173,11 +648,11 @@ def _apply_participant_postbattle_results(
     group_stats_override_by_id: dict[int, dict[str, int | str]] = {}
     group_stats_update_fields_by_id: defaultdict[int, set[str]] = defaultdict(set)
     for unit_key, result in unit_results.items():
-        parsed = _parse_unit_key(unit_key)
+        parsed = parse_unit_key(unit_key)
         info = unit_information.get(unit_key, {})
         stats_override = info.get("stats_override", {})
         kill_count = kills_by_unit.get(unit_key, 0)
-        xp_earned = _coerce_int(result.get("xp_earned", 0), field_name="xp_earned", minimum=0, maximum=9999)
+        xp_earned = coerce_int(result.get("xp_earned", 0), field_name="xp_earned", minimum=0, maximum=9999)
         unit_name = result.get("unit_name", "") or unit_key
         injury = injury_outcome(result, unit_name)  # the last roll, when ticked (decision 7)
         dead = bool(result.get("dead", False)) or injury.dead
@@ -1299,7 +774,7 @@ def _apply_participant_postbattle_results(
         upkeep_entries = upkeep.get("entries", {})
         upkeep_hired_sword_ids = []
         for unit_key in upkeep_entries.keys():
-            parsed_unit = _parse_unit_key(unit_key)
+            parsed_unit = parse_unit_key(unit_key)
             if parsed_unit["unit_type"] == "hired_sword" and parsed_unit["unit_id"] is not None:
                 upkeep_hired_sword_ids.append(parsed_unit["unit_id"])
 
@@ -1315,7 +790,7 @@ def _apply_participant_postbattle_results(
         upkeep_total = 0
         upkeep_note_lines: list[str] = []
         for unit_key, entry in upkeep_entries.items():
-            parsed_unit = _parse_unit_key(unit_key)
+            parsed_unit = parse_unit_key(unit_key)
             if parsed_unit["unit_type"] != "hired_sword":
                 continue
             hired_sword = active_upkeep_hired_swords.get(parsed_unit["unit_id"])
@@ -1324,7 +799,7 @@ def _apply_participant_postbattle_results(
             cost = entry.get("cost")
             if cost is None:
                 continue
-            normalized_cost = _coerce_int(
+            normalized_cost = coerce_int(
                 cost,
                 field_name="postbattle upkeep cost",
                 minimum=0,
@@ -1339,7 +814,7 @@ def _apply_participant_postbattle_results(
             ledger.record(warband, LedgerAction.UPKEEP, -upkeep_total, "Post-battle upkeep", notes=notes)
 
     finds = normalized.get("finds", {"gold_crowns": 0, "items": []})
-    finds_gold_crowns = _coerce_int(
+    finds_gold_crowns = coerce_int(
         finds.get("gold_crowns", 0),
         field_name="postbattle finds gold_crowns",
         minimum=0,
@@ -1349,7 +824,7 @@ def _apply_participant_postbattle_results(
     canonical_find_items: list[dict] = []
     if finds_items:
         requested_item_ids = [
-            _coerce_int(entry.get("item_id"), field_name="postbattle finds item_id", minimum=1) for entry in finds_items
+            coerce_int(entry.get("item_id"), field_name="postbattle finds item_id", minimum=1) for entry in finds_items
         ]
         available_items = {
             item.id: item

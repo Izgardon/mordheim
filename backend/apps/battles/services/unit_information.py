@@ -145,3 +145,38 @@ def apply_whole_map(stored: dict[str, dict[str, Any]], whole: Any) -> dict[str, 
         entry = merged.setdefault(unit_key, _new_entry())
         entry.update(clean_editable_fields(info))
     return _without_empty(merged)
+
+
+def unit_entry(unit_information: dict[str, dict[str, Any]], unit_key: str) -> dict[str, Any]:
+    """The unit's entry in a normalised map, added (with what was stored for it) when it isn't there yet; a kill
+    or out-of-action tap changes it in place."""
+    existing = unit_information.get(unit_key, {})
+    if not isinstance(existing, dict):
+        existing = {}
+    try:
+        existing_kill_count = int(existing.get("kill_count", 0) or 0)
+    except (TypeError, ValueError):
+        existing_kill_count = 0
+    entry = {
+        "stats_override": existing.get("stats_override", {}),
+        "notes": existing.get("notes", ""),
+        "current_wounds": existing.get("current_wounds", None),
+        "out_of_action": bool(existing.get("out_of_action", False)),
+        "kill_count": max(0, existing_kill_count),
+    }
+    unit_information[unit_key] = entry
+    return entry
+
+
+def parse_armour_save_override(value: Any) -> int | None:
+    """A kept override's armour save for the unit's record: as every unit write parses it (decision 11), "-" is
+    none."""
+    if value is None:
+        return None
+    cleaned = str(value).strip()
+    if cleaned == "-":
+        return None
+    try:
+        return parse_armour_save(cleaned)
+    except ValueError:
+        raise ValueError(f"unit information armour_save: {ARMOUR_SAVE_ERROR}") from None

@@ -12,8 +12,13 @@ from ..services.errors import BattleError
 from ..services.events import append_event
 from ..services.exploration import keep_exploration
 from ..services.item_use import check_payload_size, item_use_payload
+from ..services.selection import selected_unit_keys
 from ..services.timing import postbattle_deadline, record_activity
+from ..services.unit_information import unit_entry
 from ..services.unusual import unusual_value_warnings
+from ..validation.coerce import coerce_bool
+from ..validation.config import normalize_unit_information
+from ..validation.unit_keys import parse_unit_key
 from .closing import skip_postbattle
 from .responses import broadcast_response, response_with_snapshot
 from .shared import (
@@ -22,14 +27,9 @@ from .shared import (
     _all_started_participants_confirmed,
     _apply_participant_postbattle_results,
     _build_battle_unit_event_payload,
-    _coerce_bool,
     _finalize_battle,
     _get_user_battle_participant,
-    _normalize_unit_information,
-    _parse_unit_key,
-    _participant_selected_unit_keys,
     _reset_trading_actions_for_battle_participants,
-    _upsert_unit_information,
     _validate_postbattle_json_for_participant,
 )
 
@@ -49,7 +49,7 @@ def _item_use_refusal(battle: Battle, participant: BattleParticipant) -> Respons
 
 def _checked_item_use(battle: Battle, participant: BattleParticipant, payload_json: dict) -> dict:
     """The item use to store: a unit of the player's (selected, once the battle is active) carrying the item."""
-    selected = _participant_selected_unit_keys(participant) if battle.status == Battle.STATUS_ACTIVE else None
+    selected = selected_unit_keys(participant) if battle.status == Battle.STATUS_ACTIVE else None
     return item_use_payload(participant, payload_json, selected)
 
 
@@ -125,12 +125,12 @@ class CampaignBattleUnitOoaView(APIView):
     def post(self, request, campaign_id, battle_id):
         raw_unit_key = request.data.get("unit_key")
         try:
-            unit = _parse_unit_key(raw_unit_key)
+            unit = parse_unit_key(raw_unit_key)
         except ValueError as exc:
             return Response({"detail": str(exc)}, status=400)
 
         try:
-            out_of_action = _coerce_bool(request.data.get("out_of_action"), field_name="out_of_action")
+            out_of_action = coerce_bool(request.data.get("out_of_action"), field_name="out_of_action")
         except ValueError as exc:
             return Response({"detail": str(exc)}, status=400)
 
@@ -144,12 +144,12 @@ class CampaignBattleUnitOoaView(APIView):
             if participant.status != BattleParticipant.STATUS_IN_BATTLE:
                 return Response({"detail": "You are not currently in battle"}, status=400)
 
-            selected_keys = _participant_selected_unit_keys(participant)
+            selected_keys = selected_unit_keys(participant)
             if unit["unit_key"] not in selected_keys:
                 return Response({"detail": "unit_key is not selected for this participant"}, status=400)
 
-            unit_information = _normalize_unit_information(participant.unit_information_json)
-            info = _upsert_unit_information(unit_information, unit["unit_key"])
+            unit_information = normalize_unit_information(participant.unit_information_json)
+            info = unit_entry(unit_information, unit["unit_key"])
             if info["out_of_action"] == out_of_action:
                 return response_with_snapshot(battle.id, events)
 
@@ -213,14 +213,14 @@ class CampaignBattleUnitKillView(APIView):
         raw_notes = request.data.get("notes", "")
 
         try:
-            killer = _parse_unit_key(raw_killer_unit_key)
+            killer = parse_unit_key(raw_killer_unit_key)
         except ValueError as exc:
             return Response({"detail": str(exc)}, status=400)
 
         victim = None
         if raw_victim_unit_key:
             try:
-                victim = _parse_unit_key(raw_victim_unit_key)
+                victim = parse_unit_key(raw_victim_unit_key)
             except ValueError as exc:
                 return Response({"detail": str(exc)}, status=400)
 
@@ -247,7 +247,7 @@ class CampaignBattleUnitKillView(APIView):
             )
 
         try:
-            earned_xp = _coerce_bool(request.data.get("earned_xp", True), field_name="earned_xp")
+            earned_xp = coerce_bool(request.data.get("earned_xp", True), field_name="earned_xp")
         except ValueError as exc:
             return Response({"detail": str(exc)}, status=400)
         source = "postbattle" if request.data.get("source") == "postbattle" else "battle"
@@ -260,12 +260,12 @@ class CampaignBattleUnitKillView(APIView):
             if (refusal := _kill_refusal(battle, participant, source)) is not None:
                 return refusal
 
-            killer_selected_keys = _participant_selected_unit_keys(participant)
+            killer_selected_keys = selected_unit_keys(participant)
             if killer["unit_key"] not in killer_selected_keys:
                 return Response({"detail": "killer_unit_key is not selected for this participant"}, status=400)
 
-            unit_information = _normalize_unit_information(participant.unit_information_json)
-            killer_info = _upsert_unit_information(unit_information, killer["unit_key"])
+            unit_information = normalize_unit_information(participant.unit_information_json)
+            killer_info = unit_entry(unit_information, killer["unit_key"])
             if killer_info["out_of_action"] and source == "battle":  # in postbattle he may have scored before
                 return Response({"detail": "Cannot record kills for a unit that is out of action"}, status=400)
 
@@ -275,7 +275,7 @@ class CampaignBattleUnitKillView(APIView):
             victim_participant = None
             if victim is not None:
                 for entry in participants:
-                    entry_selected_keys = _participant_selected_unit_keys(entry)
+                    entry_selected_keys = selected_unit_keys(entry)
                     if victim["unit_key"] in entry_selected_keys:
                         victim_participant = entry
                         break
