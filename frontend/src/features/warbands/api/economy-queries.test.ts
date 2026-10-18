@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 
 import {
   prependTreasuryRow,
+  readTradeData,
+  setTradeData,
+  tradeQuery,
   warbandLogsQuery,
   warbandStashQuery,
   warbandTreasuryQuery,
@@ -9,6 +12,7 @@ import {
 import { queryKeys } from "@/lib/query-keys";
 import { createTestQueryClient } from "@/test/query-test-utils";
 
+import type { TradeRequest } from "../types/trade-request-types";
 import type { WarbandTrade } from "../types/warband-types";
 
 const row = (id: number, description: string): WarbandTrade => ({
@@ -76,5 +80,36 @@ describe("prependTreasuryRow", () => {
     prependTreasuryRow(queryClient, 9, row(3, "Lantern"));
 
     expect(queryClient.getQueryData(queryKeys.campaign.warbandTreasury(7, 9))).toBeUndefined();
+  });
+});
+
+describe("the trade query", () => {
+  const trade = { id: "t-1", campaign_id: 7, status: "accepted" } as TradeRequest;
+
+  it("sits under the campaign, keyed by the request id", () => {
+    expect(queryKeys.campaign.trade(7, "t-1")).toEqual([
+      ...queryKeys.campaign.all(7),
+      "trade",
+      "t-1",
+    ]);
+    expect(tradeQuery(7, "t-1").queryKey).toEqual(queryKeys.campaign.trade(7, "t-1"));
+  });
+
+  it("is never stale but is read once per mount, with no retry", () => {
+    expect(tradeQuery(7, "t-1")).toMatchObject({
+      staleTime: Infinity,
+      refetchOnMount: "always",
+      retry: false,
+    });
+  });
+
+  it("takes a write's answer or an event's payload under its own key", () => {
+    const queryClient = createTestQueryClient();
+
+    setTradeData(queryClient, trade);
+
+    expect(queryClient.getQueryData(queryKeys.campaign.trade(7, "t-1"))).toEqual(trade);
+    expect(readTradeData(queryClient, 7, "t-1")).toEqual(trade);
+    expect(readTradeData(queryClient, 7, "t-2")).toBeUndefined();
   });
 });

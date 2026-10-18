@@ -62,7 +62,6 @@ function expectEmptySession(
   expect(store.battleInviteNotifications).toEqual([]);
   expect(store.battleResultRequestNotifications).toEqual([]);
   expect(store.currentBattleSession).toBeNull();
-  expect(store.tradeSession).toBeNull();
 }
 
 describe("sign-out clears the previous user's data (BUG-22)", () => {

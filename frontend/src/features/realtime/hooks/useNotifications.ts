@@ -23,7 +23,7 @@ import type { TradeNotification } from "@/features/warbands/types/trade-request-
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useAppStore } from "@/stores/app-store";
 import { toCurrentBattleSession } from "@/features/battles/utils/battle-session";
-import { toTradeSession } from "../utils/notification-mappers";
+import { setTradeData } from "@/features/warbands/api/economy-queries";
 
 /** The notification lists and their actions (accept, decline, dismiss, clear). */
 export function useNotifications() {
@@ -41,7 +41,6 @@ export function useNotifications() {
     removeBattleResultRequestNotification,
     clearBattleResultRequestNotifications,
     setCurrentBattleSession,
-    setTradeSession,
   } = useAppStore();
 
   const acceptTradeNotification = useCallback(
@@ -50,11 +49,12 @@ export function useNotifications() {
         return;
       }
       const request = await acceptTradeRequest(notification.campaignId, notification.id);
-      setTradeSession(toTradeSession(request, user.id, "active"));
+      // The accepted trade is the trade query's: the warband page opens it from ?trade=.
+      setTradeData(queryClient, request);
       removeTradeRequestNotification(notification.id);
       navigate(`/campaigns/${notification.campaignId}/warband?trade=${notification.id}`);
     },
-    [navigate, removeTradeRequestNotification, setTradeSession, user]
+    [navigate, queryClient, removeTradeRequestNotification, user]
   );
 
   const declineTradeNotification = useCallback(

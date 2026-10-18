@@ -6,7 +6,6 @@ import type { AppNotification } from "@/features/notifications/api/notifications
 import type {
   TradeNotification,
   TradeRequest,
-  TradeSession,
 } from "@/features/warbands/types/trade-request-types";
 
 /** Pure conversions from notification payloads (REST list and realtime events) to store items. */
@@ -24,24 +23,6 @@ export const toTradeNotification = (
   createdAt: request.created_at,
   expiresAt: request.expires_at,
 });
-
-export const toTradeSession = (
-  request: TradeRequest,
-  userId: number,
-  status: "pending" | "active"
-): TradeSession => {
-  const role = request.from_user.id === userId ? "initiator" : "recipient";
-  return {
-    requestId: request.id,
-    campaignId: request.campaign_id,
-    partner: role === "initiator" ? request.to_user : request.from_user,
-    fromWarband: request.from_warband,
-    toWarband: request.to_warband,
-    status,
-    expiresAt: request.expires_at,
-    role,
-  };
-};
 
 export type BattleNotificationPayload = {
   battle_id?: number;

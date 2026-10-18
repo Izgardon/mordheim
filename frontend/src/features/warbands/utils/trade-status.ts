@@ -1,4 +1,4 @@
-import type { TradeRequest } from "../types/trade-request-types";
+import type { TradeRequest, TradeSession } from "../types/trade-request-types";
 
 /** A request that can no longer be traded on. */
 export const isTradeOver = (request: TradeRequest) =>
@@ -27,4 +27,22 @@ export function describeTradeEnd(request: TradeRequest, userId?: number | null):
     default:
       return null;
   }
+}
+
+/**
+ * The trade as player `userId` sees it: their role, their partner, and whether it is open
+ * ("active", once accepted) or still waiting for an answer ("pending").
+ */
+export function toTradeSession(request: TradeRequest, userId: number): TradeSession {
+  const role = request.from_user.id === userId ? "initiator" : "recipient";
+  return {
+    requestId: request.id,
+    campaignId: request.campaign_id,
+    partner: role === "initiator" ? request.to_user : request.from_user,
+    fromWarband: request.from_warband,
+    toWarband: request.to_warband,
+    status: request.status === "accepted" ? "active" : "pending",
+    expiresAt: request.expires_at,
+    role,
+  };
 }

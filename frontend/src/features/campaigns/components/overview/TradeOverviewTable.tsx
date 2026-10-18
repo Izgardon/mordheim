@@ -6,6 +6,9 @@ import { ChevronDown } from "lucide-react";
 // components
 import { RosterSkeleton } from "@components/card-skeleton";
 
+// utils
+import { offerValue } from "@/features/warbands/utils/trade-offer";
+
 // types
 import type { TradeOffer, TradeRequest } from "@/features/warbands/types/trade-request-types";
 
@@ -23,17 +26,6 @@ const formatTradeDate = (value?: string | null) => {
   const date = new Date(value);
   if (Number.isNaN(date.valueOf())) return "-";
   return date.toLocaleDateString();
-};
-
-const getOfferValue = (offer?: TradeOffer) => {
-  const gold = Math.max(0, Number(offer?.gold ?? 0));
-  const items = Array.isArray(offer?.items) ? (offer?.items ?? []) : [];
-  const itemTotal = items.reduce((sum, item) => {
-    const quantity = Math.max(0, Number(item.quantity ?? 0));
-    const cost = Math.max(0, Number(item.cost ?? 0));
-    return sum + quantity * cost;
-  }, 0);
-  return gold + itemTotal;
 };
 
 const buildOfferLines = (offer?: TradeOffer) => {
@@ -122,8 +114,7 @@ export default function TradeOverviewTable({
                     {trades.map((trade, index) => {
                       const fromName = trade.from_warband?.name || "Unknown warband";
                       const toName = trade.to_warband?.name || "Unknown warband";
-                      const totalValue =
-                        getOfferValue(trade.from_offer) + getOfferValue(trade.to_offer);
+                      const totalValue = offerValue(trade.from_offer) + offerValue(trade.to_offer);
                       const isExpanded = expandedTradeIds.includes(trade.id);
                       const fromLines = buildOfferLines(trade.from_offer);
                       const toLines = buildOfferLines(trade.to_offer);

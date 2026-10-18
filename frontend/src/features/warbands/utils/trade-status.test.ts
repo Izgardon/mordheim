@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { describeTradeEnd, isTradeOver } from "./trade-status";
+import { describeTradeEnd, isTradeOver, toTradeSession } from "./trade-status";
 
 import type { TradeRequest } from "../types/trade-request-types";
 
@@ -34,5 +34,31 @@ describe("trade-status", () => {
     expect(describeTradeEnd(trade("expired"), 1)).toBe("The trade request expired.");
     expect(describeTradeEnd(trade("completed"), 1)).toBe("The trade is complete.");
     expect(describeTradeEnd(trade("accepted"), 1)).toBeNull();
+  });
+
+  it("reads a trade from either player's side: role, partner, and open once accepted", () => {
+    const request = {
+      ...trade("accepted"),
+      campaign_id: 7,
+      expires_at: "2026-10-18T12:00:00Z",
+      from_warband: { id: 9, name: "The Black Wolves" },
+      to_warband: { id: 12, name: "Reikland Rats" },
+    } as TradeRequest;
+
+    expect(toTradeSession(request, 1)).toEqual({
+      requestId: "t-1",
+      campaignId: 7,
+      partner: { id: 2, label: "Bob" },
+      fromWarband: { id: 9, name: "The Black Wolves" },
+      toWarband: { id: 12, name: "Reikland Rats" },
+      status: "active",
+      expiresAt: "2026-10-18T12:00:00Z",
+      role: "initiator",
+    });
+    expect(toTradeSession(request, 2)).toMatchObject({
+      partner: { id: 1, label: "Ann" },
+      role: "recipient",
+    });
+    expect(toTradeSession({ ...request, status: "pending" }, 2).status).toBe("pending");
   });
 });

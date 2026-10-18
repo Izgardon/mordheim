@@ -1,7 +1,7 @@
 /**
  * `useWarbandTradeSession`: how a trade session is restored from `?trade=` (one read of the
  * request, BUG-113), what each realtime event triggers (ECON-PERF-02), and how closing and expiry
- * behave (BUG-69). The real app store and router run; the trade channel is replaced by a hook
+ * behave (BUG-69). The real router and query cache run; the trade channel is replaced by a hook
  * that hands the test its handler, and `apiRequest` is answered by a fake server.
  */
 import { act, screen, waitFor } from "@testing-library/react";
@@ -12,7 +12,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useWarbandTradeSession } from "./useWarbandTradeSession";
 import { AppToaster } from "@/components/ui/toaster";
 import { ApiError } from "@/lib/api-client";
-import { AppStoreProvider, useAppStore } from "@/stores/app-store";
+import { AppStoreProvider } from "@/stores/app-store";
 import { queryKeys } from "@/lib/query-keys";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
@@ -90,7 +90,7 @@ function WarbandPageTrade({ loadWarchestItems }: { loadWarchestItems: () => void
     warbandId: 9,
     loadWarchestItems,
   });
-  const { tradeSession } = useAppStore();
+  const tradeSession = trade.session;
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
   return (
@@ -149,7 +149,11 @@ const openOnTrade = async () => {
   return page;
 };
 
-const deliver = (message: TradeEventMessage) => act(() => channel.handler(message));
+/** Delivers an event, then lets the query cache tell the page (it notifies on the next tick). */
+const deliver = async (message: TradeEventMessage) => {
+  act(() => channel.handler(message));
+  await act(() => new Promise((resolve) => setTimeout(resolve, 0)));
+};
 
 beforeEach(() => {
   fakeApi.reset();
@@ -247,7 +251,7 @@ describe("useWarbandTradeSession: an open trade and how trades end", () => {
   it("says the partner declined when the recipient closes the trade", async () => {
     await openOnTrade();
 
-    deliver({ type: "trade.closed", payload: request({ status: "declined" }) });
+    await deliver({ type: "trade.closed", payload: request({ status: "declined" }) });
 
     expect(screen.getByText("Session: none")).toBeInTheDocument();
     expect(await screen.findByText("Bob declined the trade.")).toBeInTheDocument();
@@ -256,7 +260,7 @@ describe("useWarbandTradeSession: an open trade and how trades end", () => {
   it("says why the partner's lock couldn't complete the trade, with both sides unlocked", async () => {
     await openOnTrade();
 
-    deliver({
+    await deliver({
       type: "trade.offer_updated",
       payload: {
         ...request({ to_offer: { gold: 15, items: [] } }),
@@ -278,12 +282,12 @@ describe("useWarbandTradeSession: realtime events", () => {
     await openOnTrade();
     fakeApi.clearRequests();
 
-    deliver({
+    await deliver({
       type: "trade.offer_updated",
       payload: request({ to_offer: { gold: 15, items: [] } }),
     });
     expect(screen.getByText("Bob offers: 15 gc")).toBeInTheDocument();
-    deliver({
+    await deliver({
       type: "trade.locked",
       payload: request({ to_offer: { gold: 20, items: [] }, to_accepted: true }),
     });
@@ -299,7 +303,7 @@ describe("useWarbandTradeSession: realtime events", () => {
     renderPage();
     await screen.findByText("Session: pending (initiator)");
 
-    deliver({ type: "trade.accepted", payload: request() });
+    await deliver({ type: "trade.accepted", payload: request() });
 
     expect(screen.getByText("Session: active (initiator)")).toBeInTheDocument();
   });
@@ -308,7 +312,7 @@ describe("useWarbandTradeSession: realtime events", () => {
     const { loadWarchestItems } = await openOnTrade();
     fakeApi.clearRequests();
 
-    deliver({ type: "trade.completed", payload: completed() });
+    await deliver({ type: "trade.completed", payload: completed() });
 
     expect(screen.getByText("Session: none")).toBeInTheDocument();
     expect(screen.getByText("URL: (none)")).toBeInTheDocument();
@@ -321,7 +325,7 @@ describe("useWarbandTradeSession: realtime events", () => {
     await openOnTrade();
     fakeApi.clearRequests();
 
-    deliver({ type: "trade.completed", payload: request({ status: "completed" }) });
+    await deliver({ type: "trade.completed", payload: request({ status: "completed" }) });
 
     await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/summary/")).toBe(1));
   });
@@ -343,7 +347,7 @@ describe("useWarbandTradeSession: realtime events", () => {
   it("ends the session when the partner cancels", async () => {
     await openOnTrade();
 
-    deliver({ type: "trade.closed" });
+    await deliver({ type: "trade.closed" });
 
     expect(screen.getByText("Session: none")).toBeInTheDocument();
     expect(screen.getByText("URL: (none)")).toBeInTheDocument();

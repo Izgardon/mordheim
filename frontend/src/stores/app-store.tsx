@@ -7,10 +7,7 @@ import { useAuth } from "@/features/auth/hooks/use-auth";
 // types
 import type { AuthUser } from "@/features/auth/types/auth-types";
 import type { Warband } from "@/features/warbands/types/warband-types";
-import type {
-  TradeNotification,
-  TradeSession,
-} from "@/features/warbands/types/trade-request-types";
+import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 import type {
   BattleInviteNotification,
   BattleResultRequestNotification,
@@ -30,7 +27,6 @@ type AppStoreValue = {
   battleInviteNotifications: BattleInviteNotification[];
   battleResultRequestNotifications: BattleResultRequestNotification[];
   currentBattleSession: CurrentBattleSession | null;
-  tradeSession: TradeSession | null;
   setWarband: (warband: Warband | null) => void;
   setWarbandLoading: (loading: boolean) => void;
   setWarbandError: (error: string) => void;
@@ -46,7 +42,6 @@ type AppStoreValue = {
   clearBattleResultRequestNotifications: () => void;
   setCurrentBattleSession: (session: CurrentBattleSession | null) => void;
   clearCurrentBattleSession: () => void;
-  setTradeSession: (session: TradeSession | null) => void;
 };
 
 const AppStoreContext = createContext<AppStoreValue | null>(null);
@@ -68,7 +63,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   >([]);
   const [currentBattleSession, setCurrentBattleSessionState] =
     useState<CurrentBattleSession | null>(null);
-  const [tradeSession, setTradeSessionState] = useState<TradeSession | null>(null);
 
   // When the signed-in user changes (sign-out, expiry, another account), drop the previous
   // user's session state before anything renders with it (BUG-22). Done during render, the
@@ -86,7 +80,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       setBattleInviteNotifications([]);
       setBattleResultRequestNotifications([]);
       setCurrentBattleSessionState(null);
-      setTradeSessionState(null);
     }
   }
 
@@ -162,10 +155,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
     setCurrentBattleSessionState(null);
   }, []);
 
-  const setTradeSession = useCallback((session: TradeSession | null) => {
-    setTradeSessionState(session);
-  }, []);
-
   const value = useMemo<AppStoreValue>(
     () => ({
       user,
@@ -178,7 +167,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       battleInviteNotifications,
       battleResultRequestNotifications,
       currentBattleSession,
-      tradeSession,
       setWarband,
       setWarbandLoading,
       setWarbandError,
@@ -194,7 +182,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       clearBattleResultRequestNotifications,
       setCurrentBattleSession,
       clearCurrentBattleSession,
-      setTradeSession,
     }),
     [
       user,
@@ -207,7 +194,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       battleInviteNotifications,
       battleResultRequestNotifications,
       currentBattleSession,
-      tradeSession,
       addTradeRequestNotification,
       removeTradeRequestNotification,
       clearTradeRequestNotifications,
@@ -219,7 +205,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       clearBattleResultRequestNotifications,
       setCurrentBattleSession,
       clearCurrentBattleSession,
-      setTradeSession,
     ]
   );
 

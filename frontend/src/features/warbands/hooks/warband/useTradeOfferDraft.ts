@@ -1,35 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { updateTradeOffer } from "@/features/campaigns/api/campaigns-api";
+import { useTradeOfferSave } from "@/features/warbands/api/economy-queries";
 import { offerErrorMessage } from "@/features/warbands/utils/trade-errors";
+import { buildOfferPayload, type DraftOffer } from "@/features/warbands/utils/trade-offer";
 
-import type {
-  TradeOffer,
-  TradeRequest,
-  TradeSession,
-} from "@/features/warbands/types/trade-request-types";
-
-export type DraftOffer = Required<TradeOffer>;
+import type { TradeRequest, TradeSession } from "@/features/warbands/types/trade-request-types";
 
 /** How long after the last edit the offer is saved: rapid clicks make one save (ECON-PERF-02). */
 export const OFFER_SAVE_DELAY_MS = 600;
-
-export const normalizeOffer = (offer?: TradeOffer): DraftOffer => ({
-  trader_id: offer?.trader_id ?? null,
-  trader_name: offer?.trader_name ?? null,
-  gold: Math.max(0, Number(offer?.gold ?? 0)),
-  items: Array.isArray(offer?.items) ? (offer?.items ?? []) : [],
-});
-
-const buildOfferPayload = (offer: DraftOffer, maxGold: number) => ({
-  trader_id: offer.trader_id ?? null,
-  gold: Math.min(Math.max(0, Number(offer.gold || 0)), maxGold),
-  items: offer.items.map((item) => ({
-    id: item.id,
-    name: item.name,
-    quantity: Math.max(0, Number(item.quantity) || 0),
-  })),
-});
 
 type UseTradeOfferDraftOptions = {
   session: TradeSession | null;
@@ -61,6 +39,7 @@ export function useTradeOfferDraft({
   const [isSaving, setIsSaving] = useState(false);
   const [hasFailed, setHasFailed] = useState(false);
   const [error, setError] = useState("");
+  const { mutateAsync: saveOffer } = useTradeOfferSave();
   // Counts edits, so a save's answer knows whether the draft changed while it was in flight.
   const editCount = useRef(0);
   const onSavedRef = useRef(onSaved);
@@ -104,7 +83,7 @@ export function useTradeOfferDraft({
     const timeout = window.setTimeout(() => {
       const sentAt = editCount.current;
       setIsSaving(true);
-      updateTradeOffer(campaignId, requestId, buildOfferPayload(draft, maxGold))
+      saveOffer({ campaignId, requestId, offer: buildOfferPayload(draft, maxGold) })
         .then((request) => {
           setError("");
           // Nothing was edited while this save was out, so the server's copy is the draft.
@@ -120,7 +99,7 @@ export function useTradeOfferDraft({
         .finally(() => setIsSaving(false));
     }, OFFER_SAVE_DELAY_MS);
     return () => window.clearTimeout(timeout);
-  }, [campaignId, draft, hasFailed, isDirty, isSaving, locked, maxGold, requestId]);
+  }, [campaignId, draft, hasFailed, isDirty, isSaving, locked, maxGold, requestId, saveOffer]);
 
   return { draft, edit, isDirty, isSaving, error };
 }

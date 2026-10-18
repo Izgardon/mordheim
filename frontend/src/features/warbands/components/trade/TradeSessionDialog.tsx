@@ -1,43 +1,34 @@
-import type { ChangeEvent } from "react";
 import { useMemo, useState } from "react";
 
-import { Button } from "@components/button";
-import { NumberInput } from "@components/number-input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@components/dialog";
-import { cn } from "@/lib/utils";
 
-import { lockTradeOffer, unlockTradeOffer } from "@/features/campaigns/api/campaigns-api";
+import TradeActions from "./TradeActions";
+import TradeOfferEditor from "./TradeOfferEditor";
+import TradeOfferSummary from "./TradeOfferSummary";
+import { useTradeOfferDraft } from "@/features/warbands/hooks/warband/useTradeOfferDraft";
+import { useTradeLockActions } from "@/features/warbands/hooks/warband/useTradeLockActions";
 import {
+  addOfferItem,
   normalizeOffer,
-  useTradeOfferDraft,
-  type DraftOffer,
-} from "@/features/warbands/hooks/warband/useTradeOfferDraft";
-import { ConfirmDialog } from "@components/confirm-dialog";
-import { lockErrorMessage, tradeFromError } from "@/features/warbands/utils/trade-errors";
+  offerableStash,
+  removeOfferItem,
+  withOfferGold,
+  withOfferTrader,
+  type OfferableStashItem,
+} from "@/features/warbands/utils/trade-offer";
+
 import type { WarbandHero, WarbandItemSummary } from "@/features/warbands/types/warband-types";
 import type {
   TradeOfferItem,
   TradeRequest,
   TradeSession,
 } from "@/features/warbands/types/trade-request-types";
-
-const calculateOfferValue = (offer: DraftOffer) => {
-  const gold = Math.max(0, Number(offer.gold ?? 0));
-  const itemTotal = offer.items.reduce((sum, item) => {
-    const quantity = Math.max(0, Number(item.quantity ?? 0));
-    const cost = Math.max(0, Number(item.cost ?? 0));
-    return sum + quantity * cost;
-  }, 0);
-  return gold + itemTotal;
-};
 
 type TradeSessionDialogProps = {
   session: TradeSession | null;
@@ -51,6 +42,10 @@ type TradeSessionDialogProps = {
   onClose: () => void;
 };
 
+/**
+ * An open trade: your offer as you edit it (`TradeOfferEditor`, saved by `useTradeOfferDraft`),
+ * both offers (`TradeOfferSummary`), and Cancel / Accept / Unaccept (`TradeActions`).
+ */
 export default function TradeSessionDialog({
   session,
   tradeRequest,
@@ -86,134 +81,41 @@ export default function TradeSessionDialog({
     locked: myAccepted,
     onSaved: onRequestUpdated,
   });
-  const { draft: draftOffer, edit: editOffer, isDirty, isSaving } = offer;
-  const [isLocking, setIsLocking] = useState(false);
-  const [isUnlocking, setIsUnlocking] = useState(false);
+  const { draft, edit } = offer;
+  const actions = useTradeLockActions({
+    session,
+    offerVersion: tradeRequest?.offer_version,
+    myAccepted,
+    onRequestUpdated,
+  });
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
-  const [actionError, setActionError] = useState("");
-  const error = actionError || offer.error;
+  const error = actions.actionError || offer.error;
+  const warchest = useMemo(() => offerableStash(warchestItems, draft), [draft, warchestItems]);
 
-  const offeredCounts = useMemo(() => {
-    const map = new Map<number, number>();
-    draftOffer.items.forEach((item) => {
-      map.set(item.id, (map.get(item.id) ?? 0) + item.quantity);
-    });
-    return map;
-  }, [draftOffer.items]);
-
-  const availableWarchest = useMemo(
-    () =>
-      warchestItems.map((item) => {
-        const total = Math.max(0, Number(item.quantity ?? 0));
-        const offered = offeredCounts.get(item.id) ?? 0;
-        return {
-          ...item,
-          total,
-          available: Math.max(0, total - offered),
-        };
-      }),
-    [offeredCounts, warchestItems]
-  );
-
-  const handleAddItem = (item: WarbandItemSummary & { available: number }) => {
-    if (myAccepted || item.available <= 0) {
-      return;
+  const handleAddItem = (item: OfferableStashItem) => {
+    if (!myAccepted && item.available > 0) {
+      edit((prev) => addOfferItem(prev, item));
     }
-    editOffer((prev) => {
-      const nextItems = [...prev.items];
-      const idx = nextItems.findIndex((entry) => entry.id === item.id);
-      if (idx === -1) {
-        nextItems.push({ id: item.id, name: item.name, quantity: 1, cost: item.cost ?? 0 });
-      } else {
-        nextItems[idx] = {
-          ...nextItems[idx],
-          cost: nextItems[idx].cost ?? item.cost ?? 0,
-          quantity: nextItems[idx].quantity + 1,
-        };
-      }
-      return { ...prev, items: nextItems };
-    });
   };
-
   const handleRemoveItem = (item: TradeOfferItem) => {
-    if (myAccepted) {
-      return;
+    if (!myAccepted) {
+      edit((prev) => removeOfferItem(prev, item));
     }
-    editOffer((prev) => {
-      const nextItems = prev.items
-        .map((entry) => (entry.id === item.id ? { ...entry, quantity: entry.quantity - 1 } : entry))
-        .filter((entry) => entry.quantity > 0);
-      return { ...prev, items: nextItems };
-    });
   };
-
-  const handleGoldChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (myAccepted) {
-      return;
+  const handleGoldChange = (typed: string) => {
+    if (!myAccepted) {
+      edit((prev) => withOfferGold(prev, typed, maxGold));
     }
-    const value = Number(event.target.value || 0);
-    const nextGold = Math.min(Math.max(0, value), maxGold);
-    editOffer((prev) => ({ ...prev, gold: nextGold }));
   };
-
   const handleTraderChange = (value: string) => {
-    if (myAccepted) {
-      return;
-    }
-    const nextTrader = value === "none" ? null : Number(value);
-    editOffer((prev) => ({ ...prev, trader_id: Number.isNaN(nextTrader) ? null : nextTrader }));
-  };
-
-  const handleAccept = async () => {
-    if (!session || myAccepted) {
-      return;
-    }
-    setIsLocking(true);
-    setActionError("");
-    try {
-      // The lock names the offers it was shown (BUG-35); it moves no gold (ECON-PERF-02).
-      const shown = tradeRequest?.offer_version;
-      const request = await lockTradeOffer(session.campaignId, session.requestId, shown);
-      onRequestUpdated(request);
-    } catch (err) {
-      // A refusal that carries the trade (the offers changed) shows it as it is now.
-      const current = tradeFromError(err);
-      if (current) {
-        onRequestUpdated(current);
-      }
-      setActionError(lockErrorMessage(err));
-    } finally {
-      setIsLocking(false);
-    }
-  };
-
-  const handleUnaccept = async () => {
-    if (!session || !myAccepted) {
-      return;
-    }
-    setIsUnlocking(true);
-    setActionError("");
-    try {
-      const request = await unlockTradeOffer(session.campaignId, session.requestId);
-      onRequestUpdated(request);
-    } catch (err) {
-      if (err instanceof Error) {
-        setActionError(err.message || "Unable to unaccept trade.");
-      } else {
-        setActionError("Unable to unaccept trade.");
-      }
-    } finally {
-      setIsUnlocking(false);
+    if (!myAccepted) {
+      edit((prev) => withOfferTrader(prev, value));
     }
   };
 
   if (!session) {
     return null;
   }
-
-  const traderValue = draftOffer.trader_id ? String(draftOffer.trader_id) : "none";
-  const myTotalValue = calculateOfferValue(draftOffer);
-  const theirTotalValue = calculateOfferValue(theirOffer);
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => (!open ? onClose() : null)}>
@@ -226,180 +128,34 @@ export default function TradeSessionDialog({
         </DialogHeader>
 
         <div className="space-y-6">
-          <div className="grid gap-4 min-[960px]:grid-cols-2">
-            <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
-                Trader
-              </p>
-              <Select value={traderValue} onValueChange={handleTraderChange} disabled={myAccepted}>
-                <SelectTrigger className="bg-background/70">
-                  <SelectValue placeholder="Select (optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
-                  {heroes.map((hero) => (
-                    <SelectItem
-                      key={hero.id}
-                      value={String(hero.id)}
-                      disabled={hero.trading_action === false}
-                    >
-                      {hero.name || `Hero ${hero.id}`}
-                      {hero.trading_action === false ? " (spent)" : ""}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
-                  Add gold
-                </p>
-                <span className="text-xs text-muted-foreground">Available: {maxGold} gc</span>
-              </div>
-              <NumberInput
-                min={0}
-                max={maxGold}
-                step={1}
-                value={draftOffer.gold ?? 0}
-                onChange={handleGoldChange}
-                disabled={myAccepted}
-                allowEmpty
-                className="bg-background/70 border-border/60 text-foreground"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
-                Warchest
-              </p>
-              {isWarchestLoading ? (
-                <span className="text-xs text-muted-foreground">Loading...</span>
-              ) : null}
-            </div>
-            {warchestError ? (
-              <p className="text-xs text-red-400">{warchestError}</p>
-            ) : (
-              <div className="grid max-h-48 grid-cols-2 gap-2 overflow-y-auto pr-1 min-[960px]:grid-cols-4">
-                {availableWarchest.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => handleAddItem(item)}
-                    disabled={myAccepted || item.available <= 0}
-                    className={cn(
-                      "rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-left text-xs transition-colors",
-                      item.available <= 0 || myAccepted ? "opacity-50" : "hover:border-white/40"
-                    )}
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="truncate font-semibold">{item.name}</span>
-                      <span className="text-[0.55rem] text-muted-foreground">
-                        {item.available}/{item.total}
-                      </span>
-                    </div>
-                  </button>
-                ))}
-                {availableWarchest.length === 0 && !isWarchestLoading ? (
-                  <div className="text-xs text-muted-foreground">No items in warchest.</div>
-                ) : null}
-              </div>
-            )}
-          </div>
+          <TradeOfferEditor
+            draft={draft}
+            heroes={heroes}
+            maxGold={maxGold}
+            locked={myAccepted}
+            warchest={warchest}
+            isWarchestLoading={isWarchestLoading}
+            warchestError={warchestError}
+            onTraderChange={handleTraderChange}
+            onGoldChange={handleGoldChange}
+            onAddItem={handleAddItem}
+          />
 
           <div className="grid gap-4 min-[960px]:grid-cols-2">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
-                    Your offer
-                  </p>
-                  <span className="text-[0.65rem] text-muted-foreground">
-                    Total value: {myTotalValue} gc
-                  </span>
-                </div>
-                {myAccepted ? (
-                  <span className="surface-inline theme-heading-soft rounded-full px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.2em]">
-                    Accepted
-                  </span>
-                ) : null}
-              </div>
-              <div className="rounded-xl border border-[#2b2117]/80 bg-[#0f0c09] p-3">
-                <div className="grid min-h-[80px] grid-cols-2 gap-2">
-                  {draftOffer.items.length === 0 ? (
-                    <span className="text-xs text-muted-foreground">No items added.</span>
-                  ) : (
-                    draftOffer.items.map((item) => (
-                      <button
-                        key={`${item.id}-${item.quantity}`}
-                        type="button"
-                        onClick={() => handleRemoveItem(item)}
-                        disabled={myAccepted}
-                        className={cn(
-                          "rounded border border-white/10 bg-white/5 px-2 py-1 text-left text-xs",
-                          myAccepted ? "opacity-50" : "hover:border-white/40"
-                        )}
-                      >
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="truncate">{item.name}</span>
-                          <span className="text-[0.55rem] text-muted-foreground">
-                            x{item.quantity}
-                          </span>
-                        </div>
-                      </button>
-                    ))
-                  )}
-                </div>
-                <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-                  <span>Gold</span>
-                  <span>{draftOffer.gold || 0} gc</span>
-                </div>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
-                    {session.partner.label}&apos;s offer
-                  </p>
-                  <span className="text-[0.65rem] text-muted-foreground">
-                    Total value: {theirTotalValue} gc
-                  </span>
-                </div>
-                {theirAccepted ? (
-                  <span className="surface-inline theme-heading-soft rounded-full px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.2em]">
-                    Accepted
-                  </span>
-                ) : null}
-              </div>
-              <div className="rounded-xl border border-[#2b2117]/80 bg-[#0f0c09] p-3">
-                <div className="grid min-h-[80px] grid-cols-2 gap-2">
-                  {theirOffer.items.length === 0 ? (
-                    <span className="text-xs text-muted-foreground">No items yet.</span>
-                  ) : (
-                    theirOffer.items.map((item) => (
-                      <div
-                        key={`${item.id}-${item.quantity}`}
-                        className="rounded border border-white/10 bg-white/5 px-2 py-1 text-left text-xs"
-                      >
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="truncate">{item.name}</span>
-                          <span className="text-[0.55rem] text-muted-foreground">
-                            x{item.quantity}
-                          </span>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-                <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-                  <span>Gold</span>
-                  <span>{theirOffer.gold || 0} gc</span>
-                </div>
-              </div>
-            </div>
+            <TradeOfferSummary
+              title="Your offer"
+              offer={draft}
+              accepted={myAccepted}
+              emptyText="No items added."
+              onRemoveItem={handleRemoveItem}
+              disabled={myAccepted}
+            />
+            <TradeOfferSummary
+              title={`${session.partner.label}'s offer`}
+              offer={theirOffer}
+              accepted={theirAccepted}
+              emptyText="No items yet."
+            />
           </div>
 
           {error ? <p className="text-xs text-red-400">{error}</p> : null}
@@ -408,41 +164,16 @@ export default function TradeSessionDialog({
           ) : null}
         </div>
 
-        <DialogFooter>
-          <Button type="button" variant="secondary" onClick={() => setShowCancelConfirm(true)}>
-            Cancel
-          </Button>
-          {myAccepted ? (
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={handleUnaccept}
-              disabled={isUnlocking}
-            >
-              {isUnlocking ? "Unaccepting..." : "Unaccept"}
-            </Button>
-          ) : (
-            // Accept locks the server's copy, so it waits until your changes are saved.
-            <Button
-              type="button"
-              onClick={handleAccept}
-              disabled={isDirty || isSaving || isLocking}
-            >
-              {isLocking ? "Accepting..." : "Accept"}
-            </Button>
-          )}
-        </DialogFooter>
-        <ConfirmDialog
-          open={showCancelConfirm}
-          onOpenChange={setShowCancelConfirm}
-          description="Are you sure you want to cancel this trade? Both sides will lose their offers."
-          confirmText="Cancel Trade"
-          cancelText="Go Back"
-          onConfirm={() => {
-            // The dialog stays mounted on the page: a confirmed prompt mustn't greet the next trade.
-            setShowCancelConfirm(false);
-            onClose();
-          }}
+        <TradeActions
+          myAccepted={myAccepted}
+          hasUnsavedOffer={offer.isDirty || offer.isSaving}
+          isLocking={actions.isLocking}
+          isUnlocking={actions.isUnlocking}
+          onAccept={actions.accept}
+          onUnaccept={actions.unaccept}
+          onCancel={onClose}
+          showCancelConfirm={showCancelConfirm}
+          onShowCancelConfirmChange={setShowCancelConfirm}
         />
       </DialogContent>
     </Dialog>

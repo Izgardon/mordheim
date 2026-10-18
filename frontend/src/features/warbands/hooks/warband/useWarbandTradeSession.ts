@@ -1,30 +1,20 @@
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { useAppStore } from "@/stores/app-store";
 import { useAuth } from "../../../auth/hooks/use-auth";
 import {
   closeTradeRequest,
   createTradeRequest,
   getTradeRequest,
 } from "../../../campaigns/api/campaigns-api";
+import { setTradeData, tradeQuery } from "../../api/economy-queries";
 import { useWarbandCacheUpdate } from "../../api/warband-cache";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { useTradeEvents } from "@/lib/realtime";
-import {
-  completionFailureMessage,
-  openTradeIdFromError,
-  type TradeCompletionError,
-} from "../../utils/trade-errors";
-import { describeTradeEnd, isTradeOver } from "../../utils/trade-status";
+import { openTradeIdFromError } from "../../utils/trade-errors";
+import { describeTradeEnd, isTradeOver, toTradeSession } from "../../utils/trade-status";
+import { useTradeChannel } from "./useTradeChannel";
 
 import type { TradeCompletion, TradeRequest, TradeSession } from "../../types/trade-request-types";
 
@@ -36,14 +26,20 @@ type UseWarbandTradeSessionParams = {
 };
 
 type UseWarbandTradeSessionReturn = {
+  /** The open trade, from `?trade=` and the trade query; null when none is open. */
+  session: TradeSession | null;
   tradeRequest: TradeRequest | null;
-  setTradeRequest: Dispatch<SetStateAction<TradeRequest | null>>;
   /** A write's answer (offer, lock, unlock); a completing lock also ends the session. */
   handleRequestUpdated: (request: TradeRequest) => void;
   handleTradeRequestCreated: (targetUserId: number) => Promise<void>;
   handleTradeSessionClose: () => void;
 };
 
+/**
+ * The trade open on the warband page. `?trade=<id>` says which trade it is; the trade query holds
+ * it, read once per visit (BUG-113) and patched by write answers and realtime events, so no copy
+ * of it lives in the app store.
+ */
 export function useWarbandTradeSession({
   campaignId,
   hasCampaignId,
@@ -51,81 +47,102 @@ export function useWarbandTradeSession({
   loadWarchestItems,
 }: UseWarbandTradeSessionParams): UseWarbandTradeSessionReturn {
   const { user } = useAuth();
-  const { tradeSession, setTradeSession } = useAppStore();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [tradeRequest, setTradeRequest] = useState<TradeRequest | null>(null);
+  const queryClient = useQueryClient();
   const updateWarbandCache = useWarbandCacheUpdate();
-  const [expiredRequestId, setExpiredRequestId] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
   const canLoad = hasCampaignId && !Number.isNaN(campaignId);
+  const userId = user?.id;
+  const tradeParam = searchParams.get("trade");
+  // The latest URL, for callbacks that must not change with every ?tab= (ECON-PERF-02).
+  const latest = useRef({ searchParams, setSearchParams });
+  latest.current = { searchParams, setSearchParams };
+  // The trade whose end this page has already handled (it says nothing more about it).
+  const handledEnd = useRef<string | null>(null);
 
-  const tradeRequestParam = searchParams.get("trade");
-  // The latest URL and request, read by effects keyed on the trade alone (ECON-PERF-02).
-  const latest = useRef({ searchParams, setSearchParams, tradeRequest });
-  latest.current = { searchParams, setSearchParams, tradeRequest };
+  const trade = useQuery({
+    ...tradeQuery(campaignId, tradeParam ?? ""),
+    enabled: canLoad && Boolean(user) && Boolean(tradeParam),
+  });
+  const request = tradeParam && trade.data?.id === tradeParam ? trade.data : null;
+  const session = useMemo(
+    () =>
+      request && userId !== undefined && !isTradeOver(request)
+        ? toTradeSession(request, userId)
+        : null,
+    [request, userId]
+  );
+
+  const setTradeParam = useCallback((requestId: string | null) => {
+    const next = new URLSearchParams(latest.current.searchParams);
+    if (requestId) {
+      next.set("trade", requestId);
+    } else {
+      next.delete("trade");
+    }
+    latest.current.setSearchParams(next, { replace: true });
+  }, []);
 
   /** Says how a trade ended: cancelled by its sender, declined, expired or completed. */
-  const userId = user?.id;
   const announceEnd = useCallback(
-    (request: TradeRequest) => {
-      const ended = describeTradeEnd(request, userId);
-      if (ended) {
-        toast(ended, { id: `trade-ended-${request.id}` });
+    (ended: TradeRequest) => {
+      const text = describeTradeEnd(ended, userId);
+      if (text) {
+        toast(text, { id: `trade-ended-${ended.id}` });
       }
     },
     [userId]
   );
 
-  /** Drops `?trade=` from the URL, keeping the other parameters. */
-  const dropTradeParam = useCallback(() => {
-    const next = new URLSearchParams(latest.current.searchParams);
-    next.delete("trade");
-    latest.current.setSearchParams(next, { replace: true });
-  }, []);
+  // A trade that has ended (a link to it, or the server saying so) leaves the URL, with why.
+  useEffect(() => {
+    if (request && isTradeOver(request)) {
+      setTradeParam(null);
+      if (handledEnd.current !== request.id) {
+        announceEnd(request);
+      }
+    }
+  }, [announceEnd, request, setTradeParam]);
 
-  const buildTradeSession = useCallback(
-    (request: TradeRequest, status: TradeSession["status"]): TradeSession => {
-      const role = request.from_user.id === user?.id ? "initiator" : "recipient";
-      return {
-        requestId: request.id,
-        campaignId: request.campaign_id,
-        partner: role === "initiator" ? request.to_user : request.from_user,
-        fromWarband: request.from_warband,
-        toWarband: request.to_warband,
-        status,
-        expiresAt: request.expires_at,
-        role,
-      };
-    },
-    [user?.id]
-  );
+  const failure = trade.isError ? trade.error : null;
+  const hasCopy = trade.data !== undefined;
+  useEffect(() => {
+    if (failure) {
+      toast.error(hasCopy ? "Couldn't load the trade." : "Couldn't open the trade.", {
+        description: getErrorMessage(failure),
+      });
+    }
+  }, [failure, hasCopy]);
+
+  // The warchest is offered once the trade is open.
+  const sessionStatus = session?.status;
+  useEffect(() => {
+    if (sessionStatus === "active") {
+      loadWarchestItems();
+    }
+  }, [loadWarchestItems, sessionStatus]);
 
   const handleTradeRequestCreated = useCallback(
     async (targetUserId: number) => {
       if (!canLoad || !user) {
         return;
       }
-      let request: TradeRequest;
+      let created: TradeRequest;
       try {
-        request = await createTradeRequest(campaignId, targetUserId);
+        created = await createTradeRequest(campaignId, targetUserId);
       } catch (error) {
         // One open trade per pair of warbands (BUG-114): open the one that exists instead.
         const openId = openTradeIdFromError(error);
         if (!openId) {
           throw error;
         }
-        request = await getTradeRequest(campaignId, openId);
+        created = await getTradeRequest(campaignId, openId);
         toast("You already have a trade open with this player.", { id: `trade-open-${openId}` });
       }
       // The answer is the request, so it isn't read again (BUG-113).
-      setTradeRequest(request);
-      setTradeSession(
-        buildTradeSession(request, request.status === "accepted" ? "active" : "pending")
-      );
-      const nextParams = new URLSearchParams(searchParams);
-      nextParams.set("trade", request.id);
-      setSearchParams(nextParams, { replace: true });
+      setTradeData(queryClient, created);
+      setTradeParam(created.id);
     },
-    [buildTradeSession, campaignId, canLoad, searchParams, setSearchParams, setTradeSession, user]
+    [campaignId, canLoad, queryClient, setTradeParam, user]
   );
 
   /**
@@ -133,15 +150,15 @@ export function useWarbandTradeSession({
    * warband takes the summary the completion carries (no summary GET), and the stash reloads.
    */
   const finishTrade = useCallback(
-    (request: TradeCompletion, endsSession: boolean) => {
-      setTradeRequest(request);
+    (completed: TradeCompletion, endsSession: boolean) => {
+      handledEnd.current = completed.id;
       if (endsSession) {
-        setTradeSession(null);
-        dropTradeParam();
+        setTradeParam(null);
       }
-      if (request.from_summary && request.to_summary) {
-        updateWarbandCache(request.from_warband.id, { summary: request.from_summary });
-        updateWarbandCache(request.to_warband.id, { summary: request.to_summary });
+      setTradeData(queryClient, completed);
+      if (completed.from_summary && completed.to_summary) {
+        updateWarbandCache(completed.from_warband.id, { summary: completed.from_summary });
+        updateWarbandCache(completed.to_warband.id, { summary: completed.to_summary });
       } else if (warbandId) {
         updateWarbandCache(warbandId);
       }
@@ -149,26 +166,27 @@ export function useWarbandTradeSession({
         loadWarchestItems();
       }
     },
-    [dropTradeParam, loadWarchestItems, setTradeSession, updateWarbandCache, warbandId]
+    [loadWarchestItems, queryClient, setTradeParam, updateWarbandCache, warbandId]
   );
 
   const handleRequestUpdated = useCallback(
-    (request: TradeRequest) => {
-      if (request.status === "completed") {
+    (updated: TradeRequest) => {
+      if (updated.status === "completed") {
         // The locker gets no event of its own once it names its socket: its answer completes.
-        finishTrade(request, true);
+        finishTrade(updated, true);
         return;
       }
-      setTradeRequest(request);
+      setTradeData(queryClient, updated);
     },
-    [finishTrade]
+    [finishTrade, queryClient]
   );
 
   const handleTradeSessionClose = useCallback(() => {
-    if (tradeSession && canLoad) {
-      const partner = tradeSession.partner.label;
+    if (session && canLoad) {
+      handledEnd.current = session.requestId;
+      const partner = session.partner.label;
       // The dialog closes at once; a failed close is said, not swallowed (ECON-UX-05).
-      closeTradeRequest(campaignId, tradeSession.requestId)
+      closeTradeRequest(campaignId, session.requestId)
         .catch((error: unknown) => {
           toast.error(`Couldn't cancel the trade with ${partner}.`, {
             description: getErrorMessage(error, "It may stay open until it expires."),
@@ -180,171 +198,28 @@ export function useWarbandTradeSession({
           }
         });
     }
-    setTradeSession(null);
-    dropTradeParam();
-  }, [
-    campaignId,
-    canLoad,
-    dropTradeParam,
-    setTradeSession,
-    tradeSession,
-    updateWarbandCache,
-    warbandId,
-  ]);
+    setTradeParam(null);
+  }, [campaignId, canLoad, session, setTradeParam, updateWarbandCache, warbandId]);
 
-  // Restore the session from ?trade= (a link or a notification): one read of the request,
-  // which the session keeps, so the read below doesn't repeat it (BUG-113).
-  const sessionRequestId = tradeSession?.requestId ?? null;
-  useEffect(() => {
-    if (!tradeRequestParam || !canLoad || !user || sessionRequestId === tradeRequestParam) {
-      return;
-    }
-    getTradeRequest(campaignId, tradeRequestParam)
-      .then((request) => {
-        if (isTradeOver(request)) {
-          setTradeSession(null);
-          dropTradeParam();
-          announceEnd(request);
-          return;
-        }
-        setTradeRequest(request);
-        setTradeSession(
-          buildTradeSession(request, request.status === "accepted" ? "active" : "pending")
-        );
-      })
-      .catch((error: unknown) => {
-        toast.error("Couldn't open the trade.", { description: getErrorMessage(error) });
-      });
-  }, [
-    announceEnd,
-    buildTradeSession,
-    campaignId,
-    canLoad,
-    dropTradeParam,
-    sessionRequestId,
-    setTradeSession,
-    tradeRequestParam,
-    user,
-  ]);
-
-  // Load warchest when trade session becomes active
-  useEffect(() => {
-    if (tradeSession?.status === "active") {
-      loadWarchestItems();
-    }
-  }, [loadWarchestItems, tradeSession?.status]);
-
-  // Stop listening once the trade request expires.
-  const tradeRequestId = tradeSession?.requestId ?? null;
-  const tradeExpiresAt = tradeSession?.expiresAt ?? null;
-  useEffect(() => {
-    if (!tradeRequestId || !tradeExpiresAt) {
-      return;
-    }
-    const timeoutMs = new Date(tradeExpiresAt).getTime() - Date.now();
-    if (timeoutMs <= 0) {
-      setExpiredRequestId(tradeRequestId);
-      return;
-    }
-    const timer = window.setTimeout(() => setExpiredRequestId(tradeRequestId), timeoutMs);
-    return () => window.clearTimeout(timer);
-  }, [tradeExpiresAt, tradeRequestId]);
-
-  // One subscription per trade request; URL or session-object changes no longer rebuild it.
-  useTradeEvents(tradeRequestId !== expiredRequestId ? tradeRequestId : null, (message) => {
-    if (!tradeSession) {
-      return;
-    }
-
-    if (message.type === "trade.accepted") {
-      const request = message.payload as TradeRequest;
-      if (!request?.id) {
-        return;
-      }
-      setTradeSession(buildTradeSession(request, "active"));
-      setTradeRequest(request);
-      const nextParams = new URLSearchParams(searchParams);
-      if (!nextParams.get("trade")) {
-        nextParams.set("trade", request.id);
-        setSearchParams(nextParams, { replace: true });
-      }
-      return;
-    }
-
-    // Offers and locks move no gold: the event's request is all that changed (ECON-PERF-02).
-    if (message.type === "trade.offer_updated" || message.type === "trade.locked") {
-      const request = message.payload as TradeRequest & { error?: TradeCompletionError };
-      if (!request?.id) {
-        return;
-      }
-      setTradeRequest(request);
-      // The partner's lock couldn't complete the trade: both sides are unlocked again.
-      if (request.error) {
-        toast.error(completionFailureMessage(request.error, request), {
-          id: `trade-failed-${request.id}-${request.offer_version ?? 0}`,
-        });
-      }
-      return;
-    }
-
-    if (message.type === "trade.completed") {
-      const request = message.payload as TradeCompletion;
-      if (request?.id) {
-        finishTrade(request, tradeSession.requestId === request.id);
-      }
-      return;
-    }
-
-    if (message.type === "trade.closed") {
+  useTradeChannel({
+    session,
+    onCompleted: finishTrade,
+    onClosed: (closed) => {
       if (warbandId) {
         updateWarbandCache(warbandId);
       }
-      setTradeSession(null);
-      dropTradeParam();
-      const request = message.payload as TradeRequest | undefined;
-      if (request?.id) {
-        announceEnd(request);
+      setTradeParam(null);
+      if (closed?.id) {
+        handledEnd.current = closed.id;
+        setTradeData(queryClient, closed);
+        announceEnd(closed);
       }
-    }
+    },
   });
 
-  // The session's request, read once per trade (a session restored by another page, or kept
-  // in the app store across pages); URL changes such as ?tab= don't read it again.
-  useEffect(() => {
-    if (!sessionRequestId || !canLoad) {
-      setTradeRequest(null);
-      return;
-    }
-    if (latest.current.tradeRequest?.id === sessionRequestId) {
-      return;
-    }
-    let active = true;
-    getTradeRequest(campaignId, sessionRequestId)
-      .then((request) => {
-        if (!active) {
-          return;
-        }
-        if (isTradeOver(request)) {
-          setTradeSession(null);
-          dropTradeParam();
-          announceEnd(request);
-          return;
-        }
-        setTradeRequest(request);
-      })
-      .catch((error: unknown) => {
-        if (active) {
-          toast.error("Couldn't load the trade.", { description: getErrorMessage(error) });
-        }
-      });
-    return () => {
-      active = false;
-    };
-  }, [announceEnd, campaignId, canLoad, dropTradeParam, sessionRequestId, setTradeSession]);
-
   return {
-    tradeRequest,
-    setTradeRequest,
+    session,
+    tradeRequest: session ? request : null,
     handleRequestUpdated,
     handleTradeRequestCreated,
     handleTradeSessionClose,
