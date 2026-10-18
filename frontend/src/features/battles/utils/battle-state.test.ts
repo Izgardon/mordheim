@@ -2,11 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { BattleState } from "@/features/battles/types/battle-types";
 
-import {
-  getBattleStateLastEventId,
-  mergeBattleState,
-  shouldIgnoreBattleSocketEvent,
-} from "./battle-state";
+import { getBattleStateLastEventId, mergeBattleState } from "./battle-state";
 
 const baseState: BattleState = {
   battle: {
@@ -64,27 +60,5 @@ describe("battle-state utils", () => {
 
     expect(merged.events.map((event) => event.id)).toEqual([1, 2, 3]);
     expect(getBattleStateLastEventId(merged)).toBe(3);
-  });
-
-  it("ignores self-originated socket events but not remote ones", () => {
-    expect(
-      shouldIgnoreBattleSocketEvent(
-        {
-          type: "battle_state_updated",
-          payload: { actor_user_id: 7 },
-        },
-        7
-      )
-    ).toBe(true);
-
-    expect(
-      shouldIgnoreBattleSocketEvent(
-        {
-          type: "battle_state_updated",
-          payload: { actor_user_id: 9 },
-        },
-        7
-      )
-    ).toBe(false);
   });
 });

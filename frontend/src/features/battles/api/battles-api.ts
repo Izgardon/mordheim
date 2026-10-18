@@ -1,4 +1,5 @@
 import { apiRequest } from "@/lib/api-client";
+import { realtimeSocketId } from "@/lib/realtime/client";
 
 import type {
   BattleCustomUnit,
@@ -9,6 +10,16 @@ import type {
   BattleState,
   BattleStateView,
 } from "@/features/battles/types/battle-types";
+
+/**
+ * Battle writes name this browser's socket (BUG-75), so the server leaves only this tab out of the
+ * event the write broadcasts; your other tabs and devices still get it. Needs
+ * `x-pusher-socket-id` in the backend's CORS_ALLOW_HEADERS.
+ */
+const battleWriteHeaders = () => {
+  const socketId = realtimeSocketId();
+  return socketId ? { "X-Pusher-Socket-Id": socketId } : undefined;
+};
 
 /** The caller's battles in this campaign that haven't ended or been canceled. */
 export function listOpenCampaignBattles(
@@ -21,6 +32,7 @@ export function listOpenCampaignBattles(
 export function createBattle(campaignId: number, payload: BattleCreatePayload) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/`, {
     method: "POST",
+    headers: battleWriteHeaders(),
     body: payload,
   });
 }
@@ -28,6 +40,7 @@ export function createBattle(campaignId: number, payload: BattleCreatePayload) {
 export function reportBattleResult(campaignId: number, payload: ReportBattleResultPayload) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/report-result/`, {
     method: "POST",
+    headers: battleWriteHeaders(),
     body: payload,
   });
 }
@@ -65,6 +78,7 @@ export function getBattleRosters(campaignId: number, battleId: number) {
 export function joinBattle(campaignId: number, battleId: number) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/join/`, {
     method: "POST",
+    headers: battleWriteHeaders(),
   });
 }
 
@@ -82,6 +96,7 @@ export function saveBattleParticipantConfig(
 ) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/config/`, {
     method: "POST",
+    headers: battleWriteHeaders(),
     body: payload,
   });
 }
@@ -89,6 +104,7 @@ export function saveBattleParticipantConfig(
 export function setBattleReady(campaignId: number, battleId: number, ready: boolean) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/ready/`, {
     method: "POST",
+    headers: battleWriteHeaders(),
     body: { ready },
   });
 }
@@ -96,18 +112,21 @@ export function setBattleReady(campaignId: number, battleId: number, ready: bool
 export function cancelBattlePrebattle(campaignId: number, battleId: number) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/cancel/`, {
     method: "POST",
+    headers: battleWriteHeaders(),
   });
 }
 
 export function cancelBattleAsCreator(campaignId: number, battleId: number) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/cancel-battle/`, {
     method: "POST",
+    headers: battleWriteHeaders(),
   });
 }
 
 export function startBattle(campaignId: number, battleId: number) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/start/`, {
     method: "POST",
+    headers: battleWriteHeaders(),
   });
 }
 
@@ -121,6 +140,7 @@ export function appendBattleEvent(
 ) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/events/`, {
     method: "POST",
+    headers: battleWriteHeaders(),
     body: payload,
   });
 }
@@ -132,6 +152,7 @@ export function setUnitOutOfAction(
 ) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/unit-ooa/`, {
     method: "POST",
+    headers: battleWriteHeaders(),
     body: payload,
   });
 }
@@ -149,6 +170,7 @@ export function recordUnitKill(
 ) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/unit-kill/`, {
     method: "POST",
+    headers: battleWriteHeaders(),
     body: payload,
   });
 }
@@ -160,6 +182,7 @@ export function finishBattle(
 ) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/finish/`, {
     method: "POST",
+    headers: battleWriteHeaders(),
     body: payload,
   });
 }
@@ -167,12 +190,14 @@ export function finishBattle(
 export function approveReportedBattleResult(campaignId: number, battleId: number) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/approve-result/`, {
     method: "POST",
+    headers: battleWriteHeaders(),
   });
 }
 
 export function declineReportedBattleResult(campaignId: number, battleId: number) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/decline-result/`, {
     method: "POST",
+    headers: battleWriteHeaders(),
   });
 }
 
@@ -183,6 +208,7 @@ export function saveBattlePostbattleDraft(
 ) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/postbattle/`, {
     method: "POST",
+    headers: battleWriteHeaders(),
     body: payload,
   });
 }
@@ -196,6 +222,7 @@ export function finalizeBattlePostbattle(
     `/campaigns/${campaignId}/battles/${battleId}/finalize-postbattle/`,
     {
       method: "POST",
+      headers: battleWriteHeaders(),
       body: payload,
     }
   );
@@ -204,5 +231,6 @@ export function finalizeBattlePostbattle(
 export function confirmBattlePostbattle(campaignId: number, battleId: number) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/confirm/`, {
     method: "POST",
+    headers: battleWriteHeaders(),
   });
 }

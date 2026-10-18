@@ -1,6 +1,7 @@
 /**
  * How a battle page keeps its state: one full `state/` read on mount, then one more read for every
- * socket event another user sends. Characterised before PR B moves battle state into TanStack.
+ * socket event it hears (the server leaves out this tab's own). Characterised before PR B moves
+ * battle state into TanStack.
  */
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -37,7 +38,6 @@ const renderBattleState = () =>
       campaignId: CAMPAIGN_ID,
       battleId: BATTLE_ID,
       view: "active",
-      currentUserId: ME.id,
     })
   );
 
@@ -93,15 +93,17 @@ describe("useBattleState", () => {
     expect(fakeApi.calls()).toEqual([`GET ${statePath("active", 3)}`]);
   });
 
-  it("skips every event your own user sent, so your other tab or device never updates (BUG-75, pinned; flips in PR A)", async () => {
+  it("reads state for your own user's events too, so your other tab or device updates (BUG-75)", async () => {
     await renderLoaded();
 
+    // Sent from your phone: the server left only the phone's socket out, so this tab hears them.
     emit(socketMessage(battleEvent(4, "unit_kill_recorded", ME.id)));
     emit(stateUpdatedMessage("active", ME.id));
-    expect(fakeApi.calls()).toEqual([]);
 
-    emit(socketMessage(battleEvent(5, "unit_ooa_set", null)));
-    expect(fakeApi.calls()).toEqual([`GET ${statePath("active", 3)}`]);
+    expect(fakeApi.calls()).toEqual([
+      `GET ${statePath("active", 3)}`,
+      `GET ${statePath("active", 3)}`,
+    ]);
   });
 
   it("refetches nothing when the connection comes back or the tab is shown again (BUG-19, BATL-TEST-22, pinned; flips in PR B)", async () => {

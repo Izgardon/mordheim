@@ -87,7 +87,6 @@ export default function BattleActive() {
       campaignId,
       battleId: numericBattleId,
       view: "active",
-      currentUserId: user?.id,
     });
   const { rosters, rosterLoading, rosterErrors } = useBattleRosters(
     campaignId,

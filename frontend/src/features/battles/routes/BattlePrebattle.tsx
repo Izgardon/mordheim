@@ -70,7 +70,6 @@ export default function BattlePrebattle() {
     campaignId,
     battleId: numericBattleId,
     view: "prebattle",
-    currentUserId: user?.id,
   });
   const { rosters, rosterLoading, rosterErrors } = useBattleRosters(
     campaignId,

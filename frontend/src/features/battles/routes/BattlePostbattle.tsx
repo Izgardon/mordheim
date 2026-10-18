@@ -407,7 +407,6 @@ export default function BattlePostbattle() {
     campaignId,
     battleId: numericBattleId,
     view: "postbattle",
-    currentUserId: user?.id,
   });
   const [resources, setResources] = useState<WarbandResource[]>([]);
   const [isResourcesLoading, setIsResourcesLoading] = useState(false);

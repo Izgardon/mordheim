@@ -4,25 +4,15 @@ import { getBattleState } from "@/features/battles/api/battles-api";
 import type { BattleState, BattleStateView } from "@/features/battles/types/battle-types";
 import { useBattleEvents } from "@/lib/realtime";
 
-import {
-  getBattleStateLastEventId,
-  mergeBattleState,
-  shouldIgnoreBattleSocketEvent,
-} from "../utils/battle-state";
+import { getBattleStateLastEventId, mergeBattleState } from "../utils/battle-state";
 
 type UseBattleStateOptions = {
   campaignId: number;
   battleId: number;
   view: BattleStateView;
-  currentUserId?: number | null;
 };
 
-export function useBattleState({
-  campaignId,
-  battleId,
-  view,
-  currentUserId,
-}: UseBattleStateOptions) {
+export function useBattleState({ campaignId, battleId, view }: UseBattleStateOptions) {
   const [battleState, setBattleState] = useState<BattleState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -113,10 +103,9 @@ export function useBattleState({
     };
   }, [battleId, campaignId, replaceBattleState, view]);
 
-  useBattleEvents(Number.isNaN(battleId) ? null : battleId, (message) => {
-    if (shouldIgnoreBattleSocketEvent(message, currentUserId)) {
-      return;
-    }
+  // Battle writes name this tab's socket, so the server never sends this tab its own events; any
+  // event that arrives is news, even one your own user sent from another tab or device (BUG-75).
+  useBattleEvents(Number.isNaN(battleId) ? null : battleId, () => {
     void refreshBattleState();
   });
 
