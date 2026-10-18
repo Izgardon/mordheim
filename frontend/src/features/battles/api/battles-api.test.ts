@@ -5,6 +5,7 @@ import {
   approveReportedBattleResult,
   cancelBattleAsCreator,
   cancelBattlePrebattle,
+  closePostbattle,
   confirmBattlePostbattle,
   createBattle,
   declineReportedBattleResult,
@@ -73,6 +74,7 @@ describe("battles-api: battle writes name this browser's socket (BUG-75)", () =>
       () => saveBattlePostbattleDraft(1, 5, { postbattle_json: draft }),
       () => finalizeBattlePostbattle(1, 5, { postbattle_json: draft }),
       () => confirmBattlePostbattle(1, 5),
+      () => closePostbattle(1, 5),
     ];
     for (const write of writes) {
       await write();

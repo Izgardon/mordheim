@@ -8,6 +8,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { BattlePostbattleState, BattleState } from "@/features/battles/types/battle-types";
 import {
   ME,
+  OPPONENT,
   battleEvent,
   battlePath,
   battleRosters,
@@ -163,6 +164,56 @@ describe("BattlePostbattle requests", () => {
 
     expect(await screen.findByLabelText("Current path")).toHaveTextContent("/campaigns/1/warband");
     expect(fakeApi.requests()).toEqual([{ method: "POST", path: battlePath("confirm/") }]);
+  });
+
+  it("lets the creator close postbattle from More actions, naming who will be skipped (BUG-09)", async () => {
+    const user = setupUser();
+    fakeApi.on(`POST ${battlePath("close-postbattle/")}`, () => battleState({ status: "ended" }));
+    await renderPostbattle();
+
+    await user.click(screen.getByRole("button", { name: "More actions" }));
+    const close = within(screen.getByRole("dialog", { name: "More actions" })).getByRole("button", {
+      name: "Close postbattle",
+    });
+    expect(close).toHaveClass("btn-destructive");
+    await user.click(close);
+
+    const dialog = screen.getByRole("dialog", { name: "Close postbattle" });
+    expect(dialog).toHaveAccessibleDescription(/records wins and losses.*skipped/);
+    expect(
+      within(dialog)
+        .getAllByRole("listitem")
+        .map((item) => item.textContent)
+    ).toEqual(["You (Iron Vultures)", "Player (Night Razors)"]);
+    expect(fakeApi.requests()).toEqual([]);
+    await user.click(within(dialog).getByRole("button", { name: "Close postbattle" }));
+
+    expect(await screen.findByText("Campaign overview")).toBeInTheDocument();
+    expect(fakeApi.requests()).toEqual([{ method: "POST", path: battlePath("close-postbattle/") }]);
+  });
+
+  it("offers Close postbattle to a battle manager who didn't create the battle, and not to others (BUG-09)", async () => {
+    const user = setupUser();
+    server.battle.created_by_user_id = OPPONENT.id;
+    const { unmount } = renderBattleRoute("postbattle");
+    await screen.findByText("Captain Wolf");
+
+    await user.click(screen.getByRole("button", { name: "More actions" }));
+    expect(
+      within(screen.getByRole("dialog", { name: "More actions" }))
+        .getAllByRole("button")
+        .map((button) => button.textContent)
+    ).toEqual(["Skip postbattle"]);
+    unmount();
+
+    renderBattleRoute("postbattle", { campaign: { permissions: ["manage_battles"] } });
+    await screen.findByText("Captain Wolf");
+    await user.click(screen.getByRole("button", { name: "More actions" }));
+    expect(
+      within(screen.getByRole("dialog", { name: "More actions" })).getByRole("button", {
+        name: "Close postbattle",
+      })
+    ).toBeEnabled();
   });
 
   it("keeps Skip postbattle out of the desktop action panel, beside Finalise (BUG-48)", async () => {

@@ -66,8 +66,10 @@ import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesD
 import BattleOverflowMenu from "@/features/battles/components/shared/BattleOverflowMenu";
 import PostbattleDeadTick from "@/features/battles/components/postbattle/PostbattleDeadTick";
 import PostbattleSkipDialog from "@/features/battles/components/postbattle/PostbattleSkipDialog";
+import ClosePostbattleDialog from "@/features/battles/components/shared/ClosePostbattleDialog";
+import { useClosePostbattle } from "@/features/battles/hooks/useClosePostbattle";
 import type { Item } from "@/features/items/types/item-types";
-import type { BattlePostbattleState } from "@/features/battles/types/battle-types";
+import type { BattlePostbattleState, BattleState } from "@/features/battles/types/battle-types";
 import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { listWarbandResources } from "@/features/warbands/api/warbands-resources";
@@ -921,6 +923,24 @@ export default function BattlePostbattle() {
     ],
     [upkeepRows.length]
   );
+  // Close postbattle replaces Cancel here (BUG-09): the creator's, or a battle manager's.
+  const canClosePostbattle = Boolean(
+    battleState?.battle.created_by_user_id === user?.id ||
+      campaign?.permissions?.includes("manage_battles")
+  );
+  const closing = useClosePostbattle({
+    campaignId,
+    battleId: numericBattleId,
+    onClosed: useCallback(
+      (next: BattleState) => {
+        clearCurrentBattleSession();
+        void refreshOpenBattles();
+        applyBattleResponse(next);
+      },
+      [applyBattleResponse, clearCurrentBattleSession, refreshOpenBattles]
+    ),
+  });
+  const openCloseConfirm = closing.openChange;
   const overflowActions = useMemo(
     () => [
       {
@@ -929,8 +949,18 @@ export default function BattlePostbattle() {
         disabled: isFinalized || isFinalizing || isSkipping || isSavingDraft,
         destructive: true,
       },
+      ...(canClosePostbattle
+        ? [
+            {
+              label: "Close postbattle",
+              onSelect: () => openCloseConfirm(true),
+              disabled: isFinalizing || isSkipping,
+              destructive: true,
+            },
+          ]
+        : []),
     ],
-    [isFinalized, isFinalizing, isSavingDraft, isSkipping]
+    [canClosePostbattle, isFinalized, isFinalizing, isSavingDraft, isSkipping, openCloseConfirm]
   );
   const mobileTopBarExtraActions = useMemo(
     () => (
@@ -1848,6 +1878,15 @@ export default function BattlePostbattle() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <ClosePostbattleDialog
+        open={closing.isOpen}
+        onOpenChange={closing.openChange}
+        participants={battleState.participants}
+        currentUserId={user?.id}
+        isClosing={closing.isClosing}
+        error={closing.error}
+        onConfirm={() => void closing.close()}
+      />
       <PostbattleSkipDialog
         open={isSkipConfirmOpen}
         onOpenChange={setIsSkipConfirmOpen}

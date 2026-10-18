@@ -27,8 +27,8 @@ const campaign = {
   hero_death_roll: "d66",
 } as unknown as CampaignSummary;
 
-function CampaignShell() {
-  const context: CampaignLayoutContext = { campaign };
+function CampaignShell({ overrides }: { overrides?: Partial<CampaignSummary> }) {
+  const context: CampaignLayoutContext = { campaign: { ...campaign, ...overrides } };
   return <Outlet context={context} />;
 }
 
@@ -44,7 +44,10 @@ export const phasePath = (phase: BattlePhase) =>
 
 export function renderBattleRoute(
   phase: BattlePhase,
-  { queryClient }: { queryClient?: QueryClient } = {}
+  {
+    queryClient,
+    campaign: campaignOverrides,
+  }: { queryClient?: QueryClient; campaign?: Partial<CampaignSummary> } = {}
 ) {
   return renderWithQueryClient(
     <AppStoreProvider>
@@ -52,7 +55,7 @@ export function renderBattleRoute(
         <MemoryRouter initialEntries={[phasePath(phase)]}>
           <CurrentPath />
           <Routes>
-            <Route path="/campaigns/:id" element={<CampaignShell />}>
+            <Route path="/campaigns/:id" element={<CampaignShell overrides={campaignOverrides} />}>
               <Route index element={<p>Campaign overview</p>} />
               <Route path="warband" element={<p>Warband page</p>} />
               <Route path="battles/:battleId" element={<BattleLayout />}>

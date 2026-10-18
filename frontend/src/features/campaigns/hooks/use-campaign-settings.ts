@@ -11,6 +11,7 @@ import {
   updateMemberRole,
 } from "../api/campaigns-api";
 import { deleteWarband } from "../../warbands/api/warbands-api";
+import { closePostbattle } from "@/features/battles/api/battles-api";
 
 // constants
 import { permissionOptions } from "../constants/campaign-settings";
@@ -314,6 +315,14 @@ export function useCampaignSettings({
     setActiveBattles((prev) => prev.filter((entry) => entry.battle.id !== updated.battle.id));
   };
 
+  const handleCloseActiveBattle = async (battleId: number) => {
+    if (!canManageActiveBattles || Number.isNaN(campaignId)) {
+      return;
+    }
+    await closePostbattle(campaignId, battleId);
+    setActiveBattles((prev) => prev.filter((entry) => entry.battle.id !== battleId));
+  };
+
   return {
     members,
     activeBattles,
@@ -354,6 +363,7 @@ export function useCampaignSettings({
     setDeleteValue,
     handleDeleteCampaign,
     handleCancelActiveBattle,
+    handleCloseActiveBattle,
     resetDeleteState,
   };
 }

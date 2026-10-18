@@ -5,6 +5,8 @@ import { ChevronDown } from "lucide-react";
 import { Button } from "@components/button";
 import { ConfirmDialog } from "@components/confirm-dialog";
 import { RosterSkeleton } from "@components/card-skeleton";
+import ClosePostbattleDialog from "@/features/battles/components/shared/ClosePostbattleDialog";
+import { apiErrorCode, getErrorMessage } from "@/lib/get-error-message";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import type { CampaignActiveBattle } from "../../types/campaign-types";
@@ -14,6 +16,8 @@ type ActiveBattlesTableProps = {
   error: string;
   battles: CampaignActiveBattle[];
   onCancelBattle: (battleId: number) => Promise<void>;
+  /** A battle in postbattle is closed, not cancelled (BUG-09). */
+  onCloseBattle: (battleId: number) => Promise<void>;
 };
 
 const battleTypeLabel = (flowType: CampaignActiveBattle["battle"]["flow_type"]) =>
@@ -96,12 +100,16 @@ export default function ActiveBattlesTable({
   error,
   battles,
   onCancelBattle,
+  onCloseBattle,
 }: ActiveBattlesTableProps) {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [expandedBattleIds, setExpandedBattleIds] = useState<number[]>([]);
   const [cancelTarget, setCancelTarget] = useState<CampaignActiveBattle | null>(null);
   const [isCanceling, setIsCanceling] = useState(false);
   const [cancelError, setCancelError] = useState("");
+  const [closeTarget, setCloseTarget] = useState<CampaignActiveBattle | null>(null);
+  const [isClosing, setIsClosing] = useState(false);
+  const [closeError, setCloseError] = useState("");
 
   const columnCount = isMobile ? 3 : 7;
 
@@ -133,13 +141,35 @@ export default function ActiveBattlesTable({
       setExpandedBattleIds((prev) => prev.filter((entry) => entry !== cancelTarget.battle.id));
       setCancelTarget(null);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setCancelError(errorResponse.message || "Unable to cancel battle");
+      if (apiErrorCode(errorResponse) === "use_close_postbattle") {
+        // It reached postbattle since the list loaded: offer Close postbattle instead.
+        setCloseTarget({
+          ...cancelTarget,
+          battle: { ...cancelTarget.battle, status: "postbattle" },
+        });
+        setCloseError("This battle has reached postbattle, so it can only be closed.");
+        setCancelTarget(null);
       } else {
-        setCancelError("Unable to cancel battle");
+        setCancelError(getErrorMessage(errorResponse, "Unable to cancel battle"));
       }
     } finally {
       setIsCanceling(false);
+    }
+  };
+
+  const handleConfirmClose = async () => {
+    if (!closeTarget) {
+      return;
+    }
+    setIsClosing(true);
+    setCloseError("");
+    try {
+      await onCloseBattle(closeTarget.battle.id);
+      setCloseTarget(null);
+    } catch (errorResponse) {
+      setCloseError(getErrorMessage(errorResponse, "Unable to close postbattle"));
+    } finally {
+      setIsClosing(false);
     }
   };
 
@@ -185,7 +215,7 @@ export default function ActiveBattlesTable({
                     </th>
                   ) : null}
                   <th className="table-head-surface w-[92px] px-2 py-2 text-right font-semibold sm:px-4 sm:py-3">
-                    Cancel
+                    Action
                   </th>
                 </tr>
               </thead>
@@ -266,11 +296,16 @@ export default function ActiveBattlesTable({
                             className="h-7 px-2 text-[0.58rem]"
                             onClick={(event) => {
                               event.stopPropagation();
+                              if (battle.status === "postbattle") {
+                                setCloseTarget(battleEntry);
+                                setCloseError("");
+                                return;
+                              }
                               setCancelTarget(battleEntry);
                               setCancelError("");
                             }}
                           >
-                            Cancel
+                            {battle.status === "postbattle" ? "Close" : "Cancel"}
                           </Button>
                         </td>
                       </tr>
@@ -356,6 +391,14 @@ export default function ActiveBattlesTable({
         isConfirming={isCanceling}
         onConfirm={() => void handleConfirmCancel()}
         onCancel={closeCancelDialog}
+      />
+      <ClosePostbattleDialog
+        open={Boolean(closeTarget)}
+        onOpenChange={(open) => !open && !isClosing && setCloseTarget(null)}
+        participants={closeTarget?.participants ?? []}
+        isClosing={isClosing}
+        error={closeError}
+        onConfirm={() => void handleConfirmClose()}
       />
     </section>
   );

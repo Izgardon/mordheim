@@ -251,6 +251,17 @@ export function finalizeBattlePostbattle(
   );
 }
 
+/**
+ * Ends a battle in postbattle now (BUG-09): whoever hasn't finished is skipped. The creator's, or
+ * anyone with the campaign's manage_battles permission.
+ */
+export function closePostbattle(campaignId: number, battleId: number) {
+  return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/close-postbattle/`, {
+    method: "POST",
+    headers: battleWriteHeaders(),
+  });
+}
+
 export function confirmBattlePostbattle(campaignId: number, battleId: number) {
   return apiRequest<BattleState>(`/campaigns/${campaignId}/battles/${battleId}/confirm/`, {
     method: "POST",
