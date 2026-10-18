@@ -13,6 +13,7 @@ from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES, MethodScopedThro
 from ..models import Battle
 from ..serializers import PARTICIPANT_VIEWS, battle_state_payload, participants_prefetch, snapshot_from_battle
 from ..services.broadcast import ALL
+from ..services.capabilities import capabilities
 from ..services.errors import Refused
 from ..services.expiry import expire_overdue
 from ..services.presence import mark_participant_seen
@@ -95,6 +96,7 @@ class CampaignBattleStateView(BattleScopedView):
         if view not in PARTICIPANT_VIEWS:
             return Response({"detail": "Invalid view"}, status=400)
         payload = battle_state_payload(scope.battle, since_event_id, participant_view=view)
+        payload["capabilities"] = capabilities(scope.battle, request.user.id, scope.battle.participants.all())
         mark_participant_seen(scope.player)
         return Response(payload)
 
