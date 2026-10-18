@@ -8,6 +8,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import CampaignLayout from "@/features/campaigns/routes/CampaignLayout";
 import Warband from "./Warband";
+import { createQueryClient } from "@/lib/query-client";
 import { AppStoreProvider } from "@/stores/app-store";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import {
@@ -103,7 +104,11 @@ describe("cold warband page load", () => {
             </Route>
           </Routes>
         </MemoryRouter>
-      </AppStoreProvider>
+      </AppStoreProvider>,
+      // The app's own cache rules (30 s staleTime): with the test default of 0, whether the page
+      // mounts before or after the layout's sheet read lands decides a second read, so the count
+      // would depend on module-loading speed rather than on the app.
+      { queryClient: createQueryClient() }
     );
 
     expect(await screen.findByText("Aldric the Bold")).toBeInTheDocument();
