@@ -219,6 +219,43 @@ export const battleEvent = (
 /** What `battle.event` carries for a timeline event (`send_battle_event`): its type and the event. */
 export const socketMessage = (event: BattleEvent) => ({ type: event.type, payload: event });
 
+/**
+ * What `battle.event` carries since PERF-34: the write's `state_version`, and on its last message
+ * the battle and the participants it changed (`services/broadcast.py`).
+ */
+export const versionedMessage = (
+  event: BattleEvent | null,
+  stateVersion: number,
+  {
+    status = "active",
+    participants,
+    snapshotOmitted = false,
+  }: {
+    status?: BattleStatus;
+    /** The changed participants; leave out for an earlier message of the same write. */
+    participants?: BattleParticipant[];
+    snapshotOmitted?: boolean;
+  } = {}
+) => ({
+  type: event?.type ?? "battle_state_updated",
+  payload: event ?? {
+    battle_id: BATTLE_ID,
+    campaign_id: CAMPAIGN_ID,
+    status,
+    actor_user_id: OPPONENT.id,
+    reason: "participant_config_updated",
+    state_version: stateVersion,
+  },
+  state_version: stateVersion,
+  ...(participants || snapshotOmitted
+    ? {
+        battle: battleState({ status, state_version: stateVersion }).battle,
+        participants: snapshotOmitted ? [] : participants,
+        ...(snapshotOmitted ? { snapshot_omitted: true } : {}),
+      }
+    : {}),
+});
+
 /** What `battle.event` carries for a config, ready or join change (`battle_state_updated`). */
 export const stateUpdatedMessage = (status: BattleStatus, actorUserId: number) => ({
   type: "battle_state_updated",

@@ -1,7 +1,7 @@
 /**
- * How a battle page keeps its state: one full `state/` read on mount, then one more read for every
- * socket event it hears (the server leaves out this tab's own). Characterised before PR B moves
- * battle state into TanStack.
+ * How the battle pages keep their state: one full `state/` read on mount, then each socket message
+ * (the server leaves out this tab's own) patches the cached state from its snapshot, with a read
+ * only on a version gap, one at a time (PERF-34). Messages without a version read as before.
  */
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { notifyManager } from "@tanstack/react-query";
@@ -16,9 +16,11 @@ import {
   battleEvent,
   battleState,
   deferred,
+  opponentParticipant,
   socketMessage,
   statePath,
   stateUpdatedMessage,
+  versionedMessage,
 } from "@/test/battle-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
@@ -66,6 +68,16 @@ const killCountOf = (state: BattleState | null) =>
   state?.participants.find((entry) => entry.user.id === ME.id)?.unit_information_json["hero:1"]
     ?.kill_count;
 
+const opponentUnit = (state: BattleState | null) =>
+  state?.participants.find((entry) => entry.user.id === OPPONENT.id)?.unit_information_json[
+    "hero:2"
+  ];
+
+const versioned = (version: number) =>
+  battleState({ state_version: version, events: [firstEvent] });
+
+const opponentKill = (id: number) => battleEvent(id, "unit_kill_recorded", OPPONENT.id);
+
 describe("useBattleState", () => {
   beforeEach(() => {
     fakeApi.reset();
@@ -84,22 +96,70 @@ describe("useBattleState", () => {
     expect(fakeRealtime.subscriberCount(BATTLE_CHANNEL)).toBe(1);
   });
 
-  it("GETs state/ again for every event another user sends, with no coalescing (PERF-34, pinned; flips in PR B)", async () => {
-    await renderLoaded();
-    // The reads never answer, so each event starts its own, all from the same last event id.
-    for (let id = 4; id <= 8; id += 1) {
-      emit(socketMessage(battleEvent(id, "unit_kill_recorded", OPPONENT.id)));
+  it("patches the state from each message's snapshot and reads nothing (PERF-34, BATL-TEST-21)", async () => {
+    const { result } = await renderLoaded(versioned(1));
+
+    for (let version = 2; version <= 6; version += 1) {
+      const killCount = version - 1;
+      emit(
+        versionedMessage(opponentKill(version + 2), version, {
+          participants: [
+            opponentParticipant({ unit_information_json: { "hero:2": { kill_count: killCount } } }),
+          ],
+        })
+      );
     }
 
-    expect(fakeApi.calls()).toEqual(Array(5).fill(`GET ${statePath("active", 3)}`));
+    expect(fakeApi.calls()).toEqual([]);
+    expect(result.current.battleState?.battle.state_version).toBe(6);
+    expect(result.current.battleState?.events.map((event) => event.id)).toEqual([3, 4, 5, 6, 7, 8]);
+    expect(opponentUnit(result.current.battleState)?.kill_count).toBe(5);
   });
 
-  it("refetches for a bare battle_state_updated too: the event carries no state (PERF-34, pinned; flips in PR B)", async () => {
-    await renderLoaded();
+  it("applies a battle_state_updated snapshot without reading state/ (PERF-34)", async () => {
+    const { result } = await renderLoaded(versioned(1));
 
-    emit(stateUpdatedMessage("active", OPPONENT.id));
+    emit(
+      versionedMessage(null, 2, {
+        participants: [
+          opponentParticipant({ unit_information_json: { "hero:2": { current_wounds: 0 } } }),
+        ],
+      })
+    );
 
+    expect(fakeApi.calls()).toEqual([]);
+    expect(opponentUnit(result.current.battleState)?.current_wounds).toBe(0);
+    expect(result.current.battleState?.battle.state_version).toBe(2);
+  });
+
+  it("reads state/ on a version gap, one read at a time, then once more for what came meanwhile (PERF-34)", async () => {
+    const { result } = await renderLoaded(versioned(1));
+    const firstRead = deferred<BattleState>();
+    fakeApi.on(`GET ${statePath("active", 3)}`, () => firstRead.promise);
+    fakeApi.on(`GET ${statePath("active", 6)}`, battleState({ state_version: 4, events: [] }));
+
+    // Version 2 never arrived: the cache can't be patched from 3 or 4.
+    emit(versionedMessage(opponentKill(5), 3, { participants: [opponentParticipant()] }));
+    emit(versionedMessage(opponentKill(6), 4, { participants: [opponentParticipant()] }));
     expect(fakeApi.calls()).toEqual([`GET ${statePath("active", 3)}`]);
+
+    await act(async () =>
+      firstRead.resolve(
+        battleState({
+          state_version: 4,
+          events: [opponentKill(4), opponentKill(5), opponentKill(6)],
+        })
+      )
+    );
+
+    await waitFor(() =>
+      expect(fakeApi.calls()).toEqual([
+        `GET ${statePath("active", 3)}`,
+        `GET ${statePath("active", 6)}`,
+      ])
+    );
+    expect(result.current.battleState?.battle.state_version).toBe(4);
+    expect(result.current.battleState?.events.map((event) => event.id)).toEqual([3, 4, 5, 6]);
   });
 
   it("reads state for your own user's events too, so your other tab or device updates (BUG-75)", async () => {
@@ -133,17 +193,18 @@ describe("useBattleState", () => {
     expect(result.current.battleState?.battle.status).toBe("active");
   });
 
-  it("lets a slow read take back participants a newer answer already applied (BUG-44, pinned; flips in PR B)", async () => {
-    const { result } = await renderLoaded();
+  it("keeps what a newer answer applied when a slower, older read lands (BUG-44)", async () => {
+    const { result } = await renderLoaded(versioned(1));
     const slowRead = deferred<BattleState>();
     fakeApi.on(`GET ${statePath("active", 3)}`, () => slowRead.promise);
 
-    // Another player's event starts a read; the server answers it before your kill lands.
-    emit(socketMessage(battleEvent(4, "unit_ooa_set", OPPONENT.id)));
-    // Your kill's answer arrives first and is applied.
+    // A version gap starts a read; the server answers it before your kill lands.
+    emit(versionedMessage(battleEvent(4, "unit_ooa_set", OPPONENT.id), 3));
+    // Your kill's answer (version 4) arrives first and is applied.
     act(() =>
       result.current.applyBattleResponse(
         battleState({
+          state_version: 4,
           me: { unit_information_json: { "hero:1": { kill_count: 1 } } },
           events: [firstEvent, battleEvent(5, "unit_kill_recorded", ME.id)],
         })
@@ -152,11 +213,14 @@ describe("useBattleState", () => {
     expect(killCountOf(result.current.battleState)).toBe(1);
 
     await act(async () => {
-      slowRead.resolve(battleState({ events: [battleEvent(4, "unit_ooa_set", OPPONENT.id)] }));
+      slowRead.resolve(
+        battleState({ state_version: 3, events: [battleEvent(4, "unit_ooa_set", OPPONENT.id)] })
+      );
     });
 
-    // The older participants replace the newer ones; the events are merged.
-    expect(killCountOf(result.current.battleState)).toBeUndefined();
+    // The older read's participants are dropped; its event joins the timeline.
+    expect(killCountOf(result.current.battleState)).toBe(1);
+    expect(result.current.battleState?.battle.state_version).toBe(4);
     expect(result.current.battleState?.events.map((event) => event.id)).toEqual([3, 4, 5]);
   });
 });

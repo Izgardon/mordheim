@@ -3,6 +3,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { battleStateQuery } from "@/features/battles/api/battle-queries";
 import { getBattleStateLastEventId, mergeBattleState } from "@/features/battles/state/battle-cache";
+import {
+  createSingleFlight,
+  reconcileBattleMessage,
+} from "@/features/battles/state/battle-messages";
+import type { BattleSocketMessage } from "@/features/battles/types/battle-messages";
 import type { BattleState, BattleStateView } from "@/features/battles/types/battle-types";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { queryKeys } from "@/lib/query-keys";
@@ -20,8 +25,9 @@ export type BattleStateRef = { readonly current: BattleState | null };
 
 /**
  * The battle's state as a TanStack query (`['campaign', cid, 'battle', bid, 'state']`): one full
- * read per visit, writes' answers merged in with `applyBattleResponse`, and a read of the newer
- * events for each battle socket message.
+ * read per visit; writes' answers merged in with `applyBattleResponse`; socket messages patch it
+ * from their snapshot (PERF-34), reading `state/` only on a version gap, one read at a time.
+ * Answers older than the cache never replace it (BUG-44).
  */
 export function useBattleState({ campaignId, battleId, view }: UseBattleStateOptions) {
   const queryClient = useQueryClient();
@@ -82,11 +88,29 @@ export function useBattleState({ campaignId, battleId, view }: UseBattleStateOpt
     () => queryClient.refetchQueries({ queryKey, exact: true }),
     [queryClient, queryKey]
   );
+  // Gap reads join a read already running and read once more after it, never two at once.
+  const gapRefresh = useMemo(
+    () =>
+      createSingleFlight(
+        () => queryClient.refetchQueries({ queryKey, exact: true }, { cancelRefetch: false }),
+        () => queryClient.isFetching({ queryKey, exact: true }) > 0
+      ),
+    [queryClient, queryKey]
+  );
 
   // Battle writes name this tab's socket, so the server never sends this tab its own events; any
   // event that arrives is news, even one your own user sent from another tab or device (BUG-75).
-  useBattleEvents(validRoute ? battleId : null, () => {
-    void refreshBattleState();
+  useBattleEvents(validRoute ? battleId : null, (message) => {
+    const outcome = reconcileBattleMessage(readState(), message as BattleSocketMessage);
+    if (outcome.next) {
+      queryClient.setQueryData<BattleState>(queryKey, outcome.next);
+    }
+    if (outcome.refetch === "gap") {
+      gapRefresh.request();
+    } else if (outcome.refetch === "legacy") {
+      // A message without a version (an older server): read the newer events, as before.
+      void refreshBattleState();
+    }
   });
 
   const battleState = query.data ?? null;

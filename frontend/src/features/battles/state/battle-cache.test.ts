@@ -2,7 +2,14 @@ import { describe, expect, it } from "vitest";
 
 import type { BattleState } from "@/features/battles/types/battle-types";
 
-import { getBattleStateLastEventId, mergeBattleState } from "./battle-cache";
+import { battleState, myParticipant, opponentParticipant } from "@/test/battle-fixtures";
+
+import {
+  getBattleStateLastEventId,
+  mergeBattleState,
+  patchParticipants,
+  stateVersion,
+} from "./battle-cache";
 
 const baseState: BattleState = {
   battle: {
@@ -82,5 +89,54 @@ describe("battle-cache", () => {
 
     expect(merged.events.map((event) => event.id)).toEqual([1, 2, 3]);
     expect(getBattleStateLastEventId(merged)).toBe(3);
+  });
+
+  it("drops an older answer's battle and participants but keeps its events (BUG-44)", () => {
+    const newer = battleState({
+      state_version: 6,
+      me: { unit_information_json: { "hero:1": { kill_count: 1 } } },
+      events: baseState.events,
+    });
+    const slowRead = battleState({
+      state_version: 5,
+      status: "postbattle",
+      events: [{ ...baseState.events[0], id: 4, type: "unit_ooa_set" }],
+    });
+
+    const merged = mergeBattleState(newer, slowRead);
+
+    expect(merged.battle).toBe(newer.battle);
+    expect(merged.participants).toBe(newer.participants);
+    expect(merged.events.map((event) => event.id)).toEqual([1, 2, 4]);
+    expect(stateVersion(merged)).toBe(6);
+  });
+
+  it("takes an answer of the same or a newer version, and any answer without versions", () => {
+    const cached = battleState({ state_version: 6 });
+    const same = battleState({ state_version: 6, status: "postbattle" });
+    const newer = battleState({ state_version: 7, status: "ended" });
+
+    expect(mergeBattleState(cached, same).battle.status).toBe("postbattle");
+    expect(mergeBattleState(cached, newer).battle.status).toBe("ended");
+    expect(mergeBattleState(baseState, battleState({ status: "ended" })).battle.status).toBe(
+      "ended"
+    );
+    expect(stateVersion(baseState)).toBeNull();
+  });
+
+  it("patches changed participants by id and adds new ones", () => {
+    const changed = opponentParticipant({ status: "ready" });
+    const newcomer = { ...opponentParticipant(), id: 23 };
+
+    const patched = patchParticipants(
+      [myParticipant(), opponentParticipant()],
+      [changed, newcomer]
+    );
+
+    expect(patched.map((entry) => [entry.id, entry.status])).toEqual([
+      [21, "in_battle"],
+      [22, "ready"],
+      [23, "in_battle"],
+    ]);
   });
 });
