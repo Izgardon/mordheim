@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.conf import settings
 from django.core.validators import RegexValidator
 from django.db import models
@@ -26,6 +28,8 @@ class Warband(models.Model):
     warband_link = models.URLField(max_length=500, null=True, blank=True)
     max_units = models.PositiveSmallIntegerField(default=15)  # warband size: warn only (decision 12)
     show_loadout_on_mobile = models.BooleanField(default=False)
+    # The sum of the ledger, changed only by services/ledger.py in the same transaction as each row (decision 4).
+    gold = models.BigIntegerField(default=0, db_default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -48,8 +52,19 @@ class Warband(models.Model):
     def __str__(self):
         return f"{self.name} ({self.campaign_id}:{self.user_id})"
 
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        """Saving a loaded warband never writes `gold`: a balance read earlier may be stale (the ledger changes it
+        in the database). Name `gold` in `update_fields` to write it on purpose."""
+        if not self._state.adding and kwargs.get("update_fields") is None:
+            kwargs["update_fields"] = [
+                field.name for field in self._meta.concrete_fields if not field.primary_key and field.name != "gold"
+            ]
+        super().save(*args, **kwargs)
+
 
 class WarbandItem(models.Model):
+    """Copies of an item in a warband's stash at one cost: one row per item and cost (BUG-117)."""
+
     warband = models.ForeignKey(Warband, related_name="warband_items", on_delete=models.CASCADE)
     item = models.ForeignKey("items.Item", related_name="warband_items", on_delete=models.CASCADE)
     cost = models.PositiveIntegerField(null=True, blank=True)
@@ -57,7 +72,12 @@ class WarbandItem(models.Model):
 
     class Meta:
         db_table = "warband_items"
-        constraints = [models.UniqueConstraint(fields=["warband", "item"], name="unique_warband_item")]
+        constraints = [
+            # an unknown cost (NULL) is one cost too: copies whose cost isn't known share a row
+            models.UniqueConstraint(
+                fields=["warband", "item", "cost"], name="unique_warband_item_cost", nulls_distinct=False
+            )
+        ]
 
     def __str__(self):
         return f"{self.warband_id}:{self.item_id} x{self.quantity}"
@@ -74,6 +94,7 @@ class WarbandLog(models.Model):
     class Meta:
         db_table = "warband_log"
         ordering = ["-created_at"]
+        indexes = [models.Index(fields=["warband", "-created_at", "-id"], name="warband_log_recent_idx")]
 
     def __str__(self):
         return f"{self.warband_id}:{self.feature}:{self.entry_type}"
@@ -92,19 +113,56 @@ class WarbandResource(models.Model):
         return f"{self.warband_id}:{self.name}"
 
 
+class LedgerAction(models.TextChoices):
+    """What a ledger row records: one vocabulary for hand-entered and automatic rows (decision 4)."""
+
+    BUY = "Buy"
+    SELL = "Sell"
+    RECRUIT = "Recruit"
+    HIRE = "Hire"
+    UPKEEP = "Upkeep"
+    REWARD = "Reward"
+    EXPLORATION = "Exploration"
+    TRADE = "Trade"
+    ADJUSTMENT = "Adjustment"
+    STARTING_GOLD = "Starting gold"
+    GROUP = "Group"  # a header the rows of one batch nest under; it moves no gold
+
+    @property
+    def is_expense(self) -> bool:
+        """The action always spends gold: its rows are stored negative."""
+        return self in EXPENSE_ACTIONS
+
+    @property
+    def is_signed(self) -> bool:
+        """Gold may go either way (a trade sent or received, an adjustment up or down): the amount carries its sign."""
+        return self in SIGNED_ACTIONS
+
+
+EXPENSE_ACTIONS = frozenset({LedgerAction.BUY, LedgerAction.RECRUIT, LedgerAction.HIRE, LedgerAction.UPKEEP})
+SIGNED_ACTIONS = frozenset({LedgerAction.TRADE, LedgerAction.ADJUSTMENT})
+
+
 class WarbandTrade(models.Model):
     warband = models.ForeignKey(Warband, related_name="trades", on_delete=models.CASCADE)
     parent = models.ForeignKey("self", null=True, blank=True, related_name="children", on_delete=models.CASCADE)
-    action = models.CharField(max_length=120)
+    action = models.CharField(max_length=120, choices=LedgerAction.choices)
     description = models.CharField(max_length=500)
     price = models.IntegerField(default=0)
     notes = models.TextField(max_length=2000, blank=True, default="")
+    # who entered a row by hand (decision 6); None for automatic rows and rows from before pass 2
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, related_name="+", on_delete=models.SET_NULL
+    )
+    # the row an adjustment corrects (decision 5): history is append-only, so mistakes are corrected, not edited
+    corrects = models.ForeignKey("self", null=True, blank=True, related_name="corrections", on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = "warband_trades"
         ordering = ["-created_at"]
+        indexes = [models.Index(fields=["warband", "-created_at", "-id"], name="warband_trades_recent_idx")]
 
     def __str__(self):
         return f"{self.warband_id}:{self.action}"

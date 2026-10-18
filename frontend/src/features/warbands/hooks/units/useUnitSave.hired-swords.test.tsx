@@ -16,6 +16,7 @@ import {
   answerBatch,
   batchCreates,
   batchDismissals,
+  batchPurchases,
   batchUpdate,
   batchUpdates,
 } from "@/test/batch-mock";
@@ -364,9 +365,7 @@ describe("useUnitSave: hired swords characterisation", () => {
     expect(eventMocks.emitWarbandUpdate).toHaveBeenCalledWith(9, { summary: { gold: 80 } });
   });
 
-  it("commits purchases for kept hired swords only, naming them in the log", async () => {
-    apiMocks.createWarbandTrade.mockResolvedValue({ id: 1 });
-    apiMocks.createWarbandLog.mockResolvedValue({});
+  it("sends purchases for kept hired swords only, in the batch (decision 1)", async () => {
     const purchase = {
       unitType: "hiredswords" as const,
       itemId: 101,
@@ -374,6 +373,7 @@ describe("useUnitSave: hired swords characterisation", () => {
       quantity: 1,
       unitPrice: 10,
       isBuying: true,
+      line: { item_id: 101, quantity: 1, price: 10, availability_id: null, is_buying: true },
     };
     const { save, params } = renderSave({
       hiredSwordForms: [mapHiredSwordToForm(veteran)],
@@ -386,14 +386,11 @@ describe("useUnitSave: hired swords characterisation", () => {
 
     await save();
 
-    expect(apiMocks.createWarbandTrade).toHaveBeenCalledTimes(1);
-    expect(apiMocks.createWarbandLog).toHaveBeenCalledWith(
-      9,
-      expect.objectContaining({
-        entry_type: "hired_sword_item",
-        payload: { hero: "Brother Hal", item: "Sword", price: 10 },
-      })
-    );
+    expect(batchPurchases(apiMocks.batchWarbandHiredSwords)).toEqual([
+      { unit_id: 31, item_id: 101, quantity: 1, price: 10, availability_id: null, is_buying: true },
+    ]);
+    expect(apiMocks.createWarbandTrade).not.toHaveBeenCalled();
+    expect(apiMocks.createWarbandLog).not.toHaveBeenCalled();
     expect(params.onPendingCleared).toHaveBeenCalledTimes(1);
   });
 

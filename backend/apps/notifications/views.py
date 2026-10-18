@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import Q, QuerySet
 from django.utils import timezone
 from rest_framework import permissions
 from rest_framework.response import Response
@@ -18,11 +19,21 @@ def _serialize_notification(n: Notification) -> dict:
     }
 
 
+def _without_stale_trade_requests(rows: QuerySet[Notification]) -> QuerySet[Notification]:
+    """Trade-request notifications only while the request can still be answered: one that ran out reads as gone,
+    without a write (decision 8). Same single query."""
+    from apps.trades.selectors import answerable_request_refs
+
+    stale = Q(notification_type=Notification.TYPE_TRADE_REQUEST) & ~Q(reference_id__in=answerable_request_refs())
+    return rows.exclude(stale)
+
+
 class NotificationListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        notifications = Notification.objects.filter(user=request.user, is_resolved=False).order_by("-created_at")
+        unresolved = Notification.objects.filter(user=request.user, is_resolved=False)
+        notifications = _without_stale_trade_requests(unresolved).order_by("-created_at")
         return Response([_serialize_notification(n) for n in notifications])
 
 
@@ -66,11 +77,15 @@ def _apply_clear_side_effects(notification: Notification, user, now) -> None:
 
 
 def _clear_trade_request(notification: Notification, user, now) -> None:
-    from apps.realtime.services import send_user_notification, serialize_trade_request
+    from apps.realtime.services import send_user_notification
     from apps.trades.models import TradeRequest
+    from apps.trades.serializers import serialize_trade_request
+    from apps.trades.services.lifecycle import answer_request, expire
 
+    # Under the trade's row lock, like every trade write, so an accept at the same moment can't be overwritten.
     trade_request = (
-        TradeRequest.objects.select_related("from_user", "to_user", "from_warband", "to_warband")
+        TradeRequest.objects.select_for_update(of=("self",))
+        .select_related("from_user", "to_user", "from_warband", "to_warband")
         .filter(id=notification.reference_id, to_user=user)
         .first()
     )
@@ -78,14 +93,10 @@ def _clear_trade_request(notification: Notification, user, now) -> None:
         return
 
     if trade_request.expires_at <= now:
-        trade_request.status = TradeRequest.STATUS_EXPIRED
-        trade_request.responded_at = now
-        trade_request.save(update_fields=["status", "responded_at"])
+        expire(trade_request)
         return
 
-    trade_request.status = TradeRequest.STATUS_DECLINED
-    trade_request.responded_at = now
-    trade_request.save(update_fields=["status", "responded_at"])
+    answer_request(trade_request, accept=False)
     payload = serialize_trade_request(trade_request)
     from_user_id = trade_request.from_user_id
     transaction.on_commit(

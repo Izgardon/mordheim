@@ -9,6 +9,8 @@ export type BatchBody = {
   create?: Entry[];
   update?: (Entry & { id: number })[];
   dismiss?: number[];
+  purchases?: Entry[];
+  stash_takes?: Entry[];
 };
 
 const lastBatch = (mock: Mock): BatchBody | undefined =>
@@ -17,6 +19,8 @@ const lastBatch = (mock: Mock): BatchBody | undefined =>
 export const batchCreates = (mock: Mock) => lastBatch(mock)?.create ?? [];
 export const batchUpdates = (mock: Mock) => lastBatch(mock)?.update ?? [];
 export const batchDismissals = (mock: Mock) => lastBatch(mock)?.dismiss ?? [];
+export const batchPurchases = (mock: Mock) => lastBatch(mock)?.purchases ?? [];
+export const batchStashTakes = (mock: Mock) => lastBatch(mock)?.stash_takes ?? [];
 
 /** One unit's update entry in the last batch, without its id. */
 export const batchUpdate = (mock: Mock, id: number) => {

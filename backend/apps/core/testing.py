@@ -1,4 +1,4 @@
-"""Shared test fixtures: a reference campaign and query counting.
+"""Shared test fixtures: a reference campaign, query counting and running requests concurrently.
 
 Production reaches Neon (London) from Render (Frankfurt), so every SQL query is a
 network round trip and query count is effectively latency. The reference campaign
@@ -6,6 +6,8 @@ gives the heavy endpoints realistic data to run against, so query-budget tests
 can catch N+1 regressions (see apps/core/tests/test_query_budgets.py).
 """
 
+import threading
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
@@ -34,10 +36,11 @@ from apps.warbands.models import (
     HeroSpell,
     HiredSword,
     HiredSwordItem,
+    LedgerAction,
     Warband,
     WarbandItem,
 )
-from apps.warbands.utils.trades import TradeHelper
+from apps.warbands.services import ledger
 
 
 @dataclass
@@ -118,7 +121,7 @@ def build_reference_campaign(unit_count: int = 3) -> ReferenceCampaign:
         HiredSwordItem.objects.create(hired_sword=sword, item=items[index])
 
         WarbandItem.objects.create(warband=warband, item=items[index], quantity=1)
-        TradeHelper.create_trade(warband=warband, action="Buy", description=f"Sword {index}", price=10)
+        ledger.record(warband, LedgerAction.BUY, -10, f"Sword {index}")
 
     ended_battle = None
     for index in range(unit_count):
@@ -192,3 +195,57 @@ def count_get_queries(client: APIClient, url: str) -> int:
         response = client.get(url)
     assert response.status_code == 200, f"GET {url} -> {response.status_code}"
     return len(captured)
+
+
+class Rendezvous:
+    """Holds each request at one point until the others get there too (for TransactionTestCase races).
+
+    Patched in between a request's read and its write (`side_effect=rendezvous.before(original)`), it makes
+    concurrent requests all read before any of them writes: the race, every time. A request that can't get
+    there, for instance because it waits on a row lock another one holds (as a fixed version would), makes
+    the others stop waiting after `timeout` seconds and carry on, so the test sees the serialised outcome.
+    """
+
+    def __init__(self, parties: int = 2, timeout: float = 2.0) -> None:
+        self._barrier = threading.Barrier(parties, timeout=timeout)
+
+    def wait(self) -> None:
+        try:
+            self._barrier.wait()
+        except threading.BrokenBarrierError:
+            pass  # someone didn't arrive in time: carry on alone
+
+    def before(self, function: Callable[..., Any]) -> Callable[..., Any]:
+        """`function`, waiting here first."""
+
+        def waiting(*args: Any, **kwargs: Any) -> Any:
+            self.wait()
+            return function(*args, **kwargs)
+
+        return waiting
+
+
+def run_concurrently(*calls: Callable[[], Any]) -> list[Any]:
+    """Run each call on its own thread, so each gets its own database connection; results in call order.
+
+    Only for TransactionTestCase: a TestCase's data is in a transaction the other threads can't see.
+    """
+    results: list[Any] = [None] * len(calls)
+    errors: list[BaseException] = []
+
+    def run(index: int, call: Callable[[], Any]) -> None:
+        try:
+            results[index] = call()
+        except BaseException as exc:  # re-raised on the test's thread below
+            errors.append(exc)
+        finally:
+            connection.close()
+
+    threads = [threading.Thread(target=run, args=(index, call)) for index, call in enumerate(calls)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(timeout=30)
+    if errors:
+        raise errors[0]
+    return results

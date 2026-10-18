@@ -7,7 +7,7 @@ from apps.campaigns.models import CampaignSettings
 from apps.campaigns.permissions import get_membership
 from apps.restrictions.serializers import RestrictionSerializer
 from apps.warbands.access import check_backstory_change
-from apps.warbands.models import Warband, WarbandResource
+from apps.warbands.models import LedgerAction, Warband, WarbandResource
 from apps.warbands.restrictions import get_effective_restrictions_for_warband
 from apps.warbands.serializers import (
     WarbandCreateSerializer,
@@ -15,7 +15,7 @@ from apps.warbands.serializers import (
     WarbandSummarySerializer,
     WarbandUpdateSerializer,
 )
-from apps.warbands.utils.trades import TradeHelper
+from apps.warbands.services import ledger
 
 from .base import WarbandScopedView
 
@@ -53,7 +53,7 @@ class WarbandListCreateView(APIView):
         WarbandResource.objects.get_or_create(warband=warband, name="Treasure", defaults={"amount": 0})
         settings = CampaignSettings.objects.filter(campaign_id=campaign_id).first()
         starting_gold = settings.starting_gold if settings else 500
-        TradeHelper.upsert_starting_gold_trade(warband, starting_gold)
+        ledger.record(warband, LedgerAction.STARTING_GOLD, abs(starting_gold), "Starting Gold")
         response_serializer = WarbandSerializer(warband)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 

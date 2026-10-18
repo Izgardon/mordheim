@@ -12,11 +12,15 @@ from .views import (
     WarbandItemTransferView,
     WarbandListCreateView,
     WarbandLogListView,
+    WarbandPurchaseView,
+    WarbandRarityRollView,
     WarbandResourceDetailView,
     WarbandResourceListCreateView,
+    WarbandResourceSaleView,
     WarbandRestrictionsView,
     WarbandSheetView,
     WarbandSummaryView,
+    WarbandTradeDetailView,
     WarbandTradeListCreateView,
 )
 
@@ -53,6 +57,16 @@ urlpatterns = [
         WarbandItemSaleView.as_view(),
         name="warbands-item-sales",
     ),
+    path(
+        "warbands/<int:warband_id>/purchases/",
+        WarbandPurchaseView.as_view(),
+        name="warbands-purchases",
+    ),
+    path(
+        "warbands/<int:warband_id>/rarity-rolls/",
+        WarbandRarityRollView.as_view(),
+        name="warbands-rarity-rolls",
+    ),
     *unit_urlpatterns(HERO),
     path(
         "warbands/hero-specials/<int:special_id>/",
@@ -87,8 +101,18 @@ urlpatterns = [
         name="warbands-resources-detail",
     ),
     path(
+        "warbands/<int:warband_id>/resources/<int:resource_id>/sell/",
+        WarbandResourceSaleView.as_view(),
+        name="warbands-resources-sell",
+    ),
+    path(
         "warbands/<int:warband_id>/trades/",
         WarbandTradeListCreateView.as_view(),
         name="warbands-trades",
+    ),
+    path(
+        "warbands/<int:warband_id>/trades/<int:trade_id>/",
+        WarbandTradeDetailView.as_view(),
+        name="warbands-trades-detail",
     ),
 ]

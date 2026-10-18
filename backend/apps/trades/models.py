@@ -10,6 +10,7 @@ class TradeRequest(models.Model):
     STATUS_DECLINED = "declined"
     STATUS_EXPIRED = "expired"
     STATUS_COMPLETED = "completed"
+    STATUS_CANCELLED = "cancelled"  # closed by the player who sent the request; "declined" is the recipient (BUG-115)
 
     STATUS_CHOICES = (
         (STATUS_PENDING, "Pending"),
@@ -17,6 +18,7 @@ class TradeRequest(models.Model):
         (STATUS_DECLINED, "Declined"),
         (STATUS_EXPIRED, "Expired"),
         (STATUS_COMPLETED, "Completed"),
+        (STATUS_CANCELLED, "Cancelled"),
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -54,6 +56,16 @@ class TradeRequest(models.Model):
     to_offer = models.JSONField(default=dict, blank=True)
     from_accepted = models.BooleanField(default=False)
     to_accepted = models.BooleanField(default=False)
+    # Counts offer changes; a lock names the version its player was shown (BUG-35)
+    offer_version = models.PositiveIntegerField(default=0)
+    # The hero whose trading action this trade's completion spent on each side: null until it completes, and
+    # null for no trader or one who had already traded this round (decision 9)
+    from_trader_spent = models.ForeignKey(
+        "warbands.Hero", null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    to_trader_spent = models.ForeignKey(
+        "warbands.Hero", null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     responded_at = models.DateTimeField(null=True, blank=True)
     expires_at = models.DateTimeField()

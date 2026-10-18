@@ -38,7 +38,6 @@ vi.mock("@/stores/app-store", () => ({
   useAppStore: () => ({
     warband: null,
     setWarband: mocks.setStoreWarband,
-    tradeSession: null,
   }),
 }));
 
@@ -134,8 +133,8 @@ vi.mock("../hooks/warband/useWarbandWarchest", () => ({
 
 vi.mock("../hooks/warband/useWarbandTradeSession", () => ({
   useWarbandTradeSession: () => ({
+    session: null,
     tradeRequest: null,
-    setTradeRequest: vi.fn(),
     handleTradeRequestCreated: vi.fn(),
     handleTradeSessionClose: vi.fn(),
   }),
@@ -192,7 +191,7 @@ vi.mock("../components/tabs/LogsTab", () => ({
   default: () => null,
 }));
 
-vi.mock("../components/tabs/TradesTab", () => ({
+vi.mock("../components/tabs/TreasuryTab", () => ({
   default: () => null,
 }));
 

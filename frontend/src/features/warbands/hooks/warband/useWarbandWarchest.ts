@@ -1,8 +1,7 @@
-﻿import { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import { listWarbandItems } from "@/features/warbands/api/warbands-api";
-import { queryKeys } from "@/lib/query-keys";
+import { warbandStashQuery } from "@/features/warbands/api/economy-queries";
 
 import type { WarbandItemSummary } from "@/features/warbands/types/warband-types";
 
@@ -16,12 +15,8 @@ const LOAD_ERROR = "Unable to load warchest items.";
 export function useWarbandWarchest(campaignId: number, warbandId?: number | null) {
   const [isWarchestOpen, setIsWarchestOpen] = useState(false);
   const stash = useQuery({
-    queryKey: queryKeys.campaign.warbandStash(campaignId, warbandId ?? 0),
-    queryFn: () => listWarbandItems(warbandId ?? 0),
+    ...warbandStashQuery(campaignId, warbandId ?? 0),
     enabled: isWarchestOpen && Boolean(warbandId),
-    staleTime: 0,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
   });
   const { refetch } = stash;
 

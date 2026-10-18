@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import DiceRoller from "@/components/dice/DiceRoller";
 import { parseDiceValues } from "@/components/dice/dice-utils";
@@ -21,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createWarbandLog } from "@/features/warbands/api/warbands-api";
+import { markLedgerStale } from "@/features/warbands/api/warband-cache";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import { Dices } from "lucide-react";
@@ -43,6 +45,7 @@ export default function CampaignDiceRollerMenu({
   label,
 }: CampaignDiceRollerMenuProps) {
   const { warband, diceColor } = useAppStore();
+  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [diceCount, setDiceCount] = useState(2);
   const [diceSides, setDiceSides] = useState<(typeof DICE_SIDES)[number]>(6);
@@ -109,10 +112,12 @@ export default function CampaignDiceRollerMenu({
         total,
         ...(reasonValue ? { reason: reasonValue } : {}),
       },
-    }).catch((logError) => {
-      console.error("Failed to log dice roll", logError);
-      setError("Roll completed, but logging failed.");
-    });
+    })
+      .then(() => markLedgerStale(queryClient, warband.id))
+      .catch((logError) => {
+        console.error("Failed to log dice roll", logError);
+        setError("Roll completed, but logging failed.");
+      });
   };
 
   return (

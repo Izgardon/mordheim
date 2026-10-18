@@ -84,7 +84,7 @@ HERO = Kind(
     spells="hero_spells",
     thresholds_setting="hero_level_thresholds",
     default_thresholds=HERO_LEVEL_THRESHOLDS,
-    trade_action="Recruited",
+    trade_action="Recruit",
     log_new="new_hero",
     log_remove="remove_hero",
     log_advance="hero",
@@ -102,7 +102,7 @@ HENCHMEN = Kind(
     spells=None,
     thresholds_setting="henchmen_level_thresholds",
     default_thresholds=HENCHMEN_LEVEL_THRESHOLDS,
-    trade_action="Recruited",
+    trade_action="Recruit",
     log_new="new_henchmen_group",
     log_remove="remove_henchmen_group",
     log_advance="henchmen",
@@ -120,7 +120,7 @@ HIRED_SWORD = Kind(
     spells="hired_sword_spells",
     thresholds_setting="hero_level_thresholds",  # hired swords advance like heroes (decision 8)
     default_thresholds=HERO_LEVEL_THRESHOLDS,
-    trade_action="Hired",
+    trade_action="Hire",
     log_new="new_hired_sword",
     log_remove="remove_hired_sword",
     log_advance="hired_sword",
@@ -167,6 +167,12 @@ def trade_rows(warband: Warband) -> list[tuple[str, str, int, str | None]]:
     """(action, description, price, parent description) for every ledger row, oldest first."""
     rows = WarbandTrade.objects.filter(warband=warband).select_related("parent").order_by("id")
     return [(row.action, row.description, row.price, row.parent.description if row.parent else None) for row in rows]
+
+
+def clear_ledger(warband: Warband) -> None:
+    """Start the warband's ledger again: no rows and no gold (the stored balance follows the rows)."""
+    WarbandTrade.objects.filter(warband=warband).delete()
+    Warband.objects.filter(id=warband.id).update(gold=0)
 
 
 def log_rows(warband: Warband) -> list[tuple[str, str, dict[str, Any], str | None]]:
@@ -351,3 +357,26 @@ def _postbattle_result(unit_key: str, xp: int) -> dict[str, Any]:
 def cap_error(detail: str, code: str = "hero_cap_reached") -> dict[str, Any]:
     """The 400 body for adding a unit over the hero or hired-sword cap (decision 12)."""
     return {"detail": detail, "code": code, "fields": {}}
+
+
+class ItemMoveHelpers:
+    """Moving items between units and the stash (POST item-transfers/), for RosterTestCase subclasses."""
+
+    client: Any
+    warband: Warband
+    sword: Item
+    axe: Item
+
+    def _transfer(self, **body: Any) -> Any:
+        return self.client.post(f"/api/warbands/{self.warband.id}/item-transfers/", body, format="json")
+
+    def _armed(self, kind: Kind, warband: Any = None, **fields: Any) -> Any:
+        """A unit carrying two swords (costs 10, then 12) and an axe (cost 7)."""
+        unit = make_unit(kind, warband or self.warband, **fields)
+        links = getattr(unit, kind.items)
+        for item, cost in ((self.sword, 10), (self.sword, 12), (self.axe, 7)):
+            links.create(item=item, cost=cost)
+        return unit
+
+    def _carried(self, kind: Kind, unit: Any) -> list[tuple[int, int | None]]:
+        return list(getattr(unit, kind.items).order_by("id").values_list("item_id", "cost"))

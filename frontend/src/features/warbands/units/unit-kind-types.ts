@@ -4,7 +4,6 @@ import type { Skill } from "@/features/skills/types/skill-types";
 import type { LevelInfo } from "../components/heroes/utils/hero-level";
 import type { AddFieldsSlotProps } from "../components/units/forms/AddFormFields";
 import type { UnitFormSlotProps } from "../components/units/forms/form-types";
-import type { FollowUp } from "../utils/follow-ups";
 import type { PendingChangeItem, PendingPurchase } from "../utils/pending-purchases";
 import type { LevelUpCore, UnitAdvance } from "../hooks/units/level-up-types";
 import type { UnitCardSlots } from "./unit-slot-types";
@@ -118,6 +117,9 @@ export type UnitCreationConfig<K extends UnitKindKey> = {
   duplicate: (form: UnitForm<K>) => UnitForm<K>;
 };
 
+/** Copies a Save takes out of the stash for one of its saved units (BUG-108). */
+export type StashTake = { unitId: number; itemId: number; quantity: number };
+
 export type UnitEditorConfig<K extends UnitKindKey> = {
   creation: UnitCreationConfig<K>;
   limits: (input: {
@@ -128,8 +130,8 @@ export type UnitEditorConfig<K extends UnitKindKey> = {
     roster: RosterLimits;
   }) => UnitLimits<K>;
   buildPendingChanges: (purchases: PendingPurchase[], forms: UnitForm<K>[]) => PendingChangeItem[];
-  /** Henchmen: the stash picks to take out of the stash once the batch has gone through. */
-  afterSaveSteps?: (warbandId: number, forms: UnitForm<K>[]) => FollowUp[];
+  /** Henchmen: new members' stash picks, which the Save's batch takes out of the stash. */
+  stashTakes?: (forms: UnitForm<K>[]) => StashTake[];
   /** Extra edit-card props (henchmen: stash quantities, loaded when editing starts). */
   useFormExtras: (
     warbandId: number,

@@ -72,6 +72,8 @@ What has been fixed, and where. Every fix ships with a regression test that fail
 | `chore/foundations-0e` | BUG-23, BUG-26, BUG-57, BUG-58, BUG-60, BUG-61 | SEC-15 (headers on; CSP report-only), BUG-19 (shared client and reconnect catch-up; battle state in pass 3), BUG-20 (notifications and chat errors; per-screen rollout in the passes), BUG-24 (layout side; Warband's own loop in pass 1) |
 | `pass1/warband-roster` (PR A) | BUG-03, BUG-04 (now guaranteed, not accidental), BUG-88, BUG-89, BUG-90, BUG-91, BUG-92, BUG-93, BUG-94, BUG-95; part 2: BUG-62, BUG-96, BUG-97 | SEC-07 (unit writes; stash, item and catalogue writes in passes 2 and 5), BUG-63 (server locks the warband and only moves the crown when asked; stale whole-unit XP saves stop in PR C) |
 | `pass1/roster-changes-backend` + `-frontend` (PR C) | BUG-27, BUG-28, BUG-29, BUG-30, BUG-31, BUG-32 (warn only, decision 10), BUG-33, BUG-34, BUG-63 (rest: XP +/- sends only `{xp}`), BUG-64, BUG-65, BUG-66, BUG-67, BUG-85, BUG-86, BUG-87, BUG-98, BUG-99, BUG-100, BUG-101, BUG-102, BUG-104, BUG-105, SEC-14; BUG-24 re-verified at 375 px | |
+| `pass2/economy-trades` + `pass2/frontend-fixes` (PR A part 1, before the pass 2 decisions) | BUG-06, BUG-08, BUG-35, BUG-36, BUG-37 (frontend reads the server's gold), BUG-38, BUG-40, BUG-41, BUG-42, BUG-68, BUG-70, BUG-107, BUG-109, BUG-110, BUG-111, BUG-112, BUG-113, BUG-114, BUG-115, BUG-116, BUG-118, BUG-119, BUG-120; SEC-08 (trade half) | BUG-05 (a trade with a trader completes; spent-trader warn vs refuse is decision 9), BUG-69 (errors shown; timers wait for decision 8), SEC-07 (stash half done; catalogue writes pass 5) |
+| `pass2/economy-backend`, `pass2/trades-backend` / `-followup`, `pass2/economy-frontend-changes` (PR A part 2, B, C) | BUG-05 (rest: a spent trader warns), BUG-07 (one `purchases/` request; purchases ride the roster Save), BUG-37 (stored, signed ledger), BUG-43, BUG-69 (timers, countdown, `trade_closed`; nothing to restore because the trading action is spent only at completion), BUG-108, BUG-117 (one stash row per cost) | BUG-18 (Buy again at the current price and recruits at the recorded price are done; the override rule itself is pass 5) |
 
 Pass 1 PR A notes:
 - **BUG-03:** postbattle XP goes through one `apply_xp_gain` (`apps/warbands/services/xp.py`) that reads the campaign's tables and halves the award for half-rate units. Hired swords still use the henchmen table until decision 8 lands in PR C. The PATCH path joins the same helper with BUG-27 in PR C.
@@ -324,9 +326,23 @@ No defect was graded P0 by its reviewer. Treat these as P0 until verified:
 | BUG-104 | A unit `items` entry with no `id`, or a non-numeric one, returns 500 (`_build_item_join_rows`) | Pass 1 PR A part 2 | Roster | Confirmed (code) | 1 (PR C) |
 | BUG-105 | Hero and hired-sword caps are checked outside the create transaction, so two simultaneous creates can both pass | Pass 1 PR A part 2 | Roster | Likely | 1 (PR C, with BUG-29 and decision 12) |
 | BUG-106 | Postbattle finalisation writes heroes before taking the warband lock, the opposite order to the roster paths; a leader PATCH on the same hero at the same moment can deadlock (Postgres aborts one request) | Pass 1 PR A part 2 | Battles | Speculative (code) | 3 |
-| BUG-107 | Stash Move targets, Buy again and the acquire dialog use the app store's warband (always your own), not the one on screen: an admin moving an item on another player's warband gets a 404 and BUG-06 destroys the item; Buy again in another warband's stash charges the admin's own (`StashItemList.tsx`, `UnitItemDialogs.tsx`, `useAcquireItemDialogShared.tsx`). *Severity P2 (data loss), listed here with the later finds* | Pass 2 brief research | Economy | Likely (code) | 2 |
+| BUG-107 | Stash Move targets, Buy again and the acquire dialog use the app store's warband (always your own), not the one on screen: an admin moving an item on another player's warband gets a 404 and BUG-06 destroys the item; Buy again in another warband's stash charges the admin's own (`StashItemList.tsx`, `UnitItemDialogs.tsx`, `useAcquireItemDialogShared.tsx`). Same cause: Buy again on another player's unit card silently does nothing, and a user with no warband of their own (e.g. a campaign admin) can't buy, give or move anything; the only hint is "Not enough gold crowns." in a hover tooltip. *Severity P2 (data loss), listed here with the later finds* | Pass 2 brief research; frontend characterisation | Economy | Confirmed (tests) | 2 |
 | BUG-108 | An item taken from the stash for a new henchman leaves the stash through a separate DELETE after the roster batch, so the two can disagree if the second fails (pass 1 made the retry safe; the server half is pass 2's purchase endpoint) | Pass 2 brief research | Economy | Confirmed (code) | 2 |
 | BUG-109 | The server accepts a dead hero as a trade's trader (`trades/views.py` filters `not_dismissed`, not `on_roster`) | Pass 2 brief research | Economy | Confirmed (code) | 2 |
+| BUG-110 | A purchase into the stash is logged as a hero item, so Logs read "Stash received: …" (`useAcquireItemDialogShared.tsx:857-859, 884-889`) | Pass 2 frontend characterisation | Economy | Confirmed (test) | 2 |
+| BUG-111 | A Save's purchase group header names only the first unit that bought something (`pending-purchases.ts:141`) | Pass 2 frontend characterisation | Economy | Confirmed (test) | 2 |
+| BUG-112 | The acquire and trade dialogs have no accessible description, and the unit card's item menu button has no name (`LoadoutEntryRow.tsx:64-77`) | Pass 2 frontend characterisation | Economy / a11y | Confirmed (test) | 2 |
+| BUG-113 | Opening a trade from `?trade=` reads the trade request twice (`useWarbandTradeSession.ts:109-138, 225-254`) | Pass 2 frontend characterisation | Economy / perf | Confirmed (test) | 2 |
+| BUG-114 | Any number of pending trade requests can exist between the same two players (`trades/views.py:360`) | Pass 2 backend characterisation | Economy | Confirmed (test) | 2 |
+| BUG-115 | A sender cancelling their own trade request is stored as "declined" (`trades/views.py:705`) | Pass 2 backend characterisation | Economy | Confirmed (test) | 2 |
+| BUG-116 | Every campaign member sees every trade in the campaign trade list, offers included, although the detail view answers 404 to non-participants (`trades/views.py:284`) | Pass 2 backend characterisation | Economy / privacy | Confirmed (test) | 2 |
+| BUG-117 | The stash re-prices copies: copies of different cost collapse to the oldest copy's cost, and `POST items/` without a cost overwrites the row's cost (`item_moves.py:85, :103`) | Pass 2 backend characterisation | Economy | Confirmed (test) | 2 |
+| BUG-118 | Any late write (offer, lock, a GET's expiry check) turned a completed or declined trade into "expired"; expiry now applies only to pending and accepted trades | Pass 2 PR A | Economy | Confirmed; **fixed** | 2 |
+| BUG-119 | Clearing a trade-request notification declined the trade with an unlocked read-modify-write, so an accept at the same moment could be overwritten (`notifications/views.py` `_clear_trade_request`) | Pass 2 PR A | Economy | Confirmed; **fixed** | 2 |
+| BUG-120 | Confirming "Cancel Trade" never closed the confirmation, so it reopened over the player's next trade | Pass 2 PR A browser check | Economy | Confirmed; **fixed** | 2 |
+| BUG-121 | Clearing a reported-result notification declines the result without a lock, so a same-user Approve at the same moment can leave the result applied on a battle that then shows as cancelled (`notifications/views.py` battle-result clear path) | Pass 3 brief research | Battles | Likely (race not reproduced) | 3 |
+| BUG-122 | Heroes' trading actions are reset twice when a battle finishes (`battles/views/combat.py` and again in `shared.py` finalisation) | Pass 3 brief research | Battles | Confirmed (code) | 3 |
+| BUG-123 | A malformed armour-save override is accepted mid-battle but only parsed at finalise, so finalising answers 400 (`battles/views/shared.py`) | Pass 3 brief research | Battles | Confirmed (code) | 3 |
 
 ## By plan phase
 
@@ -353,10 +369,12 @@ Each pass's bug checklist. IDs marked "(part)" are shared between passes; the no
 - P2: BUG-35, BUG-36, BUG-37, BUG-38, BUG-39, BUG-40, BUG-41, BUG-42, BUG-43
 - P3: BUG-68, BUG-69, BUG-70
 - Found while writing the pass 2 brief: BUG-107 (P2), BUG-108, BUG-109
+- Found by the pass 2 characterisation tests: BUG-110 to BUG-117 (all P3). The trade draft also resets when the page's gold changes, which belongs to BUG-42's fix.
 - Security: SEC-07 (part: stash and item writes), SEC-08 (part: trades)
 
 **Pass 3: Battles**
-- Product question (found in Phase 0): the active-battle stat-override editor has been off screen since a restyle, but `onSaveOverride` is still threaded through `ActiveUnitCard` / `ActiveHenchmenGroupCard`. Restore the editor or remove the chain?
+- Product question (found in Phase 0): the active-battle stat-override editor has been off screen since a restyle. **Answered: restore it** (pass 3 decision 6).
+- Found while writing the pass 3 brief: BUG-121, BUG-122, BUG-123 (all P3).
 - P1: BUG-09, BUG-10, BUG-11; regression tests for BUG-03
 - P2: BUG-19 (part: `useBattleState` catch-up), BUG-44, BUG-45, BUG-46, BUG-47, BUG-48
 - P3: BUG-71, BUG-72, BUG-73, BUG-74, BUG-75

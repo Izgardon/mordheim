@@ -14,6 +14,7 @@ from django.db.models.functions import JSONObject
 
 from apps.items.models import ItemAvailability, ItemAvailabilityRestriction, ItemPropertyLink
 from apps.warbands.models import Henchman, on_roster
+from apps.warbands.services.prices import house_rule_prices
 from apps.warbands.units.catalogue import SkillDetailSerializer, SpecialDetailSerializer, SpellDetailSerializer
 
 # The catalogue columns a unit payload shows for each kind of entry: the detail serializers' fields, which
@@ -28,6 +29,14 @@ ENTRY_COLUMNS: dict[str, tuple[str, ...]] = {
 def links_prefetch(relation: str, join_model: type[Model], target: str) -> Prefetch:
     """A unit's join rows with their catalogue entry: one query instead of two."""
     return Prefetch(relation, queryset=join_model._default_manager.select_related(target).order_by("id"))
+
+
+def item_links_prefetch(relation: str, join_model: type[Model], parent_field: str) -> Prefetch:
+    """A unit's copies with their items, and the campaign's house rule for each item read in the same query (the
+    sale price, decision 3)."""
+    rows = join_model._default_manager.select_related("item")
+    rows = rows.annotate(**house_rule_prices(f"{parent_field}__warband__campaign_id", "item__name"))
+    return Prefetch(relation, queryset=rows.order_by("id"))
 
 
 def entries_attr(relation: str) -> str:

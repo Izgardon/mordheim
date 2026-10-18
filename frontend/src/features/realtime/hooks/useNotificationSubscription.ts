@@ -13,20 +13,16 @@ import {
   listNotifications,
   type AppNotification,
 } from "@/features/notifications/api/notifications-api";
-import type {
-  TradeNotification,
-  TradeRequest,
-} from "@/features/warbands/types/trade-request-types";
+import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 import { useRealtimeReconnect, useUserNotifications } from "@/lib/realtime";
 import { useAppStore } from "@/stores/app-store";
 import {
   notificationFromApi,
   toBattleInviteNotification,
   toBattleResultRequestNotification,
-  toTradeNotification,
-  toTradeSession,
   type BattleNotificationPayload,
 } from "../utils/notification-mappers";
+import { handleTradeNotification } from "../utils/trade-notifications";
 
 /** Long enough to read and act on; the Rejoin Battle button and the bell remain afterwards. */
 const ACTIONABLE_TOAST_MS = 12_000;
@@ -41,7 +37,6 @@ export function useNotificationSubscription() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const {
-    tradeSession,
     currentBattleSession,
     addTradeRequestNotification,
     removeTradeRequestNotification,
@@ -54,7 +49,6 @@ export function useNotificationSubscription() {
     clearBattleResultRequestNotifications,
     setCurrentBattleSession,
     clearCurrentBattleSession,
-    setTradeSession,
   } = useAppStore();
   const userId = user?.id ?? null;
 
@@ -125,52 +119,15 @@ export function useNotificationSubscription() {
       return;
     }
 
-    if (message.type === "trade_request") {
-      const request = message.payload as TradeRequest & { notification_id?: number };
-      if (!request?.id) {
-        return;
-      }
-      addTradeRequestNotification(toTradeNotification(request, request.notification_id ?? 0));
-      return;
-    }
-
-    if (message.type === "trade_accepted") {
-      const request = message.payload as TradeRequest;
-      if (!request?.id) {
-        return;
-      }
-      if (tradeSession?.requestId === request.id && tradeSession.status === "active") {
-        return;
-      }
-      setTradeSession(toTradeSession(request, userId, "active"));
-      // Offer the trade instead of navigating: the user may be mid-edit elsewhere (BUG-26).
-      const isTradeOpen =
-        location.pathname === `/campaigns/${request.campaign_id}/warband` &&
-        new URLSearchParams(location.search).get("trade") === request.id;
-      if (!isTradeOpen) {
-        const partner = request.from_user.id === userId ? request.to_user : request.from_user;
-        toast(`${partner.label} accepted your trade`, {
-          id: `trade-accepted-${request.id}`,
-          duration: ACTIONABLE_TOAST_MS,
-          action: {
-            label: "Open trade",
-            onClick: () =>
-              navigate(`/campaigns/${request.campaign_id}/warband?trade=${request.id}`),
-          },
-        });
-      }
-      return;
-    }
-
-    if (message.type === "trade_declined") {
-      const request = message.payload as TradeRequest;
-      if (!request?.id) {
-        return;
-      }
-      removeTradeRequestNotification(request.id);
-      if (tradeSession?.requestId === request.id) {
-        setTradeSession(null);
-      }
+    const tradeContext = {
+      queryClient,
+      userId,
+      location,
+      navigate,
+      addTradeRequestNotification,
+      removeTradeRequestNotification,
+    };
+    if (handleTradeNotification(message, tradeContext)) {
       return;
     }
 

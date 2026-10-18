@@ -1,9 +1,4 @@
-import type {
-  HenchmenGroup,
-  WarbandHero,
-  WarbandHiredSword,
-  WarbandTrade,
-} from "../types/warband-types";
+import type { HenchmenGroup, WarbandHero, WarbandHiredSword } from "../types/warband-types";
 
 export const statFields = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
 
@@ -139,26 +134,6 @@ export const toNullableNumber = (value: string) => {
   return Number.isFinite(parsed) ? parsed : null;
 };
 
-const EXPENSE_ACTIONS = new Set([
-  "buy",
-  "bought",
-  "recruit",
-  "recruited",
-  "hired",
-  "hire",
-  "upkeep",
-  "trade sent",
-]);
-
-/** Returns the trade price with correct sign: negative for expenses, positive for income. */
-export const getSignedTradePrice = (trade: Pick<WarbandTrade, "price" | "action">): number => {
-  const price = trade.price || 0;
-  if (EXPENSE_ACTIONS.has(trade.action.trim().toLowerCase())) {
-    return -Math.abs(price);
-  }
-  return Math.abs(price);
-};
-
 // ── Warband rating ──────────────────────────────────────────────────────
 
 export const calculateWarbandRating = (
@@ -215,26 +190,6 @@ export const getWarbandUnitCount = (
 };
 
 // ── Trade formatting ────────────────────────────────────────────────────
-
-const PAST_TENSE_MAP: Record<string, string> = {
-  buy: "Bought",
-  bought: "Bought",
-  sell: "Sold",
-  sold: "Sold",
-  hire: "Hired",
-  hired: "Hired",
-  recruit: "Recruited",
-  recruited: "Recruited",
-  upkeep: "Upkeep",
-  exploration: "Exploration",
-  reward: "Reward",
-  "starting gold": "Starting Gold",
-};
-
-export const formatTradeAction = (action: string): string => {
-  const normalized = action.trim().toLowerCase();
-  return PAST_TENSE_MAP[normalized] || action.trim();
-};
 
 export const formatTradeDate = (value: string): string => {
   const date = new Date(value);

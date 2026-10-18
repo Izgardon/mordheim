@@ -5,6 +5,7 @@ serializers (apps/warbands/serializers/<kind>.py) set `kind` and list their fiel
 keeps today's payloads key for key, including the differences between kinds.
 """
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Any, ClassVar
 
@@ -12,8 +13,9 @@ from rest_framework import serializers
 
 from apps.warbands.models import RosterUnit
 from apps.warbands.prefetches import entries_attr
+from apps.warbands.services.ledger import MAX_TRADE_PRICE
+from apps.warbands.services.prices import annotated_current, own_price, sale_price
 from apps.warbands.utils.armour_save import parse_armour_save
-from apps.warbands.utils.trades import MAX_TRADE_PRICE
 
 from .catalogue import (
     ItemDetailSerializer,
@@ -118,14 +120,24 @@ class UnitDetailSerializer(UnitReadSerializer):
     race = RaceSummarySerializer(read_only=True)
 
     def get_items(self, unit: RosterUnit) -> list[Any]:
-        items = []
-        for row in self._entries(unit, self.kind.items):
-            if not row.item_id:
-                continue
-            data = ItemDetailSerializer(row.item).data
-            data["cost"] = getattr(row, "cost", None)
-            items.append(data)
-        return items
+        return detail_item_entries(self._entries(unit, self.kind.items))
+
+
+def detail_item_entries(rows: Iterable[Any]) -> list[Any]:
+    """A unit's copies as detail payloads list them: the item's detail, what this copy cost, and its suggested sale
+    price (decision 3: half the current campaign price, or half this cost when there is none). The rows come from
+    `item_links_prefetch` (the house rule read with them) and their items' availabilities are prefetched."""
+    items = []
+    for row in rows:
+        if not row.item_id:
+            continue
+        data = ItemDetailSerializer(row.item).data
+        data["cost"] = getattr(row, "cost", None)
+        data["current_price"] = annotated_current(row, own_price(row.item))  # what Buy again charges
+        sale = sale_price(data["current_price"], data["cost"])
+        data["suggested_sale_price"], data["sale_price_basis"] = sale.price, sale.basis
+        items.append(data)
+    return items
 
 
 class UnitItemEntrySerializer(serializers.Serializer):
@@ -236,4 +248,7 @@ class UnitBatchSerializer(serializers.Serializer):
             "create": serializers.ListField(child=serializers.DictField(), required=False, default=list),
             "update": serializers.ListField(child=serializers.DictField(), required=False, default=list),  # with "id"
             "dismiss": serializers.ListField(child=serializers.IntegerField(), required=False, default=list),
+            # pass 2, decision 1 and BUG-108: copies bought or taken from the stash for the batch's units
+            "purchases": serializers.ListField(child=serializers.DictField(), required=False, default=list),
+            "stash_takes": serializers.ListField(child=serializers.DictField(), required=False, default=list),
         }

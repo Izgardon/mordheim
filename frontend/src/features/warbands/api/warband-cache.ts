@@ -135,8 +135,23 @@ export function readCachedSheet(queryClient: QueryClient, warbandId: number) {
 }
 
 /**
+ * The ledger and the log after a write the server recorded rows for (purchases, sales, moves,
+ * recruits, level-ups...): marked stale, so a tab shown later reads them again. Nothing is read
+ * now; a tab on screen keeps what it shows (ECON-PERF-08).
+ */
+export function markLedgerStale(queryClient: QueryClient, warbandId: number) {
+  for (const path of ["treasury", "logs"]) {
+    void queryClient.invalidateQueries({
+      predicate: isWarbandQuery(warbandId, path),
+      refetchType: "none",
+    });
+  }
+}
+
+/**
  * Applies a write's result to the cached warband sheet: unit and stash rows merge by id, and the
- * summary is merged when the write returned one, otherwise re-read (see `WarbandUpdate`).
+ * summary is merged when the write returned one, otherwise re-read (see `WarbandUpdate`). The
+ * ledger and the log are marked stale (`markLedgerStale`).
  */
 export function applyWarbandUpdate(
   queryClient: QueryClient,
@@ -156,6 +171,43 @@ export function applyWarbandUpdate(
   }
   if (!update.summary && !update.summaryUnchanged) {
     refreshSheetSummary(queryClient, warbandId);
+  }
+  markLedgerStale(queryClient, warbandId);
+}
+
+/**
+ * A hero's trading action as each cached sheet of his warband shows it (detail and summary rows):
+ * `available` false once a trade or search spent it. Rows not in the cache are left alone.
+ */
+export function setHeroTradingAction(
+  queryClient: QueryClient,
+  warbandId: number,
+  heroId: number,
+  available: boolean
+) {
+  const mark = <H extends { id: number; trading_action?: boolean | null }>(heroes?: H[]) =>
+    heroes?.map((hero) => (hero.id === heroId ? { ...hero, trading_action: available } : hero));
+  queryClient.setQueriesData<WarbandSheet>(
+    { predicate: isWarbandQuery(warbandId, "sheet") },
+    (sheet: WarbandSheet | undefined) =>
+      sheet && {
+        ...sheet,
+        heroes: mark(sheet.heroes) ?? sheet.heroes,
+        summary: sheet.summary.heroes
+          ? { ...sheet.summary, heroes: mark(sheet.summary.heroes) }
+          : sheet.summary,
+      }
+  );
+}
+
+/** Marks the warband's cached reads under each path stale; the ones on screen are read again. */
+export function invalidateWarbandReads(
+  queryClient: QueryClient,
+  warbandId: number,
+  ...paths: string[]
+) {
+  for (const path of paths) {
+    void queryClient.invalidateQueries({ predicate: isWarbandQuery(warbandId, path) });
   }
 }
 

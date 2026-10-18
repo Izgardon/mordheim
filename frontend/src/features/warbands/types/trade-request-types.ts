@@ -1,3 +1,5 @@
+import type { WarbandUnitsSummary } from "./warband-types";
+
 export type TradeUserSummary = {
   id: number;
   label: string;
@@ -22,10 +24,14 @@ export type TradeOffer = {
   items?: TradeOfferItem[];
 };
 
+/** A rule the server warned about instead of refusing (`trading_action_spent`: decision 9). */
+export type TradeWarning = { code: string; message: string; hero_id?: number | null };
+
 export type TradeRequest = {
   id: string;
   campaign_id: number;
-  status: "pending" | "accepted" | "declined" | "expired" | "completed";
+  /** "cancelled": the sender closed it; "declined": the recipient turned it down or closed it. */
+  status: "pending" | "accepted" | "declined" | "cancelled" | "expired" | "completed";
   created_at: string;
   responded_at?: string | null;
   expires_at: string;
@@ -33,11 +39,27 @@ export type TradeRequest = {
   to_offer?: TradeOffer;
   from_accepted?: boolean;
   to_accepted?: boolean;
+  /** Goes up with every saved offer; a lock names the one its player was shown (BUG-35). */
+  offer_version?: number;
+  /** The hero the completed trade spent on each side (decision 9); null until it completes. */
+  from_trader_spent_id?: number | null;
+  to_trader_spent_id?: number | null;
+  /** In the acting player's offer and lock answers only: what went ahead despite a rule. */
+  warnings?: TradeWarning[];
   from_user: TradeUserSummary;
   to_user: TradeUserSummary;
   from_warband: TradeWarbandSummary;
   to_warband: TradeWarbandSummary;
   channel: string;
+};
+
+/**
+ * A completed trade as the completing lock answers it and `trade.completed` carries it: the
+ * request plus each warband's summary, so neither player re-reads its own (ECON-PERF-02).
+ */
+export type TradeCompletion = TradeRequest & {
+  from_summary?: WarbandUnitsSummary;
+  to_summary?: WarbandUnitsSummary;
 };
 
 export type TradeNotification = {

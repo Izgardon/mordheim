@@ -77,6 +77,9 @@ ITEM_DETAIL = {
         }
     ],
     "cost": "int",
+    "current_price": "int",  # decision 11: what Buy again charges
+    "suggested_sale_price": "int",  # decision 3
+    "sale_price_basis": "str",
 }
 NAMED = {"id": "int", "name": "str"}
 SKILL_DETAIL = {"id": "int", "name": "str", "type": "str"}
@@ -100,6 +103,7 @@ HERO_SUMMARY = {
 }
 HERO_DETAIL = {
     **HERO_SUMMARY,
+    "updated_at": "str",  # pass 2: the version a roster Save sends back
     "race": RACE,
     "kills": "int",
     "deeds": "str",
@@ -125,6 +129,7 @@ HENCHMEN_SUMMARY = {
 }
 HENCHMEN_DETAIL = {
     **HENCHMEN_SUMMARY,
+    "updated_at": "str",
     "race": RACE,
     "deeds": "str",
     "items": [ITEM_DETAIL],
@@ -152,6 +157,7 @@ HIRED_SWORD_SUMMARY = {
 }
 HIRED_SWORD_DETAIL = {
     **HIRED_SWORD_SUMMARY,
+    "updated_at": "str",
     "race": RACE,
     "kills": "int",
     "deeds": "str",

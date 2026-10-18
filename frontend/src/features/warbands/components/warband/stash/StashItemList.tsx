@@ -1,20 +1,11 @@
-import { useRef, useEffect } from "react";
-import { createPortal } from "react-dom";
-
-import ItemSellDialog from "../../shared/dialogs/ItemSellDialog";
-import ItemMoveDialog from "../../shared/dialogs/ItemMoveDialog";
-import AcquireItemDialog from "../../../../items/components/AcquireItemDialog/AcquireItemDialog";
+import ItemActionDialogs from "../../shared/ItemActionDialogs";
+import { itemMutationUpdate } from "../../../api/economy-queries";
 import { useWarbandCacheUpdate } from "../../../api/warband-cache";
 
-import type {
-  HenchmenGroup,
-  WarbandHero,
-  WarbandHiredSword,
-  WarbandItemSummary,
-} from "../../../types/warband-types";
+import type { WarbandHero, WarbandItemSummary } from "../../../types/warband-types";
 
 import { ExitIcon } from "@components/exit-icon";
-import useStashActions from "../../../hooks/warband/useStashActions";
+import useItemActionMenu, { stashEntries } from "../../../hooks/useItemActionMenu";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { Button } from "@components/button";
 
@@ -24,134 +15,37 @@ type StashItemListProps = {
   isLoading?: boolean;
   error?: string;
   onClose?: () => void;
-  onItemsChanged?: () => void;
   onHeroUpdated?: (updatedHero: WarbandHero) => void;
   canEdit?: boolean;
   inSheet?: boolean;
 };
 
-function getFloatingMenuPosition(anchorRect: DOMRect, actionCount: number) {
-  const viewportPadding = 12;
-  const gap = 4;
-  const menuWidth = 112;
-  const estimatedRowHeight = 31;
-  const menuHeight = actionCount * estimatedRowHeight;
-  const spaceBelow = window.innerHeight - anchorRect.bottom - viewportPadding - gap;
-  const spaceAbove = anchorRect.top - viewportPadding - gap;
-
-  let top =
-    spaceBelow < menuHeight && spaceAbove > spaceBelow
-      ? anchorRect.top - menuHeight - gap
-      : anchorRect.bottom + gap;
-
-  top = Math.max(viewportPadding, Math.min(top, window.innerHeight - viewportPadding - menuHeight));
-
-  let left = anchorRect.right - menuWidth;
-  left = Math.max(viewportPadding, Math.min(left, window.innerWidth - viewportPadding - menuWidth));
-
-  return { top, left, menuWidth };
-}
-
+/** The warband stash: its rows, each with Sell, Move and Buy again for editors. */
 export default function StashItemList({
   items,
   warbandId,
   isLoading = false,
   error = "",
   onClose,
-  onItemsChanged,
   onHeroUpdated,
   canEdit = false,
   inSheet = false,
 }: StashItemListProps) {
-  const menuRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery("(max-width: 960px)");
   const updateWarbandCache = useWarbandCacheUpdate();
-
-  const {
-    openMenu,
-    setOpenMenu,
-    itemDialog,
-    setItemDialog,
-    acquireItem,
-    setAcquireItem,
-    henchmenGroups,
-    entries,
-    warband,
-    handleMenuToggle,
-    handleMenuAction,
-    handleSellConfirm,
-    handleMoveConfirm,
-  } = useStashActions({
-    items,
+  const entries = stashEntries(items);
+  const menu = useItemActionMenu({
+    source: { kind: "stash", items },
     warbandId,
-    onItemsChanged,
-    onHeroUpdated,
+    canEdit,
     onMutationComplete: (result) => {
-      updateWarbandCache(warbandId, {
-        summary: result.summary,
-        heroes:
-          result.targetUnitType === "heroes" && result.target && !("quantity" in result.target)
-            ? [result.target as WarbandHero]
-            : undefined,
-        hiredSwords:
-          result.targetUnitType === "hiredswords" && result.target && !("quantity" in result.target)
-            ? [result.target as WarbandHiredSword]
-            : undefined,
-        henchmenGroups:
-          result.targetUnitType === "henchmen" && result.target && !("quantity" in result.target)
-            ? [result.target as HenchmenGroup]
-            : undefined,
-        stashItems: result.stash_item ? [result.stash_item] : undefined,
-        removedStashItemIds: result.removed_stash_item_id
-          ? [result.removed_stash_item_id]
-          : undefined,
-      });
+      if (result.targetUnitType === "heroes" && result.target && !("quantity" in result.target)) {
+        onHeroUpdated?.(result.target as WarbandHero);
+      }
+      // The answer carries the stash row (or its removal): no stash reload (ECON-PERF-08).
+      updateWarbandCache(warbandId, itemMutationUpdate(result));
     },
   });
-
-  useEffect(() => {
-    if (!openMenu) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setOpenMenu(null);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [openMenu, setOpenMenu]);
-
-  useEffect(() => {
-    if (!canEdit && openMenu) {
-      setOpenMenu(null);
-    }
-  }, [canEdit, openMenu, setOpenMenu]);
-
-  const menuActions = ["Sell", "Move", "Buy again"] as const;
-  const menuPosition = openMenu ? getFloatingMenuPosition(openMenu.rect, menuActions.length) : null;
-  const menuContent =
-    openMenu && canEdit ? (
-      <div
-        ref={menuRef}
-        data-allow-dialog-interaction
-        className="fixed z-[9999] min-w-[100px] rounded border border-white/20 bg-neutral-900 shadow-lg"
-        style={{
-          top: menuPosition?.top,
-          left: menuPosition?.left,
-          width: menuPosition?.menuWidth,
-        }}
-      >
-        {menuActions.map((action) => (
-          <button
-            key={action}
-            type="button"
-            className="block w-full cursor-pointer border-none bg-transparent px-3 py-1.5 text-left text-xs text-foreground transition-colors duration-150 hover:bg-white/10 hover:text-accent"
-            onClick={() => handleMenuAction(action, openMenu.entry)}
-          >
-            {action}
-          </button>
-        ))}
-      </div>
-    ) : null;
 
   return (
     <>
@@ -213,14 +107,28 @@ export default function StashItemList({
                   key={entry.id}
                   className="flex items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 transition-colors duration-150 hover:border-white/40"
                 >
-                  <span className="min-w-0 flex-1 truncate text-foreground">{entry.label}</span>
+                  <span className="min-w-0 flex-1 truncate text-foreground">
+                    {entry.label}
+                    {entry.costs ? (
+                      <span className="block truncate text-xs text-muted-foreground">
+                        {entry.costs}
+                      </span>
+                    ) : null}
+                  </span>
                   {canEdit ? (
                     <button
                       type="button"
                       className="flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-foreground/50 transition-colors duration-150 hover:text-foreground"
-                      onClick={(e) => handleMenuToggle(entry, e)}
+                      onClick={(e) => menu.handleMenuToggle(entry, e)}
+                      aria-label={`Actions for ${entry.label}`}
                     >
-                      <svg width="3" height="13" viewBox="0 0 3 13" fill="currentColor">
+                      <svg
+                        width="3"
+                        height="13"
+                        viewBox="0 0 3 13"
+                        fill="currentColor"
+                        aria-hidden="true"
+                      >
                         <circle cx="1.5" cy="1.5" r="1.5" />
                         <circle cx="1.5" cy="6.5" r="1.5" />
                         <circle cx="1.5" cy="11.5" r="1.5" />
@@ -233,53 +141,7 @@ export default function StashItemList({
           )}
         </div>
       </div>
-      {inSheet ? menuContent : menuContent ? createPortal(menuContent, document.body) : null}
-      {itemDialog?.action === "sell" && (
-        <ItemSellDialog
-          open
-          onOpenChange={(open) => {
-            if (!open) setItemDialog(null);
-          }}
-          itemName={itemDialog.item.name}
-          itemCost={itemDialog.item.cost}
-          maxQuantity={itemDialog.count}
-          onConfirm={({ quantity, price }) => handleSellConfirm(itemDialog.item, quantity, price)}
-        />
-      )}
-      {itemDialog?.action === "move" && (
-        <ItemMoveDialog
-          open
-          onOpenChange={(open) => {
-            if (!open) setItemDialog(null);
-          }}
-          itemName={itemDialog.item.name}
-          maxQuantity={itemDialog.count}
-          unitTypes={["heroes", "hiredswords", "henchmen"]}
-          units={{
-            heroes: warband?.heroes ?? [],
-            hiredswords: warband?.hired_swords ?? [],
-            henchmen: henchmenGroups,
-          }}
-          onConfirm={({ quantity, unitType, unitId }) =>
-            handleMoveConfirm(itemDialog.item, quantity, unitType, unitId)
-          }
-        />
-      )}
-      {acquireItem && (
-        <AcquireItemDialog
-          item={acquireItem}
-          open
-          onOpenChange={(open) => {
-            if (!open) setAcquireItem(null);
-          }}
-          trigger={null}
-          variant="buy-again"
-          presetUnitType="stash"
-          onAcquire={() => {
-            onItemsChanged?.();
-          }}
-        />
-      )}
+      <ItemActionDialogs menu={menu} canEdit={canEdit} menuInPlace={inSheet} />
     </>
   );
 }

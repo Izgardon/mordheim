@@ -32,7 +32,7 @@ Branch: `chore/foundations` off `main`. One commit per step, grouped into five P
 - [x] **0.8 Security hotfix:** sanitise location content and stop rendering it raw (SEC-03)
 - [x] **0.9 Don't log users out on transient errors:** only a 401 from refresh clears tokens (BUG-02)
 
-**Status: pushed as `chore/foundations` (PR 0-A), waiting for you to open the PR and deploy.** Steps 0.1–0.9 are done, plus local realtime moved to soketi (dev only). Notes:
+**Status: merged to main and deployed on 2026-10-17 with the rest of Phase 0 and pass 1 (`7cc3831`). The deploy checklist below still applies (items 1–4 and 6–7 are yours; item 5 is confirmed).** Steps 0.1–0.9 are done, plus local realtime moved to soketi (dev only). Notes:
 - Step 0.5's Django gzip half was dropped: Render's edge already Brotli-compresses API responses.
 - Step 0.7's frontend dedupe moved to 0.19.
 - SEC-04 (`RATE_LIMIT_NUM_PROXIES`) is waiting on the X-Forwarded-For chain the new access log records.
@@ -155,10 +155,10 @@ Types: **New** (new functionality), **Tweak** (change to existing behaviour), **
 
 | Pass | Brief | Your changes | Tests locked | Fix PR | Refactor PR | Feature PR | Done |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 0 Foundations | — | — | — | 0-A pushed, awaiting your PR + deploy | 0-B / 0-C / 0-D / 0-E pushed (stacked) | — | Implementation done; designs 0.28 / 0.29 await sign-off |
-| 1 Warband roster | [Done](briefs/pass-1-warband-roster.md) | Answered 2026-10-17 | 119 backend + 527 frontend tests | PR A done incl. part 2 (`pass1/warband-roster`) | Done (`pass1/unit-abstraction-backend`, `-frontend`) | Done (`pass1/roster-changes-backend`, `-frontend`) | 2026-10-17 |
-| 2 Economy and trades | [Done](briefs/pass-2-economy-trades.md) | Waiting for your answers | | | | | |
-| 3 Battles | | | | | | | |
+| 0 Foundations | — | — | — | 0-A | 0-B to 0-E | — | **Merged to main and deployed 2026-10-17** (`7cc3831`); design 0.28 built in pass 1, 0.29 in part (`WarbandScopedView`, `capabilities`) |
+| 1 Warband roster | [Done](briefs/pass-1-warband-roster.md) | Answered 2026-10-17 | 119 backend + 527 frontend tests | PR A done incl. part 2 | Done | Done | **Merged to main and deployed 2026-10-17** (`7cc3831`) |
+| 2 Economy and trades | [Done](briefs/pass-2-economy-trades.md) | Answered 2026-10-17 | 90 backend + 89 frontend tests | Done | Done | Done | 2026-10-18 |
+| 3 Battles | [Done](briefs/pass-3-battles.md) | Answered 2026-10-18 | | | | | |
 | 4 Campaigns | | | | | | | |
 | 5 Catalogue | | | | | | | |
 | 6 Auth and core | | | | | | | |

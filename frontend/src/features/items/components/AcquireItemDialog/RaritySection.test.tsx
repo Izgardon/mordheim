@@ -59,11 +59,44 @@ describe("RaritySection", () => {
       />
     );
 
-    expect(screen.getByText("Spent Hero (spent)")).toBeInTheDocument();
+    // Decision 9: a spent hero is greyed and named so, but stays selectable.
+    expect(screen.getByText("Spent Hero (used his trading action this round)")).toHaveAttribute(
+      "data-disabled",
+      "false"
+    );
+    // His roll is stored, so there is nothing to warn about.
+    expect(screen.queryByText(/already used his trading action/)).not.toBeInTheDocument();
     expect(screen.getByText("Rolled 7 + 1 = 8")).toBeInTheDocument();
     expect(screen.getByText("(Failed)")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Roll 2d6" })).toBeDisabled();
     expect(screen.getByRole("checkbox")).toBeDisabled();
+  });
+
+  it("warns when a spent hero is picked to search, and lets him roll (decision 9, ECON-TWEAK-01)", () => {
+    render(
+      <RaritySection
+        rarity={9}
+        heroes={[{ id: 1, name: "Spent Hero", trading_action: false }]}
+        searchingHeroId="1"
+        onSearchingHeroChange={vi.fn()}
+        rollDisabled={false}
+        isSavingRarityRoll={false}
+        hasStoredRarityRoll={false}
+        currentRarityRoll={null}
+        modifierEnabled={false}
+        onModifierEnabledChange={vi.fn()}
+        rarityModifier={0}
+        onRarityModifierChange={vi.fn()}
+        modifierReason=""
+        onModifierReasonChange={vi.fn()}
+        onRarityRollTotalChange={vi.fn()}
+      />
+    );
+
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Spent Hero already used his trading action this round."
+    );
+    expect(screen.getByRole("button", { name: "Roll 2d6" })).toBeEnabled();
   });
 
   it("disables rolling when no searchable hero is selected but keeps modifier controls editable", () => {

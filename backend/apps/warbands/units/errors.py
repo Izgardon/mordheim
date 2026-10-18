@@ -23,6 +23,7 @@ class RosterError(APIException):
         self.status_code = status_code
         self.error_code = code
         self.message = detail
+        self.fields: FieldErrors = fields or {}
 
 
 def flatten_errors(errors: Any, prefix: str = "") -> FieldErrors:

@@ -30,7 +30,6 @@ import type {
 
 type WarbandMobileMetaBarProps = {
   warband: Warband;
-  tradeTotal: number;
   /** Gold the open edit session will spend on Save (queued recruits and purchases). */
   pendingGold?: number;
   warbandRating: number;
@@ -48,7 +47,6 @@ type WarbandMobileMetaBarProps = {
 
 export default function WarbandMobileMetaBar({
   warband,
-  tradeTotal,
   pendingGold = 0,
   warbandRating,
   heroes,
@@ -74,7 +72,7 @@ export default function WarbandMobileMetaBar({
             trigger={
               <div className="flex items-center gap-2">
                 <img src={greedIcon} alt="" className="h-4 w-4" />
-                <GoldLabel gold={tradeTotal} pending={pendingGold} />
+                <GoldLabel gold={warband.gold ?? 0} pending={pendingGold} />
               </div>
             }
             content="Gold coins"

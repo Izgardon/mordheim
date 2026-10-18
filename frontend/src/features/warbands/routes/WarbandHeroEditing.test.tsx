@@ -62,7 +62,6 @@ vi.mock("@/stores/app-store", () => ({
   useAppStore: () => ({
     warband: null,
     setWarband: vi.fn(),
-    tradeSession: null,
     diceColor: "#2e8555",
     campaignStarted: true,
   }),
@@ -161,8 +160,8 @@ vi.mock("../hooks/warband/useWarbandWarchest", () => ({
 }));
 vi.mock("../hooks/warband/useWarbandTradeSession", () => ({
   useWarbandTradeSession: () => ({
+    session: null,
     tradeRequest: null,
-    setTradeRequest: vi.fn(),
     handleTradeRequestCreated: vi.fn(),
     handleTradeSessionClose: vi.fn(),
   }),
@@ -180,7 +179,7 @@ vi.mock("../components/warband/WarbandPageSkeleton", () => ({
 vi.mock("../components/shared/dialogs/CreateWarbandDialog", nothing);
 vi.mock("../components/tabs/BackstoryTab", nothing);
 vi.mock("../components/tabs/LogsTab", nothing);
-vi.mock("../components/tabs/TradesTab", nothing);
+vi.mock("../components/tabs/TreasuryTab", nothing);
 vi.mock("../components/trade/TradeInviteDialog", nothing);
 vi.mock("../components/trade/TradeSessionDialog", nothing);
 vi.mock("../components/warband/WarbandMobileMetaBar", nothing);

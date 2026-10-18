@@ -1,5 +1,5 @@
 // types
-import type { Item, Restriction } from "../../items/types/item-types";
+import type { Item, Restriction, SalePriceBasis } from "../../items/types/item-types";
 import type { Skill } from "../../skills/types/skill-types";
 import type { Spell } from "../../spells/types/spell-types";
 import type { Special } from "../../special/types/special-types";
@@ -431,6 +431,8 @@ export type HenchmenGroup = {
   initiative: number | null;
   attacks: number | null;
   leadership: number | null;
+  /** The group's version: a roster Save sends it back and is refused if it moved (409). */
+  updated_at?: string;
   race?: {
     name: string;
     movement: number;
@@ -550,11 +552,24 @@ export type NamedKillHistory = {
   named_kills: NamedKillHistoryEntry[];
 };
 
+/** How many stash copies of an item have one cost (BUG-117); null: copies of unknown cost. */
+export type StashCost = { cost: number | null; quantity: number };
+
+/**
+ * A stash entry: one per item. `cost` is the cost of the copies that leave first, and `costs`
+ * lists each cost's count in the order copies leave.
+ */
 export type WarbandItemSummary = {
   id: number;
   name: string;
   cost?: number | null;
   quantity?: number | null;
+  costs?: StashCost[];
+  /** One copy's suggested sale price (decision 3; null: none known). */
+  suggested_sale_price?: number | null;
+  /** What Buy again charges: the campaign's current price, house rule included (null: unknown). */
+  current_price?: number | null;
+  sale_price_basis?: SalePriceBasis | null;
 };
 
 export type WarbandUnitDetail = WarbandHero | WarbandHiredSword | HenchmenGroup;
@@ -566,6 +581,8 @@ export type WarbandItemTransferPayload = {
   target_id?: number | null;
   item_id: number;
   quantity: number;
+  /** From the stash: only copies of this cost (null: of unknown cost). */
+  cost?: number | null;
 };
 
 export type WarbandItemSalePayload = {
@@ -574,6 +591,8 @@ export type WarbandItemSalePayload = {
   item_id: number;
   quantity: number;
   price: number;
+  /** From the stash: only copies of this cost (null: of unknown cost). */
+  cost?: number | null;
 };
 
 export type WarbandItemMutationResponse = {
@@ -584,12 +603,19 @@ export type WarbandItemMutationResponse = {
   removed_stash_item_id?: number | null;
 };
 
+/** Who entered a ledger row by hand (decision 6); null for automatic and older rows. */
+export type TradeAuthor = { id: number; name: string };
+
+/** `price` is signed (decision 4): negative when gold left the warband. */
 export type WarbandTradeChild = {
   id: number;
   action: string;
   description: string;
   price: number;
   notes: string;
+  created_by?: TradeAuthor | null;
+  /** The row an Adjustment corrects (decision 5). */
+  corrects_id?: number | null;
   created_at: string;
 };
 
@@ -601,15 +627,22 @@ export type WarbandTrade = {
   description: string;
   price: number;
   notes: string;
+  created_by?: TradeAuthor | null;
+  corrects_id?: number | null;
   children: WarbandTradeChild[];
   created_at: string;
   updated_at: string;
 };
 
+/** A manual entry. `price`: signed for an Adjustment, otherwise 0 or more (the server signs it). */
 export type WarbandTradePayload = {
   action: string;
   description: string;
   price: number;
   notes?: string;
   parent_id?: number | null;
+  corrects_id?: number | null;
 };
+
+/** What can change on a row entered by hand: never its gold (decision 6). */
+export type WarbandTradeEdit = { description?: string; notes?: string };

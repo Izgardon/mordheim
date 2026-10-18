@@ -27,6 +27,7 @@ from apps.warbands.models import (
     HiredSwordSkill,
     HiredSwordSpecial,
     HiredSwordSpell,
+    LedgerAction,
     RosterUnit,
     Warband,
     on_roster,
@@ -36,7 +37,7 @@ from apps.warbands.prefetches import (
     entries_array,
     entries_attr,
     item_detail_prefetches,
-    links_prefetch,
+    item_links_prefetch,
 )
 from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
 from apps.warbands.utils.hero_level import count_new_level_ups
@@ -80,7 +81,7 @@ class LinkSpec:
 class RecruitSpec:
     """How recruiting and dismissing the kind is written to the ledger and the log."""
 
-    trade_action: str  # "Recruited" | "Hired"
+    trade_action: LedgerAction  # Recruit | Hire
     log_new: str
     log_remove: str
     client_may_seed_level_up: bool = False  # Lad's Got Talent creates the promoted hero with level_up=2
@@ -152,7 +153,7 @@ class UnitKindSpec:
             for link in self.links()
             if link is not self.items
         }
-        prefetch: list[str | Prefetch] = [links_prefetch(self.items.relation, self.items.model, "item")]
+        prefetch: list[str | Prefetch] = [item_links_prefetch(self.items.relation, self.items.model, self.parent_field)]
         if detail:
             prefetch += item_detail_prefetches(f"{self.items.relation}__item__")
         if self.has_members and living_members:
@@ -195,7 +196,7 @@ HERO = UnitKindSpec(
     advance_log_type="hero",
     caster_traits=True,
     can_lead=True,
-    recruit=RecruitSpec("Recruited", "new_hero", "remove_hero", client_may_seed_level_up=True),
+    recruit=RecruitSpec(LedgerAction.RECRUIT, "new_hero", "remove_hero", client_may_seed_level_up=True),
     cap=CapSpec("max_heroes", 6, "heroes", "hero_cap_reached", counted=on_roster),  # living ones only (BUG-29)
     unknown_name="Unknown Hero",
     unknown_type="Unknown Type",
@@ -222,7 +223,7 @@ HENCHMEN_GROUP = UnitKindSpec(
     advance_log_type="henchmen",
     caster_traits=False,
     can_lead=False,
-    recruit=RecruitSpec("Recruited", "new_henchmen_group", "remove_henchmen_group"),
+    recruit=RecruitSpec(LedgerAction.RECRUIT, "new_henchmen_group", "remove_henchmen_group"),
     cap=None,  # group max_size and warband max_units only warn (decision 12, BUG-67)
     unknown_name="Unknown",
     unknown_type="Unknown",
@@ -251,7 +252,7 @@ HIRED_SWORD = UnitKindSpec(
     advance_log_type="hired_sword",
     caster_traits=True,
     can_lead=False,
-    recruit=RecruitSpec("Hired", "new_hired_sword", "remove_hired_sword"),
+    recruit=RecruitSpec(LedgerAction.HIRE, "new_hired_sword", "remove_hired_sword"),
     cap=CapSpec(
         "max_hired_swords",
         3,

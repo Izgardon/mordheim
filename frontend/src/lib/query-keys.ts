@@ -36,5 +36,16 @@ export const queryKeys = {
       ["campaign", campaignId, "warband", warbandId, "summary"] as const,
     warbandStash: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "stash"] as const,
+    /** The warband's ledger, as the Treasury tab lists it. */
+    warbandTreasury: (campaignId: number, warbandId: number) =>
+      ["campaign", campaignId, "warband", warbandId, "treasury"] as const,
+    /** The warband's log entries, as the Logs tab lists them. */
+    warbandLogs: (campaignId: number, warbandId: number) =>
+      ["campaign", campaignId, "warband", warbandId, "logs"] as const,
+    /** One trade request between two players of the campaign. */
+    trade: (campaignId: number, requestId: string) =>
+      ["campaign", campaignId, "trade", requestId] as const,
+    /** Your open trades in the campaign (pending or accepted), for resuming one. */
+    openTrades: (campaignId: number) => ["campaign", campaignId, "trades", "open"] as const,
   },
 };

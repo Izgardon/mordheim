@@ -26,9 +26,9 @@ class RosterCreateCharacterisationTests(RosterTestCase):
     def test_create_writes_the_unit_its_recruit_trade_and_logs(self):
         recruit = {"name": "Recruit", "type": "Trooper"}
         expected_trades = {
-            HERO.key: [("Recruited", "Recruit the Trooper", -25, None)],
-            HENCHMEN.key: [("Recruited", "Alpha into Recruit", -25, None)],
-            HIRED_SWORD.key: [("Hired", "Recruit the Trooper", -25, None)],
+            HERO.key: [("Recruit", "Recruit the Trooper", -25, None)],
+            HENCHMEN.key: [("Recruit", "Alpha into Recruit", -25, None)],
+            HIRED_SWORD.key: [("Hire", "Recruit the Trooper", -25, None)],
         }
         expected_logs = {
             HERO.key: [("personnel", "new_hero", recruit, None)],
@@ -302,9 +302,9 @@ class HenchmenCreateCharacterisationTests(RosterTestCase):
         self.assertEqual(
             sorted(trades[1:]),
             [
-                ("Recruited", "Ana into Zealots", -25, header),
-                ("Recruited", "Cy into Zealots", -25, header),
-                ("Recruited", "Unnamed Henchman into Zealots", -25, header),
+                ("Recruit", "Ana into Zealots", -25, header),
+                ("Recruit", "Cy into Zealots", -25, header),
+                ("Recruit", "Unnamed Henchman into Zealots", -25, header),
             ],
         )
         self.assertEqual(

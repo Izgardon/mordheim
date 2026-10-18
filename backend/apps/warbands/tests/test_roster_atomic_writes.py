@@ -8,7 +8,7 @@ from typing import Any
 from unittest import mock
 
 from apps.warbands.models import Henchman, WarbandLog, WarbandTrade
-from apps.warbands.utils.trades import TradeHelper
+from apps.warbands.services import ledger
 
 from .roster_support import HENCHMEN, KINDS, Kind, RosterTestCase, create_payload, make_unit, related_ids, unit_url
 
@@ -45,7 +45,7 @@ class RosterAtomicWriteTests(RosterTestCase):
                 if kind is HENCHMEN:
                     payload["henchmen"] = [{"name": "Alpha"}, {"name": "Beta"}]
 
-                with mock.patch.object(TradeHelper, "create_trade", side_effect=Boom), self.assertRaises(Boom):
+                with mock.patch.object(ledger, "record_entries", side_effect=Boom), self.assertRaises(Boom):
                     self.client.post(unit_url(kind, self.warband.id), payload, format="json")
 
                 self.assertEqual((kind.model.objects.count(), self._ledger()), before)
@@ -60,7 +60,7 @@ class RosterAtomicWriteTests(RosterTestCase):
                 if kind is HENCHMEN:
                     members = list(unit.henchmen.values("id"))
                     payload["henchmen"] = [*members, {"name": "Gamma", "cost": 10}]
-                    failure = mock.patch.object(TradeHelper, "create_trade", side_effect=Boom)
+                    failure = mock.patch.object(ledger, "record_entries", side_effect=Boom)
 
                 with failure, self.assertRaises(Boom):
                     self.client.patch(unit_url(kind, self.warband.id, unit.id), payload, format="json")

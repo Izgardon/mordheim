@@ -6,6 +6,7 @@ from typing import Any
 from rest_framework import serializers
 
 from apps.warbands.models import Henchman, HenchmenGroup
+from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.units.kinds import HENCHMEN_GROUP
 from apps.warbands.units.serializers import (
     STAT_FIELDS,
@@ -15,7 +16,6 @@ from apps.warbands.units.serializers import (
     get_prefetched_or_query,
 )
 from apps.warbands.units.services.hire_cost import henchman_hire_cost
-from apps.warbands.utils.trades import MAX_TRADE_PRICE
 
 WRITE_FIELDS = (
     "name",
@@ -150,6 +150,7 @@ class HenchmenGroupDetailSerializer(HenchmenMembersMixin, UnitDetailSerializer):
             "skills",
             "specials",
             "henchmen",
+            "updated_at",  # the version a roster Save sends back (409 when it changed)
         )
 
 

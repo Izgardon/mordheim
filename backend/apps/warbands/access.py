@@ -34,6 +34,7 @@ WARBAND_RULES: Mapping[str, Rule] = {
     "edit": can_edit_warband,  # warband and unit writes, level-ups, items, resources, the ledger
     "delete": owns_warband,  # warband DELETE: its owner only
     "edit_backstory": owns_warband,  # changing the backstory: its owner only (decision 13)
+    "trade": owns_warband,  # trading for it with another warband: its owner only (pass 2 decision 10)
 }
 
 
@@ -62,4 +63,5 @@ def warband_capabilities(user: Any, warband: Warband, membership: CampaignMember
         "edit_backstory": owns_warband(user, warband, membership),  # the owner only (decision 13)
         "delete": owns_warband(user, warband, membership),  # warband DELETE: its owner only
         "add_custom": has_campaign_permission(membership, "add_custom"),  # custom catalogue entries
+        "trade": owns_warband(user, warband, membership),  # player trades: its owner only (pass 2 decision 10)
     }

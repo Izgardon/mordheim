@@ -7,20 +7,9 @@ from django.test.utils import CaptureQueriesContext
 
 from apps.campaigns.models import CampaignMembership, CampaignRole
 from apps.core.testing import ReferenceCampaign, build_reference_campaign
-from apps.warbands.models import Henchman, HenchmenGroup, Hero, HiredSword, Warband, WarbandTrade
-from apps.warbands.services.summary import EXPENSE_ACTIONS, load_warband_units, warband_gold
-
-
-def _python_gold(warband: Warband) -> int:
-    """The original per-row calculation the database aggregate replaced."""
-    total = 0
-    for trade in WarbandTrade.objects.filter(warband=warband):
-        price = trade.price or 0
-        if (trade.action or "").strip().lower() in EXPENSE_ACTIONS:
-            total -= abs(price)
-        else:
-            total += abs(price)
-    return total
+from apps.warbands.models import Henchman, HenchmenGroup, Hero, HiredSword, LedgerAction, Warband
+from apps.warbands.services import ledger
+from apps.warbands.services.summary import load_warband_units, warband_gold
 
 
 class WarbandSummaryServiceTests(TestCase):
@@ -32,26 +21,24 @@ class WarbandSummaryServiceTests(TestCase):
         cls.ref = build_reference_campaign(unit_count=1)
         cls.warband = cls.ref.rival_warband
 
-    def test_gold_matches_the_per_row_calculation(self):
-        WarbandTrade.objects.filter(warband=self.warband).delete()  # drop the automatic starting-gold row
+    def test_gold_is_the_stored_balance_the_ledger_keeps(self):
+        # the warband was created with its starting gold (500, campaign default)
         rows = [
-            ("Starting Gold", 500),
-            ("Buy", 25),
-            (" buy ", -10),  # odd spacing and a negative stored price
-            ("RECRUITED", 40),
-            ("Sell", 12),
-            ("Trade Sent", 7),
-            ("Reward", -20),  # income stored negative still counts as income
+            (LedgerAction.BUY, -25),
+            (LedgerAction.RECRUIT, -40),
+            (LedgerAction.SELL, 12),
+            (LedgerAction.TRADE, -7),
+            (LedgerAction.REWARD, 20),
         ]
-        for action, price in rows:
-            WarbandTrade.objects.create(warband=self.warband, action=action, description="x", price=price)
+        for action, amount in rows:
+            ledger.record(self.warband, action, amount, "x")
 
-        self.assertEqual(warband_gold(self.warband.id), _python_gold(self.warband))
-        self.assertEqual(warband_gold(self.warband.id), 500 - 25 - 10 - 40 + 12 - 7 + 20)
+        self.assertEqual(warband_gold(self.warband.id), 500 - 25 - 40 + 12 - 7 + 20)
 
     def test_gold_is_zero_without_ledger_rows(self):
-        WarbandTrade.objects.filter(warband=self.warband).delete()
-        self.assertEqual(warband_gold(self.warband.id), 0)
+        user = get_user_model().objects.create_user(username="empty@example.com", password="x")
+        warband = Warband.objects.create(campaign_id=self.ref.campaign_id, user=user, name="Empty")
+        self.assertEqual(warband_gold(warband.id), 0)
 
     def test_rating_counts_living_units_with_the_original_formula(self):
         Hero.objects.create(warband=self.warband, name="Captain", xp=Decimal("12.5"))

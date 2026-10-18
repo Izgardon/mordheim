@@ -1,9 +1,10 @@
 import type { UnitTypeOption } from "@components/unit-selection-section";
+import type { PurchaseLine } from "@/features/items/api/purchase";
 
-import { createWarbandLog, createWarbandTrade } from "@/features/warbands/api/warbands-api";
-
-import type { FollowUp } from "./follow-ups";
-
+/**
+ * A purchase queued in roster edit mode. Its copies show on the unit's form until Save, which
+ * sends `line` in the section's batch (decision 1) with this entry's `quantity`.
+ */
 export type PendingPurchase = {
   unitType: UnitTypeOption;
   unitId: string;
@@ -13,6 +14,8 @@ export type PendingPurchase = {
   unitPrice: number;
   isBuying: boolean;
   reason?: string;
+  /** The purchase as the dialog built it: price, availability and any rarity roll. */
+  line: PurchaseLine;
 };
 
 export type PendingChangeItem = {
@@ -112,90 +115,3 @@ export const removePendingPurchase = (
   }
   return purchases;
 };
-
-/**
- * A Save's purchases as follow-up steps, sent one at a time: a group header trade when more than
- * one item is bought, then per entry its Bought trade and its loadout log. Each step runs once,
- * so a retry after a failure re-sends nothing that went through.
- */
-export function buildPurchaseSteps(
-  warbandId: number,
-  purchases: PendingPurchase[],
-  resolveActorName: (entry: PendingPurchase) => string
-): FollowUp[] {
-  const buyingEntries = purchases.filter((p) => {
-    const qty = Math.max(1, Number(p.quantity) || 1);
-    const price = Math.max(0, Number(p.unitPrice) || 0);
-    return p.isBuying && qty * price > 0;
-  });
-  const steps: FollowUp[] = [];
-  // Filled in by the header step; the trades after it read it when they run.
-  const trade = { parentId: null as number | null };
-
-  if (buyingEntries.length > 1) {
-    const totalCost = buyingEntries.reduce((sum, p) => {
-      const qty = Math.max(1, Number(p.quantity) || 1);
-      const price = Math.max(0, Number(p.unitPrice) || 0);
-      return sum + qty * price;
-    }, 0);
-    const description = `Equipped ${resolveActorName(buyingEntries[0])} (${buyingEntries.length} items, ${totalCost} gc)`;
-    steps.push({
-      label: `the trade record "${description}"`,
-      run: async () => {
-        const header = await createWarbandTrade(warbandId, {
-          action: "Group",
-          description,
-          price: 0,
-        });
-        trade.parentId = header.id;
-      },
-    });
-  }
-
-  for (const entry of purchases) {
-    const quantity = Math.max(1, Number(entry.quantity) || 1);
-    const unitPrice = Math.max(0, Number(entry.unitPrice) || 0);
-    const totalPrice = unitPrice * quantity;
-    const description = quantity > 1 ? `${entry.itemName} x ${quantity}` : entry.itemName;
-    const actorName = resolveActorName(entry);
-
-    if (entry.isBuying && totalPrice > 0) {
-      steps.push({
-        label: `buying ${description} (${totalPrice} gc)`,
-        run: async () => {
-          await createWarbandTrade(warbandId, {
-            action: "Bought",
-            description,
-            price: totalPrice,
-            parent_id: trade.parentId,
-          });
-        },
-      });
-    }
-
-    const entryType =
-      entry.unitType === "henchmen"
-        ? "henchmen_item"
-        : entry.unitType === "hiredswords"
-          ? "hired_sword_item"
-          : "hero_item";
-
-    steps.push({
-      label: `the loadout log for ${entry.itemName} (${actorName})`,
-      run: async () => {
-        await createWarbandLog(warbandId, {
-          feature: "loadout",
-          entry_type: entryType,
-          payload: {
-            hero: actorName,
-            item: entry.itemName,
-            ...(entry.isBuying && totalPrice > 0 ? { price: totalPrice } : {}),
-            ...(quantity > 1 ? { quantity } : {}),
-            ...(!entry.isBuying && entry.reason?.trim() ? { reason: entry.reason.trim() } : {}),
-          },
-        });
-      },
-    });
-  }
-  return steps;
-}

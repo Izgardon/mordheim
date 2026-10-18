@@ -2,7 +2,8 @@ import { ApiError } from "@/lib/api-client";
 
 /**
  * A refused batch Save's messages, sorted onto the forms they are about (UX-05). The server
- * keys them by their place in the request: `create.1.name`, `update.0.xp`, `dismiss.0`.
+ * keys them by their place in the request: `create.1.name`, `update.0.xp`, `dismiss.0`,
+ * `purchases.1.price`, `stash_takes.0.quantity`.
  */
 export type BatchErrors<F> = {
   byForm: Map<F, string[]>;
@@ -29,10 +30,15 @@ const humanizePath = (path: string[]) => {
   return words.charAt(0).toUpperCase() + words.slice(1);
 };
 
+/** Fields the message reads well without (`update.0.updated_at`: "...reload it"). */
+const UNNAMED_FIELDS = new Set(["id", "updated_at"]);
+
 export function sortBatchErrors<F>(
   error: unknown,
   createForms: readonly F[],
-  updateForms: readonly F[]
+  updateForms: readonly F[],
+  /** Each line's form in the other sections (`purchases`, `stash_takes`). */
+  lineForms: Record<string, readonly (F | undefined)[]> = {}
 ): BatchErrors<F> | null {
   if (!(error instanceof ApiError) || !error.data || typeof error.data !== "object") {
     return null;
@@ -45,9 +51,10 @@ export function sortBatchErrors<F>(
   const general: string[] = [];
   for (const [key, value] of Object.entries(body.fields as Record<string, unknown>)) {
     const [section, index, ...rest] = key.split(".");
-    const forms = section === "create" ? createForms : section === "update" ? updateForms : [];
-    const form = index !== undefined ? forms[Number(index)] : undefined;
-    const prefix = rest.length > 0 && rest[0] !== "id" ? `${humanizePath(rest)}: ` : "";
+    const forms =
+      section === "create" ? createForms : section === "update" ? updateForms : lineForms[section];
+    const form = index !== undefined ? forms?.[Number(index)] : undefined;
+    const prefix = rest.length > 0 && !UNNAMED_FIELDS.has(rest[0]) ? `${humanizePath(rest)}: ` : "";
     const messages = toMessages(value).map((message) => `${prefix}${message}`);
     if (form !== undefined) {
       byForm.set(form, [...(byForm.get(form) ?? []), ...messages]);

@@ -1,12 +1,14 @@
 import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { listNotifications } from "@/features/notifications/api/notifications-api";
-import type { TradeRequest, TradeSession } from "@/features/warbands/types/trade-request-types";
+import type { TradeRequest } from "@/features/warbands/types/trade-request-types";
 import { subscribe } from "@/lib/realtime/client";
 import { AppToaster } from "@/components/ui/toaster";
 import { AppStoreProvider, useAppStore } from "@/stores/app-store";
+import { queryKeys } from "@/lib/query-keys";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { useNotificationSubscription } from "./useNotificationSubscription";
 
@@ -35,17 +37,6 @@ const tradeRequest = {
   to_warband: { id: 10, name: "Possessed" },
 } as TradeRequest;
 
-const tradeSession: TradeSession = {
-  requestId: "trade-9",
-  campaignId: 7,
-  partner: { id: 2, label: "Mira" },
-  fromWarband: { id: 20, name: "Reiklanders" },
-  toWarband: { id: 10, name: "Possessed" },
-  status: "pending",
-  expiresAt: "2099-01-01T00:00:00Z",
-  role: "recipient",
-};
-
 function CurrentLocation() {
   const location = useLocation();
   return <p data-testid="location">{`${location.pathname}${location.search}`}</p>;
@@ -53,7 +44,8 @@ function CurrentLocation() {
 
 function Harness() {
   useNotificationSubscription();
-  const { setCurrentBattleSession, setTradeSession, tradeRequestNotifications } = useAppStore();
+  const { setCurrentBattleSession, tradeRequestNotifications } = useAppStore();
+  const queryClient = useQueryClient();
   return (
     <>
       <p>{tradeRequestNotifications.length} trade requests</p>
@@ -62,7 +54,14 @@ function Harness() {
       >
         Enter battle
       </button>
-      <button onClick={() => setTradeSession(tradeSession)}>Start trade</button>
+      {/* A trade this browser has open: the trade query holds it. */}
+      <button
+        onClick={() =>
+          queryClient.setQueryData(queryKeys.campaign.trade(7, "trade-9"), tradeRequest)
+        }
+      >
+        Start trade
+      </button>
     </>
   );
 }
@@ -115,6 +114,63 @@ describe("useNotificationSubscription", () => {
     act(() => notificationHandler()({ type: "trade_request", payload: tradeRequest }));
 
     expect(screen.getByText("1 trade requests")).toBeInTheDocument();
+  });
+
+  it("ends your pending request when the recipient declines it, and says so", async () => {
+    renderHarness();
+    await waitFor(() => expect(notificationHandler()).toBeDefined());
+    fireEvent.click(screen.getByRole("button", { name: "Start trade" }));
+
+    act(() =>
+      notificationHandler()({
+        type: "trade_declined",
+        payload: {
+          ...tradeRequest,
+          status: "declined",
+          from_user: { id: 1, label: "Raider" },
+          to_user: { id: 2, label: "Mira" },
+        },
+      })
+    );
+
+    expect(await screen.findByText("Mira declined the trade.")).toBeInTheDocument();
+  });
+
+  it("closes a trade shown here when trade_closed says how it ended, and drops its request (decision 8)", async () => {
+    const { queryClient } = renderHarness();
+    await waitFor(() => expect(notificationHandler()).toBeDefined());
+    act(() => notificationHandler()({ type: "trade_request", payload: tradeRequest }));
+    expect(screen.getByText("1 trade requests")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Start trade" }));
+
+    act(() =>
+      notificationHandler()({
+        type: "trade_closed",
+        payload: { ...tradeRequest, status: "cancelled" },
+      })
+    );
+
+    expect(await screen.findByText("Mira cancelled the trade.")).toBeInTheDocument();
+    expect(screen.getByText("0 trade requests")).toBeInTheDocument();
+    expect(
+      queryClient.getQueryData<TradeRequest>(queryKeys.campaign.trade(7, "trade-9"))?.status
+    ).toBe("cancelled");
+  });
+
+  it("says nothing on trade_closed for a trade this browser doesn't show", async () => {
+    const { queryClient } = renderHarness();
+    await waitFor(() => expect(notificationHandler()).toBeDefined());
+
+    act(() =>
+      notificationHandler()({
+        type: "trade_closed",
+        payload: { ...tradeRequest, status: "expired" },
+      })
+    );
+    await act(() => new Promise((resolve) => setTimeout(resolve, 20)));
+
+    expect(screen.queryByText("The trade request expired.")).not.toBeInTheDocument();
+    expect(queryClient.getQueryData(queryKeys.campaign.trade(7, "trade-9"))).toBeUndefined();
   });
 
   it("offers an accepted trade in a toast instead of navigating away (BUG-26)", async () => {

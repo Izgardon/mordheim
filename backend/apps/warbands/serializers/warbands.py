@@ -1,15 +1,14 @@
+from typing import Any
+
 from rest_framework import serializers
 
 from apps.restrictions.serializers import RestrictionSerializer
-from apps.warbands.models import (
-    Warband,
-    WarbandItem,
-    WarbandLog,
-    WarbandResource,
-    WarbandTrade,
-)
+from apps.warbands.models import Warband, WarbandResource
 from apps.warbands.restrictions import get_effective_restrictions_for_warband
-from apps.warbands.services.summary import WarbandUnits, load_warband_units, warband_gold
+from apps.warbands.services.ledger import MAX_TRADE_PRICE
+from apps.warbands.services.prices import sale_price
+from apps.warbands.services.resources import MAX_AMOUNT
+from apps.warbands.services.summary import WarbandUnits, load_warband_units
 from apps.warbands.units.kinds import HERO, HIRED_SWORD
 from apps.warbands.units.services.create import cap_limit
 
@@ -78,8 +77,8 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
             cache[obj.id] = load_warband_units([obj.id])[obj.id]
         return cache[obj.id]
 
-    def get_gold(self, obj):
-        return warband_gold(obj.id)
+    def get_gold(self, obj: Warband) -> int:
+        return obj.gold  # the stored balance (services/ledger.py)
 
     def get_resources(self, obj):
         resources = getattr(obj, "resources", None)
@@ -207,112 +206,53 @@ class WarbandResourceCreateSerializer(serializers.ModelSerializer):
         return cleaned
 
 
-class WarbandResourceUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = WarbandResource
-        fields = ("amount",)
+class WarbandResourceUpdateSerializer(serializers.Serializer):
+    """PATCH resources/<id>/: `delta` adds to the stored amount (stopping at 0); `amount` sets it (0 or more, for
+    clients from before pass 2). Other keys, the name included, are ignored (BUG-68)."""
+
+    amount = serializers.IntegerField(min_value=0, max_value=MAX_AMOUNT, required=False)
+    delta = serializers.IntegerField(min_value=-MAX_AMOUNT, max_value=MAX_AMOUNT, required=False)
+
+    def validate(self, attrs):
+        if "amount" in attrs and "delta" in attrs:
+            raise serializers.ValidationError("Send amount or delta, not both.")
+        return attrs
 
 
-class WarbandLogSerializer(serializers.ModelSerializer):
-    warband_id = serializers.IntegerField(read_only=True)
-
-    class Meta:
-        model = WarbandLog
-        fields = ("id", "warband_id", "parent_id", "feature", "entry_type", "payload", "created_at")
+class WarbandResourceSaleSerializer(serializers.Serializer):
+    quantity = serializers.IntegerField(min_value=1, max_value=MAX_AMOUNT)
+    price = serializers.IntegerField(min_value=0, max_value=MAX_TRADE_PRICE)
 
 
-class WarbandLogCreateSerializer(serializers.Serializer):
-    feature = serializers.CharField(max_length=80, required=False, allow_blank=True)
-    entry_type = serializers.CharField(max_length=80, required=False, allow_blank=True)
-    payload = serializers.JSONField(required=False)
-
-    def validate_feature(self, value):
-        return str(value).strip()
-
-    def validate_entry_type(self, value):
-        return str(value).strip()
-
-    def validate_payload(self, value):
-        if value is None:
-            return {}
-        if not isinstance(value, dict):
-            raise serializers.ValidationError("Payload must be an object.")
-        return value
+class StashCostSerializer(serializers.Serializer):
+    cost = serializers.IntegerField(allow_null=True)
+    quantity = serializers.IntegerField()
 
 
-class WarbandItemSummarySerializer(serializers.ModelSerializer):
+class WarbandItemSummarySerializer(serializers.Serializer):
+    """A stash entry (services/stash.py StashEntry): the item, how many copies, the cost of the copies that leave
+    first, and how many copies of each cost (BUG-117), the copies that leave first first."""
+
     id = serializers.IntegerField(source="item.id")
     name = serializers.CharField(source="item.name")
+    cost = serializers.IntegerField(allow_null=True)
+    quantity = serializers.IntegerField()
+    costs = StashCostSerializer(many=True)
+    current_price = serializers.IntegerField(allow_null=True)  # what Buy again charges (decision 11)
+    suggested_sale_price = serializers.SerializerMethodField()  # per copy, decision 3
+    sale_price_basis = serializers.SerializerMethodField()
 
-    class Meta:
-        model = WarbandItem
-        fields = ("id", "name", "cost", "quantity")
+    def get_suggested_sale_price(self, entry: Any) -> int | None:
+        return sale_price(entry.current_price, entry.cost).price
 
-
-class WarbandTradeChildSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = WarbandTrade
-        fields = (
-            "id",
-            "action",
-            "description",
-            "price",
-            "notes",
-            "created_at",
-        )
-
-
-class WarbandTradeSerializer(serializers.ModelSerializer):
-    warband_id = serializers.IntegerField(read_only=True)
-    children = WarbandTradeChildSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = WarbandTrade
-        fields = (
-            "id",
-            "warband_id",
-            "parent_id",
-            "action",
-            "description",
-            "price",
-            "notes",
-            "children",
-            "created_at",
-            "updated_at",
-        )
-        read_only_fields = ("created_at", "updated_at")
-
-
-class WarbandTradeCreateSerializer(serializers.ModelSerializer):
-    parent_id = serializers.IntegerField(required=False, allow_null=True)
-
-    class Meta:
-        model = WarbandTrade
-        fields = ("action", "description", "price", "notes", "parent_id")
-
-    def validate_action(self, value):
-        cleaned = str(value).strip()
-        if not cleaned:
-            raise serializers.ValidationError("Action is required")
-        return cleaned
-
-    def validate_description(self, value):
-        cleaned = str(value).strip()
-        if not cleaned:
-            raise serializers.ValidationError("Description is required")
-        return cleaned
-
-    def validate_price(self, value):
-        if value is None:
-            return 0
-        if value < 0:
-            raise serializers.ValidationError("Gold coins cannot be negative")
-        return value
+    def get_sale_price_basis(self, entry: Any) -> str | None:
+        return sale_price(entry.current_price, entry.cost).basis
 
 
 class WarbandItemTransferSerializer(serializers.Serializer):
     source_type = serializers.ChoiceField(choices=("hero", "hired_sword", "henchmen_group", "stash"))
     source_id = serializers.IntegerField(required=False, allow_null=True)
+    cost = serializers.IntegerField(required=False, allow_null=True)  # from the stash: only copies of this cost
     target_type = serializers.ChoiceField(choices=("hero", "hired_sword", "henchmen_group", "stash"))
     target_id = serializers.IntegerField(required=False, allow_null=True)
     item_id = serializers.IntegerField()
@@ -340,9 +280,11 @@ class WarbandItemTransferSerializer(serializers.Serializer):
 class WarbandItemSaleSerializer(serializers.Serializer):
     source_type = serializers.ChoiceField(choices=("hero", "hired_sword", "henchmen_group", "stash"))
     source_id = serializers.IntegerField(required=False, allow_null=True)
+    cost = serializers.IntegerField(required=False, allow_null=True)  # from the stash: only copies of this cost
     item_id = serializers.IntegerField()
     quantity = serializers.IntegerField(min_value=1)
-    price = serializers.IntegerField(min_value=0)
+    # the gold for all the copies; without it, the suggested sale price of each (decision 3)
+    price = serializers.IntegerField(min_value=0, max_value=MAX_TRADE_PRICE, required=False, allow_null=True)
 
     def validate(self, attrs):
         source_type = attrs["source_type"]

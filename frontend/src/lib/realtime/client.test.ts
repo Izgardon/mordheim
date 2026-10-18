@@ -183,4 +183,16 @@ describe("realtime client", () => {
     await new Promise((resolve) => setTimeout(resolve, 10));
     expect(FakePusher.instances).toHaveLength(0);
   });
+
+  it("gives this browser's socket id once connected, for trade writes to name (ECON-PERF-02)", async () => {
+    const { realtimeSocketId, subscribe } = await loadClient();
+    expect(realtimeSocketId()).toBeNull();
+
+    subscribe("private-trade-t-1", "trade.offer_updated", vi.fn());
+    const pusher = await connected();
+    expect(realtimeSocketId()).toBeNull();
+    (pusher.connection as { socket_id?: string }).socket_id = "123.456";
+
+    expect(realtimeSocketId()).toBe("123.456");
+  });
 });

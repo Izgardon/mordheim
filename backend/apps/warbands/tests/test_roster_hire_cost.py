@@ -70,7 +70,7 @@ class HireCostTests(RosterTestCase):
 
         body = self._patch({"henchmen": [*self._members(), {"name": "C"}], "items": items})
 
-        self.assertEqual(trade_rows(self.warband), [("Recruited", "C into Zealots", -shown, None)])
+        self.assertEqual(trade_rows(self.warband), [("Recruit", "C into Zealots", -shown, None)])
         self.assertEqual(body["hire_cost"], 25 + 10 + 8)  # three swords for three members: still one each
 
     def test_items_bought_in_the_same_save_are_not_part_of_the_recruits_cost(self):
@@ -78,15 +78,15 @@ class HireCostTests(RosterTestCase):
 
         self._patch({"henchmen": [*self._members(), {"name": "C"}], "items": items})
 
-        self.assertEqual(trade_rows(self.warband), [("Recruited", "C into Zealots", -43, None)])
+        self.assertEqual(trade_rows(self.warband), [("Recruit", "C into Zealots", -43, None)])
 
     def test_an_explicit_cost_still_wins(self):
         self._patch({"henchmen": [*self._members(), {"name": "C", "cost": 12}]})
-        self.assertEqual(trade_rows(self.warband), [("Recruited", "C into Zealots", -12, None)])
+        self.assertEqual(trade_rows(self.warband), [("Recruit", "C into Zealots", -12, None)])
 
     def test_the_xp_and_price_sent_in_the_same_save_set_the_cost(self):
         self._patch({"henchmen": [*self._members(), {"name": "C"}], "xp": "7.5", "price": 30})
-        self.assertEqual(trade_rows(self.warband), [("Recruited", "C into Zealots", -(30 + 10 + 14), None)])
+        self.assertEqual(trade_rows(self.warband), [("Recruit", "C into Zealots", -(30 + 10 + 14), None)])
 
     def test_dead_and_dismissed_members_do_not_share_the_items(self):
         dead = self.group.henchmen.create(name="Fallen", dead=True)

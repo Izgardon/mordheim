@@ -1,7 +1,7 @@
-﻿import type { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import AcquireItemDialogContent from "./AcquireItemDialogContent";
-import type { AcquireItemMeta, AcquiredUnit } from "../../hooks/useAcquireItemDialogShared";
+import type { AcquireItemMeta } from "../../hooks/useAcquireItemDialogShared";
 import {
   useAcquireItemDialogItemsPage,
   type AcquireItemDialogItemsPageParams,
@@ -38,15 +38,14 @@ type AcquireItemDialogProps = {
   defaultRaritySectionCollapsed?: boolean;
   defaultPriceSectionCollapsed?: boolean;
   variant?: "items" | "buy-again" | "unit-edit";
+  /** Buy again: what the server will charge (the row's current_price); null: the item's price. */
+  currentPrice?: number | null;
   onAcquire?: (
     item: Item,
     unitType: UnitTypeOption,
     unitId: string,
-    meta?: AcquireItemMeta,
-    updated?: AcquiredUnit
+    meta?: AcquireItemMeta
   ) => void;
-  /** After buying, refresh the cached warband's summary (gold, rating). */
-  emitWarbandUpdate?: boolean;
   deferCommit?: boolean;
   reservedGold?: number;
   onPendingPurchaseAdd?: (purchase: PendingPurchase) => void;
@@ -67,8 +66,8 @@ export default function AcquireItemDialog({
   defaultRaritySectionCollapsed,
   defaultPriceSectionCollapsed,
   variant = "items",
+  currentPrice,
   onAcquire,
-  emitWarbandUpdate = true,
   deferCommit = false,
   reservedGold = 0,
   onPendingPurchaseAdd,
@@ -87,8 +86,8 @@ export default function AcquireItemDialog({
     defaultUnitSectionCollapsed,
     defaultRaritySectionCollapsed,
     defaultPriceSectionCollapsed,
+    currentPrice,
     onAcquire,
-    emitWarbandUpdate,
     deferCommit,
     reservedGold,
   };

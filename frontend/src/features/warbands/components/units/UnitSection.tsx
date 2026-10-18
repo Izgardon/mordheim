@@ -1,4 +1,3 @@
-import { Button } from "@components/button";
 import WarbandSectionShell from "../shared/sections/WarbandSectionShell";
 import UnitSectionEditing from "./section/UnitSectionEditing";
 import UnitSectionRoster from "./section/UnitSectionRoster";
@@ -64,22 +63,6 @@ export default function UnitSection<K extends UnitKindKey>({
       {status(catalogue.isRacesLoading, "races", catalogue.racesError)}
     </>
   ) : null;
-  // Shown in and out of an edit: the batch went through, a later write didn't.
-  const followUpNode = save.followUpNotice ? (
-    <div role="alert" className="flex flex-wrap items-center gap-2 text-sm text-red-600">
-      <span>{save.followUpNotice}</span>
-      <Button
-        type="button"
-        size="sm"
-        variant="secondary"
-        onClick={() => void save.retryFollowUps()}
-        disabled={save.isRetryingFollowUps}
-      >
-        {save.isRetryingFollowUps ? "Retrying..." : "Retry"}
-      </Button>
-    </div>
-  ) : null;
-
   return (
     <div ref={sectionRef}>
       <WarbandSectionShell
@@ -96,12 +79,7 @@ export default function UnitSection<K extends UnitKindKey>({
         onCancel={editor.requestCancel}
         onSave={save.handleSaveChanges}
         isSaving={save.isSaving}
-        status={
-          <>
-            {statusNode}
-            {followUpNode}
-          </>
-        }
+        status={statusNode}
         saveError={save.saveError}
         pendingSpend={purchases.pendingSpend}
         pendingChanges={purchases.pendingChanges}

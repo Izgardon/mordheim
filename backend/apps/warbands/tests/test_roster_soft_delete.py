@@ -8,7 +8,8 @@ from typing import Any
 
 from apps.battles.models import Battle, BattleParticipant
 from apps.battles.views.shared import _battle_rosters_payload
-from apps.trades.views import _build_offer_payload
+from apps.trades.services.errors import TradeError
+from apps.trades.services.offers import build_offer
 from apps.warbands.models import Henchman, Hero
 
 from .roster_support import HENCHMEN, HERO, HIRED_SWORD, KINDS, Kind, RosterTestCase, make_unit, unit_url
@@ -136,5 +137,5 @@ class DismissedUnitTests(RosterTestCase):
         self.assertEqual(roster["hiredSwords"], [])
         self.assertEqual([entry["id"] for entry in roster["henchmenGroups"]], [group.id])
         self.assertEqual([member["id"] for member in roster["henchmenGroups"][0]["members"]], [alpha.id])
-        with self.assertRaisesMessage(ValueError, "Trader not found."):
-            _build_offer_payload({"trader_id": gone_hero.id}, self.warband.id)
+        with self.assertRaisesMessage(TradeError, "Trader not found."):
+            build_offer({"trader_id": gone_hero.id}, self.warband.id)

@@ -1,9 +1,10 @@
-"""Unit writes may only reference global catalogue entries or the warband's own campaign's (SEC-07)."""
+"""Unit and stash writes may only reference global catalogue entries or the warband's own campaign's (SEC-07)."""
 
 from collections.abc import Iterable
 from typing import Any
 
 from django.core.exceptions import ImproperlyConfigured
+from django.db.models import Q, QuerySet
 from rest_framework import serializers
 
 from apps.items.models import Item
@@ -17,6 +18,12 @@ CATALOGUE_ID_FIELDS: dict[str, type[Skill] | type[Special] | type[Spell]] = {
     "special_ids": Special,
     "spell_ids": Spell,
 }
+
+
+def in_campaign_scope[RowsT: QuerySet[Any]](rows: RowsT, campaign_id: int) -> RowsT:
+    """The catalogue `rows` a campaign may use: global entries and its own (stash adds and moves use this)."""
+    scoped: RowsT = rows.filter(Q(campaign__isnull=True) | Q(campaign_id=campaign_id))
+    return scoped
 
 
 def _whole_ids(values: Iterable[Any]) -> set[int]:

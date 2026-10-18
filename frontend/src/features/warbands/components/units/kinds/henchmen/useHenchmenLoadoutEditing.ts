@@ -89,12 +89,10 @@ export function useHenchmenLoadoutEditing(
         ...current,
         items: current.items.filter((_, i) => i !== itemIndex),
       }));
-      if (deferItemCommit && removed && group.id && onPendingPurchaseRemove) {
-        onPendingPurchaseRemove({
-          unitType: "henchmen",
-          unitId: String(group.id),
-          itemId: removed.id,
-        });
+      // A queued purchase goes with its copy, a queued group's too (filed under its draft key).
+      const unitId = group.id ? String(group.id) : group.draftKey;
+      if (deferItemCommit && removed && unitId && onPendingPurchaseRemove) {
+        onPendingPurchaseRemove({ unitType: "henchmen", unitId, itemId: removed.id });
       }
     },
     handleAddSkill: (skill: Skill) => {

@@ -1,13 +1,17 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { listWarbandLogs } from "../../api/warbands-api";
+import { warbandLogsQuery } from "../../api/economy-queries";
 import { formatLogMessage } from "../../data/log-translations";
 import { FEATURE_COLORS, DEFAULT_FEATURE_COLOR, LOG_FORMATTERS } from "../../data/log-formatters";
 
 import type { Warband, WarbandLog } from "../../types/warband-types";
 
-const LOGS_PER_PAGE = 12;
+const NO_LOGS: WarbandLog[] = [];
+
+const errorMessage = (error: unknown) =>
+  error instanceof Error ? error.message || "Unable to load logs" : "Unable to load logs";
 
 // Free-form log payload; these are the keys the generic (template) formatter reads directly.
 type GenericLogPayload = Record<string, unknown> & {
@@ -22,66 +26,47 @@ type LogsTabProps = {
   warband: Warband;
 };
 
+/**
+ * The Logs tab: the warband's log a server page at a time (12 entries), newest first, filtered
+ * on the server by feature (ECON-PERF-06). Pages already read are kept while the tab is hidden.
+ */
 export default function LogsTab({ warband }: LogsTabProps) {
-  const [logs, setLogs] = useState<WarbandLog[]>([]);
-  const [isLogsLoading, setIsLogsLoading] = useState(false);
-  const [logsError, setLogsError] = useState("");
   const [selectedFeature, setSelectedFeature] = useState("all");
   const [page, setPage] = useState(0);
+  const feature = selectedFeature === "all" ? "" : selectedFeature;
+  const logsQuery = useInfiniteQuery(warbandLogsQuery(warband.campaign_id, warband.id, feature));
+  const pages = logsQuery.data?.pages;
+  const paginatedLogs = pages?.[page]?.results ?? NO_LOGS;
+  const isLogsLoading = logsQuery.isPending;
+  const logsError = logsQuery.isError ? errorMessage(logsQuery.error) : "";
+  const hasNextPage = page < (pages?.length ?? 0) - 1 || logsQuery.hasNextPage;
 
+  // Another warband's logs start unfiltered.
   useEffect(() => {
-    let isActive = true;
-
-    setIsLogsLoading(true);
-    setLogsError("");
     setSelectedFeature("all");
-    listWarbandLogs(warband.id)
-      .then((data) => {
-        if (!isActive) {
-          return;
-        }
-        setLogs(data);
-      })
-      .catch((errorResponse) => {
-        if (!isActive) {
-          return;
-        }
-        if (errorResponse instanceof Error) {
-          setLogsError(errorResponse.message || "Unable to load logs");
-        } else {
-          setLogsError("Unable to load logs");
-        }
-      })
-      .finally(() => {
-        if (isActive) {
-          setIsLogsLoading(false);
-        }
-      });
-
-    return () => {
-      isActive = false;
-    };
   }, [warband.id]);
 
-  const featureOptions = useMemo(() => {
-    const unique = new Set(logs.map((log) => log.feature).filter(Boolean));
-    return Array.from(unique).sort((a, b) => a.localeCompare(b));
-  }, [logs]);
-
-  const filteredLogs = useMemo(() => {
-    if (selectedFeature === "all") {
-      return logs;
-    }
-    return logs.filter((log) => log.feature === selectedFeature);
-  }, [logs, selectedFeature]);
+  // The whole log's features, from its first page (sorted for the filter).
+  const featureOptions = useMemo(
+    () => [...(pages?.[0]?.features ?? [])].sort((a, b) => a.localeCompare(b)),
+    [pages]
+  );
 
   // Reset page when filter changes
   useEffect(() => {
     setPage(0);
   }, [selectedFeature]);
 
-  const totalPages = Math.ceil(filteredLogs.length / LOGS_PER_PAGE);
-  const paginatedLogs = filteredLogs.slice(page * LOGS_PER_PAGE, (page + 1) * LOGS_PER_PAGE);
+  /** The next page: read from the server the first time it is shown. */
+  const handleNextPage = async () => {
+    if (page >= (pages?.length ?? 0) - 1) {
+      const next = await logsQuery.fetchNextPage();
+      if (next.isError) {
+        return;
+      }
+    }
+    setPage((current) => current + 1);
+  };
 
   const featureLabelMap: Record<string, string> = {
     advance: "Advances",
@@ -150,9 +135,9 @@ export default function LogsTab({ warband }: LogsTabProps) {
       <div className="overflow-hidden rounded-xl border border-border/60 bg-black/20">
         {isLogsLoading ? (
           <p className="px-3 py-3 text-sm text-muted-foreground">Gathering log entries...</p>
-        ) : logsError ? (
+        ) : logsError && !pages ? (
           <p className="px-3 py-3 text-sm text-red-600">{logsError}</p>
-        ) : filteredLogs.length === 0 ? (
+        ) : paginatedLogs.length === 0 ? (
           <p className="px-3 py-3 text-sm text-muted-foreground">No log entries yet.</p>
         ) : (
           <div className="space-y-0">
@@ -185,7 +170,8 @@ export default function LogsTab({ warband }: LogsTabProps) {
         )}
       </div>
 
-      {filteredLogs.length > 0 && totalPages > 1 ? (
+      {pages && logsError ? <p className="text-center text-xs text-red-600">{logsError}</p> : null}
+      {page > 0 || hasNextPage ? (
         <div className="flex items-center justify-center gap-3 pt-4">
           <button
             type="button"
@@ -196,14 +182,12 @@ export default function LogsTab({ warband }: LogsTabProps) {
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
-          <span className="text-xs text-muted-foreground">
-            Page {page + 1} of {totalPages}
-          </span>
+          <span className="text-xs text-muted-foreground">Page {page + 1}</span>
           <button
             type="button"
             className="rounded border border-border/60 p-1.5 text-muted-foreground transition-colors duration-150 hover:border-white/40 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-border/60 disabled:hover:text-muted-foreground"
-            disabled={page >= totalPages - 1}
-            onClick={() => setPage((p) => p + 1)}
+            disabled={!hasNextPage || logsQuery.isFetchingNextPage}
+            onClick={() => void handleNextPage()}
             aria-label="Next page"
           >
             <ChevronRight className="h-4 w-4" />

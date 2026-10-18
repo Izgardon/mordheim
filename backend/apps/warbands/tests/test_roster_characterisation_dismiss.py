@@ -40,7 +40,7 @@ class RosterDismissCharacterisationTests(RosterTestCase):
             HIRED_SWORD.key: [("personnel", "remove_hired_sword", {"name": "Bert", "type": "Trooper"}, None)],
         }
         WarbandItem.objects.create(warband=self.warband, item=self.axe, quantity=1)
-        self.warband.trades.create(action="Recruited", description="Bert the Trooper", price=-25)
+        self.warband.trades.create(action="Recruit", description="Bert the Trooper", price=-25)
         for kind in KINDS:
             with self.subTest(kind=kind.key):
                 self.warband.logs.all().delete()
@@ -56,7 +56,7 @@ class RosterDismissCharacterisationTests(RosterTestCase):
                 self.assertTrue(all(relation.exists() for relation in relations))  # items stay on the record
                 if kind is HENCHMEN:
                     self.assertEqual(Henchman.objects.filter(group_id=unit.id).count(), 2)
-                self.assertEqual(trade_rows(self.warband), [("Recruited", "Bert the Trooper", -25, None)])
+                self.assertEqual(trade_rows(self.warband), [("Recruit", "Bert the Trooper", -25, None)])
                 self.assertEqual(list(WarbandItem.objects.values_list("item_id", "quantity")), [(self.axe.id, 1)])
                 self.assertEqual(log_rows(self.warband), expected_logs[kind.key])
 

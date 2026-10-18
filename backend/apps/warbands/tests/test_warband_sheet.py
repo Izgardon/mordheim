@@ -1,12 +1,12 @@
 """GET /api/warbands/<id>/sheet/ (PERF-24): the whole sheet in one request, with capability flags."""
 
 from apps.campaigns.models import CampaignMembership, CampaignMembershipPermission, CampaignPermission
-from apps.warbands.models import Henchman, WarbandResource
-from apps.warbands.utils.trades import TradeHelper
+from apps.warbands.models import Henchman, LedgerAction, WarbandResource
+from apps.warbands.services import ledger
 
 from .roster_support import HENCHMEN, HERO, HIRED_SWORD, RosterTestCase, make_unit
 
-ALL_FLAGS = ("edit", "level_up", "manage_items", "edit_backstory", "delete", "add_custom")
+ALL_FLAGS = ("edit", "level_up", "manage_items", "edit_backstory", "delete", "add_custom", "trade")
 
 
 def flags(*granted: str) -> dict[str, bool]:
@@ -36,8 +36,8 @@ class WarbandSheetTests(RosterTestCase):
         sword.hired_sword_items.create(item=self.axe, cost=5)
         sword.hired_sword_specials.create(special=self.large)
         WarbandResource.objects.create(warband=self.warband, name="Wyrdstone", amount=2)
-        TradeHelper.create_trade(warband=self.warband, action="Starting Gold", description="Gold", price=500)
-        TradeHelper.create_trade(warband=self.warband, action="Buy", description="Sword", price=10)
+        ledger.record(self.warband, LedgerAction.STARTING_GOLD, 500, "Gold")
+        ledger.record(self.warband, LedgerAction.BUY, -10, "Sword")
 
     def test_the_sheet_holds_the_same_bodies_as_the_separate_endpoints(self):
         self._populate()
@@ -67,7 +67,9 @@ class WarbandSheetTests(RosterTestCase):
 
     def test_capabilities_follow_todays_permission_checks(self):
         expected = {
-            "player": flags(*EDITOR, "edit_backstory", "delete"),  # owns the warband; no add_custom grant
+            # owns the warband; no add_custom grant. trade: the owner only (pass 2 decision 10), so campaign
+            # owners, admins and managers who may edit the warband still can't trade for it
+            "player": flags(*EDITOR, "edit_backstory", "delete", "trade"),
             "campaign_owner": flags(*EDITOR, "add_custom"),
             "admin": flags(*EDITOR, "add_custom"),
             "manager": flags(*EDITOR),  # a player holding manage_warbands

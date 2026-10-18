@@ -8,6 +8,7 @@ from django.utils import timezone
 from apps.battles.models import BattleParticipant
 from apps.campaigns.permissions import get_membership
 from apps.trades.models import TradeRequest
+from apps.trades.selectors import is_member, with_memberships
 
 _CAMPAIGN_CHANNEL_REGEX = re.compile(r"^private-campaign-(\d+)-pings$")
 _CAMPAIGN_CHAT_REGEX = re.compile(r"^private-campaign-(\d+)-chat$")
@@ -56,17 +57,20 @@ def _authorize_trade_channel(user, match: re.Match[str]) -> bool:
         trade_id = uuid.UUID(match.group(1))
     except ValueError:
         return False
-    trade_request = TradeRequest.objects.select_related("from_user", "to_user").filter(id=trade_id).first()
+    trade_request = with_memberships(TradeRequest.objects.filter(id=trade_id)).first()
     if not trade_request:
         return False
     if trade_request.status in (
         TradeRequest.STATUS_DECLINED,
         TradeRequest.STATUS_EXPIRED,
         TradeRequest.STATUS_COMPLETED,
+        TradeRequest.STATUS_CANCELLED,
     ):
         return False
     if trade_request.expires_at <= timezone.now():
         return False
+    if not (is_member(trade_request, "from") and is_member(trade_request, "to")):
+        return False  # both players must still be in the campaign (SEC-08)
     return user.id in (trade_request.from_user_id, trade_request.to_user_id)
 
 

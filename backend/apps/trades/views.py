@@ -1,280 +1,48 @@
-from datetime import timedelta
+"""Player-to-player trades: request, answer, offers, locks and completion, close.
+
+Each write runs one service (services/) on the trade locked for its player (actions.run_trade_action); realtime
+events go out after commit, skipping the sender's own socket when it names it (ECON-PERF-02).
+"""
+
+from typing import Any
 
 from django.db import transaction
-from django.utils import timezone
 from rest_framework import permissions, status
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.models import CampaignMembership
-from apps.campaigns.permissions import get_membership
 from apps.core.throttling import TRADE_WRITE_THROTTLE_CLASSES, MethodScopedThrottleMixin
 from apps.notifications.models import Notification
-from apps.notifications.utils import create_notification, resolve_notification
-from apps.realtime.services import (
-    send_trade_event,
-    send_user_notification,
-    serialize_trade_request,
-)
-from apps.warbands.models import Hero, Warband, WarbandItem, WarbandTrade, not_dismissed
-from apps.warbands.services.summary import warband_gold
+from apps.notifications.utils import resolve_notification
+from apps.realtime.services import send_trade_event, send_user_notification, sender_socket_id
 
+from .actions import run_trade_action
 from .models import TradeRequest
+from .selectors import get_trade_for_participant, player_trades, require_member
+from .serializers import serialize_completed_trade, serialize_trade_request
+from .services.errors import TradeError
+from .services.lifecycle import (
+    answer_request,
+    both_locked,
+    check_offer_version,
+    close,
+    complete_or_reopen,
+    lock_side,
+    unlock_side,
+    update_offer,
+)
+from .services.offers import TradeWarning
+from .services.requests import request_trade
 
 
-def _calculate_trade_total(warband_id: int) -> int:
-    return max(warband_gold(warband_id), 0)
+def _broadcast(request: Request, trade: TradeRequest, event: str, payload: dict[str, Any]) -> None:
+    send_trade_event(trade.id, event, payload, socket_id=sender_socket_id(request))
 
 
-def _normalize_offer_items(items, warband_id: int):
-    normalized: list[dict] = []
-    if not isinstance(items, list):
-        return normalized
-
-    requested: dict[int, int] = {}
-    for entry in items:
-        if not isinstance(entry, dict):
-            continue
-        raw_id = entry.get("id")
-        qty = entry.get("quantity", 0)
-        if raw_id is None:
-            continue
-        try:
-            item_id = int(raw_id)
-            qty = int(qty)
-        except (TypeError, ValueError):
-            continue
-        if item_id <= 0 or qty <= 0:
-            continue
-        requested[item_id] = requested.get(item_id, 0) + qty
-
-    if not requested:
-        return normalized
-
-    warband_items = WarbandItem.objects.select_related("item").filter(
-        warband_id=warband_id, item_id__in=requested.keys()
-    )
-    available = {entry.item_id: entry.quantity for entry in warband_items}
-    names = {entry.item_id: entry.item.name for entry in warband_items}
-    costs = {entry.item_id: getattr(entry.item, "cost", 0) for entry in warband_items}
-
-    for item_id, qty in requested.items():
-        if item_id not in available:
-            raise ValueError("One or more items are not in the warchest.")
-        if qty > available[item_id]:
-            raise ValueError("Not enough quantity for one or more items.")
-        normalized.append(
-            {
-                "id": item_id,
-                "name": names[item_id],
-                "quantity": qty,
-                "cost": costs.get(item_id, 0),
-            }
-        )
-
-    return normalized
-
-
-def _build_offer_payload(payload, warband_id: int):
-    data = payload if isinstance(payload, dict) else {}
-    trader_id = data.get("trader_id", None)
-    trader_name = None
-    if trader_id is not None and trader_id != "":
-        try:
-            trader_id = int(trader_id)
-        except (TypeError, ValueError):
-            trader_id = None
-    else:
-        trader_id = None
-    if trader_id is not None:
-        hero = not_dismissed(Hero.objects.filter(id=trader_id, warband_id=warband_id)).first()
-        if not hero:
-            raise ValueError("Trader not found.")
-        if not hero.trading_action:
-            raise ValueError("Selected trader is unavailable.")
-        trader_name = hero.name or f"Hero {hero.id}"
-
-    gold = data.get("gold", 0)
-    try:
-        gold = int(gold)
-    except (TypeError, ValueError):
-        gold = 0
-    gold = max(0, gold)
-
-    max_gold = _calculate_trade_total(warband_id)
-    if gold > max_gold:
-        raise ValueError("Not enough gold.")
-
-    items = _normalize_offer_items(data.get("items", []), warband_id)
-
-    return {
-        "trader_id": trader_id,
-        "trader_name": trader_name,
-        "gold": gold,
-        "items": items,
-    }
-
-
-def _get_offer_data(trade_request, side: str):
-    return trade_request.from_offer if side == "from" else trade_request.to_offer
-
-
-def _set_offer_data(trade_request, side: str, offer: dict):
-    if side == "from":
-        trade_request.from_offer = offer
-    else:
-        trade_request.to_offer = offer
-
-
-def _get_offer_trader_id(offer: dict | None) -> int | None:
-    if not isinstance(offer, dict):
-        return None
-
-    trader_id = offer.get("trader_id")
-    if trader_id is None or trader_id == "":
-        return None
-
-    try:
-        return int(trader_id)
-    except (TypeError, ValueError):
-        return None
-
-
-def _restore_offer_trader(offer: dict | None, warband_id: int) -> None:
-    trader_id = _get_offer_trader_id(offer)
-    if trader_id is None:
-        return
-    Hero.objects.filter(id=trader_id, warband_id=warband_id).update(trading_action=True)
-
-
-def _consume_offer_trader(offer: dict | None, warband_id: int) -> None:
-    trader_id = _get_offer_trader_id(offer)
-    if trader_id is None:
-        return
-
-    hero = not_dismissed(Hero.objects.filter(id=trader_id, warband_id=warband_id)).first()
-    if not hero:
-        raise ValueError("Trader not found.")
-    if not hero.trading_action:
-        raise ValueError("Selected trader is unavailable.")
-
-    hero.trading_action = False
-    hero.save(update_fields=["trading_action"])
-
-
-def _restore_accepted_traders(trade_request: TradeRequest) -> None:
-    if trade_request.from_accepted:
-        _restore_offer_trader(trade_request.from_offer, trade_request.from_warband_id)
-    if trade_request.to_accepted:
-        _restore_offer_trader(trade_request.to_offer, trade_request.to_warband_id)
-
-
-def _expire_trade_request(trade_request: TradeRequest) -> None:
-    if trade_request.status == TradeRequest.STATUS_ACCEPTED:
-        _restore_accepted_traders(trade_request)
-    trade_request.from_accepted = False
-    trade_request.to_accepted = False
-    trade_request.status = TradeRequest.STATUS_EXPIRED
-    trade_request.responded_at = timezone.now()
-    trade_request.save(update_fields=["status", "responded_at", "from_accepted", "to_accepted"])
-
-
-def _transfer_items(source_warband_id: int, target_warband_id: int, items: list[dict]) -> None:
-    for entry in items:
-        item_id = int(entry["id"])
-        qty = int(entry.get("quantity", 0) or 0)
-        if qty <= 0:
-            continue
-
-        source_item = (
-            WarbandItem.objects.select_for_update().filter(warband_id=source_warband_id, item_id=item_id).first()
-        )
-        if not source_item or source_item.quantity < qty:
-            raise ValueError("Insufficient item quantity for trade.")
-
-        source_item.quantity -= qty
-        if source_item.quantity <= 0:
-            source_item.delete()
-        else:
-            source_item.save(update_fields=["quantity"])
-
-        target_item = (
-            WarbandItem.objects.select_for_update().filter(warband_id=target_warband_id, item_id=item_id).first()
-        )
-        if target_item:
-            target_item.quantity += qty
-            target_item.save(update_fields=["quantity"])
-        else:
-            WarbandItem.objects.create(
-                warband_id=target_warband_id,
-                item_id=item_id,
-                quantity=qty,
-            )
-
-
-def _apply_trade_transfer(trade_request: TradeRequest):
-    from_offer = _build_offer_payload(trade_request.from_offer, trade_request.from_warband_id)
-    to_offer = _build_offer_payload(trade_request.to_offer, trade_request.to_warband_id)
-
-    trade_request.from_offer = from_offer
-    trade_request.to_offer = to_offer
-
-    _transfer_items(trade_request.from_warband_id, trade_request.to_warband_id, from_offer["items"])
-    _transfer_items(trade_request.to_warband_id, trade_request.from_warband_id, to_offer["items"])
-
-    from_gold = from_offer.get("gold", 0)
-    if from_gold:
-        WarbandTrade.objects.create(
-            warband_id=trade_request.from_warband_id,
-            action="Trade sent",
-            description=f"Gold sent to {trade_request.to_warband.name}",
-            price=int(from_gold),
-        )
-        WarbandTrade.objects.create(
-            warband_id=trade_request.to_warband_id,
-            action="Trade received",
-            description=f"Gold received from {trade_request.from_warband.name}",
-            price=int(from_gold),
-        )
-
-    to_gold = to_offer.get("gold", 0)
-    if to_gold:
-        WarbandTrade.objects.create(
-            warband_id=trade_request.to_warband_id,
-            action="Trade sent",
-            description=f"Gold sent to {trade_request.from_warband.name}",
-            price=int(to_gold),
-        )
-        WarbandTrade.objects.create(
-            warband_id=trade_request.from_warband_id,
-            action="Trade received",
-            description=f"Gold received from {trade_request.to_warband.name}",
-            price=int(to_gold),
-        )
-
-
-class UserPendingTradeRequestListView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request):
-        now = timezone.now()
-        base_qs = TradeRequest.objects.select_related(
-            "from_user",
-            "to_user",
-            "from_warband",
-            "to_warband",
-        ).filter(to_user=request.user, status=TradeRequest.STATUS_PENDING)
-
-        expired_ids = list(base_qs.filter(expires_at__lte=now).values_list("id", flat=True))
-        if expired_ids:
-            TradeRequest.objects.filter(id__in=expired_ids).update(
-                status=TradeRequest.STATUS_EXPIRED,
-                responded_at=now,
-            )
-
-        requests = base_qs.filter(expires_at__gt=now).order_by("-created_at")
-        payload = [serialize_trade_request(entry) for entry in requests]
-        return Response(payload)
+def _answer(payload: dict[str, Any], warnings: list[TradeWarning]) -> Response:
+    """The acting player's answer: the payload, plus `warnings` when there are any (events never carry them)."""
+    return Response({**payload, "warnings": warnings} if warnings else payload)
 
 
 class CampaignTradeRequestListCreateView(MethodScopedThrottleMixin, APIView):
@@ -282,431 +50,120 @@ class CampaignTradeRequestListCreateView(MethodScopedThrottleMixin, APIView):
     throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
 
     def get(self, request, campaign_id):
-        membership = get_membership(request.user, campaign_id)
-        if not membership:
-            return Response({"detail": "Not found"}, status=404)
-
-        status_filter = request.query_params.get("status")
-        if status_filter:
-            valid_statuses = {
-                TradeRequest.STATUS_PENDING,
-                TradeRequest.STATUS_ACCEPTED,
-                TradeRequest.STATUS_DECLINED,
-                TradeRequest.STATUS_EXPIRED,
-                TradeRequest.STATUS_COMPLETED,
-            }
-            if status_filter not in valid_statuses:
-                return Response({"detail": "Invalid status"}, status=400)
-
-        expired_active_requests = list(
-            TradeRequest.objects.select_related(
-                "from_user",
-                "to_user",
-                "from_warband",
-                "to_warband",
-            ).filter(
-                campaign_id=campaign_id,
-                status=TradeRequest.STATUS_ACCEPTED,
-                expires_at__lte=timezone.now(),
-            )
-        )
-        for expired_request in expired_active_requests:
-            _expire_trade_request(expired_request)
-
-        queryset = TradeRequest.objects.select_related(
-            "from_user",
-            "to_user",
-            "from_warband",
-            "to_warband",
-        ).filter(campaign_id=campaign_id)
-
-        if status_filter:
-            queryset = queryset.filter(status=status_filter)
-
-        queryset = queryset.order_by("-responded_at", "-created_at")
-        payload = [serialize_trade_request(entry) for entry in queryset]
-        return Response(payload)
+        require_member(request.user, campaign_id)
+        try:
+            trades = player_trades(request.user, campaign_id, request.query_params.get("status"))
+        except TradeError as refused:
+            return Response(refused.body(), status=refused.status)
+        return Response([serialize_trade_request(entry) for entry in trades])
 
     def post(self, request, campaign_id):
-        membership = get_membership(request.user, campaign_id)
-        if not membership:
-            return Response({"detail": "Not found"}, status=404)
-
-        target_user_id = request.data.get("target_user_id")
-        if not target_user_id:
-            return Response({"detail": "target_user_id is required"}, status=400)
-
+        require_member(request.user, campaign_id)
         try:
-            target_user_id = int(target_user_id)
-        except (TypeError, ValueError):
-            return Response({"detail": "Invalid target_user_id"}, status=400)
-
-        if target_user_id == request.user.id:
-            return Response({"detail": "Cannot trade with yourself"}, status=400)
-
-        target_membership = CampaignMembership.objects.filter(campaign_id=campaign_id, user_id=target_user_id).first()
-        if not target_membership:
-            return Response({"detail": "Player not found"}, status=404)
-
-        from_warband = Warband.objects.filter(campaign_id=campaign_id, user_id=request.user.id).first()
-        to_warband = Warband.objects.filter(campaign_id=campaign_id, user_id=target_user_id).first()
-
-        if not from_warband or not to_warband:
-            return Response(
-                {"detail": "Both players need a warband to trade"},
-                status=400,
-            )
-
-        trade_request = TradeRequest.objects.create(
-            campaign_id=campaign_id,
-            from_user=request.user,
-            to_user_id=target_user_id,
-            from_warband=from_warband,
-            to_warband=to_warband,
-            expires_at=timezone.now() + timedelta(minutes=5),
-        )
-
-        trade_request = TradeRequest.objects.select_related(
-            "from_user",
-            "to_user",
-            "from_warband",
-            "to_warband",
-        ).get(id=trade_request.id)
-        payload = serialize_trade_request(trade_request)
-        notif = create_notification(
-            user_id=target_user_id,
-            notification_type=Notification.TYPE_TRADE_REQUEST,
-            reference_id=str(trade_request.id),
-            campaign_id=campaign_id,
-            payload=payload,
-        )
-        send_user_notification(target_user_id, "trade_request", {**payload, "notification_id": notif.id})
-
-        return Response(payload, status=status.HTTP_201_CREATED)
-
-
-class CampaignTradeOfferUpdateView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
-
-    def post(self, request, campaign_id, request_id):
-        trade_request = (
-            TradeRequest.objects.select_related(
-                "from_user",
-                "to_user",
-                "from_warband",
-                "to_warband",
-            )
-            .filter(id=request_id, campaign_id=campaign_id)
-            .first()
-        )
-        if not trade_request:
-            return Response({"detail": "Not found"}, status=404)
-
-        if request.user.id not in (trade_request.from_user_id, trade_request.to_user_id):
-            return Response({"detail": "Forbidden"}, status=403)
-
-        if trade_request.expires_at <= timezone.now():
-            _expire_trade_request(trade_request)
-            return Response({"detail": "Trade request expired"}, status=400)
-
-        if trade_request.status != TradeRequest.STATUS_ACCEPTED:
-            return Response({"detail": "Trade is not active"}, status=400)
-
-        side = "from" if request.user.id == trade_request.from_user_id else "to"
-        warband_id = trade_request.from_warband_id if side == "from" else trade_request.to_warband_id
-
-        try:
-            offer = _build_offer_payload(request.data, warband_id)
-        except ValueError as exc:
-            return Response({"detail": str(exc)}, status=400)
-
-        _restore_accepted_traders(trade_request)
-        _set_offer_data(trade_request, side, offer)
-        trade_request.from_accepted = False
-        trade_request.to_accepted = False
-        trade_request.save(update_fields=["from_offer", "to_offer", "from_accepted", "to_accepted"])
-
-        payload = serialize_trade_request(trade_request)
-        send_trade_event(trade_request.id, "trade.offer_updated", payload)
-        return Response(payload)
+            with transaction.atomic():  # one open trade per pair of warbands (BUG-114)
+                trade, notice = request_trade(campaign_id, request.user, request.data.get("target_user_id"))
+                send_user_notification(
+                    trade.to_user_id, "trade_request", {**notice.payload, "notification_id": notice.id}
+                )
+        except TradeError as refused:
+            return Response(refused.body(), status=refused.status)
+        return Response(notice.payload, status=status.HTTP_201_CREATED)
 
 
 class CampaignTradeRequestDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, campaign_id, request_id):
-        trade_request = (
-            TradeRequest.objects.select_related(
-                "from_user",
-                "to_user",
-                "from_warband",
-                "to_warband",
-            )
-            .filter(id=request_id, campaign_id=campaign_id)
-            .first()
-        )
-        if not trade_request:
-            return Response({"detail": "Not found"}, status=404)
-
-        if request.user.id not in (trade_request.from_user_id, trade_request.to_user_id):
-            return Response({"detail": "Not found"}, status=404)
-
-        if trade_request.expires_at <= timezone.now() and trade_request.status in (
-            TradeRequest.STATUS_PENDING,
-            TradeRequest.STATUS_ACCEPTED,
-        ):
-            _expire_trade_request(trade_request)
-
-        return Response(serialize_trade_request(trade_request))
+        trade = get_trade_for_participant(request.user, campaign_id, request_id, hidden=True)
+        return Response(serialize_trade_request(trade))
 
 
-class CampaignTradeRequestAcceptView(APIView):
+class TradeWriteView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
 
+
+class CampaignTradeRequestAcceptView(TradeWriteView):
     def post(self, request, campaign_id, request_id):
-        trade_request = (
-            TradeRequest.objects.select_related(
-                "from_user",
-                "to_user",
-                "from_warband",
-                "to_warband",
-            )
-            .filter(id=request_id, campaign_id=campaign_id)
-            .first()
-        )
-        if not trade_request:
-            return Response({"detail": "Not found"}, status=404)
-
-        if request.user.id != trade_request.to_user_id:
-            return Response({"detail": "Forbidden"}, status=403)
-
-        if trade_request.expires_at <= timezone.now():
-            trade_request.status = TradeRequest.STATUS_EXPIRED
-            trade_request.responded_at = timezone.now()
-            trade_request.save(update_fields=["status", "responded_at"])
-            return Response({"detail": "Trade request expired"}, status=400)
-
-        if trade_request.status != TradeRequest.STATUS_PENDING:
-            return Response({"detail": "Trade request is no longer pending"}, status=400)
-
-        trade_request.status = TradeRequest.STATUS_ACCEPTED
-        trade_request.responded_at = timezone.now()
-        trade_request.save(update_fields=["status", "responded_at"])
-
-        resolve_notification(request.user.id, Notification.TYPE_TRADE_REQUEST, str(trade_request.id))
-
-        payload = serialize_trade_request(trade_request)
-        send_trade_event(trade_request.id, "trade.accepted", payload)
-        send_user_notification(trade_request.from_user_id, "trade_accepted", payload)
-
-        return Response(payload)
-
-
-class CampaignTradeOfferAcceptView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
-
-    def post(self, request, campaign_id, request_id):
-        trade_request = (
-            TradeRequest.objects.select_related(
-                "from_user",
-                "to_user",
-                "from_warband",
-                "to_warband",
-            )
-            .filter(id=request_id, campaign_id=campaign_id)
-            .first()
-        )
-        if not trade_request:
-            return Response({"detail": "Not found"}, status=404)
-
-        if request.user.id not in (trade_request.from_user_id, trade_request.to_user_id):
-            return Response({"detail": "Forbidden"}, status=403)
-
-        if trade_request.expires_at <= timezone.now():
-            _expire_trade_request(trade_request)
-            return Response({"detail": "Trade request expired"}, status=400)
-
-        if trade_request.status != TradeRequest.STATUS_ACCEPTED:
-            return Response({"detail": "Trade is not active"}, status=400)
-
-        try:
-            if request.user.id == trade_request.from_user_id:
-                if not trade_request.from_accepted:
-                    _consume_offer_trader(trade_request.from_offer, trade_request.from_warband_id)
-                trade_request.from_accepted = True
-            else:
-                if not trade_request.to_accepted:
-                    _consume_offer_trader(trade_request.to_offer, trade_request.to_warband_id)
-                trade_request.to_accepted = True
-            trade_request.save(update_fields=["from_accepted", "to_accepted"])
-        except ValueError as exc:
-            return Response({"detail": str(exc)}, status=400)
-
-        payload = serialize_trade_request(trade_request)
-        send_trade_event(trade_request.id, "trade.locked", payload)
-
-        if trade_request.from_accepted and trade_request.to_accepted:
-            try:
-                with transaction.atomic():
-                    locked = (
-                        TradeRequest.objects.select_for_update()
-                        .select_related(
-                            "from_user",
-                            "to_user",
-                            "from_warband",
-                            "to_warband",
-                        )
-                        .get(id=trade_request.id)
-                    )
-                    if locked.status != TradeRequest.STATUS_ACCEPTED:
-                        return Response({"detail": "Trade is no longer active"}, status=400)
-                    if not (locked.from_accepted and locked.to_accepted):
-                        return Response(serialize_trade_request(locked))
-
-                    _apply_trade_transfer(locked)
-                    locked.status = TradeRequest.STATUS_COMPLETED
-                    locked.responded_at = timezone.now()
-                    locked.save(update_fields=["status", "responded_at", "from_offer", "to_offer"])
-            except ValueError as exc:
-                return Response({"detail": str(exc)}, status=400)
-
-            payload = serialize_trade_request(locked)
-            send_trade_event(trade_request.id, "trade.completed", payload)
+        def accept(trade: TradeRequest, side: str) -> Response:
+            answer_request(trade, accept=True)
+            resolve_notification(request.user.id, Notification.TYPE_TRADE_REQUEST, str(trade.id))
+            payload = serialize_trade_request(trade)
+            _broadcast(request, trade, "trade.accepted", payload)
+            send_user_notification(trade.from_user_id, "trade_accepted", payload)
             return Response(payload)
 
-        return Response(payload)
+        return run_trade_action(request, campaign_id, request_id, accept, recipient_only=True, needs_partner=True)
 
 
-class CampaignTradeOfferUnlockView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
+class CampaignTradeRequestDeclineView(TradeWriteView):
+    def post(self, request, campaign_id, request_id):
+        def decline(trade: TradeRequest, side: str) -> Response:
+            answer_request(trade, accept=False)  # resolves the request's notification (closing.close_out)
+            payload = serialize_trade_request(trade)
+            send_user_notification(trade.from_user_id, "trade_declined", payload)
+            return Response(payload)
+
+        return run_trade_action(request, campaign_id, request_id, decline, recipient_only=True)
+
+
+class CampaignTradeOfferUpdateView(TradeWriteView):
+    def post(self, request, campaign_id, request_id):
+        def offer(trade: TradeRequest, side: str) -> Response:
+            warnings = update_offer(trade, side, request.data)
+            payload = serialize_trade_request(trade)
+            _broadcast(request, trade, "trade.offer_updated", payload)
+            return _answer(payload, warnings)
+
+        return run_trade_action(request, campaign_id, request_id, offer, needs_partner=True)
+
+
+class CampaignTradeOfferAcceptView(TradeWriteView):
+    """Lock: the caller accepts both offers as they stand, at the `offer_version` it was shown when it sends one
+    (409 `offer_changed` otherwise; without one, older clients lock whatever stands). The second lock completes
+    the trade in the same transaction, or unlocks both sides with a 409 when it can't (BUG-41)."""
 
     def post(self, request, campaign_id, request_id):
-        trade_request = (
-            TradeRequest.objects.select_related(
-                "from_user",
-                "to_user",
-                "from_warband",
-                "to_warband",
-            )
-            .filter(id=request_id, campaign_id=campaign_id)
-            .first()
-        )
-        if not trade_request:
-            return Response({"detail": "Not found"}, status=404)
+        def lock(trade: TradeRequest, side: str) -> Response:
+            try:
+                check_offer_version(trade, request.data)
+            except TradeError as changed:
+                return Response({**changed.body(), "trade": serialize_trade_request(trade)}, status=changed.status)
+            warnings = lock_side(trade, side)
+            locked = serialize_trade_request(trade)
+            if not both_locked(trade):
+                _broadcast(request, trade, "trade.locked", locked)
+                return _answer(locked, warnings)
+            failure = complete_or_reopen(trade)
+            if failure is not None:
+                reopened = serialize_trade_request(trade)
+                _broadcast(request, trade, "trade.offer_updated", {**reopened, "error": failure.body()})
+                return Response({**failure.body(), "trade": reopened}, status=failure.status)
+            completed = serialize_completed_trade(trade)
+            _broadcast(request, trade, "trade.locked", locked)
+            _broadcast(request, trade, "trade.completed", completed)
+            return _answer(completed, warnings)
 
-        if request.user.id not in (trade_request.from_user_id, trade_request.to_user_id):
-            return Response({"detail": "Forbidden"}, status=403)
-
-        if trade_request.expires_at <= timezone.now():
-            _expire_trade_request(trade_request)
-            return Response({"detail": "Trade request expired"}, status=400)
-
-        if trade_request.status != TradeRequest.STATUS_ACCEPTED:
-            return Response({"detail": "Trade is not active"}, status=400)
-
-        if request.user.id == trade_request.from_user_id:
-            if trade_request.from_accepted:
-                _restore_offer_trader(trade_request.from_offer, trade_request.from_warband_id)
-            trade_request.from_accepted = False
-        else:
-            if trade_request.to_accepted:
-                _restore_offer_trader(trade_request.to_offer, trade_request.to_warband_id)
-            trade_request.to_accepted = False
-        trade_request.save(update_fields=["from_accepted", "to_accepted"])
-
-        payload = serialize_trade_request(trade_request)
-        send_trade_event(trade_request.id, "trade.offer_updated", payload)
-        return Response(payload)
+        return run_trade_action(request, campaign_id, request_id, lock, needs_partner=True)
 
 
-class CampaignTradeRequestDeclineView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
-
+class CampaignTradeOfferUnlockView(TradeWriteView):
     def post(self, request, campaign_id, request_id):
-        trade_request = (
-            TradeRequest.objects.select_related(
-                "from_user",
-                "to_user",
-                "from_warband",
-                "to_warband",
-            )
-            .filter(id=request_id, campaign_id=campaign_id)
-            .first()
-        )
-        if not trade_request:
-            return Response({"detail": "Not found"}, status=404)
+        def unlock(trade: TradeRequest, side: str) -> Response:
+            unlock_side(trade, side)
+            payload = serialize_trade_request(trade)
+            _broadcast(request, trade, "trade.offer_updated", payload)
+            return Response(payload)
 
-        if request.user.id != trade_request.to_user_id:
-            return Response({"detail": "Forbidden"}, status=403)
-
-        if trade_request.expires_at <= timezone.now():
-            trade_request.status = TradeRequest.STATUS_EXPIRED
-            trade_request.responded_at = timezone.now()
-            trade_request.save(update_fields=["status", "responded_at"])
-            return Response({"detail": "Trade request expired"}, status=400)
-
-        if trade_request.status != TradeRequest.STATUS_PENDING:
-            return Response({"detail": "Trade request is no longer pending"}, status=400)
-
-        trade_request.status = TradeRequest.STATUS_DECLINED
-        trade_request.responded_at = timezone.now()
-        trade_request.save(update_fields=["status", "responded_at"])
-
-        resolve_notification(request.user.id, Notification.TYPE_TRADE_REQUEST, str(trade_request.id))
-
-        payload = serialize_trade_request(trade_request)
-        send_user_notification(trade_request.from_user_id, "trade_declined", payload)
-
-        return Response(payload)
+        return run_trade_action(request, campaign_id, request_id, unlock)
 
 
-class CampaignTradeRequestCloseView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    throttle_classes = TRADE_WRITE_THROTTLE_CLASSES
-
+class CampaignTradeRequestCloseView(TradeWriteView):
     def post(self, request, campaign_id, request_id):
-        trade_request = (
-            TradeRequest.objects.select_related(
-                "from_user",
-                "to_user",
-                "from_warband",
-                "to_warband",
-            )
-            .filter(id=request_id, campaign_id=campaign_id)
-            .first()
-        )
-        if not trade_request:
-            return Response({"detail": "Not found"}, status=404)
+        def close_trade(trade: TradeRequest, side: str) -> Response:
+            close(trade, side)
+            payload = serialize_trade_request(trade)
+            _broadcast(request, trade, "trade.closed", payload)
+            return Response(payload)
 
-        if request.user.id not in (trade_request.from_user_id, trade_request.to_user_id):
-            return Response({"detail": "Forbidden"}, status=403)
-
-        if trade_request.status in (
-            TradeRequest.STATUS_DECLINED,
-            TradeRequest.STATUS_EXPIRED,
-            TradeRequest.STATUS_COMPLETED,
-        ):
-            return Response({"detail": "Trade request is no longer active"}, status=400)
-
-        if trade_request.expires_at <= timezone.now():
-            _expire_trade_request(trade_request)
-            return Response({"detail": "Trade request expired"}, status=400)
-
-        if trade_request.status == TradeRequest.STATUS_ACCEPTED:
-            _restore_accepted_traders(trade_request)
-            trade_request.from_accepted = False
-            trade_request.to_accepted = False
-
-        trade_request.status = TradeRequest.STATUS_DECLINED
-        trade_request.responded_at = timezone.now()
-        trade_request.save(update_fields=["status", "responded_at", "from_accepted", "to_accepted"])
-
-        payload = serialize_trade_request(trade_request)
-        send_trade_event(trade_request.id, "trade.closed", payload)
-
-        return Response(payload)
+        return run_trade_action(request, campaign_id, request_id, close_trade)

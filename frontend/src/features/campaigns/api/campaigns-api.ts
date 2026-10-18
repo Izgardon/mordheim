@@ -1,5 +1,6 @@
 // api
 import { apiRequest } from "../../../lib/api-client";
+import { realtimeSocketId } from "@/lib/realtime/client";
 
 // types
 import type {
@@ -212,21 +213,25 @@ export function listCampaignTradeRequests(campaignId: number, status?: TradeRequ
   });
 }
 
-export function listPendingTradeRequests() {
-  return apiRequest<TradeRequest[]>(`/trade-requests/pending/`, {
-    method: "GET",
-  });
-}
-
 export function getTradeRequest(campaignId: number, requestId: string) {
   return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/`, {
     method: "GET",
   });
 }
 
+/**
+ * Trade writes name this browser's socket (ECON-PERF-02), so the server can leave it out of the
+ * event the write broadcasts. Needs `x-pusher-socket-id` in the backend's CORS_ALLOW_HEADERS.
+ */
+const tradeWriteHeaders = () => {
+  const socketId = realtimeSocketId();
+  return socketId ? { "X-Pusher-Socket-Id": socketId } : undefined;
+};
+
 export function acceptTradeRequest(campaignId: number, requestId: string) {
   return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/accept/`, {
     method: "POST",
+    headers: tradeWriteHeaders(),
   });
 }
 
@@ -241,31 +246,38 @@ export function updateTradeOffer(
 ) {
   return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/offer/`, {
     method: "POST",
+    headers: tradeWriteHeaders(),
     body: payload,
   });
 }
 
-export function lockTradeOffer(campaignId: number, requestId: string) {
+/** Accepts both offers as shown: `offerVersion` is the version on screen (409 if it moved on). */
+export function lockTradeOffer(campaignId: number, requestId: string, offerVersion?: number) {
   return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/lock/`, {
     method: "POST",
+    headers: tradeWriteHeaders(),
+    body: offerVersion === undefined ? undefined : { offer_version: offerVersion },
   });
 }
 
 export function unlockTradeOffer(campaignId: number, requestId: string) {
   return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/unlock/`, {
     method: "POST",
+    headers: tradeWriteHeaders(),
   });
 }
 
 export function declineTradeRequest(campaignId: number, requestId: string) {
   return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/decline/`, {
     method: "POST",
+    headers: tradeWriteHeaders(),
   });
 }
 
 export function closeTradeRequest(campaignId: number, requestId: string) {
   return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/close/`, {
     method: "POST",
+    headers: tradeWriteHeaders(),
   });
 }
 
