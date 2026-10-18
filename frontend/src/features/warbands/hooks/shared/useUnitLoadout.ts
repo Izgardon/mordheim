@@ -79,7 +79,6 @@ export function useUnitLoadout<T extends HeroFormEntry>({
   const [buyItemDialogOpen, setBuyItemDialogOpen] = useState(false);
   const [buyItemTarget, setBuyItemTarget] = useState<Item | null>(null);
 
-  // draftUnitId generation
   const draftUnitIdRef = useRef<string | null>(null);
   if (!draftUnitIdRef.current) {
     const unitKey = unitType ?? "unit";
@@ -197,8 +196,9 @@ export function useUnitLoadout<T extends HeroFormEntry>({
       ...current,
       items: current.items.filter((_, currentIndex) => currentIndex !== itemIndex),
     }));
-    if (deferItemCommit && removed && unitType && unit.id && onPendingPurchaseRemove) {
-      onPendingPurchaseRemove({ unitType, unitId: String(unit.id), itemId: removed.id });
+    const unitId = String(unit.id ?? draftUnitId);
+    if (deferItemCommit && removed && unitType && onPendingPurchaseRemove) {
+      onPendingPurchaseRemove({ unitType, unitId, itemId: removed.id });
     }
   };
 
