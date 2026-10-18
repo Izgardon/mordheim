@@ -24,7 +24,7 @@ export type TradeOffer = {
   items?: TradeOfferItem[];
 };
 
-/** A rule the server warned about instead of refusing (`trader_spent`: decision 9). */
+/** A rule the server warned about instead of refusing (`trading_action_spent`: decision 9). */
 export type TradeWarning = { code: string; message: string; hero_id?: number | null };
 
 export type TradeRequest = {
@@ -41,7 +41,7 @@ export type TradeRequest = {
   to_accepted?: boolean;
   /** Goes up with every saved offer; a lock names the one its player was shown (BUG-35). */
   offer_version?: number;
-  /** The hero each side's lock spent (decision 9); null once given back or when none was. */
+  /** The hero the completed trade spent on each side (decision 9); null until it completes. */
   from_trader_spent_id?: number | null;
   to_trader_spent_id?: number | null;
   /** In the acting player's offer and lock answers only: what went ahead despite a rule. */

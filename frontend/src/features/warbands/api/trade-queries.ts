@@ -35,27 +35,16 @@ export const tradeQuery = (campaignId: number, requestId: string) =>
 const SIDES = ["from", "to"] as const;
 
 /**
- * Keeps the traders' spent flags in the warbands' sheets as a trade moves (decision 9): the hero
- * a side's lock spent is spent; one given back (the id cleared on a trade that didn't complete)
- * is available again. A hero who was spent already is never named, so he stays spent.
+ * Marks the traders a completed trade spent in the warbands' sheets (decision 9). Only completion
+ * spends a trading action, and it names the heroes it spent (a hero spent already isn't named);
+ * offers and locks spend nothing, so cancel, decline, unlock and expiry give nothing back.
  */
-function syncTraderSpends(
-  queryClient: QueryClient,
-  before: TradeRequest | undefined,
-  after: TradeRequest
-) {
+function syncTraderSpends(queryClient: QueryClient, request: TradeRequest) {
   for (const side of SIDES) {
-    const warbandId = after[`${side}_warband`]?.id;
-    if (warbandId === undefined) {
-      continue;
-    }
-    const previous = before?.[`${side}_trader_spent_id`] ?? null;
-    const current = after[`${side}_trader_spent_id`] ?? null;
-    if (current !== null && current !== previous) {
-      setHeroTradingAction(queryClient, warbandId, current, false);
-    }
-    if (previous !== null && current === null && after.status !== "completed") {
-      setHeroTradingAction(queryClient, warbandId, previous, true);
+    const warbandId = request[`${side}_warband`]?.id;
+    const heroId = request[`${side}_trader_spent_id`] ?? null;
+    if (warbandId !== undefined && heroId !== null) {
+      setHeroTradingAction(queryClient, warbandId, heroId, false);
     }
   }
 }
@@ -93,10 +82,8 @@ function patchOpenTrades(queryClient: QueryClient, request: TradeRequest) {
 
 /** The trade as the server last sent it (a write's answer or a realtime event's payload). */
 export function setTradeData(queryClient: QueryClient, request: TradeRequest) {
-  const key = queryKeys.campaign.trade(request.campaign_id, request.id);
-  const before = queryClient.getQueryData<TradeRequest>(key);
-  queryClient.setQueryData(key, request);
-  syncTraderSpends(queryClient, before, request);
+  queryClient.setQueryData(queryKeys.campaign.trade(request.campaign_id, request.id), request);
+  syncTraderSpends(queryClient, request);
   patchOpenTrades(queryClient, request);
 }
 

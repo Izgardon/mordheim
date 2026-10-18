@@ -492,19 +492,20 @@ describe("TradeSessionDialog: Accept and Unaccept", () => {
     await waitFor(() => expect(fakeApi.bodyOf(OFFER)).toMatchObject({ trader_id: 12 }));
   });
 
-  it("doesn't count the hero this trade's own lock spent as spent", async () => {
+  it("shows the trader as spent from the sheet, whatever the trade records (a lock spends nothing)", async () => {
     const user = setupUser();
     renderDialog(
       request({ from_trader_spent_id: 12, from_offer: { ...emptyOffer, trader_id: 12 } })
     );
 
+    expect(
+      screen.getByText("Gunther already used his trading action this round.")
+    ).toBeInTheDocument();
     act(() => screen.getByRole("combobox").focus());
     await user.keyboard("{Enter}");
-
-    expect(screen.getByRole("option", { name: "Gunther" })).toBeInTheDocument();
     expect(
-      screen.queryByText("Gunther already used his trading action this round.")
-    ).not.toBeInTheDocument();
+      screen.getByRole("option", { name: "Gunther (used his trading action this round)" })
+    ).toBeInTheDocument();
   });
 
   it("shows the server's warnings from an offer answer as a toast (decision 9)", async () => {
@@ -513,7 +514,7 @@ describe("TradeSessionDialog: Accept and Unaccept", () => {
       ...withMyOffer(body as TradeOffer),
       warnings: [
         {
-          code: "trader_spent",
+          code: "trading_action_spent",
           message: "Gunther already used his trading action this round.",
           hero_id: 12,
         },

@@ -12,8 +12,6 @@ type TradeOfferEditorProps = {
   maxGold: number;
   /** You have accepted: nothing can change until you unaccept. */
   locked: boolean;
-  /** The hero this trade's own lock spent: spent by this trade, so not "spent" for it. */
-  spentByThisTrade?: number | null;
   warchest: OfferableStashItem[];
   isWarchestLoading: boolean;
   warchestError: string;
@@ -32,7 +30,6 @@ export default function TradeOfferEditor({
   heroes,
   maxGold,
   locked,
-  spentByThisTrade = null,
   warchest,
   isWarchestLoading,
   warchestError,
@@ -40,8 +37,8 @@ export default function TradeOfferEditor({
   onGoldChange,
   onAddItem,
 }: TradeOfferEditorProps) {
-  const isSpent = (hero: WarbandHero) =>
-    hero.trading_action === false && hero.id !== spentByThisTrade;
+  // From the sheet: a lock spends nothing, only the completed trade does (decision 9).
+  const isSpent = (hero: WarbandHero) => hero.trading_action === false;
   const nameOf = (hero: WarbandHero) => hero.name || `Hero ${hero.id}`;
   const trader = heroes.find((hero) => hero.id === draft.trader_id);
 

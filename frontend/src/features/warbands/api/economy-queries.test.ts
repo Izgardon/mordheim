@@ -214,7 +214,7 @@ describe("itemMutationUpdate", () => {
   });
 });
 
-describe("setTradeData keeps the traders' spent flags (decision 9)", () => {
+describe("setTradeData marks the traders a completed trade spent (decision 9)", () => {
   const heroRow = (id: number, tradingAction: boolean) => ({
     id,
     name: `Hero ${id}`,
@@ -250,7 +250,7 @@ describe("setTradeData keeps the traders' spent flags (decision 9)", () => {
     };
   };
 
-  it("marks the hero a lock spent, gives him back on unlock, and keeps him spent on completion", () => {
+  it("spends nothing on a lock, then marks each side's trader the completion spent", () => {
     const queryClient = createTestQueryClient();
     queryClient.setQueryData(
       queryKeys.campaign.warbandSheet(7, 9),
@@ -258,17 +258,26 @@ describe("setTradeData keeps the traders' spent flags (decision 9)", () => {
     );
     queryClient.setQueryData(queryKeys.campaign.warbandSheet(7, 12), sheet([heroRow(31, true)]));
 
-    setTradeData(queryClient, trade({ from_trader_spent_id: 11, to_trader_spent_id: 31 }));
+    setTradeData(queryClient, trade({ from_accepted: true, to_accepted: false }));
+    expect(flagsOf(queryClient, 9)).toEqual({ heroes: [true, true], summary: [true, true] });
+
+    setTradeData(
+      queryClient,
+      trade({ status: "completed", from_trader_spent_id: 11, to_trader_spent_id: 31 })
+    );
     expect(flagsOf(queryClient, 9)).toEqual({ heroes: [false, true], summary: [false, true] });
     expect(flagsOf(queryClient, 12).heroes).toEqual([false]);
+  });
 
-    setTradeData(queryClient, trade({ to_trader_spent_id: 31 }));
-    expect(flagsOf(queryClient, 9).heroes).toEqual([true, true]);
+  it("gives nothing back when a trade ends without completing", () => {
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(queryKeys.campaign.warbandSheet(7, 9), sheet([heroRow(11, false)]));
+    // A copy that named him (an older server's lock), then the trade is cancelled.
+    setTradeData(queryClient, trade({ from_trader_spent_id: 11 }));
 
-    setTradeData(queryClient, trade({ from_trader_spent_id: 12, to_trader_spent_id: 31 }));
-    setTradeData(queryClient, trade({ status: "completed" }));
-    expect(flagsOf(queryClient, 9).heroes).toEqual([true, false]);
-    expect(flagsOf(queryClient, 12).heroes).toEqual([false]);
+    setTradeData(queryClient, trade({ status: "cancelled" }));
+
+    expect(flagsOf(queryClient, 9).heroes).toEqual([false]);
   });
 
   it("adds no hero to a sheet that doesn't list him", () => {

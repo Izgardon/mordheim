@@ -59,8 +59,8 @@ function offerAcceptedTrade(request: TradeRequest, ctx: TradeNotificationContext
 
 /**
  * A `trade_*` event on the player's notification channel. Answers false for any other event.
- * `trade_closed` (decision 8) comes to both players for every finished trade: completed,
- * declined, cancelled or expired.
+ * `trade_closed` (decision 8) comes to both players for a trade that completed, was declined
+ * or was cancelled. Expiry sends nothing: each page closes the trade from its countdown.
  */
 export function handleTradeNotification(
   message: { type: string; payload?: unknown },
