@@ -111,7 +111,7 @@ class TradeOfferTests(TradeTestCase):
         self.assertEqual((response.status_code, response.json()), (400, {"detail": "Not enough gold."}))
 
     def test_invalid_offers_are_400_and_change_nothing(self):
-        spent = self.trader(self.warband, name="Spent", trading_action=False)
+        # a trader who already traded this round is no longer refused, only warned about (decision 9)
         dismissed = self.trader(self.warband, name="Gone", dismissed_at=timezone.now())
         foreign = self.trader(self.rival, name="Rat")
         too_few = "Not enough quantity for one or more items."
@@ -119,7 +119,6 @@ class TradeOfferTests(TradeTestCase):
             ({"items": [{"id": self.sword.id, "quantity": 4}]}, too_few),
             ({"items": [{"id": self.sword.id, "quantity": 2}, {"id": self.sword.id, "quantity": 2}]}, too_few),
             ({"items": [{"id": self.flail.id, "quantity": 1}]}, "One or more items are not in the warchest."),
-            ({"trader_id": spent.id}, "Selected trader is unavailable."),
             ({"trader_id": dismissed.id}, "Trader not found."),
             ({"trader_id": foreign.id}, "Trader not found."),
             ({"trader_id": 999999}, "Trader not found."),

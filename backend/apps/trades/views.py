@@ -32,11 +32,17 @@ from .services.lifecycle import (
     unlock_side,
     update_offer,
 )
+from .services.offers import TradeWarning
 from .services.requests import request_trade
 
 
 def _broadcast(request: Request, trade: TradeRequest, event: str, payload: dict[str, Any]) -> None:
     send_trade_event(trade.id, event, payload, socket_id=sender_socket_id(request))
+
+
+def _answer(payload: dict[str, Any], warnings: list[TradeWarning]) -> Response:
+    """The acting player's answer: the payload, plus `warnings` when there are any (events never carry them)."""
+    return Response({**payload, "warnings": warnings} if warnings else payload)
 
 
 class CampaignTradeRequestListCreateView(MethodScopedThrottleMixin, APIView):
@@ -104,10 +110,10 @@ class CampaignTradeRequestDeclineView(TradeWriteView):
 class CampaignTradeOfferUpdateView(TradeWriteView):
     def post(self, request, campaign_id, request_id):
         def offer(trade: TradeRequest, side: str) -> Response:
-            update_offer(trade, side, request.data)
+            warnings = update_offer(trade, side, request.data)
             payload = serialize_trade_request(trade)
             _broadcast(request, trade, "trade.offer_updated", payload)
-            return Response(payload)
+            return _answer(payload, warnings)
 
         return run_trade_action(request, campaign_id, request_id, offer, needs_partner=True)
 
@@ -123,11 +129,11 @@ class CampaignTradeOfferAcceptView(TradeWriteView):
                 check_offer_version(trade, request.data)
             except TradeError as changed:
                 return Response({**changed.body(), "trade": serialize_trade_request(trade)}, status=changed.status)
-            lock_side(trade, side)
+            warnings = lock_side(trade, side)
             locked = serialize_trade_request(trade)
             if not both_locked(trade):
                 _broadcast(request, trade, "trade.locked", locked)
-                return Response(locked)
+                return _answer(locked, warnings)
             failure = complete_or_reopen(trade)
             if failure is not None:
                 reopened = serialize_trade_request(trade)
@@ -136,7 +142,7 @@ class CampaignTradeOfferAcceptView(TradeWriteView):
             completed = serialize_completed_trade(trade)
             _broadcast(request, trade, "trade.locked", locked)
             _broadcast(request, trade, "trade.completed", completed)
-            return Response(completed)
+            return _answer(completed, warnings)
 
         return run_trade_action(request, campaign_id, request_id, lock, needs_partner=True)
 

@@ -1,7 +1,8 @@
 """Trade offers: what one side puts on the table, normalised and checked against its own warband.
 
 An offer is `{"trader_id", "trader_name", "gold", "items": [{"id", "name", "quantity", "cost"}]}`. Loose input
-is coerced or dropped silently, as it always was; what the warband can't offer is a TradeError (400).
+is coerced or dropped silently, as it always was; what the warband can't offer is a TradeError (400). A trader who
+already used his trading action this round is a warning, not a refusal (decision 9, ECON-TWEAK-01).
 """
 
 from typing import Any
@@ -10,6 +11,15 @@ from apps.warbands.models import Hero, WarbandItem, on_roster
 from apps.warbands.services.summary import warband_gold
 
 from .errors import TradeError
+
+TRADER_SPENT = "trader_spent"
+TradeWarning = dict[str, Any]  # {"code", "message", ...}: answered to the player who acted, never broadcast
+
+
+def trader_spent_warning(hero: Hero) -> TradeWarning:
+    """The warning for a trader who already used his trading action this round."""
+    name = hero.name or f"Hero {hero.id}"
+    return {"code": TRADER_SPENT, "message": f"{name} already used his trading action this round.", "hero_id": hero.id}
 
 
 def _whole(value: Any) -> int | None:
@@ -69,23 +79,25 @@ def _offer_items(items: Any, warband_id: int) -> list[dict[str, Any]]:
     return offered
 
 
-def build_offer(payload: Any, warband_id: int) -> dict[str, Any]:
-    """The offer one side sends, normalised; TradeError for a trader, gold or items the warband can't offer."""
+def build_offer(payload: Any, warband_id: int) -> tuple[dict[str, Any], list[TradeWarning]]:
+    """The offer one side sends, normalised, and its warnings; TradeError for a trader, gold or items the warband
+    can't offer."""
     data = payload if isinstance(payload, dict) else {}
     trader_id = offer_trader_id(data)
     trader_name = None
+    warnings = []
     if trader_id is not None:
         hero = on_roster(Hero.objects.filter(id=trader_id, warband_id=warband_id)).first()
-        if hero is None:  # missing, dead or dismissed (BUG-109)
+        if hero is None:  # missing, dead or dismissed: refused, that's data, not a game rule (BUG-109)
             raise TradeError("Trader not found.")
-        if not hero.trading_action:  # a hero who has traded this round is refused (decision 9 may change this)
-            raise TradeError("Selected trader is unavailable.")
+        if not hero.trading_action:  # traded this round: warn and allow (decision 9)
+            warnings.append(trader_spent_warning(hero))
         trader_name = hero.name or f"Hero {hero.id}"
     gold = offer_gold(data)
     if gold > max(warband_gold(warband_id), 0):
         raise TradeError("Not enough gold.")
     items = _offer_items(data.get("items", []), warband_id)
-    return {"trader_id": trader_id, "trader_name": trader_name, "gold": gold, "items": items}
+    return {"trader_id": trader_id, "trader_name": trader_name, "gold": gold, "items": items}, warnings
 
 
 def stored_offer(raw: Any) -> dict[str, Any]:

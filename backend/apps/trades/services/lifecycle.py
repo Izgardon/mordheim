@@ -20,7 +20,7 @@ from apps.trades.selectors import trade_requests
 from .closing import close_out
 from .completion import complete_trade
 from .errors import TradeError
-from .offers import build_offer
+from .offers import TradeWarning, build_offer
 from .timing import OPEN_STATUSES, extend, is_due
 from .traders import SPENT_FIELDS, restore_spent_traders, spend_trader
 
@@ -80,17 +80,20 @@ def close(trade: TradeRequest, side: str) -> None:
     _finish(trade, TradeRequest.STATUS_CANCELLED if side == "from" else TradeRequest.STATUS_DECLINED)
 
 
-def update_offer(trade: TradeRequest, side: str, payload: Any) -> None:
-    """Replace the side's offer. Any offer unlocks both sides and gives back the traders they spent."""
+def update_offer(trade: TradeRequest, side: str, payload: Any) -> list[TradeWarning]:
+    """Replace the side's offer and return its warnings. Any offer unlocks both sides and gives back the traders
+    they spent."""
     if trade.status != TradeRequest.STATUS_ACCEPTED:
         raise TradeError(NOT_ACTIVE)
     restore_spent_traders(trade)  # first, so a trader this trade spent can be offered again
-    setattr(trade, f"{side}_offer", build_offer(payload, getattr(trade, f"{side}_warband_id")))
+    offer, warnings = build_offer(payload, getattr(trade, f"{side}_warband_id"))
+    setattr(trade, f"{side}_offer", offer)
     trade.from_accepted = trade.to_accepted = False
     trade.offer_version += 1  # under the row lock, so no two offers get the same version
     extend(trade)
     changed = [f"{side}_offer", "from_accepted", "to_accepted", "offer_version", "expires_at", *SPENT_FIELDS]
     trade.save(update_fields=changed)
+    return warnings
 
 
 def _shown_offer_version(data: Any) -> int | None:
@@ -113,16 +116,18 @@ def check_offer_version(trade: TradeRequest, data: Any) -> None:
         raise TradeError(detail, status=409, code="offer_changed", offer_version=trade.offer_version)
 
 
-def lock_side(trade: TradeRequest, side: str) -> None:
-    """The side accepts the offers as they stand, spending its trader once (a second lock changes nothing)."""
+def lock_side(trade: TradeRequest, side: str) -> list[TradeWarning]:
+    """The side accepts the offers as they stand, spending its trader once (a second lock changes nothing), and
+    gets the warnings: a trader who already traded this round still locks (decision 9)."""
     if trade.status != TradeRequest.STATUS_ACCEPTED:
         raise TradeError(NOT_ACTIVE)
     if getattr(trade, f"{side}_accepted"):
-        return
-    spend_trader(trade, side)
+        return []
+    warnings = spend_trader(trade, side)
     setattr(trade, f"{side}_accepted", True)
     extend(trade)
     trade.save(update_fields=[f"{side}_accepted", f"{side}_trader_spent", "expires_at"])
+    return warnings
 
 
 def both_locked(trade: TradeRequest) -> bool:
