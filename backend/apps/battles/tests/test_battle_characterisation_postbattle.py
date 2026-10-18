@@ -1,9 +1,9 @@
 """Finalising postbattle characterised on the review's fixture warband (pass 3, step 0; BATL-TEST-07's fixture).
 
 `warband` fields 5 heroes, 2 hired swords and 8 henchmen in 3 groups (each carrying a rope) against one rival
-hero, and finds a lucky charm. Pinned: stat overrides made permanent without a log and unusual numbers accepted
-silently (SEC-10, BUG-71); dead units keeping their items (pass 2 decision 7). A failed finalise writes nothing
-(BUG-124, fixed; each trigger in test_battle_finalise_rollback.py).
+hero, and finds a lucky charm. Fixed in PR A: stat overrides kept only when ticked, and logged; unusual numbers warn
+and are logged (SEC-10, decisions 6 and 9); dead units lose their items (pass 2 decision 7); a failed finalise
+writes nothing (BUG-124; each trigger in test_battle_finalise_rollback.py).
 """
 
 from decimal import Decimal
@@ -26,9 +26,9 @@ from .battle_support import BattleTestCase, build_fixture_warband, catalogue_ite
 class FixturePostbattleTests(BattleTestCase):
     def setUp(self) -> None:
         super().setUp()
-        rope = catalogue_item("Rope", 5)
+        self.rope = catalogue_item("Rope", 5)
         self.charm = catalogue_item("Lucky Charm", 10)
-        self.fixture = build_fixture_warband(self.warband, rope)
+        self.fixture = build_fixture_warband(self.warband, self.rope)
         self.heroes, self.swords, self.groups = self.fixture.heroes, self.fixture.hired_swords, self.fixture.groups
         self.henchmen = self.fixture.henchmen  # groups of 3, 3 and 2
         self.rat = f"hero:{self.rival.heroes.create(name='Rat', unit_type='Assassin').id}"
@@ -107,6 +107,17 @@ class FixturePostbattleTests(BattleTestCase):
                     None,
                 ),  # fmt: skip
                 ("battle", "finds", {"gold_crowns": 25, "items": [find]}, None),
+                (
+                    "battle",
+                    "items_lost",
+                    {
+                        "units": [
+                            {"unit_name": self.key(h[4]), "items": ["Rope"]},
+                            {"unit_name": self.key(m[3]), "items": ["Rope"]},
+                        ]
+                    },
+                    None,
+                ),  # fmt: skip
             ],
         )  # deaths and XP are not logged
 
@@ -204,21 +215,29 @@ class FixturePostbattleTests(BattleTestCase):
         self.assertEqual(data["warnings"][0]["message"], "7 exploration dice for 5 heroes.")
         self.assertFalse(WarbandLog.objects.filter(warband=self.warband).exists())
 
-    def test_dead_units_keep_their_items(self):
-        # Characterises current behaviour (pass 2 decision 7, BATL-TWEAK-08; flips in PR A: a dead hero's or hired
-        # sword's items stay on his record out of reach, and each dead henchman takes one copy of each group item)
+    def test_dead_units_lose_their_items(self):
+        # Pass 2 decision 7, BATL-TWEAK-08: a dead hero's or hired sword's items stay on his record, out of reach;
+        # each dead henchman takes one copy of each of his group's items; the battle log lists what was lost
+        group = self.groups[0]  # 3 henchmen: 2 more ropes and a lucky charm
+        group.henchmen_group_items.create(item=self.charm, cost=10)
+        for _ in range(2):
+            group.henchmen_group_items.create(item=self.rope, cost=5)
         battle_id = self.start()
         self.finish(battle_id, [self.warband])
-        dead = [self.heroes[1], self.swords[0], self.henchmen[6]]
+        dead = [self.heroes[1], self.swords[0], self.henchmen[0], self.henchmen[1], self.henchmen[6]]
         changes = {self.key(unit): {"dead": True} for unit in dead}
 
         self.ok(self.finalize(self.player, battle_id, draft(self.results(**changes))))
 
         self.assertEqual(HeroItem.objects.filter(hero=self.heroes[1]).count(), 1)
         self.assertEqual(HiredSwordItem.objects.filter(hired_sword=self.swords[0]).count(), 1)
-        self.assertEqual(HenchmenGroupItem.objects.filter(henchmen_group=self.groups[2]).count(), 1)
-        self.henchmen[6].refresh_from_db()
-        self.assertTrue(self.henchmen[6].dead)
+        self.assertEqual(list(group.henchmen_group_items.values_list("item__name", flat=True)), ["Rope"])
+        self.assertFalse(HenchmenGroupItem.objects.filter(henchmen_group=self.groups[2]).exists())
+        lost = WarbandLog.objects.get(warband=self.warband, entry_type="items_lost").payload["units"]
+        self.assertEqual(
+            [(entry["unit_name"], entry["items"]) for entry in lost],
+            [(self.key(self.heroes[1]), ["Rope"]), (self.key(self.swords[0]), ["Rope"]), (self.key(self.henchmen[0]), ["Rope", "Lucky Charm"]), (self.key(self.henchmen[1]), ["Rope"]), (self.key(self.henchmen[6]), ["Rope"])],
+        )  # fmt: skip
 
     def test_a_whole_group_dying_marks_the_group_dead(self):
         battle_id = self.start()

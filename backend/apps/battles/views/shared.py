@@ -42,6 +42,7 @@ from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.broadcast import Changed, publish
 from ..services.exploration import exploration_amount
 from ..services.injuries import apply_stat_and_special, describe_roll, injury_outcome
+from ..services.items_lost import carried_item_names, henchman_takes_his_share, lost_entry
 from ..services.kills import kill_counts_by_unit
 from ..services.lifecycle import participants_all_in, record_wins_and_losses
 from ..services.timing import is_overdue
@@ -1563,6 +1564,7 @@ def _apply_participant_postbattle_results(
     warnings: list[Warning] = []
     injury_logs: list[dict] = []
     stat_logs: list[dict] = []
+    items_lost: list[dict | None] = []  # what each unit dying here takes with him (pass 2 decision 7)
     kills_by_unit = kill_counts_by_unit(battle.id, participant.warband_id)  # the live kill events (decision 5)
     group_xp_by_id: dict[int, int] = {}
     group_stats_override_by_id: dict[int, dict[str, int | str]] = {}
@@ -1593,6 +1595,7 @@ def _apply_participant_postbattle_results(
             if dead and not hero.dead:
                 hero.dead = True
                 update_fields.append("dead")
+                items_lost.append(lost_entry(unit_name, carried_item_names(hero)))
             if update_fields:
                 hero.save(update_fields=[*dict.fromkeys(update_fields), "updated_at"])
             for special_id in result.get("special_ids", []):
@@ -1619,6 +1622,7 @@ def _apply_participant_postbattle_results(
             if dead and not hired_sword.dead:
                 hired_sword.dead = True
                 update_fields.append("dead")
+                items_lost.append(lost_entry(unit_name, carried_item_names(hired_sword)))
             if update_fields:
                 hired_sword.save(update_fields=[*dict.fromkeys(update_fields), "updated_at"])
             continue
@@ -1645,6 +1649,7 @@ def _apply_participant_postbattle_results(
                 henchman.kills += kill_count
             if dead and not henchman.dead:
                 henchman.dead = True
+                items_lost.append(lost_entry(unit_name, henchman_takes_his_share(group)))
             henchman.save(update_fields=["kills", "dead"])
             existing_group_xp = group_xp_by_id.get(henchman.group_id)
             if existing_group_xp is None:
@@ -1808,6 +1813,8 @@ def _apply_participant_postbattle_results(
         log_warband_event(participant.warband_id, "personnel", "serious_injury", injury_log)
     for stat_log in stat_logs:  # the kept stat changes, before and after (decision 6)
         log_warband_event(participant.warband_id, "personnel", "stats_kept", stat_log)
+    if any(items_lost):
+        log_warband_event(participant.warband_id, "battle", "items_lost", {"units": list(filter(None, items_lost))})
     unusual = unusual_value_warnings(normalized)  # allowed, answered and logged (decision 9)
     if unusual:
         log_warband_event(participant.warband_id, "battle", "warnings", {"warnings": unusual})
