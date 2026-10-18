@@ -121,6 +121,44 @@ class KickTests(CampaignTestCase):
         self.assertTrue(self.is_member(self.player))
 
 
+class MemberListTests(CampaignTestCase):
+    def test_owners_and_admins_list_members_with_emails_grants_and_warbands(self):
+        self.grant(self.player, "manage_items")
+        for user, expected in ((self.player, 403), (self.outsider, 404)):
+            with self.subTest(user=user.first_name):
+                self.assertEqual(self.get_as(user, self.url("members/")).status_code, expected)
+
+        members = self.get_as(self.admin, self.url("members/")).json()
+
+        # ordered by the role's slug, so the admin comes before the owner
+        rows = [(row["name"], row["email"], row["role"], sorted(row["permissions"])) for row in members]
+        self.assertEqual(
+            rows,
+            [
+                ("Ada", "admin@example.com", "admin", ["add_custom"]),
+                ("Olga", "owner@example.com", "owner", []),
+                ("Pia", "player@example.com", "player", ["add_custom", "manage_items"]),
+                ("Rex", "rival@example.com", "player", ["add_custom"]),
+            ],
+        )
+        warbands = [(row["warband_id"], row["warband_name"]) for row in members]
+        self.assertEqual(
+            warbands, [(None, None), (None, None), (self.warband.id, "Monks"), (self.rival_warband.id, "Rats")]
+        )
+
+    def test_every_member_lists_the_players_by_first_name(self):
+        players = self.get_as(self.rival, self.url("players/")).json()
+
+        self.assertEqual(
+            [(row["id"], row["name"]) for row in players][:2], [(self.admin.id, "Ada"), (self.owner.id, "Olga")]
+        )
+        pia = players[2]
+        self.assertEqual((pia["warband"]["id"], pia["warband"]["name"]), (self.warband.id, "Monks"))
+        self.assertEqual((pia["battle_busy"], pia["battle_busy_status"]), (False, None))
+        self.assertIsNone(players[0]["warband"])
+        self.assertEqual(self.get_as(self.outsider, self.url("players/")).status_code, 404)
+
+
 class MemberRoleTests(CampaignTestCase):
     def set_role(self, actor, target, role):
         return self.patch_as(actor, self.url(f"members/{target.id}/role/"), {"role": role})
