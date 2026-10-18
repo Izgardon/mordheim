@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { Button } from "@components/button";
 import { ConfirmDialog } from "@components/confirm-dialog";
 import { DialogFooter } from "@components/dialog";
@@ -12,9 +14,6 @@ type TradeActionsProps = {
   onUnaccept: () => void;
   /** Cancel, once confirmed: ends the trade for both sides. */
   onCancel: () => void;
-  /** The Cancel confirmation; the dialog keeps it, so it outlives the open trade. */
-  showCancelConfirm: boolean;
-  onShowCancelConfirmChange: (open: boolean) => void;
 };
 
 /** Cancel (with a confirmation), and Accept or Unaccept your side. */
@@ -26,9 +25,11 @@ export default function TradeActions({
   onAccept,
   onUnaccept,
   onCancel,
-  showCancelConfirm,
-  onShowCancelConfirmChange: setShowCancelConfirm,
 }: TradeActionsProps) {
+  // Kept here, so it goes with the dialog when the trade ends (completed, cancelled, expired)
+  // and never greets the next trade.
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+
   return (
     <>
       <DialogFooter>

@@ -87,8 +87,11 @@ function SheetObserver() {
 /** Lets a test deliver a new copy of the request, as a partner's realtime event does. */
 const partner = { send: (_next: TradeRequest) => undefined as void };
 
-/** Lets a test change the page's gold, as a summary refresh does. */
-const page = { setGold: (_gold: number) => undefined as void };
+/** Lets a test change the page's gold, as a summary refresh does, or end the open trade. */
+const page = {
+  setGold: (_gold: number) => undefined as void,
+  setTradeOpen: (_open: boolean) => undefined as void,
+};
 
 /** The dialog as the page holds it: answers and events replace `tradeRequest`. */
 function TradeHarness({
@@ -102,14 +105,16 @@ function TradeHarness({
 }) {
   const [tradeRequest, setTradeRequest] = useState<TradeRequest | null>(initial);
   const [gold, setGold] = useState(120);
+  const [isTradeOpen, setTradeOpen] = useState(true);
   partner.send = setTradeRequest;
   page.setGold = setGold;
+  page.setTradeOpen = setTradeOpen;
   return (
     <>
       <AppToaster />
       <SheetObserver />
       <TradeSessionDialog
-        session={{ ...session, status: sessionStatus }}
+        session={isTradeOpen ? { ...session, status: sessionStatus } : null}
         tradeRequest={tradeRequest}
         heroes={[aldric, gunther]}
         warchestItems={stash}
@@ -552,5 +557,19 @@ describe("TradeSessionDialog: Accept and Unaccept", () => {
         "Are you sure you want to cancel this trade? Both sides will lose their offers."
       )
     ).not.toBeInTheDocument();
+  });
+
+  it("drops an open Cancel confirmation when the trade ends some other way", async () => {
+    const user = setupUser();
+    renderDialog();
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(screen.getByRole("button", { name: "Cancel Trade" })).toBeInTheDocument();
+
+    // Bob cancels (or the trade completes or runs out); then a new trade opens.
+    act(() => page.setTradeOpen(false));
+    act(() => page.setTradeOpen(true));
+
+    expect(screen.getByRole("dialog", { name: "Trading with Bob" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Cancel Trade" })).not.toBeInTheDocument();
   });
 });

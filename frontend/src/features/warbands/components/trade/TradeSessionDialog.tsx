@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import {
   Dialog,
@@ -92,7 +92,6 @@ export default function TradeSessionDialog({
     myAccepted,
     onRequestUpdated,
   });
-  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   // The deadline moves with every change either player makes (decision 8): read it each time.
   const timeLeft = useCountdown(tradeRequest?.expires_at ?? session?.expiresAt);
   const error = actions.actionError || offer.error;
@@ -186,8 +185,6 @@ export default function TradeSessionDialog({
           onAccept={actions.accept}
           onUnaccept={actions.unaccept}
           onCancel={onClose}
-          showCancelConfirm={showCancelConfirm}
-          onShowCancelConfirmChange={setShowCancelConfirm}
         />
       </DialogContent>
     </Dialog>
