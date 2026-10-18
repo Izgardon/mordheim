@@ -238,6 +238,7 @@ class WarbandItemSummarySerializer(serializers.Serializer):
     cost = serializers.IntegerField(allow_null=True)
     quantity = serializers.IntegerField()
     costs = StashCostSerializer(many=True)
+    current_price = serializers.IntegerField(allow_null=True)  # what Buy again charges (decision 11)
     suggested_sale_price = serializers.SerializerMethodField()  # per copy, decision 3
     sale_price_basis = serializers.SerializerMethodField()
 

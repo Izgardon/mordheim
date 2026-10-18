@@ -133,7 +133,8 @@ def detail_item_entries(rows: Iterable[Any]) -> list[Any]:
             continue
         data = ItemDetailSerializer(row.item).data
         data["cost"] = getattr(row, "cost", None)
-        sale = sale_price(annotated_current(row, own_price(row.item)), data["cost"])
+        data["current_price"] = annotated_current(row, own_price(row.item))  # what Buy again charges
+        sale = sale_price(data["current_price"], data["cost"])
         data["suggested_sale_price"], data["sale_price_basis"] = sale.price, sale.basis
         items.append(data)
     return items

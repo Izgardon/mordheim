@@ -77,6 +77,7 @@ ITEM_DETAIL = {
         }
     ],
     "cost": "int",
+    "current_price": "int",  # decision 11: what Buy again charges
     "suggested_sale_price": "int",  # decision 3
     "sale_price_basis": "str",
 }

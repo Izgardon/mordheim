@@ -8,8 +8,8 @@ from apps.warbands.models import WarbandItem, WarbandResource
 from .roster_support import HERO, RosterTestCase, log_rows, make_unit, trade_rows
 
 # decision 3: half the item's current campaign price, rounded up (the Sword lists at 10, the Axe at 5 and 15)
-SWORD_SALE = {"suggested_sale_price": 5, "sale_price_basis": "campaign_price"}
-AXE_SALE = {"suggested_sale_price": 3, "sale_price_basis": "campaign_price"}
+SWORD_SALE = {"current_price": 10, "suggested_sale_price": 5, "sale_price_basis": "campaign_price"}
+AXE_SALE = {"current_price": 5, "suggested_sale_price": 3, "sale_price_basis": "campaign_price"}
 
 
 class StashTests(RosterTestCase):

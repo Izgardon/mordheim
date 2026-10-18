@@ -52,6 +52,26 @@ class SuggestedSalePriceTests(RosterTestCase):
         self.assertEqual(self._sale(stash["Idol"]), (None, None))
 
 
+class CurrentPriceTests(RosterTestCase):
+    """Each copy says what Buy again would charge for it (decision 11): the current campaign price, house rule
+    included, which the dialog shows instead of the global item's own price."""
+
+    def test_copies_carry_the_current_campaign_price(self):
+        house_axe = Item.objects.create(name="Axe", type="Melee", campaign=self.campaign)
+        ItemAvailability.objects.create(item=house_axe, cost=25, rarity=2)
+        WarbandItem.objects.create(warband=self.warband, item=self.axe, quantity=1, cost=5)
+        relic = Item.objects.create(name="Relic", type="Misc")
+        WarbandItem.objects.create(warband=self.warband, item=relic, quantity=1, cost=9)
+        hero = make_unit(HERO, self.warband)
+        hero.hero_items.create(item=self.axe, cost=5)
+
+        stash = {entry["name"]: entry for entry in self.client.get(f"/api/warbands/{self.warband.id}/items/").json()}
+        sheet = self.client.get(f"/api/warbands/{self.warband.id}/sheet/").json()
+
+        self.assertEqual((stash["Axe"]["current_price"], stash["Relic"]["current_price"]), (25, None))
+        self.assertEqual(sheet["heroes"][0]["items"][0]["current_price"], 25)
+
+
 class SaleDefaultPriceTests(RosterTestCase):
     def _sell(self, **body: Any) -> Any:
         return self.client.post(f"/api/warbands/{self.warband.id}/item-sales/", body, format="json")
