@@ -25,7 +25,7 @@ class TradeSpentTraderTests(TradeTestCase):
     def warning(self, hero: Hero | None = None) -> dict[str, Any]:
         hero = hero or self.hero
         message = f"{hero.name} already used his trading action this round."
-        return {"code": "trader_spent", "message": message, "hero_id": hero.id}
+        return {"code": "trading_action_spent", "message": message, "hero_id": hero.id}
 
     def test_a_spent_hero_can_be_offered_with_a_warning(self):
         response = self.offer(self.player, self.trade, trader_id=self.hero.id, gold=5)

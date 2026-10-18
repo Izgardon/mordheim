@@ -12,7 +12,7 @@ from apps.warbands.services.summary import warband_gold
 
 from .errors import TradeError
 
-TRADER_SPENT = "trader_spent"
+TRADER_SPENT = "trading_action_spent"  # the same code purchases use for a spent searcher
 TradeWarning = dict[str, Any]  # {"code", "message", ...}: answered to the player who acted, never broadcast
 
 

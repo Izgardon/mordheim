@@ -95,5 +95,5 @@ class TradeTradingActionTests(TradeTestCase):
         body = self.lock(self.player, trade).json()
 
         self.assertEqual((body["status"], body["from_trader_spent_id"]), ("completed", None))
-        self.assertEqual([warning["code"] for warning in body["warnings"]], ["trader_spent"])
+        self.assertEqual([warning["code"] for warning in body["warnings"]], ["trading_action_spent"])
         self.assertEqual(self.actions(), {"Fence": True, "Haggler": True, "Spent": False})
