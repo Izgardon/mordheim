@@ -357,3 +357,26 @@ def _postbattle_result(unit_key: str, xp: int) -> dict[str, Any]:
 def cap_error(detail: str, code: str = "hero_cap_reached") -> dict[str, Any]:
     """The 400 body for adding a unit over the hero or hired-sword cap (decision 12)."""
     return {"detail": detail, "code": code, "fields": {}}
+
+
+class ItemMoveHelpers:
+    """Moving items between units and the stash (POST item-transfers/), for RosterTestCase subclasses."""
+
+    client: Any
+    warband: Warband
+    sword: Item
+    axe: Item
+
+    def _transfer(self, **body: Any) -> Any:
+        return self.client.post(f"/api/warbands/{self.warband.id}/item-transfers/", body, format="json")
+
+    def _armed(self, kind: Kind, warband: Any = None, **fields: Any) -> Any:
+        """A unit carrying two swords (costs 10, then 12) and an axe (cost 7)."""
+        unit = make_unit(kind, warband or self.warband, **fields)
+        links = getattr(unit, kind.items)
+        for item, cost in ((self.sword, 10), (self.sword, 12), (self.axe, 7)):
+            links.create(item=item, cost=cost)
+        return unit
+
+    def _carried(self, kind: Kind, unit: Any) -> list[tuple[int, int | None]]:
+        return list(getattr(unit, kind.items).order_by("id").values_list("item_id", "cost"))

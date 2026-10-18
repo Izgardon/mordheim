@@ -17,7 +17,7 @@ from .roster_support import (
     HERO,
     HIRED_SWORD,
     KINDS,
-    Kind,
+    ItemMoveHelpers,
     RosterTestCase,
     clear_ledger,
     make_unit,
@@ -35,21 +35,7 @@ AXE_SALE = {"suggested_sale_price": 3, "sale_price_basis": "campaign_price"}
 OTHER_KIND = {HERO.key: HENCHMEN, HENCHMEN.key: HIRED_SWORD, HIRED_SWORD.key: HERO}
 
 
-class RosterItemTransferCharacterisationTests(RosterTestCase):
-    def _transfer(self, **body: Any) -> Any:
-        return self.client.post(f"/api/warbands/{self.warband.id}/item-transfers/", body, format="json")
-
-    def _armed(self, kind: Kind, warband: Any = None, **fields: Any) -> Any:
-        """A unit carrying two swords (costs 10, then 12) and an axe (cost 7)."""
-        unit = make_unit(kind, warband or self.warband, **fields)
-        links = getattr(unit, kind.items)
-        for item, cost in ((self.sword, 10), (self.sword, 12), (self.axe, 7)):
-            links.create(item=item, cost=cost)
-        return unit
-
-    def _carried(self, kind: Kind, unit: Any) -> list[tuple[int, int | None]]:
-        return list(getattr(unit, kind.items).order_by("id").values_list("item_id", "cost"))
-
+class RosterItemTransferCharacterisationTests(ItemMoveHelpers, RosterTestCase):
     def _summary(self) -> Any:
         return self.client.get(f"/api/warbands/{self.warband.id}/summary/").json()
 
@@ -75,21 +61,6 @@ class RosterItemTransferCharacterisationTests(RosterTestCase):
                 self.assertEqual(set(body["source"]), set(SHAPES[kind.key][1]))  # the detail key set
                 self.assertEqual(body["summary"], self._summary())
                 self.assertEqual(self._carried(kind, unit), [(self.sword.id, 10), (self.axe.id, 7)])
-
-    def test_moving_into_the_stash_keeps_each_copys_cost_beside_the_copies_held(self):
-        # BUG-117: the four copies used to become four at 10 (the last known cost)
-        WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=2, cost=5)
-        hero = self._armed(HERO)
-
-        body = self._transfer(
-            source_type="hero", source_id=hero.id, target_type="stash", item_id=self.sword.id, quantity=2
-        ).json()
-
-        # the row created last first: its copies leave first
-        costs = [{"cost": 10, "quantity": 1}, {"cost": 12, "quantity": 1}, {"cost": 5, "quantity": 2}]
-        stash_item = {"id": self.sword.id, "name": "Sword", "cost": 10, "quantity": 4, "costs": costs, **SWORD_SALE}
-        self.assertEqual(body["stash_item"], stash_item)
-        self.assertEqual(self._carried(HERO, hero), [(self.axe.id, 7)])
 
     def test_moving_a_stash_item_to_a_unit(self):
         for kind in KINDS:
@@ -165,39 +136,6 @@ class RosterItemTransferCharacterisationTests(RosterTestCase):
         stash_item = {"id": self.axe.id, "name": "Axe", "cost": 6, "quantity": 1}
         self.assertEqual(body["stash_item"], {**stash_item, "costs": [{"cost": 6, "quantity": 1}], **AXE_SALE})
         self.assertEqual(self._carried(HERO, target)[2:], [(self.axe.id, 6), (self.axe.id, 6)])
-
-    def test_copies_moved_into_the_stash_keep_their_costs(self):
-        # BUG-117: two copies at 12 and 10 used to become two at 10, and a copy of unknown cost took the row's
-        hero = self._armed(HERO)
-
-        body = self._transfer(
-            source_type="hero", source_id=hero.id, target_type="stash", item_id=self.sword.id, quantity=2
-        ).json()
-        self.assertEqual(body["stash_item"]["costs"], [{"cost": 10, "quantity": 1}, {"cost": 12, "quantity": 1}])
-
-        hero.hero_items.create(item=self.sword, cost=None)
-        body = self._transfer(
-            source_type="hero", source_id=hero.id, target_type="stash", item_id=self.sword.id, quantity=1
-        ).json()
-        costs = [{"cost": None, "quantity": 1}, {"cost": 10, "quantity": 1}, {"cost": 12, "quantity": 1}]
-        self.assertEqual((body["stash_item"]["quantity"], body["stash_item"]["costs"]), (3, costs))
-
-    def test_the_copies_of_one_cost_can_be_moved_or_sold_from_the_stash(self):
-        WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=3, cost=5)
-        WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=1, cost=12)
-        hero = make_unit(HERO, self.warband)
-
-        moved = self._transfer(
-            source_type="stash", target_type="hero", target_id=hero.id, item_id=self.sword.id, quantity=2, cost=5
-        )
-        sale = {"source_type": "stash", "item_id": self.sword.id, "quantity": 1, "price": 6, "cost": 5}
-        sold = self.client.post(f"/api/warbands/{self.warband.id}/item-sales/", sale, format="json")
-        too_many = self.client.post(f"/api/warbands/{self.warband.id}/item-sales/", sale, format="json")
-
-        self.assertEqual((moved.status_code, sold.status_code, too_many.status_code), (200, 200, 400))
-        self.assertEqual(self._carried(HERO, hero), [(self.sword.id, 5), (self.sword.id, 5)])
-        self.assertEqual(moved.json()["stash_item"]["costs"], [{"cost": 12, "quantity": 1}, {"cost": 5, "quantity": 1}])
-        self.assertEqual(sold.json()["stash_item"]["costs"], [{"cost": 12, "quantity": 1}])
 
     def test_henchmen_payloads_list_dead_members_too(self):
         # Unlike every other roster response, the transfer and sale payloads include dead members, but not
