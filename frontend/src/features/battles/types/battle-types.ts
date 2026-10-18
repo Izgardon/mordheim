@@ -137,8 +137,6 @@ export type BattleEventType =
   | "battle_prebattle_opened"
   | "battle_started"
   | "participant_joined_battle"
-  | "kill_recorded"
-  | "death_recorded"
   | "item_used"
   | "unit_ooa_set"
   | "unit_ooa_unset"

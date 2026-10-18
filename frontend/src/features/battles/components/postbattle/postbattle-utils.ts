@@ -317,33 +317,6 @@ export function setLocalExplorationDieSelected(
   };
 }
 
-function rollD6Value() {
-  return Math.floor(Math.random() * 6) + 1;
-}
-
-export function rollAllLocalExplorationDice(state: LocalExplorationState): LocalExplorationState {
-  return {
-    ...state,
-    hasRolledAllDice: true,
-    diceValues: state.diceValues.map(() => rollD6Value()),
-  };
-}
-
-export function rerollLocalExplorationDie(
-  state: LocalExplorationState,
-  index: number
-): LocalExplorationState {
-  if (index < 0 || index >= state.diceValues.length) {
-    return state;
-  }
-  return {
-    ...state,
-    diceValues: state.diceValues.map((value, entryIndex) =>
-      entryIndex === index ? rollD6Value() : value
-    ),
-  };
-}
-
 export function setLocalExplorationDieValue(
   state: LocalExplorationState,
   index: number,
@@ -844,22 +817,6 @@ export function buildHeroSeriousInjuryRoll(
     result_label: guide.label,
     dead_suggestion: guide.dead,
   };
-}
-
-export function rollD6SeriousInjury(): BattlePostbattleSeriousInjuryRoll {
-  return buildD6SeriousInjuryRoll(Math.floor(Math.random() * 6) + 1);
-}
-
-export function rollHeroSeriousInjury(
-  mode: CampaignHeroDeathRoll = "d66"
-): BattlePostbattleSeriousInjuryRoll {
-  if (mode === "d100") {
-    return buildHeroSeriousInjuryRoll([Math.floor(Math.random() * 100) + 1], mode);
-  }
-  return buildHeroSeriousInjuryRoll(
-    [Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1],
-    mode
-  );
 }
 
 export function isPostbattleDraftValid(draft: BattlePostbattleState | null) {

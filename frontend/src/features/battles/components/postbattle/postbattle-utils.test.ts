@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import type {
   BattlePostbattleState,
@@ -9,6 +9,8 @@ import type {
 import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
 
 import {
+  buildD6SeriousInjuryRoll,
+  buildHeroSeriousInjuryRoll,
   buildLocalExplorationState,
   settledExplorationPayload,
   buildPostbattleDraft,
@@ -16,9 +18,6 @@ import {
   getPostbattleUpkeepTotal,
   getExplorationResourceAmount,
   getSelectedExplorationDiceValues,
-  rollAllLocalExplorationDice,
-  rollD6SeriousInjury,
-  rollHeroSeriousInjury,
   setPostbattlePayUpkeep,
   setLocalExplorationDiceCount,
   setLocalExplorationDieSelected,
@@ -536,24 +535,9 @@ describe("postbattle-utils", () => {
     expect(getPostbattleUpkeepTotal(unpaid)).toBe(20);
   });
 
-  it("rolls all local exploration dice and maps totals to resource table values", () => {
-    const randomSpy = vi.spyOn(Math, "random");
-    randomSpy.mockReturnValueOnce(0).mockReturnValueOnce(0.5);
-
-    const rolled = rollAllLocalExplorationDice({
-      diceCount: 2,
-      diceValues: [null, null],
-      selectedDice: [true, true],
-      resourceId: 7,
-      amountOverride: null,
-      hasRolledAllDice: false,
-    });
-    expect(rolled.hasRolledAllDice).toBe(true);
-    expect(rolled.diceValues).toEqual([1, 4]);
+  it("maps exploration totals to resource table values", () => {
     expect(getExplorationResourceAmount([1, 4, null])).toBe(1);
     expect(getExplorationResourceAmount([6, 6, 6, 6, 6, 6])).toBe(7);
-
-    randomSpy.mockRestore();
   });
 
   it("only includes checked exploration dice in the final payload and reward", () => {
@@ -577,17 +561,12 @@ describe("postbattle-utils", () => {
     expect(checked.selectedDice).toEqual([false, true, true, true, true, true, true]);
   });
 
-  it("rolls d6 and d66 serious injury guides deterministically", () => {
-    const randomSpy = vi.spyOn(Math, "random");
-    randomSpy.mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(0);
-
-    const d6 = rollD6SeriousInjury();
+  it("reads d6 and d66 serious injury guides from the dice", () => {
+    const d6 = buildD6SeriousInjuryRoll(1);
     expect(d6.result_label).toBe("Dead");
 
-    const hero = rollHeroSeriousInjury();
+    const hero = buildHeroSeriousInjuryRoll([1, 1], "d66");
     expect(hero.result_code).toBe("11");
     expect(hero.dead_suggestion).toBe(true);
-
-    randomSpy.mockRestore();
   });
 });
