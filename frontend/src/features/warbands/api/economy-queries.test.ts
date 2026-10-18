@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  patchSheetResources,
   prependTreasuryRow,
   readTradeData,
   setTradeData,
@@ -13,6 +14,7 @@ import { queryKeys } from "@/lib/query-keys";
 import { createTestQueryClient } from "@/test/query-test-utils";
 
 import type { TradeRequest } from "../types/trade-request-types";
+import type { WarbandSheet } from "../types/warband-sheet";
 import type { WarbandTrade } from "../types/warband-types";
 
 const row = (id: number, description: string): WarbandTrade => ({
@@ -111,5 +113,47 @@ describe("the trade query", () => {
     expect(queryClient.getQueryData(queryKeys.campaign.trade(7, "t-1"))).toEqual(trade);
     expect(readTradeData(queryClient, 7, "t-1")).toEqual(trade);
     expect(readTradeData(queryClient, 7, "t-2")).toBeUndefined();
+  });
+});
+
+describe("patchSheetResources", () => {
+  const treasure = { id: 3, warband_id: 9, name: "Treasure", amount: 2 };
+  const sheetWith = (summary: object, warband: object = {}) =>
+    ({
+      warband,
+      summary,
+      capabilities: {},
+      heroes: [],
+      henchmen_groups: [],
+      hired_swords: [],
+    }) as unknown as WarbandSheet;
+  const resourcesOf = (queryClient: ReturnType<typeof createTestQueryClient>) =>
+    queryClient.getQueryData<WarbandSheet>(queryKeys.campaign.warbandSheet(7, 9))?.summary
+      .resources;
+
+  it("changes the resources in the summary the page reads", () => {
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(
+      queryKeys.campaign.warbandSheet(7, 9),
+      sheetWith({ gold: 5, resources: [treasure] })
+    );
+
+    patchSheetResources(queryClient, 9, (resources) =>
+      resources.map((entry) => ({ ...entry, amount: entry.amount + 1 }))
+    );
+
+    expect(resourcesOf(queryClient)).toEqual([{ ...treasure, amount: 3 }]);
+  });
+
+  it("starts from the warband's resources when the summary has none", () => {
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(
+      queryKeys.campaign.warbandSheet(7, 9),
+      sheetWith({ gold: 5 }, { resources: [treasure] })
+    );
+
+    patchSheetResources(queryClient, 9, (resources) => resources.filter((entry) => entry.id !== 3));
+
+    expect(resourcesOf(queryClient)).toEqual([]);
   });
 });

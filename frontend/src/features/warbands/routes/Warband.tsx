@@ -173,7 +173,6 @@ export default function Warband() {
               <WarbandTabContent
                 warbandId={warband.id}
                 resources={warband.resources ?? []}
-                onResourcesUpdated={(resources) => mergeWarband({ resources })}
                 capabilities={capabilities}
                 editors={page.editors}
                 {...roster}
