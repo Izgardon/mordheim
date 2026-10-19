@@ -254,6 +254,26 @@ describe("BattlePostbattle requests", () => {
     ).toBeEnabled();
   });
 
+  it("offers Close postbattle as the server's capabilities say, whoever created the battle", async () => {
+    const user = setupUser();
+    server.battle.created_by_user_id = OPPONENT.id;
+    server.capabilities = {
+      start: false,
+      end: false,
+      cancel: false,
+      close_postbattle: true,
+      edit_record: false,
+    };
+    await renderPostbattle();
+
+    await user.click(screen.getByRole("button", { name: "More actions" }));
+    expect(
+      within(screen.getByRole("dialog", { name: "More actions" })).getByRole("button", {
+        name: "Close postbattle",
+      })
+    ).toBeEnabled();
+  });
+
   it("shows a saved injury's server effect, ticked to apply, and saves the untick (BUG-47)", async () => {
     const user = setupUser();
     const mine = server.participants.find((entry) => entry.user.id === ME.id)!;

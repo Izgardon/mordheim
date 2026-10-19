@@ -154,6 +154,36 @@ describe("BattleActive requests", () => {
     expect(screen.getByText("Player cancelled Street Fight.")).toBeInTheDocument();
   });
 
+  it("offers End and Cancel battle to whoever the server's capabilities allow, not by the creator check", async () => {
+    routeServer();
+    server.battle.created_by_user_id = OPPONENT.id;
+    server.capabilities = {
+      start: false,
+      end: true,
+      cancel: true,
+      close_postbattle: false,
+      edit_record: false,
+    };
+    renderBattleRoute("active");
+    expect(await screen.findByRole("button", { name: "End Battle" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "More actions" })).toBeInTheDocument();
+  });
+
+  it("hides End battle from the creator when the server's capabilities don't allow it", async () => {
+    routeServer();
+    server.capabilities = {
+      start: false,
+      end: false,
+      cancel: false,
+      close_postbattle: false,
+      edit_record: false,
+    };
+    renderBattleRoute("active");
+    expect(await screen.findByText("Captain Wolf")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "End Battle" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "More actions" })).toBeNull();
+  });
+
   it("offers No winner, which ends the battle with an empty winner list (decision 8)", async () => {
     const user = setupUser();
     await renderActive();

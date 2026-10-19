@@ -94,6 +94,7 @@ export function usePostbattlePage(campaign: CampaignSummary | null | undefined) 
     battleState,
     currentParticipant,
     canManageBattles: Boolean(campaign?.permissions?.includes("manage_battles")),
+    capabilities: battle.capabilities,
     userId: user?.id,
     exploration: explore.exploration,
     drafting,

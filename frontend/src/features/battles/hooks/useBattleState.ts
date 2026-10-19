@@ -151,6 +151,12 @@ export function useBattleState({ campaignId, battleId, view }: UseBattleStateOpt
     error = getErrorMessage(query.error, "Unable to load battle");
   }
 
+  /** A read of what changed, or the read already running if there is one. */
+  const joinRead = useCallback(
+    () => queryClient.refetchQueries({ queryKey, exact: true }, { cancelRefetch: false }),
+    [queryClient, queryKey]
+  );
+
   return useMemo(
     () => ({
       battleState,
@@ -161,6 +167,7 @@ export function useBattleState({ campaignId, battleId, view }: UseBattleStateOpt
       updateBattleState,
       applyBattleResponse,
       refreshBattleState,
+      joinRead,
     }),
     [
       applyBattleResponse,
@@ -170,6 +177,7 @@ export function useBattleState({ campaignId, battleId, view }: UseBattleStateOpt
       isLoading,
       lastEventIdRef,
       refreshBattleState,
+      joinRead,
       updateBattleState,
     ]
   );

@@ -3,7 +3,7 @@ import { createContext, useContext } from "react";
 import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
 import type { BattleStateRef } from "@/features/battles/hooks/useBattleState";
 import type { BattlePhase } from "@/features/battles/state/battle-machine";
-import type { BattleState } from "@/features/battles/types/battle-types";
+import type { BattleCapabilities, BattleState } from "@/features/battles/types/battle-types";
 
 /** What `BattleLayout` shares with the page it shows, once the battle is loaded and on it. */
 export type BattleContextValue = {
@@ -12,6 +12,11 @@ export type BattleContextValue = {
   /** The page being shown. */
   phase: BattlePhase;
   battleState: BattleState;
+  /**
+   * What the reader may do, from the server's `capabilities`: none while they're being read again
+   * after a status change; null when the server sent none (the pages' own rules apply).
+   */
+  capabilities: BattleCapabilities | null;
   /** The latest cached state, optimistic changes included, for reads outside a render. */
   battleStateRef: BattleStateRef;
   rosters: Record<number, ParticipantRoster>;

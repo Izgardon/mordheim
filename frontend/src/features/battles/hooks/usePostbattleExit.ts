@@ -13,7 +13,11 @@ import {
 import { useClosePostbattle } from "@/features/battles/hooks/useClosePostbattle";
 import { useRefreshOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import type { PostbattleDraft } from "@/features/battles/hooks/usePostbattleDraft";
-import type { BattleParticipant, BattleState } from "@/features/battles/types/battle-types";
+import type {
+  BattleCapabilities,
+  BattleParticipant,
+  BattleState,
+} from "@/features/battles/types/battle-types";
 import { toastBattleOver } from "@/features/battles/utils/battle-over";
 import { toastBattleWarnings } from "@/features/battles/utils/battle-warnings";
 import { getErrorMessage } from "@/lib/get-error-message";
@@ -32,6 +36,7 @@ export function usePostbattleExit({
   battleState,
   currentParticipant,
   canManageBattles,
+  capabilities,
   userId,
   exploration,
   drafting,
@@ -42,6 +47,7 @@ export function usePostbattleExit({
   battleState: BattleState;
   currentParticipant: BattleParticipant | null;
   canManageBattles: boolean;
+  capabilities: BattleCapabilities | null;
   userId: number | undefined;
   exploration: LocalExplorationState | null;
   drafting: PostbattleDraft;
@@ -139,8 +145,11 @@ export function usePostbattleExit({
     navigate(`/campaigns/${campaignId}/warband`);
   }, [campaignId, navigate]);
 
-  // Close postbattle replaces Cancel here (BUG-09): the creator's, or a battle manager's.
-  const canClosePostbattle = battleState.battle.created_by_user_id === userId || canManageBattles;
+  // Close postbattle replaces Cancel here (BUG-09): the creator's, or a battle manager's, as the
+  // server's capabilities say (without them, those two rules).
+  const canClosePostbattle = capabilities
+    ? capabilities.close_postbattle
+    : battleState.battle.created_by_user_id === userId || canManageBattles;
   const closing = useClosePostbattle({
     campaignId,
     battleId,

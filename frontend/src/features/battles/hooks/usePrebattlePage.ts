@@ -85,6 +85,7 @@ export function usePrebattlePage() {
 
   const flags = prebattleFlags({
     battleState,
+    capabilities: battle.capabilities,
     currentParticipant,
     userId: user?.id,
     isOwnSelected,

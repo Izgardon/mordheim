@@ -108,6 +108,9 @@ export function useActivePage() {
     [applyBattleResponse, battleId, campaignId, offerUndo, user?.id]
   );
 
+  const isActiveCreator =
+    battleState.battle.status === "active" && battleState.battle.created_by_user_id === user?.id;
+
   const leaveBattle = useCallback(() => {
     setIsLeaveDialogOpen(false);
     navigate(`/campaigns/${campaignId}`);
@@ -127,8 +130,9 @@ export function useActivePage() {
     rangedOptions,
     setOutOfAction,
     recordKill,
-    canEndBattle:
-      battleState.battle.status === "active" && battleState.battle.created_by_user_id === user?.id,
+    // The server's capabilities decide End and Cancel; without them, the creator's own rule.
+    canEndBattle: battle.capabilities ? battle.capabilities.end : isActiveCreator,
+    canCancelBattle: battle.capabilities ? battle.capabilities.cancel : isActiveCreator,
     leave: { isOpen: isLeaveDialogOpen, setIsOpen: setIsLeaveDialogOpen, confirm: leaveBattle },
     scenarioDialog: { isOpen: isScenarioLinkDialogOpen, setIsOpen: setIsScenarioLinkDialogOpen },
     notesDialog: { isOpen: isBattleNotesOpen, setIsOpen: setIsBattleNotesOpen },

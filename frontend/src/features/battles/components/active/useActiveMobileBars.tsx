@@ -24,7 +24,7 @@ export function useActiveMobileBars({
   isMobile: boolean;
   selectedCustomUnits: PrebattleUnit[];
 } & Pick<BattleLayoutContext, "setBattleMobileTopBar" | "setBattleMobileBottomBar">) {
-  const { selection, creatorCancel, finishing, canEndBattle } = page;
+  const { selection, creatorCancel, finishing, canEndBattle, canCancelBattle } = page;
   const scenarioLink = page.battle.battleState.battle.scenario_link;
   const isOwnSelected = selection.selectedParticipantIsCurrentUser;
   const { setIsOpen: setNotesOpen } = page.notesDialog;
@@ -37,7 +37,7 @@ export function useActiveMobileBars({
   // Cancel battle sits in More actions, away from End battle, the normal path (BATL-UX-05).
   const overflowActions = useMemo(
     () =>
-      canEndBattle
+      canCancelBattle
         ? [
             {
               label: isCanceling ? "Canceling..." : "Cancel battle",
@@ -47,7 +47,7 @@ export function useActiveMobileBars({
             },
           ]
         : [],
-    [canEndBattle, isCanceling, openCancel]
+    [canCancelBattle, isCanceling, openCancel]
   );
   const extraActions = useMemo(
     () =>

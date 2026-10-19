@@ -4,6 +4,8 @@ import type {
   BattleState,
 } from "@/features/battles/types/battle-types";
 
+import { capabilityBasis } from "./battle-capabilities";
+
 /**
  * A write's answer carries only the events it added, so an undo (`unit_kill_voided`,
  * `item_used_voided`) names the event it voided rather than resending it: mark that one voided
@@ -65,18 +67,27 @@ function isOlderThan(next: BattleState, previous: BattleState) {
  * (BUG-44: a slow read never takes back what a newer answer or message applied).
  */
 export function mergeBattleState(previous: BattleState | null, next: BattleState): BattleState {
+  // Reads carry the reader's capabilities, tied to the statuses they were read with.
+  const readCapabilities = next.capabilities
+    ? { capabilities: next.capabilities, capabilitiesBasis: capabilityBasis(next) }
+    : null;
   if (!previous) {
-    return next;
+    return readCapabilities ? { ...next, ...readCapabilities } : next;
   }
   const events = mergeBattleEvents(previous.events ?? [], next.events ?? []);
+  const older = isOlderThan(next, previous);
+  const keptCapabilities = previous.capabilities
+    ? { capabilities: previous.capabilities, capabilitiesBasis: previous.capabilitiesBasis }
+    : {};
   // Only postbattle reads carry the server's suggestions and rules; writes and messages don't.
   const extras = {
     ...((next.suggested_postbattle ?? previous.suggested_postbattle)
       ? { suggested_postbattle: next.suggested_postbattle ?? previous.suggested_postbattle }
       : {}),
     ...((next.rules ?? previous.rules) ? { rules: next.rules ?? previous.rules } : {}),
+    ...(readCapabilities && !older ? readCapabilities : keptCapabilities),
   };
-  if (isOlderThan(next, previous)) {
+  if (older) {
     return { battle: previous.battle, participants: previous.participants, events, ...extras };
   }
   return { battle: next.battle, participants: next.participants, events, ...extras };

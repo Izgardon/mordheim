@@ -1,8 +1,16 @@
-import type { BattleParticipant, BattleState } from "@/features/battles/types/battle-types";
+import type {
+  BattleCapabilities,
+  BattleParticipant,
+  BattleState,
+} from "@/features/battles/types/battle-types";
 
-/** What the prebattle page offers you, from the battle, your row and what is in flight. */
+/**
+ * What the prebattle page offers you, from the battle, your row, what is in flight and the
+ * server's capabilities (start, cancel); without capabilities, the creator's own rules.
+ */
 export function prebattleFlags({
   battleState,
+  capabilities,
   currentParticipant,
   userId,
   isOwnSelected,
@@ -11,6 +19,7 @@ export function prebattleFlags({
   isStartingBattle,
 }: {
   battleState: BattleState;
+  capabilities: BattleCapabilities | null;
   currentParticipant: BattleParticipant | null;
   userId: number | undefined;
   isOwnSelected: boolean;
@@ -27,6 +36,9 @@ export function prebattleFlags({
   const canAcceptInvite = invitePending && currentParticipant?.status === "invited";
   const waitingForOthers = invitePending && currentParticipant?.status === "accepted";
   const isBattleCreator = battleState.battle.created_by_user_id === userId;
+  const mayStart = capabilities
+    ? capabilities.start
+    : isBattleCreator && allParticipantsReady && status === "prebattle";
 
   return {
     currentUserReady,
@@ -36,7 +48,12 @@ export function prebattleFlags({
     waitingForOthers,
     isBattleCreator,
     canDeclineInvite: invitePending && !isBattleCreator && (canAcceptInvite || waitingForOthers),
-    canCreatorCancelBattle: isBattleCreator && (status === "inviting" || status === "prebattle"),
+    canCreatorCancelBattle: capabilities
+      ? capabilities.cancel
+      : isBattleCreator && (status === "inviting" || status === "prebattle"),
+    // The creator sees Start (greyed out until everyone is ready), and so does anyone else the
+    // server lets start.
+    showStart: isBattleCreator || mayStart,
     canEditOwnConfig: Boolean(
       isOwnSelected &&
         currentParticipant &&
@@ -52,6 +69,6 @@ export function prebattleFlags({
       !currentParticipant ||
       currentParticipant.status === "accepted" ||
       currentParticipant.status === "canceled_prebattle",
-    startDisabled: !allParticipantsReady || status !== "prebattle" || isStartingBattle,
+    startDisabled: !mayStart || isStartingBattle,
   };
 }

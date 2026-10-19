@@ -64,6 +64,62 @@ describe("BattlePrebattle requests", () => {
     ).toEqual(["YouReady", "PlayerNot readyidle 2 days"]);
   });
 
+  it("enables Start from the server's capabilities, reading them again once your ready changes them", async () => {
+    const user = setupUser();
+    const capabilities = (start: boolean) => ({
+      start,
+      end: false,
+      cancel: true,
+      close_postbattle: false,
+      edit_record: false,
+    });
+    fakeApi.on(`GET ${statePath("prebattle")}`, {
+      ...battleState({ status: "prebattle", opponent: { status: "ready" } }),
+      capabilities: capabilities(false),
+    });
+    // Ready Up's answer carries no capabilities; the read after it does.
+    fakeApi.on(READY_ROUTE, () =>
+      battleState({
+        status: "prebattle",
+        me: { status: "ready" },
+        opponent: { status: "ready" },
+        events: [battleEvent(3, "participant_ready_set", 7)],
+      })
+    );
+    fakeApi.on(`GET ${statePath("prebattle", 3)}`, {
+      ...battleState({
+        status: "prebattle",
+        me: { status: "ready" },
+        opponent: { status: "ready" },
+      }),
+      capabilities: capabilities(true),
+    });
+    renderBattleRoute("prebattle");
+    expect(await screen.findByRole("button", { name: "Start Battle" })).toBeDisabled();
+    fakeApi.clearRequests();
+
+    await user.click(screen.getByRole("button", { name: "Ready Up" }));
+
+    await waitFor(() => expect(screen.getByRole("button", { name: "Start Battle" })).toBeEnabled());
+    expect(fakeApi.calls()).toEqual([READY_ROUTE, `GET ${statePath("prebattle", 3)}`]);
+  });
+
+  it("doesn't offer Cancel battle to the creator when the server's capabilities don't allow it", async () => {
+    fakeApi.on(`GET ${statePath("prebattle")}`, {
+      ...battleState({ status: "prebattle" }),
+      capabilities: {
+        start: false,
+        end: false,
+        cancel: false,
+        close_postbattle: false,
+        edit_record: false,
+      },
+    });
+    renderBattleRoute("prebattle");
+    expect(await screen.findByRole("button", { name: "Ready Up" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Cancel battle" })).toBeNull();
+  });
+
   it("sends Undo Ready once, with no second unready from the exit cleanup (BUG-74)", async () => {
     const user = setupUser();
     fakeApi.on(

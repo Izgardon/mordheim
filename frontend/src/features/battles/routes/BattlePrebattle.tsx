@@ -69,7 +69,7 @@ export default function BattlePrebattle() {
     currentUserReady: flags.currentUserReady,
     readyDisabled: flags.readyDisabled,
     onToggleReady: ready.toggleReady,
-    isBattleCreator: flags.isBattleCreator,
+    showStart: flags.showStart,
     isStartingBattle: start.isStarting,
     startDisabled: flags.startDisabled,
     canCreatorCancelBattle: flags.canCreatorCancelBattle,
@@ -176,9 +176,8 @@ export default function BattlePrebattle() {
           currentUserReady={flags.currentUserReady}
           isUpdatingReady={ready.isUpdatingReady}
           isCancelingBattle={creatorCancel.isCanceling}
-          isStartingBattle={start.isStarting}
-          allParticipantsReady={flags.allParticipantsReady}
-          isBattleCreator={flags.isBattleCreator}
+          showStart={flags.showStart}
+          startDisabled={flags.startDisabled}
           canCreatorCancelBattle={flags.canCreatorCancelBattle}
           onToggleReady={ready.toggleReady}
           onOpenCreatorCancel={() => creatorCancel.setIsOpen(true)}

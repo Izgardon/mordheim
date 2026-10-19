@@ -325,6 +325,19 @@ export type BattlePostbattleSuggestion = {
   upkeep: { entries: Record<string, { unit_name: string; cost: number | null }> };
 };
 
+/**
+ * What the reader may do with the battle now, by the server's own rules (`GET state/` only):
+ * start (prebattle, everyone ready), end (active), cancel (before postbattle), close postbattle,
+ * edit the record of an ended battle.
+ */
+export type BattleCapabilities = {
+  start: boolean;
+  end: boolean;
+  cancel: boolean;
+  close_postbattle: boolean;
+  edit_record: boolean;
+};
+
 export type BattleStateOf<Participant extends BattleParticipantCore> = {
   battle: BattleSummary;
   participants: Participant[];
@@ -334,10 +347,18 @@ export type BattleStateOf<Participant extends BattleParticipantCore> = {
   /** Only in `state/?view=postbattle`, for the reader's own participant. */
   suggested_postbattle?: BattlePostbattleSuggestion;
   rules?: BattlePostbattleRules;
+  /** Only in `state/` reads: what the reader may do (the battle as it was read). */
+  capabilities?: BattleCapabilities;
 };
 
 /** The battle as the pages cache it. */
-export type BattleState = BattleStateOf<BattleParticipant>;
+export type BattleState = BattleStateOf<BattleParticipant> & {
+  /**
+   * Client-side: the battle's and participants' statuses when `capabilities` were read
+   * (`capabilityBasis`); once they differ, the capabilities are stale until the next read.
+   */
+  capabilitiesBasis?: string;
+};
 
 export type BattleRosterItem = {
   id: number;

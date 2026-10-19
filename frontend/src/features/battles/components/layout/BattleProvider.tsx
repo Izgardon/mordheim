@@ -3,6 +3,7 @@ import { Navigate, useParams } from "react-router-dom";
 
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { useBattleCapabilities } from "@/features/battles/hooks/useBattleCapabilities";
 import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
 import { useBattleState } from "@/features/battles/hooks/useBattleState";
 import { BattleContext, type BattleContextValue } from "@/features/battles/state/battle-context";
@@ -38,6 +39,7 @@ export default function BattleProvider({
     applyBattleResponse,
     updateBattleState,
     refreshBattleState,
+    joinRead,
   } = useBattleState({ campaignId, battleId: numericBattleId, view: phase });
   const { rosters, rosterLoading, rosterErrors } = useBattleRosters(
     campaignId,
@@ -45,6 +47,12 @@ export default function BattleProvider({
     battleState?.participants
   );
 
+  const view = deriveBattleView({ page: phase, isLoading, error, battle: battleState?.battle });
+  const capabilities = useBattleCapabilities({
+    battleState,
+    onPage: view.kind === "ready",
+    joinRead,
+  });
   const value = useMemo<BattleContextValue | null>(
     () =>
       battleState
@@ -53,6 +61,7 @@ export default function BattleProvider({
             battleId: numericBattleId,
             phase,
             battleState,
+            capabilities,
             battleStateRef,
             rosters,
             rosterLoading,
@@ -68,6 +77,7 @@ export default function BattleProvider({
       battleState,
       battleStateRef,
       campaignId,
+      capabilities,
       numericBattleId,
       phase,
       rosterErrors,
@@ -77,7 +87,6 @@ export default function BattleProvider({
     ]
   );
 
-  const view = deriveBattleView({ page: phase, isLoading, error, battle: battleState?.battle });
   // The battle ended or was cancelled: say so as the page closes (BATL-NEW-08).
   const { user } = useAuth();
   const closesToOverview = view.kind === "redirect" && view.to === "overview";
@@ -87,6 +96,7 @@ export default function BattleProvider({
       toastBattleOver(latest, user?.id);
     }
   }, [battleStateRef, closesToOverview, user?.id]);
+
   if (view.kind === "loading") {
     return <LoadingScreen message={view.message} />;
   }

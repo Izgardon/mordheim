@@ -11,6 +11,7 @@ const flagsFor = (
 ) =>
   prebattleFlags({
     battleState: state,
+    capabilities: state.capabilities ?? null,
     currentParticipant: state.participants.find((entry) => entry.user.id === userId) ?? null,
     userId,
     isOwnSelected: true,

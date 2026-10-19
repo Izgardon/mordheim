@@ -11,9 +11,8 @@ type PrebattleActionBarProps = {
   currentUserReady: boolean;
   isUpdatingReady: boolean;
   isCancelingBattle: boolean;
-  isStartingBattle: boolean;
-  allParticipantsReady: boolean;
-  isBattleCreator: boolean;
+  showStart: boolean;
+  startDisabled: boolean;
   canCreatorCancelBattle: boolean;
   onToggleReady: () => void;
   onOpenCreatorCancel: () => void;
@@ -30,9 +29,8 @@ export default function PrebattleActionBar({
   currentUserReady,
   isUpdatingReady,
   isCancelingBattle,
-  isStartingBattle,
-  allParticipantsReady,
-  isBattleCreator,
+  showStart,
+  startDisabled,
   canCreatorCancelBattle,
   onToggleReady,
   onOpenCreatorCancel,
@@ -68,12 +66,8 @@ export default function PrebattleActionBar({
               Cancel battle
             </Button>
           ) : null}
-          {isBattleCreator ? (
-            <Button
-              variant="default"
-              onClick={onOpenStartDialog}
-              disabled={!allParticipantsReady || battleStatus !== "prebattle" || isStartingBattle}
-            >
+          {showStart ? (
+            <Button variant="default" onClick={onOpenStartDialog} disabled={startDisabled}>
               Start Battle
             </Button>
           ) : null}
