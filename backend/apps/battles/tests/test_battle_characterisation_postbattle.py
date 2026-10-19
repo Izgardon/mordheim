@@ -99,7 +99,6 @@ class FixturePostbattleTests(BattleTestCase):
         self.assertEqual(
             log_rows(self.warband),
             [
-                ("battle", "complete", {"result": "won", "with": [], "against": ["Rats"]}, None),
                 (
                     "battle",
                     "exploration",
@@ -119,7 +118,7 @@ class FixturePostbattleTests(BattleTestCase):
                     None,
                 ),  # fmt: skip
             ],
-        )  # deaths and XP are not logged
+        )  # deaths and XP are not logged; the result is logged when the battle ends
 
     def test_upkeep_entries_without_a_price_charge_nothing(self):
         battle_id = self.start()
@@ -197,7 +196,7 @@ class FixturePostbattleTests(BattleTestCase):
         self.assertEqual(logged, data["warnings"])
         self.assertEqual(data["warnings"][0]["message"], f"{h1} earned 9999 XP in one battle.")
         exploration = {"dice": [1], "amount": 500, "amount_override": 500, "resource": "Wyrdstone", "rerolls": []}
-        self.assertEqual(log_rows(self.warband)[1][2], exploration)  # the override is logged (decision 9)
+        self.assertEqual(log_rows(self.warband)[0][2], exploration)  # the override is logged (decision 9)
 
     def test_a_draft_answers_unusual_values_and_logs_nothing(self):
         # Decision 9: the draft says so straight away; only finalise logs

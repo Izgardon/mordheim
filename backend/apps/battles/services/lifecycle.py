@@ -2,7 +2,8 @@
 
 Wins and losses count once, when the battle ends: when the last player finishes postbattle, or postbattle is closed
 (by a player with the right, or when its deadline passes). The end (`end_battle`) runs under the battle lock with
-its status as the guard, so it runs once per battle; PR C's automatic end (decision 4) calls the same function.
+its status as the guard, so it runs once per battle, and writes each warband's `battle:complete` log then, from the
+final winners (decision 4: a player may finish his postbattle before the results are known).
 """
 
 from collections.abc import Iterable
@@ -14,7 +15,7 @@ from django.utils import timezone
 
 from apps.notifications.models import Notification
 from apps.notifications.utils import resolve_notifications_for_reference
-from apps.warbands.models import Hero, Warband
+from apps.warbands.models import Hero, Warband, WarbandLog
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from .events import append_event, notify_result_updated
@@ -100,8 +101,9 @@ def end_battle(
     **ended: object,
 ) -> None:
     """End the battle (the battle is locked; its status guards against a second end): wins and losses recorded
-    once (decision 3), the battle_ended event (with `ended`, e.g. who closed postbattle) and pivotal moments.
-    PR C's automatic end when the last player finishes (decision 4) calls this too."""
+    once (decision 3) and each warband's battle log, the battle_ended event (with `ended`, e.g. who closed
+    postbattle) and pivotal moments. `participants`: all of them with their warbands, when the caller has read
+    them under the battle lock."""
     if battle.status == Battle.STATUS_ENDED:
         return
     now = timezone.now()
@@ -112,7 +114,11 @@ def end_battle(
     battle.save(update_fields=["status", "ended_at", "post_processed_at", "updated_at"])
     payload = {"winner_warband_ids": battle.winner_warband_ids_json or [], **ended}
     events.append(append_event(battle, BattleEvent.TYPE_BATTLE_ENDED, actor_user=actor_user, payload=payload))
+    if participants is None:
+        participants = BattleParticipant.objects.select_related("warband").filter(battle_id=battle.id).order_by("id")
+    participants = list(participants)
     record_wins_and_losses(battle, participants)
+    log_battle_results(battle, participants)
     # trading actions were reset at End battle, once (BUG-122)
     from apps.campaigns.pivotal_moments import generate_pivotal_moments_for_battle
 
@@ -192,15 +198,9 @@ def reset_trading_actions(battle: Battle, *, only_if_most_recent: bool = False) 
         Hero.objects.filter(warband_id=warband_id).update(trading_action=True)
 
 
-def battle_result_log(battle: Battle, participant: BattleParticipant) -> dict:
-    """The participant's `battle:complete` log: won or lost, with and against whom (or "No winner")."""
-    participants = list(
-        BattleParticipant.objects.select_related("warband")
-        .filter(battle_id=battle.id)
-        .exclude(status__in=BattleParticipant.LEFT_STATUSES)
-        .order_by("id")
-    )
-    winner_ids = set(battle.winner_warband_ids_json or [])
+def result_log(winner_ids: set[int], participant: BattleParticipant, participants: list[BattleParticipant]) -> dict:
+    """The participant's `battle:complete` log: won or lost, with and against whom (or "No winner"), among the
+    `participants` still in the battle (with their warbands)."""
     participant_won = participant.warband_id in winner_ids
     others = [entry for entry in participants if entry.warband_id != participant.warband_id]
     if not winner_ids:  # "No winner" (decision 8): everyone fought everyone
@@ -208,3 +208,30 @@ def battle_result_log(battle: Battle, participant: BattleParticipant) -> dict:
     with_names = [entry.warband.name for entry in others if (entry.warband_id in winner_ids) == participant_won]
     against_names = [entry.warband.name for entry in others if (entry.warband_id in winner_ids) != participant_won]
     return {"result": "won" if participant_won else "lost", "with": with_names, "against": against_names}
+
+
+def battle_result_log(battle: Battle, participant: BattleParticipant) -> dict:
+    """A reported result's `battle:complete` log for the participant (reads the other participants)."""
+    participants = list(
+        BattleParticipant.objects.select_related("warband")
+        .filter(battle_id=battle.id)
+        .exclude(status__in=BattleParticipant.LEFT_STATUSES)
+        .order_by("id")
+    )
+    return result_log(set(battle.winner_warband_ids_json or []), participant, participants)
+
+
+def log_battle_results(battle: Battle, participants: Iterable[BattleParticipant]) -> None:
+    """At the end, one `battle:complete` log per warband still in the battle (skipped ones too, as their wins and
+    losses count), from the final winners, in one INSERT."""
+    playing = still_in(participants)
+    winner_ids = set(battle.winner_warband_ids_json or [])
+    WarbandLog.objects.bulk_create(
+        WarbandLog(
+            warband_id=entry.warband_id,
+            feature="battle",
+            entry_type="complete",
+            payload=result_log(winner_ids, entry, playing),
+        )
+        for entry in playing
+    )

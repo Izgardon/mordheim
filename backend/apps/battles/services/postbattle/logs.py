@@ -1,11 +1,10 @@
-"""The warband log entries a finalise writes, in one INSERT and in this order: the battle's result, exploration,
-finds, each unit's serious injury, kept stat changes, items lost with dead units and the unusual values that were
-allowed (PERF-36: they were written one by one)."""
+"""The warband log entries a finalise writes, in one INSERT and in this order: exploration, finds, each unit's
+serious injury, kept stat changes, items lost with dead units and the unusual values that were allowed (PERF-36:
+they were written one by one). The battle's result is logged when the battle ends (services/lifecycle.py)."""
 
 from apps.warbands.models import WarbandLog
 
 from ...models import Battle, BattleParticipant
-from ..lifecycle import battle_result_log
 from ..warnings import Warning
 from .rewards import Exploration, Finds
 from .units import UnitOutcome
@@ -20,7 +19,7 @@ def write_battle_logs(
     units: UnitOutcome,
     unusual: list[Warning],
 ) -> None:
-    entries: list[tuple[str, str, dict]] = [("battle", "complete", battle_result_log(battle, participant))]
+    entries: list[tuple[str, str, dict]] = []
     exploration_log = {
         "dice": exploration.get("dice_values", []),
         "amount": explored.amount,

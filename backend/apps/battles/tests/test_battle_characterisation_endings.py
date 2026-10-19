@@ -105,6 +105,21 @@ class BattleFinishTests(BattleTestCase):
         complete = self.warband.logs.get(entry_type="complete")
         self.assertEqual(complete.payload, {"result": "no_winner", "with": [], "against": ["Rats"]})
 
+    def test_the_result_is_logged_for_every_warband_when_the_battle_ends(self):
+        # Decision 4: a player can finalise before the results are known, so the result log waits for the end; a
+        # skipped warband's win or loss counts (decision 3), so it is logged too (it got none)
+        battle_id = self.to_postbattle(winners=[self.warband])
+        self.ok(self.finalize(self.player, battle_id, draft({})))
+        self.assertFalse(self.warband.logs.filter(entry_type="complete").exists())
+
+        self.ok(self.post_as(self.viewer, self.url(battle_id, "skip-postbattle")))
+
+        self.assertEqual(self.battle(battle_id).status, "ended")
+        won = self.warband.logs.get(entry_type="complete").payload
+        lost = self.rival.logs.get(entry_type="complete").payload
+        self.assertEqual(won, {"result": "won", "with": [], "against": ["Rats"]})
+        self.assertEqual(lost, {"result": "lost", "with": [], "against": ["Monks"]})
+
 
 class BattleCancelTests(BattleTestCase):
     def _battle_in(self, phase: str) -> int:
