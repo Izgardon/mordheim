@@ -79,7 +79,9 @@ class BattleLockOrderTests(BattleTestCase):
             ),  # fmt: skip
             (self.player, "unit-kill", {"killer_unit_key": self.h, "victim_unit_key": self.r}),
             (self.viewer, "unit-ooa", {"unit_key": self.r, "out_of_action": True}),
-            (self.player, "finish", {"winner_warband_ids": [self.warband.id]}),
+            (self.player, "finish-mine", {"result": "won"}),  # decision 4: each finishes his own battle
+            (self.viewer, "finish-mine", {"result": "lost"}),
+            (self.viewer, "results", {"winners": [self.warband.id]}),
             (
                 self.player,
                 "postbattle",

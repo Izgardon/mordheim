@@ -33,6 +33,8 @@ BATTLE_KEYS = [
     "last_activity_at",
     "closes_at",
     "overdue",
+    "results_pending",
+    "results_confirmer_user_id",
 ]
 PARTICIPANT_KEYS = [
     "id",
@@ -43,6 +45,7 @@ PARTICIPANT_KEYS = [
     "unit_information_json",
     "custom_units_json",
     "battle_notes",
+    "declared_result",
     "user",
     "warband",
     "invited_by_user_id",

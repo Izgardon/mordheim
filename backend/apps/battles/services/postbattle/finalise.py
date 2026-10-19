@@ -8,7 +8,8 @@ Finalise runs in two transactions (PERF-36), so the battle row is locked only fo
    and finds, the single-use items used in battle and the logs are written, and his status becomes
    confirmed_postbattle. That status is the idempotency guard: a repeat waits for the lock, then finds it.
 2. `confirm_postbattle`, under the battle lock: his confirmation event, and the battle's end when everyone still in
-   it has finished (the last player to confirm always sees everyone else's committed status).
+   it has finished and its results are confirmed (the last player to confirm always sees everyone else's committed
+   status). A player can finalise while the others still fight (decision 4): then only his event is added.
 
 Neither waits for the battle row while it holds a player's rows, so nothing can deadlock with writes that lock the
 battle first (services/locks.py).
@@ -112,6 +113,6 @@ def confirm_postbattle(battle_id: int, participant: BattleParticipant, actor_use
     payload = {"participant_user_id": actor_user.id}
     event_type = BattleEvent.TYPE_PARTICIPANT_CONFIRMED_POSTBATTLE
     events = [append_event(battle, event_type, actor_user=actor_user, payload=payload)]
-    if battle.status != Battle.STATUS_ENDED and all_finished(participants):
-        end_battle(battle, actor_user, events, participants)
+    if battle.status != Battle.STATUS_ENDED and not battle.results_pending and all_finished(participants):
+        end_battle(battle, actor_user, events, participants)  # pending results end it when confirmed (decision 4)
     return Confirmed(battle, participants, events, bump_state_version(battle))

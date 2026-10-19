@@ -77,6 +77,7 @@ class Written:
     reason: str = ""
     status: int = 200
     warnings: list[Warning] | None = None
+    body: dict | None = None  # more for the acting player's answer only
 
 
 @dataclass
@@ -88,6 +89,7 @@ class Unchanged:
     status: int = 200
     warnings: list[Warning] | None = None
     activity: bool = False
+    body: dict | None = None
 
 
 Outcome = Written | Unchanged | Response
@@ -114,6 +116,8 @@ class BattleScopedView(APIView):
         if battle is None or not is_member(battle):
             raise not_found()
         if not self.in_battle:
+            if lock == LOCK_BATTLE and is_overdue(battle):
+                settle_during_write(battle)
             return Scope(request, battle, None)
         rows = participant_rows(battle, request.user)
         if lock:
@@ -174,7 +178,9 @@ class BattleWriteView(BattleScopedView):
             if isinstance(outcome, Unchanged):
                 if outcome.activity:
                     record_activity(scope.battle)
-                return response_with_snapshot(scope.battle.id, outcome.events, outcome.status, outcome.warnings)
+                return response_with_snapshot(
+                    scope.battle.id, outcome.events, outcome.status, outcome.warnings, outcome.body
+                )
             version = bump_state_version(scope.battle)
         return broadcast_response(
             request,
@@ -185,4 +191,5 @@ class BattleWriteView(BattleScopedView):
             reason=outcome.reason,
             response_status=outcome.status,
             warnings=outcome.warnings,
+            body=outcome.body,
         )

@@ -14,7 +14,7 @@ from apps.battles.models import Battle, BattleParticipant
 from apps.battles.serializers import serialize_battle, serialize_participant
 from apps.battles.services.broadcast import ALL, bump_state_version
 from apps.battles.services.expiry import expire_overdue
-from apps.battles.services.lifecycle import cancel_battle
+from apps.battles.services.lifecycle import POSTBATTLE_APPLIED, cancel_battle, someone_finalised
 from apps.battles.services.setup import busy_participations
 from apps.battles.views.responses import broadcast_response, response_with_snapshot
 from apps.core.throttling import (
@@ -753,6 +753,8 @@ class CampaignActiveBattleCancelView(APIView):
                     {"detail": "Postbattle can't be cancelled; close it instead", "code": "use_close_postbattle"},
                     status=400,
                 )
+            if battle.status == Battle.STATUS_ACTIVE and someone_finalised(battle.id):  # decision 4, BUG-09
+                return Response({"detail": POSTBATTLE_APPLIED, "code": "postbattle_applied"}, status=400)
 
             event = cancel_battle(
                 battle,

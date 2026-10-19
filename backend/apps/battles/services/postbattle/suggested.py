@@ -3,7 +3,8 @@
 `suggested_postbattle` is today's rule, which the postbattle page worked out on its own until now:
 - XP: 1 for each hero and hired sword (0 for one with no level-ups) plus 1 per live kill that earns XP; a henchmen
   group earns 1 plus its selected members' kills, the same for each member (0 when any has no level-ups);
-- exploration dice: one per selected hero still in action, one more for a winner, at most 10;
+- exploration dice: one per selected hero still in action, one more for a winner (the player's own declaration
+  while the others still fight, decision 4), at most 10;
 - upkeep: every hired sword on the battle's roster, at his upkeep price.
 PR C adds Winning Leader +1 and the reason for each suggestion (BATL-NEW-09).
 
@@ -52,6 +53,14 @@ def _upkeep(hired_swords: list[dict]) -> dict[str, dict]:
     return entries
 
 
+def won(battle: Battle, participant: BattleParticipant) -> bool:
+    """Whether the suggestions count the player as a winner: the battle's winners once the fight is over, his own
+    declaration while the others still fight (decision 4)."""
+    if battle.status == Battle.STATUS_ACTIVE:
+        return participant.declared_result == BattleParticipant.DECLARED_WON
+    return participant.warband_id in (battle.winner_warband_ids_json or [])
+
+
 def suggested_postbattle(battle: Battle, participant: BattleParticipant, kill_payloads: Iterable[Any]) -> dict:
     """The player's suggested XP per unit, exploration dice and upkeep, from his battle roster."""
     roster = participant.roster_json or {}
@@ -65,7 +74,7 @@ def suggested_postbattle(battle: Battle, participant: BattleParticipant, kill_pa
     unit_results.update(_group_results(roster.get("henchmenGroups", []), selected, kills))
     information = normalize_unit_information(participant.unit_information_json)
     in_action = [hero for hero in heroes if not information.get(hero["key"], {}).get("out_of_action")]
-    winner = participant.warband_id in (battle.winner_warband_ids_json or [])
+    winner = won(battle, participant)
     return {
         "unit_results": unit_results,
         "exploration": {"dice_count": max(0, min(MAX_EXPLORATION_DICE, len(in_action) + int(winner)))},

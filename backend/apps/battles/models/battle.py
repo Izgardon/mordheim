@@ -62,6 +62,16 @@ class Battle(models.Model):
     # moved by every battle write ("idle N days"); the deadline of an invitation or a postbattle (BUG-10)
     last_activity_at = models.DateTimeField(default=timezone.now)
     closes_at = models.DateTimeField(null=True, blank=True)
+    # the fight ended when its last player finished (decision 4): until he (or a battle manager) confirms the
+    # results, the winners are the warbands whose players declared a win, and the battle doesn't end
+    results_pending = models.BooleanField(default=False)
+    results_confirmer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="+",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         db_table = "battle"

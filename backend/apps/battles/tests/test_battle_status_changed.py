@@ -27,11 +27,14 @@ class BattleStatusChangedTests(BattleTestCase):
         self.assertEqual((response.status_code, response.data), (400, status_changed(detail, "postbattle")))
 
     def test_a_skip_or_close_outside_postbattle_and_the_codes_that_stay(self):
-        battle_id = self.to_active()
+        battle_id = self.to_prebattle()
         for action in ("skip-postbattle", "close-postbattle", "finalize-postbattle"):
             with self.subTest(action=action):
                 response = self.post_as(self.player, self.url(battle_id, action))
-                self.assertEqual(response.data, status_changed("Battle is not in postbattle", "active"))
+                self.assertEqual(response.data, status_changed("Battle is not in postbattle", "prebattle"))
+        battle_id = self.to_active()
+        response = self.post_as(self.player, self.url(battle_id, "close-postbattle"))
+        self.assertEqual(response.data, status_changed("Battle is not in postbattle", "active"))
         self.finish(battle_id, [self.warband])
         response = self.post_as(self.player, self.url(battle_id, "cancel-battle"))  # its own code, as before
         self.assertEqual(response.data, {"detail": "Postbattle can't be cancelled; close it instead", "code": "use_close_postbattle"})  # fmt: skip

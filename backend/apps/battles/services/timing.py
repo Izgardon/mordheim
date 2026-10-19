@@ -2,8 +2,8 @@
 
 `Battle.last_activity_at` moves with every battle write, so pages can say "idle N days". Only two phases have a
 deadline, `Battle.closes_at`, counted from when they begin so the deadline shown never moves: an invitation is
-answered within 72 hours of the battle's creation, and postbattle closes 72 hours after End battle. No other
-automatic action.
+answered within 72 hours of the battle's creation, and postbattle closes 72 hours after the fight ends (when its
+last player finished, decision 4, or a battle manager ended it). No other automatic action.
 """
 
 from datetime import datetime, timedelta

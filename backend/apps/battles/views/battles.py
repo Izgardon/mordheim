@@ -16,6 +16,7 @@ from ..services.broadcast import ALL
 from ..services.capabilities import capabilities
 from ..services.errors import Refused
 from ..services.expiry import expire_overdue
+from ..services.finishing import results_sides
 from ..services.postbattle.suggested import postbattle_guide
 from ..services.presence import mark_participant_seen
 from ..services.rosters import battle_rosters_payload
@@ -99,7 +100,10 @@ class CampaignBattleStateView(BattleScopedView):
         if view not in PARTICIPANT_VIEWS:
             return Response({"detail": "Invalid view"}, status=400)
         payload = battle_state_payload(scope.battle, since_event_id, participant_view=view)
-        payload["capabilities"] = capabilities(scope.battle, request.user.id, scope.battle.participants.all())
+        participants = scope.battle.participants.all()
+        payload["capabilities"] = capabilities(scope.battle, request.user.id, participants)
+        if payload["capabilities"]["confirm_results"]:  # where the Confirm results modal starts (decision 4)
+            payload["confirm_results"] = results_sides(scope.battle, participants)
         if view == "postbattle":  # the server's suggestions and rules (IMP-52)
             payload.update(postbattle_guide(scope.battle, scope.player))
         mark_participant_seen(scope.player)

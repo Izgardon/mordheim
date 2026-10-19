@@ -12,7 +12,14 @@ from apps.warbands.models import Warband
 
 from .battle_support import BattleTestCase
 
-NONE = {"start": False, "end": False, "cancel": False, "close_postbattle": False, "edit_record": False}
+NONE = {
+    "start": False,
+    "finish_mine": False,
+    "confirm_results": False,
+    "cancel": False,
+    "close_postbattle": False,
+    "edit_record": False,
+}
 
 
 class BattleCapabilityTests(BattleTestCase):
@@ -44,9 +51,12 @@ class BattleCapabilityTests(BattleTestCase):
         self.assertEqual(self.capabilities(self.viewer, battle_id), {**NONE, "start": True})  # decision 4
         self.ok(self.post_as(self.viewer, self.url(battle_id, "start")))
 
-        self.assertEqual(self.capabilities(self.player, battle_id), {**NONE, "end": True, "cancel": True})
+        # decision 4: each player finishes his own battle; nobody has an End
+        self.assertEqual(self.capabilities(self.player, battle_id), {**NONE, "finish_mine": True, "cancel": True})
+        self.assertEqual(self.capabilities(self.viewer, battle_id), {**NONE, "finish_mine": True})
+        self.assertEqual(self.post_as(self.player, self.url(battle_id, "finish"), {"winners": []}).status_code, 403)
+        self.ok(self.finish_mine(self.viewer, battle_id, "lost"))
         self.assertEqual(self.capabilities(self.viewer, battle_id), NONE)
-        self.assertEqual(self.post_as(self.viewer, self.url(battle_id, "finish"), {"winner_warband_ids": []}).status_code, 403)  # fmt: skip
 
     def test_a_player_who_left_neither_starts_nor_is_offered_it(self):
         # Decision 4: the start is any participant's who is still in the battle
@@ -69,7 +79,8 @@ class BattleCapabilityTests(BattleTestCase):
         self.assertEqual(self.post_as(self.viewer, self.url(battle_id, "close-postbattle")).status_code, 403)
 
         self.grant_manage_battles(self.viewer)
-        self.assertEqual(self.capabilities(self.viewer, battle_id), {**NONE, "close_postbattle": True})
+        manager = {**NONE, "close_postbattle": True, "confirm_results": True}
+        self.assertEqual(self.capabilities(self.viewer, battle_id), manager)
         self.ok(self.post_as(self.viewer, self.url(battle_id, "close-postbattle")))
 
         self.assertEqual(self.capabilities(self.player, battle_id), NONE)  # ended; the player manages nothing
@@ -78,6 +89,6 @@ class BattleCapabilityTests(BattleTestCase):
     def test_owners_and_admins_manage_battles_without_a_grant(self):
         Warband.objects.create(campaign=self.campaign, user=self.admin, name="Crows", faction="Any")
         battle_id = self.to_postbattle({self.player: [], self.admin: []})
-        self.assertEqual(self.capabilities(self.admin, battle_id), {**NONE, "close_postbattle": True})
+        self.assertEqual(self.capabilities(self.admin, battle_id), {**NONE, "close_postbattle": True, "confirm_results": True})  # fmt: skip
         self.ok(self.post_as(self.admin, self.url(battle_id, "close-postbattle")))
         self.assertEqual(self.capabilities(self.admin, battle_id), {**NONE, "edit_record": True})

@@ -109,26 +109,41 @@ def end_battle(
     now = timezone.now()
     if not battle.post_processed_at:
         battle.post_processed_at = now
+    payload = {"winner_warband_ids": battle.winner_warband_ids_json or [], **ended}
+    if battle.results_pending:  # closed before anyone confirmed them: the declared winners count (decision 4)
+        payload["unconfirmed_results"] = True
     battle.status = Battle.STATUS_ENDED
     battle.ended_at = battle.ended_at or now
-    battle.save(update_fields=["status", "ended_at", "post_processed_at", "updated_at"])
-    payload = {"winner_warband_ids": battle.winner_warband_ids_json or [], **ended}
+    battle.results_pending = False
+    battle.save(update_fields=["status", "ended_at", "post_processed_at", "results_pending", "updated_at"])
     events.append(append_event(battle, BattleEvent.TYPE_BATTLE_ENDED, actor_user=actor_user, payload=payload))
     if participants is None:
         participants = BattleParticipant.objects.select_related("warband").filter(battle_id=battle.id).order_by("id")
     participants = list(participants)
     record_wins_and_losses(battle, participants)
     log_battle_results(battle, participants)
-    # trading actions were reset at End battle, once (BUG-122)
+    # trading actions were reset when each player finished his battle, once (BUG-122)
     from apps.campaigns.pivotal_moments import generate_pivotal_moments_for_battle
 
     generate_pivotal_moments_for_battle(battle)
 
 
 def end_if_everyone_finished(battle: Battle, actor_user, events: list[dict]) -> None:
-    """After a player finalised or skipped: the battle ends when he was the last one still in postbattle."""
-    if battle.status != Battle.STATUS_ENDED and everyone_confirmed(battle.id):
+    """After a player finalised or skipped: the battle ends when he was the last one still in postbattle, once its
+    results are confirmed (decision 4; confirming them then ends it)."""
+    if battle.status != Battle.STATUS_ENDED and not battle.results_pending and everyone_confirmed(battle.id):
         end_battle(battle, actor_user, events)
+
+
+POSTBATTLE_APPLIED = "A player has applied his postbattle, so this battle can't be cancelled; end it instead"
+
+
+def someone_finalised(battle_id: int) -> bool:
+    """A player has applied his postbattle (decision 4 lets him before the fight ends), so the battle can't be
+    cancelled any more: its results would stay applied (BUG-09)."""
+    return BattleParticipant.objects.filter(
+        battle_id=battle_id, status=BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
+    ).exists()
 
 
 def _cancel_rows(battle: Battle, participants: list[BattleParticipant], now) -> None:
@@ -185,8 +200,15 @@ def _is_most_recent_for_warband(battle: Battle, warband_id: int) -> bool:
     return latest_battle_id == battle.id
 
 
+def reset_trading_for(warband_ids: list[int]) -> None:
+    """Give these warbands' heroes their trading actions back: once per player, when he finishes his battle
+    (decision 4, BUG-122)."""
+    if warband_ids:
+        Hero.objects.filter(warband_id__in=warband_ids).update(trading_action=True)
+
+
 def reset_trading_actions(battle: Battle, *, only_if_most_recent: bool = False) -> None:
-    """Give every hero of the battle's warbands his trading action back (at End battle, once: BUG-122)."""
+    """Give every hero of the battle's warbands his trading action back (a reported result, when approved)."""
     warband_ids = list(
         BattleParticipant.objects.filter(battle_id=battle.id)
         .exclude(status__in=BattleParticipant.LEFT_STATUSES)

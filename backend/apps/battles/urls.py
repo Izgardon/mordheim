@@ -9,6 +9,7 @@ from .views import (
     CampaignBattleEventCreateView,
     CampaignBattleEventVoidView,
     CampaignBattleFinalizePostbattleView,
+    CampaignBattleFinishMineView,
     CampaignBattleFinishView,
     CampaignBattleJoinView,
     CampaignBattleListCreateView,
@@ -17,6 +18,7 @@ from .views import (
     CampaignBattleReportedResultApproveView,
     CampaignBattleReportedResultCreateView,
     CampaignBattleReportedResultDeclineView,
+    CampaignBattleResultsView,
     CampaignBattleRosterView,
     CampaignBattleSkipPostbattleView,
     CampaignBattleStartView,
@@ -124,6 +126,16 @@ urlpatterns = [
         name="campaigns-battles-unit-kill",
     ),
     path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/finish-mine/",
+        CampaignBattleFinishMineView.as_view(),
+        name="campaigns-battles-finish-mine",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/results/",
+        CampaignBattleResultsView.as_view(),
+        name="campaigns-battles-results",
+    ),
+    path(  # a battle manager ends a stuck fight (BATL-NEW-03); players finish their own battle
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/finish/",
         CampaignBattleFinishView.as_view(),
         name="campaigns-battles-finish",

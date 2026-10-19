@@ -45,6 +45,8 @@ def serialize_battle(battle: Battle) -> dict:
         "last_activity_at": battle.last_activity_at.isoformat(),
         "closes_at": _iso(battle.closes_at),
         "overdue": is_overdue(battle),
+        "results_pending": battle.results_pending,
+        "results_confirmer_user_id": battle.results_confirmer_id,
     }
 
 
@@ -73,6 +75,7 @@ def serialize_participant(participant: BattleParticipant, participant_view: str 
         "unit_information_json": participant.unit_information_json or {},
         "custom_units_json": participant.custom_units_json or [],
         "battle_notes": participant.battle_notes or "",
+        "declared_result": participant.declared_result or None,
         "user": {"id": participant.user_id, "label": display_name(participant.user)},
         "warband": {"id": participant.warband_id, "name": participant.warband.name},
     }

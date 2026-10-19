@@ -1,11 +1,9 @@
-"""The fight: units taken out of action, kills, single-use items used, and End battle.
+"""The fight: units taken out of action, kills and single-use items used (each player finishes his own battle:
+services/finishing.py).
 
 A kill is an event that names the killer and the victim (decision 5): tapped in battle, or added in the killer's own
-postbattle (`source: "postbattle"`). End battle moves everyone still fighting to postbattle with the winners chosen
-(none: "No winner", decision 8) and gives trading actions back once (BUG-122); wins and losses wait for the end.
+postbattle (`source: "postbattle"`).
 """
-
-from django.utils import timezone
 
 from apps.warbands.models import Henchman, Hero, HiredSword
 
@@ -14,10 +12,8 @@ from ..validation.config import normalize_unit_information
 from .errors import Refused, battle_status_changed
 from .events import append_event
 from .item_use import item_use_payload
-from .lifecycle import reset_trading_actions
 from .locks import locked
 from .selection import custom_unit_entry, selected_unit_keys
-from .timing import postbattle_deadline
 from .unit_information import unit_entry
 
 CASTERS = {"Wizard", "Priest"}
@@ -139,29 +135,3 @@ def record_item_use(battle: Battle, participant: BattleParticipant, payload: dic
     selected = selected_unit_keys(participant) if battle.status == Battle.STATUS_ACTIVE else None
     stored = item_use_payload(participant, payload, selected)
     return append_event(battle, BattleEvent.TYPE_ITEM_USED, actor_user=actor, payload=stored)
-
-
-def enter_postbattle(battle: Battle, winner_ids: list[int], actor) -> list[dict]:
-    """End battle: winners from the battle (none is "No winner"), everyone still fighting to postbattle, 72 hours
-    of postbattle (decision 2) and trading actions back once (BUG-122)."""
-    warband_ids = set(BattleParticipant.objects.filter(battle_id=battle.id).values_list("warband_id", flat=True))
-    if any(winner_id not in warband_ids for winner_id in winner_ids):
-        raise Refused("winner_warband_ids must belong to this battle")
-    now = timezone.now()
-    for entry in locked(BattleParticipant.objects.filter(battle_id=battle.id).order_by("id")):
-        # wins and losses count when the battle ends, not here (decision 3, BUG-09)
-        if (
-            entry.status in BattleParticipant.LEFT_STATUSES
-            or entry.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
-        ):
-            continue
-        entry.status = BattleParticipant.STATUS_FINISHED_BATTLE
-        entry.finished_at = entry.finished_at or now
-        entry.save(update_fields=["status", "finished_at", "updated_at"])
-    battle.status = Battle.STATUS_POSTBATTLE
-    battle.winner_warband_ids_json = winner_ids
-    battle.closes_at = postbattle_deadline(now)  # 72 hours of postbattle (decision 2)
-    battle.save(update_fields=["status", "winner_warband_ids_json", "closes_at", "updated_at"])
-    reset_trading_actions(battle)
-    payload = {"winner_warband_ids": winner_ids}
-    return [append_event(battle, BattleEvent.TYPE_BATTLE_ENTERED_POSTBATTLE, actor_user=actor, payload=payload)]

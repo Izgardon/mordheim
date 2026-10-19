@@ -25,6 +25,7 @@ class BattleEvent(models.Model):
     TYPE_ITEM_USED_VOIDED = "item_used_voided"
     TYPE_PARTICIPANT_FINISHED_BATTLE = "participant_finished_battle"
     TYPE_BATTLE_ENTERED_POSTBATTLE = "battle_entered_postbattle"
+    TYPE_BATTLE_RESULTS_CONFIRMED = "battle_results_confirmed"
     TYPE_PARTICIPANT_CONFIRMED_POSTBATTLE = "participant_confirmed_postbattle"
     TYPE_BATTLE_ENDED = "battle_ended"
     TYPE_BATTLE_CANCELED = "battle_canceled"
@@ -50,6 +51,7 @@ class BattleEvent(models.Model):
         (TYPE_ITEM_USED_VOIDED, "Item use voided"),
         (TYPE_PARTICIPANT_FINISHED_BATTLE, "Participant finished battle"),
         (TYPE_BATTLE_ENTERED_POSTBATTLE, "Battle entered postbattle"),
+        (TYPE_BATTLE_RESULTS_CONFIRMED, "Battle results confirmed"),
         (TYPE_PARTICIPANT_CONFIRMED_POSTBATTLE, "Participant confirmed postbattle"),
         (TYPE_BATTLE_ENDED, "Battle ended"),
         (TYPE_BATTLE_CANCELED, "Battle canceled"),

@@ -193,8 +193,13 @@ class BattleTestCase(RosterTestCase):
         return self.ok(self.post_as(user, self.url(battle_id, "config"), body))
 
     def finish(self, battle_id: int, winners: list[Warband]) -> Any:
-        body = {"winner_warband_ids": [warband.id for warband in winners]}
-        return self.ok(self.post_as(self.player, self.url(battle_id, "finish"), body))
+        """Everyone to postbattle at once with these winners: the campaign owner's End (BATL-NEW-03; players finish
+        their own battle with finish-mine/, decision 4)."""
+        body = {"winners": [warband.id for warband in winners]}
+        return self.ok(self.post_as(self.campaign_owner, self.url(battle_id, "finish"), body))
+
+    def finish_mine(self, user: Any, battle_id: int, result: str = "undecided") -> Any:
+        return self.post_as(user, self.url(battle_id, "finish-mine"), {"result": result})
 
     def finalize(self, user: Any, battle_id: int, postbattle_json: dict[str, Any]) -> Any:
         return self.post_as(user, self.url(battle_id, "finalize-postbattle"), {"postbattle_json": postbattle_json})

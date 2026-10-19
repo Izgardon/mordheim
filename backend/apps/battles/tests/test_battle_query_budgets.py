@@ -86,8 +86,8 @@ class BattleQueryBudgetTests(BattleTestCase):
         # Each: the battle (with the caller's membership) and participant locked, the write, its event, the battle's
         # state_version (PERF-34; the realtime sends go after commit) and the answer's fresh snapshot (2); no presence
         # write since PERF-35. A kill also locks every participant and reads both units; an item use checks the unit
-        # carries the item (BUG-72); End also locks every participant and resets trading actions (wins and losses
-        # count when the battle ends, decision 3).
+        # carries the item (BUG-72). Finishing his battle (decision 4) also resets his heroes' trading actions and
+        # reads the others to see whether anyone is still fighting.
         cases: list[tuple[str, str, dict[str, Any], int]] = [
             ("config", "config", info, 8),
             ("unit_ooa", "unit-ooa", {"unit_key": f"hero:{self.fixture.heroes[2].id}", "out_of_action": True}, 9),
@@ -98,12 +98,27 @@ class BattleQueryBudgetTests(BattleTestCase):
                 {"type": "item_used", "payload_json": {"unit_key": h, "item_id": self.rope.id}},
                 9,
             ),
-            ("finish", "finish", {"winner_warband_ids": [self.warband.id]}, 16),
+            ("finish_mine", "finish-mine", {"result": "won"}, 11),  # End was 16
         ]
         for name, action, body, budget in cases:
             with self.subTest(write=name):
                 queries, _ = self.count(self.player, "post", self.url(battle_id, action), body)
                 self.within(name, queries, budget)
+
+    def test_the_last_finish_and_the_results_stay_within_budget(self):
+        # Decision 4. The last player to finish also ends the fight: the battle's UPDATE and event (the sides to
+        # confirm come from the participants already read). The results: the battle (with membership) locked, the
+        # participants, the battle's UPDATE and event, the version and the answer's snapshot (2). A manager's End
+        # reads the participants, locks and moves those still fighting and resets their trading actions.
+        battle_id = self.to_active({self.player: self.fixture.keys, self.viewer: [self.r]})
+        self.ok(self.finish_mine(self.player, battle_id, "won"))
+        last, _ = self.count(self.viewer, "post", self.url(battle_id, "finish-mine"), {"result": "lost"})
+        self.within("finish_mine_last", last, 13)
+        results, _ = self.count(self.viewer, "post", self.url(battle_id, "results"), {"winners": [self.warband.id]})
+        self.within("results", results, 9)
+        manager_end = self.to_active({self.player: self.fixture.keys, self.viewer: [self.r]})
+        end, _ = self.count(self.campaign_owner, "post", self.url(manager_end, "finish"), {"winners": []})
+        self.within("finish_manager", end, 13)
 
     def test_writes_leave_presence_alone(self):
         # PERF-35: no write updates the writer's presence (an UPDATE each); only reads do, at most once a minute

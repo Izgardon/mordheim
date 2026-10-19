@@ -4,11 +4,11 @@ from rest_framework.response import Response
 
 from ..models import Battle, BattleParticipant
 from ..services.broadcast import ALL
-from ..services.lifecycle import cancel_battle
+from ..services.lifecycle import POSTBATTLE_APPLIED, cancel_battle, someone_finalised
 from ..services.prebattle import join, leave, set_ready, start
 from ..validation.config import changes_others_see, config_changes
 from .base import BattleWriteView, Scope, Unchanged, Written
-from .rules import creator_only, normal_flow, only, refuse, refuse_player, snapshot_when
+from .rules import creator_only, normal_flow, only, refuse, refuse_player, refused, snapshot_when
 
 WAITING_FOR_ANSWERS = "Waiting for all participants to accept invitation"
 FIGHT_OR_AFTER = (Battle.STATUS_ACTIVE, Battle.STATUS_POSTBATTLE, Battle.STATUS_ENDED)
@@ -94,6 +94,14 @@ class CampaignBattleCancelView(BattleWriteView):
         return Written(events, changed=changed, reason="participant_canceled_prebattle")
 
 
+def _nothing_applied(scope: Scope) -> Response | None:
+    """A player may apply his postbattle while the others still fight (decision 4); after that the battle can't be
+    cancelled, as his results would stay applied (BUG-09). A battle manager ends it instead (finish/)."""
+    if scope.battle.status == Battle.STATUS_ACTIVE and someone_finalised(scope.battle.id):
+        return refused(POSTBATTLE_APPLIED, code="postbattle_applied")
+    return None
+
+
 class CampaignBattleCreatorCancelView(BattleWriteView):
     rules = (
         creator_only("Only the battle creator can cancel this battle"),
@@ -105,6 +113,7 @@ class CampaignBattleCreatorCancelView(BattleWriteView):
             "Postbattle can't be cancelled; close it instead",
             code="use_close_postbattle",
         ),
+        _nothing_applied,
     )
 
     def act(self, scope: Scope):

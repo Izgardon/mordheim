@@ -1,4 +1,5 @@
-"""A player's postbattle: saving the draft, finalising it, or skipping it."""
+"""A player's postbattle: saving the draft, finalising it, or skipping it. It starts when he finishes his battle,
+so the others may still be fighting (decision 4)."""
 
 from django.db import transaction
 from rest_framework.response import Response
@@ -14,7 +15,9 @@ from .responses import answer, publish_snapshot
 from .rules import only, only_player, refuse, refused, snapshot_when_player
 
 CONFIRMED = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
+FINISHED = BattleParticipant.STATUS_FINISHED_BATTLE
 NOT_IN_POSTBATTLE = "Battle is not in postbattle"
+POSTBATTLE_OPEN = (Battle.STATUS_ACTIVE, Battle.STATUS_POSTBATTLE)  # his own postbattle, once he has finished
 
 
 def _changed(scope: Scope):
@@ -29,7 +32,11 @@ def _skipped(scope: Scope) -> Response | None:
 
 
 class CampaignBattlePostbattleSaveView(BattleWriteView):
-    rules = (only((Battle.STATUS_POSTBATTLE,), NOT_IN_POSTBATTLE), snapshot_when_player(CONFIRMED))
+    rules = (
+        only(POSTBATTLE_OPEN, NOT_IN_POSTBATTLE),
+        snapshot_when_player(CONFIRMED),
+        only_player((FINISHED,), "You must enter postbattle before saving it"),
+    )
 
     def act(self, scope: Scope):
         raw_draft = scope.request.data.get("postbattle_json", scope.player.postbattle_json)
@@ -46,8 +53,8 @@ class CampaignBattleFinalizePostbattleView(BattleWriteView):
         refuse((Battle.STATUS_CANCELED,), "Battle was canceled"),
         _skipped,
         snapshot_when_player(CONFIRMED),
-        only((Battle.STATUS_POSTBATTLE,), NOT_IN_POSTBATTLE),
-        only_player((BattleParticipant.STATUS_FINISHED_BATTLE,), "You must enter postbattle before finalizing"),
+        only(POSTBATTLE_OPEN, NOT_IN_POSTBATTLE),
+        only_player((FINISHED,), "You must enter postbattle before finalizing"),
     )
 
     battle_related = ("campaign__settings",)
@@ -81,8 +88,8 @@ class CampaignBattleSkipPostbattleView(BattleWriteView):  # skip-postbattle/, an
     rules = (
         refuse((Battle.STATUS_CANCELED,), "Battle was canceled"),
         snapshot_when_player(CONFIRMED),
-        only((Battle.STATUS_POSTBATTLE,), NOT_IN_POSTBATTLE),
-        only_player((BattleParticipant.STATUS_FINISHED_BATTLE,), "You must enter postbattle before leaving"),
+        only(POSTBATTLE_OPEN, NOT_IN_POSTBATTLE),
+        only_player((FINISHED,), "You must enter postbattle before leaving"),
     )
 
     def act(self, scope: Scope):

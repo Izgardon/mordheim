@@ -3,7 +3,9 @@
 Fixed: a cancelled participant no longer blocks start (BUG-45; decline in test_battle_decline.py); wins and losses
 count once, when the battle ends,
 and cancels refuse postbattle (BUG-09, BATL-TEST-03/04; close-postbattle in test_battle_close_postbattle.py); the
-trading actions reset once, at End (BUG-122); a skip uses up the items used in battle (BUG-72); End needing a winner is decision 8's and creator-only End decision 4's.
+trading actions reset once, when each player finishes (BUG-122); a skip uses up the items used in battle (BUG-72); End
+needing a winner is decision 8's; decision 4 replaced the creator's End with each player's finish (a battle manager
+can still end a stuck fight: test_battle_finish_mine.py).
 """
 
 from collections.abc import Callable
@@ -17,30 +19,40 @@ from .battle_support import BattleTestCase, draft, status_changed, unit_result
 
 
 class BattleFinishTests(BattleTestCase):
-    def test_end_needs_the_creator_and_winners_from_the_battle(self):
-        # Decision 8: an empty list is "No winner" (test_no_winner_records_no_wins_or_losses)
+    def finish_as(self, user: Any, battle_id: int, body: dict[str, Any]) -> Any:
+        return self.post_as(user, self.url(battle_id, "finish"), body)
+
+    def test_only_a_battle_manager_ends_the_fight_with_winners_from_the_battle(self):
+        # Decision 4: players finish their own battle (finish-mine/); finish/ is a battle manager's End for a stuck
+        # fight (BATL-NEW-03), where only the creator could; [] is "No winner" (decision 8)
         battle_id = self.to_active()
-        url = self.url(battle_id, "finish")
-        cases = [
-            (None, "winner_warband_ids must be a list"),
-            ("x", "winner_warband_ids must be a list"),
-            (["x"], "winner_warband_ids must contain integers"),
-            ([0], "winner_warband_ids must contain integers"),
-            ([self.warband.id + 999], "winner_warband_ids must belong to this battle"),
+        cases: list[tuple[dict[str, Any], str, str]] = [
+            ({}, "winners", "winners must be a list"),
+            ({"winners": "x"}, "winners", "winners must be a list"),
+            ({"winners": ["x"]}, "winners", "winners must contain warband ids"),
+            ({"winners": [0]}, "winners", "winners must contain warband ids"),
+            ({"winners": [self.warband.id + 999]}, "winners", "winners must be warbands in this battle"),
+            (
+                {"winners": [self.warband.id], "losers": [self.warband.id]},
+                "losers",
+                "A warband can't both win and lose",
+            ),
         ]
-        for winners, detail in cases:
-            with self.subTest(winners=winners):
-                response = self.post_as(self.player, url, {"winner_warband_ids": winners})
-                self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
-        # decision 4 (pinned; flips in PR C): the battle ends when the last player finishes, with no End button
-        response = self.post_as(self.viewer, url, {"winner_warband_ids": [self.rival.id]})
-        detail = "Only the battle creator can end the active battle"
-        self.assertEqual((response.status_code, response.data), (403, {"detail": detail}))
+        for body, field, detail in cases:
+            with self.subTest(body=body):
+                response = self.finish_as(self.campaign_owner, battle_id, body)
+                self.assertEqual((response.status_code, response.data["detail"]), (400, detail))
+                self.assertEqual((response.data["code"], list(response.data["fields"])), ("invalid", [field]))
+        for user in (self.player, self.viewer):  # the creator too
+            response = self.finish_as(user, battle_id, {"winners": [self.rival.id]})
+            self.assertEqual((response.status_code, response.data["code"]), (403, "not_allowed"))
         self.assertEqual(self.battle(battle_id).status, "active")
+        self.ok(self.finish_as(self.campaign_owner, battle_id, {"winner_warband_ids": [self.rival.id]}))  # older body
+        self.assertEqual(self.battle(battle_id).winner_warband_ids_json, [self.rival.id])
 
     def test_end_before_the_battle_starts(self):
         battle_id = self.to_prebattle()
-        response = self.post_as(self.player, self.url(battle_id, "finish"), {"winner_warband_ids": [self.warband.id]})
+        response = self.finish_as(self.campaign_owner, battle_id, {"winners": [self.warband.id]})
         self.assertEqual(
             (response.status_code, response.data), (400, status_changed("Battle has not started", "prebattle"))
         )
@@ -49,19 +61,17 @@ class BattleFinishTests(BattleTestCase):
         # BUG-09, decision 3: they were added at End battle, and kept by a later cancel
         battle_id = self.to_active()
 
-        data = self.ok(
-            self.post_as(
-                self.player, self.url(battle_id, "finish"), {"winner_warband_ids": [self.warband.id, self.warband.id]}
-            )
-        ).data
+        data = self.ok(self.finish_as(self.campaign_owner, battle_id, {"winners": [self.warband.id, self.warband.id]})).data  # fmt: skip
 
         self.assertEqual((self.record(self.warband), self.record(self.rival)), ((None, None), (None, None)))
         self.assertEqual(
             (data["battle"]["status"], data["battle"]["winner_warband_ids_json"]), ("postbattle", [self.warband.id])
         )
+        self.assertFalse(data["battle"]["results_pending"])  # a manager's End confirms them
         self.assertEqual(self.statuses(battle_id), ["finished_battle", "finished_battle"])
         self.assertEqual([event["type"] for event in data["events"]], ["battle_entered_postbattle"])
-        self.assertEqual(data["events"][0]["payload_json"], {"winner_warband_ids": [self.warband.id]})
+        payload = {"winner_warband_ids": [self.warband.id], "mode": "manager", "results_pending": False}
+        self.assertEqual(data["events"][0]["payload_json"], payload)
 
         again = self.ok(self.finish(battle_id, [self.rival])).data  # a second End is ignored
         self.assertEqual((again["events"], again["battle"]["winner_warband_ids_json"]), ([], [self.warband.id]))
@@ -95,7 +105,7 @@ class BattleFinishTests(BattleTestCase):
         # Decision 8: End battle with "No winner" (an empty list); the battle log says so
         battle_id = self.to_active()
 
-        data = self.ok(self.post_as(self.player, self.url(battle_id, "finish"), {"winner_warband_ids": []})).data
+        data = self.ok(self.finish_as(self.campaign_owner, battle_id, {"winners": []})).data
         self.ok(self.finalize(self.player, battle_id, draft({})))
         self.ok(self.finalize(self.viewer, battle_id, draft({})))
 
@@ -249,14 +259,14 @@ class BattleCancelTests(BattleTestCase):
 
 class BattleSkipTests(BattleTestCase):
     def test_skip_and_finalise_outside_postbattle(self):
-        battle_id = self.to_active()
-        for action in ("confirm", "finalize-postbattle"):
+        battle_id = self.to_active()  # decision 4: a player's postbattle opens when he finishes his battle
+        for action, detail in (
+            ("confirm", "You must enter postbattle before leaving"),
+            ("finalize-postbattle", "You must enter postbattle before finalizing"),
+        ):
             with self.subTest(action=action):
                 response = self.post_as(self.viewer, self.url(battle_id, action))
-                self.assertEqual(
-                    (response.status_code, response.data),
-                    (400, status_changed("Battle is not in postbattle", "active")),
-                )
+                self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
         Battle.objects.filter(id=battle_id).update(status=Battle.STATUS_CANCELED)
         for action in ("confirm", "finalize-postbattle"):
             with self.subTest(action=action, status="canceled"):

@@ -2363,8 +2363,8 @@ class BattleApiTests(APITestCase):
             {"winner_warband_ids": [self.player_warband.id]},
             format="json",
         )
-        self.assertEqual(response.status_code, 403)
-        self.assertEqual(response.data.get("detail"), "Only the battle creator can end the active battle")
+        self.assertEqual(response.status_code, 403)  # decision 4: players finish their own battle
+        self.assertEqual(response.data.get("code"), "not_allowed")
 
     def test_wins_and_losses_count_when_the_battle_ends(self):
         data = self._create_battle()

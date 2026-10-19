@@ -1,7 +1,7 @@
 """Settling battles past their deadline, without a scheduler (decision 2, BUG-10, BATL-NEW-02).
 
 An invitation unanswered 72 hours after the battle was created counts as declined (with fewer than two players left
-the battle is cancelled), and a postbattle still open 72 hours after End battle is closed as Close postbattle closes
+the battle is cancelled), and a postbattle still open 72 hours after the fight ended is closed as Close postbattle closes
 it (whoever hasn't finished is skipped and the battle ends). Nothing runs on a timer: an overdue battle is settled
 when the campaign's battle list or Settings > Active Battles is read (a few per request), or first thing in any
 write to it. Reading a single battle only reports `overdue`.

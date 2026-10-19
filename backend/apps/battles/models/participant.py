@@ -33,6 +33,16 @@ class BattleParticipant(models.Model):
         (STATUS_CONFIRMED_POSTBATTLE, "Confirmed postbattle"),
     )
 
+    # what a player declares when he finishes his own battle (decision 4); "" until then
+    DECLARED_WON = "won"
+    DECLARED_LOST = "lost"
+    DECLARED_UNDECIDED = "undecided"
+    DECLARED_RESULT_CHOICES = (
+        (DECLARED_WON, "Won"),
+        (DECLARED_LOST, "Lost"),
+        (DECLARED_UNDECIDED, "Decide when the battle ends"),
+    )
+
     # out of the battle: they don't count towards it and can't follow it (SEC-08)
     LEFT_STATUSES = (STATUS_CANCELED_PREBATTLE, STATUS_DECLINED, STATUS_REPORTED_RESULT_DECLINED)
     ACCEPTED_STATUSES = (STATUS_ACCEPTED, STATUS_JOINED_PREBATTLE, STATUS_READY)
@@ -74,6 +84,7 @@ class BattleParticipant(models.Model):
     confirmed_at = models.DateTimeField(null=True, blank=True)
     # finished postbattle without applying it: skipped, or closed for him (decision 3)
     skipped_postbattle = models.BooleanField(default=False)
+    declared_result = models.CharField(max_length=10, choices=DECLARED_RESULT_CHOICES, blank=True, default="")
     last_seen_at = models.DateTimeField(null=True, blank=True)
     selected_unit_keys_json = models.JSONField(default=list, blank=True)
     unit_information_json = models.JSONField(default=dict, blank=True)

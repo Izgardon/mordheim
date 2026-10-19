@@ -1,17 +1,16 @@
-"""The fight: single-use items used, out of action, kills, End battle."""
+"""The fight: single-use items used, out of action and kills (finishing is views/finishing.py)."""
 
 from rest_framework import status
 from rest_framework.response import Response
 
 from ..models import Battle, BattleEvent, BattleParticipant
-from ..services.broadcast import ALL
-from ..services.combat import enter_postbattle, record_item_use, record_kill, set_out_of_action
+from ..services.combat import record_item_use, record_kill, set_out_of_action
 from ..services.errors import BattleError, battle_status_changed
 from ..services.item_use import check_payload_size
 from ..validation.coerce import coerce_bool
 from ..validation.unit_keys import parse_unit_key
 from .base import BattleWriteView, Scope, Unchanged, Written
-from .rules import creator_only, only, only_player, refuse, snapshot_when
+from .rules import only, only_player
 
 INGAME_EVENT_TYPES = {BattleEvent.TYPE_ITEM_USED}  # kills go through unit-kill/ (the legacy types are gone)
 NOT_ACTIVE = "Battle is not active"
@@ -95,11 +94,12 @@ def _kill_request(data) -> dict:
 
 def _kill_refusal(scope: Scope, source: str) -> Response | None:
     """Kills are tapped in an active battle, or added in the killer's own postbattle when the request says
-    `source: "postbattle"` (decision 5, BATL-NEW-06), so a phone that slept through End isn't taken for one."""
+    `source: "postbattle"` (decision 5, BATL-NEW-06), so a phone that slept through End isn't taken for one. His
+    postbattle starts when he finishes his battle, while the others may still fight (decision 4)."""
     battle, participant = scope.battle, scope.player
     if source == "postbattle":
         in_own_postbattle = participant.status == BattleParticipant.STATUS_FINISHED_BATTLE
-        if battle.status == Battle.STATUS_POSTBATTLE and in_own_postbattle:
+        if battle.status in (Battle.STATUS_ACTIVE, Battle.STATUS_POSTBATTLE) and in_own_postbattle:
             return None
         detail = "Kills can be added in postbattle only until you finalise"
         return Response({"detail": detail, "code": "not_in_postbattle"}, status=400)
@@ -122,31 +122,3 @@ class CampaignBattleUnitKillView(BattleWriteView):
             return refusal
         events = record_kill(scope.battle, scope.player, self.input, scope.user)
         return Written(events, changed=[scope.player.id], status=status.HTTP_201_CREATED)
-
-
-class CampaignBattleFinishView(BattleWriteView):
-    rules = (
-        refuse((Battle.STATUS_INVITING, Battle.STATUS_PREBATTLE, Battle.STATUS_CANCELED), "Battle has not started"),
-        snapshot_when(Battle.STATUS_ENDED, Battle.STATUS_POSTBATTLE),
-        only((Battle.STATUS_ACTIVE,), NOT_ACTIVE),
-        creator_only("Only the battle creator can end the active battle"),  # decision 4 opens it up (PR C)
-    )
-
-    def parse(self, request):
-        winner_ids = request.data.get("winner_warband_ids")
-        if not isinstance(winner_ids, list):  # [] is "No winner" (decision 8)
-            return Response({"detail": "winner_warband_ids must be a list"}, status=400)
-        normalized: list[int] = []
-        for raw_winner_id in winner_ids:
-            try:
-                winner_id = int(raw_winner_id)
-            except (TypeError, ValueError):
-                winner_id = 0
-            if winner_id <= 0:
-                return Response({"detail": "winner_warband_ids must contain integers"}, status=400)
-            if winner_id not in normalized:
-                normalized.append(winner_id)
-        return normalized
-
-    def act(self, scope: Scope):
-        return Written(enter_postbattle(scope.battle, self.input, scope.user), changed=ALL)
