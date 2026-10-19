@@ -6,6 +6,8 @@ import type {
   BattleCreatePayload,
   BattleParticipantForView,
   BattlePostbattleState,
+  BattleRecord,
+  BattleRecordPatch,
   ReportBattleResultPayload,
   BattleRosterMap,
   BattleState,
@@ -188,6 +190,19 @@ export function confirmBattleResults(
   results: { winners: number[]; losers: number[] }
 ) {
   return battleWrite(campaignId, battleId, "results/", results);
+}
+
+/** An ended battle's record (BATL-NEW-04): battle managers only. */
+export function getBattleRecord(campaignId: number, battleId: number) {
+  return apiRequest<BattleRecord>(battlePath(campaignId, battleId, "record/"));
+}
+
+/** Edits an ended battle's record; nothing else is recalculated (BATL-NEW-04). */
+export function updateBattleRecord(campaignId: number, battleId: number, patch: BattleRecordPatch) {
+  return apiRequest<BattleWriteAnswer & { record: BattleRecord }>(
+    battlePath(campaignId, battleId, "record/"),
+    { method: "PATCH", headers: battleWriteHeaders(), body: patch }
+  );
 }
 
 /** What a player says about his own fight when he finishes it (decision 4). */

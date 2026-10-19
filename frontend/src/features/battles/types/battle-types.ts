@@ -461,6 +461,37 @@ export type ReportBattleResultPayload = {
   winner_warband_ids: number[];
 };
 
+/** An ended battle's record, as a battle manager edits it (BATL-NEW-04, `record/`). */
+export type BattleRecord = {
+  battle_id: number;
+  flow_type: BattleFlowType;
+  scenario: string;
+  scenario_link: string | null;
+  /** "YYYY-MM-DD" */
+  date: string;
+  participants: {
+    warband_id: number;
+    warband_name: string;
+    user_id: number;
+    user_label: string;
+    declared_rating: number | null;
+    /** Taken off the record (kept, marked removed). */
+    removed: boolean;
+  }[];
+  winner_warband_ids: number[];
+  loser_warband_ids: number[];
+};
+
+/** What `PATCH record/` accepts; a participant left without a rating keeps his. */
+export type BattleRecordPatch = Partial<{
+  scenario: string;
+  scenario_link: string | null;
+  date: string;
+  participants: { warband_id: number; declared_rating?: number | null }[];
+  winners: number[];
+  losers: number[];
+}>;
+
 /** A reported result still waiting for answers, as `pending-results/` lists it (BUG-46). */
 export type PendingReportedResult = {
   battle_id: number;

@@ -32,6 +32,9 @@ export const queryKeys = {
     /** One battle's state (battle, participants, events), patched from its socket messages. */
     battleState: (campaignId: number, battleId: number) =>
       ["campaign", campaignId, "battle", battleId, "state"] as const,
+    /** An ended battle's record, as a battle manager edits it (BATL-NEW-04). */
+    battleRecord: (campaignId: number, battleId: number) =>
+      ["campaign", campaignId, "battle", battleId, "record"] as const,
     /** The postbattle rules, the same for every battle of the campaign (broadcasts may omit them). */
     battleRules: (campaignId: number) => ["campaign", campaignId, "battle-rules"] as const,
     /** Every participant's roster for one battle (the start snapshot once it has started). */

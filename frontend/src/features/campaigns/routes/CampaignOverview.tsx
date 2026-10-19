@@ -14,7 +14,7 @@ import TabbedCard from "@components/tabbed-card";
 
 // components
 import BattleActionPanel from "../components/overview/BattleActionPanel";
-import BattleHistoryTable from "../components/overview/BattleHistoryTable";
+import BattleHistorySection from "../components/overview/BattleHistorySection";
 import BulletinBoardTab from "../components/overview/BulletinBoardTab";
 import PivotalMomentsTable from "../components/overview/PivotalMomentsTable";
 import RosterTable from "../components/overview/RosterTable";
@@ -59,6 +59,7 @@ export default function CampaignOverview() {
     battleHistory,
     battleHistoryError,
     isBattleHistoryLoading,
+    reloadBattleHistory,
     pivotalMoments,
     pivotalMomentsError,
     isPivotalMomentsLoading,
@@ -128,7 +129,10 @@ export default function CampaignOverview() {
           snapshotLoading={snapshotLoading}
           snapshotErrors={snapshotErrors}
         />
-        <BattleHistoryTable
+        <BattleHistorySection
+          campaignId={campaignId}
+          canEditRecords={Boolean(campaign.permissions?.includes("manage_battles"))}
+          onRecordSaved={reloadBattleHistory}
           isLoading={isBattleHistoryLoading}
           error={battleHistoryError}
           battles={battleHistory}
