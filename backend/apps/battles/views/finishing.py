@@ -9,6 +9,7 @@ from ..serializers import snapshot_participants
 from ..services.broadcast import ALL
 from ..services.errors import BattleError
 from ..services.finishing import check_sides, confirm_results, end_fight, finish_player, results_sides
+from ..services.postbattle.guides import postbattle_guides
 from ..validation.results import parse_declared_result, parse_results
 from .base import BattleWriteView, Scope, Unchanged, Written
 from .rules import normal_flow, only, only_player, refuse, refused, snapshot_when, snapshot_when_player
@@ -22,6 +23,7 @@ class CampaignBattleFinishMineView(BattleWriteView):
     postbattle while the others play on; the last one to finish ends the fight and is asked to confirm the
     results (`confirm_results` in his answer)."""
 
+    battle_related = ("campaign__settings",)  # the postbattle guides (item 8)
     rules = (
         normal_flow("Reported results do not have an active battle phase"),
         refuse(NOT_STARTED, "Battle has not started"),
@@ -39,10 +41,12 @@ class CampaignBattleFinishMineView(BattleWriteView):
 
     def act(self, scope: Scope):
         finished = finish_player(scope.battle, scope.player, self.input, scope.user)
-        if not finished.fight_over:
-            return Written(finished.events, changed=[scope.player.id])
-        body = {"confirm_results": results_sides(scope.battle, finished.participants)}
-        return Written(finished.events, changed=ALL, body=body)
+        if not finished.fight_over:  # his postbattle starts now: what it suggests comes with the answer (item 8)
+            mine = postbattle_guides(scope.battle, user_id=scope.user.id)
+            return Written(finished.events, changed=[scope.player.id], body=mine.answer_for(scope.user.id))
+        guides = postbattle_guides(scope.battle)
+        body = {"confirm_results": results_sides(scope.battle, finished.participants), **guides.answer_for(scope.user.id)}  # fmt: skip
+        return Written(finished.events, changed=ALL, body=body, postbattle=guides.broadcast())
 
 
 def _confirmer_or_manager(scope: Scope) -> Response | None:
@@ -64,6 +68,7 @@ class CampaignBattleResultsView(BattleWriteView):
     The battle ends now if everyone has finished postbattle."""
 
     in_battle = False  # a battle manager needn't be in the battle
+    battle_related = ("campaign__settings",)
     rules = (
         normal_flow("Reported results are confirmed by approving them"),
         _confirmer_or_manager,
@@ -77,7 +82,10 @@ class CampaignBattleResultsView(BattleWriteView):
         events = confirm_results(scope.battle, self.input, scope.user)
         if not events:
             return Unchanged()
-        return Written(events, changed=ALL if scope.battle.status == Battle.STATUS_ENDED else ())
+        if scope.battle.status == Battle.STATUS_ENDED:
+            return Written(events, changed=ALL)
+        guides = postbattle_guides(scope.battle)  # the winners changed what is suggested (Winning Leader, a die)
+        return Written(events, body=guides.answer_for(scope.user.id), postbattle=guides.broadcast())
 
 
 def _manager_only(scope: Scope) -> Response | None:
@@ -92,6 +100,7 @@ class CampaignBattleFinishView(BattleWriteView):
     fight with its results; everyone still fighting goes to postbattle (BATL-NEW-03)."""
 
     in_battle = False
+    battle_related = ("campaign__settings",)
     rules = (
         _manager_only,
         refuse((*NOT_STARTED, Battle.STATUS_CANCELED), "Battle has not started"),
@@ -105,4 +114,5 @@ class CampaignBattleFinishView(BattleWriteView):
     def act(self, scope: Scope):
         check_sides(snapshot_participants().filter(battle_id=scope.battle.id), self.input)
         events = end_fight(scope.battle, self.input.winners, scope.user, results_pending=False, mode="manager")
-        return Written(events, changed=ALL)
+        guides = postbattle_guides(scope.battle)
+        return Written(events, changed=ALL, body=guides.answer_for(scope.user.id), postbattle=guides.broadcast())

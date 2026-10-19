@@ -78,6 +78,7 @@ class Written:
     status: int = 200
     warnings: list[Warning] | None = None
     body: dict | None = None  # more for the acting player's answer only
+    postbattle: dict | None = None  # the postbattle guides for the broadcast (services/broadcast.py)
 
 
 @dataclass
@@ -101,7 +102,7 @@ class BattleScopedView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     rules: tuple[Rule, ...] = ()
     in_battle = True  # the caller must be one of the battle's participants
-    battle_related: tuple[str, ...] = ()  # read with an unlocked battle (finalise: the campaign's settings)
+    battle_related: tuple[str, ...] = ()  # read with the battle (the campaign's settings: finalise, the guides)
 
     def load_scope(self, request: Request, campaign_id: int, battle_id: int, *, lock: str = READ) -> Scope:
         """The battle and the caller's participant: `READ` locks nothing; `LOCK_BATTLE` (a write) locks the battle,
@@ -109,8 +110,8 @@ class BattleScopedView(APIView):
         battle settles it first, under the battle lock (decision 2)."""
         battles = scoped_battles(request.user, campaign_id).filter(id=battle_id)
         if lock == LOCK_BATTLE:
-            battles = locked(battles)
-        elif self.battle_related:
+            battles = locked(battles)  # FOR UPDATE OF the battle alone, whatever it joins
+        if self.battle_related:
             battles = battles.select_related(*self.battle_related)
         battle = battles.first()
         if battle is None or not is_member(battle):
@@ -192,4 +193,5 @@ class BattleWriteView(BattleScopedView):
             response_status=outcome.status,
             warnings=outcome.warnings,
             body=outcome.body,
+            postbattle=outcome.postbattle,
         )

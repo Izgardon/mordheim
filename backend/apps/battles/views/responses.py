@@ -28,7 +28,9 @@ def response_with_snapshot(
     return answer(battle_snapshot(battle_id), events, response_status, warnings, body)
 
 
-def publish_snapshot(request, payload: dict, events: list[dict], version: int, changed: Changed, reason: str) -> None:
+def publish_snapshot(
+    request, payload: dict, events: list[dict], version: int, changed: Changed, reason: str, postbattle=None
+) -> None:
     """Queue the write's messages for the other players (sent after commit, skipping the sender's socket)."""
     publish(
         payload,
@@ -38,6 +40,7 @@ def publish_snapshot(request, payload: dict, events: list[dict], version: int, c
         reason=reason,
         actor_user_id=request.user.id,
         socket_id=sender_socket_id(request),
+        postbattle=postbattle,
     )
 
 
@@ -52,10 +55,12 @@ def broadcast_response(
     response_status=200,
     warnings=None,
     body=None,
+    postbattle=None,
 ) -> Response:
     """Answer a write that raised the battle's state_version (`version`) with the fresh snapshot, and send its
-    events, or a battle_state_updated, to the other players with the snapshots of the participants it `changed`.
-    Called after the write's transaction; the sends go out in the background."""
+    events, or a battle_state_updated, to the other players with the snapshots of the participants it `changed`
+    (and the `postbattle` guides, services/broadcast.py). Called after the write's transaction; the sends go out
+    in the background."""
     payload = battle_snapshot(battle_id)
-    publish_snapshot(request, payload, events, version, changed, reason)
+    publish_snapshot(request, payload, events, version, changed, reason, postbattle)
     return answer(payload, events, response_status, warnings, body)

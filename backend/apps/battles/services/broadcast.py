@@ -9,7 +9,12 @@ request names it (`X-Pusher-Socket-Id`):
 - or, for a write that adds no event, one `battle_state_updated` message;
 - the last message also carries `battle` (the serialised battle) and `participants`, the snapshots of the
   participants the write changed (all of them for a phase change), unless they would push the message past
-  Pusher's 10 KB limit: then `participants` is empty and `snapshot_omitted` is true, and clients read `state/`.
+  Pusher's 10 KB limit: then `participants` is empty and `snapshot_omitted` is true, and clients read `state/`;
+- a write that puts players into postbattle or changes its winners (the end of the fight, the results) adds
+  `postbattle: {"rules", "suggested": {user id: suggested_postbattle}}` for every player in his own postbattle, so
+  their pages need no extra read (item 8). Under the limit first goes the snapshot, then the suggestions, then the
+  rules: what doesn't fit is left out and flagged (`rules_omitted` inside `postbattle`, or `postbattle_omitted`),
+  and those clients read `state/?view=postbattle`.
 
 A client patches its copy from the message when `state_version` is its own plus one (or, for the later messages
 of the same write, equal to it) and reads `state/` on a gap. Writes that change only what the player alone sees
@@ -43,14 +48,29 @@ def bump_state_version(battle: Battle) -> int:
     return battle.state_version
 
 
-def _snapshot_fields(snapshot: dict[str, Any], changed: Changed) -> dict[str, Any]:
+def _fits(fields: dict[str, Any]) -> bool:
+    return len(json.dumps(fields, default=str)) <= SNAPSHOT_LIMIT_BYTES
+
+
+def _with_postbattle(fields: dict[str, Any], postbattle: dict[str, Any] | None) -> dict[str, Any]:
+    """The snapshot fields plus as much of the postbattle guides as fits: all, without the rules, or none."""
+    if not postbattle:
+        return fields
+    for attempt in (postbattle, {"suggested": postbattle.get("suggested", {}), "rules_omitted": True}):
+        if _fits(with_guides := {**fields, "postbattle": attempt}):
+            return with_guides
+    return {**fields, "postbattle_omitted": True}
+
+
+def _snapshot_fields(snapshot: dict[str, Any], changed: Changed, postbattle: dict[str, Any] | None) -> dict[str, Any]:
     participants = snapshot["participants"]
     if changed != ALL:
         participants = [entry for entry in participants if entry["id"] in changed]
     fields = {"battle": snapshot["battle"], "participants": participants}
-    if len(json.dumps(fields, default=str)) > SNAPSHOT_LIMIT_BYTES:
-        return {"battle": snapshot["battle"], "participants": [], "snapshot_omitted": True}
-    return fields
+    if not _fits(fields):
+        omitted = {"battle": snapshot["battle"], "participants": [], "snapshot_omitted": True}
+        return {**omitted, "postbattle_omitted": True} if postbattle else omitted
+    return _with_postbattle(fields, postbattle)
 
 
 def publish(
@@ -62,10 +82,11 @@ def publish(
     reason: str,
     actor_user_id: int | None,
     socket_id: str | None,
+    postbattle: dict[str, Any] | None = None,
 ) -> None:
     """Queue the write's messages for the battle channel (sent after commit, in the background)."""
     battle = snapshot["battle"]
-    last = {"state_version": version, **_snapshot_fields(snapshot, changed)}
+    last = {"state_version": version, **_snapshot_fields(snapshot, changed, postbattle)}
     if events:
         for event in events[:-1]:
             send_battle_event(battle["id"], event["type"], event, socket_id=socket_id, state_version=version)
