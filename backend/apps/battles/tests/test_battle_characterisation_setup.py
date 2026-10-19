@@ -273,8 +273,8 @@ class BattleReadyAndStartTests(BattleTestCase):
                 response = self.ready(self.viewer, battle_id, True)
                 self.assertEqual((response.status_code, response.data), (400, status_changed(detail, battle_status)))
 
-    def test_only_the_creator_starts_once_everyone_is_ready(self):
-        # Characterises current behaviour (decision 4, pinned; flips in PR C: any participant starts after a confirm)
+    def test_any_participant_starts_once_everyone_is_ready(self):
+        # Decision 4: any participant still in starts (the page asks him to confirm); only the creator could
         battle_id = self.create_battle()
         response = self.post_as(self.player, self.url(battle_id, "start"))
         detail = "Waiting for all participants to accept invitation"
@@ -287,11 +287,7 @@ class BattleReadyAndStartTests(BattleTestCase):
         self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
 
         self.ok(self.ready(self.player, battle_id, True))
-        response = self.post_as(self.viewer, self.url(battle_id, "start"))
-        detail = "Only the battle creator can start this battle"
-        self.assertEqual((response.status_code, response.data), (403, {"detail": detail}))
-
-        data = self.ok(self.post_as(self.player, self.url(battle_id, "start"))).data
+        data = self.ok(self.post_as(self.viewer, self.url(battle_id, "start"))).data
         self.assertEqual(data["battle"]["status"], "active")
         self.assertIsNotNone(data["battle"]["started_at"])
         self.assertEqual(self.statuses(battle_id), ["in_battle", "in_battle"])

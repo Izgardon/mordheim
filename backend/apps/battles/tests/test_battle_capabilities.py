@@ -29,7 +29,7 @@ class BattleCapabilityTests(BattleTestCase):
         permission = _ensure_permissions()["manage_battles"]
         CampaignMembershipPermission.objects.create(membership=membership, permission=permission)
 
-    def test_the_creator_cancels_before_the_fight_and_starts_once_everyone_is_ready(self):
+    def test_the_creator_cancels_before_the_fight_and_anyone_starts_once_everyone_is_ready(self):
         battle_id = self.create_battle()
         self.assertEqual(self.capabilities(self.player, battle_id), {**NONE, "cancel": True})
         self.assertEqual(self.capabilities(self.viewer, battle_id), NONE)
@@ -41,12 +41,26 @@ class BattleCapabilityTests(BattleTestCase):
 
         self.ok(self.post_as(self.viewer, self.url(battle_id, "ready"), {"ready": True}))
         self.assertEqual(self.capabilities(self.player, battle_id), {**NONE, "start": True, "cancel": True})
-        self.assertEqual(self.capabilities(self.viewer, battle_id), NONE)
-        self.ok(self.post_as(self.player, self.url(battle_id, "start")))
+        self.assertEqual(self.capabilities(self.viewer, battle_id), {**NONE, "start": True})  # decision 4
+        self.ok(self.post_as(self.viewer, self.url(battle_id, "start")))
 
         self.assertEqual(self.capabilities(self.player, battle_id), {**NONE, "end": True, "cancel": True})
         self.assertEqual(self.capabilities(self.viewer, battle_id), NONE)
         self.assertEqual(self.post_as(self.viewer, self.url(battle_id, "finish"), {"winner_warband_ids": []}).status_code, 403)  # fmt: skip
+
+    def test_a_player_who_left_neither_starts_nor_is_offered_it(self):
+        # Decision 4: the start is any participant's who is still in the battle
+        Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows", faction="X")
+        battle_id = self.to_prebattle([self.viewer, self.manager])
+        self.ok(self.post_as(self.manager, self.url(battle_id, "cancel")))
+        for user in (self.player, self.viewer):
+            self.ok(self.post_as(user, self.url(battle_id, "ready"), {"ready": True}))
+
+        self.assertFalse(self.capabilities(self.manager, battle_id)["start"])
+        response = self.post_as(self.manager, self.url(battle_id, "start"))
+        expected = {"detail": "You are no longer in this battle", "code": "not_in_battle"}
+        self.assertEqual((response.status_code, response.data), (400, expected))
+        self.assertTrue(self.capabilities(self.viewer, battle_id)["start"])
 
     def test_postbattle_is_closed_by_the_creator_or_a_battle_manager(self):
         battle_id = self.to_postbattle()

@@ -2727,7 +2727,7 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data.get("detail"), "Only the battle creator can cancel this battle")
 
-    def test_non_creator_cannot_start_battle(self):
+    def test_non_creator_can_start_battle(self):  # decision 4: any participant starts
         data = self._create_battle()
         battle_id = data["battle"]["id"]
 
@@ -2758,8 +2758,8 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/start/",
             format="json",
         )
-        self.assertEqual(response.status_code, 403)
-        self.assertEqual(response.data.get("detail"), "Only the battle creator can start this battle")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["battle"]["status"], "active")
 
     def test_state_since_event_id_returns_incremental_events(self):
         data = self._create_battle()

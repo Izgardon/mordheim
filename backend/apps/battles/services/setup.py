@@ -1,7 +1,7 @@
 """Setting a battle up: create it and invite the players, then join, ready, leave and start.
 
-Busy players (already in an unfinished battle) are warned about, never refused (decision 1, BATL-TWEAK-01). The
-creator starts once everyone still in is ready; `start/` stores each roster as it stands (BUG-73).
+Busy players (already in an unfinished battle) are warned about, never refused (decision 1, BATL-TWEAK-01). Any
+participant still in starts once everyone is ready (decision 4); `start/` stores each roster as it stands (BUG-73).
 """
 
 import logging

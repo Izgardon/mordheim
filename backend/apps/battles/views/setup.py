@@ -1,4 +1,4 @@
-"""Before the fight and around it: config, join, ready, leaving, the creator's cancel and the start."""
+"""Before the fight and around it: config, join, ready, leaving, the creator's cancel and the start (by anyone)."""
 
 from rest_framework.response import Response
 
@@ -112,8 +112,11 @@ class CampaignBattleCreatorCancelView(BattleWriteView):
 
 
 class CampaignBattleStartView(BattleWriteView):
+    """POST: any participant still in the battle starts it once everyone is ready (decision 4; the page asks him to
+    confirm when someone else created it)."""
+
     rules = (
-        creator_only("Only the battle creator can start this battle"),
+        refuse_player(BattleParticipant.LEFT_STATUSES, "You are no longer in this battle", code="not_in_battle"),
         normal_flow("Reported results do not have an active battle phase"),
         refuse(FIGHT_OR_AFTER, "Battle already started"),
         refuse((Battle.STATUS_INVITING,), WAITING_FOR_ANSWERS),
