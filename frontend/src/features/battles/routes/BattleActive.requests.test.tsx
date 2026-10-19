@@ -335,6 +335,7 @@ describe("BattleActive requests", () => {
       new ApiError("Battle is not active", 400, {
         detail: "Battle is not active",
         code: "battle_status_changed",
+        status: "postbattle",
       })
     );
 

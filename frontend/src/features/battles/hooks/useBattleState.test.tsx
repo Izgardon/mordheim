@@ -215,7 +215,7 @@ describe("useBattleState", () => {
     expect(fakeApi.calls()).toEqual([`GET ${statePath("active", 3)}`]);
   });
 
-  it("reads state/ when a write is refused because the battle moved on (BUG-19)", async () => {
+  it("reads state/ when a write is refused because the battle moved on, as the server says it (BUG-19)", async () => {
     const { result } = await renderLoaded();
     fakeApi.on(`GET ${statePath("active", 3)}`, battleState({ status: "postbattle" }));
     fakeApi.fail(
@@ -223,6 +223,7 @@ describe("useBattleState", () => {
       new ApiError("Battle is not active", 400, {
         detail: "Battle is not active",
         code: "battle_status_changed",
+        status: "postbattle",
       })
     );
 
@@ -243,7 +244,11 @@ describe("useBattleState", () => {
     );
     fakeApi.fail(
       `POST /campaigns/${CAMPAIGN_ID}/battles/99/join/`,
-      new ApiError("Moved on", 400, { detail: "Moved on", code: "battle_status_changed" })
+      new ApiError("Moved on", 400, {
+        detail: "Moved on",
+        code: "battle_status_changed",
+        status: "ended",
+      })
     );
 
     await expect(joinBattle(CAMPAIGN_ID, BATTLE_ID)).rejects.toThrow("Nope");
