@@ -2,10 +2,14 @@
  * The Start battle dialog: players in another open battle are greyed out but can be invited, with
  * a warning, and the create answer's warnings show as toasts (BUG-10, decision 1).
  */
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AppToaster } from "@/components/ui/toaster";
+import { createTestQueryClient, renderWithQueryClient } from "@/test/query-test-utils";
+import { battleState } from "@/test/battle-fixtures";
+import { queryKeys } from "@/lib/query-keys";
 import { fakeApi } from "@/test/fake-api";
 import { setupUser } from "@/test/user-event";
 import type { CampaignPlayer } from "../../types/campaign-types";
@@ -38,10 +42,17 @@ const busyMira: CampaignPlayer = {
 };
 const bors = player(12, "Bors", "Grey Wardens", 150);
 
-function renderDialog(players: CampaignPlayer[]) {
+/** The overview has the open battles cached already (the Rejoin button reads them). */
+const withOpenBattles = () => {
+  const queryClient = createTestQueryClient();
+  queryClient.setQueryData(queryKeys.campaign.openBattles(1), []);
+  return queryClient;
+};
+
+function renderDialog(players: CampaignPlayer[], queryClient = withOpenBattles()) {
   const onBattleCreated = vi.fn();
-  render(
-    <>
+  renderWithQueryClient(
+    <MemoryRouter>
       <StartBattleDialog
         open
         onOpenChange={vi.fn()}
@@ -51,7 +62,8 @@ function renderDialog(players: CampaignPlayer[]) {
         onBattleCreated={onBattleCreated}
       />
       <AppToaster />
-    </>
+    </MemoryRouter>,
+    { queryClient }
   );
   return { onBattleCreated };
 }
@@ -160,5 +172,29 @@ describe("StartBattleDialog", () => {
     await user.click(rowOf("Mira").tick);
 
     expect(rowOf("Mira").tick).toBeChecked();
+  });
+
+  it("tells you about your unfinished battle, with a link to its page (BATL-NEW-01)", () => {
+    const queryClient = createTestQueryClient();
+    const unfinished = battleState({
+      id: 40,
+      status: "postbattle",
+      last_activity_at: new Date(Date.now() - 6 * 86_400_000 - 60_000).toISOString(),
+    });
+    unfinished.viewer = {
+      participant_status: "finished_battle",
+      unfinished: true,
+      page: "postbattle",
+    };
+    queryClient.setQueryData(queryKeys.campaign.openBattles(1), [unfinished]);
+    renderDialog([me, bors], queryClient);
+
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "You have an unfinished battle: #40, postbattle, idle 6 days. Go to it"
+    );
+    expect(screen.getByRole("link", { name: "Go to it" })).toHaveAttribute(
+      "href",
+      "/campaigns/1/battles/40/postbattle"
+    );
   });
 });

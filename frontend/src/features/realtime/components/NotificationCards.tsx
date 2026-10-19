@@ -7,6 +7,7 @@ import type {
 } from "@/features/battles/types/battle-types";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 import { cn } from "@/lib/utils";
+import UnfinishedBattleBanner from "@/features/battles/components/shared/UnfinishedBattleBanner";
 
 type NotificationCardAction = {
   label: string;
@@ -80,6 +81,8 @@ type CardProps<T> = {
   state: NotificationCardState;
   onAccept: () => void;
   onDecline: () => void;
+  /** Following a link out of the card (closes the menu). */
+  onNavigate?: () => void;
 };
 
 const formatTimestamp = (value: string) => {
@@ -142,6 +145,7 @@ export function BattleInviteCard({
   state,
   onAccept,
   onDecline,
+  onNavigate,
 }: CardProps<BattleInviteNotification>) {
   return (
     <NotificationCard
@@ -151,6 +155,12 @@ export function BattleInviteCard({
       accept={{ label: "Accept battle invite", onClick: onAccept }}
     >
       <BattleDetails notification={notification} />
+      <UnfinishedBattleBanner
+        campaignId={notification.campaignId}
+        excludeBattleId={notification.battleId}
+        onGo={onNavigate}
+        className="text-xs"
+      />
     </NotificationCard>
   );
 }

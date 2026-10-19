@@ -17,6 +17,7 @@ import { normalizeWebUrl } from "@/lib/url-utils";
 import type { CampaignPlayer } from "../../types/campaign-types";
 import { idleLabel } from "@/features/battles/utils/battle-timing";
 import { toastBattleWarnings } from "@/features/battles/utils/battle-warnings";
+import UnfinishedBattleBanner from "@/features/battles/components/shared/UnfinishedBattleBanner";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 /** "In battle #40 (postbattle), idle 6 days" from the players' busy fields (decision 1). */
@@ -264,6 +265,7 @@ export default function StartBattleDialog({
         </DialogHeader>
 
         <div className="space-y-4">
+          <UnfinishedBattleBanner campaignId={campaignId} onGo={() => onOpenChange(false)} />
           <TabSwitcher
             tabs={MODE_TABS}
             activeTab={mode}

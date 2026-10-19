@@ -16,6 +16,7 @@ import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesk
 import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesDialog";
 import BattleStatusStrip from "@/features/battles/components/shared/BattleStatusStrip";
 import BattleTopBarActions from "@/features/battles/components/shared/BattleTopBarActions";
+import UnfinishedBattleBanner from "@/features/battles/components/shared/UnfinishedBattleBanner";
 import { usePrebattlePage } from "@/features/battles/hooks/usePrebattlePage";
 import { allRostersSettled, isRosterLoading } from "@/features/battles/utils/battle-rosters";
 import WarbandPdfViewerDialog from "@/features/warbands/components/warband/WarbandPdfViewerDialog";
@@ -117,19 +118,22 @@ export default function BattlePrebattle() {
       {ready.actionError ? <p className="text-sm text-red-600">{ready.actionError}</p> : null}
 
       {flags.invitePending ? (
-        <PrebattleInviteGate
-          canAcceptInvite={flags.canAcceptInvite}
-          isAcceptingInvite={ready.isAcceptingInvite}
-          waitingForOthers={flags.waitingForOthers}
-          canCreatorCancelBattle={flags.canCreatorCancelBattle}
-          isCancelingBattle={creatorCancel.isCanceling}
-          onAcceptInvite={ready.acceptInvite}
-          onOpenCancelBattle={() => creatorCancel.setIsOpen(true)}
-          canDeclineInvite={flags.canDeclineInvite}
-          isDecliningInvite={declining.isDeclining}
-          declineError={declining.error}
-          onDeclineInvite={() => void declining.decline()}
-        />
+        <>
+          <UnfinishedBattleBanner campaignId={campaignId} excludeBattleId={battleId} />
+          <PrebattleInviteGate
+            canAcceptInvite={flags.canAcceptInvite}
+            isAcceptingInvite={ready.isAcceptingInvite}
+            waitingForOthers={flags.waitingForOthers}
+            canCreatorCancelBattle={flags.canCreatorCancelBattle}
+            isCancelingBattle={creatorCancel.isCanceling}
+            onAcceptInvite={ready.acceptInvite}
+            onOpenCancelBattle={() => creatorCancel.setIsOpen(true)}
+            canDeclineInvite={flags.canDeclineInvite}
+            isDecliningInvite={declining.isDeclining}
+            declineError={declining.error}
+            onDeclineInvite={() => void declining.decline()}
+          />
+        </>
       ) : (
         <PrebattleRosterPanel
           campaignId={campaignId}

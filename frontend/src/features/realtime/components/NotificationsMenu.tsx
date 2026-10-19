@@ -182,6 +182,7 @@ export default function NotificationsMenu({
                 onDecline={() =>
                   void runAction(notification.id, () => onDeclineBattleInvite(notification))
                 }
+                onNavigate={() => setIsOpen(false)}
               />
             ))}
             {sortedTradeNotifications.map((notification) => (

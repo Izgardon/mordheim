@@ -325,6 +325,30 @@ describe("BattlePrebattle requests", () => {
     expect(fakeApi.requests()).toContainEqual({ method: "POST", path: battlePath("decline/") });
   });
 
+  it("tells an invitee about another unfinished battle on the invite gate (BATL-NEW-01)", async () => {
+    fakeApi.on(
+      `GET ${statePath("prebattle")}`,
+      battleState({
+        status: "inviting",
+        created_by_user_id: OPPONENT.id,
+        me: { status: "invited" },
+      })
+    );
+    const thisInvite = battleState({ status: "inviting" });
+    thisInvite.viewer = { participant_status: "invited", unfinished: true, page: "prebattle" };
+    const other = battleState({ id: 40, status: "active" });
+    other.viewer = { participant_status: "in_battle", unfinished: true, page: "active" };
+    fakeApi.on("GET /campaigns/1/battles/?open=1", [thisInvite, other]);
+    renderBattleRoute("prebattle");
+
+    expect(await screen.findByRole("button", { name: "Accept invitation" })).toBeInTheDocument();
+    const banner = await screen.findByText(/You have an unfinished battle: #40, active/);
+    expect(within(banner).getByRole("link", { name: "Go to it" })).toHaveAttribute(
+      "href",
+      "/campaigns/1/battles/40/active"
+    );
+  });
+
   it("doesn't offer Decline to the battle's creator", async () => {
     fakeApi.on(
       `GET ${statePath("prebattle")}`,

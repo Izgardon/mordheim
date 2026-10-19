@@ -30,6 +30,7 @@ import {
 } from "@/features/battles/utils/battle-session";
 import { deadlineLabel } from "@/features/battles/utils/battle-timing";
 import type { CampaignPlayer } from "../../types/campaign-types";
+import UnfinishedBattleBanner from "@/features/battles/components/shared/UnfinishedBattleBanner";
 import PendingResultsCard from "./PendingResultsCard";
 import StartBattleDialog from "./StartBattleDialog";
 import { getErrorMessage } from "@/lib/get-error-message";
@@ -206,6 +207,7 @@ export default function BattleActionPanel({
         </p>
       ) : null}
       {battleError ? <p className="text-center text-sm text-red-600">{battleError}</p> : null}
+      <UnfinishedBattleBanner campaignId={campaignId} className="mx-2 mt-2 text-center sm:mx-0" />
 
       <PendingResultsCard campaignId={campaignId} />
 
