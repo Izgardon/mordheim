@@ -108,14 +108,14 @@ class BattleQueryBudgetTests(BattleTestCase):
     def test_writes_leave_presence_alone(self):
         # PERF-35: no write updates the writer's presence (an UPDATE each); only reads do, at most once a minute
         battle_id = self.to_active({self.player: [f"hero:{self.fixture.heroes[0].id}"], self.viewer: [self.r]})
-        BattleParticipant.objects.filter(battle_id=battle_id).update(last_seen_at=None, connection_state="offline")
+        BattleParticipant.objects.filter(battle_id=battle_id).update(last_seen_at=None)
         self.ok(self.post_as(self.player, self.url(battle_id, "config"), {"battle_notes": "x"}))
         self.ok(self.kill(self.player, battle_id, f"hero:{self.fixture.heroes[0].id}", self.r), 201)
         self.finish(battle_id, [self.warband])
         self.ok(self.post_as(self.player, self.url(battle_id, "confirm")))
 
-        rows = BattleParticipant.objects.filter(battle_id=battle_id).values_list("last_seen_at", "connection_state")
-        self.assertEqual(list(rows.distinct()), [(None, "offline")])
+        rows = BattleParticipant.objects.filter(battle_id=battle_id).values_list("last_seen_at", flat=True)
+        self.assertEqual(list(rows.distinct()), [None])
 
     def _fixture_postbattle(
         self, active_writes: list[tuple[str, dict[str, Any]]] | None = None

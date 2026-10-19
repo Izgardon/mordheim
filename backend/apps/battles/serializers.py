@@ -68,8 +68,6 @@ def serialize_participant(participant: BattleParticipant, participant_view: str 
         "id": participant.id,
         "battle_id": participant.battle_id,
         "status": participant.status,
-        "connection_state": participant.connection_state,
-        "last_event_id": participant.last_event_id,
         "last_seen_at": _iso(participant.last_seen_at),
         "selected_unit_keys_json": participant.selected_unit_keys_json or [],
         "unit_information_json": participant.unit_information_json or {},

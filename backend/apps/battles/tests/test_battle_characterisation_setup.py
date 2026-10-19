@@ -38,8 +38,6 @@ PARTICIPANT_KEYS = [
     "id",
     "battle_id",
     "status",
-    "connection_state",
-    "last_event_id",
     "last_seen_at",
     "selected_unit_keys_json",
     "unit_information_json",

@@ -37,13 +37,6 @@ class BattleParticipant(models.Model):
     LEFT_STATUSES = (STATUS_CANCELED_PREBATTLE, STATUS_DECLINED, STATUS_REPORTED_RESULT_DECLINED)
     ACCEPTED_STATUSES = (STATUS_ACCEPTED, STATUS_JOINED_PREBATTLE, STATUS_READY)
 
-    CONNECTION_ONLINE = "online"
-    CONNECTION_OFFLINE = "offline"
-    CONNECTION_CHOICES = (
-        (CONNECTION_ONLINE, "Online"),
-        (CONNECTION_OFFLINE, "Offline"),
-    )
-
     battle = models.ForeignKey(
         Battle,
         related_name="participants",
@@ -64,11 +57,6 @@ class BattleParticipant(models.Model):
         choices=STATUS_CHOICES,
         default=STATUS_INVITED,
     )
-    connection_state = models.CharField(
-        max_length=10,
-        choices=CONNECTION_CHOICES,
-        default=CONNECTION_OFFLINE,
-    )
     invited_by_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="battle_participant_invites",
@@ -86,7 +74,6 @@ class BattleParticipant(models.Model):
     confirmed_at = models.DateTimeField(null=True, blank=True)
     # finished postbattle without applying it: skipped, or closed for him (decision 3)
     skipped_postbattle = models.BooleanField(default=False)
-    last_event_id = models.BigIntegerField(default=0)
     last_seen_at = models.DateTimeField(null=True, blank=True)
     selected_unit_keys_json = models.JSONField(default=list, blank=True)
     unit_information_json = models.JSONField(default=dict, blank=True)
