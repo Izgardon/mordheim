@@ -151,6 +151,7 @@ export function usePostbattlePage(campaign: CampaignSummary | null | undefined) 
     events: battleState.events,
     userId: user?.id,
     victimName,
+    suggestion,
   };
 
   return {

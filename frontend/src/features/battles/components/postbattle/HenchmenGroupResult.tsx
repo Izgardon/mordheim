@@ -30,6 +30,8 @@ export default function HenchmenGroupResult({
               value={firstRow.xpEarned}
               disabled={tools.isFinalized}
               onCommit={(nextXp) => tools.actions.commitGroupXp(group.label, nextXp)}
+              unitName={group.label}
+              suggested={tools.suggestion?.unit_results[firstRow.unitKey]}
             />
           ) : null}
         </div>

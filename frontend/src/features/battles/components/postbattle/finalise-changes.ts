@@ -23,26 +23,47 @@ export type LevelUpLine = {
   key: string;
   unitName: string;
   levelUps: number;
-  xpFrom: number;
-  xpTo: number;
+  /** The unit's XP before and after, when the sheet has it. */
+  xpFrom?: number;
+  xpTo?: number;
 };
 
+type ServerSuggestions = Record<string, { xp_earned: number; level_ups?: number }> | undefined;
+
 /**
- * Who reaches a level-up with this battle's XP, on the campaign's thresholds (heroes and hired
- * swords on the heroes' table, henchmen groups on theirs), counted from the sheet's XP; half-rate
- * units gain half. A henchmen group is counted once.
+ * Who reaches a level-up with this battle's XP. The server's count (`level_ups`, BATL-NEW-10:
+ * campaign tables, half rate, the XP high-water mark) wherever the XP is the one it suggested;
+ * for XP changed by hand, the campaign's thresholds from the sheet's XP (heroes and hired swords
+ * on the heroes' table, henchmen groups on theirs; half-rate units gain half). A henchmen group
+ * is counted once.
  */
 export function buildLevelUps(
   xpAwards: XpUnit[],
   sheet: WarbandSheet | undefined,
-  campaign: Pick<CampaignSummary, "hero_level_thresholds" | "henchmen_level_thresholds"> | null
+  campaign: Pick<CampaignSummary, "hero_level_thresholds" | "henchmen_level_thresholds"> | null,
+  server?: ServerSuggestions
 ): LevelUpLine[] {
-  if (!sheet) {
-    return [];
-  }
   const lines: LevelUpLine[] = [];
   const countedGroups = new Set<number>();
+  const serverGroups = new Set<string>();
   for (const award of xpAwards) {
+    const suggested = server?.[award.unitKey];
+    if (
+      suggested &&
+      typeof suggested.level_ups === "number" &&
+      suggested.xp_earned === award.xpEarned
+    ) {
+      const groupKey = award.unitKind === "henchman" ? `group:${award.groupName}` : award.unitKey;
+      if (serverGroups.has(groupKey)) continue;
+      serverGroups.add(groupKey);
+      if (suggested.level_ups > 0) {
+        const name =
+          award.unitKind === "henchman" ? award.groupName || award.unitName : award.unitName;
+        lines.push({ key: groupKey, unitName: name, levelUps: suggested.level_ups });
+      }
+      continue;
+    }
+    if (!sheet) continue;
     const id = idOf(award.unitKey);
     let unit: { xp: number | null; half_rate: boolean | null; no_level_ups?: boolean | null };
     let key = award.unitKey;

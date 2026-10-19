@@ -8,7 +8,11 @@ import {
 import type { PostbattleRenderableGroup } from "@/features/battles/components/postbattle/postbattle-utils";
 import type { StatChangeRow } from "@/features/battles/components/postbattle/stat-changes";
 import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
-import type { BattleEvent, BattlePostbattleState } from "@/features/battles/types/battle-types";
+import type {
+  BattleEvent,
+  BattlePostbattleState,
+  BattlePostbattleSuggestion,
+} from "@/features/battles/types/battle-types";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import type { WarbandSheet } from "@/features/warbands/types/warband-sheet";
 
@@ -59,6 +63,7 @@ export function buildFinalizeSummary({
   roster,
   sheet,
   campaign,
+  suggestion,
   resourceAmount,
   resourceName,
   upkeepRows,
@@ -73,6 +78,8 @@ export function buildFinalizeSummary({
   roster: ParticipantRoster | undefined;
   sheet: WarbandSheet | undefined;
   campaign: Pick<CampaignSummary, "hero_level_thresholds" | "henchmen_level_thresholds"> | null;
+  /** The server's suggestions: their `level_ups` count where the XP wasn't changed. */
+  suggestion?: BattlePostbattleSuggestion;
   resourceAmount: number;
   resourceName: string | null;
   upkeepRows: UpkeepRow[];
@@ -91,7 +98,7 @@ export function buildFinalizeSummary({
       unitName: row.unitName,
       xpEarned: row.xpEarned,
     })),
-    levelUps: buildLevelUps(xpRows, sheet, campaign),
+    levelUps: buildLevelUps(xpRows, sheet, campaign, suggestion?.unit_results),
     keptStatChanges: statChangeRows.filter((row) => row.kept),
     droppedStatChanges: statChangeRows.filter((row) => !row.kept),
     itemsUsed: buildItemsUsed(events, userId, roster),

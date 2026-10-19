@@ -330,7 +330,14 @@ export type BattlePostbattleRules = {
 
 /** The server's suggestions for the reader's own postbattle (IMP-52). */
 export type BattlePostbattleSuggestion = {
-  unit_results: Record<string, { xp_earned: number }>;
+  /**
+   * Per unit: the suggested XP, why (BATL-NEW-09: "survived" +1, "2 kills" +2, "winning
+   * leader" +1...) and the level-ups that XP would bring (BATL-NEW-10).
+   */
+  unit_results: Record<
+    string,
+    { xp_earned: number; reasons?: { label: string; xp: number }[]; level_ups?: number }
+  >;
   exploration: { dice_count: number };
   upkeep: { entries: Record<string, { unit_name: string; cost: number | null }> };
 };

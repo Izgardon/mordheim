@@ -408,6 +408,47 @@ describe("BattlePostbattle requests", () => {
     expect(screen.queryByRole("checkbox", { name: /^Apply Arm Wound/ })).toBeNull();
   });
 
+  it("says why each XP is suggested, and counts the server's level-ups in the summary (BATL-NEW-09, -10)", async () => {
+    const user = setupUser();
+    server.suggested_postbattle = {
+      unit_results: {
+        "hero:1": {
+          xp_earned: 4,
+          reasons: [
+            { label: "survived", xp: 1 },
+            { label: "2 kills", xp: 2 },
+            { label: "winning leader", xp: 1 },
+          ],
+          level_ups: 1,
+        },
+        "hired_sword:4": {
+          xp_earned: 0,
+          reasons: [{ label: "no level-ups", xp: 0 }],
+          level_ups: 0,
+        },
+      },
+      exploration: { dice_count: 2 },
+      upkeep: { entries: {} },
+    };
+    await renderPostbattle();
+
+    expect(
+      within(row("Captain Wolf")).getByRole("img", {
+        name: "Why 4 XP for Captain Wolf: survived +1, 2 kills +2, winning leader +1",
+      })
+    ).toBeInTheDocument();
+    expect(
+      within(row("Ogre Bodyguard")).getByRole("img", {
+        name: "Why 0 XP for Ogre Bodyguard: no level-ups",
+      })
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Finalise Postbattle" }));
+    const dialog = screen.getByRole("dialog", { name: "Finalise Postbattle" });
+    // The server's count (its high-water mark and tables), not a preview from the sheet.
+    expect(dialog).toHaveTextContent("Captain Wolf reaches a level-up.");
+  });
+
   it("seeds the exploration dice from the suggestion when it arrives after the page opened", async () => {
     // Reached from Active, the cache had no suggestion; the read that follows brings it.
     const suggestion = server.suggested_postbattle;

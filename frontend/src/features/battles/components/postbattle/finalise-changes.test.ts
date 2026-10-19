@@ -66,6 +66,34 @@ describe("finalise changes", () => {
     expect(buildLevelUps(awards, undefined, null)).toEqual([]);
   });
 
+  it("takes the server's level-ups where the XP is the suggested one, else counts them (BATL-NEW-10)", () => {
+    const awards = [
+      {
+        unitKey: "hero:1",
+        unitName: "Wolf",
+        unitKind: "hero" as const,
+        groupName: "",
+        xpEarned: 3,
+      },
+      {
+        unitKey: "henchman:2",
+        unitName: "Lad",
+        unitKind: "henchman" as const,
+        groupName: "Youngbloods",
+        xpEarned: 2,
+      },
+    ];
+    const server = {
+      // Wolf's XP was changed by hand: the sheet and thresholds count it.
+      "hero:1": { xp_earned: 1, level_ups: 0 },
+      "henchman:2": { xp_earned: 2, level_ups: 2 },
+    };
+    expect(buildLevelUps(awards, sheet, { hero_level_thresholds: [8, 12] }, server)).toEqual([
+      { key: "hero:1", unitName: "Wolf", levelUps: 1, xpFrom: 7, xpTo: 8.5 },
+      { key: "group:Youngbloods", unitName: "Youngbloods", levelUps: 2 },
+    ]);
+  });
+
   it("lists the player's own item uses that still count", () => {
     const use = (id: number, actor: number, voided = false) => ({
       ...battleEvent(id, "item_used", actor, { unit_key: "hero:1", item_name: "Rope" }),

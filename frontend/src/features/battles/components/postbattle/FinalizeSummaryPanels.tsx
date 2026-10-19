@@ -126,7 +126,7 @@ export default function FinalizeSummaryPanels({
         title="Level-ups"
         lines={summary.levelUps.map((row) => ({
           key: `level-${row.key}`,
-          text: `${row.unitName} reaches ${row.levelUps === 1 ? "a level-up" : plural(row.levelUps, "level-up")} (XP ${row.xpFrom} → ${row.xpTo}).`,
+          text: `${row.unitName} reaches ${row.levelUps === 1 ? "a level-up" : plural(row.levelUps, "level-up")}${row.xpFrom !== undefined ? ` (XP ${row.xpFrom} → ${row.xpTo})` : ""}.`,
         }))}
       />
       <OptionalPanel
