@@ -50,16 +50,15 @@ export default function UnitResultCard({
           <PostbattleInjuryRollButton row={row} tools={tools} />
         </div>
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <div className="flex flex-wrap items-end gap-4">
-            {row.canGainXp ? (
-              <PostbattleXpField
-                value={row.xpEarned}
-                disabled={tools.isFinalized}
-                onCommit={(nextXp) => tools.actions.commitUnitXp(row.unitKey, nextXp)}
-              />
-            ) : null}
-            <PostbattleRowKills row={row} tools={tools} />
-          </div>
+          {row.canGainXp ? (
+            <PostbattleXpField
+              value={row.xpEarned}
+              disabled={tools.isFinalized}
+              onCommit={(nextXp) => tools.actions.commitUnitXp(row.unitKey, nextXp)}
+            />
+          ) : (
+            <span />
+          )}
           <PostbattleDeadTick
             unitKey={row.unitKey}
             unitKind={row.unitKind}
@@ -68,6 +67,7 @@ export default function UnitResultCard({
             onChange={(checked) => void tools.actions.toggleDead(row, checked)}
           />
         </div>
+        <PostbattleRowKills row={row} tools={tools} />
         <PostbattleRowKeepStats unitKeys={[row.unitKey]} unitName={row.unitName} tools={tools} />
       </div>
       <PostbattleRowInjuries row={row} className="mt-3" tools={tools} />

@@ -35,7 +35,7 @@ describe("postbattle summary", () => {
     expect(buildUpkeepRows(null, roster)).toEqual([]);
   });
 
-  it("sums up deaths, XP, kills, finds and the upkeep that is paid", () => {
+  it("sums up deaths, XP, the kill lists, finds and the upkeep that is paid", () => {
     const groups = [
       {
         key: "heroes",
@@ -63,6 +63,8 @@ describe("postbattle summary", () => {
     const summary = buildFinalizeSummary({
       groups,
       draft,
+      // The kill list is the number, not the row's stored count (BATL-NEW-06).
+      victimsByUnitKey: { "hero:1": ["Player's Black Fang"], "hero:3": [] },
       resourceAmount: 2,
       resourceName: "Treasure",
       upkeepRows: buildUpkeepRows(draft, roster),
@@ -71,7 +73,9 @@ describe("postbattle summary", () => {
 
     expect(summary.deaths.map((row) => row.unitKey)).toEqual(["hero:3"]);
     expect(summary.xpAwards).toEqual([{ unitKey: "hero:1", unitName: "Wolf", xpEarned: 3 }]);
-    expect(summary.kills).toEqual([{ unitKey: "hero:1", unitName: "Wolf", killCount: 2 }]);
+    expect(summary.kills).toEqual([
+      { unitKey: "hero:1", unitName: "Wolf", victims: ["Player's Black Fang"] },
+    ]);
     expect(summary).toMatchObject({ findsGoldCrowns: 12, payUpkeep: true, upkeepTotal: 15 });
     expect(summary.upkeepRows).toHaveLength(1);
   });

@@ -16,7 +16,7 @@ export type SkippedPostbattleSummary = {
   findsGoldCrowns: number;
   findsItems: { name: string }[];
   xpAwards: { unitKey: string; unitName: string; xpEarned: number }[];
-  kills: { unitKey: string; unitName: string; killCount: number }[];
+  kills: { unitKey: string; unitName: string; victims: string[] }[];
   deaths: { unitKey: string; unitName: string }[];
   upkeepTotal: number;
   payUpkeep: boolean;
@@ -40,7 +40,7 @@ export function skippedPostbattleLines(summary: SkippedPostbattleSummary) {
       : null,
     summary.kills.length > 0
       ? `Kills: ${summary.kills
-          .map((row) => `${row.unitName} ${plural(row.killCount, "kill")}`)
+          .map((row) => `${row.unitName} ${plural(row.victims.length, "kill")}`)
           .join(", ")}`
       : null,
     summary.deaths.length > 0

@@ -15,4 +15,6 @@ export type PostbattleRowTools = {
   userId: number | undefined;
   baseStatsByUnitKey: Record<string, UnitStats>;
   unitInformation: Record<string, BattleUnitInformationEntry>;
+  /** Who a kill took out, for the kill lists (BATL-NEW-06). */
+  victimName: (kill: BattleEvent) => string;
 };

@@ -45,18 +45,18 @@ export default function HenchmenGroupResult({
               <div className="space-y-3">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <p className="font-semibold text-foreground">{row.unitName}</p>
-                  <PostbattleInjuryRollButton row={row} tools={tools} />
+                  <div className="flex flex-wrap items-center gap-3">
+                    <PostbattleInjuryRollButton row={row} tools={tools} />
+                    <PostbattleDeadTick
+                      unitKey={row.unitKey}
+                      unitKind={row.unitKind}
+                      checked={row.dead}
+                      disabled={tools.isFinalized}
+                      onChange={(checked) => void tools.actions.toggleDead(row, checked)}
+                    />
+                  </div>
                 </div>
-                <div className="flex flex-wrap items-end justify-between gap-3">
-                  <PostbattleRowKills row={row} tools={tools} />
-                  <PostbattleDeadTick
-                    unitKey={row.unitKey}
-                    unitKind={row.unitKind}
-                    checked={row.dead}
-                    disabled={tools.isFinalized}
-                    onChange={(checked) => void tools.actions.toggleDead(row, checked)}
-                  />
-                </div>
+                <PostbattleRowKills row={row} tools={tools} />
                 <PostbattleRowInjuries row={row} tools={tools} />
               </div>
             </div>

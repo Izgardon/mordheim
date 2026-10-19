@@ -41,10 +41,16 @@ const ROPE = { id: 77, name: "Rope & Hook", type: "Miscellaneous", availabilitie
 const SWORD = { id: 78, name: "Sword", type: "Hand-to-hand", availabilities: [] };
 const RESOURCES = [{ id: 9, warband_id: ME.warband.id, name: "Treasure", amount: 0 }];
 
-const killBy = (id: number, killerKey: string) =>
+const killBy = (
+  id: number,
+  killerKey: string,
+  victim: Record<string, unknown> = { unit_key: "hero:2", warband_id: OPPONENT.warband.id },
+  earnedXp = true
+) =>
   battleEvent(id, "unit_kill_recorded", ME.id, {
     killer: { warband_id: ME.warband.id, unit_key: killerKey },
-    earned_xp: true,
+    victim,
+    earned_xp: earnedXp,
   });
 
 /** The server's copy of the battle: you won, Captain Wolf took two out, Rolf was taken out. */
@@ -73,7 +79,7 @@ function routeServer() {
         item_name: "Healing Draught",
       }),
       killBy(4, "hero:1"),
-      killBy(5, "hero:1"),
+      killBy(5, "hero:1", { unit_key: null, name: "Giant Rat" }, false),
     ],
   });
   // The postbattle view carries the server's rules and suggestions (IMP-52).
@@ -471,37 +477,49 @@ describe("BattlePostbattle requests", () => {
     expect(finalised.postbattle_json.unit_results["hero:1"].keep_stats).toBe(true);
   });
 
-  it("shows the kills that still count: Minus undoes the latest, Plus records one in postbattle (BUG-11)", async () => {
+  it("lists each unit's kills by victim; removes the one picked and adds one with a victim from the other roster (BATL-NEW-06)", async () => {
     const user = setupUser();
     // The answer carries only the new undo event, as the server's does.
-    fakeApi.on(`POST ${battlePath("events/5/void/")}`, () => ({
+    fakeApi.on(`POST ${battlePath("events/4/void/")}`, () => ({
       ...answer(),
       events: [
-        battleEvent(6, "unit_kill_voided", ME.id, { voided_event_id: 5, unit_key: "hero:1" }),
+        battleEvent(6, "unit_kill_voided", ME.id, { voided_event_id: 4, unit_key: "hero:1" }),
       ],
     }));
     fakeApi.on(`POST ${battlePath("unit-kill/")}`, () => ({
       ...answer(),
-      events: [killBy(7, "hero:1")],
+      events: [killBy(7, "hero:1", { unit_key: "hero:2", warband_id: OPPONENT.warband.id })],
     }));
     await renderPostbattle();
-    const kills = () => screen.getByRole("status", { name: "Captain Wolf's kills" });
-    expect(kills()).toHaveTextContent("2");
+    const kills = () =>
+      within(screen.getByRole("list", { name: "Kills by Captain Wolf" }))
+        .getAllByRole("listitem")
+        .map((item) => item.textContent);
+    expect(kills()).toEqual(["took out Player's Black Fang", "took out Giant Rat (no XP)"]);
+    expect(screen.getByRole("status", { name: "Captain Wolf's kills" })).toHaveTextContent("2");
 
-    await user.click(screen.getByRole("button", { name: "Undo Captain Wolf's latest kill" }));
-    const confirm = screen.getByRole("dialog", { name: "Undo kill" });
-    expect(confirm).toHaveAccessibleDescription(/marked undone/);
-    await user.click(within(confirm).getByRole("button", { name: "Undo kill" }));
-    await waitFor(() => expect(kills()).toHaveTextContent("1"));
+    // The first kill, not just the latest, can be removed.
+    await user.click(
+      screen.getByRole("button", { name: "Remove Captain Wolf's kill of Player's Black Fang" })
+    );
+    const confirm = screen.getByRole("dialog", { name: "Remove kill" });
+    expect(confirm).toHaveAccessibleDescription(
+      "Remove Captain Wolf's kill of Player's Black Fang? It stays in the battle log, marked undone."
+    );
+    await user.click(within(confirm).getByRole("button", { name: "Remove kill" }));
+    await waitFor(() => expect(kills()).toEqual(["took out Giant Rat (no XP)"]));
 
     await user.click(screen.getByRole("button", { name: "Add a kill for Captain Wolf" }));
     const dialog = screen.getByRole("dialog", { name: "Record Kill" });
     await user.selectOptions(within(dialog).getByRole("combobox"), "hero:2");
     await user.click(within(dialog).getByRole("button", { name: "Save" }));
-    await waitFor(() => expect(kills()).toHaveTextContent("2"));
+    await waitFor(() =>
+      expect(kills()).toEqual(["took out Giant Rat (no XP)", "took out Player's Black Fang"])
+    );
+    expect(screen.getByRole("status", { name: "Captain Wolf's kills" })).toHaveTextContent("2");
 
     expect(fakeApi.requests()).toEqual([
-      { method: "POST", path: battlePath("events/5/void/") },
+      { method: "POST", path: battlePath("events/4/void/") },
       {
         method: "POST",
         path: battlePath("unit-kill/"),
@@ -515,6 +533,33 @@ describe("BattlePostbattle requests", () => {
         },
       },
     ]);
+  });
+
+  it("adds a kill of a unit on no roster by its typed name (BATL-NEW-06)", async () => {
+    const user = setupUser();
+    fakeApi.on(`POST ${battlePath("unit-kill/")}`, () => ({
+      ...answer(),
+      events: [killBy(7, "hero:3", { unit_key: null, name: "Dire Wolf" })],
+    }));
+    await renderPostbattle();
+    expect(screen.queryByRole("list", { name: "Kills by Rolf" })).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "Add a kill for Rolf" }));
+    const dialog = screen.getByRole("dialog", { name: "Record Kill" });
+    await user.type(within(dialog).getByPlaceholderText("Non-recorded unit name"), "Dire Wolf");
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+
+    expect(
+      await within(await screen.findByRole("list", { name: "Kills by Rolf" })).findByText(
+        "took out Dire Wolf"
+      )
+    ).toBeInTheDocument();
+    expect(fakeApi.bodyOf(`POST ${battlePath("unit-kill/")}`)).toMatchObject({
+      killer_unit_key: "hero:3",
+      victim_unit_key: undefined,
+      victim_name: "Dire Wolf",
+      source: "postbattle",
+    });
   });
 
   it("sums up exploration, finds, deaths, XP and upkeep only, then finalises with the rolled dice (BATL-UX-04, BATL-TEST-27 baseline, pinned; flips in PR C)", async () => {

@@ -34,10 +34,14 @@ export function buildUpkeepRows(
   });
 }
 
-/** What finalising applies, as the finalise and skip dialogs list it. */
+/**
+ * What finalising applies, as the finalise and skip dialogs list it. `victimsByUnitKey` is each
+ * unit's kill list (who it took out), the number finalise applies (BATL-NEW-06).
+ */
 export function buildFinalizeSummary({
   groups,
   draft,
+  victimsByUnitKey,
   resourceAmount,
   resourceName,
   upkeepRows,
@@ -45,6 +49,7 @@ export function buildFinalizeSummary({
 }: {
   groups: PostbattleRenderableGroup[];
   draft: BattlePostbattleState | null;
+  victimsByUnitKey: Record<string, string[]>;
   resourceAmount: number;
   resourceName: string | null;
   upkeepRows: UpkeepRow[];
@@ -57,8 +62,12 @@ export function buildFinalizeSummary({
       .filter((row) => row.canGainXp && row.xpEarned > 0)
       .map((row) => ({ unitKey: row.unitKey, unitName: row.unitName, xpEarned: row.xpEarned })),
     kills: rows
-      .filter((row) => row.killCount > 0)
-      .map((row) => ({ unitKey: row.unitKey, unitName: row.unitName, killCount: row.killCount })),
+      .map((row) => ({
+        unitKey: row.unitKey,
+        unitName: row.unitName,
+        victims: victimsByUnitKey[row.unitKey] ?? [],
+      }))
+      .filter((row) => row.victims.length > 0),
     findsGoldCrowns: draft?.finds.gold_crowns ?? 0,
     findsItems: draft?.finds.items ?? [],
     resourceAmount,

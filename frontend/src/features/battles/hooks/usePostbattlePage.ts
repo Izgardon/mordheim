@@ -21,6 +21,9 @@ import { usePostbattleDraft } from "@/features/battles/hooks/usePostbattleDraft"
 import { usePostbattleExit } from "@/features/battles/hooks/usePostbattleExit";
 import { usePostbattleUnitActions } from "@/features/battles/hooks/usePostbattleUnitActions";
 import { useBattle } from "@/features/battles/state/battle-context";
+import type { BattleEvent } from "@/features/battles/types/battle-types";
+import { liveKillEvents } from "@/features/battles/utils/battle-events";
+import { killVictimName } from "@/features/battles/utils/kill-victims";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { warbandSheetQuery } from "@/features/warbands/api/warband-queries";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
@@ -110,17 +113,43 @@ export function usePostbattlePage(campaign: CampaignSummary | null | undefined) 
   );
   const upkeepRows = useMemo(() => buildUpkeepRows(draft, currentRoster), [currentRoster, draft]);
   const upkeepTotal = useMemo(() => getPostbattleUpkeepTotal(draft), [draft]);
+  const victimName = useCallback(
+    (kill: BattleEvent) => killVictimName(kill, battleState.participants, rosters),
+    [battleState.participants, rosters]
+  );
+  // Each unit's kills that still count, by victim: the list is the number (BATL-NEW-06).
+  const victimsByUnitKey = useMemo(
+    () =>
+      Object.fromEntries(
+        groups
+          .flatMap((group) => group.rows)
+          .map((row) => [
+            row.unitKey,
+            liveKillEvents(battleState.events, row.unitKey, user?.id).map(victimName),
+          ])
+      ),
+    [battleState.events, groups, user?.id, victimName]
+  );
   const summary = useMemo(
     () =>
       buildFinalizeSummary({
         groups,
         draft,
+        victimsByUnitKey,
         resourceAmount: explore.amount,
         resourceName: explore.resource?.name ?? null,
         upkeepRows,
         upkeepTotal,
       }),
-    [draft, explore.amount, explore.resource?.name, groups, upkeepRows, upkeepTotal]
+    [
+      draft,
+      explore.amount,
+      explore.resource?.name,
+      groups,
+      upkeepRows,
+      upkeepTotal,
+      victimsByUnitKey,
+    ]
   );
   const baseStatsByUnitKey = useMemo(
     () =>
@@ -146,6 +175,7 @@ export function usePostbattlePage(campaign: CampaignSummary | null | undefined) 
     userId: user?.id,
     baseStatsByUnitKey,
     unitInformation: currentParticipant?.unit_information_json ?? {},
+    victimName,
   };
 
   return {

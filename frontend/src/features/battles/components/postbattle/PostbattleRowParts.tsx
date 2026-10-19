@@ -3,13 +3,13 @@ import PostbattleInjuryResult from "@/features/battles/components/postbattle/Pos
 import PostbattleKeepStatsTick, {
   statChanges,
 } from "@/features/battles/components/postbattle/PostbattleKeepStatsTick";
-import PostbattleKillsControl from "@/features/battles/components/postbattle/PostbattleKillsControl";
+import PostbattleKillList from "@/features/battles/components/postbattle/PostbattleKillList";
 import type { PostbattleRenderableRow } from "@/features/battles/components/postbattle/postbattle-utils";
 import type { PostbattleRowTools } from "@/features/battles/components/postbattle/postbattle-row-tools";
 import { liveKillEvents } from "@/features/battles/utils/battle-events";
 import { cn } from "@/lib/utils";
 
-/** A unit's kills: the live kill events, Plus to add one, Minus to undo the latest (BUG-11). */
+/** A unit's kills by victim: the live kill events, each removable, and Add kill (BATL-NEW-06). */
 export function PostbattleRowKills({
   row,
   tools,
@@ -18,11 +18,12 @@ export function PostbattleRowKills({
   tools: PostbattleRowTools;
 }) {
   return (
-    <PostbattleKillsControl
+    <PostbattleKillList
       unitKey={row.unitKey}
       unitName={row.unitName}
       unitKind={row.unitKind}
       kills={liveKillEvents(tools.events, row.unitKey, tools.userId)}
+      victimName={tools.victimName}
       killTargetOptions={tools.actions.killTargetOptions}
       disabled={tools.isFinalized}
       onAddKill={tools.actions.addKill}

@@ -251,7 +251,8 @@ export type BattleParticipant = BattleParticipantCore &
 /** What a kill event says (`unit-kill/`): who took whom out, and whether it earns XP. */
 export type UnitKillPayload = {
   killer?: { unit_key?: string; warband_id?: number; name?: string };
-  victim?: { unit_key?: string; name?: string };
+  /** A unit of another warband (its key and warband), or only the name typed for one. */
+  victim?: { unit_key?: string | null; warband_id?: number | null; name?: string | null };
   earned_xp?: boolean;
   source?: "battle" | "postbattle";
   [field: string]: unknown;
