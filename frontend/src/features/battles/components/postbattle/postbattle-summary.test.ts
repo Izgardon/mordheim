@@ -47,6 +47,7 @@ describe("postbattle summary", () => {
             canGainXp: true,
             xpEarned: 3,
             killCount: 2,
+            seriousInjuryRolls: [],
           },
           {
             unitKey: "hero:3",
@@ -55,6 +56,7 @@ describe("postbattle summary", () => {
             canGainXp: true,
             xpEarned: 0,
             killCount: 0,
+            seriousInjuryRolls: [],
           },
         ],
       },
@@ -65,6 +67,12 @@ describe("postbattle summary", () => {
       draft,
       // The kill list is the number, not the row's stored count (BATL-NEW-06).
       victimsByUnitKey: { "hero:1": ["Player's Black Fang"], "hero:3": [] },
+      statChangeRows: [],
+      events: [],
+      userId: ME.id,
+      roster,
+      sheet: undefined,
+      campaign: null,
       resourceAmount: 2,
       resourceName: "Treasure",
       upkeepRows: buildUpkeepRows(draft, roster),

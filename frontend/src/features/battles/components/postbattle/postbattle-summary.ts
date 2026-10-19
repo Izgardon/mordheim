@@ -1,6 +1,16 @@
+import {
+  buildGold,
+  buildInjuries,
+  buildItemsLost,
+  buildItemsUsed,
+  buildLevelUps,
+} from "@/features/battles/components/postbattle/finalise-changes";
 import type { PostbattleRenderableGroup } from "@/features/battles/components/postbattle/postbattle-utils";
+import type { StatChangeRow } from "@/features/battles/components/postbattle/stat-changes";
 import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
-import type { BattlePostbattleState } from "@/features/battles/types/battle-types";
+import type { BattleEvent, BattlePostbattleState } from "@/features/battles/types/battle-types";
+import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
+import type { WarbandSheet } from "@/features/warbands/types/warband-sheet";
 
 export type UpkeepRow = {
   unitKey: string;
@@ -35,13 +45,20 @@ export function buildUpkeepRows(
 }
 
 /**
- * What finalising applies, as the finalise and skip dialogs list it. `victimsByUnitKey` is each
- * unit's kill list (who it took out), the number finalise applies (BATL-NEW-06).
+ * Every permanent change finalising applies, as the finalise dialog lists it (BATL-NEW-10) and
+ * the skip dialog lists what won't be applied. `victimsByUnitKey` is each unit's kill list (who
+ * it took out), the number finalise applies (BATL-NEW-06).
  */
 export function buildFinalizeSummary({
   groups,
   draft,
   victimsByUnitKey,
+  statChangeRows,
+  events,
+  userId,
+  roster,
+  sheet,
+  campaign,
   resourceAmount,
   resourceName,
   upkeepRows,
@@ -50,17 +67,35 @@ export function buildFinalizeSummary({
   groups: PostbattleRenderableGroup[];
   draft: BattlePostbattleState | null;
   victimsByUnitKey: Record<string, string[]>;
+  statChangeRows: StatChangeRow[];
+  events: BattleEvent[];
+  userId: number | undefined;
+  roster: ParticipantRoster | undefined;
+  sheet: WarbandSheet | undefined;
+  campaign: Pick<CampaignSummary, "hero_level_thresholds" | "henchmen_level_thresholds"> | null;
   resourceAmount: number;
   resourceName: string | null;
   upkeepRows: UpkeepRow[];
   upkeepTotal: number;
 }) {
   const rows = groups.flatMap((group) => group.rows);
+  const xpRows = rows.filter((row) => row.canGainXp && row.xpEarned > 0);
+  const payUpkeep = Boolean(draft?.upkeep.pay_upkeep);
+  const findsGoldCrowns = draft?.finds.gold_crowns ?? 0;
   return {
     deaths: rows.filter((row) => row.dead),
-    xpAwards: rows
-      .filter((row) => row.canGainXp && row.xpEarned > 0)
-      .map((row) => ({ unitKey: row.unitKey, unitName: row.unitName, xpEarned: row.xpEarned })),
+    itemsLost: buildItemsLost(rows, roster),
+    injuries: buildInjuries(rows),
+    xpAwards: xpRows.map((row) => ({
+      unitKey: row.unitKey,
+      unitName: row.unitName,
+      xpEarned: row.xpEarned,
+    })),
+    levelUps: buildLevelUps(xpRows, sheet, campaign),
+    keptStatChanges: statChangeRows.filter((row) => row.kept),
+    droppedStatChanges: statChangeRows.filter((row) => !row.kept),
+    itemsUsed: buildItemsUsed(events, userId, roster),
+    gold: buildGold({ sheet, findsGoldCrowns, upkeepPaid: payUpkeep ? upkeepTotal : 0 }),
     kills: rows
       .map((row) => ({
         unitKey: row.unitKey,
@@ -68,13 +103,13 @@ export function buildFinalizeSummary({
         victims: victimsByUnitKey[row.unitKey] ?? [],
       }))
       .filter((row) => row.victims.length > 0),
-    findsGoldCrowns: draft?.finds.gold_crowns ?? 0,
+    findsGoldCrowns,
     findsItems: draft?.finds.items ?? [],
     resourceAmount,
     resourceName,
     upkeepRows: upkeepRows.filter((row) => !row.dead && typeof row.cost === "number"),
     upkeepTotal,
-    payUpkeep: Boolean(draft?.upkeep.pay_upkeep),
+    payUpkeep,
   };
 }
 

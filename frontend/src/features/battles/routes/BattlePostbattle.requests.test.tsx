@@ -599,27 +599,117 @@ describe("BattlePostbattle requests", () => {
     });
   });
 
-  it("sums up exploration, finds, deaths, XP and upkeep only, then finalises with the rolled dice (BATL-UX-04, BATL-TEST-27 baseline, pinned; flips in PR C)", async () => {
+  it("lists every permanent change before finalising, then finalises with the rolled dice (BATL-NEW-10, BATL-TEST-27)", async () => {
     const user = setupUser();
-    await renderPostbattle();
+    const mine = server.participants.find((entry) => entry.user.id === ME.id)!;
+    mine.postbattle_json = {
+      exploration: { dice_values: [], resource_id: null },
+      finds: { gold_crowns: 0, items: [] },
+      upkeep: { pay_upkeep: true, entries: {} },
+      unit_results: {
+        "hero:1": { keep_stats: true },
+        "hero:3": {
+          serious_injury_rolls: [
+            {
+              roll_type: "d66",
+              rolls: [3, 4],
+              result_code: "34",
+              result_label: "Arm Wound",
+              dead_suggestion: false,
+              effect: { kind: "manual" },
+            },
+          ],
+        },
+        "henchman:2": {
+          dead: true,
+          serious_injury_rolls: [
+            {
+              roll_type: "d6",
+              rolls: [1],
+              result_code: "1",
+              result_label: "Dead",
+              dead_suggestion: true,
+              apply: true,
+              effect: { kind: "dead" },
+            },
+          ],
+        },
+      },
+    } as unknown as BattlePostbattleState;
+    const rosters = battleRosters();
+    rosters[String(ME.id)].henchmenGroups[0].members[0].items = [
+      { id: 51, name: "Club", count: 1, singleUse: false },
+    ];
+    fakeApi.on(`GET ${battlePath("rosters/")}`, rosters);
+    fakeApi.on(`GET /warbands/${ME.warband.id}/sheet/`, {
+      ...mySheet(RESOURCES),
+      warband: { id: ME.warband.id, name: ME.warband.name, gold: 10 },
+      heroes: [{ id: 1, xp: 3, half_rate: false }],
+      hired_swords: [{ id: 4, xp: 0, half_rate: false, no_level_ups: false }],
+      henchmen_groups: [
+        { id: 11, name: "Youngbloods", xp: 1, half_rate: false, henchmen: [{ id: 2 }] },
+      ],
+    });
     fakeApi.on(`POST ${battlePath("finalize-postbattle/")}`, () =>
       battleState({ status: "postbattle", me: { status: "confirmed_postbattle" } })
     );
+    await renderPostbattle();
     await user.click(screen.getByRole("button", { name: "Roll" }));
 
     await user.click(screen.getByRole("button", { name: "Finalise Postbattle" }));
     const dialog = screen.getByRole("dialog", { name: "Finalise Postbattle" });
+    const panel = (title: string) =>
+      Array.from(dialog.querySelectorAll(".battle-section-title"))
+        .find((element) => element.textContent === title)!
+        .closest(".battle-inline-panel") as HTMLElement;
+    const lines = (title: string) =>
+      Array.from(panel(title).querySelectorAll("p:not(.battle-section-title)"), (line) =>
+        line.textContent?.trim()
+      );
 
     expect(
       Array.from(dialog.querySelectorAll(".battle-section-title"), (title) => title.textContent)
-    ).toEqual(["Exploration", "Finds", "Deaths", "XP Awards", "Upkeep"]);
-    expect(dialog).toHaveTextContent("You will gain 2 Treasure.");
-    expect(dialog).toHaveTextContent("No finds are currently set.");
-    expect(dialog).toHaveTextContent("No units are marked dead.");
-    expect(dialog).toHaveTextContent("Captain Wolf will gain 3 XP.");
-    expect(dialog).toHaveTextContent("You will be paying 15gc in upkeep.");
-    // Captain Wolf's WS 5, his two kills and the Healing Draught go unmentioned; nor do level-ups.
-    expect(dialog).not.toHaveTextContent(/kill|weapon|WS|level|Healing Draught|injur/i);
+    ).toEqual([
+      "Exploration",
+      "Finds",
+      "Deaths",
+      "Items lost",
+      "Serious injuries",
+      "XP Awards",
+      "Level-ups",
+      "Kills",
+      "Stat changes",
+      "Items used",
+      "Upkeep",
+      "Gold",
+    ]);
+    expect(lines("Exploration")).toEqual(["You will gain 2 Treasure."]);
+    expect(lines("Deaths")).toEqual(["Youngblood A will be marked dead."]);
+    expect(lines("Items lost")).toEqual([
+      "Youngblood A takes one of each of his group's items with him: Club.",
+    ]);
+    expect(lines("Serious injuries")).toEqual([
+      "Rolf: Arm Wound: apply by hand on the warband sheet.",
+      "Youngblood A: Dead (He dies).",
+    ]);
+    expect(lines("XP Awards")).toEqual([
+      "Captain Wolf will gain 3 XP.",
+      "Rolf will gain 1 XP.",
+      "Youngblood A will gain 1 XP.",
+      "Ogre Bodyguard will gain 1 XP.",
+    ]);
+    // The campaign's default thresholds: heroes level at 2, 4, 6...; henchmen at 2, 5, 9, 14.
+    expect(lines("Level-ups")).toEqual([
+      "Captain Wolf reaches 2 level-ups (XP 3 → 6).",
+      "Youngbloods reaches a level-up (XP 1 → 2).",
+    ]);
+    expect(lines("Kills")).toEqual(["Captain Wolf took out Player's Black Fang, Giant Rat."]);
+    expect(lines("Stat changes")).toEqual(["Captain Wolf keeps WS 4 → 5."]);
+    expect(lines("Items used")).toEqual(["Captain Wolf's Healing Draught is used up."]);
+    expect(lines("Upkeep")).toEqual(["You will be paying 15gc in upkeep."]);
+    expect(lines("Gold")).toEqual(["10 gc now, -15 gc upkeep: -5 gc after this battle."]);
+    // Gold below zero shows in red (pass 2 decision 2).
+    expect(within(panel("Gold")).getByText("-5 gc")).toHaveClass("text-red-500");
 
     await user.click(within(dialog).getByRole("button", { name: "Confirm" }));
 
@@ -633,10 +723,36 @@ describe("BattlePostbattle requests", () => {
       amount_override: undefined,
     });
     expect(finalised.postbattle_json.unit_results["hero:1"]).toMatchObject({
-      kill_count: 2,
+      keep_stats: true,
       xp_earned: 3,
       special_ids: [],
     });
+  });
+
+  it("leaves out the kinds of change a battle didn't have, and counts found gold in the gold", async () => {
+    const user = setupUser();
+    const mine = server.participants.find((entry) => entry.user.id === ME.id)!;
+    mine.unit_information_json = {};
+    server.events = [];
+    mine.postbattle_json = {
+      exploration: { dice_values: [], resource_id: null },
+      finds: { gold_crowns: 30, items: [] },
+      upkeep: { pay_upkeep: false, entries: {} },
+      unit_results: {},
+    } as unknown as BattlePostbattleState;
+    fakeApi.on(`GET /warbands/${ME.warband.id}/sheet/`, {
+      ...mySheet(RESOURCES),
+      warband: { id: ME.warband.id, name: ME.warband.name, gold: 10 },
+    });
+    await renderPostbattle();
+
+    await user.click(screen.getByRole("button", { name: "Finalise Postbattle" }));
+    const dialog = screen.getByRole("dialog", { name: "Finalise Postbattle" });
+    expect(
+      Array.from(dialog.querySelectorAll(".battle-section-title"), (title) => title.textContent)
+    ).toEqual(["Exploration", "Finds", "Deaths", "XP Awards", "Upkeep", "Gold"]);
+    expect(dialog).toHaveTextContent("10 gc now, +30 gc found: 40 gc after this battle.");
+    expect(within(dialog).getByText("40 gc")).not.toHaveClass("text-red-500");
   });
 
   it("loads the campaign's items once when the finds picker opens and filters them as you type (PERF-40)", async () => {

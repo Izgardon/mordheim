@@ -5,26 +5,19 @@ import { useAuth } from "@/features/auth/hooks/use-auth";
 import { saveBattleParticipantConfig } from "@/features/battles/api/battles-api";
 import { heroDeathRollFor } from "@/features/battles/components/postbattle/postbattle-rules";
 import type { PostbattleRowTools } from "@/features/battles/components/postbattle/postbattle-row-tools";
-import { buildStatChangeRows } from "@/features/battles/components/postbattle/stat-changes";
-import {
-  buildFinalizeSummary,
-  buildUpkeepRows,
-} from "@/features/battles/components/postbattle/postbattle-summary";
+import { buildUpkeepRows } from "@/features/battles/components/postbattle/postbattle-summary";
 import {
   buildRenderableGroups,
   getPostbattleUpkeepTotal,
   isPostbattleDraftValid,
 } from "@/features/battles/components/postbattle/postbattle-utils";
-import { flattenRosterUnits } from "@/features/battles/components/prebattle/prebattle-utils";
 import { useExploration } from "@/features/battles/hooks/useExploration";
 import { useFindItemSearch } from "@/features/battles/hooks/useFindItemSearch";
 import { usePostbattleDraft } from "@/features/battles/hooks/usePostbattleDraft";
 import { usePostbattleExit } from "@/features/battles/hooks/usePostbattleExit";
+import { usePostbattleSummary } from "@/features/battles/hooks/usePostbattleSummary";
 import { usePostbattleUnitActions } from "@/features/battles/hooks/usePostbattleUnitActions";
 import { useBattle } from "@/features/battles/state/battle-context";
-import type { BattleEvent } from "@/features/battles/types/battle-types";
-import { liveKillEvents } from "@/features/battles/utils/battle-events";
-import { killVictimName } from "@/features/battles/utils/kill-victims";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { warbandSheetQuery } from "@/features/warbands/api/warband-queries";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
@@ -114,49 +107,21 @@ export function usePostbattlePage(campaign: CampaignSummary | null | undefined) 
   );
   const upkeepRows = useMemo(() => buildUpkeepRows(draft, currentRoster), [currentRoster, draft]);
   const upkeepTotal = useMemo(() => getPostbattleUpkeepTotal(draft), [draft]);
-  const victimName = useCallback(
-    (kill: BattleEvent) => killVictimName(kill, battleState.participants, rosters),
-    [battleState.participants, rosters]
-  );
-  // Each unit's kills that still count, by victim: the list is the number (BATL-NEW-06).
-  const victimsByUnitKey = useMemo(
-    () =>
-      Object.fromEntries(
-        groups
-          .flatMap((group) => group.rows)
-          .map((row) => [
-            row.unitKey,
-            liveKillEvents(battleState.events, row.unitKey, user?.id).map(victimName),
-          ])
-      ),
-    [battleState.events, groups, user?.id, victimName]
-  );
-  const summary = useMemo(
-    () =>
-      buildFinalizeSummary({
-        groups,
-        draft,
-        victimsByUnitKey,
-        resourceAmount: explore.amount,
-        resourceName: explore.resource?.name ?? null,
-        upkeepRows,
-        upkeepTotal,
-      }),
-    [
-      draft,
-      explore.amount,
-      explore.resource?.name,
-      groups,
-      upkeepRows,
-      upkeepTotal,
-      victimsByUnitKey,
-    ]
-  );
-  const baseStatsByUnitKey = useMemo(
-    () =>
-      Object.fromEntries(flattenRosterUnits(currentRoster).map((unit) => [unit.key, unit.stats])),
-    [currentRoster]
-  );
+  const { victimName, statChangeRows, summary } = usePostbattleSummary({
+    battleState,
+    rosters,
+    currentParticipant,
+    currentRoster,
+    userId: user?.id,
+    draft,
+    groups,
+    resourceAmount: explore.amount,
+    resourceName: explore.resource?.name ?? null,
+    upkeepRows,
+    upkeepTotal,
+    sheet: sheetQuery.data,
+    campaign,
+  });
   const saveBattleNotes = useCallback(
     async (battleNotes: string) => {
       if (!currentParticipant) {
@@ -167,17 +132,6 @@ export function usePostbattlePage(campaign: CampaignSummary | null | undefined) 
       );
     },
     [applyBattleResponse, battleId, campaignId, currentParticipant]
-  );
-  const unitInformation = currentParticipant?.unit_information_json;
-  const statChangeRows = useMemo(
-    () =>
-      buildStatChangeRows({
-        groups,
-        draft,
-        baseStatsByUnitKey,
-        unitInformation: unitInformation ?? {},
-      }),
-    [baseStatsByUnitKey, draft, groups, unitInformation]
   );
   const rowTools: PostbattleRowTools = {
     draft,
