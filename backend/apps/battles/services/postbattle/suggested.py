@@ -1,12 +1,14 @@
 """What postbattle suggests to the player, and the rules it plays by, from the server (IMP-52, BATL-CQ-03).
 
 `suggested_postbattle` is today's rule, which the postbattle page worked out on its own until now:
-- XP: 1 for each hero and hired sword (0 for one with no level-ups) plus 1 per live kill that earns XP; a henchmen
-  group earns 1 plus its selected members' kills, the same for each member (0 when any has no level-ups);
+- XP: 1 for each hero and hired sword (0 for one with no level-ups) plus 1 per live kill that earns XP, plus 1 for
+  a winning warband's leader (Winning Leader, BATL-NEW-09); a henchmen group earns 1 plus its selected members'
+  kills, the same for each member (0 when any has no level-ups). Each unit's suggestion lists its `reasons`
+  (`[{"label": "survived", "xp": 1}, {"label": "2 kills", "xp": 2}, {"label": "winning leader", "xp": 1}]`), which
+  add up to its `xp_earned`;
 - exploration dice: one per selected hero still in action, one more for a winner (the player's own declaration
   while the others still fight, decision 4), at most 10;
 - upkeep: every hired sword on the battle's roster, at his upkeep price.
-PR C adds Winning Leader +1 and the reason for each suggestion (BATL-NEW-09).
 
 `rules` are the exploration chart and dice limits, and the serious injury tables with the campaign's hero death roll
 (henchmen and hired swords roll a d6).
@@ -33,15 +35,43 @@ def _xp_kills(kill_payloads: Iterable[Any], warband_id: int) -> dict[str, int]:
     return dict(count_kills(earning, warband_id))
 
 
+def _suggestion(*reasons: tuple[str, int] | None) -> dict:
+    """A unit's suggested XP and why: the reasons that apply, which add up to it."""
+    listed = [{"label": label, "xp": xp} for label, xp in filter(None, reasons)]
+    return {"xp_earned": sum(reason["xp"] for reason in listed), "reasons": listed}
+
+
+def _kills(count: int, noun: str = "kill") -> tuple[str, int] | None:
+    return (f"{count} {noun}{'' if count == 1 else 's'}", count) if count else None
+
+
+SURVIVED = ("survived", 1)
+NO_LEVEL_UPS = ("no level-ups", 0)
+
+
+def _hero_results(heroes: list[dict], kills: dict[str, int], winner: bool) -> dict[str, dict]:
+    return {
+        hero["key"]: _suggestion(
+            SURVIVED,
+            _kills(kills.get(hero["key"], 0)),
+            ("winning leader", 1) if winner and hero.get("isLeader") else None,
+        )
+        for hero in heroes
+    }
+
+
 def _group_results(groups: list[dict], selected: set[str], kills: dict[str, int]) -> dict[str, dict]:
     results: dict[str, dict] = {}
     for group in groups:
         members = [member for member in group.get("members", []) if member.get("key") in selected]
         if not members:
             continue
+        group_kills = sum(kills.get(member["key"], 0) for member in members)
         no_level_ups = any(member.get("noLevelUps") for member in members)
-        xp = 0 if no_level_ups else 1 + sum(kills.get(member["key"], 0) for member in members)
-        results.update({member["key"]: {"xp_earned": xp} for member in members})
+        suggestion = (
+            _suggestion(NO_LEVEL_UPS) if no_level_ups else _suggestion(SURVIVED, _kills(group_kills, "group kill"))
+        )
+        results.update({member["key"]: suggestion for member in members})
     return results
 
 
@@ -69,13 +99,17 @@ def suggested_postbattle(battle: Battle, participant: BattleParticipant, kill_pa
     kills = _xp_kills(kill_payloads, participant.warband_id)
     heroes = [hero for hero in roster.get("heroes", []) if hero.get("key") in selected]
     swords = [sword for sword in roster.get("hiredSwords", []) if sword.get("key") in selected]
-    unit_results = {hero["key"]: {"xp_earned": 1 + kills.get(hero["key"], 0)} for hero in heroes}
+    winner = won(battle, participant)
+    unit_results = _hero_results(heroes, kills, winner)
     for sword in swords:
-        unit_results[sword["key"]] = {"xp_earned": 0 if sword.get("noLevelUps") else 1 + kills.get(sword["key"], 0)}
+        unit_results[sword["key"]] = (
+            _suggestion(NO_LEVEL_UPS)
+            if sword.get("noLevelUps")
+            else _suggestion(SURVIVED, _kills(kills.get(sword["key"], 0)))
+        )
     unit_results.update(_group_results(roster.get("henchmenGroups", []), selected, kills))
     information = normalize_unit_information(participant.unit_information_json)
     in_action = [hero for hero in heroes if not information.get(hero["key"], {}).get("out_of_action")]
-    winner = won(battle, participant)
     return {
         "unit_results": unit_results,
         "exploration": {"dice_count": max(0, min(MAX_EXPLORATION_DICE, len(in_action) + int(winner)))},

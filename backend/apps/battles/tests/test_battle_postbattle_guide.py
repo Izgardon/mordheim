@@ -40,9 +40,17 @@ class PostbattleGuideTests(BattleTestCase):
 
         swords = [f"hired_sword:{sword.id}" for sword in self.fixture.hired_swords]
         group_xp = [2, 2, 2, 1, 1, 1, 1, 1]  # the first group shares its member's kill
-        expected_xp = dict(zip(heroes, [2, 1, 1, 1, 1], strict=True)) | {swords[0]: 1, swords[1]: 0}
+        # the first hero leads a winning warband: Winning Leader +1 (BATL-NEW-09)
+        expected_xp = dict(zip(heroes, [3, 1, 1, 1, 1], strict=True)) | {swords[0]: 1, swords[1]: 0}
         expected_xp |= {f"henchman:{member.id}": xp for member, xp in zip(henchmen, group_xp, strict=True)}
         self.assertEqual({key: entry["xp_earned"] for key, entry in suggested["unit_results"].items()}, expected_xp)
+        reasons = {key: entry["reasons"] for key, entry in suggested["unit_results"].items()}
+        survived, no_level_ups = {"label": "survived", "xp": 1}, {"label": "no level-ups", "xp": 0}
+        leader = [survived, {"label": "1 kill", "xp": 1}, {"label": "winning leader", "xp": 1}]
+        self.assertEqual((reasons[heroes[0]], reasons[heroes[1]]), (leader, [survived]))
+        self.assertEqual((reasons[swords[0]], reasons[swords[1]]), ([survived], [no_level_ups]))
+        group_kill = [survived, {"label": "1 group kill", "xp": 1}]
+        self.assertEqual((reasons[f"henchman:{henchmen[0].id}"], reasons[f"henchman:{henchmen[3].id}"]), (group_kill, [survived]))  # fmt: skip
         self.assertEqual(suggested["exploration"], {"dice_count": 5})  # 4 heroes in action, +1 for the win
         upkeep = {key: {"unit_name": f"Sword {n}", "cost": 15} for n, key in enumerate(swords)}
         self.assertEqual(suggested["upkeep"], {"entries": upkeep})
@@ -84,3 +92,14 @@ class PostbattleGuideTests(BattleTestCase):
         with CaptureQueriesContext(connection) as captured:
             self.ok(self.client.get(self.url(battle_id, "state") + "?view=postbattle"))
         self.assertLessEqual(len(captured), 6)  # state's 4, the player's battle roster, the live kill events
+
+    def test_only_a_winning_leader_gets_winning_leader(self):
+        # BATL-NEW-09: the warband's leader, when it won (the player's own declaration while the others fight)
+        leader = f"hero:{self.fixture.heroes[0].id}"
+        battle_id = self.to_active({self.player: [leader], self.viewer: [self.r]})
+        self.ok(self.finish_mine(self.player, battle_id, "lost"))
+        self.assertEqual(self.guide(battle_id)["suggested_postbattle"]["unit_results"][leader]["xp_earned"], 1)
+        self.ok(self.finish_mine(self.viewer, battle_id, "won"))
+        self.ok(self.post_as(self.viewer, self.url(battle_id, "results"), {"winners": [self.warband.id]}))
+        reasons = self.guide(battle_id)["suggested_postbattle"]["unit_results"][leader]["reasons"]
+        self.assertEqual([reason["label"] for reason in reasons], ["survived", "winning leader"])

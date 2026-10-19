@@ -76,6 +76,7 @@ def hero_entry(hero: Hero) -> dict:
         "kind": "hero",
         "displayName": hero.name or f"Hero {hero.id}",
         "unitType": hero.unit_type or "Hero",
+        "isLeader": bool(hero.is_leader),  # Winning Leader XP (BATL-NEW-09)
         "stats": _stats(hero),
         "items": items,
         "singleUseItems": _single_use(items),
