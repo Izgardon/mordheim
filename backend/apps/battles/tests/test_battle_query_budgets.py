@@ -123,6 +123,23 @@ class BattleQueryBudgetTests(BattleTestCase):
         end, _ = self.count(self.campaign_owner, "post", self.url(manager_end, "finish"), {"winners": []})
         self.within("finish_manager", end, 18)
 
+    def test_a_nudge_and_a_record_edit_stay_within_budget(self):
+        # BATL-NEW-08: the battle and his participant locked, the target, his last nudge, the notification's
+        # update_or_create (its own savepoint), the event, the version, the answer's snapshot. BATL-NEW-04: the battle
+        # with membership, the participants with users and warbands locked, the battle's UPDATE and event, the version
+        # and the snapshot; the read is the battle and the participants.
+        battle_id = self.to_active({self.player: [], self.viewer: [self.r]})
+        nudge, _ = self.count(self.player, "post", self.url(battle_id, "nudge"), {"user_id": self.viewer.id})
+        self.within("nudge", nudge, 16)
+        self.ok(self.post_as(self.campaign_owner, self.url(battle_id, "finish"), {"winners": []}))
+        self.ok(self.post_as(self.campaign_owner, self.url(battle_id, "close-postbattle")))
+        read, _ = self.count(self.campaign_owner, "get", self.url(battle_id, "record"))
+        self.within("record_read", read, 2)
+        self.client.force_authenticate(user=self.campaign_owner)
+        with CaptureQueriesContext(connection) as captured:
+            self.ok(self.client.patch(self.url(battle_id, "record"), {"scenario": "Ford"}, format="json"))
+        self.within("record_edit", len(captured), 9)
+
     def test_writes_leave_presence_alone(self):
         # PERF-35: no write updates the writer's presence (an UPDATE each); only reads do, at most once a minute
         battle_id = self.to_active({self.player: [f"hero:{self.fixture.heroes[0].id}"], self.viewer: [self.r]})
@@ -161,18 +178,18 @@ class BattleQueryBudgetTests(BattleTestCase):
         # not held): the battle with his membership and the campaign settings, his participant, the warband (with the
         # exploration resource), heroes, hired swords and henchmen (with what each carries), their groups, the kill
         # events and his item uses in one read; one UPDATE per unit kind, the resource, the ledger's one INSERT and
-        # balance UPDATE, the find (its cost read once, the stash row added), the result log's opponents, every log
-        # in one INSERT, his status. Then the battle row for the last step: the participants, his event, the
-        # state_version. The answer is built from those reads (was 67).
+        # balance UPDATE, the find (its cost read once, the stash row added), every log in one INSERT, his status.
+        # Then the battle row for the last step: the participants, his event, the state_version. The answer is built
+        # from those reads (was 67; 30 until the result log moved to the end, decision 4).
         battle_id, postbattle = self._fixture_postbattle()
         body = {"postbattle_json": postbattle}
         queries, _ = self.count(self.player, "post", self.url(battle_id, "finalize-postbattle"), body)
-        self.within("finalise_first", queries, 30)
+        self.within("finalise_first", queries, 29)
 
     def test_finalising_the_fixture_warband_last_stays_within_budget(self):
         # + ending the battle: its UPDATE and event, the wins and losses (one UPDATE each for winners and losers, from
-        # the participants already read; decision 3 moved them here from End) and the pivotal moments (the trading
-        # reset went to End only, BUG-122). Was 76.
+        # the participants already read; decision 3 moved them here from End), every warband's result log in one
+        # INSERT (decision 4) and the pivotal moments (the trading reset went to End only, BUG-122). Was 76.
         battle_id, postbattle = self._fixture_postbattle()
         self.ok(self.post_as(self.viewer, self.url(battle_id, "confirm")))
         body = {"postbattle_json": postbattle}
