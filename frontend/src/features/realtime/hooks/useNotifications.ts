@@ -14,10 +14,14 @@ import {
 } from "@/features/battles/api/battles-api";
 import type {
   BattleInviteNotification,
+  BattleNudgeNotification,
   BattleResultRequestNotification,
 } from "@/features/battles/types/battle-types";
 import { acceptTradeRequest, declineTradeRequest } from "@/features/campaigns/api/campaigns-api";
-import { clearAllNotifications as apiClearAllNotifications } from "@/features/notifications/api/notifications-api";
+import {
+  clearAllNotifications as apiClearAllNotifications,
+  clearNotification,
+} from "@/features/notifications/api/notifications-api";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useAppStore } from "@/stores/app-store";
@@ -39,6 +43,9 @@ export function useNotifications() {
     clearBattleInviteNotifications,
     removeBattleResultRequestNotification,
     clearBattleResultRequestNotifications,
+    battleNudgeNotifications,
+    removeBattleNudgeNotification,
+    clearBattleNudgeNotifications,
     currentBattleSession,
     setCurrentBattleSession,
     clearCurrentBattleSession,
@@ -119,8 +126,31 @@ export function useNotifications() {
     [queryClient, removeBattleResultRequestNotification]
   );
 
+  // A nudge (BATL-NEW-08): the tick goes to the battle's page, the X dismisses it; both clear it.
+  const dismissBattleNudge = useCallback(
+    async (notification: BattleNudgeNotification) => {
+      if (notification.notificationDbId > 0) {
+        await clearNotification(notification.notificationDbId);
+      }
+      removeBattleNudgeNotification(notification.id);
+    },
+    [removeBattleNudgeNotification]
+  );
+  const goToBattleNudge = useCallback(
+    async (notification: BattleNudgeNotification) => {
+      await dismissBattleNudge(notification);
+      navigate(
+        notification.page
+          ? `/campaigns/${notification.campaignId}/battles/${notification.battleId}/${notification.page}`
+          : `/campaigns/${notification.campaignId}`
+      );
+    },
+    [dismissBattleNudge, navigate]
+  );
+
   const clearNotifications = useCallback(() => {
     clearTradeRequestNotifications();
+    clearBattleNudgeNotifications();
     clearBattleInviteNotifications();
     clearBattleResultRequestNotifications();
     apiClearAllNotifications().catch((error: unknown) => {
@@ -130,6 +160,7 @@ export function useNotifications() {
     });
   }, [
     clearBattleInviteNotifications,
+    clearBattleNudgeNotifications,
     clearBattleResultRequestNotifications,
     clearTradeRequestNotifications,
   ]);
@@ -144,6 +175,9 @@ export function useNotifications() {
     declineBattleInviteNotification,
     acceptBattleResultRequestNotification,
     declineBattleResultRequestNotification,
+    battleNudgeNotifications,
+    goToBattleNudge,
+    dismissBattleNudge,
     clearNotifications,
   };
 }

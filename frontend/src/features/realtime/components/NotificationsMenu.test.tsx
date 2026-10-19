@@ -121,4 +121,42 @@ describe("NotificationsMenu", () => {
     fireEvent.click(screen.getByRole("link", { name: "Go to it" }));
     expect(screen.queryByRole("dialog", { name: "Notifications" })).toBeNull();
   });
+
+  it("lists a nudge: the tick goes to the battle, the X dismisses it (BATL-NEW-08)", async () => {
+    const onGoToNudge = vi.fn(async () => undefined);
+    const onDismissNudge = vi.fn(async () => undefined);
+    const nudge = {
+      id: "battle-nudge-41",
+      notificationDbId: 12,
+      battleId: 41,
+      campaignId: 7,
+      scenario: "Street Fight",
+      page: "postbattle" as const,
+      fromLabel: "Mira",
+      createdAt: "2026-10-19T10:00:00Z",
+    };
+    render(
+      <NotificationsMenu
+        tradeRequestNotifications={[]}
+        battleInviteNotifications={[]}
+        battleResultRequestNotifications={[]}
+        battleNudgeNotifications={[nudge]}
+        onGoToNudge={onGoToNudge}
+        onDismissNudge={onDismissNudge}
+        onAcceptTrade={vi.fn()}
+        onDeclineTrade={vi.fn()}
+        onAcceptBattleInvite={vi.fn()}
+        onDeclineBattleInvite={vi.fn()}
+        onAcceptBattleResultRequest={vi.fn()}
+        onDeclineBattleResultRequest={vi.fn()}
+      />
+    );
+    expect(screen.getByRole("button", { name: "Notifications" })).toHaveTextContent("1");
+    fireEvent.click(screen.getByRole("button", { name: "Notifications" }));
+
+    expect(screen.getByText("Nudge from Mira")).toBeInTheDocument();
+    expect(screen.getByText("Street Fight is waiting for you.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Go to the battle" }));
+    await waitFor(() => expect(onGoToNudge).toHaveBeenCalledWith(nudge));
+  });
 });

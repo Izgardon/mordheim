@@ -528,6 +528,19 @@ export type BattleInviteNotification = {
   createdAt: string;
 };
 
+/** Another player nudged you: the battle is waiting for you (BATL-NEW-08). */
+export type BattleNudgeNotification = {
+  id: string;
+  notificationDbId: number;
+  battleId: number;
+  campaignId: number;
+  scenario: string;
+  /** Where you carry on: "prebattle", "active" or "postbattle". */
+  page: "prebattle" | "active" | "postbattle" | null;
+  fromLabel: string;
+  createdAt: string;
+};
+
 export type BattleResultRequestNotification = {
   id: string;
   notificationDbId: number;

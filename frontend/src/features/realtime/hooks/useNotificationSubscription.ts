@@ -20,6 +20,7 @@ import { useAppStore } from "@/stores/app-store";
 import {
   notificationFromApi,
   toBattleInviteNotification,
+  toBattleNudgeNotification,
   toBattleResultRequestNotification,
   type BattleNotificationPayload,
 } from "../utils/notification-mappers";
@@ -48,6 +49,8 @@ export function useNotificationSubscription() {
     addBattleResultRequestNotification,
     removeBattleResultRequestNotification,
     clearBattleResultRequestNotifications,
+    addBattleNudgeNotification,
+    clearBattleNudgeNotifications,
     setCurrentBattleSession,
     clearCurrentBattleSession,
   } = useAppStore();
@@ -59,8 +62,15 @@ export function useNotificationSubscription() {
         clearTradeRequestNotifications();
         clearBattleInviteNotifications();
         clearBattleResultRequestNotifications();
+        clearBattleNudgeNotifications();
       }
       for (const n of notifications) {
+        if (n.notification_type === "battle_nudge") {
+          // A nudge waiting since you were away (BATL-NEW-08).
+          const nudge = toBattleNudgeNotification(n.payload as BattleNotificationPayload, n.id);
+          if (nudge) addBattleNudgeNotification(nudge);
+          continue;
+        }
         const converted = notificationFromApi(n);
         if (!converted) continue;
         if (n.notification_type === "trade_request") {
@@ -80,9 +90,11 @@ export function useNotificationSubscription() {
     },
     [
       addBattleInviteNotification,
+      addBattleNudgeNotification,
       addBattleResultRequestNotification,
       addTradeRequestNotification,
       clearBattleInviteNotifications,
+      clearBattleNudgeNotifications,
       clearBattleResultRequestNotifications,
       clearTradeRequestNotifications,
       setCurrentBattleSession,
@@ -156,6 +168,27 @@ export function useNotificationSubscription() {
       }
       addBattleResultRequestNotification(notification);
       void invalidatePendingResults(queryClient, notification.campaignId);
+      return;
+    }
+
+    if (message.type === "battle_nudge") {
+      // Another player is waiting for you (BATL-NEW-08): a toast that goes there, and the bell.
+      const payload = message.payload as BattleNotificationPayload;
+      const nudge = toBattleNudgeNotification(payload, payload.notification_id ?? 0);
+      if (!nudge) {
+        return;
+      }
+      addBattleNudgeNotification(nudge);
+      const page = nudge.page
+        ? `/campaigns/${nudge.campaignId}/battles/${nudge.battleId}/${nudge.page}`
+        : null;
+      toast(`${nudge.fromLabel} nudged you: ${nudge.scenario} is waiting for you.`, {
+        id: `battle-nudge-${nudge.battleId}`,
+        duration: ACTIONABLE_TOAST_MS,
+        ...(page && !location.pathname.startsWith(page)
+          ? { action: { label: "Go", onClick: () => navigate(page) } }
+          : {}),
+      });
       return;
     }
 

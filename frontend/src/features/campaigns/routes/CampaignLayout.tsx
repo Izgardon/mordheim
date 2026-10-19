@@ -78,6 +78,9 @@ export default function CampaignLayout() {
     declineBattleInviteNotification,
     acceptBattleResultRequestNotification,
     declineBattleResultRequestNotification,
+    battleNudgeNotifications,
+    goToBattleNudge,
+    dismissBattleNudge,
     clearNotifications,
   } = useNotifications();
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -155,10 +158,16 @@ export default function CampaignLayout() {
         onDeclineBattleInvite={declineBattleInviteNotification}
         onAcceptBattleResultRequest={acceptBattleResultRequestNotification}
         onDeclineBattleResultRequest={declineBattleResultRequestNotification}
+        battleNudgeNotifications={battleNudgeNotifications}
+        onGoToNudge={goToBattleNudge}
+        onDismissNudge={dismissBattleNudge}
         onClear={clearNotifications}
       />
     ),
     [
+      battleNudgeNotifications,
+      dismissBattleNudge,
+      goToBattleNudge,
       acceptBattleInviteNotification,
       acceptBattleResultRequestNotification,
       acceptTradeNotification,
