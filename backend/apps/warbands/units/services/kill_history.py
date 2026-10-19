@@ -20,7 +20,8 @@ def _serialize_named_kills(events: Iterable[BattleEvent]) -> list[dict[str, Any]
         if not isinstance(victim, dict):
             continue
 
-        victim_name = str(victim.get("name", "") or "").strip()
+        # a nameless unit by its type ("Youngblood", BATL-NEW-06)
+        victim_name = str(victim.get("name") or victim.get("type_name") or "").strip()
         if not victim_name:
             continue
 

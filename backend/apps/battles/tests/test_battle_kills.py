@@ -100,3 +100,57 @@ class PostbattleKillTests(BattleTestCase):
         self.assertEqual(self.abbess.kills, 1)
         response = self.kill(self.player, battle_id, self.a, self.r, source="postbattle")  # finalised
         self.assertEqual((response.status_code, response.data["code"]), (400, "not_in_postbattle"))
+
+
+class NamedKillTests(BattleTestCase):
+    """BATL-NEW-06: postbattle lists each unit's kills by who was taken out; a kill is added (a victim from another
+    roster, or a typed name) or removed, and that list is what finalise, kill history and the suggested XP count."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.abbess = Hero.objects.create(warband=self.warband, name="Abbess", unit_type="Matriarch")
+        self.rat = Hero.objects.create(warband=self.rival, name="Rat", unit_type="Assassin")
+        self.youngblood = Hero.objects.create(warband=self.rival, name="", unit_type="Youngblood")
+        self.a, self.r, self.y = (f"hero:{hero.id}" for hero in (self.abbess, self.rat, self.youngblood))
+
+    def unit_kills(self, battle_id: int) -> list[tuple[str | None, str | None, str | None, bool, str]]:
+        state = self.ok(self.get_as(self.player, self.url(battle_id, "state") + "?view=postbattle")).data
+        return [
+            (
+                kill["victim"]["name"] or kill["victim"]["type_name"],
+                kill["victim"]["warband_name"],
+                kill["victim"]["player_label"],
+                kill["earned_xp"],
+                kill["source"],
+            )  # fmt: skip
+            for kill in state["unit_kills"].get(self.a, [])
+        ]
+
+    def test_postbattle_lists_each_units_kills_by_victim_and_everything_counts_that_list(self):
+        battle_id = self.to_active({self.player: [self.a], self.viewer: [self.r, self.y]})
+        self.ok(self.kill(self.player, battle_id, self.a, self.r), 201)
+        undone = self.ok(self.kill(self.player, battle_id, self.a, self.y), 201).data["events"][0]["id"]
+        self.ok(self.post_as(self.player, f"{self.url(battle_id, 'events')}{undone}/void/"))
+        self.ok(self.finish_mine(self.player, battle_id, "won"))
+        self.ok(self.kill(self.player, battle_id, self.a, victim_name="Ogre", earned_xp=False, source="postbattle"), 201)  # fmt: skip
+        self.ok(self.kill(self.player, battle_id, self.a, self.y, source="postbattle"), 201)
+
+        self.assertEqual(
+            self.unit_kills(battle_id),
+            [
+                ("Rat", "Rats", "viewe", True, "battle"),
+                ("Ogre", None, None, False, "postbattle"),  # a typed name
+                ("Youngblood", "Rats", "viewe", True, "postbattle"),  # nameless: by its type
+            ],
+        )
+        guide = self.ok(self.get_as(self.player, self.url(battle_id, "state") + "?view=postbattle")).data
+        self.assertEqual(guide["suggested_postbattle"]["unit_results"][self.a]["xp_earned"], 3)  # 1 + 2 earning kills
+        self.ok(self.finish_mine(self.viewer, battle_id, "lost"))
+        self.ok(self.post_as(self.viewer, self.url(battle_id, "skip-postbattle")))
+        self.ok(self.finalize(self.player, battle_id, draft({self.a: unit_result(self.a)})))
+        self.ok(self.post_as(self.viewer, self.url(battle_id, "results"), {"winners": [self.warband.id]}))
+
+        self.abbess.refresh_from_db()
+        self.assertEqual(self.abbess.kills, 3)
+        history = self.ok(self.get_as(self.player, f"/api/warbands/{self.warband.id}/heroes/{self.abbess.id}/kill-history/")).data  # fmt: skip
+        self.assertEqual(sorted(kill["victim_name"] for kill in history["named_kills"]), ["Rat", "Youngblood"])

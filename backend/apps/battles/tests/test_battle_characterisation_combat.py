@@ -195,7 +195,8 @@ class BattleKillAndOoaTests(BattleTestCase):
         kind, raw_id = key.split(":")
         unit_id = int(raw_id) if raw_id.isdigit() else None
         payload = {"unit_key": key, "unit_type": kind, "unit_id": unit_id, "warband_id": warband_id, "name": None}
-        return payload | {"is_leader": False, "is_caster": False, "caster_type": None, "is_large": False} | fields
+        flags = {"type_name": None, "is_leader": False, "is_caster": False, "caster_type": None, "is_large": False}
+        return payload | flags | fields
 
     def test_a_kill_records_both_units_and_counts_on_the_killer(self):
         data = self.ok(
@@ -207,9 +208,15 @@ class BattleKillAndOoaTests(BattleTestCase):
             data["events"][0]["payload_json"],
             {
                 "killer": self.unit(
-                    self.a, self.warband.id, name="Abbess", is_leader=True, is_caster=True, caster_type="Priest"
+                    self.a,
+                    self.warband.id,
+                    name="Abbess",
+                    type_name="Matriarch",
+                    is_leader=True,
+                    is_caster=True,
+                    caster_type="Priest",
                 ),
-                "victim": self.unit(self.r, self.rival.id, name="Rat", is_large=True),
+                "victim": self.unit(self.r, self.rival.id, name="Rat", type_name="Assassin", is_large=True),
                 "earned_xp": False,
                 "source": "battle",  # or "postbattle", added in the killer's postbattle (decision 5)
                 "notes": "clean",
@@ -226,14 +233,15 @@ class BattleKillAndOoaTests(BattleTestCase):
         self.assertEqual(
             by_henchman["events"][0]["payload_json"],
             {
-                "killer": self.unit(self.s, self.warband.id, name="Sister Ana", is_large=True),
+                "killer": self.unit(self.s, self.warband.id, name="Sister Ana", type_name="Sister", is_large=True),
                 "victim": {"unit_key": None, "unit_type": None, "unit_id": None, "warband_id": None, "name": "Ogre"},
                 "earned_xp": True,
                 "source": "battle",
             },
         )
         self.assertEqual(
-            by_dog["events"][0]["payload_json"]["killer"], self.unit("custom:dog", self.warband.id, name="War Dog")
+            by_dog["events"][0]["payload_json"]["killer"],
+            self.unit("custom:dog", self.warband.id, name="War Dog", type_name="Dog"),
         )
 
     def test_kill_validation(self):

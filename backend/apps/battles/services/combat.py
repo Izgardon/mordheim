@@ -26,6 +26,7 @@ def _blank_unit_payload(unit: dict, warband_id: int | None) -> dict:
         "unit_id": unit["unit_id"],
         "warband_id": warband_id,
         "name": None,
+        "type_name": None,  # the unit's type ("Youngblood"), so a nameless one can still be told (BATL-NEW-06)
         "is_leader": False,
         "is_caster": False,
         "caster_type": None,
@@ -45,6 +46,7 @@ def unit_event_payload(participant: BattleParticipant, unit: dict) -> dict:
             row = HiredSword.objects.filter(id=unit["unit_id"], warband_id=participant.warband_id).first()
         if row:
             payload["name"] = row.name or None
+            payload["type_name"] = row.unit_type or None
             payload["is_caster"] = row.caster in CASTERS
             payload["caster_type"] = row.caster if row.caster in CASTERS else None
             payload["is_large"] = bool(row.large)
@@ -57,11 +59,13 @@ def unit_event_payload(participant: BattleParticipant, unit: dict) -> dict:
         )
         if henchman:
             payload["name"] = henchman.name or None
+            payload["type_name"] = henchman.group.unit_type or None
             payload["is_large"] = bool(getattr(henchman.group, "large", False))
         return payload
     custom_unit = custom_unit_entry(participant, unit["unit_key"])
     if custom_unit:
         payload["name"] = str(custom_unit.get("name", "")).strip() or None
+        payload["type_name"] = str(custom_unit.get("unit_type") or "").strip() or None
     return payload
 
 

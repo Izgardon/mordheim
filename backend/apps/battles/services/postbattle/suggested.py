@@ -23,6 +23,7 @@ from ..injuries import injury_tables
 from ..kills import count_kills, live_kill_events
 from ..selection import selected_unit_keys
 from ..unusual import MAX_EXPLORATION_DICE as MAX_CHOSEN_DICE
+from .kill_list import unit_kills
 
 
 def _xp_kills(kill_payloads: Iterable[Any], warband_id: int) -> dict[str, int]:
@@ -92,11 +93,13 @@ def postbattle_rules(hero_death_roll: str) -> dict:
 
 
 def postbattle_guide(battle: Battle, participant: BattleParticipant) -> dict:
-    """`suggested_postbattle` and `rules` for the postbattle page's state (two reads: the player's battle roster and
-    the live kill events; the campaign's settings come with the battle)."""
+    """`suggested_postbattle`, `rules` and `unit_kills` (his units' kills by victim, BATL-NEW-06) for the postbattle
+    page's state (two reads: the player's battle roster and the live kill events; the campaign's settings come with
+    the battle, the participants with the snapshot)."""
     settings = getattr(battle.campaign, "settings", None)
-    kills = live_kill_events(battle.id).values_list("payload_json", flat=True)
+    kills = list(live_kill_events(battle.id).only("id", "payload_json").order_by("id"))
     return {
-        "suggested_postbattle": suggested_postbattle(battle, participant, kills),
+        "suggested_postbattle": suggested_postbattle(battle, participant, [event.payload_json for event in kills]),
         "rules": postbattle_rules((settings.hero_death_roll if settings else None) or "d66"),
+        "unit_kills": unit_kills(participant.warband_id, kills, battle.participants.all()),
     }
