@@ -160,5 +160,5 @@ Types: **New** (new functionality), **Tweak** (change to existing behaviour), **
 | 2 Economy and trades | [Done](briefs/pass-2-economy-trades.md) | Answered 2026-10-17 | 90 backend + 89 frontend tests | Done | Done | Done | 2026-10-18 |
 | 3 Battles | [Done](briefs/pass-3-battles.md) | Answered 2026-10-18 | 80 backend (2 expected failures) + 26 frontend tests (`pass3/battles`) | | | | |
 | 4 Campaigns | [Done](briefs/pass-4-campaigns.md) | Answered 2026-10-18 | | | | | |
-| 5 Catalogue | | | | | | | |
-| 6 Auth and core | | | | | | | |
+| 5 Catalogue | [Done](briefs/pass-5-catalogue.md) | Answered 2026-10-19 | | | | | |
+| 6 Auth and core | [Done](briefs/pass-6-auth-core.md) | Answered 2026-10-19 | | | | | |
