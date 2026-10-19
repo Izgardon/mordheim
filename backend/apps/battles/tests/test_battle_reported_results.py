@@ -12,7 +12,7 @@ from apps.battles.models import BattleEvent
 from apps.notifications.models import Notification
 from apps.warbands.models import Warband
 
-from .battle_support import BattleTestCase
+from .battle_support import BattleTestCase, status_changed
 
 
 class PendingResultsTests(BattleTestCase):
@@ -99,7 +99,7 @@ class WithdrawResultTests(BattleTestCase):
         self.ok(self.post_as(self.viewer, self.url(battle_id, "approve-result")))
         response = self.post_as(self.player, self.url(battle_id, "withdraw-result"))
         detail = "Reported result has already been committed"
-        self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
+        self.assertEqual((response.status_code, response.data), (400, status_changed(detail, "ended")))
 
         normal = self.create_battle()
         response = self.post_as(self.player, self.url(normal, "withdraw-result"))

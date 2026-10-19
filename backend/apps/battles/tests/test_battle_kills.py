@@ -7,7 +7,7 @@ A player voids his own kill or item use until he finalises; the event stays in t
 from apps.battles.models import BattleEvent
 from apps.warbands.models import Hero, HeroItem
 
-from .battle_support import BattleTestCase, catalogue_item, draft, unit_result
+from .battle_support import BattleTestCase, catalogue_item, draft, status_changed, unit_result
 
 
 class BattleUndoTests(BattleTestCase):
@@ -89,7 +89,9 @@ class PostbattleKillTests(BattleTestCase):
         self.finish(battle_id, [self.warband])
 
         response = self.kill(self.player, battle_id, self.a, self.r)  # without source: an active-page tap
-        self.assertEqual((response.status_code, response.data), (400, {"detail": "Battle is not active"}))
+        self.assertEqual(
+            (response.status_code, response.data), (400, status_changed("Battle is not active", "postbattle"))
+        )
         data = self.ok(self.kill(self.player, battle_id, self.a, self.r, source="postbattle"), 201).data
 
         self.assertEqual(data["events"][0]["payload_json"]["source"], "postbattle")

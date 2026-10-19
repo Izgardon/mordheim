@@ -11,7 +11,7 @@ from apps.warbands.models import Henchman, Hero, HiredSword
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..validation.config import normalize_unit_information
-from .errors import Refused
+from .errors import Refused, battle_status_changed
 from .events import append_event
 from .item_use import item_use_payload
 from .lifecycle import reset_trading_actions
@@ -125,7 +125,7 @@ def record_kill(battle: Battle, participant: BattleParticipant, kill: dict, acto
 def item_use_refusal(battle: Battle, participant: BattleParticipant) -> None:
     """Items are used in prebattle or in the fight, by a player who is in that phase."""
     if battle.status not in (Battle.STATUS_PREBATTLE, Battle.STATUS_ACTIVE):
-        raise Refused("Items can only be used in prebattle or active battle")
+        raise battle_status_changed(battle, "Items can only be used in prebattle or active battle")
     in_prebattle = (BattleParticipant.STATUS_JOINED_PREBATTLE, BattleParticipant.STATUS_READY)
     if battle.status == Battle.STATUS_PREBATTLE and participant.status not in in_prebattle:
         raise Refused("You are not currently in prebattle")

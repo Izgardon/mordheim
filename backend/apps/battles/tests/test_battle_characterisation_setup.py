@@ -12,7 +12,7 @@ from apps.battles.models import Battle, BattleEvent, BattleParticipant
 from apps.notifications.models import Notification
 from apps.warbands.models import Hero, Warband
 
-from .battle_support import BattleTestCase
+from .battle_support import BattleTestCase, status_changed
 
 BATTLE_KEYS = [
     "id",
@@ -217,7 +217,9 @@ class BattleJoinTests(BattleTestCase):
             with self.subTest(status=closed):
                 Battle.objects.filter(id=battle_id).update(status=closed)
                 response = self.post_as(self.viewer, self.url(battle_id, "join"))
-                self.assertEqual((response.status_code, response.data), (400, {"detail": "Battle is closed"}))
+                self.assertEqual(
+                    (response.status_code, response.data), (400, status_changed("Battle is closed", closed))
+                )
 
     def test_join_needs_a_participant_of_a_normal_battle(self):
         battle_id = self.create_battle()
@@ -269,14 +271,14 @@ class BattleReadyAndStartTests(BattleTestCase):
             with self.subTest(status=battle_status):
                 Battle.objects.filter(id=battle_id).update(status=battle_status)
                 response = self.ready(self.viewer, battle_id, True)
-                self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
+                self.assertEqual((response.status_code, response.data), (400, status_changed(detail, battle_status)))
 
     def test_only_the_creator_starts_once_everyone_is_ready(self):
         # Characterises current behaviour (decision 4, pinned; flips in PR C: any participant starts after a confirm)
         battle_id = self.create_battle()
         response = self.post_as(self.player, self.url(battle_id, "start"))
         detail = "Waiting for all participants to accept invitation"
-        self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
+        self.assertEqual((response.status_code, response.data), (400, status_changed(detail, "inviting")))
 
         self.ok(self.post_as(self.viewer, self.url(battle_id, "join")))
         self.ok(self.ready(self.viewer, battle_id, True))
@@ -298,10 +300,12 @@ class BattleReadyAndStartTests(BattleTestCase):
         self.assertEqual(started, sorted([self.player.id, self.viewer.id]))
 
         response = self.post_as(self.player, self.url(battle_id, "start"))
-        self.assertEqual((response.status_code, response.data), (400, {"detail": "Battle already started"}))
+        self.assertEqual(
+            (response.status_code, response.data), (400, status_changed("Battle already started", "active"))
+        )
         Battle.objects.filter(id=battle_id).update(status=Battle.STATUS_CANCELED)
         response = self.post_as(self.player, self.url(battle_id, "start"))
-        self.assertEqual((response.status_code, response.data), (400, {"detail": "Battle is canceled"}))
+        self.assertEqual((response.status_code, response.data), (400, status_changed("Battle is canceled", "canceled")))
 
 
 class BattleReadAccessTests(BattleTestCase):

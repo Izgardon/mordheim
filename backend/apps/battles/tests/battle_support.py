@@ -56,6 +56,11 @@ def injury_roll(rolls: list[int], roll_type: str = "d66", label: str = "Old Batt
     }
 
 
+def status_changed(detail: str, battle_status: str) -> dict[str, Any]:
+    """A write refused for the battle's status: the old detail, plus the code and status pages refetch on (BUG-19)."""
+    return {"detail": detail, "code": "battle_status_changed", "status": battle_status}
+
+
 def draft(results: dict[str, dict[str, Any]], **sections: Any) -> dict[str, Any]:
     """A whole `postbattle_json`: the unit results plus any of exploration, finds and upkeep."""
     return {"exploration": {"dice_values": [], "resource_id": None}, "unit_results": results, **sections}

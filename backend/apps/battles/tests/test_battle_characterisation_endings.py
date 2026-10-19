@@ -13,7 +13,7 @@ from apps.battles.models import Battle, BattleEvent
 from apps.notifications.models import Notification
 from apps.warbands.models import Hero, Warband
 
-from .battle_support import BattleTestCase, draft, unit_result
+from .battle_support import BattleTestCase, draft, status_changed, unit_result
 
 
 class BattleFinishTests(BattleTestCase):
@@ -41,7 +41,9 @@ class BattleFinishTests(BattleTestCase):
     def test_end_before_the_battle_starts(self):
         battle_id = self.to_prebattle()
         response = self.post_as(self.player, self.url(battle_id, "finish"), {"winner_warband_ids": [self.warband.id]})
-        self.assertEqual((response.status_code, response.data), (400, {"detail": "Battle has not started"}))
+        self.assertEqual(
+            (response.status_code, response.data), (400, status_changed("Battle has not started", "prebattle"))
+        )
 
     def test_wins_and_losses_count_once_when_the_battle_ends(self):
         # BUG-09, decision 3: they were added at End battle, and kept by a later cancel
@@ -138,7 +140,9 @@ class BattleCancelTests(BattleTestCase):
                 self.assertEqual(self.event_types(battle_id), events)
         Battle.objects.filter(id=battle_id).update(status=Battle.STATUS_ENDED)
         response = self.post_as(self.player, self.url(battle_id, "cancel-battle"))
-        self.assertEqual((response.status_code, response.data), (400, {"detail": "Battle is already ended"}))
+        self.assertEqual(
+            (response.status_code, response.data), (400, status_changed("Battle is already ended", "ended"))
+        )
 
     def test_the_campaign_owner_cancels_in_every_phase_before_postbattle(self):
         def owner_url(battle_id: int) -> str:
@@ -225,7 +229,7 @@ class BattleCancelTests(BattleTestCase):
             with self.subTest(status=battle_status):
                 Battle.objects.filter(id=battle_id).update(status=battle_status)
                 response = self.post_as(self.viewer, self.url(battle_id, "cancel"))
-                self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
+                self.assertEqual((response.status_code, response.data), (400, status_changed(detail, battle_status)))
 
 
 class BattleSkipTests(BattleTestCase):
@@ -235,13 +239,16 @@ class BattleSkipTests(BattleTestCase):
             with self.subTest(action=action):
                 response = self.post_as(self.viewer, self.url(battle_id, action))
                 self.assertEqual(
-                    (response.status_code, response.data), (400, {"detail": "Battle is not in postbattle"})
+                    (response.status_code, response.data),
+                    (400, status_changed("Battle is not in postbattle", "active")),
                 )
         Battle.objects.filter(id=battle_id).update(status=Battle.STATUS_CANCELED)
         for action in ("confirm", "finalize-postbattle"):
             with self.subTest(action=action, status="canceled"):
                 response = self.post_as(self.viewer, self.url(battle_id, action))
-                self.assertEqual((response.status_code, response.data), (400, {"detail": "Battle was canceled"}))
+                self.assertEqual(
+                    (response.status_code, response.data), (400, status_changed("Battle was canceled", "canceled"))
+                )
 
     def test_a_skip_or_finalise_after_finishing_changes_nothing(self):
         battle_id = self.to_postbattle()

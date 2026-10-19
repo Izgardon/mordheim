@@ -10,7 +10,7 @@ from apps.battles.models import Battle, BattleParticipant
 from apps.warbands.models import Henchman, HenchmenGroup, Hero
 from apps.warbands.utils.armour_save import ARMOUR_SAVE_ERROR
 
-from .battle_support import BattleTestCase, draft, unit_result
+from .battle_support import BattleTestCase, draft, status_changed, unit_result
 
 
 def info(**fields: Any) -> dict[str, Any]:
@@ -152,7 +152,8 @@ class BattleConfigTests(BattleTestCase):
                 Battle.objects.filter(id=self.battle_id).update(status=battle_status)
                 response = self.config({"battle_notes": "late"})
                 self.assertEqual(
-                    (response.status_code, response.data), (400, {"detail": "Battle configuration is locked"})
+                    (response.status_code, response.data),
+                    (400, status_changed("Battle configuration is locked", battle_status)),
                 )
 
     def test_an_armour_save_is_parsed_when_entered(self):
@@ -266,7 +267,9 @@ class BattleKillAndOoaTests(BattleTestCase):
         self.assertEqual((response.status_code, response.data), (400, {"detail": "You are not currently in battle"}))
         Battle.objects.filter(id=self.battle_id).update(status=Battle.STATUS_POSTBATTLE)
         response = self.kill(self.player, self.battle_id, self.a, self.r)  # BUG-19: what a phone that slept sees
-        self.assertEqual((response.status_code, response.data), (400, {"detail": "Battle is not active"}))
+        self.assertEqual(
+            (response.status_code, response.data), (400, status_changed("Battle is not active", "postbattle"))
+        )
 
     def test_out_of_action_set_repeat_and_unset(self):
         url = self.url(self.battle_id, "unit-ooa")

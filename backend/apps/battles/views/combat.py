@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.broadcast import ALL
 from ..services.combat import enter_postbattle, record_item_use, record_kill, set_out_of_action
-from ..services.errors import BattleError
+from ..services.errors import BattleError, battle_status_changed
 from ..services.item_use import check_payload_size
 from ..validation.coerce import coerce_bool
 from ..validation.unit_keys import parse_unit_key
@@ -104,7 +104,7 @@ def _kill_refusal(scope: Scope, source: str) -> Response | None:
         detail = "Kills can be added in postbattle only until you finalise"
         return Response({"detail": detail, "code": "not_in_postbattle"}, status=400)
     if battle.status != Battle.STATUS_ACTIVE:
-        return Response({"detail": NOT_ACTIVE}, status=400)
+        return battle_status_changed(battle, NOT_ACTIVE).response()
     if participant.status != BattleParticipant.STATUS_IN_BATTLE:
         return Response({"detail": NOT_IN_BATTLE}, status=400)
     return None

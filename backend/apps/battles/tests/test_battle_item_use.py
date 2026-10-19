@@ -10,7 +10,7 @@ from typing import Any
 from apps.battles.models import Battle, BattleEvent, BattleParticipant
 from apps.warbands.models import HenchmenGroup, Hero, HeroItem
 
-from .battle_support import BattleTestCase, catalogue_item
+from .battle_support import BattleTestCase, catalogue_item, status_changed
 
 
 class BattleItemUseTests(BattleTestCase):
@@ -56,15 +56,16 @@ class BattleItemUseTests(BattleTestCase):
         BattleParticipant.objects.filter(battle_id=battle_id, user=self.player).update(status="canceled_prebattle")
         response = self.use_item(self.player, battle_id, use)
         self.assertEqual((response.status_code, response.data), (400, {"detail": "You are not currently in prebattle"}))
-        for battle_status, detail in (
-            (Battle.STATUS_ACTIVE, "You are not currently in battle"),
-            (Battle.STATUS_INVITING, "Items can only be used in prebattle or active battle"),
-            (Battle.STATUS_POSTBATTLE, "Items can only be used in prebattle or active battle"),
+        wrong_phase = "Items can only be used in prebattle or active battle"
+        for battle_status, body in (
+            (Battle.STATUS_ACTIVE, {"detail": "You are not currently in battle"}),
+            (Battle.STATUS_INVITING, status_changed(wrong_phase, Battle.STATUS_INVITING)),
+            (Battle.STATUS_POSTBATTLE, status_changed(wrong_phase, Battle.STATUS_POSTBATTLE)),
         ):
             with self.subTest(status=battle_status):
                 Battle.objects.filter(id=battle_id).update(status=battle_status)
                 response = self.use_item(self.player, battle_id, use)
-                self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
+                self.assertEqual((response.status_code, response.data), (400, body))
 
     def test_item_use_needs_a_selected_unit_of_the_players_that_carries_the_item(self):
         # BUG-72, BATL-TEST-17: another player's unit, an item nobody carries and an empty payload were all stored

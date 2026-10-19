@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 from rest_framework.response import Response
 
 from ..models import Battle
+from ..services.errors import battle_status_changed
 from .responses import response_with_snapshot
 
 if TYPE_CHECKING:
@@ -23,14 +24,20 @@ def refused(detail: str, *, code: str | None = None, status: int = 400) -> Respo
     return Response(body, status=status)
 
 
+def _wrong_status(scope: "Scope", detail: str, code: str | None) -> Response:
+    """A refusal for the battle's status: its own code when it has one, else battle_status_changed and the current
+    status (the page reads the state again, BUG-19)."""
+    return refused(detail, code=code) if code else battle_status_changed(scope.battle, detail).response()
+
+
 def refuse(statuses: Collection[str], detail: str, *, code: str | None = None) -> Rule:
     """Refuse while the battle is in one of `statuses`."""
-    return lambda scope: refused(detail, code=code) if scope.battle.status in statuses else None
+    return lambda scope: _wrong_status(scope, detail, code) if scope.battle.status in statuses else None
 
 
 def only(statuses: Collection[str], detail: str, *, code: str | None = None) -> Rule:
     """Refuse unless the battle is in one of `statuses`."""
-    return lambda scope: None if scope.battle.status in statuses else refused(detail, code=code)
+    return lambda scope: None if scope.battle.status in statuses else _wrong_status(scope, detail, code)
 
 
 def snapshot_when(*statuses: str) -> Rule:

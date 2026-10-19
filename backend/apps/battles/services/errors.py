@@ -43,14 +43,27 @@ class Refused(Exception):
     pages read as they are. Raised before the action writes anything, and answered inside its transaction, so
     what an overdue battle's settling wrote first is kept."""
 
-    def __init__(self, detail: str, *, code: str | None = None, status: int = 400) -> None:
+    def __init__(
+        self, detail: str, *, code: str | None = None, status: int = 400, extra: dict[str, Any] | None = None
+    ) -> None:
         super().__init__(detail)
         self.detail = detail
         self.code = code
         self.status = status
+        self.extra = extra or {}
 
     def response(self) -> Response:
         body: dict[str, Any] = {"detail": self.detail}
         if self.code:
             body["code"] = self.code
-        return Response(body, status=self.status)
+        return Response({**body, **self.extra}, status=self.status)
+
+
+BATTLE_STATUS_CHANGED = "battle_status_changed"
+
+
+def battle_status_changed(battle: Any, detail: str) -> Refused:
+    """A write the battle's current status doesn't allow (it moved on since the page last read it): the old
+    `detail`, plus `code: "battle_status_changed"` and the current `status`, so the page reads the state again
+    (BUG-19)."""
+    return Refused(detail, code=BATTLE_STATUS_CHANGED, extra={"status": battle.status})

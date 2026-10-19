@@ -8,7 +8,7 @@ from apps.campaigns.models import CampaignMembership, CampaignMembershipPermissi
 from apps.campaigns.views import _ensure_permissions
 from apps.warbands.models import Hero, HeroItem
 
-from .battle_support import BattleTestCase, catalogue_item, draft, unit_result
+from .battle_support import BattleTestCase, catalogue_item, draft, status_changed, unit_result
 
 
 class ClosePostbattleTests(BattleTestCase):
@@ -69,7 +69,9 @@ class ClosePostbattleTests(BattleTestCase):
     def test_close_needs_a_battle_in_postbattle(self):
         battle_id = self.to_active({self.player: [self.a], self.viewer: [self.r]})
         response = self.post_as(self.campaign_owner, self.url(battle_id, "close-postbattle"))
-        self.assertEqual((response.status_code, response.data), (400, {"detail": "Battle is not in postbattle"}))
+        self.assertEqual(
+            (response.status_code, response.data), (400, status_changed("Battle is not in postbattle", "active"))
+        )
 
 
 class SkipPostbattleTests(BattleTestCase):
