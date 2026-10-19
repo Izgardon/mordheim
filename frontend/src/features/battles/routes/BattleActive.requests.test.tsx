@@ -8,6 +8,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { BattleState } from "@/features/battles/types/battle-types";
 import {
+  BATTLE_CHANNEL,
   ME,
   OPPONENT,
   battleEvent,
@@ -15,11 +16,13 @@ import {
   battleRosters,
   battleState,
   deferred,
+  socketMessage,
   statePath,
 } from "@/test/battle-fixtures";
 import { ApiError } from "@/lib/api-client";
 import { renderBattleRoute } from "@/test/battle-routes";
 import { fakeApi } from "@/test/fake-api";
+import { fakeRealtime } from "@/test/fake-realtime";
 import { setupUser } from "@/test/user-event";
 
 vi.mock("@/lib/api-client", async (importOriginal) => ({
@@ -135,6 +138,20 @@ describe("BattleActive requests", () => {
         .getAllByRole("listitem")
         .map((item) => item.textContent)
     ).toEqual(["YouIn battle", "PlayerIn battle"]);
+  });
+
+  it("says who cancelled the battle when it is cancelled under you (BATL-NEW-08)", async () => {
+    await renderActive();
+    const canceled = battleEvent(30, "battle_canceled", OPPONENT.id, {
+      canceled_by_user_id: OPPONENT.id,
+    });
+    server.battle.status = "canceled";
+    server.events = [canceled];
+
+    act(() => fakeRealtime.emit(BATTLE_CHANNEL, "battle.event", socketMessage(canceled)));
+
+    expect(await screen.findByText("Campaign overview")).toBeInTheDocument();
+    expect(screen.getByText("Player cancelled Street Fight.")).toBeInTheDocument();
   });
 
   it("offers No winner, which ends the battle with an empty winner list (decision 8)", async () => {

@@ -1,7 +1,8 @@
-import { useMemo, type ReactNode } from "react";
+import { useEffect, useMemo, type ReactNode } from "react";
 import { Navigate, useParams } from "react-router-dom";
 
 import { LoadingScreen } from "@/components/ui/loading-screen";
+import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
 import { useBattleState } from "@/features/battles/hooks/useBattleState";
 import { BattleContext, type BattleContextValue } from "@/features/battles/state/battle-context";
@@ -10,10 +11,12 @@ import {
   deriveBattleView,
   type BattlePhase,
 } from "@/features/battles/state/battle-machine";
+import { toastBattleOver } from "@/features/battles/utils/battle-over";
 
 /**
  * Loads the battle once for every phase page (state and rosters), sends the user to the page the
- * battle is on (`deriveBattleView`), and shares the battle with that page through `BattleContext`.
+ * battle is on (`deriveBattleView`, with a toast when it ended or was cancelled), and shares the
+ * battle with that page through `BattleContext`.
  * `BattleLayout` keeps it mounted across phase changes, so moving on reads nothing again.
  */
 export default function BattleProvider({
@@ -75,6 +78,15 @@ export default function BattleProvider({
   );
 
   const view = deriveBattleView({ page: phase, isLoading, error, battle: battleState?.battle });
+  // The battle ended or was cancelled: say so as the page closes (BATL-NEW-08).
+  const { user } = useAuth();
+  const closesToOverview = view.kind === "redirect" && view.to === "overview";
+  useEffect(() => {
+    const latest = battleStateRef.current;
+    if (closesToOverview && latest) {
+      toastBattleOver(latest, user?.id);
+    }
+  }, [battleStateRef, closesToOverview, user?.id]);
   if (view.kind === "loading") {
     return <LoadingScreen message={view.message} />;
   }

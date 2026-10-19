@@ -14,6 +14,7 @@ import { useClosePostbattle } from "@/features/battles/hooks/useClosePostbattle"
 import { useRefreshOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import type { PostbattleDraft } from "@/features/battles/hooks/usePostbattleDraft";
 import type { BattleParticipant, BattleState } from "@/features/battles/types/battle-types";
+import { toastBattleOver } from "@/features/battles/utils/battle-over";
 import { toastBattleWarnings } from "@/features/battles/utils/battle-warnings";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { queryKeys } from "@/lib/query-keys";
@@ -65,12 +66,20 @@ export function usePostbattleExit({
       clearCurrentBattleSession();
       void refreshOpenBattles();
       if (answer.battle.status === "ended") {
+        toastBattleOver(answer, userId);
         navigate(`/campaigns/${campaignId}/warband`, { replace: true });
         return;
       }
       applyBattleResponse(answer);
     },
-    [applyBattleResponse, campaignId, clearCurrentBattleSession, navigate, refreshOpenBattles]
+    [
+      applyBattleResponse,
+      campaignId,
+      clearCurrentBattleSession,
+      navigate,
+      refreshOpenBattles,
+      userId,
+    ]
   );
 
   const finalize = useCallback(async () => {

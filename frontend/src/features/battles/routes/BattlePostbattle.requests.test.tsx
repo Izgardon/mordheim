@@ -7,6 +7,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { BattlePostbattleState, BattleState } from "@/features/battles/types/battle-types";
 import {
+  BATTLE_CHANNEL,
   ME,
   OPPONENT,
   battleEvent,
@@ -16,12 +17,14 @@ import {
   deferred,
   mySheet,
   postbattleRules,
+  socketMessage,
   statePath,
 } from "@/test/battle-fixtures";
 import { createQueryClient } from "@/lib/query-client";
 import { queryKeys } from "@/lib/query-keys";
 import { renderBattleRoute } from "@/test/battle-routes";
 import { fakeApi } from "@/test/fake-api";
+import { fakeRealtime } from "@/test/fake-realtime";
 import { setupUser } from "@/test/user-event";
 
 vi.mock("@/lib/api-client", async (importOriginal) => ({
@@ -815,6 +818,32 @@ describe("BattlePostbattle requests", () => {
     );
 
     expect(await screen.findByText("Warband page")).toBeInTheDocument();
+    expect(screen.getByText("Street Fight has ended.")).toBeInTheDocument();
+  });
+
+  it("says the battle has ended when the last player finishes while you wait (BATL-NEW-08)", async () => {
+    const user = setupUser();
+    fakeApi.on(`POST ${battlePath("finalize-postbattle/")}`, () =>
+      battleState({ status: "postbattle", me: { status: "confirmed_postbattle" } })
+    );
+    const ended = battleEvent(20, "battle_ended", OPPONENT.id, {});
+    fakeApi.on(
+      `GET ${statePath("postbattle", 5)}`,
+      battleState({ status: "ended", me: { status: "confirmed_postbattle" }, events: [ended] })
+    );
+    await renderPostbattle();
+    await user.click(screen.getByRole("button", { name: "Finalise Postbattle" }));
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Finalise Postbattle" })).getByRole("button", {
+        name: "Confirm",
+      })
+    );
+    await screen.findByRole("region", { name: "Waiting for others" });
+
+    act(() => fakeRealtime.emit(BATTLE_CHANNEL, "battle.event", socketMessage(ended)));
+
+    expect(await screen.findByText("Campaign overview")).toBeInTheDocument();
+    expect(screen.getByText("Street Fight has ended.")).toBeInTheDocument();
   });
 
   it("loads the campaign's items once when the finds picker opens and filters them as you type (PERF-40)", async () => {
