@@ -18,23 +18,9 @@ from ..serializers import display_name
 from .errors import Refused
 from .events import append_event, notify_user
 from .timing import invite_deadline
+from .unfinished import BUSY_BATTLE_STATUSES, BUSY_PARTICIPANT_STATUSES, page_for
 
 logger = logging.getLogger(__name__)
-
-BUSY_BATTLE_STATUSES = (
-    Battle.STATUS_INVITING,
-    Battle.STATUS_PREBATTLE,
-    Battle.STATUS_ACTIVE,
-    Battle.STATUS_POSTBATTLE,
-)
-BUSY_PARTICIPANT_STATUSES = (
-    BattleParticipant.STATUS_INVITED,
-    BattleParticipant.STATUS_ACCEPTED,
-    BattleParticipant.STATUS_JOINED_PREBATTLE,
-    BattleParticipant.STATUS_READY,
-    BattleParticipant.STATUS_IN_BATTLE,
-    BattleParticipant.STATUS_FINISHED_BATTLE,
-)
 
 
 def busy_participations(campaign_id: int, user_ids):
@@ -74,6 +60,7 @@ def busy_player_warnings(campaign_id: int, user_ids: list[int], creator_id: int)
             "battle_id": battle.id,
             "battle_status": battle.status,
             "last_activity_at": battle.last_activity_at.isoformat(),
+            "page": page_for(battle, entry),  # where to go to finish it (BATL-NEW-01)
         }
     return list(warnings.values())
 

@@ -97,11 +97,11 @@ class BattleCreateTests(BattleTestCase):
     def test_create_warns_about_players_in_an_open_battle(self):
         # BUG-10, decision 1 (BATL-TWEAK-01, BATL-NEW-01): busy players were refused; now the battle is created and
         # the answer says who is busy where, the creator included
-        for battle_status, participant_status in (
-            (Battle.STATUS_INVITING, BattleParticipant.STATUS_INVITED),
-            (Battle.STATUS_PREBATTLE, BattleParticipant.STATUS_READY),
-            (Battle.STATUS_ACTIVE, BattleParticipant.STATUS_IN_BATTLE),
-            (Battle.STATUS_POSTBATTLE, BattleParticipant.STATUS_FINISHED_BATTLE),
+        for battle_status, participant_status, page in (
+            (Battle.STATUS_INVITING, BattleParticipant.STATUS_INVITED, "prebattle"),
+            (Battle.STATUS_PREBATTLE, BattleParticipant.STATUS_READY, "prebattle"),
+            (Battle.STATUS_ACTIVE, BattleParticipant.STATUS_IN_BATTLE, "active"),
+            (Battle.STATUS_POSTBATTLE, BattleParticipant.STATUS_FINISHED_BATTLE, "postbattle"),
         ):
             with self.subTest(phase=battle_status):
                 old = self._open_battle(battle_status, participant_status)
@@ -117,6 +117,7 @@ class BattleCreateTests(BattleTestCase):
                             "battle_id": old.id,
                             "battle_status": battle_status,
                             "last_activity_at": old.last_activity_at.isoformat(),
+                            "page": page,  # where to finish it (BATL-NEW-01)
                         }
                     ],
                 )

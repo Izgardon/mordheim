@@ -21,6 +21,7 @@ from ..services.postbattle.suggested import postbattle_guide
 from ..services.presence import mark_participant_seen
 from ..services.rosters import battle_rosters_payload
 from ..services.setup import create_battle, new_battle
+from ..services.unfinished import viewer, viewer_in
 from .base import BattleScopedView, Scope
 from .responses import broadcast_response
 
@@ -45,7 +46,10 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
             battles = battles.exclude(status__in=(Battle.STATUS_ENDED, Battle.STATUS_CANCELED))
         if expire_overdue(battles):  # settle what is past its deadline (decision 2), then read again
             battles = battles.all()
-        return Response([snapshot_from_battle(battle) for battle in battles])
+        # each with the reader's place in it: his unfinished battle is the first unfinished one (BATL-NEW-01)
+        return Response(
+            [{**snapshot_from_battle(battle), "viewer": viewer_in(battle, request.user.id)} for battle in battles]
+        )
 
     def post(self, request, campaign_id):
         if not get_membership(request.user, campaign_id):
@@ -104,6 +108,7 @@ class CampaignBattleStateView(BattleScopedView):
         payload["capabilities"] = capabilities(scope.battle, request.user.id, participants)
         if payload["capabilities"]["confirm_results"]:  # where the Confirm results modal starts (decision 4)
             payload["confirm_results"] = results_sides(scope.battle, participants)
+        payload["viewer"] = viewer(scope.battle, scope.player)
         if view == "postbattle":  # the server's suggestions and rules (IMP-52)
             payload.update(postbattle_guide(scope.battle, scope.player))
         mark_participant_seen(scope.player)
