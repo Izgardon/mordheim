@@ -201,6 +201,50 @@ export function battleState({
   };
 }
 
+/** `rules` as `state/?view=postbattle` sends them (IMP-52; a few injury rows of each table). */
+export const postbattleRules = (
+  heroDeathRoll: "d66" | "d100" = "d66"
+): NonNullable<BattleState["rules"]> => ({
+  exploration_table: [
+    { max_total: 0, amount: 0 },
+    { max_total: 5, amount: 1 },
+    { max_total: 11, amount: 2 },
+    { max_total: 17, amount: 3 },
+    { max_total: 24, amount: 4 },
+    { max_total: 30, amount: 5 },
+    { max_total: 35, amount: 6 },
+    { max_total: null, amount: 7 },
+  ],
+  exploration_dice: { max: 10, max_chosen: 6 },
+  hero_death_roll: heroDeathRoll,
+  injury_tables: {
+    d6: [
+      { low: 1, high: 2, label: "Dead", effect: { kind: "dead" } },
+      { low: 3, high: 6, label: "Survives", effect: { kind: "none" } },
+    ],
+    d66: [
+      { low: 11, high: 15, label: "Dead", effect: { kind: "dead" } },
+      { low: 16, high: 21, label: "Full Recovery", effect: { kind: "none" } },
+      {
+        low: 22,
+        high: 26,
+        label: "Horrible Scars",
+        effect: { kind: "special", special: "Horrible Scars" },
+      },
+      { low: 41, high: 55, label: "Sold to the Pits", effect: { kind: "manual" } },
+    ],
+    d100: [
+      { low: 1, high: 14, label: "Dead", effect: { kind: "dead" } },
+      {
+        low: 29,
+        high: 31,
+        label: "Chest Wound",
+        effect: { kind: "stat", stat: "toughness", change: -1 },
+      },
+    ],
+  },
+});
+
 /** A timeline event, as `state/` returns it and `battle.event` carries it. */
 export const battleEvent = (
   id: number,

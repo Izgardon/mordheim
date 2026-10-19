@@ -27,8 +27,15 @@ export default function BattleProvider({
   const campaignId = Number(id);
   const numericBattleId = Number(battleId);
 
-  const { battleState, battleStateRef, isLoading, error, applyBattleResponse, updateBattleState } =
-    useBattleState({ campaignId, battleId: numericBattleId, view: phase });
+  const {
+    battleState,
+    battleStateRef,
+    isLoading,
+    error,
+    applyBattleResponse,
+    updateBattleState,
+    refreshBattleState,
+  } = useBattleState({ campaignId, battleId: numericBattleId, view: phase });
   const { rosters, rosterLoading, rosterErrors } = useBattleRosters(
     campaignId,
     numericBattleId,
@@ -49,10 +56,12 @@ export default function BattleProvider({
             rosterErrors,
             applyBattleResponse,
             updateBattleState,
+            refreshBattleState,
           }
         : null,
     [
       applyBattleResponse,
+      refreshBattleState,
       battleState,
       battleStateRef,
       campaignId,

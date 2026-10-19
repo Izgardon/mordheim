@@ -47,14 +47,14 @@ export function usePostbattleDraft({
 
   // Rebuilt only when what the draft is built from changes, not on every participant update.
   const participantRef = useLatestRef(currentParticipant);
-  const { battle, events } = battleState;
+  const { battle, suggested_postbattle: suggestion } = battleState;
   useEffect(() => {
     const participant = participantRef.current;
     if (!participant || !currentRoster) return;
-    setDraft(suggestedDraft(participant, currentRoster, resources, events));
+    setDraft(suggestedDraft(participant, currentRoster, resources, suggestion));
   }, [
     battle,
-    events,
+    suggestion,
     currentParticipant?.id,
     currentParticipant?.postbattle_json,
     currentParticipant?.unit_information_json,

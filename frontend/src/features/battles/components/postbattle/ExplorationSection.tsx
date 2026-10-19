@@ -6,10 +6,7 @@ import ExplorationInfoTooltip from "@/features/battles/components/postbattle/Exp
 import PostbattleSection, {
   POSTBATTLE_SECTION_LABELS,
 } from "@/features/battles/components/postbattle/PostbattleSection";
-import {
-  MAX_CHOSEN_EXPLORATION_DICE,
-  MAX_EXPLORATION_DICE,
-} from "@/features/battles/components/postbattle/postbattle-rules";
+import { explorationTableRows } from "@/features/battles/components/postbattle/postbattle-rules";
 import {
   setLocalExplorationAmountOverride,
   setLocalExplorationDieSelected,
@@ -41,14 +38,14 @@ export default function ExplorationSection({
   draftError: string;
   diceColor: string;
 }) {
-  const { exploration, setExploration, isRolling } = explore;
+  const { exploration, setExploration, isRolling, limits } = explore;
   const chosenCount = exploration?.selectedDice.filter(Boolean).length ?? 0;
   return (
     <PostbattleSection section="exploration" isMobile={isMobile}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <p className="battle-section-title">{POSTBATTLE_SECTION_LABELS.exploration}</p>
-          <ExplorationInfoTooltip />
+          <ExplorationInfoTooltip rows={explorationTableRows(explore.rules)} />
         </div>
         <div className="flex items-center gap-3">
           {isSavingDraft ? (
@@ -67,7 +64,7 @@ export default function ExplorationSection({
           <CommittedNumberInput
             value={exploration?.diceCount ?? 0}
             min={0}
-            max={MAX_EXPLORATION_DICE}
+            max={limits.max}
             fallbackValue={0}
             className="field-surface h-10 !rounded-none"
             disabled={isFinalized || !exploration}
@@ -109,13 +106,13 @@ export default function ExplorationSection({
             chooseDisabled={
               isFinalized ||
               !exploration ||
-              (!exploration.selectedDice[index] && chosenCount >= MAX_CHOSEN_EXPLORATION_DICE)
+              (!exploration.selectedDice[index] && chosenCount >= limits.max_chosen)
             }
             disabled={isFinalized}
             rerollDisabled={isFinalized || !exploration || isRolling}
             onChooseChange={(chosen) =>
               exploration &&
-              setExploration(setLocalExplorationDieSelected(exploration, index, chosen))
+              setExploration(setLocalExplorationDieSelected(exploration, index, chosen, limits))
             }
             onValueChange={(rawValue) =>
               exploration &&

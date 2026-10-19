@@ -21,6 +21,8 @@ export type BattleContextValue = {
   applyBattleResponse: (next: BattleState) => void;
   /** Changes the cached state in place (optimistic edits). */
   updateBattleState: (updater: (previous: BattleState | null) => BattleState | null) => void;
+  /** Reads the events after the cached ones, in the shown page's view. */
+  refreshBattleState: () => Promise<void>;
 };
 
 export const BattleContext = createContext<BattleContextValue | null>(null);

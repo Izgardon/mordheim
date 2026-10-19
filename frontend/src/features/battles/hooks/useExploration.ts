@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   explorationAmount,
+  explorationDiceLimits,
   suggestedExploration,
 } from "@/features/battles/components/postbattle/postbattle-rules";
 import {
@@ -46,7 +47,8 @@ export function useExploration({
   const [isRolling, setIsRolling] = useState(false);
 
   const participantRef = useLatestRef(currentParticipant);
-  const { battle } = battleState;
+  const { battle, rules, suggested_postbattle: suggestion } = battleState;
+  const limits = explorationDiceLimits(rules);
   useEffect(() => {
     const participant = participantRef.current;
     if (!participant || !currentRoster) {
@@ -54,7 +56,7 @@ export function useExploration({
     }
     const ownerKey = `${battle.id}:${participant.id}`;
     if (explorationKey !== ownerKey) {
-      const restored = suggestedExploration(participant, currentRoster, battle, resources);
+      const restored = suggestedExploration(participant, resources, suggestion, rules);
       const saved = settledExplorationPayload(restored);
       savedExplorationKeyRef.current = saved ? JSON.stringify(saved) : null;
       lastSettledExplorationRef.current = saved;
@@ -77,7 +79,9 @@ export function useExploration({
     lastSettledExplorationRef,
     participantRef,
     resources,
+    rules,
     savedExplorationKeyRef,
+    suggestion,
   ]);
 
   const settledExploration = useMemo(() => settledExplorationPayload(exploration), [exploration]);
@@ -165,15 +169,16 @@ export function useExploration({
   const commitDiceCount = useCallback(
     (nextCount: number) => {
       if (exploration) {
-        setExploration(setLocalExplorationDiceCount(exploration, nextCount));
+        setExploration(setLocalExplorationDiceCount(exploration, nextCount, limits));
       }
     },
-    [exploration]
+    [exploration, limits]
   );
 
   const amountFromDice = useMemo(
-    () => explorationAmount(exploration ? getSelectedExplorationDiceValues(exploration) : []),
-    [exploration]
+    () =>
+      explorationAmount(rules, exploration ? getSelectedExplorationDiceValues(exploration) : []),
+    [exploration, rules]
   );
   const resource = useMemo(
     () => resources.find((entry) => entry.id === exploration?.resourceId) ?? null,
@@ -183,6 +188,8 @@ export function useExploration({
   return {
     exploration,
     setExploration,
+    rules,
+    limits,
     amountFromDice,
     amount: exploration?.amountOverride ?? amountFromDice,
     resource,

@@ -69,10 +69,17 @@ export function mergeBattleState(previous: BattleState | null, next: BattleState
     return next;
   }
   const events = mergeBattleEvents(previous.events ?? [], next.events ?? []);
+  // Only postbattle reads carry the server's suggestions and rules; writes and messages don't.
+  const extras = {
+    ...((next.suggested_postbattle ?? previous.suggested_postbattle)
+      ? { suggested_postbattle: next.suggested_postbattle ?? previous.suggested_postbattle }
+      : {}),
+    ...((next.rules ?? previous.rules) ? { rules: next.rules ?? previous.rules } : {}),
+  };
   if (isOlderThan(next, previous)) {
-    return { battle: previous.battle, participants: previous.participants, events };
+    return { battle: previous.battle, participants: previous.participants, events, ...extras };
   }
-  return { battle: next.battle, participants: next.participants, events };
+  return { battle: next.battle, participants: next.participants, events, ...extras };
 }
 
 /** The cached participants with the changed ones replaced (by id) and new ones added. */

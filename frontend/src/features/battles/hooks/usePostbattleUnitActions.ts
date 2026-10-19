@@ -14,8 +14,7 @@ import type { InjuryRollTarget } from "@/features/battles/components/postbattle/
 import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
 import { useEventUndo } from "@/features/battles/hooks/useEventUndo";
 import type { PostbattleDraft } from "@/features/battles/hooks/usePostbattleDraft";
-import type { BattleState } from "@/features/battles/types/battle-types";
-import type { CampaignHeroDeathRoll } from "@/features/campaigns/types/campaign-types";
+import type { BattlePostbattleRules, BattleState } from "@/features/battles/types/battle-types";
 import { parseDiceValues } from "@/features/battles/utils/dice-results";
 
 type KillInput = { victimUnitKey?: string; victimName?: string; notes?: string; earnedXp: boolean };
@@ -30,7 +29,7 @@ export function usePostbattleUnitActions({
   battleState,
   rosters,
   userId,
-  heroDeathRoll,
+  rules,
   drafting,
   applyBattleResponse,
 }: {
@@ -39,7 +38,7 @@ export function usePostbattleUnitActions({
   battleState: BattleState;
   rosters: Record<number, ParticipantRoster>;
   userId: number | undefined;
-  heroDeathRoll: CampaignHeroDeathRoll;
+  rules: BattlePostbattleRules | undefined;
   drafting: PostbattleDraft;
   applyBattleResponse: (next: BattleState) => void;
 }) {
@@ -71,7 +70,7 @@ export function usePostbattleUnitActions({
         setDraftError("Unable to read serious injury roll.");
         return;
       }
-      const roll = seriousInjuryRoll(rollTarget.unitKind, values, heroDeathRoll);
+      const roll = seriousInjuryRoll(rollTarget.unitKind, values, rules);
       setIsInjuryRolling(false);
       setRollTarget(null);
       await persistDraft(
@@ -82,7 +81,7 @@ export function usePostbattleUnitActions({
         }))
       );
     },
-    [draft, heroDeathRoll, persistDraft, rollTarget, setDraftError]
+    [draft, persistDraft, rollTarget, rules, setDraftError]
   );
 
   /** Only the unit's last roll counts; its effect is applied at finalise when ticked (BUG-47). */

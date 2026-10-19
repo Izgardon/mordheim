@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import { useAuth } from "@/features/auth/hooks/use-auth";
@@ -68,14 +68,25 @@ export function usePostbattlePage(campaign: CampaignSummary | null | undefined) 
     resources,
     drafting,
   });
-  const heroDeathRoll = heroDeathRollFor(campaign);
+  // Only a postbattle read carries the server's rules and suggestions (IMP-52): reached from Active
+  // (a write's answer or a message), the page reads them once.
+  const { rules, suggested_postbattle: suggestion } = battleState;
+  const { refreshBattleState } = battle;
+  const askedForRulesRef = useRef(false);
+  useEffect(() => {
+    if ((!rules || !suggestion) && !askedForRulesRef.current) {
+      askedForRulesRef.current = true;
+      void refreshBattleState();
+    }
+  }, [refreshBattleState, rules, suggestion]);
+  const heroDeathRoll = heroDeathRollFor(rules);
   const actions = usePostbattleUnitActions({
     campaignId,
     battleId,
     battleState,
     rosters,
     userId: user?.id,
-    heroDeathRoll,
+    rules,
     drafting,
     applyBattleResponse,
   });

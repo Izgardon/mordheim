@@ -1,6 +1,7 @@
 /**
  * Requests a creator's walk through the three phase pages sends: `BattleLayout` reads the battle's
- * state and the rosters once, and moving from page to page reads neither again (PERF-38).
+ * state and the rosters once, and moving from page to page reads neither again (PERF-38); postbattle
+ * reads its own view once more for the server's rules and suggestions, which only it carries (IMP-52).
  */
 import { act, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
@@ -30,7 +31,7 @@ vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => false }));
 vi.mock("@/features/realtime/components/CampaignDiceRollerMenu", () => ({ default: () => null }));
 
 describe("battle phase requests", () => {
-  it("reads rosters/ and the state once for the whole walk from prebattle to postbattle (PERF-38)", async () => {
+  it("reads rosters/ once and the state once, plus postbattle's rules, from prebattle to postbattle (PERF-38, IMP-52)", async () => {
     const user = setupUser();
     fakeApi.reset();
     fakeApi.on(
@@ -63,6 +64,8 @@ describe("battle phase requests", () => {
       `POST ${battlePath("finish/")}`,
       // Postbattle's resources come from the warband's sheet query (BUG-127).
       `GET /warbands/${ME.warband.id}/sheet/`,
+      // End battle's answer has no rules or suggestions; the postbattle view does (IMP-52).
+      `GET ${statePath("postbattle")}`,
     ]);
   });
 });

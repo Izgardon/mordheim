@@ -1,38 +1,27 @@
 import type {
-  BattleEvent,
   BattlePostbattleFindItem,
   BattleParticipant,
   BattlePostbattleSeriousInjuryRoll,
+  BattlePostbattleSuggestion,
   BattlePostbattleUpkeepEntry,
   BattlePostbattleState,
   BattlePostbattleUnitResult,
-  BattleSummary,
   BattleUnitInformationEntry,
 } from "@/features/battles/types/battle-types";
 import type {
   ParticipantRoster,
   PrebattleUnit,
 } from "@/features/battles/components/prebattle/prebattle-types";
-import type { CampaignHeroDeathRoll } from "@/features/campaigns/types/campaign-types";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
 
 import {
   getParticipantSelectedUnits,
   toUnitInformationMap,
 } from "@/features/battles/components/active/active-utils";
-
-type SeriousInjuryGuide = {
-  code: string;
-  label: string;
-  dead: boolean;
-};
-
-type SeriousInjuryRangeGuide = {
-  min: number;
-  max: number;
-  label: string;
-  dead: boolean;
-};
+import {
+  DEFAULT_EXPLORATION_DICE,
+  type ExplorationDiceLimits,
+} from "@/features/battles/components/postbattle/exploration-dice";
 
 export type LocalExplorationState = {
   diceCount: number;
@@ -65,71 +54,6 @@ export type PostbattleRenderableGroup = {
   rows: PostbattleRenderableRow[];
 };
 
-const HERO_INJURY_GUIDE: Record<string, SeriousInjuryGuide> = {
-  "11": { code: "11", label: "Dead", dead: true },
-  "12": { code: "12", label: "Dead", dead: true },
-  "13": { code: "13", label: "Dead", dead: true },
-  "14": { code: "14", label: "Dead", dead: true },
-  "15": { code: "15", label: "Dead", dead: true },
-  "16": { code: "16", label: "Full Recovery", dead: false },
-  "21": { code: "21", label: "Full Recovery", dead: false },
-  "22": { code: "22", label: "Horrible Scars", dead: false },
-  "23": { code: "23", label: "Horrible Scars", dead: false },
-  "24": { code: "24", label: "Horrible Scars", dead: false },
-  "25": { code: "25", label: "Horrible Scars", dead: false },
-  "26": { code: "26", label: "Horrible Scars", dead: false },
-  "31": { code: "31", label: "Old Battle Wound", dead: false },
-  "32": { code: "32", label: "Nervous Condition", dead: false },
-  "33": { code: "33", label: "Smashed Leg", dead: false },
-  "34": { code: "34", label: "Arm Wound", dead: false },
-  "35": { code: "35", label: "Severe Head Wound", dead: false },
-  "36": { code: "36", label: "Robbed", dead: false },
-  "41": { code: "41", label: "Sold to the Pits", dead: false },
-  "42": { code: "42", label: "Sold to the Pits", dead: false },
-  "43": { code: "43", label: "Sold to the Pits", dead: false },
-  "44": { code: "44", label: "Sold to the Pits", dead: false },
-  "45": { code: "45", label: "Sold to the Pits", dead: false },
-  "46": { code: "46", label: "Sold to the Pits", dead: false },
-  "51": { code: "51", label: "Sold to the Pits", dead: false },
-  "52": { code: "52", label: "Sold to the Pits", dead: false },
-  "53": { code: "53", label: "Sold to the Pits", dead: false },
-  "54": { code: "54", label: "Sold to the Pits", dead: false },
-  "55": { code: "55", label: "Sold to the Pits", dead: false },
-  "56": { code: "56", label: "Bitter Enmity", dead: false },
-  "61": { code: "61", label: "Captured", dead: false },
-  "62": { code: "62", label: "Hardened", dead: false },
-  "63": { code: "63", label: "Mad", dead: false },
-  "64": { code: "64", label: "Stupidity", dead: false },
-  "65": { code: "65", label: "Frenzy", dead: false },
-  "66": { code: "66", label: "Multiple Injuries", dead: false },
-};
-
-const HERO_D100_INJURY_GUIDE: SeriousInjuryRangeGuide[] = [
-  { min: 1, max: 14, label: "Dead", dead: true },
-  { min: 15, max: 20, label: "Multiple Injuries", dead: false },
-  { min: 21, max: 23, label: "Smashed Leg", dead: false },
-  { min: 24, max: 24, label: "Arm Wound", dead: false },
-  { min: 25, max: 26, label: "Madness", dead: false },
-  { min: 27, max: 28, label: "Smashed Leg", dead: false },
-  { min: 29, max: 31, label: "Chest Wound", dead: false },
-  { min: 32, max: 34, label: "Big City Shakes", dead: false },
-  { min: 35, max: 37, label: "Blind in One Eye", dead: false },
-  { min: 38, max: 39, label: "Old Battle Wound", dead: false },
-  { min: 40, max: 42, label: "Nervous Condition", dead: false },
-  { min: 43, max: 45, label: "Hand Injury", dead: false },
-  { min: 46, max: 49, label: "Deep Wound", dead: false },
-  { min: 50, max: 74, label: "Full Recovery", dead: false },
-  { min: 75, max: 77, label: "Robbed", dead: false },
-  { min: 78, max: 80, label: "Bitter Enmity", dead: false },
-  { min: 81, max: 85, label: "Captured", dead: false },
-  { min: 86, max: 88, label: "Hardened", dead: false },
-  { min: 89, max: 91, label: "Horrible Scars", dead: false },
-  { min: 92, max: 94, label: "Sold to the Pits", dead: false },
-  { min: 95, max: 97, label: "Survives Against the Odds", dead: false },
-  { min: 98, max: 99, label: "Really Survives Against the Odds", dead: false },
-  { min: 100, max: 100, label: "Mutation", dead: false },
-];
-
 function getUnitInformationEntry(
   unitInformationByKey: Record<string, BattleUnitInformationEntry>,
   unitKey: string
@@ -141,46 +65,6 @@ function getUnitInformationEntry(
       kill_count: 0,
     }
   );
-}
-
-function getWinnerBonus(battle: BattleSummary, participant: BattleParticipant) {
-  return (battle.winner_warband_ids_json ?? []).includes(participant.warband.id) ? 1 : 0;
-}
-
-function getXpKillCountByUnitKey(events: BattleEvent[], participant: BattleParticipant) {
-  const xpKillCountByUnitKey: Record<string, number> = {};
-  for (const event of events) {
-    if (event.type !== "unit_kill_recorded") {
-      continue;
-    }
-    const payload = event.payload_json ?? {};
-    const earnedXp = payload.earned_xp;
-    if (earnedXp === false) {
-      continue;
-    }
-    const killerPayload =
-      typeof payload.killer === "object" && payload.killer !== null
-        ? (payload.killer as Record<string, unknown>)
-        : null;
-    if (!killerPayload) {
-      continue;
-    }
-    const killerWarbandId = killerPayload.warband_id;
-    const killerUnitKey = killerPayload.unit_key;
-    if (killerWarbandId !== participant.warband.id || typeof killerUnitKey !== "string") {
-      continue;
-    }
-    xpKillCountByUnitKey[killerUnitKey] = (xpKillCountByUnitKey[killerUnitKey] ?? 0) + 1;
-  }
-  return xpKillCountByUnitKey;
-}
-
-function defaultGroupXp(members: PrebattleUnit[], xpKillCountByUnitKey: Record<string, number>) {
-  const kills = members.reduce(
-    (total, member) => total + (xpKillCountByUnitKey[member.key] ?? 0),
-    0
-  );
-  return 1 + kills;
 }
 
 function createDefaultUnitResult(
@@ -205,39 +89,17 @@ function createDefaultUnitResult(
   };
 }
 
-function createDefaultUpkeepEntry(unit: PrebattleUnit): BattlePostbattleUpkeepEntry {
-  return {
-    unit_name: unit.displayName,
-    cost:
-      unit.kind === "hired_sword" && typeof unit.upkeepPrice === "number"
-        ? Math.max(0, Math.trunc(unit.upkeepPrice))
-        : null,
-  };
-}
-
-export function getDefaultExplorationDiceCount(
-  participant: BattleParticipant,
-  roster: ParticipantRoster | undefined,
-  battle: BattleSummary
-) {
-  const selected = getParticipantSelectedUnits(participant, roster);
-  const unitInformationByKey = toUnitInformationMap(participant.unit_information_json);
-  const eligibleHeroCount = selected.heroes.filter(
-    (hero) => !getUnitInformationEntry(unitInformationByKey, hero.key).out_of_action
-  ).length;
-  return Math.max(0, Math.min(10, eligibleHeroCount + getWinnerBonus(battle, participant)));
-}
-
 function findTreasureResourceId(resources: WarbandResource[]): number | null {
   const treasure = resources.find((r) => r.name.toLowerCase() === "treasure");
   return treasure?.id ?? resources[0]?.id ?? null;
 }
 
+/** The roll saved with the draft, or `suggestion`'s dice (the server's, `suggested_postbattle`). */
 export function buildLocalExplorationState(
   participant: BattleParticipant,
-  roster: ParticipantRoster | undefined,
-  battle: BattleSummary,
-  resources: WarbandResource[]
+  resources: WarbandResource[],
+  suggestion?: BattlePostbattleSuggestion["exploration"],
+  limits: ExplorationDiceLimits = DEFAULT_EXPLORATION_DICE
 ): LocalExplorationState {
   // A roll saved with the draft comes back as it was (BUG-71): the chosen dice, resource and
   // override; the dice that weren't chosen aren't kept.
@@ -252,17 +114,17 @@ export function buildLocalExplorationState(
     return {
       diceCount: savedDice.length,
       diceValues: savedDice,
-      selectedDice: savedDice.map((_, index) => index < 6),
+      selectedDice: savedDice.map((_, index) => index < limits.max_chosen),
       resourceId: savedResourceId,
       amountOverride: savedOverride,
       hasRolledAllDice: true,
     };
   }
-  const diceCount = getDefaultExplorationDiceCount(participant, roster, battle);
+  const diceCount = Math.max(0, Math.min(limits.max, suggestion?.dice_count ?? 0));
   return {
     diceCount,
     diceValues: Array.from({ length: diceCount }, () => null),
-    selectedDice: Array.from({ length: diceCount }, (_, index) => index < 6),
+    selectedDice: Array.from({ length: diceCount }, (_, index) => index < limits.max_chosen),
     resourceId: savedResourceId,
     amountOverride: savedOverride,
     hasRolledAllDice: false,
@@ -279,16 +141,17 @@ export function settledExplorationPayload(state: LocalExplorationState | null) {
 
 export function setLocalExplorationDiceCount(
   state: LocalExplorationState,
-  nextDiceCount: number
+  nextDiceCount: number,
+  limits: ExplorationDiceLimits = DEFAULT_EXPLORATION_DICE
 ): LocalExplorationState {
-  const cappedCount = Math.max(0, Math.min(10, nextDiceCount));
+  const cappedCount = Math.max(0, Math.min(limits.max, nextDiceCount));
   const nextDiceValues = state.diceValues.slice(0, cappedCount);
   const nextSelectedDice = state.selectedDice.slice(0, cappedCount);
   while (nextDiceValues.length < cappedCount) {
     nextDiceValues.push(null);
   }
   while (nextSelectedDice.length < cappedCount) {
-    nextSelectedDice.push(nextSelectedDice.filter(Boolean).length < 6);
+    nextSelectedDice.push(nextSelectedDice.filter(Boolean).length < limits.max_chosen);
   }
   return {
     ...state,
@@ -301,12 +164,14 @@ export function setLocalExplorationDiceCount(
 export function setLocalExplorationDieSelected(
   state: LocalExplorationState,
   index: number,
-  checked: boolean
+  checked: boolean,
+  limits: ExplorationDiceLimits = DEFAULT_EXPLORATION_DICE
 ): LocalExplorationState {
   if (index < 0 || index >= state.selectedDice.length) {
     return state;
   }
-  if (checked && !state.selectedDice[index] && state.selectedDice.filter(Boolean).length >= 6) {
+  const chosen = state.selectedDice.filter(Boolean).length;
+  if (checked && !state.selectedDice[index] && chosen >= limits.max_chosen) {
     return state;
   }
   return {
@@ -365,32 +230,6 @@ export function setLocalExplorationAmountOverride(
     return state;
   }
   return { ...state, amountOverride: Math.max(0, Math.trunc(parsed)) };
-}
-
-export function getExplorationResourceAmount(diceValues: Array<number | null>) {
-  const total = diceValues.reduce<number>((sum, value) => sum + (value ?? 0), 0);
-  if (total <= 0) {
-    return 0;
-  }
-  if (total <= 5) {
-    return 1;
-  }
-  if (total <= 11) {
-    return 2;
-  }
-  if (total <= 17) {
-    return 3;
-  }
-  if (total <= 24) {
-    return 4;
-  }
-  if (total <= 30) {
-    return 5;
-  }
-  if (total <= 35) {
-    return 6;
-  }
-  return 7;
 }
 
 export function getSelectedExplorationDiceValues(state: LocalExplorationState) {
@@ -491,14 +330,18 @@ function getExistingFinds(existing: BattlePostbattleState | undefined) {
   };
 }
 
+/**
+ * The draft saved so far, filled in from the server's `suggested_postbattle` (XP per unit, upkeep)
+ * for whatever the player hasn't set; without a suggestion XP starts at 0 and upkeep unknown.
+ */
 export function buildPostbattleDraft(
   participant: BattleParticipant,
   roster: ParticipantRoster | undefined,
   resources: WarbandResource[],
-  events: BattleEvent[] = []
+  suggestion?: BattlePostbattleSuggestion
 ): BattlePostbattleState {
   const unitInformationByKey = toUnitInformationMap(participant.unit_information_json);
-  const xpKillCountByUnitKey = getXpKillCountByUnitKey(events, participant);
+  const suggestedXp = (unitKey: string) => suggestion?.unit_results[unitKey]?.xp_earned ?? 0;
   const selected = getParticipantSelectedUnits(participant, roster);
   const existing = (participant.postbattle_json as BattlePostbattleState | undefined) ?? undefined;
 
@@ -507,11 +350,7 @@ export function buildPostbattleDraft(
 
   for (const hero of selected.heroes) {
     const unitInformation = getUnitInformationEntry(unitInformationByKey, hero.key);
-    const defaultResult = createDefaultUnitResult(
-      hero,
-      unitInformation,
-      1 + (xpKillCountByUnitKey[hero.key] ?? 0)
-    );
+    const defaultResult = createDefaultUnitResult(hero, unitInformation, suggestedXp(hero.key));
     nextUnitResults[hero.key] = {
       ...mergeUnitResultWithExisting(defaultResult, getExistingUnitResult(existing, hero.key)),
     };
@@ -522,7 +361,7 @@ export function buildPostbattleDraft(
     const defaultResult = createDefaultUnitResult(
       hiredSword,
       unitInformation,
-      hiredSword.noLevelUps ? 0 : 1 + (xpKillCountByUnitKey[hiredSword.key] ?? 0)
+      suggestedXp(hiredSword.key)
     );
     nextUnitResults[hiredSword.key] = {
       ...mergeUnitResultWithExisting(
@@ -534,7 +373,10 @@ export function buildPostbattleDraft(
 
   for (const hiredSword of roster?.hiredSwords ?? []) {
     nextUpkeepEntries[hiredSword.key] = {
-      ...createDefaultUpkeepEntry(hiredSword),
+      ...(suggestion?.upkeep.entries[hiredSword.key] ?? {
+        unit_name: hiredSword.displayName,
+        cost: null,
+      }),
       ...getExistingUpkeepEntry(existing, hiredSword.key),
     };
   }
@@ -546,12 +388,14 @@ export function buildPostbattleDraft(
     if (selectedMembers.length === 0) {
       continue;
     }
-    const groupXp = selectedMembers.some((member) => member.noLevelUps)
-      ? 0
-      : defaultGroupXp(selectedMembers, xpKillCountByUnitKey);
     for (const member of selectedMembers) {
       const unitInformation = getUnitInformationEntry(unitInformationByKey, member.key);
-      const defaultResult = createDefaultUnitResult(member, unitInformation, groupXp, group.name);
+      const defaultResult = createDefaultUnitResult(
+        member,
+        unitInformation,
+        suggestedXp(member.key),
+        group.name
+      );
       nextUnitResults[member.key] = {
         ...mergeUnitResultWithExisting(defaultResult, getExistingUnitResult(existing, member.key)),
       };
@@ -765,58 +609,6 @@ export function getPostbattleUpkeepTotal(draft: BattlePostbattleState | null) {
     total += Math.max(0, Math.trunc(entry.cost));
   }
   return total;
-}
-
-export function buildD6SeriousInjuryRoll(value: number): BattlePostbattleSeriousInjuryRoll {
-  const normalizedValue = Math.max(1, Math.min(6, Math.trunc(value || 1)));
-  const dead = normalizedValue <= 2;
-  return {
-    roll_type: "d6",
-    rolls: [normalizedValue],
-    result_code: String(normalizedValue),
-    result_label: dead ? "Dead" : "Survives",
-    dead_suggestion: dead,
-  };
-}
-
-export function buildHeroSeriousInjuryRoll(
-  values: number[],
-  mode: CampaignHeroDeathRoll = "d66"
-): BattlePostbattleSeriousInjuryRoll {
-  if (mode === "d100") {
-    const value = Math.max(1, Math.min(100, Math.trunc(values[0] || 1)));
-    const guide = HERO_D100_INJURY_GUIDE.find(
-      (entry) => value >= entry.min && value <= entry.max
-    ) ?? {
-      min: value,
-      max: value,
-      label: "Check the serious injury chart manually",
-      dead: false,
-    };
-    return {
-      roll_type: "d100",
-      rolls: [value],
-      result_code: String(value).padStart(2, "0"),
-      result_label: guide.label,
-      dead_suggestion: guide.dead,
-    };
-  }
-
-  const tens = Math.max(1, Math.min(6, Math.trunc(values[0] || 1)));
-  const ones = Math.max(1, Math.min(6, Math.trunc(values[1] || 1)));
-  const code = `${tens}${ones}`;
-  const guide = HERO_INJURY_GUIDE[code] ?? {
-    code,
-    label: "Check the serious injury chart manually",
-    dead: false,
-  };
-  return {
-    roll_type: "d66",
-    rolls: [tens, ones],
-    result_code: guide.code,
-    result_label: guide.label,
-    dead_suggestion: guide.dead,
-  };
 }
 
 export function isPostbattleDraftValid(draft: BattlePostbattleState | null) {

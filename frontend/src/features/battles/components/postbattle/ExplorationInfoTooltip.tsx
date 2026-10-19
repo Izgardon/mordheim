@@ -2,10 +2,12 @@ import { Info } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
-import { EXPLORATION_SHARD_TABLE } from "@/features/battles/components/postbattle/postbattle-rules";
-
-/** The exploration table (dice total to shards found), behind an info button. */
-export default function ExplorationInfoTooltip() {
+/** The exploration table (dice total to shards found, the server's), behind an info button. */
+export default function ExplorationInfoTooltip({
+  rows,
+}: {
+  rows: { diceResult: string; shardsFound: string }[];
+}) {
   return (
     <Tooltip
       trigger={
@@ -34,7 +36,7 @@ export default function ExplorationInfoTooltip() {
               </tr>
             </thead>
             <tbody>
-              {EXPLORATION_SHARD_TABLE.map((row) => (
+              {rows.map((row) => (
                 <tr key={row.diceResult} className="border border-border/60">
                   <td className="border border-border/60 px-3 py-2 text-foreground">
                     {row.diceResult}

@@ -1,4 +1,5 @@
 import type { BattleWarning } from "@/features/battles/utils/battle-warnings";
+import type { CampaignHeroDeathRoll } from "@/features/campaigns/types/campaign-types";
 
 export type BattleFlowType = "normal" | "reported_result";
 export type BattleStateView = "full" | "prebattle" | "active" | "postbattle";
@@ -296,12 +297,42 @@ export type BattleEvent =
     });
 
 /** A battle with its participants in one view's shape. */
+export type BattleInjuryEffect = NonNullable<BattlePostbattleSeriousInjuryRoll["effect"]>;
+
+/** One row of a serious-injury table: the rolls from `low` to `high` (D66 codes for d66). */
+export type BattleInjuryTableRow = {
+  low: number;
+  high: number;
+  label: string;
+  effect: BattleInjuryEffect;
+};
+
+/** The postbattle rules the server applies (IMP-52), in `state/?view=postbattle`. */
+export type BattlePostbattleRules = {
+  /** Ascending; the first row whose `max_total` (null: no limit) covers the dice total. */
+  exploration_table: { max_total: number | null; amount: number }[];
+  exploration_dice: { max: number; max_chosen: number };
+  /** Heroes' serious-injury table; henchmen and hired swords roll d6. */
+  hero_death_roll: CampaignHeroDeathRoll;
+  injury_tables: Record<"d6" | "d66" | "d100", BattleInjuryTableRow[]>;
+};
+
+/** The server's suggestions for the reader's own postbattle (IMP-52). */
+export type BattlePostbattleSuggestion = {
+  unit_results: Record<string, { xp_earned: number }>;
+  exploration: { dice_count: number };
+  upkeep: { entries: Record<string, { unit_name: string; cost: number | null }> };
+};
+
 export type BattleStateOf<Participant extends BattleParticipantCore> = {
   battle: BattleSummary;
   participants: Participant[];
   events: BattleEvent[];
   /** Only in the acting player's answer, only when there are any. */
   warnings?: BattleWarning[];
+  /** Only in `state/?view=postbattle`, for the reader's own participant. */
+  suggested_postbattle?: BattlePostbattleSuggestion;
+  rules?: BattlePostbattleRules;
 };
 
 /** The battle as the pages cache it. */

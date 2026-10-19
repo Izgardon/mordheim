@@ -1,74 +1,85 @@
 import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
+import { DEFAULT_EXPLORATION_DICE } from "@/features/battles/components/postbattle/exploration-dice";
 import {
-  buildD6SeriousInjuryRoll,
-  buildHeroSeriousInjuryRoll,
   buildLocalExplorationState,
   buildPostbattleDraft,
-  getExplorationResourceAmount,
 } from "@/features/battles/components/postbattle/postbattle-utils";
 import type {
-  BattleEvent,
+  BattleInjuryTableRow,
   BattleParticipant,
-  BattleSummary,
+  BattlePostbattleRules,
+  BattlePostbattleSeriousInjuryRoll,
+  BattlePostbattleSuggestion,
 } from "@/features/battles/types/battle-types";
-import type {
-  CampaignHeroDeathRoll,
-  CampaignSummary,
-} from "@/features/campaigns/types/campaign-types";
+import type { CampaignHeroDeathRoll } from "@/features/campaigns/types/campaign-types";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
 
 /**
- * The postbattle rules and suggestions the page still works out itself, in one place (IMP-52).
- * When the server's `suggested_postbattle` (XP per unit, exploration dice, upkeep) and `rules`
- * block (exploration table, injury tables, hero death roll) reach the postbattle state, only this
- * module changes: the page reads the table, the limits and the suggestions from here.
+ * Postbattle's rules and suggestions come from the server (IMP-52): `rules` and
+ * `suggested_postbattle` in `state/?view=postbattle`. Without them (an older server) the page
+ * still works: no exploration table (amount 0), the default dice limits, XP 0 and unknown upkeep,
+ * and injury rolls flagged for the chart.
  */
 
-/** Shards found per exploration total. */
-export const EXPLORATION_SHARD_TABLE = [
-  { diceResult: "1-5", shardsFound: "1" },
-  { diceResult: "6-11", shardsFound: "2" },
-  { diceResult: "12-17", shardsFound: "3" },
-  { diceResult: "18-24", shardsFound: "4" },
-  { diceResult: "25-30", shardsFound: "5" },
-  { diceResult: "31-35", shardsFound: "6" },
-  { diceResult: "36+", shardsFound: "7" },
-] as const;
+type Rules = BattlePostbattleRules | undefined;
 
-/** At most this many exploration dice can be rolled, and this many chosen. */
-export const MAX_EXPLORATION_DICE = 10;
-export const MAX_CHOSEN_EXPLORATION_DICE = 6;
-
-/** The exploration amount for the chosen dice, by the table. */
-export function explorationAmount(diceValues: Array<number | null>) {
-  return getExplorationResourceAmount(diceValues);
+/** The exploration table as the info tooltip lists it: "6-11" → 2. */
+export function explorationTableRows(rules: Rules) {
+  const rows: { diceResult: string; shardsFound: string }[] = [];
+  let previousMax = 0;
+  for (const row of rules?.exploration_table ?? []) {
+    if (row.amount > 0) {
+      const range =
+        row.max_total === null ? `${previousMax + 1}+` : `${previousMax + 1}-${row.max_total}`;
+      rows.push({ diceResult: range, shardsFound: String(row.amount) });
+    }
+    previousMax = row.max_total ?? previousMax;
+  }
+  return rows;
 }
 
-/** The draft with today's suggestions filled in (XP per unit, upkeep), or the saved one. */
+/** How many exploration dice can be rolled and chosen. */
+export function explorationDiceLimits(rules: Rules) {
+  return rules?.exploration_dice ?? DEFAULT_EXPLORATION_DICE;
+}
+
+/** The exploration amount for the chosen dice, by the server's table. */
+export function explorationAmount(rules: Rules, diceValues: Array<number | null>) {
+  const total = diceValues.reduce<number>((sum, value) => sum + (value ?? 0), 0);
+  const row = rules?.exploration_table.find(
+    (entry) => entry.max_total === null || total <= entry.max_total
+  );
+  return row?.amount ?? 0;
+}
+
+/** The draft saved so far, with the server's suggested XP and upkeep for the rest. */
 export function suggestedDraft(
   participant: BattleParticipant,
   roster: ParticipantRoster | undefined,
   resources: WarbandResource[],
-  events: BattleEvent[]
+  suggestion: BattlePostbattleSuggestion | undefined
 ) {
-  return buildPostbattleDraft(participant, roster, resources, events);
+  return buildPostbattleDraft(participant, roster, resources, suggestion);
 }
 
-/** The exploration roll saved with the draft, or the suggested dice for a new one. */
+/** The exploration roll saved with the draft, or the server's suggested dice. */
 export function suggestedExploration(
   participant: BattleParticipant,
-  roster: ParticipantRoster | undefined,
-  battle: BattleSummary,
-  resources: WarbandResource[]
+  resources: WarbandResource[],
+  suggestion: BattlePostbattleSuggestion | undefined,
+  rules: Rules
 ) {
-  return buildLocalExplorationState(participant, roster, battle, resources);
+  return buildLocalExplorationState(
+    participant,
+    resources,
+    suggestion?.exploration,
+    explorationDiceLimits(rules)
+  );
 }
 
 /** The campaign's serious-injury table for heroes. */
-export function heroDeathRollFor(
-  campaign: Pick<CampaignSummary, "hero_death_roll"> | null | undefined
-) {
-  return campaign?.hero_death_roll ?? "d66";
+export function heroDeathRollFor(rules: Rules): CampaignHeroDeathRoll {
+  return rules?.hero_death_roll ?? "d66";
 }
 
 export type InjuryRollUnitKind = "hero" | "hired_sword" | "henchman";
@@ -84,13 +95,40 @@ export function seriousInjuryNotation(
   return "1d6";
 }
 
-/** The serious-injury entry for the rolled dice, from the table for the unit's kind. */
+const clamp = (value: number, max: number) => Math.max(1, Math.min(max, Math.trunc(value || 1)));
+
+/** The serious-injury entry for the rolled dice, from the server's table for the unit's kind. */
 export function seriousInjuryRoll(
   unitKind: InjuryRollUnitKind,
   values: number[],
-  heroRoll: CampaignHeroDeathRoll
-) {
-  return unitKind === "hero"
-    ? buildHeroSeriousInjuryRoll(values, heroRoll)
-    : buildD6SeriousInjuryRoll(values[0]);
+  rules: Rules
+): BattlePostbattleSeriousInjuryRoll {
+  const rollType = unitKind === "hero" ? heroDeathRollFor(rules) : "d6";
+  let rolls: number[];
+  let code: number;
+  let resultCode: string;
+  if (rollType === "d66") {
+    rolls = [clamp(values[0], 6), clamp(values[1], 6)];
+    code = rolls[0] * 10 + rolls[1];
+    resultCode = String(code);
+  } else if (rollType === "d100") {
+    rolls = [clamp(values[0], 100)];
+    code = rolls[0];
+    resultCode = String(code).padStart(2, "0");
+  } else {
+    rolls = [clamp(values[0], 6)];
+    code = rolls[0];
+    resultCode = String(code);
+  }
+  const row: BattleInjuryTableRow | undefined = rules?.injury_tables[rollType].find(
+    (entry) => code >= entry.low && code <= entry.high
+  );
+  return {
+    roll_type: rollType,
+    rolls,
+    result_code: resultCode,
+    result_label: row?.label ?? "Check the serious injury chart manually",
+    dead_suggestion: row?.effect.kind === "dead",
+    ...(row ? { effect: row.effect } : {}),
+  };
 }

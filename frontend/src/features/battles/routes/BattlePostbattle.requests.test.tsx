@@ -15,6 +15,7 @@ import {
   battleState,
   deferred,
   mySheet,
+  postbattleRules,
   statePath,
 } from "@/test/battle-fixtures";
 import { createQueryClient } from "@/lib/query-client";
@@ -75,6 +76,18 @@ function routeServer() {
       killBy(5, "hero:1"),
     ],
   });
+  // The postbattle view carries the server's rules and suggestions (IMP-52).
+  server.rules = postbattleRules();
+  server.suggested_postbattle = {
+    unit_results: {
+      "hero:1": { xp_earned: 3 },
+      "hero:3": { xp_earned: 1 },
+      "hired_sword:4": { xp_earned: 1 },
+      "henchman:2": { xp_earned: 1 },
+    },
+    exploration: { dice_count: 2 },
+    upkeep: { entries: { "hired_sword:4": { unit_name: "Ogre Bodyguard", cost: 15 } } },
+  };
   fakeApi.on(`GET ${statePath("postbattle")}`, () => answer());
   fakeApi.on(`GET ${battlePath("rosters/")}`, battleRosters());
   fakeApi.on(`GET /warbands/${ME.warband.id}/sheet/`, mySheet(RESOURCES));
