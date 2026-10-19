@@ -61,7 +61,7 @@ class CampaignBattleFinalizePostbattleView(BattleWriteView):
 
     def post(self, request, campaign_id, battle_id, **kwargs):
         try:
-            return self.finalise(request, campaign_id, battle_id)
+            return self.answered(request, self.finalise(request, campaign_id, battle_id))
         except ValueError as exc:  # raised inside the first transaction, so nothing it wrote is kept (BUG-124)
             return Response({"detail": str(exc)}, status=400)
 

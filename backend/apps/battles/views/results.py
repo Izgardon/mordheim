@@ -21,7 +21,7 @@ from ..services.errors import BattleError, Refused
 from ..services.lifecycle import cancel_battle
 from ..services.reported import approve, create_reported_result, decline, reported_result
 from .base import BattleWriteView, Scope, Written
-from .responses import broadcast_response
+from .responses import broadcast_response, with_capabilities
 from .rules import refuse, refuse_player, refused, reported_flow, snapshot_when
 
 NOT_REPORTED = "This battle is not a reported result"
@@ -41,9 +41,10 @@ class CampaignBattleReportedResultCreateView(APIView):
             return refusal.response()
         with transaction.atomic():
             battle, events = create_reported_result(campaign_id, request.user, result)
-        return broadcast_response(
+        answer = broadcast_response(
             request, battle.id, events, battle.state_version, changed=ALL, response_status=status.HTTP_201_CREATED
         )
+        return with_capabilities(answer, request.user.id, False)  # pending: nothing to manage yet
 
 
 class CampaignBattleReportedResultApproveView(BattleWriteView):

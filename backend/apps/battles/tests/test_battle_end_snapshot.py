@@ -62,7 +62,8 @@ class EndSnapshotTests(BattleTestCase):
         self.assertEqual(sorted(self.last_message()["postbattle"]["suggested"]), sorted([str(self.player.id), str(self.viewer.id)]))  # fmt: skip
 
     def test_what_does_not_fit_under_the_limit_is_left_out_and_flagged(self):
-        snapshot = {"battle": {"id": 1}, "participants": [{"id": 7, "notes": "x" * 100}]}
+        battle = {"id": 1, "status": "postbattle", "flow_type": "normal", "created_by_user_id": 3}
+        snapshot = {"battle": battle, "participants": [{"id": 7, "user": {"id": 3}, "status": "finished_battle", "notes": "x" * 100}]}  # fmt: skip
         postbattle = {"rules": {"tables": "r" * 3000}, "suggested": {"7": {"unit_results": "s" * 3000}}}
         fields = broadcast._snapshot_fields
         with mock.patch.object(broadcast, "SNAPSHOT_LIMIT_BYTES", 7000):

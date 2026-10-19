@@ -10,6 +10,7 @@ from apps.realtime.services import sender_socket_id
 
 from ..serializers import battle_snapshot
 from ..services.broadcast import Changed, publish
+from ..services.capabilities import capabilities_from, snapshot_facts
 
 
 def answer(payload: dict, events: list[dict], response_status: int = 200, warnings=None, body=None) -> Response:
@@ -19,6 +20,15 @@ def answer(payload: dict, events: list[dict], response_status: int = 200, warnin
     if warnings:
         payload["warnings"] = warnings
     return Response(payload, status=response_status)
+
+
+def with_capabilities(response: Response, user_id: int | None, manager: bool) -> Response:
+    """A write's answer carries the caller's capabilities, worked out from the snapshot it answers, so the page
+    needs no read to know what it may do next."""
+    data = response.data
+    if response.status_code < 300 and isinstance(data, dict) and data.get("battle") and "participants" in data:
+        data["capabilities"] = capabilities_from(snapshot_facts(data), user_id, manager)
+    return response
 
 
 def response_with_snapshot(

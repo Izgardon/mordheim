@@ -94,3 +94,31 @@ class BattleCapabilityTests(BattleTestCase):
         self.assertEqual(self.capabilities(self.admin, battle_id), {**OPEN, "close_postbattle": True, "confirm_results": True})  # fmt: skip
         self.ok(self.post_as(self.admin, self.url(battle_id, "close-postbattle")))
         self.assertEqual(self.capabilities(self.admin, battle_id), {**NONE, "edit_record": True})
+
+    def test_every_write_answers_the_callers_capabilities_and_broadcasts_everyones(self):
+        # A status change costs no read: the answer has the caller's flags, the broadcast every player's and a
+        # battle manager's (a manager ORs the two)
+        data = self.ok(self.post_as(self.player, self.battles_url(), {"participant_user_ids": [self.viewer.id], "scenario": "Bridge"}), 201).data  # fmt: skip
+        battle_id = data["battle"]["id"]
+        self.assertEqual(data["capabilities"], self.capabilities(self.player, battle_id))
+        steps: list[tuple[Any, Any, str, dict[str, Any]]] = [
+            (self.viewer, self.player, "join", {}),
+            (self.player, self.viewer, "ready", {"ready": True}),
+            (self.viewer, self.player, "ready", {"ready": True}),
+            (self.viewer, self.player, "start", {}),
+            (self.player, self.viewer, "finish-mine", {"result": "won"}),
+            (self.viewer, self.player, "finish-mine", {"result": "lost"}),
+            (self.viewer, self.player, "results", {"winners": [self.warband.id]}),
+        ]
+        for user, other, action, body in steps:
+            with self.subTest(action=action, user=user.username):
+                data = self.ok(self.post_as(user, self.url(battle_id, action), body)).data
+                broadcast = self.battle_events.call_args.kwargs["capabilities"]
+                self.assertEqual(data["capabilities"], self.capabilities(user, battle_id))
+                self.assertEqual(broadcast["by_user"][str(other.id)], self.capabilities(other, battle_id))
+
+        self.grant_manage_battles(self.viewer)
+        as_player, as_manager = broadcast["by_user"][str(self.viewer.id)], broadcast["manager"]
+        merged = {flag: as_player[flag] or as_manager[flag] for flag in as_player}
+        self.assertEqual(merged, self.capabilities(self.viewer, battle_id))
+        self.assertTrue(merged["close_postbattle"])

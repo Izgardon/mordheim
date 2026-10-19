@@ -23,7 +23,7 @@ from ..services.rosters import battle_rosters_payload
 from ..services.setup import create_battle, new_battle
 from ..services.unfinished import viewer, viewer_in
 from .base import BattleScopedView, Scope
-from .responses import broadcast_response
+from .responses import broadcast_response, with_capabilities
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +78,7 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
                 requested.user_ids,
             )
             raise
-        return broadcast_response(
+        answer = broadcast_response(
             request,
             battle.id,
             events,
@@ -87,6 +87,7 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
             response_status=status.HTTP_201_CREATED,
             warnings=requested.warnings,
         )
+        return with_capabilities(answer, request.user.id, False)  # inviting: nothing a battle manager adds yet
 
 
 class CampaignBattleStateView(BattleScopedView):

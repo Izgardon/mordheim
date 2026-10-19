@@ -78,7 +78,7 @@ class BattleCreateTests(BattleTestCase):
 
         data = response.data
         battle_id = data["battle"]["id"]
-        self.assertEqual(list(data), ["battle", "participants", "events"])
+        self.assertEqual(list(data), ["battle", "participants", "events", "capabilities"])
         self.assertEqual(list(data["battle"]), BATTLE_KEYS)
         self.assertEqual(list(data["participants"][0]), PARTICIPANT_KEYS)
         self.assertEqual((data["battle"]["status"], data["battle"]["scenario"]), ("inviting", "Bridge"))

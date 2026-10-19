@@ -7,9 +7,11 @@ request names it (`X-Pusher-Socket-Id`):
 
 - one `battle.event` message per event the write added, in order, each with the write's `state_version`;
 - or, for a write that adds no event, one `battle_state_updated` message;
-- the last message also carries `battle` (the serialised battle) and `participants`, the snapshots of the
-  participants the write changed (all of them for a phase change), unless they would push the message past
-  Pusher's 10 KB limit: then `participants` is empty and `snapshot_omitted` is true, and clients read `state/`;
+- the last message also carries `battle` (the serialised battle), `capabilities` (each player's flags and a
+  battle manager's, services/capabilities.py `everyones_capabilities`, so a phase change costs no read) and
+  `participants`, the snapshots of the participants the write changed (all of them for a phase change), unless
+  they would push the message past Pusher's 10 KB limit: then `participants` is empty and `snapshot_omitted` is
+  true, and clients read `state/`;
 - a write that puts players into postbattle or changes its winners (the end of the fight, the results) adds
   `postbattle: {"rules", "suggested": {user id: suggested_postbattle}}` for every player in his own postbattle, so
   their pages need no extra read (item 8). Under the limit first goes the snapshot, then the suggestions, then the
@@ -30,6 +32,7 @@ from django.utils import timezone
 from apps.realtime.services import send_battle_event
 
 from ..models import Battle
+from .capabilities import everyones_capabilities
 
 SNAPSHOT_LIMIT_BYTES = 9000  # Pusher refuses messages over 10 KB; the rest is the event and envelope
 ALL = "all"  # every participant changed (a phase change)
@@ -66,9 +69,10 @@ def _snapshot_fields(snapshot: dict[str, Any], changed: Changed, postbattle: dic
     participants = snapshot["participants"]
     if changed != ALL:
         participants = [entry for entry in participants if entry["id"] in changed]
-    fields = {"battle": snapshot["battle"], "participants": participants}
+    always = {"battle": snapshot["battle"], "capabilities": everyones_capabilities(snapshot)}
+    fields = {**always, "participants": participants}
     if not _fits(fields):
-        omitted = {"battle": snapshot["battle"], "participants": [], "snapshot_omitted": True}
+        omitted = {**always, "participants": [], "snapshot_omitted": True}
         return {**omitted, "postbattle_omitted": True} if postbattle else omitted
     return _with_postbattle(fields, postbattle)
 

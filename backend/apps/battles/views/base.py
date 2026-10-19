@@ -32,7 +32,7 @@ from ..services.expiry import settle_during_write
 from ..services.locks import locked
 from ..services.timing import is_overdue, record_activity
 from ..services.warnings import Warning
-from .responses import broadcast_response, response_with_snapshot
+from .responses import broadcast_response, response_with_snapshot, with_capabilities
 from .rules import Rule
 
 READ, LOCK_BATTLE, LOCK_PLAYER = "", "battle", "player"
@@ -102,6 +102,7 @@ class BattleScopedView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     rules: tuple[Rule, ...] = ()
     in_battle = True  # the caller must be one of the battle's participants
+    manages = False  # the caller holds manage_battles (set when the battle is loaded)
     battle_related: tuple[str, ...] = ()  # read with the battle (the campaign's settings: finalise, the guides)
 
     def load_scope(self, request: Request, campaign_id: int, battle_id: int, *, lock: str = READ) -> Scope:
@@ -116,6 +117,7 @@ class BattleScopedView(APIView):
         battle = battles.first()
         if battle is None or not is_member(battle):
             raise not_found()
+        self.manages = manages_battles(battle)
         if not self.in_battle:
             if lock == LOCK_BATTLE and is_overdue(battle):
                 settle_during_write(battle)
@@ -164,7 +166,11 @@ class BattleWriteView(BattleScopedView):
         if isinstance(parsed, Response):
             return parsed
         self.input = parsed
-        return self.write(request, campaign_id, battle_id, self.act)
+        return self.answered(request, self.write(request, campaign_id, battle_id, self.act))
+
+    def answered(self, request: Request, response: Response) -> Response:
+        """The caller's capabilities in the answer (views/responses.py)."""
+        return with_capabilities(response, request.user.id, self.manages)
 
     def write(self, request: Request, campaign_id: int, battle_id: int, act: Callable[[Scope], Outcome]) -> Response:
         with transaction.atomic():

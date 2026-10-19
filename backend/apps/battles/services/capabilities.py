@@ -13,43 +13,85 @@ Each flag is the server's own rule for that action, in the battle's current phas
   in it (his status isn't confirmed_postbattle, declined or cancelled).
 
 A reported result has only `edit_record`, once it has ended. Computing the flags costs no query: the membership
-and the manage_battles grant come with the battle (services/access.py) and the participants with the snapshot.
+and the manage_battles grant come with the battle (services/access.py) and the participants with the snapshot. The
+state, every write's answer (the caller's flags) and every broadcast (`everyones_capabilities`) carry them, so a
+status change costs no read.
 
 `manager_actions` are the tools Settings > Active Battles offers a battle manager for each battle (BATL-NEW-03).
 """
 
 from collections.abc import Iterable
+from dataclasses import dataclass
 
 from ..models import Battle, BattleParticipant
 from .access import manages_battles
 from .unfinished import BUSY_BATTLE_STATUSES
 
 
-def _everyone_ready(participants: Iterable[BattleParticipant]) -> bool:
-    still_in = [entry for entry in participants if entry.status not in BattleParticipant.LEFT_STATUSES]
-    return bool(still_in) and all(entry.status == BattleParticipant.STATUS_READY for entry in still_in)
+@dataclass(frozen=True)
+class Facts:
+    """What the flags are worked out from: the battle's phase and people, and each participant's status."""
+
+    status: str
+    flow_type: str
+    created_by_user_id: int
+    results_confirmer_user_id: int | None
+    statuses: dict[int, str]  # by user id
+
+
+def facts(battle: Battle, participants: Iterable[BattleParticipant]) -> Facts:
+    statuses = {entry.user_id: entry.status for entry in participants}
+    return Facts(battle.status, battle.flow_type, battle.created_by_user_id, battle.results_confirmer_id, statuses)
+
+
+def snapshot_facts(snapshot: dict) -> Facts:
+    """The same facts from a battle snapshot (`{"battle", "participants"}`, every participant)."""
+    battle = snapshot["battle"]
+    statuses = {entry["user"]["id"]: entry["status"] for entry in snapshot["participants"]}
+    return Facts(
+        battle["status"],
+        battle["flow_type"],
+        battle["created_by_user_id"],
+        battle.get("results_confirmer_user_id"),
+        statuses,
+    )
+
+
+def capabilities_from(known: Facts, user_id: int | None, manager: bool) -> dict[str, bool]:
+    left = BattleParticipant.LEFT_STATUSES
+    status, normal = known.status, known.flow_type == Battle.FLOW_TYPE_NORMAL
+    creator = known.created_by_user_id == user_id
+    mine = known.statuses.get(user_id) if user_id is not None else None
+    still_in = mine is not None and mine not in left
+    playing = [entry for entry in known.statuses.values() if entry not in left]
+    everyone_ready = bool(playing) and all(entry == BattleParticipant.STATUS_READY for entry in playing)
+    applied = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE in known.statuses.values()
+    confirmer = user_id is not None and known.results_confirmer_user_id == user_id
+    before_postbattle = (Battle.STATUS_INVITING, Battle.STATUS_PREBATTLE, Battle.STATUS_ACTIVE)
+    return {
+        "start": still_in and normal and status == Battle.STATUS_PREBATTLE and everyone_ready,
+        "finish_mine": normal and mine == BattleParticipant.STATUS_IN_BATTLE and status == Battle.STATUS_ACTIVE,
+        "confirm_results": normal and (confirmer or manager) and status == Battle.STATUS_POSTBATTLE,
+        "cancel": creator and normal and status in before_postbattle and not applied,
+        "close_postbattle": (creator or manager) and status == Battle.STATUS_POSTBATTLE,
+        "edit_record": manager and status == Battle.STATUS_ENDED,
+        "nudge": still_in and normal and status in BUSY_BATTLE_STATUSES,
+    }
 
 
 def capabilities(battle: Battle, user_id: int, participants: Iterable[BattleParticipant]) -> dict[str, bool]:
-    participants = list(participants)
-    creator = battle.created_by_user_id == user_id
-    normal = battle.flow_type == Battle.FLOW_TYPE_NORMAL
-    manager = manages_battles(battle)
-    creates = creator and normal
-    mine = next((entry for entry in participants if entry.user_id == user_id), None)
-    still_in = mine is not None and mine.status not in BattleParticipant.LEFT_STATUSES
-    fighting = mine is not None and mine.status == BattleParticipant.STATUS_IN_BATTLE
-    confirmer = battle.results_confirmer_id == user_id
-    applied = any(entry.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE for entry in participants)
-    before_postbattle = (Battle.STATUS_INVITING, Battle.STATUS_PREBATTLE, Battle.STATUS_ACTIVE)
+    """The reader's flags (a battle read through scoped_battles, which carries his manage_battles grant)."""
+    return capabilities_from(facts(battle, participants), user_id, manages_battles(battle))
+
+
+def everyones_capabilities(snapshot: dict) -> dict:
+    """For a broadcast, which reaches every player: each participant's flags as a player (`by_user`), and those
+    of a battle manager who isn't playing (`manager`). A reader who holds manage_battles (the campaign payload's
+    `permissions`) ORs the two; every flag only ever widens with it."""
+    known = snapshot_facts(snapshot)
     return {
-        "start": still_in and normal and battle.status == Battle.STATUS_PREBATTLE and _everyone_ready(participants),
-        "finish_mine": normal and fighting and battle.status == Battle.STATUS_ACTIVE,
-        "confirm_results": normal and (confirmer or manager) and battle.status == Battle.STATUS_POSTBATTLE,
-        "cancel": creates and battle.status in before_postbattle and not applied,
-        "close_postbattle": (creator or manager) and battle.status == Battle.STATUS_POSTBATTLE,
-        "edit_record": manager and battle.status == Battle.STATUS_ENDED,
-        "nudge": still_in and normal and battle.status in BUSY_BATTLE_STATUSES,
+        "by_user": {str(user_id): capabilities_from(known, user_id, False) for user_id in known.statuses},
+        "manager": capabilities_from(known, None, True),
     }
 
 
