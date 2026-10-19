@@ -196,7 +196,8 @@ describe("BattlePostbattle requests", () => {
 
     await user.click(within(dialog).getByRole("button", { name: "Skip postbattle" }));
 
-    expect(await screen.findByLabelText("Current path")).toHaveTextContent("/campaigns/1/warband");
+    expect(await screen.findByRole("region", { name: "Waiting for others" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Current path")).toHaveTextContent(/postbattle$/);
     expect(fakeApi.requests()).toEqual([{ method: "POST", path: battlePath("confirm/") }]);
   });
 
@@ -727,7 +728,7 @@ describe("BattlePostbattle requests", () => {
 
     await user.click(within(dialog).getByRole("button", { name: "Confirm" }));
 
-    expect(await screen.findByLabelText("Current path")).toHaveTextContent("/campaigns/1/warband");
+    expect(await screen.findByRole("region", { name: "Waiting for others" })).toBeInTheDocument();
     const finalised = fakeApi.bodyOf(`POST ${battlePath("finalize-postbattle/")}`) as {
       postbattle_json: BattlePostbattleState;
     };
@@ -767,6 +768,53 @@ describe("BattlePostbattle requests", () => {
     ).toEqual(["Exploration", "Finds", "Deaths", "XP Awards", "Upkeep", "Gold"]);
     expect(dialog).toHaveTextContent("10 gc now, +30 gc found: 40 gc after this battle.");
     expect(within(dialog).getByText("40 gc")).not.toHaveClass("text-red-500");
+  });
+
+  it("waits for the others after finalising instead of leaving the page (BATL-NEW-08)", async () => {
+    const user = setupUser();
+    fakeApi.on(`POST ${battlePath("finalize-postbattle/")}`, () =>
+      battleState({ status: "postbattle", me: { status: "confirmed_postbattle" } })
+    );
+    await renderPostbattle();
+
+    await user.click(screen.getByRole("button", { name: "Finalise Postbattle" }));
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Finalise Postbattle" })).getByRole("button", {
+        name: "Confirm",
+      })
+    );
+
+    const panel = await screen.findByRole("region", { name: "Waiting for others" });
+    expect(panel).toHaveTextContent("Still in postbattle: Player (Night Razors).");
+    expect(screen.getByLabelText("Current path")).toHaveTextContent(/postbattle$/);
+    // The draft is done with: no sections to edit, no second Finalise.
+    expect(screen.queryByRole("button", { name: "Roll" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Finalise Postbattle" })).toBeNull();
+    expect(
+      within(screen.getByRole("region", { name: "Battle status" }))
+        .getAllByRole("listitem")
+        .map((item) => item.textContent)
+    ).toEqual(["YouFinished", "PlayerIn postbattle"]);
+
+    await user.click(within(panel).getByRole("button", { name: "Go to your warband" }));
+    expect(screen.getByLabelText("Current path")).toHaveTextContent("/campaigns/1/warband");
+  });
+
+  it("sends the last player to finish to his warband: his finalise ended the battle (BATL-NEW-08)", async () => {
+    const user = setupUser();
+    fakeApi.on(`POST ${battlePath("finalize-postbattle/")}`, () =>
+      battleState({ status: "ended", me: { status: "confirmed_postbattle" } })
+    );
+    await renderPostbattle();
+
+    await user.click(screen.getByRole("button", { name: "Finalise Postbattle" }));
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Finalise Postbattle" })).getByRole("button", {
+        name: "Confirm",
+      })
+    );
+
+    expect(await screen.findByText("Warband page")).toBeInTheDocument();
   });
 
   it("loads the campaign's items once when the finds picker opens and filters them as you type (PERF-40)", async () => {

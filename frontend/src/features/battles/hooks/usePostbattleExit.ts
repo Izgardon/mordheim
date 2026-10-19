@@ -20,9 +20,10 @@ import { queryKeys } from "@/lib/query-keys";
 import { useAppStore } from "@/stores/app-store";
 
 /**
- * The ways out of postbattle: Finalise (applies the draft), Skip postbattle (applies nothing),
- * Close postbattle for the creator or a battle manager (BUG-09), and the back chevron, which only
- * leaves the page (BUG-48). Skip and Close sit in More actions.
+ * The ways out of postbattle: Finalise (applies the draft) and Skip postbattle (applies nothing),
+ * after which the page waits for the others (BATL-NEW-08); Close postbattle for the creator or a
+ * battle manager (BUG-09); and the back chevron, which only leaves the page (BUG-48). Skip and
+ * Close sit in More actions.
  */
 export function usePostbattleExit({
   campaignId,
@@ -57,11 +58,20 @@ export function usePostbattleExit({
   const isFinalized = currentParticipant?.status === "confirmed_postbattle";
   const warbandId = currentParticipant?.warband.id ?? null;
 
-  const exitPostbattle = useCallback(() => {
-    clearCurrentBattleSession();
-    void refreshOpenBattles();
-    navigate(`/campaigns/${campaignId}/warband`, { replace: true });
-  }, [campaignId, clearCurrentBattleSession, navigate, refreshOpenBattles]);
+  // Finalising or skipping is your part done (BATL-NEW-08): the page shows "Waiting for others"
+  // until the battle ends. The last player to finish ends it and goes to his warband.
+  const finishPostbattle = useCallback(
+    (answer: BattleState) => {
+      clearCurrentBattleSession();
+      void refreshOpenBattles();
+      if (answer.battle.status === "ended") {
+        navigate(`/campaigns/${campaignId}/warband`, { replace: true });
+        return;
+      }
+      applyBattleResponse(answer);
+    },
+    [applyBattleResponse, campaignId, clearCurrentBattleSession, navigate, refreshOpenBattles]
+  );
 
   const finalize = useCallback(async () => {
     if (!draft || !currentParticipant || !exploration) return;
@@ -79,7 +89,7 @@ export function usePostbattleExit({
         });
       }
       setIsFinalizeOpen(false);
-      exitPostbattle();
+      finishPostbattle(finalised);
     } catch (errorResponse) {
       setDraftError(getErrorMessage(errorResponse, "Unable to finalise postbattle"));
     } finally {
@@ -90,7 +100,7 @@ export function usePostbattleExit({
     campaignId,
     currentParticipant,
     draft,
-    exitPostbattle,
+    finishPostbattle,
     exploration,
     queryClient,
     setDraftError,
@@ -102,19 +112,22 @@ export function usePostbattleExit({
     setIsSkipping(true);
     setDraftError("");
     try {
-      await confirmBattlePostbattle(campaignId, battleId);
+      const skipped = await confirmBattlePostbattle(campaignId, battleId);
       setIsSkipConfirmOpen(false);
-      exitPostbattle();
+      finishPostbattle(skipped);
     } catch (errorResponse) {
       setDraftError(getErrorMessage(errorResponse, "Unable to skip postbattle"));
     } finally {
       setIsSkipping(false);
     }
-  }, [battleId, campaignId, currentParticipant, exitPostbattle, setDraftError]);
+  }, [battleId, campaignId, currentParticipant, finishPostbattle, setDraftError]);
 
   // The back chevron only leaves the page: the draft is saved and the overview resumes it (BUG-48).
   const back = useCallback(() => {
     navigate(`/campaigns/${campaignId}`);
+  }, [campaignId, navigate]);
+  const openWarband = useCallback(() => {
+    navigate(`/campaigns/${campaignId}/warband`);
   }, [campaignId, navigate]);
 
   // Close postbattle replaces Cancel here (BUG-09): the creator's, or a battle manager's.
@@ -163,6 +176,7 @@ export function usePostbattleExit({
     finalize,
     skip,
     back,
+    openWarband,
     closing,
     overflowActions,
   };

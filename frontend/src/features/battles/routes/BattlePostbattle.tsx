@@ -8,6 +8,7 @@ import ExplorationSection from "@/features/battles/components/postbattle/Explora
 import FinalizeSummaryDialog from "@/features/battles/components/postbattle/FinalizeSummaryDialog";
 import FindsSection from "@/features/battles/components/postbattle/FindsSection";
 import PostbattleSkipDialog from "@/features/battles/components/postbattle/PostbattleSkipDialog";
+import PostbattleWaitingPanel from "@/features/battles/components/postbattle/PostbattleWaitingPanel";
 import RosterResultsSection from "@/features/battles/components/postbattle/RosterResultsSection";
 import SeriousInjuryRollDialog from "@/features/battles/components/postbattle/SeriousInjuryRollDialog";
 import StatChangesSection from "@/features/battles/components/postbattle/StatChangesSection";
@@ -68,6 +69,7 @@ export default function BattlePostbattle() {
   if (!currentParticipant)
     return <p className="text-sm text-red-600">You are not part of this battle.</p>;
   if (
+    !exit.isFinalized &&
     !page.rosterError &&
     (page.rosterLoading ||
       page.isResourcesLoading ||
@@ -100,53 +102,64 @@ export default function BattlePostbattle() {
       ) : null}
       <BattleStatusStrip />
 
-      <ExplorationSection
-        isMobile={isMobile}
-        explore={explore}
-        resources={page.resources}
-        isFinalized={exit.isFinalized}
-        isSavingDraft={isSavingDraft}
-        draftError={draftError}
-        diceColor={diceColor}
-      />
-      <RosterResultsSection
-        isMobile={isMobile}
-        groups={page.groups}
-        rosterLoading={page.rosterLoading}
-        rosterError={page.rosterError}
-        tools={page.rowTools}
-      />
-      <StatChangesSection
-        isMobile={isMobile}
-        rows={page.statChangeRows}
-        isFinalized={exit.isFinalized}
-        onToggleKeep={actions.toggleKeepStats}
-      />
-      <FindsSection
-        isMobile={isMobile}
-        draft={draft}
-        finds={finds}
-        isFinalized={exit.isFinalized}
-      />
-      {page.upkeepRows.length > 0 ? (
-        <UpkeepSection
-          isMobile={isMobile}
-          rows={page.upkeepRows}
-          total={page.upkeepTotal}
-          payUpkeep={Boolean(draft?.upkeep.pay_upkeep)}
-          isFinalized={exit.isFinalized}
-          onCommitCost={actions.commitUpkeepCost}
-          onTogglePayUpkeep={actions.togglePayUpkeep}
+      {exit.isFinalized ? (
+        <PostbattleWaitingPanel
+          participants={battleState.participants}
+          currentUserId={user?.id}
+          onOpenWarband={exit.openWarband}
+          onOpenCampaign={exit.back}
         />
-      ) : null}
+      ) : (
+        <>
+          <ExplorationSection
+            isMobile={isMobile}
+            explore={explore}
+            resources={page.resources}
+            isFinalized={exit.isFinalized}
+            isSavingDraft={isSavingDraft}
+            draftError={draftError}
+            diceColor={diceColor}
+          />
+          <RosterResultsSection
+            isMobile={isMobile}
+            groups={page.groups}
+            rosterLoading={page.rosterLoading}
+            rosterError={page.rosterError}
+            tools={page.rowTools}
+          />
+          <StatChangesSection
+            isMobile={isMobile}
+            rows={page.statChangeRows}
+            isFinalized={exit.isFinalized}
+            onToggleKeep={actions.toggleKeepStats}
+          />
+          <FindsSection
+            isMobile={isMobile}
+            draft={draft}
+            finds={finds}
+            isFinalized={exit.isFinalized}
+          />
+          {page.upkeepRows.length > 0 ? (
+            <UpkeepSection
+              isMobile={isMobile}
+              rows={page.upkeepRows}
+              total={page.upkeepTotal}
+              payUpkeep={Boolean(draft?.upkeep.pay_upkeep)}
+              isFinalized={exit.isFinalized}
+              onCommitCost={actions.commitUpkeepCost}
+              onTogglePayUpkeep={actions.togglePayUpkeep}
+            />
+          ) : null}
 
-      {!isMobile ? (
-        <BattleFloatingActionBar>
-          <Button type="button" disabled={finaliseBlocked} onClick={() => openFinalise(true)}>
-            {finaliseState ?? "Finalise Postbattle"}
-          </Button>
-        </BattleFloatingActionBar>
-      ) : null}
+          {!isMobile ? (
+            <BattleFloatingActionBar>
+              <Button type="button" disabled={finaliseBlocked} onClick={() => openFinalise(true)}>
+                {finaliseState ?? "Finalise Postbattle"}
+              </Button>
+            </BattleFloatingActionBar>
+          ) : null}
+        </>
+      )}
 
       <SeriousInjuryRollDialog
         target={actions.rollTarget}
