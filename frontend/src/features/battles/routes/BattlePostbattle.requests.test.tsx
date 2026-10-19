@@ -202,6 +202,9 @@ describe("BattlePostbattle requests", () => {
     expect(await screen.findByRole("region", { name: "Waiting for others" })).toBeInTheDocument();
     expect(screen.getByLabelText("Current path")).toHaveTextContent(/postbattle$/);
     expect(fakeApi.requests()).toEqual([{ method: "POST", path: battlePath("confirm/") }]);
+    // Waiting, the phone bars offer no sections to jump to and nothing to finalise.
+    expect(screen.queryByRole("combobox")).toBeNull();
+    expect(screen.queryByRole("button", { name: /^Finalis/ })).toBeNull();
   });
 
   it("lets the creator close postbattle from More actions, naming who will be skipped (BUG-09)", async () => {

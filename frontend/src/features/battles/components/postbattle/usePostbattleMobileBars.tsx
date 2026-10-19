@@ -9,7 +9,8 @@ type SectionOption = { value: string; label: string };
 
 /**
  * Postbattle's phone bars: the top bar's section picker, Battle Notes and More actions (Skip and
- * Close postbattle); Finalise as the bottom bar's one action.
+ * Close postbattle); Finalise as the bottom bar's one action. While the page waits for the others
+ * (`waiting`, BATL-NEW-08) there are no sections to pick and nothing to finalise.
  */
 export function usePostbattleMobileBars({
   isMobile,
@@ -23,6 +24,7 @@ export function usePostbattleMobileBars({
   selectedSection,
   onSectionChange,
   finalise,
+  waiting = false,
 }: Pick<BattleLayoutContext, "setBattleMobileTopBar" | "setBattleMobileBottomBar"> & {
   isMobile: boolean;
   currentParticipant: BattleParticipant | null;
@@ -33,6 +35,7 @@ export function usePostbattleMobileBars({
   selectedSection: string;
   onSectionChange: (value: string) => void;
   finalise: { label: string; disabled: boolean; onOpen: () => void };
+  waiting?: boolean;
 }) {
   const extraActions = useMemo(
     () => <BattleTopBarActions onOpenNotes={onOpenNotes} overflowActions={overflowActions} />,
@@ -51,18 +54,22 @@ export function usePostbattleMobileBars({
       title: "Postbattle",
       onBack,
       extraActions,
-      unitTypeOptions: sectionOptions,
+      unitTypeOptions: waiting ? [] : sectionOptions,
       selectedUnitTypeValue: selectedSection,
       onUnitTypeChange: onSectionChange,
     });
-    setBattleMobileBottomBar?.({
-      primaryAction: {
-        label: finaliseLabel,
-        onClick: openFinalise,
-        disabled: finaliseDisabled,
-        variant: "default",
-      },
-    });
+    setBattleMobileBottomBar?.(
+      waiting
+        ? null
+        : {
+            primaryAction: {
+              label: finaliseLabel,
+              onClick: openFinalise,
+              disabled: finaliseDisabled,
+              variant: "default",
+            },
+          }
+    );
 
     return () => {
       setBattleMobileTopBar?.(null);
@@ -81,5 +88,6 @@ export function usePostbattleMobileBars({
     selectedSection,
     setBattleMobileBottomBar,
     setBattleMobileTopBar,
+    waiting,
   ]);
 }

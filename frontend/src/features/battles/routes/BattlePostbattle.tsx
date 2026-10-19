@@ -64,6 +64,7 @@ export default function BattlePostbattle() {
       disabled: finaliseBlocked,
       onOpen: useCallback(() => openFinalise(true), [openFinalise]),
     },
+    waiting: exit.isFinalized,
   });
 
   if (!currentParticipant)
