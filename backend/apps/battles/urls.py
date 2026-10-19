@@ -15,6 +15,7 @@ from .views import (
     CampaignBattleListCreateView,
     CampaignBattlePostbattleSaveView,
     CampaignBattleReadyView,
+    CampaignBattleRecordView,
     CampaignBattleReportedResultApproveView,
     CampaignBattleReportedResultCreateView,
     CampaignBattleReportedResultDeclineView,
@@ -134,6 +135,11 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/results/",
         CampaignBattleResultsView.as_view(),
         name="campaigns-battles-results",
+    ),
+    path(  # an ended battle's record, read and edited by a battle manager (BATL-NEW-04)
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/record/",
+        CampaignBattleRecordView.as_view(),
+        name="campaigns-battles-record",
     ),
     path(  # a battle manager ends a stuck fight (BATL-NEW-03); players finish their own battle
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/finish/",

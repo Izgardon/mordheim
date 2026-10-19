@@ -657,9 +657,11 @@ class CampaignBattleHistoryView(APIView):
                 status=Battle.STATUS_ENDED,
             )
             .prefetch_related(
-                Prefetch(
+                Prefetch(  # without those a battle manager took off the record (BATL-NEW-04)
                     "participants",
-                    queryset=BattleParticipant.objects.select_related("warband").order_by("id"),
+                    queryset=BattleParticipant.objects.select_related("warband")
+                    .filter(removed_from_record=False)
+                    .order_by("id"),
                 )
             )
             .order_by("-ended_at", "-created_at", "-id")

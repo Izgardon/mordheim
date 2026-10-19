@@ -48,15 +48,21 @@ def _user_ids(raw_ids, creator_id: int) -> list[int]:
     return user_ids
 
 
-def _battle_date(raw) -> date:
+def parse_battle_date(raw, *, field: str = "battle_date") -> date:
+    """A played battle's date, "YYYY-MM-DD", today or earlier (a reported result's, or an edited record's)."""
     if not isinstance(raw, str):
-        raise Refused("battle_date is required")
+        raise Refused(f"{field} is required")
     battle_date = parse_date(raw.strip())
     if battle_date is None:
-        raise Refused("battle_date must be a valid date")
+        raise Refused(f"{field} must be a valid date")
     if battle_date > timezone.localdate():  # BATL-TEST-18
-        raise field_error("battle_date", "battle_date can't be in the future", "Pick today or an earlier date.")
+        raise field_error(field, f"{field} can't be in the future", "Pick today or an earlier date.")
     return battle_date
+
+
+def start_of(day: date) -> datetime:
+    """The battle's end as a reported result stores its date: midnight, local time."""
+    return timezone.make_aware(datetime.combine(day, time.min), timezone.get_current_timezone())
 
 
 def _winner_ids(raw, warbands: dict[int, Warband]) -> list[int]:
@@ -79,7 +85,7 @@ def reported_result(data, campaign_id: int, creator) -> ReportedResult:
     user_ids = _user_ids(data.get("participant_user_ids"), creator.id)
     warbands = players_warbands(campaign_id, user_ids)
     scenario = scenario_name(data.get("scenario"))
-    battle_date = _battle_date(data.get("battle_date"))
+    battle_date = parse_battle_date(data.get("battle_date"))
     winner_ids = _winner_ids(data.get("winner_warband_ids"), warbands)
     raw_battle_date = data.get("battle_date").strip()
     return ReportedResult(user_ids, warbands, scenario, battle_date, raw_battle_date, winner_ids)
@@ -109,7 +115,7 @@ def _request_approval(battle: Battle, creator, result: ReportedResult, user_id: 
 
 def create_reported_result(campaign_id: int, creator, result: ReportedResult) -> tuple[Battle, list[dict]]:
     """The reported result (the submitter has approved it) and a request to approve it for every other player."""
-    ended_at = timezone.make_aware(datetime.combine(result.battle_date, time.min), timezone.get_current_timezone())
+    ended_at = start_of(result.battle_date)
     battle = Battle.objects.create(
         campaign_id=campaign_id,
         created_by_user=creator,

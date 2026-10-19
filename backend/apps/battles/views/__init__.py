@@ -8,6 +8,7 @@ from .postbattle import (
     CampaignBattlePostbattleSaveView,
     CampaignBattleSkipPostbattleView,
 )
+from .record import CampaignBattleRecordView
 from .results import (
     CampaignBattleReportedResultApproveView,
     CampaignBattleReportedResultCreateView,
@@ -49,6 +50,7 @@ __all__ = [
     "CampaignBattleFinishView",
     "CampaignBattleFinishMineView",
     "CampaignBattleResultsView",
+    "CampaignBattleRecordView",
     "CampaignBattlePostbattleSaveView",
     "CampaignBattleFinalizePostbattleView",
     "CampaignBattleSkipPostbattleView",

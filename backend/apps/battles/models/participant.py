@@ -85,6 +85,8 @@ class BattleParticipant(models.Model):
     # finished postbattle without applying it: skipped, or closed for him (decision 3)
     skipped_postbattle = models.BooleanField(default=False)
     declared_result = models.CharField(max_length=10, choices=DECLARED_RESULT_CHOICES, blank=True, default="")
+    # taken off an ended battle's record by a battle manager (BATL-NEW-04): kept, marked removed
+    removed_from_record = models.BooleanField(default=False)
     last_seen_at = models.DateTimeField(null=True, blank=True)
     selected_unit_keys_json = models.JSONField(default=list, blank=True)
     unit_information_json = models.JSONField(default=dict, blank=True)
