@@ -4,6 +4,10 @@ import type {
   BattleState,
 } from "@/features/battles/types/battle-types";
 
+const creatorLabel = ({ battle, participants }: BattleState) =>
+  participants.find((participant) => participant.user.id === battle.created_by_user_id)?.user
+    .label ?? "Another player";
+
 /**
  * What the prebattle page offers you, from the battle, your row, what is in flight and the
  * server's capabilities (start, cancel); without capabilities, the creator's own rules.
@@ -52,8 +56,11 @@ export function prebattleFlags({
       ? capabilities.cancel
       : isBattleCreator && (status === "inviting" || status === "prebattle"),
     // The creator sees Start (greyed out until everyone is ready), and so does anyone else the
-    // server lets start.
+    // server lets start (decision 4: any participant, after a confirm).
     showStart: isBattleCreator || mayStart,
+    startQuestion: isBattleCreator
+      ? "All participants are ready. Start the battle now?"
+      : `${creatorLabel(battleState)} created this battle. Start it anyway?`,
     canEditOwnConfig: Boolean(
       isOwnSelected &&
         currentParticipant &&

@@ -191,6 +191,7 @@ export default function BattlePrebattle() {
         onConfirmLeave={page.leave.confirm}
         isStartDialogOpen={start.isOpen}
         onStartDialogChange={start.openChange}
+        startQuestion={flags.startQuestion}
         startError={start.error}
         isStartingBattle={start.isStarting}
         onConfirmStart={start.start}

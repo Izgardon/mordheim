@@ -18,6 +18,8 @@ type PrebattleDialogsProps = {
   onConfirmLeave: () => void;
   isStartDialogOpen: boolean;
   onStartDialogChange: (open: boolean) => void;
+  /** "All participants are ready...", or for anyone but the creator "Alice created this battle..." */
+  startQuestion: string;
   startError: string;
   isStartingBattle: boolean;
   onConfirmStart: () => void;
@@ -34,6 +36,7 @@ export default function PrebattleDialogs({
   onConfirmLeave,
   isStartDialogOpen,
   onStartDialogChange,
+  startQuestion,
   startError,
   isStartingBattle,
   onConfirmStart,
@@ -75,7 +78,7 @@ export default function PrebattleDialogs({
         onOpenChange={onStartDialogChange}
         description={
           <div className="space-y-2">
-            <p>All participants are ready. Start the battle now?</p>
+            <p>{startQuestion}</p>
             {startError ? <p className="text-sm text-red-600">{startError}</p> : null}
           </div>
         }

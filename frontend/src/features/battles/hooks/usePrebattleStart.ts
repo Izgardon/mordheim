@@ -4,7 +4,7 @@ import { startBattle } from "@/features/battles/api/battles-api";
 import type { BattleState } from "@/features/battles/types/battle-types";
 import { getErrorMessage } from "@/lib/get-error-message";
 
-/** The creator's Start battle: its confirm, request and error (cleared when the confirm closes). */
+/** Start battle (any participant once everyone is ready): its confirm, request and error. */
 export function usePrebattleStart({
   campaignId,
   battleId,

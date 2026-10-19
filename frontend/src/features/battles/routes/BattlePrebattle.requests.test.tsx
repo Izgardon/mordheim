@@ -106,6 +106,48 @@ describe("BattlePrebattle requests", () => {
     expect(fakeApi.calls()).toEqual([READY_ROUTE, `GET ${statePath("prebattle", 3)}`]);
   });
 
+  it("lets a player who didn't create the battle start it, after a confirm naming the creator (decision 4)", async () => {
+    const user = setupUser();
+    const flags = { start: true, cancel: false, close_postbattle: false, edit_record: false };
+    fakeApi.on(`GET ${statePath("prebattle")}`, {
+      ...battleState({
+        status: "prebattle",
+        created_by_user_id: OPPONENT.id,
+        me: { status: "ready" },
+        opponent: { status: "ready" },
+      }),
+      capabilities: flags,
+    });
+    fakeApi.on(`POST ${battlePath("start/")}`, () => ({
+      ...battleState({ status: "active", created_by_user_id: OPPONENT.id }),
+      capabilities: { ...flags, start: false, finish_mine: true },
+    }));
+    fakeApi.on(`GET ${battlePath("rosters/")}`, battleRosters());
+    renderBattleRoute("prebattle");
+
+    await user.click(await screen.findByRole("button", { name: "Start Battle" }));
+    const confirm = screen.getByRole("dialog", { name: "Start" });
+    expect(confirm).toHaveAccessibleDescription("Player created this battle. Start it anyway?");
+    await user.click(within(confirm).getByRole("button", { name: "Start" }));
+
+    await waitFor(() =>
+      expect(screen.getByLabelText("Current path")).toHaveTextContent(
+        "/campaigns/1/battles/5/active"
+      )
+    );
+    expect(fakeApi.calls()).toContain(`POST ${battlePath("start/")}`);
+  });
+
+  it("offers Start to nobody but the creator until the server allows it", async () => {
+    fakeApi.on(`GET ${statePath("prebattle")}`, {
+      ...battleState({ status: "prebattle", created_by_user_id: OPPONENT.id }),
+      capabilities: { start: false, cancel: false, close_postbattle: false, edit_record: false },
+    });
+    renderBattleRoute("prebattle");
+    expect(await screen.findByRole("button", { name: "Ready Up" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Start Battle" })).toBeNull();
+  });
+
   it("takes the capabilities a write answers with, reading nothing more (item 8)", async () => {
     const user = setupUser();
     const capabilities = (start: boolean) => ({

@@ -11,6 +11,7 @@ const renderDialogs = (open: { leave?: boolean; start?: boolean; cancel?: boolea
       onConfirmLeave={vi.fn()}
       isStartDialogOpen={Boolean(open.start)}
       onStartDialogChange={vi.fn()}
+      startQuestion="All participants are ready. Start the battle now?"
       startError=""
       isStartingBattle={false}
       onConfirmStart={vi.fn()}
