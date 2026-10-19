@@ -46,8 +46,8 @@ export default function ActiveFinishMineDialog({ finishing }: { finishing: Finis
               aria-checked={result === choice.value}
               onClick={() => finishing.setResult(choice.value)}
               className={cn(
-                "battle-inline-panel flex min-h-11 w-full flex-col items-start rounded-xl px-3 py-2 text-left text-sm text-foreground transition",
-                result === choice.value && "battle-selected-card bg-amber-900/15"
+                "battle-inline-panel flex min-h-11 w-full flex-col items-start rounded-xl border border-border/60 px-3 py-2 text-left text-sm text-foreground transition",
+                result === choice.value && "border-amber-300/80 bg-amber-900/25"
               )}
             >
               <span className="font-semibold">{choice.label}</span>
