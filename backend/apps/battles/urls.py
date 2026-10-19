@@ -4,7 +4,6 @@ from .views import (
     CampaignBattleCancelView,
     CampaignBattleClosePostbattleView,
     CampaignBattleConfigView,
-    CampaignBattleConfirmView,
     CampaignBattleCreatorCancelView,
     CampaignBattleDeclineView,
     CampaignBattleEventCreateView,
@@ -19,6 +18,7 @@ from .views import (
     CampaignBattleReportedResultCreateView,
     CampaignBattleReportedResultDeclineView,
     CampaignBattleRosterView,
+    CampaignBattleSkipPostbattleView,
     CampaignBattleStartView,
     CampaignBattleStateView,
     CampaignBattleUnitKillView,
@@ -144,8 +144,13 @@ urlpatterns = [
         name="campaigns-battles-close-postbattle",
     ),
     path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/skip-postbattle/",
+        CampaignBattleSkipPostbattleView.as_view(),
+        name="campaigns-battles-skip-postbattle",
+    ),
+    path(  # the old name of skip-postbattle/, kept for clients that still call it
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/confirm/",
-        CampaignBattleConfirmView.as_view(),
+        CampaignBattleSkipPostbattleView.as_view(),
         name="campaigns-battles-confirm",
     ),
 ]

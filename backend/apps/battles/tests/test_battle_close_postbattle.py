@@ -70,3 +70,18 @@ class ClosePostbattleTests(BattleTestCase):
         battle_id = self.to_active({self.player: [self.a], self.viewer: [self.r]})
         response = self.post_as(self.campaign_owner, self.url(battle_id, "close-postbattle"))
         self.assertEqual((response.status_code, response.data), (400, {"detail": "Battle is not in postbattle"}))
+
+
+class SkipPostbattleTests(BattleTestCase):
+    def test_skip_postbattle_and_its_old_path_confirm_skip_alike(self):
+        # PR B: confirm/ became skip-postbattle/; the old path stays an alias for older clients
+        for action in ("skip-postbattle", "confirm"):
+            with self.subTest(path=action):
+                battle_id = self.to_postbattle()
+                data = self.ok(self.post_as(self.viewer, self.url(battle_id, action))).data
+                self.assertEqual(
+                    data["events"][0]["payload_json"],
+                    {"participant_user_id": self.viewer.id, "skipped_postbattle": True},
+                )
+                self.assertTrue(self.participant(battle_id, self.viewer).skipped_postbattle)
+                self.assertEqual(self.post_as(self.viewer, self.url(battle_id, action)).status_code, 200)  # a repeat

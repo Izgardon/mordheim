@@ -77,7 +77,7 @@ class CampaignBattleFinalizePostbattleView(BattleWriteView):
         return answer(payload, confirmed.events, warnings=warnings)
 
 
-class CampaignBattleConfirmView(BattleWriteView):
+class CampaignBattleSkipPostbattleView(BattleWriteView):  # skip-postbattle/, and confirm/ for older clients
     rules = (
         refuse((Battle.STATUS_CANCELED,), "Battle was canceled"),
         snapshot_when_player(CONFIRMED),
