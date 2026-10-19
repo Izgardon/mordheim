@@ -13,6 +13,7 @@ from rest_framework.views import APIView
 from apps.battles.models import Battle, BattleParticipant
 from apps.battles.serializers import serialize_battle, serialize_participant
 from apps.battles.services.broadcast import ALL, bump_state_version
+from apps.battles.services.capabilities import manager_actions
 from apps.battles.services.expiry import expire_overdue
 from apps.battles.services.lifecycle import POSTBATTLE_APPLIED, cancel_battle, someone_finalised
 from apps.battles.services.setup import busy_participations
@@ -718,10 +719,12 @@ class CampaignActiveBattlesView(APIView):
 
         payload = []
         for battle in battles:
+            participants = battle.participants.all()
             payload.append(
                 {
-                    "battle": serialize_battle(battle),
-                    "participants": [serialize_participant(participant) for participant in battle.participants.all()],
+                    "battle": serialize_battle(battle),  # its last_activity_at is the idle time
+                    "participants": [serialize_participant(participant) for participant in participants],
+                    "actions": manager_actions(battle, participants),  # the owner tools that apply (BATL-NEW-03)
                 }
             )
 

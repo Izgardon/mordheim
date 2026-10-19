@@ -12,6 +12,8 @@ Each flag is the server's own rule for that action, in the battle's current phas
 
 A reported result has only `edit_record`, once it has ended. Computing the flags costs no query: the membership
 and the manage_battles grant come with the battle (services/access.py) and the participants with the snapshot.
+
+`manager_actions` are the tools Settings > Active Battles offers a battle manager for each battle (BATL-NEW-03).
 """
 
 from collections.abc import Iterable
@@ -44,4 +46,24 @@ def capabilities(battle: Battle, user_id: int, participants: Iterable[BattlePart
         "cancel": creates and battle.status in before_postbattle and not applied,
         "close_postbattle": (creator or manager) and battle.status == Battle.STATUS_POSTBATTLE,
         "edit_record": manager and battle.status == Battle.STATUS_ENDED,
+    }
+
+
+def manager_actions(battle: Battle, participants: Iterable[BattleParticipant]) -> dict[str, bool]:
+    """Settings > Active Battles, for a battle manager (BATL-NEW-03): end a stuck fight with its results
+    (`finish/`), confirm the results of a postbattle (`results/`), close a postbattle, or cancel the battle before
+    postbattle while nobody has applied his postbattle (`active-battles/:id/cancel/`)."""
+    normal = battle.flow_type == Battle.FLOW_TYPE_NORMAL
+    applied = any(entry.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE for entry in participants)
+    cancellable = (
+        Battle.STATUS_INVITING,
+        Battle.STATUS_REPORTED_RESULT_PENDING,
+        Battle.STATUS_PREBATTLE,
+        Battle.STATUS_ACTIVE,
+    )
+    return {
+        "end": normal and battle.status == Battle.STATUS_ACTIVE,
+        "confirm_results": normal and battle.status == Battle.STATUS_POSTBATTLE,
+        "close_postbattle": battle.status == Battle.STATUS_POSTBATTLE,
+        "cancel": battle.status in cancellable and not applied,
     }
