@@ -20,6 +20,7 @@ import {
   socketMessage,
   statePath,
 } from "@/test/battle-fixtures";
+import { ApiError } from "@/lib/api-client";
 import { createQueryClient } from "@/lib/query-client";
 import { queryKeys } from "@/lib/query-keys";
 import { renderBattleRoute } from "@/test/battle-routes";
@@ -151,6 +152,71 @@ describe("BattlePostbattle requests", () => {
         .getAllByRole("listitem")
         .map((item) => item.textContent)
     ).toEqual(["YouIn postbattle", "PlayerSkippedidle 5 hours"]);
+  });
+
+  it("nudges a player the battle waits for, then says when you can again (BATL-NEW-08)", async () => {
+    const user = setupUser();
+    server.capabilities = {
+      start: false,
+      cancel: false,
+      close_postbattle: false,
+      edit_record: false,
+      nudge: true,
+    };
+    fakeApi.on(`POST ${battlePath("nudge/")}`, () => ({
+      ...answer(),
+      events: [
+        {
+          ...battleEvent(30, "participant_nudged", ME.id, {
+            target_user_id: OPPONENT.id,
+            nudged_by_user_id: ME.id,
+          }),
+          created_at: new Date().toISOString(),
+        },
+      ],
+    }));
+    await renderPostbattle();
+    const strip = screen.getByRole("region", { name: "Battle status" });
+
+    await user.click(within(strip).getByRole("button", { name: "Nudge Player" }));
+
+    const again = await within(strip).findByRole("button", {
+      name: "Player nudged; again in 10 min",
+    });
+    expect(again).toBeDisabled();
+    expect(again).toHaveTextContent("Again in 10 min");
+    expect(fakeApi.bodyOf(`POST ${battlePath("nudge/")}`)).toEqual({ user_id: OPPONENT.id });
+    expect(await screen.findByText("Player has been nudged.")).toBeInTheDocument();
+  });
+
+  it("shows the wait the server answers when a nudge comes too soon (BATL-NEW-08)", async () => {
+    const user = setupUser();
+    server.capabilities = {
+      start: false,
+      cancel: false,
+      close_postbattle: false,
+      edit_record: false,
+      nudge: true,
+    };
+    fakeApi.fail(
+      `POST ${battlePath("nudge/")}`,
+      new ApiError("Too soon", 429, {
+        detail: "You nudged them a few minutes ago.",
+        code: "nudged_recently",
+        retry_after: 230,
+      })
+    );
+    await renderPostbattle();
+    const strip = screen.getByRole("region", { name: "Battle status" });
+
+    await user.click(within(strip).getByRole("button", { name: "Nudge Player" }));
+
+    expect(
+      await within(strip).findByRole("button", { name: "Player nudged; again in 4 min" })
+    ).toBeDisabled();
+    expect(
+      await screen.findByText("You nudged Player not long ago; you can again in 4 min.")
+    ).toBeInTheDocument();
   });
 
   it("makes the phone's back chevron go to the overview and skip nothing (BUG-48, BATL-TEST-20)", async () => {

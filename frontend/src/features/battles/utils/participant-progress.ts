@@ -74,7 +74,8 @@ export function battleProgress(
     .map((participant) => ({
       participant,
       progress: participantProgress(participant, battleStatus),
-      idle: idleLabel(participant.last_seen_at, now),
+      // Their last write or read (BATL-NEW-08); older servers only have the last read.
+      idle: idleLabel(participant.last_activity_at ?? participant.last_seen_at, now),
     }))
     .filter((entry) => entry.progress.tone !== "left");
 }

@@ -41,7 +41,12 @@ describe("participant progress", () => {
     const now = Date.parse("2026-10-18T15:00:00Z");
     const entries = battleProgress(
       [
-        myParticipant({ status: "finished_battle", last_seen_at: "2026-10-18T14:30:00Z" }),
+        myParticipant({
+          status: "finished_battle",
+          last_seen_at: "2026-10-18T09:00:00Z",
+          // Their last write counts too, so a recent one isn't idle (BATL-NEW-08).
+          last_activity_at: "2026-10-18T14:30:00Z",
+        }),
         opponentParticipant({ status: "finished_battle", last_seen_at: "2026-10-18T11:00:00Z" }),
         opponentParticipant({ id: 23, status: "declined" }),
       ],
