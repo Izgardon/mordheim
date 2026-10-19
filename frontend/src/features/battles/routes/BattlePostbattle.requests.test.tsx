@@ -136,6 +136,20 @@ describe("BattlePostbattle requests", () => {
     routeServer();
   });
 
+  it("shows who is still in postbattle and who has finished or was skipped (BATL-NEW-08)", async () => {
+    server.participants[1].status = "confirmed_postbattle";
+    server.participants[1].skipped_postbattle = true;
+    server.participants[1].last_seen_at = new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString();
+    await renderPostbattle();
+
+    const strip = screen.getByRole("region", { name: "Battle status" });
+    expect(
+      within(strip)
+        .getAllByRole("listitem")
+        .map((item) => item.textContent)
+    ).toEqual(["YouIn postbattle", "PlayerSkippedidle 5 hours"]);
+  });
+
   it("makes the phone's back chevron go to the overview and skip nothing (BUG-48, BATL-TEST-20)", async () => {
     media.mobile = true;
     const user = setupUser();

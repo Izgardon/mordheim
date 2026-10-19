@@ -17,6 +17,7 @@ import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesk
 import BattleFloatingActionBar from "@/features/battles/components/shared/BattleFloatingActionBar";
 import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesDialog";
 import BattleOverflowMenu from "@/features/battles/components/shared/BattleOverflowMenu";
+import BattleStatusStrip from "@/features/battles/components/shared/BattleStatusStrip";
 import ClosePostbattleDialog from "@/features/battles/components/shared/ClosePostbattleDialog";
 import { usePostbattlePage } from "@/features/battles/hooks/usePostbattlePage";
 import { useSectionScrollSpy } from "@/features/battles/hooks/useSectionScrollSpy";
@@ -97,6 +98,7 @@ export default function BattlePostbattle() {
           }
         />
       ) : null}
+      <BattleStatusStrip />
 
       <ExplorationSection
         isMobile={isMobile}

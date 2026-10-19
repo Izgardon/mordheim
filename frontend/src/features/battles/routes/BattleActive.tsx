@@ -19,6 +19,7 @@ import { normalizeCustomUnits } from "@/features/battles/components/prebattle/pr
 import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesktopSubnav";
 import BattleFloatingActionBar from "@/features/battles/components/shared/BattleFloatingActionBar";
 import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesDialog";
+import BattleStatusStrip from "@/features/battles/components/shared/BattleStatusStrip";
 import { useActivePage } from "@/features/battles/hooks/useActivePage";
 import { allRostersSettled, isRosterLoading } from "@/features/battles/utils/battle-rosters";
 import WarbandPdfViewerDialog from "@/features/warbands/components/warband/WarbandPdfViewerDialog";
@@ -91,6 +92,7 @@ export default function BattleActive() {
           }
         />
       ) : null}
+      <BattleStatusStrip />
 
       {isMobile && selectedParticipant ? (
         <div className="flex flex-wrap items-center justify-center gap-2 px-2">

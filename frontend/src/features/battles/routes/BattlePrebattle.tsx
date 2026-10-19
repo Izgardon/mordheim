@@ -14,6 +14,7 @@ import {
 } from "@/features/battles/components/prebattle/usePrebattleMobileBars";
 import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesktopSubnav";
 import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesDialog";
+import BattleStatusStrip from "@/features/battles/components/shared/BattleStatusStrip";
 import BattleTopBarActions from "@/features/battles/components/shared/BattleTopBarActions";
 import { usePrebattlePage } from "@/features/battles/hooks/usePrebattlePage";
 import { allRostersSettled, isRosterLoading } from "@/features/battles/utils/battle-rosters";
@@ -106,6 +107,7 @@ export default function BattlePrebattle() {
           }
         />
       ) : null}
+      <BattleStatusStrip />
 
       {ready.isSavingConfig ? (
         <p className="text-[0.58rem] uppercase tracking-[0.2em] text-muted-foreground">

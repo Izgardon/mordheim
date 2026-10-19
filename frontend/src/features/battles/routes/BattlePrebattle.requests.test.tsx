@@ -44,6 +44,26 @@ describe("BattlePrebattle requests", () => {
     fakeApi.on(`GET ${battlePath("rosters/")}`, battleRosters());
   });
 
+  it("shows who the battle is waiting for, and how long since each player was seen (BATL-NEW-08)", async () => {
+    const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString();
+    fakeApi.on(
+      `GET ${statePath("prebattle")}`,
+      battleState({
+        status: "prebattle",
+        me: { status: "ready", last_seen_at: new Date().toISOString() },
+        opponent: { status: "joined_prebattle", last_seen_at: twoDaysAgo },
+      })
+    );
+    renderBattleRoute("prebattle");
+
+    const strip = await screen.findByRole("region", { name: "Battle status" });
+    expect(
+      within(strip)
+        .getAllByRole("listitem")
+        .map((item) => item.textContent)
+    ).toEqual(["YouReady", "PlayerNot readyidle 2 days"]);
+  });
+
   it("sends Undo Ready once, with no second unready from the exit cleanup (BUG-74)", async () => {
     const user = setupUser();
     fakeApi.on(

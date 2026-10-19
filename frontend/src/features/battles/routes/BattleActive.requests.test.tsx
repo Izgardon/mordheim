@@ -126,6 +126,17 @@ describe("BattleActive requests", () => {
     fakeApi.reset();
   });
 
+  it("shows each player's place in the battle on the active page too (BATL-NEW-08)", async () => {
+    await renderActive();
+
+    const strip = screen.getByRole("region", { name: "Battle status" });
+    expect(
+      within(strip)
+        .getAllByRole("listitem")
+        .map((item) => item.textContent)
+    ).toEqual(["YouIn battle", "PlayerIn battle"]);
+  });
+
   it("offers No winner, which ends the battle with an empty winner list (decision 8)", async () => {
     const user = setupUser();
     await renderActive();
