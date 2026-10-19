@@ -8,7 +8,9 @@ Each flag is the server's own rule for that action, in the battle's current phas
 - `cancel`: the creator, before postbattle (postbattle is closed instead, decision 3), and only while nobody has
   applied his postbattle;
 - `close_postbattle`: the creator or a battle manager (`manage_battles`), in postbattle;
-- `edit_record`: a battle manager, once the battle has ended (BATL-NEW-04).
+- `edit_record`: a battle manager, once the battle has ended (BATL-NEW-04);
+- `nudge`: a participant still in an open battle (BATL-NEW-08), towards any other who still has something to do
+  in it (his status isn't confirmed_postbattle, declined or cancelled).
 
 A reported result has only `edit_record`, once it has ended. Computing the flags costs no query: the membership
 and the manage_battles grant come with the battle (services/access.py) and the participants with the snapshot.
@@ -20,6 +22,7 @@ from collections.abc import Iterable
 
 from ..models import Battle, BattleParticipant
 from .access import manages_battles
+from .unfinished import BUSY_BATTLE_STATUSES
 
 
 def _everyone_ready(participants: Iterable[BattleParticipant]) -> bool:
@@ -46,6 +49,7 @@ def capabilities(battle: Battle, user_id: int, participants: Iterable[BattlePart
         "cancel": creates and battle.status in before_postbattle and not applied,
         "close_postbattle": (creator or manager) and battle.status == Battle.STATUS_POSTBATTLE,
         "edit_record": manager and battle.status == Battle.STATUS_ENDED,
+        "nudge": still_in and normal and battle.status in BUSY_BATTLE_STATUSES,
     }
 
 

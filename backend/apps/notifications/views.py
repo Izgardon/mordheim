@@ -28,12 +28,21 @@ def _without_stale_trade_requests(rows: QuerySet[Notification]) -> QuerySet[Noti
     return rows.exclude(stale)
 
 
+def _without_stale_battle_nudges(rows: QuerySet[Notification]) -> QuerySet[Notification]:
+    """A nudge only while its battle is open (BATL-NEW-08): one about a finished battle reads as gone, without a
+    write. Same single query."""
+    from apps.battles.services.nudge import open_battle_refs
+
+    stale = Q(notification_type=Notification.TYPE_BATTLE_NUDGE) & ~Q(reference_id__in=open_battle_refs())
+    return rows.exclude(stale)
+
+
 class NotificationListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         unresolved = Notification.objects.filter(user=request.user, is_resolved=False)
-        notifications = _without_stale_trade_requests(unresolved).order_by("-created_at")
+        notifications = _without_stale_battle_nudges(_without_stale_trade_requests(unresolved)).order_by("-created_at")
         return Response([_serialize_notification(n) for n in notifications])
 
 

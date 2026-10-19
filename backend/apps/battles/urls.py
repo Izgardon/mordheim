@@ -13,6 +13,7 @@ from .views import (
     CampaignBattleFinishView,
     CampaignBattleJoinView,
     CampaignBattleListCreateView,
+    CampaignBattleNudgeView,
     CampaignBattlePostbattleSaveView,
     CampaignBattleReadyView,
     CampaignBattleRecordView,
@@ -135,6 +136,11 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/results/",
         CampaignBattleResultsView.as_view(),
         name="campaigns-battles-results",
+    ),
+    path(  # a notification to a player holding up the battle (BATL-NEW-08)
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/nudge/",
+        CampaignBattleNudgeView.as_view(),
+        name="campaigns-battles-nudge",
     ),
     path(  # an ended battle's record, read and edited by a battle manager (BATL-NEW-04)
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/record/",

@@ -65,12 +65,21 @@ def _timeline(participant: BattleParticipant) -> dict:
     }
 
 
+def last_activity(participant: BattleParticipant):
+    """When the player last did anything in the battle (BATL-NEW-08's idle time): his last write to his own row, or
+    his last read of it (presence, written at most once a minute), whichever is later. Phase changes others make
+    (start, a manager's End, Close postbattle) also count, as they move his row."""
+    seen = [moment for moment in (participant.updated_at, participant.last_seen_at) if moment is not None]
+    return max(seen) if seen else None
+
+
 def serialize_participant(participant: BattleParticipant, participant_view: str = "full") -> dict:
     payload = {
         "id": participant.id,
         "battle_id": participant.battle_id,
         "status": participant.status,
         "last_seen_at": _iso(participant.last_seen_at),
+        "last_activity_at": _iso(last_activity(participant)),
         "selected_unit_keys_json": participant.selected_unit_keys_json or [],
         "unit_information_json": participant.unit_information_json or {},
         "custom_units_json": participant.custom_units_json or [],
