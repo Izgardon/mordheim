@@ -8,6 +8,7 @@ from django.test.utils import CaptureQueriesContext
 
 from apps.battles.services.exploration import table_amount
 from apps.battles.services.injuries import describe_roll
+from apps.warbands.models import HenchmenGroup, Hero, HiredSword
 
 from .battle_support import BattleTestCase, build_fixture_warband, catalogue_item
 
@@ -91,7 +92,9 @@ class PostbattleGuideTests(BattleTestCase):
         self.client.force_authenticate(user=self.player)
         with CaptureQueriesContext(connection) as captured:
             self.ok(self.client.get(self.url(battle_id, "state") + "?view=postbattle"))
-        self.assertLessEqual(len(captured), 6)  # state's 4, the player's battle roster, the live kill events
+        # state's 4, the player's battle roster, the live kill events, and his heroes', hired swords' and groups' XP for
+        # the level-ups (BATL-NEW-10)
+        self.assertLessEqual(len(captured), 9)
 
     def test_only_a_winning_leader_gets_winning_leader(self):
         # BATL-NEW-09: the warband's leader, when it won (the player's own declaration while the others fight)
@@ -103,3 +106,27 @@ class PostbattleGuideTests(BattleTestCase):
         self.ok(self.post_as(self.viewer, self.url(battle_id, "results"), {"winners": [self.warband.id]}))
         reasons = self.guide(battle_id)["suggested_postbattle"]["unit_results"][leader]["reasons"]
         self.assertEqual([reason["label"] for reason in reasons], ["survived", "winning leader"])
+
+    def test_each_suggestion_says_how_many_level_ups_its_xp_would_earn(self):
+        # Counted by the server above each unit's XP high-water mark, with the campaign's tables (the hero table for
+        # hired swords), at half rate for a slow learner (the finalise summary's preview)
+        h, swords, groups = self.fixture.heroes, self.fixture.hired_swords, self.fixture.groups
+        for hero, (xp, high_water, half_rate) in zip(h, [(1, 1, False), (1, 3, False), (1, 1, True), (3, 3, False), (0, 0, False)], strict=True):  # fmt: skip
+            Hero.objects.filter(id=hero.id).update(xp=xp, xp_high_water=high_water, half_rate=half_rate)
+        HiredSword.objects.filter(id=swords[0].id).update(xp=1, xp_high_water=1)
+        HenchmenGroup.objects.filter(id=groups[0].id).update(xp=1, xp_high_water=1)
+        battle_id = self.to_postbattle({self.player: self.fixture.keys, self.viewer: [self.r]}, winners=[self.rival])
+
+        def level_ups() -> dict[str, int]:
+            results = self.guide(battle_id)["suggested_postbattle"]["unit_results"]
+            return {key: entry["level_ups"] for key, entry in results.items()}
+
+        predicted = level_ups()
+        self.assertEqual([predicted[f"hero:{hero.id}"] for hero in h], [1, 0, 0, 1, 0])
+        self.assertEqual([predicted[f"hired_sword:{sword.id}"] for sword in swords], [1, 0])  # no level-ups: 0
+        self.assertEqual([predicted[f"henchman:{member.id}"] for member in self.fixture.henchmen], [1, 1, 1, 0, 0, 0, 0, 0])  # fmt: skip
+        self.campaign_settings.hero_level_thresholds = [4, 8]
+        self.campaign_settings.save()
+        predicted = level_ups()
+        self.assertEqual([predicted[f"hero:{hero.id}"] for hero in h], [0, 0, 0, 1, 0])
+        self.assertEqual(predicted[f"hired_sword:{swords[0].id}"], 0)

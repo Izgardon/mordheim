@@ -51,13 +51,29 @@ def record_xp_change(
     return awarded
 
 
+def _battle_gain(unit: RosterUnit, xp_earned: int) -> Decimal:
+    return Decimal(xp_earned) * HALF_RATE if unit.half_rate else Decimal(xp_earned)
+
+
+def predicted_level_ups(unit: RosterUnit, xp_earned: int, settings: CampaignSettings | None) -> int:
+    """The level-ups `apply_xp_gain` would add for `xp_earned` battle XP, without changing the unit (the
+    postbattle suggestion, BATL-NEW-10): above the high-water mark, at half rate when the unit learns slowly."""
+    kind = KIND_BY_MODEL[type(unit)]
+    gain = _battle_gain(unit, xp_earned)
+    if gain <= 0 or (kind.has_no_level_ups and getattr(unit, "no_level_ups", False)):
+        return 0
+    previous_xp = _as_decimal(unit.xp)
+    high_water = max(previous_xp, _as_decimal(unit.xp_high_water))
+    return level_ups_between(kind, high_water, previous_xp + gain, settings)
+
+
 def apply_xp_gain(unit: RosterUnit, xp_earned: int, settings: CampaignSettings | None) -> bool:
     """Add `xp_earned` battle XP to `unit` and the level-ups it crosses; False if there is nothing to add.
 
     Half-rate units gain half (decision 6), so an odd award leaves half a point, and a threshold is
     reached only once the whole XP gets there. The caller saves XP_FIELDS.
     """
-    gain = Decimal(xp_earned) * HALF_RATE if unit.half_rate else Decimal(xp_earned)
+    gain = _battle_gain(unit, xp_earned)
     if gain <= 0:
         return False
     previous_xp = unit.xp or Decimal(0)

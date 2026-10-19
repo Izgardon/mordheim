@@ -5,7 +5,7 @@
   a winning warband's leader (Winning Leader, BATL-NEW-09); a henchmen group earns 1 plus its selected members'
   kills, the same for each member (0 when any has no level-ups). Each unit's suggestion lists its `reasons`
   (`[{"label": "survived", "xp": 1}, {"label": "2 kills", "xp": 2}, {"label": "winning leader", "xp": 1}]`), which
-  add up to its `xp_earned`;
+  add up to its `xp_earned`, and the `level_ups` that XP would earn (services/postbattle/level_ups.py);
 - exploration dice: one per selected hero still in action, one more for a winner (the player's own declaration
   while the others still fight, decision 4), at most 10;
 - upkeep: every hired sword on the battle's roster, at his upkeep price.
@@ -17,6 +17,8 @@
 from collections.abc import Iterable
 from typing import Any
 
+from apps.campaigns.models import CampaignSettings
+
 from ...models import Battle, BattleParticipant
 from ...validation.config import normalize_unit_information
 from ...validation.postbattle import MAX_EXPLORATION_DICE
@@ -26,6 +28,7 @@ from ..kills import count_kills, live_kill_events
 from ..selection import selected_unit_keys
 from ..unusual import MAX_EXPLORATION_DICE as MAX_CHOSEN_DICE
 from .kill_list import unit_kills
+from .level_ups import add_level_ups, unit_rows
 
 
 def _xp_kills(kill_payloads: Iterable[Any], warband_id: int) -> dict[str, int]:
@@ -126,14 +129,37 @@ def postbattle_rules(hero_death_roll: str) -> dict:
     }
 
 
+def rules_for(settings: CampaignSettings | None) -> dict:
+    return postbattle_rules((settings.hero_death_roll if settings else None) or "d66")
+
+
+def suggestions_for(
+    battle: Battle,
+    participants: list[BattleParticipant],
+    settings: CampaignSettings | None,
+    kill_payloads: list[Any] | None = None,
+) -> dict[int, dict]:
+    """Each player's `suggested_postbattle` by user id (players read with their battle rosters), with the level-ups
+    each unit's XP would earn: the live kill events (unless given) and at most one read per unit kind for all."""
+    if kill_payloads is None:
+        kill_payloads = list(live_kill_events(battle.id).values_list("payload_json", flat=True))
+    suggestions = {entry.user_id: suggested_postbattle(battle, entry, kill_payloads) for entry in participants}
+    keys = {key for suggestion in suggestions.values() for key in suggestion["unit_results"]}
+    rows = unit_rows([entry.roster_json or {} for entry in participants], keys)
+    for suggestion in suggestions.values():
+        add_level_ups(suggestion["unit_results"], rows, settings)
+    return suggestions
+
+
 def postbattle_guide(battle: Battle, participant: BattleParticipant) -> dict:
     """`suggested_postbattle`, `rules` and `unit_kills` (his units' kills by victim, BATL-NEW-06) for the postbattle
-    page's state (two reads: the player's battle roster and the live kill events; the campaign's settings come with
-    the battle, the participants with the snapshot)."""
+    page's state: the player's battle roster, the live kill events and his units' XP (up to three reads); the
+    campaign's settings come with the battle, the participants with the snapshot."""
     settings = getattr(battle.campaign, "settings", None)
     kills = list(live_kill_events(battle.id).only("id", "payload_json").order_by("id"))
+    payloads = [event.payload_json for event in kills]
     return {
-        "suggested_postbattle": suggested_postbattle(battle, participant, [event.payload_json for event in kills]),
-        "rules": postbattle_rules((settings.hero_death_roll if settings else None) or "d66"),
+        "suggested_postbattle": suggestions_for(battle, [participant], settings, payloads)[participant.user_id],
+        "rules": rules_for(settings),
         "unit_kills": unit_kills(participant.warband_id, kills, battle.participants.all()),
     }
