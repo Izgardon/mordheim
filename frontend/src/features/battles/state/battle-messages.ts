@@ -1,7 +1,77 @@
-import type { BattleEvent, BattleState } from "@/features/battles/types/battle-types";
+import type {
+  BattleCapabilities,
+  BattleEvent,
+  BattleState,
+  BroadcastCapabilities,
+} from "@/features/battles/types/battle-types";
 import type { BattleSocketMessage } from "@/features/battles/types/battle-messages";
 
+import { capabilityBasis } from "./battle-capabilities";
 import { mergeBattleEvents, patchParticipants, stateVersion } from "./battle-cache";
+
+/** Who reads the messages: their user id, and whether they hold `manage_battles`. */
+export type BattleReader = { userId: number | undefined; managesBattles: boolean };
+
+const NO_READER: BattleReader = { userId: undefined, managesBattles: false };
+
+/**
+ * Your flags from a broadcast: yours as a player, widened flag by flag by a battle manager's when
+ * you hold `manage_battles` (every flag only widens with it); a manager not playing gets theirs.
+ */
+export function readerCapabilities(
+  broadcast: BroadcastCapabilities,
+  reader: BattleReader
+): BattleCapabilities {
+  const mine = reader.userId !== undefined ? broadcast.by_user[String(reader.userId)] : undefined;
+  const none: BattleCapabilities = {
+    start: false,
+    cancel: false,
+    close_postbattle: false,
+    edit_record: false,
+  };
+  if (!reader.managesBattles) {
+    return mine ?? none;
+  }
+  const flags: Record<string, boolean> = { ...none };
+  for (const source of [mine ?? none, broadcast.manager]) {
+    for (const [flag, value] of Object.entries(source)) {
+      flags[flag] = Boolean(flags[flag]) || Boolean(value);
+    }
+  }
+  return flags as BattleCapabilities;
+}
+
+/**
+ * What a write's last message adds besides the snapshot: your capabilities, and once players are
+ * in postbattle your suggestions and the rules (item 8), so none of them costs a read.
+ */
+function withBroadcastExtras(
+  state: BattleState,
+  message: BattleSocketMessage,
+  reader: BattleReader
+): BattleState {
+  const capabilities = message.capabilities
+    ? readerCapabilities(message.capabilities, reader)
+    : null;
+  const suggestion =
+    reader.userId !== undefined ? message.postbattle?.suggested?.[String(reader.userId)] : null;
+  return {
+    ...state,
+    ...(capabilities ? { capabilities, capabilitiesBasis: capabilityBasis(state) } : {}),
+    ...(suggestion ? { suggested_postbattle: suggestion } : {}),
+    ...(message.postbattle?.rules ? { rules: message.postbattle.rules } : {}),
+  };
+}
+
+/** True when your own postbattle is open and the message couldn't carry its suggestions. */
+function missesYourSuggestions(
+  state: BattleState,
+  message: BattleSocketMessage,
+  reader: BattleReader
+) {
+  const you = state.participants.find((participant) => participant.user.id === reader.userId);
+  return Boolean(message.postbattle_omitted) && you?.status === "finished_battle";
+}
 
 /**
  * What a battle socket message does to the cached state (PERF-34):
@@ -39,7 +109,8 @@ function withEvent(state: BattleState, event: BattleEvent | null): BattleState |
  */
 export function reconcileBattleMessage(
   cached: BattleState | null,
-  message: BattleSocketMessage
+  message: BattleSocketMessage,
+  reader: BattleReader = NO_READER
 ): BattleMessageOutcome {
   const version = typeof message.state_version === "number" ? message.state_version : null;
   if (version === null) {
@@ -64,14 +135,16 @@ export function reconcileBattleMessage(
     return { next: withEvent(cached, event), refetch: "none" };
   }
   const base = withEvent(cached, event) ?? cached;
-  return {
-    next: {
+  const next = withBroadcastExtras(
+    {
       ...base,
       battle: message.battle,
       participants: patchParticipants(cached.participants, message.participants ?? []),
     },
-    refetch: "none",
-  };
+    message,
+    reader
+  );
+  return { next, refetch: missesYourSuggestions(next, message, reader) ? "gap" : "none" };
 }
 
 /**

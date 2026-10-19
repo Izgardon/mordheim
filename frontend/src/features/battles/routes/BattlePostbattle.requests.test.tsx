@@ -342,6 +342,34 @@ describe("BattlePostbattle requests", () => {
     expect(screen.queryByRole("checkbox", { name: /^Apply Arm Wound/ })).toBeNull();
   });
 
+  it("seeds the exploration dice from the suggestion when it arrives after the page opened", async () => {
+    // Reached from Active, the cache had no suggestion; the read that follows brings it.
+    const suggestion = server.suggested_postbattle;
+    delete server.suggested_postbattle;
+    const later = deferred<BattleState>();
+    fakeApi.on(`GET ${statePath("postbattle", 5)}`, () => later.promise);
+    await renderPostbattle();
+    expect(screen.queryAllByPlaceholderText("-")).toHaveLength(0);
+
+    await act(async () => later.resolve({ ...answer(), suggested_postbattle: suggestion }));
+
+    await waitFor(() => expect(screen.getAllByPlaceholderText("-")).toHaveLength(2));
+    expect(screen.getByRole("button", { name: "Roll" })).toBeEnabled();
+  });
+
+  it("uses the campaign's cached rules when the battle came without them, reading nothing (item 8)", async () => {
+    delete server.rules;
+    const queryClient = createQueryClient();
+    queryClient.setQueryData(queryKeys.campaign.battleRules(1), postbattleRules("d100"));
+    renderBattleRoute("postbattle", { queryClient });
+    expect((await screen.findAllByText("Captain Wolf"))[0]).toBeInTheDocument();
+    await pause(50);
+
+    expect(fakeApi.calls().filter((call) => call.includes("state/"))).toEqual([
+      `GET ${statePath("postbattle")}`,
+    ]);
+  });
+
   it("reads the warband's resources from its cached sheet, with no request of its own (BUG-127)", async () => {
     const queryClient = createQueryClient();
     queryClient.setQueryData(queryKeys.campaign.warbandSheet(1, ME.warband.id), mySheet(RESOURCES));

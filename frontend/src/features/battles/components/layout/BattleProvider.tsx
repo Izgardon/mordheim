@@ -1,10 +1,11 @@
 import { useEffect, useMemo, type ReactNode } from "react";
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useOutletContext, useParams } from "react-router-dom";
 
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useBattleCapabilities } from "@/features/battles/hooks/useBattleCapabilities";
 import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
+import { useCampaignBattleRules } from "@/features/battles/hooks/useCampaignBattleRules";
 import { useBattleState } from "@/features/battles/hooks/useBattleState";
 import { BattleContext, type BattleContextValue } from "@/features/battles/state/battle-context";
 import {
@@ -13,6 +14,7 @@ import {
   type BattlePhase,
 } from "@/features/battles/state/battle-machine";
 import { toastBattleOver } from "@/features/battles/utils/battle-over";
+import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 
 /**
  * Loads the battle once for every phase page (state and rosters), sends the user to the page the
@@ -30,9 +32,13 @@ export default function BattleProvider({
   const { id, battleId } = useParams();
   const campaignId = Number(id);
   const numericBattleId = Number(battleId);
+  const { user } = useAuth();
+  const outlet = useOutletContext<CampaignLayoutContext | undefined>();
+  const managesBattles = Boolean(outlet?.campaign?.permissions?.includes("manage_battles"));
+  const reader = useMemo(() => ({ userId: user?.id, managesBattles }), [managesBattles, user?.id]);
 
   const {
-    battleState,
+    battleState: cachedState,
     battleStateRef,
     isLoading,
     error,
@@ -40,13 +46,19 @@ export default function BattleProvider({
     updateBattleState,
     refreshBattleState,
     joinRead,
-  } = useBattleState({ campaignId, battleId: numericBattleId, view: phase });
+  } = useBattleState({ campaignId, battleId: numericBattleId, view: phase, reader });
   const { rosters, rosterLoading, rosterErrors } = useBattleRosters(
     campaignId,
     numericBattleId,
-    battleState?.participants
+    cachedState?.participants
   );
 
+  // Broadcasts may leave the rules out; the campaign's last ones stand in (item 8).
+  const rules = useCampaignBattleRules(campaignId, cachedState?.rules);
+  const battleState = useMemo(
+    () => (cachedState && !cachedState.rules && rules ? { ...cachedState, rules } : cachedState),
+    [cachedState, rules]
+  );
   const view = deriveBattleView({ page: phase, isLoading, error, battle: battleState?.battle });
   const capabilities = useBattleCapabilities({
     battleState,
@@ -88,7 +100,6 @@ export default function BattleProvider({
   );
 
   // The battle ended or was cancelled: say so as the page closes (BATL-NEW-08).
-  const { user } = useAuth();
   const closesToOverview = view.kind === "redirect" && view.to === "overview";
   useEffect(() => {
     const latest = battleStateRef.current;

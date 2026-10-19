@@ -2,8 +2,11 @@ import { describe, expect, it, vi } from "vitest";
 
 import type { BattleSocketMessage } from "@/features/battles/types/battle-messages";
 import {
+  ME,
   OPPONENT,
   battleEvent,
+  myParticipant,
+  postbattleRules,
   battleState,
   deferred,
   opponentParticipant,
@@ -11,7 +14,7 @@ import {
   versionedMessage,
 } from "@/test/battle-fixtures";
 
-import { createSingleFlight, reconcileBattleMessage } from "./battle-messages";
+import { createSingleFlight, readerCapabilities, reconcileBattleMessage } from "./battle-messages";
 
 const message = (value: unknown) => value as BattleSocketMessage;
 
@@ -22,6 +25,93 @@ const kill = (id: number) => battleEvent(id, "unit_kill_recorded", OPPONENT.id);
 
 const opponentKills = (count: number) =>
   opponentParticipant({ unit_information_json: { "hero:2": { kill_count: count } } });
+
+const FLAGS = { start: false, cancel: false, close_postbattle: false, edit_record: false };
+const broadcast = {
+  by_user: {
+    [String(ME.id)]: { ...FLAGS, finish_mine: true },
+    [String(OPPONENT.id)]: { ...FLAGS, start: true },
+  },
+  manager: { ...FLAGS, close_postbattle: true, confirm_results: true },
+};
+
+describe("readerCapabilities", () => {
+  it("takes your own flags, widened by a battle manager's when you hold manage_battles", () => {
+    expect(readerCapabilities(broadcast, { userId: ME.id, managesBattles: false })).toEqual({
+      ...FLAGS,
+      finish_mine: true,
+    });
+    expect(readerCapabilities(broadcast, { userId: ME.id, managesBattles: true })).toEqual({
+      ...FLAGS,
+      finish_mine: true,
+      close_postbattle: true,
+      confirm_results: true,
+    });
+    // A manager who isn't playing gets a manager's flags; anyone else nothing.
+    expect(readerCapabilities(broadcast, { userId: 99, managesBattles: true })).toMatchObject({
+      close_postbattle: true,
+    });
+    expect(readerCapabilities(broadcast, { userId: 99, managesBattles: false })).toEqual(FLAGS);
+  });
+});
+
+describe("reconcileBattleMessage, the broadcast's extras (item 8)", () => {
+  const reader = { userId: ME.id, managesBattles: false };
+
+  it("applies your capabilities from the message, so a status change needs no read", () => {
+    const outcome = reconcileBattleMessage(
+      cachedAt(4),
+      message({
+        ...versionedMessage(null, 5, { status: "postbattle", participants: [opponentKills(0)] }),
+        capabilities: broadcast,
+      }),
+      reader
+    );
+
+    expect(outcome.refetch).toBe("none");
+    expect(outcome.next?.capabilities).toEqual({ ...FLAGS, finish_mine: true });
+    expect(outcome.next?.capabilitiesBasis).toContain("postbattle");
+  });
+
+  it("takes your suggestions and the rules once you are in postbattle", () => {
+    const suggestion = {
+      unit_results: { "hero:1": { xp_earned: 2 } },
+      exploration: { dice_count: 3 },
+      upkeep: { entries: {} },
+    };
+    const outcome = reconcileBattleMessage(
+      cachedAt(4),
+      message({
+        ...versionedMessage(null, 5, {
+          status: "postbattle",
+          participants: [myParticipant({ status: "finished_battle" })],
+        }),
+        postbattle: { rules: postbattleRules(), suggested: { [String(ME.id)]: suggestion } },
+      }),
+      reader
+    );
+
+    expect(outcome.refetch).toBe("none");
+    expect(outcome.next?.suggested_postbattle).toEqual(suggestion);
+    expect(outcome.next?.rules?.hero_death_roll).toBe("d66");
+  });
+
+  it("reads state when your postbattle's suggestions didn't fit in the message", () => {
+    const outcome = reconcileBattleMessage(
+      cachedAt(4),
+      message({
+        ...versionedMessage(null, 5, {
+          status: "postbattle",
+          participants: [myParticipant({ status: "finished_battle" })],
+        }),
+        postbattle_omitted: true,
+      }),
+      reader
+    );
+
+    expect(outcome.refetch).toBe("gap");
+  });
+});
 
 describe("reconcileBattleMessage", () => {
   it("patches the next version from its snapshot: battle, changed participants, event", () => {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   explorationAmount,
@@ -49,17 +49,23 @@ export function useExploration({
   const participantRef = useLatestRef(currentParticipant);
   const { battle, rules, suggested_postbattle: suggestion } = battleState;
   const limits = explorationDiceLimits(rules);
+  // Seeded before the server's suggestion arrived (it comes with a read or a broadcast): seed
+  // again once it does, while no die is set (the "Dice Count 0" after End battle).
+  const seededWithoutSuggestionRef = useRef(false);
   useEffect(() => {
     const participant = participantRef.current;
     if (!participant || !currentRoster) {
       return;
     }
     const ownerKey = `${battle.id}:${participant.id}`;
-    if (explorationKey !== ownerKey) {
+    const untouched = exploration?.diceValues.every((value) => value === null) ?? false;
+    const lateSuggestion = Boolean(suggestion) && seededWithoutSuggestionRef.current && untouched;
+    if (explorationKey !== ownerKey || lateSuggestion) {
       const restored = suggestedExploration(participant, resources, suggestion, rules);
       const saved = settledExplorationPayload(restored);
       savedExplorationKeyRef.current = saved ? JSON.stringify(saved) : null;
       lastSettledExplorationRef.current = saved;
+      seededWithoutSuggestionRef.current = !suggestion;
       setExploration(restored);
       setExplorationKey(ownerKey);
       return;

@@ -332,10 +332,22 @@ export type BattlePostbattleSuggestion = {
  */
 export type BattleCapabilities = {
   start: boolean;
-  end: boolean;
   cancel: boolean;
   close_postbattle: boolean;
   edit_record: boolean;
+  /** Finish your own fight (decision 4). */
+  finish_mine?: boolean;
+  /** Confirm the results: the last player to finish, or a battle manager, in postbattle. */
+  confirm_results?: boolean;
+  nudge?: boolean;
+  /** The creator's End battle, before decision 4 (an older server). */
+  end?: boolean;
+};
+
+/** What a broadcast says each reader may do: every player's flags and a battle manager's. */
+export type BroadcastCapabilities = {
+  by_user: Record<string, BattleCapabilities>;
+  manager: BattleCapabilities;
 };
 
 export type BattleStateOf<Participant extends BattleParticipantCore> = {

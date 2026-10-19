@@ -2,8 +2,11 @@ import type {
   BattleEvent,
   BattleEventType,
   BattleParticipant,
+  BattlePostbattleRules,
+  BattlePostbattleSuggestion,
   BattleStatus,
   BattleSummary,
+  BroadcastCapabilities,
 } from "@/features/battles/types/battle-types";
 
 /**
@@ -18,6 +21,18 @@ type BattleMessageSnapshot = {
   battle?: BattleSummary;
   participants?: BattleParticipant[];
   snapshot_omitted?: boolean;
+  /** Each player's flags and a battle manager's, so a status change needs no read. */
+  capabilities?: BroadcastCapabilities;
+  /**
+   * When a write puts players into postbattle or changes its winners: each one's suggestions and
+   * the rules, as much as fits (`rules_omitted`; `postbattle_omitted` when none did).
+   */
+  postbattle?: {
+    rules?: BattlePostbattleRules;
+    suggested?: Record<string, BattlePostbattleSuggestion>;
+    rules_omitted?: boolean;
+  };
+  postbattle_omitted?: boolean;
 };
 
 /** A timeline event (a kill, an item use, the battle starting...). */

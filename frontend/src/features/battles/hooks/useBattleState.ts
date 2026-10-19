@@ -7,6 +7,7 @@ import { getBattleStateLastEventId, mergeBattleState } from "@/features/battles/
 import {
   createSingleFlight,
   reconcileBattleMessage,
+  type BattleReader,
 } from "@/features/battles/state/battle-messages";
 import type { BattleSocketMessage } from "@/features/battles/types/battle-messages";
 import type { BattleState, BattleStateView } from "@/features/battles/types/battle-types";
@@ -19,6 +20,8 @@ type UseBattleStateOptions = {
   battleId: number;
   /** The participant shape reads ask for (the page being shown). */
   view: BattleStateView;
+  /** Who reads: picks your capabilities and suggestions out of broadcasts. */
+  reader?: BattleReader;
 };
 
 /** A ref-like view of the cache: always the latest state, including optimistic changes. */
@@ -32,7 +35,7 @@ export type BattleStateRef = { readonly current: BattleState | null };
  * back, when the tab is shown again, and when a write is refused because the battle moved on
  * (BUG-19), so a phone that slept through End battle follows it.
  */
-export function useBattleState({ campaignId, battleId, view }: UseBattleStateOptions) {
+export function useBattleState({ campaignId, battleId, view, reader }: UseBattleStateOptions) {
   const queryClient = useQueryClient();
   const validRoute = Number.isFinite(campaignId) && Number.isFinite(battleId);
   const queryKey = useMemo(
@@ -41,8 +44,10 @@ export function useBattleState({ campaignId, battleId, view }: UseBattleStateOpt
   );
 
   const viewRef = useRef(view);
+  const readerRef = useRef(reader);
   useLayoutEffect(() => {
     viewRef.current = view;
+    readerRef.current = reader;
   });
   const query = useQuery({
     ...battleStateQuery(queryClient, campaignId, battleId, () => viewRef.current),
@@ -130,7 +135,11 @@ export function useBattleState({ campaignId, battleId, view }: UseBattleStateOpt
   // Battle writes name this tab's socket, so the server never sends this tab its own events; any
   // event that arrives is news, even one your own user sent from another tab or device (BUG-75).
   useBattleEvents(validRoute ? battleId : null, (message) => {
-    const outcome = reconcileBattleMessage(readState(), message as BattleSocketMessage);
+    const outcome = reconcileBattleMessage(
+      readState(),
+      message as BattleSocketMessage,
+      readerRef.current
+    );
     if (outcome.next) {
       queryClient.setQueryData<BattleState>(queryKey, outcome.next);
     }

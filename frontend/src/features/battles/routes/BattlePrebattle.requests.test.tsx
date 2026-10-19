@@ -13,8 +13,10 @@ import {
   battlePath,
   battleRosters,
   battleState,
+  opponentParticipant,
   socketMessage,
   statePath,
+  versionedMessage,
 } from "@/test/battle-fixtures";
 import { renderBattleRoute } from "@/test/battle-routes";
 import { fakeApi } from "@/test/fake-api";
@@ -102,6 +104,60 @@ describe("BattlePrebattle requests", () => {
 
     await waitFor(() => expect(screen.getByRole("button", { name: "Start Battle" })).toBeEnabled());
     expect(fakeApi.calls()).toEqual([READY_ROUTE, `GET ${statePath("prebattle", 3)}`]);
+  });
+
+  it("takes the capabilities a write answers with, reading nothing more (item 8)", async () => {
+    const user = setupUser();
+    const capabilities = (start: boolean) => ({
+      start,
+      cancel: true,
+      close_postbattle: false,
+      edit_record: false,
+    });
+    fakeApi.on(`GET ${statePath("prebattle")}`, {
+      ...battleState({ status: "prebattle", opponent: { status: "ready" } }),
+      capabilities: capabilities(false),
+    });
+    fakeApi.on(READY_ROUTE, () => ({
+      ...battleState({
+        status: "prebattle",
+        me: { status: "ready" },
+        opponent: { status: "ready" },
+      }),
+      capabilities: capabilities(true),
+    }));
+    renderBattleRoute("prebattle");
+    expect(await screen.findByRole("button", { name: "Start Battle" })).toBeDisabled();
+    fakeApi.clearRequests();
+
+    await user.click(screen.getByRole("button", { name: "Ready Up" }));
+
+    await waitFor(() => expect(screen.getByRole("button", { name: "Start Battle" })).toBeEnabled());
+    expect(fakeApi.calls()).toEqual([READY_ROUTE]);
+  });
+
+  it("takes your capabilities from another player's broadcast, reading nothing (item 8)", async () => {
+    const flags = { start: false, cancel: true, close_postbattle: false, edit_record: false };
+    fakeApi.on(`GET ${statePath("prebattle")}`, {
+      ...battleState({ status: "prebattle", state_version: 4, me: { status: "ready" } }),
+      capabilities: flags,
+    });
+    renderBattleRoute("prebattle");
+    expect(await screen.findByRole("button", { name: "Start Battle" })).toBeDisabled();
+    fakeApi.clearRequests();
+
+    act(() =>
+      fakeRealtime.emit(BATTLE_CHANNEL, "battle.event", {
+        ...versionedMessage(null, 5, {
+          status: "prebattle",
+          participants: [opponentParticipant({ status: "ready" })],
+        }),
+        capabilities: { by_user: { "7": { ...flags, start: true } }, manager: flags },
+      })
+    );
+
+    await waitFor(() => expect(screen.getByRole("button", { name: "Start Battle" })).toBeEnabled());
+    expect(fakeApi.calls()).toEqual([]);
   });
 
   it("doesn't offer Cancel battle to the creator when the server's capabilities don't allow it", async () => {
