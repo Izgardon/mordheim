@@ -192,18 +192,20 @@ export default function BattleUnitStatsAndItems({
                 </div>
               ))}
             </div>
-            <div className="space-y-1">
-              <label className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-foreground">
-                Notes
-              </label>
-              <Input
-                value={notes}
-                onChange={(event) => onUpdateNotes?.(event.target.value)}
-                placeholder="Unit notes"
-                maxLength={500}
-                className="h-8 text-xs"
-              />
-            </div>
+            {onUpdateNotes ? (
+              <div className="space-y-1">
+                <label className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-foreground">
+                  Notes
+                </label>
+                <Input
+                  value={notes}
+                  onChange={(event) => onUpdateNotes(event.target.value)}
+                  placeholder="Unit notes"
+                  maxLength={500}
+                  className="h-8 text-xs"
+                />
+              </div>
+            ) : null}
             <div className="flex justify-end gap-2">
               {showApplyButton ? (
                 <button

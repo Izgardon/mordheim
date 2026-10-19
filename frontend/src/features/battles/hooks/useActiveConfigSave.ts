@@ -69,9 +69,9 @@ export function useActiveConfigSave({
     async (
       payload: ParticipantConfigPatch,
       {
-        savingUnitKey,
+        savingUnitKeys = [],
         showGlobalSaving = true,
-      }: { savingUnitKey?: string; showGlobalSaving?: boolean } = {}
+      }: { savingUnitKeys?: string[]; showGlobalSaving?: boolean } = {}
     ) => {
       if (!ownParticipant()) {
         return null;
@@ -93,7 +93,7 @@ export function useActiveConfigSave({
       }
       try {
         return await queueConfigSave(payload, {
-          keys: savingUnitKey ? [savingUnitKey] : [],
+          keys: savingUnitKeys,
           silent: !showGlobalSaving,
         });
       } catch (errorResponse) {
@@ -125,38 +125,40 @@ export function useActiveConfigSave({
             [unit.key]: { current_wounds: nextEntry?.current_wounds ?? null },
           },
         },
-        { savingUnitKey: unit.key }
+        { savingUnitKeys: [unit.key] }
       );
     },
     [ownParticipant, saveConfig]
   );
 
+  /**
+   * A battle stat change (BATL-NEW-07): one unit's, or every member's of a henchmen group, as one
+   * patch. It stays temporary unless kept in postbattle (decision 6).
+   */
   const saveUnitOverride = useCallback(
-    async (unitKey: string, override: UnitOverride | undefined) => {
+    async (unitKeys: string[], override: UnitOverride | undefined) => {
       const participant = ownParticipant();
-      if (!participant) {
+      if (!participant || unitKeys.length === 0) {
         return;
       }
       const selected = getParticipantSelectedUnits(participant, rosters[participant.user.id]);
-      const unit = [
+      const units = [
         ...selected.heroes,
         ...selected.henchmen,
         ...selected.hiredSwords,
         ...selected.temporary,
-      ].find((entry) => entry.key === unitKey);
-      if (!unit) {
-        throw new Error("Unable to find unit for active edit");
-      }
+      ];
       const unitInformation = toUnitInformationMap(participant.unit_information_json);
-      const nextEntry = updateUnitInformationOverride(unitInformation, unit, override)[unitKey];
-      await saveConfig(
-        {
-          unit_information_patch: {
-            [unitKey]: { stats_override: nextEntry?.stats_override ?? {} },
-          },
-        },
-        { savingUnitKey: unitKey }
-      );
+      const patch: NonNullable<ParticipantConfigPatch["unit_information_patch"]> = {};
+      for (const unitKey of unitKeys) {
+        const unit = units.find((entry) => entry.key === unitKey);
+        if (!unit) {
+          throw new Error("Unable to find unit for active edit");
+        }
+        const nextEntry = updateUnitInformationOverride(unitInformation, unit, override)[unitKey];
+        patch[unitKey] = { stats_override: nextEntry?.stats_override ?? {} };
+      }
+      await saveConfig({ unit_information_patch: patch }, { savingUnitKeys: unitKeys });
     },
     [ownParticipant, rosters, saveConfig]
   );
@@ -165,7 +167,7 @@ export function useActiveConfigSave({
     async (unitKey: string, notes: string) => {
       await saveConfig(
         { unit_information_patch: { [unitKey]: { notes } } },
-        { savingUnitKey: unitKey, showGlobalSaving: false }
+        { savingUnitKeys: [unitKey], showGlobalSaving: false }
       );
     },
     [saveConfig]

@@ -25,7 +25,7 @@ type ActiveParticipantRosterProps = {
   canInteract: boolean;
   onSetOutOfAction: (unitKey: string, outOfAction: boolean) => Promise<void>;
   onAdjustWounds: (unit: PrebattleUnit, delta: number) => Promise<void>;
-  onSaveOverride: (unitKey: string, override: UnitOverride | undefined) => Promise<void>;
+  onSaveOverride: (unitKeys: string[], override: UnitOverride | undefined) => Promise<void>;
   onSaveUnitNotes: (unitKey: string, notes: string) => Promise<void>;
   onRecordKill: (payload: {
     killerUnitKey: string;

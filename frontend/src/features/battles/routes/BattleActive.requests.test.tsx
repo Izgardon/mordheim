@@ -472,6 +472,29 @@ describe("BattleActive requests", () => {
     expect(myUnit("hero:3").notes).toBe("Limping");
   });
 
+  it("edits a unit's battle stats from its details and saves them as that unit's patch (BATL-NEW-07)", async () => {
+    const user = setupUser();
+    await renderActive();
+
+    await user.click(firstButton("Captain Wolf", "Details for Captain Wolf"));
+    await user.click(within(card("Captain Wolf")).getByRole("button", { name: "Edit stats" }));
+    // The editor's fields follow the profile: M, WS, BS, ...
+    const weaponSkill = within(card("Captain Wolf")).getAllByRole("spinbutton")[1];
+    await user.clear(weaponSkill);
+    await user.type(weaponSkill, "5");
+    await user.click(
+      within(card("Captain Wolf")).getByRole("button", { name: "Apply stat changes" })
+    );
+
+    await waitFor(() =>
+      expect(fakeApi.bodyOf(`POST ${battlePath("config/")}`)).toEqual({
+        unit_information_patch: { "hero:1": { stats_override: { weapon_skill: 5 } } },
+      })
+    );
+    expect(myUnit("hero:1").stats_override).toEqual({ weapon_skill: 5 });
+    expect(within(card("Captain Wolf")).getByText("Temp")).toBeInTheDocument();
+  });
+
   it("locks a unit while its wound save waits in the queue, so no kill lands before it is sent (BUG-44)", async () => {
     const user = setupUser();
     await renderActive();

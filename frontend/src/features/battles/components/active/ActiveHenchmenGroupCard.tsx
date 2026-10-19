@@ -15,6 +15,7 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import ActiveHenchmanRow from "./ActiveHenchmanRow";
 import ActiveKillDialog from "./ActiveKillDialog";
 import ActiveUnitExpandedDetails from "./ActiveUnitExpandedDetails";
+import ActiveUnitStatEditor from "./ActiveUnitStatEditor";
 import { getEffectiveUnitStats, type ActiveBattleUnitOption } from "./active-utils";
 
 type ActiveHenchmenGroupCardProps = {
@@ -26,11 +27,8 @@ type ActiveHenchmenGroupCardProps = {
   killTargetOptions: ActiveBattleUnitOption[];
   onSetOutOfAction: (unitKey: string, outOfAction: boolean) => Promise<void>;
   onAdjustWounds: (unit: PrebattleUnit, delta: number) => Promise<void>;
-  /**
-   * Not read: no stat-override editor is rendered since ActiveUnitStatEditor was unmounted.
-   * Kept (callers still pass it) pending a decision on whether to restore that editor.
-   */
-  onSaveOverride: (unitKey: string, override: UnitOverride | undefined) => Promise<void>;
+  /** Saves a battle stat change for every member of the group (BATL-NEW-07). */
+  onSaveOverride: (unitKeys: string[], override: UnitOverride | undefined) => Promise<void>;
   onSaveUnitNotes: (unitKey: string, notes: string) => Promise<void>;
   onRecordKill: (payload: {
     killerUnitKey: string;
@@ -55,6 +53,7 @@ export default function ActiveHenchmenGroupCard({
   killTargetOptions,
   onSetOutOfAction,
   onAdjustWounds,
+  onSaveOverride,
   onSaveUnitNotes,
   onRecordKill,
   onUseSingleUseItem,
@@ -166,6 +165,20 @@ export default function ActiveHenchmenGroupCard({
 
       {isExpanded ? (
         <div>
+          <div className="px-3 pt-3">
+            <ActiveUnitStatEditor
+              unit={detailUnit}
+              unitInformation={detailUnitInfo}
+              editable={canInteract}
+              isSaving={members.some((member) => savingUnitKeys[member.key])}
+              onSaveOverride={(_, override) =>
+                onSaveOverride(
+                  members.map((member) => member.key),
+                  override
+                )
+              }
+            />
+          </div>
           <ActiveUnitExpandedDetails
             unit={detailUnit}
             unitInformation={detailUnitInfo}

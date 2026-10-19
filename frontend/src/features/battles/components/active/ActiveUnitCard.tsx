@@ -16,6 +16,7 @@ import { getErrorMessage } from "@/lib/get-error-message";
 
 import ActiveKillDialog from "./ActiveKillDialog";
 import ActiveUnitExpandedDetails from "./ActiveUnitExpandedDetails";
+import ActiveUnitStatEditor from "./ActiveUnitStatEditor";
 import { ActiveUnitActions } from "./ActiveUnitControls";
 import {
   getCurrentUnitWounds,
@@ -30,11 +31,8 @@ type ActiveUnitCardProps = {
   killTargetOptions: ActiveBattleUnitOption[];
   onSetOutOfAction: (unitKey: string, outOfAction: boolean) => Promise<void>;
   onAdjustWounds: (unit: PrebattleUnit, delta: number) => Promise<void>;
-  /**
-   * Not read: no stat-override editor is rendered since ActiveUnitStatEditor was unmounted.
-   * Kept (callers still pass it) pending a decision on whether to restore that editor.
-   */
-  onSaveOverride: (unitKey: string, override: UnitOverride | undefined) => Promise<void>;
+  /** Saves a battle stat change from the details' stat editor (BATL-NEW-07). */
+  onSaveOverride: (unitKeys: string[], override: UnitOverride | undefined) => Promise<void>;
   onSaveUnitNotes: (unitKey: string, notes: string) => Promise<void>;
   onRecordKill: (payload: {
     killerUnitKey: string;
@@ -90,6 +88,7 @@ export default function ActiveUnitCard({
   killTargetOptions,
   onSetOutOfAction,
   onAdjustWounds,
+  onSaveOverride,
   onSaveUnitNotes,
   onRecordKill,
   onUseSingleUseItem,
@@ -176,6 +175,17 @@ export default function ActiveUnitCard({
         <ChevronDown className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
       </button>
 
+      {isExpanded ? (
+        <div className="px-3 pt-3">
+          <ActiveUnitStatEditor
+            unit={unit}
+            unitInformation={unitInformation}
+            editable={canInteract && !outOfAction}
+            isSaving={isSavingUnitConfig}
+            onSaveOverride={(unitKey, override) => onSaveOverride([unitKey], override)}
+          />
+        </div>
+      ) : null}
       {isExpanded ? (
         <ActiveUnitExpandedDetails
           unit={unit}
