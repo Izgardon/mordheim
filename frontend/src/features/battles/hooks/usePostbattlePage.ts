@@ -5,6 +5,7 @@ import { useAuth } from "@/features/auth/hooks/use-auth";
 import { saveBattleParticipantConfig } from "@/features/battles/api/battles-api";
 import { heroDeathRollFor } from "@/features/battles/components/postbattle/postbattle-rules";
 import type { PostbattleRowTools } from "@/features/battles/components/postbattle/postbattle-row-tools";
+import { buildStatChangeRows } from "@/features/battles/components/postbattle/stat-changes";
 import {
   buildFinalizeSummary,
   buildUpkeepRows,
@@ -167,14 +168,23 @@ export function usePostbattlePage(campaign: CampaignSummary | null | undefined) 
     },
     [applyBattleResponse, battleId, campaignId, currentParticipant]
   );
+  const unitInformation = currentParticipant?.unit_information_json;
+  const statChangeRows = useMemo(
+    () =>
+      buildStatChangeRows({
+        groups,
+        draft,
+        baseStatsByUnitKey,
+        unitInformation: unitInformation ?? {},
+      }),
+    [baseStatsByUnitKey, draft, groups, unitInformation]
+  );
   const rowTools: PostbattleRowTools = {
     draft,
     isFinalized: exit.isFinalized,
     actions,
     events: battleState.events,
     userId: user?.id,
-    baseStatsByUnitKey,
-    unitInformation: currentParticipant?.unit_information_json ?? {},
     victimName,
   };
 
@@ -196,6 +206,7 @@ export function usePostbattlePage(campaign: CampaignSummary | null | undefined) 
     upkeepRows,
     upkeepTotal,
     summary,
+    statChangeRows,
     rowTools,
     saveBattleNotes,
     canFinalize: Boolean(draft && explore.exploration && isPostbattleDraftValid(draft)),

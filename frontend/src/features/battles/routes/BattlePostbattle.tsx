@@ -10,6 +10,7 @@ import FindsSection from "@/features/battles/components/postbattle/FindsSection"
 import PostbattleSkipDialog from "@/features/battles/components/postbattle/PostbattleSkipDialog";
 import RosterResultsSection from "@/features/battles/components/postbattle/RosterResultsSection";
 import SeriousInjuryRollDialog from "@/features/battles/components/postbattle/SeriousInjuryRollDialog";
+import StatChangesSection from "@/features/battles/components/postbattle/StatChangesSection";
 import UpkeepSection from "@/features/battles/components/postbattle/UpkeepSection";
 import { usePostbattleMobileBars } from "@/features/battles/components/postbattle/usePostbattleMobileBars";
 import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesktopSubnav";
@@ -40,7 +41,11 @@ export default function BattlePostbattle() {
     exit.isFinalized || exit.isFinalizing || exit.isSkipping || isSavingDraft || !page.canFinalize;
   const finaliseState = exit.isFinalizing ? "Finalising..." : exit.isFinalized ? "Finalised" : null;
 
-  const sections = useSectionScrollSpy({ isMobile, hasUpkeep: page.upkeepRows.length > 0 });
+  const sections = useSectionScrollSpy({
+    isMobile,
+    hasUpkeep: page.upkeepRows.length > 0,
+    hasStatChanges: page.statChangeRows.length > 0,
+  });
   usePostbattleMobileBars({
     isMobile,
     currentParticipant,
@@ -108,6 +113,12 @@ export default function BattlePostbattle() {
         rosterLoading={page.rosterLoading}
         rosterError={page.rosterError}
         tools={page.rowTools}
+      />
+      <StatChangesSection
+        isMobile={isMobile}
+        rows={page.statChangeRows}
+        isFinalized={exit.isFinalized}
+        onToggleKeep={actions.toggleKeepStats}
       />
       <FindsSection
         isMobile={isMobile}

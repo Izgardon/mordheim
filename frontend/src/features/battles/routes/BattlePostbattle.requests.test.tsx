@@ -102,7 +102,7 @@ function routeServer() {
 
 async function renderPostbattle(options: Parameters<typeof renderBattleRoute>[1] = {}) {
   const view = renderBattleRoute("postbattle", options);
-  expect(await screen.findByText("Captain Wolf")).toBeInTheDocument();
+  expect((await screen.findAllByText("Captain Wolf"))[0]).toBeInTheDocument();
   fakeApi.clearRequests();
   return view;
 }
@@ -216,7 +216,7 @@ describe("BattlePostbattle requests", () => {
     const user = setupUser();
     server.battle.created_by_user_id = OPPONENT.id;
     const { unmount } = renderBattleRoute("postbattle");
-    await screen.findByText("Captain Wolf");
+    await screen.findAllByText("Captain Wolf");
 
     await user.click(screen.getByRole("button", { name: "More actions" }));
     expect(
@@ -227,7 +227,7 @@ describe("BattlePostbattle requests", () => {
     unmount();
 
     renderBattleRoute("postbattle", { campaign: { permissions: ["manage_battles"] } });
-    await screen.findByText("Captain Wolf");
+    await screen.findAllByText("Captain Wolf");
     await user.click(screen.getByRole("button", { name: "More actions" }));
     expect(
       within(screen.getByRole("dialog", { name: "More actions" })).getByRole("button", {
@@ -306,7 +306,7 @@ describe("BattlePostbattle requests", () => {
     queryClient.setQueryData(queryKeys.campaign.warbandSheet(1, ME.warband.id), mySheet(RESOURCES));
     renderBattleRoute("postbattle", { queryClient });
 
-    expect(await screen.findByText("Captain Wolf")).toBeInTheDocument();
+    expect((await screen.findAllByText("Captain Wolf"))[0]).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "Treasure" })).toBeInTheDocument();
     expect(fakeApi.calls().filter((call) => call.includes("/warbands/"))).toEqual([]);
   });
@@ -452,7 +452,7 @@ describe("BattlePostbattle requests", () => {
 
     // Captain Wolf fought with WS 5 (his profile says 4); kept only if ticked.
     expect(
-      within(row("Captain Wolf")).getByText(/Stat changes this battle: WS 4 → 5/)
+      within(screen.getByRole("list", { name: "Units with stat changes" })).getByText("WS 4 → 5")
     ).toBeInTheDocument();
     const keep = screen.getByRole("checkbox", { name: "Keep Captain Wolf's stat changes" });
     expect(keep).not.toBeChecked();
@@ -475,6 +475,43 @@ describe("BattlePostbattle requests", () => {
       postbattle_json: BattlePostbattleState;
     };
     expect(finalised.postbattle_json.unit_results["hero:1"].keep_stats).toBe(true);
+  });
+
+  it("lists every unit with a stat change, each with a Keep tick that is off, one per henchmen group (BATL-TWEAK-04)", async () => {
+    const user = setupUser();
+    const mine = server.participants.find((entry) => entry.user.id === ME.id)!;
+    mine.unit_information_json = {
+      ...mine.unit_information_json,
+      "henchman:2": { stats_override: { toughness: 4 }, out_of_action: false, kill_count: 0 },
+      "hired_sword:4": {
+        stats_override: { strength: 4, attacks: 2 },
+        out_of_action: false,
+        kill_count: 0,
+      },
+    };
+    await renderPostbattle();
+
+    const list = screen.getByRole("list", { name: "Units with stat changes" });
+    expect(
+      within(list)
+        .getAllByRole("listitem")
+        .map((item) => item.textContent)
+    ).toEqual([
+      "Captain WolfWS 4 → 5Keep",
+      "YoungbloodsT 3 → 4Keep",
+      "Ogre BodyguardS 3 → 4, A 1 → 2Keep",
+    ]);
+    for (const checkbox of within(list).getAllByRole("checkbox")) {
+      expect(checkbox).not.toBeChecked();
+    }
+    // Rolf fought on his profile: nothing to keep.
+    expect(screen.queryByRole("checkbox", { name: "Keep Rolf's stat changes" })).toBeNull();
+
+    await user.click(screen.getByRole("checkbox", { name: "Keep Youngbloods's stat changes" }));
+    await waitFor(() => expect(draftBodies()).toHaveLength(1));
+    expect(draftBodies()[0].unit_results["henchman:2"].keep_stats).toBe(true);
+    expect(draftBodies()[0].unit_results["hero:1"].keep_stats).toBeFalsy();
+    expect(screen.getByRole("checkbox", { name: "Keep Youngbloods's stat changes" })).toBeChecked();
   });
 
   it("lists each unit's kills by victim; removes the one picked and adds one with a victim from the other roster (BATL-NEW-06)", async () => {

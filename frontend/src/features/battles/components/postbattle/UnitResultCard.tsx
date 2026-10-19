@@ -2,7 +2,6 @@ import PostbattleDeadTick from "@/features/battles/components/postbattle/Postbat
 import {
   PostbattleInjuryRollButton,
   PostbattleRowInjuries,
-  PostbattleRowKeepStats,
   PostbattleRowKills,
 } from "@/features/battles/components/postbattle/PostbattleRowParts";
 import PostbattleStepperInput from "@/features/battles/components/postbattle/PostbattleStepperInput";
@@ -29,7 +28,7 @@ export function PostbattleXpField({
   );
 }
 
-/** A hero's or hired sword's results: XP, kills, Dead, kept stat changes and injuries. */
+/** A hero's or hired sword's results: XP, Dead, kills and injuries. */
 export default function UnitResultCard({
   row,
   tools,
@@ -68,7 +67,6 @@ export default function UnitResultCard({
           />
         </div>
         <PostbattleRowKills row={row} tools={tools} />
-        <PostbattleRowKeepStats unitKeys={[row.unitKey]} unitName={row.unitName} tools={tools} />
       </div>
       <PostbattleRowInjuries row={row} className="mt-3" tools={tools} />
     </div>

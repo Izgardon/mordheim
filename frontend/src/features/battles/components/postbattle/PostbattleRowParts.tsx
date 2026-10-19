@@ -1,8 +1,5 @@
 import { Button } from "@/components/ui/button";
 import PostbattleInjuryResult from "@/features/battles/components/postbattle/PostbattleInjuryResult";
-import PostbattleKeepStatsTick, {
-  statChanges,
-} from "@/features/battles/components/postbattle/PostbattleKeepStatsTick";
 import PostbattleKillList from "@/features/battles/components/postbattle/PostbattleKillList";
 import type { PostbattleRenderableRow } from "@/features/battles/components/postbattle/postbattle-utils";
 import type { PostbattleRowTools } from "@/features/battles/components/postbattle/postbattle-row-tools";
@@ -28,34 +25,6 @@ export function PostbattleRowKills({
       disabled={tools.isFinalized}
       onAddKill={tools.actions.addKill}
       onUndoKill={tools.actions.undoKill}
-    />
-  );
-}
-
-/** "Keep" for battle stat changes (SEC-10, decision 6); one tick for a henchmen group. */
-export function PostbattleRowKeepStats({
-  unitKeys,
-  unitName,
-  tools,
-}: {
-  unitKeys: string[];
-  unitName: string;
-  tools: PostbattleRowTools;
-}) {
-  const changesOf = (unitKey: string) =>
-    statChanges(tools.baseStatsByUnitKey[unitKey], tools.unitInformation[unitKey]?.stats_override);
-  const changedKey = unitKeys.find((unitKey) => changesOf(unitKey).length > 0);
-  const { draft } = tools;
-  if (!changedKey || !draft) {
-    return null;
-  }
-  return (
-    <PostbattleKeepStatsTick
-      unitName={unitName}
-      changes={changesOf(changedKey)}
-      checked={unitKeys.some((unitKey) => draft.unit_results[unitKey]?.keep_stats)}
-      disabled={tools.isFinalized}
-      onChange={(keep) => tools.actions.toggleKeepStats(unitKeys, keep)}
     />
   );
 }

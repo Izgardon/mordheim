@@ -15,25 +15,30 @@ const sectionTop = (section: PostbattleSectionKey) => {
 };
 
 /**
- * The phone's postbattle section picker: its options (Upkeep only with hired swords), jumping to
- * a section, and following the section scrolled to.
+ * The phone's postbattle section picker: its options (Stat changes only when the battle changed
+ * any, Upkeep only with hired swords), jumping to a section, and following the section scrolled to.
  */
 export function useSectionScrollSpy({
   isMobile,
   hasUpkeep,
+  hasStatChanges = false,
 }: {
   isMobile: boolean;
   hasUpkeep: boolean;
+  hasStatChanges?: boolean;
 }) {
   const [selectedSection, setSelectedSection] = useState<PostbattleSectionKey>("exploration");
   const sectionOptions = useMemo(
     () => [
       { value: "exploration" as const, label: POSTBATTLE_SECTION_LABELS.exploration },
       { value: "roster" as const, label: POSTBATTLE_SECTION_LABELS.roster },
+      ...(hasStatChanges
+        ? [{ value: "stats" as const, label: POSTBATTLE_SECTION_LABELS.stats }]
+        : []),
       { value: "finds" as const, label: POSTBATTLE_SECTION_LABELS.finds },
       ...(hasUpkeep ? [{ value: "upkeep" as const, label: POSTBATTLE_SECTION_LABELS.upkeep }] : []),
     ],
-    [hasUpkeep]
+    [hasStatChanges, hasUpkeep]
   );
 
   const changeSection = useCallback((nextSectionValue: string) => {

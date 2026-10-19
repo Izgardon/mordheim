@@ -2,7 +2,6 @@ import PostbattleDeadTick from "@/features/battles/components/postbattle/Postbat
 import {
   PostbattleInjuryRollButton,
   PostbattleRowInjuries,
-  PostbattleRowKeepStats,
   PostbattleRowKills,
 } from "@/features/battles/components/postbattle/PostbattleRowParts";
 import { PostbattleXpField } from "@/features/battles/components/postbattle/UnitResultCard";
@@ -34,11 +33,6 @@ export default function HenchmenGroupResult({
             />
           ) : null}
         </div>
-        <PostbattleRowKeepStats
-          unitKeys={group.rows.map((member) => member.unitKey)}
-          unitName={group.label}
-          tools={tools}
-        />
         <div className="space-y-3 border-t border-border/40 pt-3">
           {group.rows.map((row, index) => (
             <div key={row.unitKey} className={index > 0 ? "border-t border-border/40 pt-3" : ""}>
