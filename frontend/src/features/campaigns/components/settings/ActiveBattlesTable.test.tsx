@@ -21,6 +21,8 @@ const inPhase = (status: "active" | "postbattle"): CampaignActiveBattle => {
 const renderTable = (battle: CampaignActiveBattle) => {
   const onCancelBattle = vi.fn(async () => undefined);
   const onCloseBattle = vi.fn(async () => undefined);
+  const onEndBattle = vi.fn(async () => undefined);
+  const onConfirmResults = vi.fn(async () => undefined);
   renderWithQueryClient(
     <ActiveBattlesTable
       isLoading={false}
@@ -28,10 +30,14 @@ const renderTable = (battle: CampaignActiveBattle) => {
       battles={[battle]}
       onCancelBattle={onCancelBattle}
       onCloseBattle={onCloseBattle}
+      onEndBattle={onEndBattle}
+      onConfirmResults={onConfirmResults}
     />
   );
-  return { onCancelBattle, onCloseBattle };
+  return { onCancelBattle, onCloseBattle, onEndBattle, onConfirmResults };
 };
+
+const NO_ACTIONS = { end: false, confirm_results: false, close_postbattle: false, cancel: false };
 
 describe("ActiveBattlesTable (BUG-09, BUG-10)", () => {
   it("shows each battle's deadline and idle time beside its phase (decision 2)", () => {
@@ -95,5 +101,45 @@ describe("ActiveBattlesTable (BUG-09, BUG-10)", () => {
     );
     await user.click(within(dialog).getByRole("button", { name: "Close postbattle" }));
     await waitFor(() => expect(onCloseBattle).toHaveBeenCalledWith(5));
+  });
+
+  it("offers the tools the server's actions list, and ends a stuck fight with the results modal (BATL-NEW-03)", async () => {
+    const user = setupUser();
+    const battle = { ...inPhase("active"), actions: { ...NO_ACTIONS, end: true, cancel: true } };
+    battle.participants[1].declared_result = "won";
+    const { onEndBattle } = renderTable(battle);
+
+    expect(screen.getByRole("button", { name: "Cancel" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Close" })).toBeNull();
+    await user.click(screen.getByRole("button", { name: "End battle" }));
+
+    const dialog = screen.getByRole("dialog", { name: "End battle" });
+    expect(dialog).toHaveAccessibleDescription(/Everyone still fighting goes to postbattle/);
+    // The player who declared a win starts among the winners.
+    expect(
+      within(within(dialog).getByRole("region", { name: "Winners" })).getByText("Night Razors")
+    ).toBeInTheDocument();
+    await user.click(within(dialog).getByRole("button", { name: "No winner" }));
+    await user.click(within(dialog).getByRole("button", { name: "End battle" }));
+
+    await waitFor(() => expect(onEndBattle).toHaveBeenCalledWith(5, { winners: [], losers: [] }));
+  });
+
+  it("confirms a postbattle's results from the list (BATL-NEW-03)", async () => {
+    const user = setupUser();
+    const battle = {
+      ...inPhase("postbattle"),
+      actions: { ...NO_ACTIONS, confirm_results: true, close_postbattle: true },
+    };
+    battle.battle.winner_warband_ids_json = [101];
+    const { onConfirmResults } = renderTable(battle);
+
+    await user.click(screen.getByRole("button", { name: "Confirm results" }));
+    const dialog = screen.getByRole("dialog", { name: "Confirm results" });
+    await user.click(within(dialog).getByRole("button", { name: "Confirm results" }));
+
+    await waitFor(() =>
+      expect(onConfirmResults).toHaveBeenCalledWith(5, { winners: [101], losers: [102] })
+    );
   });
 });

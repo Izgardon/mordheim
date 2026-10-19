@@ -2,12 +2,12 @@ import { Fragment, useMemo, useState } from "react";
 
 import { ChevronDown } from "lucide-react";
 
-import { Button } from "@components/button";
 import { RosterSkeleton } from "@components/card-skeleton";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import { useActiveBattleTools } from "../../hooks/useActiveBattleTools";
 import type { CampaignActiveBattle } from "../../types/campaign-types";
+import ActiveBattleActions from "./ActiveBattleActions";
 import ActiveBattleDialogs from "./ActiveBattleDialogs";
 import {
   battleStatusLine,
@@ -25,6 +25,15 @@ type ActiveBattlesTableProps = {
   onCancelBattle: (battleId: number) => Promise<void>;
   /** A battle in postbattle is closed, not cancelled (BUG-09). */
   onCloseBattle: (battleId: number) => Promise<void>;
+  /** A battle manager's End for a stuck fight, with the results (BATL-NEW-03). */
+  onEndBattle?: (
+    battleId: number,
+    results: { winners: number[]; losers: number[] }
+  ) => Promise<void>;
+  onConfirmResults?: (
+    battleId: number,
+    results: { winners: number[]; losers: number[] }
+  ) => Promise<void>;
 };
 
 export default function ActiveBattlesTable({
@@ -33,10 +42,17 @@ export default function ActiveBattlesTable({
   battles,
   onCancelBattle,
   onCloseBattle,
+  onEndBattle,
+  onConfirmResults,
 }: ActiveBattlesTableProps) {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [expandedBattleIds, setExpandedBattleIds] = useState<number[]>([]);
-  const tools = useActiveBattleTools({ onCancelBattle, onCloseBattle });
+  const tools = useActiveBattleTools({
+    onCancelBattle,
+    onCloseBattle,
+    onEndBattle,
+    onConfirmResults,
+  });
 
   const columnCount = isMobile ? 3 : 7;
 
@@ -164,22 +180,7 @@ export default function ActiveBattlesTable({
                           </td>
                         ) : null}
                         <td className="px-2 py-2 text-right align-middle sm:px-4 sm:py-3">
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="sm"
-                            className="h-7 px-2 text-[0.58rem]"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              if (battle.status === "postbattle") {
-                                tools.askClose(battleEntry);
-                                return;
-                              }
-                              tools.askCancel(battleEntry);
-                            }}
-                          >
-                            {battle.status === "postbattle" ? "Close" : "Cancel"}
-                          </Button>
+                          <ActiveBattleActions entry={battleEntry} tools={tools} />
                         </td>
                       </tr>
                       {isExpanded ? (

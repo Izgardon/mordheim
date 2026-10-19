@@ -11,7 +11,11 @@ import {
   updateMemberRole,
 } from "../api/campaigns-api";
 import { deleteWarband } from "../../warbands/api/warbands-api";
-import { closePostbattle } from "@/features/battles/api/battles-api";
+import {
+  closePostbattle,
+  confirmBattleResults,
+  finishBattle,
+} from "@/features/battles/api/battles-api";
 
 // constants
 import { permissionOptions } from "../constants/campaign-settings";
@@ -328,6 +332,20 @@ export function useCampaignSettings({
     setActiveBattles((prev) => prev.filter((entry) => entry.battle.id !== battleId));
   };
 
+  // End a stuck fight, or confirm its results (BATL-NEW-03): the battle moves on, and its row's
+  // tools with it, so the list is read again.
+  const resultsWrite =
+    (send: typeof finishBattle) =>
+    async (battleId: number, results: { winners: number[]; losers: number[] }) => {
+      if (!canManageActiveBattles || Number.isNaN(campaignId)) {
+        return;
+      }
+      await send(campaignId, battleId, results);
+      setActiveBattles(await listCampaignActiveBattles(campaignId));
+    };
+  const handleEndActiveBattle = resultsWrite(finishBattle);
+  const handleConfirmActiveBattleResults = resultsWrite(confirmBattleResults);
+
   return {
     members,
     activeBattles,
@@ -369,6 +387,8 @@ export function useCampaignSettings({
     handleDeleteCampaign,
     handleCancelActiveBattle,
     handleCloseActiveBattle,
+    handleEndActiveBattle,
+    handleConfirmActiveBattleResults,
     resetDeleteState,
   };
 }

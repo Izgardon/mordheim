@@ -166,12 +166,16 @@ export function voidBattleEvent(campaignId: number, battleId: number, eventId: n
   return battleWrite(campaignId, battleId, `events/${eventId}/void/`);
 }
 
+/**
+ * A battle manager's End for a stuck fight (BATL-NEW-03): everyone still fighting goes to
+ * postbattle and these results are confirmed. Players finish their own battle instead.
+ */
 export function finishBattle(
   campaignId: number,
   battleId: number,
-  payload: { winner_warband_ids: number[] }
+  results: { winners: number[]; losers: number[] }
 ) {
-  return battleWrite(campaignId, battleId, "finish/", payload);
+  return battleWrite(campaignId, battleId, "finish/", results);
 }
 
 /**

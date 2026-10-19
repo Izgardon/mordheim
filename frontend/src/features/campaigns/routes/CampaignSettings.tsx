@@ -105,6 +105,8 @@ export default function CampaignSettings() {
     handleDeleteCampaign,
     handleCancelActiveBattle,
     handleCloseActiveBattle,
+    handleEndActiveBattle,
+    handleConfirmActiveBattleResults,
     resetDeleteState,
   } = useCampaignSettings({
     campaignId,
@@ -230,6 +232,8 @@ export default function CampaignSettings() {
                     battles={activeBattles}
                     onCancelBattle={handleCancelActiveBattle}
                     onCloseBattle={handleCloseActiveBattle}
+                    onEndBattle={handleEndActiveBattle}
+                    onConfirmResults={handleConfirmActiveBattleResults}
                   />
                 ) : null}
 

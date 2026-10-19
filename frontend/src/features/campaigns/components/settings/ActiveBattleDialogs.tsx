@@ -1,9 +1,19 @@
 import { ConfirmDialog } from "@components/confirm-dialog";
+import BattleResultsDialog from "@/features/battles/components/shared/BattleResultsDialog";
 import ClosePostbattleDialog from "@/features/battles/components/shared/ClosePostbattleDialog";
+import { resultsWarbands } from "@/features/battles/utils/battle-results";
 
 import type { ActiveBattleTools } from "../../hooks/useActiveBattleTools";
 
-/** Active Battles' confirms: Cancel a battle for everyone, or Close its postbattle. */
+const END_COPY =
+  "Everyone still fighting goes to postbattle with these results. Drag each warband to Winners or Losers, or use its move button; an empty Winners column is No winner. Wins and losses are recorded when everyone has finished postbattle.";
+const CONFIRM_COPY =
+  "Drag each warband to Winners or Losers, or use its move button; an empty Winners column is No winner. The battle ends once the results are confirmed and every postbattle is done.";
+
+/**
+ * Active Battles' confirms: End a stuck fight or Confirm its results (the results modal), Cancel a
+ * battle for everyone, or Close its postbattle.
+ */
 export default function ActiveBattleDialogs({
   tools,
   onCanceled,
@@ -11,9 +21,29 @@ export default function ActiveBattleDialogs({
   tools: ActiveBattleTools;
   onCanceled: (battleId: number) => void;
 }) {
-  const { cancel, close } = tools;
+  const { cancel, close, results } = tools;
+  const target = results.target;
+  const ending = target?.mode === "end";
   return (
     <>
+      <BattleResultsDialog
+        open={Boolean(target)}
+        onOpenChange={(open) => !open && tools.dismissResults()}
+        title={ending ? "End battle" : "Confirm results"}
+        description={ending ? END_COPY : CONFIRM_COPY}
+        warbands={resultsWarbands(target?.battle.participants ?? [])}
+        initialWinners={
+          ending
+            ? (target?.battle.participants ?? [])
+                .filter((participant) => participant.declared_result === "won")
+                .map((participant) => participant.warband.id)
+            : (target?.battle.battle.winner_warband_ids_json ?? [])
+        }
+        confirmLabel={ending ? "End battle" : "Confirm results"}
+        isSubmitting={results.isSubmitting}
+        error={results.error}
+        onSubmit={(picked) => void tools.submitResults(picked)}
+      />
       <ConfirmDialog
         open={Boolean(cancel.target)}
         onOpenChange={(open) => {

@@ -109,6 +109,8 @@ export type CampaignBattleHistoryEntry = {
 export type CampaignActiveBattle = {
   battle: BattleSummary;
   participants: BattleParticipant[];
+  /** The owner tools that apply to this battle now (BATL-NEW-03). */
+  actions?: { end: boolean; confirm_results: boolean; close_postbattle: boolean; cancel: boolean };
 };
 
 export type CampaignPivotalMoment = {
