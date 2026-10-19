@@ -18,12 +18,14 @@ export default function PostbattleWaitingPanel({
   onOpenWarband: () => void;
   onOpenCampaign: () => void;
 }) {
-  const waitingFor = participants
-    .filter(
-      (participant) =>
-        participant.user.id !== currentUserId && participant.status === "finished_battle"
-    )
-    .map((participant) => `${participant.user.label} (${participant.warband.name})`);
+  const others = participants.filter((participant) => participant.user.id !== currentUserId);
+  const named = (status: BattleParticipant["status"]) =>
+    others
+      .filter((participant) => participant.status === status)
+      .map((participant) => `${participant.user.label} (${participant.warband.name})`);
+  // Decision 4: some may still be fighting while you are done.
+  const fighting = named("in_battle");
+  const waitingFor = named("finished_battle");
   return (
     <section aria-labelledby="postbattle-waiting-title">
       <CardBackground className="battle-card space-y-3 p-4 sm:p-5">
@@ -34,6 +36,9 @@ export default function PostbattleWaitingPanel({
           Your postbattle is done. The battle ends, and wins and losses are recorded, once everyone
           has finished theirs.
         </p>
+        {fighting.length > 0 ? (
+          <p className="text-sm text-foreground">Still fighting: {fighting.join(", ")}.</p>
+        ) : null}
         {waitingFor.length > 0 ? (
           <p className="text-sm text-foreground">Still in postbattle: {waitingFor.join(", ")}.</p>
         ) : null}

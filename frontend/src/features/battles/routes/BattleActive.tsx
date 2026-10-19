@@ -6,7 +6,7 @@ import { CardBackground } from "@/components/ui/card-background";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import ActiveBattleHelpers from "@/features/battles/components/active/ActiveBattleHelpers";
 import ActiveCancelBattleDialog from "@/features/battles/components/active/ActiveCancelBattleDialog";
-import ActiveFinishBattleDialog from "@/features/battles/components/active/ActiveFinishBattleDialog";
+import ActiveFinishMineDialog from "@/features/battles/components/active/ActiveFinishMineDialog";
 import ActiveHelperDialogs from "@/features/battles/components/active/ActiveHelperDialogs";
 import ActiveLeaveDialog from "@/features/battles/components/active/ActiveLeaveDialog";
 import ActiveOwnTools from "@/features/battles/components/active/ActiveOwnTools";
@@ -44,7 +44,7 @@ export default function BattleActive() {
     () => toUnitInformationMap(selectedParticipant?.unit_information_json),
     [selectedParticipant?.unit_information_json]
   );
-  const { sectionIdByKey, overflowActions, endBattleAction, openNotes, openScenario } =
+  const { sectionIdByKey, overflowActions, finishMineAction, openNotes, openScenario } =
     useActiveMobileBars({
       page,
       isMobile,
@@ -158,14 +158,14 @@ export default function BattleActive() {
         />
       ) : null}
 
-      {!isMobile && page.canEndBattle ? (
+      {!isMobile && page.canFinishMine ? (
         <BattleFloatingActionBar>
           <Button
-            variant={endBattleAction.variant}
-            onClick={endBattleAction.onClick}
-            disabled={endBattleAction.disabled}
+            variant={finishMineAction.variant}
+            onClick={finishMineAction.onClick}
+            disabled={finishMineAction.disabled}
           >
-            {endBattleAction.label}
+            {finishMineAction.label}
           </Button>
         </BattleFloatingActionBar>
       ) : null}
@@ -183,7 +183,7 @@ export default function BattleActive() {
           title={scenario || "Scenario"}
         />
       ) : null}
-      <ActiveFinishBattleDialog finishing={finishing} participants={participants} />
+      <ActiveFinishMineDialog finishing={finishing} />
       <ActiveCancelBattleDialog
         open={creatorCancel.isOpen}
         onOpenChange={creatorCancel.setIsOpen}

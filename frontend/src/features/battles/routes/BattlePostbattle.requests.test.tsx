@@ -854,6 +854,31 @@ describe("BattlePostbattle requests", () => {
     expect(screen.getByLabelText("Current path")).toHaveTextContent("/campaigns/1/warband");
   });
 
+  it("names who is still fighting while you wait, in a battle others play on (decision 4)", async () => {
+    const user = setupUser();
+    server.battle.status = "active";
+    server.participants[1].status = "in_battle";
+    fakeApi.on(`POST ${battlePath("finalize-postbattle/")}`, () =>
+      battleState({
+        status: "active",
+        me: { status: "confirmed_postbattle" },
+        opponent: { status: "in_battle" },
+      })
+    );
+    await renderPostbattle();
+
+    await user.click(screen.getByRole("button", { name: "Finalise Postbattle" }));
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Finalise Postbattle" })).getByRole("button", {
+        name: "Confirm",
+      })
+    );
+
+    const panel = await screen.findByRole("region", { name: "Waiting for others" });
+    expect(panel).toHaveTextContent("Still fighting: Player (Night Razors).");
+    expect(panel).not.toHaveTextContent("Still in postbattle");
+  });
+
   it("sends the last player to finish to his warband: his finalise ended the battle (BATL-NEW-08)", async () => {
     const user = setupUser();
     fakeApi.on(`POST ${battlePath("finalize-postbattle/")}`, () =>

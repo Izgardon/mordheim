@@ -11,7 +11,7 @@ import type { ActivePage } from "@/features/battles/hooks/useActivePage";
 
 /**
  * The active page's phone bars and shared actions: the top bar (notes, scenario, More actions with
- * Cancel battle), and End Battle as the bottom bar's one action (BATL-UX-05).
+ * Cancel battle), and Finish my battle as the bottom bar's one action (decision 4).
  */
 export function useActiveMobileBars({
   page,
@@ -24,7 +24,7 @@ export function useActiveMobileBars({
   isMobile: boolean;
   selectedCustomUnits: PrebattleUnit[];
 } & Pick<BattleLayoutContext, "setBattleMobileTopBar" | "setBattleMobileBottomBar">) {
-  const { selection, creatorCancel, finishing, canEndBattle, canCancelBattle } = page;
+  const { selection, creatorCancel, finishing, canFinishMine, canCancelBattle } = page;
   const scenarioLink = page.battle.battleState.battle.scenario_link;
   const isOwnSelected = selection.selectedParticipantIsCurrentUser;
   const { setIsOpen: setNotesOpen } = page.notesDialog;
@@ -34,7 +34,7 @@ export function useActiveMobileBars({
   const openNotes = useCallback(() => setNotesOpen(true), [setNotesOpen]);
   const openScenario = useCallback(() => setScenarioOpen(true), [setScenarioOpen]);
 
-  // Cancel battle sits in More actions, away from End battle, the normal path (BATL-UX-05).
+  // Cancel battle sits in More actions, away from Finish my battle, the normal path (BATL-UX-05).
   const overflowActions = useMemo(
     () =>
       canCancelBattle
@@ -76,9 +76,9 @@ export function useActiveMobileBars({
     onSelectParticipantUserId: selection.setSelectedParticipantUserId,
   });
 
-  const endBattleAction = useMemo(
+  const finishMineAction = useMemo(
     () => ({
-      label: isFinishing ? "Ending..." : "End Battle",
+      label: isFinishing ? "Finishing..." : "Finish my battle",
       onClick: () => openFinish(true),
       disabled: isFinishing,
       variant: "default" as const,
@@ -86,10 +86,10 @@ export function useActiveMobileBars({
     [isFinishing, openFinish]
   );
   const bottomBarConfig = useMemo(
-    () => (canEndBattle ? { primaryAction: endBattleAction } : null),
-    [canEndBattle, endBattleAction]
+    () => (canFinishMine ? { primaryAction: finishMineAction } : null),
+    [canFinishMine, finishMineAction]
   );
   useBattleMobileBottomBar({ isMobile, setBattleMobileBottomBar, config: bottomBarConfig });
 
-  return { sectionIdByKey, overflowActions, endBattleAction, openNotes, openScenario };
+  return { sectionIdByKey, overflowActions, finishMineAction, openNotes, openScenario };
 }

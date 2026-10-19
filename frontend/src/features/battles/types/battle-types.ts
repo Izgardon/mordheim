@@ -150,7 +150,10 @@ export type BattleEventType =
   | "battle_canceled"
   | "participant_declined"
   | "unit_kill_voided"
-  | "item_used_voided";
+  | "item_used_voided"
+  | "battle_results_confirmed"
+  | "battle_record_edited"
+  | "participant_nudged";
 
 export type BattleSummary = {
   id: number;
@@ -175,6 +178,9 @@ export type BattleSummary = {
   closes_at?: string | null;
   /** Past `closes_at`, waiting to be settled by the next list read or write. */
   overdue?: boolean;
+  /** Every player has finished his fight; the results wait for the last one (decision 4). */
+  results_pending?: boolean;
+  results_confirmer_user_id?: number | null;
 };
 
 /** The fields every participant view has; `?view=active` sends only these (IMP-54). */
@@ -186,6 +192,10 @@ export type BattleParticipantCore = {
   last_event_id: number;
   last_seen_at: string | null;
   selected_unit_keys_json: string[];
+  /** What he said when he finished his fight (decision 4); null until then. */
+  declared_result?: "won" | "lost" | "undecided" | null;
+  /** His last write or read (BATL-NEW-08: "idle N days"). */
+  last_activity_at?: string | null;
   unit_information_json: Record<string, BattleUnitInformationEntry>;
   custom_units_json: BattleCustomUnit[];
   battle_notes: string;
@@ -359,8 +369,19 @@ export type BattleStateOf<Participant extends BattleParticipantCore> = {
   /** Only in `state/?view=postbattle`, for the reader's own participant. */
   suggested_postbattle?: BattlePostbattleSuggestion;
   rules?: BattlePostbattleRules;
-  /** Only in `state/` reads: what the reader may do (the battle as it was read). */
+  /** In `state/` reads and write answers: what the reader may do (the battle as it was read). */
   capabilities?: BattleCapabilities;
+  /** Where the Confirm results modal starts: warband ids by declared side (decision 4). */
+  confirm_results?: { winners: number[]; losers: number[]; undecided: number[] };
+  /** The reader's place in the battle (BATL-NEW-01). */
+  viewer?: BattleViewer;
+};
+
+/** Where the reader stands in a battle, and the page where he carries on (BATL-NEW-01). */
+export type BattleViewer = {
+  participant_status: BattleParticipantStatus | null;
+  unfinished: boolean;
+  page: "prebattle" | "active" | "postbattle" | null;
 };
 
 /** The battle as the pages cache it. */

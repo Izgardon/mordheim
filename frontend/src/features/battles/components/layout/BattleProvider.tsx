@@ -59,7 +59,14 @@ export default function BattleProvider({
     () => (cachedState && !cachedState.rules && rules ? { ...cachedState, rules } : cachedState),
     [cachedState, rules]
   );
-  const view = deriveBattleView({ page: phase, isLoading, error, battle: battleState?.battle });
+  const view = deriveBattleView({
+    page: phase,
+    isLoading,
+    error,
+    battle: battleState?.battle,
+    participantStatus: battleState?.participants.find((entry) => entry.user.id === user?.id)
+      ?.status,
+  });
   const capabilities = useBattleCapabilities({
     battleState,
     onPage: view.kind === "ready",

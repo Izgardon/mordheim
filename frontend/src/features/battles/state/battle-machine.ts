@@ -1,4 +1,8 @@
-import type { BattleStatus, BattleSummary } from "@/features/battles/types/battle-types";
+import type {
+  BattleParticipantStatus,
+  BattleStatus,
+  BattleSummary,
+} from "@/features/battles/types/battle-types";
 
 /**
  * Which battle page shows what (IMP-51): one place decides between loading, an error, a redirect
@@ -6,7 +10,7 @@ import type { BattleStatus, BattleSummary } from "@/features/battles/types/battl
  *
  *   inviting   → stays on the page it was opened on (prebattle shows the invite gate)
  *   prebattle  → /prebattle
- *   active     → /active
+ *   active     → /active, or /postbattle once you have finished your own fight (decision 4)
  *   postbattle → /postbattle
  *   ended, canceled → the campaign overview
  */
@@ -33,14 +37,26 @@ export function phaseFromPath(pathname: string): BattlePhase | null {
   return (BATTLE_PHASES as readonly string[]).includes(last) ? (last as BattlePhase) : null;
 }
 
+/** Your fight is over: your postbattle is open while the others may still be fighting. */
+const DONE_FIGHTING: readonly BattleParticipantStatus[] = [
+  "finished_battle",
+  "confirmed_postbattle",
+];
+
 /**
- * Where a battle in `status` belongs, or null when any page may show it (an invitation, a reported
- * result). PR C's per-player finish adds the participant's own status here.
+ * Where a battle in `status` belongs for a player in `participantStatus`, or null when any page may
+ * show it (an invitation, a reported result).
  */
-export function pageForStatus(status: BattleStatus): BattlePhase | "overview" | null {
+export function pageForStatus(
+  status: BattleStatus,
+  participantStatus?: BattleParticipantStatus
+): BattlePhase | "overview" | null {
   switch (status) {
-    case "prebattle":
     case "active":
+      return participantStatus && DONE_FIGHTING.includes(participantStatus)
+        ? "postbattle"
+        : "active";
+    case "prebattle":
     case "postbattle":
       return status;
     case "ended":
@@ -56,11 +72,14 @@ export function deriveBattleView({
   isLoading,
   error,
   battle,
+  participantStatus,
 }: {
   page: BattlePhase;
   isLoading: boolean;
   error: string;
   battle: BattleSummary | null | undefined;
+  /** Yours, when you are a participant. */
+  participantStatus?: BattleParticipantStatus;
 }): BattleView {
   if (isLoading) {
     return { kind: "loading", message: PAGE_COPY[page].loading };
@@ -68,7 +87,7 @@ export function deriveBattleView({
   if (error || !battle) {
     return { kind: "error", message: error || PAGE_COPY[page].error };
   }
-  const target = pageForStatus(battle.status);
+  const target = pageForStatus(battle.status, participantStatus);
   if (target && target !== page) {
     return { kind: "redirect", to: target };
   }

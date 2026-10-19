@@ -16,7 +16,14 @@ describe("participant progress", () => {
       tone: "waiting",
     });
     expect(participantProgress({ status: "ready" }, "prebattle").label).toBe("Ready");
-    expect(participantProgress({ status: "in_battle" }, "active").label).toBe("In battle");
+    // Decision 4: the battle waits for those still fighting; the others say how it went.
+    expect(participantProgress({ status: "in_battle" }, "active")).toEqual({
+      label: "In battle",
+      tone: "waiting",
+    });
+    expect(
+      participantProgress({ status: "finished_battle", declared_result: "lost" }, "active")
+    ).toEqual({ label: "Finished: lost", tone: "done" });
     expect(participantProgress({ status: "finished_battle" }, "postbattle")).toEqual({
       label: "In postbattle",
       tone: "waiting",

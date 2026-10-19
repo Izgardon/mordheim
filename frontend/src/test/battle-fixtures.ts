@@ -251,14 +251,15 @@ export const battleEvent = (
   type: BattleEvent["type"],
   actorUserId: number | null,
   payload: Record<string, unknown> = {}
-): BattleEvent => ({
-  id,
-  battle_id: BATTLE_ID,
-  type,
-  actor_user_id: actorUserId,
-  payload_json: payload,
-  created_at: "2026-10-18T10:05:00Z",
-});
+): BattleEvent =>
+  ({
+    id,
+    battle_id: BATTLE_ID,
+    type,
+    actor_user_id: actorUserId,
+    payload_json: payload,
+    created_at: "2026-10-18T10:05:00Z",
+  }) as BattleEvent;
 
 /** What `battle.event` carries for a timeline event (`send_battle_event`): its type and the event. */
 export const socketMessage = (event: BattleEvent) => ({ type: event.type, payload: event });

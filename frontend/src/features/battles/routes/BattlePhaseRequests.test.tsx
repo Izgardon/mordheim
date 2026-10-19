@@ -1,7 +1,7 @@
 /**
  * Requests a creator's walk through the three phase pages sends: `BattleLayout` reads the battle's
- * state and the rosters once, and moving from page to page reads neither again (PERF-38); postbattle
- * reads its own view once more for the server's rules and suggestions, which only it carries (IMP-52).
+ * state and the rosters once, and moving from page to page reads neither again (PERF-38); Finish my
+ * battle's answer brings postbattle's rules and suggestions, so it needs no read either (item 8).
  */
 import { act, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
@@ -13,6 +13,7 @@ import {
   battleRosters,
   battleState,
   mySheet,
+  postbattleRules,
   statePath,
 } from "@/test/battle-fixtures";
 import { renderBattleRoute } from "@/test/battle-routes";
@@ -31,7 +32,7 @@ vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => false }));
 vi.mock("@/features/realtime/components/CampaignDiceRollerMenu", () => ({ default: () => null }));
 
 describe("battle phase requests", () => {
-  it("reads rosters/ once and the state once, plus postbattle's rules, from prebattle to postbattle (PERF-38, IMP-52)", async () => {
+  it("reads rosters/ once and the state once from prebattle to postbattle (PERF-38, item 8)", async () => {
     const user = setupUser();
     fakeApi.reset();
     fakeApi.on(
@@ -41,31 +42,40 @@ describe("battle phase requests", () => {
     fakeApi.on(`GET ${battlePath("rosters/")}`, battleRosters());
     fakeApi.on(`GET /warbands/${ME.warband.id}/sheet/`, mySheet());
     fakeApi.on(`POST ${battlePath("start/")}`, battleState({ status: "active" }));
-    fakeApi.on(`POST ${battlePath("finish/")}`, battleState({ status: "postbattle" }));
+    fakeApi.on(`POST ${battlePath("finish-mine/")}`, {
+      ...battleState({
+        status: "active",
+        me: { status: "finished_battle", declared_result: "won" },
+      }),
+      rules: postbattleRules(),
+      suggested_postbattle: {
+        unit_results: {},
+        exploration: { dice_count: 1 },
+        upkeep: { entries: {} },
+      },
+    });
 
     // The app's own cache rules, as WarbandColdLoad.test.tsx explains.
     renderBattleRoute("prebattle", { queryClient: createQueryClient() });
 
     await user.click(await screen.findByRole("button", { name: "Start Battle" }));
     await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Start" }));
-    await user.click(await screen.findByRole("button", { name: "End Battle" }));
-    const endDialog = screen.getByRole("dialog", { name: "End Active Battle" });
-    await user.click(within(endDialog).getByRole("checkbox", { name: "Iron Vultures" }));
-    await user.click(within(endDialog).getByRole("button", { name: "End battle" }));
+    await user.click(await screen.findByRole("button", { name: "Finish my battle" }));
+    const finishDialog = screen.getByRole("dialog", { name: "Finish my battle" });
+    await user.click(within(finishDialog).getByRole("radio", { name: /I won/ }));
+    await user.click(within(finishDialog).getByRole("button", { name: "Finish my battle" }));
     expect(await screen.findByRole("button", { name: "Finalise Postbattle" })).toBeInTheDocument();
     // Gives a late duplicate request the chance to start before counting.
     await act(() => new Promise((resolve) => setTimeout(resolve, 50)));
 
-    // Start's and End's answers move the cached state on; the pages read nothing again.
+    // Start's and Finish's answers move the cached state on; the pages read nothing again.
     expect(fakeApi.calls()).toEqual([
       `GET ${statePath("prebattle")}`,
       `GET ${battlePath("rosters/")}`,
       `POST ${battlePath("start/")}`,
-      `POST ${battlePath("finish/")}`,
+      `POST ${battlePath("finish-mine/")}`,
       // Postbattle's resources come from the warband's sheet query (BUG-127).
       `GET /warbands/${ME.warband.id}/sheet/`,
-      // End battle's answer has no rules or suggestions; the postbattle view does (IMP-52).
-      `GET ${statePath("postbattle")}`,
     ]);
   });
 });

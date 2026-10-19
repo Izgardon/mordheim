@@ -174,6 +174,17 @@ export function finishBattle(
   return battleWrite(campaignId, battleId, "finish/", payload);
 }
 
+/** What a player says about his own fight when he finishes it (decision 4). */
+export type DeclaredResult = "won" | "lost" | "undecided";
+
+/**
+ * Finishes your own fight (decision 4): your postbattle opens while the others play on. The last
+ * player to finish ends the fight; his answer has `confirm_results`, the results modal's sides.
+ */
+export function finishMyBattle(campaignId: number, battleId: number, result: DeclaredResult) {
+  return battleWrite(campaignId, battleId, "finish-mine/", { result });
+}
+
 export function approveReportedBattleResult(campaignId: number, battleId: number) {
   return battleWrite(campaignId, battleId, "approve-result/");
 }

@@ -16,6 +16,8 @@ import {
   battleRosters,
   battleState,
   deferred,
+  mySheet,
+  postbattleRules,
   socketMessage,
   statePath,
 } from "@/test/battle-fixtures";
@@ -154,103 +156,86 @@ describe("BattleActive requests", () => {
     expect(screen.getByText("Player cancelled Street Fight.")).toBeInTheDocument();
   });
 
-  it("offers End and Cancel battle to whoever the server's capabilities allow, not by the creator check", async () => {
+  it("offers Finish my battle as the server's capabilities say, to the creator or not (decision 4)", async () => {
     routeServer();
     server.battle.created_by_user_id = OPPONENT.id;
     server.capabilities = {
       start: false,
-      end: true,
-      cancel: true,
-      close_postbattle: false,
-      edit_record: false,
-    };
-    renderBattleRoute("active");
-    expect(await screen.findByRole("button", { name: "End Battle" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "More actions" })).toBeInTheDocument();
-  });
-
-  it("hides End battle from the creator when the server's capabilities don't allow it", async () => {
-    routeServer();
-    server.capabilities = {
-      start: false,
-      end: false,
       cancel: false,
       close_postbattle: false,
       edit_record: false,
+      finish_mine: true,
     };
-    renderBattleRoute("active");
-    expect(await screen.findByText("Captain Wolf")).toBeInTheDocument();
+    const { unmount } = renderBattleRoute("active");
+    expect(await screen.findByRole("button", { name: "Finish my battle" })).toBeInTheDocument();
+    // Nobody ends the battle for everyone any more.
     expect(screen.queryByRole("button", { name: "End Battle" })).toBeNull();
-    expect(screen.queryByRole("button", { name: "More actions" })).toBeNull();
+    unmount();
+
+    server.capabilities = { ...server.capabilities, finish_mine: false };
+    renderBattleRoute("active");
+    expect((await screen.findAllByText("Captain Wolf"))[0]).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Finish my battle" })).toBeNull();
   });
 
-  it("offers No winner, which ends the battle with an empty winner list (decision 8)", async () => {
+  it("finishes your fight as lost and opens your postbattle while the others play on (decision 4)", async () => {
     const user = setupUser();
     await renderActive();
-    fakeApi.on(`POST ${battlePath("finish/")}`, () => battleState({ status: "postbattle" }));
+    fakeApi.on(`POST ${battlePath("finish-mine/")}`, () => ({
+      ...battleState({
+        status: "active",
+        me: { status: "finished_battle", declared_result: "lost" },
+        opponent: { status: "in_battle" },
+        events: [
+          battleEvent(40, "participant_finished_battle", ME.id, { declared_result: "lost" }),
+        ],
+      }),
+      rules: postbattleRules(),
+      suggested_postbattle: {
+        unit_results: { "hero:1": { xp_earned: 1 } },
+        exploration: { dice_count: 2 },
+        upkeep: { entries: {} },
+      },
+    }));
+    fakeApi.on(`GET /warbands/${ME.warband.id}/sheet/`, mySheet());
 
-    await user.click(screen.getByRole("button", { name: "End Battle" }));
-    const dialog = screen.getByRole("dialog", { name: "End Active Battle" });
-    expect(dialog).toHaveAccessibleDescription(
-      /Wins and losses are recorded when everyone has finished postbattle\.$/
-    );
+    await user.click(screen.getByRole("button", { name: "Finish my battle" }));
+    const dialog = screen.getByRole("dialog", { name: "Finish my battle" });
+    expect(dialog).toHaveAccessibleDescription(/while the others play on. You can't go back/);
+    const confirm = within(dialog).getByRole("button", { name: "Finish my battle" });
+    expect(confirm).toBeDisabled();
     expect(
       within(dialog)
-        .getAllByRole("checkbox")
-        .map((box) => box.closest("label")?.textContent)
-    ).toEqual(["Iron Vultures", "Night Razors", "No winner"]);
-    const confirm = within(dialog).getByRole("button", { name: "End battle" });
-    expect(confirm).toBeDisabled();
-
-    // Ticking a warband after No winner takes No winner off, and the other way round.
-    await user.click(within(dialog).getByRole("checkbox", { name: "No winner" }));
-    await user.click(within(dialog).getByRole("checkbox", { name: "Night Razors" }));
-    expect(within(dialog).getByRole("checkbox", { name: "No winner" })).not.toBeChecked();
-    await user.click(within(dialog).getByRole("checkbox", { name: "No winner" }));
-    expect(within(dialog).getByRole("checkbox", { name: "Night Razors" })).not.toBeChecked();
+        .getAllByRole("radio")
+        .map((radio) => radio.textContent)
+    ).toEqual([
+      "I wonYou start on the winners' side.",
+      "I lostOut first, routed, or beaten.",
+      "Decide when the battle endsThe last player to finish places you.",
+    ]);
+    await user.click(within(dialog).getByRole("radio", { name: /I lost/ }));
     await user.click(confirm);
 
-    expect(fakeApi.requests()[0]).toEqual({
-      method: "POST",
-      path: battlePath("finish/"),
-      body: { winner_warband_ids: [] },
-    });
     expect(await screen.findByLabelText("Current path")).toHaveTextContent(
       "/campaigns/1/battles/5/postbattle"
     );
+    expect(fakeApi.bodyOf(`POST ${battlePath("finish-mine/")}`)).toEqual({ result: "lost" });
+    // Its answer brought the suggestions and rules: two dice, and no state read for them.
+    await waitFor(() => expect(screen.getAllByPlaceholderText("-")).toHaveLength(2));
+    expect(fakeApi.calls().filter((call) => call.includes("state/"))).toEqual([]);
+    expect(
+      within(screen.getByRole("region", { name: "Battle status" }))
+        .getAllByRole("listitem")
+        .map((item) => item.textContent)
+    ).toEqual(["YouFinished: lost", "PlayerIn battle"]);
   });
 
-  it("ends the battle with the ticked winners", async () => {
-    const user = setupUser();
-    await renderActive();
-    fakeApi.on(`POST ${battlePath("finish/")}`, () =>
-      battleState({ status: "postbattle", winner_warband_ids_json: [OPPONENT.warband.id] })
-    );
-
-    await user.click(screen.getByRole("button", { name: "End Battle" }));
-    const dialog = screen.getByRole("dialog", { name: "End Active Battle" });
-    const confirm = within(dialog).getByRole("button", { name: "End battle" });
-
-    await user.click(within(dialog).getByRole("checkbox", { name: "Night Razors" }));
-    expect(confirm).toBeEnabled();
-    await user.click(confirm);
-
-    expect(fakeApi.requests()[0]).toEqual({
-      method: "POST",
-      path: battlePath("finish/"),
-      body: { winner_warband_ids: [OPPONENT.warband.id] },
-    });
-    expect(await screen.findByLabelText("Current path")).toHaveTextContent(
-      "/campaigns/1/battles/5/postbattle"
-    );
-  });
-
-  it("makes End battle the default action and keeps Cancel battle in More actions (BATL-UX-05)", async () => {
+  it("makes Finish my battle the default action and keeps Cancel battle in More actions (BATL-UX-05)", async () => {
     const user = setupUser();
     await renderActive();
 
-    // The action panel offers End battle alone, as the normal path.
-    expect(screen.getByRole("button", { name: "End Battle" })).toHaveClass("btn-primary");
+    // The action panel offers Finish my battle alone, as the normal path.
+    expect(screen.getByRole("button", { name: "Finish my battle" })).toHaveClass("btn-primary");
     expect(screen.queryByRole("button", { name: "Cancel battle" })).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "More actions" }));

@@ -7,8 +7,10 @@ import { idleLabel } from "@/features/battles/utils/battle-timing";
 
 /**
  * Where each player is in the battle, for "who's holding up the battle" (BATL-NEW-08):
- * - `waiting`: the battle is waiting for them (an unanswered invite, not ready, postbattle open);
- * - `done`: they've done their part for now (accepted, ready, in battle, finished, skipped);
+ * - `waiting`: the battle is waiting for them (an unanswered invite, not ready, still fighting,
+ *   postbattle open);
+ * - `done`: they've done their part for now (accepted, ready, finished their fight, finished,
+ *   skipped);
  * - `left`: declined or left before the battle, so nobody waits for them.
  */
 export type ParticipantProgress = {
@@ -22,8 +24,10 @@ const LEFT: Partial<Record<BattleParticipantStatus, string>> = {
   reported_result_declined: "Declined",
 };
 
+const DECLARED: Record<string, string> = { won: "won", lost: "lost", undecided: "undecided" };
+
 export function participantProgress(
-  participant: Pick<BattleParticipant, "status" | "skipped_postbattle">,
+  participant: Pick<BattleParticipant, "status" | "skipped_postbattle" | "declared_result">,
   battleStatus: BattleStatus
 ): ParticipantProgress {
   const left = LEFT[participant.status];
@@ -42,11 +46,15 @@ export function participantProgress(
     case "ready":
       return { label: "Ready", tone: "done" };
     case "in_battle":
-      return { label: "In battle", tone: "done" };
-    case "finished_battle":
-      return battleStatus === "postbattle"
-        ? { label: "In postbattle", tone: "waiting" }
-        : { label: "Finished battle", tone: "done" };
+      // Each player finishes his own fight (decision 4): the battle waits for those still in it.
+      return { label: "In battle", tone: "waiting" };
+    case "finished_battle": {
+      if (battleStatus === "postbattle") {
+        return { label: "In postbattle", tone: "waiting" };
+      }
+      const declared = participant.declared_result ? DECLARED[participant.declared_result] : null;
+      return { label: declared ? `Finished: ${declared}` : "Finished battle", tone: "done" };
+    }
     case "confirmed_postbattle":
       return participant.skipped_postbattle
         ? { label: "Skipped", tone: "done" }

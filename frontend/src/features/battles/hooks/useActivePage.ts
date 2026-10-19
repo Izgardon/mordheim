@@ -8,7 +8,7 @@ import { useActiveConfigSave } from "@/features/battles/hooks/useActiveConfigSav
 import { useBattleNotesDialog } from "@/features/battles/hooks/useBattleNotesDialog";
 import { useCreatorCancel } from "@/features/battles/hooks/useCreatorCancel";
 import { useEventUndo } from "@/features/battles/hooks/useEventUndo";
-import { useFinishBattle } from "@/features/battles/hooks/useFinishBattle";
+import { useFinishMine } from "@/features/battles/hooks/useFinishMine";
 import { useParticipantSelection } from "@/features/battles/hooks/useParticipantSelection";
 import {
   useSingleUseItemActions,
@@ -30,7 +30,7 @@ type KillInput = {
 
 /**
  * Everything the active page shows and does, from the battle `BattleLayout` shares: whose
- * warband is shown, config saves, kills and out of action, item uses, End and Cancel battle, the
+ * warband is shown, config saves, kills and out of action, item uses, Finish my battle and Cancel, the
  * helpers' unit lists and the page's dialogs.
  */
 export function useActivePage() {
@@ -54,7 +54,7 @@ export function useActivePage() {
     setActionError: config.setActionError,
   });
   const { offerUndo } = useEventUndo({ campaignId, battleId, applyBattleResponse });
-  const finishing = useFinishBattle({ campaignId, battleId, applyBattleResponse });
+  const finishing = useFinishMine({ campaignId, battleId, applyBattleResponse });
   const creatorCancel = useCreatorCancel({ campaignId, battleId, applyBattleResponse });
   const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
   const [isScenarioLinkDialogOpen, setIsScenarioLinkDialogOpen] = useState(false);
@@ -130,8 +130,10 @@ export function useActivePage() {
     rangedOptions,
     setOutOfAction,
     recordKill,
-    // The server's capabilities decide End and Cancel; without them, the creator's own rule.
-    canEndBattle: battle.capabilities ? battle.capabilities.end : isActiveCreator,
+    // The server's capabilities decide Finish my battle and Cancel; without them, the old rules.
+    canFinishMine: battle.capabilities
+      ? Boolean(battle.capabilities.finish_mine)
+      : battleState.battle.status === "active" && currentParticipant?.status === "in_battle",
     canCancelBattle: battle.capabilities ? battle.capabilities.cancel : isActiveCreator,
     leave: { isOpen: isLeaveDialogOpen, setIsOpen: setIsLeaveDialogOpen, confirm: leaveBattle },
     scenarioDialog: { isOpen: isScenarioLinkDialogOpen, setIsOpen: setIsScenarioLinkDialogOpen },

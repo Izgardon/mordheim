@@ -54,6 +54,21 @@ describe("deriveBattleView", () => {
     expect(pageForStatus("inviting")).toBeNull();
     expect(pageForStatus("reported_result_pending")).toBeNull();
   });
+
+  it("sends a player who has finished his fight to his postbattle while the battle is active (decision 4)", () => {
+    expect(pageForStatus("active", "in_battle")).toBe("active");
+    expect(pageForStatus("active", "finished_battle")).toBe("postbattle");
+    expect(pageForStatus("active", "confirmed_postbattle")).toBe("postbattle");
+    expect(
+      deriveBattleView({
+        page: "active",
+        isLoading: false,
+        error: "",
+        battle: battle("active"),
+        participantStatus: "finished_battle",
+      })
+    ).toEqual({ kind: "redirect", to: "postbattle" });
+  });
 });
 
 describe("phaseFromPath", () => {
