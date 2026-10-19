@@ -45,14 +45,16 @@ vi.mock("../components/settings/WarbandDiceSettingsCard", () => ({ default: () =
 vi.mock("../components/settings/WarbandSettingsCard", () => ({ default: () => null }));
 vi.mock("../components/settings/FeedbackReportCard", () => ({ default: () => null }));
 vi.mock("../components/settings/DeleteWarbandCard", () => ({ default: () => null }));
-vi.mock("../components/settings/ActiveBattlesTable", () => ({ default: () => null }));
+vi.mock("../components/settings/ActiveBattlesTable", () => ({
+  default: () => <div>Active battles table</div>,
+}));
 vi.mock("../components/settings/CampaignControlCard", () => ({ default: () => null }));
 vi.mock("../components/settings/CampaignLevelUpSettingsCard", () => ({ default: () => null }));
 vi.mock("../components/settings/DeleteCampaignCard", () => ({ default: () => null }));
 vi.mock("../components/settings/RemoveMemberDialog", () => ({ default: () => null }));
 vi.mock("@components/confirm-dialog", () => ({ ConfirmDialog: () => null }));
 
-const buildCampaign = (role: CampaignRole): CampaignSummary => ({
+const buildCampaign = (role: CampaignRole, permissions?: string[]): CampaignSummary => ({
   id: 4,
   name: "Shadows over Mordheim",
   join_code: "",
@@ -63,6 +65,7 @@ const buildCampaign = (role: CampaignRole): CampaignSummary => ({
   starting_gold: 500,
   player_count: 3,
   role,
+  permissions,
   in_progress: true,
   created_at: "2026-04-18T10:00:00Z",
   updated_at: "2026-04-18T10:00:00Z",
@@ -117,5 +120,36 @@ describe("CampaignSettings", () => {
     await waitFor(() => expect(listCampaignMembers).toHaveBeenCalledWith(4));
     await user.click(screen.getAllByRole("button", { name: "Campaign" })[0]);
     expect(await screen.findByText("Members card")).toBeInTheDocument();
+  });
+
+  it("shows Active Battles to an admin, who holds manage_battles like the owner (BATL-NEW-03)", async () => {
+    const user = userEvent.setup();
+    renderWithQueryClient(
+      <SettingsRoute campaign={buildCampaign("admin", ["manage_battles", "manage_items"])} />
+    );
+
+    await user.click(screen.getAllByRole("button", { name: "Campaign" })[0]);
+    expect(await screen.findByText("Active battles table")).toBeInTheDocument();
+    expect(screen.getByText("Members card")).toBeInTheDocument();
+    expect(listCampaignActiveBattles).toHaveBeenCalledWith(4);
+  });
+
+  it("gives a player granted manage_battles the Campaign tab with Active Battles alone (BATL-NEW-03)", async () => {
+    const user = userEvent.setup();
+    renderWithQueryClient(<SettingsRoute campaign={buildCampaign("player", ["manage_battles"])} />);
+
+    await user.click(screen.getAllByRole("button", { name: "Campaign" })[0]);
+    expect(await screen.findByText("Active battles table")).toBeInTheDocument();
+    expect(screen.queryByText("Members card")).not.toBeInTheDocument();
+    expect(listCampaignActiveBattles).toHaveBeenCalledWith(4);
+    expect(listCampaignMembers).not.toHaveBeenCalled();
+  });
+
+  it("keeps Active Battles from players without manage_battles", () => {
+    renderWithQueryClient(<SettingsRoute campaign={buildCampaign("player", [])} />);
+
+    expect(screen.queryByRole("button", { name: "Campaign" })).not.toBeInTheDocument();
+    expect(screen.queryByText("Active battles table")).not.toBeInTheDocument();
+    expect(listCampaignActiveBattles).not.toHaveBeenCalled();
   });
 });
