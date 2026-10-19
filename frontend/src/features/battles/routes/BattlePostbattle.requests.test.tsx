@@ -854,6 +854,74 @@ describe("BattlePostbattle requests", () => {
     expect(screen.getByLabelText("Current path")).toHaveTextContent("/campaigns/1/warband");
   });
 
+  it("asks the last player to finish to confirm the results, then sends them (decision 4)", async () => {
+    const user = setupUser();
+    server.battle.results_pending = true;
+    server.battle.results_confirmer_user_id = ME.id;
+    server.participants[0].declared_result = "undecided";
+    server.participants[1].declared_result = "won";
+    server.confirm_results = {
+      winners: [OPPONENT.warband.id],
+      losers: [],
+      undecided: [ME.warband.id],
+    };
+    server.capabilities = {
+      start: false,
+      cancel: false,
+      close_postbattle: true,
+      edit_record: false,
+      confirm_results: true,
+    };
+    fakeApi.on(`POST ${battlePath("results/")}`, () => {
+      server.battle.results_pending = false;
+      server.battle.winner_warband_ids_json = [ME.warband.id];
+      return answer();
+    });
+    await renderPostbattle();
+
+    // The modal opens by itself, each warband on the side its player declared.
+    const dialog = await screen.findByRole("dialog", { name: "Confirm results" });
+    const side = (name: string) =>
+      within(within(dialog).getByRole("region", { name }))
+        .queryAllByRole("listitem")
+        .map((item) => item.querySelector("p")?.textContent);
+    expect(side("Winners")).toEqual(["Night Razors"]);
+    expect(side("Losers")).toEqual(["Iron Vultures"]);
+    await user.click(within(dialog).getByRole("button", { name: "Move Iron Vultures to Winners" }));
+    await user.click(within(dialog).getByRole("button", { name: "Move Night Razors to Losers" }));
+    await user.click(within(dialog).getByRole("button", { name: "Confirm results" }));
+
+    expect(
+      await screen.findByText(
+        "Results confirmed: Iron Vultures won. You can change them until the battle ends."
+      )
+    ).toBeInTheDocument();
+    expect(fakeApi.bodyOf(`POST ${battlePath("results/")}`)).toEqual({
+      winners: [ME.warband.id],
+      losers: [OPPONENT.warband.id],
+    });
+  });
+
+  it("tells the others who the results wait for", async () => {
+    server.battle.results_pending = true;
+    server.battle.results_confirmer_user_id = OPPONENT.id;
+    server.capabilities = {
+      start: false,
+      cancel: false,
+      close_postbattle: false,
+      edit_record: false,
+    };
+    await renderPostbattle();
+
+    expect(
+      within(screen.getByRole("region", { name: "Results" })).getByText(
+        "Waiting for Player to confirm the results."
+      )
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("dialog", { name: "Confirm results" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Confirm results" })).toBeNull();
+  });
+
   it("names who is still fighting while you wait, in a battle others play on (decision 4)", async () => {
     const user = setupUser();
     server.battle.status = "active";

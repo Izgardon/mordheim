@@ -14,10 +14,17 @@ export function battleOverMessage(state: BattleState, userId: number | undefined
   const { battle, participants, events } = state;
   const title = battle.scenario?.trim() || `Battle #${battle.id}`;
   if (battle.status === "ended") {
-    const mode = latest(events, "battle_ended")?.payload_json?.mode;
-    if (mode === "closed") return `Postbattle was closed: ${title} has ended.`;
-    if (mode === "expired") return `Postbattle ran out of time: ${title} has ended.`;
-    return `${title} has ended.`;
+    const payload = latest(events, "battle_ended")?.payload_json ?? {};
+    // Closed or out of time before the results were confirmed: the declared winners count.
+    const unconfirmed = payload.unconfirmed_results
+      ? " The results were never confirmed, so the declared winners count."
+      : "";
+    if (payload.mode === "closed")
+      return `Postbattle was closed: ${title} has ended.${unconfirmed}`;
+    if (payload.mode === "expired") {
+      return `Postbattle ran out of time: ${title} has ended.${unconfirmed}`;
+    }
+    return `${title} has ended.${unconfirmed}`;
   }
   if (battle.status === "canceled") {
     const payload = latest(events, "battle_canceled")?.payload_json ?? {};

@@ -86,6 +86,10 @@ export function mergeBattleState(previous: BattleState | null, next: BattleState
       : {}),
     ...((next.rules ?? previous.rules) ? { rules: next.rules ?? previous.rules } : {}),
     ...(readCapabilities && !older ? readCapabilities : keptCapabilities),
+    // The Confirm results modal's starting sides (decision 4): a read's or the last finish's.
+    ...((next.confirm_results ?? previous.confirm_results)
+      ? { confirm_results: next.confirm_results ?? previous.confirm_results }
+      : {}),
   };
   if (older) {
     return { battle: previous.battle, participants: previous.participants, events, ...extras };

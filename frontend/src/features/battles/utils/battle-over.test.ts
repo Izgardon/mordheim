@@ -24,6 +24,18 @@ describe("battleOverMessage", () => {
     );
   });
 
+  it("says when the battle ended before its results were confirmed (decision 4)", () => {
+    const closed = battleState({
+      status: "ended",
+      events: [
+        battleEvent(9, "battle_ended", OPPONENT.id, { mode: "closed", unconfirmed_results: true }),
+      ],
+    });
+    expect(battleOverMessage(closed, ME.id)).toBe(
+      "Postbattle was closed: Street Fight has ended. The results were never confirmed, so the declared winners count."
+    );
+  });
+
   it("names who cancelled it, or why", () => {
     const by = (userId: number) =>
       battleState({

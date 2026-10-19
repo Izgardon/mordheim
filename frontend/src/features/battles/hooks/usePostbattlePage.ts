@@ -14,6 +14,7 @@ import {
 import { useExploration } from "@/features/battles/hooks/useExploration";
 import { useFindItemSearch } from "@/features/battles/hooks/useFindItemSearch";
 import { usePostbattleDraft } from "@/features/battles/hooks/usePostbattleDraft";
+import { useConfirmResults } from "@/features/battles/hooks/useConfirmResults";
 import { usePostbattleExit } from "@/features/battles/hooks/usePostbattleExit";
 import { usePostbattleSummary } from "@/features/battles/hooks/usePostbattleSummary";
 import { usePostbattleUnitActions } from "@/features/battles/hooks/usePostbattleUnitActions";
@@ -101,6 +102,15 @@ export function usePostbattlePage(campaign: CampaignSummary | null | undefined) 
     applyBattleResponse,
   });
 
+  const results = useConfirmResults({
+    campaignId,
+    battleId,
+    battleState,
+    capabilities: battle.capabilities,
+    userId: user?.id,
+    applyBattleResponse,
+  });
+
   const { draft } = drafting;
   const groups = useMemo(
     () => (draft ? buildRenderableGroups(draft, currentRoster) : []),
@@ -157,6 +167,7 @@ export function usePostbattlePage(campaign: CampaignSummary | null | undefined) 
     actions,
     finds,
     exit,
+    results,
     groups,
     upkeepRows,
     upkeepTotal,

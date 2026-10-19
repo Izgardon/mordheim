@@ -7,6 +7,7 @@ import type { BattleLayoutContext } from "@/features/battles/components/layout/b
 import ExplorationSection from "@/features/battles/components/postbattle/ExplorationSection";
 import FinalizeSummaryDialog from "@/features/battles/components/postbattle/FinalizeSummaryDialog";
 import FindsSection from "@/features/battles/components/postbattle/FindsSection";
+import PostbattleResultsBanner from "@/features/battles/components/postbattle/PostbattleResultsBanner";
 import PostbattleSkipDialog from "@/features/battles/components/postbattle/PostbattleSkipDialog";
 import PostbattleWaitingPanel from "@/features/battles/components/postbattle/PostbattleWaitingPanel";
 import RosterResultsSection from "@/features/battles/components/postbattle/RosterResultsSection";
@@ -17,12 +18,14 @@ import { usePostbattleMobileBars } from "@/features/battles/components/postbattl
 import BattleDesktopSubnav from "@/features/battles/components/shared/BattleDesktopSubnav";
 import BattleFloatingActionBar from "@/features/battles/components/shared/BattleFloatingActionBar";
 import BattleNotesDialog from "@/features/battles/components/shared/BattleNotesDialog";
+import BattleResultsDialog from "@/features/battles/components/shared/BattleResultsDialog";
 import BattleOverflowMenu from "@/features/battles/components/shared/BattleOverflowMenu";
 import BattleStatusStrip from "@/features/battles/components/shared/BattleStatusStrip";
 import ClosePostbattleDialog from "@/features/battles/components/shared/ClosePostbattleDialog";
 import { usePostbattlePage } from "@/features/battles/hooks/usePostbattlePage";
 import { useSectionScrollSpy } from "@/features/battles/hooks/useSectionScrollSpy";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { initialResultsWinners, resultsWarbands } from "@/features/battles/utils/battle-results";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { useAppStore } from "@/stores/app-store";
 
@@ -102,6 +105,11 @@ export default function BattlePostbattle() {
         />
       ) : null}
       <BattleStatusStrip />
+      <PostbattleResultsBanner
+        battleState={battleState}
+        canConfirm={page.results.canConfirm}
+        onOpen={() => page.results.openChange(true)}
+      />
 
       {exit.isFinalized ? (
         <PostbattleWaitingPanel
@@ -162,6 +170,16 @@ export default function BattlePostbattle() {
         </>
       )}
 
+      <BattleResultsDialog
+        open={page.results.isOpen}
+        onOpenChange={page.results.openChange}
+        description="Drag each warband to Winners or Losers, or use its move button. Anyone who said how their battle went starts on that side; an empty Winners column is No winner."
+        warbands={resultsWarbands(battleState.participants)}
+        initialWinners={initialResultsWinners(battleState)}
+        isSubmitting={page.results.isSubmitting}
+        error={page.results.error}
+        onSubmit={(results) => void page.results.submit(results)}
+      />
       <SeriousInjuryRollDialog
         target={actions.rollTarget}
         heroRollType={page.heroDeathRoll}

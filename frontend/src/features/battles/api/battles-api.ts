@@ -174,6 +174,18 @@ export function finishBattle(
   return battleWrite(campaignId, battleId, "finish/", payload);
 }
 
+/**
+ * Confirms (or changes) the results: the last player to finish or a battle manager, in
+ * postbattle, until the battle ends. `winners: []` is No winner.
+ */
+export function confirmBattleResults(
+  campaignId: number,
+  battleId: number,
+  results: { winners: number[]; losers: number[] }
+) {
+  return battleWrite(campaignId, battleId, "results/", results);
+}
+
 /** What a player says about his own fight when he finishes it (decision 4). */
 export type DeclaredResult = "won" | "lost" | "undecided";
 
