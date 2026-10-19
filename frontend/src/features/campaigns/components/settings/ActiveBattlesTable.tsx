@@ -3,14 +3,20 @@ import { Fragment, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 import { Button } from "@components/button";
-import { ConfirmDialog } from "@components/confirm-dialog";
 import { RosterSkeleton } from "@components/card-skeleton";
-import ClosePostbattleDialog from "@/features/battles/components/shared/ClosePostbattleDialog";
-import { deadlineLabel, idleLabel } from "@/features/battles/utils/battle-timing";
-import { apiErrorCode, getErrorMessage } from "@/lib/get-error-message";
 import { useMediaQuery } from "@/lib/use-media-query";
 
+import { useActiveBattleTools } from "../../hooks/useActiveBattleTools";
 import type { CampaignActiveBattle } from "../../types/campaign-types";
+import ActiveBattleDialogs from "./ActiveBattleDialogs";
+import {
+  battleStatusLine,
+  battleTypeLabel,
+  formatCreatedAt,
+  getCreatorLabel,
+  getParticipantSummary,
+  participantStatusLabel,
+} from "./active-battle-labels";
 
 type ActiveBattlesTableProps = {
   isLoading: boolean;
@@ -21,93 +27,6 @@ type ActiveBattlesTableProps = {
   onCloseBattle: (battleId: number) => Promise<void>;
 };
 
-const battleTypeLabel = (flowType: CampaignActiveBattle["battle"]["flow_type"]) =>
-  flowType === "reported_result" ? "Result request" : "Battle";
-
-const battleStatusLabel = (status: CampaignActiveBattle["battle"]["status"]) => {
-  switch (status) {
-    case "inviting":
-      return "Request sent";
-    case "reported_result_pending":
-      return "Awaiting replies";
-    case "prebattle":
-      return "Prebattle";
-    case "active":
-      return "Active";
-    case "postbattle":
-      return "Postbattle";
-    case "ended":
-      return "Ended";
-    case "canceled":
-      return "Canceled";
-    default:
-      return status;
-  }
-};
-
-const participantStatusLabel = (status: CampaignActiveBattle["participants"][number]["status"]) => {
-  switch (status) {
-    case "invited":
-      return "Invited";
-    case "accepted":
-      return "Accepted";
-    case "reported_result_pending":
-      return "Pending";
-    case "reported_result_approved":
-      return "Approved";
-    case "reported_result_declined":
-      return "Declined";
-    case "joined_prebattle":
-      return "Joined prebattle";
-    case "ready":
-      return "Ready";
-    case "canceled_prebattle":
-      return "Canceled";
-    case "declined":
-      return "Declined";
-    case "in_battle":
-      return "In battle";
-    case "finished_battle":
-      return "Finished";
-    case "confirmed_postbattle":
-      return "Confirmed";
-    default:
-      return status;
-  }
-};
-
-const formatCreatedAt = (value: string) => {
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.valueOf())) {
-    return "-";
-  }
-  return parsed.toLocaleString([], {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
-};
-
-/** "Postbattle · closes in 2 days · idle 3 days" (decision 2). */
-const battleStatusLine = (battle: CampaignActiveBattle["battle"]) =>
-  [
-    battleStatusLabel(battle.status),
-    deadlineLabel(battle, { short: true }),
-    idleLabel(battle.last_activity_at),
-  ]
-    .filter(Boolean)
-    .join(" · ");
-
-const getCreatorLabel = (battle: CampaignActiveBattle) =>
-  battle.participants.find(
-    (participant) => participant.user.id === battle.battle.created_by_user_id
-  )?.user.label ?? "Unknown";
-
-const getParticipantSummary = (battle: CampaignActiveBattle) =>
-  battle.participants.map((participant) => participant.warband.name).join(", ");
-
 export default function ActiveBattlesTable({
   isLoading,
   error,
@@ -117,12 +36,7 @@ export default function ActiveBattlesTable({
 }: ActiveBattlesTableProps) {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [expandedBattleIds, setExpandedBattleIds] = useState<number[]>([]);
-  const [cancelTarget, setCancelTarget] = useState<CampaignActiveBattle | null>(null);
-  const [isCanceling, setIsCanceling] = useState(false);
-  const [cancelError, setCancelError] = useState("");
-  const [closeTarget, setCloseTarget] = useState<CampaignActiveBattle | null>(null);
-  const [isClosing, setIsClosing] = useState(false);
-  const [closeError, setCloseError] = useState("");
+  const tools = useActiveBattleTools({ onCancelBattle, onCloseBattle });
 
   const columnCount = isMobile ? 3 : 7;
 
@@ -132,58 +46,6 @@ export default function ActiveBattlesTable({
     setExpandedBattleIds((prev) =>
       prev.includes(battleId) ? prev.filter((entry) => entry !== battleId) : [...prev, battleId]
     );
-  };
-
-  const closeCancelDialog = () => {
-    if (isCanceling) {
-      return;
-    }
-    setCancelTarget(null);
-    setCancelError("");
-  };
-
-  const handleConfirmCancel = async () => {
-    if (!cancelTarget) {
-      return;
-    }
-
-    setIsCanceling(true);
-    setCancelError("");
-    try {
-      await onCancelBattle(cancelTarget.battle.id);
-      setExpandedBattleIds((prev) => prev.filter((entry) => entry !== cancelTarget.battle.id));
-      setCancelTarget(null);
-    } catch (errorResponse) {
-      if (apiErrorCode(errorResponse) === "use_close_postbattle") {
-        // It reached postbattle since the list loaded: offer Close postbattle instead.
-        setCloseTarget({
-          ...cancelTarget,
-          battle: { ...cancelTarget.battle, status: "postbattle" },
-        });
-        setCloseError("This battle has reached postbattle, so it can only be closed.");
-        setCancelTarget(null);
-      } else {
-        setCancelError(getErrorMessage(errorResponse, "Unable to cancel battle"));
-      }
-    } finally {
-      setIsCanceling(false);
-    }
-  };
-
-  const handleConfirmClose = async () => {
-    if (!closeTarget) {
-      return;
-    }
-    setIsClosing(true);
-    setCloseError("");
-    try {
-      await onCloseBattle(closeTarget.battle.id);
-      setCloseTarget(null);
-    } catch (errorResponse) {
-      setCloseError(getErrorMessage(errorResponse, "Unable to close postbattle"));
-    } finally {
-      setIsClosing(false);
-    }
   };
 
   return (
@@ -310,12 +172,10 @@ export default function ActiveBattlesTable({
                             onClick={(event) => {
                               event.stopPropagation();
                               if (battle.status === "postbattle") {
-                                setCloseTarget(battleEntry);
-                                setCloseError("");
+                                tools.askClose(battleEntry);
                                 return;
                               }
-                              setCancelTarget(battleEntry);
-                              setCancelError("");
+                              tools.askCancel(battleEntry);
                             }}
                           >
                             {battle.status === "postbattle" ? "Close" : "Cancel"}
@@ -379,40 +239,11 @@ export default function ActiveBattlesTable({
         </div>
       )}
 
-      <ConfirmDialog
-        open={Boolean(cancelTarget)}
-        onOpenChange={(open) => {
-          if (!open) {
-            closeCancelDialog();
-          }
-        }}
-        description={
-          <div className="space-y-2">
-            <p>
-              Cancel{" "}
-              <span className="font-semibold text-foreground">
-                {cancelTarget?.battle.scenario || "this battle"}
-              </span>{" "}
-              for all participants?
-            </p>
-            {cancelError ? <p className="text-sm text-red-600">{cancelError}</p> : null}
-          </div>
+      <ActiveBattleDialogs
+        tools={tools}
+        onCanceled={(battleId) =>
+          setExpandedBattleIds((prev) => prev.filter((entry) => entry !== battleId))
         }
-        confirmText={isCanceling ? "Canceling..." : "Confirm cancel"}
-        confirmVariant="destructive"
-        confirmDisabled={isCanceling || !cancelTarget}
-        isConfirming={isCanceling}
-        onConfirm={() => void handleConfirmCancel()}
-        onCancel={closeCancelDialog}
-      />
-      <ClosePostbattleDialog
-        open={Boolean(closeTarget)}
-        onOpenChange={(open) => !open && !isClosing && setCloseTarget(null)}
-        participants={closeTarget?.participants ?? []}
-        hasWinners={(closeTarget?.battle.winner_warband_ids_json ?? []).length > 0}
-        isClosing={isClosing}
-        error={closeError}
-        onConfirm={() => void handleConfirmClose()}
       />
     </section>
   );
