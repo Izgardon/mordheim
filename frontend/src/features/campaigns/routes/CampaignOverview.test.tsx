@@ -290,7 +290,7 @@ describe("Start campaign", () => {
       { method: "PATCH", path: campaignApi(), body: { in_progress: true } },
     ]);
 
-    // The store's copy (the XP bar's gate) follows the cached campaign...
+    // useCampaignStarted (the XP bar's gate) reads the cached campaign...
     await user.click(screen.getByRole("link", { name: "Skills" }));
     expect(await screen.findByText("XP tracking: on")).toBeInTheDocument();
     await user.click(screen.getByRole("link", { name: "Campaign" }));

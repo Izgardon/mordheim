@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { useAppStore } from "@/stores/app-store";
+import { useCampaignStarted } from "@/features/campaigns/hooks/useCampaignStarted";
 
 import type { LevelInfo } from "../../components/heroes/utils/hero-level";
 
@@ -32,7 +32,7 @@ export function useExperienceBar({
   getLevelInfo,
   onSave,
 }: UseExperienceBarOptions) {
-  const { campaignStarted } = useAppStore();
+  const campaignStarted = useCampaignStarted();
   const [xp, setXp] = useState(() => toNumber(initialXp));
   const [isUpdating, setIsUpdating] = useState(false);
   const [isGlowing, setIsGlowing] = useState(false);

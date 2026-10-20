@@ -63,8 +63,10 @@ vi.mock("@/stores/app-store", () => ({
     warband: null,
     setWarband: vi.fn(),
     diceColor: "#2e8555",
-    campaignStarted: true,
   }),
+}));
+vi.mock("@/features/campaigns/hooks/useCampaignStarted", () => ({
+  useCampaignStarted: () => true,
 }));
 vi.mock("../../auth/hooks/use-auth", () => ({ useAuth: () => ({ user: { id: viewer.userId } }) }));
 vi.mock("../hooks/campaign/useCampaignCatalogues", () => ({

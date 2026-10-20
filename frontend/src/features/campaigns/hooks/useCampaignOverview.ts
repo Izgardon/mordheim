@@ -96,8 +96,7 @@ export function useCampaignOverview({
   const [isStartOpen, setIsStartOpen] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [startError, setStartError] = useState("");
-  // Read from the cached campaign, which the start writes to (BUG-14): the layout copies it into
-  // the store's campaignStarted for the XP bar.
+  // Read from the cached campaign, which the start writes to (BUG-14), as the XP bar reads it.
   const isUnderway = campaign?.in_progress ?? false;
 
   useEffect(() => {

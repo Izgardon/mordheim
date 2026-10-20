@@ -17,7 +17,8 @@ import Encampments from "@/features/campaigns/routes/Encampments";
 import { RealtimeProvider } from "@/features/realtime/components/RealtimeProvider";
 import Items from "@/features/items/routes/Items";
 import HouseRules from "@/features/rules/routes/HouseRules";
-import { AppStoreProvider, useAppStore } from "@/stores/app-store";
+import { useCampaignStarted } from "@/features/campaigns/hooks/useCampaignStarted";
+import { AppStoreProvider } from "@/stores/app-store";
 import { TestDiceProvider } from "./dice";
 import { renderWithQueryClient } from "./query-test-utils";
 
@@ -28,11 +29,11 @@ function CurrentPath() {
 }
 
 /**
- * A page to leave the overview for. It shows the store's `campaignStarted`, the copy that gates
- * the warband pages' XP bar (`useExperienceBar`), so a test can compare it with the overview.
+ * A page to leave the overview for. It shows `useCampaignStarted()`, which gates the warband
+ * pages' XP bar (`useExperienceBar`), so a test can compare it with the overview.
  */
 function SkillsStandIn() {
-  const { campaignStarted } = useAppStore();
+  const campaignStarted = useCampaignStarted();
   return (
     <>
       <p>Skills page</p>

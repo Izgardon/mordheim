@@ -62,13 +62,8 @@ export type MobileTopBarConfig = {
 
 export default function CampaignLayout() {
   const { id } = useParams();
-  const {
-    user,
-    setCampaignStarted,
-    currentBattleSession,
-    setCurrentBattleSession,
-    clearCurrentBattleSession,
-  } = useAppStore();
+  const { user, currentBattleSession, setCurrentBattleSession, clearCurrentBattleSession } =
+    useAppStore();
   const {
     tradeRequestNotifications,
     battleInviteNotifications,
@@ -247,13 +242,6 @@ export default function CampaignLayout() {
     ]
   );
   const { topBar: mobileTopBar, setMobileTopBar } = useMobileTopBarOverride(defaultTopBar);
-
-  const campaignInProgress = campaign?.in_progress;
-  useEffect(() => {
-    if (campaignInProgress !== undefined) {
-      setCampaignStarted(campaignInProgress);
-    }
-  }, [campaign?.id, campaignInProgress, setCampaignStarted]);
 
   useMyWarbandStore(campaign?.id ?? null);
 

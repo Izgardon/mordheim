@@ -23,7 +23,6 @@ type AppStoreValue = {
   diceColor: string;
   warbandLoading: boolean;
   warbandError: string;
-  campaignStarted: boolean;
   tradeRequestNotifications: TradeNotification[];
   battleInviteNotifications: BattleInviteNotification[];
   battleResultRequestNotifications: BattleResultRequestNotification[];
@@ -32,7 +31,6 @@ type AppStoreValue = {
   setWarband: (warband: Warband | null) => void;
   setWarbandLoading: (loading: boolean) => void;
   setWarbandError: (error: string) => void;
-  setCampaignStarted: (started: boolean) => void;
   addTradeRequestNotification: (notification: TradeNotification) => void;
   removeTradeRequestNotification: (notificationId: string) => void;
   clearTradeRequestNotifications: () => void;
@@ -56,7 +54,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   const [warband, setWarband] = useState<Warband | null>(null);
   const [warbandLoading, setWarbandLoading] = useState(false);
   const [warbandError, setWarbandError] = useState("");
-  const [campaignStarted, setCampaignStarted] = useState(false);
   const [tradeRequestNotifications, setTradeRequestNotifications] = useState<TradeNotification[]>(
     []
   );
@@ -80,7 +77,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       setWarband(null);
       setWarbandLoading(false);
       setWarbandError("");
-      setCampaignStarted(false);
       setTradeRequestNotifications([]);
       setBattleInviteNotifications([]);
       setBattleResultRequestNotifications([]);
@@ -182,7 +178,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       diceColor,
       warbandLoading,
       warbandError,
-      campaignStarted,
       tradeRequestNotifications,
       battleInviteNotifications,
       battleResultRequestNotifications,
@@ -191,7 +186,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       setWarband,
       setWarbandLoading,
       setWarbandError,
-      setCampaignStarted,
       addTradeRequestNotification,
       removeTradeRequestNotification,
       clearTradeRequestNotifications,
@@ -213,7 +207,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       diceColor,
       warbandLoading,
       warbandError,
-      campaignStarted,
       tradeRequestNotifications,
       battleInviteNotifications,
       battleResultRequestNotifications,

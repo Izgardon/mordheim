@@ -44,7 +44,6 @@ function seedAliceSession(
   queryClient.setQueryData(["campaign", 7, "detail"], { id: 7, name: "Alice's campaign" });
   act(() => {
     store.setWarband({ id: 3, campaign_id: 7, name: "Alice's Wolves" } as Warband);
-    store.setCampaignStarted(true);
     store.addTradeRequestNotification({ id: "trade-1" } as TradeNotification);
     store.addBattleInviteNotification({ id: "invite-1" } as BattleInviteNotification);
     store.setCurrentBattleSession({ battleId: 31, campaignId: 7, status: "active" });
@@ -57,7 +56,6 @@ function expectEmptySession(
 ) {
   expect(queryClient.getQueryCache().getAll()).toHaveLength(0);
   expect(store.warband).toBeNull();
-  expect(store.campaignStarted).toBe(false);
   expect(store.tradeRequestNotifications).toEqual([]);
   expect(store.battleInviteNotifications).toEqual([]);
   expect(store.battleResultRequestNotifications).toEqual([]);

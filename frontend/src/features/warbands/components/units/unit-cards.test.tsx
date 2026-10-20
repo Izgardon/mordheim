@@ -54,7 +54,10 @@ vi.mock("@/features/warbands/api/warband-cache", async (importOriginal) => {
   };
 });
 vi.mock("@/stores/app-store", () => ({
-  useAppStore: () => ({ warband: null, diceColor: "#2e8555", campaignStarted: true }),
+  useAppStore: () => ({ warband: null, diceColor: "#2e8555" }),
+}));
+vi.mock("@/features/campaigns/hooks/useCampaignStarted", () => ({
+  useCampaignStarted: () => true,
 }));
 // Phone width: the XP bar always shows its label and +/- (on desktop they appear on hover).
 vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => true }));
