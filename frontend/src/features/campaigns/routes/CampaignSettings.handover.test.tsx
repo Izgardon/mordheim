@@ -2,7 +2,7 @@
  * Settings → Campaign's hand-over (decision 4, CAMP-NEW-02) as the app mounts it (layout, fake
  * server): the owner makes an admin the owner and becomes an admin.
  */
-import { screen, waitFor, within } from "@testing-library/react";
+import { act, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError } from "@/lib/api-client";
@@ -78,6 +78,23 @@ describe("Hand ownership to an admin (CAMP-NEW-02)", () => {
     await waitFor(() => expect(fakeApi.countOf(MEMBERS)).toBe(2));
     expect(await screen.findByText(`${ADMIN.name} now owns Shards of the Comet.`)).toBeVisible();
     expect(screen.queryByRole("dialog", { name: "Hand over the campaign" })).toBeNull();
+
+    // Your own role change arrives on the socket too: it takes the hand-over toast's place.
+    act(() =>
+      fakeRealtime.emit(`private-user-${OWNER.id}-notifications`, "notification", {
+        type: "membership_changed",
+        payload: {
+          campaign_id: 1,
+          campaign_name: "Shards of the Comet",
+          change: "role",
+          role: "admin",
+        },
+      })
+    );
+    expect(
+      await screen.findByText("Your role in Shards of the Comet changed to admin.")
+    ).toBeInTheDocument();
+    expect(screen.queryByText(`${ADMIN.name} now owns Shards of the Comet.`)).toBeNull();
   });
 
   it("shows Make owner greyed out on a player's row, saying to make them an admin first, and sends nothing", async () => {

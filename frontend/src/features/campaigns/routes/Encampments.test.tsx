@@ -209,6 +209,31 @@ describe("Encampments: adding and editing, as the owner", () => {
     });
   });
 
+  it("keeps an owner who has left: the picker names them, and an edit that keeps them sends no owner", async () => {
+    const user = setupUser();
+    fakeApi.on(ENCAMPMENTS, [encampment({ owner_left: true })]);
+    fakeApi.on(
+      PLAYER_NAMES,
+      campaignPlayers()
+        .filter(({ id }) => id !== PLAYER.id)
+        .map(({ id, name }) => ({ id, name }))
+    );
+    fakeApi.on(UPDATE, (body: unknown) => encampment({ ...(body as object), owner_left: true }));
+    await openEncampments();
+
+    await user.click(within(row("Sailmakers' Row")).getByRole("button", { name: "Edit" }));
+    expect(screen.getByRole("combobox")).toHaveTextContent("Mira (left)");
+    await user.type(screen.getByDisplayValue(/Rope, canvas/), " Abandoned.");
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
+
+    // The server refuses a non-member as owner, so the departed one isn't sent back.
+    await waitFor(() => expect(fakeApi.countOf(UPDATE)).toBe(1));
+    expect(fakeApi.bodyOf(UPDATE)).toEqual({
+      name: "Sailmakers' Row",
+      description: "Rope, canvas and a dry place to sleep. Abandoned.",
+    });
+  });
+
   it("shows a nameless owner by the server's display name, in the list and the owner picker, never an email (SEC-13)", async () => {
     const user = setupUser();
     fakeApi.on(ENCAMPMENTS, [encampment({ owner_id: NAMELESS.id, owner_name: NAMELESS.name })]);

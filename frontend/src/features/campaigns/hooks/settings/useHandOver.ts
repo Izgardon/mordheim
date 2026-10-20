@@ -49,7 +49,11 @@ export function useHandOver(campaign: CampaignSummary) {
     setError("");
     try {
       await handOverOwnership(campaign.id, target.id);
-      toast(`${target.name} now owns ${campaign.name}.`, { description: "You're an admin now." });
+      // Shares its id with your own `membership_changed` toast, so the two don't stack.
+      toast(`${target.name} now owns ${campaign.name}.`, {
+        id: `membership-changed-${campaign.id}`,
+        description: "You're an admin now.",
+      });
       closeHandOver();
       void queryClient.invalidateQueries({ queryKey: queryKeys.campaign.detail(campaign.id) });
       void queryClient.invalidateQueries({ queryKey: queryKeys.campaign.members(campaign.id) });

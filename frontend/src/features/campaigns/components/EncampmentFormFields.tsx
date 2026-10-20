@@ -16,15 +16,18 @@ type EncampmentFormFieldsProps = {
   ownerValue: string;
   onOwnerChange: (value: string) => void;
   players: CampaignPlayerName[];
+  /** The edited encampment's owner who has left: still listed, so keeping them is a choice. */
+  departedOwner?: { value: string; label: string } | null;
 };
 
-/** An encampment's name, owner (any member, or nobody) and description. */
+/** An encampment's name, owner (any member, nobody, or one who has left) and description. */
 export default function EncampmentFormFields({
   form,
   setForm,
   ownerValue,
   onOwnerChange,
   players,
+  departedOwner,
 }: EncampmentFormFieldsProps) {
   return (
     <>
@@ -44,6 +47,9 @@ export default function EncampmentFormFields({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={NOBODY_OWNER}>Nobody</SelectItem>
+            {departedOwner ? (
+              <SelectItem value={departedOwner.value}>{departedOwner.label}</SelectItem>
+            ) : null}
             {players.map((player) => (
               <SelectItem key={player.id} value={String(player.id)}>
                 {player.name}

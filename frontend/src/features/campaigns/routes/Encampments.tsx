@@ -61,6 +61,7 @@ function EncampmentsPage({ campaign }: { campaign: CampaignSummary }) {
             ownerValue={page.ownerValue}
             onOwnerChange={page.chooseOwner}
             players={page.players}
+            departedOwner={page.departedOwner}
           />
         </RecordForm>
       }

@@ -95,10 +95,22 @@ export function useEncampments(campaign: CampaignSummary) {
     setForm((prev) => ({ ...prev, owner_id: value === NOBODY_OWNER ? null : Number(value) }));
   };
 
+  // An owner who has left can't be sent back (the server takes members only): kept, it's left out.
+  const departedOwner =
+    editing?.owner_left && editing.owner_id
+      ? {
+          value: String(editing.owner_id),
+          label: `${editing.owner_name?.trim() || "Former member"} (left)`,
+        }
+      : null;
+
   const submit = async () => {
+    const keepsDepartedOwner = departedOwner?.value === ownerValue;
     const payload: CampaignEncampmentPayload = {
       name: form.name?.trim() ?? "",
-      owner_id: ownerValue === NOBODY_OWNER ? null : Number(ownerValue),
+      ...(keepsDepartedOwner
+        ? {}
+        : { owner_id: ownerValue === NOBODY_OWNER ? null : Number(ownerValue) }),
       description: form.description ?? "",
     };
     if (!payload.name) {
@@ -172,6 +184,7 @@ export function useEncampments(campaign: CampaignSummary) {
     form,
     setForm,
     ownerValue,
+    departedOwner,
     chooseOwner,
     formError,
     isSubmitting,
