@@ -52,12 +52,19 @@ function CurrentLocation() {
 
 function Harness() {
   useNotificationSubscription();
-  const { setCurrentBattleSession, tradeRequestNotifications, battleNudgeNotifications } =
-    useAppStore();
+  const {
+    currentBattleSession,
+    setCurrentBattleSession,
+    tradeRequestNotifications,
+    battleInviteNotifications,
+    battleNudgeNotifications,
+  } = useAppStore();
   const queryClient = useQueryClient();
   return (
     <>
       <p>{tradeRequestNotifications.length} trade requests</p>
+      <p>{battleInviteNotifications.length} battle invites</p>
+      <p>{currentBattleSession ? `Rejoin battle ${currentBattleSession.battleId}` : "No battle"}</p>
       <p>{battleNudgeNotifications.map((nudge) => nudge.fromLabel).join(", ") || "No nudges"}</p>
       <button
         onClick={() => setCurrentBattleSession({ battleId: 3, campaignId: 7, status: "prebattle" })}
@@ -240,6 +247,47 @@ describe("useNotificationSubscription", () => {
     );
 
     expect(invalidate).toHaveBeenCalledWith({ queryKey: ["campaign", 7, "battles", "open"] });
+  });
+
+  it("drops a cancelled battle's invite and its Rejoin wherever you are, and reads the open battles again", async () => {
+    const { queryClient } = renderHarness("/campaigns/7/warband");
+    await waitFor(() => expect(notificationHandler()).toBeDefined());
+    act(() =>
+      notificationHandler()({
+        type: "battle_invite",
+        payload: { battle_id: 41, campaign_id: 7, status: "inviting", notification_id: 5 },
+      })
+    );
+    expect(screen.getByText("1 battle invites")).toBeInTheDocument();
+    expect(screen.getByText("Rejoin battle 41")).toBeInTheDocument();
+    const invalidate = vi.spyOn(queryClient, "invalidateQueries");
+
+    // A battle manager cancelled it from Settings, or its creator did: off its page, only this says so.
+    act(() =>
+      notificationHandler()({
+        type: "battle_canceled",
+        payload: { battle_id: 41, campaign_id: 7, status: "canceled" },
+      })
+    );
+
+    expect(screen.getByText("0 battle invites")).toBeInTheDocument();
+    expect(screen.getByText("No battle")).toBeInTheDocument();
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ["campaign", 7, "battles", "open"] });
+  });
+
+  it("keeps the Rejoin of another battle when one you were in is cancelled", async () => {
+    renderHarness();
+    await waitFor(() => expect(notificationHandler()).toBeDefined());
+    fireEvent.click(screen.getByRole("button", { name: "Enter battle" }));
+
+    act(() =>
+      notificationHandler()({
+        type: "battle_canceled",
+        payload: { battle_id: 41, campaign_id: 7, status: "canceled" },
+      })
+    );
+
+    expect(screen.getByText("Rejoin battle 3")).toBeInTheDocument();
   });
 
   it("says who nudged you, with a way to the battle, and keeps the nudge in the bell (BATL-NEW-08)", async () => {

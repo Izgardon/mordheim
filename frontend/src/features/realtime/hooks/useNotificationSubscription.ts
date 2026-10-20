@@ -159,6 +159,21 @@ export function useNotificationSubscription() {
       return;
     }
 
+    if (message.type === "battle_canceled") {
+      // A battle you were in was cancelled (its creator, or a battle manager from Settings): off
+      // its page only this says so, so its invite and your Rejoin for it go here.
+      const payload = message.payload as BattleNotificationPayload;
+      if (!payload?.battle_id || !payload?.campaign_id) {
+        return;
+      }
+      if (currentBattleSession?.battleId === payload.battle_id) {
+        clearCurrentBattleSession();
+      }
+      removeBattleInviteNotification(`battle-${payload.battle_id}`);
+      void invalidateOpenBattles(queryClient, payload.campaign_id);
+      return;
+    }
+
     if (message.type === "battle_invite_declined") {
       // An invitee declined your battle, or didn't answer in time (BUG-45, decision 2).
       const payload = message.payload as BattleNotificationPayload & {

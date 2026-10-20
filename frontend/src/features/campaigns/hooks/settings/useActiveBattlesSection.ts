@@ -8,6 +8,7 @@ import {
   confirmBattleResults,
   finishBattle,
 } from "@/features/battles/api/battles-api";
+import { invalidateOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 
 // other
 import { getErrorMessage } from "@/lib/get-error-message";
@@ -23,16 +24,19 @@ type Results = { winners: number[]; losers: number[] };
 /**
  * Settings → Active Battles (`manage_battles`, BATL-NEW-03): the cached list and a battle
  * manager's tools. Cancel and Close drop the row; End and Confirm move the battle on, and its
- * row's tools with it, so the list is read again.
+ * row's tools with it, so the list is read again. Your open battles are read again after each,
+ * so a Rejoin for a battle that is over goes at once.
  */
 export function useActiveBattlesSection(campaignId: number) {
   const queryClient = useQueryClient();
   const query = useCampaignActiveBattles(campaignId);
   const queryKey = queryKeys.campaign.activeBattles(campaignId);
-  const dropBattle = (battleId: number) =>
+  const dropBattle = (battleId: number) => {
     updateCachedList<CampaignActiveBattle>(queryClient, queryKey, (prev) =>
       prev.filter((entry) => entry.battle.id !== battleId)
     );
+    void invalidateOpenBattles(queryClient, campaignId);
+  };
 
   const onCancelBattle = async (battleId: number) => {
     const updated = await cancelCampaignActiveBattle(campaignId, battleId);
@@ -47,6 +51,7 @@ export function useActiveBattlesSection(campaignId: number) {
   const resultsWrite =
     (send: typeof finishBattle) => async (battleId: number, results: Results) => {
       await send(campaignId, battleId, results);
+      void invalidateOpenBattles(queryClient, campaignId);
       await queryClient.invalidateQueries({ queryKey });
     };
 
