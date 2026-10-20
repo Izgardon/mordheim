@@ -38,6 +38,7 @@ vi.mock("@/features/realtime/components/CampaignDiceRollerMenu", () => ({ defaul
 
 const ENCAMPMENTS = `GET ${campaignApi("encampments/")}`;
 const PLAYERS = `GET ${campaignApi("players/")}`;
+const PLAYER_NAMES = `GET ${campaignApi("players/?fields=basic")}`;
 const CREATE = `POST ${campaignApi("encampments/")}`;
 const UPDATE = `PATCH ${campaignApi("encampments/4/")}`;
 
@@ -64,7 +65,10 @@ beforeEach(() => {
   auth.user = { id: OWNER.id, email: OWNER.email };
   routeCampaignShell({ campaign: campaignSummary({ enable_encampments: true }) });
   fakeApi.on(ENCAMPMENTS, [encampment()]);
-  fakeApi.on(PLAYERS, campaignPlayers());
+  fakeApi.on(
+    PLAYER_NAMES,
+    campaignPlayers().map(({ id, name }) => ({ id, name }))
+  );
 });
 
 describe("Encampments: who may add and edit", () => {
@@ -126,7 +130,7 @@ describe("Encampments: adding and editing, as the owner", () => {
     expect(fakeApi.countOf(CREATE)).toBe(0);
   });
 
-  it("edits with every member from players/ as a possible owner, PATCHing the whole form", async () => {
+  it("edits with every member from players/?fields=basic as a possible owner, PATCHing the whole form", async () => {
     const user = setupUser();
     fakeApi.on(UPDATE, (body: unknown) =>
       encampment({ ...(body as object), owner_name: ADMIN.name })
@@ -159,12 +163,12 @@ describe("Encampments: adding and editing, as the owner", () => {
 });
 
 describe("Encampments: requests", () => {
-  it("reads the encampments and the whole players list, for the owner names, together (PERF-41, pinned; flips in PR A)", async () => {
+  it("reads the encampments and only the players' ids and names, for the owner picker, together (PERF-41)", async () => {
     await openEncampments();
 
     expect(fakeApi.countOf(ENCAMPMENTS)).toBe(1);
-    expect(fakeApi.countOf(PLAYERS)).toBe(1);
-    expect(fakeApi.countOf(`GET ${campaignApi("players/?fields=basic")}`)).toBe(0);
+    expect(fakeApi.countOf(PLAYER_NAMES)).toBe(1);
+    expect(fakeApi.countOf(PLAYERS)).toBe(0);
   });
 
   it("reads both again on every visit (CAMP-CQ-05, pinned; flips in PR B)", async () => {
@@ -177,7 +181,7 @@ describe("Encampments: requests", () => {
     await screen.findByRole("row", { name: /^Sailmakers' Row/ });
 
     expect(fakeApi.countOf(ENCAMPMENTS)).toBe(2);
-    expect(fakeApi.countOf(PLAYERS)).toBe(2);
+    expect(fakeApi.countOf(PLAYER_NAMES)).toBe(2);
   });
 
   it("says the page is disabled and reads nothing when encampments are off", async () => {
@@ -189,7 +193,7 @@ describe("Encampments: requests", () => {
       await screen.findByText(/Encampments are currently disabled for this campaign/)
     ).toBeInTheDocument();
     expect(fakeApi.countOf(ENCAMPMENTS)).toBe(0);
-    expect(fakeApi.countOf(PLAYERS)).toBe(0);
+    expect(fakeApi.countOf(PLAYER_NAMES)).toBe(0);
     expect(screen.queryByRole("button", { name: "Add encampment" })).not.toBeInTheDocument();
   });
 });

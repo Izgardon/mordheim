@@ -18,6 +18,7 @@ import type {
   CampaignPermission,
   MemberRemovalPreview,
   CampaignPlayer,
+  CampaignPlayerName,
   CampaignPivotalMoment,
   CampaignSummary,
   CampaignTopKiller,
@@ -62,6 +63,11 @@ export function regenerateJoinCode(campaignId: number) {
 
 export function listCampaignPlayers(campaignId: number) {
   return apiRequest<CampaignPlayer[]>(`/campaigns/${campaignId}/players/`, {});
+}
+
+/** Ids and names only (at most 2 queries), for the encampment owner picker (PERF-41). */
+export function listCampaignPlayerNames(campaignId: number) {
+  return apiRequest<CampaignPlayerName[]>(`/campaigns/${campaignId}/players/?fields=basic`);
 }
 
 export function listCampaignBattleHistory(campaignId: number) {
