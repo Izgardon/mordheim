@@ -6,6 +6,8 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError } from "@/lib/api-client";
+import { queryKeys } from "@/lib/query-keys";
+import { createTestQueryClient } from "@/test/query-test-utils";
 import {
   ADMIN,
   OWNER,
@@ -45,8 +47,11 @@ const patches = () => fakeApi.requests().filter((request) => request.method === 
 const blockOf = (label: string) => screen.getByText(label).parentElement!;
 
 /** Opens Settings and its Campaign tab as the owner, and waits for the owner's cards. */
-async function openCampaignTab(user: ReturnType<typeof setupUser>) {
-  renderCampaignRoute("/campaigns/1/settings");
+async function openCampaignTab(
+  user: ReturnType<typeof setupUser>,
+  queryClient = createTestQueryClient()
+) {
+  renderCampaignRoute("/campaigns/1/settings", { queryClient });
   const header = await screen.findByRole("banner");
   await user.click(within(header).getByRole("button", { name: "Campaign" }));
   await screen.findByRole("heading", { name: "Campaign Systems" });
@@ -65,9 +70,12 @@ beforeEach(() => {
 });
 
 describe("Starting gold and warband caps", () => {
-  it("saves a new starting gold at once with one PATCH: no question about existing warbands, and your sheet isn't read again (BUG-78, pinned; flips in PR A)", async () => {
+  it("asks whether existing warbands get the difference, unticked after the start; ticked, the PATCH says so and your sheet and treasury are read again (BUG-78, decision 6)", async () => {
     const user = setupUser();
-    await openCampaignTab(user);
+    const queryClient = createTestQueryClient();
+    const treasury = queryKeys.campaign.warbandTreasury(1, OWNER.warband!.id);
+    queryClient.setQueryData(treasury, { pages: [], pageParams: [] });
+    await openCampaignTab(user, queryClient);
     const gold = blockOf("Starting gold");
     const input = within(gold).getByRole("spinbutton");
     expect(input).toHaveValue(500);
@@ -77,12 +85,54 @@ describe("Starting gold and warband caps", () => {
     await user.type(input, "600");
     await user.click(within(gold).getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(patches()).toHaveLength(1));
-    expect(patches()[0].body).toEqual({ starting_gold: 600 });
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    const dialog = screen.getByRole("dialog", { name: "Change starting gold" });
+    expect(dialog).toHaveTextContent("Change the starting gold from 500 to 600 gc?");
+    const adjust = within(dialog).getByRole("checkbox", {
+      name: "Adjust existing warbands by +100 gc",
+    });
+    expect(adjust).not.toBeChecked();
+    expect(dialog).toHaveTextContent("Existing warbands keep their gold");
+    expect(patches()).toHaveLength(0);
+    await user.click(adjust);
+    expect(dialog).toHaveTextContent("Each warband gets an Adjustment of +100 gc in its treasury.");
+    await user.click(within(dialog).getByRole("button", { name: "Save starting gold" }));
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(patches().map((request) => request.body)).toEqual([
+      { starting_gold: 600, adjust_existing_warbands: true },
+    ]);
     // The answer becomes the campaign: the field keeps 600 and Save has nothing left to save.
     await waitFor(() => expect(within(gold).getByRole("button", { name: "Save" })).toBeDisabled());
     expect(input).toHaveValue(600);
+    await waitFor(() => expect(fakeApi.countOf(MY_SHEET)).toBe(sheetReads + 1));
+    expect(queryClient.getQueryState(treasury)?.isInvalidated).toBe(true);
+  });
+
+  it("ticks the adjustment before the start; unticked, only new warbands get the new amount and nothing is read again (decision 6)", async () => {
+    const user = setupUser();
+    const campaign = campaignSummary({ in_progress: false });
+    routeCampaignShell({ campaign });
+    fakeApi.on(PATCH_CAMPAIGN, (body: unknown) => patchedCampaign(campaign, body));
+    await openCampaignTab(user);
+    const gold = blockOf("Starting gold");
+    const sheetReads = fakeApi.countOf(MY_SHEET);
+
+    await user.clear(within(gold).getByRole("spinbutton"));
+    await user.type(within(gold).getByRole("spinbutton"), "450");
+    await user.click(within(gold).getByRole("button", { name: "Save" }));
+
+    const dialog = screen.getByRole("dialog", { name: "Change starting gold" });
+    const adjust = within(dialog).getByRole("checkbox", {
+      name: "Adjust existing warbands by -50 gc",
+    });
+    expect(adjust).toBeChecked();
+    await user.click(adjust);
+    await user.click(within(dialog).getByRole("button", { name: "Save starting gold" }));
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(patches().map((request) => request.body)).toEqual([
+      { starting_gold: 450, adjust_existing_warbands: false },
+    ]);
     expect(fakeApi.countOf(MY_SHEET)).toBe(sheetReads);
   });
 
