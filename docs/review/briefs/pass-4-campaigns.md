@@ -147,6 +147,7 @@ Frontend (the fake API server, `src/test/fake-api.ts`)
 | # | Decision | Answer |
 | --- | --- | --- |
 | 1 | Removing a player (BUG-12, BUG-50) | **One "Remove from campaign" action**; Kick is merged into it. No option to retire the warband: it is always kept and comes back if the player rejoins. Their open battles and trades close on removal. **Plus:** owners and admins can regenerate the join code (the old code stops working), which is how a removed player is kept out (CAMP-TWEAK-01, CAMP-NEW-01). |
+| 1b | Join code visibility (BUG-143, 2026-10-20) | **Every member can see the join code**, in Settings and on the campaigns list alike; only owners and admins regenerate it (regenerating is how a removed player is kept out). |
 | 2 | Who can start the campaign (BUG-13) | **Owner and admins** (CAMP-TWEAK-02). |
 | 3 | What "started" means (BUG-77) | **Starting only enables battles and XP.** Before the start, Start battle is greyed out but clickable, with a warning (CAMP-TWEAK-03). |
 | 4 | Ownership and leaving | The owner can **hand ownership to an admin**; players can **leave**, with the same clean-up as removal; the owner must hand over first (CAMP-NEW-02, -03). |
