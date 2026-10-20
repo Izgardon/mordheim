@@ -37,6 +37,14 @@ const tradeRequest = {
   to_warband: { id: 10, name: "Possessed" },
 } as TradeRequest;
 
+/**
+ * A toast's action closes it and sonner removes it 200 ms later on a timer. Waiting for that keeps
+ * the timer inside the test: one still pending when the file's environment is torn down throws
+ * "window is not defined" and fails the run.
+ */
+const waitForToastToGo = (toastText: HTMLElement) =>
+  waitFor(() => expect(toastText).not.toBeInTheDocument());
+
 function CurrentLocation() {
   const location = useLocation();
   return <p data-testid="location">{`${location.pathname}${location.search}`}</p>;
@@ -190,11 +198,12 @@ describe("useNotificationSubscription", () => {
       })
     );
 
-    expect(await screen.findByText("Mira accepted your trade")).toBeInTheDocument();
+    const toastText = await screen.findByText("Mira accepted your trade");
     expect(screen.getByTestId("location")).toHaveTextContent("/campaigns/7/skills");
 
     fireEvent.click(screen.getByRole("button", { name: "Open trade" }));
     expect(screen.getByTestId("location")).toHaveTextContent("/campaigns/7/warband?trade=trade-9");
+    await waitForToastToGo(toastText);
   });
 
   it("offers an opened prebattle in a toast instead of navigating away (BUG-26)", async () => {
@@ -209,12 +218,13 @@ describe("useNotificationSubscription", () => {
       })
     );
 
-    expect(await screen.findByText("Prebattle is open for Ambush at the Well")).toBeInTheDocument();
+    const toastText = await screen.findByText("Prebattle is open for Ambush at the Well");
     expect(screen.getByTestId("location")).toHaveTextContent("/campaigns/7/warband");
     expect(invalidate).toHaveBeenCalledWith({ queryKey: ["campaign", 7, "battles", "open"] });
 
     fireEvent.click(screen.getByRole("button", { name: "Go" }));
     expect(screen.getByTestId("location")).toHaveTextContent("/campaigns/7/battles/41/prebattle");
+    await waitForToastToGo(toastText);
   });
 
   it("refreshes the open battles when a battle result changes", async () => {
@@ -257,6 +267,7 @@ describe("useNotificationSubscription", () => {
     const nudgeToast = toastText.closest("[data-sonner-toast]") as HTMLElement;
     fireEvent.click(within(nudgeToast).getByRole("button", { name: "Go" }));
     expect(screen.getByTestId("location")).toHaveTextContent("/campaigns/7/battles/41/postbattle");
+    await waitForToastToGo(toastText);
   });
 
   it("puts a nudge sent while you were away in the bell (BATL-NEW-08)", async () => {
