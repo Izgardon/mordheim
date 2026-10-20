@@ -1346,20 +1346,19 @@ class CampaignApiTests(APITestCase):
         list_response = self.client.get(f"/api/campaigns/{campaign['id']}/encampments/")
         self.assertEqual(list_response.status_code, 200)
 
-        forbidden_create_response = self.client.post(
+        # decision 9: any member adds one (his own); someone else's needs manage_encampments
+        own_create_response = self.client.post(
             f"/api/campaigns/{campaign['id']}/encampments/",
             {"name": "Player Camp"},
             format="json",
         )
-        self.assertEqual(forbidden_create_response.status_code, 403)
+        self.assertEqual((own_create_response.status_code, own_create_response.data["owner_id"]), (201, player.id))
+        nobodys = CampaignEncampment.objects.create(campaign_id=campaign["id"], name="Nobody's Camp")
+        nobodys_url = f"/api/campaigns/{campaign['id']}/encampments/{nobodys.id}/"
+        self.assertEqual(self.client.patch(nobodys_url, {"name": "Mine"}, format="json").status_code, 403)
 
         self._grant_campaign_permission(campaign["id"], player, "manage_encampments")
-        allowed_create_response = self.client.post(
-            f"/api/campaigns/{campaign['id']}/encampments/",
-            {"name": "Player Camp"},
-            format="json",
-        )
-        self.assertEqual(allowed_create_response.status_code, 201)
+        self.assertEqual(self.client.patch(nobodys_url, {"name": "Mine"}, format="json").status_code, 200)
 
     def test_location_create_list_and_patch_flow(self):
         owner = self._create_user("owner@example.com", "Owner")

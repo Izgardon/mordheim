@@ -125,6 +125,11 @@ def author_or_staff(access: CampaignAccess, obj: Any = None) -> bool:
     return access.is_staff or (obj is not None and obj.user_id == access.user_id)
 
 
+def encampment_owner_or_manager(access: CampaignAccess, obj: Any = None) -> bool:
+    """The encampment is his, or he holds manage_encampments (decision 9; the view has checked its page is on)."""
+    return access.has("manage_encampments") or (obj is not None and obj.owner_id == access.user_id)
+
+
 ROLE_RULES: Mapping[str, Rule] = {
     "edit_settings": owner,  # PATCH with any settings field
     "start": staff,  # PATCH with in_progress alone (decision 2, BUG-13)
@@ -150,6 +155,7 @@ CAMPAIGN_RULES: Mapping[str, Rule] = {
     **ROLE_RULES,
     **CODE_RULES,
     "delete_bulletin_entry": author_or_staff,  # an object rule: check_rule("delete_bulletin_entry", entry)
+    "edit_encampment": encampment_owner_or_manager,  # edit, reassign, remove (object rule)
 }
 CAPABILITIES: tuple[str, ...] = (*ROLE_RULES, *CODE_RULES)  # the flags: every rule but view and object rules
 # what an archived campaign still lets its members do (everything else answers 403 campaign_archived)

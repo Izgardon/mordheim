@@ -57,8 +57,9 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("POST", "bulletin/", {"body": "WTB a horse"}, (201, 201, 201, 201)),
     ("DELETE", "bulletin/{note}/", None, (403, 403, 204, 204)),  # Rex's note: its author, owners and admins
     ("GET", "encampments/", None, OK_ALL),
-    ("POST", "encampments/", {"name": "Camp"}, (403, 201, 201, 201)),
-    ("PATCH", "encampments/{camp}/", {"name": "Camp 2"}, (403, 200, 200, 200)),
+    ("POST", "encampments/", {"name": "Camp"}, (201, 201, 201, 201)),  # any member (decision 9)
+    ("PATCH", "encampments/{camp}/", {"name": "Camp 2"}, (403, 200, 200, 200)),  # nobody's: manage_encampments
+    ("DELETE", "encampments/{camp}/", None, (403, 204, 204, 204)),
     ("GET", "locations/", None, OK_ALL),
     ("POST", "locations/", {"name": "Ruin"}, (403, 201, 201, 201)),
     ("PATCH", "locations/{place}/", {"name": "Ruin 2"}, (403, 200, 200, 200)),
@@ -106,7 +107,7 @@ REPRESENTATIVE: dict[str, tuple[str, str, dict[str, Any] | None]] = {
     "manage_specials": ("DELETE", "/api/special/{special}/", None),
     "manage_rules": ("POST", "rules/", {"title": "No running"}),
     "manage_warbands": ("PATCH", "/api/warbands/{rival_warband}/", {"name": "Rats"}),
-    "manage_encampments": ("POST", "encampments/", {"name": "Camp"}),
+    "manage_encampments": ("PATCH", "encampments/{camp}/", {"name": "Camp 2"}),  # an encampment nobody owns
     "manage_locations": ("POST", "locations/", {"name": "Ruin"}),
     "manage_bestiary": ("DELETE", "/api/bestiary/{beast}/", None),
     "manage_battles": ("POST", "active-battles/{battle}/cancel/", {}),

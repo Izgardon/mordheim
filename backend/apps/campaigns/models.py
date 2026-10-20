@@ -236,6 +236,11 @@ class CampaignEncampment(models.Model):
         blank=True,
     )
     description = models.TextField(blank=True, default="")
+    # soft delete by its owner or a manage_encampments holder: no longer listed (decision 9)
+    removed_at = models.DateTimeField(null=True, blank=True)
+    removed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="+", on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     class Meta:
         db_table = "campaign_encampment"

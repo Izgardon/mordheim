@@ -15,7 +15,7 @@ from django.core.management import call_command
 from rest_framework.test import APITestCase
 
 from apps.campaigns.constants import PERMISSION_CODES, PERMISSIONS
-from apps.campaigns.models import CampaignPermission, CampaignRole
+from apps.campaigns.models import CampaignEncampment, CampaignPermission, CampaignRole
 
 from .campaign_support import CampaignTestCase, make_user
 
@@ -182,10 +182,12 @@ class GrantTests(CampaignTestCase):
         self.assertEqual(self.codes(self.player), ["add_custom"])
 
     def test_a_grant_opens_the_matching_write(self):
+        # an encampment nobody owns needs manage_encampments (adding one no longer does: decision 9)
         self.enable_features()
-        body = {"name": "Dockside"}
-        self.assertEqual(self.post_as(self.player, self.url("encampments/"), body).status_code, 403)
+        camp = CampaignEncampment.objects.create(campaign=self.campaign, name="Dockside")
+        url = self.url(f"encampments/{camp.id}/")
+        self.assertEqual(self.patch_as(self.player, url, {"name": "Wharf"}).status_code, 403)
 
         self.put_grants(self.owner, self.player, ["manage_encampments"])
 
-        self.assertEqual(self.post_as(self.player, self.url("encampments/"), body).status_code, 201)
+        self.assertEqual(self.patch_as(self.player, url, {"name": "Wharf"}).status_code, 200)

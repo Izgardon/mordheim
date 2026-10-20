@@ -5,6 +5,7 @@ from rest_framework import serializers
 from apps.core.html import sanitize_rich_text
 from apps.users.names import display_name
 
+from ..access import CAMPAIGN_RULES
 from ..effects import EFFECT_KEYS
 from ..models import (
     CampaignBulletinEntry,
@@ -37,18 +38,30 @@ class CampaignHouseRuleCreateSerializer(serializers.ModelSerializer):
 
 
 class CampaignEncampmentSerializer(serializers.ModelSerializer):
+    """An encampment, with `owner_left` (its owner has left the campaign: shown "(left)") and what the reader may do
+    with it (`capabilities.edit`: edit, reassign, remove); `context["access"]` is the reader's CampaignAccess."""
+
     campaign_id = serializers.IntegerField(read_only=True)
     owner_id = serializers.IntegerField(source="owner.id", read_only=True, allow_null=True)
     owner_name = serializers.SerializerMethodField()
+    owner_left = serializers.SerializerMethodField()
+    capabilities = serializers.SerializerMethodField()
 
     class Meta:
         model = CampaignEncampment
-        fields = ("id", "campaign_id", "name", "owner_id", "owner_name", "description")
+        fields = ("id", "campaign_id", "name", "owner_id", "owner_name", "owner_left", "description", "capabilities")
 
     def get_owner_name(self, obj):
         if not obj.owner_id:
             return None
         return display_name(obj.owner)
+
+    def get_owner_left(self, obj):
+        return bool(obj.owner_id) and not getattr(obj, "owner_is_member", True)  # annotated (services/encampments)
+
+    def get_capabilities(self, obj):
+        access = self.context["access"]
+        return {"edit": not access.archived and CAMPAIGN_RULES["edit_encampment"](access, obj)}
 
 
 class CampaignEncampmentWriteSerializer(serializers.ModelSerializer):

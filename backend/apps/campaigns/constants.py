@@ -31,7 +31,9 @@ PERMISSIONS: tuple[PermissionCode, ...] = (
     PermissionCode("manage_specials", "Manage specials", "Edit and delete the campaign's custom specials."),
     PermissionCode("manage_rules", "Manage rules", "Add, edit and delete the campaign's house rules."),
     PermissionCode("manage_warbands", "Manage warbands", "Edit every warband in the campaign, not just their own."),
-    PermissionCode("manage_encampments", "Manage encampments", "Add and edit the campaign's encampments."),
+    PermissionCode(
+        "manage_encampments", "Manage encampments", "Edit, reassign and remove every encampment, not just their own."
+    ),
     PermissionCode("manage_locations", "Manage locations", "Add and edit the campaign's locations."),
     PermissionCode("manage_bestiary", "Manage bestiary", "Add, edit and delete the campaign's bestiary entries."),
     PermissionCode(
