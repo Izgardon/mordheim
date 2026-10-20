@@ -10,6 +10,7 @@ from apps.restrictions.serializers import RestrictionNoteSerializer, refuse_unkn
 from .models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemProperty
 
 MAX_COST = 2_147_483_647  # the largest cost the column holds
+WEAPON_DEFAULTS = {"strength": "As user", "range": "Close combat"}
 
 
 class ItemPropertySummarySerializer(serializers.ModelSerializer):
@@ -168,14 +169,14 @@ class ItemWriteSerializer(serializers.ModelSerializer):
         return rows
 
     def validate(self, attrs):
+        """A weapon's strength and range default to "As user" and "Close combat" where the write leaves them empty: sent
+        blank, or not sent and not stored (BUG-151: an edit that didn't resend them lost them)."""
         item_type = attrs.get("type") or getattr(self.instance, "type", "")
         if item_type and item_type.lower() == "weapon":
-            strength = attrs.get("strength")
-            range_value = attrs.get("range")
-            if not strength:
-                attrs["strength"] = "As user"
-            if not range_value:
-                attrs["range"] = "Close combat"
+            for field, default in WEAPON_DEFAULTS.items():
+                value = attrs[field] if field in attrs else getattr(self.instance, field, None)
+                if not value:
+                    attrs[field] = default
         return attrs
 
 

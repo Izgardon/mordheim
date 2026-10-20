@@ -1,5 +1,6 @@
 """A PATCH's nested rows are whole rows: an availability, an equipment line or a restriction link takes the same
-defaults in an edit as in a create (DRF skips nested defaults in a partial write)."""
+defaults in an edit as in a create (DRF skips nested defaults in a partial write). A weapon's strength and range
+take theirs only where nothing is stored."""
 
 from apps.bestiary.models import BestiaryEntryItem, HiredSwordProfileRestriction
 
@@ -7,6 +8,28 @@ from .catalogue_support import BESTIARY, HIRED_SWORDS, ITEMS, CatalogueTestCase,
 
 
 class PartialWriteDefaultsTests(CatalogueTestCase):
+    def test_renaming_a_weapon_keeps_its_strength_and_range(self):
+        # BUG-151: an edit that didn't resend strength or range reset them to "As user" and "Close combat"
+        flail = make_entry(ITEMS, "Flail", campaign=self.campaign, strength="+1", range="Close combat")
+        sling = make_entry(ITEMS, "Sling", campaign=self.campaign, strength="3", range='18"')
+
+        renamed = self.patch_as(self.owner, ITEMS.detail_url(flail.id), {"name": "Morning Star"})
+        described = self.patch_as(self.owner, ITEMS.detail_url(sling.id), {"description": "Stones."})
+
+        self.assertEqual((renamed.status_code, renamed.data["strength"], renamed.data["range"]), (200, "+1", "Close combat"))  # fmt: skip
+        self.assertEqual((described.data["strength"], described.data["range"]), ("3", '18"'))
+
+    def test_a_weapon_edit_fills_only_what_is_blank_or_empty(self):
+        # BUG-151: the defaults still fill a strength or range sent blank, and a weapon that has none stored
+        armour = make_entry(ITEMS, "Spiked shield", campaign=self.campaign, type="Armour", subtype="Shield")
+        flail = make_entry(ITEMS, "Flail", campaign=self.campaign, strength="+1", range="Close combat")
+
+        retyped = self.patch_as(self.owner, ITEMS.detail_url(armour.id), {"type": "Weapon"})
+        blanked = self.patch_as(self.owner, ITEMS.detail_url(flail.id), {"strength": ""})
+
+        self.assertEqual((retyped.data["strength"], retyped.data["range"]), ("As user", "Close combat"))
+        self.assertEqual((blanked.data["strength"], blanked.data["range"]), ("As user", "Close combat"))
+
     def test_an_edited_availability_without_a_rarity_or_restrictions_takes_the_defaults(self):
         item = make_entry(ITEMS, "Flail", campaign=self.campaign, cost=15)
 
