@@ -1,27 +1,23 @@
-import json
-import re
+"""Seed the book's items and item properties from JSON (`apps/items/data/`).
+
+Campaign rows are never read or written (BUG-17); the run is all or nothing; there is no --truncate (BUG-16: it
+deleted campaign rows and every copy of them), a wipe replaces it. It ends by syncing every campaign's house rules
+again, so their clones take the reseeded book prices (BUG-51).
+"""
+
 from pathlib import Path
+from typing import Any
 
 from django.core.management.base import BaseCommand, CommandError
-from django.core.management.color import no_style
-from django.db import connection, transaction
+from django.db import transaction
 
 from apps.campaigns.services.house_rules import resync_every_campaign
-from apps.items.models import (
-    Item,
-    ItemAvailability,
-    ItemAvailabilityRestriction,
-    ItemProperty,
-    ItemPropertyLink,
-)
+from apps.core.seeding import clean, entry_value, read_json_list, reset_sequence, sync_availabilities, upsert_global
+from apps.items.models import Item, ItemProperty, ItemPropertyLink
 from apps.restrictions.book import BookRestrictions
 
-DEFAULT_JSON_PATHS = [
-    Path("apps/items/data/standard-items.json"),
-]
-DEFAULT_PROPERTY_PATHS = [
-    Path("apps/items/data/item-properties.json"),
-]
+DEFAULT_JSON_PATHS = [Path("apps/items/data/standard-items.json")]
+DEFAULT_PROPERTY_PATHS = [Path("apps/items/data/item-properties.json")]
 
 HEADER_ALIASES = {
     "name": ["name", "item"],
@@ -43,120 +39,121 @@ HEADER_ALIASES = {
 }
 
 
-def _normalize(value):
-    return str(value or "").strip()
+def _value(entry: Any, field: str) -> Any:
+    return entry_value(entry, HEADER_ALIASES[field])
 
 
-def _property_cache_key(name, property_type=""):
-    return (_normalize(name).lower(), _normalize(property_type).lower())
+def _key(name: Any, property_type: Any = "") -> tuple[str, str]:
+    return clean(name).lower(), clean(property_type).lower()
 
 
-def _remove_property_cache_entries_for_id(property_cache, property_id):
-    stale_keys = [key for key, value in property_cache.items() if value.id == property_id]
-    for key in stale_keys:
-        property_cache.pop(key, None)
-
-
-def _resolve_property_from_cache(property_cache, name, property_type=""):
-    exact_match = property_cache.get(_property_cache_key(name, property_type))
-    if exact_match:
-        return exact_match
-    if property_type:
-        return property_cache.get(_property_cache_key(name, ""))
-    return None
-
-
-def _normalize_bool(value):
-    cleaned = _normalize(value).lower()
-    return cleaned in {"1", "true", "yes", "y", "t"}
-
-
-def _parse_int(value, default=0):
-    cleaned = _normalize(value)
-    if not cleaned:
-        return default
-    match = re.search(r"-?\d+", cleaned)
-    if not match:
-        return default
-    try:
-        return int(match.group(0))
-    except ValueError:
-        return default
-
-
-def _parse_property_id(value):
+def _property_id(value: Any) -> int | None:
     if isinstance(value, int):
         return value
-    if isinstance(value, str):
-        cleaned = value.strip()
-        if cleaned.isdigit():
-            return int(cleaned)
+    if isinstance(value, str) and value.strip().isdigit():
+        return int(value.strip())
     return None
 
 
-def _normalize_rarity(value, default=2):
-    parsed = _parse_int(value, default=default)
-    if parsed < 2:
-        return 2
-    if parsed > 20:
-        return 20
-    return parsed
+class BookProperties:
+    """The book's item properties by id and by name and type, kept current as the run writes them."""
+
+    def __init__(self) -> None:
+        self.by_id: dict[int, ItemProperty] = {}
+        self.by_key: dict[tuple[str, str], ItemProperty] = {}
+        for prop in ItemProperty.objects.filter(campaign__isnull=True):
+            self.remember(prop)
+        self.campaign_ids = set(ItemProperty.objects.filter(campaign__isnull=False).values_list("id", flat=True))
+
+    def remember(self, prop: ItemProperty) -> None:
+        self.by_id[prop.id] = prop
+        self.by_key[_key(prop.name, prop.type)] = prop
+
+    def seed(self, entry: dict[str, Any], path: Path) -> None:
+        """One row of the properties file, upserted by its id, or by its name and type when it has none."""
+        prop_id, name, prop_type = _property_id(entry.get("id")), clean(entry.get("name")), clean(entry.get("type"))
+        if not name:
+            return
+        existing = self.by_key.get(_key(name, prop_type))
+        if existing and prop_id and existing.id != prop_id:
+            raise CommandError(
+                f"Duplicate property name/type with different ids: {name} [{prop_type or 'Any'}] ({prop_id} vs {existing.id})"
+            )
+        if prop_id in self.campaign_ids:  # the id was given to a campaign's property since the last seed
+            raise CommandError(f"Property id {prop_id} ({name}) belongs to a campaign's property: {path}")
+        fields = {"name": name, "description": clean(entry.get("description")), "type": prop_type}
+        if prop_id is not None:
+            prop, _ = ItemProperty.objects.update_or_create(id=prop_id, defaults=fields)
+        else:
+            prop, _ = ItemProperty.objects.update_or_create(
+                name=name, type=prop_type, campaign=None, defaults={"description": fields["description"]}
+            )
+        for key in [key for key, row in self.by_key.items() if row.id == prop.id]:  # its old name and type
+            del self.by_key[key]
+        self.remember(prop)
+
+    def linked(self, link: Any, item: dict[str, str], path: Path) -> ItemProperty | None:
+        """The property an item's entry names: an id (which must exist), or a name (created in the book, of the item's
+        type, when the book has none of that name)."""
+        prop_id, name, description, prop_type = None, "", "", ""
+        if isinstance(link, dict):
+            prop_id, name = _property_id(link.get("id")), clean(link.get("name"))
+            description, prop_type = clean(link.get("description")), clean(link.get("type")) or item["type"]
+        elif isinstance(link, int):
+            prop_id = link
+        elif isinstance(link, str):
+            prop_id = _property_id(link)
+            if prop_id is None:
+                name, prop_type = clean(link), item["type"]
+        if prop_id is not None:
+            if prop_id not in self.by_id:
+                raise CommandError(f"Unknown property id {prop_id} for item '{item['name']}' in {path}")
+            return self.by_id[prop_id]
+        if not name:
+            return None
+        found = self.by_key.get(_key(name, prop_type or item["type"]))
+        if found is None and (prop_type or item["type"]):
+            found = self.by_key.get(_key(name, ""))
+        if found is None:
+            found = ItemProperty.objects.create(name=name, description=description, type=prop_type or item["type"])
+            self.remember(found)
+        return found
 
 
-def _get_entry_value(entry, aliases):
-    if not isinstance(entry, dict):
-        return None
-    key_map = {str(key).strip().lower(): key for key in entry.keys()}
-    for alias in aliases:
-        key = key_map.get(alias)
-        if key is not None:
-            return entry.get(key)
-    return None
+def _item_defaults(entry: Any) -> dict[str, Any]:
+    single_use = _value(entry, "single_use")
+    return {
+        "subtype": clean(_value(entry, "subtype")),
+        "grade": clean(_value(entry, "grade")) or "1a",
+        "single_use": clean(single_use).lower() in {"1", "true", "yes", "y", "t"} if single_use is not None else False,
+        "description": clean(_value(entry, "description")),
+        "strength": clean(_value(entry, "strength")).replace(";", "").strip() or None,
+        "range": clean(_value(entry, "range")) or None,
+        "save_value": clean(_value(entry, "save")) or None,
+        "statblock": clean(_value(entry, "statblock")) or None,
+    }
 
 
-def _resolve_default_json_paths():
-    return [path for path in DEFAULT_JSON_PATHS if path.exists()]
+def _availability_rows(entry: Any) -> list[Any]:
+    """The entry's prices: its availabilities, or (an older shape) one flat cost, rarity, unique-to and variable cost."""
+    rows: Any = _value(entry, "availabilities")
+    if rows and isinstance(rows, list):
+        return list(rows)
+    return [
+        {
+            "cost": _value(entry, "cost"),
+            "rarity": _value(entry, "rarity"),
+            "unique_to": clean(_value(entry, "unique_to")),
+            "variable_cost": clean(_value(entry, "variable_cost")),
+        }
+    ]
 
 
-def _resolve_default_property_paths():
-    return [path for path in DEFAULT_PROPERTY_PATHS if path.exists()]
-
-
-def _reset_sequence(model):
-    sequence_sql = connection.ops.sequence_reset_sql(no_style(), [model])
-    if not sequence_sql:
-        return
-    with connection.cursor() as cursor:
-        for sql in sequence_sql:
-            cursor.execute(sql)
-
-
-def _sync_availabilities(item, availabilities_data, restriction_cache: BookRestrictions):
-    """Replace all availability rows for an item."""
-    item.availabilities.all().delete()
-    if not availabilities_data:
-        return
-    for entry in availabilities_data:
-        avail = ItemAvailability.objects.create(
-            item=item,
-            cost=_parse_int(entry.get("cost"), 0),
-            rarity=_normalize_rarity(entry.get("rarity")),
-            variable_cost=_normalize(entry.get("variable_cost")) or None,
-        )
-        unique_to_text = _normalize(entry.get("unique_to"))
-        if unique_to_text:
-            resolved = restriction_cache.resolve(unique_to_text)
-            if resolved:
-                ItemAvailabilityRestriction.objects.bulk_create(
-                    [
-                        ItemAvailabilityRestriction(
-                            item_availability=avail,
-                            restriction=r,
-                            additional_note=note,
-                        )
-                        for r, note in resolved
-                    ]
-                )
+def _property_links(entry: Any) -> list[Any]:
+    links = _value(entry, "properties")
+    if links and isinstance(links, (str, int)):
+        return [links]
+    return links if links and isinstance(links, list) else []
 
 
 class Command(BaseCommand):
@@ -171,225 +168,28 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        """Upsert the book's items and properties, all or nothing; campaign rows are never read or written (BUG-17).
-        There is no --truncate: it deleted campaign rows and every copy of them (BUG-16); a wipe replaces it."""
+        """Upsert the book's items and properties, all or nothing (BUG-17); campaign rows are never read or written."""
         with transaction.atomic():
             self._import(options)
 
-    def _import(self, options):
-        json_path = options.get("json_path")
-        properties_path = options.get("properties_path")
-
-        paths = [Path(json_path)] if json_path else _resolve_default_json_paths()
+    def _import(self, options: dict[str, Any]) -> None:
+        json_path, properties_path = options.get("json_path"), options.get("properties_path")
+        paths = [Path(json_path)] if json_path else [path for path in DEFAULT_JSON_PATHS if path.exists()]
         if not paths:
             raise CommandError(
                 "JSON file(s) not found. Provide --json or place data at apps/items/data/standard-*.json."
             )
-
-        property_paths = [Path(properties_path)] if properties_path else _resolve_default_property_paths()
-
-        created = 0
-        updated = 0
-        skipped = 0
-        property_cache_by_id = {}
-        property_cache_by_key = {}
-        for prop in ItemProperty.objects.filter(campaign__isnull=True):
-            property_cache_by_id[prop.id] = prop
-            property_cache_by_key[_property_cache_key(prop.name, prop.type)] = prop
-        campaign_property_ids = set(ItemProperty.objects.filter(campaign__isnull=False).values_list("id", flat=True))
-
+        property_paths = (
+            [Path(properties_path)] if properties_path else [path for path in DEFAULT_PROPERTY_PATHS if path.exists()]
+        )
+        properties = BookProperties()
+        for path in property_paths:
+            for entry in read_json_list(path):
+                if isinstance(entry, dict):
+                    properties.seed(entry, path)
         if property_paths:
-            property_entries = []
-            for path in property_paths:
-                try:
-                    data = json.loads(path.read_text(encoding="utf-8-sig"))
-                except json.JSONDecodeError as exc:
-                    raise CommandError(f"Unable to parse JSON ({path}): {exc}") from exc
-                except FileNotFoundError as exc:
-                    raise CommandError(f"Property JSON file not found: {path}") from exc
-
-                if not isinstance(data, list):
-                    raise CommandError(f"Property JSON data should be a list of objects: {path}")
-                property_entries.extend(data)
-
-            for entry in property_entries:
-                if not isinstance(entry, dict):
-                    continue
-
-                prop_id = _parse_property_id(entry.get("id"))
-                prop_name = _normalize(entry.get("name"))
-                prop_description = _normalize(entry.get("description"))
-                prop_type = _normalize(entry.get("type"))
-
-                if not prop_name:
-                    continue
-
-                cache_key = _property_cache_key(prop_name, prop_type)
-                existing = property_cache_by_key.get(cache_key)
-                if existing and prop_id and existing.id != prop_id:
-                    raise CommandError(
-                        f"Duplicate property name/type with different ids: {prop_name} [{prop_type or 'Any'}] ({prop_id} vs {existing.id})"
-                    )
-
-                if prop_id in campaign_property_ids:  # the id was given to a campaign's property since the last seed
-                    raise CommandError(f"Property id {prop_id} ({prop_name}) belongs to a campaign's property: {path}")
-                if prop_id is not None:
-                    item_property, _ = ItemProperty.objects.update_or_create(
-                        id=prop_id,
-                        defaults={
-                            "name": prop_name,
-                            "description": prop_description,
-                            "type": prop_type,
-                        },
-                    )
-                else:
-                    item_property, _ = ItemProperty.objects.update_or_create(
-                        name=prop_name,
-                        type=prop_type,
-                        campaign=None,
-                        defaults={
-                            "description": prop_description,
-                        },
-                    )
-
-                _remove_property_cache_entries_for_id(property_cache_by_key, item_property.id)
-                property_cache_by_id[item_property.id] = item_property
-                property_cache_by_key[_property_cache_key(item_property.name, item_property.type)] = item_property
-
-            _reset_sequence(ItemProperty)
-
-        restriction_cache = BookRestrictions()
-
-        for path in paths:
-            try:
-                data = json.loads(path.read_text(encoding="utf-8-sig"))
-            except json.JSONDecodeError as exc:
-                raise CommandError(f"Unable to parse JSON ({path}): {exc}") from exc
-
-            if not isinstance(data, list):
-                raise CommandError(f"JSON data should be a list of item objects: {path}")
-
-            for entry in data:
-                raw_name = _normalize(_get_entry_value(entry, HEADER_ALIASES["name"]))
-                raw_type = _normalize(_get_entry_value(entry, HEADER_ALIASES["type"]))
-                raw_subtype = _normalize(_get_entry_value(entry, HEADER_ALIASES["subtype"]))
-                raw_grade = _normalize(_get_entry_value(entry, HEADER_ALIASES["grade"]))
-                raw_description = _normalize(_get_entry_value(entry, HEADER_ALIASES["description"]))
-                raw_strength = _normalize(_get_entry_value(entry, HEADER_ALIASES["strength"]))
-                if raw_strength:
-                    raw_strength = raw_strength.replace(";", "").strip()
-                raw_range = _normalize(_get_entry_value(entry, HEADER_ALIASES["range"]))
-                raw_save = _normalize(_get_entry_value(entry, HEADER_ALIASES["save"]))
-                raw_statblock = _normalize(_get_entry_value(entry, HEADER_ALIASES["statblock"]))
-                raw_single_use = _get_entry_value(entry, HEADER_ALIASES["single_use"])
-                raw_properties = _get_entry_value(entry, HEADER_ALIASES["properties"])
-                raw_availabilities = _get_entry_value(entry, HEADER_ALIASES["availabilities"])
-
-                if not raw_name or not raw_type:
-                    skipped += 1
-                    continue
-
-                single_use_value = _normalize_bool(raw_single_use) if raw_single_use is not None else False
-
-                item, was_created = Item.objects.update_or_create(
-                    name=raw_name,
-                    type=raw_type,
-                    campaign=None,  # the book: never a campaign's entry or a house-rule clone (BUG-17)
-                    campaign_type=None,
-                    defaults={
-                        "subtype": raw_subtype or "",
-                        "grade": raw_grade or "1a",
-                        "single_use": single_use_value,
-                        "description": raw_description,
-                        "strength": raw_strength or None,
-                        "range": raw_range or None,
-                        "save_value": raw_save or None,
-                        "statblock": raw_statblock or None,
-                    },
-                )
-
-                if was_created:
-                    created += 1
-                else:
-                    updated += 1
-
-                # Sync availabilities
-                if raw_availabilities and isinstance(raw_availabilities, list):
-                    _sync_availabilities(item, raw_availabilities, restriction_cache)
-                else:
-                    # Backward compat: read flat cost/rarity/unique_to/variable_cost
-                    raw_cost = _get_entry_value(entry, HEADER_ALIASES["cost"])
-                    raw_rarity = _get_entry_value(entry, HEADER_ALIASES["rarity"])
-                    raw_unique = _normalize(_get_entry_value(entry, HEADER_ALIASES["unique_to"]))
-                    raw_variable = _normalize(_get_entry_value(entry, HEADER_ALIASES["variable_cost"]))
-                    _sync_availabilities(
-                        item,
-                        [
-                            {
-                                "cost": raw_cost,
-                                "rarity": raw_rarity,
-                                "unique_to": raw_unique,
-                                "variable_cost": raw_variable,
-                            }
-                        ],
-                        restriction_cache,
-                    )
-
-                if raw_properties:
-                    property_entries = raw_properties
-                    if isinstance(raw_properties, (str, int)):
-                        property_entries = [raw_properties]
-
-                    if isinstance(property_entries, list):
-                        for prop_entry in property_entries:
-                            prop_id = None
-                            prop_name = ""
-                            prop_description = ""
-                            prop_type = ""
-
-                            if isinstance(prop_entry, dict):
-                                prop_id = _parse_property_id(prop_entry.get("id"))
-                                prop_name = _normalize(prop_entry.get("name"))
-                                prop_description = _normalize(prop_entry.get("description"))
-                                prop_type = _normalize(prop_entry.get("type")) or raw_type
-                            elif isinstance(prop_entry, int):
-                                prop_id = prop_entry
-                            elif isinstance(prop_entry, str):
-                                prop_id = _parse_property_id(prop_entry)
-                                if prop_id is None:
-                                    prop_name = _normalize(prop_entry)
-                                    prop_type = raw_type
-
-                            resolved_prop: ItemProperty | None = None
-                            if prop_id is not None:
-                                resolved_prop = property_cache_by_id.get(prop_id)
-                                if not resolved_prop:
-                                    raise CommandError(f"Unknown property id {prop_id} for item '{raw_name}' in {path}")
-                            elif prop_name:
-                                resolved_prop = _resolve_property_from_cache(
-                                    property_cache_by_key,
-                                    prop_name,
-                                    prop_type or raw_type,
-                                )
-                                if not resolved_prop:
-                                    resolved_prop = ItemProperty.objects.create(
-                                        name=prop_name,
-                                        description=prop_description,
-                                        type=prop_type or raw_type,
-                                    )
-                                    property_cache_by_key[
-                                        _property_cache_key(resolved_prop.name, resolved_prop.type)
-                                    ] = resolved_prop
-                                    property_cache_by_id[resolved_prop.id] = resolved_prop
-
-                            if not resolved_prop:
-                                continue
-
-                            ItemPropertyLink.objects.get_or_create(
-                                item=item,
-                                property=resolved_prop,
-                            )
-
+            reset_sequence(ItemProperty)
+        created, updated, skipped = self._seed_items(paths, properties, BookRestrictions())
         synced = resync_every_campaign()  # house-rule clones take the reseeded book prices (BUG-51)
         self.stdout.write(
             self.style.SUCCESS(
@@ -397,3 +197,21 @@ class Command(BaseCommand):
                 f"house rules synced: {synced}"
             )
         )
+
+    def _seed_items(self, paths: list[Path], properties: BookProperties, restrictions: BookRestrictions) -> list[int]:
+        """Upsert every item of the files with its prices and properties; [created, updated, skipped]."""
+        counts = [0, 0, 0]
+        for path in paths:
+            for entry in read_json_list(path, "item objects"):
+                name, item_type = clean(_value(entry, "name")), clean(_value(entry, "type"))
+                if not name or not item_type:
+                    counts[2] += 1
+                    continue
+                item, was_created = upsert_global(Item, {"name": name, "type": item_type}, _item_defaults(entry))
+                counts[0 if was_created else 1] += 1
+                sync_availabilities(item, _availability_rows(entry), restrictions)
+                for link in _property_links(entry):
+                    prop = properties.linked(link, {"name": name, "type": item_type}, path)
+                    if prop is not None:
+                        ItemPropertyLink.objects.get_or_create(item=item, property=prop)
+        return counts
