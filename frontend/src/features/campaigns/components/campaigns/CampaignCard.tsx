@@ -111,7 +111,8 @@ export default function CampaignCard({
                 />
               </div>
             </div>
-            {role === "owner" ? (
+            {/* Every member sees the code; owners and admins regenerate it in Settings (1b). */}
+            {join_code ? (
               <div className="campaign-card-meta flex items-center justify-between gap-3 rounded-2xl px-3 py-2.5">
                 <span className="min-w-0 text-xs text-[#c8b59a] sm:text-sm">
                   Join code:{" "}
