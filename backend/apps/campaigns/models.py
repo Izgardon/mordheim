@@ -105,6 +105,8 @@ class CampaignMembership(models.Model):
         on_delete=models.CASCADE,
     )
     role = models.ForeignKey(CampaignRole, related_name="memberships", on_delete=models.PROTECT)
+    # the newest chat message he has read, on every device (CAMP-TWEAK-09); 0 before he has read any
+    chat_last_read_id = models.BigIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

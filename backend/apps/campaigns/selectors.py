@@ -6,7 +6,19 @@ Each read costs a fixed number of queries, whatever the number of rows (CAMP-TES
 from datetime import datetime
 from typing import Any
 
-from django.db.models import CharField, Count, F, FilteredRelation, Model, Prefetch, Q, QuerySet, Value
+from django.db.models import (
+    CharField,
+    Count,
+    F,
+    FilteredRelation,
+    Model,
+    OuterRef,
+    Prefetch,
+    Q,
+    QuerySet,
+    Subquery,
+    Value,
+)
 from django.db.models.functions import Cast, Coalesce, Concat, Lower, NullIf, Trim
 from django.utils import timezone
 
@@ -16,7 +28,7 @@ from apps.users.names import display_name
 from apps.warbands.models import Henchman, Hero, HiredSword, Warband
 from apps.warbands.services.summary import load_warband_units
 
-from .models import Campaign, CampaignMembership, CampaignMembershipPermission, PivotalMoment
+from .models import Campaign, CampaignMembership, CampaignMembershipPermission, CampaignMessage, PivotalMoment
 
 
 def campaigns_for_user(user: Any) -> QuerySet[Campaign]:
@@ -32,6 +44,21 @@ def campaigns_for_user(user: Any) -> QuerySet[Campaign]:
 
 def campaign_for_user(campaign_id: int, user: Any) -> Campaign | None:
     return campaigns_for_user(user).filter(id=campaign_id).first()
+
+
+def campaign_detail_for_user(campaign_id: int, user: Any) -> Campaign | None:
+    """The campaign as its detail shows it to the user, with `chat_unread`: the messages after his read mark that
+    aren't his and weren't removed (CAMP-TWEAK-09), counted in the same query."""
+    rows = campaigns_for_user(user).annotate(chat_last_read=F("membership_for_user__chat_last_read_id"))
+    unread = (
+        CampaignMessage.objects.filter(campaign_id=OuterRef("pk"), id__gt=OuterRef("chat_last_read"), removed_at=None)
+        .exclude(user=user)
+        .order_by()
+        .values("campaign_id")
+        .annotate(count=Count("id"))
+        .values("count")
+    )
+    return rows.annotate(chat_unread=Coalesce(Subquery(unread), 0)).filter(id=campaign_id).first()
 
 
 def format_short_date(value: datetime | None) -> str:

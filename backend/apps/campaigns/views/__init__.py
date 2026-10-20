@@ -9,7 +9,7 @@ from .campaigns import (
     CampaignRestoreView,
     JoinCampaignView,
 )
-from .chat import CampaignMessageDetailView, CampaignMessagesView
+from .chat import CampaignChatReadView, CampaignMessageDetailView, CampaignMessagesView
 from .content import (
     CampaignBulletinDetailView,
     CampaignBulletinView,
@@ -48,6 +48,7 @@ __all__ = [
     "CampaignBattleHistoryView",
     "CampaignBulletinDetailView",
     "CampaignBulletinView",
+    "CampaignChatReadView",
     "CampaignCommonRulesView",
     "CampaignDetailView",
     "CampaignEncampmentDetailView",

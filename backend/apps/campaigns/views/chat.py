@@ -1,5 +1,5 @@
 """Campaign chat: any member reads it a page at a time and posts to it (posts are throttled); owners and admins
-remove a message (decision 8)."""
+remove a message (decision 8); each member's read mark (CAMP-TWEAK-09)."""
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -34,3 +34,15 @@ class CampaignMessageDetailView(CampaignScopedView):
     def delete(self, request, campaign_id, message_id):
         chat.remove(campaign_id, message_id, request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CampaignChatReadView(CampaignScopedView):
+    """POST: the caller has read the chat up to `last_read_id` (the newest message when absent). Answers his mark
+    and what is still unread (CAMP-TWEAK-09). His own read mark, so an archived campaign takes it too."""
+
+    rules = {"POST": "view"}
+    allow_archived = frozenset({"POST"})
+
+    def post(self, request, campaign_id):
+        raw = request.data.get("last_read_id") if isinstance(request.data, dict) else None
+        return Response(chat.mark_read(self.access.membership, raw))

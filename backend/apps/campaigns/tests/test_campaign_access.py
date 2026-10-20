@@ -83,6 +83,7 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("GET", "messages/", None, OK_ALL),
     ("POST", "messages/", {"body": "Hi"}, (201, 201, 201, 201)),
     ("DELETE", "messages/{message}/", None, (403, 403, 204, 204)),
+    ("POST", "messages/read/", {}, (200, 200, 200, 200)),
 ]
 
 # capability -> the request it promises will succeed (a path starting with "/" is outside campaigns/<id>/)
