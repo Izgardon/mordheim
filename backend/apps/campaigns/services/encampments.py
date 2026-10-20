@@ -24,8 +24,10 @@ def encampments(campaign_id: int) -> QuerySet[CampaignEncampment]:
 def create(campaign_id: int, creator: Any, validated: dict[str, Any]) -> CampaignEncampment:
     """A new encampment, owned by `owner_id` when sent (None: nobody), else by its creator."""
     fields = dict(validated)
-    owner_id = fields.pop("owner_id") if "owner_id" in fields else creator.id
-    entry = CampaignEncampment.objects.create(campaign_id=campaign_id, owner_id=owner_id, **fields)
+    if "owner_id" in fields:
+        entry = CampaignEncampment.objects.create(campaign_id=campaign_id, owner_id=fields.pop("owner_id"), **fields)
+    else:  # the creator, already loaded: no query for the answer's owner_name
+        entry = CampaignEncampment.objects.create(campaign_id=campaign_id, owner=creator, **fields)
     entry.owner_is_member = True  # type: ignore[attr-defined]  # a member or nobody (the serializer checked)
     return entry
 

@@ -160,6 +160,15 @@ class CampaignQueryBudgetTests(CampaignTestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(len(captured), 1)
 
+    def test_a_player_adds_an_encampment_in_two_queries(self):
+        # decision 9: any member adds one, owned by himself by default; the answer names him without reading him
+        self.client.force_authenticate(user=self.player)
+        with CaptureQueriesContext(connection) as captured:
+            response = self.client.post(self.url("encampments/"), {"name": "Tent"}, format="json")
+
+        self.assertEqual((response.status_code, response.json()["owner_name"]), (201, "Pia"))
+        self.assertEqual(len(captured), 2)  # the access read and the INSERT
+
     def test_history_reads_only_the_participant_columns_it_shows(self):
         # PERF-45: the participants prefetch read every JSON column of every participant
         self.client.force_authenticate(user=self.player)
