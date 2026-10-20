@@ -257,10 +257,24 @@ class SeederAtomicityTests(SeederTestCase):
     def test_seed_races_failing_part_way_keeps_nothing(self):
         rows = [{"name": "Human", **STATS}, {"name": "Elf", **STATS, "movement": "fast"}]
 
-        with data_file(rows) as path, self.assertRaises((CommandError, ValueError)):
+        with data_file(rows) as path, self.assertRaisesMessage(CommandError, "Race 'Elf': movement is 'fast'."):
             run("seed_races", json_path=path)
 
         self.assertFalse(Race.objects.exists())
+
+    def test_a_missing_stat_stops_seed_races_and_seed_bestiary_naming_it(self):
+        # BUG-54: seed_races crashed with a ValueError on save, seed_bestiary wrote a 0; both fail loudly now
+        partial = {key: value for key, value in STATS.items() if key not in ("strength", "leadership")}
+        cases = [
+            ("seed_races", {"json_path"}, [{"name": "Gnome", **partial}], "Race 'Gnome'"),
+            ("seed_bestiary", {"json_paths"}, [{"name": "Boar", "type": "Animal", **partial}], "Bestiary entry 'Boar'"),
+        ]
+        for command, (option,), rows, label in cases:
+            with self.subTest(command=command), data_file(rows) as path:
+                value = [path] if option == "json_paths" else path
+                with self.assertRaisesMessage(CommandError, f"{label}: strength is missing, leadership is missing."):
+                    run(command, **{option: value})
+        self.assertFalse(Race.objects.exists() or BestiaryEntry.objects.exists())
 
 
 class HouseRuleReseedTests(SeederTestCase):

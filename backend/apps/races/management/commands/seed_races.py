@@ -4,6 +4,7 @@ from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
+from apps.core.seeding import STAT_FIELDS, read_stats
 from apps.races.models import Race
 
 DEFAULT_JSON_PATH = Path("apps/races/data/races.json")
@@ -84,22 +85,9 @@ class Command(BaseCommand):
                 skipped += 1
                 continue
 
-            fields = {
-                "movement": _normalize(_get_entry_value(entry, HEADER_ALIASES["movement"])),
-                "weapon_skill": _normalize(_get_entry_value(entry, HEADER_ALIASES["weapon_skill"])),
-                "ballistic_skill": _normalize(_get_entry_value(entry, HEADER_ALIASES["ballistic_skill"])),
-                "strength": _normalize(_get_entry_value(entry, HEADER_ALIASES["strength"])),
-                "toughness": _normalize(_get_entry_value(entry, HEADER_ALIASES["toughness"])),
-                "wounds": _normalize(_get_entry_value(entry, HEADER_ALIASES["wounds"])),
-                "initiative": _normalize(_get_entry_value(entry, HEADER_ALIASES["initiative"])),
-                "attacks": _normalize(_get_entry_value(entry, HEADER_ALIASES["attacks"])),
-                "leadership": _normalize(_get_entry_value(entry, HEADER_ALIASES["leadership"])),
-                "campaign": None,
-            }
-
-            if not any(fields.values()):
-                skipped += 1
-                continue
+            # every stat must be there: a missing one is an error naming the race, not a crash on save (BUG-54)
+            raw = {field: _get_entry_value(entry, HEADER_ALIASES[field]) for field in STAT_FIELDS}
+            fields = read_stats(raw, f"Race '{name}'")
 
             race = Race.objects.filter(name=name, campaign__isnull=True, campaign_type__isnull=True).first()
             if race:

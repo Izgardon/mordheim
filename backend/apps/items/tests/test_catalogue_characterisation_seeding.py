@@ -10,7 +10,6 @@ copy-on-write makes): the seeders read and write the book only (BUG-17). Small, 
 
 from contextlib import redirect_stdout
 from io import StringIO
-from unittest import expectedFailure
 
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
@@ -19,7 +18,7 @@ from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
 from rest_framework.test import APIClient
 
-from apps.bestiary.models import BestiaryEntry, HiredSwordProfile
+from apps.bestiary.models import BestiaryEntry, BestiaryEntryItem, HiredSwordProfile
 from apps.campaigns.models import Campaign, CampaignType
 from apps.items.models import Item, ItemAvailability, ItemProperty
 from apps.items.services import sync_half_price_armour_for_campaign
@@ -30,27 +29,6 @@ from apps.special.models import Special
 from apps.spells.models import Spell
 
 BOOK_MODELS = (Race, Restriction, Item, ItemProperty, Skill, Spell, Special, BestiaryEntry, HiredSwordProfile)
-
-# The links seed_bestiary can't resolve on the committed data (BUG-54): the review's 14 (CAT-BUG-06) plus the
-# Hobgoblin Scout's Giant Wolf and the Freelancer's Warhorse (no item of either name).
-UNRESOLVED_TODAY = [
-    "Equipment 'Giant Wolf' not found for 'Hobgoblin Scout'",
-    "Equipment 'Horse' not found for 'Highwayman'",
-    "Equipment 'Horse' not found for 'Roadwarden'",
-    "Equipment 'Scythe' not found for 'Priest of Morr'",
-    "Equipment 'Thief's Cloak' not found for 'Thief'",
-    "Equipment 'Warhorse' not found for 'Freelancer'",
-    "Equipment 'Warpfire Thrower' not found for 'Clan Skryre Rat Ogre'",
-    "Skill 'Leap of Faith' not found for 'Ninja'",
-    "Skill 'Lightning Speed' not found for 'Ninja'",
-    "Skill 'Ride Warhorse' not found for 'Knight of the White Wolf'",
-    "Spell '1 - Banishment' not found for 'Dark Mage'",
-    "Spell '2 - Soul Render' not found for 'Dark Mage'",
-    "Spell '3 - Shade Mount' not found for 'Dark Mage'",
-    "Spell '4 - Jozun" + chr(0x2019) + "s Decay' not found for 'Dark Mage'",  # a curly apostrophe in the data
-    "Spell '5 - Cowel of Pain' not found for 'Dark Mage'",
-    "Spell '6 - Doom & Dark' not found for 'Dark Mage'",
-]
 
 
 def seed_all() -> str:
@@ -90,7 +68,7 @@ class SeedAllTests(TestCase):
                 "Item": 230,
                 "ItemProperty": 240,
                 "Skill": 252,
-                "Spell": 183,
+                "Spell": 189,  # 183 + the Dark Mage's six (BUG-54)
                 "Special": 186,
                 "BestiaryEntry": 86,
                 "HiredSwordProfile": 72,
@@ -117,10 +95,6 @@ class SeedAllTests(TestCase):
         # every availability is deleted and written again under a new id (CAT-BUG-08's id churn)
         self.assertEqual(set(ItemAvailability.objects.values_list("id", flat=True)) & availabilities, set())
 
-    def test_the_links_seed_bestiary_cannot_resolve(self):
-        # Characterises current behaviour (BUG-54, pinned; flips in PR A: prefixes stripped, aliases added)
-        self.assertEqual(self.unresolved(self.output), sorted(UNRESOLVED_TODAY))
-
     def test_the_seeded_bounty_hunter_details_cost_today(self):
         # Characterises current behaviour (PERF-46, CAT-TEST-08, pinned; flips in PR A: at most 12)
         client = APIClient()
@@ -133,15 +107,41 @@ class SeedAllTests(TestCase):
             counts.append(len(captured))
         self.assertEqual(counts, [43, 45])  # bestiary entry, hired sword: 8 items, each read on its own
 
-    @expectedFailure
     def test_every_seeded_link_resolves(self):
-        # BUG-54, CAT-TEST-13 (the Giant Spider's S0 is set aside, decision 8)
+        # BUG-54, CAT-TEST-13 (was pinned: 16 links unresolved; flipped in PR A: prefixes stripped, apostrophes
+        # straightened, aliases added, Animal items cached as they are written; the Giant Spider's S0 is set aside,
+        # decision 8)
         self.assertEqual(self.unresolved(self.output), [])
+        links = {
+            ("Highwayman", "Riding/Draft Horse"),
+            ("Roadwarden", "Riding/Draft Horse"),
+            ("Freelancer", "Warhorse"),
+            ("Hobgoblin Scout", "Giant Wolf"),
+            ("Priest of Morr", "Double-handed weapon"),
+        }
+        equipped = set(BestiaryEntryItem.objects.values_list("bestiary_entry__name", "item__name"))
+        self.assertLessEqual(links, equipped)
+        ninja = set(BestiaryEntry.objects.get(name="Ninja").skills.values_list("name", flat=True))
+        self.assertLessEqual({"Leap", "Lightning Reflexes"}, ninja)
+        knight = BestiaryEntry.objects.get(name="Knight of the White Wolf").skills.values_list("name", flat=True)
+        self.assertIn("Ride [Animal]", knight)
 
-    @expectedFailure
     def test_the_dark_mage_knows_his_six_spells(self):
-        # BUG-54, CAT-TEST-13: the "1 - " to "6 - " prefixes keep his spells from matching
-        self.assertEqual(BestiaryEntry.objects.get(name="Dark Mage").spells.count(), 6)
+        # BUG-54, CAT-TEST-13: the "1 - " to "6 - " prefixes kept his spells from matching; they are his own spells,
+        # written as book spells of his type with the roll from the prefix and the difficulty from the text
+        spells = BestiaryEntry.objects.get(name="Dark Mage").spells.order_by("roll")
+
+        self.assertEqual(
+            [(spell.roll, spell.name, spell.dc, spell.type) for spell in spells],
+            [
+                (1, "Banishment", "8", "Hired Sword - Dark Mage"),
+                (2, "Soul Render", "8", "Hired Sword - Dark Mage"),
+                (3, "Shade Mount", "8", "Hired Sword - Dark Mage"),
+                (4, "Jozun's Decay", "9", "Hired Sword - Dark Mage"),
+                (5, "Cowel of Pain", "6", "Hired Sword - Dark Mage"),
+                (6, "Doom & Dark", "7", "Hired Sword - Dark Mage"),
+            ],
+        )
 
     def _campaign_with_an_axe_and_half_price_armour(self) -> tuple[Campaign, Item]:
         campaign = Campaign.objects.create(name="Shards", join_code="SHARDS")

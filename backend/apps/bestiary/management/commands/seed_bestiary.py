@@ -14,6 +14,7 @@ from apps.bestiary.models import (
     HiredSwordProfile,
     HiredSwordProfileRestriction,
 )
+from apps.core.seeding import read_stats
 from apps.items.models import (
     Item,
     ItemAvailability,
@@ -29,19 +30,17 @@ DEFAULT_JSON_PATHS = [
     Path("apps/bestiary/data/hired-swords.json"),
 ]
 
-STAT_FIELDS = [
-    "movement",
-    "weapon_skill",
-    "ballistic_skill",
-    "strength",
-    "toughness",
-    "wounds",
-    "initiative",
-    "attacks",
-    "leadership",
-]
+SKILL_NAME_ALIASES = {  # the Ninja's and the Knight of the White Wolf's skills under their book names (BUG-54)
+    "lightning speed": "lightning reflexes",
+    "leap of faith": "leap",
+    "ride warhorse": "ride [animal]",
+}
+SPELL_PREFIX = re.compile(r"^(\d+)\s*-\s*")  # "1 - Banishment": the Dark Mage's D6 roll (BUG-54)
+SPELL_DIFFICULTY = re.compile(r"^Difficulty (\d+)")
 
 EQUIPMENT_NAME_ALIASES = {
+    "horse": "riding/draft horse",  # BUG-54
+    "scythe": "double-handed weapon",  # a Priest of Morr's scythe is one (BUG-54)
     "throwing knife": "throwing knives/stars",
     "throwing daggers": "throwing knives/stars",
     "throwing stars": "throwing knives/stars",
@@ -124,12 +123,27 @@ def _resolve_equipment_item(item_name, item_type, item_cache, item_name_cache):
 
 
 def _extract_name_and_description(item):
-    """Return (name, description) from either a plain string or a dict."""
+    """Return (name, description) from either a plain string or a dict; curly apostrophes in the name are
+    straightened, so "Jozun’s Decay" is stored and matched as "Jozun's Decay" (BUG-54)."""
     if isinstance(item, str):
-        return item.strip(), ""
-    if isinstance(item, dict):
-        return item.get("name", "").strip(), item.get("description", "").strip()
-    return "", ""
+        name, description = item, ""
+    elif isinstance(item, dict):
+        name, description = item.get("name", ""), item.get("description", "").strip()
+    else:
+        return "", ""
+    return re.sub(r"[`‘’]", "'", name).strip(), description
+
+
+def _spell_fields(spell_item):
+    """A hired sword's own spell: its name without the "N - " roll prefix, and the fields a book spell has."""
+    name, description = _extract_name_and_description(spell_item)
+    prefix = SPELL_PREFIX.match(name)
+    difficulty = SPELL_DIFFICULTY.match(description)
+    return SPELL_PREFIX.sub("", name), {
+        "description": description,
+        "roll": int(prefix.group(1)) if prefix else None,
+        "dc": difficulty.group(1) if difficulty else "",
+    }
 
 
 def _sync_availabilities(item, availabilities_data, restriction_cache: BookRestrictions):
@@ -182,27 +196,16 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING("No bestiary JSON files found."))
             return
 
-        # Build lookup caches for M2M resolution
-        skill_cache: dict[str, Skill] = {}
-        for s in Skill.objects.filter(campaign__isnull=True, campaign_type__isnull=True):
-            skill_cache[s.name.strip().lower()] = s
-
-        special_cache: dict[str, Special] = {}
-        for sp in Special.objects.filter(campaign__isnull=True, campaign_type__isnull=True):
-            special_cache[sp.name.strip().lower()] = sp
-
-        spell_cache: dict[str, Spell] = {}
-        for sl in Spell.objects.filter(campaign__isnull=True, campaign_type__isnull=True):
-            spell_cache[sl.name.strip().lower()] = sl
-
+        # Lookup caches for M2M resolution: the book's entries only (BUG-17), by name with apostrophes straightened
+        book = {"campaign__isnull": True, "campaign_type__isnull": True}
+        skill_cache = {_normalize_lookup_key(row.name): row for row in Skill.objects.filter(**book)}
+        special_cache = {_normalize_lookup_key(row.name): row for row in Special.objects.filter(**book)}
+        spell_cache = {_normalize_lookup_key(row.name): row for row in Spell.objects.filter(**book)}
         item_cache: dict[tuple[str, str], Item] = {}
         item_name_cache: dict[str, Item] = {}
-        for i in Item.objects.filter(campaign__isnull=True, campaign_type__isnull=True):
-            normalized_name = _normalize_lookup_key(i.name)
-            normalized_type = _normalize_lookup_key(i.type)
-            key = (normalized_name, normalized_type)
-            item_cache[key] = i
-            item_name_cache.setdefault(normalized_name, i)
+        for i in Item.objects.filter(**book):
+            item_cache[(_normalize_lookup_key(i.name), _normalize_lookup_key(i.type))] = i
+            item_name_cache.setdefault(_normalize_lookup_key(i.name), i)
 
         restriction_cache = BookRestrictions()
 
@@ -234,8 +237,7 @@ class Command(BaseCommand):
                         "large": bool(entry_data.get("large", False)),
                         "caster": entry_data.get("caster", "No"),
                     }
-                    for field in STAT_FIELDS:
-                        defaults[field] = _parse_int(entry_data.get(field), 0)
+                    defaults.update(read_stats(entry_data, f"Bestiary entry '{name}'"))  # fail loudly (BUG-54)
 
                     entry, was_created = BestiaryEntry.objects.update_or_create(
                         name=name,
@@ -251,7 +253,8 @@ class Command(BaseCommand):
                     # Sync skills (clear + re-add for idempotency)
                     BestiaryEntrySkill.objects.filter(bestiary_entry=entry).delete()
                     for skill_name in entry_data.get("skills", []):
-                        skill = skill_cache.get(skill_name.strip().lower())
+                        skill_key = _normalize_lookup_key(skill_name)
+                        skill = skill_cache.get(SKILL_NAME_ALIASES.get(skill_key, skill_key))
                         if skill:
                             BestiaryEntrySkill.objects.create(bestiary_entry=entry, skill=skill)
                         else:
@@ -263,7 +266,7 @@ class Command(BaseCommand):
                         special_name, special_desc = _extract_name_and_description(special_item)
                         if not special_name:
                             continue
-                        cache_key = special_name.lower()
+                        cache_key = _normalize_lookup_key(special_name)
                         special = special_cache.get(cache_key)
                         if not special:
                             special = Special.objects.create(
@@ -282,14 +285,16 @@ class Command(BaseCommand):
                     # Sync spells
                     BestiaryEntrySpell.objects.filter(bestiary_entry=entry).delete()
                     for spell_item in entry_data.get("spells", []):
-                        spell_name, _ = _extract_name_and_description(spell_item)
+                        spell_name, spell_fields = _spell_fields(spell_item)
                         if not spell_name:
                             continue
-                        spell = spell_cache.get(spell_name.lower())
-                        if spell:
-                            BestiaryEntrySpell.objects.create(bestiary_entry=entry, spell=spell)
-                        else:
-                            warnings.append(f"  Spell '{spell_name}' not found for '{name}'")
+                        spell = spell_cache.get(_normalize_lookup_key(spell_name))
+                        if not spell:  # his own spell (the Dark Mage's six), as specials and skills are (BUG-54)
+                            spell_type = f"Hired Sword - {name}"
+                            spell = Spell.objects.create(name=spell_name, type=spell_type, **spell_fields)
+                            spell_cache[_normalize_lookup_key(spell_name)] = spell
+                            warnings.append(f"  Created spell '{spell_name}' ({spell_type}) for '{name}'")
+                        BestiaryEntrySpell.objects.create(bestiary_entry=entry, spell=spell)
 
                     # Sync equipment items
                     BestiaryEntryItem.objects.filter(bestiary_entry=entry).delete()
@@ -328,6 +333,9 @@ class Command(BaseCommand):
                                 "bestiary_entry": entry,
                             },
                         )
+                        # a later entry may be equipped with it (the Freelancer's Warhorse, BUG-54)
+                        item_cache[(_normalize_lookup_key(name), "animal")] = item
+                        item_name_cache.setdefault(_normalize_lookup_key(name), item)
                         _sync_availabilities(
                             item,
                             shop_item_data.get("availabilities", []),
@@ -359,7 +367,7 @@ class Command(BaseCommand):
                             if not skill_name:
                                 continue
                             has_special_skills = True
-                            cache_key = skill_name.lower()
+                            cache_key = _normalize_lookup_key(skill_name)
                             skill = skill_cache.get(cache_key)
                             if not skill:
                                 skill = Skill.objects.create(
