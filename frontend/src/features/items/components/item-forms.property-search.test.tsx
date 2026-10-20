@@ -1,14 +1,13 @@
 /**
  * The property search in the item forms (`AddItemForm` on the Wargear page, `ItemFormDialog` on
- * the warband pages): each keystroke asks the server again, with no debounce and no guard against
- * answers arriving out of order (CAT-PERF-08). PR A filters the cached `item-properties` list
- * instead.
+ * the warband pages): both filter the campaign's cached `item-properties` list to the form's type
+ * and the search, so typing sends no request and no answer can land out of order (CAT-PERF-08).
  */
-import { act, screen } from "@testing-library/react";
+import { act, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { queryKeys } from "@/lib/query-keys";
-import { PROPERTIES, deferred } from "@/test/catalogue-fixtures";
+import { LIST, PROPERTIES, deferred } from "@/test/catalogue-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { createTestQueryClient, renderWithQueryClient } from "@/test/query-test-utils";
 import { chooseOption } from "@/test/select-option";
@@ -22,9 +21,6 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
 }));
-
-const search = (text = "") =>
-  `GET /item-properties/?type=Weapon${text ? `&search=${text}` : ""}&campaign_id=1`;
 
 const parry: ItemProperty = PROPERTIES[0];
 const poisoned: ItemProperty = {
@@ -42,6 +38,25 @@ const pairWeapon: ItemProperty = {
   description: "Comes as two.",
 };
 
+/** A book armour property: never offered for a weapon. */
+const padded: ItemProperty = {
+  id: 504,
+  campaign_id: null,
+  name: "Padded",
+  type: "Armour",
+  description: "Soft lining.",
+};
+/** A property with no type: the server offers it for every type. */
+const painted: ItemProperty = {
+  id: 505,
+  campaign_id: 1,
+  name: "Painted",
+  type: "",
+  description: "Warband colours.",
+};
+/** The campaign's `item-properties` list, every type, as `?campaign_id=1` returns it. */
+const PROPERTY_LIST = [parry, padded, painted, pairWeapon, poisoned];
+
 const PROPERTIES_KEY = queryKeys.campaign.catalogue(1, "item-properties");
 
 /** The property suggestions under the search box. */
@@ -53,16 +68,17 @@ const suggestions = () =>
 
 beforeEach(() => {
   fakeApi.reset();
-  fakeApi.on(search(), [parry, poisoned, pairWeapon]);
-  fakeApi.on(search("P"), [parry, poisoned, pairWeapon]);
-  fakeApi.on(search("Pa"), [parry, pairWeapon]);
-  fakeApi.on(search("Par"), [parry]);
 });
 
 describe("AddItemForm: property search", () => {
-  async function renderWeaponForm(user: ReturnType<typeof setupUser>) {
+  async function renderWeaponForm(
+    user: ReturnType<typeof setupUser>,
+    cached: ItemProperty[] | null = PROPERTIES
+  ) {
     const queryClient = createTestQueryClient();
-    queryClient.setQueryData(PROPERTIES_KEY, PROPERTIES);
+    if (cached) {
+      queryClient.setQueryData(PROPERTIES_KEY, cached);
+    }
     renderWithQueryClient(<AddItemForm campaignId={1} onCreated={vi.fn()} onCancel={vi.fn()} />, {
       queryClient,
     });
@@ -70,29 +86,34 @@ describe("AddItemForm: property search", () => {
     return queryClient;
   }
 
-  // Characterises current behaviour (CAT-PERF-08, pinned; flips in PR A)
-  it("asks the server once for the type, then once per keystroke (CAT-PERF-08, pinned; flips in PR A)", async () => {
+  it("filters the cached list to the type and the search as you type, with no request (CAT-PERF-08)", async () => {
     const user = setupUser();
-    await renderWeaponForm(user);
+    await renderWeaponForm(user, PROPERTY_LIST);
+    const searchBox = screen.getByPlaceholderText("Search properties...");
 
-    await user.type(screen.getByPlaceholderText("Search properties..."), "Par");
+    await user.type(searchBox, "pa");
+    expect(suggestions()).toEqual(["Parry", "Painted", "Pair"]);
+    await user.type(searchBox, "i");
 
-    expect(fakeApi.calls()).toEqual([search(), search("P"), search("Pa"), search("Par")]);
-    expect(suggestions()).toEqual(["Parry"]);
+    expect(suggestions()).toEqual(["Painted", "Pair"]);
+    expect(fakeApi.calls()).toEqual([]);
   });
 
-  // Characterises current behaviour (CAT-PERF-08, pinned; flips in PR A)
-  it("shows whichever answer lands last, so a slow answer for an earlier keystroke wins (CAT-PERF-08, pinned; flips in PR A)", async () => {
+  it("reads the list once on a cold cache, then filters it for every keystroke (CAT-PERF-08)", async () => {
     const user = setupUser();
-    const slowP = deferred<ItemProperty[]>();
-    fakeApi.on(search("P"), () => slowP.promise);
-    await renderWeaponForm(user);
+    const list = deferred<ItemProperty[]>();
+    fakeApi.on(LIST.properties, () => list.promise);
+    await renderWeaponForm(user, null);
+    const searchBox = screen.getByPlaceholderText("Search properties...");
 
-    await user.type(screen.getByPlaceholderText("Search properties..."), "Pa");
-    expect(suggestions()).toEqual(["Parry", "Pair"]);
-    await act(async () => slowP.resolve([parry, poisoned, pairWeapon]));
+    await user.type(searchBox, "Pa");
+    expect(suggestions()).toEqual([]);
+    await act(async () => list.resolve(PROPERTY_LIST));
+    await waitFor(() => expect(suggestions()).toEqual(["Parry", "Painted", "Pair"]));
+    await user.type(searchBox, "i");
 
-    expect(suggestions()).toEqual(["Parry", "Poisoned", "Pair"]);
+    expect(suggestions()).toEqual(["Painted", "Pair"]);
+    expect(fakeApi.calls()).toEqual([LIST.properties]);
   });
 
   it("puts a property it creates into the cached item-properties list", async () => {
@@ -120,9 +141,12 @@ describe("AddItemForm: property search", () => {
 });
 
 describe("ItemFormDialog: property search", () => {
-  async function openWeaponDialog(user: ReturnType<typeof setupUser>) {
+  async function openWeaponDialog(
+    user: ReturnType<typeof setupUser>,
+    cached: ItemProperty[] = PROPERTIES
+  ) {
     const queryClient = createTestQueryClient();
-    queryClient.setQueryData(PROPERTIES_KEY, PROPERTIES);
+    queryClient.setQueryData(PROPERTIES_KEY, cached);
     renderWithQueryClient(<ItemFormDialog mode="create" campaignId={1} onCreated={vi.fn()} />, {
       queryClient,
     });
@@ -132,15 +156,17 @@ describe("ItemFormDialog: property search", () => {
     return queryClient;
   }
 
-  // Characterises current behaviour (CAT-PERF-08, pinned; flips in PR A)
-  it("asks the server once for the type, then once per keystroke (CAT-PERF-08, pinned; flips in PR A)", async () => {
+  it("filters the cached list to the type and the search as you type, with no request (CAT-PERF-08)", async () => {
     const user = setupUser();
-    await openWeaponDialog(user);
+    await openWeaponDialog(user, PROPERTY_LIST);
+    const searchBox = screen.getByPlaceholderText("Search properties...");
 
-    await user.type(screen.getByPlaceholderText("Search properties..."), "Par");
+    await user.type(searchBox, "pa");
+    expect(suggestions()).toEqual(["Parry", "Painted", "Pair"]);
+    await user.type(searchBox, "i");
 
-    expect(fakeApi.calls()).toEqual([search(), search("P"), search("Pa"), search("Par")]);
-    expect(suggestions()).toEqual(["Parry"]);
+    expect(suggestions()).toEqual(["Painted", "Pair"]);
+    expect(fakeApi.calls()).toEqual([]);
   });
 
   // Characterises current behaviour (BUG-149, pinned; flips in PR A)

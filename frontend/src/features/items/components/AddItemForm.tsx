@@ -13,13 +13,8 @@ import { X } from "lucide-react";
 
 import { useCatalogueCache } from "@/lib/catalogue-queries";
 
-import {
-  createItem,
-  createItemProperty,
-  listItemProperties,
-  updateItem,
-  deleteItem,
-} from "../api/items-api";
+import { createItem, createItemProperty, updateItem, deleteItem } from "../api/items-api";
+import { useItemPropertySearch } from "../hooks/useItemPropertySearch";
 
 import type { Item, ItemProperty, Restriction } from "../types/item-types";
 
@@ -173,8 +168,12 @@ export default function AddItemForm({
   const [selectedProperties, setSelectedProperties] = useState<ItemProperty[]>(() =>
     editingItem ? mapPropertiesFromItem(editingItem) : []
   );
-  const [availableProperties, setAvailableProperties] = useState<ItemProperty[]>([]);
   const [propertySearch, setPropertySearch] = useState("");
+  const { forType: typeProperties, matches: availableProperties } = useItemPropertySearch(
+    campaignId,
+    form.type,
+    propertySearch
+  );
   const [showPropertyForm, setShowPropertyForm] = useState(false);
   const [newPropertyName, setNewPropertyName] = useState("");
   const [newPropertyDescription, setNewPropertyDescription] = useState("");
@@ -208,25 +207,15 @@ export default function AddItemForm({
     setNewPropertyDescription("");
   };
 
+  // Fills in the descriptions of an edited item's properties; unchanged, it keeps the same list.
   useEffect(() => {
-    if (form.type) {
-      listItemProperties({
-        type: form.type,
-        search: propertySearch,
-        campaignId,
-      })
-        .then((properties) => setAvailableProperties(properties))
-        .catch(() => setAvailableProperties([]));
-    } else {
-      setAvailableProperties([]);
-    }
-  }, [form.type, propertySearch, campaignId]);
-
-  useEffect(() => {
-    setSelectedProperties((prev) =>
-      prev.map((property) => availableProperties.find((p) => p.id === property.id) ?? property)
-    );
-  }, [availableProperties]);
+    setSelectedProperties((prev) => {
+      const next = prev.map(
+        (property) => typeProperties.find((p) => p.id === property.id) ?? property
+      );
+      return next.some((property, index) => property !== prev[index]) ? next : prev;
+    });
+  }, [typeProperties]);
 
   useEffect(() => {
     setPropertySearch("");
@@ -259,7 +248,6 @@ export default function AddItemForm({
       });
       catalogueCache.upsert("item-properties", campaignId, newProperty);
       setSelectedProperties([...selectedProperties, newProperty]);
-      setAvailableProperties([...availableProperties, newProperty]);
       setNewPropertyName("");
       setNewPropertyDescription("");
       setPropertySearch("");

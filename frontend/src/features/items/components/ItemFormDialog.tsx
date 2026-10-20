@@ -22,13 +22,8 @@ import { Tooltip } from "@components/tooltip";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 // api
-import {
-  createItem,
-  createItemProperty,
-  listItemProperties,
-  updateItem,
-  deleteItem,
-} from "../api/items-api";
+import { createItem, createItemProperty, updateItem, deleteItem } from "../api/items-api";
+import { useItemPropertySearch } from "../hooks/useItemPropertySearch";
 
 // types
 import type { Item, ItemProperty, Restriction } from "../types/item-types";
@@ -210,13 +205,18 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
   const [selectedProperties, setSelectedProperties] = useState<ItemProperty[]>(
     props.mode === "edit" ? mapPropertiesFromItem(props.item) : []
   );
-  const [availableProperties, setAvailableProperties] = useState<ItemProperty[]>([]);
   const [propertySearch, setPropertySearch] = useState("");
   const [showPropertyForm, setShowPropertyForm] = useState(false);
   const [newPropertyName, setNewPropertyName] = useState("");
   const [newPropertyDescription, setNewPropertyDescription] = useState("");
   const [isCreatingProperty, setIsCreatingProperty] = useState(false);
   const resolvedOpen = openProp ?? open;
+  const { forType: typeProperties, matches: availableProperties } = useItemPropertySearch(
+    props.campaignId,
+    form.type,
+    propertySearch,
+    { enabled: resolvedOpen }
+  );
 
   const resolvedTypeOptions = useMemo(() => {
     if (props.mode !== "edit") {
@@ -253,25 +253,15 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
     }
   }, [props.mode, props.mode === "edit" ? props.item : null, resolvedOpen]);
 
+  // Fills in the descriptions of an edited item's properties; unchanged, it keeps the same list.
   useEffect(() => {
-    if (form.type && resolvedOpen) {
-      listItemProperties({
-        type: form.type,
-        search: propertySearch,
-        campaignId: props.campaignId,
-      })
-        .then((properties) => setAvailableProperties(properties))
-        .catch(() => setAvailableProperties([]));
-    } else {
-      setAvailableProperties([]);
-    }
-  }, [form.type, propertySearch, props.campaignId, resolvedOpen]);
-
-  useEffect(() => {
-    setSelectedProperties((prev) =>
-      prev.map((property) => availableProperties.find((p) => p.id === property.id) ?? property)
-    );
-  }, [availableProperties]);
+    setSelectedProperties((prev) => {
+      const next = prev.map(
+        (property) => typeProperties.find((p) => p.id === property.id) ?? property
+      );
+      return next.some((property, index) => property !== prev[index]) ? next : prev;
+    });
+  }, [typeProperties]);
 
   useEffect(() => {
     setPropertySearch("");
@@ -321,7 +311,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
         campaign_id: props.campaignId,
       });
       setSelectedProperties([...selectedProperties, newProperty]);
-      setAvailableProperties([...availableProperties, newProperty]);
       setNewPropertyName("");
       setNewPropertyDescription("");
       setPropertySearch("");

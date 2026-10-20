@@ -7,7 +7,13 @@
 import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { PROPERTIES, availability, restricted, rustyCleaver } from "@/test/catalogue-fixtures";
+import {
+  LIST,
+  PROPERTIES,
+  availability,
+  restricted,
+  rustyCleaver,
+} from "@/test/catalogue-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { chooseOption } from "@/test/select-option";
@@ -24,10 +30,7 @@ const typeSelect = () => screen.getByText("Select a type").closest("button")!;
 
 beforeEach(() => {
   fakeApi.reset();
-  fakeApi.on("GET /item-properties/?type=Weapon&campaign_id=1", PROPERTIES);
-  fakeApi.on("GET /item-properties/?type=Weapon&search=P&campaign_id=1", PROPERTIES);
-  fakeApi.on("GET /item-properties/?type=Animal&campaign_id=1", []);
-  fakeApi.on("GET /item-properties/?type=Armour&campaign_id=1", []);
+  fakeApi.on(LIST.properties, PROPERTIES);
   fakeApi.on("POST /items/", (body: object) => ({ ...rustyCleaver, ...body, id: 300 }));
   fakeApi.on("PATCH /items/240/", (body: object) => ({ ...rustyCleaver, ...body }));
 });

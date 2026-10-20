@@ -38,7 +38,7 @@ const cachedNames = (queryClient: ReturnType<typeof createTestQueryClient>) =>
 
 beforeEach(() => {
   fakeApi.reset();
-  fakeApi.on("GET /item-properties/?type=Weapon&campaign_id=1", []);
+  fakeApi.on("GET /item-properties/?campaign_id=1", []);
 });
 
 describe("AddItemForm: Delete", () => {
