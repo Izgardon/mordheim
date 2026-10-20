@@ -13,6 +13,8 @@ class SpellSerializer(serializers.ModelSerializer):
 
 
 class SpellCreateSerializer(serializers.ModelSerializer):
+    """A custom spell's create or edit; the campaign is never an input (the view saves the create in its campaign)."""
+
     class Meta:
         model = Spell
-        fields = ("campaign", "name", "type", "description", "dc", "roll")
+        fields = ("name", "type", "description", "dc", "roll")

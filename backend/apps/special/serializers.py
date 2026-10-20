@@ -13,6 +13,8 @@ class SpecialSerializer(serializers.ModelSerializer):
 
 
 class SpecialCreateSerializer(serializers.ModelSerializer):
+    """A custom special's create or edit; the campaign is never an input (the view saves the create in its campaign)."""
+
     class Meta:
         model = Special
-        fields = ("campaign", "name", "type", "description")
+        fields = ("name", "type", "description")

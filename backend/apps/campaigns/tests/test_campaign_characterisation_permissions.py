@@ -18,6 +18,7 @@ from rest_framework.test import APITestCase
 
 from apps.campaigns.constants import PERMISSION_CODES, PERMISSIONS
 from apps.campaigns.models import CampaignEncampment, CampaignPermission, CampaignRole
+from apps.core.catalogue.views import CATALOGUE_RULES
 
 from .campaign_support import CampaignTestCase, make_user
 
@@ -92,7 +93,8 @@ class PermissionCatalogueTests(CampaignTestCase):
     def test_every_code_a_view_checks_exists(self):
         # BUG-15, CAMP-TEST-08: spells and specials checked codes nobody could hold; no view checks a retired code
         self.assertEqual(codes_checked_in_source() - set(PERMISSION_CODES), set())
-        self.assertLessEqual({"edit_catalogue", "delete_catalogue"}, codes_checked_in_source())
+        # the catalogue views check their codes through the campaign rules since PR B (IMP-79), not by a literal call
+        self.assertLessEqual({"edit_catalogue", "delete_catalogue"}, set(CATALOGUE_RULES.values()))
         self.assertEqual(codes_checked_in_source() & set(RETIRED_CODES), set())
 
     def test_any_member_reads_the_catalogue_with_labels_and_descriptions(self):

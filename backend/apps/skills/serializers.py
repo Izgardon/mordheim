@@ -13,7 +13,9 @@ class SkillSerializer(serializers.ModelSerializer):
 
 
 class SkillCreateSerializer(serializers.ModelSerializer):
+    """A custom skill's create or edit; the campaign is never an input (the view saves the create in its campaign)."""
+
     class Meta:
         model = Skill
-        fields = ("campaign", "name", "type", "description")
+        fields = ("name", "type", "description")
         extra_kwargs = {"description": {"allow_blank": False}}

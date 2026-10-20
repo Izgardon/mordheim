@@ -233,7 +233,7 @@ class CatalogueWriteBudgetTests(CatalogueTestCase):
         self.assertEqual(self.count(HIRED_SWORDS.list_url(), sword), 20)
         self.assertEqual(self.count(HIRED_SWORDS.list_url(), small), 20)
 
-    def test_a_skill_create_costs_5_queries(self):
-        # membership, the campaign read by the serializer's campaign field, the savepoint pair and the INSERT (3
-        # before the duplicate guard's savepoint, BUG-17)
-        self.assertEqual(self.count(SKILLS.list_url(), SKILLS.body("Feint", self.campaign)), 5)
+    def test_a_skill_create_costs_4_queries(self):
+        # membership, the savepoint pair and the INSERT (5 while the serializer read the campaign through a writable
+        # campaign field, IMP-79; 3 before the duplicate guard's savepoint, BUG-17)
+        self.assertEqual(self.count(SKILLS.list_url(), SKILLS.body("Feint", self.campaign)), 4)
