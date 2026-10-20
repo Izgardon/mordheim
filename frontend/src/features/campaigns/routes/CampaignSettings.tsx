@@ -20,6 +20,7 @@ import WarbandSettingsCard from "../components/settings/WarbandSettingsCard";
 
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";
+import { campaignCapabilities, hasCampaignSettings } from "../capabilities";
 import { useCampaignSettings } from "../hooks/use-campaign-settings";
 import { useMyWarbandWriter } from "@/features/warbands/hooks/warband/useMyWarbandStore";
 
@@ -39,10 +40,9 @@ export default function CampaignSettings() {
   const { warband } = useAppStore();
   const campaignId = Number(id);
   const myWarband = useMyWarbandWriter(Number.isNaN(campaignId) ? null : campaignId);
-  const canManageSettings = campaign ? ["owner", "admin"].includes(campaign.role) : false;
+  const capabilities = campaignCapabilities(campaign);
   // A player granted manage_battles gets the Campaign tab for Active Battles alone (BATL-NEW-03).
-  const hasCampaignTab =
-    canManageSettings || Boolean(campaign?.permissions?.includes("manage_battles"));
+  const hasCampaignTab = hasCampaignSettings(capabilities);
   const [activeTab, setActiveTab] = useState<SettingsTabId>("personal");
   const handleOpenCampaigns = useMemo(() => () => navigate("/campaigns"), [navigate]);
 
@@ -102,8 +102,7 @@ export default function CampaignSettings() {
     resetDeleteState,
   } = useCampaignSettings({
     campaignId,
-    campaignRole: campaign?.role,
-    campaignPermissions: campaign?.permissions,
+    campaign,
     onDeleted: () => navigate("/campaigns"),
   });
 
@@ -115,12 +114,11 @@ export default function CampaignSettings() {
     return <p className="text-sm text-red-600">Invalid campaign id.</p>;
   }
 
-  const isOwner = campaign.role === "owner";
   const joinCode = (compact: boolean) =>
     campaign.join_code ? (
       <JoinCodeBadge
         campaign={campaign}
-        canRegenerate={canManageSettings}
+        canRegenerate={capabilities.regenerate_join_code}
         onRegenerated={(updated) => setCampaign?.(updated)}
         compact={compact}
       />
@@ -129,7 +127,7 @@ export default function CampaignSettings() {
   const personalSettingsContent = (
     <div className="space-y-6">
       <PersonalSettingsCard onSignOut={signOut} onOpenCampaigns={handleOpenCampaigns} />
-      <WarbandDiceSettingsCard campaignRole={campaign.role} />
+      <WarbandDiceSettingsCard canEditAnyWarband={capabilities.manage_warbands} />
       {warband ? (
         <WarbandSettingsCard
           warband={warband}
@@ -183,11 +181,11 @@ export default function CampaignSettings() {
               personalSettingsContent
             ) : (
               <div className="space-y-8">
-                {canManageSettings && error ? (
+                {capabilities.view_members && error ? (
                   <p className="text-sm text-red-600">{error}</p>
                 ) : null}
 
-                {canManageSettings ? (
+                {capabilities.view_members ? (
                   <MembersCard
                     isLoading={isLoading}
                     members={members}
@@ -217,20 +215,20 @@ export default function CampaignSettings() {
                   />
                 ) : null}
 
-                {isOwner ? (
+                {capabilities.edit_settings ? (
                   <CampaignControlCard
                     campaign={campaign}
                     onCampaignUpdated={(updated) => setCampaign?.(updated)}
                   />
                 ) : null}
-                {isOwner ? (
+                {capabilities.edit_settings ? (
                   <CampaignLevelUpSettingsCard
                     campaign={campaign}
                     onCampaignUpdated={(updated) => setCampaign?.(updated)}
                   />
                 ) : null}
 
-                {isOwner ? (
+                {capabilities.delete ? (
                   <DeleteCampaignCard
                     open={deleteOpen}
                     onOpenChange={setDeleteOpen}

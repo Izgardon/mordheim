@@ -13,7 +13,7 @@ import { PageHeader } from "@components/page-header";
 import MobileTabs from "@components/mobile-tabs";
 
 // api
-import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
+import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import { createHouseRule, listHouseRules } from "../api/rules-api";
 import CommonRulesSheet from "../components/CommonRulesSheet";
 import EditHouseRuleDialog from "../components/EditHouseRuleDialog";
@@ -46,14 +46,8 @@ export default function HouseRules() {
   const [isCommonRulesOpen, setIsCommonRulesOpen] = useState(false);
 
   const campaignId = Number(id);
-  const memberPermissions = useCampaignPermissions(campaignId);
 
-  const canManageRules = useMemo(() => {
-    if (campaign?.role === "owner" || campaign?.role === "admin") {
-      return true;
-    }
-    return memberPermissions.includes("manage_rules");
-  }, [campaign?.role, memberPermissions]);
+  const canManageRules = campaignCapabilities(campaign).manage_rules;
 
   const syncItemCatalogIfNeeded = async (previousRules: HouseRule[], nextRules: HouseRule[]) => {
     const itemEffectKeys = new Set(["half_price_armour", "improved_shields"]);

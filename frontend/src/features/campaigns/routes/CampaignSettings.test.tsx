@@ -4,6 +4,7 @@ import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import CampaignSettings from "./CampaignSettings";
+import { capabilitiesFor } from "@/test/campaign-fixtures";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 
 import type { CampaignRole, CampaignSummary } from "../types/campaign-types";
@@ -55,6 +56,7 @@ vi.mock("../components/settings/RemoveMemberDialog", () => ({ default: () => nul
 vi.mock("@components/confirm-dialog", () => ({ ConfirmDialog: () => null }));
 
 const buildCampaign = (role: CampaignRole, permissions?: string[]): CampaignSummary => ({
+  capabilities: capabilitiesFor({ role, permissions }),
   id: 4,
   name: "Shadows over Mordheim",
   join_code: "",

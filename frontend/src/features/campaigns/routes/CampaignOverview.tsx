@@ -21,6 +21,7 @@ import RosterTable from "../components/overview/RosterTable";
 import TradeOverviewTable from "../components/overview/TradeOverviewTable";
 
 // hooks
+import { campaignCapabilities } from "../capabilities";
 import { useCampaignOverview } from "../hooks/useCampaignOverview";
 
 // types
@@ -131,7 +132,7 @@ export default function CampaignOverview() {
         />
         <BattleHistorySection
           campaignId={campaignId}
-          canEditRecords={Boolean(campaign.permissions?.includes("manage_battles"))}
+          canEditRecords={campaignCapabilities(campaign).manage_battles}
           onRecordSaved={reloadBattleHistory}
           isLoading={isBattleHistoryLoading}
           error={battleHistoryError}

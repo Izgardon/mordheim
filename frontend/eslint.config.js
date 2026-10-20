@@ -24,4 +24,24 @@ export default tseslint.config(
       ],
     },
   },
+  {
+    // Campaign controls gate on the detail's capabilities (design 0.29): only
+    // features/campaigns/capabilities.ts knows roles and permission codes.
+    files: ["src/features/**/*.{ts,tsx}"],
+    ignores: ["src/features/campaigns/capabilities.ts", "src/**/*.test.{ts,tsx}"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "MemberExpression[object.name=/^campaign$/][property.name='role']",
+          message: "Gate on capabilities (design 0.29), not on the viewer's role.",
+        },
+        {
+          selector:
+            "CallExpression[callee.property.name='includes'][arguments.0.value=/^(add_custom|manage_)/]",
+          message: "Gate on capabilities (design 0.29), not on permission codes.",
+        },
+      ],
+    },
+  },
 );

@@ -14,8 +14,6 @@ import type { CampaignSummary } from "../types/campaign-types";
 /** Campaign settings and the caller's permissions change rarely, and writes update the cache. */
 export const CAMPAIGN_STALE_TIME_MS = 5 * 60_000;
 
-const NO_PERMISSIONS: string[] = [];
-
 export function isCampaignId(campaignId: number) {
   return Number.isInteger(campaignId) && campaignId > 0;
 }
@@ -31,15 +29,6 @@ export function useCampaignQuery(campaignId: number) {
 }
 
 /**
- * The caller's permission codes in the campaign (owners and admins hold every code), read
- * from the campaign payload instead of a separate /permissions/me/ request.
- */
-export function useCampaignPermissions(campaignId: number) {
-  const { data } = useCampaignQuery(campaignId);
-  return data?.permissions ?? NO_PERMISSIONS;
-}
-
-/**
  * The permission codes an owner or admin can grant, with the server's labels and descriptions
  * (BUG-15). The list only changes with a deploy, so it is read once per session.
  */
@@ -52,7 +41,7 @@ export function usePermissionCatalogue(campaignId: number, { enabled }: { enable
   });
 }
 
-/** Replaces the cached campaign after a settings change, keeping the caller's permissions. */
+/** Replaces the cached campaign after a settings change, keeping the caller's permissions and flags. */
 export function useSetCampaign(campaignId: number) {
   const queryClient = useQueryClient();
   return useCallback<Dispatch<SetStateAction<CampaignSummary | null>>>(
@@ -64,8 +53,12 @@ export function useSetCampaign(campaignId: number) {
           if (!resolved) {
             return previous;
           }
-          // Update responses don't carry the caller's permissions.
-          return { ...resolved, permissions: resolved.permissions ?? previous?.permissions };
+          // Update responses don't carry the caller's permissions or capabilities.
+          return {
+            ...resolved,
+            permissions: resolved.permissions ?? previous?.permissions,
+            capabilities: resolved.capabilities ?? previous?.capabilities,
+          };
         }
       );
     },

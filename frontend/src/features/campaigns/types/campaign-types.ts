@@ -1,5 +1,6 @@
 import type { Restriction } from "../../items/types/item-types";
 import type { BattleParticipant, BattleSummary } from "@/features/battles/types/battle-types";
+import type { CampaignCapability } from "../capabilities";
 
 export type CampaignRole = "owner" | "admin" | "player";
 export type CampaignHeroDeathRoll = "d66" | "d100";
@@ -26,6 +27,11 @@ export type CampaignSummary = {
   role: CampaignRole;
   /** The caller's permission codes; only the campaign detail endpoint includes them. */
   permissions?: string[];
+  /**
+   * What the caller may do (design 0.29); only the detail includes them. Read them through
+   * `capabilities.ts`, which treats a missing flag as false.
+   */
+  capabilities?: Partial<Record<CampaignCapability, boolean>>;
   in_progress: boolean;
   created_at: string;
   updated_at: string;

@@ -17,7 +17,7 @@ import {
   listCampaignLocations,
   updateCampaignLocation,
 } from "../api/campaigns-api";
-import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
+import { campaignCapabilities } from "../capabilities";
 import { getCampaignSectionTabs, type CampaignSectionTabId } from "@/lib/campaign-section-tabs";
 import LocationsTable from "../components/LocationsTable";
 
@@ -57,12 +57,8 @@ export default function Locations() {
   const formRef = useRef<HTMLDivElement>(null);
 
   const campaignId = Number(id);
-  const memberPermissions = useCampaignPermissions(campaignId);
   const campaignSectionTabs = useMemo(() => getCampaignSectionTabs(campaign), [campaign]);
-  const canManage =
-    campaign?.role === "owner" ||
-    campaign?.role === "admin" ||
-    memberPermissions.includes("manage_locations");
+  const canManage = campaignCapabilities(campaign).manage_locations;
   const isEnabled = Boolean(campaign?.enable_locations);
 
   useEffect(() => {

@@ -14,6 +14,7 @@ import {
   type BattlePhase,
 } from "@/features/battles/state/battle-machine";
 import { toastBattleOver } from "@/features/battles/utils/battle-over";
+import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 
 /**
@@ -34,7 +35,7 @@ export default function BattleProvider({
   const numericBattleId = Number(battleId);
   const { user } = useAuth();
   const outlet = useOutletContext<CampaignLayoutContext | undefined>();
-  const managesBattles = Boolean(outlet?.campaign?.permissions?.includes("manage_battles"));
+  const managesBattles = campaignCapabilities(outlet?.campaign).manage_battles;
   const reader = useMemo(() => ({ userId: user?.id, managesBattles }), [managesBattles, user?.id]);
 
   const {

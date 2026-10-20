@@ -14,6 +14,7 @@ import {
   updateCampaign,
 } from "../api/campaigns-api";
 import { getWarbandRosterStats, type RosterStatsRow } from "../../warbands/api/warbands-core";
+import { campaignCapabilities } from "../capabilities";
 
 // types
 import type {
@@ -238,7 +239,7 @@ export function useCampaignOverview({
   }, [campaignId, isBulletinOpen]);
 
   // Owners and admins start the campaign (decision 2, BUG-13).
-  const canStartCampaign = campaign?.role === "owner" || campaign?.role === "admin";
+  const canStartCampaign = campaignCapabilities(campaign).start;
 
   const togglePlayer = (player: CampaignPlayer) => {
     setExpandedPlayers((prev) => {

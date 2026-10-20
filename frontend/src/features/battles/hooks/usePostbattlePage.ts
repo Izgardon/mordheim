@@ -19,6 +19,7 @@ import { usePostbattleExit } from "@/features/battles/hooks/usePostbattleExit";
 import { usePostbattleSummary } from "@/features/battles/hooks/usePostbattleSummary";
 import { usePostbattleUnitActions } from "@/features/battles/hooks/usePostbattleUnitActions";
 import { useBattle } from "@/features/battles/state/battle-context";
+import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { warbandSheetQuery } from "@/features/warbands/api/warband-queries";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
@@ -94,7 +95,7 @@ export function usePostbattlePage(campaign: CampaignSummary | null | undefined) 
     battleId,
     battleState,
     currentParticipant,
-    canManageBattles: Boolean(campaign?.permissions?.includes("manage_battles")),
+    canManageBattles: campaignCapabilities(campaign).manage_battles,
     capabilities: battle.capabilities,
     userId: user?.id,
     exploration: explore.exploration,

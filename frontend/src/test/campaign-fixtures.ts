@@ -5,6 +5,7 @@
  * The server names that member "Player 12" wherever a name goes, never by email (SEC-13).
  */
 import type { PendingReportedResult } from "@/features/battles/types/battle-types";
+import type { CampaignCapability } from "@/features/campaigns/capabilities";
 import type {
   CampaignBattleHistoryEntry,
   CampaignEncampment,
@@ -81,9 +82,46 @@ export const PERMISSION_CATALOGUE: CampaignPermission[] = [
 /** Every code an owner's or an admin's campaign payload carries. */
 export const ALL_PERMISSION_CODES = PERMISSION_CATALOGUE.map((entry) => entry.code);
 
+/**
+ * The detail's `capabilities` as the server's rules give them (`apps/campaigns/access.py`):
+ * role flags for owners and admins, one flag per code held, and the encampment and location codes
+ * only while their page is switched on.
+ */
+export function capabilitiesFor(
+  campaign: Pick<
+    CampaignSummary,
+    "role" | "permissions" | "enable_encampments" | "enable_locations"
+  >
+): Record<CampaignCapability, boolean> {
+  const isOwner = campaign.role === "owner";
+  const isStaff = isOwner || campaign.role === "admin";
+  const holds = (code: string) => isStaff || (campaign.permissions ?? []).includes(code);
+  return {
+    edit_settings: isOwner,
+    start: isStaff,
+    delete: isOwner,
+    regenerate_join_code: isStaff,
+    view_members: isStaff,
+    grant_permissions: isStaff,
+    change_roles: isOwner,
+    remove_members: isStaff,
+    add_custom: holds("add_custom"),
+    manage_items: holds("manage_items"),
+    manage_skills: holds("manage_skills"),
+    manage_spells: holds("manage_spells"),
+    manage_specials: holds("manage_specials"),
+    manage_rules: holds("manage_rules"),
+    manage_warbands: holds("manage_warbands"),
+    manage_encampments: Boolean(campaign.enable_encampments) && holds("manage_encampments"),
+    manage_locations: Boolean(campaign.enable_locations) && holds("manage_locations"),
+    manage_bestiary: holds("manage_bestiary"),
+    manage_battles: holds("manage_battles"),
+  };
+}
+
 /** `GET campaigns/1/` as the owner reads it; a started Standard campaign by default. */
 export function campaignSummary(overrides: Partial<CampaignSummary> = {}): CampaignSummary {
-  return {
+  const campaign: CampaignSummary = {
     id: CAMPAIGN_ID,
     name: "Shards of the Comet",
     join_code: "WYR123",
@@ -108,6 +146,7 @@ export function campaignSummary(overrides: Partial<CampaignSummary> = {}): Campa
     updated_at: "2026-10-18T18:00:00Z",
     ...overrides,
   };
+  return { ...campaign, capabilities: overrides.capabilities ?? capabilitiesFor(campaign) };
 }
 
 /**
@@ -292,8 +331,8 @@ export function routeOverviewLists() {
   fakeApi.on(`GET ${campaignApi("battles/pending-results/")}`, []);
 }
 
-/** The PATCH answer: the campaign with the change, without the caller's permissions (as today). */
+/** The PATCH answer: the campaign with the change, without the caller's permissions or flags. */
 export function patchedCampaign(campaign: CampaignSummary, body: unknown): CampaignSummary {
-  const { permissions: _permissions, ...rest } = campaign;
+  const { permissions: _permissions, capabilities: _capabilities, ...rest } = campaign;
   return { ...rest, ...(body as Partial<CampaignSummary>) };
 }

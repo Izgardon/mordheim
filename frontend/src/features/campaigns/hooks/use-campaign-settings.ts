@@ -18,30 +18,35 @@ import {
 } from "@/features/battles/api/battles-api";
 import { invalidateOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 
+import { campaignCapabilities, canRemoveMember as mayRemove } from "../capabilities";
 import { usePermissionCatalogue } from "./useCampaignQuery";
 import { apiErrorCode } from "@/lib/get-error-message";
 import { queryKeys } from "@/lib/query-keys";
 
 // types
-import type { CampaignActiveBattle, CampaignMember } from "../types/campaign-types";
+import type {
+  CampaignActiveBattle,
+  CampaignMember,
+  CampaignSummary,
+} from "../types/campaign-types";
 
 type UseCampaignSettingsParams = {
   campaignId: number;
-  campaignRole?: CampaignMember["role"];
-  /** The viewer's campaign permission codes; `manage_battles` opens Active Battles. */
-  campaignPermissions?: string[];
+  /** The viewer's campaign: its capabilities gate every card (design 0.29). */
+  campaign: CampaignSummary | null;
   onDeleted: () => void;
 };
 
 export function useCampaignSettings({
   campaignId,
-  campaignRole,
-  campaignPermissions,
+  campaign,
   onDeleted,
 }: UseCampaignSettingsParams) {
+  const capabilities = campaignCapabilities(campaign);
   // Active Battles is for anyone with manage_battles (owners and admins have it), as the server
   // rules (BATL-NEW-03).
-  const canManageActiveBattles = Boolean(campaignPermissions?.includes("manage_battles"));
+  const canManageActiveBattles = capabilities.manage_battles;
+  const canViewMembers = capabilities.view_members;
   const [members, setMembers] = useState<CampaignMember[]>([]);
   const [activeBattles, setActiveBattles] = useState<CampaignActiveBattle[]>([]);
   const [error, setError] = useState("");
@@ -60,12 +65,12 @@ export function useCampaignSettings({
   const [removeError, setRemoveError] = useState("");
   const [isRemoving, setIsRemoving] = useState(false);
 
-  const canManagePermissions = campaignRole === "owner" || campaignRole === "admin";
-  const canManageRoles = campaignRole === "owner";
+  const canManagePermissions = capabilities.grant_permissions;
+  const canManageRoles = capabilities.change_roles;
   // The owner removes anyone but themself, admins included; admins remove players; nobody
   // removes the owner (decision 1, as the server rules).
   const canRemoveMember = (member: CampaignMember) =>
-    member.role !== "owner" && (campaignRole === "owner" || member.role === "player");
+    campaign ? mayRemove(campaign, member) : false;
   const isDeleteReady = deleteValue.trim().toLowerCase() === "delete";
 
   // The grant menu's codes, labels and descriptions come from the server (BUG-15).
@@ -78,7 +83,7 @@ export function useCampaignSettings({
   );
 
   useEffect(() => {
-    if (!campaignRole || !["owner", "admin"].includes(campaignRole) || Number.isNaN(campaignId)) {
+    if (!canViewMembers || Number.isNaN(campaignId)) {
       return;
     }
 
@@ -100,7 +105,7 @@ export function useCampaignSettings({
         }
       })
       .finally(() => setIsLoading(false));
-  }, [campaignRole, campaignId]);
+  }, [canViewMembers, campaignId]);
 
   useEffect(() => {
     if (!canManageActiveBattles || Number.isNaN(campaignId)) {
