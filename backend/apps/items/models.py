@@ -39,6 +39,13 @@ class Item(models.Model):
     class Meta:
         db_table = "item"
         ordering = ["type", "name"]
+        constraints = [
+            models.UniqueConstraint(  # one clone per source item and house rule effect in a campaign (BUG-51)
+                fields=["campaign", "generated_effect_key", "source_item"],
+                condition=models.Q(generated_effect_key__isnull=False),
+                name="item_unique_house_rule_clone",
+            )
+        ]
 
     def __str__(self):
         return f"{self.name} ({self.type})"

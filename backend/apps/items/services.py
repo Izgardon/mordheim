@@ -47,13 +47,6 @@ def _prefetched_base_shield_items():
     )
 
 
-def _single_availability_cost(item):
-    availabilities = list(item.availabilities.all())
-    if len(availabilities) != 1:
-        return None
-    return availabilities[0].cost
-
-
 def _clone_item_fields(source, clone, campaign_id, effect_key, *, save_value=None):
     clone.campaign_id = campaign_id
     clone.source_item = source
@@ -128,7 +121,9 @@ def _sync_matching_availabilities(source, clone):
             ItemAvailabilityRestriction.objects.bulk_create(restriction_links)
 
 
-def _remap_campaign_owned_rows(campaign_id, item_id_map, cost_by_target_id):
+def _remap_campaign_owned_rows(campaign_id, item_id_map):
+    """Point the campaign's owned copies of each item at its replacement. Each row keeps its stored purchase cost:
+    what the warband paid, which sales and values read (BUG-51)."""
     if not item_id_map:
         return
 
@@ -139,8 +134,7 @@ def _remap_campaign_owned_rows(campaign_id, item_id_map, cost_by_target_id):
         if target_item_id is None:
             continue
         hero_item.item_id = target_item_id
-        hero_item.cost = cost_by_target_id.get(target_item_id)
-        hero_item.save(update_fields=["item", "cost"])
+        hero_item.save(update_fields=["item"])
 
     for group_item in HenchmenGroupItem.objects.filter(
         henchmen_group__warband__campaign_id=campaign_id,
@@ -150,8 +144,7 @@ def _remap_campaign_owned_rows(campaign_id, item_id_map, cost_by_target_id):
         if target_item_id is None:
             continue
         group_item.item_id = target_item_id
-        group_item.cost = cost_by_target_id.get(target_item_id)
-        group_item.save(update_fields=["item", "cost"])
+        group_item.save(update_fields=["item"])
 
     for sword_item in HiredSwordItem.objects.filter(
         hired_sword__warband__campaign_id=campaign_id,
@@ -161,8 +154,7 @@ def _remap_campaign_owned_rows(campaign_id, item_id_map, cost_by_target_id):
         if target_item_id is None:
             continue
         sword_item.item_id = target_item_id
-        sword_item.cost = cost_by_target_id.get(target_item_id)
-        sword_item.save(update_fields=["item", "cost"])
+        sword_item.save(update_fields=["item"])
 
     from apps.warbands.services.stash import add_to_stash  # the stash's row per item and cost (BUG-117)
 
@@ -171,37 +163,24 @@ def _remap_campaign_owned_rows(campaign_id, item_id_map, cost_by_target_id):
         target_item_id = item_id_map.get(stash_item.item_id)
         if target_item_id is None:
             continue
-        # the copies move to the target item at its catalogue cost, joining any copies already at that cost
+        # the copies move to the target item at the cost they were bought at, joining copies already at that cost
         stash_item.delete()
-        add_to_stash(
-            stash_item.warband_id, target_item_id, stash_item.quantity or 0, cost_by_target_id.get(target_item_id)
-        )
+        add_to_stash(stash_item.warband_id, target_item_id, stash_item.quantity or 0, stash_item.cost)
+
+
+def _retire_clones(campaign_id, clones):
+    """Move the campaign's owned copies of these clones back to their source items, then delete the clones (deleting
+    first would cascade and delete the owned copies, BUG-51)."""
+    clones = [clone for clone in clones if clone.source_item_id]
+    if not clones:
+        return
+    _remap_campaign_owned_rows(campaign_id, {clone.id: clone.source_item_id for clone in clones})
+    Item.objects.filter(id__in=[clone.id for clone in clones]).delete()
 
 
 def _revert_generated_items_for_campaign(campaign_id, effect_key):
-    generated_clones = list(
-        Item.objects.filter(
-            campaign_id=campaign_id,
-            generated_effect_key=effect_key,
-            source_item__isnull=False,
-        )
-        .select_related("source_item")
-        .prefetch_related("source_item__availabilities")
-    )
-    if not generated_clones:
-        return
-
-    item_id_map = {}
-    restored_cost_by_source_id = {}
-    for clone in generated_clones:
-        if not clone.source_item_id:
-            continue
-        item_id_map[clone.id] = clone.source_item_id
-        source_cost = _single_availability_cost(clone.source_item)
-        restored_cost_by_source_id[clone.source_item_id] = source_cost
-
-    _remap_campaign_owned_rows(campaign_id, item_id_map, restored_cost_by_source_id)
-    Item.objects.filter(id__in=[clone.id for clone in generated_clones]).delete()
+    clones = Item.objects.filter(campaign_id=campaign_id, generated_effect_key=effect_key, source_item__isnull=False)
+    _retire_clones(campaign_id, list(clones.only("id", "source_item_id")))
 
 
 def _sync_generated_items_for_campaign(
@@ -210,7 +189,6 @@ def _sync_generated_items_for_campaign(
     effect_key,
     source_items,
     clone_sync_fn,
-    cost_transform_fn,
 ):
     source_items = list(source_items)
     source_ids = [item.id for item in source_items]
@@ -224,7 +202,6 @@ def _sync_generated_items_for_campaign(
     }
 
     clone_map = {}
-    cost_by_clone_id = {}
 
     for source in source_items:
         clone = existing_clones.get(source.id)
@@ -233,19 +210,13 @@ def _sync_generated_items_for_campaign(
         clone_sync_fn(source, clone)
         clone_map[source.id] = clone
 
-        source_cost = _single_availability_cost(source)
-        if source_cost is not None:
-            cost_by_clone_id[clone.id] = cost_transform_fn(source_cost)
-
-    stale_clones = Item.objects.filter(
-        campaign_id=campaign_id,
-        generated_effect_key=effect_key,
-    ).exclude(source_item_id__in=source_ids)
-    if stale_clones.exists():
-        stale_clones.delete()
+    stale_clones = Item.objects.filter(campaign_id=campaign_id, generated_effect_key=effect_key).exclude(
+        source_item_id__in=source_ids
+    )
+    _retire_clones(campaign_id, list(stale_clones.only("id", "source_item_id")))
 
     item_id_map = {source_id: clone.id for source_id, clone in clone_map.items()}
-    _remap_campaign_owned_rows(campaign_id, item_id_map, cost_by_clone_id)
+    _remap_campaign_owned_rows(campaign_id, item_id_map)
 
 
 def sync_half_price_armour_for_campaign(campaign_id):
@@ -260,7 +231,6 @@ def sync_half_price_armour_for_campaign(campaign_id):
         effect_key=HALF_PRICE_ARMOUR_EFFECT_KEY,
         source_items=_prefetched_base_armour_items(),
         clone_sync_fn=clone_sync_fn,
-        cost_transform_fn=lambda source_cost: int(math.ceil(source_cost / 2)),
     )
 
 
@@ -296,7 +266,6 @@ def sync_improved_shields_for_campaign(campaign_id):
         effect_key=IMPROVED_SHIELDS_EFFECT_KEY,
         source_items=_prefetched_base_shield_items(),
         clone_sync_fn=clone_sync_fn,
-        cost_transform_fn=lambda source_cost: source_cost,
     )
 
 

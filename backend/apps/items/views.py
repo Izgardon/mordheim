@@ -15,6 +15,11 @@ from .models import (
 )
 from .serializers import ItemCreateSerializer, ItemPropertySerializer, ItemSerializer
 
+HOUSE_RULE_ITEM = {
+    "detail": "This item comes from a house rule and changes with it. Edit or delete the house rule instead.",
+    "code": "house_rule_item",
+}  # BUG-51: editing or deleting a generated clone was lost on the next sync or cascaded to every owned copy
+
 
 def _prefetch_items():
     return Item.objects.prefetch_related(
@@ -147,6 +152,8 @@ class ItemDetailView(APIView):
         membership = get_membership(request.user, item.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
+        if item.generated_effect_key:
+            return Response(HOUSE_RULE_ITEM, status=403)
         if not has_campaign_permission(membership, "manage_items"):
             return Response({"detail": "Forbidden"}, status=403)
 
@@ -182,6 +189,8 @@ class ItemDetailView(APIView):
         membership = get_membership(request.user, item.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
+        if item.generated_effect_key:
+            return Response(HOUSE_RULE_ITEM, status=403)
         if not has_campaign_permission(membership, "manage_items"):
             return Response({"detail": "Forbidden"}, status=403)
 

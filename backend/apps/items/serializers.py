@@ -99,6 +99,7 @@ class ItemSerializer(serializers.ModelSerializer):
             "properties",
             "availabilities",
             "bestiary_entry",
+            "generated_effect_key",  # set on a house rule's clone, which can't be edited or deleted (BUG-51)
         )
 
     def get_properties(self, obj):

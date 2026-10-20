@@ -362,13 +362,13 @@ class CampaignApiTests(APITestCase):
             source_item=armour,
         )
         self.assertEqual(WarbandItem.objects.get(warband=warband).item_id, clone.id)
-        self.assertEqual(WarbandItem.objects.get(warband=warband).cost, 46)
+        self.assertEqual(WarbandItem.objects.get(warband=warband).cost, 91)  # what was paid (BUG-51)
         self.assertEqual(HeroItem.objects.get(hero=hero).item_id, clone.id)
-        self.assertEqual(HeroItem.objects.get(hero=hero).cost, 46)
+        self.assertEqual(HeroItem.objects.get(hero=hero).cost, 91)
         self.assertEqual(HiredSwordItem.objects.get(hired_sword=hired_sword).item_id, clone.id)
-        self.assertEqual(HiredSwordItem.objects.get(hired_sword=hired_sword).cost, 46)
+        self.assertEqual(HiredSwordItem.objects.get(hired_sword=hired_sword).cost, 91)
         self.assertEqual(HenchmenGroupItem.objects.get(henchmen_group=group).item_id, clone.id)
-        self.assertEqual(HenchmenGroupItem.objects.get(henchmen_group=group).cost, 46)
+        self.assertEqual(HenchmenGroupItem.objects.get(henchmen_group=group).cost, 91)
 
     def test_delete_half_price_armour_rule_restores_owned_items_and_removes_clones(self):
         owner = self._create_user("owner@example.com", "Owner")
