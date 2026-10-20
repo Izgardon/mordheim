@@ -5,6 +5,7 @@ import type { Dispatch, ReactNode, SetStateAction } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 
 // components
+import CampaignLoadError from "../components/layout/CampaignLoadError";
 import CampaignSidebar from "../components/layout/CampaignSidebar";
 import {
   getCampaignNavItems,
@@ -342,11 +343,10 @@ export default function CampaignLayout() {
 
   if (!campaign) {
     return (
-      <main className="campaigns max-h-full bg-transparent">
-        <div className="mx-auto flex max-h-full max-w-6xl items-center justify-center px-6 py-10">
-          <p className="text-sm text-red-600">{campaignError || "No record of that campaign."}</p>
-        </div>
-      </main>
+      <CampaignLoadError
+        message={campaignError || "No record of that campaign."}
+        onRetry={isCampaignId(campaignId) ? () => void campaignQuery.refetch() : undefined}
+      />
     );
   }
 
