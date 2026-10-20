@@ -18,6 +18,7 @@ import { createHouseRule, listHouseRules } from "../api/rules-api";
 import CommonRulesSheet from "../components/CommonRulesSheet";
 import EditHouseRuleDialog from "../components/EditHouseRuleDialog";
 import { getCampaignSectionTabs, type CampaignSectionTabId } from "@/lib/campaign-section-tabs";
+import { mergeAppliedRules } from "../utils/merge-applied-rules";
 
 // types
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
@@ -155,13 +156,18 @@ export default function HouseRules() {
     void syncItemCatalogIfNeeded(rules, nextRules);
   };
 
-  const handleCommonRulesApplied = (createdRules: HouseRule[]) => {
-    const nextRules = [...createdRules, ...rules];
+  const handleCommonRulesApplied = (
+    applied: HouseRule[],
+    { allApplied }: { allApplied: boolean }
+  ) => {
+    const nextRules = mergeAppliedRules(rules, applied);
     setRules(nextRules);
     void syncItemCatalogIfNeeded(rules, nextRules);
-    setIsFormOpen(false);
-    setForm(initialForm);
-    setFormError("");
+    if (allApplied) {
+      setIsFormOpen(false);
+      setForm(initialForm);
+      setFormError("");
+    }
   };
 
   const handleRulesNavChange = (tabId: CampaignSectionTabId) => {
