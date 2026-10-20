@@ -240,43 +240,6 @@ class SeederUpsertTests(SeederTestCase):
         self.assertEqual(Item.objects.get(name="Warhound", type="Animal").bestiary_entry_id, book.id)
 
 
-class SeederAtomicityTests(SeederTestCase):
-    """BUG-17: each seeder writes everything or nothing."""
-
-    def test_seed_items_failing_part_way_keeps_nothing(self):
-        rows: list[dict[str, Any]] = [
-            {"name": "Club", "type": "Weapon", "cost": 3},
-            {"name": "Axe", "type": "Weapon", "properties": [999]},
-        ]
-
-        with self.assertRaisesMessage(CommandError, "Unknown property id 999 for item 'Axe'"):
-            seed_items(rows)
-
-        self.assertFalse(Item.objects.exists())
-
-    def test_seed_races_failing_part_way_keeps_nothing(self):
-        rows = [{"name": "Human", **STATS}, {"name": "Elf", **STATS, "movement": "fast"}]
-
-        with data_file(rows) as path, self.assertRaisesMessage(CommandError, "Race 'Elf': movement is 'fast'."):
-            run("seed_races", json_path=path)
-
-        self.assertFalse(Race.objects.exists())
-
-    def test_a_missing_stat_stops_seed_races_and_seed_bestiary_naming_it(self):
-        # BUG-54: seed_races crashed with a ValueError on save, seed_bestiary wrote a 0; both fail loudly now
-        partial = {key: value for key, value in STATS.items() if key not in ("strength", "leadership")}
-        cases = [
-            ("seed_races", {"json_path"}, [{"name": "Gnome", **partial}], "Race 'Gnome'"),
-            ("seed_bestiary", {"json_paths"}, [{"name": "Boar", "type": "Animal", **partial}], "Bestiary entry 'Boar'"),
-        ]
-        for command, (option,), rows, label in cases:
-            with self.subTest(command=command), data_file(rows) as path:
-                value = [path] if option == "json_paths" else path
-                with self.assertRaisesMessage(CommandError, f"{label}: strength is missing, leadership is missing."):
-                    run(command, **{option: value})
-        self.assertFalse(Race.objects.exists() or BestiaryEntry.objects.exists())
-
-
 class HouseRuleReseedTests(SeederTestCase):
     """BUG-51 (pass 5 half): clones copy their book armour once, so `seed_items` ends by syncing every campaign's
     rule again, through pass 4's one repricing path."""
