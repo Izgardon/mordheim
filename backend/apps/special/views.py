@@ -8,6 +8,7 @@ from apps.campaigns.permissions import (
     has_campaign_permission,
     parse_campaign_id,
 )
+from apps.core.catalogue import merge
 from apps.core.catalogue.duplicates import refusing_duplicates
 from apps.core.catalogue.usage import delete_unless_in_use
 
@@ -35,12 +36,8 @@ class SpecialListView(APIView):
             if not membership:
                 return Response({"detail": "Not found"}, status=404)
 
-            campaign_specials = specials.filter(campaign_id=campaign_id)
-            base_specials = specials.filter(campaign__isnull=True)
-            if campaign_specials.exists():
-                base_specials = base_specials.exclude(name__in=campaign_specials.values_list("name", flat=True))
-            merged = list(campaign_specials.order_by("name", "id")) + list(base_specials.order_by("name", "id"))
-            serializer = SpecialSerializer(merged, many=True)
+            rows = merge.campaign_rows(specials, campaign_id).order_by(*merge.campaign_first("name", "id"))
+            serializer = SpecialSerializer(rows, many=True)
             return Response(serializer.data)
 
         specials = specials.filter(campaign__isnull=True)

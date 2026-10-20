@@ -1,5 +1,3 @@
-from typing import Any
-
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,6 +8,7 @@ from apps.campaigns.permissions import (
     has_campaign_permission,
     parse_campaign_id,
 )
+from apps.core.catalogue import merge
 from apps.core.catalogue.duplicates import refusing_duplicates
 from apps.core.catalogue.usage import delete_unless_in_use
 
@@ -23,30 +22,20 @@ class RaceListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        races: Any = Race.objects.all()
+        races = Race.objects.all()
         campaign_id = parse_campaign_id(request.query_params.get("campaign_id"))
+        search = request.query_params.get("search")
+        if search:  # before the merge, as every list: the rule hides only exact names, so the rows are the same
+            races = races.filter(name__icontains=search.strip())
         if campaign_id is not None:
             membership = get_membership(request.user, campaign_id)
             if not membership:
                 return Response({"detail": "Not found"}, status=404)
-
-            custom_races = races.filter(campaign_id=campaign_id)
-            base_races = races.filter(campaign__isnull=True)
-            if custom_races.exists():
-                base_races = base_races.exclude(name__in=custom_races.values_list("name", flat=True))
-            races = list(custom_races.order_by("name", "id")) + list(base_races.order_by("name", "id"))
+            rows = merge.campaign_rows(races, campaign_id).order_by(*merge.campaign_first("name", "id"))
         else:
-            races = races.filter(campaign__isnull=True).order_by("name", "id")
+            rows = merge.book_rows(races).order_by("name", "id")
 
-        search = request.query_params.get("search")
-        if search:
-            if isinstance(races, list):
-                cleaned = search.strip().lower()
-                races = [race for race in races if cleaned in race.name.lower()]
-            else:
-                races = races.filter(name__icontains=search.strip())
-
-        serializer = RaceSerializer(races, many=True)
+        serializer = RaceSerializer(rows, many=True)
         return Response(serializer.data)
 
     def post(self, request):

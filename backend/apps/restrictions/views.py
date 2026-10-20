@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.campaigns.permissions import get_membership, parse_campaign_id
+from apps.core.catalogue import merge
 
 from .models import Restriction
 from .serializers import RestrictionSerializer
@@ -31,14 +32,9 @@ class RestrictionListView(APIView):
             if not membership:
                 return Response({"detail": "Not found"}, status=404)
 
-            custom = restrictions.filter(campaign_id=campaign_id)
-            base = restrictions.filter(campaign__isnull=True)
-            if custom.exists():
-                base = base.exclude(restriction__in=custom.values_list("restriction", flat=True))
-            merged = list(custom.order_by("type", "restriction")) + list(base.order_by("type", "restriction"))
-            serializer = RestrictionSerializer(merged, many=True)
+            rows = merge.campaign_rows(restrictions, campaign_id, "restriction")  # by text
+            serializer = RestrictionSerializer(rows.order_by(*merge.campaign_first("type", "restriction")), many=True)
             return Response(serializer.data)
 
-        restrictions = restrictions.filter(campaign__isnull=True)
-        serializer = RestrictionSerializer(restrictions, many=True)
+        serializer = RestrictionSerializer(merge.book_rows(restrictions).order_by("type", "restriction"), many=True)
         return Response(serializer.data)

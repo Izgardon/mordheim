@@ -8,6 +8,7 @@ from apps.campaigns.permissions import (
     has_campaign_permission,
     parse_campaign_id,
 )
+from apps.core.catalogue import merge
 from apps.core.catalogue.duplicates import refusing_duplicates
 from apps.core.catalogue.usage import delete_unless_in_use
 
@@ -35,12 +36,8 @@ class SkillListView(APIView):
             if not membership:
                 return Response({"detail": "Not found"}, status=404)
 
-            campaign_skills = skills.filter(campaign_id=campaign_id)
-            base_skills = skills.filter(campaign__isnull=True)
-            if campaign_skills.exists():
-                base_skills = base_skills.exclude(name__in=campaign_skills.values_list("name", flat=True))
-            merged = list(campaign_skills.order_by("name", "id")) + list(base_skills.order_by("name", "id"))
-            serializer = SkillSerializer(merged, many=True)
+            rows = merge.campaign_rows(skills, campaign_id).order_by(*merge.campaign_first("name", "id"))
+            serializer = SkillSerializer(rows, many=True)
             return Response(serializer.data)
 
         skills = skills.filter(campaign__isnull=True)

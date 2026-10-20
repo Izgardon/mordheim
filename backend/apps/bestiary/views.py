@@ -9,12 +9,13 @@ from apps.campaigns.permissions import (
     has_campaign_permission,
     parse_campaign_id,
 )
+from apps.core.catalogue import merge
 from apps.warbands.models import Warband
 from apps.warbands.units.catalogue_scope import in_campaign_scope
 
 from . import writes
 from .models import BestiaryEntry, HiredSwordProfile, WarbandBestiaryFavourite
-from .selectors import entry_details, hired_sword_details
+from .selectors import entry_details, hired_sword_details, hired_sword_rows
 from .serializers import (
     BestiaryEntrySerializer,
     BestiaryEntrySummarySerializer,
@@ -45,16 +46,10 @@ class BestiaryEntryListView(APIView):
             if not membership:
                 return Response({"detail": "Not found"}, status=404)
 
-            campaign_entries = entries.filter(campaign_id=campaign_id)
-            base_entries = entries.filter(campaign__isnull=True)
-            if campaign_entries.exists():
-                base_entries = base_entries.exclude(name__in=campaign_entries.values_list("name", flat=True))
-            merged = list(campaign_entries.order_by("name", "id")) + list(base_entries.order_by("name", "id"))
-            serializer = BestiaryEntrySummarySerializer(merged, many=True)
-            return Response(serializer.data)
+            rows = merge.campaign_rows(entries, campaign_id).order_by(*merge.campaign_first("name", "id"))
+            return Response(BestiaryEntrySummarySerializer(rows, many=True).data)
 
-        entries = entries.filter(campaign__isnull=True)
-        serializer = BestiaryEntrySummarySerializer(entries.order_by("name", "id"), many=True)
+        serializer = BestiaryEntrySummarySerializer(merge.book_rows(entries).order_by("name", "id"), many=True)
         return Response(serializer.data)
 
     def post(self, request):
@@ -193,9 +188,7 @@ class HiredSwordProfileListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        profiles = HiredSwordProfile.objects.select_related("bestiary_entry").prefetch_related(
-            "restriction_links__restriction",
-        )
+        profiles = HiredSwordProfile.objects.all()
 
         search = request.query_params.get("search")
         if search:
@@ -207,20 +200,12 @@ class HiredSwordProfileListView(APIView):
             if not membership:
                 return Response({"detail": "Not found"}, status=404)
 
-            campaign_profiles = profiles.filter(campaign_id=campaign_id)
-            base_profiles = profiles.filter(campaign__isnull=True)
-            if campaign_profiles.exists():
-                base_profiles = base_profiles.exclude(
-                    bestiary_entry__name__in=campaign_profiles.values_list("bestiary_entry__name", flat=True)
-                )
-            merged = list(campaign_profiles.order_by("bestiary_entry__name")) + list(
-                base_profiles.order_by("bestiary_entry__name")
-            )
-            serializer = HiredSwordProfileSummarySerializer(merged, many=True)
-            return Response(serializer.data)
+            rows = merge.campaign_rows(profiles, campaign_id, "bestiary_entry__name")  # by the entry's name
+            rows = rows.order_by(*merge.campaign_first("bestiary_entry__name"))
+            return Response(HiredSwordProfileSummarySerializer(hired_sword_rows(rows), many=True).data)
 
-        profiles = profiles.filter(campaign__isnull=True)
-        serializer = HiredSwordProfileSummarySerializer(profiles.order_by("bestiary_entry__name"), many=True)
+        rows = merge.book_rows(profiles).order_by("bestiary_entry__name")
+        serializer = HiredSwordProfileSummarySerializer(hired_sword_rows(rows), many=True)
         return Response(serializer.data)
 
     def post(self, request):

@@ -22,17 +22,18 @@ from .catalogue_support import BESTIARY, HIRED_SWORDS, ITEMS, KINDS, RACES, SKIL
 # list -> (url, budget with book rows only, budget with campaign rows as well). The book rows include a Sword with
 # a property and a restricted availability, and each campaign item has both, so every prefetch runs.
 LIST_BUDGETS: dict[str, tuple[str, int, int]] = {
-    # membership, exists(), then each half with its own 5-query prefetch chain (PERF-49; PR B: <= 7 either way)
-    "items": ("/api/items/?campaign_id={campaign}", 9, 14),
-    "skills": ("/api/skills/?campaign_id={campaign}", 4, 4),  # membership, exists(), campaign rows, book rows
-    "spells": ("/api/spells/?campaign_id={campaign}", 4, 4),
-    "specials": ("/api/special/?campaign_id={campaign}", 4, 4),
-    "races": ("/api/races/?campaign_id={campaign}", 4, 4),
-    "bestiary": ("/api/bestiary/?campaign_id={campaign}", 4, 4),
-    "hired_swords": ("/api/hired-swords/?campaign_id={campaign}", 5, 6),  # + the restrictions of each half
-    "restrictions": ("/api/restrictions/?campaign_id={campaign}", 4, 4),
+    # PERF-49 (were 9 and 14: exists(), then each half with its own prefetch chain): membership, the merged rows (an
+    # animal's entry joined), their property links, availabilities and restriction links; + an animal's specials
+    "items": ("/api/items/?campaign_id={campaign}", 5, 5),
+    "skills": ("/api/skills/?campaign_id={campaign}", 2, 2),  # membership, the merged rows (were 4)
+    "spells": ("/api/spells/?campaign_id={campaign}", 2, 2),
+    "specials": ("/api/special/?campaign_id={campaign}", 2, 2),
+    "races": ("/api/races/?campaign_id={campaign}", 2, 2),
+    "bestiary": ("/api/bestiary/?campaign_id={campaign}", 2, 2),
+    "hired_swords": ("/api/hired-swords/?campaign_id={campaign}", 3, 3),  # + their restrictions (were 5 and 6)
+    "restrictions": ("/api/restrictions/?campaign_id={campaign}", 2, 2),
     "item_properties": ("/api/item-properties/?campaign_id={campaign}", 2, 2),  # one filtered list
-    "items_book": ("/api/items/", 6, 6),  # no campaign: the book list and its prefetch chain
+    "items_book": ("/api/items/", 4, 4),  # no campaign: the book rows and their prefetch chain (was 6)
 }
 
 
@@ -94,6 +95,13 @@ class CatalogueQueryBudgetTests(CatalogueTestCase):
         for name, (template, _, _) in LIST_BUDGETS.items():
             with self.subTest(list=name):
                 self.assertEqual(self.count("get", self.budget_url(template)), before[name])
+
+    def test_the_items_list_costs_6_queries_with_campaign_rows_and_an_animal(self):
+        # PERF-49, CAT-TEST-07 (at most 7 either way): an Animal item adds its entry's specials, in one query
+        self.add_campaign_rows("House")
+        make_entry(ITEMS, "Hound", type="Animal", subtype="", bestiary_entry=self.warhound)
+
+        self.assertEqual(self.count("get", self.budget_url(LIST_BUDGETS["items"][0])), 6)
 
     def test_a_revalidated_list_runs_every_query_to_answer_304(self):
         # Characterises current behaviour (PERF-13's server half, pinned; flips in PR B: at most 3 queries)
@@ -201,13 +209,14 @@ class CatalogueWriteBudgetTests(CatalogueTestCase):
         availabilities = [{"cost": 10 * (n + 1), **restricted} for n in range(links)]
         return ITEMS.body(name, self.campaign, availabilities=availabilities, property_ids=properties)
 
-    def test_an_item_create_costs_15_queries_however_many_rows_it_links(self):
+    def test_an_item_create_costs_13_queries_however_many_rows_it_links(self):
         # PERF-44, BUG-53 (was pinned at 25: an INSERT and a restriction read per availability, a get_or_create per
         # property; flipped in PR A). Membership, a scope check for the properties and one for the restrictions, the
         # savepoint pair, the item, its availabilities, their restrictions and its properties in one INSERT each,
-        # then the answer (the item and its five prefetches)
-        self.assertEqual(self.count(ITEMS.list_url(), self.item_body("Halberd", 2)), 15)
-        self.assertEqual(self.count(ITEMS.list_url(), self.item_body("Glaive", 6)), 15)
+        # then the answer: the item and its three prefetches (15 with five, before PERF-49 joined the properties and
+        # restrictions to their links)
+        self.assertEqual(self.count(ITEMS.list_url(), self.item_body("Halberd", 2)), 13)
+        self.assertEqual(self.count(ITEMS.list_url(), self.item_body("Glaive", 6)), 13)
 
     def test_a_hired_sword_create_costs_20_queries_however_many_rows_it_links(self):
         # PERF-44, BUG-53 (was pinned at 96: a get_or_create per link, then the answer's N+1; flipped in PR A). The

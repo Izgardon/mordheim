@@ -8,6 +8,7 @@ from apps.campaigns.permissions import (
     has_campaign_permission,
     parse_campaign_id,
 )
+from apps.core.catalogue import merge
 from apps.core.catalogue.duplicates import refusing_duplicates
 from apps.core.catalogue.usage import delete_unless_in_use
 
@@ -35,12 +36,8 @@ class SpellListView(APIView):
             if not membership:
                 return Response({"detail": "Not found"}, status=404)
 
-            campaign_spells = spells.filter(campaign_id=campaign_id)
-            base_spells = spells.filter(campaign__isnull=True)
-            if campaign_spells.exists():
-                base_spells = base_spells.exclude(name__in=campaign_spells.values_list("name", flat=True))
-            merged = list(campaign_spells.order_by("name", "id")) + list(base_spells.order_by("name", "id"))
-            serializer = SpellSerializer(merged, many=True)
+            rows = merge.campaign_rows(spells, campaign_id).order_by(*merge.campaign_first("name", "id"))
+            serializer = SpellSerializer(rows, many=True)
             return Response(serializer.data)
 
         spells = spells.filter(campaign__isnull=True)

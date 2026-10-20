@@ -32,6 +32,13 @@ def entry_details() -> QuerySet[BestiaryEntry]:
     return BestiaryEntry.objects.prefetch_related(*_entry_prefetches())
 
 
+def hired_sword_rows(rows: QuerySet[HiredSwordProfile]) -> QuerySet[HiredSwordProfile]:
+    """Hired-sword profiles read for the list payload: each entry with its profile's row, the restrictions (with
+    their text) in one query (PERF-49)."""
+    restrictions = HiredSwordProfileRestriction.objects.select_related("restriction").order_by("id")
+    return rows.select_related("bestiary_entry").prefetch_related(Prefetch("restriction_links", queryset=restrictions))
+
+
 def hired_sword_details() -> QuerySet[HiredSwordProfile]:
     """Hired-sword profiles read for the detail payload: their entry's as above, plus the profile's restrictions."""
     restrictions = HiredSwordProfileRestriction.objects.select_related("restriction").order_by("id")

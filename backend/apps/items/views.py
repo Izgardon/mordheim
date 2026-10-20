@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import QuerySet
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,10 +10,12 @@ from apps.campaigns.permissions import (
     has_campaign_permission,
     parse_campaign_id,
 )
+from apps.core.catalogue import merge
 from apps.core.catalogue.usage import delete_unless_in_use
+from apps.warbands.prefetches import item_detail_prefetches
 
 from . import writes
-from .models import Item, ItemAvailability, ItemProperty
+from .models import Item, ItemProperty
 from .serializers import ItemPropertySerializer, ItemSerializer, ItemWriteSerializer
 
 HOUSE_RULE_ITEM = {
@@ -21,22 +24,19 @@ HOUSE_RULE_ITEM = {
 }  # BUG-51: editing or deleting a generated clone was lost on the next sync or cascaded to every owned copy
 
 
-def _prefetch_items():
-    return Item.objects.prefetch_related(
-        "property_links__property",
-        "bestiary_entry__specials",
-        models.Prefetch(
-            "availabilities",
-            queryset=ItemAvailability.objects.prefetch_related("restriction_links__restriction"),
-        ),
-    )
+def _prefetch_items(rows: QuerySet[Item] | None = None) -> QuerySet[Item]:
+    """Items read for their payload: an animal's entry with the row, then one query each for the property links (with
+    their properties), the availabilities, their restriction links (with their restrictions) and, when an item hires
+    an animal, its specials (PERF-49)."""
+    rows = Item.objects.all() if rows is None else rows
+    return rows.select_related("bestiary_entry").prefetch_related(*item_detail_prefetches(), "bestiary_entry__specials")
 
 
 class ItemListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        items = _prefetch_items()
+        items = Item.objects.all()
         item_type = request.query_params.get("type")
         if item_type:
             items = items.filter(type__iexact=item_type.strip())
@@ -50,17 +50,11 @@ class ItemListView(APIView):
             if not membership:
                 return Response({"detail": "Not found"}, status=404)
 
-            custom_items = items.filter(campaign_id=campaign_id)
-            base_items = items.filter(campaign__isnull=True)
-            if custom_items.exists():
-                base_items = base_items.exclude(name__in=custom_items.values_list("name", flat=True))
-            merged = list(custom_items.order_by("name", "id")) + list(base_items.order_by("name", "id"))
-            serializer = ItemSerializer(merged, many=True)
-            return Response(serializer.data)
+            rows = merge.campaign_rows(items, campaign_id).order_by(*merge.campaign_first("name", "id"))
+            return Response(ItemSerializer(_prefetch_items(rows), many=True).data)
 
-        items = items.filter(campaign__isnull=True)
-        serializer = ItemSerializer(items.order_by("name", "id"), many=True)
-        return Response(serializer.data)
+        rows = merge.book_rows(items).order_by("name", "id")
+        return Response(ItemSerializer(_prefetch_items(rows), many=True).data)
 
     def post(self, request):
         campaign_id = parse_campaign_id(request.data.get("campaign_id"))
