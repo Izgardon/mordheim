@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@components/button";
 import { ConfirmDialog } from "@components/confirm-dialog";
@@ -14,6 +15,9 @@ import {
 } from "@/components/ui/dialog";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { cancelBattleAsCreator, joinBattle } from "@/features/battles/api/battles-api";
+import { DECLINE_INVITE_QUESTION } from "@/features/battles/components/prebattle/PrebattleInviteGate";
+import { useDeclineInvite } from "@/features/battles/hooks/useDeclineInvite";
+import { invalidatePendingResults } from "@/features/battles/hooks/usePendingReportedResults";
 import {
   useOpenCampaignBattles,
   useRefreshOpenBattles,
@@ -24,8 +28,12 @@ import {
   getBattleRouteForStatus,
   getResumableBattleForUser,
 } from "@/features/battles/utils/battle-session";
+import { deadlineLabel } from "@/features/battles/utils/battle-timing";
 import type { CampaignPlayer } from "../../types/campaign-types";
+import UnfinishedBattleBanner from "@/features/battles/components/shared/UnfinishedBattleBanner";
+import PendingResultsCard from "./PendingResultsCard";
 import StartBattleDialog from "./StartBattleDialog";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 const NO_BATTLES: BattleState[] = [];
 
@@ -60,6 +68,7 @@ export default function BattleActionPanel({
   const isBattlesLoading = battlesQuery.isPending;
   const replaceOpenBattle = useReplaceOpenBattle(campaignId);
   const refreshOpenBattles = useRefreshOpenBattles(campaignId);
+  const queryClient = useQueryClient();
 
   const resumableBattle = useMemo(
     () => getResumableBattleForUser(battleStates, user?.id),
@@ -74,6 +83,21 @@ export default function BattleActionPanel({
 
   const battleIsInviting = resumableBattle?.battle.status === "inviting";
   const canAcceptInvite = battleIsInviting && currentUserParticipant?.status === "invited";
+  const canDeclineInvite =
+    battleIsInviting &&
+    resumableBattle?.battle.created_by_user_id !== user?.id &&
+    (currentUserParticipant?.status === "invited" || currentUserParticipant?.status === "accepted");
+  const [isDeclineConfirmOpen, setIsDeclineConfirmOpen] = useState(false);
+  const declining = useDeclineInvite({
+    campaignId,
+    battleId: resumableBattle?.battle.id ?? null,
+    onDeclined: (updatedBattle) => {
+      replaceOpenBattle(updatedBattle);
+      void refreshOpenBattles();
+      setIsDeclineConfirmOpen(false);
+      setIsStatusDialogOpen(false);
+    },
+  });
 
   const canCreatorCancelResumableBattle =
     Boolean(resumableBattle) &&
@@ -99,11 +123,7 @@ export default function BattleActionPanel({
       const updatedBattle = await joinBattle(campaignId, resumableBattle.battle.id);
       replaceOpenBattle(updatedBattle);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setInviteActionError(errorResponse.message || "Unable to accept invitation");
-      } else {
-        setInviteActionError("Unable to accept invitation");
-      }
+      setInviteActionError(getErrorMessage(errorResponse, "Unable to accept invitation"));
     } finally {
       setIsAcceptingInvite(false);
     }
@@ -121,11 +141,7 @@ export default function BattleActionPanel({
       setIsCancelBattleDialogOpen(false);
       setIsStatusDialogOpen(false);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setCancelBattleError(errorResponse.message || "Unable to cancel battle");
-      } else {
-        setCancelBattleError("Unable to cancel battle");
-      }
+      setCancelBattleError(getErrorMessage(errorResponse, "Unable to cancel battle"));
     } finally {
       setIsCancelingBattle(false);
     }
@@ -176,12 +192,24 @@ export default function BattleActionPanel({
             campaignId={campaignId}
             creatorUserId={user?.id ?? 0}
             players={players}
-            onBattleCreated={refreshOpenBattles}
+            onBattleCreated={() => {
+              void refreshOpenBattles();
+              // A reported result waits on the card, with Withdraw for you (BUG-46).
+              void invalidatePendingResults(queryClient, campaignId);
+            }}
           />
         ) : null}
       </div>
 
+      {resumableBattle && deadlineLabel(resumableBattle.battle) ? (
+        <p className="pt-1 text-center text-[0.62rem] uppercase tracking-[0.2em] text-amber-300">
+          {deadlineLabel(resumableBattle.battle)}
+        </p>
+      ) : null}
       {battleError ? <p className="text-center text-sm text-red-600">{battleError}</p> : null}
+      <UnfinishedBattleBanner campaignId={campaignId} className="mx-2 mt-2 text-center sm:mx-0" />
+
+      <PendingResultsCard campaignId={campaignId} />
 
       {resumableBattle && battleIsInviting ? (
         <BattleInviteStatusDialog
@@ -195,8 +223,25 @@ export default function BattleActionPanel({
           onAcceptInvite={handleAcceptInvite}
           onCancelBattle={() => setIsCancelBattleDialogOpen(true)}
           cancelBattleError={cancelBattleError}
+          canDeclineInvite={Boolean(canDeclineInvite)}
+          onDeclineInvite={() => setIsDeclineConfirmOpen(true)}
         />
       ) : null}
+
+      <ConfirmDialog
+        open={isDeclineConfirmOpen}
+        onOpenChange={setIsDeclineConfirmOpen}
+        title="Decline battle"
+        description={
+          <div className="space-y-2">
+            <p>{DECLINE_INVITE_QUESTION}</p>
+            {declining.error ? <p className="text-sm text-red-600">{declining.error}</p> : null}
+          </div>
+        }
+        confirmText={declining.isDeclining ? "Declining..." : "Decline"}
+        isConfirming={declining.isDeclining}
+        onConfirm={() => void declining.decline()}
+      />
 
       <ConfirmDialog
         open={isCancelBattleDialogOpen}
@@ -242,6 +287,8 @@ type BattleInviteStatusDialogProps = {
   onAcceptInvite: () => void;
   onCancelBattle: () => void;
   cancelBattleError: string;
+  canDeclineInvite: boolean;
+  onDeclineInvite: () => void;
 };
 
 function BattleInviteStatusDialog({
@@ -255,6 +302,8 @@ function BattleInviteStatusDialog({
   onAcceptInvite,
   onCancelBattle,
   cancelBattleError,
+  canDeclineInvite,
+  onDeclineInvite,
 }: BattleInviteStatusDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -268,7 +317,12 @@ function BattleInviteStatusDialog({
 
         <div className="space-y-2">
           <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
-            {battleState.battle.scenario || `Session #${battleState.battle.id}`}
+            {[
+              battleState.battle.scenario || `Session #${battleState.battle.id}`,
+              deadlineLabel(battleState.battle),
+            ]
+              .filter(Boolean)
+              .join(" · ")}
           </p>
           <div className="rounded-xl border border-border/50 bg-black/30">
             <table className="w-full border-collapse">
@@ -307,6 +361,11 @@ function BattleInviteStatusDialog({
           {canAcceptInvite ? (
             <Button variant="default" onClick={onAcceptInvite} disabled={isAcceptingInvite}>
               {isAcceptingInvite ? "Accepting..." : "Accept invite"}
+            </Button>
+          ) : null}
+          {canDeclineInvite ? (
+            <Button variant="secondary" onClick={onDeclineInvite}>
+              Decline
             </Button>
           ) : null}
           {canCancelBattle ? (

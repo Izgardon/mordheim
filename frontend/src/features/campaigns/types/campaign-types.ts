@@ -68,6 +68,9 @@ export type CampaignPlayer = {
   name: string;
   battle_busy?: boolean;
   battle_busy_status?: "inviting" | "prebattle" | "active" | "postbattle" | null;
+  /** The open battle a busy player is in, and its last write (decision 1). */
+  battle_busy_battle_id?: number | null;
+  battle_busy_last_activity_at?: string | null;
   warband?: {
     id: number;
     name: string;
@@ -106,6 +109,8 @@ export type CampaignBattleHistoryEntry = {
 export type CampaignActiveBattle = {
   battle: BattleSummary;
   participants: BattleParticipant[];
+  /** The owner tools that apply to this battle now (BATL-NEW-03). */
+  actions?: { end: boolean; confirm_results: boolean; close_postbattle: boolean; cancel: boolean };
 };
 
 export type CampaignPivotalMoment = {

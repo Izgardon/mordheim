@@ -8,7 +8,7 @@ from typing import Any
 
 from django.test import SimpleTestCase
 
-from apps.battles.views.shared import _parse_armour_save_override
+from apps.battles.services.unit_information import parse_armour_save_override
 from apps.warbands.utils.armour_save import ARMOUR_SAVE_ERROR, parse_armour_save
 
 from .roster_support import KINDS, RosterTestCase, create_payload, make_unit, unit_url
@@ -44,10 +44,10 @@ class ArmourSaveParsingTests(SimpleTestCase):
 
     def test_postbattle_overrides_parse_the_same_way(self):
         self.assertEqual(
-            [_parse_armour_save_override(value) for value in ("-", "", None, "4+", "-1+")], [None, None, None, 4, -1]
+            [parse_armour_save_override(value) for value in ("-", "", None, "4+", "-1+")], [None, None, None, 4, -1]
         )
         with self.assertRaisesMessage(ValueError, "unit information armour_save"):
-            _parse_armour_save_override("9+")
+            parse_armour_save_override("9+")
 
 
 class ArmourSaveWriteTests(RosterTestCase):

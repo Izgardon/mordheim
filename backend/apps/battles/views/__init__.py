@@ -1,29 +1,38 @@
-from .combat import (
-    CampaignBattleConfirmView,
-    CampaignBattleEventCreateView,
+from .battles import CampaignBattleListCreateView, CampaignBattleRosterView, CampaignBattleStateView
+from .closing import CampaignBattleClosePostbattleView
+from .combat import CampaignBattleEventCreateView, CampaignBattleUnitKillView, CampaignBattleUnitOoaView
+from .finishing import CampaignBattleFinishMineView, CampaignBattleFinishView, CampaignBattleResultsView
+from .invites import CampaignBattleDeclineView
+from .nudge import CampaignBattleNudgeView
+from .postbattle import (
     CampaignBattleFinalizePostbattleView,
-    CampaignBattleFinishView,
     CampaignBattlePostbattleSaveView,
-    CampaignBattleUnitKillView,
-    CampaignBattleUnitOoaView,
-    CampaignBattleWinnerView,
+    CampaignBattleSkipPostbattleView,
 )
-from .lifecycle import (
+from .record import CampaignBattleRecordView
+from .results import (
+    CampaignBattleReportedResultApproveView,
+    CampaignBattleReportedResultCreateView,
+    CampaignBattleReportedResultDeclineView,
+    CampaignBattleWithdrawResultView,
+    CampaignPendingResultsView,
+)
+from .setup import (
     CampaignBattleCancelView,
     CampaignBattleConfigView,
     CampaignBattleCreatorCancelView,
     CampaignBattleJoinView,
-    CampaignBattleListCreateView,
     CampaignBattleReadyView,
-    CampaignBattleReportedResultApproveView,
-    CampaignBattleReportedResultCreateView,
-    CampaignBattleReportedResultDeclineView,
-    CampaignBattleRosterView,
     CampaignBattleStartView,
-    CampaignBattleStateView,
 )
+from .undo import CampaignBattleEventVoidView
 
 __all__ = [
+    "CampaignBattleEventVoidView",
+    "CampaignBattleDeclineView",
+    "CampaignBattleClosePostbattleView",
+    "CampaignPendingResultsView",
+    "CampaignBattleWithdrawResultView",
     "CampaignBattleListCreateView",
     "CampaignBattleReportedResultCreateView",
     "CampaignBattleStateView",
@@ -40,8 +49,11 @@ __all__ = [
     "CampaignBattleUnitOoaView",
     "CampaignBattleUnitKillView",
     "CampaignBattleFinishView",
-    "CampaignBattleWinnerView",
+    "CampaignBattleFinishMineView",
+    "CampaignBattleResultsView",
+    "CampaignBattleRecordView",
+    "CampaignBattleNudgeView",
     "CampaignBattlePostbattleSaveView",
     "CampaignBattleFinalizePostbattleView",
-    "CampaignBattleConfirmView",
+    "CampaignBattleSkipPostbattleView",
 ]

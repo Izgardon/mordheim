@@ -127,6 +127,14 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 201)
         return response.data
 
+    def _live(self, user, battle_id, action, body):
+        """A unit-kill/ or unit-ooa/ post: kills and out of action change only through these (BUG-44)."""
+        self.client.force_authenticate(user=user)
+        response = self.client.post(
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/{action}/", body, format="json"
+        )
+        self.assertEqual(response.status_code, 201, response.data)
+
     def _ready_both_and_start(self, battle_id):
         self.client.force_authenticate(user=self.owner)
         response = self.client.post(
@@ -187,7 +195,7 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data.get("detail"), "scenario is required")
 
-    def test_create_battle_rejects_busy_participant(self):
+    def test_create_battle_warns_about_a_busy_participant(self):
         self.client.force_authenticate(user=self.player)
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/",
@@ -208,11 +216,8 @@ class BattleApiTests(APITestCase):
             },
             format="json",
         )
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(
-            response.data.get("detail"),
-            "One or more participants are already in another battle: Player",
-        )
+        self.assertEqual(response.status_code, 201)  # decision 1: warn and allow
+        self.assertEqual([warning["user_id"] for warning in response.data["warnings"]], [self.player.id])
 
     def test_create_reported_result_initial_state(self):
         data = self._create_reported_result(
@@ -463,13 +468,6 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
                 "selected_unit_keys_json": [f"hero:{owner_hero.id}"],
-                "unit_information_json": {
-                    f"hero:{owner_hero.id}": {
-                        "kill_count": 2,
-                        "out_of_action": True,
-                        "stats_override": {},
-                    }
-                },
             },
             format="json",
         )
@@ -480,17 +478,14 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
                 "selected_unit_keys_json": [f"hero:{player_hero.id}"],
-                "unit_information_json": {
-                    f"hero:{player_hero.id}": {
-                        "kill_count": 0,
-                        "out_of_action": False,
-                        "stats_override": {},
-                    }
-                },
             },
             format="json",
         )
         self.assertEqual(response.status_code, 200)
+        kill = {"killer_unit_key": f"hero:{owner_hero.id}", "victim_unit_key": f"hero:{player_hero.id}"}
+        self._live(self.owner, battle_id, "unit-kill", kill)
+        self._live(self.owner, battle_id, "unit-kill", kill)
+        self._live(self.owner, battle_id, "unit-ooa", {"unit_key": f"hero:{owner_hero.id}", "out_of_action": True})
 
         self.client.force_authenticate(user=self.owner)
         response = self.client.post(
@@ -501,10 +496,6 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["battle"]["status"], "postbattle")
         self.assertEqual(response.data["battle"]["winner_warband_ids_json"], [self.owner_warband.id])
-        self.owner_warband.refresh_from_db()
-        self.player_warband.refresh_from_db()
-        self.assertEqual(self.owner_warband.wins, 1)
-        self.assertEqual(self.player_warband.losses, 1)
 
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/postbattle/",
@@ -542,33 +533,20 @@ class BattleApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
         owner_participant = BattleParticipant.objects.get(battle_id=battle_id, user=self.owner)
-        self.assertEqual(
+        self.assertEqual(  # the draft keeps the roll (decision 9, BUG-71)
             owner_participant.postbattle_json.get("exploration"),
-            {"dice_values": [], "resource_id": None},
-        )
-        self.assertEqual(
-            WarbandLog.objects.filter(
-                warband=self.owner_warband,
-                feature="personnel",
-                entry_type="serious_injury",
-            ).count(),
-            1,
-        )
-        serious_injury_log = WarbandLog.objects.get(
-            warband=self.owner_warband,
-            feature="personnel",
-            entry_type="serious_injury",
-        )
-        self.assertEqual(
-            serious_injury_log.payload,
             {
-                "unit_name": owner_hero.name,
-                "roll_type": "d66",
-                "rolls": [1, 1],
-                "result_code": "11",
-                "result_label": "Dead",
-                "dead_suggestion": True,
+                "dice_values": [5],
+                "resource_id": resource.id,
+                "amount_override": None,
+                "previous_rolls": [],
+                "amount": 1,
             },
+        )
+        self.assertFalse(  # drafts log nothing (BUG-47)
+            WarbandLog.objects.filter(
+                warband=self.owner_warband, feature="personnel", entry_type="serious_injury"
+            ).exists()
         )
 
         response = self.client.post(
@@ -606,13 +584,10 @@ class BattleApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(
+        self.assertFalse(
             WarbandLog.objects.filter(
-                warband=self.owner_warband,
-                feature="personnel",
-                entry_type="serious_injury",
-            ).count(),
-            1,
+                warband=self.owner_warband, feature="personnel", entry_type="serious_injury"
+            ).exists()
         )
 
         response = self.client.post(
@@ -702,7 +677,10 @@ class BattleApiTests(APITestCase):
             entry_type="exploration",
         ).first()
         assert exploration_log is not None
-        self.assertEqual(exploration_log.payload, {"dice": [5]})
+        self.assertEqual(
+            exploration_log.payload,
+            {"dice": [5], "amount": 1, "amount_override": None, "resource": "Shards", "rerolls": []},
+        )
         self.assertFalse(
             WarbandLog.objects.filter(
                 warband=self.owner_warband,
@@ -837,9 +815,15 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
 
         owner_participant = BattleParticipant.objects.get(battle_id=battle_id, user=self.owner)
-        self.assertEqual(
+        self.assertEqual(  # the draft keeps the roll (decision 9, BUG-71)
             owner_participant.postbattle_json.get("exploration"),
-            {"dice_values": [], "resource_id": None},
+            {
+                "dice_values": [5],
+                "resource_id": resource.id,
+                "amount_override": None,
+                "previous_rolls": [],
+                "amount": 1,
+            },
         )
         self.assertEqual(
             owner_participant.postbattle_json.get("upkeep"),
@@ -1702,6 +1686,7 @@ class BattleApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 201)
 
+        Battle.objects.filter(id=battle_id).update(status=Battle.STATUS_ENDED)  # ended battles only (BUG-11)
         response = self.client.get(f"/api/warbands/{self.owner_warband.id}/heroes/{owner_hero.id}/kill-history/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["total_kills"], 2)
@@ -1768,6 +1753,7 @@ class BattleApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 201)
 
+        Battle.objects.filter(id=battle_id).update(status=Battle.STATUS_ENDED)  # ended battles only (BUG-11)
         response = self.client.get(
             f"/api/warbands/{self.owner_warband.id}/hired-swords/{owner_hired_sword.id}/kill-history/"
         )
@@ -1859,6 +1845,7 @@ class BattleApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 201)
 
+        Battle.objects.filter(id=battle_id).update(status=Battle.STATUS_ENDED)  # ended battles only (BUG-11)
         response = self.client.get(
             f"/api/warbands/{self.owner_warband.id}/henchmen-groups/{owner_group.id}/kill-history/"
         )
@@ -1914,13 +1901,6 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
                 "selected_unit_keys_json": [f"hero:{owner_hero.id}"],
-                "unit_information_json": {
-                    f"hero:{owner_hero.id}": {
-                        "kill_count": 2,
-                        "out_of_action": False,
-                        "stats_override": {},
-                    }
-                },
             },
             format="json",
         )
@@ -1931,17 +1911,14 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
                 "selected_unit_keys_json": [f"hero:{player_hero.id}"],
-                "unit_information_json": {
-                    f"hero:{player_hero.id}": {
-                        "kill_count": 0,
-                        "out_of_action": True,
-                        "stats_override": {},
-                    }
-                },
             },
             format="json",
         )
         self.assertEqual(response.status_code, 200)
+        kill = {"killer_unit_key": f"hero:{owner_hero.id}", "victim_unit_key": f"hero:{player_hero.id}"}
+        self._live(self.owner, battle_id, "unit-kill", kill)
+        self._live(self.owner, battle_id, "unit-kill", kill)
+        self._live(self.player, battle_id, "unit-ooa", {"unit_key": f"hero:{player_hero.id}", "out_of_action": True})
 
         self.client.force_authenticate(user=self.owner)
         response = self.client.post(
@@ -2386,10 +2363,10 @@ class BattleApiTests(APITestCase):
             {"winner_warband_ids": [self.player_warband.id]},
             format="json",
         )
-        self.assertEqual(response.status_code, 403)
-        self.assertEqual(response.data.get("detail"), "Only the battle creator can end the active battle")
+        self.assertEqual(response.status_code, 403)  # decision 4: players finish their own battle
+        self.assertEqual(response.data.get("code"), "not_allowed")
 
-    def test_finish_commits_wins_and_losses_once(self):
+    def test_wins_and_losses_count_when_the_battle_ends(self):
         data = self._create_battle()
         battle_id = data["battle"]["id"]
         self._ready_both_and_start(battle_id)
@@ -2401,6 +2378,13 @@ class BattleApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, 200)
+        self.owner_warband.refresh_from_db()
+        self.assertIsNone(self.owner_warband.wins)  # decision 3: not at End
+
+        for user in (self.owner, self.player):
+            self.client.force_authenticate(user=user)
+            response = self.client.post(f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/confirm/")
+            self.assertEqual(response.status_code, 200)
 
         self.owner_warband.refresh_from_db()
         self.player_warband.refresh_from_db()
@@ -2591,11 +2575,7 @@ class BattleApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, 200)
-
-        self.owner_warband.refresh_from_db()
-        self.player_warband.refresh_from_db()
-        self.assertEqual(self.owner_warband.wins, 1)
-        self.assertEqual(self.player_warband.losses, 1)
+        self.assertEqual(response.data["battle"]["winner_warband_ids_json"], [self.owner_warband.id])
 
     def test_cancel_all_moves_battle_to_canceled(self):
         data = self._create_battle()
@@ -2607,15 +2587,15 @@ class BattleApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertNotEqual(response.data["battle"]["status"], "canceled")
+        self.assertEqual(response.data["battle"]["status"], "canceled")  # one player left (BUG-45)
 
         self.client.force_authenticate(user=self.player)
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/cancel/",
             format="json",
         )
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["battle"]["status"], "canceled")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["detail"], "Battle is already canceled")
 
     def test_creator_can_cancel_battle_while_inviting(self):
         data = self._create_battle()
@@ -2747,7 +2727,7 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.data.get("detail"), "Only the battle creator can cancel this battle")
 
-    def test_non_creator_cannot_start_battle(self):
+    def test_non_creator_can_start_battle(self):  # decision 4: any participant starts
         data = self._create_battle()
         battle_id = data["battle"]["id"]
 
@@ -2778,8 +2758,8 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/start/",
             format="json",
         )
-        self.assertEqual(response.status_code, 403)
-        self.assertEqual(response.data.get("detail"), "Only the battle creator can start this battle")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["battle"]["status"], "active")
 
     def test_state_since_event_id_returns_incremental_events(self):
         data = self._create_battle()
@@ -3364,6 +3344,7 @@ class BattleApiTests(APITestCase):
                             "kill_count": 0,
                             "xp_earned": 1,
                             "dead": False,
+                            "keep_stats": True,  # battle stat changes are kept only when ticked (decision 6)
                             "special_ids": [],
                             "serious_injury_rolls": [],
                         },
@@ -3376,6 +3357,7 @@ class BattleApiTests(APITestCase):
                             "kill_count": 0,
                             "xp_earned": 1,
                             "dead": False,
+                            "keep_stats": True,  # battle stat changes are kept only when ticked (decision 6)
                             "special_ids": [],
                             "serious_injury_rolls": [],
                         },
@@ -3388,6 +3370,7 @@ class BattleApiTests(APITestCase):
                             "kill_count": 0,
                             "xp_earned": 1,
                             "dead": False,
+                            "keep_stats": True,  # battle stat changes are kept only when ticked (decision 6)
                             "special_ids": [],
                             "serious_injury_rolls": [],
                         },
@@ -3400,6 +3383,7 @@ class BattleApiTests(APITestCase):
                             "kill_count": 0,
                             "xp_earned": 1,
                             "dead": False,
+                            "keep_stats": True,  # battle stat changes are kept only when ticked (decision 6)
                             "special_ids": [],
                             "serious_injury_rolls": [],
                         },
@@ -3666,14 +3650,17 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["battle"]["status"], "prebattle")
 
+        herbs = Item.objects.create(name="Healing Herbs", type="Misc", single_use=True)
+        hero = Hero.objects.create(warband=self.owner_warband, name="Captain Wolf", unit_type="Captain")
+        HeroItem.objects.create(hero=hero, item=herbs, cost=10)
         self.client.force_authenticate(user=self.owner)
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/events/",
             {
                 "type": "item_used",
                 "payload_json": {
-                    "unit_key": "hero:1",
-                    "item_id": 100,
+                    "unit_key": f"hero:{hero.id}",
+                    "item_id": herbs.id,
                     "item_name": "Healing Herbs",
                 },
             },

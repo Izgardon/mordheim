@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { invalidateOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
+import { invalidatePendingResults } from "@/features/battles/hooks/usePendingReportedResults";
 import type {
   BattleInviteNotification,
   BattleResultRequestNotification,
@@ -19,6 +20,7 @@ import { useAppStore } from "@/stores/app-store";
 import {
   notificationFromApi,
   toBattleInviteNotification,
+  toBattleNudgeNotification,
   toBattleResultRequestNotification,
   type BattleNotificationPayload,
 } from "../utils/notification-mappers";
@@ -47,6 +49,8 @@ export function useNotificationSubscription() {
     addBattleResultRequestNotification,
     removeBattleResultRequestNotification,
     clearBattleResultRequestNotifications,
+    addBattleNudgeNotification,
+    clearBattleNudgeNotifications,
     setCurrentBattleSession,
     clearCurrentBattleSession,
   } = useAppStore();
@@ -58,8 +62,15 @@ export function useNotificationSubscription() {
         clearTradeRequestNotifications();
         clearBattleInviteNotifications();
         clearBattleResultRequestNotifications();
+        clearBattleNudgeNotifications();
       }
       for (const n of notifications) {
+        if (n.notification_type === "battle_nudge") {
+          // A nudge waiting since you were away (BATL-NEW-08).
+          const nudge = toBattleNudgeNotification(n.payload as BattleNotificationPayload, n.id);
+          if (nudge) addBattleNudgeNotification(nudge);
+          continue;
+        }
         const converted = notificationFromApi(n);
         if (!converted) continue;
         if (n.notification_type === "trade_request") {
@@ -79,9 +90,11 @@ export function useNotificationSubscription() {
     },
     [
       addBattleInviteNotification,
+      addBattleNudgeNotification,
       addBattleResultRequestNotification,
       addTradeRequestNotification,
       clearBattleInviteNotifications,
+      clearBattleNudgeNotifications,
       clearBattleResultRequestNotifications,
       clearTradeRequestNotifications,
       setCurrentBattleSession,
@@ -154,6 +167,28 @@ export function useNotificationSubscription() {
         return;
       }
       addBattleResultRequestNotification(notification);
+      void invalidatePendingResults(queryClient, notification.campaignId);
+      return;
+    }
+
+    if (message.type === "battle_nudge") {
+      // Another player is waiting for you (BATL-NEW-08): a toast that goes there, and the bell.
+      const payload = message.payload as BattleNotificationPayload;
+      const nudge = toBattleNudgeNotification(payload, payload.notification_id ?? 0);
+      if (!nudge) {
+        return;
+      }
+      addBattleNudgeNotification(nudge);
+      const page = nudge.page
+        ? `/campaigns/${nudge.campaignId}/battles/${nudge.battleId}/${nudge.page}`
+        : null;
+      toast(`${nudge.fromLabel} nudged you: ${nudge.scenario} is waiting for you.`, {
+        id: `battle-nudge-${nudge.battleId}`,
+        duration: ACTIONABLE_TOAST_MS,
+        ...(page && !location.pathname.startsWith(page)
+          ? { action: { label: "Go", onClick: () => navigate(page) } }
+          : {}),
+      });
       return;
     }
 
@@ -169,6 +204,27 @@ export function useNotificationSubscription() {
         clearCurrentBattleSession();
       }
       removeBattleResultRequestNotification(`battle-result-${payload.battle_id}`);
+      void invalidateOpenBattles(queryClient, payload.campaign_id);
+      void invalidatePendingResults(queryClient, payload.campaign_id);
+      return;
+    }
+
+    if (message.type === "battle_invite_declined") {
+      // An invitee declined your battle, or didn't answer in time (BUG-45, decision 2).
+      const payload = message.payload as BattleNotificationPayload & {
+        user_label?: string;
+        reason?: string;
+      };
+      if (!payload?.battle_id || !payload?.campaign_id) {
+        return;
+      }
+      const who = payload.user_label?.trim() || "A player";
+      toast(
+        payload.reason === "expired"
+          ? `${who} didn't answer your battle invite in time.`
+          : `${who} declined your battle invite.`,
+        { id: `battle-declined-${payload.battle_id}-${payload.user_label ?? ""}` }
+      );
       void invalidateOpenBattles(queryClient, payload.campaign_id);
       return;
     }

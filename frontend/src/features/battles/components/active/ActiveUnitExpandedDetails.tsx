@@ -25,6 +25,8 @@ type ActiveUnitExpandedDetailsProps = {
   onSaveNotes?: (notes: string) => Promise<void> | void;
   onUseSingleUseItem?: (item: UnitItemEntry) => Promise<void> | void;
   getUsedSingleUseItemCount?: (itemId: number) => number;
+  /** Undoes the latest use of the item (BUG-11); shown once one is used. */
+  onUndoSingleUseItem?: (itemId: number) => Promise<void> | void;
   activeItemActionKey?: string | null;
 };
 
@@ -51,6 +53,7 @@ export default function ActiveUnitExpandedDetails({
   onSaveNotes,
   onUseSingleUseItem,
   getUsedSingleUseItemCount,
+  onUndoSingleUseItem,
   activeItemActionKey,
 }: ActiveUnitExpandedDetailsProps) {
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -285,6 +288,17 @@ export default function ActiveUnitExpandedDetails({
                 disabled={remaining <= 0 || isUsingItem}
               >
                 {isUsingItem ? "..." : "Use"}
+              </button>
+            ) : null}
+            {canInteract && onUndoSingleUseItem && entry.item && remaining < entry.item.count ? (
+              <button
+                type="button"
+                className="battle-toolbar-button px-1.5 py-0.5 text-[0.58rem] uppercase tracking-[0.16em] text-muted-foreground disabled:opacity-50"
+                onClick={() => entry.item && void onUndoSingleUseItem(entry.item.id)}
+                disabled={isUsingItem}
+                aria-label={`Undo using ${entry.item.name}`}
+              >
+                Undo
               </button>
             ) : null}
           </div>

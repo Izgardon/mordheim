@@ -11,12 +11,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.battles.models import Battle, BattleParticipant
-from apps.battles.views.shared import (
-    _cancel_battle_for_all_participants,
-    _response_with_snapshot,
-    _serialize_battle,
-    _serialize_participant,
-)
+from apps.battles.serializers import serialize_battle, serialize_participant
+from apps.battles.services.broadcast import ALL, bump_state_version
+from apps.battles.services.capabilities import manager_actions
+from apps.battles.services.expiry import expire_overdue
+from apps.battles.services.lifecycle import POSTBATTLE_APPLIED, cancel_battle, someone_finalised
+from apps.battles.services.setup import busy_participations
+from apps.battles.views.responses import broadcast_response, response_with_snapshot
 from apps.core.throttling import (
     BATTLE_WRITE_THROTTLE_CLASSES,
     CAMPAIGN_CHAT_THROTTLE_CLASSES,
@@ -91,6 +92,7 @@ PERMISSION_SEED = [
     ("manage_encampments", "Manage encampments"),
     ("manage_locations", "Manage locations"),
     ("manage_bestiary", "Manage bestiary"),
+    ("manage_battles", "Manage battles"),  # close postbattle, Settings > Active Battles (BATL-NEW-04, -03)
 ]
 
 
@@ -581,6 +583,15 @@ class JoinCampaignView(APIView):
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
 
+def _busy_battle_fields(busy: tuple | None) -> dict:
+    battle_id, battle_status, last_activity_at = busy or (None, None, None)
+    return {
+        "battle_busy_status": battle_status,
+        "battle_busy_battle_id": battle_id,
+        "battle_busy_last_activity_at": last_activity_at,
+    }
+
+
 class CampaignPlayersView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -611,38 +622,20 @@ class CampaignPlayersView(APIView):
         }
         member_user_ids = [member.user_id for member in memberships]
         busy_entries = (
-            BattleParticipant.objects.filter(
-                user_id__in=member_user_ids,
-                battle__campaign_id=campaign_id,
-                battle__flow_type=Battle.FLOW_TYPE_NORMAL,
-                battle__status__in=(
-                    Battle.STATUS_INVITING,
-                    Battle.STATUS_PREBATTLE,
-                    Battle.STATUS_ACTIVE,
-                    Battle.STATUS_POSTBATTLE,
-                ),
-                status__in=(
-                    BattleParticipant.STATUS_INVITED,
-                    BattleParticipant.STATUS_ACCEPTED,
-                    BattleParticipant.STATUS_JOINED_PREBATTLE,
-                    BattleParticipant.STATUS_READY,
-                    BattleParticipant.STATUS_IN_BATTLE,
-                    BattleParticipant.STATUS_FINISHED_BATTLE,
-                ),
-            )
+            busy_participations(campaign_id, member_user_ids)  # the busy rule battles warn with (decision 1)
             .order_by("-battle__created_at")
-            .values_list("user_id", "battle__status")
+            .values_list("user_id", "battle_id", "battle__status", "battle__last_activity_at")
         )
-        busy_status_by_user: dict[int, str] = {}
-        for user_id, battle_status in busy_entries:
-            busy_status_by_user.setdefault(user_id, battle_status)
+        busy_by_user: dict[int, tuple] = {}  # the most recent unfinished battle: id, status, last activity (BUG-10)
+        for user_id, *battle in busy_entries:
+            busy_by_user.setdefault(user_id, tuple(battle))
         players = [
             {
                 "id": member.user_id,
                 "name": member.user.first_name or member.user.email,
                 "warband": warband_by_user.get(member.user_id),
-                "battle_busy": member.user_id in busy_status_by_user,
-                "battle_busy_status": busy_status_by_user.get(member.user_id),
+                "battle_busy": member.user_id in busy_by_user,
+                **_busy_battle_fields(busy_by_user.get(member.user_id)),
             }
             for member in memberships
         ]
@@ -664,9 +657,11 @@ class CampaignBattleHistoryView(APIView):
                 status=Battle.STATUS_ENDED,
             )
             .prefetch_related(
-                Prefetch(
+                Prefetch(  # without those a battle manager took off the record (BATL-NEW-04)
                     "participants",
-                    queryset=BattleParticipant.objects.select_related("warband").order_by("id"),
+                    queryset=BattleParticipant.objects.select_related("warband")
+                    .filter(removed_from_record=False)
+                    .order_by("id"),
                 )
             )
             .order_by("-ended_at", "-created_at", "-id")
@@ -699,7 +694,7 @@ class CampaignActiveBattlesView(APIView):
         membership = get_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not is_owner(membership):
+        if not has_campaign_permission(membership, "manage_battles"):
             return Response({"detail": "Forbidden"}, status=403)
 
         battles = (
@@ -721,13 +716,17 @@ class CampaignActiveBattlesView(APIView):
             )
             .order_by("-created_at", "-id")
         )
+        if expire_overdue(battles):  # settle what is past its deadline (decision 2), then read again
+            battles = battles.all()
 
         payload = []
         for battle in battles:
+            participants = battle.participants.all()
             payload.append(
                 {
-                    "battle": _serialize_battle(battle),
-                    "participants": [_serialize_participant(participant) for participant in battle.participants.all()],
+                    "battle": serialize_battle(battle),  # its last_activity_at is the idle time
+                    "participants": [serialize_participant(participant) for participant in participants],
+                    "actions": manager_actions(battle, participants),  # the owner tools that apply (BATL-NEW-03)
                 }
             )
 
@@ -742,7 +741,7 @@ class CampaignActiveBattleCancelView(APIView):
         membership = get_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not is_owner(membership):
+        if not has_campaign_permission(membership, "manage_battles"):
             return Response({"detail": "Forbidden"}, status=403)
 
         events: list[dict] = []
@@ -751,18 +750,26 @@ class CampaignActiveBattleCancelView(APIView):
             if not battle:
                 return Response({"detail": "Not found"}, status=404)
             if battle.status == Battle.STATUS_CANCELED:
-                return _response_with_snapshot(battle.id, events)
+                return response_with_snapshot(battle.id, events)
             if battle.status == Battle.STATUS_ENDED:
                 return Response({"detail": "Battle is already ended"}, status=400)
+            if battle.status == Battle.STATUS_POSTBATTLE:  # decision 3, BUG-09
+                return Response(
+                    {"detail": "Postbattle can't be cancelled; close it instead", "code": "use_close_postbattle"},
+                    status=400,
+                )
+            if battle.status == Battle.STATUS_ACTIVE and someone_finalised(battle.id):  # decision 4, BUG-09
+                return Response({"detail": POSTBATTLE_APPLIED, "code": "postbattle_applied"}, status=400)
 
-            event = _cancel_battle_for_all_participants(
+            event = cancel_battle(
                 battle,
                 actor_user=request.user,
-                mode="campaign_owner",
+                mode="campaign_owner" if is_owner(membership) else "campaign_manager",
             )
             events.append(event)
+            version = bump_state_version(battle)
 
-        return _response_with_snapshot(battle.id, events)
+        return broadcast_response(request, battle.id, events, version, changed=ALL)
 
 
 class CampaignPivotalMomentsView(APIView):

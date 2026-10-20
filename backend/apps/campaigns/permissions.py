@@ -13,10 +13,13 @@ def is_admin(membership):
     return bool(membership and membership.role.slug == "admin")
 
 
+IMPLICIT_PERMISSION_ROLES = ("owner", "admin")  # these roles hold every campaign permission
+
+
 def has_campaign_permission(membership, permission_code):
     if not membership:
         return False
-    if membership.role.slug in ("owner", "admin"):
+    if membership.role.slug in IMPLICIT_PERMISSION_ROLES:
         return True
     return CampaignMembershipPermission.objects.filter(
         membership=membership,

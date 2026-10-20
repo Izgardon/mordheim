@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 type BattleNotesDialogProps = {
   open: boolean;
@@ -54,11 +55,7 @@ export default function BattleNotesDialog({
       await onSave(normalizedDraftNotes);
       onOpenChange(false);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setError(errorResponse.message || "Unable to save battle notes");
-      } else {
-        setError("Unable to save battle notes");
-      }
+      setError(getErrorMessage(errorResponse, "Unable to save battle notes"));
     } finally {
       setIsSaving(false);
     }

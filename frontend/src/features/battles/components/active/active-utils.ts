@@ -8,7 +8,6 @@ import type {
   PrebattleUnit,
   UnitOverride,
   UnitStats,
-  StatKey,
 } from "@/features/battles/components/prebattle/prebattle-types";
 import {
   normalizeCustomUnits,
@@ -252,32 +251,6 @@ export function updateUnitInformationOverride(
     kill_count: existing?.kill_count ?? 0,
   };
   return next;
-}
-
-export function setUnitOverrideStat(
-  unitInformationByKey: Record<string, BattleUnitInformationEntry>,
-  unit: PrebattleUnit,
-  statKey: StatKey,
-  value: number | null
-) {
-  const existingOverride = unitInformationToOverride(unitInformationByKey[unit.key]) ?? {
-    stats: {},
-  };
-  const nextStats = { ...existingOverride.stats };
-
-  if (statKey === "armour_save") {
-    if (value === null) {
-      delete nextStats.armour_save;
-    } else {
-      nextStats.armour_save = value;
-    }
-  } else if (value === unit.stats[statKey]) {
-    delete nextStats[statKey];
-  } else {
-    nextStats[statKey] = value;
-  }
-
-  return updateUnitInformationOverride(unitInformationByKey, unit, { stats: nextStats });
 }
 
 export function setUnitCurrentWounds(

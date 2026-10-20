@@ -1,4 +1,4 @@
-import { act, fireEvent, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -44,11 +44,13 @@ function CurrentLocation() {
 
 function Harness() {
   useNotificationSubscription();
-  const { setCurrentBattleSession, tradeRequestNotifications } = useAppStore();
+  const { setCurrentBattleSession, tradeRequestNotifications, battleNudgeNotifications } =
+    useAppStore();
   const queryClient = useQueryClient();
   return (
     <>
       <p>{tradeRequestNotifications.length} trade requests</p>
+      <p>{battleNudgeNotifications.map((nudge) => nudge.fromLabel).join(", ") || "No nudges"}</p>
       <button
         onClick={() => setCurrentBattleSession({ battleId: 3, campaignId: 7, status: "prebattle" })}
       >
@@ -228,5 +230,53 @@ describe("useNotificationSubscription", () => {
     );
 
     expect(invalidate).toHaveBeenCalledWith({ queryKey: ["campaign", 7, "battles", "open"] });
+  });
+
+  it("says who nudged you, with a way to the battle, and keeps the nudge in the bell (BATL-NEW-08)", async () => {
+    renderHarness("/campaigns/7/warband");
+    await waitFor(() => expect(notificationHandler()).toBeDefined());
+
+    act(() =>
+      notificationHandler()({
+        type: "battle_nudge",
+        payload: {
+          battle_id: 41,
+          campaign_id: 7,
+          scenario: "Ambush at the Well",
+          page: "postbattle",
+          nudged_by_user_label: "Mira",
+          notification_id: 12,
+        },
+      })
+    );
+
+    const toastText = await screen.findByText(
+      "Mira nudged you: Ambush at the Well is waiting for you."
+    );
+    expect(screen.getByText("Mira")).toBeInTheDocument();
+    const nudgeToast = toastText.closest("[data-sonner-toast]") as HTMLElement;
+    fireEvent.click(within(nudgeToast).getByRole("button", { name: "Go" }));
+    expect(screen.getByTestId("location")).toHaveTextContent("/campaigns/7/battles/41/postbattle");
+  });
+
+  it("puts a nudge sent while you were away in the bell (BATL-NEW-08)", async () => {
+    vi.mocked(listNotifications).mockResolvedValueOnce([
+      {
+        id: 12,
+        notification_type: "battle_nudge",
+        campaign_id: 7,
+        reference_id: "41",
+        payload: {
+          battle_id: 41,
+          campaign_id: 7,
+          scenario: "Ambush",
+          nudged_by_user_label: "Bors",
+        },
+        created_at: "2026-10-19T10:00:00Z",
+      },
+    ]);
+    renderHarness();
+
+    expect(await screen.findByText("Bors")).toBeInTheDocument();
   });
 });

@@ -2,25 +2,33 @@ from django.urls import path
 
 from .views import (
     CampaignBattleCancelView,
+    CampaignBattleClosePostbattleView,
     CampaignBattleConfigView,
-    CampaignBattleConfirmView,
     CampaignBattleCreatorCancelView,
+    CampaignBattleDeclineView,
     CampaignBattleEventCreateView,
+    CampaignBattleEventVoidView,
     CampaignBattleFinalizePostbattleView,
+    CampaignBattleFinishMineView,
     CampaignBattleFinishView,
     CampaignBattleJoinView,
     CampaignBattleListCreateView,
+    CampaignBattleNudgeView,
     CampaignBattlePostbattleSaveView,
     CampaignBattleReadyView,
+    CampaignBattleRecordView,
     CampaignBattleReportedResultApproveView,
     CampaignBattleReportedResultCreateView,
     CampaignBattleReportedResultDeclineView,
+    CampaignBattleResultsView,
     CampaignBattleRosterView,
+    CampaignBattleSkipPostbattleView,
     CampaignBattleStartView,
     CampaignBattleStateView,
     CampaignBattleUnitKillView,
     CampaignBattleUnitOoaView,
-    CampaignBattleWinnerView,
+    CampaignBattleWithdrawResultView,
+    CampaignPendingResultsView,
 )
 
 urlpatterns = [
@@ -33,6 +41,16 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/battles/report-result/",
         CampaignBattleReportedResultCreateView.as_view(),
         name="campaigns-battles-report-result",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/pending-results/",
+        CampaignPendingResultsView.as_view(),
+        name="campaigns-battles-pending-results",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/withdraw-result/",
+        CampaignBattleWithdrawResultView.as_view(),
+        name="campaigns-battles-withdraw-result",
     ),
     path(
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/state/",
@@ -58,6 +76,11 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/join/",
         CampaignBattleJoinView.as_view(),
         name="campaigns-battles-join",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/decline/",
+        CampaignBattleDeclineView.as_view(),
+        name="campaigns-battles-decline",
     ),
     path(
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/config/",
@@ -90,6 +113,11 @@ urlpatterns = [
         name="campaigns-battles-events",
     ),
     path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/events/<int:event_id>/void/",
+        CampaignBattleEventVoidView.as_view(),
+        name="campaigns-battles-events-void",
+    ),
+    path(
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/unit-ooa/",
         CampaignBattleUnitOoaView.as_view(),
         name="campaigns-battles-unit-ooa",
@@ -100,6 +128,26 @@ urlpatterns = [
         name="campaigns-battles-unit-kill",
     ),
     path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/finish-mine/",
+        CampaignBattleFinishMineView.as_view(),
+        name="campaigns-battles-finish-mine",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/results/",
+        CampaignBattleResultsView.as_view(),
+        name="campaigns-battles-results",
+    ),
+    path(  # a notification to a player holding up the battle (BATL-NEW-08)
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/nudge/",
+        CampaignBattleNudgeView.as_view(),
+        name="campaigns-battles-nudge",
+    ),
+    path(  # an ended battle's record, read and edited by a battle manager (BATL-NEW-04)
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/record/",
+        CampaignBattleRecordView.as_view(),
+        name="campaigns-battles-record",
+    ),
+    path(  # a battle manager ends a stuck fight (BATL-NEW-03); players finish their own battle
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/finish/",
         CampaignBattleFinishView.as_view(),
         name="campaigns-battles-finish",
@@ -115,13 +163,18 @@ urlpatterns = [
         name="campaigns-battles-finalize-postbattle",
     ),
     path(
-        "campaigns/<int:campaign_id>/battles/<int:battle_id>/winner/",
-        CampaignBattleWinnerView.as_view(),
-        name="campaigns-battles-winner",
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/close-postbattle/",
+        CampaignBattleClosePostbattleView.as_view(),
+        name="campaigns-battles-close-postbattle",
     ),
     path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/skip-postbattle/",
+        CampaignBattleSkipPostbattleView.as_view(),
+        name="campaigns-battles-skip-postbattle",
+    ),
+    path(  # the old name of skip-postbattle/, kept for clients that still call it
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/confirm/",
-        CampaignBattleConfirmView.as_view(),
+        CampaignBattleSkipPostbattleView.as_view(),
         name="campaigns-battles-confirm",
     ),
 ]

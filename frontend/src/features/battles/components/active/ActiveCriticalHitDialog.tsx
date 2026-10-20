@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -166,6 +167,9 @@ export default function ActiveCriticalHitDialog({ open, onOpenChange }: Critical
       <DialogContent className={`max-w-3xl ${HELPER_DIALOG_CONTENT_CLASS}`}>
         <DialogHeader>
           <DialogTitle>Critical Hits</DialogTitle>
+          <DialogDescription className="sr-only">
+            The critical hit tables, one per weapon type.
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="max-w-sm">

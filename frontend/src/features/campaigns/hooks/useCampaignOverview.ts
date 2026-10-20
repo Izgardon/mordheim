@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // api
 import {
@@ -67,6 +67,9 @@ export function useCampaignOverview({
   const [tradeError, setTradeError] = useState("");
   const [isTradesLoading, setIsTradesLoading] = useState(true);
   const [battleHistory, setBattleHistory] = useState<CampaignBattleHistoryEntry[]>([]);
+  // Raised to read the history again (a battle record edited, BATL-NEW-04).
+  const [battleHistoryVersion, setBattleHistoryVersion] = useState(0);
+  const reloadBattleHistory = useCallback(() => setBattleHistoryVersion((value) => value + 1), []);
   const [battleHistoryError, setBattleHistoryError] = useState("");
   const [isBattleHistoryLoading, setIsBattleHistoryLoading] = useState(true);
   const [pivotalMoments, setPivotalMoments] = useState<CampaignPivotalMoment[]>([]);
@@ -162,7 +165,7 @@ export function useCampaignOverview({
         }
       })
       .finally(() => setIsBattleHistoryLoading(false));
-  }, [campaignId]);
+  }, [campaignId, battleHistoryVersion]);
 
   useEffect(() => {
     if (Number.isNaN(campaignId)) {
@@ -404,6 +407,7 @@ export function useCampaignOverview({
     isTradesLoading,
     battleHistory,
     battleHistoryError,
+    reloadBattleHistory,
     isBattleHistoryLoading,
     pivotalMoments,
     pivotalMomentsError,

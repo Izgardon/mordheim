@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useMemo, useState, type ReactNode } from "react";
 
 import { ChevronDown } from "lucide-react";
 
@@ -26,6 +26,8 @@ type BattleHistoryTableProps = {
   isMobile: boolean;
   mobileExpanded: boolean;
   onToggleMobileExpanded: () => void;
+  /** Shown under a battle's details (Edit record for battle managers, BATL-NEW-04). */
+  renderBattleActions?: (battle: CampaignBattleHistoryEntry) => ReactNode;
 };
 
 const formatListCell = (values: string[] | number[]) =>
@@ -193,6 +195,7 @@ export default function BattleHistoryTable({
   isMobile,
   mobileExpanded,
   onToggleMobileExpanded,
+  renderBattleActions,
 }: BattleHistoryTableProps) {
   const { user } = useAuth();
   const [expandedBattleIds, setExpandedBattleIds] = useState<number[]>([]);
@@ -348,6 +351,11 @@ export default function BattleHistoryTable({
                                   ) : (
                                     <BattleHistoryDetailTable participants={battle.participants} />
                                   )}
+                                  {renderBattleActions ? (
+                                    <div className="flex justify-end pt-2">
+                                      {renderBattleActions(battle)}
+                                    </div>
+                                  ) : null}
                                 </div>
                               </td>
                             </tr>

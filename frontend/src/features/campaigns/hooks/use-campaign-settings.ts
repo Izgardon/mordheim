@@ -11,6 +11,11 @@ import {
   updateMemberRole,
 } from "../api/campaigns-api";
 import { deleteWarband } from "../../warbands/api/warbands-api";
+import {
+  closePostbattle,
+  confirmBattleResults,
+  finishBattle,
+} from "@/features/battles/api/battles-api";
 
 // constants
 import { permissionOptions } from "../constants/campaign-settings";
@@ -21,20 +26,26 @@ import type { CampaignActiveBattle, CampaignMember } from "../types/campaign-typ
 type UseCampaignSettingsParams = {
   campaignId: number;
   campaignRole?: CampaignMember["role"];
+  /** The viewer's campaign permission codes; `manage_battles` opens Active Battles. */
+  campaignPermissions?: string[];
   onDeleted: () => void;
 };
 
 export function useCampaignSettings({
   campaignId,
   campaignRole,
+  campaignPermissions,
   onDeleted,
 }: UseCampaignSettingsParams) {
+  // Active Battles is for anyone with manage_battles (owners and admins have it), as the server
+  // rules (BATL-NEW-03).
+  const canManageActiveBattles = Boolean(campaignPermissions?.includes("manage_battles"));
   const [members, setMembers] = useState<CampaignMember[]>([]);
   const [activeBattles, setActiveBattles] = useState<CampaignActiveBattle[]>([]);
   const [error, setError] = useState("");
   const [activeBattlesError, setActiveBattlesError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [isActiveBattlesLoading, setIsActiveBattlesLoading] = useState(campaignRole === "owner");
+  const [isActiveBattlesLoading, setIsActiveBattlesLoading] = useState(canManageActiveBattles);
   const [savingPermissions, setSavingPermissions] = useState<Record<number, boolean>>({});
   const [savingRoles, setSavingRoles] = useState<Record<number, boolean>>({});
   const [memberErrors, setMemberErrors] = useState<Record<number, string>>({});
@@ -54,7 +65,6 @@ export function useCampaignSettings({
   const canManagePermissions = campaignRole === "owner" || campaignRole === "admin";
   const canManageRoles = campaignRole === "owner";
   const canRemoveMembers = campaignRole === "owner";
-  const canManageActiveBattles = campaignRole === "owner";
   const isDeleteReady = deleteValue.trim().toLowerCase() === "delete";
 
   const permissionLabelMap = useMemo(
@@ -314,6 +324,28 @@ export function useCampaignSettings({
     setActiveBattles((prev) => prev.filter((entry) => entry.battle.id !== updated.battle.id));
   };
 
+  const handleCloseActiveBattle = async (battleId: number) => {
+    if (!canManageActiveBattles || Number.isNaN(campaignId)) {
+      return;
+    }
+    await closePostbattle(campaignId, battleId);
+    setActiveBattles((prev) => prev.filter((entry) => entry.battle.id !== battleId));
+  };
+
+  // End a stuck fight, or confirm its results (BATL-NEW-03): the battle moves on, and its row's
+  // tools with it, so the list is read again.
+  const resultsWrite =
+    (send: typeof finishBattle) =>
+    async (battleId: number, results: { winners: number[]; losers: number[] }) => {
+      if (!canManageActiveBattles || Number.isNaN(campaignId)) {
+        return;
+      }
+      await send(campaignId, battleId, results);
+      setActiveBattles(await listCampaignActiveBattles(campaignId));
+    };
+  const handleEndActiveBattle = resultsWrite(finishBattle);
+  const handleConfirmActiveBattleResults = resultsWrite(confirmBattleResults);
+
   return {
     members,
     activeBattles,
@@ -354,6 +386,9 @@ export function useCampaignSettings({
     setDeleteValue,
     handleDeleteCampaign,
     handleCancelActiveBattle,
+    handleCloseActiveBattle,
+    handleEndActiveBattle,
+    handleConfirmActiveBattleResults,
     resetDeleteState,
   };
 }

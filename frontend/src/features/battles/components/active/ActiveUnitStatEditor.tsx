@@ -13,6 +13,7 @@ import {
 } from "@/features/battles/components/prebattle/prebattle-utils";
 
 import { normalizeUnitOverride, unitInformationToOverride } from "./active-utils";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 type ActiveUnitStatEditorProps = {
   unit: PrebattleUnit;
@@ -88,11 +89,7 @@ export default function ActiveUnitStatEditor({
       await onSaveOverride(unit.key, draftOverride);
       setIsEditing(false);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setError(errorResponse.message || "Unable to save stat changes");
-      } else {
-        setError("Unable to save stat changes");
-      }
+      setError(getErrorMessage(errorResponse, "Unable to save stat changes"));
     }
   };
 

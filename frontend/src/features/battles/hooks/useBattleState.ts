@@ -1,56 +1,88 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { getBattleState } from "@/features/battles/api/battles-api";
-import type { BattleState, BattleStateView } from "@/features/battles/types/battle-types";
-import { useBattleEvents } from "@/lib/realtime";
-
+import { battleStateQuery } from "@/features/battles/api/battle-queries";
+import { onBattleStatusChanged } from "@/features/battles/api/battle-status-changed";
+import { getBattleStateLastEventId, mergeBattleState } from "@/features/battles/state/battle-cache";
 import {
-  getBattleStateLastEventId,
-  mergeBattleState,
-  shouldIgnoreBattleSocketEvent,
-} from "../utils/battle-state";
+  createSingleFlight,
+  reconcileBattleMessage,
+  type BattleReader,
+} from "@/features/battles/state/battle-messages";
+import type { BattleSocketMessage } from "@/features/battles/types/battle-messages";
+import type { BattleState, BattleStateView } from "@/features/battles/types/battle-types";
+import { getErrorMessage } from "@/lib/get-error-message";
+import { queryKeys } from "@/lib/query-keys";
+import { useBattleEvents, useRealtimeReconnect } from "@/lib/realtime";
 
 type UseBattleStateOptions = {
   campaignId: number;
   battleId: number;
+  /** The participant shape reads ask for (the page being shown). */
   view: BattleStateView;
-  currentUserId?: number | null;
+  /** Who reads: picks your capabilities and suggestions out of broadcasts. */
+  reader?: BattleReader;
 };
 
-export function useBattleState({
-  campaignId,
-  battleId,
-  view,
-  currentUserId,
-}: UseBattleStateOptions) {
-  const [battleState, setBattleState] = useState<BattleState | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
-  const battleStateRef = useRef<BattleState | null>(null);
-  const lastEventIdRef = useRef(0);
+/** A ref-like view of the cache: always the latest state, including optimistic changes. */
+export type BattleStateRef = { readonly current: BattleState | null };
 
-  const syncStateRefs = useCallback((nextState: BattleState | null) => {
-    battleStateRef.current = nextState;
-    lastEventIdRef.current = getBattleStateLastEventId(nextState);
-  }, []);
+/**
+ * The battle's state as a TanStack query (`['campaign', cid, 'battle', bid, 'state']`): one full
+ * read per visit; writes' answers merged in with `applyBattleResponse`; socket messages patch it
+ * from their snapshot (PERF-34), reading `state/` only on a version gap, one read at a time.
+ * Answers older than the cache never replace it (BUG-44). It catches up after the socket comes
+ * back, when the tab is shown again, and when a write is refused because the battle moved on
+ * (BUG-19), so a phone that slept through End battle follows it.
+ */
+export function useBattleState({ campaignId, battleId, view, reader }: UseBattleStateOptions) {
+  const queryClient = useQueryClient();
+  const validRoute = Number.isFinite(campaignId) && Number.isFinite(battleId);
+  const queryKey = useMemo(
+    () => queryKeys.campaign.battleState(campaignId, battleId),
+    [battleId, campaignId]
+  );
 
-  const replaceBattleState = useCallback(
-    (nextState: BattleState | null) => {
-      syncStateRefs(nextState);
-      setBattleState(nextState);
-    },
-    [syncStateRefs]
+  const viewRef = useRef(view);
+  const readerRef = useRef(reader);
+  useLayoutEffect(() => {
+    viewRef.current = view;
+    readerRef.current = reader;
+  });
+  const query = useQuery({
+    ...battleStateQuery(queryClient, campaignId, battleId, () => viewRef.current),
+    enabled: validRoute,
+  });
+
+  const readState = useCallback(
+    () => queryClient.getQueryData<BattleState>(queryKey) ?? null,
+    [queryClient, queryKey]
+  );
+  const battleStateRef = useMemo<BattleStateRef>(
+    () => ({
+      get current() {
+        return readState();
+      },
+    }),
+    [readState]
+  );
+  const lastEventIdRef = useMemo(
+    () => ({
+      get current() {
+        return getBattleStateLastEventId(readState());
+      },
+    }),
+    [readState]
   );
 
   const updateBattleState = useCallback(
     (updater: (previous: BattleState | null) => BattleState | null) => {
-      setBattleState((previous) => {
-        const nextState = updater(previous);
-        syncStateRefs(nextState);
-        return nextState;
-      });
+      queryClient.setQueryData<BattleState>(
+        queryKey,
+        (previous: BattleState | undefined) => updater(previous ?? null) ?? undefined
+      );
     },
-    [syncStateRefs]
+    [queryClient, queryKey]
   );
 
   const applyBattleResponse = useCallback(
@@ -61,64 +93,78 @@ export function useBattleState({
   );
 
   const refreshBattleState = useCallback(
-    async ({ forceFull = false }: { forceFull?: boolean } = {}) => {
-      if (Number.isNaN(campaignId) || Number.isNaN(battleId)) {
-        return null;
-      }
-      const nextState = await getBattleState(campaignId, battleId, {
-        sinceEventId: forceFull ? 0 : lastEventIdRef.current,
-        view,
-      });
-      applyBattleResponse(nextState);
-      return nextState;
-    },
-    [applyBattleResponse, battleId, campaignId, view]
+    () => queryClient.refetchQueries({ queryKey, exact: true }),
+    [queryClient, queryKey]
+  );
+  // Gap reads join a read already running and read once more after it, never two at once.
+  const gapRefresh = useMemo(
+    () =>
+      createSingleFlight(
+        () => queryClient.refetchQueries({ queryKey, exact: true }, { cancelRefetch: false }),
+        () => queryClient.isFetching({ queryKey, exact: true }) > 0
+      ),
+    [queryClient, queryKey]
   );
 
+  // Messages sent while the socket was down or the tab hidden are gone: read what changed (BUG-19).
+  // A read already running (the campaign's reconnect catch-up) is joined, not repeated.
+  const catchUp = useCallback(() => {
+    if (validRoute) {
+      void queryClient.invalidateQueries({ queryKey, exact: true }, { cancelRefetch: false });
+    }
+  }, [queryClient, queryKey, validRoute]);
+  useRealtimeReconnect(catchUp);
   useEffect(() => {
-    if (Number.isNaN(campaignId) || Number.isNaN(battleId)) {
-      setError("Invalid battle route.");
-      setIsLoading(false);
-      return;
-    }
-
-    let active = true;
-    setIsLoading(true);
-    setError("");
-    getBattleState(campaignId, battleId, { sinceEventId: 0, view })
-      .then((nextState) => {
-        if (!active) {
-          return;
-        }
-        replaceBattleState(nextState);
-      })
-      .catch((errorResponse) => {
-        if (!active) {
-          return;
-        }
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to load battle");
-        } else {
-          setError("Unable to load battle");
-        }
-      })
-      .finally(() => {
-        if (active) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      active = false;
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        catchUp();
+      }
     };
-  }, [battleId, campaignId, replaceBattleState, view]);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    const stopListening = onBattleStatusChanged((changedCampaignId, changedBattleId) => {
+      if (changedCampaignId === campaignId && changedBattleId === battleId) {
+        catchUp();
+      }
+    });
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      stopListening();
+    };
+  }, [battleId, campaignId, catchUp]);
 
-  useBattleEvents(Number.isNaN(battleId) ? null : battleId, (message) => {
-    if (shouldIgnoreBattleSocketEvent(message, currentUserId)) {
-      return;
+  // Battle writes name this tab's socket, so the server never sends this tab its own events; any
+  // event that arrives is news, even one your own user sent from another tab or device (BUG-75).
+  useBattleEvents(validRoute ? battleId : null, (message) => {
+    const outcome = reconcileBattleMessage(
+      readState(),
+      message as BattleSocketMessage,
+      readerRef.current
+    );
+    if (outcome.next) {
+      queryClient.setQueryData<BattleState>(queryKey, outcome.next);
     }
-    void refreshBattleState();
+    if (outcome.refetch === "gap") {
+      gapRefresh.request();
+    } else if (outcome.refetch === "legacy") {
+      // A message without a version (an older server): read the newer events, as before.
+      void refreshBattleState();
+    }
   });
+
+  const battleState = query.data ?? null;
+  const isLoading = validRoute && query.isPending;
+  let error = "";
+  if (!validRoute) {
+    error = "Invalid battle route.";
+  } else if (!battleState && query.error) {
+    error = getErrorMessage(query.error, "Unable to load battle");
+  }
+
+  /** A read of what changed, or the read already running if there is one. */
+  const joinRead = useCallback(
+    () => queryClient.refetchQueries({ queryKey, exact: true }, { cancelRefetch: false }),
+    [queryClient, queryKey]
+  );
 
   return useMemo(
     () => ({
@@ -127,18 +173,20 @@ export function useBattleState({
       isLoading,
       error,
       lastEventIdRef,
-      replaceBattleState,
       updateBattleState,
       applyBattleResponse,
       refreshBattleState,
+      joinRead,
     }),
     [
       applyBattleResponse,
       battleState,
+      battleStateRef,
       error,
       isLoading,
+      lastEventIdRef,
       refreshBattleState,
-      replaceBattleState,
+      joinRead,
       updateBattleState,
     ]
   );

@@ -5,19 +5,22 @@ import { toast } from "sonner";
 
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { invalidateOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
+import { invalidatePendingResults } from "@/features/battles/hooks/usePendingReportedResults";
 import {
   approveReportedBattleResult,
+  declineBattleInvite,
   declineReportedBattleResult,
   joinBattle,
 } from "@/features/battles/api/battles-api";
 import type {
   BattleInviteNotification,
+  BattleNudgeNotification,
   BattleResultRequestNotification,
 } from "@/features/battles/types/battle-types";
 import { acceptTradeRequest, declineTradeRequest } from "@/features/campaigns/api/campaigns-api";
 import {
   clearAllNotifications as apiClearAllNotifications,
-  clearNotification as apiClearNotification,
+  clearNotification,
 } from "@/features/notifications/api/notifications-api";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 import { getErrorMessage } from "@/lib/get-error-message";
@@ -40,7 +43,12 @@ export function useNotifications() {
     clearBattleInviteNotifications,
     removeBattleResultRequestNotification,
     clearBattleResultRequestNotifications,
+    battleNudgeNotifications,
+    removeBattleNudgeNotification,
+    clearBattleNudgeNotifications,
+    currentBattleSession,
     setCurrentBattleSession,
+    clearCurrentBattleSession,
   } = useAppStore();
 
   const acceptTradeNotification = useCallback(
@@ -84,16 +92,18 @@ export function useNotifications() {
     [navigate, queryClient, removeBattleInviteNotification, setCurrentBattleSession]
   );
 
-  const dismissBattleInviteNotification = useCallback(
+  // The invite's X declines it (BUG-45): final; the server resolves the notification. Removed once
+  // the server has it, so a failure shows on the card instead of the invite silently coming back.
+  const declineBattleInviteNotification = useCallback(
     async (notification: BattleInviteNotification) => {
-      // Removed once the server has it, so a failure shows on the card instead of the invite
-      // silently coming back on the next load.
-      if (notification.notificationDbId) {
-        await apiClearNotification(notification.notificationDbId);
-      }
+      await declineBattleInvite(notification.campaignId, notification.battleId);
       removeBattleInviteNotification(notification.id);
+      if (currentBattleSession?.battleId === notification.battleId) {
+        clearCurrentBattleSession();
+      }
+      void invalidateOpenBattles(queryClient, notification.campaignId);
     },
-    [removeBattleInviteNotification]
+    [clearCurrentBattleSession, currentBattleSession, queryClient, removeBattleInviteNotification]
   );
 
   const acceptBattleResultRequestNotification = useCallback(
@@ -101,6 +111,7 @@ export function useNotifications() {
       await approveReportedBattleResult(notification.campaignId, notification.battleId);
       removeBattleResultRequestNotification(notification.id);
       void invalidateOpenBattles(queryClient, notification.campaignId);
+      void invalidatePendingResults(queryClient, notification.campaignId);
     },
     [queryClient, removeBattleResultRequestNotification]
   );
@@ -110,12 +121,36 @@ export function useNotifications() {
       await declineReportedBattleResult(notification.campaignId, notification.battleId);
       removeBattleResultRequestNotification(notification.id);
       void invalidateOpenBattles(queryClient, notification.campaignId);
+      void invalidatePendingResults(queryClient, notification.campaignId);
     },
     [queryClient, removeBattleResultRequestNotification]
   );
 
+  // A nudge (BATL-NEW-08): the tick goes to the battle's page, the X dismisses it; both clear it.
+  const dismissBattleNudge = useCallback(
+    async (notification: BattleNudgeNotification) => {
+      if (notification.notificationDbId > 0) {
+        await clearNotification(notification.notificationDbId);
+      }
+      removeBattleNudgeNotification(notification.id);
+    },
+    [removeBattleNudgeNotification]
+  );
+  const goToBattleNudge = useCallback(
+    async (notification: BattleNudgeNotification) => {
+      await dismissBattleNudge(notification);
+      navigate(
+        notification.page
+          ? `/campaigns/${notification.campaignId}/battles/${notification.battleId}/${notification.page}`
+          : `/campaigns/${notification.campaignId}`
+      );
+    },
+    [dismissBattleNudge, navigate]
+  );
+
   const clearNotifications = useCallback(() => {
     clearTradeRequestNotifications();
+    clearBattleNudgeNotifications();
     clearBattleInviteNotifications();
     clearBattleResultRequestNotifications();
     apiClearAllNotifications().catch((error: unknown) => {
@@ -125,6 +160,7 @@ export function useNotifications() {
     });
   }, [
     clearBattleInviteNotifications,
+    clearBattleNudgeNotifications,
     clearBattleResultRequestNotifications,
     clearTradeRequestNotifications,
   ]);
@@ -136,9 +172,12 @@ export function useNotifications() {
     acceptTradeNotification,
     declineTradeNotification,
     acceptBattleInviteNotification,
-    dismissBattleInviteNotification,
+    declineBattleInviteNotification,
     acceptBattleResultRequestNotification,
     declineBattleResultRequestNotification,
+    battleNudgeNotifications,
+    goToBattleNudge,
+    dismissBattleNudge,
     clearNotifications,
   };
 }

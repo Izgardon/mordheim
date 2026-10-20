@@ -1,5 +1,10 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
+
+import { battleState } from "@/test/battle-fixtures";
+import { createTestQueryClient, renderWithQueryClient } from "@/test/query-test-utils";
+import { queryKeys } from "@/lib/query-keys";
 
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 import { ApiError } from "@/lib/api-client";
@@ -25,7 +30,7 @@ function renderMenu(onAcceptTrade: (notification: TradeNotification) => Promise<
       onAcceptTrade={onAcceptTrade}
       onDeclineTrade={vi.fn()}
       onAcceptBattleInvite={vi.fn()}
-      onDismissBattleInvite={vi.fn()}
+      onDeclineBattleInvite={vi.fn()}
       onAcceptBattleResultRequest={vi.fn()}
       onDeclineBattleResultRequest={vi.fn()}
     />
@@ -34,6 +39,14 @@ function renderMenu(onAcceptTrade: (notification: TradeNotification) => Promise<
 }
 
 describe("NotificationsMenu", () => {
+  it("describes the bell's dialog to screen readers (BUG-126)", () => {
+    renderMenu(vi.fn());
+
+    expect(screen.getByRole("dialog", { name: "Notifications" })).toHaveAccessibleDescription(
+      "Battle invites, battle results waiting for your answer, and trade requests."
+    );
+  });
+
   it("stays open and shows why when an action fails", async () => {
     const onAcceptTrade = vi.fn(async () => {
       throw new ApiError("Bad request", 400, { detail: "This trade request has expired." });
@@ -64,5 +77,86 @@ describe("NotificationsMenu", () => {
     finish();
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
     expect(onAcceptTrade).toHaveBeenCalledWith(trade);
+  });
+
+  it("tells an invitee about another unfinished battle on the invite, and closes as he goes to it (BATL-NEW-01)", () => {
+    const queryClient = createTestQueryClient();
+    const other = battleState({ id: 40, status: "postbattle" });
+    other.viewer = { participant_status: "finished_battle", unfinished: true, page: "postbattle" };
+    queryClient.setQueryData(queryKeys.campaign.openBattles(7), [other]);
+    renderWithQueryClient(
+      <MemoryRouter>
+        <NotificationsMenu
+          tradeRequestNotifications={[]}
+          battleInviteNotifications={[
+            {
+              id: "battle-41",
+              notificationDbId: 4,
+              battleId: 41,
+              campaignId: 7,
+              title: "Street Fight",
+              scenario: "Street Fight",
+              battleDate: "",
+              createdByUserId: 2,
+              createdByLabel: "Mira",
+              createdAt: "2026-10-17T10:00:00Z",
+            },
+          ]}
+          battleResultRequestNotifications={[]}
+          onAcceptTrade={vi.fn()}
+          onDeclineTrade={vi.fn()}
+          onAcceptBattleInvite={vi.fn()}
+          onDeclineBattleInvite={vi.fn()}
+          onAcceptBattleResultRequest={vi.fn()}
+          onDeclineBattleResultRequest={vi.fn()}
+        />
+      </MemoryRouter>,
+      { queryClient }
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Notifications" }));
+
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "You have an unfinished battle: #40, postbattle."
+    );
+    fireEvent.click(screen.getByRole("link", { name: "Go to it" }));
+    expect(screen.queryByRole("dialog", { name: "Notifications" })).toBeNull();
+  });
+
+  it("lists a nudge: the tick goes to the battle, the X dismisses it (BATL-NEW-08)", async () => {
+    const onGoToNudge = vi.fn(async () => undefined);
+    const onDismissNudge = vi.fn(async () => undefined);
+    const nudge = {
+      id: "battle-nudge-41",
+      notificationDbId: 12,
+      battleId: 41,
+      campaignId: 7,
+      scenario: "Street Fight",
+      page: "postbattle" as const,
+      fromLabel: "Mira",
+      createdAt: "2026-10-19T10:00:00Z",
+    };
+    render(
+      <NotificationsMenu
+        tradeRequestNotifications={[]}
+        battleInviteNotifications={[]}
+        battleResultRequestNotifications={[]}
+        battleNudgeNotifications={[nudge]}
+        onGoToNudge={onGoToNudge}
+        onDismissNudge={onDismissNudge}
+        onAcceptTrade={vi.fn()}
+        onDeclineTrade={vi.fn()}
+        onAcceptBattleInvite={vi.fn()}
+        onDeclineBattleInvite={vi.fn()}
+        onAcceptBattleResultRequest={vi.fn()}
+        onDeclineBattleResultRequest={vi.fn()}
+      />
+    );
+    expect(screen.getByRole("button", { name: "Notifications" })).toHaveTextContent("1");
+    fireEvent.click(screen.getByRole("button", { name: "Notifications" }));
+
+    expect(screen.getByText("Nudge from Mira")).toBeInTheDocument();
+    expect(screen.getByText("Street Fight is waiting for you.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Go to the battle" }));
+    await waitFor(() => expect(onGoToNudge).toHaveBeenCalledWith(nudge));
   });
 });

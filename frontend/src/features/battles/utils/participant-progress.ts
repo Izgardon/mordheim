@@ -1,0 +1,81 @@
+import type {
+  BattleParticipant,
+  BattleParticipantStatus,
+  BattleStatus,
+} from "@/features/battles/types/battle-types";
+import { idleLabel } from "@/features/battles/utils/battle-timing";
+
+/**
+ * Where each player is in the battle, for "who's holding up the battle" (BATL-NEW-08):
+ * - `waiting`: the battle is waiting for them (an unanswered invite, not ready, still fighting,
+ *   postbattle open);
+ * - `done`: they've done their part for now (accepted, ready, finished their fight, finished,
+ *   skipped);
+ * - `left`: declined or left before the battle, so nobody waits for them.
+ */
+export type ParticipantProgress = {
+  label: string;
+  tone: "waiting" | "done" | "left";
+};
+
+const LEFT: Partial<Record<BattleParticipantStatus, string>> = {
+  declined: "Declined",
+  canceled_prebattle: "Left",
+  reported_result_declined: "Declined",
+};
+
+const DECLARED: Record<string, string> = { won: "won", lost: "lost", undecided: "undecided" };
+
+export function participantProgress(
+  participant: Pick<BattleParticipant, "status" | "skipped_postbattle" | "declared_result">,
+  battleStatus: BattleStatus
+): ParticipantProgress {
+  const left = LEFT[participant.status];
+  if (left) {
+    return { label: left, tone: "left" };
+  }
+  switch (participant.status) {
+    case "invited":
+      return { label: "Invited", tone: "waiting" };
+    case "accepted":
+      return battleStatus === "inviting"
+        ? { label: "Accepted", tone: "done" }
+        : { label: "Not ready", tone: "waiting" };
+    case "joined_prebattle":
+      return { label: "Not ready", tone: "waiting" };
+    case "ready":
+      return { label: "Ready", tone: "done" };
+    case "in_battle":
+      // Each player finishes his own fight (decision 4): the battle waits for those still in it.
+      return { label: "In battle", tone: "waiting" };
+    case "finished_battle": {
+      if (battleStatus === "postbattle") {
+        return { label: "In postbattle", tone: "waiting" };
+      }
+      const declared = participant.declared_result ? DECLARED[participant.declared_result] : null;
+      return { label: declared ? `Finished: ${declared}` : "Finished battle", tone: "done" };
+    }
+    case "confirmed_postbattle":
+      return participant.skipped_postbattle
+        ? { label: "Skipped", tone: "done" }
+        : { label: "Finished", tone: "done" };
+    default:
+      return { label: participant.status, tone: "done" };
+  }
+}
+
+/** Each player still in the battle, with their progress and how long since they were last seen. */
+export function battleProgress(
+  participants: BattleParticipant[],
+  battleStatus: BattleStatus,
+  now = Date.now()
+) {
+  return participants
+    .map((participant) => ({
+      participant,
+      progress: participantProgress(participant, battleStatus),
+      // Their last write or read (BATL-NEW-08); older servers only have the last read.
+      idle: idleLabel(participant.last_activity_at ?? participant.last_seen_at, now),
+    }))
+    .filter((entry) => entry.progress.tone !== "left");
+}

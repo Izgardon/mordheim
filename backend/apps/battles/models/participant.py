@@ -13,6 +13,7 @@ class BattleParticipant(models.Model):
     STATUS_JOINED_PREBATTLE = "joined_prebattle"
     STATUS_READY = "ready"
     STATUS_CANCELED_PREBATTLE = "canceled_prebattle"
+    STATUS_DECLINED = "declined"
     STATUS_IN_BATTLE = "in_battle"
     STATUS_FINISHED_BATTLE = "finished_battle"
     STATUS_CONFIRMED_POSTBATTLE = "confirmed_postbattle"
@@ -26,17 +27,25 @@ class BattleParticipant(models.Model):
         (STATUS_JOINED_PREBATTLE, "Joined prebattle"),
         (STATUS_READY, "Ready"),
         (STATUS_CANCELED_PREBATTLE, "Canceled prebattle"),
+        (STATUS_DECLINED, "Declined"),
         (STATUS_IN_BATTLE, "In battle"),
         (STATUS_FINISHED_BATTLE, "Finished battle"),
         (STATUS_CONFIRMED_POSTBATTLE, "Confirmed postbattle"),
     )
 
-    CONNECTION_ONLINE = "online"
-    CONNECTION_OFFLINE = "offline"
-    CONNECTION_CHOICES = (
-        (CONNECTION_ONLINE, "Online"),
-        (CONNECTION_OFFLINE, "Offline"),
+    # what a player declares when he finishes his own battle (decision 4); "" until then
+    DECLARED_WON = "won"
+    DECLARED_LOST = "lost"
+    DECLARED_UNDECIDED = "undecided"
+    DECLARED_RESULT_CHOICES = (
+        (DECLARED_WON, "Won"),
+        (DECLARED_LOST, "Lost"),
+        (DECLARED_UNDECIDED, "Decide when the battle ends"),
     )
+
+    # out of the battle: they don't count towards it and can't follow it (SEC-08)
+    LEFT_STATUSES = (STATUS_CANCELED_PREBATTLE, STATUS_DECLINED, STATUS_REPORTED_RESULT_DECLINED)
+    ACCEPTED_STATUSES = (STATUS_ACCEPTED, STATUS_JOINED_PREBATTLE, STATUS_READY)
 
     battle = models.ForeignKey(
         Battle,
@@ -58,11 +67,6 @@ class BattleParticipant(models.Model):
         choices=STATUS_CHOICES,
         default=STATUS_INVITED,
     )
-    connection_state = models.CharField(
-        max_length=10,
-        choices=CONNECTION_CHOICES,
-        default=CONNECTION_OFFLINE,
-    )
     invited_by_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="battle_participant_invites",
@@ -78,12 +82,18 @@ class BattleParticipant(models.Model):
     battle_joined_at = models.DateTimeField(null=True, blank=True)
     finished_at = models.DateTimeField(null=True, blank=True)
     confirmed_at = models.DateTimeField(null=True, blank=True)
-    last_event_id = models.BigIntegerField(default=0)
+    # finished postbattle without applying it: skipped, or closed for him (decision 3)
+    skipped_postbattle = models.BooleanField(default=False)
+    declared_result = models.CharField(max_length=10, choices=DECLARED_RESULT_CHOICES, blank=True, default="")
+    # taken off an ended battle's record by a battle manager (BATL-NEW-04): kept, marked removed
+    removed_from_record = models.BooleanField(default=False)
     last_seen_at = models.DateTimeField(null=True, blank=True)
     selected_unit_keys_json = models.JSONField(default=list, blank=True)
     unit_information_json = models.JSONField(default=dict, blank=True)
     custom_units_json = models.JSONField(default=list, blank=True)
     postbattle_json = models.JSONField(default=dict, blank=True)
+    # each roster as it stood when the battle started (BUG-73, PERF-38); None until then
+    roster_json = models.JSONField(null=True, blank=True)
     declared_rating = models.PositiveIntegerField(null=True, blank=True)
     battle_notes = models.TextField(blank=True, default="")
     created_at = models.DateTimeField(auto_now_add=True)

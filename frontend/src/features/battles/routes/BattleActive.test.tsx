@@ -3,6 +3,10 @@ import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { renderWithQueryClient } from "@/test/query-test-utils";
+
+import BattleProvider from "@/features/battles/components/layout/BattleProvider";
+
 import BattleActive from "./BattleActive";
 
 const mocks = vi.hoisted(() => {
@@ -285,6 +289,7 @@ vi.mock("@/features/battles/api/battles-api", () => ({
 
 vi.mock("@/lib/realtime", () => ({
   useBattleEvents: mocks.useBattleEvents,
+  useRealtimeReconnect: vi.fn(),
 }));
 
 vi.mock("@/features/battles/hooks/useBattleRosters", () => ({
@@ -412,7 +417,11 @@ describe("BattleActive", () => {
   });
 
   it("publishes a mobile top bar action for Battle Notes on the current user's warband", async () => {
-    render(<BattleActive />);
+    renderWithQueryClient(
+      <BattleProvider phase="active">
+        <BattleActive />
+      </BattleProvider>
+    );
 
     await screen.findByText("Active roster");
 
@@ -435,7 +444,11 @@ describe("BattleActive", () => {
   it("queues rapid wound updates and saves the final hero current_wounds snapshot", async () => {
     const user = userEvent.setup();
 
-    render(<BattleActive />);
+    renderWithQueryClient(
+      <BattleProvider phase="active">
+        <BattleActive />
+      </BattleProvider>
+    );
 
     await screen.findByText("Active roster");
 
@@ -453,14 +466,10 @@ describe("BattleActive", () => {
       expect(mocks.saveBattleParticipantConfig).toHaveBeenCalledTimes(2);
     });
 
-    const secondPayload = mocks.saveBattleParticipantConfig.mock.calls[1]?.[2] as {
-      unit_information_json: Record<
-        string,
-        { current_wounds?: number | null; stats_override?: Record<string, unknown> }
-      >;
-    };
-    expect(secondPayload.unit_information_json["hero:1"]?.current_wounds).toBe(0);
-    expect(secondPayload.unit_information_json["hero:1"]?.stats_override?.wounds).toBeUndefined();
+    // Only the changed field of the changed unit (BUG-44): wounds, never stats_override.
+    expect(mocks.saveBattleParticipantConfig.mock.calls[1]?.[2]).toEqual({
+      unit_information_patch: { "hero:1": { current_wounds: 0 } },
+    });
 
     await act(async () => {
       mocks.resolveNextSave();
@@ -470,7 +479,11 @@ describe("BattleActive", () => {
   it("stores henchman wound changes in current_wounds instead of stats_override", async () => {
     const user = userEvent.setup();
 
-    render(<BattleActive />);
+    renderWithQueryClient(
+      <BattleProvider phase="active">
+        <BattleActive />
+      </BattleProvider>
+    );
 
     await screen.findByText("Active roster");
 
@@ -488,16 +501,9 @@ describe("BattleActive", () => {
       expect(mocks.saveBattleParticipantConfig).toHaveBeenCalledTimes(2);
     });
 
-    const secondPayload = mocks.saveBattleParticipantConfig.mock.calls[1]?.[2] as {
-      unit_information_json: Record<
-        string,
-        { current_wounds?: number | null; stats_override?: Record<string, unknown> }
-      >;
-    };
-    expect(secondPayload.unit_information_json["henchman:2"]?.current_wounds).toBe(3);
-    expect(
-      secondPayload.unit_information_json["henchman:2"]?.stats_override?.wounds
-    ).toBeUndefined();
+    expect(mocks.saveBattleParticipantConfig.mock.calls[1]?.[2]).toEqual({
+      unit_information_patch: { "henchman:2": { current_wounds: 3 } },
+    });
 
     await act(async () => {
       mocks.resolveNextSave();

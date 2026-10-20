@@ -10,20 +10,13 @@ import type {
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
 import "@/features/warbands/styles/warband.css";
 import { getBattleCardThemeStyle } from "@/features/battles/components/shared/battle-card-theme";
+import { getErrorMessage } from "@/lib/get-error-message";
 
+import ActiveHenchmanRow from "./ActiveHenchmanRow";
 import ActiveKillDialog from "./ActiveKillDialog";
 import ActiveUnitExpandedDetails from "./ActiveUnitExpandedDetails";
-import { KillTrophyIcon, OutOfActionIcon } from "./ActiveBattleActionIcons";
-import {
-  getCurrentUnitWounds,
-  getEffectiveUnitStats,
-  type ActiveBattleUnitOption,
-} from "./active-utils";
-
-const DANGER_ACTION_BUTTON_CLASS =
-  "battle-toolbar-button icon-button flex h-8 w-8 items-center justify-center rounded-md text-red-400/85 transition hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50";
-const DANGER_KILL_BUTTON_CLASS =
-  "battle-toolbar-button icon-button inline-flex h-8 items-center gap-1 rounded-md px-1.5 text-red-400/85 transition hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50";
+import ActiveUnitStatEditor from "./ActiveUnitStatEditor";
+import { getEffectiveUnitStats, type ActiveBattleUnitOption } from "./active-utils";
 
 type ActiveHenchmenGroupCardProps = {
   groupName: string;
@@ -34,11 +27,8 @@ type ActiveHenchmenGroupCardProps = {
   killTargetOptions: ActiveBattleUnitOption[];
   onSetOutOfAction: (unitKey: string, outOfAction: boolean) => Promise<void>;
   onAdjustWounds: (unit: PrebattleUnit, delta: number) => Promise<void>;
-  /**
-   * Not read: no stat-override editor is rendered since ActiveUnitStatEditor was unmounted.
-   * Kept (callers still pass it) pending a decision on whether to restore that editor.
-   */
-  onSaveOverride: (unitKey: string, override: UnitOverride | undefined) => Promise<void>;
+  /** Saves a battle stat change for every member of the group (BATL-NEW-07). */
+  onSaveOverride: (unitKeys: string[], override: UnitOverride | undefined) => Promise<void>;
   onSaveUnitNotes: (unitKey: string, notes: string) => Promise<void>;
   onRecordKill: (payload: {
     killerUnitKey: string;
@@ -49,6 +39,7 @@ type ActiveHenchmenGroupCardProps = {
   }) => Promise<void>;
   onUseSingleUseItem: (unit: PrebattleUnit, item: UnitSingleUseItem) => Promise<void>;
   getUsedSingleUseItemCount: (unitKey: string, itemId: number) => number;
+  onUndoSingleUseItem?: (unit: PrebattleUnit, itemId: number) => Promise<void>;
   activeItemActionKey: string | null;
   savingUnitKeys?: Record<string, boolean>;
 };
@@ -62,10 +53,12 @@ export default function ActiveHenchmenGroupCard({
   killTargetOptions,
   onSetOutOfAction,
   onAdjustWounds,
+  onSaveOverride,
   onSaveUnitNotes,
   onRecordKill,
   onUseSingleUseItem,
   getUsedSingleUseItemCount,
+  onUndoSingleUseItem,
   activeItemActionKey,
   savingUnitKeys = {},
 }: ActiveHenchmenGroupCardProps) {
@@ -110,11 +103,7 @@ export default function ActiveHenchmenGroupCard({
     try {
       await onSetOutOfAction(unitKey, nextOutOfAction);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setError(errorResponse.message || "Unable to update unit state");
-      } else {
-        setError("Unable to update unit state");
-      }
+      setError(getErrorMessage(errorResponse, "Unable to update unit state"));
     } finally {
       setUpdatingOutOfActionKeys((prev) => ({ ...prev, [unitKey]: false }));
     }
@@ -144,97 +133,21 @@ export default function ActiveHenchmenGroupCard({
         </div>
 
         <div className={`mt-2 grid gap-2 ${memberGridClass}`}>
-          {members.map((member) => {
-            const memberInfo = unitInformationByKey[member.key];
-            const outOfAction = Boolean(memberInfo?.out_of_action);
-            const killCount = memberInfo?.kill_count ?? 0;
-            const isUpdating = Boolean(updatingOutOfActionKeys[member.key]);
-            const woundsValue = getCurrentUnitWounds(member, memberInfo);
-            const isSavingConfig = Boolean(savingUnitKeys[member.key]);
-
-            return (
-              <div
-                key={member.key}
-                className={`battle-metric-box px-2.5 py-2 ${outOfAction ? "opacity-85" : ""}`}
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p
-                        className={`truncate text-sm font-medium ${
-                          outOfAction ? "text-muted-foreground/80" : "text-foreground"
-                        }`}
-                      >
-                        {member.displayName}
-                      </p>
-                      {outOfAction ? (
-                        <span className="rounded-sm border border-red-900/50 bg-red-950/30 px-1.5 py-0.5 text-[0.52rem] uppercase tracking-[0.16em] text-red-300/85">
-                          OOA
-                        </span>
-                      ) : null}
-                    </div>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-1.5">
-                    <div className="battle-metric-box inline-flex h-8 items-center overflow-hidden">
-                      <span className="flex h-full items-center border-r border-border/50 px-1.5 text-[0.55rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                        W
-                      </span>
-                      <button
-                        type="button"
-                        className="icon-button flex h-8 w-8 items-center justify-center text-sm text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                        onClick={() => void onAdjustWounds(member, -1)}
-                        disabled={!canInteract || outOfAction || isSavingConfig || woundsValue <= 0}
-                        aria-label={`Decrease wounds for ${member.displayName}`}
-                      >
-                        -
-                      </button>
-                      <div className="flex h-8 min-w-9 items-center justify-center border-x border-border/50 px-2 text-xs font-semibold text-foreground">
-                        {woundsValue}
-                      </div>
-                      <button
-                        type="button"
-                        className="icon-button flex h-8 w-8 items-center justify-center text-sm text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                        onClick={() => void onAdjustWounds(member, 1)}
-                        disabled={!canInteract || outOfAction || isSavingConfig}
-                        aria-label={`Increase wounds for ${member.displayName}`}
-                      >
-                        +
-                      </button>
-                    </div>
-                    <button
-                      type="button"
-                      className={
-                        outOfAction
-                          ? "battle-toolbar-button icon-button flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                          : DANGER_ACTION_BUTTON_CLASS
-                      }
-                      onClick={() => void handleSetOutOfAction(member.key, !outOfAction)}
-                      disabled={!canInteract || isUpdating || isSavingConfig}
-                      aria-label={
-                        outOfAction ? "Set unit back in action" : "Set unit out of action"
-                      }
-                      title={outOfAction ? "Set back in action" : "Set out of action"}
-                    >
-                      <OutOfActionIcon
-                        className={outOfAction ? "h-6 w-6" : "h-5 w-5 text-red-400"}
-                      />
-                    </button>
-                    <button
-                      type="button"
-                      className={DANGER_KILL_BUTTON_CLASS}
-                      onClick={() => setKillDialogMember(member)}
-                      disabled={!canInteract || outOfAction || isSavingConfig}
-                      aria-label="Record kill"
-                      title="Record kill"
-                    >
-                      <KillTrophyIcon className="h-5 w-5" />
-                      <span className="text-xs font-semibold">{killCount}</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {members.map((member) => (
+            <ActiveHenchmanRow
+              key={member.key}
+              member={member}
+              memberInfo={unitInformationByKey[member.key]}
+              canInteract={canInteract}
+              isUpdating={Boolean(updatingOutOfActionKeys[member.key])}
+              isSavingConfig={Boolean(savingUnitKeys[member.key])}
+              onAdjustWounds={(delta) => void onAdjustWounds(member, delta)}
+              onToggleOutOfAction={(outOfAction) =>
+                void handleSetOutOfAction(member.key, outOfAction)
+              }
+              onRecordKill={() => setKillDialogMember(member)}
+            />
+          ))}
         </div>
 
         {error ? <p className="mt-2 text-xs text-red-500">{error}</p> : null}
@@ -242,8 +155,9 @@ export default function ActiveHenchmenGroupCard({
 
       <button
         type="button"
-        className="flex h-8 w-full items-center justify-center border-t border-border/30 bg-black/25 text-muted-foreground transition hover:text-foreground focus-visible:outline-none"
-        aria-label="Expand henchmen group details"
+        className="flex h-11 w-full items-center justify-center border-t border-border/30 bg-black/25 text-muted-foreground transition hover:text-foreground focus-visible:outline-none"
+        aria-label={`Details for ${groupName}`}
+        aria-expanded={isExpanded}
         onClick={() => setIsExpanded((prev) => !prev)}
       >
         <ChevronDown className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
@@ -251,6 +165,20 @@ export default function ActiveHenchmenGroupCard({
 
       {isExpanded ? (
         <div>
+          <div className="px-3 pt-3">
+            <ActiveUnitStatEditor
+              unit={detailUnit}
+              unitInformation={detailUnitInfo}
+              editable={canInteract}
+              isSaving={members.some((member) => savingUnitKeys[member.key])}
+              onSaveOverride={(_, override) =>
+                onSaveOverride(
+                  members.map((member) => member.key),
+                  override
+                )
+              }
+            />
+          </div>
           <ActiveUnitExpandedDetails
             unit={detailUnit}
             unitInformation={detailUnitInfo}
@@ -265,6 +193,9 @@ export default function ActiveHenchmenGroupCard({
             }
             getUsedSingleUseItemCount={(itemId) =>
               getUsedSingleUseItemCount(detailUnit.key, itemId)
+            }
+            onUndoSingleUseItem={
+              onUndoSingleUseItem ? (itemId) => onUndoSingleUseItem(detailUnit, itemId) : undefined
             }
             activeItemActionKey={activeItemActionKey}
           />

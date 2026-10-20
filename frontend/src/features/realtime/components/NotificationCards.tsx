@@ -3,10 +3,12 @@ import { Check, Loader2, X } from "lucide-react";
 
 import type {
   BattleInviteNotification,
+  BattleNudgeNotification,
   BattleResultRequestNotification,
 } from "@/features/battles/types/battle-types";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 import { cn } from "@/lib/utils";
+import UnfinishedBattleBanner from "@/features/battles/components/shared/UnfinishedBattleBanner";
 
 type NotificationCardAction = {
   label: string;
@@ -80,6 +82,8 @@ type CardProps<T> = {
   state: NotificationCardState;
   onAccept: () => void;
   onDecline: () => void;
+  /** Following a link out of the card (closes the menu). */
+  onNavigate?: () => void;
 };
 
 const formatTimestamp = (value: string) => {
@@ -142,15 +146,41 @@ export function BattleInviteCard({
   state,
   onAccept,
   onDecline,
+  onNavigate,
 }: CardProps<BattleInviteNotification>) {
   return (
     <NotificationCard
       title="Battle invite"
       {...state}
-      decline={{ label: "Dismiss battle invite", onClick: onDecline }}
+      decline={{ label: "Decline battle invite", onClick: onDecline }}
       accept={{ label: "Accept battle invite", onClick: onAccept }}
     >
       <BattleDetails notification={notification} />
+      <UnfinishedBattleBanner
+        campaignId={notification.campaignId}
+        excludeBattleId={notification.battleId}
+        onGo={onNavigate}
+        className="text-xs"
+      />
+    </NotificationCard>
+  );
+}
+
+/** A nudge: the battle is waiting for you; the tick goes to it, the X dismisses it. */
+export function BattleNudgeCard({
+  notification,
+  state,
+  onAccept,
+  onDecline,
+}: CardProps<BattleNudgeNotification>) {
+  return (
+    <NotificationCard
+      title={`Nudge from ${notification.fromLabel}`}
+      {...state}
+      decline={{ label: "Dismiss nudge", onClick: onDecline }}
+      accept={{ label: "Go to the battle", onClick: onAccept }}
+    >
+      <p className="text-xs text-muted-foreground">{notification.scenario} is waiting for you.</p>
     </NotificationCard>
   );
 }

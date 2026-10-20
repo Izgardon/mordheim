@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -10,10 +11,16 @@ import {
 import { getErrorMessage } from "@/lib/get-error-message";
 import { cn } from "@/lib/utils";
 import { Bell } from "lucide-react";
-import { BattleInviteCard, BattleResultRequestCard, TradeRequestCard } from "./NotificationCards";
+import {
+  BattleInviteCard,
+  BattleNudgeCard,
+  BattleResultRequestCard,
+  TradeRequestCard,
+} from "./NotificationCards";
 
 import type {
   BattleInviteNotification,
+  BattleNudgeNotification,
   BattleResultRequestNotification,
 } from "@/features/battles/types/battle-types";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
@@ -30,13 +37,17 @@ type NotificationsMenuProps = {
   onAcceptTrade: (notification: TradeNotification) => NotificationAction;
   onDeclineTrade: (notification: TradeNotification) => NotificationAction;
   onAcceptBattleInvite: (notification: BattleInviteNotification) => NotificationAction;
-  onDismissBattleInvite: (notification: BattleInviteNotification) => NotificationAction;
+  onDeclineBattleInvite: (notification: BattleInviteNotification) => NotificationAction;
   onAcceptBattleResultRequest: (
     notification: BattleResultRequestNotification
   ) => NotificationAction;
   onDeclineBattleResultRequest: (
     notification: BattleResultRequestNotification
   ) => NotificationAction;
+  /** Nudges from other players (BATL-NEW-08): go to the battle, or dismiss. */
+  battleNudgeNotifications?: BattleNudgeNotification[];
+  onGoToNudge?: (notification: BattleNudgeNotification) => NotificationAction;
+  onDismissNudge?: (notification: BattleNudgeNotification) => NotificationAction;
   onClear?: () => void;
   className?: string;
   iconClassName?: string;
@@ -50,9 +61,12 @@ export default function NotificationsMenu({
   onAcceptTrade,
   onDeclineTrade,
   onAcceptBattleInvite,
-  onDismissBattleInvite,
+  onDeclineBattleInvite,
   onAcceptBattleResultRequest,
   onDeclineBattleResultRequest,
+  battleNudgeNotifications = [],
+  onGoToNudge,
+  onDismissNudge,
   onClear,
   className,
   iconClassName,
@@ -62,7 +76,8 @@ export default function NotificationsMenu({
   const unreadCount =
     tradeRequestNotifications.length +
     battleInviteNotifications.length +
-    battleResultRequestNotifications.length;
+    battleResultRequestNotifications.length +
+    battleNudgeNotifications.length;
   const hasNotifications = unreadCount > 0;
 
   const sortedTradeNotifications = useMemo(
@@ -147,10 +162,11 @@ export default function NotificationsMenu({
               </button>
             ) : null}
           </div>
+          <DialogDescription className="sr-only">
+            Battle invites, battle results waiting for your answer, and trade requests.
+          </DialogDescription>
         </DialogHeader>
-        {sortedTradeNotifications.length === 0 &&
-        sortedBattleInvites.length === 0 &&
-        sortedBattleResultRequests.length === 0 ? (
+        {!hasNotifications ? (
           <p className="text-sm text-muted-foreground">You are all caught up.</p>
         ) : (
           <div className="space-y-3">
@@ -167,6 +183,17 @@ export default function NotificationsMenu({
                 }
               />
             ))}
+            {byNewest(battleNudgeNotifications).map((notification) => (
+              <BattleNudgeCard
+                key={notification.id}
+                notification={notification}
+                state={cardState(notification.id)}
+                onAccept={() => void runAction(notification.id, () => onGoToNudge?.(notification))}
+                onDecline={() =>
+                  void runAction(notification.id, () => onDismissNudge?.(notification))
+                }
+              />
+            ))}
             {sortedBattleInvites.map((notification) => (
               <BattleInviteCard
                 key={notification.id}
@@ -176,8 +203,9 @@ export default function NotificationsMenu({
                   void runAction(notification.id, () => onAcceptBattleInvite(notification))
                 }
                 onDecline={() =>
-                  void runAction(notification.id, () => onDismissBattleInvite(notification))
+                  void runAction(notification.id, () => onDeclineBattleInvite(notification))
                 }
+                onNavigate={() => setIsOpen(false)}
               />
             ))}
             {sortedTradeNotifications.map((notification) => (

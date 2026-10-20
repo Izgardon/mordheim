@@ -75,11 +75,17 @@ def _authorize_trade_channel(user, match: re.Match[str]) -> bool:
 
 
 def _authorize_battle_channel(user, match: re.Match[str]) -> bool:
+    """A participant who is still in the battle (not cancelled or declined) and still in its campaign (SEC-08)."""
     battle_id = int(match.group(1))
-    return BattleParticipant.objects.filter(
-        battle_id=battle_id,
-        user_id=user.id,
-    ).exists()
+    return (
+        BattleParticipant.objects.filter(
+            battle_id=battle_id,
+            user_id=user.id,
+            battle__campaign__memberships__user_id=user.id,
+        )
+        .exclude(status__in=BattleParticipant.LEFT_STATUSES)
+        .exists()
+    )
 
 
 register_channel_rule(

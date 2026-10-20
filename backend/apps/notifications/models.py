@@ -6,11 +6,13 @@ class Notification(models.Model):
     TYPE_TRADE_REQUEST = "trade_request"
     TYPE_BATTLE_INVITE = "battle_invite"
     TYPE_BATTLE_RESULT_REQUEST = "battle_result_request"
+    TYPE_BATTLE_NUDGE = "battle_nudge"
 
     TYPE_CHOICES = [
         (TYPE_TRADE_REQUEST, "Trade request"),
         (TYPE_BATTLE_INVITE, "Battle invite"),
         (TYPE_BATTLE_RESULT_REQUEST, "Battle result request"),
+        (TYPE_BATTLE_NUDGE, "Battle nudge"),
     ]
 
     user = models.ForeignKey(

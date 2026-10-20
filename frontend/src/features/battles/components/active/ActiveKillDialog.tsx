@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -13,6 +14,7 @@ import { Input } from "@/components/ui/input";
 
 import type { ActiveBattleUnitOption } from "./active-utils";
 import { HELPER_NATIVE_SELECT_CLASS, HELPER_NATIVE_SELECT_STYLE } from "./helper-dialog-styles";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 const SECTION_ORDER = ["Heroes", "Henchmen", "Hired Swords", "Temporary Units"] as const;
 
@@ -113,11 +115,7 @@ export default function ActiveKillDialog({
       });
       onOpenChange(false);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setError(errorResponse.message || "Unable to record kill");
-      } else {
-        setError("Unable to record kill");
-      }
+      setError(getErrorMessage(errorResponse, "Unable to record kill"));
     } finally {
       setIsSaving(false);
     }
@@ -128,6 +126,9 @@ export default function ActiveKillDialog({
       <DialogContent className="max-w-xl">
         <DialogHeader>
           <DialogTitle>Record Kill</DialogTitle>
+          <DialogDescription className="sr-only">
+            Pick the enemy unit {killerName} took out, or type a name.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-3">

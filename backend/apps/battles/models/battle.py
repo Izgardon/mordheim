@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 
 class Battle(models.Model):
@@ -56,6 +57,21 @@ class Battle(models.Model):
     started_at = models.DateTimeField(null=True, blank=True)
     ended_at = models.DateTimeField(null=True, blank=True)
     post_processed_at = models.DateTimeField(null=True, blank=True)
+    # raised by every write other players see; carried by the snapshot and each realtime message (PERF-34)
+    state_version = models.PositiveIntegerField(default=0)
+    # moved by every battle write ("idle N days"); the deadline of an invitation or a postbattle (BUG-10)
+    last_activity_at = models.DateTimeField(default=timezone.now)
+    closes_at = models.DateTimeField(null=True, blank=True)
+    # the fight ended when its last player finished (decision 4): until he (or a battle manager) confirms the
+    # results, the winners are the warbands whose players declared a win, and the battle doesn't end
+    results_pending = models.BooleanField(default=False)
+    results_confirmer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="+",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         db_table = "battle"
@@ -68,6 +84,7 @@ class Battle(models.Model):
         indexes = [
             models.Index(fields=["campaign", "status"]),
             models.Index(fields=["status", "created_at"]),
+            models.Index(fields=["status", "last_activity_at"], name="battle_status_activity_idx"),
         ]
 
     def __str__(self):

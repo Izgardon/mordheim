@@ -75,9 +75,12 @@ export default function CampaignLayout() {
     acceptTradeNotification,
     declineTradeNotification,
     acceptBattleInviteNotification,
-    dismissBattleInviteNotification,
+    declineBattleInviteNotification,
     acceptBattleResultRequestNotification,
     declineBattleResultRequestNotification,
+    battleNudgeNotifications,
+    goToBattleNudge,
+    dismissBattleNudge,
     clearNotifications,
   } = useNotifications();
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -152,13 +155,19 @@ export default function CampaignLayout() {
         onAcceptTrade={acceptTradeNotification}
         onDeclineTrade={declineTradeNotification}
         onAcceptBattleInvite={acceptBattleInviteNotification}
-        onDismissBattleInvite={dismissBattleInviteNotification}
+        onDeclineBattleInvite={declineBattleInviteNotification}
         onAcceptBattleResultRequest={acceptBattleResultRequestNotification}
         onDeclineBattleResultRequest={declineBattleResultRequestNotification}
+        battleNudgeNotifications={battleNudgeNotifications}
+        onGoToNudge={goToBattleNudge}
+        onDismissNudge={dismissBattleNudge}
         onClear={clearNotifications}
       />
     ),
     [
+      battleNudgeNotifications,
+      dismissBattleNudge,
+      goToBattleNudge,
       acceptBattleInviteNotification,
       acceptBattleResultRequestNotification,
       acceptTradeNotification,
@@ -167,7 +176,7 @@ export default function CampaignLayout() {
       clearNotifications,
       declineTradeNotification,
       declineBattleResultRequestNotification,
-      dismissBattleInviteNotification,
+      declineBattleInviteNotification,
       tradeRequestNotifications,
     ]
   );

@@ -25,7 +25,7 @@ type ActiveParticipantRosterProps = {
   canInteract: boolean;
   onSetOutOfAction: (unitKey: string, outOfAction: boolean) => Promise<void>;
   onAdjustWounds: (unit: PrebattleUnit, delta: number) => Promise<void>;
-  onSaveOverride: (unitKey: string, override: UnitOverride | undefined) => Promise<void>;
+  onSaveOverride: (unitKeys: string[], override: UnitOverride | undefined) => Promise<void>;
   onSaveUnitNotes: (unitKey: string, notes: string) => Promise<void>;
   onRecordKill: (payload: {
     killerUnitKey: string;
@@ -36,6 +36,8 @@ type ActiveParticipantRosterProps = {
   }) => Promise<void>;
   onUseSingleUseItem: (unit: PrebattleUnit, item: UnitSingleUseItem) => Promise<void>;
   getUsedSingleUseItemCount: (unitKey: string, itemId: number) => number;
+  /** Undoes this player's latest use of an item by a unit (BUG-11). */
+  onUndoSingleUseItem?: (unit: PrebattleUnit, itemId: number) => Promise<void>;
   activeItemActionKey: string | null;
   savingUnitKeys?: Record<string, boolean>;
   sectionIds?: Partial<Record<"heroes" | "henchmen" | "hired_swords" | "temporary", string>>;
@@ -58,6 +60,7 @@ export default function ActiveParticipantRoster({
   onRecordKill,
   onUseSingleUseItem,
   getUsedSingleUseItemCount,
+  onUndoSingleUseItem,
   activeItemActionKey,
   savingUnitKeys = {},
   sectionIds,
@@ -97,6 +100,7 @@ export default function ActiveParticipantRoster({
                     onRecordKill={onRecordKill}
                     onUseSingleUseItem={onUseSingleUseItem}
                     getUsedSingleUseItemCount={getUsedSingleUseItemCount}
+                    onUndoSingleUseItem={onUndoSingleUseItem}
                     activeItemActionKey={activeItemActionKey}
                     isSavingUnitConfig={Boolean(savingUnitKeys[unit.key])}
                   />
@@ -125,6 +129,7 @@ export default function ActiveParticipantRoster({
                     onRecordKill={onRecordKill}
                     onUseSingleUseItem={onUseSingleUseItem}
                     getUsedSingleUseItemCount={getUsedSingleUseItemCount}
+                    onUndoSingleUseItem={onUndoSingleUseItem}
                     activeItemActionKey={activeItemActionKey}
                     savingUnitKeys={savingUnitKeys}
                   />
@@ -151,6 +156,7 @@ export default function ActiveParticipantRoster({
                     onRecordKill={onRecordKill}
                     onUseSingleUseItem={onUseSingleUseItem}
                     getUsedSingleUseItemCount={getUsedSingleUseItemCount}
+                    onUndoSingleUseItem={onUndoSingleUseItem}
                     activeItemActionKey={activeItemActionKey}
                     isSavingUnitConfig={Boolean(savingUnitKeys[unit.key])}
                   />
@@ -177,6 +183,7 @@ export default function ActiveParticipantRoster({
                     onRecordKill={onRecordKill}
                     onUseSingleUseItem={onUseSingleUseItem}
                     getUsedSingleUseItemCount={getUsedSingleUseItemCount}
+                    onUndoSingleUseItem={onUndoSingleUseItem}
                     activeItemActionKey={activeItemActionKey}
                     isSavingUnitConfig={Boolean(savingUnitKeys[unit.key])}
                   />

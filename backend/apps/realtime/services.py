@@ -107,8 +107,11 @@ def send_trade_event(
     return _trigger(get_trade_channel_name(trade_request_id), "trade.event", data, socket_id)
 
 
-def send_battle_event(battle_id: int, event: str, payload: dict) -> bool:
-    return _trigger(get_battle_channel_name(battle_id), "battle.event", {"type": event, "payload": payload})
+def send_battle_event(battle_id: int, event: str, payload: dict, socket_id: str | None = None, **fields: Any) -> bool:
+    """`battle.event` with {type, payload, **fields} (state_version and snapshots, PERF-34), to every subscriber
+    but `socket_id` (BUG-75)."""
+    data = {"type": event, "payload": payload, **fields}
+    return _trigger(get_battle_channel_name(battle_id), "battle.event", data, socket_id)
 
 
 def send_campaign_chat_message(campaign_id: int, message) -> bool:

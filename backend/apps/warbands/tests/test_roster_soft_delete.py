@@ -7,7 +7,7 @@ the unit, as it ignored a deleted one, while its kills keep counting in kill his
 from typing import Any
 
 from apps.battles.models import Battle, BattleParticipant
-from apps.battles.views.shared import _battle_rosters_payload
+from apps.battles.services.rosters import battle_rosters_payload
 from apps.trades.services.errors import TradeError
 from apps.trades.services.offers import build_offer
 from apps.warbands.models import Henchman, Hero
@@ -131,7 +131,7 @@ class DismissedUnitTests(RosterTestCase):
         battle = Battle.objects.create(campaign=self.campaign, created_by_user=self.player, scenario="Bridge")
         BattleParticipant.objects.create(battle=battle, user=self.player, warband=self.warband)
 
-        roster = _battle_rosters_payload(battle.id)[str(self.player.id)]
+        roster = battle_rosters_payload(battle.id)[str(self.player.id)]
 
         self.assertEqual([entry["id"] for entry in roster["heroes"]], [hero.id])
         self.assertEqual(roster["hiredSwords"], [])

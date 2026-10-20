@@ -140,7 +140,7 @@ export default function BattleUnitStatsAndItems({
               <button
                 type="button"
                 aria-label={isEditing ? "Close stat editing" : "Edit stats"}
-                className="battle-toolbar-button icon-button flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition hover:text-foreground"
+                className="battle-toolbar-button icon-button flex h-11 w-11 items-center justify-center rounded text-muted-foreground transition hover:text-foreground"
                 onClick={onToggleEditing}
               >
                 <Pencil className="h-3.5 w-3.5" />
@@ -192,23 +192,25 @@ export default function BattleUnitStatsAndItems({
                 </div>
               ))}
             </div>
-            <div className="space-y-1">
-              <label className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-foreground">
-                Notes
-              </label>
-              <Input
-                value={notes}
-                onChange={(event) => onUpdateNotes?.(event.target.value)}
-                placeholder="Unit notes"
-                maxLength={500}
-                className="h-8 text-xs"
-              />
-            </div>
+            {onUpdateNotes ? (
+              <div className="space-y-1">
+                <label className="text-[0.5rem] uppercase tracking-[0.12em] text-muted-foreground">
+                  Notes
+                </label>
+                <Input
+                  value={notes}
+                  onChange={(event) => onUpdateNotes(event.target.value)}
+                  placeholder="Unit notes"
+                  maxLength={500}
+                  className="h-8 text-xs"
+                />
+              </div>
+            ) : null}
             <div className="flex justify-end gap-2">
               {showApplyButton ? (
                 <button
                   type="button"
-                  className="battle-toolbar-button icon-button flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                  className="battle-toolbar-button icon-button flex h-11 w-11 items-center justify-center rounded text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                   onClick={onApplyStatChanges}
                   disabled={Boolean(isApplyingStatChanges)}
                   aria-label={
@@ -221,7 +223,7 @@ export default function BattleUnitStatsAndItems({
               ) : null}
               <button
                 type="button"
-                className="battle-toolbar-button icon-button flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition hover:text-foreground"
+                className="battle-toolbar-button icon-button flex h-11 w-11 items-center justify-center rounded text-muted-foreground transition hover:text-foreground"
                 onClick={() => {
                   setDraftStatValues(
                     Object.fromEntries(

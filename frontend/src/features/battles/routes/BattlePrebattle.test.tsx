@@ -1,7 +1,12 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+import { AppStoreProvider } from "@/stores/app-store";
+import { renderWithQueryClient } from "@/test/query-test-utils";
+
+import BattleProvider from "@/features/battles/components/layout/BattleProvider";
 
 import BattlePrebattle from "./BattlePrebattle";
 
@@ -209,6 +214,7 @@ vi.mock("@/features/battles/api/battles-api", () => ({
 
 vi.mock("@/lib/realtime", () => ({
   useBattleEvents: mocks.useBattleEvents,
+  useRealtimeReconnect: vi.fn(),
 }));
 
 vi.mock("@/features/battles/hooks/useBattleRosters", () => ({
@@ -304,7 +310,13 @@ describe("BattlePrebattle", () => {
   it("shows Battle Notes only for the current user's selected warband and saves through participant config", async () => {
     const user = userEvent.setup();
 
-    render(<BattlePrebattle />);
+    renderWithQueryClient(
+      <AppStoreProvider>
+        <BattleProvider phase="prebattle">
+          <BattlePrebattle />
+        </BattleProvider>
+      </AppStoreProvider>
+    );
 
     await screen.findByText("Roster for Iron Vultures");
 

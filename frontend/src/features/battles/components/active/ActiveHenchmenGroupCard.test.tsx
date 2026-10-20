@@ -97,10 +97,45 @@ describe("ActiveHenchmenGroupCard", () => {
       />
     );
 
-    await user.click(screen.getByLabelText("Expand henchmen group details"));
+    await user.click(screen.getByLabelText("Details for Youngbloods"));
 
     expect(screen.queryByText("Member")).not.toBeInTheDocument();
     expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
     expect(screen.getByText("Club")).toBeInTheDocument();
+  });
+
+  it("edits the group's battle stats and saves them for every member (BATL-NEW-07)", async () => {
+    const user = userEvent.setup();
+    const onSaveOverride = vi.fn().mockResolvedValue(undefined);
+
+    render(
+      <ActiveHenchmenGroupCard
+        groupName="Youngbloods"
+        groupType="Youngblood"
+        members={[createMember("henchman:1", "Lad One"), createMember("henchman:2", "Lad Two")]}
+        canInteract
+        unitInformationByKey={{}}
+        killTargetOptions={[]}
+        onSetOutOfAction={vi.fn().mockResolvedValue(undefined)}
+        onAdjustWounds={vi.fn().mockResolvedValue(undefined)}
+        onSaveOverride={onSaveOverride}
+        onSaveUnitNotes={vi.fn().mockResolvedValue(undefined)}
+        onRecordKill={vi.fn().mockResolvedValue(undefined)}
+        onUseSingleUseItem={vi.fn().mockResolvedValue(undefined)}
+        getUsedSingleUseItemCount={() => 0}
+        activeItemActionKey={null}
+      />
+    );
+
+    await user.click(screen.getByLabelText("Details for Youngbloods"));
+    await user.click(screen.getByRole("button", { name: "Edit stats" }));
+    const toughness = screen.getAllByRole("spinbutton")[4];
+    await user.clear(toughness);
+    await user.type(toughness, "4");
+    await user.click(screen.getByRole("button", { name: "Apply stat changes" }));
+
+    expect(onSaveOverride).toHaveBeenCalledWith(["henchman:1", "henchman:2"], {
+      stats: { toughness: 4 },
+    });
   });
 });

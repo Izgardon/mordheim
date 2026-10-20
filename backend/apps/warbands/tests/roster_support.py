@@ -326,7 +326,9 @@ class RosterTestCase(APITestCase):
             info = {key: {"stats_override": {}, "out_of_action": False, "kill_count": 0} for key in xp}
             config = {"selected_unit_keys_json": list(xp), "unit_information_json": info, "custom_units_json": []}
             self._battle_post(user, f"{battle}config/", config)
-        self._battle_post(self.player, f"{battle}finish/", {"winner_warband_ids": [self.warband.id]})
+        self._battle_post(self.player, f"{battle}finish-mine/", {"result": "won"})  # each finishes (decision 4)
+        self._battle_post(self.viewer, f"{battle}finish-mine/", {"result": "lost"})
+        self._battle_post(self.viewer, f"{battle}results/", {"winners": [self.warband.id]})
         for user, xp in sides:
             results = {key: _postbattle_result(key, earned) for key, earned in xp.items()}
             postbattle = {"exploration": {"dice_values": [], "resource_id": None}, "unit_results": results}

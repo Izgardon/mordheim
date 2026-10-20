@@ -1,45 +1,27 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import type {
-  BattleEvent,
+  BattlePostbattleState,
+  BattlePostbattleSuggestion,
   BattleParticipant,
-  BattleSummary,
 } from "@/features/battles/types/battle-types";
+import { postbattleRules } from "@/test/battle-fixtures";
 import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
 
+import { explorationAmount } from "./postbattle-rules";
 import {
   buildLocalExplorationState,
+  settledExplorationPayload,
   buildPostbattleDraft,
   buildRenderableGroups,
   getPostbattleUpkeepTotal,
-  getExplorationResourceAmount,
   getSelectedExplorationDiceValues,
-  rollAllLocalExplorationDice,
-  rollD6SeriousInjury,
-  rollHeroSeriousInjury,
   setPostbattlePayUpkeep,
   setLocalExplorationDiceCount,
   setLocalExplorationDieSelected,
   toPostbattleExplorationPayload,
   updatePostbattleUpkeepEntry,
 } from "./postbattle-utils";
-
-const battle: BattleSummary = {
-  id: 1,
-  campaign_id: 1,
-  created_by_user_id: 1,
-  flow_type: "normal",
-  status: "postbattle",
-  scenario: "Street Fight",
-  scenario_link: null,
-  winner_warband_ids_json: [10],
-  created_at: "",
-  updated_at: "",
-  started_at: "",
-  ended_at: null,
-  post_processed_at: null,
-  channel: "battle",
-};
 
 const participant: BattleParticipant = {
   id: 1,
@@ -186,58 +168,30 @@ const roster: ParticipantRoster = {
   ],
 };
 
-const events: BattleEvent[] = [
-  {
-    id: 1,
-    battle_id: 1,
-    type: "unit_kill_recorded",
-    actor_user_id: 1,
-    payload_json: {
-      killer: {
-        unit_key: "hero:1",
-        warband_id: 10,
-      },
-      earned_xp: true,
-    },
-    created_at: "",
+/** The server's `suggested_postbattle` for this fixture (IMP-52). */
+const suggestion: BattlePostbattleSuggestion = {
+  unit_results: {
+    "hero:1": { xp_earned: 2 },
+    "hired_sword:21": { xp_earned: 1 },
+    "henchman:11": { xp_earned: 2 },
+    "henchman:12": { xp_earned: 2 },
   },
-  {
-    id: 2,
-    battle_id: 1,
-    type: "unit_kill_recorded",
-    actor_user_id: 1,
-    payload_json: {
-      killer: {
-        unit_key: "hero:1",
-        warband_id: 10,
-      },
-      earned_xp: false,
+  exploration: { dice_count: 2 },
+  upkeep: {
+    entries: {
+      "hired_sword:21": { unit_name: "Johann", cost: 15 },
+      "hired_sword:22": { unit_name: "Shade", cost: null },
     },
-    created_at: "",
   },
-  {
-    id: 3,
-    battle_id: 1,
-    type: "unit_kill_recorded",
-    actor_user_id: 1,
-    payload_json: {
-      killer: {
-        unit_key: "henchman:11",
-        warband_id: 10,
-      },
-      earned_xp: true,
-    },
-    created_at: "",
-  },
-];
+};
 
 describe("postbattle-utils", () => {
-  it("builds defaults for dice and gives every unit 1 XP plus only XP-granting kills", () => {
+  it("fills the draft from the server's suggestion: XP per unit and upkeep (IMP-52)", () => {
     const draft = buildPostbattleDraft(
       participant,
       roster,
       [{ id: 7, warband_id: 10, name: "Shards", amount: 0 }],
-      events
+      suggestion
     );
 
     expect(draft.exploration.dice_values).toEqual([]);
@@ -258,6 +212,14 @@ describe("postbattle-utils", () => {
     expect(draft.unit_results["hero:1"].xp_earned).toBe(2);
     expect(draft.unit_results["henchman:11"].xp_earned).toBe(2);
     expect(draft.unit_results["henchman:12"].xp_earned).toBe(2);
+
+    // Without the suggestion (an older server) XP starts at 0 and upkeep is unknown.
+    const unsuggested = buildPostbattleDraft(participant, roster, [], undefined);
+    expect(unsuggested.unit_results["hero:1"].xp_earned).toBe(0);
+    expect(unsuggested.upkeep.entries["hired_sword:21"]).toEqual({
+      unit_name: "Johann",
+      cost: null,
+    });
   });
 
   it("never lets saved postbattle kill counts drop below active battle kill counts", () => {
@@ -307,7 +269,7 @@ describe("postbattle-utils", () => {
       },
       roster,
       [],
-      events
+      suggestion
     );
 
     expect(draft.unit_results["hero:1"].kill_count).toBe(2);
@@ -401,7 +363,7 @@ describe("postbattle-utils", () => {
       },
     };
 
-    const draft = buildPostbattleDraft(orderedParticipant, orderedRoster, [], []);
+    const draft = buildPostbattleDraft(orderedParticipant, orderedRoster, [], undefined);
     const groups = buildRenderableGroups(draft, orderedRoster);
 
     expect(
@@ -415,7 +377,7 @@ describe("postbattle-utils", () => {
     ).toEqual(["Blade 2", "Blade 1"]);
   });
 
-  it("suppresses default xp and xp visibility for units flagged with no level ups", () => {
+  it("hides XP for units flagged with no level ups, which the server suggests 0 for", () => {
     const noLevelRoster: ParticipantRoster = {
       ...roster,
       hiredSwords: roster.hiredSwords.map((entry) =>
@@ -435,7 +397,15 @@ describe("postbattle-utils", () => {
       },
     };
 
-    const draft = buildPostbattleDraft(noLevelParticipant, noLevelRoster, [], events);
+    const draft = buildPostbattleDraft(noLevelParticipant, noLevelRoster, [], {
+      ...suggestion,
+      unit_results: {
+        ...suggestion.unit_results,
+        "hired_sword:21": { xp_earned: 0 },
+        "henchman:11": { xp_earned: 0 },
+        "henchman:12": { xp_earned: 0 },
+      },
+    });
     const groups = buildRenderableGroups(draft, noLevelRoster);
 
     expect(draft.unit_results["hired_sword:21"].xp_earned).toBe(0);
@@ -449,10 +419,39 @@ describe("postbattle-utils", () => {
     ).toBe(true);
   });
 
+  it("restores a roll saved with the draft, and calls it settled only once every die is set (BUG-71)", () => {
+    const saved = buildLocalExplorationState(
+      {
+        ...participant,
+        postbattle_json: {
+          ...(participant.postbattle_json as BattlePostbattleState),
+          exploration: { dice_values: [5, 2, 6], resource_id: 8, amount_override: 4 },
+        },
+      },
+      [{ id: 7, warband_id: 10, name: "Shards", amount: 0 }],
+      suggestion.exploration
+    );
+    expect(saved).toMatchObject({
+      diceCount: 3,
+      diceValues: [5, 2, 6],
+      resourceId: 8,
+      amountOverride: 4,
+      hasRolledAllDice: true,
+    });
+    expect(settledExplorationPayload(saved)).toEqual({
+      dice_values: [5, 2, 6],
+      resource_id: 8,
+      amount_override: 4,
+    });
+    expect(settledExplorationPayload({ ...saved, diceValues: [5, null, 6] })).toBeNull();
+  });
+
   it("builds local exploration defaults and preserves values when count changes", () => {
-    const state = buildLocalExplorationState(participant, roster, battle, [
-      { id: 7, warband_id: 10, name: "Shards", amount: 0 },
-    ]);
+    const state = buildLocalExplorationState(
+      participant,
+      [{ id: 7, warband_id: 10, name: "Shards", amount: 0 }],
+      suggestion.exploration
+    );
     expect(state.diceCount).toBe(2);
     expect(state.diceValues).toEqual([null, null]);
     expect(state.selectedDice).toEqual([true, true]);
@@ -474,7 +473,7 @@ describe("postbattle-utils", () => {
   });
 
   it("updates upkeep totals, excludes dead hired swords, and respects the pay toggle", () => {
-    const draft = buildPostbattleDraft(participant, roster, [], []);
+    const draft = buildPostbattleDraft(participant, roster, [], suggestion);
 
     expect(getPostbattleUpkeepTotal(draft)).toBe(15);
 
@@ -506,24 +505,9 @@ describe("postbattle-utils", () => {
     expect(getPostbattleUpkeepTotal(unpaid)).toBe(20);
   });
 
-  it("rolls all local exploration dice and maps totals to resource table values", () => {
-    const randomSpy = vi.spyOn(Math, "random");
-    randomSpy.mockReturnValueOnce(0).mockReturnValueOnce(0.5);
-
-    const rolled = rollAllLocalExplorationDice({
-      diceCount: 2,
-      diceValues: [null, null],
-      selectedDice: [true, true],
-      resourceId: 7,
-      amountOverride: null,
-      hasRolledAllDice: false,
-    });
-    expect(rolled.hasRolledAllDice).toBe(true);
-    expect(rolled.diceValues).toEqual([1, 4]);
-    expect(getExplorationResourceAmount([1, 4, null])).toBe(1);
-    expect(getExplorationResourceAmount([6, 6, 6, 6, 6, 6])).toBe(7);
-
-    randomSpy.mockRestore();
+  it("maps exploration totals to the server's table", () => {
+    expect(explorationAmount(postbattleRules(), [1, 4, null])).toBe(1);
+    expect(explorationAmount(postbattleRules(), [6, 6, 6, 6, 6, 6])).toBe(7);
   });
 
   it("only includes checked exploration dice in the final payload and reward", () => {
@@ -536,7 +520,7 @@ describe("postbattle-utils", () => {
       hasRolledAllDice: true,
     };
     expect(getSelectedExplorationDiceValues(state)).toEqual([6, 6, 6, 6, 6, 1]);
-    expect(getExplorationResourceAmount(getSelectedExplorationDiceValues(state))).toBe(6);
+    expect(explorationAmount(postbattleRules(), getSelectedExplorationDiceValues(state))).toBe(6);
     expect(toPostbattleExplorationPayload(state)).toEqual({
       dice_values: [6, 6, 6, 6, 6, 1],
       resource_id: 7,
@@ -545,19 +529,5 @@ describe("postbattle-utils", () => {
     const unchecked = setLocalExplorationDieSelected(state, 0, false);
     const checked = setLocalExplorationDieSelected(unchecked, 6, true);
     expect(checked.selectedDice).toEqual([false, true, true, true, true, true, true]);
-  });
-
-  it("rolls d6 and d66 serious injury guides deterministically", () => {
-    const randomSpy = vi.spyOn(Math, "random");
-    randomSpy.mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(0);
-
-    const d6 = rollD6SeriousInjury();
-    expect(d6.result_label).toBe("Dead");
-
-    const hero = rollHeroSeriousInjury();
-    expect(hero.result_code).toBe("11");
-    expect(hero.dead_suggestion).toBe(true);
-
-    randomSpy.mockRestore();
   });
 });

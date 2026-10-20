@@ -238,6 +238,8 @@ export function participantStatusLabel(status: BattleParticipant["status"]) {
       return "In Prebattle";
     case "canceled_prebattle":
       return "Canceled";
+    case "declined":
+      return "Declined";
     case "invited":
       return "Invited";
     case "in_battle":

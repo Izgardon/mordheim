@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 
 import type { BattleParticipant } from "@/features/battles/types/battle-types";
-import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
+import type { BattleLayoutContext } from "@/features/battles/components/layout/battle-shell-types";
 import type {
   ParticipantRoster,
   PrebattleUnit,

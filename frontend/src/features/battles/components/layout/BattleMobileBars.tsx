@@ -1,0 +1,129 @@
+import { Check, ChevronDown, ChevronLeft } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import CampaignDiceRollerMenu from "@/features/realtime/components/CampaignDiceRollerMenu";
+
+import type { BattleMobileBottomBarConfig, BattleMobileTopBarConfig } from "./battle-shell-types";
+
+export function BattleMobileTopBar({ config }: { config: BattleMobileTopBarConfig | null }) {
+  const hasWarbandDropdown = Boolean(
+    config?.warbandOptions?.length && config.selectedWarbandValue && config.onWarbandChange
+  );
+  const hasUnitTypeDropdown = Boolean(
+    config?.unitTypeOptions?.length && config.selectedUnitTypeValue && config.onUnitTypeChange
+  );
+  const selectedWarbandValue = config?.selectedWarbandValue;
+  const selectedWarbandReady = Boolean(
+    selectedWarbandValue !== undefined && config?.readyWarbandValues?.includes(selectedWarbandValue)
+  );
+
+  return (
+    <div className="fixed inset-x-0 top-0 z-50">
+      <div className="battle-mobile-header">
+        <div className="flex min-h-[3rem] items-center justify-between gap-2 px-3 pb-1 pt-[calc(env(safe-area-inset-top,0px)+0.55rem)]">
+          <div className="flex min-w-0 items-center gap-2">
+            <button
+              type="button"
+              className="icon-button flex h-9 w-9 items-center justify-center border-none bg-transparent p-0 text-muted-foreground"
+              onClick={() => config?.onBack()}
+              disabled={!config}
+              aria-label="Back"
+            >
+              <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+            </button>
+            <p className="truncate text-sm font-semibold uppercase tracking-[0.14em] text-foreground">
+              {config?.title ?? "Battle"}
+            </p>
+          </div>
+          <div className="flex items-center text-muted-foreground [&_.btn-icon]:border-[#4c3a2a] [&_.btn-icon]:bg-[#0f0c09] [&_.btn-icon]:text-muted-foreground [&_.icon-button]:text-muted-foreground [&_.theme-heading-soft]:text-muted-foreground [&_.theme-icon-soft]:text-muted-foreground [&_.theme-icon-strong]:text-foreground [&_svg]:text-muted-foreground">
+            {config?.extraActions ?? null}
+            <div className={config?.extraActions ? "ml-2" : undefined}>
+              <CampaignDiceRollerMenu />
+            </div>
+          </div>
+        </div>
+        {config && (hasWarbandDropdown || hasUnitTypeDropdown) ? (
+          <div className="flex items-center gap-2 px-3 pb-2">
+            {hasWarbandDropdown ? (
+              <div className={`relative min-w-0 ${hasUnitTypeDropdown ? "flex-1" : "w-full"}`}>
+                <select
+                  value={config.selectedWarbandValue}
+                  onChange={(event) => config.onWarbandChange?.(event.target.value)}
+                  className="battle-mobile-select min-w-0 pl-2 pr-10 text-xs font-semibold"
+                  style={{ WebkitAppearance: "none", MozAppearance: "none", appearance: "none" }}
+                >
+                  {config.warbandOptions?.map((option) => (
+                    <option key={`warband-${option.value}`} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center gap-1.5 text-muted-foreground">
+                  {selectedWarbandReady ? <Check className="h-3.5 w-3.5 text-amber-300" /> : null}
+                  <ChevronDown className="h-3.5 w-3.5" />
+                </div>
+              </div>
+            ) : null}
+            {hasUnitTypeDropdown ? (
+              <div className={`relative ${hasWarbandDropdown ? "flex-1" : "w-full"}`}>
+                <select
+                  value={config.selectedUnitTypeValue}
+                  onChange={(event) => config.onUnitTypeChange?.(event.target.value)}
+                  className="battle-mobile-select pl-2 pr-8 text-xs font-semibold"
+                  style={{ WebkitAppearance: "none", MozAppearance: "none", appearance: "none" }}
+                >
+                  {config.unitTypeOptions?.map((option) => (
+                    <option key={`unit-type-${option.value}`} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute inset-y-0 right-2 my-auto h-3.5 w-3.5 text-muted-foreground" />
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+export function BattleMobileBottomBar({ config }: { config: BattleMobileBottomBarConfig | null }) {
+  if (!config) {
+    return null;
+  }
+
+  return (
+    <nav className="pointer-events-auto fixed inset-x-0 bottom-0 z-40 w-full">
+      <div
+        className="battle-floating-panel w-full border-t px-3 pt-2 backdrop-blur"
+        style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.7rem)" }}
+      >
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
+          {config.primaryAction ? (
+            <Button
+              size="sm"
+              variant={config.primaryAction.variant ?? "secondary"}
+              onClick={config.primaryAction.onClick}
+              disabled={config.primaryAction.disabled}
+              className="w-36 shrink-0"
+            >
+              {config.primaryAction.label}
+            </Button>
+          ) : null}
+          {config.secondaryAction ? (
+            <Button
+              size="sm"
+              variant={config.secondaryAction.variant ?? "default"}
+              onClick={config.secondaryAction.onClick}
+              disabled={config.secondaryAction.disabled}
+              className="w-36 shrink-0"
+            >
+              {config.secondaryAction.label}
+            </Button>
+          ) : null}
+        </div>
+      </div>
+    </nav>
+  );
+}

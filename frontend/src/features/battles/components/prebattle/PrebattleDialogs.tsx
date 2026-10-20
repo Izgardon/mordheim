@@ -6,6 +6,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -17,6 +18,8 @@ type PrebattleDialogsProps = {
   onConfirmLeave: () => void;
   isStartDialogOpen: boolean;
   onStartDialogChange: (open: boolean) => void;
+  /** "All participants are ready...", or for anyone but the creator "Alice created this battle..." */
+  startQuestion: string;
   startError: string;
   isStartingBattle: boolean;
   onConfirmStart: () => void;
@@ -33,6 +36,7 @@ export default function PrebattleDialogs({
   onConfirmLeave,
   isStartDialogOpen,
   onStartDialogChange,
+  startQuestion,
   startError,
   isStartingBattle,
   onConfirmStart,
@@ -74,7 +78,7 @@ export default function PrebattleDialogs({
         onOpenChange={onStartDialogChange}
         description={
           <div className="space-y-2">
-            <p>All participants are ready. Start the battle now?</p>
+            <p>{startQuestion}</p>
             {startError ? <p className="text-sm text-red-600">{startError}</p> : null}
           </div>
         }
@@ -92,10 +96,14 @@ export default function PrebattleDialogs({
             <DialogTitle>Cancel Battle</DialogTitle>
           </DialogHeader>
           <div className="space-y-2">
-            <p>Cancel this battle for all participants?</p>
-            <p className="text-xs text-muted-foreground">
-              This is only available before the battle starts.
-            </p>
+            <DialogDescription asChild className="block space-y-2">
+              <div>
+                <p>Cancel this battle for all participants?</p>
+                <p className="text-xs text-muted-foreground">
+                  This is only available before the battle starts.
+                </p>
+              </div>
+            </DialogDescription>
             <label className="battle-inline-panel mt-3 flex items-start gap-3 rounded-xl px-3 py-2 text-sm text-foreground">
               <Checkbox
                 checked={cancelConfirmed}

@@ -42,14 +42,17 @@ export default function CampaignSettings() {
   const campaignId = Number(id);
   const myWarband = useMyWarbandWriter(Number.isNaN(campaignId) ? null : campaignId);
   const canManageSettings = campaign ? ["owner", "admin"].includes(campaign.role) : false;
+  // A player granted manage_battles gets the Campaign tab for Active Battles alone (BATL-NEW-03).
+  const hasCampaignTab =
+    canManageSettings || Boolean(campaign?.permissions?.includes("manage_battles"));
   const [activeTab, setActiveTab] = useState<SettingsTabId>("personal");
   const handleOpenCampaigns = useMemo(() => () => navigate("/campaigns"), [navigate]);
 
   useEffect(() => {
-    if (!canManageSettings && activeTab !== "personal") {
+    if (!hasCampaignTab && activeTab !== "personal") {
       setActiveTab("personal");
     }
-  }, [activeTab, canManageSettings]);
+  }, [activeTab, hasCampaignTab]);
 
   const settingsTabs = useMemo(
     () => [
@@ -101,10 +104,14 @@ export default function CampaignSettings() {
     setDeleteValue,
     handleDeleteCampaign,
     handleCancelActiveBattle,
+    handleCloseActiveBattle,
+    handleEndActiveBattle,
+    handleConfirmActiveBattleResults,
     resetDeleteState,
   } = useCampaignSettings({
     campaignId,
     campaignRole: campaign?.role,
+    campaignPermissions: campaign?.permissions,
     onDeleted: () => navigate("/campaigns"),
   });
 
@@ -153,7 +160,7 @@ export default function CampaignSettings() {
       <PageHeader
         title="Settings"
         subtitle={campaign.name}
-        tabs={canManageSettings ? settingsTabs : undefined}
+        tabs={hasCampaignTab ? settingsTabs : undefined}
         activeTab={activeTab}
         onTabChange={(tabId) => setActiveTab(tabId as SettingsTabId)}
         rightSlot={
@@ -168,7 +175,7 @@ export default function CampaignSettings() {
         }
       />
 
-      {canManageSettings ? (
+      {hasCampaignTab ? (
         <div className="space-y-4">
           <TabbedCard
             tabs={settingsTabs}
@@ -195,31 +202,38 @@ export default function CampaignSettings() {
               personalSettingsContent
             ) : (
               <div className="space-y-8">
-                {error ? <p className="text-sm text-red-600">{error}</p> : null}
+                {canManageSettings && error ? (
+                  <p className="text-sm text-red-600">{error}</p>
+                ) : null}
 
-                <MembersCard
-                  isLoading={isLoading}
-                  members={members}
-                  formatPermissionsLabel={formatPermissionsLabel}
-                  canManagePermissions={canManagePermissions}
-                  canManageRoles={canManageRoles}
-                  canRemoveMembers={canRemoveMembers}
-                  savingPermissions={savingPermissions}
-                  savingRoles={savingRoles}
-                  memberErrors={memberErrors}
-                  onTogglePermission={handlePermissionToggle}
-                  onToggleRole={handleRoleToggle}
-                  onRemoveRequest={requestRemoveMember}
-                  canKickPlayers={isOwner}
-                  onKickRequest={requestKickPlayer}
-                />
+                {canManageSettings ? (
+                  <MembersCard
+                    isLoading={isLoading}
+                    members={members}
+                    formatPermissionsLabel={formatPermissionsLabel}
+                    canManagePermissions={canManagePermissions}
+                    canManageRoles={canManageRoles}
+                    canRemoveMembers={canRemoveMembers}
+                    savingPermissions={savingPermissions}
+                    savingRoles={savingRoles}
+                    memberErrors={memberErrors}
+                    onTogglePermission={handlePermissionToggle}
+                    onToggleRole={handleRoleToggle}
+                    onRemoveRequest={requestRemoveMember}
+                    canKickPlayers={isOwner}
+                    onKickRequest={requestKickPlayer}
+                  />
+                ) : null}
 
-                {isOwner && canManageActiveBattles ? (
+                {canManageActiveBattles ? (
                   <ActiveBattlesTable
                     isLoading={isActiveBattlesLoading}
                     error={activeBattlesError}
                     battles={activeBattles}
                     onCancelBattle={handleCancelActiveBattle}
+                    onCloseBattle={handleCloseActiveBattle}
+                    onEndBattle={handleEndActiveBattle}
+                    onConfirmResults={handleConfirmActiveBattleResults}
                   />
                 ) : null}
 

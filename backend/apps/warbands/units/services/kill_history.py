@@ -3,7 +3,7 @@
 from collections.abc import Iterable
 from typing import TYPE_CHECKING, Any
 
-from apps.battles.models import BattleEvent
+from apps.battles.models import Battle, BattleEvent
 from apps.warbands.models import RosterUnit, Warband
 
 if TYPE_CHECKING:
@@ -20,7 +20,8 @@ def _serialize_named_kills(events: Iterable[BattleEvent]) -> list[dict[str, Any]
         if not isinstance(victim, dict):
             continue
 
-        victim_name = str(victim.get("name", "") or "").strip()
+        # a nameless unit by its type ("Youngblood", BATL-NEW-06)
+        victim_name = str(victim.get("name") or victim.get("type_name") or "").strip()
         if not victim_name:
             continue
 
@@ -59,7 +60,8 @@ def _serialize_named_kills(events: Iterable[BattleEvent]) -> list[dict[str, Any]
 
 
 def _kill_events(warband: Warband, killer_type: str, killer_ids: list[int]) -> Any:
-    """Kill events credited to these units, newest first, from the warband's own campaign only.
+    """Kill events credited to these units, newest first, from the warband's own campaign's ended battles only,
+    leaving out kills their player undid (decision 5, BUG-11: a cancelled battle's kills were listed).
 
     The killer lookups match the partial index battle_event_kill_killer_idx (PERF-29), so this reads
     only the unit's own kill events instead of scanning every battle event in every campaign.
@@ -68,6 +70,8 @@ def _kill_events(warband: Warband, killer_type: str, killer_ids: list[int]) -> A
         BattleEvent.objects.filter(
             type=BattleEvent.TYPE_UNIT_KILL_RECORDED,
             battle__campaign_id=warband.campaign_id,
+            battle__status=Battle.STATUS_ENDED,
+            voided_at__isnull=True,
             payload_json__killer__unit_type=killer_type,
             payload_json__killer__unit_id__in=killer_ids,
         )

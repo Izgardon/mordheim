@@ -9,6 +9,10 @@ import type {
   BattlePostbattleState,
 } from "@/features/battles/types/battle-types";
 
+import { renderWithQueryClient } from "@/test/query-test-utils";
+
+import BattleProvider from "@/features/battles/components/layout/BattleProvider";
+
 import BattlePostbattle from "./BattlePostbattle";
 
 const mocks = vi.hoisted(() => {
@@ -197,7 +201,9 @@ const mocks = vi.hoisted(() => {
     saveBattlePostbattleDraft: vi.fn(async () => battleState),
     finalizeBattlePostbattle: vi.fn(async () => battleState),
     confirmBattlePostbattle: vi.fn(async () => battleState),
-    listWarbandResources: vi.fn(async () => [{ id: 9, name: "Wyrdstone" }]),
+    getWarbandSheet: vi.fn(async () => ({
+      summary: { resources: [{ id: 9, name: "Wyrdstone" }] },
+    })),
     listItems: vi.fn(async () => [
       {
         id: 77,
@@ -262,8 +268,9 @@ vi.mock("@/features/battles/api/battles-api", () => ({
   confirmBattlePostbattle: mocks.confirmBattlePostbattle,
 }));
 
-vi.mock("@/features/warbands/api/warbands-resources", () => ({
-  listWarbandResources: mocks.listWarbandResources,
+vi.mock("@/features/warbands/api/warbands-api", () => ({
+  getWarband: vi.fn(),
+  getWarbandSheet: mocks.getWarbandSheet,
 }));
 
 vi.mock("@/features/items/api/items-api", () => ({
@@ -272,6 +279,7 @@ vi.mock("@/features/items/api/items-api", () => ({
 
 vi.mock("@/lib/realtime", () => ({
   useBattleEvents: mocks.useBattleEvents,
+  useRealtimeReconnect: vi.fn(),
 }));
 
 vi.mock("@/features/battles/hooks/useBattleRosters", () => ({
@@ -304,6 +312,8 @@ vi.mock("@/features/battles/components/postbattle/postbattle-utils", () => ({
   buildLocalExplorationState: vi.fn(() => ({ ...mocks.localExploration })),
   buildPostbattleDraft: vi.fn(() => ({ ...mocks.draft })),
   buildRenderableGroups: vi.fn(() => mocks.groups),
+  // No settled roll in these tests, so nothing saves on its own.
+  settledExplorationPayload: vi.fn(() => null),
   getExplorationResourceAmount: vi.fn(() => 2),
   getPostbattleUpkeepTotal: vi.fn(() => 15),
   getSelectedExplorationDiceValues: vi.fn(() => [4, 5]),
@@ -451,7 +461,11 @@ describe("BattlePostbattle", () => {
   });
 
   it("renders the postbattle battle shell on desktop", async () => {
-    const { container } = render(<BattlePostbattle />);
+    const { container } = renderWithQueryClient(
+      <BattleProvider phase="postbattle">
+        <BattlePostbattle />
+      </BattleProvider>
+    );
 
     await screen.findByTestId("battle-desktop-subnav");
 
@@ -464,7 +478,11 @@ describe("BattlePostbattle", () => {
   it("saves Battle Notes through participant config", async () => {
     const user = userEvent.setup();
 
-    render(<BattlePostbattle />);
+    renderWithQueryClient(
+      <BattleProvider phase="postbattle">
+        <BattlePostbattle />
+      </BattleProvider>
+    );
 
     await screen.findByTestId("battle-desktop-subnav");
 
@@ -481,7 +499,11 @@ describe("BattlePostbattle", () => {
   it("publishes mobile section navigation without warband selection", async () => {
     mocks.useMediaQuery.mockReturnValue(true);
 
-    render(<BattlePostbattle />);
+    renderWithQueryClient(
+      <BattleProvider phase="postbattle">
+        <BattlePostbattle />
+      </BattleProvider>
+    );
 
     await waitFor(() => expect(mocks.setBattleMobileTopBar).toHaveBeenCalled());
 
@@ -511,7 +533,11 @@ describe("BattlePostbattle", () => {
   it("opens battle-styled postbattle dialogs", async () => {
     const user = userEvent.setup();
 
-    render(<BattlePostbattle />);
+    renderWithQueryClient(
+      <BattleProvider phase="postbattle">
+        <BattlePostbattle />
+      </BattleProvider>
+    );
 
     await screen.findByRole("button", { name: "Serious Injury Roll" });
 
@@ -534,10 +560,13 @@ describe("BattlePostbattle", () => {
     });
 
     await act(async () => {
-      await user.click(screen.getByRole("button", { name: "Leave Without Saving" }));
+      await user.click(screen.getByRole("button", { name: "More actions" }));
+    });
+    await act(async () => {
+      await user.click(screen.getByRole("button", { name: "Skip postbattle" }));
     });
     expect(screen.getByRole("dialog")).toHaveClass("!rounded-none");
-    expect(screen.getByRole("heading", { name: "Leave Battle" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Skip postbattle" })).toBeInTheDocument();
   });
 
   it("hides xp controls and xp awards for units that cannot gain xp", async () => {
@@ -566,7 +595,11 @@ describe("BattlePostbattle", () => {
       },
     ];
 
-    render(<BattlePostbattle />);
+    renderWithQueryClient(
+      <BattleProvider phase="postbattle">
+        <BattlePostbattle />
+      </BattleProvider>
+    );
 
     await screen.findAllByText("Ogre Bodyguard");
 
@@ -582,7 +615,11 @@ describe("BattlePostbattle", () => {
   it("searches and saves found items through the inline dropdown", async () => {
     const user = userEvent.setup();
 
-    render(<BattlePostbattle />);
+    renderWithQueryClient(
+      <BattleProvider phase="postbattle">
+        <BattlePostbattle />
+      </BattleProvider>
+    );
 
     await screen.findByTestId("battle-desktop-subnav");
 
@@ -590,18 +627,18 @@ describe("BattlePostbattle", () => {
       await user.click(screen.getByPlaceholderText("Search and add an item"));
     });
 
-    await waitFor(() => expect(mocks.listItems).toHaveBeenCalled());
+    await waitFor(() => expect(mocks.listItems).toHaveBeenCalledTimes(1));
+    expect(mocks.listItems).toHaveBeenCalledWith({
+      campaignId: 1,
+      signal: expect.any(AbortSignal),
+    });
 
     await act(async () => {
       await user.type(screen.getByPlaceholderText("Search and add an item"), "Charm");
     });
 
-    await waitFor(() =>
-      expect(mocks.listItems).toHaveBeenLastCalledWith({
-        campaignId: 1,
-        search: "Charm",
-      })
-    );
+    // Typing filters the loaded catalogue (PERF-40).
+    expect(mocks.listItems).toHaveBeenCalledTimes(1);
 
     await act(async () => {
       await user.click(screen.getByRole("button", { name: /Lucky Charm/i }));

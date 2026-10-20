@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import type { BattleLayoutContext } from "@/features/battles/routes/BattleLayout";
+import type { BattleLayoutContext } from "@/features/battles/components/layout/battle-shell-types";
 import { useBattleMobileBottomBar } from "@/features/battles/components/shared/useBattleMobileBars";
 
 export {
@@ -17,7 +17,8 @@ type UsePrebattleMobileBottomBarParams = {
   currentUserReady: boolean;
   readyDisabled: boolean;
   onToggleReady: () => void;
-  isBattleCreator: boolean;
+  /** Start battle is offered (the creator's, or anyone's the server lets start). */
+  showStart: boolean;
   isStartingBattle: boolean;
   startDisabled: boolean;
   canCreatorCancelBattle: boolean;
@@ -33,7 +34,7 @@ export function usePrebattleMobileBottomBar({
   currentUserReady,
   readyDisabled,
   onToggleReady,
-  isBattleCreator,
+  showStart,
   isStartingBattle,
   startDisabled,
   canCreatorCancelBattle,
@@ -49,8 +50,8 @@ export function usePrebattleMobileBottomBar({
         disabled: readyDisabled,
         variant: "secondary" as const,
       },
-      secondaryAction: isBattleCreator
-        ? currentUserReady
+      secondaryAction:
+        showStart && currentUserReady
           ? {
               label: isStartingBattle ? "Starting..." : "Start battle",
               onClick: onOpenStart,
@@ -64,13 +65,11 @@ export function usePrebattleMobileBottomBar({
                 disabled: isCancelingBattle,
                 variant: "destructive" as const,
               }
-            : undefined
-        : undefined,
+            : undefined,
     };
   }, [
     canCreatorCancelBattle,
     currentUserReady,
-    isBattleCreator,
     isCancelingBattle,
     isStartingBattle,
     isUpdatingReady,
@@ -78,6 +77,7 @@ export function usePrebattleMobileBottomBar({
     onOpenStart,
     onToggleReady,
     readyDisabled,
+    showStart,
     startDisabled,
   ]);
 

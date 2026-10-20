@@ -1,5 +1,6 @@
 import type {
   BattleInviteNotification,
+  BattleNudgeNotification,
   BattleResultRequestNotification,
 } from "@/features/battles/types/battle-types";
 import type { AppNotification } from "@/features/notifications/api/notifications-api";
@@ -91,6 +92,30 @@ export const toBattleResultRequestNotification = (
       typeof payload.created_by_user_id === "number" ? payload.created_by_user_id : null,
     createdByLabel: payload.created_by_user_label?.trim() || "",
     createdAt: new Date().toISOString(),
+  };
+};
+
+/** A nudge's payload (`battle_nudge`): who nudged you about which battle, and its page. */
+export const toBattleNudgeNotification = (
+  payload: BattleNotificationPayload & {
+    page?: BattleNudgeNotification["page"];
+    nudged_by_user_label?: string;
+    nudged_at?: string;
+  },
+  notificationDbId: number
+): BattleNudgeNotification | null => {
+  if (!payload?.battle_id || !payload?.campaign_id) {
+    return null;
+  }
+  return {
+    id: `battle-nudge-${payload.battle_id}`,
+    notificationDbId,
+    battleId: payload.battle_id,
+    campaignId: payload.campaign_id,
+    scenario: payload.scenario?.trim() || `Battle #${payload.battle_id}`,
+    page: payload.page ?? null,
+    fromLabel: payload.nudged_by_user_label?.trim() || "A player",
+    createdAt: payload.nudged_at || new Date().toISOString(),
   };
 };
 

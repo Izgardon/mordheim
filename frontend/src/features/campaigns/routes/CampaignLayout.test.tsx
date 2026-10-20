@@ -36,7 +36,7 @@ const { notifications } = vi.hoisted(() => ({
     acceptTradeNotification: () => undefined,
     declineTradeNotification: () => undefined,
     acceptBattleInviteNotification: () => undefined,
-    dismissBattleInviteNotification: () => undefined,
+    declineBattleInviteNotification: () => undefined,
     acceptBattleResultRequestNotification: () => undefined,
     declineBattleResultRequestNotification: () => undefined,
     clearNotifications: () => undefined,
@@ -61,6 +61,7 @@ vi.mock("@/features/warbands/api/warbands-api", () => ({
 }));
 vi.mock("@/features/battles/api/battles-api", () => ({
   listOpenCampaignBattles: vi.fn(),
+  listPendingReportedResults: vi.fn(async () => []),
   joinBattle: vi.fn(),
   cancelBattleAsCreator: vi.fn(),
 }));

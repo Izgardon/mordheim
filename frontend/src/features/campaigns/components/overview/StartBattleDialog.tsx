@@ -15,6 +15,20 @@ import { Input } from "@/components/ui/input";
 import { createBattle, reportBattleResult } from "@/features/battles/api/battles-api";
 import { normalizeWebUrl } from "@/lib/url-utils";
 import type { CampaignPlayer } from "../../types/campaign-types";
+import { idleLabel } from "@/features/battles/utils/battle-timing";
+import { toastBattleWarnings } from "@/features/battles/utils/battle-warnings";
+import UnfinishedBattleBanner from "@/features/battles/components/shared/UnfinishedBattleBanner";
+import { getErrorMessage } from "@/lib/get-error-message";
+
+/** "In battle #40 (postbattle), idle 6 days" from the players' busy fields (decision 1). */
+function battleBusyLabel(player: CampaignPlayer) {
+  const battle = player.battle_busy_battle_id
+    ? `battle #${player.battle_busy_battle_id}`
+    : "a battle";
+  const phase = player.battle_busy_status ? ` (${player.battle_busy_status})` : "";
+  const idle = idleLabel(player.battle_busy_last_activity_at);
+  return `In ${battle}${phase}${idle ? `, ${idle}` : ""}`;
+}
 
 type StartBattleDialogProps = {
   open: boolean;
@@ -51,6 +65,8 @@ export default function StartBattleDialog({
   const [mode, setMode] = useState<BattleDialogMode>("start_battle");
   const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
   const [selectedWinnerWarbandIds, setSelectedWinnerWarbandIds] = useState<number[]>([]);
+  // A reported result can record "No winner" too (decision 8): no wins or losses.
+  const [noWinner, setNoWinner] = useState(false);
   const [scenario, setScenario] = useState("");
   const [scenarioLink, setScenarioLink] = useState("");
   const [battleDate, setBattleDate] = useState(getTodayInputValue);
@@ -58,10 +74,6 @@ export default function StartBattleDialog({
   const [error, setError] = useState("");
 
   const eligiblePlayers = useMemo(() => players.filter((player) => player.warband?.id), [players]);
-  const availablePlayers = useMemo(
-    () => eligiblePlayers.filter((player) => player.id === creatorUserId || !player.battle_busy),
-    [creatorUserId, eligiblePlayers]
-  );
   const participantUserIds = useMemo(
     () => Array.from(new Set([...selectedUserIds, creatorUserId])),
     [creatorUserId, selectedUserIds]
@@ -98,6 +110,7 @@ export default function StartBattleDialog({
     setMode("start_battle");
     setSelectedUserIds([]);
     setSelectedWinnerWarbandIds([]);
+    setNoWinner(false);
     setError("");
     setScenario("");
     setScenarioLink("");
@@ -107,8 +120,7 @@ export default function StartBattleDialog({
   useEffect(() => {
     setSelectedUserIds((prev) =>
       prev.filter((userId) => {
-        const player = eligiblePlayerById[userId];
-        return Boolean(player && (player.id === creatorUserId || !player.battle_busy));
+        return Boolean(eligiblePlayerById[userId]);
       })
     );
   }, [creatorUserId, eligiblePlayerById]);
@@ -119,8 +131,7 @@ export default function StartBattleDialog({
   }, [selectableWinners]);
 
   const toggleUser = (userId: number) => {
-    const player = eligiblePlayerById[userId];
-    if (userId === creatorUserId || (mode === "start_battle" && player?.battle_busy)) {
+    if (userId === creatorUserId) {
       return;
     }
     setSelectedUserIds((prev) =>
@@ -129,26 +140,16 @@ export default function StartBattleDialog({
   };
 
   const toggleWinner = (warbandId: number) => {
+    setNoWinner(false);
     setSelectedWinnerWarbandIds((prev) =>
       prev.includes(warbandId) ? prev.filter((entry) => entry !== warbandId) : [...prev, warbandId]
     );
   };
 
-  const getBattleBusyLabel = (status: CampaignPlayer["battle_busy_status"]) => {
-    if (status === "inviting") {
-      return "In inviting battle";
-    }
-    if (status === "prebattle") {
-      return "In prebattle";
-    }
-    if (status === "active") {
-      return "In active battle";
-    }
-    if (status === "postbattle") {
-      return "In postbattle";
-    }
-    return "In another battle";
-  };
+  // Busy players are greyed out but can be invited, with a warning (decision 1).
+  const busyInvitees = selectedParticipants.filter(
+    (player) => player.id !== creatorUserId && player.battle_busy
+  );
 
   const handleSubmit = async () => {
     if (mode === "report_result") {
@@ -156,8 +157,8 @@ export default function StartBattleDialog({
         setError("Select at least two players.");
         return;
       }
-      if (selectedWinnerWarbandIds.length < 1) {
-        setError("Select at least one winner.");
+      if (selectedWinnerWarbandIds.length < 1 && !noWinner) {
+        setError("Select the winners, or No winner.");
         return;
       }
       if (!scenario.trim()) {
@@ -176,16 +177,12 @@ export default function StartBattleDialog({
           scenario: scenario.trim(),
           battle_date: battleDate,
           participant_user_ids: participantUserIds,
-          winner_warband_ids: selectedWinnerWarbandIds,
+          winner_warband_ids: noWinner ? [] : selectedWinnerWarbandIds,
         });
         onOpenChange(false);
         onBattleCreated?.();
       } catch (errorResponse) {
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to report battle result");
-        } else {
-          setError("Unable to report battle result");
-        }
+        setError(getErrorMessage(errorResponse, "Unable to report battle result"));
       } finally {
         setIsSubmitting(false);
       }
@@ -215,20 +212,17 @@ export default function StartBattleDialog({
     setError("");
     try {
       const normalizedScenarioLink = normalizeWebUrl(scenarioLink);
-      await createBattle(campaignId, {
+      const created = await createBattle(campaignId, {
         scenario: trimmedScenario,
         scenario_link: normalizedScenarioLink || null,
         participant_user_ids: participantUserIds,
         participant_ratings: participantRatings,
       });
+      toastBattleWarnings(created.warnings);
       onOpenChange(false);
       onBattleCreated?.();
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setError(errorResponse.message || "Unable to create battle");
-      } else {
-        setError("Unable to create battle");
-      }
+      setError(getErrorMessage(errorResponse, "Unable to create battle"));
     } finally {
       setIsSubmitting(false);
     }
@@ -250,12 +244,12 @@ export default function StartBattleDialog({
   const submitDisabled =
     isSubmitting ||
     (mode === "start_battle"
-      ? availablePlayers.length < 2 || !scenario.trim()
+      ? eligiblePlayers.length < 2 || !scenario.trim()
       : eligiblePlayers.length < 2 ||
         !scenario.trim() ||
         !battleDate ||
         participantUserIds.length < 2 ||
-        selectedWinnerWarbandIds.length < 1);
+        (selectedWinnerWarbandIds.length < 1 && !noWinner));
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -271,6 +265,7 @@ export default function StartBattleDialog({
         </DialogHeader>
 
         <div className="space-y-4">
+          <UnfinishedBattleBanner campaignId={campaignId} onGo={() => onOpenChange(false)} />
           <TabSwitcher
             tabs={MODE_TABS}
             activeTab={mode}
@@ -344,10 +339,7 @@ export default function StartBattleDialog({
                       type="button"
                       className="min-w-0 text-left"
                       onClick={() => toggleUser(player.id)}
-                      disabled={
-                        player.id === creatorUserId ||
-                        (mode === "start_battle" && Boolean(player.battle_busy))
-                      }
+                      disabled={player.id === creatorUserId}
                     >
                       <span className="block truncate text-sm font-semibold text-foreground">
                         {player.name}
@@ -357,7 +349,7 @@ export default function StartBattleDialog({
                       </span>
                       {player.battle_busy ? (
                         <span className="block truncate text-[0.65rem] uppercase tracking-[0.15em] text-amber-300">
-                          {getBattleBusyLabel(player.battle_busy_status)}
+                          {battleBusyLabel(player)}
                         </span>
                       ) : null}
                     </button>
@@ -374,10 +366,7 @@ export default function StartBattleDialog({
                       </div>
                       <Checkbox
                         checked={player.id === creatorUserId || selectedUserIds.includes(player.id)}
-                        disabled={
-                          player.id === creatorUserId ||
-                          (mode === "start_battle" && Boolean(player.battle_busy))
-                        }
+                        disabled={player.id === creatorUserId}
                         onChange={() => toggleUser(player.id)}
                       />
                     </div>
@@ -386,6 +375,15 @@ export default function StartBattleDialog({
               )}
             </div>
           </div>
+
+          {mode === "start_battle" && busyInvitees.length > 0 ? (
+            <p className="text-sm text-amber-300">
+              {busyInvitees
+                .map((player) => `${player.name} is ${battleBusyLabel(player).toLowerCase()}`)
+                .join("; ")}
+              . You can still invite them; they finish that battle when they can.
+            </p>
+          ) : null}
 
           {mode === "report_result" ? (
             <>
@@ -417,6 +415,18 @@ export default function StartBattleDialog({
                       </div>
                     ))
                   )}
+                  {selectableWinners.length > 0 ? (
+                    <label className="flex items-center justify-between gap-3 rounded-lg border border-border/40 bg-black/30 px-3 py-2 text-sm font-semibold text-foreground">
+                      No winner
+                      <Checkbox
+                        checked={noWinner}
+                        onChange={(event) => {
+                          setNoWinner(event.target.checked);
+                          setSelectedWinnerWarbandIds([]);
+                        }}
+                      />
+                    </label>
+                  ) : null}
                 </div>
               </div>
 
@@ -429,12 +439,14 @@ export default function StartBattleDialog({
                   : "-"}
                 <br />
                 Winners:{" "}
-                {selectedWinnerWarbandIds.length > 0
-                  ? selectableWinners
-                      .filter((warband) => selectedWinnerWarbandIds.includes(warband.id))
-                      .map((warband) => warband.name)
-                      .join(", ")
-                  : "-"}
+                {noWinner
+                  ? "No winner"
+                  : selectedWinnerWarbandIds.length > 0
+                    ? selectableWinners
+                        .filter((warband) => selectedWinnerWarbandIds.includes(warband.id))
+                        .map((warband) => warband.name)
+                        .join(", ")
+                    : "-"}
                 <br />
                 Date: {battleDate || "-"}
               </div>

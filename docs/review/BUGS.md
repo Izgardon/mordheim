@@ -74,6 +74,7 @@ What has been fixed, and where. Every fix ships with a regression test that fail
 | `pass1/roster-changes-backend` + `-frontend` (PR C) | BUG-27, BUG-28, BUG-29, BUG-30, BUG-31, BUG-32 (warn only, decision 10), BUG-33, BUG-34, BUG-63 (rest: XP +/- sends only `{xp}`), BUG-64, BUG-65, BUG-66, BUG-67, BUG-85, BUG-86, BUG-87, BUG-98, BUG-99, BUG-100, BUG-101, BUG-102, BUG-104, BUG-105, SEC-14; BUG-24 re-verified at 375 px | |
 | `pass2/economy-trades` + `pass2/frontend-fixes` (PR A part 1, before the pass 2 decisions) | BUG-06, BUG-08, BUG-35, BUG-36, BUG-37 (frontend reads the server's gold), BUG-38, BUG-40, BUG-41, BUG-42, BUG-68, BUG-70, BUG-107, BUG-109, BUG-110, BUG-111, BUG-112, BUG-113, BUG-114, BUG-115, BUG-116, BUG-118, BUG-119, BUG-120; SEC-08 (trade half) | BUG-05 (a trade with a trader completes; spent-trader warn vs refuse is decision 9), BUG-69 (errors shown; timers wait for decision 8), SEC-07 (stash half done; catalogue writes pass 5) |
 | `pass2/economy-backend`, `pass2/trades-backend` / `-followup`, `pass2/economy-frontend-changes` (PR A part 2, B, C) | BUG-05 (rest: a spent trader warns), BUG-07 (one `purchases/` request; purchases ride the roster Save), BUG-37 (stored, signed ledger), BUG-43, BUG-69 (timers, countdown, `trade_closed`; nothing to restore because the trading action is spent only at completion), BUG-108, BUG-117 (one stash row per cost) | BUG-18 (Buy again at the current price and recruits at the recorded price are done; the override rule itself is pass 5) |
+| `pass3/battles` → `pass3/changes-frontend` (PR A, B, C) | BUG-09, BUG-10, BUG-11, BUG-19, BUG-44, BUG-45, BUG-46, BUG-47, BUG-48, BUG-71, BUG-72, BUG-73, BUG-74, BUG-75, BUG-106 (lock order pinned), BUG-121, BUG-122, BUG-123, BUG-124, BUG-125, BUG-126, BUG-127, BUG-128 (also hotfixed on main); SEC-08 (battle half), SEC-09, SEC-10 | |
 
 Pass 1 PR A notes:
 - **BUG-03:** postbattle XP goes through one `apply_xp_gain` (`apps/warbands/services/xp.py`) that reads the campaign's tables and halves the award for half-rate units. Hired swords still use the henchmen table until decision 8 lands in PR C. The PATCH path joins the same helper with BUG-27 in PR C.
@@ -340,9 +341,13 @@ No defect was graded P0 by its reviewer. Treat these as P0 until verified:
 | BUG-118 | Any late write (offer, lock, a GET's expiry check) turned a completed or declined trade into "expired"; expiry now applies only to pending and accepted trades | Pass 2 PR A | Economy | Confirmed; **fixed** | 2 |
 | BUG-119 | Clearing a trade-request notification declined the trade with an unlocked read-modify-write, so an accept at the same moment could be overwritten (`notifications/views.py` `_clear_trade_request`) | Pass 2 PR A | Economy | Confirmed; **fixed** | 2 |
 | BUG-120 | Confirming "Cancel Trade" never closed the confirmation, so it reopened over the player's next trade | Pass 2 PR A browser check | Economy | Confirmed; **fixed** | 2 |
-| BUG-121 | Clearing a reported-result notification declines the result without a lock, so a same-user Approve at the same moment can leave the result applied on a battle that then shows as cancelled (`notifications/views.py` battle-result clear path) | Pass 3 brief research | Battles | Likely (race not reproduced) | 3 |
+| BUG-121 | Clearing a reported-result notification declines the result without a lock, so a same-user Approve at the same moment can leave the result applied on a battle that then shows as cancelled (`notifications/views.py` battle-result clear path) | Pass 3 brief research | Battles | Confirmed (reproduced by a two-thread test) | 3 |
 | BUG-122 | Heroes' trading actions are reset twice when a battle finishes (`battles/views/combat.py` and again in `shared.py` finalisation) | Pass 3 brief research | Battles | Confirmed (code) | 3 |
 | BUG-123 | A malformed armour-save override is accepted mid-battle but only parsed at finalise, so finalising answers 400 (`battles/views/shared.py`) | Pass 3 brief research | Battles | Confirmed (code) | 3 |
+| BUG-124 | A finalise that answers 400 part-way keeps what it already wrote, so a retry doubles XP, shards and upkeep: the 400 is returned from inside `transaction.atomic()`, so earlier writes commit (`battles/views/combat.py:458-466`; triggers: a find with no cost, a BUG-123 typo, a dismissed unit, a henchmen mismatch). *Severity P2 (gold and XP), listed here with the later finds* | Pass 3 backend characterisation | Battles | Confirmed (test) | 3 |
+| BUG-125 | Battle config stores `out_of_action: "no"` as true (`shared.py:835`), and a non-numeric `declared_rating` answers with Python's `int()` message (`lifecycle.py:590`) | Pass 3 backend characterisation | Battles | Confirmed (test) | 3 |
+| BUG-126 | Battle and notification dialogs have no accessible description (`ActiveKillDialog.tsx`, `BattleActive.tsx`, `PrebattleDialogs.tsx`, `NotificationsMenu.tsx`) | Pass 3 frontend characterisation | Battles / a11y | Confirmed (test) | 3 |
+| BUG-127 | Postbattle fetches the warband's resources itself on every mount although the warband sheet already has them (`BattlePostbattle.tsx:451-466`) | Pass 3 frontend characterisation | Battles / perf | Confirmed (test) | 3 |
 
 ## By plan phase
 
@@ -375,6 +380,7 @@ Each pass's bug checklist. IDs marked "(part)" are shared between passes; the no
 **Pass 3: Battles**
 - Product question (found in Phase 0): the active-battle stat-override editor has been off screen since a restyle. **Answered: restore it** (pass 3 decision 6).
 - Found while writing the pass 3 brief: BUG-121, BUG-122, BUG-123 (all P3).
+- Found by the pass 3 characterisation tests: BUG-124 (P2: a failed finalise keeps its earlier writes), BUG-125, BUG-126, BUG-127. A unit's buttons staying enabled while its config save is queued belongs to BUG-44's fix.
 - P1: BUG-09, BUG-10, BUG-11; regression tests for BUG-03
 - P2: BUG-19 (part: `useBattleState` catch-up), BUG-44, BUG-45, BUG-46, BUG-47, BUG-48
 - P3: BUG-71, BUG-72, BUG-73, BUG-74, BUG-75

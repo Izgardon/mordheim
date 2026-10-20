@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { NumberInput } from "@/components/ui/number-input";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
 import type { UnitStats } from "@/features/battles/components/prebattle/prebattle-types";
@@ -201,6 +207,10 @@ export default function ActiveMeleeDialog({
       <DialogContent className={`max-w-2xl ${HELPER_DIALOG_CONTENT_CLASS}`}>
         <DialogHeader>
           <DialogTitle>Melee</DialogTitle>
+          <DialogDescription className="sr-only">
+            Pick your unit and an enemy unit to see the rolls needed to hit, to wound and to save in
+            close combat.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-3">
