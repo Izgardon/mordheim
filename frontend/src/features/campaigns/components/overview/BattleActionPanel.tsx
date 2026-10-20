@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -32,7 +33,7 @@ import { deadlineLabel } from "@/features/battles/utils/battle-timing";
 import type { CampaignPlayer } from "../../types/campaign-types";
 import UnfinishedBattleBanner from "@/features/battles/components/shared/UnfinishedBattleBanner";
 import PendingResultsCard from "./PendingResultsCard";
-import StartBattleDialog from "./StartBattleDialog";
+import StartBattleButton from "./StartBattleButton";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 const NO_BATTLES: BattleState[] = [];
@@ -41,18 +42,20 @@ type BattleActionPanelProps = {
   campaignId: number;
   players: CampaignPlayer[];
   campaignStarted: boolean;
+  /** Shown first in the button row (Start campaign, before the start). */
+  leadingAction?: ReactNode;
 };
 
 export default function BattleActionPanel({
   campaignId,
   players,
   campaignStarted,
+  leadingAction,
 }: BattleActionPanelProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 960px)");
 
-  const [isStartBattleOpen, setIsStartBattleOpen] = useState(false);
   const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
   const [isCancelBattleDialogOpen, setIsCancelBattleDialogOpen] = useState(false);
   const [isCancelingBattle, setIsCancelingBattle] = useState(false);
@@ -150,6 +153,7 @@ export default function BattleActionPanel({
   return (
     <>
       <div className="flex flex-wrap justify-center gap-2 px-2 pt-2 sm:px-0 sm:pt-0">
+        {leadingAction}
         {resumableBattle ? (
           <Button
             variant="toolbar"
@@ -170,35 +174,26 @@ export default function BattleActionPanel({
           >
             {battleIsInviting ? "See Status" : "Rejoin Battle"}
           </Button>
-        ) : campaignStarted ? (
-          <Button
-            variant="toolbar"
-            size="sm"
+        ) : (
+          // Greyed out but clickable before the start, with a warning (decision 3).
+          <StartBattleButton
+            campaignId={campaignId}
+            creatorUserId={user?.id ?? 0}
+            players={players}
+            campaignStarted={campaignStarted}
             disabled={isBattlesLoading}
-            onClick={() => setIsStartBattleOpen(true)}
             className={
               isMobile
                 ? "min-w-0 border-[#8b6a31] bg-[#3c2e14] text-[#e8d5a3] hover:border-[#aa8540] hover:bg-[#4a3918] hover:text-[#f2e3bd]"
                 : "min-w-[9.5rem] border-[#b38b3c] bg-[#5d4719] text-[#f7e6b8] shadow-[0_0_18px_rgba(214,168,71,0.3)] hover:border-[#d6a847] hover:bg-[#7a5c1f] hover:text-[#fff3d4]"
             }
-          >
-            Start battle
-          </Button>
-        ) : null}
-        {campaignStarted ? (
-          <StartBattleDialog
-            open={isStartBattleOpen}
-            onOpenChange={setIsStartBattleOpen}
-            campaignId={campaignId}
-            creatorUserId={user?.id ?? 0}
-            players={players}
             onBattleCreated={() => {
               void refreshOpenBattles();
               // A reported result waits on the card, with Withdraw for you (BUG-46).
               void invalidatePendingResults(queryClient, campaignId);
             }}
           />
-        ) : null}
+        )}
       </div>
 
       {resumableBattle && deadlineLabel(resumableBattle.battle) ? (
