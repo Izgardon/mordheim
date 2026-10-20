@@ -1,6 +1,3 @@
-import random
-import string
-
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
@@ -14,20 +11,8 @@ from apps.campaigns.models import (
     CampaignRole,
     CampaignSettings,
 )
+from apps.campaigns.services.campaigns import unique_join_code
 from apps.campaigns.services.codes import seed_roles_and_codes
-
-
-def _generate_join_code():
-    alphabet = string.ascii_uppercase + string.digits
-    return "".join(random.choice(alphabet) for _ in range(6))
-
-
-def _unique_join_code():
-    for _ in range(20):
-        code = _generate_join_code()
-        if not Campaign.objects.filter(join_code=code).exists():
-            return code
-    return _generate_join_code()
 
 
 class Command(BaseCommand):
@@ -86,112 +71,106 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle(self, *args, **options):
         count = options["count"]
-        admin_count = options["admins"]
-        campaign_name = options["campaign_name"]
-        max_players = options["max_players"]
-        email_domain = options["email_domain"]
-        prefix = options["prefix"]
-        password = options["password"]
-        reset_passwords = options["reset_passwords"]
-
         if count < 1:
             raise CommandError("--count must be at least 1 to create an owner.")
 
-        admin_count = max(0, min(admin_count, count - 1))
+        admin_count = max(0, min(options["admins"], count - 1))
+        max_players = options["max_players"]
         desired_max_players = max_players if max_players is not None else max(count + 1, 6)
         desired_max_players = max(desired_max_players, count + 1)
-
-        campaign = Campaign.objects.filter(name=campaign_name).first()
-
-        if not campaign:
-            campaign = Campaign.objects.create(
-                name=campaign_name,
-                join_code=_unique_join_code(),
-            )
-            CampaignSettings.objects.create(
-                campaign=campaign,
-                max_players=desired_max_players,
-            )
-        else:
-            settings, _ = CampaignSettings.objects.get_or_create(campaign=campaign)
-            if settings.max_players < desired_max_players:
-                settings.max_players = desired_max_players
-                settings.save(update_fields=["max_players"])
+        campaign = _seed_campaign(options["campaign_name"], desired_max_players)
 
         seed_roles_and_codes()  # the migration seeds them; this keeps the command safe on any database
         roles = {role.slug: role for role in CampaignRole.objects.all()}
         join_grants = list(CampaignPermission.objects.filter(code__in=JOIN_GRANTS))
 
-        user_model = get_user_model()
-        created_users = 0
-        updated_users = 0
-        created_memberships = 0
-        updated_memberships = 0
-
+        tally = {"users created": 0, "users updated": 0, "memberships created": 0, "memberships updated": 0}
         for index in range(1, count + 1):
-            email = f"{prefix}{index}@{email_domain}".lower()
-            display_name = f"Raider {index}"
-            user, created = user_model.objects.get_or_create(
-                username=email,
-                defaults={"email": email, "first_name": display_name},
-            )
-
-            if created:
-                user.set_password(password)
-                user.save()
-                created_users += 1
-            else:
-                updated = False
-                if user.email != email:
-                    user.email = email
-                    updated = True
-                if user.first_name != display_name:
-                    user.first_name = display_name
-                    updated = True
-                if reset_passwords:
-                    user.set_password(password)
-                    updated = True
-                if updated:
-                    user.save()
-                    updated_users += 1
-
-            if index == 1:
-                role = roles[OWNER]
-            elif index <= admin_count + 1:
-                role = roles[ADMIN]
-            else:
-                role = roles[PLAYER]
-
-            membership, membership_created = CampaignMembership.objects.get_or_create(
-                campaign=campaign,
-                user=user,
-                defaults={"role": role},
-            )
-            if membership_created:
-                created_memberships += 1
-            elif membership.role_id != role.id:
-                membership.role = role
-                membership.save(update_fields=["role"])
-                updated_memberships += 1
-
-            if membership.role.slug == PLAYER:
-                CampaignMembershipPermission.objects.bulk_create(
-                    [CampaignMembershipPermission(membership=membership, permission=entry) for entry in join_grants],
-                    ignore_conflicts=True,
-                )
+            user, user_created, user_updated = _seed_user(index, options)
+            tally["users created"] += user_created
+            tally["users updated"] += user_updated
+            role = roles[OWNER] if index == 1 else roles[ADMIN] if index <= admin_count + 1 else roles[PLAYER]
+            membership_created, membership_updated = _seed_membership(campaign, user, role, join_grants)
+            tally["memberships created"] += membership_created
+            tally["memberships updated"] += membership_updated
 
         member_count = CampaignMembership.objects.filter(campaign=campaign).count()
-        required_max_players = max(desired_max_players, member_count + 1)
-        settings, _ = CampaignSettings.objects.get_or_create(campaign=campaign)
-        if settings.max_players < required_max_players:
-            settings.max_players = required_max_players
-            settings.save(update_fields=["max_players"])
+        _ensure_seats(campaign, max(desired_max_players, member_count + 1))
 
         self.stdout.write(
             self.style.SUCCESS(
                 "Campaign seed complete."
                 f" Campaign: {campaign.name} (id={campaign.id}, join={campaign.join_code})"
-                f" Users created: {created_users}, updated: {updated_users}."
-                f" Memberships created: {created_memberships}, updated: {updated_memberships}."
+                f" Users created: {tally['users created']}, updated: {tally['users updated']}."
+                f" Memberships created: {tally['memberships created']}, updated: {tally['memberships updated']}."
             )
         )
+
+
+def _email(index, options):
+    return f"{options['prefix']}{index}@{options['email_domain']}".lower()
+
+
+def _ensure_seats(campaign, seats):
+    """The campaign's settings, with at least `seats` places."""
+    settings, _ = CampaignSettings.objects.get_or_create(campaign=campaign)
+    if settings.max_players < seats:
+        settings.max_players = seats
+        settings.save(update_fields=["max_players"])
+
+
+def _seed_campaign(name, seats):
+    """The campaign with this name (made, with its settings, when missing), with at least `seats` places."""
+    campaign = Campaign.objects.filter(name=name).first()
+    if campaign:
+        _ensure_seats(campaign, seats)
+        return campaign
+    campaign = Campaign.objects.create(name=name, join_code=unique_join_code())
+    CampaignSettings.objects.create(campaign=campaign, max_players=seats)
+    return campaign
+
+
+def _seed_user(index, options):
+    """Raider `index`: made with the password, or brought back to the seeded email and name; (user, created,
+    updated)."""
+    email = _email(index, options)
+    display_name = f"Raider {index}"
+    user, created = get_user_model().objects.get_or_create(
+        username=email,
+        defaults={"email": email, "first_name": display_name},
+    )
+    if created:
+        user.set_password(options["password"])
+        user.save()
+        return user, True, False
+    updated = False
+    if user.email != email:
+        user.email = email
+        updated = True
+    if user.first_name != display_name:
+        user.first_name = display_name
+        updated = True
+    if options["reset_passwords"]:
+        user.set_password(options["password"])
+        updated = True
+    if updated:
+        user.save()
+    return user, False, updated
+
+
+def _seed_membership(campaign, user, role, join_grants):
+    """The user's membership with this role (players also get the join grants); (created, updated)."""
+    membership, created = CampaignMembership.objects.get_or_create(
+        campaign=campaign, user=user, defaults={"role": role}
+    )
+    updated = False
+    if not created and membership.role_id != role.id:
+        membership.role = role
+        membership.save(update_fields=["role"])
+        updated = True
+    if membership.role.slug == PLAYER:
+        CampaignMembershipPermission.objects.bulk_create(
+            [CampaignMembershipPermission(membership=membership, permission=entry) for entry in join_grants],
+            ignore_conflicts=True,
+        )
+    return created, updated
