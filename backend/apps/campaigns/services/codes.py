@@ -13,7 +13,7 @@ from django.db.models import Subquery
 from ..constants import PERMISSION_CODES, PERMISSIONS, ROLES
 from ..models import CampaignMembershipPermission, CampaignPermission, CampaignRole
 
-_LABELS = {entry.code: entry.label for entry in PERMISSIONS}
+_BY_CODE = {entry.code: entry for entry in PERMISSIONS}
 
 
 def role_ref(slug: str) -> Subquery:
@@ -33,8 +33,9 @@ def grant_on_join(membership: Any, codes: Iterable[str]) -> None:
 
 
 def describe(codes: Iterable[str] = PERMISSION_CODES) -> list[dict[str, str]]:
-    """Each code (every code by default) as the API shows it, in the order given."""
-    return [{"code": code, "name": _LABELS[code]} for code in codes if code in _LABELS]
+    """Each code (every code by default) as the API shows it, code, label and description, in the order given."""
+    entries = [_BY_CODE[code] for code in codes if code in _BY_CODE]
+    return [{"code": entry.code, "label": entry.label, "description": entry.description} for entry in entries]
 
 
 def in_catalogue_order(codes: Iterable[str]) -> list[str]:

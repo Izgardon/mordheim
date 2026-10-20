@@ -93,14 +93,21 @@ class PermissionCatalogueTests(CampaignTestCase):
         self.assertEqual(codes_checked_in_source() - set(PERMISSION_CODES), set())
         self.assertLessEqual({"manage_spells", "manage_specials"}, codes_checked_in_source())
 
-    def test_any_member_reads_the_catalogue_in_seed_order(self):
-        # GET /permissions/ has no caller in the frontend (BUG-15); code and name only, no description
-        expected = [{"code": entry.code, "name": entry.label} for entry in PERMISSIONS]
+    def test_any_member_reads_the_catalogue_with_labels_and_descriptions(self):
+        # BUG-15: what the grant menu is built from (it used to be code and name only)
+        expected = [{"code": e.code, "label": e.label, "description": e.description} for e in PERMISSIONS]
         for user in (self.owner, self.player):
             with self.subTest(user=user.first_name):
                 response = self.get_as(user, self.url("permissions/"))
                 self.assertEqual((response.status_code, response.json()), (200, expected))
         self.assertEqual(self.get_as(self.outsider, self.url("permissions/")).status_code, 404)
+
+        grants_url = self.url(f"members/{self.player.id}/permissions/")
+        granted = self.put_as(self.owner, grants_url, {"permissions": ["manage_rules", "add_custom"]})
+        mine = self.get_as(self.player, self.url("permissions/me/")).json()
+
+        self.assertEqual(granted.json(), [expected[5], expected[0]])  # in the order sent
+        self.assertEqual(mine, [expected[0], expected[5]])  # in the catalogue's order
 
     def test_owners_and_admins_hold_every_code_and_players_their_grants(self):
         for user in (self.owner, self.admin):
