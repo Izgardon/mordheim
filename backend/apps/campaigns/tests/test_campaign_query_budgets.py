@@ -31,7 +31,7 @@ from .campaign_support import CampaignTestCase, make_user
 # name -> (who asks, url suffix, budget)
 BUDGETS: dict[str, tuple[str, str, int]] = {
     "detail (owner)": ("owner", "", 3),
-    "detail (player)": ("player", "", 4),  # + the player's codes; target ≤ 3 for every role
+    "detail (player)": ("player", "", 3),  # the codes come with the membership (CampaignScopedView, design 0.29)
     "players": ("player", "players/", 6),  # the member check reads the list it returns (PERF-41)
     "players (basic)": ("player", "players/?fields=basic", 1),  # names only, for pickers (PERF-41, target <= 2)
     "completed trades": ("player", "trade-requests/?status=completed", 2),
@@ -40,11 +40,11 @@ BUDGETS: dict[str, tuple[str, str, int]] = {
     "top killers": ("player", "top-killers/", 2),
     "members": ("admin", "members/", 4),
     "permissions": ("player", "permissions/", 1),  # served from the constants (BUG-15)
-    "permissions/me (player)": ("player", "permissions/me/", 2),
+    "permissions/me (player)": ("player", "permissions/me/", 1),  # the codes come with the membership
     "messages": ("player", "messages/", 2),
     "bulletin": ("player", "bulletin/", 2),
-    "encampments": ("player", "encampments/", 3),
-    "locations": ("player", "locations/", 3),
+    "encampments": ("player", "encampments/", 2),  # the feature flag comes with the membership
+    "locations": ("player", "locations/", 2),
     "house rules": ("player", "rules/", 2),
     "active battles": ("owner", "active-battles/", 3),
 }
@@ -148,8 +148,9 @@ class CampaignQueryBudgetTests(CampaignTestCase):
             self.assertEqual(self.join(newcomer).status_code, 201)
         return len(captured), [query["sql"] for query in captured]
 
-    def test_a_players_feature_write_costs_three_queries_before_any_work(self):
-        # CAMP-PERF-06: membership, the feature flag, then the grant; a 400 after them shows the preamble alone
+    def test_a_players_feature_write_costs_one_query_before_any_work(self):
+        # CAMP-PERF-06: membership, feature flag and grant are one read (CampaignScopedView; it was 3 queries); a 400
+        # after it shows the preamble alone
         self.grant(self.player, "manage_encampments")
         self.client.force_authenticate(user=self.player)
 
@@ -157,7 +158,7 @@ class CampaignQueryBudgetTests(CampaignTestCase):
             response = self.client.post(self.url("encampments/"), {"name": " "}, format="json")
 
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(len(captured), 3)
+        self.assertEqual(len(captured), 1)
 
     def test_history_reads_only_the_participant_columns_it_shows(self):
         # PERF-45: the participants prefetch read every JSON column of every participant

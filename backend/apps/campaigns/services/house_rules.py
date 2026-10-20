@@ -46,6 +46,10 @@ def revert_effect_if_unused(campaign_id: int, effect_key: str | None) -> None:
         revert(campaign_id)
 
 
+def rules(campaign_id: int):
+    return CampaignHouseRule.objects.filter(campaign_id=campaign_id).order_by("created_at")
+
+
 def _rule_with_effect(campaign_id: int, effect_key: str) -> CampaignHouseRule | None:
     return CampaignHouseRule.objects.filter(campaign_id=campaign_id, effect_key=effect_key).first()
 
@@ -87,3 +91,11 @@ def update_rule(rule: CampaignHouseRule, validated: dict[str, Any]) -> CampaignH
             raise
         raise Refused("This campaign already has a house rule with that effect.", code="duplicate_effect") from error
     return rule
+
+
+def delete_rule(rule: CampaignHouseRule) -> None:
+    """Delete the rule; its effect's clones go once no other rule of the campaign has it."""
+    effect_key = rule.effect_key
+    with transaction.atomic():
+        rule.delete()
+        revert_effect_if_unused(rule.campaign_id, effect_key)

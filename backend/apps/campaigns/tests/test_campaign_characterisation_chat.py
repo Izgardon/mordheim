@@ -24,7 +24,7 @@ class ChatTests(CampaignTestCase):
     def setUp(self) -> None:
         super().setUp()
         patcher = mock.patch(
-            "apps.campaigns.views.send_campaign_chat_message", wraps=realtime.send_campaign_chat_message
+            "apps.campaigns.services.chat.send_campaign_chat_message", wraps=realtime.send_campaign_chat_message
         )
         self.chat_events = patcher.start()
         self.addCleanup(patcher.stop)

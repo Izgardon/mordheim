@@ -1,0 +1,25 @@
+"""Campaign chat: any member reads it a page at a time and posts to it (posts are throttled)."""
+
+from rest_framework import status
+from rest_framework.response import Response
+
+from apps.core.throttling import CAMPAIGN_CHAT_THROTTLE_CLASSES, MethodScopedThrottleMixin
+
+from ..serializers import CampaignMessageSerializer
+from ..services import chat
+from .base import CampaignScopedView
+
+
+class CampaignMessagesView(MethodScopedThrottleMixin, CampaignScopedView):
+    """GET: 50 messages, newest first (`?before=<id>` for older ones). POST: a message of up to 2,000 characters."""
+
+    rules = {"GET": "view", "POST": "view"}
+    throttle_classes = CAMPAIGN_CHAT_THROTTLE_CLASSES
+
+    def get(self, request, campaign_id):
+        messages = chat.page(campaign_id, request.query_params.get("before"))
+        return Response(CampaignMessageSerializer(messages, many=True).data)
+
+    def post(self, request, campaign_id):
+        message = chat.post(campaign_id, request.user, request.data.get("body", ""))
+        return Response(CampaignMessageSerializer(message).data, status=status.HTTP_201_CREATED)

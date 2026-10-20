@@ -6,7 +6,6 @@ from django.db import transaction
 
 from apps.warbands.restrictions import get_valid_campaign_item_settings
 
-from ..constants import ADMIN, OWNER
 from ..errors import Refused
 from ..models import Campaign, CampaignSettings
 from . import starting_gold
@@ -28,12 +27,11 @@ START_FIELDS = frozenset({"in_progress"})
 UPDATE_FIELDS = frozenset({*START_FIELDS, *SETTINGS_FIELDS, "item_setting_ids", starting_gold.ADJUST_FLAG})
 
 
-def may_update(role_slug: str, data: Any) -> bool:
-    """The owner changes anything; an admin may send the start flag on its own (decision 2, BUG-13)."""
-    if role_slug == OWNER:
-        return True
+def rule_for(data: Any) -> str:
+    """The rule a PATCH needs (access.CAMPAIGN_RULES): `start` (owners and admins, decision 2, BUG-13) when it sends
+    nothing but the start flag, else `edit_settings` (the owner)."""
     sent = set(data) & UPDATE_FIELDS if isinstance(data, dict) else set()
-    return role_slug == ADMIN and sent <= START_FIELDS
+    return "start" if sent <= START_FIELDS else "edit_settings"
 
 
 def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> None:
