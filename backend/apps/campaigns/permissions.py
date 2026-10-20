@@ -5,6 +5,12 @@ def get_membership(user, campaign_id):
     return CampaignMembership.objects.select_related("role").filter(campaign_id=campaign_id, user=user).first()
 
 
+def get_membership_with_campaign(user, campaign_id):
+    """The membership with its campaign read in the same query (e.g. for its `in_progress`)."""
+    rows = CampaignMembership.objects.select_related("role", "campaign")
+    return rows.filter(campaign_id=campaign_id, user=user).first()
+
+
 def is_owner(membership):
     return bool(membership and membership.role.slug == "owner")
 

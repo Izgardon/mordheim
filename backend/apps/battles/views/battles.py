@@ -7,7 +7,7 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.permissions import get_membership
+from apps.campaigns.permissions import get_membership, get_membership_with_campaign
 from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES, MethodScopedThrottleMixin
 
 from ..models import Battle
@@ -22,6 +22,7 @@ from ..services.presence import mark_participant_seen
 from ..services.rosters import battle_rosters_payload
 from ..services.setup import create_battle, new_battle
 from ..services.unfinished import viewer, viewer_in
+from ..services.warnings import campaign_warnings
 from .base import BattleScopedView, Scope
 from .responses import broadcast_response, with_capabilities
 
@@ -52,7 +53,8 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
         )
 
     def post(self, request, campaign_id):
-        if not get_membership(request.user, campaign_id):
+        membership = get_membership_with_campaign(request.user, campaign_id)
+        if not membership:
             return Response({"detail": "Not found"}, status=404)
         try:
             requested = new_battle(request.data, campaign_id, request.user)
@@ -85,7 +87,7 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
             battle.state_version,
             changed=ALL,
             response_status=status.HTTP_201_CREATED,
-            warnings=requested.warnings,
+            warnings=[*campaign_warnings(membership.campaign.in_progress), *requested.warnings],
         )
         return with_capabilities(answer, request.user.id, False)  # inviting: nothing a battle manager adds yet
 

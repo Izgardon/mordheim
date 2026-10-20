@@ -126,6 +126,12 @@ class BattleTestCase(RosterTestCase):
     battle_events: mock.MagicMock
     user_events: mock.MagicMock
 
+    @classmethod
+    def setUpTestData(cls) -> None:
+        super().setUpTestData()
+        cls.campaign.in_progress = True  # started: a battle before the start warns campaign_not_started (BUG-77)
+        cls.campaign.save(update_fields=["in_progress"])
+
     def setUp(self) -> None:
         super().setUp()
         self.battle_events = self._record("apps.battles.services.broadcast", "send_battle_event")

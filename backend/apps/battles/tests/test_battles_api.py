@@ -49,6 +49,7 @@ class BattleApiTests(APITestCase):
         self.campaign = Campaign.objects.create(
             name="Shadows Over Mordheim",
             join_code="ABC123",
+            in_progress=True,  # started: no campaign_not_started warning (BUG-77)
         )
         CampaignMembership.objects.create(
             campaign=self.campaign,

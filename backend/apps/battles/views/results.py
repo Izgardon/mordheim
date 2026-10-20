@@ -11,7 +11,7 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.permissions import get_membership
+from apps.campaigns.permissions import get_membership, get_membership_with_campaign
 from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 from apps.users.names import display_name
 
@@ -21,6 +21,7 @@ from ..services.broadcast import ALL
 from ..services.errors import BattleError, Refused
 from ..services.lifecycle import cancel_battle
 from ..services.reported import approve, create_reported_result, decline, reported_result
+from ..services.warnings import campaign_warnings
 from .base import BattleWriteView, Scope, Written
 from .responses import broadcast_response, with_capabilities
 from .rules import refuse, refuse_player, refused, reported_flow, snapshot_when
@@ -34,7 +35,8 @@ class CampaignBattleReportedResultCreateView(APIView):
     throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id):
-        if not get_membership(request.user, campaign_id):
+        membership = get_membership_with_campaign(request.user, campaign_id)
+        if not membership:
             return Response({"detail": "Not found"}, status=404)
         try:
             result = reported_result(request.data, campaign_id, request.user)
@@ -43,7 +45,13 @@ class CampaignBattleReportedResultCreateView(APIView):
         with transaction.atomic():
             battle, events = create_reported_result(campaign_id, request.user, result)
         answer = broadcast_response(
-            request, battle.id, events, battle.state_version, changed=ALL, response_status=status.HTTP_201_CREATED
+            request,
+            battle.id,
+            events,
+            battle.state_version,
+            changed=ALL,
+            response_status=status.HTTP_201_CREATED,
+            warnings=campaign_warnings(membership.campaign.in_progress),  # decision 3, BUG-77
         )
         return with_capabilities(answer, request.user.id, False)  # pending: nothing to manage yet
 

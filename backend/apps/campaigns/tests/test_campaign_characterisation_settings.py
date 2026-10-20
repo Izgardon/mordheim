@@ -57,22 +57,35 @@ class CampaignStartTests(CampaignTestCase):
         self.assertFalse(self.started())
         self.assertEqual(CampaignSettings.objects.get(campaign=self.campaign).max_heroes, 6)
 
-    def test_nothing_on_the_server_reads_in_progress(self):
-        # Characterises current behaviour (BUG-77, pinned; flips in PR A: decision 3 warns `campaign_not_started`)
+    def test_before_the_start_battles_and_reported_results_warn_and_go_ahead(self):
+        # BUG-77, decision 3: nothing read in_progress; now the start only takes the warning away (XP is unchanged)
         self.assertFalse(self.started())
         hero = Hero.objects.create(warband=self.warband, name="Abbess", unit_type="Matriarch")
+        warning = {"code": "campaign_not_started", "message": "The campaign hasn't started yet."}
+        players = [self.player.id, self.rival.id]
 
-        battle = self.post_as(
-            self.player,
-            self.url("battles/"),
-            {"participant_user_ids": [self.player.id, self.rival.id], "scenario": "Street Fight"},
-        )
+        battle = self.post_as(self.player, self.url("battles/"), {"participant_user_ids": players, "scenario": "Ford"})
+        reported = self.report(self.player)
         xp = self.patch_as(self.player, f"/api/warbands/{self.warband.id}/heroes/{hero.id}/", {"xp": 3})
 
-        self.assertEqual(battle.status_code, 201, battle.data)
-        self.assertNotIn("warnings", battle.json())
-        self.assertEqual(xp.status_code, 200)
-        self.assertEqual(Hero.objects.get(id=hero.id).xp, 3)
+        self.assertEqual((battle.status_code, battle.json()["warnings"]), (201, [warning]))
+        self.assertEqual((reported.status_code, reported.json()["warnings"]), (201, [warning]))
+        self.assertEqual((xp.status_code, Hero.objects.get(id=hero.id).xp), (200, 3))
+
+        self.start(self.admin)
+        after = self.report(self.rival)
+
+        self.assertEqual(after.status_code, 201, after.data)
+        self.assertNotIn("warnings", after.json())
+
+    def report(self, user):
+        body = {
+            "participant_user_ids": [self.player.id, self.rival.id],
+            "scenario": "Ambush",
+            "battle_date": "2026-10-01",
+            "winner_warband_ids": [self.warband.id],
+        }
+        return self.post_as(user, self.url("battles/report-result/"), body)
 
 
 class CampaignSettingsTests(CampaignTestCase):
