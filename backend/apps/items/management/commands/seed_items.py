@@ -6,6 +6,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.management.color import no_style
 from django.db import connection, transaction
 
+from apps.campaigns.services.house_rules import resync_every_campaign
 from apps.items.models import (
     Item,
     ItemAvailability,
@@ -389,6 +390,10 @@ class Command(BaseCommand):
                                 property=resolved_prop,
                             )
 
+        synced = resync_every_campaign()  # house-rule clones take the reseeded book prices (BUG-51)
         self.stdout.write(
-            self.style.SUCCESS(f"Items import complete. Created: {created}, Updated: {updated}, Skipped: {skipped}")
+            self.style.SUCCESS(
+                f"Items import complete. Created: {created}, Updated: {updated}, Skipped: {skipped}, "
+                f"house rules synced: {synced}"
+            )
         )

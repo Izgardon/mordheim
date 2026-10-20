@@ -12,7 +12,6 @@ from io import StringIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any
-from unittest import expectedFailure
 
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
@@ -21,9 +20,9 @@ from django.db import IntegrityError, transaction
 from django.test import SimpleTestCase, TestCase
 
 from apps.bestiary.models import BestiaryEntry
-from apps.campaigns.models import Campaign, CampaignSettings
+from apps.campaigns.models import Campaign, CampaignHouseRule, CampaignSettings
 from apps.items.models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemProperty
-from apps.items.services import sync_half_price_armour_for_campaign
+from apps.items.services import HALF_PRICE_ARMOUR_EFFECT_KEY, sync_half_price_armour_for_campaign
 from apps.races.models import Race
 from apps.restrictions.models import Restriction
 from apps.restrictions.utils import _RESTRICTION_CORRECTIONS, parse_unique_to
@@ -265,28 +264,36 @@ class SeederAtomicityTests(SeederTestCase):
 
 
 class HouseRuleReseedTests(SeederTestCase):
-    """BUG-51 (pass 5 half): clones copy their book armour once; only a sync of the rule copies it again."""
+    """BUG-51 (pass 5 half): clones copy their book armour once, so `seed_items` ends by syncing every campaign's
+    rule again, through pass 4's one repricing path."""
 
     def setUp(self) -> None:
         super().setUp()
         self.armour = book_item("Heavy Armour", 50, type="Armour", subtype="Armour", save_value="5+")
+        CampaignHouseRule.objects.create(campaign=self.campaign, title="Half price", effect_key=HALF_PRICE_ARMOUR_EFFECT_KEY)  # fmt: skip
         sync_half_price_armour_for_campaign(self.campaign.id)
         self.clone = Item.objects.get(campaign=self.campaign, source_item=self.armour)
 
-    @expectedFailure
     def test_a_reseeded_armour_price_reaches_the_half_price_clone(self):
         # BUG-51 (seed_items re-syncs every campaign's rule) after BUG-17 (the reseed stops crashing on the clone)
         seed_items([{"name": "Heavy Armour", "type": "Armour", "subtype": "Armour", "cost": 60}])
 
         self.assertEqual((costs(self.armour), costs(self.clone)), ([60], [30]))
 
-    def test_the_clone_keeps_its_price_until_the_rule_is_synced_again(self):
-        # Characterises current behaviour (BUG-51, pinned; flips in PR A: seed_items ends with the sync)
-        ItemAvailability.objects.filter(item=self.armour).update(cost=60)  # what a reseed would write
+    def test_a_reseed_reprices_every_campaigns_clone_and_copies_keep_what_was_paid(self):
+        # BUG-51 (was pinned: the clone kept its price until the rule was synced by hand; flipped in PR A)
+        other = Campaign.objects.create(name="Elsewhere", join_code="ELSEWH")
+        CampaignHouseRule.objects.create(campaign=other, title="Half price", effect_key=HALF_PRICE_ARMOUR_EFFECT_KEY)
+        sync_half_price_armour_for_campaign(other.id)
+        hero = Hero.objects.create(warband=self.warband, name="Abbess", unit_type="Matriarch")
+        hero.hero_items.create(item=self.clone, cost=25)
 
-        self.assertEqual(costs(self.clone), [25])
-        sync_half_price_armour_for_campaign(self.campaign.id)
-        self.assertEqual(costs(Item.objects.get(campaign=self.campaign, source_item=self.armour)), [30])
+        output = seed_items([{"name": "Heavy Armour", "type": "Armour", "subtype": "Armour", "cost": 60}])
+
+        clones = Item.objects.filter(source_item=self.armour).order_by("campaign_id")
+        self.assertEqual([(clone.campaign_id, costs(clone)) for clone in clones], [(self.campaign.id, [30]), (other.id, [30])])  # fmt: skip
+        self.assertEqual(list(hero.hero_items.values_list("item_id", "cost")), [(self.clone.id, 25)])
+        self.assertIn("house rules synced: 2", output)
 
 
 class SeederTruncateTests(SeederTestCase):

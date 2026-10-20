@@ -39,6 +39,16 @@ def sync_effect(campaign_id: int, effect_key: str | None) -> None:
         sync(campaign_id)
 
 
+def resync_every_campaign() -> int:
+    """Sync every campaign's item-effect rules again, through the one repricing path, and return how many (BUG-51:
+    a clone copies its book armour once, so `seed_items` calls this after a reseed reprices the book)."""
+    rules = CampaignHouseRule.objects.exclude(effect_key__isnull=True).exclude(effect_key="")
+    pairs = list(rules.values_list("campaign_id", "effect_key").distinct().order_by("campaign_id", "effect_key"))
+    for campaign_id, effect_key in pairs:
+        sync_effect(campaign_id, effect_key)
+    return len(pairs)
+
+
 def revert_effect_if_unused(campaign_id: int, effect_key: str | None) -> None:
     """Undo an effect's clones once no rule of the campaign has it."""
     revert = REVERTS.get(effect_key or "")
