@@ -166,13 +166,13 @@ describe("Starting gold and warband caps", () => {
 });
 
 describe("Campaign features", () => {
-  it("promises Marketplace trading, Infamous Haunts and Cursed Marshes on the Locations toggle (CAMP-UX-03, pinned; flips in PR C)", async () => {
+  it("says only what the Locations toggle does: shows the Locations page (CAMP-UX-03, CAMP-TWEAK-07)", async () => {
     const user = setupUser();
     await openCampaignTab(user);
 
-    expect(screen.getByText("Enable locations").parentElement).toHaveTextContent(
-      "Show the Locations page and allow trading in the Marketplace, Infamous Haunts and Cursed Marshes."
-    );
+    const locations = screen.getByText("Enable locations").parentElement!;
+    expect(locations).toHaveTextContent("Show the Locations page.");
+    expect(locations).not.toHaveTextContent(/Marketplace|Infamous Haunts|Cursed Marshes|trading/);
     expect(screen.getByText("Enable encampments").parentElement).toHaveTextContent(
       "Show the Encampments page and allow encampment ownership."
     );

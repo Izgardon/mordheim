@@ -94,7 +94,7 @@ export default function CampaignFeaturesField({ campaign }: { campaign: Campaign
         />
         <FeatureToggle
           label="Enable locations"
-          description="Show the Locations page and allow trading in the Marketplace, Infamous Haunts and Cursed Marshes."
+          description="Show the Locations page."
           checked={enableLocations}
           onChange={setEnableLocations}
         />
