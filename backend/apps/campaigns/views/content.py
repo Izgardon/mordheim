@@ -3,6 +3,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 
+from ..effects import common_rules
 from ..models import CampaignBulletinEntry, CampaignHouseRule, CampaignLocation
 from ..serializers.content import (
     CampaignBulletinEntryCreateSerializer,
@@ -129,6 +130,13 @@ class CampaignHouseRulesView(CampaignScopedView):
         rule, created = house_rules.create_rule(campaign_id, serializer.validated_data)
         answer_status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
         return Response(CampaignHouseRuleSerializer(rule).data, status=answer_status)
+
+
+class CampaignCommonRulesView(CampaignScopedView):
+    """GET: the ready-made house rules the House Rules page offers, two of them with an item effect (IMP-69)."""
+
+    def get(self, request, campaign_id):
+        return Response(common_rules())
 
 
 class CampaignHouseRuleDetailView(CampaignScopedView):

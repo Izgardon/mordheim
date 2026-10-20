@@ -6,6 +6,7 @@ from .chat import CampaignMessagesView
 from .content import (
     CampaignBulletinDetailView,
     CampaignBulletinView,
+    CampaignCommonRulesView,
     CampaignEncampmentDetailView,
     CampaignEncampmentsView,
     CampaignHouseRuleDetailView,
@@ -37,6 +38,7 @@ __all__ = [
     "CampaignBattleHistoryView",
     "CampaignBulletinDetailView",
     "CampaignBulletinView",
+    "CampaignCommonRulesView",
     "CampaignDetailView",
     "CampaignEncampmentDetailView",
     "CampaignEncampmentsView",

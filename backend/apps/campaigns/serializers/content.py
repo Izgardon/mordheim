@@ -5,6 +5,7 @@ from rest_framework import serializers
 from apps.core.html import sanitize_rich_text
 from apps.users.names import display_name
 
+from ..effects import EFFECT_KEYS
 from ..models import (
     CampaignBulletinEntry,
     CampaignEncampment,
@@ -27,6 +28,12 @@ class CampaignHouseRuleCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CampaignHouseRule
         fields = ("title", "description", "effect_key")
+
+    def validate_effect_key(self, value):
+        """One of the known effects, or nothing (a rule that is only text; IMP-69)."""
+        if value and value not in EFFECT_KEYS:
+            raise serializers.ValidationError(f"Unknown effect: {value}.")
+        return value
 
 
 class CampaignEncampmentSerializer(serializers.ModelSerializer):

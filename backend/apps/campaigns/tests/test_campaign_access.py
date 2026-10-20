@@ -62,6 +62,7 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("GET", "permissions/", None, OK_ALL),
     ("GET", "permissions/me/", None, OK_ALL),
     ("GET", "rules/", None, OK_ALL),
+    ("GET", "rules/common/", None, OK_ALL),
     ("POST", "rules/", {"title": "No running"}, (403, 201, 201, 201)),
     ("PATCH", "rules/{rule}/", {"title": "Walk"}, (403, 200, 200, 200)),
     ("DELETE", "rules/{rule}/", None, (403, 204, 204, 204)),

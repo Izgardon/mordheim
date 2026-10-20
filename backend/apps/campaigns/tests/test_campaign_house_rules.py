@@ -9,6 +9,8 @@ paid for them, and a clone that goes stale hands its copies back to its source b
 from django.db import IntegrityError, connection, transaction
 from django.test.utils import CaptureQueriesContext
 
+from apps.campaigns.effects import EFFECT_KEYS
+from apps.campaigns.services import house_rules
 from apps.items.models import Item, ItemAvailability
 from apps.items.services import HALF_PRICE_ARMOUR_EFFECT_KEY, sync_half_price_armour_for_campaign
 from apps.warbands.models import Hero, HeroItem
@@ -160,3 +162,31 @@ class HouseRuleEffectTests(CampaignTestCase):
 
         self.assertEqual(cleared.status_code, 200)
         self.assertEqual(self.clone_rows(), [])
+
+
+class EffectRegistryTests(CampaignTestCase):
+    """IMP-69: effect keys come from one registry, which also serves the common rules."""
+
+    def test_every_effect_has_a_sync_and_a_revert(self):
+        self.assertEqual(set(house_rules.SYNCS), EFFECT_KEYS)
+        self.assertEqual(set(house_rules.REVERTS), EFFECT_KEYS)
+
+    def test_an_unknown_effect_is_refused_and_a_text_rule_needs_none(self):
+        refused = self.post_as(self.owner, self.url("rules/"), {"title": "50% Ranged", "effect_key": "ranged_limit"})
+        self.assertEqual(
+            (refused.status_code, refused.json()), (400, {"effect_key": ["Unknown effect: ranged_limit."]})
+        )
+        for effect_key in ("", None):
+            with self.subTest(effect_key=effect_key):
+                body = {"title": f"Text {effect_key!r}", "effect_key": effect_key}
+                self.assertEqual(self.post_as(self.owner, self.url("rules/"), body).status_code, 201)
+
+    def test_members_read_the_common_rules(self):
+        response = self.get_as(self.player, self.url("rules/common/"))
+
+        self.assertEqual(response.status_code, 200)
+        rules = response.json()
+        self.assertEqual(len(rules), 8)
+        self.assertEqual(set(rules[0]), {"id", "title", "description", "effect_key"})
+        self.assertEqual({rule["effect_key"] for rule in rules if rule["effect_key"]}, EFFECT_KEYS)
+        self.assertEqual(rules[0]["title"], "Half Price Armour")

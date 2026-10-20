@@ -1,7 +1,7 @@
 """House rules with an item effect (BUG-52, PERF-44; CAMP-TEST-14, -18).
 
 A rule's `effect_key` (half-price armour, improved shields) clones items into the campaign (apps/items/services.py).
-A campaign has at most one rule per effect (a partial unique index), so creating it again, even twice at once,
+The effects are `effects.EFFECTS`; each has its sync and revert here. A campaign has at most one rule per effect (a partial unique index), so creating it again, even twice at once,
 answers the rule that exists instead of a second rule and a second set of clones. An edit that keeps the effect
 (a title or a description) leaves the clones alone; only a change of effect reverts the old one and syncs the new.
 """
