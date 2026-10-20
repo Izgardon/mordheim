@@ -14,7 +14,6 @@ from .models import (
     CampaignLocation,
     CampaignMembership,
     CampaignMessage,
-    CampaignPermission,
     CampaignSettings,
     PivotalMoment,
 )
@@ -227,12 +226,6 @@ class CampaignMemberSerializer(serializers.Serializer):
     permissions = serializers.ListField(child=serializers.CharField())
     warband_id = serializers.IntegerField(allow_null=True, required=False)
     warband_name = serializers.CharField(allow_null=True, required=False)
-
-
-class CampaignPermissionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CampaignPermission
-        fields = ("code", "name")
 
 
 class MembershipPermissionsUpdateSerializer(serializers.Serializer):

@@ -2,8 +2,8 @@
 
 `TransactionTestCase`: each request commits as it would in production, so what a failed request leaves behind can
 be read afterwards, and two requests on two threads (each with its own connection) can race. The join race is held
-at `_ensure_roles`, which a join calls after its member and seat checks and before it writes; if PR A moves the
-checks or removes that helper, `mock.patch` raises and the hold point moves to the new gap.
+at `codes.role_ref`, which a join calls after its member and seat checks, as it builds its INSERT. The flush
+after each `TransactionTestCase` empties the seeded roles and codes too, so `setUp` seeds them again.
 """
 
 import logging
@@ -16,11 +16,12 @@ from django.db import DatabaseError
 from django.test import TransactionTestCase, override_settings
 from rest_framework.test import APIClient
 
-from apps.campaigns import views
 from apps.campaigns.models import Campaign, CampaignMembership, CampaignMembershipPermission, CampaignSettings
+from apps.campaigns.services import codes
+from apps.campaigns.services.codes import seed_roles_and_codes
 from apps.core.testing import Rendezvous, run_concurrently
 
-from .campaign_support import clear_code_caches, make_user
+from .campaign_support import make_user
 
 
 @override_settings(RATE_LIMIT_ENABLED=False)
@@ -31,9 +32,8 @@ class CampaignTransactionTestCase(TransactionTestCase):
     client_class = APIClient
 
     def setUp(self) -> None:
-        clear_code_caches()
+        seed_roles_and_codes()
         cache.clear()
-        self.addCleanup(clear_code_caches)  # the flush deletes the cached rows
         self.owner = make_user("owner@example.com", "Olga")
         self.campaign = self.create_campaign(max_players=2)
 
@@ -108,7 +108,7 @@ class JoinRaceTests(CampaignTransactionTestCase):
     def hold_joins_before_they_write(self) -> None:
         self.quiet_request_errors()
         rendezvous = Rendezvous()
-        patcher = mock.patch.object(views, "_ensure_roles", side_effect=rendezvous.before(views._ensure_roles))
+        patcher = mock.patch.object(codes, "role_ref", side_effect=rendezvous.before(codes.role_ref))
         patcher.start()
         self.addCleanup(patcher.stop)
 

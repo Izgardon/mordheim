@@ -1,6 +1,5 @@
 import random
 import string
-from functools import lru_cache
 
 from django.db import transaction
 from django.db.models import CharField, Count, F, FilteredRelation, Prefetch, Q, Value
@@ -39,6 +38,7 @@ from apps.warbands.serializers import WarbandSerializer
 from apps.warbands.services import ledger
 from apps.warbands.services.summary import load_warband_units
 
+from .constants import JOIN_GRANTS, OWNER, PERMISSION_CODES, PLAYER
 from .models import (
     Campaign,
     CampaignBulletinEntry,
@@ -49,11 +49,10 @@ from .models import (
     CampaignMembershipPermission,
     CampaignMessage,
     CampaignPermission,
-    CampaignRole,
     CampaignSettings,
     PivotalMoment,
 )
-from .permissions import get_membership, has_campaign_permission, is_admin, is_owner
+from .permissions import IMPLICIT_PERMISSION_ROLES, get_membership, has_campaign_permission, is_admin, is_owner
 from .serializers import (
     CampaignBulletinEntryCreateSerializer,
     CampaignBulletinEntrySerializer,
@@ -66,7 +65,6 @@ from .serializers import (
     CampaignLocationWriteSerializer,
     CampaignMemberSerializer,
     CampaignMessageSerializer,
-    CampaignPermissionSerializer,
     CampaignPlayerSerializer,
     CampaignSerializer,
     CampaignTopKillerSerializer,
@@ -76,50 +74,7 @@ from .serializers import (
     MembershipRoleUpdateSerializer,
     PivotalMomentSerializer,
 )
-
-ROLE_SEED = [
-    ("owner", "Owner"),
-    ("admin", "Admin"),
-    ("player", "Player"),
-]
-
-PERMISSION_SEED = [
-    ("add_custom", "Add custom"),
-    ("manage_items", "Manage items"),
-    ("manage_skills", "Manage skills"),
-    ("manage_rules", "Manage rules"),
-    ("manage_warbands", "Manage warbands"),
-    ("manage_encampments", "Manage encampments"),
-    ("manage_locations", "Manage locations"),
-    ("manage_bestiary", "Manage bestiary"),
-    ("manage_battles", "Manage battles"),  # close postbattle, Settings > Active Battles (BATL-NEW-04, -03)
-]
-
-
-@lru_cache(maxsize=1)
-def _ensure_roles():
-    """
-    Ensure roles exist and return cached mapping of slug -> role.
-    Uses LRU cache to avoid repeated database queries within the same process.
-    """
-    roles = {}
-    for slug, name in ROLE_SEED:
-        role, _ = CampaignRole.objects.get_or_create(slug=slug, defaults={"name": name})
-        roles[slug] = role
-    return roles
-
-
-@lru_cache(maxsize=1)
-def _ensure_permissions():
-    """
-    Ensure permissions exist and return cached mapping of code -> permission.
-    Uses LRU cache to avoid repeated database queries within the same process.
-    """
-    permissions = {}
-    for code, name in PERMISSION_SEED:
-        permission, _ = CampaignPermission.objects.get_or_create(code=code, defaults={"name": name})
-        permissions[code] = permission
-    return permissions
+from .services import codes
 
 
 def _generate_join_code():
@@ -388,7 +343,6 @@ class CampaignListCreateView(APIView):
         serializer = CampaignCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        roles = _ensure_roles()
         validated = serializer.validated_data
         campaign_type = validated.get("campaign_type", "standard")
         item_setting_ids = validated.get("item_setting_ids", [])
@@ -411,11 +365,7 @@ class CampaignListCreateView(APIView):
         if item_setting_ids:
             settings.item_settings.set(get_valid_campaign_item_settings(item_setting_ids))
 
-        CampaignMembership.objects.create(
-            campaign=campaign,
-            user=request.user,
-            role=roles["owner"],
-        )
+        CampaignMembership.objects.create(campaign=campaign, user=request.user, role_id=codes.role_ref(OWNER))
 
         response_serializer = CampaignSerializer(
             _campaigns_for_user(request.user)
@@ -431,8 +381,8 @@ class CampaignListCreateView(APIView):
 
 def _permission_codes_for(campaign_id, user, role_slug):
     """Permission codes the user holds in the campaign (owners and admins hold all of them)."""
-    if role_slug in ("owner", "admin"):
-        return sorted(_ensure_permissions().keys())
+    if role_slug in IMPLICIT_PERMISSION_ROLES:
+        return sorted(PERMISSION_CODES)
     return sorted(
         CampaignMembershipPermission.objects.filter(
             membership__campaign_id=campaign_id, membership__user=user
@@ -552,24 +502,10 @@ class JoinCampaignView(APIView):
         if player_count >= max_players:
             return Response({"detail": "Campaign is full"}, status=400)
 
-        roles = _ensure_roles()
-        permissions = _ensure_permissions()
-        membership = CampaignMembership.objects.create(campaign=campaign, user=request.user, role=roles["player"])
-
-        default_permissions = [
-            permissions.get("add_custom"),
-        ]
-        CampaignMembershipPermission.objects.bulk_create(
-            [
-                CampaignMembershipPermission(
-                    membership=membership,
-                    permission=permission,
-                )
-                for permission in default_permissions
-                if permission is not None
-            ],
-            ignore_conflicts=True,
+        membership = CampaignMembership.objects.create(
+            campaign=campaign, user=request.user, role_id=codes.role_ref(PLAYER)
         )
+        codes.grant_on_join(membership, JOIN_GRANTS)
 
         response_serializer = CampaignSerializer(
             _campaigns_for_user(request.user)
@@ -1002,7 +938,6 @@ class CampaignMembersView(APIView):
         if not (is_owner(membership) or is_admin(membership)):
             return Response({"detail": "Forbidden"}, status=403)
 
-        _ensure_permissions()
         memberships = (
             CampaignMembership.objects.filter(campaign_id=campaign_id)
             .select_related("user", "role")
@@ -1041,13 +976,7 @@ class CampaignPermissionsView(APIView):
         if not membership:
             return Response({"detail": "Not found"}, status=404)
 
-        permissions = _ensure_permissions()
-        permission_by_code = {
-            permission.code: permission for permission in CampaignPermission.objects.filter(code__in=permissions.keys())
-        }
-        ordered_permissions = [permission_by_code[code] for code in permissions.keys() if code in permission_by_code]
-        serializer = CampaignPermissionSerializer(ordered_permissions, many=True)
-        return Response(serializer.data)
+        return Response(codes.describe())
 
 
 class CampaignMyPermissionsView(APIView):
@@ -1058,19 +987,12 @@ class CampaignMyPermissionsView(APIView):
         if not membership:
             return Response({"detail": "Not found"}, status=404)
 
-        permissions = _ensure_permissions()
-        if membership.role.slug in ("owner", "admin"):
-            permission_objects = [permissions[code] for code in permissions.keys() if code in permissions]
-        else:
-            permission_objects = [
-                entry.permission
-                for entry in CampaignMembershipPermission.objects.filter(membership=membership).select_related(
-                    "permission"
-                )
-            ]
-
-        serializer = CampaignPermissionSerializer(permission_objects, many=True)
-        return Response(serializer.data)
+        if membership.role.slug in IMPLICIT_PERMISSION_ROLES:
+            return Response(codes.describe())
+        held = CampaignMembershipPermission.objects.filter(membership=membership).values_list(
+            "permission__code", flat=True
+        )
+        return Response(codes.describe(codes.in_catalogue_order(held)))
 
 
 class CampaignMemberPermissionsView(APIView):
@@ -1097,9 +1019,8 @@ class CampaignMemberPermissionsView(APIView):
         serializer = MembershipPermissionsUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         requested = serializer.validated_data["permissions"]
-
-        permissions = _ensure_permissions()
-        allowed_permissions = [permissions[code] for code in requested if code in permissions]
+        by_code = {permission.code: permission for permission in CampaignPermission.objects.filter(code__in=requested)}
+        allowed_permissions = [by_code[code] for code in requested if code in by_code]
 
         CampaignMembershipPermission.objects.filter(membership=target_membership).delete()
         CampaignMembershipPermission.objects.bulk_create(
@@ -1109,8 +1030,7 @@ class CampaignMemberPermissionsView(APIView):
             ]
         )
 
-        response_serializer = CampaignPermissionSerializer(allowed_permissions, many=True)
-        return Response(response_serializer.data)
+        return Response(codes.describe(permission.code for permission in allowed_permissions))
 
 
 class CampaignMemberRoleView(APIView):
@@ -1135,11 +1055,8 @@ class CampaignMemberRoleView(APIView):
         serializer.is_valid(raise_exception=True)
         requested_role = serializer.validated_data["role"]
 
-        roles = _ensure_roles()
-        target_membership.role = roles[requested_role]
-        target_membership.save(update_fields=["role"])
-
-        return Response({"id": target_membership.user_id, "role": target_membership.role.slug})
+        CampaignMembership.objects.filter(id=target_membership.id).update(role_id=codes.role_ref(requested_role))
+        return Response({"id": target_membership.user_id, "role": requested_role})
 
 
 class CampaignMemberRemoveView(APIView):

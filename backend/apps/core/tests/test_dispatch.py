@@ -5,7 +5,6 @@ from django.core.cache import cache
 from django.test import TestCase
 from rest_framework.test import APIClient, APITestCase
 
-from apps.campaigns.views import _ensure_permissions, _ensure_roles
 from apps.core.dispatch import dispatch_after_commit
 from apps.realtime.services import send_battle_event
 
@@ -51,8 +50,6 @@ class RealtimeFailureApiTests(APITestCase):
 
     def setUp(self):
         cache.clear()
-        _ensure_roles.cache_clear()
-        _ensure_permissions.cache_clear()
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
             username="owner@example.com", email="owner@example.com", password="testpass123", first_name="Owner"

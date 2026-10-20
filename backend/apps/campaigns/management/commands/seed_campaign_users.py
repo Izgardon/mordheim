@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
+from apps.campaigns.constants import ADMIN, JOIN_GRANTS, OWNER, PLAYER
 from apps.campaigns.models import (
     Campaign,
     CampaignMembership,
@@ -13,38 +14,7 @@ from apps.campaigns.models import (
     CampaignRole,
     CampaignSettings,
 )
-
-ROLE_SEED = [
-    ("owner", "Owner"),
-    ("admin", "Admin"),
-    ("player", "Player"),
-]
-
-PERMISSION_SEED = [
-    ("add_custom", "Add custom"),
-    ("manage_items", "Manage items"),
-    ("manage_skills", "Manage skills"),
-    ("manage_rules", "Manage rules"),
-    ("manage_warbands", "Manage warbands"),
-    ("manage_locations", "Manage locations"),
-    ("manage_bestiary", "Manage bestiary"),
-]
-
-
-def _ensure_roles():
-    roles = {}
-    for slug, name in ROLE_SEED:
-        role, _ = CampaignRole.objects.get_or_create(slug=slug, defaults={"name": name})
-        roles[slug] = role
-    return roles
-
-
-def _ensure_permissions():
-    permissions = {}
-    for code, name in PERMISSION_SEED:
-        permission, _ = CampaignPermission.objects.get_or_create(code=code, defaults={"name": name})
-        permissions[code] = permission
-    return permissions
+from apps.campaigns.services.codes import seed_roles_and_codes
 
 
 def _generate_join_code():
@@ -148,8 +118,9 @@ class Command(BaseCommand):
                 settings.max_players = desired_max_players
                 settings.save(update_fields=["max_players"])
 
-        permissions = _ensure_permissions()
-        roles = _ensure_roles()
+        seed_roles_and_codes()  # the migration seeds them; this keeps the command safe on any database
+        roles = {role.slug: role for role in CampaignRole.objects.all()}
+        join_grants = list(CampaignPermission.objects.filter(code__in=JOIN_GRANTS))
 
         user_model = get_user_model()
         created_users = 0
@@ -185,11 +156,11 @@ class Command(BaseCommand):
                     updated_users += 1
 
             if index == 1:
-                role = roles["owner"]
+                role = roles[OWNER]
             elif index <= admin_count + 1:
-                role = roles["admin"]
+                role = roles[ADMIN]
             else:
-                role = roles["player"]
+                role = roles[PLAYER]
 
             membership, membership_created = CampaignMembership.objects.get_or_create(
                 campaign=campaign,
@@ -203,19 +174,9 @@ class Command(BaseCommand):
                 membership.save(update_fields=["role"])
                 updated_memberships += 1
 
-            if membership.role.slug == "player":
-                default_permissions = [
-                    permissions.get("add_custom"),
-                ]
+            if membership.role.slug == PLAYER:
                 CampaignMembershipPermission.objects.bulk_create(
-                    [
-                        CampaignMembershipPermission(
-                            membership=membership,
-                            permission=permission,
-                        )
-                        for permission in default_permissions
-                        if permission is not None
-                    ],
+                    [CampaignMembershipPermission(membership=membership, permission=entry) for entry in join_grants],
                     ignore_conflicts=True,
                 )
 

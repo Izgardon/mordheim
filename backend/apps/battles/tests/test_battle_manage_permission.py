@@ -8,24 +8,17 @@ from typing import Any
 from apps.battles.models import BattleEvent
 from apps.campaigns.models import CampaignMembership, CampaignMembershipPermission, CampaignPermission
 from apps.campaigns.permissions import get_membership, has_campaign_permission
-from apps.campaigns.views import _ensure_permissions
 
 from .battle_support import BattleTestCase
 
 
 class ManageBattlesPermissionTests(BattleTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        _ensure_permissions.cache_clear()
-        self.addCleanup(_ensure_permissions.cache_clear)
-
     def grant(self, user: Any) -> None:
         membership = CampaignMembership.objects.get(campaign=self.campaign, user=user)
-        permission = _ensure_permissions()["manage_battles"]
+        permission = CampaignPermission.objects.get(code="manage_battles")
         CampaignMembershipPermission.objects.create(membership=membership, permission=permission)
 
     def test_owners_and_admins_hold_it_and_it_can_be_granted(self):
-        self.assertIn("manage_battles", _ensure_permissions())  # created on first use
         self.assertTrue(CampaignPermission.objects.filter(code="manage_battles", name="Manage battles").exists())
         holders = [
             has_campaign_permission(get_membership(user, self.campaign.id), "manage_battles")

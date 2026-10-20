@@ -26,7 +26,7 @@ class WarbandsApiTests(APITestCase):
         self.user_model = get_user_model()
         self.password = "testpass123"
 
-        self.owner_role = CampaignRole.objects.create(slug="owner", name="Owner")
+        self.owner_role = CampaignRole.objects.get(slug="owner")
         self.owner = self._create_user("owner@example.com", "Owner")
         self.campaign = Campaign.objects.create(name="Shadows Over Mordheim", join_code="ABC123")
         CampaignMembership.objects.create(

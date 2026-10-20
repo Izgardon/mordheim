@@ -4,7 +4,6 @@ from django.test import SimpleTestCase
 from rest_framework.test import APIClient, APITestCase
 
 from apps.campaigns.models import CampaignLocation
-from apps.campaigns.views import _ensure_permissions, _ensure_roles
 from apps.core.html import sanitize_rich_text
 
 
@@ -34,8 +33,6 @@ class LocationContentSanitizedOnWriteTests(APITestCase):
 
     def setUp(self):
         cache.clear()
-        _ensure_roles.cache_clear()
-        _ensure_permissions.cache_clear()
         self.client = APIClient()
         owner = get_user_model().objects.create_user(username="owner@example.com", password="x", first_name="Owner")
         self.client.force_authenticate(user=owner)

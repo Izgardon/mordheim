@@ -4,8 +4,7 @@ who hasn't finished and ends the battle, which records the wins and losses once.
 
 from decimal import Decimal
 
-from apps.campaigns.models import CampaignMembership, CampaignMembershipPermission
-from apps.campaigns.views import _ensure_permissions
+from apps.campaigns.models import CampaignMembership, CampaignMembershipPermission, CampaignPermission
 from apps.warbands.models import Hero, HeroItem
 
 from .battle_support import BattleTestCase, catalogue_item, draft, status_changed, unit_result
@@ -60,9 +59,7 @@ class ClosePostbattleTests(BattleTestCase):
         self.assertEqual(self.post_as(self.outsider, url).status_code, 404)
 
         membership = CampaignMembership.objects.get(campaign=self.campaign, user=self.manager)
-        _ensure_permissions.cache_clear()
-        self.addCleanup(_ensure_permissions.cache_clear)
-        CampaignMembershipPermission.objects.create(membership=membership, permission=_ensure_permissions()["manage_battles"])  # fmt: skip
+        CampaignMembershipPermission.objects.create(membership=membership, permission=CampaignPermission.objects.get(code="manage_battles"))  # fmt: skip
         self.ok(self.post_as(self.manager, url))  # not even in the battle
         self.assertEqual(self.battle(battle_id).status, "ended")
 

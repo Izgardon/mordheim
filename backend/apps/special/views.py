@@ -80,7 +80,7 @@ class SpecialDetailView(APIView):
         membership = get_membership(request.user, special.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "manage_features"):
+        if not has_campaign_permission(membership, "manage_specials"):
             return Response({"detail": "Forbidden"}, status=403)
 
         data = request.data.copy()
@@ -101,7 +101,7 @@ class SpecialDetailView(APIView):
         membership = get_membership(request.user, special.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "manage_features"):
+        if not has_campaign_permission(membership, "manage_specials"):
             return Response({"detail": "Forbidden"}, status=403)
 
         special.delete()

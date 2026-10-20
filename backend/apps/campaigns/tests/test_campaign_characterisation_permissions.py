@@ -1,35 +1,24 @@
 """Roles and permission codes: where they come from, the grant PUT and the code catalogue (BUG-15, CAMP-TEST-08).
 
-No migration seeds roles or codes: they are created with `get_or_create` on the request path, the roles by the first
-campaign create and the codes by the first request that needs them (`views.py:97-120`). The code list has drifted
-from the codes the views check, and the grant PUT drops what it doesn't know.
+Migration 0014 seeds every role and code from a frozen copy of `apps/campaigns/constants.py`, so a fresh database
+has them before its first request and no request creates them (design 0.29 Q4). The seed command reads the same
+constants, and every code a view checks is in them.
 """
 
+import io
 import re
-import unittest
 from pathlib import Path
 
 from django.conf import settings
 from django.core.cache import cache
+from django.core.management import call_command
 from rest_framework.test import APITestCase
 
-from apps.campaigns.management.commands import seed_campaign_users
+from apps.campaigns.constants import PERMISSION_CODES, PERMISSIONS
 from apps.campaigns.models import CampaignPermission, CampaignRole
-from apps.campaigns.views import PERMISSION_SEED
 
-from .campaign_support import CampaignTestCase, clear_code_caches, make_user
+from .campaign_support import CampaignTestCase, make_user
 
-SEEDED_CODES = [
-    "add_custom",
-    "manage_items",
-    "manage_skills",
-    "manage_rules",
-    "manage_warbands",
-    "manage_encampments",
-    "manage_locations",
-    "manage_bestiary",
-    "manage_battles",  # pass 3 (BATL-NEW-03, -04)
-]
 _CHECKED_CODE = re.compile(r"has_campaign_permission\(\s*\w+\s*,\s*\"([a-z_]+)\"\s*\)")
 
 
@@ -43,51 +32,70 @@ def codes_checked_in_source() -> set[str]:
 
 
 class FreshDatabaseTests(APITestCase):
-    """A migrated database before any campaign request (no fixture: the shared one creates the codes)."""
+    """A migrated database before any campaign request (no fixture)."""
 
     def setUp(self) -> None:
         cache.clear()
-        clear_code_caches()
-        self.addCleanup(clear_code_caches)
 
-    def test_a_fresh_database_holds_no_roles_and_no_codes(self):
-        # Characterises current behaviour (BUG-15 / design 0.29 Q4, pinned; flips in PR A's seed migration)
-        self.assertEqual(CampaignRole.objects.count(), 0)
-        self.assertEqual(CampaignPermission.objects.count(), 0)
+    def test_a_fresh_database_holds_every_role_and_code(self):
+        # BUG-15 / design 0.29 Q4: seeded by migration 0014
+        self.assertEqual(sorted(CampaignRole.objects.values_list("slug", flat=True)), ["admin", "owner", "player"])
+        labels = dict(CampaignPermission.objects.values_list("code", "name"))
+        self.assertEqual(labels, {entry.code: entry.label for entry in PERMISSIONS})
 
-    def test_the_first_create_makes_the_roles_and_the_first_detail_read_makes_the_codes(self):
-        # Characterises current behaviour (BUG-15, pinned; flips in PR A): codes appear on the request path
+    def test_requests_create_no_roles_or_codes(self):
+        # BUG-15, CAMP-CQ-03: nothing on the request path creates them any more
         owner = make_user("owner@example.com", "Olga")
+        player = make_user("player@example.com", "Pia")
+        before = (CampaignRole.objects.count(), CampaignPermission.objects.count())
         self.client.force_authenticate(user=owner)
 
         created = self.client.post("/api/campaigns/", {"name": "Shards", "max_players": 4}, format="json")
-
-        self.assertEqual(sorted(CampaignRole.objects.values_list("slug", flat=True)), ["admin", "owner", "player"])
-        self.assertEqual(CampaignPermission.objects.count(), 0)
-
         detail = self.client.get(f"/api/campaigns/{created.data['id']}/")
+        self.client.force_authenticate(user=player)
+        joined = self.client.post("/api/campaigns/join/", {"join_code": created.data["join_code"]}, format="json")
 
-        self.assertEqual(detail.data["permissions"], sorted(SEEDED_CODES))
-        self.assertEqual(list(CampaignPermission.objects.order_by("id").values_list("code", flat=True)), SEEDED_CODES)
+        self.assertEqual((created.data["role"], joined.data["role"]), ("owner", "player"))
+        self.assertEqual(detail.data["permissions"], sorted(PERMISSION_CODES))
+        self.assertEqual((CampaignRole.objects.count(), CampaignPermission.objects.count()), before)
+
+    def test_the_seed_command_reads_the_constants(self):
+        # IMP-64: one list; the command upserts it, so it works on a database emptied by hand too
+        CampaignPermission.objects.all().delete()
+
+        call_command("seed_campaign_users", count=3, stdout=io.StringIO())
+
+        self.assertEqual(sorted(CampaignPermission.objects.values_list("code", flat=True)), sorted(PERMISSION_CODES))
 
 
 class PermissionCatalogueTests(CampaignTestCase):
-    def test_the_seed_lists_nine_codes(self):
-        self.assertEqual([code for code, _name in PERMISSION_SEED], SEEDED_CODES)
+    def test_the_constants_list_eleven_codes(self):
+        # design 0.29 Q1: manage_spells seeded, manage_features renamed manage_specials
+        self.assertEqual(
+            list(PERMISSION_CODES),
+            [
+                "add_custom",
+                "manage_items",
+                "manage_skills",
+                "manage_spells",
+                "manage_specials",
+                "manage_rules",
+                "manage_warbands",
+                "manage_encampments",
+                "manage_locations",
+                "manage_bestiary",
+                "manage_battles",
+            ],
+        )
 
-    @unittest.expectedFailure
     def test_every_code_a_view_checks_exists(self):
-        # BUG-15, CAMP-TEST-08 (expected failure until PR A): spells and specials check codes nobody can hold
-        self.assertEqual(codes_checked_in_source() - set(SEEDED_CODES), set())
-
-    def test_the_seed_command_has_its_own_copy_without_encampments_or_battles(self):
-        # Characterises current behaviour (BUG-15 / IMP-64, pinned; flips in PR A's constants module)
-        command_codes = [code for code, _name in seed_campaign_users.PERMISSION_SEED]
-        self.assertEqual(set(SEEDED_CODES) - set(command_codes), {"manage_encampments", "manage_battles"})
+        # BUG-15, CAMP-TEST-08: spells and specials checked codes nobody could hold
+        self.assertEqual(codes_checked_in_source() - set(PERMISSION_CODES), set())
+        self.assertLessEqual({"manage_spells", "manage_specials"}, codes_checked_in_source())
 
     def test_any_member_reads_the_catalogue_in_seed_order(self):
         # GET /permissions/ has no caller in the frontend (BUG-15); code and name only, no description
-        expected = [{"code": code, "name": name} for code, name in PERMISSION_SEED]
+        expected = [{"code": entry.code, "name": entry.label} for entry in PERMISSIONS]
         for user in (self.owner, self.player):
             with self.subTest(user=user.first_name):
                 response = self.get_as(user, self.url("permissions/"))
@@ -95,13 +103,25 @@ class PermissionCatalogueTests(CampaignTestCase):
         self.assertEqual(self.get_as(self.outsider, self.url("permissions/")).status_code, 404)
 
     def test_owners_and_admins_hold_every_code_and_players_their_grants(self):
-        for user, expected in ((self.owner, sorted(SEEDED_CODES)), (self.admin, sorted(SEEDED_CODES))):
+        for user in (self.owner, self.admin):
             with self.subTest(user=user.first_name):
-                self.assertEqual(self.get_as(user, self.url()).data["permissions"], expected)
+                self.assertEqual(self.get_as(user, self.url()).data["permissions"], sorted(PERMISSION_CODES))
                 mine = self.get_as(user, self.url("permissions/me/")).json()
-                self.assertEqual(sorted(row["code"] for row in mine), expected)
+                self.assertEqual(sorted(row["code"] for row in mine), sorted(PERMISSION_CODES))
         self.assertEqual(self.get_as(self.player, self.url()).data["permissions"], ["add_custom"])
         self.assertEqual(self.codes(self.admin), ["add_custom"])  # the admin's join grant is still stored
+
+    def test_a_player_granted_the_new_codes_can_edit_spells_and_specials(self):
+        # BUG-15: the grant reaches the spells and specials writes it gates
+        self.grant(self.player, "manage_spells", "manage_specials")
+        for kind in ("spells", "special"):
+            with self.subTest(kind=kind):
+                self.client.force_authenticate(user=self.admin)
+                body = {"name": f"House {kind}", "type": "Custom", "campaign_id": self.campaign.id}
+                created = self.client.post(f"/api/{kind}/", body, format="json")
+                self.assertEqual(created.status_code, 201, created.data)
+                renamed = self.patch_as(self.player, f"/api/{kind}/{created.data['id']}/", {"name": "Renamed"})
+                self.assertEqual(renamed.status_code, 200, renamed.data)
 
 
 class GrantTests(CampaignTestCase):
@@ -113,8 +133,9 @@ class GrantTests(CampaignTestCase):
         response = self.put_grants(self.owner, self.player, ["manage_items", "manage_spells", "manage_features", "x"])
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), [{"code": "manage_items", "name": "Manage items"}])
-        self.assertEqual(self.codes(self.player), ["manage_items"])
+        codes = [row["code"] for row in response.json()]
+        self.assertEqual(codes, ["manage_items", "manage_spells"])  # manage_spells is seeded now
+        self.assertEqual(self.codes(self.player), ["manage_items", "manage_spells"])
 
     def test_the_put_replaces_the_grants_after_tidying_the_codes(self):
         blank = self.put_grants(self.admin, self.player, ["manage_items", " "])

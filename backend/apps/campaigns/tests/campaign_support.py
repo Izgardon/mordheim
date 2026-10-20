@@ -4,9 +4,7 @@ The `test_campaign_characterisation_*` modules lock in how the campaign endpoint
 them and PR B splits `campaigns/views.py`. Known bugs are pinned with their BUGS.md ID and the comment
 "Characterises current behaviour (BUG-NN, pinned; flips in PR A)" (or the PR or decision that changes it).
 
-Roles and permission codes are created lazily on the request path today (`_ensure_roles` / `_ensure_permissions`,
-cached per process with `lru_cache`). A cached row from another test class's rolled-back transaction would break a
-foreign key here, so the caches are cleared before the fixture is built and again when the class is done.
+Roles and permission codes are seeded by migration 0014 (BUG-15), so every test database has them.
 """
 
 from typing import Any
@@ -24,15 +22,8 @@ from apps.campaigns.models import (
     CampaignPermission,
     CampaignSettings,
 )
-from apps.campaigns.views import _ensure_permissions, _ensure_roles
 from apps.notifications.models import Notification
 from apps.warbands.models import Warband
-
-
-def clear_code_caches() -> None:
-    """Forget the cached roles and permission codes (the next request reads or creates them again)."""
-    _ensure_roles.cache_clear()
-    _ensure_permissions.cache_clear()
 
 
 def make_user(email: str, first_name: str = "") -> Any:
@@ -47,7 +38,7 @@ class CampaignTestCase(APITestCase):
     `owner` ("Olga") created "Shards"; `admin` ("Ada") joined and was promoted by the owner; `player` ("Pia",
     warband "Monks") and `rival` ("Rex", warband "Rats") joined and hold only `add_custom`, which joining grants.
     `outsider` ("Otto") owns another campaign, `elsewhere`. The owner and the admin have no warband. Every role
-    and permission code exists from the start, as on any database where a campaign has been created and joined.
+    and permission code exists from the start (migration 0014).
     """
 
     client: APIClient
@@ -63,7 +54,6 @@ class CampaignTestCase(APITestCase):
 
     @classmethod
     def setUpTestData(cls) -> None:
-        clear_code_caches()
         cache.clear()
         cls.owner = make_user("owner@example.com", "Olga")
         cls.admin = make_user("admin@example.com", "Ada")
@@ -99,11 +89,6 @@ class CampaignTestCase(APITestCase):
         response = client.post("/api/warbands/", body, format="json")
         assert response.status_code == 201, response.data
         return Warband.objects.get(id=response.data["id"])
-
-    @classmethod
-    def tearDownClass(cls) -> None:
-        super().tearDownClass()
-        clear_code_caches()  # the cached rows were rolled back with the class's data
 
     def setUp(self) -> None:
         cache.clear()  # throttle counters

@@ -6,8 +6,7 @@ ahead. Reading them costs no query (the state budget in test_battle_query_budget
 
 from typing import Any
 
-from apps.campaigns.models import CampaignMembership, CampaignMembershipPermission
-from apps.campaigns.views import _ensure_permissions
+from apps.campaigns.models import CampaignMembership, CampaignMembershipPermission, CampaignPermission
 from apps.warbands.models import Warband
 
 from .battle_support import BattleTestCase
@@ -25,17 +24,12 @@ OPEN = {**NONE, "nudge": True}  # any player still in an open battle can nudge (
 
 
 class BattleCapabilityTests(BattleTestCase):
-    def setUp(self) -> None:
-        super().setUp()
-        _ensure_permissions.cache_clear()
-        self.addCleanup(_ensure_permissions.cache_clear)
-
     def capabilities(self, user: Any, battle_id: int) -> dict[str, bool]:
         return dict(self.ok(self.get_as(user, self.url(battle_id, "state"))).data["capabilities"])
 
     def grant_manage_battles(self, user: Any) -> None:
         membership = CampaignMembership.objects.get(campaign=self.campaign, user=user)
-        permission = _ensure_permissions()["manage_battles"]
+        permission = CampaignPermission.objects.get(code="manage_battles")
         CampaignMembershipPermission.objects.create(membership=membership, permission=permission)
 
     def test_the_creator_cancels_before_the_fight_and_anyone_starts_once_everyone_is_ready(self):

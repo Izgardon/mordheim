@@ -12,11 +12,11 @@ from apps.campaigns.models import (
     CampaignLocation,
     CampaignMembership,
     CampaignMembershipPermission,
+    CampaignPermission,
     CampaignRole,
     CampaignSettings,
     PivotalMoment,
 )
-from apps.campaigns.views import _ensure_permissions, _ensure_roles
 from apps.items.models import (
     Item,
     ItemAvailability,
@@ -46,8 +46,6 @@ class CampaignApiTests(APITestCase):
         cache.clear()
         self.user_model = get_user_model()
         self.password = "testpass123"
-        _ensure_roles.cache_clear()
-        _ensure_permissions.cache_clear()
 
     def _create_user(self, email, name=""):
         return self.user_model.objects.create_user(
@@ -74,11 +72,10 @@ class CampaignApiTests(APITestCase):
         return response.data
 
     def _grant_campaign_permission(self, campaign_id, user, permission_code):
-        permissions = _ensure_permissions()
         membership = CampaignMembership.objects.get(campaign_id=campaign_id, user=user)
         CampaignMembershipPermission.objects.get_or_create(
             membership=membership,
-            permission=permissions[permission_code],
+            permission=CampaignPermission.objects.get(code=permission_code),
         )
 
     def _create_setting(self, name="Cathay Setting"):

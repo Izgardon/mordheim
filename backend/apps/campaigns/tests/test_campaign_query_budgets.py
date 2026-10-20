@@ -5,6 +5,7 @@ budget; when a change makes one cheaper, lower the budget in the same commit. Co
 (production adds one query for the JWT user). The pass 4 targets are in the brief's "Query and request targets".
 """
 
+import re
 from datetime import UTC, datetime
 from typing import Any
 
@@ -25,7 +26,7 @@ from apps.campaigns.models import (
 from apps.core.testing import count_get_queries
 from apps.warbands.models import Hero, Warband
 
-from .campaign_support import CampaignTestCase, clear_code_caches, make_user
+from .campaign_support import CampaignTestCase, make_user
 
 # name -> (who asks, url suffix, budget)
 BUDGETS: dict[str, tuple[str, str, int]] = {
@@ -37,7 +38,7 @@ BUDGETS: dict[str, tuple[str, str, int]] = {
     "pivotal moments": ("player", "pivotal-moments/", 2),
     "top killers": ("player", "top-killers/", 2),
     "members": ("admin", "members/", 4),
-    "permissions": ("player", "permissions/", 2),
+    "permissions": ("player", "permissions/", 1),  # served from the constants (BUG-15)
     "permissions/me (player)": ("player", "permissions/me/", 2),
     "messages": ("player", "messages/", 2),
     "bulletin": ("player", "bulletin/", 2),
@@ -49,6 +50,7 @@ BUDGETS: dict[str, tuple[str, str, int]] = {
 # The overview's four list requests on every mount (players, completed trades, history, pivotal moments)
 OVERVIEW = ("players", "completed trades", "battle history", "pivotal moments")
 OVERVIEW_BUDGET = 14  # target 0 on a revisit within the stale time (CAMP-TEST-04)
+JOIN_BUDGET = 7  # the same as a warm join before the seed migration; no first-call extra (BUG-15)
 
 
 class CampaignQueryBudgetTests(CampaignTestCase):
@@ -126,24 +128,24 @@ class CampaignQueryBudgetTests(CampaignTestCase):
             with self.subTest(endpoint=name):
                 self.assertEqual(self.measure(name), before[name])
 
-    def test_the_first_request_after_a_restart_creates_or_reads_every_code_and_role(self):
-        # Characterises current behaviour (BUG-15 / CAMP-CQ-03, pinned; flips in PR A: codes leave the request path)
-        warm = {name: self.measure(name) for name in ("members", "detail (owner)")}
-        for name, extra in (("members", 9), ("detail (owner)", 9)):
-            with self.subTest(endpoint=name):
-                clear_code_caches()
-                self.assertEqual(self.measure(name) - warm[name], extra)  # one get_or_create per code
+    def test_a_join_reads_no_role_or_code_and_costs_the_same_every_time(self):
+        # BUG-15 / CAMP-CQ-03: the role and the join grant are subqueries of their INSERTs; no first-call extra
+        first, first_sql = self.join_queries("late@example.com")
+        second, _sql = self.join_queries("later@example.com")
 
-        clear_code_caches()
-        cold_join = self.count_join("late@example.com")
-        warm_join = self.count_join("later@example.com")
-        self.assertEqual(cold_join - warm_join, 3 + 9)  # every role and every code, then cached for the process
+        self.assertEqual((first, second), (JOIN_BUDGET, JOIN_BUDGET))
+        lookups = [
+            sql
+            for sql in first_sql
+            if sql.startswith("SELECT") and re.search(r'FROM "campaign_(role|permission)"', sql)
+        ]
+        self.assertEqual(lookups, [])
 
-    def count_join(self, email: str) -> int:
+    def join_queries(self, email: str) -> tuple[int, list[str]]:
         newcomer = make_user(email, "Lou")
         with CaptureQueriesContext(connection) as captured:
             self.assertEqual(self.join(newcomer).status_code, 201)
-        return len(captured)
+        return len(captured), [query["sql"] for query in captured]
 
     def test_a_players_feature_write_costs_three_queries_before_any_work(self):
         # CAMP-PERF-06: membership, the feature flag, then the grant; a 400 after them shows the preamble alone
