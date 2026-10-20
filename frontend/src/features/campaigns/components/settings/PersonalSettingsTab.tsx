@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 // components
 import DeleteWarbandCard from "./DeleteWarbandCard";
 import FeedbackReportCard from "./FeedbackReportCard";
+import LeaveCampaignCard from "./LeaveCampaignCard";
 import PersonalSettingsCard from "./PersonalSettingsCard";
 import WarbandDiceSettingsCard from "./WarbandDiceSettingsCard";
 import WarbandSettingsCard from "./WarbandSettingsCard";
@@ -47,6 +48,7 @@ export default function PersonalSettingsTab({ campaign, capabilities }: Personal
         warbandId={warband?.id}
         warbandName={warband?.name}
       />
+      <LeaveCampaignCard campaign={campaign} />
       {warband ? (
         <DeleteWarbandCard
           warbandId={warband.id}

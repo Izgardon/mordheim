@@ -76,3 +76,52 @@ describe("Removed from a campaign (decision 1)", () => {
     expect(screen.getByLabelText("Current path")).toHaveTextContent("/campaigns/1/skills");
   });
 });
+
+describe("Your role or grants changed (CAMP-NEW-07)", () => {
+  it("tells you and reads the campaign again for its capabilities, keeping you on the page", async () => {
+    renderCampaignRoute("/campaigns/1/skills");
+    expect(await screen.findByText("Skills page")).toBeInTheDocument();
+    await waitFor(() => expect(fakeRealtime.subscriberCount(MY_CHANNEL)).toBe(1));
+    const reads = fakeApi.countOf("GET /campaigns/1/");
+
+    act(() =>
+      fakeRealtime.emit(MY_CHANNEL, "notification", {
+        type: "membership_changed",
+        payload: {
+          campaign_id: 1,
+          campaign_name: "Shards of the Comet",
+          change: "role",
+          role: "admin",
+        },
+      })
+    );
+
+    expect(
+      await screen.findByText("Your role in Shards of the Comet changed to admin.")
+    ).toBeInTheDocument();
+    await waitFor(() => expect(fakeApi.countOf("GET /campaigns/1/")).toBe(reads + 1));
+    expect(screen.getByLabelText("Current path")).toHaveTextContent("/campaigns/1/skills");
+  });
+
+  it("says your permissions changed on a grants change", async () => {
+    renderCampaignRoute("/campaigns/1/skills");
+    expect(await screen.findByText("Skills page")).toBeInTheDocument();
+    await waitFor(() => expect(fakeRealtime.subscriberCount(MY_CHANNEL)).toBe(1));
+
+    act(() =>
+      fakeRealtime.emit(MY_CHANNEL, "notification", {
+        type: "membership_changed",
+        payload: {
+          campaign_id: 1,
+          campaign_name: "Shards of the Comet",
+          change: "permissions",
+          permissions: ["add_custom", "manage_items"],
+        },
+      })
+    );
+
+    expect(
+      await screen.findByText("Your permissions in Shards of the Comet changed.")
+    ).toBeInTheDocument();
+  });
+});

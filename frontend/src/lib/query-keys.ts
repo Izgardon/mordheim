@@ -45,6 +45,8 @@ export const queryKeys = {
     commonRules: (campaignId: number) => ["campaign", campaignId, "common-rules"] as const,
     /** The campaign chat's history, newest page first (an infinite query). */
     chat: (campaignId: number) => ["campaign", campaignId, "chat"] as const,
+    /** What leaving would close for you (read each time the leave dialog opens). */
+    leavePreview: (campaignId: number) => ["campaign", campaignId, "leave"] as const,
     /** What removing one member would close (read each time the remove dialog opens). */
     memberRemoval: (campaignId: number, userId: number) =>
       ["campaign", campaignId, "members", userId, "removal"] as const,
