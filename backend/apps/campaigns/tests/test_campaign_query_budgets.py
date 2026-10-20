@@ -32,7 +32,8 @@ from .campaign_support import CampaignTestCase, make_user
 BUDGETS: dict[str, tuple[str, str, int]] = {
     "detail (owner)": ("owner", "", 3),
     "detail (player)": ("player", "", 4),  # + the player's codes; target ≤ 3 for every role
-    "players": ("player", "players/", 7),  # target ≤ 6, and ?fields=basic ≤ 2 (PERF-41)
+    "players": ("player", "players/", 6),  # the member check reads the list it returns (PERF-41)
+    "players (basic)": ("player", "players/?fields=basic", 1),  # names only, for pickers (PERF-41, target <= 2)
     "completed trades": ("player", "trade-requests/?status=completed", 2),
     "battle history": ("player", "battle-history/", 3),
     "pivotal moments": ("player", "pivotal-moments/", 2),
@@ -49,7 +50,7 @@ BUDGETS: dict[str, tuple[str, str, int]] = {
 }
 # The overview's four list requests on every mount (players, completed trades, history, pivotal moments)
 OVERVIEW = ("players", "completed trades", "battle history", "pivotal moments")
-OVERVIEW_BUDGET = 14  # target 0 on a revisit within the stale time (CAMP-TEST-04)
+OVERVIEW_BUDGET = 13  # target 0 on a revisit within the stale time (CAMP-TEST-04)
 JOIN_BUDGET = 9  # 7 queries + its transaction (BUG-49: checks and insert under the campaign row's lock)
 
 

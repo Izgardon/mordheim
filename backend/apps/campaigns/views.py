@@ -429,15 +429,15 @@ class CampaignPlayersView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, campaign_id):
-        membership = get_membership(request.user, campaign_id)
-        if not membership:
-            return Response({"detail": "Not found"}, status=404)
-
-        memberships = (
+        memberships = list(
             CampaignMembership.objects.filter(campaign_id=campaign_id)
             .select_related("user")
             .order_by("user__first_name", "user__email")
         )
+        if all(member.user_id != request.user.id for member in memberships):  # the member check (PERF-41)
+            return Response({"detail": "Not found"}, status=404)
+        if request.query_params.get("fields") == "basic":  # name pickers need no warbands (PERF-41)
+            return Response([{"id": member.user_id, "name": display_name(member.user)} for member in memberships])
         warbands = list(
             Warband.objects.filter(campaign_id=campaign_id).only("id", "name", "faction", "user_id", "wins", "losses")
         )

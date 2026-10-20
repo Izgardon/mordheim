@@ -159,6 +159,13 @@ class MemberListTests(CampaignTestCase):
         self.assertIsNone(players[0]["warband"])
         self.assertEqual(self.get_as(self.outsider, self.url("players/")).status_code, 404)
 
+    def test_name_pickers_read_ids_and_names_only(self):
+        # PERF-41: Encampments and the trade invite fetched the whole roster (7 queries) for names
+        basic = self.get_as(self.rival, self.url("players/?fields=basic")).json()
+
+        self.assertEqual(basic[:3], [{"id": self.admin.id, "name": "Ada"}, {"id": self.owner.id, "name": "Olga"}, {"id": self.player.id, "name": "Pia"}])  # fmt: skip
+        self.assertEqual(self.get_as(self.outsider, self.url("players/?fields=basic")).status_code, 404)
+
 
 class MemberRoleTests(CampaignTestCase):
     def set_role(self, actor, target, role):
