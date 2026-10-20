@@ -49,6 +49,8 @@ type SkillFormDialogEditProps = SkillFormDialogBaseProps & {
   skill: Skill;
   onUpdated: (skill: Skill) => void;
   onDeleted: (skillId: number) => void;
+  /** delete_catalogue: Delete shows only to someone the server lets delete (decision 5). */
+  canDelete?: boolean;
 };
 
 type SkillFormDialogProps = SkillFormDialogCreateProps | SkillFormDialogEditProps;
@@ -397,7 +399,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
             mode === "edit" ? "flex flex-wrap items-center justify-between gap-3" : undefined
           }
         >
-          {mode === "edit" ? (
+          {mode === "edit" && props.canDelete ? (
             <Button
               variant="secondary"
               type="button"

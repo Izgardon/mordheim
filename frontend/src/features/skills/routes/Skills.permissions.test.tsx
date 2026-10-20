@@ -113,3 +113,25 @@ describe("Skills: who sees Add and Edit", () => {
     });
   });
 });
+
+describe("Skills: who sees Delete (decision 5)", () => {
+  it("offers Delete in the edit form to a player granted delete_catalogue, and not to one without it", async () => {
+    const user = setupUser();
+    signInAsPlayer(["edit_catalogue"]);
+    const { unmount } = await openSkillsAndEdit(user);
+    expect(screen.queryByRole("button", { name: "Delete" })).toBeNull();
+    unmount();
+
+    signInAsPlayer(["edit_catalogue", "delete_catalogue"]);
+    await openSkillsAndEdit(user);
+    expect(screen.getByRole("button", { name: "Delete" })).toBeVisible();
+  });
+});
+
+async function openSkillsAndEdit(user: ReturnType<typeof setupUser>) {
+  const view = renderCatalogueRoute("/campaigns/1/skills");
+  await screen.findByRole("row", { name: /^Quick Hands/ });
+  await user.click(within(row("Quick Hands")).getByRole("button", { name: "Edit skill" }));
+  expect(screen.getByRole("button", { name: "Save changes" })).toBeVisible();
+  return view;
+}

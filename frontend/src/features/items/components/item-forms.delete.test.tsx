@@ -46,12 +46,13 @@ beforeEach(() => {
 });
 
 describe("AddItemForm: Delete", () => {
-  function renderForm(queryClient = clientWithItems()) {
+  function renderForm(queryClient = clientWithItems(), canDelete = true) {
     const onDeleted = vi.fn();
     renderWithQueryClient(
       <AddItemForm
         campaignId={1}
         editingItem={rustyCleaver}
+        canDelete={canDelete}
         onCreated={vi.fn()}
         onDeleted={onDeleted}
         onCancel={vi.fn()}
@@ -77,6 +78,13 @@ describe("AddItemForm: Delete", () => {
     expect(onDeleted).toHaveBeenCalledWith(240);
     expect(cachedNames(queryClient)).not.toContain("Rusty Cleaver");
     expect(queryClient.getQueryState(ITEMS_KEY)?.isInvalidated).toBe(true);
+  });
+
+  it("offers no Delete to someone without delete_catalogue (decision 5)", async () => {
+    renderForm(clientWithItems(), false);
+
+    expect(screen.queryByRole("button", { name: "Delete" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Save changes" })).toBeVisible();
   });
 
   it("sends nothing when the confirm is cancelled", async () => {
@@ -116,11 +124,23 @@ describe("AddItemForm: Delete", () => {
 });
 
 describe("ItemFormDialog (edit mode): Delete", () => {
-  async function openDialog(user: ReturnType<typeof setupUser>, queryClient = clientWithItems()) {
+  it("offers no Delete to someone without delete_catalogue (decision 5)", async () => {
+    await openDialog(setupUser(), clientWithItems(), false);
+
+    expect(screen.queryByRole("button", { name: "Delete" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Save changes" })).toBeVisible();
+  });
+
+  async function openDialog(
+    user: ReturnType<typeof setupUser>,
+    queryClient = clientWithItems(),
+    canDelete = true
+  ) {
     const onDeleted = vi.fn();
     renderWithQueryClient(
       <ItemFormDialog
         mode="edit"
+        canDelete={canDelete}
         item={rustyCleaver}
         campaignId={1}
         onUpdated={vi.fn()}

@@ -22,6 +22,8 @@ type AddSpellFormProps = {
   onCancel: () => void;
   typeOptions?: string[];
   editingSpell?: Spell | null;
+  /** delete_catalogue: Delete shows only to someone the server lets delete (decision 5). */
+  canDelete?: boolean;
 };
 
 type SpellFormState = {
@@ -63,6 +65,7 @@ export default function AddSpellForm({
   onCancel,
   typeOptions = [],
   editingSpell,
+  canDelete = false,
 }: AddSpellFormProps) {
   const isEditing = Boolean(editingSpell);
   const catalogueCache = useCatalogueCache();
@@ -364,7 +367,7 @@ export default function AddSpellForm({
       </div>
       {formError && <p className="text-sm text-red-600">{formError}</p>}
       <div className="flex flex-wrap items-center gap-2">
-        {isEditing && (
+        {isEditing && canDelete && (
           <Button
             variant="destructive"
             onClick={deleteConfirm.open}

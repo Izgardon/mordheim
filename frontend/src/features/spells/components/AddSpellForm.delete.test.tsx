@@ -24,7 +24,7 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
 const SPELLS_KEY = queryKeys.campaign.catalogue(1, "spells");
 const DELETE = "DELETE /spells/950/";
 
-function renderForm() {
+function renderForm(canDelete = true) {
   const queryClient = createTestQueryClient();
   queryClient.setQueryData(SPELLS_KEY, SPELLS);
   const onDeleted = vi.fn();
@@ -32,6 +32,7 @@ function renderForm() {
     <AddSpellForm
       campaignId={1}
       editingSpell={gutterHex}
+      canDelete={canDelete}
       typeOptions={["Lesser Magic"]}
       onCreated={vi.fn()}
       onDeleted={onDeleted}
@@ -49,6 +50,13 @@ beforeEach(() => {
 });
 
 describe("AddSpellForm: Delete", () => {
+  it("offers no Delete to someone without delete_catalogue (decision 5)", async () => {
+    renderForm(false);
+
+    expect(screen.queryByRole("button", { name: "Delete" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Save changes" })).toBeVisible();
+  });
+
   // Characterises current behaviour (BUG-16, CAT-TWEAK-04, pinned; flips in PR C)
   it('says only "This action cannot be undone", then sends one DELETE with no usage check (BUG-16, pinned; flips in PR C)', async () => {
     const user = setupUser();

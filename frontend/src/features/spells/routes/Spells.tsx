@@ -50,7 +50,8 @@ export default function Spells() {
   const [editingSpell, setEditingSpell] = useState<Spell | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
 
-  const canEdit = campaignCapabilities(campaign).edit_catalogue;
+  const capabilities = campaignCapabilities(campaign);
+  const canEdit = capabilities.edit_catalogue;
 
   const typeOptions = useMemo(() => {
     const unique = new Set(spells.map((spell) => spell.type).filter(Boolean) as string[]);
@@ -188,6 +189,7 @@ export default function Spells() {
               }}
               typeOptions={typeOptions}
               editingSpell={editingSpell}
+              canDelete={capabilities.delete_catalogue}
             />
           </div>
         )}

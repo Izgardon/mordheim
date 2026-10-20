@@ -56,6 +56,8 @@ type AddItemFormProps = {
   onDeleted?: (itemId: number) => void;
   onCancel: () => void;
   editingItem?: Item | null;
+  /** delete_catalogue: Delete shows only to someone the server lets delete (decision 5). */
+  canDelete?: boolean;
 };
 
 const createEmptyStatblock = (): StatblockState =>
@@ -157,6 +159,7 @@ export default function AddItemForm({
   onDeleted,
   onCancel,
   editingItem,
+  canDelete = false,
 }: AddItemFormProps) {
   const isEditing = Boolean(editingItem);
   const catalogueCache = useCatalogueCache();
@@ -713,7 +716,7 @@ export default function AddItemForm({
 
       {formError && <p className="text-sm text-red-600">{formError}</p>}
       <div className="flex flex-wrap items-center gap-2">
-        {isEditing && (
+        {isEditing && canDelete && (
           <Button variant="destructive" onClick={deleteConfirm.open} disabled={isSaving} size="sm">
             Delete
           </Button>

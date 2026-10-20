@@ -51,7 +51,8 @@ export default function Skills() {
   const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
 
-  const canEdit = campaignCapabilities(campaign).edit_catalogue;
+  const capabilities = campaignCapabilities(campaign);
+  const canEdit = capabilities.edit_catalogue;
 
   const typeOptions = useMemo(() => {
     const unique = new Set(skills.map((skill) => skill.type).filter(Boolean));
@@ -193,6 +194,7 @@ export default function Skills() {
               }}
               typeOptions={typeOptions}
               editingSkill={editingSkill}
+              canDelete={capabilities.delete_catalogue}
             />
           </div>
         )}

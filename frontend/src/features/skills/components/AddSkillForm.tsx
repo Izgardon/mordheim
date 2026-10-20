@@ -20,6 +20,8 @@ type AddSkillFormProps = {
   onCancel: () => void;
   typeOptions?: string[];
   editingSkill?: Skill | null;
+  /** delete_catalogue: Delete shows only to someone the server lets delete (decision 5). */
+  canDelete?: boolean;
 };
 
 type SkillFormState = {
@@ -53,6 +55,7 @@ export default function AddSkillForm({
   onCancel,
   typeOptions = [],
   editingSkill,
+  canDelete = false,
 }: AddSkillFormProps) {
   const isEditing = Boolean(editingSkill);
   const catalogueCache = useCatalogueCache();
@@ -305,7 +308,7 @@ export default function AddSkillForm({
       </div>
       {formError && <p className="text-sm text-red-600">{formError}</p>}
       <div className="flex flex-wrap items-center gap-2">
-        {isEditing && (
+        {isEditing && canDelete && (
           <Button variant="destructive" onClick={deleteConfirm.open} disabled={isSaving} size="sm">
             Delete
           </Button>

@@ -89,6 +89,8 @@ type ItemFormDialogEditProps = ItemFormDialogBaseProps & {
   campaignId: number;
   onUpdated: (item: Item) => void;
   onDeleted: (itemId: number) => void;
+  /** delete_catalogue: Delete shows only to someone the server lets delete (decision 5). */
+  canDelete?: boolean;
 };
 
 type ItemFormDialogProps = ItemFormDialogCreateProps | ItemFormDialogEditProps;
@@ -838,7 +840,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
             props.mode === "edit" ? "flex flex-wrap items-center justify-between gap-3" : undefined
           }
         >
-          {props.mode === "edit" ? (
+          {props.mode === "edit" && props.canDelete ? (
             <Button
               variant="secondary"
               type="button"

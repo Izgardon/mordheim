@@ -16,6 +16,7 @@ import { routeCatalogue } from "@/test/catalogue-fixtures";
 import { renderCatalogueRoute } from "@/test/catalogue-routes";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
+import { setupUser } from "@/test/user-event";
 
 vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
@@ -93,5 +94,27 @@ describe("Wargear: who sees Add and Edit", () => {
     expect(
       within(row("Rusty Cleaver")).getByRole("button", { name: "Acquire melee weapon" })
     ).toBeVisible();
+  });
+});
+
+describe("Wargear: who sees Delete (decision 5)", () => {
+  it("offers Delete in the edit form only with delete_catalogue: the owner has it, a joined player doesn't", async () => {
+    const user = setupUser();
+    signInAsPlayer(["edit_catalogue"]);
+    await openWargear();
+
+    await user.click(editOn("Rusty Cleaver")!);
+
+    expect(screen.getByRole("button", { name: "Save changes" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Delete" })).toBeNull();
+  });
+
+  it("offers the owner Delete in the edit form", async () => {
+    const user = setupUser();
+    await openWargear();
+
+    await user.click(editOn("Rusty Cleaver")!);
+
+    expect(screen.getByRole("button", { name: "Delete" })).toBeVisible();
   });
 });

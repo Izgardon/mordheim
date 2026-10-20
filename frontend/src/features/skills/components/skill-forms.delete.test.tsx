@@ -43,12 +43,20 @@ beforeEach(() => {
 });
 
 describe("AddSkillForm: Delete", () => {
-  function renderForm(queryClient = clientWithSkills()) {
+  it("offers no Delete to someone without delete_catalogue (decision 5)", async () => {
+    renderForm(clientWithSkills(), false);
+
+    expect(screen.queryByRole("button", { name: "Delete" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Save changes" })).toBeVisible();
+  });
+
+  function renderForm(queryClient = clientWithSkills(), canDelete = true) {
     const onDeleted = vi.fn();
     renderWithQueryClient(
       <AddSkillForm
         campaignId={1}
         editingSkill={quickHands}
+        canDelete={canDelete}
         typeOptions={["Combat", "Speed"]}
         onCreated={vi.fn()}
         onDeleted={onDeleted}
@@ -96,11 +104,23 @@ describe("AddSkillForm: Delete", () => {
 });
 
 describe("SkillFormDialog (edit mode): Delete", () => {
-  async function openDialog(user: ReturnType<typeof setupUser>, queryClient = clientWithSkills()) {
+  it("offers no Delete to someone without delete_catalogue (decision 5)", async () => {
+    await openDialog(setupUser(), clientWithSkills(), false);
+
+    expect(screen.queryByRole("button", { name: "Delete" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Save changes" })).toBeVisible();
+  });
+
+  async function openDialog(
+    user: ReturnType<typeof setupUser>,
+    queryClient = clientWithSkills(),
+    canDelete = true
+  ) {
     const onDeleted = vi.fn();
     renderWithQueryClient(
       <SkillFormDialog
         mode="edit"
+        canDelete={canDelete}
         skill={quickHands}
         typeOptions={["Combat", "Speed"]}
         onUpdated={vi.fn()}

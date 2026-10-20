@@ -782,6 +782,7 @@ export default function Items() {
                 setEditingItem(null);
               }}
               editingItem={editingItem}
+              canDelete={capabilities.delete_catalogue}
             />
           </div>
         )}

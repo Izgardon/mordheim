@@ -2,10 +2,9 @@
  * The Spells page as the app mounts it (layout, fake server): Add and Edit both follow
  * `edit_catalogue` (BUG-15, CAT-TEST-18, decision 4); Edit never shows on a book spell.
  */
-import { screen, within } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { ApiError } from "@/lib/api-client";
 import {
   OWNER,
   PLAYER,
@@ -13,7 +12,7 @@ import {
   campaignSummary,
   routeCampaignShell,
 } from "@/test/campaign-fixtures";
-import { routeCatalogue } from "@/test/catalogue-fixtures";
+import { LIST, routeCatalogue, spell } from "@/test/catalogue-fixtures";
 import { renderCatalogueRoute } from "@/test/catalogue-routes";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
@@ -81,22 +80,31 @@ describe("Spells: who sees Add and Edit", () => {
     expect(within(row("Gutter Hex")).queryByRole("button", { name: "Edit spell" })).toBeNull();
   });
 
-  // Characterises current behaviour (BUG-15, CAT-TEST-18, pinned; flips in PR A)
-  it("lets that player open Delete and learn of the 403 only after confirming, in the still-open confirm (BUG-15, pinned; flips in PR A)", async () => {
+  it("offers a player holding edit_catalogue but not delete_catalogue the edit form with no Delete (BUG-15, CAT-TEST-18, decision 5)", async () => {
     const user = setupUser();
-    const denied = "You do not have permission to perform this action.";
     signInAsPlayer(["edit_catalogue"]);
-    fakeApi.fail("DELETE /spells/950/", new ApiError(denied, 403, { detail: denied }));
     await openSpells();
 
     await user.click(within(row("Gutter Hex")).getByRole("button", { name: "Edit spell" }));
-    await user.click(screen.getByRole("button", { name: "Delete" }));
-    await user.click(screen.getByRole("button", { name: "Delete spell" }));
 
-    // The confirm stays open and shows the refusal (BUG-148).
-    const confirm = screen.getByRole("dialog");
-    expect(await within(confirm).findByRole("alert")).toHaveTextContent(denied);
-    expect(within(confirm).getByRole("button", { name: "Delete spell" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Save changes" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Delete" })).toBeNull();
+  });
+
+  it("lets a player granted delete_catalogue delete the campaign's spell: one DELETE, and the row goes", async () => {
+    const user = setupUser();
+    signInAsPlayer(["edit_catalogue", "delete_catalogue"]);
+    fakeApi.on("DELETE /spells/950/", undefined);
+    await openSpells();
+    fakeApi.on(LIST.spells, [spell()]);
+
+    await user.click(within(row("Gutter Hex")).getByRole("button", { name: "Edit spell" }));
+    await user.click(screen.getByRole("button", { name: "Delete" }));
+    await user.click(
+      within(screen.getByRole("dialog")).getByRole("button", { name: "Delete spell" })
+    );
+
+    await waitFor(() => expect(screen.queryByRole("row", { name: /^Gutter Hex/ })).toBeNull());
     expect(fakeApi.countOf("DELETE /spells/950/")).toBe(1);
   });
 });
