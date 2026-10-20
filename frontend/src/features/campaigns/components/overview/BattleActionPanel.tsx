@@ -38,6 +38,8 @@ type BattleActionPanelProps = {
   campaignStarted: boolean;
   /** Shown first in the button row (Start campaign, before the start). */
   leadingAction?: ReactNode;
+  /** An archived campaign takes no new battles (decision 5): Start battle goes. */
+  readOnly?: boolean;
 };
 
 export default function BattleActionPanel({
@@ -45,6 +47,7 @@ export default function BattleActionPanel({
   players,
   campaignStarted,
   leadingAction,
+  readOnly = false,
 }: BattleActionPanelProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -162,7 +165,7 @@ export default function BattleActionPanel({
           >
             {battleIsInviting ? "See Status" : "Rejoin Battle"}
           </RejoinBattleButton>
-        ) : (
+        ) : readOnly ? null : (
           // Greyed out but clickable before the start, with a warning (decision 3).
           <StartBattleButton
             campaignId={campaignId}

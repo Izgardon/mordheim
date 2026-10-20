@@ -16,7 +16,7 @@ import { useMyWarbandWriter } from "@/features/warbands/hooks/warband/useMyWarba
 import { useAppStore } from "@/stores/app-store";
 
 // types
-import type { CampaignCapabilities } from "../../capabilities";
+import { isArchived, type CampaignCapabilities } from "../../capabilities";
 import type { CampaignSummary } from "../../types/campaign-types";
 
 type PersonalSettingsTabProps = {
@@ -30,15 +30,19 @@ export default function PersonalSettingsTab({ campaign, capabilities }: Personal
   const { signOut } = useAuth();
   const { warband } = useAppStore();
   const myWarband = useMyWarbandWriter(campaign.id);
+  const archived = isArchived(campaign);
 
   return (
     <div className="space-y-6">
       <PersonalSettingsCard onSignOut={signOut} onOpenCampaigns={() => navigate("/campaigns")} />
-      <WarbandDiceSettingsCard canEditAnyWarband={capabilities.manage_warbands} />
+      <WarbandDiceSettingsCard
+        canEditAnyWarband={capabilities.manage_warbands}
+        readOnly={archived}
+      />
       {warband ? (
         <WarbandSettingsCard
           warband={warband}
-          canEdit={true}
+          canEdit={!archived}
           onWarbandUpdated={(updated) => myWarband.merge(updated.id, updated)}
         />
       ) : null}
@@ -49,7 +53,7 @@ export default function PersonalSettingsTab({ campaign, capabilities }: Personal
         warbandName={warband?.name}
       />
       <LeaveCampaignCard campaign={campaign} />
-      {warband ? (
+      {warband && !archived ? (
         <DeleteWarbandCard
           warbandId={warband.id}
           warbandName={warband.name}

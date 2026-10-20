@@ -32,6 +32,7 @@ export default function CampaignCard({
   max_players,
   role,
   join_code,
+  archived_at,
 }: CampaignSummary) {
   const titleId = useId();
   const [copied, setCopied] = useState(false);
@@ -79,9 +80,16 @@ export default function CampaignCard({
                   </Link>
                 </CardTitle>
               </div>
-              <Badge variant="outline" className={roleTone[role]}>
-                {roleLabel}
-              </Badge>
+              <div className="flex flex-wrap items-center gap-2">
+                {archived_at ? (
+                  <Badge variant="outline" className="campaign-card-badge">
+                    Archived
+                  </Badge>
+                ) : null}
+                <Badge variant="outline" className={roleTone[role]}>
+                  {roleLabel}
+                </Badge>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4 pt-0">

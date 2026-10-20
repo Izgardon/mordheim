@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 
 // components
+import ArchivedBanner from "../components/layout/ArchivedBanner";
 import CampaignLoadError from "../components/layout/CampaignLoadError";
 import CampaignSidebar from "../components/layout/CampaignSidebar";
 import CampaignTopBarActions from "../components/layout/CampaignTopBarActions";
@@ -27,6 +28,7 @@ import { ChevronLeft } from "lucide-react";
 
 // hooks
 import { isCampaignId, useCampaignQuery } from "../hooks/useCampaignQuery";
+import { useArchivedRefusals } from "../hooks/useArchivedRefusals";
 import { useBattleSession } from "../hooks/useBattleSession";
 import { useMobileTopBarOverride } from "../hooks/useMobileTopBarOverride";
 import { useMyWarbandStore } from "@/features/warbands/hooks/warband/useMyWarbandStore";
@@ -103,6 +105,7 @@ export default function CampaignLayout() {
   const { topBar: mobileTopBar, setMobileTopBar } = useMobileTopBarOverride(defaultTopBar);
 
   useMyWarbandStore(campaign?.id ?? null);
+  useArchivedRefusals(campaignId);
 
   // Stable unless a value changes, so the layout re-rendering (store writes, notifications)
   // doesn't re-render the page through its outlet context (PERF-19).
@@ -178,6 +181,7 @@ export default function CampaignLayout() {
       }
     >
       <section className="min-h-0 flex-1">
+        <ArchivedBanner campaign={campaign} />
         <Suspense fallback={<RouteSkeleton />}>
           <Outlet context={outletContext} />
         </Suspense>

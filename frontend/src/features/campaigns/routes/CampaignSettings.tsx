@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 // routing
-import { useOutletContext, useParams } from "react-router-dom";
+import { useOutletContext, useParams, useSearchParams } from "react-router-dom";
 
 // components
 import TabbedCard from "@components/tabbed-card";
@@ -35,7 +35,11 @@ export default function CampaignSettings() {
   const capabilities = campaignCapabilities(campaign);
   // A player granted manage_battles gets the Campaign tab for Active Battles alone (BATL-NEW-03).
   const hasCampaignTab = hasCampaignSettings(capabilities);
-  const [activeTab, setActiveTab] = useState<SettingsTabId>("personal");
+  // `?tab=campaign` opens the Campaign tab (the archived banner and the stuck-battles banner).
+  const [searchParams] = useSearchParams();
+  const linkedTab: SettingsTabId = searchParams.get("tab") === "campaign" ? "campaign" : "personal";
+  const [activeTab, setActiveTab] = useState<SettingsTabId>(linkedTab);
+  useEffect(() => setActiveTab(linkedTab), [linkedTab]);
 
   // The Campaign tab's lists load as the page opens, on either tab; its cards share them.
   useCampaignMembers(campaignId, { enabled: capabilities.view_members });

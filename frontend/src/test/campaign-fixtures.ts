@@ -99,7 +99,7 @@ export function capabilitiesFor(
   const flags: Record<CampaignCapability, boolean> = {
     edit_settings: isOwner,
     start: isStaff,
-    delete: isOwner,
+    delete: false,
     regenerate_join_code: isStaff,
     view_members: isStaff,
     grant_permissions: isStaff,

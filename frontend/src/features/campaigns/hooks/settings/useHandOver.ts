@@ -6,14 +6,13 @@ import { toast } from "sonner";
 import { handOverOwnership } from "../../api/campaign-lifecycle-api";
 
 // other
-import { apiErrorCode, getErrorMessage } from "@/lib/get-error-message";
+import { getRefusalMessage } from "@/lib/get-error-message";
 import { queryKeys } from "@/lib/query-keys";
 
 // types
 import type { CampaignMember, CampaignSummary } from "../../types/campaign-types";
 
 export const MAKE_ADMIN_FIRST = "Make them an admin first";
-const NOT_AN_ADMIN = "Ownership can only go to an admin. Make them an admin first.";
 
 /**
  * Hand ownership to an admin (decision 4, CAMP-NEW-02, `capabilities.hand_over`). The owner picks
@@ -55,11 +54,7 @@ export function useHandOver(campaign: CampaignSummary) {
       void queryClient.invalidateQueries({ queryKey: queryKeys.campaign.detail(campaign.id) });
       void queryClient.invalidateQueries({ queryKey: queryKeys.campaign.members(campaign.id) });
     } catch (errorResponse) {
-      setError(
-        apiErrorCode(errorResponse) === "not_an_admin"
-          ? NOT_AN_ADMIN
-          : getErrorMessage(errorResponse, "Couldn't hand the campaign over.")
-      );
+      setError(getRefusalMessage(errorResponse, "Couldn't hand the campaign over."));
     } finally {
       setIsHandingOver(false);
     }

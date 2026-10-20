@@ -12,6 +12,8 @@
  * value). Every request is recorded; one with no route never answers, like a hung server.
  */
 
+import { reportApiRefusal } from "@/lib/api-refusals";
+
 type Handler = (body: unknown, path: string) => unknown;
 
 export type SentRequest = { method: string; path: string; body?: unknown };
@@ -29,7 +31,13 @@ export const fakeApi = {
     if (!handler) {
       return new Promise<never>(() => undefined);
     }
-    return handler(options.body, path);
+    // As apiRequest does, failures are reported to the app's refusal listeners.
+    try {
+      return await handler(options.body, path);
+    } catch (error) {
+      reportApiRefusal(error);
+      throw error;
+    }
   },
 
   /** Answers `"METHOD /path/"` with `respond(body)`, or with `respond` itself when not a function. */

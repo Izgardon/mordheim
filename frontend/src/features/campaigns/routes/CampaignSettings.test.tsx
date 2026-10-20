@@ -18,7 +18,6 @@ vi.mock("../api/campaigns-api", () => ({
   listCampaignMembers,
   listCampaignActiveBattles,
   cancelCampaignActiveBattle: vi.fn(),
-  deleteCampaign: vi.fn(),
   removeCampaignMember: vi.fn(),
   updateMemberPermissions: vi.fn(),
   updateMemberRole: vi.fn(),
@@ -51,7 +50,8 @@ vi.mock("../components/settings/ActiveBattlesTable", () => ({
 }));
 vi.mock("../components/settings/CampaignControlCard", () => ({ default: () => null }));
 vi.mock("../components/settings/CampaignLevelUpSettingsCard", () => ({ default: () => null }));
-vi.mock("../components/settings/DeleteCampaignCard", () => ({ default: () => null }));
+vi.mock("../components/settings/ArchiveCampaignCard", () => ({ default: () => null }));
+vi.mock("../components/settings/ArchivedCampaignCard", () => ({ default: () => null }));
 vi.mock("../components/settings/RemoveMemberDialog", () => ({ default: () => null }));
 vi.mock("@components/confirm-dialog", () => ({ ConfirmDialog: () => null }));
 

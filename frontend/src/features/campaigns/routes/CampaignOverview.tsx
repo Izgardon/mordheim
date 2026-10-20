@@ -19,6 +19,7 @@ import OverviewSections, {
 import StartCampaignDialog from "../components/overview/StartCampaignDialog";
 
 // hooks
+import { isArchived } from "../capabilities";
 import { useCampaignOverview } from "../hooks/useCampaignOverview";
 
 // types
@@ -109,6 +110,7 @@ export default function CampaignOverview() {
             campaignId={campaign.id}
             players={overview.players}
             campaignStarted={overview.isUnderway}
+            readOnly={isArchived(campaign)}
             leadingAction={
               showStart ? (
                 <Button variant="secondary" size="sm" onClick={() => overview.setIsStartOpen(true)}>

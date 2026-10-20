@@ -215,12 +215,6 @@ export function removeCampaignMember(campaignId: number, userId: number) {
   });
 }
 
-export function deleteCampaign(campaignId: number) {
-  return apiRequest<void>(`/campaigns/${campaignId}/`, {
-    method: "DELETE",
-  });
-}
-
 export function createTradeRequest(campaignId: number, targetUserId: number) {
   return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/`, {
     method: "POST",

@@ -211,39 +211,25 @@ describe("Campaign features", () => {
 });
 
 describe("Delete campaign", () => {
-  it("is headed Delete, opened by Close campaign, confirmed as CONFIRM CLOSURE and Erase campaign, then hard-deletes (CAMP-UX-06, pinned; flips in PR C)", async () => {
+  it("is gone from a live campaign: the owner archives it instead, and deleting for good waits for the archive (CAMP-UX-06, CAMP-NEW-04, CAMP-TWEAK-04)", async () => {
     const user = setupUser();
-    fakeApi.on(`DELETE ${campaignApi()}`, undefined);
     await openCampaignTab(user);
-    expect(screen.getByRole("heading", { name: "Delete campaign" })).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Close campaign" }));
-
-    const dialog = screen.getByRole("dialog", { name: "Confirm closure" });
-    expect(dialog).toHaveTextContent("CONFIRM CLOSURE");
-    // Nothing lists what goes with it: warbands, battles, trades, logs, house-rule items.
-    expect(dialog).not.toHaveTextContent(/warband|battle|trade/i);
-    const erase = within(dialog).getByRole("button", { name: "Erase campaign" });
-    expect(erase).toBeDisabled();
-    await user.type(within(dialog).getByPlaceholderText("Type delete"), "DELETE");
-    expect(erase).toBeEnabled();
-    await user.click(erase);
-
-    expect(await screen.findByText("Campaigns page")).toBeInTheDocument();
-    expect(fakeApi.calls().filter((call) => call.startsWith("DELETE"))).toEqual([
-      `DELETE ${campaignApi()}`,
-    ]);
+    expect(screen.getByRole("heading", { name: "Archive campaign" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Delete campaign" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Close campaign" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Delete for good" })).toBeNull();
   });
 });
 
 describe("Settings dialogs", () => {
-  it("describe the campaign and warband delete confirms to screen readers (BUG-142)", async () => {
+  it("describe the campaign archive and warband delete confirms to screen readers (BUG-142)", async () => {
     const user = setupUser();
     await openCampaignTab(user);
 
-    await user.click(screen.getByRole("button", { name: "Close campaign" }));
-    expect(screen.getByRole("dialog", { name: "Confirm closure" })).toHaveAccessibleDescription(
-      "Type delete to erase this campaign for every member. This can't be undone."
+    await user.click(screen.getByRole("button", { name: "Archive campaign" }));
+    expect(screen.getByRole("dialog", { name: "Archive campaign" })).toHaveAccessibleDescription(
+      /^Archive Shards of the Comet\?/
     );
     await user.keyboard("{Escape}");
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());

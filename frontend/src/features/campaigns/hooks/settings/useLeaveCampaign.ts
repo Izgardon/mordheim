@@ -8,7 +8,7 @@ import { getLeavePreview, leaveCampaign } from "../../api/campaign-lifecycle-api
 
 // other
 import { campaignCapabilities } from "../../capabilities";
-import { getErrorMessage } from "@/lib/get-error-message";
+import { getRefusalMessage } from "@/lib/get-error-message";
 import { queryKeys } from "@/lib/query-keys";
 import { useAppStore } from "@/stores/app-store";
 
@@ -84,7 +84,7 @@ export function useLeaveCampaign(campaign: CampaignSummary) {
         refetchType: "none",
       });
     } catch (errorResponse) {
-      setError(getErrorMessage(errorResponse, "Couldn't leave the campaign."));
+      setError(getRefusalMessage(errorResponse, "Couldn't leave the campaign."));
     } finally {
       setIsLeaving(false);
     }

@@ -159,3 +159,27 @@ describe("Campaigns list and the join code", () => {
     expect(screen.getByText("2 campaigns")).toBeInTheDocument();
   });
 });
+
+describe("Archived campaigns (CAMP-NEW-04)", () => {
+  it("lists them apart, under Archived, folded until opened", async () => {
+    const user = setupUser();
+    const archived = campaignSummary({
+      id: 3,
+      name: "The Drowned Quarter",
+      archived_at: "2026-10-20T10:00:00Z",
+    });
+    fakeApi.on("GET /campaigns/", [owned, joined, archived]);
+    renderCampaigns();
+
+    expect(await screen.findByText("2 campaigns")).toBeInTheDocument();
+    expect(screen.queryByRole("article", { name: archived.name })).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "Archived (1)" }));
+
+    expect(card(archived.name)).toHaveTextContent("Archived");
+    expect(screen.getByRole("button", { name: "Archived (1)" })).toHaveAttribute(
+      "aria-expanded",
+      "true"
+    );
+  });
+});
