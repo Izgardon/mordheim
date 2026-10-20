@@ -180,8 +180,7 @@ export default function Items() {
   const formRef = useRef<HTMLDivElement>(null);
 
   const capabilities = campaignCapabilities(campaign);
-  const canAdd = capabilities.add_custom;
-  const canManage = capabilities.manage_items;
+  const canEdit = capabilities.edit_catalogue;
 
   useEffect(() => {
     setSelectedSubtype(ALL_SUBTYPES);
@@ -678,7 +677,7 @@ export default function Items() {
             ) : null}
             <AcquireItemDialog item={item} initialAvailabilityId={item._availability?.id ?? null} />
             {/* A house rule's clone changes with its rule, never here (BUG-51). */}
-            {canManage && item.campaign_id && !item.generated_effect_key ? (
+            {canEdit && item.campaign_id && !item.generated_effect_key ? (
               <Tooltip
                 trigger={
                   <Button
@@ -699,7 +698,7 @@ export default function Items() {
         ),
       },
     ];
-  }, [activeTab, canManage, handleDeleted, handleUpdated, propertyMap]);
+  }, [activeTab, canEdit, handleDeleted, handleUpdated, propertyMap]);
 
   return (
     <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-8">
@@ -765,7 +764,7 @@ export default function Items() {
               </SelectContent>
             </Select>
           ) : null}
-          {canAdd && !isFormOpen ? (
+          {canEdit && !isFormOpen ? (
             <Button size="sm" className="ml-auto md:h-11" onClick={() => setIsFormOpen(true)}>
               Add item
             </Button>

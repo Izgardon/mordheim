@@ -38,7 +38,7 @@ export default function HiredSwords() {
     : null;
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
-  const canManage = campaignCapabilities(campaign).manage_bestiary;
+  const canManage = campaignCapabilities(campaign).edit_catalogue;
 
   useEffect(() => {
     setCurrentPage(0);

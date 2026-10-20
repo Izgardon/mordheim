@@ -60,7 +60,7 @@ export default function Bestiary() {
   const selectedEntryId = searchParams.get("entry") ? Number(searchParams.get("entry")) : null;
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
-  const canManage = campaignCapabilities(campaign).manage_bestiary;
+  const canManage = campaignCapabilities(campaign).edit_catalogue;
 
   useEffect(() => {
     if (!warband?.id) return;

@@ -1,7 +1,7 @@
 /**
  * The bestiary and hired-sword detail panels and the Bestiary's favourite stars, as the app mounts
  * them (layout, fake server). The panels offer only Back, even on a campaign entry viewed by
- * someone holding `manage_bestiary` (CAT-UX-02; PR C adds Edit, Revert and Delete, CAT-NEW-01).
+ * someone holding `edit_catalogue` (CAT-UX-02; PR C adds Edit, Revert and Delete, CAT-NEW-01).
  * A star changes at once, and a failed toggle puts it back and says why (CAT-UX-04).
  */
 import { act, screen, waitFor, within } from "@testing-library/react";
@@ -70,7 +70,7 @@ beforeEach(() => {
 
 describe("detail panels", () => {
   // Characterises current behaviour (CAT-UX-02, CAT-NEW-01, pinned; flips in PR C)
-  it("offers only Back on the campaign's own bestiary entry, to an owner holding manage_bestiary (CAT-UX-02, pinned; flips in PR C)", async () => {
+  it("offers only Back on the campaign's own bestiary entry, to an owner holding edit_catalogue (CAT-UX-02, pinned; flips in PR C)", async () => {
     renderCatalogueRoute("/campaigns/1/bestiary?entry=90");
 
     expect(await screen.findByRole("heading", { name: "Sewer Rat" })).toBeVisible();

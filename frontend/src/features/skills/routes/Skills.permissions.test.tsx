@@ -1,12 +1,10 @@
 /**
- * The Skills page as the app mounts it (layout, fake server): which capability flags gate Add and
- * Edit today. Add reads `add_custom`; Edit reads nothing, so every campaign skill offers it to
- * everyone (BUG-15, CAT-TEST-18). PR A gates both on `edit_catalogue`.
+ * The Skills page as the app mounts it (layout, fake server): Add and Edit both follow
+ * `edit_catalogue` (BUG-15, CAT-TEST-18, decision 4); Edit never shows on a book skill.
  */
-import { screen, within } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { ApiError } from "@/lib/api-client";
 import {
   OWNER,
   PLAYER,
@@ -14,7 +12,7 @@ import {
   campaignSummary,
   routeCampaignShell,
 } from "@/test/campaign-fixtures";
-import { LIST, routeCatalogue } from "@/test/catalogue-fixtures";
+import { quickHands, routeCatalogue } from "@/test/catalogue-fixtures";
 import { renderCatalogueRoute } from "@/test/catalogue-routes";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
@@ -65,9 +63,8 @@ describe("Skills: who sees Add and Edit", () => {
     ).toBeNull();
   });
 
-  // Characterises current behaviour (BUG-15, CAT-TEST-18, pinned; flips in PR A)
-  it("offers a player holding only add_custom Edit on every campaign skill (BUG-15, CAT-TEST-18, pinned; flips in PR A)", async () => {
-    signInAsPlayer(["add_custom"]);
+  it("offers a player holding edit_catalogue Add skill and Edit on the campaign's skill, never on a book skill (BUG-15, CAT-TEST-18)", async () => {
+    signInAsPlayer(["edit_catalogue"]);
 
     await openSkills();
 
@@ -78,34 +75,28 @@ describe("Skills: who sees Add and Edit", () => {
     ).toBeNull();
   });
 
-  // Characterises current behaviour (BUG-15, CAT-TEST-18, pinned; flips in PR A)
-  it("offers Edit to a player holding no code at all; only Add skill is gated, on add_custom (BUG-15, pinned; flips in PR A)", async () => {
+  it("offers a player without edit_catalogue neither Add skill nor Edit, so no form the server would refuse (BUG-15, CAT-TEST-18)", async () => {
     signInAsPlayer([]);
 
     await openSkills();
 
     expect(screen.queryByRole("button", { name: "Add skill" })).toBeNull();
-    expect(within(row("Quick Hands")).getByRole("button", { name: "Edit skill" })).toBeVisible();
+    expect(within(row("Quick Hands")).queryByRole("button", { name: "Edit skill" })).toBeNull();
   });
 
-  // Characterises current behaviour (BUG-15, pinned; flips in PR A)
-  it("reads no manage_skills flag: holding it alone gives no Add skill, and Edit shows regardless (BUG-15, pinned; flips in PR A)", async () => {
-    signInAsPlayer(["manage_skills"]);
+  it("gives delete_catalogue alone no Add skill or Edit (BUG-15)", async () => {
+    signInAsPlayer(["delete_catalogue"]);
 
     await openSkills();
 
     expect(screen.queryByRole("button", { name: "Add skill" })).toBeNull();
-    expect(within(row("Quick Hands")).getByRole("button", { name: "Edit skill" })).toBeVisible();
+    expect(within(row("Quick Hands")).queryByRole("button", { name: "Edit skill" })).toBeNull();
   });
 
-  // Characterises current behaviour (BUG-15, CAT-TEST-18, pinned; flips in PR A)
-  it("lets that player fill in the edit form and learn of the 403 only after Save changes (BUG-15, CAT-TEST-18, pinned; flips in PR A)", async () => {
+  it("lets a player holding edit_catalogue edit the campaign's skill: one PATCH, and the form closes", async () => {
     const user = setupUser();
-    signInAsPlayer(["add_custom"]);
-    fakeApi.fail(
-      "PATCH /skills/900/",
-      new ApiError("You do not have permission to perform this action.", 403, {})
-    );
+    signInAsPlayer(["edit_catalogue"]);
+    fakeApi.on("PATCH /skills/900/", (body: object) => ({ ...quickHands, ...body }));
     await openSkills();
 
     await user.click(within(row("Quick Hands")).getByRole("button", { name: "Edit skill" }));
@@ -114,14 +105,11 @@ describe("Skills: who sees Add and Edit", () => {
     await user.type(name, "Quicker Hands");
     await user.click(screen.getByRole("button", { name: "Save changes" }));
 
-    expect(
-      await screen.findByText("You do not have permission to perform this action.")
-    ).toBeVisible();
+    await waitFor(() => expect(screen.queryByRole("button", { name: "Save changes" })).toBeNull());
     expect(fakeApi.bodyOf("PATCH /skills/900/")).toEqual({
       name: "Quicker Hands",
       type: "Speed",
       description: "Steals a drink before anyone notices.",
     });
-    expect(fakeApi.countOf(LIST.skills)).toBe(1);
   });
 });

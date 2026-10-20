@@ -1,7 +1,7 @@
 /**
  * The Bestiary and Hired Swords pages as the app mounts them (layout, fake server): both gate
- * their Add control on `manage_bestiary`, which players don't get on joining (their `add_custom`
- * unlocks nothing here). PR A gates them on `edit_catalogue` with the other pages.
+ * their Add control on `edit_catalogue`, the one catalogue code players hold on joining (BUG-15,
+ * decision 4).
  */
 import { screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -62,21 +62,20 @@ describe("Bestiary: who sees Add entry", () => {
     expect(screen.getByRole("button", { name: "Add entry" })).toBeVisible();
   });
 
-  // Characterises current behaviour (BUG-15, CAT-TWEAK-05, pinned; flips in PR A)
-  it("offers a player holding add_custom no Add entry: it reads manage_bestiary (BUG-15, pinned; flips in PR A)", async () => {
-    signInAsPlayer(["add_custom"]);
-
-    await openBestiary();
-
-    expect(screen.queryByRole("button", { name: "Add entry" })).toBeNull();
-  });
-
-  it("offers a player granted manage_bestiary Add entry", async () => {
-    signInAsPlayer(["add_custom", "manage_bestiary"]);
+  it("offers a player holding edit_catalogue, as joining grants it, Add entry (BUG-15, CAT-TWEAK-05)", async () => {
+    signInAsPlayer(["edit_catalogue"]);
 
     await openBestiary();
 
     expect(screen.getByRole("button", { name: "Add entry" })).toBeVisible();
+  });
+
+  it("offers a player without edit_catalogue no Add entry", async () => {
+    signInAsPlayer(["delete_catalogue"]);
+
+    await openBestiary();
+
+    expect(screen.queryByRole("button", { name: "Add entry" })).toBeNull();
   });
 });
 
@@ -87,20 +86,19 @@ describe("Hired Swords: who sees Add hired sword", () => {
     expect(screen.getByRole("button", { name: "Add hired sword" })).toBeVisible();
   });
 
-  // Characterises current behaviour (BUG-15, CAT-TWEAK-05, pinned; flips in PR A)
-  it("offers a player holding add_custom no Add hired sword: it reads manage_bestiary (BUG-15, pinned; flips in PR A)", async () => {
-    signInAsPlayer(["add_custom"]);
-
-    await openHiredSwords();
-
-    expect(screen.queryByRole("button", { name: "Add hired sword" })).toBeNull();
-  });
-
-  it("offers a player granted manage_bestiary Add hired sword", async () => {
-    signInAsPlayer(["manage_bestiary"]);
+  it("offers a player holding edit_catalogue Add hired sword (BUG-15, CAT-TWEAK-05)", async () => {
+    signInAsPlayer(["edit_catalogue"]);
 
     await openHiredSwords();
 
     expect(screen.getByRole("button", { name: "Add hired sword" })).toBeVisible();
+  });
+
+  it("offers a player without edit_catalogue no Add hired sword", async () => {
+    signInAsPlayer([]);
+
+    await openHiredSwords();
+
+    expect(screen.queryByRole("button", { name: "Add hired sword" })).toBeNull();
   });
 });

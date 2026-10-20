@@ -1,8 +1,6 @@
 /**
- * The Wargear page as the app mounts it (layout, fake server): which capability flags gate Add
- * and Edit today. Add reads `add_custom`, Edit reads `manage_items` (and never shows on book rows
- * or house-rule clones), so a player can add an item but never fix it (BUG-15). PR A gates both
- * on `edit_catalogue`.
+ * The Wargear page as the app mounts it (layout, fake server): Add and Edit both follow
+ * `edit_catalogue` (BUG-15, decision 4), and Edit never shows on book rows or house-rule clones.
  */
 import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -65,26 +63,24 @@ describe("Wargear: who sees Add and Edit", () => {
     expect(editOn("Sword")).toBeNull();
   });
 
-  // Characterises current behaviour (BUG-15, CAT-TEST-03, pinned; flips in PR A)
-  it("offers a player holding add_custom Add item but no Edit, not even on what they added (BUG-15, pinned; flips in PR A)", async () => {
-    signInAsPlayer(["add_custom"]);
+  it("offers a player holding edit_catalogue Add item and Edit on every campaign item, never on a book item (BUG-15, CAT-TEST-18)", async () => {
+    signInAsPlayer(["edit_catalogue"]);
 
     await openWargear();
 
     expect(screen.getByRole("button", { name: "Add item" })).toBeVisible();
-    expect(editOn("Rusty Cleaver")).toBeNull();
-    expect(editOn("Axe")).toBeNull();
+    expect(editOn("Rusty Cleaver")).toBeVisible();
+    expect(editOn("Axe")).toBeVisible();
+    expect(editOn("Sword")).toBeNull();
   });
 
-  // Characterises current behaviour (BUG-15, pinned; flips in PR A)
-  it("offers a player holding manage_items alone Edit on campaign items but no Add item (BUG-15, pinned; flips in PR A)", async () => {
-    signInAsPlayer(["manage_items"]);
+  it("offers a player without edit_catalogue neither Add item nor Edit, whatever else they hold (BUG-15)", async () => {
+    signInAsPlayer(["delete_catalogue", "manage_rules", "manage_warbands"]);
 
     await openWargear();
 
     expect(screen.queryByRole("button", { name: "Add item" })).toBeNull();
-    expect(editOn("Rusty Cleaver")).toBeVisible();
-    expect(editOn("Sword")).toBeNull();
+    expect(editOn("Rusty Cleaver")).toBeNull();
   });
 
   it("offers a player holding no code neither Add item nor Edit, while Acquire stays on every row", async () => {

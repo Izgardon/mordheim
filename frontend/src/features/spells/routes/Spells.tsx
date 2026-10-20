@@ -50,7 +50,7 @@ export default function Spells() {
   const [editingSpell, setEditingSpell] = useState<Spell | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
 
-  const canAdd = campaignCapabilities(campaign).add_custom;
+  const canEdit = campaignCapabilities(campaign).edit_catalogue;
 
   const typeOptions = useMemo(() => {
     const unique = new Set(spells.map((spell) => spell.type).filter(Boolean) as string[]);
@@ -168,7 +168,7 @@ export default function Spells() {
             </Select>
           </div>
           <div className="flex items-center justify-end md:shrink-0">
-            {canAdd && !isFormOpen ? (
+            {canEdit && !isFormOpen ? (
               <Button size="sm" className="md:h-11" onClick={() => setIsFormOpen(true)}>
                 Add spell
               </Button>
@@ -206,7 +206,7 @@ export default function Spells() {
               renderActions={(spell) => (
                 <div className="flex items-center justify-end gap-2">
                   <AttuneSpellDialog spell={spell} unitTypes={["heroes", "hiredswords"]} />
-                  {spell.campaign_id ? (
+                  {canEdit && spell.campaign_id ? (
                     <Tooltip
                       trigger={
                         <Button

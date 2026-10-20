@@ -115,7 +115,7 @@ describe("Your role or grants changed (CAMP-NEW-07)", () => {
           campaign_id: 1,
           campaign_name: "Shards of the Comet",
           change: "permissions",
-          permissions: ["add_custom", "manage_items"],
+          permissions: ["edit_catalogue", "delete_catalogue"],
         },
       })
     );

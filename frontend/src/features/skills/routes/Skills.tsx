@@ -51,7 +51,7 @@ export default function Skills() {
   const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
 
-  const canAdd = campaignCapabilities(campaign).add_custom;
+  const canEdit = campaignCapabilities(campaign).edit_catalogue;
 
   const typeOptions = useMemo(() => {
     const unique = new Set(skills.map((skill) => skill.type).filter(Boolean));
@@ -173,7 +173,7 @@ export default function Skills() {
             </Select>
           </div>
           <div className="flex items-center justify-end md:shrink-0">
-            {canAdd && !isFormOpen ? (
+            {canEdit && !isFormOpen ? (
               <Button size="sm" className="md:h-11" onClick={() => setIsFormOpen(true)}>
                 Add skill
               </Button>
@@ -211,7 +211,7 @@ export default function Skills() {
               renderActions={(skill) => (
                 <div className="flex items-center justify-end gap-2">
                   <LearnSkillDialog skill={skill} unitTypes={["heroes", "hiredswords"]} />
-                  {skill.campaign_id ? (
+                  {canEdit && skill.campaign_id ? (
                     <Tooltip
                       trigger={
                         <Button
