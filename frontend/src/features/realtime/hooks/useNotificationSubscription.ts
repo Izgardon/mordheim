@@ -24,6 +24,7 @@ import {
   toBattleResultRequestNotification,
   type BattleNotificationPayload,
 } from "../utils/notification-mappers";
+import { handleMembershipNotification } from "../utils/membership-notifications";
 import { handleTradeNotification } from "../utils/trade-notifications";
 
 /** Long enough to read and act on; the Rejoin Battle button and the bell remain afterwards. */
@@ -117,15 +118,17 @@ export function useNotificationSubscription() {
     };
   }, [applyNotificationList, userId]);
 
-  // Notifications sent while the socket was down are only in the database: reload the list.
-  useRealtimeReconnect(() => {
+  const reloadNotifications = useCallback(() => {
     if (!userId) {
       return;
     }
     listNotifications()
       .then((notifications) => applyNotificationList(notifications, { replace: true }))
       .catch(() => {});
-  });
+  }, [applyNotificationList, userId]);
+
+  // Notifications sent while the socket was down are only in the database: reload the list.
+  useRealtimeReconnect(reloadNotifications);
 
   useUserNotifications(userId, (message) => {
     if (!userId) {
@@ -141,6 +144,17 @@ export function useNotificationSubscription() {
       removeTradeRequestNotification,
     };
     if (handleTradeNotification(message, tradeContext)) {
+      return;
+    }
+    const membershipContext = {
+      queryClient,
+      location,
+      navigate,
+      reloadNotifications,
+      currentBattleCampaignId: currentBattleSession?.campaignId ?? null,
+      clearCurrentBattleSession,
+    };
+    if (handleMembershipNotification(message, membershipContext)) {
       return;
     }
 
