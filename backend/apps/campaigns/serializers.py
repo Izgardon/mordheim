@@ -161,6 +161,7 @@ class CampaignUpdateSerializer(serializers.Serializer):
         allow_empty=False,
     )
     item_setting_ids = serializers.ListField(child=serializers.IntegerField(), required=False)
+    adjust_existing_warbands = serializers.BooleanField(required=False)  # with a new starting_gold (BUG-78)
 
     def validate_hero_level_thresholds(self, value):
         try:

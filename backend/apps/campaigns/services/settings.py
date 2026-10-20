@@ -1,16 +1,15 @@
-"""The campaign PATCH (BUG-76): the start flag, the settings and the warbands it touches, in one transaction."""
+"""The campaign PATCH (BUG-76): the start flag, the settings and the warbands it adjusts, in one transaction."""
 
 from typing import Any
 
 from django.db import transaction
 
-from apps.warbands.models import Warband
 from apps.warbands.restrictions import get_valid_campaign_item_settings
-from apps.warbands.services import ledger
 
 from ..constants import ADMIN, OWNER
 from ..errors import Refused
 from ..models import Campaign, CampaignSettings
+from . import starting_gold
 
 SETTINGS_FIELDS = (
     "max_heroes",
@@ -26,7 +25,7 @@ SETTINGS_FIELDS = (
 
 
 START_FIELDS = frozenset({"in_progress"})
-UPDATE_FIELDS = frozenset({*START_FIELDS, *SETTINGS_FIELDS, "item_setting_ids"})
+UPDATE_FIELDS = frozenset({*START_FIELDS, *SETTINGS_FIELDS, "item_setting_ids", starting_gold.ADJUST_FLAG})
 
 
 def may_update(role_slug: str, data: Any) -> bool:
@@ -39,8 +38,9 @@ def may_update(role_slug: str, data: Any) -> bool:
 
 def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> None:
     """Apply CampaignUpdateSerializer's data (only the fields sent); all or nothing."""
-    if not validated:
+    if not set(validated) - {starting_gold.ADJUST_FLAG}:
         raise Refused("No updates provided.")
+    old_gold = starting_gold.changed_from(campaign, validated)
     settings_updates = {field: validated[field] for field in SETTINGS_FIELDS if field in validated}
     item_setting_ids = validated.get("item_setting_ids")
     with transaction.atomic():
@@ -56,6 +56,5 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> None:
             settings.save(update_fields=list(settings_updates))
         if item_setting_ids is not None:
             settings.item_settings.set(get_valid_campaign_item_settings(item_setting_ids))
-        if "starting_gold" in settings_updates:
-            for warband in Warband.objects.filter(campaign=campaign):
-                ledger.rewrite_starting_gold(warband, settings_updates["starting_gold"])
+        if old_gold is not None and validated.get(starting_gold.ADJUST_FLAG):
+            starting_gold.adjust_warbands(campaign, old_gold, settings_updates["starting_gold"])

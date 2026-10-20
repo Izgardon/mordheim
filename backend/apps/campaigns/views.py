@@ -35,7 +35,7 @@ from apps.warbands.serializers import WarbandSerializer
 from apps.warbands.services.summary import load_warband_units
 
 from .constants import PERMISSION_CODES
-from .errors import Refused, field_error
+from .errors import CampaignError, Refused, field_error
 from .models import (
     Campaign,
     CampaignBulletinEntry,
@@ -395,7 +395,7 @@ class CampaignDetailView(APIView):
         serializer.is_valid(raise_exception=True)
         try:
             update_campaign(campaign, serializer.validated_data)
-        except Refused as refusal:
+        except (CampaignError, Refused) as refusal:
             return refusal.response()
 
         refreshed = _get_campaign_for_user(campaign_id, request.user)

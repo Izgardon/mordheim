@@ -105,23 +105,6 @@ def _change_balances(changes: dict[int, int], warbands: Sequence[Warband]) -> No
             warband.gold = balances[warband.id]
 
 
-def rewrite_starting_gold(warband: Warband, starting_gold: int) -> None:
-    """Make the warband's oldest row "Starting gold" at `starting_gold`, moving the balance by the difference.
-
-    BUG-78 (pass 4): the oldest row of any action is rewritten, as before; a warband without rows gets one.
-    """
-    amount = abs(int(starting_gold or 0))
-    with transaction.atomic():
-        row = WarbandTrade.objects.select_for_update().filter(warband=warband).order_by("created_at").first()
-        if row is None:
-            record(warband, LedgerAction.STARTING_GOLD, amount, "Starting Gold")
-            return
-        difference = amount - row.price
-        row.action, row.description, row.price = LedgerAction.STARTING_GOLD, "Starting Gold", amount
-        row.save(update_fields=["action", "description", "price", "updated_at"])
-        _change_balances({warband.id: difference}, [warband])
-
-
 def _ledger_sum() -> Coalesce:
     """The sum of the outer warband's rows, 0 without rows."""
     totals = WarbandTrade.objects.filter(warband=OuterRef("pk")).values("warband").annotate(total=Sum("price"))

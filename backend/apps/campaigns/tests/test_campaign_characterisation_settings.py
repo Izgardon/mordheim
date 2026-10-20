@@ -1,19 +1,15 @@
-"""Starting the campaign and changing its settings (BUG-13, BUG-76, BUG-77, BUG-78; CAMP-TEST-06, -22, -23).
+"""Starting the campaign and changing its settings (BUG-13, BUG-76, BUG-77; CAMP-TEST-06, -22).
 
-Every setting is written by the campaign PATCH, which only the owner may send. The 500s from out-of-range numbers
-abort the test's transaction, so they live in `test_campaign_transactions.py`.
+Every setting is written by the campaign PATCH: the owner sends any field, an admin only the start flag. Writes that
+fail part way need committed transactions, so they live in `test_campaign_transactions.py`; starting gold is in
+`test_campaign_starting_gold.py`.
 """
 
 from typing import Any
 
-from django.db import connection
-from django.test.utils import CaptureQueriesContext
-
 from apps.campaigns.models import Campaign, CampaignSettings
 from apps.restrictions.models import Restriction
-from apps.warbands.models import Hero, LedgerAction, Warband, WarbandLog, WarbandTrade
-from apps.warbands.services import ledger
-from apps.warbands.tests.roster_support import clear_ledger, trade_rows
+from apps.warbands.models import Hero
 
 from .campaign_support import CampaignTestCase
 
@@ -165,69 +161,3 @@ class CampaignSettingsTests(CampaignTestCase):
 
         self.assertEqual(created.status_code, 201)
         self.assertEqual((created.data["max_heroes"], created.data["max_players"]), (32767, 8))
-
-
-class StartingGoldTests(CampaignTestCase):
-    """The rival's ledger starts with a purchase, not with its starting gold (CAMP-TEST-23)."""
-
-    def setUp(self) -> None:
-        super().setUp()
-        clear_ledger(self.rival_warband)
-        ledger.record(self.rival_warband, LedgerAction.BUY, -40, "Shield")
-        ledger.record(self.rival_warband, LedgerAction.REWARD, 10, "Purse")
-
-    def set_starting_gold(self, amount):
-        return self.patch_as(self.owner, self.url(), {"starting_gold": amount})
-
-    def gold(self, warband: Warband) -> int:
-        return Warband.objects.values_list("gold", flat=True).get(id=warband.id)
-
-    def test_a_new_starting_gold_rewrites_each_warbands_oldest_row_whatever_its_action(self):
-        # Characterises current behaviour (BUG-78, pinned; flips in PR A: decision 6, one Adjustment per warband)
-        self.assertEqual(trade_rows(self.warband), [(*STARTING, 500, None)])
-
-        response = self.set_starting_gold(600)
-
-        self.assertEqual((response.status_code, response.data["starting_gold"]), (200, 600))
-        self.assertEqual(trade_rows(self.warband), [(*STARTING, 600, None)])
-        self.assertEqual(self.gold(self.warband), 600)
-        self.assertEqual(trade_rows(self.rival_warband), [(*STARTING, 600, None), ("Reward", "Purse", 10, None)])
-        self.assertEqual(self.gold(self.rival_warband), 610)  # the Shield is gone from the ledger
-        self.assertFalse(WarbandLog.objects.filter(warband__campaign=self.campaign).exists())  # and nothing logs it
-
-    def test_saving_the_same_amount_still_rewrites(self):
-        # BUG-78: the save asks nothing and compares nothing
-        self.set_starting_gold(500)
-
-        self.assertEqual(trade_rows(self.rival_warband)[0], (*STARTING, 500, None))
-        self.assertEqual(self.gold(self.rival_warband), 510)
-
-    def test_a_warband_without_rows_gets_one_and_new_warbands_get_the_new_amount(self):
-        clear_ledger(self.warband)
-
-        self.set_starting_gold(450)
-        created = self.post_as(
-            self.admin, "/api/warbands/", {"name": "Ravens", "faction": "Mercenaries", "campaign_id": self.campaign.id}
-        )
-
-        self.assertEqual(trade_rows(self.warband), [(*STARTING, 450, None)])
-        self.assertEqual(trade_rows(Warband.objects.get(id=created.data["id"])), [(*STARTING, 450, None)])
-
-    def test_each_warband_is_rewritten_in_its_own_transaction(self):
-        # Characterises current behaviour (BUG-78, pinned; PR A writes every adjustment in one INSERT and one UPDATE)
-        def rewrite_queries(amount: int) -> list[str]:
-            with CaptureQueriesContext(connection) as captured:
-                self.assertEqual(self.set_starting_gold(amount).status_code, 200)
-            return [query["sql"] for query in captured]
-
-        two = rewrite_queries(600)
-        self.post_as(
-            self.admin, "/api/warbands/", {"name": "Ravens", "faction": "Merc", "campaign_id": self.campaign.id}
-        )
-        three = rewrite_queries(700)
-
-        self.assertEqual(len(three) - len(two), 5)  # SAVEPOINT, the locked oldest row, its UPDATE, the balance, RELEASE
-        self.assertEqual(
-            sum(sql.startswith("SAVEPOINT") for sql in three), 1 + 3
-        )  # the PATCH's own (BUG-76), then one each
-        self.assertEqual(WarbandTrade.objects.filter(warband__campaign=self.campaign).count(), 4)
