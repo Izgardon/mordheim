@@ -10,7 +10,13 @@ from .ledger import (
 )
 from .purchases import WarbandPurchaseView, WarbandRarityRollView
 from .sheet import WarbandSheetView
-from .warbands import WarbandDetailView, WarbandListCreateView, WarbandRestrictionsView, WarbandSummaryView
+from .warbands import (
+    WarbandDetailView,
+    WarbandListCreateView,
+    WarbandRestrictionsView,
+    WarbandRosterStatsView,
+    WarbandSummaryView,
+)
 
 __all__ = [
     "WarbandDetailView",
@@ -29,6 +35,7 @@ __all__ = [
     "WarbandResourceSaleView",
     "WarbandRestrictionsView",
     "WarbandSheetView",
+    "WarbandRosterStatsView",
     "WarbandSummaryView",
     "WarbandTradeDetailView",
     "WarbandTradeListCreateView",
