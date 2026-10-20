@@ -33,6 +33,9 @@ class RestrictionNoteSerializer(serializers.Serializer):
     def to_internal_value(self, data: Any) -> Any:
         return super().to_internal_value(data if isinstance(data, Mapping) else {"restriction_id": data})
 
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        return {"additional_note": "", **attrs}  # in a PATCH too, where DRF skips defaults
+
 
 def unique_restriction_notes(notes: Iterable[Mapping[str, Any]]) -> list[dict[str, Any]]:
     """The links once each (one row per restriction and note), in the order sent."""

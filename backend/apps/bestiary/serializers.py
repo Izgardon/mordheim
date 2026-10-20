@@ -99,6 +99,9 @@ class EquipmentInputSerializer(serializers.Serializer):
     def to_internal_value(self, data: Any) -> Any:
         return super().to_internal_value(data if isinstance(data, Mapping) else {"item_id": data})
 
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        return {"quantity": 1, **attrs}  # in a PATCH too, where DRF skips defaults
+
 
 class BestiaryEntryWriteSerializer(serializers.ModelSerializer):
     """A campaign bestiary entry's create or edit, checked whole before anything is written (BUG-53). Linked ids are

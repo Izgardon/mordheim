@@ -127,6 +127,10 @@ class AvailabilityInputSerializer(serializers.Serializer):
     variable_cost = serializers.CharField(max_length=120, allow_blank=True, allow_null=True, required=False)
     restrictions = RestrictionNoteSerializer(many=True, required=False)
 
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        # a PATCH's availabilities are whole rows: the defaults apply there too (DRF skips them in a partial write)
+        return {"cost": 0, "rarity": 2, "restrictions": [], **attrs}
+
 
 class ItemWriteSerializer(serializers.ModelSerializer):
     """A custom item's create or edit. Linked ids are the book's or this campaign's (`context["campaign_id"]`,
