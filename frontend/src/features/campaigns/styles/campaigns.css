@@ -47,7 +47,8 @@
   border-radius: 1.75rem;
 }
 
-.campaign-ornate-card-link:focus-visible {
+/* The card's link is its title, stretched over the card (CAMP-UX-07): it shows the focus. */
+.campaign-card-open:focus-visible {
   outline: none;
 }
 
@@ -115,7 +116,7 @@
 }
 
 .campaign-ornate-card-link:hover .campaign-ornate-frame,
-.campaign-ornate-card-link:focus-visible .campaign-ornate-frame {
+.campaign-ornate-card-link:has(.campaign-card-open:focus-visible) .campaign-ornate-frame {
   transform: translateY(-3px);
   box-shadow:
     0 30px 56px rgba(0, 0, 0, 0.54),
@@ -124,7 +125,7 @@
   filter: saturate(1.04);
 }
 
-.campaign-ornate-card-link:focus-visible .campaign-ornate-frame {
+.campaign-ornate-card-link:has(.campaign-card-open:focus-visible) .campaign-ornate-frame {
   box-shadow:
     0 0 0 2px rgba(244, 219, 169, 0.72),
     0 30px 56px rgba(0, 0, 0, 0.54),
