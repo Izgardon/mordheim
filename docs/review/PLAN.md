@@ -158,7 +158,7 @@ Types: **New** (new functionality), **Tweak** (change to existing behaviour), **
 | 0 Foundations | — | — | — | 0-A | 0-B to 0-E | — | **Merged to main and deployed 2026-10-17** (`7cc3831`); design 0.28 built in pass 1, 0.29 in part (`WarbandScopedView`, `capabilities`) |
 | 1 Warband roster | [Done](briefs/pass-1-warband-roster.md) | Answered 2026-10-17 | 119 backend + 527 frontend tests | PR A done incl. part 2 | Done | Done | **Merged to main and deployed 2026-10-17** (`7cc3831`) |
 | 2 Economy and trades | [Done](briefs/pass-2-economy-trades.md) | Answered 2026-10-17 | 90 backend + 89 frontend tests | Done | Done | Done | 2026-10-18 |
-| 3 Battles | [Done](briefs/pass-3-battles.md) | Answered 2026-10-18 | 80 backend (2 expected failures) + 26 frontend tests (`pass3/battles`) | | | | |
+| 3 Battles | [Done](briefs/pass-3-battles.md) | Answered 2026-10-18 | 80 backend (2 expected failures) + 26 frontend tests (`pass3/battles`) | Done | Done | Done | 2026-10-20 |
 | 4 Campaigns | [Done](briefs/pass-4-campaigns.md) | Answered 2026-10-18 | | | | | |
 | 5 Catalogue | [Done](briefs/pass-5-catalogue.md) | Answered 2026-10-19 | | | | | |
 | 6 Auth and core | [Done](briefs/pass-6-auth-core.md) | Answered 2026-10-19 | | | | | |
