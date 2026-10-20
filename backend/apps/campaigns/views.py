@@ -39,6 +39,7 @@ from apps.warbands.services import ledger
 from apps.warbands.services.summary import load_warband_units
 
 from .constants import JOIN_GRANTS, OWNER, PERMISSION_CODES, PLAYER
+from .errors import field_error
 from .models import (
     Campaign,
     CampaignBulletinEntry,
@@ -1019,8 +1020,13 @@ class CampaignMemberPermissionsView(APIView):
         serializer = MembershipPermissionsUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         requested = serializer.validated_data["permissions"]
+        unknown = [code for code in requested if code not in PERMISSION_CODES]
+        if unknown:  # refused, never dropped (BUG-15)
+            return field_error(
+                "permissions", f"Unknown permission: {', '.join(unknown)}.", "unknown_permission"
+            ).response()
         by_code = {permission.code: permission for permission in CampaignPermission.objects.filter(code__in=requested)}
-        allowed_permissions = [by_code[code] for code in requested if code in by_code]
+        allowed_permissions = [by_code[code] for code in requested]
 
         CampaignMembershipPermission.objects.filter(membership=target_membership).delete()
         CampaignMembershipPermission.objects.bulk_create(

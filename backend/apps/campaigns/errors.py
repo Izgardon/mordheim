@@ -1,0 +1,36 @@
+"""A refused campaign request in the standard error shape `{"detail": str, "code": str, "fields": {name: [msg]}}`.
+
+Services raise it inside the request's transaction, so nothing they wrote is kept, and the view answers it. `code`
+is stable for clients to branch on; older campaign refusals keep their detail-only body.
+"""
+
+from typing import Any
+
+from rest_framework.response import Response
+
+
+class CampaignError(Exception):
+    def __init__(
+        self,
+        detail: str,
+        *,
+        code: str = "invalid",
+        fields: dict[str, list[str]] | None = None,
+        status: int = 400,
+        **extra: Any,
+    ) -> None:
+        super().__init__(detail)
+        self.detail = detail
+        self.code = code
+        self.fields = fields or {}
+        self.status = status
+        self.extra = extra
+
+    def response(self) -> Response:
+        body = {"detail": self.detail, "code": self.code, "fields": self.fields, **self.extra}
+        return Response(body, status=self.status)
+
+
+def field_error(field: str, detail: str, code: str = "invalid") -> CampaignError:
+    """A 400 for one invalid input field."""
+    return CampaignError(detail, code=code, fields={field: [detail]})

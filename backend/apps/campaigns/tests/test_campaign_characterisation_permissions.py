@@ -128,13 +128,21 @@ class GrantTests(CampaignTestCase):
     def put_grants(self, actor, target, codes):
         return self.put_as(actor, self.url(f"members/{target.id}/permissions/"), {"permissions": codes})
 
-    def test_unknown_codes_are_dropped_silently(self):
-        # Characterises current behaviour (BUG-15, pinned; flips in PR A: 400 unknown_permission)
+    def test_unknown_codes_are_refused_and_nothing_changes(self):
+        # BUG-15: 400 unknown_permission (they used to be dropped silently); manage_spells is a real code now
         response = self.put_grants(self.owner, self.player, ["manage_items", "manage_spells", "manage_features", "x"])
 
-        self.assertEqual(response.status_code, 200)
-        codes = [row["code"] for row in response.json()]
-        self.assertEqual(codes, ["manage_items", "manage_spells"])  # manage_spells is seeded now
+        self.assertEqual(response.status_code, 400)
+        detail = "Unknown permission: manage_features, x."
+        self.assertEqual(
+            response.json(),
+            {"detail": detail, "code": "unknown_permission", "fields": {"permissions": [detail]}},
+        )
+        self.assertEqual(self.codes(self.player), ["add_custom"])
+
+        granted = self.put_grants(self.owner, self.player, ["manage_spells", "manage_items"])
+
+        self.assertEqual([row["code"] for row in granted.json()], ["manage_spells", "manage_items"])
         self.assertEqual(self.codes(self.player), ["manage_items", "manage_spells"])
 
     def test_the_put_replaces_the_grants_after_tidying_the_codes(self):
