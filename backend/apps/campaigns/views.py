@@ -1096,7 +1096,10 @@ class CampaignMessagesView(MethodScopedThrottleMixin, APIView):
         if not membership:
             return Response({"detail": "Not found"}, status=404)
 
-        body = str(request.data.get("body", "")).strip()
+        raw_body = request.data.get("body", "")
+        if not isinstance(raw_body, str):  # BUG-129: a list or object used to be stored as its Python repr
+            return field_error("body", "Message body must be text.").response()
+        body = raw_body.strip()
         if not body:
             return Response({"detail": "Message body is required."}, status=400)
         if len(body) > 2000:

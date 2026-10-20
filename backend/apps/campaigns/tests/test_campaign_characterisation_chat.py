@@ -89,11 +89,17 @@ class ChatTests(CampaignTestCase):
         self.assertEqual(self.post_as(self.player, self.url("messages/"), {"body": "x" * 2000}).status_code, 201)
         self.assertEqual(CampaignMessage.objects.count(), 1)
 
-    def test_a_body_that_is_not_text_is_stored_as_its_python_repr(self):
-        # Characterises current behaviour (BUG-129, pinned): str() of whatever JSON came in
-        response = self.post_as(self.player, self.url("messages/"), {"body": ["hello", 2]})
-
-        self.assertEqual((response.status_code, response.json()["body"]), (201, "['hello', 2]"))
+    def test_a_body_that_is_not_text_is_refused(self):
+        # BUG-129: str() of whatever JSON came in used to be stored ({"body": ["hello", 2]} -> "['hello', 2]")
+        detail = "Message body must be text."
+        for body in (["hello", 2], {"text": "hi"}, 42, True, None):
+            with self.subTest(body=body):
+                response = self.post_as(self.player, self.url("messages/"), {"body": body})
+                self.assertEqual(
+                    (response.status_code, response.json()),
+                    (400, {"detail": detail, "code": "invalid", "fields": {"body": [detail]}}),
+                )
+        self.assertFalse(CampaignMessage.objects.exists())
 
     def test_only_members_read_and_post_and_nobody_deletes(self):
         self.say(1)
