@@ -1,37 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
-import type { FocusEvent, ReactNode } from "react";
+import { useEffect } from "react";
+import type { ReactNode } from "react";
 
-import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 import { Button } from "@components/button";
-import { ConfirmDialog } from "@components/confirm-dialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@components/dialog";
-import { FieldError } from "@components/field-error";
-import { Input } from "@components/input";
-import { Label } from "@components/label";
-import { Tooltip } from "@components/tooltip";
 
-import { createSkill, deleteSkill, updateSkill } from "../api/skills-api";
-import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
-import { useCatalogueCache } from "@/lib/catalogue-queries";
-import { useFieldErrors } from "@/lib/field-errors";
+import {
+  CatalogueFormDialog,
+  editEntryTrigger,
+} from "@/features/catalogue/components/CatalogueFormDialog";
+import { useControllableOpen } from "@/features/catalogue/hooks/useControllableOpen";
+
+import { useSkillForm } from "../hooks/useSkillForm";
+import SkillFormFields from "./SkillFormFields";
 
 import type { Skill } from "../types/skill-types";
-
-import { Pencil } from "lucide-react";
-
-type SkillFormState = {
-  name: string;
-  type: string;
-  description: string;
-  typeCommitted: boolean;
-};
 
 type SkillFormDialogBaseProps = {
   typeOptions?: string[];
@@ -56,382 +37,44 @@ type SkillFormDialogEditProps = SkillFormDialogBaseProps & {
 
 type SkillFormDialogProps = SkillFormDialogCreateProps | SkillFormDialogEditProps;
 
-const initialState: SkillFormState = {
-  name: "",
-  type: "",
-  description: "",
-  typeCommitted: false,
-};
-
-const formatTypeLabel = (value: string) => value.replace(/_/g, " ");
-
-const buildFormFromSkill = (skill: Skill): SkillFormState => ({
-  name: skill.name ?? "",
-  type: skill.type ?? "",
-  description: skill.description ?? "",
-  typeCommitted: true,
-});
-
+/** The warband pages' New skill dialog (and an edit mode, with Delete). */
 export default function SkillFormDialog(props: SkillFormDialogProps) {
-  const { mode, typeOptions = [], trigger, open: openProp, onOpenChange } = props;
-  const skill = mode === "edit" ? props.skill : null;
-  const campaignId = mode === "create" ? props.campaignId : (skill?.campaign_id ?? NaN);
-  const catalogueCache = useCatalogueCache();
-
-  const [open, setOpen] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [formError, setFormError] = useState("");
-  const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete skill");
-  const [form, setForm] = useState<SkillFormState>(() =>
-    mode === "edit" && skill ? buildFormFromSkill(skill) : initialState
-  );
-  const [customTypes, setCustomTypes] = useState<string[]>([]);
-  const [isTypeMenuOpen, setIsTypeMenuOpen] = useState(false);
-
-  const resolvedOpen = openProp ?? open;
-  const fieldErrors = useFieldErrors(["name"], resolvedOpen);
-  const setResolvedOpen = (nextOpen: boolean) => {
-    if (openProp === undefined) {
-      setOpen(nextOpen);
-    }
-    onOpenChange?.(nextOpen);
-  };
-
-  const resetForm = () => {
-    if (mode === "edit" && skill) {
-      setForm(buildFormFromSkill(skill));
-    } else {
-      setForm(initialState);
-    }
-    setCustomTypes([]);
-    setFormError("");
-    setIsTypeMenuOpen(false);
-  };
+  const { mode, typeOptions = [], trigger } = props;
+  const skill = props.mode === "edit" ? props.skill : null;
+  const campaignId = props.mode === "create" ? props.campaignId : (skill?.campaign_id ?? NaN);
+  const dialog = useControllableOpen(props);
+  const form = useSkillForm({
+    campaignId,
+    skill,
+    typeOptions,
+    resetKey: dialog.open,
+    onSaved: (saved) => (props.mode === "create" ? props.onCreated(saved) : props.onUpdated(saved)),
+    onDeleted: props.mode === "edit" ? props.onDeleted : undefined,
+  });
+  const { load } = form;
 
   useEffect(() => {
-    if (!resolvedOpen) {
-      return;
+    if (dialog.open) {
+      load(skill);
     }
-
-    if (mode === "edit" && skill) {
-      setForm(buildFormFromSkill(skill));
-    }
-
-    setCustomTypes([]);
-    setFormError("");
-    setIsTypeMenuOpen(false);
-  }, [mode, resolvedOpen, skill]);
-
-  const normalizedTypeOptions = useMemo(() => {
-    const unique = new Map<string, string>();
-    const pushOption = (option: string) => {
-      const trimmed = option.trim();
-      if (!trimmed) {
-        return;
-      }
-      const key = trimmed.toLowerCase();
-      if (!unique.has(key)) {
-        unique.set(key, trimmed);
-      }
-    };
-
-    typeOptions.forEach(pushOption);
-    customTypes.forEach(pushOption);
-    if (mode === "edit" && skill?.type) {
-      pushOption(skill.type);
-    }
-
-    return Array.from(unique.values()).sort((a, b) => a.localeCompare(b));
-  }, [customTypes, mode, skill?.type, typeOptions]);
-
-  const trimmedType = form.type.trim();
-  const typeQuery = trimmedType.toLowerCase();
-  const filteredTypeOptions = useMemo(() => {
-    if (!typeQuery) {
-      return normalizedTypeOptions;
-    }
-    return normalizedTypeOptions.filter((option) => option.toLowerCase().includes(typeQuery));
-  }, [normalizedTypeOptions, typeQuery]);
-
-  const typeExists = Boolean(
-    trimmedType && normalizedTypeOptions.some((option) => option.toLowerCase() === typeQuery)
-  );
-  const canAddType = Boolean(trimmedType && !typeExists);
-
-  const handleTypeBlur = (event: FocusEvent<HTMLDivElement>) => {
-    if (event.currentTarget.contains(event.relatedTarget as Node | null)) {
-      return;
-    }
-    setIsTypeMenuOpen(false);
-  };
-
-  const handleSelectType = (value: string) => {
-    setForm((prev) => ({
-      ...prev,
-      type: value,
-      typeCommitted: true,
-    }));
-    setIsTypeMenuOpen(false);
-  };
-
-  const handleAddType = () => {
-    if (!trimmedType) {
-      return;
-    }
-    if (!typeExists) {
-      setCustomTypes((prev) => [trimmedType, ...prev]);
-    }
-    setForm((prev) => ({
-      ...prev,
-      type: trimmedType,
-      typeCommitted: true,
-    }));
-    setIsTypeMenuOpen(false);
-  };
-
-  const handleOpenChange = (nextOpen: boolean) => {
-    setResolvedOpen(nextOpen);
-    if (!nextOpen) {
-      resetForm();
-      deleteConfirm.close();
-    }
-  };
-
-  const handleCancel = () => {
-    handleOpenChange(false);
-  };
-
-  const handleSave = async () => {
-    if (!form.name.trim() || !form.type.trim() || !form.description.trim()) {
-      setFormError("Name, type, and description are required.");
-      return;
-    }
-
-    if (!form.typeCommitted) {
-      setFormError("Add or select a type before saving.");
-      return;
-    }
-
-    if (mode === "create" && Number.isNaN(props.campaignId)) {
-      setFormError("Unable to create skill.");
-      return;
-    }
-
-    setIsSaving(true);
-    setFormError("");
-
-    try {
-      if (mode === "create") {
-        const newSkill = await createSkill({
-          name: form.name.trim(),
-          type: form.type.trim(),
-          description: form.description.trim(),
-          campaign_id: props.campaignId,
-        });
-        catalogueCache.upsert("skills", campaignId, newSkill);
-        props.onCreated(newSkill);
-      } else if (skill) {
-        const updated = await updateSkill(skill.id, {
-          name: form.name.trim(),
-          type: form.type.trim(),
-          description: form.description.trim(),
-        });
-        catalogueCache.upsert("skills", campaignId, updated);
-        props.onUpdated(updated);
-      }
-      setResolvedOpen(false);
-      resetForm();
-    } catch (errorResponse) {
-      setFormError(fieldErrors.take(errorResponse, "Unable to save skill"));
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (mode !== "edit" || !skill) {
-      return;
-    }
-
-    setIsSaving(true);
-    deleteConfirm.clearError();
-
-    try {
-      await deleteSkill(skill.id);
-      catalogueCache.remove("skills", campaignId, skill.id);
-      props.onDeleted(skill.id);
-      setResolvedOpen(false);
-      deleteConfirm.close();
-    } catch (errorResponse) {
-      deleteConfirm.refused(errorResponse);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const triggerNode =
-    trigger === undefined ? (
-      mode === "create" ? (
-        <Button>Add skill</Button>
-      ) : (
-        <Tooltip
-          trigger={
-            <button
-              type="button"
-              aria-label="Edit skill"
-              className="icon-button flex h-9 w-9 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <Pencil className="h-5 w-5" aria-hidden="true" />
-            </button>
-          }
-          content="Edit"
-        />
-      )
-    ) : (
-      trigger
-    );
-
-  const title = mode === "create" ? "Add Skill" : "Edit Skill";
-  const idSuffix = mode === "edit" && skill ? `-${skill.id}` : "";
+  }, [dialog.open, load, skill]);
 
   return (
-    <Dialog open={resolvedOpen} onOpenChange={handleOpenChange}>
-      {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
-      <DialogContent className="max-w-[750px]">
-        <DialogHeader>
-          <DialogTitle className="font-bold" style={{ color: "#a78f79" }}>
-            {title}
-          </DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor={`skill-name${idSuffix}`}>Name</Label>
-            <Input
-              id={`skill-name${idSuffix}`}
-              value={form.name}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  name: event.target.value,
-                }))
-              }
-              aria-invalid={Boolean(fieldErrors.errors.name)}
-              placeholder="Quick Hands"
-              required
-            />
-            <FieldError message={fieldErrors.errors.name} />
-          </div>
-          <div
-            className="relative space-y-2"
-            onFocusCapture={() => setIsTypeMenuOpen(true)}
-            onBlurCapture={handleTypeBlur}
-          >
-            <Label htmlFor={`skill-type${idSuffix}`}>List</Label>
-            <ActionSearchInput
-              id={`skill-type${idSuffix}`}
-              value={form.type}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  type: event.target.value,
-                  typeCommitted: false,
-                }))
-              }
-              placeholder="Search or add a list"
-              actionLabel="Add list"
-              actionAriaLabel="Add custom list"
-              actionDisabled={!canAddType}
-              onAction={handleAddType}
-              required
-              autoComplete="off"
-            >
-              <ActionSearchDropdown
-                open={isTypeMenuOpen}
-                onClose={() => setIsTypeMenuOpen(false)}
-                className="z-50 rounded-2xl"
-              >
-                {filteredTypeOptions.length > 0 ? (
-                  <div className="max-h-40 w-full overflow-y-auto p-2 text-sm">
-                    <div className="space-y-1">
-                      {filteredTypeOptions.map((option) => (
-                        <button
-                          key={option}
-                          type="button"
-                          onClick={() => handleSelectType(option)}
-                          className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm text-foreground hover:bg-accent/30"
-                        >
-                          <span className="font-medium">{formatTypeLabel(option)}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="w-full px-3 py-2 text-xs text-muted-foreground">
-                    No matching types yet.
-                  </div>
-                )}
-              </ActionSearchDropdown>
-            </ActionSearchInput>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor={`skill-description${idSuffix}`}>Description</Label>
-            <textarea
-              id={`skill-description${idSuffix}`}
-              value={form.description}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  description: event.target.value,
-                }))
-              }
-              placeholder="Describe the skill."
-              className="min-h-[120px] w-full rounded-2xl border border-input/80 bg-background/60 px-3 py-2 text-sm text-foreground shadow-[0_12px_20px_rgba(5,20,24,0.25)] placeholder:text-muted-foreground/60 placeholder:italic focus-visible:outline-none focus-visible:shadow-[0_12px_20px_rgba(5,20,24,0.25),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]"
-              required
-            />
-          </div>
-          {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
-        </div>
-        <DialogFooter
-          className={
-            mode === "edit" ? "flex flex-wrap items-center justify-between gap-3" : undefined
-          }
-        >
-          {mode === "edit" && props.canDelete ? (
-            <Button
-              variant="secondary"
-              type="button"
-              onClick={deleteConfirm.open}
-              disabled={isSaving}
-              className="mr-auto"
-            >
-              Delete
-            </Button>
-          ) : null}
-          <Button variant="secondary" type="button" onClick={handleCancel} disabled={isSaving}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave} disabled={isSaving}>
-            {isSaving ? "Saving..." : mode === "create" ? "Add skill" : "Save changes"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-      {mode === "edit" && skill ? (
-        <ConfirmDialog
-          open={deleteConfirm.isOpen}
-          onOpenChange={deleteConfirm.onOpenChange}
-          error={deleteConfirm.error}
-          description={
-            <span>
-              Delete <span className="font-semibold text-foreground">{skill.name}</span>? This
-              action cannot be undone.
-            </span>
-          }
-          confirmText={isSaving ? "Deleting..." : "Delete skill"}
-          confirmDisabled={isSaving}
-          isConfirming={isSaving}
-          onConfirm={handleDelete}
-        />
-      ) : null}
-    </Dialog>
+    <CatalogueFormDialog
+      form={form}
+      dialog={dialog}
+      editing={skill}
+      title={mode === "create" ? "Add Skill" : "Edit Skill"}
+      noun="skill"
+      trigger={trigger}
+      defaultTrigger={
+        mode === "create" ? <Button>Add skill</Button> : editEntryTrigger("Edit skill")
+      }
+      submitLabel={mode === "create" ? "Add skill" : "Save changes"}
+      canDelete={props.mode === "edit" && props.canDelete}
+      onReset={() => load(skill)}
+    >
+      <SkillFormFields layout="dialog" form={form} idSuffix={skill ? `-${skill.id}` : ""} />
+    </CatalogueFormDialog>
   );
 }

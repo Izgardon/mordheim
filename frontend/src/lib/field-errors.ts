@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { ApiError } from "./api-client";
 import { getRefusalMessage } from "./get-error-message";
@@ -87,13 +87,15 @@ export function formRefusal(error: unknown, shown: readonly string[], fallback: 
 export function useFieldErrors(shown: readonly string[], resetKey?: unknown) {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [errorsKey, setErrorsKey] = useState(resetKey);
+  const clear = useCallback(() => setErrors({}), []);
   if (errorsKey !== resetKey) {
     setErrorsKey(resetKey);
     setErrors({});
   }
   return {
     errors,
-    clear: () => setErrors({}),
+    /** Stable, so a form's reset can depend on it. */
+    clear,
     /** Puts a refusal's messages on the fields shown and returns the rest as one line. */
     take: (error: unknown, fallback: string) => {
       const refusal = formRefusal(error, shown, fallback);

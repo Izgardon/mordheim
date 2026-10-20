@@ -77,3 +77,5 @@ export function useCatalogueDeleteConfirm(fallback: string) {
     refused: (caught: unknown) => setError(deleteRefusalMessage(caught, fallback)),
   };
 }
+
+export type CatalogueDeleteConfirmState = ReturnType<typeof useCatalogueDeleteConfirm>;
