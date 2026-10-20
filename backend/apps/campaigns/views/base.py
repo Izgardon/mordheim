@@ -9,7 +9,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ..access import CAMPAIGN_RULES, CampaignAccess, load_campaign_access
+from ..access import CAMPAIGN_RULES, CampaignAccess, campaign_capabilities, load_campaign_access
 from ..errors import CampaignError, Refused
 
 
@@ -57,3 +57,7 @@ class CampaignScopedView(AnswersRefusals):
         """403 "Forbidden" unless the caller passes the rule (for `obj`, for an object rule)."""
         if name is None or not CAMPAIGN_RULES[name](self.access, obj):
             raise PermissionDenied("Forbidden")
+
+    def capabilities(self) -> dict[str, bool]:
+        """What the caller may do in the campaign, as flags (access.CAPABILITIES): no query."""
+        return campaign_capabilities(self.access)

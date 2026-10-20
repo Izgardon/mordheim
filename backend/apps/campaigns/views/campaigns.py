@@ -39,7 +39,7 @@ class JoinCampaignView(AnswersRefusals):
 
 
 class CampaignDetailView(CampaignScopedView):
-    """GET: the campaign with the caller's permissions. PATCH: the start flag (owners and admins)
+    """GET: the campaign with the caller's permissions and capabilities. PATCH: the start flag (owners and admins)
     or the settings (the owner). DELETE: the owner deletes it."""
 
     rules = {"GET": "view", "PATCH": "view", "DELETE": "delete"}  # PATCH: the rule depends on the fields sent
@@ -49,8 +49,10 @@ class CampaignDetailView(CampaignScopedView):
         if not campaign:
             return Response({"detail": "Not found"}, status=404)
         data = CampaignSerializer(campaign).data
-        # Pages read the caller's permissions from here instead of each fetching /permissions/me/.
+        # Pages read the caller's permissions from here instead of each fetching /permissions/me/, and gate their
+        # controls on the capabilities (design 0.29): what the server lets him do, from the same read
         data["permissions"] = self.access.codes
+        data["capabilities"] = self.capabilities()
         return Response(data)
 
     def delete(self, request, campaign_id):
