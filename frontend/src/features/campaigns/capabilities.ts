@@ -21,6 +21,11 @@ export const CAMPAIGN_CAPABILITIES = [
   "grant_permissions",
   "change_roles",
   "remove_members",
+  "hand_over",
+  "archive",
+  "restore",
+  "remove_posts",
+  "leave",
   "add_custom",
   "manage_items",
   "manage_skills",
@@ -82,6 +87,16 @@ export function hasCampaignSettings(capabilities: CampaignCapabilities) {
     capabilities.view_members ||
     capabilities.manage_battles ||
     capabilities.edit_settings ||
+    capabilities.archive ||
+    capabilities.restore ||
     capabilities.delete
   );
+}
+
+/**
+ * An archived campaign is read-only for everyone (decision 5): writes no capability names (a new
+ * battle, a chat message, a bulletin note, an encampment) hide while it is.
+ */
+export function isArchived(campaign: Pick<CampaignSummary, "archived_at"> | null | undefined) {
+  return Boolean(campaign?.archived_at);
 }

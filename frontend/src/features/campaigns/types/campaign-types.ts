@@ -32,6 +32,10 @@ export type CampaignSummary = {
    */
   capabilities?: Partial<Record<CampaignCapability, boolean>>;
   in_progress: boolean;
+  /** Set while the campaign is archived: read-only for everyone until its owner restores it. */
+  archived_at?: string | null;
+  /** Chat messages from others after your read mark (the detail only, CAMP-TWEAK-09). */
+  chat_unread?: number;
   created_at: string;
   updated_at: string;
 };
@@ -114,6 +118,9 @@ export type CampaignActiveBattle = {
   participants: BattleParticipant[];
   /** The owner tools that apply to this battle now (BATL-NEW-03). */
   actions?: { end: boolean; confirm_results: boolean; close_postbattle: boolean; cancel: boolean };
+  /** Seconds since the battle's last write, and whether that is past the server's 24 h. */
+  idle_seconds?: number | null;
+  stuck?: boolean;
 };
 
 export type CampaignPivotalMoment = {
@@ -142,13 +149,19 @@ export type CampaignTopKiller = {
   kills: number;
 };
 
+/** Who removed a post: an owner or admin, or its author (decision 8). */
+export type PostRemovedBy = "admin" | "author";
+
 export type CampaignBulletinEntry = {
   id: number;
   campaign_id: number;
   user_id: number | null;
   username: string;
+  /** Empty once removed. */
   body: string;
   created_at: string;
+  removed_at?: string | null;
+  removed_by?: PostRemovedBy | null;
 };
 
 export type CampaignEncampment = {
@@ -157,7 +170,11 @@ export type CampaignEncampment = {
   name: string;
   owner_id: number | null;
   owner_name: string | null;
+  /** The owner has left the campaign (shown as "(left)"). */
+  owner_left?: boolean;
   description: string;
+  /** Whether you may edit, reassign and remove it: its owner, or manage_encampments. */
+  capabilities?: { edit?: boolean };
 };
 
 export type CampaignEncampmentPayload = {
@@ -213,6 +230,9 @@ export type MemberRemovalPreview = {
   notifications: number;
 };
 
+/** What leaving closes (`GET leave/`): removal's preview, and whether it archives the campaign. */
+export type LeavePreview = MemberRemovalPreview & { archives_campaign: boolean };
+
 /** A permission code as `GET permissions/` (and the grant PUT) answer it, in the server's order. */
 export type CampaignPermission = {
   code: string;
@@ -225,8 +245,11 @@ export type CampaignMessage = {
   campaign_id: number;
   user_id: number | null;
   username: string;
+  /** Empty once removed. */
   body: string;
   created_at: string;
+  removed_at?: string | null;
+  removed_by?: PostRemovedBy | null;
 };
 
 /** One unit's stat line in the overview's expanded roster row (from `roster-stats/`). */

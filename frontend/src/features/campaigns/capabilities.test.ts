@@ -5,6 +5,7 @@ import {
   campaignCapabilities,
   canRemoveMember,
   hasCampaignSettings,
+  isArchived,
   readCapabilities,
 } from "./capabilities";
 
@@ -79,6 +80,17 @@ describe("hasCampaignSettings", () => {
     expect(hasCampaignSettings({ ...none, manage_battles: true })).toBe(true);
     expect(hasCampaignSettings({ ...none, edit_settings: true })).toBe(true);
     expect(hasCampaignSettings({ ...none, delete: true })).toBe(true);
+    expect(hasCampaignSettings({ ...none, archive: true })).toBe(true);
+    expect(hasCampaignSettings({ ...none, restore: true })).toBe(true);
     expect(hasCampaignSettings({ ...none, add_custom: true, manage_items: true })).toBe(false);
+  });
+});
+
+describe("isArchived", () => {
+  it("reads the campaign's archived_at", () => {
+    expect(isArchived({ archived_at: "2026-10-20T10:00:00Z" })).toBe(true);
+    expect(isArchived({ archived_at: null })).toBe(false);
+    expect(isArchived({})).toBe(false);
+    expect(isArchived(null)).toBe(false);
   });
 });

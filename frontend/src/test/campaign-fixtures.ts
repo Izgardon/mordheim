@@ -90,13 +90,13 @@ export const ALL_PERMISSION_CODES = PERMISSION_CATALOGUE.map((entry) => entry.co
 export function capabilitiesFor(
   campaign: Pick<
     CampaignSummary,
-    "role" | "permissions" | "enable_encampments" | "enable_locations"
+    "role" | "permissions" | "enable_encampments" | "enable_locations" | "archived_at"
   >
 ): Record<CampaignCapability, boolean> {
   const isOwner = campaign.role === "owner";
   const isStaff = isOwner || campaign.role === "admin";
   const holds = (code: string) => isStaff || (campaign.permissions ?? []).includes(code);
-  return {
+  const flags: Record<CampaignCapability, boolean> = {
     edit_settings: isOwner,
     start: isStaff,
     delete: isOwner,
@@ -105,6 +105,11 @@ export function capabilitiesFor(
     grant_permissions: isStaff,
     change_roles: isOwner,
     remove_members: isStaff,
+    hand_over: isOwner,
+    archive: isOwner,
+    restore: false,
+    remove_posts: isStaff,
+    leave: !isOwner,
     add_custom: holds("add_custom"),
     manage_items: holds("manage_items"),
     manage_skills: holds("manage_skills"),
@@ -117,6 +122,15 @@ export function capabilitiesFor(
     manage_bestiary: holds("manage_bestiary"),
     manage_battles: holds("manage_battles"),
   };
+  if (!campaign.archived_at) {
+    return flags;
+  }
+  // Archived: read-only for everyone; the owner may restore it or delete it for good.
+  const archived = Object.fromEntries(Object.keys(flags).map((key) => [key, false])) as Record<
+    CampaignCapability,
+    boolean
+  >;
+  return { ...archived, view_members: isStaff, restore: isOwner, delete: isOwner };
 }
 
 /** `GET campaigns/1/` as the owner reads it; a started Standard campaign by default. */
