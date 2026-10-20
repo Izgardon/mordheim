@@ -69,7 +69,7 @@ describe("campaign overview requests", () => {
     );
   });
 
-  it("sends the four overview lists again on a revisit within every stale time, and nothing else (CAMP-TEST-04 baseline, pinned; flips in PR B)", async () => {
+  it("sends nothing on a revisit within every stale time: the overview reads its cached lists (CAMP-TEST-04)", async () => {
     const user = setupUser();
     await openOverview();
     await user.click(screen.getByRole("link", { name: "Skills" }));
@@ -80,6 +80,6 @@ describe("campaign overview requests", () => {
     await screen.findByRole("button", { name: /Aldric/ });
     await settle();
 
-    expect([...fakeApi.calls()].sort()).toEqual([...OVERVIEW_LISTS].sort());
+    expect(fakeApi.calls()).toEqual([]);
   });
 });

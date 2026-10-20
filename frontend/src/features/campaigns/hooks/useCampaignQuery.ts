@@ -3,13 +3,13 @@ import type { Dispatch, SetStateAction } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 // api
-import { getCampaign, listCampaignPermissions } from "../api/campaigns-api";
+import { getCampaign, listCampaignPermissions, updateCampaign } from "../api/campaigns-api";
 
 // other
 import { queryKeys } from "@/lib/query-keys";
 
 // types
-import type { CampaignSummary } from "../types/campaign-types";
+import type { CampaignSummary, CampaignUpdatePayload } from "../types/campaign-types";
 
 /** Campaign settings and the caller's permissions change rarely, and writes update the cache. */
 export const CAMPAIGN_STALE_TIME_MS = 5 * 60_000;
@@ -63,5 +63,21 @@ export function useSetCampaign(campaignId: number) {
       );
     },
     [campaignId, queryClient]
+  );
+}
+
+/**
+ * PATCHes the campaign (a start, a settings card) and writes the answer into the layout's cached
+ * campaign, which every page reads; resolves with the answer.
+ */
+export function useUpdateCampaign(campaignId: number) {
+  const setCampaign = useSetCampaign(campaignId);
+  return useCallback(
+    async (payload: CampaignUpdatePayload) => {
+      const updated = await updateCampaign(campaignId, payload);
+      setCampaign(updated);
+      return updated;
+    },
+    [campaignId, setCampaign]
   );
 }

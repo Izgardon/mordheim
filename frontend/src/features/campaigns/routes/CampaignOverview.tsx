@@ -38,7 +38,7 @@ const resolveOverviewTab = (value: string | null): OverviewTab | null =>
 export default function CampaignOverview() {
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { campaign, setCampaign } = useOutletContext<CampaignLayoutContext>();
+  const { campaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const activeTab = resolveOverviewTab(searchParams.get("tab")) ?? "overview";
   const [mobileExpandedSections, setMobileExpandedSections] = useState({
@@ -87,7 +87,7 @@ export default function CampaignOverview() {
     handleStartCampaign,
     handleCreateBulletinEntry,
     handleDeleteBulletinEntry,
-  } = useCampaignOverview({ campaignId, campaign, setCampaign, activeTab });
+  } = useCampaignOverview({ campaignId, campaign, activeTab });
 
   if (!campaign) {
     return <p className="text-sm text-muted-foreground">No record of this campaign.</p>;

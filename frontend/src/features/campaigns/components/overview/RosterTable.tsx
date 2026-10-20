@@ -7,7 +7,7 @@ import RosterRow from "./RosterRow";
 
 // types
 import type { CampaignPlayer } from "../../types/campaign-types";
-import type { RosterUnit } from "../../hooks/useCampaignOverview";
+import type { RosterUnit } from "../../types/campaign-types";
 
 type RosterTableProps = {
   campaignId: number;

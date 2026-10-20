@@ -21,7 +21,7 @@ import UnitsTable from "./UnitsTable";
 
 // types
 import type { CampaignPlayer } from "../../types/campaign-types";
-import type { RosterUnit } from "../../hooks/useCampaignOverview";
+import type { RosterUnit } from "../../types/campaign-types";
 
 type WarbandRecordMetricProps = {
   icon: LucideIcon;

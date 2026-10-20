@@ -342,7 +342,9 @@ describe("Start campaign", () => {
     await user.click(screen.getByRole("button", { name: "Confirm start" }));
 
     await waitFor(() =>
-      expect(screen.getByRole("dialog")).toHaveTextContent("Request failed (500)")
+      expect(screen.getByRole("dialog")).toHaveTextContent(
+        "The server ran into a problem. Please try again."
+      )
     );
     expect(screen.queryByRole("button", { name: "Start battle" })).not.toBeInTheDocument();
   });
