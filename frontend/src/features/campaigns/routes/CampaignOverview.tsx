@@ -179,42 +179,43 @@ export default function CampaignOverview() {
       <OverviewHeader campaign={campaign} activeTab={activeTab} onTabChange={handleTabChange} />
       <div className="space-y-4 px-2 sm:space-y-6 sm:px-0">
         {canStartCampaign && !isUnderway ? (
-          <div className="flex justify-center px-2 sm:px-0">
-            <Button variant="secondary" onClick={() => setIsStartOpen(true)}>
-              Start campaign
-            </Button>
-            <ConfirmDialog
-              open={isStartOpen}
-              onOpenChange={setIsStartOpen}
-              title="Start campaign"
-              description={
-                <div className="space-y-2">
-                  <p>Start the campaign now? Starting enables battles and experience.</p>
-                  <p className="text-sm text-muted-foreground">
-                    Nothing else is locked: settings, house rules and rosters can still change after
-                    the start.
-                  </p>
-                  {startError ? <p className="text-sm text-red-600">{startError}</p> : null}
-                </div>
-              }
-              confirmText={isStarting ? "Starting..." : "Confirm start"}
-              confirmVariant="secondary"
-              confirmDisabled={isStarting}
-              isConfirming={isStarting}
-              onConfirm={handleStartCampaign}
-              onCancel={() => setIsStartOpen(false)}
-            />
-          </div>
+          <ConfirmDialog
+            open={isStartOpen}
+            onOpenChange={setIsStartOpen}
+            title="Start campaign"
+            description={
+              <div className="space-y-2">
+                <p>Start the campaign now? Starting enables battles and experience.</p>
+                <p className="text-sm text-muted-foreground">
+                  Nothing else is locked: settings, house rules and rosters can still change after
+                  the start.
+                </p>
+                {startError ? <p className="text-sm text-red-600">{startError}</p> : null}
+              </div>
+            }
+            confirmText={isStarting ? "Starting..." : "Confirm start"}
+            confirmVariant="secondary"
+            confirmDisabled={isStarting}
+            isConfirming={isStarting}
+            onConfirm={handleStartCampaign}
+            onCancel={() => setIsStartOpen(false)}
+          />
         ) : null}
-        {isUnderway ? (
-          <div className="pt-3 sm:pt-0">
-            <BattleActionPanel
-              campaignId={campaign.id}
-              players={players}
-              campaignStarted={isUnderway}
-            />
-          </div>
-        ) : null}
+        <div className="pt-3 sm:pt-0">
+          {/* Before the start too: Start battle is greyed out but clickable (decision 3). */}
+          <BattleActionPanel
+            campaignId={campaign.id}
+            players={players}
+            campaignStarted={isUnderway}
+            leadingAction={
+              canStartCampaign && !isUnderway ? (
+                <Button variant="secondary" size="sm" onClick={() => setIsStartOpen(true)}>
+                  Start campaign
+                </Button>
+              ) : null
+            }
+          />
+        </div>
         {isMobile ? (
           <TabbedCard
             tabs={overviewTabs}

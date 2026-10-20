@@ -173,12 +173,13 @@ export default function StartBattleDialog({
       setIsSubmitting(true);
       setError("");
       try {
-        await reportBattleResult(campaignId, {
+        const reported = await reportBattleResult(campaignId, {
           scenario: scenario.trim(),
           battle_date: battleDate,
           participant_user_ids: participantUserIds,
           winner_warband_ids: noWinner ? [] : selectedWinnerWarbandIds,
         });
+        toastBattleWarnings(reported.warnings);
         onOpenChange(false);
         onBattleCreated?.();
       } catch (errorResponse) {

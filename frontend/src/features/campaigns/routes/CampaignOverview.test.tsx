@@ -202,16 +202,47 @@ describe("Start campaign", () => {
     expect(within(dialog).getByRole("button", { name: "Confirm start" })).toBeEnabled();
   });
 
-  it("hides the whole battle panel before the start: no Start battle, banner or results card (decision 3, BUG-77, pinned; flips in PR A)", async () => {
+  it("keeps the battle panel before the start: Start battle is greyed out but clickable beside Start campaign, and the results card shows (decision 3, BUG-77)", async () => {
     routeCampaignShell({ campaign: campaignSummary({ in_progress: false }) });
     fakeApi.on(`GET ${campaignApi("battles/pending-results/")}`, [pendingResultRow()]);
 
     await openOverview();
 
-    expect(startCampaignButton()).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Start battle" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("region", { name: /Results awaiting/ })).not.toBeInTheDocument();
-    expect(fakeApi.countOf(`GET ${campaignApi("battles/pending-results/")}`)).toBe(0);
+    const startBattle = await screen.findByRole("button", { name: "Start battle" });
+    expect(startBattle).toBeEnabled();
+    expect(startBattle).toHaveClass("opacity-60");
+    expect(startCampaignButton()!.parentElement).toBe(startBattle.parentElement);
+    expect(
+      await screen.findByRole("region", { name: "Results awaiting your approval" })
+    ).toHaveTextContent("Ambush at the Bridge");
+  });
+
+  it("asks before a battle ahead of the start, then creates it and shows the server's campaign_not_started warning (decision 3)", async () => {
+    const user = setupUser();
+    routeCampaignShell({ campaign: campaignSummary({ in_progress: false }) });
+    fakeApi.on(`POST ${campaignApi("battles/")}`, {
+      battle: { id: 42 },
+      participants: [],
+      events: [],
+      warnings: [{ code: "campaign_not_started", message: "The campaign hasn't started yet." }],
+    });
+    await openOverview();
+
+    await user.click(await screen.findByRole("button", { name: "Start battle" }));
+
+    const warning = screen.getByRole("dialog", { name: "Campaign not started" });
+    expect(warning).toHaveAccessibleDescription(
+      "The campaign hasn't started yet. Start a battle anyway?"
+    );
+    await user.click(within(warning).getByRole("button", { name: "Start a battle anyway" }));
+    const dialog = await screen.findByRole("dialog", { name: "Start Battle" });
+    const mira = within(dialog).getByRole("button", { name: /^Mira/ }).parentElement!;
+    await user.click(mira.querySelector("input[type=checkbox]")!);
+    await user.type(within(dialog).getByPlaceholderText("Breakthrough at the Old Gate..."), "Ford");
+    await user.click(within(dialog).getByRole("button", { name: "Create battle" }));
+
+    expect(await screen.findByText("The campaign hasn't started yet.")).toBeInTheDocument();
+    expect(fakeApi.bodyOf(`POST ${campaignApi("battles/")}`)).toMatchObject({ scenario: "Ford" });
   });
 
   it("PATCHes in_progress and writes the answer into the campaign: leaving and coming back keeps Start battle and no Start campaign, with no second read (BUG-14, CAMP-TEST-07)", async () => {
