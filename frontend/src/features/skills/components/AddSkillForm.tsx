@@ -22,7 +22,6 @@ type AddSkillFormProps = {
   onCancel: () => void;
   typeOptions?: string[];
   editingSkill?: Skill | null;
-  /** delete_catalogue: Delete shows only to someone the server lets delete (decision 5). */
   canDelete?: boolean;
 };
 
@@ -172,7 +171,6 @@ export default function AddSkillForm({
 
     setIsSaving(true);
     setFormError("");
-    fieldErrors.clear();
 
     try {
       if (isEditing && editingSkill) {
@@ -196,12 +194,7 @@ export default function AddSkillForm({
         resetForm();
       }
     } catch (errorResponse) {
-      setFormError(
-        fieldErrors.take(
-          errorResponse,
-          isEditing ? "Unable to update skill" : "Unable to create skill"
-        )
-      );
+      setFormError(fieldErrors.take(errorResponse, "Unable to save skill"));
     } finally {
       setIsSaving(false);
     }

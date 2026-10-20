@@ -130,7 +130,7 @@ export default function HiredSwordProfileFormDialog({
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const fieldErrors = useFieldErrors(["name"]);
+  const fieldErrors = useFieldErrors(["name", "hire_cost", "upkeep_cost"], open);
   const campaignEnabled = open && !Number.isNaN(campaignId);
   const campaignLookupParams = {
     campaignId,
@@ -201,7 +201,6 @@ export default function HiredSwordProfileFormDialog({
     setCreatingSpecial(false);
     setNewSpecialName("");
     setNewSpecialDescription("");
-    fieldErrors.clear();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -210,7 +209,6 @@ export default function HiredSwordProfileFormDialog({
 
     setSaving(true);
     setError("");
-    fieldErrors.clear();
 
     try {
       const hireCostNum = form.hire_cost ? Number(form.hire_cost) : null;
@@ -323,8 +321,10 @@ export default function HiredSwordProfileFormDialog({
                 min={0}
                 value={form.hire_cost}
                 onChange={(e) => setForm((f) => ({ ...f, hire_cost: e.target.value }))}
+                aria-invalid={Boolean(fieldErrors.errors.hire_cost)}
                 placeholder="e.g. 80"
               />
+              <FieldError message={fieldErrors.errors.hire_cost} />
             </div>
             <div className="flex flex-1 flex-col gap-1.5">
               <Label htmlFor="hs-hire-expr">or Expression</Label>
@@ -351,8 +351,10 @@ export default function HiredSwordProfileFormDialog({
                 min={0}
                 value={form.upkeep_cost}
                 onChange={(e) => setForm((f) => ({ ...f, upkeep_cost: e.target.value }))}
+                aria-invalid={Boolean(fieldErrors.errors.upkeep_cost)}
                 placeholder="e.g. 30"
               />
+              <FieldError message={fieldErrors.errors.upkeep_cost} />
             </div>
             <div className="flex flex-1 flex-col gap-1.5">
               <Label htmlFor="hs-upkeep-expr">or Expression</Label>

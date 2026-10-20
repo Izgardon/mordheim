@@ -18,6 +18,7 @@ import { useFieldErrors } from "@/lib/field-errors";
 
 import { createItem, createItemProperty, updateItem, deleteItem } from "../api/items-api";
 import { useItemPropertySearch } from "../hooks/useItemPropertySearch";
+import { ITEM_FIELDS } from "../utils/item-form-fields";
 
 import type { Item, ItemProperty, Restriction } from "../types/item-types";
 
@@ -58,7 +59,6 @@ type AddItemFormProps = {
   onDeleted?: (itemId: number) => void;
   onCancel: () => void;
   editingItem?: Item | null;
-  /** delete_catalogue: Delete shows only to someone the server lets delete (decision 5). */
   canDelete?: boolean;
 };
 
@@ -167,7 +167,9 @@ export default function AddItemForm({
   const catalogueCache = useCatalogueCache();
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
-  const fieldErrors = useFieldErrors(["name"], editingItem);
+  const fieldErrors = useFieldErrors(ITEM_FIELDS, editingItem);
+  const rowError = (index: number, field: string) =>
+    fieldErrors.errors[`availabilities.${index}.${field}`];
   const [form, setForm] = useState<ItemFormState>(() =>
     editingItem ? buildFormFromItem(editingItem) : initialState
   );
@@ -325,13 +327,13 @@ export default function AddItemForm({
     }
 
     const hasInvalidAvailability = form.availabilities.some((row) => {
-      if (!row.cost.trim() || !row.rarity.trim()) return true;
+      if (!row.cost.trim() || !row.rarity.trim() || !(Number(row.cost) >= 0)) return true;
       const rarityValue = Number(row.rarity);
       return Number.isNaN(rarityValue) || rarityValue < 2 || rarityValue > 20;
     });
 
     if (form.availabilities.length === 0 || hasInvalidAvailability) {
-      setFormError("Each availability needs a valid price and rarity (2-20).");
+      setFormError("Each availability needs a price of 0 or more and a rarity from 2 to 20.");
       return;
     }
 
@@ -342,7 +344,6 @@ export default function AddItemForm({
 
     setIsSaving(true);
     setFormError("");
-    fieldErrors.clear();
 
     try {
       if (isEditing && editingItem) {
@@ -536,6 +537,7 @@ export default function AddItemForm({
             + Add
           </Button>
         </div>
+        <FieldError message={fieldErrors.errors.availabilities} />
         {form.availabilities.map((row, index) => {
           return (
             <div
@@ -550,8 +552,10 @@ export default function AddItemForm({
                     step={1}
                     value={row.cost}
                     onChange={(event) => updateAvailability(index, "cost", event.target.value)}
+                    aria-invalid={Boolean(rowError(index, "cost"))}
                     placeholder="25"
                   />
+                  <FieldError message={rowError(index, "cost")} />
                 </div>
                 <div>
                   <label className="mb-1 block text-xs text-muted-foreground">
@@ -563,8 +567,10 @@ export default function AddItemForm({
                     step={1}
                     value={row.rarity}
                     onChange={(event) => updateAvailability(index, "rarity", event.target.value)}
+                    aria-invalid={Boolean(rowError(index, "rarity"))}
                     placeholder="2"
                   />
+                  <FieldError message={rowError(index, "rarity")} />
                 </div>
                 <div>
                   <label className="mb-1 block text-xs text-muted-foreground">Variable cost</label>
@@ -642,6 +648,7 @@ export default function AddItemForm({
               </div>
             </ActionSearchDropdown>
           </ActionSearchInput>
+          <FieldError message={fieldErrors.errors.property_ids} />
           {showPropertyForm && (
             <div className="space-y-2 rounded-lg border border-input/80 bg-background/40 p-3">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">

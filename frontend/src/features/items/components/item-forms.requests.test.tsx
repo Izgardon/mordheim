@@ -108,9 +108,9 @@ describe("AddItemForm: create", () => {
     });
   });
 
-  // Characterises current behaviour (BUG-53, CAT-TEST-09, pinned; PR A answers it with a 400)
-  it("checks the rarity but not the price: a negative price is sent as typed (BUG-53, pinned; PR A answers 400)", async () => {
+  it("refuses a negative price before sending, as it refuses a rarity outside 2 to 20, the server's limits (BUG-53, CAT-TEST-09)", async () => {
     const user = setupUser();
+    const hint = "Each availability needs a price of 0 or more and a rarity from 2 to 20.";
     renderWithQueryClient(<AddItemForm campaignId={1} onCreated={vi.fn()} onCancel={vi.fn()} />);
     await user.type(screen.getByPlaceholderText("Gutterblade"), "Debt");
     await chooseOption(user, typeSelect(), "Weapon");
@@ -118,17 +118,20 @@ describe("AddItemForm: create", () => {
     await user.type(screen.getByPlaceholderText("25"), "-5");
     await user.type(screen.getByPlaceholderText("2"), "21");
     await user.click(screen.getByRole("button", { name: "Save" }));
-    expect(
-      screen.getByText("Each availability needs a valid price and rarity (2-20).")
-    ).toBeVisible();
-    expect(fakeApi.countOf("POST /items/")).toBe(0);
+    expect(screen.getByText(hint)).toBeVisible();
 
     await user.clear(screen.getByPlaceholderText("2"));
     await user.type(screen.getByPlaceholderText("2"), "2");
     await user.click(screen.getByRole("button", { name: "Save" }));
+    expect(screen.getByText(hint)).toBeVisible();
+    expect(fakeApi.countOf("POST /items/")).toBe(0);
+
+    await user.clear(screen.getByPlaceholderText("25"));
+    await user.type(screen.getByPlaceholderText("25"), "0");
+    await user.click(screen.getByRole("button", { name: "Save" }));
 
     expect(fakeApi.bodyOf("POST /items/")).toMatchObject({
-      availabilities: [{ cost: -5, rarity: 2, variable_cost: null, restrictions: [] }],
+      availabilities: [{ cost: 0, rarity: 2, variable_cost: null, restrictions: [] }],
     });
   });
 });

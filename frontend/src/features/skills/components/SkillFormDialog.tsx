@@ -51,7 +51,6 @@ type SkillFormDialogEditProps = SkillFormDialogBaseProps & {
   skill: Skill;
   onUpdated: (skill: Skill) => void;
   onDeleted: (skillId: number) => void;
-  /** delete_catalogue: Delete shows only to someone the server lets delete (decision 5). */
   canDelete?: boolean;
 };
 
@@ -82,7 +81,6 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
   const [open, setOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
-  const fieldErrors = useFieldErrors(["name"]);
   const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete skill");
   const [form, setForm] = useState<SkillFormState>(() =>
     mode === "edit" && skill ? buildFormFromSkill(skill) : initialState
@@ -91,6 +89,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
   const [isTypeMenuOpen, setIsTypeMenuOpen] = useState(false);
 
   const resolvedOpen = openProp ?? open;
+  const fieldErrors = useFieldErrors(["name"], resolvedOpen);
   const setResolvedOpen = (nextOpen: boolean) => {
     if (openProp === undefined) {
       setOpen(nextOpen);
@@ -106,7 +105,6 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
     }
     setCustomTypes([]);
     setFormError("");
-    fieldErrors.clear();
     setIsTypeMenuOpen(false);
   };
 
@@ -221,7 +219,6 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
 
     setIsSaving(true);
     setFormError("");
-    fieldErrors.clear();
 
     try {
       if (mode === "create") {
@@ -245,12 +242,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
       setResolvedOpen(false);
       resetForm();
     } catch (errorResponse) {
-      setFormError(
-        fieldErrors.take(
-          errorResponse,
-          mode === "create" ? "Unable to create skill" : "Unable to update skill"
-        )
-      );
+      setFormError(fieldErrors.take(errorResponse, "Unable to save skill"));
     } finally {
       setIsSaving(false);
     }

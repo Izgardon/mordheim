@@ -24,7 +24,6 @@ type AddSpellFormProps = {
   onCancel: () => void;
   typeOptions?: string[];
   editingSpell?: Spell | null;
-  /** delete_catalogue: Delete shows only to someone the server lets delete (decision 5). */
   canDelete?: boolean;
 };
 
@@ -190,7 +189,6 @@ export default function AddSpellForm({
 
     setIsCreating(true);
     setFormError("");
-    fieldErrors.clear();
 
     try {
       if (isEditing && editingSpell) {
@@ -218,12 +216,7 @@ export default function AddSpellForm({
         resetForm();
       }
     } catch (errorResponse) {
-      setFormError(
-        fieldErrors.take(
-          errorResponse,
-          isEditing ? "Unable to update spell" : "Unable to create spell"
-        )
-      );
+      setFormError(fieldErrors.take(errorResponse, "Unable to save spell"));
     } finally {
       setIsCreating(false);
     }

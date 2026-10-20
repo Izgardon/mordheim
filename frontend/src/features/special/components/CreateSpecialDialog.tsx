@@ -61,7 +61,6 @@ export default function CreateSpecialDialog({
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
-  const fieldErrors = useFieldErrors(["name"]);
   const [form, setForm] = useState<SpecialFormState>(initialState);
   const [customTypes, setCustomTypes] = useState<string[]>([]);
   const [isTypeMenuOpen, setIsTypeMenuOpen] = useState(false);
@@ -69,11 +68,11 @@ export default function CreateSpecialDialog({
   const resetForm = () => {
     setForm(initialState);
     setFormError("");
-    fieldErrors.clear();
     setIsTypeMenuOpen(false);
   };
 
   const resolvedOpen = openProp ?? open;
+  const fieldErrors = useFieldErrors(["name"], resolvedOpen);
   const setResolvedOpen = (nextOpen: boolean) => {
     if (openProp === undefined) {
       setOpen(nextOpen);
@@ -174,7 +173,6 @@ export default function CreateSpecialDialog({
 
     setIsCreating(true);
     setFormError("");
-    fieldErrors.clear();
 
     try {
       const newSpecial = await createSpecial({

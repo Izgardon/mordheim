@@ -27,6 +27,7 @@ import { useFieldErrors } from "@/lib/field-errors";
 // api
 import { createItem, createItemProperty, updateItem, deleteItem } from "../api/items-api";
 import { useItemPropertySearch } from "../hooks/useItemPropertySearch";
+import { ITEM_FIELDS } from "../utils/item-form-fields";
 
 // types
 import type { Item, ItemProperty, Restriction } from "../types/item-types";
@@ -91,7 +92,6 @@ type ItemFormDialogEditProps = ItemFormDialogBaseProps & {
   campaignId: number;
   onUpdated: (item: Item) => void;
   onDeleted: (itemId: number) => void;
-  /** delete_catalogue: Delete shows only to someone the server lets delete (decision 5). */
   canDelete?: boolean;
 };
 
@@ -202,7 +202,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
   const [open, setOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
-  const fieldErrors = useFieldErrors(["name"]);
   const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete item");
   const [form, setForm] = useState<ItemFormState>(() =>
     props.mode === "edit" ? buildFormFromItem(props.item) : initialState
@@ -217,6 +216,9 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
   const [newPropertyDescription, setNewPropertyDescription] = useState("");
   const [isCreatingProperty, setIsCreatingProperty] = useState(false);
   const resolvedOpen = openProp ?? open;
+  const fieldErrors = useFieldErrors(ITEM_FIELDS, resolvedOpen);
+  const rowError = (index: number, field: string) =>
+    fieldErrors.errors[`availabilities.${index}.${field}`];
   const { forType: typeProperties, matches: availableProperties } = useItemPropertySearch(
     props.campaignId,
     form.type,
@@ -244,7 +246,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
       setSelectedProperties([]);
     }
     setFormError("");
-    fieldErrors.clear();
     setShowFluff(false);
     setPropertySearch("");
     setShowPropertyForm(false);
@@ -371,8 +372,8 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
 
     for (let i = 0; i < form.availabilities.length; i++) {
       const row = form.availabilities[i];
-      if (!row.cost.trim() || !row.rarity.trim()) {
-        setFormError(`Availability ${i + 1}: price and rarity are required.`);
+      if (!row.cost.trim() || !row.rarity.trim() || !(Number(row.cost) >= 0)) {
+        setFormError(`Availability ${i + 1}: a price of 0 or more and a rarity are required.`);
         return;
       }
       const rarityValue = Number(row.rarity);
@@ -384,7 +385,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
 
     setIsSaving(true);
     setFormError("");
-    fieldErrors.clear();
 
     try {
       if (props.mode === "create") {
@@ -563,6 +563,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
                   </div>
                 </ActionSearchDropdown>
               </ActionSearchInput>
+              <FieldError message={fieldErrors.errors.property_ids} />
               {showPropertyForm ? (
                 <div className="space-y-3 rounded-lg border border-input/80 bg-background/40 p-4">
                   <div className="space-y-2">
@@ -791,8 +792,10 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
                             ),
                           }))
                         }
+                        aria-invalid={Boolean(rowError(index, "cost"))}
                         placeholder="25"
                       />
+                      <FieldError message={rowError(index, "cost")} />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor={`item-rarity-${props.mode}-${index}`}>
@@ -812,8 +815,10 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
                             ),
                           }))
                         }
+                        aria-invalid={Boolean(rowError(index, "rarity"))}
                         placeholder="2"
                       />
+                      <FieldError message={rowError(index, "rarity")} />
                     </div>
                   </div>
                   <div className="space-y-2">

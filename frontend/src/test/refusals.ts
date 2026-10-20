@@ -27,6 +27,9 @@ export const validationError = (body: Record<string, unknown>) =>
 /** The message shows under `input` (its field's alert), once on the page, and marks it invalid. */
 export async function expectFieldError(input: HTMLElement, message: string) {
   await waitFor(() => expect(input).toHaveAttribute("aria-invalid", "true"));
-  expect(within(input.parentElement!).getByRole("alert")).toHaveTextContent(message);
+  // The field's container: the nearest ancestor holding an alert (a number input wraps its box).
+  let field = input.parentElement;
+  while (field && !within(field).queryByRole("alert")) field = field.parentElement;
+  expect(within(field!).getByRole("alert")).toHaveTextContent(message);
   expect(screen.getAllByText(message)).toHaveLength(1);
 }

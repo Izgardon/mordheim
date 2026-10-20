@@ -111,7 +111,7 @@ export default function BestiaryEntryFormDialog({
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const fieldErrors = useFieldErrors(["name"]);
+  const fieldErrors = useFieldErrors(["name"], open);
   const campaignEnabled = open && !Number.isNaN(campaignId);
   const campaignLookupParams = {
     campaignId,
@@ -182,7 +182,6 @@ export default function BestiaryEntryFormDialog({
     setCreatingSpecial(false);
     setNewSpecialName("");
     setNewSpecialDescription("");
-    fieldErrors.clear();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -191,7 +190,6 @@ export default function BestiaryEntryFormDialog({
 
     setSaving(true);
     setError("");
-    fieldErrors.clear();
 
     try {
       const payload = {

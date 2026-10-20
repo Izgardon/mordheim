@@ -88,15 +88,14 @@ export default function CreateRaceDialog({
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
-  const fieldErrors = useFieldErrors(["name"]);
   const [form, setForm] = useState<RaceFormState>(initialState);
   const resetForm = () => {
     setForm(initialState);
     setFormError("");
-    fieldErrors.clear();
   };
 
   const resolvedOpen = openProp ?? open;
+  const fieldErrors = useFieldErrors(["name"], resolvedOpen);
   const setResolvedOpen = (nextOpen: boolean) => {
     if (openProp === undefined) {
       setOpen(nextOpen);
@@ -153,7 +152,6 @@ export default function CreateRaceDialog({
 
     setIsCreating(true);
     setFormError("");
-    fieldErrors.clear();
 
     try {
       const newRace = await createRace({

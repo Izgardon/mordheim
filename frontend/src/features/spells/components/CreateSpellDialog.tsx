@@ -69,7 +69,6 @@ export default function CreateSpellDialog({
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
-  const fieldErrors = useFieldErrors(["name"]);
   const [form, setForm] = useState<SpellFormState>(initialState);
   const [customTypes, setCustomTypes] = useState<string[]>([]);
   const [isTypeMenuOpen, setIsTypeMenuOpen] = useState(false);
@@ -77,11 +76,11 @@ export default function CreateSpellDialog({
   const resetForm = () => {
     setForm(initialState);
     setFormError("");
-    fieldErrors.clear();
     setIsTypeMenuOpen(false);
   };
 
   const resolvedOpen = openProp ?? open;
+  const fieldErrors = useFieldErrors(["name"], resolvedOpen);
   const setResolvedOpen = (nextOpen: boolean) => {
     if (openProp === undefined) {
       setOpen(nextOpen);
@@ -191,7 +190,6 @@ export default function CreateSpellDialog({
 
     setIsCreating(true);
     setFormError("");
-    fieldErrors.clear();
 
     try {
       const newSpell = await createSpell({
