@@ -83,6 +83,9 @@ export type CampaignPlayer = {
   } | null;
 };
 
+/** `GET players/?fields=basic`: just who is in the campaign, for name pickers (PERF-41). */
+export type CampaignPlayerName = Pick<CampaignPlayer, "id" | "name">;
+
 export type CampaignWarband = {
   id: number;
   name: string;

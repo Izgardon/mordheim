@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {
   createCampaignEncampment,
   listCampaignEncampments,
-  listCampaignPlayers,
+  listCampaignPlayerNames,
   updateCampaignEncampment,
 } from "../api/campaigns-api";
 import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
@@ -26,7 +26,7 @@ import type { CampaignLayoutContext } from "./CampaignLayout";
 import type {
   CampaignEncampment,
   CampaignEncampmentPayload,
-  CampaignPlayer,
+  CampaignPlayerName,
 } from "../types/campaign-types";
 
 const UNASSIGNED_OWNER = "unassigned";
@@ -40,7 +40,7 @@ export default function Encampments() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [encampments, setEncampments] = useState<CampaignEncampment[]>([]);
-  const [players, setPlayers] = useState<CampaignPlayer[]>([]);
+  const [players, setPlayers] = useState<CampaignPlayerName[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [formError, setFormError] = useState("");
@@ -75,7 +75,7 @@ export default function Encampments() {
     setIsLoading(true);
     setError("");
 
-    Promise.all([listCampaignEncampments(campaignId), listCampaignPlayers(campaignId)])
+    Promise.all([listCampaignEncampments(campaignId), listCampaignPlayerNames(campaignId)])
       .then(([encampmentData, playerData]) => {
         setEncampments(encampmentData);
         setPlayers(playerData);
