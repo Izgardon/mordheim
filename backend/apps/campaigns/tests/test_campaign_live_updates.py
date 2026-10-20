@@ -10,6 +10,7 @@ from unittest import mock
 
 from django.test import override_settings
 
+from apps.battles.models import Battle
 from apps.realtime.channel_auth import authorize_private_channel
 
 from .campaign_support import CampaignTestCase
@@ -119,3 +120,22 @@ class LiveUpdateTests(CampaignTestCase):
                 for user in (self.admin, self.player, self.rival)
             ),
         )
+
+    def test_a_cancelled_battle_tells_each_player_still_in_it_on_their_own_channel(self):
+        # a player away from the battle page kept its Rejoin and its invite until a reload: the cancel went only to
+        # the battle's channel
+        for actor, suffix in ((self.owner, "active-battles/{}/cancel/"), (self.player, "battles/{}/cancel-battle/")):
+            with self.subTest(suffix=suffix):
+                self.pusher.reset_mock()
+                battle = self.open_battle(Battle.STATUS_INVITING)
+
+                self.assertEqual(self.send("post", actor, suffix.format(battle.id)).status_code, 200)
+
+                payload = {"battle_id": battle.id, "campaign_id": self.campaign.id, "status": "canceled"}
+                self.assertEqual(
+                    sorted((channel, data) for channel, data, _options in self.triggered("notification")),
+                    sorted(
+                        (f"private-user-{user.id}-notifications", {"type": "battle_canceled", "payload": payload})
+                        for user in (self.player, self.rival)
+                    ),
+                )

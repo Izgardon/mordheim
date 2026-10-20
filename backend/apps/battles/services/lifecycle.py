@@ -18,7 +18,7 @@ from apps.notifications.utils import resolve_notifications_for_reference
 from apps.warbands.models import Hero, Warband, WarbandLog
 
 from ..models import Battle, BattleEvent, BattleParticipant
-from .events import append_event, notify_result_updated
+from .events import append_event, notify_canceled, notify_result_updated
 from .locks import locked
 
 
@@ -147,6 +147,7 @@ def someone_finalised(battle_id: int) -> bool:
 
 
 def _cancel_rows(battle: Battle, participants: list[BattleParticipant], now) -> None:
+    cancelled = []
     for entry in participants:
         # a finished postbattle is a record, never rewritten (BUG-09; cancels refuse postbattle anyway)
         if entry.status in (*BattleParticipant.LEFT_STATUSES, BattleParticipant.STATUS_CONFIRMED_POSTBATTLE):
@@ -155,7 +156,9 @@ def _cancel_rows(battle: Battle, participants: list[BattleParticipant], now) -> 
         entry.canceled_at = entry.canceled_at or now
         entry.responded_at = entry.responded_at or now
         entry.save(update_fields=["status", "canceled_at", "responded_at", "updated_at"])
+        cancelled.append(entry.user_id)
     resolve_notifications_for_reference(Notification.TYPE_BATTLE_INVITE, str(battle.id))
+    notify_canceled(battle, cancelled)
 
 
 def _decline_reported_rows(battle: Battle, participants: list[BattleParticipant], now) -> None:
