@@ -2,13 +2,17 @@
 
 Both need `manage_battles` (owners and admins hold it; it can be granted, BATL-NEW-04). The list settles overdue
 battles first (pass 3, decision 2); a cancel takes the battle row's lock first, as every battle write does (BUG-106).
+Each row says how long the battle has been idle and whether that is past `STUCK_AFTER`, the overview's stuck-battles
+banner (decision 7, CAMP-NEW-05).
 """
 
 from dataclasses import dataclass, field
+from datetime import datetime, timedelta
 from typing import Any
 
 from django.db import transaction
 from django.db.models import Prefetch
+from django.utils import timezone
 
 from apps.battles.models import Battle, BattleParticipant
 from apps.battles.serializers import serialize_battle, serialize_participant
@@ -21,6 +25,8 @@ from apps.battles.services.locks import locked
 from ..errors import Refused
 from .removal_battles import OPEN_STATUSES
 
+STUCK_AFTER = timedelta(hours=24)  # idle this long, a battle shows on the overview's banner (decision 7)
+
 
 def listing(campaign_id: int) -> list[dict[str, Any]]:
     """Each open battle, newest first, with its participants and the manager tools that apply."""
@@ -32,15 +38,19 @@ def listing(campaign_id: int) -> list[dict[str, Any]]:
     )
     if expire_overdue(battles):  # settle what is past its deadline (decision 2), then read again
         battles = battles.all()
-    return [_active_battle(battle) for battle in battles]
+    now = timezone.now()
+    return [_active_battle(battle, now) for battle in battles]
 
 
-def _active_battle(battle: Battle) -> dict[str, Any]:
+def _active_battle(battle: Battle, now: datetime) -> dict[str, Any]:
     participants = battle.participants.all()
+    idle = max(now - battle.last_activity_at, timedelta(0))
     return {
-        "battle": serialize_battle(battle),  # its last_activity_at is the idle time
+        "battle": serialize_battle(battle),
         "participants": [serialize_participant(participant) for participant in participants],
         "actions": manager_actions(battle, participants),  # the owner tools that apply (BATL-NEW-03)
+        "idle_seconds": int(idle.total_seconds()),  # since its last write (last_activity_at)
+        "stuck": idle >= STUCK_AFTER,
     }
 
 
