@@ -44,7 +44,7 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("GET", "", None, OK_ALL),
     ("PATCH", "", {"in_progress": True}, (403, 403, 200, 200)),
     ("PATCH", "", {"max_heroes": 5}, (403, 403, 403, 200)),
-    ("DELETE", "", None, (403, 403, 403, 204)),
+    ("DELETE", "", {"name": "Shards"}, (403, 403, 403, 403)),  # archived first (decision 5)
     ("POST", "join-code/", {}, (403, 403, 200, 200)),
     ("GET", "players/", None, OK_ALL),
     ("GET", "battle-history/", None, OK_ALL),
@@ -84,7 +84,7 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
 REPRESENTATIVE: dict[str, tuple[str, str, dict[str, Any] | None]] = {
     "edit_settings": ("PATCH", "", {"max_heroes": 5}),
     "start": ("PATCH", "", {"in_progress": True}),
-    "delete": ("DELETE", "", None),
+    "delete": ("DELETE", "", {"name": "Shards"}),
     "regenerate_join_code": ("POST", "join-code/", {}),
     "view_members": ("GET", "members/", None),
     "grant_permissions": ("PUT", "members/{rival}/permissions/", {"permissions": ["add_custom"]}),

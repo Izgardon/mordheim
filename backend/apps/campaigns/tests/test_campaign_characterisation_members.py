@@ -209,29 +209,49 @@ class MemberRoleTests(CampaignTestCase):
 
 
 class CampaignDeleteTests(CampaignTestCase):
-    def test_only_the_owner_deletes(self):
+    def delete_for_good(self, user):
+        self.client.force_authenticate(user=user)
+        return self.client.delete(self.url(), {"name": "Shards"}, format="json")
+
+    def test_only_the_owner_deletes_and_only_an_archived_campaign(self):
+        # decision 5, CAMP-TWEAK-04: archive first, then delete for good with the campaign's name
+        self.assertEqual(self.delete_for_good(self.owner).status_code, 403)
+        self.post_as(self.owner, self.url("archive/"))
         for user, expected in ((self.admin, 403), (self.player, 403), (self.outsider, 404)):
             with self.subTest(user=user.first_name):
-                self.assertEqual(self.delete_as(user, self.url()).status_code, expected)
+                self.assertEqual(self.delete_for_good(user).status_code, expected)
         self.assertTrue(Campaign.objects.filter(id=self.campaign.id).exists())
 
-        self.assertEqual(self.delete_as(self.owner, self.url()).status_code, 204)
+        self.assertEqual(self.delete_for_good(self.owner).status_code, 204)
 
         self.assertFalse(Campaign.objects.filter(id=self.campaign.id).exists())
         self.assertFalse(Warband.objects.filter(id__in=(self.warband.id, self.rival_warband.id)).exists())
 
-    def test_deleting_the_campaign_leaves_its_notifications(self):
-        # Characterises current behaviour (BUG-50, CAMP-TEST-28, pinned; flips in PR C): campaign_id is a plain integer
+    def test_deleting_the_campaign_removes_its_notifications(self):
+        # BUG-50, CAMP-TEST-28 (CAMP-TWEAK-04): campaign_id is a plain integer, so they used to stay listed
         battle = self.open_battle(Battle.STATUS_INVITING)
         self.notify(self.rival, Notification.TYPE_BATTLE_INVITE, battle.id)
         trade = self.post_as(self.player, self.url("trade-requests/"), {"target_user_id": self.rival.id}).json()
+        kept = self.notify(self.outsider, Notification.TYPE_BATTLE_INVITE, 7, campaign=self.elsewhere)
+        self.post_as(self.owner, self.url("archive/"))
 
-        self.delete_as(self.owner, self.url())
+        self.assertEqual(self.delete_for_good(self.owner).status_code, 204)
 
-        self.assertEqual(Notification.objects.filter(campaign_id=self.campaign.id, is_resolved=False).count(), 2)
-        # the trade went with the campaign, so its notification drops out of the list; the invite stays listed
+        self.assertFalse(Notification.objects.filter(campaign_id=self.campaign.id).exists())
         self.assertFalse(TradeRequest.objects.filter(id=trade["id"]).exists())
-        self.assertEqual(
-            self.listed_notifications(self.rival),
-            [(Notification.TYPE_BATTLE_INVITE, str(battle.id), self.campaign.id)],
-        )
+        self.assertEqual(self.listed_notifications(self.rival), [])
+        self.assertTrue(Notification.objects.filter(id=kept.id).exists())
+
+    def test_the_name_must_match(self):
+        self.post_as(self.owner, self.url("archive/"))
+        detail = "Type the campaign's name to delete it for good."
+        for body in ({"name": "shards"}, {"name": ""}, {}, {"name": 7}):
+            with self.subTest(body=body):
+                self.client.force_authenticate(user=self.owner)
+                response = self.client.delete(self.url(), body, format="json")
+                self.assertEqual(
+                    (response.status_code, response.json()),
+                    (400, {"detail": detail, "code": "name_mismatch", "fields": {"name": [detail]}}),
+                )
+        self.client.force_authenticate(user=self.owner)
+        self.assertEqual(self.client.delete(self.url(), {"name": " Shards "}, format="json").status_code, 204)

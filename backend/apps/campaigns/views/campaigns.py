@@ -57,7 +57,8 @@ def detail_payload(view: CampaignScopedView, campaign_id: int) -> dict:
 
 class CampaignDetailView(CampaignScopedView):
     """GET: the campaign with the caller's permissions and capabilities. PATCH: the start flag (owners and admins)
-    or the settings (the owner). DELETE: the owner deletes it, archived or not."""
+    or the settings (the owner). DELETE: the owner deletes his archived campaign for good, sending its `name`
+    (decision 5, CAMP-TWEAK-04)."""
 
     rules = {"GET": "view", "PATCH": "view", "DELETE": "delete"}  # PATCH: the rule depends on the fields sent
     allow_archived = frozenset({"DELETE"})
@@ -66,7 +67,8 @@ class CampaignDetailView(CampaignScopedView):
         return Response(detail_payload(self, campaign_id))
 
     def delete(self, request, campaign_id):
-        self.access.campaign.delete()
+        name = request.data.get("name") if isinstance(request.data, dict) else None
+        archive.delete_permanently(self.access.campaign, name)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request, campaign_id):

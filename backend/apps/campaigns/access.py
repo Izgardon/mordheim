@@ -124,7 +124,7 @@ def author(access: CampaignAccess, obj: Any = None) -> bool:
 ROLE_RULES: Mapping[str, Rule] = {
     "edit_settings": owner,  # PATCH with any settings field
     "start": staff,  # PATCH with in_progress alone (decision 2, BUG-13)
-    "delete": owner,
+    "delete": owner_of_archived,  # for good, archived first (decision 5, CAMP-TWEAK-04)
     "regenerate_join_code": staff,  # decision 1, CAMP-NEW-01
     "view_members": staff,
     "grant_permissions": staff,
