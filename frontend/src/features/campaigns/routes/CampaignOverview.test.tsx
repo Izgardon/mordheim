@@ -339,6 +339,38 @@ describe("CampaignLayout around the overview", () => {
     expect(fakeApi.countOf(`GET ${campaignApi("players/")}`)).toBe(0);
   });
 
+  it("offers Retry and the way back when the campaign can't be read, and Retry reads it again (BUG-144)", async () => {
+    const user = setupUser();
+    routeCampaignShell();
+    fakeApi.fail(CAMPAIGN_ROUTE, new ApiError("Request failed (500)", 500, null));
+    renderCampaignRoute("/campaigns/1");
+
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("Couldn't open this campaign");
+    expect(alert).toHaveTextContent("The server ran into a problem. Please try again.");
+    expect(within(alert).getByRole("link", { name: "Back to campaigns" })).toHaveAttribute(
+      "href",
+      "/campaigns"
+    );
+
+    fakeApi.on(CAMPAIGN_ROUTE, campaignSummary());
+    await user.click(within(alert).getByRole("button", { name: "Retry" }));
+
+    expect(await screen.findByRole("heading", { name: "Roster (4 / 8)" })).toBeInTheDocument();
+    expect(fakeApi.countOf(CAMPAIGN_ROUTE)).toBe(2);
+  });
+
+  it("takes you back to the campaigns list from a campaign that can't be read (BUG-144)", async () => {
+    const user = setupUser();
+    routeCampaignShell();
+    fakeApi.fail(CAMPAIGN_ROUTE, new ApiError("Not found", 404, { detail: "Not found" }));
+    renderCampaignRoute("/campaigns/1");
+
+    await user.click(await screen.findByRole("link", { name: "Back to campaigns" }));
+
+    expect(await screen.findByText("Campaigns page")).toBeInTheDocument();
+  });
+
   it("listens to the campaign's chat and your notifications only: nothing tells it about a start, a toggle or a role change made elsewhere (CAMP-UX-04, CAMP-NEW-07, pinned; flips in PR C)", async () => {
     routeCampaignShell();
 
