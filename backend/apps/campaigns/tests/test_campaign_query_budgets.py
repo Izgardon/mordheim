@@ -157,3 +157,20 @@ class CampaignQueryBudgetTests(CampaignTestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(len(captured), 3)
+
+    def test_history_reads_only_the_participant_columns_it_shows(self):
+        # PERF-45: the participants prefetch read every JSON column of every participant
+        self.client.force_authenticate(user=self.player)
+        with CaptureQueriesContext(connection) as captured:
+            self.client.get(self.url("battle-history/"))
+
+        participant_sql = next(query["sql"] for query in captured if 'FROM "battle_participant"' in query["sql"])
+        self.assertIn('"postbattle_json"', participant_sql)
+        unread = (
+            "roster_json",
+            "unit_information_json",
+            "custom_units_json",
+            "selected_unit_keys_json",
+            "battle_notes",
+        )
+        self.assertEqual([column for column in unread if f'"{column}"' in participant_sql], [])

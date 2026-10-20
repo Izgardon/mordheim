@@ -9,7 +9,9 @@ from datetime import timedelta
 from typing import Any
 from unittest import mock
 
+from django.db import connection
 from django.test import override_settings
+from django.test.utils import CaptureQueriesContext
 from django.utils import timezone
 
 from apps.campaigns.models import CampaignBulletinEntry, CampaignMessage
@@ -57,12 +59,16 @@ class ChatTests(CampaignTestCase):
         self.assertEqual(self.page(f"?before={second[-1]}"), [])
         self.assertEqual(self.page("?before=soon"), first)  # a bad cursor is ignored
 
-    def test_pages_are_cut_by_id_but_ordered_by_created_at(self):
-        # Characterises current behaviour (PERF-45, pinned; flips in PR A: ordered by -id)
+    def test_pages_are_cut_and_ordered_by_id(self):
+        # PERF-45: pages were cut by id but ordered by created_at, which no index served
         older_id, newer_id = self.say(2)
         CampaignMessage.objects.filter(id=newer_id).update(created_at=timezone.now() - timedelta(days=1))
 
-        self.assertEqual(self.page(), [older_id, newer_id])
+        self.assertEqual(self.page(), [newer_id, older_id])
+        self.client.force_authenticate(user=self.rival)
+        with CaptureQueriesContext(connection) as captured:
+            self.client.get(self.url("messages/"))
+        self.assertIn('ORDER BY "campaign_message"."id" DESC', captured[-1]["sql"])
 
     def test_a_message_is_trimmed_stored_with_the_first_name_and_sent_after_commit(self):
         response = self.post_as(self.player, self.url("messages/"), {"body": "  Ale at the Drunken Goblin  "})

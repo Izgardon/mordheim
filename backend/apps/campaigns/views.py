@@ -476,6 +476,15 @@ class CampaignPlayersView(APIView):
         return Response(serializer.data)
 
 
+HISTORY_UNREAD_FIELDS = (
+    "selected_unit_keys_json",
+    "unit_information_json",
+    "custom_units_json",
+    "roster_json",
+    "battle_notes",
+)
+
+
 class CampaignBattleHistoryView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -494,6 +503,7 @@ class CampaignBattleHistoryView(APIView):
                     "participants",
                     queryset=BattleParticipant.objects.select_related("warband")
                     .filter(removed_from_record=False)
+                    .defer(*HISTORY_UNREAD_FIELDS)  # only postbattle_json is read (PERF-45)
                     .order_by("id"),
                 )
             )
@@ -1082,7 +1092,7 @@ class CampaignMessagesView(MethodScopedThrottleMixin, APIView):
             except (ValueError, TypeError):
                 pass
 
-        messages = qs.order_by("-created_at")[:50]
+        messages = qs.order_by("-id")[:50]  # the order pages are cut in, on Index(campaign, -id) (PERF-45)
         serializer = CampaignMessageSerializer(messages, many=True)
         return Response(serializer.data)
 

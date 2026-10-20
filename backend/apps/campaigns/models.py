@@ -212,7 +212,8 @@ class CampaignMessage(models.Model):
 
     class Meta:
         db_table = "campaign_message"
-        ordering = ["-created_at"]
+        ordering = ["-id"]
+        indexes = [models.Index(fields=["campaign", "-id"], name="campaign_message_recent_idx")]  # PERF-45
 
     def __str__(self):
         return f"{self.campaign_id}:{self.user_id}:{self.created_at}"
@@ -233,7 +234,8 @@ class CampaignBulletinEntry(models.Model):
 
     class Meta:
         db_table = "campaign_bulletin"
-        ordering = ["-created_at", "-id"]
+        ordering = ["-id"]
+        indexes = [models.Index(fields=["campaign", "-id"], name="campaign_bulletin_recent_idx")]  # PERF-45
 
     def __str__(self):
         return f"{self.campaign_id}:{self.user_id}:{self.created_at}"
