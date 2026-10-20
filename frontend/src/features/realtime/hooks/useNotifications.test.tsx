@@ -9,7 +9,7 @@ import { declineBattleInvite } from "@/features/battles/api/battles-api";
 import { clearAllNotifications } from "@/features/notifications/api/notifications-api";
 import { AppStoreProvider, useAppStore } from "@/stores/app-store";
 import { createQueryWrapper } from "@/test/query-test-utils";
-import { useNotifications } from "./useNotifications";
+import { clearAllMessage, useNotifications } from "./useNotifications";
 
 const { auth } = vi.hoisted(() => ({ auth: { user: { id: 1, email: "raider@example.com" } } }));
 
@@ -93,5 +93,14 @@ describe("useNotifications", () => {
     expect(
       await screen.findByText("Can't reach the server right now. Please try again.")
     ).toBeInTheDocument();
+  });
+});
+
+describe("clearAllMessage (CAMP-TWEAK-10)", () => {
+  it("says how many went and how many still need an answer", () => {
+    expect(clearAllMessage(2, 1)).toBe("Cleared 2. 1 still needs an answer.");
+    expect(clearAllMessage(3, 0)).toBe("Cleared 3.");
+    expect(clearAllMessage(0, 2)).toBe("Nothing to clear: 2 still need an answer.");
+    expect(clearAllMessage(0, 0)).toBe("Nothing to clear.");
   });
 });

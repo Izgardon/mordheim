@@ -408,9 +408,9 @@ describe("BattleActionPanel with a reported result awaiting you", () => {
     expect(screen.getByRole("button", { name: "Notifications" })).not.toHaveTextContent("1");
   });
 
-  it("keeps the result to answer on the overview once the bell is cleared (BUG-46)", async () => {
+  it("keeps the result to answer on the overview, and in the bell, once the bell is cleared (BUG-46, CAMP-TWEAK-10)", async () => {
     const user = setupUser();
-    fakeApi.on("POST /notifications/clear-all/", { ok: true });
+    fakeApi.on("POST /notifications/clear-all/", { ok: true, cleared: 0, kept: 1 });
     const overview = await renderOverview();
     await within(overview).findByRole("region", { name: "Results awaiting your approval" });
 
@@ -425,9 +425,9 @@ describe("BattleActionPanel with a reported result awaiting you", () => {
         .getAllByRole("button")
         .map((button) => button.textContent)
     ).toEqual(["Decline", "Approve"]);
-    await user.click(screen.getByRole("button", { name: "Notifications" }));
-    expect(screen.getByRole("dialog", { name: "Notifications" })).toHaveTextContent(
-      "You are all caught up."
+    // Clear all keeps what still needs an answer (CAMP-TWEAK-10): the result stays in the bell.
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Notifications" })).toHaveTextContent("1")
     );
   });
 });

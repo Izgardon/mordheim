@@ -54,6 +54,7 @@ function NotificationCard({
           onClick={decline.onClick}
           disabled={decline.disabled || isPending}
           aria-label={decline.label}
+          title={decline.label}
         >
           <X className="h-4 w-4" aria-hidden="true" />
         </button>

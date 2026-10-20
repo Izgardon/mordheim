@@ -94,29 +94,45 @@ beforeEach(() => {
 });
 
 describe("Clearing the bell", () => {
-  it("removes the invite, the trade request and the result with no confirm, sending only clear-all/ (IMP-78, CAMP-TWEAK-10, pinned; flips in PR C)", async () => {
+  it("clears only what no longer needs an answer: the server says how many went and how many stay, and the bell lists what stays (IMP-78, CAMP-TWEAK-10)", async () => {
     const user = setupUser();
+    fakeApi.on("POST /notifications/clear-all/", { ok: true, cleared: 1, kept: 2 });
     renderCampaignRoute("/campaigns/1/skills");
     await waitFor(() => expect(bell()).toHaveTextContent("3"));
 
     await user.click(bell());
     const menu = screen.getByRole("dialog", { name: "Notifications" });
     expect(within(menu).getByText("Trade request from Mira")).toBeInTheDocument();
-    expect(within(menu).getByText("Battle invite")).toBeInTheDocument();
-    expect(within(menu).getByText("Ambush at the Bridge")).toBeInTheDocument();
     fakeApi.clearRequests();
+    // What the server still lists after Clear all: the two that need an answer.
+    fakeApi.on("GET /notifications/", pending.slice(1));
 
-    // The button reads "Clear", and nothing asks first.
     await user.click(within(menu).getByRole("button", { name: "Clear" }));
 
-    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
-    expect(bell()).toHaveTextContent("");
+    expect(await screen.findByText("Cleared 1. 2 still need an answer.")).toBeInTheDocument();
+    await waitFor(() => expect(bell()).toHaveTextContent("2"));
     expect(fakeApi.calls().filter((call) => !call.startsWith("GET"))).toEqual([
       "POST /notifications/clear-all/",
     ]);
+    expect(fakeApi.countOf("GET /notifications/")).toBe(1);
+  });
+
+  it("says when nothing could be cleared", async () => {
+    const user = setupUser();
+    fakeApi.on("POST /notifications/clear-all/", { ok: true, cleared: 0, kept: 3 });
+    renderCampaignRoute("/campaigns/1/skills");
+    await waitFor(() => expect(bell()).toHaveTextContent("3"));
+
     await user.click(bell());
-    expect(screen.getByRole("dialog", { name: "Notifications" })).toHaveTextContent(
-      "You are all caught up."
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Notifications" })).getByRole("button", {
+        name: "Clear",
+      })
     );
+
+    expect(
+      await screen.findByText("Nothing to clear: 3 still need an answer.")
+    ).toBeInTheDocument();
+    await waitFor(() => expect(bell()).toHaveTextContent("3"));
   });
 });

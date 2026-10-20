@@ -17,6 +17,9 @@ export function clearNotification(notificationId: number) {
   return apiRequest<{ ok: boolean }>(`/notifications/${notificationId}/clear/`, { method: "POST" });
 }
 
+/** Resolves what can no longer be answered (CAMP-TWEAK-10): how many went, and how many stay. */
 export function clearAllNotifications() {
-  return apiRequest<{ ok: boolean }>("/notifications/clear-all/", { method: "POST" });
+  return apiRequest<{ ok: boolean; cleared: number; kept: number }>("/notifications/clear-all/", {
+    method: "POST",
+  });
 }

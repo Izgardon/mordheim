@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -6,19 +6,10 @@ import { toast } from "sonner";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { invalidateOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import { invalidatePendingResults } from "@/features/battles/hooks/usePendingReportedResults";
-import type {
-  BattleInviteNotification,
-  BattleResultRequestNotification,
-} from "@/features/battles/types/battle-types";
-import {
-  listNotifications,
-  type AppNotification,
-} from "@/features/notifications/api/notifications-api";
-import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
+import { listNotifications } from "@/features/notifications/api/notifications-api";
 import { useRealtimeReconnect, useUserNotifications } from "@/lib/realtime";
 import { useAppStore } from "@/stores/app-store";
 import {
-  notificationFromApi,
   toBattleInviteNotification,
   toBattleNudgeNotification,
   toBattleResultRequestNotification,
@@ -26,6 +17,7 @@ import {
 } from "../utils/notification-mappers";
 import { handleMembershipNotification } from "../utils/membership-notifications";
 import { handleTradeNotification } from "../utils/trade-notifications";
+import { useApplyNotificationList, useReloadNotifications } from "./useNotificationList";
 
 /** Long enough to read and act on; the Rejoin Battle button and the bell remain afterwards. */
 const ACTIONABLE_TOAST_MS = 12_000;
@@ -43,64 +35,17 @@ export function useNotificationSubscription() {
     currentBattleSession,
     addTradeRequestNotification,
     removeTradeRequestNotification,
-    clearTradeRequestNotifications,
     addBattleInviteNotification,
     removeBattleInviteNotification,
-    clearBattleInviteNotifications,
     addBattleResultRequestNotification,
     removeBattleResultRequestNotification,
-    clearBattleResultRequestNotifications,
     addBattleNudgeNotification,
-    clearBattleNudgeNotifications,
     setCurrentBattleSession,
     clearCurrentBattleSession,
   } = useAppStore();
   const userId = user?.id ?? null;
-
-  const applyNotificationList = useCallback(
-    (notifications: AppNotification[], { replace }: { replace: boolean }) => {
-      if (replace) {
-        clearTradeRequestNotifications();
-        clearBattleInviteNotifications();
-        clearBattleResultRequestNotifications();
-        clearBattleNudgeNotifications();
-      }
-      for (const n of notifications) {
-        if (n.notification_type === "battle_nudge") {
-          // A nudge waiting since you were away (BATL-NEW-08).
-          const nudge = toBattleNudgeNotification(n.payload as BattleNotificationPayload, n.id);
-          if (nudge) addBattleNudgeNotification(nudge);
-          continue;
-        }
-        const converted = notificationFromApi(n);
-        if (!converted) continue;
-        if (n.notification_type === "trade_request") {
-          addTradeRequestNotification(converted as TradeNotification);
-        } else if (n.notification_type === "battle_invite") {
-          const battleInvite = converted as BattleInviteNotification;
-          addBattleInviteNotification(battleInvite);
-          setCurrentBattleSession({
-            battleId: battleInvite.battleId,
-            campaignId: battleInvite.campaignId,
-            status: "inviting",
-          });
-        } else if (n.notification_type === "battle_result_request") {
-          addBattleResultRequestNotification(converted as BattleResultRequestNotification);
-        }
-      }
-    },
-    [
-      addBattleInviteNotification,
-      addBattleNudgeNotification,
-      addBattleResultRequestNotification,
-      addTradeRequestNotification,
-      clearBattleInviteNotifications,
-      clearBattleNudgeNotifications,
-      clearBattleResultRequestNotifications,
-      clearTradeRequestNotifications,
-      setCurrentBattleSession,
-    ]
-  );
+  const applyNotificationList = useApplyNotificationList();
+  const reloadNotifications = useReloadNotifications();
 
   // Only a different user reloads the list; store changes (battle or trade session) don't.
   useEffect(() => {
@@ -116,15 +61,6 @@ export function useNotificationSubscription() {
     return () => {
       active = false;
     };
-  }, [applyNotificationList, userId]);
-
-  const reloadNotifications = useCallback(() => {
-    if (!userId) {
-      return;
-    }
-    listNotifications()
-      .then((notifications) => applyNotificationList(notifications, { replace: true }))
-      .catch(() => {});
   }, [applyNotificationList, userId]);
 
   // Notifications sent while the socket was down are only in the database: reload the list.
