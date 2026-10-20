@@ -49,19 +49,20 @@ beforeEach(() => {
 });
 
 describe("Campaigns list and the join code", () => {
-  it("shows the join code, with Copy, on campaigns you own only", async () => {
+  it("shows the join code, with Copy, on every campaign you belong to, the ones you only play in too (BUG-143, decision 1b)", async () => {
     const user = setupUser();
     renderCampaigns();
 
     expect(await screen.findByText("2 campaigns")).toBeInTheDocument();
     expect(card(owned.name)).toHaveTextContent("Join code: WYR123");
-    expect(card(joined.name)).not.toHaveTextContent("Join code");
-    expect(within(card(joined.name)).queryByRole("button", { name: "Copy" })).toBeNull();
+    expect(card(joined.name)).toHaveTextContent("Join code: PIT777");
 
-    await user.click(within(card(owned.name)).getByRole("button", { name: "Copy" }));
+    await user.click(within(card(joined.name)).getByRole("button", { name: "Copy" }));
 
-    expect(await navigator.clipboard.readText()).toBe("WYR123");
-    expect(within(card(owned.name)).getByRole("button", { name: "Copied" })).toBeInTheDocument();
+    expect(await navigator.clipboard.readText()).toBe("PIT777");
+    expect(within(card(joined.name)).getByRole("button", { name: "Copied" })).toBeInTheDocument();
+    expect(within(card(owned.name)).getByRole("button", { name: "Copy" })).toBeInTheDocument();
+    // Regenerating it is in Settings, for owners and admins.
     expect(screen.queryByRole("button", { name: /new code|regenerate/i })).toBeNull();
   });
 
