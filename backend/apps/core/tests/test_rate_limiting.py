@@ -36,9 +36,9 @@ class RateLimitingApiTests(APITestCase):
         self.user_model = get_user_model()
         self.password = "testpass123"
 
-        self.owner_role = CampaignRole.objects.create(slug="owner", name="Owner")
-        self.player_role = CampaignRole.objects.create(slug="player", name="Player")
-        self.admin_role = CampaignRole.objects.create(slug="admin", name="Admin")
+        self.owner_role = CampaignRole.objects.get(slug="owner")
+        self.player_role = CampaignRole.objects.get(slug="player")
+        self.admin_role = CampaignRole.objects.get(slug="admin")
 
         self.owner = self._create_user("owner@example.com", "Owner")
         self.player = self._create_user("player@example.com", "Player")
@@ -131,8 +131,6 @@ class RateLimitingApiTests(APITestCase):
                 "feedback_report_ip": "10/min",
                 "campaign_chat_user": "12/min",
                 "campaign_chat_ip": "60/min",
-                "campaign_ping_user": "30/min",
-                "campaign_ping_ip": "120/min",
                 "battle_write_user": "60/min",
                 "battle_write_ip": "240/min",
                 "trade_write_user": "20/min",
@@ -335,25 +333,6 @@ class RateLimitingApiTests(APITestCase):
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/messages/",
             {"body": "Hold the line."},
-            format="json",
-        )
-        self.assertEqual(response.status_code, 429)
-
-    @override_settings(REST_FRAMEWORK=_rest_framework_with_rates(campaign_ping_user="2/min", campaign_ping_ip="10/min"))
-    def test_campaign_ping_post_is_rate_limited(self):
-        self._auth_client(self.owner)
-
-        for _ in range(2):
-            response = self.client.post(
-                f"/api/campaigns/{self.campaign.id}/pings/",
-                {"payload": {"kind": "ready-check"}},
-                format="json",
-            )
-            self.assertIn(response.status_code, {200, 503})
-
-        response = self.client.post(
-            f"/api/campaigns/{self.campaign.id}/pings/",
-            {"payload": {"kind": "ready-check"}},
             format="json",
         )
         self.assertEqual(response.status_code, 429)

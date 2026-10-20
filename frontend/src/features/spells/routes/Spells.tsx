@@ -22,7 +22,7 @@ import { Tooltip } from "@components/tooltip";
 import { Pencil } from "lucide-react";
 
 // api
-import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
+import { campaignCapabilities } from "@/features/campaigns/capabilities";
 
 // types
 import type { Spell } from "../types/spell-types";
@@ -43,7 +43,6 @@ export default function Spells() {
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignId = Number(id);
-  const memberPermissions = useCampaignPermissions(campaignId);
   const { data: spells, isLoading, error } = useCatalogue("spells", campaignId);
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,10 +50,7 @@ export default function Spells() {
   const [editingSpell, setEditingSpell] = useState<Spell | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
 
-  const canAdd =
-    campaign?.role === "owner" ||
-    campaign?.role === "admin" ||
-    memberPermissions.includes("add_custom");
+  const canAdd = campaignCapabilities(campaign).add_custom;
 
   const typeOptions = useMemo(() => {
     const unique = new Set(spells.map((spell) => spell.type).filter(Boolean) as string[]);

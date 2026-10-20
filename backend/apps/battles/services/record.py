@@ -10,10 +10,10 @@ before and after.
 
 from django.utils import timezone
 
+from apps.users.names import display_name
 from apps.warbands.models import Warband
 
 from ..models import Battle, BattleEvent, BattleParticipant
-from ..serializers import display_name
 from ..validation.record import KEEP, RecordEdit
 from .errors import field_error
 from .events import append_event

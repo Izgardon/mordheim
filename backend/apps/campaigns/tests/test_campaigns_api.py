@@ -12,11 +12,11 @@ from apps.campaigns.models import (
     CampaignLocation,
     CampaignMembership,
     CampaignMembershipPermission,
+    CampaignPermission,
     CampaignRole,
     CampaignSettings,
     PivotalMoment,
 )
-from apps.campaigns.views import _ensure_permissions, _ensure_roles
 from apps.items.models import (
     Item,
     ItemAvailability,
@@ -46,8 +46,6 @@ class CampaignApiTests(APITestCase):
         cache.clear()
         self.user_model = get_user_model()
         self.password = "testpass123"
-        _ensure_roles.cache_clear()
-        _ensure_permissions.cache_clear()
 
     def _create_user(self, email, name=""):
         return self.user_model.objects.create_user(
@@ -74,11 +72,10 @@ class CampaignApiTests(APITestCase):
         return response.data
 
     def _grant_campaign_permission(self, campaign_id, user, permission_code):
-        permissions = _ensure_permissions()
         membership = CampaignMembership.objects.get(campaign_id=campaign_id, user=user)
         CampaignMembershipPermission.objects.get_or_create(
             membership=membership,
-            permission=permissions[permission_code],
+            permission=CampaignPermission.objects.get(code=permission_code),
         )
 
     def _create_setting(self, name="Cathay Setting"):
@@ -329,7 +326,8 @@ class CampaignApiTests(APITestCase):
         second_response = self._create_half_price_armour_rule(owner, campaign["id"], title="Half Price Armour Copy")
 
         self.assertEqual(first_response.status_code, 201)
-        self.assertEqual(second_response.status_code, 201)
+        self.assertEqual(second_response.status_code, 200)  # the rule that exists (BUG-52)
+        self.assertEqual(second_response.data["id"], first_response.data["id"])
         clones = Item.objects.filter(
             campaign_id=campaign["id"],
             generated_effect_key="half_price_armour",
@@ -365,13 +363,13 @@ class CampaignApiTests(APITestCase):
             source_item=armour,
         )
         self.assertEqual(WarbandItem.objects.get(warband=warband).item_id, clone.id)
-        self.assertEqual(WarbandItem.objects.get(warband=warband).cost, 46)
+        self.assertEqual(WarbandItem.objects.get(warband=warband).cost, 91)  # what was paid (BUG-51)
         self.assertEqual(HeroItem.objects.get(hero=hero).item_id, clone.id)
-        self.assertEqual(HeroItem.objects.get(hero=hero).cost, 46)
+        self.assertEqual(HeroItem.objects.get(hero=hero).cost, 91)
         self.assertEqual(HiredSwordItem.objects.get(hired_sword=hired_sword).item_id, clone.id)
-        self.assertEqual(HiredSwordItem.objects.get(hired_sword=hired_sword).cost, 46)
+        self.assertEqual(HiredSwordItem.objects.get(hired_sword=hired_sword).cost, 91)
         self.assertEqual(HenchmenGroupItem.objects.get(henchmen_group=group).item_id, clone.id)
-        self.assertEqual(HenchmenGroupItem.objects.get(henchmen_group=group).cost, 46)
+        self.assertEqual(HenchmenGroupItem.objects.get(henchmen_group=group).cost, 91)
 
     def test_delete_half_price_armour_rule_restores_owned_items_and_removes_clones(self):
         owner = self._create_user("owner@example.com", "Owner")
@@ -662,7 +660,8 @@ class CampaignApiTests(APITestCase):
             ["Cathay Setting"],
         )
 
-    def test_campaign_warbands_endpoint_returns_effective_restrictions(self):
+    def test_warband_detail_returns_effective_restrictions(self):
+        # The campaign warbands route had no caller and is gone (IMP-68); the warband detail answers the same rows
         owner = self._create_user("owner@example.com", "Owner")
         campaign = self._create_campaign(owner)
         setting = self._create_setting("Cathay Setting")
@@ -687,11 +686,11 @@ class CampaignApiTests(APITestCase):
         )
         self.assertEqual(create_response.status_code, 201)
 
-        response = self.client.get(f"/api/campaigns/{campaign['id']}/warbands/")
+        self.assertEqual(self.client.get(f"/api/campaigns/{campaign['id']}/warbands/").status_code, 404)
+        response = self.client.get(f"/api/warbands/{create_response.data['id']}/")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
         self.assertEqual(
-            [entry["restriction"] for entry in response.data[0]["restrictions"]],
+            [entry["restriction"] for entry in response.data["restrictions"]],
             ["Cathay Setting"],
         )
 
@@ -1202,7 +1201,8 @@ class CampaignApiTests(APITestCase):
 
         delete_response = self.client.delete(f"/api/campaigns/{campaign['id']}/bulletin/{second_response.data['id']}/")
         self.assertEqual(delete_response.status_code, 204)
-        self.assertFalse(CampaignBulletinEntry.objects.filter(id=second_response.data["id"]).exists())
+        removed = CampaignBulletinEntry.objects.get(id=second_response.data["id"])  # a soft delete (decision 8)
+        self.assertEqual(removed.removed_by_id, player.id)
 
     def test_bulletin_entry_rejects_blank_or_over_limit_body(self):
         owner = self._create_user("owner@example.com", "Owner")
@@ -1346,20 +1346,19 @@ class CampaignApiTests(APITestCase):
         list_response = self.client.get(f"/api/campaigns/{campaign['id']}/encampments/")
         self.assertEqual(list_response.status_code, 200)
 
-        forbidden_create_response = self.client.post(
+        # decision 9: any member adds one (his own); someone else's needs manage_encampments
+        own_create_response = self.client.post(
             f"/api/campaigns/{campaign['id']}/encampments/",
             {"name": "Player Camp"},
             format="json",
         )
-        self.assertEqual(forbidden_create_response.status_code, 403)
+        self.assertEqual((own_create_response.status_code, own_create_response.data["owner_id"]), (201, player.id))
+        nobodys = CampaignEncampment.objects.create(campaign_id=campaign["id"], name="Nobody's Camp")
+        nobodys_url = f"/api/campaigns/{campaign['id']}/encampments/{nobodys.id}/"
+        self.assertEqual(self.client.patch(nobodys_url, {"name": "Mine"}, format="json").status_code, 403)
 
         self._grant_campaign_permission(campaign["id"], player, "manage_encampments")
-        allowed_create_response = self.client.post(
-            f"/api/campaigns/{campaign['id']}/encampments/",
-            {"name": "Player Camp"},
-            format="json",
-        )
-        self.assertEqual(allowed_create_response.status_code, 201)
+        self.assertEqual(self.client.patch(nobodys_url, {"name": "Mine"}, format="json").status_code, 200)
 
     def test_location_create_list_and_patch_flow(self):
         owner = self._create_user("owner@example.com", "Owner")

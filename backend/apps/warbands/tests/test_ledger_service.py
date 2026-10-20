@@ -52,37 +52,6 @@ class LedgerRecordTests(RosterTestCase):
             self.assertEqual(ledger.record_entries([]), [])
 
 
-class StartingGoldRewriteTests(RosterTestCase):
-    """Until BUG-78 (pass 4) a new campaign starting gold rewrites the oldest row; the balance follows it."""
-
-    def test_the_oldest_row_is_rewritten_and_the_balance_moves_by_the_difference(self):
-        ledger.record(self.warband, LedgerAction.STARTING_GOLD, 500, "Starting Gold")
-        ledger.record(self.warband, LedgerAction.BUY, -40, "Shield")
-
-        ledger.rewrite_starting_gold(self.warband, 300)
-
-        self.assertEqual(
-            trade_rows(self.warband),
-            [("Starting gold", "Starting Gold", 300, None), ("Buy", "Shield", -40, None)],
-        )
-        self.assertEqual(Warband.objects.get(id=self.warband.id).gold, 260)
-
-    def test_any_oldest_row_becomes_the_starting_gold_as_before(self):
-        # BUG-78, pinned: the rewrite doesn't look at the row's action
-        ledger.record(self.warband, LedgerAction.BUY, -40, "Shield")
-
-        ledger.rewrite_starting_gold(self.warband, 500)
-
-        self.assertEqual(trade_rows(self.warband), [("Starting gold", "Starting Gold", 500, None)])
-        self.assertEqual(Warband.objects.get(id=self.warband.id).gold, 500)
-
-    def test_a_warband_without_rows_gets_its_starting_gold(self):
-        ledger.rewrite_starting_gold(self.warband, 500)
-
-        self.assertEqual(trade_rows(self.warband), [("Starting gold", "Starting Gold", 500, None)])
-        self.assertEqual(Warband.objects.get(id=self.warband.id).gold, 500)
-
-
 class StaleWarbandSaveTests(RosterTestCase):
     def test_saving_a_warband_loaded_earlier_keeps_the_gold_written_since(self):
         stale = Warband.objects.get(id=self.warband.id)

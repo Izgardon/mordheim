@@ -35,6 +35,27 @@ export function getCampaignNavItems(campaign: CampaignNavFlags) {
   ];
 }
 
+const SECTION_TITLES: Record<string, string> = {
+  locations: "Locations",
+  encampments: "Encampments",
+  warband: "Warband",
+  items: "Wargear",
+  skills: "Skills",
+  spells: "Spells",
+  bestiary: "Bestiary",
+  "hired-swords": "Hired Swords",
+  rules: "Rules",
+  "house-rules": "House Rules",
+  settings: "Settings",
+  battles: "Battle",
+};
+
+/** The phone's top-bar title for a campaign path (`/campaigns/:id/<section>/...`). */
+export function campaignSectionTitle(pathname: string) {
+  const section = pathname.split("/").filter(Boolean)[2] ?? "overview";
+  return SECTION_TITLES[section] ?? "Overview";
+}
+
 /** Where the mobile nav's "Campaign" tab goes: the first campaign section that is switched on. */
 export function getMobileCampaignPath(campaign: CampaignNavFlags, campaignId: string) {
   if (campaign.enable_locations) return `/campaigns/${campaignId}/locations`;

@@ -4,7 +4,7 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.permissions import get_membership, is_admin, is_owner
+from apps.campaigns.permissions import get_membership, get_writable_membership, is_admin, is_owner
 
 from .models import Race
 from .serializers import RaceCreateSerializer, RaceSerializer
@@ -42,7 +42,7 @@ class RaceListView(APIView):
 
     def post(self, request):
         campaign_id = request.data.get("campaign_id")
-        membership = get_membership(request.user, campaign_id)
+        membership = get_writable_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
         data = request.data.copy()
@@ -68,7 +68,7 @@ class RaceDetailView(APIView):
         if campaign_id and str(campaign_id) != str(race.campaign_id):
             return Response({"detail": "Not found"}, status=404)
 
-        membership = get_membership(request.user, race.campaign_id)
+        membership = get_writable_membership(request.user, race.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
         if not (is_owner(membership) or is_admin(membership)):

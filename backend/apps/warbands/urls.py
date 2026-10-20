@@ -18,6 +18,7 @@ from .views import (
     WarbandResourceListCreateView,
     WarbandResourceSaleView,
     WarbandRestrictionsView,
+    WarbandRosterStatsView,
     WarbandSheetView,
     WarbandSummaryView,
     WarbandTradeDetailView,
@@ -27,6 +28,7 @@ from .views import (
 urlpatterns = [
     path("warbands/", WarbandListCreateView.as_view(), name="warbands"),
     path("warbands/<int:warband_id>/", WarbandDetailView.as_view(), name="warbands-detail"),
+    path("warbands/<int:warband_id>/roster-stats/", WarbandRosterStatsView.as_view(), name="warbands-roster-stats"),
     path(
         "warbands/<int:warband_id>/summary/",
         WarbandSummaryView.as_view(),

@@ -8,6 +8,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import { useActiveBattleTools } from "../../hooks/useActiveBattleTools";
 import type { CampaignActiveBattle } from "../../types/campaign-types";
 import ActiveBattleActions from "./ActiveBattleActions";
+import ActiveBattleDetails from "./ActiveBattleDetails";
 import ActiveBattleDialogs from "./ActiveBattleDialogs";
 import {
   battleStatusLine,
@@ -15,7 +16,6 @@ import {
   formatCreatedAt,
   getCreatorLabel,
   getParticipantSummary,
-  participantStatusLabel,
 } from "./active-battle-labels";
 
 type ActiveBattlesTableProps = {
@@ -153,8 +153,13 @@ export default function ActiveBattlesTable({
                           </div>
                         </td>
                         <td className="px-2 py-2 align-middle sm:px-4 sm:py-3">
-                          <span className="block max-w-[150px] truncate text-foreground sm:max-w-none">
-                            {battle.scenario || "-"}
+                          <span className="flex max-w-[150px] items-center gap-2 text-foreground sm:max-w-none">
+                            <span className="truncate">{battle.scenario || "-"}</span>
+                            {battleEntry.stuck ? (
+                              <span className="shrink-0 rounded border border-amber-500/50 bg-amber-900/30 px-1.5 py-0.5 text-[0.55rem] uppercase tracking-[0.15em] text-amber-200">
+                                Stuck
+                              </span>
+                            ) : null}
                           </span>
                         </td>
                         {!isMobile ? (
@@ -164,7 +169,7 @@ export default function ActiveBattlesTable({
                         ) : null}
                         {!isMobile ? (
                           <td className="px-2 py-2 align-middle text-muted-foreground sm:px-4 sm:py-3">
-                            {battleStatusLine(battle)}
+                            {battleStatusLine(battle, battleEntry.idle_seconds)}
                           </td>
                         ) : null}
                         {!isMobile ? (
@@ -184,52 +189,11 @@ export default function ActiveBattlesTable({
                         </td>
                       </tr>
                       {isExpanded ? (
-                        <tr>
-                          <td
-                            colSpan={columnCount}
-                            className="border-b border-border/40 bg-background/20 px-3 pb-3 pt-2 sm:px-4 sm:pb-4 sm:pt-3"
-                          >
-                            <div className="space-y-3">
-                              {isMobile ? (
-                                <div className="grid gap-2 text-xs text-muted-foreground">
-                                  <p>
-                                    <span className="font-semibold text-foreground">Type:</span>{" "}
-                                    {battleTypeLabel(battle.flow_type)}
-                                  </p>
-                                  <p>
-                                    <span className="font-semibold text-foreground">Status:</span>{" "}
-                                    {battleStatusLine(battle)}
-                                  </p>
-                                  <p>
-                                    <span className="font-semibold text-foreground">Created:</span>{" "}
-                                    {formatCreatedAt(battle.created_at)}
-                                  </p>
-                                </div>
-                              ) : null}
-                              <div className="space-y-2">
-                                <p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
-                                  Participants
-                                </p>
-                                <div className="grid gap-2">
-                                  {battleEntry.participants.map((participant) => (
-                                    <div
-                                      key={participant.id}
-                                      className="rounded-xl border border-border/50 bg-black/20 px-3 py-2"
-                                    >
-                                      <p className="text-sm font-semibold text-foreground">
-                                        {participant.user.label}
-                                      </p>
-                                      <p className="text-xs text-muted-foreground">
-                                        {participant.warband.name} •{" "}
-                                        {participantStatusLabel(participant.status)}
-                                      </p>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
+                        <ActiveBattleDetails
+                          entry={battleEntry}
+                          columnCount={columnCount}
+                          isMobile={isMobile}
+                        />
                       ) : null}
                     </Fragment>
                   );

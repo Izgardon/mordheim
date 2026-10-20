@@ -4,6 +4,7 @@ import { MessageSquare, Send } from "lucide-react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -14,37 +15,30 @@ import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import { useChatWindow } from "../hooks/useChatWindow";
 
-import type { CampaignMessage } from "@/features/campaigns/types/campaign-types";
+import { useCampaignCapabilities } from "@/features/campaigns/capabilities";
+import ChatMessageItem from "./ChatMessageItem";
 
 type Props = {
   campaignId: number;
   className?: string;
 };
 
-function ChatMessage({ message, isOwn }: { message: CampaignMessage; isOwn: boolean }) {
-  return (
-    <div className={cn("flex flex-col gap-0.5", isOwn ? "items-end" : "items-start")}>
-      <span className="px-1 text-[0.65rem] text-muted-foreground">{message.username}</span>
-      <div
-        className={cn(
-          "max-w-[75%] break-words rounded-2xl px-3 py-2 text-sm",
-          isOwn ? "bg-primary/20 text-primary-foreground" : "surface-inline text-foreground"
-        )}
-      >
-        {message.body}
-      </div>
-    </div>
-  );
-}
-
 export default function CampaignChatMenu({ campaignId, className }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const { user: currentUser } = useAppStore();
   const chat = useChatWindow(campaignId, isOpen);
+  // Owners and admins remove posts (decision 8); read from the campaign the layout loaded.
+  const canRemove = useCampaignCapabilities(campaignId, { read: false }).remove_posts;
   const { messages, isLoading, loadError, unread } = chat;
+  const handleOpenChange = (open: boolean) => {
+    if (open) {
+      chat.resetHistory();
+    }
+    setIsOpen(open);
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <button
           type="button"
@@ -65,6 +59,7 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
       <DialogContent className="sm:max-w-[28rem]">
         <DialogHeader>
           <DialogTitle>Campaign Chat</DialogTitle>
+          <DialogDescription>Messages to everyone in this campaign.</DialogDescription>
         </DialogHeader>
 
         {/* Messages list */}
@@ -96,10 +91,12 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
             <EmptyState>No messages yet. Say something!</EmptyState>
           ) : null}
           {messages.map((message) => (
-            <ChatMessage
+            <ChatMessageItem
               key={message.id}
               message={message}
               isOwn={currentUser?.id === message.user_id}
+              canRemove={canRemove}
+              onRemove={chat.removeMessage}
             />
           ))}
         </div>
@@ -107,7 +104,11 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
         {/* Input bar */}
         <div className="space-y-2 border-t border-border/40 pt-3">
           <div className="flex items-center gap-2">
+            <label htmlFor="campaign-chat-message" className="sr-only">
+              Message the campaign
+            </label>
             <input
+              id="campaign-chat-message"
               type="text"
               className="field-surface flex-1 rounded-xl px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary/60"
               placeholder="Send a message..."

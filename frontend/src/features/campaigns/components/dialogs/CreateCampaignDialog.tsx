@@ -7,6 +7,7 @@ import { X } from "lucide-react";
 import { Button } from "@components/button";
 import {
   Dialog,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -22,6 +23,7 @@ import RestrictionPicker from "@/features/warbands/components/shared/Restriction
 import type { CampaignCreatePayload, CampaignCreateType } from "../../types/campaign-types";
 import type { Restriction } from "@/features/items/types/item-types";
 import { listRestrictions } from "@/features/items/api/items-api";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 const TYPE_OPTIONS = [
   { value: "standard", label: "Standard" },
@@ -99,11 +101,7 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
       });
       setOpen(false);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setError(errorResponse.message || "Unable to start campaign");
-      } else {
-        setError("Unable to start campaign");
-      }
+      setError(getErrorMessage(errorResponse, "Unable to start campaign"));
     } finally {
       setIsSubmitting(false);
     }
@@ -117,6 +115,9 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
           <DialogTitle className="text-base font-semibold">Start a new campaign</DialogTitle>
+          <DialogDescription className="block text-sm text-muted-foreground">
+            Name it, pick its rules and limits, then share its join code with your players.
+          </DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">

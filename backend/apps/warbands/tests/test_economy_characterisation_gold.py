@@ -42,7 +42,7 @@ class MixedLedgerGoldTests(RosterTestCase):
         return response.json()
 
     def _write_mixed_ledger(self) -> None:
-        ledger.rewrite_starting_gold(self.warband, 500)  # warband create
+        ledger.record(self.warband, LedgerAction.STARTING_GOLD, 500, "Starting Gold")  # warband create
         self._post("trades/", {"action": "Buy", "description": "Rope", "price": 25})  # manual entry
         self._post("trades/", {"action": "Bought", "description": "Sword", "price": 40})  # the buy dialog
         WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=1, cost=10)

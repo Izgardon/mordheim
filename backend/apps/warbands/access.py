@@ -54,9 +54,10 @@ def check_backstory_change(
 
 
 def warband_capabilities(user: Any, warband: Warband, membership: CampaignMembership) -> dict[str, bool]:
-    """Flags for a member of the warband's campaign; costs at most two queries, none for owners and admins."""
+    """Flags for a member of the warband's campaign; costs at most two queries, none for owners and admins. All
+    false while the campaign is archived (decision 5: read-only)."""
     can_edit = can_edit_warband(user, warband, membership)
-    return {
+    flags = {
         "edit": can_edit,  # warband and unit writes
         "level_up": can_edit,  # unit level-up endpoints
         "manage_items": can_edit,  # stash, item transfers and sales, resources, ledger entries
@@ -65,3 +66,6 @@ def warband_capabilities(user: Any, warband: Warband, membership: CampaignMember
         "add_custom": has_campaign_permission(membership, "add_custom"),  # custom catalogue entries
         "trade": owns_warband(user, warband, membership),  # player trades: its owner only (pass 2 decision 10)
     }
+    if warband.campaign.archived_at is not None:
+        return dict.fromkeys(flags, False)
+    return flags

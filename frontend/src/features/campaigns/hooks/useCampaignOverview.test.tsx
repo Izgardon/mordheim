@@ -9,9 +9,9 @@ import {
   listCampaignTopKillers,
   listCampaignTradeRequests,
 } from "../api/campaigns-api";
+import { createQueryWrapper } from "@/test/query-test-utils";
 import { useCampaignOverview } from "./useCampaignOverview";
 
-vi.mock("@/stores/app-store", () => ({ useAppStore: () => ({ setCampaignStarted: vi.fn() }) }));
 vi.mock("../api/campaigns-api", () => ({
   createCampaignBulletinEntry: vi.fn(),
   deleteCampaignBulletinEntry: vi.fn(),
@@ -30,7 +30,10 @@ describe("useCampaignOverview", () => {
   });
 
   it("loads the overview tab without the hidden bulletin tab's data (PERF-43)", async () => {
-    renderHook(() => useCampaignOverview({ campaignId: 7, campaign: null, activeTab: "overview" }));
+    renderHook(
+      () => useCampaignOverview({ campaignId: 7, campaign: null, activeTab: "overview" }),
+      { wrapper: createQueryWrapper() }
+    );
 
     await waitFor(() => expect(listCampaignPlayers).toHaveBeenCalledWith(7));
     expect(listCampaignTradeRequests).toHaveBeenCalled();
@@ -41,8 +44,9 @@ describe("useCampaignOverview", () => {
   });
 
   it("loads the bulletin and top killers when the bulletin tab is open", async () => {
-    const { result } = renderHook(() =>
-      useCampaignOverview({ campaignId: 7, campaign: null, activeTab: "bulletin" })
+    const { result } = renderHook(
+      () => useCampaignOverview({ campaignId: 7, campaign: null, activeTab: "bulletin" }),
+      { wrapper: createQueryWrapper() }
     );
 
     await waitFor(() => expect(result.current.isBulletinLoading).toBe(false));

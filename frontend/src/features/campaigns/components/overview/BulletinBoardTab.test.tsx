@@ -83,7 +83,7 @@ describe("BulletinBoardTab", () => {
     });
   });
 
-  it("only shows delete controls for the current user's notes", async () => {
+  it("only shows remove controls for the current user's notes, and asks before removing (CAMP-NEW-06)", async () => {
     const user = userEvent.setup();
     const onDeleteBulletinEntry = vi.fn().mockResolvedValue(undefined);
 
@@ -120,13 +120,79 @@ describe("BulletinBoardTab", () => {
       />
     );
 
-    const ownDeleteButton = screen.getByRole("button", { name: "Delete bulletin note 11" });
+    const ownDeleteButton = screen.getByRole("button", { name: "Remove bulletin note 11" });
     expect(
-      screen.queryByRole("button", { name: "Delete bulletin note 12" })
+      screen.queryByRole("button", { name: "Remove bulletin note 12" })
     ).not.toBeInTheDocument();
 
     await user.click(ownDeleteButton);
-    expect(onDeleteBulletinEntry).toHaveBeenCalledWith(11);
+    expect(onDeleteBulletinEntry).not.toHaveBeenCalled();
+    const confirm = screen.getByRole("dialog", { name: "Remove note" });
+    await user.click(within(confirm).getByRole("button", { name: "Remove" }));
+    expect(onDeleteBulletinEntry).toHaveBeenCalledWith(11, "author");
+  });
+
+  it("lets an owner or admin remove anyone's note, and shows removed notes muted (CAMP-NEW-06)", () => {
+    render(
+      <BulletinBoardTab
+        isTopKillersLoading={false}
+        topKillersError=""
+        topKillers={[]}
+        isBulletinLoading={false}
+        bulletinError=""
+        bulletinActionError=""
+        bulletinEntries={[
+          {
+            id: 12,
+            campaign_id: 2,
+            user_id: 8,
+            username: "Player",
+            body: "Need a blunderbuss.",
+            created_at: "2026-04-02T10:00:00Z",
+          },
+          {
+            id: 13,
+            campaign_id: 2,
+            user_id: 8,
+            username: "Player",
+            body: "",
+            created_at: "2026-04-01T10:00:00Z",
+            removed_at: "2026-04-02T11:00:00Z",
+            removed_by: "author",
+          },
+        ]}
+        isCreatingBulletinEntry={false}
+        deletingBulletinEntryIds={[]}
+        canRemovePosts
+        onCreateBulletinEntry={vi.fn().mockResolvedValue(undefined)}
+        onDeleteBulletinEntry={vi.fn().mockResolvedValue(undefined)}
+      />
+    );
+
+    expect(screen.getByRole("button", { name: "Remove bulletin note 12" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Remove bulletin note 13" })).toBeNull();
+    expect(screen.getByText("removed by its author")).toBeInTheDocument();
+  });
+
+  it("hides Add Note in an archived campaign", () => {
+    render(
+      <BulletinBoardTab
+        isTopKillersLoading={false}
+        topKillersError=""
+        topKillers={[]}
+        isBulletinLoading={false}
+        bulletinError=""
+        bulletinActionError=""
+        bulletinEntries={[]}
+        isCreatingBulletinEntry={false}
+        deletingBulletinEntryIds={[]}
+        canPost={false}
+        onCreateBulletinEntry={vi.fn().mockResolvedValue(undefined)}
+        onDeleteBulletinEntry={vi.fn().mockResolvedValue(undefined)}
+      />
+    );
+
+    expect(screen.queryByRole("button", { name: /add note/i })).toBeNull();
   });
 
   it("renders the most dangerous section as a normal table", () => {

@@ -2,8 +2,8 @@ from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from rest_framework.test import APIClient, APITestCase
 
-from apps.campaigns.models import CampaignMembership, CampaignMembershipPermission
-from apps.campaigns.views import _ensure_permissions, _ensure_roles
+from apps.campaigns.constants import PERMISSION_CODES
+from apps.campaigns.models import CampaignMembership, CampaignMembershipPermission, CampaignPermission
 
 
 class CampaignDetailPermissionsTests(APITestCase):
@@ -13,8 +13,6 @@ class CampaignDetailPermissionsTests(APITestCase):
 
     def setUp(self):
         cache.clear()
-        _ensure_roles.cache_clear()
-        _ensure_permissions.cache_clear()
         user_model = get_user_model()
         self.owner = user_model.objects.create_user(username="owner@example.com", password="x", first_name="Owner")
         self.player = user_model.objects.create_user(username="player@example.com", password="x", first_name="Pl")
@@ -30,7 +28,7 @@ class CampaignDetailPermissionsTests(APITestCase):
     def test_owner_holds_every_permission(self):
         response = self.client.get(f"/api/campaigns/{self.campaign_id}/")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["permissions"], sorted(_ensure_permissions().keys()))
+        self.assertEqual(response.data["permissions"], sorted(PERMISSION_CODES))
 
     def test_player_sees_only_granted_permissions(self):
         url = f"/api/campaigns/{self.campaign_id}/"
@@ -39,7 +37,7 @@ class CampaignDetailPermissionsTests(APITestCase):
 
         membership = CampaignMembership.objects.get(campaign_id=self.campaign_id, user=self.player)
         CampaignMembershipPermission.objects.create(
-            membership=membership, permission=_ensure_permissions()["manage_items"]
+            membership=membership, permission=CampaignPermission.objects.get(code="manage_items")
         )
 
         self.assertEqual(self.player_client.get(url).data["permissions"], ["add_custom", "manage_items"])

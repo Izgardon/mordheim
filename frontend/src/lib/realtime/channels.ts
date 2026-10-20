@@ -24,7 +24,20 @@ export type ChatMessage = {
   username: string;
   body: string;
   created_at: string;
+  removed_at?: string | null;
+  removed_by?: "admin" | "author" | null;
 };
+
+/** `chat.removed`: an owner or admin removed a message (decision 8, CAMP-NEW-06). */
+export type ChatRemoval = {
+  id: number;
+  campaign_id: number;
+  removed_at: string;
+  removed_by: "admin" | "author";
+};
+
+/** `campaign.updated` and friends on `private-campaign-{id}-events` (CAMP-NEW-07). */
+export type CampaignEventMessage = Record<string, unknown>;
 
 const hasType = (data: unknown): data is { type: string } =>
   Boolean(data && typeof data === "object" && (data as { type?: unknown }).type);
@@ -53,6 +66,37 @@ export function useCampaignChatMessages(
     (data) => {
       if (data && typeof data === "object" && (data as { id?: unknown }).id) {
         handler(data as ChatMessage);
+      }
+    }
+  );
+}
+
+export function useCampaignChatRemovals(
+  campaignId: number | null,
+  handler: (removal: ChatRemoval) => void
+) {
+  useChannel<unknown>(
+    campaignId ? `private-campaign-${campaignId}-chat` : null,
+    "chat.removed",
+    (data) => {
+      if (data && typeof data === "object" && (data as { id?: unknown }).id) {
+        handler(data as ChatRemoval);
+      }
+    }
+  );
+}
+
+/** `campaign.updated` on the campaign's events channel (members only, CAMP-NEW-07). */
+export function useCampaignUpdates(
+  campaignId: number | null,
+  handler: (campaign: CampaignEventMessage) => void
+) {
+  useChannel<unknown>(
+    campaignId ? `private-campaign-${campaignId}-events` : null,
+    "campaign.updated",
+    (data) => {
+      if (data && typeof data === "object" && (data as { id?: unknown }).id) {
+        handler(data as CampaignEventMessage);
       }
     }
   );

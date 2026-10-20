@@ -42,6 +42,8 @@ export type SalePriceBasis = "campaign_price" | "stored_cost";
 export type Item = {
   id: number;
   campaign_id?: number | null;
+  /** Set on a house rule's clone of a catalogue item (BUG-51): it changes with its rule only. */
+  generated_effect_key?: string | null;
   name: string;
   type: string;
   subtype?: string;

@@ -7,7 +7,7 @@ battle costs one query and its capabilities none.
 
 from django.db.models import Exists, OuterRef, QuerySet, Subquery
 
-from apps.campaigns.models import CampaignMembership, CampaignMembershipPermission
+from apps.campaigns.models import Campaign, CampaignMembership, CampaignMembershipPermission
 from apps.campaigns.permissions import IMPLICIT_PERMISSION_ROLES
 
 from ..models import Battle, BattleParticipant
@@ -16,13 +16,17 @@ MANAGE_BATTLES = "manage_battles"
 
 
 def scoped_battles(user, campaign_id: int) -> QuerySet[Battle]:
-    """The campaign's battles, each with the caller's role (`member_role`) and his manage_battles grant."""
+    """The campaign's battles, each with the caller's role (`member_role`), his manage_battles grant and when the
+    campaign was archived (`campaign_archived_at`, decision 5)."""
     membership = CampaignMembership.objects.filter(campaign_id=OuterRef("campaign_id"), user=user)
     granted = CampaignMembershipPermission.objects.filter(
         membership__campaign_id=OuterRef("campaign_id"), membership__user=user, permission__code=MANAGE_BATTLES
     )
     return Battle.objects.filter(campaign_id=campaign_id).annotate(
-        member_role=Subquery(membership.values("role__slug")[:1]), granted_manage_battles=Exists(granted)
+        member_role=Subquery(membership.values("role__slug")[:1]),
+        granted_manage_battles=Exists(granted),
+        # a subquery, not a join, so a write still locks the battle row alone (PERF-37)
+        campaign_archived_at=Subquery(Campaign.objects.filter(id=OuterRef("campaign_id")).values("archived_at")[:1]),
     )
 
 

@@ -2,8 +2,6 @@ from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from rest_framework.test import APIClient, APITestCase
 
-from apps.campaigns.views import _ensure_permissions, _ensure_roles
-
 
 class SpellApiTests(APITestCase):
     client: APIClient
@@ -13,8 +11,6 @@ class SpellApiTests(APITestCase):
         cache.clear()
         self.user_model = get_user_model()
         self.password = "testpass123"
-        _ensure_roles.cache_clear()
-        _ensure_permissions.cache_clear()
 
     def _create_user(self, email, name=""):
         return self.user_model.objects.create_user(

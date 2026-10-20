@@ -8,28 +8,31 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 // components
 import { Button } from "@components/button";
-import { ConfirmDialog } from "@components/confirm-dialog";
 import { PageHeader } from "@components/page-header";
 import TabbedCard from "@components/tabbed-card";
-
-// components
 import BattleActionPanel from "../components/overview/BattleActionPanel";
-import BattleHistorySection from "../components/overview/BattleHistorySection";
 import BulletinBoardTab from "../components/overview/BulletinBoardTab";
-import PivotalMomentsTable from "../components/overview/PivotalMomentsTable";
-import RosterTable from "../components/overview/RosterTable";
-import TradeOverviewTable from "../components/overview/TradeOverviewTable";
+import OverviewSections, {
+  ALL_SECTIONS_OPEN,
+  type OverviewSection,
+} from "../components/overview/OverviewSections";
+import StartCampaignDialog from "../components/overview/StartCampaignDialog";
+import StuckBattlesBanner from "../components/overview/StuckBattlesBanner";
 
 // hooks
+import { campaignCapabilities, isArchived } from "../capabilities";
 import { useCampaignOverview } from "../hooks/useCampaignOverview";
 
 // types
-import type { CampaignSummary } from "../types/campaign-types";
 import type { CampaignLayoutContext } from "./CampaignLayout";
 
 type OverviewTab = "overview" | "bulletin";
 
-const overviewTabs = [{ id: "overview" as const, label: "Overview" }] as const;
+// The bulletin is switched on as it is (CAMP-TWEAK-06); its content waits for its design.
+const overviewTabs = [
+  { id: "overview" as const, label: "Overview" },
+  { id: "bulletin" as const, label: "Bulletin" },
+] as const;
 
 const resolveOverviewTab = (value: string | null): OverviewTab | null =>
   value === "bulletin" ? "bulletin" : value === "overview" ? "overview" : null;
@@ -40,64 +43,16 @@ export default function CampaignOverview() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const activeTab = resolveOverviewTab(searchParams.get("tab")) ?? "overview";
-  const [mobileExpandedSections, setMobileExpandedSections] = useState({
-    roster: true,
-    battleHistory: true,
-    pivotalMoments: true,
-    trades: true,
-  });
-
+  const [mobileExpandedSections, setMobileExpandedSections] = useState(ALL_SECTIONS_OPEN);
   const campaignId = Number(id);
-
-  const {
-    players,
-    isLoading,
-    error,
-    tradeRequests,
-    tradeError,
-    isTradesLoading,
-    battleHistory,
-    battleHistoryError,
-    isBattleHistoryLoading,
-    reloadBattleHistory,
-    pivotalMoments,
-    pivotalMomentsError,
-    isPivotalMomentsLoading,
-    topKillers,
-    topKillersError,
-    isTopKillersLoading,
-    bulletinEntries,
-    bulletinError,
-    isBulletinLoading,
-    bulletinActionError,
-    isCreatingBulletinEntry,
-    deletingBulletinEntryIds,
-    expandedPlayers,
-    heroSnapshots,
-    snapshotLoading,
-    snapshotErrors,
-    togglePlayer,
-    canStartCampaign,
-    isUnderway,
-    isStartOpen,
-    setIsStartOpen,
-    isStarting,
-    startError,
-    handleStartCampaign,
-    handleCreateBulletinEntry,
-    handleDeleteBulletinEntry,
-  } = useCampaignOverview({ campaignId, campaign, activeTab });
+  const overview = useCampaignOverview({ campaignId, campaign, activeTab });
 
   if (!campaign) {
     return <p className="text-sm text-muted-foreground">No record of this campaign.</p>;
   }
 
-  const toggleMobileSection = (key: "roster" | "battleHistory" | "pivotalMoments" | "trades") => {
-    setMobileExpandedSections((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
+  const toggleMobileSection = (key: OverviewSection) =>
+    setMobileExpandedSections((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const handleTabChange = (tabId: string) => {
     const nextTab = resolveOverviewTab(tabId) ?? "overview";
@@ -110,120 +65,77 @@ export default function CampaignOverview() {
     setSearchParams(nextParams, { replace: true });
   };
 
+  const showStart = overview.canStartCampaign && !overview.isUnderway;
   const overviewTabContent =
     activeTab === "overview" ? (
-      <div className="grid gap-8">
-        <RosterTable
-          campaignId={campaign.id}
-          playerCount={campaign.player_count}
-          maxPlayers={campaign.max_players}
-          isMobile={isMobile}
-          mobileExpanded={mobileExpandedSections.roster}
-          onToggleMobileExpanded={() => toggleMobileSection("roster")}
-          isLoading={isLoading}
-          error={error}
-          players={players}
-          expandedPlayers={expandedPlayers}
-          onTogglePlayer={togglePlayer}
-          heroSnapshots={heroSnapshots}
-          snapshotLoading={snapshotLoading}
-          snapshotErrors={snapshotErrors}
-        />
-        <BattleHistorySection
-          campaignId={campaignId}
-          canEditRecords={Boolean(campaign.permissions?.includes("manage_battles"))}
-          onRecordSaved={reloadBattleHistory}
-          isLoading={isBattleHistoryLoading}
-          error={battleHistoryError}
-          battles={battleHistory}
-          players={players}
-          isMobile={isMobile}
-          mobileExpanded={mobileExpandedSections.battleHistory}
-          onToggleMobileExpanded={() => toggleMobileSection("battleHistory")}
-        />
-        <PivotalMomentsTable
-          isMobile={isMobile}
-          mobileExpanded={mobileExpandedSections.pivotalMoments}
-          onToggleMobileExpanded={() => toggleMobileSection("pivotalMoments")}
-          isLoading={isPivotalMomentsLoading}
-          error={pivotalMomentsError}
-          moments={pivotalMoments}
-        />
-        <TradeOverviewTable
-          isMobile={isMobile}
-          mobileExpanded={mobileExpandedSections.trades}
-          onToggleMobileExpanded={() => toggleMobileSection("trades")}
-          isLoading={isTradesLoading}
-          error={tradeError}
-          trades={tradeRequests}
-        />
-      </div>
+      <OverviewSections
+        campaign={campaign}
+        overview={overview}
+        isMobile={isMobile}
+        expanded={mobileExpandedSections}
+        onToggle={toggleMobileSection}
+      />
     ) : (
       <BulletinBoardTab
-        isTopKillersLoading={isTopKillersLoading}
-        topKillersError={topKillersError}
-        topKillers={topKillers}
-        isBulletinLoading={isBulletinLoading}
-        bulletinError={bulletinError}
-        bulletinActionError={bulletinActionError}
-        bulletinEntries={bulletinEntries}
-        isCreatingBulletinEntry={isCreatingBulletinEntry}
-        deletingBulletinEntryIds={deletingBulletinEntryIds}
-        onCreateBulletinEntry={handleCreateBulletinEntry}
-        onDeleteBulletinEntry={handleDeleteBulletinEntry}
+        isTopKillersLoading={overview.isTopKillersLoading}
+        topKillersError={overview.topKillersError}
+        topKillers={overview.topKillers}
+        isBulletinLoading={overview.isBulletinLoading}
+        bulletinError={overview.bulletinError}
+        bulletinActionError={overview.bulletinActionError}
+        bulletinEntries={overview.bulletinEntries}
+        isCreatingBulletinEntry={overview.isCreatingBulletinEntry}
+        deletingBulletinEntryIds={overview.deletingBulletinEntryIds}
+        onCreateBulletinEntry={overview.handleCreateBulletinEntry}
+        onDeleteBulletinEntry={overview.handleDeleteBulletinEntry}
+        canRemovePosts={campaignCapabilities(campaign).remove_posts}
+        canPost={!isArchived(campaign)}
       />
     );
 
   return (
     <div className="min-h-0 space-y-6">
-      <OverviewHeader campaign={campaign} activeTab={activeTab} onTabChange={handleTabChange} />
+      <PageHeader
+        title={campaign.name}
+        tabs={overviewTabs}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
       <div className="space-y-4 px-2 sm:space-y-6 sm:px-0">
-        {canStartCampaign && !isUnderway ? (
-          <div className="flex justify-center px-2 sm:px-0">
-            <Button variant="secondary" onClick={() => setIsStartOpen(true)}>
-              Start campaign
-            </Button>
-            <ConfirmDialog
-              open={isStartOpen}
-              onOpenChange={(nextOpen) => {
-                setIsStartOpen(nextOpen);
-                if (!nextOpen) {
-                  // startError is managed by hook
-                }
-              }}
-              description={
-                <div className="space-y-2">
-                  <p>Start the campaign now? This will lock in the roster.</p>
-                  <p className="text-sm text-muted-foreground">
-                    Before starting, make sure all Campaign Settings locations are set for items,
-                    all House Rules are added, and any spell lists and skill lists are ready.
-                  </p>
-                  {startError ? <p className="text-sm text-red-600">{startError}</p> : null}
-                </div>
-              }
-              confirmText={isStarting ? "Starting..." : "Confirm start"}
-              confirmVariant="secondary"
-              confirmDisabled={isStarting}
-              isConfirming={isStarting}
-              onConfirm={handleStartCampaign}
-              onCancel={() => setIsStartOpen(false)}
-            />
-          </div>
+        {showStart ? (
+          <StartCampaignDialog
+            open={overview.isStartOpen}
+            onOpenChange={overview.setIsStartOpen}
+            isStarting={overview.isStarting}
+            error={overview.startError}
+            onConfirm={overview.handleStartCampaign}
+          />
         ) : null}
-        {isUnderway ? (
-          <div className="pt-3 sm:pt-0">
-            <BattleActionPanel
-              campaignId={campaign.id}
-              players={players}
-              campaignStarted={isUnderway}
-            />
-          </div>
-        ) : null}
+        <StuckBattlesBanner
+          campaignId={campaign.id}
+          enabled={campaignCapabilities(campaign).manage_battles}
+        />
+        <div className="pt-3 sm:pt-0">
+          {/* Before the start too: Start battle is greyed out but clickable (decision 3). */}
+          <BattleActionPanel
+            campaignId={campaign.id}
+            players={overview.players}
+            campaignStarted={overview.isUnderway}
+            readOnly={isArchived(campaign)}
+            leadingAction={
+              showStart ? (
+                <Button variant="secondary" size="sm" onClick={() => overview.setIsStartOpen(true)}>
+                  Start campaign
+                </Button>
+              ) : null
+            }
+          />
+        </div>
         {isMobile ? (
           <TabbedCard
             tabs={overviewTabs}
-            activeTab="overview"
-            onTabChange={() => handleTabChange("overview")}
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
             mobileTabsShowDivider
             className="pb-6"
             contentClassName="space-y-4 pt-2"
@@ -235,22 +147,5 @@ export default function CampaignOverview() {
         )}
       </div>
     </div>
-  );
-}
-
-type OverviewHeaderProps = {
-  campaign: CampaignSummary;
-  activeTab: OverviewTab;
-  onTabChange: (tabId: string) => void;
-};
-
-function OverviewHeader({ campaign, activeTab, onTabChange }: OverviewHeaderProps) {
-  return (
-    <PageHeader
-      title={campaign.name}
-      tabs={overviewTabs}
-      activeTab={activeTab === "bulletin" ? "overview" : activeTab}
-      onTabChange={onTabChange}
-    />
   );
 }

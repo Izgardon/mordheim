@@ -13,15 +13,22 @@ import { updateWarband } from "@/features/warbands/api/warbands-api";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useMyWarbandWriter } from "@/features/warbands/hooks/warband/useMyWarbandStore";
 import { useAppStore } from "@/stores/app-store";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 const DEFAULT_DICE_COLOR = "#2e8555";
 const HEX_COLOR_REGEX = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
 
 type WarbandDiceSettingsCardProps = {
-  campaignRole?: string | null;
+  /** `capabilities.manage_warbands`: the viewer may edit any warband, not just their own. */
+  canEditAnyWarband?: boolean;
+  /** An archived campaign: nothing in it changes (decision 5). */
+  readOnly?: boolean;
 };
 
-export default function WarbandDiceSettingsCard({ campaignRole }: WarbandDiceSettingsCardProps) {
+export default function WarbandDiceSettingsCard({
+  canEditAnyWarband = false,
+  readOnly = false,
+}: WarbandDiceSettingsCardProps) {
   const { user } = useAuth();
   const { warband, warbandLoading, warbandError } = useAppStore();
   const myWarband = useMyWarbandWriter(warband?.campaign_id ?? null);
@@ -46,7 +53,7 @@ export default function WarbandDiceSettingsCard({ campaignRole }: WarbandDiceSet
 
   const previewColor = isValidColor ? diceColor : DEFAULT_DICE_COLOR;
   const canEdit = Boolean(
-    warband && (warband.user_id === user?.id || ["owner", "admin"].includes(campaignRole ?? ""))
+    warband && !readOnly && (warband.user_id === user?.id || canEditAnyWarband)
   );
 
   const handleSaveColor = async () => {
@@ -64,7 +71,7 @@ export default function WarbandDiceSettingsCard({ campaignRole }: WarbandDiceSet
       setSavedColor(nextColor);
       setDiceColor(nextColor);
     } catch (saveError) {
-      setColorError(saveError instanceof Error ? saveError.message : "Unable to save dice color.");
+      setColorError(getErrorMessage(saveError, "Unable to save dice color."));
     } finally {
       setIsSavingColor(false);
     }

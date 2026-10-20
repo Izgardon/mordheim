@@ -1,8 +1,7 @@
-import { useMemo, useState } from "react";
-import type { KeyboardEvent } from "react";
+import { useId, useMemo, useState } from "react";
 
 // routing
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 // components
 import { Badge } from "@components/badge";
@@ -22,6 +21,10 @@ const roleTone: Record<CampaignSummary["role"], string> = {
   player: "campaign-card-badge campaign-card-badge--player",
 };
 
+/**
+ * A campaign on the list. The title is the card's real link, stretched over the whole card, and
+ * the Roster and Copy buttons sit above it, so no button is nested in a link (CAMP-UX-07).
+ */
 export default function CampaignCard({
   id,
   name,
@@ -29,8 +32,9 @@ export default function CampaignCard({
   max_players,
   role,
   join_code,
+  archived_at,
 }: CampaignSummary) {
-  const navigate = useNavigate();
+  const titleId = useId();
   const [copied, setCopied] = useState(false);
   const [isRosterOpen, setIsRosterOpen] = useState(false);
 
@@ -40,21 +44,6 @@ export default function CampaignCard({
     }
     return `${role.charAt(0).toUpperCase()}${role.slice(1)}`;
   }, [role]);
-
-  const handleOpen = () => {
-    if (isRosterOpen) {
-      return;
-    }
-    navigate(`/campaigns/${id}`);
-  };
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key !== "Enter" && event.key !== " ") {
-      return;
-    }
-    event.preventDefault();
-    handleOpen();
-  };
 
   const handleCopyJoinCode = async () => {
     if (!join_code) {
@@ -70,14 +59,7 @@ export default function CampaignCard({
   };
 
   return (
-    <div
-      role="link"
-      tabIndex={0}
-      onClick={handleOpen}
-      onKeyDown={handleKeyDown}
-      aria-label={`Open ${name}`}
-      className="campaign-ornate-card-link group cursor-pointer focus-visible:ring-offset-background"
-    >
+    <article aria-labelledby={titleId} className="campaign-ornate-card-link group cursor-pointer">
       <CardBackground className="campaign-ornate-frame">
         <Card className="campaign-ornate-card min-w-0">
           <CardHeader className="pb-3">
@@ -86,13 +68,28 @@ export default function CampaignCard({
                 <p className="text-[0.58rem] uppercase tracking-[0.28em] text-[#b79a6f]">
                   Campaign Ledger
                 </p>
-                <CardTitle className="theme-heading-soft break-words text-xl font-bold text-[#f0dfbc] transition group-hover:text-[#fff1d6]">
-                  {name}
+                <CardTitle
+                  id={titleId}
+                  className="theme-heading-soft break-words text-xl font-bold text-[#f0dfbc] transition group-hover:text-[#fff1d6]"
+                >
+                  <Link
+                    to={`/campaigns/${id}`}
+                    className="campaign-card-open outline-none after:absolute after:inset-0 after:z-[1] after:content-['']"
+                  >
+                    {name}
+                  </Link>
                 </CardTitle>
               </div>
-              <Badge variant="outline" className={roleTone[role]}>
-                {roleLabel}
-              </Badge>
+              <div className="flex flex-wrap items-center gap-2">
+                {archived_at ? (
+                  <Badge variant="outline" className="campaign-card-badge">
+                    Archived
+                  </Badge>
+                ) : null}
+                <Badge variant="outline" className={roleTone[role]}>
+                  {roleLabel}
+                </Badge>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4 pt-0">
@@ -100,10 +97,7 @@ export default function CampaignCard({
               <span>
                 {player_count} / {max_players} players accounted
               </span>
-              <div
-                onClick={(event) => event.stopPropagation()}
-                onKeyDown={(event) => event.stopPropagation()}
-              >
+              <div className="relative z-[2]">
                 <CampaignPlayersDialog
                   campaignId={id}
                   open={isRosterOpen}
@@ -111,7 +105,8 @@ export default function CampaignCard({
                 />
               </div>
             </div>
-            {role === "owner" ? (
+            {/* Every member sees the code; owners and admins regenerate it in Settings (1b). */}
+            {join_code ? (
               <div className="campaign-card-meta flex items-center justify-between gap-3 rounded-2xl px-3 py-2.5">
                 <span className="min-w-0 text-xs text-[#c8b59a] sm:text-sm">
                   Join code:{" "}
@@ -123,12 +118,8 @@ export default function CampaignCard({
                   type="button"
                   variant="secondary"
                   size="sm"
-                  className="h-8 border-[#7c5c37] bg-[#20160d] px-3 text-[0.5rem] text-[#ecd6ad] hover:bg-[#2a1d12] hover:text-[#f6e7c7] sm:h-10 sm:px-5 sm:text-[0.6rem]"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    handleCopyJoinCode();
-                  }}
-                  onKeyDown={(event) => event.stopPropagation()}
+                  className="relative z-[2] h-8 border-[#7c5c37] bg-[#20160d] px-3 text-[0.5rem] text-[#ecd6ad] hover:bg-[#2a1d12] hover:text-[#f6e7c7] sm:h-10 sm:px-5 sm:text-[0.6rem]"
+                  onClick={() => void handleCopyJoinCode()}
                 >
                   {copied ? "Copied" : "Copy"}
                 </Button>
@@ -137,6 +128,6 @@ export default function CampaignCard({
           </CardContent>
         </Card>
       </CardBackground>
-    </div>
+    </article>
   );
 }

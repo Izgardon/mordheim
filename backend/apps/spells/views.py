@@ -2,7 +2,7 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.permissions import get_membership, has_campaign_permission
+from apps.campaigns.permissions import get_membership, get_writable_membership, has_campaign_permission
 
 from .models import Spell
 from .serializers import SpellCreateSerializer, SpellSerializer
@@ -40,7 +40,7 @@ class SpellListView(APIView):
 
     def post(self, request):
         campaign_id = request.data.get("campaign_id")
-        membership = get_membership(request.user, campaign_id)
+        membership = get_writable_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
         if not has_campaign_permission(membership, "add_custom"):
@@ -77,7 +77,7 @@ class SpellDetailView(APIView):
         if not spell.campaign_id:
             return Response({"detail": "Forbidden"}, status=403)
 
-        membership = get_membership(request.user, spell.campaign_id)
+        membership = get_writable_membership(request.user, spell.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
         if not has_campaign_permission(membership, "manage_spells"):
@@ -98,7 +98,7 @@ class SpellDetailView(APIView):
         if not spell.campaign_id:
             return Response({"detail": "Forbidden"}, status=403)
 
-        membership = get_membership(request.user, spell.campaign_id)
+        membership = get_writable_membership(request.user, spell.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
         if not has_campaign_permission(membership, "manage_spells"):

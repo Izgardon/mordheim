@@ -25,7 +25,7 @@ import { Pencil } from "lucide-react";
 import { renderBoldMarkdown } from "../../../lib/render-bold-markdown";
 
 // api
-import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
+import { campaignCapabilities } from "@/features/campaigns/capabilities";
 
 // types
 import type { Item, ItemAvailability, ItemProperty } from "../types/item-types";
@@ -182,7 +182,6 @@ export default function Items() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const navigate = useNavigate();
   const campaignId = Number(id);
-  const memberPermissions = useCampaignPermissions(campaignId);
   const isMobile = useMediaQuery("(max-width: 960px)");
   // Shares the cached campaign item list with the warband editor instead of re-downloading it.
   const { data: items, isLoading, error } = useCatalogue("items", campaignId);
@@ -200,14 +199,9 @@ export default function Items() {
   const [editingItem, setEditingItem] = useState<Item | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
 
-  const canAdd =
-    campaign?.role === "owner" ||
-    campaign?.role === "admin" ||
-    memberPermissions.includes("add_custom");
-  const canManage =
-    campaign?.role === "owner" ||
-    campaign?.role === "admin" ||
-    memberPermissions.includes("manage_items");
+  const capabilities = campaignCapabilities(campaign);
+  const canAdd = capabilities.add_custom;
+  const canManage = capabilities.manage_items;
 
   useEffect(() => {
     setSelectedSubtype(ALL_SUBTYPES);
@@ -703,7 +697,8 @@ export default function Items() {
               />
             ) : null}
             <AcquireItemDialog item={item} initialAvailabilityId={item._availability?.id ?? null} />
-            {canManage && item.campaign_id ? (
+            {/* A house rule's clone changes with its rule, never here (BUG-51). */}
+            {canManage && item.campaign_id && !item.generated_effect_key ? (
               <Tooltip
                 trigger={
                   <Button

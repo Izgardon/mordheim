@@ -164,6 +164,26 @@ describe("StartBattleDialog", () => {
     });
   });
 
+  it("shows a reported result's warnings as toasts, as a created battle's (decision 3)", async () => {
+    const user = setupUser();
+    fakeApi.on("POST /campaigns/1/battles/report-result/", {
+      battle: { id: 42 },
+      participants: [],
+      events: [],
+      warnings: [{ code: "campaign_not_started", message: "The campaign hasn't started yet." }],
+    });
+    const { onBattleCreated } = renderDialog([me, bors]);
+
+    await user.click(screen.getByRole("button", { name: "Report" }));
+    await user.click(rowOf("Bors").tick);
+    await user.type(screen.getByPlaceholderText("Skirmish at the Market Square..."), "Ambush");
+    await user.click(screen.getByRole("checkbox", { name: "No winner" }));
+    await user.click(screen.getByRole("button", { name: "Submit result" }));
+
+    await waitFor(() => expect(onBattleCreated).toHaveBeenCalled());
+    expect(await screen.findByText("The campaign hasn't started yet.")).toBeInTheDocument();
+  });
+
   it("lets a busy player be picked when reporting a result instead", async () => {
     const user = setupUser();
     renderDialog([me, busyMira, bors]);

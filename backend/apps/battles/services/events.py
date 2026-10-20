@@ -23,6 +23,14 @@ def notify_user(user_id: int, event: str, payload: dict) -> None:
     send_user_notification(user_id, event, payload)
 
 
+def notify_canceled(battle: Battle, user_ids) -> None:
+    """Tell each player the battle was cancelled, wherever he is: off the battle page, its events don't reach him,
+    and his Rejoin and invite would stay until a reload."""
+    payload = {"battle_id": battle.id, "campaign_id": battle.campaign_id, "status": Battle.STATUS_CANCELED}
+    for user_id in user_ids:
+        notify_user(user_id, "battle_canceled", payload)
+
+
 def notify_result_updated(battle: Battle, user_ids) -> None:
     """Tell each player a reported result changed (approved, declined, withdrawn or cancelled)."""
     payload = {"battle_id": battle.id, "campaign_id": battle.campaign_id, "status": battle.status}

@@ -1,6 +1,6 @@
 // api
 import { apiRequest } from "../../../lib/api-client";
-import { realtimeSocketId } from "@/lib/realtime/client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 
 // types
 import type {
@@ -16,12 +16,13 @@ import type {
   CampaignMember,
   CampaignMessage,
   CampaignPermission,
+  MemberRemovalPreview,
   CampaignPlayer,
+  CampaignPlayerName,
   CampaignPivotalMoment,
   CampaignSummary,
   CampaignTopKiller,
   CampaignUpdatePayload,
-  CampaignWarband,
 } from "../types/campaign-types";
 import type { TradeRequest } from "@/features/warbands/types/trade-request-types";
 
@@ -51,11 +52,25 @@ export function updateCampaign(campaignId: number, payload: CampaignUpdatePayloa
   return apiRequest<CampaignSummary>(`/campaigns/${campaignId}/`, {
     method: "PATCH",
     body: payload,
+    headers: socketIdHeaders(),
+  });
+}
+
+/** A new join code for the campaign (owners and admins); the old one stops working at once. */
+export function regenerateJoinCode(campaignId: number) {
+  return apiRequest<CampaignSummary>(`/campaigns/${campaignId}/join-code/`, {
+    method: "POST",
+    headers: socketIdHeaders(),
   });
 }
 
 export function listCampaignPlayers(campaignId: number) {
   return apiRequest<CampaignPlayer[]>(`/campaigns/${campaignId}/players/`, {});
+}
+
+/** Ids and names only (at most 2 queries), for the encampment owner picker (PERF-41). */
+export function listCampaignPlayerNames(campaignId: number) {
+  return apiRequest<CampaignPlayerName[]>(`/campaigns/${campaignId}/players/?fields=basic`);
 }
 
 export function listCampaignBattleHistory(campaignId: number) {
@@ -103,6 +118,13 @@ export function createCampaignBulletinEntry(campaignId: number, body: string) {
 
 export function deleteCampaignBulletinEntry(campaignId: number, entryId: number) {
   return apiRequest<void>(`/campaigns/${campaignId}/bulletin/${entryId}/`, {
+    method: "DELETE",
+  });
+}
+
+/** Soft-deletes an encampment (its owner, or manage_encampments); it leaves the list. */
+export function deleteCampaignEncampment(campaignId: number, encampmentId: number) {
+  return apiRequest<void>(`/campaigns/${campaignId}/encampments/${encampmentId}/`, {
     method: "DELETE",
   });
 }
@@ -155,10 +177,6 @@ export function updateCampaignLocation(
   });
 }
 
-export function listCampaignWarbands(campaignId: number) {
-  return apiRequest<CampaignWarband[]>(`/campaigns/${campaignId}/warbands/`);
-}
-
 export function listCampaignMembers(campaignId: number) {
   return apiRequest<CampaignMember[]>(`/campaigns/${campaignId}/members/`, {});
 }
@@ -187,14 +205,12 @@ export function updateMemberRole(campaignId: number, userId: number, role: "admi
   );
 }
 
-export function removeCampaignMember(campaignId: number, userId: number) {
-  return apiRequest<void>(`/campaigns/${campaignId}/members/${userId}/`, {
-    method: "DELETE",
-  });
+export function getMemberRemovalPreview(campaignId: number, userId: number) {
+  return apiRequest<MemberRemovalPreview>(`/campaigns/${campaignId}/members/${userId}/removal/`);
 }
 
-export function deleteCampaign(campaignId: number) {
-  return apiRequest<void>(`/campaigns/${campaignId}/`, {
+export function removeCampaignMember(campaignId: number, userId: number) {
+  return apiRequest<void>(`/campaigns/${campaignId}/members/${userId}/`, {
     method: "DELETE",
   });
 }
@@ -219,19 +235,10 @@ export function getTradeRequest(campaignId: number, requestId: string) {
   });
 }
 
-/**
- * Trade writes name this browser's socket (ECON-PERF-02), so the server can leave it out of the
- * event the write broadcasts. Needs `x-pusher-socket-id` in the backend's CORS_ALLOW_HEADERS.
- */
-const tradeWriteHeaders = () => {
-  const socketId = realtimeSocketId();
-  return socketId ? { "X-Pusher-Socket-Id": socketId } : undefined;
-};
-
 export function acceptTradeRequest(campaignId: number, requestId: string) {
   return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/accept/`, {
     method: "POST",
-    headers: tradeWriteHeaders(),
+    headers: socketIdHeaders(),
   });
 }
 
@@ -246,7 +253,7 @@ export function updateTradeOffer(
 ) {
   return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/offer/`, {
     method: "POST",
-    headers: tradeWriteHeaders(),
+    headers: socketIdHeaders(),
     body: payload,
   });
 }
@@ -255,7 +262,7 @@ export function updateTradeOffer(
 export function lockTradeOffer(campaignId: number, requestId: string, offerVersion?: number) {
   return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/lock/`, {
     method: "POST",
-    headers: tradeWriteHeaders(),
+    headers: socketIdHeaders(),
     body: offerVersion === undefined ? undefined : { offer_version: offerVersion },
   });
 }
@@ -263,27 +270,40 @@ export function lockTradeOffer(campaignId: number, requestId: string, offerVersi
 export function unlockTradeOffer(campaignId: number, requestId: string) {
   return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/unlock/`, {
     method: "POST",
-    headers: tradeWriteHeaders(),
+    headers: socketIdHeaders(),
   });
 }
 
 export function declineTradeRequest(campaignId: number, requestId: string) {
   return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/decline/`, {
     method: "POST",
-    headers: tradeWriteHeaders(),
+    headers: socketIdHeaders(),
   });
 }
 
 export function closeTradeRequest(campaignId: number, requestId: string) {
   return apiRequest<TradeRequest>(`/campaigns/${campaignId}/trade-requests/${requestId}/close/`, {
     method: "POST",
-    headers: tradeWriteHeaders(),
+    headers: socketIdHeaders(),
   });
 }
 
 export function listCampaignMessages(campaignId: number, before?: number) {
   const query = before ? `?before=${before}` : "";
   return apiRequest<CampaignMessage[]>(`/campaigns/${campaignId}/messages/${query}`);
+}
+
+/** An owner or admin removes a chat message; it stays listed as "removed by admin". */
+export function removeCampaignMessage(campaignId: number, messageId: number) {
+  return apiRequest<void>(`/campaigns/${campaignId}/messages/${messageId}/`, { method: "DELETE" });
+}
+
+/** Moves your read mark forward (to the newest message without an id); answers the new count. */
+export function markCampaignChatRead(campaignId: number, lastReadId?: number) {
+  return apiRequest<{ chat_last_read_id: number; chat_unread: number }>(
+    `/campaigns/${campaignId}/messages/read/`,
+    { method: "POST", body: lastReadId ? { last_read_id: lastReadId } : {} }
+  );
 }
 
 export function sendCampaignMessage(campaignId: number, body: string) {

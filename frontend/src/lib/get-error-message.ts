@@ -122,3 +122,18 @@ export function getErrorMessage(error: unknown, fallback = DEFAULT_ERROR_MESSAGE
   }
   return fallback;
 }
+
+/**
+ * A refusal in the standard body (`{detail, code, fields}`) is summed up by its own `detail`
+ * ("Type the campaign's name to delete it for good."), better than its field errors restated
+ * with the field's name; anything else reads through getErrorMessage.
+ */
+export function getRefusalMessage(error: unknown, fallback = DEFAULT_ERROR_MESSAGE): string {
+  if (apiErrorCode(error) && error instanceof ApiError && error.status < 500) {
+    const detail = toMessages((error.data as { detail?: unknown }).detail).join(" ");
+    if (detail) {
+      return detail;
+    }
+  }
+  return getErrorMessage(error, fallback);
+}

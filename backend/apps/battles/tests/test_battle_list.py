@@ -20,7 +20,7 @@ class CampaignBattleListTests(APITestCase):
         user_model = get_user_model()
         self.owner = user_model.objects.create_user(username="owner@example.com", password="x", first_name="Owner")
         self.player = user_model.objects.create_user(username="player@example.com", password="x", first_name="Player")
-        role = CampaignRole.objects.create(slug="player", name="Player")
+        role = CampaignRole.objects.get(slug="player")
         self.campaign = Campaign.objects.create(name="Shards", join_code="ABC123")
         self.warbands = {}
         for user in (self.owner, self.player):

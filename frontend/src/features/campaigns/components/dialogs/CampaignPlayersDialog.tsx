@@ -5,6 +5,7 @@ import { Button } from "@components/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -15,6 +16,7 @@ import { listCampaignPlayers } from "../../api/campaigns-api";
 
 // types
 import type { CampaignPlayer } from "../../types/campaign-types";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 type CampaignPlayersDialogProps = {
   campaignId: number;
@@ -51,11 +53,7 @@ export default function CampaignPlayersDialog({
     listCampaignPlayers(campaignId)
       .then((data) => setPlayers(data))
       .catch((errorResponse) => {
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to load players");
-        } else {
-          setError("Unable to load players");
-        }
+        setError(getErrorMessage(errorResponse, "Unable to load players"));
       })
       .finally(() => setIsLoading(false));
   }, [open, campaignId]);
@@ -70,6 +68,7 @@ export default function CampaignPlayersDialog({
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
           <DialogTitle className="font-bold">Roster</DialogTitle>
+          <DialogDescription>Everyone playing in this campaign.</DialogDescription>
         </DialogHeader>
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Gathering names...</p>

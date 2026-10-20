@@ -54,6 +54,10 @@ export const fakeRealtime = {
   subscriberCount: (channel: string) =>
     [...subscriptions].filter((subscription) => subscription.channel === channel).length,
 
+  /** Every channel something listens to, sorted. */
+  channels: () =>
+    [...new Set([...subscriptions].map((subscription) => subscription.channel))].sort(),
+
   reset() {
     subscriptions.clear();
     restoredListeners.clear();

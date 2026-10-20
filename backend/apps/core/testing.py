@@ -18,7 +18,6 @@ from django.test.utils import CaptureQueriesContext
 from rest_framework.test import APIClient
 
 from apps.battles.models import Battle, BattleEvent, BattleParticipant
-from apps.campaigns.views import _ensure_permissions, _ensure_roles
 from apps.items.models import Item, ItemAvailability, ItemAvailabilityRestriction
 from apps.races.models import Race
 from apps.restrictions.models import Restriction
@@ -81,8 +80,6 @@ def _catalogue_item(name: str, cost: int) -> Item:
 def build_reference_campaign(unit_count: int = 3) -> ReferenceCampaign:
     """A campaign with two warbands, `unit_count` of each unit type, catalogue rows and battle history."""
     cache.clear()
-    _ensure_roles.cache_clear()
-    _ensure_permissions.cache_clear()
 
     owner = _create_user("owner@example.com", "Owner")
     player = _create_user("player@example.com", "Player")

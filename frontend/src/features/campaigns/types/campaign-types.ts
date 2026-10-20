@@ -1,5 +1,6 @@
 import type { Restriction } from "../../items/types/item-types";
 import type { BattleParticipant, BattleSummary } from "@/features/battles/types/battle-types";
+import type { CampaignCapability } from "../capabilities";
 
 export type CampaignRole = "owner" | "admin" | "player";
 export type CampaignHeroDeathRoll = "d66" | "d100";
@@ -18,7 +19,6 @@ export type CampaignSummary = {
   hero_level_thresholds?: number[];
   henchmen_level_thresholds?: number[];
   hired_sword_level_thresholds?: number[];
-  locations?: boolean;
   enable_encampments?: boolean;
   enable_locations?: boolean;
   item_settings?: Restriction[];
@@ -26,7 +26,16 @@ export type CampaignSummary = {
   role: CampaignRole;
   /** The caller's permission codes; only the campaign detail endpoint includes them. */
   permissions?: string[];
+  /**
+   * What the caller may do (design 0.29); only the detail includes them. Read them through
+   * `capabilities.ts`, which treats a missing flag as false.
+   */
+  capabilities?: Partial<Record<CampaignCapability, boolean>>;
   in_progress: boolean;
+  /** Set while the campaign is archived: read-only for everyone until its owner restores it. */
+  archived_at?: string | null;
+  /** Chat messages from others after your read mark (the detail only, CAMP-TWEAK-09). */
+  chat_unread?: number;
   created_at: string;
   updated_at: string;
 };
@@ -50,6 +59,8 @@ export type CampaignUpdatePayload = {
   max_heroes?: number;
   max_hired_swords?: number;
   starting_gold?: number;
+  /** With a new starting gold: whether existing warbands get the difference (decision 6). */
+  adjust_existing_warbands?: boolean;
   hero_death_roll?: CampaignHeroDeathRoll;
   enable_encampments?: boolean;
   enable_locations?: boolean;
@@ -81,12 +92,8 @@ export type CampaignPlayer = {
   } | null;
 };
 
-export type CampaignWarband = {
-  id: number;
-  name: string;
-  faction: string;
-  restrictions?: { id: number; type: string; restriction: string }[];
-};
+/** `GET players/?fields=basic`: just who is in the campaign, for name pickers (PERF-41). */
+export type CampaignPlayerName = Pick<CampaignPlayer, "id" | "name">;
 
 export type CampaignBattleHistoryParticipant = {
   warband_id: number;
@@ -111,6 +118,9 @@ export type CampaignActiveBattle = {
   participants: BattleParticipant[];
   /** The owner tools that apply to this battle now (BATL-NEW-03). */
   actions?: { end: boolean; confirm_results: boolean; close_postbattle: boolean; cancel: boolean };
+  /** Seconds since the battle's last write, and whether that is past the server's 24 h. */
+  idle_seconds?: number | null;
+  stuck?: boolean;
 };
 
 export type CampaignPivotalMoment = {
@@ -139,13 +149,19 @@ export type CampaignTopKiller = {
   kills: number;
 };
 
+/** Who removed a post: an owner or admin, or its author (decision 8). */
+export type PostRemovedBy = "admin" | "author";
+
 export type CampaignBulletinEntry = {
   id: number;
   campaign_id: number;
   user_id: number | null;
   username: string;
+  /** Empty once removed. */
   body: string;
   created_at: string;
+  removed_at?: string | null;
+  removed_by?: PostRemovedBy | null;
 };
 
 export type CampaignEncampment = {
@@ -154,7 +170,11 @@ export type CampaignEncampment = {
   name: string;
   owner_id: number | null;
   owner_name: string | null;
+  /** The owner has left the campaign (shown as "(left)"). */
+  owner_left?: boolean;
   description: string;
+  /** Whether you may edit, reassign and remove it: its owner, or manage_encampments. */
+  capabilities?: { edit?: boolean };
 };
 
 export type CampaignEncampmentPayload = {
@@ -197,9 +217,27 @@ export type CampaignMember = {
   warband_name?: string | null;
 };
 
+/**
+ * What removing a member closes (`GET members/:user/removal/`). The warband is always kept and
+ * comes back if they rejoin; `outcome` is `cancelled` (for everyone) or `skipped` (only them, the
+ * battle goes on). Trades that have already run out aren't listed.
+ */
+export type MemberRemovalPreview = {
+  member: { id: number; name: string; role: CampaignRole };
+  warband: { id: number; name: string } | null;
+  battles: { id: number; scenario: string; status: string; outcome: "cancelled" | "skipped" }[];
+  trades: { id: string; status: string; with: { id: number; name: string } }[];
+  notifications: number;
+};
+
+/** What leaving closes (`GET leave/`): removal's preview, and whether it archives the campaign. */
+export type LeavePreview = MemberRemovalPreview & { archives_campaign: boolean };
+
+/** A permission code as `GET permissions/` (and the grant PUT) answer it, in the server's order. */
 export type CampaignPermission = {
   code: string;
-  name: string;
+  label: string;
+  description: string;
 };
 
 export type CampaignMessage = {
@@ -207,6 +245,27 @@ export type CampaignMessage = {
   campaign_id: number;
   user_id: number | null;
   username: string;
+  /** Empty once removed. */
   body: string;
   created_at: string;
+  removed_at?: string | null;
+  removed_by?: PostRemovedBy | null;
+};
+
+/** One unit's stat line in the overview's expanded roster row (from `roster-stats/`). */
+export type RosterUnit = {
+  id: string;
+  category: "Heroes" | "Henchmen" | "Hired Swords";
+  name: string | null;
+  unit_type: string | null;
+  movement: number | null;
+  weapon_skill: number | null;
+  ballistic_skill: number | null;
+  strength: number | null;
+  toughness: number | null;
+  wounds: number | null;
+  initiative: number | null;
+  attacks: number | null;
+  leadership: number | null;
+  armour_save: number | null;
 };

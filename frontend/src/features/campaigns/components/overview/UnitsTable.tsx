@@ -1,5 +1,5 @@
 import { useMediaQuery } from "@/lib/use-media-query";
-import type { RosterUnit } from "../../hooks/useCampaignOverview";
+import type { RosterUnit } from "../../types/campaign-types";
 
 const CATEGORY_ORDER: RosterUnit["category"][] = ["Heroes", "Henchmen", "Hired Swords"];
 

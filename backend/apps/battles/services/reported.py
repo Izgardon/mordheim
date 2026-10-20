@@ -13,10 +13,10 @@ from django.utils.dateparse import parse_date
 from apps.logs.utils import log_warband_event
 from apps.notifications.models import Notification
 from apps.notifications.utils import resolve_notification, resolve_notifications_for_reference
+from apps.users.names import display_name
 from apps.warbands.models import Warband
 
 from ..models import Battle, BattleEvent, BattleParticipant
-from ..serializers import display_name
 from .errors import Refused, field_error
 from .events import append_event, notify_result_updated, notify_user
 from .lifecycle import battle_result_log, record_wins_and_losses, reset_trading_actions

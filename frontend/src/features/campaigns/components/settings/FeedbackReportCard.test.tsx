@@ -168,6 +168,28 @@ describe("FeedbackReportCard", () => {
     expect(screen.getByLabelText("Report")).toHaveValue("");
   });
 
+  it("thanks you once the report is sent, until you write another (CAMP-NEW-08)", async () => {
+    sendFeedbackReport.mockResolvedValue({ detail: "Feedback report sent." });
+    render(<FeedbackReportCard />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Send report" }));
+    const dialog = screen.getByRole("dialog");
+    fireEvent.change(within(dialog).getByLabelText("Report"), { target: { value: "Hit a bug" } });
+    fireEvent.click(within(dialog).getByRole("button", { name: "Send" }));
+
+    expect(await screen.findByRole("status")).toHaveTextContent("Thanks, report sent");
+    fireEvent.click(screen.getByRole("button", { name: "Send report" }));
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+  });
+
+  it("speaks of your account alone without a campaign (the campaigns page, CAMP-NEW-08)", () => {
+    render(<FeedbackReportCard />);
+
+    expect(screen.getByRole("region", { name: "Feedback and bug report" })).toHaveTextContent(
+      "Send a report with your account so issues are easier to trace."
+    );
+  });
+
   it("shows api failures inline", async () => {
     sendFeedbackReport.mockRejectedValue(new Error("Too many requests"));
 

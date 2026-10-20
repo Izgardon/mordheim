@@ -56,8 +56,9 @@ class ReportedResultTests(BattleTestCase):
         complete = self.rival.logs.get(entry_type="complete")
         self.assertEqual(complete.payload, {"result": "no_winner", "with": [], "against": ["Monks"]})
 
-    def test_clear_all_only_resolves_a_pending_results_notification(self):
-        # BUG-46: Clear all declined the result for everyone, without saying so
+    def test_clear_all_keeps_a_pending_results_notification(self):
+        # BUG-46: Clear all declined the result for everyone, without saying so; pass 3 made it only resolve the
+        # notification; CAMP-TWEAK-10 (pass 4): it still needs his answer, so Clear all leaves it listed
         battle_id = self.ok(self.report(), 201).data["battle"]["id"]
         sent = self._record_realtime()
 
@@ -66,7 +67,7 @@ class ReportedResultTests(BattleTestCase):
 
         self.assertEqual(self.battle(battle_id).status, "reported_result_pending")
         self.assertEqual(self.statuses(battle_id), ["reported_result_approved", "reported_result_pending"])
-        self.assertTrue(self.result_notification(battle_id).is_resolved)
+        self.assertFalse(self.result_notification(battle_id).is_resolved)
         self.assertFalse([call for call in sent.call_args_list if call.args[1] == "battle_result_updated"])
         self.ok(self.post_as(self.viewer, self.url(battle_id, "approve-result")))  # still answerable
         self.assertEqual(self.battle(battle_id).status, "ended")

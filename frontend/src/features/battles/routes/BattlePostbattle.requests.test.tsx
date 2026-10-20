@@ -313,7 +313,9 @@ describe("BattlePostbattle requests", () => {
     ).toEqual(["Skip postbattle"]);
     unmount();
 
-    renderBattleRoute("postbattle", { campaign: { permissions: ["manage_battles"] } });
+    renderBattleRoute("postbattle", {
+      campaign: { permissions: ["manage_battles"], capabilities: { manage_battles: true } },
+    });
     await screen.findAllByText("Captain Wolf");
     await user.click(screen.getByRole("button", { name: "More actions" }));
     expect(

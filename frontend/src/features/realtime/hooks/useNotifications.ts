@@ -27,25 +27,33 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { useAppStore } from "@/stores/app-store";
 import { toCurrentBattleSession } from "@/features/battles/utils/battle-session";
 import { setTradeData } from "@/features/warbands/api/economy-queries";
+import { useReloadNotifications } from "./useNotificationList";
+
+const answers = (count: number) => `${count} still need${count === 1 ? "s" : ""} an answer`;
+
+/** "Cleared 2. 1 still needs an answer." after Clear all (CAMP-TWEAK-10). */
+export function clearAllMessage(cleared: number, kept: number) {
+  if (cleared === 0) {
+    return kept > 0 ? `Nothing to clear: ${answers(kept)}.` : "Nothing to clear.";
+  }
+  return kept > 0 ? `Cleared ${cleared}. ${answers(kept)}.` : `Cleared ${cleared}.`;
+}
 
 /** The notification lists and their actions (accept, decline, dismiss, clear). */
 export function useNotifications() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const reloadNotifications = useReloadNotifications();
   const {
     tradeRequestNotifications,
     battleInviteNotifications,
     battleResultRequestNotifications,
     removeTradeRequestNotification,
-    clearTradeRequestNotifications,
     removeBattleInviteNotification,
-    clearBattleInviteNotifications,
     removeBattleResultRequestNotification,
-    clearBattleResultRequestNotifications,
     battleNudgeNotifications,
     removeBattleNudgeNotification,
-    clearBattleNudgeNotifications,
     currentBattleSession,
     setCurrentBattleSession,
     clearCurrentBattleSession,
@@ -148,22 +156,18 @@ export function useNotifications() {
     [dismissBattleNudge, navigate]
   );
 
+  // Clear all resolves only what can no longer be answered and never declines (CAMP-TWEAK-10):
+  // the server says how many went and stayed, and the bell lists what stayed.
   const clearNotifications = useCallback(() => {
-    clearTradeRequestNotifications();
-    clearBattleNudgeNotifications();
-    clearBattleInviteNotifications();
-    clearBattleResultRequestNotifications();
-    apiClearAllNotifications().catch((error: unknown) => {
-      toast.error(getErrorMessage(error, "Couldn't clear your notifications."), {
-        description: "They may come back the next time the list loads.",
+    apiClearAllNotifications()
+      .then(({ cleared, kept }) => {
+        toast(clearAllMessage(cleared, kept));
+        return reloadNotifications();
+      })
+      .catch((error: unknown) => {
+        toast.error(getErrorMessage(error, "Couldn't clear your notifications."));
       });
-    });
-  }, [
-    clearBattleInviteNotifications,
-    clearBattleNudgeNotifications,
-    clearBattleResultRequestNotifications,
-    clearTradeRequestNotifications,
-  ]);
+  }, [reloadNotifications]);
 
   return {
     tradeRequestNotifications,

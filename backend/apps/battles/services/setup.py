@@ -11,10 +11,10 @@ from django.utils import timezone
 
 from apps.campaigns.models import CampaignMembership
 from apps.notifications.models import Notification
+from apps.users.names import display_name
 from apps.warbands.models import Warband
 
 from ..models import Battle, BattleEvent, BattleParticipant
-from ..serializers import display_name
 from .errors import Refused
 from .events import append_event, notify_user
 from .timing import invite_deadline

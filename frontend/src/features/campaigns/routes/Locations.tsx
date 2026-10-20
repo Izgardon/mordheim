@@ -17,12 +17,13 @@ import {
   listCampaignLocations,
   updateCampaignLocation,
 } from "../api/campaigns-api";
-import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
+import { campaignCapabilities } from "../capabilities";
 import { getCampaignSectionTabs, type CampaignSectionTabId } from "@/lib/campaign-section-tabs";
 import LocationsTable from "../components/LocationsTable";
 
 import type { CampaignLayoutContext } from "./CampaignLayout";
 import type { CampaignLocation, CampaignLocationPayload } from "../types/campaign-types";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 const emptyForm: CampaignLocationPayload = {
   name: "",
@@ -57,12 +58,8 @@ export default function Locations() {
   const formRef = useRef<HTMLDivElement>(null);
 
   const campaignId = Number(id);
-  const memberPermissions = useCampaignPermissions(campaignId);
   const campaignSectionTabs = useMemo(() => getCampaignSectionTabs(campaign), [campaign]);
-  const canManage =
-    campaign?.role === "owner" ||
-    campaign?.role === "admin" ||
-    memberPermissions.includes("manage_locations");
+  const canManage = campaignCapabilities(campaign).manage_locations;
   const isEnabled = Boolean(campaign?.enable_locations);
 
   useEffect(() => {
@@ -78,11 +75,7 @@ export default function Locations() {
     listCampaignLocations(campaignId)
       .then((data) => setLocations(data))
       .catch((errorResponse) => {
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to load locations.");
-        } else {
-          setError("Unable to load locations.");
-        }
+        setError(getErrorMessage(errorResponse, "Unable to load locations."));
       })
       .finally(() => setIsLoading(false));
   }, [campaignId, isEnabled]);
@@ -167,11 +160,7 @@ export default function Locations() {
       }
       closeForm();
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || "Unable to save location.");
-      } else {
-        setFormError("Unable to save location.");
-      }
+      setFormError(getErrorMessage(errorResponse, "Unable to save location."));
     } finally {
       setIsSubmitting(false);
     }

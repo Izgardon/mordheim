@@ -6,6 +6,7 @@ import {
   SERVER_ERROR_MESSAGE,
   SESSION_EXPIRED_MESSAGE,
   getErrorMessage,
+  getRefusalMessage,
 } from "./get-error-message";
 
 const apiError = (status: number, data: unknown) => new ApiError("raw", status, data);
@@ -86,5 +87,26 @@ describe("getErrorMessage", () => {
     );
     expect(getErrorMessage("boom")).toBe(DEFAULT_ERROR_MESSAGE);
     expect(getErrorMessage(new Error("Roll failed"))).toBe("Roll failed");
+  });
+});
+
+describe("getRefusalMessage", () => {
+  it("reads a coded refusal's own detail, not its field errors with the field's name", () => {
+    const error = apiError(400, {
+      detail: "Type the campaign's name to delete it for good.",
+      code: "name_mismatch",
+      fields: { name: ["Type the campaign's name to delete it for good."] },
+    });
+
+    expect(getRefusalMessage(error)).toBe("Type the campaign's name to delete it for good.");
+    expect(getErrorMessage(error)).toBe("Name: Type the campaign's name to delete it for good.");
+  });
+
+  it("reads anything else as getErrorMessage does", () => {
+    expect(getRefusalMessage(apiError(400, { name: ["Required."] }))).toBe("Name: Required.");
+    expect(getRefusalMessage(apiError(500, { detail: "x", code: "boom" }))).toBe(
+      SERVER_ERROR_MESSAGE
+    );
+    expect(getRefusalMessage(new Error("Nope"))).toBe("Nope");
   });
 });

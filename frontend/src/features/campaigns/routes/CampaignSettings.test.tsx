@@ -4,6 +4,7 @@ import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import CampaignSettings from "./CampaignSettings";
+import { capabilitiesFor } from "@/test/campaign-fixtures";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 
 import type { CampaignRole, CampaignSummary } from "../types/campaign-types";
@@ -17,7 +18,6 @@ vi.mock("../api/campaigns-api", () => ({
   listCampaignMembers,
   listCampaignActiveBattles,
   cancelCampaignActiveBattle: vi.fn(),
-  deleteCampaign: vi.fn(),
   removeCampaignMember: vi.fn(),
   updateMemberPermissions: vi.fn(),
   updateMemberRole: vi.fn(),
@@ -50,11 +50,13 @@ vi.mock("../components/settings/ActiveBattlesTable", () => ({
 }));
 vi.mock("../components/settings/CampaignControlCard", () => ({ default: () => null }));
 vi.mock("../components/settings/CampaignLevelUpSettingsCard", () => ({ default: () => null }));
-vi.mock("../components/settings/DeleteCampaignCard", () => ({ default: () => null }));
+vi.mock("../components/settings/ArchiveCampaignCard", () => ({ default: () => null }));
+vi.mock("../components/settings/ArchivedCampaignCard", () => ({ default: () => null }));
 vi.mock("../components/settings/RemoveMemberDialog", () => ({ default: () => null }));
 vi.mock("@components/confirm-dialog", () => ({ ConfirmDialog: () => null }));
 
 const buildCampaign = (role: CampaignRole, permissions?: string[]): CampaignSummary => ({
+  capabilities: capabilitiesFor({ role, permissions }),
   id: 4,
   name: "Shadows over Mordheim",
   join_code: "",

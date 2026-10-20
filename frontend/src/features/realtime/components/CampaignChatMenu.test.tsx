@@ -1,8 +1,9 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { listCampaignMessages, sendCampaignMessage } from "@/features/campaigns/api/campaigns-api";
 import { ApiError } from "@/lib/api-client";
+import { renderWithQueryClient } from "@/test/query-test-utils";
 import { CampaignChatContext, type CampaignChatValue } from "../hooks/useCampaignChat";
 import CampaignChatMenu from "./CampaignChatMenu";
 
@@ -33,7 +34,7 @@ const message = (id: number, body: string) => ({
 });
 
 const openChat = () => {
-  render(
+  renderWithQueryClient(
     <CampaignChatContext.Provider value={chat}>
       <CampaignChatMenu campaignId={7} />
     </CampaignChatContext.Provider>

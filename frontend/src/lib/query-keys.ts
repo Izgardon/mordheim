@@ -17,9 +17,41 @@ export type CatalogueKind =
   | "hired-swords";
 
 export const queryKeys = {
+  /** Item restrictions of one type (catalogue data, not campaign-scoped). */
+  restrictions: (type: string) => ["restrictions", type] as const,
+  /** Your campaigns, as the campaigns page lists them. */
+  campaigns: () => ["campaigns"] as const,
   campaign: {
     all: (campaignId: number) => ["campaign", campaignId] as const,
     detail: (campaignId: number) => ["campaign", campaignId, "detail"] as const,
+    /** Every permission code with its label and description (the grant menu's options). */
+    permissionCatalogue: (campaignId: number) => ["campaign", campaignId, "permissions"] as const,
+    /** Every member with their warband, rating and battle-busy fields (the overview's roster). */
+    players: (campaignId: number) => ["campaign", campaignId, "players"] as const,
+    /** Members' ids and names only (`players/?fields=basic`), for name pickers (PERF-41). */
+    playerNames: (campaignId: number) => ["campaign", campaignId, "players", "basic"] as const,
+    battleHistory: (campaignId: number) => ["campaign", campaignId, "battle-history"] as const,
+    pivotalMoments: (campaignId: number) => ["campaign", campaignId, "pivotal-moments"] as const,
+    /** The campaign's completed trades (the overview's Trades table). */
+    completedTrades: (campaignId: number) =>
+      ["campaign", campaignId, "trades", "completed"] as const,
+    bulletin: (campaignId: number) => ["campaign", campaignId, "bulletin"] as const,
+    topKillers: (campaignId: number) => ["campaign", campaignId, "top-killers"] as const,
+    /** Members with emails, roles and grants (Settings, for owners and admins). */
+    members: (campaignId: number) => ["campaign", campaignId, "members"] as const,
+    /** Open battles a battle manager can act on (Settings → Active Battles, manage_battles). */
+    activeBattles: (campaignId: number) => ["campaign", campaignId, "battles", "active"] as const,
+    encampments: (campaignId: number) => ["campaign", campaignId, "encampments"] as const,
+    houseRules: (campaignId: number) => ["campaign", campaignId, "rules"] as const,
+    /** The server's list of common house rules (`rules/common/`), the same for every campaign. */
+    commonRules: (campaignId: number) => ["campaign", campaignId, "common-rules"] as const,
+    /** The campaign chat's history, newest page first (an infinite query). */
+    chat: (campaignId: number) => ["campaign", campaignId, "chat"] as const,
+    /** What leaving would close for you (read each time the leave dialog opens). */
+    leavePreview: (campaignId: number) => ["campaign", campaignId, "leave"] as const,
+    /** What removing one member would close (read each time the remove dialog opens). */
+    memberRemoval: (campaignId: number, userId: number) =>
+      ["campaign", campaignId, "members", userId, "removal"] as const,
     catalogue: (campaignId: number, kind: CatalogueKind) =>
       ["campaign", campaignId, "catalogue", kind] as const,
     openBattles: (campaignId: number) => ["campaign", campaignId, "battles", "open"] as const,
@@ -59,6 +91,9 @@ export const queryKeys = {
     /** The warband's log entries, as the Logs tab lists them. */
     warbandLogs: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "logs"] as const,
+    /** Every on-roster unit's stat line, as the overview's roster expands it (PERF-42). */
+    warbandRosterStats: (campaignId: number, warbandId: number) =>
+      ["campaign", campaignId, "warband", warbandId, "roster-stats"] as const,
     /** One trade request between two players of the campaign. */
     trade: (campaignId: number, requestId: string) =>
       ["campaign", campaignId, "trade", requestId] as const,

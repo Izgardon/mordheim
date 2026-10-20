@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from apps.warbands.utils.henchmen_level import HENCHMEN_LEVEL_THRESHOLDS
@@ -24,6 +24,11 @@ class Campaign(models.Model):
     name = models.CharField(max_length=120)
     join_code = models.CharField(max_length=6, unique=True)
     in_progress = models.BooleanField(default=False)
+    # set while the campaign is archived: read-only for everyone until its owner restores it (decision 5)
+    archived_at = models.DateTimeField(null=True, blank=True)
+    archived_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="+", on_delete=models.SET_NULL, null=True, blank=True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -32,72 +37,6 @@ class Campaign(models.Model):
 
     def __str__(self):
         return self.name
-
-    def _get_settings_or_none(self):
-        try:
-            return self.settings
-        except ObjectDoesNotExist:
-            return None
-
-    def _get_settings_value(self, field_name, default):
-        settings_obj = self._get_settings_or_none()
-        if not settings_obj:
-            return default
-        value = getattr(settings_obj, field_name, None)
-        return default if value is None else value
-
-    def _set_settings_value(self, field_name, value):
-        settings_obj, _ = CampaignSettings.objects.get_or_create(campaign=self)
-        setattr(settings_obj, field_name, value)
-        settings_obj.save(update_fields=[field_name])
-
-    @property
-    def max_players(self):
-        return self._get_settings_value("max_players", 8)
-
-    @max_players.setter
-    def max_players(self, value):
-        self._set_settings_value("max_players", value)
-
-    @property
-    def max_heroes(self):
-        return self._get_settings_value("max_heroes", 6)
-
-    @max_heroes.setter
-    def max_heroes(self, value):
-        self._set_settings_value("max_heroes", value)
-
-    @property
-    def max_hired_swords(self):
-        return self._get_settings_value("max_hired_swords", 3)
-
-    @max_hired_swords.setter
-    def max_hired_swords(self, value):
-        self._set_settings_value("max_hired_swords", value)
-
-    @property
-    def max_games(self):
-        return self._get_settings_value("max_games", 10)
-
-    @max_games.setter
-    def max_games(self, value):
-        self._set_settings_value("max_games", value)
-
-    @property
-    def starting_gold(self):
-        return self._get_settings_value("starting_gold", 500)
-
-    @starting_gold.setter
-    def starting_gold(self, value):
-        self._set_settings_value("starting_gold", value)
-
-    @property
-    def hero_death_roll(self):
-        return self._get_settings_value("hero_death_roll", "d66")
-
-    @hero_death_roll.setter
-    def hero_death_roll(self, value):
-        self._set_settings_value("hero_death_roll", value)
 
 
 class CampaignSettings(models.Model):
@@ -110,7 +49,6 @@ class CampaignSettings(models.Model):
     hero_level_thresholds = models.JSONField(default=get_default_hero_level_thresholds)
     henchmen_level_thresholds = models.JSONField(default=get_default_henchmen_level_thresholds)
     hired_sword_level_thresholds = models.JSONField(default=get_default_henchmen_level_thresholds)
-    locations = models.BooleanField(default=False)
     enable_encampments = models.BooleanField(default=False)
     enable_locations = models.BooleanField(default=False)
     hero_death_roll = models.CharField(
@@ -167,6 +105,8 @@ class CampaignMembership(models.Model):
         on_delete=models.CASCADE,
     )
     role = models.ForeignKey(CampaignRole, related_name="memberships", on_delete=models.PROTECT)
+    # the newest chat message he has read, on every device (CAMP-TWEAK-09); 0 before he has read any
+    chat_last_read_id = models.BigIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -209,10 +149,16 @@ class CampaignMessage(models.Model):
     username = models.CharField(max_length=150)
     body = models.TextField(max_length=2000)
     created_at = models.DateTimeField(auto_now_add=True)
+    # soft delete (decision 8): the post stays listed as "removed" by an owner or admin, or by its author
+    removed_at = models.DateTimeField(null=True, blank=True)
+    removed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="+", on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     class Meta:
         db_table = "campaign_message"
-        ordering = ["-created_at"]
+        ordering = ["-id"]
+        indexes = [models.Index(fields=["campaign", "-id"], name="campaign_message_recent_idx")]  # PERF-45
 
     def __str__(self):
         return f"{self.campaign_id}:{self.user_id}:{self.created_at}"
@@ -230,10 +176,16 @@ class CampaignBulletinEntry(models.Model):
     username = models.CharField(max_length=150)
     body = models.TextField(max_length=280)
     created_at = models.DateTimeField(auto_now_add=True)
+    # soft delete (decision 8): the post stays listed as "removed" by an owner or admin, or by its author
+    removed_at = models.DateTimeField(null=True, blank=True)
+    removed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="+", on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     class Meta:
         db_table = "campaign_bulletin"
-        ordering = ["-created_at", "-id"]
+        ordering = ["-id"]
+        indexes = [models.Index(fields=["campaign", "-id"], name="campaign_bulletin_recent_idx")]  # PERF-45
 
     def __str__(self):
         return f"{self.campaign_id}:{self.user_id}:{self.created_at}"
@@ -263,6 +215,13 @@ class CampaignHouseRule(models.Model):
     class Meta:
         db_table = "campaign_house_rule"
         ordering = ["created_at"]
+        constraints = [
+            models.UniqueConstraint(  # one rule per item effect in a campaign (BUG-52)
+                fields=["campaign", "effect_key"],
+                condition=models.Q(effect_key__isnull=False) & ~models.Q(effect_key=""),
+                name="campaign_house_rule_unique_effect",
+            )
+        ]
 
     def __str__(self):
         return f"{self.campaign_id}:{self.title}"
@@ -279,6 +238,11 @@ class CampaignEncampment(models.Model):
         blank=True,
     )
     description = models.TextField(blank=True, default="")
+    # soft delete by its owner or a manage_encampments holder: no longer listed (decision 9)
+    removed_at = models.DateTimeField(null=True, blank=True)
+    removed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="+", on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     class Meta:
         db_table = "campaign_encampment"

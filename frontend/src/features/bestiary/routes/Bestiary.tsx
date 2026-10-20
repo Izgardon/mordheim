@@ -17,7 +17,7 @@ import MobileTabs from "@/components/ui/mobile-tabs";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import { useAppStore } from "@/stores/app-store";
-import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
+import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import {
   listWarbandBestiaryFavourites,
@@ -41,7 +41,6 @@ export default function Bestiary() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const campaignId = Number(id);
-  const memberPermissions = useCampaignPermissions(campaignId);
   const isMobile = useMediaQuery("(max-width: 960px)");
   const { warband } = useAppStore();
 
@@ -59,10 +58,7 @@ export default function Bestiary() {
   const selectedEntryId = searchParams.get("entry") ? Number(searchParams.get("entry")) : null;
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
-  const canManage =
-    campaign?.role === "owner" ||
-    campaign?.role === "admin" ||
-    memberPermissions.includes("manage_bestiary");
+  const canManage = campaignCapabilities(campaign).manage_bestiary;
 
   useEffect(() => {
     if (!warband?.id) return;

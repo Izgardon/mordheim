@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.campaigns.models import CampaignSettings
-from apps.campaigns.permissions import get_membership
+from apps.campaigns.permissions import get_writable_membership
 from apps.restrictions.serializers import RestrictionSerializer
 from apps.warbands.access import check_backstory_change
 from apps.warbands.models import LedgerAction, Warband, WarbandResource
@@ -16,6 +16,7 @@ from apps.warbands.serializers import (
     WarbandUpdateSerializer,
 )
 from apps.warbands.services import ledger
+from apps.warbands.services.roster_stats import roster_stats
 
 from .base import WarbandScopedView
 
@@ -42,7 +43,7 @@ class WarbandListCreateView(APIView):
         serializer.is_valid(raise_exception=True)
         campaign_id = serializer.validated_data.get("campaign_id")
 
-        if not get_membership(request.user, campaign_id):
+        if not get_writable_membership(request.user, campaign_id):
             return Response({"detail": "Not found"}, status=404)
 
         if Warband.objects.filter(campaign_id=campaign_id, user=request.user).exists():
@@ -80,6 +81,13 @@ class WarbandDetailView(WarbandScopedView):
 class WarbandSummaryView(WarbandScopedView):
     def get(self, request: Request, warband_id: int) -> Response:
         return Response(WarbandSummarySerializer(self.warband).data)
+
+
+class WarbandRosterStatsView(WarbandScopedView):
+    """GET: the stat line of each unit on the roster, for the campaign overview's expand (PERF-42; 3 queries)."""
+
+    def get(self, request: Request, warband_id: int) -> Response:
+        return Response(roster_stats(self.warband.id))
 
 
 # Kept as it is until the frontend stops calling it: PUT changes nothing and answers like GET. (No docstring:

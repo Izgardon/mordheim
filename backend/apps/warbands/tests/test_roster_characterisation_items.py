@@ -9,7 +9,7 @@ from typing import Any
 
 from django.utils import timezone
 
-from apps.warbands.models import Henchman, WarbandItem
+from apps.warbands.models import Henchman, LedgerAction, WarbandItem
 from apps.warbands.services import ledger
 
 from .roster_support import (
@@ -300,7 +300,7 @@ class RosterItemSaleCharacterisationTests(RosterTestCase):
 
     def test_a_sale_adds_exactly_its_price_to_the_gold(self):
         # ECON-TEST-04: from the stash and from a unit, starting from a warband that already has gold
-        ledger.rewrite_starting_gold(self.warband, 100)
+        ledger.record(self.warband, LedgerAction.STARTING_GOLD, 100, "Starting Gold")
         WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=2, cost=9)
         hero = make_unit(HERO, self.warband)
         hero.hero_items.create(item=self.axe, cost=7)

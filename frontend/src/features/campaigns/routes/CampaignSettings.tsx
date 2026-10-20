@@ -1,119 +1,56 @@
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+// routing
+import { useOutletContext, useParams, useSearchParams } from "react-router-dom";
 
 // components
-import { useEffect, useMemo, useState } from "react";
-
 import TabbedCard from "@components/tabbed-card";
 import { PageHeader } from "@components/page-header";
-import { ConfirmDialog } from "@components/confirm-dialog";
-import ActiveBattlesTable from "../components/settings/ActiveBattlesTable";
-import DeleteCampaignCard from "../components/settings/DeleteCampaignCard";
-import DeleteWarbandCard from "../components/settings/DeleteWarbandCard";
-import CampaignControlCard from "../components/settings/CampaignControlCard";
-import CampaignLevelUpSettingsCard from "../components/settings/CampaignLevelUpSettingsCard";
-import FeedbackReportCard from "../components/settings/FeedbackReportCard";
-import MembersCard from "../components/settings/MembersCard";
-import RemoveMemberDialog from "../components/settings/RemoveMemberDialog";
-import PersonalSettingsCard from "../components/settings/PersonalSettingsCard";
-import WarbandDiceSettingsCard from "../components/settings/WarbandDiceSettingsCard";
-import WarbandSettingsCard from "../components/settings/WarbandSettingsCard";
+import CampaignSettingsTab from "../components/settings/CampaignSettingsTab";
+import JoinCodeBadge from "../components/settings/JoinCodeBadge";
+import PersonalSettingsTab from "../components/settings/PersonalSettingsTab";
 
-import type { CampaignMember } from "../types/campaign-types";
+// api
+import { useCampaignActiveBattles, useCampaignMembers } from "../api/campaign-queries";
+import { usePermissionCatalogue, useSetCampaign } from "../hooks/useCampaignQuery";
 
-// hooks
-import { useAuth } from "../../auth/hooks/use-auth";
-import { useCampaignSettings } from "../hooks/use-campaign-settings";
-import { useMyWarbandWriter } from "@/features/warbands/hooks/warband/useMyWarbandStore";
-
-// stores
-import { useAppStore } from "@/stores/app-store";
+// other
+import { campaignCapabilities, hasCampaignSettings } from "../capabilities";
 
 // types
 import type { CampaignLayoutContext } from "./CampaignLayout";
 
 type SettingsTabId = "personal" | "campaign";
 
+const SETTINGS_TABS = [
+  { id: "personal" as const, label: "Personal" },
+  { id: "campaign" as const, label: "Campaign" },
+];
+
 export default function CampaignSettings() {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const { signOut } = useAuth();
-  const { campaign, setCampaign } = useOutletContext<CampaignLayoutContext>();
-  const { warband } = useAppStore();
+  const { campaign } = useOutletContext<CampaignLayoutContext>();
   const campaignId = Number(id);
-  const myWarband = useMyWarbandWriter(Number.isNaN(campaignId) ? null : campaignId);
-  const canManageSettings = campaign ? ["owner", "admin"].includes(campaign.role) : false;
+  const setCampaign = useSetCampaign(campaignId);
+  const capabilities = campaignCapabilities(campaign);
   // A player granted manage_battles gets the Campaign tab for Active Battles alone (BATL-NEW-03).
-  const hasCampaignTab =
-    canManageSettings || Boolean(campaign?.permissions?.includes("manage_battles"));
-  const [activeTab, setActiveTab] = useState<SettingsTabId>("personal");
-  const handleOpenCampaigns = useMemo(() => () => navigate("/campaigns"), [navigate]);
+  const hasCampaignTab = hasCampaignSettings(capabilities);
+  // `?tab=campaign` opens the Campaign tab (the archived banner and the stuck-battles banner).
+  const [searchParams] = useSearchParams();
+  const linkedTab: SettingsTabId = searchParams.get("tab") === "campaign" ? "campaign" : "personal";
+  const [activeTab, setActiveTab] = useState<SettingsTabId>(linkedTab);
+  useEffect(() => setActiveTab(linkedTab), [linkedTab]);
+
+  // The Campaign tab's lists load as the page opens, on either tab; its cards share them.
+  useCampaignMembers(campaignId, { enabled: capabilities.view_members });
+  useCampaignActiveBattles(campaignId, { enabled: capabilities.manage_battles });
+  usePermissionCatalogue(campaignId, { enabled: capabilities.grant_permissions });
 
   useEffect(() => {
     if (!hasCampaignTab && activeTab !== "personal") {
       setActiveTab("personal");
     }
   }, [activeTab, hasCampaignTab]);
-
-  const settingsTabs = useMemo(
-    () => [
-      { id: "personal" as const, label: "Personal" },
-      { id: "campaign" as const, label: "Campaign" },
-    ],
-    []
-  );
-
-  // Called for every viewer so the hook order never depends on the role (or on the guards
-  // below). The hook only fetches members / active battles for owners and admins.
-  const {
-    members,
-    activeBattles,
-    error,
-    activeBattlesError,
-    isLoading,
-    isActiveBattlesLoading,
-    savingPermissions,
-    savingRoles,
-    memberErrors,
-    deleteOpen,
-    deleteValue,
-    deleteError,
-    isDeleting,
-    removeTarget,
-    removeOpen,
-    removeError,
-    isRemoving,
-    kickTarget,
-    kickOpen,
-    kickError,
-    isKicking,
-    canManagePermissions,
-    canManageRoles,
-    canRemoveMembers,
-    canManageActiveBattles,
-    isDeleteReady,
-    formatPermissionsLabel,
-    handlePermissionToggle,
-    handleRoleToggle,
-    requestRemoveMember,
-    closeRemoveDialog,
-    handleRemoveMember,
-    requestKickPlayer,
-    closeKickDialog,
-    handleKickPlayer,
-    setDeleteOpen,
-    setDeleteValue,
-    handleDeleteCampaign,
-    handleCancelActiveBattle,
-    handleCloseActiveBattle,
-    handleEndActiveBattle,
-    handleConfirmActiveBattleResults,
-    resetDeleteState,
-  } = useCampaignSettings({
-    campaignId,
-    campaignRole: campaign?.role,
-    campaignPermissions: campaign?.permissions,
-    onDeleted: () => navigate("/campaigns"),
-  });
 
   if (!campaign) {
     return <p className="text-sm text-muted-foreground">No record of that campaign.</p>;
@@ -123,216 +60,51 @@ export default function CampaignSettings() {
     return <p className="text-sm text-red-600">Invalid campaign id.</p>;
   }
 
-  const isOwner = campaign.role === "owner";
-
-  const personalSettingsContent = (
-    <div className="space-y-6">
-      <PersonalSettingsCard onSignOut={signOut} onOpenCampaigns={handleOpenCampaigns} />
-      <WarbandDiceSettingsCard campaignRole={campaign.role} />
-      {warband ? (
-        <WarbandSettingsCard
-          warband={warband}
-          canEdit={true}
-          onWarbandUpdated={(updated) => myWarband.merge(updated.id, updated)}
-        />
-      ) : null}
-      <FeedbackReportCard
-        campaignId={campaign.id}
-        campaignName={campaign.name}
-        warbandId={warband?.id}
-        warbandName={warband?.name}
+  const joinCode = (compact: boolean) =>
+    campaign.join_code ? (
+      <JoinCodeBadge
+        campaign={campaign}
+        canRegenerate={capabilities.regenerate_join_code}
+        onRegenerated={setCampaign}
+        compact={compact}
       />
-      {warband ? (
-        <DeleteWarbandCard
-          warbandId={warband.id}
-          warbandName={warband.name}
-          onDeleted={() => {
-            myWarband.remove(warband.id);
-            navigate(`/campaigns/${campaignId}`);
-          }}
-        />
-      ) : null}
-    </div>
-  );
+    ) : undefined;
+
+  const personalTab = <PersonalSettingsTab campaign={campaign} capabilities={capabilities} />;
 
   return (
     <div className="space-y-8">
       <PageHeader
         title="Settings"
         subtitle={campaign.name}
-        tabs={hasCampaignTab ? settingsTabs : undefined}
+        tabs={hasCampaignTab ? SETTINGS_TABS : undefined}
         activeTab={activeTab}
         onTabChange={(tabId) => setActiveTab(tabId as SettingsTabId)}
-        rightSlot={
-          campaign.join_code ? (
-            <div className="flex flex-col items-end">
-              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Join Code</p>
-              <p className="font-mono text-sm font-semibold text-foreground">
-                {campaign.join_code}
-              </p>
-            </div>
-          ) : undefined
-        }
+        rightSlot={joinCode(false)}
       />
 
       {hasCampaignTab ? (
         <div className="space-y-4">
           <TabbedCard
-            tabs={settingsTabs}
+            tabs={SETTINGS_TABS}
             activeTab={activeTab}
             onTabChange={setActiveTab}
             tabsClassName="hidden"
             headerClassName="hidden"
             className="px-2 pb-6 sm:px-0"
             contentClassName="pt-4 sm:pt-0"
-            mobileRight={
-              campaign.join_code ? (
-                <div className="text-right">
-                  <p className="text-[0.5rem] uppercase tracking-[0.2em] text-muted-foreground">
-                    Join Code
-                  </p>
-                  <p className="font-mono text-[0.65rem] font-semibold text-foreground">
-                    {campaign.join_code}
-                  </p>
-                </div>
-              ) : undefined
-            }
+            mobileRight={joinCode(true)}
           >
             {activeTab === "personal" ? (
-              personalSettingsContent
+              personalTab
             ) : (
-              <div className="space-y-8">
-                {canManageSettings && error ? (
-                  <p className="text-sm text-red-600">{error}</p>
-                ) : null}
-
-                {canManageSettings ? (
-                  <MembersCard
-                    isLoading={isLoading}
-                    members={members}
-                    formatPermissionsLabel={formatPermissionsLabel}
-                    canManagePermissions={canManagePermissions}
-                    canManageRoles={canManageRoles}
-                    canRemoveMembers={canRemoveMembers}
-                    savingPermissions={savingPermissions}
-                    savingRoles={savingRoles}
-                    memberErrors={memberErrors}
-                    onTogglePermission={handlePermissionToggle}
-                    onToggleRole={handleRoleToggle}
-                    onRemoveRequest={requestRemoveMember}
-                    canKickPlayers={isOwner}
-                    onKickRequest={requestKickPlayer}
-                  />
-                ) : null}
-
-                {canManageActiveBattles ? (
-                  <ActiveBattlesTable
-                    isLoading={isActiveBattlesLoading}
-                    error={activeBattlesError}
-                    battles={activeBattles}
-                    onCancelBattle={handleCancelActiveBattle}
-                    onCloseBattle={handleCloseActiveBattle}
-                    onEndBattle={handleEndActiveBattle}
-                    onConfirmResults={handleConfirmActiveBattleResults}
-                  />
-                ) : null}
-
-                {isOwner ? (
-                  <CampaignControlCard
-                    campaign={campaign}
-                    onCampaignUpdated={(updated) => setCampaign?.(updated)}
-                  />
-                ) : null}
-                {isOwner ? (
-                  <CampaignLevelUpSettingsCard
-                    campaign={campaign}
-                    onCampaignUpdated={(updated) => setCampaign?.(updated)}
-                  />
-                ) : null}
-
-                {canRemoveMembers ? (
-                  <DeleteCampaignCard
-                    open={deleteOpen}
-                    onOpenChange={setDeleteOpen}
-                    onReset={resetDeleteState}
-                    deleteValue={deleteValue}
-                    onDeleteValueChange={setDeleteValue}
-                    isDeleteReady={isDeleteReady}
-                    deleteError={deleteError}
-                    isDeleting={isDeleting}
-                    onDelete={handleDeleteCampaign}
-                  />
-                ) : null}
-
-                <RemoveMemberDialog
-                  open={removeOpen}
-                  target={removeTarget}
-                  error={removeError}
-                  isRemoving={isRemoving}
-                  onClose={closeRemoveDialog}
-                  onConfirm={handleRemoveMember}
-                />
-                <KickPlayerDialog
-                  open={kickOpen}
-                  target={kickTarget}
-                  error={kickError}
-                  isKicking={isKicking}
-                  onClose={closeKickDialog}
-                  onConfirm={handleKickPlayer}
-                />
-              </div>
+              <CampaignSettingsTab campaign={campaign} capabilities={capabilities} />
             )}
           </TabbedCard>
         </div>
       ) : (
-        personalSettingsContent
+        personalTab
       )}
     </div>
-  );
-}
-
-type KickPlayerDialogProps = {
-  open: boolean;
-  target: CampaignMember | null;
-  error: string;
-  isKicking: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-};
-
-function KickPlayerDialog({
-  open,
-  target,
-  error,
-  isKicking,
-  onClose,
-  onConfirm,
-}: KickPlayerDialogProps) {
-  const description = (
-    <div className="space-y-2">
-      <p>
-        Delete{" "}
-        <span className="font-semibold text-foreground">
-          {target?.warband_name ?? "this warband"}
-        </span>
-        ? This will permanently remove the warband and all its units.
-      </p>
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
-    </div>
-  );
-  return (
-    <ConfirmDialog
-      open={open}
-      onOpenChange={(nextOpen) => {
-        if (!nextOpen) onClose();
-      }}
-      description={description}
-      confirmText={isKicking ? "Kicking..." : "Kick player"}
-      confirmVariant="destructive"
-      confirmDisabled={isKicking || !target}
-      isConfirming={isKicking}
-      onConfirm={onConfirm}
-      onCancel={onClose}
-    />
   );
 }

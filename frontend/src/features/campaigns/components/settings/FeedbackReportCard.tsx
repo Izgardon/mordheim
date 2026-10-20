@@ -13,6 +13,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 
 import { sendFeedbackReport } from "@/features/auth/api/auth-api";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 const textareaClassName =
   "min-h-[120px] w-full rounded-2xl border border-border/60 bg-background/70 px-3 py-2 text-sm text-foreground shadow-[0_12px_22px_rgba(5,20,24,0.25)] focus-visible:outline-none focus-visible:shadow-[0_12px_22px_rgba(5,20,24,0.25),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]";
@@ -40,11 +41,15 @@ export default function FeedbackReportCard({
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSent, setIsSent] = useState(false);
 
   const trimmedMessage = message.trim();
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
+    if (nextOpen) {
+      setIsSent(false);
+    }
     if (!nextOpen) {
       setError("");
       setReportType("Bug");
@@ -72,12 +77,9 @@ export default function FeedbackReportCard({
       });
       setMessage("");
       setOpen(false);
+      setIsSent(true);
     } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message || "Unable to send feedback report.");
-      } else {
-        setError("Unable to send feedback report.");
-      }
+      setError(getErrorMessage(err, "Unable to send feedback report."));
     } finally {
       setIsSubmitting(false);
     }
@@ -89,8 +91,9 @@ export default function FeedbackReportCard({
         <div className="space-y-2">
           <h3 className="text-lg font-semibold text-foreground">Feedback/Bug Report</h3>
           <p className="text-sm text-muted-foreground">
-            Send a report with your account and current campaign context so issues are easier to
-            trace.
+            {campaignId
+              ? "Send a report with your account and current campaign context so issues are easier to trace."
+              : "Send a report with your account so issues are easier to trace."}
           </p>
         </div>
         <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -152,6 +155,11 @@ export default function FeedbackReportCard({
             </DialogFooter>
           </DialogContent>
         </Dialog>
+        {isSent ? (
+          <p role="status" className="text-sm text-emerald-400">
+            Thanks, report sent
+          </p>
+        ) : null}
       </CardBackground>
     </section>
   );

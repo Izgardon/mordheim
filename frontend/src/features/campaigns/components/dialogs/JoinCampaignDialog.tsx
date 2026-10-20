@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "@components/button";
 import {
   Dialog,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -15,6 +16,7 @@ import { Input } from "@components/input";
 import { Label } from "@components/label";
 // types
 import type { CampaignJoinPayload } from "../../types/campaign-types";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 const initialState: CampaignJoinPayload = {
   join_code: "",
@@ -46,11 +48,7 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
       await onJoin({ join_code: form.join_code.trim().toUpperCase() });
       setOpen(false);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setError(errorResponse.message || "Unable to join campaign");
-      } else {
-        setError("Unable to join campaign");
-      }
+      setError(getErrorMessage(errorResponse, "Unable to join campaign"));
     } finally {
       setIsSubmitting(false);
     }
@@ -64,6 +62,9 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
           <DialogTitle className="text-base font-semibold">Join a campaign</DialogTitle>
+          <DialogDescription className="block text-sm text-muted-foreground">
+            Enter the six-character rally code a member of the campaign shared with you.
+          </DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">

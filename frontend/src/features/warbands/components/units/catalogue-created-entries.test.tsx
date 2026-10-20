@@ -78,8 +78,10 @@ vi.mock("@/stores/app-store", () => ({
   useAppStore: () => ({
     warband: { id: 9, campaign_id: 1, gold: 500 },
     diceColor: "#2e8555",
-    campaignStarted: true,
   }),
+}));
+vi.mock("@/features/campaigns/hooks/useCampaignStarted", () => ({
+  useCampaignStarted: () => true,
 }));
 
 const first = makeVeteranHiredSword({ id: 31, name: "Brother Hal", caster: "Wizard" });

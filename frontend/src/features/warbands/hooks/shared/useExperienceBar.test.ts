@@ -5,10 +5,8 @@ import { useExperienceBar } from "./useExperienceBar";
 
 import type { LevelInfo } from "@/features/warbands/components/heroes/utils/hero-level";
 
-vi.mock("@/stores/app-store", () => ({
-  useAppStore: () => ({
-    campaignStarted: true,
-  }),
+vi.mock("@/features/campaigns/hooks/useCampaignStarted", () => ({
+  useCampaignStarted: () => true,
 }));
 
 const getLevelInfo = (xp: number): LevelInfo => {

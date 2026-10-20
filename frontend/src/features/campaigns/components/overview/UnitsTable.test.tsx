@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import type { RosterUnit } from "../../hooks/useCampaignOverview";
+import type { RosterUnit } from "../../types/campaign-types";
 import UnitsTable from "./UnitsTable";
 
 const units: RosterUnit[] = [

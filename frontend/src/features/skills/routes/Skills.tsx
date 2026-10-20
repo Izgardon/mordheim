@@ -22,7 +22,7 @@ import { Tooltip } from "@components/tooltip";
 import { Pencil } from "lucide-react";
 
 // api
-import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
+import { campaignCapabilities } from "@/features/campaigns/capabilities";
 
 // types
 import type { Skill } from "../types/skill-types";
@@ -43,7 +43,6 @@ export default function Skills() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const navigate = useNavigate();
   const campaignId = Number(id);
-  const memberPermissions = useCampaignPermissions(campaignId);
   const isMobile = useMediaQuery("(max-width: 960px)");
   const { data: skills, isLoading, error } = useCatalogue("skills", campaignId);
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
@@ -52,10 +51,7 @@ export default function Skills() {
   const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
 
-  const canAdd =
-    campaign?.role === "owner" ||
-    campaign?.role === "admin" ||
-    memberPermissions.includes("add_custom");
+  const canAdd = campaignCapabilities(campaign).add_custom;
 
   const typeOptions = useMemo(() => {
     const unique = new Set(skills.map((skill) => skill.type).filter(Boolean));

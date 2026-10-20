@@ -14,8 +14,13 @@ type EncampmentsTableProps = {
   isMobile?: boolean;
 };
 
+/** The owner's name, "(left)" once they've left the campaign, or Nobody (CAMP-TWEAK-08). */
 function renderOwner(encampment: CampaignEncampment) {
-  return encampment.owner_name?.trim() || "Unassigned";
+  const name = encampment.owner_name?.trim();
+  if (!name) {
+    return "Nobody";
+  }
+  return encampment.owner_left ? `${name} (left)` : name;
 }
 
 export default function EncampmentsTable({

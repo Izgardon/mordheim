@@ -1,18 +1,10 @@
 import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { Button } from "@components/button";
 import { ConfirmDialog } from "@components/confirm-dialog";
 import { useMediaQuery } from "@/lib/use-media-query";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { cancelBattleAsCreator, joinBattle } from "@/features/battles/api/battles-api";
 import { DECLINE_INVITE_QUESTION } from "@/features/battles/components/prebattle/PrebattleInviteGate";
@@ -23,7 +15,7 @@ import {
   useRefreshOpenBattles,
   useReplaceOpenBattle,
 } from "@/features/battles/hooks/useOpenCampaignBattles";
-import type { BattleParticipantStatus, BattleState } from "@/features/battles/types/battle-types";
+import type { BattleState } from "@/features/battles/types/battle-types";
 import {
   getBattleRouteForStatus,
   getResumableBattleForUser,
@@ -31,8 +23,11 @@ import {
 import { deadlineLabel } from "@/features/battles/utils/battle-timing";
 import type { CampaignPlayer } from "../../types/campaign-types";
 import UnfinishedBattleBanner from "@/features/battles/components/shared/UnfinishedBattleBanner";
+import { battleButtonClass } from "../layout/RejoinBattleButton";
+import RejoinBattleButton from "../layout/RejoinBattleButton";
+import BattleInviteStatusDialog from "./BattleInviteStatusDialog";
 import PendingResultsCard from "./PendingResultsCard";
-import StartBattleDialog from "./StartBattleDialog";
+import StartBattleButton from "./StartBattleButton";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 const NO_BATTLES: BattleState[] = [];
@@ -41,18 +36,23 @@ type BattleActionPanelProps = {
   campaignId: number;
   players: CampaignPlayer[];
   campaignStarted: boolean;
+  /** Shown first in the button row (Start campaign, before the start). */
+  leadingAction?: ReactNode;
+  /** An archived campaign takes no new battles (decision 5): Start battle goes. */
+  readOnly?: boolean;
 };
 
 export default function BattleActionPanel({
   campaignId,
   players,
   campaignStarted,
+  leadingAction,
+  readOnly = false,
 }: BattleActionPanelProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 960px)");
 
-  const [isStartBattleOpen, setIsStartBattleOpen] = useState(false);
   const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
   const [isCancelBattleDialogOpen, setIsCancelBattleDialogOpen] = useState(false);
   const [isCancelingBattle, setIsCancelingBattle] = useState(false);
@@ -63,7 +63,7 @@ export default function BattleActionPanel({
   const battlesQuery = useOpenCampaignBattles(campaignId);
   const battleStates = battlesQuery.data ?? NO_BATTLES;
   const battleError = battlesQuery.error
-    ? battlesQuery.error.message || "Unable to load battles"
+    ? getErrorMessage(battlesQuery.error, "Unable to load battles")
     : "";
   const isBattlesLoading = battlesQuery.isPending;
   const replaceOpenBattle = useReplaceOpenBattle(campaignId);
@@ -150,10 +150,10 @@ export default function BattleActionPanel({
   return (
     <>
       <div className="flex flex-wrap justify-center gap-2 px-2 pt-2 sm:px-0 sm:pt-0">
+        {leadingAction}
         {resumableBattle ? (
-          <Button
-            variant="toolbar"
-            size="sm"
+          <RejoinBattleButton
+            compact={isMobile}
             disabled={isBattlesLoading}
             onClick={() => {
               if (battleIsInviting) {
@@ -162,43 +162,25 @@ export default function BattleActionPanel({
               }
               handleRejoinBattle();
             }}
-            className={
-              isMobile
-                ? "min-w-0 border-[#8b6a31] bg-[#3c2e14] text-[#e8d5a3] hover:border-[#aa8540] hover:bg-[#4a3918] hover:text-[#f2e3bd]"
-                : "min-w-[9.5rem] border-[#b38b3c] bg-[#5d4719] text-[#f7e6b8] shadow-[0_0_18px_rgba(214,168,71,0.3)] hover:border-[#d6a847] hover:bg-[#7a5c1f] hover:text-[#fff3d4]"
-            }
           >
             {battleIsInviting ? "See Status" : "Rejoin Battle"}
-          </Button>
-        ) : campaignStarted ? (
-          <Button
-            variant="toolbar"
-            size="sm"
-            disabled={isBattlesLoading}
-            onClick={() => setIsStartBattleOpen(true)}
-            className={
-              isMobile
-                ? "min-w-0 border-[#8b6a31] bg-[#3c2e14] text-[#e8d5a3] hover:border-[#aa8540] hover:bg-[#4a3918] hover:text-[#f2e3bd]"
-                : "min-w-[9.5rem] border-[#b38b3c] bg-[#5d4719] text-[#f7e6b8] shadow-[0_0_18px_rgba(214,168,71,0.3)] hover:border-[#d6a847] hover:bg-[#7a5c1f] hover:text-[#fff3d4]"
-            }
-          >
-            Start battle
-          </Button>
-        ) : null}
-        {campaignStarted ? (
-          <StartBattleDialog
-            open={isStartBattleOpen}
-            onOpenChange={setIsStartBattleOpen}
+          </RejoinBattleButton>
+        ) : readOnly ? null : (
+          // Greyed out but clickable before the start, with a warning (decision 3).
+          <StartBattleButton
             campaignId={campaignId}
             creatorUserId={user?.id ?? 0}
             players={players}
+            campaignStarted={campaignStarted}
+            disabled={isBattlesLoading}
+            className={battleButtonClass(isMobile)}
             onBattleCreated={() => {
               void refreshOpenBattles();
               // A reported result waits on the card, with Withdraw for you (BUG-46).
               void invalidatePendingResults(queryClient, campaignId);
             }}
           />
-        ) : null}
+        )}
       </div>
 
       {resumableBattle && deadlineLabel(resumableBattle.battle) ? (
@@ -263,121 +245,5 @@ export default function BattleActionPanel({
         onCancel={() => setIsCancelBattleDialogOpen(false)}
       />
     </>
-  );
-}
-
-function getInviteStatusLabel(status: BattleParticipantStatus) {
-  if (status === "accepted") {
-    return "Accepted";
-  }
-  if (status === "invited") {
-    return "Invited";
-  }
-  return status.replace(/_/g, " ");
-}
-
-type BattleInviteStatusDialogProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  battleState: BattleState;
-  canCancelBattle: boolean;
-  canAcceptInvite: boolean;
-  isAcceptingInvite: boolean;
-  inviteActionError: string;
-  onAcceptInvite: () => void;
-  onCancelBattle: () => void;
-  cancelBattleError: string;
-  canDeclineInvite: boolean;
-  onDeclineInvite: () => void;
-};
-
-function BattleInviteStatusDialog({
-  open,
-  onOpenChange,
-  battleState,
-  canCancelBattle,
-  canAcceptInvite,
-  isAcceptingInvite,
-  inviteActionError,
-  onAcceptInvite,
-  onCancelBattle,
-  cancelBattleError,
-  canDeclineInvite,
-  onDeclineInvite,
-}: BattleInviteStatusDialogProps) {
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[720px]">
-        <DialogHeader>
-          <DialogTitle>Battle Status</DialogTitle>
-          <DialogDescription>
-            Waiting for all participants to accept before prebattle opens.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-2">
-          <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
-            {[
-              battleState.battle.scenario || `Session #${battleState.battle.id}`,
-              deadlineLabel(battleState.battle),
-            ]
-              .filter(Boolean)
-              .join(" · ")}
-          </p>
-          <div className="rounded-xl border border-border/50 bg-black/30">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b border-border/40 bg-black/35">
-                  <th className="px-3 py-2 text-left text-[0.58rem] uppercase tracking-[0.15em] text-muted-foreground">
-                    Participant
-                  </th>
-                  <th className="px-3 py-2 text-right text-[0.58rem] uppercase tracking-[0.15em] text-muted-foreground">
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {battleState.participants.map((participant) => (
-                  <tr key={participant.id} className="border-b border-border/30 last:border-b-0">
-                    <td className="px-3 py-2">
-                      <p className="text-sm font-semibold text-foreground">
-                        {participant.user.label}
-                      </p>
-                      <p className="text-xs text-muted-foreground">{participant.warband.name}</p>
-                    </td>
-                    <td className="px-3 py-2 text-right text-[0.62rem] uppercase tracking-[0.17em] text-amber-300">
-                      {getInviteStatusLabel(participant.status)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {inviteActionError ? <p className="text-sm text-red-600">{inviteActionError}</p> : null}
-          {cancelBattleError ? <p className="text-sm text-red-600">{cancelBattleError}</p> : null}
-        </div>
-
-        <DialogFooter className="gap-2">
-          {canAcceptInvite ? (
-            <Button variant="default" onClick={onAcceptInvite} disabled={isAcceptingInvite}>
-              {isAcceptingInvite ? "Accepting..." : "Accept invite"}
-            </Button>
-          ) : null}
-          {canDeclineInvite ? (
-            <Button variant="secondary" onClick={onDeclineInvite}>
-              Decline
-            </Button>
-          ) : null}
-          {canCancelBattle ? (
-            <Button variant="destructive" onClick={onCancelBattle}>
-              Cancel battle
-            </Button>
-          ) : null}
-          <Button variant="secondary" onClick={() => onOpenChange(false)}>
-            Close
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
   );
 }

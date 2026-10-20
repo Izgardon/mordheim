@@ -39,7 +39,10 @@ vi.mock("@/features/warbands/api/warbands-items", () => ({
   removeWarbandItem: vi.fn(),
 }));
 vi.mock("@/stores/app-store", () => ({
-  useAppStore: () => ({ warband: null, diceColor: "#2e8555", campaignStarted: true }),
+  useAppStore: () => ({ warband: null, diceColor: "#2e8555" }),
+}));
+vi.mock("@/features/campaigns/hooks/useCampaignStarted", () => ({
+  useCampaignStarted: () => true,
 }));
 vi.mock("@/lib/catalogue-queries", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/catalogue-queries")>()),

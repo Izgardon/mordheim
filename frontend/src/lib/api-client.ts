@@ -2,6 +2,7 @@
 import { API_BASE_URL } from "../config/env";
 
 // utils
+import { reportApiRefusal } from "./api-refusals";
 import { clearToken, getRefreshToken, getToken, setToken } from "../utils/storage";
 
 export class ApiError extends Error {
@@ -235,5 +236,16 @@ export async function apiRequest<T>(
   path: string,
   { method = "GET", body, token, headers: customHeaders, signal }: ApiRequestOptions = {}
 ): Promise<T> {
-  return apiRequestInternal(path, { method, body, token, headers: customHeaders, signal });
+  try {
+    return await apiRequestInternal<T>(path, {
+      method,
+      body,
+      token,
+      headers: customHeaders,
+      signal,
+    });
+  } catch (error) {
+    reportApiRefusal(error);
+    throw error;
+  }
 }

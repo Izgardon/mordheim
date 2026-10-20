@@ -38,9 +38,9 @@ class BattleApiTests(APITestCase):
         self.user_model = get_user_model()
         self.password = "testpass123"
 
-        self.owner_role = CampaignRole.objects.create(slug="owner", name="Owner")
-        self.player_role = CampaignRole.objects.create(slug="player", name="Player")
-        self.admin_role = CampaignRole.objects.create(slug="admin", name="Admin")
+        self.owner_role = CampaignRole.objects.get(slug="owner")
+        self.player_role = CampaignRole.objects.get(slug="player")
+        self.admin_role = CampaignRole.objects.get(slug="admin")
 
         self.owner = self._create_user("owner@example.com", "Owner")
         self.player = self._create_user("player@example.com", "Player")
@@ -49,6 +49,7 @@ class BattleApiTests(APITestCase):
         self.campaign = Campaign.objects.create(
             name="Shadows Over Mordheim",
             join_code="ABC123",
+            in_progress=True,  # started: no campaign_not_started warning (BUG-77)
         )
         CampaignMembership.objects.create(
             campaign=self.campaign,

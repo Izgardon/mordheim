@@ -58,7 +58,7 @@ class CampaignTradeRequestListCreateView(MethodScopedThrottleMixin, APIView):
         return Response([serialize_trade_request(entry) for entry in trades])
 
     def post(self, request, campaign_id):
-        require_member(request.user, campaign_id)
+        require_member(request.user, campaign_id, write=True)
         try:
             with transaction.atomic():  # one open trade per pair of warbands (BUG-114)
                 trade, notice = request_trade(campaign_id, request.user, request.data.get("target_user_id"))

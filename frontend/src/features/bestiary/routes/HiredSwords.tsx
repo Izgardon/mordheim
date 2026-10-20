@@ -9,7 +9,7 @@ import { TableSkeleton } from "@/components/ui/table-skeleton";
 import MobileTabs from "@/components/ui/mobile-tabs";
 import { useMediaQuery } from "@/lib/use-media-query";
 
-import { useCampaignPermissions } from "@/features/campaigns/hooks/useCampaignQuery";
+import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import HiredSwordProfileCard from "../components/HiredSwordProfileCard";
 import HiredSwordProfileDetail from "../components/HiredSwordProfileDetail";
@@ -26,7 +26,6 @@ export default function HiredSwords() {
   const { id } = useParams();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const campaignId = Number(id);
-  const memberPermissions = useCampaignPermissions(campaignId);
   const isMobile = useMediaQuery("(max-width: 960px)");
 
   const { data: profiles, isLoading, error } = useCatalogue("hired-swords", campaignId);
@@ -39,10 +38,7 @@ export default function HiredSwords() {
     : null;
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
-  const canManage =
-    campaign?.role === "owner" ||
-    campaign?.role === "admin" ||
-    memberPermissions.includes("manage_bestiary");
+  const canManage = campaignCapabilities(campaign).manage_bestiary;
 
   useEffect(() => {
     setCurrentPage(0);

@@ -49,6 +49,15 @@ describe("ActiveBattlesTable (BUG-09, BUG-10)", () => {
     expect(screen.getByText("Postbattle · closes in 2 days · idle 3 days")).toBeInTheDocument();
   });
 
+  it("marks a stuck battle and gives the server's idle time (decision 7, CAMP-NEW-05)", () => {
+    const battle = { ...inPhase("active"), idle_seconds: 5 * 86_400 + 60, stuck: true };
+    battle.battle.last_activity_at = undefined;
+    renderTable(battle);
+
+    expect(screen.getByText("Stuck")).toBeInTheDocument();
+    expect(screen.getByText("Active · idle 5 days")).toBeInTheDocument();
+  });
+
   it("marks an overdue battle", () => {
     const battle = inPhase("active");
     battle.battle.overdue = true;
