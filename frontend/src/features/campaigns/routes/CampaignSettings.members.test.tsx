@@ -11,6 +11,7 @@ import {
   ADMIN,
   NAMELESS,
   OWNER,
+  PERMISSION_CATALOGUE,
   PLAYER,
   campaignApi,
   campaignFor,
@@ -38,23 +39,13 @@ vi.mock("@/features/realtime/components/CampaignDiceRollerMenu", () => ({ defaul
 const MEMBERS = `GET ${campaignApi("members/")}`;
 const PERMISSIONS_PUT = `PUT ${campaignApi(`members/${PLAYER.id}/permissions/`)}`;
 const ROLE_PATCH = `PATCH ${campaignApi(`members/${PLAYER.id}/role/`)}`;
+const CATALOGUE = `GET ${campaignApi("permissions/")}`;
 
-/** The codes the server knows today and their names; the grant PUT drops any other code. */
-const SERVER_CODES: Record<string, string> = {
-  add_custom: "Add custom",
-  manage_items: "Manage items",
-  manage_skills: "Manage skills",
-  manage_rules: "Manage rules",
-  manage_warbands: "Manage warbands",
-  manage_encampments: "Manage encampments",
-  manage_locations: "Manage locations",
-  manage_bestiary: "Manage bestiary",
-  manage_battles: "Manage battles",
-};
+/** The grant PUT's answer: the granted codes with their labels and descriptions. */
 const grantAnswer = (body: unknown) =>
-  (body as { permissions: string[] }).permissions
-    .filter((code) => code in SERVER_CODES)
-    .map((code) => ({ code, name: SERVER_CODES[code] }));
+  PERMISSION_CATALOGUE.filter((entry) =>
+    (body as { permissions: string[] }).permissions.includes(entry.code)
+  );
 
 const row = (name: string) => screen.getByRole("row", { name: new RegExp(`^${name}`) });
 
@@ -78,6 +69,7 @@ beforeEach(() => {
   auth.user = { id: OWNER.id, email: OWNER.email };
   routeCampaignShell();
   fakeApi.on(MEMBERS, campaignMembers());
+  fakeApi.on(CATALOGUE, PERMISSION_CATALOGUE);
   fakeApi.on(`GET ${campaignApi("active-battles/")}`, []);
   fakeApi.on("GET /restrictions/?type=Setting", []);
 });
@@ -179,34 +171,43 @@ describe("Settings members list, as the owner", () => {
     expect(dialog).not.toHaveTextContent(NAMELESS.email);
   });
 
-  it("offers six codes in the grant menu, none for encampments, bestiary, spells, specials or battles, and never reads GET permissions/ (BUG-15, CAMP-TEST-25 baseline, pinned; flips in PR A)", async () => {
+  it("offers every code GET permissions/ lists, with the server's labels and descriptions and in its order, spells, specials and battles included (BUG-15, CAMP-TEST-25)", async () => {
     const user = setupUser();
     await openMembers(user);
 
     await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Add custom" }));
 
     const options = within(grantMenu()).getAllByRole("checkbox");
-    const labels = [
-      "Add custom",
-      "Manage items",
-      "Manage skills",
-      "Manage house rules",
-      "Manage warbands",
-      "Manage locations",
-    ];
-    expect(options).toHaveLength(labels.length);
-    labels.forEach((label, index) =>
-      expect(options[index]).toHaveAccessibleName(new RegExp(`^${label}`))
+    expect(options).toHaveLength(11);
+    PERMISSION_CATALOGUE.forEach((entry, index) =>
+      expect(options[index]).toHaveAccessibleName(`${entry.label} ${entry.description}`)
     );
-    expect(options.map((option) => (option as HTMLInputElement).checked)).toEqual([
-      true,
-      false,
-      false,
-      false,
-      false,
-      false,
-    ]);
-    expect(fakeApi.countOf(`GET ${campaignApi("permissions/")}`)).toBe(0);
+    expect(options.map((option) => (option as HTMLInputElement).checked)).toEqual(
+      PERMISSION_CATALOGUE.map((entry) => entry.code === "add_custom")
+    );
+    expect(fakeApi.countOf(CATALOGUE)).toBe(1);
+  });
+
+  it("puts a grant the server refuses as unknown_permission back, says why and reads the codes again", async () => {
+    const user = setupUser();
+    fakeApi.fail(
+      PERMISSIONS_PUT,
+      new ApiError("Unknown permission: manage_specials.", 400, {
+        detail: "Unknown permission: manage_specials.",
+        code: "unknown_permission",
+        fields: { permissions: ["Unknown permission: manage_specials."] },
+      })
+    );
+    await openMembers(user);
+    await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Add custom" }));
+
+    await user.click(screen.getByRole("checkbox", { name: /^Manage specials/ }));
+
+    expect(
+      await within(row(PLAYER.name)).findByText("Unknown permission: manage_specials.")
+    ).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: /^Manage specials/ })).not.toBeChecked();
+    await waitFor(() => expect(fakeApi.countOf(CATALOGUE)).toBe(2));
   });
 
   it("ticks a code at once and PUTs the whole new list; the answer's codes become the row's label (CAMP-TEST-25 baseline)", async () => {
@@ -241,7 +242,7 @@ describe("Settings members list, as the owner", () => {
     await openMembers(user);
     await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Add custom" }));
 
-    await user.click(screen.getByRole("checkbox", { name: /^Manage house rules/ }));
+    await user.click(screen.getByRole("checkbox", { name: /^Manage rules/ }));
 
     expect(
       await within(row(PLAYER.name)).findByText("Only owners and admins can change permissions.")
@@ -249,7 +250,7 @@ describe("Settings members list, as the owner", () => {
     expect(
       within(row(PLAYER.name)).getByRole("button", { name: "Add custom" })
     ).toBeInTheDocument();
-    expect(screen.getByRole("checkbox", { name: /^Manage house rules/ })).not.toBeChecked();
+    expect(screen.getByRole("checkbox", { name: /^Manage rules/ })).not.toBeChecked();
   });
 
   it("closes the grant menu on an outside click but not on Escape (CAMP-UX-07, pinned; flips in PR A)", async () => {

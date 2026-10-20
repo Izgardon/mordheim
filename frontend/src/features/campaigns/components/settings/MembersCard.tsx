@@ -7,14 +7,16 @@ import { RosterSkeleton } from "@components/card-skeleton";
 import { Checkbox } from "@components/checkbox";
 import { ChevronDown } from "lucide-react";
 
-import { permissionOptions, roleLabel, roleTone } from "../../constants/campaign-settings";
+import { roleLabel, roleTone } from "../../constants/campaign-settings";
 import { useMediaQuery } from "@/lib/use-media-query";
 
-import type { CampaignMember } from "../../types/campaign-types";
+import type { CampaignMember, CampaignPermission } from "../../types/campaign-types";
 
 type MembersCardProps = {
   isLoading: boolean;
   members: CampaignMember[];
+  /** The codes the server offers, in its order (`GET permissions/`). */
+  permissionOptions: CampaignPermission[];
   formatPermissionsLabel: (codes: string[]) => string;
   canManagePermissions: boolean;
   canManageRoles: boolean;
@@ -32,6 +34,7 @@ type MembersCardProps = {
 export default function MembersCard({
   isLoading,
   members,
+  permissionOptions,
   formatPermissionsLabel,
   canManagePermissions,
   canManageRoles,

@@ -10,6 +10,7 @@ import type {
   CampaignEncampment,
   CampaignMember,
   CampaignMessage,
+  CampaignPermission,
   CampaignPivotalMoment,
   CampaignPlayer,
   CampaignRole,
@@ -62,18 +63,23 @@ export const NAMELESS: Person = {
 
 const PEOPLE = [OWNER, ADMIN, PLAYER, NAMELESS];
 
-/** Every code an owner's or an admin's campaign payload carries today (PERMISSION_SEED, sorted). */
-export const ALL_PERMISSION_CODES = [
-  "add_custom",
-  "manage_battles",
-  "manage_bestiary",
-  "manage_encampments",
-  "manage_items",
-  "manage_locations",
-  "manage_rules",
-  "manage_skills",
-  "manage_warbands",
-];
+/** `GET permissions/`: the server's eleven codes with labels and descriptions, in its order. */
+export const PERMISSION_CATALOGUE: CampaignPermission[] = [
+  ["add_custom", "Add custom", "Add custom items, skills, spells and specials to the campaign."],
+  ["manage_items", "Manage items", "Edit and delete the campaign's custom items."],
+  ["manage_skills", "Manage skills", "Edit and delete the campaign's custom skills."],
+  ["manage_spells", "Manage spells", "Edit and delete the campaign's custom spells."],
+  ["manage_specials", "Manage specials", "Edit and delete the campaign's custom specials."],
+  ["manage_rules", "Manage rules", "Add, edit and delete the campaign's house rules."],
+  ["manage_warbands", "Manage warbands", "Edit every warband in the campaign, not just their own."],
+  ["manage_encampments", "Manage encampments", "Add and edit the campaign's encampments."],
+  ["manage_locations", "Manage locations", "Add and edit the campaign's locations."],
+  ["manage_bestiary", "Manage bestiary", "Add, edit and delete the campaign's bestiary entries."],
+  ["manage_battles", "Manage battles", "See Settings > Active Battles and end stuck battles."],
+].map(([code, label, description]) => ({ code, label, description }));
+
+/** Every code an owner's or an admin's campaign payload carries. */
+export const ALL_PERMISSION_CODES = PERMISSION_CATALOGUE.map((entry) => entry.code);
 
 /** `GET campaigns/1/` as the owner reads it; a started Standard campaign by default. */
 export function campaignSummary(overrides: Partial<CampaignSummary> = {}): CampaignSummary {

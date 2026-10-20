@@ -91,6 +91,7 @@ export default function CampaignSettings() {
     canRemoveMembers,
     canManageActiveBattles,
     isDeleteReady,
+    permissionCatalogue,
     formatPermissionsLabel,
     handlePermissionToggle,
     handleRoleToggle,
@@ -210,6 +211,7 @@ export default function CampaignSettings() {
                   <MembersCard
                     isLoading={isLoading}
                     members={members}
+                    permissionOptions={permissionCatalogue}
                     formatPermissionsLabel={formatPermissionsLabel}
                     canManagePermissions={canManagePermissions}
                     canManageRoles={canManageRoles}

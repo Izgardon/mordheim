@@ -20,6 +20,8 @@ export const queryKeys = {
   campaign: {
     all: (campaignId: number) => ["campaign", campaignId] as const,
     detail: (campaignId: number) => ["campaign", campaignId, "detail"] as const,
+    /** Every permission code with its label and description (the grant menu's options). */
+    permissionCatalogue: (campaignId: number) => ["campaign", campaignId, "permissions"] as const,
     catalogue: (campaignId: number, kind: CatalogueKind) =>
       ["campaign", campaignId, "catalogue", kind] as const,
     openBattles: (campaignId: number) => ["campaign", campaignId, "battles", "open"] as const,

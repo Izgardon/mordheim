@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 // api
 import {
@@ -17,8 +18,9 @@ import {
   finishBattle,
 } from "@/features/battles/api/battles-api";
 
-// constants
-import { permissionOptions } from "../constants/campaign-settings";
+import { usePermissionCatalogue } from "./useCampaignQuery";
+import { apiErrorCode } from "@/lib/get-error-message";
+import { queryKeys } from "@/lib/query-keys";
 
 // types
 import type { CampaignActiveBattle, CampaignMember } from "../types/campaign-types";
@@ -67,11 +69,13 @@ export function useCampaignSettings({
   const canRemoveMembers = campaignRole === "owner";
   const isDeleteReady = deleteValue.trim().toLowerCase() === "delete";
 
+  // The grant menu's codes, labels and descriptions come from the server (BUG-15).
+  const queryClient = useQueryClient();
+  const catalogueQuery = usePermissionCatalogue(campaignId, { enabled: canManagePermissions });
+  const permissionCatalogue = useMemo(() => catalogueQuery.data ?? [], [catalogueQuery.data]);
   const permissionLabelMap = useMemo(
-    // Keyed by string: member permission codes come from the API and may include codes
-    // that are not in permissionOptions.
-    () => new Map<string, string>(permissionOptions.map((option) => [option.code, option.label])),
-    []
+    () => new Map(permissionCatalogue.map((option) => [option.code, option.label])),
+    [permissionCatalogue]
   );
 
   useEffect(() => {
@@ -173,6 +177,12 @@ export function useCampaignSettings({
           member.id === memberId ? { ...member, permissions: previousPermissions } : member
         )
       );
+      if (apiErrorCode(errorResponse) === "unknown_permission") {
+        // The menu offered a code the server no longer has: read the codes again.
+        void queryClient.invalidateQueries({
+          queryKey: queryKeys.campaign.permissionCatalogue(campaignId),
+        });
+      }
     } finally {
       setSavingPermissions((prev) => ({ ...prev, [memberId]: false }));
     }
@@ -373,6 +383,7 @@ export function useCampaignSettings({
     canRemoveMembers,
     canManageActiveBattles,
     isDeleteReady,
+    permissionCatalogue,
     formatPermissionsLabel,
     handlePermissionToggle,
     handleRoleToggle,

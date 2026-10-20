@@ -3,7 +3,7 @@ import type { Dispatch, SetStateAction } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 // api
-import { getCampaign } from "../api/campaigns-api";
+import { getCampaign, listCampaignPermissions } from "../api/campaigns-api";
 
 // other
 import { queryKeys } from "@/lib/query-keys";
@@ -37,6 +37,19 @@ export function useCampaignQuery(campaignId: number) {
 export function useCampaignPermissions(campaignId: number) {
   const { data } = useCampaignQuery(campaignId);
   return data?.permissions ?? NO_PERMISSIONS;
+}
+
+/**
+ * The permission codes an owner or admin can grant, with the server's labels and descriptions
+ * (BUG-15). The list only changes with a deploy, so it is read once per session.
+ */
+export function usePermissionCatalogue(campaignId: number, { enabled }: { enabled: boolean }) {
+  return useQuery({
+    queryKey: queryKeys.campaign.permissionCatalogue(campaignId),
+    queryFn: () => listCampaignPermissions(campaignId),
+    staleTime: Infinity,
+    enabled: enabled && isCampaignId(campaignId),
+  });
 }
 
 /** Replaces the cached campaign after a settings change, keeping the caller's permissions. */
