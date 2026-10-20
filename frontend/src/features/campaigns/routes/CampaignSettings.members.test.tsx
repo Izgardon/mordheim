@@ -255,7 +255,7 @@ describe("Settings members list, as the owner", () => {
     await user.click(screen.getByRole("menuitemcheckbox", { name: /^Manage specials/ }));
 
     expect(
-      await within(row(PLAYER.name)).findByText("Unknown permission: manage_specials.")
+      await within(row(PLAYER.name)).findByText("Permissions: Unknown permission: manage_specials.")
     ).toBeInTheDocument();
     expect(screen.getByRole("menuitemcheckbox", { name: /^Manage specials/ })).not.toBeChecked();
     await waitFor(() => expect(fakeApi.countOf(CATALOGUE)).toBe(2));
@@ -293,7 +293,9 @@ describe("Settings members list, as the owner", () => {
     const user = setupUser();
     fakeApi.fail(
       PERMISSIONS_PUT,
-      new ApiError("Only owners and admins can change permissions.", 403, null)
+      new ApiError("Only owners and admins can change permissions.", 403, {
+        detail: "Only owners and admins can change permissions.",
+      })
     );
     await openMembers(user);
     await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Add custom" }));
@@ -366,7 +368,12 @@ describe("Settings members list, as the owner", () => {
 
   it("puts a refused role change back and shows why on the row", async () => {
     const user = setupUser();
-    fakeApi.fail(ROLE_PATCH, new ApiError("Owner role cannot be changed.", 400, null));
+    fakeApi.fail(
+      ROLE_PATCH,
+      new ApiError("Owner role cannot be changed.", 400, {
+        detail: "Owner role cannot be changed.",
+      })
+    );
     await openMembers(user);
 
     await user.click(within(row(PLAYER.name)).getByRole("checkbox", { name: "Admin" }));

@@ -13,11 +13,15 @@ import {
   listCampaignTopKillers,
   listCampaignTradeRequests,
 } from "./campaigns-api";
+import { listRestrictions } from "@/features/items/api/items-api";
 import { getWarbandRosterStats } from "@/features/warbands/api/warbands-core";
 
 // other
 import { isCampaignId } from "../hooks/useCampaignQuery";
 import { queryKeys } from "@/lib/query-keys";
+
+// types
+import type { Restriction } from "@/features/items/types/item-types";
 
 /**
  * The campaign's shared lists as TanStack queries, under `["campaign", id, ...]` (IMP-66), so a
@@ -25,6 +29,8 @@ import { queryKeys } from "@/lib/query-keys";
  * them, and a write updates the one list it changed (`setQueryData`, `updateCachedList`).
  */
 export const CAMPAIGN_LIST_STALE_TIME_MS = 30_000;
+/** Restrictions change only with the catalogue. */
+const RESTRICTIONS_STALE_TIME_MS = 5 * 60_000;
 
 type Toggle = { enabled?: boolean };
 
@@ -118,6 +124,18 @@ export function useCampaignEncampments(campaignId: number, { enabled = true }: T
     queryFn: () => listCampaignEncampments(campaignId),
     ...listOptions(campaignId, enabled),
   });
+}
+
+const NO_RESTRICTIONS: Restriction[] = [];
+
+/** The setting restrictions a campaign can apply to item availability (catalogue data). */
+export function useSettingRestrictions() {
+  const { data } = useQuery({
+    queryKey: queryKeys.restrictions("Setting"),
+    queryFn: () => listRestrictions({ type: "Setting" }),
+    staleTime: RESTRICTIONS_STALE_TIME_MS,
+  });
+  return data ?? NO_RESTRICTIONS;
 }
 
 /** One warband's on-roster stat lines, as a roster row expands it (one request, PERF-42). */

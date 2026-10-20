@@ -8,14 +8,9 @@ import { Label } from "@components/label";
 import { NumberInput } from "@components/number-input";
 import { getErrorMessage } from "@/lib/get-error-message";
 
-import { updateCampaign } from "../../api/campaigns-api";
+import { useUpdateCampaign } from "../../hooks/useCampaignQuery";
 
 import type { CampaignSummary } from "../../types/campaign-types";
-
-type StartingGoldFieldProps = {
-  campaign: CampaignSummary;
-  onCampaignUpdated?: (campaign: CampaignSummary) => void;
-};
 
 /** A warband's sheet, summary or treasury in this campaign: what an adjustment changes. */
 const isWarbandGoldQuery = (campaignId: number) => (query: Query) => {
@@ -36,8 +31,9 @@ const signedGold = (amount: number) => `${amount > 0 ? "+" : ""}${amount} gc`;
  * warbands get the difference, ticked before the start and unticked after; the server writes one
  * Adjustment row per warband, and their sheets and treasuries are read again.
  */
-export default function StartingGoldField({ campaign, onCampaignUpdated }: StartingGoldFieldProps) {
+export default function StartingGoldField({ campaign }: { campaign: CampaignSummary }) {
   const queryClient = useQueryClient();
+  const updateCampaign = useUpdateCampaign(campaign.id);
   const current = campaign.starting_gold ?? 500;
   const [value, setValue] = useState(String(current));
   const [error, setError] = useState("");
@@ -64,11 +60,7 @@ export default function StartingGoldField({ campaign, onCampaignUpdated }: Start
     setIsSaving(true);
     setError("");
     try {
-      const updated = await updateCampaign(campaign.id, {
-        starting_gold: amount,
-        adjust_existing_warbands: adjustExisting,
-      });
-      onCampaignUpdated?.(updated);
+      await updateCampaign({ starting_gold: amount, adjust_existing_warbands: adjustExisting });
       setIsConfirmOpen(false);
       if (adjustExisting) {
         void queryClient.invalidateQueries({ predicate: isWarbandGoldQuery(campaign.id) });

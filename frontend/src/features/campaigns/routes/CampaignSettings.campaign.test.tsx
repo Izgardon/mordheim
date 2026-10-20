@@ -150,7 +150,9 @@ describe("Starting gold and warband caps", () => {
     await user.type(maxHeroes, "40000");
     await user.click(within(limits).getByRole("button", { name: "Save" }));
 
-    expect(await within(limits).findByText("Request failed (500)")).toBeInTheDocument();
+    expect(
+      await within(limits).findByText("The server ran into a problem. Please try again.")
+    ).toBeInTheDocument();
     expect(patches().map((request) => request.body)).toEqual([
       { max_heroes: 40000, max_hired_swords: 3 },
     ]);

@@ -17,6 +17,8 @@ export type CatalogueKind =
   | "hired-swords";
 
 export const queryKeys = {
+  /** Item restrictions of one type (catalogue data, not campaign-scoped). */
+  restrictions: (type: string) => ["restrictions", type] as const,
   campaign: {
     all: (campaignId: number) => ["campaign", campaignId] as const,
     detail: (campaignId: number) => ["campaign", campaignId, "detail"] as const,
