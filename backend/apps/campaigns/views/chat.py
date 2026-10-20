@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from apps.core.throttling import CAMPAIGN_CHAT_THROTTLE_CLASSES, MethodScopedThrottleMixin
 
-from ..serializers import CampaignMessageSerializer
+from ..serializers.content import CampaignMessageSerializer
 from ..services import chat
 from .base import CampaignScopedView
 

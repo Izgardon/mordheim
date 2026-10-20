@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from ..selectors import members_payload
-from ..serializers import (
+from ..serializers.members import (
     CampaignMemberSerializer,
     MembershipPermissionsUpdateSerializer,
     MembershipRoleUpdateSerializer,

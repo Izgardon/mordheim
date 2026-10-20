@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from ..models import CampaignBulletinEntry, CampaignHouseRule, CampaignLocation
-from ..serializers import (
+from ..serializers.content import (
     CampaignBulletinEntryCreateSerializer,
     CampaignBulletinEntrySerializer,
     CampaignEncampmentSerializer,

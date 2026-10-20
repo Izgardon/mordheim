@@ -4,7 +4,12 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 
 from ..selectors import campaign_for_user, campaigns_for_user
-from ..serializers import CampaignCreateSerializer, CampaignSerializer, CampaignUpdateSerializer, JoinCampaignSerializer
+from ..serializers.campaigns import (
+    CampaignCreateSerializer,
+    CampaignSerializer,
+    CampaignUpdateSerializer,
+    JoinCampaignSerializer,
+)
 from ..services.campaigns import create_campaign, regenerate_join_code
 from ..services.joining import join_campaign
 from ..services.settings import rule_for, update_campaign

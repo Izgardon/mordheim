@@ -19,7 +19,8 @@ from ..selectors import (
     players_payload,
     top_killers_payload,
 )
-from ..serializers import CampaignPlayerSerializer, CampaignTopKillerSerializer, PivotalMomentSerializer
+from ..serializers.history import CampaignTopKillerSerializer, PivotalMomentSerializer
+from ..serializers.members import CampaignPlayerSerializer
 from ..services import active_battles
 from .base import CampaignScopedView
 
