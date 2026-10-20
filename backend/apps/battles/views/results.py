@@ -13,9 +13,10 @@ from rest_framework.views import APIView
 
 from apps.campaigns.permissions import get_membership
 from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
+from apps.users.names import display_name
 
 from ..models import Battle, BattleParticipant
-from ..serializers import display_name, participants_prefetch
+from ..serializers import participants_prefetch
 from ..services.broadcast import ALL
 from ..services.errors import BattleError, Refused
 from ..services.lifecycle import cancel_battle

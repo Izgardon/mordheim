@@ -7,18 +7,12 @@ shape depends on the page asking (`?view=`): `active` is the lightest, `full` ha
 from django.db.models import Prefetch, prefetch_related_objects
 
 from apps.realtime.services import get_battle_channel_name
+from apps.users.names import display_name
 
 from .models import Battle, BattleEvent, BattleParticipant
 from .services.timing import is_overdue
 
 PARTICIPANT_VIEWS = ("full", "prebattle", "active", "postbattle")
-
-
-def display_name(user) -> str:
-    first_name = getattr(user, "first_name", None)
-    if first_name and str(first_name).strip():
-        return str(first_name).strip()
-    return str(user.get_username())
 
 
 def _iso(value):

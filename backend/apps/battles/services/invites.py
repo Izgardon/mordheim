@@ -9,9 +9,9 @@ from django.utils import timezone
 
 from apps.notifications.models import Notification
 from apps.notifications.utils import resolve_notification, resolve_notifications_for_reference
+from apps.users.names import display_name
 
 from ..models import Battle, BattleEvent, BattleParticipant
-from ..serializers import display_name
 from .events import append_event, notify_user
 from .lifecycle import cancel_battle, participants_all_in
 from .locks import locked

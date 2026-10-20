@@ -7,6 +7,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from apps.core.dispatch import dispatch_after_commit
+from apps.users.names import display_name
 
 try:
     import pusher  # type: ignore[import-untyped]
@@ -89,7 +90,7 @@ def _trigger(channel_name: str, event: str, data: dict, socket_id: str | None = 
 def build_ping_payload(campaign_id: int, user, payload: object | None):
     return {
         "type": "ping",
-        "from": {"id": user.id, "label": user.get_username()},
+        "from": {"id": user.id, "label": display_name(user)},
         "campaign_id": campaign_id,
         "payload": payload,
         "timestamp": timezone.now().isoformat(),

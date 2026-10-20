@@ -8,8 +8,9 @@ typed name (`victim_name`).
 
 from collections.abc import Iterable
 
+from apps.users.names import display_name
+
 from ...models import BattleEvent, BattleParticipant
-from ...serializers import display_name
 
 
 def _part(payload: dict, name: str) -> dict:

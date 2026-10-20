@@ -13,9 +13,9 @@ from django.utils import timezone
 
 from apps.notifications.models import Notification
 from apps.notifications.utils import create_notification
+from apps.users.names import display_name
 
 from ..models import Battle, BattleEvent, BattleParticipant
-from ..serializers import display_name
 from .errors import BattleError
 from .events import append_event, notify_user
 from .unfinished import BUSY_BATTLE_STATUSES, is_unfinished, page_for

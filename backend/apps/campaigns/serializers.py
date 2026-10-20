@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from apps.core.html import sanitize_rich_text
 from apps.restrictions.models import Restriction
+from apps.users.names import display_name
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.utils.henchmen_level import normalize_henchmen_level_thresholds
 from apps.warbands.utils.hero_level import normalize_hero_level_thresholds
@@ -273,7 +274,7 @@ class CampaignEncampmentSerializer(serializers.ModelSerializer):
     def get_owner_name(self, obj):
         if not obj.owner_id:
             return None
-        return obj.owner.first_name or obj.owner.get_username()
+        return display_name(obj.owner)
 
 
 class CampaignEncampmentWriteSerializer(serializers.ModelSerializer):

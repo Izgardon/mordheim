@@ -3,15 +3,11 @@
 from typing import Any
 
 from apps.realtime.services import get_trade_channel_name
+from apps.users.names import display_name
 from apps.warbands.services.sheet import warband_summaries
 
 from .models import TradeRequest
 from .services.timing import is_due
-
-
-def _display_name(user: Any) -> str:
-    """The player's first name, or their username when they have none."""
-    return str(user.first_name).strip() or str(user.get_username())
 
 
 def serialize_trade_request(trade: TradeRequest) -> dict[str, Any]:
@@ -34,8 +30,8 @@ def serialize_trade_request(trade: TradeRequest) -> dict[str, Any]:
         # sheet's heroes[].trading_action it keeps the trader picker's "spent" marks right without a sheet GET
         "from_trader_spent_id": trade.from_trader_spent_id,
         "to_trader_spent_id": trade.to_trader_spent_id,
-        "from_user": {"id": trade.from_user_id, "label": _display_name(trade.from_user)},
-        "to_user": {"id": trade.to_user_id, "label": _display_name(trade.to_user)},
+        "from_user": {"id": trade.from_user_id, "label": display_name(trade.from_user)},
+        "to_user": {"id": trade.to_user_id, "label": display_name(trade.to_user)},
         "from_warband": {"id": trade.from_warband_id, "name": trade.from_warband.name},
         "to_warband": {"id": trade.to_warband_id, "name": trade.to_warband.name},
         "channel": get_trade_channel_name(trade.id),

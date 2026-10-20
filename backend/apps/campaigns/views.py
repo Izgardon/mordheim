@@ -29,6 +29,7 @@ from apps.items.services import (
     sync_improved_shields_for_campaign,
 )
 from apps.realtime.services import send_campaign_chat_message, send_campaign_ping
+from apps.users.names import display_name
 from apps.warbands.models import Henchman, Hero, HiredSword, Warband
 from apps.warbands.serializers import WarbandSerializer
 from apps.warbands.services.summary import load_warband_units
@@ -475,7 +476,7 @@ class CampaignPlayersView(APIView):
         players = [
             {
                 "id": member.user_id,
-                "name": member.user.first_name or member.user.email,
+                "name": display_name(member.user),
                 "warband": warband_by_user.get(member.user_id),
                 "battle_busy": member.user_id in busy_by_user,
                 **_busy_battle_fields(busy_by_user.get(member.user_id)),
@@ -674,7 +675,7 @@ class CampaignBulletinView(APIView):
         serializer.is_valid(raise_exception=True)
 
         user = request.user
-        username = user.first_name or user.get_username()
+        username = display_name(user)  # SEC-13: never the email
         entry = CampaignBulletinEntry.objects.create(
             campaign_id=campaign_id,
             user=user,
@@ -862,7 +863,7 @@ class CampaignMembersView(APIView):
         members = [
             {
                 "id": member.user_id,
-                "name": member.user.first_name or member.user.email,
+                "name": display_name(member.user),
                 "email": member.user.email,
                 "role": member.role.slug,
                 "permissions": [entry.permission.code for entry in member.permissions.all()],
@@ -1106,7 +1107,7 @@ class CampaignMessagesView(MethodScopedThrottleMixin, APIView):
             return Response({"detail": "Message is too long."}, status=400)
 
         user = request.user
-        username = user.first_name or user.get_username()
+        username = display_name(user)  # SEC-13: never the email
         message = CampaignMessage.objects.create(
             campaign_id=campaign_id,
             user=user,
