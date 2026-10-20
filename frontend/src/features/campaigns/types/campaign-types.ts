@@ -197,6 +197,19 @@ export type CampaignMember = {
   warband_name?: string | null;
 };
 
+/**
+ * What removing a member closes (`GET members/:user/removal/`). The warband is always kept and
+ * comes back if they rejoin; `outcome` is `cancelled` (for everyone) or `skipped` (only them, the
+ * battle goes on). Trades that have already run out aren't listed.
+ */
+export type MemberRemovalPreview = {
+  member: { id: number; name: string; role: CampaignRole };
+  warband: { id: number; name: string } | null;
+  battles: { id: number; scenario: string; status: string; outcome: "cancelled" | "skipped" }[];
+  trades: { id: string; status: string; with: { id: number; name: string } }[];
+  notifications: number;
+};
+
 /** A permission code as `GET permissions/` (and the grant PUT) answer it, in the server's order. */
 export type CampaignPermission = {
   code: string;

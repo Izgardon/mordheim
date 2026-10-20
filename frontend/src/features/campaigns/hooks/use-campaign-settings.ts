@@ -11,12 +11,12 @@ import {
   updateMemberPermissions,
   updateMemberRole,
 } from "../api/campaigns-api";
-import { deleteWarband } from "../../warbands/api/warbands-api";
 import {
   closePostbattle,
   confirmBattleResults,
   finishBattle,
 } from "@/features/battles/api/battles-api";
+import { invalidateOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 
 import { usePermissionCatalogue } from "./useCampaignQuery";
 import { apiErrorCode } from "@/lib/get-error-message";
@@ -59,14 +59,13 @@ export function useCampaignSettings({
   const [removeOpen, setRemoveOpen] = useState(false);
   const [removeError, setRemoveError] = useState("");
   const [isRemoving, setIsRemoving] = useState(false);
-  const [kickTarget, setKickTarget] = useState<CampaignMember | null>(null);
-  const [kickOpen, setKickOpen] = useState(false);
-  const [kickError, setKickError] = useState("");
-  const [isKicking, setIsKicking] = useState(false);
 
   const canManagePermissions = campaignRole === "owner" || campaignRole === "admin";
   const canManageRoles = campaignRole === "owner";
-  const canRemoveMembers = campaignRole === "owner";
+  // The owner removes anyone but themself, admins included; admins remove players; nobody
+  // removes the owner (decision 1, as the server rules).
+  const canRemoveMember = (member: CampaignMember) =>
+    member.role !== "owner" && (campaignRole === "owner" || member.role === "player");
   const isDeleteReady = deleteValue.trim().toLowerCase() === "delete";
 
   // The grant menu's codes, labels and descriptions come from the server (BUG-15).
@@ -248,6 +247,11 @@ export function useCampaignSettings({
       await removeCampaignMember(campaignId, removeTarget.id);
       setMembers((prev) => prev.filter((member) => member.id !== removeTarget.id));
       closeRemoveDialog();
+      // Their open battles were cancelled or skipped them.
+      void invalidateOpenBattles(queryClient, campaignId);
+      if (canManageActiveBattles) {
+        setActiveBattles(await listCampaignActiveBattles(campaignId));
+      }
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {
         setRemoveError(errorResponse.message || "Unable to remove member");
@@ -256,45 +260,6 @@ export function useCampaignSettings({
       }
     } finally {
       setIsRemoving(false);
-    }
-  };
-
-  const requestKickPlayer = (member: CampaignMember) => {
-    setKickTarget(member);
-    setKickOpen(true);
-    setKickError("");
-  };
-
-  const closeKickDialog = () => {
-    setKickOpen(false);
-    setKickTarget(null);
-    setKickError("");
-  };
-
-  const handleKickPlayer = async () => {
-    if (!kickTarget?.warband_id || Number.isNaN(campaignId)) {
-      return;
-    }
-
-    setIsKicking(true);
-    setKickError("");
-
-    try {
-      await deleteWarband(kickTarget.warband_id);
-      setMembers((prev) =>
-        prev.map((m) =>
-          m.id === kickTarget.id ? { ...m, warband_id: null, warband_name: null } : m
-        )
-      );
-      closeKickDialog();
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setKickError(errorResponse.message || "Unable to kick player");
-      } else {
-        setKickError("Unable to kick player");
-      }
-    } finally {
-      setIsKicking(false);
     }
   };
 
@@ -374,13 +339,9 @@ export function useCampaignSettings({
     removeOpen,
     removeError,
     isRemoving,
-    kickTarget,
-    kickOpen,
-    kickError,
-    isKicking,
     canManagePermissions,
     canManageRoles,
-    canRemoveMembers,
+    canRemoveMember,
     canManageActiveBattles,
     isDeleteReady,
     permissionCatalogue,
@@ -390,9 +351,6 @@ export function useCampaignSettings({
     requestRemoveMember,
     closeRemoveDialog,
     handleRemoveMember,
-    requestKickPlayer,
-    closeKickDialog,
-    handleKickPlayer,
     setDeleteOpen,
     setDeleteValue,
     handleDeleteCampaign,
