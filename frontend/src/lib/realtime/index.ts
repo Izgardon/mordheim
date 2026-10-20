@@ -4,11 +4,13 @@ export {
   useBattleEvents,
   useCampaignChatMessages,
   useCampaignChatRemovals,
+  useCampaignUpdates,
   useTradeEvents,
   useUserNotifications,
 } from "./channels";
 export type {
   BattleEventMessage,
+  CampaignEventMessage,
   ChatMessage,
   ChatRemoval,
   NotificationMessage,

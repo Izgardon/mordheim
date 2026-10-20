@@ -7,6 +7,7 @@ import { isCampaignId } from "@/features/campaigns/hooks/useCampaignQuery";
 import { queryKeys } from "@/lib/query-keys";
 import { disconnectRealtime, useRealtimeReconnect } from "@/lib/realtime";
 import { CampaignChatContext, useCampaignChatState } from "../hooks/useCampaignChat";
+import { useCampaignEvents } from "../hooks/useCampaignEvents";
 import { useNotificationSubscription } from "../hooks/useNotificationSubscription";
 
 function useActiveCampaignId() {
@@ -17,7 +18,8 @@ function useActiveCampaignId() {
 
 /**
  * Realtime for every signed-in screen, mounted once above them (PERF-18): the user's
- * notifications, the current campaign's chat, and catch-up after the connection drops.
+ * notifications, the current campaign's chat and live changes (CAMP-NEW-07), and catch-up after
+ * the connection drops.
  * Navigating between campaign pages, or to and from the campaigns list, keeps the
  * subscriptions instead of rebuilding them.
  */
@@ -25,6 +27,7 @@ export function RealtimeProvider({ children }: PropsWithChildren) {
   const queryClient = useQueryClient();
   const campaignId = useActiveCampaignId();
   const chat = useCampaignChatState(campaignId);
+  useCampaignEvents(campaignId);
   useNotificationSubscription();
 
   // Events published while the socket was down are gone; refetch what's on screen (BUG-19).

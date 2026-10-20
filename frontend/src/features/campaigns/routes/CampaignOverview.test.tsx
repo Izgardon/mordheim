@@ -419,14 +419,15 @@ describe("CampaignLayout around the overview", () => {
     expect(await screen.findByText("Campaigns page")).toBeInTheDocument();
   });
 
-  it("listens to the campaign's chat and your notifications only: nothing tells it about a start, a toggle or a role change made elsewhere (CAMP-UX-04, CAMP-NEW-07, pinned; flips in PR C)", async () => {
+  it("listens to the campaign's chat, its live changes and your notifications (CAMP-UX-04, CAMP-NEW-07)", async () => {
     routeCampaignShell();
 
     await openOverview();
 
     await waitFor(() =>
-      expect(fakeRealtime.channels()).toEqual([
+      expect([...fakeRealtime.channels()].sort()).toEqual([
         "private-campaign-1-chat",
+        "private-campaign-1-events",
         `private-user-${OWNER.id}-notifications`,
       ])
     );

@@ -44,13 +44,17 @@ export function usePermissionCatalogue(campaignId: number, { enabled }: { enable
   });
 }
 
-/** The settings the viewer's capabilities depend on (a switched-off page grants nothing). */
-const CAPABILITY_SETTINGS = ["enable_encampments", "enable_locations"] as const;
+/**
+ * The campaign fields the viewer's capabilities depend on: a switched-off page grants nothing,
+ * and an archived campaign grants almost nothing.
+ */
+const CAPABILITY_SETTINGS = ["enable_encampments", "enable_locations", "archived_at"] as const;
 
 /**
- * Writes a campaign answer (a PATCH, a new join code; later a campaign event) into the cached
- * campaign. Answers carry neither the caller's permissions nor capabilities, so the cached ones
- * are kept; when the answer switches a page on or off, the capabilities it gates are read again.
+ * Writes a campaign answer (a PATCH, a new join code, a `campaign.updated` event) over the cached
+ * campaign. Answers may leave out the reader's own fields (role, permissions, capabilities,
+ * chat_unread), so the cached ones are kept; when an answer without capabilities switches a page
+ * on or off, or archives or restores the campaign, the capabilities are read again.
  */
 export function writeCampaignAnswer(
   queryClient: QueryClient,
@@ -60,6 +64,7 @@ export function writeCampaignAnswer(
   const key = queryKeys.campaign.detail(campaignId);
   const previous = queryClient.getQueryData<CampaignSummary>(key);
   queryClient.setQueryData<CampaignSummary>(key, {
+    ...previous,
     ...answer,
     permissions: answer.permissions ?? previous?.permissions,
     capabilities: answer.capabilities ?? previous?.capabilities,

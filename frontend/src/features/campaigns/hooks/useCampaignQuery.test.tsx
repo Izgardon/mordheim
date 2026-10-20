@@ -107,4 +107,24 @@ describe("writeCampaignAnswer", () => {
 
     expect(invalidate).toHaveBeenCalledWith({ queryKey: key, exact: true });
   });
+
+  it("keeps the reader's role and unread count when an event leaves them out, and reads the flags again on an archive", () => {
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(key, { ...campaign, chat_unread: 3 });
+    const invalidate = vi.spyOn(queryClient, "invalidateQueries");
+    const { role: _role, permissions: _codes, capabilities: _flags, ...event } = campaign;
+
+    writeCampaignAnswer(queryClient, 7, {
+      ...event,
+      archived_at: "2026-10-20T10:00:00Z",
+    } as CampaignSummary);
+
+    expect(queryClient.getQueryData<CampaignSummary>(key)).toMatchObject({
+      role: "player",
+      chat_unread: 3,
+      archived_at: "2026-10-20T10:00:00Z",
+      capabilities: campaign.capabilities,
+    });
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: key, exact: true });
+  });
 });

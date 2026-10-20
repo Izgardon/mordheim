@@ -86,6 +86,22 @@ export function useCampaignChatRemovals(
   );
 }
 
+/** `campaign.updated` on the campaign's events channel (members only, CAMP-NEW-07). */
+export function useCampaignUpdates(
+  campaignId: number | null,
+  handler: (campaign: CampaignEventMessage) => void
+) {
+  useChannel<unknown>(
+    campaignId ? `private-campaign-${campaignId}-events` : null,
+    "campaign.updated",
+    (data) => {
+      if (data && typeof data === "object" && (data as { id?: unknown }).id) {
+        handler(data as CampaignEventMessage);
+      }
+    }
+  );
+}
+
 export function useTradeEvents(
   tradeRequestId: string | null,
   handler: (message: TradeEventMessage) => void
