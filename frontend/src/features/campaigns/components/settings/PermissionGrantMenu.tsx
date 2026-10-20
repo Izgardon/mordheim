@@ -57,7 +57,8 @@ export default function PermissionGrantMenu({
           // Named for whose grants they are, not by the trigger's summary of them.
           aria-labelledby={undefined}
           aria-label={`Permissions for ${member.name}`}
-          className="z-[9999] w-72 max-w-[calc(100vw-1rem)] space-y-1 rounded-2xl border border-border/60 bg-background p-2 shadow-[0_12px_22px_rgba(5,20,24,0.35)]"
+          // Eleven codes are taller than the space left on a phone: the list scrolls instead.
+          className="z-[9999] max-h-[var(--radix-dropdown-menu-content-available-height)] w-72 max-w-[calc(100vw-1rem)] space-y-1 overflow-y-auto rounded-2xl border border-border/60 bg-background p-2 shadow-[0_12px_22px_rgba(5,20,24,0.35)]"
         >
           {options.map((option) => (
             <DropdownMenu.CheckboxItem

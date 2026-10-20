@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { RefreshCw } from "lucide-react";
 
 import { Button } from "@components/button";
 import { ConfirmDialog } from "@components/confirm-dialog";
@@ -75,14 +76,17 @@ export default function JoinCodeBadge({
       </div>
       {canRegenerate ? (
         <>
+          {/* Beside the phone's tabs there is room for an icon only. */}
           <Button
             type="button"
             variant="secondary"
-            size="sm"
-            className={compact ? "h-7 px-2 text-[0.55rem]" : undefined}
+            size={compact ? "icon" : "sm"}
+            className={compact ? "h-7 w-7" : undefined}
+            title={compact ? "New code" : undefined}
             onClick={() => setIsConfirmOpen(true)}
           >
-            New code
+            {compact ? <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" /> : null}
+            <span className={compact ? "sr-only" : undefined}>New code</span>
           </Button>
           <ConfirmDialog
             open={isConfirmOpen}
