@@ -703,7 +703,8 @@ export default function Items() {
               />
             ) : null}
             <AcquireItemDialog item={item} initialAvailabilityId={item._availability?.id ?? null} />
-            {canManage && item.campaign_id ? (
+            {/* A house rule's clone changes with its rule, never here (BUG-51). */}
+            {canManage && item.campaign_id && !item.generated_effect_key ? (
               <Tooltip
                 trigger={
                   <Button

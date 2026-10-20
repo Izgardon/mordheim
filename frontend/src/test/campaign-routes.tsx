@@ -1,6 +1,6 @@
 /**
  * The campaign pages as the app mounts them: RealtimeProvider above `CampaignLayout` (as
- * ProtectedLayout does), with the overview, encampments, house rules and settings routes, a
+ * ProtectedLayout does), with the overview, items, encampments, house rules and settings routes, a
  * stand-in Skills page to leave a page for, and the campaigns list as a stand-in. Mock in the
  * test file:
  * `@/lib/api-client` (fake-api), `@/lib/realtime/client` (fake-realtime), `use-auth`,
@@ -15,6 +15,7 @@ import CampaignOverview from "@/features/campaigns/routes/CampaignOverview";
 import CampaignSettings from "@/features/campaigns/routes/CampaignSettings";
 import Encampments from "@/features/campaigns/routes/Encampments";
 import { RealtimeProvider } from "@/features/realtime/components/RealtimeProvider";
+import Items from "@/features/items/routes/Items";
 import HouseRules from "@/features/rules/routes/HouseRules";
 import { AppStoreProvider, useAppStore } from "@/stores/app-store";
 import { TestDiceProvider } from "./dice";
@@ -55,6 +56,7 @@ export function renderCampaignRoute(
               <Route path="/campaigns/:id" element={<CampaignLayout />}>
                 <Route index element={<CampaignOverview />} />
                 <Route path="skills" element={<SkillsStandIn />} />
+                <Route path="items" element={<Items />} />
                 <Route path="encampments" element={<Encampments />} />
                 <Route path="house-rules" element={<HouseRules />} />
                 <Route path="settings" element={<CampaignSettings />} />
