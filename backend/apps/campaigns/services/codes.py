@@ -8,6 +8,7 @@ them from the constants, for the seed command and for tests that start from an e
 from collections.abc import Iterable
 from typing import Any
 
+from django.db import transaction
 from django.db.models import Subquery
 
 from ..constants import PERMISSION_CODES, PERMISSIONS, ROLES
@@ -30,6 +31,19 @@ def grant_on_join(membership: Any, codes: Iterable[str]) -> None:
     """Give a new member these codes, one INSERT each, without reading them first."""
     for code in codes:
         CampaignMembershipPermission.objects.create(membership=membership, permission_id=permission_ref(code))
+
+
+def replace_grants(membership: Any, requested: Iterable[str]) -> None:
+    """The member's grants become exactly these known codes, in one transaction (BUG-76: a failed insert used to
+    leave him with none)."""
+    with transaction.atomic():
+        CampaignMembershipPermission.objects.filter(membership=membership).delete()
+        CampaignMembershipPermission.objects.bulk_create(
+            [
+                CampaignMembershipPermission(membership=membership, permission=permission)
+                for permission in CampaignPermission.objects.filter(code__in=list(requested))
+            ]
+        )
 
 
 def describe(codes: Iterable[str] = PERMISSION_CODES) -> list[dict[str, str]]:

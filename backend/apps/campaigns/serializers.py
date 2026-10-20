@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from apps.core.html import sanitize_rich_text
 from apps.restrictions.models import Restriction
+from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.utils.henchmen_level import normalize_henchmen_level_thresholds
 from apps.warbands.utils.hero_level import normalize_hero_level_thresholds
 
@@ -17,6 +18,8 @@ from .models import (
     CampaignSettings,
     PivotalMoment,
 )
+
+SMALLINT_MAX = 32767  # the settings' PositiveSmallIntegerField columns (BUG-76)
 
 
 class CampaignRestrictionSerializer(serializers.ModelSerializer):
@@ -121,10 +124,10 @@ class CampaignCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=120)
     campaign_type = serializers.ChoiceField(choices=["standard", "marienburg"], required=False, default="standard")
     max_players = serializers.IntegerField(default=8)
-    max_heroes = serializers.IntegerField(default=6)
-    max_hired_swords = serializers.IntegerField(default=3)
-    max_games = serializers.IntegerField(default=10)
-    starting_gold = serializers.IntegerField(default=500)
+    max_heroes = serializers.IntegerField(default=6, min_value=0, max_value=SMALLINT_MAX)
+    max_hired_swords = serializers.IntegerField(default=3, min_value=0, max_value=SMALLINT_MAX)
+    max_games = serializers.IntegerField(default=10, min_value=0, max_value=SMALLINT_MAX)
+    starting_gold = serializers.IntegerField(default=500, min_value=0, max_value=MAX_TRADE_PRICE)
     item_setting_ids = serializers.ListField(child=serializers.IntegerField(), required=False, default=list)
 
     def validate_max_players(self, value):
@@ -135,9 +138,9 @@ class CampaignCreateSerializer(serializers.Serializer):
 
 class CampaignUpdateSerializer(serializers.Serializer):
     in_progress = serializers.BooleanField(required=False)
-    max_heroes = serializers.IntegerField(required=False, min_value=0)
-    max_hired_swords = serializers.IntegerField(required=False, min_value=0)
-    starting_gold = serializers.IntegerField(required=False, min_value=0)
+    max_heroes = serializers.IntegerField(required=False, min_value=0, max_value=SMALLINT_MAX)
+    max_hired_swords = serializers.IntegerField(required=False, min_value=0, max_value=SMALLINT_MAX)
+    starting_gold = serializers.IntegerField(required=False, min_value=0, max_value=MAX_TRADE_PRICE)
     hero_death_roll = serializers.ChoiceField(choices=["d66", "d100"], required=False)
     enable_encampments = serializers.BooleanField(required=False)
     enable_locations = serializers.BooleanField(required=False)

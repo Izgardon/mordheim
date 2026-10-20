@@ -1,6 +1,3 @@
-import random
-import string
-
 from django.db import transaction
 from django.db.models import CharField, Count, F, FilteredRelation, Prefetch, Q, Value
 from django.db.models.functions import Cast, Coalesce, Concat, Lower, NullIf, Trim
@@ -33,12 +30,10 @@ from apps.items.services import (
 )
 from apps.realtime.services import send_campaign_chat_message, send_campaign_ping
 from apps.warbands.models import Henchman, Hero, HiredSword, Warband
-from apps.warbands.restrictions import get_valid_campaign_item_settings
 from apps.warbands.serializers import WarbandSerializer
-from apps.warbands.services import ledger
 from apps.warbands.services.summary import load_warband_units
 
-from .constants import OWNER, PERMISSION_CODES
+from .constants import PERMISSION_CODES
 from .errors import Refused, field_error
 from .models import (
     Campaign,
@@ -49,7 +44,6 @@ from .models import (
     CampaignMembership,
     CampaignMembershipPermission,
     CampaignMessage,
-    CampaignPermission,
     CampaignSettings,
     PivotalMoment,
 )
@@ -76,20 +70,9 @@ from .serializers import (
     PivotalMomentSerializer,
 )
 from .services import codes
+from .services.campaigns import create_campaign
 from .services.joining import join_campaign
-
-
-def _generate_join_code():
-    alphabet = string.ascii_uppercase + string.digits
-    return "".join(random.choice(alphabet) for _ in range(6))
-
-
-def _unique_join_code():
-    for _ in range(20):
-        code = _generate_join_code()
-        if not Campaign.objects.filter(join_code=code).exists():
-            return code
-    return _generate_join_code()
+from .services.settings import update_campaign
 
 
 def _campaigns_for_user(user):
@@ -345,30 +328,7 @@ class CampaignListCreateView(APIView):
         serializer = CampaignCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        validated = serializer.validated_data
-        campaign_type = validated.get("campaign_type", "standard")
-        item_setting_ids = validated.get("item_setting_ids", [])
-
-        campaign = Campaign.objects.create(
-            name=validated["name"],
-            join_code=_unique_join_code(),
-        )
-
-        settings = CampaignSettings.objects.create(
-            campaign=campaign,
-            max_players=validated.get("max_players", 8),
-            max_heroes=validated.get("max_heroes", 6),
-            max_hired_swords=validated.get("max_hired_swords", 3),
-            max_games=validated.get("max_games", 10),
-            starting_gold=validated.get("starting_gold", 500),
-            enable_encampments=campaign_type == "marienburg",
-            enable_locations=campaign_type == "marienburg",
-        )
-        if item_setting_ids:
-            settings.item_settings.set(get_valid_campaign_item_settings(item_setting_ids))
-
-        CampaignMembership.objects.create(campaign=campaign, user=request.user, role_id=codes.role_ref(OWNER))
-
+        campaign = create_campaign(request.user, serializer.validated_data)
         response_serializer = CampaignSerializer(
             _campaigns_for_user(request.user)
             .filter(id=campaign.id)
@@ -432,51 +392,10 @@ class CampaignDetailView(APIView):
 
         serializer = CampaignUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        campaign_updates = {}
-        settings_updates = {}
-        item_setting_ids = serializer.validated_data.get("item_setting_ids")
-
-        if "in_progress" in serializer.validated_data:
-            campaign_updates["in_progress"] = serializer.validated_data["in_progress"]
-        if "max_heroes" in serializer.validated_data:
-            settings_updates["max_heroes"] = serializer.validated_data["max_heroes"]
-        if "max_hired_swords" in serializer.validated_data:
-            settings_updates["max_hired_swords"] = serializer.validated_data["max_hired_swords"]
-        if "starting_gold" in serializer.validated_data:
-            settings_updates["starting_gold"] = serializer.validated_data["starting_gold"]
-        if "hero_death_roll" in serializer.validated_data:
-            settings_updates["hero_death_roll"] = serializer.validated_data["hero_death_roll"]
-        if "enable_encampments" in serializer.validated_data:
-            settings_updates["enable_encampments"] = serializer.validated_data["enable_encampments"]
-        if "enable_locations" in serializer.validated_data:
-            settings_updates["enable_locations"] = serializer.validated_data["enable_locations"]
-        if "hero_level_thresholds" in serializer.validated_data:
-            settings_updates["hero_level_thresholds"] = serializer.validated_data["hero_level_thresholds"]
-        if "henchmen_level_thresholds" in serializer.validated_data:
-            settings_updates["henchmen_level_thresholds"] = serializer.validated_data["henchmen_level_thresholds"]
-        if "hired_sword_level_thresholds" in serializer.validated_data:
-            settings_updates["hired_sword_level_thresholds"] = serializer.validated_data["hired_sword_level_thresholds"]
-
-        if not campaign_updates and not settings_updates and item_setting_ids is None:
-            return Response({"detail": "No updates provided."}, status=400)
-
-        if campaign_updates:
-            for field, value in campaign_updates.items():
-                setattr(campaign, field, value)
-            campaign.save(update_fields=list(campaign_updates.keys()))
-
-        if settings_updates or item_setting_ids is not None:
-            settings, _ = CampaignSettings.objects.get_or_create(campaign=campaign)
-            for field, value in settings_updates.items():
-                setattr(settings, field, value)
-            if settings_updates:
-                settings.save(update_fields=list(settings_updates.keys()))
-            if item_setting_ids is not None:
-                settings.item_settings.set(get_valid_campaign_item_settings(item_setting_ids))
-            if "starting_gold" in settings_updates:
-                for warband in Warband.objects.filter(campaign=campaign):
-                    ledger.rewrite_starting_gold(warband, settings_updates["starting_gold"])
+        try:
+            update_campaign(campaign, serializer.validated_data)
+        except Refused as refusal:
+            return refusal.response()
 
         refreshed = _get_campaign_for_user(campaign_id, request.user)
         if not refreshed:
@@ -1012,18 +931,8 @@ class CampaignMemberPermissionsView(APIView):
             return field_error(
                 "permissions", f"Unknown permission: {', '.join(unknown)}.", "unknown_permission"
             ).response()
-        by_code = {permission.code: permission for permission in CampaignPermission.objects.filter(code__in=requested)}
-        allowed_permissions = [by_code[code] for code in requested]
-
-        CampaignMembershipPermission.objects.filter(membership=target_membership).delete()
-        CampaignMembershipPermission.objects.bulk_create(
-            [
-                CampaignMembershipPermission(membership=target_membership, permission=permission)
-                for permission in allowed_permissions
-            ]
-        )
-
-        return Response(codes.describe(permission.code for permission in allowed_permissions))
+        codes.replace_grants(target_membership, requested)
+        return Response(codes.describe(requested))
 
 
 class CampaignMemberRoleView(APIView):

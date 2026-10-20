@@ -9,7 +9,7 @@ from typing import Any
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
-from apps.campaigns.models import CampaignSettings
+from apps.campaigns.models import Campaign, CampaignSettings
 from apps.restrictions.models import Restriction
 from apps.warbands.models import Hero, LedgerAction, Warband, WarbandLog, WarbandTrade
 from apps.warbands.services import ledger
@@ -88,7 +88,10 @@ class CampaignSettingsTests(CampaignTestCase):
         invalid: list[dict[str, Any]] = [
             {"max_heroes": -1},
             {"max_hired_swords": -1},
+            {"max_heroes": 32768},  # past the smallint column (BUG-76: a 500)
+            {"max_hired_swords": 40000},
             {"starting_gold": -5},
+            {"starting_gold": 2_147_483_648},  # past the ledger's 32-bit ceiling
             {"hero_death_roll": "d6"},
             {"hero_level_thresholds": []},
             {"henchmen_level_thresholds": [0]},
@@ -117,13 +120,19 @@ class CampaignSettingsTests(CampaignTestCase):
         self.assertEqual(data["hero_level_thresholds"], [2, 5, 9])
         self.assertEqual([row["restriction"] for row in data["item_settings"]], ["Cathay Setting"])
 
-    def test_create_validates_only_the_player_count(self):
-        # Characterises current behaviour (BUG-76, CAMP-TEST-22): the other numbers reach the columns unchecked
+    def test_create_validates_every_number_against_its_column(self):
+        # BUG-76, CAMP-TEST-22: only max_players was checked; the others reached the columns unchecked
         for seats in (1, 17):
             with self.subTest(max_players=seats):
                 response = self.post_as(self.owner, "/api/campaigns/", {"name": "Tiny", "max_players": seats})
                 self.assertEqual(response.status_code, 400)
                 self.assertEqual(list(response.data), ["max_players"])
+        too_big = {"max_heroes": 32768, "max_hired_swords": -1, "max_games": 40000, "starting_gold": 2**31}
+        for field, value in too_big.items():
+            with self.subTest(**{field: value}):
+                response = self.post_as(self.owner, "/api/campaigns/", {"name": "Odd", field: value})
+                self.assertEqual((response.status_code, list(response.data)), (400, [field]))
+        self.assertFalse(Campaign.objects.filter(name="Odd").exists())
 
         created = self.post_as(
             self.owner,
@@ -195,5 +204,7 @@ class StartingGoldTests(CampaignTestCase):
         three = rewrite_queries(700)
 
         self.assertEqual(len(three) - len(two), 5)  # SAVEPOINT, the locked oldest row, its UPDATE, the balance, RELEASE
-        self.assertEqual(sum(sql.startswith("SAVEPOINT") for sql in three), 3)
+        self.assertEqual(
+            sum(sql.startswith("SAVEPOINT") for sql in three), 1 + 3
+        )  # the PATCH's own (BUG-76), then one each
         self.assertEqual(WarbandTrade.objects.filter(warband__campaign=self.campaign).count(), 4)

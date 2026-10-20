@@ -61,33 +61,40 @@ class CampaignTransactionTestCase(TransactionTestCase):
 
 
 class CampaignWriteAtomicityTests(CampaignTransactionTestCase):
-    def test_a_create_with_a_negative_max_heroes_leaves_a_campaign_without_settings_or_members(self):
-        # Characterises current behaviour (BUG-76, CAMP-TEST-22, pinned; flips in PR A: 400 and nothing written)
+    def test_a_create_that_fails_part_way_leaves_nothing(self):
+        # BUG-76, CAMP-TEST-22: campaign, settings and membership used to be written one by one
+        refused = self.client.post("/api/campaigns/", {"name": "Broken", "max_heroes": -1}, format="json")
+        self.assertEqual((refused.status_code, list(refused.data)), (400, ["max_heroes"]))
         self.answer_errors_with_500()
 
-        response = self.client.post("/api/campaigns/", {"name": "Broken", "max_heroes": -1}, format="json")
+        with mock.patch.object(CampaignMembership.objects, "create", side_effect=DatabaseError("insert failed")):
+            response = self.client.post("/api/campaigns/", {"name": "Broken"}, format="json")
 
         self.assertEqual(response.status_code, 500)
-        orphan = Campaign.objects.get(name="Broken")
-        self.assertFalse(CampaignSettings.objects.filter(campaign=orphan).exists())
-        self.assertFalse(CampaignMembership.objects.filter(campaign=orphan).exists())
+        self.assertFalse(Campaign.objects.filter(name="Broken").exists())
+        self.assertEqual(CampaignSettings.objects.count(), 1)
         self.assertEqual([row["name"] for row in self.client.get("/api/campaigns/").data], ["Shards"])
 
-    def test_a_patch_over_the_smallint_ceiling_answers_500_after_saving_the_start(self):
-        # Characterises current behaviour (BUG-76, pinned; flips in PR A: a 400, and the PATCH is atomic)
+    def test_a_patch_is_checked_against_the_columns_and_written_all_or_nothing(self):
+        # BUG-76: max_heroes 40000 was a 500 after the start had been saved
+        url = f"/api/campaigns/{self.campaign.id}/"
+        refused = self.client.patch(url, {"in_progress": True, "max_heroes": 40000}, format="json")
+        self.assertEqual((refused.status_code, list(refused.data)), (400, ["max_heroes"]))
         self.answer_errors_with_500()
-
-        response = self.client.patch(
-            f"/api/campaigns/{self.campaign.id}/", {"in_progress": True, "max_heroes": 40000}, format="json"
+        failing = mock.patch(
+            "apps.campaigns.services.settings.get_valid_campaign_item_settings", side_effect=DatabaseError("boom")
         )
+
+        with failing:
+            response = self.client.patch(url, {"in_progress": True, "max_heroes": 4, "item_setting_ids": [1]}, format="json")  # fmt: skip
 
         self.assertEqual(response.status_code, 500)
         self.campaign.refresh_from_db()
-        self.assertTrue(self.campaign.in_progress)
+        self.assertFalse(self.campaign.in_progress)
         self.assertEqual(CampaignSettings.objects.get(campaign=self.campaign).max_heroes, 6)
 
-    def test_a_grant_put_that_fails_after_its_delete_leaves_the_player_with_no_grants(self):
-        # Characterises current behaviour (BUG-76, pinned; flips in PR A): delete, then insert, outside a transaction
+    def test_a_grant_put_that_fails_part_way_keeps_the_old_grants(self):
+        # BUG-76: delete, then insert, outside a transaction left the player with no grants
         player = make_user("player@example.com", "Pia")
         self.assertEqual(self.joiner(player)().status_code, 201)
         self.answer_errors_with_500()
@@ -98,7 +105,7 @@ class CampaignWriteAtomicityTests(CampaignTransactionTestCase):
             response = self.client.put(url, {"permissions": ["add_custom", "manage_items"]}, format="json")
 
         self.assertEqual(response.status_code, 500)
-        self.assertFalse(rows.filter(membership__user=player).exists())
+        self.assertEqual(list(rows.filter(membership__user=player).values_list("permission__code", flat=True)), ["add_custom"])  # fmt: skip
 
 
 class JoinRaceTests(CampaignTransactionTestCase):
