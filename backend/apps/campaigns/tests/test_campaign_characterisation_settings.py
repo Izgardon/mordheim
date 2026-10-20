@@ -38,14 +38,24 @@ class CampaignStartTests(CampaignTestCase):
         self.assertFalse(self.start(self.owner, in_progress=False).data["in_progress"])
         self.assertFalse(self.started())
 
-    def test_an_admin_cannot_start_the_campaign(self):
-        # Characterises current behaviour (BUG-13, CAMP-TEST-06, pinned; flips in PR A: decision 2)
-        response = self.start(self.admin)
-
-        self.assertEqual((response.status_code, response.data), (403, {"detail": "Forbidden"}))
+    def test_an_admin_starts_and_unstarts_the_campaign_but_changes_nothing_else(self):
+        # BUG-13, CAMP-TEST-06 (decision 2): the PATCH was owner only, so an admin's Start answered 403
         self.assertEqual(self.start(self.player).status_code, 403)
         self.assertEqual(self.start(self.outsider).status_code, 404)
+
+        response = self.start(self.admin)
+
+        self.assertEqual(
+            (response.status_code, response.data["in_progress"], response.data["role"]), (200, True, "admin")
+        )
+        self.assertTrue(self.started())
+        self.assertFalse(self.start(self.admin, in_progress=False).data["in_progress"])
+        for body in ({"in_progress": True, "max_heroes": 4}, {"starting_gold": 600}, {"enable_locations": True}):
+            with self.subTest(body=body):
+                refused = self.patch_as(self.admin, self.url(), body)
+                self.assertEqual((refused.status_code, refused.data), (403, {"detail": "Forbidden"}))
         self.assertFalse(self.started())
+        self.assertEqual(CampaignSettings.objects.get(campaign=self.campaign).max_heroes, 6)
 
     def test_nothing_on_the_server_reads_in_progress(self):
         # Characterises current behaviour (BUG-77, pinned; flips in PR A: decision 3 warns `campaign_not_started`)

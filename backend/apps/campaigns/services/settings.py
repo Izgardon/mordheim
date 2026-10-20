@@ -8,6 +8,7 @@ from apps.warbands.models import Warband
 from apps.warbands.restrictions import get_valid_campaign_item_settings
 from apps.warbands.services import ledger
 
+from ..constants import ADMIN, OWNER
 from ..errors import Refused
 from ..models import Campaign, CampaignSettings
 
@@ -22,6 +23,18 @@ SETTINGS_FIELDS = (
     "henchmen_level_thresholds",
     "hired_sword_level_thresholds",
 )
+
+
+START_FIELDS = frozenset({"in_progress"})
+UPDATE_FIELDS = frozenset({*START_FIELDS, *SETTINGS_FIELDS, "item_setting_ids"})
+
+
+def may_update(role_slug: str, data: Any) -> bool:
+    """The owner changes anything; an admin may send the start flag on its own (decision 2, BUG-13)."""
+    if role_slug == OWNER:
+        return True
+    sent = set(data) & UPDATE_FIELDS if isinstance(data, dict) else set()
+    return role_slug == ADMIN and sent <= START_FIELDS
 
 
 def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> None:

@@ -73,7 +73,7 @@ from .serializers import (
 from .services import codes
 from .services.campaigns import create_campaign
 from .services.joining import join_campaign
-from .services.settings import update_campaign
+from .services.settings import may_update, update_campaign
 
 
 def _campaigns_for_user(user):
@@ -384,7 +384,7 @@ class CampaignDetailView(APIView):
         membership = get_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not is_owner(membership):
+        if not may_update(membership.role.slug, request.data):  # admins may start and unstart only (BUG-13)
             return Response({"detail": "Forbidden"}, status=403)
 
         campaign = Campaign.objects.select_related("settings").filter(id=campaign_id).first()
