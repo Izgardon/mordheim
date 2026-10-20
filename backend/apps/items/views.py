@@ -9,20 +9,12 @@ from apps.campaigns.permissions import (
     has_campaign_permission,
     parse_campaign_id,
 )
-from apps.core.catalogue.duplicates import refusing_duplicates
 from apps.core.catalogue.usage import delete_unless_in_use
-from apps.restrictions.models import Restriction
 
-from .models import (
-    Item,
-    ItemAvailability,
-    ItemAvailabilityRestriction,
-    ItemProperty,
-    ItemPropertyLink,
-)
-from .serializers import ItemCreateSerializer, ItemPropertySerializer, ItemSerializer
+from . import writes
+from .models import Item, ItemAvailability, ItemProperty
+from .serializers import ItemPropertySerializer, ItemSerializer, ItemWriteSerializer
 
-DUPLICATE = "an item with this name and type"  # the base constraint (BUG-17)
 HOUSE_RULE_ITEM = {
     "detail": "This item comes from a house rule and changes with it. Edit or delete the house rule instead.",
     "code": "house_rule_item",
@@ -38,42 +30,6 @@ def _prefetch_items():
             queryset=ItemAvailability.objects.prefetch_related("restriction_links__restriction"),
         ),
     )
-
-
-def _sync_availabilities(item, availabilities_data):
-    """Replace all availability rows for an item with the given list.
-
-    Each entry in availabilities_data can have a "restrictions" list of dicts
-    with "restriction_id" and optional "additional_note".
-    """
-    item.availabilities.all().delete()
-    if not availabilities_data:
-        return
-    for entry in availabilities_data:
-        avail = ItemAvailability.objects.create(
-            item=item,
-            cost=entry.get("cost", 0),
-            rarity=entry.get("rarity", 2),
-            variable_cost=entry.get("variable_cost") or None,
-        )
-        restriction_entries = entry.get("restrictions", [])
-        if restriction_entries:
-            restriction_ids = [r.get("restriction_id") for r in restriction_entries]
-            restrictions_by_id = {r.id: r for r in Restriction.objects.filter(id__in=restriction_ids)}
-            links = []
-            for r_entry in restriction_entries:
-                r_id = r_entry.get("restriction_id")
-                restriction = restrictions_by_id.get(r_id)
-                if restriction:
-                    links.append(
-                        ItemAvailabilityRestriction(
-                            item_availability=avail,
-                            restriction=restriction,
-                            additional_note=r_entry.get("additional_note", ""),
-                        )
-                    )
-            if links:
-                ItemAvailabilityRestriction.objects.bulk_create(links)
 
 
 class ItemListView(APIView):
@@ -114,24 +70,9 @@ class ItemListView(APIView):
         if not has_campaign_permission(membership, "add_custom"):
             return Response({"detail": "Forbidden"}, status=403)
 
-        data = request.data.copy()
-        data.pop("campaign_id", None)
-        property_ids = data.pop("property_ids", [])
-        availabilities_data = data.pop("availabilities", [])
-        data["campaign"] = campaign_id
-        serializer = ItemCreateSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        with refusing_duplicates(DUPLICATE):
-            item = serializer.save()  # type: ignore[operator]
-
-        if availabilities_data:
-            _sync_availabilities(item, availabilities_data)
-
-        if property_ids:
-            properties = ItemProperty.objects.filter(id__in=property_ids)
-            for prop in properties:
-                ItemPropertyLink.objects.get_or_create(item=item, property=prop)
-
+        serializer = ItemWriteSerializer(data=request.data, context={"campaign_id": campaign_id})
+        serializer.is_valid(raise_exception=True)  # costs, rarities and linked ids, before anything is written
+        item = writes.create_item(membership.campaign_id, serializer.validated_data)
         item_with_links = _prefetch_items().get(id=item.id)
         return Response(ItemSerializer(item_with_links).data, status=status.HTTP_201_CREATED)
 
@@ -166,26 +107,10 @@ class ItemDetailView(APIView):
         if not has_campaign_permission(membership, "manage_items"):
             return Response({"detail": "Forbidden"}, status=403)
 
-        data = request.data.copy()
-        data.pop("campaign_id", None)
-        data.pop("campaign", None)
-        property_ids = data.pop("property_ids", None)
-        availabilities_data = data.pop("availabilities", None)
-        serializer = ItemCreateSerializer(item, data=data, partial=True)
+        context = {"campaign_id": item.campaign_id}
+        serializer = ItemWriteSerializer(item, data=request.data, partial=True, context=context)
         serializer.is_valid(raise_exception=True)
-        with refusing_duplicates(DUPLICATE):
-            serializer.save()  # type: ignore[operator]
-
-        if availabilities_data is not None:
-            _sync_availabilities(item, availabilities_data)
-
-        if property_ids is not None:
-            ItemPropertyLink.objects.filter(item=item).delete()
-            properties = ItemProperty.objects.filter(id__in=property_ids)
-            ItemPropertyLink.objects.bulk_create(
-                [ItemPropertyLink(item=item, property=prop) for prop in properties],
-            )
-
+        writes.update_item(item, serializer.validated_data)
         item_with_links = _prefetch_items().get(id=item.id)
         return Response(ItemSerializer(item_with_links).data)
 
@@ -249,12 +174,9 @@ class ItemPropertyListView(APIView):
         if not has_campaign_permission(membership, "add_custom"):
             return Response({"detail": "Forbidden"}, status=403)
 
-        data = request.data.copy()
-        data.pop("campaign_id", None)
-        data["campaign"] = campaign_id
-        serializer = ItemPropertySerializer(data=data)
+        serializer = ItemPropertySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        item_property = serializer.save()
+        item_property = serializer.save(campaign_id=campaign_id)  # the campaign's own property (BUG-145)
         return Response(ItemPropertySerializer(item_property).data, status=status.HTTP_201_CREATED)
 
 

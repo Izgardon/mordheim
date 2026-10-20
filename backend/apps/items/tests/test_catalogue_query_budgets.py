@@ -182,6 +182,9 @@ class BestiaryDetailBudgetTests(CatalogueTestCase):
 
 
 class CatalogueWriteBudgetTests(CatalogueTestCase):
+    """PERF-44: a write costs the same however many rows it links (they were a get_or_create each). Counts include
+    the write's savepoint pair: a test runs inside a transaction, where production has a BEGIN and a COMMIT."""
+
     def setUp(self) -> None:
         super().setUp()
         self.client.force_authenticate(user=self.owner)
@@ -192,22 +195,32 @@ class CatalogueWriteBudgetTests(CatalogueTestCase):
         self.assertEqual(response.status_code, 201, response.data)
         return len(captured)
 
-    def test_creates_cost_queries_per_row_they_link(self):
-        # Characterises current behaviour (PERF-44, pinned; flips in PR A: links by bulk_create, hired sword <= 10)
+    def item_body(self, name: str, links: int) -> dict[str, Any]:
         restricted = {"restrictions": [{"restriction_id": self.mercenaries.id}]}
-        properties = [self.parry.id, ItemProperty.objects.create(name="Cleave", type="Weapon").id]
-        item = ITEMS.body("Halberd", self.campaign, availabilities=[{"cost": 10, **restricted}, {"cost": 20, **restricted}], property_ids=properties)  # fmt: skip
+        properties = [ItemProperty.objects.create(name=f"{name} rule {n}", type="Weapon").id for n in range(links)]
+        availabilities = [{"cost": 10 * (n + 1), **restricted} for n in range(links)]
+        return ITEMS.body(name, self.campaign, availabilities=availabilities, property_ids=properties)
+
+    def test_an_item_create_costs_15_queries_however_many_rows_it_links(self):
+        # PERF-44, BUG-53 (was pinned at 25: an INSERT and a restriction read per availability, a get_or_create per
+        # property; flipped in PR A). Membership, a scope check for the properties and one for the restrictions, the
+        # savepoint pair, the item, its availabilities, their restrictions and its properties in one INSERT each,
+        # then the answer (the item and its five prefetches)
+        self.assertEqual(self.count(ITEMS.list_url(), self.item_body("Halberd", 2)), 15)
+        self.assertEqual(self.count(ITEMS.list_url(), self.item_body("Glaive", 6)), 15)
+
+    def test_a_hired_sword_create_costs_queries_per_row_it_links(self):
+        # Characterises current behaviour (PERF-44, pinned; flips in PR A's bestiary writes: links by bulk_create)
         skills = [Skill.objects.create(name=f"Trick {n}", type="Combat").id for n in range(6)]
         specials = [Special.objects.create(name=f"Gift {n}", type="Ability").id for n in range(3)]
         gear = [{"item_id": make_entry(ITEMS, f"Kit {n}").id, "quantity": 1} for n in range(6)]
         sword = HIRED_SWORDS.body("Mercenary", self.campaign, skill_ids=skills, special_ids=specials, item_entries=gear)
 
-        # 2 availabilities: an INSERT and a restriction read and INSERT each; 2 properties: a get_or_create each;
-        # +2 since BUG-17: the duplicate guard's savepoint around the INSERT (a test runs inside a transaction; in
-        # production the guard's BEGIN and COMMIT are no queries)
-        self.assertLessEqual(self.count(ITEMS.list_url(), item), 27)
         # 15 links: a get_or_create each (SELECT, SAVEPOINT, INSERT, RELEASE); the answer reads through the details'
         # prefetch (PERF-46: 98 -> 78)
         self.assertLessEqual(self.count(HIRED_SWORDS.list_url(), sword), 78)
-        # membership, INSERT and the guard's savepoint (+2 since BUG-17, tests only)
-        self.assertLessEqual(self.count(SKILLS.list_url(), SKILLS.body("Feint", self.campaign)), 5)
+
+    def test_a_skill_create_costs_5_queries(self):
+        # membership, the campaign read by the serializer's campaign field, the savepoint pair and the INSERT (3
+        # before the duplicate guard's savepoint, BUG-17)
+        self.assertEqual(self.count(SKILLS.list_url(), SKILLS.body("Feint", self.campaign)), 5)

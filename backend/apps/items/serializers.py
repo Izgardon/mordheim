@@ -1,8 +1,15 @@
+from typing import Any
+
 from rest_framework import serializers
 
+from apps.bestiary.models import BestiaryEntry
+from apps.core.catalogue.scope import CatalogueEntryField, CatalogueIdsField
 from apps.restrictions.models import Restriction
+from apps.restrictions.serializers import RestrictionNoteSerializer, refuse_unknown_restrictions
 
 from .models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemProperty
+
+MAX_COST = 2_147_483_647  # the largest cost the column holds
 
 
 class ItemPropertySummarySerializer(serializers.ModelSerializer):
@@ -112,18 +119,30 @@ class ItemSerializer(serializers.ModelSerializer):
         return ItemPropertySummarySerializer(properties, many=True).data
 
 
-class ItemCreateSerializer(serializers.ModelSerializer):
+class AvailabilityInputSerializer(serializers.Serializer):
+    """One price of a custom item: what ItemAvailability allows, checked before anything is written (BUG-53)."""
+
+    cost = serializers.IntegerField(min_value=0, max_value=MAX_COST, default=0)
+    rarity = serializers.IntegerField(min_value=2, max_value=20, default=2)
+    variable_cost = serializers.CharField(max_length=120, allow_blank=True, allow_null=True, required=False)
+    restrictions = RestrictionNoteSerializer(many=True, required=False)
+
+
+class ItemWriteSerializer(serializers.ModelSerializer):
+    """A custom item's create or edit. Linked ids are the book's or this campaign's (`context["campaign_id"]`,
+    SEC-07); the campaign itself is never an input."""
+
     save = serializers.CharField(source="save_value", allow_null=True, required=False)  # type: ignore[assignment]
-    property_ids = serializers.ListField(child=serializers.IntegerField(), required=False, write_only=True)
-    availabilities = serializers.ListField(child=serializers.DictField(), required=False, write_only=True)
-    bestiary_entry_id = serializers.IntegerField(
-        required=False, allow_null=True, write_only=True, source="bestiary_entry"
-    )
+    property_ids = CatalogueIdsField(rows=ItemProperty.objects.all(), required=False)
+    availabilities = AvailabilityInputSerializer(many=True, required=False)
+    bestiary_entry_id = CatalogueEntryField(
+        queryset=BestiaryEntry.objects.all(), source="bestiary_entry", allow_null=True, required=False
+    )  # the animal an Animal item hires (BUG-146: a raw id was a 500)
 
     class Meta:
         model = Item
+        validators: list = []  # a duplicate is the database constraint's 400 duplicate_entry (BUG-17)
         fields = (
-            "campaign",
             "name",
             "type",
             "subtype",
@@ -138,6 +157,11 @@ class ItemCreateSerializer(serializers.ModelSerializer):
             "availabilities",
             "bestiary_entry_id",
         )
+
+    def validate_availabilities(self, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        links = [link for row in rows for link in row.get("restrictions", [])]
+        refuse_unknown_restrictions(links, self.context["campaign_id"])
+        return rows
 
     def validate(self, attrs):
         item_type = attrs.get("type") or getattr(self.instance, "type", "")

@@ -55,13 +55,15 @@ class ItemWriteTests(CatalogueTestCase):
             ],  # fmt: skip
         )
 
-    def test_unknown_property_and_restriction_ids_are_dropped_silently(self):
+    def test_unknown_property_and_restriction_ids_are_refused(self):
+        # SEC-07 (they used to be dropped silently): an unknown id and another campaign's read the same, a 400
         availabilities = [{"cost": 5, "rarity": 2, "restrictions": [{"restriction_id": 999999}]}]
 
         response = self.create_as(self.owner, ITEMS, "Club", availabilities=availabilities, property_ids=[999999])
 
-        self.assertEqual(response.status_code, 201, response.data)
-        self.assertEqual((response.data["properties"], response.data["availabilities"][0]["restrictions"]), ([], []))
+        unknown = ['Invalid pk "999999" - object does not exist.']
+        self.assertEqual((response.status_code, response.json()), (400, {"property_ids": unknown, "availabilities": unknown}))  # fmt: skip
+        self.assertFalse(Item.objects.filter(name="Club").exists())
 
     def test_an_edit_replaces_the_availabilities_and_properties_it_sends_and_keeps_the_rest(self):
         item = make_entry(ITEMS, "Flail", campaign=self.campaign, cost=15)
@@ -89,37 +91,39 @@ class ItemWriteTests(CatalogueTestCase):
             (created.data["campaign_id"], edited.data["campaign_id"]), (self.campaign.id, self.campaign.id)
         )
 
-    def test_linking_an_animal_through_bestiary_entry_id_is_a_500(self):
-        # Characterises current behaviour (BUG-146, pinned; flips in PR A): ItemCreateSerializer passes the raw id to
-        # the `bestiary_entry` relation, which needs an instance, so the write raises ValueError after nothing is saved
-        self.client.raise_request_exception = False
-        self._quiet_request_errors()
+    def test_an_item_links_its_animal_through_bestiary_entry_id(self):
+        # BUG-146 (was pinned: the raw id reached the relation, which needs an instance, so every write was a 500;
+        # flipped in PR A: a scoped related field)
+        theirs = make_entry(BESTIARY, "Their pony", campaign=self.elsewhere)
 
-        response = self.create_as(self.owner, ITEMS, "Pony", type="Animal", bestiary_entry_id=self.warhound.id)
+        created = self.create_as(self.owner, ITEMS, "Hound", type="Animal", bestiary_entry_id=self.warhound.id)
+        unlinked = self.patch_as(self.owner, ITEMS.detail_url(created.data["id"]), {"bestiary_entry_id": None})
+        foreign = self.create_as(self.owner, ITEMS, "Pony", type="Animal", bestiary_entry_id=theirs.id)
 
-        self.assertEqual(response.status_code, 500)
+        self.assertEqual((created.status_code, created.data["bestiary_entry"]["name"]), (201, "Warhound"))
+        self.assertEqual((unlinked.status_code, unlinked.data["bestiary_entry"]), (200, None))
+        self.assertEqual((foreign.status_code, list(foreign.data)), (400, ["bestiary_entry_id"]))
         self.assertFalse(Item.objects.filter(name="Pony").exists())
-
-    def _quiet_request_errors(self) -> None:
-        logger = logging.getLogger("django.request")
-        self.addCleanup(setattr, logger, "disabled", logger.disabled)
-        logger.disabled = True
 
 
 class CampaignScopeOfWriteIdsTests(CatalogueTestCase):
     """SEC-07's catalogue half (CAT-TEST-16): ids from another campaign are linked, and their text then reads back."""
 
-    def test_an_item_links_another_campaigns_property_and_restriction(self):
-        # Characterises current behaviour (SEC-07, pinned; flips in PR A: scoped PrimaryKeyRelatedFields, a 400)
+    def test_an_item_cannot_link_another_campaigns_property_or_restriction(self):
+        # SEC-07 (was pinned: both were linked and their text read back; flipped in PR A: scoped ids, a 400 that
+        # reads like an unknown id, and nothing written); the book's and this campaign's are linked
         their_property = ItemProperty.objects.create(name="Secret rule", type="Weapon", campaign=self.elsewhere)
         their_restriction = Restriction.objects.create(restriction="Their warband", campaign=self.elsewhere)
+        our_property = ItemProperty.objects.create(name="House rule", type="Weapon", campaign=self.campaign)
         availabilities = [{"cost": 5, "rarity": 2, "restrictions": [{"restriction_id": their_restriction.id}]}]
 
-        response = self.create_as(self.player, ITEMS, "Spy glass", availabilities=availabilities, property_ids=[their_property.id])  # fmt: skip
+        refused = self.create_as(self.player, ITEMS, "Spy glass", availabilities=availabilities, property_ids=[their_property.id])  # fmt: skip
+        linked = self.create_as(self.player, ITEMS, "Telescope", property_ids=[our_property.id, self.parry.id])
 
-        self.assertEqual(response.status_code, 201, response.data)
-        self.assertEqual([prop["name"] for prop in response.data["properties"]], ["Secret rule"])
-        self.assertEqual(response.data["availabilities"][0]["restrictions"][0]["restriction"]["restriction"], "Their warband")  # fmt: skip
+        self.assertEqual((refused.status_code, sorted(refused.data)), (400, ["availabilities", "property_ids"]))
+        self.assertEqual(refused.data["property_ids"], [f'Invalid pk "{their_property.id}" - object does not exist.'])
+        self.assertFalse(Item.objects.filter(name="Spy glass").exists())
+        self.assertEqual([prop["name"] for prop in linked.data["properties"]], ["House rule", "Parry"])
 
     def test_a_bestiary_entry_links_another_campaigns_skills_specials_spells_and_items(self):
         # Characterises current behaviour (SEC-07, CAT-TEST-16, pinned; flips in PR A)
@@ -220,17 +224,18 @@ class RestrictionCreateTests(CatalogueTestCase):
 
 
 class ItemPropertyCreateTests(CatalogueTestCase):
-    def test_a_players_new_property_is_saved_as_a_book_property_every_campaign_lists(self):
-        # Characterises current behaviour (BUG-145, pinned; flips in PR A): the view sets data["campaign"], which the
-        # serializer has no field for, so the property is saved with no campaign
+    def test_a_players_new_property_is_saved_in_the_campaign(self):
+        # BUG-145 (was pinned: saved as a book property every campaign listed; flipped in PR A)
         body = {"campaign_id": self.campaign.id, "name": "Cleave", "type": "Weapon", "description": "Hits twice."}
 
         response = self.post_as(self.player, "/api/item-properties/", body)
 
-        self.assertEqual((response.status_code, response.data["campaign_id"]), (201, None))
+        self.assertEqual((response.status_code, response.data["campaign_id"]), (201, self.campaign.id))
+        shards = self.get_as(self.rival, f"/api/item-properties/?campaign_id={self.campaign.id}").json()
         elsewhere = self.get_as(self.outsider, f"/api/item-properties/?campaign_id={self.elsewhere.id}").json()
-        self.assertIn("Cleave", [row["name"] for row in elsewhere])
-        self.assertIn("Cleave", [row["name"] for row in self.get_as(self.outsider, "/api/item-properties/").json()])
+        self.assertIn("Cleave", [row["name"] for row in shards])
+        self.assertNotIn("Cleave", [row["name"] for row in elsewhere])
+        self.assertNotIn("Cleave", [row["name"] for row in self.get_as(self.outsider, "/api/item-properties/").json()])
 
 
 class RaceWriteTests(CatalogueTestCase):
