@@ -5,6 +5,7 @@ import { useOutletContext } from "react-router-dom";
 
 // components
 import { Button } from "@components/button";
+import { ConfirmDialog } from "@components/confirm-dialog";
 import CampaignRecordsPage, { RecordForm } from "../components/records/CampaignRecordsPage";
 import EncampmentFormFields from "../components/EncampmentFormFields";
 import EncampmentsTable from "../components/EncampmentsTable";
@@ -41,7 +42,7 @@ function EncampmentsPage({ campaign }: { campaign: CampaignSummary }) {
       isEnabled={page.isEnabled}
       disabledMessage="Encampments are currently disabled for this campaign. The campaign owner can enable them in Campaign Settings."
       addLabel="Add encampment"
-      canAdd={page.canManage}
+      canAdd={page.canAdd}
       isFormOpen={page.isFormOpen}
       onOpenForm={page.openCreateForm}
       onCloseForm={page.closeForm}
@@ -74,17 +75,45 @@ function EncampmentsPage({ campaign }: { campaign: CampaignSummary }) {
         rowBackground={ENCAMPMENT_ROW_BG_STYLE}
         isMobile={isMobile}
         renderActions={(encampment) =>
-          page.canManage ? (
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-8"
-              onClick={() => page.openEditForm(encampment)}
-            >
-              Edit
-            </Button>
+          encampment.capabilities?.edit && page.canAdd ? (
+            <div className="flex flex-wrap justify-end gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8"
+                onClick={() => page.openEditForm(encampment)}
+              >
+                Edit
+              </Button>
+              <Button
+                size="sm"
+                variant="destructive"
+                className="h-8"
+                onClick={() => page.requestDelete(encampment)}
+              >
+                Delete
+              </Button>
+            </div>
           ) : null
         }
+      />
+      <ConfirmDialog
+        open={Boolean(page.deleting)}
+        onOpenChange={(open) => {
+          if (!open) page.cancelDelete();
+        }}
+        title="Delete encampment"
+        description={
+          <div className="space-y-2">
+            <p>{`Delete ${page.deleting?.name ?? "this encampment"}?`}</p>
+            <p className="text-xs">It leaves the list for everyone in the campaign.</p>
+            {page.deleteError ? <p className="text-sm text-red-600">{page.deleteError}</p> : null}
+          </div>
+        }
+        confirmText={page.isDeleting ? "Deleting..." : "Delete"}
+        confirmDisabled={page.isDeleting}
+        isConfirming={page.isDeleting}
+        onConfirm={() => void page.confirmDelete()}
       />
     </CampaignRecordsPage>
   );

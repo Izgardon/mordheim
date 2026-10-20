@@ -277,7 +277,9 @@ export const encampment = (overrides: Partial<CampaignEncampment> = {}): Campaig
   name: "Sailmakers' Row",
   owner_id: PLAYER.id,
   owner_name: PLAYER.name,
+  owner_left: false,
   description: "Rope, canvas and a dry place to sleep.",
+  capabilities: { edit: true },
   ...overrides,
 });
 

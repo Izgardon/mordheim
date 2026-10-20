@@ -3,7 +3,7 @@ import type { Dispatch, SetStateAction } from "react";
 import { Input } from "@components/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 
-import { UNASSIGNED_OWNER } from "../hooks/useEncampments";
+import { NOBODY_OWNER } from "../hooks/useEncampments";
 
 import type { CampaignEncampmentPayload, CampaignPlayerName } from "../types/campaign-types";
 
@@ -18,7 +18,7 @@ type EncampmentFormFieldsProps = {
   players: CampaignPlayerName[];
 };
 
-/** An encampment's name, owner (any member, or Unassigned) and description. */
+/** An encampment's name, owner (any member, or nobody) and description. */
 export default function EncampmentFormFields({
   form,
   setForm,
@@ -43,7 +43,7 @@ export default function EncampmentFormFields({
             <SelectValue placeholder="Choose an owner" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={UNASSIGNED_OWNER}>Unassigned</SelectItem>
+            <SelectItem value={NOBODY_OWNER}>Nobody</SelectItem>
             {players.map((player) => (
               <SelectItem key={player.id} value={String(player.id)}>
                 {player.name}

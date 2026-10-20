@@ -72,14 +72,29 @@ beforeEach(() => {
 });
 
 describe("Encampments: who may add and edit", () => {
-  it("shows a player without manage_encampments the list but no Add or Edit (decision 9, CAMP-TWEAK-08, pinned; flips in PR C)", async () => {
+  it("lets any member add one; Edit and Delete follow each row's capabilities (decision 9, CAMP-TWEAK-08)", async () => {
     signInAsPlayer(["add_custom"]);
+    fakeApi.on(ENCAMPMENTS, [
+      encampment(),
+      encampment({
+        id: 6,
+        name: "Old Mill",
+        owner_id: OWNER.id,
+        owner_name: OWNER.name,
+        capabilities: { edit: false },
+      }),
+    ]);
 
     await openEncampments();
 
-    expect(row("Sailmakers' Row")).toHaveTextContent("Mira");
-    expect(screen.queryByRole("button", { name: "Add encampment" })).not.toBeInTheDocument();
-    expect(within(row("Sailmakers' Row")).queryByRole("button")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Add encampment" })).toBeInTheDocument();
+    expect(
+      within(row("Sailmakers' Row")).getByRole("button", { name: "Edit" })
+    ).toBeInTheDocument();
+    expect(
+      within(row("Sailmakers' Row")).getByRole("button", { name: "Delete" })
+    ).toBeInTheDocument();
+    expect(within(row("Old Mill")).queryByRole("button")).not.toBeInTheDocument();
   });
 
   it("gives a player granted manage_encampments Add and Edit", async () => {
@@ -92,10 +107,45 @@ describe("Encampments: who may add and edit", () => {
       within(row("Sailmakers' Row")).getByRole("button", { name: "Edit" })
     ).toBeInTheDocument();
   });
+
+  it("marks an owner who has left the campaign", async () => {
+    fakeApi.on(ENCAMPMENTS, [encampment({ owner_left: true })]);
+
+    await openEncampments();
+
+    expect(row("Sailmakers' Row")).toHaveTextContent("Mira (left)");
+  });
 });
 
 describe("Encampments: adding and editing, as the owner", () => {
-  it("defaults a new encampment's owner to Unassigned, POSTs owner_id null and lists it in name order; nothing can be deleted (decision 9, CAMP-TWEAK-08, pinned; flips in PR C)", async () => {
+  it("defaults a new encampment's owner to you, POSTs your id and lists it in name order (decision 9, CAMP-TWEAK-08)", async () => {
+    const user = setupUser();
+    fakeApi.on(CREATE, (body: unknown) =>
+      encampment({ ...(body as object), id: 5, owner_name: OWNER.name })
+    );
+    await openEncampments();
+
+    await user.click(screen.getByRole("button", { name: "Add encampment" }));
+
+    expect(screen.getByRole("combobox")).toHaveTextContent(OWNER.name);
+    await user.type(screen.getByPlaceholderText("Sailmakers' Row"), "Bell Tower");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(screen.queryByRole("combobox")).not.toBeInTheDocument());
+    expect(fakeApi.bodyOf(CREATE)).toEqual({
+      name: "Bell Tower",
+      owner_id: OWNER.id,
+      description: "",
+    });
+    const names = screen
+      .getAllByRole("row")
+      .slice(1)
+      .map((entry) => entry.querySelector("td")!.textContent);
+    expect(names).toEqual(["Bell Tower", "Sailmakers' Row"]);
+    expect(row("Bell Tower")).toHaveTextContent(OWNER.name);
+  });
+
+  it("can give a new encampment to nobody", async () => {
     const user = setupUser();
     fakeApi.on(CREATE, (body: unknown) =>
       encampment({ ...(body as object), id: 5, owner_name: null })
@@ -103,20 +153,29 @@ describe("Encampments: adding and editing, as the owner", () => {
     await openEncampments();
 
     await user.click(screen.getByRole("button", { name: "Add encampment" }));
-
-    expect(screen.getByRole("combobox")).toHaveTextContent("Unassigned");
+    await chooseOption(user, screen.getByRole("combobox"), "Nobody");
     await user.type(screen.getByPlaceholderText("Sailmakers' Row"), "Bell Tower");
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(screen.queryByRole("combobox")).not.toBeInTheDocument());
+    await waitFor(() => expect(fakeApi.countOf(CREATE)).toBe(1));
     expect(fakeApi.bodyOf(CREATE)).toEqual({ name: "Bell Tower", owner_id: null, description: "" });
-    const names = screen
-      .getAllByRole("row")
-      .slice(1)
-      .map((entry) => entry.querySelector("td")!.textContent);
-    expect(names).toEqual(["Bell Tower", "Sailmakers' Row"]);
-    expect(row("Bell Tower")).toHaveTextContent("Unassigned");
-    expect(screen.queryByRole("button", { name: /delete|remove/i })).not.toBeInTheDocument();
+    expect(await screen.findByRole("row", { name: /^Bell Tower/ })).toHaveTextContent("Nobody");
+  });
+
+  it("deletes an encampment after a confirm, and it leaves the list", async () => {
+    const user = setupUser();
+    fakeApi.on(`DELETE ${campaignApi("encampments/4/")}`, undefined);
+    await openEncampments();
+
+    await user.click(within(row("Sailmakers' Row")).getByRole("button", { name: "Delete" }));
+    const confirm = screen.getByRole("dialog", { name: "Delete encampment" });
+    expect(confirm).toHaveTextContent("Delete Sailmakers' Row?");
+    await user.click(within(confirm).getByRole("button", { name: "Delete" }));
+
+    await waitFor(() =>
+      expect(screen.queryByRole("row", { name: /^Sailmakers' Row/ })).not.toBeInTheDocument()
+    );
+    expect(fakeApi.countOf(`DELETE ${campaignApi("encampments/4/")}`)).toBe(1);
   });
 
   it("says a name is required and sends nothing without one", async () => {

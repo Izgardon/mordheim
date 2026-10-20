@@ -2,7 +2,11 @@ import { useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 // api
-import { createCampaignEncampment, updateCampaignEncampment } from "../api/campaigns-api";
+import {
+  createCampaignEncampment,
+  deleteCampaignEncampment,
+  updateCampaignEncampment,
+} from "../api/campaigns-api";
 import {
   updateCachedList,
   useCampaignEncampments,
@@ -10,7 +14,8 @@ import {
 } from "../api/campaign-queries";
 
 // other
-import { campaignCapabilities } from "../capabilities";
+import { isArchived } from "../capabilities";
+import { useAppStore } from "@/stores/app-store";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { queryKeys } from "@/lib/query-keys";
 
@@ -22,7 +27,8 @@ import type {
   CampaignSummary,
 } from "../types/campaign-types";
 
-export const UNASSIGNED_OWNER = "unassigned";
+/** The owner picker's value for an encampment nobody owns (`owner_id: null`). */
+export const NOBODY_OWNER = "nobody";
 
 const NO_ENCAMPMENTS: CampaignEncampment[] = [];
 const NO_PLAYERS: CampaignPlayerName[] = [];
@@ -31,19 +37,25 @@ const EMPTY_FORM: CampaignEncampmentPayload = { name: "", owner_id: null, descri
 const byName = (a: CampaignEncampment, b: CampaignEncampment) => a.name.localeCompare(b.name);
 
 /**
- * The Encampments page: the cached encampments and members' names (read only while the page is
- * switched on), and the add and edit form, whose answers go into the cached list.
+ * The Encampments page (decision 9, CAMP-TWEAK-08): the cached encampments and members' names
+ * (read only while the page is on), any member's Add with themselves as the default owner, and
+ * each row's Edit and Delete as its `capabilities.edit` says. Answers go into the cached list.
  */
 export function useEncampments(campaign: CampaignSummary) {
   const campaignId = campaign.id;
   const queryClient = useQueryClient();
+  const { user } = useAppStore();
+  const myOwnerValue = user?.id ? String(user.id) : NOBODY_OWNER;
   const isEnabled = Boolean(campaign.enable_encampments);
   const encampments = useCampaignEncampments(campaignId, { enabled: isEnabled });
   const players = useCampaignPlayerNames(campaignId, { enabled: isEnabled });
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editing, setEditing] = useState<CampaignEncampment | null>(null);
   const [form, setForm] = useState<CampaignEncampmentPayload>(EMPTY_FORM);
-  const [ownerValue, setOwnerValue] = useState(UNASSIGNED_OWNER);
+  const [ownerValue, setOwnerValue] = useState(myOwnerValue);
+  const [deleting, setDeleting] = useState<CampaignEncampment | null>(null);
+  const [deleteError, setDeleteError] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
   const [formError, setFormError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
@@ -60,7 +72,9 @@ export function useEncampments(campaign: CampaignSummary) {
           }
         : EMPTY_FORM
     );
-    setOwnerValue(encampment?.owner_id ? String(encampment.owner_id) : UNASSIGNED_OWNER);
+    setOwnerValue(
+      encampment ? (encampment.owner_id ? String(encampment.owner_id) : NOBODY_OWNER) : myOwnerValue
+    );
     setFormError("");
     setIsFormOpen(true);
     requestAnimationFrame(() => {
@@ -71,20 +85,20 @@ export function useEncampments(campaign: CampaignSummary) {
   const closeForm = () => {
     setEditing(null);
     setForm(EMPTY_FORM);
-    setOwnerValue(UNASSIGNED_OWNER);
+    setOwnerValue(myOwnerValue);
     setFormError("");
     setIsFormOpen(false);
   };
 
   const chooseOwner = (value: string) => {
     setOwnerValue(value);
-    setForm((prev) => ({ ...prev, owner_id: value === UNASSIGNED_OWNER ? null : Number(value) }));
+    setForm((prev) => ({ ...prev, owner_id: value === NOBODY_OWNER ? null : Number(value) }));
   };
 
   const submit = async () => {
     const payload: CampaignEncampmentPayload = {
       name: form.name?.trim() ?? "",
-      owner_id: ownerValue === UNASSIGNED_OWNER ? null : Number(ownerValue),
+      owner_id: ownerValue === NOBODY_OWNER ? null : Number(ownerValue),
       description: form.description ?? "",
     };
     if (!payload.name) {
@@ -114,9 +128,41 @@ export function useEncampments(campaign: CampaignSummary) {
     }
   };
 
+  /** Soft: the server hides it, so it leaves the list (CAMP-TWEAK-08). */
+  const confirmDelete = async () => {
+    if (!deleting) {
+      return;
+    }
+    setIsDeleting(true);
+    setDeleteError("");
+    try {
+      await deleteCampaignEncampment(campaignId, deleting.id);
+      updateCachedList<CampaignEncampment>(
+        queryClient,
+        queryKeys.campaign.encampments(campaignId),
+        (prev) => prev.filter((entry) => entry.id !== deleting.id)
+      );
+      setDeleting(null);
+    } catch (errorResponse) {
+      setDeleteError(getErrorMessage(errorResponse, "Unable to delete the encampment."));
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return {
     isEnabled,
-    canManage: campaignCapabilities(campaign).manage_encampments,
+    // Any member adds one while the page is on, and the campaign isn't archived.
+    canAdd: !isArchived(campaign),
+    deleting,
+    deleteError,
+    isDeleting,
+    requestDelete: (encampment: CampaignEncampment) => {
+      setDeleteError("");
+      setDeleting(encampment);
+    },
+    cancelDelete: () => setDeleting(null),
+    confirmDelete,
     encampments: encampments.data ?? NO_ENCAMPMENTS,
     players: players.data ?? NO_PLAYERS,
     isLoading: isEnabled && (encampments.isPending || players.isPending) && !loadError,
