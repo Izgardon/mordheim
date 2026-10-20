@@ -1,33 +1,37 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 
-import { listCampaignMessages, sendCampaignMessage } from "@/features/campaigns/api/campaigns-api";
-import type { CampaignMessage } from "@/features/campaigns/types/campaign-types";
+import { sendCampaignMessage } from "@/features/campaigns/api/campaigns-api";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { useRealtimeReconnect } from "@/lib/realtime";
+import { queryKeys } from "@/lib/query-keys";
 import { useCampaignChat } from "./useCampaignChat";
+import { appendChatMessage, chatHistoryQuery, chatMessagesFromPages } from "../utils/chat-cache";
 
-const PAGE_SIZE = 50;
-
-/** The open chat window: history pages, live messages, sending, and their failures (BUG-20). */
+/**
+ * The open chat window (BUG-20): the history as an infinite query read while the window is open
+ * (each opening reads the latest page afresh, `resetHistory`), live messages and your own sends
+ * written into it, older pages on scrolling up, and the failures of each. A reconnect reads the
+ * open history again through RealtimeProvider's campaign catch-up.
+ */
 export function useChatWindow(campaignId: number, isOpen: boolean) {
-  const [messages, setMessages] = useState<CampaignMessage[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [loadError, setLoadError] = useState("");
+  const queryClient = useQueryClient();
   const [draft, setDraft] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [sendError, setSendError] = useState("");
   const { unread, markRead, addMessageListener } = useCampaignChat();
+  const history = useInfiniteQuery({
+    ...chatHistoryQuery(campaignId),
+    enabled: isOpen,
+    staleTime: Infinity,
+    gcTime: 0,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+  const messages = useMemo(() => chatMessagesFromPages(history.data?.pages ?? []), [history.data]);
 
   const listRef = useRef<HTMLDivElement>(null);
-  const isLoadingRef = useRef(false);
-  const hasMoreRef = useRef(true);
-  const messagesRef = useRef<CampaignMessage[]>([]);
-  const isOpenRef = useRef(isOpen);
-  isOpenRef.current = isOpen;
-
-  useEffect(() => {
-    messagesRef.current = messages;
-  }, [messages]);
+  const scrolledToLatest = useRef(false);
+  const heightBeforeOlder = useRef<number | null>(null);
 
   const scrollToBottom = useCallback((onlyIfNearBottom = false) => {
     requestAnimationFrame(() => {
@@ -40,85 +44,55 @@ export function useChatWindow(campaignId: number, isOpen: boolean) {
     });
   }, []);
 
-  const appendMessage = useCallback((message: CampaignMessage) => {
-    setMessages((prev) => (prev.some((m) => m.id === message.id) ? prev : [...prev, message]));
-  }, []);
+  // The first page lands at the bottom; an older page keeps the message you were reading in place.
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    if (heightBeforeOlder.current !== null && list) {
+      const previousHeight = heightBeforeOlder.current;
+      heightBeforeOlder.current = null;
+      requestAnimationFrame(() => {
+        list.scrollTop = list.scrollHeight - previousHeight;
+      });
+    } else if (!scrolledToLatest.current && history.data) {
+      scrolledToLatest.current = true;
+      scrollToBottom();
+    }
+  }, [history.data, scrollToBottom]);
 
-  const loadMessages = useCallback(
-    async (before?: number) => {
-      if (isLoadingRef.current) return;
-      isLoadingRef.current = true;
-      setIsLoading(true);
-      try {
-        const data = await listCampaignMessages(campaignId, before);
-        // API returns newest-first; reverse for chronological display
-        const reversed = [...data].reverse();
-        hasMoreRef.current = data.length === PAGE_SIZE;
-        setLoadError("");
-        if (before) {
-          const list = listRef.current;
-          const prevHeight = list?.scrollHeight ?? 0;
-          setMessages((prev) => [...reversed, ...prev]);
-          requestAnimationFrame(() => {
-            if (list) {
-              list.scrollTop = list.scrollHeight - prevHeight;
-            }
-          });
-        } else {
-          setMessages(reversed);
-          scrollToBottom();
-        }
-      } catch (error) {
-        // Not "No messages yet": the history is unknown, so say so and offer a retry.
-        setLoadError(getErrorMessage(error, "Couldn't load the chat."));
-      } finally {
-        isLoadingRef.current = false;
-        setIsLoading(false);
-      }
-    },
-    [campaignId, scrollToBottom]
-  );
+  /** Called as the window opens: drops the history read last time, so the latest page is read. */
+  const resetHistory = useCallback(() => {
+    scrolledToLatest.current = false;
+    heightBeforeOlder.current = null;
+    void queryClient.resetQueries({ queryKey: queryKeys.campaign.chat(campaignId), exact: true });
+  }, [campaignId, queryClient]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setSendError("");
+    markRead();
+  }, [isOpen, markRead]);
 
   // While open, live messages land in the list; RealtimeProvider counts them as unread otherwise.
   useEffect(() => {
     if (!isOpen) return;
     return addMessageListener((message) => {
-      appendMessage(message);
+      appendChatMessage(queryClient, campaignId, message);
       scrollToBottom(true);
     });
-  }, [addMessageListener, appendMessage, isOpen, scrollToBottom]);
+  }, [addMessageListener, campaignId, isOpen, queryClient, scrollToBottom]);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    setMessages([]);
-    messagesRef.current = [];
-    hasMoreRef.current = true;
-    setLoadError("");
-    setSendError("");
-    markRead();
-    void loadMessages();
-  }, [isOpen, loadMessages, markRead]);
-
-  // Messages sent while the connection was down never arrive live: reload the latest page.
-  useRealtimeReconnect(() => {
-    if (isOpenRef.current) {
-      void loadMessages();
-    }
-  });
-
+  const { fetchNextPage, hasNextPage, isFetching, isFetchNextPageError, refetch } = history;
   const handleScroll = useCallback(() => {
     const list = listRef.current;
-    if (!list || isLoadingRef.current || !hasMoreRef.current || list.scrollTop > 0) return;
-    const oldest = messagesRef.current[0];
-    if (oldest) {
-      void loadMessages(oldest.id);
-    }
-  }, [loadMessages]);
+    if (!list || isFetching || !hasNextPage || list.scrollTop > 0) return;
+    heightBeforeOlder.current = list.scrollHeight;
+    void fetchNextPage();
+  }, [fetchNextPage, hasNextPage, isFetching]);
 
   /** Retries whichever page failed: the latest, or the older page being scrolled to. */
   const retryLoad = useCallback(() => {
-    void loadMessages(messagesRef.current[0]?.id);
-  }, [loadMessages]);
+    void (isFetchNextPageError ? fetchNextPage() : refetch());
+  }, [fetchNextPage, isFetchNextPageError, refetch]);
 
   const handleSend = async () => {
     const body = draft.trim();
@@ -126,7 +100,7 @@ export function useChatWindow(campaignId: number, isOpen: boolean) {
     setIsSending(true);
     setSendError("");
     try {
-      appendMessage(await sendCampaignMessage(campaignId, body));
+      appendChatMessage(queryClient, campaignId, await sendCampaignMessage(campaignId, body));
       // The draft stays until the server has the message, so a failure never loses it.
       setDraft((current) => (current.trim() === body ? "" : current));
       scrollToBottom();
@@ -145,9 +119,10 @@ export function useChatWindow(campaignId: number, isOpen: boolean) {
   return {
     unread,
     messages,
-    isLoading,
-    loadError,
+    isLoading: history.isLoading || history.isFetchingNextPage,
+    loadError: history.error ? getErrorMessage(history.error, "Couldn't load the chat.") : "",
     retryLoad,
+    resetHistory,
     listRef,
     handleScroll,
     draft,

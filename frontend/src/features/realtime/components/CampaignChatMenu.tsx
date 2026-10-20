@@ -43,9 +43,15 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
   const { user: currentUser } = useAppStore();
   const chat = useChatWindow(campaignId, isOpen);
   const { messages, isLoading, loadError, unread } = chat;
+  const handleOpenChange = (open: boolean) => {
+    if (open) {
+      chat.resetHistory();
+    }
+    setIsOpen(open);
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <button
           type="button"
