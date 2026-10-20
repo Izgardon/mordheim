@@ -18,13 +18,16 @@ export function isCampaignId(campaignId: number) {
   return Number.isInteger(campaignId) && campaignId > 0;
 }
 
-/** The campaign detail payload, shared by the layout and every page that needs it. */
-export function useCampaignQuery(campaignId: number) {
+/**
+ * The campaign detail payload, shared by the layout and every page that needs it. `read: false`
+ * only watches what the layout has read, sending nothing (for components tested on their own).
+ */
+export function useCampaignQuery(campaignId: number, { read = true }: { read?: boolean } = {}) {
   return useQuery({
     queryKey: queryKeys.campaign.detail(campaignId),
     queryFn: ({ signal }) => getCampaign(campaignId, { signal }),
     staleTime: CAMPAIGN_STALE_TIME_MS,
-    enabled: isCampaignId(campaignId),
+    enabled: read && isCampaignId(campaignId),
   });
 }
 

@@ -107,6 +107,7 @@ export default function StartBattleDialog(props: StartBattleDialogProps) {
           )}
 
           <BattleParticipantPicker
+            campaignId={campaignId}
             players={form.eligiblePlayers}
             creatorUserId={creatorUserId}
             selectedUserIds={form.selectedUserIds}

@@ -26,6 +26,21 @@ export function idleLabel(lastActivityAt?: string | null, now = Date.now()) {
   return null;
 }
 
+/** "6 days" or "3 hours" of idle time the server counted (`idle_seconds`); null under an hour. */
+export function idleDuration(idleSeconds?: number | null) {
+  if (typeof idleSeconds !== "number" || !Number.isFinite(idleSeconds)) {
+    return null;
+  }
+  const idle = idleSeconds * 1000;
+  if (idle >= DAY_MS) {
+    return plural(Math.floor(idle / DAY_MS), "day");
+  }
+  if (idle >= HOUR_MS) {
+    return plural(Math.floor(idle / HOUR_MS), "hour");
+  }
+  return null;
+}
+
 type DeadlineBattle = {
   status: BattleStatus;
   closes_at?: string | null;

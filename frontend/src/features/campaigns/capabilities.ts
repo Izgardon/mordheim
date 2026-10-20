@@ -60,8 +60,11 @@ export function campaignCapabilities(
 }
 
 /** The viewer's flags from the cached campaign detail (the layout's query). */
-export function useCampaignCapabilities(campaignId: number): CampaignCapabilities {
-  const { data } = useCampaignQuery(campaignId);
+export function useCampaignCapabilities(
+  campaignId: number,
+  options: { read?: boolean } = {}
+): CampaignCapabilities {
+  const { data } = useCampaignQuery(campaignId, options);
   const raw = data?.capabilities;
   return useMemo(() => readCapabilities(CAMPAIGN_CAPABILITIES, raw), [raw]);
 }

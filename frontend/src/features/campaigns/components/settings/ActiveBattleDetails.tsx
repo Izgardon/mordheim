@@ -34,7 +34,7 @@ export default function ActiveBattleDetails({
               </p>
               <p>
                 <span className="font-semibold text-foreground">Status:</span>{" "}
-                {battleStatusLine(battle)}
+                {battleStatusLine(battle, entry.idle_seconds)}
               </p>
               <p>
                 <span className="font-semibold text-foreground">Created:</span>{" "}

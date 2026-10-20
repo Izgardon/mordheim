@@ -50,10 +50,11 @@ beforeEach(() => {
   fakeRealtime.reset();
   routeCampaignShell();
   routeOverviewLists();
+  fakeApi.on(`GET ${campaignApi("active-battles/")}`, []);
 });
 
 describe("campaign overview requests", () => {
-  it("cold: the campaign, open battles, your warband and sheet, the bell, then the four lists and pending results, once each", async () => {
+  it("cold: the campaign, open battles, your warband and sheet, the bell, then the four lists, pending results and (a battle manager's stuck-battles banner, CAMP-NEW-05) active battles, once each", async () => {
     await openOverview();
 
     expect([...fakeApi.calls()].sort()).toEqual(
@@ -65,6 +66,7 @@ describe("campaign overview requests", () => {
         `GET /warbands/${OWNER.warband!.id}/sheet/`,
         ...OVERVIEW_LISTS,
         `GET ${campaignApi("battles/pending-results/")}`,
+        `GET ${campaignApi("active-battles/")}`,
       ].sort()
     );
   });

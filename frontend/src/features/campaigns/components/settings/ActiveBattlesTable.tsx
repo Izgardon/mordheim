@@ -153,8 +153,13 @@ export default function ActiveBattlesTable({
                           </div>
                         </td>
                         <td className="px-2 py-2 align-middle sm:px-4 sm:py-3">
-                          <span className="block max-w-[150px] truncate text-foreground sm:max-w-none">
-                            {battle.scenario || "-"}
+                          <span className="flex max-w-[150px] items-center gap-2 text-foreground sm:max-w-none">
+                            <span className="truncate">{battle.scenario || "-"}</span>
+                            {battleEntry.stuck ? (
+                              <span className="shrink-0 rounded border border-amber-500/50 bg-amber-900/30 px-1.5 py-0.5 text-[0.55rem] uppercase tracking-[0.15em] text-amber-200">
+                                Stuck
+                              </span>
+                            ) : null}
                           </span>
                         </td>
                         {!isMobile ? (
@@ -164,7 +169,7 @@ export default function ActiveBattlesTable({
                         ) : null}
                         {!isMobile ? (
                           <td className="px-2 py-2 align-middle text-muted-foreground sm:px-4 sm:py-3">
-                            {battleStatusLine(battle)}
+                            {battleStatusLine(battle, battleEntry.idle_seconds)}
                           </td>
                         ) : null}
                         {!isMobile ? (

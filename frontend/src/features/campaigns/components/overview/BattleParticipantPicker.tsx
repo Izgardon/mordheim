@@ -1,5 +1,10 @@
+import { Link } from "react-router-dom";
+
 import { Checkbox } from "@/components/ui/checkbox";
 import { idleLabel } from "@/features/battles/utils/battle-timing";
+
+import { useCampaignCapabilities } from "../../capabilities";
+import { activeBattlesPath } from "./StuckBattlesBanner";
 
 import type { CampaignPlayer } from "../../types/campaign-types";
 
@@ -13,7 +18,10 @@ export function battleBusyLabel(player: CampaignPlayer) {
   return `In ${battle}${phase}${idle ? `, ${idle}` : ""}`;
 }
 
+const BUSY_LABEL = "block truncate text-[0.65rem] uppercase tracking-[0.15em] text-amber-300";
+
 type BattleParticipantPickerProps = {
+  campaignId: number;
   players: CampaignPlayer[];
   creatorUserId: number;
   selectedUserIds: number[];
@@ -26,6 +34,7 @@ type BattleParticipantPickerProps = {
 
 /** The players with a warband, each with their rating; you are always in. */
 export default function BattleParticipantPicker({
+  campaignId,
   players,
   creatorUserId,
   selectedUserIds,
@@ -33,6 +42,8 @@ export default function BattleParticipantPicker({
   greyOutBusy,
   busyInvitees,
 }: BattleParticipantPickerProps) {
+  // A battle manager can go and see the stuck battle (CAMP-NEW-05).
+  const canReview = useCampaignCapabilities(campaignId, { read: false }).manage_battles;
   return (
     <>
       <div className="space-y-2">
@@ -62,10 +73,8 @@ export default function BattleParticipantPicker({
                   <span className="block truncate text-xs text-muted-foreground">
                     {player.warband?.name ?? "No warband"}
                   </span>
-                  {player.battle_busy ? (
-                    <span className="block truncate text-[0.65rem] uppercase tracking-[0.15em] text-amber-300">
-                      {battleBusyLabel(player)}
-                    </span>
+                  {player.battle_busy && !canReview ? (
+                    <span className={BUSY_LABEL}>{battleBusyLabel(player)}</span>
                   ) : null}
                 </button>
                 <div className="flex items-end gap-2">
@@ -85,6 +94,15 @@ export default function BattleParticipantPicker({
                     onChange={() => onToggle(player.id)}
                   />
                 </div>
+                {player.battle_busy && canReview ? (
+                  // A link can't sit inside the toggle button, so it gets the row's second line.
+                  <Link
+                    to={activeBattlesPath(campaignId)}
+                    className={`${BUSY_LABEL} col-span-2 -mt-2 underline underline-offset-2 hover:text-amber-100`}
+                  >
+                    {battleBusyLabel(player)}
+                  </Link>
+                ) : null}
               </div>
             ))
           )}

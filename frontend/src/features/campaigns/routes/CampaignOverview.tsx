@@ -17,9 +17,10 @@ import OverviewSections, {
   type OverviewSection,
 } from "../components/overview/OverviewSections";
 import StartCampaignDialog from "../components/overview/StartCampaignDialog";
+import StuckBattlesBanner from "../components/overview/StuckBattlesBanner";
 
 // hooks
-import { isArchived } from "../capabilities";
+import { campaignCapabilities, isArchived } from "../capabilities";
 import { useCampaignOverview } from "../hooks/useCampaignOverview";
 
 // types
@@ -104,6 +105,10 @@ export default function CampaignOverview() {
             onConfirm={overview.handleStartCampaign}
           />
         ) : null}
+        <StuckBattlesBanner
+          campaignId={campaign.id}
+          enabled={campaignCapabilities(campaign).manage_battles}
+        />
         <div className="pt-3 sm:pt-0">
           {/* Before the start too: Start battle is greyed out but clickable (decision 3). */}
           <BattleActionPanel
