@@ -143,6 +143,17 @@ describe("Campaign chat window", () => {
     expect(within(dialog).queryByRole("textbox", { name: /message/i })).not.toBeInTheDocument();
   });
 
+  it("describes the chat window to screen readers (BUG-142)", async () => {
+    const user = setupUser();
+    await openCampaignPage();
+
+    await user.click(chatButton());
+
+    expect(screen.getByRole("dialog", { name: "Campaign Chat" })).toHaveAccessibleDescription(
+      "Messages to everyone in this campaign."
+    );
+  });
+
   it("shows a nameless member's messages under the server's display name, never an email (SEC-13)", async () => {
     const user = setupUser();
     fakeApi.on(MESSAGES, [chatMessage(2, NAMELESS, "Hello all")]);

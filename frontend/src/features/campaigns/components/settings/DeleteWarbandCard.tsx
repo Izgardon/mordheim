@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
-import { Dialog, DialogTitle, DialogTrigger, DialogContent } from "@components/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@components/dialog";
 import { Input } from "@components/input";
 
 import { deleteWarband } from "../../../warbands/api/warbands-api";
@@ -73,10 +79,10 @@ export default function DeleteWarbandCard({
         <DialogContent className="max-w-[400px]">
           <DialogTitle className="sr-only">Confirm deletion</DialogTitle>
           <p className="theme-heading-soft text-center text-base font-bold">CONFIRM DELETION</p>
-          <p className="text-center text-sm text-muted-foreground">
+          <DialogDescription className="block text-center text-sm text-muted-foreground">
             This will permanently delete{" "}
             <span className="font-semibold text-foreground">{warbandName}</span> and all its units.
-          </p>
+          </DialogDescription>
           <div className="space-y-3">
             <Input
               placeholder="Type delete"

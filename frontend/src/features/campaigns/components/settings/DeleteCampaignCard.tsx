@@ -1,6 +1,12 @@
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
-import { Dialog, DialogTitle, DialogTrigger, DialogContent } from "@components/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@components/dialog";
 import { Input } from "@components/input";
 
 type DeleteCampaignCardProps = {
@@ -44,6 +50,9 @@ export default function DeleteCampaignCard({
         <DialogContent className="max-w-[400px]">
           <DialogTitle className="sr-only">Confirm closure</DialogTitle>
           <p className="theme-heading-soft text-center text-base font-bold">CONFIRM CLOSURE</p>
+          <DialogDescription className="block text-center text-sm text-muted-foreground">
+            Type delete to erase this campaign for every member. This can't be undone.
+          </DialogDescription>
           <div className="space-y-3">
             <Input
               placeholder="Type delete"
