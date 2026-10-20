@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 // components
 import { Button } from "@components/button";
@@ -8,9 +8,10 @@ import FeedbackReportCard from "../components/settings/FeedbackReportCard";
 
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";
+import { addToCampaignList, useCampaignList } from "../hooks/useCampaignList";
 
 // api
-import { createCampaign, joinCampaign, listCampaigns } from "../api/campaigns-api";
+import { createCampaign, joinCampaign } from "../api/campaigns-api";
 
 // types
 import type {
@@ -22,37 +23,21 @@ import siteBackground from "@/assets/background/campaign_background.webp";
 import "../styles/campaigns.css";
 import { getErrorMessage } from "@/lib/get-error-message";
 
+const NO_CAMPAIGNS: CampaignSummary[] = [];
+
 export default function Campaigns() {
   const { user, signOut } = useAuth();
-  const [campaigns, setCampaigns] = useState<CampaignSummary[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  const loadCampaigns = useCallback(async () => {
-    setIsLoading(true);
-    setError("");
-    try {
-      const data = await listCampaigns();
-      setCampaigns(data);
-    } catch (errorResponse) {
-      setError(getErrorMessage(errorResponse, "Unable to load campaigns"));
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadCampaigns();
-  }, [loadCampaigns]);
+  const queryClient = useQueryClient();
+  const list = useCampaignList();
+  const campaigns = list.data ?? NO_CAMPAIGNS;
+  const error = list.error ? getErrorMessage(list.error, "Unable to load campaigns") : "";
 
   const handleCreate = async (payload: CampaignCreatePayload) => {
-    const created = await createCampaign(payload);
-    setCampaigns((prev) => [created, ...prev]);
+    addToCampaignList(queryClient, await createCampaign(payload));
   };
 
   const handleJoin = async (payload: CampaignJoinPayload) => {
-    const joined = await joinCampaign(payload);
-    setCampaigns((prev) => [joined, ...prev]);
+    addToCampaignList(queryClient, await joinCampaign(payload));
   };
 
   return (
@@ -78,7 +63,7 @@ export default function Campaigns() {
         <div className="campaign-list-shell campaign-list-shell--flat p-4 sm:p-6">
           <CampaignsHeader user={user} onCreate={handleCreate} onJoin={handleJoin} />
         </div>
-        <CampaignListSection campaigns={campaigns} isLoading={isLoading} error={error} />
+        <CampaignListSection campaigns={campaigns} isLoading={list.isPending} error={error} />
         {/* The same card as Settings, without a campaign's fields (CAMP-NEW-08). */}
         <FeedbackReportCard />
       </div>

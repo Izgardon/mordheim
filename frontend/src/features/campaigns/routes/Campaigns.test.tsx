@@ -2,11 +2,12 @@
  * The campaigns list and the join code: who sees the code on a campaign card, Copy, and joining
  * with a code (what the dialog sends and how it shows a refusal).
  */
-import { screen, waitFor, within } from "@testing-library/react";
+import { act, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError } from "@/lib/api-client";
+import { handleMembershipNotification } from "@/features/realtime/utils/membership-notifications";
 import { campaignFor, campaignSummary } from "@/test/campaign-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
@@ -37,7 +38,7 @@ const joined = campaignFor("player", {
 const card = (name: string) => screen.getByRole("article", { name });
 
 function renderCampaigns() {
-  renderWithQueryClient(
+  return renderWithQueryClient(
     <MemoryRouter initialEntries={["/campaigns"]}>
       <Campaigns />
     </MemoryRouter>
@@ -201,5 +202,42 @@ describe("Feedback on the campaigns page (CAMP-NEW-08)", () => {
       report_type: "Bug",
       message: "The list is slow",
     });
+  });
+});
+
+describe("A campaign you lose from elsewhere (CAMP-TWEAK-04, decision 1)", () => {
+  it("drops out of the list at once when it is deleted, or you are removed from it, reading nothing", async () => {
+    const { queryClient } = renderCampaigns();
+    expect(await screen.findByText("2 campaigns")).toBeInTheDocument();
+    const reads = fakeApi.countOf("GET /campaigns/");
+    const ctx = {
+      queryClient,
+      location: { pathname: "/campaigns" },
+      navigate: vi.fn(),
+      reloadNotifications: vi.fn(),
+      currentBattleCampaignId: null,
+      clearCurrentBattleSession: vi.fn(),
+    };
+
+    act(() => {
+      handleMembershipNotification(
+        { type: "campaign_deleted", payload: { campaign_id: 2, campaign_name: joined.name } },
+        ctx
+      );
+    });
+
+    await waitFor(() => expect(screen.queryByRole("article", { name: joined.name })).toBeNull());
+    expect(screen.getByText("1 campaign")).toBeInTheDocument();
+
+    act(() => {
+      handleMembershipNotification(
+        { type: "membership_removed", payload: { campaign_id: 1, campaign_name: owned.name } },
+        ctx
+      );
+    });
+
+    await waitFor(() => expect(screen.queryByRole("article", { name: owned.name })).toBeNull());
+    expect(fakeApi.countOf("GET /campaigns/")).toBe(reads);
+    expect(ctx.navigate).not.toHaveBeenCalled();
   });
 });

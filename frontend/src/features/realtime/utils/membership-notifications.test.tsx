@@ -125,3 +125,42 @@ describe("Your role or grants changed (CAMP-NEW-07)", () => {
     ).toBeInTheDocument();
   });
 });
+
+describe("A campaign deleted for good (CAMP-TWEAK-04)", () => {
+  const deleted = (campaignId: number, campaignName: string) =>
+    act(() =>
+      fakeRealtime.emit(MY_CHANNEL, "notification", {
+        type: "campaign_deleted",
+        payload: { campaign_id: campaignId, campaign_name: campaignName },
+      })
+    );
+
+  it("tells a member on its pages, takes them off, forgets it and reads the bell again", async () => {
+    const { queryClient } = renderCampaignRoute("/campaigns/1/skills");
+    expect(await screen.findByText("Skills page")).toBeInTheDocument();
+    await waitFor(() => expect(fakeRealtime.subscriberCount(MY_CHANNEL)).toBe(1));
+    const bellReads = fakeApi.countOf("GET /notifications/");
+
+    await deleted(1, "Shards of the Comet");
+
+    expect(
+      await screen.findByText("Shards of the Comet was deleted by its owner.")
+    ).toBeInTheDocument();
+    expect(await screen.findByText("Campaigns page")).toBeInTheDocument();
+    await waitFor(() => expect(fakeApi.countOf("GET /notifications/")).toBe(bellReads + 1));
+    // It is gone for good: nothing of it stays cached, and nothing reads it again.
+    expect(queryClient.getQueryData(["campaign", 1, "detail"])).toBeUndefined();
+    expect(fakeApi.countOf("GET /campaigns/1/")).toBe(1);
+  });
+
+  it("only tells a member who is looking at another campaign", async () => {
+    renderCampaignRoute("/campaigns/1/skills");
+    expect(await screen.findByText("Skills page")).toBeInTheDocument();
+    await waitFor(() => expect(fakeRealtime.subscriberCount(MY_CHANNEL)).toBe(1));
+
+    await deleted(2, "The Pit Fights");
+
+    expect(await screen.findByText("The Pit Fights was deleted by its owner.")).toBeVisible();
+    expect(screen.getByLabelText("Current path")).toHaveTextContent("/campaigns/1/skills");
+  });
+});
