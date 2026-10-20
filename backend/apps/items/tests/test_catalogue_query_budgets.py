@@ -182,9 +182,12 @@ class CatalogueWriteBudgetTests(CatalogueTestCase):
         gear = [{"item_id": make_entry(ITEMS, f"Kit {n}").id, "quantity": 1} for n in range(6)]
         sword = HIRED_SWORDS.body("Mercenary", self.campaign, skill_ids=skills, special_ids=specials, item_entries=gear)
 
-        # 2 availabilities: an INSERT and a restriction read and INSERT each; 2 properties: a get_or_create each
-        self.assertLessEqual(self.count(ITEMS.list_url(), item), 25)
+        # 2 availabilities: an INSERT and a restriction read and INSERT each; 2 properties: a get_or_create each;
+        # +2 since BUG-17: the duplicate guard's savepoint around the INSERT (a test runs inside a transaction; in
+        # production the guard's BEGIN and COMMIT are no queries)
+        self.assertLessEqual(self.count(ITEMS.list_url(), item), 27)
         # 15 links: a get_or_create each (SELECT, SAVEPOINT, INSERT, RELEASE), then the answer's N+1 (PERF-46);
-        # the brief estimated about 35
-        self.assertLessEqual(self.count(HIRED_SWORDS.list_url(), sword), 96)
-        self.assertLessEqual(self.count(SKILLS.list_url(), SKILLS.body("Feint", self.campaign)), 3)
+        # the brief estimated about 35; +2 since BUG-17, the duplicate guard's savepoint (as above)
+        self.assertLessEqual(self.count(HIRED_SWORDS.list_url(), sword), 98)
+        # membership, INSERT and the guard's savepoint (+2 since BUG-17, tests only)
+        self.assertLessEqual(self.count(SKILLS.list_url(), SKILLS.body("Feint", self.campaign)), 5)

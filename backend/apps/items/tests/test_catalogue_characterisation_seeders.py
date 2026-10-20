@@ -1,10 +1,8 @@
-"""Characterisation: the catalogue seeders on small files (pass 5; BUG-16, BUG-17, BUG-51, SEC-06, CAT-TEST-14).
+"""The catalogue seeders on small files (pass 5; BUG-16, BUG-17, BUG-51, SEC-06, CAT-TEST-14).
 
-The upserts in `seed_items`, `seed_skills`, `seed_spells_and_special` and `seed_bestiary`'s Animal items match on name
-and type without `campaign IS NULL`, and the restriction and property caches read every campaign's rows (BUG-17).
-`seed_races` and `seed_restrictions` scope their upserts to the book; only `seed_bestiary` is atomic. Five seeders'
-`--truncate` delete campaign rows too, and everything that references them (BUG-16). The full `seed_all` run on the
-committed data is in `test_catalogue_characterisation_seeding.py`.
+Since PR A every seeder reads and writes the book only (`campaign IS NULL`, no add-on), matches restrictions by text
+and type, and runs in one transaction; none takes `--truncate` (BUG-16: it deleted campaign rows and every copy of
+them). The full `seed_all` run on the committed data is in `test_catalogue_characterisation_seeding.py`.
 """
 
 import json
@@ -17,12 +15,12 @@ from typing import Any
 from unittest import expectedFailure
 
 from django.contrib.auth import get_user_model
-from django.core.exceptions import MultipleObjectsReturned
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.db import IntegrityError, transaction
 from django.test import SimpleTestCase, TestCase
 
-from apps.bestiary.models import BestiaryEntry, HiredSwordProfile, WarbandBestiaryFavourite
+from apps.bestiary.models import BestiaryEntry
 from apps.campaigns.models import Campaign, CampaignSettings
 from apps.items.models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemProperty
 from apps.items.services import sync_half_price_armour_for_campaign
@@ -30,9 +28,8 @@ from apps.races.models import Race
 from apps.restrictions.models import Restriction
 from apps.restrictions.utils import _RESTRICTION_CORRECTIONS, parse_unique_to
 from apps.skills.models import Skill
-from apps.special.models import Special
 from apps.spells.models import Spell
-from apps.warbands.models import Hero, Warband, WarbandItem
+from apps.warbands.models import Hero, Warband
 
 from .catalogue_support import STATS
 
@@ -87,53 +84,71 @@ class SeederTestCase(TestCase):
 
 
 class SeederUpsertTests(SeederTestCase):
-    def test_seed_items_stops_at_a_campaign_item_of_a_book_name_and_type_and_keeps_what_it_wrote(self):
-        # Characterises current behaviour (BUG-17, pinned; flips in PR A: campaign IS NULL, and atomic)
+    def test_seed_items_updates_the_book_item_beside_a_campaign_item_of_its_name_and_type(self):
+        # BUG-17 (was pinned: seed_items stopped at the campaign's Axe and kept what it had written; flipped in PR A:
+        # the upsert matches the book only)
         club = book_item("Club", 3, description="old")
-        book_item("Axe", 5)
-        book_item("Axe", 25, campaign=self.campaign)
+        axe = book_item("Axe", 5)
+        house_axe = book_item("Axe", 25, campaign=self.campaign, description="House axe")
         rows = [
             {"name": "Club", "type": "Weapon", "cost": 4, "description": "new"},
-            {"name": "Axe", "type": "Weapon", "cost": 5},
+            {"name": "Axe", "type": "Weapon", "cost": 6, "description": "Book axe"},
             {"name": "Zweihander", "type": "Weapon", "cost": 15},
         ]
 
-        with self.assertRaises(MultipleObjectsReturned):
-            seed_items(rows)
+        seed_items(rows)
 
         club.refresh_from_db()
+        axe.refresh_from_db()
+        house_axe.refresh_from_db()
         self.assertEqual((club.description, costs(club)), ("new", [4]))
-        self.assertFalse(Item.objects.filter(name="Zweihander").exists())
+        self.assertEqual((axe.description, costs(axe)), ("Book axe", [6]))
+        self.assertEqual((house_axe.campaign_id, house_axe.description, costs(house_axe)), (self.campaign.id, "House axe", [25]))  # fmt: skip
+        self.assertTrue(Item.objects.filter(name="Zweihander", campaign__isnull=True).exists())
 
-    def test_seed_items_rewrites_a_campaign_item_when_the_book_has_none_of_its_name(self):
-        # Characterises current behaviour (BUG-17, pinned; flips in PR A: a book Axe is created beside it)
+    def test_seed_items_creates_a_book_item_beside_a_campaign_item_of_its_name(self):
+        # BUG-17 (was pinned: the campaign's Axe was rewritten into the book's; flipped in PR A)
         house_axe = book_item("Axe", 25, campaign=self.campaign, description="House axe")
 
         seed_items([{"name": "Axe", "type": "Weapon", "cost": 5, "description": "Book axe"}])
 
         house_axe.refresh_from_db()
-        self.assertEqual((house_axe.campaign_id, house_axe.description, costs(house_axe)), (self.campaign.id, "Book axe", [5]))  # fmt: skip
-        self.assertFalse(Item.objects.filter(name="Axe", campaign__isnull=True).exists())
+        self.assertEqual((house_axe.campaign_id, house_axe.description, costs(house_axe)), (self.campaign.id, "House axe", [25]))  # fmt: skip
+        book = Item.objects.get(name="Axe", campaign__isnull=True)
+        self.assertEqual((book.description, costs(book)), ("Book axe", [5]))
 
-    def test_seed_items_stops_at_a_campaign_property_of_a_book_name_and_type(self):
-        # Characterises current behaviour (BUG-17, pinned; flips in PR A): a property row without an id is upserted
-        # by name and type, whatever its campaign
-        ItemProperty.objects.create(name="Parry", type="Weapon")
-        ItemProperty.objects.create(name="Parry", type="Weapon", campaign=self.campaign)
+    def test_seed_items_updates_the_book_property_and_leaves_the_campaign_property_alone(self):
+        # BUG-17 (was pinned: a property row without an id stopped at a campaign property of its name and type)
+        book = ItemProperty.objects.create(name="Parry", type="Weapon")
+        house = ItemProperty.objects.create(name="Parry", type="Weapon", campaign=self.campaign, description="House")
 
-        with self.assertRaises(MultipleObjectsReturned):
-            seed_items([], properties=[{"name": "Parry", "type": "Weapon", "description": "Parries."}])
+        seed_items([], properties=[{"name": "Parry", "type": "Weapon", "description": "Parries."}])
 
-    def test_seed_items_links_a_junk_global_restriction_of_the_same_text(self):
-        # Characterises current behaviour (SEC-06, BUG-17, pinned; flips in PR A): the restriction cache is keyed by
-        # text across every row, and the junk "Warband Group" row is read after the book's "Warband" one
-        Restriction.objects.create(type="Warband", restriction="Mercenaries")
-        junk = self.junk_restriction("Warband Group", "Mercenaries")
+        book.refresh_from_db()
+        house.refresh_from_db()
+        self.assertEqual((book.description, house.description), ("Parries.", "House"))
+
+    def test_seed_items_refuses_a_property_id_a_campaign_property_holds(self):
+        house = ItemProperty.objects.create(name="Lucky", type="Weapon", campaign=self.campaign)
+
+        with self.assertRaisesMessage(CommandError, f"Property id {house.id} (Parry) belongs to a campaign's property"):
+            seed_items([], properties=[{"id": house.id, "name": "Parry", "type": "Weapon"}])
+
+        house.refresh_from_db()
+        self.assertEqual((house.name, house.campaign_id), ("Lucky", self.campaign.id))
+
+    def test_seed_items_links_the_book_restriction_of_the_same_text_and_type(self):
+        # SEC-06, BUG-17 (was pinned: the restriction cache was keyed by text across every row, so the junk "Warband
+        # Group" row read last was linked; flipped in PR A: the book only, by text and type)
+        book = Restriction.objects.create(type="Warband", restriction="Mercenaries")
+        self.junk_restriction("Warband Group", "Mercenaries")
+        Restriction.objects.create(type="Warband", restriction="Mercenaries", campaign=self.campaign)
 
         seed_items([{"name": "Pistol", "type": "Weapon", "cost": 15, "unique_to": "Mercenaries only"}])
 
         links = ItemAvailabilityRestriction.objects.filter(item_availability__item__name="Pistol")
-        self.assertEqual(list(links.values_list("restriction_id", flat=True)), [junk.id])
+        self.assertEqual(list(links.values_list("restriction_id", flat=True)), [book.id])
+        self.assertEqual(Restriction.objects.filter(restriction="Mercenaries").count(), 3)
 
     def test_no_junk_global_restriction_can_share_a_book_text_and_type(self):
         # SEC-06 (was pinned: a junk global row of a book text stopped seed_restrictions; flipped in PR A: no POST,
@@ -147,6 +162,17 @@ class SeederUpsertTests(SeederTestCase):
 
         self.assertEqual(Restriction.objects.filter(restriction="Mercenaries").count(), 1)
 
+    def test_a_group_restriction_the_book_holds_once_is_linked_whatever_its_type(self):
+        # restrictions.json types 18 group restrictions "Warband Group" while "unique to" texts parse as "Warband"
+        group = Restriction.objects.create(type="Warband Group", restriction="Skaven")
+        Restriction.objects.create(type="Warband", restriction="Skaven", campaign=self.campaign)
+
+        seed_items([{"name": "Warplock", "type": "Weapon", "cost": 15, "unique_to": "Skaven only"}])
+
+        links = ItemAvailabilityRestriction.objects.filter(item_availability__item__name="Warplock")
+        self.assertEqual(list(links.values_list("restriction_id", flat=True)), [group.id])
+        self.assertEqual(Restriction.objects.filter(restriction="Skaven", campaign__isnull=True).count(), 1)
+
     def test_seed_restrictions_and_seed_races_upsert_the_book_and_leave_campaign_rows_alone(self):
         Restriction.objects.create(type="Warband", restriction="Mercenaries", campaign=self.campaign)
         Race.objects.create(name="Human", campaign=self.campaign, movement=9)
@@ -159,41 +185,52 @@ class SeederUpsertTests(SeederTestCase):
         self.assertCountEqual(Restriction.objects.values_list("campaign_id", flat=True), [None, self.campaign.id])
         self.assertCountEqual(Race.objects.values_list("campaign_id", "movement"), [(None, 4), (self.campaign.id, 9)])
 
-    def test_seed_skills_stops_at_a_campaign_skill_of_a_book_name_and_type(self):
-        # Characterises current behaviour (BUG-17, pinned; flips in PR A)
-        Skill.objects.create(name="Infiltration", type="Skaven")
-        Skill.objects.create(name="Infiltration", type="Skaven", campaign=self.campaign)
+    def test_seed_skills_updates_the_book_skill_beside_a_campaign_skill_of_its_name_and_type(self):
+        # BUG-17 (was pinned: seed_skills stopped at the campaign's skill; flipped in PR A)
+        book = Skill.objects.create(name="Infiltration", type="Skaven")
+        house = Skill.objects.create(name="Infiltration", type="Skaven", campaign=self.campaign, description="House")
 
         with data_file([{"name": "Infiltration", "type": "Skaven Skills", "description": "Sneaks."}]) as path:
-            with self.assertRaises(MultipleObjectsReturned):
-                run("seed_skills", json_path=path)
+            run("seed_skills", json_path=path)
 
-    def test_seed_spells_and_special_stop_at_a_campaign_spell_of_a_book_name_and_type(self):
-        # Characterises current behaviour (BUG-17, pinned; flips in PR A); it reads the committed files only
-        Spell.objects.create(name="Lifestealer", type="Necromancy")
-        Spell.objects.create(name="Lifestealer", type="Necromancy", campaign=self.campaign)
+        book.refresh_from_db()
+        house.refresh_from_db()
+        self.assertEqual((book.description, house.description), ("Sneaks.", "House"))
 
-        with self.assertRaises(MultipleObjectsReturned):
-            run("seed_spells_and_special")
+    def test_seed_spells_and_special_update_the_book_beside_a_campaign_spell_of_its_name_and_type(self):
+        # BUG-17 (was pinned: they stopped at the campaign's spell; flipped in PR A); it reads the committed files
+        book = Spell.objects.create(name="Lifestealer", type="Necromancy")
+        house = Spell.objects.create(name="Lifestealer", type="Necromancy", campaign=self.campaign, description="House")
 
-    def test_seed_bestiary_stops_at_a_campaign_animal_item_and_keeps_nothing_it_wrote(self):
-        # Characterises current behaviour (BUG-17, pinned; flips in PR A). seed_bestiary is the one atomic seeder,
-        # so the Bear written before the crash is rolled back.
-        book_item("Warhound", 15, type="Animal", subtype="Animal")
-        book_item("Warhound", 15, type="Animal", subtype="Animal", campaign=self.campaign)
+        run("seed_spells_and_special")
+
+        book.refresh_from_db()
+        house.refresh_from_db()
+        self.assertNotEqual(book.description, "")
+        self.assertEqual(house.description, "House")
+
+    def test_seed_bestiary_writes_the_book_animal_item_beside_a_campaign_one(self):
+        # BUG-17 (was pinned: seed_bestiary stopped at the campaign's Warhound item and kept nothing; flipped in PR A)
+        house = book_item("Warhound", 15, type="Animal", subtype="Animal", campaign=self.campaign)
+        shop = {"availabilities": [{"cost": 20, "rarity": 2}]}
         rows: list[dict[str, Any]] = [
-            {"name": "Bear", "type": "Animal", "movement": 6},
-            {"name": "Warhound", "type": "Animal", "shop_item": {"availabilities": [{"cost": 15, "rarity": 2}]}},
+            {"name": "Bear", "type": "Animal", **STATS},
+            {"name": "Warhound", "type": "Animal", **STATS, "shop_item": shop},
         ]
 
-        with data_file(rows) as path, self.assertRaises(MultipleObjectsReturned):
+        with data_file(rows) as path:
             run("seed_bestiary", json_paths=[path])
 
-        self.assertFalse(BestiaryEntry.objects.exists())
+        book = Item.objects.select_related("bestiary_entry").get(name="Warhound", type="Animal", campaign__isnull=True)
+        self.assertEqual((costs(book), book.bestiary_entry.name if book.bestiary_entry else None), ([20], "Warhound"))
+        house.refresh_from_db()
+        self.assertEqual((costs(house), house.bestiary_entry_id), ([15], None))
+        self.assertEqual(sorted(BestiaryEntry.objects.values_list("name", flat=True)), ["Bear", "Warhound"])
 
     def test_seed_bestiary_matches_entries_in_the_book_only(self):
         house = BestiaryEntry.objects.create(name="Warhound", type="Animal", campaign=self.campaign, movement=9)
-        rows = [{"name": "Warhound", "type": "Animal", "movement": 6, "shop_item": {"availabilities": [{"cost": 15}]}}]
+        shop = {"availabilities": [{"cost": 15}]}
+        rows = [{"name": "Warhound", "type": "Animal", **STATS, "movement": 6, "shop_item": shop}]
 
         with data_file(rows) as path:
             run("seed_bestiary", json_paths=[path])
@@ -202,6 +239,29 @@ class SeederUpsertTests(SeederTestCase):
         book = BestiaryEntry.objects.get(name="Warhound", campaign__isnull=True)
         self.assertEqual((house.movement, book.movement), (9, 6))
         self.assertEqual(Item.objects.get(name="Warhound", type="Animal").bestiary_entry_id, book.id)
+
+
+class SeederAtomicityTests(SeederTestCase):
+    """BUG-17: each seeder writes everything or nothing."""
+
+    def test_seed_items_failing_part_way_keeps_nothing(self):
+        rows: list[dict[str, Any]] = [
+            {"name": "Club", "type": "Weapon", "cost": 3},
+            {"name": "Axe", "type": "Weapon", "properties": [999]},
+        ]
+
+        with self.assertRaisesMessage(CommandError, "Unknown property id 999 for item 'Axe'"):
+            seed_items(rows)
+
+        self.assertFalse(Item.objects.exists())
+
+    def test_seed_races_failing_part_way_keeps_nothing(self):
+        rows = [{"name": "Human", **STATS}, {"name": "Elf", **STATS, "movement": "fast"}]
+
+        with data_file(rows) as path, self.assertRaises((CommandError, ValueError)):
+            run("seed_races", json_path=path)
+
+        self.assertFalse(Race.objects.exists())
 
 
 class HouseRuleReseedTests(SeederTestCase):
@@ -230,76 +290,24 @@ class HouseRuleReseedTests(SeederTestCase):
 
 
 class SeederTruncateTests(SeederTestCase):
-    """BUG-16's seeder half: `--truncate` deletes campaign rows and, through CASCADE, every copy of them."""
+    """BUG-16's seeder half: `--truncate` deleted campaign rows and, through CASCADE, every copy of them. PR A
+    removed it from every seeder; a wipe replaces it."""
 
-    def setUp(self) -> None:
-        super().setUp()
-        self.hero = Hero.objects.create(warband=self.warband, name="Abbess", unit_type="Matriarch")
-
-    def test_seed_items_truncate_deletes_campaign_items_their_copies_and_campaign_properties(self):
-        # Characterises current behaviour (BUG-16, pinned; flips in PR A: --truncate goes)
+    def test_no_seeder_takes_truncate_and_campaign_rows_and_their_copies_stay(self):
+        # BUG-16 (was pinned: seed_items, seed_skills, seed_spells_and_special and seed_restrictions --truncate
+        # deleted campaign rows, their copies, links and item settings; flipped in PR A)
+        hero = Hero.objects.create(warband=self.warband, name="Abbess", unit_type="Matriarch")
         charm = book_item("Lucky Charm", 25, campaign=self.campaign)
-        self.hero.hero_items.create(item=charm, cost=25)
-        WarbandItem.objects.create(warband=self.warband, item=charm, quantity=1, cost=25)
-        ItemProperty.objects.create(name="Lucky", campaign=self.campaign)
-
-        seed_items([{"name": "Club", "type": "Weapon", "cost": 3}], truncate=True)
-
-        self.assertEqual(list(Item.objects.values_list("name", "campaign_id")), [("Club", None)])
-        self.assertEqual((self.hero.hero_items.count(), WarbandItem.objects.count()), (0, 0))
-        self.assertFalse(ItemProperty.objects.exists())
-
-    def test_seed_skills_truncate_deletes_campaign_skills_and_the_heroes_who_knew_them_keep_nothing(self):
-        # Characterises current behaviour (BUG-16, pinned; flips in PR A)
+        hero.hero_items.create(item=charm, cost=25)
         skill = Skill.objects.create(name="Ambush", type="Combat", campaign=self.campaign)
-        self.hero.hero_skills.create(skill=skill)
+        hero.hero_skills.create(skill=skill)
+        commands = ("seed_items", "seed_skills", "seed_spells_and_special", "seed_races", "seed_restrictions")
+        for command in (*commands, "seed_bestiary"):
+            with self.subTest(command=command):
+                with self.assertRaisesMessage(TypeError, f"Unknown option(s) for {command} command: truncate."):
+                    call_command(command, truncate=True, stdout=StringIO())
 
-        with data_file([{"name": "Sprint", "type": "Speed", "description": "Runs."}]) as path:
-            run("seed_skills", json_path=path, truncate=True)
-
-        self.assertEqual(list(Skill.objects.values_list("name", "campaign_id")), [("Sprint", None)])
-        self.assertEqual(self.hero.hero_skills.count(), 0)
-
-    def test_seed_spells_and_special_truncate_deletes_campaign_spells_and_specials(self):
-        # Characterises current behaviour (BUG-16, pinned; flips in PR A)
-        spell = Spell.objects.create(name="Gloom", type="House", campaign=self.campaign)
-        special = Special.objects.create(name="Fearsome", type="House", campaign=self.campaign)
-        self.hero.hero_spells.create(spell=spell)
-        self.hero.hero_specials.create(special=special)
-
-        run("seed_spells_and_special", truncate=True)
-
-        self.assertFalse(Spell.objects.filter(campaign__isnull=False).exists())
-        self.assertFalse(Special.objects.filter(campaign__isnull=False).exists())
-        self.assertEqual((self.hero.hero_spells.count(), self.hero.hero_specials.count()), (0, 0))
-
-    def test_seed_restrictions_truncate_deletes_campaign_restrictions_their_links_and_the_campaigns_item_settings(self):
-        # Characterises current behaviour (BUG-16, pinned; flips in PR A)
-        theirs = Restriction.objects.create(type="Warband", restriction="Sisters", campaign=self.campaign)
-        setting = Restriction.objects.create(type="Setting", restriction="Lustria Setting")
-        CampaignSettings.objects.get(campaign=self.campaign).item_settings.add(setting)
-        relic = book_item("Relic", 10)
-        ItemAvailabilityRestriction.objects.create(item_availability=relic.availabilities.get(), restriction=theirs)
-
-        with data_file([{"type": "Warband", "restriction": "Mercenaries"}]) as path:
-            run("seed_restrictions", json_path=path, truncate=True)
-
-        self.assertEqual(list(Restriction.objects.values_list("restriction", flat=True)), ["Mercenaries"])
-        self.assertFalse(ItemAvailabilityRestriction.objects.exists())
-        self.assertEqual(CampaignSettings.objects.get(campaign=self.campaign).item_settings.count(), 0)
-
-    def test_seed_bestiary_truncate_deletes_only_book_entries_with_their_profiles_and_favourites(self):
-        book = BestiaryEntry.objects.create(name="Ogre", type="Hired Sword")
-        HiredSwordProfile.objects.create(bestiary_entry=book, hire_cost=80)
-        WarbandBestiaryFavourite.objects.create(warband=self.warband, bestiary_entry=book)
-        house = BestiaryEntry.objects.create(name="Warhound", type="Animal", campaign=self.campaign)
-
-        with data_file([{"name": "Bear", "type": "Animal"}]) as path:
-            run("seed_bestiary", json_paths=[path], truncate=True)
-
-        self.assertEqual(sorted(BestiaryEntry.objects.values_list("name", flat=True)), ["Bear", "Warhound"])
-        self.assertTrue(BestiaryEntry.objects.filter(id=house.id).exists())
-        self.assertEqual((HiredSwordProfile.objects.count(), WarbandBestiaryFavourite.objects.count()), (0, 0))
+        self.assertEqual((hero.hero_items.count(), hero.hero_skills.count()), (1, 1))
 
 
 class ParseUniqueToTests(SimpleTestCase):

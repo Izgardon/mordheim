@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.campaigns.permissions import get_membership, get_writable_membership, has_campaign_permission
+from apps.core.catalogue.duplicates import refusing_duplicates
 from apps.restrictions.models import Restriction
 
 from .models import (
@@ -15,6 +16,7 @@ from .models import (
 )
 from .serializers import ItemCreateSerializer, ItemPropertySerializer, ItemSerializer
 
+DUPLICATE = "an item with this name and type"  # the base constraint (BUG-17)
 HOUSE_RULE_ITEM = {
     "detail": "This item comes from a house rule and changes with it. Edit or delete the house rule instead.",
     "code": "house_rule_item",
@@ -113,7 +115,8 @@ class ItemListView(APIView):
         data["campaign"] = campaign_id
         serializer = ItemCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
-        item = serializer.save()  # type: ignore[operator]
+        with refusing_duplicates(DUPLICATE):
+            item = serializer.save()  # type: ignore[operator]
 
         if availabilities_data:
             _sync_availabilities(item, availabilities_data)
@@ -164,7 +167,8 @@ class ItemDetailView(APIView):
         availabilities_data = data.pop("availabilities", None)
         serializer = ItemCreateSerializer(item, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.save()  # type: ignore[operator]
+        with refusing_duplicates(DUPLICATE):
+            serializer.save()  # type: ignore[operator]
 
         if availabilities_data is not None:
             _sync_availabilities(item, availabilities_data)

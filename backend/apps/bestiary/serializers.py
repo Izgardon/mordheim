@@ -1,5 +1,8 @@
+from typing import Any
+
 from rest_framework import serializers
 
+from apps.core.catalogue.duplicates import refusing_duplicates
 from apps.items.serializers import ItemSerializer
 from apps.restrictions.models import Restriction
 from apps.skills.serializers import SkillSerializer
@@ -80,6 +83,7 @@ class BestiaryEntrySummarySerializer(serializers.ModelSerializer):
 class BestiaryEntryCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = BestiaryEntry
+        validators: list = []  # a duplicate name is the database constraint's 400 duplicate_entry (BUG-17)
         fields = (
             "campaign",
             "name",
@@ -98,6 +102,11 @@ class BestiaryEntryCreateSerializer(serializers.ModelSerializer):
             "large",
             "caster",
         )
+
+    def save(self, **kwargs: Any) -> Any:
+        """Write the entry; a name the campaign's bestiary already holds answers 400 duplicate_entry (BUG-17)."""
+        with refusing_duplicates("a bestiary entry or hired sword with this name"):
+            return super().save(**kwargs)
 
 
 class _HiredSwordRestrictionInlineSerializer(serializers.ModelSerializer):

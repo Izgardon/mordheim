@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from django.core.management.base import BaseCommand, CommandError
+from django.db import transaction
 
 from apps.races.models import Race
 
@@ -49,18 +50,15 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--json", dest="json_path", help="Path to a JSON file.")
-        parser.add_argument(
-            "--truncate",
-            action="store_true",
-            help="Delete existing races before importing.",
-        )
 
     def handle(self, *args, **options):
-        json_path = options.get("json_path")
-        truncate = options.get("truncate")
+        """Upsert the book's races, all or nothing; campaign rows are never read or written (BUG-17). There is no
+        --truncate: it deleted every race and every unit of one (BUG-16, BUG-130); a wipe replaces it."""
+        with transaction.atomic():
+            self._import(options)
 
-        if truncate:
-            Race.objects.all().delete()
+    def _import(self, options):
+        json_path = options.get("json_path")
 
         path = Path(json_path) if json_path else _resolve_default_json_path()
         if not path or not path.exists():
@@ -103,7 +101,7 @@ class Command(BaseCommand):
                 skipped += 1
                 continue
 
-            race = Race.objects.filter(name=name, campaign__isnull=True).first()
+            race = Race.objects.filter(name=name, campaign__isnull=True, campaign_type__isnull=True).first()
             if race:
                 for key, value in fields.items():
                     setattr(race, key, value)

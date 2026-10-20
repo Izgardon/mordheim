@@ -3,9 +3,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.campaigns.permissions import get_membership, get_writable_membership, has_campaign_permission
+from apps.core.catalogue.duplicates import refusing_duplicates
 
 from .models import Special
 from .serializers import SpecialCreateSerializer, SpecialSerializer
+
+DUPLICATE = "a special with this name and type"  # the base constraint (BUG-17)
 
 
 class SpecialListView(APIView):
@@ -51,7 +54,8 @@ class SpecialListView(APIView):
         data["campaign"] = campaign_id
         serializer = SpecialCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
-        special = serializer.save()
+        with refusing_duplicates(DUPLICATE):
+            special = serializer.save()
         return Response(SpecialSerializer(special).data, status=status.HTTP_201_CREATED)
 
 
@@ -88,7 +92,8 @@ class SpecialDetailView(APIView):
         data.pop("campaign", None)
         serializer = SpecialCreateSerializer(special, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        with refusing_duplicates(DUPLICATE):
+            serializer.save()
         return Response(SpecialSerializer(special).data)
 
     def delete(self, request, special_id):

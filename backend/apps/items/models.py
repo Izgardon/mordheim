@@ -47,7 +47,16 @@ class Item(models.Model):
                 fields=["campaign", "generated_effect_key", "source_item"],
                 condition=models.Q(generated_effect_key__isnull=False),
                 name="item_unique_house_rule_clone",
-            )
+            ),
+            # one item per name and type in the book, an add-on and a campaign (BUG-17, IMP-83). The effect key keeps
+            # a house rule's clone apart from a custom item of the book armour's name, which a campaign may already
+            # hold when the rule is switched on (a condition would do the same, but Django 5.0 writes a partial
+            # NULLS NOT DISTINCT index's SQL in the wrong order)
+            models.UniqueConstraint(
+                fields=["campaign", "campaign_type", "name", "type", "generated_effect_key"],
+                name="item_unique_name_type",
+                nulls_distinct=False,
+            ),
         ]
 
     def __str__(self):

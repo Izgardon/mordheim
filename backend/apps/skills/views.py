@@ -3,9 +3,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.campaigns.permissions import get_membership, get_writable_membership, has_campaign_permission
+from apps.core.catalogue.duplicates import refusing_duplicates
 
 from .models import Skill
 from .serializers import SkillCreateSerializer, SkillSerializer
+
+DUPLICATE = "a skill with this name and type"  # the base constraint (BUG-17)
 
 
 class SkillListView(APIView):
@@ -51,7 +54,8 @@ class SkillListView(APIView):
         data["campaign"] = campaign_id
         serializer = SkillCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
-        skill = serializer.save()
+        with refusing_duplicates(DUPLICATE):
+            skill = serializer.save()
         return Response(SkillSerializer(skill).data, status=status.HTTP_201_CREATED)
 
 
@@ -88,7 +92,8 @@ class SkillDetailView(APIView):
         data.pop("campaign", None)
         serializer = SkillCreateSerializer(skill, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        with refusing_duplicates(DUPLICATE):
+            serializer.save()
         return Response(SkillSerializer(skill).data)
 
     def delete(self, request, skill_id):

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from django.core.management.base import BaseCommand, CommandError
 from django.core.management.color import no_style
-from django.db import connection
+from django.db import connection, transaction
 
 from apps.items.models import (
     Item,
@@ -13,8 +13,7 @@ from apps.items.models import (
     ItemProperty,
     ItemPropertyLink,
 )
-from apps.restrictions.models import Restriction
-from apps.restrictions.utils import parse_unique_to
+from apps.restrictions.book import BookRestrictions
 
 DEFAULT_JSON_PATHS = [
     Path("apps/items/data/standard-items.json"),
@@ -131,30 +130,7 @@ def _reset_sequence(model):
             cursor.execute(sql)
 
 
-def _resolve_restrictions(unique_to_text, restriction_cache):
-    """Parse a unique_to string and resolve to Restriction objects with notes.
-
-    Uses the shared parse_unique_to utility. Creates any missing restrictions
-    with a default type of 'Warband'.
-
-    Returns a list of (Restriction, additional_note) tuples.
-    """
-    parsed = parse_unique_to(unique_to_text)
-    results = []
-    for entry in parsed:
-        cache_key = entry["restriction"]
-        restriction = restriction_cache.get(cache_key)
-        if not restriction:
-            restriction, _ = Restriction.objects.get_or_create(
-                restriction=entry["restriction"],
-                defaults={"type": entry["type"]},
-            )
-            restriction_cache[cache_key] = restriction
-        results.append((restriction, entry["additional_note"]))
-    return results
-
-
-def _sync_availabilities(item, availabilities_data, restriction_cache):
+def _sync_availabilities(item, availabilities_data, restriction_cache: BookRestrictions):
     """Replace all availability rows for an item."""
     item.availabilities.all().delete()
     if not availabilities_data:
@@ -168,7 +144,7 @@ def _sync_availabilities(item, availabilities_data, restriction_cache):
         )
         unique_to_text = _normalize(entry.get("unique_to"))
         if unique_to_text:
-            resolved = _resolve_restrictions(unique_to_text, restriction_cache)
+            resolved = restriction_cache.resolve(unique_to_text)
             if resolved:
                 ItemAvailabilityRestriction.objects.bulk_create(
                     [
@@ -192,21 +168,16 @@ class Command(BaseCommand):
             dest="properties_path",
             help="Path to a JSON file containing item properties.",
         )
-        parser.add_argument(
-            "--truncate",
-            action="store_true",
-            help="Delete existing items before importing.",
-        )
 
     def handle(self, *args, **options):
+        """Upsert the book's items and properties, all or nothing; campaign rows are never read or written (BUG-17).
+        There is no --truncate: it deleted campaign rows and every copy of them (BUG-16); a wipe replaces it."""
+        with transaction.atomic():
+            self._import(options)
+
+    def _import(self, options):
         json_path = options.get("json_path")
         properties_path = options.get("properties_path")
-        truncate = options.get("truncate")
-
-        if truncate:
-            ItemPropertyLink.objects.all().delete()
-            Item.objects.all().delete()
-            ItemProperty.objects.all().delete()
 
         paths = [Path(json_path)] if json_path else _resolve_default_json_paths()
         if not paths:
@@ -221,9 +192,10 @@ class Command(BaseCommand):
         skipped = 0
         property_cache_by_id = {}
         property_cache_by_key = {}
-        for prop in ItemProperty.objects.all():
+        for prop in ItemProperty.objects.filter(campaign__isnull=True):
             property_cache_by_id[prop.id] = prop
             property_cache_by_key[_property_cache_key(prop.name, prop.type)] = prop
+        campaign_property_ids = set(ItemProperty.objects.filter(campaign__isnull=False).values_list("id", flat=True))
 
         if property_paths:
             property_entries = []
@@ -258,6 +230,8 @@ class Command(BaseCommand):
                         f"Duplicate property name/type with different ids: {prop_name} [{prop_type or 'Any'}] ({prop_id} vs {existing.id})"
                     )
 
+                if prop_id in campaign_property_ids:  # the id was given to a campaign's property since the last seed
+                    raise CommandError(f"Property id {prop_id} ({prop_name}) belongs to a campaign's property: {path}")
                 if prop_id is not None:
                     item_property, _ = ItemProperty.objects.update_or_create(
                         id=prop_id,
@@ -271,6 +245,7 @@ class Command(BaseCommand):
                     item_property, _ = ItemProperty.objects.update_or_create(
                         name=prop_name,
                         type=prop_type,
+                        campaign=None,
                         defaults={
                             "description": prop_description,
                         },
@@ -282,9 +257,7 @@ class Command(BaseCommand):
 
             _reset_sequence(ItemProperty)
 
-        restriction_cache = {}
-        for r in Restriction.objects.all():
-            restriction_cache[r.restriction] = r
+        restriction_cache = BookRestrictions()
 
         for path in paths:
             try:
@@ -320,6 +293,8 @@ class Command(BaseCommand):
                 item, was_created = Item.objects.update_or_create(
                     name=raw_name,
                     type=raw_type,
+                    campaign=None,  # the book: never a campaign's entry or a house-rule clone (BUG-17)
+                    campaign_type=None,
                     defaults={
                         "subtype": raw_subtype or "",
                         "grade": raw_grade or "1a",

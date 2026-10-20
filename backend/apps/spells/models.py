@@ -20,6 +20,13 @@ class Spell(models.Model):
 
     class Meta:
         db_table = "spell"
+        constraints = [  # one per name and type in the book, an add-on and a campaign (BUG-17, IMP-83)
+            models.UniqueConstraint(
+                fields=["campaign", "campaign_type", "name", "type"],
+                name="spell_unique_name_type",
+                nulls_distinct=False,
+            )
+        ]
         ordering = ["type", "name"]
 
     def __str__(self):

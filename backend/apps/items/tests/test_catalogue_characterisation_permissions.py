@@ -43,7 +43,7 @@ class CataloguePermissionTestCase(CatalogueTestCase):
         return make_entry(kind, name or f"House {kind.key}", campaign=self.campaign)
 
     def edit(self, user: Any, kind: CatalogueKind, entry: Any) -> int:
-        return int(self.patch_as(user, kind.detail_url(entry.id), {"name": "Renamed"}).status_code)
+        return int(self.patch_as(user, kind.detail_url(entry.id), {"name": f"Renamed {entry.id}"}).status_code)
 
     def delete(self, user: Any, kind: CatalogueKind, entry: Any) -> int:
         return int(self.delete_as(user, kind.detail_url(entry.id)).status_code)

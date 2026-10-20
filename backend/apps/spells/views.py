@@ -3,9 +3,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.campaigns.permissions import get_membership, get_writable_membership, has_campaign_permission
+from apps.core.catalogue.duplicates import refusing_duplicates
 
 from .models import Spell
 from .serializers import SpellCreateSerializer, SpellSerializer
+
+DUPLICATE = "a spell with this name and type"  # the base constraint (BUG-17)
 
 
 class SpellListView(APIView):
@@ -51,7 +54,8 @@ class SpellListView(APIView):
         data["campaign"] = campaign_id
         serializer = SpellCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
-        spell = serializer.save()
+        with refusing_duplicates(DUPLICATE):
+            spell = serializer.save()
         return Response(SpellSerializer(spell).data, status=status.HTTP_201_CREATED)
 
 
@@ -88,7 +92,8 @@ class SpellDetailView(APIView):
         data.pop("campaign", None)
         serializer = SpellCreateSerializer(spell, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        with refusing_duplicates(DUPLICATE):
+            serializer.save()
         return Response(SpellSerializer(spell).data)
 
     def delete(self, request, spell_id):

@@ -3,7 +3,7 @@ from pathlib import Path
 
 from django.core.management.base import BaseCommand, CommandError
 from django.core.management.color import no_style
-from django.db import connection
+from django.db import connection, transaction
 
 from apps.restrictions.models import Restriction
 
@@ -24,18 +24,16 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--json", dest="json_path", help="Path to a JSON file.")
-        parser.add_argument(
-            "--truncate",
-            action="store_true",
-            help="Delete existing restrictions before importing.",
-        )
 
     def handle(self, *args, **options):
-        json_path = options.get("json_path")
-        truncate = options.get("truncate")
+        """Upsert the book's restrictions by text and type, all or nothing; campaign rows are never read or written
+        (BUG-17). There is no --truncate: it deleted campaign restrictions, their links and every campaign's item
+        settings (BUG-16); a wipe replaces it."""
+        with transaction.atomic():
+            self._import(options)
 
-        if truncate:
-            Restriction.objects.all().delete()
+    def _import(self, options):
+        json_path = options.get("json_path")
 
         path = Path(json_path) if json_path else DEFAULT_JSON_PATH
         if not path.exists():
@@ -58,10 +56,8 @@ class Command(BaseCommand):
             if not restriction_text:
                 continue
 
-            _, was_created = Restriction.objects.update_or_create(
-                restriction=restriction_text,
-                campaign__isnull=True,
-                defaults={"type": restriction_type},
+            _, was_created = Restriction.objects.get_or_create(
+                restriction=restriction_text, type=restriction_type, campaign=None, campaign_type=None
             )
             if was_created:
                 created += 1

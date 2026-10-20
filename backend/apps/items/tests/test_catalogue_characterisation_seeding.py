@@ -1,10 +1,10 @@
-"""Characterisation: the catalogue seeders on the committed data (pass 5; BUG-17, BUG-51, BUG-54, CAT-TEST-12, -13).
+"""The catalogue seeders on the committed data (pass 5; BUG-17, BUG-51, BUG-54, CAT-TEST-12, -13).
 
 `seed_all` runs `seed_races`, `seed_restrictions`, `seed_items`, `seed_skills`, `seed_spells_and_special`, then
-`seed_bestiary`, each upserting the book by name (and type), and `seed_catalogue_if_empty` runs it on a wiped
-production database. Only `seed_bestiary` is atomic. On an empty database it works and can run again; once a campaign
-holds an entry of a book entry's name and type (a custom override, a house-rule clone, and every version PR C's
-copy-on-write makes), the upserts find two rows and crash (BUG-17). Small, file-driven seeder cases are in
+`seed_bestiary`, each upserting the book by name (and type) in its own transaction, and `seed_catalogue_if_empty`
+runs it on a wiped production database. It works on an empty database and again later, also once a campaign holds
+an entry of a book entry's name and type (a custom override, a house-rule clone, and every version PR C's
+copy-on-write makes): the seeders read and write the book only (BUG-17). Small, file-driven seeder cases are in
 `test_catalogue_characterisation_seeders.py`.
 """
 
@@ -13,7 +13,6 @@ from io import StringIO
 from unittest import expectedFailure
 
 from django.contrib.auth import get_user_model
-from django.core.exceptions import MultipleObjectsReturned
 from django.core.management import call_command
 from django.db import connection
 from django.test import TestCase
@@ -151,7 +150,6 @@ class SeedAllTests(TestCase):
         sync_half_price_armour_for_campaign(campaign.id)
         return campaign, axe
 
-    @expectedFailure
     def test_reseeding_with_a_campaign_axe_and_half_price_armour_leaves_the_campaign_rows_alone(self):
         # BUG-17, CAT-TEST-12: the second run must update the book, keep the campaign's rows and add no duplicates
         campaign, axe = self._campaign_with_an_axe_and_half_price_armour()
@@ -164,28 +162,27 @@ class SeedAllTests(TestCase):
         self.assertEqual(set(Item.objects.filter(campaign=campaign).values_list("id", "name")), campaign_rows)
         self.assertEqual(axe.availabilities.get().cost, 25)
 
-    def test_a_reseed_with_a_same_named_campaign_item_crashes_in_seed_items(self):
-        # Characterises current behaviour (BUG-17, pinned; flips in PR A): the Axe, the first item in
-        # standard-items.json, matches the book Axe and the campaign's, so seed_items stops before writing any item
-        self._campaign_with_an_axe_and_half_price_armour()
-        output = StringIO()
+    def test_a_reseed_rewrites_the_book_axe_beside_a_same_named_campaign_axe(self):
+        # BUG-17 (was pinned: the Axe, the first item in standard-items.json, matched the book Axe and the campaign's,
+        # so seed_items stopped before writing any item; flipped in PR A)
+        campaign, axe = self._campaign_with_an_axe_and_half_price_armour()
+        Item.objects.filter(campaign__isnull=True, name="Axe").update(description="stale")
 
-        with redirect_stdout(output), self.assertRaises(MultipleObjectsReturned):
-            call_command("seed_all")
+        seed_all()
 
-        self.assertIn("seed_restrictions completed", output.getvalue())
-        self.assertIn("seed_items failed: get() returned more than one Item -- it returned 2!", output.getvalue())
-        self.assertNotIn("seed_skills", output.getvalue())
+        self.assertNotEqual(Item.objects.get(name="Axe", campaign__isnull=True).description, "stale")
+        self.assertEqual(Item.objects.get(id=axe.id).campaign_id, campaign.id)
 
-    def test_a_reseed_with_only_half_price_armour_crashes_on_the_first_cloned_armour(self):
-        # Characterises current behaviour (BUG-17, pinned; flips in PR A): every clone shares its book armour's name
-        # and type. seed_items is not atomic, so the items before the first armour are already written.
+    def test_a_reseed_rewrites_every_book_armour_and_leaves_the_clones(self):
+        # BUG-17 (was pinned: every clone shared its book armour's name and type, so seed_items crashed on the first
+        # armour with the items before it already rewritten; flipped in PR A: the book only, and atomic)
         campaign = Campaign.objects.create(name="Shards", join_code="SHARDS")
         sync_half_price_armour_for_campaign(campaign.id)
+        clones = set(Item.objects.filter(campaign=campaign).values_list("id", "source_item_id"))
         Item.objects.filter(campaign__isnull=True, name__in=["Axe", "Wyrdstone Pendulum"]).update(description="stale")
 
-        with redirect_stdout(StringIO()), self.assertRaises(MultipleObjectsReturned):
-            call_command("seed_all")
+        seed_all()
 
-        self.assertNotEqual(Item.objects.get(name="Axe").description, "stale")  # before the armour: written again
-        self.assertEqual(Item.objects.get(name="Wyrdstone Pendulum").description, "stale")  # after: not
+        self.assertNotEqual(Item.objects.get(name="Axe").description, "stale")
+        self.assertNotEqual(Item.objects.get(name="Wyrdstone Pendulum").description, "stale")
+        self.assertEqual(set(Item.objects.filter(campaign=campaign).values_list("id", "source_item_id")), clones)

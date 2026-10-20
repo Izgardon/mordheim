@@ -19,8 +19,7 @@ from apps.items.models import (
     ItemAvailability,
     ItemAvailabilityRestriction,
 )
-from apps.restrictions.models import Restriction
-from apps.restrictions.utils import parse_unique_to
+from apps.restrictions.book import BookRestrictions
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
@@ -124,22 +123,6 @@ def _resolve_equipment_item(item_name, item_type, item_cache, item_name_cache):
     return item_name_cache.get(alias_key)
 
 
-def _resolve_restrictions(unique_to_text, restriction_cache):
-    parsed = parse_unique_to(unique_to_text)
-    results = []
-    for entry in parsed:
-        cache_key = entry["restriction"]
-        restriction = restriction_cache.get(cache_key)
-        if not restriction:
-            restriction, _ = Restriction.objects.get_or_create(
-                restriction=entry["restriction"],
-                defaults={"type": entry["type"]},
-            )
-            restriction_cache[cache_key] = restriction
-        results.append((restriction, entry["additional_note"]))
-    return results
-
-
 def _extract_name_and_description(item):
     """Return (name, description) from either a plain string or a dict."""
     if isinstance(item, str):
@@ -149,7 +132,7 @@ def _extract_name_and_description(item):
     return "", ""
 
 
-def _sync_availabilities(item, availabilities_data, restriction_cache):
+def _sync_availabilities(item, availabilities_data, restriction_cache: BookRestrictions):
     item.availabilities.all().delete()
     if not availabilities_data:
         return
@@ -163,7 +146,7 @@ def _sync_availabilities(item, availabilities_data, restriction_cache):
         )
         unique_to_text = (avail_data.get("unique_to") or "").strip()
         if unique_to_text:
-            resolved = _resolve_restrictions(unique_to_text, restriction_cache)
+            resolved = restriction_cache.resolve(unique_to_text)
             if resolved:
                 ItemAvailabilityRestriction.objects.bulk_create(
                     [
@@ -187,11 +170,6 @@ class Command(BaseCommand):
             action="append",
             help="Path to a bestiary JSON file. May be specified multiple times.",
         )
-        parser.add_argument(
-            "--truncate",
-            action="store_true",
-            help="Delete existing global bestiary entries before importing.",
-        )
 
     def handle(self, *args, **options):
         paths = (
@@ -204,34 +182,29 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING("No bestiary JSON files found."))
             return
 
-        if options.get("truncate"):
-            BestiaryEntry.objects.filter(campaign__isnull=True).delete()
-
         # Build lookup caches for M2M resolution
         skill_cache: dict[str, Skill] = {}
-        for s in Skill.objects.filter(campaign__isnull=True):
+        for s in Skill.objects.filter(campaign__isnull=True, campaign_type__isnull=True):
             skill_cache[s.name.strip().lower()] = s
 
         special_cache: dict[str, Special] = {}
-        for sp in Special.objects.filter(campaign__isnull=True):
+        for sp in Special.objects.filter(campaign__isnull=True, campaign_type__isnull=True):
             special_cache[sp.name.strip().lower()] = sp
 
         spell_cache: dict[str, Spell] = {}
-        for sl in Spell.objects.filter(campaign__isnull=True):
+        for sl in Spell.objects.filter(campaign__isnull=True, campaign_type__isnull=True):
             spell_cache[sl.name.strip().lower()] = sl
 
         item_cache: dict[tuple[str, str], Item] = {}
         item_name_cache: dict[str, Item] = {}
-        for i in Item.objects.filter(campaign__isnull=True):
+        for i in Item.objects.filter(campaign__isnull=True, campaign_type__isnull=True):
             normalized_name = _normalize_lookup_key(i.name)
             normalized_type = _normalize_lookup_key(i.type)
             key = (normalized_name, normalized_type)
             item_cache[key] = i
             item_name_cache.setdefault(normalized_name, i)
 
-        restriction_cache = {}
-        for r in Restriction.objects.all():
-            restriction_cache[r.restriction] = r
+        restriction_cache = BookRestrictions()
 
         created = 0
         updated = 0
@@ -345,6 +318,8 @@ class Command(BaseCommand):
                         item, item_was_created = Item.objects.update_or_create(
                             name=name,
                             type="Animal",
+                            campaign=None,  # the book: never a campaign's item of the name (BUG-17)
+                            campaign_type=None,
                             defaults={
                                 "subtype": entry_type,
                                 "grade": shop_item_data.get("grade", "1a"),
@@ -419,7 +394,7 @@ class Command(BaseCommand):
                         HiredSwordProfileRestriction.objects.filter(hired_sword_profile=profile).delete()
                         unique_to_text = (hired_sword_data.get("unique_to") or "").strip()
                         if unique_to_text:
-                            resolved = _resolve_restrictions(unique_to_text, restriction_cache)
+                            resolved = restriction_cache.resolve(unique_to_text)
                             if resolved:
                                 HiredSwordProfileRestriction.objects.bulk_create(
                                     [

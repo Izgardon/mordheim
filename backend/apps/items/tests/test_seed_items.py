@@ -54,7 +54,6 @@ class SeedItemsCommandTests(TestCase):
                 "seed_items",
                 json_path=str(items_path),
                 properties_path=str(properties_path),
-                truncate=True,
             )
 
         self.assertEqual(ItemProperty.objects.filter(name="Parry").count(), 2)

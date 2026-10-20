@@ -55,7 +55,14 @@ class BestiaryEntry(StatBlock):
         db_table = "bestiary_entry"
         ordering = ["type", "name"]
         verbose_name_plural = "bestiary entries"
-        constraints = stat_constraints("bestiary_entry")
+        constraints = [
+            *stat_constraints("bestiary_entry"),
+            # one entry per name in the book and in a campaign, as seed_bestiary upserts (BUG-17, IMP-83): an animal
+            # and a hired sword (an entry of type "Hired Sword") share the names
+            models.UniqueConstraint(
+                fields=["campaign", "name"], name="bestiary_entry_unique_name", nulls_distinct=False
+            ),
+        ]
 
     def __str__(self):
         return f"{self.name} ({self.type})"

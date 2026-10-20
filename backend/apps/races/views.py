@@ -5,9 +5,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.campaigns.permissions import get_membership, get_writable_membership, is_admin, is_owner
+from apps.core.catalogue.duplicates import refusing_duplicates
 
 from .models import Race
 from .serializers import RaceCreateSerializer, RaceSerializer
+
+DUPLICATE = "a race with this name"  # the base constraint (BUG-17)
 
 
 class RaceListView(APIView):
@@ -49,7 +52,8 @@ class RaceListView(APIView):
         data.pop("campaign_id", None)
         serializer = RaceCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
-        race = serializer.save(campaign_id=campaign_id)
+        with refusing_duplicates(DUPLICATE):
+            race = serializer.save(campaign_id=campaign_id)
         return Response(RaceSerializer(race).data, status=status.HTTP_201_CREATED)
 
 
@@ -78,7 +82,8 @@ class RaceDetailView(APIView):
         data.pop("campaign_id", None)
         serializer = RaceCreateSerializer(race, data=data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        with refusing_duplicates(DUPLICATE):
+            serializer.save()
         return Response(RaceSerializer(race).data)
 
     def put(self, request, race_id):

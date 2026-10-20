@@ -158,16 +158,19 @@ class RaceDeleteTests(CatalogueTestCase):
 
         self.assertEqual(self.surviving_units(), ["Cooks", "Stranger"])
 
-    def test_seed_races_truncate_deletes_every_race_and_every_unit_with_one(self):
-        # Characterises current behaviour (BUG-130, BUG-16, pinned; flips in PR A: --truncate goes from the seeders)
+    def test_reseeding_races_keeps_every_race_and_every_unit_of_one(self):
+        # BUG-130, BUG-16 (was pinned: seed_races --truncate deleted every race and every unit with one; flipped in
+        # PR A: --truncate is gone, and the upsert updates the book's Human in place)
         with TemporaryDirectory() as folder:
             path = Path(folder) / "races.json"
             path.write_text(json.dumps([{"name": "Human", **STATS}]), encoding="utf-8")
-            call_command("seed_races", json_path=str(path), truncate=True, stdout=StringIO())
+            with self.assertRaises(TypeError):
+                call_command("seed_races", json_path=str(path), truncate=True, stdout=StringIO())
+            call_command("seed_races", json_path=str(path), stdout=StringIO())
 
-        self.assertEqual(self.surviving_units(), ["Stranger"])
-        self.assertEqual(list(Race.objects.values_list("name", "campaign_id")), [("Human", None)])
-        self.assertNotEqual(Race.objects.get().id, self.human.id)
+        self.assertEqual(self.surviving_units(), ["Abbess", "Cooks", "Scout", "Stranger"])
+        self.assertCountEqual(Race.objects.values_list("name", "campaign_id"), [("Human", None), ("Halfling", self.campaign.id)])  # fmt: skip
+        self.assertEqual(Race.objects.get(name="Human").id, self.human.id)
 
     def test_a_race_cannot_be_deleted_through_the_api(self):
         self.assertEqual(self.delete_as(self.owner, RACES.detail_url(self.halfling.id)).status_code, 405)

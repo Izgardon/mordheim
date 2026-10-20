@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from django.core.management.base import BaseCommand
+from django.db import transaction
 
 from apps.special.models import Special
 from apps.spells.models import Spell
@@ -13,22 +14,12 @@ SPECIAL_JSON_PATH = Path("apps/special/data/special.json")
 class Command(BaseCommand):
     help = "Seed spells and special from JSON data files."
 
-    def add_arguments(self, parser):
-        parser.add_argument(
-            "--truncate",
-            action="store_true",
-            help="Delete existing spells and special before seeding.",
-        )
-
     def handle(self, *args, **options):
-        truncate = options.get("truncate")
-
-        if truncate:
-            Spell.objects.all().delete()
-            Special.objects.all().delete()
-
-        spells_created, spells_updated = self._seed_spells()
-        special_created, special_updated = self._seed_special()
+        """Upsert the book's spells and specials, all or nothing; campaign rows are never read or written (BUG-17).
+        There is no --truncate: it deleted campaign rows and every copy of them (BUG-16); a wipe replaces it."""
+        with transaction.atomic():
+            spells_created, spells_updated = self._seed_spells()
+            special_created, special_updated = self._seed_special()
 
         self.stdout.write(
             self.style.SUCCESS(
@@ -60,6 +51,8 @@ class Command(BaseCommand):
             _, was_created = Spell.objects.update_or_create(
                 name=name,
                 type=spell_type,
+                campaign=None,  # the book (BUG-17)
+                campaign_type=None,
                 defaults={"description": description, "dc": dc, "roll": roll},
             )
 
@@ -90,6 +83,8 @@ class Command(BaseCommand):
             _, was_created = Special.objects.update_or_create(
                 name=name,
                 type=special_type,
+                campaign=None,  # the book (BUG-17)
+                campaign_type=None,
                 defaults={"description": description},
             )
 

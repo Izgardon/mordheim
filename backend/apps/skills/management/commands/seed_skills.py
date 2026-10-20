@@ -5,6 +5,7 @@ from pathlib import Path
 from urllib.request import urlopen
 
 from django.core.management.base import BaseCommand, CommandError
+from django.db import transaction
 
 from apps.skills.models import Skill
 
@@ -86,20 +87,17 @@ class Command(BaseCommand):
         parser.add_argument("--csv", dest="csv_path", help="Path to a CSV file.")
         parser.add_argument("--json", dest="json_path", help="Path to a JSON file.")
         parser.add_argument("--url", dest="url", help="URL to a CSV export.")
-        parser.add_argument(
-            "--truncate",
-            action="store_true",
-            help="Delete existing skills before importing.",
-        )
 
     def handle(self, *args, **options):
+        """Upsert the book's skills, all or nothing; campaign rows are never read or written (BUG-17). There is no
+        --truncate: it deleted campaign skills and every copy of them (BUG-16); a wipe replaces it."""
+        with transaction.atomic():
+            self._import(options)
+
+    def _import(self, options):
         csv_path = options.get("csv_path")
         json_path = options.get("json_path")
         url = options.get("url")
-        truncate = options.get("truncate")
-
-        if truncate:
-            Skill.objects.all().delete()
 
         if json_path:
             entries = self._load_json_entries(json_path)
@@ -140,6 +138,8 @@ class Command(BaseCommand):
             skill, was_created = Skill.objects.update_or_create(
                 name=raw_name,
                 type=raw_type,
+                campaign=None,  # the book (BUG-17)
+                campaign_type=None,
                 defaults={"description": raw_description},
             )
 
@@ -199,6 +199,8 @@ class Command(BaseCommand):
             skill, was_created = Skill.objects.update_or_create(
                 name=raw_name,
                 type=raw_type,
+                campaign=None,  # the book (BUG-17)
+                campaign_type=None,
                 defaults={"description": raw_description},
             )
 

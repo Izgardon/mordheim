@@ -19,7 +19,13 @@ class Race(StatBlock):
     class Meta:
         db_table = "race"
         ordering = ["name"]
-        constraints = stat_constraints("race")
+        constraints = [
+            *stat_constraints("race"),
+            # one race per name in the book, an add-on and a campaign (BUG-17, IMP-83)
+            models.UniqueConstraint(
+                fields=["campaign", "campaign_type", "name"], name="race_unique_name", nulls_distinct=False
+            ),
+        ]
 
     def __str__(self):
         return self.name
