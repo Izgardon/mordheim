@@ -5,6 +5,7 @@ import { Button } from "@components/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -70,6 +71,7 @@ export default function CampaignPlayersDialog({
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
           <DialogTitle className="font-bold">Roster</DialogTitle>
+          <DialogDescription>Everyone playing in this campaign.</DialogDescription>
         </DialogHeader>
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Gathering names...</p>

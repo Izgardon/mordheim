@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "@components/button";
 import {
   Dialog,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -64,6 +65,9 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
           <DialogTitle className="text-base font-semibold">Join a campaign</DialogTitle>
+          <DialogDescription className="block text-sm text-muted-foreground">
+            Enter the six-character rally code a member of the campaign shared with you.
+          </DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">

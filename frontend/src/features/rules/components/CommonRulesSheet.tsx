@@ -2,7 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@components/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@components/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@components/dialog";
 
 import { createHouseRule } from "../api/rules-api";
 
@@ -155,9 +162,9 @@ export default function CommonRulesSheet({
           <DialogTitle className="font-bold">Common Rules</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <p className="text-sm text-muted-foreground">
+          <DialogDescription className="block text-sm text-muted-foreground">
             Choose from a small list of commonly used campaign house rules.
-          </p>
+          </DialogDescription>
           <div className="space-y-3">
             {COMMON_RULES.map((rule) => {
               const isAlreadyApplied = existingTitles.has(normalizeRuleTitle(rule.title));

@@ -63,6 +63,19 @@ beforeEach(() => {
 });
 
 describe("Common Rules", () => {
+  it("describes the sheet to screen readers (BUG-142)", async () => {
+    const user = setupUser();
+    renderCampaignRoute("/campaigns/1/house-rules");
+    await screen.findByText("No house rules logged yet.");
+
+    await user.click(screen.getByRole("button", { name: "Add rule" }));
+    await user.click(screen.getByRole("button", { name: "Common Rules" }));
+
+    expect(screen.getByRole("dialog", { name: "Common Rules" })).toHaveAccessibleDescription(
+      "Choose from a small list of commonly used campaign house rules."
+    );
+  });
+
   it("posts every picked rule at once; when one fails, the rule the server did create stays off the list and a retry posts it again (BUG-52, CAMP-TEST-19, pinned; flips in PR A)", async () => {
     const user = setupUser();
     const answers = new Map<string, ReturnType<typeof deferred<HouseRule>>>();

@@ -213,6 +213,26 @@ describe("Delete campaign", () => {
   });
 });
 
+describe("Settings dialogs", () => {
+  it("describe the campaign and warband delete confirms to screen readers (BUG-142)", async () => {
+    const user = setupUser();
+    await openCampaignTab(user);
+
+    await user.click(screen.getByRole("button", { name: "Close campaign" }));
+    expect(screen.getByRole("dialog", { name: "Confirm closure" })).toHaveAccessibleDescription(
+      "Type delete to erase this campaign for every member. This can't be undone."
+    );
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+
+    await user.click(within(screen.getByRole("banner")).getByRole("button", { name: "Personal" }));
+    await user.click(await screen.findByRole("button", { name: "Delete warband" }));
+    expect(screen.getByRole("dialog", { name: "Confirm deletion" })).toHaveAccessibleDescription(
+      "This will permanently delete Iron Vultures and all its units."
+    );
+  });
+});
+
 describe("Join code in Settings", () => {
   it("lets the owner regenerate it after a confirm that says the old code stops working; the header shows the new code (decision 1, CAMP-NEW-01)", async () => {
     const user = setupUser();

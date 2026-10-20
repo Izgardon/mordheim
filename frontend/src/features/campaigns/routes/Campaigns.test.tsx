@@ -87,6 +87,32 @@ describe("Campaigns list and the join code", () => {
     ]);
   });
 
+  it("describes the join, create and roster dialogs to screen readers (BUG-142)", async () => {
+    const user = setupUser();
+    fakeApi.on(`GET /campaigns/${joined.id}/players/`, []);
+    renderCampaigns();
+    await screen.findByText("2 campaigns");
+
+    await user.click(screen.getByRole("button", { name: "Join" }));
+    expect(screen.getByRole("dialog", { name: "Join a campaign" })).toHaveAccessibleDescription(
+      "Enter the six-character rally code a member of the campaign shared with you."
+    );
+    await user.keyboard("{Escape}");
+
+    await user.click(screen.getByRole("button", { name: "Create" }));
+    expect(
+      screen.getByRole("dialog", { name: "Start a new campaign" })
+    ).toHaveAccessibleDescription(
+      "Name it, pick its rules and limits, then share its join code with your players."
+    );
+    await user.keyboard("{Escape}");
+
+    await user.click(within(card(joined.name)).getByRole("button", { name: "Roster" }));
+    expect(screen.getByRole("dialog", { name: "Roster" })).toHaveAccessibleDescription(
+      "Everyone playing in this campaign."
+    );
+  });
+
   it("keeps the dialog open with the server's refusal", async () => {
     const user = setupUser();
     fakeApi.fail(

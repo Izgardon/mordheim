@@ -7,6 +7,7 @@ import { X } from "lucide-react";
 import { Button } from "@components/button";
 import {
   Dialog,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -117,6 +118,9 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
           <DialogTitle className="text-base font-semibold">Start a new campaign</DialogTitle>
+          <DialogDescription className="block text-sm text-muted-foreground">
+            Name it, pick its rules and limits, then share its join code with your players.
+          </DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">

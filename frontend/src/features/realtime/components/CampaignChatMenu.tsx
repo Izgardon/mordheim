@@ -4,6 +4,7 @@ import { MessageSquare, Send } from "lucide-react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -65,6 +66,7 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
       <DialogContent className="sm:max-w-[28rem]">
         <DialogHeader>
           <DialogTitle>Campaign Chat</DialogTitle>
+          <DialogDescription>Messages to everyone in this campaign.</DialogDescription>
         </DialogHeader>
 
         {/* Messages list */}
