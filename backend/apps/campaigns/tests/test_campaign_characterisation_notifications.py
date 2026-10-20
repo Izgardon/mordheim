@@ -1,9 +1,10 @@
 """Clearing notifications that aren't battle results (IMP-78; CAMP-TWEAK-10).
 
-Clear all resolves every unresolved notification the user has and, on the way, answers what they could still
-answer: a pending trade request is declined (or expired, if it ran out). Battle-result requests are pass 3's and are
-characterised in `apps/battles/tests`. The decline's event to the requester goes out on commit; the helper is
-wrapped (still run, Pusher is off) to record it.
+Clear all resolves only the notifications that can no longer be answered and answers nothing: a pending trade
+request, an invitation to a battle still inviting and a nudge about an open battle stay listed. It used to resolve
+everything and decline pending trade requests on the way. Clearing one notification still declines a pending trade
+request. Battle-result requests are pass 3's and are characterised in `apps/battles/tests`. Events to the requester go
+out on commit; the helper is wrapped (still run, Pusher is off) to record them.
 """
 
 from datetime import timedelta
@@ -14,6 +15,7 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 from django.utils import timezone
 
+from apps.battles.models import Battle
 from apps.notifications.models import Notification
 from apps.realtime import services as realtime
 from apps.trades.models import TradeRequest
@@ -55,39 +57,50 @@ class NotificationClearTests(CampaignTestCase):
         trade.refresh_from_db()
         return trade.status
 
-    def test_clear_all_resolves_everything_and_declines_pending_trade_requests(self):
-        # Characterises current behaviour (IMP-78, pinned; flips in PR C: CAMP-TWEAK-10, Clear all never declines)
+    def test_clear_all_keeps_what_still_needs_an_answer_and_declines_nothing(self):
+        # IMP-78, CAMP-TWEAK-10: Clear all used to resolve everything and decline pending trade requests on the way
         trade = self.request_trade()
-        self.notify(self.player, Notification.TYPE_BATTLE_INVITE, 41)
-        self.notify(self.player, Notification.TYPE_BATTLE_INVITE, 7, campaign=self.elsewhere)
-        self.notify(self.rival, Notification.TYPE_BATTLE_INVITE, 41)
+        inviting = self.open_battle(Battle.STATUS_INVITING)
+        gone = self.open_battle(Battle.STATUS_CANCELED)
+        for battle in (inviting, gone):
+            self.notify(self.player, Notification.TYPE_BATTLE_INVITE, battle.id)
+            Notification.objects.create(
+                user=self.player,
+                notification_type=Notification.TYPE_BATTLE_NUDGE,
+                campaign_id=self.campaign.id,
+                reference_id=str(battle.id),
+                payload={},
+            )
+        self.notify(self.player, Notification.TYPE_BATTLE_INVITE, 999999, campaign=self.elsewhere)
+        self.notify(self.rival, Notification.TYPE_BATTLE_INVITE, inviting.id)
 
         response = self.clear_all(self.player)
 
-        self.assertEqual((response.status_code, response.json()), (200, {"ok": True}))
-        self.assertEqual(self.listed_notifications(self.player), [])
-        rows = Notification.objects.filter(user=self.player)
-        self.assertEqual(sorted((row.is_resolved, row.resolved_at is not None) for row in rows), [(True, True)] * 3)
-        self.assertEqual(self.status(trade), TradeRequest.STATUS_DECLINED)
-        self.assertIsNotNone(trade.responded_at)
-        declined = [call.args for call in self.user_events.call_args_list if call.args[1] == "trade_declined"]
+        self.assertEqual((response.status_code, response.json()), (200, {"ok": True, "cleared": 3, "kept": 3}))
         self.assertEqual(
-            [(user_id, payload["status"]) for user_id, _, payload in declined], [(self.rival.id, "declined")]
+            self.listed_notifications(self.player),
+            [
+                (Notification.TYPE_BATTLE_INVITE, str(inviting.id), self.campaign.id),
+                (Notification.TYPE_BATTLE_NUDGE, str(inviting.id), self.campaign.id),
+                (Notification.TYPE_TRADE_REQUEST, str(trade.id), self.campaign.id),
+            ],
         )
+        self.assertEqual(self.status(trade), TradeRequest.STATUS_PENDING)
+        self.assertNotIn("trade_declined", [call.args[1] for call in self.user_events.call_args_list])
         self.assertEqual(
             self.listed_notifications(self.rival),
-            [(Notification.TYPE_BATTLE_INVITE, "41", self.campaign.id)],
+            [(Notification.TYPE_BATTLE_INVITE, str(inviting.id), self.campaign.id)],
         )
 
-    def test_clear_all_expires_a_request_that_ran_out_and_leaves_one_already_answered(self):
+    def test_clear_all_resolves_requests_that_ran_out_or_were_answered_and_leaves_the_trades_alone(self):
         overdue = self.request_trade()
         TradeRequest.objects.filter(id=overdue.id).update(expires_at=timezone.now() - timedelta(minutes=1))
         accepted = self.extra_trade()
         TradeRequest.objects.filter(id=accepted.id).update(status=TradeRequest.STATUS_ACCEPTED)
 
-        self.clear_all(self.player)
+        self.assertEqual(self.clear_all(self.player).json(), {"ok": True, "cleared": 2, "kept": 0})
 
-        self.assertEqual(self.status(overdue), TradeRequest.STATUS_EXPIRED)
+        self.assertEqual(self.status(overdue), TradeRequest.STATUS_PENDING)  # it reads as expired; nothing wrote it
         self.assertEqual(self.status(accepted), TradeRequest.STATUS_ACCEPTED)
         self.assertFalse(Notification.objects.filter(user=self.player, is_resolved=False).exists())
         self.assertNotIn("trade_declined", [call.args[1] for call in self.user_events.call_args_list])
@@ -119,18 +132,16 @@ class NotificationClearTests(CampaignTestCase):
         )
         self.assertFalse(Notification.objects.get(id=theirs.id).is_resolved)
 
-    def test_clear_all_costs_a_constant_four_queries_plus_three_per_pending_trade_request(self):
-        def clear_all_queries() -> int:
-            with CaptureQueriesContext(connection) as captured:
-                self.clear_all(self.player)
-            return len(captured)
-
+    def test_clear_all_costs_two_queries_whatever_it_clears(self):
+        # one UPDATE that leaves out, in subqueries, what still needs an answer, and one COUNT of what stays listed;
+        # it was 4 queries plus 3 per pending trade request
         for reference in range(5):
             self.notify(self.player, Notification.TYPE_BATTLE_INVITE, reference)
-        invites_only = clear_all_queries()  # read, SAVEPOINT, one UPDATE, RELEASE
         self.extra_trade()
         self.extra_trade()
-        two_trades = clear_all_queries()
 
-        self.assertEqual(invites_only, 4)
-        self.assertEqual(two_trades - invites_only, 2 * 3)  # each: the locked request, its UPDATE, its notifications
+        with CaptureQueriesContext(connection) as captured:
+            response = self.clear_all(self.player)
+
+        self.assertEqual(response.json(), {"ok": True, "cleared": 5, "kept": 2})
+        self.assertEqual(len(captured), 2)

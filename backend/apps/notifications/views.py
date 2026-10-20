@@ -27,10 +27,10 @@ class NotificationClearView(APIView):
 
 
 class NotificationClearAllView(APIView):
-    """POST: clear all of the caller's notifications (pending trade requests are declined)."""
+    """POST: clear the caller's notifications that can no longer be answered; nothing is declined, and what still
+    needs an answer stays (CAMP-TWEAK-10). Answers `{"ok": true, "cleared": n, "kept": m}`."""
 
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        services.clear_all(request.user)
-        return Response({"ok": True})
+        return Response({"ok": True, **services.clear_all(request.user)})

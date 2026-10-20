@@ -1,9 +1,11 @@
 """Clearing notifications: one, or all of a user's at once.
 
-Clearing resolves the notification. A pending trade request is also answered: declined (its sender is told after
-commit), or expired once it has run out. Battle invites and reported-result requests are only resolved: a result is
-answered on the campaign overview (approve, decline, or withdraw for its submitter), never by clearing (BUG-46,
-BUG-121).
+Clearing one resolves it. A pending trade request is also answered: declined (its sender is told after commit), or
+expired once it has run out. Battle invites and reported-result requests are only resolved: a result is answered on
+the campaign overview (approve, decline, or withdraw for its submitter), never by clearing (BUG-46, BUG-121).
+
+Clear all resolves only the notifications that can no longer be answered and answers nothing: invitations and
+requests that still need an answer stay until they are answered (CAMP-TWEAK-10, IMP-78).
 """
 
 from datetime import datetime
@@ -12,6 +14,7 @@ from typing import Any
 from django.db import transaction
 from django.utils import timezone
 
+from . import selectors
 from .models import Notification
 
 
@@ -29,14 +32,13 @@ def clear(user: Any, notification_id: int) -> bool:
     return True
 
 
-def clear_all(user: Any) -> None:
-    """Clear every unresolved notification of the user's."""
-    notifications = list(Notification.objects.filter(user=user, is_resolved=False))
-    now = timezone.now()
-    with transaction.atomic():
-        for notification in notifications:
-            _apply_clear_side_effects(notification, user, now)
-        Notification.objects.filter(user=user, is_resolved=False).update(is_resolved=True, resolved_at=now)
+def clear_all(user: Any) -> dict[str, int]:
+    """Resolve the user's notifications that can no longer be answered (a trade request answered or run out, an
+    invitation to a battle past inviting, a settled result, a nudge about a finished battle) in one UPDATE, and
+    decline nothing. Returns how many were cleared and how many are still listed."""
+    stale = Notification.objects.filter(user=user, is_resolved=False).exclude(selectors.answerable(user))
+    cleared = stale.update(is_resolved=True, resolved_at=timezone.now())
+    return {"cleared": cleared, "kept": selectors.listed(user).count()}
 
 
 def _apply_clear_side_effects(notification: Notification, user: Any, now: datetime) -> None:
