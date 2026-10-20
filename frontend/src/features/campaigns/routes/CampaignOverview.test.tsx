@@ -184,18 +184,21 @@ describe("CampaignOverview tabs", () => {
 });
 
 describe("Start campaign", () => {
-  it("is offered to the owner before the start, saying it locks in the roster (BUG-77, pinned; flips in PR A)", async () => {
+  it("is offered to the owner before the start, saying it enables battles and experience and locks nothing (BUG-77, decision 3)", async () => {
     const user = setupUser();
     routeCampaignShell({ campaign: campaignSummary({ in_progress: false }) });
     await openOverview();
 
     await user.click(startCampaignButton()!);
 
-    const dialog = screen.getByRole("dialog");
-    expect(dialog).toHaveTextContent("Start the campaign now? This will lock in the roster.");
+    const dialog = screen.getByRole("dialog", { name: "Start campaign" });
     expect(dialog).toHaveTextContent(
-      "Before starting, make sure all Campaign Settings locations are set for items"
+      "Start the campaign now? Starting enables battles and experience."
     );
+    expect(dialog).toHaveTextContent(
+      "Nothing else is locked: settings, house rules and rosters can still change after the start."
+    );
+    expect(dialog).not.toHaveTextContent(/lock in the roster/i);
     expect(within(dialog).getByRole("button", { name: "Confirm start" })).toBeEnabled();
   });
 
@@ -211,7 +214,7 @@ describe("Start campaign", () => {
     expect(fakeApi.countOf(`GET ${campaignApi("battles/pending-results/")}`)).toBe(0);
   });
 
-  it("PATCHes in_progress and shows Start battle; leaving and coming back brings Start campaign back and hides Start battle (BUG-14, CAMP-TEST-07 baseline, pinned; flips in PR A)", async () => {
+  it("PATCHes in_progress and writes the answer into the campaign: leaving and coming back keeps Start battle and no Start campaign, with no second read (BUG-14, CAMP-TEST-07)", async () => {
     const user = setupUser();
     const campaign = campaignSummary({ in_progress: false });
     routeCampaignShell({ campaign });
@@ -227,35 +230,34 @@ describe("Start campaign", () => {
       { method: "PATCH", path: campaignApi(), body: { in_progress: true } },
     ]);
 
-    // The store's copy (the XP bar's gate) says started while away from the overview...
+    // The store's copy (the XP bar's gate) follows the cached campaign...
     await user.click(screen.getByRole("link", { name: "Skills" }));
     expect(await screen.findByText("XP tracking: on")).toBeInTheDocument();
     await user.click(screen.getByRole("link", { name: "Campaign" }));
     await screen.findByRole("heading", { name: "Roster (4 / 8)" });
 
-    // ...but the PATCH answer never reached the cached campaign, which the overview reads again.
-    expect(startCampaignButton()).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Start battle" })).not.toBeInTheDocument();
+    // ...and so does the overview, which reads the PATCH answer from it.
+    expect(await screen.findByRole("button", { name: "Start battle" })).toBeInTheDocument();
+    expect(startCampaignButton()).not.toBeInTheDocument();
     expect(fakeApi.countOf(CAMPAIGN_ROUTE)).toBe(1);
   });
 
-  it("is offered to an admin, whose confirm the server refuses with 403 (BUG-13, pinned; flips in PR A)", async () => {
+  it("is offered to an admin, whose start the server accepts: Start battle appears with no second read of the campaign (BUG-13, decision 2)", async () => {
     const user = setupUser();
     signInAs(ADMIN);
-    routeCampaignShell({
-      campaign: campaignFor("admin", { in_progress: false }),
-      viewer: ADMIN,
-    });
-    fakeApi.fail(PATCH_CAMPAIGN, new ApiError("Forbidden", 403, { detail: "Forbidden" }));
+    const campaign = campaignFor("admin", { in_progress: false });
+    routeCampaignShell({ campaign, viewer: ADMIN });
+    fakeApi.on(PATCH_CAMPAIGN, (body: unknown) => patchedCampaign(campaign, body));
     await openOverview();
 
     await user.click(startCampaignButton()!);
     await user.click(screen.getByRole("button", { name: "Confirm start" }));
 
-    const dialog = screen.getByRole("dialog");
-    expect(await within(dialog).findByText("Forbidden")).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Start battle" })).toBeInTheDocument();
     expect(fakeApi.bodyOf(PATCH_CAMPAIGN)).toEqual({ in_progress: true });
-    expect(screen.queryByRole("button", { name: "Start battle" })).not.toBeInTheDocument();
+    expect(startCampaignButton()).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(fakeApi.countOf(CAMPAIGN_ROUTE)).toBe(1);
   });
 
   it("is not offered to a player", async () => {
