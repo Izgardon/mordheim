@@ -123,13 +123,15 @@ describe("catalogue cache: other members' writes", () => {
     expect(await screen.findByRole("row", { name: /^Dirty Fighting/ })).toBeVisible();
   });
 
-  // Characterises current behaviour (BUG-80, pinned; flips in PR C)
-  it("adds no socket subscription on a catalogue page: the shell's chat and notifications only (BUG-80, pinned; flips in PR C)", async () => {
+  // Characterises current behaviour (BUG-80, pinned; flips in PR C). Pass 4's campaign events
+  // channel is open, but nothing on it touches the catalogue lists yet.
+  it("adds no socket subscription on a catalogue page: the shell's chat, notifications and campaign events only (BUG-80, pinned; flips in PR C)", async () => {
     await openSkills();
 
     await waitFor(() =>
       expect(fakeRealtime.channels()).toEqual([
         "private-campaign-1-chat",
+        "private-campaign-1-events",
         `private-user-${OWNER.id}-notifications`,
       ])
     );
