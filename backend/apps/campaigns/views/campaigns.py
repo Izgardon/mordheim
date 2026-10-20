@@ -4,6 +4,8 @@ archiving and restoring it (decision 5)."""
 from rest_framework import permissions, status
 from rest_framework.response import Response
 
+from apps.realtime.services import send_campaign_updated, sender_socket_id
+
 from ..selectors import campaign_for_user, campaigns_for_user
 from ..serializers.campaigns import (
     CampaignCreateSerializer,
@@ -55,6 +57,13 @@ def detail_payload(view: CampaignScopedView, campaign_id: int) -> dict:
     return data
 
 
+def updated(view: CampaignScopedView, campaign_id: int) -> Response:
+    """Answer the caller with the campaign's detail and send the other members `campaign.updated` (CAMP-NEW-07)."""
+    data = detail_payload(view, campaign_id)
+    send_campaign_updated(campaign_id, data, sender_socket_id(view.request))
+    return Response(data)
+
+
 class CampaignDetailView(CampaignScopedView):
     """GET: the campaign with the caller's permissions and capabilities. PATCH: the start flag (owners and admins)
     or the settings (the owner). DELETE: the owner deletes his archived campaign for good, sending its `name`
@@ -76,10 +85,9 @@ class CampaignDetailView(CampaignScopedView):
         serializer = CampaignUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         update_campaign(self.access.campaign, serializer.validated_data)
-        refreshed = campaign_for_user(campaign_id, request.user)
-        if not refreshed:
-            return Response({"detail": "Not found"}, status=404)
-        return Response(CampaignSerializer(refreshed).data)
+        data = CampaignSerializer(campaign_for_user(campaign_id, request.user)).data
+        send_campaign_updated(campaign_id, data, sender_socket_id(request))  # a start, a toggle, settings
+        return Response(data)
 
 
 class CampaignJoinCodeView(CampaignScopedView):
@@ -89,7 +97,9 @@ class CampaignJoinCodeView(CampaignScopedView):
 
     def post(self, request, campaign_id):
         regenerate_join_code(campaign_id)
-        return Response(CampaignSerializer(campaign_for_user(campaign_id, request.user)).data)
+        data = CampaignSerializer(campaign_for_user(campaign_id, request.user)).data
+        send_campaign_updated(campaign_id, data, sender_socket_id(request))  # the new code, on every screen
+        return Response(data)
 
 
 class CampaignArchiveView(CampaignScopedView):
@@ -100,7 +110,7 @@ class CampaignArchiveView(CampaignScopedView):
 
     def post(self, request, campaign_id):
         self.access.campaign.archived_at = archive.archive(campaign_id, request.user).archived_at
-        return Response(detail_payload(self, campaign_id))
+        return updated(self, campaign_id)
 
 
 class CampaignRestoreView(CampaignScopedView):
@@ -112,4 +122,4 @@ class CampaignRestoreView(CampaignScopedView):
     def post(self, request, campaign_id):
         archive.restore(campaign_id)
         self.access.campaign.archived_at = None
-        return Response(detail_payload(self, campaign_id))
+        return updated(self, campaign_id)

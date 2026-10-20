@@ -59,7 +59,7 @@ class CampaignMemberRoleView(CampaignScopedView):
         target = membership.role_target(campaign_id, user_id)
         serializer = MembershipRoleUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        membership.set_role(target, serializer.validated_data["role"])
+        membership.change_role(target, serializer.validated_data["role"])
         return Response({"id": target.user_id, "role": serializer.validated_data["role"]})
 
 

@@ -7,17 +7,21 @@ an admin's grants), then the body's own errors. Removing a member is `removal.py
 """
 
 from collections.abc import Iterable
+from typing import Any
 
 from django.db import transaction
 
+from apps.realtime.services import send_user_notification
+
 from ..constants import ADMIN, OWNER, PERMISSION_CODES
 from ..errors import CampaignError, Refused, field_error
-from ..models import CampaignMembership
+from ..models import Campaign, CampaignMembership
 from . import codes
 
 
 def _member(campaign_id: int, user_id: int) -> CampaignMembership:
-    target = CampaignMembership.objects.select_related("role").filter(campaign_id=campaign_id, user_id=user_id).first()
+    rows = CampaignMembership.objects.select_related("role", "campaign")
+    target = rows.filter(campaign_id=campaign_id, user_id=user_id).first()
     if target is None:
         raise Refused("Not found", status=404)
     return target
@@ -38,6 +42,7 @@ def set_grants(target: CampaignMembership, requested: Iterable[str]) -> list[str
     if unknown:
         raise field_error("permissions", f"Unknown permission: {', '.join(unknown)}.", "unknown_permission")
     codes.replace_grants(target, requested)
+    notify_member(target.user_id, target.campaign, "permissions", permissions=codes.in_catalogue_order(requested))
     return requested
 
 
@@ -47,6 +52,19 @@ def role_target(campaign_id: int, user_id: int) -> CampaignMembership:
     if target.role.slug == OWNER:
         raise Refused("Owner role cannot be changed.")
     return target
+
+
+def change_role(target: CampaignMembership, role: str) -> None:
+    """Make him an admin or a player, and tell him (`membership_changed`)."""
+    set_role(target, role)
+    notify_member(target.user_id, target.campaign, "role", role=role)
+
+
+def notify_member(user_id: int, campaign: Campaign, change: str, **fields: Any) -> None:
+    """`membership_changed` on the member's own channel, after commit: his role or grants changed, so his pages
+    refetch the campaign and its capabilities (CAMP-NEW-07)."""
+    payload = {"campaign_id": campaign.id, "campaign_name": campaign.name, "change": change, **fields}
+    send_user_notification(user_id, "membership_changed", payload)
 
 
 def set_role(target: CampaignMembership, role: str) -> None:
@@ -59,7 +77,8 @@ def hand_over(owner: CampaignMembership, user_id: int) -> CampaignMembership:
     locks (decision 4, CAMP-NEW-02); returns the new owner's membership. Refused (standard body) for a non-member
     (404), a member who isn't an admin (400 `not_an_admin`), or an owner who has already handed over (403)."""
     with transaction.atomic():
-        rows = CampaignMembership.objects.select_related("role").select_for_update(of=("self",)).order_by("id")
+        rows = CampaignMembership.objects.select_related("role", "campaign").select_for_update(of=("self",))
+        rows = rows.order_by("id")
         both = rows.filter(campaign_id=owner.campaign_id, user_id__in=(owner.user_id, user_id))
         pair = {row.user_id: row for row in both}
         target, current = pair.get(user_id), pair.get(owner.user_id)
@@ -72,4 +91,6 @@ def hand_over(owner: CampaignMembership, user_id: int) -> CampaignMembership:
             raise CampaignError(detail, code="not_an_admin", fields={"user_id": [detail]})
         set_role(target, OWNER)
         set_role(current, ADMIN)
+    notify_member(target.user_id, target.campaign, "role", role=OWNER)
+    notify_member(current.user_id, current.campaign, "role", role=ADMIN)
     return target

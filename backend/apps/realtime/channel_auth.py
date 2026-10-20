@@ -11,6 +11,7 @@ from apps.trades.models import TradeRequest
 from apps.trades.selectors import is_member, with_memberships
 
 _CAMPAIGN_CHAT_REGEX = re.compile(r"^private-campaign-(\d+)-chat$")
+_CAMPAIGN_EVENTS_REGEX = re.compile(r"^private-campaign-(\d+)-events$")  # campaign.updated (CAMP-NEW-07)
 _USER_CHANNEL_REGEX = re.compile(r"^private-user-(\d+)-notifications$")
 _TRADE_CHANNEL_REGEX = re.compile(r"^private-trade-([0-9a-f-]+)$")
 _BATTLE_CHANNEL_REGEX = re.compile(r"^private-battle-(\d+)$")
@@ -91,6 +92,13 @@ register_channel_rule(
     ChannelRule(
         name="campaign-chat",
         pattern=_CAMPAIGN_CHAT_REGEX,
+        authorize=_authorize_campaign_channel,
+    )
+)
+register_channel_rule(
+    ChannelRule(
+        name="campaign-events",
+        pattern=_CAMPAIGN_EVENTS_REGEX,
         authorize=_authorize_campaign_channel,
     )
 )
