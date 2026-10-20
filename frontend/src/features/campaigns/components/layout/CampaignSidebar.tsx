@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { Link, useMatch, useResolvedPath } from "react-router-dom";
 import type { LucideIcon } from "lucide-react";
 import { LogOut, Settings } from "lucide-react";
 
@@ -20,6 +20,36 @@ type CampaignSidebarProps = {
   className?: string;
 };
 
+type SidebarLinkProps = {
+  to: string;
+  label: string;
+  icon: LucideIcon;
+  /** Active only on this exact path (the overview), not on the pages below it. */
+  end?: boolean;
+  /** Whether the link shows as active when its page is open. */
+  showsActive?: boolean;
+};
+
+/** A real link styled as a nav button (CAMP-UX-07): no button inside a link. */
+function SidebarLink({ to, label, icon: Icon, end = false, showsActive = true }: SidebarLinkProps) {
+  const { pathname } = useResolvedPath(to);
+  const isActive = Boolean(useMatch({ path: pathname, end })) && showsActive;
+  return (
+    <Button
+      asChild
+      variant="nav"
+      size="default"
+      data-active={isActive}
+      className="h-11 w-full justify-start gap-3 px-3"
+    >
+      <Link to={to} aria-current={isActive ? "page" : undefined}>
+        <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+        <span className="truncate">{label}</span>
+      </Link>
+    </Button>
+  );
+}
+
 export default function CampaignSidebar({
   campaign,
   campaignId,
@@ -40,47 +70,20 @@ export default function CampaignSidebar({
       </div>
 
       <nav className="flex flex-1 flex-col gap-1">
-        {navItems.map((item) => {
-          const target = item.path ? `${basePath}/${item.path}` : basePath;
-          const Icon = item.icon;
-          return (
-            <NavLink key={item.label} to={target} end={item.path === ""}>
-              {({ isActive }) => (
-                <Button
-                  variant="nav"
-                  size="default"
-                  data-active={isActive}
-                  className="h-11 w-full justify-start gap-3 px-3"
-                >
-                  <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
-                  <span className="truncate">{item.label}</span>
-                </Button>
-              )}
-            </NavLink>
-          );
-        })}
+        {navItems.map((item) => (
+          <SidebarLink
+            key={item.label}
+            to={item.path ? `${basePath}/${item.path}` : basePath}
+            label={item.label}
+            icon={item.icon}
+            end={item.path === ""}
+          />
+        ))}
       </nav>
 
       <div className="mt-auto flex flex-col gap-1 border-t border-border/70 pt-3">
-        <NavLink to="/campaigns">
-          <Button variant="nav" size="default" className="h-11 w-full justify-start gap-3 px-3">
-            <LogOut className="h-4 w-4 shrink-0" aria-hidden="true" />
-            <span>Back To Campaigns</span>
-          </Button>
-        </NavLink>
-        <NavLink to={`${basePath}/settings`}>
-          {({ isActive }) => (
-            <Button
-              variant="nav"
-              size="default"
-              data-active={isActive}
-              className="h-11 w-full justify-start gap-3 px-3"
-            >
-              <Settings className="h-4 w-4 shrink-0" aria-hidden="true" />
-              <span>Settings</span>
-            </Button>
-          )}
-        </NavLink>
+        <SidebarLink to="/campaigns" label="Back To Campaigns" icon={LogOut} showsActive={false} />
+        <SidebarLink to={`${basePath}/settings`} label="Settings" icon={Settings} />
       </div>
     </div>
   );

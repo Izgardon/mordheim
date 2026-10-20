@@ -96,7 +96,7 @@ describe("CampaignOverview on a started campaign", () => {
 
     await openOverview();
 
-    const row = screen.getByRole("button", { name: new RegExp(NAMELESS.name) });
+    const row = screen.getByRole("row", { name: new RegExp(NAMELESS.name) });
     expect(row).toHaveTextContent("Player 12");
     expect(row).toHaveTextContent("Unassigned");
     expect(screen.queryByText(/@example\.com/)).not.toBeInTheDocument();
@@ -142,6 +142,36 @@ describe("CampaignOverview on a started campaign", () => {
     await user.click(row);
     expect(await screen.findByText("Black Fang")).toBeInTheDocument();
     expect(fakeApi.calls()).toHaveLength(1);
+  });
+});
+
+describe("CampaignOverview roster semantics", () => {
+  it("expands a player from a real button that says whether it's open, with View warband a link beside it, not inside it (CAMP-UX-07)", async () => {
+    const user = setupUser();
+    routeCampaignShell();
+    fakeApi.on(`GET /warbands/${PLAYER.warband!.id}/roster-stats/`, {
+      heroes: [],
+      henchmen_groups: [],
+      hired_swords: [],
+    });
+    await openOverview();
+
+    const mira = screen.getByRole("row", { name: /Mira/ });
+    const expand = within(mira).getByRole("button", { name: "Mira" });
+    expect(expand).toHaveAttribute("aria-expanded", "false");
+    expect(mira).not.toHaveAttribute("role");
+    expect(within(mira).getByRole("link", { name: "View warband" }).closest("button")).toBeNull();
+
+    await user.click(expand);
+
+    expect(expand).toHaveAttribute("aria-expanded", "true");
+    expect(await screen.findByText("No units logged yet.")).toBeInTheDocument();
+    const roster = mira.closest("table")!;
+    expect(
+      within(roster)
+        .getAllByRole("button")
+        .map((button) => button.tagName)
+    ).not.toContain("TR");
   });
 });
 
@@ -319,6 +349,23 @@ describe("Start campaign", () => {
 });
 
 describe("CampaignLayout around the overview", () => {
+  it("makes the side rail real links, the open page's marked current, with no button inside (CAMP-UX-07)", async () => {
+    routeCampaignShell();
+
+    await openOverview();
+
+    const overview = screen.getByRole("link", { name: "Campaign" });
+    expect(overview).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Skills" })).not.toHaveAttribute("aria-current");
+    expect(screen.getByRole("link", { name: "Back To Campaigns" })).toHaveAttribute(
+      "href",
+      "/campaigns"
+    );
+    for (const name of ["Campaign", "Skills", "Settings", "Back To Campaigns"]) {
+      expect(within(screen.getByRole("link", { name })).queryByRole("button")).toBeNull();
+    }
+  });
+
   it("lists Locations and Encampments in the side rail only when each is switched on", async () => {
     routeCampaignShell({ campaign: campaignSummary({ enable_locations: true }) });
 
