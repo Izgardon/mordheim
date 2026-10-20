@@ -92,16 +92,17 @@ class NotificationClearTests(CampaignTestCase):
         self.assertFalse(Notification.objects.filter(user=self.player, is_resolved=False).exists())
         self.assertNotIn("trade_declined", [call.args[1] for call in self.user_events.call_args_list])
 
-    def test_a_removed_player_still_declines_through_clear_all(self):
-        # Characterises current behaviour (BUG-50, pinned; flips in PR A, where removal closes the trade and resolves
-        # the notifications): the trade endpoints answer 404 to a player who left, but the clear only checks to_user
+    def test_removal_closes_the_trade_and_resolves_its_notification_first(self):
+        # BUG-50: a removed player's Clear all used to decline a request in the campaign he had left; removal now
+        # closes the trade (declined, he was its recipient) and resolves the notification, so Clear all finds nothing
         trade = self.request_trade()
-        self.delete_as(self.owner, self.url(f"members/{self.player.id}/"))
-        self.assertEqual(self.post_as(self.player, self.url(f"trade-requests/{trade.id}/decline/")).status_code, 404)
-
-        self.clear_all(self.player)
+        with self.captureOnCommitCallbacks(execute=True):
+            self.delete_as(self.owner, self.url(f"members/{self.player.id}/"))
 
         self.assertEqual(self.status(trade), TradeRequest.STATUS_DECLINED)
+        self.assertFalse(Notification.objects.filter(user=self.player, is_resolved=False).exists())
+        self.assertEqual(self.listed_notifications(self.player), [])
+        self.assertEqual(self.post_as(self.player, self.url(f"trade-requests/{trade.id}/decline/")).status_code, 404)
 
     def test_clearing_one_notification_needs_an_unresolved_one_of_your_own(self):
         mine = self.notify(self.player, Notification.TYPE_BATTLE_INVITE, 41)

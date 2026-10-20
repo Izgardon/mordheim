@@ -1,8 +1,8 @@
 """Members: removal, Kick, roles and deleting the campaign (CAMP-TEST-05, -11, -12, -28).
 
-Removal deletes only the membership row (BUG-50): what the player was part of stays behind, and rejoining with the
-same code reattaches their warband. Kick is the frontend calling the warband DELETE, which only the warband's
-owner may call (BUG-12).
+Removal closes the player's battles and trades and keeps his warband (decision 1, BUG-50): rejoining reattaches it.
+Kick was the frontend calling the warband DELETE, which only the warband's owner may call (BUG-12); it merges into
+removal. What removal closes, battle by battle, is in `test_campaign_removal.py`.
 """
 
 from apps.battles.models import Battle, BattleParticipant
@@ -19,26 +19,34 @@ class MemberRemovalTests(CampaignTestCase):
     def remove(self, actor, target):
         return self.delete_as(actor, self.url(f"members/{target.id}/"))
 
-    def test_only_the_owner_removes_and_only_players(self):
-        # CAMP-TEST-12: admins can't remove anyone, and nobody can remove an admin or the owner
-        self.assertEqual(self.remove(self.admin, self.player).status_code, 403)
+    def test_the_owner_removes_anyone_but_himself_and_admins_remove_players(self):
+        # CAMP-TEST-12 as decision 1 has it: admins used to remove nobody, and the owner only players
         self.assertEqual(self.remove(self.rival, self.player).status_code, 403)
         self.assertEqual(self.remove(self.outsider, self.player).status_code, 404)
-
-        refused = self.remove(self.owner, self.admin)
-        self.assertEqual((refused.status_code, refused.data), (400, {"detail": "Only players can be removed."}))
-        self.assertEqual(self.remove(self.owner, self.owner).status_code, 400)
         self.assertEqual(self.remove(self.owner, self.outsider).status_code, 404)
-        self.assertTrue(all(self.is_member(user) for user in (self.owner, self.admin, self.player)))
+        owner_body = {"detail": "The campaign owner can't be removed.", "code": "owner_not_removable"}
+        for actor in (self.owner, self.admin):
+            with self.subTest(actor=actor.first_name):
+                refused = self.remove(actor, self.owner)
+                self.assertEqual((refused.status_code, refused.data), (400, owner_body))
+        self.patch_as(self.owner, self.url(f"members/{self.rival.id}/role/"), {"role": "admin"})
+        admin_on_admin = self.remove(self.admin, self.rival)
+        self.assertEqual(
+            (admin_on_admin.status_code, admin_on_admin.data),
+            (403, {"detail": "Admins can only remove players.", "code": "not_allowed"}),
+        )
 
-        removed = self.remove(self.owner, self.player)
+        self.assertEqual(self.remove(self.admin, self.player).status_code, 204)
+        self.assertEqual(self.remove(self.owner, self.rival).status_code, 204)  # an admin, without demoting him first
 
-        self.assertEqual(removed.status_code, 204)
-        self.assertFalse(self.is_member(self.player))
+        self.assertEqual(
+            [self.is_member(user) for user in (self.owner, self.admin, self.player, self.rival)],
+            [True, True, False, False],
+        )
         self.assertEqual(self.get_as(self.player, self.url()).status_code, 404)
 
-    def test_removal_leaves_the_players_battles_trades_notifications_and_encampments(self):
-        # Characterises current behaviour (BUG-50, CAMP-TEST-11, pinned; flips in PR A): only the membership goes
+    def test_removal_closes_his_battles_and_trades_and_keeps_his_warband_and_encampments(self):
+        # BUG-50, CAMP-TEST-11 (decision 1): only the membership used to go; the rest stayed open and unanswerable
         self.enable_features()
         battle = self.open_battle(Battle.STATUS_INVITING)
         self.notify(self.player, Notification.TYPE_BATTLE_INVITE, battle.id)
@@ -48,19 +56,11 @@ class MemberRemovalTests(CampaignTestCase):
 
         self.assertEqual(self.remove(self.owner, self.player).status_code, 204)
 
-        self.assertEqual(Battle.objects.get(id=battle.id).status, Battle.STATUS_INVITING)
-        participant = BattleParticipant.objects.get(battle=battle, user=self.player)
-        self.assertEqual(participant.status, BattleParticipant.STATUS_INVITED)
-        self.assertEqual(TradeRequest.objects.get(id=trade.id).status, TradeRequest.STATUS_PENDING)
-        self.assertEqual(  # the list doesn't check membership (notifications/views.py:31-37)
-            self.listed_notifications(self.player),
-            [
-                (Notification.TYPE_BATTLE_INVITE, str(battle.id), self.campaign.id),
-                (Notification.TYPE_TRADE_REQUEST, str(trade.id), self.campaign.id),
-            ],
-        )
-        accepted = self.post_as(self.player, self.url(f"trade-requests/{trade.id}/accept/"))
-        self.assertEqual(accepted.status_code, 404)  # listed, but no longer answerable (SEC-08)
+        self.assertEqual(Battle.objects.get(id=battle.id).status, Battle.STATUS_CANCELED)
+        statuses = set(BattleParticipant.objects.filter(battle=battle).values_list("status", flat=True))
+        self.assertEqual(statuses, {BattleParticipant.STATUS_CANCELED_PREBATTLE})
+        self.assertEqual(TradeRequest.objects.get(id=trade.id).status, TradeRequest.STATUS_DECLINED)
+        self.assertEqual(self.listed_notifications(self.player), [])
         listed = self.get_as(self.owner, self.url("encampments/")).data
         owners = [(row["id"], row["owner_id"], row["owner_name"]) for row in listed]
         self.assertEqual(owners, [(camp.id, self.player.id, "Pia")])
@@ -79,7 +79,7 @@ class MemberRemovalTests(CampaignTestCase):
         self.assertFalse(authorize_private_channel(self.player, f"private-battle-{battle.id}"))
 
     def test_rejoining_with_the_same_code_reattaches_the_warband_and_drops_the_grants(self):
-        # Characterises current behaviour (BUG-50, pinned; decision 1 keeps the warband and adds a new join code)
+        # Decision 1: the warband is kept on purpose and comes back on rejoin; a new join code keeps him out
         self.grant(self.player, "manage_items")
         self.remove(self.owner, self.player)
         self.assertEqual(self.get_as(self.owner, self.url("players/")).status_code, 200)
@@ -98,7 +98,7 @@ class KickTests(CampaignTestCase):
     """Kick in Settings sends DELETE /warbands/:id/ for the player's warband (CAMP-TEST-05)."""
 
     def test_kick_is_refused_to_the_owner_and_the_admin(self):
-        # Characterises current behaviour (BUG-12, pinned; flips in PR A, where Kick merges into removal)
+        # BUG-12, CAMP-TEST-05 (decision 1): Kick is gone, merged into removal; the warband DELETE stays its owner's
         self.grant(self.rival, "manage_warbands")
         for user in (self.owner, self.admin, self.rival):
             with self.subTest(user=user.first_name):

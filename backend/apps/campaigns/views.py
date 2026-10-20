@@ -70,7 +70,7 @@ from .serializers import (
     MembershipRoleUpdateSerializer,
     PivotalMomentSerializer,
 )
-from .services import codes
+from .services import codes, removal
 from .services.campaigns import create_campaign
 from .services.joining import join_campaign
 from .services.settings import may_update, update_campaign
@@ -969,19 +969,26 @@ class CampaignMemberRemoveView(APIView):
         membership = get_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not is_owner(membership):
-            return Response({"detail": "Forbidden"}, status=403)
-
-        target_membership = (
-            CampaignMembership.objects.select_related("role").filter(campaign_id=campaign_id, user_id=user_id).first()
-        )
-        if not target_membership:
-            return Response({"detail": "Not found"}, status=404)
-        if target_membership.role.slug != "player":
-            return Response({"detail": "Only players can be removed."}, status=400)
-
-        target_membership.delete()
+        try:  # closes his battles and trades; his warband stays (decision 1, BUG-12, BUG-50)
+            removal.remove_member(membership, user_id, request.user)
+        except Refused as refusal:
+            return refusal.response()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CampaignMemberRemovalPreviewView(APIView):
+    """GET: what removing the member will close, for the Remove dialog (decision 1)."""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, campaign_id, user_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        try:
+            return Response(removal.preview(membership, user_id))
+        except Refused as refusal:
+            return refusal.response()
 
 
 class CampaignHouseRulesView(APIView):
