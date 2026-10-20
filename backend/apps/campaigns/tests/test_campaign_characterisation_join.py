@@ -3,7 +3,7 @@
 import re
 from unittest import mock
 
-from apps.campaigns.models import CampaignSettings
+from apps.campaigns.models import Campaign, CampaignSettings
 
 from .campaign_support import CampaignTestCase, make_user
 
@@ -62,7 +62,7 @@ class JoinTests(CampaignTestCase):
         self.assertFalse(self.is_member(newcomer))
 
     def test_codes_are_six_capital_letters_or_digits(self):
-        # The PATCH can't change a code (test_campaign_characterisation_settings); CAMP-NEW-01 (PR C) adds "New code"
+        # The PATCH can't change a code (test_campaign_characterisation_settings); join-code/ makes a new one (below)
         for code in self.all_codes():
             with self.subTest(code=code):
                 self.assertRegex(code, re.compile(r"\A[A-Z0-9]{6}\Z"))
@@ -70,3 +70,30 @@ class JoinTests(CampaignTestCase):
 
     def all_codes(self) -> list[str]:
         return [self.campaign.join_code, self.elsewhere.join_code]
+
+
+class NewJoinCodeTests(CampaignTestCase):
+    """Decision 1, CAMP-NEW-01: owners and admins regenerate the code, which is how a removed player is kept out."""
+
+    def regenerate(self, user):
+        return self.post_as(user, self.url("join-code/"))
+
+    def test_owners_and_admins_get_a_new_code_and_the_old_one_stops_working(self):
+        old = self.campaign.join_code
+        newcomer = make_user("newcomer@example.com", "Nell")
+
+        response = self.regenerate(self.admin)
+
+        self.assertEqual(response.status_code, 200)
+        new = response.data["join_code"]
+        self.assertRegex(new, re.compile(r"\A[A-Z0-9]{6}\Z"))
+        self.assertNotEqual(new, old)
+        self.assertEqual((response.data["id"], response.data["role"]), (self.campaign.id, "admin"))  # the campaign
+        self.assertEqual(self.join(newcomer, old).status_code, 404)
+        self.assertEqual(self.join(newcomer, new).status_code, 201)
+        self.assertNotEqual(self.regenerate(self.owner).data["join_code"], new)
+
+    def test_players_and_outsiders_cannot(self):
+        self.assertEqual(self.regenerate(self.player).status_code, 403)
+        self.assertEqual(self.regenerate(self.outsider).status_code, 404)
+        self.assertEqual(Campaign.objects.get(id=self.campaign.id).join_code, self.campaign.join_code)

@@ -11,6 +11,7 @@ from .views import (
     CampaignEncampmentsView,
     CampaignHouseRuleDetailView,
     CampaignHouseRulesView,
+    CampaignJoinCodeView,
     CampaignListCreateView,
     CampaignLocationDetailView,
     CampaignLocationsView,
@@ -34,6 +35,7 @@ urlpatterns = [
     path("campaigns/", CampaignListCreateView.as_view(), name="campaigns"),
     path("campaigns/join/", JoinCampaignView.as_view(), name="campaigns-join"),
     path("campaigns/<int:campaign_id>/", CampaignDetailView.as_view(), name="campaigns-detail"),
+    path("campaigns/<int:campaign_id>/join-code/", CampaignJoinCodeView.as_view(), name="campaigns-join-code"),
     path(
         "campaigns/<int:campaign_id>/players/",
         CampaignPlayersView.as_view(),

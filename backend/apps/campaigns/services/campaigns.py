@@ -1,4 +1,5 @@
-"""Creating a campaign (BUG-76): the campaign, its settings and the owner's membership in one transaction."""
+"""Creating a campaign (BUG-76): the campaign, its settings and the owner's membership in one transaction; its join
+code, and a new one when owners or admins want the old one to stop working (decision 1, CAMP-NEW-01)."""
 
 import random
 import string
@@ -48,3 +49,10 @@ def create_campaign(owner: Any, validated: dict[str, Any]) -> Campaign:
             settings.item_settings.set(get_valid_campaign_item_settings(item_setting_ids))
         CampaignMembership.objects.create(campaign=campaign, user=owner, role_id=codes.role_ref(OWNER))
     return campaign
+
+
+def regenerate_join_code(campaign_id: int) -> str:
+    """Give the campaign a new join code; the old one stops working at once (decision 1, CAMP-NEW-01)."""
+    code = unique_join_code()
+    Campaign.objects.filter(id=campaign_id).update(join_code=code)
+    return code

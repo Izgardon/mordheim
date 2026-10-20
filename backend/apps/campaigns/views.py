@@ -71,7 +71,7 @@ from .serializers import (
     PivotalMomentSerializer,
 )
 from .services import codes, removal
-from .services.campaigns import create_campaign
+from .services.campaigns import create_campaign, regenerate_join_code
 from .services.joining import join_campaign
 from .services.settings import may_update, update_campaign
 
@@ -351,6 +351,21 @@ def _permission_codes_for(campaign_id, user, role_slug):
             membership__campaign_id=campaign_id, membership__user=user
         ).values_list("permission__code", flat=True)
     )
+
+
+class CampaignJoinCodeView(APIView):
+    """POST: owners and admins give the campaign a new join code (decision 1, CAMP-NEW-01). Answers the campaign."""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, campaign_id):
+        membership = get_membership(request.user, campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if membership.role.slug not in IMPLICIT_PERMISSION_ROLES:
+            return Response({"detail": "Forbidden"}, status=403)
+        regenerate_join_code(campaign_id)
+        return Response(CampaignSerializer(_get_campaign_for_user(campaign_id, request.user)).data)
 
 
 class CampaignDetailView(APIView):
