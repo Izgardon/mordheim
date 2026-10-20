@@ -143,22 +143,42 @@ class BestiaryDetailBudgetTests(CatalogueTestCase):
             self.assertEqual(self.client.get(url).status_code, 200)
         return len(captured)
 
-    def test_the_bestiary_and_hired_sword_details_cost_today(self):
-        # Characterises current behaviour (PERF-46, CAT-TEST-08, pinned; flips in PR A: at most 12, constant)
-        self.assertLessEqual(
-            self.count(BESTIARY.detail_url(self.entry.id)), 51
-        )  # the seeded Bounty Hunter: 43 (seeding tests)
-        self.assertLessEqual(self.count(HIRED_SWORDS.detail_url(self.profile.id)), 52)  # the seeded one: 45
+    def test_the_bestiary_and_hired_sword_details_cost_8_and_9_queries(self):
+        # PERF-46, CAT-TEST-08 (was pinned: 51 and 52 here, 43 and 45 for the seeded Bounty Hunter; flipped in PR A):
+        # the entry, its skills, specials and spells, its equipment with the items, and the items' properties,
+        # availabilities and restrictions; the hired sword adds its restrictions. A campaign entry adds the
+        # membership read.
+        self.assertEqual(self.count(BESTIARY.detail_url(self.entry.id)), 8)
+        self.assertEqual(self.count(HIRED_SWORDS.detail_url(self.profile.id)), 9)
 
-    def test_each_equipment_item_adds_queries(self):
-        # Characterises current behaviour (PERF-46, pinned; flips in PR A: constant in items)
+    def test_the_details_stay_constant_as_equipment_grows(self):
+        # PERF-46 (was pinned: 5 more queries per item; flipped in PR A)
         before = (self.count(BESTIARY.detail_url(self.entry.id)), self.count(HIRED_SWORDS.detail_url(self.profile.id)))
 
         self.equip(2)
 
         after = (self.count(BESTIARY.detail_url(self.entry.id)), self.count(HIRED_SWORDS.detail_url(self.profile.id)))
-        # 5 per item: its nested ItemSerializer reads properties, availabilities and restrictions one item at a time
-        self.assertEqual((after[0] - before[0], after[1] - before[1]), (10, 10))
+        self.assertEqual(after, before)
+
+    def test_an_edit_answers_with_the_same_reads_whatever_the_equipment(self):
+        # PERF-46: the PATCH answers read through the details' prefetch
+        profile = make_entry(HIRED_SWORDS, "Duellist", campaign=self.campaign)
+        entry = profile.bestiary_entry
+        BestiaryEntryItem.objects.create(bestiary_entry=entry, item=make_entry(ITEMS, "Dagger"))
+
+        def edits() -> tuple[int, int]:
+            counts = []
+            for url in (BESTIARY.detail_url(entry.id), HIRED_SWORDS.detail_url(profile.id)):
+                with CaptureQueriesContext(connection) as captured:
+                    self.assertEqual(self.client.patch(url, {"description": "Sharp"}, format="json").status_code, 200)
+                counts.append(len(captured))
+            return counts[0], counts[1]
+
+        before = edits()
+        for index in range(3):
+            BestiaryEntryItem.objects.create(bestiary_entry=entry, item=make_entry(ITEMS, f"Blade {index}"))
+
+        self.assertEqual(edits(), before)
 
 
 class CatalogueWriteBudgetTests(CatalogueTestCase):
@@ -186,8 +206,8 @@ class CatalogueWriteBudgetTests(CatalogueTestCase):
         # +2 since BUG-17: the duplicate guard's savepoint around the INSERT (a test runs inside a transaction; in
         # production the guard's BEGIN and COMMIT are no queries)
         self.assertLessEqual(self.count(ITEMS.list_url(), item), 27)
-        # 15 links: a get_or_create each (SELECT, SAVEPOINT, INSERT, RELEASE), then the answer's N+1 (PERF-46);
-        # the brief estimated about 35; +2 since BUG-17, the duplicate guard's savepoint (as above)
-        self.assertLessEqual(self.count(HIRED_SWORDS.list_url(), sword), 98)
+        # 15 links: a get_or_create each (SELECT, SAVEPOINT, INSERT, RELEASE); the answer reads through the details'
+        # prefetch (PERF-46: 98 -> 78)
+        self.assertLessEqual(self.count(HIRED_SWORDS.list_url(), sword), 78)
         # membership, INSERT and the guard's savepoint (+2 since BUG-17, tests only)
         self.assertLessEqual(self.count(SKILLS.list_url(), SKILLS.body("Feint", self.campaign)), 5)

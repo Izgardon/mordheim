@@ -95,8 +95,8 @@ class SeedAllTests(TestCase):
         # every availability is deleted and written again under a new id (CAT-BUG-08's id churn)
         self.assertEqual(set(ItemAvailability.objects.values_list("id", flat=True)) & availabilities, set())
 
-    def test_the_seeded_bounty_hunter_details_cost_today(self):
-        # Characterises current behaviour (PERF-46, CAT-TEST-08, pinned; flips in PR A: at most 12)
+    def test_the_seeded_bounty_hunter_details_cost_8_and_9_queries(self):
+        # PERF-46, CAT-TEST-08 (was pinned: 43 and 45, each of his 8 items read on its own; flipped in PR A)
         client = APIClient()
         client.force_authenticate(user=get_user_model().objects.create_user(username="reader@example.com"))
         profile = HiredSwordProfile.objects.select_related("bestiary_entry").get(bestiary_entry__name="Bounty Hunter")
@@ -105,7 +105,7 @@ class SeedAllTests(TestCase):
             with CaptureQueriesContext(connection) as captured:
                 self.assertEqual(client.get(url).status_code, 200)
             counts.append(len(captured))
-        self.assertEqual(counts, [43, 45])  # bestiary entry, hired sword: 8 items, each read on its own
+        self.assertEqual(counts, [8, 9])  # bestiary entry, hired sword: constant whatever the equipment
 
     def test_every_seeded_link_resolves(self):
         # BUG-54, CAT-TEST-13 (was pinned: 16 links unresolved; flipped in PR A: prefixes stripped, apostrophes

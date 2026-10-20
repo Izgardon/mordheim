@@ -20,6 +20,7 @@ from .models import (
     HiredSwordProfileRestriction,
     WarbandBestiaryFavourite,
 )
+from .selectors import entry_details, hired_sword_details
 from .serializers import (
     BestiaryEntryCreateSerializer,
     BestiaryEntrySerializer,
@@ -78,23 +79,14 @@ class BestiaryEntryListView(APIView):
 
         _sync_m2m(entry, request.data)
 
-        return Response(BestiaryEntrySerializer(entry).data, status=status.HTTP_201_CREATED)
+        return Response(BestiaryEntrySerializer(entry_details().get(id=entry.id)).data, status=status.HTTP_201_CREATED)
 
 
 class BestiaryEntryDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, entry_id):
-        entry = (
-            BestiaryEntry.objects.prefetch_related(
-                "bestiary_entry_skills__skill",
-                "bestiary_entry_specials__special",
-                "bestiary_entry_spells__spell",
-                "bestiary_entry_items__item",
-            )
-            .filter(id=entry_id)
-            .first()
-        )
+        entry = entry_details().filter(id=entry_id).first()
         if not entry:
             return Response({"detail": "Not found"}, status=404)
 
@@ -127,8 +119,7 @@ class BestiaryEntryDetailView(APIView):
 
         _sync_m2m(entry, request.data)
 
-        entry.refresh_from_db()
-        return Response(BestiaryEntrySerializer(entry).data)
+        return Response(BestiaryEntrySerializer(entry_details().get(id=entry.id)).data)
 
     def delete(self, request, entry_id):
         entry = BestiaryEntry.objects.filter(id=entry_id).first()
@@ -334,7 +325,7 @@ class HiredSwordProfileListView(APIView):
             _sync_hired_sword_profile_restrictions(profile, restriction_entries)
 
         return Response(
-            HiredSwordProfileDetailSerializer(profile).data,
+            HiredSwordProfileDetailSerializer(hired_sword_details().get(id=profile.id)).data,
             status=status.HTTP_201_CREATED,
         )
 
@@ -343,18 +334,7 @@ class HiredSwordProfileDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, profile_id):
-        profile = (
-            HiredSwordProfile.objects.select_related("bestiary_entry")
-            .prefetch_related(
-                "bestiary_entry__bestiary_entry_skills__skill",
-                "bestiary_entry__bestiary_entry_specials__special",
-                "bestiary_entry__bestiary_entry_spells__spell",
-                "bestiary_entry__bestiary_entry_items__item",
-                "restriction_links__restriction",
-            )
-            .filter(id=profile_id)
-            .first()
-        )
+        profile = hired_sword_details().filter(id=profile_id).first()
         if not profile:
             return Response({"detail": "Not found"}, status=404)
 
@@ -419,8 +399,7 @@ class HiredSwordProfileDetailView(APIView):
         if restriction_entries is not None:
             _sync_hired_sword_profile_restrictions(profile, restriction_entries)
 
-        profile.refresh_from_db()
-        return Response(HiredSwordProfileDetailSerializer(profile).data)
+        return Response(HiredSwordProfileDetailSerializer(hired_sword_details().get(id=profile.id)).data)
 
     def delete(self, request, profile_id):
         profile = HiredSwordProfile.objects.select_related("bestiary_entry").filter(id=profile_id).first()
