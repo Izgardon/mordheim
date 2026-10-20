@@ -97,3 +97,15 @@ class NewJoinCodeTests(CampaignTestCase):
         self.assertEqual(self.regenerate(self.player).status_code, 403)
         self.assertEqual(self.regenerate(self.outsider).status_code, 404)
         self.assertEqual(Campaign.objects.get(id=self.campaign.id).join_code, self.campaign.join_code)
+
+
+class JoinCodeVisibilityTests(CampaignTestCase):
+    """BUG-143 (William, pass 4): every member sees the join code, in the campaigns list and in the campaign."""
+
+    def test_every_member_reads_the_code_in_the_list_and_the_detail(self):
+        for user in (self.owner, self.admin, self.player):
+            with self.subTest(user=user.first_name):
+                listed = {row["id"]: row for row in self.get_as(user, "/api/campaigns/").data}
+                self.assertEqual(listed[self.campaign.id]["join_code"], self.campaign.join_code)
+                self.assertEqual(self.get_as(user, self.url()).data["join_code"], self.campaign.join_code)
+        self.assertNotIn(self.campaign.id, [row["id"] for row in self.get_as(self.outsider, "/api/campaigns/").data])
