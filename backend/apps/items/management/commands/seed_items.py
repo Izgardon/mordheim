@@ -12,6 +12,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from apps.campaigns.services.house_rules import resync_every_campaign
+from apps.core.catalogue.cache import bump
 from apps.core.seeding import clean, entry_value, read_json_list, reset_sequence, sync_availabilities, upsert_global
 from apps.items.models import Item, ItemProperty, ItemPropertyLink
 from apps.restrictions.book import BookRestrictions
@@ -171,6 +172,7 @@ class Command(BaseCommand):
         """Upsert the book's items and properties, all or nothing (BUG-17); campaign rows are never read or written."""
         with transaction.atomic():
             self._import(options)
+            bump(None)  # every cached catalogue list shows the book (PERF-13)
 
     def _import(self, options: dict[str, Any]) -> None:
         json_path, properties_path = options.get("json_path"), options.get("properties_path")

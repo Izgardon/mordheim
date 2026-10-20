@@ -23,6 +23,7 @@ from apps.bestiary.models import (
     HiredSwordProfileRestriction,
 )
 from apps.bestiary.seeding import BookLookups
+from apps.core.catalogue.cache import bump
 from apps.core.seeding import clean, parse_int, read_json_list, read_stats, sync_availabilities, upsert_global
 from apps.items.models import Item
 from apps.restrictions.book import BookRestrictions
@@ -146,6 +147,7 @@ class Command(BaseCommand):
         lookups = BookLookups()
         with transaction.atomic():
             counts = self._seed(paths, lookups, BookRestrictions())
+            bump(None)  # every cached catalogue list shows the book (PERF-13)
 
         for warning in lookups.warnings:
             self.stdout.write(self.style.WARNING(warning))

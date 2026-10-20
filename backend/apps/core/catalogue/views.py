@@ -12,6 +12,7 @@ A method a view handles but `rules` doesn't name is refused (deny by default).
 from typing import Any, ClassVar
 
 from django.db.models import Model
+from django.http.response import HttpResponseBase
 from rest_framework import status
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.request import Request
@@ -21,6 +22,7 @@ from rest_framework.serializers import BaseSerializer
 from apps.campaigns.permissions import parse_campaign_id
 from apps.campaigns.views.base import CampaignScopedView
 
+from . import cache
 from .kinds import CatalogueKindSpec
 from .writes import catalogue_write, delete_unless_in_use
 
@@ -68,20 +70,31 @@ class CatalogueCollectionView(CatalogueScopedView):
         elif method != "GET":
             self.kind.hooks.missing_campaign()
 
-    def list(self, request: Request) -> Response:
-        """The kind's rows, filtered, then the book's or the campaign's by today's name rule."""
+    def list(self, request: Request) -> HttpResponseBase:
+        """The kind's rows, filtered, then the book's or the campaign's by today's name rule; answered from the cache
+        while neither catalogue has changed (PERF-13)."""
+        campaign_settings = self.access.settings if self.campaign_id is not None else None
+        version = campaign_settings.catalogue_version if campaign_settings else None
+        key = cache.list_key(self.kind.key, self.campaign_id, version, request)
+        hit = cache.cached_response(key) if key else None
+        if hit is not None:
+            return hit
+        response = Response(self.list_data(request))
+        if key:
+            response.add_post_render_callback(cache.remembered(key))
+        return response
+
+    def list_data(self, request: Request) -> Any:
         kind = self.kind
-        rows = (
-            kind.hooks.rows(kind).exclude(type__in=kind.excluded_types)
-            if kind.excluded_types
-            else kind.hooks.rows(kind)
-        )
+        rows = kind.hooks.rows(kind)
+        if kind.excluded_types:
+            rows = rows.exclude(type__in=kind.excluded_types)
         for param, keeps in kind.filters.items():
             value = request.query_params.get(param)
             if value:
                 rows = rows.filter(keeps(value.strip()))
         listed = kind.hooks.read(kind.hooks.listed(kind, rows, self.campaign_id))
-        return Response(kind.row_serializer(listed, many=True).data)
+        return kind.row_serializer(listed, many=True).data
 
     def create(self, request: Request) -> Response:
         assert self.campaign_id is not None  # load_scope found it
@@ -93,7 +106,7 @@ class CatalogueCollectionView(CatalogueScopedView):
 
 
 class CatalogueListView(CatalogueCollectionView):
-    def get(self, request: Request) -> Response:
+    def get(self, request: Request) -> HttpResponseBase:
         return self.list(request)
 
     def post(self, request: Request) -> Response:

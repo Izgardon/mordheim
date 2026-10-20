@@ -1,3 +1,5 @@
+import uuid
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -75,6 +77,8 @@ class CampaignCampaignType(models.Model):
 
 class CampaignSettings(models.Model):
     campaign = models.OneToOneField(Campaign, related_name="settings", on_delete=models.CASCADE)
+    # the campaign's catalogue: a new random value with every write to it, which retires its cached lists (PERF-13)
+    catalogue_version = models.UUIDField(default=uuid.uuid4, editable=False)
     max_players = models.PositiveSmallIntegerField(default=8)
     max_heroes = models.PositiveSmallIntegerField(default=6)
     max_hired_swords = models.PositiveSmallIntegerField(default=3)

@@ -12,6 +12,7 @@ from typing import Any
 
 from django.db.models import F, Q
 
+from apps.core.catalogue import cache as catalogue_cache
 from apps.special.models import Special
 
 DEAD = {"kind": "dead"}
@@ -139,7 +140,10 @@ def apply_stat_and_special(unit: Any, outcome: InjuryOutcome, campaign_id: int) 
             Special.objects.filter(Q(campaign__isnull=True) | Q(campaign_id=campaign_id), name__iexact=outcome.special)
             .order_by(F("campaign_id").asc(nulls_first=True), "id")
             .first()
-        ) or Special.objects.create(campaign_id=campaign_id, name=outcome.special, type="Injury")
+        )
+        if special is None:
+            special = Special.objects.create(campaign_id=campaign_id, name=outcome.special, type="Injury")
+            catalogue_cache.bump(campaign_id)  # the campaign's specials list shows it (PERF-13)
         links = unit.hero_specials if hasattr(unit, "hero_specials") else unit.hired_sword_specials
         if not links.filter(special=special).exists():
             links.create(special=special)

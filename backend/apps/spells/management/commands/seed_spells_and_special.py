@@ -9,6 +9,7 @@ from pathlib import Path
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
+from apps.core.catalogue.cache import bump
 from apps.core.seeding import read_json_list, upsert_global
 from apps.special.models import Special
 from apps.spells.models import Spell
@@ -25,6 +26,7 @@ class Command(BaseCommand):
         with transaction.atomic():
             spells_created, spells_updated = self._seed(Spell, SPELLS_JSON_PATH, "Spells", ("description", "dc"))
             special_created, special_updated = self._seed(Special, SPECIAL_JSON_PATH, "Special", ("description",))
+            bump(None)  # every cached catalogue list shows the book (PERF-13)
 
         self.stdout.write(
             self.style.SUCCESS(

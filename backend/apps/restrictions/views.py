@@ -1,5 +1,5 @@
+from django.http.response import HttpResponseBase
 from rest_framework.request import Request
-from rest_framework.response import Response
 
 from apps.core.catalogue.kinds import RESTRICTIONS
 from apps.core.catalogue.views import CatalogueCollectionView
@@ -11,5 +11,5 @@ class RestrictionListView(CatalogueCollectionView):
 
     kind = RESTRICTIONS
 
-    def get(self, request: Request) -> Response:
+    def get(self, request: Request) -> HttpResponseBase:
         return self.list(request)

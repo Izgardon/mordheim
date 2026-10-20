@@ -5,6 +5,7 @@ from typing import Any
 from django.db import models
 
 from apps.bestiary.models import BestiaryEntryItem
+from apps.core.catalogue.cache import bump
 from apps.warbands.models import HenchmenGroupItem, HeroItem, HiredSwordItem, WarbandItem
 
 from .models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemPropertyLink
@@ -176,6 +177,7 @@ def _retire_clones(campaign_id, clones):
 def _revert_generated_items_for_campaign(campaign_id, effect_key):
     clones = Item.objects.filter(campaign_id=campaign_id, generated_effect_key=effect_key, source_item__isnull=False)
     _retire_clones(campaign_id, list(clones.only("id", "source_item_id")))
+    bump(campaign_id)  # the campaign's cached lists show the clones (PERF-13)
 
 
 def _sync_generated_items_for_campaign(
@@ -212,6 +214,7 @@ def _sync_generated_items_for_campaign(
 
     item_id_map = {source_id: clone.id for source_id, clone in clone_map.items()}
     _remap_campaign_owned_rows(campaign_id, item_id_map)
+    bump(campaign_id)  # the campaign's cached lists show the clones (PERF-13)
 
 
 def sync_half_price_armour_for_campaign(campaign_id):

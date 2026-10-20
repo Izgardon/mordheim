@@ -7,9 +7,12 @@ properties and restrictions lists, the lists with campaign rows, the details and
 """
 
 from typing import Any
+from unittest import mock
 
+from django.core.cache import caches
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
+from rest_framework.serializers import BaseSerializer
 
 from apps.bestiary.models import BestiaryEntryItem, BestiaryEntrySkill, BestiaryEntrySpecial
 from apps.items.models import Item, ItemAvailabilityRestriction, ItemProperty, ItemPropertyLink
@@ -17,7 +20,17 @@ from apps.restrictions.models import Restriction
 from apps.skills.models import Skill
 from apps.special.models import Special
 
-from .catalogue_support import BESTIARY, HIRED_SWORDS, ITEMS, KINDS, RACES, SKILLS, CatalogueTestCase, make_entry
+from .catalogue_support import (
+    BESTIARY,
+    HIRED_SWORDS,
+    ITEMS,
+    KINDS,
+    RACES,
+    SKILLS,
+    CatalogueTestCase,
+    catalogue_cache_on,
+    make_entry,
+)
 
 # list -> (url, budget with book rows only, budget with campaign rows as well). The book rows include a Sword with
 # a property and a restricted availability, and each campaign item has both, so every prefetch runs.
@@ -33,7 +46,7 @@ LIST_BUDGETS: dict[str, tuple[str, int, int]] = {
     "hired_swords": ("/api/hired-swords/?campaign_id={campaign}", 3, 3),  # + their restrictions (were 5 and 6)
     "restrictions": ("/api/restrictions/?campaign_id={campaign}", 2, 2),
     "item_properties": ("/api/item-properties/?campaign_id={campaign}", 2, 2),  # one filtered list
-    "items_book": ("/api/items/", 4, 4),  # no campaign: the book rows and their prefetch chain (was 6)
+    "items_book": ("/api/items/", 5, 5),  # no campaign: the book's version (PERF-13), its rows and their chain (was 6)
 }
 
 
@@ -103,12 +116,20 @@ class CatalogueQueryBudgetTests(CatalogueTestCase):
 
         self.assertEqual(self.count("get", self.budget_url(LIST_BUDGETS["items"][0])), 6)
 
-    def test_a_revalidated_list_runs_every_query_to_answer_304(self):
-        # Characterises current behaviour (PERF-13's server half, pinned; flips in PR B: at most 3 queries)
-        url = self.budget_url(LIST_BUDGETS["items"][0])
-        etag = self.client.get(url)["ETag"]
-
-        self.assertEqual(self.count("get", url, status=304, HTTP_IF_NONE_MATCH=etag), self.count("get", url))
+    def test_a_revalidated_list_costs_one_query_and_no_serialisation(self):
+        # PERF-13, CAT-TEST-06 (was pinned: a 304 ran every query of the list and its serialisation; flipped in PR B):
+        # the membership, which carries the campaign's catalogue version (without a campaign, the book's version); the
+        # body comes from the cache
+        with catalogue_cache_on():
+            caches["catalogue"].clear()
+            for name, (template, _, _) in LIST_BUDGETS.items():
+                url = self.budget_url(template)
+                etag = self.client.get(url)["ETag"]
+                serialised = mock.patch.object(
+                    BaseSerializer, "data", new_callable=mock.PropertyMock, side_effect=AssertionError
+                )
+                with self.subTest(list=name), serialised:
+                    self.assertEqual(self.count("get", url, status=304, HTTP_IF_NONE_MATCH=etag), 1)
 
     def test_simple_details_cost_one_query_and_a_campaign_entry_two(self):
         for kind in KINDS:
@@ -209,31 +230,32 @@ class CatalogueWriteBudgetTests(CatalogueTestCase):
         availabilities = [{"cost": 10 * (n + 1), **restricted} for n in range(links)]
         return ITEMS.body(name, self.campaign, availabilities=availabilities, property_ids=properties)
 
-    def test_an_item_create_costs_13_queries_however_many_rows_it_links(self):
+    def test_an_item_create_costs_14_queries_however_many_rows_it_links(self):
         # PERF-44, BUG-53 (was pinned at 25: an INSERT and a restriction read per availability, a get_or_create per
         # property; flipped in PR A). Membership, a scope check for the properties and one for the restrictions, the
         # savepoint pair, the item, its availabilities, their restrictions and its properties in one INSERT each,
         # then the answer: the item and its three prefetches (15 with five, before PERF-49 joined the properties and
-        # restrictions to their links)
-        self.assertEqual(self.count(ITEMS.list_url(), self.item_body("Halberd", 2)), 13)
-        self.assertEqual(self.count(ITEMS.list_url(), self.item_body("Glaive", 6)), 13)
+        # restrictions to their links), and the campaign's catalogue version bumped with the write (PERF-13)
+        self.assertEqual(self.count(ITEMS.list_url(), self.item_body("Halberd", 2)), 14)
+        self.assertEqual(self.count(ITEMS.list_url(), self.item_body("Glaive", 6)), 14)
 
-    def test_a_hired_sword_create_costs_20_queries_however_many_rows_it_links(self):
+    def test_a_hired_sword_create_costs_21_queries_however_many_rows_it_links(self):
         # PERF-44, BUG-53 (was pinned at 96: a get_or_create per link, then the answer's N+1; flipped in PR A). The
         # write: membership, a scope check per table sent (skills, specials, items), the savepoint pair, the entry,
-        # one INSERT per kind of link and the profile (11). The answer: the hired sword detail's 9 prefetched reads,
-        # spells and restrictions included though none were sent. The brief's 10 would need the answer built from
-        # what was written instead of read back.
+        # one INSERT per kind of link, the profile and the campaign's catalogue version (12, PERF-13). The answer: the
+        # hired sword detail's 9 prefetched reads, spells and restrictions included though none were sent. The brief's
+        # 10 would need the answer built from what was written instead of read back.
         skills = [Skill.objects.create(name=f"Trick {n}", type="Combat").id for n in range(6)]
         specials = [Special.objects.create(name=f"Gift {n}", type="Ability").id for n in range(3)]
         gear = [{"item_id": make_entry(ITEMS, f"Kit {n}").id, "quantity": 1} for n in range(6)]
         sword = HIRED_SWORDS.body("Mercenary", self.campaign, skill_ids=skills, special_ids=specials, item_entries=gear)
         small = HIRED_SWORDS.body("Squire", self.campaign, skill_ids=skills[:1], special_ids=specials[:1], item_entries=gear[:1])  # fmt: skip
 
-        self.assertEqual(self.count(HIRED_SWORDS.list_url(), sword), 20)
-        self.assertEqual(self.count(HIRED_SWORDS.list_url(), small), 20)
+        self.assertEqual(self.count(HIRED_SWORDS.list_url(), sword), 21)
+        self.assertEqual(self.count(HIRED_SWORDS.list_url(), small), 21)
 
-    def test_a_skill_create_costs_4_queries(self):
-        # membership, the savepoint pair and the INSERT (5 while the serializer read the campaign through a writable
-        # campaign field, IMP-79; 3 before the duplicate guard's savepoint, BUG-17)
-        self.assertEqual(self.count(SKILLS.list_url(), SKILLS.body("Feint", self.campaign)), 4)
+    def test_a_skill_create_costs_5_queries(self):
+        # membership, the savepoint pair, the INSERT and the campaign's catalogue version (PERF-13). It was 5 with the
+        # campaign read by the serializer's campaign field instead of the version (IMP-79 dropped it), 3 before the
+        # duplicate guard's savepoint (BUG-17)
+        self.assertEqual(self.count(SKILLS.list_url(), SKILLS.body("Feint", self.campaign)), 5)

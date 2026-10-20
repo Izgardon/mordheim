@@ -10,6 +10,7 @@ from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
+from apps.core.catalogue.cache import bump
 from apps.core.seeding import clean, entry_value, read_json_list, upsert_global
 from apps.skills.models import Skill
 
@@ -43,6 +44,7 @@ class Command(BaseCommand):
         """Upsert the book's skills by name and type, all or nothing (BUG-17)."""
         with transaction.atomic():
             self._import(options)
+            bump(None)  # every cached catalogue list shows the book (PERF-13)
 
     def _import(self, options):
         json_path = options.get("json_path")

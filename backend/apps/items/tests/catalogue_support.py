@@ -12,7 +12,9 @@ Every catalogue table has a nullable `campaign`: NULL is the book (seeded), a va
 from dataclasses import dataclass, field
 from typing import Any
 
+from django.conf import settings
 from django.db.models import Model
+from django.test.utils import override_settings
 
 from apps.bestiary.models import BestiaryEntry, HiredSwordProfile
 from apps.campaigns.models import Campaign, CampaignMembershipPermission
@@ -211,3 +213,10 @@ class CatalogueTestCase(CampaignTestCase):
         CampaignMembershipPermission.objects.filter(
             membership=self.membership(user), permission__code__in=codes
         ).delete()
+
+
+def catalogue_cache_on() -> override_settings:
+    """The catalogue list cache on, as in production (the test runner turns it off: config/test_runner.py). Clear
+    `caches["catalogue"]` in setUp: the cache outlives each test's rollback."""
+    locmem = {"BACKEND": "django.core.cache.backends.locmem.LocMemCache", "LOCATION": "catalogue-tests"}
+    return override_settings(CACHES={**settings.CACHES, "catalogue": locmem})
