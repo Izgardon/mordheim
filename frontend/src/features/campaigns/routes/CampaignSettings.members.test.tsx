@@ -1,6 +1,7 @@
 /**
  * Settings → Campaign's members list as the app mounts it (layout, fake server): who sees which
- * action, Kick and Remove, role changes and permission grants, and the requests each one sends.
+ * action, Remove from campaign and its preview, role changes and permission grants, and the
+ * requests each one sends.
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -23,6 +24,8 @@ import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
 import { setupUser } from "@/test/user-event";
 
+import type { MemberRemovalPreview } from "../types/campaign-types";
+
 vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
@@ -40,6 +43,22 @@ const MEMBERS = `GET ${campaignApi("members/")}`;
 const PERMISSIONS_PUT = `PUT ${campaignApi(`members/${PLAYER.id}/permissions/`)}`;
 const ROLE_PATCH = `PATCH ${campaignApi(`members/${PLAYER.id}/role/`)}`;
 const CATALOGUE = `GET ${campaignApi("permissions/")}`;
+const REMOVAL_PREVIEW = `GET ${campaignApi(`members/${PLAYER.id}/removal/`)}`;
+const MEMBER_DELETE = `DELETE ${campaignApi(`members/${PLAYER.id}/`)}`;
+const REMOVE = "Remove from campaign";
+
+/** `GET members/9/removal/`: Mira's open battles and trades, and her kept warband. */
+const removalPreview = (overrides: Partial<MemberRemovalPreview> = {}): MemberRemovalPreview => ({
+  member: { id: PLAYER.id, name: PLAYER.name, role: "player" },
+  warband: { id: PLAYER.warband!.id, name: PLAYER.warband!.name },
+  battles: [
+    { id: 40, scenario: "Ford", status: "inviting", outcome: "cancelled" },
+    { id: 41, scenario: "Ford", status: "postbattle", outcome: "skipped" },
+  ],
+  trades: [{ id: "trade-1", status: "pending", with: { id: OWNER.id, name: OWNER.name } }],
+  notifications: 2,
+  ...overrides,
+});
 
 /** The grant PUT's answer: the granted codes with their labels and descriptions. */
 const grantAnswer = (body: unknown) =>
@@ -72,7 +91,7 @@ beforeEach(() => {
 });
 
 describe("Settings members list, as the owner", () => {
-  it("lists every member with email, rank and permissions; Remove on players, Kick only beside a warband; nothing on the owner's or the admin's row (CAMP-UX-02)", async () => {
+  it("lists every member with email, rank and permissions; Remove from campaign on every row but the owner's, and no Kick (CAMP-UX-02, decision 1)", async () => {
     const user = setupUser();
     await openMembers(user);
 
@@ -81,73 +100,103 @@ describe("Settings members list, as the owner", () => {
     expect(within(owner).getAllByText("Owner")).toHaveLength(2);
     expect(within(owner).getByRole("button", { name: "All permissions" })).toBeDisabled();
     expect(within(owner).queryByRole("checkbox")).not.toBeInTheDocument();
+    expect(within(owner).queryByRole("button", { name: REMOVE })).not.toBeInTheDocument();
 
     const admin = row(ADMIN.name);
     expect(within(admin).getByRole("checkbox", { name: "Admin" })).toBeChecked();
     expect(within(admin).getByRole("checkbox", { name: "Admin" })).toBeEnabled();
     expect(within(admin).getByRole("button", { name: "All permissions" })).toBeDisabled();
-    // Admins can't be removed, and nothing on the row says so.
-    expect(within(admin).queryByRole("button", { name: "Remove" })).not.toBeInTheDocument();
+    // The owner removes an admin directly, without demoting them first.
+    expect(within(admin).getByRole("button", { name: REMOVE })).toBeInTheDocument();
 
     const player = row(PLAYER.name);
     expect(player).toHaveTextContent(PLAYER.email);
     expect(within(player).getByRole("checkbox", { name: "Admin" })).not.toBeChecked();
     expect(within(player).getByRole("button", { name: "Add custom" })).toBeEnabled();
-    expect(within(player).getByRole("button", { name: "Remove" })).toBeInTheDocument();
-    expect(within(player).getByRole("button", { name: "Kick" })).toBeInTheDocument();
+    expect(within(player).getByRole("button", { name: REMOVE })).toBeInTheDocument();
 
     const nameless = row(NAMELESS.name);
     expect(within(nameless).getByRole("button", { name: "None" })).toBeEnabled();
-    expect(within(nameless).getByRole("button", { name: "Remove" })).toBeInTheDocument();
-    expect(within(nameless).queryByRole("button", { name: "Kick" })).not.toBeInTheDocument();
+    expect(within(nameless).getByRole("button", { name: REMOVE })).toBeInTheDocument();
 
+    expect(screen.queryByRole("button", { name: "Kick" })).not.toBeInTheDocument();
     expect(fakeApi.countOf(MEMBERS)).toBe(1);
   });
 
-  it("Kick asks to delete the warband, then sends the warband DELETE, which the server refuses the owner (BUG-12, pinned; flips in PR A)", async () => {
+  it("removes through one action that never deletes a warband: the preview says the warband is kept and lists what closes, then the membership DELETE drops the row (BUG-12, BUG-50, decision 1)", async () => {
     const user = setupUser();
-    fakeApi.fail(
-      `DELETE /warbands/${PLAYER.warband!.id}/`,
-      new ApiError("Forbidden", 403, { detail: "Forbidden" })
-    );
+    fakeApi.on(REMOVAL_PREVIEW, removalPreview());
+    fakeApi.on(MEMBER_DELETE, undefined);
     await openMembers(user);
 
-    await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Kick" }));
+    await user.click(within(row(PLAYER.name)).getByRole("button", { name: REMOVE }));
 
-    const dialog = screen.getByRole("dialog", { name: "Kick player" });
+    const dialog = screen.getByRole("dialog", { name: REMOVE });
+    expect(await within(dialog).findByRole("list", { name: "What closes" })).toBeInTheDocument();
+    expect(dialog).toHaveTextContent("Remove Mira from the campaign?");
     expect(dialog).toHaveTextContent(
-      "Delete Night Razors? This will permanently remove the warband and all its units."
+      "Their warband, Night Razors, is kept: it stays in the campaign's history and comes back if Mira rejoins."
     );
-    await user.click(within(dialog).getByRole("button", { name: "Kick player" }));
-
-    expect(await within(dialog).findByText("Forbidden")).toBeInTheDocument();
-    expect(fakeApi.calls().filter((call) => !call.startsWith("GET"))).toEqual([
-      `DELETE /warbands/${PLAYER.warband!.id}/`,
+    const lines = within(dialog)
+      .getAllByRole("listitem")
+      .map((item) => item.textContent);
+    expect(lines).toEqual([
+      "Battle #40, Ford (inviting): cancelled for everyone.",
+      "Battle #41, Ford (postbattle): Mira is skipped and the battle goes on without them.",
+      "Trade with Aldric (pending): closed.",
     ]);
-    // The dialog stays open over the list (which Radix hides from the accessibility tree).
-    expect(screen.getByRole("row", { name: /^Mira/, hidden: true })).toBeInTheDocument();
-  });
+    expect(dialog).toHaveTextContent("2 notifications waiting for Mira will be cleared.");
+    expect(dialog).toHaveTextContent("To keep them out, regenerate the join code afterwards.");
+    expect(dialog).not.toHaveTextContent(/cannot be undone|permanently/i);
 
-  it("Remove says it cannot be undone, sends the member DELETE and drops the row (BUG-50, pinned; flips in PR A)", async () => {
-    const user = setupUser();
-    fakeApi.on(`DELETE ${campaignApi(`members/${PLAYER.id}/`)}`, undefined);
-    await openMembers(user);
-
-    await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Remove" }));
-
-    const dialog = screen.getByRole("dialog", { name: "Remove player" });
-    expect(dialog).toHaveTextContent(
-      "Remove Mira from the campaign? This action cannot be undone."
-    );
-    await user.click(within(dialog).getByRole("button", { name: "Remove player" }));
+    await user.click(within(dialog).getByRole("button", { name: REMOVE }));
 
     await waitFor(() =>
       expect(screen.queryByRole("row", { name: /^Mira/ })).not.toBeInTheDocument()
     );
-    expect(fakeApi.calls().filter((call) => !call.startsWith("GET"))).toEqual([
-      `DELETE ${campaignApi(`members/${PLAYER.id}/`)}`,
-    ]);
+    expect(fakeApi.calls().filter((call) => !call.startsWith("GET"))).toEqual([MEMBER_DELETE]);
+    expect(fakeApi.calls().some((call) => call.startsWith("DELETE /warbands/"))).toBe(false);
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("waits for the preview before Remove from campaign can be confirmed, and says when there is nothing to close", async () => {
+    const user = setupUser();
+    const answer = deferred<unknown>();
+    fakeApi.on(REMOVAL_PREVIEW, () => answer.promise);
+    await openMembers(user);
+
+    await user.click(within(row(PLAYER.name)).getByRole("button", { name: REMOVE }));
+
+    const dialog = screen.getByRole("dialog", { name: REMOVE });
+    expect(dialog).toHaveTextContent("Checking what this closes...");
+    expect(within(dialog).getByRole("button", { name: REMOVE })).toBeDisabled();
+
+    answer.resolve(removalPreview({ battles: [], trades: [], notifications: 0 }));
+
+    expect(await within(dialog).findByText("Mira has no open battles or trades.")).toBeVisible();
+    expect(within(dialog).getByRole("button", { name: REMOVE })).toBeEnabled();
+    expect(fakeApi.countOf(REMOVAL_PREVIEW)).toBe(1);
+  });
+
+  it("keeps the dialog open with the server's refusal and the row in place", async () => {
+    const user = setupUser();
+    fakeApi.on(REMOVAL_PREVIEW, removalPreview());
+    fakeApi.fail(
+      MEMBER_DELETE,
+      new ApiError("Admins can only remove players.", 403, {
+        detail: "Admins can only remove players.",
+        code: "not_allowed",
+      })
+    );
+    await openMembers(user);
+    await user.click(within(row(PLAYER.name)).getByRole("button", { name: REMOVE }));
+    const dialog = screen.getByRole("dialog", { name: REMOVE });
+    await within(dialog).findByRole("list", { name: "What closes" });
+
+    await user.click(within(dialog).getByRole("button", { name: REMOVE }));
+
+    expect(await within(dialog).findByText("Admins can only remove players.")).toBeVisible();
+    expect(screen.getByRole("row", { name: /^Mira/, hidden: true })).toBeInTheDocument();
   });
 
   it("never names a member by email in the remove dialog, even one sent without a name (SEC-13)", async () => {
@@ -158,12 +207,17 @@ describe("Settings members list, as the owner", () => {
         member.id === NAMELESS.id ? { ...member, name: "" } : member
       )
     );
+    fakeApi.on(`GET ${campaignApi(`members/${NAMELESS.id}/removal/`)}`, {
+      ...removalPreview({ battles: [], trades: [], notifications: 0 }),
+      warband: null,
+    });
     await openMembers(user);
 
     const nameless = screen.getByRole("row", { name: new RegExp(`^${NAMELESS.email}`) });
-    await user.click(within(nameless).getByRole("button", { name: "Remove" }));
+    await user.click(within(nameless).getByRole("button", { name: REMOVE }));
 
-    const dialog = screen.getByRole("dialog", { name: "Remove player" });
+    const dialog = screen.getByRole("dialog", { name: REMOVE });
+    expect(await within(dialog).findByText("This player has no warband.")).toBeVisible();
     expect(dialog).toHaveTextContent("Remove this player from the campaign?");
     expect(dialog).not.toHaveTextContent(NAMELESS.email);
   });
@@ -294,7 +348,7 @@ describe("Settings members list, as the owner", () => {
     expect(grantMenu(PLAYER.name)).toBeInTheDocument();
   });
 
-  it("makes a player an admin through the role PATCH: All permissions, and no Remove or Kick", async () => {
+  it("makes a player an admin through the role PATCH: All permissions, and the owner can still remove them", async () => {
     const user = setupUser();
     fakeApi.on(ROLE_PATCH, { id: PLAYER.id, role: "admin" });
     await openMembers(user);
@@ -307,8 +361,7 @@ describe("Settings members list, as the owner", () => {
     expect(fakeApi.bodyOf(ROLE_PATCH)).toEqual({ role: "admin" });
     const player = row(PLAYER.name);
     expect(within(player).getByRole("button", { name: "All permissions" })).toBeDisabled();
-    expect(within(player).queryByRole("button", { name: "Remove" })).not.toBeInTheDocument();
-    expect(within(player).queryByRole("button", { name: "Kick" })).not.toBeInTheDocument();
+    expect(within(player).getByRole("button", { name: REMOVE })).toBeInTheDocument();
   });
 
   it("puts a refused role change back and shows why on the row", async () => {
@@ -322,7 +375,7 @@ describe("Settings members list, as the owner", () => {
       await within(row(PLAYER.name)).findByText("Owner role cannot be changed.")
     ).toBeInTheDocument();
     expect(within(row(PLAYER.name)).getByRole("checkbox", { name: "Admin" })).not.toBeChecked();
-    expect(within(row(PLAYER.name)).getByRole("button", { name: "Remove" })).toBeInTheDocument();
+    expect(within(row(PLAYER.name)).getByRole("button", { name: REMOVE })).toBeInTheDocument();
   });
 });
 
@@ -332,7 +385,7 @@ describe("Settings members list, as an admin", () => {
     routeCampaignShell({ campaign: campaignFor("admin"), viewer: ADMIN });
   });
 
-  it("can grant codes to players but can't change roles or remove anyone; no Campaign Systems, Warband or delete cards", async () => {
+  it("can grant codes to players and remove players, but can't change roles or remove the owner or an admin; no Campaign Systems, Warband or delete cards", async () => {
     const user = setupUser();
     await openMembers(user);
 
@@ -340,7 +393,10 @@ describe("Settings members list, as an admin", () => {
     expect(within(player).getByRole("checkbox", { name: "Admin" })).toBeDisabled();
     expect(within(row(ADMIN.name)).getByRole("checkbox", { name: "Admin" })).toBeDisabled();
     expect(within(player).getByRole("button", { name: "Add custom" })).toBeEnabled();
-    expect(screen.queryByRole("button", { name: "Remove" })).not.toBeInTheDocument();
+    expect(within(player).getByRole("button", { name: REMOVE })).toBeInTheDocument();
+    expect(within(row(NAMELESS.name)).getByRole("button", { name: REMOVE })).toBeInTheDocument();
+    expect(within(row(OWNER.name)).queryByRole("button", { name: REMOVE })).toBeNull();
+    expect(within(row(ADMIN.name)).queryByRole("button", { name: REMOVE })).toBeNull();
     expect(screen.queryByRole("button", { name: "Kick" })).not.toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Campaign Systems" })).not.toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Delete campaign" })).not.toBeInTheDocument();

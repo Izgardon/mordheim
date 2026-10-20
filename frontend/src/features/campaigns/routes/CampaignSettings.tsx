@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from "react";
 
 import TabbedCard from "@components/tabbed-card";
 import { PageHeader } from "@components/page-header";
-import { ConfirmDialog } from "@components/confirm-dialog";
 import ActiveBattlesTable from "../components/settings/ActiveBattlesTable";
 import DeleteCampaignCard from "../components/settings/DeleteCampaignCard";
 import DeleteWarbandCard from "../components/settings/DeleteWarbandCard";
@@ -17,8 +16,6 @@ import RemoveMemberDialog from "../components/settings/RemoveMemberDialog";
 import PersonalSettingsCard from "../components/settings/PersonalSettingsCard";
 import WarbandDiceSettingsCard from "../components/settings/WarbandDiceSettingsCard";
 import WarbandSettingsCard from "../components/settings/WarbandSettingsCard";
-
-import type { CampaignMember } from "../types/campaign-types";
 
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";
@@ -82,13 +79,9 @@ export default function CampaignSettings() {
     removeOpen,
     removeError,
     isRemoving,
-    kickTarget,
-    kickOpen,
-    kickError,
-    isKicking,
     canManagePermissions,
     canManageRoles,
-    canRemoveMembers,
+    canRemoveMember,
     canManageActiveBattles,
     isDeleteReady,
     permissionCatalogue,
@@ -98,9 +91,6 @@ export default function CampaignSettings() {
     requestRemoveMember,
     closeRemoveDialog,
     handleRemoveMember,
-    requestKickPlayer,
-    closeKickDialog,
-    handleKickPlayer,
     setDeleteOpen,
     setDeleteValue,
     handleDeleteCampaign,
@@ -215,15 +205,13 @@ export default function CampaignSettings() {
                     formatPermissionsLabel={formatPermissionsLabel}
                     canManagePermissions={canManagePermissions}
                     canManageRoles={canManageRoles}
-                    canRemoveMembers={canRemoveMembers}
+                    canRemoveMember={canRemoveMember}
                     savingPermissions={savingPermissions}
                     savingRoles={savingRoles}
                     memberErrors={memberErrors}
                     onTogglePermission={handlePermissionToggle}
                     onToggleRole={handleRoleToggle}
                     onRemoveRequest={requestRemoveMember}
-                    canKickPlayers={isOwner}
-                    onKickRequest={requestKickPlayer}
                   />
                 ) : null}
 
@@ -252,7 +240,7 @@ export default function CampaignSettings() {
                   />
                 ) : null}
 
-                {canRemoveMembers ? (
+                {isOwner ? (
                   <DeleteCampaignCard
                     open={deleteOpen}
                     onOpenChange={setDeleteOpen}
@@ -267,20 +255,13 @@ export default function CampaignSettings() {
                 ) : null}
 
                 <RemoveMemberDialog
+                  campaignId={campaignId}
                   open={removeOpen}
                   target={removeTarget}
                   error={removeError}
                   isRemoving={isRemoving}
                   onClose={closeRemoveDialog}
                   onConfirm={handleRemoveMember}
-                />
-                <KickPlayerDialog
-                  open={kickOpen}
-                  target={kickTarget}
-                  error={kickError}
-                  isKicking={isKicking}
-                  onClose={closeKickDialog}
-                  onConfirm={handleKickPlayer}
                 />
               </div>
             )}
@@ -290,51 +271,5 @@ export default function CampaignSettings() {
         personalSettingsContent
       )}
     </div>
-  );
-}
-
-type KickPlayerDialogProps = {
-  open: boolean;
-  target: CampaignMember | null;
-  error: string;
-  isKicking: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-};
-
-function KickPlayerDialog({
-  open,
-  target,
-  error,
-  isKicking,
-  onClose,
-  onConfirm,
-}: KickPlayerDialogProps) {
-  const description = (
-    <div className="space-y-2">
-      <p>
-        Delete{" "}
-        <span className="font-semibold text-foreground">
-          {target?.warband_name ?? "this warband"}
-        </span>
-        ? This will permanently remove the warband and all its units.
-      </p>
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
-    </div>
-  );
-  return (
-    <ConfirmDialog
-      open={open}
-      onOpenChange={(nextOpen) => {
-        if (!nextOpen) onClose();
-      }}
-      description={description}
-      confirmText={isKicking ? "Kicking..." : "Kick player"}
-      confirmVariant="destructive"
-      confirmDisabled={isKicking || !target}
-      isConfirming={isKicking}
-      onConfirm={onConfirm}
-      onCancel={onClose}
-    />
   );
 }

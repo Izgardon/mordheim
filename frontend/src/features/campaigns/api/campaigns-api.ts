@@ -16,6 +16,7 @@ import type {
   CampaignMember,
   CampaignMessage,
   CampaignPermission,
+  MemberRemovalPreview,
   CampaignPlayer,
   CampaignPivotalMoment,
   CampaignSummary,
@@ -185,6 +186,10 @@ export function updateMemberRole(campaignId: number, userId: number, role: "admi
       body: { role },
     }
   );
+}
+
+export function getMemberRemovalPreview(campaignId: number, userId: number) {
+  return apiRequest<MemberRemovalPreview>(`/campaigns/${campaignId}/members/${userId}/removal/`);
 }
 
 export function removeCampaignMember(campaignId: number, userId: number) {

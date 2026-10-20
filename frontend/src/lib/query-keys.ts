@@ -22,6 +22,9 @@ export const queryKeys = {
     detail: (campaignId: number) => ["campaign", campaignId, "detail"] as const,
     /** Every permission code with its label and description (the grant menu's options). */
     permissionCatalogue: (campaignId: number) => ["campaign", campaignId, "permissions"] as const,
+    /** What removing one member would close (read each time the remove dialog opens). */
+    memberRemoval: (campaignId: number, userId: number) =>
+      ["campaign", campaignId, "members", userId, "removal"] as const,
     catalogue: (campaignId: number, kind: CatalogueKind) =>
       ["campaign", campaignId, "catalogue", kind] as const,
     openBattles: (campaignId: number) => ["campaign", campaignId, "battles", "open"] as const,
