@@ -73,6 +73,7 @@ class CampaignSerializer(serializers.ModelSerializer):
             "enable_locations",
             "item_settings",
             "in_progress",
+            "archived_at",
             "player_count",
             "role",
             "created_at",
@@ -80,6 +81,7 @@ class CampaignSerializer(serializers.ModelSerializer):
         )
         read_only_fields = (
             "join_code",
+            "archived_at",
             "player_count",
             "role",
             "created_at",

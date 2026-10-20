@@ -64,9 +64,12 @@ def check_may_remove(actor: CampaignMembership, target: CampaignMembership) -> N
         raise Refused("Admins can only remove players.", code="not_allowed", status=403)
 
 
-def _open_trades(campaign_id: int, user_id: int):
-    involved = Q(from_user_id=user_id) | Q(to_user_id=user_id)
-    return trade_requests().filter(involved, campaign_id=campaign_id, status__in=OPEN_STATUSES).order_by("created_at")
+def _open_trades(campaign_id: int, user_id: int | None = None):
+    """The campaign's pending and accepted trades (a member's, when `user_id` is given), oldest first."""
+    rows = trade_requests().filter(campaign_id=campaign_id, status__in=OPEN_STATUSES)
+    if user_id is not None:
+        rows = rows.filter(Q(from_user_id=user_id) | Q(to_user_id=user_id))
+    return rows.order_by("created_at")
 
 
 def preview(actor: CampaignMembership, user_id: int) -> dict[str, Any]:
@@ -107,34 +110,40 @@ def remove_member(actor: CampaignMembership, user_id: int, actor_user: Any) -> N
     with transaction.atomic():
         target = _target(actor.campaign_id, user_id, lock=True)
         check_may_remove(actor, target)
-        _close_trades(actor.campaign_id, target.user)
+        close_trades(actor.campaign_id, target.user)
         _close_battles(actor.campaign_id, user_id, actor_user, closed)
         Notification.objects.filter(user_id=user_id, campaign_id=actor.campaign_id, is_resolved=False).update(
             is_resolved=True, resolved_at=timezone.now()
         )
         campaign = target.campaign
         target.delete()
+    publish_closed(closed, actor_user, removal_battles.REMOVAL_MODE)
+    payload = {"campaign_id": campaign.id, "campaign_name": campaign.name, "removed_by": display_name(actor_user)}
+    send_user_notification(user_id, "membership_removed", payload)
+
+
+def close_trades(campaign_id: int, user: Any = None) -> None:
+    """His pending and accepted trades end as if he cancelled or declined them; with no `user` (archiving), every
+    open trade of the campaign is cancelled. One that ran out expires instead."""
+    for trade in _open_trades(campaign_id, user.id if user else None).select_for_update(of=("self",)):
+        if is_due(trade):
+            expire(trade)
+        else:
+            close(trade, side_of(trade, user) if user else "from")
+
+
+def publish_closed(closed: Closed, actor_user: Any, reason: str) -> None:
+    """Each closed battle's events and fresh snapshot to its channel (call it after the transaction)."""
     for battle_id, events, version in closed.battles:
         publish(
             battle_snapshot(battle_id),
             events,
             version=version,
             changed=ALL,
-            reason=removal_battles.REMOVAL_MODE,
+            reason=reason,
             actor_user_id=actor_user.id,
             socket_id=None,
         )
-    payload = {"campaign_id": campaign.id, "campaign_name": campaign.name, "removed_by": display_name(actor_user)}
-    send_user_notification(user_id, "membership_removed", payload)
-
-
-def _close_trades(campaign_id: int, user: Any) -> None:
-    """His pending and accepted trades end as if he cancelled or declined them (one that ran out expires)."""
-    for trade in _open_trades(campaign_id, user.id).select_for_update(of=("self",)):
-        if is_due(trade):
-            expire(trade)
-        else:
-            close(trade, side_of(trade, user))
 
 
 def _close_battles(campaign_id: int, user_id: int, actor_user: Any, closed: Closed) -> None:

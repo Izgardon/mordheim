@@ -13,6 +13,7 @@ from django.db import connection, transaction
 from django.test import RequestFactory
 from django.test.utils import CaptureQueriesContext
 from django.urls import URLPattern, get_resolver
+from django.utils import timezone
 from rest_framework.request import Request
 
 from apps.battles.models import Battle
@@ -20,7 +21,13 @@ from apps.bestiary.models import BestiaryEntry
 from apps.campaigns import views as campaign_views
 from apps.campaigns.access import CAMPAIGN_RULES, CAPABILITIES, load_campaign_access
 from apps.campaigns.constants import PERMISSION_CODES
-from apps.campaigns.models import CampaignBulletinEntry, CampaignEncampment, CampaignHouseRule, CampaignLocation
+from apps.campaigns.models import (
+    Campaign,
+    CampaignBulletinEntry,
+    CampaignEncampment,
+    CampaignHouseRule,
+    CampaignLocation,
+)
 from apps.campaigns.views.base import CampaignScopedView
 from apps.items.models import Item
 from apps.skills.models import Skill
@@ -60,6 +67,8 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("GET", "members/{rival}/removal/", None, (403, 403, 200, 200)),
     ("DELETE", "members/{rival}/", None, (403, 403, 204, 204)),
     ("POST", "ownership/", {"user_id": "{admin}"}, (403, 403, 403, 200)),
+    ("POST", "archive/", {}, (403, 403, 403, 200)),
+    ("POST", "restore/", {}, (403, 403, 403, 403)),  # not archived: nothing to restore
     ("GET", "permissions/", None, OK_ALL),
     ("GET", "permissions/me/", None, OK_ALL),
     ("GET", "rules/", None, OK_ALL),
@@ -82,6 +91,8 @@ REPRESENTATIVE: dict[str, tuple[str, str, dict[str, Any] | None]] = {
     "change_roles": ("PATCH", "members/{rival}/role/", {"role": "player"}),
     "remove_members": ("DELETE", "members/{rival}/", None),
     "hand_over": ("POST", "ownership/", {"user_id": "{admin}"}),
+    "archive": ("POST", "archive/", {}),
+    "restore": ("POST", "restore/", {}),
     "add_custom": ("POST", "/api/skills/", {"campaign_id": "{campaign}", "name": "Dodge", "type": "Speed"}),
     "manage_items": ("DELETE", "/api/items/{item}/", None),
     "manage_skills": ("DELETE", "/api/skills/{skill}/", None),
@@ -92,7 +103,7 @@ REPRESENTATIVE: dict[str, tuple[str, str, dict[str, Any] | None]] = {
     "manage_encampments": ("POST", "encampments/", {"name": "Camp"}),
     "manage_locations": ("POST", "locations/", {"name": "Ruin"}),
     "manage_bestiary": ("DELETE", "/api/bestiary/{beast}/", None),
-    "manage_battles": ("GET", "active-battles/", None),
+    "manage_battles": ("POST", "active-battles/{battle}/cancel/", {}),
 }
 
 NOT_SCOPED = {  # views without a campaign_id, and the players list, whose member check is the list (PERF-41)
@@ -201,6 +212,18 @@ class CapabilityTruthTests(CampaignAccessFixture):
             capabilities = self.get_as(getattr(self, actor), self.url()).json()["capabilities"]
             self.assertEqual(list(capabilities), list(CAPABILITIES))
             for name, (method, template, body) in REPRESENTATIVE.items():
+                with self.subTest(actor=actor, capability=name):
+                    allowed = 200 <= self.status_of(getattr(self, actor), method, template, body) < 300
+                    self.assertEqual(capabilities[name], allowed)
+
+    def test_capabilities_match_what_an_archived_campaign_allows(self):
+        # decision 5: every write answers 403 campaign_archived but restore and delete (the owner's)
+        Campaign.objects.filter(id=self.campaign.id).update(archived_at=timezone.now())
+        for actor in MEMBERS:
+            capabilities = self.get_as(getattr(self, actor), self.url()).json()["capabilities"]
+            for name, (method, template, body) in REPRESENTATIVE.items():
+                if template.startswith("/"):
+                    continue  # outside campaigns/<id>/
                 with self.subTest(actor=actor, capability=name):
                     allowed = 200 <= self.status_of(getattr(self, actor), method, template, body) < 300
                     self.assertEqual(capabilities[name], allowed)

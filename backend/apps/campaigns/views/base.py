@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ..access import CAMPAIGN_RULES, CampaignAccess, campaign_capabilities, load_campaign_access
-from ..errors import CampaignError, Refused
+from ..errors import CampaignArchived, CampaignError, Refused
 
 
 class AnswersRefusals(APIView):
@@ -28,7 +28,9 @@ class CampaignScopedView(AnswersRefusals):
     method's rule before the handler.
 
     Answers as the hand-written checks did: anonymous 401 (and throttles) first, then a non-member 404 "Not found",
-    a feature switched off 404 "Not found" (`feature_flag`), a member without the right 403 "Forbidden". `rules`
+    a feature switched off 404 "Not found" (`feature_flag`), any write to an archived campaign 403
+    `campaign_archived` (but the methods in `allow_archived`: restore, delete), a member without the right 403
+    "Forbidden". `rules`
     maps each method the view handles to a rule of `access.CAMPAIGN_RULES`; a handled method it doesn't list is
     refused (deny by default). Methods the view doesn't handle, and OPTIONS, are left to DRF (405, metadata).
     Object rules (a note's author) are checked in the handler with `check_rule(name, obj)`.
@@ -37,6 +39,7 @@ class CampaignScopedView(AnswersRefusals):
     permission_classes = [permissions.IsAuthenticated]
     rules: Mapping[str, str] = {"GET": "view"}
     feature_flag: str | None = None
+    allow_archived: frozenset[str] = frozenset()  # writes an archived campaign still takes (decision 5)
 
     access: CampaignAccess
 
@@ -51,6 +54,8 @@ class CampaignScopedView(AnswersRefusals):
         self.access = access
         if self.feature_flag and not access.feature(self.feature_flag):
             raise NotFound("Not found")
+        if method != "GET" and access.archived and method not in self.allow_archived:
+            raise CampaignArchived()
         self.check_rule(self.rules.get(method))
 
     def check_rule(self, name: str | None, obj: Any = None) -> None:

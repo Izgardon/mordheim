@@ -10,7 +10,7 @@ from typing import Any
 from django.db import IntegrityError, transaction
 
 from ..constants import JOIN_GRANTS, PLAYER
-from ..errors import Refused
+from ..errors import CampaignArchived, Refused
 from ..models import Campaign, CampaignMembership
 from . import codes
 
@@ -26,6 +26,8 @@ def join_campaign(user: Any, join_code: str) -> Campaign:
             campaign = rows.filter(join_code=join_code).first()
             if campaign is None:
                 raise Refused("Campaign not found", status=404)
+            if campaign.archived_at is not None:  # read-only, members included (decision 5)
+                raise CampaignArchived()
             members = CampaignMembership.objects.filter(campaign=campaign)
             if members.filter(user=user).exists():
                 raise Refused(ALREADY_A_MEMBER)

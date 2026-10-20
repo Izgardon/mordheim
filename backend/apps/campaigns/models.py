@@ -24,6 +24,11 @@ class Campaign(models.Model):
     name = models.CharField(max_length=120)
     join_code = models.CharField(max_length=6, unique=True)
     in_progress = models.BooleanField(default=False)
+    # set while the campaign is archived: read-only for everyone until its owner restores it (decision 5)
+    archived_at = models.DateTimeField(null=True, blank=True)
+    archived_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="+", on_delete=models.SET_NULL, null=True, blank=True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

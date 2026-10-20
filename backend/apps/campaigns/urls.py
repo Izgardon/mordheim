@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (
     CampaignActiveBattleCancelView,
     CampaignActiveBattlesView,
+    CampaignArchiveView,
     CampaignBattleHistoryView,
     CampaignBulletinDetailView,
     CampaignBulletinView,
@@ -27,6 +28,7 @@ from .views import (
     CampaignPermissionsView,
     CampaignPivotalMomentsView,
     CampaignPlayersView,
+    CampaignRestoreView,
     CampaignTopKillersView,
     JoinCampaignView,
 )
@@ -36,6 +38,8 @@ urlpatterns = [
     path("campaigns/join/", JoinCampaignView.as_view(), name="campaigns-join"),
     path("campaigns/<int:campaign_id>/", CampaignDetailView.as_view(), name="campaigns-detail"),
     path("campaigns/<int:campaign_id>/join-code/", CampaignJoinCodeView.as_view(), name="campaigns-join-code"),
+    path("campaigns/<int:campaign_id>/archive/", CampaignArchiveView.as_view(), name="campaigns-archive"),
+    path("campaigns/<int:campaign_id>/restore/", CampaignRestoreView.as_view(), name="campaigns-restore"),
     path(
         "campaigns/<int:campaign_id>/players/",
         CampaignPlayersView.as_view(),

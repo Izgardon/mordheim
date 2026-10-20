@@ -44,6 +44,11 @@ class CampaignAccess:
         return getattr(self.membership.campaign, "settings", None)  # None for a campaign without its settings row
 
     @property
+    def archived(self) -> bool:
+        """The campaign is archived: read-only for everyone until its owner restores it (decision 5)."""
+        return self.campaign.archived_at is not None
+
+    @property
     def is_staff(self) -> bool:
         return self.role in IMPLICIT_PERMISSION_ROLES
 
@@ -87,6 +92,10 @@ def owner(access: CampaignAccess, obj: Any = None) -> bool:
     return access.role == OWNER
 
 
+def owner_of_archived(access: CampaignAccess, obj: Any = None) -> bool:
+    return access.role == OWNER and access.archived
+
+
 def staff(access: CampaignAccess, obj: Any = None) -> bool:
     return access.is_staff
 
@@ -122,6 +131,8 @@ ROLE_RULES: Mapping[str, Rule] = {
     "change_roles": owner,
     "remove_members": staff,  # whom each may remove: services/removal.check_may_remove
     "hand_over": owner,  # ownership goes to an admin (decision 4, CAMP-NEW-02)
+    "archive": owner,  # decision 5, CAMP-NEW-04
+    "restore": owner_of_archived,
 }
 CODE_RULES: Mapping[str, Rule] = {
     **{code: has(code) for code in PERMISSION_CODES},
@@ -135,8 +146,13 @@ CAMPAIGN_RULES: Mapping[str, Rule] = {
     "delete_bulletin_entry": author,  # an object rule: check_rule("delete_bulletin_entry", entry)
 }
 CAPABILITIES: tuple[str, ...] = (*ROLE_RULES, *CODE_RULES)  # the flags: every rule but view and object rules
+# what an archived campaign still lets its members do (everything else answers 403 campaign_archived)
+KEPT_WHEN_ARCHIVED = frozenset({"view_members", "restore", "delete"})
 
 
 def campaign_capabilities(access: CampaignAccess) -> dict[str, bool]:
     """Flags for the campaign payload, from the loaded access: no query."""
-    return {name: CAMPAIGN_RULES[name](access, None) for name in CAPABILITIES}
+    return {
+        name: CAMPAIGN_RULES[name](access, None) and (not access.archived or name in KEPT_WHEN_ARCHIVED)
+        for name in CAPABILITIES
+    }

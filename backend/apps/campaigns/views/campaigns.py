@@ -1,4 +1,5 @@
-"""The campaigns list, creating and joining one, and one campaign: read, settings, delete and its join code."""
+"""The campaigns list, creating and joining one, and one campaign: read, settings, delete, its join code, and
+archiving and restoring it (decision 5)."""
 
 from rest_framework import permissions, status
 from rest_framework.response import Response
@@ -10,6 +11,7 @@ from ..serializers.campaigns import (
     CampaignUpdateSerializer,
     JoinCampaignSerializer,
 )
+from ..services import archive
 from ..services.campaigns import create_campaign, regenerate_join_code
 from ..services.joining import join_campaign
 from ..services.settings import rule_for, update_campaign
@@ -43,22 +45,25 @@ class JoinCampaignView(AnswersRefusals):
         return Response(CampaignSerializer(campaign_for_user(campaign.id, request.user)).data, status=201)
 
 
+def detail_payload(view: CampaignScopedView, campaign_id: int) -> dict:
+    """The campaign as its detail answers it to the caller, with his permissions and capabilities."""
+    data = CampaignSerializer(campaign_for_user(campaign_id, view.request.user)).data
+    # Pages read the caller's permissions from here instead of each fetching /permissions/me/, and gate their
+    # controls on the capabilities (design 0.29): what the server lets him do, from the same read
+    data["permissions"] = view.access.codes
+    data["capabilities"] = view.capabilities()
+    return data
+
+
 class CampaignDetailView(CampaignScopedView):
     """GET: the campaign with the caller's permissions and capabilities. PATCH: the start flag (owners and admins)
-    or the settings (the owner). DELETE: the owner deletes it."""
+    or the settings (the owner). DELETE: the owner deletes it, archived or not."""
 
     rules = {"GET": "view", "PATCH": "view", "DELETE": "delete"}  # PATCH: the rule depends on the fields sent
+    allow_archived = frozenset({"DELETE"})
 
     def get(self, request, campaign_id):
-        campaign = campaign_for_user(campaign_id, request.user)
-        if not campaign:
-            return Response({"detail": "Not found"}, status=404)
-        data = CampaignSerializer(campaign).data
-        # Pages read the caller's permissions from here instead of each fetching /permissions/me/, and gate their
-        # controls on the capabilities (design 0.29): what the server lets him do, from the same read
-        data["permissions"] = self.access.codes
-        data["capabilities"] = self.capabilities()
-        return Response(data)
+        return Response(detail_payload(self, campaign_id))
 
     def delete(self, request, campaign_id):
         self.access.campaign.delete()
@@ -83,3 +88,26 @@ class CampaignJoinCodeView(CampaignScopedView):
     def post(self, request, campaign_id):
         regenerate_join_code(campaign_id)
         return Response(CampaignSerializer(campaign_for_user(campaign_id, request.user)).data)
+
+
+class CampaignArchiveView(CampaignScopedView):
+    """POST: the owner archives the campaign: its open battles and trades close and it becomes read-only for
+    everyone (decision 5, CAMP-NEW-04). Answers the campaign as its detail does."""
+
+    rules = {"POST": "archive"}
+
+    def post(self, request, campaign_id):
+        self.access.campaign.archived_at = archive.archive(campaign_id, request.user).archived_at
+        return Response(detail_payload(self, campaign_id))
+
+
+class CampaignRestoreView(CampaignScopedView):
+    """POST: the owner restores his archived campaign; it can change again (decision 5)."""
+
+    rules = {"POST": "restore"}
+    allow_archived = frozenset({"POST"})
+
+    def post(self, request, campaign_id):
+        archive.restore(campaign_id)
+        self.access.campaign.archived_at = None
+        return Response(detail_payload(self, campaign_id))
