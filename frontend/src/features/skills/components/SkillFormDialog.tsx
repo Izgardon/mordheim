@@ -17,6 +17,7 @@ import { Label } from "@components/label";
 import { Tooltip } from "@components/tooltip";
 
 import { createSkill, deleteSkill, updateSkill } from "../api/skills-api";
+import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 import type { Skill } from "../types/skill-types";
@@ -77,7 +78,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
   const [open, setOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete skill");
   const [form, setForm] = useState<SkillFormState>(() =>
     mode === "edit" && skill ? buildFormFromSkill(skill) : initialState
   );
@@ -188,7 +189,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
     setResolvedOpen(nextOpen);
     if (!nextOpen) {
       resetForm();
-      setIsDeleteOpen(false);
+      deleteConfirm.close();
     }
   };
 
@@ -256,20 +257,16 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
     }
 
     setIsSaving(true);
-    setFormError("");
+    deleteConfirm.clearError();
 
     try {
       await deleteSkill(skill.id);
       catalogueCache.remove("skills", campaignId, skill.id);
       props.onDeleted(skill.id);
       setResolvedOpen(false);
-      setIsDeleteOpen(false);
+      deleteConfirm.close();
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || "Unable to delete skill");
-      } else {
-        setFormError("Unable to delete skill");
-      }
+      deleteConfirm.refused(errorResponse);
     } finally {
       setIsSaving(false);
     }
@@ -404,7 +401,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
             <Button
               variant="secondary"
               type="button"
-              onClick={() => setIsDeleteOpen(true)}
+              onClick={deleteConfirm.open}
               disabled={isSaving}
               className="mr-auto"
             >
@@ -421,8 +418,9 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
       </DialogContent>
       {mode === "edit" && skill ? (
         <ConfirmDialog
-          open={isDeleteOpen}
-          onOpenChange={setIsDeleteOpen}
+          open={deleteConfirm.isOpen}
+          onOpenChange={deleteConfirm.onOpenChange}
+          error={deleteConfirm.error}
           description={
             <span>
               Delete <span className="font-semibold text-foreground">{skill.name}</span>? This
@@ -433,7 +431,6 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
           confirmDisabled={isSaving}
           isConfirming={isSaving}
           onConfirm={handleDelete}
-          onCancel={() => setIsDeleteOpen(false)}
         />
       ) : null}
     </Dialog>

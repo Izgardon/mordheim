@@ -1,8 +1,9 @@
 /**
  * Deleting a custom spell from the Spells page's form (`AddSpellForm`; the warband pages'
  * `CreateSpellDialog` creates only): the confirm's copy, the one DELETE it sends with no usage
- * check, and what a refused delete looks like. The server removes the spell from every unit that
- * knows it (BUG-16); PR A answers 409 `in_use` instead, and PR C asks `usage/` first.
+ * check, and a refused delete's reason shown in the confirm (BUG-148). The server removes the
+ * spell from every unit that knows it (BUG-16); PR A answers 409 `in_use` instead, and PR C asks
+ * `usage/` first.
  */
 import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -75,10 +76,10 @@ describe("AddSpellForm: Delete", () => {
     expect(fakeApi.calls()).toEqual([]);
   });
 
-  // Characterises current behaviour (BUG-16, BUG-148, pinned; flips in PR A)
-  it("leaves the confirm open after a refused delete and writes the error into the form behind it (BUG-148, pinned; flips in PR A)", async () => {
+  it("shows a refused delete's reason in the confirm, which stays open, and not in the form behind it (BUG-148)", async () => {
     const user = setupUser();
-    fakeApi.fail(DELETE, new ApiError("Gutter Hex is known by 1 hero.", 409, { code: "in_use" }));
+    const detail = "Gutter Hex is known by 1 hero.";
+    fakeApi.fail(DELETE, new ApiError(detail, 409, { detail, code: "in_use" }));
     const { onDeleted, cachedNames } = renderForm();
 
     await user.click(screen.getByRole("button", { name: "Delete" }));
@@ -86,8 +87,10 @@ describe("AddSpellForm: Delete", () => {
       within(screen.getByRole("dialog")).getByRole("button", { name: "Delete spell" })
     );
 
-    expect(await screen.findByText("Gutter Hex is known by 1 hero.")).toBeInTheDocument();
-    expect(screen.getByRole("dialog")).not.toHaveTextContent("known by 1 hero");
+    const reason = await screen.findByRole("alert");
+    expect(reason).toHaveTextContent(detail);
+    expect(screen.getByRole("dialog", { name: "Delete spell" })).toContainElement(reason);
+    expect(screen.getAllByText(detail)).toHaveLength(1);
     expect(onDeleted).not.toHaveBeenCalled();
     expect(cachedNames()).toContain("Gutter Hex");
   });

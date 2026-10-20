@@ -19,6 +19,7 @@ import { ConfirmDialog } from "@components/confirm-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 import { Tooltip } from "@components/tooltip";
+import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 // api
@@ -197,7 +198,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
   const [open, setOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete item");
   const [form, setForm] = useState<ItemFormState>(() =>
     props.mode === "edit" ? buildFormFromItem(props.item) : initialState
   );
@@ -413,20 +414,16 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
       return;
     }
     setIsSaving(true);
-    setFormError("");
+    deleteConfirm.clearError();
 
     try {
       await deleteItem(props.item.id);
       catalogueCache.remove("items", props.campaignId, props.item.id);
       props.onDeleted(props.item.id);
       setResolvedOpen(false);
-      setIsDeleteOpen(false);
+      deleteConfirm.close();
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || "Unable to delete item");
-      } else {
-        setFormError("Unable to delete item");
-      }
+      deleteConfirm.refused(errorResponse);
     } finally {
       setIsSaving(false);
     }
@@ -845,7 +842,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
             <Button
               variant="secondary"
               type="button"
-              onClick={() => setIsDeleteOpen(true)}
+              onClick={deleteConfirm.open}
               disabled={isSaving}
               className="mr-auto"
             >
@@ -862,8 +859,9 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
       </DialogContent>
       {props.mode === "edit" ? (
         <ConfirmDialog
-          open={isDeleteOpen}
-          onOpenChange={setIsDeleteOpen}
+          open={deleteConfirm.isOpen}
+          onOpenChange={deleteConfirm.onOpenChange}
+          error={deleteConfirm.error}
           description={
             <span>
               Delete <span className="font-semibold text-foreground">{props.item.name}</span>? This
@@ -874,7 +872,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
           confirmDisabled={isSaving}
           isConfirming={isSaving}
           onConfirm={handleDelete}
-          onCancel={() => setIsDeleteOpen(false)}
         />
       ) : null}
     </Dialog>

@@ -9,6 +9,7 @@ import { NumberInput } from "@components/number-input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 
 import { createSpell, updateSpell, deleteSpell } from "../api/spells-api";
+import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 import type { Spell } from "../types/spell-types";
@@ -72,7 +73,7 @@ export default function AddSpellForm({
   );
   const [customTypes, setCustomTypes] = useState<string[]>([]);
   const [isTypeMenuOpen, setIsTypeMenuOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete spell");
 
   useEffect(() => {
     if (editingSpell) {
@@ -224,18 +225,14 @@ export default function AddSpellForm({
   const handleDelete = async () => {
     if (!editingSpell) return;
     setIsCreating(true);
-    setFormError("");
+    deleteConfirm.clearError();
     try {
       await deleteSpell(editingSpell.id);
       catalogueCache.remove("spells", campaignId, editingSpell.id);
       onDeleted?.(editingSpell.id);
       resetForm();
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || "Unable to delete spell");
-      } else {
-        setFormError("Unable to delete spell");
-      }
+      deleteConfirm.refused(errorResponse);
     } finally {
       setIsCreating(false);
     }
@@ -370,7 +367,7 @@ export default function AddSpellForm({
         {isEditing && (
           <Button
             variant="destructive"
-            onClick={() => setIsDeleteOpen(true)}
+            onClick={deleteConfirm.open}
             disabled={isCreating}
             size="sm"
           >
@@ -388,8 +385,9 @@ export default function AddSpellForm({
       </div>
       {isEditing && editingSpell && (
         <ConfirmDialog
-          open={isDeleteOpen}
-          onOpenChange={setIsDeleteOpen}
+          open={deleteConfirm.isOpen}
+          onOpenChange={deleteConfirm.onOpenChange}
+          error={deleteConfirm.error}
           description={
             <span>
               Delete <span className="font-semibold text-foreground">{editingSpell.name}</span>?
@@ -400,7 +398,6 @@ export default function AddSpellForm({
           confirmDisabled={isCreating}
           isConfirming={isCreating}
           onConfirm={handleDelete}
-          onCancel={() => setIsDeleteOpen(false)}
         />
       )}
     </div>

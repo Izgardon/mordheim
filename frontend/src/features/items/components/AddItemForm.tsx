@@ -11,6 +11,7 @@ import { ActionSearchDropdown, ActionSearchInput } from "@components/action-sear
 
 import { X } from "lucide-react";
 
+import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 import { createItem, createItemProperty, updateItem, deleteItem } from "../api/items-api";
@@ -178,7 +179,7 @@ export default function AddItemForm({
   const [newPropertyName, setNewPropertyName] = useState("");
   const [newPropertyDescription, setNewPropertyDescription] = useState("");
   const [isCreatingProperty, setIsCreatingProperty] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete item");
 
   useEffect(() => {
     if (editingItem) {
@@ -364,18 +365,14 @@ export default function AddItemForm({
   const handleDelete = async () => {
     if (!editingItem) return;
     setIsSaving(true);
-    setFormError("");
+    deleteConfirm.clearError();
     try {
       await deleteItem(editingItem.id);
       catalogueCache.remove("items", campaignId, editingItem.id);
       onDeleted?.(editingItem.id);
       resetForm();
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || "Unable to delete item");
-      } else {
-        setFormError("Unable to delete item");
-      }
+      deleteConfirm.refused(errorResponse);
     } finally {
       setIsSaving(false);
     }
@@ -717,12 +714,7 @@ export default function AddItemForm({
       {formError && <p className="text-sm text-red-600">{formError}</p>}
       <div className="flex flex-wrap items-center gap-2">
         {isEditing && (
-          <Button
-            variant="destructive"
-            onClick={() => setIsDeleteOpen(true)}
-            disabled={isSaving}
-            size="sm"
-          >
+          <Button variant="destructive" onClick={deleteConfirm.open} disabled={isSaving} size="sm">
             Delete
           </Button>
         )}
@@ -737,8 +729,9 @@ export default function AddItemForm({
       </div>
       {isEditing && editingItem && (
         <ConfirmDialog
-          open={isDeleteOpen}
-          onOpenChange={setIsDeleteOpen}
+          open={deleteConfirm.isOpen}
+          onOpenChange={deleteConfirm.onOpenChange}
+          error={deleteConfirm.error}
           description={
             <span>
               Delete <span className="font-semibold text-foreground">{editingItem.name}</span>? This
@@ -749,7 +742,6 @@ export default function AddItemForm({
           confirmDisabled={isSaving}
           isConfirming={isSaving}
           onConfirm={handleDelete}
-          onCancel={() => setIsDeleteOpen(false)}
         />
       )}
     </div>

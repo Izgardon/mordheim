@@ -94,26 +94,21 @@ describe("Spells: who sees Add and Edit", () => {
   });
 
   // Characterises current behaviour (BUG-15, CAT-TEST-18, pinned; flips in PR A)
-  it("lets that player open Delete and learn of the 403 only after confirming, behind the still-open confirm (BUG-15, pinned; flips in PR A)", async () => {
+  it("lets that player open Delete and learn of the 403 only after confirming, in the still-open confirm (BUG-15, pinned; flips in PR A)", async () => {
     const user = setupUser();
+    const denied = "You do not have permission to perform this action.";
     signInAsPlayer(["add_custom"]);
-    fakeApi.fail(
-      "DELETE /spells/950/",
-      new ApiError("You do not have permission to perform this action.", 403, {})
-    );
+    fakeApi.fail("DELETE /spells/950/", new ApiError(denied, 403, { detail: denied }));
     await openSpells();
 
     await user.click(within(row("Gutter Hex")).getByRole("button", { name: "Edit spell" }));
     await user.click(screen.getByRole("button", { name: "Delete" }));
     await user.click(screen.getByRole("button", { name: "Delete spell" }));
 
-    // The form under the dialog shows the error; the confirm stays open over it.
-    expect(
-      await screen.findByText("You do not have permission to perform this action.")
-    ).toBeInTheDocument();
-    expect(
-      within(screen.getByRole("dialog")).getByRole("button", { name: "Delete spell" })
-    ).toBeEnabled();
+    // The confirm stays open and shows the refusal (BUG-148).
+    const confirm = screen.getByRole("dialog");
+    expect(await within(confirm).findByRole("alert")).toHaveTextContent(denied);
+    expect(within(confirm).getByRole("button", { name: "Delete spell" })).toBeEnabled();
     expect(fakeApi.countOf("DELETE /spells/950/")).toBe(1);
   });
 });

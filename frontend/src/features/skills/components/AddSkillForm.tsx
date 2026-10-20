@@ -7,6 +7,7 @@ import { ConfirmDialog } from "@components/confirm-dialog";
 import { Input } from "@components/input";
 
 import { createSkill, updateSkill, deleteSkill } from "../api/skills-api";
+import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
 
 import type { Skill } from "../types/skill-types";
@@ -62,7 +63,7 @@ export default function AddSkillForm({
   );
   const [customTypes, setCustomTypes] = useState<string[]>([]);
   const [isTypeMenuOpen, setIsTypeMenuOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete skill");
 
   useEffect(() => {
     if (editingSkill) {
@@ -202,18 +203,14 @@ export default function AddSkillForm({
   const handleDelete = async () => {
     if (!editingSkill) return;
     setIsSaving(true);
-    setFormError("");
+    deleteConfirm.clearError();
     try {
       await deleteSkill(editingSkill.id);
       catalogueCache.remove("skills", campaignId, editingSkill.id);
       onDeleted?.(editingSkill.id);
       resetForm();
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || "Unable to delete skill");
-      } else {
-        setFormError("Unable to delete skill");
-      }
+      deleteConfirm.refused(errorResponse);
     } finally {
       setIsSaving(false);
     }
@@ -309,12 +306,7 @@ export default function AddSkillForm({
       {formError && <p className="text-sm text-red-600">{formError}</p>}
       <div className="flex flex-wrap items-center gap-2">
         {isEditing && (
-          <Button
-            variant="destructive"
-            onClick={() => setIsDeleteOpen(true)}
-            disabled={isSaving}
-            size="sm"
-          >
+          <Button variant="destructive" onClick={deleteConfirm.open} disabled={isSaving} size="sm">
             Delete
           </Button>
         )}
@@ -329,8 +321,9 @@ export default function AddSkillForm({
       </div>
       {isEditing && editingSkill && (
         <ConfirmDialog
-          open={isDeleteOpen}
-          onOpenChange={setIsDeleteOpen}
+          open={deleteConfirm.isOpen}
+          onOpenChange={deleteConfirm.onOpenChange}
+          error={deleteConfirm.error}
           description={
             <span>
               Delete <span className="font-semibold text-foreground">{editingSkill.name}</span>?
@@ -341,7 +334,6 @@ export default function AddSkillForm({
           confirmDisabled={isSaving}
           isConfirming={isSaving}
           onConfirm={handleDelete}
-          onCancel={() => setIsDeleteOpen(false)}
         />
       )}
     </div>

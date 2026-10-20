@@ -1,9 +1,9 @@
 /**
  * Deleting a custom item from the Wargear page's form (`AddItemForm`) and from the warband pages'
  * dialog (`ItemFormDialog`, whose edit mode no screen opens today): the confirm's copy, the one
- * DELETE it sends with no usage check, and what a refused delete looks like. The server cascades
- * the delete into every warband's copies (BUG-16); PR A answers 409 `in_use` instead, and PR C
- * asks `usage/` first and archives what is in use.
+ * DELETE it sends with no usage check, and a refused delete's reason shown in the confirm
+ * (BUG-148). The server cascades the delete into every warband's copies (BUG-16); PR A answers
+ * 409 `in_use` instead, and PR C asks `usage/` first and archives what is in use.
  */
 import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -24,7 +24,11 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
 
 const ITEMS_KEY = queryKeys.campaign.catalogue(1, "items");
 const DELETE = "DELETE /items/240/";
-const IN_USE = new ApiError("Rusty Cleaver is used by 2 units.", 409, { code: "in_use" });
+/** A refusal as apiRequest throws it: the standard body's `detail` is also the message. */
+const IN_USE = new ApiError("Rusty Cleaver is used by 2 units.", 409, {
+  detail: "Rusty Cleaver is used by 2 units.",
+  code: "in_use",
+});
 
 /** A client holding the campaign's cached item list, as the Wargear page leaves it. */
 function clientWithItems() {
@@ -87,8 +91,7 @@ describe("AddItemForm: Delete", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
-  // Characterises current behaviour (BUG-16, BUG-148, pinned; flips in PR A)
-  it("leaves the confirm open after a refused delete and writes the error into the form behind it (BUG-148, pinned; flips in PR A)", async () => {
+  it("shows a refused delete's reason in the confirm, which stays open, and not in the form behind it (BUG-148)", async () => {
     const user = setupUser();
     fakeApi.fail(DELETE, IN_USE);
     const { onDeleted, queryClient } = renderForm();
@@ -98,12 +101,17 @@ describe("AddItemForm: Delete", () => {
       within(screen.getByRole("dialog")).getByRole("button", { name: "Delete item" })
     );
 
-    expect(await screen.findByText("Rusty Cleaver is used by 2 units.")).toBeInTheDocument();
-    const confirm = screen.getByRole("dialog");
-    expect(confirm).not.toHaveTextContent("used by 2 units");
-    expect(confirm).toHaveTextContent("This action cannot be undone.");
+    const reason = await screen.findByRole("alert");
+    expect(reason).toHaveTextContent("Rusty Cleaver is used by 2 units.");
+    expect(screen.getByRole("dialog", { name: "Delete item" })).toContainElement(reason);
+    expect(screen.getAllByText("Rusty Cleaver is used by 2 units.")).toHaveLength(1);
     expect(onDeleted).not.toHaveBeenCalled();
     expect(cachedNames(queryClient)).toContain("Rusty Cleaver");
+
+    // Cancelled and reopened, the confirm starts clean.
+    await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Cancel" }));
+    await user.click(screen.getByRole("button", { name: "Delete" }));
+    expect(within(screen.getByRole("dialog")).queryByRole("alert")).toBeNull();
   });
 });
 
@@ -142,8 +150,7 @@ describe("ItemFormDialog (edit mode): Delete", () => {
     expect(screen.queryByRole("dialog", { name: "Edit Wargear" })).toBeNull();
   });
 
-  // Characterises current behaviour (BUG-16, BUG-148, pinned; flips in PR A)
-  it("leaves the confirm open after a refused delete and writes the error into the form behind it (BUG-148, pinned; flips in PR A)", async () => {
+  it("shows a refused delete's reason in the confirm, which stays open, and not in the form behind it (BUG-148)", async () => {
     const user = setupUser();
     fakeApi.fail(DELETE, IN_USE);
     const { onDeleted } = await openDialog(user);
@@ -155,10 +162,10 @@ describe("ItemFormDialog (edit mode): Delete", () => {
       })
     );
 
-    expect(await screen.findByText("Rusty Cleaver is used by 2 units.")).toBeInTheDocument();
-    expect(screen.getByRole("dialog", { name: "Delete item" })).not.toHaveTextContent(
-      "used by 2 units"
-    );
+    const reason = await screen.findByRole("alert");
+    expect(reason).toHaveTextContent("Rusty Cleaver is used by 2 units.");
+    expect(screen.getByRole("dialog", { name: "Delete item" })).toContainElement(reason);
+    expect(screen.getAllByText("Rusty Cleaver is used by 2 units.")).toHaveLength(1);
     expect(onDeleted).not.toHaveBeenCalled();
   });
 });
