@@ -4,8 +4,14 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.permissions import get_membership, get_writable_membership, is_admin, is_owner, parse_campaign_id
+from apps.campaigns.permissions import (
+    get_membership,
+    get_writable_membership,
+    has_campaign_permission,
+    parse_campaign_id,
+)
 from apps.core.catalogue.duplicates import refusing_duplicates
+from apps.core.catalogue.usage import delete_unless_in_use
 
 from .models import Race
 from .serializers import RaceCreateSerializer, RaceSerializer
@@ -48,6 +54,8 @@ class RaceListView(APIView):
         membership = get_writable_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
+        if not has_campaign_permission(membership, "edit_catalogue"):  # any member could (BUG-82)
+            return Response({"detail": "Forbidden"}, status=403)
         serializer = RaceCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         with refusing_duplicates(DUPLICATE):
@@ -73,7 +81,7 @@ class RaceDetailView(APIView):
         membership = get_writable_membership(request.user, race.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not (is_owner(membership) or is_admin(membership)):
+        if not has_campaign_permission(membership, "edit_catalogue"):  # it was owners and admins only (BUG-82)
             return Response({"detail": "Forbidden"}, status=403)
 
         serializer = RaceCreateSerializer(race, data=request.data, partial=partial)
@@ -87,3 +95,17 @@ class RaceDetailView(APIView):
 
     def patch(self, request, race_id):
         return self._update(request, race_id, partial=True)
+
+    def delete(self, request, race_id):
+        race = self._get_campaign_race(race_id)  # a book race is "Not found" here, as for edits
+        if not race:
+            return Response({"detail": "Not found"}, status=404)
+
+        membership = get_writable_membership(request.user, race.campaign_id)
+        if not membership:
+            return Response({"detail": "Not found"}, status=404)
+        if not has_campaign_permission(membership, "delete_catalogue"):
+            return Response({"detail": "Forbidden"}, status=403)
+
+        delete_unless_in_use(race, "race")  # 409 in_use while any unit is of it (BUG-130)
+        return Response(status=status.HTTP_204_NO_CONTENT)

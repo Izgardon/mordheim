@@ -52,7 +52,7 @@ class SkillListView(APIView):
         membership = get_writable_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "add_custom"):
+        if not has_campaign_permission(membership, "edit_catalogue"):
             return Response({"detail": "Forbidden"}, status=403)
 
         data = request.data.copy()
@@ -90,7 +90,7 @@ class SkillDetailView(APIView):
         membership = get_writable_membership(request.user, skill.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "manage_skills"):
+        if not has_campaign_permission(membership, "edit_catalogue"):
             return Response({"detail": "Forbidden"}, status=403)
 
         data = request.data.copy()
@@ -112,7 +112,7 @@ class SkillDetailView(APIView):
         membership = get_writable_membership(request.user, skill.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "manage_skills"):
+        if not has_campaign_permission(membership, "delete_catalogue"):
             return Response({"detail": "Forbidden"}, status=403)
 
         delete_unless_in_use(skill, "skill")  # 409 in_use when anything holds it (BUG-16)

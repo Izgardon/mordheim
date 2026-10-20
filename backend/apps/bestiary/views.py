@@ -62,7 +62,7 @@ class BestiaryEntryListView(APIView):
         membership = get_writable_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "manage_bestiary"):
+        if not has_campaign_permission(membership, "edit_catalogue"):
             return Response({"detail": "Forbidden"}, status=403)
 
         context = {"campaign_id": membership.campaign_id}
@@ -97,7 +97,7 @@ class BestiaryEntryDetailView(APIView):
         membership = get_writable_membership(request.user, entry.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "manage_bestiary"):
+        if not has_campaign_permission(membership, "edit_catalogue"):
             return Response({"detail": "Forbidden"}, status=403)
 
         context = {"campaign_id": entry.campaign_id}
@@ -116,7 +116,7 @@ class BestiaryEntryDetailView(APIView):
         membership = get_writable_membership(request.user, entry.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "manage_bestiary"):
+        if not has_campaign_permission(membership, "delete_catalogue"):
             return Response({"detail": "Forbidden"}, status=403)
 
         entry.delete()
@@ -228,7 +228,7 @@ class HiredSwordProfileListView(APIView):
         membership = get_writable_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "manage_bestiary"):
+        if not has_campaign_permission(membership, "edit_catalogue"):
             return Response({"detail": "Forbidden"}, status=403)
 
         serializer = HiredSwordWriteSerializer(data=request.data, context={"campaign_id": membership.campaign_id})
@@ -265,7 +265,7 @@ class HiredSwordProfileDetailView(APIView):
         membership = get_writable_membership(request.user, profile.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "manage_bestiary"):
+        if not has_campaign_permission(membership, "edit_catalogue"):
             return Response({"detail": "Forbidden"}, status=403)
 
         context = {"campaign_id": profile.campaign_id}
@@ -285,7 +285,7 @@ class HiredSwordProfileDetailView(APIView):
         membership = get_writable_membership(request.user, profile.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "manage_bestiary"):
+        if not has_campaign_permission(membership, "delete_catalogue"):
             return Response({"detail": "Forbidden"}, status=403)
 
         profile.bestiary_entry.delete()

@@ -80,7 +80,7 @@ class MemberRemovalTests(CampaignTestCase):
 
     def test_rejoining_with_the_same_code_reattaches_the_warband_and_drops_the_grants(self):
         # Decision 1: the warband is kept on purpose and comes back on rejoin; a new join code keeps him out
-        self.grant(self.player, "manage_items")
+        self.grant(self.player, "delete_catalogue")
         self.remove(self.owner, self.player)
         self.assertEqual(self.get_as(self.owner, self.url("players/")).status_code, 200)
         self.assertNotIn(self.player.id, [row["id"] for row in self.get_as(self.owner, self.url("players/")).data])
@@ -90,7 +90,7 @@ class MemberRemovalTests(CampaignTestCase):
         self.assertEqual(rejoined.status_code, 201)
         players = {row["id"]: row["warband"] for row in self.get_as(self.owner, self.url("players/")).data}
         self.assertEqual(players[self.player.id]["id"], self.warband.id)
-        self.assertEqual(self.codes(self.player), ["add_custom"])
+        self.assertEqual(self.codes(self.player), ["edit_catalogue"])
         self.assertEqual(self.membership(self.player).role.slug, "player")
 
 
@@ -124,7 +124,7 @@ class KickTests(CampaignTestCase):
 
 class MemberListTests(CampaignTestCase):
     def test_owners_and_admins_list_members_with_emails_grants_and_warbands(self):
-        self.grant(self.player, "manage_items")
+        self.grant(self.player, "delete_catalogue")
         for user, expected in ((self.player, 403), (self.outsider, 404)):
             with self.subTest(user=user.first_name):
                 self.assertEqual(self.get_as(user, self.url("members/")).status_code, expected)
@@ -136,10 +136,10 @@ class MemberListTests(CampaignTestCase):
         self.assertEqual(
             rows,
             [
-                ("Ada", "admin@example.com", "admin", ["add_custom"]),
+                ("Ada", "admin@example.com", "admin", ["edit_catalogue"]),
                 ("Olga", "owner@example.com", "owner", []),
-                ("Pia", "player@example.com", "player", ["add_custom", "manage_items"]),
-                ("Rex", "rival@example.com", "player", ["add_custom"]),
+                ("Pia", "player@example.com", "player", ["delete_catalogue", "edit_catalogue"]),
+                ("Rex", "rival@example.com", "player", ["edit_catalogue"]),
             ],
         )
         warbands = [(row["warband_id"], row["warband_name"]) for row in members]
@@ -199,13 +199,17 @@ class MemberRoleTests(CampaignTestCase):
         self.assertEqual(self.membership(self.owner).role.slug, "owner")
 
     def test_grants_survive_a_promotion_and_count_again_after_a_demotion(self):
-        self.grant(self.player, "manage_items")
+        self.grant(self.player, "delete_catalogue")
         self.set_role(self.owner, self.player, "admin")
-        self.assertEqual(self.codes(self.player), ["add_custom", "manage_items"])  # stored, but admins hold every code
+        self.assertEqual(
+            self.codes(self.player), ["delete_catalogue", "edit_catalogue"]
+        )  # stored, but admins hold every code
 
         self.set_role(self.owner, self.player, "player")
 
-        self.assertEqual(self.get_as(self.player, self.url()).data["permissions"], ["add_custom", "manage_items"])
+        self.assertEqual(
+            self.get_as(self.player, self.url()).data["permissions"], ["delete_catalogue", "edit_catalogue"]
+        )
 
 
 class CampaignDeleteTests(CampaignTestCase):

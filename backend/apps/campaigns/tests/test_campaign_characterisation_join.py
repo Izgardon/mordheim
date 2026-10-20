@@ -9,7 +9,7 @@ from .campaign_support import CampaignTestCase, make_user
 
 
 class JoinTests(CampaignTestCase):
-    def test_a_join_answers_with_the_campaign_and_grants_add_custom(self):
+    def test_a_join_answers_with_the_campaign_and_grants_edit_catalogue(self):
         newcomer = make_user("newcomer@example.com", "Nell")
 
         response = self.join(newcomer)
@@ -19,7 +19,7 @@ class JoinTests(CampaignTestCase):
         self.assertEqual((data["id"], data["role"], data["player_count"]), (self.campaign.id, "player", 5))
         self.assertEqual(data["join_code"], self.campaign.join_code)
         self.assertEqual(self.membership(newcomer).role.slug, "player")
-        self.assertEqual(self.codes(newcomer), ["add_custom"])
+        self.assertEqual(self.codes(newcomer), ["edit_catalogue"])
 
     def test_the_code_is_trimmed_and_read_in_any_case(self):
         newcomer = make_user("newcomer@example.com", "Nell")

@@ -67,7 +67,7 @@ class ItemListView(APIView):
         membership = get_writable_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "add_custom"):
+        if not has_campaign_permission(membership, "edit_catalogue"):
             return Response({"detail": "Forbidden"}, status=403)
 
         serializer = ItemWriteSerializer(data=request.data, context={"campaign_id": campaign_id})
@@ -104,7 +104,7 @@ class ItemDetailView(APIView):
             return Response({"detail": "Not found"}, status=404)
         if item.generated_effect_key:
             return Response(HOUSE_RULE_ITEM, status=403)
-        if not has_campaign_permission(membership, "manage_items"):
+        if not has_campaign_permission(membership, "edit_catalogue"):
             return Response({"detail": "Forbidden"}, status=403)
 
         context = {"campaign_id": item.campaign_id}
@@ -126,7 +126,7 @@ class ItemDetailView(APIView):
             return Response({"detail": "Not found"}, status=404)
         if item.generated_effect_key:
             return Response(HOUSE_RULE_ITEM, status=403)
-        if not has_campaign_permission(membership, "manage_items"):
+        if not has_campaign_permission(membership, "delete_catalogue"):
             return Response({"detail": "Forbidden"}, status=403)
 
         delete_unless_in_use(item, "item")  # 409 in_use when anything holds it (BUG-16)
@@ -171,7 +171,7 @@ class ItemPropertyListView(APIView):
         membership = get_writable_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "add_custom"):
+        if not has_campaign_permission(membership, "edit_catalogue"):
             return Response({"detail": "Forbidden"}, status=403)
 
         serializer = ItemPropertySerializer(data=request.data)

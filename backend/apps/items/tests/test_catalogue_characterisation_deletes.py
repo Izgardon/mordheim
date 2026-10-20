@@ -207,8 +207,15 @@ class RaceDeleteTests(CatalogueTestCase):
         self.assertCountEqual(Race.objects.values_list("name", "campaign_id"), [("Human", None), ("Halfling", self.campaign.id)])  # fmt: skip
         self.assertEqual(Race.objects.get(name="Human").id, self.human.id)
 
-    def test_a_race_cannot_be_deleted_through_the_api(self):
-        self.assertEqual(self.delete_as(self.owner, RACES.detail_url(self.halfling.id)).status_code, 405)
+    def test_a_race_in_use_is_refused_through_the_api_and_an_unused_one_is_deleted(self):
+        # BUG-82, BUG-130: races gained a DELETE in PR A (delete_catalogue), with the in-use rule
+        gnome = make_entry(RACES, "Gnome", campaign=self.campaign)
+
+        refused = self.delete_as(self.owner, RACES.detail_url(self.halfling.id))
+        deleted = self.delete_as(self.owner, RACES.detail_url(gnome.id))
+
+        self.assertEqual((refused.status_code, refused.json()), (409, in_use("race", units=1, warbands=1, stashes=0, bestiary_entries=0)))  # fmt: skip
+        self.assertEqual(deleted.status_code, 204)
         self.assertEqual(self.surviving_units(), ["Abbess", "Cooks", "Scout", "Stranger"])
 
 

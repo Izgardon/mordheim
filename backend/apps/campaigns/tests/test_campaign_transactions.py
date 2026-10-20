@@ -109,10 +109,10 @@ class CampaignWriteAtomicityTests(CampaignTransactionTestCase):
         rows = CampaignMembershipPermission.objects
 
         with mock.patch.object(rows, "bulk_create", side_effect=DatabaseError("insert failed")):
-            response = self.client.put(url, {"permissions": ["add_custom", "manage_items"]}, format="json")
+            response = self.client.put(url, {"permissions": ["edit_catalogue", "delete_catalogue"]}, format="json")
 
         self.assertEqual(response.status_code, 500)
-        self.assertEqual(list(rows.filter(membership__user=player).values_list("permission__code", flat=True)), ["add_custom"])  # fmt: skip
+        self.assertEqual(list(rows.filter(membership__user=player).values_list("permission__code", flat=True)), ["edit_catalogue"])  # fmt: skip
 
 
 class JoinRaceTests(CampaignTransactionTestCase):

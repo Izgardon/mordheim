@@ -38,22 +38,21 @@ STATS = {
 
 # The six book skill types that share the name "Infiltration" in skills.json.
 INFILTRATION_TYPES = ("Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Skink", "Strigany")
+EDIT = "edit_catalogue"  # create and edit every kind; joining grants it (decision 4)
+DELETE = "delete_catalogue"  # delete every kind; owners and admins, and players granted it (decision 5)
 
 
 @dataclass(frozen=True, eq=False)  # compared and hashed by identity: one object per kind
 class CatalogueKind:
-    """One catalogue kind as its endpoints see it today.
+    """One catalogue kind as its endpoints see it.
 
-    `create_code` / `edit_code` are the permission codes the views check (None for races: any member creates, owners
-    and admins edit). `name_path` is where a list row keeps its name.
+    Since PR A every kind is created and edited under `edit_catalogue` and deleted under `delete_catalogue`
+    (decisions 4 and 5), races included. `name_path` is where a list row keeps its name.
     """
 
     key: str
     path: str
     model: type[Model]
-    create_code: str | None
-    edit_code: str | None
-    deletable: bool = True
     name_path: tuple[str, ...] = ("name",)
     payload: dict[str, Any] = field(default_factory=dict)
 
@@ -87,49 +86,37 @@ ITEMS = CatalogueKind(
     "items",
     "items",
     Item,
-    create_code="add_custom",
-    edit_code="manage_items",
     payload={"type": "Weapon", "subtype": "Melee", "availabilities": [{"cost": 25, "rarity": 2}]},
 )
 SKILLS = CatalogueKind(
     "skills",
     "skills",
     Skill,
-    create_code="add_custom",
-    edit_code="manage_skills",
     payload={"type": "Combat", "description": "Strikes first."},
 )
 SPELLS = CatalogueKind(
     "spells",
     "spells",
     Spell,
-    create_code="add_custom",
-    edit_code="manage_spells",
     payload={"type": "Lesser Magic", "description": "A bolt of light.", "dc": "7"},
 )
 SPECIALS = CatalogueKind(
     "specials",
     "special",
     Special,
-    create_code="add_custom",
-    edit_code="manage_specials",
     payload={"type": "Ability", "description": "Never panics."},
 )
-RACES = CatalogueKind("races", "races", Race, create_code=None, edit_code=None, deletable=False, payload=dict(STATS))
+RACES = CatalogueKind("races", "races", Race, payload=dict(STATS))
 BESTIARY = CatalogueKind(
     "bestiary",
     "bestiary",
     BestiaryEntry,
-    create_code="manage_bestiary",
-    edit_code="manage_bestiary",
     payload={"type": "Animal", **STATS},
 )
 HIRED_SWORDS = CatalogueKind(
     "hired_swords",
     "hired-swords",
     HiredSwordProfile,
-    create_code="manage_bestiary",
-    edit_code="manage_bestiary",
     name_path=("bestiary_entry", "name"),
     payload={"hire_cost": 30, "upkeep_cost": 15, "rating": 12, **STATS},
 )
@@ -161,7 +148,7 @@ def make_entry(kind: CatalogueKind, name: str, campaign: Campaign | None = None,
 
 
 class CatalogueTestCase(CampaignTestCase):
-    """CampaignTestCase ("Shards": owner Olga, admin Ada, players Pia and Rex holding only `add_custom`, outsider Otto
+    """CampaignTestCase ("Shards": owner Olga, admin Ada, players Pia and Rex holding only `edit_catalogue`, outsider Otto
     with his own campaign `elsewhere`) plus a small book catalogue:
 
     the Axe (Weapon, 5 gc), the Sword (Weapon, 10 gc) and Heavy Armour (Armour, 50 gc); "Infiltration" in the six

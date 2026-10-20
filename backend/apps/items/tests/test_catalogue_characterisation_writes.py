@@ -337,7 +337,6 @@ class CatalogueRealtimeTests(CatalogueTestCase):
                 created = send("post", kind.list_url(), kind.body(f"Live {kind.key}", self.campaign))
                 url = kind.detail_url(created.data["id"])
                 statuses = [created.status_code, send("patch", url, {"name": "Changed"}).status_code]
-                if kind.deletable:
-                    statuses.append(send("delete", url).status_code)
-                self.assertEqual(statuses, [201, 200, 204] if kind.deletable else [201, 200])
+                statuses.append(send("delete", url).status_code)
+                self.assertEqual(statuses, [201, 200, 204])
         self.assertEqual(pusher.trigger.call_args_list, [])

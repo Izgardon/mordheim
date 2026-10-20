@@ -1465,7 +1465,7 @@ class CampaignApiTests(APITestCase):
         self.client.force_authenticate(user=target_user)
         response = self.client.put(
             f"/api/campaigns/{campaign['id']}/members/{target_user.id}/permissions/",
-            {"permissions": ["manage_items"]},
+            {"permissions": ["delete_catalogue"]},
             format="json",
         )
         self.assertEqual(response.status_code, 403)
@@ -1473,19 +1473,19 @@ class CampaignApiTests(APITestCase):
         self.client.force_authenticate(user=admin_user)
         response = self.client.put(
             f"/api/campaigns/{campaign['id']}/members/{target_user.id}/permissions/",
-            {"permissions": ["manage_items"]},
+            {"permissions": ["delete_catalogue"]},
             format="json",
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["code"], "manage_items")
+        self.assertEqual(response.data[0]["code"], "delete_catalogue")
 
         self.client.force_authenticate(user=owner)
         response = self.client.put(
             f"/api/campaigns/{campaign['id']}/members/{target_user.id}/permissions/",
-            {"permissions": ["manage_items"]},
+            {"permissions": ["delete_catalogue"]},
             format="json",
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["code"], "manage_items")
+        self.assertEqual(response.data[0]["code"], "delete_catalogue")

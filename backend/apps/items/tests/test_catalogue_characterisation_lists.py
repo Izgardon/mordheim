@@ -87,9 +87,10 @@ class CatalogueListAccessTests(CatalogueTestCase):
 class CatalogueMergeTests(CatalogueTestCase):
     """BUG-18 (CAT-TEST-02 baseline): a campaign entry hides every book entry of its name, whatever its type."""
 
-    def test_any_player_reprices_a_book_item_for_the_whole_campaign_and_cannot_undo_it(self):
-        # Characterises current behaviour (BUG-18, BUG-15, pinned; flips in PR A (who may) and PR C (a version of the
-        # Axe, with Revert)): the "Axe 25 gc" case
+    def test_any_player_reprices_a_book_item_for_the_whole_campaign_and_can_price_it_back(self):
+        # Characterises current behaviour (BUG-18, pinned; flips in PR C: a version of the Axe, with Revert): the
+        # "Axe 25 gc" case. Who may (BUG-15) flipped in PR A: edit_catalogue edits it back; deleting needs
+        # delete_catalogue
         created = self.create_as(self.player, ITEMS, "Axe")  # 25 gc
         self.post_as(self.player, f"/api/warbands/{self.warband.id}/purchases/", {"item_id": self.book_axe.id, "target_type": "stash"})  # fmt: skip
 
@@ -99,7 +100,7 @@ class CatalogueMergeTests(CatalogueTestCase):
         self.assertEqual(created.status_code, 201)
         self.assertEqual([(row["id"], row["availabilities"][0]["cost"]) for row in rows if row["name"] == "Axe"], [(created.data["id"], 25)])  # fmt: skip
         self.assertIn(("Buy", "Axe", -25), [(row["action"], row["description"], row["price"]) for row in bought])  # fmt: skip
-        self.assertEqual(self.patch_as(self.player, ITEMS.detail_url(created.data["id"]), {"availabilities": [{"cost": 5}]}).status_code, 403)  # fmt: skip
+        self.assertEqual(self.patch_as(self.rival, ITEMS.detail_url(created.data["id"]), {"availabilities": [{"cost": 5}]}).status_code, 200)  # fmt: skip
         self.assertEqual(self.delete_as(self.player, ITEMS.detail_url(created.data["id"])).status_code, 403)
 
     def test_a_campaign_axe_of_another_type_hides_the_book_axe(self):
