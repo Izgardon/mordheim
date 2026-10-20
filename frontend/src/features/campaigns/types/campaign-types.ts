@@ -50,6 +50,8 @@ export type CampaignUpdatePayload = {
   max_heroes?: number;
   max_hired_swords?: number;
   starting_gold?: number;
+  /** With a new starting gold: whether existing warbands get the difference (decision 6). */
+  adjust_existing_warbands?: boolean;
   hero_death_roll?: CampaignHeroDeathRoll;
   enable_encampments?: boolean;
   enable_locations?: boolean;
