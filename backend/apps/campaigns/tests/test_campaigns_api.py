@@ -660,7 +660,8 @@ class CampaignApiTests(APITestCase):
             ["Cathay Setting"],
         )
 
-    def test_campaign_warbands_endpoint_returns_effective_restrictions(self):
+    def test_warband_detail_returns_effective_restrictions(self):
+        # The campaign warbands route had no caller and is gone (IMP-68); the warband detail answers the same rows
         owner = self._create_user("owner@example.com", "Owner")
         campaign = self._create_campaign(owner)
         setting = self._create_setting("Cathay Setting")
@@ -685,11 +686,11 @@ class CampaignApiTests(APITestCase):
         )
         self.assertEqual(create_response.status_code, 201)
 
-        response = self.client.get(f"/api/campaigns/{campaign['id']}/warbands/")
+        self.assertEqual(self.client.get(f"/api/campaigns/{campaign['id']}/warbands/").status_code, 404)
+        response = self.client.get(f"/api/warbands/{create_response.data['id']}/")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
         self.assertEqual(
-            [entry["restriction"] for entry in response.data[0]["restrictions"]],
+            [entry["restriction"] for entry in response.data["restrictions"]],
             ["Cathay Setting"],
         )
 

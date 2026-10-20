@@ -95,14 +95,6 @@ class CampaignChatIPRateThrottle(IPRateThrottle):
     scope = "campaign_chat_ip"
 
 
-class CampaignPingUserRateThrottle(UserOrIPRateThrottle):
-    scope = "campaign_ping_user"
-
-
-class CampaignPingIPRateThrottle(IPRateThrottle):
-    scope = "campaign_ping_ip"
-
-
 class BattleWriteUserRateThrottle(UserOrIPRateThrottle):
     scope = "battle_write_user"
 
@@ -150,11 +142,6 @@ FEEDBACK_REPORT_THROTTLE_CLASSES = [
 CAMPAIGN_CHAT_THROTTLE_CLASSES = [
     CampaignChatUserRateThrottle,
     CampaignChatIPRateThrottle,
-]
-
-CAMPAIGN_PING_THROTTLE_CLASSES = [
-    CampaignPingUserRateThrottle,
-    CampaignPingIPRateThrottle,
 ]
 
 BATTLE_WRITE_THROTTLE_CLASSES = [

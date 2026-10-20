@@ -17,13 +17,11 @@ from apps.battles.views.responses import broadcast_response, response_with_snaps
 from apps.core.throttling import (
     BATTLE_WRITE_THROTTLE_CLASSES,
     CAMPAIGN_CHAT_THROTTLE_CLASSES,
-    CAMPAIGN_PING_THROTTLE_CLASSES,
     MethodScopedThrottleMixin,
 )
-from apps.realtime.services import send_campaign_chat_message, send_campaign_ping
+from apps.realtime.services import send_campaign_chat_message
 from apps.users.names import display_name
 from apps.warbands.models import Henchman, Hero, HiredSword, Warband
-from apps.warbands.serializers import WarbandSerializer
 from apps.warbands.services.summary import load_warband_units
 
 from .constants import PERMISSION_CODES
@@ -817,24 +815,6 @@ class CampaignLocationDetailView(APIView):
         return Response(CampaignLocationSerializer(updated).data)
 
 
-class CampaignWarbandsView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, campaign_id):
-        membership = get_membership(request.user, campaign_id)
-        if not membership:
-            return Response({"detail": "Not found"}, status=404)
-
-        warbands = (
-            Warband.objects.filter(campaign_id=campaign_id)
-            .select_related("campaign", "campaign__settings")
-            .prefetch_related("campaign__settings__item_settings")
-            .order_by("name")
-        )
-        serializer = WarbandSerializer(warbands, many=True)
-        return Response(serializer.data)
-
-
 class CampaignMembersView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -1054,25 +1034,6 @@ class CampaignHouseRuleDetailView(APIView):
             rule.delete()
             house_rules.revert_effect_if_unused(campaign_id, effect_key)
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class CampaignPingView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    throttle_classes = CAMPAIGN_PING_THROTTLE_CLASSES
-
-    def post(self, request, campaign_id):
-        membership = get_membership(request.user, campaign_id)
-        if not membership:
-            return Response({"detail": "Not found"}, status=404)
-
-        payload = request.data.get("payload")
-        if not send_campaign_ping(campaign_id, request.user, payload):
-            return Response(
-                {"detail": "Realtime not configured"},
-                status=status.HTTP_503_SERVICE_UNAVAILABLE,
-            )
-
-        return Response({"status": "ok"}, status=status.HTTP_200_OK)
 
 
 class CampaignMessagesView(MethodScopedThrottleMixin, APIView):

@@ -15,6 +15,7 @@ from ..models import Campaign, CampaignMembership
 from . import codes
 
 ALREADY_A_MEMBER = "Already a member"
+DEFAULT_MAX_PLAYERS = 8  # CampaignSettings.max_players's default
 
 
 def join_campaign(user: Any, join_code: str) -> Campaign:
@@ -28,7 +29,8 @@ def join_campaign(user: Any, join_code: str) -> Campaign:
             members = CampaignMembership.objects.filter(campaign=campaign)
             if members.filter(user=user).exists():
                 raise Refused(ALREADY_A_MEMBER)
-            if members.count() >= campaign.max_players:
+            settings = getattr(campaign, "settings", None)  # read with the campaign; None without its row
+            if members.count() >= (settings.max_players if settings else DEFAULT_MAX_PLAYERS):
                 raise Refused("Campaign is full")
             membership = CampaignMembership.objects.create(campaign=campaign, user=user, role_id=codes.role_ref(PLAYER))
             codes.grant_on_join(membership, JOIN_GRANTS)

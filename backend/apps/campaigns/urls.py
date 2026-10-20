@@ -23,11 +23,9 @@ from .views import (
     CampaignMessagesView,
     CampaignMyPermissionsView,
     CampaignPermissionsView,
-    CampaignPingView,
     CampaignPivotalMomentsView,
     CampaignPlayersView,
     CampaignTopKillersView,
-    CampaignWarbandsView,
     JoinCampaignView,
 )
 
@@ -97,11 +95,6 @@ urlpatterns = [
         name="campaigns-locations-detail",
     ),
     path(
-        "campaigns/<int:campaign_id>/warbands/",
-        CampaignWarbandsView.as_view(),
-        name="campaigns-warbands",
-    ),
-    path(
         "campaigns/<int:campaign_id>/members/",
         CampaignMembersView.as_view(),
         name="campaigns-members",
@@ -145,11 +138,6 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/rules/<int:rule_id>/",
         CampaignHouseRuleDetailView.as_view(),
         name="campaigns-house-rules-detail",
-    ),
-    path(
-        "campaigns/<int:campaign_id>/pings/",
-        CampaignPingView.as_view(),
-        name="campaigns-pings",
     ),
     path(
         "campaigns/<int:campaign_id>/messages/",

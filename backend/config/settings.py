@@ -156,8 +156,6 @@ REST_FRAMEWORK: dict[str, Any] = {
         "feedback_report_ip": "10/min",
         "campaign_chat_user": "12/min",
         "campaign_chat_ip": "60/min",
-        "campaign_ping_user": "30/min",
-        "campaign_ping_ip": "120/min",
         "battle_write_user": "60/min",
         "battle_write_ip": "240/min",
         "trade_write_user": "20/min",

@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from apps.warbands.utils.henchmen_level import HENCHMEN_LEVEL_THRESHOLDS
@@ -33,72 +33,6 @@ class Campaign(models.Model):
     def __str__(self):
         return self.name
 
-    def _get_settings_or_none(self):
-        try:
-            return self.settings
-        except ObjectDoesNotExist:
-            return None
-
-    def _get_settings_value(self, field_name, default):
-        settings_obj = self._get_settings_or_none()
-        if not settings_obj:
-            return default
-        value = getattr(settings_obj, field_name, None)
-        return default if value is None else value
-
-    def _set_settings_value(self, field_name, value):
-        settings_obj, _ = CampaignSettings.objects.get_or_create(campaign=self)
-        setattr(settings_obj, field_name, value)
-        settings_obj.save(update_fields=[field_name])
-
-    @property
-    def max_players(self):
-        return self._get_settings_value("max_players", 8)
-
-    @max_players.setter
-    def max_players(self, value):
-        self._set_settings_value("max_players", value)
-
-    @property
-    def max_heroes(self):
-        return self._get_settings_value("max_heroes", 6)
-
-    @max_heroes.setter
-    def max_heroes(self, value):
-        self._set_settings_value("max_heroes", value)
-
-    @property
-    def max_hired_swords(self):
-        return self._get_settings_value("max_hired_swords", 3)
-
-    @max_hired_swords.setter
-    def max_hired_swords(self, value):
-        self._set_settings_value("max_hired_swords", value)
-
-    @property
-    def max_games(self):
-        return self._get_settings_value("max_games", 10)
-
-    @max_games.setter
-    def max_games(self, value):
-        self._set_settings_value("max_games", value)
-
-    @property
-    def starting_gold(self):
-        return self._get_settings_value("starting_gold", 500)
-
-    @starting_gold.setter
-    def starting_gold(self, value):
-        self._set_settings_value("starting_gold", value)
-
-    @property
-    def hero_death_roll(self):
-        return self._get_settings_value("hero_death_roll", "d66")
-
-    @hero_death_roll.setter
-    def hero_death_roll(self, value):
-        self._set_settings_value("hero_death_roll", value)
-
 
 class CampaignSettings(models.Model):
     campaign = models.OneToOneField(Campaign, related_name="settings", on_delete=models.CASCADE)
@@ -110,7 +44,6 @@ class CampaignSettings(models.Model):
     hero_level_thresholds = models.JSONField(default=get_default_hero_level_thresholds)
     henchmen_level_thresholds = models.JSONField(default=get_default_henchmen_level_thresholds)
     hired_sword_level_thresholds = models.JSONField(default=get_default_henchmen_level_thresholds)
-    locations = models.BooleanField(default=False)
     enable_encampments = models.BooleanField(default=False)
     enable_locations = models.BooleanField(default=False)
     hero_death_roll = models.CharField(

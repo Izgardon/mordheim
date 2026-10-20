@@ -4,19 +4,13 @@ from functools import lru_cache
 from typing import Any
 
 from django.conf import settings
-from django.utils import timezone
 
 from apps.core.dispatch import dispatch_after_commit
-from apps.users.names import display_name
 
 try:
     import pusher  # type: ignore[import-untyped]
 except ImportError:  # pragma: no cover - optional dependency
     pusher = None
-
-
-def get_campaign_channel_name(campaign_id: int) -> str:
-    return f"private-campaign-{campaign_id}-pings"
 
 
 def get_campaign_chat_channel_name(campaign_id: int) -> str:
@@ -87,16 +81,6 @@ def _trigger(channel_name: str, event: str, data: dict, socket_id: str | None = 
     return True
 
 
-def build_ping_payload(campaign_id: int, user, payload: object | None):
-    return {
-        "type": "ping",
-        "from": {"id": user.id, "label": display_name(user)},
-        "campaign_id": campaign_id,
-        "payload": payload,
-        "timestamp": timezone.now().isoformat(),
-    }
-
-
 def send_user_notification(user_id: int, event: str, payload: dict) -> bool:
     return _trigger(get_user_channel_name(user_id), "notification", {"type": event, "payload": payload})
 
@@ -125,7 +109,3 @@ def send_campaign_chat_message(campaign_id: int, message) -> bool:
         "created_at": message.created_at.isoformat(),
     }
     return _trigger(get_campaign_chat_channel_name(campaign_id), "chat.message", payload)
-
-
-def send_campaign_ping(campaign_id: int, user, payload: object | None = None) -> bool:
-    return _trigger(get_campaign_channel_name(campaign_id), "ping", build_ping_payload(campaign_id, user, payload))

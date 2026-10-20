@@ -6,14 +6,12 @@ the members list (its `email` field).
 """
 
 from typing import Any
-from unittest import mock
 
-from django.test import override_settings
 from rest_framework.test import APIClient
 
 from apps.battles.models import Battle
 from apps.campaigns.models import CampaignBulletinEntry, CampaignEncampment, CampaignMessage
-from apps.realtime.services import build_ping_payload
+from apps.realtime.channel_auth import authorize_private_channel
 from apps.warbands.models import Warband
 
 from .campaign_support import CampaignTestCase, make_user
@@ -81,23 +79,8 @@ class DisplayNameTests(CampaignTestCase):
         payload = response.json()
         self.assertEqual((payload["from_user"]["label"], payload["to_user"]["label"]), (self.shown, "Pia"))
 
-    def test_ping_labels_are_display_names(self):
-        # The pings route has no caller (IMP-68: PR B deletes it); its label was the username, even beside a first name
-        self.assertEqual(build_ping_payload(self.campaign.id, self.player, None)["from"]["label"], "Pia")
-        self.assertEqual(build_ping_payload(self.campaign.id, self.nameless, None)["from"]["label"], self.shown)
-
-        unconfigured = self.post_as(self.player, self.url("pings/"), {"payload": {"any": "thing"}})
-        self.assertEqual((unconfigured.status_code, unconfigured.data), (503, {"detail": "Realtime not configured"}))
-
-        client = mock.Mock()
-        with (
-            override_settings(EXTERNAL_DISPATCH_SYNC=True),
-            mock.patch("apps.realtime.services.get_pusher_client", return_value=client),
-            self.captureOnCommitCallbacks(execute=True),
-        ):
-            relayed = self.post_as(self.player, self.url("pings/"), {"payload": {"any": "thing"}})
-        self.assertEqual(relayed.data, {"status": "ok"})
-        channel, event, data = client.trigger.call_args.args
-        self.assertEqual((channel, event), (f"private-campaign-{self.campaign.id}-pings", "ping"))
-        self.assertEqual(data["payload"], {"any": "thing"})  # relayed as sent, to every member
-        self.assertEqual(self.post_as(self.outsider, self.url("pings/"), {}).status_code, 404)
+    def test_the_pings_route_and_channel_are_gone(self):
+        # IMP-68: the pings route had no caller and relayed any payload to every member (its label was the name)
+        self.assertEqual(self.post_as(self.player, self.url("pings/"), {"payload": {"any": "thing"}}).status_code, 404)
+        self.assertFalse(authorize_private_channel(self.player, f"private-campaign-{self.campaign.id}-pings"))
+        self.assertTrue(authorize_private_channel(self.player, f"private-campaign-{self.campaign.id}-chat"))

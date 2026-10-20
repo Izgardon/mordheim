@@ -16,7 +16,6 @@ from .models import (
     CampaignLocation,
     CampaignMembership,
     CampaignMessage,
-    CampaignSettings,
     PivotalMoment,
 )
 
@@ -27,28 +26,6 @@ class CampaignRestrictionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restriction
         fields = ("id", "type", "restriction")
-
-
-class CampaignSettingsSerializer(serializers.ModelSerializer):
-    item_settings = CampaignRestrictionSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = CampaignSettings
-        fields = (
-            "max_players",
-            "max_heroes",
-            "max_hired_swords",
-            "max_games",
-            "starting_gold",
-            "hero_death_roll",
-            "hero_level_thresholds",
-            "henchmen_level_thresholds",
-            "hired_sword_level_thresholds",
-            "locations",
-            "enable_encampments",
-            "enable_locations",
-            "item_settings",
-        )
 
 
 class CampaignSerializer(serializers.ModelSerializer):
@@ -75,7 +52,6 @@ class CampaignSerializer(serializers.ModelSerializer):
         read_only=True,
         child=serializers.IntegerField(),
     )
-    locations = serializers.BooleanField(source="settings.locations", read_only=True)
     enable_encampments = serializers.BooleanField(source="settings.enable_encampments", read_only=True)
     enable_locations = serializers.BooleanField(source="settings.enable_locations", read_only=True)
     item_settings = serializers.SerializerMethodField()
@@ -102,7 +78,6 @@ class CampaignSerializer(serializers.ModelSerializer):
             "hero_level_thresholds",
             "henchmen_level_thresholds",
             "hired_sword_level_thresholds",
-            "locations",
             "enable_encampments",
             "enable_locations",
             "item_settings",
@@ -190,14 +165,6 @@ class JoinCampaignSerializer(serializers.Serializer):
         if len(cleaned) != 6:
             raise serializers.ValidationError("Join code must be 6 characters")
         return cleaned
-
-
-class CampaignMembershipSerializer(serializers.ModelSerializer):
-    campaign = CampaignSerializer(read_only=True)
-
-    class Meta:
-        model = CampaignMembership
-        fields = ("id", "role", "campaign")
 
 
 class CampaignPlayerSerializer(serializers.Serializer):
