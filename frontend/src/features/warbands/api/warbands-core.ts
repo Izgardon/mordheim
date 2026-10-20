@@ -25,6 +25,34 @@ export function getWarbandSummary(warbandId: number) {
 }
 
 /** The warband page in one request: warband, summary, capabilities and the three unit lists. */
+/** One on-roster unit's stat line, as `roster-stats/` answers it (PERF-42). */
+export type RosterStatsRow = {
+  id: number;
+  name: string | null;
+  unit_type: string | null;
+  movement: number | null;
+  weapon_skill: number | null;
+  ballistic_skill: number | null;
+  strength: number | null;
+  toughness: number | null;
+  wounds: number | null;
+  initiative: number | null;
+  attacks: number | null;
+  leadership: number | null;
+  armour_save: number | null;
+};
+
+export type WarbandRosterStats = {
+  heroes: RosterStatsRow[];
+  henchmen_groups: RosterStatsRow[];
+  hired_swords: RosterStatsRow[];
+};
+
+/** Every alive, undismissed unit's stat line, by kind, oldest first: one request for any member. */
+export function getWarbandRosterStats(warbandId: number) {
+  return apiRequest<WarbandRosterStats>(`/warbands/${warbandId}/roster-stats/`);
+}
+
 export function getWarbandSheet(warbandId: number) {
   return apiRequest<WarbandSheet>(`/warbands/${warbandId}/sheet/`);
 }
