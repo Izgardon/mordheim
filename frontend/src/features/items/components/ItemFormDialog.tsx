@@ -310,6 +310,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
         type: form.type,
         campaign_id: props.campaignId,
       });
+      catalogueCache.upsert("item-properties", props.campaignId, newProperty);
       setSelectedProperties([...selectedProperties, newProperty]);
       setNewPropertyName("");
       setNewPropertyDescription("");

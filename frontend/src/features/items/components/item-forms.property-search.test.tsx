@@ -169,8 +169,7 @@ describe("ItemFormDialog: property search", () => {
     expect(fakeApi.calls()).toEqual([]);
   });
 
-  // Characterises current behaviour (BUG-149, pinned; flips in PR A)
-  it("leaves a property it creates out of the cached item-properties list, unlike AddItemForm (BUG-149, pinned; flips in PR A)", async () => {
+  it("puts a property it creates into the cached item-properties list, as AddItemForm does (BUG-149)", async () => {
     const user = setupUser();
     const created = { ...poisoned, id: 510, campaign_id: 1, name: "Rusty" };
     fakeApi.on("POST /item-properties/", created);
@@ -182,7 +181,9 @@ describe("ItemFormDialog: property search", () => {
 
     expect(await screen.findByText("Rusty", { selector: "span" })).toBeVisible();
     expect(queryClient.getQueryData<ItemProperty[]>(PROPERTIES_KEY)?.map((p) => p.name)).toEqual([
+      "Rusty",
       "Parry",
     ]);
+    expect(queryClient.getQueryState(PROPERTIES_KEY)?.isInvalidated).toBe(true);
   });
 });
