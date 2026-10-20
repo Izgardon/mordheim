@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Button } from "@components/button";
 import CampaignListSection from "../components/campaigns/CampaignListSection";
 import CampaignsHeader from "../components/campaigns/CampaignsHeader";
+import FeedbackReportCard from "../components/settings/FeedbackReportCard";
 
 // hooks
 import { useAuth } from "../../auth/hooks/use-auth";
@@ -78,6 +79,8 @@ export default function Campaigns() {
           <CampaignsHeader user={user} onCreate={handleCreate} onJoin={handleJoin} />
         </div>
         <CampaignListSection campaigns={campaigns} isLoading={isLoading} error={error} />
+        {/* The same card as Settings, without a campaign's fields (CAMP-NEW-08). */}
+        <FeedbackReportCard />
       </div>
     </main>
   );

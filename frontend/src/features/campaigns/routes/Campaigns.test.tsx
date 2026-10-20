@@ -183,3 +183,23 @@ describe("Archived campaigns (CAMP-NEW-04)", () => {
     );
   });
 });
+
+describe("Feedback on the campaigns page (CAMP-NEW-08)", () => {
+  it("sends a report without campaign fields and thanks you", async () => {
+    const user = setupUser();
+    fakeApi.on("POST /auth/feedback-report/", { detail: "Feedback report sent." });
+    renderCampaigns();
+    await screen.findByText("2 campaigns");
+
+    await user.click(screen.getByRole("button", { name: "Send report" }));
+    const dialog = screen.getByRole("dialog", { name: "Feedback/Bug Report" });
+    await user.type(within(dialog).getByLabelText("Report"), "The list is slow");
+    await user.click(within(dialog).getByRole("button", { name: "Send" }));
+
+    expect(await screen.findByText("Thanks, report sent")).toBeInTheDocument();
+    expect(fakeApi.bodyOf("POST /auth/feedback-report/")).toEqual({
+      report_type: "Bug",
+      message: "The list is slow",
+    });
+  });
+});
