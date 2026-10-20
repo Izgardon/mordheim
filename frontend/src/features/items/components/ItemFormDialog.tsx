@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@components/dialog";
+import { FieldError } from "@components/field-error";
 import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
@@ -21,6 +22,7 @@ import { ActionSearchDropdown, ActionSearchInput } from "@components/action-sear
 import { Tooltip } from "@components/tooltip";
 import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
+import { useFieldErrors } from "@/lib/field-errors";
 
 // api
 import { createItem, createItemProperty, updateItem, deleteItem } from "../api/items-api";
@@ -200,6 +202,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
   const [open, setOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
+  const fieldErrors = useFieldErrors(["name"]);
   const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete item");
   const [form, setForm] = useState<ItemFormState>(() =>
     props.mode === "edit" ? buildFormFromItem(props.item) : initialState
@@ -241,6 +244,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
       setSelectedProperties([]);
     }
     setFormError("");
+    fieldErrors.clear();
     setShowFluff(false);
     setPropertySearch("");
     setShowPropertyForm(false);
@@ -380,6 +384,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
 
     setIsSaving(true);
     setFormError("");
+    fieldErrors.clear();
 
     try {
       if (props.mode === "create") {
@@ -401,11 +406,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
       setResolvedOpen(false);
       resetForm();
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || "Unable to save item");
-      } else {
-        setFormError("Unable to save item");
-      }
+      setFormError(fieldErrors.take(errorResponse, "Unable to save item"));
     } finally {
       setIsSaving(false);
     }
@@ -474,8 +475,10 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
                   name: event.target.value,
                 }))
               }
+              aria-invalid={Boolean(fieldErrors.errors.name)}
               placeholder="Gutterblade"
             />
+            <FieldError message={fieldErrors.errors.name} />
           </div>
           <div className="space-y-2">
             <Label htmlFor={`item-type-${props.mode}`}>Type</Label>

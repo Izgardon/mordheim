@@ -4,6 +4,7 @@ import type { FocusEvent } from "react";
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 import { Button } from "@components/button";
 import { ConfirmDialog } from "@components/confirm-dialog";
+import { FieldError } from "@components/field-error";
 import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
@@ -11,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { createSpell, updateSpell, deleteSpell } from "../api/spells-api";
 import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
+import { useFieldErrors } from "@/lib/field-errors";
 
 import type { Spell } from "../types/spell-types";
 
@@ -71,6 +73,7 @@ export default function AddSpellForm({
   const catalogueCache = useCatalogueCache();
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
+  const fieldErrors = useFieldErrors(["name"], editingSpell);
   const [form, setForm] = useState<SpellFormState>(() =>
     editingSpell ? buildFormFromSpell(editingSpell) : initialState
   );
@@ -92,6 +95,7 @@ export default function AddSpellForm({
   const resetForm = () => {
     setForm(initialState);
     setFormError("");
+    fieldErrors.clear();
     setIsTypeMenuOpen(false);
   };
 
@@ -186,6 +190,7 @@ export default function AddSpellForm({
 
     setIsCreating(true);
     setFormError("");
+    fieldErrors.clear();
 
     try {
       if (isEditing && editingSpell) {
@@ -213,13 +218,12 @@ export default function AddSpellForm({
         resetForm();
       }
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setFormError(
-          errorResponse.message || (isEditing ? "Unable to update spell" : "Unable to create spell")
-        );
-      } else {
-        setFormError(isEditing ? "Unable to update spell" : "Unable to create spell");
-      }
+      setFormError(
+        fieldErrors.take(
+          errorResponse,
+          isEditing ? "Unable to update spell" : "Unable to create spell"
+        )
+      );
     } finally {
       setIsCreating(false);
     }
@@ -259,8 +263,10 @@ export default function AddSpellForm({
                 name: event.target.value,
               }))
             }
+            aria-invalid={Boolean(fieldErrors.errors.name)}
             placeholder="Fireball"
           />
+          <FieldError message={fieldErrors.errors.name} />
         </div>
         <div
           className="relative"

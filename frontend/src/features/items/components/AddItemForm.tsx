@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@components/button";
 import { Checkbox } from "@components/checkbox";
 import { ConfirmDialog } from "@components/confirm-dialog";
+import { FieldError } from "@components/field-error";
 import { Input } from "@components/input";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
@@ -13,6 +14,7 @@ import { X } from "lucide-react";
 
 import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
+import { useFieldErrors } from "@/lib/field-errors";
 
 import { createItem, createItemProperty, updateItem, deleteItem } from "../api/items-api";
 import { useItemPropertySearch } from "../hooks/useItemPropertySearch";
@@ -165,6 +167,7 @@ export default function AddItemForm({
   const catalogueCache = useCatalogueCache();
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
+  const fieldErrors = useFieldErrors(["name"], editingItem);
   const [form, setForm] = useState<ItemFormState>(() =>
     editingItem ? buildFormFromItem(editingItem) : initialState
   );
@@ -204,6 +207,7 @@ export default function AddItemForm({
     setForm(initialState);
     setSelectedProperties([]);
     setFormError("");
+    fieldErrors.clear();
     setShowFluff(false);
     setPropertySearch("");
     setShowPropertyForm(false);
@@ -338,6 +342,7 @@ export default function AddItemForm({
 
     setIsSaving(true);
     setFormError("");
+    fieldErrors.clear();
 
     try {
       if (isEditing && editingItem) {
@@ -355,11 +360,7 @@ export default function AddItemForm({
         resetForm();
       }
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || "Unable to save item");
-      } else {
-        setFormError("Unable to save item");
-      }
+      setFormError(fieldErrors.take(errorResponse, "Unable to save item"));
     } finally {
       setIsSaving(false);
     }
@@ -399,8 +400,10 @@ export default function AddItemForm({
                 name: event.target.value,
               }))
             }
+            aria-invalid={Boolean(fieldErrors.errors.name)}
             placeholder="Gutterblade"
           />
+          <FieldError message={fieldErrors.errors.name} />
         </div>
         <div>
           <label className="mb-1 block text-xs text-muted-foreground">Type</label>

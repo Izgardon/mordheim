@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@components/dialog";
+import { FieldError } from "@components/field-error";
 import { Input } from "@components/input";
 import { Label } from "@components/label";
 import { Tooltip } from "@components/tooltip";
@@ -19,6 +20,7 @@ import { Tooltip } from "@components/tooltip";
 import { createSkill, deleteSkill, updateSkill } from "../api/skills-api";
 import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
+import { useFieldErrors } from "@/lib/field-errors";
 
 import type { Skill } from "../types/skill-types";
 
@@ -80,6 +82,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
   const [open, setOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
+  const fieldErrors = useFieldErrors(["name"]);
   const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete skill");
   const [form, setForm] = useState<SkillFormState>(() =>
     mode === "edit" && skill ? buildFormFromSkill(skill) : initialState
@@ -103,6 +106,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
     }
     setCustomTypes([]);
     setFormError("");
+    fieldErrors.clear();
     setIsTypeMenuOpen(false);
   };
 
@@ -217,6 +221,7 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
 
     setIsSaving(true);
     setFormError("");
+    fieldErrors.clear();
 
     try {
       if (mode === "create") {
@@ -240,14 +245,12 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
       setResolvedOpen(false);
       resetForm();
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setFormError(
-          errorResponse.message ||
-            (mode === "create" ? "Unable to create skill" : "Unable to update skill")
-        );
-      } else {
-        setFormError(mode === "create" ? "Unable to create skill" : "Unable to update skill");
-      }
+      setFormError(
+        fieldErrors.take(
+          errorResponse,
+          mode === "create" ? "Unable to create skill" : "Unable to update skill"
+        )
+      );
     } finally {
       setIsSaving(false);
     }
@@ -320,9 +323,11 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
                   name: event.target.value,
                 }))
               }
+              aria-invalid={Boolean(fieldErrors.errors.name)}
               placeholder="Quick Hands"
               required
             />
+            <FieldError message={fieldErrors.errors.name} />
           </div>
           <div
             className="relative space-y-2"

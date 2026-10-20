@@ -10,7 +10,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@components/dialog";
+import { FieldError } from "@components/field-error";
 import { Input } from "@components/input";
+import { useFieldErrors } from "@/lib/field-errors";
 import { NumberInput } from "@components/number-input";
 import { Label } from "@components/label";
 
@@ -86,10 +88,12 @@ export default function CreateRaceDialog({
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
+  const fieldErrors = useFieldErrors(["name"]);
   const [form, setForm] = useState<RaceFormState>(initialState);
   const resetForm = () => {
     setForm(initialState);
     setFormError("");
+    fieldErrors.clear();
   };
 
   const resolvedOpen = openProp ?? open;
@@ -149,6 +153,7 @@ export default function CreateRaceDialog({
 
     setIsCreating(true);
     setFormError("");
+    fieldErrors.clear();
 
     try {
       const newRace = await createRace({
@@ -168,11 +173,7 @@ export default function CreateRaceDialog({
       setResolvedOpen(false);
       resetForm();
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || "Unable to create race");
-      } else {
-        setFormError("Unable to create race");
-      }
+      setFormError(fieldErrors.take(errorResponse, "Unable to create race"));
     } finally {
       setIsCreating(false);
     }
@@ -203,8 +204,10 @@ export default function CreateRaceDialog({
               }
               onFocus={handleSelectAll}
               onClick={handleSelectAll}
+              aria-invalid={Boolean(fieldErrors.errors.name)}
               placeholder="Human"
             />
+            <FieldError message={fieldErrors.errors.name} />
           </div>
           <div className="space-y-2">
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">

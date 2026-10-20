@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@components/dialog";
+import { FieldError } from "@components/field-error";
 import { Input } from "@components/input";
 import { Label } from "@components/label";
 import { NumberInput } from "@components/number-input";
@@ -20,6 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 // api
 import { createSpell } from "../api/spells-api";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
+import { useFieldErrors } from "@/lib/field-errors";
 
 // types
 import type { Spell } from "../types/spell-types";
@@ -67,6 +69,7 @@ export default function CreateSpellDialog({
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
+  const fieldErrors = useFieldErrors(["name"]);
   const [form, setForm] = useState<SpellFormState>(initialState);
   const [customTypes, setCustomTypes] = useState<string[]>([]);
   const [isTypeMenuOpen, setIsTypeMenuOpen] = useState(false);
@@ -74,6 +77,7 @@ export default function CreateSpellDialog({
   const resetForm = () => {
     setForm(initialState);
     setFormError("");
+    fieldErrors.clear();
     setIsTypeMenuOpen(false);
   };
 
@@ -187,6 +191,7 @@ export default function CreateSpellDialog({
 
     setIsCreating(true);
     setFormError("");
+    fieldErrors.clear();
 
     try {
       const newSpell = await createSpell({
@@ -202,11 +207,7 @@ export default function CreateSpellDialog({
       setResolvedOpen(false);
       resetForm();
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || "Unable to create spell");
-      } else {
-        setFormError("Unable to create spell");
-      }
+      setFormError(fieldErrors.take(errorResponse, "Unable to create spell"));
     } finally {
       setIsCreating(false);
     }
@@ -235,9 +236,11 @@ export default function CreateSpellDialog({
                   name: event.target.value,
                 }))
               }
+              aria-invalid={Boolean(fieldErrors.errors.name)}
               placeholder="Fireball"
               required
             />
+            <FieldError message={fieldErrors.errors.name} />
           </div>
           <div
             className="relative space-y-2"

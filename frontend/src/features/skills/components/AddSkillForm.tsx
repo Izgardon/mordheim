@@ -4,11 +4,13 @@ import type { FocusEvent } from "react";
 import { ActionSearchDropdown, ActionSearchInput } from "@components/action-search-input";
 import { Button } from "@components/button";
 import { ConfirmDialog } from "@components/confirm-dialog";
+import { FieldError } from "@components/field-error";
 import { Input } from "@components/input";
 
 import { createSkill, updateSkill, deleteSkill } from "../api/skills-api";
 import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
+import { useFieldErrors } from "@/lib/field-errors";
 
 import type { Skill } from "../types/skill-types";
 
@@ -61,6 +63,7 @@ export default function AddSkillForm({
   const catalogueCache = useCatalogueCache();
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
+  const fieldErrors = useFieldErrors(["name"], editingSkill);
   const [form, setForm] = useState<SkillFormState>(() =>
     editingSkill ? buildFormFromSkill(editingSkill) : initialState
   );
@@ -83,6 +86,7 @@ export default function AddSkillForm({
     setForm(initialState);
     setCustomTypes([]);
     setFormError("");
+    fieldErrors.clear();
     setIsTypeMenuOpen(false);
   };
 
@@ -168,6 +172,7 @@ export default function AddSkillForm({
 
     setIsSaving(true);
     setFormError("");
+    fieldErrors.clear();
 
     try {
       if (isEditing && editingSkill) {
@@ -191,13 +196,12 @@ export default function AddSkillForm({
         resetForm();
       }
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setFormError(
-          errorResponse.message || (isEditing ? "Unable to update skill" : "Unable to create skill")
-        );
-      } else {
-        setFormError(isEditing ? "Unable to update skill" : "Unable to create skill");
-      }
+      setFormError(
+        fieldErrors.take(
+          errorResponse,
+          isEditing ? "Unable to update skill" : "Unable to create skill"
+        )
+      );
     } finally {
       setIsSaving(false);
     }
@@ -237,8 +241,10 @@ export default function AddSkillForm({
                 name: event.target.value,
               }))
             }
+            aria-invalid={Boolean(fieldErrors.errors.name)}
             placeholder="Quick Hands"
           />
+          <FieldError message={fieldErrors.errors.name} />
         </div>
         <div
           className="relative"

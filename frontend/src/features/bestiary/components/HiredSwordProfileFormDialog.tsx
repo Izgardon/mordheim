@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { FieldError } from "@/components/ui/field-error";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -34,6 +35,7 @@ import { useCampaignSpecial } from "@/features/warbands/hooks/campaign/useCampai
 import SearchablePickerSection from "./SearchablePickerSection";
 import { skillAbbrevToType } from "@/features/warbands/utils/warband-utils";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
+import { useFieldErrors } from "@/lib/field-errors";
 
 import type { HiredSwordProfile } from "../types/bestiary-types";
 import type { Special } from "@/features/special/types/special-types";
@@ -128,6 +130,7 @@ export default function HiredSwordProfileFormDialog({
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const fieldErrors = useFieldErrors(["name"]);
   const campaignEnabled = open && !Number.isNaN(campaignId);
   const campaignLookupParams = {
     campaignId,
@@ -198,6 +201,7 @@ export default function HiredSwordProfileFormDialog({
     setCreatingSpecial(false);
     setNewSpecialName("");
     setNewSpecialDescription("");
+    fieldErrors.clear();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -206,6 +210,7 @@ export default function HiredSwordProfileFormDialog({
 
     setSaving(true);
     setError("");
+    fieldErrors.clear();
 
     try {
       const hireCostNum = form.hire_cost ? Number(form.hire_cost) : null;
@@ -249,7 +254,7 @@ export default function HiredSwordProfileFormDialog({
       resetForm();
       onOpenChange(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create hired sword");
+      setError(fieldErrors.take(err, "Failed to create hired sword"));
     } finally {
       setSaving(false);
     }
@@ -269,9 +274,11 @@ export default function HiredSwordProfileFormDialog({
               id="hs-name"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+              aria-invalid={Boolean(fieldErrors.errors.name)}
               placeholder="e.g. Ogre Bodyguard"
               required
             />
+            <FieldError message={fieldErrors.errors.name} />
           </div>
 
           <div className="flex gap-3">

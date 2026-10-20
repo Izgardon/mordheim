@@ -12,9 +12,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@components/dialog";
+import { FieldError } from "@components/field-error";
 import { Input } from "@components/input";
 import { Label } from "@components/label";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
+import { useFieldErrors } from "@/lib/field-errors";
 
 // api
 import { createSpecial } from "../api/special-api";
@@ -59,6 +61,7 @@ export default function CreateSpecialDialog({
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [formError, setFormError] = useState("");
+  const fieldErrors = useFieldErrors(["name"]);
   const [form, setForm] = useState<SpecialFormState>(initialState);
   const [customTypes, setCustomTypes] = useState<string[]>([]);
   const [isTypeMenuOpen, setIsTypeMenuOpen] = useState(false);
@@ -66,6 +69,7 @@ export default function CreateSpecialDialog({
   const resetForm = () => {
     setForm(initialState);
     setFormError("");
+    fieldErrors.clear();
     setIsTypeMenuOpen(false);
   };
 
@@ -170,6 +174,7 @@ export default function CreateSpecialDialog({
 
     setIsCreating(true);
     setFormError("");
+    fieldErrors.clear();
 
     try {
       const newSpecial = await createSpecial({
@@ -183,11 +188,7 @@ export default function CreateSpecialDialog({
       setResolvedOpen(false);
       resetForm();
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || "Unable to create entry");
-      } else {
-        setFormError("Unable to create entry");
-      }
+      setFormError(fieldErrors.take(errorResponse, "Unable to create entry"));
     } finally {
       setIsCreating(false);
     }
@@ -216,9 +217,11 @@ export default function CreateSpecialDialog({
                   name: event.target.value,
                 }))
               }
+              aria-invalid={Boolean(fieldErrors.errors.name)}
               placeholder="Blessing"
               required
             />
+            <FieldError message={fieldErrors.errors.name} />
           </div>
           <div
             className="relative space-y-2"
