@@ -23,6 +23,12 @@ import { Pencil } from "lucide-react";
 
 // utils
 import { renderBoldMarkdown } from "../../../lib/render-bold-markdown";
+import {
+  formatAvailabilitySummary,
+  formatCost,
+  formatRarity,
+  formatRestrictions,
+} from "../utils/availability-format";
 
 // api
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
@@ -41,32 +47,6 @@ const ALL_SUBTYPES = "all";
 const ALL_SINGLE_USE = "all";
 const SINGLE_USE_ONLY = "single";
 const STAT_HEADERS = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
-
-const formatRarity = (value?: number | null) => {
-  if (value === 2) {
-    return "Common";
-  }
-  if (value === null || value === undefined) {
-    return "-";
-  }
-  return String(value);
-};
-const formatCost = (value?: number | null) => {
-  if (value === null || value === undefined) {
-    return "-";
-  }
-  return String(value);
-};
-
-const formatRestrictions = (avail: ItemAvailability | null): string => {
-  if (!avail?.restrictions?.length) return "-";
-  return avail.restrictions
-    .map((link) => {
-      const name = link.restriction.restriction;
-      return link.additional_note ? `${name} (${link.additional_note})` : name;
-    })
-    .join(", ");
-};
 
 type ItemTabId = "weapons" | "armour" | "misc" | "animals";
 
@@ -825,6 +805,7 @@ export default function Items() {
                 expandedRowIds={expandedRowIds}
                 onToggleRow={toggleItemExpanded}
                 getRowId={(item) => item._rowId}
+                getMobileSubtitle={(item) => formatAvailabilitySummary(item._availability)}
                 isMobile={isMobile}
               />
             </>

@@ -1,7 +1,7 @@
 /**
  * The Wargear table as the app mounts it (layout, fake server): one row per availability, the
- * name cell holding only the name whatever the row is (CAT-UX-01), multi-availability items as
- * look-alike rows on a phone (CAT-UX-03), and one Acquire dialog mounted per row (PERF-48).
+ * name cell holding only the name whatever the row is (CAT-UX-01), each phone row's availability
+ * under its name (CAT-UX-03), and one Acquire dialog mounted per row (PERF-48).
  */
 import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -91,16 +91,17 @@ describe("Wargear: what a row says", () => {
     expect(common).toHaveTextContent(/Common\s*25/);
   });
 
-  // Characterises current behaviour (CAT-UX-03, CAT-TEST-19, pinned; flips in PR A)
-  it("shows a multi-availability item as two identical rows on a phone, told apart only once expanded (CAT-UX-03, CAT-TEST-19, pinned; flips in PR A)", async () => {
+  it("shows each availability's restriction and rarity under the name on a phone, so look-alike rows differ (CAT-UX-03, CAT-TEST-19)", async () => {
     const user = setupUser();
     media.mobile = true;
     await openWargear();
 
     const [rare, common] = rows("Blowpipe");
-    expect(cells(rare)).toEqual(cells(common));
-    expect(cells(rare).slice(1, 3)).toEqual(["Blowpipe", "25"]);
-    expect(screen.queryByText("Forest Goblins")).toBeNull();
+    expect(cells(rare).slice(1, 3)).toEqual(["BlowpipeLizardmen, Skaven · Rare 7", "25"]);
+    expect(cells(common).slice(1, 3)).toEqual(["BlowpipeForest Goblins · Common", "25"]);
+    expect(within(rare).getByText("Lizardmen, Skaven · Rare 7")).toBeVisible();
+    // An item anyone may buy shows its rarity alone.
+    expect(cells(row("Sword"))[1]).toBe("SwordCommon");
 
     await user.click(common);
     expect(

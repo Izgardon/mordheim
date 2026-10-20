@@ -22,6 +22,8 @@ type ItemsTableProps<T extends Item = Item> = {
   expandedRowIds: string[];
   onToggleRow: (rowId: string) => void;
   getRowId: (item: T) => string;
+  /** A phone shows only name and price, so this line under the name tells look-alike rows apart. */
+  getMobileSubtitle?: (item: T) => string;
   isMobile?: boolean;
 };
 
@@ -43,6 +45,7 @@ export default function ItemsTable<T extends Item>({
   expandedRowIds,
   onToggleRow,
   getRowId,
+  getMobileSubtitle,
   isMobile,
 }: ItemsTableProps<T>) {
   if (isMobile) {
@@ -108,6 +111,9 @@ export default function ItemsTable<T extends Item>({
                     </td>
                     <td className="px-2 py-2 font-medium text-foreground">
                       {nameCol?.render(item) ?? item.name}
+                      <span className="block text-[0.65rem] font-normal text-muted-foreground">
+                        {getMobileSubtitle?.(item)}
+                      </span>
                     </td>
                     <td className="px-2 py-2 text-muted-foreground">
                       {priceCol?.render(item) ?? "-"}
