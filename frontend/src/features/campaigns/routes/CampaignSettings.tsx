@@ -11,6 +11,7 @@ import DeleteWarbandCard from "../components/settings/DeleteWarbandCard";
 import CampaignControlCard from "../components/settings/CampaignControlCard";
 import CampaignLevelUpSettingsCard from "../components/settings/CampaignLevelUpSettingsCard";
 import FeedbackReportCard from "../components/settings/FeedbackReportCard";
+import JoinCodeBadge from "../components/settings/JoinCodeBadge";
 import MembersCard from "../components/settings/MembersCard";
 import RemoveMemberDialog from "../components/settings/RemoveMemberDialog";
 import PersonalSettingsCard from "../components/settings/PersonalSettingsCard";
@@ -115,6 +116,15 @@ export default function CampaignSettings() {
   }
 
   const isOwner = campaign.role === "owner";
+  const joinCode = (compact: boolean) =>
+    campaign.join_code ? (
+      <JoinCodeBadge
+        campaign={campaign}
+        canRegenerate={canManageSettings}
+        onRegenerated={(updated) => setCampaign?.(updated)}
+        compact={compact}
+      />
+    ) : undefined;
 
   const personalSettingsContent = (
     <div className="space-y-6">
@@ -154,16 +164,7 @@ export default function CampaignSettings() {
         tabs={hasCampaignTab ? settingsTabs : undefined}
         activeTab={activeTab}
         onTabChange={(tabId) => setActiveTab(tabId as SettingsTabId)}
-        rightSlot={
-          campaign.join_code ? (
-            <div className="flex flex-col items-end">
-              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Join Code</p>
-              <p className="font-mono text-sm font-semibold text-foreground">
-                {campaign.join_code}
-              </p>
-            </div>
-          ) : undefined
-        }
+        rightSlot={joinCode(false)}
       />
 
       {hasCampaignTab ? (
@@ -176,18 +177,7 @@ export default function CampaignSettings() {
             headerClassName="hidden"
             className="px-2 pb-6 sm:px-0"
             contentClassName="pt-4 sm:pt-0"
-            mobileRight={
-              campaign.join_code ? (
-                <div className="text-right">
-                  <p className="text-[0.5rem] uppercase tracking-[0.2em] text-muted-foreground">
-                    Join Code
-                  </p>
-                  <p className="font-mono text-[0.65rem] font-semibold text-foreground">
-                    {campaign.join_code}
-                  </p>
-                </div>
-              ) : undefined
-            }
+            mobileRight={joinCode(true)}
           >
             {activeTab === "personal" ? (
               personalSettingsContent

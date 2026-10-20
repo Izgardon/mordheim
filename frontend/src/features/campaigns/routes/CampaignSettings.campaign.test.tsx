@@ -7,6 +7,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError } from "@/lib/api-client";
 import {
+  ADMIN,
   OWNER,
   PLAYER,
   campaignApi,
@@ -36,6 +37,7 @@ vi.mock("@/features/realtime/components/CampaignDiceRollerMenu", () => ({ defaul
 
 const PATCH_CAMPAIGN = `PATCH ${campaignApi()}`;
 const MY_SHEET = `GET /warbands/${OWNER.warband!.id}/sheet/`;
+const JOIN_CODE = `POST ${campaignApi("join-code/")}`;
 
 const patches = () => fakeApi.requests().filter((request) => request.method === "PATCH");
 
@@ -162,15 +164,45 @@ describe("Delete campaign", () => {
 });
 
 describe("Join code in Settings", () => {
-  it("shows the join code in the header to the owner, with no way to regenerate it (CAMP-NEW-01, pinned; flips in PR C)", async () => {
+  it("lets the owner regenerate it after a confirm that says the old code stops working; the header shows the new code (decision 1, CAMP-NEW-01)", async () => {
     const user = setupUser();
+    fakeApi.on(JOIN_CODE, () => patchedCampaign(campaignSummary(), { join_code: "NEW456" }));
     await openCampaignTab(user);
+    const header = screen.getByRole("banner");
+    expect(header).toHaveTextContent("Join CodeWYR123");
 
-    expect(screen.getByRole("banner")).toHaveTextContent("Join CodeWYR123");
-    expect(screen.queryByRole("button", { name: /new code|regenerate/i })).not.toBeInTheDocument();
+    await user.click(within(header).getByRole("button", { name: "New code" }));
+
+    const dialog = screen.getByRole("dialog", { name: "Regenerate join code" });
+    expect(dialog).toHaveTextContent("The old code, WYR123, stops working at once.");
+    expect(dialog).toHaveAccessibleDescription(expect.stringContaining("stops working at once"));
+    expect(fakeApi.countOf(JOIN_CODE)).toBe(0);
+    await user.click(within(dialog).getByRole("button", { name: "Regenerate join code" }));
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(screen.getByRole("banner")).toHaveTextContent("Join CodeNEW456");
+    expect(fakeApi.calls().filter((call) => !call.startsWith("GET"))).toEqual([JOIN_CODE]);
+    // The answer carries no permissions; the owner's cards stay.
+    expect(screen.getByRole("heading", { name: "Campaign Systems" })).toBeInTheDocument();
   });
 
-  it("shows the join code to a player too, on the personal settings they get", async () => {
+  it("lets an admin regenerate it too, and keeps a refusal in the dialog", async () => {
+    const user = setupUser();
+    auth.user = { id: ADMIN.id, email: ADMIN.email };
+    routeCampaignShell({ campaign: campaignFor("admin"), viewer: ADMIN });
+    fakeApi.fail(JOIN_CODE, new ApiError("Forbidden", 403, { detail: "Forbidden" }));
+    renderCampaignRoute("/campaigns/1/settings");
+    const header = await screen.findByRole("banner");
+
+    await user.click(within(header).getByRole("button", { name: "New code" }));
+    const dialog = screen.getByRole("dialog", { name: "Regenerate join code" });
+    await user.click(within(dialog).getByRole("button", { name: "Regenerate join code" }));
+
+    expect(await within(dialog).findByText("Forbidden")).toBeVisible();
+    expect(screen.getByRole("banner", { hidden: true })).toHaveTextContent("Join CodeWYR123");
+  });
+
+  it("shows the join code to a player too, on the personal settings they get, with no way to regenerate it", async () => {
     auth.user = { id: PLAYER.id, email: PLAYER.email };
     routeCampaignShell({ campaign: campaignFor("player"), viewer: PLAYER });
 
@@ -178,6 +210,7 @@ describe("Join code in Settings", () => {
 
     const header = await screen.findByRole("banner");
     expect(header).toHaveTextContent("Join CodeWYR123");
+    expect(within(header).queryByRole("button", { name: "New code" })).not.toBeInTheDocument();
     expect(within(header).queryByRole("button", { name: "Campaign" })).not.toBeInTheDocument();
     expect(fakeApi.countOf(`GET ${campaignApi("members/")}`)).toBe(0);
   });
