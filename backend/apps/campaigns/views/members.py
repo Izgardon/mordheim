@@ -1,5 +1,5 @@
 """Members, their roles and grants, the permission catalogue, removing a member (decision 1) and handing ownership
-to an admin (decision 4)."""
+to an admin and leaving (decision 4)."""
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -11,7 +11,7 @@ from ..serializers.members import (
     MembershipRoleUpdateSerializer,
     OwnershipSerializer,
 )
-from ..services import codes, membership, removal
+from ..services import codes, leaving, membership, removal
 from .base import CampaignScopedView
 
 
@@ -93,3 +93,17 @@ class CampaignOwnershipView(CampaignScopedView):
         serializer.is_valid(raise_exception=True)
         new_owner = membership.hand_over(self.access.membership, serializer.validated_data["user_id"])
         return Response({"owner_id": new_owner.user_id, "previous_owner_id": request.user.id})
+
+
+class CampaignLeaveView(CampaignScopedView):
+    """GET: what leaving will close (refused as leaving is). POST: the caller leaves the campaign, with removal's
+    clean-up; the owner hands ownership over first, unless he is alone, when leaving archives the campaign
+    (decision 4, CAMP-NEW-03). Answers `{"outcome": "left" | "archived"}`."""
+
+    rules = {"GET": "view", "POST": "view"}  # who may leave is the service's (leaving.py)
+
+    def get(self, request, campaign_id):
+        return Response(leaving.preview(self.access.membership))
+
+    def post(self, request, campaign_id):
+        return Response({"outcome": leaving.leave(self.access.membership, request.user)})

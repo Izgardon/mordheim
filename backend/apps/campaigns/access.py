@@ -92,6 +92,10 @@ def owner(access: CampaignAccess, obj: Any = None) -> bool:
     return access.role == OWNER
 
 
+def not_owner(access: CampaignAccess, obj: Any = None) -> bool:
+    return access.role != OWNER
+
+
 def owner_of_archived(access: CampaignAccess, obj: Any = None) -> bool:
     return access.role == OWNER and access.archived
 
@@ -133,6 +137,7 @@ ROLE_RULES: Mapping[str, Rule] = {
     "hand_over": owner,  # ownership goes to an admin (decision 4, CAMP-NEW-02)
     "archive": owner,  # decision 5, CAMP-NEW-04
     "restore": owner_of_archived,
+    "leave": not_owner,  # the owner hands over first; alone, leaving archives (decision 4, services/leaving)
 }
 CODE_RULES: Mapping[str, Rule] = {
     **{code: has(code) for code in PERMISSION_CODES},

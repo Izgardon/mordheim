@@ -69,6 +69,8 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("POST", "ownership/", {"user_id": "{admin}"}, (403, 403, 403, 200)),
     ("POST", "archive/", {}, (403, 403, 403, 200)),
     ("POST", "restore/", {}, (403, 403, 403, 403)),  # not archived: nothing to restore
+    ("GET", "leave/", None, (200, 200, 200, 400)),  # the owner hands over first
+    ("POST", "leave/", {}, (200, 200, 200, 400)),
     ("GET", "permissions/", None, OK_ALL),
     ("GET", "permissions/me/", None, OK_ALL),
     ("GET", "rules/", None, OK_ALL),
@@ -93,6 +95,7 @@ REPRESENTATIVE: dict[str, tuple[str, str, dict[str, Any] | None]] = {
     "hand_over": ("POST", "ownership/", {"user_id": "{admin}"}),
     "archive": ("POST", "archive/", {}),
     "restore": ("POST", "restore/", {}),
+    "leave": ("POST", "leave/", {}),
     "add_custom": ("POST", "/api/skills/", {"campaign_id": "{campaign}", "name": "Dodge", "type": "Speed"}),
     "manage_items": ("DELETE", "/api/items/{item}/", None),
     "manage_skills": ("DELETE", "/api/skills/{skill}/", None),

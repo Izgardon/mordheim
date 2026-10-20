@@ -7,9 +7,11 @@ accepted trades close (`lifecycle.close`, as if he cancelled or declined them), 
 deleted. His warband, battles, ledger and encampments stay, so rejoining brings everything back but his grants.
 After commit the battles' players get the battle events and he gets `membership_removed` on his own channel.
 
-`preview` lists the same things first, for the Remove dialog (`GET members/<user>/removal/`).
+`preview` lists the same things first, for the Remove dialog (`GET members/<user>/removal/`). Leaving
+(`leaving.py`) is the same clean-up, `take_out`, without the remover's check.
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -32,7 +34,7 @@ from apps.warbands.models import Warband
 
 from ..constants import ADMIN, OWNER, PLAYER
 from ..errors import Refused
-from ..models import CampaignMembership
+from ..models import Campaign, CampaignMembership
 from . import removal_battles
 
 
@@ -76,7 +78,16 @@ def preview(actor: CampaignMembership, user_id: int) -> dict[str, Any]:
     """What removing the member will close, read without changing anything."""
     target = _target(actor.campaign_id, user_id)
     check_may_remove(actor, target)
-    campaign_id = actor.campaign_id
+    return _describe(target)
+
+
+def describe(campaign_id: int, user_id: int) -> dict[str, Any]:
+    """What taking the member out will close (his own Leave dialog)."""
+    return _describe(_target(campaign_id, user_id))
+
+
+def _describe(target: CampaignMembership) -> dict[str, Any]:
+    campaign_id, user_id = target.campaign_id, target.user_id
     warband = Warband.objects.filter(campaign_id=campaign_id, user_id=user_id).only("id", "name").first()
     places = list(removal_battles.open_participations(campaign_id, user_id).prefetch_related("battle__participants"))
     trades = [trade for trade in _open_trades(campaign_id, user_id) if not is_due(trade)]
@@ -106,20 +117,35 @@ def _trade_row(trade: TradeRequest, user_id: int) -> dict[str, Any]:
 
 def remove_member(actor: CampaignMembership, user_id: int, actor_user: Any) -> None:
     """Remove the member, closing what he was part of (see the module docstring); Refused when not allowed."""
+    campaign = take_out(actor.campaign_id, user_id, actor_user, check=lambda target: check_may_remove(actor, target))
+    payload = {"campaign_id": campaign.id, "campaign_name": campaign.name, "removed_by": display_name(actor_user)}
+    send_user_notification(user_id, "membership_removed", payload)
+
+
+def take_out(
+    campaign_id: int,
+    user_id: int,
+    actor_user: Any,
+    *,
+    check: Callable[[CampaignMembership], None] | None = None,
+    mode: str = removal_battles.REMOVAL_MODE,
+) -> Campaign:
+    """Close what the member was part of and delete his membership, in one transaction under its lock (`check`
+    may refuse him first); the battle events go out after commit. Returns his campaign."""
     closed = Closed()
     with transaction.atomic():
-        target = _target(actor.campaign_id, user_id, lock=True)
-        check_may_remove(actor, target)
-        close_trades(actor.campaign_id, target.user)
-        _close_battles(actor.campaign_id, user_id, actor_user, closed)
-        Notification.objects.filter(user_id=user_id, campaign_id=actor.campaign_id, is_resolved=False).update(
+        target = _target(campaign_id, user_id, lock=True)
+        if check is not None:
+            check(target)
+        close_trades(campaign_id, target.user)
+        _close_battles(campaign_id, user_id, actor_user, closed, mode)
+        Notification.objects.filter(user_id=user_id, campaign_id=campaign_id, is_resolved=False).update(
             is_resolved=True, resolved_at=timezone.now()
         )
         campaign = target.campaign
         target.delete()
-    publish_closed(closed, actor_user, removal_battles.REMOVAL_MODE)
-    payload = {"campaign_id": campaign.id, "campaign_name": campaign.name, "removed_by": display_name(actor_user)}
-    send_user_notification(user_id, "membership_removed", payload)
+    publish_closed(closed, actor_user, mode)
+    return campaign
 
 
 def close_trades(campaign_id: int, user: Any = None) -> None:
@@ -146,9 +172,9 @@ def publish_closed(closed: Closed, actor_user: Any, reason: str) -> None:
         )
 
 
-def _close_battles(campaign_id: int, user_id: int, actor_user: Any, closed: Closed) -> None:
+def _close_battles(campaign_id: int, user_id: int, actor_user: Any, closed: Closed, mode: str) -> None:
     battle_ids = sorted({place.battle_id for place in removal_battles.open_participations(campaign_id, user_id)})
     for battle in locked(Battle.objects.filter(id__in=battle_ids).order_by("id")):
-        events = removal_battles.close_for_removal(battle, user_id, actor_user)
+        events = removal_battles.close_for_removal(battle, user_id, actor_user, mode)
         if events:
             closed.battles.append((battle.id, events, bump_state_version(battle)))

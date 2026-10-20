@@ -36,6 +36,7 @@ CANCELLED = "cancelled"
 SKIPPED = "skipped"
 REMOVAL_MODE = "member_removed"
 ARCHIVE_MODE = "campaign_archived"
+LEAVE_MODE = "member_left"  # the same clean-up when he leaves himself (decision 4)
 DONE = (*BattleParticipant.LEFT_STATUSES, BattleParticipant.STATUS_CONFIRMED_POSTBATTLE)
 
 
@@ -59,7 +60,7 @@ def outcome(battle: Battle, participants: Iterable[BattleParticipant]) -> str:
     return CANCELLED
 
 
-def close_for_removal(battle: Battle, user_id: int, actor) -> list[dict]:
+def close_for_removal(battle: Battle, user_id: int, actor, mode: str = REMOVAL_MODE) -> list[dict]:
     """Cancel the (locked) battle or skip the removed player in it; returns the events (none when there was
     nothing left to do, e.g. its deadline settled it first)."""
     settle_during_write(battle)
@@ -70,7 +71,7 @@ def close_for_removal(battle: Battle, user_id: int, actor) -> list[dict]:
     if mine is None or mine.status in DONE:
         return []
     if outcome(battle, participants) == CANCELLED:
-        return [cancel_battle(battle, actor_user=actor, mode=REMOVAL_MODE)]
+        return [cancel_battle(battle, actor_user=actor, mode=mode)]
     events: list[dict] = []
     if mine.status == BattleParticipant.STATUS_IN_BATTLE:
         events += finish_player(battle, mine, BattleParticipant.DECLARED_UNDECIDED, actor).events

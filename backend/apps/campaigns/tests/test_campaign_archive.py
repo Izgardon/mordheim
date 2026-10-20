@@ -75,6 +75,7 @@ class ArchiveRestoreTests(ArchiveTestCase):
             (self.owner, "patch", f"members/{self.player.id}/role/", {"role": "admin"}),
             (self.owner, "delete", f"members/{self.player.id}/", None),
             (self.owner, "post", "ownership/", {"user_id": self.admin.id}),
+            (self.player, "post", "leave/", {}),
         )
         for user, method, suffix, body in writes:
             with self.subTest(write=f"{method} {suffix}"):
