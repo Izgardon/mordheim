@@ -66,7 +66,7 @@ class WarbandItem(models.Model):
     """Copies of an item in a warband's stash at one cost: one row per item and cost (BUG-117)."""
 
     warband = models.ForeignKey(Warband, related_name="warband_items", on_delete=models.CASCADE)
-    item = models.ForeignKey("items.Item", related_name="warband_items", on_delete=models.CASCADE)
+    item = models.ForeignKey("items.Item", related_name="warband_items", on_delete=models.RESTRICT)
     cost = models.PositiveIntegerField(null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
 

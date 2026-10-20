@@ -9,6 +9,7 @@ from apps.campaigns.permissions import (
     parse_campaign_id,
 )
 from apps.core.catalogue.duplicates import refusing_duplicates
+from apps.core.catalogue.usage import delete_unless_in_use
 
 from .models import Special
 from .serializers import SpecialCreateSerializer, SpecialSerializer
@@ -114,5 +115,5 @@ class SpecialDetailView(APIView):
         if not has_campaign_permission(membership, "manage_specials"):
             return Response({"detail": "Forbidden"}, status=403)
 
-        special.delete()
+        delete_unless_in_use(special, "special")  # 409 in_use when anything holds it (BUG-16)
         return Response(status=status.HTTP_204_NO_CONTENT)

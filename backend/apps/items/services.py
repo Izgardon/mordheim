@@ -4,6 +4,7 @@ from typing import Any
 
 from django.db import models
 
+from apps.bestiary.models import BestiaryEntryItem
 from apps.warbands.models import HenchmenGroupItem, HeroItem, HiredSwordItem, WarbandItem
 
 from .models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemPropertyLink
@@ -135,13 +136,40 @@ def _remap_campaign_owned_rows(campaign_id, item_id_map):
         add_to_stash(stash_item.warband_id, target_item_id, stash_item.quantity or 0, stash_item.cost)
 
 
+def _return_equipment(item_id_map):
+    """Bestiary entries equipped with a clone get its source item back; an entry already equipped with the source
+    keeps that link alone (one row per entry and item)."""
+    links = list(BestiaryEntryItem.objects.filter(item_id__in=item_id_map.keys()))
+    if not links:
+        return
+    entry_ids = {link.bestiary_entry_id for link in links}
+    taken = set(
+        BestiaryEntryItem.objects.filter(bestiary_entry_id__in=entry_ids, item_id__in=set(item_id_map.values()))
+        .values_list("bestiary_entry_id", "item_id")
+    )  # fmt: skip
+    moved, dropped = [], []
+    for link in links:
+        key = (link.bestiary_entry_id, item_id_map[link.item_id])
+        if key in taken:
+            dropped.append(link.id)
+            continue
+        taken.add(key)
+        link.item_id = key[1]
+        moved.append(link)
+    BestiaryEntryItem.objects.bulk_update(moved, ["item"])
+    BestiaryEntryItem.objects.filter(id__in=dropped).delete()
+
+
 def _retire_clones(campaign_id, clones):
-    """Move the campaign's owned copies of these clones back to their source items, then delete the clones (deleting
-    first would cascade and delete the owned copies, BUG-51)."""
+    """Move the campaign's owned copies and bestiary equipment of these clones back to their source items, then
+    delete the clones (copies and equipment reference items with RESTRICT, so a clone still held can't go: BUG-16,
+    BUG-51)."""
     clones = [clone for clone in clones if clone.source_item_id]
     if not clones:
         return
-    _remap_campaign_owned_rows(campaign_id, {clone.id: clone.source_item_id for clone in clones})
+    item_id_map = {clone.id: clone.source_item_id for clone in clones}
+    _remap_campaign_owned_rows(campaign_id, item_id_map)
+    _return_equipment(item_id_map)
     Item.objects.filter(id__in=[clone.id for clone in clones]).delete()
 
 

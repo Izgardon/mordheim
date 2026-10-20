@@ -77,7 +77,7 @@ class BestiaryEntrySkill(models.Model):
     skill = models.ForeignKey(
         "skills.Skill",
         related_name="bestiary_entry_skills",
-        on_delete=models.CASCADE,
+        on_delete=models.RESTRICT,  # an entry in use can't be deleted (BUG-16)
     )
 
     class Meta:
@@ -96,7 +96,7 @@ class BestiaryEntrySpecial(models.Model):
     special = models.ForeignKey(
         "special.Special",
         related_name="bestiary_entry_specials",
-        on_delete=models.CASCADE,
+        on_delete=models.RESTRICT,  # an entry in use can't be deleted (BUG-16)
     )
 
     class Meta:
@@ -115,7 +115,7 @@ class BestiaryEntrySpell(models.Model):
     spell = models.ForeignKey(
         "spells.Spell",
         related_name="bestiary_entry_spells",
-        on_delete=models.CASCADE,
+        on_delete=models.RESTRICT,  # an entry in use can't be deleted (BUG-16)
     )
 
     class Meta:
@@ -134,7 +134,7 @@ class BestiaryEntryItem(models.Model):
     item = models.ForeignKey(
         "items.Item",
         related_name="bestiary_entry_items",
-        on_delete=models.CASCADE,
+        on_delete=models.RESTRICT,  # an entry in use can't be deleted (BUG-16)
     )
     quantity = models.PositiveIntegerField(default=1)
 

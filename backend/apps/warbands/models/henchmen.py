@@ -9,7 +9,7 @@ class HenchmenGroup(RosterUnit):
     race = models.ForeignKey(
         "races.Race",
         related_name="henchmen_groups",
-        on_delete=models.CASCADE,
+        on_delete=models.RESTRICT,  # a race in use can't be deleted (BUG-130)
         null=True,
         blank=True,
     )
@@ -59,7 +59,7 @@ class Henchman(models.Model):
 
 class HenchmenGroupItem(models.Model):
     henchmen_group = models.ForeignKey(HenchmenGroup, related_name="henchmen_group_items", on_delete=models.CASCADE)
-    item = models.ForeignKey("items.Item", related_name="henchmen_group_items", on_delete=models.CASCADE)
+    item = models.ForeignKey("items.Item", related_name="henchmen_group_items", on_delete=models.RESTRICT)
     cost = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
@@ -71,7 +71,7 @@ class HenchmenGroupItem(models.Model):
 
 class HenchmenGroupSkill(models.Model):
     henchmen_group = models.ForeignKey(HenchmenGroup, related_name="henchmen_group_skills", on_delete=models.CASCADE)
-    skill = models.ForeignKey("skills.Skill", related_name="henchmen_group_skills", on_delete=models.CASCADE)
+    skill = models.ForeignKey("skills.Skill", related_name="henchmen_group_skills", on_delete=models.RESTRICT)
 
     class Meta:
         db_table = "henchmen_group_skill"
@@ -82,7 +82,7 @@ class HenchmenGroupSkill(models.Model):
 
 class HenchmenGroupSpecial(models.Model):
     henchmen_group = models.ForeignKey(HenchmenGroup, related_name="henchmen_group_specials", on_delete=models.CASCADE)
-    special = models.ForeignKey("special.Special", related_name="henchmen_group_specials", on_delete=models.CASCADE)
+    special = models.ForeignKey("special.Special", related_name="henchmen_group_specials", on_delete=models.RESTRICT)
 
     class Meta:
         db_table = "henchmen_group_special"

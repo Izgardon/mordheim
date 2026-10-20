@@ -1,9 +1,9 @@
-"""Characterisation: deleting catalogue entries deletes what references them (pass 5; BUG-16, BUG-130, CAT-TEST-04).
+"""Deleting catalogue entries that something holds (pass 5; BUG-16, BUG-130, CAT-TEST-04).
 
-Owned copies (unit items, skills, spells and specials, stash rows), the bestiary's link tables and units' races all
-reference the catalogue with CASCADE. Deleting a custom entry deletes every copy in every warband of the campaign,
-with no refund, ledger row or notice; deleting a race deletes every unit of that race. PR A makes them RESTRICT and
-answers 409 `in_use` with counts; PR C archives an entry in use instead (decision 5).
+Owned copies (unit items, skills, spells and specials, stash rows), the bestiary's link tables and units' races
+reference the catalogue with RESTRICT since PR A (they were CASCADE: a delete took every copy in every warband, with
+no refund, and a race took every unit of it). Deleting an entry in use answers 409 `in_use` with counts and deletes
+nothing; deleting a whole campaign still cascades. PR C archives an entry in use instead (decision 5).
 """
 
 import json
@@ -12,6 +12,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from django.core.management import call_command
+from django.db import transaction
+from django.db.models import RestrictedError
 
 from apps.bestiary.models import (
     BestiaryEntryItem,
@@ -20,7 +22,9 @@ from apps.bestiary.models import (
     BestiaryEntrySpell,
     WarbandBestiaryFavourite,
 )
+from apps.core.catalogue.usage import usage_of
 from apps.items.models import Item
+from apps.items.services import HALF_PRICE_ARMOUR_EFFECT_KEY as HALF
 from apps.races.models import Race
 from apps.warbands.models import HenchmenGroup, Hero, HiredSword, Warband, WarbandItem, WarbandTrade
 from apps.warbands.tests.roster_support import HENCHMEN, HERO, HIRED_SWORD, make_unit
@@ -39,6 +43,11 @@ from .catalogue_support import (
 )
 
 
+def in_use(noun: str, **usage: int) -> dict[str, object]:
+    """The 409 body of a refused delete."""
+    return {"detail": f"This {noun} is in use, so nothing was deleted.", "code": "in_use", "fields": {}, "usage": usage}
+
+
 class CustomEntryDeleteTests(CatalogueTestCase):
     def setUp(self) -> None:
         super().setUp()
@@ -51,8 +60,9 @@ class CustomEntryDeleteTests(CatalogueTestCase):
         rows = WarbandTrade.objects.filter(warband__campaign=self.campaign).order_by("id")
         return list(rows.values_list("warband_id", "action", "price"))
 
-    def test_deleting_a_custom_item_deletes_every_copy_in_every_warband_without_a_refund(self):
-        # Characterises current behaviour (BUG-16, CAT-TEST-04, pinned; flips in PR A: 409 in_use, copies untouched)
+    def test_deleting_a_custom_item_in_use_is_refused_with_its_usage_and_keeps_every_copy(self):
+        # BUG-16, CAT-TEST-04 (was pinned: the delete took every copy in every warband, with no refund; flipped in
+        # PR A: copies are RESTRICT and the delete answers 409 in_use with the counts)
         charm = make_entry(ITEMS, "Lucky Charm", campaign=self.campaign, cost=25)
         self.hero.hero_items.create(item=charm, cost=25)
         self.group.henchmen_group_items.create(item=charm, cost=25)
@@ -63,22 +73,38 @@ class CustomEntryDeleteTests(CatalogueTestCase):
 
         response = self.delete_as(self.owner, ITEMS.detail_url(charm.id))
 
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(
+            (response.status_code, response.json()),
+            (409, in_use("item", units=3, warbands=2, stashes=1, bestiary_entries=1)),
+        )
         self.assertEqual(
             [
                 self.hero.hero_items.count(),
                 self.group.henchmen_group_items.count(),
                 self.sword.hired_sword_items.count(),
             ],
-            [0, 0, 0],
+            [1, 1, 1],
         )
-        self.assertFalse(WarbandItem.objects.filter(warband=self.warband).exists())
-        self.assertFalse(BestiaryEntryItem.objects.filter(bestiary_entry=self.beast).exists())
+        self.assertTrue(WarbandItem.objects.filter(warband=self.warband, item=charm).exists())
+        self.assertTrue(BestiaryEntryItem.objects.filter(bestiary_entry=self.beast, item=charm).exists())
         self.assertEqual(self.ledger(), ledger)
         self.assertEqual(list(Warband.objects.order_by("id").values_list("gold", flat=True)), gold)
 
-    def test_deleting_a_custom_skill_spell_or_special_takes_it_from_every_unit_and_bestiary_entry(self):
-        # Characterises current behaviour (BUG-16, pinned; flips in PR A)
+    def test_a_dead_units_copy_still_counts_and_an_unused_entry_is_deleted(self):
+        charm = make_entry(ITEMS, "Lucky Charm", campaign=self.campaign)
+        self.hero.hero_items.create(item=charm, cost=25)
+        Hero.objects.filter(id=self.hero.id).update(dead=True)  # soft-deleted units keep their records
+        spare = make_entry(ITEMS, "Spare Charm", campaign=self.campaign)
+
+        refused = self.delete_as(self.owner, ITEMS.detail_url(charm.id))
+        deleted = self.delete_as(self.owner, ITEMS.detail_url(spare.id))
+
+        self.assertEqual((refused.status_code, refused.json()["usage"]["units"]), (409, 1))
+        self.assertEqual(deleted.status_code, 204)
+        self.assertFalse(Item.objects.filter(id=spare.id).exists())
+
+    def test_deleting_a_custom_skill_spell_or_special_in_use_is_refused_and_keeps_every_link(self):
+        # BUG-16 (was pinned: the delete took it from every unit and bestiary entry; flipped in PR A)
         skill = make_entry(SKILLS, "Ambush", campaign=self.campaign)
         spell = make_entry(SPELLS, "Gloom", campaign=self.campaign)
         special = make_entry(SPECIALS, "Fearsome", campaign=self.campaign)
@@ -91,22 +117,29 @@ class CustomEntryDeleteTests(CatalogueTestCase):
         BestiaryEntrySpell.objects.create(bestiary_entry=self.beast, spell=spell)
         BestiaryEntrySpecial.objects.create(bestiary_entry=self.beast, special=special)
 
-        statuses = [
-            self.delete_as(self.owner, kind.detail_url(entry.id)).status_code
+        answers = [
+            self.delete_as(self.owner, kind.detail_url(entry.id))
             for kind, entry in ((SKILLS, skill), (SPELLS, spell), (SPECIALS, special))
         ]
 
-        self.assertEqual(statuses, [204, 204, 204])
+        self.assertEqual(
+            [(answer.status_code, answer.json()) for answer in answers],
+            [
+                (409, in_use("skill", units=3, warbands=2, stashes=0, bestiary_entries=1)),
+                (409, in_use("spell", units=2, warbands=2, stashes=0, bestiary_entries=1)),  # henchmen have no spells
+                (409, in_use("special", units=3, warbands=2, stashes=0, bestiary_entries=1)),
+            ],
+        )
         for unit, kind in ((self.hero, HERO), (self.group, HENCHMEN), (self.sword, HIRED_SWORD)):
             with self.subTest(kind=kind.key):
                 relations = [kind.skills, kind.specials, *([kind.spells] if kind.spells else [])]
-                self.assertEqual([getattr(unit, relation).count() for relation in relations], [0] * len(relations))
+                self.assertEqual([getattr(unit, relation).count() for relation in relations], [1] * len(relations))
         self.assertEqual(
             [
                 model.objects.filter(bestiary_entry=self.beast).count()
                 for model in (BestiaryEntrySkill, BestiaryEntrySpell, BestiaryEntrySpecial)
             ],  # fmt: skip
-            [0, 0, 0],
+            [1, 1, 1],
         )
 
     def test_deleting_a_bestiary_entry_drops_its_favourites_and_unlinks_its_shop_item(self):
@@ -152,11 +185,13 @@ class RaceDeleteTests(CatalogueTestCase):
             + list(HiredSword.objects.values_list("name", flat=True))
         )
 
-    def test_deleting_a_race_deletes_every_unit_of_that_race(self):
-        # Characterises current behaviour (BUG-130, pinned; flips in PR A: RESTRICT, and a delete answers 409 in_use)
-        Race.objects.filter(id=self.human.id).delete()
+    def test_a_race_in_use_cannot_be_deleted_and_its_units_stay(self):
+        # BUG-130 (was pinned: deleting a race deleted every unit of it; flipped in PR A: units' races are RESTRICT)
+        with self.assertRaises(RestrictedError), transaction.atomic():
+            Race.objects.filter(id=self.human.id).delete()
 
-        self.assertEqual(self.surviving_units(), ["Cooks", "Stranger"])
+        self.assertEqual(self.surviving_units(), ["Abbess", "Cooks", "Scout", "Stranger"])
+        self.assertEqual(usage_of(Hero.objects.filter(race=self.human)), {"units": 1, "warbands": 1, "stashes": 0, "bestiary_entries": 0})  # fmt: skip
 
     def test_reseeding_races_keeps_every_race_and_every_unit_of_one(self):
         # BUG-130, BUG-16 (was pinned: seed_races --truncate deleted every race and every unit with one; flipped in
@@ -175,3 +210,59 @@ class RaceDeleteTests(CatalogueTestCase):
     def test_a_race_cannot_be_deleted_through_the_api(self):
         self.assertEqual(self.delete_as(self.owner, RACES.detail_url(self.halfling.id)).status_code, 405)
         self.assertEqual(self.surviving_units(), ["Abbess", "Cooks", "Scout", "Stranger"])
+
+
+class CampaignDeleteTests(CatalogueTestCase):
+    """RESTRICT, not PROTECT: pass 4's permanent campaign delete still takes everything in it (decision 5)."""
+
+    def test_deleting_an_archived_campaign_takes_its_custom_entries_and_every_copy(self):
+        race = make_entry(RACES, "Halfling", campaign=self.campaign)
+        charm = make_entry(ITEMS, "Lucky Charm", campaign=self.campaign)
+        skill = make_entry(SKILLS, "Ambush", campaign=self.campaign)
+        spell = make_entry(SPELLS, "Gloom", campaign=self.campaign)
+        special = make_entry(SPECIALS, "Fearsome", campaign=self.campaign)
+        beast = make_entry(BESTIARY, "War Boar", campaign=self.campaign)
+        hero = make_unit(HERO, self.warband, name="Cook", race=race)
+        group = make_unit(HENCHMEN, self.rival_warband, name="Cooks", race=race)
+        hero.hero_items.create(item=charm, cost=5)
+        hero.hero_items.create(item=self.book_axe, cost=5)
+        hero.hero_skills.create(skill=skill)
+        hero.hero_spells.create(spell=spell)
+        group.henchmen_group_specials.create(special=special)
+        WarbandItem.objects.create(warband=self.warband, item=charm, quantity=1, cost=5)
+        BestiaryEntryItem.objects.create(bestiary_entry=beast, item=charm)
+        BestiaryEntrySkill.objects.create(bestiary_entry=beast, skill=skill)
+        self.assertEqual(self.post_as(self.owner, self.url("archive/")).status_code, 200)
+        self.client.force_authenticate(user=self.owner)
+
+        response = self.client.delete(self.url(), {"name": "Shards"}, format="json")
+
+        self.assertEqual(response.status_code, 204)
+        for entry in (race, charm, skill, spell, special, beast, hero, group):
+            with self.subTest(entry=str(entry)):
+                self.assertFalse(type(entry).objects.filter(id=entry.id).exists())
+        self.assertTrue(Item.objects.filter(id=self.book_axe.id).exists())
+        self.assertTrue(Race.objects.filter(id=self.human.id).exists())
+
+
+class HouseRuleRevertTests(CatalogueTestCase):
+    """A rule's clone can't go while something holds it, so reverting a rule hands bestiary equipment back too."""
+
+    def test_reverting_a_rule_returns_a_bestiary_entrys_clone_to_the_book_item(self):
+        rule = self.post_as(self.owner, self.url("rules/"), {"title": "Half price", "effect_key": HALF})
+        clone = Item.objects.get(campaign=self.campaign, source_item=self.heavy_armour)
+        mule = make_entry(BESTIARY, "Mule", campaign=self.campaign)
+        knight = make_entry(BESTIARY, "Knight", campaign=self.campaign)
+        BestiaryEntryItem.objects.create(bestiary_entry=mule, item=clone, quantity=2)
+        BestiaryEntryItem.objects.create(bestiary_entry=knight, item=clone)
+        BestiaryEntryItem.objects.create(bestiary_entry=knight, item=self.heavy_armour)
+
+        response = self.delete_as(self.owner, self.url(f"rules/{rule.data['id']}/"))
+
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(Item.objects.filter(id=clone.id).exists())
+        equipped = BestiaryEntryItem.objects.filter(bestiary_entry__in=[mule, knight]).order_by("bestiary_entry__name")
+        self.assertEqual(
+            list(equipped.values_list("bestiary_entry__name", "item_id", "quantity")),
+            [("Knight", self.heavy_armour.id, 1), ("Mule", self.heavy_armour.id, 2)],
+        )
