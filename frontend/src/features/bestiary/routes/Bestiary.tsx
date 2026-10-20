@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useNavigate, useOutletContext, useParams, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import { useAppStore } from "@/stores/app-store";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import { useCatalogue } from "@/lib/catalogue-queries";
+import { getErrorMessage } from "@/lib/get-error-message";
 import {
   listWarbandBestiaryFavourites,
   addWarbandBestiaryFavourite,
@@ -75,20 +77,23 @@ export default function Bestiary() {
     async (entry: BestiaryEntrySummary) => {
       if (!warband?.id) return;
       const isFav = favouriteIds.has(entry.id);
+      const setStar = (filled: boolean) =>
+        setFavouriteIds((prev) => {
+          const next = new Set(prev);
+          if (filled) next.add(entry.id);
+          else next.delete(entry.id);
+          return next;
+        });
+      // The star changes at once, and goes back with the reason if the write fails (CAT-UX-04).
+      setStar(!isFav);
       try {
-        if (isFav) {
-          await removeWarbandBestiaryFavourite(warband.id, entry.id);
-          setFavouriteIds((prev) => {
-            const next = new Set(prev);
-            next.delete(entry.id);
-            return next;
-          });
-        } else {
-          await addWarbandBestiaryFavourite(warband.id, entry.id);
-          setFavouriteIds((prev) => new Set(prev).add(entry.id));
-        }
-      } catch {
-        // silently fail
+        await (isFav
+          ? removeWarbandBestiaryFavourite(warband.id, entry.id)
+          : addWarbandBestiaryFavourite(warband.id, entry.id));
+      } catch (error) {
+        setStar(isFav);
+        const action = isFav ? `remove ${entry.name} from` : `add ${entry.name} to`;
+        toast.error(`Couldn't ${action} favourites.`, { description: getErrorMessage(error) });
       }
     },
     [warband?.id, favouriteIds]

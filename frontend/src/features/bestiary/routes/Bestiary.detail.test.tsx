@@ -2,8 +2,7 @@
  * The bestiary and hired-sword detail panels and the Bestiary's favourite stars, as the app mounts
  * them (layout, fake server). The panels offer only Back, even on a campaign entry viewed by
  * someone holding `manage_bestiary` (CAT-UX-02; PR C adds Edit, Revert and Delete, CAT-NEW-01).
- * A star changes only once the server answers, and a failed toggle is swallowed (CAT-UX-04; PR A
- * rolls back with a message).
+ * A star changes at once, and a failed toggle puts it back and says why (CAT-UX-04).
  */
 import { act, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -134,7 +133,7 @@ describe("favourite stars", () => {
     expect(fakeApi.countOf(FAVOURITES)).toBe(1);
   });
 
-  it("fills the star only once the server answers, and empties it with a DELETE", async () => {
+  it("fills the star at once, keeps it when the server answers, and empties it with a DELETE (CAT-UX-04)", async () => {
     const user = setupUser();
     const answer = deferred<void>();
     fakeApi.on(ADD_FAVOURITE, () => answer.promise);
@@ -143,7 +142,7 @@ describe("favourite stars", () => {
 
     await user.click(star("Sewer Rat"));
     expect(fakeApi.bodyOf(ADD_FAVOURITE)).toEqual({ bestiary_entry_id: 90 });
-    expect(star("Sewer Rat")).toHaveAccessibleName("Add to favourites");
+    expect(star("Sewer Rat")).toHaveAccessibleName("Remove from favourites");
     await act(async () => answer.resolve(undefined));
     expect(star("Sewer Rat")).toHaveAccessibleName("Remove from favourites");
 
@@ -152,19 +151,33 @@ describe("favourite stars", () => {
     expect(star("Sewer Rat")).toHaveAccessibleName("Add to favourites");
   });
 
-  // Characterises current behaviour (CAT-UX-04, pinned; flips in PR A)
-  it("swallows a failed toggle: the star stays empty and nothing says why (CAT-UX-04, pinned; flips in PR A)", async () => {
+  it("puts a star back when its write fails, and says why (CAT-UX-04)", async () => {
     const user = setupUser();
-    fakeApi.fail(ADD_FAVOURITE, new Error("Server error"));
+    const answer = deferred<void>();
+    fakeApi.on(ADD_FAVOURITE, () => answer.promise);
     await openBestiary();
 
     await user.click(star("Sewer Rat"));
-    await act(async () => undefined);
+    expect(star("Sewer Rat")).toHaveAccessibleName("Remove from favourites");
+    await act(async () => answer.reject(new Error("Server error")));
 
-    expect(fakeApi.countOf(ADD_FAVOURITE)).toBe(1);
     expect(star("Sewer Rat")).toHaveAccessibleName("Add to favourites");
-    expect(screen.queryByText("Server error")).toBeNull();
-    expect(screen.queryByRole("alert")).toBeNull();
+    expect(await screen.findByText("Couldn't add Sewer Rat to favourites.")).toBeVisible();
+    expect(screen.getByText("Server error")).toBeVisible();
+    expect(fakeApi.countOf(ADD_FAVOURITE)).toBe(1);
+  });
+
+  it("refills a star whose removal fails", async () => {
+    const user = setupUser();
+    fakeApi.on(FAVOURITES, [sewerRat]);
+    fakeApi.fail(REMOVE_FAVOURITE, new Error("Server error"));
+    await openBestiary();
+    await within(card("Sewer Rat")).findByRole("button", { name: "Remove from favourites" });
+
+    await user.click(star("Sewer Rat"));
+
+    expect(await screen.findByText("Couldn't remove Sewer Rat from favourites.")).toBeVisible();
+    expect(star("Sewer Rat")).toHaveAccessibleName("Remove from favourites");
   });
 
   it("reads the favourites again on every visit (an effect, not a cached query)", async () => {
