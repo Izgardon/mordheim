@@ -109,7 +109,11 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
         {/* Input bar */}
         <div className="space-y-2 border-t border-border/40 pt-3">
           <div className="flex items-center gap-2">
+            <label htmlFor="campaign-chat-message" className="sr-only">
+              Message the campaign
+            </label>
             <input
+              id="campaign-chat-message"
               type="text"
               className="field-surface flex-1 rounded-xl px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary/60"
               placeholder="Send a message..."

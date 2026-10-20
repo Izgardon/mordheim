@@ -132,15 +132,38 @@ describe("Campaign chat window", () => {
     ).toEqual([{ body: "Hold the bridge" }, { body: "Hold the bridge" }]);
   });
 
-  it("has a message box with a placeholder and no label (CAMP-UX-07, pinned; flips in PR A)", async () => {
+  it("labels the message box (CAMP-UX-07)", async () => {
     const user = setupUser();
     await openCampaignPage();
 
     await user.click(chatButton());
 
     const dialog = screen.getByRole("dialog", { name: "Campaign Chat" });
-    expect(within(dialog).getByRole("textbox")).toHaveAccessibleName("");
-    expect(within(dialog).queryByRole("textbox", { name: /message/i })).not.toBeInTheDocument();
+    expect(within(dialog).getByRole("textbox")).toHaveAccessibleName("Message the campaign");
+  });
+
+  it("shows why the server refused a message, keeping the draft (BUG-129)", async () => {
+    const user = setupUser();
+    fakeApi.fail(
+      SEND,
+      new ApiError("Message body must be text.", 400, {
+        detail: "Message body must be text.",
+        code: "invalid",
+        fields: { body: ["Message body must be text."] },
+      })
+    );
+    await openCampaignPage();
+    await user.click(chatButton());
+    const dialog = screen.getByRole("dialog", { name: "Campaign Chat" });
+    const input = within(dialog).getByRole("textbox", { name: "Message the campaign" });
+
+    await user.type(input, "Hold the bridge");
+    await user.keyboard("{Enter}");
+
+    expect(await within(dialog).findByRole("alert")).toHaveTextContent(
+      "Message body must be text."
+    );
+    expect(input).toHaveValue("Hold the bridge");
   });
 
   it("describes the chat window to screen readers (BUG-142)", async () => {
