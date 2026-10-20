@@ -5,12 +5,14 @@ from .models import Race
 
 class RaceSerializer(serializers.ModelSerializer):
     campaign_id = serializers.IntegerField(read_only=True)
+    campaign_type_id = serializers.IntegerField(read_only=True)  # CAT-NEW-04: always null today
 
     class Meta:
         model = Race
         fields = (
             "id",
             "campaign_id",
+            "campaign_type_id",
             "name",
             "movement",
             "weapon_skill",

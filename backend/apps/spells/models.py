@@ -9,6 +9,9 @@ class Spell(models.Model):
         blank=True,
         on_delete=models.CASCADE,
     )
+    campaign_type = models.ForeignKey(  # an add-on's entry (CAT-NEW-04: schema only, always null today)
+        "campaigns.CampaignType", related_name="spells", null=True, blank=True, on_delete=models.RESTRICT
+    )
     name = models.CharField(max_length=160)
     type = models.CharField(max_length=80, db_index=True)
     description = models.TextField(blank=True, default="")

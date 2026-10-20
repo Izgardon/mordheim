@@ -177,6 +177,13 @@ class HiredSwordProfile(models.Model):
         blank=True,
         on_delete=models.CASCADE,
     )
+    campaign_type = models.ForeignKey(  # an add-on's hired sword (CAT-NEW-04: schema only, always null today)
+        "campaigns.CampaignType",
+        related_name="hired_sword_profiles",
+        null=True,
+        blank=True,
+        on_delete=models.RESTRICT,
+    )
     bestiary_entry = models.OneToOneField(
         BestiaryEntry,
         related_name="hired_sword_profile",

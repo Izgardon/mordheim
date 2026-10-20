@@ -123,6 +123,7 @@ class HiredSwordProfileSummarySerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "campaign_id",
+            "campaign_type_id",  # CAT-NEW-04: always null today
             "grade",
             "race",
             "hire_cost",
@@ -145,6 +146,7 @@ class HiredSwordProfileDetailSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "campaign_id",
+            "campaign_type_id",  # CAT-NEW-04: always null today
             "grade",
             "race",
             "hire_cost",

@@ -5,10 +5,11 @@ from .models import Skill
 
 class SkillSerializer(serializers.ModelSerializer):
     campaign_id = serializers.IntegerField(read_only=True)
+    campaign_type_id = serializers.IntegerField(read_only=True)  # CAT-NEW-04: always null today
 
     class Meta:
         model = Skill
-        fields = ("id", "campaign_id", "name", "type", "description")
+        fields = ("id", "campaign_id", "campaign_type_id", "name", "type", "description")
 
 
 class SkillCreateSerializer(serializers.ModelSerializer):

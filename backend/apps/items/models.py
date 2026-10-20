@@ -10,6 +10,9 @@ class Item(models.Model):
         blank=True,
         on_delete=models.CASCADE,
     )
+    campaign_type = models.ForeignKey(  # an add-on's entry (CAT-NEW-04: schema only, always null today)
+        "campaigns.CampaignType", related_name="items", null=True, blank=True, on_delete=models.RESTRICT
+    )
     name = models.CharField(max_length=255)
     type = models.CharField(max_length=80, db_index=True)
     subtype = models.CharField(max_length=80, blank=True, default="")

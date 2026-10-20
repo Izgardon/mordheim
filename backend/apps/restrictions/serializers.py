@@ -18,5 +18,6 @@ class RestrictionSerializer(serializers.ModelSerializer):
             "type",
             "restriction",
             "campaign",
+            "campaign_type",  # CAT-NEW-04: always null today
         )
-        read_only_fields = ("campaign",)
+        read_only_fields = ("campaign", "campaign_type")

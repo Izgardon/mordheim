@@ -21,7 +21,7 @@ from django.test.utils import CaptureQueriesContext
 from rest_framework.test import APIClient
 
 from apps.bestiary.models import BestiaryEntry, HiredSwordProfile
-from apps.campaigns.models import Campaign
+from apps.campaigns.models import Campaign, CampaignType
 from apps.items.models import Item, ItemAvailability, ItemProperty
 from apps.items.services import sync_half_price_armour_for_campaign
 from apps.races.models import Race
@@ -101,6 +101,10 @@ class SeedAllTests(TestCase):
             if hasattr(model, "campaign"):
                 with self.subTest(model=model.__name__):
                     self.assertFalse(model.objects.filter(campaign__isnull=False).exists())
+            if hasattr(model, "campaign_type"):  # CAT-NEW-04: the seeders leave the add-on column null
+                with self.subTest(model=model.__name__, column="campaign_type"):
+                    self.assertFalse(model._default_manager.filter(**{"campaign_type__isnull": False}).exists())
+        self.assertFalse(CampaignType.objects.exists())
 
     def test_a_second_run_changes_no_book_row_but_rewrites_every_availability(self):
         items = set(Item.objects.values_list("id", "name", "type"))

@@ -76,6 +76,7 @@ class ItemBestiaryEntrySummarySerializer(serializers.Serializer):
 
 class ItemSerializer(serializers.ModelSerializer):
     campaign_id = serializers.IntegerField(read_only=True)
+    campaign_type_id = serializers.IntegerField(read_only=True)  # CAT-NEW-04: always null today
     save = serializers.CharField(source="save_value", allow_null=True, required=False)  # type: ignore[assignment]
     properties = serializers.SerializerMethodField()
     availabilities = ItemAvailabilitySerializer(many=True, read_only=True)
@@ -86,6 +87,7 @@ class ItemSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "campaign_id",
+            "campaign_type_id",
             "name",
             "type",
             "subtype",

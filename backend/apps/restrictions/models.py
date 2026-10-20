@@ -16,6 +16,9 @@ class Restriction(models.Model):
         blank=True,
         on_delete=models.CASCADE,
     )
+    campaign_type = models.ForeignKey(  # an add-on's entry (CAT-NEW-04: schema only, always null today)
+        "campaigns.CampaignType", related_name="restrictions", null=True, blank=True, on_delete=models.RESTRICT
+    )
     type = models.CharField(
         max_length=20,
         choices=RESTRICTION_TYPE_CHOICES,
