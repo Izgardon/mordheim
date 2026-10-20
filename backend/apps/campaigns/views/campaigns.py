@@ -79,7 +79,7 @@ class CampaignDetailView(CampaignScopedView):
 
     def delete(self, request, campaign_id):
         name = request.data.get("name") if isinstance(request.data, dict) else None
-        archive.delete_permanently(self.access.campaign, name)
+        archive.delete_permanently(self.access.campaign, name, request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request, campaign_id):

@@ -100,3 +100,22 @@ class LiveUpdateTests(CampaignTestCase):
         self.assertEqual(
             {data["type"] for _channel, data, _options in self.triggered("notification")}, {"membership_changed"}
         )
+
+    def test_deleting_for_good_tells_every_other_member_on_their_own_channel(self):
+        # a member on the campaign's pages would otherwise stay there until his next read 404s
+        self.send("post", self.owner, "archive/")
+        self.pusher.reset_mock()
+        self.send("delete", self.owner, "", {"name": "wrong"})
+        self.assertEqual(self.triggered("notification"), [])
+
+        self.assertEqual(self.send("delete", self.owner, "", {"name": "Shards"}).status_code, 204)
+
+        deleted = sorted((channel, data) for channel, data, _options in self.triggered("notification"))
+        payload = {"campaign_id": self.campaign.id, "campaign_name": "Shards"}
+        self.assertEqual(
+            deleted,
+            sorted(
+                (f"private-user-{user.id}-notifications", {"type": "campaign_deleted", "payload": payload})
+                for user in (self.admin, self.player, self.rival)
+            ),
+        )

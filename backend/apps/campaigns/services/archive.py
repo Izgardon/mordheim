@@ -9,7 +9,8 @@ for everyone still in it (`removal_battles.close_for_archive`), and every unreso
 is resolved. The battles' players get the battle events after commit.
 
 Deleting for good is a separate step, only for an archived campaign and only with its name typed in: the campaign
-goes with everything in it (warbands, battles, trades, logs, house rules and their items) and its notifications.
+goes with everything in it (warbands, battles, trades, logs, house rules and their items) and its notifications. Every
+other member gets `campaign_deleted` on his own channel after commit, so a page of the campaign he has open leaves it.
 """
 
 from typing import Any
@@ -21,9 +22,10 @@ from apps.battles.models import Battle
 from apps.battles.services.broadcast import bump_state_version
 from apps.battles.services.locks import locked
 from apps.notifications.models import Notification
+from apps.realtime.services import send_user_notification
 
 from ..errors import CampaignArchived, CampaignError
-from ..models import Campaign
+from ..models import Campaign, CampaignMembership
 from . import removal_battles
 from .removal import Closed, close_trades, publish_closed
 
@@ -51,15 +53,20 @@ def restore(campaign_id: int) -> None:
     Campaign.objects.filter(id=campaign_id).update(archived_at=None, archived_by=None, updated_at=timezone.now())
 
 
-def delete_permanently(campaign: Campaign, name: Any) -> None:
+def delete_permanently(campaign: Campaign, name: Any, actor_user: Any) -> None:
     """Destroy the (archived) campaign, everything in it and its notifications, once `name` is its name; a 400
-    `name_mismatch` otherwise (CAMP-TWEAK-04, CAMP-TEST-28)."""
+    `name_mismatch` otherwise (CAMP-TWEAK-04, CAMP-TEST-28). The other members are told after commit."""
     if not isinstance(name, str) or name.strip() != campaign.name.strip():
         detail = "Type the campaign's name to delete it for good."
         raise CampaignError(detail, code="name_mismatch", fields={"name": [detail]})
+    payload = {"campaign_id": campaign.id, "campaign_name": campaign.name}
     with transaction.atomic():
+        members = CampaignMembership.objects.filter(campaign_id=campaign.id).exclude(user_id=actor_user.id)
+        member_ids = list(members.values_list("user_id", flat=True))  # read before the memberships go
         Notification.objects.filter(campaign_id=campaign.id).delete()  # a plain integer, so nothing cascades
         campaign.delete()
+        for user_id in member_ids:
+            send_user_notification(user_id, "campaign_deleted", payload)  # queued for after commit
 
 
 def _close_battles(campaign_id: int, actor_user: Any, closed: Closed) -> None:
