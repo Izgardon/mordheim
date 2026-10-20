@@ -1,0 +1,176 @@
+import { useCallback, useState } from "react";
+
+import type { StatLabel } from "@/features/catalogue/utils/statblock";
+import { blankItemStatblock } from "@/features/catalogue/utils/statblock";
+import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
+import { useCatalogueCache } from "@/lib/catalogue-queries";
+import { useFieldErrors } from "@/lib/field-errors";
+
+import { createItem, deleteItem, updateItem } from "../api/items-api";
+import { ITEM_FIELDS } from "../utils/item-form-fields";
+import {
+  ITEM_SUBTYPE_OPTIONS,
+  blankAvailability,
+  itemFormProblem,
+  itemPayload,
+  itemPropertiesOf,
+  itemTypeOptions,
+  itemValuesOf,
+  type AvailabilityRow,
+  type AvailabilityTextField,
+  type ItemFormValues,
+} from "../utils/item-form-values";
+import { useItemPropertyPicker } from "./useItemPropertyPicker";
+
+import type { Item } from "../types/item-types";
+
+type ItemTextField = "name" | "subtype" | "description" | "strength" | "range" | "save";
+
+type UseItemFormOptions = {
+  campaignId: number;
+  /** The item being edited; null when adding one. */
+  item: Item | null;
+  /** How a save stopped before sending is worded: one line inline, row by row in the dialog. */
+  wording: "summary" | "per-row";
+  /** The form shows (a closed dialog reads no property list). */
+  enabled: boolean;
+  /** Server field errors clear whenever this changes (the edited item, or the dialog opening). */
+  resetKey: unknown;
+  /** After a save, its answer already in the cached items list. */
+  onSaved: (item: Item) => void;
+  /** After a delete, the item already gone from the cached list. */
+  onDeleted?: (itemId: number) => void;
+};
+
+/**
+ * An item's Add or Edit form, inline on the Wargear page or in the warband pages' dialog: the
+ * values, the availabilities, the properties, the checks before sending (BUG-53's price), the
+ * save (the answer goes into the cached list; refusals land on their fields) and the delete
+ * (refusals stay in its confirm, BUG-148).
+ */
+export function useItemForm({
+  campaignId,
+  item,
+  wording,
+  enabled,
+  resetKey,
+  onSaved,
+  onDeleted,
+}: UseItemFormOptions) {
+  const catalogueCache = useCatalogueCache();
+  const [values, setValues] = useState<ItemFormValues>(() => itemValuesOf(item));
+  const [showFluff, setShowFluff] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [formError, setFormError] = useState("");
+  const fieldErrors = useFieldErrors(ITEM_FIELDS, resetKey);
+  const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete item");
+  const properties = useItemPropertyPicker({
+    campaignId,
+    type: values.type,
+    enabled,
+    initial: itemPropertiesOf(item),
+  });
+
+  const setRows = (update: (rows: AvailabilityRow[]) => AvailabilityRow[]) =>
+    setValues((prev) => ({ ...prev, availabilities: update(prev.availabilities) }));
+
+  const save = async (after?: () => void) => {
+    const problem = itemFormProblem(values, wording);
+    if (problem) {
+      setFormError(problem);
+      return;
+    }
+    if (!item && Number.isNaN(campaignId)) {
+      setFormError("Unable to create item.");
+      return;
+    }
+    setIsSaving(true);
+    setFormError("");
+    const payload = itemPayload(
+      values,
+      properties.selected.map((property) => property.id)
+    );
+    try {
+      const saved = item
+        ? await updateItem(item.id, payload)
+        : await createItem({ ...payload, campaign_id: campaignId });
+      catalogueCache.upsert("items", campaignId, saved);
+      onSaved(saved);
+      after?.();
+    } catch (errorResponse) {
+      setFormError(fieldErrors.take(errorResponse, "Unable to save item"));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const remove = async (after?: () => void) => {
+    if (!item) {
+      return;
+    }
+    setIsSaving(true);
+    deleteConfirm.clearError();
+    try {
+      await deleteItem(item.id);
+      catalogueCache.remove("items", campaignId, item.id);
+      onDeleted?.(item.id);
+      after?.();
+    } catch (errorResponse) {
+      deleteConfirm.refused(errorResponse);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const { load: loadProperties } = properties;
+  const { clear: clearFieldErrors } = fieldErrors;
+  /** Back to `entry`'s values and chips (a blank form for null), its fluff shown if it has one. */
+  const load = useCallback(
+    (entry: Item | null) => {
+      setValues(itemValuesOf(entry));
+      loadProperties(itemPropertiesOf(entry));
+      setShowFluff(Boolean(entry?.description));
+      setFormError("");
+      clearFieldErrors();
+    },
+    [clearFieldErrors, loadProperties]
+  );
+
+  return {
+    values,
+    typeOptions: itemTypeOptions(item),
+    subtypeOptions: ITEM_SUBTYPE_OPTIONS[values.type] ?? [],
+    setValue: (field: ItemTextField, value: string) =>
+      setValues((prev) => ({ ...prev, [field]: value })),
+    /** A new type starts at its first subtype; only animals keep a statblock, only misc single use. */
+    setType: (type: string) =>
+      setValues((prev) => ({
+        ...prev,
+        type,
+        subtype: ITEM_SUBTYPE_OPTIONS[type]?.[0] ?? "",
+        statblock: type === "Animal" ? prev.statblock : blankItemStatblock(),
+        singleUse: type === "Miscellaneous" ? prev.singleUse : false,
+      })),
+    setSingleUse: (singleUse: boolean) => setValues((prev) => ({ ...prev, singleUse })),
+    setStat: (label: StatLabel, value: string) =>
+      setValues((prev) => ({ ...prev, statblock: { ...prev.statblock, [label]: value } })),
+    addAvailability: () => setRows((rows) => [...rows, blankAvailability()]),
+    removeAvailability: (index: number) => setRows((rows) => rows.filter((_, i) => i !== index)),
+    setAvailability: (index: number, field: AvailabilityTextField, value: string) =>
+      setRows((rows) => rows.map((row, i) => (i === index ? { ...row, [field]: value } : row))),
+    showFluff,
+    setShowFluff,
+    properties,
+    fieldErrors: fieldErrors.errors,
+    rowError: (index: number, field: "cost" | "rarity") =>
+      fieldErrors.errors[`availabilities.${index}.${field}`],
+    isSaving,
+    formError,
+    deleteConfirm,
+    save,
+    remove,
+    load,
+  };
+}
+
+export type ItemFormState = ReturnType<typeof useItemForm>;
