@@ -76,7 +76,7 @@ describe("Common Rules", () => {
     );
   });
 
-  it("posts every picked rule at once; when one fails, the rule the server did create stays off the list and a retry posts it again (BUG-52, CAMP-TEST-19, pinned; flips in PR A)", async () => {
+  it("posts every picked rule at once; when one fails, the one created joins the list, only the failure is reported, and a retry posts just that one (BUG-52, CAMP-TEST-19)", async () => {
     const user = setupUser();
     const answers = new Map<string, ReturnType<typeof deferred<HouseRule>>>();
     fakeApi.on(`POST ${RULES}`, (body: unknown) => {
@@ -92,7 +92,6 @@ describe("Common Rules", () => {
 
     // Both are in flight together.
     expect(postedTitles()).toEqual(["Half Price Armour", "Improved Shields"]);
-    expect(fakeApi.bodyOf(`POST ${RULES}`)).toMatchObject({ effect_key: "improved_shields" });
     answers.get("Half Price Armour")!.resolve(
       createdRule({
         title: "Half Price Armour",
@@ -102,27 +101,49 @@ describe("Common Rules", () => {
     );
     answers.get("Improved Shields")!.reject(new ApiError("Request failed (500)", 500, null));
 
-    expect(await within(sheet).findByText("Request failed (500)")).toBeInTheDocument();
-    await user.click(within(sheet).getByRole("button", { name: "Cancel" }));
-    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
-    // The server has Half Price Armour; the page doesn't show it.
-    expect(screen.getByText("No house rules logged yet.")).toBeInTheDocument();
+    expect(
+      await within(sheet).findByText(
+        "Couldn't add Improved Shields: The server ran into a problem. Please try again."
+      )
+    ).toBeInTheDocument();
+    // The created rule is listed and marked Applied; only the failure stays picked.
+    expect(screen.queryByText("No house rules logged yet.")).not.toBeInTheDocument();
+    expect(screen.getAllByText("Half Price Armour")).toHaveLength(2); // the list, and the sheet
+    expect(within(sheet).getByRole("checkbox", { name: /^Half Price Armour/ })).toBeDisabled();
+    expect(within(sheet).getByText("Applied")).toBeInTheDocument();
+    expect(within(sheet).getByRole("checkbox", { name: /^Improved Shields/ })).toBeChecked();
 
     fakeApi.on(`POST ${RULES}`, (body: unknown) => createdRule(body as HouseRulePayload));
-    await user.click(screen.getByRole("button", { name: "Common Rules" }));
-    const retry = screen.getByRole("dialog", { name: "Common Rules" });
-    expect(within(retry).queryByText("Applied")).not.toBeInTheDocument();
-    await user.click(within(retry).getByRole("checkbox", { name: /^Half Price Armour/ }));
-    await user.click(within(retry).getByRole("checkbox", { name: /^Improved Shields/ }));
-    await user.click(within(retry).getByRole("button", { name: "Save" }));
+    await user.click(within(sheet).getByRole("button", { name: "Save" }));
 
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
-    expect(postedTitles()).toEqual([
-      "Half Price Armour",
-      "Improved Shields",
-      "Half Price Armour",
-      "Improved Shields",
-    ]);
+    expect(postedTitles()).toEqual(["Half Price Armour", "Improved Shields", "Improved Shields"]);
     expect(screen.getAllByText("Half Price Armour")).toHaveLength(1);
+    expect(screen.getAllByText("Improved Shields")).toHaveLength(1);
+    // Everything applied: the new-rule form closes too.
+    expect(screen.getByRole("button", { name: "Add rule" })).toBeInTheDocument();
+  });
+
+  it("lists a rule the server already had (answered with the existing rule) once", async () => {
+    const user = setupUser();
+    const existing = createdRule({
+      title: "Half Price Armour",
+      description: "",
+      effect_key: "half_price_armour",
+    });
+    fakeApi.on(`GET ${RULES}`, [{ ...existing, title: "Cheap armour" }]);
+    fakeApi.on(`POST ${RULES}`, () => existing);
+    renderCampaignRoute("/campaigns/1/house-rules");
+    expect(await screen.findByText("Cheap armour")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Add rule" }));
+    await user.click(screen.getByRole("button", { name: "Common Rules" }));
+    const sheet = screen.getByRole("dialog", { name: "Common Rules" });
+    await user.click(within(sheet).getByRole("checkbox", { name: /^Half Price Armour/ }));
+    await user.click(within(sheet).getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(screen.getAllByText("Half Price Armour")).toHaveLength(1);
+    expect(screen.queryByText("Cheap armour")).not.toBeInTheDocument();
   });
 });

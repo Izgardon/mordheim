@@ -11,6 +11,8 @@ import {
   DialogTitle,
 } from "@components/dialog";
 
+import { getErrorMessage } from "@/lib/get-error-message";
+
 import { createHouseRule } from "../api/rules-api";
 
 import type { HouseRule } from "../types/rule-types";
@@ -20,7 +22,8 @@ type CommonRulesSheetProps = {
   existingRules: HouseRule[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onApplied: (rules: HouseRule[]) => void;
+  /** The rules the server now holds (new, or one it already had); `allApplied` if none failed. */
+  onApplied: (rules: HouseRule[], outcome: { allApplied: boolean }) => void;
 };
 
 type CommonRuleDefinition = {
@@ -132,27 +135,40 @@ export default function CommonRulesSheet({
     setIsSaving(true);
     setError("");
 
-    try {
-      const created = await Promise.all(
-        selectedRules.map((rule) =>
-          createHouseRule(campaignId, {
-            title: rule.title,
-            description: rule.description,
-            effect_key: rule.effectKey ?? null,
-          })
-        )
-      );
-      onApplied(created);
-      onOpenChange(false);
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setError(errorResponse.message || "Unable to add common rules");
-      } else {
-        setError("Unable to add common rules");
-      }
-    } finally {
-      setIsSaving(false);
+    // Each rule stands alone (BUG-52): the ones the server created join the list even when
+    // another fails, and only the failures stay picked, so Save retries just those.
+    const results = await Promise.allSettled(
+      selectedRules.map((rule) =>
+        createHouseRule(campaignId, {
+          title: rule.title,
+          description: rule.description,
+          effect_key: rule.effectKey ?? null,
+        })
+      )
+    );
+    const created = results.flatMap((result) =>
+      result.status === "fulfilled" ? [result.value] : []
+    );
+    const failures = results.flatMap((result, index) =>
+      result.status === "rejected" ? [{ rule: selectedRules[index], reason: result.reason }] : []
+    );
+    setIsSaving(false);
+    if (created.length > 0 || failures.length === 0) {
+      onApplied(created, { allApplied: failures.length === 0 });
     }
+    if (failures.length === 0) {
+      onOpenChange(false);
+      return;
+    }
+    setSelectedIds(failures.map((failure) => failure.rule.id));
+    setError(
+      failures
+        .map(
+          (failure) =>
+            `Couldn't add ${failure.rule.title}: ${getErrorMessage(failure.reason, "please try again.")}`
+        )
+        .join(" ")
+    );
   };
 
   return (
