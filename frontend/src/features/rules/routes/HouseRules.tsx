@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
-import { useCatalogueCache } from "@/lib/catalogue-queries";
+import { useMemo } from "react";
 
 // routing
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
@@ -7,162 +6,28 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 // components
 import { Button } from "@components/button";
-import { ListSkeleton } from "@components/card-skeleton";
-import { Input } from "@components/input";
 import { PageHeader } from "@components/page-header";
 import MobileTabs from "@components/mobile-tabs";
+import HouseRuleForm from "../components/HouseRuleForm";
+import HouseRuleList from "../components/HouseRuleList";
 
-// api
+// hooks
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
-import { createHouseRule, listHouseRules } from "../api/rules-api";
-import CommonRulesSheet from "../components/CommonRulesSheet";
-import EditHouseRuleDialog from "../components/EditHouseRuleDialog";
 import { getCampaignSectionTabs, type CampaignSectionTabId } from "@/lib/campaign-section-tabs";
-import { mergeAppliedRules } from "../utils/merge-applied-rules";
+import { useHouseRulesPage } from "../hooks/useHouseRulesPage";
 
 // types
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
-import type { HouseRule, HouseRulePayload } from "../types/rule-types";
-
-const initialForm: HouseRulePayload = {
-  title: "",
-  description: "",
-};
 
 export default function HouseRules() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
-  const catalogueCache = useCatalogueCache();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignSectionTabs = useMemo(() => getCampaignSectionTabs(campaign), [campaign]);
-  const [rules, setRules] = useState<HouseRule[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [formError, setFormError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [form, setForm] = useState<HouseRulePayload>(initialForm);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [isCommonRulesOpen, setIsCommonRulesOpen] = useState(false);
-
   const campaignId = Number(id);
-
+  const page = useHouseRulesPage(campaignId);
   const canManageRules = campaignCapabilities(campaign).manage_rules;
-
-  const syncItemCatalogIfNeeded = async (previousRules: HouseRule[], nextRules: HouseRule[]) => {
-    const itemEffectKeys = new Set(["half_price_armour", "improved_shields"]);
-    const previousKeys = previousRules
-      .map((rule) => rule.effect_key)
-      .filter((value): value is string => !!value && itemEffectKeys.has(value));
-    const nextKeys = nextRules
-      .map((rule) => rule.effect_key)
-      .filter((value): value is string => !!value && itemEffectKeys.has(value));
-
-    const previousSignature = [...new Set(previousKeys)].sort().join("|");
-    const nextSignature = [...new Set(nextKeys)].sort().join("|");
-
-    if (previousSignature === nextSignature || Number.isNaN(campaignId)) {
-      return;
-    }
-
-    // Item prices depend on these rules, so the cached item list is out of date.
-    await catalogueCache.invalidate("items", campaignId);
-  };
-
-  useEffect(() => {
-    if (Number.isNaN(campaignId)) {
-      return;
-    }
-
-    setIsLoading(true);
-    setError("");
-
-    listHouseRules(campaignId)
-      .then((data) => setRules(data))
-      .catch((errorResponse) => {
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to load house rules");
-        } else {
-          setError("Unable to load house rules");
-        }
-      })
-      .finally(() => setIsLoading(false));
-  }, [campaignId]);
-
-  const handleSubmit = async () => {
-    if (Number.isNaN(campaignId)) {
-      return;
-    }
-
-    const title = form.title.trim();
-    const description = form.description.trim();
-
-    if (!title) {
-      setFormError("Title is required.");
-      return;
-    }
-
-    if (!description) {
-      setFormError("Description is required.");
-      return;
-    }
-
-    setFormError("");
-    setIsSubmitting(true);
-
-    try {
-      const created = await createHouseRule(campaignId, {
-        title,
-        description,
-      });
-      const nextRules = [created, ...rules];
-      setRules(nextRules);
-      await syncItemCatalogIfNeeded(rules, nextRules);
-      setIsFormOpen(false);
-      setForm(initialForm);
-      setFormError("");
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setError(errorResponse.message || "Unable to create house rule");
-      } else {
-        setError("Unable to create house rule");
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleCancel = () => {
-    setIsFormOpen(false);
-    setForm(initialForm);
-    setFormError("");
-  };
-
-  const handleUpdated = (updatedRule: HouseRule) => {
-    const nextRules = rules.map((rule) => (rule.id === updatedRule.id ? updatedRule : rule));
-    setRules(nextRules);
-    void syncItemCatalogIfNeeded(rules, nextRules);
-  };
-
-  const handleDeleted = (ruleId: number) => {
-    const nextRules = rules.filter((rule) => rule.id !== ruleId);
-    setRules(nextRules);
-    void syncItemCatalogIfNeeded(rules, nextRules);
-  };
-
-  const handleCommonRulesApplied = (
-    applied: HouseRule[],
-    { allApplied }: { allApplied: boolean }
-  ) => {
-    const nextRules = mergeAppliedRules(rules, applied);
-    setRules(nextRules);
-    void syncItemCatalogIfNeeded(rules, nextRules);
-    if (allApplied) {
-      setIsFormOpen(false);
-      setForm(initialForm);
-      setFormError("");
-    }
-  };
 
   const handleRulesNavChange = (tabId: CampaignSectionTabId) => {
     if (!id) {
@@ -185,107 +50,38 @@ export default function HouseRules() {
         />
       ) : null}
 
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      {page.error ? <p className="text-sm text-red-600">{page.error}</p> : null}
 
       <div className="space-y-4 px-2 sm:px-0">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="theme-heading-soft text-xl font-bold">Rules Ledger</h3>
-          {canManageRules && !isFormOpen ? (
-            <Button size="sm" onClick={() => setIsFormOpen(true)}>
+          {canManageRules && !page.isFormOpen ? (
+            <Button size="sm" onClick={page.openForm}>
               Add rule
             </Button>
           ) : null}
         </div>
-        {canManageRules && isFormOpen ? (
-          <div className="surface-panel-strong space-y-3 rounded-2xl p-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h4 className="theme-heading-soft text-sm font-semibold uppercase tracking-[0.2em]">
-                New Rule
-              </h4>
-              <Button
-                size="sm"
-                variant="secondary"
-                onClick={() => setIsCommonRulesOpen(true)}
-                disabled={isSubmitting}
-              >
-                Common Rules
-              </Button>
-            </div>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-foreground">Title</label>
-                <Input
-                  value={form.title}
-                  onChange={(event) => {
-                    setForm((prev) => ({ ...prev, title: event.target.value }));
-                    if (formError) {
-                      setFormError("");
-                    }
-                  }}
-                  placeholder="Parry changes"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-foreground">Description</label>
-                <textarea
-                  className="field-surface min-h-[140px] w-full rounded-2xl px-3 py-2 text-sm text-foreground shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
-                  value={form.description}
-                  onChange={(event) => {
-                    setForm((prev) => ({ ...prev, description: event.target.value }));
-                    if (formError) {
-                      setFormError("");
-                    }
-                  }}
-                  placeholder="Describe the ruling and any clarifications."
-                />
-              </div>
-            </div>
-            {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
-            <div className="flex flex-wrap justify-end gap-2">
-              <Button size="sm" variant="secondary" onClick={handleCancel} disabled={isSubmitting}>
-                Cancel
-              </Button>
-              <Button size="sm" onClick={handleSubmit} disabled={isSubmitting}>
-                {isSubmitting ? "Saving..." : "Add rule"}
-              </Button>
-            </div>
-            <CommonRulesSheet
-              campaignId={campaignId}
-              existingRules={rules}
-              open={isCommonRulesOpen}
-              onOpenChange={setIsCommonRulesOpen}
-              onApplied={handleCommonRulesApplied}
-            />
-          </div>
+        {canManageRules && page.isFormOpen ? (
+          <HouseRuleForm
+            campaignId={campaignId}
+            rules={page.rules}
+            form={page.form}
+            onFieldChange={page.updateField}
+            formError={page.formError}
+            isSubmitting={page.isSubmitting}
+            onCancel={page.closeForm}
+            onSubmit={page.submit}
+            onCommonRulesApplied={page.onCommonRulesApplied}
+          />
         ) : null}
-        {isLoading ? (
-          <ListSkeleton count={4} />
-        ) : rules.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No house rules logged yet.</p>
-        ) : (
-          <div className="space-y-3">
-            {rules.map((rule) => (
-              <div key={rule.id} className="surface-panel-strong rounded-2xl p-4">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <p className="text-sm font-semibold text-foreground">{rule.title}</p>
-                  {canManageRules ? (
-                    <EditHouseRuleDialog
-                      campaignId={campaignId}
-                      rule={rule}
-                      onUpdated={handleUpdated}
-                      onDeleted={handleDeleted}
-                    />
-                  ) : null}
-                </div>
-                {rule.description ? (
-                  <p className="mt-2 text-sm text-muted-foreground whitespace-pre-line">
-                    {rule.description}
-                  </p>
-                ) : null}
-              </div>
-            ))}
-          </div>
-        )}
+        <HouseRuleList
+          campaignId={campaignId}
+          rules={page.rules}
+          isLoading={page.isLoading}
+          canManageRules={canManageRules}
+          onUpdated={page.onUpdated}
+          onDeleted={page.onDeleted}
+        />
       </div>
     </div>
   );

@@ -13,6 +13,7 @@ import {
 } from "@components/dialog";
 import { Input } from "@components/input";
 import { ConfirmDialog } from "@components/confirm-dialog";
+import { getErrorMessage } from "@/lib/get-error-message";
 // api
 import { deleteHouseRule, updateHouseRule } from "../api/rules-api";
 
@@ -91,11 +92,7 @@ export default function EditHouseRuleDialog({
       onUpdated(updated);
       setResolvedOpen(false);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || "Unable to update house rule");
-      } else {
-        setFormError("Unable to update house rule");
-      }
+      setFormError(getErrorMessage(errorResponse, "Unable to update house rule"));
     } finally {
       setIsSaving(false);
     }
@@ -111,11 +108,7 @@ export default function EditHouseRuleDialog({
       setResolvedOpen(false);
       setIsDeleteOpen(false);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || "Unable to delete house rule");
-      } else {
-        setFormError("Unable to delete house rule");
-      }
+      setFormError(getErrorMessage(errorResponse, "Unable to delete house rule"));
     } finally {
       setIsSaving(false);
     }

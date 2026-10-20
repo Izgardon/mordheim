@@ -14,8 +14,11 @@ import {
 import { getErrorMessage } from "@/lib/get-error-message";
 
 import { createHouseRule } from "../api/rules-api";
+import { useCommonRules } from "../api/rule-queries";
 
-import type { HouseRule } from "../types/rule-types";
+import type { CommonRule, HouseRule } from "../types/rule-types";
+
+const NO_COMMON_RULES: CommonRule[] = [];
 
 type CommonRulesSheetProps = {
   campaignId: number;
@@ -25,65 +28,6 @@ type CommonRulesSheetProps = {
   /** The rules the server now holds (new, or one it already had); `allApplied` if none failed. */
   onApplied: (rules: HouseRule[], outcome: { allApplied: boolean }) => void;
 };
-
-type CommonRuleDefinition = {
-  id: string;
-  title: string;
-  description: string;
-  effectKey?: string;
-};
-
-const COMMON_RULES: CommonRuleDefinition[] = [
-  {
-    id: "half-price-armour",
-    title: "Half Price Armour",
-    description:
-      "All items listed under Armour are half price with the exception of Shields and Bucklers.",
-    effectKey: "half_price_armour",
-  },
-  {
-    id: "improved-shields",
-    title: "Improved Shields",
-    description: "Both Shields and Bucklers offer an improved +1 Sv in combat.",
-    effectKey: "improved_shields",
-  },
-  {
-    id: "two-weapon-fighting",
-    title: "Two-weapon Fighting",
-    description:
-      "Attacks made with a weapon in your off hand are at -1 to hit. Furthermore, off-hand attacks cannot cause critical hits.",
-  },
-  {
-    id: "black-powder-improvements",
-    title: "Black Powder Improvements",
-    description:
-      "Black powder weapons have their cost reduced by 33% but will misfire on a roll to hit of 1 (see Misfire table). Furthermore, all non-pistol and template black powder weaponry gets +1 to their injury rolls.",
-  },
-  {
-    id: "rout-test-changes",
-    title: "Rout Test Changes",
-    description:
-      "When rolling rout tests, Warband Leaders suffer a -1 to their LD when at or below 50% of their warband size. This increases to -2 to their LD when at or below 25%.",
-  },
-  {
-    id: "ranged-weapon-limitations",
-    title: "50% Ranged Limit",
-    description:
-      'Only half of the models in your warband, including hired swords, can be armed with missile weapons with a range of more than 8".',
-  },
-  {
-    id: "trinket-item-cap",
-    title: "Trinket Item Cap",
-    description:
-      "Maximum 1 each of Lucky Charm, Rabbit's Foot, Holy/Unholy Relic, and Bear Claw Necklaces in a Warband.",
-  },
-  {
-    id: "miscasts",
-    title: "Miscasts",
-    description:
-      "Magic is very dangerous! The roll of a double one when casting a spell will result in a miscast – roll on the miscasts table. You may never re-roll a miscast with any skills or items, however you may use the Rabbit's Foot to re-roll a single dice when rolling on the miscast table.",
-  },
-];
 
 function normalizeRuleTitle(value: string) {
   return value.trim().toLowerCase();
@@ -96,6 +40,9 @@ export default function CommonRulesSheet({
   onOpenChange,
   onApplied,
 }: CommonRulesSheetProps) {
+  // The server's list (IMP-69), read when the new-rule form opens with this sheet.
+  const commonRulesQuery = useCommonRules(campaignId);
+  const commonRules = commonRulesQuery.data ?? NO_COMMON_RULES;
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
@@ -123,7 +70,7 @@ export default function CommonRulesSheet({
   };
 
   const handleSave = async () => {
-    const selectedRules = COMMON_RULES.filter(
+    const selectedRules = commonRules.filter(
       (rule) => selectedIds.includes(rule.id) && !existingTitles.has(normalizeRuleTitle(rule.title))
     );
 
@@ -142,7 +89,7 @@ export default function CommonRulesSheet({
         createHouseRule(campaignId, {
           title: rule.title,
           description: rule.description,
-          effect_key: rule.effectKey ?? null,
+          effect_key: rule.effect_key,
         })
       )
     );
@@ -181,8 +128,16 @@ export default function CommonRulesSheet({
           <DialogDescription className="block text-sm text-muted-foreground">
             Choose from a small list of commonly used campaign house rules.
           </DialogDescription>
+          {commonRulesQuery.isPending ? (
+            <p className="text-sm text-muted-foreground">Loading common rules...</p>
+          ) : null}
+          {commonRulesQuery.error ? (
+            <p className="text-sm text-red-600">
+              {getErrorMessage(commonRulesQuery.error, "Couldn't load the common rules.")}
+            </p>
+          ) : null}
           <div className="space-y-3">
-            {COMMON_RULES.map((rule) => {
+            {commonRules.map((rule) => {
               const isAlreadyApplied = existingTitles.has(normalizeRuleTitle(rule.title));
               const isChecked = selectedIds.includes(rule.id);
 
@@ -208,7 +163,7 @@ export default function CommonRulesSheet({
                           Applied
                         </span>
                       ) : null}
-                      {rule.effectKey ? (
+                      {rule.effect_key ? (
                         <span className="rounded bg-amber-900/30 px-2 py-0.5 text-[0.65rem] uppercase tracking-[0.18em] text-amber-400/80">
                           Has game effects
                         </span>

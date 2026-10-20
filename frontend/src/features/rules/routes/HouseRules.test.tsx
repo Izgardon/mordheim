@@ -7,7 +7,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError } from "@/lib/api-client";
 import { deferred } from "@/test/battle-fixtures";
-import { CAMPAIGN_ID, campaignApi, routeCampaignShell } from "@/test/campaign-fixtures";
+import {
+  CAMPAIGN_ID,
+  COMMON_RULES,
+  campaignApi,
+  routeCampaignShell,
+} from "@/test/campaign-fixtures";
 import { renderCampaignRoute } from "@/test/campaign-routes";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
@@ -60,6 +65,7 @@ beforeEach(() => {
   fakeRealtime.reset();
   routeCampaignShell();
   fakeApi.on(`GET ${RULES}`, []);
+  fakeApi.on(`GET ${campaignApi("rules/common/")}`, COMMON_RULES);
 });
 
 describe("Common Rules", () => {

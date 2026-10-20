@@ -286,6 +286,30 @@ export const chatMessage = (
 
 export const CHAT_CHANNEL = `private-campaign-${CAMPAIGN_ID}-chat`;
 
+/** `GET rules/common/`: the server's common house rules (the two with item effects first). */
+export const COMMON_RULES = [
+  {
+    id: "half-price-armour",
+    title: "Half Price Armour",
+    description:
+      "All items listed under Armour are half price with the exception of Shields and Bucklers.",
+    effect_key: "half_price_armour",
+  },
+  {
+    id: "improved-shields",
+    title: "Improved Shields",
+    description: "Both Shields and Bucklers offer an improved +1 Sv in combat.",
+    effect_key: "improved_shields",
+  },
+  {
+    id: "trinket-item-cap",
+    title: "Trinket Item Cap",
+    description:
+      "Maximum 1 each of Lucky Charm, Rabbit's Foot, Holy/Unholy Relic, and Bear Claw Necklaces in a Warband.",
+    effect_key: null,
+  },
+];
+
 /** Your warband's sheet as the layout's store reads it (only the warband and its summary). */
 const sheetOf = (person: Person) => ({
   warband: {
