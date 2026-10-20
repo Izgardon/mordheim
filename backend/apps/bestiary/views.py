@@ -2,7 +2,12 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.permissions import get_membership, get_writable_membership, has_campaign_permission
+from apps.campaigns.permissions import (
+    get_membership,
+    get_writable_membership,
+    has_campaign_permission,
+    parse_campaign_id,
+)
 from apps.warbands.models import Warband
 
 from .models import (
@@ -38,8 +43,8 @@ class BestiaryEntryListView(APIView):
         if search:
             entries = entries.filter(name__icontains=search.strip())
 
-        campaign_id = request.query_params.get("campaign_id")
-        if campaign_id:
+        campaign_id = parse_campaign_id(request.query_params.get("campaign_id"))
+        if campaign_id is not None:
             membership = get_membership(request.user, campaign_id)
             if not membership:
                 return Response({"detail": "Not found"}, status=404)
@@ -57,7 +62,7 @@ class BestiaryEntryListView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        campaign_id = request.data.get("campaign_id")
+        campaign_id = parse_campaign_id(request.data.get("campaign_id"))
         membership = get_writable_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
@@ -264,8 +269,8 @@ class HiredSwordProfileListView(APIView):
         if search:
             profiles = profiles.filter(bestiary_entry__name__icontains=search.strip())
 
-        campaign_id = request.query_params.get("campaign_id")
-        if campaign_id:
+        campaign_id = parse_campaign_id(request.query_params.get("campaign_id"))
+        if campaign_id is not None:
             membership = get_membership(request.user, campaign_id)
             if not membership:
                 return Response({"detail": "Not found"}, status=404)
@@ -287,7 +292,7 @@ class HiredSwordProfileListView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        campaign_id = request.data.get("campaign_id")
+        campaign_id = parse_campaign_id(request.data.get("campaign_id"))
         membership = get_writable_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)

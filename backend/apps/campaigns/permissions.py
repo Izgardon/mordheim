@@ -5,14 +5,31 @@ permission codes (`permission_codes`, one subquery of the same query), so `has_c
 another query (design 0.29).
 """
 
+from typing import Any
+
 from django.contrib.postgres.expressions import ArraySubquery
 from django.db.models import OuterRef, QuerySet
+
+from apps.core.errors import ApiError
 
 from .constants import ADMIN, OWNER
 from .errors import CampaignArchived
 from .models import CampaignMembership, CampaignMembershipPermission
 
 IMPLICIT_PERMISSION_ROLES = (OWNER, ADMIN)  # these roles hold every campaign permission
+
+
+def parse_campaign_id(value: Any, field: str = "campaign_id") -> int | None:
+    """A campaign id sent in a query string or a body: None when it is absent or blank, the id when it is a whole
+    number, and a 400 in the standard body otherwise (BUG-79: `abc` or `1.5` was a 500)."""
+    if value is None or (isinstance(value, str) and not value.strip()):
+        return None
+    if isinstance(value, int) and not isinstance(value, bool):
+        return value
+    if isinstance(value, str) and value.strip().isdigit():
+        return int(value.strip())
+    detail = f"{field} must be a campaign's id."
+    raise ApiError(detail, code="invalid", fields={field: [detail]})
 
 
 def with_codes(rows: QuerySet[CampaignMembership]) -> QuerySet[CampaignMembership]:

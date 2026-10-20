@@ -3,7 +3,12 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.permissions import get_membership, get_writable_membership, has_campaign_permission
+from apps.campaigns.permissions import (
+    get_membership,
+    get_writable_membership,
+    has_campaign_permission,
+    parse_campaign_id,
+)
 from apps.core.catalogue.duplicates import refusing_duplicates
 from apps.restrictions.models import Restriction
 
@@ -82,8 +87,8 @@ class ItemListView(APIView):
         if search:
             items = items.filter(name__icontains=search.strip())
 
-        campaign_id = request.query_params.get("campaign_id")
-        if campaign_id:
+        campaign_id = parse_campaign_id(request.query_params.get("campaign_id"))
+        if campaign_id is not None:
             membership = get_membership(request.user, campaign_id)
             if not membership:
                 return Response({"detail": "Not found"}, status=404)
@@ -101,7 +106,7 @@ class ItemListView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        campaign_id = request.data.get("campaign_id")
+        campaign_id = parse_campaign_id(request.data.get("campaign_id"))
         membership = get_writable_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
@@ -219,8 +224,8 @@ class ItemPropertyListView(APIView):
         if search:
             properties = properties.filter(name__icontains=search.strip())
 
-        campaign_id = request.query_params.get("campaign_id")
-        if campaign_id:
+        campaign_id = parse_campaign_id(request.query_params.get("campaign_id"))
+        if campaign_id is not None:
             membership = get_membership(request.user, campaign_id)
             if not membership:
                 return Response({"detail": "Not found"}, status=404)
@@ -233,8 +238,8 @@ class ItemPropertyListView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        campaign_id = request.data.get("campaign_id")
-        if not campaign_id:
+        campaign_id = parse_campaign_id(request.data.get("campaign_id"))
+        if campaign_id is None:
             return Response({"detail": "campaign_id is required"}, status=400)
 
         membership = get_writable_membership(request.user, campaign_id)

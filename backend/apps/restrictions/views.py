@@ -2,7 +2,7 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.permissions import get_membership
+from apps.campaigns.permissions import get_membership, parse_campaign_id
 
 from .models import Restriction
 from .serializers import RestrictionSerializer
@@ -25,8 +25,8 @@ class RestrictionListView(APIView):
         if restriction_type:
             restrictions = restrictions.filter(type__iexact=restriction_type.strip())
 
-        campaign_id = request.query_params.get("campaign_id")
-        if campaign_id:
+        campaign_id = parse_campaign_id(request.query_params.get("campaign_id"))
+        if campaign_id is not None:
             membership = get_membership(request.user, campaign_id)
             if not membership:
                 return Response({"detail": "Not found"}, status=404)

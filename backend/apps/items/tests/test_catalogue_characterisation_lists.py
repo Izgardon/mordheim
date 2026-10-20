@@ -2,10 +2,8 @@
 
 With `?campaign_id=`, each list returns the campaign's rows, then the book rows whose name no campaign row uses
 (BUG-18: by name only, whatever the type). Without it, only book rows. A list for a campaign the caller isn't in is a
-404 (CAT-TEST-01); a campaign id that isn't a number is a 500 (BUG-79, CAT-TEST-11).
+404 (CAT-TEST-01); a campaign id that isn't a whole number is a 400 (BUG-79, CAT-TEST-11).
 """
-
-import logging
 
 from apps.items.models import Item, ItemProperty
 from apps.restrictions.models import Restriction
@@ -45,16 +43,23 @@ class CatalogueListAccessTests(CatalogueTestCase):
                 self.assertEqual(book.status_code, 200)
         self.assertNotIn("House blade", [row["name"] for row in self.get_as(self.outsider, ITEMS.list_url()).json()])
 
-    def test_a_campaign_id_that_is_not_a_number_is_a_500(self):
-        # Characterises current behaviour (BUG-79, CAT-TEST-11, pinned; flips in PR A to a 400)
-        self.client.raise_request_exception = False
-        logger = logging.getLogger("django.request")
-        self.addCleanup(setattr, logger, "disabled", logger.disabled)
-        logger.disabled = True
+    def test_a_campaign_id_that_is_not_a_number_is_a_400(self):
+        # BUG-79, CAT-TEST-11 (was pinned: a 500 on every list; flipped in PR A: one parse_campaign_id)
+        detail = "campaign_id must be a campaign's id."
+        refused = {"detail": detail, "code": "invalid", "fields": {"campaign_id": [detail]}}
         for key, url in LIST_URLS.items():
-            for value in ("abc", "1.5"):
+            for value in ("abc", "1.5", "-3"):
                 with self.subTest(list=key, campaign_id=value):
-                    self.assertEqual(self.get_as(self.player, f"{url}?campaign_id={value}").status_code, 500)
+                    response = self.get_as(self.player, f"{url}?campaign_id={value}")
+                    self.assertEqual((response.status_code, response.json()), (400, refused))
+
+    def test_a_catalogue_write_naming_a_campaign_that_is_not_a_number_is_a_400(self):
+        # BUG-79: the writes read the body's campaign_id the same way
+        writes = [kind.list_url() for kind in KINDS] + ["/api/item-properties/"]
+        for url in writes:
+            with self.subTest(url=url):
+                response = self.post_as(self.owner, url, {"campaign_id": "abc", "name": "Bad", "type": "Weapon"})
+                self.assertEqual((response.status_code, response.json()["code"]), (400, "invalid"))
 
     def test_another_campaigns_entry_is_a_404_and_a_book_entry_is_open_to_anyone(self):
         for kind in KINDS:
