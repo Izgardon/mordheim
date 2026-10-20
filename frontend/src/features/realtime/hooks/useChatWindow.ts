@@ -13,6 +13,9 @@ import {
   markChatMessageRemoved,
 } from "../utils/chat-cache";
 
+/** How long the read mark waits for more live messages before it moves. */
+const READ_MARK_DEBOUNCE_MS = 800;
+
 /**
  * The open chat window (BUG-20): the history as an infinite query read while the window is open
  * (each opening reads the latest page afresh, `resetHistory`), live messages and your own sends
@@ -78,14 +81,22 @@ export function useChatWindow(campaignId: number, isOpen: boolean) {
     markRead();
   }, [isOpen, markRead]);
 
-  // While open, live messages land in the list; RealtimeProvider counts them as unread otherwise.
+  // While open, live messages land in the list and move your read mark to the newest of them
+  // (debounced, CAMP-TWEAK-09); RealtimeProvider counts them as unread otherwise.
   useEffect(() => {
     if (!isOpen) return;
-    return addMessageListener((message) => {
+    let readTimer: ReturnType<typeof setTimeout> | undefined;
+    const stopListening = addMessageListener((message) => {
       appendChatMessage(queryClient, campaignId, message);
       scrollToBottom(true);
+      clearTimeout(readTimer);
+      readTimer = setTimeout(() => markRead(message.id), READ_MARK_DEBOUNCE_MS);
     });
-  }, [addMessageListener, campaignId, isOpen, queryClient, scrollToBottom]);
+    return () => {
+      clearTimeout(readTimer);
+      stopListening();
+    };
+  }, [addMessageListener, campaignId, isOpen, markRead, queryClient, scrollToBottom]);
 
   // A removal made elsewhere shows at once while the window is open (CAMP-NEW-06).
   useCampaignChatRemovals(isOpen ? campaignId : null, (removal) =>

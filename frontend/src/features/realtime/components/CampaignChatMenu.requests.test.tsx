@@ -13,6 +13,7 @@ import {
   PLAYER,
   campaignApi,
   campaignFor,
+  campaignSummary,
   chatMessage,
   routeCampaignShell,
 } from "@/test/campaign-fixtures";
@@ -34,6 +35,7 @@ vi.mock("@/features/realtime/components/CampaignDiceRollerMenu", () => ({ defaul
 
 const MESSAGES = `GET ${campaignApi("messages/")}`;
 const SEND = `POST ${campaignApi("messages/")}`;
+const READ = `POST ${campaignApi("messages/read/")}`;
 
 const chatButton = () => screen.getByRole("button", { name: "Campaign chat" });
 
@@ -54,33 +56,58 @@ beforeEach(() => {
   fakeRealtime.reset();
   routeCampaignShell();
   fakeApi.on(MESSAGES, [chatMessage(1, PLAYER, "Ready when you are")]);
+  fakeApi.on(READ, { chat_last_read_id: 1, chat_unread: 0 });
 });
 
 describe("Campaign chat unread badge", () => {
-  it("counts every message that arrives while the chat is closed, your own from another device included (IMP-78, pinned; flips in PR C)", async () => {
+  it("starts from the campaign's unread count and adds others' messages arriving while the chat is closed, never your own (IMP-78, CAMP-TWEAK-09)", async () => {
+    routeCampaignShell({ campaign: campaignSummary({ chat_unread: 2 }) });
     await openCampaignPage();
-    expect(chatButton()).toHaveTextContent("");
+    await waitFor(() => expect(chatButton()).toHaveTextContent("2"));
 
     await arrive(chatMessage(11, PLAYER, "Who has the rope?"));
-    expect(chatButton()).toHaveTextContent("1");
+    expect(chatButton()).toHaveTextContent("3");
 
     // Sent by you, from your phone.
     await arrive(chatMessage(12, OWNER, "I do"));
-    expect(chatButton()).toHaveTextContent("2");
+    expect(chatButton()).toHaveTextContent("3");
   });
 
-  it("forgets the count on a reload, though nothing was read (IMP-78, pinned; flips in PR C)", async () => {
+  it("keeps the count across a reload: it is the server's, after your read mark (IMP-78, CAMP-TWEAK-09)", async () => {
     const first = await openCampaignPage();
     await arrive(chatMessage(11, PLAYER, "Who has the rope?"));
     await arrive(chatMessage(12, PLAYER, "Anyone?"));
     expect(chatButton()).toHaveTextContent("2");
     first.unmount();
     fakeRealtime.reset();
+    // The server counted both: nothing was read.
+    routeCampaignShell({ campaign: campaignSummary({ chat_unread: 2 }) });
 
     await openCampaignPage();
 
-    expect(chatButton()).toHaveTextContent("");
+    await waitFor(() => expect(chatButton()).toHaveTextContent("2"));
     expect(fakeApi.countOf(MESSAGES)).toBe(0);
+  });
+
+  it("moves your read mark when the chat opens, and to the newest live message while it stays open", async () => {
+    const user = setupUser();
+    routeCampaignShell({ campaign: campaignSummary({ chat_unread: 4 }) });
+    await openCampaignPage();
+    await waitFor(() => expect(chatButton()).toHaveTextContent("4"));
+
+    await user.click(chatButton());
+    const dialog = screen.getByRole("dialog", { name: "Campaign Chat" });
+    await within(dialog).findByText("Ready when you are");
+
+    expect(fakeApi.bodyOf(READ)).toEqual({});
+    await arrive(chatMessage(13, PLAYER, "Found it"));
+    await arrive(chatMessage(14, PLAYER, "Coming"));
+    await waitFor(() => expect(fakeApi.countOf(READ)).toBe(2), { timeout: 3000 });
+    expect(fakeApi.bodyOf(READ)).toEqual({ last_read_id: 14 });
+
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(chatButton()).toHaveTextContent("");
   });
 
   it("clears the badge on opening, reads the latest page once, and lists live messages without counting them", async () => {
@@ -128,7 +155,7 @@ describe("Campaign chat window", () => {
     expect(
       fakeApi
         .requests()
-        .filter((request) => request.method === "POST")
+        .filter((request) => request.method === "POST" && request.path === campaignApi("messages/"))
         .map((r) => r.body)
     ).toEqual([{ body: "Hold the bridge" }, { body: "Hold the bridge" }]);
   });

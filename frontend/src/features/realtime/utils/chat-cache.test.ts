@@ -6,6 +6,7 @@ import {
   appendChatMessage,
   chatHistoryQuery,
   chatMessagesFromPages,
+  markChatMessageRemoved,
   type ChatHistory,
   type ChatPage,
 } from "./chat-cache";
@@ -86,5 +87,23 @@ describe("appendChatMessage", () => {
     appendChatMessage(queryClient, 1, message(3));
 
     expect(queryClient.getQueryData(key)).toBeUndefined();
+  });
+});
+
+describe("markChatMessageRemoved", () => {
+  it("empties the message where it is and marks who removed it (CAMP-NEW-06)", () => {
+    const queryClient = createTestQueryClient();
+    const key = queryKeys.campaign.chat(1);
+    queryClient.setQueryData<ChatHistory>(key, { pages: [page([2, 1])], pageParams: [undefined] });
+
+    markChatMessageRemoved(queryClient, 1, {
+      id: 1,
+      removed_at: "2026-10-19T10:00:00Z",
+      removed_by: "admin",
+    });
+
+    const [newest, removed] = queryClient.getQueryData<ChatHistory>(key)!.pages[0].messages;
+    expect(newest.body).toBe("Message 2");
+    expect(removed).toMatchObject({ id: 1, body: "", removed_by: "admin" });
   });
 });
