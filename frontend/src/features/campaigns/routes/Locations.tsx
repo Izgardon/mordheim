@@ -23,6 +23,7 @@ import LocationsTable from "../components/LocationsTable";
 
 import type { CampaignLayoutContext } from "./CampaignLayout";
 import type { CampaignLocation, CampaignLocationPayload } from "../types/campaign-types";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 const emptyForm: CampaignLocationPayload = {
   name: "",
@@ -74,11 +75,7 @@ export default function Locations() {
     listCampaignLocations(campaignId)
       .then((data) => setLocations(data))
       .catch((errorResponse) => {
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to load locations.");
-        } else {
-          setError("Unable to load locations.");
-        }
+        setError(getErrorMessage(errorResponse, "Unable to load locations."));
       })
       .finally(() => setIsLoading(false));
   }, [campaignId, isEnabled]);
@@ -163,11 +160,7 @@ export default function Locations() {
       }
       closeForm();
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setFormError(errorResponse.message || "Unable to save location.");
-      } else {
-        setFormError("Unable to save location.");
-      }
+      setFormError(getErrorMessage(errorResponse, "Unable to save location."));
     } finally {
       setIsSubmitting(false);
     }

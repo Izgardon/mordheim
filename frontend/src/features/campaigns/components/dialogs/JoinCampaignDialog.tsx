@@ -16,6 +16,7 @@ import { Input } from "@components/input";
 import { Label } from "@components/label";
 // types
 import type { CampaignJoinPayload } from "../../types/campaign-types";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 const initialState: CampaignJoinPayload = {
   join_code: "",
@@ -47,11 +48,7 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
       await onJoin({ join_code: form.join_code.trim().toUpperCase() });
       setOpen(false);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setError(errorResponse.message || "Unable to join campaign");
-      } else {
-        setError("Unable to join campaign");
-      }
+      setError(getErrorMessage(errorResponse, "Unable to join campaign"));
     } finally {
       setIsSubmitting(false);
     }

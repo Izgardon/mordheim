@@ -19,7 +19,6 @@ export type CampaignSummary = {
   hero_level_thresholds?: number[];
   henchmen_level_thresholds?: number[];
   hired_sword_level_thresholds?: number[];
-  locations?: boolean;
   enable_encampments?: boolean;
   enable_locations?: boolean;
   item_settings?: Restriction[];
@@ -91,13 +90,6 @@ export type CampaignPlayer = {
 
 /** `GET players/?fields=basic`: just who is in the campaign, for name pickers (PERF-41). */
 export type CampaignPlayerName = Pick<CampaignPlayer, "id" | "name">;
-
-export type CampaignWarband = {
-  id: number;
-  name: string;
-  faction: string;
-  restrictions?: { id: number; type: string; restriction: string }[];
-};
 
 export type CampaignBattleHistoryParticipant = {
   warband_id: number;

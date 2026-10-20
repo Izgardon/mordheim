@@ -11,6 +11,7 @@ import {
 import { Input } from "@components/input";
 
 import { deleteWarband } from "../../../warbands/api/warbands-api";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 type DeleteWarbandCardProps = {
   warbandId: number;
@@ -55,11 +56,7 @@ export default function DeleteWarbandCard({
       setOpen(false);
       onDeleted();
     } catch (err) {
-      if (err instanceof Error) {
-        setDeleteError(err.message || "Failed to delete warband");
-      } else {
-        setDeleteError("Failed to delete warband");
-      }
+      setDeleteError(getErrorMessage(err, "Failed to delete warband"));
     } finally {
       setIsDeleting(false);
     }

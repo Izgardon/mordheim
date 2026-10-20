@@ -23,6 +23,7 @@ import RestrictionPicker from "@/features/warbands/components/shared/Restriction
 import type { CampaignCreatePayload, CampaignCreateType } from "../../types/campaign-types";
 import type { Restriction } from "@/features/items/types/item-types";
 import { listRestrictions } from "@/features/items/api/items-api";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 const TYPE_OPTIONS = [
   { value: "standard", label: "Standard" },
@@ -100,11 +101,7 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
       });
       setOpen(false);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setError(errorResponse.message || "Unable to start campaign");
-      } else {
-        setError("Unable to start campaign");
-      }
+      setError(getErrorMessage(errorResponse, "Unable to start campaign"));
     } finally {
       setIsSubmitting(false);
     }

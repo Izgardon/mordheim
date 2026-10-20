@@ -16,6 +16,7 @@ import { listCampaignPlayers } from "../../api/campaigns-api";
 
 // types
 import type { CampaignPlayer } from "../../types/campaign-types";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 type CampaignPlayersDialogProps = {
   campaignId: number;
@@ -52,11 +53,7 @@ export default function CampaignPlayersDialog({
     listCampaignPlayers(campaignId)
       .then((data) => setPlayers(data))
       .catch((errorResponse) => {
-        if (errorResponse instanceof Error) {
-          setError(errorResponse.message || "Unable to load players");
-        } else {
-          setError("Unable to load players");
-        }
+        setError(getErrorMessage(errorResponse, "Unable to load players"));
       })
       .finally(() => setIsLoading(false));
   }, [open, campaignId]);

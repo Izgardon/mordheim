@@ -134,7 +134,6 @@ export function campaignSummary(overrides: Partial<CampaignSummary> = {}): Campa
     hero_level_thresholds: [2, 4, 6, 8, 11, 14],
     henchmen_level_thresholds: [2, 5, 9, 14],
     hired_sword_level_thresholds: [2, 4, 6, 8, 11, 14],
-    locations: false,
     enable_encampments: false,
     enable_locations: false,
     item_settings: [],

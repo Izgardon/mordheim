@@ -19,6 +19,7 @@ import type {
 } from "../types/campaign-types";
 import siteBackground from "@/assets/background/campaign_background.webp";
 import "../styles/campaigns.css";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 export default function Campaigns() {
   const { user, signOut } = useAuth();
@@ -33,11 +34,7 @@ export default function Campaigns() {
       const data = await listCampaigns();
       setCampaigns(data);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setError(errorResponse.message || "Unable to load campaigns");
-      } else {
-        setError("Unable to load campaigns");
-      }
+      setError(getErrorMessage(errorResponse, "Unable to load campaigns"));
     } finally {
       setIsLoading(false);
     }

@@ -23,7 +23,6 @@ import type {
   CampaignSummary,
   CampaignTopKiller,
   CampaignUpdatePayload,
-  CampaignWarband,
 } from "../types/campaign-types";
 import type { TradeRequest } from "@/features/warbands/types/trade-request-types";
 
@@ -165,10 +164,6 @@ export function updateCampaignLocation(
     method: "PATCH",
     body: payload,
   });
-}
-
-export function listCampaignWarbands(campaignId: number) {
-  return apiRequest<CampaignWarband[]>(`/campaigns/${campaignId}/warbands/`);
 }
 
 export function listCampaignMembers(campaignId: number) {

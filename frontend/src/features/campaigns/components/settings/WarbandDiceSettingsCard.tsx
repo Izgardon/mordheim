@@ -13,6 +13,7 @@ import { updateWarband } from "@/features/warbands/api/warbands-api";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useMyWarbandWriter } from "@/features/warbands/hooks/warband/useMyWarbandStore";
 import { useAppStore } from "@/stores/app-store";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 const DEFAULT_DICE_COLOR = "#2e8555";
 const HEX_COLOR_REGEX = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
@@ -65,7 +66,7 @@ export default function WarbandDiceSettingsCard({
       setSavedColor(nextColor);
       setDiceColor(nextColor);
     } catch (saveError) {
-      setColorError(saveError instanceof Error ? saveError.message : "Unable to save dice color.");
+      setColorError(getErrorMessage(saveError, "Unable to save dice color."));
     } finally {
       setIsSavingColor(false);
     }
