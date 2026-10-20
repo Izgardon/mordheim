@@ -7,7 +7,6 @@ after each `TransactionTestCase` empties the seeded roles and codes too, so `set
 """
 
 import logging
-import unittest
 from typing import Any
 from unittest import mock
 
@@ -103,7 +102,7 @@ class CampaignWriteAtomicityTests(CampaignTransactionTestCase):
 
 
 class JoinRaceTests(CampaignTransactionTestCase):
-    """Two joins that both pass the checks before either writes (BUG-49). Today's outcome is in each docstring."""
+    """Two joins at once (BUG-49): the campaign row's lock makes the second wait for the first, then see it."""
 
     def hold_joins_before_they_write(self) -> None:
         self.quiet_request_errors()
@@ -112,10 +111,9 @@ class JoinRaceTests(CampaignTransactionTestCase):
         patcher.start()
         self.addCleanup(patcher.stop)
 
-    @unittest.expectedFailure
     def test_two_players_racing_for_the_last_seat_take_it_once(self):
-        """Today both are let in: three members of a two-seat campaign."""
-        # BUG-49, CAMP-TEST-10 (expected failure until PR A locks the campaign row)
+        """They used to both get in: three members of a two-seat campaign."""
+        # BUG-49, CAMP-TEST-10
         self.hold_joins_before_they_write()
 
         results = run_concurrently(
@@ -125,13 +123,14 @@ class JoinRaceTests(CampaignTransactionTestCase):
         self.assertEqual(sorted(response.status_code for response in results), [201, 400])
         self.assertEqual(CampaignMembership.objects.filter(campaign=self.campaign).count(), 2)
 
-    @unittest.expectedFailure
     def test_one_player_joining_twice_at_once_is_told_they_are_already_a_member(self):
-        """Today the second insert hits the unique constraint: a 500."""
-        # BUG-49, CAMP-TEST-10 (expected failure until PR A turns the IntegrityError into 400 "Already a member")
+        """The second insert used to hit the unique constraint: a 500."""
+        # BUG-49, CAMP-TEST-10
         player = make_user("pia@example.com", "Pia")
         self.hold_joins_before_they_write()
 
         results = run_concurrently(self.joiner(player), self.joiner(player))
 
         self.assertEqual(sorted(response.status_code for response in results), [201, 400])
+        self.assertIn({"detail": "Already a member"}, [response.json() for response in results])
+        self.assertEqual(CampaignMembership.objects.filter(campaign=self.campaign, user=player).count(), 1)

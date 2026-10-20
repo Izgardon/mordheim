@@ -34,3 +34,18 @@ class CampaignError(Exception):
 def field_error(field: str, detail: str, code: str = "invalid") -> CampaignError:
     """A 400 for one invalid input field."""
     return CampaignError(detail, code=code, fields={field: [detail]})
+
+
+class Refused(Exception):
+    """A refusal in the older campaign body, `{"detail": str}` (with `code` when it has one), which the current
+    pages read as they are."""
+
+    def __init__(self, detail: str, *, code: str | None = None, status: int = 400) -> None:
+        super().__init__(detail)
+        self.detail = detail
+        self.code = code
+        self.status = status
+
+    def response(self) -> Response:
+        body = {"detail": self.detail, **({"code": self.code} if self.code else {})}
+        return Response(body, status=self.status)

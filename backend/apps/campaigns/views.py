@@ -38,8 +38,8 @@ from apps.warbands.serializers import WarbandSerializer
 from apps.warbands.services import ledger
 from apps.warbands.services.summary import load_warband_units
 
-from .constants import JOIN_GRANTS, OWNER, PERMISSION_CODES, PLAYER
-from .errors import field_error
+from .constants import OWNER, PERMISSION_CODES
+from .errors import Refused, field_error
 from .models import (
     Campaign,
     CampaignBulletinEntry,
@@ -76,6 +76,7 @@ from .serializers import (
     PivotalMomentSerializer,
 )
 from .services import codes
+from .services.joining import join_campaign
 
 
 def _generate_join_code():
@@ -489,24 +490,10 @@ class JoinCampaignView(APIView):
     def post(self, request):
         serializer = JoinCampaignSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        join_code = serializer.validated_data["join_code"]
-
-        campaign = Campaign.objects.select_related("settings").filter(join_code=join_code).first()
-        if not campaign:
-            return Response({"detail": "Campaign not found"}, status=404)
-
-        if CampaignMembership.objects.filter(campaign=campaign, user=request.user).exists():
-            return Response({"detail": "Already a member"}, status=400)
-
-        player_count = CampaignMembership.objects.filter(campaign=campaign).count()
-        max_players = campaign.max_players
-        if player_count >= max_players:
-            return Response({"detail": "Campaign is full"}, status=400)
-
-        membership = CampaignMembership.objects.create(
-            campaign=campaign, user=request.user, role_id=codes.role_ref(PLAYER)
-        )
-        codes.grant_on_join(membership, JOIN_GRANTS)
+        try:
+            campaign = join_campaign(request.user, serializer.validated_data["join_code"])
+        except Refused as refusal:
+            return refusal.response()
 
         response_serializer = CampaignSerializer(
             _campaigns_for_user(request.user)

@@ -50,7 +50,7 @@ BUDGETS: dict[str, tuple[str, str, int]] = {
 # The overview's four list requests on every mount (players, completed trades, history, pivotal moments)
 OVERVIEW = ("players", "completed trades", "battle history", "pivotal moments")
 OVERVIEW_BUDGET = 14  # target 0 on a revisit within the stale time (CAMP-TEST-04)
-JOIN_BUDGET = 7  # the same as a warm join before the seed migration; no first-call extra (BUG-15)
+JOIN_BUDGET = 9  # 7 queries + its transaction (BUG-49: checks and insert under the campaign row's lock)
 
 
 class CampaignQueryBudgetTests(CampaignTestCase):

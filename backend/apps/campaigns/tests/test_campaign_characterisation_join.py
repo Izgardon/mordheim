@@ -1,6 +1,7 @@
 """Joining with the code (CAMP-TEST-09). The races are in `test_campaign_transactions.py` (BUG-49)."""
 
 import re
+from unittest import mock
 
 from apps.campaigns.models import CampaignSettings
 
@@ -39,6 +40,13 @@ class JoinTests(CampaignTestCase):
         self.assertEqual(last_seat.status_code, 201)
         self.assertEqual((full.status_code, full.data), (400, {"detail": "Campaign is full"}))
         self.assertEqual(self.join(self.rival).data, {"detail": "Already a member"})  # checked before the seats
+
+    def test_a_duplicate_insert_behind_the_checks_is_still_already_a_member(self):
+        # BUG-49: the unique constraint has the last word (it used to be an IntegrityError 500)
+        with mock.patch("django.db.models.query.QuerySet.exists", return_value=False):
+            again = self.join(self.player)
+
+        self.assertEqual((again.status_code, again.data), (400, {"detail": "Already a member"}))
 
     def test_malformed_and_unknown_codes(self):
         newcomer = make_user("newcomer@example.com", "Nell")
