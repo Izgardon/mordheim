@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
 
 // api
 import {
@@ -15,9 +16,6 @@ import {
 import { listWarbandHeroes } from "../../warbands/api/warbands-api";
 import { listWarbandHenchmenGroups } from "../../warbands/api/warbands-henchmen";
 import { listWarbandHiredSwords } from "../../warbands/api/warbands-hiredswords";
-
-// stores
-import { useAppStore } from "@/stores/app-store";
 
 // types
 import type {
@@ -50,6 +48,8 @@ export type RosterUnit = {
 type UseCampaignOverviewParams = {
   campaignId: number;
   campaign: CampaignSummary | null;
+  /** Writes an answer into the cached campaign (the layout's query), which the overview reads. */
+  setCampaign?: Dispatch<SetStateAction<CampaignSummary | null>>;
   /** The bulletin tab's data (bulletin, top killers) loads only while that tab is open. */
   activeTab: "overview" | "bulletin";
 };
@@ -57,6 +57,7 @@ type UseCampaignOverviewParams = {
 export function useCampaignOverview({
   campaignId,
   campaign,
+  setCampaign,
   activeTab,
 }: UseCampaignOverviewParams) {
   const isBulletinOpen = activeTab === "bulletin";
@@ -91,15 +92,9 @@ export function useCampaignOverview({
   const [isStartOpen, setIsStartOpen] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [startError, setStartError] = useState("");
-  const [isUnderway, setIsUnderway] = useState(campaign?.in_progress ?? false);
-
-  const { setCampaignStarted } = useAppStore();
-
-  useEffect(() => {
-    if (campaign) {
-      setIsUnderway(campaign.in_progress);
-    }
-  }, [campaign]);
+  // Read from the cached campaign, which the start writes to (BUG-14): the layout copies it into
+  // the store's campaignStarted for the XP bar.
+  const isUnderway = campaign?.in_progress ?? false;
 
   useEffect(() => {
     if (Number.isNaN(campaignId)) {
@@ -239,6 +234,7 @@ export function useCampaignOverview({
       .finally(() => setIsBulletinLoading(false));
   }, [campaignId, isBulletinOpen]);
 
+  // Owners and admins start the campaign (decision 2, BUG-13).
   const canStartCampaign = campaign?.role === "owner" || campaign?.role === "admin";
 
   const togglePlayer = (player: CampaignPlayer) => {
@@ -344,9 +340,7 @@ export function useCampaignOverview({
     setStartError("");
 
     try {
-      await updateCampaign(campaign.id, { in_progress: true });
-      setIsUnderway(true);
-      setCampaignStarted(true);
+      setCampaign?.(await updateCampaign(campaign.id, { in_progress: true }));
       setIsStartOpen(false);
     } catch (errorResponse) {
       if (errorResponse instanceof Error) {

@@ -11,7 +11,6 @@ import {
 } from "../api/campaigns-api";
 import { useCampaignOverview } from "./useCampaignOverview";
 
-vi.mock("@/stores/app-store", () => ({ useAppStore: () => ({ setCampaignStarted: vi.fn() }) }));
 vi.mock("../api/campaigns-api", () => ({
   createCampaignBulletinEntry: vi.fn(),
   deleteCampaignBulletinEntry: vi.fn(),

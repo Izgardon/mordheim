@@ -37,7 +37,7 @@ const resolveOverviewTab = (value: string | null): OverviewTab | null =>
 export default function CampaignOverview() {
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { campaign } = useOutletContext<CampaignLayoutContext>();
+  const { campaign, setCampaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const activeTab = resolveOverviewTab(searchParams.get("tab")) ?? "overview";
   const [mobileExpandedSections, setMobileExpandedSections] = useState({
@@ -86,7 +86,7 @@ export default function CampaignOverview() {
     handleStartCampaign,
     handleCreateBulletinEntry,
     handleDeleteBulletinEntry,
-  } = useCampaignOverview({ campaignId, campaign, activeTab });
+  } = useCampaignOverview({ campaignId, campaign, setCampaign, activeTab });
 
   if (!campaign) {
     return <p className="text-sm text-muted-foreground">No record of this campaign.</p>;
@@ -185,18 +185,14 @@ export default function CampaignOverview() {
             </Button>
             <ConfirmDialog
               open={isStartOpen}
-              onOpenChange={(nextOpen) => {
-                setIsStartOpen(nextOpen);
-                if (!nextOpen) {
-                  // startError is managed by hook
-                }
-              }}
+              onOpenChange={setIsStartOpen}
+              title="Start campaign"
               description={
                 <div className="space-y-2">
-                  <p>Start the campaign now? This will lock in the roster.</p>
+                  <p>Start the campaign now? Starting enables battles and experience.</p>
                   <p className="text-sm text-muted-foreground">
-                    Before starting, make sure all Campaign Settings locations are set for items,
-                    all House Rules are added, and any spell lists and skill lists are ready.
+                    Nothing else is locked: settings, house rules and rosters can still change after
+                    the start.
                   </p>
                   {startError ? <p className="text-sm text-red-600">{startError}</p> : null}
                 </div>
