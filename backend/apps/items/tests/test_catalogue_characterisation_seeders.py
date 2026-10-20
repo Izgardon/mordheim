@@ -19,8 +19,8 @@ from unittest import expectedFailure
 from django.contrib.auth import get_user_model
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.management import call_command
+from django.db import IntegrityError, transaction
 from django.test import SimpleTestCase, TestCase
-from rest_framework.test import APIClient
 
 from apps.bestiary.models import BestiaryEntry, HiredSwordProfile, WarbandBestiaryFavourite
 from apps.campaigns.models import Campaign, CampaignSettings
@@ -81,12 +81,9 @@ class SeederTestCase(TestCase):
         cls.warband = Warband.objects.create(campaign=cls.campaign, user=cls.user, name="Monks", faction="Sisters")
 
     def junk_restriction(self, restriction_type: str, text: str) -> Restriction:
-        """A global restriction added through POST /restrictions/ by any signed-in user (SEC-06)."""
-        client = APIClient()
-        client.force_authenticate(user=self.user)
-        response = client.post("/api/restrictions/", {"type": restriction_type, "restriction": text}, format="json")
-        self.assertEqual(response.status_code, 201, response.data)
-        return Restriction.objects.get(id=response.data["id"])
+        """A global restriction like the ones POST /restrictions/ let any signed-in user add before PR A removed it
+        (SEC-06); a database that kept them holds them still."""
+        return Restriction.objects.create(type=restriction_type, restriction=text)
 
 
 class SeederUpsertTests(SeederTestCase):
@@ -138,14 +135,17 @@ class SeederUpsertTests(SeederTestCase):
         links = ItemAvailabilityRestriction.objects.filter(item_availability__item__name="Pistol")
         self.assertEqual(list(links.values_list("restriction_id", flat=True)), [junk.id])
 
-    def test_seed_restrictions_stops_at_a_junk_global_restriction_of_a_book_text(self):
-        # Characterises current behaviour (SEC-06, pinned; flips in PR A: no POST, and nulls_distinct=False)
+    def test_no_junk_global_restriction_can_share_a_book_text_and_type(self):
+        # SEC-06 (was pinned: a junk global row of a book text stopped seed_restrictions; flipped in PR A: no POST,
+        # and nulls_distinct=False keeps the book to one row per text and type)
         Restriction.objects.create(type="Warband", restriction="Mercenaries")
-        self.junk_restriction("Warband", "Mercenaries")
 
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            self.junk_restriction("Warband", "Mercenaries")
         with data_file([{"type": "Warband", "restriction": "Mercenaries"}]) as path:
-            with self.assertRaises(MultipleObjectsReturned):
-                run("seed_restrictions", json_path=path)
+            run("seed_restrictions", json_path=path)
+
+        self.assertEqual(Restriction.objects.filter(restriction="Mercenaries").count(), 1)
 
     def test_seed_restrictions_and_seed_races_upsert_the_book_and_leave_campaign_rows_alone(self):
         Restriction.objects.create(type="Warband", restriction="Mercenaries", campaign=self.campaign)

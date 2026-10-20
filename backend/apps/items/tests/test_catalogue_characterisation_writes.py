@@ -9,6 +9,7 @@ import logging
 from typing import Any
 from unittest import mock
 
+from django.db import IntegrityError, transaction
 from django.test import override_settings
 
 from apps.bestiary.models import BestiaryEntry, HiredSwordProfile, WarbandBestiaryFavourite
@@ -188,32 +189,34 @@ class CampaignScopeOfWriteIdsTests(CatalogueTestCase):
 
 
 class RestrictionCreateTests(CatalogueTestCase):
-    """SEC-06 (CAT-TEST-05): any signed-in user adds a global restriction, which every campaign then lists."""
+    """SEC-06 (CAT-TEST-05): restrictions are the seeders' rows; nothing adds one through the API."""
 
-    def test_anyone_signed_in_adds_a_global_restriction_that_every_campaign_lists(self):
-        # Characterises current behaviour (SEC-06, pinned; flips in PR A: the POST is removed)
-        response = self.post_as(self.outsider, "/api/restrictions/", {"type": "Warband", "restriction": "Junk"})
-
-        self.assertEqual((response.status_code, response.data["campaign"]), (201, None))
+    def test_nobody_adds_a_global_restriction_through_the_api(self):
+        # SEC-06 (was pinned: any signed-in user added a global row that every campaign listed; flipped in PR A)
+        for user in (self.outsider, self.owner):
+            with self.subTest(user=user.first_name):
+                response = self.post_as(user, "/api/restrictions/", {"type": "Warband", "restriction": "Junk"})
+                self.assertEqual(response.status_code, 405)
+        self.assertFalse(Restriction.objects.filter(restriction="Junk").exists())
         shards = self.get_as(self.player, f"/api/restrictions/?campaign_id={self.campaign.id}").json()
-        self.assertIn("Junk", [row["restriction"] for row in shards])
+        self.assertEqual([row["restriction"] for row in shards], ["Mercenaries"])
 
-    def test_the_same_global_text_can_be_added_again_and_again(self):
-        # Characterises current behaviour (SEC-06, pinned; flips in PR A: nulls_distinct=False on the constraint)
-        body = {"type": "Warband", "restriction": "Mercenaries"}
+    def test_the_book_holds_one_row_per_text_and_type(self):
+        # SEC-06 (was pinned: the same global text could be added again and again; flipped in PR A by
+        # nulls_distinct=False): another type of the same text, or a campaign's row, is still a row of its own
+        Restriction.objects.create(type="Warband Group", restriction="Mercenaries")
+        Restriction.objects.create(type="Warband", restriction="Mercenaries", campaign=self.campaign)
 
-        statuses = [self.post_as(self.outsider, "/api/restrictions/", body).status_code for _ in range(2)]
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            Restriction.objects.create(type="Warband", restriction="Mercenaries")
+        self.assertEqual(Restriction.objects.filter(restriction="Mercenaries").count(), 3)
 
-        self.assertEqual(statuses, [201, 201])
-        self.assertEqual(Restriction.objects.filter(restriction="Mercenaries", campaign__isnull=True).count(), 3)
-
-    def test_settings_are_refused_and_signing_in_is_required(self):
-        setting = self.post_as(self.outsider, "/api/restrictions/", {"type": "Setting", "restriction": "Lustria"})
+    def test_signing_in_is_still_required_to_read_them(self):
         self.client.force_authenticate(user=None)
-        anonymous = self.client.post("/api/restrictions/", {"type": "Warband", "restriction": "Junk"}, format="json")
-
-        self.assertEqual((setting.status_code, list(setting.data)), (400, ["type"]))
-        self.assertEqual(anonymous.status_code, 401)
+        self.assertEqual(self.client.get("/api/restrictions/").status_code, 401)
+        self.assertEqual(
+            self.client.post("/api/restrictions/", {"restriction": "Junk"}, format="json").status_code, 401
+        )
 
 
 class ItemPropertyCreateTests(CatalogueTestCase):

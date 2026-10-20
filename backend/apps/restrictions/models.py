@@ -30,9 +30,11 @@ class Restriction(models.Model):
         db_table = "restriction"
         ordering = ["type", "restriction"]
         constraints = [
+            # one row per text and type in the book (NULLs not distinct: SEC-06, BUG-17), in an add-on and in a campaign
             models.UniqueConstraint(
-                fields=["campaign", "type", "restriction"],
-                name="unique_restriction",
+                fields=["campaign", "campaign_type", "restriction", "type"],
+                name="restriction_unique_text_type",
+                nulls_distinct=False,
             ),
         ]
 

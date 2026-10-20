@@ -694,7 +694,8 @@ class CampaignApiTests(APITestCase):
             ["Cathay Setting"],
         )
 
-    def test_posting_setting_restriction_is_rejected(self):
+    def test_posting_a_restriction_is_not_allowed(self):
+        # SEC-06: restrictions are the seeders' rows; the POST (which refused only settings) is gone
         owner = self._create_user("owner@example.com", "Owner")
         self.client.force_authenticate(user=owner)
 
@@ -704,7 +705,7 @@ class CampaignApiTests(APITestCase):
             format="json",
         )
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 405)
         self.assertEqual(Restriction.objects.filter(restriction="Tilea Setting").count(), 0)
 
     def test_players_returns_members(self):

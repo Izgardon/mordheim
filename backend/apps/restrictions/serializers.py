@@ -4,12 +4,7 @@ from .models import Restriction
 
 
 class RestrictionSerializer(serializers.ModelSerializer):
-    def validate_type(self, value):
-        if value == "Setting":
-            raise serializers.ValidationError(
-                "Setting restrictions must be selected from the existing campaign settings."
-            )
-        return value
+    """A restriction as lists and warband payloads show it; nothing writes restrictions through the API (SEC-06)."""
 
     class Meta:
         model = Restriction

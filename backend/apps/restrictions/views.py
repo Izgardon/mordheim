@@ -1,4 +1,4 @@
-from rest_framework import permissions, status
+from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -9,6 +9,9 @@ from .serializers import RestrictionSerializer
 
 
 class RestrictionListView(APIView):
+    """The restrictions list. Read-only: the seeders write the book's rows (SEC-06 removed the POST, which let anyone
+    signed in add a row every campaign listed)."""
+
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
@@ -39,12 +42,3 @@ class RestrictionListView(APIView):
         restrictions = restrictions.filter(campaign__isnull=True)
         serializer = RestrictionSerializer(restrictions, many=True)
         return Response(serializer.data)
-
-    def post(self, request):
-        serializer = RestrictionSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        restriction = serializer.save()
-        return Response(
-            RestrictionSerializer(restriction).data,
-            status=status.HTTP_201_CREATED,
-        )
