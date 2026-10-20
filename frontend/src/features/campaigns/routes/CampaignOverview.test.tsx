@@ -1,7 +1,7 @@
 /**
  * The campaign overview as the app mounts it (layout, realtime provider, fake server): what it
- * shows, who is offered Start campaign and what starting does, the hidden bulletin tab, and the
- * requests a roster expand sends.
+ * shows, who is offered Start campaign and what starting does, the hidden bulletin tab, the
+ * requests a roster expand sends, and what the layout around it shows and listens to.
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -282,5 +282,39 @@ describe("Start campaign", () => {
       expect(screen.getByRole("dialog")).toHaveTextContent("Request failed (500)")
     );
     expect(screen.queryByRole("button", { name: "Start battle" })).not.toBeInTheDocument();
+  });
+});
+
+describe("CampaignLayout around the overview", () => {
+  it("lists Locations and Encampments in the side rail only when each is switched on", async () => {
+    routeCampaignShell({ campaign: campaignSummary({ enable_locations: true }) });
+
+    await openOverview();
+
+    expect(screen.getByRole("link", { name: "Locations" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Encampments" })).not.toBeInTheDocument();
+  });
+
+  it("shows the server's answer instead of the page when the campaign can't be read", async () => {
+    routeCampaignShell();
+    fakeApi.fail(CAMPAIGN_ROUTE, new ApiError("Not found", 404, { detail: "Not found" }));
+
+    renderCampaignRoute("/campaigns/1");
+
+    expect(await screen.findByText("Not found")).toBeInTheDocument();
+    expect(fakeApi.countOf(`GET ${campaignApi("players/")}`)).toBe(0);
+  });
+
+  it("listens to the campaign's chat and your notifications only: nothing tells it about a start, a toggle or a role change made elsewhere (CAMP-UX-04, CAMP-NEW-07, pinned; flips in PR C)", async () => {
+    routeCampaignShell();
+
+    await openOverview();
+
+    await waitFor(() =>
+      expect(fakeRealtime.channels()).toEqual([
+        "private-campaign-1-chat",
+        `private-user-${OWNER.id}-notifications`,
+      ])
+    );
   });
 });
