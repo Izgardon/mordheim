@@ -81,6 +81,16 @@ class ItemWriteTests(CatalogueTestCase):
         self.assertEqual([prop["name"] for prop in repriced.data["properties"]], ["Parry"])
         self.assertFalse(ItemAvailability.objects.filter(id=original).exists())
 
+    def test_an_items_save_is_written_and_read_as_save_after_its_range(self):
+        # IMP-85: the save_value column is "save" in every item payload, declared without a field named save
+        created = self.create_as(self.owner, ITEMS, "Buckler", type="Armour", subtype="Shield", save="6+")
+        edited = self.patch_as(self.owner, ITEMS.detail_url(created.data["id"]), {"save": "5+"})
+
+        keys = list(created.data)
+        self.assertEqual(keys[keys.index("range") + 1], "save")
+        self.assertEqual((created.data["save"], edited.data["save"]), ("6+", "5+"))
+        self.assertEqual(Item.objects.get(id=created.data["id"]).save_value, "5+")
+
     def test_an_item_can_be_moved_to_no_campaign_by_neither_create_nor_edit(self):
         created = self.post_as(self.owner, ITEMS.list_url(), {**ITEMS.body("Pike", self.campaign), "campaign": None})
         edited = self.patch_as(

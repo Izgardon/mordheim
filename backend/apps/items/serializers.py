@@ -1,6 +1,7 @@
 from typing import Any
 
 from rest_framework import serializers
+from rest_framework.fields import Field
 
 from apps.bestiary.models import BestiaryEntry
 from apps.core.catalogue.scope import CatalogueEntryField, CatalogueIdsField
@@ -11,6 +12,18 @@ from .models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemPro
 
 MAX_COST = 2_147_483_647  # the largest cost the column holds
 WEAPON_DEFAULTS = {"strength": "As user", "range": "Close combat"}
+
+
+def with_save(fields: dict[str, Field]) -> dict[str, Field]:
+    """`fields` with the item's "save" after its "range" (IMP-85). The column is `save_value`; declared in the class
+    body, a field named `save` reads as if it replaced Serializer.save() (it only works because DRF's metaclass pops
+    declared fields off the class, CAT-CQ-09)."""
+    ordered: dict[str, Field] = {}
+    for name, field in fields.items():
+        ordered[name] = field
+        if name == "range":
+            ordered["save"] = serializers.CharField(source="save_value", allow_null=True, required=False)
+    return ordered
 
 
 class ItemPropertySummarySerializer(serializers.ModelSerializer):
@@ -85,7 +98,6 @@ class ItemBestiaryEntrySummarySerializer(serializers.Serializer):
 class ItemSerializer(serializers.ModelSerializer):
     campaign_id = serializers.IntegerField(read_only=True)
     campaign_type_id = serializers.IntegerField(read_only=True)  # CAT-NEW-04: always null today
-    save = serializers.CharField(source="save_value", allow_null=True, required=False)  # type: ignore[assignment]
     properties = serializers.SerializerMethodField()
     availabilities = ItemAvailabilitySerializer(many=True, read_only=True)
     bestiary_entry = ItemBestiaryEntrySummarySerializer(read_only=True)
@@ -104,13 +116,15 @@ class ItemSerializer(serializers.ModelSerializer):
             "description",
             "strength",
             "range",
-            "save",
             "statblock",
             "properties",
             "availabilities",
             "bestiary_entry",
             "generated_effect_key",  # set on a house rule's clone, which can't be edited or deleted (BUG-51)
         )
+
+    def get_fields(self) -> dict[str, Field]:
+        return with_save(super().get_fields())
 
     def get_properties(self, obj):
         links = getattr(obj, "property_links", None)
@@ -137,7 +151,6 @@ class ItemWriteSerializer(serializers.ModelSerializer):
     """A custom item's create or edit. Linked ids are the book's or this campaign's (`context["campaign_id"]`,
     SEC-07); the campaign itself is never an input."""
 
-    save = serializers.CharField(source="save_value", allow_null=True, required=False)  # type: ignore[assignment]
     property_ids = CatalogueIdsField(rows=ItemProperty.objects.all(), required=False)
     availabilities = AvailabilityInputSerializer(many=True, required=False)
     bestiary_entry_id = CatalogueEntryField(
@@ -156,12 +169,14 @@ class ItemWriteSerializer(serializers.ModelSerializer):
             "description",
             "strength",
             "range",
-            "save",
             "statblock",
             "property_ids",
             "availabilities",
             "bestiary_entry_id",
         )
+
+    def get_fields(self) -> dict[str, Field]:
+        return with_save(super().get_fields())
 
     def validate_availabilities(self, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         links = [link for row in rows for link in row.get("restrictions", [])]

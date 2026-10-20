@@ -1,9 +1,10 @@
 """Catalogue entries as unit payloads show them: items, skills, specials, spells and the race."""
 
 from rest_framework import serializers
+from rest_framework.fields import Field
 
 from apps.items.models import Item, ItemPropertyLink
-from apps.items.serializers import ItemAvailabilitySerializer
+from apps.items.serializers import ItemAvailabilitySerializer, with_save
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
@@ -32,8 +33,10 @@ class ItemSummarySerializer(serializers.Serializer):
 
 class ItemDetailSerializer(serializers.ModelSerializer):
     properties = serializers.SerializerMethodField()
-    save = serializers.CharField(source="save_value", allow_null=True, required=False)  # type: ignore[assignment]
     availabilities = ItemAvailabilitySerializer(many=True, read_only=True)
+
+    def get_fields(self) -> dict[str, Field]:
+        return with_save(super().get_fields())  # "save" after "range" (IMP-85)
 
     def get_properties(self, obj):
         links = getattr(obj, "property_links", None)
@@ -52,7 +55,6 @@ class ItemDetailSerializer(serializers.ModelSerializer):
             "single_use",
             "strength",
             "range",
-            "save",
             "statblock",
             "properties",
             "availabilities",
