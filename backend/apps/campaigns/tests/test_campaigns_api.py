@@ -326,7 +326,8 @@ class CampaignApiTests(APITestCase):
         second_response = self._create_half_price_armour_rule(owner, campaign["id"], title="Half Price Armour Copy")
 
         self.assertEqual(first_response.status_code, 201)
-        self.assertEqual(second_response.status_code, 201)
+        self.assertEqual(second_response.status_code, 200)  # the rule that exists (BUG-52)
+        self.assertEqual(second_response.data["id"], first_response.data["id"])
         clones = Item.objects.filter(
             campaign_id=campaign["id"],
             generated_effect_key="half_price_armour",

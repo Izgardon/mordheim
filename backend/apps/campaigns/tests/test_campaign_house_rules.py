@@ -1,11 +1,13 @@
-"""House-rule items: the clones half-price armour and improved shields make (BUG-51; CAMP-TEST-15 to -17).
+"""House-rule items: the clones half-price armour and improved shields make (BUG-51, BUG-52, PERF-44; CAMP-TEST-14
+to -18).
 
 A rule with an item effect clones the base armour (or shields) into the campaign and points every owned copy at the
 clones; removing the rule points them back. The clones change only with their rule, the owned copies keep what was
 paid for them, and a clone that goes stale hands its copies back to its source before it is deleted.
 """
 
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, connection, transaction
+from django.test.utils import CaptureQueriesContext
 
 from apps.items.models import Item, ItemAvailability
 from apps.items.services import HALF_PRICE_ARMOUR_EFFECT_KEY, sync_half_price_armour_for_campaign
@@ -100,3 +102,61 @@ class HouseRuleItemTests(CampaignTestCase):
                 source_item=armour,
                 generated_effect_key=HALF,
             )
+
+
+class HouseRuleEffectTests(CampaignTestCase):
+    """One rule per effect (BUG-52, CAMP-TEST-18) and edits that leave the clones alone (PERF-44, CAMP-TEST-14)."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.armour = [base_armour("Light Armour", 20), base_armour("Heavy Armour", 50)]
+
+    def add_rule(self, effect_key: str = HALF, title: str = "Half price armour"):
+        return self.post_as(self.owner, self.url("rules/"), {"title": title, "effect_key": effect_key})
+
+    def clone_rows(self) -> list[tuple[int, int]]:
+        """(clone id, availability id) of every house-rule clone in the campaign."""
+        availabilities = ItemAvailability.objects.filter(item__campaign=self.campaign, item__generated_effect_key=HALF)
+        return sorted(availabilities.values_list("item_id", "id"))
+
+    def test_creating_an_effect_again_answers_the_rule_that_exists(self):
+        first = self.add_rule()
+        again = self.add_rule(title="Half price armour, again")
+
+        self.assertEqual((first.status_code, again.status_code), (201, 200))
+        self.assertEqual((again.data["id"], again.data["title"]), (first.data["id"], "Half price armour"))
+        self.assertEqual(self.get_as(self.player, self.url("rules/")).data[0]["id"], first.data["id"])
+        self.assertEqual(len(self.clone_rows()), 2)
+        plain = [self.post_as(self.owner, self.url("rules/"), {"title": f"No running {n}"}) for n in (1, 2)]
+        self.assertEqual([response.status_code for response in plain], [201, 201])  # rules without an effect
+
+    def test_a_title_edit_leaves_the_clones_alone(self):
+        # PERF-44: every PATCH reverted and re-synced, about 70 queries, with new clone and availability ids
+        rule = self.add_rule()
+        before = self.clone_rows()
+        self.client.force_authenticate(user=self.owner)
+
+        with CaptureQueriesContext(connection) as captured:
+            response = self.client.patch(self.url(f"rules/{rule.data['id']}/"), {"title": "Cheap plate"}, format="json")
+
+        self.assertEqual((response.status_code, response.data["title"]), (200, "Cheap plate"))
+        self.assertEqual(self.clone_rows(), before)
+        self.assertEqual(len(captured), 3)  # membership, rule, UPDATE (target <= 4)
+
+    def test_changing_the_effect_swaps_the_clones_and_a_taken_effect_is_refused(self):
+        rule = self.add_rule()
+        self.add_rule(effect_key="improved_shields", title="Shields")
+        url = self.url(f"rules/{rule.data['id']}/")
+
+        taken = self.patch_as(self.owner, url, {"effect_key": "improved_shields"})
+
+        self.assertEqual(
+            (taken.status_code, taken.data),
+            (400, {"detail": "This campaign already has a house rule with that effect.", "code": "duplicate_effect"}),
+        )
+        self.assertEqual(len(self.clone_rows()), 2)
+
+        cleared = self.patch_as(self.owner, url, {"effect_key": ""})
+
+        self.assertEqual(cleared.status_code, 200)
+        self.assertEqual(self.clone_rows(), [])

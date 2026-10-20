@@ -15,10 +15,17 @@ from django.db import DatabaseError
 from django.test import TransactionTestCase, override_settings
 from rest_framework.test import APIClient
 
-from apps.campaigns.models import Campaign, CampaignMembership, CampaignMembershipPermission, CampaignSettings
-from apps.campaigns.services import codes
+from apps.campaigns.models import (
+    Campaign,
+    CampaignHouseRule,
+    CampaignMembership,
+    CampaignMembershipPermission,
+    CampaignSettings,
+)
+from apps.campaigns.services import codes, house_rules
 from apps.campaigns.services.codes import seed_roles_and_codes
 from apps.core.testing import Rendezvous, run_concurrently
+from apps.items.models import Item, ItemAvailability
 
 from .campaign_support import make_user
 
@@ -141,3 +148,30 @@ class JoinRaceTests(CampaignTransactionTestCase):
         self.assertEqual(sorted(response.status_code for response in results), [201, 400])
         self.assertIn({"detail": "Already a member"}, [response.json() for response in results])
         self.assertEqual(CampaignMembership.objects.filter(campaign=self.campaign, user=player).count(), 1)
+
+
+class HouseRuleRaceTests(CampaignTransactionTestCase):
+    """The same effect rule posted twice at once (BUG-52, CAMP-TEST-18): both used to make a rule and a clone set."""
+
+    def test_two_posts_of_one_effect_make_one_rule_and_one_clone_set(self):
+        armour = Item.objects.create(name="Light Armour", type="Armour", subtype="Armour")
+        ItemAvailability.objects.create(item=armour, cost=20, rarity=8)
+        rendezvous = Rendezvous()
+        patcher = mock.patch.object(
+            house_rules, "_rule_with_effect", side_effect=rendezvous.before(house_rules._rule_with_effect)
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+        def poster() -> Any:
+            client = APIClient()
+            client.force_authenticate(user=self.owner)
+            body = {"title": "Half price armour", "effect_key": "half_price_armour"}
+            return lambda: client.post(f"/api/campaigns/{self.campaign.id}/rules/", body, format="json")
+
+        results = run_concurrently(poster(), poster())
+
+        self.assertEqual(sorted(response.status_code for response in results), [200, 201])
+        self.assertEqual(len({response.json()["id"] for response in results}), 1)
+        self.assertEqual(CampaignHouseRule.objects.filter(campaign=self.campaign).count(), 1)
+        self.assertEqual(Item.objects.filter(campaign=self.campaign, source_item=armour).count(), 1)

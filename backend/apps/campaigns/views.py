@@ -20,14 +20,6 @@ from apps.core.throttling import (
     CAMPAIGN_PING_THROTTLE_CLASSES,
     MethodScopedThrottleMixin,
 )
-from apps.items.services import (
-    HALF_PRICE_ARMOUR_EFFECT_KEY,
-    IMPROVED_SHIELDS_EFFECT_KEY,
-    revert_half_price_armour_for_campaign,
-    revert_improved_shields_for_campaign,
-    sync_half_price_armour_for_campaign,
-    sync_improved_shields_for_campaign,
-)
 from apps.realtime.services import send_campaign_chat_message, send_campaign_ping
 from apps.users.names import display_name
 from apps.warbands.models import Henchman, Hero, HiredSword, Warband
@@ -70,7 +62,7 @@ from .serializers import (
     MembershipRoleUpdateSerializer,
     PivotalMomentSerializer,
 )
-from .services import codes, removal
+from .services import codes, house_rules, removal
 from .services.campaigns import create_campaign, regenerate_join_code
 from .services.joining import join_campaign
 from .services.settings import may_update, update_campaign
@@ -290,24 +282,6 @@ def _campaign_top_killers_payload(campaign_id, limit=5):
         }
         for row in rows
     ]
-
-
-def _sync_house_rule_effect(campaign_id, effect_key):
-    if effect_key == HALF_PRICE_ARMOUR_EFFECT_KEY:
-        sync_half_price_armour_for_campaign(campaign_id)
-    elif effect_key == IMPROVED_SHIELDS_EFFECT_KEY:
-        sync_improved_shields_for_campaign(campaign_id)
-
-
-def _revert_house_rule_effect_if_unused(campaign_id, effect_key):
-    if effect_key not in (HALF_PRICE_ARMOUR_EFFECT_KEY, IMPROVED_SHIELDS_EFFECT_KEY):
-        return
-    if CampaignHouseRule.objects.filter(campaign_id=campaign_id, effect_key=effect_key).exists():
-        return
-    if effect_key == HALF_PRICE_ARMOUR_EFFECT_KEY:
-        revert_half_price_armour_for_campaign(campaign_id)
-    elif effect_key == IMPROVED_SHIELDS_EFFECT_KEY:
-        revert_improved_shields_for_campaign(campaign_id)
 
 
 class CampaignListCreateView(APIView):
@@ -1027,10 +1001,9 @@ class CampaignHouseRulesView(APIView):
 
         serializer = CampaignHouseRuleCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        with transaction.atomic():
-            rule = serializer.save(campaign_id=campaign_id)
-            _sync_house_rule_effect(campaign_id, rule.effect_key)
-        return Response(CampaignHouseRuleSerializer(rule).data, status=status.HTTP_201_CREATED)
+        rule, created = house_rules.create_rule(campaign_id, serializer.validated_data)  # one per effect (BUG-52)
+        answer_status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        return Response(CampaignHouseRuleSerializer(rule).data, status=answer_status)
 
 
 class CampaignHouseRuleDetailView(APIView):
@@ -1047,13 +1020,12 @@ class CampaignHouseRuleDetailView(APIView):
         if not rule:
             return Response({"detail": "Not found"}, status=404)
 
-        previous_effect_key = rule.effect_key
         serializer = CampaignHouseRuleCreateSerializer(rule, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        with transaction.atomic():
-            rule = serializer.save()
-            _revert_house_rule_effect_if_unused(campaign_id, previous_effect_key)
-            _sync_house_rule_effect(campaign_id, rule.effect_key)
+        try:  # the clones change only with the effect (PERF-44)
+            rule = house_rules.update_rule(rule, serializer.validated_data)
+        except Refused as refusal:
+            return refusal.response()
         return Response(CampaignHouseRuleSerializer(rule).data)
 
     def delete(self, request, campaign_id, rule_id):
@@ -1070,7 +1042,7 @@ class CampaignHouseRuleDetailView(APIView):
         effect_key = rule.effect_key
         with transaction.atomic():
             rule.delete()
-            _revert_house_rule_effect_if_unused(campaign_id, effect_key)
+            house_rules.revert_effect_if_unused(campaign_id, effect_key)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

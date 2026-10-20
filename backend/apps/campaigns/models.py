@@ -263,6 +263,13 @@ class CampaignHouseRule(models.Model):
     class Meta:
         db_table = "campaign_house_rule"
         ordering = ["created_at"]
+        constraints = [
+            models.UniqueConstraint(  # one rule per item effect in a campaign (BUG-52)
+                fields=["campaign", "effect_key"],
+                condition=models.Q(effect_key__isnull=False) & ~models.Q(effect_key=""),
+                name="campaign_house_rule_unique_effect",
+            )
+        ]
 
     def __str__(self):
         return f"{self.campaign_id}:{self.title}"
