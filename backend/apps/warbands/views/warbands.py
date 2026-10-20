@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.campaigns.models import CampaignSettings
-from apps.campaigns.permissions import get_membership
+from apps.campaigns.permissions import get_writable_membership
 from apps.restrictions.serializers import RestrictionSerializer
 from apps.warbands.access import check_backstory_change
 from apps.warbands.models import LedgerAction, Warband, WarbandResource
@@ -43,7 +43,7 @@ class WarbandListCreateView(APIView):
         serializer.is_valid(raise_exception=True)
         campaign_id = serializer.validated_data.get("campaign_id")
 
-        if not get_membership(request.user, campaign_id):
+        if not get_writable_membership(request.user, campaign_id):
             return Response({"detail": "Not found"}, status=404)
 
         if Warband.objects.filter(campaign_id=campaign_id, user=request.user).exists():

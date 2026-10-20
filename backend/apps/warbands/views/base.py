@@ -8,6 +8,7 @@ from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.request import Request
 from rest_framework.views import APIView
 
+from apps.campaigns.errors import CampaignArchived
 from apps.campaigns.models import CampaignMembership
 from apps.campaigns.permissions import get_membership
 from apps.warbands.access import WARBAND_RULES, warband_capabilities
@@ -18,7 +19,8 @@ class WarbandScopedView(APIView):
     """Loads the warband and the viewer's membership once and checks the method's rule before the handler.
 
     Answers as the hand-written checks did: anonymous 401, an unknown warband or a non-member 404 "Not
-    found", a member without the right 403 "Forbidden", all before the handler looks anything else up.
+    found", a write to a warband of an archived campaign 403 `campaign_archived` (decision 5), a member without
+    the right 403 "Forbidden", all before the handler looks anything else up.
     Methods the view doesn't handle, and OPTIONS, are left to DRF (405 and the metadata), as before.
     """
 
@@ -42,6 +44,8 @@ class WarbandScopedView(APIView):
         if membership is None:
             raise NotFound("Not found")
         self.warband, self.membership = warband, membership
+        if method != "GET" and warband.campaign.archived_at is not None:
+            raise CampaignArchived()
         if not WARBAND_RULES[self.rules[method]](request.user, warband, membership):
             raise PermissionDenied("Forbidden")
 

@@ -2,7 +2,7 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.permissions import get_membership, has_campaign_permission
+from apps.campaigns.permissions import get_membership, get_writable_membership, has_campaign_permission
 from apps.warbands.models import Warband
 
 from .models import (
@@ -58,7 +58,7 @@ class BestiaryEntryListView(APIView):
 
     def post(self, request):
         campaign_id = request.data.get("campaign_id")
-        membership = get_membership(request.user, campaign_id)
+        membership = get_writable_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
         if not has_campaign_permission(membership, "manage_bestiary"):
@@ -107,7 +107,7 @@ class BestiaryEntryDetailView(APIView):
         if not entry.campaign_id:
             return Response({"detail": "Forbidden"}, status=403)
 
-        membership = get_membership(request.user, entry.campaign_id)
+        membership = get_writable_membership(request.user, entry.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
         if not has_campaign_permission(membership, "manage_bestiary"):
@@ -132,7 +132,7 @@ class BestiaryEntryDetailView(APIView):
         if not entry.campaign_id:
             return Response({"detail": "Forbidden"}, status=403)
 
-        membership = get_membership(request.user, entry.campaign_id)
+        membership = get_writable_membership(request.user, entry.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
         if not has_campaign_permission(membership, "manage_bestiary"):
@@ -164,7 +164,7 @@ class WarbandBestiaryFavouriteListView(APIView):
         if not warband:
             return Response({"detail": "Not found"}, status=404)
 
-        membership = get_membership(request.user, warband.campaign_id)
+        membership = get_writable_membership(request.user, warband.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
 
@@ -189,7 +189,7 @@ class WarbandBestiaryFavouriteDeleteView(APIView):
         if not warband:
             return Response({"detail": "Not found"}, status=404)
 
-        membership = get_membership(request.user, warband.campaign_id)
+        membership = get_writable_membership(request.user, warband.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
 
@@ -288,7 +288,7 @@ class HiredSwordProfileListView(APIView):
 
     def post(self, request):
         campaign_id = request.data.get("campaign_id")
-        membership = get_membership(request.user, campaign_id)
+        membership = get_writable_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
         if not has_campaign_permission(membership, "manage_bestiary"):
@@ -367,7 +367,7 @@ class HiredSwordProfileDetailView(APIView):
         if not profile.campaign_id:
             return Response({"detail": "Forbidden"}, status=403)
 
-        membership = get_membership(request.user, profile.campaign_id)
+        membership = get_writable_membership(request.user, profile.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
         if not has_campaign_permission(membership, "manage_bestiary"):
@@ -424,7 +424,7 @@ class HiredSwordProfileDetailView(APIView):
         if not profile.campaign_id:
             return Response({"detail": "Forbidden"}, status=403)
 
-        membership = get_membership(request.user, profile.campaign_id)
+        membership = get_writable_membership(request.user, profile.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
         if not has_campaign_permission(membership, "manage_bestiary"):

@@ -11,7 +11,7 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.permissions import get_membership, get_membership_with_campaign
+from apps.campaigns.permissions import get_membership, get_writable_membership
 from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 from apps.users.names import display_name
 
@@ -35,7 +35,7 @@ class CampaignBattleReportedResultCreateView(APIView):
     throttle_classes = BATTLE_WRITE_THROTTLE_CLASSES
 
     def post(self, request, campaign_id):
-        membership = get_membership_with_campaign(request.user, campaign_id)
+        membership = get_writable_membership(request.user, campaign_id)  # an archived campaign: 403
         if not membership:
             return Response({"detail": "Not found"}, status=404)
         try:

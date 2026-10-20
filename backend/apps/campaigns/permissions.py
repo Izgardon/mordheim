@@ -9,6 +9,7 @@ from django.contrib.postgres.expressions import ArraySubquery
 from django.db.models import OuterRef, QuerySet
 
 from .constants import ADMIN, OWNER
+from .errors import CampaignArchived
 from .models import CampaignMembership, CampaignMembershipPermission
 
 IMPLICIT_PERMISSION_ROLES = (OWNER, ADMIN)  # these roles hold every campaign permission
@@ -30,6 +31,15 @@ def get_membership_with_campaign(user, campaign_id):
     """The membership with its campaign read in the same query (e.g. for its `in_progress`)."""
     rows = with_codes(CampaignMembership.objects.select_related("role", "campaign"))
     return rows.filter(campaign_id=campaign_id, user=user).first()
+
+
+def get_writable_membership(user, campaign_id):
+    """The membership for a write in the campaign, read with its campaign (one query, as above): None for a
+    non-member; CampaignArchived (403 campaign_archived) when the campaign is archived (decision 5)."""
+    membership = get_membership_with_campaign(user, campaign_id)
+    if membership is not None and membership.campaign.archived_at is not None:
+        raise CampaignArchived()
+    return membership
 
 
 def is_owner(membership):

@@ -22,6 +22,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.campaigns.errors import CampaignArchived
 from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 
 from ..models import Battle, BattleParticipant
@@ -117,6 +118,8 @@ class BattleScopedView(APIView):
         battle = battles.first()
         if battle is None or not is_member(battle):
             raise not_found()
+        if lock and getattr(battle, "campaign_archived_at", None) is not None:  # read-only (decision 5)
+            raise CampaignArchived()
         self.manages = manages_battles(battle)
         if not self.in_battle:
             if lock == LOCK_BATTLE and is_overdue(battle):

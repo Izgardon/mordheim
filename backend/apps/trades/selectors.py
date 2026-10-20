@@ -8,6 +8,7 @@ from django.db.models.functions import Cast
 from django.utils import timezone
 from rest_framework.exceptions import NotFound, PermissionDenied
 
+from apps.campaigns.errors import CampaignArchived
 from apps.campaigns.models import CampaignMembership
 
 from .models import TradeRequest
@@ -75,10 +76,15 @@ def get_trade_for_participant(
     return trade
 
 
-def require_member(user: Any, campaign_id: int) -> None:
-    """The campaign-level trade endpoints are for its members only: 404 for anyone else."""
-    if not CampaignMembership.objects.filter(campaign_id=campaign_id, user_id=user.id).exists():
+def require_member(user: Any, campaign_id: int, *, write: bool = False) -> None:
+    """The campaign-level trade endpoints are for its members only: 404 for anyone else. A write (a new request)
+    to an archived campaign is 403 campaign_archived (decision 5)."""
+    row = CampaignMembership.objects.filter(campaign_id=campaign_id, user_id=user.id).values("campaign__archived_at")
+    found = row.first()
+    if found is None:
         raise NotFound("Not found")
+    if write and found["campaign__archived_at"] is not None:
+        raise CampaignArchived()
 
 
 def _shown_as(status: str) -> Q:

@@ -6,9 +6,12 @@ everyone (403 `campaign_archived`) until he restores it. Reads go on.
 
 from typing import Any
 
+from django.utils import timezone
+
 from apps.battles.models import Battle, BattleEvent, BattleParticipant
 from apps.campaigns.errors import ARCHIVED_DETAIL
 from apps.campaigns.models import Campaign
+from apps.items.models import Item
 from apps.notifications.models import Notification
 from apps.trades.models import TradeRequest
 
@@ -152,3 +155,46 @@ class ArchiveClosingTests(ArchiveTestCase):
         )
         mine = BattleParticipant.objects.get(battle=battle, user=self.player)
         self.assertEqual((mine.status, mine.skipped_postbattle), (BattleParticipant.STATUS_CONFIRMED_POSTBATTLE, True))
+
+
+class ArchivedEverywhereTests(ArchiveTestCase):
+    """Warbands, battles, trades and the campaign's custom catalogue are read-only too (decision 5)."""
+
+    def test_writes_outside_the_campaign_routes_are_refused_and_reads_go_on(self):
+        battle = self.battle_in(Battle.STATUS_INVITING, {self.player: "invited", self.rival: "invited"})
+        item = Item.objects.create(campaign=self.campaign, name="Lucky Charm", type="Miscellaneous")
+        Campaign.objects.filter(id=self.campaign.id).update(archived_at=timezone.now())  # battle left open on purpose
+        campaign = self.campaign.id
+        warband = f"/api/warbands/{self.warband.id}/"
+        writes: tuple[tuple[Any, str, str, dict[str, Any] | None], ...] = (
+            (self.player, "patch", warband, {"name": "Friars"}),
+            (self.player, "delete", warband, None),
+            (self.player, "post", f"{warband}purchases/", {"items": []}),
+            (self.admin, "post", "/api/warbands/", {"name": "Late", "faction": "Mercenaries", "campaign_id": campaign}),
+            (self.player, "post", self.url("battles/"), {}),
+            (self.player, "post", self.url("battles/report-result/"), {}),
+            (self.player, "post", self.url(f"battles/{battle.id}/decline/"), {}),
+            (self.rival, "post", self.url("trade-requests/"), {"target_user_id": self.player.id}),
+            (self.player, "post", "/api/skills/", {"campaign_id": campaign, "name": "Dodge", "type": "Speed"}),
+            (self.owner, "patch", f"/api/items/{item.id}/", {"name": "Charm"}),
+            (self.owner, "delete", f"/api/items/{item.id}/", None),
+            (self.owner, "post", "/api/bestiary/", {"campaign_id": campaign, "name": "Rat Ogre", "type": "Monster"}),
+            (self.owner, "post", "/api/races/", {"campaign_id": campaign, "name": "Ogre"}),
+        )
+        for user, method, url, body in writes:
+            with self.subTest(write=f"{method} {url}"):
+                self.client.force_authenticate(user=user)
+                response = getattr(self.client, method)(url, body, format="json")
+                self.assertEqual((response.status_code, response.json()), (403, ARCHIVED))
+        self.assertEqual(self.status_of(battle), Battle.STATUS_INVITING)
+        for user, url in (
+            (self.player, warband),
+            (self.player, f"{warband}sheet/"),
+            (self.player, self.url("battles/")),
+            (self.player, self.url("trade-requests/")),
+            (self.player, f"/api/skills/?campaign_id={campaign}"),
+        ):
+            with self.subTest(read=url):
+                self.assertEqual(self.get_as(user, url).status_code, 200)
+        capabilities = self.get_as(self.player, f"{warband}sheet/").json()["capabilities"]
+        self.assertEqual(set(capabilities.values()), {False})

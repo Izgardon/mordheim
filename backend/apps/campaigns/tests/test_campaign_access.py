@@ -217,13 +217,12 @@ class CapabilityTruthTests(CampaignAccessFixture):
                     self.assertEqual(capabilities[name], allowed)
 
     def test_capabilities_match_what_an_archived_campaign_allows(self):
-        # decision 5: every write answers 403 campaign_archived but restore and delete (the owner's)
+        # decision 5: every write, in the campaign's warbands and catalogue too, answers 403 campaign_archived but
+        # restore and delete (the owner's)
         Campaign.objects.filter(id=self.campaign.id).update(archived_at=timezone.now())
         for actor in MEMBERS:
             capabilities = self.get_as(getattr(self, actor), self.url()).json()["capabilities"]
             for name, (method, template, body) in REPRESENTATIVE.items():
-                if template.startswith("/"):
-                    continue  # outside campaigns/<id>/
                 with self.subTest(actor=actor, capability=name):
                     allowed = 200 <= self.status_of(getattr(self, actor), method, template, body) < 300
                     self.assertEqual(capabilities[name], allowed)

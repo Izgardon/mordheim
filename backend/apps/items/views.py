@@ -3,7 +3,7 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.permissions import get_membership, has_campaign_permission
+from apps.campaigns.permissions import get_membership, get_writable_membership, has_campaign_permission
 from apps.restrictions.models import Restriction
 
 from .models import (
@@ -100,7 +100,7 @@ class ItemListView(APIView):
 
     def post(self, request):
         campaign_id = request.data.get("campaign_id")
-        membership = get_membership(request.user, campaign_id)
+        membership = get_writable_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
         if not has_campaign_permission(membership, "add_custom"):
@@ -149,7 +149,7 @@ class ItemDetailView(APIView):
         if not item.campaign_id:
             return Response({"detail": "Forbidden"}, status=403)
 
-        membership = get_membership(request.user, item.campaign_id)
+        membership = get_writable_membership(request.user, item.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
         if item.generated_effect_key:
@@ -186,7 +186,7 @@ class ItemDetailView(APIView):
         if not item.campaign_id:
             return Response({"detail": "Forbidden"}, status=403)
 
-        membership = get_membership(request.user, item.campaign_id)
+        membership = get_writable_membership(request.user, item.campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
         if item.generated_effect_key:
@@ -233,7 +233,7 @@ class ItemPropertyListView(APIView):
         if not campaign_id:
             return Response({"detail": "campaign_id is required"}, status=400)
 
-        membership = get_membership(request.user, campaign_id)
+        membership = get_writable_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
         if not has_campaign_permission(membership, "add_custom"):
