@@ -237,19 +237,19 @@ class ItemPropertyCreateTests(CatalogueTestCase):
 
 
 class RaceWriteTests(CatalogueTestCase):
-    def test_an_edit_can_move_a_race_to_another_campaign_or_into_the_book(self):
-        # Characterises current behaviour (BUG-147, pinned; flips in PR A): the race edit drops `campaign_id` but
-        # keeps `campaign`, a writable field of RaceCreateSerializer
+    def test_an_edit_cannot_move_a_race_to_another_campaign_or_into_the_book(self):
+        # BUG-147 (was pinned: the edit dropped `campaign_id` but kept `campaign`, a writable field, so a race could be
+        # moved anywhere; flipped in PR A: the campaign is no input, and an edit leaves it alone)
         moved = make_entry(RACES, "Halfling", campaign=self.campaign)
         booked = make_entry(RACES, "Gnome", campaign=self.campaign)
 
         to_elsewhere = self.patch_as(self.owner, RACES.detail_url(moved.id), {"campaign": self.elsewhere.id})
-        to_book = self.patch_as(self.owner, RACES.detail_url(booked.id), {"campaign": None})
+        to_book = self.patch_as(self.owner, RACES.detail_url(booked.id), {"campaign": None, "name": "Deep Gnome"})
 
-        self.assertEqual((to_elsewhere.status_code, to_elsewhere.data["campaign_id"]), (200, self.elsewhere.id))
-        self.assertEqual((to_book.status_code, to_book.data["campaign_id"]), (200, None))
-        self.assertIn("Gnome", [row["name"] for row in self.get_as(self.outsider, RACES.list_url()).json()])
-        self.assertEqual(Race.objects.get(id=moved.id).campaign_id, self.elsewhere.id)
+        self.assertEqual((to_elsewhere.status_code, to_elsewhere.data["campaign_id"]), (200, self.campaign.id))
+        self.assertEqual((to_book.status_code, to_book.data["campaign_id"], to_book.data["name"]), (200, self.campaign.id, "Deep Gnome"))  # fmt: skip
+        self.assertNotIn("Deep Gnome", [row["name"] for row in self.get_as(self.outsider, RACES.list_url()).json()])
+        self.assertEqual(Race.objects.get(id=moved.id).campaign_id, self.campaign.id)
 
     def test_a_race_is_created_in_the_campaign_named_by_campaign_id(self):
         response = self.post_as(self.player, RACES.list_url(), {**RACES.body("Elf", self.campaign), "campaign": self.elsewhere.id})  # fmt: skip

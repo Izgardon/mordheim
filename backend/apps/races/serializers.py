@@ -27,10 +27,12 @@ class RaceSerializer(serializers.ModelSerializer):
 
 
 class RaceCreateSerializer(serializers.ModelSerializer):
+    """A race's create or edit; the campaign is never an input (BUG-147: an edit could move a race to another
+    campaign, or into the book every campaign lists)."""
+
     class Meta:
         model = Race
         fields = (
-            "campaign",
             "name",
             "movement",
             "weapon_skill",

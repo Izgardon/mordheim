@@ -48,9 +48,7 @@ class RaceListView(APIView):
         membership = get_writable_membership(request.user, campaign_id)
         if not membership:
             return Response({"detail": "Not found"}, status=404)
-        data = request.data.copy()
-        data.pop("campaign_id", None)
-        serializer = RaceCreateSerializer(data=data)
+        serializer = RaceCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         with refusing_duplicates(DUPLICATE):
             race = serializer.save(campaign_id=campaign_id)
@@ -78,9 +76,7 @@ class RaceDetailView(APIView):
         if not (is_owner(membership) or is_admin(membership)):
             return Response({"detail": "Forbidden"}, status=403)
 
-        data = request.data.copy()
-        data.pop("campaign_id", None)
-        serializer = RaceCreateSerializer(race, data=data, partial=partial)
+        serializer = RaceCreateSerializer(race, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         with refusing_duplicates(DUPLICATE):
             serializer.save()
