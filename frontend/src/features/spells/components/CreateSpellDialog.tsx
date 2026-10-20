@@ -180,7 +180,7 @@ export default function CreateSpellDialog({
     }
 
     const trimmedDc = form.dc.trim();
-    const dcValue = trimmedDc ? Number(trimmedDc) : null;
+    const dcValue = trimmedDc ? Number(trimmedDc) : "";
     if (trimmedDc && Number.isNaN(dcValue)) {
       setFormError("Difficulty must be a number.");
       return;

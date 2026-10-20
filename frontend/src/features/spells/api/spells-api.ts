@@ -14,7 +14,8 @@ export type SpellCreatePayload = {
   name: string;
   type: string;
   description: string;
-  dc?: number | null;
+  /** The server stores the difficulty as text: "" is none, and null is refused. */
+  dc?: number | "";
   roll?: number | null;
 };
 

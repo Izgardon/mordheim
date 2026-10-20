@@ -6,6 +6,7 @@
 import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { ApiError } from "@/lib/api-client";
 import { gutterHex, spell } from "@/test/catalogue-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
@@ -20,6 +21,16 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
 }));
 
 const created = spell({ id: 951, campaign_id: 1, name: "Rat Swarm" });
+
+/** As the API answers: a spell's dc is text, so a blank difficulty is "" and a null dc is a 400. */
+const refusingNullDc =
+  (answer: (body: object) => unknown) =>
+  (body: { dc?: unknown }): unknown => {
+    if (body.dc === null) {
+      throw new ApiError("Bad Request", 400, { dc: ["This field may not be null."] });
+    }
+    return answer(body);
+  };
 
 beforeEach(() => {
   fakeApi.reset();
@@ -58,13 +69,18 @@ describe("AddSpellForm", () => {
     });
   });
 
-  it("create: sends dc and roll as null when left blank", async () => {
+  it("create: a blank difficulty is sent as an empty dc, which the API accepts, and roll as null", async () => {
+    fakeApi.on(
+      "POST /spells/",
+      refusingNullDc(() => created)
+    );
+    const onCreated = vi.fn();
     const user = setupUser();
     renderWithQueryClient(
       <AddSpellForm
         campaignId={1}
         typeOptions={["Lesser Magic"]}
-        onCreated={vi.fn()}
+        onCreated={onCreated}
         onCancel={vi.fn()}
       />
     );
@@ -75,7 +91,34 @@ describe("AddSpellForm", () => {
     await user.type(screen.getByPlaceholderText("Describe the spell."), "Rats.");
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    expect(fakeApi.bodyOf("POST /spells/")).toMatchObject({ dc: null, roll: null });
+    expect(fakeApi.bodyOf("POST /spells/")).toMatchObject({ dc: "", roll: null });
+    expect(onCreated).toHaveBeenCalledWith(created);
+    expect(screen.queryByText(/may not be null/)).not.toBeInTheDocument();
+  });
+
+  it("edit: clearing the difficulty sends an empty dc, which the API accepts", async () => {
+    fakeApi.on(
+      "PATCH /spells/950/",
+      refusingNullDc((body) => ({ ...gutterHex, ...body }))
+    );
+    const onUpdated = vi.fn();
+    const user = setupUser();
+    renderWithQueryClient(
+      <AddSpellForm
+        campaignId={1}
+        editingSpell={gutterHex}
+        typeOptions={["Lesser Magic"]}
+        onCreated={vi.fn()}
+        onUpdated={onUpdated}
+        onCancel={vi.fn()}
+      />
+    );
+
+    await user.clear(screen.getByPlaceholderText("0"));
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
+
+    expect(fakeApi.bodyOf("PATCH /spells/950/")).toMatchObject({ dc: "" });
+    expect(onUpdated).toHaveBeenCalledWith(expect.objectContaining({ id: 950, dc: "" }));
   });
 
   it("edit: PATCHes every field with dc and roll, and no campaign_id", async () => {
@@ -130,5 +173,28 @@ describe("CreateSpellDialog", () => {
       roll: null,
       campaign_id: 1,
     });
+  });
+
+  it("create: a blank difficulty is sent as an empty dc, which the API accepts", async () => {
+    fakeApi.on(
+      "POST /spells/",
+      refusingNullDc(() => created)
+    );
+    const onCreated = vi.fn();
+    const user = setupUser();
+    renderWithQueryClient(
+      <CreateSpellDialog campaignId={1} typeOptions={["Lesser Magic"]} onCreated={onCreated} />
+    );
+    await user.click(screen.getByRole("button", { name: "Add spell" }));
+    const dialog = screen.getByRole("dialog");
+
+    await user.type(within(dialog).getByPlaceholderText("Fireball"), "Rat Swarm");
+    await user.click(within(dialog).getByPlaceholderText("Search or add a class"));
+    await user.click(within(dialog).getByRole("button", { name: "Lesser Magic" }));
+    await user.type(within(dialog).getByPlaceholderText("Describe the spell."), "Rats.");
+    await user.click(within(dialog).getByRole("button", { name: "Add spell" }));
+
+    expect(fakeApi.bodyOf("POST /spells/")).toMatchObject({ dc: "", roll: null });
+    expect(onCreated).toHaveBeenCalledWith(created);
   });
 });
