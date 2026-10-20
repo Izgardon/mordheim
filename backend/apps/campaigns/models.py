@@ -147,6 +147,11 @@ class CampaignMessage(models.Model):
     username = models.CharField(max_length=150)
     body = models.TextField(max_length=2000)
     created_at = models.DateTimeField(auto_now_add=True)
+    # soft delete (decision 8): the post stays listed as "removed" by an owner or admin, or by its author
+    removed_at = models.DateTimeField(null=True, blank=True)
+    removed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="+", on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     class Meta:
         db_table = "campaign_message"
@@ -169,6 +174,11 @@ class CampaignBulletinEntry(models.Model):
     username = models.CharField(max_length=150)
     body = models.TextField(max_length=280)
     created_at = models.DateTimeField(auto_now_add=True)
+    # soft delete (decision 8): the post stays listed as "removed" by an owner or admin, or by its author
+    removed_at = models.DateTimeField(null=True, blank=True)
+    removed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="+", on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     class Meta:
         db_table = "campaign_bulletin"

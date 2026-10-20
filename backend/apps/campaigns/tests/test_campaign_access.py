@@ -27,6 +27,7 @@ from apps.campaigns.models import (
     CampaignEncampment,
     CampaignHouseRule,
     CampaignLocation,
+    CampaignMessage,
 )
 from apps.campaigns.views.base import CampaignScopedView
 from apps.items.models import Item
@@ -54,7 +55,7 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("POST", "active-battles/{battle}/cancel/", {}, (403, 200, 200, 200)),
     ("GET", "bulletin/", None, OK_ALL),
     ("POST", "bulletin/", {"body": "WTB a horse"}, (201, 201, 201, 201)),
-    ("DELETE", "bulletin/{note}/", None, (403, 403, 403, 403)),  # Rex's note: its author only
+    ("DELETE", "bulletin/{note}/", None, (403, 403, 204, 204)),  # Rex's note: its author, owners and admins
     ("GET", "encampments/", None, OK_ALL),
     ("POST", "encampments/", {"name": "Camp"}, (403, 201, 201, 201)),
     ("PATCH", "encampments/{camp}/", {"name": "Camp 2"}, (403, 200, 200, 200)),
@@ -80,6 +81,7 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("DELETE", "rules/{rule}/", None, (403, 204, 204, 204)),
     ("GET", "messages/", None, OK_ALL),
     ("POST", "messages/", {"body": "Hi"}, (201, 201, 201, 201)),
+    ("DELETE", "messages/{message}/", None, (403, 403, 204, 204)),
 ]
 
 # capability -> the request it promises will succeed (a path starting with "/" is outside campaigns/<id>/)
@@ -96,6 +98,7 @@ REPRESENTATIVE: dict[str, tuple[str, str, dict[str, Any] | None]] = {
     "archive": ("POST", "archive/", {}),
     "restore": ("POST", "restore/", {}),
     "leave": ("POST", "leave/", {}),
+    "remove_posts": ("DELETE", "messages/{message}/", None),
     "add_custom": ("POST", "/api/skills/", {"campaign_id": "{campaign}", "name": "Dodge", "type": "Speed"}),
     "manage_items": ("DELETE", "/api/items/{item}/", None),
     "manage_skills": ("DELETE", "/api/skills/{skill}/", None),
@@ -143,6 +146,7 @@ class CampaignAccessFixture(CampaignTestCase):
             "rival_warband": cls.rival_warband.id,
             "battle": battle.id,
             "note": note.id,
+            "message": CampaignMessage.objects.create(campaign=campaign, user=cls.rival, username="Rex", body="Hi").id,
             "camp": CampaignEncampment.objects.create(campaign=campaign, name="Old Camp").id,
             "place": CampaignLocation.objects.create(campaign=campaign, name="Old Ruin").id,
             "rule": CampaignHouseRule.objects.create(campaign=campaign, title="Old rule").id,

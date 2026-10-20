@@ -107,5 +107,14 @@ def send_campaign_chat_message(campaign_id: int, message) -> bool:
         "username": message.username,
         "body": message.body,
         "created_at": message.created_at.isoformat(),
+        "removed_at": None,
+        "removed_by": None,
     }
     return _trigger(get_campaign_chat_channel_name(campaign_id), "chat.message", payload)
+
+
+def send_campaign_chat_removed(campaign_id: int, message_id: int, removed_at: str) -> bool:
+    """`chat.removed`: an owner or admin removed the message; every member shows it as "removed by admin"
+    (decision 8)."""
+    payload = {"id": message_id, "campaign_id": campaign_id, "removed_at": removed_at, "removed_by": "admin"}
+    return _trigger(get_campaign_chat_channel_name(campaign_id), "chat.removed", payload)

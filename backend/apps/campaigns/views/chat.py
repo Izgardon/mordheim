@@ -1,4 +1,5 @@
-"""Campaign chat: any member reads it a page at a time and posts to it (posts are throttled)."""
+"""Campaign chat: any member reads it a page at a time and posts to it (posts are throttled); owners and admins
+remove a message (decision 8)."""
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -23,3 +24,13 @@ class CampaignMessagesView(MethodScopedThrottleMixin, CampaignScopedView):
     def post(self, request, campaign_id):
         message = chat.post(campaign_id, request.user, request.data.get("body", ""))
         return Response(CampaignMessageSerializer(message).data, status=status.HTTP_201_CREATED)
+
+
+class CampaignMessageDetailView(CampaignScopedView):
+    """DELETE: an owner or admin removes the message; everyone sees "removed by admin" (decision 8, CAMP-NEW-06)."""
+
+    rules = {"DELETE": "remove_posts"}
+
+    def delete(self, request, campaign_id, message_id):
+        chat.remove(campaign_id, message_id, request.user)
+        return Response(status=status.HTTP_204_NO_CONTENT)

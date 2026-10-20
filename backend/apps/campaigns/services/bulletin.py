@@ -1,8 +1,10 @@
-"""The campaign bulletin board: notes of up to 280 characters, newest first; only a note's author deletes it."""
+"""The campaign bulletin board: notes of up to 280 characters, newest first. Its author, an owner or an admin removes
+a note (decision 8): a soft delete, so it stays listed as removed (by its author, or "removed by admin")."""
 
 from typing import Any
 
 from django.db.models import QuerySet
+from django.utils import timezone
 
 from apps.users.names import display_name
 
@@ -22,5 +24,7 @@ def post(campaign_id: int, user: Any, body: str) -> CampaignBulletinEntry:
     )
 
 
-def delete(entry: CampaignBulletinEntry) -> None:
-    entry.delete()
+def remove(entry: CampaignBulletinEntry, by: Any) -> None:
+    """Remove the note for everyone (a second remove changes nothing)."""
+    rows = CampaignBulletinEntry.objects.filter(id=entry.id, removed_at__isnull=True)
+    rows.update(removed_at=timezone.now(), removed_by=by)

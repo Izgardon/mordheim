@@ -39,7 +39,7 @@ class CampaignBulletinView(CampaignScopedView):
 
 
 class CampaignBulletinDetailView(CampaignScopedView):
-    """DELETE: a note's author deletes it."""
+    """DELETE: a note's author, an owner or an admin removes it; it stays listed as removed (decision 8)."""
 
     rules = {"DELETE": "view"}  # then the author, once the note is found
 
@@ -48,7 +48,7 @@ class CampaignBulletinDetailView(CampaignScopedView):
         if not entry:
             return not_found()
         self.check_rule("delete_bulletin_entry", entry)
-        bulletin.delete(entry)
+        bulletin.remove(entry, request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

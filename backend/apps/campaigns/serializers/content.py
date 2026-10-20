@@ -109,21 +109,35 @@ class CampaignLocationWriteSerializer(serializers.ModelSerializer):
         return sanitize_rich_text(value)
 
 
-class CampaignMessageSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(source="user.id", read_only=True, allow_null=True)
+class RemovablePostSerializer(serializers.ModelSerializer):
+    """A chat message or bulletin note: once removed (decision 8) its body is gone and `removed_by` says by whom,
+    "author" or "admin" (an owner or admin, or a remover whose account is gone)."""
 
+    user_id = serializers.IntegerField(source="user.id", read_only=True, allow_null=True)
+    body = serializers.SerializerMethodField()
+    removed_by = serializers.SerializerMethodField()
+
+    def get_body(self, obj):
+        return "" if obj.removed_at else obj.body
+
+    def get_removed_by(self, obj):
+        if not obj.removed_at:
+            return None
+        return "author" if obj.removed_by_id is not None and obj.removed_by_id == obj.user_id else "admin"
+
+
+class CampaignMessageSerializer(RemovablePostSerializer):
     class Meta:
         model = CampaignMessage
-        fields = ("id", "campaign_id", "user_id", "username", "body", "created_at")
+        fields = ("id", "campaign_id", "user_id", "username", "body", "created_at", "removed_at", "removed_by")
 
 
-class CampaignBulletinEntrySerializer(serializers.ModelSerializer):
+class CampaignBulletinEntrySerializer(RemovablePostSerializer):
     campaign_id = serializers.IntegerField(read_only=True)
-    user_id = serializers.IntegerField(source="user.id", read_only=True, allow_null=True)
 
     class Meta:
         model = CampaignBulletinEntry
-        fields = ("id", "campaign_id", "user_id", "username", "body", "created_at")
+        fields = ("id", "campaign_id", "user_id", "username", "body", "created_at", "removed_at", "removed_by")
 
 
 class CampaignBulletinEntryCreateSerializer(serializers.ModelSerializer):

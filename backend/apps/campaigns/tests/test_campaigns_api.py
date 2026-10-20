@@ -1201,7 +1201,8 @@ class CampaignApiTests(APITestCase):
 
         delete_response = self.client.delete(f"/api/campaigns/{campaign['id']}/bulletin/{second_response.data['id']}/")
         self.assertEqual(delete_response.status_code, 204)
-        self.assertFalse(CampaignBulletinEntry.objects.filter(id=second_response.data["id"]).exists())
+        removed = CampaignBulletinEntry.objects.get(id=second_response.data["id"])  # a soft delete (decision 8)
+        self.assertEqual(removed.removed_by_id, player.id)
 
     def test_bulletin_entry_rejects_blank_or_over_limit_body(self):
         owner = self._create_user("owner@example.com", "Owner")

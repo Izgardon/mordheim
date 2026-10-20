@@ -112,7 +112,7 @@ class ChatTests(CampaignTestCase):
         self.assertEqual(self.get_as(self.outsider, self.url("messages/")).status_code, 404)
         self.assertEqual(self.post_as(self.outsider, self.url("messages/"), {"body": "Hi"}).status_code, 404)
         self.assertEqual(CampaignMessage.objects.count(), 1)
-        # CAMP-UX-08: no delete, not even for the owner (decision 8 adds "removed by admin" in PR C)
+        # the list takes no DELETE; owners and admins remove one message at a time (decision 8, test_campaign_moderation)
         self.assertEqual(self.delete_as(self.owner, self.url("messages/")).status_code, 405)
 
     @override_settings(EXTERNAL_DISPATCH_SYNC=True)
@@ -152,19 +152,22 @@ class BulletinTests(CampaignTestCase):
         self.assertEqual(listed[1]["body"], "Looking for a sling.")
         self.assertEqual(len(self.note(self.player, "x" * 280)["body"]), 280)
 
-    def test_only_the_author_deletes_a_note_and_the_delete_is_for_good(self):
-        # Characterises current behaviour (CAMP-UX-08, pinned; flips in PR C: decision 8, owner and admins soft-remove)
+    def test_the_author_removes_his_note_and_it_stays_listed_as_removed(self):
+        # CAMP-UX-08, decision 8: the author's delete used to be for good; it is soft now, with one removed shape
         note = self.note(self.player)
         url = self.url(f"bulletin/{note['id']}/")
-        for user, expected in ((self.owner, 403), (self.admin, 403), (self.rival, 403), (self.outsider, 404)):
+        for user, expected in ((self.rival, 403), (self.outsider, 404)):
             with self.subTest(user=user.first_name):
                 self.assertEqual(self.delete_as(user, url).status_code, expected)
-        self.assertTrue(CampaignBulletinEntry.objects.filter(id=note["id"]).exists())
+        self.assertIsNone(CampaignBulletinEntry.objects.get(id=note["id"]).removed_at)
 
         self.assertEqual(self.delete_as(self.player, url).status_code, 204)
 
-        self.assertFalse(CampaignBulletinEntry.objects.filter(id=note["id"]).exists())
-        self.assertEqual(self.delete_as(self.player, url).status_code, 404)
+        row = self.get_as(self.rival, self.url("bulletin/")).json()[0]
+        self.assertEqual((row["id"], row["body"], row["removed_by"]), (note["id"], "", "author"))
+        self.assertIsNotNone(row["removed_at"])
+        self.assertEqual(self.delete_as(self.player, url).status_code, 204)  # again: nothing changes
+        self.assertEqual(self.delete_as(self.player, self.url("bulletin/999999/")).status_code, 404)
 
     def test_only_members_read_and_post(self):
         self.assertEqual(self.get_as(self.outsider, self.url("bulletin/")).status_code, 404)
