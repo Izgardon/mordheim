@@ -13,9 +13,7 @@ import {
   listCampaignTradeRequests,
   updateCampaign,
 } from "../api/campaigns-api";
-import { listWarbandHeroes } from "../../warbands/api/warbands-api";
-import { listWarbandHenchmenGroups } from "../../warbands/api/warbands-henchmen";
-import { listWarbandHiredSwords } from "../../warbands/api/warbands-hiredswords";
+import { getWarbandRosterStats, type RosterStatsRow } from "../../warbands/api/warbands-core";
 
 // types
 import type {
@@ -44,6 +42,11 @@ export type RosterUnit = {
   leadership: number | null;
   armour_save: number | null;
 };
+
+/** A `roster-stats/` row as the roster's units table shows it, keyed by kind. */
+const toRosterUnit =
+  (prefix: string, category: RosterUnit["category"]) =>
+  ({ id, ...stats }: RosterStatsRow): RosterUnit => ({ id: `${prefix}-${id}`, category, ...stats });
 
 type UseCampaignOverviewParams = {
   campaignId: number;
@@ -258,61 +261,13 @@ export function useCampaignOverview({
     setSnapshotLoading((prev) => ({ ...prev, [warbandId]: true }));
     setSnapshotErrors((prev) => ({ ...prev, [warbandId]: "" }));
 
-    Promise.all([
-      listWarbandHeroes(warbandId),
-      listWarbandHenchmenGroups(warbandId),
-      listWarbandHiredSwords(warbandId),
-    ])
-      .then(([heroes, henchmenGroups, hiredSwords]) => {
+    // One request for the three kinds' stat lines (PERF-42).
+    getWarbandRosterStats(warbandId)
+      .then((stats) => {
         const units: RosterUnit[] = [
-          ...heroes.map((h) => ({
-            id: `hero-${h.id}`,
-            category: "Heroes" as const,
-            name: h.name,
-            unit_type: h.unit_type,
-            movement: h.movement,
-            weapon_skill: h.weapon_skill,
-            ballistic_skill: h.ballistic_skill,
-            strength: h.strength,
-            toughness: h.toughness,
-            wounds: h.wounds,
-            initiative: h.initiative,
-            attacks: h.attacks,
-            leadership: h.leadership,
-            armour_save: h.armour_save,
-          })),
-          ...henchmenGroups.map((g) => ({
-            id: `henchmen-${g.id}`,
-            category: "Henchmen" as const,
-            name: g.name,
-            unit_type: g.unit_type,
-            movement: g.movement,
-            weapon_skill: g.weapon_skill,
-            ballistic_skill: g.ballistic_skill,
-            strength: g.strength,
-            toughness: g.toughness,
-            wounds: g.wounds,
-            initiative: g.initiative,
-            attacks: g.attacks,
-            leadership: g.leadership,
-            armour_save: g.armour_save,
-          })),
-          ...hiredSwords.map((s) => ({
-            id: `hs-${s.id}`,
-            category: "Hired Swords" as const,
-            name: s.name,
-            unit_type: s.unit_type,
-            movement: s.movement,
-            weapon_skill: s.weapon_skill,
-            ballistic_skill: s.ballistic_skill,
-            strength: s.strength,
-            toughness: s.toughness,
-            wounds: s.wounds,
-            initiative: s.initiative,
-            attacks: s.attacks,
-            leadership: s.leadership,
-            armour_save: s.armour_save,
-          })),
+          ...stats.heroes.map(toRosterUnit("hero", "Heroes")),
+          ...stats.henchmen_groups.map(toRosterUnit("henchmen", "Henchmen")),
+          ...stats.hired_swords.map(toRosterUnit("hs", "Hired Swords")),
         ];
         setHeroSnapshots((prev) => ({ ...prev, [warbandId]: units }));
       })

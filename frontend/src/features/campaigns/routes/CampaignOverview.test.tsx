@@ -102,29 +102,30 @@ describe("CampaignOverview on a started campaign", () => {
     expect(screen.queryByText(/@example\.com/)).not.toBeInTheDocument();
   });
 
-  it("expands a roster row with three list requests, one per unit kind (PERF-42, pinned; flips in PR A)", async () => {
+  it("expands a roster row with one roster-stats request for every unit kind, and reuses it (PERF-42)", async () => {
     const user = setupUser();
     routeCampaignShell();
     const warbandId = PLAYER.warband!.id;
-    fakeApi.on(`GET /warbands/${warbandId}/heroes/`, [
-      {
-        id: 2,
-        name: "Black Fang",
-        unit_type: "Assassin Adept",
-        movement: 6,
-        weapon_skill: 4,
-        ballistic_skill: 3,
-        strength: 4,
-        toughness: 3,
-        wounds: 1,
-        initiative: 5,
-        attacks: 1,
-        leadership: 7,
-        armour_save: null,
-      },
-    ]);
-    fakeApi.on(`GET /warbands/${warbandId}/henchmen-groups/`, []);
-    fakeApi.on(`GET /warbands/${warbandId}/hired-swords/`, []);
+    const statLine = (id: number, name: string, unitType: string) => ({
+      id,
+      name,
+      unit_type: unitType,
+      movement: 5,
+      weapon_skill: 3,
+      ballistic_skill: 3,
+      strength: 3,
+      toughness: 3,
+      wounds: 1,
+      initiative: 4,
+      attacks: 1,
+      leadership: 7,
+      armour_save: null,
+    });
+    fakeApi.on(`GET /warbands/${warbandId}/roster-stats/`, {
+      heroes: [statLine(2, "Black Fang", "Assassin Adept")],
+      henchmen_groups: [statLine(5, "Night Runners", "Verminkin")],
+      hired_swords: [statLine(8, "Ogre Bodyguard", "Ogre")],
+    });
     await openOverview();
     fakeApi.clearRequests();
 
@@ -132,17 +133,15 @@ describe("CampaignOverview on a started campaign", () => {
     await user.click(row);
 
     expect(await screen.findByText("Black Fang")).toBeInTheDocument();
-    expect(fakeApi.calls()).toEqual([
-      `GET /warbands/${warbandId}/heroes/`,
-      `GET /warbands/${warbandId}/henchmen-groups/`,
-      `GET /warbands/${warbandId}/hired-swords/`,
-    ]);
+    expect(screen.getByText("Night Runners")).toBeInTheDocument();
+    expect(screen.getByText("Ogre Bodyguard")).toBeInTheDocument();
+    expect(fakeApi.calls()).toEqual([`GET /warbands/${warbandId}/roster-stats/`]);
 
     // Folding and unfolding again reuses what this mount loaded.
     await user.click(row);
     await user.click(row);
     expect(await screen.findByText("Black Fang")).toBeInTheDocument();
-    expect(fakeApi.calls()).toHaveLength(3);
+    expect(fakeApi.calls()).toHaveLength(1);
   });
 });
 
