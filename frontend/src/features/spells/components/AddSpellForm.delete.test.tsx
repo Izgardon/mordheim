@@ -84,10 +84,12 @@ describe("AddSpellForm: Delete", () => {
     expect(fakeApi.calls()).toEqual([]);
   });
 
-  it("shows a refused delete's reason in the confirm, which stays open, and not in the form behind it (BUG-148)", async () => {
+  it("shows what holds an entry in use in the confirm, which stays open with the entry still listed, and nothing in the form behind it (BUG-148, BUG-16)", async () => {
     const user = setupUser();
-    const detail = "Gutter Hex is known by 1 hero.";
-    fakeApi.fail(DELETE, new ApiError(detail, 409, { detail, code: "in_use" }));
+    const detail = "This spell is in use, so nothing was deleted.";
+    const usage = { units: 1, warbands: 1, stashes: 0, bestiary_entries: 0 };
+    fakeApi.fail(DELETE, new ApiError(detail, 409, { detail, code: "in_use", fields: {}, usage }));
+    const counts = "Used by 1 unit in 1 warband; nothing was deleted.";
     const { onDeleted, cachedNames } = renderForm();
 
     await user.click(screen.getByRole("button", { name: "Delete" }));
@@ -96,9 +98,9 @@ describe("AddSpellForm: Delete", () => {
     );
 
     const reason = await screen.findByRole("alert");
-    expect(reason).toHaveTextContent(detail);
+    expect(reason).toHaveTextContent(counts);
     expect(screen.getByRole("dialog", { name: "Delete spell" })).toContainElement(reason);
-    expect(screen.getAllByText(detail)).toHaveLength(1);
+    expect(screen.getAllByText(counts)).toHaveLength(1);
     expect(onDeleted).not.toHaveBeenCalled();
     expect(cachedNames()).toContain("Gutter Hex");
   });

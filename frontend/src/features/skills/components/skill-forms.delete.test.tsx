@@ -24,10 +24,13 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
 
 const SKILLS_KEY = queryKeys.campaign.catalogue(1, "skills");
 const DELETE = "DELETE /skills/900/";
-const IN_USE = new ApiError("Quick Hands is known by 3 heroes.", 409, {
-  detail: "Quick Hands is known by 3 heroes.",
+const IN_USE = new ApiError("This skill is in use, so nothing was deleted.", 409, {
+  detail: "This skill is in use, so nothing was deleted.",
   code: "in_use",
+  fields: {},
+  usage: { units: 3, warbands: 2, stashes: 0, bestiary_entries: 1 },
 });
+const IN_USE_TEXT = "Used by 3 units in 2 warbands, and by 1 bestiary entry; nothing was deleted.";
 
 function clientWithSkills() {
   const queryClient = createTestQueryClient();
@@ -84,7 +87,7 @@ describe("AddSkillForm: Delete", () => {
     expect(queryClient.getQueryState(SKILLS_KEY)?.isInvalidated).toBe(true);
   });
 
-  it("shows a refused delete's reason in the confirm, which stays open, and not in the form behind it (BUG-148)", async () => {
+  it("shows what holds an entry in use in the confirm, which stays open with the entry still listed, and nothing in the form behind it (BUG-148, BUG-16)", async () => {
     const user = setupUser();
     fakeApi.fail(DELETE, IN_USE);
     const { onDeleted, queryClient } = renderForm();
@@ -95,9 +98,9 @@ describe("AddSkillForm: Delete", () => {
     );
 
     const reason = await screen.findByRole("alert");
-    expect(reason).toHaveTextContent("Quick Hands is known by 3 heroes.");
+    expect(reason).toHaveTextContent(IN_USE_TEXT);
     expect(screen.getByRole("dialog", { name: "Delete skill" })).toContainElement(reason);
-    expect(screen.getAllByText("Quick Hands is known by 3 heroes.")).toHaveLength(1);
+    expect(screen.getAllByText(IN_USE_TEXT)).toHaveLength(1);
     expect(onDeleted).not.toHaveBeenCalled();
     expect(cachedNames(queryClient)).toContain("Quick Hands");
   });
@@ -149,7 +152,7 @@ describe("SkillFormDialog (edit mode): Delete", () => {
     expect(cachedNames(queryClient)).toEqual(["Strike to Injure"]);
   });
 
-  it("shows a refused delete's reason in the confirm, which stays open, and not in the form behind it (BUG-148)", async () => {
+  it("shows what holds an entry in use in the confirm, which stays open with the entry still listed, and nothing in the form behind it (BUG-148, BUG-16)", async () => {
     const user = setupUser();
     fakeApi.fail(DELETE, IN_USE);
     const { onDeleted } = await openDialog(user);
@@ -162,9 +165,9 @@ describe("SkillFormDialog (edit mode): Delete", () => {
     );
 
     const reason = await screen.findByRole("alert");
-    expect(reason).toHaveTextContent("Quick Hands is known by 3 heroes.");
+    expect(reason).toHaveTextContent(IN_USE_TEXT);
     expect(screen.getByRole("dialog", { name: "Delete skill" })).toContainElement(reason);
-    expect(screen.getAllByText("Quick Hands is known by 3 heroes.")).toHaveLength(1);
+    expect(screen.getAllByText(IN_USE_TEXT)).toHaveLength(1);
     expect(onDeleted).not.toHaveBeenCalled();
   });
 });

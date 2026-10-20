@@ -24,11 +24,14 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
 
 const ITEMS_KEY = queryKeys.campaign.catalogue(1, "items");
 const DELETE = "DELETE /items/240/";
-/** A refusal as apiRequest throws it: the standard body's `detail` is also the message. */
-const IN_USE = new ApiError("Rusty Cleaver is used by 2 units.", 409, {
-  detail: "Rusty Cleaver is used by 2 units.",
+/** The 409 for an item in use, as apiRequest throws it (`detail` is also its message). */
+const IN_USE = new ApiError("This item is in use, so nothing was deleted.", 409, {
+  detail: "This item is in use, so nothing was deleted.",
   code: "in_use",
+  fields: {},
+  usage: { units: 2, warbands: 1, stashes: 0, bestiary_entries: 0 },
 });
+const IN_USE_TEXT = "Used by 2 units in 1 warband; nothing was deleted.";
 
 /** A client holding the campaign's cached item list, as the Wargear page leaves it. */
 function clientWithItems() {
@@ -99,7 +102,7 @@ describe("AddItemForm: Delete", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
-  it("shows a refused delete's reason in the confirm, which stays open, and not in the form behind it (BUG-148)", async () => {
+  it("shows what holds an entry in use in the confirm, which stays open with the entry still listed, and nothing in the form behind it (BUG-148, BUG-16)", async () => {
     const user = setupUser();
     fakeApi.fail(DELETE, IN_USE);
     const { onDeleted, queryClient } = renderForm();
@@ -110,9 +113,9 @@ describe("AddItemForm: Delete", () => {
     );
 
     const reason = await screen.findByRole("alert");
-    expect(reason).toHaveTextContent("Rusty Cleaver is used by 2 units.");
+    expect(reason).toHaveTextContent(IN_USE_TEXT);
     expect(screen.getByRole("dialog", { name: "Delete item" })).toContainElement(reason);
-    expect(screen.getAllByText("Rusty Cleaver is used by 2 units.")).toHaveLength(1);
+    expect(screen.getAllByText(IN_USE_TEXT)).toHaveLength(1);
     expect(onDeleted).not.toHaveBeenCalled();
     expect(cachedNames(queryClient)).toContain("Rusty Cleaver");
 
@@ -170,7 +173,7 @@ describe("ItemFormDialog (edit mode): Delete", () => {
     expect(screen.queryByRole("dialog", { name: "Edit Wargear" })).toBeNull();
   });
 
-  it("shows a refused delete's reason in the confirm, which stays open, and not in the form behind it (BUG-148)", async () => {
+  it("shows what holds an entry in use in the confirm, which stays open with the entry still listed, and nothing in the form behind it (BUG-148, BUG-16)", async () => {
     const user = setupUser();
     fakeApi.fail(DELETE, IN_USE);
     const { onDeleted } = await openDialog(user);
@@ -183,9 +186,9 @@ describe("ItemFormDialog (edit mode): Delete", () => {
     );
 
     const reason = await screen.findByRole("alert");
-    expect(reason).toHaveTextContent("Rusty Cleaver is used by 2 units.");
+    expect(reason).toHaveTextContent(IN_USE_TEXT);
     expect(screen.getByRole("dialog", { name: "Delete item" })).toContainElement(reason);
-    expect(screen.getAllByText("Rusty Cleaver is used by 2 units.")).toHaveLength(1);
+    expect(screen.getAllByText(IN_USE_TEXT)).toHaveLength(1);
     expect(onDeleted).not.toHaveBeenCalled();
   });
 });
