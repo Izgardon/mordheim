@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createQueryWrapper, createTestQueryClient } from "@/test/query-test-utils";
 import { getCampaign } from "../api/campaigns-api";
 import { useCampaignCapabilities } from "../capabilities";
-import { useCampaignQuery, useSetCampaign } from "./useCampaignQuery";
+import { useCampaignQuery, useSetCampaign, writeCampaignAnswer } from "./useCampaignQuery";
 
 import type { CampaignSummary } from "../types/campaign-types";
 
@@ -68,5 +68,43 @@ describe("useCampaignQuery", () => {
     await waitFor(() => expect(result.current.query.data?.in_progress).toBe(true));
     expect(result.current.query.data?.permissions).toEqual(["add_custom", "manage_items"]);
     expect(result.current.query.data?.capabilities).toEqual(campaign.capabilities);
+  });
+});
+
+describe("writeCampaignAnswer", () => {
+  const key = ["campaign", 7, "detail"];
+
+  it("keeps the cached permissions and capabilities, reading nothing again", () => {
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(key, campaign);
+    const invalidate = vi.spyOn(queryClient, "invalidateQueries");
+
+    writeCampaignAnswer(queryClient, 7, {
+      ...campaign,
+      permissions: undefined,
+      capabilities: undefined,
+      name: "Renamed",
+    });
+
+    expect(queryClient.getQueryData<CampaignSummary>(key)).toMatchObject({
+      name: "Renamed",
+      permissions: campaign.permissions,
+      capabilities: campaign.capabilities,
+    });
+    expect(invalidate).not.toHaveBeenCalled();
+  });
+
+  it("reads the campaign again when the answer switches a page on or off (its flags depend on it)", () => {
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(key, { ...campaign, enable_encampments: false });
+    const invalidate = vi.spyOn(queryClient, "invalidateQueries");
+
+    writeCampaignAnswer(queryClient, 7, {
+      ...campaign,
+      capabilities: undefined,
+      enable_encampments: true,
+    });
+
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: key, exact: true });
   });
 });

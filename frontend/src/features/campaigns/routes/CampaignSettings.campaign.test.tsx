@@ -24,6 +24,8 @@ import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
 import { setupUser } from "@/test/user-event";
 
+import type { CampaignSummary } from "../types/campaign-types";
+
 vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
@@ -63,7 +65,11 @@ beforeEach(() => {
   auth.user = { id: OWNER.id, email: OWNER.email };
   const campaign = campaignSummary();
   routeCampaignShell({ campaign });
-  fakeApi.on(PATCH_CAMPAIGN, (body: unknown) => patchedCampaign(campaign, body));
+  fakeApi.on(PATCH_CAMPAIGN, (body: unknown) => {
+    // The server keeps the change: a later read of the campaign has it, with its capabilities.
+    fakeApi.on(`GET ${campaignApi()}`, campaignSummary(body as Partial<CampaignSummary>));
+    return patchedCampaign(campaign, body);
+  });
   fakeApi.on(`GET ${campaignApi("members/")}`, campaignMembers());
   fakeApi.on(`GET ${campaignApi("active-battles/")}`, []);
   fakeApi.on("GET /restrictions/?type=Setting", []);
@@ -186,6 +192,21 @@ describe("Campaign features", () => {
       { enable_encampments: true, enable_locations: false },
     ]);
     expect(screen.queryByRole("link", { name: "Locations" })).not.toBeInTheDocument();
+  });
+
+  it("reads the campaign again when a page is switched on, so its capability follows: the owner can add an encampment", async () => {
+    const user = setupUser();
+    fakeApi.on(`GET ${campaignApi("encampments/")}`, []);
+    fakeApi.on(`GET ${campaignApi("players/?fields=basic")}`, []);
+    await openCampaignTab(user);
+    const features = blockOf("Campaign features").parentElement!;
+
+    await user.click(screen.getByRole("checkbox", { name: "Enable encampments" }));
+    await user.click(within(features).getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(fakeApi.countOf(`GET ${campaignApi()}`)).toBe(2));
+    await user.click(await screen.findByRole("link", { name: "Encampments" }));
+
+    expect(await screen.findByRole("button", { name: "Add encampment" })).toBeInTheDocument();
   });
 });
 

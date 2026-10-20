@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
 
 // api
 import { getCampaign, listCampaignPermissions, updateCampaign } from "../api/campaigns-api";
@@ -41,26 +41,46 @@ export function usePermissionCatalogue(campaignId: number, { enabled }: { enable
   });
 }
 
-/** Replaces the cached campaign after a settings change, keeping the caller's permissions and flags. */
+/** The settings the viewer's capabilities depend on (a switched-off page grants nothing). */
+const CAPABILITY_SETTINGS = ["enable_encampments", "enable_locations"] as const;
+
+/**
+ * Writes a campaign answer (a PATCH, a new join code; later a campaign event) into the cached
+ * campaign. Answers carry neither the caller's permissions nor capabilities, so the cached ones
+ * are kept; when the answer switches a page on or off, the capabilities it gates are read again.
+ */
+export function writeCampaignAnswer(
+  queryClient: QueryClient,
+  campaignId: number,
+  answer: CampaignSummary
+) {
+  const key = queryKeys.campaign.detail(campaignId);
+  const previous = queryClient.getQueryData<CampaignSummary>(key);
+  queryClient.setQueryData<CampaignSummary>(key, {
+    ...answer,
+    permissions: answer.permissions ?? previous?.permissions,
+    capabilities: answer.capabilities ?? previous?.capabilities,
+  });
+  const gatesChanged = CAPABILITY_SETTINGS.some(
+    (setting) => Boolean(previous?.[setting]) !== Boolean(answer[setting])
+  );
+  if (previous && !answer.capabilities && gatesChanged) {
+    void queryClient.invalidateQueries({ queryKey: key, exact: true });
+  }
+}
+
+/** Replaces the cached campaign after a settings change (`writeCampaignAnswer`). */
 export function useSetCampaign(campaignId: number) {
   const queryClient = useQueryClient();
   return useCallback<Dispatch<SetStateAction<CampaignSummary | null>>>(
     (next) => {
-      queryClient.setQueryData(
-        queryKeys.campaign.detail(campaignId),
-        (previous: CampaignSummary | undefined) => {
-          const resolved = typeof next === "function" ? next(previous ?? null) : next;
-          if (!resolved) {
-            return previous;
-          }
-          // Update responses don't carry the caller's permissions or capabilities.
-          return {
-            ...resolved,
-            permissions: resolved.permissions ?? previous?.permissions,
-            capabilities: resolved.capabilities ?? previous?.capabilities,
-          };
-        }
+      const previous = queryClient.getQueryData<CampaignSummary>(
+        queryKeys.campaign.detail(campaignId)
       );
+      const resolved = typeof next === "function" ? next(previous ?? null) : next;
+      if (resolved) {
+        writeCampaignAnswer(queryClient, campaignId, resolved);
+      }
     },
     [campaignId, queryClient]
   );
