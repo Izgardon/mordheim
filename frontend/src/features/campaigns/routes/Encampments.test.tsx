@@ -171,7 +171,7 @@ describe("Encampments: requests", () => {
     expect(fakeApi.countOf(PLAYERS)).toBe(0);
   });
 
-  it("reads both again on every visit (CAMP-CQ-05, pinned; flips in PR B)", async () => {
+  it("reads both once: a revisit within the stale time uses the cached lists (CAMP-CQ-05)", async () => {
     const user = setupUser();
     await openEncampments();
 
@@ -180,8 +180,8 @@ describe("Encampments: requests", () => {
     await user.click(screen.getByRole("link", { name: "Encampments" }));
     await screen.findByRole("row", { name: /^Sailmakers' Row/ });
 
-    expect(fakeApi.countOf(ENCAMPMENTS)).toBe(2);
-    expect(fakeApi.countOf(PLAYER_NAMES)).toBe(2);
+    expect(fakeApi.countOf(ENCAMPMENTS)).toBe(1);
+    expect(fakeApi.countOf(PLAYER_NAMES)).toBe(1);
   });
 
   it("says the page is disabled and reads nothing when encampments are off", async () => {
