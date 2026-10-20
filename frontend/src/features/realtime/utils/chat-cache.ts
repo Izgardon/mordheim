@@ -36,6 +36,34 @@ export function chatMessagesFromPages(pages: ChatPage[]): CampaignMessage[] {
   return [...pages].reverse().flatMap((page) => [...page.messages].reverse());
 }
 
+/** Marks a message removed where it is (decision 8): its body goes, and it reads as removed. */
+export function markChatMessageRemoved(
+  queryClient: QueryClient,
+  campaignId: number,
+  removal: Pick<CampaignMessage, "id" | "removed_at" | "removed_by">
+) {
+  queryClient.setQueryData<ChatHistory>(
+    queryKeys.campaign.chat(campaignId),
+    (history: ChatHistory | undefined) =>
+      history && {
+        ...history,
+        pages: history.pages.map((page) => ({
+          ...page,
+          messages: page.messages.map((message) =>
+            message.id === removal.id
+              ? {
+                  ...message,
+                  body: "",
+                  removed_at: removal.removed_at,
+                  removed_by: removal.removed_by,
+                }
+              : message
+          ),
+        })),
+      }
+  );
+}
+
 /**
  * Puts a message (sent, or arrived live) at the end of the cached history, once. Nothing happens
  * while no window holds the history: it is read afresh when one opens.

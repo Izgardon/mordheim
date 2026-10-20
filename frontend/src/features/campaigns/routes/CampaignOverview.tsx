@@ -28,7 +28,11 @@ import type { CampaignLayoutContext } from "./CampaignLayout";
 
 type OverviewTab = "overview" | "bulletin";
 
-const overviewTabs = [{ id: "overview" as const, label: "Overview" }] as const;
+// The bulletin is switched on as it is (CAMP-TWEAK-06); its content waits for its design.
+const overviewTabs = [
+  { id: "overview" as const, label: "Overview" },
+  { id: "bulletin" as const, label: "Bulletin" },
+] as const;
 
 const resolveOverviewTab = (value: string | null): OverviewTab | null =>
   value === "bulletin" ? "bulletin" : value === "overview" ? "overview" : null;
@@ -84,6 +88,8 @@ export default function CampaignOverview() {
         deletingBulletinEntryIds={overview.deletingBulletinEntryIds}
         onCreateBulletinEntry={overview.handleCreateBulletinEntry}
         onDeleteBulletinEntry={overview.handleDeleteBulletinEntry}
+        canRemovePosts={campaignCapabilities(campaign).remove_posts}
+        canPost={!isArchived(campaign)}
       />
     );
 
@@ -92,7 +98,7 @@ export default function CampaignOverview() {
       <PageHeader
         title={campaign.name}
         tabs={overviewTabs}
-        activeTab={activeTab === "bulletin" ? "overview" : activeTab}
+        activeTab={activeTab}
         onTabChange={handleTabChange}
       />
       <div className="space-y-4 px-2 sm:space-y-6 sm:px-0">
@@ -128,8 +134,8 @@ export default function CampaignOverview() {
         {isMobile ? (
           <TabbedCard
             tabs={overviewTabs}
-            activeTab="overview"
-            onTabChange={() => handleTabChange("overview")}
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
             mobileTabsShowDivider
             className="pb-6"
             contentClassName="space-y-4 pt-2"

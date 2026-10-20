@@ -176,7 +176,7 @@ describe("CampaignOverview roster semantics", () => {
 });
 
 describe("CampaignOverview tabs", () => {
-  it("shows the Overview tab alone; ?tab=bulletin opens the bulletin while the header says Overview (CAMP-UX-05, pinned; flips in PR C)", async () => {
+  it("shows the Overview and Bulletin tabs; ?tab=bulletin opens the bulletin with its own tab marked (CAMP-UX-05, CAMP-TWEAK-06)", async () => {
     routeCampaignShell();
     fakeApi.on(`GET ${campaignApi("bulletin/")}`, [
       {
@@ -196,8 +196,8 @@ describe("CampaignOverview tabs", () => {
     expect(await screen.findByText("Wanted: one rope, slightly used.")).toBeInTheDocument();
     const header = screen.getByRole("banner");
     const tabs = within(header).getAllByRole("button");
-    expect(tabs.map((tab) => tab.textContent)).toEqual(["Overview"]);
-    expect(tabs[0]).toHaveAttribute("data-active", "true");
+    expect(tabs.map((tab) => tab.textContent)).toEqual(["Overview", "Bulletin"]);
+    expect(tabs[1]).toHaveAttribute("data-active", "true");
     expect(screen.queryByRole("heading", { name: /^Roster/ })).not.toBeInTheDocument();
   });
 

@@ -1,11 +1,17 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 
-import { sendCampaignMessage } from "@/features/campaigns/api/campaigns-api";
+import { removeCampaignMessage, sendCampaignMessage } from "@/features/campaigns/api/campaigns-api";
+import { useCampaignChatRemovals } from "@/lib/realtime";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { queryKeys } from "@/lib/query-keys";
 import { useCampaignChat } from "./useCampaignChat";
-import { appendChatMessage, chatHistoryQuery, chatMessagesFromPages } from "../utils/chat-cache";
+import {
+  appendChatMessage,
+  chatHistoryQuery,
+  chatMessagesFromPages,
+  markChatMessageRemoved,
+} from "../utils/chat-cache";
 
 /**
  * The open chat window (BUG-20): the history as an infinite query read while the window is open
@@ -81,6 +87,21 @@ export function useChatWindow(campaignId: number, isOpen: boolean) {
     });
   }, [addMessageListener, campaignId, isOpen, queryClient, scrollToBottom]);
 
+  // A removal made elsewhere shows at once while the window is open (CAMP-NEW-06).
+  useCampaignChatRemovals(isOpen ? campaignId : null, (removal) =>
+    markChatMessageRemoved(queryClient, campaignId, removal)
+  );
+
+  /** An owner or admin removes a message; it stays in place as "removed by admin". */
+  const removeMessage = async (messageId: number) => {
+    await removeCampaignMessage(campaignId, messageId);
+    markChatMessageRemoved(queryClient, campaignId, {
+      id: messageId,
+      removed_at: new Date().toISOString(),
+      removed_by: "admin",
+    });
+  };
+
   const { fetchNextPage, hasNextPage, isFetching, isFetchNextPageError, refetch } = history;
   const handleScroll = useCallback(() => {
     const list = listRef.current;
@@ -130,5 +151,6 @@ export function useChatWindow(campaignId: number, isOpen: boolean) {
     isSending,
     sendError,
     handleSend,
+    removeMessage,
   };
 }

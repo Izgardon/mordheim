@@ -12,6 +12,7 @@ import {
   OWNER,
   PLAYER,
   campaignApi,
+  campaignFor,
   chatMessage,
   routeCampaignShell,
 } from "@/test/campaign-fixtures";
@@ -188,5 +189,62 @@ describe("Campaign chat window", () => {
     expect(await within(dialog).findByText("Hello all")).toBeInTheDocument();
     expect(within(dialog).getByText("Player 12")).toBeInTheDocument();
     expect(within(dialog).queryByText(/@example\.com/)).not.toBeInTheDocument();
+  });
+});
+
+describe("Removing chat messages (decision 8, CAMP-NEW-06)", () => {
+  it("lets an owner remove a message after a confirm; it stays in place as removed by admin", async () => {
+    const user = setupUser();
+    fakeApi.on(`DELETE ${campaignApi("messages/1/")}`, undefined);
+    await openCampaignPage();
+    await user.click(chatButton());
+    const dialog = screen.getByRole("dialog", { name: "Campaign Chat" });
+    await within(dialog).findByText("Ready when you are");
+
+    await user.click(within(dialog).getByRole("button", { name: "Remove message from Mira" }));
+    const confirm = screen.getByRole("dialog", { name: "Remove message" });
+    expect(confirm).toHaveTextContent("removed by admin");
+    await user.click(within(confirm).getByRole("button", { name: "Remove" }));
+
+    expect(await within(dialog).findByText("removed by admin")).toBeInTheDocument();
+    expect(within(dialog).queryByText("Ready when you are")).toBeNull();
+    expect(fakeApi.countOf(`DELETE ${campaignApi("messages/1/")}`)).toBe(1);
+  });
+
+  it("offers a player no Remove, and shows removed posts muted, with no body", async () => {
+    const user = setupUser();
+    routeCampaignShell({ campaign: campaignFor("player"), viewer: PLAYER });
+    fakeApi.on(MESSAGES, [
+      chatMessage(1, PLAYER, "", { removed_at: "2026-10-19T10:00:00Z", removed_by: "admin" }),
+      chatMessage(2, OWNER, "Still here"),
+    ]);
+    await openCampaignPage();
+    await user.click(chatButton());
+    const dialog = screen.getByRole("dialog", { name: "Campaign Chat" });
+
+    expect(await within(dialog).findByText("Still here")).toBeInTheDocument();
+    expect(within(dialog).getByText("removed by admin")).toBeInTheDocument();
+    expect(within(dialog).queryByRole("button", { name: /^Remove message/ })).toBeNull();
+  });
+
+  it("shows a removal made elsewhere at once (chat.removed)", async () => {
+    const user = setupUser();
+    await openCampaignPage();
+    await user.click(chatButton());
+    const dialog = screen.getByRole("dialog", { name: "Campaign Chat" });
+    await within(dialog).findByText("Ready when you are");
+
+    act(() =>
+      fakeRealtime.emit(CHAT_CHANNEL, "chat.removed", {
+        id: 1,
+        campaign_id: 1,
+        removed_at: "2026-10-19T10:00:00Z",
+        removed_by: "admin",
+      })
+    );
+
+    expect(await within(dialog).findByText("removed by admin")).toBeInTheDocument();
+    expect(within(dialog).queryByText("Ready when you are")).toBeNull();
+    expect(fakeApi.countOf(MESSAGES)).toBe(1);
   });
 });

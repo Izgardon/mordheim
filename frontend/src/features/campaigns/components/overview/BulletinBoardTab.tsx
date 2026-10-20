@@ -1,14 +1,19 @@
 import { useState, type FormEvent } from "react";
 
-import { Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 
-import wantedPosterImage from "@/assets/containers/wanted_poster.png";
+import wantedPosterImage from "@/assets/containers/wanted_poster.webp";
 import { Button } from "@/components/ui/button";
 import { CardBackground } from "@/components/ui/card-background";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
+import BulletinEntryItem from "./BulletinEntryItem";
 
-import type { CampaignBulletinEntry, CampaignTopKiller } from "../../types/campaign-types";
+import type {
+  CampaignBulletinEntry,
+  CampaignTopKiller,
+  PostRemovedBy,
+} from "../../types/campaign-types";
 
 type BulletinBoardTabProps = {
   isTopKillersLoading: boolean;
@@ -21,7 +26,11 @@ type BulletinBoardTabProps = {
   isCreatingBulletinEntry: boolean;
   deletingBulletinEntryIds: number[];
   onCreateBulletinEntry: (body: string) => Promise<unknown>;
-  onDeleteBulletinEntry: (entryId: number) => Promise<unknown>;
+  onDeleteBulletinEntry: (entryId: number, removedBy: PostRemovedBy) => Promise<unknown>;
+  /** `capabilities.remove_posts`: owners and admins remove anyone's note (decision 8). */
+  canRemovePosts?: boolean;
+  /** False in an archived campaign: no new notes. */
+  canPost?: boolean;
 };
 
 function BoardSkeleton() {
@@ -95,6 +104,8 @@ export default function BulletinBoardTab({
   deletingBulletinEntryIds,
   onCreateBulletinEntry,
   onDeleteBulletinEntry,
+  canRemovePosts = false,
+  canPost = true,
 }: BulletinBoardTabProps) {
   const [draft, setDraft] = useState("");
   const [isComposerOpen, setIsComposerOpen] = useState(false);
@@ -133,20 +144,22 @@ export default function BulletinBoardTab({
                 >
                   Bulletin Board
                 </h2>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="shrink-0"
-                  onClick={() => setIsComposerOpen((prev) => !prev)}
-                  aria-expanded={isComposerOpen}
-                  aria-controls="campaign-bulletin-composer"
-                >
-                  <Plus className="h-4 w-4" />
-                  {isComposerOpen ? "Close" : "Add Note"}
-                </Button>
+                {canPost ? (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="shrink-0"
+                    onClick={() => setIsComposerOpen((prev) => !prev)}
+                    aria-expanded={isComposerOpen}
+                    aria-controls="campaign-bulletin-composer"
+                  >
+                    <Plus className="h-4 w-4" />
+                    {isComposerOpen ? "Close" : "Add Note"}
+                  </Button>
+                ) : null}
               </div>
 
-              {isComposerOpen ? (
+              {isComposerOpen && canPost ? (
                 <form
                   id="campaign-bulletin-composer"
                   onSubmit={handleSubmit}
@@ -182,41 +195,17 @@ export default function BulletinBoardTab({
 
               <div className="campaign-bulletin-scroll scrollbar-hidden-mobile min-h-0 flex-1 overflow-y-auto pr-1">
                 <ol className="space-y-2">
-                  {bulletinEntries.map((entry, index) => {
-                    const isOwnEntry = Boolean(user?.id && entry.user_id === user.id);
-                    const isDeleting = deletingBulletinEntryIds.includes(entry.id);
-
-                    return (
-                      <li
-                        key={entry.id}
-                        className={cn(
-                          "border-b border-[#6b4724]/55 px-1 py-2 last:border-b-0",
-                          index === 0 && "pt-0"
-                        )}
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0 flex-1">
-                            <p className="whitespace-pre-wrap break-words text-sm leading-6 text-[#f2dfbf]">
-                              {entry.body}
-                            </p>
-                          </div>
-                          {isOwnEntry ? (
-                            <button
-                              type="button"
-                              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[#6f4b29]/65 bg-black/15 text-[#d8b17b] transition hover:border-[#9a6f3d] hover:text-[#f0d3a4]"
-                              aria-label={`Delete bulletin note ${entry.id}`}
-                              disabled={isDeleting}
-                              onClick={() => {
-                                void onDeleteBulletinEntry(entry.id).catch(() => undefined);
-                              }}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          ) : null}
-                        </div>
-                      </li>
-                    );
-                  })}
+                  {bulletinEntries.map((entry, index) => (
+                    <BulletinEntryItem
+                      key={entry.id}
+                      entry={entry}
+                      isFirst={index === 0}
+                      isOwn={Boolean(user?.id && entry.user_id === user.id)}
+                      canRemove={canRemovePosts || Boolean(user?.id && entry.user_id === user.id)}
+                      isRemoving={deletingBulletinEntryIds.includes(entry.id)}
+                      onRemove={onDeleteBulletinEntry}
+                    />
+                  ))}
                 </ol>
               </div>
             </div>

@@ -15,33 +15,20 @@ import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import { useChatWindow } from "../hooks/useChatWindow";
 
-import type { CampaignMessage } from "@/features/campaigns/types/campaign-types";
+import { useCampaignCapabilities } from "@/features/campaigns/capabilities";
+import ChatMessageItem from "./ChatMessageItem";
 
 type Props = {
   campaignId: number;
   className?: string;
 };
 
-function ChatMessage({ message, isOwn }: { message: CampaignMessage; isOwn: boolean }) {
-  return (
-    <div className={cn("flex flex-col gap-0.5", isOwn ? "items-end" : "items-start")}>
-      <span className="px-1 text-[0.65rem] text-muted-foreground">{message.username}</span>
-      <div
-        className={cn(
-          "max-w-[75%] break-words rounded-2xl px-3 py-2 text-sm",
-          isOwn ? "bg-primary/20 text-primary-foreground" : "surface-inline text-foreground"
-        )}
-      >
-        {message.body}
-      </div>
-    </div>
-  );
-}
-
 export default function CampaignChatMenu({ campaignId, className }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const { user: currentUser } = useAppStore();
   const chat = useChatWindow(campaignId, isOpen);
+  // Owners and admins remove posts (decision 8); read from the campaign the layout loaded.
+  const canRemove = useCampaignCapabilities(campaignId, { read: false }).remove_posts;
   const { messages, isLoading, loadError, unread } = chat;
   const handleOpenChange = (open: boolean) => {
     if (open) {
@@ -104,10 +91,12 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
             <EmptyState>No messages yet. Say something!</EmptyState>
           ) : null}
           {messages.map((message) => (
-            <ChatMessage
+            <ChatMessageItem
               key={message.id}
               message={message}
               isOwn={currentUser?.id === message.user_id}
+              canRemove={canRemove}
+              onRemove={chat.removeMessage}
             />
           ))}
         </div>

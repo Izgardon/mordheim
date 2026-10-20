@@ -14,7 +14,11 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { queryKeys } from "@/lib/query-keys";
 
 // types
-import type { CampaignBulletinEntry, CampaignTopKiller } from "../../types/campaign-types";
+import type {
+  CampaignBulletinEntry,
+  CampaignTopKiller,
+  PostRemovedBy,
+} from "../../types/campaign-types";
 
 const NO_ENTRIES: CampaignBulletinEntry[] = [];
 const NO_KILLERS: CampaignTopKiller[] = [];
@@ -47,13 +51,23 @@ export function useBulletinBoard(campaignId: number, isOpen: boolean) {
     }
   };
 
-  const handleDeleteBulletinEntry = async (entryId: number) => {
+  const handleDeleteBulletinEntry = async (entryId: number, removedBy: PostRemovedBy = "admin") => {
     setDeletingBulletinEntryIds((prev) => [...prev, entryId]);
     setBulletinActionError("");
     try {
       await deleteCampaignBulletinEntry(campaignId, entryId);
+      // Soft (decision 8): the note stays in place, removed by its author or by an admin.
       updateCachedList<CampaignBulletinEntry>(queryClient, bulletinKey, (prev) =>
-        prev.filter((entry) => entry.id !== entryId)
+        prev.map((entry) =>
+          entry.id === entryId
+            ? {
+                ...entry,
+                body: "",
+                removed_at: new Date().toISOString(),
+                removed_by: removedBy,
+              }
+            : entry
+        )
       );
     } catch (errorResponse) {
       setBulletinActionError(getErrorMessage(errorResponse, "Unable to remove bulletin note"));
