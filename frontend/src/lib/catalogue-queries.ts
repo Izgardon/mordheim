@@ -102,6 +102,8 @@ export function useCatalogue<K extends CatalogueKind>(
     data: (query.data ?? NO_ENTRIES) as CatalogueEntry<K>[],
     isLoading: query.isLoading,
     error,
+    /** Reads the list again, e.g. from a Retry beside its error. */
+    refetch: query.refetch,
   };
 }
 
