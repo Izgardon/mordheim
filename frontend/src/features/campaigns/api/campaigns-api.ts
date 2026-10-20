@@ -55,6 +55,11 @@ export function updateCampaign(campaignId: number, payload: CampaignUpdatePayloa
   });
 }
 
+/** A new join code for the campaign (owners and admins); the old one stops working at once. */
+export function regenerateJoinCode(campaignId: number) {
+  return apiRequest<CampaignSummary>(`/campaigns/${campaignId}/join-code/`, { method: "POST" });
+}
+
 export function listCampaignPlayers(campaignId: number) {
   return apiRequest<CampaignPlayer[]>(`/campaigns/${campaignId}/players/`, {});
 }
