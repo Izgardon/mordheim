@@ -91,14 +91,15 @@ describe("CampaignOverview on a started campaign", () => {
     expect(startCampaignButton()).not.toBeInTheDocument();
   });
 
-  it("shows the email today's server sends as a nameless member's roster name (SEC-13, pinned; flips in PR A)", async () => {
+  it("shows a nameless member by the server's display name, never an email (SEC-13)", async () => {
     routeCampaignShell();
 
     await openOverview();
 
     const row = screen.getByRole("button", { name: new RegExp(NAMELESS.name) });
-    expect(row).toHaveTextContent("nameless@example.com");
+    expect(row).toHaveTextContent("Player 12");
     expect(row).toHaveTextContent("Unassigned");
+    expect(screen.queryByText(/@example\.com/)).not.toBeInTheDocument();
   });
 
   it("expands a roster row with three list requests, one per unit kind (PERF-42, pinned; flips in PR A)", async () => {

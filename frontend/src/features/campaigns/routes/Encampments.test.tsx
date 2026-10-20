@@ -146,14 +146,15 @@ describe("Encampments: adding and editing, as the owner", () => {
     });
   });
 
-  it("shows the email today's server sends as a nameless owner's name, in the list and the owner picker (SEC-13, pinned; flips in PR A)", async () => {
+  it("shows a nameless owner by the server's display name, in the list and the owner picker, never an email (SEC-13)", async () => {
     const user = setupUser();
     fakeApi.on(ENCAMPMENTS, [encampment({ owner_id: NAMELESS.id, owner_name: NAMELESS.name })]);
     await openEncampments();
 
-    expect(row("Sailmakers' Row")).toHaveTextContent("nameless@example.com");
+    expect(row("Sailmakers' Row")).toHaveTextContent("Player 12");
     await user.click(within(row("Sailmakers' Row")).getByRole("button", { name: "Edit" }));
-    expect(screen.getByRole("combobox")).toHaveTextContent("nameless@example.com");
+    expect(screen.getByRole("combobox")).toHaveTextContent("Player 12");
+    expect(screen.queryByText(/@example\.com/)).not.toBeInTheDocument();
   });
 });
 
