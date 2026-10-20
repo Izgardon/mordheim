@@ -111,10 +111,3 @@ export function listRestrictions(
   const path = query ? `/restrictions/?${query}` : "/restrictions/";
   return apiRequest<Restriction[]>(path);
 }
-
-export function createRestriction(payload: { type: string; restriction: string }) {
-  return apiRequest<Restriction>("/restrictions/", {
-    method: "POST",
-    body: payload,
-  });
-}
