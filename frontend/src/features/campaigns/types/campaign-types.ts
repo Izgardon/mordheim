@@ -197,9 +197,11 @@ export type CampaignMember = {
   warband_name?: string | null;
 };
 
+/** A permission code as `GET permissions/` (and the grant PUT) answer it, in the server's order. */
 export type CampaignPermission = {
   code: string;
-  name: string;
+  label: string;
+  description: string;
 };
 
 export type CampaignMessage = {
