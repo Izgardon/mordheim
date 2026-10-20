@@ -75,6 +75,7 @@ What has been fixed, and where. Every fix ships with a regression test that fail
 | `pass2/economy-trades` + `pass2/frontend-fixes` (PR A part 1, before the pass 2 decisions) | BUG-06, BUG-08, BUG-35, BUG-36, BUG-37 (frontend reads the server's gold), BUG-38, BUG-40, BUG-41, BUG-42, BUG-68, BUG-70, BUG-107, BUG-109, BUG-110, BUG-111, BUG-112, BUG-113, BUG-114, BUG-115, BUG-116, BUG-118, BUG-119, BUG-120; SEC-08 (trade half) | BUG-05 (a trade with a trader completes; spent-trader warn vs refuse is decision 9), BUG-69 (errors shown; timers wait for decision 8), SEC-07 (stash half done; catalogue writes pass 5) |
 | `pass2/economy-backend`, `pass2/trades-backend` / `-followup`, `pass2/economy-frontend-changes` (PR A part 2, B, C) | BUG-05 (rest: a spent trader warns), BUG-07 (one `purchases/` request; purchases ride the roster Save), BUG-37 (stored, signed ledger), BUG-43, BUG-69 (timers, countdown, `trade_closed`; nothing to restore because the trading action is spent only at completion), BUG-108, BUG-117 (one stash row per cost) | BUG-18 (Buy again at the current price and recruits at the recorded price are done; the override rule itself is pass 5) |
 | `pass3/battles` → `pass3/changes-frontend` (PR A, B, C) | BUG-09, BUG-10, BUG-11, BUG-19, BUG-44, BUG-45, BUG-46, BUG-47, BUG-48, BUG-71, BUG-72, BUG-73, BUG-74, BUG-75, BUG-106 (lock order pinned), BUG-121, BUG-122, BUG-123, BUG-124, BUG-125, BUG-126, BUG-127, BUG-128 (also hotfixed on main); SEC-08 (battle half), SEC-09, SEC-10 | |
+| `pass4/campaigns` → `pass4/changes-frontend` (PR A, B, C) | BUG-12 (Kick merged into Remove), BUG-13, BUG-14, BUG-49, BUG-50, BUG-52, BUG-76, BUG-77 (warn, never refuse), BUG-78, BUG-129, BUG-142, BUG-143 (every member sees the code), BUG-144; SEC-13 | BUG-15 (every code seeded from one constants list, the grant menu from the server; the catalogue Edit gates are pass 5), BUG-51 (clones locked, stored costs kept, no cascade; the reseed re-sync is pass 5) |
 
 Pass 1 PR A notes:
 - **BUG-03:** postbattle XP goes through one `apply_xp_gain` (`apps/warbands/services/xp.py`) that reads the campaign's tables and halves the award for half-rate units. Hired swords still use the henchmen table until decision 8 lands in PR C. The PATCH path joins the same helper with BUG-27 in PR C.
@@ -348,6 +349,21 @@ No defect was graded P0 by its reviewer. Treat these as P0 until verified:
 | BUG-125 | Battle config stores `out_of_action: "no"` as true (`shared.py:835`), and a non-numeric `declared_rating` answers with Python's `int()` message (`lifecycle.py:590`) | Pass 3 backend characterisation | Battles | Confirmed (test) | 3 |
 | BUG-126 | Battle and notification dialogs have no accessible description (`ActiveKillDialog.tsx`, `BattleActive.tsx`, `PrebattleDialogs.tsx`, `NotificationsMenu.tsx`) | Pass 3 frontend characterisation | Battles / a11y | Confirmed (test) | 3 |
 | BUG-127 | Postbattle fetches the warband's resources itself on every mount although the warband sheet already has them (`BattlePostbattle.tsx:451-466`) | Pass 3 frontend characterisation | Battles / perf | Confirmed (test) | 3 |
+| BUG-128 | A unit's wounds stick at 0 after a kill, OOA, note or stat change in battle: `Number(null)` read as 0 wounds, so − was disabled | Pass 3 browser check | Battles | Confirmed; **fixed, hotfixed to production** (`58358e7`) | 3 |
+| BUG-129 | A chat message whose `body` isn't a string is stored as its Python repr (`{"body": ["hello", 2]}` → `"['hello', 2]"`) | Pass 4 backend characterisation | Campaigns | Confirmed (test); **fixed** | 4 |
+| BUG-130 | Units reference their race with CASCADE (`heroes.py:9-15`, `henchmen.py:9-15`, `hired_swords.py:9-15`), so `seed_races --truncate` or any race delete removes every unit of that race | Pass 5 brief research | Catalogue | Confirmed (test) | 5 |
+| BUG-131 to BUG-139 | Not assigned (the pass 6 brief started at BUG-140) | | | | |
+| BUG-140 | A wiped database reuses user ids, and tokens are checked by `user_id` alone, so a token issued before a wipe signs in as whichever new account gets that id. **P2.** Until pass 6's session key lands, rotate `DJANGO_SECRET_KEY` whenever production is wiped | Pass 6 brief research | Auth | Confirmed (code) | 6 |
+| BUG-141 | A retried request that still gets a 401 after a successful refresh throws but keeps the tokens, so every later request repeats refresh and retry until a reload (`api-client.ts:190-203`) | Pass 6 brief research | Auth | Confirmed (code) | 6 |
+| BUG-142 | Campaign dialogs (Join, Create, Roster, the delete confirms, Chat, Common Rules) have no accessible description | Pass 4 frontend characterisation | Campaigns / a11y | Confirmed (test); **fixed** | 4 |
+| BUG-143 | The join code showed to every member in Settings but only to the owner on the campaigns list. Decision 1b: every member sees it in both places | Pass 4 frontend characterisation | Campaigns | Confirmed (test); **fixed** | 4 |
+| BUG-144 | A campaign that fails to load is a dead end: a bare red line with no Retry and no way back (`CampaignLayout.tsx:343-351`) | Pass 4 frontend characterisation | Campaigns / UX | Confirmed (test); **fixed** | 4 |
+| BUG-145 | A new item property is saved as a book property, so every campaign lists it, and it feeds `seed_items`' unscoped cache (`items/views.py:244`, `items/serializers.py:152-163`) | Pass 5 backend characterisation | Catalogue | Confirmed (test) | 5 |
+| BUG-146 | `bestiary_entry_id` on an item create or edit is always a 500: a raw id is handed to the relation (`items/serializers.py:117-119`); latent, no frontend caller | Pass 5 backend characterisation | Catalogue | Confirmed (test) | 5 |
+| BUG-147 | A race edit can move the race to another campaign, or with `{"campaign": null}` into the book for every campaign (`races/views.py:77-79`, `races/serializers.py:31`). **P2** (cross-campaign write) | Pass 5 backend characterisation | Catalogue / security | Confirmed (test) | 5 |
+| BUG-148 | A refused catalogue delete leaves the confirm open and writes the error into the form behind the modal, so the user sees only "This action cannot be undone" (`AddItemForm.tsx:376-394`, `ItemFormDialog.tsx:421-443` and the skill and spell forms) | Pass 5 frontend characterisation | Catalogue / UX | Confirmed (test) | 5 |
+| BUG-149 | The warband pages' Add item creates a property without adding it to the cached `item-properties` list, so its tooltip reads "No description available yet." for up to 5 minutes (`ItemFormDialog.tsx:310-333`) | Pass 5 frontend characterisation | Catalogue | Confirmed (test) | 5 |
+| BUG-150 | The bestiary and hired-sword detail's Back is `navigate(-1)`, so on a fresh `?entry=` / `?profile=` link it leaves the app or does nothing (`Bestiary.tsx:134`, `HiredSwords.tsx:78`) | Pass 5 frontend characterisation | Catalogue / UX | Confirmed (test) | 5 |
 
 ## By plan phase
 
@@ -391,6 +407,7 @@ Each pass's bug checklist. IDs marked "(part)" are shared between passes; the no
 - P2: BUG-20 (part: chat), BUG-49, BUG-50, BUG-51, BUG-52
 - P3: BUG-76, BUG-77, BUG-78
 - Security: SEC-13; SEC-03 if it wasn't done in Phase 0
+- Found by the pass 4 characterisation tests: BUG-129, BUG-142, BUG-143, BUG-144 (all P3, all fixed in pass 4).
 
 **Pass 5: Catalogue**
 - P1: BUG-15 (part: catalogue Edit gates), BUG-16, BUG-17, BUG-18
@@ -398,11 +415,13 @@ Each pass's bug checklist. IDs marked "(part)" are shared between passes; the no
 - P3: BUG-79, BUG-80, BUG-81, BUG-82
 - Security: SEC-06, SEC-07 (part: catalogue writes)
 - Order inside the pass: BUG-16 before any production catalogue cleanup; BUG-17 before reseeding for BUG-54.
+- Found while writing the brief: BUG-130 (P3). Found by the pass 5 characterisation tests: BUG-147 (P2), BUG-145, BUG-146, BUG-148, BUG-149, BUG-150 (P3).
 
 **Pass 6: Auth and core**
 - P2: BUG-55, BUG-56
 - P3: BUG-83, BUG-84
 - Security: SEC-04 (part: identity-keyed throttles, Redis), SEC-05, SEC-11, SEC-12
+- Found while writing the brief: BUG-140 (P2), BUG-141 (P3).
 - SEC-05's `CHECK_REVOKE_TOKEN` is S effort: if SEC-01 forces a key rotation, ship it in the same deploy so users are logged out only once.
 
 ## Production checks
