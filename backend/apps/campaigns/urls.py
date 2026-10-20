@@ -23,6 +23,7 @@ from .views import (
     CampaignMembersView,
     CampaignMessagesView,
     CampaignMyPermissionsView,
+    CampaignOwnershipView,
     CampaignPermissionsView,
     CampaignPivotalMomentsView,
     CampaignPlayersView,
@@ -119,6 +120,11 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/members/<int:user_id>/removal/",
         CampaignMemberRemovalPreviewView.as_view(),
         name="campaigns-member-removal",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/ownership/",
+        CampaignOwnershipView.as_view(),
+        name="campaigns-ownership",
     ),
     path(
         "campaigns/<int:campaign_id>/permissions/",

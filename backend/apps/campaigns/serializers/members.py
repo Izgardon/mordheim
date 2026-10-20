@@ -50,3 +50,7 @@ class MembershipPermissionsUpdateSerializer(serializers.Serializer):
 
 class MembershipRoleUpdateSerializer(serializers.Serializer):
     role = serializers.ChoiceField(choices=["admin", "player"])
+
+
+class OwnershipSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField()  # the admin who becomes the owner (decision 4)

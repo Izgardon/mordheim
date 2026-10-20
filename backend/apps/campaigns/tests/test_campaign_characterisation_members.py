@@ -184,7 +184,7 @@ class MemberRoleTests(CampaignTestCase):
         self.assertEqual(self.get_as(self.player, self.url("members/")).status_code, 403)
 
     def test_only_the_owner_changes_roles_and_the_owner_stays_owner(self):
-        # CAMP-TEST-12; CAMP-UX-02: no hand-over (roles are admin and player only)
+        # CAMP-TEST-12; a role change never makes an owner: ownership is handed over through ownership/ (decision 4)
         self.assertEqual(self.set_role(self.admin, self.player, "admin").status_code, 403)
         self.assertEqual(self.set_role(self.player, self.player, "admin").status_code, 403)
         self.assertEqual(self.set_role(self.outsider, self.player, "admin").status_code, 404)

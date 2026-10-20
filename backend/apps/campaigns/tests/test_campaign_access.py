@@ -59,6 +59,7 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("PATCH", "members/{rival}/role/", {"role": "player"}, (403, 403, 403, 200)),
     ("GET", "members/{rival}/removal/", None, (403, 403, 200, 200)),
     ("DELETE", "members/{rival}/", None, (403, 403, 204, 204)),
+    ("POST", "ownership/", {"user_id": "{admin}"}, (403, 403, 403, 200)),
     ("GET", "permissions/", None, OK_ALL),
     ("GET", "permissions/me/", None, OK_ALL),
     ("GET", "rules/", None, OK_ALL),
@@ -80,6 +81,7 @@ REPRESENTATIVE: dict[str, tuple[str, str, dict[str, Any] | None]] = {
     "grant_permissions": ("PUT", "members/{rival}/permissions/", {"permissions": ["add_custom"]}),
     "change_roles": ("PATCH", "members/{rival}/role/", {"role": "player"}),
     "remove_members": ("DELETE", "members/{rival}/", None),
+    "hand_over": ("POST", "ownership/", {"user_id": "{admin}"}),
     "add_custom": ("POST", "/api/skills/", {"campaign_id": "{campaign}", "name": "Dodge", "type": "Speed"}),
     "manage_items": ("DELETE", "/api/items/{item}/", None),
     "manage_skills": ("DELETE", "/api/skills/{skill}/", None),
@@ -123,6 +125,7 @@ class CampaignAccessFixture(CampaignTestCase):
         cls.refs = {
             "campaign": campaign.id,
             "rival": cls.rival.id,
+            "admin": cls.admin.id,
             "rival_warband": cls.rival_warband.id,
             "battle": battle.id,
             "note": note.id,

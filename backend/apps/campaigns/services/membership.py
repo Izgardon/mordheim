@@ -1,14 +1,17 @@
-"""Roles and grants of a campaign's members (owners change roles; owners and admins change a player's grants).
+"""Roles and grants of a campaign's members (owners change roles; owners and admins change a player's grants), and
+handing ownership to an admin (decision 4).
 
-The views check who may ask (`change_roles`, `grant_permissions`); these check whom it applies to, before the
-request body is read, so the answers come in today's order: 404 for a non-member, 400 for an owner (or an admin's
-grants), then the body's own errors. Removing a member is `removal.py`; joining is `joining.py`.
+The views check who may ask (`change_roles`, `grant_permissions`, `hand_over`); these check whom it applies to,
+before the request body is read, so the answers come in today's order: 404 for a non-member, 400 for an owner (or
+an admin's grants), then the body's own errors. Removing a member is `removal.py`; joining is `joining.py`.
 """
 
 from collections.abc import Iterable
 
+from django.db import transaction
+
 from ..constants import ADMIN, OWNER, PERMISSION_CODES
-from ..errors import Refused, field_error
+from ..errors import CampaignError, Refused, field_error
 from ..models import CampaignMembership
 from . import codes
 
@@ -49,3 +52,24 @@ def role_target(campaign_id: int, user_id: int) -> CampaignMembership:
 def set_role(target: CampaignMembership, role: str) -> None:
     """Make him an admin or a player (his grants stay, and count again if he is demoted)."""
     CampaignMembership.objects.filter(id=target.id).update(role_id=codes.role_ref(role))
+
+
+def hand_over(owner: CampaignMembership, user_id: int) -> CampaignMembership:
+    """The admin `user_id` becomes the owner and the owner an admin, in one transaction under both memberships'
+    locks (decision 4, CAMP-NEW-02); returns the new owner's membership. Refused (standard body) for a non-member
+    (404), a member who isn't an admin (400 `not_an_admin`), or an owner who has already handed over (403)."""
+    with transaction.atomic():
+        rows = CampaignMembership.objects.select_related("role").select_for_update(of=("self",)).order_by("id")
+        both = rows.filter(campaign_id=owner.campaign_id, user_id__in=(owner.user_id, user_id))
+        pair = {row.user_id: row for row in both}
+        target, current = pair.get(user_id), pair.get(owner.user_id)
+        if target is None:
+            raise CampaignError("Not found", code="not_found", status=404)
+        if current is None or current.role.slug != OWNER:  # a hand-over at the same moment got there first
+            raise CampaignError("Forbidden", code="forbidden", status=403)
+        if target.role.slug != ADMIN:
+            detail = "Ownership can only go to an admin. Make them an admin first."
+            raise CampaignError(detail, code="not_an_admin", fields={"user_id": [detail]})
+        set_role(target, OWNER)
+        set_role(current, ADMIN)
+    return target

@@ -1,4 +1,5 @@
-"""Members, their roles and grants, the permission catalogue, and removing a member (decision 1)."""
+"""Members, their roles and grants, the permission catalogue, removing a member (decision 1) and handing ownership
+to an admin (decision 4)."""
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -8,6 +9,7 @@ from ..serializers.members import (
     CampaignMemberSerializer,
     MembershipPermissionsUpdateSerializer,
     MembershipRoleUpdateSerializer,
+    OwnershipSerializer,
 )
 from ..services import codes, membership, removal
 from .base import CampaignScopedView
@@ -79,3 +81,15 @@ class CampaignMemberRemovalPreviewView(CampaignScopedView):
 
     def get(self, request, campaign_id, user_id):
         return Response(removal.preview(self.access.membership, user_id))
+
+
+class CampaignOwnershipView(CampaignScopedView):
+    """POST: the owner hands ownership to an admin and becomes an admin (decision 4, CAMP-NEW-02)."""
+
+    rules = {"POST": "hand_over"}
+
+    def post(self, request, campaign_id):
+        serializer = OwnershipSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        new_owner = membership.hand_over(self.access.membership, serializer.validated_data["user_id"])
+        return Response({"owner_id": new_owner.user_id, "previous_owner_id": request.user.id})

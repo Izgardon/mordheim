@@ -21,6 +21,7 @@ from .members import (
     CampaignMemberRoleView,
     CampaignMembersView,
     CampaignMyPermissionsView,
+    CampaignOwnershipView,
     CampaignPermissionsView,
 )
 from .overview import (
@@ -55,6 +56,7 @@ __all__ = [
     "CampaignMembersView",
     "CampaignMessagesView",
     "CampaignMyPermissionsView",
+    "CampaignOwnershipView",
     "CampaignPermissionsView",
     "CampaignPivotalMomentsView",
     "CampaignPlayersView",

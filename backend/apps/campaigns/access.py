@@ -121,6 +121,7 @@ ROLE_RULES: Mapping[str, Rule] = {
     "grant_permissions": staff,
     "change_roles": owner,
     "remove_members": staff,  # whom each may remove: services/removal.check_may_remove
+    "hand_over": owner,  # ownership goes to an admin (decision 4, CAMP-NEW-02)
 }
 CODE_RULES: Mapping[str, Rule] = {
     **{code: has(code) for code in PERMISSION_CODES},
