@@ -19,7 +19,8 @@ export default function RemoveMemberDialog({
   onClose,
   onConfirm,
 }: RemoveMemberDialogProps) {
-  const memberName = target?.name || target?.email || "this player";
+  // The server always sends a display name; an email is never shown in its place (SEC-13).
+  const memberName = target?.name || "this player";
   const description = (
     <div className="space-y-2">
       <p>

@@ -2,8 +2,7 @@
  * A campaign for the campaign screens' tests, in the API's shapes: campaign 1, "Shards of the
  * Comet", owned by Aldric (user 7, Iron Vultures), with Brunhilde (8, admin, Grey Wardens), Mira
  * (9, player, Night Razors) and a member who registered without a name (12, no warband yet).
- * Today's server sends that member's email wherever a name goes (SEC-13); `NAMELESS` is the one
- * place to change when PR A's `display_name` makes it "Player 12".
+ * The server names that member "Player 12" wherever a name goes, never by email (SEC-13).
  */
 import type { PendingReportedResult } from "@/features/battles/types/battle-types";
 import type {
@@ -52,10 +51,10 @@ export const PLAYER: Person = {
   role: "player",
   warband: { id: 102, name: "Night Razors", faction: "Skaven" },
 };
-/** Registered without a name: the label today's server builds is `first_name or email` (SEC-13). */
+/** Registered without a name: the server's `display_name` is "Player {id}" (SEC-13). */
 export const NAMELESS: Person = {
   id: 12,
-  name: "nameless@example.com",
+  name: "Player 12",
   email: "nameless@example.com",
   role: "player",
   warband: null,

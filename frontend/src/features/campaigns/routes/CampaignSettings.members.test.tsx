@@ -161,6 +161,24 @@ describe("Settings members list, as the owner", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
+  it("never names a member by email in the remove dialog, even one sent without a name (SEC-13)", async () => {
+    const user = setupUser();
+    fakeApi.on(
+      MEMBERS,
+      campaignMembers().map((member) =>
+        member.id === NAMELESS.id ? { ...member, name: "" } : member
+      )
+    );
+    await openMembers(user);
+
+    const nameless = screen.getByRole("row", { name: new RegExp(`^${NAMELESS.email}`) });
+    await user.click(within(nameless).getByRole("button", { name: "Remove" }));
+
+    const dialog = screen.getByRole("dialog", { name: "Remove player" });
+    expect(dialog).toHaveTextContent("Remove this player from the campaign?");
+    expect(dialog).not.toHaveTextContent(NAMELESS.email);
+  });
+
   it("offers six codes in the grant menu, none for encampments, bestiary, spells, specials or battles, and never reads GET permissions/ (BUG-15, CAMP-TEST-25 baseline, pinned; flips in PR A)", async () => {
     const user = setupUser();
     await openMembers(user);
