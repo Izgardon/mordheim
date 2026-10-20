@@ -57,11 +57,8 @@ async function openMembers(user: ReturnType<typeof setupUser>) {
   await screen.findByRole("row", { name: /^Mira/ });
 }
 
-/** The grant menu (a portal at the end of body) opened from a row's permissions button. */
-function grantMenu() {
-  const first = screen.getByRole("checkbox", { name: /^Add custom/ });
-  return first.closest("label")!.parentElement!;
-}
+/** The grant menu (a Radix dropdown) opened from a player's permissions button. */
+const grantMenu = (name: string) => screen.getByRole("menu", { name: `Permissions for ${name}` });
 
 beforeEach(() => {
   fakeApi.reset();
@@ -177,12 +174,12 @@ describe("Settings members list, as the owner", () => {
 
     await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Add custom" }));
 
-    const options = within(grantMenu()).getAllByRole("checkbox");
+    const options = within(grantMenu(PLAYER.name)).getAllByRole("menuitemcheckbox");
     expect(options).toHaveLength(11);
     PERMISSION_CATALOGUE.forEach((entry, index) =>
       expect(options[index]).toHaveAccessibleName(`${entry.label} ${entry.description}`)
     );
-    expect(options.map((option) => (option as HTMLInputElement).checked)).toEqual(
+    expect(options.map((option) => option.getAttribute("aria-checked") === "true")).toEqual(
       PERMISSION_CATALOGUE.map((entry) => entry.code === "add_custom")
     );
     expect(fakeApi.countOf(CATALOGUE)).toBe(1);
@@ -201,12 +198,12 @@ describe("Settings members list, as the owner", () => {
     await openMembers(user);
     await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Add custom" }));
 
-    await user.click(screen.getByRole("checkbox", { name: /^Manage specials/ }));
+    await user.click(screen.getByRole("menuitemcheckbox", { name: /^Manage specials/ }));
 
     expect(
       await within(row(PLAYER.name)).findByText("Unknown permission: manage_specials.")
     ).toBeInTheDocument();
-    expect(screen.getByRole("checkbox", { name: /^Manage specials/ })).not.toBeChecked();
+    expect(screen.getByRole("menuitemcheckbox", { name: /^Manage specials/ })).not.toBeChecked();
     await waitFor(() => expect(fakeApi.countOf(CATALOGUE)).toBe(2));
   });
 
@@ -217,10 +214,13 @@ describe("Settings members list, as the owner", () => {
     await openMembers(user);
     await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Add custom" }));
 
-    await user.click(screen.getByRole("checkbox", { name: /^Manage items/ }));
+    await user.click(screen.getByRole("menuitemcheckbox", { name: /^Manage items/ }));
 
-    expect(screen.getByRole("checkbox", { name: /^Manage items/ })).toBeChecked();
-    expect(screen.getByRole("checkbox", { name: /^Manage skills/ })).toBeDisabled();
+    expect(screen.getByRole("menuitemcheckbox", { name: /^Manage items/ })).toBeChecked();
+    expect(screen.getByRole("menuitemcheckbox", { name: /^Manage skills/ })).toHaveAttribute(
+      "aria-disabled",
+      "true"
+    );
     expect(fakeApi.bodyOf(PERMISSIONS_PUT)).toEqual({
       permissions: ["add_custom", "manage_items"],
     });
@@ -230,7 +230,9 @@ describe("Settings members list, as the owner", () => {
     expect(
       await within(row(PLAYER.name)).findByRole("button", { name: "Add custom, Manage items" })
     ).toBeInTheDocument();
-    expect(screen.getByRole("checkbox", { name: /^Manage skills/ })).toBeEnabled();
+    expect(screen.getByRole("menuitemcheckbox", { name: /^Manage skills/ })).not.toHaveAttribute(
+      "aria-disabled"
+    );
   });
 
   it("puts a refused grant back and shows why on the row (CAMP-TEST-25 baseline)", async () => {
@@ -242,7 +244,7 @@ describe("Settings members list, as the owner", () => {
     await openMembers(user);
     await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Add custom" }));
 
-    await user.click(screen.getByRole("checkbox", { name: /^Manage rules/ }));
+    await user.click(screen.getByRole("menuitemcheckbox", { name: /^Manage rules/ }));
 
     expect(
       await within(row(PLAYER.name)).findByText("Only owners and admins can change permissions.")
@@ -250,19 +252,46 @@ describe("Settings members list, as the owner", () => {
     expect(
       within(row(PLAYER.name)).getByRole("button", { name: "Add custom" })
     ).toBeInTheDocument();
-    expect(screen.getByRole("checkbox", { name: /^Manage rules/ })).not.toBeChecked();
+    expect(screen.getByRole("menuitemcheckbox", { name: /^Manage rules/ })).not.toBeChecked();
   });
 
-  it("closes the grant menu on an outside click but not on Escape (CAMP-UX-07, pinned; flips in PR A)", async () => {
+  it("closes the grant menu on Escape, handing focus back to its button, and on an outside click (CAMP-UX-07)", async () => {
     const user = setupUser();
     await openMembers(user);
-    await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Add custom" }));
+    const trigger = within(row(PLAYER.name)).getByRole("button", { name: "Add custom" });
+    await user.click(trigger);
+    expect(grantMenu(PLAYER.name)).toBeInTheDocument();
 
     await user.keyboard("{Escape}");
-    expect(screen.getByRole("checkbox", { name: /^Manage items/ })).toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByRole("menu")).not.toBeInTheDocument());
+    expect(trigger).toHaveFocus();
 
+    await user.click(trigger);
+    expect(grantMenu(PLAYER.name)).toBeInTheDocument();
     await user.click(screen.getByRole("heading", { name: "Roster" }));
-    expect(screen.queryByRole("checkbox", { name: /^Manage items/ })).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByRole("menu")).not.toBeInTheDocument());
+  });
+
+  it("ticks a code from the keyboard: arrow keys move through the codes and Space ticks one", async () => {
+    const user = setupUser();
+    fakeApi.on(PERMISSIONS_PUT, (body: unknown) => grantAnswer(body));
+    await openMembers(user);
+    within(row(PLAYER.name)).getByRole("button", { name: "Add custom" }).focus();
+
+    await user.keyboard("{Enter}");
+    await waitFor(() =>
+      expect(screen.getByRole("menuitemcheckbox", { name: /^Add custom/ })).toHaveFocus()
+    );
+    await user.keyboard("{ArrowDown}");
+    expect(screen.getByRole("menuitemcheckbox", { name: /^Manage items/ })).toHaveFocus();
+    await user.keyboard(" ");
+
+    await waitFor(() =>
+      expect(fakeApi.bodyOf(PERMISSIONS_PUT)).toEqual({
+        permissions: ["add_custom", "manage_items"],
+      })
+    );
+    expect(grantMenu(PLAYER.name)).toBeInTheDocument();
   });
 
   it("makes a player an admin through the role PATCH: All permissions, and no Remove or Kick", async () => {
