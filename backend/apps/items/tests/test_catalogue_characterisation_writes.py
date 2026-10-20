@@ -1,11 +1,11 @@
-"""Characterisation: what catalogue writes store and accept today (pass 5; BUG-53, SEC-06, SEC-07, BUG-80, BUG-145).
+"""What catalogue writes store and accept (pass 5; BUG-53, BUG-145, BUG-146, BUG-147, SEC-06, SEC-07, BUG-80).
 
-Item writes take availabilities as a raw list of dicts and property ids as a raw list; bestiary and hired-sword
-writes take skill, special, spell, item and restriction ids. None of these ids is checked against the campaign
-(SEC-07's catalogue half, CAT-TEST-16). Writes that fail part-way are in `test_catalogue_transactions.py`.
+Item writes take availabilities as nested input and property ids; bestiary and hired-sword writes take skill,
+special, spell, item and restriction ids. Since PR A every id must be the book's or the writer's campaign's (SEC-07's
+catalogue half, CAT-TEST-16): another campaign's id is refused like an unknown one. Writes that fail part-way are
+in `test_catalogue_transactions.py`.
 """
 
-import logging
 from typing import Any
 from unittest import mock
 
@@ -125,8 +125,9 @@ class CampaignScopeOfWriteIdsTests(CatalogueTestCase):
         self.assertFalse(Item.objects.filter(name="Spy glass").exists())
         self.assertEqual([prop["name"] for prop in linked.data["properties"]], ["House rule", "Parry"])
 
-    def test_a_bestiary_entry_links_another_campaigns_skills_specials_spells_and_items(self):
-        # Characterises current behaviour (SEC-07, CAT-TEST-16, pinned; flips in PR A)
+    def test_a_bestiary_entry_cannot_link_another_campaigns_skills_specials_spells_or_items(self):
+        # SEC-07, CAT-TEST-16 (was pinned: all four were linked and their text read back; flipped in PR A: a 400 that
+        # reads like unknown ids, with nothing written)
         skill = Skill.objects.create(name="Their skill", type="Combat", description="Secret", campaign=self.elsewhere)
         special = Special.objects.create(name="Their special", type="Ability", campaign=self.elsewhere)
         spell = Spell.objects.create(name="Their spell", type="Magic", campaign=self.elsewhere)
@@ -139,43 +140,40 @@ class CampaignScopeOfWriteIdsTests(CatalogueTestCase):
         }
 
         created = self.create_as(self.owner, BESTIARY, "Spy", **links)
-        detail = self.get_as(self.player, BESTIARY.detail_url(created.data["id"])).json()
 
-        self.assertEqual(created.status_code, 201, created.data)
-        self.assertEqual([row["description"] for row in detail["skills"]], ["Secret"])
+        self.assertEqual(created.status_code, 400)
         self.assertEqual(
-            ([row["name"] for row in detail["specials"]], [row["name"] for row in detail["spells"]]),
-            (["Their special"], ["Their spell"]),
+            created.json(),
+            {
+                key: [f'Invalid pk "{pk}" - object does not exist.']
+                for key, pk in zip(links, (skill.id, special.id, spell.id, item.id), strict=True)
+            },  # fmt: skip
         )
-        self.assertEqual([(row["item"]["name"], row["quantity"]) for row in detail["equipment"]], [("Their blade", 2)])
+        self.assertFalse(BestiaryEntry.objects.filter(name="Spy").exists())
 
-    def test_a_hired_sword_links_another_campaigns_restriction(self):
-        # Characterises current behaviour (SEC-07, pinned; flips in PR A)
+    def test_a_hired_sword_cannot_link_another_campaigns_restriction(self):
+        # SEC-07 (was pinned: linked, and its text read back; flipped in PR A)
         theirs = Restriction.objects.create(restriction="Their warband", campaign=self.elsewhere)
 
         response = self.create_as(self.owner, HIRED_SWORDS, "Mole", restriction_ids=[{"restriction_id": theirs.id, "additional_note": "x"}])  # fmt: skip
 
-        self.assertEqual(response.status_code, 201, response.data)
-        self.assertEqual(
-            response.data["restrictions"],
-            [
-                {
-                    "restriction": {"id": theirs.id, "type": "Warband", "restriction": "Their warband"},
-                    "additional_note": "x",
-                }
-            ],  # fmt: skip
-        )
+        self.assertEqual(response.json(), {"restriction_ids": [f'Invalid pk "{theirs.id}" - object does not exist.']})
+        self.assertFalse(BestiaryEntry.objects.filter(name="Mole").exists())
 
-    def test_a_warband_favourites_another_campaigns_bestiary_entry_and_reads_it(self):
-        # Characterises current behaviour (SEC-07, pinned; flips in PR A)
+    def test_a_warband_cannot_favourite_another_campaigns_bestiary_entry_or_read_it(self):
+        # SEC-07 (was pinned: favourited, and its stats read back; flipped in PR A: not found, and a favourite left
+        # over from before is no longer listed)
         theirs = make_entry(BESTIARY, "Their beast", campaign=self.elsewhere, description="Secret stats")
+        WarbandBestiaryFavourite.objects.create(warband=self.warband, bestiary_entry=theirs)
         url = f"/api/warbands/{self.warband.id}/bestiary-favourites/"
 
         added = self.post_as(self.player, url, {"bestiary_entry_id": theirs.id})
+        garbage = self.post_as(self.player, url, {"bestiary_entry_id": "abc"})
         listed = self.get_as(self.player, url).json()
 
-        self.assertEqual(added.status_code, 201)
-        self.assertEqual([(row["name"], row["description"]) for row in listed], [("Their beast", "Secret stats")])
+        self.assertEqual((added.status_code, added.data), (404, {"detail": "Bestiary entry not found"}))
+        self.assertEqual(garbage.status_code, 404)
+        self.assertEqual(listed, [])
 
     def test_favourites_are_the_warband_owners_or_a_manage_warbands_holders(self):
         url = f"/api/warbands/{self.warband.id}/bestiary-favourites/"
@@ -280,36 +278,37 @@ class BestiaryWriteTests(CatalogueTestCase):
         self.assertEqual([row["name"] for row in edited.data["skills"]], ["Sprint"])
         self.assertEqual(([row["name"] for row in edited.data["specials"]], edited.data["large"]), (["Large"], True))
 
-    def test_a_hired_sword_is_created_without_the_grade_and_race_it_was_sent(self):
-        # Characterises current behaviour (BUG-53, CAT-UX-02, pinned; flips in PR A: create keeps grade and race)
+    def test_a_hired_sword_is_created_with_the_grade_and_race_it_was_sent(self):
+        # BUG-53, CAT-UX-02 (was pinned: create dropped them; flipped in PR A); an edit changes them too
         response = self.create_as(self.owner, HIRED_SWORDS, "Duellist", grade="1b", race="Human", available_skill_types=["Combat"])  # fmt: skip
+        edited = self.patch_as(self.owner, HIRED_SWORDS.detail_url(response.data["id"]), {"grade": "2a", "race": "Elf"})
 
         self.assertEqual(response.status_code, 201, response.data)
         body = response.data
-        self.assertEqual((body["grade"], body["race"], body["available_skill_types"]), ("", "", ["Combat"]))
+        self.assertEqual((body["grade"], body["race"], body["available_skill_types"]), ("1b", "Human", ["Combat"]))
         self.assertEqual((body["hire_cost"], body["upkeep_cost"], body["rating"]), (30, 15, 12))
         self.assertEqual((body["bestiary_entry"]["type"], body["campaign_id"]), ("Hired Sword", self.campaign.id))
+        self.assertEqual((edited.data["grade"], edited.data["race"]), ("2a", "Elf"))
 
-    def test_a_hired_sword_edit_saves_its_costs_before_the_entry_is_validated(self):
-        # Characterises current behaviour (BUG-53, pinned; flips in PR A): the costs are saved, then a bad name is a 400
+    def test_a_hired_sword_edit_with_a_bad_field_saves_nothing(self):
+        # BUG-53 (was pinned: the costs were saved, then the bad name was a 400; flipped in PR A)
         profile = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign)
 
         response = self.patch_as(self.owner, HIRED_SWORDS.detail_url(profile.id), {"hire_cost": 99, "name": ""})
 
         self.assertEqual((response.status_code, list(response.data)), (400, ["name"]))
-        self.assertEqual(HiredSwordProfile.objects.get(id=profile.id).hire_cost, 99)
+        self.assertEqual(HiredSwordProfile.objects.get(id=profile.id).hire_cost, 40)
 
-    def test_a_hired_sword_edit_with_a_cost_that_is_not_a_number_is_a_500(self):
-        # Characterises current behaviour (BUG-53, pinned; flips in PR A: a 400)
+    def test_a_hired_sword_edit_with_a_cost_that_is_not_a_whole_number_of_0_or_more_is_a_400(self):
+        # BUG-53 (was pinned: "abc" was a 500; flipped in PR A: the PATCH validates its costs)
         profile = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign)
-        self.client.raise_request_exception = False
-        logger = logging.getLogger("django.request")
-        self.addCleanup(setattr, logger, "disabled", logger.disabled)
-        logger.disabled = True
-
-        response = self.patch_as(self.owner, HIRED_SWORDS.detail_url(profile.id), {"hire_cost": "abc"})
-
-        self.assertEqual(response.status_code, 500)
+        cases = [("hire_cost", "abc"), ("upkeep_cost", -1), ("rating", 1.5), ("hire_cost_expression", "x" * 121)]
+        for field, value in cases:
+            with self.subTest(field=field, value=value):
+                response = self.patch_as(self.owner, HIRED_SWORDS.detail_url(profile.id), {field: value})
+                self.assertEqual((response.status_code, list(response.data)), (400, [field]))
+        cleared = self.patch_as(self.owner, HIRED_SWORDS.detail_url(profile.id), {"hire_cost": None, "upkeep_cost": 0})
+        self.assertEqual((cleared.data["hire_cost"], cleared.data["upkeep_cost"]), (None, 0))
 
     def test_deleting_a_hired_sword_deletes_its_entry(self):
         profile = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign)

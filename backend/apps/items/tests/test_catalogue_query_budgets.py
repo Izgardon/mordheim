@@ -209,16 +209,20 @@ class CatalogueWriteBudgetTests(CatalogueTestCase):
         self.assertEqual(self.count(ITEMS.list_url(), self.item_body("Halberd", 2)), 15)
         self.assertEqual(self.count(ITEMS.list_url(), self.item_body("Glaive", 6)), 15)
 
-    def test_a_hired_sword_create_costs_queries_per_row_it_links(self):
-        # Characterises current behaviour (PERF-44, pinned; flips in PR A's bestiary writes: links by bulk_create)
+    def test_a_hired_sword_create_costs_20_queries_however_many_rows_it_links(self):
+        # PERF-44, BUG-53 (was pinned at 96: a get_or_create per link, then the answer's N+1; flipped in PR A). The
+        # write: membership, a scope check per table sent (skills, specials, items), the savepoint pair, the entry,
+        # one INSERT per kind of link and the profile (11). The answer: the hired sword detail's 9 prefetched reads,
+        # spells and restrictions included though none were sent. The brief's 10 would need the answer built from
+        # what was written instead of read back.
         skills = [Skill.objects.create(name=f"Trick {n}", type="Combat").id for n in range(6)]
         specials = [Special.objects.create(name=f"Gift {n}", type="Ability").id for n in range(3)]
         gear = [{"item_id": make_entry(ITEMS, f"Kit {n}").id, "quantity": 1} for n in range(6)]
         sword = HIRED_SWORDS.body("Mercenary", self.campaign, skill_ids=skills, special_ids=specials, item_entries=gear)
+        small = HIRED_SWORDS.body("Squire", self.campaign, skill_ids=skills[:1], special_ids=specials[:1], item_entries=gear[:1])  # fmt: skip
 
-        # 15 links: a get_or_create each (SELECT, SAVEPOINT, INSERT, RELEASE); the answer reads through the details'
-        # prefetch (PERF-46: 98 -> 78)
-        self.assertLessEqual(self.count(HIRED_SWORDS.list_url(), sword), 78)
+        self.assertEqual(self.count(HIRED_SWORDS.list_url(), sword), 20)
+        self.assertEqual(self.count(HIRED_SWORDS.list_url(), small), 20)
 
     def test_a_skill_create_costs_5_queries(self):
         # membership, the campaign read by the serializer's campaign field, the savepoint pair and the INSERT (3

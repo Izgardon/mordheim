@@ -1,9 +1,9 @@
-"""Catalogue writes that fail part-way keep what they wrote (pass 5; BUG-53, CAT-TEST-09, CAT-TEST-10).
+"""Catalogue writes are whole or not at all (pass 5; BUG-53, CAT-TEST-09, CAT-TEST-10).
 
 `TransactionTestCase`: each request commits as it would in production (there is no ATOMIC_REQUESTS), so what a
-failed write leaves behind can be read afterwards. Item writes save the item, then its availabilities from the raw
-request; bestiary and hired-sword writes save the entry, then its links one by one, then the profile. PR A validates
-the input in nested serializers (a 400 before anything is written) and wraps every write in a transaction.
+failed write leaves behind can be read afterwards. Since PR A the input is validated in nested serializers (a 400
+with field errors before anything is written) and every item, bestiary and hired-sword write runs in one
+transaction; before, a failed write kept the item without its prices, or an entry without its links or profile.
 """
 
 import logging
@@ -81,34 +81,38 @@ class CatalogueTransactionTests(TransactionTestCase):
         self.assertEqual(response.status_code, 500)
         self.assertEqual((Item.objects.count(), ItemAvailability.objects.count()), (0, 0))
 
-    def test_a_hired_sword_with_an_unknown_skill_leaves_an_entry_without_a_profile(self):
-        # Characterises current behaviour (BUG-53, CAT-TEST-10, pinned; flips in PR A: 400, no orphan entry)
+    def test_a_hired_sword_with_an_unknown_skill_is_refused_and_leaves_no_entry(self):
+        # BUG-53, CAT-TEST-10 (was pinned: a 500 that left an orphan "Hired Sword" entry no hired-sword list showed;
+        # flipped in PR A)
         response = self.post(HIRED_SWORDS.list_url(), HIRED_SWORDS.body("Ghost", skill_ids=[999999]))
 
-        self.assertEqual(response.status_code, 500)
-        orphan = BestiaryEntry.objects.get(name="Ghost")
-        self.assertEqual((orphan.type, orphan.campaign_id), ("Hired Sword", self.campaign.id))
-        self.assertFalse(HiredSwordProfile.objects.filter(bestiary_entry=orphan).exists())
-        hired_swords = self.client.get(HIRED_SWORDS.list_url(self.campaign)).json()
-        self.assertEqual(hired_swords, [])  # nothing lists it, so nothing can edit or delete it
-        bestiary = self.client.get(BESTIARY.list_url(self.campaign)).json()
-        self.assertEqual([(row["name"], row["type"]) for row in bestiary], [("Ghost", "Hired Sword")])
+        self.assertEqual((response.status_code, list(response.json())), (400, ["skill_ids"]))
+        self.assertFalse(BestiaryEntry.objects.exists())
+        self.assertEqual(self.client.get(BESTIARY.list_url(self.campaign)).json(), [])
 
-    def test_a_bestiary_entry_with_an_unknown_link_is_saved_with_the_links_before_it(self):
-        # Characterises current behaviour (BUG-53, pinned; flips in PR A)
+    def test_a_bestiary_entry_with_an_unknown_link_is_refused_and_writes_nothing(self):
+        # BUG-53 (was pinned: a 500 that kept the entry with the links before the bad one; flipped in PR A)
         skill = self.client.post("/api/skills/", {"campaign_id": self.campaign.id, "name": "Bite", "type": "Animal", "description": "Bites."}, format="json")  # fmt: skip
 
         response = self.post(BESTIARY.list_url(), BESTIARY.body("Wolf", skill_ids=[skill.data["id"]], special_ids=[999999]))  # fmt: skip
 
-        self.assertEqual(response.status_code, 500)
-        wolf = BestiaryEntry.objects.get(name="Wolf")
-        self.assertEqual((list(wolf.skills.values_list("name", flat=True)), wolf.specials.count()), (["Bite"], 0))
+        self.assertEqual((response.status_code, list(response.json())), (400, ["special_ids"]))
+        self.assertFalse(BestiaryEntry.objects.filter(name="Wolf").exists())
 
-    def test_a_hired_sword_edit_with_a_negative_cost_is_a_500(self):
-        # Characterises current behaviour (BUG-53, pinned; flips in PR A: a 400)
+    def test_a_hired_sword_edit_with_a_negative_cost_is_a_400(self):
+        # BUG-53 (was pinned: a 500; flipped in PR A)
         profile = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign, hire_cost=40)
 
         response = self.client.patch(HIRED_SWORDS.detail_url(profile.id), {"hire_cost": -5}, format="json")
 
-        self.assertEqual(response.status_code, 500)
+        self.assertEqual((response.status_code, list(response.json())), (400, ["hire_cost"]))
         self.assertEqual(HiredSwordProfile.objects.get(id=profile.id).hire_cost, 40)
+
+    def test_a_hired_sword_write_failing_after_validation_keeps_nothing(self):
+        # BUG-53: the entry, its links, the profile and its restrictions are one transaction
+        body = HIRED_SWORDS.body("Ghost", restriction_ids=[])
+        with mock.patch("apps.bestiary.writes._write_restrictions", side_effect=RuntimeError("disk full")):
+            response = self.post(HIRED_SWORDS.list_url(), body)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual((BestiaryEntry.objects.count(), HiredSwordProfile.objects.count()), (0, 0))
