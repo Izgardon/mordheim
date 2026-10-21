@@ -61,8 +61,7 @@ describe("ResetPassword (AUTH-TEST-27)", () => {
     });
   });
 
-  it("after success shows the server's message, empties the fields and stays live: no Sign in button, and a resubmit posts again (AUTH-UX-05, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (AUTH-UX-05, pinned; flips in PR A)
+  it("after success replaces the form with 'Password updated' and a Sign in button to the sign-in card (AUTH-UX-05, AUTH-TEST-27)", async () => {
     const user = setupUser();
     fakeApi.on("POST /auth/password-reset-confirm/", { detail: RESET_DONE });
     renderReset();
@@ -70,38 +69,40 @@ describe("ResetPassword (AUTH-TEST-27)", () => {
     await user.type(confirmPassword(), "wyrdstone-42");
     await user.click(resetButton());
 
-    expect(await screen.findByText(RESET_DONE)).toBeInTheDocument();
-    expect(newPassword()).toHaveValue("");
-    expect(confirmPassword()).toHaveValue("");
-    expect(resetButton()).toBeEnabled();
-    expect(screen.queryByRole("button", { name: "Sign in" })).toBeNull();
-    expect(screen.getAllByRole("link").map((link) => link.textContent)).toEqual([
-      "Back to sign in",
-    ]);
+    expect(await screen.findByText("Password updated")).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Sign in with your new password.");
+    expect(screen.queryByLabelText("New password")).toBeNull();
+    expect(screen.queryByRole("button", { name: "Reset password" })).toBeNull();
 
+    await user.click(screen.getByRole("link", { name: "Sign in" }));
+
+    expect(screen.getByText("Landing page")).toBeInTheDocument();
+    expect(fakeApi.countOf("POST /auth/password-reset-confirm/")).toBe(1);
+  });
+
+  it("says a link missing its token is incomplete, before anything is typed, and disables Reset password (AUTH-UX-05, AUTH-TEST-27)", () => {
+    renderReset("/reset-password?uid=MQ");
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "This reset link is incomplete. Ask for a new one from the sign-in page."
+    );
+    expect(resetButton()).toBeDisabled();
+    expect(fakeApi.calls()).toEqual([]);
+  });
+
+  it("shows a refused link's reason and keeps the form for another try", async () => {
+    const user = setupUser();
     fakeApi.fail(
       "POST /auth/password-reset-confirm/",
       new ApiError("Invalid or expired token", 400, { detail: "Invalid or expired token" })
     );
-    await user.type(newPassword(), "wyrdstone-43");
-    await user.type(confirmPassword(), "wyrdstone-43");
-    await user.click(resetButton());
-
-    expect(await screen.findByText("Invalid or expired token")).toBeInTheDocument();
-    expect(fakeApi.countOf("POST /auth/password-reset-confirm/")).toBe(2);
-  });
-
-  it("disables Reset password for a link missing its token, and says nothing about why (AUTH-UX-05, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (AUTH-UX-05, pinned; flips in PR A)
-    const user = setupUser();
-    renderReset("/reset-password?uid=MQ");
-
+    renderReset();
     await user.type(newPassword(), "wyrdstone-42");
     await user.type(confirmPassword(), "wyrdstone-42");
+    await user.click(resetButton());
 
-    expect(resetButton()).toBeDisabled();
-    expect(screen.queryByText(/missing|invalid|expired/i)).toBeNull();
-    expect(fakeApi.calls()).toEqual([]);
+    expect(await screen.findByRole("alert")).toHaveTextContent("Invalid or expired token");
+    expect(resetButton()).toBeEnabled();
   });
 
   it("says 'Passwords do not match.', as an alert, and sends nothing when the two differ", async () => {
@@ -135,11 +136,11 @@ describe("ResetPassword (AUTH-TEST-27)", () => {
     );
   });
 
-  it("says the link 'expires after a short time' (AUTH-UX-05, pinned; flips in PR A: 'valid for 1 hour')", () => {
-    // Characterises current behaviour (AUTH-UX-05, pinned; flips in PR A)
+  it("says the link is valid for 1 hour (AUTH-UX-05)", () => {
     renderReset();
 
-    expect(screen.getByText(/This link expires after a short time\./)).toBeInTheDocument();
+    expect(screen.getByText(/This link is valid for 1 hour\./)).toBeInTheDocument();
+    expect(screen.queryByText(/a short time/)).toBeNull();
   });
 
   it("has no show-password toggle and no password hint (AUTH-TWEAK-07, pinned; flips in PR C)", () => {
