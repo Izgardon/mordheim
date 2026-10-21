@@ -2,6 +2,10 @@
 
 from typing import Any
 
+from django.db import transaction
+
+from apps.campaigns.services.authors import restamp_author_names
+
 from .tokens import end_all_sessions, issue_tokens
 
 
@@ -24,3 +28,12 @@ def sign_out_others(user: Any) -> dict[str, str]:
     """Sign out everywhere else (AUTH-NEW-04): a new session key, and a fresh pair for this device (1 query)."""
     end_all_sessions(user)
     return issue_tokens(user)
+
+
+def rename(user: Any, name: str) -> None:
+    """Change the display name (AUTH-NEW-02, decision 2), and the name stored on the user's chat messages and bulletin
+    notes with it, in one transaction."""
+    with transaction.atomic():
+        user.first_name = name
+        user.save(update_fields=["first_name"])
+        restamp_author_names(user)

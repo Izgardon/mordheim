@@ -24,6 +24,7 @@ from .emails import send_feedback_report_email, send_password_reset_email
 from .serializers import (
     FeedbackReportSerializer,
     LoginSerializer,
+    NameSerializer,
     PasswordChangeSerializer,
     PasswordResetConfirmSerializer,
     PasswordResetRequestSerializer,
@@ -31,7 +32,7 @@ from .serializers import (
     UserSerializer,
     password_problems,
 )
-from .services.accounts import change_password, set_new_password, sign_out_others
+from .services.accounts import change_password, rename, set_new_password, sign_out_others
 from .services.tokens import SessionTokenRefreshSerializer, issue_tokens
 
 
@@ -98,6 +99,13 @@ class MeView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
+        return Response(UserSerializer(request.user).data)
+
+    def patch(self, request):
+        """Change the display name (AUTH-NEW-02); `name` is the only field taken."""
+        serializer = NameSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        rename(request.user, serializer.validated_data["name"])
         return Response(UserSerializer(request.user).data)
 
 

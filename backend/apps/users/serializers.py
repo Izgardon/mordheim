@@ -63,6 +63,10 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
+class NameSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=NAME_MAX_LENGTH)  # required and trimmed, as at sign-up (decision 2)
+
+
 class UserSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source="first_name", allow_blank=True)
 

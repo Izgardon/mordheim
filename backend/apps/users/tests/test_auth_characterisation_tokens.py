@@ -104,16 +104,20 @@ class MeTests(AuthTestCase):
                 self.assertEqual((response.status_code, body.get("code", body["detail"])), (401, code))
                 self.assertEqual(response["WWW-Authenticate"], 'Bearer realm="api"')
 
-    def test_me_answers_only_get(self):
-        # Characterises current behaviour (AUTH-NEW-02, decision 2, pinned; flips in PR A: PATCH changes the name)
+    def test_me_answers_get_and_patch_only(self):
+        # AUTH-NEW-02, decision 2 (was pinned: GET only; flipped in PR A: PATCH changes the name, see test_rename.py)
         client = self.bearer(self.sign_in()["access"])
-        for method in ("patch", "put", "post", "delete"):
+        for method in ("put", "post", "delete"):
             with self.subTest(method=method):
                 response = getattr(client, method)(ME, {"name": "Pia the Bold"}, format="json")
 
                 self.assertEqual(response.status_code, 405)
         self.pia.refresh_from_db()
         self.assertEqual(self.pia.first_name, "Pia")
+
+        renamed = client.patch(ME, {"name": "Pia the Bold"}, format="json")
+
+        self.assertEqual((renamed.status_code, renamed.json()["name"]), (200, "Pia the Bold"))
 
 
 class SessionLifetimeTests(AuthTestCase):
