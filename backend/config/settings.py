@@ -174,7 +174,9 @@ SIMPLE_JWT = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
+        # The username is the email, so comparing both would only name the username (AUTH-CQ-04 b)
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "OPTIONS": {"user_attributes": ("email", "first_name")},
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",

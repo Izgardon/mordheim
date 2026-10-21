@@ -85,13 +85,15 @@ class RegisterTests(AuthTestCase):
                 self.assertEqual(response.json(), {"password": messages})
         self.assertFalse(get_user_model().objects.filter(username="weak@example.com").exists())
 
-    def test_a_password_equal_to_the_email_or_the_name_is_accepted(self):
-        # Characterises current behaviour (AUTH-CQ-04 b, AUTH-TEST-03, pinned; flips in PR A): validate_password
-        # runs without the user, so UserAttributeSimilarityValidator never compares it
+    def test_a_password_like_the_email_or_the_name_is_refused(self):
+        # AUTH-CQ-04 b, AUTH-TEST-03 (was pinned: both accepted, since validate_password ran without the user;
+        # flipped in PR A: the similarity validator compares the new account's email and name)
         same_as_email = self.post(REGISTER, {"email": "lanternbearer@example.com", "password": "lanternbearer@example.com", "name": "Rex"})  # fmt: skip
         same_as_name = self.post(REGISTER, {"email": "rex@example.com", "password": "Lanternbearer", "name": "Lanternbearer"})  # fmt: skip
 
-        self.assertEqual((same_as_email.status_code, same_as_name.status_code), (201, 201))
+        self.assertEqual((same_as_email.status_code, same_as_email.json()), (400, {"password": ["The password is too similar to the email address."]}))  # fmt: skip
+        self.assertEqual((same_as_name.status_code, same_as_name.json()), (400, {"password": ["The password is too similar to the first name."]}))  # fmt: skip
+        self.assertFalse(get_user_model().objects.filter(username__in=["lanternbearer@example.com", "rex@example.com"]).exists())  # fmt: skip
 
     @override_settings(RATE_LIMIT_ENABLED=False)
     def test_missing_or_malformed_fields_are_field_errors(self):

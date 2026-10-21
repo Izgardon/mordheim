@@ -27,6 +27,7 @@ from .serializers import (
     PasswordResetRequestSerializer,
     RegisterSerializer,
     UserSerializer,
+    password_problems,
 )
 
 
@@ -127,6 +128,9 @@ class PasswordResetConfirmView(APIView):
         user = _get_user_from_uid(uid)
         if not user or not PasswordResetTokenGenerator().check_token(user, token):
             return Response({"detail": "Invalid or expired token."}, status=400)
+        problems = password_problems(new_password, user)
+        if problems:
+            return Response({"new_password": problems}, status=400)
 
         user.set_password(new_password)
         user.save(update_fields=["password"])

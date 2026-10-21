@@ -1,5 +1,8 @@
+from typing import Any
+
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError, transaction
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -7,6 +10,16 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 NAME_MAX_LENGTH = 40  # a display name (decision 2)
 EMAIL_MAX_LENGTH = 150  # the email is also the username, a varchar(150) (BUG-84)
 EMAIL_TAKEN = "User already exists"
+
+
+def password_problems(password: str, user: Any) -> list[str]:
+    """Every configured validator's complaint about `password` (none when it passes). Given the user, the similarity
+    check compares it with their email and name too (AUTH-CQ-04 b)."""
+    try:
+        validate_password(password, user=user)
+    except DjangoValidationError as error:
+        return list(error.messages)
+    return []
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -25,9 +38,13 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(EMAIL_TAKEN)
         return email
 
-    def validate_password(self, value):
-        validate_password(value)
-        return value
+    def validate(self, attrs):
+        email = attrs["email"]
+        account = get_user_model()(username=email, email=email, first_name=attrs["name"])
+        problems = password_problems(attrs["password"], account)
+        if problems:
+            raise serializers.ValidationError({"password": problems})
+        return attrs
 
     def create(self, validated_data):
         name = validated_data.pop("name")
@@ -84,11 +101,7 @@ class PasswordResetRequestSerializer(serializers.Serializer):
 class PasswordResetConfirmSerializer(serializers.Serializer):
     uid = serializers.CharField()
     token = serializers.CharField()
-    new_password = serializers.CharField(write_only=True, min_length=8)
-
-    def validate_new_password(self, value):
-        validate_password(value)
-        return value
+    new_password = serializers.CharField(write_only=True, min_length=8)  # checked against the user in the view
 
 
 class FeedbackReportSerializer(serializers.Serializer):

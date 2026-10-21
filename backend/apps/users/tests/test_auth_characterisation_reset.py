@@ -148,9 +148,8 @@ class ResetConfirmTests(AuthTestCase):
 
                 self.assertEqual((response.status_code, response.json()), (400, INVALID))
 
-    def test_the_new_password_is_validated_but_not_against_the_user(self):
-        # Characterises current behaviour (AUTH-CQ-04 b, pinned; flips in PR A: the validators get the user, so the
-        # address itself is refused as too similar)
+    def test_the_new_password_is_validated_against_the_user(self):
+        # AUTH-CQ-04 b (was pinned: the address itself was accepted; flipped in PR A: the validators get the user)
         uid, token = reset_link_parts(self.pia)
         weak = self.confirm(uid, token, "12345678")
         self.assertEqual(weak.status_code, 400)
@@ -158,8 +157,9 @@ class ResetConfirmTests(AuthTestCase):
 
         same_as_email = self.confirm(uid, token, "pia@example.com")
 
-        self.assertEqual(same_as_email.status_code, 200)
-        self.assertTrue(get_user_model().objects.get(id=self.pia.id).check_password("pia@example.com"))
+        self.assertEqual((same_as_email.status_code, same_as_email.json()), (400, {"new_password": ["The password is too similar to the email address."]}))  # fmt: skip
+        self.assertTrue(get_user_model().objects.get(id=self.pia.id).check_password(PASSWORD))
+        self.assertEqual(self.confirm(uid, token).status_code, 200)  # a refused password leaves the link usable
 
     def test_uids_that_decode_to_nothing_usable_are_refused_or_field_errors(self):
         # AUTH-TEST-12, the cases that hold today: blank, a number beyond any id, bytes that aren't UTF-8, id 0
