@@ -29,11 +29,15 @@ PERMISSIONS: tuple[PermissionCode, ...] = (
     PermissionCode(
         "edit_catalogue",
         "Edit catalogue",
-        "Add and edit the campaign's custom items, skills, spells, specials, races, bestiary entries and hired swords,"
-        " and add item properties.",
+        "Add items, skills, spells, specials, races, bestiary entries, hired swords and item properties to the"
+        " campaign's catalogue, edit any entry (a book entry through the campaign's own version of it), revert versions"
+        " and restore what was archived.",
     ),
     PermissionCode(
-        "delete_catalogue", "Delete catalogue", "Delete the campaign's custom catalogue entries that nothing uses."
+        "delete_catalogue",
+        "Delete catalogue",
+        "Delete the campaign's custom entries (an entry in use is archived instead) and hide book entries from the"
+        " campaign.",
     ),
     PermissionCode("manage_rules", "Manage rules", "Add, edit and delete the campaign's house rules."),
     PermissionCode("manage_warbands", "Manage warbands", "Edit every warband in the campaign, not just their own."),

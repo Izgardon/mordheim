@@ -155,7 +155,7 @@ class CatalogueEditPermissionTests(CataloguePermissionTestCase):
 
     def test_races_are_edited_and_deleted_under_the_catalogue_codes(self):
         # BUG-82 (was pinned: only owners and admins edited a race, whatever codes a player held, and nothing
-        # deleted one; flipped in PR A); a race in use answers 409 in_use (BUG-130)
+        # deleted one; flipped in PR A); a race in use is archived (BUG-130; it answered 409 in_use before PR C)
         race = self.entry(RACES)
         used = self.entry(RACES, "Ogre")
         make_unit(HERO, self.warband, name="Brute", race=used)
@@ -164,8 +164,8 @@ class CatalogueEditPermissionTests(CataloguePermissionTestCase):
         self.assertEqual(self.put_as(self.player, RACES.detail_url(race.id), RACES.body("Gnome")).status_code, 200)
         self.assertEqual(self.delete(self.player, RACES, race), 403)
         self.grant(self.player, DELETE)
-        refused = self.delete_as(self.player, RACES.detail_url(used.id))
-        self.assertEqual((refused.status_code, refused.json()["code"], refused.json()["usage"]["units"]), (409, "in_use", 1))  # fmt: skip
+        archived = self.delete_as(self.player, RACES.detail_url(used.id))
+        self.assertEqual((archived.status_code, archived.json()["outcome"], archived.json()["usage"]["units"]), (200, "archived", 1))  # fmt: skip
         self.assertEqual(self.delete(self.player, RACES, race), 204)
         self.assertTrue(self.exists(RACES, used))
 

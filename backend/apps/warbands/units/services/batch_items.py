@@ -19,6 +19,7 @@ from apps.warbands.services import economy_log
 from apps.warbands.services.purchases import Line, Warning, buy_lines, price_line
 from apps.warbands.services.stash import StashShortage, remove_from_stash
 from apps.warbands.services.unit_items import add_unit_copies
+from apps.warbands.units.catalogue_scope import shop_items
 from apps.warbands.units.errors import FieldErrors, RosterError, flatten_errors
 
 if TYPE_CHECKING:
@@ -83,7 +84,7 @@ def plan_lines(
     lines = _validated(body, creates, unit_ids, errors)
     wanted = {line.data["item_id"] for line in lines.all}
 
-    items = current_rows(Item.objects.prefetch_related("availabilities"), wanted, warband.campaign_id)  # CAT-TWEAK-03
+    items = current_rows(shop_items(warband.campaign_id), wanted, warband.campaign_id)  # CAT-TWEAK-03
     for line in lines.all:
         line.item = items.get(line.data["item_id"])
         if line.item is None:

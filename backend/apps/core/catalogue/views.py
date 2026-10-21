@@ -24,9 +24,11 @@ from rest_framework.serializers import BaseSerializer
 from apps.campaigns.permissions import parse_campaign_id
 from apps.campaigns.views.base import CampaignScopedView
 
-from . import cache, names, versions
-from .kinds import CatalogueKindSpec
-from .writes import catalogue_write, delete_unless_in_use
+from . import archive, cache, names, versions
+from .hooks import CampaignRequired
+from .kinds import CatalogueKindSpec, entry_kind
+from .usage import count_usage
+from .writes import catalogue_write
 
 CATALOGUE_RULES = {
     "GET": "view",
@@ -96,7 +98,8 @@ class CatalogueCollectionView(CatalogueScopedView):
             value = request.query_params.get(param)
             if value:
                 rows = rows.filter(keeps(value.strip()))
-        listed = kind.hooks.shown(kind.hooks.listed(kind, rows, self.campaign_id), request.query_params)
+        params = request.query_params
+        listed = kind.hooks.shown(kind.hooks.listed(kind, rows, self.campaign_id, params), params)
         serializer = kind.hooks.row_serializer(kind, request.query_params)
         return serializer(kind.hooks.read(listed), many=True).data
 
@@ -130,12 +133,13 @@ class CatalogueEntryView(CatalogueScopedView):
     """One entry: read (GET), edited (PUT, PATCH) or deleted (DELETE)."""
 
     entry: Any
-    book_methods: ClassVar[frozenset[str]] = frozenset({"PUT", "PATCH"})  # what a book entry takes, for a campaign
+    book_methods: ClassVar[frozenset[str]] = frozenset({"PUT", "PATCH", "DELETE"})  # a book entry's, for a campaign
+    reads_detail: ClassVar[bool] = True  # GET reads the entry with what its detail shows
     actions: ClassVar[dict[str, str]] = ACTIONS  # method -> what `hooks.refuse_write` is asked about
 
     def load_scope(self, method: str, **kwargs: Any) -> None:
         kind = self.kind
-        rows = kind.hooks.detail_rows(kind) if method == "GET" else kind.hooks.write_rows(kind)
+        rows = kind.hooks.detail_rows(kind) if method == "GET" and self.reads_detail else kind.hooks.write_rows(kind)
         entry = rows.filter(pk=kwargs[kind.url_kwarg]).first()
         if entry is None:
             raise NotFound("Not found")
@@ -176,8 +180,11 @@ class CatalogueEntryView(CatalogueScopedView):
         return Response(self.answer(entry))
 
     def destroy(self) -> Response:
-        delete_unless_in_use(self.kind, self.entry)  # 409 in_use when anything holds it (BUG-16)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        """A custom entry is deleted, or archived while something holds it; a book entry is removed for the campaign;
+        a version is refused (409 use_revert): CAT-TWEAK-04, CAT-NEW-05."""
+        assert self.campaign_id is not None
+        body = archive.delete_entry(self.kind, self.entry, self.campaign_id, self.request.user)
+        return Response(status=status.HTTP_204_NO_CONTENT) if body is None else Response(body)
 
 
 class CatalogueDetailView(CatalogueEntryView):
@@ -205,3 +212,32 @@ class CatalogueRevertView(CatalogueEntryView):
         with catalogue_write(self.kind, self.campaign_id):
             book = versions.revert(self.kind, self.entry, self.campaign_id)
         return Response(self.answer(book))
+
+
+class CatalogueRestoreView(CatalogueEntryView):
+    """POST <kind>/:id/restore/: an archived entry, or a book entry removed for the campaign (with `campaign_id`), is
+    back in the campaign's lists (CAT-TWEAK-04, CAT-NEW-05). The answer is the entry."""
+
+    rules = {"POST": "edit_catalogue"}
+    book_methods = frozenset({"POST"})
+    actions = {"POST": "restore"}
+
+    def post(self, request: Request, **kwargs: Any) -> Response:
+        assert self.campaign_id is not None
+        archive.restore(self.kind, self.entry, self.campaign_id)
+        return Response(self.answer(self.entry))
+
+
+class CatalogueUsageView(CatalogueEntryView):
+    """GET <kind>/:id/usage/: how much of the campaign holds the entry, in the counts a delete answers with (a book
+    entry's needs `?campaign_id=`)."""
+
+    rules = {"GET": "view"}
+    book_methods = frozenset({"GET"})
+    reads_detail = False
+
+    def get(self, request: Request, **kwargs: Any) -> Response:
+        if self.campaign_id is None:
+            raise CampaignRequired()
+        entry = versions.entry_of(self.kind, self.entry)
+        return Response(count_usage(entry_kind(self.kind), entry.pk, self.campaign_id))

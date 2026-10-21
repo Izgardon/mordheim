@@ -14,7 +14,7 @@ from apps.warbands.services.purchases import Purchase, purchase
 from apps.warbands.services.rarity_rolls import RollRefused, record_roll
 from apps.warbands.services.stash import stash_entry
 from apps.warbands.services.unit_items import unit_item_rows
-from apps.warbands.units.catalogue_scope import current_entry
+from apps.warbands.units.catalogue_scope import current_entry, shop_items
 from apps.warbands.units.errors import RosterError, validation_error
 from apps.warbands.units.serializers import detail_item_entries
 
@@ -24,7 +24,7 @@ from .base import WarbandScopedView
 def scoped_item(warband: Any, item_id: int) -> Item:
     """The campaign's current item for `item_id` (its version of a book item, CAT-TWEAK-03) if the warband's campaign
     may use it (SEC-07); another campaign's answers as an unknown one."""
-    item: Item | None = current_entry(Item.objects.prefetch_related("availabilities"), item_id, warband.campaign_id)
+    item: Item | None = current_entry(shop_items(warband.campaign_id), item_id, warband.campaign_id)
     if item is None:
         raise RosterError("Item not found.", "not_found", {"item_id": ["Item not found."]}, status_code=404)
     return item

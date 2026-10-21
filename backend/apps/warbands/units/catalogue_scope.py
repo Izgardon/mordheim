@@ -7,11 +7,12 @@ from collections.abc import Iterable
 from typing import Any
 
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import Q, QuerySet
+from django.db.models import Exists, OuterRef, Q, QuerySet
 from rest_framework import serializers
 
 from apps.core.catalogue.current import current_rows
 from apps.core.catalogue.scope import as_id
+from apps.core.models import CatalogueRemoval
 from apps.items.models import Item
 from apps.skills.models import Skill
 from apps.special.models import Special
@@ -101,3 +102,10 @@ class CampaignCatalogueScopeMixin(serializers.Serializer):
                 entry["id"] = versions.get(as_id(entry.get("id")), entry.get("id"))
             return
         attrs[field] = list(dict.fromkeys(versions.get(as_id(pk), pk) for pk in attrs[field]))  # a skill once
+
+
+def shop_items(campaign_id: int) -> QuerySet[Item]:
+    """Items as a purchase reads them: their prices, and whether the campaign removed the book item (`removed`), so
+    buying an archived or removed item from a list read before can warn (decision 5)."""
+    removed = CatalogueRemoval.objects.filter(campaign_id=campaign_id, kind="items", entry_id=OuterRef("pk"))
+    return Item.objects.prefetch_related("availabilities").annotate(removed=Exists(removed))

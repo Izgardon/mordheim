@@ -46,13 +46,16 @@ class CatalogueHooks:
         """Every row of the kind: what a list filters and the detail reads."""
         return kind.model._default_manager.all()
 
-    def listed(self, kind: "CatalogueKindSpec", rows: QuerySet[Any], campaign_id: int | None) -> QuerySet[Any]:
+    def listed(
+        self, kind: "CatalogueKindSpec", rows: QuerySet[Any], campaign_id: int | None, params: QueryDict
+    ) -> QuerySet[Any]:
         """The filtered rows a list shows, in order: the book's, or the campaign's with the book entries it hasn't
-        replaced or removed (merge.py; restrictions, which have no versions, by their text)."""
+        replaced or removed, archived and removed ones too with `?archived=1` (merge.py; restrictions, which have no
+        versions, by their text)."""
         if campaign_id is None:
             return merge.book_rows(rows).order_by(*kind.order)
         if kind.versioned:
-            merged = merge.campaign_list(kind, rows, campaign_id)
+            merged = merge.campaign_list(kind, rows, campaign_id, archived=params.get("archived") in ("1", "true"))
         else:
             merged = merge.campaign_rows(rows, campaign_id, kind.name_field)
         return merged.order_by(*merge.campaign_first(*kind.order))
@@ -181,7 +184,9 @@ class RaceHooks(CatalogueHooks):
 
 
 class ItemPropertyHooks(CatalogueHooks):
-    def listed(self, kind: "CatalogueKindSpec", rows: QuerySet[Any], campaign_id: int | None) -> QuerySet[Any]:
+    def listed(
+        self, kind: "CatalogueKindSpec", rows: QuerySet[Any], campaign_id: int | None, params: QueryDict
+    ) -> QuerySet[Any]:
         """The book's properties and the campaign's side by side: a property overrides nothing."""
         scope = (
             Q(campaign__isnull=True) if campaign_id is None else Q(campaign_id=campaign_id) | Q(campaign__isnull=True)

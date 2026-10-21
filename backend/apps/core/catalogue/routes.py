@@ -1,12 +1,16 @@
 """The routes every catalogue entry has besides its detail, for each kind: `<prefix>/<id>/revert/` (decisions 1 and
-2). Each is the generic view given the kind, so a kind can't miss one."""
+2), `restore/` and `usage/` (decision 5). Each is the generic view given the kind, so a kind can't miss one."""
 
 from django.urls import URLPattern, path
 
 from .kinds import CatalogueKindSpec
-from .views import CatalogueEntryView, CatalogueRevertView
+from .views import CatalogueEntryView, CatalogueRestoreView, CatalogueRevertView, CatalogueUsageView
 
-ENTRY_ACTIONS: tuple[tuple[str, type[CatalogueEntryView]], ...] = (("revert", CatalogueRevertView),)
+ENTRY_ACTIONS: tuple[tuple[str, type[CatalogueEntryView]], ...] = (
+    ("revert", CatalogueRevertView),
+    ("restore", CatalogueRestoreView),
+    ("usage", CatalogueUsageView),
+)
 
 
 def _for_kind(view: type[CatalogueEntryView], kind: CatalogueKindSpec) -> type[CatalogueEntryView]:

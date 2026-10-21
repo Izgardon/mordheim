@@ -1,9 +1,10 @@
-"""Deleting catalogue entries that something holds (pass 5; BUG-16, BUG-130, CAT-TEST-04).
+"""Deleting catalogue entries that something holds (pass 5; BUG-16, BUG-130, CAT-TEST-04, CAT-TWEAK-04, CAT-TEST-25).
 
 Owned copies (unit items, skills, spells and specials, stash rows), the bestiary's link tables and units' races
 reference the catalogue with RESTRICT since PR A (they were CASCADE: a delete took every copy in every warband, with
-no refund, and a race took every unit of it). Deleting an entry in use answers 409 `in_use` with counts and deletes
-nothing; deleting a whole campaign still cascades. PR C archives an entry in use instead (decision 5).
+no refund, and a race took every unit of it). PR A answered a delete of an entry in use with 409 `in_use`; since PR
+C (decision 5) it archives the entry instead, answering its usage, and every copy stays. Deleting a whole campaign
+still cascades.
 """
 
 import json
@@ -44,9 +45,9 @@ from .catalogue_support import (
 )
 
 
-def in_use(noun: str, **usage: int) -> dict[str, object]:
-    """The 409 body of a refused delete."""
-    return {"detail": f"This {noun} is in use, so nothing was deleted.", "code": "in_use", "fields": {}, "usage": usage}
+def archived(**usage: int) -> dict[str, object]:
+    """The answer to a delete that archived the entry (it was the 409 in_use body before PR C)."""
+    return {"outcome": "archived", "usage": usage}
 
 
 class CustomEntryDeleteTests(CatalogueTestCase):
@@ -61,9 +62,9 @@ class CustomEntryDeleteTests(CatalogueTestCase):
         rows = WarbandTrade.objects.filter(warband__campaign=self.campaign).order_by("id")
         return list(rows.values_list("warband_id", "action", "price"))
 
-    def test_deleting_a_custom_item_in_use_is_refused_with_its_usage_and_keeps_every_copy(self):
+    def test_deleting_a_custom_item_in_use_archives_it_with_its_usage_and_keeps_every_copy(self):
         # BUG-16, CAT-TEST-04 (was pinned: the delete took every copy in every warband, with no refund; flipped in
-        # PR A: copies are RESTRICT and the delete answers 409 in_use with the counts)
+        # PR A: copies are RESTRICT and the delete answered 409 in_use; PR C, decision 5: it archives the item)
         charm = make_entry(ITEMS, "Lucky Charm", campaign=self.campaign, cost=25)
         self.hero.hero_items.create(item=charm, cost=25)
         self.group.henchmen_group_items.create(item=charm, cost=25)
@@ -76,8 +77,9 @@ class CustomEntryDeleteTests(CatalogueTestCase):
 
         self.assertEqual(
             (response.status_code, response.json()),
-            (409, in_use("item", units=3, warbands=2, stashes=1, bestiary_entries=1)),
+            (200, archived(units=3, warbands=2, stashes=1, bestiary_entries=1)),
         )
+        self.assertIsNotNone(Item.objects.get(id=charm.id).archived_at)
         self.assertEqual(
             [
                 self.hero.hero_items.count(),
@@ -100,11 +102,11 @@ class CustomEntryDeleteTests(CatalogueTestCase):
         refused = self.delete_as(self.owner, ITEMS.detail_url(charm.id))
         deleted = self.delete_as(self.owner, ITEMS.detail_url(spare.id))
 
-        self.assertEqual((refused.status_code, refused.json()["usage"]["units"]), (409, 1))
+        self.assertEqual((refused.status_code, refused.json()["usage"]["units"]), (200, 1))  # archived
         self.assertEqual(deleted.status_code, 204)
         self.assertFalse(Item.objects.filter(id=spare.id).exists())
 
-    def test_deleting_a_custom_skill_spell_or_special_in_use_is_refused_and_keeps_every_link(self):
+    def test_deleting_a_custom_skill_spell_or_special_in_use_archives_it_and_keeps_every_link(self):
         # BUG-16 (was pinned: the delete took it from every unit and bestiary entry; flipped in PR A)
         skill = make_entry(SKILLS, "Ambush", campaign=self.campaign)
         spell = make_entry(SPELLS, "Gloom", campaign=self.campaign)
@@ -126,9 +128,9 @@ class CustomEntryDeleteTests(CatalogueTestCase):
         self.assertEqual(
             [(answer.status_code, answer.json()) for answer in answers],
             [
-                (409, in_use("skill", units=3, warbands=2, stashes=0, bestiary_entries=1)),
-                (409, in_use("spell", units=2, warbands=2, stashes=0, bestiary_entries=1)),  # henchmen have no spells
-                (409, in_use("special", units=3, warbands=2, stashes=0, bestiary_entries=1)),
+                (200, archived(units=3, warbands=2, stashes=0, bestiary_entries=1)),
+                (200, archived(units=2, warbands=2, stashes=0, bestiary_entries=1)),  # henchmen have no spells
+                (200, archived(units=3, warbands=2, stashes=0, bestiary_entries=1)),
             ],
         )
         for unit, kind in ((self.hero, HERO), (self.group, HENCHMEN), (self.sword, HIRED_SWORD)):
@@ -211,14 +213,14 @@ class RaceDeleteTests(CatalogueTestCase):
         self.assertCountEqual(Race.objects.values_list("name", "campaign_id"), [("Human", None), ("Halfling", self.campaign.id)])  # fmt: skip
         self.assertEqual(Race.objects.get(name="Human").id, self.human.id)
 
-    def test_a_race_in_use_is_refused_through_the_api_and_an_unused_one_is_deleted(self):
+    def test_a_race_in_use_is_archived_through_the_api_and_an_unused_one_is_deleted(self):
         # BUG-82, BUG-130: races gained a DELETE in PR A (delete_catalogue), with the in-use rule
         gnome = make_entry(RACES, "Gnome", campaign=self.campaign)
 
         refused = self.delete_as(self.owner, RACES.detail_url(self.halfling.id))
         deleted = self.delete_as(self.owner, RACES.detail_url(gnome.id))
 
-        self.assertEqual((refused.status_code, refused.json()), (409, in_use("race", units=1, warbands=1, stashes=0, bestiary_entries=0)))  # fmt: skip
+        self.assertEqual((refused.status_code, refused.json()), (200, archived(units=1, warbands=1, stashes=0, bestiary_entries=0)))  # fmt: skip
         self.assertEqual(deleted.status_code, 204)
         self.assertEqual(self.surviving_units(), ["Abbess", "Cooks", "Scout", "Stranger"])
 

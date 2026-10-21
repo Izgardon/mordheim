@@ -27,6 +27,7 @@ from .unit_items import add_unit_copies, resolve_unit
 
 Warning = dict[str, Any]  # {"code", "message", ...}, the shape trades answer
 GOLD_NEGATIVE = "gold_negative"
+ARCHIVED_ENTRY = "archived_entry"
 STASH = "stash"
 LOG_ENTRY = {
     "hero": "hero_item",
@@ -48,6 +49,13 @@ class Line:
     @property
     def total(self) -> int:
         return (self.price or 0) * self.data["quantity"] if self.data["is_buying"] else 0
+
+
+def archived_entry(item: Item) -> Warning:
+    """An item bought from a list read before it was archived, or removed from the campaign's catalogue: the purchase
+    goes through and says so (decision 5)."""
+    message = f"{item.name} is archived in this campaign's catalogue; it was bought anyway."
+    return {"code": ARCHIVED_ENTRY, "message": message, "item_id": item.id}
 
 
 def refused(key: str, name: str, message: str) -> RosterError:
@@ -120,6 +128,8 @@ def buy_lines(warband: Warband, lines: Sequence[Line]) -> tuple[list[WarbandTrad
         else:
             add_unit_copies(line.target_type, line.unit, line.item, [line.price] * line.data["quantity"])
         _log(warband, line)
+        if line.item.archived_at is not None or getattr(line.item, "removed", False):
+            warnings.append(archived_entry(line.item))
     if charged and warband.gold < 0:
         warnings.append(
             {"code": GOLD_NEGATIVE, "message": f"This leaves the warband at {warband.gold} gc.", "gold": warband.gold}

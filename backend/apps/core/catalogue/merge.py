@@ -1,5 +1,5 @@
-"""Which rows a catalogue list shows (CAT-TWEAK-03, BUG-18): a campaign's own entries, and the book's that it hasn't
-replaced or removed.
+"""Which rows a catalogue list shows (CAT-TWEAK-03, -04, BUG-18): a campaign's own entries, and the book's that
+it hasn't replaced or removed; archived entries and removed ones only when asked (`?archived=1`).
 
 With a campaign, a list is the campaign's rows, then the book rows it has no version of (`~Exists` of a campaign row
 whose `replaces` is the book row) and hasn't removed (CAT-NEW-05's record). A campaign entry of a book entry's name
@@ -11,7 +11,7 @@ rows whose text none of them uses.
 
 from typing import TYPE_CHECKING, Any
 
-from django.db.models import Exists, F, OuterRef, Q, QuerySet
+from django.db.models import Exists, F, OuterRef, Q, QuerySet, Subquery
 
 from apps.core.models import CatalogueRemoval
 
@@ -19,13 +19,19 @@ if TYPE_CHECKING:
     from .kinds import CatalogueKindSpec
 
 
-def campaign_list[RowsT: QuerySet[Any]](kind: "CatalogueKindSpec", rows: RowsT, campaign_id: int) -> RowsT:
-    """The campaign's rows and the book rows it has neither a version of nor removed."""
+def campaign_list[RowsT: QuerySet[Any]](
+    kind: "CatalogueKindSpec", rows: RowsT, campaign_id: int, *, archived: bool = False
+) -> RowsT:
+    """The campaign's rows and the book rows it has no version of, without its archived rows and the book rows it
+    removed; with them when `archived` (each row then says since when: `archived_at`, or `removed_at`)."""
     ref = OuterRef(kind.entry_ref())
     versioned = kind.entry_model._default_manager.filter(campaign_id=campaign_id, replaces_id=ref)
     removed = CatalogueRemoval.objects.filter(campaign_id=campaign_id, kind=kind.entry_key, entry_id=ref)
-    book = Q(campaign__isnull=True) & ~Exists(versioned) & ~Exists(removed)
-    shown: RowsT = rows.filter(Q(campaign_id=campaign_id) | book)
+    own, book = Q(campaign_id=campaign_id), Q(campaign__isnull=True) & ~Exists(versioned)
+    if archived:
+        shown: RowsT = rows.filter(own | book).annotate(removed_at=Subquery(removed.values("removed_at")[:1]))
+        return shown
+    shown = rows.filter((own & Q(**{kind.entry_path("archived_at__isnull"): True})) | (book & ~Exists(removed)))
     return shown
 
 

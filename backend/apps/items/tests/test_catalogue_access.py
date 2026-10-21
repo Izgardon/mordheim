@@ -84,6 +84,14 @@ class CatalogueAccessFixture(CatalogueTestCase):
             ("POST", f"{kind.detail_url(house)}revert/", None, (409, 409, 409, 409, 404)),  # not a version
             ("POST", f"{book}revert/", {"campaign_id": campaign}, (409, 409, 409, 409, 404)),  # no version of it
             ("POST", f"{book}revert/", None, (403,) * 5),
+            ("DELETE", f"{book}?campaign_id={campaign}", None, (403, 200, 200, 200, 404)),  # removed for the campaign
+            ("DELETE", version, None, (403, 409, 409, 409, 404)),  # a version is reverted, not deleted
+            ("POST", f"{kind.detail_url(house)}restore/", None, (200, 200, 200, 200, 404)),
+            ("POST", f"{book}restore/", {"campaign_id": campaign}, (200, 200, 200, 200, 404)),
+            ("POST", f"{book}restore/", None, (403,) * 5),
+            ("GET", f"{kind.detail_url(house)}usage/", None, (200, 200, 200, 200, 404)),
+            ("GET", f"{book}usage/?campaign_id={campaign}", None, (200, 200, 200, 200, 404)),
+            ("GET", f"{book}usage/", None, (400,) * 5),  # a book entry's usage is in a campaign
         ]
 
     def matrix(self) -> list[Row]:
@@ -151,7 +159,7 @@ def catalogue_patterns() -> list[URLPattern]:
         for entry in get_resolver(f"apps.{app}.urls").url_patterns
         if isinstance(entry, URLPattern)
     ]
-    assert len(patterns) == 26, [pattern.name for pattern in patterns]
+    assert len(patterns) == 40, [pattern.name for pattern in patterns]
     return patterns
 
 
