@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { useNavigate, useOutletContext, useParams, useSearchParams } from "react-router-dom";
 
@@ -10,6 +10,8 @@ import MobileTabs from "@/components/ui/mobile-tabs";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
+import CataloguePager from "@/features/catalogue/components/CataloguePager";
+import { usePagedList } from "@/features/catalogue/hooks/usePagedList";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import HiredSwordProfileCard from "../components/HiredSwordProfileCard";
 import HiredSwordProfileDetail from "../components/HiredSwordProfileDetail";
@@ -30,7 +32,6 @@ export default function HiredSwords() {
 
   const { data: profiles, isLoading, error } = useCatalogue("hired-swords", campaignId);
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(0);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const selectedProfileId = searchParams.get("profile")
@@ -39,10 +40,6 @@ export default function HiredSwords() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   const canManage = campaignCapabilities(campaign).edit_catalogue;
-
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [searchQuery]);
 
   const filteredProfiles = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -60,11 +57,7 @@ export default function HiredSwords() {
       .sort((a, b) => a.bestiary_entry.name.localeCompare(b.bestiary_entry.name));
   }, [profiles, searchQuery]);
 
-  const totalPages = Math.ceil(filteredProfiles.length / PAGE_SIZE);
-  const pagedProfiles = filteredProfiles.slice(
-    currentPage * PAGE_SIZE,
-    (currentPage + 1) * PAGE_SIZE
-  );
+  const pages = usePagedList(filteredProfiles, PAGE_SIZE, searchQuery);
 
   const handleLoadoutTabChange = (tabId: LoadoutTabId) => {
     if (!id) return;
@@ -120,7 +113,7 @@ export default function HiredSwords() {
             <p className="text-sm text-muted-foreground">No hired swords found.</p>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {pagedProfiles.map((profile) => (
+              {pages.paged.map((profile) => (
                 <HiredSwordProfileCard
                   key={profile.id}
                   profile={profile}
@@ -131,29 +124,7 @@ export default function HiredSwords() {
           )}
         </div>
 
-        {totalPages > 1 ? (
-          <div className="flex items-center justify-center gap-4 pt-1">
-            <Button
-              size="sm"
-              variant="secondary"
-              disabled={currentPage === 0}
-              onClick={() => setCurrentPage((p) => p - 1)}
-            >
-              Previous
-            </Button>
-            <span className="text-sm text-muted-foreground tabular-nums">
-              {currentPage + 1} / {totalPages}
-            </span>
-            <Button
-              size="sm"
-              variant="secondary"
-              disabled={currentPage >= totalPages - 1}
-              onClick={() => setCurrentPage((p) => p + 1)}
-            >
-              Next
-            </Button>
-          </div>
-        ) : null}
+        <CataloguePager {...pages} />
       </div>
 
       <HiredSwordProfileFormDialog
