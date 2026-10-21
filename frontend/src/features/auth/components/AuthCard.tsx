@@ -195,7 +195,7 @@ export default function AuthCard() {
           {isRegister ? (
             <label className="mx-auto block w-full max-w-[320px] space-y-2 text-sm">
               <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Alias
+                Display name
               </span>
               <Input
                 value={registerForm.name}
@@ -203,7 +203,9 @@ export default function AuthCard() {
                   setRegisterForm((prev) => ({ ...prev, name: event.target.value }))
                 }
                 placeholder="Gravewatch Captain"
-                autoComplete="name"
+                autoComplete="nickname"
+                required
+                maxLength={40}
                 className="h-10 max-w-[320px]"
               />
             </label>

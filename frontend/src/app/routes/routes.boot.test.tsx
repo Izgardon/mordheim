@@ -161,25 +161,38 @@ describe("signing in or up from the landing page", () => {
     ]);
   });
 
-  it("signs up with one register and no /auth/me (PERF-50), and a user with no alias is welcomed by their email (SEC-13, AUTH-TWEAK-02, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (SEC-13 leftover in CampaignsHeader.tsx:16, AUTH-TWEAK-02,
-    // pinned; flips in PR A)
-    fakeApi.on("POST /auth/register/", registerAnswer(NAMELESS));
-    fakeApi.on("GET /auth/me/", NAMELESS);
+  it("signs up with one register and no /auth/me (PERF-50)", async () => {
+    fakeApi.on("POST /auth/register/", registerAnswer(RAIDER));
+    fakeApi.on("GET /auth/me/", RAIDER);
     const user = setupUser();
     renderApp("/");
     await screen.findByRole("heading", { name: "Mordheim Chronicler" });
 
     await user.click(screen.getByRole("button", { name: "Create Account" }));
-    await user.type(screen.getByLabelText("Email"), NAMELESS.email);
+    await user.type(screen.getByLabelText("Display name"), "Raider");
+    await user.type(screen.getByLabelText("Email"), RAIDER.email);
     await user.type(screen.getByLabelText("Password"), "wyrdstone");
     await user.click(submitButton());
 
-    await screen.findByRole("heading", { name: "Welcome back, nameless@example.com" });
+    await screen.findByRole("heading", { name: "Welcome back, Raider" });
     expect(await settledCalls(3)).toEqual([
       "GET /campaigns/",
       "GET /notifications/",
       "POST /auth/register/",
     ]);
+  });
+});
+
+describe("a user with no name (signed up before names were required)", () => {
+  it("is welcomed by their email (SEC-13, AUTH-TWEAK-02, pinned; flips in PR A)", async () => {
+    // Characterises current behaviour (SEC-13 leftover in CampaignsHeader.tsx:16, AUTH-TWEAK-02,
+    // pinned; flips in PR A)
+    storeSession(NAMELESS);
+    fakeApi.on("GET /auth/me/", NAMELESS);
+    renderApp("/campaigns");
+
+    expect(
+      await screen.findByRole("heading", { name: "Welcome back, nameless@example.com" })
+    ).toBeInTheDocument();
   });
 });

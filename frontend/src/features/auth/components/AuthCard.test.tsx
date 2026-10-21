@@ -1,8 +1,8 @@
 /**
- * Pass 6 characterisation: the sign-in card as the landing page shows it, with the real
- * AuthProvider over the fake API server. Sign-in, sign-up with the optional alias, the inline
- * forgot-password form, the mode switch, the password toggle and the redirect. What the card
- * shows for each refusal is in AuthCard.errors.test.tsx.
+ * The sign-in card as the landing page shows it, with the real AuthProvider over the fake API
+ * server. Sign-in, sign-up with its display name, the inline forgot-password form, the mode
+ * switch, the password toggle and the redirect. What the card shows for each refusal is in
+ * AuthCard.errors.test.tsx.
  */
 import { act, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
@@ -10,14 +10,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AuthProvider } from "@/features/auth/stores/auth-store";
 import { ApiError } from "@/lib/api-client";
-import {
-  deferred,
-  NAMELESS,
-  RAIDER,
-  registerAnswer,
-  storeSession,
-  tokensFor,
-} from "@/test/auth-fixtures";
+import { deferred, RAIDER, registerAnswer, storeSession, tokensFor } from "@/test/auth-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { createQueryWrapper } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
@@ -106,17 +99,16 @@ describe("signing in", () => {
 });
 
 describe("creating an account", () => {
-  it('offers an optional Alias, and a blank one is sent as name "" (decision 2, AUTH-TWEAK-01, pinned; flips in PR A)', async () => {
-    // Characterises current behaviour (decision 2, AUTH-TWEAK-01, pinned; flips in PR A)
+  it("asks for a display name, required and up to 40 characters, and sends it (decision 2, AUTH-TWEAK-01)", async () => {
     const user = setupUser();
-    fakeApi.on("POST /auth/register/", registerAnswer(NAMELESS));
-    fakeApi.on("GET /auth/me/", NAMELESS);
+    fakeApi.on("POST /auth/register/", registerAnswer(RAIDER));
     renderCard();
 
     await user.click(screen.getByRole("button", { name: "Create Account" }));
 
-    expect(screen.getByLabelText("Alias")).not.toBeRequired();
-    expect(screen.queryByLabelText("Display name")).toBeNull();
+    expect(screen.getByLabelText("Display name")).toBeRequired();
+    expect(screen.getByLabelText("Display name")).toHaveAttribute("maxlength", "40");
+    expect(screen.queryByLabelText("Alias")).toBeNull();
     expect(screen.getByLabelText("Email")).toBeRequired();
     expect(screen.getByLabelText("Email")).toHaveAttribute("type", "email");
     expect(screen.getByLabelText("Password")).toBeRequired();
@@ -124,16 +116,31 @@ describe("creating an account", () => {
     // No password-rules hint (AUTH-TWEAK-07).
     expect(screen.queryByText(/at least 8 characters/i)).toBeNull();
 
-    await user.type(screen.getByLabelText("Email"), NAMELESS.email);
+    await user.type(screen.getByLabelText("Display name"), "Raider");
+    await user.type(screen.getByLabelText("Email"), RAIDER.email);
     await user.type(screen.getByLabelText("Password"), "wyrdstone");
     await user.click(submitButton());
 
     expect(await screen.findByText("Campaigns page")).toBeInTheDocument();
     expect(fakeApi.bodyOf("POST /auth/register/")).toEqual({
-      name: "",
-      email: NAMELESS.email,
+      name: "Raider",
+      email: RAIDER.email,
       password: "wyrdstone",
     });
+  });
+
+  it("sends no sign-up without a display name (decision 2, AUTH-TWEAK-01)", async () => {
+    const user = setupUser();
+    fakeApi.on("POST /auth/register/", registerAnswer(RAIDER));
+    renderCard();
+
+    await user.click(screen.getByRole("button", { name: "Create Account" }));
+    await user.type(screen.getByLabelText("Email"), RAIDER.email);
+    await user.type(screen.getByLabelText("Password"), "wyrdstone");
+    await user.click(submitButton());
+
+    expect(fakeApi.calls()).toEqual([]);
+    expect(screen.getByLabelText("Display name")).toBeInvalid();
   });
 
   it("marks the chosen mode with aria-pressed, not by colour alone (AUTH-UX-07)", async () => {

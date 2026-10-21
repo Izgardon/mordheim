@@ -54,7 +54,7 @@ async function signUp() {
   const user = setupUser();
   renderCard();
   await user.click(screen.getByRole("button", { name: "Create Account" }));
-  await user.type(screen.getByLabelText("Alias"), "Raider");
+  await user.type(screen.getByLabelText("Display name"), "Raider");
   await user.type(screen.getByLabelText("Email"), RAIDER.email);
   await user.type(screen.getByLabelText("Password"), "password");
   await user.click(submitButton());
