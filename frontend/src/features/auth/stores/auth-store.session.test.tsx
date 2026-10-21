@@ -122,9 +122,7 @@ describe("signing out", () => {
     expect(fakeApi.calls()).toEqual([]);
   });
 
-  it("leaves the previous user's battle nudges in the store for the next one (BUG-157, new, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (BUG-157, pinned; flips in PR A): the BUG-22 reset in
-    // AppStoreProvider predates nudges (BATL-NEW-08) and doesn't clear them.
+  it("drops the previous user's battle nudges, so the next one doesn't see them (BUG-157)", async () => {
     storeSession();
     fakeApi.on("GET /auth/me/", RAIDER);
     const { result } = renderSession();
@@ -142,7 +140,7 @@ describe("signing out", () => {
 
     expect(result.current.auth.user).toEqual(RIVAL);
     expect(result.current.store.tradeRequestNotifications).toEqual([]);
-    expect(result.current.store.battleNudgeNotifications).toEqual([NUDGE]);
+    expect(result.current.store.battleNudgeNotifications).toEqual([]);
   });
 });
 
