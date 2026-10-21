@@ -11,6 +11,7 @@ campaign; item properties list the book's and the campaign's side by side.
 from typing import TYPE_CHECKING, Any
 
 from django.db.models import Model, Q, QuerySet
+from django.http import QueryDict
 from rest_framework.exceptions import APIException, NotFound, PermissionDenied
 from rest_framework.request import Request
 from rest_framework.serializers import BaseSerializer
@@ -18,6 +19,7 @@ from rest_framework.serializers import BaseSerializer
 from apps.bestiary import writes as bestiary_writes
 from apps.bestiary.models import HiredSwordProfile
 from apps.bestiary.selectors import entry_details, hired_sword_details, hired_sword_rows
+from apps.bestiary.serializers import BestiaryEntryBriefSerializer
 from apps.items import writes as item_writes
 from apps.items.selectors import item_rows
 from apps.races.models import Race
@@ -51,6 +53,14 @@ class CatalogueHooks:
             return merge.book_rows(rows).order_by(*kind.order)
         merged = merge.campaign_rows(rows, campaign_id, kind.name_field)
         return merged.order_by(*merge.campaign_first(*kind.order))
+
+    def shown(self, rows: QuerySet[Any], params: QueryDict) -> QuerySet[Any]:
+        """What the list keeps of its merged rows (the bestiary's `?exclude_type=`)."""
+        return rows
+
+    def row_serializer(self, kind: "CatalogueKindSpec", params: QueryDict) -> type[Serializer]:
+        """The serializer of the list's rows (the bestiary's `?view=summary`)."""
+        return kind.row_serializer
 
     def read(self, rows: QuerySet[Any]) -> QuerySet[Any]:
         """The list's rows with what its serializer reads."""
@@ -109,6 +119,20 @@ class ItemHooks(CatalogueHooks):
 
 
 class BestiaryHooks(CatalogueHooks):
+    """The Bestiary page's list leaves out the hired swords and the descriptions it doesn't show (PERF-47): additive
+    query parameters, so the default list is unchanged."""
+
+    def shown(self, rows: QuerySet[Any], params: QueryDict) -> QuerySet[Any]:
+        """`?exclude_type=` (repeatable, any case) leaves out entries of the type after the merge, as the page did."""
+        for excluded in params.getlist("exclude_type"):
+            if excluded.strip():
+                rows = rows.exclude(type__iexact=excluded.strip())
+        return rows
+
+    def row_serializer(self, kind: "CatalogueKindSpec", params: QueryDict) -> type[Serializer]:
+        """`?view=summary`: each row without its description; any other view is the default row."""
+        return BestiaryEntryBriefSerializer if params.get("view") == "summary" else kind.row_serializer
+
     def detail_rows(self, kind: "CatalogueKindSpec") -> QuerySet[Any]:
         return entry_details()
 

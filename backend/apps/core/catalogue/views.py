@@ -93,8 +93,9 @@ class CatalogueCollectionView(CatalogueScopedView):
             value = request.query_params.get(param)
             if value:
                 rows = rows.filter(keeps(value.strip()))
-        listed = kind.hooks.read(kind.hooks.listed(kind, rows, self.campaign_id))
-        return kind.row_serializer(listed, many=True).data
+        listed = kind.hooks.shown(kind.hooks.listed(kind, rows, self.campaign_id), request.query_params)
+        serializer = kind.hooks.row_serializer(kind, request.query_params)
+        return serializer(kind.hooks.read(listed), many=True).data
 
     def create(self, request: Request) -> Response:
         assert self.campaign_id is not None  # load_scope found it

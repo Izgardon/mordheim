@@ -69,7 +69,7 @@ class BestiaryEntrySummarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BestiaryEntry
-        fields = (
+        fields: tuple[str, ...] = (
             "id",
             "campaign_id",
             "name",
@@ -88,6 +88,13 @@ class BestiaryEntrySummarySerializer(serializers.ModelSerializer):
             "large",
             "caster",
         )
+
+
+class BestiaryEntryBriefSerializer(BestiaryEntrySummarySerializer):
+    """A list row without its description, for `GET bestiary/?view=summary` (PERF-47): what pickers show."""
+
+    class Meta(BestiaryEntrySummarySerializer.Meta):
+        fields = tuple(name for name in BestiaryEntrySummarySerializer.Meta.fields if name != "description")
 
 
 class EquipmentInputSerializer(serializers.Serializer):
