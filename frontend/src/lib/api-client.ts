@@ -191,7 +191,13 @@ async function apiRequestInternal<T>(
   if (!response.ok) {
     const refreshToken = getRefreshToken();
     if (response.status === 401 && !hasRetried && token !== null && refreshToken) {
-      const outcome = await refreshAccessToken(refreshToken);
+      // Sent with a token another request has refreshed since: retry with the stored one. The
+      // shared refresh may have finished before this 401 landed (BUG-158).
+      const storedToken = getToken();
+      const outcome: RefreshOutcome =
+        storedToken && storedToken !== resolvedToken
+          ? { kind: "refreshed", access: storedToken }
+          : await refreshAccessToken(refreshToken);
       if (outcome.kind === "refreshed") {
         return apiRequestInternal(
           path,

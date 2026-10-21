@@ -10,7 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { AuthProvider, useAuthContext } from "@/features/auth/stores/auth-store";
-import { accessToken, countTokenEvents, RAIDER } from "@/test/auth-fixtures";
+import { accessToken, countTokenEvents, deferred, RAIDER } from "@/test/auth-fixtures";
 import { fakeFetch, json } from "@/test/fake-fetch";
 import { createQueryWrapper } from "@/test/query-test-utils";
 import { getRefreshToken, getToken, setRefreshToken, setToken, setTokens } from "@/utils/storage";
@@ -173,6 +173,29 @@ describe("401s that arrive together", () => {
     expect(fakeFetch.countOf("GET /a/")).toBe(2);
     expect(fakeFetch.countOf("GET /b/")).toBe(2);
     expect(fakeFetch.countOf("GET /c/")).toBe(2);
+  });
+
+  it("retries a 401 that lands after the shared refresh has finished with its new token, and refreshes no more (BUG-158, AUTH-TEST-19)", async () => {
+    const lateAnswer = deferred<Response>();
+    fakeFetch.on("GET /a/", ({ headers }) =>
+      headers.authorization === `Bearer ${NEW_ACCESS}` ? json(200, "a") : tokenNotValid()
+    );
+    fakeFetch.on("GET /b/", ({ headers }) =>
+      headers.authorization === `Bearer ${NEW_ACCESS}` ? json(200, "b") : lateAnswer.promise
+    );
+
+    const late = apiRequest("/b/");
+    await expect(apiRequest("/a/")).resolves.toBe("a");
+    lateAnswer.resolve(tokenNotValid());
+
+    await expect(late).resolves.toBe("b");
+    expect(fakeFetch.calls()).toEqual([
+      "GET /b/",
+      "GET /a/",
+      "POST /auth/refresh/",
+      "GET /a/",
+      "GET /b/",
+    ]);
   });
 
   it("all throw, and the session is cleared, when the retries get a 401 too (BUG-141)", async () => {
