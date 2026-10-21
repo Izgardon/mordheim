@@ -31,9 +31,9 @@ function renderLanding() {
   );
 }
 
-/** The declarations of the first `selector { ... }` rule in index.css. */
-function cssRule(selector: string) {
-  const start = stylesheet.indexOf(`${selector} {`);
+/** The declarations of the first `selector { ... }` rule in index.css, after `from`. */
+function cssRule(selector: string, from = 0) {
+  const start = stylesheet.indexOf(`${selector} {`, from);
   return stylesheet.slice(start, stylesheet.indexOf("}", start));
 }
 
@@ -92,15 +92,29 @@ describe("Landing on a phone", () => {
 });
 
 describe("the landing box", () => {
-  it("is one screen tall with its overflow hidden, so a long sign-up can't scroll (AUTH-UX-07, pinned; flips in PR A)", () => {
-    // Characterises current behaviour (AUTH-UX-07, pinned; flips in PR A:
-    // min-height: 100dvh; overflow-y: auto)
+  it("is one visible screen tall and scrolls, so a long sign-up on a short screen can be reached (AUTH-UX-07)", () => {
+    // The page itself never scrolls (body is overflow: hidden), so the box must: a fixed
+    // height of the visible viewport (dvh, with a vh fallback) and its own vertical scroll.
     const { container } = renderLanding();
 
-    expect(container.querySelector("main")).toHaveClass("landing", "h-screen");
+    const main = container.querySelector("main");
+    expect(main).toHaveClass("landing");
+    expect(main).not.toHaveClass("h-screen");
+    expect(main).not.toHaveClass("min-h-screen");
     const rule = cssRule(".landing");
-    expect(rule).toMatch(/height: 100vh;/);
-    expect(rule).toMatch(/overflow: hidden;/);
-    expect(rule).not.toMatch(/100dvh/);
+    expect(rule).toMatch(/height: 100vh;\s+height: 100dvh;/);
+    expect(rule).toMatch(/overflow-y: auto;/);
+    expect(rule).not.toMatch(/overflow: hidden;/);
+    const phoneRule = cssRule(".landing", stylesheet.indexOf("@media (max-width: 960px)"));
+    expect(phoneRule).toMatch(/height: 100dvh;/);
+    expect(phoneRule).not.toMatch(/height: 100vh;\s+}/);
+  });
+
+  it("lets the desktop card grow past one screen with its form instead of clipping it (AUTH-UX-07)", () => {
+    const rule = cssRule(".landing-auth .auth-card");
+
+    expect(rule).toMatch(/height: auto;/);
+    expect(rule).toMatch(/min-height: calc\(100% \+ 10px\);/);
+    expect(rule).not.toMatch(/\sheight: calc/);
   });
 });
