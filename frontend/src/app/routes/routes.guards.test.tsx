@@ -144,7 +144,7 @@ describe("a session that ends", () => {
 describe("pages outside the gate", () => {
   it("opens /reset-password for a signed-in user too, with no redirect", async () => {
     storeSession();
-    const app = renderApp("/reset-password?uid=MQ&token=abc");
+    const app = renderApp("/reset-password#uid=MQ&token=abc");
 
     expect(await screen.findByText("Set a new password")).toBeInTheDocument();
     expect(app.location().pathname).toBe("/reset-password");

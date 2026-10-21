@@ -1,10 +1,9 @@
 /**
- * Pass 6 characterisation: the reset-password page (AUTH-TEST-27) as a link from the reset
- * email opens it, over the fake API server: where it reads the link, what it posts, and the
- * page after success.
+ * The reset-password page (AUTH-TEST-27) as a link from the reset email opens it, over the fake
+ * API server: where it reads the link, what it posts, and the page after success.
  */
 import { render, screen } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError } from "@/lib/api-client";
@@ -19,8 +18,14 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
 const media = vi.hoisted(() => ({ mobile: false }));
 vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => media.mobile }));
 
-const LINK = "/reset-password?uid=MQ&token=cz1abc-0123456789abcdef";
+const LINK = "/reset-password#uid=MQ&token=cz1abc-0123456789abcdef";
 const RESET_DONE = "Password has been reset.";
+
+/** Where the router is now, as the address bar shows it. */
+function AddressBar() {
+  const location = useLocation();
+  return <p data-testid="address">{`${location.pathname}${location.search}${location.hash}`}</p>;
+}
 
 function renderReset(path = LINK) {
   return render(
@@ -29,6 +34,7 @@ function renderReset(path = LINK) {
         <Route path="/" element={<p>Landing page</p>} />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
+      <AddressBar />
     </MemoryRouter>
   );
 }
@@ -43,8 +49,7 @@ beforeEach(() => {
 });
 
 describe("ResetPassword (AUTH-TEST-27)", () => {
-  it("reads uid and token from the query string and posts them with the new password (SEC-12, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (SEC-12, pinned; flips in PR A: the link's fragment)
+  it("reads uid and token from the link's fragment and posts them with the new password (SEC-12)", async () => {
     const user = setupUser();
     fakeApi.on("POST /auth/password-reset-confirm/", { detail: RESET_DONE });
     renderReset();
@@ -59,6 +64,20 @@ describe("ResetPassword (AUTH-TEST-27)", () => {
       token: "cz1abc-0123456789abcdef",
       new_password: "wyrdstone-42",
     });
+  });
+
+  it("drops the fragment from the address bar once it has read it (SEC-12)", () => {
+    renderReset();
+
+    expect(screen.getByTestId("address")).toHaveTextContent(/^\/reset-password$/);
+    expect(resetButton()).toBeEnabled();
+  });
+
+  it("takes nothing from the query string: no reset link with one was ever sent (SEC-12)", () => {
+    renderReset("/reset-password?uid=MQ&token=cz1abc-0123456789abcdef");
+
+    expect(screen.getByRole("alert")).toHaveTextContent("This reset link is incomplete.");
+    expect(resetButton()).toBeDisabled();
   });
 
   it("after success replaces the form with 'Password updated' and a Sign in button to the sign-in card (AUTH-UX-05, AUTH-TEST-27)", async () => {
@@ -81,7 +100,7 @@ describe("ResetPassword (AUTH-TEST-27)", () => {
   });
 
   it("says a link missing its token is incomplete, before anything is typed, and disables Reset password (AUTH-UX-05, AUTH-TEST-27)", () => {
-    renderReset("/reset-password?uid=MQ");
+    renderReset("/reset-password#uid=MQ");
 
     expect(screen.getByRole("alert")).toHaveTextContent(
       "This reset link is incomplete. Ask for a new one from the sign-in page."

@@ -1,6 +1,6 @@
 import type { FormEvent } from "react";
-import { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { Button } from "@components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
@@ -16,9 +16,19 @@ const INCOMPLETE_LINK_MESSAGE =
   "This reset link is incomplete. Ask for a new one from the sign-in page.";
 
 export default function ResetPassword() {
-  const [searchParams] = useSearchParams();
-  const uid = searchParams.get("uid") || "";
-  const token = searchParams.get("token") || "";
+  const location = useLocation();
+  const navigate = useNavigate();
+  // The email's link carries uid and token in the fragment (#uid=…&token=…), which no server
+  // log or Referer sees (SEC-12). Read once, then dropped from the address bar.
+  const [{ uid, token }] = useState(() => {
+    const params = new URLSearchParams(location.hash.slice(1));
+    return { uid: params.get("uid") ?? "", token: params.get("token") ?? "" };
+  });
+  useEffect(() => {
+    if (location.hash) {
+      navigate({ pathname: location.pathname, search: location.search }, { replace: true });
+    }
+  }, [location.hash, location.pathname, location.search, navigate]);
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
