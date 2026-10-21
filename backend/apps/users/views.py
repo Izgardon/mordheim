@@ -20,7 +20,12 @@ from apps.core.throttling import (
     REGISTER_THROTTLE_CLASSES,
 )
 
-from .emails import send_feedback_report_email, send_password_reset_email
+from .emails import (
+    RESET_EMAIL_UNAVAILABLE,
+    password_reset_email_available,
+    send_feedback_report_email,
+    send_password_reset_email,
+)
 from .serializers import (
     FeedbackReportSerializer,
     LoginSerializer,
@@ -115,6 +120,9 @@ class PasswordResetRequestView(APIView):
         serializer = PasswordResetRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data["email"]
+        if not password_reset_email_available():  # the same answer for every address, before any lookup (BUG-56)
+            body = {"detail": RESET_EMAIL_UNAVAILABLE, "code": "email_unavailable", "fields": {}}
+            return Response(body, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         user = _get_user_by_email(email)
         if user:

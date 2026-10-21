@@ -83,6 +83,7 @@ class AuthThrottleRateTests(TableTestCase):
 
         self.assert_throttled(self.from_table(LOGIN, {"email": "pia@example.com", "password": PASSWORD}), 60)
 
+    @override_settings(RESEND_API_KEY="re_test")
     @mock.patch("apps.users.views.send_password_reset_email", return_value=True)
     def test_twenty_reset_requests_an_hour_from_one_address_and_the_twenty_first_is_refused(self, _send):
         # BUG-55 (was pinned: the 4th was refused; flipped in PR A: 20 an hour per address, 3 per email)

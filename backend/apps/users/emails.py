@@ -9,6 +9,7 @@ from apps.core.dispatch import dispatch_after_commit
 logger = logging.getLogger(__name__)
 
 RESEND_EMAILS_URL = "https://api.resend.com/emails"
+RESET_EMAIL_UNAVAILABLE = "Password reset by email isn't switched on yet. Ask the app's admin to reset your password."
 
 
 def _post_to_resend(api_key: str, payload: dict, description: str) -> None:
@@ -31,11 +32,20 @@ def _post_to_resend(api_key: str, payload: dict, description: str) -> None:
         logger.error("Resend error %s while sending %s email: %s", response.status_code, description, response.text)
 
 
+def password_reset_email_available() -> bool:
+    """Whether reset emails can be sent. When they can't, a reset request answers 503 for every address, logged at
+    ERROR without the address (BUG-56, BUG-155)."""
+    if getattr(settings, "RESEND_API_KEY", ""):
+        return True
+    logger.error("A password reset was requested, but RESEND_API_KEY isn't set: answered 503 email_unavailable")
+    return False
+
+
 def send_password_reset_email(to_email, reset_url):
     """Queue a password reset email. Returns False when email isn't configured."""
     api_key = getattr(settings, "RESEND_API_KEY", "")
     if not api_key:
-        logger.warning("RESEND_API_KEY not set; skipping password reset email to %s", to_email)
+        logger.error("RESEND_API_KEY not set; skipping a password reset email")  # no address in the log (BUG-155)
         return False
 
     subject = getattr(settings, "PASSWORD_RESET_EMAIL_SUBJECT", "Reset your password")

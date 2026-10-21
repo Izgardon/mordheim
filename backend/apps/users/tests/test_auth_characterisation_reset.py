@@ -2,7 +2,7 @@
 
 `POST auth/password-reset/` looks for an active user by email or username in any case, builds
 `{FRONTEND_URL}/reset-password?uid=…&token=…` and queues the email after commit; it answers the same "sent" message
-whatever happened. `POST auth/password-reset-confirm/` checks Django's token (valid for PASSWORD_RESET_TIMEOUT, spent
+whatever happened. Without RESEND_API_KEY it answers 503 `email_unavailable` for every address (PR A, BUG-56). `POST auth/password-reset-confirm/` checks Django's token (valid for PASSWORD_RESET_TIMEOUT, spent
 once the password changes) and sets the new password. PR A answers 503 `email_unavailable` while Resend isn't
 configured (BUG-56), moves the link into the fragment (SEC-12), catches bad uids (BUG-83) and validates the new
 password against the user (AUTH-CQ-04 b).
@@ -25,8 +25,14 @@ from .auth_support import LOGIN, NEW_PASSWORD, PASSWORD, RESET, RESET_CONFIRM, A
 SENT = {"detail": "If an account exists for that email, a reset link has been sent."}
 INVALID = {"detail": "Invalid or expired token."}
 SEND = "apps.users.views.send_password_reset_email"
+UNAVAILABLE = {
+    "detail": "Password reset by email isn't switched on yet. Ask the app's admin to reset your password.",
+    "code": "email_unavailable",
+    "fields": {},
+}
 
 
+@override_settings(RESEND_API_KEY="re_test")  # the send itself is mocked, or Resend's post is
 class ResetRequestTests(AuthTestCase):
     @mock.patch(SEND, return_value=True)
     def test_a_known_and_an_unknown_email_get_the_same_answer(self, send):
@@ -69,15 +75,29 @@ class ResetRequestTests(AuthTestCase):
         self.assertEqual((response.status_code, response.json()), (200, SENT))
         send.assert_not_called()
 
-    def test_with_resend_unconfigured_the_answer_still_says_a_link_was_sent(self):
-        # Characterises current behaviour (BUG-56, pinned; flips in PR A: 503 email_unavailable for every address,
-        # logged at ERROR). The runner blanks RESEND_API_KEY, as production has it today
-        with self.assertLogs("apps.users.emails", "WARNING") as logs, mock.patch("apps.users.emails.requests.post") as post:  # fmt: skip
-            response = self.post(RESET, {"email": "pia@example.com"})
+    @override_settings(RESEND_API_KEY="")  # as production has it today
+    def test_with_resend_unconfigured_every_address_gets_503_email_unavailable(self):
+        # BUG-56, BUG-155 (was pinned: "a reset link has been sent", and a WARNING naming the address; flipped in PR A:
+        # 503 for every address, before any lookup, logged at ERROR without the address)
+        make_user("ina@example.com", "Ina", is_active=False)
+        for email in ("pia@example.com", "nobody@example.com", "ina@example.com"):
+            with self.subTest(email=email):
+                with (
+                    self.assertLogs("apps.users.emails", "WARNING") as logs,
+                    mock.patch("apps.users.emails.requests.post") as post,
+                    self.assertNumQueries(0),
+                ):
+                    response = self.post(RESET, {"email": email})
 
-        self.assertEqual((response.status_code, response.json()), (200, SENT))
-        post.assert_not_called()
-        self.assertEqual(logs.output, ["WARNING:apps.users.emails:RESEND_API_KEY not set; skipping password reset email to pia@example.com"])  # fmt: skip
+                self.assertEqual((response.status_code, response.json()), (503, UNAVAILABLE))
+                post.assert_not_called()
+                self.assertEqual(logs.output, ["ERROR:apps.users.emails:A password reset was requested, but RESEND_API_KEY isn't set: answered 503 email_unavailable"])  # fmt: skip
+
+    @override_settings(RESEND_API_KEY="")
+    def test_a_malformed_email_is_still_a_field_error_with_email_off(self):
+        response = self.post(RESET, {"email": "pia"})
+
+        self.assertEqual((response.status_code, response.json()), (400, {"email": ["Enter a valid email address."]}))
 
     @override_settings(RESEND_API_KEY="re_test", DEFAULT_FROM_EMAIL="no-reply@example.com", FRONTEND_URL="https://m.example.com")  # fmt: skip
     def test_with_resend_configured_the_email_is_posted_after_commit(self):

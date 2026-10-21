@@ -55,6 +55,7 @@ class EmailThrottleTests(TableTestCase):
             response = self.from_table(LOGIN, bodies[n % 3], f"198.51.100.{n}")
             self.assertEqual(response.status_code, 400)
 
+    @override_settings(RESEND_API_KEY="re_test")
     @mock.patch("apps.users.views.send_password_reset_email", return_value=True)
     def test_one_email_is_refused_after_three_reset_requests_an_hour(self, _send):
         for n in range(3):

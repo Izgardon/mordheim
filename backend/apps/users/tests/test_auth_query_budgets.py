@@ -71,12 +71,15 @@ class AuthQueryBudgetTests(AuthTestCase):
 
         self.assert_queries(1, 200, client.get, ME)
 
+    @override_settings(RESEND_API_KEY="re_test")
     @mock.patch("apps.users.views.send_password_reset_email", return_value=True)
     def test_a_reset_request_runs_one_query_for_a_known_email_and_an_unknown(self, _send):
         # BUG-153 (was pinned at 3 and 1: _get_user_by_email loaded only id and email, then make_token read last_login
         # and password, one deferred load each, two Neon round trips telling a known address from an unknown one)
         self.assert_queries(1, 200, self.post, RESET, {"email": "pia@example.com"})
         self.assert_queries(1, 200, self.post, RESET, {"email": "nobody@example.com"})
+        with override_settings(RESEND_API_KEY=""), self.assertLogs("apps.users.emails", "ERROR"):
+            self.assert_queries(0, 503, self.post, RESET, {"email": "pia@example.com"})  # email off (BUG-56)
 
     def test_a_reset_confirm_runs_three_queries_and_a_refused_one_one(self):
         uid, token = reset_link_parts(self.pia)

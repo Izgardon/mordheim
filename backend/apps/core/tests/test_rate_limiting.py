@@ -183,8 +183,11 @@ class RateLimitingApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 429)
 
-    @override_settings(REST_FRAMEWORK=_rest_framework_with_rates(auth_password_reset_hour="1/hour"))
-    def test_password_reset_request_is_rate_limited_by_ip(self):
+    @patch("apps.users.views.send_password_reset_email", return_value=True)
+    @override_settings(
+        REST_FRAMEWORK=_rest_framework_with_rates(auth_password_reset_hour="1/hour"), RESEND_API_KEY="re_test"
+    )
+    def test_password_reset_request_is_rate_limited_by_ip(self, _send):
         self._set_forwarded_ip("198.51.100.30")
 
         response = self.client.post(
