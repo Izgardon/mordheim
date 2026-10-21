@@ -203,6 +203,11 @@ async function apiRequestInternal<T>(
         throw new ApiError(SERVER_UNAVAILABLE_MESSAGE, outcome.status, null);
       }
     }
+    if (response.status === 401 && hasRetried && getToken() === resolvedToken) {
+      // Even the freshly refreshed token is refused: the server has ended the session (the user
+      // is gone or inactive). Sign out rather than refresh and retry on every request (BUG-141).
+      clearToken();
+    }
 
     let message: string | undefined;
 

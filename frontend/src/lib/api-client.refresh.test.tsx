@@ -13,7 +13,7 @@ import { AuthProvider, useAuthContext } from "@/features/auth/stores/auth-store"
 import { accessToken, countTokenEvents, RAIDER } from "@/test/auth-fixtures";
 import { fakeFetch, json } from "@/test/fake-fetch";
 import { createQueryWrapper } from "@/test/query-test-utils";
-import { getRefreshToken, getToken, setRefreshToken, setToken } from "@/utils/storage";
+import { getRefreshToken, getToken, setRefreshToken, setToken, setTokens } from "@/utils/storage";
 import { ApiError, apiRequest } from "./api-client";
 
 vi.mock("@/lib/realtime/client", () => ({ disconnectRealtime: vi.fn() }));
@@ -33,6 +33,28 @@ const authWrapper = ({ children }: PropsWithChildren) => (
 const tokenNotValid = () =>
   json(401, { detail: "Given token not valid for any token type", code: "token_not_valid" });
 
+/** A signed-in page behind ProtectedRoute, with the landing page to fall back to. */
+function renderCampaignsScreen() {
+  return render(
+    <AuthProvider>
+      <MemoryRouter initialEntries={["/campaigns"]}>
+        <Routes>
+          <Route path="/" element={<p>Landing page</p>} />
+          <Route
+            path="/campaigns"
+            element={
+              <ProtectedRoute>
+                <p>Campaigns page</p>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    </AuthProvider>,
+    { wrapper: createQueryWrapper() }
+  );
+}
+
 beforeEach(() => {
   localStorage.clear();
   setToken(OLD_ACCESS);
@@ -50,8 +72,7 @@ describe("a retry that still gets a 401 after a successful refresh", () => {
     fakeFetch.on("GET /campaigns/", userNotFound());
   });
 
-  it("throws the retry's 401 but keeps both tokens, the refreshed access included (BUG-141, AUTH-TEST-21, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (BUG-141, pinned; flips in PR A)
+  it("throws the retry's 401 and clears both tokens: the server has ended the session (BUG-141, AUTH-TEST-21)", async () => {
     const error = await apiRequest("/campaigns/").catch((caught: unknown) => caught);
 
     expect(error).toBeInstanceOf(ApiError);
@@ -61,19 +82,48 @@ describe("a retry that still gets a 401 after a successful refresh", () => {
       "POST /auth/refresh/",
       "GET /campaigns/",
     ]);
-    expect(getToken()).toBe(NEW_ACCESS);
-    expect(getRefreshToken()).toBe("refresh-1");
+    expect(getToken()).toBeNull();
+    expect(getRefreshToken()).toBeNull();
   });
 
-  it("repeats the refresh and the retry on every later request (BUG-141, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (BUG-141, pinned; flips in PR A)
+  it("refreshes no more after that: later requests go out without a token (BUG-141)", async () => {
     await apiRequest("/campaigns/").catch(() => undefined);
     await apiRequest("/campaigns/").catch(() => undefined);
     await apiRequest("/campaigns/").catch(() => undefined);
 
-    expect(fakeFetch.countOf("POST /auth/refresh/")).toBe(3);
-    expect(fakeFetch.countOf("GET /campaigns/")).toBe(6);
-    expect(getToken()).toBe(NEW_ACCESS);
+    expect(fakeFetch.countOf("POST /auth/refresh/")).toBe(1);
+    expect(fakeFetch.countOf("GET /campaigns/")).toBe(4);
+    const later = fakeFetch.requests().slice(3);
+    expect(later.map((request) => request.headers.authorization)).toEqual([undefined, undefined]);
+    expect(getToken()).toBeNull();
+  });
+
+  it("takes a signed-in screen back to the landing page (BUG-141)", async () => {
+    fakeFetch.on("GET /auth/me/", json(200, RAIDER));
+    renderCampaignsScreen();
+    expect(await screen.findByText("Campaigns page")).toBeInTheDocument();
+
+    await act(async () => {
+      await apiRequest("/campaigns/").catch(() => undefined);
+    });
+
+    expect(await screen.findByText("Landing page")).toBeInTheDocument();
+    expect(localStorage.length).toBe(0);
+  });
+
+  it("leaves alone a session that replaced the refreshed one while the retry was out", async () => {
+    const other = accessToken(2, "signed-in-meanwhile");
+    fakeFetch.on("GET /campaigns/", ({ headers }) => {
+      if (headers.authorization === `Bearer ${NEW_ACCESS}`) {
+        setTokens({ access: other, refresh: "refresh-2" });
+      }
+      return userNotFound();
+    });
+
+    await apiRequest("/campaigns/").catch(() => undefined);
+
+    expect(getToken()).toBe(other);
+    expect(getRefreshToken()).toBe("refresh-2");
   });
 
   it("on a reload, signs out after one refresh and two /auth/me reads: the boot load and its retry (BUG-158)", async () => {
@@ -125,8 +175,7 @@ describe("401s that arrive together", () => {
     expect(fakeFetch.countOf("GET /c/")).toBe(2);
   });
 
-  it("all throw, with the tokens kept, when the retries get a 401 too (BUG-141, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (BUG-141, pinned; flips in PR A)
+  it("all throw, and the session is cleared, when the retries get a 401 too (BUG-141)", async () => {
     fakeFetch.on("GET /a/", userNotFound());
     fakeFetch.on("GET /b/", userNotFound());
 
@@ -134,8 +183,8 @@ describe("401s that arrive together", () => {
 
     expect(results.map((settled) => settled.status)).toEqual(["rejected", "rejected"]);
     expect(fakeFetch.countOf("POST /auth/refresh/")).toBe(1);
-    expect(getToken()).toBe(NEW_ACCESS);
-    expect(getRefreshToken()).toBe("refresh-1");
+    expect(getToken()).toBeNull();
+    expect(getRefreshToken()).toBeNull();
   });
 });
 
@@ -165,24 +214,7 @@ describe("a refused refresh", () => {
     fakeFetch.on("GET /auth/me/", json(200, RAIDER));
     fakeFetch.on("GET /campaigns/", tokenNotValid());
     fakeFetch.on("POST /auth/refresh/", json(401, { detail: "Token is invalid or expired" }));
-    render(
-      <AuthProvider>
-        <MemoryRouter initialEntries={["/campaigns"]}>
-          <Routes>
-            <Route path="/" element={<p>Landing page</p>} />
-            <Route
-              path="/campaigns"
-              element={
-                <ProtectedRoute>
-                  <p>Campaigns page</p>
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </MemoryRouter>
-      </AuthProvider>,
-      { wrapper: createQueryWrapper() }
-    );
+    renderCampaignsScreen();
     expect(await screen.findByText("Campaigns page")).toBeInTheDocument();
 
     await act(async () => {
