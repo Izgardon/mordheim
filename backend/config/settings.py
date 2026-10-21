@@ -144,15 +144,17 @@ REST_FRAMEWORK: dict[str, Any] = {
     # SimpleJWT's bearer tokens, refused once their session key is no longer the user's (SEC-05)
     "DEFAULT_AUTHENTICATION_CLASSES": ("apps.users.services.tokens.SessionKeyJWTAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    # The auth limits are loose per address, since a table of players shares one, and tight per email (BUG-55)
     "DEFAULT_THROTTLE_RATES": {
-        "auth_login_minute": "5/min",
-        "auth_login_hour": "30/hour",
-        "auth_register_hour": "3/hour",
-        "auth_register_day": "10/day",
-        "auth_password_reset_hour": "3/hour",
-        "auth_password_reset_day": "10/day",
-        "auth_password_reset_confirm_hour": "10/hour",
-        "auth_refresh_minute": "30/min",
+        "auth_login_minute": "30/min",
+        "auth_login_email_minute": "10/min",
+        "auth_login_email_hour": "30/hour",
+        "auth_register_hour": "20/hour",
+        "auth_register_day": "50/day",
+        "auth_password_reset_hour": "20/hour",
+        "auth_password_reset_email_hour": "3/hour",
+        "auth_password_reset_confirm_hour": "20/hour",
+        "auth_refresh_minute": "60/min",
         "auth_account_user": "5/min",
         "feedback_report_user": "3/min",
         "feedback_report_ip": "10/min",
@@ -206,10 +208,13 @@ STATIC_URL = "static/"
 
 RATE_LIMIT_ENABLED = _env_bool("RATE_LIMIT_ENABLED", True)
 
+# The throttles' counters, per gunicorn worker (so a limit is at most doubled with 2 workers); room for many
+# addresses and emails before culling starts evicting real histories (SEC-04)
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         "LOCATION": "rate-limit",
+        "OPTIONS": {"MAX_ENTRIES": 10_000},
     }
 }
 

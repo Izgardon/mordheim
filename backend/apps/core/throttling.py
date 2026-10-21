@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 from typing import TYPE_CHECKING
 
 from django.conf import settings
@@ -47,12 +48,30 @@ class UserOrIPRateThrottle(ToggleableScopedRateThrottle):
         return self._cache_key(f"ip:{self.get_ident(request)}")
 
 
+class EmailRateThrottle(ToggleableScopedRateThrottle):
+    """Keyed on the email in the request body, trimmed and lowercased, so one account's limit holds whichever
+    network the requests come from, while players sharing a table's address keep their own (BUG-55, SEC-04). The
+    address is hashed into the key. A body without an email string isn't counted here."""
+
+    def get_cache_key(self, request, view):
+        data = request.data
+        email = data.get("email") if hasattr(data, "get") else None
+        if not isinstance(email, str) or not email.strip():
+            return None
+        digest = hashlib.sha256(email.strip().lower().encode()).hexdigest()
+        return self._cache_key(f"email:{digest}")
+
+
 class AuthLoginMinuteIPRateThrottle(IPRateThrottle):
     scope = "auth_login_minute"
 
 
-class AuthLoginHourIPRateThrottle(IPRateThrottle):
-    scope = "auth_login_hour"
+class AuthLoginEmailMinuteRateThrottle(EmailRateThrottle):
+    scope = "auth_login_email_minute"
+
+
+class AuthLoginEmailHourRateThrottle(EmailRateThrottle):
+    scope = "auth_login_email_hour"
 
 
 class AuthRegisterHourIPRateThrottle(IPRateThrottle):
@@ -67,8 +86,8 @@ class AuthPasswordResetHourIPRateThrottle(IPRateThrottle):
     scope = "auth_password_reset_hour"
 
 
-class AuthPasswordResetDayIPRateThrottle(IPRateThrottle):
-    scope = "auth_password_reset_day"
+class AuthPasswordResetEmailHourRateThrottle(EmailRateThrottle):
+    scope = "auth_password_reset_email_hour"
 
 
 class AuthPasswordResetConfirmHourIPRateThrottle(IPRateThrottle):
@@ -117,7 +136,8 @@ class TradeWriteIPRateThrottle(IPRateThrottle):
 
 LOGIN_THROTTLE_CLASSES = [
     AuthLoginMinuteIPRateThrottle,
-    AuthLoginHourIPRateThrottle,
+    AuthLoginEmailMinuteRateThrottle,
+    AuthLoginEmailHourRateThrottle,
 ]
 
 REGISTER_THROTTLE_CLASSES = [
@@ -127,7 +147,7 @@ REGISTER_THROTTLE_CLASSES = [
 
 PASSWORD_RESET_REQUEST_THROTTLE_CLASSES = [
     AuthPasswordResetHourIPRateThrottle,
-    AuthPasswordResetDayIPRateThrottle,
+    AuthPasswordResetEmailHourRateThrottle,
 ]
 
 PASSWORD_RESET_CONFIRM_THROTTLE_CLASSES = [
