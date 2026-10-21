@@ -18,6 +18,7 @@ from rest_framework.exceptions import NotFound
 from apps.core.errors import ApiError
 from apps.core.models import CatalogueEntry, RevertedVersion
 
+from .current import is_entry_table
 from .kinds import CatalogueKindSpec, entry_kind
 from .remap import remap
 
@@ -141,7 +142,7 @@ def _point_at_versions(rows: list[Model], campaign_id: int, *, skip: str) -> Non
     version of each where it has one: one query per kind of link."""
     for field in rows[0]._meta.concrete_fields:
         target: Any = getattr(field, "related_model", None)
-        if field.attname == skip or not _is_entry_table(target):
+        if field.attname == skip or not is_entry_table(target):
             continue
         ids = {getattr(row, field.attname) for row in rows} - {None}
         if not ids:
@@ -153,8 +154,3 @@ def _point_at_versions(rows: list[Model], campaign_id: int, *, skip: str) -> Non
         )
         for row in rows:
             setattr(row, field.attname, versions.get(getattr(row, field.attname), getattr(row, field.attname)))
-
-
-def _is_entry_table(model: Any) -> bool:
-    """Whether `model` is a catalogue entry table (it carries versions)."""
-    return isinstance(model, type) and issubclass(model, CatalogueEntry)

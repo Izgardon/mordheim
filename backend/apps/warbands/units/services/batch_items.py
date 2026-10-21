@@ -11,6 +11,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
+from apps.core.catalogue.current import current_rows
 from apps.items.models import Item
 from apps.warbands.models import RosterUnit, Warband
 from apps.warbands.serializers.purchases import BatchPurchaseSerializer, StashTakeSerializer
@@ -18,7 +19,6 @@ from apps.warbands.services import economy_log
 from apps.warbands.services.purchases import Line, Warning, buy_lines, price_line
 from apps.warbands.services.stash import StashShortage, remove_from_stash
 from apps.warbands.services.unit_items import add_unit_copies
-from apps.warbands.units.catalogue_scope import in_campaign_scope
 from apps.warbands.units.errors import FieldErrors, RosterError, flatten_errors
 
 if TYPE_CHECKING:
@@ -82,8 +82,8 @@ def plan_lines(
     """Validate the body's `purchases` and `stash_takes`, recording errors; nothing is written."""
     lines = _validated(body, creates, unit_ids, errors)
     wanted = {line.data["item_id"] for line in lines.all}
-    scoped = in_campaign_scope(Item.objects.filter(id__in=wanted), warband.campaign_id)
-    items = {item.id: item for item in scoped.prefetch_related("availabilities")} if wanted else {}
+
+    items = current_rows(Item.objects.prefetch_related("availabilities"), wanted, warband.campaign_id)  # CAT-TWEAK-03
     for line in lines.all:
         line.item = items.get(line.data["item_id"])
         if line.item is None:

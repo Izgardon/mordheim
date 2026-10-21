@@ -1,7 +1,7 @@
 """The differences between catalogue kinds that are behaviour rather than data (IMP-79), as pass 1 did for units.
 
 The generic views (views.py) call these hooks. `CatalogueHooks` is what skills, spells, specials and restrictions
-need: every row of the model, today's name rule, a create that saves the serializer in the campaign, an edit that
+need: every row of the model, the list rule (merge.py), a create that saves the serializer in the campaign, an edit that
 saves it, a delete of the entry. Items refuse writes to a house rule's clones and write through `items/writes.py`;
 bestiary entries and hired swords write through `bestiary/writes.py` and read their details through
 `bestiary/selectors.py`, and a hired sword is edited and deleted through its entry; a race edit naming another
@@ -47,10 +47,14 @@ class CatalogueHooks:
         return kind.model._default_manager.all()
 
     def listed(self, kind: "CatalogueKindSpec", rows: QuerySet[Any], campaign_id: int | None) -> QuerySet[Any]:
-        """The filtered rows a list shows, in order: the book's, or today's name rule for a campaign (merge.py)."""
+        """The filtered rows a list shows, in order: the book's, or the campaign's with the book entries it hasn't
+        replaced or removed (merge.py; restrictions, which have no versions, by their text)."""
         if campaign_id is None:
             return merge.book_rows(rows).order_by(*kind.order)
-        merged = merge.campaign_rows(rows, campaign_id, kind.name_field)
+        if kind.versioned:
+            merged = merge.campaign_list(kind, rows, campaign_id)
+        else:
+            merged = merge.campaign_rows(rows, campaign_id, kind.name_field)
         return merged.order_by(*merge.campaign_first(*kind.order))
 
     def shown(self, rows: QuerySet[Any], params: QueryDict) -> QuerySet[Any]:

@@ -1,9 +1,11 @@
 """Characterisation: the catalogue lists and details, and how a campaign's entries replace book entries (pass 5).
 
-With `?campaign_id=`, each list returns the campaign's rows, then the book rows whose name no campaign row uses
-(BUG-18: by name only, whatever the type). Without it, only book rows. A list for a campaign the caller isn't in is a
-404 (CAT-TEST-01); a campaign id that isn't a whole number is a 400 (BUG-79, CAT-TEST-11).
+With `?campaign_id=`, each list returns the campaign's rows, then the book rows it has no version of and hasn't
+removed (BUG-18 flipped in PR C: it was by name, whatever the type). Without it, only book rows. A list for a campaign
+the caller isn't in is a 404 (CAT-TEST-01); a campaign id that isn't a whole number is a 400 (BUG-79, CAT-TEST-11).
 """
+
+from typing import Any
 
 from apps.items.models import Item, ItemProperty
 from apps.restrictions.models import Restriction
@@ -18,6 +20,7 @@ from .catalogue_support import (
     SKILLS,
     SPECIALS,
     SPELLS,
+    CatalogueKind,
     CatalogueTestCase,
     make_entry,
 )
@@ -85,65 +88,75 @@ class CatalogueListAccessTests(CatalogueTestCase):
 
 
 class CatalogueMergeTests(CatalogueTestCase):
-    """BUG-18 (CAT-TEST-02 baseline): a campaign entry hides every book entry of its name, whatever its type."""
+    """BUG-18, CAT-TEST-02: only a campaign's version of a book entry replaces it; a campaign entry that merely shares
+    its name, of any type, replaces nothing (was: it hid every book entry of its name; flipped in PR C)."""
 
     def test_any_player_reprices_a_book_item_for_the_whole_campaign_and_can_price_it_back(self):
-        # Characterises current behaviour (BUG-18, pinned; flips in PR C: a version of the Axe, with Revert): the
-        # "Axe 25 gc" case. Who may (BUG-15) flipped in PR A: edit_catalogue edits it back; deleting needs
-        # delete_catalogue
-        created = self.create_as(self.player, ITEMS, "Axe")  # 25 gc
+        # BUG-18 (was pinned: a custom "Axe" hid the book Axe by name; flipped in PR C: an edit of the book Axe makes
+        # the campaign's version of it, which Buy again charges, and a Revert takes it back). Who may (BUG-15)
+        # flipped in PR A: edit_catalogue edits it; deleting needs delete_catalogue
+        edited = self.patch_as(self.player, ITEMS.detail_url(self.book_axe.id), {"campaign_id": self.campaign.id, "availabilities": [{"cost": 25}]})  # fmt: skip
         self.post_as(self.player, f"/api/warbands/{self.warband.id}/purchases/", {"item_id": self.book_axe.id, "target_type": "stash"})  # fmt: skip
 
         rows = self.get_as(self.rival, ITEMS.list_url(self.campaign)).json()
         bought = self.get_as(self.player, f"/api/warbands/{self.warband.id}/trades/").json()
 
-        self.assertEqual(created.status_code, 201)
-        self.assertEqual([(row["id"], row["availabilities"][0]["cost"]) for row in rows if row["name"] == "Axe"], [(created.data["id"], 25)])  # fmt: skip
+        self.assertEqual(edited.status_code, 200)
+        self.assertEqual([(row["id"], row["availabilities"][0]["cost"]) for row in rows if row["name"] == "Axe"], [(edited.data["id"], 25)])  # fmt: skip
         self.assertIn(("Buy", "Axe", -25), [(row["action"], row["description"], row["price"]) for row in bought])  # fmt: skip
-        self.assertEqual(self.patch_as(self.rival, ITEMS.detail_url(created.data["id"]), {"availabilities": [{"cost": 5}]}).status_code, 200)  # fmt: skip
-        self.assertEqual(self.delete_as(self.player, ITEMS.detail_url(created.data["id"])).status_code, 403)
+        self.assertEqual(self.patch_as(self.rival, ITEMS.detail_url(edited.data["id"]), {"availabilities": [{"cost": 5}]}).status_code, 200)  # fmt: skip
+        self.assertEqual(self.post_as(self.rival, f"{ITEMS.detail_url(edited.data['id'])}revert/").status_code, 200)
+        self.assertEqual([row["id"] for row in self.get_as(self.rival, ITEMS.list_url(self.campaign)).json() if row["name"] == "Axe"], [self.book_axe.id])  # fmt: skip
 
-    def test_a_campaign_axe_of_another_type_hides_the_book_axe(self):
-        # Characterises current behaviour (BUG-18, pinned; flips in PR C: only a version replacing the Axe hides it)
+    def test_a_campaign_axe_of_another_type_replaces_nothing(self):
+        # BUG-18 (was pinned: it hid the book Axe; flipped in PR C)
         make_entry(ITEMS, "Axe", campaign=self.campaign, type="Miscellaneous", subtype="", cost=25)
 
         rows = self.get_as(self.player, ITEMS.list_url(self.campaign)).json()
 
         self.assertEqual(
             [(row["name"], row["type"], row["campaign_id"]) for row in rows],
-            [("Axe", "Miscellaneous", self.campaign.id), ("Heavy Armour", "Armour", None), ("Sword", "Weapon", None)],
+            [
+                ("Axe", "Miscellaneous", self.campaign.id),
+                ("Axe", "Weapon", None),
+                ("Heavy Armour", "Armour", None),
+                ("Sword", "Weapon", None),
+            ],
         )
 
-    def test_one_campaign_infiltration_hides_all_six_book_skills_of_that_name(self):
-        # Characterises current behaviour (BUG-18, pinned; flips in PR C)
+    def test_a_version_of_one_infiltration_replaces_that_one_alone(self):
+        # BUG-18 (was pinned: one campaign "Infiltration" hid all six book skills of that name; flipped in PR C)
         self.assertEqual(self.listed(self.player, SKILLS), ["Infiltration"] * 6 + ["Sprint"])
-
-        make_entry(SKILLS, "Infiltration", campaign=self.campaign, type="Combat")
+        make_entry(SKILLS, "Infiltration", campaign=self.campaign, type="Combat")  # a custom one: hides none
+        make_entry(SKILLS, "Sneaking", campaign=self.campaign, type="Skaven", replaces=self.infiltration[2])
 
         rows = self.get_as(self.player, SKILLS.list_url(self.campaign)).json()
-        self.assertEqual(
-            [(row["name"], row["type"]) for row in rows], [("Infiltration", "Combat"), ("Sprint", "Speed")]
-        )
-        self.assertEqual(len(INFILTRATION_TYPES), 6)
 
-    def test_every_kind_hides_book_entries_by_name(self):
-        # Characterises current behaviour (BUG-18, pinned; flips in PR C)
-        cases = [
-            (SPELLS, "Lifestealer", {"type": "Lesser Magic"}),
-            (SPECIALS, "Large", {"type": "Ability"}),
-            (RACES, "Human", {}),
-            (BESTIARY, "Warhound", {"type": "Monster"}),
-            (HIRED_SWORDS, "Ogre Bodyguard", {}),
+        listed = [(row["name"], row["type"]) for row in rows]
+        self.assertEqual(listed[:2], [("Infiltration", "Combat"), ("Sneaking", "Skaven")])
+        self.assertCountEqual(listed[2:], [("Infiltration", kind) for kind in INFILTRATION_TYPES if kind != "Skaven"] + [("Sprint", "Speed")])  # fmt: skip
+
+    def test_every_kind_replaces_a_book_entry_only_by_a_version(self) -> None:
+        # BUG-18 (was pinned: every kind hid book entries by name; flipped in PR C)
+        cases: list[tuple[CatalogueKind, Any, dict[str, Any]]] = [
+            (SPELLS, self.lifestealer[0], {"type": "Lesser Magic"}),
+            (SPECIALS, self.large, {"type": "Ability"}),
+            (RACES, self.human, {}),
+            (BESTIARY, self.warhound, {"type": "Monster"}),
+            (HIRED_SWORDS, self.ogre, {}),
         ]
-        for kind, name, fields in cases:
+        for kind, book, fields in cases:
             with self.subTest(kind=kind.key):
-                self.assertIn(name, self.listed(self.player, kind))
-                make_entry(kind, name, campaign=self.campaign, **fields)
+                entry = book.bestiary_entry if kind is HIRED_SWORDS else book
+                same_name = make_entry(kind, entry.name, campaign=self.campaign, **fields)
+                listed = [row["id"] for row in self.get_as(self.player, kind.list_url(self.campaign)).json()]
+                self.assertLessEqual({same_name.id, book.id}, set(listed))
+                version = make_entry(kind, f"New {entry.name}", campaign=self.campaign, replaces=entry, **fields)
 
-                rows = self.get_as(self.player, kind.list_url(self.campaign)).json()
+                listed = [row["id"] for row in self.get_as(self.player, kind.list_url(self.campaign)).json()]
 
-                named = [row for row in rows if kind.row_name(row) == name]
-                self.assertEqual([row["campaign_id"] for row in named], [self.campaign.id])
+                self.assertNotIn(book.id, listed)
+                self.assertLessEqual({same_name.id, version.id}, set(listed))
 
     def test_restrictions_hide_book_rows_by_text(self):
         Restriction.objects.create(type="Warband Group", restriction="Mercenaries", campaign=self.campaign)
@@ -215,8 +228,9 @@ class CatalogueMergeTests(CatalogueTestCase):
         weapons = self.get_as(self.player, f"{ITEMS.list_url(self.campaign)}&type=weapon").json()
         searched = self.get_as(self.player, f"{ITEMS.list_url(self.campaign)}&search=AX").json()
 
-        # Characterises current behaviour (BUG-18, pinned; flips in PR C): filtered by type, the Misc Axe is gone
-        # before the merge and the book Axe is back; searched by name, the Misc Axe still hides it
+        # BUG-18 (was pinned: searched by name, the Misc Axe hid the book Axe; flipped in PR C: it replaces nothing)
         self.assertEqual([(row["name"], row["campaign_id"]) for row in weapons], [("Axe", None), ("Sword", None)])
-        self.assertEqual([(row["name"], row["type"]) for row in searched], [("Axe", "Miscellaneous")])
+        self.assertEqual(
+            [(row["name"], row["type"]) for row in searched], [("Axe", "Miscellaneous"), ("Axe", "Weapon")]
+        )
         self.assertEqual(Item.objects.filter(name="Axe").count(), 2)

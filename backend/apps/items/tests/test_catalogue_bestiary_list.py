@@ -1,6 +1,6 @@
 """The bestiary list's additive query parameters for the Bestiary page and pickers (PERF-47).
 
-`?exclude_type=` leaves out entries of a type (any case, repeatable) after today's name rule, as the page's own
+`?exclude_type=` leaves out entries of a type (any case, repeatable) after the list rule (merge.py), as the page's own
 filter did, so it can stop fetching the 72 hired swords it drops. `?view=summary` sends each row without its
 description. Without them, the list is unchanged.
 """
@@ -59,12 +59,12 @@ class BestiaryListViewsTests(CatalogueTestCase):
         self.assertEqual([row["name"] for row in self.rows("&exclude_type=Hired Sword&exclude_type=Monster")], ["Warhound"])  # fmt: skip
         self.assertEqual(len(self.rows("&exclude_type=")), 3)
 
-    def test_exclude_type_applies_after_the_name_rule_as_the_page_did(self):
-        # BUG-18's rule (PR C): the campaign's hired sword "Warhound" hides the book's Warhound; leaving out hired
-        # swords then shows neither, as the page's filter did
-        make_entry(BESTIARY, "Warhound", campaign=self.campaign, type="Hired Sword")
+    def test_exclude_type_applies_after_the_list_rule_as_the_page_did(self):
+        # the campaign's version of the book Warhound, typed "Hired Sword", replaces it; leaving out hired swords then
+        # shows neither, as the page's filter did (BUG-18: a same-named entry used to do the replacing, PR C)
+        make_entry(BESTIARY, "War Dog", campaign=self.campaign, type="Hired Sword", replaces=self.warhound)
 
-        self.assertNotIn("Warhound", [row["name"] for row in self.rows("&exclude_type=Hired Sword")])
+        self.assertEqual([row["name"] for row in self.rows("&exclude_type=Hired Sword")], ["Rat Ogre"])
 
     def test_the_summary_view_drops_the_description_and_keeps_the_rest_in_order(self):
         rows = self.rows("&view=summary&exclude_type=Hired Sword")

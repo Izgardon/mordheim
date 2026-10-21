@@ -8,8 +8,9 @@ stash at their own cost (services/stash.py; BUG-117: nothing is re-priced).
 from collections import defaultdict
 from dataclasses import dataclass, field
 
-from django.db.models import F, Min, Q
+from django.db.models import F, Min
 
+from apps.core.catalogue.current import resolve
 from apps.items.models import Item
 from apps.warbands.models import LedgerAction, WarbandResource
 from apps.warbands.services import ledger
@@ -65,12 +66,10 @@ def upkeep_entry(context: FinaliseContext, upkeep: dict) -> ledger.Entry | None:
 
 
 def _found_items(context: FinaliseContext, item_ids: list[int]) -> tuple[list[dict], dict[int, list[int | None]]]:
-    """Each found item at its cheapest catalogue cost (one query), and the costs per item for the stash."""
-    campaign = Q(campaign_id__isnull=True) | Q(campaign_id=context.battle.campaign_id)
-    available = {
-        item.id: item
-        for item in Item.objects.filter(id__in=item_ids).filter(campaign).annotate(cheapest=Min("availabilities__cost"))
-    }
+    """Each found item at its cheapest catalogue cost (one query), and the costs per item for the stash. A found
+    item is the campaign's current one: its version of a book item, or after a Revert the book item (CAT-TWEAK-03)."""
+    rows = Item.objects.annotate(cheapest=Min("availabilities__cost"))
+    available = resolve(rows, "items", item_ids, context.battle.campaign_id)
     logged: list[dict] = []
     costs: defaultdict[int, list[int | None]] = defaultdict(list)
     for item_id in item_ids:

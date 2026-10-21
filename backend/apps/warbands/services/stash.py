@@ -85,7 +85,7 @@ def add_costs(warband_id: int, item_id: int, costs: Iterable[int | None]) -> Non
 
 def _priced(rows: QuerySet[WarbandItem]) -> QuerySet[WarbandItem]:
     """Stash rows with their item's current campaign price read in the same query."""
-    return rows.annotate(**house_rule_prices("warband__campaign_id", "item__name"), own_price=own_price_of("item_id"))
+    return rows.annotate(**house_rule_prices("warband__campaign_id", "item_id"), own_price=own_price_of("item_id"))
 
 
 def _entry(item: Item, rows: list[WarbandItem]) -> StashEntry | None:

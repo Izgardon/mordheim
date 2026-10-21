@@ -14,7 +14,7 @@ from apps.warbands.serializers import (
 )
 from apps.warbands.services.item_moves import Outcome, sell_item, transfer_item
 from apps.warbands.services.stash import discard_from_stash, stash_entries, stock_item
-from apps.warbands.units.catalogue_scope import in_campaign_scope
+from apps.warbands.units.catalogue_scope import current_entry
 
 from .base import WarbandScopedView
 
@@ -39,8 +39,9 @@ class WarbandItemListView(WarbandScopedView):
         if cost is not None:
             cost = _int_or(cost, None)
 
-        # another campaign's item answers as one that doesn't exist (SEC-07)
-        item = in_campaign_scope(Item.objects.filter(id=item_id), self.warband.campaign_id).first()
+        # another campaign's item answers as one that doesn't exist (SEC-07); a book item the campaign has a version of
+        # is the version (CAT-TWEAK-03)
+        item = current_entry(Item.objects.all(), item_id, self.warband.campaign_id)
         if not item:
             return Response({"detail": "Item not found"}, status=404)
         warband_item = stock_item(self.warband, item, quantity, cost)
@@ -59,12 +60,14 @@ def _item_response(move: Any, warband: Any, data: dict[str, Any], *, scoped: boo
     """Run a transfer or sale for an existing item; too few copies to move is a 400. A `scoped` move (a
     transfer) only takes the campaign's own or global items (SEC-07); a copy of another campaign's item
     already held can still be sold."""
-    items = Item.objects.filter(id=data["item_id"])
-    item = (in_campaign_scope(items, warband.campaign_id) if scoped else items).first()
+    if scoped:
+        item = current_entry(Item.objects.all(), data["item_id"], warband.campaign_id)
+    else:
+        item = Item.objects.filter(id=data["item_id"]).first()
     if not item:
         return Response({"detail": "Item not found"}, status=404)
     try:
-        outcome: Outcome = move(warband, item, data)
+        outcome: Outcome = move(warband, item, {**data, "item_id": item.id})  # the version a book id stands for
     except ValueError as exc:
         return Response({"detail": str(exc)}, status=400)
     status_code, body = outcome

@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from apps.core.catalogue.kinds import BESTIARY, HIRED_SWORDS
 from apps.core.catalogue.views import CatalogueDetailView, CatalogueListView
-from apps.warbands.units.catalogue_scope import in_campaign_scope
+from apps.warbands.units.catalogue_scope import current_entry
 from apps.warbands.views.base import WarbandScopedView
 
 from .models import BestiaryEntry, WarbandBestiaryFavourite
@@ -29,10 +29,11 @@ class HiredSwordProfileDetailView(CatalogueDetailView):
 
 
 def _in_scope(raw_id, campaign_id):
-    """The book's or the campaign's entry with this id; another campaign's reads as not found (SEC-07)."""
+    """The campaign's current entry for this id (its version of a book entry, CAT-TWEAK-03); another campaign's reads
+    as not found (SEC-07)."""
     if not str(raw_id).isdigit():
         return None
-    return in_campaign_scope(BestiaryEntry.objects.filter(id=int(raw_id)), campaign_id).first()
+    return current_entry(BestiaryEntry.objects.all(), int(raw_id), campaign_id)
 
 
 class WarbandBestiaryFavouriteListView(WarbandScopedView):

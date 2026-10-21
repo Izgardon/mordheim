@@ -128,22 +128,32 @@ def injury_outcome(result: dict[str, Any], unit_name: str) -> InjuryOutcome:
     return InjuryOutcome(dead=effect["kind"] == "dead", stat=effect.get("stat"), special=effect.get("special"), log=log)
 
 
+def injury_special(name: str, campaign_id: int) -> Special:
+    """The special an injury grants: the book's of that name (or the campaign's version of it, CAT-TWEAK-03), else
+    the campaign's own, created the first time. One query to find it."""
+    named = Q(name__iexact=name) & (Q(campaign__isnull=True) | Q(campaign_id=campaign_id))
+    versions = Q(campaign_id=campaign_id, replaces__campaign__isnull=True, replaces__name__iexact=name)
+    rows = list(Special.objects.filter(named | versions).order_by(F("campaign_id").asc(nulls_first=True), "id"))
+    book = next((row for row in rows if row.campaign_id is None), None)
+    if book is not None:
+        return next((row for row in rows if row.replaces_id == book.id), book)
+    own = next((row for row in rows if row.campaign_id is not None and row.name.lower() == name.lower()), None)
+    if own is not None:
+        return own
+    special = Special.objects.create(campaign_id=campaign_id, name=name, type="Injury")
+    catalogue_cache.bump(campaign_id)  # the campaign's specials list shows it (PERF-13)
+    return special
+
+
 def apply_stat_and_special(unit: Any, outcome: InjuryOutcome, campaign_id: int) -> list[str]:
     """Lower the unit's characteristic and grant the named special (a hero or hired sword); returns the changed
-    unit fields. The special is the catalogue's (or the campaign's), created for the campaign the first time."""
+    unit fields."""
     fields: list[str] = []
     if outcome.stat:
         setattr(unit, outcome.stat, max(0, (getattr(unit, outcome.stat) or 0) - 1))
         fields.append(outcome.stat)
     if outcome.special:
-        special = (
-            Special.objects.filter(Q(campaign__isnull=True) | Q(campaign_id=campaign_id), name__iexact=outcome.special)
-            .order_by(F("campaign_id").asc(nulls_first=True), "id")
-            .first()
-        )
-        if special is None:
-            special = Special.objects.create(campaign_id=campaign_id, name=outcome.special, type="Injury")
-            catalogue_cache.bump(campaign_id)  # the campaign's specials list shows it (PERF-13)
+        special = injury_special(outcome.special, campaign_id)
         links = unit.hero_specials if hasattr(unit, "hero_specials") else unit.hired_sword_specials
         if not links.filter(special=special).exists():
             links.create(special=special)

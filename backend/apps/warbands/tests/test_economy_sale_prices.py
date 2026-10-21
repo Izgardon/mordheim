@@ -1,7 +1,7 @@
 """Suggested sale prices (decision 3, ECON-TWEAK-02): half the item's current campaign price, rounded up.
 
-The browser used to suggest half of what the warband paid. The current price is a house-rule entry's when the
-campaign has one of the item's name; an item with no current price falls back to half the copy's stored cost,
+The browser used to suggest half of what the warband paid. The current price is the campaign's version's when it has
+one of the item (CAT-TWEAK-03); an item with no current price falls back to half the copy's stored cost,
 and says so (`sale_price_basis`). A sale without a price is sold at the suggestion; a client price still wins.
 """
 
@@ -28,7 +28,7 @@ class SuggestedSalePriceTests(RosterTestCase):
         self.assertEqual(self._sale(self._stash()["Club"]), (8, "campaign_price"))
 
     def test_a_house_rule_entry_sets_the_price_of_the_global_item(self):
-        house_axe = Item.objects.create(name="Axe", type="Melee", campaign=self.campaign)
+        house_axe = Item.objects.create(name="Axe", type="Melee", campaign=self.campaign, replaces=self.axe)
         ItemAvailability.objects.create(item=house_axe, cost=25, rarity=2)
         WarbandItem.objects.create(warband=self.warband, item=self.axe, quantity=1, cost=5)  # the global Axe
         hero = make_unit(HERO, self.warband)
@@ -57,7 +57,7 @@ class CurrentPriceTests(RosterTestCase):
     included, which the dialog shows instead of the global item's own price."""
 
     def test_copies_carry_the_current_campaign_price(self):
-        house_axe = Item.objects.create(name="Axe", type="Melee", campaign=self.campaign)
+        house_axe = Item.objects.create(name="Axe", type="Melee", campaign=self.campaign, replaces=self.axe)
         ItemAvailability.objects.create(item=house_axe, cost=25, rarity=2)
         WarbandItem.objects.create(warband=self.warband, item=self.axe, quantity=1, cost=5)
         relic = Item.objects.create(name="Relic", type="Misc")

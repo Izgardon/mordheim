@@ -145,10 +145,13 @@ class BestiaryEntryWriteSerializer(serializers.ModelSerializer):
         )
 
     def validate_item_entries(self, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        first = {row["item_id"]: row for row in reversed(rows)}  # an item listed twice: its first quantity
-        unique = [first[item_id] for item_id in dict.fromkeys(row["item_id"] for row in rows)]
-        refuse_unknown(Item.objects.all(), first, self.context["campaign_id"])
-        return unique
+        """Each item once (an item listed twice: its first quantity), as the campaign's current item for it."""
+        first = {row["item_id"]: row for row in reversed(rows)}
+        current = refuse_unknown(Item.objects.all(), first, self.context["campaign_id"])
+        unique: dict[int, dict[str, Any]] = {}
+        for item_id in dict.fromkeys(row["item_id"] for row in rows):
+            unique.setdefault(current[item_id], {**first[item_id], "item_id": current[item_id]})
+        return list(unique.values())
 
 
 class HiredSwordWriteSerializer(BestiaryEntryWriteSerializer):

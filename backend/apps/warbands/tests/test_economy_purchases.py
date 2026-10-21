@@ -65,17 +65,18 @@ class PurchaseTests(PurchaseTestCase):
         self.assertEqual(log_rows(self.warband)[0][:2], ("loadout", "henchmen_item"))
 
     def test_without_a_price_a_copy_costs_the_current_campaign_price(self):
-        # decision 11 ("Buy again"): a house-rule entry of the same name in the campaign replaces the global price
+        # decision 11 ("Buy again"): the campaign's version of a book item (CAT-TWEAK-03; it was any same-named campaign
+        # entry, BUG-18) replaces the book price; an availability sent must be the version's
         self.buy(item_id=self.sword.id, target_type="stash")  # one availability: 10
-        house_axe = Item.objects.create(name="Axe", type="Melee", campaign=self.campaign)
+        house_axe = Item.objects.create(name="Axe", type="Melee", campaign=self.campaign, replaces=self.axe)
         ItemAvailability.objects.create(item=house_axe, cost=25, rarity=2)
-        self.buy(item_id=self.axe.id, target_type="stash")  # the global Axe (5 / 15) under the house rule: 25
-        picked = ItemAvailability.objects.filter(item=self.axe, cost=15).get()
+        picked = ItemAvailability.objects.create(item=house_axe, cost=35, rarity=6)
+        self.buy(item_id=self.axe.id, target_type="stash")  # the book Axe (5 / 15) under the version (25 / 35): 25
         self.buy(item_id=self.axe.id, availability_id=picked.id, target_type="stash")
 
         self.assertEqual(
             trade_rows(self.warband),
-            [("Buy", "Sword", -10, None), ("Buy", "Axe", -25, None), ("Buy", "Axe", -15, None)],
+            [("Buy", "Sword", -10, None), ("Buy", "Axe", -25, None), ("Buy", "Axe", -35, None)],
         )
 
     def test_without_a_house_rule_the_lowest_listed_price_is_paid(self):
