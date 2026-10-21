@@ -73,23 +73,29 @@ describe("signed out", () => {
 });
 
 describe("an unknown URL", () => {
-  it("redirects a signed-out visitor to /, and NotFound is never shown (FE-TEST-18, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (FE-TEST-18, FE-UX-03, pinned; flips in PR A: `*` renders NotFound)
+  it("shows NotFound to a signed-out visitor, at the URL they asked for, with a way back (FE-TEST-18, FE-UX-03)", async () => {
     const app = renderApp("/nope");
 
+    expect(await screen.findByRole("heading", { name: "LOST IN THE RUINS" })).toBeInTheDocument();
+    expect(app.location().pathname).toBe("/nope");
+    expect(fakeApi.calls()).toEqual([]);
+
+    await setupUser().click(screen.getByRole("link", { name: "Back to the chronicle" }));
+
     await landing();
-    expect(app.location().pathname).toBe("/");
-    expect(screen.queryByText("LOST IN THE RUINS")).toBeNull();
   });
 
-  it("redirects a signed-in visitor to /, and the sign-in card sends them on to /campaigns (FE-TEST-18, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (FE-TEST-18, FE-UX-03, pinned; flips in PR A)
+  it("shows NotFound to a signed-in visitor too, and the way back goes on to the campaigns list (FE-TEST-18, FE-UX-03)", async () => {
     storeSession();
     const app = renderApp("/campaigns/1/nope/deeper");
 
+    expect(await screen.findByRole("heading", { name: "LOST IN THE RUINS" })).toBeInTheDocument();
+    expect(app.location().pathname).toBe("/campaigns/1/nope/deeper");
+
+    await setupUser().click(screen.getByRole("link", { name: "Back to the chronicle" }));
+
     await campaignsPage();
     expect(app.location().pathname).toBe("/campaigns");
-    expect(screen.queryByText("LOST IN THE RUINS")).toBeNull();
   });
 });
 
