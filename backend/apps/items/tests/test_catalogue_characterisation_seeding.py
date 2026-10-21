@@ -19,7 +19,7 @@ from django.test.utils import CaptureQueriesContext
 from rest_framework.test import APIClient
 
 from apps.bestiary.models import BestiaryEntry, BestiaryEntryItem, HiredSwordProfile
-from apps.campaigns.models import Campaign, CampaignType
+from apps.campaigns.models import Campaign, CampaignHouseRule, CampaignType
 from apps.items.models import Item, ItemAvailability, ItemProperty
 from apps.items.services import sync_half_price_armour_for_campaign
 from apps.races.models import Race
@@ -186,3 +186,23 @@ class SeedAllTests(TestCase):
         self.assertNotEqual(Item.objects.get(name="Axe").description, "stale")
         self.assertNotEqual(Item.objects.get(name="Wyrdstone Pendulum").description, "stale")
         self.assertEqual(set(Item.objects.filter(campaign=campaign).values_list("id", "replaces_id")), clones)
+
+    def test_a_reseed_leaves_the_campaigns_versions_alone_and_a_rule_still_skips_a_hand_made_one(self):
+        # CAT-TEST-12 with PR C's versions: a reseed rewrites the book and resyncs the half-price rule; the versions
+        # keep their ids, books and prices, and the hand-made Heavy Armour version stays out of the rule
+        campaign = Campaign.objects.create(name="Shards", join_code="SHARDS")
+        CampaignHouseRule.objects.create(campaign=campaign, title="Half price", effect_key="half_price_armour")
+        book_axe = Item.objects.get(campaign__isnull=True, name="Axe")
+        heavy = Item.objects.get(campaign__isnull=True, name="Heavy Armour")
+        axe = Item.objects.create(name="Axe", type=book_axe.type, campaign=campaign, replaces=book_axe)
+        ItemAvailability.objects.create(item=axe, cost=25, rarity=2)
+        mine = Item.objects.create(name="Heavy Armour", type=heavy.type, subtype=heavy.subtype, campaign=campaign, replaces=heavy)  # fmt: skip
+        sync_half_price_armour_for_campaign(campaign.id)
+        versions = set(Item.objects.filter(campaign=campaign).values_list("id", "replaces_id", "generated_effect_key"))
+
+        output = seed_all()
+
+        self.assertIn("All seed commands completed successfully!", output)
+        self.assertEqual(set(Item.objects.filter(campaign=campaign).values_list("id", "replaces_id", "generated_effect_key")), versions)  # fmt: skip
+        self.assertEqual(Item.objects.filter(replaces=heavy, campaign=campaign).get().id, mine.id)
+        self.assertEqual(axe.availabilities.get().cost, 25)
