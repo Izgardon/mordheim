@@ -1,10 +1,9 @@
-import { useMemo, useRef, useState } from "react";
-import type { CSSProperties } from "react";
-
 // routing
 import { useOutletContext, useParams, useNavigate } from "react-router-dom";
 
 // data
+import { ALL_TYPES, useCatalogueFilters } from "@/features/catalogue/hooks/useCatalogueFilters";
+import { useCatalogueEditor } from "@/features/catalogue/hooks/useCatalogueEditor";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { useMediaQuery } from "@/lib/use-media-query";
 
@@ -14,12 +13,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { TableSkeleton } from "@components/table-skeleton";
 import { PageHeader } from "@components/page-header";
 import MobileTabs from "@components/mobile-tabs";
+import { EditRowButton } from "@/features/catalogue/components/EditRowButton";
 import AddSpellForm from "../components/AddSpellForm";
 import AttuneSpellDialog from "../components/AttuneSpellDialog";
 import SpellsTable from "../components/SpellsTable";
 import { Input } from "@components/input";
-import { Tooltip } from "@components/tooltip";
-import { Pencil } from "lucide-react";
 
 // api
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
@@ -28,14 +26,26 @@ import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { Spell } from "../types/spell-types";
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
 
-const ALL_TYPES = "all";
-
 import { LOADOUT_TABS } from "@/lib/loadout-tabs";
 import type { LoadoutTabId } from "@/lib/loadout-tabs";
 
 const formatType = (value: string) => value.replace(/_/g, " ");
 
-const SPELL_ROW_BG_STYLE: CSSProperties = {};
+const spellHaystack = (spell: Spell) => [spell.name, spell.type, spell.description];
+
+/** By class, then by roll (spells with none last), then by name. */
+const compareSpells = (a: Spell, b: Spell) => {
+  const typeCompare = (a.type || "").localeCompare(b.type || "");
+  if (typeCompare !== 0) {
+    return typeCompare;
+  }
+  const rollA = a.roll ?? Number.POSITIVE_INFINITY;
+  const rollB = b.roll ?? Number.POSITIVE_INFINITY;
+  if (rollA !== rollB) {
+    return rollA - rollB;
+  }
+  return a.name.localeCompare(b.name);
+};
 
 export default function Spells() {
   const { id } = useParams();
@@ -44,83 +54,12 @@ export default function Spells() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignId = Number(id);
   const { data: spells, isLoading, error } = useCatalogue("spells", campaignId);
-  const [selectedType, setSelectedType] = useState(ALL_TYPES);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingSpell, setEditingSpell] = useState<Spell | null>(null);
-  const formRef = useRef<HTMLDivElement>(null);
+  const filters = useCatalogueFilters(spells, { haystack: spellHaystack, compare: compareSpells });
+  // AddSpellForm writes created, edited and deleted spells to the shared cache itself.
+  const editor = useCatalogueEditor<Spell>();
 
   const capabilities = campaignCapabilities(campaign);
   const canEdit = capabilities.edit_catalogue;
-
-  const typeOptions = useMemo(() => {
-    const unique = new Set(spells.map((spell) => spell.type).filter(Boolean) as string[]);
-    return Array.from(unique).sort((a, b) => a.localeCompare(b));
-  }, [spells]);
-
-  const filteredSpells = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-    const byType =
-      selectedType === ALL_TYPES ? spells : spells.filter((spell) => spell.type === selectedType);
-    if (!query) {
-      return byType.slice().sort((a, b) => {
-        const typeCompare = (a.type || "").localeCompare(b.type || "");
-        if (typeCompare !== 0) {
-          return typeCompare;
-        }
-        const rollA = a.roll ?? Number.POSITIVE_INFINITY;
-        const rollB = b.roll ?? Number.POSITIVE_INFINITY;
-        if (rollA !== rollB) {
-          return rollA - rollB;
-        }
-        return a.name.localeCompare(b.name);
-      });
-    }
-    return byType
-      .filter((spell) => {
-        const haystack = [spell.name, spell.type, spell.description]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase();
-        return haystack.includes(query);
-      })
-      .sort((a, b) => {
-        const typeCompare = (a.type || "").localeCompare(b.type || "");
-        if (typeCompare !== 0) {
-          return typeCompare;
-        }
-        const rollA = a.roll ?? Number.POSITIVE_INFINITY;
-        const rollB = b.roll ?? Number.POSITIVE_INFINITY;
-        if (rollA !== rollB) {
-          return rollA - rollB;
-        }
-        return a.name.localeCompare(b.name);
-      });
-  }, [spells, searchQuery, selectedType]);
-
-  // AddSpellForm writes created, edited and deleted spells to the shared cache itself.
-  const handleCreated = (_newSpell: Spell) => {
-    setIsFormOpen(false);
-    setEditingSpell(null);
-  };
-
-  const handleUpdated = (_updatedSpell: Spell) => {
-    setIsFormOpen(false);
-    setEditingSpell(null);
-  };
-
-  const handleDeleted = (_spellId: number) => {
-    setIsFormOpen(false);
-    setEditingSpell(null);
-  };
-
-  const handleEdit = (spell: Spell) => {
-    setEditingSpell(spell);
-    setIsFormOpen(true);
-    requestAnimationFrame(() => {
-      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  };
 
   const handleLoadoutTabChange = (tabId: LoadoutTabId) => {
     if (!id) {
@@ -148,19 +87,19 @@ export default function Spells() {
           <div className="flex flex-col gap-3 sm:flex-row md:min-w-0 md:flex-1 md:flex-nowrap md:items-center">
             <Input
               type="search"
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
+              value={filters.searchQuery}
+              onChange={(event) => filters.setSearchQuery(event.target.value)}
               placeholder="Search spells..."
               aria-label="Search spells"
               className="w-full sm:max-w-sm md:w-full md:max-w-sm md:flex-none"
             />
-            <Select value={selectedType} onValueChange={setSelectedType}>
+            <Select value={filters.selectedType} onValueChange={filters.setSelectedType}>
               <SelectTrigger className="w-full sm:w-56 md:shrink-0">
                 <SelectValue placeholder="Filter by type" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={ALL_TYPES}>All types</SelectItem>
-                {typeOptions.map((typeOption) => (
+                {filters.typeOptions.map((typeOption) => (
                   <SelectItem key={typeOption} value={typeOption}>
                     {formatType(typeOption)}
                   </SelectItem>
@@ -169,26 +108,23 @@ export default function Spells() {
             </Select>
           </div>
           <div className="flex items-center justify-end md:shrink-0">
-            {canEdit && !isFormOpen ? (
-              <Button size="sm" className="md:h-11" onClick={() => setIsFormOpen(true)}>
+            {canEdit && !editor.isOpen ? (
+              <Button size="sm" className="md:h-11" onClick={editor.openNew}>
                 Add spell
               </Button>
             ) : null}
           </div>
         </div>
-        {isFormOpen && (
-          <div ref={formRef}>
+        {editor.isOpen && (
+          <div ref={editor.formRef}>
             <AddSpellForm
-              campaignId={Number(id)}
-              onCreated={handleCreated}
-              onUpdated={handleUpdated}
-              onDeleted={handleDeleted}
-              onCancel={() => {
-                setIsFormOpen(false);
-                setEditingSpell(null);
-              }}
-              typeOptions={typeOptions}
-              editingSpell={editingSpell}
+              campaignId={campaignId}
+              onCreated={editor.close}
+              onUpdated={editor.close}
+              onDeleted={editor.close}
+              onCancel={editor.close}
+              typeOptions={filters.typeOptions}
+              editingSpell={editor.editing}
               canDelete={capabilities.delete_catalogue}
             />
           </div>
@@ -198,32 +134,17 @@ export default function Spells() {
             <TableSkeleton columns={6} rows={12} />
           ) : error ? (
             <p className="text-sm text-red-600">{error}</p>
-          ) : filteredSpells.length === 0 ? (
+          ) : filters.filtered.length === 0 ? (
             <p className="text-sm text-muted-foreground">No spells recorded yet.</p>
           ) : (
             <SpellsTable
-              spells={filteredSpells}
-              rowBackground={SPELL_ROW_BG_STYLE}
+              spells={filters.filtered}
               isMobile={isMobile}
               renderActions={(spell) => (
                 <div className="flex items-center justify-end gap-2">
                   <AttuneSpellDialog spell={spell} unitTypes={["heroes", "hiredswords"]} />
                   {canEdit && spell.campaign_id ? (
-                    <Tooltip
-                      trigger={
-                        <Button
-                          type="button"
-                          aria-label="Edit spell"
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => handleEdit(spell)}
-                        >
-                          <Pencil className="h-4 w-4" aria-hidden="true" />
-                        </Button>
-                      }
-                      content="Edit"
-                    />
+                    <EditRowButton label="Edit spell" onClick={() => editor.edit(spell)} />
                   ) : null}
                 </div>
               )}
