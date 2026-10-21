@@ -148,7 +148,7 @@ def sync_half_price_armour_for_campaign(campaign_id):
         _sync_property_links(source, clone)
         _sync_availabilities(source, clone, _half_price)
 
-    _sync_generated_items_for_campaign(
+    return _sync_generated_items_for_campaign(
         campaign_id,
         effect_key=HALF_PRICE_ARMOUR_EFFECT_KEY,
         source_items=_prefetched_base_items("Armour"),
@@ -183,7 +183,7 @@ def sync_improved_shields_for_campaign(campaign_id):
         _sync_property_links(source, clone)
         _sync_availabilities(source, clone, _same_price)
 
-    _sync_generated_items_for_campaign(
+    return _sync_generated_items_for_campaign(
         campaign_id,
         effect_key=IMPROVED_SHIELDS_EFFECT_KEY,
         source_items=_prefetched_base_items("Shield"),

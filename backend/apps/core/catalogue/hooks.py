@@ -30,9 +30,10 @@ if TYPE_CHECKING:
 
 Serializer = BaseSerializer[Any]
 HOUSE_RULE_ITEM = {
-    "detail": "This item comes from a house rule and changes with it. Edit or delete the house rule instead.",
+    "detail": "This item comes from a house rule and changes with it. Edit it (which detaches it from the rule), or"
+    " change the house rule instead.",
     "code": "house_rule_item",
-}  # BUG-51: editing or deleting a generated clone was lost on the next sync or cascaded to every owned copy
+}  # BUG-51: deleting or reverting a generated clone would fight its rule; an edit detaches it (PR C's Calls)
 
 
 class CampaignRequired(APIException):
@@ -115,7 +116,7 @@ class ItemHooks(CatalogueHooks):
         return item_rows()
 
     def refuse_write(self, entry: Any, action: str = "edit") -> None:
-        if entry.generated_effect_key:
+        if entry.generated_effect_key and action != "edit":  # an edit detaches the clone (versions.editable)
             raise PermissionDenied(HOUSE_RULE_ITEM)
 
     def create(self, serializer: Serializer, campaign_id: int) -> Model:

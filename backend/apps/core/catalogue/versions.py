@@ -39,21 +39,24 @@ def row_of(kind: CatalogueKindSpec, entry: Any) -> Any:
 
 def editable(kind: CatalogueKindSpec, row: Any, campaign_id: int) -> Any:
     """The row an edit in the campaign writes: a custom entry or a version itself (locked, so a Revert can't take it
-    mid-edit); for a book entry, the campaign's version of it, made by this first edit."""
+    mid-edit); for a book entry, the campaign's version of it, made by this first edit. Editing a house rule's clone
+    detaches it from the rule (its effect key goes, so the rule leaves it alone from then on)."""
     entry = entry_of(kind, row)
     owner = entry_kind(kind)
     manager = owner.model._default_manager
-    if entry.campaign_id is not None:
-        if entry.replaces_id is not None and not manager.select_for_update().filter(pk=entry.pk).exists():
-            raise NotFound("Not found")  # reverted while this edit was on its way
-        return row
-    book = manager.select_for_update().get(pk=entry.pk)
-    version = manager.filter(campaign_id=campaign_id, replaces=book).first()
-    if version is None:
-        version = copy_entry(owner, book, campaign_id)
-        remap(owner, campaign_id, {book.pk: version.pk}, fresh=True)
-    owner.hooks.refuse_write(version)  # a house rule's clone (pass 4: its rule owns it)
-    return row_of(kind, version)
+    if entry.campaign_id is None:
+        book = manager.select_for_update().get(pk=entry.pk)
+        entry = manager.filter(campaign_id=campaign_id, replaces=book).first()
+        if entry is None:
+            entry = copy_entry(owner, book, campaign_id)
+            remap(owner, campaign_id, {book.pk: entry.pk}, fresh=True)
+        row = row_of(kind, entry)
+    elif entry.replaces_id is not None and not manager.select_for_update().filter(pk=entry.pk).exists():
+        raise NotFound("Not found")  # reverted while this edit was on its way
+    if getattr(entry, "generated_effect_key", None):
+        manager.filter(pk=entry.pk).update(generated_effect_key=None)
+        row.generated_effect_key = entry.generated_effect_key = None
+    return row
 
 
 def revert(kind: CatalogueKindSpec, row: Any, campaign_id: int) -> Any:

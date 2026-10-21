@@ -1,15 +1,19 @@
 """House rules with an item effect (BUG-52, PERF-44; CAMP-TEST-14, -18).
 
-A rule's `effect_key` (half-price armour, improved shields) clones items into the campaign (apps/items/services.py).
-The effects are `effects.EFFECTS`; each has its sync and revert here. A campaign has at most one rule per effect (a partial unique index), so creating it again, even twice at once,
-answers the rule that exists instead of a second rule and a second set of clones. An edit that keeps the effect
-(a title or a description) leaves the clones alone; only a change of effect reverts the old one and syncs the new.
+A rule's `effect_key` (half-price armour, improved shields) clones items into the campaign (apps/items/services.py):
+each clone is a version of the book item it changes (`replaces`) with the effect's key. The effects are
+`effects.EFFECTS`; each has its sync and revert here. A campaign has at most one rule per effect (a partial unique
+index), so creating it again, even twice at once, answers the rule that exists instead of a second rule and a second
+set of clones. An edit that keeps the effect (a title or a description) leaves the clones alone; only a change of
+effect reverts the old one and syncs the new. A book item the campaign already has its own version of is left alone
+by the rule, and the answer says so (`house_rule_skipped`, PR C's Calls).
 """
 
 from typing import Any
 
 from django.db import IntegrityError, transaction
 
+from apps.items.models import Item
 from apps.items.services import (
     HALF_PRICE_ARMOUR_EFFECT_KEY,
     IMPROVED_SHIELDS_EFFECT_KEY,
@@ -33,10 +37,21 @@ REVERTS = {
 }
 
 
-def sync_effect(campaign_id: int, effect_key: str | None) -> None:
+def sync_effect(campaign_id: int, effect_key: str | None) -> list[Item]:
+    """Sync the effect's clones; the campaign's own versions it left alone."""
     sync = SYNCS.get(effect_key or "")
-    if sync:
-        sync(campaign_id)
+    skipped: list[Item] = sync(campaign_id) if sync else []
+    return skipped
+
+
+def skipped_warnings(skipped: list[Item]) -> list[dict[str, Any]]:
+    """`house_rule_skipped`, naming the campaign's own versions the rule left alone (none: no warning)."""
+    if not skipped:
+        return []
+    names = ", ".join(sorted(item.name for item in skipped))
+    message = f"The campaign's own versions of {names} were left alone; revert them for the rule to change them."
+    items = [{"id": item.id, "name": item.name, "replaces": item.replaces_id} for item in skipped]
+    return [{"code": "house_rule_skipped", "message": message, "items": items}]
 
 
 def resync_every_campaign() -> int:
@@ -64,43 +79,45 @@ def _rule_with_effect(campaign_id: int, effect_key: str) -> CampaignHouseRule | 
     return CampaignHouseRule.objects.filter(campaign_id=campaign_id, effect_key=effect_key).first()
 
 
-def create_rule(campaign_id: int, validated: dict[str, Any]) -> tuple[CampaignHouseRule, bool]:
-    """The new rule and True, or the campaign's existing rule with that effect and False (BUG-52)."""
+def create_rule(campaign_id: int, validated: dict[str, Any]) -> tuple[CampaignHouseRule, bool, list[Item]]:
+    """The new rule and True, or the campaign's existing rule with that effect and False (BUG-52); and the campaign's
+    own versions the effect left alone."""
     effect_key = validated.get("effect_key") or ""
     existing = _rule_with_effect(campaign_id, effect_key) if effect_key else None
     if existing:
-        return existing, False
+        return existing, False, []
     try:
         with transaction.atomic():
             rule = CampaignHouseRule.objects.create(campaign_id=campaign_id, **validated)
-            sync_effect(campaign_id, rule.effect_key)
+            skipped = sync_effect(campaign_id, rule.effect_key)
     except IntegrityError as error:  # the same effect created at the same moment: the first one stands
         if UNIQUE_EFFECT not in str(error):
             raise
         existing = _rule_with_effect(campaign_id, effect_key)
         assert existing is not None
-        return existing, False
-    return rule, True
+        return existing, False, []
+    return rule, True, skipped
 
 
-def update_rule(rule: CampaignHouseRule, validated: dict[str, Any]) -> CampaignHouseRule:
-    """Apply an edit; the clones change only when the effect does (PERF-44)."""
+def update_rule(rule: CampaignHouseRule, validated: dict[str, Any]) -> tuple[CampaignHouseRule, list[Item]]:
+    """Apply an edit; the clones change only when the effect does (PERF-44). The campaign's own versions the new
+    effect left alone come back with it."""
     previous = rule.effect_key or ""
     for field, value in validated.items():
         setattr(rule, field, value)
     if (rule.effect_key or "") == previous:
         rule.save(update_fields=[*validated, "updated_at"])
-        return rule
+        return rule, []
     try:
         with transaction.atomic():
             rule.save()
             revert_effect_if_unused(rule.campaign_id, previous)
-            sync_effect(rule.campaign_id, rule.effect_key)
+            skipped = sync_effect(rule.campaign_id, rule.effect_key)
     except IntegrityError as error:
         if UNIQUE_EFFECT not in str(error):
             raise
         raise Refused("This campaign already has a house rule with that effect.", code="duplicate_effect") from error
-    return rule
+    return rule, skipped
 
 
 def delete_rule(rule: CampaignHouseRule) -> None:

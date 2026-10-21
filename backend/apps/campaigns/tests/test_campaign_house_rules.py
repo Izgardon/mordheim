@@ -42,26 +42,45 @@ class HouseRuleItemTests(CampaignTestCase):
         row.refresh_from_db()
         return row.item_id, row.cost
 
-    def test_a_clone_cannot_be_edited_or_deleted_as_an_item(self):
-        # CAMP-TEST-15: an edit was lost on the next sync, and a delete cascaded to every owned copy
+    def test_editing_a_clone_detaches_it_and_deleting_or_reverting_it_is_refused(self):
+        # CAMP-TEST-15 (was: an edit was refused too, 403; PR C's Calls: an edit detaches the clone from its rule, and
+        # the rule leaves it alone from then on); a delete or a revert would fight the rule, so they stay refused
         armour = base_armour("Heavy Armour", 50)
         self.add_rule()
         clone = self.clone_of(armour)
         owned = HeroItem.objects.create(hero=self.hero, item=clone, cost=25)
         refusal = {
-            "detail": "This item comes from a house rule and changes with it. Edit or delete the house rule instead.",
+            "detail": "This item comes from a house rule and changes with it. Edit it (which detaches it from the rule),"
+            " or change the house rule instead.",
             "code": "house_rule_item",
         }
 
-        edited = self.patch_as(self.owner, f"/api/items/{clone.id}/", {"name": "Cheap plate"})
         deleted = self.delete_as(self.owner, f"/api/items/{clone.id}/")
+        reverted = self.post_as(self.owner, f"/api/items/{clone.id}/revert/")
+        edited = self.patch_as(self.owner, f"/api/items/{clone.id}/", {"name": "Cheap plate"})
+        sync_half_price_armour_for_campaign(self.campaign.id)  # a reseed's resync
 
-        self.assertEqual((edited.status_code, edited.data), (403, refusal))
         self.assertEqual((deleted.status_code, deleted.data), (403, refusal))
-        self.assertEqual(Item.objects.get(id=clone.id).name, "Heavy Armour")
+        self.assertEqual((reverted.status_code, reverted.data), (403, refusal))
+        self.assertEqual((edited.status_code, edited.data["id"], edited.data["generated_effect_key"]), (200, clone.id, None))  # fmt: skip
+        self.assertEqual(list(Item.objects.filter(replaces=armour).values_list("id", "name")), [(clone.id, "Cheap plate")])  # fmt: skip
         self.assertEqual(self.owned(owned), (clone.id, 25))
-        self.assertEqual(self.get_as(self.player, f"/api/items/{clone.id}/").data["generated_effect_key"], HALF)
         self.assertIsNone(self.get_as(self.player, f"/api/items/{armour.id}/").data["generated_effect_key"])
+
+    def test_enabling_a_rule_skips_a_book_item_the_campaign_has_its_own_version_of(self):
+        # PR C's Calls: house_rule_skipped names the versions the rule left alone
+        light, heavy = base_armour("Light Armour", 20), base_armour("Heavy Armour", 50)
+        body = {"campaign_id": self.campaign.id, "availabilities": [{"cost": 40}]}
+        version = self.patch_as(self.player, f"/api/items/{heavy.id}/", body).data["id"]
+
+        rule = self.add_rule()
+
+        self.assertEqual(rule.status_code, 201)
+        [warning] = rule.data["warnings"]
+        self.assertEqual((warning["code"], warning["items"]), ("house_rule_skipped", [{"id": version, "name": "Heavy Armour", "replaces": heavy.id}]))  # fmt: skip
+        self.assertEqual(list(Item.objects.get(id=version).availabilities.values_list("cost", flat=True)), [40])
+        self.assertEqual(list(self.clone_of(light).availabilities.values_list("cost", flat=True)), [10])
+        self.assertFalse(Item.objects.filter(replaces=heavy, generated_effect_key=HALF).exists())
 
     def test_toggling_half_price_armour_keeps_what_was_paid(self):
         # CAMP-TEST-16: the remap halved the stored cost, reset it on revert, and made it None for a source with
