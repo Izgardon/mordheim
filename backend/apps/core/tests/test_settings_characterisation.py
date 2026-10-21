@@ -62,11 +62,16 @@ def load_settings(**env: str) -> dict[str, Any]:
 
 
 class ProductionStartupTests(SimpleTestCase):
-    def test_production_starts_with_a_short_secret_key(self):
-        # Characterises current behaviour (SEC-01 rest, pinned; flips in PR A: a key under 50 characters is refused)
-        values = load_settings(DJANGO_DEBUG="0", DJANGO_SECRET_KEY=SHORT_KEY)
+    def test_production_refuses_a_secret_key_under_50_characters(self):
+        # SEC-01 rest (was pinned: a 16-character key started; flipped in PR A)
+        for key in (SHORT_KEY, "k" * 49):
+            with self.subTest(length=len(key)):
+                result = run(READ_SETTINGS, DJANGO_DEBUG="0", DJANGO_SECRET_KEY=key)
 
-        self.assertEqual((values["DEBUG"], values["SECRET_KEY_LENGTH"]), (False, 16))
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("DJANGO_SECRET_KEY must be at least 50 characters when DJANGO_DEBUG is off.", result.stderr)  # fmt: skip
+        self.assertEqual(load_settings(DJANGO_DEBUG="0", DJANGO_SECRET_KEY="k" * 50)["SECRET_KEY_LENGTH"], 50)
+        self.assertEqual(load_settings(DJANGO_DEBUG="1", DJANGO_SECRET_KEY=SHORT_KEY)["SECRET_KEY_LENGTH"], 16)  # dev
 
     def test_production_without_num_proxies_assumes_one_and_starts_without_email_settings_and_hardened(self):
         # SEC-04 (was pinned: NUM_PROXIES absent, so the whole X-Forwarded-For was the throttles' identity; flipped
@@ -119,13 +124,15 @@ class DeployCheckTests(SimpleTestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("System check identified no issues (3 silenced).", result.stdout)
 
-    def test_check_deploy_warns_about_a_short_key_that_startup_accepts(self):
-        # Characterises current behaviour (SEC-01 rest, INFRA-CQ-03, pinned; flips in PR A: startup refuses it, and
-        # CI gains `check --deploy`)
+    def test_check_deploy_cannot_even_start_with_a_short_key(self):
+        # SEC-01 rest (was pinned: check --deploy warned W009 about a key that startup accepted; flipped in PR A:
+        # startup refuses it). CI gaining `check --deploy` is PR B's. A management command doesn't show the settings'
+        # message: Django keeps the ImproperlyConfigured aside and fails later with AppRegistryNotReady, as it does
+        # for Phase 0's missing-key guard; importing the settings, as gunicorn does, shows it (the test above)
         result = run(CHECK_DEPLOY, DJANGO_DEBUG="0", DJANGO_SECRET_KEY=SHORT_KEY)
 
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("(security.W009)", result.stdout + result.stderr)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("AppRegistryNotReady", result.stderr)
 
 
 class LoadedSettingsTests(SimpleTestCase):

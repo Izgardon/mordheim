@@ -26,7 +26,9 @@ def _load_settings(**env: str) -> subprocess.CompletedProcess[str]:
 
 class SettingsGuardTests(SimpleTestCase):
     def test_debug_is_off_unless_enabled(self):
-        result = _load_settings(DJANGO_DEBUG="", DJANGO_SECRET_KEY="a-unique-production-key-for-tests")
+        result = _load_settings(
+            DJANGO_DEBUG="", DJANGO_SECRET_KEY="a-unique-production-key-for-the-settings-guard-tests"
+        )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue(result.stdout.startswith("False"))
 

@@ -26,13 +26,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = _env_bool("DJANGO_DEBUG", False)
 
 # SECRET_KEY also signs JWTs and password-reset tokens, so production must never
-# fall back to a known value. Local dev (DEBUG on) gets a fixed throwaway key.
+# fall back to a known value, nor use a short one (SEC-01; Django's check --deploy
+# asks for 50 characters). Local dev (DEBUG on) gets a fixed throwaway key.
 _DEV_SECRET_KEY = "dev-only-insecure-secret-key-do-not-use-in-production"
+SECRET_KEY_MIN_LENGTH = 50
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "")
 if not SECRET_KEY or SECRET_KEY in {"dev-secret-key", _DEV_SECRET_KEY}:
     if not DEBUG:
         raise ImproperlyConfigured("DJANGO_SECRET_KEY must be set to a unique value when DJANGO_DEBUG is off.")
     SECRET_KEY = _DEV_SECRET_KEY
+elif not DEBUG and len(SECRET_KEY) < SECRET_KEY_MIN_LENGTH:
+    raise ImproperlyConfigured(
+        f"DJANGO_SECRET_KEY must be at least {SECRET_KEY_MIN_LENGTH} characters when DJANGO_DEBUG is off."
+    )
 
 allowed_hosts = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,0.0.0.0,backend")
 ALLOWED_HOSTS = [host for host in allowed_hosts.split(",") if host]
