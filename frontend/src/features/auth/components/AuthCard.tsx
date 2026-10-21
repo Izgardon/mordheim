@@ -14,6 +14,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { requestPasswordReset } from "../api/auth-api";
 import { useAuth } from "../hooks/use-auth";
 import { useSignInRedirect } from "../hooks/use-sign-in-redirect";
+import { getErrorMessage } from "@/lib/get-error-message";
 import { useMediaQuery } from "@/lib/use-media-query";
 import titleImage from "@/assets/background/title.webp";
 export default function AuthCard() {
@@ -59,11 +60,7 @@ export default function AuthCard() {
         });
       }
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setError(errorResponse.message || "Unable to sign in");
-      } else {
-        setError("Unable to sign in");
-      }
+      setError(getErrorMessage(errorResponse, "Unable to sign in"));
     }
   };
 
@@ -77,15 +74,17 @@ export default function AuthCard() {
       const response = await requestPasswordReset({ email: forgotEmail });
       setNotice(response.detail);
     } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setError(errorResponse.message || "Unable to send reset email");
-      } else {
-        setError("Unable to send reset email");
-      }
+      setError(getErrorMessage(errorResponse, "Unable to send reset email"));
     } finally {
       setIsForgotSubmitting(false);
     }
   };
+
+  const errorAlert = error ? (
+    <p role="alert" className="text-sm text-destructive">
+      {error}
+    </p>
+  ) : null;
 
   const headerContent = (
     <CardHeader className={isMobile ? "space-y-3 px-4 pb-3 pt-4" : "space-y-4 pt-6"}>
@@ -131,6 +130,7 @@ export default function AuthCard() {
               : "min-w-[110px] rounded-full px-4 text-xs leading-none py-1"
           }
           onClick={() => setMode("login")}
+          aria-pressed={mode === "login"}
         >
           Sign in
         </Button>
@@ -144,6 +144,7 @@ export default function AuthCard() {
               : "min-w-[110px] rounded-full px-4 text-xs leading-none py-1"
           }
           onClick={() => setMode("register")}
+          aria-pressed={isRegister}
         >
           Create Account
         </Button>
@@ -175,7 +176,7 @@ export default function AuthCard() {
             />
           </label>
           {notice ? <p className="text-sm">{notice}</p> : null}
-          {error ? <p className="text-sm text-destructive">{error}</p> : null}
+          {errorAlert}
           <div className="flex flex-col items-center gap-3">
             <Button size="sm" type="submit" disabled={isForgotSubmitting}>
               {isForgotSubmitting ? "Sending..." : "Send reset link"}
@@ -264,7 +265,7 @@ export default function AuthCard() {
               </button>
             </div>
           ) : null}
-          {error ? <p className="text-sm text-destructive">{error}</p> : null}
+          {errorAlert}
           <div className="flex justify-center">
             <Button size="sm" type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Working..." : isRegister ? "Create account" : "Sign in"}

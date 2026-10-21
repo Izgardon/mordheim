@@ -79,8 +79,7 @@ describe("signing in", () => {
     expect(await screen.findByText("Campaigns page")).toBeInTheDocument();
   });
 
-  it("shows a refusal under the form with no role=alert (AUTH-UX-07, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (AUTH-UX-07, pinned; flips in PR A)
+  it("announces a refusal under the form as an alert (AUTH-UX-07)", async () => {
     const user = setupUser();
     fakeApi.fail(
       "POST /auth/login/",
@@ -92,8 +91,7 @@ describe("signing in", () => {
     await user.type(screen.getByLabelText("Password"), "wrong");
     await user.click(submitButton());
 
-    expect(await screen.findByText("Invalid credentials")).toBeInTheDocument();
-    expect(screen.queryByRole("alert")).toBeNull();
+    expect(await screen.findByRole("alert")).toHaveTextContent("Invalid credentials");
     expect(submitButton()).toHaveTextContent("Sign in");
   });
 
@@ -138,18 +136,24 @@ describe("creating an account", () => {
     });
   });
 
-  it("marks the chosen mode by colour alone: neither switch has aria-pressed (AUTH-UX-07, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (AUTH-UX-07, pinned; flips in PR A)
+  it("marks the chosen mode with aria-pressed, not by colour alone (AUTH-UX-07)", async () => {
     const user = setupUser();
     renderCard();
     const signInSwitch = () => screen.getAllByRole("button", { name: "Sign in" })[0];
     const createSwitch = () => screen.getByRole("button", { name: "Create Account" });
 
-    expect(signInSwitch()).not.toHaveAttribute("aria-pressed");
+    expect(signInSwitch()).toHaveAttribute("aria-pressed", "true");
+    expect(createSwitch()).toHaveAttribute("aria-pressed", "false");
     await user.click(createSwitch());
 
-    expect(createSwitch()).not.toHaveAttribute("aria-pressed");
+    expect(createSwitch()).toHaveAttribute("aria-pressed", "true");
+    expect(signInSwitch()).toHaveAttribute("aria-pressed", "false");
     expect(submitButton()).toHaveTextContent("Create account");
+
+    await user.click(signInSwitch());
+    await user.click(screen.getByRole("button", { name: "Forgot password?" }));
+    expect(signInSwitch()).toHaveAttribute("aria-pressed", "false");
+    expect(createSwitch()).toHaveAttribute("aria-pressed", "false");
   });
 });
 

@@ -104,7 +104,7 @@ describe("ResetPassword (AUTH-TEST-27)", () => {
     expect(fakeApi.calls()).toEqual([]);
   });
 
-  it("says 'Passwords do not match.' and sends nothing when the two differ", async () => {
+  it("says 'Passwords do not match.', as an alert, and sends nothing when the two differ", async () => {
     const user = setupUser();
     renderReset();
 
@@ -112,8 +112,27 @@ describe("ResetPassword (AUTH-TEST-27)", () => {
     await user.type(confirmPassword(), "wyrdstone-24");
     await user.click(resetButton());
 
-    expect(screen.getByText("Passwords do not match.")).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("Passwords do not match.");
     expect(fakeApi.calls()).toEqual([]);
+  });
+
+  it("announces the server's refusal as an alert, with every password rule it breaks (AUTH-UX-01, AUTH-UX-07)", async () => {
+    const user = setupUser();
+    const tooShort = "This password is too short. It must contain at least 8 characters.";
+    const tooCommon = "This password is too common.";
+    fakeApi.fail(
+      "POST /auth/password-reset-confirm/",
+      new ApiError(tooShort, 400, { new_password: [tooShort, tooCommon] })
+    );
+    renderReset();
+
+    await user.type(newPassword(), "abc");
+    await user.type(confirmPassword(), "abc");
+    await user.click(resetButton());
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      `New password: ${tooShort} ${tooCommon}`
+    );
   });
 
   it("says the link 'expires after a short time' (AUTH-UX-05, pinned; flips in PR A: 'valid for 1 hour')", () => {

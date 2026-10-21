@@ -1,15 +1,15 @@
 /**
- * Pass 6 characterisation: the text the sign-in card shows for each refusal (AUTH-TEST-26).
- * The real `apiRequest` builds the message from a fake `fetch`, so these are the words a user
- * reads today: the card prints `error.message` and doesn't use `getErrorMessage`.
+ * The text the sign-in card shows for each refusal (AUTH-TEST-26). The real `apiRequest` builds
+ * the error from a fake `fetch`, and the card reads it through `getErrorMessage` (AUTH-UX-01),
+ * as an alert (AUTH-UX-07).
  */
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AuthProvider } from "@/features/auth/stores/auth-store";
-import { ApiError } from "@/lib/api-client";
-import { getErrorMessage } from "@/lib/get-error-message";
+import { ApiError, SERVER_UNAVAILABLE_MESSAGE } from "@/lib/api-client";
+import { getErrorMessage, SERVER_ERROR_MESSAGE } from "@/lib/get-error-message";
 import { RAIDER } from "@/test/auth-fixtures";
 import { fakeFetch, json } from "@/test/fake-fetch";
 import { createQueryWrapper } from "@/test/query-test-utils";
@@ -70,38 +70,38 @@ afterEach(() => {
 });
 
 describe("refusals on the sign-in card (AUTH-TEST-26)", () => {
-  it("shows DRF's throttle text in seconds, Retry-After unread (AUTH-TEST-26, AUTH-UX-01, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (AUTH-UX-01, pinned; flips in PR A: getErrorMessage)
+  it("says when to try again after a throttle, in minutes, not DRF's seconds (AUTH-TEST-26, AUTH-UX-01)", async () => {
     fakeFetch.on("POST /auth/login/", json(429, { detail: THROTTLED }, { "Retry-After": "3540" }));
 
     await signIn();
 
-    expect(await screen.findByText(THROTTLED)).toBeInTheDocument();
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Too many attempts. Try again in 59 minutes."
+    );
+    expect(screen.queryByText(THROTTLED)).toBeNull();
   });
 
-  it("shows the browser's 'Failed to fetch' when the server can't be reached (AUTH-TEST-26, AUTH-UX-01, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (AUTH-UX-01, pinned; flips in PR A)
+  it("says the server can't be reached instead of 'Failed to fetch' (AUTH-TEST-26, AUTH-UX-01)", async () => {
     fakeFetch.on("POST /auth/login/", () => {
       throw new TypeError("Failed to fetch");
     });
 
     await signIn();
 
-    expect(await screen.findByText("Failed to fetch")).toBeInTheDocument();
+    expect(await screen.findByRole("alert")).toHaveTextContent(SERVER_UNAVAILABLE_MESSAGE);
   });
 
-  it("shows only the first of two password rules a sign-up breaks (AUTH-TEST-26, AUTH-UX-01, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (AUTH-UX-01, pinned; flips in PR A)
+  it("shows both password rules a sign-up breaks (AUTH-TEST-26, AUTH-UX-01)", async () => {
     fakeFetch.on("POST /auth/register/", json(400, { password: [TOO_SHORT, TOO_COMMON] }));
 
     await signUp();
 
-    expect(await screen.findByText(TOO_SHORT)).toBeInTheDocument();
-    expect(screen.queryByText(new RegExp(TOO_COMMON))).toBeNull();
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      `Password: ${TOO_SHORT} ${TOO_COMMON}`
+    );
   });
 
-  it("shows 'Request failed (500)' for a server error, as the over-long alias gets (BUG-84, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (BUG-84, AUTH-UX-01, pinned; flips in PR A)
+  it("shows a plain sentence for a server error, as the over-long alias gets (BUG-84, AUTH-UX-01)", async () => {
     fakeFetch.on(
       "POST /auth/register/",
       () =>
@@ -113,7 +113,8 @@ describe("refusals on the sign-in card (AUTH-TEST-26)", () => {
 
     await signUp();
 
-    expect(await screen.findByText("Request failed (500)")).toBeInTheDocument();
+    expect(await screen.findByRole("alert")).toHaveTextContent(SERVER_ERROR_MESSAGE);
+    expect(screen.queryByText("Request failed (500)")).toBeNull();
   });
 
   it("says a taken email is taken (SEC-11, accepted)", async () => {
@@ -121,7 +122,7 @@ describe("refusals on the sign-in card (AUTH-TEST-26)", () => {
 
     await signUp();
 
-    expect(await screen.findByText("User already exists")).toBeInTheDocument();
+    expect(await screen.findByRole("alert")).toHaveTextContent("Email: User already exists");
   });
 
   it("shows login's 'Invalid credentials' and stores no session", async () => {
@@ -129,7 +130,7 @@ describe("refusals on the sign-in card (AUTH-TEST-26)", () => {
 
     await signIn();
 
-    expect(await screen.findByText("Invalid credentials")).toBeInTheDocument();
+    expect(await screen.findByRole("alert")).toHaveTextContent("Invalid credentials");
     expect(fakeFetch.calls()).toEqual(["POST /auth/login/"]);
     expect(localStorage.length).toBe(0);
   });
@@ -150,7 +151,7 @@ describe("a refusal on the forgot-password form", () => {
     await user.type(screen.getByLabelText("Email"), RAIDER.email);
     await user.click(screen.getByRole("button", { name: "Send reset link" }));
 
-    expect(await screen.findByText(EMAIL_OFF)).toBeInTheDocument();
+    expect(await screen.findByRole("alert")).toHaveTextContent(EMAIL_OFF);
     const sameError = new ApiError(EMAIL_OFF, 503, {
       detail: EMAIL_OFF,
       code: "email_unavailable",

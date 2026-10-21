@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
 import { CardBackground } from "@components/card-background";
 import { Input } from "@components/input";
 
+import { getErrorMessage } from "@/lib/get-error-message";
+
 import AuthShell from "../components/AuthShell";
 import { confirmPasswordReset } from "../api/auth-api";
 
@@ -53,9 +55,8 @@ export default function ResetPassword() {
       setNewPassword("");
       setConfirmPassword("");
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Unable to reset password.";
       setStatus("error");
-      setMessage(errorMessage);
+      setMessage(getErrorMessage(error, "Unable to reset password."));
     } finally {
       setIsSubmitting(false);
     }
@@ -104,7 +105,10 @@ export default function ResetPassword() {
               />
             </label>
             {message ? (
-              <p className={status === "error" ? "text-sm text-destructive" : "text-sm"}>
+              <p
+                role={status === "error" ? "alert" : undefined}
+                className={status === "error" ? "text-sm text-destructive" : "text-sm"}
+              >
                 {message}
               </p>
             ) : null}
