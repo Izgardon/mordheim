@@ -1,20 +1,21 @@
 """The one write path of the catalogue: every create, edit, revert and delete of an entry, for every kind, runs here.
 
-A write of a kind with a name constraint runs in one transaction, where an exact duplicate answers 400
-`duplicate_entry` with nothing written (duplicates.py). A delete deletes the entry, or answers 409 `in_use` with
-the counts and deletes nothing when anything holds it (usage.py; BUG-16 safety net, BUG-130). Every write bumps
-its campaign's catalogue version in the same transaction, which retires the campaign's cached lists (cache.py,
-PERF-13).
+A write of a kind with names runs in one transaction, where a name that two writes took at once answers 400
+`name_taken` with nothing written (duplicates.py, names.py). A delete deletes the entry, or answers 409 `in_use`
+with the counts and deletes nothing when anything holds it (usage.py; BUG-16 safety net, BUG-130). Every write
+bumps its campaign's catalogue version in the same transaction, which retires the campaign's cached lists
+(cache.py, PERF-13).
 """
 
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, NoReturn
 
 from django.db import models, transaction
 
 from apps.core.errors import ApiError
 
+from . import names
 from .cache import bump
 from .duplicates import refusing_duplicates
 from .usage import count_usage
@@ -24,13 +25,21 @@ if TYPE_CHECKING:
 
 
 @contextmanager
-def catalogue_write(kind: "CatalogueKindSpec", campaign_id: int) -> Iterator[None]:
-    """A create, an edit or a revert of one of the campaign's entries."""
-    if kind.duplicate is None:  # one INSERT (an item property): nothing to refuse, and nothing to wrap
+def catalogue_write(
+    kind: "CatalogueKindSpec", campaign_id: int, name: str | None = None, allowed: Iterable[Any] = ()
+) -> Iterator[None]:
+    """A create, an edit or a revert of one of the campaign's entries (`name`: the name it writes, `allowed`: the
+    entry ids that may hold it)."""
+    if not kind.named:  # one INSERT (an item property): nothing to refuse, and nothing to wrap
         yield
         bump(campaign_id)  # after the INSERT's commit: a list read in between caches the new row under the old version
         return
-    with refusing_duplicates(kind.duplicate):
+
+    def taken() -> NoReturn:
+        written = name or ""
+        names.refuse(kind, written, names.matches(kind, campaign_id, written, allowed))
+
+    with refusing_duplicates(taken):
         yield
         bump(campaign_id)
 

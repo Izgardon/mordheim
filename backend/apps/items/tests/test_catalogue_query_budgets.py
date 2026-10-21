@@ -230,32 +230,34 @@ class CatalogueWriteBudgetTests(CatalogueTestCase):
         availabilities = [{"cost": 10 * (n + 1), **restricted} for n in range(links)]
         return ITEMS.body(name, self.campaign, availabilities=availabilities, property_ids=properties)
 
-    def test_an_item_create_costs_14_queries_however_many_rows_it_links(self):
+    def test_an_item_create_costs_15_queries_however_many_rows_it_links(self):
         # PERF-44, BUG-53 (was pinned at 25: an INSERT and a restriction read per availability, a get_or_create per
         # property; flipped in PR A). Membership, a scope check for the properties and one for the restrictions, the
         # savepoint pair, the item, its availabilities, their restrictions and its properties in one INSERT each,
         # then the answer: the item and its three prefetches (15 with five, before PERF-49 joined the properties and
-        # restrictions to their links), and the campaign's catalogue version bumped with the write (PERF-13)
-        self.assertEqual(self.count(ITEMS.list_url(), self.item_body("Halberd", 2)), 14)
-        self.assertEqual(self.count(ITEMS.list_url(), self.item_body("Glaive", 6)), 14)
+        # restrictions to their links), the campaign's catalogue version bumped with the write (PERF-13), and the name
+        # check (CAT-TWEAK-02, PR C: 14 before)
+        self.assertEqual(self.count(ITEMS.list_url(), self.item_body("Halberd", 2)), 15)
+        self.assertEqual(self.count(ITEMS.list_url(), self.item_body("Glaive", 6)), 15)
 
-    def test_a_hired_sword_create_costs_21_queries_however_many_rows_it_links(self):
+    def test_a_hired_sword_create_costs_22_queries_however_many_rows_it_links(self):
         # PERF-44, BUG-53 (was pinned at 96: a get_or_create per link, then the answer's N+1; flipped in PR A). The
         # write: membership, a scope check per table sent (skills, specials, items), the savepoint pair, the entry,
-        # one INSERT per kind of link, the profile and the campaign's catalogue version (12, PERF-13). The answer: the
-        # hired sword detail's 9 prefetched reads, spells and restrictions included though none were sent. The brief's
-        # 10 would need the answer built from what was written instead of read back.
+        # one INSERT per kind of link, the profile, the campaign's catalogue version (PERF-13) and the name check
+        # (13; CAT-TWEAK-02, PR C: 21 before). The answer: the hired sword detail's 9 prefetched reads, spells and
+        # restrictions included though none were sent. The brief's 10 would need the answer built from what was
+        # written instead of read back.
         skills = [Skill.objects.create(name=f"Trick {n}", type="Combat").id for n in range(6)]
         specials = [Special.objects.create(name=f"Gift {n}", type="Ability").id for n in range(3)]
         gear = [{"item_id": make_entry(ITEMS, f"Kit {n}").id, "quantity": 1} for n in range(6)]
         sword = HIRED_SWORDS.body("Mercenary", self.campaign, skill_ids=skills, special_ids=specials, item_entries=gear)
         small = HIRED_SWORDS.body("Squire", self.campaign, skill_ids=skills[:1], special_ids=specials[:1], item_entries=gear[:1])  # fmt: skip
 
-        self.assertEqual(self.count(HIRED_SWORDS.list_url(), sword), 21)
-        self.assertEqual(self.count(HIRED_SWORDS.list_url(), small), 21)
+        self.assertEqual(self.count(HIRED_SWORDS.list_url(), sword), 22)
+        self.assertEqual(self.count(HIRED_SWORDS.list_url(), small), 22)
 
-    def test_a_skill_create_costs_5_queries(self):
-        # membership, the savepoint pair, the INSERT and the campaign's catalogue version (PERF-13). It was 5 with the
-        # campaign read by the serializer's campaign field instead of the version (IMP-79 dropped it), 3 before the
-        # duplicate guard's savepoint (BUG-17)
-        self.assertEqual(self.count(SKILLS.list_url(), SKILLS.body("Feint", self.campaign)), 5)
+    def test_a_skill_create_costs_6_queries(self):
+        # membership, the name check (CAT-TWEAK-02, PR C), the savepoint pair, the INSERT and the campaign's catalogue
+        # version (PERF-13). It was 5 before the name check, 5 with the campaign read by the serializer's campaign field
+        # instead of the version (IMP-79 dropped it), 3 before the duplicate guard's savepoint (BUG-17)
+        self.assertEqual(self.count(SKILLS.list_url(), SKILLS.body("Feint", self.campaign)), 6)

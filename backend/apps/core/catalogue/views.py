@@ -24,7 +24,7 @@ from rest_framework.serializers import BaseSerializer
 from apps.campaigns.permissions import parse_campaign_id
 from apps.campaigns.views.base import CampaignScopedView
 
-from . import cache, versions
+from . import cache, names, versions
 from .kinds import CatalogueKindSpec
 from .writes import catalogue_write, delete_unless_in_use
 
@@ -104,7 +104,10 @@ class CatalogueCollectionView(CatalogueScopedView):
         assert self.campaign_id is not None  # load_scope found it
         serializer = self.write_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)  # every field and linked id, before anything is written
-        with catalogue_write(self.kind, self.campaign_id):
+        name = serializer.validated_data.get("name")
+        if self.kind.named and name is not None:
+            names.check_create(self.kind, self.campaign_id, name)  # 400 name_taken with the matches (CAT-TWEAK-02)
+        with catalogue_write(self.kind, self.campaign_id, name):
             entry = self.kind.hooks.create(serializer, self.campaign_id)
         return Response(self.answer(entry), status=status.HTTP_201_CREATED)
 
@@ -164,7 +167,9 @@ class CatalogueEntryView(CatalogueScopedView):
             kind.hooks.write_instance(self.entry), data=self.request.data, partial=partial
         )
         serializer.is_valid(raise_exception=True)
-        with catalogue_write(kind, self.campaign_id):
+        name, shown = serializer.validated_data.get("name"), versions.entry_of(kind, self.entry)
+        names.check_edit(kind, shown, self.campaign_id, name)  # its own name, or its book entry's, stays allowed
+        with catalogue_write(kind, self.campaign_id, name, allowed=[shown.pk, shown.replaces_id or shown.pk]):
             entry = versions.editable(kind, self.entry, self.campaign_id)
             serializer.instance = kind.hooks.write_instance(entry)
             kind.hooks.update(entry, serializer)

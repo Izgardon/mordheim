@@ -121,7 +121,7 @@ class BestiaryEntryWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BestiaryEntry
-        validators: list = []  # a duplicate name is the database constraint's 400 duplicate_entry (BUG-17)
+        validators: list = []  # a taken name is the name rule's 400 name_taken (CAT-TWEAK-02), backed by the constraint
         fields: tuple[str, ...] = (
             "name",
             "type",

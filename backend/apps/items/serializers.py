@@ -159,7 +159,7 @@ class ItemWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Item
-        validators: list = []  # a duplicate is the database constraint's 400 duplicate_entry (BUG-17)
+        validators: list = []  # a taken name is the name rule's 400 name_taken (CAT-TWEAK-02), backed by the constraint
         fields = (
             "name",
             "type",
