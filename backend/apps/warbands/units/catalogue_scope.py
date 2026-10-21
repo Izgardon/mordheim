@@ -26,12 +26,6 @@ CATALOGUE_ID_FIELDS: dict[str, type[Skill] | type[Special] | type[Spell]] = {
 }
 
 
-def in_campaign_scope[RowsT: QuerySet[Any]](rows: RowsT, campaign_id: int) -> RowsT:
-    """The catalogue `rows` a campaign may use: book entries and its own."""
-    scoped: RowsT = rows.filter(Q(campaign__isnull=True) | Q(campaign_id=campaign_id))
-    return scoped
-
-
 def current_entry(rows: QuerySet[Any], entry_id: Any, campaign_id: int) -> Any:
     """The campaign's current entry for `entry_id` (the version of a book entry it replaced), or None for another
     campaign's or an unknown id: one query."""

@@ -1,11 +1,12 @@
 """The differences between catalogue kinds that are behaviour rather than data (IMP-79), as pass 1 did for units.
 
 The generic views (views.py) call these hooks. `CatalogueHooks` is what skills, spells, specials and restrictions
-need: every row of the model, the list rule (merge.py), a create that saves the serializer in the campaign, an edit that
-saves it, a delete of the entry. Items refuse writes to a house rule's clones and write through `items/writes.py`;
-bestiary entries and hired swords write through `bestiary/writes.py` and read their details through
-`bestiary/selectors.py`, and a hired sword is edited and deleted through its entry; a race edit naming another
-campaign is refused (BUG-147); item properties list the book's and the campaign's side by side.
+need: every row of the model with what its badges read, the list rule (merge.py), a create that saves the serializer
+in the campaign, an edit that saves it, a delete of the entry. Items refuse deleting or reverting a house rule's
+clone and write through `items/writes.py`; bestiary entries and hired swords write through `bestiary/writes.py` and
+read their details through `bestiary/selectors.py`, and a hired sword is edited and deleted through its entry; a
+race edit naming another campaign is refused (BUG-147); item properties list the book's and the campaign's side by
+side.
 """
 
 from typing import TYPE_CHECKING, Any

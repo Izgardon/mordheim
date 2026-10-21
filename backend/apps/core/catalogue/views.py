@@ -4,11 +4,11 @@ kind (kinds.py), on pass 4's `CampaignScopedView`.
 A catalogue path doesn't name its campaign. A list reads `?campaign_id=` (none: the book, which needs only a
 login), a create reads its body's `campaign_id` (none: 404), an entry its own campaign. A book entry is read by
 anyone signed in; a write to it names the campaign it is for (`campaign_id` in the body or the query; none: 403),
-where an edit makes or changes the campaign's version of it (versions.py). Once the campaign is known, access is
-the campaign routes': a non-member 404 "Not found", a write to an archived campaign 403 `campaign_archived`, then
-the method's rule: reading takes membership, creating, editing and reverting `edit_catalogue`, deleting
-`delete_catalogue` (decisions 4 and 5). A method a view handles but `rules` doesn't name is refused (deny by
-default).
+where an edit makes or changes the campaign's version of it (versions.py) and a DELETE removes it from the campaign
+(archive.py). Once the campaign is known, access is the campaign routes': a non-member 404 "Not found", a write to
+an archived campaign 403 `campaign_archived`, then the method's rule: reading and `usage/` take membership;
+creating, editing, reverting and restoring `edit_catalogue`; deleting `delete_catalogue` (decisions 4 and 5). A
+method a view handles but `rules` doesn't name is refused (deny by default).
 """
 
 from typing import Any, ClassVar
@@ -87,7 +87,7 @@ class CatalogueCollectionView(CatalogueScopedView):
             self.kind.hooks.missing_campaign()
 
     def list(self, request: Request) -> HttpResponseBase:
-        """The kind's rows, filtered, then the book's or the campaign's by today's name rule; answered from the cache
+        """The kind's rows, filtered, then the book's or the campaign's (merge.py); answered from the cache
         while neither catalogue has changed (PERF-13)."""
         campaign_settings = self.access.settings if self.campaign_id is not None else None
         version = campaign_settings.catalogue_version if campaign_settings else None
