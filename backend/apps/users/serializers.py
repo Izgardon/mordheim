@@ -5,7 +5,6 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError, transaction
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 NAME_MAX_LENGTH = 40  # a display name (decision 2)
 EMAIL_MAX_LENGTH = 150  # the email is also the username, a varchar(150) (BUG-84)
@@ -68,27 +67,20 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ("id", "email", "name")
 
 
-class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
-    username_field = "email"
+class LoginSerializer(serializers.Serializer):
+    """An email and password; valid when they sign in an active user, given as `user`.
+
+    The email is checked as an address (IMP-95 a): SimpleJWT's obtain serializer swapped the declared EmailField for a
+    CharField, so anything at all was just "Invalid credentials"."""
+
     email = serializers.EmailField(write_only=True)
+    password = serializers.CharField(write_only=True, style={"input_type": "password"})
 
     def validate(self, attrs):
-        email = attrs.get("email", "").strip().lower()
-        password = attrs.get("password")
-
-        if not email or not password:
-            raise serializers.ValidationError("Email and password are required")
-
-        user = authenticate(username=email, password=password)
-        if not user:
+        user = authenticate(self.context.get("request"), username=attrs["email"].lower(), password=attrs["password"])
+        if user is None:
             raise serializers.ValidationError("Invalid credentials")
-
-        self.user = user
-        refresh = self.get_token(user)
-        return {
-            "refresh": str(refresh),
-            "access": str(refresh.access_token),  # type: ignore[attr-defined]
-        }
+        return {"user": user}
 
 
 class PasswordResetRequestSerializer(serializers.Serializer):

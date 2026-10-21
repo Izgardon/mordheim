@@ -8,7 +8,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView
 
 from apps.core.throttling import (
     FEEDBACK_REPORT_THROTTLE_CLASSES,
@@ -21,8 +21,8 @@ from apps.core.throttling import (
 
 from .emails import send_feedback_report_email, send_password_reset_email
 from .serializers import (
-    EmailTokenObtainPairSerializer,
     FeedbackReportSerializer,
+    LoginSerializer,
     PasswordResetConfirmSerializer,
     PasswordResetRequestSerializer,
     RegisterSerializer,
@@ -79,9 +79,16 @@ class RegisterView(generics.CreateAPIView):
         )
 
 
-class LoginView(TokenObtainPairView):
-    serializer_class = EmailTokenObtainPairSerializer  # type: ignore[assignment]
+class LoginView(APIView):
+    authentication_classes = ()  # a stale bearer header never stops a sign-in
+    permission_classes = [permissions.AllowAny]
     throttle_classes = LOGIN_THROTTLE_CLASSES
+
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        refresh = RefreshToken.for_user(serializer.validated_data["user"])
+        return Response({"refresh": str(refresh), "access": str(refresh.access_token)})  # type: ignore[attr-defined]
 
 
 class RefreshView(TokenRefreshView):

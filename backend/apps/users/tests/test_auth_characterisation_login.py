@@ -54,15 +54,15 @@ class LoginTests(AuthTestCase):
             with self.subTest(email=email):
                 self.assertEqual(self.login(email).status_code, 200)
 
-    def test_an_email_that_is_not_an_address_is_just_invalid_credentials(self):
-        # Characterises current behaviour (AUTH-CQ-04 a, IMP-95 a, pinned; flips in PR A: "Enter a valid email
-        # address."): TokenObtainSerializer.__init__ replaces the declared EmailField with a CharField
+    def test_an_email_that_is_not_an_address_is_a_field_error(self):
+        # AUTH-CQ-04 a, IMP-95 a (was pinned: just "Invalid credentials", since TokenObtainSerializer.__init__ replaced
+        # the declared EmailField with a CharField; flipped in PR A)
         response = self.login("pia")
 
-        self.assertEqual((response.status_code, response.json()), (400, INVALID))
+        self.assertEqual((response.status_code, response.json()), (400, {"email": ["Enter a valid email address."]}))
 
     def test_missing_fields_are_field_errors(self):
-        # The serializer's own "Email and password are required" can't be reached: the fields refuse blanks first
+        # The fields refuse blanks before any credentials check
         cases = {
             "nothing": ({}, {"email": ["This field is required."], "password": ["This field is required."]}),
             "blank email": ({"email": "  ", "password": PASSWORD}, {"email": ["This field may not be blank."]}),
