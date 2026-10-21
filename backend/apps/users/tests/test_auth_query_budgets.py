@@ -1,0 +1,96 @@
+"""Query budgets for auth and core at today's counts (pass 6; AUTH-TEST-01, -05, -07, -08, -14).
+
+Real JWTs, so a signed-in request's count includes the JWT user lookup, as in production. Counts are exact: a
+change that makes a request cheaper lowers its budget in the same commit. PR A's targets (the brief's table): login
+<= 2, register <= 3, refresh 1 (it starts loading the user and the session key), me 1 (user and account joined),
+health and keep-awake 0 with any header, password change and sign out others <= 4.
+"""
+
+from collections.abc import Callable
+from typing import Any
+from unittest import mock
+
+from django.test import override_settings
+
+from .auth_support import (
+    FEEDBACK,
+    LOGIN,
+    ME,
+    NEW_PASSWORD,
+    PASSWORD,
+    REGISTER,
+    RESET,
+    RESET_CONFIRM,
+    AuthTestCase,
+    reset_link_parts,
+)
+
+HEALTH = "/api/health/"
+KEEP_AWAKE = "/api/keep-awake/"
+
+
+class AuthQueryBudgetTests(AuthTestCase):
+    def assert_queries(self, count: int, status: int, call: Callable[..., Any], *args: Any, **kwargs: Any) -> None:
+        """`call(*args, **kwargs)` answers `status` within exactly `count` queries."""
+        with self.assertNumQueries(count):
+            response = call(*args, **kwargs)
+        self.assertEqual(response.status_code, status, getattr(response, "data", None))
+
+    def test_login_runs_one_query_whether_it_succeeds_or_not(self):
+        # AUTH-TEST-05: the user by username; nothing is written (no last_login, no outstanding-token row)
+        cases = {
+            "success": ("pia@example.com", PASSWORD, 200),
+            "wrong password": ("pia@example.com", "guess-again", 400),
+            "unknown email": ("nobody@example.com", PASSWORD, 400),
+        }
+        for label, (email, password, status) in cases.items():
+            with self.subTest(login=label):
+                self.assert_queries(1, status, self.post, LOGIN, {"email": email, "password": password})
+
+    def test_register_runs_two_queries(self):
+        # AUTH-TEST-01: validate_email's EXISTS, then the INSERT; a taken email stops after the first
+        self.assert_queries(2, 201, self.post, REGISTER, {"email": "rex@example.com", "password": PASSWORD})
+        self.assert_queries(1, 400, self.post, REGISTER, {"email": "pia@example.com", "password": PASSWORD})
+
+    def test_refresh_runs_no_query(self):
+        # Characterises current behaviour (SEC-05, AUTH-TEST-07, pinned; flips in PR A: 1, the user and its account)
+        refresh = self.sign_in()["refresh"]
+
+        self.assert_queries(0, 200, self.refresh, refresh)
+
+    def test_me_runs_one_query(self):
+        # AUTH-TEST-08: the JWT user lookup is the whole cost
+        client = self.bearer(self.sign_in()["access"])
+
+        self.assert_queries(1, 200, client.get, ME)
+
+    @mock.patch("apps.users.views.send_password_reset_email", return_value=True)
+    def test_a_reset_request_runs_three_queries_for_a_known_email_and_one_for_an_unknown(self, _send):
+        # Characterises current behaviour (BUG-153 suggested, pinned; flips in PR A/B: 1 query either way):
+        # _get_user_by_email loads only id and email, then make_token reads last_login and password, one deferred
+        # load each. Two more Neon round trips (about 20-40 ms) tell a known address from an unknown one
+        self.assert_queries(3, 200, self.post, RESET, {"email": "pia@example.com"})
+        self.assert_queries(1, 200, self.post, RESET, {"email": "nobody@example.com"})
+
+    def test_a_reset_confirm_runs_two_queries_and_a_refused_one_one(self):
+        uid, token = reset_link_parts(self.pia)
+        body = {"uid": uid, "token": token, "new_password": NEW_PASSWORD}
+
+        self.assert_queries(2, 200, self.post, RESET_CONFIRM, body)  # the user, then the password UPDATE
+        self.assert_queries(1, 400, self.post, RESET_CONFIRM, body)  # the link is spent
+
+    @override_settings(RESEND_API_KEY="re_test", FEEDBACK_REPORT_TO_EMAIL="bugs@example.com")
+    def test_a_feedback_report_runs_one_query(self):
+        client = self.bearer(self.sign_in()["access"])
+
+        with mock.patch("apps.users.emails.requests.post"):
+            self.assert_queries(1, 200, client.post, FEEDBACK, {"report_type": "Bug", "message": "Hi."}, format="json")
+
+    def test_the_probes_run_no_query_without_a_token_and_one_with_a_token(self):
+        # Characterises current behaviour (AUTH-PERF-04, AUTH-TEST-14, pinned; flips in PR A: 0 with any header)
+        client = self.bearer(self.sign_in()["access"])
+
+        self.assert_queries(0, 200, self.client.get, HEALTH)
+        self.assert_queries(0, 204, self.client.head, KEEP_AWAKE)
+        self.assert_queries(1, 200, client.get, HEALTH)
+        self.assert_queries(1, 204, client.head, KEEP_AWAKE)
