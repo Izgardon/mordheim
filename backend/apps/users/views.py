@@ -87,8 +87,11 @@ class LoginView(APIView):
     def post(self, request):
         serializer = LoginSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
-        refresh = RefreshToken.for_user(serializer.validated_data["user"])
-        return Response({"refresh": str(refresh), "access": str(refresh.access_token)})  # type: ignore[attr-defined]
+        user = serializer.validated_data["user"]
+        refresh = RefreshToken.for_user(user)
+        access = str(refresh.access_token)  # type: ignore[attr-defined]
+        # The user beside the pair, as register answers, so the app needn't ask /auth/me (PERF-50)
+        return Response({"refresh": str(refresh), "access": access, "user": UserSerializer(user).data})
 
 
 class RefreshView(TokenRefreshView):

@@ -17,13 +17,15 @@ class LoginTests(AuthTestCase):
     def login(self, email: str, password: str = PASSWORD, **extra: str) -> Any:
         return self.post(LOGIN, {"email": email, "password": password}, **extra)
 
-    def test_a_correct_login_answers_only_the_token_pair(self):
-        # Characterises current behaviour (PERF-50 server half, pinned; flips in PR A: {access, refresh, user})
+    def test_a_correct_login_answers_the_token_pair_and_the_user(self):
+        # PERF-50 server half (was pinned: only the pair; flipped in PR A: {access, refresh, user}, as register)
         response = self.login("pia@example.com")
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(sorted(response.json()), ["access", "refresh"])
-        self.assertEqual(self.me(response.json()["access"]).json()["id"], self.pia.id)
+        body = response.json()
+        self.assertEqual(sorted(body), ["access", "refresh", "user"])
+        self.assertEqual(body["user"], {"id": self.pia.id, "email": "pia@example.com", "name": "Pia"})
+        self.assertEqual(self.me(body["access"]).json(), body["user"])
 
     def test_the_tokens_carry_only_simplejwts_claims_and_lifetimes(self):
         # Characterises current behaviour (SEC-05, BUG-140, pinned; flips in PR A: the session key claim `sk`)

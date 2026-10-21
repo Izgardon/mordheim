@@ -101,8 +101,7 @@ class AuthTestCase(APITestCase):
         """`{access, refresh}` from a real login."""
         response = self.post(LOGIN, {"email": email, "password": password})
         assert response.status_code == 200, response.data
-        tokens: dict[str, str] = response.json()
-        return tokens
+        return {key: response.json()[key] for key in ("access", "refresh")}
 
     def bearer(self, access: str) -> APIClient:
         """A fresh client that sends `Authorization: Bearer <access>`."""
