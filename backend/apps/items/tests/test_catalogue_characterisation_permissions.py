@@ -217,6 +217,18 @@ class CatalogueEditPermissionTests(CataloguePermissionTestCase):
                 entry = self.entry(kind, f"Kept {kind.key}")
                 self.assertEqual(self.create_as(self.player, kind, "Refused").status_code, 403)
                 self.assertEqual((self.edit(self.player, kind, entry), self.delete(self.player, kind, entry)), (403, 403))  # fmt: skip
+                # PR C: a book entry's version, Revert and Restore need edit_catalogue too
+                book = make_entry(kind, f"Book {kind.key}")
+                replaced = book.bestiary_entry if kind is HIRED_SWORDS else book
+                version = make_entry(kind, f"Version {kind.key}", campaign=self.campaign, replaces=replaced)
+                writes = [
+                    self.patch_as(
+                        self.player, kind.detail_url(book.id), {"campaign_id": self.campaign.id, "name": "X"}
+                    ),
+                    self.post_as(self.player, f"{kind.detail_url(version.id)}revert/"),
+                    self.post_as(self.player, f"{kind.detail_url(entry.id)}restore/"),
+                ]
+                self.assertEqual([response.status_code for response in writes], [403, 403, 403])
         body = {"campaign_id": self.campaign.id, "name": "Cleave", "type": "Weapon"}
         self.assertEqual(self.post_as(self.player, "/api/item-properties/", body).status_code, 403)
         self.assertEqual(self.create_as(self.rival, SKILLS, "Rex still adds").status_code, 201)
