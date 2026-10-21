@@ -6,11 +6,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { fetchMe, loginAccount, registerAccount } from "../api/auth-api";
 import { isSessionExpiredError, SERVER_UNAVAILABLE_MESSAGE } from "../../../lib/api-client";
 import { disconnectRealtime } from "../../../lib/realtime/client";
-import { AuthContext, type AuthContextValue } from "./auth-context";
+import { AuthContext, type AuthContextValue, type SessionEnd } from "./auth-context";
 
 // utils
 import { clearToken, getToken, setStoredUser, setTokens } from "../../../utils/storage";
-import { fetchProfileWithRetry } from "../utils/fetch-profile";
+import { fetchProfileWithRetry, revalidateProfile } from "../utils/fetch-profile";
 import { cachedUserFor, getTokenUserId } from "../utils/token-user";
 
 // types
@@ -31,6 +31,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const [isReady, setIsReady] = useState(!boot.token || boot.user !== null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
+  const [sessionEnd, setSessionEnd] = useState<SessionEnd | null>(null);
   // The latest token and user, for the storage listener: this tab's own writes (sign-in, a
   // refresh) notify at once, before React has re-rendered with the new values (PERF-50).
   const latest = useRef({ token: boot.token, user: boot.user });
@@ -73,23 +74,20 @@ export function AuthProvider({ children }: PropsWithChildren) {
     [setSessionToken, setUser]
   );
 
-  // The cached user shown at boot, checked behind it: an outage keeps it (the page's own reads
-  // say the server is down), and a refused session ends here.
+  // The cached user shown at boot, checked behind it: a refused session ends here, and an outage
+  // keeps the cached user (the page's own reads say the server is down).
   const revalidateUser = useCallback(
     async (accessToken: string, cached: AuthUser) => {
-      const isStillSignedIn = () => latest.current.user?.id === cached.id;
-      try {
-        const profile = await fetchMe(accessToken);
-        if (isStillSignedIn() && profile.id === cached.id) {
-          setStoredUser(profile);
-          if (JSON.stringify(profile) !== JSON.stringify(latest.current.user)) {
-            setUser(profile);
-          }
-        }
-      } catch (error) {
-        if (isSessionExpiredError(error) && isStillSignedIn()) {
-          clearToken();
-        }
+      const outcome = await revalidateProfile(accessToken);
+      const current = latest.current.user;
+      if (current?.id !== cached.id || outcome === "unavailable") {
+        return; // signed out or switched meanwhile, or the server is down
+      }
+      if (outcome === "refused") {
+        clearToken();
+      } else if (outcome.id === cached.id) {
+        setStoredUser(outcome);
+        if (JSON.stringify(outcome) !== JSON.stringify(current)) setUser(outcome);
       }
     },
     [setUser]
@@ -120,6 +118,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       if (tokenUserId !== null && tokenUserId === accountId) {
         return;
       }
+      setSessionEnd(null);
       if (currentUser) {
         // Another account signed in (in another tab): drop the previous user's cached data
         // and the socket authorised as them.
@@ -136,11 +135,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
       }
       hydrateUser(resolvedToken).catch(() => {});
     } else {
-      // Signed out elsewhere, or the session expired: the next user must not see this one's data.
+      // Signed out elsewhere, or the server refused the session: the next user must not see this
+      // one's data, and the sign-in card says the session ended (AUTH-UX-02).
       queryClient.clear();
       disconnectRealtime();
       setUser(null);
       setIsReady(true);
+      setSessionEnd("ended");
     }
   }, [hydrateUser, queryClient, setSessionToken, setUser]);
 
@@ -169,6 +170,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       setSessionToken(tokens.access);
       setUser(profile);
       setConnectionError(null);
+      setSessionEnd(null);
       setIsReady(true);
       setTokens({ access: tokens.access, refresh: tokens.refresh, user: profile });
     },
@@ -205,11 +207,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
   );
 
   const signOut = useCallback(() => {
-    clearToken();
+    // The state first, so the listener doesn't take the cleared storage for an ended session.
     setSessionToken(null);
     setUser(null);
     setConnectionError(null);
+    setSessionEnd("signed-out");
     setIsReady(true);
+    clearToken();
     // Shared devices: nothing cached for this user may reach the next one (BUG-22).
     queryClient.clear();
     disconnectRealtime();
@@ -222,12 +226,24 @@ export function AuthProvider({ children }: PropsWithChildren) {
       isReady,
       isSubmitting,
       connectionError,
+      sessionEnd,
       retryConnection,
       signIn,
       signUp,
       signOut,
     }),
-    [token, user, isReady, isSubmitting, connectionError, retryConnection, signIn, signUp, signOut]
+    [
+      token,
+      user,
+      isReady,
+      isSubmitting,
+      connectionError,
+      sessionEnd,
+      retryConnection,
+      signIn,
+      signUp,
+      signOut,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -3,7 +3,7 @@
  * providers over the fake API server. Signed-out visits, deep links surviving sign-in
  * (AUTH-TEST-28), unknown URLs (FE-TEST-18), a session ending mid-visit and Log out.
  */
-import { act, screen } from "@testing-library/react";
+import { act, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { RAIDER, storeSession, tokensFor } from "@/test/auth-fixtures";
@@ -47,26 +47,28 @@ afterEach(() => {
   cleanupApps();
 });
 
+const SESSION_ENDED = "Your session ended. Please sign in again.";
+
 describe("signed out", () => {
-  it("a visit to /campaigns lands on / with no reason and nothing to come back to (AUTH-UX-02, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (AUTH-UX-02, pinned; flips in PR A: state.from and a reason)
+  it("a visit to /campaigns lands on / remembering the page, with no reason given (AUTH-UX-02)", async () => {
     const app = renderApp("/campaigns");
 
     await landing();
     expect(app.location().pathname).toBe("/");
-    expect(app.location().state).toBeNull();
+    expect(app.location().state).toEqual({
+      from: { pathname: "/campaigns", search: "", hash: "" },
+    });
+    expect(screen.queryByText(SESSION_ENDED)).toBeNull();
     expect(fakeApi.calls()).toEqual([]);
   });
 
-  it("a deep link ends on /campaigns after sign-in, not on the page it asked for (AUTH-TEST-28, AUTH-UX-02, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (AUTH-TEST-28, AUTH-UX-02, pinned; flips in PR A)
+  it("a deep link comes back to the page it asked for after sign-in (AUTH-TEST-28, AUTH-UX-02)", async () => {
     const app = renderApp("/campaigns/1/battles/2/active");
     await landing();
 
     await signInOnLanding();
 
-    await campaignsPage();
-    expect(app.location().pathname).toBe("/campaigns");
+    await waitFor(() => expect(app.location().pathname).toBe("/campaigns/1/battles/2/active"));
   });
 });
 
@@ -92,23 +94,32 @@ describe("an unknown URL", () => {
 });
 
 describe("a session that ends", () => {
-  it("mid-visit lands on / with no reason given (AUTH-UX-02, AUTH-TWEAK-04, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (AUTH-UX-02, AUTH-TWEAK-04, pinned; flips in PR A:
-    // "Your session ended. Please sign in again.")
+  it("mid-visit lands on / saying so, and signing in again comes back to the page (AUTH-UX-02, AUTH-TWEAK-04)", async () => {
     storeSession();
-    const app = renderApp("/campaigns");
+    const app = renderApp("/campaigns?from=bell");
     await campaignsPage();
 
     // What api-client does when the refresh token is refused.
     act(() => clearToken());
 
     await landing();
-    expect(app.location()).toMatchObject({ pathname: "/", state: null });
-    expect(screen.queryByText(/session/i)).toBeNull();
+    expect(app.location()).toMatchObject({
+      pathname: "/",
+      state: {
+        from: { pathname: "/campaigns", search: "?from=bell", hash: "" },
+        reason: "session-ended",
+      },
+    });
+    expect(screen.getByRole("status")).toHaveTextContent(SESSION_ENDED);
     expect(app.queryClient.getQueryCache().getAll()).toHaveLength(0);
+
+    await signInOnLanding();
+
+    await campaignsPage();
+    expect(app.location()).toMatchObject({ pathname: "/campaigns", search: "?from=bell" });
   });
 
-  it("by Log out lands on / and tells the server nothing", async () => {
+  it("by Log out lands on / with no reason and no page to come back to, and tells the server nothing", async () => {
     storeSession();
     const app = renderApp("/campaigns");
     await campaignsPage();
@@ -117,7 +128,8 @@ describe("a session that ends", () => {
     await setupUser().click(screen.getByRole("button", { name: "Log out" }));
 
     await landing();
-    expect(app.location().pathname).toBe("/");
+    expect(app.location()).toMatchObject({ pathname: "/", state: null });
+    expect(screen.queryByText(SESSION_ENDED)).toBeNull();
     expect(localStorage.length).toBe(0);
     expect(fakeApi.calls()).toEqual([]);
   });

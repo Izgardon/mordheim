@@ -105,7 +105,7 @@ describe("token storage", () => {
 });
 
 describe("signing out", () => {
-  it("clears both tokens, the query cache and the socket (twice: signOut, then its own token event), and tells the server nothing", async () => {
+  it("clears both tokens, the query cache and the socket (once: its own token event is skipped), and tells the server nothing", async () => {
     storeSession();
     fakeApi.on("GET /auth/me/", RAIDER);
     const { queryClient, result } = renderSession();
@@ -117,8 +117,13 @@ describe("signing out", () => {
 
     expect(localStorage.length).toBe(0);
     expect(queryClient.getQueryCache().getAll()).toHaveLength(0);
-    expect(disconnectRealtime).toHaveBeenCalledTimes(2);
-    expect(result.current.auth).toMatchObject({ token: null, user: null, isReady: true });
+    expect(disconnectRealtime).toHaveBeenCalledTimes(1);
+    expect(result.current.auth).toMatchObject({
+      token: null,
+      user: null,
+      isReady: true,
+      sessionEnd: "signed-out",
+    });
     expect(fakeApi.calls()).toEqual([]);
   });
 
@@ -159,6 +164,7 @@ describe("a session changed in another tab", () => {
 
     await waitFor(() => expect(result.current.auth.user).toBeNull());
     expect(result.current.auth.token).toBeNull();
+    expect(result.current.auth.sessionEnd).toBe("ended");
     expect(queryClient.getQueryCache().getAll()).toHaveLength(0);
     expect(disconnectRealtime).toHaveBeenCalledTimes(1);
   });

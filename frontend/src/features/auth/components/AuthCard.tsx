@@ -1,9 +1,6 @@
 import type { FormEvent } from "react";
 import { useEffect, useState } from "react";
 
-// routing
-import { useNavigate } from "react-router-dom";
-
 import "../styles/auth.css";
 
 // components
@@ -16,11 +13,12 @@ import { Eye, EyeOff } from "lucide-react";
 // hooks
 import { requestPasswordReset } from "../api/auth-api";
 import { useAuth } from "../hooks/use-auth";
+import { useSignInRedirect } from "../hooks/use-sign-in-redirect";
 import { useMediaQuery } from "@/lib/use-media-query";
 import titleImage from "@/assets/background/title.webp";
 export default function AuthCard() {
-  const navigate = useNavigate();
-  const { token, isReady, isSubmitting, signIn, signUp } = useAuth();
+  const { isSubmitting, signIn, signUp } = useAuth();
+  const sessionNotice = useSignInRedirect();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [mode, setMode] = useState<"login" | "register" | "forgot">("login");
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
@@ -33,12 +31,6 @@ export default function AuthCard() {
 
   const isRegister = mode === "register";
   const isForgot = mode === "forgot";
-
-  useEffect(() => {
-    if (isReady && token) {
-      navigate("/campaigns", { replace: true });
-    }
-  }, [isReady, navigate, token]);
 
   useEffect(() => {
     setError("");
@@ -161,6 +153,11 @@ export default function AuthCard() {
 
   const content = (
     <CardContent className={isMobile ? "px-4 pb-4 pt-2" : "flex-1"}>
+      {sessionNotice ? (
+        <p role="status" className="mx-auto mb-5 max-w-[320px] text-sm">
+          {sessionNotice}
+        </p>
+      ) : null}
       {isForgot ? (
         <form className="space-y-5" onSubmit={handleForgotSubmit}>
           <label className="mx-auto block w-full max-w-[320px] space-y-2 text-sm">
