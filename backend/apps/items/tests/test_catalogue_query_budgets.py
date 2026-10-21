@@ -12,13 +12,17 @@ from unittest import mock
 from django.core.cache import caches
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
+from django.utils import timezone
 from rest_framework.serializers import BaseSerializer
 
 from apps.bestiary.models import BestiaryEntryItem, BestiaryEntrySkill, BestiaryEntrySpecial
+from apps.core.models import CatalogueRemoval
 from apps.items.models import Item, ItemAvailabilityRestriction, ItemProperty, ItemPropertyLink
 from apps.restrictions.models import Restriction
 from apps.skills.models import Skill
 from apps.special.models import Special
+from apps.warbands.models import WarbandItem
+from apps.warbands.tests.roster_support import HERO, make_unit
 
 from .catalogue_support import (
     BESTIARY,
@@ -108,6 +112,33 @@ class CatalogueQueryBudgetTests(CatalogueTestCase):
         for name, (template, _, _) in LIST_BUDGETS.items():
             with self.subTest(list=name):
                 self.assertEqual(self.count("get", self.budget_url(template)), before[name])
+
+    def add_versions_archives_and_removals(self, label: str) -> None:
+        """For each kind, a campaign version of a new book entry, an archived campaign entry and a removed book entry
+        (PR C: what the lists hide, and show with ?archived=1)."""
+        for kind in KINDS:
+            book = make_entry(kind, f"{label} book {kind.key}")
+            entry = book.bestiary_entry if kind is HIRED_SWORDS else book
+            make_entry(kind, f"{label} version {kind.key}", campaign=self.campaign, replaces=entry)
+            make_entry(kind, f"{label} archived {kind.key}", campaign=self.campaign, archived_at=timezone.now())
+            removed = make_entry(kind, f"{label} removed {kind.key}")
+            table = "bestiary" if kind is HIRED_SWORDS else kind.key
+            entry_id = removed.bestiary_entry_id if kind is HIRED_SWORDS else removed.id
+            CatalogueRemoval.objects.create(campaign=self.campaign, kind=table, entry_id=entry_id)
+
+    def test_lists_keep_their_budgets_with_versions_archives_and_removals(self):
+        # CAT-TWEAK-03, -04, CAT-NEW-03: the version and removal rules are EXISTS in the list's own query, and the
+        # badges read joins and one annotation, so nothing is added, with or without ?archived=1, as rows grow
+        self.add_campaign_rows("House")
+        self.add_versions_archives_and_removals("First")
+        before = {name: self.count("get", self.budget_url(template)) for name, (template, _, _) in LIST_BUDGETS.items()}
+        self.add_versions_archives_and_removals("Second")
+        for name, (template, _, with_campaign) in LIST_BUDGETS.items():
+            url = self.budget_url(template)
+            archived = f"{url}{'&' if '?' in url else '?'}archived=1"
+            with self.subTest(list=name):
+                self.assertEqual((self.count("get", url), self.count("get", archived)), (before[name], before[name]))
+                self.assertLessEqual(before[name], with_campaign)
 
     def test_the_items_list_costs_6_queries_with_campaign_rows_and_an_animal(self):
         # PERF-49, CAT-TEST-07 (at most 7 either way): an Animal item adds its entry's specials, in one query
@@ -261,3 +292,53 @@ class CatalogueWriteBudgetTests(CatalogueTestCase):
         # version (PERF-13). It was 5 before the name check, 5 with the campaign read by the serializer's campaign field
         # instead of the version (IMP-79 dropped it), 3 before the duplicate guard's savepoint (BUG-17)
         self.assertEqual(self.count(SKILLS.list_url(), SKILLS.body("Feint", self.campaign)), 6)
+
+
+class VersionWriteBudgetTests(CatalogueTestCase):
+    """CAT-TEST-23 and decision 5's writes: a first edit, a Revert, an archive and the usage cost these counts whatever
+    the number of copies (test_catalogue_versions.py proves them constant in copies). Counts include the write's
+    savepoint pair; production adds the JWT user query."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.client.force_authenticate(user=self.owner)
+        hero = make_unit(HERO, self.warband)
+        hero.hero_items.create(item=self.book_sword, cost=10)
+        WarbandItem.objects.create(warband=self.warband, item=self.book_sword, quantity=1, cost=10)
+        self.hero = hero
+
+    def count(self, call: Any, status: int = 200) -> int:
+        with CaptureQueriesContext(connection) as captured:
+            response = call()
+        self.assertEqual(response.status_code, status, getattr(response, "data", None))
+        return len(captured)
+
+    def test_an_items_first_edit_costs_28_queries_and_its_revert_31(self):
+        # first edit: membership, the entry, the name check, the savepoint pair, the book row locked and its version
+        # looked for, the copy (the item, then a read and an INSERT each for its availabilities, their restrictions
+        # and its properties), one UPDATE per table of copies (three kinds of unit, the stash, bestiary links), the
+        # edit (the copied availabilities deleted with their restrictions, the new ones written), the catalogue
+        # version, and the answer (the item and its three prefetches). Revert: membership, the
+        # entry, the savepoint pair, the version locked, the units' copies moved back (one UPDATE each), the stash
+        # and bestiary links read with the rows they may meet and merged, the reverted id recorded, the version's
+        # delete (Django's reads of every table that references an item, then its children), the catalogue version,
+        # and the answer
+        body = {"campaign_id": self.campaign.id, "availabilities": [{"cost": 15}]}
+        version: dict[str, int] = {}
+
+        def edit() -> Any:
+            response = self.client.patch(ITEMS.detail_url(self.book_sword.id), body, format="json")
+            version["id"] = response.data["id"]
+            return response
+
+        self.assertEqual(self.count(edit), 28)
+        self.assertEqual(self.count(lambda: self.client.post(f"{ITEMS.detail_url(version['id'])}revert/")), 31)
+
+    def test_an_items_usage_costs_7_queries_and_archiving_it_21(self):
+        # usage: membership, the entry, one read per table of copies; archive: the delete refused by RESTRICT inside
+        # a savepoint, the archive UPDATE, the catalogue version, then the usage counts
+        charm = make_entry(ITEMS, "Charm", campaign=self.campaign)
+        self.hero.hero_items.create(item=charm, cost=1)
+
+        self.assertEqual(self.count(lambda: self.client.get(f"{ITEMS.detail_url(charm.id)}usage/")), 7)
+        self.assertEqual(self.count(lambda: self.client.delete(ITEMS.detail_url(charm.id))), 21)

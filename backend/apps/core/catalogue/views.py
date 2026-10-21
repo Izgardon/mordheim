@@ -15,6 +15,7 @@ from typing import Any, ClassVar
 
 from django.db.models import Model
 from django.http.response import HttpResponseBase
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.request import Request
@@ -56,6 +57,11 @@ class CatalogueScopedView(CampaignScopedView):
         """The kind's write serializer, its linked ids scoped to the campaign (SEC-07)."""
         assert self.kind.write_serializer is not None, f"{self.kind.key} is read-only"
         return self.kind.write_serializer(*args, context={"campaign_id": self.campaign_id}, **kwargs)
+
+    def stamp(self, serializer: BaseSerializer[Any]) -> None:
+        """Who writes the entry, and when, saved with it for the badges' tooltip (CAT-NEW-03)."""
+        if self.kind.versioned:
+            serializer.validated_data.update(updated_by=self.request.user, updated_at=timezone.now())
 
     def answer(self, entry: Model) -> Any:
         """A write's answer: the entry as its detail reads it."""
@@ -110,6 +116,7 @@ class CatalogueCollectionView(CatalogueScopedView):
         name = serializer.validated_data.get("name")
         if self.kind.named and name is not None:
             names.check_create(self.kind, self.campaign_id, name)  # 400 name_taken with the matches (CAT-TWEAK-02)
+        self.stamp(serializer)
         with catalogue_write(self.kind, self.campaign_id, name):
             entry = self.kind.hooks.create(serializer, self.campaign_id)
         return Response(self.answer(entry), status=status.HTTP_201_CREATED)
@@ -173,6 +180,7 @@ class CatalogueEntryView(CatalogueScopedView):
         serializer.is_valid(raise_exception=True)
         name, shown = serializer.validated_data.get("name"), versions.entry_of(kind, self.entry)
         names.check_edit(kind, shown, self.campaign_id, name)  # its own name, or its book entry's, stays allowed
+        self.stamp(serializer)
         with catalogue_write(kind, self.campaign_id, name, allowed=[shown.pk, shown.replaces_id or shown.pk]):
             entry = versions.editable(kind, self.entry, self.campaign_id)
             serializer.instance = kind.hooks.write_instance(entry)

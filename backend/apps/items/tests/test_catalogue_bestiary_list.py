@@ -10,6 +10,8 @@ from typing import Any
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
+from apps.core.catalogue.payloads import BADGES
+
 from .catalogue_support import BESTIARY, CatalogueTestCase, make_entry
 
 DEFAULT_KEYS = [
@@ -30,6 +32,7 @@ DEFAULT_KEYS = [
     "armour_save",
     "large",
     "caster",
+    *BADGES,  # CAT-NEW-03, PR C
 ]
 
 

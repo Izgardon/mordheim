@@ -7,6 +7,7 @@ item, its entry's specials. The GETs and the POST and PATCH answers read through
 
 from django.db.models import Prefetch, QuerySet
 
+from apps.core.catalogue.payloads import badge_joins
 from apps.warbands.prefetches import item_detail_prefetches
 
 from .models import BestiaryEntry, BestiaryEntryItem, HiredSwordProfile, HiredSwordProfileRestriction
@@ -29,7 +30,7 @@ def _entry_prefetches(prefix: str = "") -> tuple[str | Prefetch, ...]:
 
 def entry_details() -> QuerySet[BestiaryEntry]:
     """Bestiary entries read for the detail payload: 8 queries, 9 when an item is an animal's."""
-    return BestiaryEntry.objects.prefetch_related(*_entry_prefetches())
+    return BestiaryEntry.objects.select_related(*badge_joins()).prefetch_related(*_entry_prefetches())
 
 
 def hired_sword_rows(rows: QuerySet[HiredSwordProfile]) -> QuerySet[HiredSwordProfile]:
@@ -42,6 +43,6 @@ def hired_sword_rows(rows: QuerySet[HiredSwordProfile]) -> QuerySet[HiredSwordPr
 def hired_sword_details() -> QuerySet[HiredSwordProfile]:
     """Hired-sword profiles read for the detail payload: their entry's as above, plus the profile's restrictions."""
     restrictions = HiredSwordProfileRestriction.objects.select_related("restriction").order_by("id")
-    return HiredSwordProfile.objects.select_related("bestiary_entry").prefetch_related(
+    return HiredSwordProfile.objects.select_related("bestiary_entry", *badge_joins("bestiary_entry")).prefetch_related(
         *_entry_prefetches("bestiary_entry__"), Prefetch("restriction_links", queryset=restrictions)
     )

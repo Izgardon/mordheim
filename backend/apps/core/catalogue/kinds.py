@@ -25,31 +25,35 @@ from apps.bestiary.models import (
     HiredSwordProfile,
     WarbandBestiaryFavourite,
 )
-from apps.bestiary.serializers import (
-    BestiaryEntrySerializer,
-    BestiaryEntrySummarySerializer,
-    BestiaryEntryWriteSerializer,
-    HiredSwordProfileDetailSerializer,
-    HiredSwordProfileSummarySerializer,
-    HiredSwordWriteSerializer,
-)
+from apps.bestiary.serializers import BestiaryEntryWriteSerializer, HiredSwordWriteSerializer
 from apps.items.models import Item, ItemProperty
-from apps.items.serializers import ItemPropertySerializer, ItemSerializer, ItemWriteSerializer
+from apps.items.serializers import ItemPropertySerializer, ItemWriteSerializer
 from apps.races.models import Race
-from apps.races.serializers import RaceCreateSerializer, RaceSerializer
+from apps.races.serializers import RaceCreateSerializer
 from apps.restrictions.models import Restriction
 from apps.restrictions.serializers import RestrictionSerializer
 from apps.skills.models import Skill
-from apps.skills.serializers import SkillCreateSerializer, SkillSerializer
+from apps.skills.serializers import SkillCreateSerializer
 from apps.special.models import Special
-from apps.special.serializers import SpecialCreateSerializer, SpecialSerializer
+from apps.special.serializers import SpecialCreateSerializer
 from apps.spells.models import Spell
-from apps.spells.serializers import SpellCreateSerializer, SpellSerializer
+from apps.spells.serializers import SpellCreateSerializer
 from apps.warbands.models import WarbandItem
 from apps.warbands.units.kinds import KINDS as UNIT_KINDS
 from apps.warbands.units.kinds import UnitKindKey
 
 from .hooks import BestiaryHooks, CatalogueHooks, HiredSwordHooks, ItemHooks, ItemPropertyHooks, RaceHooks
+from .rows import (
+    BestiaryEntryDetailRowSerializer,
+    BestiaryEntryRowSerializer,
+    HiredSwordDetailRowSerializer,
+    HiredSwordRowSerializer,
+    ItemRowSerializer,
+    RaceRowSerializer,
+    SkillRowSerializer,
+    SpecialRowSerializer,
+    SpellRowSerializer,
+)
 
 Filter = Callable[[str], Q]  # a query parameter's stripped value -> the rows it keeps
 
@@ -169,8 +173,8 @@ ITEMS = CatalogueKindSpec(
     noun="item",
     model=Item,
     url_kwarg="item_id",
-    row_serializer=ItemSerializer,
-    entry_serializer=ItemSerializer,
+    row_serializer=ItemRowSerializer,
+    entry_serializer=ItemRowSerializer,
     write_serializer=ItemWriteSerializer,
     named=True,
     versioned=True,
@@ -185,8 +189,8 @@ SKILLS = CatalogueKindSpec(
     noun="skill",
     model=Skill,
     url_kwarg="skill_id",
-    row_serializer=SkillSerializer,
-    entry_serializer=SkillSerializer,
+    row_serializer=SkillRowSerializer,
+    entry_serializer=SkillRowSerializer,
     write_serializer=SkillCreateSerializer,
     named=True,
     versioned=True,
@@ -199,8 +203,8 @@ SPELLS = CatalogueKindSpec(
     noun="spell",
     model=Spell,
     url_kwarg="spell_id",
-    row_serializer=SpellSerializer,
-    entry_serializer=SpellSerializer,
+    row_serializer=SpellRowSerializer,
+    entry_serializer=SpellRowSerializer,
     write_serializer=SpellCreateSerializer,
     named=True,
     versioned=True,
@@ -213,8 +217,8 @@ SPECIALS = CatalogueKindSpec(
     noun="special",
     model=Special,
     url_kwarg="special_id",
-    row_serializer=SpecialSerializer,
-    entry_serializer=SpecialSerializer,
+    row_serializer=SpecialRowSerializer,
+    entry_serializer=SpecialRowSerializer,
     write_serializer=SpecialCreateSerializer,
     named=True,
     versioned=True,
@@ -227,8 +231,8 @@ RACES = CatalogueKindSpec(
     noun="race",
     model=Race,
     url_kwarg="race_id",
-    row_serializer=RaceSerializer,
-    entry_serializer=RaceSerializer,
+    row_serializer=RaceRowSerializer,
+    entry_serializer=RaceRowSerializer,
     write_serializer=RaceCreateSerializer,
     named=True,
     versioned=True,
@@ -246,8 +250,8 @@ BESTIARY = CatalogueKindSpec(
     noun="bestiary entry",
     model=BestiaryEntry,
     url_kwarg="entry_id",
-    row_serializer=BestiaryEntrySummarySerializer,
-    entry_serializer=BestiaryEntrySerializer,
+    row_serializer=BestiaryEntryRowSerializer,
+    entry_serializer=BestiaryEntryDetailRowSerializer,
     write_serializer=BestiaryEntryWriteSerializer,
     named=True,
     versioned=True,
@@ -277,8 +281,8 @@ HIRED_SWORDS = CatalogueKindSpec(
     noun="hired sword",
     model=HiredSwordProfile,
     url_kwarg="profile_id",
-    row_serializer=HiredSwordProfileSummarySerializer,
-    entry_serializer=HiredSwordProfileDetailSerializer,
+    row_serializer=HiredSwordRowSerializer,
+    entry_serializer=HiredSwordDetailRowSerializer,
     write_serializer=HiredSwordWriteSerializer,
     named=True,
     versioned=True,

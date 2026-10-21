@@ -19,11 +19,12 @@ from rest_framework.serializers import BaseSerializer
 from apps.bestiary import writes as bestiary_writes
 from apps.bestiary.models import HiredSwordProfile
 from apps.bestiary.selectors import entry_details, hired_sword_details, hired_sword_rows
-from apps.bestiary.serializers import BestiaryEntryBriefSerializer
 from apps.items import writes as item_writes
 from apps.items.selectors import item_rows
 
 from . import merge
+from .payloads import badge_joins
+from .rows import BestiaryEntryBriefRowSerializer
 
 if TYPE_CHECKING:
     from .kinds import CatalogueKindSpec
@@ -44,8 +45,9 @@ class CampaignRequired(APIException):
 
 class CatalogueHooks:
     def rows(self, kind: "CatalogueKindSpec") -> QuerySet[Any]:
-        """Every row of the kind: what a list filters and the detail reads."""
-        return kind.model._default_manager.all()
+        """Every row of the kind: what a list filters and the detail reads, with what its badges read (CAT-NEW-03)."""
+        rows = kind.model._default_manager.all()
+        return rows.select_related(*badge_joins(kind.entry_via)) if kind.versioned else rows
 
     def listed(
         self, kind: "CatalogueKindSpec", rows: QuerySet[Any], campaign_id: int | None, params: QueryDict
@@ -139,7 +141,7 @@ class BestiaryHooks(CatalogueHooks):
 
     def row_serializer(self, kind: "CatalogueKindSpec", params: QueryDict) -> type[Serializer]:
         """`?view=summary`: each row without its description; any other view is the default row."""
-        return BestiaryEntryBriefSerializer if params.get("view") == "summary" else kind.row_serializer
+        return BestiaryEntryBriefRowSerializer if params.get("view") == "summary" else kind.row_serializer
 
     def detail_rows(self, kind: "CatalogueKindSpec") -> QuerySet[Any]:
         return entry_details()
