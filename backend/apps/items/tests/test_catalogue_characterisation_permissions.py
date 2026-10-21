@@ -169,7 +169,7 @@ class CatalogueEditPermissionTests(CataloguePermissionTestCase):
         self.assertEqual(self.delete(self.player, RACES, race), 204)
         self.assertTrue(self.exists(RACES, used))
 
-    def test_book_entries_cannot_be_edited_or_deleted_even_by_the_owner(self):
+    def test_the_book_itself_is_edited_or_deleted_by_nobody_even_the_owner(self):
         books = {
             ITEMS: self.book_axe,
             SKILLS: self.infiltration[0],
@@ -183,8 +183,9 @@ class CatalogueEditPermissionTests(CataloguePermissionTestCase):
             with self.subTest(kind=kind.key):
                 edited = self.edit(self.owner, kind, book)
                 deleted = self.delete(self.owner, kind, book)
-                # a book race is "Not found" to the race detail, which only reads campaign races
-                self.assertEqual((edited, deleted), (404, 404) if kind is RACES else (403, 403))
+                # without a campaign to make a version in, a write to a book entry is refused (a book race was a 404
+                # before races had versions, PR C)
+                self.assertEqual((edited, deleted), (403, 403))
                 self.assertTrue(self.exists(kind, book))
 
     def test_non_members_get_404s_and_a_missing_entry_is_a_404(self):

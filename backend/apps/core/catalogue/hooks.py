@@ -4,8 +4,8 @@ The generic views (views.py) call these hooks. `CatalogueHooks` is what skills, 
 need: every row of the model, today's name rule, a create that saves the serializer in the campaign, an edit that
 saves it, a delete of the entry. Items refuse writes to a house rule's clones and write through `items/writes.py`;
 bestiary entries and hired swords write through `bestiary/writes.py` and read their details through
-`bestiary/selectors.py`, and a hired sword is edited and deleted through its entry; races are written only in a
-campaign; item properties list the book's and the campaign's side by side.
+`bestiary/selectors.py`, and a hired sword is edited and deleted through its entry; a race edit naming another
+campaign is refused (BUG-147); item properties list the book's and the campaign's side by side.
 """
 
 from typing import TYPE_CHECKING, Any
@@ -22,7 +22,6 @@ from apps.bestiary.selectors import entry_details, hired_sword_details, hired_sw
 from apps.bestiary.serializers import BestiaryEntryBriefSerializer
 from apps.items import writes as item_writes
 from apps.items.selectors import item_rows
-from apps.races.models import Race
 
 from . import merge
 
@@ -81,8 +80,9 @@ class CatalogueHooks:
     def check_edit_body(self, request: Request, entry: Any) -> None:
         """Runs before an edit (PUT, PATCH) loads the caller's access."""
 
-    def refuse_write(self, entry: Any) -> None:
-        """Runs once the caller is known to be a member, before the method's rule: an entry no write may touch."""
+    def refuse_write(self, entry: Any, action: str = "edit") -> None:
+        """Runs once the caller is known to be a member, before the method's rule: an entry `action` (edit, delete,
+        revert, restore) may not touch."""
 
     def create(self, serializer: Serializer, campaign_id: int) -> Model:
         entry: Model = serializer.save(campaign_id=campaign_id)
@@ -107,7 +107,7 @@ class ItemHooks(CatalogueHooks):
     def detail_rows(self, kind: "CatalogueKindSpec") -> QuerySet[Any]:
         return item_rows()
 
-    def refuse_write(self, entry: Any) -> None:
+    def refuse_write(self, entry: Any, action: str = "edit") -> None:
         if entry.generated_effect_key:
             raise PermissionDenied(HOUSE_RULE_ITEM)
 
@@ -170,9 +170,6 @@ class HiredSwordHooks(CatalogueHooks):
 
 
 class RaceHooks(CatalogueHooks):
-    def write_rows(self, kind: "CatalogueKindSpec") -> QuerySet[Any]:
-        return Race.objects.filter(campaign__isnull=False)  # a book race is "Not found" to a write
-
     def check_edit_body(self, request: Request, entry: Any) -> None:
         sent = request.data.get("campaign_id")
         if sent and str(sent) != str(entry.campaign_id):  # an edit naming another campaign (BUG-147)

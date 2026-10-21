@@ -1,10 +1,12 @@
 """The catalogue kinds registry (design 0.29 for the catalogue, IMP-79): each kind as data.
 
 Items, skills, spells, specials, races, bestiary entries and hired swords, plus the read-only restrictions and the
-add-only item properties. A spec names the kind's model and serializers, how its list is filtered and merged, the
-child rows an entry carries (what a copy of it copies, PR C) and the tables whose rows hold it (`holders`: what a
-delete can't take with it, read by the 409 `in_use` counts, and what PR C's copy-on-write moves onto a version).
-Differences that are behaviour are hooks (hooks.py), as pass 1 did for units (`warbands/units/kinds.py`).
+add-only item properties. A spec names the kind's model and serializers, how its list is filtered, the child rows
+an entry carries (what a version copies), the tables whose rows hold an entry (`holders`: what a delete can't take
+with it, what `usage/` counts, and what a version's first edit moves onto it and Revert moves back) and the rows
+that follow an entry without holding it (`followers`: a warband's bestiary favourites, an item's animal). A hired
+sword is its bestiary entry for all of that (`entry_via`). Differences that are behaviour are hooks (hooks.py), as
+pass 1 did for units (`warbands/units/kinds.py`).
 """
 
 from collections.abc import Callable, Mapping
@@ -21,6 +23,7 @@ from apps.bestiary.models import (
     BestiaryEntrySpecial,
     BestiaryEntrySpell,
     HiredSwordProfile,
+    WarbandBestiaryFavourite,
 )
 from apps.bestiary.serializers import (
     BestiaryEntrySerializer,
@@ -52,51 +55,109 @@ Filter = Callable[[str], Q]  # a query parameter's stripped value -> the rows it
 
 
 @dataclass(frozen=True)
-class Holder:
-    """A table whose rows hold an entry, with RESTRICT: a unit's copy (or a unit of a race), a stash row, a bestiary
-    entry's link."""
+class Move:
+    """Rows that point at an entry and move with it when a campaign's copies are remapped (remap.py)."""
 
     model: type[Model]
     field: str  # the foreign key to the entry, e.g. "item"
-    counts_as: Literal["units", "stashes", "bestiary_entries"]  # the 409 usage key it adds to
-    holder_id: str  # the attribute naming who holds it: the unit, the warband (a stash), the bestiary entry
-    unit_kind: UnitKindKey | None = None  # for units: their kind, to find their warbands
+    campaign: str  # the path from a row to its campaign's id, e.g. "hero__warband__campaign_id"
+    unique: tuple[str, ...] = ()  # the rest of a unique key with `field`: a moved row meeting one merges into it
+    adds: str | None = None  # on a merge, this column is added to the row met (a stash row's quantity)
+
+
+@dataclass(frozen=True)
+class Holder(Move):
+    """A table whose rows hold an entry, with RESTRICT: a unit's copy (or a unit of a race), a stash row, a bestiary
+    entry's link."""
+
+    counts_as: Literal["units", "stashes", "bestiary_entries"] = "units"  # the usage key it adds to
+    holder_id: str = "pk"  # the attribute naming who holds it: the unit, the warband (a stash), the bestiary entry
+    warband: str | None = None  # the path to the holder's warband id; None for a bestiary entry's link
+    unit_kind: UnitKindKey | None = None  # for units: their kind
 
 
 @dataclass(frozen=True)
 class CatalogueKindSpec:
-    key: str  # "skills": the list's cache key
-    noun: str  # "skill": the 409 in_use message
+    key: str  # "skills": the list's cache key and the `catalogue.changed` event's kind
+    noun: str  # "skill": messages
     model: type[Model]
     url_kwarg: str  # the detail route's id, e.g. "skill_id"
     row_serializer: type[BaseSerializer[Any]]  # a list row
     entry_serializer: type[BaseSerializer[Any]]  # the detail, and a write's answer
     write_serializer: type[BaseSerializer[Any]] | None = None  # None: nothing writes the kind through the API
     duplicate: str | None = None  # "a skill with this name and type" (400 duplicate_entry); None: no name constraint
+    versioned: bool = False  # book entries get campaign versions, archive and removal (versions.py, archive.py)
     filters: Mapping[str, Filter] = field(default_factory=dict)  # list query parameter -> filter, before the merge
     excluded_types: tuple[str, ...] = ()  # types no list shows (the level-up placeholders)
-    name_field: str = "name"  # what today's name rule compares (merge.py)
+    name_field: str = "name"  # what the name rule compares (names.py; the restrictions' list merge)
     order: tuple[str, ...] = ("name", "id")  # each part of a list (the campaign's rows, then the book's)
     reread: bool = False  # a write's answer is read again with the detail's prefetch (its links)
-    children: tuple[str, ...] = ()  # rows an entry carries (CASCADE), e.g. an item's availabilities
+    entry_via: str = ""  # the relation from a row to the entry it is (a hired sword's profile: "bestiary_entry")
+    table_key: str = ""  # the kind owning the entry's table (removals, reverted versions); default: `key`
+    children: tuple[str, ...] = ()  # rows an entry carries (CASCADE), parents first; what a version copies
     holders: tuple[Holder, ...] = ()
+    followers: tuple[Move, ...] = ()
     hooks: CatalogueHooks = field(default_factory=CatalogueHooks)
+
+    @property
+    def entry_key(self) -> str:
+        return self.table_key or self.key
+
+    @property
+    def entry_model(self) -> type[Model]:
+        """The table that carries `replaces`, `archived_at` and the badges: the model, or a hired sword's entry."""
+        if not self.entry_via:
+            return self.model
+        related: type[Model] = self.model._meta.get_field(self.entry_via).related_model  # type: ignore[assignment]
+        return related
+
+    def entry_path(self, column: str) -> str:
+        """`column` of the entry, from the kind's row: "archived_at", or "bestiary_entry__archived_at"."""
+        return f"{self.entry_via}__{column}" if self.entry_via else column
+
+    def entry_ref(self) -> str:
+        """The row's entry id: "pk", or "bestiary_entry_id"."""
+        return f"{self.entry_via}_id" if self.entry_via else "pk"
 
 
 def _copies(link: str, *others: Holder) -> tuple[Holder, ...]:
     """The units' copies of an entry (each unit kind's `link` list: items, skills, specials or spells), and `others`."""
     copies = [
-        Holder(spec.model, spec.target, "units", f"{unit.parent_field}_id", unit.key)
+        Holder(
+            model=spec.model,
+            field=spec.target,
+            campaign=f"{unit.parent_field}__warband__campaign_id",
+            holder_id=f"{unit.parent_field}_id",
+            warband=f"{unit.parent_field}__warband_id",
+            unit_kind=unit.key,
+        )
         for unit in UNIT_KINDS.values()
         if (spec := getattr(unit, link)) is not None
     ]
     return (*copies, *others)
 
 
-def _linked_by(model: type[Model], target: str) -> Holder:
-    return Holder(model, target, "bestiary_entries", "bestiary_entry_id")
+def _linked_by(model: type[Model], target: str, unique: tuple[str, ...] = ()) -> Holder:
+    return Holder(
+        model=model,
+        field=target,
+        campaign="bestiary_entry__campaign_id",
+        unique=unique,
+        counts_as="bestiary_entries",
+        holder_id="bestiary_entry_id",
+    )
 
 
+STASH = Holder(
+    model=WarbandItem,
+    field="item",
+    campaign="warband__campaign_id",
+    unique=("warband_id", "cost"),  # one stash row per item and cost (BUG-117): copies join the row of their cost
+    adds="quantity",
+    counts_as="stashes",
+    holder_id="warband_id",
+    warband="warband_id",
+)
 NAME_AND_TYPE: Mapping[str, Filter] = {
     "type": lambda value: Q(type__iexact=value),
     "search": lambda value: Q(name__icontains=value),
@@ -112,12 +173,11 @@ ITEMS = CatalogueKindSpec(
     entry_serializer=ItemSerializer,
     write_serializer=ItemWriteSerializer,
     duplicate="an item with this name and type",
+    versioned=True,
     filters=NAME_AND_TYPE,
     reread=True,
     children=("availabilities", "availabilities__restriction_links", "property_links"),
-    holders=_copies(
-        "items", Holder(WarbandItem, "item", "stashes", "warband_id"), _linked_by(BestiaryEntryItem, "item")
-    ),
+    holders=_copies("items", STASH, _linked_by(BestiaryEntryItem, "item", unique=("bestiary_entry_id",))),
     hooks=ItemHooks(),
 )
 SKILLS = CatalogueKindSpec(
@@ -129,6 +189,7 @@ SKILLS = CatalogueKindSpec(
     entry_serializer=SkillSerializer,
     write_serializer=SkillCreateSerializer,
     duplicate="a skill with this name and type",
+    versioned=True,
     filters=NAME_AND_TYPE,
     excluded_types=PLACEHOLDERS,
     holders=_copies("skills", _linked_by(BestiaryEntrySkill, "skill")),
@@ -142,6 +203,7 @@ SPELLS = CatalogueKindSpec(
     entry_serializer=SpellSerializer,
     write_serializer=SpellCreateSerializer,
     duplicate="a spell with this name and type",
+    versioned=True,
     filters=NAME_AND_TYPE,
     excluded_types=PLACEHOLDERS,
     holders=_copies("spells", _linked_by(BestiaryEntrySpell, "spell")),
@@ -155,6 +217,7 @@ SPECIALS = CatalogueKindSpec(
     entry_serializer=SpecialSerializer,
     write_serializer=SpecialCreateSerializer,
     duplicate="a special with this name and type",
+    versioned=True,
     filters=NAME_AND_TYPE,
     excluded_types=PLACEHOLDERS,
     holders=_copies("specials", _linked_by(BestiaryEntrySpecial, "special")),
@@ -168,8 +231,14 @@ RACES = CatalogueKindSpec(
     entry_serializer=RaceSerializer,
     write_serializer=RaceCreateSerializer,
     duplicate="a race with this name",
+    versioned=True,
     filters={"search": NAME_AND_TYPE["search"]},
-    holders=tuple(Holder(unit.model, "race", "units", "pk", unit.key) for unit in UNIT_KINDS.values()),
+    holders=tuple(
+        Holder(
+            model=unit.model, field="race", campaign="warband__campaign_id", warband="warband_id", unit_kind=unit.key
+        )
+        for unit in UNIT_KINDS.values()
+    ),
     hooks=RaceHooks(),
 )
 BESTIARY = CatalogueKindSpec(
@@ -180,11 +249,28 @@ BESTIARY = CatalogueKindSpec(
     row_serializer=BestiaryEntrySummarySerializer,
     entry_serializer=BestiaryEntrySerializer,
     write_serializer=BestiaryEntryWriteSerializer,
-    duplicate="a bestiary entry or hired sword with this name",  # they share the names
+    duplicate="a bestiary entry or hired sword with this name",
+    versioned=True,
     filters=NAME_AND_TYPE,
     reread=True,
-    children=("bestiary_entry_skills", "bestiary_entry_specials", "bestiary_entry_spells", "bestiary_entry_items"),
-    hooks=BestiaryHooks(),  # units copy what they take from an entry: nothing holds one
+    children=(
+        "bestiary_entry_skills",
+        "bestiary_entry_specials",
+        "bestiary_entry_spells",
+        "bestiary_entry_items",
+        "hired_sword_profile",  # a hired sword's entry carries its profile
+        "hired_sword_profile__restriction_links",
+    ),
+    followers=(  # units copy what they take from an entry: nothing holds one
+        Move(
+            model=WarbandBestiaryFavourite,
+            field="bestiary_entry",
+            campaign="warband__campaign_id",
+            unique=("warband_id",),
+        ),
+        Move(model=Item, field="bestiary_entry", campaign="campaign_id"),  # the campaign's animals
+    ),
+    hooks=BestiaryHooks(),
 )
 HIRED_SWORDS = CatalogueKindSpec(
     key="hired_swords",
@@ -195,11 +281,13 @@ HIRED_SWORDS = CatalogueKindSpec(
     entry_serializer=HiredSwordProfileDetailSerializer,
     write_serializer=HiredSwordWriteSerializer,
     duplicate=BESTIARY.duplicate,
+    versioned=True,
     filters={"search": lambda value: Q(bestiary_entry__name__icontains=value)},
     name_field="bestiary_entry__name",
     order=("bestiary_entry__name",),
     reread=True,
-    children=("restriction_links",),  # and its bestiary entry, with that entry's children
+    entry_via="bestiary_entry",  # a hired sword's version, archive and removal are its entry's (with its profile)
+    table_key="bestiary",
     hooks=HiredSwordHooks(),
 )
 RESTRICTIONS = CatalogueKindSpec(  # read-only: the seeders write the book's rows (SEC-06)
@@ -237,6 +325,11 @@ LIST_KINDS: Mapping[str, CatalogueKindSpec] = {
     "restrictions": RESTRICTIONS,
     "item_properties": ITEM_PROPERTIES,
 }
-HOLDERS: Mapping[type[Model], Holder] = {
-    holder.model: holder for kind in CATALOGUE_KINDS.values() for holder in kind.holders
+ENTRY_KINDS: Mapping[str, CatalogueKindSpec] = {  # the kinds owning an entry table, by `entry_key`
+    kind.key: kind for kind in CATALOGUE_KINDS.values() if not kind.entry_via
 }
+
+
+def entry_kind(kind: CatalogueKindSpec) -> CatalogueKindSpec:
+    """The kind owning the table of `kind`'s entries: itself, or the bestiary for a hired sword."""
+    return ENTRY_KINDS[kind.entry_key]

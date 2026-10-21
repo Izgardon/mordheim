@@ -22,7 +22,8 @@ from apps.bestiary.models import (
     BestiaryEntrySpell,
     WarbandBestiaryFavourite,
 )
-from apps.core.catalogue.usage import usage_of
+from apps.core.catalogue import kinds as catalogue_kinds
+from apps.core.catalogue.usage import count_usage
 from apps.items.models import Item
 from apps.items.services import HALF_PRICE_ARMOUR_EFFECT_KEY as HALF
 from apps.races.models import Race
@@ -191,7 +192,10 @@ class RaceDeleteTests(CatalogueTestCase):
             Race.objects.filter(id=self.human.id).delete()
 
         self.assertEqual(self.surviving_units(), ["Abbess", "Cooks", "Scout", "Stranger"])
-        self.assertEqual(usage_of(Hero.objects.filter(race=self.human)), {"units": 1, "warbands": 1, "stashes": 0, "bestiary_entries": 0})  # fmt: skip
+        usage = count_usage(catalogue_kinds.RACES, self.human.id, self.campaign.id)
+        self.assertEqual(
+            usage, {"units": 2, "warbands": 1, "stashes": 0, "bestiary_entries": 0}
+        )  # a hero and a hired sword
 
     def test_reseeding_races_keeps_every_race_and_every_unit_of_one(self):
         # BUG-130, BUG-16 (was pinned: seed_races --truncate deleted every race and every unit with one; flipped in

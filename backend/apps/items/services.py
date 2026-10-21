@@ -1,12 +1,9 @@
 import math
 import re
-from typing import Any
 
 from django.db import models
 
-from apps.bestiary.models import BestiaryEntryItem
 from apps.core.catalogue.cache import bump
-from apps.warbands.models import HenchmenGroupItem, HeroItem, HiredSwordItem, WarbandItem
 
 from .models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemPropertyLink
 
@@ -99,79 +96,12 @@ def _sync_availabilities(source, clone, cost_fn):
         ItemAvailabilityRestriction.objects.bulk_create(restriction_links)
 
 
-OWNED_ITEM_ROWS = (  # the units' carried items, with the path to their campaign
-    (HeroItem, "hero__warband__campaign_id"),
-    (HenchmenGroupItem, "henchmen_group__warband__campaign_id"),
-    (HiredSwordItem, "hired_sword__warband__campaign_id"),
-)
-
-
-def _remap_rows(model: Any, campaign_path: str, campaign_id, item_id_map) -> None:
-    """One kind of carried item: every row of the campaign's on a mapped item moves, in one UPDATE (IMP-67,
-    PERF-44's bulk half)."""
-    rows = list(model.objects.filter(**{campaign_path: campaign_id}, item_id__in=item_id_map.keys()))
-    for row in rows:
-        row.item_id = item_id_map[row.item_id]
-    if rows:
-        model.objects.bulk_update(rows, ["item"])
-
-
-def _remap_campaign_owned_rows(campaign_id, item_id_map):
-    """Point the campaign's owned copies of each item at its replacement. Each row keeps its stored purchase cost:
-    what the warband paid, which sales and values read (BUG-51)."""
-    if not item_id_map:
-        return
-
-    for model, campaign_path in OWNED_ITEM_ROWS:
-        _remap_rows(model, campaign_path, campaign_id, item_id_map)
-
-    from apps.warbands.services.stash import add_to_stash  # the stash's row per item and cost (BUG-117)
-
-    stash_rows = WarbandItem.objects.filter(warband__campaign_id=campaign_id, item_id__in=item_id_map.keys())
-    for stash_item in list(stash_rows):
-        target_item_id = item_id_map.get(stash_item.item_id)
-        if target_item_id is None:
-            continue
-        # the copies move to the target item at the cost they were bought at, joining copies already at that cost
-        stash_item.delete()
-        add_to_stash(stash_item.warband_id, target_item_id, stash_item.quantity or 0, stash_item.cost)
-
-
-def _return_equipment(item_id_map):
-    """Bestiary entries equipped with a clone get its source item back; an entry already equipped with the source
-    keeps that link alone (one row per entry and item)."""
-    links = list(BestiaryEntryItem.objects.filter(item_id__in=item_id_map.keys()))
-    if not links:
-        return
-    entry_ids = {link.bestiary_entry_id for link in links}
-    taken = set(
-        BestiaryEntryItem.objects.filter(bestiary_entry_id__in=entry_ids, item_id__in=set(item_id_map.values()))
-        .values_list("bestiary_entry_id", "item_id")
-    )  # fmt: skip
-    moved, dropped = [], []
-    for link in links:
-        key = (link.bestiary_entry_id, item_id_map[link.item_id])
-        if key in taken:
-            dropped.append(link.id)
-            continue
-        taken.add(key)
-        link.item_id = key[1]
-        moved.append(link)
-    BestiaryEntryItem.objects.bulk_update(moved, ["item"])
-    BestiaryEntryItem.objects.filter(id__in=dropped).delete()
-
-
 def _retire_clones(campaign_id, clones):
-    """Move the campaign's owned copies and bestiary equipment of these clones back to their source items, then
-    delete the clones (copies and equipment reference items with RESTRICT, so a clone still held can't go: BUG-16,
-    BUG-51)."""
-    clones = [clone for clone in clones if clone.replaces_id]
-    if not clones:
-        return
-    item_id_map = {clone.id: clone.replaces_id for clone in clones}
-    _remap_campaign_owned_rows(campaign_id, item_id_map)
-    _return_equipment(item_id_map)
-    Item.objects.filter(id__in=[clone.id for clone in clones]).delete()
+    """The campaign's copies, bestiary equipment and animals of these clones go back to their book items, then the
+    clones go: a Revert's path (core/catalogue/versions.py; copies hold items with RESTRICT, BUG-16, BUG-51)."""
+    from apps.core.catalogue import kinds, versions
+
+    versions.retire(kinds.ITEMS, campaign_id, clones)
 
 
 def _revert_generated_items_for_campaign(campaign_id, effect_key):
@@ -180,41 +110,35 @@ def _revert_generated_items_for_campaign(campaign_id, effect_key):
     bump(campaign_id)  # the campaign's cached lists show the clones (PERF-13)
 
 
-def _sync_generated_items_for_campaign(
-    campaign_id,
-    *,
-    effect_key,
-    source_items,
-    clone_sync_fn,
-):
+def _sync_generated_items_for_campaign(campaign_id, *, effect_key, source_items, clone_sync_fn):
+    """Clone each book item into the campaign through `clone_sync_fn` (a clone it has already is synced again), retire
+    the effect's clones of items no longer in `source_items`, and move the campaign's copies onto the clones. A book
+    item the campaign already has its own version of is left alone; the skipped versions are returned."""
+    from apps.core.catalogue import kinds, remap
+
     source_items = list(source_items)
-    source_ids = [item.id for item in source_items]
-    existing_clones = {
-        clone.replaces_id: clone
-        for clone in Item.objects.filter(
-            campaign_id=campaign_id,
-            generated_effect_key=effect_key,
-            replaces_id__in=source_ids,
+    versions = {
+        version.replaces_id: version
+        for version in Item.objects.filter(
+            campaign_id=campaign_id, replaces_id__in=[item.id for item in source_items]
         ).select_related("replaces", "bestiary_entry")
     }
-
+    skipped = [version for version in versions.values() if version.generated_effect_key != effect_key]
     clone_map = {}
-
     for source in source_items:
-        clone = existing_clones.get(source.id)
-        if clone is None:
-            clone = Item()
+        clone = versions.get(source.id, Item())
+        if clone.pk is not None and clone.generated_effect_key != effect_key:
+            continue  # a hand-made version: the rule leaves it alone
         clone_sync_fn(source, clone)
         clone_map[source.id] = clone
 
     stale_clones = Item.objects.filter(campaign_id=campaign_id, generated_effect_key=effect_key).exclude(
-        replaces_id__in=source_ids
+        replaces_id__in=list(clone_map)
     )
     _retire_clones(campaign_id, list(stale_clones.only("id", "replaces_id")))
-
-    item_id_map = {source_id: clone.id for source_id, clone in clone_map.items()}
-    _remap_campaign_owned_rows(campaign_id, item_id_map)
+    remap.remap(kinds.ITEMS, campaign_id, {source_id: clone.id for source_id, clone in clone_map.items()})
     bump(campaign_id)  # the campaign's cached lists show the clones (PERF-13)
+    return skipped
 
 
 def sync_half_price_armour_for_campaign(campaign_id):

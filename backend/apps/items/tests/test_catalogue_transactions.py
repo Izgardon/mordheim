@@ -18,6 +18,8 @@ from apps.bestiary.models import BestiaryEntry, HiredSwordProfile
 from apps.campaigns.models import Campaign
 from apps.campaigns.services.codes import seed_roles_and_codes
 from apps.campaigns.tests.campaign_support import make_user
+from apps.core.catalogue import versions
+from apps.core.testing import Rendezvous, run_concurrently
 from apps.items.models import Item, ItemAvailability
 
 from .catalogue_support import BESTIARY, HIRED_SWORDS, ITEMS, make_entry
@@ -116,3 +118,23 @@ class CatalogueTransactionTests(TransactionTestCase):
 
         self.assertEqual(response.status_code, 500)
         self.assertEqual((BestiaryEntry.objects.count(), HiredSwordProfile.objects.count()), (0, 0))
+
+    def test_two_first_edits_of_a_book_entry_at_once_make_one_version(self):
+        # CAT-TEST-23: both requests reach the copy-on-write before either writes; the book row's lock makes the second
+        # wait, then edit the first one's version in place
+        book = make_entry(ITEMS, "Flail", cost=15)
+        rendezvous = Rendezvous()
+
+        def edit(description: str) -> Any:
+            client = APIClient()
+            client.force_authenticate(user=self.owner)
+            body = {"campaign_id": self.campaign.id, "description": description}
+            return client.patch(ITEMS.detail_url(book.id), body, format="json")
+
+        with mock.patch.object(versions, "editable", side_effect=rendezvous.before(versions.editable)):
+            first, second = run_concurrently(lambda: edit("Heavy"), lambda: edit("Spiked"))
+
+        self.assertEqual((first.status_code, second.status_code), (200, 200))
+        [version] = Item.objects.filter(campaign=self.campaign, replaces=book)
+        self.assertEqual((first.data["id"], second.data["id"]), (version.id, version.id))
+        self.assertIn(version.description, {"Heavy", "Spiked"})

@@ -3,8 +3,9 @@ structure that keeps catalogue views on the generic base and the kinds registry 
 
 Actors: `player` ("Pia", only what joining grants: edit_catalogue), `rival` ("Rex", a player also granted
 delete_catalogue), `admin`, `owner`, the outsider ("Otto", in another campaign) and anonymous (401 everywhere).
-Book lists and book entries need only a login; a campaign's list, create or entry is a 404 to a non-member. Each
-request runs in a savepoint that is rolled back, so a DELETE doesn't change what the next row sees.
+Book lists and book entries need only a login, and a write to a book entry names the campaign it is for (none: 403);
+a campaign's list, create or entry is a 404 to a non-member. Each request runs in a savepoint that is rolled back,
+so a DELETE doesn't change what the next row sees.
 """
 
 from typing import Any
@@ -22,7 +23,7 @@ from apps.items.models import ItemProperty
 from apps.warbands.access import WARBAND_RULES
 from apps.warbands.views.base import WarbandScopedView
 
-from .catalogue_support import DELETE, KINDS, RACES, CatalogueKind, CatalogueTestCase, make_entry
+from .catalogue_support import DELETE, HIRED_SWORDS, KINDS, RACES, CatalogueKind, CatalogueTestCase, make_entry
 
 ACTORS = ("player", "rival", "admin", "owner", "outsider")
 Row = tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int, int]]
@@ -32,15 +33,22 @@ FAVOURITES = {"warband-bestiary-favourites", "warband-bestiary-favourite-delete"
 
 
 class CatalogueAccessFixture(CatalogueTestCase):
-    """The shared catalogue, one campaign entry of each kind, a campaign property, and `rival` granted deleting."""
+    """The shared catalogue, one campaign entry of each kind, the campaign's version of a spare book entry of each
+    kind, a campaign property, and `rival` granted deleting."""
 
     house: dict[str, int]
+    version: dict[str, int]
 
     @classmethod
     def setUpTestData(cls) -> None:
         super().setUpTestData()
         cls.house = {kind.key: make_entry(kind, f"House {kind.key}", campaign=cls.campaign).id for kind in KINDS}
         cls.house["property"] = ItemProperty.objects.create(name="Spiked", type="Weapon", campaign=cls.campaign).id
+        cls.version = {}
+        for kind in KINDS:
+            spare = make_entry(kind, f"Spare {kind.key}")
+            book = spare.bestiary_entry if kind is HIRED_SWORDS else spare
+            cls.version[kind.key] = make_entry(kind, f"Spare {kind.key}", campaign=cls.campaign, replaces=book).id
 
     def setUp(self) -> None:
         super().setUp()
@@ -55,7 +63,12 @@ class CatalogueAccessFixture(CatalogueTestCase):
 
     def kind_rows(self, kind: CatalogueKind) -> list[Row]:
         books, house, edit = self.books(), self.house[kind.key], EDITED.get(kind.key, {"description": "Edited"})
-        races = kind is RACES  # no detail read (405), and a book race is "Not found" to writes
+        book, version, campaign = (
+            kind.detail_url(books[kind.key]),
+            kind.detail_url(self.version[kind.key]),
+            self.campaign.id,
+        )
+        races = kind is RACES  # no detail read (405)
         return [
             ("GET", kind.list_url(self.campaign), None, (200, 200, 200, 200, 404)),
             ("GET", kind.list_url(), None, (200, 200, 200, 200, 200)),  # the book: a login is enough
@@ -63,9 +76,14 @@ class CatalogueAccessFixture(CatalogueTestCase):
             ("GET", kind.detail_url(house), None, (405,) * 5 if races else (200, 200, 200, 200, 404)),
             ("PATCH", kind.detail_url(house), edit, (200, 200, 200, 200, 404)),
             ("DELETE", kind.detail_url(house), None, (403, 204, 204, 204, 404)),
-            ("GET", kind.detail_url(books[kind.key]), None, (405 if races else 200,) * 5),
-            ("PATCH", kind.detail_url(books[kind.key]), edit, (404 if races else 403,) * 5),
-            ("DELETE", kind.detail_url(books[kind.key]), None, (404 if races else 403,) * 5),
+            ("GET", book, None, (405 if races else 200,) * 5),
+            ("PATCH", book, edit, (403,) * 5),  # the book itself: nobody
+            ("DELETE", book, None, (403,) * 5),
+            ("PATCH", book, {**edit, "campaign_id": campaign}, (200, 200, 200, 200, 404)),  # the campaign's version
+            ("POST", f"{version}revert/", None, (200, 200, 200, 200, 404)),
+            ("POST", f"{kind.detail_url(house)}revert/", None, (409, 409, 409, 409, 404)),  # not a version
+            ("POST", f"{book}revert/", {"campaign_id": campaign}, (409, 409, 409, 409, 404)),  # no version of it
+            ("POST", f"{book}revert/", None, (403,) * 5),
         ]
 
     def matrix(self) -> list[Row]:
@@ -133,7 +151,7 @@ def catalogue_patterns() -> list[URLPattern]:
         for entry in get_resolver(f"apps.{app}.urls").url_patterns
         if isinstance(entry, URLPattern)
     ]
-    assert len(patterns) == 19, [pattern.name for pattern in patterns]
+    assert len(patterns) == 26, [pattern.name for pattern in patterns]
     return patterns
 
 
