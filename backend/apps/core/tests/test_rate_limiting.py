@@ -127,6 +127,7 @@ class RateLimitingApiTests(APITestCase):
                 "auth_password_reset_day": "10/day",
                 "auth_password_reset_confirm_hour": "10/hour",
                 "auth_refresh_minute": "30/min",
+                "auth_account_user": "5/min",
                 "feedback_report_user": "3/min",
                 "feedback_report_ip": "10/min",
                 "campaign_chat_user": "12/min",

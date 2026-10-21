@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from apps.core.throttling import (
+    ACCOUNT_THROTTLE_CLASSES,
     FEEDBACK_REPORT_THROTTLE_CLASSES,
     LOGIN_THROTTLE_CLASSES,
     PASSWORD_RESET_CONFIRM_THROTTLE_CLASSES,
@@ -23,13 +24,15 @@ from .emails import send_feedback_report_email, send_password_reset_email
 from .serializers import (
     FeedbackReportSerializer,
     LoginSerializer,
+    PasswordChangeSerializer,
     PasswordResetConfirmSerializer,
     PasswordResetRequestSerializer,
     RegisterSerializer,
     UserSerializer,
     password_problems,
 )
-from .services.tokens import SessionTokenRefreshSerializer, end_all_sessions, issue_tokens
+from .services.accounts import change_password, set_new_password, sign_out_others
+from .services.tokens import SessionTokenRefreshSerializer, issue_tokens
 
 
 def _get_user_by_email(email):
@@ -135,10 +138,32 @@ class PasswordResetConfirmView(APIView):
         if problems:
             return Response({"new_password": problems}, status=400)
 
-        end_all_sessions(user)  # first: should the password's save fail, the old one still works (SEC-05)
-        user.set_password(new_password)
-        user.save(update_fields=["password"])
+        set_new_password(user, new_password)  # ends every session too (SEC-05)
         return Response({"detail": "Password has been reset."})
+
+
+class PasswordChangeView(APIView):
+    """`POST auth/password/`: the current and a new password; other devices are signed out, and this one gets a fresh
+    pair (AUTH-NEW-03, decisions 1 and 4)."""
+
+    permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = ACCOUNT_THROTTLE_CLASSES
+
+    def post(self, request):
+        serializer = PasswordChangeSerializer(data=request.data, context={"user": request.user})
+        serializer.is_valid(raise_exception=True)
+        tokens = change_password(request.user, serializer.validated_data["new_password"])
+        return Response({**tokens, "user": UserSerializer(request.user).data})
+
+
+class SignOutOthersView(APIView):
+    """`POST auth/sign-out-others/`: every other device is signed out; this one gets a fresh pair (AUTH-NEW-04)."""
+
+    permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = ACCOUNT_THROTTLE_CLASSES
+
+    def post(self, request):
+        return Response({**sign_out_others(request.user), "user": UserSerializer(request.user).data})
 
 
 class FeedbackReportView(APIView):

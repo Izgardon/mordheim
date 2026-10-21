@@ -79,6 +79,10 @@ class AuthRefreshMinuteIPRateThrottle(IPRateThrottle):
     scope = "auth_refresh_minute"
 
 
+class AuthAccountUserRateThrottle(UserOrIPRateThrottle):
+    scope = "auth_account_user"
+
+
 class FeedbackReportUserRateThrottle(UserOrIPRateThrottle):
     scope = "feedback_report_user"
 
@@ -132,6 +136,11 @@ PASSWORD_RESET_CONFIRM_THROTTLE_CLASSES = [
 
 REFRESH_THROTTLE_CLASSES = [
     AuthRefreshMinuteIPRateThrottle,
+]
+
+# The password change and "sign out everywhere else" share one budget per user
+ACCOUNT_THROTTLE_CLASSES = [
+    AuthAccountUserRateThrottle,
 ]
 
 FEEDBACK_REPORT_THROTTLE_CLASSES = [

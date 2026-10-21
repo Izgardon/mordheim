@@ -11,6 +11,7 @@ from .models import UserAccount
 NAME_MAX_LENGTH = 40  # a display name (decision 2)
 EMAIL_MAX_LENGTH = 150  # the email is also the username, a varchar(150) (BUG-84)
 EMAIL_TAKEN = "User already exists"
+CURRENT_PASSWORD_WRONG = "That isn't your current password."
 
 
 def password_problems(password: str, user: Any) -> list[str]:
@@ -97,6 +98,24 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
     uid = serializers.CharField()
     token = serializers.CharField()
     new_password = serializers.CharField(write_only=True, min_length=8)  # checked against the user in the view
+
+
+class PasswordChangeSerializer(serializers.Serializer):
+    """The signed-in user's current password and a new one, checked against their email and name (AUTH-CQ-04 b)."""
+
+    current_password = serializers.CharField(write_only=True)
+    new_password = serializers.CharField(write_only=True, min_length=8)
+
+    def validate_current_password(self, value):
+        if not self.context["user"].check_password(value):
+            raise serializers.ValidationError(CURRENT_PASSWORD_WRONG)
+        return value
+
+    def validate(self, attrs):
+        problems = password_problems(attrs["new_password"], self.context["user"])
+        if problems:
+            raise serializers.ValidationError({"new_password": problems})
+        return attrs
 
 
 class FeedbackReportSerializer(serializers.Serializer):
