@@ -1,7 +1,9 @@
 from django.db import models
 
+from apps.core.models import CatalogueEntry, version_constraints
 
-class Special(models.Model):
+
+class Special(CatalogueEntry):
     campaign = models.ForeignKey(
         "campaigns.Campaign",
         related_name="specials",
@@ -18,12 +20,14 @@ class Special(models.Model):
 
     class Meta:
         db_table = "special"
-        constraints = [  # one per name and type in the book, an add-on and a campaign (BUG-17, IMP-83)
+        constraints = [
+            *version_constraints("special"),
+            # one per name and type in the book, an add-on and a campaign (BUG-17, IMP-83)
             models.UniqueConstraint(
                 fields=["campaign", "campaign_type", "name", "type"],
                 name="special_unique_name_type",
                 nulls_distinct=False,
-            )
+            ),
         ]
         ordering = ["type", "name"]
 

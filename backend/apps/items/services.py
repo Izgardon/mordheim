@@ -35,7 +35,7 @@ def _prefetched_base_items(subtype):
 
 def _clone_item_fields(source, clone, campaign_id, effect_key, *, save_value=None):
     clone.campaign_id = campaign_id
-    clone.source_item = source
+    clone.replaces = source
     clone.generated_effect_key = effect_key
     clone.name = source.name
     clone.type = source.type
@@ -165,18 +165,18 @@ def _retire_clones(campaign_id, clones):
     """Move the campaign's owned copies and bestiary equipment of these clones back to their source items, then
     delete the clones (copies and equipment reference items with RESTRICT, so a clone still held can't go: BUG-16,
     BUG-51)."""
-    clones = [clone for clone in clones if clone.source_item_id]
+    clones = [clone for clone in clones if clone.replaces_id]
     if not clones:
         return
-    item_id_map = {clone.id: clone.source_item_id for clone in clones}
+    item_id_map = {clone.id: clone.replaces_id for clone in clones}
     _remap_campaign_owned_rows(campaign_id, item_id_map)
     _return_equipment(item_id_map)
     Item.objects.filter(id__in=[clone.id for clone in clones]).delete()
 
 
 def _revert_generated_items_for_campaign(campaign_id, effect_key):
-    clones = Item.objects.filter(campaign_id=campaign_id, generated_effect_key=effect_key, source_item__isnull=False)
-    _retire_clones(campaign_id, list(clones.only("id", "source_item_id")))
+    clones = Item.objects.filter(campaign_id=campaign_id, generated_effect_key=effect_key, replaces__isnull=False)
+    _retire_clones(campaign_id, list(clones.only("id", "replaces_id")))
     bump(campaign_id)  # the campaign's cached lists show the clones (PERF-13)
 
 
@@ -190,12 +190,12 @@ def _sync_generated_items_for_campaign(
     source_items = list(source_items)
     source_ids = [item.id for item in source_items]
     existing_clones = {
-        clone.source_item_id: clone
+        clone.replaces_id: clone
         for clone in Item.objects.filter(
             campaign_id=campaign_id,
             generated_effect_key=effect_key,
-            source_item_id__in=source_ids,
-        ).select_related("source_item", "bestiary_entry")
+            replaces_id__in=source_ids,
+        ).select_related("replaces", "bestiary_entry")
     }
 
     clone_map = {}
@@ -208,9 +208,9 @@ def _sync_generated_items_for_campaign(
         clone_map[source.id] = clone
 
     stale_clones = Item.objects.filter(campaign_id=campaign_id, generated_effect_key=effect_key).exclude(
-        source_item_id__in=source_ids
+        replaces_id__in=source_ids
     )
-    _retire_clones(campaign_id, list(stale_clones.only("id", "source_item_id")))
+    _retire_clones(campaign_id, list(stale_clones.only("id", "replaces_id")))
 
     item_id_map = {source_id: clone.id for source_id, clone in clone_map.items()}
     _remap_campaign_owned_rows(campaign_id, item_id_map)

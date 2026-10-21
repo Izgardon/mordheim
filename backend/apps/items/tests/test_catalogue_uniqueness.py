@@ -126,7 +126,7 @@ class HouseRuleCloneTests(CatalogueTestCase):
         self.assertEqual((custom.status_code, rule.status_code), (201, 201), rule.data)
         rows = Item.objects.filter(campaign=self.campaign, name="Heavy Armour", type="Armour")
         self.assertEqual(
-            sorted((row.generated_effect_key or "", row.source_item_id or 0) for row in rows),
+            sorted((row.generated_effect_key or "", row.replaces_id or 0) for row in rows),
             [("", 0), (HALF_PRICE_ARMOUR_EFFECT_KEY, self.heavy_armour.id)],
         )
         self.assertEqual(self.delete_as(self.owner, self.url(f"rules/{rule.data['id']}/")).status_code, 204)

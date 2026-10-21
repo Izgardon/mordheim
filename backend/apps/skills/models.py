@@ -1,7 +1,9 @@
 from django.db import models
 
+from apps.core.models import CatalogueEntry, version_constraints
 
-class Skill(models.Model):
+
+class Skill(CatalogueEntry):
     campaign = models.ForeignKey(
         "campaigns.Campaign",
         related_name="skills",
@@ -18,12 +20,14 @@ class Skill(models.Model):
 
     class Meta:
         db_table = "skill"
-        constraints = [  # one per name and type in the book, an add-on and a campaign (BUG-17, IMP-83)
+        constraints = [
+            *version_constraints("skill"),
+            # one per name and type in the book, an add-on and a campaign (BUG-17, IMP-83)
             models.UniqueConstraint(
                 fields=["campaign", "campaign_type", "name", "type"],
                 name="skill_unique_name_type",
                 nulls_distinct=False,
-            )
+            ),
         ]
         ordering = ["type", "name"]
 

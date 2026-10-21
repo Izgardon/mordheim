@@ -161,8 +161,8 @@ class CatalogueStructureTests(CatalogueTestCase):
             restricting = {
                 (rel.related_model, rel.field.name)
                 for rel in kind.model._meta.related_objects
-                if isinstance(rel, ManyToOneRel) and rel.on_delete is RESTRICT
-            }
+                if isinstance(rel, ManyToOneRel) and rel.on_delete is RESTRICT and rel.field.name != "replaces"
+            }  # a version's `replaces` isn't a copy: Revert, not a delete, is how a version goes
             with self.subTest(kind=kind.key):
                 self.assertEqual({(holder.model, holder.field) for holder in kind.holders}, restricting)
 

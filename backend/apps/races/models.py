@@ -1,9 +1,10 @@
 from django.db import models
 
+from apps.core.models import CatalogueEntry, version_constraints
 from apps.warbands.models.shared import StatBlock, stat_constraints
 
 
-class Race(StatBlock):
+class Race(StatBlock, CatalogueEntry):
     campaign = models.ForeignKey(
         "campaigns.Campaign",
         related_name="races",
@@ -21,6 +22,7 @@ class Race(StatBlock):
         ordering = ["name"]
         constraints = [
             *stat_constraints("race"),
+            *version_constraints("race"),
             # one race per name in the book, an add-on and a campaign (BUG-17, IMP-83)
             models.UniqueConstraint(
                 fields=["campaign", "campaign_type", "name"], name="race_unique_name", nulls_distinct=False

@@ -249,7 +249,7 @@ class HouseRuleReseedTests(SeederTestCase):
         self.armour = book_item("Heavy Armour", 50, type="Armour", subtype="Armour", save_value="5+")
         CampaignHouseRule.objects.create(campaign=self.campaign, title="Half price", effect_key=HALF_PRICE_ARMOUR_EFFECT_KEY)  # fmt: skip
         sync_half_price_armour_for_campaign(self.campaign.id)
-        self.clone = Item.objects.get(campaign=self.campaign, source_item=self.armour)
+        self.clone = Item.objects.get(campaign=self.campaign, replaces=self.armour)
 
     def test_a_reseeded_armour_price_reaches_the_half_price_clone(self):
         # BUG-51 (seed_items re-syncs every campaign's rule) after BUG-17 (the reseed stops crashing on the clone)
@@ -267,7 +267,7 @@ class HouseRuleReseedTests(SeederTestCase):
 
         output = seed_items([{"name": "Heavy Armour", "type": "Armour", "subtype": "Armour", "cost": 60}])
 
-        clones = Item.objects.filter(source_item=self.armour).order_by("campaign_id")
+        clones = Item.objects.filter(replaces=self.armour).order_by("campaign_id")
         self.assertEqual([(clone.campaign_id, costs(clone)) for clone in clones], [(self.campaign.id, [30]), (other.id, [30])])  # fmt: skip
         self.assertEqual(list(hero.hero_items.values_list("item_id", "cost")), [(self.clone.id, 25)])
         self.assertIn("house rules synced: 2", output)

@@ -178,11 +178,11 @@ class SeedAllTests(TestCase):
         # armour with the items before it already rewritten; flipped in PR A: the book only, and atomic)
         campaign = Campaign.objects.create(name="Shards", join_code="SHARDS")
         sync_half_price_armour_for_campaign(campaign.id)
-        clones = set(Item.objects.filter(campaign=campaign).values_list("id", "source_item_id"))
+        clones = set(Item.objects.filter(campaign=campaign).values_list("id", "replaces_id"))
         Item.objects.filter(campaign__isnull=True, name__in=["Axe", "Wyrdstone Pendulum"]).update(description="stale")
 
         seed_all()
 
         self.assertNotEqual(Item.objects.get(name="Axe").description, "stale")
         self.assertNotEqual(Item.objects.get(name="Wyrdstone Pendulum").description, "stale")
-        self.assertEqual(set(Item.objects.filter(campaign=campaign).values_list("id", "source_item_id")), clones)
+        self.assertEqual(set(Item.objects.filter(campaign=campaign).values_list("id", "replaces_id")), clones)

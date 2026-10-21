@@ -1,9 +1,10 @@
 from django.db import models
 
+from apps.core.models import CatalogueEntry, version_constraints
 from apps.warbands.models.shared import StatBlock, stat_constraints
 
 
-class BestiaryEntry(StatBlock):
+class BestiaryEntry(StatBlock, CatalogueEntry):
     campaign = models.ForeignKey(
         "campaigns.Campaign",
         related_name="bestiary_entries",
@@ -57,6 +58,7 @@ class BestiaryEntry(StatBlock):
         verbose_name_plural = "bestiary entries"
         constraints = [
             *stat_constraints("bestiary_entry"),
+            *version_constraints("bestiary_entry"),
             # one entry per name in the book and in a campaign, as seed_bestiary upserts (BUG-17, IMP-83): an animal
             # and a hired sword (an entry of type "Hired Sword") share the names
             models.UniqueConstraint(

@@ -36,7 +36,7 @@ class HouseRuleItemTests(CampaignTestCase):
         return self.post_as(self.owner, self.url("rules/"), {"title": title, "effect_key": effect_key})
 
     def clone_of(self, source: Item) -> Item:
-        return Item.objects.get(campaign=self.campaign, generated_effect_key=HALF, source_item=source)
+        return Item.objects.get(campaign=self.campaign, generated_effect_key=HALF, replaces=source)
 
     def owned(self, row: HeroItem) -> tuple[int, int | None]:
         row.refresh_from_db()
@@ -101,7 +101,7 @@ class HouseRuleItemTests(CampaignTestCase):
                 campaign=self.campaign,
                 name="Heavy Armour",
                 type="Armour",
-                source_item=armour,
+                replaces=armour,
                 generated_effect_key=HALF,
             )
 

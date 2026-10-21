@@ -1,7 +1,9 @@
 from django.db import models
 
+from apps.core.models import CatalogueEntry, version_constraints
 
-class Spell(models.Model):
+
+class Spell(CatalogueEntry):
     campaign = models.ForeignKey(
         "campaigns.Campaign",
         related_name="spells",
@@ -20,12 +22,14 @@ class Spell(models.Model):
 
     class Meta:
         db_table = "spell"
-        constraints = [  # one per name and type in the book, an add-on and a campaign (BUG-17, IMP-83)
+        constraints = [
+            *version_constraints("spell"),
+            # one per name and type in the book, an add-on and a campaign (BUG-17, IMP-83)
             models.UniqueConstraint(
                 fields=["campaign", "campaign_type", "name", "type"],
                 name="spell_unique_name_type",
                 nulls_distinct=False,
-            )
+            ),
         ]
         ordering = ["type", "name"]
 

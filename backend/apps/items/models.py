@@ -1,8 +1,10 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
+from apps.core.models import CatalogueEntry, version_constraints
 
-class Item(models.Model):
+
+class Item(CatalogueEntry):
     campaign = models.ForeignKey(
         "campaigns.Campaign",
         related_name="items",
@@ -23,13 +25,8 @@ class Item(models.Model):
     range = models.CharField(max_length=40, blank=True, null=True)
     save_value = models.CharField(max_length=40, blank=True, null=True, db_column="save")
     statblock = models.TextField(blank=True, null=True)
-    source_item = models.ForeignKey(
-        "self",
-        related_name="generated_clones",
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-    )
+    # set on a house rule's generated version (its `replaces` is the book item the rule changes); editing the version
+    # clears it, and the rule leaves the version alone from then on
     generated_effect_key = models.CharField(max_length=80, blank=True, null=True, db_index=True)
     bestiary_entry = models.ForeignKey(
         "bestiary.BestiaryEntry",
@@ -43,11 +40,7 @@ class Item(models.Model):
         db_table = "item"
         ordering = ["type", "name"]
         constraints = [
-            models.UniqueConstraint(  # one clone per source item and house rule effect in a campaign (BUG-51)
-                fields=["campaign", "generated_effect_key", "source_item"],
-                condition=models.Q(generated_effect_key__isnull=False),
-                name="item_unique_house_rule_clone",
-            ),
+            *version_constraints("item"),  # one version per book item in a campaign, a house rule's clone included
             # one item per name and type in the book, an add-on and a campaign (BUG-17, IMP-83). The effect key keeps
             # a house rule's clone apart from a custom item of the book armour's name, which a campaign may already
             # hold when the rule is switched on (a condition would do the same, but Django 5.0 writes a partial

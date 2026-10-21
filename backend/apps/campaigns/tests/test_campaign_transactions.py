@@ -174,4 +174,4 @@ class HouseRuleRaceTests(CampaignTransactionTestCase):
         self.assertEqual(sorted(response.status_code for response in results), [200, 201])
         self.assertEqual(len({response.json()["id"] for response in results}), 1)
         self.assertEqual(CampaignHouseRule.objects.filter(campaign=self.campaign).count(), 1)
-        self.assertEqual(Item.objects.filter(campaign=self.campaign, source_item=armour).count(), 1)
+        self.assertEqual(Item.objects.filter(campaign=self.campaign, replaces=armour).count(), 1)

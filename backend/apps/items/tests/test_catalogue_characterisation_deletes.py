@@ -257,7 +257,7 @@ class HouseRuleRevertTests(CatalogueTestCase):
 
     def test_reverting_a_rule_returns_a_bestiary_entrys_clone_to_the_book_item(self):
         rule = self.post_as(self.owner, self.url("rules/"), {"title": "Half price", "effect_key": HALF})
-        clone = Item.objects.get(campaign=self.campaign, source_item=self.heavy_armour)
+        clone = Item.objects.get(campaign=self.campaign, replaces=self.heavy_armour)
         mule = make_entry(BESTIARY, "Mule", campaign=self.campaign)
         knight = make_entry(BESTIARY, "Knight", campaign=self.campaign)
         BestiaryEntryItem.objects.create(bestiary_entry=mule, item=clone, quantity=2)

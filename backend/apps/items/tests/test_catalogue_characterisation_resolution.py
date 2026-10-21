@@ -115,7 +115,7 @@ class HouseRuleCloneResolutionTests(ResolutionTestCase):
         rule = {"title": "Half price armour", "effect_key": "half_price_armour"}
         self.assertEqual(self.client.post(f"/api/campaigns/{self.campaign.id}/rules/", rule, format="json").status_code, 201)  # fmt: skip
         self.client.force_authenticate(user=self.player)
-        self.clone = Item.objects.get(campaign=self.campaign, source_item=self.armour)
+        self.clone = Item.objects.get(campaign=self.campaign, replaces=self.armour)
 
     def test_the_clone_replaces_the_book_armour_in_the_shop_and_prices_its_book_id(self):
         listed = self.client.get(f"/api/items/?campaign_id={self.campaign.id}&type=armour").json()
