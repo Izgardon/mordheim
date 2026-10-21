@@ -3,8 +3,9 @@
 Every write that changes what a campaign's list shows sends `catalogue.changed` {kind} on
 `private-campaign-{id}-events` after its commit, skipping the writer's socket: creates, edits (a book entry's
 version included), reverts, deletes, archives, removals and restores, a house rule's clones, and an injury's new
-special. A bestiary or hired-sword write names both lists. A refused write sends nothing; a seed (a book change)
-sends nothing per campaign. Pusher is replaced by a mock that records triggers.
+special. A bestiary or hired-sword write names both lists (a bestiary entry's, the items list too: an Animal item
+shows its entry). A refused write sends nothing; a seed (a book change) sends nothing per campaign. Pusher is
+replaced by a mock that records triggers.
 """
 
 from io import StringIO
@@ -53,6 +54,7 @@ class CatalogueEventTests(CatalogueTestCase):
         for kind in KINDS:
             with self.subTest(kind=kind.key):
                 lists = {BESTIARY.key, HIRED_SWORDS.key} if kind in (BESTIARY, HIRED_SWORDS) else {kind.key}
+                lists |= {ITEMS.key} if kind is BESTIARY else set()  # an item shows the animal it hires
                 created = self.send("post", kind.list_url(), kind.body(f"Live {kind.key}", self.campaign))
                 url = kind.detail_url(created.data["id"])
                 statuses = [created.status_code, self.send("patch", url, {"name": "Changed"}).status_code]

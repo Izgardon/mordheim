@@ -262,7 +262,7 @@ BESTIARY = CatalogueKindSpec(
     versioned=True,
     filters=NAME_AND_TYPE,
     reread=True,
-    lists=("bestiary", "hired_swords"),  # an entry may be a hired sword's
+    lists=("bestiary", "hired_swords", "items"),  # an entry may be a hired sword, or an animal an item shows
     children=(
         "bestiary_entry_skills",
         "bestiary_entry_specials",
