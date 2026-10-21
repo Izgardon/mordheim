@@ -72,11 +72,10 @@ class AuthQueryBudgetTests(AuthTestCase):
         self.assert_queries(1, 200, client.get, ME)
 
     @mock.patch("apps.users.views.send_password_reset_email", return_value=True)
-    def test_a_reset_request_runs_three_queries_for_a_known_email_and_one_for_an_unknown(self, _send):
-        # Characterises current behaviour (BUG-153 suggested, pinned; flips in PR A/B: 1 query either way):
-        # _get_user_by_email loads only id and email, then make_token reads last_login and password, one deferred
-        # load each. Two more Neon round trips (about 20-40 ms) tell a known address from an unknown one
-        self.assert_queries(3, 200, self.post, RESET, {"email": "pia@example.com"})
+    def test_a_reset_request_runs_one_query_for_a_known_email_and_an_unknown(self, _send):
+        # BUG-153 (was pinned at 3 and 1: _get_user_by_email loaded only id and email, then make_token read last_login
+        # and password, one deferred load each, two Neon round trips telling a known address from an unknown one)
+        self.assert_queries(1, 200, self.post, RESET, {"email": "pia@example.com"})
         self.assert_queries(1, 200, self.post, RESET, {"email": "nobody@example.com"})
 
     def test_a_reset_confirm_runs_three_queries_and_a_refused_one_one(self):

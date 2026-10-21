@@ -37,12 +37,10 @@ from .services.tokens import SessionTokenRefreshSerializer, issue_tokens
 
 
 def _get_user_by_email(email):
+    """The active user with this email, whole: the reset token reads last_login and the password, and loading them
+    here keeps a known address at the one query an unknown one costs (BUG-153)."""
     user_model = get_user_model()
-    return (
-        user_model.objects.filter(Q(email__iexact=email) | Q(username__iexact=email), is_active=True)
-        .only("id", "email")
-        .first()
-    )
+    return user_model.objects.filter(Q(email__iexact=email) | Q(username__iexact=email), is_active=True).first()
 
 
 def _get_user_from_uid(uid):
