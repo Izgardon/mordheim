@@ -2,7 +2,7 @@
 
 `/auth/me` and register's `user` are `{id, email, name}`, `name` being the raw `first_name`: the email goes only to
 its owner. Pass 4 moved players, members, chat, bulletin, encampments, battles and trades onto `display_name`
-("Player N" when the name is blank); the ledger author is still the bare first name, which PR A switches.
+("Player N" when the name is blank); PR A moved the ledger author too.
 """
 
 from typing import Any
@@ -29,16 +29,16 @@ class NamesTests(AuthTestCase):
 
         self.assertEqual(response.json(), {"id": self.rex.id, "email": "rex@example.com", "name": ""})
 
-    def test_a_nameless_authors_hand_entered_ledger_row_shows_a_blank_name(self):
-        # Characterises current behaviour (SEC-13 leftover, AUTH-TWEAK-02, pinned; flips in PR A: display_name,
-        # "Player N"): LedgerAuthorSerializer reads first_name (warbands/serializers/ledger.py:52)
+    def test_a_nameless_authors_hand_entered_ledger_row_shows_player_n(self):
+        # SEC-13 leftover, AUTH-TWEAK-02 (was pinned: a blank name, since LedgerAuthorSerializer read first_name;
+        # flipped in PR A: display_name)
         _, warband_id = self.campaign_and_warband()
         url = f"/api/warbands/{warband_id}/trades/"
 
         entered = self.rex_client.post(url, {"action": "Reward", "description": "Found a purse", "price": 5}, format="json")  # fmt: skip
 
         self.assertEqual(entered.status_code, 201, entered.data)
-        author: dict[str, Any] = {"id": self.rex.id, "name": ""}
+        author: dict[str, Any] = {"id": self.rex.id, "name": f"Player {self.rex.id}"}
         self.assertEqual(entered.json()["created_by"], author)
         listed = {row["description"]: row["created_by"] for row in self.rex_client.get(url).json()}
         self.assertEqual(listed["Found a purse"], author)
