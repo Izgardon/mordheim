@@ -8,7 +8,6 @@ configured (BUG-56), moves the link into the fragment (SEC-12), catches bad uids
 password against the user (AUTH-CQ-04 b).
 """
 
-import unittest
 from datetime import datetime, timedelta
 from typing import Any
 from unittest import mock
@@ -177,10 +176,9 @@ class ResetConfirmTests(AuthTestCase):
 
                 self.assertEqual((response.status_code, response.json()), (400, body))
 
-    @unittest.expectedFailure
     def test_a_uid_that_decodes_to_letters_is_refused(self):
-        """Fails today: `YWJj` decodes to "abc", and `filter(pk="abc")` raises ValueError outside the try (500)."""
-        # BUG-83, AUTH-TEST-12 (flips in PR A: _get_user_from_uid catches the lookup too)
+        """`YWJj` decodes to "abc"; `filter(pk="abc")` raised ValueError outside the try (a 500)."""
+        # BUG-83, AUTH-TEST-12 (was an expected failure; fixed in PR A: _get_user_from_uid catches the lookup too)
         self.answer_errors_with_500()
 
         response = self.confirm("YWJj", reset_link_parts(self.pia)[1])
@@ -188,11 +186,10 @@ class ResetConfirmTests(AuthTestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), INVALID)
 
-    @unittest.expectedFailure
     def test_a_uid_of_punctuation_is_refused(self):
-        """Fails today: `!!!` decodes to an empty string (b64decode drops what isn't base64), then `filter(pk="")`
-        raises ValueError (500)."""
-        # BUG-83, AUTH-TEST-12 (flips in PR A)
+        """`!!!` decodes to an empty string (b64decode drops what isn't base64); `filter(pk="")` raised ValueError
+        (a 500)."""
+        # BUG-83, AUTH-TEST-12 (was an expected failure; fixed in PR A)
         self.answer_errors_with_500()
 
         response = self.confirm("!!!", reset_link_parts(self.pia)[1])

@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
@@ -39,12 +40,14 @@ def _get_user_by_email(email):
 
 
 def _get_user_from_uid(uid):
+    """The active user a reset link's uid names, or None. A uid that decodes to something other than an id (letters,
+    or nothing) is refused like any other bad link, as Django's own reset view does (BUG-83)."""
     user_model = get_user_model()
     try:
         user_id = force_str(urlsafe_base64_decode(uid))
-    except (TypeError, ValueError, OverflowError):
+        return user_model.objects.filter(pk=user_id, is_active=True).first()
+    except (TypeError, ValueError, OverflowError, ValidationError):
         return None
-    return user_model.objects.filter(pk=user_id, is_active=True).first()
 
 
 def _build_reset_url(uid, token):
