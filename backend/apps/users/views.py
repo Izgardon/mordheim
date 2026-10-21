@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import update_last_login
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import ValidationError
 from django.db.models import Q
@@ -88,6 +89,7 @@ class LoginView(APIView):
         serializer = LoginSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
+        update_last_login(type(user), user)  # reset tokens hash last_login: a sign-in spends old links (BUG-154)
         refresh = RefreshToken.for_user(user)
         access = str(refresh.access_token)  # type: ignore[attr-defined]
         # The user beside the pair, as register answers, so the app needn't ask /auth/me (PERF-50)

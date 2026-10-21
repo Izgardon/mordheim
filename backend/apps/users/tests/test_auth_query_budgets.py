@@ -36,16 +36,17 @@ class AuthQueryBudgetTests(AuthTestCase):
             response = call(*args, **kwargs)
         self.assertEqual(response.status_code, status, getattr(response, "data", None))
 
-    def test_login_runs_one_query_whether_it_succeeds_or_not(self):
-        # AUTH-TEST-05: the user by username; nothing is written (no last_login, no outstanding-token row)
+    def test_login_runs_two_queries_and_a_refused_one_one(self):
+        # AUTH-TEST-05: the user by username, then last_login's UPDATE on success (BUG-154; was 1); no
+        # outstanding-token row
         cases = {
-            "success": ("pia@example.com", PASSWORD, 200),
-            "wrong password": ("pia@example.com", "guess-again", 400),
-            "unknown email": ("nobody@example.com", PASSWORD, 400),
+            "success": ("pia@example.com", PASSWORD, 200, 2),
+            "wrong password": ("pia@example.com", "guess-again", 400, 1),
+            "unknown email": ("nobody@example.com", PASSWORD, 400, 1),
         }
-        for label, (email, password, status) in cases.items():
+        for label, (email, password, status, count) in cases.items():
             with self.subTest(login=label):
-                self.assert_queries(1, status, self.post, LOGIN, {"email": email, "password": password})
+                self.assert_queries(count, status, self.post, LOGIN, {"email": email, "password": password})
 
     def test_register_runs_two_statements_and_a_savepoint_pair(self):
         # AUTH-TEST-01: validate_email's EXISTS, then the INSERT inside a savepoint, so a simultaneous sign-up's

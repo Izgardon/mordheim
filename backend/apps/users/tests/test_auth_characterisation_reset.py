@@ -127,11 +127,15 @@ class ResetConfirmTests(AuthTestCase):
 
                 self.assertEqual(self.confirm(uid, token).status_code, status)
 
-    def test_signing_in_does_not_spend_the_link(self):
+    def test_signing_in_spends_the_link(self):
+        # BUG-154 (was: a link survived a sign-in for its full hour; fixed in PR A: login records last_login)
         uid, token = reset_link_parts(self.pia)
         self.sign_in()
 
-        self.assertEqual(self.confirm(uid, token).status_code, 200)
+        response = self.confirm(uid, token)
+
+        self.assertEqual((response.status_code, response.json()), (400, INVALID))
+        self.assertTrue(get_user_model().objects.get(id=self.pia.id).check_password(PASSWORD))
 
     def test_a_wrong_token_another_users_uid_or_an_inactive_user_is_refused(self):
         rex = make_user("rex@example.com", "Rex")

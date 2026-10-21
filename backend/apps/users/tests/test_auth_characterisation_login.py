@@ -8,6 +8,8 @@ server half), makes `email` a real EmailField (IMP-95 a) and adds the session ke
 from datetime import timedelta
 from typing import Any
 
+from django.utils import timezone
+
 from .auth_support import LOGIN, PASSWORD, AuthTestCase, access_claims, make_user, refresh_claims
 
 INVALID = {"non_field_errors": ["Invalid credentials"]}
@@ -81,10 +83,14 @@ class LoginTests(AuthTestCase):
 
         self.assertEqual(response.status_code, 200)
 
-    def test_signing_in_records_no_last_login(self):
-        # UPDATE_LAST_LOGIN is off and the view never calls login(), so a reset link (whose hash includes
-        # last_login) stays valid after the user signs in
+    def test_signing_in_records_last_login_and_a_refused_one_does_not(self):
+        # BUG-154 (was: never recorded, so a reset link, whose hash includes last_login, outlived a sign-in)
+        self.login("pia@example.com", "not-the-password")
+        self.pia.refresh_from_db()
+        self.assertIsNone(self.pia.last_login)
+
+        before = timezone.now()
         self.sign_in()
 
         self.pia.refresh_from_db()
-        self.assertIsNone(self.pia.last_login)
+        self.assertTrue(before <= self.pia.last_login <= timezone.now())

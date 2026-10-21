@@ -44,8 +44,10 @@ def make_user(email: str, name: str = "", password: str | None = PASSWORD, **fie
 
 
 def reset_link_parts(user: Any) -> tuple[str, str]:
-    """The `uid` and `token` a reset email would carry for `user` today."""
-    return urlsafe_base64_encode(force_bytes(user.pk)), PasswordResetTokenGenerator().make_token(user)
+    """The `uid` and `token` a reset email would carry for `user` now (the token hashes the stored last_login and
+    password, so it is made from the stored row)."""
+    stored = get_user_model().objects.get(pk=user.pk)
+    return urlsafe_base64_encode(force_bytes(user.pk)), PasswordResetTokenGenerator().make_token(stored)
 
 
 def access_claims(raw: str) -> dict[str, Any]:
