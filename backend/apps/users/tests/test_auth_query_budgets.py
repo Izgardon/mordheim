@@ -96,11 +96,11 @@ class AuthQueryBudgetTests(AuthTestCase):
         with mock.patch("apps.users.emails.requests.post"):
             self.assert_queries(1, 200, client.post, FEEDBACK, {"report_type": "Bug", "message": "Hi."}, format="json")
 
-    def test_the_probes_run_no_query_without_a_token_and_one_with_a_token(self):
-        # Characterises current behaviour (AUTH-PERF-04, AUTH-TEST-14, pinned; flips in PR A: 0 with any header)
+    def test_the_probes_run_no_query_with_or_without_a_token(self):
+        # AUTH-PERF-04, AUTH-TEST-14 (was pinned: 1 with a token; flipped in PR A: 0 with any header)
         client = self.bearer(self.sign_in()["access"])
 
         self.assert_queries(0, 200, self.client.get, HEALTH)
         self.assert_queries(0, 204, self.client.head, KEEP_AWAKE)
-        self.assert_queries(1, 200, client.get, HEALTH)
-        self.assert_queries(1, 204, client.head, KEEP_AWAKE)
+        self.assert_queries(0, 200, client.get, HEALTH)
+        self.assert_queries(0, 204, client.get, KEEP_AWAKE)

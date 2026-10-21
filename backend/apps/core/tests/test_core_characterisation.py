@@ -1,11 +1,10 @@
-"""Core today: health, keep-awake, revalidation and security headers (pass 6; AUTH-TEST-14, AUTH-PERF-04, PERF-07,
-PERF-13).
+"""Core: health, keep-awake, revalidation and security headers (pass 6; AUTH-TEST-14, AUTH-PERF-04, PERF-07, PERF-13).
 
-`health/` and `keep-awake/` inherit the global JWT authentication, so a token costs them the user query and a stale
-one gets a 401; keep-awake answers HEAD only. `ConditionalGetMiddleware` gives every GET a content ETag and answers
-a matching If-None-Match with an empty 304 after the view has run; `ApiRevalidateMiddleware` marks API GETs
-`private, no-cache`. PR A drops authentication and throttles from both probes, lets keep-awake answer GET and HEAD
-with 204, and both run 0 queries. `test_revalidation.py` keeps the catalogue list's 304 tests.
+`health/` and `keep-awake/` run no authentication and no throttle (PR A; they inherited the JWT authentication, so a
+token cost them the user query and a stale one got a 401), and keep-awake answers GET and HEAD with 204 (it answered
+HEAD only). `ConditionalGetMiddleware` gives every GET a content ETag and answers a matching If-None-Match with an
+empty 304 after the view has run; `ApiRevalidateMiddleware` marks API GETs `private, no-cache`.
+`test_revalidation.py` keeps the catalogue list's 304 tests.
 """
 
 import re
@@ -27,29 +26,27 @@ class ProbeTests(AuthTestCase):
 
         self.assertEqual((response.status_code, response.json(), len(queries)), (200, {"status": "ok"}, 0))
 
-    def test_health_with_a_token_runs_the_user_query_and_a_stale_one_is_401(self):
-        # Characterises current behaviour (AUTH-PERF-04, AUTH-TEST-14, pinned; flips in PR A: no authentication,
-        # 0 queries and 200 whatever the header)
-        client = self.bearer(self.sign_in()["access"])
-        with CaptureQueriesContext(connection) as queries:
-            signed_in = client.get(HEALTH)
-        self.assertEqual((signed_in.status_code, len(queries)), (200, 1))
+    def test_health_answers_ok_with_no_query_whatever_the_header(self):
+        # AUTH-PERF-04, AUTH-TEST-14 (was pinned: a token cost the user query and a stale one was a 401; flipped in
+        # PR A: no authentication)
+        headers = {"a real token": f"Bearer {self.sign_in()['access']}", "a stale token": "Bearer garbage", "junk": "a b c"}  # fmt: skip
+        for label, header in headers.items():
+            for method in ("get", "head"):
+                with self.subTest(header=label, method=method), CaptureQueriesContext(connection) as queries:
+                    response = getattr(self.client, method)(HEALTH, HTTP_AUTHORIZATION=header)
 
-        stale = self.client.get(HEALTH, HTTP_AUTHORIZATION="Bearer garbage")
+                    self.assertEqual((response.status_code, len(queries)), (200, 0))
 
-        self.assertEqual((stale.status_code, stale.json()["code"]), (401, "token_not_valid"))
+    def test_keep_awake_answers_get_and_head_with_204_whatever_the_header(self):
+        # PERF-07, AUTH-PERF-06, AUTH-TEST-14 (was pinned: HEAD only, GET 405, a stale token 401; flipped in PR A)
+        for header in (None, "Bearer garbage"):
+            for method in ("get", "head"):
+                with self.subTest(header=header, method=method), CaptureQueriesContext(connection) as queries:
+                    extra = {"HTTP_AUTHORIZATION": header} if header else {}
+                    response = getattr(self.client, method)(KEEP_AWAKE, **extra)
 
-    def test_keep_awake_answers_head_only(self):
-        # Characterises current behaviour (PERF-07, AUTH-PERF-06, AUTH-TEST-14, pinned; flips in PR A: GET and HEAD
-        # answer 204, with any header)
-        head = self.client.head(KEEP_AWAKE)
-        self.assertEqual((head.status_code, head.content), (204, b""))
-        self.assertEqual(self.client.get(KEEP_AWAKE).status_code, 405)
+                    self.assertEqual((response.status_code, response.content, len(queries)), (204, b"", 0))
         self.assertEqual(self.client.post(KEEP_AWAKE).status_code, 405)
-
-        stale = self.client.head(KEEP_AWAKE, HTTP_AUTHORIZATION="Bearer garbage")
-
-        self.assertEqual(stale.status_code, 401)
 
 
 class RevalidationTests(AuthTestCase):
