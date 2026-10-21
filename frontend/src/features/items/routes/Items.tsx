@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 // routing
 import { useOutletContext, useParams, useNavigate } from "react-router-dom";
@@ -19,6 +19,7 @@ import CatalogueTable from "@/features/catalogue/components/CatalogueTable";
 import { EditRowButton } from "@/features/catalogue/components/EditRowButton";
 import AddItemForm from "../components/AddItemForm";
 import AcquireItemDialog from "../components/AcquireItemDialog/AcquireItemDialog";
+import BuyItemButton from "../components/AcquireItemDialog/BuyItemButton";
 import ItemsFilterBar from "../components/ItemsFilterBar";
 import {
   itemColumns,
@@ -73,6 +74,11 @@ export default function Items() {
   const filters = useItemsFilters(items);
   // AddItemForm writes created, edited and deleted items to the shared cache itself.
   const editor = useCatalogueEditor<Item>();
+  // One Acquire dialog for the page, on the row whose Acquire was pressed (PERF-48).
+  const [acquiring, setAcquiring] = useState<{ row: ItemRow; open: boolean } | null>(null);
+  const acquiringRow = acquiring
+    ? (filters.rows.find((row) => row._rowId === acquiring.row._rowId) ?? acquiring.row)
+    : null;
 
   const capabilities = campaignCapabilities(campaign);
   const canEdit = capabilities.edit_catalogue;
@@ -108,7 +114,12 @@ export default function Items() {
             content="View bestiary entry"
           />
         ) : null}
-        <AcquireItemDialog item={item} initialAvailabilityId={item._availability?.id ?? null} />
+        <BuyItemButton
+          item={item}
+          aria-haspopup="dialog"
+          aria-expanded={Boolean(acquiring?.open && acquiring.row._rowId === item._rowId)}
+          onClick={() => setAcquiring({ row: item, open: true })}
+        />
         {/* A house rule's clone changes with its rule, never here (BUG-51). */}
         {canEdit && item.campaign_id && !item.generated_effect_key ? (
           <EditRowButton label="Edit item" onClick={() => editor.edit(item)} />
@@ -195,6 +206,16 @@ export default function Items() {
           )}
         </div>
       </div>
+      {acquiringRow ? (
+        <AcquireItemDialog
+          key={acquiringRow._rowId}
+          item={acquiringRow}
+          initialAvailabilityId={acquiringRow._availability?.id ?? null}
+          open={acquiring?.open ?? false}
+          onOpenChange={(open) => setAcquiring((prev) => (prev ? { ...prev, open } : prev))}
+          trigger={null}
+        />
+      ) : null}
     </div>
   );
 }

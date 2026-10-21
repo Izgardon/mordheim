@@ -1,7 +1,7 @@
 /**
  * The Wargear table as the app mounts it (layout, fake server): one row per availability, the
  * name cell holding only the name whatever the row is (CAT-UX-01), each phone row's availability
- * under its name (CAT-UX-03), and one Acquire dialog mounted per row (PERF-48).
+ * under its name (CAT-UX-03), and one Acquire dialog for the page, mounted on first use (PERF-48).
  */
 import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -25,7 +25,7 @@ const media = vi.hoisted(() => ({ mobile: false }));
 vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => media.mobile }));
 vi.mock("@/features/realtime/components/CampaignDiceRollerMenu", () => ({ default: () => null }));
 
-/** Counts mounts of the Acquire dialog, which every Wargear row renders (PERF-48). */
+/** Counts mounts of the Acquire dialog: one for the page, on the row last pressed (PERF-48). */
 const acquire = vi.hoisted(() => ({ mounts: 0 }));
 vi.mock(
   "@/features/items/components/AcquireItemDialog/AcquireItemDialog",
@@ -47,6 +47,9 @@ vi.mock(
 
 const rows = (name: string) => screen.getAllByRole("button", { name: new RegExp(`^${name}`) });
 const row = (name: string) => rows(name)[0];
+/** The Acquire dialog's availability picker. */
+const availabilityOf = (dialog: HTMLElement) =>
+  within(within(dialog).getByText("Availability:").parentElement!).getByRole("combobox");
 /** The cells of a row (its first cell is the expand chevron). */
 const cells = (element: HTMLElement) =>
   [...element.querySelectorAll("td")].map((cell) => cell.textContent);
@@ -111,16 +114,30 @@ describe("Wargear: what a row says", () => {
 });
 
 describe("Wargear: Acquire dialogs", () => {
-  // Characterises current behaviour (PERF-48, CAT-PERF-06, pinned; flips in PR B)
-  it("mounts one Acquire dialog per row, and more for each tab's rows (PERF-48, pinned; flips in PR B)", async () => {
+  it("mounts no Acquire dialog until a row's Acquire is pressed, then one for the page, on that row's item and availability (PERF-48, CAT-PERF-06)", async () => {
     const user = setupUser();
     await openWargear();
 
-    // Weapons: Axe, Rusty Cleaver, Sword and Blowpipe's two rows.
+    // Weapons: Axe, Rusty Cleaver, Sword and Blowpipe's two rows, each with its Acquire.
     expect(screen.getAllByRole("button", { name: /^Acquire .*weapon$/ })).toHaveLength(5);
-    expect(acquire.mounts).toBe(5);
-
+    expect(acquire.mounts).toBe(0);
     await user.click(screen.getByRole("button", { name: "Armour" }));
-    expect(acquire.mounts).toBe(6);
+    await user.click(screen.getByRole("button", { name: "Weapons" }));
+    expect(acquire.mounts).toBe(0);
+
+    const [rare, common] = rows("Blowpipe");
+    await user.click(within(rare).getByRole("button", { name: "Acquire ranged weapon" }));
+    const dialog = await screen.findByRole("dialog", { name: "Acquire item" });
+    expect(dialog).toHaveAccessibleDescription(/Buy or give Blowpipe/);
+    expect(availabilityOf(dialog)).toHaveTextContent("Lizardmen, Skaven");
+    expect(acquire.mounts).toBe(1);
+
+    await user.click(within(dialog).getByRole("button", { name: "Cancel" }));
+    await user.click(within(common).getByRole("button", { name: "Acquire ranged weapon" }));
+    const again = await screen.findByRole("dialog", { name: "Acquire item" });
+    expect(availabilityOf(again)).toHaveTextContent("Forest Goblins");
+    // Another row's dialog starts afresh: the one dialog is mounted again for it, alone.
+    expect(acquire.mounts).toBe(2);
+    expect(screen.getAllByRole("dialog")).toHaveLength(1);
   });
 });
