@@ -250,9 +250,22 @@ describe("a refused refresh", () => {
 });
 
 describe("what a refresh may change", () => {
-  it("stores only the new access token; a rotated refresh token in the answer is dropped (decision 4, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (decision 4, AUTH-TWEAK-03, pinned; flips in PR A)
+  it("stores a rotated refresh token beside the new access token, in one write (decision 4, AUTH-TWEAK-03)", async () => {
     fakeFetch.on("POST /auth/refresh/", json(200, { access: NEW_ACCESS, refresh: "rotated" }));
+    fakeFetch.on("GET /campaigns/", ({ headers }) =>
+      headers.authorization === `Bearer ${NEW_ACCESS}` ? json(200, []) : tokenNotValid()
+    );
+    const events = countTokenEvents();
+
+    await expect(apiRequest("/campaigns/")).resolves.toEqual([]);
+    events.stop();
+
+    expect(getToken()).toBe(NEW_ACCESS);
+    expect(getRefreshToken()).toBe("rotated");
+    expect(events.count()).toBe(1);
+  });
+
+  it("keeps the stored refresh token when the answer has none (a server that doesn't rotate)", async () => {
     fakeFetch.on("GET /campaigns/", ({ headers }) =>
       headers.authorization === `Bearer ${NEW_ACCESS}` ? json(200, []) : tokenNotValid()
     );

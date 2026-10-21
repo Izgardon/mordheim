@@ -3,7 +3,7 @@ import { API_BASE_URL } from "../config/env";
 
 // utils
 import { reportApiRefusal } from "./api-refusals";
-import { clearToken, getRefreshToken, getToken, setToken } from "../utils/storage";
+import { clearToken, getRefreshToken, getToken, setTokens } from "../utils/storage";
 
 export class ApiError extends Error {
   status: number;
@@ -75,11 +75,14 @@ type RefreshOutcome =
 
 let refreshPromise: Promise<RefreshOutcome> | null = null;
 
+/** `POST /auth/refresh/`'s answer; `refresh` comes only from a server that rotates them. */
+type RefreshAnswer = { access?: string; refresh?: string };
+
 async function requestNewAccessToken(refreshToken: string): Promise<RefreshOutcome> {
   // Shared by every waiting request, so only the timeout (never one caller) may abort it.
   const request = createRequestSignal();
   let response: Response;
-  let data: { access?: string } | null = null;
+  let data: RefreshAnswer | null = null;
   try {
     response = await fetch(`${API_BASE_URL}/auth/refresh/`, {
       method: "POST",
@@ -90,7 +93,7 @@ async function requestNewAccessToken(refreshToken: string): Promise<RefreshOutco
       signal: request.signal,
     });
     if (response.ok) {
-      data = (await response.json().catch(() => null)) as { access?: string } | null;
+      data = (await response.json().catch(() => null)) as RefreshAnswer | null;
     }
   } catch {
     return { kind: "unavailable", status: 0 };
@@ -109,7 +112,9 @@ async function requestNewAccessToken(refreshToken: string): Promise<RefreshOutco
   if (!data?.access) {
     return { kind: "unavailable", status: response.status };
   }
-  setToken(data.access);
+  // A server that rotates refresh tokens (pass 6's sessions) sends a new one: keep it, or the
+  // next refresh would offer a stale one (decision 4, AUTH-TWEAK-03).
+  setTokens({ access: data.access, refresh: data.refresh });
   return { kind: "refreshed", access: data.access };
 }
 
