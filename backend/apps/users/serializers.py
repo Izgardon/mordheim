@@ -10,7 +10,7 @@ EMAIL_TAKEN = "User already exists"
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(write_only=True, required=False, allow_blank=True, max_length=NAME_MAX_LENGTH)
+    name = serializers.CharField(write_only=True, max_length=NAME_MAX_LENGTH)  # required and trimmed (decision 2)
     password = serializers.CharField(write_only=True, min_length=8)
     email = serializers.EmailField(max_length=EMAIL_MAX_LENGTH)
 
@@ -30,7 +30,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        name = validated_data.pop("name", "")
+        name = validated_data.pop("name")
         email = validated_data.get("email", "")
         user_model = get_user_model()
         user = user_model(username=email, email=email, first_name=name)

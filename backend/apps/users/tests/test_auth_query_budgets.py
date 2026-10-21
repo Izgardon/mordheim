@@ -50,8 +50,12 @@ class AuthQueryBudgetTests(AuthTestCase):
     def test_register_runs_two_statements_and_a_savepoint_pair(self):
         # AUTH-TEST-01: validate_email's EXISTS, then the INSERT inside a savepoint, so a simultaneous sign-up's
         # IntegrityError answers 400 (BUG-84; was 2 queries); a taken email stops after the first
-        self.assert_queries(4, 201, self.post, REGISTER, {"email": "rex@example.com", "password": PASSWORD})
-        self.assert_queries(1, 400, self.post, REGISTER, {"email": "pia@example.com", "password": PASSWORD})
+        self.assert_queries(
+            4, 201, self.post, REGISTER, {"email": "rex@example.com", "password": PASSWORD, "name": "Rex"}
+        )
+        self.assert_queries(
+            1, 400, self.post, REGISTER, {"email": "pia@example.com", "password": PASSWORD, "name": "Pia"}
+        )
 
     def test_refresh_runs_no_query(self):
         # Characterises current behaviour (SEC-05, AUTH-TEST-07, pinned; flips in PR A: 1, the user and its account)

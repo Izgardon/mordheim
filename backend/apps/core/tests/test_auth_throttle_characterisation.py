@@ -65,9 +65,11 @@ class AuthThrottleRateTests(AuthTestCase):
     def test_the_fourth_sign_up_in_an_hour_from_one_address_is_refused(self):
         # Characterises current behaviour (BUG-55, pinned; flips in PR A: 20 an hour and 50 a day per IP)
         for n in range(3):
-            self.assertEqual(self.from_table(REGISTER, {"email": f"new{n}@example.com", "password": PASSWORD}).status_code, 201)  # fmt: skip
+            self.assertEqual(self.from_table(REGISTER, {"email": f"new{n}@example.com", "password": PASSWORD, "name": f"New {n}"}).status_code, 201)  # fmt: skip
 
-        self.assert_throttled(self.from_table(REGISTER, {"email": "new3@example.com", "password": PASSWORD}), 3600)
+        self.assert_throttled(
+            self.from_table(REGISTER, {"email": "new3@example.com", "password": PASSWORD, "name": "New 3"}), 3600
+        )
 
     def test_the_sixth_sign_in_in_a_minute_from_one_address_is_refused(self):
         # Characterises current behaviour (BUG-55, pinned; flips in PR A: 30 a minute per IP, 10 per email)
