@@ -8,7 +8,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AuthProvider } from "@/features/auth/stores/auth-store";
-import { ApiError, SERVER_UNAVAILABLE_MESSAGE } from "@/lib/api-client";
+import { ApiError } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { RAIDER } from "@/test/auth-fixtures";
 import { fakeFetch, json } from "@/test/fake-fetch";
@@ -136,9 +136,9 @@ describe("refusals on the sign-in card (AUTH-TEST-26)", () => {
 });
 
 describe("a refusal on the forgot-password form", () => {
-  it("shows a 503's detail as sent, which getErrorMessage would replace with the outage text (BUG-56; a PR A trap)", async () => {
+  it("shows a 503's detail as sent, and getErrorMessage keeps it too (BUG-56)", async () => {
     // PR A answers 503 email_unavailable with this detail and moves the card to getErrorMessage,
-    // which reads every 503 as "Can't reach the server" and drops the detail.
+    // which reads a 503 the server sent on purpose by its detail, not as "Can't reach the server".
     const user = setupUser();
     fakeFetch.on(
       "POST /auth/password-reset/",
@@ -155,6 +155,6 @@ describe("a refusal on the forgot-password form", () => {
       detail: EMAIL_OFF,
       code: "email_unavailable",
     });
-    expect(getErrorMessage(sameError)).toBe(SERVER_UNAVAILABLE_MESSAGE);
+    expect(getErrorMessage(sameError)).toBe(EMAIL_OFF);
   });
 });

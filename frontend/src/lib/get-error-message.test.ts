@@ -52,6 +52,22 @@ describe("getErrorMessage", () => {
     );
   });
 
+  it("shows the server's own detail for a 503 it sent on purpose, and the outage text for a bare one", () => {
+    const emailOff =
+      "Password reset by email isn't switched on yet. Ask the app's admin to reset your password.";
+    expect(getErrorMessage(apiError(503, { detail: emailOff, code: "email_unavailable" }))).toBe(
+      emailOff
+    );
+    expect(
+      getErrorMessage(apiError(503, { detail: "Unable to send feedback report right now." }))
+    ).toBe("Unable to send feedback report right now.");
+    expect(getErrorMessage(apiError(503, null))).toBe(SERVER_UNAVAILABLE_MESSAGE);
+    expect(getErrorMessage(apiError(503, { detail: "  " }))).toBe(SERVER_UNAVAILABLE_MESSAGE);
+    expect(getErrorMessage(apiError(502, { detail: "Bad gateway" }))).toBe(
+      SERVER_UNAVAILABLE_MESSAGE
+    );
+  });
+
   it("hides internal server errors behind a generic message", () => {
     expect(getErrorMessage(apiError(500, { detail: "IntegrityError at /api/..." }))).toBe(
       SERVER_ERROR_MESSAGE
