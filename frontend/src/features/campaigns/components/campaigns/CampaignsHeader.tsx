@@ -13,7 +13,8 @@ type CampaignsHeaderProps = {
 };
 
 export default function CampaignsHeader({ user, onCreate, onJoin }: CampaignsHeaderProps) {
-  const displayName = user?.name || user?.email;
+  // The display name only, never the email (SEC-13); a user without one is just welcomed back.
+  const displayName = user?.name?.trim();
   return (
     <header className="flex flex-col gap-6">
       <div className="min-w-0 space-y-4">

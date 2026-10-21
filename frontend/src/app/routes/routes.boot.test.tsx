@@ -184,15 +184,12 @@ describe("signing in or up from the landing page", () => {
 });
 
 describe("a user with no name (signed up before names were required)", () => {
-  it("is welcomed by their email (SEC-13, AUTH-TWEAK-02, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (SEC-13 leftover in CampaignsHeader.tsx:16, AUTH-TWEAK-02,
-    // pinned; flips in PR A)
-    storeSession(NAMELESS);
-    fakeApi.on("GET /auth/me/", NAMELESS);
+  it("is welcomed without a name, never by their email (SEC-13, AUTH-TWEAK-02)", async () => {
+    storeSession({ ...NAMELESS, name: "  " });
+    fakeApi.on("GET /auth/me/", { ...NAMELESS, name: "  " });
     renderApp("/campaigns");
 
-    expect(
-      await screen.findByRole("heading", { name: "Welcome back, nameless@example.com" })
-    ).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Welcome back" })).toBeInTheDocument();
+    expect(screen.queryByText(/nameless@example\.com/)).toBeNull();
   });
 });
