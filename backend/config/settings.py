@@ -269,6 +269,24 @@ PUSHER_USE_TLS = _env_bool("PUSHER_USE_TLS", True)
 # The test runner turns this on so dispatched calls run inline and deterministically.
 EXTERNAL_DISPATCH_SYNC = False
 
+# Warnings and errors go to stdout, which Render's log collects: with DEBUG off, a 500's traceback used to reach no
+# handler at all (INFRA-CQ-01). django.request logs a 4xx at WARNING and a 5xx, with its traceback, at ERROR.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {"plain": {"format": "%(levelname)s %(name)s: %(message)s"}},
+    "handlers": {
+        "stdout": {
+            "class": "logging.StreamHandler",
+            "stream": "ext://sys.stdout",
+            "formatter": "plain",
+            "level": "WARNING",
+        }
+    },
+    "root": {"handlers": ["stdout"], "level": "WARNING"},
+    "loggers": {"django.request": {"handlers": ["stdout"], "level": "WARNING", "propagate": False}},
+}
+
 MIGRATION_MODULES = {
     "realtime": None,
 }

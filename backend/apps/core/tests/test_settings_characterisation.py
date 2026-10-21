@@ -153,10 +153,28 @@ class DeployCheckTests(SimpleTestCase):
 
 
 class LoadedSettingsTests(SimpleTestCase):
-    def test_there_is_no_logging_configuration(self):
-        # Characterises current behaviour (INFRA-CQ-01, pinned; flips in PR A: LOGGING to stdout, django.request at
-        # WARNING), so with DEBUG off a 500's traceback reaches no handler
-        self.assertEqual(settings.LOGGING, {})
+    def test_logging_sends_warnings_and_errors_to_stdout(self):
+        # INFRA-CQ-01 (was pinned: no LOGGING, so with DEBUG off a 500's traceback reached no handler; flipped in PR A)
+        config: Any = settings.LOGGING
+        self.assertEqual(config["handlers"]["stdout"]["stream"], "ext://sys.stdout")
+        self.assertEqual(config["root"], {"handlers": ["stdout"], "level": "WARNING"})
+        self.assertEqual(config["loggers"]["django.request"], {"handlers": ["stdout"], "level": "WARNING", "propagate": False})  # fmt: skip
+
+    def test_with_debug_off_a_request_error_reaches_stdout(self):
+        log_error = NO_DOTENV + (
+            "import logging, os\n"
+            "os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')\n"
+            "import django\n"
+            "django.setup()\n"
+            "logging.getLogger('django.request').error('Internal Server Error: /api/boom/')\n"
+            "logging.getLogger('apps.users.emails').warning('a warning from the app')\n"
+            "logging.getLogger('apps.battles').info('not this')\n"
+        )
+
+        result = run(log_error, DJANGO_DEBUG="0", DJANGO_SECRET_KEY=LONG_KEY)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.splitlines(), ["ERROR django.request: Internal Server Error: /api/boom/", "WARNING apps.users.emails: a warning from the app"])  # fmt: skip
 
     def test_the_unused_session_message_and_csrf_machinery_stays_loaded(self):
         # Characterises current behaviour (INFRA-CQ-03, pinned; flips in PR B's settings hygiene)

@@ -7,6 +7,7 @@ outbound socket connection that isn't loopback, so a missing mock fails loudly
 instead of reaching a real service.
 """
 
+import logging
 import socket
 from contextlib import ExitStack
 from typing import Any
@@ -44,8 +45,14 @@ class NoNetworkTestRunner(DiscoverRunner):
         self._external_settings.enable()
         get_pusher_client.cache_clear()
         self._install_socket_guard()
+        # LOGGING prints django.request's 4xx and 5xx answers; here they would only repeat what the tests assert (the
+        # test client raises a view's exception itself), so they stay out of the output
+        self._request_logger = logging.getLogger("django.request")
+        self._request_log_level = self._request_logger.level
+        self._request_logger.setLevel(logging.CRITICAL)
 
     def teardown_test_environment(self, **kwargs: Any) -> None:
+        self._request_logger.setLevel(self._request_log_level)
         self._remove_socket_guard()
         self._external_settings.disable()
         get_pusher_client.cache_clear()
