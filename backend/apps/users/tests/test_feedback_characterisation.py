@@ -1,10 +1,10 @@
-"""The feedback report today (pass 6; AUTH-UX-04, CAMP-NEW-08).
+"""The feedback report (pass 6; AUTH-UX-04, CAMP-NEW-08, BUG-156).
 
 `POST auth/feedback-report/` (signed in) takes a type, a message of up to 2000 characters and optional campaign and
-warband ids and names, which it copies into the email as sent. The email goes after commit to
-FEEDBACK_REPORT_TO_EMAIL with the bare type as its subject; without a Resend key or a recipient the report answers
-503. PR A makes the subject `[Mordheim] Bug from <name>: <first 60 characters>`. `test_feedback_report_api.py`
-keeps the earlier tests (the view with the helper mocked, and the helper's payload).
+warband ids and names (bounded and kept to one line since PR A), which it copies into the email. The email goes after
+commit to FEEDBACK_REPORT_TO_EMAIL with the subject `[Mordheim] Bug from <name>: <first 60 characters>` (PR A; it was
+the bare type); without a Resend key or a recipient the report answers 503. `test_feedback_report_api.py` keeps the
+earlier tests (the view with the helper mocked, and the helper's payload).
 """
 
 from typing import Any
@@ -36,15 +36,26 @@ class FeedbackReportTests(AuthTestCase):
         return response, (post.call_args.kwargs["json"] if post.called else None)
 
     @configured
-    def test_the_subject_is_just_the_report_type(self):
-        # Characterises current behaviour (AUTH-UX-04, pinned; flips in PR A: "[Mordheim] Bug from Pia: <first 60>")
+    def test_the_subject_names_the_type_the_reporter_and_the_messages_start(self):
+        # AUTH-UX-04 (was pinned: just the report type; flipped in PR A)
         for report_type in ("Bug", "Feedback"):
             with self.subTest(report_type=report_type):
                 response, email = self.send({"report_type": report_type, "message": "The ledger lost my crowns."})
 
                 self.assertEqual((response.status_code, response.json()), (200, {"detail": "Feedback report sent."}))
                 assert email is not None
-                self.assertEqual((email["subject"], email["to"], email["from"]), (report_type, ["bugs@example.com"], "no-reply@example.com"))  # fmt: skip
+                self.assertEqual((email["subject"], email["to"], email["from"]), (f"[Mordheim] {report_type} from Pia: The ledger lost my crowns.", ["bugs@example.com"], "no-reply@example.com"))  # fmt: skip
+
+    @configured
+    def test_the_subject_takes_the_first_60_characters_on_one_line_and_never_an_email(self):
+        rex = make_user("rex@example.com")  # no name: "Player N", never the address
+        message = "Line one\n\nline two " + "x" * 80
+
+        _, email = self.send({"message": message}, self.bearer(self.sign_in("rex@example.com")["access"]))
+
+        assert email is not None
+        opening = ("Line one line two " + "x" * 80)[:60]
+        self.assertEqual(email["subject"], f"[Mordheim] Bug from Player {rex.id}: {opening}")
 
     @configured
     def test_campaign_and_warband_lines_appear_only_when_sent(self):

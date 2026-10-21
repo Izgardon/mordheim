@@ -6,9 +6,12 @@ from django.utils import timezone
 
 from apps.core.dispatch import dispatch_after_commit
 
+from .names import display_name
+
 logger = logging.getLogger(__name__)
 
 RESEND_EMAILS_URL = "https://api.resend.com/emails"
+SUBJECT_MESSAGE_LENGTH = 60
 RESET_EMAIL_UNAVAILABLE = "Password reset by email isn't switched on yet. Ask the app's admin to reset your password."
 
 
@@ -64,6 +67,12 @@ def send_password_reset_email(to_email, reset_url):
     return True
 
 
+def feedback_subject(user, report_type, message):
+    """`[Mordheim] Bug from Pia: <the message's first 60 characters, on one line>` (AUTH-UX-04)."""
+    opening = " ".join(message.split())[:SUBJECT_MESSAGE_LENGTH]
+    return f"[Mordheim] {report_type} from {display_name(user)}: {opening}"
+
+
 def send_feedback_report_email(
     *,
     user,
@@ -109,7 +118,7 @@ def send_feedback_report_email(
     payload = {
         "from": settings.DEFAULT_FROM_EMAIL,
         "to": [to_email],
-        "subject": report_type,
+        "subject": feedback_subject(user, report_type, message),
         "text": "\n".join(lines),
     }
     dispatch_after_commit(_post_to_resend, api_key, payload, "feedback report")
