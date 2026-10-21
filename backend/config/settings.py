@@ -8,6 +8,8 @@ from corsheaders.defaults import default_headers
 from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
+from config.proxies import num_proxies
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -17,13 +19,6 @@ def _env_bool(name: str, default: bool) -> bool:
     if raw_value is None:
         return default
     return raw_value.strip().lower() in {"1", "true", "yes", "on"}
-
-
-def _env_int(name: str) -> int | None:
-    raw_value = os.environ.get(name)
-    if raw_value is None or not raw_value.strip():
-        return None
-    return int(raw_value)
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -167,7 +162,8 @@ REST_FRAMEWORK: dict[str, Any] = {
     },
 }
 
-rate_limit_num_proxies = _env_int("RATE_LIMIT_NUM_PROXIES")
+# The throttles' client address: RATE_LIMIT_NUM_PROXIES, else 1 (Render's proxy) with DEBUG off (config/proxies.py)
+rate_limit_num_proxies = num_proxies(os.environ, DEBUG)
 if rate_limit_num_proxies is not None:
     REST_FRAMEWORK["NUM_PROXIES"] = rate_limit_num_proxies
 

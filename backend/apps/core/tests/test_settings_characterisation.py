@@ -68,11 +68,12 @@ class ProductionStartupTests(SimpleTestCase):
 
         self.assertEqual((values["DEBUG"], values["SECRET_KEY_LENGTH"]), (False, 16))
 
-    def test_production_starts_without_num_proxies_or_email_settings_and_turns_on_https_hardening(self):
-        # Characterises current behaviour (SEC-04, BUG-56, pinned; flips in PR A: RATE_LIMIT_NUM_PROXIES required)
+    def test_production_without_num_proxies_assumes_one_and_starts_without_email_settings_and_hardened(self):
+        # SEC-04 (was pinned: NUM_PROXIES absent, so the whole X-Forwarded-For was the throttles' identity; flipped
+        # in PR A: production assumes Render's one proxy, William 2026-10-21, and gunicorn warns once)
         values = load_settings(DJANGO_DEBUG="0", DJANGO_SECRET_KEY=LONG_KEY)
 
-        self.assertEqual(values["NUM_PROXIES"], "absent")
+        self.assertEqual(values["NUM_PROXIES"], 1)
         email = {name: values[name] for name in ("FRONTEND_URL", "DEFAULT_FROM_EMAIL", "RESEND_API_KEY", "PASSWORD_RESET_TIMEOUT")}  # fmt: skip
         self.assertEqual(email, {"FRONTEND_URL": "http://localhost:5173", "DEFAULT_FROM_EMAIL": "no-reply@example.com", "RESEND_API_KEY": "", "PASSWORD_RESET_TIMEOUT": 3600})  # fmt: skip
         hardening = [values[name] for name in ("SECURE_PROXY_SSL_HEADER", "SECURE_HSTS_SECONDS", "SESSION_COOKIE_SECURE", "CSRF_COOKIE_SECURE")]  # fmt: skip
@@ -91,16 +92,24 @@ class ProductionStartupTests(SimpleTestCase):
 
         self.assertEqual((values["FRONTEND_URL"], values["DEFAULT_FROM_EMAIL"]), ("http://localhost:5173", "no-reply@example.com"))  # fmt: skip
 
-    def test_rate_limit_num_proxies_is_read_only_when_set_and_not_checked(self):
-        # A value that isn't a number stops startup with a bare ValueError rather than ImproperlyConfigured
-        for raw, expected in (("1", 1), ("", "absent")):
-            with self.subTest(RATE_LIMIT_NUM_PROXIES=raw):
-                values = load_settings(DJANGO_DEBUG="0", DJANGO_SECRET_KEY=LONG_KEY, RATE_LIMIT_NUM_PROXIES=raw)
+    def test_an_explicit_proxy_count_always_wins_and_dev_keeps_drfs_default_when_unset(self):
+        # SEC-04 (was: read only when set, else absent in production too)
+        cases = {("0", "0"): 0, ("0", "2"): 2, ("0", " 1 "): 1, ("0", ""): 1, ("1", "1"): 1, ("1", "0"): 0, ("1", ""): "absent"}  # fmt: skip
+        for (debug, raw), expected in cases.items():
+            with self.subTest(DJANGO_DEBUG=debug, RATE_LIMIT_NUM_PROXIES=raw):
+                values = load_settings(DJANGO_DEBUG=debug, DJANGO_SECRET_KEY=LONG_KEY, RATE_LIMIT_NUM_PROXIES=raw)
 
                 self.assertEqual(values["NUM_PROXIES"], expected)
-        broken = run(READ_SETTINGS, DJANGO_DEBUG="0", DJANGO_SECRET_KEY=LONG_KEY, RATE_LIMIT_NUM_PROXIES="one")
-        self.assertNotEqual(broken.returncode, 0)
-        self.assertIn("ValueError: invalid literal for int()", broken.stderr)
+
+    def test_a_proxy_count_that_is_not_a_whole_number_of_zero_or_more_stops_startup(self):
+        # SEC-04 (was a bare ValueError for "one"; now ImproperlyConfigured naming the variable, DEBUG on or off)
+        for debug in ("0", "1"):
+            for raw in ("one", "-1", "1.5"):
+                with self.subTest(DJANGO_DEBUG=debug, RATE_LIMIT_NUM_PROXIES=raw):
+                    broken = run(READ_SETTINGS, DJANGO_DEBUG=debug, DJANGO_SECRET_KEY=LONG_KEY, RATE_LIMIT_NUM_PROXIES=raw)  # fmt: skip
+
+                    self.assertNotEqual(broken.returncode, 0)
+                    self.assertIn(f"ImproperlyConfigured: RATE_LIMIT_NUM_PROXIES must be a whole number of proxies, 0 or more (got {raw!r}).", broken.stderr)  # fmt: skip
 
 
 class DeployCheckTests(SimpleTestCase):

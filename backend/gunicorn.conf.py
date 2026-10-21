@@ -35,6 +35,15 @@ accesslog = "-"
 access_log_format = '%(h)s xff="%({x-forwarded-for}i)s" "%(r)s" %(s)s %(b)s %(M)sms'
 
 
+def on_starting(server: Any) -> None:
+    """Warn once, from the master rather than from every worker, when production assumes Render's one proxy because
+    RATE_LIMIT_NUM_PROXIES is unset (SEC-04; config/proxies.py)."""
+    from config.proxies import ASSUMED_WARNING, is_assumed
+
+    if is_assumed(os.environ):
+        server.log.warning(ASSUMED_WARNING)
+
+
 def when_ready(server: Any) -> None:
     """Once the server is listening, load the catalogue in a separate process if it is missing or incomplete.
 
