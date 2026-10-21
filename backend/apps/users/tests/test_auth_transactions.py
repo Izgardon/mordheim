@@ -5,7 +5,6 @@ each with its own connection. They are held at `RegisterSerializer.create`, afte
 nobody has the address and before the insert, so both checks pass before either writes: the race, every time.
 """
 
-import unittest
 from typing import Any
 from unittest import mock
 
@@ -39,10 +38,10 @@ class RegisterRaceTests(TransactionTestCase):
         body = {"email": "rex@example.com", "password": PASSWORD, "name": name}
         return lambda: client.post(REGISTER, body, format="json")
 
-    @unittest.expectedFailure
     def test_the_second_of_two_simultaneous_sign_ups_is_told_the_email_is_taken(self):
-        """Fails today: both pass validate_email, and the second insert hits username's unique constraint (500)."""
-        # BUG-84, AUTH-TEST-04 (flips in PR A: create turns the IntegrityError into "User already exists")
+        """Both pass validate_email, and the second insert hits username's unique constraint (it was a 500)."""
+        # BUG-84, AUTH-TEST-04 (was an expected failure; fixed in PR A: create turns the IntegrityError into
+        # "User already exists")
         results = run_concurrently(self.sign_up("Rex"), self.sign_up("Rex again"))
 
         self.assertEqual(sorted(response.status_code for response in results), [201, 400])

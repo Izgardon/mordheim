@@ -5,7 +5,6 @@ and answers 201 with a token pair and the user. PR A bounds the name (1-40 chara
 (150), turns the duplicate insert into a 400, and validates the password against the new user.
 """
 
-import unittest
 from typing import Any
 
 from django.contrib.auth import get_user_model
@@ -103,38 +102,38 @@ class RegisterTests(AuthTestCase):
 
                 self.assertEqual((response.status_code, response.json()), (400, errors))
 
-    def test_an_email_and_a_name_of_150_characters_fit(self):
+    def test_an_email_of_150_characters_and_a_name_of_40_fit(self):
+        # BUG-84 (was: a 150-character name fit; PR A bounds the name at 40)
         email = email_of_length(150)
         self.assertEqual(len(email), 150)
 
-        response = self.register(email=email, name="N" * 150)
+        response = self.register(email=email, name="N" * 40)
 
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(get_user_model().objects.get(username=email).first_name, "N" * 150)
+        self.assertEqual(get_user_model().objects.get(username=email).first_name, "N" * 40)
 
-    @unittest.expectedFailure
     def test_an_email_of_151_characters_is_a_field_error(self):
-        """Fails today: the address passes EmailField and the insert into username (varchar 150) is a 500."""
-        # BUG-84, AUTH-TEST-04 (flips in PR A: email max_length 150)
+        """The address passed EmailField and the insert into username (varchar 150) was a 500."""
+        # BUG-84, AUTH-TEST-04 (was an expected failure; fixed in PR A: email max_length 150)
         self.answer_errors_with_500()
         email = email_of_length(151)
         self.assertEqual(len(email), 151)
 
         response = self.register(email=email, name="Rex")
 
-        self.assertEqual(response.status_code, 400)
-        self.assertIn("email", response.json())
+        self.assertEqual((response.status_code, response.json()), (400, {"email": ["Ensure this field has no more than 150 characters."]}))  # fmt: skip
+        self.assertFalse(get_user_model().objects.filter(username=email).exists())
 
-    @unittest.expectedFailure
-    def test_a_name_of_151_characters_is_a_field_error(self):
-        """Fails today: `name` has no max_length and the insert into first_name (varchar 150) is a 500."""
-        # BUG-84, AUTH-TEST-04 (flips in PR A: name 1-40 characters)
+    def test_a_name_over_40_characters_is_a_field_error(self):
+        """`name` had no max_length, and a 151-character one was a 500 at the insert into first_name (varchar 150)."""
+        # BUG-84, AUTH-TEST-04 (was an expected failure at 151; fixed in PR A: names of 1-40 characters)
         self.answer_errors_with_500()
+        for length in (41, 151):
+            with self.subTest(length=length):
+                response = self.register(email=f"rex{length}@example.com", name="N" * length)
 
-        response = self.register(email="rex@example.com", name="N" * 151)
-
-        self.assertEqual(response.status_code, 400)
-        self.assertIn("name", response.json())
+                self.assertEqual((response.status_code, response.json()), (400, {"name": ["Ensure this field has no more than 40 characters."]}))  # fmt: skip
+        self.assertFalse(get_user_model().objects.filter(username__startswith="rex").exists())
 
     def test_a_stale_bearer_header_makes_a_sign_up_401(self):
         # Register runs the default JWT authentication although it allows anyone; the SPA sends no token here

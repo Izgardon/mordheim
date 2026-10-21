@@ -1,13 +1,18 @@
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
+from django.db import IntegrityError, transaction
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+NAME_MAX_LENGTH = 40  # a display name (decision 2)
+EMAIL_MAX_LENGTH = 150  # the email is also the username, a varchar(150) (BUG-84)
+EMAIL_TAKEN = "User already exists"
+
 
 class RegisterSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    name = serializers.CharField(write_only=True, required=False, allow_blank=True, max_length=NAME_MAX_LENGTH)
     password = serializers.CharField(write_only=True, min_length=8)
-    email = serializers.EmailField()
+    email = serializers.EmailField(max_length=EMAIL_MAX_LENGTH)
 
     class Meta:
         model = get_user_model()
@@ -17,7 +22,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         email = value.strip().lower()
         user_model = get_user_model()
         if user_model.objects.filter(username=email).exists():
-            raise serializers.ValidationError("User already exists")
+            raise serializers.ValidationError(EMAIL_TAKEN)
         return email
 
     def validate_password(self, value):
@@ -30,7 +35,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         user_model = get_user_model()
         user = user_model(username=email, email=email, first_name=name)
         user.set_password(validated_data["password"])
-        user.save()
+        try:
+            with transaction.atomic():
+                user.save()
+        except IntegrityError:  # a simultaneous sign-up took the address after validate_email's check (BUG-84)
+            raise serializers.ValidationError({"email": [EMAIL_TAKEN]}) from None
         return user
 
 
