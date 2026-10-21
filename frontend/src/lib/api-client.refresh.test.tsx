@@ -76,36 +76,29 @@ describe("a retry that still gets a 401 after a successful refresh", () => {
     expect(getToken()).toBe(NEW_ACCESS);
   });
 
-  it("is ended only by a reload: the boot /auth/me meets the same 401, after two refreshes and five reads, and the session is cleared (BUG-141, PERF-50, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (PERF-50, pinned; flips in PR A). With no user loaded yet,
-    // each refreshed token restarts the profile load, so the boot reads /auth/me five times.
+  it("on a reload, signs out after one refresh and two /auth/me reads: the boot load and its retry (BUG-158)", async () => {
+    // A refreshed token for the same account no longer restarts the profile load, even before
+    // the profile has loaded, so nothing reads /auth/me a third time or refreshes again.
     fakeFetch.on("GET /auth/me/", userNotFound());
     const { result } = renderHook(() => useAuthContext(), { wrapper: authWrapper });
 
     await waitFor(() => expect(result.current.isReady).toBe(true));
-    expect(result.current.token).toBeNull();
+    await waitFor(() => expect(result.current.token).toBeNull());
     expect(getToken()).toBeNull();
     expect(getRefreshToken()).toBeNull();
-    expect(fakeFetch.countOf("POST /auth/refresh/")).toBe(2);
-    expect(fakeFetch.countOf("GET /auth/me/")).toBe(5);
+    expect(fakeFetch.calls()).toEqual(["GET /auth/me/", "POST /auth/refresh/", "GET /auth/me/"]);
   });
 });
 
 describe("a reload with an expired access token", () => {
-  it("refreshes once, then reads /auth/me twice with the new token: the retry and a second load (PERF-50, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (PERF-50, pinned; flips in PR A)
+  it("refreshes once and reads /auth/me once more, with the new token (BUG-158)", async () => {
     fakeFetch.on("GET /auth/me/", ({ headers }) =>
       headers.authorization === `Bearer ${NEW_ACCESS}` ? json(200, RAIDER) : tokenNotValid()
     );
     const { result } = renderHook(() => useAuthContext(), { wrapper: authWrapper });
 
     await waitFor(() => expect(result.current.user).toEqual(RAIDER));
-    expect(fakeFetch.calls()).toEqual([
-      "GET /auth/me/",
-      "POST /auth/refresh/",
-      "GET /auth/me/",
-      "GET /auth/me/",
-    ]);
+    expect(fakeFetch.calls()).toEqual(["GET /auth/me/", "POST /auth/refresh/", "GET /auth/me/"]);
     expect(result.current.token).toBe(NEW_ACCESS);
   });
 });

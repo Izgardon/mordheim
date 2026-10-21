@@ -122,12 +122,17 @@ export function AuthProvider({ children }: PropsWithChildren) {
     if (resolvedToken === latest.current.token) {
       return;
     }
-    const currentUser = latest.current.user;
+    const { token: currentToken, user: currentUser } = latest.current;
     setSessionToken(resolvedToken);
     if (resolvedToken) {
-      // A refreshed token for the signed-in user (from this tab or another): swap it and keep
-      // the app mounted. Re-hydrating flips isReady and unmounts everything (BUG-21).
-      if (currentUser && getTokenUserId(resolvedToken) === String(currentUser.id)) {
+      // A refreshed token for this account (from this tab or another): swap it and keep the app
+      // mounted, since re-hydrating flips isReady and unmounts everything (BUG-21). Before the
+      // profile has loaded too, so a reload with an expired token loads it once (BUG-158).
+      const accountId = currentUser
+        ? String(currentUser.id)
+        : currentToken && getTokenUserId(currentToken);
+      const tokenUserId = getTokenUserId(resolvedToken);
+      if (tokenUserId !== null && tokenUserId === accountId) {
         return;
       }
       if (currentUser) {
