@@ -90,12 +90,29 @@ class ProductionStartupTests(SimpleTestCase):
         hardening = [values[name] for name in ("SECURE_PROXY_SSL_HEADER", "SECURE_HSTS_SECONDS", "SESSION_COOKIE_SECURE", "CSRF_COOKIE_SECURE")]  # fmt: skip
         self.assertEqual(hardening, [None, None, None, None])
 
-    def test_a_resend_key_alone_starts_with_the_placeholder_link_and_sender(self):
-        # Characterises current behaviour (BUG-56, pinned; flips in PR A: with the key set, startup requires real
-        # FRONTEND_URL and DEFAULT_FROM_EMAIL values), so reset links would point at localhost
-        values = load_settings(DJANGO_DEBUG="0", DJANGO_SECRET_KEY=LONG_KEY, RESEND_API_KEY="re_not_a_real_key")
+    def test_with_a_resend_key_production_needs_a_real_link_and_sender(self):
+        # BUG-56 (was pinned: a key alone started with the localhost link and the example.com sender; flipped in PR A)
+        key = {"DJANGO_DEBUG": "0", "DJANGO_SECRET_KEY": LONG_KEY, "RESEND_API_KEY": "re_not_a_real_key"}
+        real = {"FRONTEND_URL": "https://mordheim.example.org", "DEFAULT_FROM_EMAIL": "Mordheim <no-reply@mordheim.example.org>"}  # fmt: skip
+        url_message = "FRONTEND_URL must be the site's https:// address when RESEND_API_KEY is set."
+        sender_message = "DEFAULT_FROM_EMAIL must be an address on Resend's verified domain when RESEND_API_KEY is set."
+        refused = {
+            "the key alone": ({}, url_message),
+            "a plain-http link": ({**real, "FRONTEND_URL": "http://mordheim.example.org"}, url_message),
+            "the placeholder sender": ({"FRONTEND_URL": real["FRONTEND_URL"]}, sender_message),
+            "a sender at example.com": ({**real, "DEFAULT_FROM_EMAIL": "Mordheim <bot@example.com>"}, sender_message),
+        }
+        for label, (env, message) in refused.items():
+            with self.subTest(case=label):
+                result = run(READ_SETTINGS, **key, **env)
 
-        self.assertEqual((values["FRONTEND_URL"], values["DEFAULT_FROM_EMAIL"]), ("http://localhost:5173", "no-reply@example.com"))  # fmt: skip
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(message, result.stderr)
+
+        values = load_settings(**key, **real)
+        self.assertEqual((values["FRONTEND_URL"], values["DEFAULT_FROM_EMAIL"]), (real["FRONTEND_URL"], real["DEFAULT_FROM_EMAIL"]))  # fmt: skip
+        local = load_settings(**{**key, "DJANGO_DEBUG": "1"})  # dev keeps its fallbacks
+        self.assertEqual(local["FRONTEND_URL"], "http://localhost:5173")
 
     def test_an_explicit_proxy_count_always_wins_and_dev_keeps_drfs_default_when_unset(self):
         # SEC-04 (was: read only when set, else absent in production too)
