@@ -37,36 +37,48 @@ beforeEach(() => {
 });
 
 describe("signing in and up (AUTH-TEST-22)", () => {
-  it("signs in with the email as typed, then reads /auth/me three times (PERF-50, AUTH-TEST-22, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (PERF-50, pinned; flips in PR A): the two token writes
-    // each start a profile load, then signIn starts its own.
-    const tokens = tokensFor(RAIDER);
-    fakeApi.on("POST /auth/login/", tokens);
+  it("signs in with the email as typed and reads no /auth/me when login's answer carries the user (PERF-50, AUTH-TEST-22)", async () => {
+    const answer = { ...tokensFor(RAIDER), user: RAIDER };
+    fakeApi.on("POST /auth/login/", answer);
     fakeApi.on("GET /auth/me/", RAIDER);
     const { result } = renderHook(() => useAuthContext(), { wrapper: authWrapper });
 
-    let answer: unknown;
+    let returned: unknown;
     await act(async () => {
-      answer = await result.current.signIn({ email: "Raider@Example.com", password: "wyrdstone" });
+      returned = await result.current.signIn({
+        email: "Raider@Example.com",
+        password: "wyrdstone",
+      });
     });
 
-    expect(answer).toEqual(tokens);
-    expect(fakeApi.calls()).toEqual([
-      "POST /auth/login/",
-      "GET /auth/me/",
-      "GET /auth/me/",
-      "GET /auth/me/",
-    ]);
+    expect(returned).toEqual(answer);
+    expect(fakeApi.calls()).toEqual(["POST /auth/login/"]);
     expect(fakeApi.bodyOf("POST /auth/login/")).toEqual({
       email: "Raider@Example.com",
       password: "wyrdstone",
     });
     expect(result.current.user).toEqual(RAIDER);
-    expect(result.current.token).toBe(tokens.access);
+    expect(result.current.token).toBe(answer.access);
   });
 
-  it("signs up, then reads /auth/me twice though the answer carries the user (PERF-50, AUTH-TEST-22, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (PERF-50, pinned; flips in PR A)
+  it("reads /auth/me once when login's answer has only the tokens, as the server sends it before its PR A (PERF-50)", async () => {
+    const tokens = tokensFor(RAIDER);
+    fakeApi.on("POST /auth/login/", tokens);
+    fakeApi.on("GET /auth/me/", RAIDER);
+    const { result } = renderHook(() => useAuthContext(), { wrapper: authWrapper });
+
+    await act(async () => {
+      await result.current.signIn({ email: RAIDER.email, password: "wyrdstone" });
+    });
+
+    expect(fakeApi.calls()).toEqual(["POST /auth/login/", "GET /auth/me/"]);
+    expect(result.current.user).toEqual(RAIDER);
+    expect(result.current.token).toBe(tokens.access);
+    expect(getToken()).toBe(tokens.access);
+    expect(getRefreshToken()).toBe(tokens.refresh);
+  });
+
+  it("signs up and reads no /auth/me: the answer carries the user (PERF-50, AUTH-TEST-22)", async () => {
     const answer = registerAnswer(RAIDER);
     fakeApi.on("POST /auth/register/", answer);
     fakeApi.on("GET /auth/me/", RAIDER);
@@ -76,7 +88,7 @@ describe("signing in and up (AUTH-TEST-22)", () => {
       await result.current.signUp({ name: "Raider", email: RAIDER.email, password: "wyrdstone" });
     });
 
-    expect(fakeApi.calls()).toEqual(["POST /auth/register/", "GET /auth/me/", "GET /auth/me/"]);
+    expect(fakeApi.calls()).toEqual(["POST /auth/register/"]);
     expect(fakeApi.bodyOf("POST /auth/register/")).toEqual({
       name: "Raider",
       email: RAIDER.email,

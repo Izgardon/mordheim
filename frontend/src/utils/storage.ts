@@ -16,6 +16,19 @@ export function setToken(token: string | null) {
   notifyAuthChange();
 }
 
+/**
+ * Stores the tokens of a sign-in, a sign-up or a refresh together and notifies once (PERF-50).
+ * An answer without a refresh token keeps the stored one.
+ */
+export function setTokens({ access, refresh }: { access: string; refresh?: string }) {
+  if (refresh) {
+    localStorage.setItem(REFRESH_TOKEN_KEY, refresh);
+  }
+  // Last, so another tab that sees the new access token sees the rest of the session too.
+  localStorage.setItem(TOKEN_KEY, access);
+  notifyAuthChange();
+}
+
 export function getToken() {
   return localStorage.getItem(TOKEN_KEY);
 }

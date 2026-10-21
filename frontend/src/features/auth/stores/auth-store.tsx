@@ -1,5 +1,13 @@
 import type { PropsWithChildren } from "react";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 // api
@@ -8,7 +16,7 @@ import { isSessionExpiredError, SERVER_UNAVAILABLE_MESSAGE } from "../../../lib/
 import { disconnectRealtime } from "../../../lib/realtime/client";
 
 // utils
-import { clearToken, getToken, setRefreshToken, setToken } from "../../../utils/storage";
+import { clearToken, getToken, setTokens } from "../../../utils/storage";
 import { getTokenUserId } from "../utils/token-user";
 
 // types
@@ -56,44 +64,51 @@ async function fetchProfileWithRetry(accessToken: string) {
 export function AuthProvider({ children }: PropsWithChildren) {
   const queryClient = useQueryClient();
   const [token, setTokenState] = useState<string | null>(null);
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUserState] = useState<AuthUser | null>(null);
   const [isReady, setIsReady] = useState(() => !getToken());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
+  // The latest token and user, for the storage listener: this tab's own writes (sign-in, a
+  // refresh) notify at once, before React has re-rendered with the new values (PERF-50).
+  const latest = useRef<{ token: string | null; user: AuthUser | null }>({
+    token: null,
+    user: null,
+  });
 
-  const hydrateUser = useCallback(async (accessToken: string, profile?: AuthUser) => {
-    if (!accessToken) {
-      setUser(null);
-      setIsReady(true);
-      return;
-    }
-
-    setIsReady(false);
-    setConnectionError(null);
-
-    if (profile) {
-      setUser(profile);
-      setIsReady(true);
-      return;
-    }
-
-    try {
-      const loadedProfile = await fetchProfileWithRetry(accessToken);
-      setUser(loadedProfile);
-      setIsReady(true);
-    } catch (error) {
-      if (isSessionExpiredError(error)) {
-        clearToken();
-        setTokenState(null);
-      } else {
-        // An outage isn't a logout: keep the tokens so the user can retry.
-        setConnectionError(SERVER_UNAVAILABLE_MESSAGE);
-      }
-      setUser(null);
-      setIsReady(true);
-      throw error;
-    }
+  const setSessionToken = useCallback((nextToken: string | null) => {
+    latest.current.token = nextToken;
+    setTokenState(nextToken);
   }, []);
+
+  const setUser = useCallback((nextUser: AuthUser | null) => {
+    latest.current.user = nextUser;
+    setUserState(nextUser);
+  }, []);
+
+  const hydrateUser = useCallback(
+    async (accessToken: string) => {
+      setIsReady(false);
+      setConnectionError(null);
+
+      try {
+        const loadedProfile = await fetchProfileWithRetry(accessToken);
+        setUser(loadedProfile);
+        setIsReady(true);
+      } catch (error) {
+        if (isSessionExpiredError(error)) {
+          clearToken();
+          setSessionToken(null);
+        } else {
+          // An outage isn't a logout: keep the tokens so the user can retry.
+          setConnectionError(SERVER_UNAVAILABLE_MESSAGE);
+        }
+        setUser(null);
+        setIsReady(true);
+        throw error;
+      }
+    },
+    [setSessionToken, setUser]
+  );
 
   const retryConnection = useCallback(() => {
     const currentToken = getToken();
@@ -102,63 +117,71 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
   }, [hydrateUser]);
 
-  const syncToken = useCallback(
-    (nextToken?: string | null) => {
-      const resolvedToken = nextToken ?? getToken();
-      if (resolvedToken === token) {
+  const syncToken = useCallback(() => {
+    const resolvedToken = getToken();
+    if (resolvedToken === latest.current.token) {
+      return;
+    }
+    const currentUser = latest.current.user;
+    setSessionToken(resolvedToken);
+    if (resolvedToken) {
+      // A refreshed token for the signed-in user (from this tab or another): swap it and keep
+      // the app mounted. Re-hydrating flips isReady and unmounts everything (BUG-21).
+      if (currentUser && getTokenUserId(resolvedToken) === String(currentUser.id)) {
         return;
       }
-      setTokenState(resolvedToken);
-      if (resolvedToken) {
-        // A refreshed token for the signed-in user (from this tab or another): swap it and keep
-        // the app mounted. Re-hydrating flips isReady and unmounts everything (BUG-21).
-        if (user && getTokenUserId(resolvedToken) === String(user.id)) {
-          return;
-        }
-        if (user) {
-          // Another account signed in (in another tab): drop the previous user's cached data
-          // and the socket authorised as them.
-          queryClient.clear();
-          disconnectRealtime();
-        }
-        hydrateUser(resolvedToken).catch(() => {});
-      } else {
-        // Signed out elsewhere, or the session expired: the next user must not see this one's data.
+      if (currentUser) {
+        // Another account signed in (in another tab): drop the previous user's cached data
+        // and the socket authorised as them.
         queryClient.clear();
         disconnectRealtime();
-        setUser(null);
-        setIsReady(true);
       }
-    },
-    [hydrateUser, queryClient, token, user]
-  );
+      hydrateUser(resolvedToken).catch(() => {});
+    } else {
+      // Signed out elsewhere, or the session expired: the next user must not see this one's data.
+      queryClient.clear();
+      disconnectRealtime();
+      setUser(null);
+      setIsReady(true);
+    }
+  }, [hydrateUser, queryClient, setSessionToken, setUser]);
 
   useEffect(() => {
     syncToken();
-    const handleStorage = () => syncToken();
-    window.addEventListener("storage", handleStorage);
-    window.addEventListener("auth:tokens-changed", handleStorage);
+    window.addEventListener("storage", syncToken);
+    window.addEventListener("auth:tokens-changed", syncToken);
     return () => {
-      window.removeEventListener("storage", handleStorage);
-      window.removeEventListener("auth:tokens-changed", handleStorage);
+      window.removeEventListener("storage", syncToken);
+      window.removeEventListener("auth:tokens-changed", syncToken);
     };
   }, [syncToken]);
+
+  // Sign-in and sign-up store the session in one write, which the listener above then skips:
+  // the user comes with the answer, so nothing reads /auth/me again (PERF-50).
+  const startSession = useCallback(
+    (tokens: AuthTokens, profile: AuthUser) => {
+      setSessionToken(tokens.access);
+      setUser(profile);
+      setConnectionError(null);
+      setIsReady(true);
+      setTokens({ access: tokens.access, refresh: tokens.refresh });
+    },
+    [setSessionToken, setUser]
+  );
 
   const signIn = useCallback(
     async (credentials: LoginCredentials) => {
       setIsSubmitting(true);
       try {
         const data = await loginAccount(credentials);
-        setToken(data.access);
-        setRefreshToken(data.refresh);
-        setTokenState(data.access);
-        await hydrateUser(data.access);
+        // Login sends the user from the server's pass 6 PR A on; before that, one profile read.
+        startSession(data, data.user ?? (await fetchMe(data.access)));
         return data;
       } finally {
         setIsSubmitting(false);
       }
     },
-    [hydrateUser]
+    [startSession]
   );
 
   const signUp = useCallback(
@@ -166,28 +189,25 @@ export function AuthProvider({ children }: PropsWithChildren) {
       setIsSubmitting(true);
       try {
         const data = await registerAccount(payload);
-        setToken(data.access);
-        setRefreshToken(data.refresh);
-        setTokenState(data.access);
-        await hydrateUser(data.access, data.user);
+        startSession(data, data.user);
         return data;
       } finally {
         setIsSubmitting(false);
       }
     },
-    [hydrateUser]
+    [startSession]
   );
 
   const signOut = useCallback(() => {
     clearToken();
-    setTokenState(null);
+    setSessionToken(null);
     setUser(null);
     setConnectionError(null);
     setIsReady(true);
     // Shared devices: nothing cached for this user may reach the next one (BUG-22).
     queryClient.clear();
     disconnectRealtime();
-  }, [queryClient]);
+  }, [queryClient, setSessionToken, setUser]);
 
   const value = useMemo<AuthContextValue>(
     () => ({

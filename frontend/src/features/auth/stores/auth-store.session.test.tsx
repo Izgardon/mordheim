@@ -63,8 +63,7 @@ beforeEach(() => {
 });
 
 describe("token storage", () => {
-  it("keeps both tokens in localStorage, written one at a time: two change events per sign-in (PERF-50, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (PERF-50, pinned; flips in PR A: one setTokens(), one event)
+  it("keeps both tokens in localStorage, written together: one change event per sign-in (PERF-50)", async () => {
     const tokens = tokensFor(RAIDER);
     fakeApi.on("POST /auth/login/", tokens);
     fakeApi.on("GET /auth/me/", RAIDER);
@@ -76,13 +75,13 @@ describe("token storage", () => {
     });
     events.stop();
 
-    expect(events.count()).toBe(2);
+    expect(events.count()).toBe(1);
     expect(localStorage.getItem("mordheim_token")).toBe(tokens.access);
     expect(localStorage.getItem("mordheim_refresh_token")).toBe(tokens.refresh);
     expect(localStorage.length).toBe(2);
   });
 
-  it("does the same on sign-up, and keeps no copy of the user (PERF-50, pinned; flips in PR A)", async () => {
+  it("does the same on sign-up (PERF-50), and keeps no copy of the user (PERF-50, pinned; flips in PR A)", async () => {
     // Characterises current behaviour (PERF-50, pinned; flips in PR A: the user is cached too)
     const answer = registerAnswer(RAIDER);
     fakeApi.on("POST /auth/register/", answer);
@@ -95,7 +94,7 @@ describe("token storage", () => {
     });
     events.stop();
 
-    expect(events.count()).toBe(2);
+    expect(events.count()).toBe(1);
     expect(Object.keys(localStorage).sort()).toEqual(["mordheim_refresh_token", "mordheim_token"]);
   });
 });

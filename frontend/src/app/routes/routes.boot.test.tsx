@@ -104,8 +104,27 @@ describe("a cold start signed in", () => {
 });
 
 describe("signing in or up from the landing page", () => {
-  it("signs in with one login, three /auth/me, then one notifications read, one list read and one channel (PERF-50, AUTH-TEST-22, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (PERF-50, AUTH-TEST-22, pinned; flips in PR A: no /auth/me)
+  it("signs in with one login and no /auth/me, then one notifications read, one list read and one channel (PERF-50, AUTH-TEST-22)", async () => {
+    fakeApi.on("POST /auth/login/", { ...tokensFor(RAIDER), user: RAIDER });
+    fakeApi.on("GET /auth/me/", RAIDER);
+    const user = setupUser();
+    renderApp("/");
+    await screen.findByRole("heading", { name: "Mordheim Chronicler" });
+
+    await user.type(screen.getByLabelText("Email"), RAIDER.email);
+    await user.type(screen.getByLabelText("Password"), "wyrdstone");
+    await user.click(submitButton());
+
+    await screen.findByRole("heading", { name: "Welcome back, Raider" });
+    expect(await settledCalls(3)).toEqual([
+      "GET /campaigns/",
+      "GET /notifications/",
+      "POST /auth/login/",
+    ]);
+    expect(fakeRealtime.subscriberCount("private-user-1-notifications")).toBe(1);
+  });
+
+  it("signs in with one /auth/me while login's answer has only the tokens (PERF-50)", async () => {
     fakeApi.on("POST /auth/login/", tokensFor(RAIDER));
     fakeApi.on("GET /auth/me/", RAIDER);
     const user = setupUser();
@@ -117,20 +136,17 @@ describe("signing in or up from the landing page", () => {
     await user.click(submitButton());
 
     await screen.findByRole("heading", { name: "Welcome back, Raider" });
-    expect(await settledCalls(6)).toEqual([
-      "GET /auth/me/",
-      "GET /auth/me/",
+    expect(await settledCalls(4)).toEqual([
       "GET /auth/me/",
       "GET /campaigns/",
       "GET /notifications/",
       "POST /auth/login/",
     ]);
-    expect(fakeRealtime.subscriberCount("private-user-1-notifications")).toBe(1);
   });
 
-  it("signs up with one register and two /auth/me, and a user with no alias is welcomed by their email (PERF-50, SEC-13, AUTH-TWEAK-02, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (PERF-50, SEC-13 leftover in CampaignsHeader.tsx:16,
-    // AUTH-TWEAK-02, pinned; flips in PR A)
+  it("signs up with one register and no /auth/me (PERF-50), and a user with no alias is welcomed by their email (SEC-13, AUTH-TWEAK-02, pinned; flips in PR A)", async () => {
+    // Characterises current behaviour (SEC-13 leftover in CampaignsHeader.tsx:16, AUTH-TWEAK-02,
+    // pinned; flips in PR A)
     fakeApi.on("POST /auth/register/", registerAnswer(NAMELESS));
     fakeApi.on("GET /auth/me/", NAMELESS);
     const user = setupUser();
@@ -143,9 +159,7 @@ describe("signing in or up from the landing page", () => {
     await user.click(submitButton());
 
     await screen.findByRole("heading", { name: "Welcome back, nameless@example.com" });
-    expect(await settledCalls(5)).toEqual([
-      "GET /auth/me/",
-      "GET /auth/me/",
+    expect(await settledCalls(3)).toEqual([
       "GET /campaigns/",
       "GET /notifications/",
       "POST /auth/register/",
