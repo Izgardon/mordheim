@@ -6,6 +6,8 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError, transaction
 from rest_framework import serializers
 
+from .models import UserAccount
+
 NAME_MAX_LENGTH = 40  # a display name (decision 2)
 EMAIL_MAX_LENGTH = 150  # the email is also the username, a varchar(150) (BUG-84)
 EMAIL_TAKEN = "User already exists"
@@ -54,6 +56,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         try:
             with transaction.atomic():
                 user.save()
+                UserAccount.objects.create(user=user)  # the session key the new pair carries (SEC-05)
         except IntegrityError:  # a simultaneous sign-up took the address after validate_email's check (BUG-84)
             raise serializers.ValidationError({"email": [EMAIL_TAKEN]}) from None
         return user

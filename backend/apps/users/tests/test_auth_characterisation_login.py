@@ -10,6 +10,8 @@ from typing import Any
 
 from django.utils import timezone
 
+from apps.users.models import UserAccount
+
 from .auth_support import LOGIN, PASSWORD, AuthTestCase, access_claims, make_user, refresh_claims
 
 INVALID = {"non_field_errors": ["Invalid credentials"]}
@@ -29,15 +31,16 @@ class LoginTests(AuthTestCase):
         self.assertEqual(body["user"], {"id": self.pia.id, "email": "pia@example.com", "name": "Pia"})
         self.assertEqual(self.me(body["access"]).json(), body["user"])
 
-    def test_the_tokens_carry_only_simplejwts_claims_and_lifetimes(self):
-        # Characterises current behaviour (SEC-05, BUG-140, pinned; flips in PR A: the session key claim `sk`)
+    def test_the_tokens_carry_the_session_key_and_simplejwts_claims_and_lifetimes(self):
+        # SEC-05, BUG-140 (was pinned: only SimpleJWT's claims; flipped in PR A: the session key claim `sk`)
         tokens = self.sign_in()
         access, refresh = access_claims(tokens["access"]), refresh_claims(tokens["refresh"])
+        key = str(UserAccount.objects.get(user=self.pia).session_key)
 
         for claims, kind, lifetime in ((access, "access", timedelta(days=1)), (refresh, "refresh", timedelta(days=30))):
             with self.subTest(token=kind):
-                self.assertEqual(sorted(claims), ["exp", "iat", "jti", "token_type", "user_id"])
-                self.assertEqual((claims["token_type"], claims["user_id"]), (kind, self.pia.id))
+                self.assertEqual(sorted(claims), ["exp", "iat", "jti", "sk", "token_type", "user_id"])
+                self.assertEqual((claims["token_type"], claims["user_id"], claims["sk"]), (kind, self.pia.id, key))
                 self.assertEqual(timedelta(seconds=claims["exp"] - claims["iat"]), lifetime)
 
     def test_wrong_password_unknown_email_and_inactive_user_get_one_identical_400(self):

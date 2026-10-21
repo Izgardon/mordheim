@@ -1,16 +1,16 @@
 """Refresh, `/auth/me` and how long a session lives (pass 6; AUTH-TEST-07, -08, -13, SEC-05, BUG-140).
 
-SimpleJWT 5.3.1 with only the lifetimes set: no rotation, no blacklist, no revocation claim. `JWTAuthentication`
-loads the user by `user_id` alone on each request; the refresh serializer never loads the user at all. PR A adds a
-per-user session key (`users.UserAccount`, claim `sk`) that the auth class and the refresh serializer check, and
-rotates refresh tokens, so a reset, a password change or "sign out everywhere else" ends the other sessions.
+SimpleJWT 5.3.1 with the lifetimes set and refresh tokens rotating, with no blacklist. Characterisation found the user
+loaded by `user_id` alone on each request and never on a refresh. PR A added a per-user session key
+(`users.UserAccount`, claim `sk`) that the auth class and the refresh serializer check, so a reset, a password change
+or "sign out everywhere else" ends every session (`test_sessions.py` covers the rest).
 """
-
-import unittest
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.settings import api_settings
+
+from apps.users.models import UserAccount
 
 from .auth_support import (
     ME,
@@ -22,28 +22,35 @@ from .auth_support import (
     expired_access,
     expired_refresh,
     make_user,
+    refresh_claims,
     reset_link_parts,
 )
 
 TOKEN_NOT_VALID = "token_not_valid"
+SESSION_ENDED = {"detail": "Your session has ended. Please sign in again.", "code": "session_ended"}
 NOT_PROVIDED = "Authentication credentials were not provided."
 
 
 class RefreshTests(AuthTestCase):
-    def test_a_refresh_answers_a_new_access_token_and_no_new_refresh_token(self):
-        # Characterises current behaviour (AUTH-TWEAK-03, AUTH-TEST-07, pinned; flips in PR A: each refresh also
-        # returns a new 30-day refresh token, so only 30 idle days end a session)
+    def test_a_refresh_answers_a_new_access_token_and_a_new_30_day_refresh_token(self):
+        # AUTH-TWEAK-03, AUTH-TEST-07 (was pinned: only a new access token; flipped in PR A: the refresh token rotates,
+        # so only 30 idle days end a session)
         tokens = self.sign_in()
 
         response = self.refresh(tokens["refresh"])
 
-        self.assertEqual((response.status_code, sorted(response.json())), (200, ["access"]))
-        access = response.json()["access"]
+        self.assertEqual((response.status_code, sorted(response.json())), (200, ["access", "refresh"]))
+        access, refresh = response.json()["access"], response.json()["refresh"]
         self.assertNotEqual(access_claims(access)["jti"], access_claims(tokens["access"])["jti"])
+        old, new = refresh_claims(tokens["refresh"]), refresh_claims(refresh)
+        self.assertNotEqual(new["jti"], old["jti"])
+        self.assertEqual((new["user_id"], new["sk"]), (old["user_id"], old["sk"]))
+        self.assertEqual(new["exp"] - new["iat"], 30 * 24 * 60 * 60)
         self.assertEqual(self.me(access).json()["id"], self.pia.id)
+        self.assertEqual(self.refresh(refresh).status_code, 200)
 
     def test_one_refresh_token_can_be_used_again_and_again(self):
-        # No blacklist (and PR A adds none): two tabs refreshing together both succeed
+        # No blacklist (PR A adds none, though refresh tokens rotate): two tabs refreshing together both succeed
         tokens = self.sign_in()
 
         statuses = [self.refresh(tokens["refresh"]).status_code for _ in range(3)]
@@ -110,22 +117,25 @@ class MeTests(AuthTestCase):
 
 
 class SessionLifetimeTests(AuthTestCase):
-    def test_a_password_reset_leaves_the_old_access_and_refresh_tokens_working(self):
-        # Characterises current behaviour (SEC-05, AUTH-TEST-13, pinned; flips in PR A: a reset gives the user a
-        # new session key, so both answer 401)
+    def test_a_password_reset_ends_the_old_access_and_refresh_tokens(self):
+        # SEC-05, AUTH-TEST-13 (was pinned: both kept working; flipped in PR A: a reset gives the user a new session
+        # key, so both answer 401 session_ended)
         tokens = self.sign_in()
+        key_before = UserAccount.objects.get(user=self.pia).session_key
         uid, token = reset_link_parts(self.pia)
         reset = self.post(RESET_CONFIRM, {"uid": uid, "token": token, "new_password": NEW_PASSWORD})
         self.assertEqual(reset.status_code, 200)
 
-        self.assertEqual(self.me(tokens["access"]).status_code, 200)
-        refreshed = self.refresh(tokens["refresh"])
-        self.assertEqual(refreshed.status_code, 200)
-        self.assertEqual(self.me(refreshed.json()["access"]).status_code, 200)
+        for label, response in (("access", self.me(tokens["access"])), ("refresh", self.refresh(tokens["refresh"]))):
+            with self.subTest(token=label):
+                self.assertEqual((response.status_code, response.json()), (401, SESSION_ENDED))
+        self.assertNotEqual(UserAccount.objects.get(user=self.pia).session_key, key_before)
+        self.assertEqual(self.me(self.sign_in(password=NEW_PASSWORD)["access"]).status_code, 200)
 
     def test_a_password_set_by_an_admin_leaves_the_tokens_working(self):
-        # Characterises current behaviour (SEC-05, pinned; flips in PR A's password change): the admin route the
-        # brief names for email-off production is `manage.py changepassword`, i.e. set_password and save
+        # Still pinned after PR A (SEC-05): `manage.py changepassword`, the admin route the brief names for email-off
+        # production, is set_password and save, which doesn't touch the session key. Reset, the password change and
+        # "sign out everywhere else" end sessions; see the PR A report's found-not-fixed
         tokens = self.sign_in()
         self.pia.set_password(NEW_PASSWORD)
         self.pia.save()
@@ -133,44 +143,42 @@ class SessionLifetimeTests(AuthTestCase):
         self.assertEqual(self.me(tokens["access"]).status_code, 200)
         self.assertEqual(self.refresh(tokens["refresh"]).status_code, 200)
 
-    def test_refresh_mints_an_access_token_for_an_inactive_user_that_me_then_refuses(self):
-        # Characterises current behaviour (SEC-05, pinned; flips in PR A: the refresh loads the user and refuses)
+    def test_refresh_refuses_an_inactive_user(self):
+        # SEC-05 (was pinned: refresh minted an access token that /me then refused; flipped in PR A: the refresh
+        # loads the user and refuses)
         tokens = self.sign_in()
         get_user_model().objects.filter(id=self.pia.id).update(is_active=False)
 
-        refreshed = self.refresh(tokens["refresh"])
+        inactive = {"detail": "User is inactive", "code": "user_inactive"}
+        for label, response in (("refresh", self.refresh(tokens["refresh"])), ("access", self.me(tokens["access"]))):
+            with self.subTest(token=label):
+                self.assertEqual((response.status_code, response.json()), (401, inactive))
 
-        self.assertEqual(refreshed.status_code, 200)
-        for access in (tokens["access"], refreshed.json()["access"]):
-            response = self.me(access)
-            self.assertEqual((response.status_code, response.json()), (401, {"detail": "User is inactive", "code": "user_inactive"}))  # fmt: skip
-
-    def test_refresh_mints_an_access_token_for_a_deleted_user(self):
-        # Characterises current behaviour (SEC-05, pinned; flips in PR A: the refresh finds no account)
+    def test_refresh_refuses_a_deleted_user(self):
+        # SEC-05 (was pinned: refresh minted an access token for a deleted user; flipped in PR A)
         rex = make_user("rex@example.com", "Rex")
         tokens = self.sign_in("rex@example.com")
         rex.delete()
 
-        refreshed = self.refresh(tokens["refresh"])
+        not_found = {"detail": "User not found", "code": "user_not_found"}
+        for label, response in (("refresh", self.refresh(tokens["refresh"])), ("access", self.me(tokens["access"]))):
+            with self.subTest(token=label):
+                self.assertEqual((response.status_code, response.json()), (401, not_found))
 
-        self.assertEqual(refreshed.status_code, 200)
-        for access in (tokens["access"], refreshed.json()["access"]):
-            response = self.me(access)
-            self.assertEqual((response.status_code, response.json()), (401, {"detail": "User not found", "code": "user_not_found"}))  # fmt: skip
-
-    @unittest.expectedFailure
     def test_a_token_for_a_deleted_user_does_not_sign_in_the_next_user_given_that_id(self):
-        """Fails today: /me answers 200 as the newcomer, and the old refresh token keeps minting for him."""
-        # BUG-140 (flips in PR A: a random session key never matches). A wiped and reseeded database hands out
-        # the same ids again; with an unchanged DJANGO_SECRET_KEY, an old token checked by user_id alone passes
+        """/me answered 200 as the newcomer, and the old refresh token kept minting for him."""
+        # BUG-140 (was an expected failure; fixed in PR A: a random session key never matches). A wiped and
+        # reseeded database hands out the same ids again; with an unchanged DJANGO_SECRET_KEY, an old token checked
+        # by user_id alone passed
         rex = make_user("rex@example.com", "Rex")
         tokens = self.sign_in("rex@example.com")
         rex_id = rex.id
         rex.delete()
         make_user("newcomer@example.com", "Newcomer", id=rex_id)
 
-        self.assertEqual(self.me(tokens["access"]).status_code, 401)
-        self.assertEqual(self.refresh(tokens["refresh"]).status_code, 401)
+        for label, response in (("access", self.me(tokens["access"])), ("refresh", self.refresh(tokens["refresh"]))):
+            with self.subTest(token=label):
+                self.assertEqual((response.status_code, response.json()), (401, SESSION_ENDED))
 
     def test_signing_in_again_leaves_the_earlier_session_working(self):
         # Each device keeps its own pair; nothing ends another (PR A keeps this for a plain sign-in)
@@ -178,11 +186,12 @@ class SessionLifetimeTests(AuthTestCase):
 
         self.assertEqual((self.me(first["access"]).status_code, self.me(second["access"]).status_code), (200, 200))
 
-    def test_there_is_no_server_side_sign_out(self):
-        # Characterises current behaviour (SEC-05, pinned; flips in PR A: rotation on, the session key checked;
-        # still no blacklist, and plain "Log out" stays this-device only)
+    def test_sessions_end_by_session_key_not_by_blacklist(self):
+        # SEC-05 (was pinned: no server-side sign-out at all; flipped in PR A: rotation on and the session key
+        # checked; still no blacklist, and plain "Log out" stays this-device only, so there's no logout route)
         self.assertEqual(self.client.post("/api/auth/logout/").status_code, 404)
         self.assertNotIn("rest_framework_simplejwt.token_blacklist", settings.INSTALLED_APPS)
-        self.assertEqual(sorted(settings.SIMPLE_JWT), ["ACCESS_TOKEN_LIFETIME", "REFRESH_TOKEN_LIFETIME"])
+        self.assertEqual(sorted(settings.SIMPLE_JWT), ["ACCESS_TOKEN_LIFETIME", "REFRESH_TOKEN_LIFETIME", "ROTATE_REFRESH_TOKENS"])  # fmt: skip
         flags = (api_settings.ROTATE_REFRESH_TOKENS, api_settings.BLACKLIST_AFTER_ROTATION, api_settings.CHECK_REVOKE_TOKEN)  # fmt: skip
-        self.assertEqual(flags, (False, False, False))
+        self.assertEqual(flags, (True, False, False))
+        self.assertEqual(settings.REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"], ("apps.users.services.tokens.SessionKeyJWTAuthentication",))  # fmt: skip

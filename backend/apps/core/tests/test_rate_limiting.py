@@ -8,10 +8,10 @@ from django.test import override_settings
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from rest_framework.test import APIClient, APITestCase
-from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.battles.models import Battle, BattleParticipant
 from apps.campaigns.models import Campaign, CampaignMembership, CampaignRole
+from apps.users.services.tokens import issue_tokens
 from apps.warbands.models import Warband
 
 
@@ -222,7 +222,7 @@ class RateLimitingApiTests(APITestCase):
     @override_settings(REST_FRAMEWORK=_rest_framework_with_rates(auth_refresh_minute="2/min"))
     def test_refresh_is_rate_limited_by_ip(self):
         self._set_forwarded_ip("198.51.100.40")
-        refresh = str(RefreshToken.for_user(self.owner))
+        refresh = issue_tokens(self.owner)["refresh"]  # a pair carrying the session key (SEC-05)
 
         for _ in range(2):
             response = self.client.post("/api/auth/refresh/", {"refresh": refresh}, format="json")

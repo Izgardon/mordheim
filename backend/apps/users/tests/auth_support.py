@@ -24,6 +24,8 @@ from django.utils.http import urlsafe_base64_encode
 from rest_framework.test import APIClient, APITestCase
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
+from apps.users.models import UserAccount
+
 REGISTER = "/api/auth/register/"
 LOGIN = "/api/auth/login/"
 REFRESH = "/api/auth/refresh/"
@@ -36,11 +38,15 @@ PASSWORD = "lantern-of-sigmar"  # passes every configured validator
 NEW_PASSWORD = "crimson-lantern-42"
 
 
-def make_user(email: str, name: str = "", password: str | None = PASSWORD, **fields: Any) -> Any:
-    """A user as registration makes one: the username is the (lowercased) email, the name is `first_name`."""
-    return get_user_model().objects.create_user(
+def make_user(email: str, name: str = "", password: str | None = PASSWORD, account: bool = True, **fields: Any) -> Any:
+    """A user as registration makes one: the username is the (lowercased) email, the name is `first_name`, and an
+    account holds the session key. `account=False` is a user made another way (createsuperuser, the seeders)."""
+    user = get_user_model().objects.create_user(
         username=email, email=email, password=password, first_name=name, **fields
     )
+    if account:
+        UserAccount.objects.create(user=user)
+    return user
 
 
 def reset_link_parts(user: Any) -> tuple[str, str]:

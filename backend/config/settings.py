@@ -141,7 +141,8 @@ if "-pooler" in str(_default_db.get("HOST", "")):
     _default_db["OPTIONS"] = {**(_default_db.get("OPTIONS") or {}), "prepare_threshold": None}
 
 REST_FRAMEWORK: dict[str, Any] = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
+    # SimpleJWT's bearer tokens, refused once their session key is no longer the user's (SEC-05)
+    "DEFAULT_AUTHENTICATION_CLASSES": ("apps.users.services.tokens.SessionKeyJWTAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_THROTTLE_RATES": {
         "auth_login_minute": "5/min",
@@ -170,7 +171,13 @@ if rate_limit_num_proxies is not None:
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    # Each refresh answers a new 30-day refresh token, so a session lasts while it's used (AUTH-TWEAK-03). No
+    # blacklist: the session key ends sessions instead (apps.users.services.tokens)
+    "ROTATE_REFRESH_TOKENS": True,
 }
+
+# Sign-in loads the user's account (its session key) in the user query
+AUTHENTICATION_BACKENDS = ["apps.users.backends.AccountBackend"]
 
 AUTH_PASSWORD_VALIDATORS = [
     {

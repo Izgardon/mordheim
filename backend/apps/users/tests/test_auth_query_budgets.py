@@ -48,24 +48,25 @@ class AuthQueryBudgetTests(AuthTestCase):
             with self.subTest(login=label):
                 self.assert_queries(count, status, self.post, LOGIN, {"email": email, "password": password})
 
-    def test_register_runs_two_statements_and_a_savepoint_pair(self):
-        # AUTH-TEST-01: validate_email's EXISTS, then the INSERT inside a savepoint, so a simultaneous sign-up's
-        # IntegrityError answers 400 (BUG-84; was 2 queries); a taken email stops after the first
+    def test_register_runs_three_statements_and_a_savepoint_pair(self):
+        # AUTH-TEST-01: validate_email's EXISTS, then the user's and the account's INSERTs inside a savepoint, so a
+        # simultaneous sign-up's IntegrityError answers 400 (BUG-84, SEC-05; was 2 queries); a taken email stops after
+        # the first
         self.assert_queries(
-            4, 201, self.post, REGISTER, {"email": "rex@example.com", "password": PASSWORD, "name": "Rex"}
+            5, 201, self.post, REGISTER, {"email": "rex@example.com", "password": PASSWORD, "name": "Rex"}
         )
         self.assert_queries(
             1, 400, self.post, REGISTER, {"email": "pia@example.com", "password": PASSWORD, "name": "Pia"}
         )
 
-    def test_refresh_runs_no_query(self):
-        # Characterises current behaviour (SEC-05, AUTH-TEST-07, pinned; flips in PR A: 1, the user and its account)
+    def test_refresh_runs_one_query(self):
+        # SEC-05, AUTH-TEST-07 (was pinned at 0: it never loaded the user; flipped in PR A: the user and its account)
         refresh = self.sign_in()["refresh"]
 
-        self.assert_queries(0, 200, self.refresh, refresh)
+        self.assert_queries(1, 200, self.refresh, refresh)
 
     def test_me_runs_one_query(self):
-        # AUTH-TEST-08: the JWT user lookup is the whole cost
+        # AUTH-TEST-08: the JWT user lookup, joined to the account for the session key, is the whole cost
         client = self.bearer(self.sign_in()["access"])
 
         self.assert_queries(1, 200, client.get, ME)
@@ -78,11 +79,12 @@ class AuthQueryBudgetTests(AuthTestCase):
         self.assert_queries(3, 200, self.post, RESET, {"email": "pia@example.com"})
         self.assert_queries(1, 200, self.post, RESET, {"email": "nobody@example.com"})
 
-    def test_a_reset_confirm_runs_two_queries_and_a_refused_one_one(self):
+    def test_a_reset_confirm_runs_three_queries_and_a_refused_one_one(self):
         uid, token = reset_link_parts(self.pia)
         body = {"uid": uid, "token": token, "new_password": NEW_PASSWORD}
 
-        self.assert_queries(2, 200, self.post, RESET_CONFIRM, body)  # the user, then the password UPDATE
+        # the user, the new session key (SEC-05; was 2), then the password UPDATE
+        self.assert_queries(3, 200, self.post, RESET_CONFIRM, body)
         self.assert_queries(1, 400, self.post, RESET_CONFIRM, body)  # the link is spent
 
     @override_settings(RESEND_API_KEY="re_test", FEEDBACK_REPORT_TO_EMAIL="bugs@example.com")

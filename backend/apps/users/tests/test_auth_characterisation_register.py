@@ -38,7 +38,7 @@ class RegisterTests(AuthTestCase):
         self.assertEqual((user.email, user.first_name, user.is_active), ("rex@example.com", "Rex", True))
         self.assertTrue(user.check_password(PASSWORD))
         self.assertEqual(self.me(body["access"]).json(), body["user"])
-        self.assertEqual(sorted(self.refresh(body["refresh"]).json()), ["access"])
+        self.assertEqual(sorted(self.refresh(body["refresh"]).json()), ["access", "refresh"])  # rotated (PR A)
 
     def test_a_taken_email_in_any_case_is_refused_and_says_so(self):
         # AUTH-TEST-02; SEC-11: "User already exists" stays (players need to know to sign in), accepted

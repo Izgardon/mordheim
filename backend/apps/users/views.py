@@ -8,7 +8,6 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from apps.core.throttling import (
@@ -30,6 +29,7 @@ from .serializers import (
     UserSerializer,
     password_problems,
 )
+from .services.tokens import SessionTokenRefreshSerializer, end_all_sessions, issue_tokens
 
 
 def _get_user_by_email(email):
@@ -69,15 +69,7 @@ class RegisterView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        refresh = RefreshToken.for_user(user)
-        return Response(
-            {
-                "access": str(refresh.access_token),  # type: ignore[attr-defined]
-                "refresh": str(refresh),
-                "user": UserSerializer(user).data,
-            },
-            status=201,
-        )
+        return Response({**issue_tokens(user), "user": UserSerializer(user).data}, status=201)
 
 
 class LoginView(APIView):
@@ -90,13 +82,12 @@ class LoginView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
         update_last_login(type(user), user)  # reset tokens hash last_login: a sign-in spends old links (BUG-154)
-        refresh = RefreshToken.for_user(user)
-        access = str(refresh.access_token)  # type: ignore[attr-defined]
         # The user beside the pair, as register answers, so the app needn't ask /auth/me (PERF-50)
-        return Response({"refresh": str(refresh), "access": access, "user": UserSerializer(user).data})
+        return Response({**issue_tokens(user), "user": UserSerializer(user).data})
 
 
 class RefreshView(TokenRefreshView):
+    serializer_class = SessionTokenRefreshSerializer  # type: ignore[assignment]
     throttle_classes = REFRESH_THROTTLE_CLASSES
 
 
@@ -144,6 +135,7 @@ class PasswordResetConfirmView(APIView):
         if problems:
             return Response({"new_password": problems}, status=400)
 
+        end_all_sessions(user)  # first: should the password's save fail, the old one still works (SEC-05)
         user.set_password(new_password)
         user.save(update_fields=["password"])
         return Response({"detail": "Password has been reset."})
