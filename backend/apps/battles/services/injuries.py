@@ -141,7 +141,7 @@ def injury_special(name: str, campaign_id: int) -> Special:
     if own is not None:
         return own
     special = Special.objects.create(campaign_id=campaign_id, name=name, type="Injury")
-    catalogue_cache.bump(campaign_id)  # the campaign's specials list shows it (PERF-13)
+    catalogue_cache.bump(campaign_id, "specials")  # its specials list shows it (PERF-13, BUG-80)
     return special
 
 

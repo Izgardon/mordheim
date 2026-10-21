@@ -107,7 +107,7 @@ def _retire_clones(campaign_id, clones):
 def _revert_generated_items_for_campaign(campaign_id, effect_key):
     clones = Item.objects.filter(campaign_id=campaign_id, generated_effect_key=effect_key, replaces__isnull=False)
     _retire_clones(campaign_id, list(clones.only("id", "replaces_id")))
-    bump(campaign_id)  # the campaign's cached lists show the clones (PERF-13)
+    bump(campaign_id, "items")  # its cached items list shows the clones (PERF-13), and members refetch it (BUG-80)
 
 
 def _sync_generated_items_for_campaign(campaign_id, *, effect_key, source_items, clone_sync_fn):
@@ -137,7 +137,7 @@ def _sync_generated_items_for_campaign(campaign_id, *, effect_key, source_items,
     )
     _retire_clones(campaign_id, list(stale_clones.only("id", "replaces_id")))
     remap.remap(kinds.ITEMS, campaign_id, {source_id: clone.id for source_id, clone in clone_map.items()})
-    bump(campaign_id)  # the campaign's cached lists show the clones (PERF-13)
+    bump(campaign_id, "items")  # its cached items list shows the clones (PERF-13), and members refetch it (BUG-80)
     return skipped
 
 

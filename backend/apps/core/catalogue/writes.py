@@ -20,13 +20,17 @@ if TYPE_CHECKING:
 
 @contextmanager
 def catalogue_write(
-    kind: "CatalogueKindSpec", campaign_id: int, name: str | None = None, allowed: Iterable[Any] = ()
+    kind: "CatalogueKindSpec",
+    campaign_id: int,
+    name: str | None = None,
+    allowed: Iterable[Any] = (),
+    socket_id: str | None = None,
 ) -> Iterator[None]:
     """A create, an edit or a revert of one of the campaign's entries (`name`: the name it writes, `allowed`: the
-    entry ids that may hold it)."""
+    entry ids that may hold it; `socket_id`: the writer's, which its `catalogue.changed` skips)."""
     if not kind.named:  # one INSERT (an item property): nothing to refuse, and nothing to wrap
         yield
-        bump(campaign_id)  # after the INSERT's commit: a list read in between caches the new row under the old version
+        bump(campaign_id, *kind.changed_lists, socket_id=socket_id)  # after the INSERT's commit (see cache.py)
         return
 
     def taken() -> NoReturn:
@@ -35,4 +39,4 @@ def catalogue_write(
 
     with refusing_duplicates(taken):
         yield
-        bump(campaign_id)
+        bump(campaign_id, *kind.changed_lists, socket_id=socket_id)

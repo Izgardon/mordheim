@@ -98,10 +98,15 @@ class CatalogueKindSpec:
     reread: bool = False  # a write's answer is read again with the detail's prefetch (its links)
     entry_via: str = ""  # the relation from a row to the entry it is (a hired sword's profile: "bestiary_entry")
     table_key: str = ""  # the kind owning the entry's table (removals, reverted versions); default: `key`
+    lists: tuple[str, ...] = ()  # the lists a write changes (`catalogue.changed` kinds); default: `(key,)`
     children: tuple[str, ...] = ()  # rows an entry carries (CASCADE), parents first; what a version copies
     holders: tuple[Holder, ...] = ()
     followers: tuple[Move, ...] = ()
     hooks: CatalogueHooks = field(default_factory=CatalogueHooks)
+
+    @property
+    def changed_lists(self) -> tuple[str, ...]:
+        return self.lists or (self.key,)
 
     @property
     def entry_key(self) -> str:
@@ -253,10 +258,11 @@ BESTIARY = CatalogueKindSpec(
     row_serializer=BestiaryEntryRowSerializer,
     entry_serializer=BestiaryEntryDetailRowSerializer,
     write_serializer=BestiaryEntryWriteSerializer,
-    named=True,
+    named=True,  # with the hired swords: they share the names
     versioned=True,
     filters=NAME_AND_TYPE,
     reread=True,
+    lists=("bestiary", "hired_swords"),  # an entry may be a hired sword's
     children=(
         "bestiary_entry_skills",
         "bestiary_entry_specials",
@@ -291,6 +297,7 @@ HIRED_SWORDS = CatalogueKindSpec(
     order=("bestiary_entry__name",),
     reread=True,
     entry_via="bestiary_entry",  # a hired sword's version, archive and removal are its entry's (with its profile)
+    lists=("hired_swords", "bestiary"),  # its entry is in the bestiary list too
     table_key="bestiary",
     hooks=HiredSwordHooks(),
 )

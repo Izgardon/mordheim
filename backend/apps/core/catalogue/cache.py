@@ -25,15 +25,20 @@ from rest_framework.response import Response
 
 from apps.campaigns.models import CampaignSettings
 from apps.core.models import BOOK, CatalogueVersion
+from apps.realtime.services import send_catalogue_changed
 
 CACHE = "catalogue"
 
 
-def bump(campaign_id: int | None) -> None:
-    """What the campaign's lists show changed: they are stale from the caller's commit on (one query). None: the
-    book changed, which every list shows, so the book's version and every campaign's move (two queries)."""
+def bump(campaign_id: int | None, *kinds: str, socket_id: str | None = None) -> None:
+    """What the campaign's lists of `kinds` show changed: they are stale from the caller's commit on (one query), and
+    each kind's `catalogue.changed` goes to the campaign's members after it (BUG-80; not to `socket_id`, the writer's).
+    None: the book changed, which every list shows, so the book's version and every campaign's move (two queries);
+    no event goes per campaign, the pages read the book again after their stale time."""
     if campaign_id is not None:
         CampaignSettings.objects.filter(campaign_id=campaign_id).update(catalogue_version=uuid.uuid4())
+        for kind in kinds:
+            send_catalogue_changed(campaign_id, kind, socket_id)
         return
     CatalogueVersion.objects.bulk_create(
         [CatalogueVersion(id=BOOK, version=uuid.uuid4())],

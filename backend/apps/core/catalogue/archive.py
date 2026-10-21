@@ -27,7 +27,9 @@ if TYPE_CHECKING:
 USE_REVERT = "This entry is the campaign's version of a book entry: revert it instead of deleting it."
 
 
-def delete_entry(kind: "CatalogueKindSpec", row: Any, campaign_id: int, user: Any) -> dict[str, Any] | None:
+def delete_entry(
+    kind: "CatalogueKindSpec", row: Any, campaign_id: int, user: Any, socket_id: str | None = None
+) -> dict[str, Any] | None:
     """Delete, archive or remove the entry for the campaign; the answer's body, None when it was deleted."""
     entry, owner = entry_of(kind, row), entry_kind(kind)
     if entry.campaign_id is not None and entry.replaces_id is not None:
@@ -45,7 +47,7 @@ def delete_entry(kind: "CatalogueKindSpec", row: Any, campaign_id: int, user: An
                 archived_at=timezone.now(), archived_by=user
             )
             outcome = "archived"
-        bump(campaign_id)
+        bump(campaign_id, *kind.changed_lists, socket_id=socket_id)
     if outcome == "deleted":
         return None
     return {"outcome": outcome, "usage": count_usage(owner, entry.pk, campaign_id)}
@@ -61,7 +63,7 @@ def _deleted(kind: "CatalogueKindSpec", row: Any) -> bool:
     return True
 
 
-def restore(kind: "CatalogueKindSpec", row: Any, campaign_id: int) -> None:
+def restore(kind: "CatalogueKindSpec", row: Any, campaign_id: int, socket_id: str | None = None) -> None:
     """Bring back an archived entry, or a book entry removed for the campaign (nothing to do otherwise)."""
     entry, owner = entry_of(kind, row), entry_kind(kind)
     with transaction.atomic():
@@ -70,4 +72,4 @@ def restore(kind: "CatalogueKindSpec", row: Any, campaign_id: int) -> None:
         else:
             owner.model._default_manager.filter(pk=entry.pk).update(archived_at=None, archived_by=None)
             entry.archived_at, entry.archived_by_id = None, None
-        bump(campaign_id)
+        bump(campaign_id, *kind.changed_lists, socket_id=socket_id)

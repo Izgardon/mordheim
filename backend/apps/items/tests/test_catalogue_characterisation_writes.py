@@ -1,16 +1,12 @@
-"""What catalogue writes store and accept (pass 5; BUG-53, BUG-145, BUG-146, BUG-147, SEC-06, SEC-07, BUG-80).
+"""What catalogue writes store and accept (pass 5; BUG-53, BUG-145, BUG-146, BUG-147, SEC-06, SEC-07).
 
 Item writes take availabilities as nested input and property ids; bestiary and hired-sword writes take skill,
 special, spell, item and restriction ids. Since PR A every id must be the book's or the writer's campaign's (SEC-07's
 catalogue half, CAT-TEST-16): another campaign's id is refused like an unknown one. Writes that fail part-way are
-in `test_catalogue_transactions.py`.
+in `test_catalogue_transactions.py`; what they tell the other members (BUG-80), in `test_catalogue_events.py`.
 """
 
-from typing import Any
-from unittest import mock
-
 from django.db import IntegrityError, transaction
-from django.test import override_settings
 
 from apps.bestiary.models import BestiaryEntry, HiredSwordProfile, WarbandBestiaryFavourite
 from apps.items.models import Item, ItemAvailability, ItemProperty
@@ -20,7 +16,7 @@ from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
 
-from .catalogue_support import BESTIARY, HIRED_SWORDS, ITEMS, KINDS, RACES, CatalogueTestCase, make_entry
+from .catalogue_support import BESTIARY, HIRED_SWORDS, ITEMS, RACES, CatalogueTestCase, make_entry
 
 
 class ItemWriteTests(CatalogueTestCase):
@@ -326,27 +322,3 @@ class BestiaryWriteTests(CatalogueTestCase):
         self.assertEqual(self.delete_as(self.owner, HIRED_SWORDS.detail_url(profile.id)).status_code, 204)
 
         self.assertFalse(BestiaryEntry.objects.filter(id=profile.bestiary_entry_id).exists())
-
-
-@override_settings(EXTERNAL_DISPATCH_SYNC=True)
-class CatalogueRealtimeTests(CatalogueTestCase):
-    def test_catalogue_writes_tell_no_other_member(self):
-        # Characterises current behaviour (BUG-80, pinned; flips in PR C: catalogue.changed on the events channel)
-        pusher = mock.Mock()
-        patcher = mock.patch("apps.realtime.services.get_pusher_client", return_value=pusher)
-        patcher.start()
-        self.addCleanup(patcher.stop)
-
-        def send(method: str, url: str, body: dict[str, Any] | None = None) -> Any:
-            self.client.force_authenticate(user=self.owner)
-            with self.captureOnCommitCallbacks(execute=True):
-                return getattr(self.client, method)(url, body or {}, format="json")
-
-        for kind in KINDS:
-            with self.subTest(kind=kind.key):
-                created = send("post", kind.list_url(), kind.body(f"Live {kind.key}", self.campaign))
-                url = kind.detail_url(created.data["id"])
-                statuses = [created.status_code, send("patch", url, {"name": "Changed"}).status_code]
-                statuses.append(send("delete", url).status_code)
-                self.assertEqual(statuses, [201, 200, 204])
-        self.assertEqual(pusher.trigger.call_args_list, [])

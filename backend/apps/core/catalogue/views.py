@@ -24,6 +24,7 @@ from rest_framework.serializers import BaseSerializer
 
 from apps.campaigns.permissions import parse_campaign_id
 from apps.campaigns.views.base import CampaignScopedView
+from apps.realtime.services import sender_socket_id
 
 from . import archive, cache, names, versions
 from .hooks import CampaignRequired
@@ -57,6 +58,10 @@ class CatalogueScopedView(CampaignScopedView):
         """The kind's write serializer, its linked ids scoped to the campaign (SEC-07)."""
         assert self.kind.write_serializer is not None, f"{self.kind.key} is read-only"
         return self.kind.write_serializer(*args, context={"campaign_id": self.campaign_id}, **kwargs)
+
+    def socket_id(self) -> str | None:
+        """The writer's Pusher socket, which the write's `catalogue.changed` skips: it has the answer (BUG-80)."""
+        return sender_socket_id(self.request)
 
     def stamp(self, serializer: BaseSerializer[Any]) -> None:
         """Who writes the entry, and when, saved with it for the badges' tooltip (CAT-NEW-03)."""
@@ -117,7 +122,7 @@ class CatalogueCollectionView(CatalogueScopedView):
         if self.kind.named and name is not None:
             names.check_create(self.kind, self.campaign_id, name)  # 400 name_taken with the matches (CAT-TWEAK-02)
         self.stamp(serializer)
-        with catalogue_write(self.kind, self.campaign_id, name):
+        with catalogue_write(self.kind, self.campaign_id, name, socket_id=self.socket_id()):
             entry = self.kind.hooks.create(serializer, self.campaign_id)
         return Response(self.answer(entry), status=status.HTTP_201_CREATED)
 
@@ -181,7 +186,8 @@ class CatalogueEntryView(CatalogueScopedView):
         name, shown = serializer.validated_data.get("name"), versions.entry_of(kind, self.entry)
         names.check_edit(kind, shown, self.campaign_id, name)  # its own name, or its book entry's, stays allowed
         self.stamp(serializer)
-        with catalogue_write(kind, self.campaign_id, name, allowed=[shown.pk, shown.replaces_id or shown.pk]):
+        allowed = [shown.pk, shown.replaces_id or shown.pk]
+        with catalogue_write(kind, self.campaign_id, name, allowed, self.socket_id()):
             entry = versions.editable(kind, self.entry, self.campaign_id)
             serializer.instance = kind.hooks.write_instance(entry)
             kind.hooks.update(entry, serializer)
@@ -191,7 +197,7 @@ class CatalogueEntryView(CatalogueScopedView):
         """A custom entry is deleted, or archived while something holds it; a book entry is removed for the campaign;
         a version is refused (409 use_revert): CAT-TWEAK-04, CAT-NEW-05."""
         assert self.campaign_id is not None
-        body = archive.delete_entry(self.kind, self.entry, self.campaign_id, self.request.user)
+        body = archive.delete_entry(self.kind, self.entry, self.campaign_id, self.request.user, self.socket_id())
         return Response(status=status.HTTP_204_NO_CONTENT) if body is None else Response(body)
 
 
@@ -217,7 +223,7 @@ class CatalogueRevertView(CatalogueEntryView):
 
     def post(self, request: Request, **kwargs: Any) -> Response:
         assert self.campaign_id is not None
-        with catalogue_write(self.kind, self.campaign_id):
+        with catalogue_write(self.kind, self.campaign_id, socket_id=self.socket_id()):
             book = versions.revert(self.kind, self.entry, self.campaign_id)
         return Response(self.answer(book))
 
@@ -232,7 +238,7 @@ class CatalogueRestoreView(CatalogueEntryView):
 
     def post(self, request: Request, **kwargs: Any) -> Response:
         assert self.campaign_id is not None
-        archive.restore(self.kind, self.entry, self.campaign_id)
+        archive.restore(self.kind, self.entry, self.campaign_id, self.socket_id())
         return Response(self.answer(self.entry))
 
 
