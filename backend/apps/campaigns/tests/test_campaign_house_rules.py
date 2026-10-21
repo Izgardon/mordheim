@@ -57,11 +57,13 @@ class HouseRuleItemTests(CampaignTestCase):
 
         deleted = self.delete_as(self.owner, f"/api/items/{clone.id}/")
         reverted = self.post_as(self.owner, f"/api/items/{clone.id}/revert/")
+        by_book_id = self.post_as(self.owner, f"/api/items/{armour.id}/revert/", {"campaign_id": self.campaign.id})
         edited = self.patch_as(self.owner, f"/api/items/{clone.id}/", {"name": "Cheap plate"})
         sync_half_price_armour_for_campaign(self.campaign.id)  # a reseed's resync
 
         self.assertEqual((deleted.status_code, deleted.data), (403, refusal))
         self.assertEqual((reverted.status_code, reverted.data), (403, refusal))
+        self.assertEqual((by_book_id.status_code, by_book_id.data), (403, refusal))
         self.assertEqual((edited.status_code, edited.data["id"], edited.data["generated_effect_key"]), (200, clone.id, None))  # fmt: skip
         self.assertEqual(list(Item.objects.filter(replaces=armour).values_list("id", "name")), [(clone.id, "Cheap plate")])  # fmt: skip
         self.assertEqual(self.owned(owned), (clone.id, 25))

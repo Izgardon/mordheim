@@ -55,11 +55,18 @@ class CatalogueEntryField(serializers.PrimaryKeyRelatedField):
     """One entry's id (an item's animal, `bestiary_entry_id`; a unit's race), read as the campaign's current entry for
     it in the field's one query."""
 
+    def campaign_id(self) -> int:
+        """The writer's campaign: the serializer's context, else its own (a unit's update reads its warband's)."""
+        campaign_id: Any = self.context.get("campaign_id")
+        if campaign_id is None and hasattr(self.parent, "_campaign_id"):
+            campaign_id = self.parent._campaign_id()
+        return int(campaign_id)
+
     def to_internal_value(self, data: Any) -> Any:
         pk = as_id(data)
         if isinstance(data, bool) or not isinstance(pk, int):
             self.fail("incorrect_type", data_type=type(data).__name__)
-        entry = current_rows(self.get_queryset(), [pk], self.context["campaign_id"]).get(pk)
+        entry = current_rows(self.get_queryset(), [pk], self.campaign_id()).get(pk)
         if entry is None:
             self.fail("does_not_exist", pk_value=data)
         return entry

@@ -24,7 +24,7 @@ from .versions import entry_of
 if TYPE_CHECKING:
     from .kinds import CatalogueKindSpec
 
-USE_REVERT = "This entry is the campaign's version of a book entry: revert it instead of deleting it."
+USE_REVERT = "This entry is (or has) the campaign's version of a book entry: revert it instead of deleting it."
 
 
 def delete_entry(
@@ -32,7 +32,10 @@ def delete_entry(
 ) -> dict[str, Any] | None:
     """Delete, archive or remove the entry for the campaign; the answer's body, None when it was deleted."""
     entry, owner = entry_of(kind, row), entry_kind(kind)
-    if entry.campaign_id is not None and entry.replaces_id is not None:
+    is_version = entry.campaign_id is not None and entry.replaces_id is not None
+    manager = owner.model._default_manager
+    has_version = entry.campaign_id is None and manager.filter(campaign_id=campaign_id, replaces=entry).exists()
+    if is_version or has_version:  # the list shows the version: Revert is the way back to the book
         raise ApiError(USE_REVERT, code="use_revert", status=409)
     with transaction.atomic():
         if entry.campaign_id is None:

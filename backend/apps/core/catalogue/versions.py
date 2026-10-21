@@ -68,7 +68,7 @@ def revert(kind: CatalogueKindSpec, row: Any, campaign_id: int) -> Any:
         entry = manager.filter(campaign_id=campaign_id, replaces=entry).first() or entry
     if entry.replaces_id is None:
         raise ApiError(NOT_A_VERSION, code="not_a_version", status=409)
-    owner.hooks.refuse_write(entry)
+    owner.hooks.refuse_write(entry, "revert")  # a house rule's clone goes with its rule, not by a Revert
     version = manager.select_for_update().filter(pk=entry.pk).first()
     if version is not None:
         retire(owner, campaign_id, [version])

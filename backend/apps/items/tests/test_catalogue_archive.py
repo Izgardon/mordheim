@@ -64,9 +64,12 @@ class CustomArchiveTests(ArchiveTestCase):
         version = self.patch_as(self.player, SKILLS.detail_url(self.infiltration[0].id), {"campaign_id": self.campaign.id, "description": "Hides."})  # fmt: skip
 
         refused = self.delete_as(self.owner, SKILLS.detail_url(version.data["id"]))
+        by_book_id = self.book_delete(SKILLS, self.infiltration[0].id)  # a list read before the edit
 
         self.assertEqual((refused.status_code, refused.json()["code"]), (409, "use_revert"))
+        self.assertEqual((by_book_id.status_code, by_book_id.json()["code"]), (409, "use_revert"))
         self.assertTrue(Skill.objects.filter(id=version.data["id"]).exists())
+        self.assertFalse(CatalogueRemoval.objects.exists())
 
     def test_archived_ids_stay_valid_in_a_full_list_patch_and_buying_one_warns(self):
         ambush = make_entry(SKILLS, "Ambush", campaign=self.campaign, archived_at=timezone.now())
