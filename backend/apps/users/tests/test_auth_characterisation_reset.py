@@ -1,11 +1,11 @@
-"""Password reset today (pass 6; AUTH-TEST-09 to -12, BUG-56, BUG-83, SEC-12, AUTH-CQ-04 b).
+"""Password reset (pass 6; AUTH-TEST-09 to -12, BUG-56, BUG-83, BUG-154, SEC-12, AUTH-CQ-04 b).
 
 `POST auth/password-reset/` looks for an active user by email or username in any case, builds
-`{FRONTEND_URL}/reset-password?uid=…&token=…` and queues the email after commit; it answers the same "sent" message
-whatever happened. Without RESEND_API_KEY it answers 503 `email_unavailable` for every address (PR A, BUG-56). `POST auth/password-reset-confirm/` checks Django's token (valid for PASSWORD_RESET_TIMEOUT, spent
-once the password changes) and sets the new password. PR A answers 503 `email_unavailable` while Resend isn't
-configured (BUG-56), moves the link into the fragment (SEC-12), catches bad uids (BUG-83) and validates the new
-password against the user (AUTH-CQ-04 b).
+`{FRONTEND_URL}/reset-password#uid=…&token=…` and queues the email after commit; it answers the same "sent" message
+whatever happened, and 503 `email_unavailable` for every address while Resend isn't configured. `POST
+auth/password-reset-confirm/` checks Django's token (valid for PASSWORD_RESET_TIMEOUT, spent once the password changes
+or the user signs in), validates the new password against the user, sets it and ends every session. PR A made the
+503, the fragment, the bad-uid 400s, the validation against the user and the spent-by-sign-in rule.
 """
 
 from datetime import datetime, timedelta
@@ -45,17 +45,17 @@ class ResetRequestTests(AuthTestCase):
         send.assert_called_once()
         to, url = send.call_args.args
         self.assertEqual(to, "pia@example.com")
-        self.assertTrue(url.startswith(f"{settings.FRONTEND_URL.rstrip('/')}/reset-password?uid="), url)
+        self.assertTrue(url.startswith(f"{settings.FRONTEND_URL.rstrip('/')}/reset-password#uid="), url)
 
     @override_settings(FRONTEND_URL="https://mordheim.example.com/")
     @mock.patch(SEND, return_value=True)
-    def test_the_link_carries_uid_and_token_in_the_query_string(self, send):
-        # Characterises current behaviour (SEC-12, pinned; flips in PR A: `/reset-password#uid=…&token=…`)
+    def test_the_link_carries_uid_and_token_in_the_fragment(self, send):
+        # SEC-12 (was pinned: in the query string, so in browser history and Vercel's access log; flipped in PR A)
         self.post(RESET, {"email": "pia@example.com"})
 
         link = urlsplit(send.call_args.args[1])
-        self.assertEqual((link.scheme, link.netloc, link.path, link.fragment), ("https", "mordheim.example.com", "/reset-password", ""))  # fmt: skip
-        query = parse_qs(link.query)
+        self.assertEqual((link.scheme, link.netloc, link.path, link.query), ("https", "mordheim.example.com", "/reset-password", ""))  # fmt: skip
+        query = parse_qs(link.fragment)
         self.assertEqual(sorted(query), ["token", "uid"])
         self.assertEqual(force_str(urlsafe_base64_decode(query["uid"][0])), str(self.pia.id))
         self.assertTrue(PasswordResetTokenGenerator().check_token(self.pia, query["token"][0]))
@@ -115,7 +115,7 @@ class ResetRequestTests(AuthTestCase):
             {key: sent["json"][key] for key in ("from", "to", "subject")},
             {"from": "no-reply@example.com", "to": ["pia@example.com"], "subject": "Reset your password"},
         )
-        self.assertIn("https://m.example.com/reset-password?uid=", sent["json"]["text"])
+        self.assertIn("https://m.example.com/reset-password#uid=", sent["json"]["text"])
 
 
 class ResetConfirmTests(AuthTestCase):

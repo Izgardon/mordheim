@@ -60,11 +60,13 @@ def _get_user_from_uid(uid):
 
 
 def _build_reset_url(uid, token):
+    """The link in the reset email. uid and token ride in the fragment, which browsers never send to a server, so
+    they stay out of access logs; the page strips it once read (SEC-12)."""
     from django.conf import settings
 
     base = settings.FRONTEND_URL.rstrip("/")
     reset_path = "/reset-password"
-    return f"{base}{reset_path}?uid={uid}&token={token}"
+    return f"{base}{reset_path}#uid={uid}&token={token}"
 
 
 class RegisterView(generics.CreateAPIView):
