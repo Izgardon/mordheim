@@ -37,7 +37,19 @@ READ_SETTINGS = NO_DOTENV + (
     "values = {name: getattr(s, name, None) for name in names}\n"
     "values['SECRET_KEY_LENGTH'] = len(s.SECRET_KEY)\n"
     "values['NUM_PROXIES'] = s.REST_FRAMEWORK.get('NUM_PROXIES', 'absent')\n"
+    "values['RENDERERS'] = s.REST_FRAMEWORK.get('DEFAULT_RENDERER_CLASSES', 'default')\n"
     "print(json.dumps(values))\n"
+)
+BROWSER_GET_HEALTH = NO_DOTENV + (
+    "import os\n"
+    "os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')\n"
+    "import django\n"
+    "django.setup()\n"
+    "from django.test import Client\n"
+    "accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'\n"
+    "response = Client(SERVER_NAME='localhost').get('/api/health/', HTTP_ACCEPT=accept)\n"
+    "print(response.status_code, response['Content-Type'])\n"
+    "print(response.content.decode().splitlines()[0])\n"
 )
 CHECK_DEPLOY = NO_DOTENV + (
     "import os\n"
@@ -83,6 +95,21 @@ class ProductionStartupTests(SimpleTestCase):
         self.assertEqual(email, {"FRONTEND_URL": "http://localhost:5173", "DEFAULT_FROM_EMAIL": "no-reply@example.com", "RESEND_API_KEY": "", "PASSWORD_RESET_TIMEOUT": 3600})  # fmt: skip
         hardening = [values[name] for name in ("SECURE_PROXY_SSL_HEADER", "SECURE_HSTS_SECONDS", "SESSION_COOKIE_SECURE", "CSRF_COOKIE_SECURE")]  # fmt: skip
         self.assertEqual(hardening, [["HTTP_X_FORWARDED_PROTO", "https"], 60 * 60 * 24 * 30, True, True])
+
+    def test_production_renders_json_only_and_dev_keeps_the_browsable_api(self):
+        # INFRA-CQ-03 (was pinned in test_core_characterisation: the browsable API served to a browser; flipped in
+        # PR A for production)
+        production = load_settings(DJANGO_DEBUG="0", DJANGO_SECRET_KEY=LONG_KEY)
+        dev = load_settings(DJANGO_DEBUG="1", DJANGO_SECRET_KEY="")
+
+        self.assertEqual((production["RENDERERS"], dev["RENDERERS"]), (["rest_framework.renderers.JSONRenderer"], "default"))  # fmt: skip
+        answers = {
+            debug: run(BROWSER_GET_HEALTH, DJANGO_DEBUG=debug, DJANGO_SECRET_KEY=LONG_KEY) for debug in ("0", "1")
+        }
+        for result in answers.values():
+            self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(answers["0"].stdout.splitlines(), ["200 application/json", '{"status":"ok"}'])
+        self.assertEqual(answers["1"].stdout.splitlines()[0], "200 text/html; charset=utf-8")
 
     def test_dev_leaves_the_https_hardening_off(self):
         values = load_settings(DJANGO_DEBUG="1", DJANGO_SECRET_KEY="")

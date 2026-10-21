@@ -168,6 +168,10 @@ REST_FRAMEWORK: dict[str, Any] = {
     },
 }
 
+# Production answers JSON only: the browsable API stays a local convenience (INFRA-CQ-03)
+if not DEBUG:
+    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = ("rest_framework.renderers.JSONRenderer",)
+
 # The throttles' client address: RATE_LIMIT_NUM_PROXIES, else 1 (Render's proxy) with DEBUG off (config/proxies.py)
 rate_limit_num_proxies = num_proxies(os.environ, DEBUG)
 if rate_limit_num_proxies is not None:

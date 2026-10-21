@@ -7,8 +7,6 @@ empty 304 after the view has run; `ApiRevalidateMiddleware` marks API GETs `priv
 `test_revalidation.py` keeps the catalogue list's 304 tests.
 """
 
-import re
-
 from django.db import connection
 from django.test import override_settings
 from django.test.utils import CaptureQueriesContext
@@ -111,9 +109,6 @@ class SecurityHeaderTests(AuthTestCase):
 
         self.assertEqual(response["Strict-Transport-Security"], "max-age=2592000")
 
-    def test_the_browsable_api_is_served_to_a_browser(self):
-        # Characterises current behaviour (INFRA-CQ-03, pinned; flips in PR A: production renders JSON only)
-        response = self.client.get(HEALTH, HTTP_ACCEPT="text/html")
-
-        self.assertEqual(response["Content-Type"], "text/html; charset=utf-8")
-        self.assertTrue(re.search(rb"<title>.*Django REST framework", response.content, re.S))
+    # INFRA-CQ-03's pin (the browsable API served to a browser) flipped in PR A: production renders JSON only. Views
+    # take their renderers when they're imported, and the suite runs with DEBUG on locally and off in CI, so
+    # test_settings_characterisation checks it in a fresh process, DEBUG on and off
