@@ -12,6 +12,7 @@ NAME_MAX_LENGTH = 40  # a display name (decision 2)
 EMAIL_MAX_LENGTH = 150  # the email is also the username, a varchar(150) (BUG-84)
 EMAIL_TAKEN = "User already exists"
 CURRENT_PASSWORD_WRONG = "That isn't your current password."
+CONTEXT_NAME_MAX_LENGTH = 120  # Campaign.name and Warband.name
 
 
 def password_problems(password: str, user: Any) -> list[str]:
@@ -122,13 +123,27 @@ class PasswordChangeSerializer(serializers.Serializer):
         return attrs
 
 
+def one_line(value: str) -> str:
+    """`value` with every run of whitespace, newlines included, as one space, so it fills one line of the email."""
+    return " ".join(value.split())
+
+
 class FeedbackReportSerializer(serializers.Serializer):
+    """The report, with the campaign and warband it was sent from: ids of 1 or more, and names no longer than a
+    campaign's or a warband's (120), kept to one line (BUG-156)."""
+
     report_type = serializers.ChoiceField(choices=["Bug", "Feedback"])
     message = serializers.CharField(max_length=2000, allow_blank=True)
-    campaign_id = serializers.IntegerField(required=False)
-    campaign_name = serializers.CharField(required=False, allow_blank=True)
-    warband_id = serializers.IntegerField(required=False)
-    warband_name = serializers.CharField(required=False, allow_blank=True)
+    campaign_id = serializers.IntegerField(required=False, min_value=1)
+    campaign_name = serializers.CharField(required=False, allow_blank=True, max_length=CONTEXT_NAME_MAX_LENGTH)
+    warband_id = serializers.IntegerField(required=False, min_value=1)
+    warband_name = serializers.CharField(required=False, allow_blank=True, max_length=CONTEXT_NAME_MAX_LENGTH)
+
+    def validate_campaign_name(self, value):
+        return one_line(value)
+
+    def validate_warband_name(self, value):
+        return one_line(value)
 
     def validate_message(self, value):
         message = value.strip()

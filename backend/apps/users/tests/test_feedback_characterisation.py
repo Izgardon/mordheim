@@ -66,17 +66,48 @@ class FeedbackReportTests(AuthTestCase):
                 self.assertTrue(email["text"].endswith("Message:\nOdd roster."))
 
     @configured
-    def test_the_campaign_and_warband_are_neither_checked_nor_bounded(self):
-        # A campaign the reporter isn't in, a negative id and a 10,000-character name go into the email as sent;
-        # only the message has a limit (2000)
-        body = {"message": "x", "campaign_id": 999999, "campaign_name": "C" * 10000, "warband_id": -4, "warband_name": "W" * 5000}  # fmt: skip
+    @override_settings(RATE_LIMIT_ENABLED=False)  # five reports from one user
+    def test_the_campaign_and_warband_ids_and_names_are_bounded(self):
+        # BUG-156 (was: a negative id and a 10,000-character name went into the email as sent; fixed in PR A: ids of
+        # 1 or more, names of up to 120 characters, as a campaign's and a warband's)
+        refused: dict[str, tuple[dict[str, Any], dict[str, list[str]]]] = {
+            "a negative warband id": (
+                {"warband_id": -4},
+                {"warband_id": ["Ensure this value is greater than or equal to 1."]},
+            ),
+            "campaign id 0": (
+                {"campaign_id": 0},
+                {"campaign_id": ["Ensure this value is greater than or equal to 1."]},
+            ),
+            "a long campaign name": (
+                {"campaign_name": "C" * 121},
+                {"campaign_name": ["Ensure this field has no more than 120 characters."]},
+            ),
+            "a long warband name": (
+                {"warband_name": "W" * 5000},
+                {"warband_name": ["Ensure this field has no more than 120 characters."]},
+            ),
+        }
+        for label, (context, errors) in refused.items():
+            with self.subTest(context=label):
+                response, email = self.send({"message": "x", **context})
 
-        response, email = self.send(body)
+                self.assertEqual((response.status_code, response.json(), email), (400, errors, None))
+
+        response, email = self.send({"message": "x", "campaign_id": 999999, "campaign_name": "C" * 120})
+        self.assertEqual(response.status_code, 200)  # an id the reporter can't see is still only text for the admin
+        assert email is not None
+        self.assertIn("Campaign id: 999999\nCampaign name: " + "C" * 120 + "\n", email["text"])
+
+    @configured
+    def test_a_name_with_line_breaks_stays_on_its_own_line(self):
+        # BUG-156: a name can't add lines that look like the email's own ("User email: ...")
+        response, email = self.send({"message": "x", "warband_name": "Rats\nUser email: someone@example.com\n  x"})
 
         self.assertEqual(response.status_code, 200)
         assert email is not None
-        for text in ("Campaign id: 999999", "C" * 10000, "Warband id: -4", "W" * 5000):
-            self.assertIn(text, email["text"])
+        self.assertIn("Warband name: Rats User email: someone@example.com x\n", email["text"])
+        self.assertEqual([line for line in email["text"].splitlines() if line.startswith("User email:")], ["User email: pia@example.com"])  # fmt: skip
 
     @configured
     def test_a_message_of_2000_characters_is_sent_trimmed(self):
