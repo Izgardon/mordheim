@@ -16,7 +16,8 @@ import { fakeApi } from "@/test/fake-api";
 import { createQueryWrapper } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
 import { getRefreshToken, getToken } from "@/utils/storage";
-import { AuthProvider, PROFILE_RETRY_DELAYS_MS, useAuthContext } from "./auth-store";
+import { PROFILE_RETRY_DELAYS_MS } from "../utils/fetch-profile";
+import { AuthProvider, useAuthContext } from "./auth-store";
 
 vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
@@ -146,10 +147,51 @@ function renderReload() {
   );
 }
 
+const cachedUser = () => JSON.parse(localStorage.getItem("mordheim_user") ?? "null") as unknown;
+
 describe("a reload (AUTH-TEST-23)", () => {
-  it("shows LoadingScreen and sends nothing else until /auth/me answers (PERF-50, AUTH-TEST-23, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (PERF-50, pinned; flips in PR A)
+  it("renders at once from the cached user, reads /auth/me beside the page's own reads, and caches its answer (PERF-50, AUTH-TEST-23)", async () => {
     storeSession();
+    const me = deferred<typeof RAIDER>();
+    fakeApi.on("GET /auth/me/", () => me.promise);
+    fakeApi.on("GET /campaigns/", []);
+    renderReload();
+
+    expect(screen.queryByRole("status")).toBeNull();
+    expect(await screen.findByText("Campaigns page (0)")).toBeInTheDocument();
+    expect([...fakeApi.calls()].sort()).toEqual(["GET /auth/me/", "GET /campaigns/"]);
+
+    await act(async () => me.resolve({ ...RAIDER, name: "Raider Prime" }));
+
+    expect(cachedUser()).toEqual({ ...RAIDER, name: "Raider Prime" });
+    expect(fakeApi.countOf("GET /auth/me/")).toBe(1);
+  });
+
+  it("keeps the cached user through an outage: one /auth/me read, no error screen, the session kept (PERF-50)", async () => {
+    const tokens = storeSession();
+    fakeApi.fail("GET /auth/me/", new ApiError("Service Unavailable", 503, null));
+    fakeApi.on("GET /campaigns/", []);
+    renderReload();
+
+    expect(await screen.findByText("Campaigns page (0)")).toBeInTheDocument();
+    await waitFor(() => expect(fakeApi.countOf("GET /auth/me/")).toBe(1));
+    expect(screen.queryByRole("alert")).toBeNull();
+    expect(getToken()).toBe(tokens.access);
+    expect(cachedUser()).toEqual(RAIDER);
+  });
+
+  it("signs out when the server refuses the session behind the cached user", async () => {
+    storeSession();
+    fakeApi.fail("GET /auth/me/", new ApiError("User not found", 401, { code: "user_not_found" }));
+    fakeApi.on("GET /campaigns/", []);
+    renderReload();
+
+    expect(await screen.findByText("Landing page")).toBeInTheDocument();
+    expect(localStorage.length).toBe(0);
+  });
+
+  it("waits for /auth/me behind LoadingScreen for a session stored without the user, then caches it (PERF-50)", async () => {
+    storeSession(RAIDER, { cachedUser: false });
     const me = deferred<typeof RAIDER>();
     fakeApi.on("GET /auth/me/", () => me.promise);
     fakeApi.on("GET /campaigns/", []);
@@ -163,6 +205,17 @@ describe("a reload (AUTH-TEST-23)", () => {
 
     expect(await screen.findByText("Campaigns page (0)")).toBeInTheDocument();
     expect(fakeApi.calls()).toEqual(["GET /auth/me/", "GET /campaigns/"]);
+    expect(cachedUser()).toEqual(RAIDER);
+  });
+
+  it("ignores a cached user who isn't the stored token's account, and waits for /auth/me", async () => {
+    storeSession();
+    localStorage.setItem("mordheim_user", JSON.stringify({ id: 3, email: "rival@example.com" }));
+    fakeApi.on("GET /auth/me/", () => new Promise(() => undefined));
+    renderReload();
+
+    expect(screen.getByRole("status")).toHaveTextContent("Loading...");
+    await waitFor(() => expect(fakeApi.calls()).toEqual(["GET /auth/me/"]));
   });
 
   it("reads nothing without a stored session, and the gate sends you to the landing page", async () => {
@@ -173,7 +226,7 @@ describe("a reload (AUTH-TEST-23)", () => {
   });
 });
 
-describe("a reload while the server is down", () => {
+describe("a reload without a cached user while the server is down", () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
   });
@@ -183,7 +236,7 @@ describe("a reload while the server is down", () => {
   });
 
   it("reads /auth/me four times over seven seconds, then offers Retry with the session kept", async () => {
-    const tokens = storeSession();
+    const tokens = storeSession(RAIDER, { cachedUser: false });
     fakeApi.fail("GET /auth/me/", new ApiError("Service Unavailable", 503, null));
     renderReload();
 

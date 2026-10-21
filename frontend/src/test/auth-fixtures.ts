@@ -3,7 +3,7 @@
  * `{id, email, name}`, login answers `{access, refresh}` and register adds the `user`.
  */
 import type { AuthResponse, AuthTokens, AuthUser } from "@/features/auth/types/auth-types";
-import { setRefreshToken, setToken } from "@/utils/storage";
+import { setTokens } from "@/utils/storage";
 
 /** An unsigned JWT-shaped token: the client reads only its payload's `user_id`. */
 export function accessToken(userId: number, nonce = "a") {
@@ -27,11 +27,13 @@ export function registerAnswer(user: AuthUser): AuthResponse {
   return { ...tokensFor(user, "register"), user };
 }
 
-/** Leaves a session in localStorage, as an earlier visit would. */
-export function storeSession(user: AuthUser = RAIDER) {
+/**
+ * Leaves a session in localStorage, as an earlier visit would: the tokens and the user cached
+ * beside them. `cachedUser: false` leaves only the tokens, as sessions stored before PR A have.
+ */
+export function storeSession(user: AuthUser = RAIDER, { cachedUser = true } = {}) {
   const tokens = tokensFor(user, "stored");
-  setToken(tokens.access);
-  setRefreshToken(tokens.refresh);
+  setTokens({ ...tokens, user: cachedUser ? user : undefined });
   return tokens;
 }
 

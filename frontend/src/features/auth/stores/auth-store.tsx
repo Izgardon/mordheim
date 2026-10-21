@@ -1,79 +1,39 @@
 import type { PropsWithChildren } from "react";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 // api
 import { fetchMe, loginAccount, registerAccount } from "../api/auth-api";
 import { isSessionExpiredError, SERVER_UNAVAILABLE_MESSAGE } from "../../../lib/api-client";
 import { disconnectRealtime } from "../../../lib/realtime/client";
+import { AuthContext, type AuthContextValue } from "./auth-context";
 
 // utils
-import { clearToken, getToken, setTokens } from "../../../utils/storage";
-import { getTokenUserId } from "../utils/token-user";
+import { clearToken, getToken, setStoredUser, setTokens } from "../../../utils/storage";
+import { fetchProfileWithRetry } from "../utils/fetch-profile";
+import { cachedUserFor, getTokenUserId } from "../utils/token-user";
 
 // types
-import type {
-  AuthResponse,
-  AuthTokens,
-  AuthUser,
-  LoginCredentials,
-  RegisterPayload,
-} from "../types/auth-types";
+import type { AuthTokens, AuthUser, LoginCredentials, RegisterPayload } from "../types/auth-types";
 
-type AuthContextValue = {
-  token: string | null;
-  user: AuthUser | null;
-  isReady: boolean;
-  isSubmitting: boolean;
-  /** Set when the profile couldn't be loaded because the server was unreachable; the session is kept. */
-  connectionError: string | null;
-  retryConnection: () => void;
-  signIn: (credentials: LoginCredentials) => Promise<AuthTokens>;
-  signUp: (payload: RegisterPayload) => Promise<AuthResponse>;
-  signOut: () => void;
-};
-
-const AuthContext = createContext<AuthContextValue | null>(null);
-
-// Back-off between profile retries while the server is unreachable (e.g. mid-deploy).
-export const PROFILE_RETRY_DELAYS_MS = [1000, 2000, 4000];
-
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-async function fetchProfileWithRetry(accessToken: string) {
-  for (let attempt = 0; ; attempt += 1) {
-    try {
-      return await fetchMe(accessToken);
-    } catch (error) {
-      if (isSessionExpiredError(error) || attempt >= PROFILE_RETRY_DELAYS_MS.length) {
-        throw error;
-      }
-      await wait(PROFILE_RETRY_DELAYS_MS[attempt]);
-    }
-  }
-}
+export { useAuthContext } from "./auth-context";
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const queryClient = useQueryClient();
-  const [token, setTokenState] = useState<string | null>(null);
-  const [user, setUserState] = useState<AuthUser | null>(null);
-  const [isReady, setIsReady] = useState(() => !getToken());
+  // A reload renders at once from the user cached beside the tokens and checks /auth/me behind
+  // it; a session stored without one waits for /auth/me (PERF-50).
+  const [boot] = useState(() => {
+    const storedToken = getToken();
+    return { token: storedToken, user: cachedUserFor(storedToken) };
+  });
+  const [token, setTokenState] = useState(boot.token);
+  const [user, setUserState] = useState(boot.user);
+  const [isReady, setIsReady] = useState(!boot.token || boot.user !== null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   // The latest token and user, for the storage listener: this tab's own writes (sign-in, a
   // refresh) notify at once, before React has re-rendered with the new values (PERF-50).
-  const latest = useRef<{ token: string | null; user: AuthUser | null }>({
-    token: null,
-    user: null,
-  });
+  const latest = useRef({ token: boot.token, user: boot.user });
 
   const setSessionToken = useCallback((nextToken: string | null) => {
     latest.current.token = nextToken;
@@ -93,6 +53,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
       try {
         const loadedProfile = await fetchProfileWithRetry(accessToken);
         setUser(loadedProfile);
+        if (getToken()) {
+          setStoredUser(loadedProfile);
+        }
         setIsReady(true);
       } catch (error) {
         if (isSessionExpiredError(error)) {
@@ -108,6 +71,28 @@ export function AuthProvider({ children }: PropsWithChildren) {
       }
     },
     [setSessionToken, setUser]
+  );
+
+  // The cached user shown at boot, checked behind it: an outage keeps it (the page's own reads
+  // say the server is down), and a refused session ends here.
+  const revalidateUser = useCallback(
+    async (accessToken: string, cached: AuthUser) => {
+      const isStillSignedIn = () => latest.current.user?.id === cached.id;
+      try {
+        const profile = await fetchMe(accessToken);
+        if (isStillSignedIn() && profile.id === cached.id) {
+          setStoredUser(profile);
+          if (JSON.stringify(profile) !== JSON.stringify(latest.current.user)) {
+            setUser(profile);
+          }
+        }
+      } catch (error) {
+        if (isSessionExpiredError(error) && isStillSignedIn()) {
+          clearToken();
+        }
+      }
+    },
+    [setUser]
   );
 
   const retryConnection = useCallback(() => {
@@ -141,6 +126,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
         queryClient.clear();
         disconnectRealtime();
       }
+      const cached = cachedUserFor(resolvedToken);
+      if (cached) {
+        // Signed in in another tab, which cached the user beside the tokens.
+        setUser(cached);
+        setConnectionError(null);
+        setIsReady(true);
+        return;
+      }
       hydrateUser(resolvedToken).catch(() => {});
     } else {
       // Signed out elsewhere, or the session expired: the next user must not see this one's data.
@@ -161,6 +154,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
     };
   }, [syncToken]);
 
+  useEffect(() => {
+    if (boot.token && boot.user) {
+      void revalidateUser(boot.token, boot.user);
+    } else if (boot.token) {
+      hydrateUser(boot.token).catch(() => {});
+    }
+  }, [boot, hydrateUser, revalidateUser]);
+
   // Sign-in and sign-up store the session in one write, which the listener above then skips:
   // the user comes with the answer, so nothing reads /auth/me again (PERF-50).
   const startSession = useCallback(
@@ -169,7 +170,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       setUser(profile);
       setConnectionError(null);
       setIsReady(true);
-      setTokens({ access: tokens.access, refresh: tokens.refresh });
+      setTokens({ access: tokens.access, refresh: tokens.refresh, user: profile });
     },
     [setSessionToken, setUser]
   );
@@ -230,12 +231,4 @@ export function AuthProvider({ children }: PropsWithChildren) {
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuthContext() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within AuthProvider");
-  }
-  return context;
 }

@@ -65,10 +65,28 @@ describe("a cold start signed out", () => {
 });
 
 describe("a cold start signed in", () => {
-  it("sends /auth/me alone until it answers, then the notifications and the campaigns list once each (PERF-50, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (PERF-50, pinned; flips in PR A: render from the cached
-    // user, /auth/me in the background)
+  it("renders from the cached user at once, with /auth/me read in the background beside the notifications and the campaigns list (PERF-50)", async () => {
     storeSession();
+    const me = deferred<typeof RAIDER>();
+    fakeApi.on("GET /auth/me/", () => me.promise);
+    renderApp("/campaigns");
+
+    await screen.findByRole("heading", { name: "Welcome back, Raider" });
+    expect(await settledCalls(3)).toEqual([
+      "GET /auth/me/",
+      "GET /campaigns/",
+      "GET /notifications/",
+    ]);
+    expect(fakeRealtime.channels()).toEqual(["private-user-1-notifications"]);
+
+    await act(async () => me.resolve(RAIDER));
+
+    expect(await settledCalls(3)).toHaveLength(3);
+    expect(fakeRealtime.subscriberCount("private-user-1-notifications")).toBe(1);
+  });
+
+  it("without a cached user, sends /auth/me alone until it answers, then the rest once each", async () => {
+    storeSession(RAIDER, { cachedUser: false });
     const me = deferred<typeof RAIDER>();
     fakeApi.on("GET /auth/me/", () => me.promise);
     renderApp("/campaigns");
@@ -85,7 +103,6 @@ describe("a cold start signed in", () => {
       "GET /notifications/",
     ]);
     expect(fakeApi.calls()[0]).toBe("GET /auth/me/");
-    expect(fakeRealtime.channels()).toEqual(["private-user-1-notifications"]);
   });
 
   it("from / reads the same three, on its way to /campaigns", async () => {

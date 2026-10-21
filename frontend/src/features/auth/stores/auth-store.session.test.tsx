@@ -78,11 +78,11 @@ describe("token storage", () => {
     expect(events.count()).toBe(1);
     expect(localStorage.getItem("mordheim_token")).toBe(tokens.access);
     expect(localStorage.getItem("mordheim_refresh_token")).toBe(tokens.refresh);
-    expect(localStorage.length).toBe(2);
+    expect(JSON.parse(localStorage.getItem("mordheim_user") ?? "null")).toEqual(RAIDER);
+    expect(localStorage.length).toBe(3);
   });
 
-  it("does the same on sign-up (PERF-50), and keeps no copy of the user (PERF-50, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (PERF-50, pinned; flips in PR A: the user is cached too)
+  it("does the same on sign-up, with the user cached beside the tokens (PERF-50)", async () => {
     const answer = registerAnswer(RAIDER);
     fakeApi.on("POST /auth/register/", answer);
     fakeApi.on("GET /auth/me/", RAIDER);
@@ -95,7 +95,12 @@ describe("token storage", () => {
     events.stop();
 
     expect(events.count()).toBe(1);
-    expect(Object.keys(localStorage).sort()).toEqual(["mordheim_refresh_token", "mordheim_token"]);
+    expect(Object.keys(localStorage).sort()).toEqual([
+      "mordheim_refresh_token",
+      "mordheim_token",
+      "mordheim_user",
+    ]);
+    expect(JSON.parse(localStorage.getItem("mordheim_user") ?? "null")).toEqual(RAIDER);
   });
 });
 

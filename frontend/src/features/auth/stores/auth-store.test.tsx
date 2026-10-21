@@ -7,7 +7,8 @@ import ProtectedRoute from "../../../components/ProtectedRoute";
 import { createQueryWrapper } from "../../../test/query-test-utils";
 import { ApiError, SERVER_UNAVAILABLE_MESSAGE } from "../../../lib/api-client";
 import { getRefreshToken, getToken, setRefreshToken, setToken } from "../../../utils/storage";
-import { AuthProvider, PROFILE_RETRY_DELAYS_MS, useAuthContext } from "./auth-store";
+import { PROFILE_RETRY_DELAYS_MS } from "../utils/fetch-profile";
+import { AuthProvider, useAuthContext } from "./auth-store";
 
 const { fetchMe, disconnectRealtime } = vi.hoisted(() => ({
   fetchMe: vi.fn(),
