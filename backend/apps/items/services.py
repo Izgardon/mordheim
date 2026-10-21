@@ -4,6 +4,7 @@ import re
 from django.db import models
 
 from apps.core.catalogue.cache import bump
+from apps.core.models import CatalogueRemoval
 
 from .models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemPropertyLink
 
@@ -12,7 +13,8 @@ IMPROVED_SHIELDS_EFFECT_KEY = "improved_shields"
 
 
 def _prefetched_base_items(subtype):
-    """The base catalogue's armour of this subtype ("Armour" or "Shield") with what a clone copies (IMP-67)."""
+    """The base catalogue's armour of this subtype ("Armour" or "Shield") with what a clone copies (IMP-67), locked:
+    a first edit of one waits, then finds the clone (or the sync waits, then finds the version)."""
     return (
         Item.objects.filter(
             campaign__isnull=True,
@@ -27,6 +29,7 @@ def _prefetched_base_items(subtype):
             ),
         )
         .order_by("id")
+        .select_for_update(of=("self",))
     )
 
 
@@ -113,10 +116,14 @@ def _revert_generated_items_for_campaign(campaign_id, effect_key):
 def _sync_generated_items_for_campaign(campaign_id, *, effect_key, source_items, clone_sync_fn):
     """Clone each book item into the campaign through `clone_sync_fn` (a clone it has already is synced again), retire
     the effect's clones of items no longer in `source_items`, and move the campaign's copies onto the clones. A book
-    item the campaign already has its own version of is left alone; the skipped versions are returned."""
+    item the campaign already has its own version of is left alone (the skipped versions are returned), and so is one
+    it removed from its catalogue."""
     from apps.core.catalogue import kinds, remap
 
-    source_items = list(source_items)
+    removed = set(
+        CatalogueRemoval.objects.filter(campaign_id=campaign_id, kind="items").values_list("entry_id", flat=True)
+    )
+    source_items = [item for item in source_items if item.id not in removed]  # hidden from the campaign
     versions = {
         version.replaces_id: version
         for version in Item.objects.filter(

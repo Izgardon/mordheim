@@ -59,5 +59,7 @@ class WarbandBestiaryFavouriteListView(WarbandScopedView):
 
 class WarbandBestiaryFavouriteDeleteView(WarbandScopedView):
     def delete(self, request: Request, warband_id: int, entry_id: int) -> Response:
-        WarbandBestiaryFavourite.objects.filter(warband=self.warband, bestiary_entry_id=entry_id).delete()
+        # a book id from a list read before the campaign versioned it names the version (CAT-TWEAK-03)
+        version = Q(bestiary_entry__replaces_id=entry_id, bestiary_entry__campaign_id=self.warband.campaign_id)
+        WarbandBestiaryFavourite.objects.filter(Q(bestiary_entry_id=entry_id) | version, warband=self.warband).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

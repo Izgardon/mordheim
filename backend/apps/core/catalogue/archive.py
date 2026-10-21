@@ -72,6 +72,7 @@ def restore(kind: "CatalogueKindSpec", row: Any, campaign_id: int, socket_id: st
     with transaction.atomic():
         if entry.campaign_id is None:
             CatalogueRemoval.objects.filter(campaign_id=campaign_id, kind=owner.key, entry_id=entry.pk).delete()
+            owner.hooks.back_to_book(campaign_id)
         else:
             owner.model._default_manager.filter(pk=entry.pk).update(archived_at=None, archived_by=None)
             entry.archived_at, entry.archived_by_id = None, None

@@ -46,7 +46,7 @@ def editable(kind: CatalogueKindSpec, row: Any, campaign_id: int) -> Any:
     manager = owner.model._default_manager
     if entry.campaign_id is None:
         book = manager.select_for_update().get(pk=entry.pk)
-        entry = manager.filter(campaign_id=campaign_id, replaces=book).first()
+        entry = manager.select_for_update().filter(campaign_id=campaign_id, replaces=book).first()  # vs. a Revert
         if entry is None:
             entry = copy_entry(owner, book, campaign_id)
             remap(owner, campaign_id, {book.pk: entry.pk}, fresh=True)
@@ -60,7 +60,8 @@ def editable(kind: CatalogueKindSpec, row: Any, campaign_id: int) -> Any:
 
 
 def revert(kind: CatalogueKindSpec, row: Any, campaign_id: int) -> Any:
-    """Revert the campaign's version (a book id: the campaign's version of it); the book entry's row of the kind."""
+    """Revert the campaign's version (a book id: the campaign's version of it); the campaign's entry for the book entry
+    now, as a row of the kind: the book entry, or the clone a house rule makes of it again (`back_to_book`)."""
     entry = entry_of(kind, row)
     owner = entry_kind(kind)
     manager = owner.model._default_manager
@@ -72,7 +73,9 @@ def revert(kind: CatalogueKindSpec, row: Any, campaign_id: int) -> Any:
     version = manager.select_for_update().filter(pk=entry.pk).first()
     if version is not None:
         retire(owner, campaign_id, [version])
-    return row_of(kind, manager.get(pk=entry.replaces_id))
+        owner.hooks.back_to_book(campaign_id)
+    current = manager.filter(campaign_id=campaign_id, replaces_id=entry.replaces_id).first()  # a house rule's clone
+    return row_of(kind, current or manager.get(pk=entry.replaces_id))
 
 
 def retire(kind: CatalogueKindSpec, campaign_id: int, versions: list[Any]) -> None:

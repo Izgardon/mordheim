@@ -64,6 +64,14 @@ def resync_every_campaign() -> int:
     return len(pairs)
 
 
+def resync_campaign(campaign_id: int) -> None:
+    """Sync the campaign's item-effect rules again (one query when it has none): a book item whose version was
+    reverted, or whose removal was undone, takes its rule's clone again."""
+    effects = CampaignHouseRule.objects.filter(campaign_id=campaign_id).exclude(effect_key__isnull=True)
+    for effect_key in effects.exclude(effect_key="").values_list("effect_key", flat=True).distinct():
+        sync_effect(campaign_id, effect_key)
+
+
 def revert_effect_if_unused(campaign_id: int, effect_key: str | None) -> None:
     """Undo an effect's clones once no rule of the campaign has it."""
     revert = REVERTS.get(effect_key or "")

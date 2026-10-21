@@ -84,6 +84,29 @@ class HouseRuleItemTests(CampaignTestCase):
         self.assertEqual(list(self.clone_of(light).availabilities.values_list("cost", flat=True)), [10])
         self.assertFalse(Item.objects.filter(replaces=heavy, generated_effect_key=HALF).exists())
 
+    def test_a_reverted_version_takes_the_rules_clone_again(self):
+        # the house_rule_skipped warning's promise: once the campaign's own version goes, the rule applies again
+        heavy = base_armour("Heavy Armour", 50)
+        version = self.patch_as(self.player, f"/api/items/{heavy.id}/", {"campaign_id": self.campaign.id, "availabilities": [{"cost": 40}]})  # fmt: skip
+        self.add_rule()
+
+        reverted = self.post_as(self.player, f"/api/items/{version.data['id']}/revert/")
+
+        clone = self.clone_of(heavy)
+        self.assertEqual((reverted.status_code, reverted.data["id"], reverted.data["generated_effect_key"]), (200, clone.id, HALF))  # fmt: skip
+        self.assertEqual(list(clone.availabilities.values_list("cost", flat=True)), [25])
+
+    def test_a_removed_armour_is_left_out_of_the_rule_until_it_is_restored(self):
+        light = base_armour("Light Armour", 20)
+        removed = self.delete_as(self.owner, f"/api/items/{light.id}/?campaign_id={self.campaign.id}")
+        self.add_rule()
+        unclone = Item.objects.filter(replaces=light, campaign=self.campaign).exists()
+
+        restored = self.post_as(self.owner, f"/api/items/{light.id}/restore/", {"campaign_id": self.campaign.id})
+
+        self.assertEqual((removed.status_code, unclone, restored.status_code), (200, False, 200))
+        self.assertEqual(list(self.clone_of(light).availabilities.values_list("cost", flat=True)), [10])
+
     def test_toggling_half_price_armour_keeps_what_was_paid(self):
         # CAMP-TEST-16: the remap halved the stored cost, reset it on revert, and made it None for a source with
         # several availabilities

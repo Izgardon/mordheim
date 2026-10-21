@@ -93,3 +93,12 @@ class WriteResolutionTests(CatalogueTestCase):
         self.assertEqual(list(boar.bestiary_entry_items.values_list("item_id", flat=True)), [self.sword.id])
         self.assertEqual(animal.data["bestiary_entry"]["id"], version_hound.id)
         self.assertEqual(list(WarbandBestiaryFavourite.objects.filter(warband=self.warband).values_list("bestiary_entry_id", flat=True)), [version_hound.id])  # fmt: skip
+
+    def test_unfavouriting_by_the_book_id_removes_the_versions_favourite(self):
+        version_hound = make_entry(BESTIARY, "Hound", campaign=self.campaign, replaces=self.warhound)
+        WarbandBestiaryFavourite.objects.create(warband=self.warband, bestiary_entry=version_hound)
+
+        response = self.client.delete(f"/api/warbands/{self.warband.id}/bestiary-favourites/{self.warhound.id}/")
+
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(WarbandBestiaryFavourite.objects.filter(warband=self.warband).exists())

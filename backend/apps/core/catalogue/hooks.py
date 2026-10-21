@@ -110,6 +110,9 @@ class CatalogueHooks:
     def delete(self, entry: Any) -> None:
         entry.delete()
 
+    def back_to_book(self, campaign_id: int) -> None:
+        """Runs after one of the campaign's entries went back to the book (a Revert, a removal restored)."""
+
 
 class ItemHooks(CatalogueHooks):
     def read(self, rows: QuerySet[Any]) -> QuerySet[Any]:
@@ -127,6 +130,12 @@ class ItemHooks(CatalogueHooks):
 
     def update(self, entry: Any, serializer: Serializer) -> None:
         item_writes.update_item(entry, serializer.validated_data)
+
+    def back_to_book(self, campaign_id: int) -> None:
+        """The campaign's item-effect house rules apply to a book item again once its version or removal is gone."""
+        from apps.campaigns.services.house_rules import resync_campaign  # campaigns -> items -> catalogue
+
+        resync_campaign(campaign_id)
 
 
 class BestiaryHooks(CatalogueHooks):
