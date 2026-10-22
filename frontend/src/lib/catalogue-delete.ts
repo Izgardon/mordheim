@@ -1,9 +1,4 @@
-import { useState } from "react";
-
-import { ApiError } from "./api-client";
-import { apiErrorCode, getRefusalMessage } from "./get-error-message";
-
-/** A 409 `in_use` body's `usage`: what still holds the entry (every key an integer). */
+/** `GET <kind>/:id/usage/` (and a delete's `usage`): what in the campaign holds the entry. */
 export type CatalogueUsage = {
   units?: number;
   warbands?: number;
@@ -15,10 +10,10 @@ const counted = (count: number, one: string, many: string) =>
   `${count} ${count === 1 ? one : many}`;
 
 /**
- * The counts of a refused delete in one plain line, zero counts left out: "Used by 3 units in 2
- * warbands; nothing was deleted." Null when every count is zero.
+ * What holds an entry, zero counts left out: "3 units in 2 warbands", "1 unit and 1 stash in 1
+ * warband, and by 1 bestiary entry". Null when nothing does.
  */
-export function inUseMessage({
+export function usageSummary({
   units = 0,
   warbands = 0,
   stashes = 0,
@@ -36,46 +31,52 @@ export function inUseMessage({
     inWarbands,
     entries > 0 ? counted(entries, "bestiary entry", "bestiary entries") : "",
   ].filter(Boolean);
-  return parts.length > 0 ? `Used by ${parts.join(", and by ")}; nothing was deleted.` : null;
+  return parts.length > 0 ? parts.join(", and by ") : null;
 }
 
-/** Why a delete was refused: an entry in use gives its counts, anything else its own reason. */
-export function deleteRefusalMessage(caught: unknown, fallback: string): string {
-  if (caught instanceof ApiError && apiErrorCode(caught) === "in_use") {
-    const usage = (caught.data as { usage?: CatalogueUsage }).usage;
-    const counts = usage ? inUseMessage(usage) : null;
-    if (counts) {
-      return counts;
-    }
-  }
-  return getRefusalMessage(caught, fallback);
-}
+/** Where a delete's usage check stands: still asking, answered, or failed (delete anyway). */
+export type UsageCheck =
+  | { state: "checking" }
+  | { state: "ready"; usage: CatalogueUsage }
+  | { state: "failed" };
+
+type Deleted = { name: string; campaign_id?: number | null };
 
 /**
- * The confirm behind a catalogue entry's Delete (BUG-148): when the server refuses, the confirm
- * stays open and says why, instead of writing it into the form the modal covers. An entry in use
- * (409 `in_use`) says what holds it and that nothing was deleted. Reopening starts clean.
+ * The delete confirm's words, matched to what will happen (decision 5, CAT-TWEAK-04, CAT-NEW-05):
+ * an unused custom entry is deleted; a used one is archived and its copies stay; a book entry is
+ * removed from this campaign only. Lossy actions say what they lose.
  */
-export function useCatalogueDeleteConfirm(fallback: string) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [error, setError] = useState("");
-
-  const onOpenChange = (open: boolean) => {
-    setIsOpen(open);
-    setError("");
-  };
-
+export function deleteWording(entry: Deleted, check: UsageCheck, noun: string) {
+  const isBook = entry.campaign_id == null;
+  if (check.state === "checking") {
+    return {
+      confirm: isBook ? `Remove ${noun}` : `Delete ${noun}`,
+      message: `Checking what uses ${entry.name}…`,
+    };
+  }
+  const used = check.state === "ready" ? usageSummary(check.usage) : null;
+  const keep = used ? ` It is used by ${used}; they keep their copies.` : "";
+  if (isBook) {
+    return {
+      confirm: `Remove ${noun}`,
+      message: `Remove ${entry.name} from this campaign only? The book and other campaigns keep it.${keep} You can restore it from Archived.`,
+    };
+  }
+  if (used) {
+    return {
+      confirm: `Archive ${noun}`,
+      message: `Archive ${entry.name}?${keep} It leaves the shops and pickers, and you can restore it from Archived.`,
+    };
+  }
+  if (check.state === "failed") {
+    return {
+      confirm: `Delete ${noun}`,
+      message: `Delete ${entry.name}? If anything uses it, it is archived instead, and its copies stay.`,
+    };
+  }
   return {
-    isOpen,
-    error,
-    onOpenChange,
-    open: () => onOpenChange(true),
-    close: () => onOpenChange(false),
-    /** Before sending the DELETE: the last refusal no longer applies. */
-    clearError: () => setError(""),
-    /** What the DELETE rejected with; the confirm stays open and shows it. */
-    refused: (caught: unknown) => setError(deleteRefusalMessage(caught, fallback)),
+    confirm: `Delete ${noun}`,
+    message: `Delete ${entry.name}? Nothing uses it, so it is deleted for good.`,
   };
 }
-
-export type CatalogueDeleteConfirmState = ReturnType<typeof useCatalogueDeleteConfirm>;

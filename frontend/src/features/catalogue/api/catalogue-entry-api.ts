@@ -1,5 +1,6 @@
 import { apiRequest } from "@/lib/api-client";
 
+import type { CatalogueUsage } from "@/lib/catalogue-delete";
 import type { CatalogueKind } from "@/lib/query-keys";
 import type { CatalogueEntryLike } from "../types/catalogue-entry";
 
@@ -27,6 +28,29 @@ const entryPath = (kind: CatalogueEntryKind, entry: Entry, action = "") =>
  */
 export function bookCampaign(entry: Entry | null | undefined, campaignId: number) {
   return entry && entry.campaign_id == null ? { campaign_id: campaignId } : {};
+}
+
+const bookQuery = (entry: Entry, campaignId: number) =>
+  entry.campaign_id == null ? `?campaign_id=${campaignId}` : "";
+
+/** `GET <kind>/:id/usage/`: what in the campaign holds the entry (before a delete). */
+export function entryUsage(kind: CatalogueEntryKind, entry: Entry, campaignId: number) {
+  return apiRequest<CatalogueUsage>(
+    `${entryPath(kind, entry, "usage")}${bookQuery(entry, campaignId)}`
+  );
+}
+
+/** A delete's answer: null when it was deleted (204), else what happened instead. */
+export type DeleteOutcome = { outcome: "archived" | "removed"; usage: CatalogueUsage } | null;
+
+/**
+ * `DELETE <kind>/:id/`: a custom entry is deleted, or archived while something holds it; a book
+ * entry is removed for this campaign only (CAT-TWEAK-04, CAT-NEW-05).
+ */
+export function deleteEntry(kind: CatalogueEntryKind, entry: Entry, campaignId: number) {
+  return apiRequest<DeleteOutcome>(`${entryPath(kind, entry)}${bookQuery(entry, campaignId)}`, {
+    method: "DELETE",
+  });
 }
 
 /**

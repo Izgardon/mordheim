@@ -37,8 +37,9 @@ export function CatalogueInlineForm({
   children,
 }: CatalogueInlineFormProps) {
   const { deleteConfirm, remove, revert } = form;
+  // Versions revert instead; a book entry is removed from this campaign (CAT-NEW-05).
   const offersDelete = Boolean(
-    editing && canDelete && deleteConfirm && remove && entrySource(editing) === "custom"
+    editing && canDelete && deleteConfirm && remove && entrySource(editing) !== "version"
   );
   const offersRevert = Boolean(editing && revert && canRevert(editing));
   return (
@@ -56,7 +57,7 @@ export function CatalogueInlineForm({
             disabled={form.isSaving}
             size="sm"
           >
-            Delete
+            {editing?.campaign_id == null ? "Remove" : "Delete"}
           </Button>
         ) : null}
         {offersRevert && revert ? <RevertButton revert={revert} disabled={form.isSaving} /> : null}
@@ -80,7 +81,7 @@ export function CatalogueInlineForm({
       {editing && offersDelete && deleteConfirm && remove ? (
         <CatalogueDeleteConfirm
           confirm={deleteConfirm}
-          name={editing.name}
+          entry={editing}
           noun={noun}
           isDeleting={form.isSaving}
           onConfirm={() => void remove(onReset)}

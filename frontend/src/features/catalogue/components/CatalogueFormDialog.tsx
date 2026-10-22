@@ -80,7 +80,7 @@ export function CatalogueFormDialog({
   const { deleteConfirm, remove, revert } = form;
   const triggerNode = trigger === undefined ? defaultTrigger : trigger;
   const offersDelete = Boolean(
-    editing && canDelete && deleteConfirm && remove && entrySource(editing) === "custom"
+    editing && canDelete && deleteConfirm && remove && entrySource(editing) !== "version"
   );
   const offersRevert = Boolean(editing && revert && canRevert(editing));
   const closeAfter = () => {
@@ -118,7 +118,7 @@ export function CatalogueFormDialog({
               disabled={form.isSaving}
               className="mr-auto"
             >
-              Delete
+              {editing?.campaign_id == null ? "Remove" : "Delete"}
             </Button>
           ) : null}
           {offersRevert && revert ? (
@@ -143,7 +143,7 @@ export function CatalogueFormDialog({
       {editing && offersDelete && deleteConfirm && remove ? (
         <CatalogueDeleteConfirm
           confirm={deleteConfirm}
-          name={editing.name}
+          entry={editing}
           noun={noun}
           isDeleting={form.isSaving}
           onConfirm={() =>

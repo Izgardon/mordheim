@@ -1,8 +1,11 @@
+import { useMemo } from "react";
+
 // routing
 import { useOutletContext, useParams, useNavigate } from "react-router-dom";
 
 // data
 import { ALL_TYPES, useCatalogueFilters } from "@/features/catalogue/hooks/useCatalogueFilters";
+import { archivedOnly, useArchivedView } from "@/features/catalogue/hooks/useArchivedView";
 import { useCatalogueEditor } from "@/features/catalogue/hooks/useCatalogueEditor";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -13,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { TableSkeleton } from "@components/table-skeleton";
 import { PageHeader } from "@components/page-header";
 import MobileTabs from "@components/mobile-tabs";
+import { ArchivedToggle, RestoreButton } from "@/features/catalogue/components/ArchivedView";
 import { EditRowButton } from "@/features/catalogue/components/EditRowButton";
 import AddSpellForm from "../components/AddSpellForm";
 import AttuneSpellDialog from "../components/AttuneSpellDialog";
@@ -53,7 +57,17 @@ export default function Spells() {
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignId = Number(id);
-  const { data: spells, isLoading, error } = useCatalogue("spells", campaignId);
+  // The Archived view reads its own list and shows only what is archived (CAT-TWEAK-04).
+  const archive = useArchivedView();
+  const {
+    data: allSpells,
+    isLoading,
+    error,
+  } = useCatalogue("spells", campaignId, archive.listOptions);
+  const spells = useMemo(
+    () => archivedOnly(archive.archived, allSpells),
+    [archive.archived, allSpells]
+  );
   const filters = useCatalogueFilters(spells, { haystack: spellHaystack, compare: compareSpells });
   // AddSpellForm writes created, edited and deleted spells to the shared cache itself.
   const editor = useCatalogueEditor<Spell>();
@@ -106,9 +120,16 @@ export default function Spells() {
                 ))}
               </SelectContent>
             </Select>
+            <ArchivedToggle
+              checked={archive.archived}
+              onChange={(on) => {
+                editor.close();
+                archive.setArchived(on);
+              }}
+            />
           </div>
           <div className="flex items-center justify-end md:shrink-0">
-            {canEdit && !editor.isOpen ? (
+            {canEdit && !editor.isOpen && !archive.archived ? (
               <Button size="sm" className="md:h-11" onClick={editor.openNew}>
                 Add spell
               </Button>
@@ -139,16 +160,24 @@ export default function Spells() {
           ) : error ? (
             <p className="text-sm text-red-600">{error}</p>
           ) : filters.filtered.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No spells recorded yet.</p>
+            <p className="text-sm text-muted-foreground">
+              {archive.archived ? "Nothing archived." : "No spells recorded yet."}
+            </p>
           ) : (
             <SpellsTable
               spells={filters.filtered}
               isMobile={isMobile}
               renderActions={(spell) => (
                 <div className="flex items-center justify-end gap-2">
-                  <AttuneSpellDialog spell={spell} unitTypes={["heroes", "hiredswords"]} />
+                  {archive.archived ? (
+                    canEdit ? (
+                      <RestoreButton kind="spells" campaignId={campaignId} entry={spell} />
+                    ) : null
+                  ) : (
+                    <AttuneSpellDialog spell={spell} unitTypes={["heroes", "hiredswords"]} />
+                  )}
                   {/* A book spell's edit makes the campaign's version (CAT-TWEAK-01). */}
-                  {canEdit ? (
+                  {canEdit && !archive.archived ? (
                     <EditRowButton label="Edit spell" onClick={() => editor.edit(spell)} />
                   ) : null}
                 </div>

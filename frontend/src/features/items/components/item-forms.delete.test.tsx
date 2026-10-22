@@ -1,21 +1,23 @@
 /**
- * Deleting a custom item from the Wargear page's form (`AddItemForm`) and from the warband pages'
- * dialog (`ItemFormDialog`, whose edit mode no screen opens today): the confirm's copy, the one
- * DELETE it sends with no usage check, and a refused delete's reason shown in the confirm
- * (BUG-148). The server cascades the delete into every warband's copies (BUG-16); PR A answers
- * 409 `in_use` instead, and PR C asks `usage/` first and archives what is in use.
+ * Deleting an item from the Wargear page's form (`AddItemForm`) and from the warband pages'
+ * dialog (`ItemFormDialog`, whose edit mode no screen opens today): the confirm asks `usage/`
+ * first and says what will happen (decision 5, CAT-TWEAK-04, CAT-NEW-05): an unused custom item is
+ * deleted, one in use is archived and its copies stay, a book item is removed from this campaign
+ * only. A refused delete's reason shows in the confirm (BUG-148).
  */
-import { screen, within } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError } from "@/lib/api-client";
 import { queryKeys } from "@/lib/query-keys";
-import { ITEMS, rustyCleaver } from "@/test/catalogue-fixtures";
+import { ITEMS, rustyCleaver, sword } from "@/test/catalogue-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { createTestQueryClient, renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
 import AddItemForm from "./AddItemForm";
 import ItemFormDialog from "./ItemFormDialog";
+
+import type { Item } from "../types/item-types";
 
 vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
@@ -24,14 +26,17 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
 
 const ITEMS_KEY = queryKeys.campaign.catalogue(1, "items");
 const DELETE = "DELETE /items/240/";
-/** The 409 for an item in use, as apiRequest throws it (`detail` is also its message). */
-const IN_USE = new ApiError("This item is in use, so nothing was deleted.", 409, {
-  detail: "This item is in use, so nothing was deleted.",
-  code: "in_use",
+const USAGE = "GET /items/240/usage/";
+const UNUSED = { units: 0, warbands: 0, stashes: 0, bestiary_entries: 0 };
+const IN_USE = { units: 3, warbands: 2, stashes: 0, bestiary_entries: 0 };
+/** A refusal the confirm must show: the entry became a version since the list was read. */
+const USE_REVERT_DETAIL =
+  "This entry is (or has) the campaign's version of a book entry: revert it instead of deleting it.";
+const USE_REVERT = new ApiError(USE_REVERT_DETAIL, 409, {
+  detail: USE_REVERT_DETAIL,
+  code: "use_revert",
   fields: {},
-  usage: { units: 2, warbands: 1, stashes: 0, bestiary_entries: 0 },
 });
-const IN_USE_TEXT = "Used by 2 units in 1 warband; nothing was deleted.";
 
 /** A client holding the campaign's cached item list, as the Wargear page leaves it. */
 function clientWithItems() {
@@ -49,12 +54,16 @@ beforeEach(() => {
 });
 
 describe("AddItemForm: Delete", () => {
-  function renderForm(queryClient = clientWithItems(), canDelete = true) {
+  function renderForm(
+    queryClient = clientWithItems(),
+    canDelete = true,
+    item: Item = rustyCleaver
+  ) {
     const onDeleted = vi.fn();
     renderWithQueryClient(
       <AddItemForm
         campaignId={1}
-        editingItem={rustyCleaver}
+        editingItem={item}
         canDelete={canDelete}
         onCreated={vi.fn()}
         onDeleted={onDeleted}
@@ -65,22 +74,81 @@ describe("AddItemForm: Delete", () => {
     return { onDeleted, queryClient };
   }
 
-  // Characterises current behaviour (BUG-16, CAT-TWEAK-04, pinned; flips in PR C)
-  it('says only "This action cannot be undone", then sends one DELETE with no usage check (BUG-16, pinned; flips in PR C)', async () => {
+  it("asks what uses it first; nothing does, so the confirm says it is deleted for good, then one DELETE (BUG-16, CAT-TWEAK-04)", async () => {
     const user = setupUser();
-    fakeApi.on(DELETE, undefined);
+    fakeApi.on(USAGE, UNUSED);
+    fakeApi.on(DELETE, null);
+    const { onDeleted, queryClient } = renderForm();
+    fakeApi.clearRequests();
+
+    await user.click(screen.getByRole("button", { name: "Delete" }));
+    const confirm = screen.getByRole("dialog", { name: "Delete item" });
+    expect(
+      await within(confirm).findByText(
+        "Delete Rusty Cleaver? Nothing uses it, so it is deleted for good."
+      )
+    ).toBeVisible();
+    await user.click(within(confirm).getByRole("button", { name: "Delete item" }));
+
+    await waitFor(() => expect(onDeleted).toHaveBeenCalledWith(240));
+    expect(fakeApi.calls()).toEqual([USAGE, DELETE]);
+    expect(cachedNames(queryClient)).not.toContain("Rusty Cleaver");
+    expect(queryClient.getQueryState(ITEMS_KEY)?.isInvalidated).toBe(true);
+  });
+
+  it("archives an item in use: the confirm says what holds it and that they keep their copies, and the item leaves the list (CAT-TWEAK-04)", async () => {
+    const user = setupUser();
+    fakeApi.on(USAGE, IN_USE);
+    fakeApi.on(DELETE, { outcome: "archived", usage: IN_USE });
     const { onDeleted, queryClient } = renderForm();
 
     await user.click(screen.getByRole("button", { name: "Delete" }));
-    const confirm = screen.getByRole("dialog");
-    expect(confirm).toHaveTextContent("Delete Rusty Cleaver? This action cannot be undone.");
-    fakeApi.clearRequests();
-    await user.click(within(confirm).getByRole("button", { name: "Delete item" }));
+    const confirm = screen.getByRole("dialog", { name: "Delete item" });
+    expect(
+      await within(confirm).findByText(
+        "Archive Rusty Cleaver? It is used by 3 units in 2 warbands; they keep their copies. It leaves the shops and pickers, and you can restore it from Archived."
+      )
+    ).toBeVisible();
+    await user.click(within(confirm).getByRole("button", { name: "Archive item" }));
 
-    expect(fakeApi.calls()).toEqual([DELETE]);
-    expect(onDeleted).toHaveBeenCalledWith(240);
+    await waitFor(() => expect(onDeleted).toHaveBeenCalledWith(240));
     expect(cachedNames(queryClient)).not.toContain("Rusty Cleaver");
-    expect(queryClient.getQueryState(ITEMS_KEY)?.isInvalidated).toBe(true);
+  });
+
+  it("removes a book item from this campaign only, naming the campaign in the usage check and the DELETE (CAT-NEW-05)", async () => {
+    const user = setupUser();
+    fakeApi.on("GET /items/2/usage/?campaign_id=1", { ...UNUSED, units: 1, warbands: 1 });
+    fakeApi.on("DELETE /items/2/?campaign_id=1", { outcome: "removed", usage: UNUSED });
+    const { onDeleted, queryClient } = renderForm(clientWithItems(), true, sword);
+
+    await user.click(screen.getByRole("button", { name: "Remove" }));
+    const confirm = screen.getByRole("dialog", { name: "Delete item" });
+    expect(
+      await within(confirm).findByText(
+        "Remove Sword from this campaign only? The book and other campaigns keep it. It is used by 1 unit in 1 warband; they keep their copies. You can restore it from Archived."
+      )
+    ).toBeVisible();
+    await user.click(within(confirm).getByRole("button", { name: "Remove item" }));
+
+    await waitFor(() => expect(onDeleted).toHaveBeenCalledWith(2));
+    expect(cachedNames(queryClient)).not.toContain("Sword");
+  });
+
+  it("waits for the usage check before offering the confirm, and still offers it when the check fails", async () => {
+    const user = setupUser();
+    fakeApi.fail(USAGE, new ApiError("Request failed (500)", 500, null));
+    renderForm();
+
+    await user.click(screen.getByRole("button", { name: "Delete" }));
+    const confirm = screen.getByRole("dialog", { name: "Delete item" });
+
+    expect(await within(confirm).findByRole("alert")).toHaveTextContent(
+      /^Couldn't check what uses it/
+    );
+    expect(confirm).toHaveTextContent(
+      "Delete Rusty Cleaver? If anything uses it, it is archived instead, and its copies stay."
+    );
+    expect(within(confirm).getByRole("button", { name: "Delete item" })).toBeEnabled();
   });
 
   it("offers no Delete to someone without delete_catalogue (decision 5)", async () => {
@@ -90,8 +158,9 @@ describe("AddItemForm: Delete", () => {
     expect(screen.getByRole("button", { name: "Save changes" })).toBeVisible();
   });
 
-  it("sends nothing when the confirm is cancelled", async () => {
+  it("sends nothing but the usage check when the confirm is cancelled", async () => {
     const user = setupUser();
+    fakeApi.on(USAGE, UNUSED);
     renderForm();
 
     await user.click(screen.getByRole("button", { name: "Delete" }));
@@ -102,20 +171,21 @@ describe("AddItemForm: Delete", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
-  it("shows what holds an entry in use in the confirm, which stays open with the entry still listed, and nothing in the form behind it (BUG-148, BUG-16)", async () => {
+  it("shows a refused delete's reason in the confirm, which stays open with the entry still listed, and nothing in the form behind it (BUG-148)", async () => {
     const user = setupUser();
-    fakeApi.fail(DELETE, IN_USE);
+    fakeApi.on(USAGE, UNUSED);
+    fakeApi.fail(DELETE, USE_REVERT);
     const { onDeleted, queryClient } = renderForm();
 
     await user.click(screen.getByRole("button", { name: "Delete" }));
-    await user.click(
-      within(screen.getByRole("dialog")).getByRole("button", { name: "Delete item" })
-    );
+    const confirm = screen.getByRole("dialog", { name: "Delete item" });
+    await within(confirm).findByText(/deleted for good/);
+    await user.click(within(confirm).getByRole("button", { name: "Delete item" }));
 
     const reason = await screen.findByRole("alert");
-    expect(reason).toHaveTextContent(IN_USE_TEXT);
+    expect(reason).toHaveTextContent(USE_REVERT_DETAIL);
     expect(screen.getByRole("dialog", { name: "Delete item" })).toContainElement(reason);
-    expect(screen.getAllByText(IN_USE_TEXT)).toHaveLength(1);
+    expect(screen.getAllByText(USE_REVERT_DETAIL)).toHaveLength(1);
     expect(onDeleted).not.toHaveBeenCalled();
     expect(cachedNames(queryClient)).toContain("Rusty Cleaver");
 
@@ -155,40 +225,42 @@ describe("ItemFormDialog (edit mode): Delete", () => {
     return { onDeleted, queryClient };
   }
 
-  // Characterises current behaviour (BUG-16, CAT-TWEAK-04, pinned; flips in PR C)
-  it('says only "This action cannot be undone", then sends one DELETE with no usage check (BUG-16, pinned; flips in PR C)', async () => {
+  it("asks what uses it first and says it is deleted for good, then sends one DELETE and closes (BUG-16, CAT-TWEAK-04)", async () => {
     const user = setupUser();
-    fakeApi.on(DELETE, undefined);
+    fakeApi.on(USAGE, UNUSED);
+    fakeApi.on(DELETE, null);
     const { onDeleted, queryClient } = await openDialog(user);
 
     await user.click(screen.getByRole("button", { name: "Delete" }));
     const confirm = screen.getByRole("dialog", { name: "Delete item" });
-    expect(confirm).toHaveTextContent("Delete Rusty Cleaver? This action cannot be undone.");
+    expect(
+      await within(confirm).findByText(
+        "Delete Rusty Cleaver? Nothing uses it, so it is deleted for good."
+      )
+    ).toBeVisible();
     fakeApi.clearRequests();
     await user.click(within(confirm).getByRole("button", { name: "Delete item" }));
 
+    await waitFor(() => expect(onDeleted).toHaveBeenCalledWith(240));
     expect(fakeApi.calls()).toEqual([DELETE]);
-    expect(onDeleted).toHaveBeenCalledWith(240);
     expect(cachedNames(queryClient)).not.toContain("Rusty Cleaver");
     expect(screen.queryByRole("dialog", { name: "Edit Wargear" })).toBeNull();
   });
 
-  it("shows what holds an entry in use in the confirm, which stays open with the entry still listed, and nothing in the form behind it (BUG-148, BUG-16)", async () => {
+  it("shows a refused delete's reason in the confirm, which stays open (BUG-148)", async () => {
     const user = setupUser();
-    fakeApi.fail(DELETE, IN_USE);
+    fakeApi.on(USAGE, UNUSED);
+    fakeApi.fail(DELETE, USE_REVERT);
     const { onDeleted } = await openDialog(user);
 
     await user.click(screen.getByRole("button", { name: "Delete" }));
-    await user.click(
-      within(screen.getByRole("dialog", { name: "Delete item" })).getByRole("button", {
-        name: "Delete item",
-      })
-    );
+    const confirm = screen.getByRole("dialog", { name: "Delete item" });
+    await within(confirm).findByText(/deleted for good/);
+    await user.click(within(confirm).getByRole("button", { name: "Delete item" }));
 
     const reason = await screen.findByRole("alert");
-    expect(reason).toHaveTextContent(IN_USE_TEXT);
+    expect(reason).toHaveTextContent(USE_REVERT_DETAIL);
     expect(screen.getByRole("dialog", { name: "Delete item" })).toContainElement(reason);
-    expect(screen.getAllByText(IN_USE_TEXT)).toHaveLength(1);
     expect(onDeleted).not.toHaveBeenCalled();
   });
 });

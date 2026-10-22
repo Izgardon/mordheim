@@ -6,20 +6,20 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 // data
 import { useCatalogue } from "@/lib/catalogue-queries";
+import { archivedOnly, useArchivedView } from "@/features/catalogue/hooks/useArchivedView";
 import { useCatalogueEditor } from "@/features/catalogue/hooks/useCatalogueEditor";
 import { useItemsFilters } from "../hooks/useItemsFilters";
 
 // components
 import { Button } from "@components/button";
 import { TableSkeleton } from "@components/table-skeleton";
-import { Tooltip } from "@components/tooltip";
 import { PageHeader } from "@components/page-header";
 import MobileTabs from "@components/mobile-tabs";
 import CatalogueTable from "@/features/catalogue/components/CatalogueTable";
-import { EditRowButton } from "@/features/catalogue/components/EditRowButton";
+import { ArchivedToggle } from "@/features/catalogue/components/ArchivedView";
 import AddItemForm from "../components/AddItemForm";
 import AcquireItemDialog from "../components/AcquireItemDialog/AcquireItemDialog";
-import BuyItemButton from "../components/AcquireItemDialog/BuyItemButton";
+import ItemRowActions from "../components/ItemRowActions";
 import ItemsFilterBar from "../components/ItemsFilterBar";
 import {
   itemColumns,
@@ -64,14 +64,17 @@ export default function Items() {
   const navigate = useNavigate();
   const campaignId = Number(id);
   const isMobile = useMediaQuery("(max-width: 960px)");
-  // Shares the cached campaign item list with the warband editor instead of re-downloading it.
-  const { data: items, isLoading, error } = useCatalogue("items", campaignId);
+  // Shares the cached campaign item list with the warband editor instead of re-downloading it;
+  // the Archived view reads its own list (CAT-TWEAK-04).
+  const archive = useArchivedView();
+  const { data: items, isLoading, error } = useCatalogue("items", campaignId, archive.listOptions);
+  const listed = useMemo(() => archivedOnly(archive.archived, items), [archive.archived, items]);
   const { data: itemProperties, error: propertyError } = useCatalogue(
     "item-properties",
     campaignId
   );
   const propertyMap = useMemo(() => byId(itemProperties), [itemProperties]);
-  const filters = useItemsFilters(items);
+  const filters = useItemsFilters(listed);
   // AddItemForm writes created, edited and deleted items to the shared cache itself.
   const editor = useCatalogueEditor<Item>();
   // One Acquire dialog for the page, on the row whose Acquire was pressed (PERF-48).
@@ -93,37 +96,15 @@ export default function Items() {
   const columns = itemColumns(filters.activeTab, {
     propertyMap,
     actions: (item) => (
-      <div
-        className="flex items-center justify-end gap-2"
-        onClick={(event) => event.stopPropagation()}
-      >
-        {item.bestiary_entry ? (
-          <Tooltip
-            trigger={
-              <button
-                type="button"
-                aria-label="View bestiary entry"
-                onClick={() =>
-                  navigate(`/campaigns/${id}/bestiary?entry=${item.bestiary_entry!.id}`)
-                }
-                className="text-xs text-muted-foreground underline decoration-dotted underline-offset-2 transition hover:text-foreground"
-              >
-                Bestiary
-              </button>
-            }
-            content="View bestiary entry"
-          />
-        ) : null}
-        <BuyItemButton
-          item={item}
-          aria-haspopup="dialog"
-          aria-expanded={Boolean(acquiring?.open && acquiring.row._rowId === item._rowId)}
-          onClick={() => setAcquiring({ row: item, open: true })}
-        />
-        {/* Every item: a book item's edit makes the campaign's version (CAT-TWEAK-01), and a
-            house rule's clone detaches from its rule. */}
-        {canEdit ? <EditRowButton label="Edit item" onClick={() => editor.edit(item)} /> : null}
-      </div>
+      <ItemRowActions
+        item={item}
+        campaignId={campaignId}
+        canEdit={canEdit}
+        archived={archive.archived}
+        isAcquiring={Boolean(acquiring?.open && acquiring.row._rowId === item._rowId)}
+        onAcquire={() => setAcquiring({ row: item, open: true })}
+        onEdit={() => editor.edit(item)}
+      />
     ),
   });
 
@@ -157,7 +138,14 @@ export default function Items() {
           />
         ) : null}
         <ItemsFilterBar filters={filters}>
-          {canEdit && !editor.isOpen ? (
+          <ArchivedToggle
+            checked={archive.archived}
+            onChange={(on) => {
+              editor.close();
+              archive.setArchived(on);
+            }}
+          />
+          {canEdit && !editor.isOpen && !archive.archived ? (
             <Button size="sm" className="ml-auto md:h-11" onClick={editor.openNew}>
               Add item
             </Button>
@@ -189,7 +177,9 @@ export default function Items() {
           ) : error ? (
             <p className="text-sm text-red-600">{error}</p>
           ) : filters.rows.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No gear found.</p>
+            <p className="text-sm text-muted-foreground">
+              {archive.archived ? "Nothing archived." : "No gear found."}
+            </p>
           ) : (
             <>
               {propertyError ? (

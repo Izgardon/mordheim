@@ -6,6 +6,8 @@ type ListSpellsOptions = {
   type?: string;
   search?: string;
   campaignId?: number;
+  /** Archived entries and book entries removed for the campaign too (`?archived=1`). */
+  archived?: boolean;
   signal?: AbortSignal;
 };
 
@@ -30,6 +32,9 @@ export function listSpells(options: ListSpellsOptions = {}) {
   if (options.campaignId) {
     params.set("campaign_id", String(options.campaignId));
   }
+  if (options.archived) {
+    params.set("archived", "1");
+  }
   const query = params.toString();
   const path = query ? `/spells/?${query}` : "/spells/";
   return apiRequest<Spell[]>(path, { signal: options.signal });
@@ -53,11 +58,5 @@ export function updateSpell(spellId: number, payload: SpellUpdatePayload) {
   return apiRequest<Spell>(`/spells/${spellId}/`, {
     method: "PATCH",
     body: payload,
-  });
-}
-
-export function deleteSpell(spellId: number) {
-  return apiRequest<void>(`/spells/${spellId}/`, {
-    method: "DELETE",
   });
 }

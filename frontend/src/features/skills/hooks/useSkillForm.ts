@@ -3,12 +3,12 @@ import { useCallback, useState } from "react";
 import { useCatalogueTypeField } from "@/features/catalogue/hooks/useCatalogueTypeField";
 import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
 import { useNameTakenMatches } from "@/features/catalogue/hooks/useNameTakenMatches";
+import { useCatalogueDelete } from "@/features/catalogue/hooks/useCatalogueDelete";
 import { useCatalogueRevert } from "@/features/catalogue/hooks/useCatalogueRevert";
-import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
 import { useFieldErrors, type NameMatch } from "@/lib/field-errors";
 
-import { createSkill, deleteSkill, updateSkill } from "../api/skills-api";
+import { createSkill, updateSkill } from "../api/skills-api";
 
 import type { Skill } from "../types/skill-types";
 
@@ -69,7 +69,13 @@ export function useSkillForm({
     fieldErrors,
     onEditMatch,
   });
-  const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete skill");
+  const deletion = useCatalogueDelete({
+    kind: "skills",
+    campaignId,
+    entry: skill,
+    noun: "skill",
+    onDeleted,
+  });
   const revert = useCatalogueRevert({ kind: "skills", campaignId, entry: skill, onReverted });
   const typeField = useCatalogueTypeField({
     value: values.type,
@@ -113,24 +119,6 @@ export function useSkillForm({
     }
   };
 
-  const remove = async (after?: () => void) => {
-    if (!skill) {
-      return;
-    }
-    setIsSaving(true);
-    deleteConfirm.clearError();
-    try {
-      await deleteSkill(skill.id);
-      catalogueCache.remove("skills", campaignId, skill.id);
-      onDeleted?.(skill.id);
-      after?.();
-    } catch (errorResponse) {
-      deleteConfirm.refused(errorResponse);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   const { reset: resetTypeField } = typeField;
   const { clear: clearFieldErrors } = fieldErrors;
   /** Back to `entry`'s values (a blank form for null), with no message and no added lists. */
@@ -151,12 +139,12 @@ export function useSkillForm({
     typeField,
     fieldErrors: fieldErrors.errors,
     nameTaken,
-    isSaving,
+    isSaving: isSaving || deletion.isDeleting,
     formError,
-    deleteConfirm,
+    deleteConfirm: deletion.deleteConfirm,
     revert,
     save,
-    remove,
+    remove: deletion.remove,
     load,
   };
 }

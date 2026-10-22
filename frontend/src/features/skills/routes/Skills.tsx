@@ -1,8 +1,11 @@
+import { useMemo } from "react";
+
 // routing
 import { useOutletContext, useParams, useNavigate } from "react-router-dom";
 
 // data
 import { ALL_TYPES, useCatalogueFilters } from "@/features/catalogue/hooks/useCatalogueFilters";
+import { archivedOnly, useArchivedView } from "@/features/catalogue/hooks/useArchivedView";
 import { useCatalogueEditor } from "@/features/catalogue/hooks/useCatalogueEditor";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -13,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { TableSkeleton } from "@components/table-skeleton";
 import { PageHeader } from "@components/page-header";
 import MobileTabs from "@components/mobile-tabs";
+import { ArchivedToggle, RestoreButton } from "@/features/catalogue/components/ArchivedView";
 import { EditRowButton } from "@/features/catalogue/components/EditRowButton";
 import AddSkillForm from "../components/AddSkillForm";
 import LearnSkillDialog from "../components/LearnSkillDialog";
@@ -57,7 +61,17 @@ export default function Skills() {
   const navigate = useNavigate();
   const campaignId = Number(id);
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const { data: skills, isLoading, error } = useCatalogue("skills", campaignId);
+  // The Archived view reads its own list and shows only what is archived (CAT-TWEAK-04).
+  const archive = useArchivedView();
+  const {
+    data: allSkills,
+    isLoading,
+    error,
+  } = useCatalogue("skills", campaignId, archive.listOptions);
+  const skills = useMemo(
+    () => archivedOnly(archive.archived, allSkills),
+    [archive.archived, allSkills]
+  );
   const filters = useCatalogueFilters(skills, { haystack: skillHaystack, compare: compareSkills });
   // AddSkillForm writes created, edited and deleted skills to the shared cache itself.
   const editor = useCatalogueEditor<Skill>();
@@ -110,9 +124,16 @@ export default function Skills() {
                 ))}
               </SelectContent>
             </Select>
+            <ArchivedToggle
+              checked={archive.archived}
+              onChange={(on) => {
+                editor.close();
+                archive.setArchived(on);
+              }}
+            />
           </div>
           <div className="flex items-center justify-end md:shrink-0">
-            {canEdit && !editor.isOpen ? (
+            {canEdit && !editor.isOpen && !archive.archived ? (
               <Button size="sm" className="md:h-11" onClick={editor.openNew}>
                 Add skill
               </Button>
@@ -143,16 +164,24 @@ export default function Skills() {
           ) : error ? (
             <p className="text-sm text-red-600">{error}</p>
           ) : filters.filtered.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No skills logged yet.</p>
+            <p className="text-sm text-muted-foreground">
+              {archive.archived ? "Nothing archived." : "No skills logged yet."}
+            </p>
           ) : (
             <SkillsTable
               skills={filters.filtered}
               isMobile={isMobile}
               renderActions={(skill) => (
                 <div className="flex items-center justify-end gap-2">
-                  <LearnSkillDialog skill={skill} unitTypes={["heroes", "hiredswords"]} />
+                  {archive.archived ? (
+                    canEdit ? (
+                      <RestoreButton kind="skills" campaignId={campaignId} entry={skill} />
+                    ) : null
+                  ) : (
+                    <LearnSkillDialog skill={skill} unitTypes={["heroes", "hiredswords"]} />
+                  )}
                   {/* A book skill's edit makes the campaign's version (CAT-TWEAK-01). */}
-                  {canEdit ? (
+                  {canEdit && !archive.archived ? (
                     <EditRowButton label="Edit skill" onClick={() => editor.edit(skill)} />
                   ) : null}
                 </div>

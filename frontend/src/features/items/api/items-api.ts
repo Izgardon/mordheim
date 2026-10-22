@@ -14,6 +14,8 @@ type ListItemsOptions = {
   type?: string;
   search?: string;
   campaignId?: number;
+  /** Archived entries and book entries removed for the campaign too (`?archived=1`). */
+  archived?: boolean;
   signal?: AbortSignal;
 };
 
@@ -46,6 +48,9 @@ export function listItems(options: ListItemsOptions = {}) {
   if (options.campaignId) {
     params.set("campaign_id", String(options.campaignId));
   }
+  if (options.archived) {
+    params.set("archived", "1");
+  }
   const query = params.toString();
   const path = query ? `/items/?${query}` : "/items/";
   return apiRequest<Item[]>(path, { signal: options.signal });
@@ -62,12 +67,6 @@ export function updateItem(itemId: number, payload: ItemUpdatePayload) {
   return apiRequest<Item>(`/items/${itemId}/`, {
     method: "PATCH",
     body: payload,
-  });
-}
-
-export function deleteItem(itemId: number) {
-  return apiRequest<void>(`/items/${itemId}/`, {
-    method: "DELETE",
   });
 }
 

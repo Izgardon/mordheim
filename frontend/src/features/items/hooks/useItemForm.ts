@@ -4,12 +4,12 @@ import type { StatLabel } from "@/features/catalogue/utils/statblock";
 import { blankItemStatblock } from "@/features/catalogue/utils/statblock";
 import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
 import { useNameTakenMatches } from "@/features/catalogue/hooks/useNameTakenMatches";
+import { useCatalogueDelete } from "@/features/catalogue/hooks/useCatalogueDelete";
 import { useCatalogueRevert } from "@/features/catalogue/hooks/useCatalogueRevert";
-import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
 import { useFieldErrors, type NameMatch } from "@/lib/field-errors";
 
-import { createItem, deleteItem, updateItem } from "../api/items-api";
+import { createItem, updateItem } from "../api/items-api";
 import { ITEM_FIELDS } from "../utils/item-form-fields";
 import {
   ITEM_SUBTYPE_OPTIONS,
@@ -78,7 +78,13 @@ export function useItemForm({
     fieldErrors,
     onEditMatch,
   });
-  const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete item");
+  const deletion = useCatalogueDelete({
+    kind: "items",
+    campaignId,
+    entry: item,
+    noun: "item",
+    onDeleted,
+  });
   const revert = useCatalogueRevert({ kind: "items", campaignId, entry: item, onReverted });
   const properties = useItemPropertyPicker({
     campaignId,
@@ -116,24 +122,6 @@ export function useItemForm({
       after?.();
     } catch (errorResponse) {
       setFormError(fieldErrors.take(errorResponse, "Unable to save item"));
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const remove = async (after?: () => void) => {
-    if (!item) {
-      return;
-    }
-    setIsSaving(true);
-    deleteConfirm.clearError();
-    try {
-      await deleteItem(item.id);
-      catalogueCache.remove("items", campaignId, item.id);
-      onDeleted?.(item.id);
-      after?.();
-    } catch (errorResponse) {
-      deleteConfirm.refused(errorResponse);
     } finally {
       setIsSaving(false);
     }
@@ -182,12 +170,12 @@ export function useItemForm({
     nameTaken,
     rowError: (index: number, field: "cost" | "rarity") =>
       fieldErrors.errors[`availabilities.${index}.${field}`],
-    isSaving,
+    isSaving: isSaving || deletion.isDeleting,
     formError,
-    deleteConfirm,
+    deleteConfirm: deletion.deleteConfirm,
     revert,
     save,
-    remove,
+    remove: deletion.remove,
     load,
   };
 }

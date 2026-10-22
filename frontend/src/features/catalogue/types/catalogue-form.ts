@@ -1,5 +1,4 @@
-import type { CatalogueDeleteConfirmState } from "@/lib/catalogue-delete";
-
+import type { CatalogueDeleteConfirmState } from "../hooks/useCatalogueDelete";
 import type { CatalogueRevertState } from "../hooks/useCatalogueRevert";
 
 /**

@@ -1,6 +1,14 @@
-import { describe, expect, it } from "vitest";
+import { toast } from "sonner";
+import { describe, expect, it, vi } from "vitest";
 
-import { applyPurchaseAnswer, purchaseLine, type PurchaseAnswer } from "./purchase";
+import {
+  applyPurchaseAnswer,
+  purchaseLine,
+  toastPurchaseWarnings,
+  type PurchaseAnswer,
+} from "./purchase";
+
+vi.mock("sonner", () => ({ toast: { warning: vi.fn() } }));
 import { queryKeys } from "@/lib/query-keys";
 import { createTestQueryClient } from "@/test/query-test-utils";
 import { makeItem } from "@/test/warband-fixtures";
@@ -22,6 +30,22 @@ const buying: AcquireItemMeta = {
   reason: "",
   baseCost: 5,
 };
+
+describe("toastPurchaseWarnings", () => {
+  it("toasts each archived item of a batch on its own, and one toast per other code", () => {
+    toastPurchaseWarnings([
+      { code: "archived_entry", message: "Rope is archived.", item_id: 120 },
+      { code: "archived_entry", message: "Lantern is archived.", item_id: 121 },
+      { code: "overspend", message: "Over by 5 gc." },
+    ]);
+
+    expect(vi.mocked(toast.warning).mock.calls).toEqual([
+      ["Rope is archived.", { id: "purchase-warning-archived_entry-120" }],
+      ["Lantern is archived.", { id: "purchase-warning-archived_entry-121" }],
+      ["Over by 5 gc.", { id: "purchase-warning-overspend" }],
+    ]);
+  });
+});
 
 describe("purchaseLine", () => {
   it("prices one copy when buying, with the availability chosen", () => {

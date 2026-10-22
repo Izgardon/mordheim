@@ -96,15 +96,22 @@ describe("Spells: who sees Add and Edit", () => {
     expect(screen.queryByRole("button", { name: "Delete" })).toBeNull();
   });
 
-  it("lets a player granted delete_catalogue delete the campaign's spell: one DELETE, and the row goes", async () => {
+  it("lets a player granted delete_catalogue delete the campaign's spell: the usage check, one DELETE, and the row goes", async () => {
     const user = setupUser();
     signInAsPlayer(["edit_catalogue", "delete_catalogue"]);
-    fakeApi.on("DELETE /spells/950/", undefined);
+    fakeApi.on("GET /spells/950/usage/", {
+      units: 0,
+      warbands: 0,
+      stashes: 0,
+      bestiary_entries: 0,
+    });
+    fakeApi.on("DELETE /spells/950/", null);
     await openSpells();
     fakeApi.on(LIST.spells, [spell()]);
 
     await user.click(within(row("Gutter Hex")).getByRole("button", { name: "Edit spell" }));
     await user.click(screen.getByRole("button", { name: "Delete" }));
+    await within(screen.getByRole("dialog")).findByText(/deleted for good/);
     await user.click(
       within(screen.getByRole("dialog")).getByRole("button", { name: "Delete spell" })
     );

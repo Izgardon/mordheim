@@ -40,10 +40,11 @@ type CatalogueEntries = {
 export type CatalogueEntry<K extends CatalogueKind> = CatalogueEntries[K];
 
 /**
- * A list beside a kind's default one, cached on its own under the kind's key: "creatures" is the
- * Bestiary page's (the bestiary without its hired swords, PERF-47).
+ * A list beside a kind's default one, cached on its own under the kind's key: "archived" adds the
+ * campaign's archived entries and removed book entries (`?archived=1`, CAT-TWEAK-04); "creatures"
+ * is the Bestiary page's (the bestiary without its hired swords, PERF-47).
  */
-export type CatalogueListVariant = "creatures";
+export type CatalogueListVariant = "archived" | "creatures";
 
 type Fetcher<K extends CatalogueKind> = (
   campaignId: number,
@@ -51,11 +52,17 @@ type Fetcher<K extends CatalogueKind> = (
   variant?: CatalogueListVariant
 ) => Promise<CatalogueEntry<K>[]>;
 
+/** The Archived list asks for `?archived=1`; the default list sends nothing extra. */
+const archivedOf = (variant?: CatalogueListVariant) =>
+  variant === "archived" ? { archived: true } : {};
+
 const fetchers: { [K in CatalogueKind]: Fetcher<K> } = {
-  items: (campaignId, signal) => listItems({ campaignId, signal }),
+  items: (campaignId, signal, variant) => listItems({ campaignId, signal, ...archivedOf(variant) }),
   "item-properties": (campaignId, signal) => listItemProperties({ campaignId, signal }),
-  skills: (campaignId, signal) => listSkills({ campaignId, signal }),
-  spells: (campaignId, signal) => listSpells({ campaignId, signal }),
+  skills: (campaignId, signal, variant) =>
+    listSkills({ campaignId, signal, ...archivedOf(variant) }),
+  spells: (campaignId, signal, variant) =>
+    listSpells({ campaignId, signal, ...archivedOf(variant) }),
   specials: (campaignId, signal) => listSpecial({ campaignId, signal }),
   races: (campaignId, signal) => listRaces({ campaignId, signal }),
   bestiary: (campaignId, signal, variant) =>
@@ -171,6 +178,10 @@ export function upsertCatalogueEntry<K extends CatalogueKind>(
   void queryClient.invalidateQueries({ queryKey });
 }
 
+/**
+ * Drop an entry from every cached list of its kind, then refetch them: a deleted entry is gone,
+ * and an archived or removed one comes back in the Archived list from the server.
+ */
 export function removeCatalogueEntry(
   queryClient: QueryClient,
   kind: CatalogueKind,
@@ -181,8 +192,10 @@ export function removeCatalogueEntry(
     return;
   }
   const queryKey = queryKeys.campaign.catalogue(campaignId, kind);
-  queryClient.setQueryData(queryKey, (previous: { id: number }[] | undefined) =>
-    previous ? previous.filter((existing) => existing.id !== entryId) : previous
+  queryClient.setQueriesData({ queryKey }, (previous: unknown) =>
+    Array.isArray(previous)
+      ? (previous as { id: number }[]).filter((existing) => existing.id !== entryId)
+      : previous
   );
   void queryClient.invalidateQueries({ queryKey });
 }

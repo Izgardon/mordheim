@@ -3,12 +3,12 @@ import { useCallback, useState } from "react";
 import { useCatalogueTypeField } from "@/features/catalogue/hooks/useCatalogueTypeField";
 import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
 import { useNameTakenMatches } from "@/features/catalogue/hooks/useNameTakenMatches";
+import { useCatalogueDelete } from "@/features/catalogue/hooks/useCatalogueDelete";
 import { useCatalogueRevert } from "@/features/catalogue/hooks/useCatalogueRevert";
-import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
 import { useFieldErrors, type NameMatch } from "@/lib/field-errors";
 
-import { createSpell, deleteSpell, updateSpell } from "../api/spells-api";
+import { createSpell, updateSpell } from "../api/spells-api";
 
 import type { Spell } from "../types/spell-types";
 
@@ -81,7 +81,13 @@ export function useSpellForm({
     fieldErrors,
     onEditMatch,
   });
-  const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete spell");
+  const deletion = useCatalogueDelete({
+    kind: "spells",
+    campaignId,
+    entry: spell,
+    noun: "spell",
+    onDeleted,
+  });
   const revert = useCatalogueRevert({ kind: "spells", campaignId, entry: spell, onReverted });
   const typeField = useCatalogueTypeField({
     value: values.type,
@@ -133,24 +139,6 @@ export function useSpellForm({
     }
   };
 
-  const remove = async (after?: () => void) => {
-    if (!spell) {
-      return;
-    }
-    setIsSaving(true);
-    deleteConfirm.clearError();
-    try {
-      await deleteSpell(spell.id);
-      catalogueCache.remove("spells", campaignId, spell.id);
-      onDeleted?.(spell.id);
-      after?.();
-    } catch (errorResponse) {
-      deleteConfirm.refused(errorResponse);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   const { reset: resetTypeField } = typeField;
   const { clear: clearFieldErrors } = fieldErrors;
   /** Back to `entry`'s values (a blank form for null), with no message. */
@@ -171,12 +159,12 @@ export function useSpellForm({
     typeField,
     fieldErrors: fieldErrors.errors,
     nameTaken,
-    isSaving,
+    isSaving: isSaving || deletion.isDeleting,
     formError,
-    deleteConfirm,
+    deleteConfirm: deletion.deleteConfirm,
     revert,
     save,
-    remove,
+    remove: deletion.remove,
     load,
   };
 }
