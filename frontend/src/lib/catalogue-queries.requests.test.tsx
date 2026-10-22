@@ -4,7 +4,7 @@
  * dialogs and the bestiary's Add dialog reading the lists the pages cached. The Bestiary asks the
  * server to leave the hired swords out (`?exclude_type=Hired Sword`, PERF-47).
  */
-import { act, cleanup, screen } from "@testing-library/react";
+import { act, cleanup, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createQueryClient } from "@/lib/query-client";
@@ -155,6 +155,12 @@ describe("catalogue pages: the shared 5-minute cache", () => {
     queryClient = createQueryClient();
     renderCatalogueRoute("/campaigns/1/warband", { queryClient });
     expect(await screen.findByText("Warband page")).toBeVisible();
+    // Waits for the reads themselves (a fixed pause raced them under a busy run), then gives a
+    // duplicate the chance to start before counting.
+    await waitFor(() => {
+      expect(fakeApi.countOf(LIST.skills)).toBeGreaterThan(0);
+      expect(fakeApi.countOf(LIST.spells)).toBeGreaterThan(0);
+    });
     await settle();
 
     expect(fakeApi.countOf(LIST.skills)).toBe(1);

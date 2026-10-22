@@ -12,12 +12,13 @@ def _load_settings(**env: str) -> subprocess.CompletedProcess[str]:
     """Import config.settings in a fresh interpreter with the given environment.
 
     Values are set explicitly (even to "") because settings call load_dotenv(),
-    which only fills variables that are absent.
+    which only fills variables that are absent. RESEND_API_KEY is blanked unless a
+    test sets it, so a developer's local .env can't trip the email guards.
     """
     return subprocess.run(
         [sys.executable, "-c", "import config.settings as s; print(s.DEBUG, len(s.SECRET_KEY))"],
         cwd=BACKEND_DIR,
-        env={**os.environ, **env},
+        env={**os.environ, "RESEND_API_KEY": "", **env},
         capture_output=True,
         text=True,
         timeout=30,
