@@ -14,7 +14,7 @@ import { ITEM_FIELDS } from "../utils/item-form-fields";
 import {
   ITEM_SUBTYPE_OPTIONS,
   blankAvailability,
-  itemFormProblem,
+  itemFormProblems,
   itemPayload,
   itemPropertiesOf,
   itemTypeOptions,
@@ -33,8 +33,6 @@ type UseItemFormOptions = {
   campaignId: number;
   /** The item being edited; null when adding one. */
   item: Item | null;
-  /** How a save stopped before sending is worded: one line inline, row by row in the dialog. */
-  wording: "summary" | "per-row";
   /** The form shows (a closed dialog reads no property list). */
   enabled: boolean;
   /** Server field errors clear whenever this changes (the edited item, or the dialog opening). */
@@ -51,14 +49,14 @@ type UseItemFormOptions = {
 
 /**
  * An item's Add or Edit form, inline on the Wargear page or in the warband pages' dialog: the
- * values, the availabilities, the properties, the checks before sending (BUG-53's price), the
+ * values, the availabilities, the properties, the checks before sending (BUG-53's price, under
+ * Price and Rarity), the
  * save (the answer goes into the cached list; refusals land on their fields) and the delete
  * (refusals stay in its confirm, BUG-148).
  */
 export function useItemForm({
   campaignId,
   item,
-  wording,
   enabled,
   resetKey,
   onSaved,
@@ -97,9 +95,11 @@ export function useItemForm({
     setValues((prev) => ({ ...prev, availabilities: update(prev.availabilities) }));
 
   const save = async (after?: () => void) => {
-    const problem = itemFormProblem(values, wording);
-    if (problem) {
-      setFormError(problem);
+    // The server's limits, checked before sending, under the fields they concern.
+    const problems = itemFormProblems(values);
+    if (problems.line || Object.keys(problems.fields).length > 0) {
+      setFormError(problems.line ?? "");
+      fieldErrors.show(problems.fields);
       return;
     }
     if (!item && Number.isNaN(campaignId)) {

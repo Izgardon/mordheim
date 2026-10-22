@@ -13,6 +13,7 @@ import { renderWithQueryClient } from "@/test/query-test-utils";
 import { nameMatch, nameTaken, expectFieldError, validationError } from "@/test/refusals";
 import { chooseOption } from "@/test/select-option";
 import { setupUser } from "@/test/user-event";
+import { PRICE_HINT } from "../utils/item-form-values";
 import AddItemForm from "./AddItemForm";
 import ItemFormDialog from "./ItemFormDialog";
 
@@ -97,6 +98,24 @@ describe("AddItemForm: refusals", () => {
 });
 
 describe("ItemFormDialog: refusals", () => {
+  it("shows a refusal of the availabilities list itself in the dialog too (PR B's found-not-fixed)", async () => {
+    const user = setupUser();
+    const listRefusal = "Add at least one availability.";
+    fakeApi.fail("POST /items/", validationError({ availabilities: [listRefusal] }));
+    renderWithQueryClient(<ItemFormDialog mode="create" campaignId={1} onCreated={vi.fn()} />);
+    await user.click(screen.getByRole("button", { name: "Add item" }));
+    const dialog = screen.getByRole("dialog");
+    await user.type(within(dialog).getByLabelText("Name"), "Rusty Cleaver");
+    await chooseOption(user, within(dialog).getByRole("combobox", { name: "Type" }), "Weapon");
+    await user.type(within(dialog).getByLabelText("Price"), "7");
+    await user.type(within(dialog).getByLabelText(/^Rarity/), "2");
+
+    await user.click(within(dialog).getByRole("button", { name: "Add item" }));
+
+    expect(await within(dialog).findByRole("alert")).toHaveTextContent(listRefusal);
+    expect(screen.getAllByText(listRefusal)).toHaveLength(1);
+  });
+
   it("shows a taken name on the name field and keeps the dialog open (name_taken)", async () => {
     const user = setupUser();
     fakeApi.fail("POST /items/", taken.error);
@@ -133,9 +152,7 @@ describe("ItemFormDialog: refusals", () => {
     await user.type(within(dialog).getByLabelText(/^Rarity/), "2");
 
     await user.click(within(dialog).getByRole("button", { name: "Add item" }));
-    expect(
-      within(dialog).getByText("Availability 1: a price of 0 or more and a rarity are required.")
-    ).toBeVisible();
+    await expectFieldError(within(dialog).getByLabelText("Price"), PRICE_HINT);
     expect(fakeApi.countOf("POST /items/")).toBe(0);
 
     await user.clear(within(dialog).getByLabelText("Price"));

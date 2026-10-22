@@ -61,7 +61,7 @@ export default function ItemAvailabilityFields({
           {isDialog ? "Add" : "+ Add"}
         </Button>
       </div>
-      {isDialog ? null : <FieldError message={form.fieldErrors.availabilities} />}
+      <FieldError message={form.fieldErrors.availabilities} />
       {rows.map((row, index) => {
         const price = (
           <CatalogueField layout={layout} label="Price" htmlFor={`item-cost${idSuffix}-${index}`}>

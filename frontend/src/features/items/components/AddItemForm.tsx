@@ -35,7 +35,6 @@ export default function AddItemForm({
   const form = useItemForm({
     campaignId,
     item,
-    wording: "summary",
     enabled: true,
     resetKey: editingItem,
     onSaved: (saved) => (item ? onUpdated?.(saved) : onCreated(saved)),

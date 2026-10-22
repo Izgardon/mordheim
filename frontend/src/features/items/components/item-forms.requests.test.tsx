@@ -17,7 +17,9 @@ import {
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { chooseOption } from "@/test/select-option";
+import { expectFieldError } from "@/test/refusals";
 import { setupUser } from "@/test/user-event";
+import { PRICE_HINT, RARITY_HINT } from "../utils/item-form-values";
 import AddItemForm from "./AddItemForm";
 import ItemFormDialog from "./ItemFormDialog";
 
@@ -108,9 +110,8 @@ describe("AddItemForm: create", () => {
     });
   });
 
-  it("refuses a negative price before sending, as it refuses a rarity outside 2 to 20, the server's limits (BUG-53, CAT-TEST-09)", async () => {
+  it("refuses a negative price before sending, as it refuses a rarity outside 2 to 20, each under its own field (BUG-53, CAT-TEST-09)", async () => {
     const user = setupUser();
-    const hint = "Each availability needs a price of 0 or more and a rarity from 2 to 20.";
     renderWithQueryClient(<AddItemForm campaignId={1} onCreated={vi.fn()} onCancel={vi.fn()} />);
     await user.type(screen.getByPlaceholderText("Gutterblade"), "Debt");
     await chooseOption(user, typeSelect(), "Weapon");
@@ -118,12 +119,14 @@ describe("AddItemForm: create", () => {
     await user.type(screen.getByPlaceholderText("25"), "-5");
     await user.type(screen.getByPlaceholderText("2"), "21");
     await user.click(screen.getByRole("button", { name: "Save" }));
-    expect(screen.getByText(hint)).toBeVisible();
+    await expectFieldError(screen.getByPlaceholderText("25"), PRICE_HINT);
+    await expectFieldError(screen.getByPlaceholderText("2"), RARITY_HINT);
 
     await user.clear(screen.getByPlaceholderText("2"));
     await user.type(screen.getByPlaceholderText("2"), "2");
     await user.click(screen.getByRole("button", { name: "Save" }));
-    expect(screen.getByText(hint)).toBeVisible();
+    await expectFieldError(screen.getByPlaceholderText("25"), PRICE_HINT);
+    expect(screen.getByPlaceholderText("2")).toHaveAttribute("aria-invalid", "false");
     expect(fakeApi.countOf("POST /items/")).toBe(0);
 
     await user.clear(screen.getByPlaceholderText("25"));

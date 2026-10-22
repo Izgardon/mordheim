@@ -135,6 +135,11 @@ export function useFieldErrors(shown: readonly string[], resetKey?: unknown) {
       setMatches(nameMatchesOf(error));
       return refusal.message;
     },
+    /** The form's own checks before sending, shown as the server's would be. */
+    show: (fields: FieldErrors) => {
+      setErrors(fields);
+      setMatches(NO_MATCHES);
+    },
     /** A match restored from the list: it is in the catalogue again, so it can be edited. */
     markRestored: (id: number) =>
       setMatches((current) =>

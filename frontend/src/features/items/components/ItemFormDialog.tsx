@@ -45,7 +45,6 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
   const form = useItemForm({
     campaignId: props.campaignId,
     item,
-    wording: "per-row",
     enabled: dialog.open,
     resetKey: dialog.open,
     onSaved: (saved) => (props.mode === "create" ? props.onCreated(saved) : props.onUpdated(saved)),

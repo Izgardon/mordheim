@@ -130,41 +130,37 @@ export function itemPayload(values: ItemFormValues, propertyIds: number[]) {
   };
 }
 
-const missingPrice = (row: AvailabilityRow) =>
-  !row.cost.trim() || !row.rarity.trim() || !(Number(row.cost) >= 0);
+const badPrice = (row: AvailabilityRow) => !row.cost.trim() || !(Number(row.cost) >= 0);
 
 const badRarity = (row: AvailabilityRow) => {
   const rarity = Number(row.rarity);
-  return Number.isNaN(rarity) || rarity < 2 || rarity > 20;
+  return !row.rarity.trim() || Number.isNaN(rarity) || rarity < 2 || rarity > 20;
 };
+
+export const PRICE_HINT = "Needs a price of 0 or more.";
+export const RARITY_HINT = "Needs a rarity from 2 to 20.";
+export const NO_AVAILABILITY_HINT = "Add at least one availability.";
 
 /**
  * What stops a save before it is sent, the server's own limits (a price of 0 or more, a rarity
- * from 2 to 20): one line for the page's form ("summary"), or naming the row in the dialog.
+ * from 2 to 20), each under its own Price or Rarity (or the availabilities list), as the server's
+ * refusals are; a missing name or type is the line under the form.
  */
-export function itemFormProblem(
-  values: ItemFormValues,
-  wording: "summary" | "per-row"
-): string | null {
+export function itemFormProblems(values: ItemFormValues): {
+  line: string | null;
+  fields: Record<string, string>;
+} {
   if (!values.name.trim() || !values.type.trim()) {
-    return "Name and type are required.";
+    return { line: "Name and type are required.", fields: {} };
   }
   const rows = values.availabilities;
-  if (wording === "summary") {
-    return rows.length === 0 || rows.some((row) => missingPrice(row) || badRarity(row))
-      ? "Each availability needs a price of 0 or more and a rarity from 2 to 20."
-      : null;
-  }
   if (rows.length === 0) {
-    return "At least one availability is required.";
+    return { line: null, fields: { availabilities: NO_AVAILABILITY_HINT } };
   }
-  for (const [index, row] of rows.entries()) {
-    if (missingPrice(row)) {
-      return `Availability ${index + 1}: a price of 0 or more and a rarity are required.`;
-    }
-    if (badRarity(row)) {
-      return `Availability ${index + 1}: rarity must be between 2 and 20.`;
-    }
-  }
-  return null;
+  const fields: Record<string, string> = {};
+  rows.forEach((row, index) => {
+    if (badPrice(row)) fields[`availabilities.${index}.cost`] = PRICE_HINT;
+    if (badRarity(row)) fields[`availabilities.${index}.rarity`] = RARITY_HINT;
+  });
+  return { line: null, fields };
 }
