@@ -33,7 +33,8 @@ class CampaignScopedView(AnswersRefusals):
     "Forbidden". `rules`
     maps each method the view handles to a rule of `access.CAMPAIGN_RULES`; a handled method it doesn't list is
     refused (deny by default). Methods the view doesn't handle, and OPTIONS, are left to DRF (405, metadata).
-    Object rules (a note's author) are checked in the handler with `check_rule(name, obj)`.
+    Object rules (a note's author) are checked in the handler with `check_rule(name, obj)`. Campaign routes name
+    their campaign in the path; a view that finds it elsewhere (the catalogue's) overrides `load_scope`.
     """
 
     permission_classes = [permissions.IsAuthenticated]
@@ -48,7 +49,18 @@ class CampaignScopedView(AnswersRefusals):
         method = "GET" if request.method == "HEAD" else str(request.method)
         if method == "OPTIONS" or not hasattr(self, method.lower()):
             return
-        access = load_campaign_access(request, kwargs["campaign_id"])
+        self.load_scope(method, **kwargs)
+
+    def load_scope(self, method: str, **kwargs: Any) -> None:
+        """Find the campaign the request acts in and check the method's rule there. Campaign routes name it in the
+        path; the catalogue's find it in the query, the body or the entry (apps/core/catalogue/views.py)."""
+        self.enter_campaign(method, kwargs["campaign_id"])
+        self.check_rule(self.rules.get(method))
+
+    def enter_campaign(self, method: str, campaign_id: int) -> None:
+        """Load the caller's access: a non-member 404, a feature switched off 404, a write to an archived campaign
+        403 `campaign_archived` (but the methods in `allow_archived`)."""
+        access = load_campaign_access(self.request, campaign_id)
         if access is None:
             raise NotFound("Not found")
         self.access = access
@@ -56,7 +68,6 @@ class CampaignScopedView(AnswersRefusals):
             raise NotFound("Not found")
         if method != "GET" and access.archived and method not in self.allow_archived:
             raise CampaignArchived()
-        self.check_rule(self.rules.get(method))
 
     def check_rule(self, name: str | None, obj: Any = None) -> None:
         """403 "Forbidden" unless the caller passes the rule (for `obj`, for an object rule)."""

@@ -71,14 +71,15 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     "warband_resources": ("/api/warbands/{warband}/resources/", 3),
     # Trades (constant in trades: test below)
     "campaign_trade_requests": ("/api/campaigns/{campaign}/trade-requests/", 2),  # reads no longer expire (BUG-69)
-    # Catalogue
-    "items": ("/api/items/?campaign_id={campaign}", 7),
-    "skills": ("/api/skills/?campaign_id={campaign}", 4),
-    "spells": ("/api/spells/?campaign_id={campaign}", 4),
-    "specials": ("/api/special/?campaign_id={campaign}", 4),
-    "races": ("/api/races/?campaign_id={campaign}", 4),
-    "bestiary": ("/api/bestiary/?campaign_id={campaign}", 4),
-    "hired_sword_profiles": ("/api/hired-swords/?campaign_id={campaign}", 4),
+    # Catalogue (PERF-49): membership and one queryset; items add their property links, availabilities and
+    # restrictions, hired swords their restrictions once a row has some
+    "items": ("/api/items/?campaign_id={campaign}", 5),
+    "skills": ("/api/skills/?campaign_id={campaign}", 2),
+    "spells": ("/api/spells/?campaign_id={campaign}", 2),
+    "specials": ("/api/special/?campaign_id={campaign}", 2),
+    "races": ("/api/races/?campaign_id={campaign}", 2),
+    "bestiary": ("/api/bestiary/?campaign_id={campaign}", 2),
+    "hired_sword_profiles": ("/api/hired-swords/?campaign_id={campaign}", 2),
     # Battles
     "battle_state": ("/api/campaigns/{campaign}/battles/{battle}/state/", 5),  # first read writes presence once
     # constant in units (pass 3; apps/battles/tests/test_battle_query_budgets.py); first read writes presence once

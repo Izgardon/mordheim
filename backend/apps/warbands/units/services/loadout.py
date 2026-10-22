@@ -9,6 +9,8 @@ from collections.abc import Iterable, Mapping, MutableMapping
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
+from django.db.models import Q
+
 from apps.items.models import Item
 from apps.special.models import Special
 from apps.warbands.models import RosterUnit
@@ -23,9 +25,16 @@ TRAIT_SPECIAL_NAMES = [LARGE_SPECIAL_NAME, *CASTER_SPECIAL_MAP.values()]
 LoadoutLists = MutableMapping[str, Any]  # write field -> the list sent, None when not sent
 
 
-def get_trait_specials() -> dict[str, Special]:
-    """The trait specials by name. The lookup is unscoped across campaigns (BUG-103, unchanged here)."""
-    return {s.name: s for s in Special.objects.filter(name__in=TRAIT_SPECIAL_NAMES)}
+def get_trait_specials(campaign_id: int) -> dict[str, Special]:
+    """The trait specials by name: the book's, or the campaign's version of one (BUG-103: every campaign's "Large"
+    was read, and the last one won). One query; of several book specials of a name, the last in the catalogue's
+    order wins, as before."""
+    names = Q(campaign__isnull=True, name__in=TRAIT_SPECIAL_NAMES)
+    versions = Q(campaign_id=campaign_id, replaces__campaign__isnull=True, replaces__name__in=TRAIT_SPECIAL_NAMES)
+    rows = list(Special.objects.filter(names | versions))
+    book = {row.name: row for row in rows if row.campaign_id is None}
+    replaced = {row.replaces_id: row for row in rows if row.campaign_id is not None}
+    return {name: replaced.get(row.id, row) for name, row in book.items()}
 
 
 def linked_ids(links: Any, column: str) -> set[int]:
@@ -98,17 +107,19 @@ def _sync_special_db(specials: Any, special_id: int, should_have: bool) -> None:
         specials.filter(special_id=special_id).delete()
 
 
-def _trait_specials_for(data: Mapping[str, Any], special_ids: list[int] | None) -> dict[str, Special]:
+def _trait_specials_for(data: Mapping[str, Any], special_ids: list[int] | None, campaign_id: int) -> dict[str, Special]:
     """A write that names none of large, caster or special_ids leaves the traits alone: no query needed."""
     if special_ids is None and "large" not in data and "caster" not in data:
         return {}
-    return get_trait_specials()
+    return get_trait_specials(campaign_id)
 
 
-def apply_create_traits(kind: "UnitKindSpec", data: MutableMapping[str, Any], lists: LoadoutLists) -> None:
+def apply_create_traits(
+    kind: "UnitKindSpec", data: MutableMapping[str, Any], lists: LoadoutLists, campaign_id: int
+) -> None:
     """Make a new unit's `large` flag and its trait specials agree before it is created."""
     sent_ids = lists.get(kind.specials.write_field)
-    traits = _trait_specials_for(data, sent_ids)
+    traits = _trait_specials_for(data, sent_ids, campaign_id)
     special_ids = sent_ids if sent_ids is not None else []
     large_sp = traits.get(LARGE_SPECIAL_NAME)
     if large_sp:
@@ -136,10 +147,14 @@ class TraitUpdate:
     desired_caster: str | None = None
 
 
-def prepare_update_traits(kind: "UnitKindSpec", data: MutableMapping[str, Any], lists: LoadoutLists) -> TraitUpdate:
+def prepare_update_traits(
+    kind: "UnitKindSpec", data: MutableMapping[str, Any], lists: LoadoutLists, campaign_id: int
+) -> TraitUpdate:
     """Sync the trait specials into a sent `special_ids` list, or `large` from it, before the save."""
     special_ids = lists.get(kind.specials.write_field)
-    update = TraitUpdate(traits=_trait_specials_for(data, special_ids), desired_large=data.get("large", None))
+    update = TraitUpdate(
+        traits=_trait_specials_for(data, special_ids, campaign_id), desired_large=data.get("large", None)
+    )
     large_sp = update.traits.get(LARGE_SPECIAL_NAME)
     if large_sp:
         if special_ids is not None:

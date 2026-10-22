@@ -63,7 +63,7 @@ def warband_capabilities(user: Any, warband: Warband, membership: CampaignMember
         "manage_items": can_edit,  # stash, item transfers and sales, resources, ledger entries
         "edit_backstory": owns_warband(user, warband, membership),  # the owner only (decision 13)
         "delete": owns_warband(user, warband, membership),  # warband DELETE: its owner only
-        "add_custom": has_campaign_permission(membership, "add_custom"),  # custom catalogue entries
+        "edit_catalogue": has_campaign_permission(membership, "edit_catalogue"),  # add and edit catalogue entries
         "trade": owns_warband(user, warband, membership),  # player trades: its owner only (pass 2 decision 10)
     }
     if warband.campaign.archived_at is not None:

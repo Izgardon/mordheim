@@ -52,7 +52,7 @@ def apply_create(kind: "UnitKindSpec", data: MutableMapping[str, Any]) -> Roster
     """Create a unit from a validated body (with `warband`): its fields, loadout, traits and members."""
     lists = pop_loadout_lists(kind, data)
     members = data.pop("henchmen", None) if kind.has_members else None
-    apply_create_traits(kind, data, lists)
+    apply_create_traits(kind, data, lists, data["warband"].campaign_id)
     if not (kind.recruit.client_may_seed_level_up and "level_up" in data):
         data["level_up"] = 0  # seeded XP on first persist mints no level-ups
     data["xp_high_water"] = data.get("xp") or 0  # nor do later climbs back up to it (BUG-27)

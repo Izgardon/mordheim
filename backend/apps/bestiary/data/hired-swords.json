@@ -1187,10 +1187,6 @@
       {
         "item": "Claws",
         "quantity": 1
-      },
-      {
-        "item": "Warpfire Thrower",
-        "quantity": 1
       }
     ],
     "hired_sword": {
@@ -2443,10 +2439,6 @@
       {
         "item": "Dagger",
         "quantity": 2
-      },
-      {
-        "item": "Thief's Cloak",
-        "quantity": 1
       }
     ],
     "hired_sword": {

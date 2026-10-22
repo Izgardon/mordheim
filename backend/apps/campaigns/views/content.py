@@ -133,7 +133,8 @@ class CampaignLocationDetailView(CampaignScopedView):
 
 
 class CampaignHouseRulesView(CampaignScopedView):
-    """GET: the house rules. POST: add one (manage_rules); one per item effect (BUG-52), so a repeat answers 200."""
+    """GET: the house rules. POST: add one (manage_rules); one per item effect (BUG-52), so a repeat answers 200. The
+    answer's `warnings` name the campaign's own versions an effect left alone (`house_rule_skipped`)."""
 
     rules = {"GET": "view", "POST": "manage_rules"}
 
@@ -143,9 +144,10 @@ class CampaignHouseRulesView(CampaignScopedView):
     def post(self, request, campaign_id):
         serializer = CampaignHouseRuleCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        rule, created = house_rules.create_rule(campaign_id, serializer.validated_data)
+        rule, created, skipped = house_rules.create_rule(campaign_id, serializer.validated_data)
         answer_status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
-        return Response(CampaignHouseRuleSerializer(rule).data, status=answer_status)
+        answer = {**CampaignHouseRuleSerializer(rule).data, "warnings": house_rules.skipped_warnings(skipped)}
+        return Response(answer, status=answer_status)
 
 
 class CampaignCommonRulesView(CampaignScopedView):
@@ -156,7 +158,8 @@ class CampaignCommonRulesView(CampaignScopedView):
 
 
 class CampaignHouseRuleDetailView(CampaignScopedView):
-    """PATCH: edit a house rule; its clones change only with its effect (PERF-44). DELETE: remove it."""
+    """PATCH: edit a house rule; its clones change only with its effect (PERF-44), and `warnings` say which of the
+    campaign's own versions a new effect left alone. DELETE: remove it."""
 
     rules = {"PATCH": "manage_rules", "DELETE": "manage_rules"}
 
@@ -166,7 +169,8 @@ class CampaignHouseRuleDetailView(CampaignScopedView):
             return not_found()
         serializer = CampaignHouseRuleCreateSerializer(rule, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        return Response(CampaignHouseRuleSerializer(house_rules.update_rule(rule, serializer.validated_data)).data)
+        rule, skipped = house_rules.update_rule(rule, serializer.validated_data)
+        return Response({**CampaignHouseRuleSerializer(rule).data, "warnings": house_rules.skipped_warnings(skipped)})
 
     def delete(self, request, campaign_id, rule_id):
         rule = CampaignHouseRule.objects.filter(id=rule_id, campaign_id=campaign_id).first()

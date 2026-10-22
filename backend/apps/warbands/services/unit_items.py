@@ -72,5 +72,5 @@ def unit_item_rows(unit_type: str, unit: RosterUnit) -> list[Any]:
     """The unit's copies in id order with their items' details (properties, availabilities), for an answer."""
     kind = KINDS[cast(UnitKindKey, unit_type)]
     links: Any = kind.items.model._default_manager.filter(**{kind.parent_field: unit}).select_related("item")
-    links = links.annotate(**house_rule_prices(f"{kind.parent_field}__warband__campaign_id", "item__name"))
+    links = links.annotate(**house_rule_prices(f"{kind.parent_field}__warband__campaign_id", "item_id"))
     return list(links.prefetch_related(*item_detail_prefetches("item__")).order_by("id"))

@@ -2,7 +2,7 @@
 
 Runs in the lock's transaction with the trade row locked; both warbands are locked too (lowest id first). Each
 side's trader must still be on the roster (BUG-05); his trading action is spent here, once the trade can no longer
-fail (decision 9).
+fail (decision 9). An item edited or reverted in the campaign since the offer moves under its current id.
 """
 
 from typing import Any
@@ -10,10 +10,12 @@ from typing import Any
 from django.db import transaction
 from django.utils import timezone
 
+from apps.core.catalogue.current import resolve
+from apps.items.models import Item
 from apps.trades.models import TradeRequest
 from apps.warbands.models import Hero, LedgerAction, Warband, on_roster
 from apps.warbands.services import economy_log, ledger
-from apps.warbands.services.stash import StashShortage, add_costs, remove_from_stash
+from apps.warbands.services.stash import StashShortage, StashTake, add_costs, remove_from_stash
 from apps.warbands.services.summary import warband_gold
 
 from .errors import TradeError
@@ -36,17 +38,28 @@ def _check_side(trade: TradeRequest, side: str, offer: dict[str, Any]) -> None:
         raise TradeError("Not enough gold.", status=409, code=FAILED, warband_id=warband_id)
 
 
+def _take(trade: TradeRequest, source: int, item_id: int, quantity: int) -> tuple[int, StashTake]:
+    """Take the offered copies out of the source's stash; the item id they left under, and what was taken. An item
+    the campaign edited or reverted since the offer (its copies moved to the version, or back to the book) is taken
+    under its current id, which only that case reads (CAT-TWEAK-03)."""
+    try:
+        return item_id, remove_from_stash(source, item_id, quantity)
+    except StashShortage as shortage:
+        rows = Item.objects.only("id", "campaign_id", "replaces_id")
+        current = None if shortage.held else resolve(rows, "items", [item_id], trade.campaign_id).get(item_id)
+        if current is not None and current.id != item_id:
+            return _take(trade, source, current.id, quantity)
+        detail = "Not enough quantity for one or more items."
+        if not shortage.held:
+            detail = "One or more items are not in the warchest."
+        raise TradeError(detail, status=409, code=FAILED, warband_id=source) from shortage
+
+
 def _move_items(trade: TradeRequest, side: str, offer: dict[str, Any]) -> None:
     source = getattr(trade, f"{side}_warband_id")
     target = getattr(trade, f"{_other(side)}_warband_id")
-    for item_id, quantity in requested_items(offer["items"]).items():
-        try:
-            taken = remove_from_stash(source, item_id, quantity)
-        except StashShortage as shortage:
-            detail = "Not enough quantity for one or more items."
-            if not shortage.held:
-                detail = "One or more items are not in the warchest."
-            raise TradeError(detail, status=409, code=FAILED, warband_id=source) from shortage
+    for offered_id, quantity in requested_items(offer["items"]).items():
+        item_id, taken = _take(trade, source, offered_id, quantity)
         # each copy keeps its cost (BUG-40, BUG-117), beside the receiver's own copies
         add_costs(target, item_id, taken.costs)
 

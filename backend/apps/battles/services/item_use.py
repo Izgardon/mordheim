@@ -8,6 +8,9 @@ the whitelisted keys with the server's own unit and item fields, never kept as s
 import json
 from typing import Any
 
+from django.db.models import Q
+
+from apps.core.models import RevertedVersion
 from apps.warbands.models import HenchmenGroupItem, HeroItem, HiredSwordItem
 
 from ..models import BattleParticipant
@@ -43,23 +46,32 @@ def _item_id(payload: dict[str, Any]) -> int:
     return int(raw)
 
 
-def _carried_item_name(warband_id: int, unit_type: str, unit_id: int, item_id: int) -> str | None:
-    """The item's name when the unit (of this warband) carries at least one; a henchman carries his group's."""
-    links: Any
+def _carried_links(warband_id: int, unit_type: str, unit_id: int) -> Any:
     if unit_type == "hero":
-        links = HeroItem.objects.filter(hero_id=unit_id, hero__warband_id=warband_id)
-    elif unit_type == "hired_sword":
-        links = HiredSwordItem.objects.filter(hired_sword_id=unit_id, hired_sword__warband_id=warband_id)
-    else:
-        links = HenchmenGroupItem.objects.filter(
-            henchmen_group__henchmen__id=unit_id, henchmen_group__warband_id=warband_id
-        )
-    name: str | None = links.filter(item_id=item_id).values_list("item__name", flat=True).first()
-    return name
+        return HeroItem.objects.filter(hero_id=unit_id, hero__warband_id=warband_id)
+    if unit_type == "hired_sword":
+        return HiredSwordItem.objects.filter(hired_sword_id=unit_id, hired_sword__warband_id=warband_id)
+    return HenchmenGroupItem.objects.filter(henchmen_group__henchmen__id=unit_id, henchmen_group__warband_id=warband_id)
+
+
+def _carried_item(warband_id: int, unit: tuple[str, int], item_id: int, campaign_id: int) -> tuple[int, str] | None:
+    """The id and name of the item the unit (of this warband) carries for `item_id`: that item, or the campaign's
+    version of it (a sheet read before the edit, CAT-TWEAK-03), or for a version reverted since, its book item; a
+    henchman carries his group's."""
+    links = _carried_links(warband_id, *unit)
+    found: tuple[int, str] | None = (
+        links.filter(Q(item_id=item_id) | Q(item__replaces_id=item_id, item__campaign_id=campaign_id))
+        .values_list("item_id", "item__name")
+        .first()
+    )
+    if found is None:
+        book_id = RevertedVersion.objects.filter(kind="items", version_id=item_id).values_list("book_id", flat=True)
+        found = links.filter(item_id__in=book_id).values_list("item_id", "item__name").first()
+    return found
 
 
 def item_use_payload(
-    participant: BattleParticipant, payload: dict[str, Any], selected_keys: set[str] | None
+    participant: BattleParticipant, payload: dict[str, Any], selected_keys: set[str] | None, campaign_id: int
 ) -> dict[str, Any]:
     """The payload to store for an item use, or BattleError. Once the battle is active (`selected_keys` given) the
     unit must be one the player selected; in prebattle, where a selection may not be saved yet, his own is enough."""
@@ -70,14 +82,14 @@ def item_use_payload(
     item_id = _item_id(payload)
     if selected_keys is not None and unit_key not in selected_keys:
         raise BattleError("unit_key is not selected for this participant", code="unit_not_selected")
-    item_name = _carried_item_name(participant.warband_id, unit_type, unit_id, item_id)
-    if item_name is None:
+    carried = _carried_item(participant.warband_id, (unit_type, unit_id), item_id, campaign_id)
+    if carried is None:
         raise BattleError("That unit doesn't carry this item", code="item_not_carried")
     return {
         "participant_user_id": participant.user_id,
         "unit_key": unit_key,
         "unit_id": unit_id,
         "unit_type": unit_type,
-        "item_id": item_id,
-        "item_name": item_name,
+        "item_id": carried[0],
+        "item_name": carried[1],
     }

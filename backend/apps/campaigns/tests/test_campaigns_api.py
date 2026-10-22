@@ -284,18 +284,18 @@ class CampaignApiTests(APITestCase):
         clones = Item.objects.filter(
             campaign_id=campaign["id"],
             generated_effect_key="half_price_armour",
-        ).select_related("source_item")
+        ).select_related("replaces")
         self.assertEqual(clones.count(), 2)
-        self.assertFalse(clones.filter(source_item__subtype="Shield").exists())
+        self.assertFalse(clones.filter(replaces__subtype="Shield").exists())
 
-        heavy_clone = clones.get(source_item=heavy_armour)
+        heavy_clone = clones.get(replaces=heavy_armour)
         self.assertEqual(heavy_clone.name, heavy_armour.name)
         self.assertEqual(heavy_clone.type, heavy_armour.type)
         self.assertEqual(heavy_clone.subtype, heavy_armour.subtype)
         self.assertEqual(heavy_clone.grade, heavy_armour.grade)
         self.assertEqual(heavy_clone.description, heavy_armour.description)
         self.assertEqual(heavy_clone.save_value, heavy_armour.save_value)
-        self.assertEqual(heavy_clone.source_item_id, heavy_armour.id)
+        self.assertEqual(heavy_clone.replaces_id, heavy_armour.id)
 
         heavy_clone_availability = heavy_clone.availabilities.get()
         self.assertEqual(heavy_clone_availability.cost, 26)
@@ -314,13 +314,13 @@ class CampaignApiTests(APITestCase):
             ["Bulky"],
         )
 
-        chaos_clone = clones.get(source_item=chaos_armour)
+        chaos_clone = clones.get(replaces=chaos_armour)
         self.assertEqual(chaos_clone.availabilities.get().cost, 93)
 
     def test_creating_half_price_armour_rule_twice_is_idempotent_for_generated_items(self):
         owner = self._create_user("owner@example.com", "Owner")
         campaign = self._create_campaign(owner)
-        source_item = self._create_base_item("Light Armour", cost=20, rarity=8)
+        replaces = self._create_base_item("Light Armour", cost=20, rarity=8)
 
         first_response = self._create_half_price_armour_rule(owner, campaign["id"])
         second_response = self._create_half_price_armour_rule(owner, campaign["id"], title="Half Price Armour Copy")
@@ -331,7 +331,7 @@ class CampaignApiTests(APITestCase):
         clones = Item.objects.filter(
             campaign_id=campaign["id"],
             generated_effect_key="half_price_armour",
-            source_item=source_item,
+            replaces=replaces,
         )
         self.assertEqual(clones.count(), 1)
         self.assertEqual(clones.get().availabilities.get().cost, 10)
@@ -360,7 +360,7 @@ class CampaignApiTests(APITestCase):
         clone = Item.objects.get(
             campaign_id=campaign["id"],
             generated_effect_key="half_price_armour",
-            source_item=armour,
+            replaces=armour,
         )
         self.assertEqual(WarbandItem.objects.get(warband=warband).item_id, clone.id)
         self.assertEqual(WarbandItem.objects.get(warband=warband).cost, 91)  # what was paid (BUG-51)
@@ -390,7 +390,7 @@ class CampaignApiTests(APITestCase):
         clone = Item.objects.get(
             campaign_id=campaign["id"],
             generated_effect_key="half_price_armour",
-            source_item=armour,
+            replaces=armour,
         )
         self.assertEqual(WarbandItem.objects.get(warband=warband).item_id, clone.id)
 
@@ -426,7 +426,7 @@ class CampaignApiTests(APITestCase):
         clone = Item.objects.get(
             campaign_id=campaign["id"],
             generated_effect_key="half_price_armour",
-            source_item=armour,
+            replaces=armour,
         )
         self.assertEqual(WarbandItem.objects.get(warband=warband).item_id, clone.id)
 
@@ -455,18 +455,18 @@ class CampaignApiTests(APITestCase):
         clones = Item.objects.filter(
             campaign_id=campaign["id"],
             generated_effect_key="improved_shields",
-        ).select_related("source_item")
+        ).select_related("replaces")
         self.assertEqual(clones.count(), 3)
 
-        shield_clone = clones.get(source_item=shield)
+        shield_clone = clones.get(replaces=shield)
         self.assertEqual(shield_clone.save_value, "6+ (5+ CC)")
         self.assertEqual(shield_clone.availabilities.get().cost, 5)
 
-        pavise_clone = clones.get(source_item=pavise)
+        pavise_clone = clones.get(replaces=pavise)
         self.assertEqual(pavise_clone.save_value, "6+ (5+ CC)")
         self.assertEqual(pavise_clone.availabilities.get().cost, 25)
 
-        buckler_clone = clones.get(source_item=buckler)
+        buckler_clone = clones.get(replaces=buckler)
         self.assertEqual(buckler_clone.save_value, "")
 
     def test_create_improved_shields_rule_remaps_owned_items_to_shield_clones(self):
@@ -489,7 +489,7 @@ class CampaignApiTests(APITestCase):
         clone = Item.objects.get(
             campaign_id=campaign["id"],
             generated_effect_key="improved_shields",
-            source_item=shield,
+            replaces=shield,
         )
         self.assertEqual(clone.save_value, "6+ (5+ CC)")
         self.assertEqual(WarbandItem.objects.get(warband=warband).item_id, clone.id)
@@ -514,7 +514,7 @@ class CampaignApiTests(APITestCase):
         clone = Item.objects.get(
             campaign_id=campaign["id"],
             generated_effect_key="improved_shields",
-            source_item=shield,
+            replaces=shield,
         )
         self.assertEqual(WarbandItem.objects.get(warband=warband).item_id, clone.id)
 
@@ -694,7 +694,8 @@ class CampaignApiTests(APITestCase):
             ["Cathay Setting"],
         )
 
-    def test_posting_setting_restriction_is_rejected(self):
+    def test_posting_a_restriction_is_not_allowed(self):
+        # SEC-06: restrictions are the seeders' rows; the POST (which refused only settings) is gone
         owner = self._create_user("owner@example.com", "Owner")
         self.client.force_authenticate(user=owner)
 
@@ -704,7 +705,7 @@ class CampaignApiTests(APITestCase):
             format="json",
         )
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 405)
         self.assertEqual(Restriction.objects.filter(restriction="Tilea Setting").count(), 0)
 
     def test_players_returns_members(self):
@@ -1464,7 +1465,7 @@ class CampaignApiTests(APITestCase):
         self.client.force_authenticate(user=target_user)
         response = self.client.put(
             f"/api/campaigns/{campaign['id']}/members/{target_user.id}/permissions/",
-            {"permissions": ["manage_items"]},
+            {"permissions": ["delete_catalogue"]},
             format="json",
         )
         self.assertEqual(response.status_code, 403)
@@ -1472,19 +1473,19 @@ class CampaignApiTests(APITestCase):
         self.client.force_authenticate(user=admin_user)
         response = self.client.put(
             f"/api/campaigns/{campaign['id']}/members/{target_user.id}/permissions/",
-            {"permissions": ["manage_items"]},
+            {"permissions": ["delete_catalogue"]},
             format="json",
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["code"], "manage_items")
+        self.assertEqual(response.data[0]["code"], "delete_catalogue")
 
         self.client.force_authenticate(user=owner)
         response = self.client.put(
             f"/api/campaigns/{campaign['id']}/members/{target_user.id}/permissions/",
-            {"permissions": ["manage_items"]},
+            {"permissions": ["delete_catalogue"]},
             format="json",
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["code"], "manage_items")
+        self.assertEqual(response.data[0]["code"], "delete_catalogue")

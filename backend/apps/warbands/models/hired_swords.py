@@ -9,7 +9,7 @@ class HiredSword(RosterUnit):
     race = models.ForeignKey(
         "races.Race",
         related_name="hired_swords",
-        on_delete=models.CASCADE,
+        on_delete=models.RESTRICT,  # a race in use can't be deleted (BUG-130)
         null=True,
         blank=True,
     )
@@ -66,7 +66,7 @@ class HiredSword(RosterUnit):
 
 class HiredSwordItem(models.Model):
     hired_sword = models.ForeignKey(HiredSword, related_name="hired_sword_items", on_delete=models.CASCADE)
-    item = models.ForeignKey("items.Item", related_name="hired_sword_items", on_delete=models.CASCADE)
+    item = models.ForeignKey("items.Item", related_name="hired_sword_items", on_delete=models.RESTRICT)
     cost = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
@@ -78,7 +78,7 @@ class HiredSwordItem(models.Model):
 
 class HiredSwordSkill(models.Model):
     hired_sword = models.ForeignKey(HiredSword, related_name="hired_sword_skills", on_delete=models.CASCADE)
-    skill = models.ForeignKey("skills.Skill", related_name="hired_sword_skills", on_delete=models.CASCADE)
+    skill = models.ForeignKey("skills.Skill", related_name="hired_sword_skills", on_delete=models.RESTRICT)
 
     class Meta:
         db_table = "hired_sword_skill"
@@ -89,7 +89,7 @@ class HiredSwordSkill(models.Model):
 
 class HiredSwordSpecial(models.Model):
     hired_sword = models.ForeignKey(HiredSword, related_name="hired_sword_specials", on_delete=models.CASCADE)
-    special = models.ForeignKey("special.Special", related_name="hired_sword_specials", on_delete=models.CASCADE)
+    special = models.ForeignKey("special.Special", related_name="hired_sword_specials", on_delete=models.RESTRICT)
 
     class Meta:
         db_table = "hired_sword_special"
@@ -100,7 +100,7 @@ class HiredSwordSpecial(models.Model):
 
 class HiredSwordSpell(models.Model):
     hired_sword = models.ForeignKey(HiredSword, related_name="hired_sword_spells", on_delete=models.CASCADE)
-    spell = models.ForeignKey("spells.Spell", related_name="hired_sword_spells", on_delete=models.CASCADE)
+    spell = models.ForeignKey("spells.Spell", related_name="hired_sword_spells", on_delete=models.RESTRICT)
 
     class Meta:
         db_table = "hired_sword_spell"

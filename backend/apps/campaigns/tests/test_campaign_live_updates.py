@@ -81,7 +81,7 @@ class LiveUpdateTests(CampaignTestCase):
 
     def test_role_grant_and_ownership_changes_go_to_the_members_own_channel(self):
         self.send("patch", self.owner, f"members/{self.player.id}/role/", {"role": "admin"})
-        self.send("put", self.owner, f"members/{self.rival.id}/permissions/", {"permissions": ["manage_items", "add_custom"]})  # fmt: skip
+        self.send("put", self.owner, f"members/{self.rival.id}/permissions/", {"permissions": ["delete_catalogue", "edit_catalogue"]})  # fmt: skip
         self.send("post", self.owner, "ownership/", {"user_id": self.admin.id})
 
         changes = [(channel, data["payload"]) for channel, data, _options in self.triggered("notification")]
@@ -92,7 +92,7 @@ class LiveUpdateTests(CampaignTestCase):
                 (f"private-user-{self.player.id}-notifications", {**base, "change": "role", "role": "admin"}),
                 (
                     f"private-user-{self.rival.id}-notifications",
-                    {**base, "change": "permissions", "permissions": ["add_custom", "manage_items"]},
+                    {**base, "change": "permissions", "permissions": ["edit_catalogue", "delete_catalogue"]},
                 ),
                 (f"private-user-{self.admin.id}-notifications", {**base, "change": "role", "role": "owner"}),
                 (f"private-user-{self.owner.id}-notifications", {**base, "change": "role", "role": "admin"}),

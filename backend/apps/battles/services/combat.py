@@ -137,5 +137,5 @@ def record_item_use(battle: Battle, participant: BattleParticipant, payload: dic
     """The item use to store: a unit of the player's (selected, once the battle is active) carrying the item."""
     item_use_refusal(battle, participant)
     selected = selected_unit_keys(participant) if battle.status == Battle.STATUS_ACTIVE else None
-    stored = item_use_payload(participant, payload, selected)
+    stored = item_use_payload(participant, payload, selected, battle.campaign_id)
     return append_event(battle, BattleEvent.TYPE_ITEM_USED, actor_user=actor, payload=stored)

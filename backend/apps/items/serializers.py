@@ -1,8 +1,29 @@
-from rest_framework import serializers
+from typing import Any
 
+from rest_framework import serializers
+from rest_framework.fields import Field
+
+from apps.bestiary.models import BestiaryEntry
+from apps.core.catalogue.scope import CatalogueEntryField, CatalogueIdsField
 from apps.restrictions.models import Restriction
+from apps.restrictions.serializers import RestrictionNoteSerializer, refuse_unknown_restrictions
 
 from .models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemProperty
+
+MAX_COST = 2_147_483_647  # the largest cost the column holds
+WEAPON_DEFAULTS = {"strength": "As user", "range": "Close combat"}
+
+
+def with_save(fields: dict[str, Field]) -> dict[str, Field]:
+    """`fields` with the item's "save" after its "range" (IMP-85). The column is `save_value`; declared in the class
+    body, a field named `save` reads as if it replaced Serializer.save() (it only works because DRF's metaclass pops
+    declared fields off the class, CAT-CQ-09)."""
+    ordered: dict[str, Field] = {}
+    for name, field in fields.items():
+        ordered[name] = field
+        if name == "range":
+            ordered["save"] = serializers.CharField(source="save_value", allow_null=True, required=False)
+    return ordered
 
 
 class ItemPropertySummarySerializer(serializers.ModelSerializer):
@@ -76,7 +97,7 @@ class ItemBestiaryEntrySummarySerializer(serializers.Serializer):
 
 class ItemSerializer(serializers.ModelSerializer):
     campaign_id = serializers.IntegerField(read_only=True)
-    save = serializers.CharField(source="save_value", allow_null=True, required=False)  # type: ignore[assignment]
+    campaign_type_id = serializers.IntegerField(read_only=True)  # CAT-NEW-04: always null today
     properties = serializers.SerializerMethodField()
     availabilities = ItemAvailabilitySerializer(many=True, read_only=True)
     bestiary_entry = ItemBestiaryEntrySummarySerializer(read_only=True)
@@ -86,6 +107,7 @@ class ItemSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "campaign_id",
+            "campaign_type_id",
             "name",
             "type",
             "subtype",
@@ -94,13 +116,15 @@ class ItemSerializer(serializers.ModelSerializer):
             "description",
             "strength",
             "range",
-            "save",
             "statblock",
             "properties",
             "availabilities",
             "bestiary_entry",
             "generated_effect_key",  # set on a house rule's clone, which can't be edited or deleted (BUG-51)
         )
+
+    def get_fields(self) -> dict[str, Field]:
+        return with_save(super().get_fields())
 
     def get_properties(self, obj):
         links = getattr(obj, "property_links", None)
@@ -110,18 +134,33 @@ class ItemSerializer(serializers.ModelSerializer):
         return ItemPropertySummarySerializer(properties, many=True).data
 
 
-class ItemCreateSerializer(serializers.ModelSerializer):
-    save = serializers.CharField(source="save_value", allow_null=True, required=False)  # type: ignore[assignment]
-    property_ids = serializers.ListField(child=serializers.IntegerField(), required=False, write_only=True)
-    availabilities = serializers.ListField(child=serializers.DictField(), required=False, write_only=True)
-    bestiary_entry_id = serializers.IntegerField(
-        required=False, allow_null=True, write_only=True, source="bestiary_entry"
-    )
+class AvailabilityInputSerializer(serializers.Serializer):
+    """One price of a custom item: what ItemAvailability allows, checked before anything is written (BUG-53)."""
+
+    cost = serializers.IntegerField(min_value=0, max_value=MAX_COST, default=0)
+    rarity = serializers.IntegerField(min_value=2, max_value=20, default=2)
+    variable_cost = serializers.CharField(max_length=120, allow_blank=True, allow_null=True, required=False)
+    restrictions = RestrictionNoteSerializer(many=True, required=False)
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        # a PATCH's availabilities are whole rows: the defaults apply there too (DRF skips them in a partial write)
+        return {"cost": 0, "rarity": 2, "restrictions": [], **attrs}
+
+
+class ItemWriteSerializer(serializers.ModelSerializer):
+    """A custom item's create or edit. Linked ids are the book's or this campaign's (`context["campaign_id"]`,
+    SEC-07); the campaign itself is never an input."""
+
+    property_ids = CatalogueIdsField(rows=ItemProperty.objects.all(), required=False)
+    availabilities = AvailabilityInputSerializer(many=True, required=False)
+    bestiary_entry_id = CatalogueEntryField(
+        queryset=BestiaryEntry.objects.all(), source="bestiary_entry", allow_null=True, required=False
+    )  # the animal an Animal item hires (BUG-146: a raw id was a 500)
 
     class Meta:
         model = Item
+        validators: list = []  # a taken name is the name rule's 400 name_taken (CAT-TWEAK-02), backed by the constraint
         fields = (
-            "campaign",
             "name",
             "type",
             "subtype",
@@ -130,22 +169,29 @@ class ItemCreateSerializer(serializers.ModelSerializer):
             "description",
             "strength",
             "range",
-            "save",
             "statblock",
             "property_ids",
             "availabilities",
             "bestiary_entry_id",
         )
 
+    def get_fields(self) -> dict[str, Field]:
+        return with_save(super().get_fields())
+
+    def validate_availabilities(self, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        links = [link for row in rows for link in row.get("restrictions", [])]
+        refuse_unknown_restrictions(links, self.context["campaign_id"])
+        return rows
+
     def validate(self, attrs):
+        """A weapon's strength and range default to "As user" and "Close combat" where the write leaves them empty: sent
+        blank, or not sent and not stored (BUG-151: an edit that didn't resend them lost them)."""
         item_type = attrs.get("type") or getattr(self.instance, "type", "")
         if item_type and item_type.lower() == "weapon":
-            strength = attrs.get("strength")
-            range_value = attrs.get("range")
-            if not strength:
-                attrs["strength"] = "As user"
-            if not range_value:
-                attrs["range"] = "Close combat"
+            for field, default in WEAPON_DEFAULTS.items():
+                value = attrs[field] if field in attrs else getattr(self.instance, field, None)
+                if not value:
+                    attrs[field] = default
         return attrs
 
 

@@ -196,11 +196,19 @@ STATIC_URL = "static/"
 
 RATE_LIMIT_ENABLED = _env_bool("RATE_LIMIT_ENABLED", True)
 
-CACHES = {
+CACHES: dict[str, dict[str, Any]] = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         "LOCATION": "rate-limit",
-    }
+    },
+    # Catalogue list bodies (PERF-13, apps/core/catalogue/cache.py): keyed on catalogue versions read from the
+    # database, so a per-worker cache serves nothing stale. Its own alias, so culling never drops rate-limit counts.
+    "catalogue": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "catalogue-lists",
+        "TIMEOUT": 60 * 60,
+        "OPTIONS": {"MAX_ENTRIES": 300},
+    },
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

@@ -134,3 +134,11 @@ def send_campaign_chat_removed(campaign_id: int, message_id: int, removed_at: st
     (decision 8)."""
     payload = {"id": message_id, "campaign_id": campaign_id, "removed_at": removed_at, "removed_by": "admin"}
     return _trigger(get_campaign_chat_channel_name(campaign_id), "chat.removed", payload)
+
+
+def send_catalogue_changed(campaign_id: int, kind: str, socket_id: str | None = None) -> bool:
+    """`catalogue.changed` {kind} on the campaign's events channel, after commit: the kind's list changed (an entry
+    written, versioned, reverted, archived, removed or restored, a house rule's clones), so every member's page
+    refetches that list now instead of after its stale time (BUG-80). The writer's own socket is skipped: it has
+    the answer."""
+    return _trigger(get_campaign_events_channel_name(campaign_id), "catalogue.changed", {"kind": kind}, socket_id)

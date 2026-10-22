@@ -6,7 +6,7 @@ from apps.warbands.services import ledger
 
 from .roster_support import HENCHMEN, HERO, HIRED_SWORD, RosterTestCase, make_unit
 
-ALL_FLAGS = ("edit", "level_up", "manage_items", "edit_backstory", "delete", "add_custom", "trade")
+ALL_FLAGS = ("edit", "level_up", "manage_items", "edit_backstory", "delete", "edit_catalogue", "trade")
 
 
 def flags(*granted: str) -> dict[str, bool]:
@@ -67,11 +67,11 @@ class WarbandSheetTests(RosterTestCase):
 
     def test_capabilities_follow_todays_permission_checks(self):
         expected = {
-            # owns the warband; no add_custom grant. trade: the owner only (pass 2 decision 10), so campaign
+            # owns the warband; no edit_catalogue grant. trade: the owner only (pass 2 decision 10), so campaign
             # owners, admins and managers who may edit the warband still can't trade for it
             "player": flags(*EDITOR, "edit_backstory", "delete", "trade"),
-            "campaign_owner": flags(*EDITOR, "add_custom"),
-            "admin": flags(*EDITOR, "add_custom"),
+            "campaign_owner": flags(*EDITOR, "edit_catalogue"),
+            "admin": flags(*EDITOR, "edit_catalogue"),
             "manager": flags(*EDITOR),  # a player holding manage_warbands
             "viewer": flags(),
         }
@@ -83,12 +83,13 @@ class WarbandSheetTests(RosterTestCase):
                 patched = self.client.patch(f"/api/warbands/{self.warband.id}/", {}, format="json")
                 self.assertEqual(patched.status_code != 403, capabilities["edit"])
 
-    def test_add_custom_follows_the_grant(self):
-        grant, _ = CampaignPermission.objects.get_or_create(code="add_custom", defaults={"name": "Add custom"})
+    def test_edit_catalogue_follows_the_grant(self):
+        # the flag was add_custom until pass 5 (decision 4): same place, new name
+        grant = CampaignPermission.objects.get(code="edit_catalogue")
         membership = CampaignMembership.objects.get(campaign=self.campaign, user=self.viewer)
         CampaignMembershipPermission.objects.create(membership=membership, permission=grant)
         self.client.force_authenticate(user=self.viewer)
-        self.assertEqual(self.client.get(self._url()).json()["capabilities"], flags("add_custom"))
+        self.assertEqual(self.client.get(self._url()).json()["capabilities"], flags("edit_catalogue"))
 
     def test_only_campaign_members_can_read_it(self):
         self.client.force_authenticate(user=self.viewer)  # a member who doesn't own the warband

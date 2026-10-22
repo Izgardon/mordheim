@@ -1,13 +1,14 @@
-"""What an item costs in a campaign now (decisions 3 and 11, ECON-TWEAK-02 and -03).
+"""What an item costs in a campaign now (decisions 3 and 11, ECON-TWEAK-02 and -03; CAT-TWEAK-03).
 
-A campaign's own catalogue entry with a global item's name replaces that item in the campaign (a house rule:
-the campaign catalogue lists it instead), so a global item's current price is its replacement's when there is
-one. An item's price is the lowest cost among its availabilities (the price the catalogue lists first); an item
-without availabilities has no current price. Buying with no price sent pays the current price; the suggested
-sale price is half of it, rounded up (decision 3), or half the copy's stored cost when there is no current price.
+A campaign's version of a book item (its `replaces` is the book item: an edit, or a house rule's clone) stands in for
+it in the campaign, so a book item's current price is its version's when the campaign has one. Only a version
+counts: a campaign entry that merely shares the name, of any type, changes nothing (BUG-18). An item's price is the
+lowest cost among its availabilities (the price the catalogue lists first); an item without availabilities has no
+current price. Buying with no price sent pays the current price; the suggested sale price is half of it, rounded up
+(decision 3), or half the copy's stored cost when there is no current price.
 
-Rows that reach an item (a unit's copies, stash rows) read the house rule with themselves (`house_rule_prices`),
-so payloads show sale prices without another query.
+Rows that reach an item (a unit's copies, stash rows) read the campaign's version with themselves
+(`house_rule_prices`), so payloads show sale prices without another query.
 """
 
 from collections.abc import Iterable
@@ -42,12 +43,12 @@ def sale_price(current: int | None, stored_cost: int | None) -> SalePrice:
     return SalePrice(None, None)
 
 
-def house_rule_prices(campaign_ref: str, name_ref: str) -> dict[str, Any]:
-    """Annotations for rows that reach an item: `house_rule`, whether the campaign has its own entry of the item's
-    name, and `house_price`, that entry's price (for a campaign's own item, its own entry)."""
-    house = Item.objects.filter(campaign_id=OuterRef(campaign_ref), name=OuterRef(name_ref))
-    price = house.order_by("id").annotate(price=Min("availabilities__cost")).values("price")[:1]
-    return {"house_rule": Exists(house), "house_price": Subquery(price)}
+def house_rule_prices(campaign_ref: str, item_ref: str) -> dict[str, Any]:
+    """Annotations for rows that reach an item: `house_rule`, whether the campaign has a version of the item, and
+    `house_price`, the version's price (a campaign's own item has none: its own price stands)."""
+    version = Item.objects.filter(campaign_id=OuterRef(campaign_ref), replaces_id=OuterRef(item_ref))
+    price = version.annotate(price=Min("availabilities__cost")).values("price")[:1]
+    return {"house_rule": Exists(version), "house_price": Subquery(price)}
 
 
 def own_price_of(item_ref: str) -> Subquery:
@@ -69,55 +70,53 @@ def own_price(item: Item) -> int | None:
     return min(costs) if costs else None
 
 
-def replacements(campaign_id: int, names: Iterable[str]) -> dict[str, int | None]:
-    """The campaign's own price for each of `names` it has an entry of (one query)."""
-    wanted = set(names)
+def replacements(campaign_id: int, book_ids: Iterable[int]) -> dict[int, int | None]:
+    """The price of the campaign's version of each of `book_ids` it has one of (one query)."""
+    wanted = set(book_ids)
     if not wanted:
         return {}
     rows = (
-        Item.objects.filter(campaign_id=campaign_id, name__in=wanted)
+        Item.objects.filter(campaign_id=campaign_id, replaces_id__in=wanted)
         .annotate(price=Min("availabilities__cost"))
-        .order_by("id")
-        .values_list("name", "price")
+        .values_list("replaces_id", "price")
     )
-    found: dict[str, int | None] = {}
-    for name, price in rows:
-        found.setdefault(name, price)
-    return found
+    return dict(rows)
 
 
 class CampaignPrices:
-    """Current prices in one campaign, the house-rule replacements read once for the items asked about."""
+    """Current prices in one campaign, the versions read once for the book items asked about."""
 
     def __init__(self, campaign_id: int) -> None:
         self.campaign_id = campaign_id
-        self._replacements: dict[str, int | None] = {}
-        self._asked: set[str] = set()
+        self._replacements: dict[int, int | None] = {}
+        self._asked: set[int] = set()
         self._own: dict[int, int | None] = {}  # item id -> its own price, read once
 
     def load(self, items: Iterable[Item]) -> "CampaignPrices":
-        """Read the replacements for every global item in `items` not asked about yet (at most one query)."""
-        names = {item.name for item in items if item.campaign_id is None} - self._asked
-        if names:
-            self._replacements.update(replacements(self.campaign_id, names))
-            self._asked |= names
+        """Read the versions of every book item in `items` not asked about yet (at most one query)."""
+        ids = {item.id for item in items if item.campaign_id is None} - self._asked
+        if ids:
+            self._replacements.update(replacements(self.campaign_id, ids))
+            self._asked |= ids
         return self
 
     def current(self, item: Item) -> int | None:
         if item.campaign_id is None:
             self.load([item])
-            if item.name in self._replacements:
-                return self._replacements[item.name]
+            if item.id in self._replacements:
+                return self._replacements[item.id]
         if item.id not in self._own:
             self._own[item.id] = own_price(item)
         return self._own[item.id]
 
     def availability_price(self, item: Item, availability_id: int) -> int | None:
-        """The cost of one of the item's availabilities (or its replacement's); None when it isn't one of them."""
-        availabilities = ItemAvailability.objects.filter(id=availability_id)
-        replacement = Q(item__campaign_id=self.campaign_id, item__name=item.name) if item.campaign_id is None else Q()
-        found = availabilities.filter(Q(item=item) | replacement) if replacement else availabilities.filter(item=item)
-        cost: int | None = found.values_list("cost", flat=True).first()
+        """The cost of one of the item's availabilities (or its campaign version's); None when it isn't one of them."""
+        scope = Q(item=item)
+        if item.campaign_id is None:
+            scope |= Q(item__campaign_id=self.campaign_id, item__replaces_id=item.id)
+        cost: int | None = (
+            ItemAvailability.objects.filter(scope, id=availability_id).values_list("cost", flat=True).first()
+        )
         return cost
 
     def sale_price(self, item: Item, stored_cost: int | None) -> SalePrice:

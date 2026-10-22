@@ -5,12 +5,14 @@ from .models import Race
 
 class RaceSerializer(serializers.ModelSerializer):
     campaign_id = serializers.IntegerField(read_only=True)
+    campaign_type_id = serializers.IntegerField(read_only=True)  # CAT-NEW-04: always null today
 
     class Meta:
         model = Race
         fields = (
             "id",
             "campaign_id",
+            "campaign_type_id",
             "name",
             "movement",
             "weapon_skill",
@@ -25,10 +27,12 @@ class RaceSerializer(serializers.ModelSerializer):
 
 
 class RaceCreateSerializer(serializers.ModelSerializer):
+    """A race's create or edit; the campaign is never an input (BUG-147: an edit could move a race to another
+    campaign, or into the book every campaign lists)."""
+
     class Meta:
         model = Race
         fields = (
-            "campaign",
             "name",
             "movement",
             "weapon_skill",

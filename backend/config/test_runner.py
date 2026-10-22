@@ -12,6 +12,7 @@ from contextlib import ExitStack
 from typing import Any
 from unittest.mock import patch
 
+from django.conf import settings
 from django.test.runner import DiscoverRunner
 from django.test.utils import override_settings
 
@@ -37,10 +38,19 @@ def _refuse_if_external(sock: socket.socket, address: Any) -> None:
         raise ExternalNetworkCallError(f"Test tried to connect to {address!r}. Mock the external service instead.")
 
 
+def _catalogue_cache_off() -> dict[str, Any]:
+    """The catalogue list cache stays off unless a test turns it on (apps/items/tests/catalogue_support.py,
+    `catalogue_cache_on`): tests write catalogue rows directly, without the version bump the write paths, seeders and
+    house rules make, and a class's tests share the versions its fixture leaves."""
+    return {**settings.CACHES, "catalogue": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
+
+
 class NoNetworkTestRunner(DiscoverRunner):
     def setup_test_environment(self, **kwargs: Any) -> None:
         super().setup_test_environment(**kwargs)
-        self._external_settings = override_settings(**EXTERNAL_SERVICE_SETTINGS, EXTERNAL_DISPATCH_SYNC=True)
+        self._external_settings = override_settings(
+            **EXTERNAL_SERVICE_SETTINGS, EXTERNAL_DISPATCH_SYNC=True, CACHES=_catalogue_cache_off()
+        )
         self._external_settings.enable()
         get_pusher_client.cache_clear()
         self._install_socket_guard()
