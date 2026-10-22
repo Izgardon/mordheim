@@ -159,19 +159,20 @@ Types: **New** (new functionality), **Tweak** (change to existing behaviour), **
 | 1 Warband roster | [Done](briefs/pass-1-warband-roster.md) | Answered 2026-10-17 | 119 backend + 527 frontend tests | PR A done incl. part 2 | Done | Done | **Merged to main and deployed 2026-10-17** (`7cc3831`) |
 | 2 Economy and trades | [Done](briefs/pass-2-economy-trades.md) | Answered 2026-10-17 | 90 backend + 89 frontend tests | Done | Done | Done | 2026-10-18 |
 | 3 Battles | [Done](briefs/pass-3-battles.md) | Answered 2026-10-18 | 80 backend (2 expected failures) + 26 frontend tests (`pass3/battles`) | Done | Done | Done | 2026-10-20 |
-| 4 Campaigns | [Done](briefs/pass-4-campaigns.md) | Answered 2026-10-18 | 79 backend (3 expected failures) + 53 frontend tests | Done | Done | Done | Ready to merge (`pass4/changes-frontend`) |
-| 5 Catalogue | [Done](briefs/pass-5-catalogue.md) | Answered 2026-10-19 | 114 backend (4 expected failures) + 108 frontend tests | In progress | | | |
-| 6 Auth and core | [Done](briefs/pass-6-auth-core.md) | Answered 2026-10-19 | | | | | |
+| 4 Campaigns | [Done](briefs/pass-4-campaigns.md) | Answered 2026-10-18 | 79 backend (3 expected failures) + 53 frontend tests | Done | Done | Done | **Merged to main and deployed 2026-10-20** (`3d0cf09`) |
+| 5 Catalogue | [Done](briefs/pass-5-catalogue.md) | Answered 2026-10-19 | 114 backend (4 expected failures) + 108 frontend tests | Done | Done | Done (CAT-NEW-01 replaced by the bestiary rewrite) | Ready to merge (`release/p5-p6`) |
+| 6 Auth and core | [Done](briefs/pass-6-auth-core.md) | Answered 2026-10-19 | 98 backend (6 expected failures) + 75 frontend tests | Done | Done | Pending (after the bestiary rewrite) | PR A and B ready to merge (`release/p5-p6`); read the brief's [Production checks](briefs/pass-6-auth-core.md#production-checks) before deploying |
 
 ## After the passes
 
-Work William has asked for once pass 6 is merged.
+Work William has asked for once `release/p5-p6` (pass 5, and pass 6's PR A and B) is merged.
 
+- **The bestiary rewrite, then grading (plans in `docs/review/plans/`).** The plans (`bestiary-hirelings.html`, `grades-settings-warbands.html`) are on the `rewrite/*` branches for now and will be committed here later. The bestiary rewrite replaces pass 5's CAT-NEW-01 (bestiary and hired-sword edit panels), and pass 6's PR C waits for it.
 - **An easier email sender (asked 2026-10-20).** Production sends no email today: `RESEND_API_KEY` isn't set, and Resend only delivers to other people's addresses once a domain is verified, which is why email verification waits for a custom domain. Compare low-effort senders on these points:
   - Can it send to any address without a domain we own (e.g. a verified single sender, or SMTP through a free mailbox)?
   - Free-tier limits.
   - Deliverability and spam-folder risk.
-  - How it plugs in: everything goes through `_post_to_resend` in `apps/users/emails.py` (password reset, feedback report), so a swap is one function plus settings.
+  - How it plugs in: everything goes through `_queue_email` and `_post_to_resend` in `apps/users/emails.py` (password reset, feedback report), and `email_configured()` is the one switch (pass 6 PR B), so a swap is one function plus settings.
   - Whether it still suits a custom domain later.
 
   Bring a recommendation; pass 6's BUG-56 (503 `email_unavailable` when no sender is configured) works with any provider.
