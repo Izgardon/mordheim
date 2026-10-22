@@ -75,7 +75,7 @@ export type BattlePostbattleSeriousInjuryRoll = {
 
 export type BattlePostbattleUnitResult = {
   unit_name: string;
-  unit_kind: "hero" | "hired_sword" | "henchman";
+  unit_kind: "hero" | "hireling" | "henchman";
   unit_type: string;
   group_name: string;
   out_of_action: boolean;
@@ -425,7 +425,7 @@ export type BattleRosterSpellEntry = BattleRosterDetailEntry & {
 export type BattleRosterUnit = {
   key: string;
   id: number;
-  kind: "hero" | "hired_sword" | "henchman";
+  kind: "hero" | "hireling" | "henchman";
   displayName: string;
   unitType: string;
   stats: BattleUnitStats;
@@ -448,7 +448,7 @@ export type BattleRosterGroup = {
 
 export type BattleParticipantRoster = {
   heroes: BattleRosterUnit[];
-  hiredSwords: BattleRosterUnit[];
+  hirelings: BattleRosterUnit[];
   henchmenGroups: BattleRosterGroup[];
 };
 

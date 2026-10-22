@@ -34,7 +34,7 @@ const baseProps = {
   participantRoster: {
     heroes: [],
     henchmenGroups: [],
-    hiredSwords: [],
+    hirelings: [],
   },
   rosterLoading: false,
   rosterError: undefined,

@@ -145,7 +145,7 @@ export function useActiveConfigSave({
       const units = [
         ...selected.heroes,
         ...selected.henchmen,
-        ...selected.hiredSwords,
+        ...selected.hirelings,
         ...selected.temporary,
       ];
       const unitInformation = toUnitInformationMap(participant.unit_information_json);

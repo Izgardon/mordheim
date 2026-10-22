@@ -32,7 +32,7 @@ function createUnit(
 
 describe("active-utils wounds handling", () => {
   it("prefers current_wounds over stats_override wounds for all unit kinds", () => {
-    for (const kind of ["hero", "hired_sword", "henchman", "custom"] as const) {
+    for (const kind of ["hero", "hireling", "henchman", "custom"] as const) {
       const unit = createUnit(kind);
       expect(
         getCurrentUnitWounds(unit, {

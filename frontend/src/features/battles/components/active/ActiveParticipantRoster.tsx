@@ -40,7 +40,7 @@ type ActiveParticipantRosterProps = {
   onUndoSingleUseItem?: (unit: PrebattleUnit, itemId: number) => Promise<void>;
   activeItemActionKey: string | null;
   savingUnitKeys?: Record<string, boolean>;
-  sectionIds?: Partial<Record<"heroes" | "henchmen" | "hired_swords" | "temporary", string>>;
+  sectionIds?: Partial<Record<"heroes" | "henchmen" | "hirelings" | "temporary", string>>;
 };
 
 const SECTION_TITLE_CLASS = "battle-section-title";
@@ -138,11 +138,11 @@ export default function ActiveParticipantRoster({
             </section>
           ) : null}
 
-          {selectedUnits.hiredSwords.length ? (
-            <section id={sectionIds?.hired_swords} className="space-y-2 scroll-mt-28">
+          {selectedUnits.hirelings.length ? (
+            <section id={sectionIds?.hirelings} className="space-y-2 scroll-mt-28">
               <p className={SECTION_TITLE_CLASS}>Hired Swords</p>
               <div className="space-y-2">
-                {selectedUnits.hiredSwords.map((unit) => (
+                {selectedUnits.hirelings.map((unit) => (
                   <ActiveUnitCard
                     key={unit.key}
                     unit={unit}
@@ -194,7 +194,7 @@ export default function ActiveParticipantRoster({
 
           {!selectedUnits.heroes.length &&
           !selectedHenchmenGroups.length &&
-          !selectedUnits.hiredSwords.length &&
+          !selectedUnits.hirelings.length &&
           !selectedUnits.temporary.length ? (
             <p className="text-sm text-muted-foreground">No units selected for this battle.</p>
           ) : null}

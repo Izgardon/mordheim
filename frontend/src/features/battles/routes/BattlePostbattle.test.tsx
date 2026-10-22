@@ -40,10 +40,10 @@ const mocks = vi.hoisted(() => {
         finished_at: null,
         confirmed_at: null,
         last_seen_at: null,
-        selected_unit_keys_json: ["hero-1", "hired-1"],
+        selected_unit_keys_json: ["hero-1", "hireling-1"],
         unit_information_json: {
           "hero-1": { kill_count: 1 },
-          "hired-1": { kill_count: 0 },
+          "hireling-1": { kill_count: 0 },
         },
         custom_units_json: [],
         postbattle_json: {},
@@ -86,11 +86,11 @@ const mocks = vi.hoisted(() => {
       },
     ],
     henchmenGroups: [],
-    hiredSwords: [
+    hirelings: [
       {
-        key: "hired-1",
+        key: "hireling-1",
         id: 201,
-        kind: "hired_sword",
+        kind: "hireling",
         displayName: "Ogre Bodyguard",
         unitType: "Hired Sword",
         upkeepPrice: 15,
@@ -125,8 +125,8 @@ const mocks = vi.hoisted(() => {
     upkeep: {
       pay_upkeep: true,
       entries: {
-        "hired-1": {
-          unit_key: "hired-1",
+        "hireling-1": {
+          unit_key: "hireling-1",
           unit_name: "Ogre Bodyguard",
           cost: 15,
         },
@@ -142,10 +142,10 @@ const mocks = vi.hoisted(() => {
         dead: false,
         serious_injury_rolls: [],
       },
-      "hired-1": {
-        unit_key: "hired-1",
+      "hireling-1": {
+        unit_key: "hireling-1",
         unit_name: "Ogre Bodyguard",
-        unit_kind: "hired_sword",
+        unit_kind: "hireling",
         xp_earned: 0,
         kill_count: 0,
         dead: false,
@@ -573,15 +573,15 @@ describe("BattlePostbattle", () => {
     const user = userEvent.setup();
     mocks.groups = [
       {
-        key: "hired-swords",
-        unitKind: "hired_sword",
+        key: "hirelings",
+        unitKind: "hireling",
         label: "Hired Swords",
         rows: [
           {
-            unitKey: "hired-1",
+            unitKey: "hireling-1",
             unitName: "Ogre Bodyguard",
             unitType: "Hired Sword",
-            unitKind: "hired_sword",
+            unitKind: "hireling",
             canGainXp: false,
             xpEarned: 3,
             killCount: 0,

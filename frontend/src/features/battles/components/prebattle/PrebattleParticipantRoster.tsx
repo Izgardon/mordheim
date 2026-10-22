@@ -39,7 +39,7 @@ type PrebattleParticipantRosterProps = {
   onUseSingleUseItem: (unit: PrebattleUnit, item: UnitSingleUseItem) => void;
   getUsedSingleUseItemCount: (unitKey: string, itemId: number) => number;
   activeItemActionKey: string | null;
-  sectionIds?: Partial<Record<"heroes" | "henchmen" | "hired_swords" | "temporary", string>>;
+  sectionIds?: Partial<Record<"heroes" | "henchmen" | "hirelings" | "temporary", string>>;
 };
 
 export default function PrebattleParticipantRoster({
@@ -282,13 +282,13 @@ export default function PrebattleParticipantRoster({
             </section>
           ) : null}
 
-          {participantRoster.hiredSwords.length ? (
-            <section id={sectionIds?.hired_swords} className="space-y-2 scroll-mt-28">
+          {participantRoster.hirelings.length ? (
+            <section id={sectionIds?.hirelings} className="space-y-2 scroll-mt-28">
               <p className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 Hired Swords
               </p>
               <div className="space-y-2">
-                {participantRoster.hiredSwords.map((unit) => renderUnitRow(unit))}
+                {participantRoster.hirelings.map((unit) => renderUnitRow(unit))}
               </div>
             </section>
           ) : null}

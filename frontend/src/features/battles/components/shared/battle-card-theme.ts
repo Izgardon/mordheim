@@ -4,7 +4,7 @@ type BattleCardThemeKind =
   | "hero"
   | "henchman"
   | "henchmen_group"
-  | "hired_sword"
+  | "hireling"
   | "custom"
   | "bestiary";
 
@@ -152,7 +152,7 @@ const HENCHMEN_THEME: ThemeTokens = {
   unitListEntryIconStrong: "rgba(245, 248, 252, 0.98)",
 };
 
-const HIRED_SWORD_THEME: ThemeTokens = {
+const HIRELING_THEME: ThemeTokens = {
   battleCardBorder: "rgba(147, 104, 76, 0.68)",
   battleCardBg: "linear-gradient(180deg, rgba(26, 18, 14, 0.8), rgba(18, 13, 10, 0.78))",
   battleCardShadow: "0 18px 32px rgba(38, 22, 14, 0.14)",
@@ -195,8 +195,8 @@ function getThemeTokens(kind: BattleCardThemeKind): ThemeTokens {
   if (kind === "henchman" || kind === "henchmen_group") {
     return HENCHMEN_THEME;
   }
-  if (kind === "hired_sword") {
-    return HIRED_SWORD_THEME;
+  if (kind === "hireling") {
+    return HIRELING_THEME;
   }
   return DEFAULT_THEME;
 }

@@ -15,7 +15,7 @@ const roster = toParticipantRosters(battleRosters())[ME.id];
 const draft = {
   exploration: { dice_values: [], resource_id: null },
   finds: { gold_crowns: 12, items: [] },
-  upkeep: { pay_upkeep: true, entries: { "hired_sword:4": { unit_name: "Ogre", cost: 15 } } },
+  upkeep: { pay_upkeep: true, entries: { "hireling:4": { unit_name: "Ogre", cost: 15 } } },
   unit_results: {},
 } as unknown as BattlePostbattleState;
 
@@ -23,7 +23,7 @@ describe("postbattle summary", () => {
   it("lists each hired sword's upkeep, with the draft's cost and the Dead tick", () => {
     expect(buildUpkeepRows(draft, roster)).toEqual([
       {
-        unitKey: "hired_sword:4",
+        unitKey: "hireling:4",
         unitName: "Ogre",
         unitType: "Ogre",
         cost: 15,

@@ -34,16 +34,16 @@ export function buildUpkeepRows(
   if (!draft || !roster) {
     return [];
   }
-  return roster.hiredSwords.map((hiredSword) => {
-    const savedEntry = draft.upkeep.entries[hiredSword.key];
+  return roster.hirelings.map((hireling) => {
+    const savedEntry = draft.upkeep.entries[hireling.key];
     return {
-      unitKey: hiredSword.key,
-      unitName: savedEntry?.unit_name ?? hiredSword.displayName,
-      unitType: hiredSword.unitType,
+      unitKey: hireling.key,
+      unitName: savedEntry?.unit_name ?? hireling.displayName,
+      unitType: hireling.unitType,
       cost: typeof savedEntry?.cost === "number" ? savedEntry.cost : null,
-      costExpression: hiredSword.upkeepCostExpression ?? null,
-      hasFixedCost: typeof hiredSword.upkeepPrice === "number",
-      dead: Boolean(draft.unit_results[hiredSword.key]?.dead),
+      costExpression: hireling.upkeepCostExpression ?? null,
+      hasFixedCost: typeof hireling.upkeepPrice === "number",
+      dead: Boolean(draft.unit_results[hireling.key]?.dead),
     };
   });
 }

@@ -20,7 +20,7 @@ describe("helper-options", () => {
     expect(options.yours.map((option) => option.value)).toEqual([
       "7:hero:1",
       "7:henchman:2",
-      "7:hired_sword:4",
+      "7:hireling:4",
     ]);
     expect(options.yours[0]).toMatchObject({
       label: "Captain Wolf (Iron Vultures)",
@@ -37,7 +37,7 @@ describe("helper-options", () => {
     expect(options.map((option) => [option.value, option.sectionLabel])).toEqual([
       ["hero:1", "Heroes"],
       ["henchman:2", "Henchmen"],
-      ["hired_sword:4", "Hired Swords"],
+      ["hireling:4", "Hired Swords"],
     ]);
     expect(options[0].defaultBallisticSkill).toBe(2);
     expect(rangedUnitOptions(null, rosters)).toEqual([]);

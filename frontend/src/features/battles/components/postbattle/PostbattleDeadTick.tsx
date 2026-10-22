@@ -2,7 +2,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 type PostbattleDeadTickProps = {
   unitKey: string;
-  unitKind: "hero" | "hired_sword" | "henchman";
+  unitKind: "hero" | "hireling" | "henchman";
   checked: boolean;
   disabled: boolean;
   onChange: (checked: boolean) => void;

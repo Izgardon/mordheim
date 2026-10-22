@@ -14,7 +14,7 @@ function unitsInAction(participant: BattleParticipant, roster: ParticipantRoster
   return [
     ...selected.heroes.map((unit) => ({ unit, sectionLabel: "Heroes" })),
     ...selected.henchmen.map((unit) => ({ unit, sectionLabel: "Henchmen" })),
-    ...selected.hiredSwords.map((unit) => ({ unit, sectionLabel: "Hired Swords" })),
+    ...selected.hirelings.map((unit) => ({ unit, sectionLabel: "Hired Swords" })),
     ...selected.temporary.map((unit) => ({ unit, sectionLabel: "Temporary Units" })),
   ]
     .filter(({ unit }) => !unitInformation[unit.key]?.out_of_action)

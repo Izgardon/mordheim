@@ -82,7 +82,7 @@ export function heroDeathRollFor(rules: Rules): CampaignHeroDeathRoll {
   return rules?.hero_death_roll ?? "d66";
 }
 
-export type InjuryRollUnitKind = "hero" | "hired_sword" | "henchman";
+export type InjuryRollUnitKind = "hero" | "hireling" | "henchman";
 
 /** The dice a serious-injury roll takes: 2D6 (D66) or D100 for heroes, a D6 for the rest. */
 export function seriousInjuryNotation(

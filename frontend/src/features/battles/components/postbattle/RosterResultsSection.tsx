@@ -6,7 +6,7 @@ import UnitResultCard from "@/features/battles/components/postbattle/UnitResultC
 import type { PostbattleRowTools } from "@/features/battles/components/postbattle/postbattle-row-tools";
 import type { PostbattleRenderableGroup } from "@/features/battles/components/postbattle/postbattle-utils";
 
-const SECTION_LABELS = { hero: "Heroes", hired_sword: "Hired Swords", henchman: "Henchmen" };
+const SECTION_LABELS = { hero: "Heroes", hireling: "Hired Swords", henchman: "Henchmen" };
 
 /** Roster: every unit's results, heroes, hired swords and henchmen groups under their headings. */
 export default function RosterResultsSection({

@@ -75,11 +75,11 @@ const roster: ParticipantRoster = {
       },
     },
   ],
-  hiredSwords: [
+  hirelings: [
     {
-      key: "hired_sword:21",
+      key: "hireling:21",
       id: 21,
-      kind: "hired_sword",
+      kind: "hireling",
       displayName: "Johann",
       unitType: "Pit Fighter",
       upkeepPrice: 15,
@@ -98,9 +98,9 @@ const roster: ParticipantRoster = {
       },
     },
     {
-      key: "hired_sword:22",
+      key: "hireling:22",
       id: 22,
-      kind: "hired_sword",
+      kind: "hireling",
       displayName: "Shade",
       unitType: "Mystic",
       upkeepPrice: null,
@@ -172,15 +172,15 @@ const roster: ParticipantRoster = {
 const suggestion: BattlePostbattleSuggestion = {
   unit_results: {
     "hero:1": { xp_earned: 2 },
-    "hired_sword:21": { xp_earned: 1 },
+    "hireling:21": { xp_earned: 1 },
     "henchman:11": { xp_earned: 2 },
     "henchman:12": { xp_earned: 2 },
   },
   exploration: { dice_count: 2 },
   upkeep: {
     entries: {
-      "hired_sword:21": { unit_name: "Johann", cost: 15 },
-      "hired_sword:22": { unit_name: "Shade", cost: null },
+      "hireling:21": { unit_name: "Johann", cost: 15 },
+      "hireling:22": { unit_name: "Shade", cost: null },
     },
   },
 };
@@ -201,11 +201,11 @@ describe("postbattle-utils", () => {
       items: [],
     });
     expect(draft.upkeep.pay_upkeep).toBe(true);
-    expect(draft.upkeep.entries["hired_sword:21"]).toEqual({
+    expect(draft.upkeep.entries["hireling:21"]).toEqual({
       unit_name: "Johann",
       cost: 15,
     });
-    expect(draft.upkeep.entries["hired_sword:22"]).toEqual({
+    expect(draft.upkeep.entries["hireling:22"]).toEqual({
       unit_name: "Shade",
       cost: null,
     });
@@ -216,7 +216,7 @@ describe("postbattle-utils", () => {
     // Without the suggestion (an older server) XP starts at 0 and upkeep is unknown.
     const unsuggested = buildPostbattleDraft(participant, roster, [], undefined);
     expect(unsuggested.unit_results["hero:1"].xp_earned).toBe(0);
-    expect(unsuggested.upkeep.entries["hired_sword:21"]).toEqual({
+    expect(unsuggested.upkeep.entries["hireling:21"]).toEqual({
       unit_name: "Johann",
       cost: null,
     });
@@ -245,7 +245,7 @@ describe("postbattle-utils", () => {
           upkeep: {
             pay_upkeep: true,
             entries: {
-              "hired_sword:21": {
+              "hireling:21": {
                 unit_name: "Johann",
                 cost: 7,
               },
@@ -285,7 +285,7 @@ describe("postbattle-utils", () => {
         },
       ],
     });
-    expect(draft.upkeep.entries["hired_sword:21"]?.cost).toBe(7);
+    expect(draft.upkeep.entries["hireling:21"]?.cost).toBe(7);
   });
 
   it("preserves roster order when building renderable groups", () => {
@@ -305,20 +305,20 @@ describe("postbattle-utils", () => {
           displayName: "Alpha Hero",
         },
       ],
-      hiredSwords: [
+      hirelings: [
         {
           ...roster.heroes[0],
-          key: "hired_sword:2",
+          key: "hireling:2",
           id: 102,
-          kind: "hired_sword",
+          kind: "hireling",
           displayName: "Zulu Sword",
           unitType: "Hired Sword",
         },
         {
           ...roster.heroes[0],
-          key: "hired_sword:1",
+          key: "hireling:1",
           id: 101,
-          kind: "hired_sword",
+          kind: "hireling",
           displayName: "Alpha Sword",
           unitType: "Hired Sword",
         },
@@ -348,16 +348,16 @@ describe("postbattle-utils", () => {
       selected_unit_keys_json: [
         "hero:2",
         "hero:1",
-        "hired_sword:2",
-        "hired_sword:1",
+        "hireling:2",
+        "hireling:1",
         "henchman:12",
         "henchman:11",
       ],
       unit_information_json: {
         "hero:2": { stats_override: {}, out_of_action: false, kill_count: 0 },
         "hero:1": { stats_override: {}, out_of_action: false, kill_count: 0 },
-        "hired_sword:2": { stats_override: {}, out_of_action: false, kill_count: 0 },
-        "hired_sword:1": { stats_override: {}, out_of_action: false, kill_count: 0 },
+        "hireling:2": { stats_override: {}, out_of_action: false, kill_count: 0 },
+        "hireling:1": { stats_override: {}, out_of_action: false, kill_count: 0 },
         "henchman:12": { stats_override: {}, out_of_action: false, kill_count: 0 },
         "henchman:11": { stats_override: {}, out_of_action: false, kill_count: 0 },
       },
@@ -370,7 +370,7 @@ describe("postbattle-utils", () => {
       groups.find((group) => group.unitKind === "hero")?.rows.map((row) => row.unitName)
     ).toEqual(["Zulu Hero", "Alpha Hero"]);
     expect(
-      groups.find((group) => group.unitKind === "hired_sword")?.rows.map((row) => row.unitName)
+      groups.find((group) => group.unitKind === "hireling")?.rows.map((row) => row.unitName)
     ).toEqual(["Zulu Sword", "Alpha Sword"]);
     expect(
       groups.find((group) => group.unitKind === "henchman")?.rows.map((row) => row.unitName)
@@ -380,8 +380,8 @@ describe("postbattle-utils", () => {
   it("hides XP for units flagged with no level ups, which the server suggests 0 for", () => {
     const noLevelRoster: ParticipantRoster = {
       ...roster,
-      hiredSwords: roster.hiredSwords.map((entry) =>
-        entry.key === "hired_sword:21" ? { ...entry, noLevelUps: true } : entry
+      hirelings: roster.hirelings.map((entry) =>
+        entry.key === "hireling:21" ? { ...entry, noLevelUps: true } : entry
       ),
       henchmenGroups: roster.henchmenGroups.map((group) => ({
         ...group,
@@ -390,10 +390,10 @@ describe("postbattle-utils", () => {
     };
     const noLevelParticipant: BattleParticipant = {
       ...participant,
-      selected_unit_keys_json: ["hero:1", "hired_sword:21", "henchman:11", "henchman:12"],
+      selected_unit_keys_json: ["hero:1", "hireling:21", "henchman:11", "henchman:12"],
       unit_information_json: {
         ...participant.unit_information_json,
-        "hired_sword:21": { stats_override: {}, out_of_action: false, kill_count: 0 },
+        "hireling:21": { stats_override: {}, out_of_action: false, kill_count: 0 },
       },
     };
 
@@ -401,19 +401,17 @@ describe("postbattle-utils", () => {
       ...suggestion,
       unit_results: {
         ...suggestion.unit_results,
-        "hired_sword:21": { xp_earned: 0 },
+        "hireling:21": { xp_earned: 0 },
         "henchman:11": { xp_earned: 0 },
         "henchman:12": { xp_earned: 0 },
       },
     });
     const groups = buildRenderableGroups(draft, noLevelRoster);
 
-    expect(draft.unit_results["hired_sword:21"].xp_earned).toBe(0);
+    expect(draft.unit_results["hireling:21"].xp_earned).toBe(0);
     expect(draft.unit_results["henchman:11"].xp_earned).toBe(0);
     expect(draft.unit_results["henchman:12"].xp_earned).toBe(0);
-    expect(groups.find((group) => group.unitKind === "hired_sword")?.rows[0]?.canGainXp).toBe(
-      false
-    );
+    expect(groups.find((group) => group.unitKind === "hireling")?.rows[0]?.canGainXp).toBe(false);
     expect(
       groups.find((group) => group.unitKind === "henchman")?.rows.every((row) => !row.canGainXp)
     ).toBe(true);
@@ -477,16 +475,16 @@ describe("postbattle-utils", () => {
 
     expect(getPostbattleUpkeepTotal(draft)).toBe(15);
 
-    const updated = updatePostbattleUpkeepEntry(draft, "hired_sword:21", 20);
+    const updated = updatePostbattleUpkeepEntry(draft, "hireling:21", 20);
     expect(getPostbattleUpkeepTotal(updated)).toBe(20);
 
-    const withDeadHiredSword = {
+    const withDeadHireling = {
       ...updated,
       unit_results: {
         ...updated.unit_results,
-        "hired_sword:21": {
+        "hireling:21": {
           unit_name: "Johann",
-          unit_kind: "hired_sword" as const,
+          unit_kind: "hireling" as const,
           unit_type: "Pit Fighter",
           group_name: "",
           out_of_action: true,
@@ -498,7 +496,7 @@ describe("postbattle-utils", () => {
         },
       },
     };
-    expect(getPostbattleUpkeepTotal(withDeadHiredSword)).toBe(0);
+    expect(getPostbattleUpkeepTotal(withDeadHireling)).toBe(0);
 
     const unpaid = setPostbattlePayUpkeep(updated, false);
     expect(unpaid.upkeep.pay_upkeep).toBe(false);

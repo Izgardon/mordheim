@@ -36,7 +36,7 @@ export type PostbattleRenderableRow = {
   unitKey: string;
   unitName: string;
   unitType: string;
-  unitKind: "hero" | "hired_sword" | "henchman";
+  unitKind: "hero" | "hireling" | "henchman";
   canGainXp: boolean;
   groupName: string;
   outOfAction: boolean;
@@ -50,7 +50,7 @@ export type PostbattleRenderableRow = {
 export type PostbattleRenderableGroup = {
   key: string;
   label: string;
-  unitKind: "hero" | "hired_sword" | "henchman";
+  unitKind: "hero" | "hireling" | "henchman";
   rows: PostbattleRenderableRow[];
 };
 
@@ -74,7 +74,7 @@ function createDefaultUnitResult(
   groupName = ""
 ): BattlePostbattleUnitResult {
   const unitKind =
-    unit.kind === "hero" ? "hero" : unit.kind === "hired_sword" ? "hired_sword" : "henchman";
+    unit.kind === "hero" ? "hero" : unit.kind === "hireling" ? "hireling" : "henchman";
   return {
     unit_name: unit.displayName,
     unit_kind: unitKind,
@@ -356,28 +356,25 @@ export function buildPostbattleDraft(
     };
   }
 
-  for (const hiredSword of selected.hiredSwords) {
-    const unitInformation = getUnitInformationEntry(unitInformationByKey, hiredSword.key);
+  for (const hireling of selected.hirelings) {
+    const unitInformation = getUnitInformationEntry(unitInformationByKey, hireling.key);
     const defaultResult = createDefaultUnitResult(
-      hiredSword,
+      hireling,
       unitInformation,
-      suggestedXp(hiredSword.key)
+      suggestedXp(hireling.key)
     );
-    nextUnitResults[hiredSword.key] = {
-      ...mergeUnitResultWithExisting(
-        defaultResult,
-        getExistingUnitResult(existing, hiredSword.key)
-      ),
+    nextUnitResults[hireling.key] = {
+      ...mergeUnitResultWithExisting(defaultResult, getExistingUnitResult(existing, hireling.key)),
     };
   }
 
-  for (const hiredSword of roster?.hiredSwords ?? []) {
-    nextUpkeepEntries[hiredSword.key] = {
-      ...(suggestion?.upkeep.entries[hiredSword.key] ?? {
-        unit_name: hiredSword.displayName,
+  for (const hireling of roster?.hirelings ?? []) {
+    nextUpkeepEntries[hireling.key] = {
+      ...(suggestion?.upkeep.entries[hireling.key] ?? {
+        unit_name: hireling.displayName,
         cost: null,
       }),
-      ...getExistingUpkeepEntry(existing, hiredSword.key),
+      ...getExistingUpkeepEntry(existing, hireling.key),
     };
   }
 
@@ -427,15 +424,15 @@ export function buildPostbattleDraft(
 
 export function buildRenderableGroups(draft: BattlePostbattleState, roster?: ParticipantRoster) {
   const heroes: PostbattleRenderableRow[] = [];
-  const hiredSwords: PostbattleRenderableRow[] = [];
+  const hirelings: PostbattleRenderableRow[] = [];
   const henchmenGroups = new Map<string, PostbattleRenderableRow[]>();
   const xpEligibilityByUnitKey = new Map<string, boolean>();
 
   for (const hero of roster?.heroes ?? []) {
     xpEligibilityByUnitKey.set(hero.key, true);
   }
-  for (const hiredSword of roster?.hiredSwords ?? []) {
-    xpEligibilityByUnitKey.set(hiredSword.key, !hiredSword.noLevelUps);
+  for (const hireling of roster?.hirelings ?? []) {
+    xpEligibilityByUnitKey.set(hireling.key, !hireling.noLevelUps);
   }
   for (const group of roster?.henchmenGroups ?? []) {
     for (const member of group.members) {
@@ -462,8 +459,8 @@ export function buildRenderableGroups(draft: BattlePostbattleState, roster?: Par
       heroes.push(row);
       continue;
     }
-    if (result.unit_kind === "hired_sword") {
-      hiredSwords.push(row);
+    if (result.unit_kind === "hireling") {
+      hirelings.push(row);
       continue;
     }
     const groupKey = result.group_name || "Henchmen";
@@ -479,12 +476,12 @@ export function buildRenderableGroups(draft: BattlePostbattleState, roster?: Par
   for (const [groupName, rows] of henchmenGroups.entries()) {
     groups.push({ key: `henchmen:${groupName}`, label: groupName, unitKind: "henchman", rows });
   }
-  if (hiredSwords.length > 0) {
+  if (hirelings.length > 0) {
     groups.push({
-      key: "hired-swords",
+      key: "hirelings",
       label: "Hired Swords",
-      unitKind: "hired_sword",
-      rows: hiredSwords,
+      unitKind: "hireling",
+      rows: hirelings,
     });
   }
 

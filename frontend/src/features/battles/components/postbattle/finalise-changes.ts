@@ -101,7 +101,7 @@ export function buildLevelUps(
 
 const rosterUnits = (roster: ParticipantRoster | undefined) => [
   ...(roster?.heroes ?? []),
-  ...(roster?.hiredSwords ?? []),
+  ...(roster?.hirelings ?? []),
   ...(roster?.henchmenGroups ?? []).flatMap((group) => group.members),
 ];
 

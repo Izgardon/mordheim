@@ -39,7 +39,7 @@ export type UnitItemEntry = UnitDetailEntry & {
 export type PrebattleUnit = {
   key: string;
   id: number | string;
-  kind: "hero" | "hired_sword" | "henchman" | "custom" | "bestiary";
+  kind: "hero" | "hireling" | "henchman" | "custom" | "bestiary";
   displayName: string;
   unitType: string;
   stats: UnitStats;
@@ -63,7 +63,7 @@ export type HenchmenGroupRoster = {
 
 export type ParticipantRoster = {
   heroes: PrebattleUnit[];
-  hiredSwords: PrebattleUnit[];
+  hirelings: PrebattleUnit[];
   henchmenGroups: HenchmenGroupRoster[];
 };
 

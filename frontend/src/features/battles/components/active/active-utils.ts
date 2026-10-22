@@ -19,7 +19,7 @@ import { STAT_FIELDS } from "@/features/battles/components/prebattle/prebattle-t
 export type ActiveSectionUnits = {
   heroes: PrebattleUnit[];
   henchmen: PrebattleUnit[];
-  hiredSwords: PrebattleUnit[];
+  hirelings: PrebattleUnit[];
   temporary: PrebattleUnit[];
 };
 
@@ -50,7 +50,7 @@ export function getParticipantSelectedUnits(
   return {
     heroes: (roster?.heroes ?? []).filter(pickUnit),
     henchmen: (roster?.henchmenGroups ?? []).flatMap((group) => group.members).filter(pickUnit),
-    hiredSwords: (roster?.hiredSwords ?? []).filter(pickUnit),
+    hirelings: (roster?.hirelings ?? []).filter(pickUnit),
     temporary: customUnits.filter(pickUnit),
   };
 }
@@ -66,7 +66,7 @@ export function buildBattleUnitOptions(
     const units = [
       ...selectedUnits.heroes.map((unit) => ({ unit, sectionLabel: "Heroes" })),
       ...selectedUnits.henchmen.map((unit) => ({ unit, sectionLabel: "Henchmen" })),
-      ...selectedUnits.hiredSwords.map((unit) => ({ unit, sectionLabel: "Hired Swords" })),
+      ...selectedUnits.hirelings.map((unit) => ({ unit, sectionLabel: "Hired Swords" })),
       ...selectedUnits.temporary.map((unit) => ({ unit, sectionLabel: "Temporary Units" })),
     ];
 

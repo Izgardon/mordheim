@@ -38,9 +38,9 @@ describe("finalise changes", () => {
         xpEarned: 3,
       },
       {
-        unitKey: "hired_sword:4",
+        unitKey: "hireling:4",
         unitName: "Ogre",
-        unitKind: "hired_sword" as const,
+        unitKind: "hireling" as const,
         groupName: "",
         xpEarned: 5,
       },
@@ -146,18 +146,16 @@ describe("finalise changes", () => {
 
   it("lists what each dead unit carried, from the start roster", () => {
     const deadRoster = toParticipantRosters(battleRosters())[ME.id];
-    deadRoster.hiredSwords[0].items = [{ id: 9, name: "Great Axe", count: 1, singleUse: false }];
+    deadRoster.hirelings[0].items = [{ id: 9, name: "Great Axe", count: 1, singleUse: false }];
     expect(
       buildItemsLost(
         [
-          row({ unitKey: "hired_sword:4", unitName: "Ogre", unitKind: "hired_sword", dead: true }),
+          row({ unitKey: "hireling:4", unitName: "Ogre", unitKind: "hireling", dead: true }),
           row({ unitKey: "hero:1", unitName: "Wolf", unitKind: "hero", dead: true }),
         ],
         deadRoster
       )
-    ).toEqual([
-      { unitKey: "hired_sword:4", unitName: "Ogre", henchman: false, items: ["Great Axe"] },
-    ]);
+    ).toEqual([{ unitKey: "hireling:4", unitName: "Ogre", henchman: false, items: ["Great Axe"] }]);
   });
 
   it("works out the gold after finds and paid upkeep, and nothing without the sheet", () => {

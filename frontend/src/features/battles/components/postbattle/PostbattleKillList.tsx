@@ -17,7 +17,7 @@ type KillPayload = {
 type PostbattleKillListProps = {
   unitKey: string;
   unitName: string;
-  unitKind: "hero" | "hired_sword" | "henchman";
+  unitKind: "hero" | "hireling" | "henchman";
   /** The unit's kills that still count, oldest first: the number finalise applies. */
   kills: BattleEvent[];
   /** Who a kill took out ("Player's Black Fang", or the name typed). */

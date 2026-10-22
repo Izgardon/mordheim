@@ -64,7 +64,7 @@ export function toParticipantRosters(
     }
     normalized[userId] = {
       heroes: roster.heroes.map((hero) => ({ ...hero })),
-      hiredSwords: roster.hiredSwords.map((hiredSword) => ({ ...hiredSword })),
+      hirelings: roster.hirelings.map((hireling) => ({ ...hireling })),
       henchmenGroups: roster.henchmenGroups.map((group) => ({
         ...group,
         members: group.members.map((member) => ({ ...member })),

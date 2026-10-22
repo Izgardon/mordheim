@@ -92,11 +92,11 @@ function routeServer() {
     unit_results: {
       "hero:1": { xp_earned: 3 },
       "hero:3": { xp_earned: 1 },
-      "hired_sword:4": { xp_earned: 1 },
+      "hireling:4": { xp_earned: 1 },
       "henchman:2": { xp_earned: 1 },
     },
     exploration: { dice_count: 2 },
-    upkeep: { entries: { "hired_sword:4": { unit_name: "Ogre Bodyguard", cost: 15 } } },
+    upkeep: { entries: { "hireling:4": { unit_name: "Ogre Bodyguard", cost: 15 } } },
   };
   fakeApi.on(`GET ${statePath("postbattle")}`, () => answer());
   fakeApi.on(`GET ${battlePath("rosters/")}`, battleRosters());
@@ -423,7 +423,7 @@ describe("BattlePostbattle requests", () => {
           ],
           level_ups: 1,
         },
-        "hired_sword:4": {
+        "hireling:4": {
           xp_earned: 0,
           reasons: [{ label: "no level-ups", xp: 0 }],
           level_ups: 0,
@@ -515,13 +515,13 @@ describe("BattlePostbattle requests", () => {
 
     // The Dead tick waits for the XP save; Finalise waits for both.
     expect(draftBodies()).toHaveLength(1);
-    expect(draftBodies()[0].unit_results["hired_sword:4"].dead).toBe(false);
+    expect(draftBodies()[0].unit_results["hireling:4"].dead).toBe(false);
     expect(dead()).toBeChecked();
     expect(screen.getByRole("button", { name: "Finalise Postbattle" })).toBeDisabled();
 
     await act(async () => held[0].release());
     await waitFor(() => expect(draftBodies()).toHaveLength(2));
-    expect(draftBodies()[1].unit_results["hired_sword:4"].dead).toBe(true);
+    expect(draftBodies()[1].unit_results["hireling:4"].dead).toBe(true);
     expect(draftBodies()[1].unit_results["hero:1"].xp_earned).toBe(5);
     expect(dead()).toBeChecked();
 
@@ -661,7 +661,7 @@ describe("BattlePostbattle requests", () => {
     mine.unit_information_json = {
       ...mine.unit_information_json,
       "henchman:2": { stats_override: { toughness: 4 }, out_of_action: false, kill_count: 0 },
-      "hired_sword:4": {
+      "hireling:4": {
         stats_override: { strength: 4, attacks: 2 },
         out_of_action: false,
         kill_count: 0,
