@@ -29,7 +29,7 @@ from .roster_support import (
 class CapTests(RosterTestCase):
     def test_each_cap_is_checked_under_the_warband_lock_inside_the_create(self):
         # BUG-105: the count ran before the transaction, so two concurrent creates could both pass
-        for kind, table in ((HERO, "hero"), (HIRED_SWORD, "hired_sword")):
+        for kind, table in ((HERO, "hero"), (HIRED_SWORD, "hireling")):
             with self.subTest(kind=kind.key):
                 with CaptureQueriesContext(connection) as captured:
                     response = self.client.post(unit_url(kind, self.warband.id), create_payload(kind), format="json")

@@ -10,7 +10,7 @@ from typing import Any
 
 from django.db.models import Count, Q
 
-from apps.warbands.models import HenchmenGroup, Hero, HiredSword, Warband, on_roster
+from apps.warbands.models import HenchmenGroup, Hero, Hireling, Warband, on_roster
 
 # A group's members on the roster (on_roster, through the group).
 LIVING_MEMBERS = Q(henchmen__dead=False, henchmen__dismissed_at__isnull=True)
@@ -83,7 +83,7 @@ def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
         units[group_row["warband_id"]].henchmen_groups.append(dict(group_row))
 
     hired_swords = (
-        on_roster(HiredSword.objects.filter(warband_id__in=ids))
+        on_roster(Hireling.objects.filter(warband_id__in=ids))
         .order_by("id")
         .values("id", "warband_id", "name", "unit_type", "rating", "xp", "blood_pacted")
     )

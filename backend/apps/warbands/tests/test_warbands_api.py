@@ -10,8 +10,8 @@ from apps.warbands.models import (
     HenchmenGroupItem,
     Hero,
     HeroItem,
-    HiredSword,
-    HiredSwordItem,
+    Hireling,
+    HirelingItem,
     Warband,
     WarbandItem,
 )
@@ -45,7 +45,7 @@ class WarbandsApiTests(APITestCase):
         ItemAvailability.objects.create(item=self.item, cost=35, rarity=8)
 
         self.hero = Hero.objects.create(warband=self.warband, name="Captain Wolf", unit_type="Captain")
-        self.hired_sword = HiredSword.objects.create(
+        self.hired_sword = Hireling.objects.create(
             warband=self.warband,
             name="Ogre Bodyguard",
             unit_type="Ogre",
@@ -174,7 +174,7 @@ class WarbandsApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["items"][0]["cost"], 35)
         self.assertEqual(
-            HiredSwordItem.objects.get(hired_sword=self.hired_sword, item=self.item).cost,
+            HirelingItem.objects.get(hireling=self.hired_sword, item=self.item).cost,
             35,
         )
 
@@ -192,7 +192,7 @@ class WarbandsApiTests(APITestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["xp"], 5)
         self.assertEqual(response.data["level_up"], 0)
-        created = HiredSword.objects.get(id=response.data["id"])
+        created = Hireling.objects.get(id=response.data["id"])
         self.assertEqual(created.level_up, 0)
 
     def test_create_blood_pacted_hired_sword_ignores_hired_sword_limit(self):

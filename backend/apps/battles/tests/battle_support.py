@@ -15,7 +15,7 @@ from django.test import override_settings
 from apps.battles.models import Battle, BattleEvent, BattleParticipant
 from apps.items.models import Item, ItemAvailability
 from apps.realtime import services as realtime
-from apps.warbands.models import Henchman, HenchmenGroup, Hero, HiredSword, Warband
+from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling, Warband
 from apps.warbands.tests.roster_support import RosterTestCase
 
 
@@ -71,7 +71,7 @@ class FixtureWarband:
     """The review's finalise fixture (BATL-TEST-07): 5 heroes, 2 hired swords, 8 henchmen in 3 groups."""
 
     heroes: list[Hero]
-    hired_swords: list[HiredSword]
+    hired_swords: list[Hireling]
     groups: list[HenchmenGroup]
     henchmen: list[Henchman] = field(default_factory=list)
 
@@ -90,8 +90,7 @@ def build_fixture_warband(warband: Warband, item: Item) -> FixtureWarband:
         Hero.objects.create(warband=warband, name=f"Hero {n}", unit_type="Champion", is_leader=n == 0) for n in range(5)
     ]
     swords = [
-        HiredSword.objects.create(warband=warband, name=f"Sword {n}", unit_type="Ogre", upkeep_price=15)
-        for n in range(2)
+        Hireling.objects.create(warband=warband, name=f"Sword {n}", unit_type="Ogre", upkeep_price=15) for n in range(2)
     ]
     groups = [HenchmenGroup.objects.create(warband=warband, name=f"Group {n}", unit_type="Warrior") for n in range(3)]
     henchmen = []
@@ -101,7 +100,7 @@ def build_fixture_warband(warband: Warband, item: Item) -> FixtureWarband:
     for hero in heroes:
         hero.hero_items.create(item=item, cost=5)
     for sword in swords:
-        sword.hired_sword_items.create(item=item, cost=5)
+        sword.hireling_items.create(item=item, cost=5)
     return FixtureWarband(heroes=heroes, hired_swords=swords, groups=groups, henchmen=henchmen)
 
 

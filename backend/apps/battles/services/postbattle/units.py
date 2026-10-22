@@ -15,7 +15,7 @@ from typing import Any
 from django.db.models import Model
 from django.utils import timezone
 
-from apps.warbands.models import HenchmenGroup, Hero, HeroSpecial, HiredSword
+from apps.warbands.models import HenchmenGroup, Hero, HeroSpecial, Hireling
 from apps.warbands.units.services.xp import XP_FIELDS, apply_xp_gain
 from apps.warbands.utils.leaders import choose_leader
 
@@ -118,7 +118,7 @@ class UnitResults:
     def _left(self, result: _Result) -> None:
         self.outcome.warnings.append(unit_left_warband(result.unit_key, result.name))
 
-    def _apply_to_unit(self, unit: Hero | HiredSword, result: _Result, xp: int) -> None:
+    def _apply_to_unit(self, unit: Hero | Hireling, result: _Result, xp: int) -> None:
         """Kept stats, injury effects, kills, XP and death for a hero or hired sword."""
         self.outcome.injury_logs.append(result.injury.log or {})
         fields = (

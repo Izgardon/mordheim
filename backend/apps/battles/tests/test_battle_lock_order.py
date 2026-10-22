@@ -107,7 +107,7 @@ class BattleLockOrderTests(BattleTestCase):
 
         transactions = self.locks(self.player, "finalize-postbattle", battle_id, body)
 
-        units = ["hero", "hired_sword", "henchman", "henchmen_group"]
+        units = ["hero", "hireling", "henchman", "henchmen_group"]
         self.assertEqual(transactions, [["battle_participant", "warband", *units, "hero_item"], ["battle"]])
 
     def test_closing_postbattle_locks_the_battle_then_the_players_it_skips(self):

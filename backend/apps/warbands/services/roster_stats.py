@@ -9,14 +9,14 @@ from typing import Any
 
 from django.db.models import CharField, F, IntegerField, QuerySet, Value
 
-from apps.warbands.models import HenchmenGroup, Hero, HiredSword
+from apps.warbands.models import HenchmenGroup, Hero, Hireling
 from apps.warbands.models.shared import STAT_FIELDS, on_roster
 
 COLUMNS = ("id", "name", "unit_type", *STAT_FIELDS, "armour_save")
 KINDS: tuple[tuple[str, Any], ...] = (
     ("heroes", Hero),
     ("henchmen_groups", HenchmenGroup),
-    ("hired_swords", HiredSword),
+    ("hired_swords", Hireling),
 )
 
 

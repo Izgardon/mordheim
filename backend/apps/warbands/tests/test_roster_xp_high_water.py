@@ -24,6 +24,13 @@ from .roster_support import (
 )
 
 
+class _AppsAsOf0025:
+    """The live models under the names migration 0025 knew them by: the hired sword is the hireling since 0036."""
+
+    def get_model(self, app_label: str, model_name: str) -> Any:
+        return django_apps.get_model(app_label, {"HiredSword": "Hireling"}.get(model_name, model_name))
+
+
 class XpHighWaterTests(RosterTestCase):
     def _set_xp(self, kind: Kind, unit: Any, xp: Any, **extra: Any) -> int:
         response = self.client.patch(unit_url(kind, self.warband.id, unit.id), {"xp": xp, **extra}, format="json")
@@ -99,7 +106,7 @@ class XpHighWaterTests(RosterTestCase):
         for unit in units:
             type(unit).objects.filter(id=unit.id).update(xp_high_water=0)
 
-        migration.backfill_high_water(django_apps, None)
+        migration.backfill_high_water(_AppsAsOf0025(), None)
 
         for unit in units:
             unit.refresh_from_db()

@@ -8,7 +8,7 @@ from django.test.utils import CaptureQueriesContext
 
 from apps.battles.services.exploration import table_amount
 from apps.battles.services.injuries import describe_roll
-from apps.warbands.models import HenchmenGroup, Hero, HiredSword
+from apps.warbands.models import HenchmenGroup, Hero, Hireling
 
 from .battle_support import BattleTestCase, build_fixture_warband, catalogue_item
 
@@ -113,7 +113,7 @@ class PostbattleGuideTests(BattleTestCase):
         h, swords, groups = self.fixture.heroes, self.fixture.hired_swords, self.fixture.groups
         for hero, (xp, high_water, half_rate) in zip(h, [(1, 1, False), (1, 3, False), (1, 1, True), (3, 3, False), (0, 0, False)], strict=True):  # fmt: skip
             Hero.objects.filter(id=hero.id).update(xp=xp, xp_high_water=high_water, half_rate=half_rate)
-        HiredSword.objects.filter(id=swords[0].id).update(xp=1, xp_high_water=1)
+        Hireling.objects.filter(id=swords[0].id).update(xp=1, xp_high_water=1)
         HenchmenGroup.objects.filter(id=groups[0].id).update(xp=1, xp_high_water=1)
         battle_id = self.to_postbattle({self.player: self.fixture.keys, self.viewer: [self.r]}, winners=[self.rival])
 

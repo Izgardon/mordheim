@@ -10,7 +10,7 @@ from collections.abc import Iterable
 
 from django.db.models import Prefetch
 
-from apps.warbands.models import Henchman, HenchmenGroup, Hero, HiredSword, on_roster
+from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling, on_roster
 
 from ..models import BattleParticipant
 
@@ -86,8 +86,8 @@ def hero_entry(hero: Hero) -> dict:
     }
 
 
-def hired_sword_entry(hired_sword: HiredSword) -> dict:
-    items = _item_entries(hired_sword.hired_sword_items.all())
+def hired_sword_entry(hired_sword: Hireling) -> dict:
+    items = _item_entries(hired_sword.hireling_items.all())
     return {
         "key": f"hired_sword:{hired_sword.id}",
         "id": hired_sword.id,
@@ -100,9 +100,9 @@ def hired_sword_entry(hired_sword: HiredSword) -> dict:
         "noLevelUps": bool(hired_sword.no_level_ups),
         "items": items,
         "singleUseItems": _single_use(items),
-        "skills": _named(hired_sword.hired_sword_skills.all(), "skill"),
-        "spells": _spells(hired_sword.hired_sword_spells.all()),
-        "specials": _named(hired_sword.hired_sword_specials.all(), "special"),
+        "skills": _named(hired_sword.hireling_skills.all(), "skill"),
+        "spells": _spells(hired_sword.hireling_spells.all()),
+        "specials": _named(hired_sword.hireling_specials.all(), "special"),
     }
 
 
@@ -146,11 +146,11 @@ def _live_rosters(warband_ids: list[int]) -> tuple[defaultdict, defaultdict, def
     heroes = on_roster(Hero.objects.filter(warband_id__in=warband_ids)).prefetch_related(
         "hero_items__item", "hero_skills__skill", "hero_specials__special", "hero_spells__spell"
     )
-    hired_swords = on_roster(HiredSword.objects.filter(warband_id__in=warband_ids)).prefetch_related(
-        "hired_sword_items__item",
-        "hired_sword_skills__skill",
-        "hired_sword_specials__special",
-        "hired_sword_spells__spell",
+    hired_swords = on_roster(Hireling.objects.filter(warband_id__in=warband_ids)).prefetch_related(
+        "hireling_items__item",
+        "hireling_skills__skill",
+        "hireling_specials__special",
+        "hireling_spells__spell",
     )
     living_henchmen = Prefetch("henchmen", queryset=on_roster(Henchman.objects.all()).order_by("id"))
     groups = on_roster(HenchmenGroup.objects.filter(warband_id__in=warband_ids)).prefetch_related(

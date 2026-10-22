@@ -3,7 +3,7 @@
 `armour_save` is listed twice (once more through STAT_FIELDS), as before; it keeps its first position.
 """
 
-from apps.warbands.models import HiredSword
+from apps.warbands.models import Hireling
 from apps.warbands.units.kinds import HIRED_SWORD
 from apps.warbands.units.serializers import (
     STAT_FIELDS,
@@ -45,7 +45,7 @@ class HiredSwordSummarySerializer(UnitSummarySerializer):
     kind = HIRED_SWORD
 
     class Meta:
-        model = HiredSword
+        model = Hireling
         fields = (
             "id",
             "warband_id",
@@ -80,7 +80,7 @@ class HiredSwordDetailSerializer(UnitDetailSerializer):
     kind = HIRED_SWORD
 
     class Meta:
-        model = HiredSword
+        model = Hireling
         fields = (
             "id",
             "warband_id",
@@ -119,7 +119,7 @@ class HiredSwordCreateSerializer(UnitWriteSerializer):
     kind = HIRED_SWORD
 
     class Meta:
-        model = HiredSword
+        model = Hireling
         fields = WRITE_FIELDS
 
 
@@ -127,5 +127,5 @@ class HiredSwordUpdateSerializer(UnitWriteSerializer):
     kind = HIRED_SWORD
 
     class Meta:
-        model = HiredSword
+        model = Hireling
         fields = WRITE_FIELDS

@@ -29,11 +29,11 @@ from apps.restrictions.models import Restriction
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
-from apps.warbands.models import Henchman, HenchmenGroup, Hero, HiredSword, Warband, WarbandLog, WarbandTrade
+from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling, Warband, WarbandLog, WarbandTrade
 from apps.warbands.utils.henchmen_level import HENCHMEN_LEVEL_THRESHOLDS
 from apps.warbands.utils.hero_level import HERO_LEVEL_THRESHOLDS
 
-RosterUnit = Hero | HenchmenGroup | HiredSword
+RosterUnit = Hero | HenchmenGroup | Hireling
 
 ALL_STAT_ADVANCES = ("M", "WS", "BS", "S", "T", "W", "I", "A", "Ld")
 STAT_FIELD_BY_ADVANCE = {
@@ -113,11 +113,11 @@ HENCHMEN = Kind(
 HIRED_SWORD = Kind(
     key="hired_sword",
     segment="hired-swords",
-    model=HiredSword,
-    items="hired_sword_items",
-    skills="hired_sword_skills",
-    specials="hired_sword_specials",
-    spells="hired_sword_spells",
+    model=Hireling,
+    items="hireling_items",
+    skills="hireling_skills",
+    specials="hireling_specials",
+    spells="hireling_spells",
     thresholds_setting="hero_level_thresholds",  # hired swords advance like heroes (decision 8)
     default_thresholds=HERO_LEVEL_THRESHOLDS,
     trade_action="Hire",

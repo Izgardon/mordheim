@@ -154,7 +154,7 @@ def apply_stat_and_special(unit: Any, outcome: InjuryOutcome, campaign_id: int) 
         fields.append(outcome.stat)
     if outcome.special:
         special = injury_special(outcome.special, campaign_id)
-        links = unit.hero_specials if hasattr(unit, "hero_specials") else unit.hired_sword_specials
+        links = unit.hero_specials if hasattr(unit, "hero_specials") else unit.hireling_specials
         if not links.filter(special=special).exists():
             links.create(special=special)
     return fields

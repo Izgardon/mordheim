@@ -25,7 +25,7 @@ from django.utils import timezone
 from apps.battles.models import Battle, BattleParticipant
 from apps.battles.services.setup import busy_participations
 from apps.users.names import display_name
-from apps.warbands.models import Henchman, Hero, HiredSword, Warband
+from apps.warbands.models import Henchman, Hero, Hireling, Warband
 from apps.warbands.services.summary import load_warband_units
 
 from .models import Campaign, CampaignMembership, CampaignMembershipPermission, CampaignMessage, PivotalMoment
@@ -287,7 +287,7 @@ def _killer_rows(
 
 KILLER_KINDS = (  # model, kind, name prefix, unit type field, path to the warband
     (Hero, "hero", "Hero ", "unit_type", "warband"),
-    (HiredSword, "hired_sword", "Hired Sword ", "unit_type", "warband"),
+    (Hireling, "hired_sword", "Hired Sword ", "unit_type", "warband"),
     (Henchman, "henchman", "Henchman ", "group__unit_type", "group__warband"),
 )
 

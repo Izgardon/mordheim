@@ -23,8 +23,8 @@ LOCK_ORDER: tuple[tuple[str, ...], ...] = (
     ("battle",),
     ("battle_participant", "battle_event"),
     ("warband",),
-    ("hero", "hired_sword", "henchman", "henchmen_group"),
-    ("hero_item", "hired_sword_item", "henchmen_group_item", "warband_items", "warband_resources"),
+    ("hero", "hireling", "henchman", "henchmen_group"),
+    ("hero_item", "hireling_item", "henchmen_group_item", "warband_items", "warband_resources"),
 )
 
 

@@ -161,7 +161,7 @@ class PostbattleDraftTests(BattleTestCase):
     def test_finalise_validation(self):
         battle_id = self.postbattle()
         other_resource = WarbandResource.objects.create(warband=self.rival, name="Shards")
-        rival_sword = self.rival.hired_swords.create(name="Ogre", unit_type="Ogre")
+        rival_sword = self.rival.hirelings.create(name="Ogre", unit_type="Ogre")
         d6_hero = {self.h: {"rolls": [injury_roll([3], roll_type="d6")]}}
         d66_henchman = {self.s: {"rolls": [injury_roll([3, 3])]}}
         cases: list[tuple[Any, str]] = [

@@ -9,7 +9,7 @@ group's.
 from collections.abc import Iterable
 
 from apps.campaigns.models import CampaignSettings
-from apps.warbands.models import HenchmenGroup, Hero, HiredSword, RosterUnit
+from apps.warbands.models import HenchmenGroup, Hero, Hireling, RosterUnit
 from apps.warbands.units.services.xp import predicted_level_ups
 
 XP_COLUMNS = ("id", "xp", "xp_high_water", "half_rate")
@@ -32,7 +32,7 @@ def unit_rows(rosters: Iterable[dict], keys: set[str]) -> dict[str, RosterUnit]:
     if hero_ids:
         rows.update({f"hero:{hero.id}": hero for hero in Hero.objects.filter(id__in=hero_ids).only(*XP_COLUMNS)})
     if sword_ids:
-        swords = HiredSword.objects.filter(id__in=sword_ids).only(*XP_COLUMNS, "no_level_ups")
+        swords = Hireling.objects.filter(id__in=sword_ids).only(*XP_COLUMNS, "no_level_ups")
         rows.update({f"hired_sword:{sword.id}": sword for sword in swords})
     if group_of:
         groups = HenchmenGroup.objects.filter(id__in=set(group_of.values())).only(*XP_COLUMNS, "no_level_ups")

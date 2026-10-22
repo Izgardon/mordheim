@@ -11,7 +11,7 @@ from apps.warbands.views.base import WarbandScopedView
 
 UNIT_VIEW_NAMES = {
     f"warbands-{segment}{suffix}": f"Warband{model}{role}View"
-    for segment, model in (("heroes", "Hero"), ("henchmen-groups", "HenchmenGroup"), ("hired-swords", "HiredSword"))
+    for segment, model in (("heroes", "Hero"), ("henchmen-groups", "HenchmenGroup"), ("hired-swords", "Hireling"))
     for suffix, role in (
         ("", "ListCreate"),
         ("-detail-list", "DetailList"),

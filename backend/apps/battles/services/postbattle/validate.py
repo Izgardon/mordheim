@@ -11,7 +11,7 @@ from django.db.models import Q
 
 from apps.campaigns.models import CampaignSettings
 from apps.special.models import Special
-from apps.warbands.models import HiredSword, WarbandResource
+from apps.warbands.models import Hireling, WarbandResource
 
 from ...models import Battle, BattleParticipant
 from ...validation.postbattle import normalize_postbattle
@@ -93,7 +93,7 @@ def validate_postbattle(battle: Battle, participant: BattleParticipant, raw_draf
             id=resource_id, warband_id=warband_id
         ).exists(),
         hired_sword_ids=lambda ids: set(
-            HiredSword.objects.filter(id__in=ids, warband_id=warband_id).values_list("id", flat=True)
+            Hireling.objects.filter(id__in=ids, warband_id=warband_id).values_list("id", flat=True)
         ),
     )
     return draft

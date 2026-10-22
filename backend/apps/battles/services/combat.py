@@ -5,7 +5,7 @@ A kill is an event that names the killer and the victim (decision 5): tapped in 
 postbattle (`source: "postbattle"`).
 """
 
-from apps.warbands.models import Henchman, Hero, HiredSword
+from apps.warbands.models import Henchman, Hero, Hireling
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..validation.config import normalize_unit_information
@@ -38,12 +38,12 @@ def unit_event_payload(participant: BattleParticipant, unit: dict) -> dict:
     """What a kill event says about one of the participant's units (a parsed unit key)."""
     payload = _blank_unit_payload(unit, participant.warband_id)
     if unit["unit_type"] in ("hero", "hired_sword"):
-        row: Hero | HiredSword | None
+        row: Hero | Hireling | None
         if unit["unit_type"] == "hero":
             row = Hero.objects.filter(id=unit["unit_id"], warband_id=participant.warband_id).first()
             payload["is_leader"] = bool(row and row.is_leader)
         else:
-            row = HiredSword.objects.filter(id=unit["unit_id"], warband_id=participant.warband_id).first()
+            row = Hireling.objects.filter(id=unit["unit_id"], warband_id=participant.warband_id).first()
         if row:
             payload["name"] = row.name or None
             payload["type_name"] = row.unit_type or None

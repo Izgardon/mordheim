@@ -31,7 +31,7 @@ def take_unit_copies(unit_type: str, unit: RosterUnit, item_id: int, quantity: i
     """Take the unit's newest `quantity` copies; ValueError when it carries fewer, or when another request took
     some of them first (the delete count is checked, BUG-36)."""
     kind = KINDS[cast(UnitKindKey, unit_type)]
-    links: Any = kind.items.model._default_manager  # HeroItem, HenchmenGroupItem or HiredSwordItem
+    links: Any = kind.items.model._default_manager  # HeroItem, HenchmenGroupItem or HirelingItem
     rows = list(
         links.filter(**{kind.parent_field: unit, "item_id": item_id})
         .order_by("-id")

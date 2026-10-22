@@ -3,7 +3,7 @@
 from typing import Any
 
 from apps.campaigns.models import CampaignSettings
-from apps.warbands.models import Henchman, HenchmenGroup, Hero, HiredSword
+from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling
 
 from .roster_support import (
     HENCHMEN,
@@ -276,7 +276,7 @@ class HiredSwordCreateCharacterisationTests(RosterTestCase):
         )
         body = response.json()
         self.assertEqual({key: body[key] for key in fields}, fields)
-        sword = HiredSword.objects.get(id=body["id"])
+        sword = Hireling.objects.get(id=body["id"])
         self.assertEqual((sword.upkeep_price, sword.rating), (15, 22))
 
 

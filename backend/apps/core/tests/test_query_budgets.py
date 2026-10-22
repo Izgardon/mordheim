@@ -25,7 +25,7 @@ from apps.core.testing import (
 )
 from apps.items.models import Item
 from apps.trades.models import TradeRequest
-from apps.warbands.models import HenchmenGroup, Hero, HiredSword
+from apps.warbands.models import HenchmenGroup, Hero, Hireling
 
 # endpoint name -> (url template, budget)
 QUERY_BUDGETS: dict[str, tuple[str, int]] = {
@@ -126,7 +126,7 @@ class QueryBudgetTests(TestCase):
         cls.unit_ids = {
             "hero": Hero.objects.filter(warband=warband).order_by("id")[0].id,
             "group": HenchmenGroup.objects.filter(warband=warband).order_by("id")[0].id,
-            "sword": HiredSword.objects.filter(warband=warband).order_by("id")[0].id,
+            "sword": Hireling.objects.filter(warband=warband).order_by("id")[0].id,
         }
 
     def _url(self, template: str) -> str:
@@ -175,7 +175,7 @@ class QueryBudgetTests(TestCase):
         client.force_authenticate(user=self.ref.owner)
         Hero.objects.filter(warband=self.ref.warband).update(level_up=1)
         HenchmenGroup.objects.filter(warband=self.ref.warband).update(level_up=1)
-        HiredSword.objects.filter(warband=self.ref.warband).update(level_up=1)
+        Hireling.objects.filter(warband=self.ref.warband).update(level_up=1)
         for name, (method, template, body, budget) in WRITE_QUERY_BUDGETS.items():
             with self.subTest(endpoint=name):
                 with CaptureQueriesContext(connection) as captured:
@@ -219,7 +219,7 @@ class QueryBudgetTests(TestCase):
         warband = self.ref.warband
         Hero.objects.filter(warband=warband).update(level_up=2)
         HenchmenGroup.objects.filter(warband=warband).update(level_up=2)
-        HiredSword.objects.filter(warband=warband).update(level_up=2)
+        Hireling.objects.filter(warband=warband).update(level_up=2)
 
         def count(name: str, xp: int) -> int:
             method, template, body, _ = WRITE_QUERY_BUDGETS[name]
@@ -232,7 +232,7 @@ class QueryBudgetTests(TestCase):
         units = (
             Hero.objects.get(id=self.unit_ids["hero"]),
             HenchmenGroup.objects.get(id=self.unit_ids["group"]),
-            HiredSword.objects.get(id=self.unit_ids["sword"]),
+            Hireling.objects.get(id=self.unit_ids["sword"]),
         )
         # Seed one restriction-linked item first: the first link adds one fixed query, which isn't growth.
         add_items_to_units(*units, count=1, label="Seed")

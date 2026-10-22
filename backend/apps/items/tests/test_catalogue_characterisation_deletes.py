@@ -28,7 +28,7 @@ from apps.core.catalogue.usage import count_usage
 from apps.items.models import Item
 from apps.items.services import HALF_PRICE_ARMOUR_EFFECT_KEY as HALF
 from apps.races.models import Race
-from apps.warbands.models import HenchmenGroup, Hero, HiredSword, Warband, WarbandItem, WarbandTrade
+from apps.warbands.models import HenchmenGroup, Hero, Hireling, Warband, WarbandItem, WarbandTrade
 from apps.warbands.tests.roster_support import HENCHMEN, HERO, HIRED_SWORD, make_unit
 
 from .catalogue_support import (
@@ -68,7 +68,7 @@ class CustomEntryDeleteTests(CatalogueTestCase):
         charm = make_entry(ITEMS, "Lucky Charm", campaign=self.campaign, cost=25)
         self.hero.hero_items.create(item=charm, cost=25)
         self.group.henchmen_group_items.create(item=charm, cost=25)
-        self.sword.hired_sword_items.create(item=charm, cost=25)
+        self.sword.hireling_items.create(item=charm, cost=25)
         WarbandItem.objects.create(warband=self.warband, item=charm, quantity=2, cost=25)
         BestiaryEntryItem.objects.create(bestiary_entry=self.beast, item=charm)
         ledger, gold = self.ledger(), list(Warband.objects.order_by("id").values_list("gold", flat=True))
@@ -84,7 +84,7 @@ class CustomEntryDeleteTests(CatalogueTestCase):
             [
                 self.hero.hero_items.count(),
                 self.group.henchmen_group_items.count(),
-                self.sword.hired_sword_items.count(),
+                self.sword.hireling_items.count(),
             ],
             [1, 1, 1],
         )
@@ -160,7 +160,7 @@ class CustomEntryDeleteTests(CatalogueTestCase):
 
         self.assertEqual(self.delete_as(self.owner, HIRED_SWORDS.detail_url(profile.id)).status_code, 204)
 
-        self.assertTrue(HiredSword.objects.filter(id=self.sword.id).exists())  # a hired sword copies its profile
+        self.assertTrue(Hireling.objects.filter(id=self.sword.id).exists())  # a hired sword copies its profile
 
     def test_deleting_the_last_copy_holder_leaves_the_catalogue_entry(self):
         charm = make_entry(ITEMS, "Lucky Charm", campaign=self.campaign)
@@ -172,7 +172,7 @@ class CustomEntryDeleteTests(CatalogueTestCase):
 
 
 class RaceDeleteTests(CatalogueTestCase):
-    """BUG-130: units reference their race with CASCADE (`heroes.py:9-15`, `henchmen.py:9-15`, `hired_swords.py:9-15`)."""
+    """BUG-130: units reference their race with CASCADE (`heroes.py:9-15`, `henchmen.py:9-15`, `hirelings.py:9-15`)."""
 
     def setUp(self) -> None:
         super().setUp()
@@ -185,7 +185,7 @@ class RaceDeleteTests(CatalogueTestCase):
     def surviving_units(self) -> list[str]:
         return sorted(
             [*Hero.objects.values_list("name", flat=True), *HenchmenGroup.objects.values_list("name", flat=True)]
-            + list(HiredSword.objects.values_list("name", flat=True))
+            + list(Hireling.objects.values_list("name", flat=True))
         )
 
     def test_a_race_in_use_cannot_be_deleted_and_its_units_stay(self):

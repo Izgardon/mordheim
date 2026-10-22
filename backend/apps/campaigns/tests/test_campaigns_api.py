@@ -31,8 +31,8 @@ from apps.warbands.models import (
     HenchmenGroupItem,
     Hero,
     HeroItem,
-    HiredSword,
-    HiredSwordItem,
+    Hireling,
+    HirelingItem,
     Warband,
     WarbandItem,
 )
@@ -347,11 +347,11 @@ class CampaignApiTests(APITestCase):
             faction="Mercenaries",
         )
         hero = Hero.objects.create(warband=warband, name="Captain", unit_type="Leader")
-        hired_sword = HiredSword.objects.create(warband=warband, name="Scout", unit_type="Ranger")
+        hired_sword = Hireling.objects.create(warband=warband, name="Scout", unit_type="Ranger")
         group = HenchmenGroup.objects.create(warband=warband, name="Youngbloods", unit_type="Mercenary")
         WarbandItem.objects.create(warband=warband, item=armour, quantity=2, cost=91)
         HeroItem.objects.create(hero=hero, item=armour, cost=91)
-        HiredSwordItem.objects.create(hired_sword=hired_sword, item=armour, cost=91)
+        HirelingItem.objects.create(hireling=hired_sword, item=armour, cost=91)
         HenchmenGroupItem.objects.create(henchmen_group=group, item=armour, cost=91)
 
         response = self._create_half_price_armour_rule(owner, campaign["id"])
@@ -366,8 +366,8 @@ class CampaignApiTests(APITestCase):
         self.assertEqual(WarbandItem.objects.get(warband=warband).cost, 91)  # what was paid (BUG-51)
         self.assertEqual(HeroItem.objects.get(hero=hero).item_id, clone.id)
         self.assertEqual(HeroItem.objects.get(hero=hero).cost, 91)
-        self.assertEqual(HiredSwordItem.objects.get(hired_sword=hired_sword).item_id, clone.id)
-        self.assertEqual(HiredSwordItem.objects.get(hired_sword=hired_sword).cost, 91)
+        self.assertEqual(HirelingItem.objects.get(hireling=hired_sword).item_id, clone.id)
+        self.assertEqual(HirelingItem.objects.get(hireling=hired_sword).cost, 91)
         self.assertEqual(HenchmenGroupItem.objects.get(henchmen_group=group).item_id, clone.id)
         self.assertEqual(HenchmenGroupItem.objects.get(henchmen_group=group).cost, 91)
 
@@ -1095,14 +1095,14 @@ class CampaignApiTests(APITestCase):
         )
 
         top_hero = Hero.objects.create(warband=owner_warband, name="Captain Wolf", unit_type="Captain", kills=9)
-        HiredSword.objects.create(warband=owner_warband, name="Ogre Bodyguard", unit_type="Ogre", kills=7)
+        Hireling.objects.create(warband=owner_warband, name="Ogre Bodyguard", unit_type="Ogre", kills=7)
         Hero.objects.create(warband=owner_warband, name="Zero Hero", unit_type="Youngblood", kills=0)
 
         group = HenchmenGroup.objects.create(warband=player_warband, name="Black Knives", unit_type="Thugs")
         Henchman.objects.create(group=group, name="Blade One", kills=8)
         Henchman.objects.create(group=group, name="Blade Two", kills=7)
 
-        HiredSword.objects.create(warband=player_warband, name="Albrecht", unit_type="Warlock", kills=7)
+        Hireling.objects.create(warband=player_warband, name="Albrecht", unit_type="Warlock", kills=7)
         Hero.objects.create(warband=player_warband, name="Boris", unit_type="Champion", kills=6)
         Hero.objects.create(warband=player_warband, name="Celia", unit_type="Champion", kills=5)
         Hero.objects.create(warband=other_warband, name="Foreign Killer", unit_type="Vampire", kills=99)

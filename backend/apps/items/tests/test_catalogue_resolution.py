@@ -7,7 +7,7 @@ an item's animal and favourites. A campaign entry that merely shares the name, o
 """
 
 from apps.bestiary.models import BestiaryEntry, WarbandBestiaryFavourite
-from apps.warbands.models import HiredSword, WarbandItem
+from apps.warbands.models import Hireling, WarbandItem
 from apps.warbands.tests.roster_support import HERO, HIRED_SWORD, create_payload, make_unit, unit_url
 
 from .catalogue_support import BESTIARY, ITEMS, RACES, SKILLS, SPECIALS, SPELLS, CatalogueTestCase, make_entry
@@ -36,12 +36,12 @@ class WriteResolutionTests(CatalogueTestCase):
         response = self.client.post(unit_url(HIRED_SWORD, self.warband.id), payload, format="json")
 
         self.assertEqual(response.status_code, 201, response.data)
-        unit = HiredSword.objects.get(id=response.data["id"])
+        unit = Hireling.objects.get(id=response.data["id"])
         self.assertEqual(unit.race_id, self.race.id)
-        self.assertEqual(list(unit.hired_sword_skills.values_list("skill_id", flat=True)), [self.skill.id])
-        self.assertEqual(list(unit.hired_sword_spells.values_list("spell_id", flat=True)), [self.spell.id])
-        self.assertIn(self.special.id, unit.hired_sword_specials.values_list("special_id", flat=True))
-        self.assertEqual(list(unit.hired_sword_items.values_list("item_id", "cost")), [(self.sword.id, 30)])
+        self.assertEqual(list(unit.hireling_skills.values_list("skill_id", flat=True)), [self.skill.id])
+        self.assertEqual(list(unit.hireling_spells.values_list("spell_id", flat=True)), [self.spell.id])
+        self.assertIn(self.special.id, unit.hireling_specials.values_list("special_id", flat=True))
+        self.assertEqual(list(unit.hireling_items.values_list("item_id", "cost")), [(self.sword.id, 30)])
 
     def test_a_full_list_patch_resending_book_ids_keeps_the_versions(self):
         hero = make_unit(HERO, self.warband)

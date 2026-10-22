@@ -41,7 +41,7 @@ class VersionTestCase(CatalogueTestCase):
         """Every kind of copy of the book Sword in this campaign, and one in another campaign's stash."""
         self.hero.hero_items.create(item=self.book_sword, cost=7)
         self.group.henchmen_group_items.create(item=self.book_sword, cost=10)
-        self.sword_unit.hired_sword_items.create(item=self.book_sword, cost=12)
+        self.sword_unit.hireling_items.create(item=self.book_sword, cost=12)
         WarbandItem.objects.create(warband=self.warband, item=self.book_sword, quantity=2, cost=10)
         BestiaryEntryItem.objects.create(bestiary_entry=self.beast, item=self.book_sword, quantity=2)
         WarbandItem.objects.create(warband=self.far, item=self.book_sword, quantity=1, cost=10)
@@ -51,7 +51,7 @@ class VersionTestCase(CatalogueTestCase):
         rows = [
             ("hero", *self.hero.hero_items.values_list("item_id", "cost").get()),
             ("henchmen", *self.group.henchmen_group_items.values_list("item_id", "cost").get()),
-            ("hired sword", *self.sword_unit.hired_sword_items.values_list("item_id", "cost").get()),
+            ("hired sword", *self.sword_unit.hireling_items.values_list("item_id", "cost").get()),
             (
                 "bestiary",
                 *BestiaryEntryItem.objects.filter(bestiary_entry=self.beast).values_list("item_id", "quantity").get(),
@@ -205,7 +205,7 @@ class VersionBudgetTests(VersionTestCase):
         for index in range(count):
             make_unit(HERO, self.warband, name=f"Hero {item.id} {index}").hero_items.create(item=item, cost=index)
             self.group.henchmen_group_items.create(item=item, cost=index)
-            self.sword_unit.hired_sword_items.create(item=item, cost=index)
+            self.sword_unit.hireling_items.create(item=item, cost=index)
             WarbandItem.objects.create(warband=self.warband, item=item, quantity=1, cost=index)
             BestiaryEntryItem.objects.create(bestiary_entry=make_entry(BESTIARY, f"Beast {item.id} {index}", campaign=self.campaign), item=item)  # fmt: skip
 

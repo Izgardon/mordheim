@@ -11,7 +11,7 @@ from typing import Any
 from django.db.models import Q
 
 from apps.core.models import RevertedVersion
-from apps.warbands.models import HenchmenGroupItem, HeroItem, HiredSwordItem
+from apps.warbands.models import HenchmenGroupItem, HeroItem, HirelingItem
 
 from ..models import BattleParticipant
 from .errors import BattleError
@@ -50,7 +50,7 @@ def _carried_links(warband_id: int, unit_type: str, unit_id: int) -> Any:
     if unit_type == "hero":
         return HeroItem.objects.filter(hero_id=unit_id, hero__warband_id=warband_id)
     if unit_type == "hired_sword":
-        return HiredSwordItem.objects.filter(hired_sword_id=unit_id, hired_sword__warband_id=warband_id)
+        return HirelingItem.objects.filter(hireling_id=unit_id, hireling__warband_id=warband_id)
     return HenchmenGroupItem.objects.filter(henchmen_group__henchmen__id=unit_id, henchmen_group__warband_id=warband_id)
 
 

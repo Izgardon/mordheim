@@ -18,8 +18,8 @@ from apps.warbands.models import (
     HenchmenGroup,
     Hero,
     HeroItem,
-    HiredSword,
-    HiredSwordItem,
+    Hireling,
+    HirelingItem,
     Warband,
     WarbandResource,
 )
@@ -40,7 +40,7 @@ class FinaliseContext:
     resource_found: bool
     resource_name: str | None
     heroes: list[Hero]  # every hero of the warband, in id order (the crown is chosen among them)
-    hired_swords: dict[int, HiredSword]  # those the draft names, as results or upkeep
+    hired_swords: dict[int, Hireling]  # those the draft names, as results or upkeep
     henchmen: list[Henchman]  # every member of the groups the draft names
     groups: dict[int, HenchmenGroup]
     kills: dict[str, int] = field(default_factory=dict)  # live kills per unit key of the warband (decision 5)
@@ -76,12 +76,12 @@ def _carried(links) -> ArraySubquery:
     return ArraySubquery(links.order_by("id").values("item__name"))
 
 
-def _locked_units(warband_id: int, draft: dict) -> tuple[list[Hero], dict[int, HiredSword], list[Henchman]]:
+def _locked_units(warband_id: int, draft: dict) -> tuple[list[Hero], dict[int, Hireling], list[Henchman]]:
     heroes = locked(Hero.objects.filter(warband_id=warband_id).order_by("id"))
     heroes = heroes.annotate(carried=_carried(HeroItem.objects.filter(hero_id=OuterRef("pk"))))
     sword_ids = {*_ids(draft, "hired_sword"), *upkeep_hired_sword_ids(draft)}
-    swords = locked(HiredSword.objects.filter(id__in=sword_ids, warband_id=warband_id))
-    swords = swords.annotate(carried=_carried(HiredSwordItem.objects.filter(hired_sword_id=OuterRef("pk"))))
+    swords = locked(Hireling.objects.filter(id__in=sword_ids, warband_id=warband_id))
+    swords = swords.annotate(carried=_carried(HirelingItem.objects.filter(hireling_id=OuterRef("pk"))))
     named_groups = Henchman.objects.filter(id__in=_ids(draft, "henchman")).values("group_id")
     henchmen = locked(
         Henchman.objects.select_related("group")

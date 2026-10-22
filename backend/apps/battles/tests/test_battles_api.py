@@ -19,8 +19,8 @@ from apps.warbands.models import (
     Hero,
     HeroItem,
     HeroSpecial,
-    HiredSword,
-    HiredSwordItem,
+    Hireling,
+    HirelingItem,
     Warband,
     WarbandItem,
     WarbandLog,
@@ -719,7 +719,7 @@ class BattleApiTests(APITestCase):
             name="Captain Wolf",
             unit_type="Captain",
         )
-        owner_hired_sword = HiredSword.objects.create(
+        owner_hired_sword = Hireling.objects.create(
             warband=self.owner_warband,
             name="Johann",
             unit_type="Pit Fighter",
@@ -1319,7 +1319,7 @@ class BattleApiTests(APITestCase):
             name="Captain Wolf",
             unit_type="Captain",
         )
-        owner_hired_sword = HiredSword.objects.create(
+        owner_hired_sword = Hireling.objects.create(
             warband=self.owner_warband,
             name="Johann",
             unit_type="Pit Fighter",
@@ -1453,7 +1453,7 @@ class BattleApiTests(APITestCase):
             name="Captain Wolf",
             unit_type="Captain",
         )
-        owner_hired_sword = HiredSword.objects.create(
+        owner_hired_sword = Hireling.objects.create(
             warband=self.owner_warband,
             name="Johann",
             unit_type="Pit Fighter",
@@ -1708,7 +1708,7 @@ class BattleApiTests(APITestCase):
         battle_id = data["battle"]["id"]
         self._ready_both_and_start(battle_id)
 
-        owner_hired_sword = HiredSword.objects.create(
+        owner_hired_sword = Hireling.objects.create(
             warband=self.owner_warband,
             name="Johann",
             unit_type="Bounty Hunter",
@@ -2994,7 +2994,7 @@ class BattleApiTests(APITestCase):
             attacks=1,
             leadership=8,
         )
-        owner_hired_sword = HiredSword.objects.create(
+        owner_hired_sword = Hireling.objects.create(
             warband=self.owner_warband,
             name="Ogre Bodyguard",
             unit_type="Ogre",
@@ -3026,7 +3026,7 @@ class BattleApiTests(APITestCase):
         Henchman.objects.create(group=owner_group, name="Marksman A")
         item = Item.objects.create(name="Healing Herbs", type="miscellaneous", single_use=True)
         HeroItem.objects.create(hero=owner_hero, item=item)
-        HiredSwordItem.objects.create(hired_sword=owner_hired_sword, item=item)
+        HirelingItem.objects.create(hireling=owner_hired_sword, item=item)
         HenchmenGroupItem.objects.create(henchmen_group=owner_group, item=item)
 
         self.client.force_authenticate(user=self.owner)
@@ -3239,7 +3239,7 @@ class BattleApiTests(APITestCase):
             strength=3,
             armour_save=5,
         )
-        owner_hired_sword = HiredSword.objects.create(
+        owner_hired_sword = Hireling.objects.create(
             warband=self.owner_warband,
             name="Ogre Bodyguard",
             unit_type="Ogre",
@@ -3447,7 +3447,7 @@ class BattleApiTests(APITestCase):
             xp=0,
             level_up=0,
         )
-        owner_hired_sword = HiredSword.objects.create(
+        owner_hired_sword = Hireling.objects.create(
             warband=self.owner_warband,
             name="Ogre Bodyguard",
             unit_type="Ogre",

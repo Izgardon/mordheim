@@ -10,7 +10,7 @@ from collections.abc import Iterable
 
 from apps.core.catalogue.current import resolve
 from apps.items.models import Item
-from apps.warbands.models import Henchman, HenchmenGroupItem, HeroItem, HiredSwordItem
+from apps.warbands.models import Henchman, HenchmenGroupItem, HeroItem, HirelingItem
 
 from ...models import Battle, BattleEvent, BattleParticipant
 from ...validation.coerce import coerce_int
@@ -53,7 +53,7 @@ def _item_rows(unit_type: str, unit_id: int, warband_id: int, group_ids: dict[in
     if unit_type == "hero":
         return HeroItem.objects.filter(hero_id=unit_id, hero__warband_id=warband_id)
     if unit_type == "hired_sword":
-        return HiredSwordItem.objects.filter(hired_sword_id=unit_id, hired_sword__warband_id=warband_id)
+        return HirelingItem.objects.filter(hireling_id=unit_id, hireling__warband_id=warband_id)
     group_id = group_ids.get(unit_id)
     if not group_id:
         return None
