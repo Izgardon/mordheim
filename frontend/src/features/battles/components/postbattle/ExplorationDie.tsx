@@ -43,8 +43,9 @@ export default function ExplorationDie({
         disabled={disabled}
         className="field-surface h-10 w-10 min-w-10 max-w-10 flex-none !rounded-none px-0 text-center text-base font-semibold"
         onFocus={(event) => {
+          const input = event.currentTarget; // gone from the event by the next frame
           window.requestAnimationFrame(() => {
-            event.currentTarget.select();
+            input.select();
           });
         }}
         onMouseUp={(event) => {
