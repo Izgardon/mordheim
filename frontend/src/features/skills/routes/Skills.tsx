@@ -147,7 +147,8 @@ export default function Skills() {
               renderActions={(skill) => (
                 <div className="flex items-center justify-end gap-2">
                   <LearnSkillDialog skill={skill} unitTypes={["heroes", "hiredswords"]} />
-                  {canEdit && skill.campaign_id ? (
+                  {/* A book skill's edit makes the campaign's version (CAT-TWEAK-01). */}
+                  {canEdit ? (
                     <EditRowButton label="Edit skill" onClick={() => editor.edit(skill)} />
                   ) : null}
                 </div>

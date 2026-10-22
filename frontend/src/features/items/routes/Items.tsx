@@ -120,10 +120,9 @@ export default function Items() {
           aria-expanded={Boolean(acquiring?.open && acquiring.row._rowId === item._rowId)}
           onClick={() => setAcquiring({ row: item, open: true })}
         />
-        {/* A house rule's clone changes with its rule, never here (BUG-51). */}
-        {canEdit && item.campaign_id && !item.generated_effect_key ? (
-          <EditRowButton label="Edit item" onClick={() => editor.edit(item)} />
-        ) : null}
+        {/* Every item: a book item's edit makes the campaign's version (CAT-TWEAK-01), and a
+            house rule's clone detaches from its rule. */}
+        {canEdit ? <EditRowButton label="Edit item" onClick={() => editor.edit(item)} /> : null}
       </div>
     ),
   });

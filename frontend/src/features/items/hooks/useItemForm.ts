@@ -2,6 +2,8 @@ import { useCallback, useState } from "react";
 
 import type { StatLabel } from "@/features/catalogue/utils/statblock";
 import { blankItemStatblock } from "@/features/catalogue/utils/statblock";
+import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
+import { useCatalogueRevert } from "@/features/catalogue/hooks/useCatalogueRevert";
 import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
 import { useFieldErrors } from "@/lib/field-errors";
@@ -40,6 +42,8 @@ type UseItemFormOptions = {
   onSaved: (item: Item) => void;
   /** After a delete, the item already gone from the cached list. */
   onDeleted?: (itemId: number) => void;
+  /** After a Revert, the book's item already in the version's place in the cached list. */
+  onReverted?: (item: Item) => void;
 };
 
 /**
@@ -56,6 +60,7 @@ export function useItemForm({
   resetKey,
   onSaved,
   onDeleted,
+  onReverted,
 }: UseItemFormOptions) {
   const catalogueCache = useCatalogueCache();
   const [values, setValues] = useState<ItemFormValues>(() => itemValuesOf(item));
@@ -64,6 +69,7 @@ export function useItemForm({
   const [formError, setFormError] = useState("");
   const fieldErrors = useFieldErrors(ITEM_FIELDS, resetKey);
   const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete item");
+  const revert = useCatalogueRevert({ kind: "items", campaignId, entry: item, onReverted });
   const properties = useItemPropertyPicker({
     campaignId,
     type: values.type,
@@ -91,10 +97,11 @@ export function useItemForm({
       properties.selected.map((property) => property.id)
     );
     try {
+      // A book item's first edit makes the campaign's version of it (CAT-TWEAK-01).
       const saved = item
-        ? await updateItem(item.id, payload)
+        ? await updateItem(item.id, { ...payload, ...bookCampaign(item, campaignId) })
         : await createItem({ ...payload, campaign_id: campaignId });
-      catalogueCache.upsert("items", campaignId, saved);
+      catalogueCache.write("items", campaignId, saved, item?.id);
       onSaved(saved);
       after?.();
     } catch (errorResponse) {
@@ -167,6 +174,7 @@ export function useItemForm({
     isSaving,
     formError,
     deleteConfirm,
+    revert,
     save,
     remove,
     load,

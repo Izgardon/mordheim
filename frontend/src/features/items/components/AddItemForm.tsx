@@ -36,6 +36,7 @@ export default function AddItemForm({
     resetKey: editingItem,
     onSaved: (saved) => (item ? onUpdated?.(saved) : onCreated(saved)),
     onDeleted,
+    onReverted: (reverted: Item) => onUpdated?.(reverted),
   });
   const { load } = form;
 

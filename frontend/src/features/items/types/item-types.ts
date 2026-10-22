@@ -100,6 +100,8 @@ export type ItemCreatePayload = {
 };
 
 export type ItemUpdatePayload = {
+  /** A book item's edit: the campaign whose version it makes or changes. */
+  campaign_id?: number;
   name?: string;
   type?: string;
   subtype?: string;

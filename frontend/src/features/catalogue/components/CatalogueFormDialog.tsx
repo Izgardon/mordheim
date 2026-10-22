@@ -13,14 +13,17 @@ import { Tooltip } from "@components/tooltip";
 import { Pencil } from "lucide-react";
 
 import { CatalogueDeleteConfirm } from "./CatalogueDeleteConfirm";
+import { RevertButton, RevertConfirm, RuleVersionNote, canRevert } from "./CatalogueVersionActions";
+import { entrySource } from "../utils/entry-status";
 import type { ControllableOpen } from "../hooks/useControllableOpen";
+import type { CatalogueEntryLike } from "../types/catalogue-entry";
 import type { CatalogueFormState } from "../types/catalogue-form";
 
 type CatalogueFormDialogProps = {
   form: CatalogueFormState;
   dialog: ControllableOpen;
-  /** The entry being edited (Delete with `canDelete`); none when adding. */
-  editing?: { name: string } | null;
+  /** The entry being edited (Delete with `canDelete`, or Revert); none when adding. */
+  editing?: CatalogueEntryLike | null;
   title: string;
   /** "item", "skill": the confirm reads "Delete item" (a kind that can be edited). */
   noun?: string;
@@ -74,8 +77,16 @@ export function CatalogueFormDialog({
       form.deleteConfirm?.close();
     }
   };
-  const { deleteConfirm, remove } = form;
+  const { deleteConfirm, remove, revert } = form;
   const triggerNode = trigger === undefined ? defaultTrigger : trigger;
+  const offersDelete = Boolean(
+    editing && canDelete && deleteConfirm && remove && entrySource(editing) === "custom"
+  );
+  const offersRevert = Boolean(editing && revert && canRevert(editing));
+  const closeAfter = () => {
+    dialog.setOpen(false);
+    onReset();
+  };
 
   return (
     <Dialog open={dialog.open} onOpenChange={handleOpenChange}>
@@ -89,11 +100,17 @@ export function CatalogueFormDialog({
         <div className="space-y-4">
           {children}
           {form.formError ? <p className="text-sm text-red-600">{form.formError}</p> : null}
+          {editing?.generated_effect_key && revert ? (
+            <RuleVersionNote
+              effectKey={editing.generated_effect_key}
+              campaignId={revert.campaignId}
+            />
+          ) : null}
         </div>
         <DialogFooter
           className={editing ? "flex flex-wrap items-center justify-between gap-3" : undefined}
         >
-          {editing && canDelete && deleteConfirm ? (
+          {offersDelete && deleteConfirm ? (
             <Button
               variant="secondary"
               type="button"
@@ -104,6 +121,9 @@ export function CatalogueFormDialog({
               Delete
             </Button>
           ) : null}
+          {offersRevert && revert ? (
+            <RevertButton revert={revert} disabled={form.isSaving} />
+          ) : null}
           <Button
             variant="secondary"
             type="button"
@@ -112,20 +132,15 @@ export function CatalogueFormDialog({
           >
             Cancel
           </Button>
-          <Button
-            onClick={() =>
-              void form.save(() => {
-                dialog.setOpen(false);
-                onReset();
-              })
-            }
-            disabled={form.isSaving}
-          >
+          <Button onClick={() => void form.save(closeAfter)} disabled={form.isSaving}>
             {form.isSaving ? "Saving..." : submitLabel}
           </Button>
         </DialogFooter>
       </DialogContent>
-      {editing && deleteConfirm && remove ? (
+      {editing && offersRevert && revert ? (
+        <RevertConfirm revert={revert} entry={editing} onReverted={closeAfter} />
+      ) : null}
+      {editing && offersDelete && deleteConfirm && remove ? (
         <CatalogueDeleteConfirm
           confirm={deleteConfirm}
           name={editing.name}

@@ -1,6 +1,7 @@
 /**
  * The Wargear page as the app mounts it (layout, fake server): Add and Edit both follow
- * `edit_catalogue` (BUG-15, decision 4), and Edit never shows on book rows or house-rule clones.
+ * `edit_catalogue` (BUG-15, decision 4). Edit shows on every row: a book item's edit makes the
+ * campaign's version (CAT-TWEAK-01) and a house rule's clone detaches from its rule.
  */
 import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -55,24 +56,26 @@ beforeEach(() => {
 });
 
 describe("Wargear: who sees Add and Edit", () => {
-  it("offers the owner Add item and Edit on campaign items, never on book items", async () => {
+  it("offers the owner Add item and Edit on every item, book items included (CAT-TWEAK-01)", async () => {
     await openWargear();
 
     expect(screen.getByRole("button", { name: "Add item" })).toBeVisible();
     expect(editOn("Rusty Cleaver")).toBeVisible();
     expect(editOn("Axe")).toBeVisible();
-    expect(editOn("Sword")).toBeNull();
+    expect(editOn("Sword")).toBeVisible();
   });
 
-  it("offers a player holding edit_catalogue Add item and Edit on every campaign item, never on a book item (BUG-15, CAT-TEST-18)", async () => {
+  it("offers a player holding edit_catalogue Add item and Edit on every item, book items and a house rule's clone included (BUG-15, CAT-TEST-18, CAT-TWEAK-01)", async () => {
+    const user = setupUser();
     signInAsPlayer(["edit_catalogue"]);
 
     await openWargear();
 
     expect(screen.getByRole("button", { name: "Add item" })).toBeVisible();
     expect(editOn("Rusty Cleaver")).toBeVisible();
-    expect(editOn("Axe")).toBeVisible();
-    expect(editOn("Sword")).toBeNull();
+    expect(editOn("Sword")).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Armour" }));
+    expect(editOn("Heavy Armour")).toBeVisible();
   });
 
   it("offers a player without edit_catalogue neither Add item nor Edit, whatever else they hold (BUG-15)", async () => {

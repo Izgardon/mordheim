@@ -131,25 +131,43 @@ export function useCatalogue<K extends CatalogueKind>(
   };
 }
 
-/** Insert or replace an entry by id in a cached list, newest first, then refetch in the background. */
+/** `entry` in place of the row `replacedId` names (or its own id), or first when neither is listed. */
+function placed<T extends { id: number }>(rows: T[], entry: T, replacedId: number) {
+  let found = false;
+  const next = rows.flatMap((existing) => {
+    if (existing.id !== replacedId && existing.id !== entry.id) {
+      return [existing];
+    }
+    if (found) {
+      return [];
+    }
+    found = true;
+    return [entry];
+  });
+  return found ? next : [entry, ...rows];
+}
+
+/**
+ * Insert or replace an entry by id in every cached list of its kind, newest first, then refetch
+ * in the background. `replacedId` names the row it stands in for: a book entry's first edit
+ * answers the campaign's new version, and a Revert answers the book entry, each in the other's
+ * place, so the row never flickers (CAT-TWEAK-01).
+ */
 export function upsertCatalogueEntry<K extends CatalogueKind>(
   queryClient: QueryClient,
   kind: K,
   campaignId: number,
-  entry: CatalogueEntry<K>
+  entry: CatalogueEntry<K>,
+  replacedId: number = entry.id
 ) {
   if (!isCampaignId(campaignId)) {
     return;
   }
   const queryKey = queryKeys.campaign.catalogue(campaignId, kind);
-  queryClient.setQueryData(queryKey, (previous: CatalogueEntry<K>[] | undefined) => {
-    if (!previous) {
-      return previous;
-    }
-    return previous.some((existing) => existing.id === entry.id)
-      ? previous.map((existing) => (existing.id === entry.id ? entry : existing))
-      : [entry, ...previous];
-  });
+  // The kind's lists (the default one and its variants); a cached single entry isn't a list.
+  queryClient.setQueriesData({ queryKey }, (previous: unknown) =>
+    Array.isArray(previous) ? placed(previous as CatalogueEntry<K>[], entry, replacedId) : previous
+  );
   void queryClient.invalidateQueries({ queryKey });
 }
 
@@ -189,6 +207,13 @@ export function useCatalogueCache() {
     () => ({
       upsert: <K extends CatalogueKind>(kind: K, campaignId: number, entry: CatalogueEntry<K>) =>
         upsertCatalogueEntry(queryClient, kind, campaignId, entry),
+      /** A write's answer in place of the row it stands in for (a version for its book entry). */
+      write: <K extends CatalogueKind>(
+        kind: K,
+        campaignId: number,
+        entry: CatalogueEntry<K>,
+        replacedId?: number
+      ) => upsertCatalogueEntry(queryClient, kind, campaignId, entry, replacedId),
       remove: (kind: CatalogueKind, campaignId: number, entryId: number) =>
         removeCatalogueEntry(queryClient, kind, campaignId, entryId),
       invalidate: (kind: CatalogueKind, campaignId: number) =>

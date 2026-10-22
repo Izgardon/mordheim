@@ -37,6 +37,7 @@ export default function AddSpellForm({
     resetKey: editingSpell,
     onSaved: (saved) => (spell ? onUpdated?.(saved) : onCreated(saved)),
     onDeleted,
+    onReverted: (reverted: Spell) => onUpdated?.(reverted),
   });
   const { load } = form;
 

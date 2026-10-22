@@ -42,7 +42,8 @@ export function createSpell(payload: SpellCreatePayload) {
   });
 }
 
-export type SpellUpdatePayload = Partial<Omit<SpellCreatePayload, "campaign_id">>;
+/** A book spell's edit names the campaign whose version it makes or changes. */
+export type SpellUpdatePayload = Partial<SpellCreatePayload>;
 
 export function getSpell(spellId: number) {
   return apiRequest<Spell>(`/spells/${spellId}/`);

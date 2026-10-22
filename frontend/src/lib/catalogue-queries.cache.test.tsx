@@ -5,7 +5,7 @@
  * list again (BUG-80); your own write goes into the cached list at once and the list is then read
  * again.
  */
-import { act, cleanup, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createQueryClient } from "@/lib/query-client";
@@ -22,7 +22,6 @@ import {
 import { renderCatalogueRoute } from "@/test/catalogue-routes";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
-import { chooseOption } from "@/test/select-option";
 import { setupUser } from "@/test/user-event";
 import { CATALOGUE_STALE_TIME_MS } from "./catalogue-queries";
 
@@ -200,41 +199,45 @@ describe("catalogue cache: your own writes", () => {
     expect(await screen.findByRole("row", { name: /^Dirty Fighting/ })).toBeVisible();
   });
 
-  // Characterises current behaviour (BUG-18, BUG-80, pinned; flips in PR C)
-  it("lists your new Axe next to the book Axe it replaces until the list is read again (BUG-18, pinned; flips in PR C)", async () => {
+  it("edits the book Axe into the campaign's version in its place: one Axe row before and after the list is read again (BUG-18, CAT-TWEAK-01)", async () => {
     const user = setupUser();
     const bookAxe = item({ id: 1, name: "Axe" });
     const yourAxe = item({
       id: 232,
       campaign_id: 1,
       name: "Axe",
+      replaces: 1,
       availabilities: [{ id: 45, cost: 25, rarity: 2, restrictions: [], variable_cost: null }],
+      book: { id: 1, name: "Axe", changes: {}, price: 5 },
     });
     const others = ITEMS.filter((entry) => entry.name !== "Axe");
     fakeApi.on(LIST.items, [bookAxe, ...others]);
-    fakeApi.on("POST /items/", yourAxe);
-    fakeApi.on("GET /item-properties/?type=Weapon&campaign_id=1", []);
+    fakeApi.on("PATCH /items/1/", yourAxe);
     queryClient = createQueryClient();
     renderCatalogueRoute("/campaigns/1/items", { queryClient });
     await screen.findByRole("button", { name: /^Axe/ });
     const refetch = deferred<unknown>();
     fakeApi.on(LIST.items, () => refetch.promise);
 
-    await user.click(screen.getByRole("button", { name: "Add item" }));
-    await user.type(screen.getByPlaceholderText("Gutterblade"), "Axe");
-    await chooseOption(user, screen.getByText("Select a type").closest("button")!, "Weapon");
-    await user.type(screen.getByPlaceholderText("25"), "25");
-    await user.type(screen.getByPlaceholderText("2"), "2");
-    await user.click(screen.getByRole("button", { name: "Save" }));
+    await user.click(
+      within(screen.getByRole("button", { name: /^Axe/ })).getByRole("button", {
+        name: "Edit item",
+      })
+    );
+    const price = screen.getByDisplayValue("5");
+    await user.clear(price);
+    await user.type(price, "25");
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
 
-    await waitFor(() => expect(screen.getAllByRole("button", { name: /^Axe/ })).toHaveLength(2));
-    const [first, second] = screen.getAllByRole("button", { name: /^Axe/ });
-    expect(first).toHaveTextContent(/Common\s*25/);
-    expect(second).toHaveTextContent(/Common\s*5(?!\d)/);
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: /^Axe/ })).toHaveTextContent(/Common\s*25/)
+    );
+    expect(screen.getAllByRole("button", { name: /^Axe/ })).toHaveLength(1);
+    expect(fakeApi.bodyOf("PATCH /items/1/")).toMatchObject({ campaign_id: 1 });
 
     await act(async () => refetch.resolve([yourAxe, ...others]));
 
-    await waitFor(() => expect(screen.getAllByRole("button", { name: /^Axe/ })).toHaveLength(1));
+    expect(screen.getAllByRole("button", { name: /^Axe/ })).toHaveLength(1);
     expect(screen.getByRole("button", { name: /^Axe/ })).toHaveTextContent(/Common\s*25/);
   });
 });

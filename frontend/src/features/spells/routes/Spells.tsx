@@ -143,7 +143,8 @@ export default function Spells() {
               renderActions={(spell) => (
                 <div className="flex items-center justify-end gap-2">
                   <AttuneSpellDialog spell={spell} unitTypes={["heroes", "hiredswords"]} />
-                  {canEdit && spell.campaign_id ? (
+                  {/* A book spell's edit makes the campaign's version (CAT-TWEAK-01). */}
+                  {canEdit ? (
                     <EditRowButton label="Edit spell" onClick={() => editor.edit(spell)} />
                   ) : null}
                 </div>

@@ -1,6 +1,8 @@
 import { useCallback, useState } from "react";
 
 import { useCatalogueTypeField } from "@/features/catalogue/hooks/useCatalogueTypeField";
+import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
+import { useCatalogueRevert } from "@/features/catalogue/hooks/useCatalogueRevert";
 import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
 import { useFieldErrors } from "@/lib/field-errors";
@@ -44,6 +46,8 @@ type UseSpellFormOptions = {
   onSaved: (spell: Spell) => void;
   /** After a delete, the spell already gone from the cached list. */
   onDeleted?: (spellId: number) => void;
+  /** After a Revert, the book's spell already in the version's place in the cached list. */
+  onReverted?: (spell: Spell) => void;
 };
 
 /**
@@ -60,6 +64,7 @@ export function useSpellForm({
   saveFailure = "Unable to save spell",
   onSaved,
   onDeleted,
+  onReverted,
 }: UseSpellFormOptions) {
   const catalogueCache = useCatalogueCache();
   const [values, setValues] = useState(() => valuesOf(spell));
@@ -67,6 +72,7 @@ export function useSpellForm({
   const [formError, setFormError] = useState("");
   const fieldErrors = useFieldErrors(["name"], resetKey);
   const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete spell");
+  const revert = useCatalogueRevert({ kind: "spells", campaignId, entry: spell, onReverted });
   const typeField = useCatalogueTypeField({
     value: values.type,
     onChange: (type, typeCommitted) => setValues((prev) => ({ ...prev, type, typeCommitted })),
@@ -103,10 +109,11 @@ export function useSpellForm({
       roll: values.roll ? Number(values.roll) : null,
     };
     try {
+      // A book spell's first edit makes the campaign's version of it (CAT-TWEAK-01).
       const saved = spell
-        ? await updateSpell(spell.id, payload)
+        ? await updateSpell(spell.id, { ...payload, ...bookCampaign(spell, campaignId) })
         : await createSpell({ ...payload, campaign_id: campaignId });
-      catalogueCache.upsert("spells", campaignId, saved);
+      catalogueCache.write("spells", campaignId, saved, spell?.id);
       onSaved(saved);
       after?.();
     } catch (errorResponse) {
@@ -156,6 +163,7 @@ export function useSpellForm({
     isSaving,
     formError,
     deleteConfirm,
+    revert,
     save,
     remove,
     load,

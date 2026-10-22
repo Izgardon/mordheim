@@ -37,6 +37,7 @@ export default function AddSkillForm({
     resetKey: editingSkill,
     onSaved: (saved) => (skill ? onUpdated?.(saved) : onCreated(saved)),
     onDeleted,
+    onReverted: (reverted: Skill) => onUpdated?.(reverted),
   });
   const { load } = form;
 

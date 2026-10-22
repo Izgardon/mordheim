@@ -318,6 +318,9 @@ export function routeCatalogue() {
   fakeApi.on(FAVOURITES, []);
 }
 
+/** What a changing list route answers next (`now`). */
+export type Listed<T> = { now: T[] };
+
 /** A promise a test settles by hand, for answers that must arrive in a chosen order. */
 export function deferred<T>() {
   let resolve!: (value: T) => void;

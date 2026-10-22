@@ -1,6 +1,7 @@
 /**
  * The Skills page as the app mounts it (layout, fake server): Add and Edit both follow
- * `edit_catalogue` (BUG-15, CAT-TEST-18, decision 4); Edit never shows on a book skill.
+ * `edit_catalogue` (BUG-15, CAT-TEST-18, decision 4); Edit shows on a book skill too, whose
+ * edit makes the campaign's version (CAT-TWEAK-01).
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -53,17 +54,17 @@ beforeEach(() => {
 });
 
 describe("Skills: who sees Add and Edit", () => {
-  it("offers the owner Add skill and Edit on the campaign's skill, never on a book skill", async () => {
+  it("offers the owner Add skill and Edit on the campaign's skill and on a book skill (CAT-TWEAK-01)", async () => {
     await openSkills();
 
     expect(screen.getByRole("button", { name: "Add skill" })).toBeVisible();
     expect(within(row("Quick Hands")).getByRole("button", { name: "Edit skill" })).toBeVisible();
     expect(
-      within(row("Strike to Injure")).queryByRole("button", { name: "Edit skill" })
-    ).toBeNull();
+      within(row("Strike to Injure")).getByRole("button", { name: "Edit skill" })
+    ).toBeVisible();
   });
 
-  it("offers a player holding edit_catalogue Add skill and Edit on the campaign's skill, never on a book skill (BUG-15, CAT-TEST-18)", async () => {
+  it("offers a player holding edit_catalogue Add skill and Edit on the campaign's skill and on a book skill (BUG-15, CAT-TEST-18, CAT-TWEAK-01)", async () => {
     signInAsPlayer(["edit_catalogue"]);
 
     await openSkills();
@@ -71,8 +72,8 @@ describe("Skills: who sees Add and Edit", () => {
     expect(screen.getByRole("button", { name: "Add skill" })).toBeVisible();
     expect(within(row("Quick Hands")).getByRole("button", { name: "Edit skill" })).toBeVisible();
     expect(
-      within(row("Strike to Injure")).queryByRole("button", { name: "Edit skill" })
-    ).toBeNull();
+      within(row("Strike to Injure")).getByRole("button", { name: "Edit skill" })
+    ).toBeVisible();
   });
 
   it("offers a player without edit_catalogue neither Add skill nor Edit, so no form the server would refuse (BUG-15, CAT-TEST-18)", async () => {

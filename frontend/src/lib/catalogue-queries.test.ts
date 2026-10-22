@@ -23,6 +23,41 @@ describe("catalogue cache writes", () => {
     ]);
   });
 
+  it("puts a version in its book entry's place, and the book entry back in the version's (CAT-TWEAK-01)", () => {
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(skillsKey, [skill(10, "Sprint"), skill(11, "Step Aside")]);
+
+    upsertCatalogueEntry(queryClient, "skills", 7, skill(40, "Sprint (ours)"), 10);
+    expect(queryClient.getQueryData(skillsKey)).toEqual([
+      skill(40, "Sprint (ours)"),
+      skill(11, "Step Aside"),
+    ]);
+
+    upsertCatalogueEntry(queryClient, "skills", 7, skill(10, "Sprint"), 40);
+    expect(queryClient.getQueryData(skillsKey)).toEqual([
+      skill(10, "Sprint"),
+      skill(11, "Step Aside"),
+    ]);
+  });
+
+  it("writes every cached list of the kind, and leaves a cached single entry alone", () => {
+    const queryClient = createTestQueryClient();
+    const archivedKey = [...skillsKey, "archived"];
+    const entryKey = [...skillsKey, 10];
+    queryClient.setQueryData(skillsKey, [skill(10, "Sprint")]);
+    queryClient.setQueryData(archivedKey, [skill(12, "Old Trick"), skill(10, "Sprint")]);
+    queryClient.setQueryData(entryKey, skill(10, "Sprint"));
+
+    upsertCatalogueEntry(queryClient, "skills", 7, skill(10, "Sprint II"));
+
+    expect(queryClient.getQueryData(archivedKey)).toEqual([
+      skill(12, "Old Trick"),
+      skill(10, "Sprint II"),
+    ]);
+    expect(queryClient.getQueryData(entryKey)).toEqual(skill(10, "Sprint"));
+    expect(queryClient.getQueryState(entryKey)?.isInvalidated).toBe(true);
+  });
+
   it("removes an entry by id", () => {
     const queryClient = createTestQueryClient();
     queryClient.setQueryData(skillsKey, [skill(10, "Sprint"), skill(11, "Step Aside")]);

@@ -16,6 +16,8 @@ export type SkillCreatePayload = {
 };
 
 export type SkillUpdatePayload = {
+  /** A book skill's edit: the campaign whose version it makes or changes. */
+  campaign_id?: number;
   name?: string;
   type?: string;
   description?: string;

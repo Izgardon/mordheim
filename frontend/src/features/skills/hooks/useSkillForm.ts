@@ -1,6 +1,8 @@
 import { useCallback, useState } from "react";
 
 import { useCatalogueTypeField } from "@/features/catalogue/hooks/useCatalogueTypeField";
+import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
+import { useCatalogueRevert } from "@/features/catalogue/hooks/useCatalogueRevert";
 import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
 import { useFieldErrors } from "@/lib/field-errors";
@@ -34,6 +36,8 @@ type UseSkillFormOptions = {
   onSaved: (skill: Skill) => void;
   /** After a delete, the skill already gone from the cached list. */
   onDeleted?: (skillId: number) => void;
+  /** After a Revert, the book's skill already in the version's place in the cached list. */
+  onReverted?: (skill: Skill) => void;
 };
 
 /**
@@ -48,6 +52,7 @@ export function useSkillForm({
   resetKey,
   onSaved,
   onDeleted,
+  onReverted,
 }: UseSkillFormOptions) {
   const catalogueCache = useCatalogueCache();
   const [values, setValues] = useState(() => valuesOf(skill));
@@ -55,6 +60,7 @@ export function useSkillForm({
   const [formError, setFormError] = useState("");
   const fieldErrors = useFieldErrors(["name"], resetKey);
   const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete skill");
+  const revert = useCatalogueRevert({ kind: "skills", campaignId, entry: skill, onReverted });
   const typeField = useCatalogueTypeField({
     value: values.type,
     onChange: (type, typeCommitted) => setValues((prev) => ({ ...prev, type, typeCommitted })),
@@ -83,10 +89,11 @@ export function useSkillForm({
       description: values.description.trim(),
     };
     try {
+      // A book skill's first edit makes the campaign's version of it (CAT-TWEAK-01).
       const saved = skill
-        ? await updateSkill(skill.id, payload)
+        ? await updateSkill(skill.id, { ...payload, ...bookCampaign(skill, campaignId) })
         : await createSkill({ ...payload, campaign_id: campaignId });
-      catalogueCache.upsert("skills", campaignId, saved);
+      catalogueCache.write("skills", campaignId, saved, skill?.id);
       onSaved(saved);
       after?.();
     } catch (errorResponse) {
@@ -136,6 +143,7 @@ export function useSkillForm({
     isSaving,
     formError,
     deleteConfirm,
+    revert,
     save,
     remove,
     load,

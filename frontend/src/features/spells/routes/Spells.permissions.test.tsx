@@ -1,6 +1,7 @@
 /**
  * The Spells page as the app mounts it (layout, fake server): Add and Edit both follow
- * `edit_catalogue` (BUG-15, CAT-TEST-18, decision 4); Edit never shows on a book spell.
+ * `edit_catalogue` (BUG-15, CAT-TEST-18, decision 4); Edit shows on a book spell too, whose
+ * edit makes the campaign's version (CAT-TWEAK-01).
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -53,22 +54,26 @@ beforeEach(() => {
 });
 
 describe("Spells: who sees Add and Edit", () => {
-  it("offers the owner Add spell and Edit on the campaign's spell, never on a book spell", async () => {
+  it("offers the owner Add spell and Edit on the campaign's spell and on a book spell (CAT-TWEAK-01)", async () => {
     await openSpells();
 
     expect(screen.getByRole("button", { name: "Add spell" })).toBeVisible();
     expect(within(row("Gutter Hex")).getByRole("button", { name: "Edit spell" })).toBeVisible();
-    expect(within(row("Fires of U'Zhul")).queryByRole("button", { name: "Edit spell" })).toBeNull();
+    expect(
+      within(row("Fires of U'Zhul")).getByRole("button", { name: "Edit spell" })
+    ).toBeVisible();
   });
 
-  it("offers a player holding edit_catalogue Add spell and Edit on the campaign's spell, never on a book spell (BUG-15, CAT-TEST-18)", async () => {
+  it("offers a player holding edit_catalogue Add spell and Edit on the campaign's spell and on a book spell (BUG-15, CAT-TEST-18, CAT-TWEAK-01)", async () => {
     signInAsPlayer(["edit_catalogue"]);
 
     await openSpells();
 
     expect(screen.getByRole("button", { name: "Add spell" })).toBeVisible();
     expect(within(row("Gutter Hex")).getByRole("button", { name: "Edit spell" })).toBeVisible();
-    expect(within(row("Fires of U'Zhul")).queryByRole("button", { name: "Edit spell" })).toBeNull();
+    expect(
+      within(row("Fires of U'Zhul")).getByRole("button", { name: "Edit spell" })
+    ).toBeVisible();
   });
 
   it("offers a player without edit_catalogue neither Add spell nor Edit, whatever else they hold (BUG-15, CAT-TEST-18)", async () => {
