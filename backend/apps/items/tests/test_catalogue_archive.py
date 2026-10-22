@@ -20,7 +20,7 @@ from apps.warbands.tests.roster_support import HERO, make_unit, unit_url
 
 from .catalogue_support import BESTIARY, HIRED_SWORDS, ITEMS, SKILLS, CatalogueTestCase, make_entry
 
-NO_USE = {"units": 0, "warbands": 0, "stashes": 0, "bestiary_entries": 0}
+NO_USE = {"units": 0, "warbands": 0, "stashes": 0, "bestiary_entries": 0, "hired_swords": 0, "dramatis_personae": 0}
 
 
 class ArchiveTestCase(CatalogueTestCase):

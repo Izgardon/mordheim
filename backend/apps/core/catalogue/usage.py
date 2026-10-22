@@ -1,8 +1,9 @@
 """How much of a campaign holds a catalogue entry (BUG-16, BUG-130; CAT-TWEAK-04): `GET <kind>/:id/usage/`, and
 what a delete answers when it archives or removes an entry instead.
 
-Units' copies (items, skills, spells, specials), stash rows, bestiary entries' skills, specials, spells and
-equipment, and units' races reference the catalogue with RESTRICT: a delete never takes them with it. The kinds
+Units' copies (items, skills, spells, specials), stash rows, the skills, specials, spells and equipment of bestiary
+entries, hired swords and dramatis personae, and the races of units, hired swords and dramatis personae reference
+the catalogue with RESTRICT: a delete never takes them with it. The kinds
 registry names those tables (`holders`, kinds.py). Counted within one campaign: a book entry is held across
 campaigns, a campaign's entry only in its own.
 """
@@ -16,7 +17,8 @@ if TYPE_CHECKING:
 
 def count_usage(kind: "CatalogueKindSpec", entry_id: Any, campaign_id: int) -> dict[str, int]:
     """Units holding the entry (any kind, dead and dismissed ones too, or of the race), the warbands they and the
-    stashes belong to, stashes, and the campaign's bestiary entries linking it. One query per holding table."""
+    stashes belong to, stashes, and the campaign's bestiary entries, hired swords and dramatis personae linking it.
+    One query per holding table."""
     units: dict[str, set[int]] = defaultdict(set)
     warbands: set[int] = set()
     found: dict[str, set[int]] = defaultdict(set)
@@ -35,4 +37,6 @@ def count_usage(kind: "CatalogueKindSpec", entry_id: Any, campaign_id: int) -> d
         "warbands": len(warbands),
         "stashes": len(found["stashes"]),
         "bestiary_entries": len(found["bestiary_entries"]),
+        "hired_swords": len(found["hired_swords"]),
+        "dramatis_personae": len(found["dramatis_personae"]),
     }

@@ -47,7 +47,7 @@ from .catalogue_support import (
 
 def archived(**usage: int) -> dict[str, object]:
     """The answer to a delete that archived the entry (it was the 409 in_use body before PR C)."""
-    return {"outcome": "archived", "usage": usage}
+    return {"outcome": "archived", "usage": {**usage, "hired_swords": 0, "dramatis_personae": 0}}
 
 
 class CustomEntryDeleteTests(CatalogueTestCase):
@@ -196,7 +196,8 @@ class RaceDeleteTests(CatalogueTestCase):
         self.assertEqual(self.surviving_units(), ["Abbess", "Cooks", "Scout", "Stranger"])
         usage = count_usage(catalogue_kinds.RACES, self.human.id, self.campaign.id)
         self.assertEqual(
-            usage, {"units": 2, "warbands": 1, "stashes": 0, "bestiary_entries": 0}
+            usage,
+            {"units": 2, "warbands": 1, "stashes": 0, "bestiary_entries": 0, "hired_swords": 0, "dramatis_personae": 0},
         )  # a hero and a hired sword
 
     def test_reseeding_races_keeps_every_race_and_every_unit_of_one(self):

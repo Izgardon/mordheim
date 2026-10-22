@@ -313,17 +313,18 @@ class VersionWriteBudgetTests(CatalogueTestCase):
         self.assertEqual(response.status_code, status, getattr(response, "data", None))
         return len(captured)
 
-    def test_an_items_first_edit_costs_28_queries_and_its_revert_33(self):
+    def test_an_items_first_edit_costs_30_queries_and_its_revert_37(self):
         # first edit: membership, the entry, the name check, the savepoint pair, the book row locked and its version
         # looked for, the copy (the item, then a read and an INSERT each for its availabilities, their restrictions
-        # and its properties), one UPDATE per table of copies (three kinds of unit, the stash, bestiary links), the
-        # edit (the copied availabilities deleted with their restrictions, the new ones written), the catalogue
-        # version, and the answer (the item and its three prefetches). Revert: membership, the
-        # entry, the savepoint pair, the version locked, the units' copies moved back (one UPDATE each), the stash
-        # and bestiary links read with the rows they may meet and merged, the reverted id recorded, the version's
-        # delete (Django's reads of every table that references an item, then its children), the campaign's house
-        # rules read (a rule applies to the book item again), the campaign's entry for the book item now (the book
-        # item, or a rule's clone of it), the catalogue version, and the answer
+        # and its properties), one UPDATE per table of copies (three kinds of unit, the stash, the bestiary's,
+        # hired swords' and dramatis personae's kits), the edit (the copied availabilities deleted with their
+        # restrictions, the new ones written), the catalogue version, and the answer (the item and its three
+        # prefetches). Revert: membership, the entry, the savepoint pair, the version locked, the units' copies moved
+        # back (one UPDATE each), the stash and the three kinds of kit read with the rows they may meet and merged,
+        # the reverted id recorded, the version's delete (Django's reads of every table that references an item,
+        # then its children), the campaign's house rules read (a rule applies to the book item again), the
+        # campaign's entry for the book item now (the book item, or a rule's clone of it), the catalogue version,
+        # and the answer
         body = {"campaign_id": self.campaign.id, "availabilities": [{"cost": 15}]}
         version: dict[str, int] = {}
 
@@ -332,14 +333,14 @@ class VersionWriteBudgetTests(CatalogueTestCase):
             version["id"] = response.data["id"]
             return response
 
-        self.assertEqual(self.count(edit), 28)
-        self.assertEqual(self.count(lambda: self.client.post(f"{ITEMS.detail_url(version['id'])}revert/")), 33)
+        self.assertEqual(self.count(edit), 30)
+        self.assertEqual(self.count(lambda: self.client.post(f"{ITEMS.detail_url(version['id'])}revert/")), 37)
 
-    def test_an_items_usage_costs_7_queries_and_archiving_it_21(self):
+    def test_an_items_usage_costs_9_queries_and_archiving_it_25(self):
         # usage: membership, the entry, one read per table of copies; archive: the delete refused by RESTRICT inside
         # a savepoint, the archive UPDATE, the catalogue version, then the usage counts
         charm = make_entry(ITEMS, "Charm", campaign=self.campaign)
         self.hero.hero_items.create(item=charm, cost=1)
 
-        self.assertEqual(self.count(lambda: self.client.get(f"{ITEMS.detail_url(charm.id)}usage/")), 7)
-        self.assertEqual(self.count(lambda: self.client.delete(ITEMS.detail_url(charm.id))), 21)
+        self.assertEqual(self.count(lambda: self.client.get(f"{ITEMS.detail_url(charm.id)}usage/")), 9)
+        self.assertEqual(self.count(lambda: self.client.delete(ITEMS.detail_url(charm.id))), 25)
