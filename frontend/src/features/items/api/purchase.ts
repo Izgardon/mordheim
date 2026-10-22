@@ -20,7 +20,14 @@ import type {
 } from "@/features/warbands/types/warband-types";
 
 /** What the server warned about while the purchase went ahead (decisions 2 and 9). */
-export type PurchaseWarning = { code: string; message: string; gold?: number; hero_id?: number };
+/** A purchase went ahead with a warning; `archived_entry` names the archived item (`item_id`). */
+export type PurchaseWarning = {
+  code: string;
+  message: string;
+  gold?: number;
+  hero_id?: number;
+  item_id?: number;
+};
 
 /** A rarity roll saved with the purchase: the searching hero spends his trading action. */
 export type RarityRollLine = {
@@ -116,10 +123,14 @@ export function applyPurchaseAnswer(
   }
 }
 
-/** The server's warnings (overspend, spent searcher, failed roll): the purchase went ahead. */
+/**
+ * The server's warnings (overspend, spent searcher, failed roll, an archived item bought from a
+ * stale list): the purchase went ahead. One toast per code, and per item for an item's warning.
+ */
 export function toastPurchaseWarnings(warnings: PurchaseWarning[] = []) {
   for (const warning of warnings) {
-    toast.warning(warning.message, { id: `purchase-warning-${warning.code}` });
+    const item = warning.item_id ? `-${warning.item_id}` : "";
+    toast.warning(warning.message, { id: `purchase-warning-${warning.code}${item}` });
   }
 }
 

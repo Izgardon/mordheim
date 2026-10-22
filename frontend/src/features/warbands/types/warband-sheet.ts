@@ -13,7 +13,8 @@ export const WARBAND_CAPABILITIES = [
   "manage_items",
   "edit_backstory",
   "delete",
-  "add_custom",
+  // Creating catalogue entries from the unit forms (the campaign's edit_catalogue code).
+  "edit_catalogue",
   // Decision 10: only the warband's owner trades for it (campaign owners and admins don't).
   "trade",
 ] as const;

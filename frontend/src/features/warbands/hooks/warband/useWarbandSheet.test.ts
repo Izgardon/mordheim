@@ -161,7 +161,7 @@ const capabilities = {
   manage_items: true,
   edit_backstory: true,
   delete: true,
-  add_custom: false,
+  edit_catalogue: false,
   trade: true,
 };
 
@@ -209,7 +209,7 @@ describe("useWarbandSheet", () => {
       manage_items: false,
       edit_backstory: false,
       delete: false,
-      add_custom: false,
+      edit_catalogue: false,
       trade: false,
     });
     expect(result.current.heroes).toEqual([richHero]);

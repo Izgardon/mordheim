@@ -182,7 +182,7 @@ export default function Warband() {
           {page.activeTab === "warband" ? (
             <WarbandCatalogueProvider
               campaignId={campaignId}
-              canAddCustom={capabilities.add_custom}
+              canAddCustom={capabilities.edit_catalogue}
             >
               <WarbandTabContent
                 warbandId={warband.id}

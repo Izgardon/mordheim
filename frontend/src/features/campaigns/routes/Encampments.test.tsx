@@ -73,7 +73,7 @@ beforeEach(() => {
 
 describe("Encampments: who may add and edit", () => {
   it("lets any member add one; Edit and Delete follow each row's capabilities (decision 9, CAMP-TWEAK-08)", async () => {
-    signInAsPlayer(["add_custom"]);
+    signInAsPlayer(["edit_catalogue"]);
     fakeApi.on(ENCAMPMENTS, [
       encampment(),
       encampment({
@@ -98,7 +98,7 @@ describe("Encampments: who may add and edit", () => {
   });
 
   it("gives a player granted manage_encampments Add and Edit", async () => {
-    signInAsPlayer(["add_custom", "manage_encampments"]);
+    signInAsPlayer(["edit_catalogue", "manage_encampments"]);
 
     await openEncampments();
 

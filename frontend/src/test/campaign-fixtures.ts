@@ -64,19 +64,31 @@ export const NAMELESS: Person = {
 
 const PEOPLE = [OWNER, ADMIN, PLAYER, NAMELESS];
 
-/** `GET permissions/`: the server's eleven codes with labels and descriptions, in its order. */
+/** `GET permissions/`: the server's seven codes with labels and descriptions, in its order. */
 export const PERMISSION_CATALOGUE: CampaignPermission[] = [
-  ["add_custom", "Add custom", "Add custom items, skills, spells and specials to the campaign."],
-  ["manage_items", "Manage items", "Edit and delete the campaign's custom items."],
-  ["manage_skills", "Manage skills", "Edit and delete the campaign's custom skills."],
-  ["manage_spells", "Manage spells", "Edit and delete the campaign's custom spells."],
-  ["manage_specials", "Manage specials", "Edit and delete the campaign's custom specials."],
+  [
+    "edit_catalogue",
+    "Edit catalogue",
+    "Add and edit the campaign's custom items, skills, spells, specials, races, bestiary entries and hired swords, and add item properties.",
+  ],
+  [
+    "delete_catalogue",
+    "Delete catalogue",
+    "Delete the campaign's custom catalogue entries that nothing uses.",
+  ],
   ["manage_rules", "Manage rules", "Add, edit and delete the campaign's house rules."],
   ["manage_warbands", "Manage warbands", "Edit every warband in the campaign, not just their own."],
-  ["manage_encampments", "Manage encampments", "Add and edit the campaign's encampments."],
+  [
+    "manage_encampments",
+    "Manage encampments",
+    "Edit, reassign and remove every encampment, not just their own.",
+  ],
   ["manage_locations", "Manage locations", "Add and edit the campaign's locations."],
-  ["manage_bestiary", "Manage bestiary", "Add, edit and delete the campaign's bestiary entries."],
-  ["manage_battles", "Manage battles", "See Settings > Active Battles and end stuck battles."],
+  [
+    "manage_battles",
+    "Manage battles",
+    "See Settings > Active Battles, end, close or cancel stuck battles and edit past battle records.",
+  ],
 ].map(([code, label, description]) => ({ code, label, description }));
 
 /** Every code an owner's or an admin's campaign payload carries. */
@@ -110,16 +122,12 @@ export function capabilitiesFor(
     restore: false,
     remove_posts: isStaff,
     leave: !isOwner,
-    add_custom: holds("add_custom"),
-    manage_items: holds("manage_items"),
-    manage_skills: holds("manage_skills"),
-    manage_spells: holds("manage_spells"),
-    manage_specials: holds("manage_specials"),
+    edit_catalogue: holds("edit_catalogue"),
+    delete_catalogue: holds("delete_catalogue"),
     manage_rules: holds("manage_rules"),
     manage_warbands: holds("manage_warbands"),
     manage_encampments: Boolean(campaign.enable_encampments) && holds("manage_encampments"),
     manage_locations: Boolean(campaign.enable_locations) && holds("manage_locations"),
-    manage_bestiary: holds("manage_bestiary"),
     manage_battles: holds("manage_battles"),
   };
   if (!campaign.archived_at) {
@@ -164,10 +172,10 @@ export function campaignSummary(overrides: Partial<CampaignSummary> = {}): Campa
 
 /**
  * The campaign as each role reads it: owners and admins carry every code, a player only the codes
- * granted (joining grants `add_custom`).
+ * granted (joining grants `edit_catalogue`).
  */
 export function campaignFor(role: CampaignRole, overrides: Partial<CampaignSummary> = {}) {
-  const permissions = role === "player" ? ["add_custom"] : ALL_PERMISSION_CODES;
+  const permissions = role === "player" ? ["edit_catalogue"] : ALL_PERMISSION_CODES;
   return campaignSummary({ role, permissions, ...overrides });
 }
 
@@ -181,14 +189,14 @@ export const campaignPlayers = (): CampaignPlayer[] =>
     warband: person.warband ? { ...person.warband, wins: 2, losses: 1, rating: 120 } : null,
   }));
 
-/** `GET members/`: owner and admin listed with every code; Mira holds `add_custom`. */
+/** `GET members/`: owner and admin listed with every code; Mira holds `edit_catalogue`. */
 export const campaignMembers = (): CampaignMember[] =>
   PEOPLE.map((person) => ({
     id: person.id,
     name: person.name,
     email: person.email,
     role: person.role,
-    permissions: person.role === "player" ? (person === PLAYER ? ["add_custom"] : []) : [],
+    permissions: person.role === "player" ? (person === PLAYER ? ["edit_catalogue"] : []) : [],
     warband_id: person.warband?.id ?? null,
     warband_name: person.warband?.name ?? null,
   }));

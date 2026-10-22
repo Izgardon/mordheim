@@ -6,6 +6,7 @@ import { Button } from "@components/button";
 import { Input } from "@components/input";
 import CreateRaceDialog from "@/features/races/components/CreateRaceDialog";
 import { cn } from "@/lib/utils";
+import { useCanAddCustom } from "../catalogue-context";
 
 import type { Race } from "@/features/races/types/race-types";
 
@@ -49,6 +50,8 @@ export default function RacePicker({
 }: RacePickerProps) {
   const [isListOpen, setIsListOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  // Creating a race needs edit_catalogue, as every catalogue create does (BUG-82).
+  const canCreate = useCanAddCustom();
   const blurTimeoutRef = useRef<number | null>(null);
   const trimmed = query.trim().toLowerCase();
   const matchingRaces = races.filter(
@@ -76,16 +79,18 @@ export default function RacePicker({
 
   return (
     <>
-      <CreateRaceDialog
-        campaignId={campaignId}
-        onCreated={(race) => {
-          onCreated(race);
-          setQuery(race.name);
-        }}
-        open={isCreateOpen}
-        onOpenChange={setIsCreateOpen}
-        trigger={null}
-      />
+      {canCreate ? (
+        <CreateRaceDialog
+          campaignId={campaignId}
+          onCreated={(race) => {
+            onCreated(race);
+            setQuery(race.name);
+          }}
+          open={isCreateOpen}
+          onOpenChange={setIsCreateOpen}
+          trigger={null}
+        />
+      ) : null}
       <Command shouldFilter={false} loop label="Race" className="relative">
         <div className="relative">
           <Command.Input asChild value={query} onValueChange={handleType}>
@@ -107,14 +112,16 @@ export default function RacePicker({
               }}
             />
           </Command.Input>
-          <Button
-            type="button"
-            aria-label="Create race"
-            className={actionClasses}
-            onClick={() => setIsCreateOpen(true)}
-          >
-            <Plus aria-hidden="true" />
-          </Button>
+          {canCreate ? (
+            <Button
+              type="button"
+              aria-label="Create race"
+              className={actionClasses}
+              onClick={() => setIsCreateOpen(true)}
+            >
+              <Plus aria-hidden="true" />
+            </Button>
+          ) : null}
         </div>
         {isListOpen ? (
           <div className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-xl border border-[#4a3829]/55 bg-[#120e0a] shadow-[0_18px_32px_rgba(6,4,2,0.32)]">

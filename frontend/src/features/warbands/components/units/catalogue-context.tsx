@@ -40,6 +40,11 @@ export function useWarbandCatalogue() {
   return catalogue;
 }
 
+/** Whether the viewer may create catalogue entries here (edit_catalogue); false outside a sheet. */
+export function useCanAddCustom() {
+  return useContext(WarbandCatalogueContext)?.canAddCustom ?? false;
+}
+
 type WarbandCatalogueProviderProps = PropsWithChildren<{
   campaignId: number;
   canAddCustom: boolean;

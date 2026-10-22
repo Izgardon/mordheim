@@ -1,6 +1,7 @@
 /**
- * The campaign's wargear list as the app mounts it (layout, fake server): who gets Edit on a
- * custom item, and that a house rule's clone of a catalogue item has none (BUG-51).
+ * The campaign's wargear list as the app mounts it (layout, fake server): a custom item and a
+ * house rule's clone both offer Edit; editing the clone detaches it from its rule (PR C's Calls,
+ * replacing BUG-51's 403).
  */
 import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -50,11 +51,11 @@ beforeEach(() => {
 });
 
 describe("Items: house rule clones", () => {
-  it("offers Edit on a custom item but not on a house rule's clone (BUG-51)", async () => {
+  it("offers Edit on a custom item and on a house rule's clone, whose edit detaches it (PR C's Calls)", async () => {
     renderCampaignRoute("/campaigns/1/items");
 
     expect(await screen.findByText("Rusty Cleaver")).toBeInTheDocument();
     expect(within(row("Rusty Cleaver")).getByRole("button", { name: "Edit item" })).toBeVisible();
-    expect(within(row("Cheap Shield")).queryByRole("button", { name: "Edit item" })).toBeNull();
+    expect(within(row("Cheap Shield")).getByRole("button", { name: "Edit item" })).toBeVisible();
   });
 });

@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { CSSProperties, ReactNode } from "react";
+import { useMemo, useState } from "react";
 
 // routing
 import { useOutletContext, useParams, useNavigate } from "react-router-dom";
@@ -7,68 +6,40 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 // data
 import { useCatalogue } from "@/lib/catalogue-queries";
+import { archivedOnly, useArchivedView } from "@/features/catalogue/hooks/useArchivedView";
+import { useCatalogueEditor } from "@/features/catalogue/hooks/useCatalogueEditor";
+import { useItemsFilters } from "../hooks/useItemsFilters";
 
 // components
 import { Button } from "@components/button";
-import { Input } from "@components/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 import { TableSkeleton } from "@components/table-skeleton";
-import { Tooltip } from "@components/tooltip";
 import { PageHeader } from "@components/page-header";
 import MobileTabs from "@components/mobile-tabs";
+import CatalogueTable from "@/features/catalogue/components/CatalogueTable";
+import { ArchivedToggle } from "@/features/catalogue/components/ArchivedView";
 import AddItemForm from "../components/AddItemForm";
 import AcquireItemDialog from "../components/AcquireItemDialog/AcquireItemDialog";
-import ItemsTable from "../components/ItemsTable";
-import { Pencil } from "lucide-react";
+import ItemRowActions from "../components/ItemRowActions";
+import ItemsFilterBar from "../components/ItemsFilterBar";
+import {
+  itemColumns,
+  itemsMobileLayout,
+  type ItemRow,
+  type ItemTabId,
+} from "../components/items-columns";
 
 // utils
-import { renderBoldMarkdown } from "../../../lib/render-bold-markdown";
+import { formatAvailabilitySummary } from "../utils/availability-format";
 
 // api
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 
 // types
-import type { Item, ItemAvailability, ItemProperty } from "../types/item-types";
+import type { Item, ItemProperty } from "../types/item-types";
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
 
-/** An item row in the table — each row represents one availability entry. */
-type ItemRow = Item & {
-  _availability: ItemAvailability | null;
-  _rowId: string;
-};
-
-const ALL_SUBTYPES = "all";
-const ALL_SINGLE_USE = "all";
-const SINGLE_USE_ONLY = "single";
-const STAT_HEADERS = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
-
-const formatRarity = (value?: number | null) => {
-  if (value === 2) {
-    return "Common";
-  }
-  if (value === null || value === undefined) {
-    return "-";
-  }
-  return String(value);
-};
-const formatCost = (value?: number | null) => {
-  if (value === null || value === undefined) {
-    return "-";
-  }
-  return String(value);
-};
-
-const formatRestrictions = (avail: ItemAvailability | null): string => {
-  if (!avail?.restrictions?.length) return "-";
-  return avail.restrictions
-    .map((link) => {
-      const name = link.restriction.restriction;
-      return link.additional_note ? `${name} (${link.additional_note})` : name;
-    })
-    .join(", ");
-};
-
-type ItemTabId = "weapons" | "armour" | "misc" | "animals";
+import { LOADOUT_TABS } from "@/lib/loadout-tabs";
+import type { LoadoutTabId } from "@/lib/loadout-tabs";
 
 const itemTabs: ReadonlyArray<{ id: ItemTabId; label: string }> = [
   { id: "weapons", label: "Weapons" },
@@ -77,105 +48,15 @@ const itemTabs: ReadonlyArray<{ id: ItemTabId; label: string }> = [
   { id: "animals", label: "Animals" },
 ];
 
-const itemTypeByTab: Record<ItemTabId, string> = {
-  weapons: "Weapon",
-  armour: "Armour",
-  misc: "Miscellaneous",
-  animals: "Animal",
-};
-
-import { LOADOUT_TABS } from "@/lib/loadout-tabs";
-import type { LoadoutTabId } from "@/lib/loadout-tabs";
-
-const subtypeOptionsByType: Record<string, string[]> = {
-  Weapon: ["Melee", "Ranged", "Blackpowder"],
-  Armour: ["Armour", "Shield", "Helmet", "Barding"],
-  Animal: ["Mount", "Attack"],
-};
-
-const ITEM_ROW_BG_STYLE: CSSProperties = {};
-
-const getItemRowId = (itemId: number, availabilityId?: number | null) =>
-  `item:${itemId}:availability:${availabilityId ?? "none"}`;
-
-const buildPropertyMap = (properties: ItemProperty[]) =>
+const byId = (properties: ItemProperty[]) =>
   properties.reduce<Record<number, ItemProperty>>((acc, property) => {
     acc[property.id] = property;
     return acc;
   }, {});
 
-type ColumnConfig = {
-  key: string;
-  label: string;
-  headerClassName?: string;
-  cellClassName?: string;
-  render: (item: ItemRow) => ReactNode;
-};
-
-const parseStatblock = (statblock: string) => {
-  try {
-    return JSON.parse(statblock) as Record<string, string | number>;
-  } catch {
-    try {
-      const normalized = statblock
-        .replace(/'/g, '"')
-        .replace(/([,{]\s*)([A-Za-z]+)(\s*:)/g, '$1"$2"$3');
-      return JSON.parse(normalized) as Record<string, string | number>;
-    } catch {
-      return null;
-    }
-  }
-};
-
-const renderStatblock = (statblock?: string | null) => {
-  if (!statblock) {
-    return <span className="text-muted-foreground">-</span>;
-  }
-
-  if (statblock.includes("[[table]]")) {
-    return <div className="text-xs text-muted-foreground">{renderBoldMarkdown(statblock)}</div>;
-  }
-
-  try {
-    const parsed = parseStatblock(statblock);
-    if (!parsed) {
-      return <span className="text-xs text-muted-foreground">{statblock}</span>;
-    }
-    const values = STAT_HEADERS.map((key) => parsed?.[key]);
-    if (values.every((value) => value === undefined || value === null || value === "")) {
-      return <span className="text-muted-foreground">-</span>;
-    }
-    return (
-      <div className="scrollbar-hidden-mobile overflow-x-auto rounded-lg border border-border/60 bg-background/60">
-        <table className="min-w-full text-[10px] text-muted-foreground">
-          <thead className="bg-background/80 uppercase tracking-[0.2em]">
-            <tr>
-              {STAT_HEADERS.map((header) => (
-                <th key={header} className="px-2 py-1 text-left font-semibold">
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="border-t border-border/60">
-              {values.map((value, index) => (
-                <td
-                  key={`${STAT_HEADERS[index]}-${index}`}
-                  className="px-2 py-1 text-xs font-semibold text-foreground"
-                >
-                  {value ?? "-"}
-                </td>
-              ))}
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    );
-  } catch {
-    return <span className="text-xs text-muted-foreground">{statblock}</span>;
-  }
-};
+const subtitle = (item: ItemRow) => formatAvailabilitySummary(item._availability);
+const description = (item: ItemRow) =>
+  item.description?.trim() ? item.description : "No description available.";
 
 export default function Items() {
   const { id } = useParams();
@@ -183,134 +64,27 @@ export default function Items() {
   const navigate = useNavigate();
   const campaignId = Number(id);
   const isMobile = useMediaQuery("(max-width: 960px)");
-  // Shares the cached campaign item list with the warband editor instead of re-downloading it.
-  const { data: items, isLoading, error } = useCatalogue("items", campaignId);
+  // Shares the cached campaign item list with the warband editor instead of re-downloading it;
+  // the Archived view reads its own list (CAT-TWEAK-04).
+  const archive = useArchivedView();
+  const { data: items, isLoading, error } = useCatalogue("items", campaignId, archive.listOptions);
+  const listed = useMemo(() => archivedOnly(archive.archived, items), [archive.archived, items]);
   const { data: itemProperties, error: propertyError } = useCatalogue(
     "item-properties",
     campaignId
   );
-  const propertyMap = useMemo(() => buildPropertyMap(itemProperties), [itemProperties]);
-  const [activeTab, setActiveTab] = useState<ItemTabId>("weapons");
-  const [selectedSubtype, setSelectedSubtype] = useState(ALL_SUBTYPES);
-  const [selectedSingleUse, setSelectedSingleUse] = useState(ALL_SINGLE_USE);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [expandedRowIds, setExpandedRowIds] = useState<string[]>([]);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<Item | null>(null);
-  const formRef = useRef<HTMLDivElement>(null);
+  const propertyMap = useMemo(() => byId(itemProperties), [itemProperties]);
+  const filters = useItemsFilters(listed);
+  // AddItemForm writes created, edited and deleted items to the shared cache itself.
+  const editor = useCatalogueEditor<Item>();
+  // One Acquire dialog for the page, on the row whose Acquire was pressed (PERF-48).
+  const [acquiring, setAcquiring] = useState<{ row: ItemRow; open: boolean } | null>(null);
+  const acquiringRow = acquiring
+    ? (filters.rows.find((row) => row._rowId === acquiring.row._rowId) ?? acquiring.row)
+    : null;
 
   const capabilities = campaignCapabilities(campaign);
-  const canAdd = capabilities.add_custom;
-  const canManage = capabilities.manage_items;
-
-  useEffect(() => {
-    setSelectedSubtype(ALL_SUBTYPES);
-    setSelectedSingleUse(ALL_SINGLE_USE);
-    setExpandedRowIds([]);
-  }, [activeTab]);
-
-  const filteredItems = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-    if (!query) {
-      return items;
-    }
-    return items.filter((item) => {
-      const haystack = [
-        item.name,
-        item.type,
-        item.subtype,
-        ...(item.availabilities ?? []).flatMap((a) =>
-          (a.restrictions ?? []).map((r) => r.restriction.restriction)
-        ),
-        item.description,
-        item.properties?.map((property) => property.name).join(" "),
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-      return haystack.includes(query);
-    });
-  }, [items, searchQuery]);
-
-  const tabItems = useMemo(() => {
-    const type = itemTypeByTab[activeTab];
-    const byType = filteredItems.filter((item) => item.type === type);
-    if (selectedSubtype === ALL_SUBTYPES || !selectedSubtype.trim()) {
-      if (activeTab !== "misc" || selectedSingleUse === ALL_SINGLE_USE) {
-        return byType;
-      }
-      return byType.filter((item) => item.single_use);
-    }
-    const subtypeFiltered = byType.filter(
-      (item) => (item.subtype ?? "").toLowerCase() === selectedSubtype.toLowerCase()
-    );
-    if (activeTab !== "misc" || selectedSingleUse === ALL_SINGLE_USE) {
-      return subtypeFiltered;
-    }
-    return subtypeFiltered.filter((item) => item.single_use);
-  }, [filteredItems, activeTab, selectedSubtype, selectedSingleUse]);
-
-  const flattenedItems = useMemo<ItemRow[]>(() => {
-    const rows: ItemRow[] = [];
-    for (const item of tabItems) {
-      const availabilities = item.availabilities ?? [];
-      if (availabilities.length === 0) {
-        rows.push({ ...item, _availability: null, _rowId: getItemRowId(item.id) });
-      } else {
-        const sorted = [...availabilities].sort((a, b) => b.rarity - a.rarity);
-        for (const avail of sorted) {
-          rows.push({
-            ...item,
-            _availability: avail,
-            _rowId: getItemRowId(item.id, avail.id),
-          });
-        }
-      }
-    }
-    return rows;
-  }, [tabItems]);
-
-  const subtypeOptions = useMemo(() => {
-    const type = itemTypeByTab[activeTab];
-    const defaults = subtypeOptionsByType[type] ?? [];
-    const extras = items
-      .filter((item) => item.type === type)
-      .map((item) => item.subtype)
-      .filter(Boolean) as string[];
-    const unique = new Set([...defaults, ...extras]);
-    return Array.from(unique).sort((a, b) => a.localeCompare(b));
-  }, [items, activeTab]);
-
-  // AddItemForm writes created, edited and deleted items to the shared cache itself.
-  const handleCreated = (_newItem: Item) => {
-    setIsFormOpen(false);
-    setEditingItem(null);
-  };
-
-  const handleUpdated = (_updatedItem: Item) => {
-    setIsFormOpen(false);
-    setEditingItem(null);
-  };
-
-  const handleDeleted = (itemId: number) => {
-    setExpandedRowIds((prev) => prev.filter((rowId) => !rowId.startsWith(`item:${itemId}:`)));
-    setIsFormOpen(false);
-    setEditingItem(null);
-  };
-
-  const handleEdit = (item: Item) => {
-    setEditingItem(item);
-    setIsFormOpen(true);
-    requestAnimationFrame(() => {
-      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  };
-
-  const toggleItemExpanded = (rowId: string) => {
-    setExpandedRowIds((prev) =>
-      prev.includes(rowId) ? prev.filter((id) => id !== rowId) : [...prev, rowId]
-    );
-  };
+  const canEdit = capabilities.edit_catalogue;
 
   const handleLoadoutTabChange = (tabId: LoadoutTabId) => {
     if (!id) {
@@ -319,407 +93,20 @@ export default function Items() {
     navigate(`/campaigns/${id}/${tabId}`);
   };
 
-  const columns = useMemo<ColumnConfig[]>(() => {
-    const hideAtLg = "hidden lg:table-cell";
-    const hideAtXl = "hidden xl:table-cell";
-    const hideAt2xl = "hidden 2xl:table-cell";
-    const propertiesCell = (item: Item) => {
-      if (!item.properties || item.properties.length === 0) {
-        return <span className="text-muted-foreground">-</span>;
-      }
-      return (
-        <div className="flex flex-wrap gap-2">
-          {item.properties.map((property) => (
-            <Tooltip
-              key={property.id}
-              trigger={
-                <span className="text-xs font-semibold text-muted-foreground underline decoration-dotted underline-offset-2 transition hover:text-foreground">
-                  {property.name}
-                </span>
-              }
-              content={
-                propertyMap[property.id]?.description?.trim()
-                  ? propertyMap[property.id]?.description
-                  : "No description available yet."
-              }
-              className="inline-flex"
-            />
-          ))}
-        </div>
-      );
-    };
-
-    const baseColumns: Record<ItemTabId, ColumnConfig[]> = {
-      weapons: [
-        {
-          key: "name",
-          label: "Name",
-          headerClassName: "w-[22%]",
-          render: (item) => <span className="font-medium text-foreground">{item.name}</span>,
-        },
-        {
-          key: "subtype",
-          label: "Type",
-          headerClassName: `w-[10%] ${hideAtLg}`,
-          cellClassName: hideAtLg,
-          render: (item) => <span className="text-muted-foreground">{item.subtype || "-"}</span>,
-        },
-        {
-          key: "strength",
-          label: "Strength",
-          headerClassName: "w-[10%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{item.strength || "As user"}</span>
-          ),
-        },
-        {
-          key: "range",
-          label: "Range",
-          headerClassName: "w-[12%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{item.range || "Close combat"}</span>
-          ),
-        },
-        {
-          key: "properties",
-          label: "Properties",
-          headerClassName: `w-[18%] ${hideAtXl}`,
-          cellClassName: hideAtXl,
-          render: propertiesCell,
-        },
-        {
-          key: "restricted",
-          label: "Restricted to",
-          headerClassName: "w-[10%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>
-          ),
-        },
-        {
-          key: "rarity",
-
-          label: "Rarity",
-          headerClassName: "w-[6%]",
-          render: (item) => (
-            <span className="text-muted-foreground">
-              {formatRarity(item._availability?.rarity)}
-            </span>
-          ),
-        },
-        {
-          key: "price",
-
-          label: "Price",
-          headerClassName: "w-[6%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>
-          ),
-        },
-        {
-          key: "grade",
-          label: "Grade",
-          headerClassName: `w-[6%] ${hideAt2xl}`,
-          cellClassName: hideAt2xl,
-          render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
-        },
-      ],
-      armour: [
-        {
-          key: "name",
-          label: "Name",
-          headerClassName: "w-[24%]",
-          render: (item) => <span className="font-medium text-foreground">{item.name}</span>,
-        },
-        {
-          key: "save",
-          label: "Save",
-          headerClassName: "w-[10%]",
-          render: (item) => <span className="text-muted-foreground">{item.save || "-"}</span>,
-        },
-        {
-          key: "properties",
-          label: "Properties",
-          headerClassName: `w-[22%] ${hideAtXl}`,
-          cellClassName: hideAtXl,
-          render: propertiesCell,
-        },
-        {
-          key: "restricted",
-          label: "Restricted to",
-          headerClassName: "w-[12%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>
-          ),
-        },
-        {
-          key: "rarity",
-
-          label: "Rarity",
-          headerClassName: "w-[8%]",
-          render: (item) => (
-            <span className="text-muted-foreground">
-              {formatRarity(item._availability?.rarity)}
-            </span>
-          ),
-        },
-        {
-          key: "price",
-
-          label: "Price",
-          headerClassName: "w-[8%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>
-          ),
-        },
-        {
-          key: "grade",
-          label: "Grade",
-          headerClassName: `w-[6%] ${hideAt2xl}`,
-          cellClassName: hideAt2xl,
-          render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
-        },
-      ],
-      misc: [
-        {
-          key: "name",
-          label: "Name",
-          headerClassName: "w-[26%]",
-          render: (item) => <span className="font-medium text-foreground">{item.name}</span>,
-        },
-        {
-          key: "properties",
-          label: "Properties",
-          headerClassName: `w-[24%] ${hideAtXl}`,
-          cellClassName: hideAtXl,
-          render: propertiesCell,
-        },
-        {
-          key: "singleUse",
-          label: "Single use",
-          headerClassName: "w-[10%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{item.single_use ? "Yes" : "-"}</span>
-          ),
-        },
-        {
-          key: "restricted",
-          label: "Restricted to",
-          headerClassName: "w-[12%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>
-          ),
-        },
-        {
-          key: "rarity",
-
-          label: "Rarity",
-          headerClassName: "w-[8%]",
-          render: (item) => (
-            <span className="text-muted-foreground">
-              {formatRarity(item._availability?.rarity)}
-            </span>
-          ),
-        },
-        {
-          key: "price",
-
-          label: "Price",
-          headerClassName: "w-[8%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>
-          ),
-        },
-        {
-          key: "grade",
-          label: "Grade",
-          headerClassName: `w-[6%] ${hideAt2xl}`,
-          cellClassName: hideAt2xl,
-          render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
-        },
-      ],
-      animals: [
-        {
-          key: "name",
-          label: "Name",
-          headerClassName: "w-[16%]",
-          render: (item) => <span className="font-medium text-foreground">{item.name}</span>,
-        },
-        {
-          key: "subtype",
-          label: "Type",
-          headerClassName: `w-[8%] ${hideAtLg}`,
-          cellClassName: hideAtLg,
-          render: (item) => <span className="text-muted-foreground">{item.subtype || "-"}</span>,
-        },
-        {
-          key: "statblock",
-          label: "Stats",
-          headerClassName: `w-[26%] ${hideAtXl}`,
-          cellClassName: hideAtXl,
-          render: (item) => {
-            const be = item.bestiary_entry;
-            if (be) {
-              const values = [
-                be.movement,
-                be.weapon_skill,
-                be.ballistic_skill,
-                be.strength,
-                be.toughness,
-                be.wounds,
-                be.initiative,
-                be.attacks,
-                be.leadership,
-              ];
-              return (
-                <div className="scrollbar-hidden-mobile overflow-x-auto rounded-lg border border-border/60 bg-background/60">
-                  <table className="min-w-full text-[10px] text-muted-foreground">
-                    <thead className="bg-background/80 uppercase tracking-[0.2em]">
-                      <tr>
-                        {STAT_HEADERS.map((header) => (
-                          <th key={header} className="px-2 py-1 text-left font-semibold">
-                            {header}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="border-t border-border/60">
-                        {values.map((value, index) => (
-                          <td
-                            key={STAT_HEADERS[index]}
-                            className="px-2 py-1 text-xs font-semibold text-foreground"
-                          >
-                            {value}
-                          </td>
-                        ))}
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              );
-            }
-            return renderStatblock(item.statblock);
-          },
-        },
-        {
-          key: "specials",
-          label: "Special Rules",
-          headerClassName: `w-[18%] ${hideAtXl}`,
-          cellClassName: hideAtXl,
-          render: (item) => {
-            const specials = item.bestiary_entry?.specials;
-            if (!specials || specials.length === 0) {
-              return <span className="text-muted-foreground">-</span>;
-            }
-            return (
-              <div className="flex flex-wrap gap-2">
-                {specials.map((s) => (
-                  <Tooltip
-                    key={s.id}
-                    trigger={
-                      <span className="text-xs font-semibold text-muted-foreground underline decoration-dotted underline-offset-2 transition hover:text-foreground">
-                        {s.name}
-                      </span>
-                    }
-                    content={s.description?.trim() || "No description available yet."}
-                    className="inline-flex"
-                  />
-                ))}
-              </div>
-            );
-          },
-        },
-        {
-          key: "restricted",
-          label: "Restricted to",
-          headerClassName: "w-[10%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{formatRestrictions(item._availability)}</span>
-          ),
-        },
-        {
-          key: "rarity",
-
-          label: "Rarity",
-          headerClassName: "w-[6%]",
-          render: (item) => (
-            <span className="text-muted-foreground">
-              {formatRarity(item._availability?.rarity)}
-            </span>
-          ),
-        },
-        {
-          key: "price",
-
-          label: "Price",
-          headerClassName: "w-[6%]",
-          render: (item) => (
-            <span className="text-muted-foreground">{formatCost(item._availability?.cost)}</span>
-          ),
-        },
-        {
-          key: "grade",
-          label: "Grade",
-          headerClassName: `w-[6%] ${hideAt2xl}`,
-          cellClassName: hideAt2xl,
-          render: (item) => <span className="text-muted-foreground">{item.grade || "-"}</span>,
-        },
-      ],
-    };
-
-    return [
-      ...(baseColumns[activeTab] ?? []),
-      {
-        key: "buttons",
-        label: "",
-        headerClassName: "w-[6%]",
-        cellClassName: "whitespace-nowrap",
-        render: (item) => (
-          <div
-            className="flex items-center justify-end gap-2"
-            onClick={(event) => event.stopPropagation()}
-          >
-            {item.bestiary_entry ? (
-              <Tooltip
-                trigger={
-                  <button
-                    type="button"
-                    aria-label="View bestiary entry"
-                    onClick={() =>
-                      navigate(`/campaigns/${id}/bestiary?entry=${item.bestiary_entry!.id}`)
-                    }
-                    className="text-xs text-muted-foreground underline decoration-dotted underline-offset-2 transition hover:text-foreground"
-                  >
-                    Bestiary
-                  </button>
-                }
-                content="View bestiary entry"
-              />
-            ) : null}
-            <AcquireItemDialog item={item} initialAvailabilityId={item._availability?.id ?? null} />
-            {/* A house rule's clone changes with its rule, never here (BUG-51). */}
-            {canManage && item.campaign_id && !item.generated_effect_key ? (
-              <Tooltip
-                trigger={
-                  <Button
-                    type="button"
-                    aria-label="Edit item"
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => handleEdit(item)}
-                  >
-                    <Pencil className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                }
-                content="Edit"
-              />
-            ) : null}
-          </div>
-        ),
-      },
-    ];
-  }, [activeTab, canManage, handleDeleted, handleUpdated, propertyMap]);
+  const columns = itemColumns(filters.activeTab, {
+    propertyMap,
+    actions: (item) => (
+      <ItemRowActions
+        item={item}
+        campaignId={campaignId}
+        canEdit={canEdit}
+        archived={archive.archived}
+        isAcquiring={Boolean(acquiring?.open && acquiring.row._rowId === item._rowId)}
+        onAcquire={() => setAcquiring({ row: item, open: true })}
+        onEdit={() => editor.edit(item)}
+      />
+    ),
+  });
 
   return (
     <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-8">
@@ -727,8 +114,8 @@ export default function Items() {
         title="Wargear"
         subtitle="Weapons, armour and equipment"
         tabs={itemTabs}
-        activeTab={activeTab}
-        onTabChange={(tabId) => setActiveTab(tabId as ItemTabId)}
+        activeTab={filters.activeTab}
+        onTabChange={(tabId) => filters.setActiveTab(tabId as ItemTabId)}
       />
 
       {isMobile ? (
@@ -745,64 +132,42 @@ export default function Items() {
         {isMobile ? (
           <MobileTabs
             tabs={itemTabs}
-            activeTab={activeTab}
-            onTabChange={(tabId) => setActiveTab(tabId as ItemTabId)}
+            activeTab={filters.activeTab}
+            onTabChange={(tabId) => filters.setActiveTab(tabId as ItemTabId)}
             className="-ml-2"
           />
         ) : null}
-        <div className="flex flex-wrap items-center gap-3">
-          <Input
-            type="search"
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder="Search items..."
-            aria-label="Search items"
-            className="flex-none w-[calc(50%-6px)] sm:w-full sm:max-w-sm"
+        <ItemsFilterBar filters={filters}>
+          <ArchivedToggle
+            checked={archive.archived}
+            onChange={(on) => {
+              editor.close();
+              archive.setArchived(on);
+            }}
           />
-          {activeTab === "weapons" || activeTab === "armour" || activeTab === "animals" ? (
-            <Select value={selectedSubtype} onValueChange={setSelectedSubtype}>
-              <SelectTrigger className="w-[calc(50%-6px)] sm:w-56">
-                <SelectValue placeholder="Filter by type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={ALL_SUBTYPES}>All types</SelectItem>
-                {subtypeOptions.map((typeOption) => (
-                  <SelectItem key={typeOption} value={typeOption}>
-                    {typeOption}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          ) : null}
-          {activeTab === "misc" ? (
-            <Select value={selectedSingleUse} onValueChange={setSelectedSingleUse}>
-              <SelectTrigger className="w-[calc(50%-6px)] sm:w-56">
-                <SelectValue placeholder="Filter by usage" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={ALL_SINGLE_USE}>All usage</SelectItem>
-                <SelectItem value={SINGLE_USE_ONLY}>Single use</SelectItem>
-              </SelectContent>
-            </Select>
-          ) : null}
-          {canAdd && !isFormOpen ? (
-            <Button size="sm" className="ml-auto md:h-11" onClick={() => setIsFormOpen(true)}>
+          {canEdit && !editor.isOpen && !archive.archived ? (
+            <Button size="sm" className="ml-auto md:h-11" onClick={editor.openNew}>
               Add item
             </Button>
           ) : null}
-        </div>
-        {isFormOpen && (
-          <div ref={formRef}>
+        </ItemsFilterBar>
+        {editor.isOpen && (
+          <div ref={editor.formRef}>
             <AddItemForm
-              campaignId={Number(id)}
-              onCreated={handleCreated}
-              onUpdated={handleUpdated}
-              onDeleted={handleDeleted}
-              onCancel={() => {
-                setIsFormOpen(false);
-                setEditingItem(null);
+              campaignId={campaignId}
+              onCreated={editor.close}
+              onUpdated={editor.close}
+              onDeleted={(itemId) => {
+                filters.collapseItem(itemId);
+                editor.close();
               }}
-              editingItem={editingItem}
+              onCancel={editor.close}
+              editingItem={editor.editing}
+              canDelete={capabilities.delete_catalogue}
+              onEditMatch={(match) => {
+                const entry = items.find((listed) => listed.id === match.id);
+                if (entry) editor.edit(entry);
+              }}
             />
           </div>
         )}
@@ -811,26 +176,39 @@ export default function Items() {
             <TableSkeleton columns={9} rows={12} />
           ) : error ? (
             <p className="text-sm text-red-600">{error}</p>
-          ) : flattenedItems.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No gear found.</p>
+          ) : filters.rows.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              {archive.archived ? "Nothing archived." : "No gear found."}
+            </p>
           ) : (
             <>
               {propertyError ? (
                 <p className="px-4 py-2 text-xs text-red-500">{propertyError}</p>
               ) : null}
-              <ItemsTable
-                items={flattenedItems}
+              <CatalogueTable
+                rows={filters.rows}
                 columns={columns}
-                rowBackground={ITEM_ROW_BG_STYLE}
-                expandedRowIds={expandedRowIds}
-                onToggleRow={toggleItemExpanded}
                 getRowId={(item) => item._rowId}
                 isMobile={isMobile}
+                mobile={itemsMobileLayout(columns, subtitle)}
+                desktopDetails={description}
+                stickyHeader
+                expanded={filters.expanded}
               />
             </>
           )}
         </div>
       </div>
+      {acquiringRow ? (
+        <AcquireItemDialog
+          key={acquiringRow._rowId}
+          item={acquiringRow}
+          initialAvailabilityId={acquiringRow._availability?.id ?? null}
+          open={acquiring?.open ?? false}
+          onOpenChange={(open) => setAcquiring((prev) => (prev ? { ...prev, open } : prev))}
+          trigger={null}
+        />
+      ) : null}
     </div>
   );
 }

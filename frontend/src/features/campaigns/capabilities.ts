@@ -26,16 +26,13 @@ export const CAMPAIGN_CAPABILITIES = [
   "restore",
   "remove_posts",
   "leave",
-  "add_custom",
-  "manage_items",
-  "manage_skills",
-  "manage_spells",
-  "manage_specials",
+  // One code for adding and editing the whole catalogue, and one for deleting (decisions 4, 5).
+  "edit_catalogue",
+  "delete_catalogue",
   "manage_rules",
   "manage_warbands",
   "manage_encampments",
   "manage_locations",
-  "manage_bestiary",
   "manage_battles",
 ] as const;
 

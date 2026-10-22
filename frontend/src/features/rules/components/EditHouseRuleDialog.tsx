@@ -16,6 +16,7 @@ import { ConfirmDialog } from "@components/confirm-dialog";
 import { getErrorMessage } from "@/lib/get-error-message";
 // api
 import { deleteHouseRule, updateHouseRule } from "../api/rules-api";
+import { takeHouseRuleWarnings } from "../utils/house-rule-warnings";
 
 // types
 import type { HouseRule, HouseRulePayload } from "../types/rule-types";
@@ -89,7 +90,7 @@ export default function EditHouseRuleDialog({
         description: form.description.trim(),
         effect_key: rule.effect_key,
       });
-      onUpdated(updated);
+      onUpdated(takeHouseRuleWarnings(updated));
       setResolvedOpen(false);
     } catch (errorResponse) {
       setFormError(getErrorMessage(errorResponse, "Unable to update house rule"));

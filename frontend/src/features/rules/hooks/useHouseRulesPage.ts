@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 // api
 import { createHouseRule } from "../api/rules-api";
+import { takeHouseRuleWarnings } from "../utils/house-rule-warnings";
 import { useHouseRules } from "../api/rule-queries";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
 
@@ -74,7 +75,9 @@ export function useHouseRulesPage(campaignId: number) {
     setFormError("");
     setIsSubmitting(true);
     try {
-      const created = await createHouseRule(campaignId, { title, description });
+      const created = takeHouseRuleWarnings(
+        await createHouseRule(campaignId, { title, description })
+      );
       await writeRules((rules) => [created, ...rules]);
       closeForm();
     } catch (errorResponse) {
