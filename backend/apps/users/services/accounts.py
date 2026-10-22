@@ -11,7 +11,6 @@ from django.contrib.auth.models import update_last_login
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
-from django.db.models import Q
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
@@ -79,10 +78,11 @@ def rename(user: Any, name: str) -> None:
 
 
 def reset_link_for(email: str) -> tuple[str, str] | None:
-    """The address to send a reset email to and the link it carries, or None when no active user has that email. The
-    user is loaded whole: the token reads last_login and the password, so a known address costs the one query an
-    unknown one does (BUG-153)."""
-    user = get_user_model().objects.filter(Q(email__iexact=email) | Q(username__iexact=email), is_active=True).first()
+    """The address to send a reset email to and the link it carries, or None when no active user has that (lowercased)
+    email. The user is found by username, which is the lowercased email, as sign-in finds them: an indexed match, where
+    `email__iexact OR username__iexact` scanned the table (IMP-95 c). They're loaded whole: the token reads last_login
+    and the password, so a known address costs the one query an unknown one does (BUG-153)."""
+    user = get_user_model().objects.filter(username=email, is_active=True).first()
     if user is None:
         return None
     uid = urlsafe_base64_encode(force_bytes(user.pk))

@@ -1,6 +1,6 @@
 """Password reset (pass 6; AUTH-TEST-09 to -12, BUG-56, BUG-83, BUG-154, SEC-12, AUTH-CQ-04 b).
 
-`POST auth/password-reset/` looks for an active user by email or username in any case, builds
+`POST auth/password-reset/` looks for an active user by username (the lowercased email, as sign-in does), builds
 `{FRONTEND_URL}/reset-password#uid=…&token=…` and queues the email after commit; it answers the same "sent" message
 whatever happened, and 503 `email_unavailable` for every address while Resend isn't configured. `POST
 auth/password-reset-confirm/` checks Django's token (valid for PASSWORD_RESET_TIMEOUT, spent once the password changes
@@ -65,6 +65,18 @@ class ResetRequestTests(AuthTestCase):
         self.post(RESET, {"email": "  PIA@Example.COM "})
 
         self.assertEqual(send.call_args.args[0], "pia@example.com")
+
+    @mock.patch(SEND, return_value=True)
+    def test_the_user_is_found_by_username_as_sign_in_finds_them(self, send):
+        # IMP-95 c (PR B; was: `email__iexact OR username__iexact`, which also found this user). A user made outside
+        # sign-up whose username isn't the lowercased email gets no link, as they get no sign-in
+        get_user_model().objects.create_user(username="Odd@Example.com", email="Odd@Example.com", password=PASSWORD)
+
+        response = self.post(RESET, {"email": "odd@example.com"})
+
+        self.assertEqual((response.status_code, response.json()), (200, SENT))
+        send.assert_not_called()
+        self.assertEqual(self.post(LOGIN, {"email": "odd@example.com", "password": PASSWORD}).status_code, 400)
 
     @mock.patch(SEND, return_value=True)
     def test_an_inactive_user_gets_the_same_answer_and_no_email(self, send):
