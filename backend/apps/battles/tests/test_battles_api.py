@@ -719,7 +719,7 @@ class BattleApiTests(APITestCase):
             name="Captain Wolf",
             unit_type="Captain",
         )
-        owner_hired_sword = Hireling.objects.create(
+        owner_hireling = Hireling.objects.create(
             warband=self.owner_warband,
             name="Johann",
             unit_type="Pit Fighter",
@@ -789,8 +789,8 @@ class BattleApiTests(APITestCase):
                     "upkeep": {
                         "pay_upkeep": True,
                         "entries": {
-                            f"hired_sword:{owner_hired_sword.id}": {
-                                "unit_name": owner_hired_sword.name,
+                            f"hireling:{owner_hireling.id}": {
+                                "unit_name": owner_hireling.name,
                                 "cost": 12,
                             }
                         },
@@ -831,8 +831,8 @@ class BattleApiTests(APITestCase):
             {
                 "pay_upkeep": True,
                 "entries": {
-                    f"hired_sword:{owner_hired_sword.id}": {
-                        "unit_name": owner_hired_sword.name,
+                    f"hireling:{owner_hireling.id}": {
+                        "unit_name": owner_hireling.name,
                         "cost": 12,
                     }
                 },
@@ -1319,7 +1319,7 @@ class BattleApiTests(APITestCase):
             name="Captain Wolf",
             unit_type="Captain",
         )
-        owner_hired_sword = Hireling.objects.create(
+        owner_hireling = Hireling.objects.create(
             warband=self.owner_warband,
             name="Johann",
             unit_type="Pit Fighter",
@@ -1381,8 +1381,8 @@ class BattleApiTests(APITestCase):
                     "upkeep": {
                         "pay_upkeep": True,
                         "entries": {
-                            f"hired_sword:{owner_hired_sword.id}": {
-                                "unit_name": owner_hired_sword.name,
+                            f"hireling:{owner_hireling.id}": {
+                                "unit_name": owner_hireling.name,
                                 "cost": 15,
                             }
                         },
@@ -1453,7 +1453,7 @@ class BattleApiTests(APITestCase):
             name="Captain Wolf",
             unit_type="Captain",
         )
-        owner_hired_sword = Hireling.objects.create(
+        owner_hireling = Hireling.objects.create(
             warband=self.owner_warband,
             name="Johann",
             unit_type="Pit Fighter",
@@ -1515,8 +1515,8 @@ class BattleApiTests(APITestCase):
                     "upkeep": {
                         "pay_upkeep": False,
                         "entries": {
-                            f"hired_sword:{owner_hired_sword.id}": {
-                                "unit_name": owner_hired_sword.name,
+                            f"hireling:{owner_hireling.id}": {
+                                "unit_name": owner_hireling.name,
                                 "cost": 15,
                             }
                         },
@@ -1703,12 +1703,12 @@ class BattleApiTests(APITestCase):
             ],
         )
 
-    def test_warband_hired_sword_kill_history_returns_named_kills_and_counts(self):
+    def test_warband_hireling_kill_history_returns_named_kills_and_counts(self):
         data = self._create_battle()
         battle_id = data["battle"]["id"]
         self._ready_both_and_start(battle_id)
 
-        owner_hired_sword = Hireling.objects.create(
+        owner_hireling = Hireling.objects.create(
             warband=self.owner_warband,
             name="Johann",
             unit_type="Bounty Hunter",
@@ -1724,7 +1724,7 @@ class BattleApiTests(APITestCase):
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
-                "selected_unit_keys_json": [f"hired_sword:{owner_hired_sword.id}"],
+                "selected_unit_keys_json": [f"hireling:{owner_hireling.id}"],
                 "custom_units_json": [],
             },
             format="json",
@@ -1746,7 +1746,7 @@ class BattleApiTests(APITestCase):
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/unit-kill/",
             {
-                "killer_unit_key": f"hired_sword:{owner_hired_sword.id}",
+                "killer_unit_key": f"hireling:{owner_hireling.id}",
                 "victim_unit_key": f"hero:{player_hero.id}",
                 "earned_xp": True,
             },
@@ -1755,9 +1755,7 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 201)
 
         Battle.objects.filter(id=battle_id).update(status=Battle.STATUS_ENDED)  # ended battles only (BUG-11)
-        response = self.client.get(
-            f"/api/warbands/{self.owner_warband.id}/hired-swords/{owner_hired_sword.id}/kill-history/"
-        )
+        response = self.client.get(f"/api/warbands/{self.owner_warband.id}/hirelings/{owner_hireling.id}/kill-history/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["total_kills"], 3)
         self.assertEqual(response.data["named_kills_count"], 1)
@@ -2994,7 +2992,7 @@ class BattleApiTests(APITestCase):
             attacks=1,
             leadership=8,
         )
-        owner_hired_sword = Hireling.objects.create(
+        owner_hireling = Hireling.objects.create(
             warband=self.owner_warband,
             name="Ogre Bodyguard",
             unit_type="Ogre",
@@ -3026,7 +3024,7 @@ class BattleApiTests(APITestCase):
         Henchman.objects.create(group=owner_group, name="Marksman A")
         item = Item.objects.create(name="Healing Herbs", type="miscellaneous", single_use=True)
         HeroItem.objects.create(hero=owner_hero, item=item)
-        HirelingItem.objects.create(hireling=owner_hired_sword, item=item)
+        HirelingItem.objects.create(hireling=owner_hireling, item=item)
         HenchmenGroupItem.objects.create(henchmen_group=owner_group, item=item)
 
         self.client.force_authenticate(user=self.owner)
@@ -3035,7 +3033,7 @@ class BattleApiTests(APITestCase):
 
         owner_roster = response.data[str(self.owner.id)]
         self.assertEqual(len(owner_roster["heroes"]), 1)
-        self.assertEqual(len(owner_roster["hiredSwords"]), 1)
+        self.assertEqual(len(owner_roster["hirelings"]), 1)
         self.assertEqual(len(owner_roster["henchmenGroups"]), 1)
 
         hero_entry = owner_roster["heroes"][0]
@@ -3048,9 +3046,9 @@ class BattleApiTests(APITestCase):
         self.assertNotIn("race", hero_entry)
         self.assertNotIn("xp", hero_entry)
 
-        hired_sword_entry = owner_roster["hiredSwords"][0]
-        self.assertEqual(hired_sword_entry["upkeepPrice"], 30)
-        self.assertEqual(hired_sword_entry["items"][0]["name"], "Healing Herbs")
+        hireling_entry = owner_roster["hirelings"][0]
+        self.assertEqual(hireling_entry["upkeepPrice"], 30)
+        self.assertEqual(hireling_entry["items"][0]["name"], "Healing Herbs")
 
         henchmen_group_entry = owner_roster["henchmenGroups"][0]
         self.assertEqual(henchmen_group_entry["name"], owner_group.name)
@@ -3239,7 +3237,7 @@ class BattleApiTests(APITestCase):
             strength=3,
             armour_save=5,
         )
-        owner_hired_sword = Hireling.objects.create(
+        owner_hireling = Hireling.objects.create(
             warband=self.owner_warband,
             name="Ogre Bodyguard",
             unit_type="Ogre",
@@ -3271,7 +3269,7 @@ class BattleApiTests(APITestCase):
             {
                 "selected_unit_keys_json": [
                     f"hero:{owner_hero.id}",
-                    f"hired_sword:{owner_hired_sword.id}",
+                    f"hireling:{owner_hireling.id}",
                     f"henchman:{owner_henchman_one.id}",
                     f"henchman:{owner_henchman_two.id}",
                 ],
@@ -3281,7 +3279,7 @@ class BattleApiTests(APITestCase):
                         "out_of_action": False,
                         "kill_count": 0,
                     },
-                    f"hired_sword:{owner_hired_sword.id}": {
+                    f"hireling:{owner_hireling.id}": {
                         "stats_override": {"movement": 5, "armour_save": "6"},
                         "out_of_action": False,
                         "kill_count": 0,
@@ -3349,10 +3347,10 @@ class BattleApiTests(APITestCase):
                             "special_ids": [],
                             "serious_injury_rolls": [],
                         },
-                        f"hired_sword:{owner_hired_sword.id}": {
-                            "unit_name": owner_hired_sword.name,
-                            "unit_kind": "hired_sword",
-                            "unit_type": owner_hired_sword.unit_type,
+                        f"hireling:{owner_hireling.id}": {
+                            "unit_name": owner_hireling.name,
+                            "unit_kind": "hireling",
+                            "unit_type": owner_hireling.unit_type,
                             "group_name": "",
                             "out_of_action": False,
                             "kill_count": 0,
@@ -3427,9 +3425,9 @@ class BattleApiTests(APITestCase):
         self.assertEqual(owner_hero.strength, 4)
         self.assertEqual(owner_hero.armour_save, 4)
 
-        owner_hired_sword.refresh_from_db()
-        self.assertEqual(owner_hired_sword.movement, 5)
-        self.assertEqual(owner_hired_sword.armour_save, 6)
+        owner_hireling.refresh_from_db()
+        self.assertEqual(owner_hireling.movement, 5)
+        self.assertEqual(owner_hireling.armour_save, 6)
 
         owner_group.refresh_from_db()
         self.assertEqual(owner_group.weapon_skill, 3)
@@ -3447,7 +3445,7 @@ class BattleApiTests(APITestCase):
             xp=0,
             level_up=0,
         )
-        owner_hired_sword = Hireling.objects.create(
+        owner_hireling = Hireling.objects.create(
             warband=self.owner_warband,
             name="Ogre Bodyguard",
             unit_type="Ogre",
@@ -3477,7 +3475,7 @@ class BattleApiTests(APITestCase):
             {
                 "selected_unit_keys_json": [
                     f"hero:{owner_hero.id}",
-                    f"hired_sword:{owner_hired_sword.id}",
+                    f"hireling:{owner_hireling.id}",
                     f"henchman:{owner_henchman_one.id}",
                     f"henchman:{owner_henchman_two.id}",
                 ],
@@ -3487,7 +3485,7 @@ class BattleApiTests(APITestCase):
                         "out_of_action": False,
                         "kill_count": 0,
                     },
-                    f"hired_sword:{owner_hired_sword.id}": {
+                    f"hireling:{owner_hireling.id}": {
                         "stats_override": {},
                         "out_of_action": False,
                         "kill_count": 0,
@@ -3553,10 +3551,10 @@ class BattleApiTests(APITestCase):
                             "special_ids": [],
                             "serious_injury_rolls": [],
                         },
-                        f"hired_sword:{owner_hired_sword.id}": {
-                            "unit_name": owner_hired_sword.name,
-                            "unit_kind": "hired_sword",
-                            "unit_type": owner_hired_sword.unit_type,
+                        f"hireling:{owner_hireling.id}": {
+                            "unit_name": owner_hireling.name,
+                            "unit_kind": "hireling",
+                            "unit_type": owner_hireling.unit_type,
                             "group_name": "",
                             "out_of_action": False,
                             "kill_count": 0,
@@ -3623,12 +3621,12 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
 
         owner_hero.refresh_from_db()
-        owner_hired_sword.refresh_from_db()
+        owner_hireling.refresh_from_db()
         owner_group.refresh_from_db()
         self.assertEqual(owner_hero.xp, 2)
         self.assertEqual(owner_hero.level_up, 1)
-        self.assertEqual(owner_hired_sword.xp, 4)
-        self.assertEqual(owner_hired_sword.level_up, 1)
+        self.assertEqual(owner_hireling.xp, 4)
+        self.assertEqual(owner_hireling.level_up, 1)
         self.assertEqual(owner_group.xp, 4)
         self.assertEqual(owner_group.level_up, 1)
 

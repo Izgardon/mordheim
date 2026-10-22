@@ -71,7 +71,7 @@ class FixtureWarband:
     """The review's finalise fixture (BATL-TEST-07): 5 heroes, 2 hired swords, 8 henchmen in 3 groups."""
 
     heroes: list[Hero]
-    hired_swords: list[Hireling]
+    hirelings: list[Hireling]
     groups: list[HenchmenGroup]
     henchmen: list[Henchman] = field(default_factory=list)
 
@@ -79,7 +79,7 @@ class FixtureWarband:
     def keys(self) -> list[str]:
         return (
             [f"hero:{hero.id}" for hero in self.heroes]
-            + [f"hired_sword:{sword.id}" for sword in self.hired_swords]
+            + [f"hireling:{sword.id}" for sword in self.hirelings]
             + [f"henchman:{henchman.id}" for henchman in self.henchmen]
         )
 
@@ -101,7 +101,7 @@ def build_fixture_warband(warband: Warband, item: Item) -> FixtureWarband:
         hero.hero_items.create(item=item, cost=5)
     for sword in swords:
         sword.hireling_items.create(item=item, cost=5)
-    return FixtureWarband(heroes=heroes, hired_swords=swords, groups=groups, henchmen=henchmen)
+    return FixtureWarband(heroes=heroes, hirelings=swords, groups=groups, henchmen=henchmen)
 
 
 def catalogue_item(name: str, cost: int | None, **fields: Any) -> Item:

@@ -110,9 +110,9 @@ HENCHMEN = Kind(
     has_no_level_ups=True,
     stat_advances=("WS", "BS", "S", "I", "A", "Ld"),
 )
-HIRED_SWORD = Kind(
-    key="hired_sword",
-    segment="hired-swords",
+HIRELING = Kind(
+    key="hireling",
+    segment="hirelings",
     model=Hireling,
     items="hireling_items",
     skills="hireling_skills",
@@ -121,14 +121,14 @@ HIRED_SWORD = Kind(
     thresholds_setting="hero_level_thresholds",  # hired swords advance like heroes (decision 8)
     default_thresholds=HERO_LEVEL_THRESHOLDS,
     trade_action="Hire",
-    log_new="new_hired_sword",
-    log_remove="remove_hired_sword",
-    log_advance="hired_sword",
-    loadout_log_prefix="hired_sword",
+    log_new="new_hireling",
+    log_remove="remove_hireling",
+    log_advance="hireling",
+    loadout_log_prefix="hireling",
     has_no_level_ups=True,
     stat_advances=ALL_STAT_ADVANCES,
 )
-KINDS = (HERO, HENCHMEN, HIRED_SWORD)
+KINDS = (HERO, HENCHMEN, HIRELING)
 
 
 def unit_url(kind: Kind, warband_id: int, unit_id: int | None = None, suffix: str = "") -> str:
@@ -305,7 +305,7 @@ class RosterTestCase(APITestCase):
     def play_battle(self, xp_by_unit_key: dict[str, int]) -> None:
         """Play and finalise a battle of `warband` against `rival` through the API.
 
-        `xp_by_unit_key` maps our unit keys ("hero:<id>", "hired_sword:<id>", "henchman:<id>") to the
+        `xp_by_unit_key` maps our unit keys ("hero:<id>", "hireling:<id>", "henchman:<id>") to the
         XP each earns; every member of a henchmen group must earn the same.
         """
         rival_key = f"hero:{make_unit(HERO, self.rival).id}"

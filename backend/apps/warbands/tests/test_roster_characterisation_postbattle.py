@@ -8,15 +8,15 @@ apps/battles/tests/test_postbattle_xp.py.
 from decimal import Decimal
 from typing import Any
 
-from .roster_support import HENCHMEN, HERO, HIRED_SWORD, RosterTestCase, make_unit
+from .roster_support import HENCHMEN, HERO, HIRELING, RosterTestCase, make_unit
 
 
 class PostbattleXpCharacterisationTests(RosterTestCase):
     def _roster(self, **fields: Any) -> tuple[Any, Any, Any, dict[str, int]]:
         hero = make_unit(HERO, self.warband, **fields)
         group = make_unit(HENCHMEN, self.warband, **fields)
-        sword = make_unit(HIRED_SWORD, self.warband, **fields)
-        keys = [f"hero:{hero.id}", f"hired_sword:{sword.id}"]
+        sword = make_unit(HIRELING, self.warband, **fields)
+        keys = [f"hero:{hero.id}", f"hireling:{sword.id}"]
         keys += [f"henchman:{member_id}" for member_id in group.henchmen.values_list("id", flat=True)]
         return hero, group, sword, dict.fromkeys(keys, 4)
 

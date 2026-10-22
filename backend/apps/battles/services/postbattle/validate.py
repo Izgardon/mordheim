@@ -47,11 +47,11 @@ def check_special_ids(campaign_id: int, unit_results: dict[str, dict]) -> None:
         raise ValueError("One or more selected injury specials are invalid")
 
 
-def upkeep_hired_sword_ids(draft: dict) -> list[int]:
+def upkeep_hireling_ids(draft: dict) -> list[int]:
     ids = []
     for unit_key in draft.get("upkeep", {}).get("entries", {}).keys():
         parsed_unit = parse_unit_key(unit_key)
-        if parsed_unit["unit_type"] == "hired_sword" and parsed_unit["unit_id"] is not None:
+        if parsed_unit["unit_type"] == "hireling" and parsed_unit["unit_id"] is not None:
             ids.append(parsed_unit["unit_id"])
     return ids
 
@@ -63,10 +63,10 @@ def check_draft(
     hero_roll_type: str,
     *,
     resource_found: Callable[[int], bool],
-    hired_sword_ids: Callable[[list[int]], set[int]],
+    hireling_ids: Callable[[list[int]], set[int]],
 ) -> None:
     """Check a normalised draft in the order its refusals have always come in; the warband's exploration resource
-    and hired swords are looked up through `resource_found` and `hired_sword_ids` (ValueError for the first
+    and hired swords are looked up through `resource_found` and `hireling_ids` (ValueError for the first
     problem)."""
     unit_results = draft["unit_results"]
     check_unit_results(participant, unit_results, hero_roll_type)
@@ -74,8 +74,8 @@ def check_draft(
     resource_id = draft["exploration"].get("resource_id")
     if resource_id is not None and not resource_found(resource_id):
         raise ValueError("Selected exploration resource is invalid")
-    sword_ids = upkeep_hired_sword_ids(draft)
-    if sword_ids and len(hired_sword_ids(sword_ids)) != len(set(sword_ids)):
+    sword_ids = upkeep_hireling_ids(draft)
+    if sword_ids and len(hireling_ids(sword_ids)) != len(set(sword_ids)):
         # the warband's own, dismissed or not; one dismissed since is charged nothing (BUG-73)
         raise ValueError("One or more upkeep hired swords are invalid")
 
@@ -92,7 +92,7 @@ def validate_postbattle(battle: Battle, participant: BattleParticipant, raw_draf
         resource_found=lambda resource_id: WarbandResource.objects.filter(
             id=resource_id, warband_id=warband_id
         ).exists(),
-        hired_sword_ids=lambda ids: set(
+        hireling_ids=lambda ids: set(
             Hireling.objects.filter(id__in=ids, warband_id=warband_id).values_list("id", flat=True)
         ),
     )

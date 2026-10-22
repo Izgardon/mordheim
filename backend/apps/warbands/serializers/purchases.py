@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 
-TARGET_TYPES = ("stash", "hero", "hired_sword", "henchmen_group")
+TARGET_TYPES = ("stash", "hero", "hireling", "henchmen_group")
 
 
 class RarityRollSerializer(serializers.Serializer):

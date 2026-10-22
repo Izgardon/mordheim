@@ -4,7 +4,7 @@
 """
 
 from apps.warbands.models import Hireling
-from apps.warbands.units.kinds import HIRED_SWORD
+from apps.warbands.units.kinds import HIRELING
 from apps.warbands.units.serializers import (
     STAT_FIELDS,
     UnitDetailSerializer,
@@ -41,8 +41,8 @@ WRITE_FIELDS = (
 )
 
 
-class HiredSwordSummarySerializer(UnitSummarySerializer):
-    kind = HIRED_SWORD
+class HirelingSummarySerializer(UnitSummarySerializer):
+    kind = HIRELING
 
     class Meta:
         model = Hireling
@@ -76,8 +76,8 @@ class HiredSwordSummarySerializer(UnitSummarySerializer):
         )
 
 
-class HiredSwordDetailSerializer(UnitDetailSerializer):
-    kind = HIRED_SWORD
+class HirelingDetailSerializer(UnitDetailSerializer):
+    kind = HIRELING
 
     class Meta:
         model = Hireling
@@ -115,16 +115,16 @@ class HiredSwordDetailSerializer(UnitDetailSerializer):
         )
 
 
-class HiredSwordCreateSerializer(UnitWriteSerializer):
-    kind = HIRED_SWORD
+class HirelingCreateSerializer(UnitWriteSerializer):
+    kind = HIRELING
 
     class Meta:
         model = Hireling
         fields = WRITE_FIELDS
 
 
-class HiredSwordUpdateSerializer(UnitWriteSerializer):
-    kind = HIRED_SWORD
+class HirelingUpdateSerializer(UnitWriteSerializer):
+    kind = HIRELING
 
     class Meta:
         model = Hireling

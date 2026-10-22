@@ -160,7 +160,7 @@ def _kill_moments(kill: _Kill) -> list[tuple[str, str]]:
     caster_type = str(kill.victim.get("caster_type", "")).strip()
     if kill.victim.get("is_caster") is True and caster_type in {"Wizard", "Priest"}:
         moments.append(("no_fairies", f"{kill.killer_name} brought down caster {kill.victim_name}."))
-    if kill.killer_type in {"hero", "henchman", "hired_sword"} and kill.victim.get("is_large") is True:
+    if kill.killer_type in {"hero", "henchman", "hireling"} and kill.victim.get("is_large") is True:
         moments.append(("giant_slayer", f"{kill.killer_name} slew large target {kill.victim_name}."))
     if kill.killer.get("is_leader") is True and kill.victim.get("is_leader") is True:
         moments.append(("there_can_be_only_one", f"{kill.killer_name} slew the enemy leader {kill.victim_name}."))

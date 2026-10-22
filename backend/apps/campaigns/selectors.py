@@ -287,7 +287,7 @@ def _killer_rows(
 
 KILLER_KINDS = (  # model, kind, name prefix, unit type field, path to the warband
     (Hero, "hero", "Hero ", "unit_type", "warband"),
-    (Hireling, "hired_sword", "Hired Sword ", "unit_type", "warband"),
+    (Hireling, "hireling", "Hired Sword ", "unit_type", "warband"),
     (Henchman, "henchman", "Henchman ", "group__unit_type", "group__warband"),
 )
 

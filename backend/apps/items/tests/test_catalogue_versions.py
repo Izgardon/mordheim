@@ -17,7 +17,7 @@ from apps.core.models import RevertedVersion
 from apps.items.models import Item
 from apps.skills.models import Skill
 from apps.warbands.models import Warband, WarbandItem
-from apps.warbands.tests.roster_support import HENCHMEN, HERO, HIRED_SWORD, make_unit
+from apps.warbands.tests.roster_support import HENCHMEN, HERO, HIRELING, make_unit
 
 from .catalogue_support import BESTIARY, HIRED_SWORDS, ITEMS, RACES, SKILLS, CatalogueTestCase, make_entry
 
@@ -27,7 +27,7 @@ class VersionTestCase(CatalogueTestCase):
         super().setUp()
         self.hero = make_unit(HERO, self.warband, name="Abbess")
         self.group = make_unit(HENCHMEN, self.rival_warband, name="Rats")
-        self.sword_unit = make_unit(HIRED_SWORD, self.rival_warband, name="Ogre")
+        self.sword_unit = make_unit(HIRELING, self.rival_warband, name="Ogre")
         self.beast = make_entry(BESTIARY, "War Boar", campaign=self.campaign)
         self.far = Warband.objects.create(campaign=self.elsewhere, user=self.outsider, name="Far", faction="Skaven")
 

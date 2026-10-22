@@ -29,7 +29,7 @@ def _as_number(value: Any) -> float | int:
 class WarbandUnits:
     heroes: list[dict[str, Any]] = field(default_factory=list)
     henchmen_groups: list[dict[str, Any]] = field(default_factory=list)
-    hired_swords: list[dict[str, Any]] = field(default_factory=list)
+    hirelings: list[dict[str, Any]] = field(default_factory=list)
 
     @property
     def rating(self) -> float | int:
@@ -38,7 +38,7 @@ class WarbandUnits:
             (row["henchmen_count"] or 0) * ((20 if row["large"] else 5) + _as_number(row["xp"]))
             for row in self.henchmen_groups
         )
-        hired_rating = sum((_as_number(row["rating"]) + _as_number(row["xp"])) for row in self.hired_swords)
+        hired_rating = sum((_as_number(row["rating"]) + _as_number(row["xp"])) for row in self.hirelings)
         return hero_rating + henchmen_rating + hired_rating
 
     @property
@@ -47,15 +47,15 @@ class WarbandUnits:
         return len(self.heroes)
 
     @property
-    def hired_sword_count(self) -> int:
+    def hireling_count(self) -> int:
         """Hired swords towards the hired-sword cap: blood-pacted ones don't count (decision 12)."""
-        return sum(1 for row in self.hired_swords if not row["blood_pacted"])
+        return sum(1 for row in self.hirelings if not row["blood_pacted"])
 
     @property
     def unit_count(self) -> int:
         """Warband size (max_units): heroes, living henchmen and blood-pacted hired swords only (decision 12)."""
         henchmen = sum(row["henchmen_count"] or 0 for row in self.henchmen_groups)
-        return self.hero_count + henchmen + sum(1 for row in self.hired_swords if row["blood_pacted"])
+        return self.hero_count + henchmen + sum(1 for row in self.hirelings if row["blood_pacted"])
 
 
 def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
@@ -82,13 +82,13 @@ def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
     for group_row in groups:
         units[group_row["warband_id"]].henchmen_groups.append(dict(group_row))
 
-    hired_swords = (
+    hirelings = (
         on_roster(Hireling.objects.filter(warband_id__in=ids))
         .order_by("id")
         .values("id", "warband_id", "name", "unit_type", "rating", "xp", "blood_pacted")
     )
-    for sword_row in hired_swords:
-        units[sword_row["warband_id"]].hired_swords.append(dict(sword_row))
+    for sword_row in hirelings:
+        units[sword_row["warband_id"]].hirelings.append(dict(sword_row))
 
     return units
 

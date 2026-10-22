@@ -45,7 +45,7 @@ class WarbandsApiTests(APITestCase):
         ItemAvailability.objects.create(item=self.item, cost=35, rarity=8)
 
         self.hero = Hero.objects.create(warband=self.warband, name="Captain Wolf", unit_type="Captain")
-        self.hired_sword = Hireling.objects.create(
+        self.hireling = Hireling.objects.create(
             warband=self.warband,
             name="Ogre Bodyguard",
             unit_type="Ogre",
@@ -162,9 +162,9 @@ class WarbandsApiTests(APITestCase):
             35,
         )
 
-    def test_patch_hired_sword_items_defaults_cost_from_single_availability(self):
+    def test_patch_hireling_items_defaults_cost_from_single_availability(self):
         response = self.client.patch(
-            f"/api/warbands/{self.warband.id}/hired-swords/{self.hired_sword.id}/",
+            f"/api/warbands/{self.warband.id}/hirelings/{self.hireling.id}/",
             {
                 "items": [{"id": self.item.id}],
             },
@@ -174,13 +174,13 @@ class WarbandsApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["items"][0]["cost"], 35)
         self.assertEqual(
-            HirelingItem.objects.get(hireling=self.hired_sword, item=self.item).cost,
+            HirelingItem.objects.get(hireling=self.hireling, item=self.item).cost,
             35,
         )
 
-    def test_create_hired_sword_with_seeded_xp_starts_without_level_ups(self):
+    def test_create_hireling_with_seeded_xp_starts_without_level_ups(self):
         response = self.client.post(
-            f"/api/warbands/{self.warband.id}/hired-swords/",
+            f"/api/warbands/{self.warband.id}/hirelings/",
             {
                 "name": "Warlock",
                 "unit_type": "Caster",
@@ -195,11 +195,11 @@ class WarbandsApiTests(APITestCase):
         created = Hireling.objects.get(id=response.data["id"])
         self.assertEqual(created.level_up, 0)
 
-    def test_create_blood_pacted_hired_sword_ignores_hired_sword_limit(self):
+    def test_create_blood_pacted_hireling_ignores_hireling_limit(self):
         CampaignSettings.objects.create(campaign=self.campaign, max_hired_swords=1)
 
         response = self.client.post(
-            f"/api/warbands/{self.warband.id}/hired-swords/",
+            f"/api/warbands/{self.warband.id}/hirelings/",
             {
                 "name": "Bound Shade",
                 "unit_type": "Daemon",
@@ -211,11 +211,11 @@ class WarbandsApiTests(APITestCase):
         self.assertEqual(response.status_code, 201)
         self.assertTrue(response.data["blood_pacted"])
 
-    def test_create_regular_hired_sword_still_honors_hired_sword_limit(self):
+    def test_create_regular_hireling_still_honors_hireling_limit(self):
         CampaignSettings.objects.create(campaign=self.campaign, max_hired_swords=1)
 
         response = self.client.post(
-            f"/api/warbands/{self.warband.id}/hired-swords/",
+            f"/api/warbands/{self.warband.id}/hirelings/",
             {
                 "name": "Pit Fighter",
                 "unit_type": "Mercenary",
@@ -226,9 +226,9 @@ class WarbandsApiTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data["detail"], "Warband already has 1 hired swords")
 
-    def test_patch_hired_sword_xp_gain_adds_level_ups_for_existing_unit(self):
+    def test_patch_hireling_xp_gain_adds_level_ups_for_existing_unit(self):
         response = self.client.patch(
-            f"/api/warbands/{self.warband.id}/hired-swords/{self.hired_sword.id}/",
+            f"/api/warbands/{self.warband.id}/hirelings/{self.hireling.id}/",
             {
                 "xp": 5,
             },
@@ -237,12 +237,12 @@ class WarbandsApiTests(APITestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["level_up"], 2)
-        self.hired_sword.refresh_from_db()
-        self.assertEqual(self.hired_sword.level_up, 2)
+        self.hireling.refresh_from_db()
+        self.assertEqual(self.hireling.level_up, 2)
 
-    def test_patch_hired_sword_with_explicit_level_up_seed_suppresses_increment(self):
+    def test_patch_hireling_with_explicit_level_up_seed_suppresses_increment(self):
         response = self.client.patch(
-            f"/api/warbands/{self.warband.id}/hired-swords/{self.hired_sword.id}/",
+            f"/api/warbands/{self.warband.id}/hirelings/{self.hireling.id}/",
             {
                 "xp": 5,
                 "level_up": 0,
@@ -252,12 +252,12 @@ class WarbandsApiTests(APITestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["level_up"], 0)
-        self.hired_sword.refresh_from_db()
-        self.assertEqual(self.hired_sword.level_up, 0)
+        self.hireling.refresh_from_db()
+        self.assertEqual(self.hireling.level_up, 0)
 
-    def test_patch_hired_sword_no_level_ups_suppresses_increment(self):
+    def test_patch_hireling_no_level_ups_suppresses_increment(self):
         response = self.client.patch(
-            f"/api/warbands/{self.warband.id}/hired-swords/{self.hired_sword.id}/",
+            f"/api/warbands/{self.warband.id}/hirelings/{self.hireling.id}/",
             {
                 "xp": 5,
                 "no_level_ups": True,
@@ -268,17 +268,17 @@ class WarbandsApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.data["no_level_ups"])
         self.assertEqual(response.data["level_up"], 0)
-        self.hired_sword.refresh_from_db()
-        self.assertTrue(self.hired_sword.no_level_ups)
-        self.assertEqual(self.hired_sword.level_up, 0)
+        self.hireling.refresh_from_db()
+        self.assertTrue(self.hireling.no_level_ups)
+        self.assertEqual(self.hireling.level_up, 0)
 
-    def test_hired_sword_level_up_endpoint_rejects_no_level_ups_units(self):
-        self.hired_sword.level_up = 2
-        self.hired_sword.no_level_ups = True
-        self.hired_sword.save(update_fields=["level_up", "no_level_ups"])
+    def test_hireling_level_up_endpoint_rejects_no_level_ups_units(self):
+        self.hireling.level_up = 2
+        self.hireling.no_level_ups = True
+        self.hireling.save(update_fields=["level_up", "no_level_ups"])
 
         response = self.client.post(
-            f"/api/warbands/{self.warband.id}/hired-swords/{self.hired_sword.id}/level-up/",
+            f"/api/warbands/{self.warband.id}/hirelings/{self.hireling.id}/level-up/",
             {
                 "payload": {
                     "advance": {

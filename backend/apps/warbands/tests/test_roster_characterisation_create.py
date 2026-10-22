@@ -8,7 +8,7 @@ from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling
 from .roster_support import (
     HENCHMEN,
     HERO,
-    HIRED_SWORD,
+    HIRELING,
     KINDS,
     Kind,
     RosterTestCase,
@@ -28,7 +28,7 @@ class RosterCreateCharacterisationTests(RosterTestCase):
         expected_trades = {
             HERO.key: [("Recruit", "Recruit the Trooper", -25, None)],
             HENCHMEN.key: [("Recruit", "Alpha into Recruit", -25, None)],
-            HIRED_SWORD.key: [("Hire", "Recruit the Trooper", -25, None)],
+            HIRELING.key: [("Hire", "Recruit the Trooper", -25, None)],
         }
         expected_logs = {
             HERO.key: [("personnel", "new_hero", recruit, None)],
@@ -36,7 +36,7 @@ class RosterCreateCharacterisationTests(RosterTestCase):
                 ("personnel", "new_henchmen_group", recruit, None),
                 ("personnel", "new_henchman", {"name": "Alpha", "group": "Recruit"}, None),
             ],
-            HIRED_SWORD.key: [("personnel", "new_hired_sword", recruit, None)],
+            HIRELING.key: [("personnel", "new_hireling", recruit, None)],
         }
         for kind in KINDS:
             with self.subTest(kind=kind.key):
@@ -85,7 +85,7 @@ class RosterCreateCharacterisationTests(RosterTestCase):
                 self.assertEqual(log_rows(self.warband)[0][1], kind.log_new)
 
     def test_minimal_payloads(self):
-        minimal: list[tuple[Kind, dict[str, Any]]] = [(HERO, {}), (HIRED_SWORD, {}), (HENCHMEN, {"henchmen": [{}]})]
+        minimal: list[tuple[Kind, dict[str, Any]]] = [(HERO, {}), (HIRELING, {}), (HENCHMEN, {"henchmen": [{}]})]
         for kind, payload in minimal:
             with self.subTest(kind=kind.key):
                 self.warband.logs.all().delete()
@@ -110,7 +110,7 @@ class RosterCreateCharacterisationTests(RosterTestCase):
         cases = {
             HERO.key: [*common, ({"caster": "Necromancer"}, "caster")],
             HENCHMEN.key: common,
-            HIRED_SWORD.key: [*common, ({"caster": "Necromancer"}, "caster")],
+            HIRELING.key: [*common, ({"caster": "Necromancer"}, "caster")],
         }
         for kind in KINDS:
             for overrides, field in cases[kind.key]:
@@ -134,7 +134,7 @@ class RosterCreateCharacterisationTests(RosterTestCase):
 
     def test_seeded_xp_never_mints_level_ups_and_only_heroes_keep_a_seeded_level_up(self):
         # Lad's Got Talent creates the promoted hero with level_up=2; the other kinds force 0.
-        expected = {HERO.key: 2, HENCHMEN.key: 0, HIRED_SWORD.key: 0}
+        expected = {HERO.key: 2, HENCHMEN.key: 0, HIRELING.key: 0}
         for kind in KINDS:
             with self.subTest(kind=kind.key):
                 plain = self.client.post(unit_url(kind, self.warband.id), create_payload(kind, xp=9), format="json")
@@ -256,23 +256,23 @@ class HeroCreateCharacterisationTests(RosterTestCase):
         self.assertEqual((response.status_code, response.json()), (400, cap_error("Warband already has 6 heroes")))
 
 
-class HiredSwordCreateCharacterisationTests(RosterTestCase):
-    def test_cap_counts_living_non_blood_pacted_hired_swords_only(self):
+class HirelingCreateCharacterisationTests(RosterTestCase):
+    def test_cap_counts_living_non_blood_pacted_hirelings_only(self):
         self.campaign_settings.max_hired_swords = 1
         self.campaign_settings.save()
-        make_unit(HIRED_SWORD, self.warband, dead=True)
-        make_unit(HIRED_SWORD, self.warband, blood_pacted=True)
-        url = unit_url(HIRED_SWORD, self.warband.id)
+        make_unit(HIRELING, self.warband, dead=True)
+        make_unit(HIRELING, self.warband, blood_pacted=True)
+        url = unit_url(HIRELING, self.warband.id)
 
-        self.assertEqual(self.client.post(url, create_payload(HIRED_SWORD), format="json").status_code, 201)
-        second = self.client.post(url, create_payload(HIRED_SWORD), format="json")
+        self.assertEqual(self.client.post(url, create_payload(HIRELING), format="json").status_code, 201)
+        second = self.client.post(url, create_payload(HIRELING), format="json")
         expected = cap_error("Warband already has 1 hired swords", "hired_sword_cap_reached")
         self.assertEqual((second.status_code, second.json()), (400, expected))
 
     def test_hire_and_upkeep_fields_are_stored_as_sent(self):
         fields = {"hire_cost_expression": "30+2d6", "upkeep_price": 15, "upkeep_cost_expression": "15", "rating": 22}
         response = self.client.post(
-            unit_url(HIRED_SWORD, self.warband.id), create_payload(HIRED_SWORD, **fields), format="json"
+            unit_url(HIRELING, self.warband.id), create_payload(HIRELING, **fields), format="json"
         )
         body = response.json()
         self.assertEqual({key: body[key] for key in fields}, fields)

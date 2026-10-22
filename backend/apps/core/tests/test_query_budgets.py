@@ -49,18 +49,18 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     "warband_sheet": ("/api/warbands/{warband}/sheet/", 15),  # constant in units (test below); one request for 5
     "warband_heroes": ("/api/warbands/{warband}/heroes/", 4),  # constant in units
     "warband_henchmen": ("/api/warbands/{warband}/henchmen-groups/", 5),  # constant in units
-    "warband_hired_swords": ("/api/warbands/{warband}/hired-swords/", 4),  # constant in units
+    "warband_hirelings": ("/api/warbands/{warband}/hirelings/", 4),  # constant in units
     "warband_hero": ("/api/warbands/{warband}/heroes/{hero}/", 7),
     "warband_henchmen_group": ("/api/warbands/{warband}/henchmen-groups/{group}/", 8),
-    "warband_hired_sword": ("/api/warbands/{warband}/hired-swords/{sword}/", 7),
+    "warband_hireling": ("/api/warbands/{warband}/hirelings/{sword}/", 7),
     "warband_hero_kill_history": ("/api/warbands/{warband}/heroes/{hero}/kill-history/", 4),
     "warband_heroes_detail": ("/api/warbands/{warband}/heroes/detail/", 7),  # constant in units (test below)
     "warband_henchmen_detail": (
         "/api/warbands/{warband}/henchmen-groups/detail/",
         8,
     ),  # constant in units
-    "warband_hired_swords_detail": (
-        "/api/warbands/{warband}/hired-swords/detail/",
+    "warband_hirelings_detail": (
+        "/api/warbands/{warband}/hirelings/detail/",
         7,
     ),  # constant in units
     "warband_items": ("/api/warbands/{warband}/items/", 3),
@@ -93,7 +93,7 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
 WRITE_QUERY_BUDGETS: dict[str, tuple[str, str, dict[str, Any], int]] = {
     "hero_patch_xp": ("patch", "/api/warbands/{warband}/heroes/{hero}/", {"xp": 3}, 11),
     "henchmen_group_patch_xp": ("patch", "/api/warbands/{warband}/henchmen-groups/{group}/", {"xp": 3}, 12),
-    "hired_sword_patch_xp": ("patch", "/api/warbands/{warband}/hired-swords/{sword}/", {"xp": 3}, 11),
+    "hireling_patch_xp": ("patch", "/api/warbands/{warband}/hirelings/{sword}/", {"xp": 3}, 11),
     "hero_level_up": (
         "post",
         "/api/warbands/{warband}/heroes/{hero}/level-up/",
@@ -106,9 +106,9 @@ WRITE_QUERY_BUDGETS: dict[str, tuple[str, str, dict[str, Any], int]] = {
         {"payload": {"advance": {"id": "WS"}}},
         13,
     ),
-    "hired_sword_level_up": (
+    "hireling_level_up": (
         "post",
-        "/api/warbands/{warband}/hired-swords/{sword}/level-up/",
+        "/api/warbands/{warband}/hirelings/{sword}/level-up/",
         {"payload": {"advance": {"id": "WS"}}},
         12,
     ),
@@ -154,10 +154,10 @@ class QueryBudgetTests(TestCase):
             "warband_sheet",
             "warband_heroes",
             "warband_henchmen",
-            "warband_hired_swords",
+            "warband_hirelings",
             "warband_heroes_detail",
             "warband_henchmen_detail",
-            "warband_hired_swords_detail",
+            "warband_hirelings_detail",
         ]
         # Start from a warband that already has restriction-linked items: the first link adds
         # one fixed query (restrictions are only fetched when some exist), which isn't growth.

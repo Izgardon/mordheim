@@ -17,7 +17,7 @@ class PostbattleGuideTests(BattleTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.fixture = build_fixture_warband(self.warband, catalogue_item("Rope", 5))
-        sword = self.fixture.hired_swords[1]
+        sword = self.fixture.hirelings[1]
         sword.no_level_ups = True
         sword.save(update_fields=["no_level_ups"])
         self.rat = self.rival.heroes.create(name="Rat", unit_type="Assassin")
@@ -39,7 +39,7 @@ class PostbattleGuideTests(BattleTestCase):
 
         suggested = self.guide(battle_id)["suggested_postbattle"]
 
-        swords = [f"hired_sword:{sword.id}" for sword in self.fixture.hired_swords]
+        swords = [f"hireling:{sword.id}" for sword in self.fixture.hirelings]
         group_xp = [2, 2, 2, 1, 1, 1, 1, 1]  # the first group shares its member's kill
         # the first hero leads a winning warband: Winning Leader +1 (BATL-NEW-09)
         expected_xp = dict(zip(heroes, [3, 1, 1, 1, 1], strict=True)) | {swords[0]: 1, swords[1]: 0}
@@ -110,7 +110,7 @@ class PostbattleGuideTests(BattleTestCase):
     def test_each_suggestion_says_how_many_level_ups_its_xp_would_earn(self):
         # Counted by the server above each unit's XP high-water mark, with the campaign's tables (the hero table for
         # hired swords), at half rate for a slow learner (the finalise summary's preview)
-        h, swords, groups = self.fixture.heroes, self.fixture.hired_swords, self.fixture.groups
+        h, swords, groups = self.fixture.heroes, self.fixture.hirelings, self.fixture.groups
         for hero, (xp, high_water, half_rate) in zip(h, [(1, 1, False), (1, 3, False), (1, 1, True), (3, 3, False), (0, 0, False)], strict=True):  # fmt: skip
             Hero.objects.filter(id=hero.id).update(xp=xp, xp_high_water=high_water, half_rate=half_rate)
         Hireling.objects.filter(id=swords[0].id).update(xp=1, xp_high_water=1)
@@ -123,10 +123,10 @@ class PostbattleGuideTests(BattleTestCase):
 
         predicted = level_ups()
         self.assertEqual([predicted[f"hero:{hero.id}"] for hero in h], [1, 0, 0, 1, 0])
-        self.assertEqual([predicted[f"hired_sword:{sword.id}"] for sword in swords], [1, 0])  # no level-ups: 0
+        self.assertEqual([predicted[f"hireling:{sword.id}"] for sword in swords], [1, 0])  # no level-ups: 0
         self.assertEqual([predicted[f"henchman:{member.id}"] for member in self.fixture.henchmen], [1, 1, 1, 0, 0, 0, 0, 0])  # fmt: skip
         self.campaign_settings.hero_level_thresholds = [4, 8]
         self.campaign_settings.save()
         predicted = level_ups()
         self.assertEqual([predicted[f"hero:{hero.id}"] for hero in h], [0, 0, 0, 1, 0])
-        self.assertEqual(predicted[f"hired_sword:{swords[0].id}"], 0)
+        self.assertEqual(predicted[f"hireling:{swords[0].id}"], 0)

@@ -347,11 +347,11 @@ class CampaignApiTests(APITestCase):
             faction="Mercenaries",
         )
         hero = Hero.objects.create(warband=warband, name="Captain", unit_type="Leader")
-        hired_sword = Hireling.objects.create(warband=warband, name="Scout", unit_type="Ranger")
+        hireling = Hireling.objects.create(warband=warband, name="Scout", unit_type="Ranger")
         group = HenchmenGroup.objects.create(warband=warband, name="Youngbloods", unit_type="Mercenary")
         WarbandItem.objects.create(warband=warband, item=armour, quantity=2, cost=91)
         HeroItem.objects.create(hero=hero, item=armour, cost=91)
-        HirelingItem.objects.create(hireling=hired_sword, item=armour, cost=91)
+        HirelingItem.objects.create(hireling=hireling, item=armour, cost=91)
         HenchmenGroupItem.objects.create(henchmen_group=group, item=armour, cost=91)
 
         response = self._create_half_price_armour_rule(owner, campaign["id"])
@@ -366,8 +366,8 @@ class CampaignApiTests(APITestCase):
         self.assertEqual(WarbandItem.objects.get(warband=warband).cost, 91)  # what was paid (BUG-51)
         self.assertEqual(HeroItem.objects.get(hero=hero).item_id, clone.id)
         self.assertEqual(HeroItem.objects.get(hero=hero).cost, 91)
-        self.assertEqual(HirelingItem.objects.get(hireling=hired_sword).item_id, clone.id)
-        self.assertEqual(HirelingItem.objects.get(hireling=hired_sword).cost, 91)
+        self.assertEqual(HirelingItem.objects.get(hireling=hireling).item_id, clone.id)
+        self.assertEqual(HirelingItem.objects.get(hireling=hireling).cost, 91)
         self.assertEqual(HenchmenGroupItem.objects.get(henchmen_group=group).item_id, clone.id)
         self.assertEqual(HenchmenGroupItem.objects.get(henchmen_group=group).cost, 91)
 

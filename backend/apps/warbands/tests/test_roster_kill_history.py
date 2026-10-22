@@ -8,9 +8,9 @@ from django.test.utils import CaptureQueriesContext
 from apps.battles.models import Battle, BattleEvent
 from apps.campaigns.models import Campaign
 
-from .roster_support import HENCHMEN, HERO, HIRED_SWORD, Kind, RosterTestCase, make_unit, record_kill, unit_url
+from .roster_support import HENCHMEN, HERO, HIRELING, Kind, RosterTestCase, make_unit, record_kill, unit_url
 
-KILLER_TYPES = ((HERO, "hero"), (HIRED_SWORD, "hired_sword"), (HENCHMEN, "henchman"))
+KILLER_TYPES = ((HERO, "hero"), (HIRELING, "hireling"), (HENCHMEN, "henchman"))
 
 
 class KillHistoryTests(RosterTestCase):

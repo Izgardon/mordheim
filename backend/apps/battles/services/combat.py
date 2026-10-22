@@ -37,7 +37,7 @@ def _blank_unit_payload(unit: dict, warband_id: int | None) -> dict:
 def unit_event_payload(participant: BattleParticipant, unit: dict) -> dict:
     """What a kill event says about one of the participant's units (a parsed unit key)."""
     payload = _blank_unit_payload(unit, participant.warband_id)
-    if unit["unit_type"] in ("hero", "hired_sword"):
+    if unit["unit_type"] in ("hero", "hireling"):
         row: Hero | Hireling | None
         if unit["unit_type"] == "hero":
             row = Hero.objects.filter(id=unit["unit_id"], warband_id=participant.warband_id).first()

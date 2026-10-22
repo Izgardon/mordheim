@@ -32,7 +32,7 @@ STASH = "stash"
 LOG_ENTRY = {
     "hero": "hero_item",
     "henchmen_group": "henchmen_item",
-    "hired_sword": "hired_sword_item",
+    "hireling": "hireling_item",
     STASH: "stash_item",
 }
 

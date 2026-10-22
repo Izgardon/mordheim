@@ -29,7 +29,7 @@ from apps.items.models import Item
 from apps.items.services import HALF_PRICE_ARMOUR_EFFECT_KEY as HALF
 from apps.races.models import Race
 from apps.warbands.models import HenchmenGroup, Hero, Hireling, Warband, WarbandItem, WarbandTrade
-from apps.warbands.tests.roster_support import HENCHMEN, HERO, HIRED_SWORD, make_unit
+from apps.warbands.tests.roster_support import HENCHMEN, HERO, HIRELING, make_unit
 
 from .catalogue_support import (
     BESTIARY,
@@ -55,7 +55,7 @@ class CustomEntryDeleteTests(CatalogueTestCase):
         super().setUp()
         self.hero = make_unit(HERO, self.warband, name="Abbess")
         self.group = make_unit(HENCHMEN, self.rival_warband, name="Rats")
-        self.sword = make_unit(HIRED_SWORD, self.rival_warband, name="Ogre")
+        self.sword = make_unit(HIRELING, self.rival_warband, name="Ogre")
         self.beast = make_entry(BESTIARY, "War Boar", campaign=self.campaign)
 
     def ledger(self) -> list[tuple[int, str, int]]:
@@ -111,7 +111,7 @@ class CustomEntryDeleteTests(CatalogueTestCase):
         skill = make_entry(SKILLS, "Ambush", campaign=self.campaign)
         spell = make_entry(SPELLS, "Gloom", campaign=self.campaign)
         special = make_entry(SPECIALS, "Fearsome", campaign=self.campaign)
-        for unit, kind in ((self.hero, HERO), (self.group, HENCHMEN), (self.sword, HIRED_SWORD)):
+        for unit, kind in ((self.hero, HERO), (self.group, HENCHMEN), (self.sword, HIRELING)):
             getattr(unit, kind.skills).create(skill=skill)
             getattr(unit, kind.specials).create(special=special)
             if kind.spells:
@@ -133,7 +133,7 @@ class CustomEntryDeleteTests(CatalogueTestCase):
                 (200, archived(units=3, warbands=2, stashes=0, bestiary_entries=1)),
             ],
         )
-        for unit, kind in ((self.hero, HERO), (self.group, HENCHMEN), (self.sword, HIRED_SWORD)):
+        for unit, kind in ((self.hero, HERO), (self.group, HENCHMEN), (self.sword, HIRELING)):
             with self.subTest(kind=kind.key):
                 relations = [kind.skills, kind.specials, *([kind.spells] if kind.spells else [])]
                 self.assertEqual([getattr(unit, relation).count() for relation in relations], [1] * len(relations))
@@ -179,7 +179,7 @@ class RaceDeleteTests(CatalogueTestCase):
         self.halfling = make_entry(RACES, "Halfling", campaign=self.campaign)
         self.hero = make_unit(HERO, self.warband, name="Abbess", race=self.human)
         self.group = make_unit(HENCHMEN, self.rival_warband, name="Cooks", race=self.halfling)
-        self.sword = make_unit(HIRED_SWORD, self.warband, name="Scout", race=self.human)
+        self.sword = make_unit(HIRELING, self.warband, name="Scout", race=self.human)
         self.raceless = make_unit(HERO, self.warband, name="Stranger")
 
     def surviving_units(self) -> list[str]:

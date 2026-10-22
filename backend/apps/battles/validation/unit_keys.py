@@ -2,7 +2,7 @@
 
 from typing import Any
 
-UNIT_TYPES = {"hero", "henchman", "hired_sword", "custom", "bestiary"}
+UNIT_TYPES = {"hero", "henchman", "hireling", "custom", "bestiary"}
 TEMPORARY_PREFIXES = ("custom:", "bestiary:")
 
 

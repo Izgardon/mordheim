@@ -88,7 +88,7 @@ class UnitResults:
         self.henchmen = {key: member for key, member in results_henchmen.items() if member.group_id in context.groups}
 
     def apply(self, unit_results: dict[str, dict]) -> UnitOutcome:
-        handlers = {"hero": self._hero, "hired_sword": self._hired_sword, "henchman": self._henchman}
+        handlers = {"hero": self._hero, "hireling": self._hireling, "henchman": self._henchman}
         for unit_key, raw in unit_results.items():
             parsed = parse_unit_key(unit_key)
             handler = handlers.get(parsed["unit_type"])
@@ -148,11 +148,11 @@ class UnitResults:
         ]
         return None
 
-    def _hired_sword(self, result: _Result) -> None:
-        hired_sword = self.context.hired_swords.get(result.unit_id)
-        if not hired_sword or hired_sword.dismissed_at is not None:
+    def _hireling(self, result: _Result) -> None:
+        hireling = self.context.hirelings.get(result.unit_id)
+        if not hireling or hireling.dismissed_at is not None:
             return self._left(result)
-        self._apply_to_unit(hired_sword, result, 0 if hired_sword.no_level_ups else result.xp)
+        self._apply_to_unit(hireling, result, 0 if hireling.no_level_ups else result.xp)
         return None
 
     def _keep_group_stats(self, group: HenchmenGroup, result: _Result) -> None:

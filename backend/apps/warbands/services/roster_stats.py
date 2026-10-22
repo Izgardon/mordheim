@@ -16,7 +16,7 @@ COLUMNS = ("id", "name", "unit_type", *STAT_FIELDS, "armour_save")
 KINDS: tuple[tuple[str, Any], ...] = (
     ("heroes", Hero),
     ("henchmen_groups", HenchmenGroup),
-    ("hired_swords", Hireling),
+    ("hirelings", Hireling),
 )
 
 
@@ -30,7 +30,7 @@ def _rows(kind: str, order: int, model: Any, warband_id: int) -> QuerySet[Any, d
 
 
 def roster_stats(warband_id: int) -> dict[str, list[dict[str, Any]]]:
-    """{"heroes": [...], "henchmen_groups": [...], "hired_swords": [...]}: each unit's id, name, type and stats,
+    """{"heroes": [...], "henchmen_groups": [...], "hirelings": [...]}: each unit's id, name, type and stats,
     oldest first, in one query."""
     parts = [_rows(kind, order, model, warband_id) for order, (kind, model) in enumerate(KINDS)]
     union = parts[0].union(*parts[1:], all=True).order_by("v_order", "v_id")

@@ -66,7 +66,7 @@ def check_draft_against(context: FinaliseContext, draft: dict) -> None:
         context.battle.campaign_id,
         (settings.hero_death_roll if settings else None) or "d66",
         resource_found=lambda resource_id: context.resource_found,
-        hired_sword_ids=lambda ids: {sword_id for sword_id in ids if sword_id in context.hired_swords},
+        hireling_ids=lambda ids: {sword_id for sword_id in ids if sword_id in context.hirelings},
     )
 
 

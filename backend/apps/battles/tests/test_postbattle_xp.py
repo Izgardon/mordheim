@@ -6,7 +6,7 @@ BATL-TEST-01/02 and ROST-TEST-05. The battles are played through the API by
 
 from decimal import Decimal
 
-from apps.warbands.tests.roster_support import HENCHMEN, HERO, HIRED_SWORD, RosterTestCase, make_unit
+from apps.warbands.tests.roster_support import HENCHMEN, HERO, HIRELING, RosterTestCase, make_unit
 
 
 class PostbattleXpTests(RosterTestCase):
@@ -32,16 +32,16 @@ class PostbattleXpTests(RosterTestCase):
         group.refresh_from_db()
         self.assertEqual((hero.level_up, group.level_up), (1, 1))  # default tables: 2, 4, ... and 2, 5, ...
 
-    def test_henchmen_use_their_table_and_hired_swords_the_hero_table(self):
+    def test_henchmen_use_their_table_and_hirelings_the_hero_table(self):
         # BATL-TEST-02: both used to fall back to the default henchmen table (one level-up at 2). Hired
         # swords advance like heroes and ignore the old hired-sword setting (decision 8).
         self.set_thresholds(
             henchmen_level_thresholds=[3], hero_level_thresholds=[1, 2, 3], hired_sword_level_thresholds=[7]
         )
         group = make_unit(HENCHMEN, self.warband, members=("Alpha",))
-        sword = make_unit(HIRED_SWORD, self.warband)
+        sword = make_unit(HIRELING, self.warband)
 
-        self.play_battle({f"henchman:{group.henchmen.get().id}": 3, f"hired_sword:{sword.id}": 3})
+        self.play_battle({f"henchman:{group.henchmen.get().id}": 3, f"hireling:{sword.id}": 3})
 
         group.refresh_from_db()
         sword.refresh_from_db()
@@ -51,9 +51,9 @@ class PostbattleXpTests(RosterTestCase):
         # ROST-TEST-05 and decision 6: an odd award leaves half a point
         hero = make_unit(HERO, self.warband, half_rate=True)
         group = make_unit(HENCHMEN, self.warband, half_rate=True, members=("Alpha",))
-        sword = make_unit(HIRED_SWORD, self.warband, half_rate=True)
+        sword = make_unit(HIRELING, self.warband, half_rate=True)
 
-        self.play_battle({f"hero:{hero.id}": 2, f"henchman:{group.henchmen.get().id}": 3, f"hired_sword:{sword.id}": 2})
+        self.play_battle({f"hero:{hero.id}": 2, f"henchman:{group.henchmen.get().id}": 3, f"hireling:{sword.id}": 2})
 
         for unit in (hero, group, sword):
             unit.refresh_from_db()
@@ -64,9 +64,9 @@ class PostbattleXpTests(RosterTestCase):
         # default tables: heroes 2, 4, ...; henchmen and hired swords 2, 5, ...
         hero = make_unit(HERO, self.warband, half_rate=True, xp=Decimal("1.5"))
         group = make_unit(HENCHMEN, self.warband, half_rate=True, xp=Decimal("4.5"), members=("Alpha",))
-        sword = make_unit(HIRED_SWORD, self.warband, half_rate=True, xp=Decimal("4.0"))
+        sword = make_unit(HIRELING, self.warband, half_rate=True, xp=Decimal("4.0"))
 
-        self.play_battle({f"hero:{hero.id}": 1, f"henchman:{group.henchmen.get().id}": 1, f"hired_sword:{sword.id}": 1})
+        self.play_battle({f"hero:{hero.id}": 1, f"henchman:{group.henchmen.get().id}": 1, f"hireling:{sword.id}": 1})
 
         for unit in (hero, group, sword):
             unit.refresh_from_db()
@@ -76,9 +76,9 @@ class PostbattleXpTests(RosterTestCase):
     def test_no_level_ups_units_still_gain_no_postbattle_xp(self):
         # unchanged by BUG-03: henchmen groups and hired swords flagged no_level_ups keep their XP
         group = make_unit(HENCHMEN, self.warband, no_level_ups=True, members=("Alpha",))
-        sword = make_unit(HIRED_SWORD, self.warband, no_level_ups=True, half_rate=True)
+        sword = make_unit(HIRELING, self.warband, no_level_ups=True, half_rate=True)
 
-        self.play_battle({f"henchman:{group.henchmen.get().id}": 4, f"hired_sword:{sword.id}": 4})
+        self.play_battle({f"henchman:{group.henchmen.get().id}": 4, f"hireling:{sword.id}": 4})
 
         for unit in (group, sword):
             unit.refresh_from_db()

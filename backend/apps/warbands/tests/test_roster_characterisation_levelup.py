@@ -12,7 +12,7 @@ from apps.warbands.units.serializers import UnitLevelUpSerializer
 from .roster_support import (
     HENCHMEN,
     HERO,
-    HIRED_SWORD,
+    HIRELING,
     KINDS,
     STAT_FIELD_BY_ADVANCE,
     Kind,
@@ -114,7 +114,7 @@ class RosterLevelUpCharacterisationTests(RosterTestCase):
                 self.assertEqual((unit.weapon_skill, unit.level_up_history), (3, []))
 
     def test_no_level_ups_flag_blocks_spending_except_for_heroes(self):
-        for kind in (HENCHMEN, HIRED_SWORD):
+        for kind in (HENCHMEN, HIRELING):
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband, level_up=2, no_level_ups=True)
                 response = self._level_up(kind, unit, advance("WS"))
@@ -132,7 +132,7 @@ class RosterLevelUpCharacterisationTests(RosterTestCase):
                     self.assertEqual((unit.level_up, unit.level_up_history), (1, []))
 
     def test_skill_spell_and_special_advances_add_pending_placeholders(self):
-        for kind in (HERO, HIRED_SWORD):
+        for kind in (HERO, HIRELING):
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband, level_up=3)
                 for code in ("Skill", "Spell", "Special"):
@@ -156,7 +156,7 @@ class RosterLevelUpCharacterisationTests(RosterTestCase):
     def test_a_missing_placeholder_is_created_as_a_global_entry(self):
         # BUG-62: a missing "New Skill" or "New Spell" used to spend the level-up and add nothing
         Skill.objects.filter(name="New Skill").delete()
-        for kind in (HERO, HIRED_SWORD):
+        for kind in (HERO, HIRELING):
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband, level_up=1)
                 self.assertEqual(self._level_up(kind, unit, advance("Skill")).status_code, 200)
@@ -168,7 +168,7 @@ class RosterLevelUpCharacterisationTests(RosterTestCase):
     def test_placeholders_never_come_from_another_campaign(self):
         # The Special placeholder used to fall back to any campaign's "New Special" (SEC-07)
         foreign = Special.objects.create(name="New Special", type="Pending", campaign=self.foreign_race.campaign)
-        for kind in (HERO, HIRED_SWORD):
+        for kind in (HERO, HIRELING):
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband, level_up=1)
                 self.assertEqual(self._level_up(kind, unit, advance("Special")).status_code, 200)
@@ -224,7 +224,7 @@ class LevelUpConcurrencyTests(RosterTestCase):
     PAYLOAD_SERIALIZERS = {
         HERO.key: UnitLevelUpSerializer,  # one payload serializer for every kind (PR B)
         HENCHMEN.key: UnitLevelUpSerializer,
-        HIRED_SWORD.key: UnitLevelUpSerializer,
+        HIRELING.key: UnitLevelUpSerializer,
     }
 
     def test_a_level_up_spent_by_another_request_meanwhile_is_a_400(self):

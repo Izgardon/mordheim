@@ -92,7 +92,7 @@ class RosterListCharacterisationTests(RosterTestCase):
 
         body = self.client.get(f"/api/warbands/{self.warband.id}/summary/").json()
 
-        for kind, key in zip(KINDS, ("heroes", "henchmen_groups", "hired_swords"), strict=True):
+        for kind, key in zip(KINDS, ("heroes", "henchmen_groups", "hirelings"), strict=True):
             with self.subTest(kind=kind.key):
                 self.assertEqual([row["id"] for row in body[key]], [living[kind.key].id])
 
@@ -104,7 +104,7 @@ class RosterUrlCharacterisationTests(RosterTestCase):
         for segment, kwarg in (
             ("heroes", "hero_id"),
             ("henchmen-groups", "group_id"),
-            ("hired-swords", "hired_sword_id"),
+            ("hirelings", "hireling_id"),
         ):
             base = f"/api/warbands/{warband}/{segment}/"
             expected[(f"warbands-{segment}", ())] = base

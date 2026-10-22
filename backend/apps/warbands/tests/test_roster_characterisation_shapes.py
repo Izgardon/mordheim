@@ -11,7 +11,7 @@ from typing import Any
 
 from apps.warbands.models import Henchman
 
-from .roster_support import HENCHMEN, HERO, HIRED_SWORD, KINDS, Kind, RosterTestCase, make_unit, unit_url
+from .roster_support import HENCHMEN, HERO, HIRELING, KINDS, Kind, RosterTestCase, make_unit, unit_url
 
 
 def shape(value: Any) -> Any:
@@ -136,7 +136,7 @@ HENCHMEN_DETAIL = {
     "skills": [SKILL_DETAIL],
     "specials": [SPECIAL_DETAIL],
 }
-HIRED_SWORD_SUMMARY = {
+HIRELING_SUMMARY = {
     **IDENTITY,
     "hire_cost_expression": "str",
     "upkeep_price": "int",
@@ -155,8 +155,8 @@ HIRED_SWORD_SUMMARY = {
     "specials": [NAMED],
     "spells": [NAMED],
 }
-HIRED_SWORD_DETAIL = {
-    **HIRED_SWORD_SUMMARY,
+HIRELING_DETAIL = {
+    **HIRELING_SUMMARY,
     "updated_at": "str",
     "race": RACE,
     "kills": "int",
@@ -169,12 +169,12 @@ HIRED_SWORD_DETAIL = {
 SHAPES = {
     HERO.key: (HERO_SUMMARY, HERO_DETAIL),
     HENCHMEN.key: (HENCHMEN_SUMMARY, HENCHMEN_DETAIL),
-    HIRED_SWORD.key: (HIRED_SWORD_SUMMARY, HIRED_SWORD_DETAIL),
+    HIRELING.key: (HIRELING_SUMMARY, HIRELING_DETAIL),
 }
 KIND_FIELDS: dict[str, dict[str, Any]] = {
     HERO.key: {"kills": 2, "is_leader": True},
     HENCHMEN.key: {},
-    HIRED_SWORD.key: {"kills": 1, "upkeep_price": 15, "hire_cost_expression": "30", "upkeep_cost_expression": "15"},
+    HIRELING.key: {"kills": 1, "upkeep_price": 15, "hire_cost_expression": "30", "upkeep_cost_expression": "15"},
 }
 
 
@@ -264,7 +264,7 @@ class RosterShapeCharacterisationTests(RosterTestCase):
         keys: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {
             HERO.key: (HERO_SUMMARY, HERO_DETAIL),
             HENCHMEN.key: (HENCHMEN_SUMMARY, HENCHMEN_DETAIL),
-            HIRED_SWORD.key: (HIRED_SWORD_SUMMARY, HIRED_SWORD_DETAIL),
+            HIRELING.key: (HIRELING_SUMMARY, HIRELING_DETAIL),
         }
         for kind in KINDS:
             with self.subTest(kind=kind.key):

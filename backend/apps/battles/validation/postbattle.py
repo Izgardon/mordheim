@@ -107,7 +107,7 @@ def _upkeep(raw: dict) -> dict[str, Any]:
         if not isinstance(unit_key, str) or not unit_key.strip():
             raise ValueError("postbattle upkeep entry keys must be strings")
         parsed_unit = parse_unit_key(unit_key)
-        if parsed_unit["unit_type"] != "hired_sword":
+        if parsed_unit["unit_type"] != "hireling":
             continue
         if not isinstance(entry, dict):
             raise ValueError("Each postbattle upkeep entry must be an object")

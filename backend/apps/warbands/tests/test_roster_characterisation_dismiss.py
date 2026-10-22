@@ -8,7 +8,7 @@ from apps.warbands.models import Henchman, Hero, WarbandItem
 from .roster_support import (
     HENCHMEN,
     HERO,
-    HIRED_SWORD,
+    HIRELING,
     KINDS,
     Kind,
     RosterTestCase,
@@ -19,7 +19,7 @@ from .roster_support import (
     unit_url,
 )
 
-KILLER_TYPE = {HERO.key: "hero", HENCHMEN.key: "henchman", HIRED_SWORD.key: "hired_sword"}
+KILLER_TYPE = {HERO.key: "hero", HENCHMEN.key: "henchman", HIRELING.key: "hireling"}
 
 
 class RosterDismissCharacterisationTests(RosterTestCase):
@@ -37,7 +37,7 @@ class RosterDismissCharacterisationTests(RosterTestCase):
         expected_logs = {
             HERO.key: [("personnel", "remove_hero", {"name": "Bert", "type": "Trooper"}, None)],
             HENCHMEN.key: [("personnel", "remove_henchmen_group", {"name": "Bert", "type": "Trooper"}, None)],
-            HIRED_SWORD.key: [("personnel", "remove_hired_sword", {"name": "Bert", "type": "Trooper"}, None)],
+            HIRELING.key: [("personnel", "remove_hireling", {"name": "Bert", "type": "Trooper"}, None)],
         }
         WarbandItem.objects.create(warband=self.warband, item=self.axe, quantity=1)
         self.warband.trades.create(action="Recruit", description="Bert the Trooper", price=-25)
@@ -64,7 +64,7 @@ class RosterDismissCharacterisationTests(RosterTestCase):
         expected = {
             HERO.key: {"name": "Unknown Hero", "type": "Unknown Type"},
             HENCHMEN.key: {"name": "Unknown", "type": "Unknown"},
-            HIRED_SWORD.key: {"name": "Unknown Hired Sword", "type": "Unknown Type"},
+            HIRELING.key: {"name": "Unknown Hired Sword", "type": "Unknown Type"},
         }
         for kind in KINDS:
             with self.subTest(kind=kind.key):
@@ -140,7 +140,7 @@ class RosterKillHistoryCharacterisationTests(RosterTestCase):
                 record_kill(tower, killer, killer_ids[0], {"name": "Ghost", "warband_id": 999999})
                 record_kill(tower, killer, killer_ids[0], {"name": "Odd", "warband_id": "abc"})
                 record_kill(tower, killer, 999999, {"name": "Elsewhere", "warband_id": self.rival.id})
-                other_type = "hero" if kind is not HERO else "hired_sword"
+                other_type = "hero" if kind is not HERO else "hireling"
                 record_kill(tower, other_type, killer_ids[0], {"name": "Mixup", "warband_id": self.rival.id})
 
                 response = self._history(kind, unit.id)

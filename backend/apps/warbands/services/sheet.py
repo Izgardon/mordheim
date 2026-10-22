@@ -14,7 +14,7 @@ from apps.warbands.models import Warband
 from apps.warbands.prefetches import item_detail_prefetches
 from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandSerializer, WarbandSummarySerializer
 from apps.warbands.services.summary import WarbandUnits, load_warband_units
-from apps.warbands.units.kinds import HENCHMEN_GROUP, HERO, HIRED_SWORD, KINDS
+from apps.warbands.units.kinds import HENCHMEN_GROUP, HERO, HIRELING, KINDS
 
 
 def _summary_units(rosters: dict[str, list[Any]]) -> WarbandUnits:
@@ -43,7 +43,7 @@ def _summary_units(rosters: dict[str, list[Any]]) -> WarbandUnits:
             }
             for g in rosters[HENCHMEN_GROUP.key]
         ],
-        hired_swords=[
+        hirelings=[
             {
                 "id": s.id,
                 "warband_id": s.warband_id,
@@ -53,7 +53,7 @@ def _summary_units(rosters: dict[str, list[Any]]) -> WarbandUnits:
                 "blood_pacted": s.blood_pacted,
                 "xp": s.xp,
             }
-            for s in rosters[HIRED_SWORD.key]
+            for s in rosters[HIRELING.key]
         ],
     )
 

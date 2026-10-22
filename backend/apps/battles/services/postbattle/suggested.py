@@ -78,9 +78,9 @@ def _group_results(groups: list[dict], selected: set[str], kills: dict[str, int]
     return results
 
 
-def _upkeep(hired_swords: list[dict]) -> dict[str, dict]:
+def _upkeep(hirelings: list[dict]) -> dict[str, dict]:
     entries = {}
-    for sword in hired_swords:
+    for sword in hirelings:
         price = sword.get("upkeepPrice")
         cost = max(0, int(price)) if isinstance(price, int | float) and not isinstance(price, bool) else None
         entries[sword["key"]] = {"unit_name": sword.get("displayName"), "cost": cost}
@@ -101,7 +101,7 @@ def suggested_postbattle(battle: Battle, participant: BattleParticipant, kill_pa
     selected = selected_unit_keys(participant)
     kills = _xp_kills(kill_payloads, participant.warband_id)
     heroes = [hero for hero in roster.get("heroes", []) if hero.get("key") in selected]
-    swords = [sword for sword in roster.get("hiredSwords", []) if sword.get("key") in selected]
+    swords = [sword for sword in roster.get("hirelings", []) if sword.get("key") in selected]
     winner = won(battle, participant)
     unit_results = _hero_results(heroes, kills, winner)
     for sword in swords:
@@ -116,7 +116,7 @@ def suggested_postbattle(battle: Battle, participant: BattleParticipant, kill_pa
     return {
         "unit_results": unit_results,
         "exploration": {"dice_count": max(0, min(MAX_EXPLORATION_DICE, len(in_action) + int(winner)))},
-        "upkeep": {"entries": _upkeep(roster.get("hiredSwords", []))},
+        "upkeep": {"entries": _upkeep(roster.get("hirelings", []))},
     }
 
 

@@ -15,7 +15,7 @@ from apps.warbands.models import Henchman, Hero, WarbandLog, WarbandTrade
 from .roster_support import (
     HENCHMEN,
     HERO,
-    HIRED_SWORD,
+    HIRELING,
     KINDS,
     Kind,
     RosterTestCase,
@@ -141,8 +141,8 @@ class RosterBatchTests(RosterTestCase):
         self.assertEqual(prices, [-20, -15, -15])  # Beta at the group's hire cost, two Rats at their price
 
     def test_dead_units_can_be_dismissed_like_delete_allows(self):
-        dead = make_unit(HIRED_SWORD, self.warband, dead=True)
-        self.assertEqual(self._batch(HIRED_SWORD, {"dismiss": [dead.id]}).status_code, 200)
+        dead = make_unit(HIRELING, self.warband, dead=True)
+        self.assertEqual(self._batch(HIRELING, {"dismiss": [dead.id]}).status_code, 200)
         self.assertIsNotNone(type(dead).objects.get(id=dead.id).dismissed_at)
 
     def test_malformed_bodies_are_400s_in_the_standard_shape(self):

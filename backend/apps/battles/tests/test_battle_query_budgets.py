@@ -165,7 +165,7 @@ class BattleQueryBudgetTests(BattleTestCase):
         self.finish(battle_id, [self.warband])
         results = {key: unit_result(key, xp=1) for key in self.fixture.keys}
         results[f"hero:{self.fixture.heroes[4].id}"]["dead"] = True
-        sword = f"hired_sword:{self.fixture.hired_swords[0].id}"
+        sword = f"hireling:{self.fixture.hirelings[0].id}"
         return battle_id, draft(
             results,
             exploration={"dice_values": [3, 4], "resource_id": resource.id},

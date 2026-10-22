@@ -9,7 +9,7 @@ from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.services.prices import sale_price
 from apps.warbands.services.resources import MAX_AMOUNT
 from apps.warbands.services.summary import WarbandUnits, load_warband_units
-from apps.warbands.units.kinds import HERO, HIRED_SWORD
+from apps.warbands.units.kinds import HERO, HIRELING
 from apps.warbands.units.services.create import cap_limit
 
 HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
@@ -59,12 +59,12 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
     rating = serializers.SerializerMethodField()
     gold = serializers.SerializerMethodField()
     heroes = serializers.SerializerMethodField()
-    hired_swords = serializers.SerializerMethodField()
+    hirelings = serializers.SerializerMethodField()
     henchmen_groups = serializers.SerializerMethodField()
     unit_count = serializers.SerializerMethodField()
     hero_count = serializers.SerializerMethodField()
     max_heroes = serializers.SerializerMethodField()
-    hired_sword_count = serializers.SerializerMethodField()
+    hireling_count = serializers.SerializerMethodField()
     max_hired_swords = serializers.SerializerMethodField()
 
     def _units(self, obj) -> WarbandUnits:
@@ -92,8 +92,8 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
     def get_heroes(self, obj):
         return WarbandUnitSummarySerializer(self._units(obj).heroes, many=True).data
 
-    def get_hired_swords(self, obj):
-        return WarbandUnitSummarySerializer(self._units(obj).hired_swords, many=True).data
+    def get_hirelings(self, obj):
+        return WarbandUnitSummarySerializer(self._units(obj).hirelings, many=True).data
 
     def get_henchmen_groups(self, obj):
         groups = self._units(obj).henchmen_groups
@@ -109,11 +109,11 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
     def get_max_heroes(self, obj) -> int | None:
         return cap_limit(HERO, obj)
 
-    def get_hired_sword_count(self, obj) -> int:
-        return self._units(obj).hired_sword_count
+    def get_hireling_count(self, obj) -> int:
+        return self._units(obj).hireling_count
 
     def get_max_hired_swords(self, obj) -> int | None:
-        return cap_limit(HIRED_SWORD, obj)
+        return cap_limit(HIRELING, obj)
 
     class Meta:
         model = Warband
@@ -122,13 +122,13 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
             "rating",
             "gold",
             "heroes",
-            "hired_swords",
+            "hirelings",
             "henchmen_groups",
             "unit_count",
             "max_units",
             "hero_count",
             "max_heroes",
-            "hired_sword_count",
+            "hireling_count",
             "max_hired_swords",
         )
 
@@ -250,10 +250,10 @@ class WarbandItemSummarySerializer(serializers.Serializer):
 
 
 class WarbandItemTransferSerializer(serializers.Serializer):
-    source_type = serializers.ChoiceField(choices=("hero", "hired_sword", "henchmen_group", "stash"))
+    source_type = serializers.ChoiceField(choices=("hero", "hireling", "henchmen_group", "stash"))
     source_id = serializers.IntegerField(required=False, allow_null=True)
     cost = serializers.IntegerField(required=False, allow_null=True)  # from the stash: only copies of this cost
-    target_type = serializers.ChoiceField(choices=("hero", "hired_sword", "henchmen_group", "stash"))
+    target_type = serializers.ChoiceField(choices=("hero", "hireling", "henchmen_group", "stash"))
     target_id = serializers.IntegerField(required=False, allow_null=True)
     item_id = serializers.IntegerField()
     quantity = serializers.IntegerField(min_value=1)
@@ -278,7 +278,7 @@ class WarbandItemTransferSerializer(serializers.Serializer):
 
 
 class WarbandItemSaleSerializer(serializers.Serializer):
-    source_type = serializers.ChoiceField(choices=("hero", "hired_sword", "henchmen_group", "stash"))
+    source_type = serializers.ChoiceField(choices=("hero", "hireling", "henchmen_group", "stash"))
     source_id = serializers.IntegerField(required=False, allow_null=True)
     cost = serializers.IntegerField(required=False, allow_null=True)  # from the stash: only copies of this cost
     item_id = serializers.IntegerField()

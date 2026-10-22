@@ -52,14 +52,14 @@ def upkeep_entry(context: FinaliseContext, upkeep: dict) -> ledger.Entry | None:
         return None
     total, lines = 0, []
     for unit_key, entry in upkeep.get("entries", {}).items():
-        hired_sword = context.hired_swords.get(parse_unit_key(unit_key)["unit_id"])
-        if hired_sword is None or hired_sword.dead or hired_sword.dismissed_at is not None:  # left the roster
+        hireling = context.hirelings.get(parse_unit_key(unit_key)["unit_id"])
+        if hireling is None or hireling.dead or hireling.dismissed_at is not None:  # left the roster
             continue
         if entry.get("cost") is None:
             continue
         cost = coerce_int(entry.get("cost"), field_name="postbattle upkeep cost", minimum=0, maximum=999999)
         total += cost
-        lines.append(f"{(entry.get('unit_name') or hired_sword.name or unit_key)[:120]}: {cost} gc")
+        lines.append(f"{(entry.get('unit_name') or hireling.name or unit_key)[:120]}: {cost} gc")
     if total <= 0:
         return None
     return ledger.Entry(context.warband, LedgerAction.UPKEEP, -total, "Post-battle upkeep", notes="\n".join(lines))

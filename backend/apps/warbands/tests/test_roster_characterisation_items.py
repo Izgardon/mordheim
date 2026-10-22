@@ -15,7 +15,7 @@ from apps.warbands.services import ledger
 from .roster_support import (
     HENCHMEN,
     HERO,
-    HIRED_SWORD,
+    HIRELING,
     KINDS,
     ItemMoveHelpers,
     RosterTestCase,
@@ -32,7 +32,7 @@ RESPONSE_KEYS = ["summary", "source", "target", "stash_item", "removed_stash_ite
 SWORD_SALE = {"current_price": 10, "suggested_sale_price": 5, "sale_price_basis": "campaign_price"}
 AXE_SALE = {"current_price": 5, "suggested_sale_price": 3, "sale_price_basis": "campaign_price"}
 # the other kind each kind hands an item to in the cross-kind test
-OTHER_KIND = {HERO.key: HENCHMEN, HENCHMEN.key: HIRED_SWORD, HIRED_SWORD.key: HERO}
+OTHER_KIND = {HERO.key: HENCHMEN, HENCHMEN.key: HIRELING, HIRELING.key: HERO}
 
 
 class RosterItemTransferCharacterisationTests(ItemMoveHelpers, RosterTestCase):

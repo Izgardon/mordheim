@@ -8,7 +8,7 @@ name things as the screen shows them, so the log reads the same after a unit is 
 - discarded: {item, quantity}
 - completed: {partner, sent: {gold, items: [{item, quantity}]}, received: {gold, items: [...]}}
 
-`*_type` is "stash", "hero", "hired_sword" or "henchmen_group"; `*_name` is the unit's name (None for the stash).
+`*_type` is "stash", "hero", "hireling" or "henchmen_group"; `*_name` is the unit's name (None for the stash).
 
 The client may log only what the server can't see (`CLIENT_LOG_ENTRIES`), with a size cap.
 """

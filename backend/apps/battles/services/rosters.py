@@ -86,23 +86,23 @@ def hero_entry(hero: Hero) -> dict:
     }
 
 
-def hired_sword_entry(hired_sword: Hireling) -> dict:
-    items = _item_entries(hired_sword.hireling_items.all())
+def hireling_entry(hireling: Hireling) -> dict:
+    items = _item_entries(hireling.hireling_items.all())
     return {
-        "key": f"hired_sword:{hired_sword.id}",
-        "id": hired_sword.id,
-        "kind": "hired_sword",
-        "displayName": hired_sword.name or f"Hired Sword {hired_sword.id}",
-        "unitType": hired_sword.unit_type or "Hired Sword",
-        "stats": _stats(hired_sword),
-        "upkeepPrice": hired_sword.upkeep_price,
-        "upkeepCostExpression": hired_sword.upkeep_cost_expression,
-        "noLevelUps": bool(hired_sword.no_level_ups),
+        "key": f"hireling:{hireling.id}",
+        "id": hireling.id,
+        "kind": "hireling",
+        "displayName": hireling.name or f"Hired Sword {hireling.id}",
+        "unitType": hireling.unit_type or "Hired Sword",
+        "stats": _stats(hireling),
+        "upkeepPrice": hireling.upkeep_price,
+        "upkeepCostExpression": hireling.upkeep_cost_expression,
+        "noLevelUps": bool(hireling.no_level_ups),
         "items": items,
         "singleUseItems": _single_use(items),
-        "skills": _named(hired_sword.hireling_skills.all(), "skill"),
-        "spells": _spells(hired_sword.hireling_spells.all()),
-        "specials": _named(hired_sword.hireling_specials.all(), "special"),
+        "skills": _named(hireling.hireling_skills.all(), "skill"),
+        "spells": _spells(hireling.hireling_spells.all()),
+        "specials": _named(hireling.hireling_specials.all(), "special"),
     }
 
 
@@ -146,7 +146,7 @@ def _live_rosters(warband_ids: list[int]) -> tuple[defaultdict, defaultdict, def
     heroes = on_roster(Hero.objects.filter(warband_id__in=warband_ids)).prefetch_related(
         "hero_items__item", "hero_skills__skill", "hero_specials__special", "hero_spells__spell"
     )
-    hired_swords = on_roster(Hireling.objects.filter(warband_id__in=warband_ids)).prefetch_related(
+    hirelings = on_roster(Hireling.objects.filter(warband_id__in=warband_ids)).prefetch_related(
         "hireling_items__item",
         "hireling_skills__skill",
         "hireling_specials__special",
@@ -161,7 +161,7 @@ def _live_rosters(warband_ids: list[int]) -> tuple[defaultdict, defaultdict, def
     )
     return (
         _by_warband(heroes.order_by("warband_id", "id"), hero_entry),
-        _by_warband(hired_swords.order_by("warband_id", "id"), hired_sword_entry),
+        _by_warband(hirelings.order_by("warband_id", "id"), hireling_entry),
         _by_warband(groups.order_by("warband_id", "id"), henchmen_group_entry),
     )
 
@@ -174,11 +174,11 @@ def battle_rosters_payload(battle_id: int) -> dict:
     warband_ids = [participant.warband_id for participant in participants]
     if not warband_ids:
         return {}
-    heroes, hired_swords, groups = _live_rosters(warband_ids)
+    heroes, hirelings, groups = _live_rosters(warband_ids)
     return {
         str(participant.user_id): {
             "heroes": heroes[participant.warband_id],
-            "hiredSwords": hired_swords[participant.warband_id],
+            "hirelings": hirelings[participant.warband_id],
             "henchmenGroups": groups[participant.warband_id],
         }
         for participant in participants

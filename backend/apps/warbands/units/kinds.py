@@ -44,7 +44,7 @@ from apps.warbands.utils.hero_level import count_new_level_ups
 
 from .hooks import HenchmenHooks, LeaderHooks, UnitHooks
 
-UnitKindKey = Literal["hero", "henchmen_group", "hired_sword"]  # also the item-transfer source/target types
+UnitKindKey = Literal["hero", "henchmen_group", "hireling"]  # also the item-transfer source/target types
 
 # Level-up advance code -> stat field.
 STAT_FIELD_BY_ADVANCE: Mapping[str, str] = {
@@ -171,7 +171,7 @@ class UnitKindSpec:
         return self.with_loadout(self.objects.select_related("race"), detail=True)
 
 
-def _counted_hired_swords(units: QuerySet[Any]) -> QuerySet[Any]:
+def _counted_hirelings(units: QuerySet[Any]) -> QuerySet[Any]:
     """Blood-pacted hired swords don't count towards the hired-sword cap, nor do dead or dismissed ones."""
     return on_roster(units).filter(blood_pacted=False)
 
@@ -230,38 +230,38 @@ HENCHMEN_GROUP = UnitKindSpec(
     hooks=HenchmenHooks(),
 )
 
-HIRED_SWORD = UnitKindSpec(
-    key="hired_sword",
-    url_segment="hired-swords",
-    url_kwarg="hired_sword_id",
-    collection="hired_swords",
+HIRELING = UnitKindSpec(
+    key="hireling",
+    url_segment="hirelings",
+    url_kwarg="hireling_id",
+    collection="hirelings",
     model=Hireling,
     parent_field="hireling",
     items=LinkSpec("hireling_items", HirelingItem, "item", "items"),
-    skills=LinkSpec("hireling_skills", HirelingSkill, "skill", "skill_ids", log_entry="hired_sword_skill"),
-    specials=LinkSpec("hireling_specials", HirelingSpecial, "special", "special_ids", log_entry="hired_sword_special"),
-    spells=LinkSpec("hireling_spells", HirelingSpell, "spell", "spell_ids", log_entry="hired_sword_spell"),
+    skills=LinkSpec("hireling_skills", HirelingSkill, "skill", "skill_ids", log_entry="hireling_skill"),
+    specials=LinkSpec("hireling_specials", HirelingSpecial, "special", "special_ids", log_entry="hireling_special"),
+    spells=LinkSpec("hireling_spells", HirelingSpell, "spell", "spell_ids", log_entry="hireling_spell"),
     has_members=False,
     thresholds_setting="hero_level_thresholds",  # hired swords advance like heroes (decision 8)
     count_level_ups=count_new_level_ups,
     has_no_level_ups=True,
     stat_advances=STAT_FIELD_BY_ADVANCE,
     placeholder_advances=True,
-    advance_log_type="hired_sword",
+    advance_log_type="hireling",
     caster_traits=True,
     can_lead=False,
-    recruit=RecruitSpec(LedgerAction.HIRE, "new_hired_sword", "remove_hired_sword"),
+    recruit=RecruitSpec(LedgerAction.HIRE, "new_hireling", "remove_hireling"),
     cap=CapSpec(
         "max_hired_swords",
         3,
         "hired swords",
         "hired_sword_cap_reached",
-        counted=_counted_hired_swords,
+        counted=_counted_hirelings,
         exempt=lambda data: bool(data.get("blood_pacted", False)),
     ),
     unknown_name="Unknown Hired Sword",
     unknown_type="Unknown Type",
 )
 
-KINDS: Mapping[UnitKindKey, UnitKindSpec] = {kind.key: kind for kind in (HERO, HENCHMEN_GROUP, HIRED_SWORD)}
+KINDS: Mapping[UnitKindKey, UnitKindSpec] = {kind.key: kind for kind in (HERO, HENCHMEN_GROUP, HIRELING)}
 KIND_BY_MODEL: Mapping[type[RosterUnit], UnitKindSpec] = {kind.model: kind for kind in KINDS.values()}

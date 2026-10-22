@@ -10,7 +10,7 @@ from apps.warbands.models import Henchman, Hero
 from .roster_support import (
     HENCHMEN,
     HERO,
-    HIRED_SWORD,
+    HIRELING,
     KINDS,
     Kind,
     RosterTestCase,
@@ -125,7 +125,7 @@ class RosterUpdateCharacterisationTests(RosterTestCase):
                 self.assertEqual(related_ids(unit, kind.skills, "skill"), [])
                 self.assertEqual(related_ids(unit, kind.specials, "special"), [])
 
-    def test_added_skills_specials_and_spells_are_logged_for_heroes_and_hired_swords_only(self):
+    def test_added_skills_specials_and_spells_are_logged_for_heroes_and_hirelings_only(self):
         for kind in KINDS:
             with self.subTest(kind=kind.key):
                 self.warband.logs.all().delete()
@@ -201,7 +201,7 @@ class RosterUpdateCharacterisationTests(RosterTestCase):
                 self.assertEqual(related_ids(unit, kind.specials, "special"), [self.specials[0].id])
 
     def test_caster_alone_swaps_the_caster_special(self):
-        for kind in (HERO, HIRED_SWORD):
+        for kind in (HERO, HIRELING):
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband)
                 self.assertEqual(self._patch(kind, unit, {"caster": "Wizard"}).status_code, 200)

@@ -49,7 +49,7 @@ class MixedLedgerGoldTests(RosterTestCase):
         sale = {"source_type": "stash", "item_id": self.sword.id, "quantity": 1, "price": 15}
         self._post("item-sales/", sale, status=200)
         self._post("heroes/", {"name": "Ana", "unit_type": "Champion", "price": 30})
-        self._post("hired-swords/", {"name": "Ogre", "unit_type": "Ogre", "price": 60})
+        self._post("hirelings/", {"name": "Ogre", "unit_type": "Ogre", "price": 60})
         # two henchmen recruited together: a Group header with a Recruit child each (20 apiece)
         self._post(
             "henchmen-groups/",

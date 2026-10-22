@@ -8,7 +8,7 @@ an item's animal and favourites. A campaign entry that merely shares the name, o
 
 from apps.bestiary.models import BestiaryEntry, WarbandBestiaryFavourite
 from apps.warbands.models import Hireling, WarbandItem
-from apps.warbands.tests.roster_support import HERO, HIRED_SWORD, create_payload, make_unit, unit_url
+from apps.warbands.tests.roster_support import HERO, HIRELING, create_payload, make_unit, unit_url
 
 from .catalogue_support import BESTIARY, ITEMS, RACES, SKILLS, SPECIALS, SPELLS, CatalogueTestCase, make_entry
 
@@ -25,7 +25,7 @@ class WriteResolutionTests(CatalogueTestCase):
 
     def test_a_hire_preset_of_book_ids_hires_with_the_campaigns_versions(self):
         payload = create_payload(
-            HIRED_SWORD,
+            HIRELING,
             race=self.human.id,
             skill_ids=[self.infiltration[2].id, self.skill.id],  # a stale list and a fresh one: the skill once
             special_ids=[self.large.id],
@@ -33,7 +33,7 @@ class WriteResolutionTests(CatalogueTestCase):
             items=[{"id": self.book_sword.id}],
         )
 
-        response = self.client.post(unit_url(HIRED_SWORD, self.warband.id), payload, format="json")
+        response = self.client.post(unit_url(HIRELING, self.warband.id), payload, format="json")
 
         self.assertEqual(response.status_code, 201, response.data)
         unit = Hireling.objects.get(id=response.data["id"])
