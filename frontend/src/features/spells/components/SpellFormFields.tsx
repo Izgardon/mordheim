@@ -37,6 +37,7 @@ export default function SpellFormFields({ layout, form }: SpellFormFieldsProps) 
       value={form.values.name}
       onChange={(value) => form.setValue("name", value)}
       error={form.fieldErrors.name}
+      nameTaken={form.nameTaken}
       placeholder="Fireball"
       required={isDialog}
     />

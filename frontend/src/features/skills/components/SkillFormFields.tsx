@@ -33,6 +33,7 @@ export default function SkillFormFields({ layout, form, idSuffix = "" }: SkillFo
         value={form.values.name}
         onChange={form.setName}
         error={form.fieldErrors.name}
+        nameTaken={form.nameTaken}
         placeholder="Quick Hands"
         required={isDialog}
       />

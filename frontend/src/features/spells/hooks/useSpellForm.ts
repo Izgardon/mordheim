@@ -2,10 +2,11 @@ import { useCallback, useState } from "react";
 
 import { useCatalogueTypeField } from "@/features/catalogue/hooks/useCatalogueTypeField";
 import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
+import { useNameTakenMatches } from "@/features/catalogue/hooks/useNameTakenMatches";
 import { useCatalogueRevert } from "@/features/catalogue/hooks/useCatalogueRevert";
 import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
-import { useFieldErrors } from "@/lib/field-errors";
+import { useFieldErrors, type NameMatch } from "@/lib/field-errors";
 
 import { createSpell, deleteSpell, updateSpell } from "../api/spells-api";
 
@@ -46,6 +47,8 @@ type UseSpellFormOptions = {
   onSaved: (spell: Spell) => void;
   /** After a delete, the spell already gone from the cached list. */
   onDeleted?: (spellId: number) => void;
+  /** Opens the edit form on an entry a taken name collided with ("Edit this instead"). */
+  onEditMatch?: (match: NameMatch) => void;
   /** After a Revert, the book's spell already in the version's place in the cached list. */
   onReverted?: (spell: Spell) => void;
 };
@@ -65,12 +68,19 @@ export function useSpellForm({
   onSaved,
   onDeleted,
   onReverted,
+  onEditMatch,
 }: UseSpellFormOptions) {
   const catalogueCache = useCatalogueCache();
   const [values, setValues] = useState(() => valuesOf(spell));
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const fieldErrors = useFieldErrors(["name"], resetKey);
+  const nameTaken = useNameTakenMatches({
+    kind: "spells",
+    campaignId,
+    fieldErrors,
+    onEditMatch,
+  });
   const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete spell");
   const revert = useCatalogueRevert({ kind: "spells", campaignId, entry: spell, onReverted });
   const typeField = useCatalogueTypeField({
@@ -160,6 +170,7 @@ export function useSpellForm({
       setValues((prev) => ({ ...prev, [field]: value })),
     typeField,
     fieldErrors: fieldErrors.errors,
+    nameTaken,
     isSaving,
     formError,
     deleteConfirm,

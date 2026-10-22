@@ -31,6 +31,7 @@ export default function SpecialFormFields({ layout, form }: SpecialFormFieldsPro
         value={form.values.name}
         onChange={(value) => form.setValue("name", value)}
         error={form.fieldErrors.name}
+        nameTaken={form.nameTaken}
         placeholder="Blessing"
         required={isDialog}
       />

@@ -176,6 +176,10 @@ export default function Items() {
               onCancel={editor.close}
               editingItem={editor.editing}
               canDelete={capabilities.delete_catalogue}
+              onEditMatch={(match) => {
+                const entry = items.find((listed) => listed.id === match.id);
+                if (entry) editor.edit(entry);
+              }}
             />
           </div>
         )}

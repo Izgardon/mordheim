@@ -126,6 +126,10 @@ export default function Spells() {
               typeOptions={filters.typeOptions}
               editingSpell={editor.editing}
               canDelete={capabilities.delete_catalogue}
+              onEditMatch={(match) => {
+                const entry = spells.find((listed) => listed.id === match.id);
+                if (entry) editor.edit(entry);
+              }}
             />
           </div>
         )}

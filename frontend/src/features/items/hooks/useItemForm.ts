@@ -3,10 +3,11 @@ import { useCallback, useState } from "react";
 import type { StatLabel } from "@/features/catalogue/utils/statblock";
 import { blankItemStatblock } from "@/features/catalogue/utils/statblock";
 import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
+import { useNameTakenMatches } from "@/features/catalogue/hooks/useNameTakenMatches";
 import { useCatalogueRevert } from "@/features/catalogue/hooks/useCatalogueRevert";
 import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
-import { useFieldErrors } from "@/lib/field-errors";
+import { useFieldErrors, type NameMatch } from "@/lib/field-errors";
 
 import { createItem, deleteItem, updateItem } from "../api/items-api";
 import { ITEM_FIELDS } from "../utils/item-form-fields";
@@ -42,6 +43,8 @@ type UseItemFormOptions = {
   onSaved: (item: Item) => void;
   /** After a delete, the item already gone from the cached list. */
   onDeleted?: (itemId: number) => void;
+  /** Opens the edit form on an entry a taken name collided with ("Edit this instead"). */
+  onEditMatch?: (match: NameMatch) => void;
   /** After a Revert, the book's item already in the version's place in the cached list. */
   onReverted?: (item: Item) => void;
 };
@@ -61,6 +64,7 @@ export function useItemForm({
   onSaved,
   onDeleted,
   onReverted,
+  onEditMatch,
 }: UseItemFormOptions) {
   const catalogueCache = useCatalogueCache();
   const [values, setValues] = useState<ItemFormValues>(() => itemValuesOf(item));
@@ -68,6 +72,12 @@ export function useItemForm({
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const fieldErrors = useFieldErrors(ITEM_FIELDS, resetKey);
+  const nameTaken = useNameTakenMatches({
+    kind: "items",
+    campaignId,
+    fieldErrors,
+    onEditMatch,
+  });
   const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete item");
   const revert = useCatalogueRevert({ kind: "items", campaignId, entry: item, onReverted });
   const properties = useItemPropertyPicker({
@@ -169,6 +179,7 @@ export function useItemForm({
     setShowFluff,
     properties,
     fieldErrors: fieldErrors.errors,
+    nameTaken,
     rowError: (index: number, field: "cost" | "rarity") =>
       fieldErrors.errors[`availabilities.${index}.${field}`],
     isSaving,

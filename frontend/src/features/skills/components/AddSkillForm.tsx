@@ -5,6 +5,7 @@ import { CatalogueInlineForm } from "@/features/catalogue/components/CatalogueIn
 import { useSkillForm } from "../hooks/useSkillForm";
 import SkillFormFields from "./SkillFormFields";
 
+import type { NameMatch } from "@/lib/field-errors";
 import type { Skill } from "../types/skill-types";
 
 type AddSkillFormProps = {
@@ -16,6 +17,8 @@ type AddSkillFormProps = {
   typeOptions?: string[];
   editingSkill?: Skill | null;
   canDelete?: boolean;
+  /** Opens this form on an entry a taken name collided with ("Edit this instead"). */
+  onEditMatch?: (match: NameMatch) => void;
 };
 
 /** The Skills page's Add skill and Edit form. */
@@ -28,6 +31,7 @@ export default function AddSkillForm({
   typeOptions = [],
   editingSkill,
   canDelete = false,
+  onEditMatch,
 }: AddSkillFormProps) {
   const skill = editingSkill ?? null;
   const form = useSkillForm({
@@ -38,6 +42,7 @@ export default function AddSkillForm({
     onSaved: (saved) => (skill ? onUpdated?.(saved) : onCreated(saved)),
     onDeleted,
     onReverted: (reverted: Skill) => onUpdated?.(reverted),
+    onEditMatch,
   });
   const { load } = form;
 

@@ -1,5 +1,5 @@
 /**
- * What the skill forms do with a taken name (backend PR A, 400 `duplicate_entry`): the message
+ * What the skill forms do with a taken name (backend PR C, 400 `name_taken`): the message
  * shows on the name field, and the form stays open, on create and on a rename.
  */
 import { screen, within } from "@testing-library/react";
@@ -8,7 +8,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { quickHands } from "@/test/catalogue-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
-import { duplicateEntry, expectFieldError } from "@/test/refusals";
+import { nameMatch, nameTaken, expectFieldError } from "@/test/refusals";
 import { setupUser } from "@/test/user-event";
 import AddSkillForm from "./AddSkillForm";
 import SkillFormDialog from "./SkillFormDialog";
@@ -18,7 +18,9 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
 }));
 
-const taken = duplicateEntry("a skill with this name and type");
+const taken = nameTaken("Strike to Injure", [
+  nameMatch({ id: 205, name: "Strike to Injure", type: "Combat" }),
+]);
 
 beforeEach(() => {
   fakeApi.reset();
@@ -45,7 +47,7 @@ describe("AddSkillForm: a taken name", () => {
     await user.type(name, "Strike to Injure");
     await user.click(screen.getByRole("button", { name: "Save changes" }));
 
-    await expectFieldError(name, taken.detail);
+    await expectFieldError(name, taken.detail, { describedBy: true });
     expect(screen.getByRole("button", { name: "Save changes" })).toBeVisible();
     expect(onUpdated).not.toHaveBeenCalled();
   });
@@ -72,7 +74,9 @@ describe("SkillFormDialog: a taken name", () => {
     await user.type(within(dialog).getByLabelText("Description"), "Fast.");
     await user.click(within(dialog).getByRole("button", { name: "Add skill" }));
 
-    await expectFieldError(within(dialog).getByLabelText("Name"), taken.detail);
+    await expectFieldError(within(dialog).getByLabelText("Name"), taken.detail, {
+      describedBy: true,
+    });
     expect(screen.getByRole("dialog", { name: "Add Skill" })).toBeVisible();
   });
 });

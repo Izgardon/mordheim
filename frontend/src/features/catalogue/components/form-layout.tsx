@@ -5,6 +5,9 @@ import { Input } from "@components/input";
 import { Label } from "@components/label";
 import { cn } from "@/lib/utils";
 
+import { NameTakenMatches } from "./NameTakenMatches";
+import type { NameTakenState } from "../hooks/useNameTakenMatches";
+
 /**
  * Where a catalogue form sits: inline on its catalogue page (small captions in a grid), or in a
  * dialog on the warband pages (stacked fields whose labels name their inputs).
@@ -64,23 +67,33 @@ type CatalogueNameFieldProps = {
   id: string;
   value: string;
   onChange: (value: string) => void;
-  /** The server's refusal of the name (e.g. 400 `duplicate_entry`). */
+  /** The server's refusal of the name (400 `name_taken`). */
   error?: string;
+  /** A taken name's matches, with "Edit this instead" and Restore (CAT-TWEAK-02). */
+  nameTaken?: NameTakenState;
   placeholder: string;
   required?: boolean;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, "id" | "value" | "onChange" | "placeholder">;
 
-/** A catalogue entry's Name, with its refusal under it. */
+/**
+ * A catalogue entry's Name, with its refusal under it, named as the input's description, and a
+ * taken name's matches.
+ */
 export function CatalogueNameField({
   layout,
   id,
   value,
   onChange,
   error,
+  nameTaken,
   placeholder,
   required,
   ...inputProps
 }: CatalogueNameFieldProps) {
+  const errorId = `${id}-error`;
+  const matchesId = `${id}-matches`;
+  const hasMatches = Boolean(nameTaken && nameTaken.matches.length > 0);
+  const describedBy = [error ? errorId : "", hasMatches ? matchesId : ""].filter(Boolean);
   return (
     <CatalogueField layout={layout} label="Name" htmlFor={id}>
       <Input
@@ -88,11 +101,13 @@ export function CatalogueNameField({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         aria-invalid={Boolean(error)}
+        aria-describedby={describedBy.length > 0 ? describedBy.join(" ") : undefined}
         placeholder={placeholder}
         required={required}
         {...inputProps}
       />
-      <FieldError message={error} />
+      <FieldError id={errorId} message={error} />
+      {nameTaken ? <NameTakenMatches id={matchesId} nameTaken={nameTaken} /> : null}
     </CatalogueField>
   );
 }

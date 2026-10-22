@@ -2,10 +2,11 @@ import { useCallback, useState } from "react";
 
 import { useCatalogueTypeField } from "@/features/catalogue/hooks/useCatalogueTypeField";
 import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
+import { useNameTakenMatches } from "@/features/catalogue/hooks/useNameTakenMatches";
 import { useCatalogueRevert } from "@/features/catalogue/hooks/useCatalogueRevert";
 import { useCatalogueDeleteConfirm } from "@/lib/catalogue-delete";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
-import { useFieldErrors } from "@/lib/field-errors";
+import { useFieldErrors, type NameMatch } from "@/lib/field-errors";
 
 import { createSkill, deleteSkill, updateSkill } from "../api/skills-api";
 
@@ -36,6 +37,8 @@ type UseSkillFormOptions = {
   onSaved: (skill: Skill) => void;
   /** After a delete, the skill already gone from the cached list. */
   onDeleted?: (skillId: number) => void;
+  /** Opens the edit form on an entry a taken name collided with ("Edit this instead"). */
+  onEditMatch?: (match: NameMatch) => void;
   /** After a Revert, the book's skill already in the version's place in the cached list. */
   onReverted?: (skill: Skill) => void;
 };
@@ -53,12 +56,19 @@ export function useSkillForm({
   onSaved,
   onDeleted,
   onReverted,
+  onEditMatch,
 }: UseSkillFormOptions) {
   const catalogueCache = useCatalogueCache();
   const [values, setValues] = useState(() => valuesOf(skill));
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const fieldErrors = useFieldErrors(["name"], resetKey);
+  const nameTaken = useNameTakenMatches({
+    kind: "skills",
+    campaignId,
+    fieldErrors,
+    onEditMatch,
+  });
   const deleteConfirm = useCatalogueDeleteConfirm("Unable to delete skill");
   const revert = useCatalogueRevert({ kind: "skills", campaignId, entry: skill, onReverted });
   const typeField = useCatalogueTypeField({
@@ -140,6 +150,7 @@ export function useSkillForm({
     setDescription: (description: string) => setValues((prev) => ({ ...prev, description })),
     typeField,
     fieldErrors: fieldErrors.errors,
+    nameTaken,
     isSaving,
     formError,
     deleteConfirm,

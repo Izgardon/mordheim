@@ -1,10 +1,10 @@
-/** A taken race name (backend PR A, 400 `duplicate_entry`) shows on the name field. */
+/** A taken race name (backend PR C, 400 `name_taken`) shows on the name field. */
 import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
-import { duplicateEntry, expectFieldError } from "@/test/refusals";
+import { nameMatch, nameTaken, expectFieldError } from "@/test/refusals";
 import { setupUser } from "@/test/user-event";
 import CreateRaceDialog from "./CreateRaceDialog";
 
@@ -13,7 +13,7 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
 }));
 
-const taken = duplicateEntry("a race with this name");
+const taken = nameTaken("Ogre", [nameMatch({ kind: "races", id: 12, name: "Ogre" })]);
 
 beforeEach(() => {
   fakeApi.reset();
@@ -31,7 +31,9 @@ describe("CreateRaceDialog: a taken name", () => {
     await user.type(within(dialog).getByPlaceholderText("Human"), "Ogre");
     await user.click(within(dialog).getByRole("button", { name: "Add race" }));
 
-    await expectFieldError(within(dialog).getByPlaceholderText("Human"), taken.detail);
+    await expectFieldError(within(dialog).getByPlaceholderText("Human"), taken.detail, {
+      describedBy: true,
+    });
     expect(screen.getByRole("dialog")).toBeVisible();
     expect(onCreated).not.toHaveBeenCalled();
   });

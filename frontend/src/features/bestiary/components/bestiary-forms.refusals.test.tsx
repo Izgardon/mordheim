@@ -1,6 +1,6 @@
 /**
  * What the bestiary pages' Add dialogs do with the server's refusals (backend PR A): a taken
- * name (400 `duplicate_entry`; entries and hired swords share names) shows on the name field, a
+ * name (400 `name_taken`; entries and hired swords share names) shows on the name field, a
  * refused hire or upkeep cost on its field, and the dialog stays open.
  */
 import { screen } from "@testing-library/react";
@@ -9,7 +9,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { routeCatalogue } from "@/test/catalogue-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
-import { duplicateEntry, expectFieldError, validationError } from "@/test/refusals";
+import { nameMatch, nameTaken, expectFieldError, validationError } from "@/test/refusals";
 import { setupUser } from "@/test/user-event";
 import BestiaryEntryFormDialog from "./BestiaryEntryFormDialog";
 import HiredSwordProfileFormDialog from "./HiredSwordProfileFormDialog";
@@ -19,7 +19,9 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
 }));
 
-const taken = duplicateEntry("a bestiary entry or hired sword with this name");
+const taken = nameTaken("Sewer Rat", [
+  nameMatch({ kind: "bestiary", id: 90, name: "Sewer Rat", type: "Attack", source: "campaign" }),
+]);
 
 beforeEach(() => {
   fakeApi.reset();

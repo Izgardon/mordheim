@@ -30,6 +30,18 @@ export function bookCampaign(entry: Entry | null | undefined, campaignId: number
 }
 
 /**
+ * `POST <kind>/:id/restore/`: an archived entry, or a book entry removed for the campaign, is back
+ * in the campaign's lists (CAT-TWEAK-04, CAT-NEW-05). The answer is the entry.
+ */
+export function restoreEntry<T>(kind: CatalogueEntryKind, entry: Entry, campaignId: number) {
+  const body = bookCampaign(entry, campaignId);
+  return apiRequest<T>(entryPath(kind, entry, "restore"), {
+    method: "POST",
+    body: "campaign_id" in body ? body : undefined,
+  });
+}
+
+/**
  * `POST <kind>/:id/revert/`: the campaign's version goes and its copies go back to the book entry,
  * keeping what was paid (CAT-TWEAK-01). The answer is the campaign's entry for the book entry now:
  * the book's own, or a house rule's new clone.

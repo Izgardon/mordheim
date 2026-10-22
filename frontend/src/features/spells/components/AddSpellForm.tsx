@@ -5,6 +5,7 @@ import { CatalogueInlineForm } from "@/features/catalogue/components/CatalogueIn
 import { useSpellForm } from "../hooks/useSpellForm";
 import SpellFormFields from "./SpellFormFields";
 
+import type { NameMatch } from "@/lib/field-errors";
 import type { Spell } from "../types/spell-types";
 
 type AddSpellFormProps = {
@@ -16,6 +17,8 @@ type AddSpellFormProps = {
   typeOptions?: string[];
   editingSpell?: Spell | null;
   canDelete?: boolean;
+  /** Opens this form on an entry a taken name collided with ("Edit this instead"). */
+  onEditMatch?: (match: NameMatch) => void;
 };
 
 /** The Spells page's Add spell and Edit form. */
@@ -28,6 +31,7 @@ export default function AddSpellForm({
   typeOptions = [],
   editingSpell,
   canDelete = false,
+  onEditMatch,
 }: AddSpellFormProps) {
   const spell = editingSpell ?? null;
   const form = useSpellForm({
@@ -38,6 +42,7 @@ export default function AddSpellForm({
     onSaved: (saved) => (spell ? onUpdated?.(saved) : onCreated(saved)),
     onDeleted,
     onReverted: (reverted: Spell) => onUpdated?.(reverted),
+    onEditMatch,
   });
   const { load } = form;
 

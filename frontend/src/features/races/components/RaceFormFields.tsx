@@ -23,6 +23,7 @@ export default function RaceFormFields({ form }: { form: RaceFormState }) {
         value={form.values.name}
         onChange={form.setName}
         error={form.fieldErrors.name}
+        nameTaken={form.nameTaken}
         placeholder="Human"
         onFocus={selectAll}
         onClick={selectAll}

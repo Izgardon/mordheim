@@ -130,6 +130,10 @@ export default function Skills() {
               typeOptions={filters.typeOptions}
               editingSkill={editor.editing}
               canDelete={capabilities.delete_catalogue}
+              onEditMatch={(match) => {
+                const entry = skills.find((listed) => listed.id === match.id);
+                if (entry) editor.edit(entry);
+              }}
             />
           </div>
         )}

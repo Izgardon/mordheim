@@ -1,5 +1,5 @@
 /**
- * What the spell forms do with a taken name (backend PR A, 400 `duplicate_entry`): the message
+ * What the spell forms do with a taken name (backend PR C, 400 `name_taken`): the message
  * shows on the name field, and the form stays open.
  */
 import { screen, within } from "@testing-library/react";
@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
-import { duplicateEntry, expectFieldError } from "@/test/refusals";
+import { nameMatch, nameTaken, expectFieldError } from "@/test/refusals";
 import { setupUser } from "@/test/user-event";
 import AddSpellForm from "./AddSpellForm";
 import CreateSpellDialog from "./CreateSpellDialog";
@@ -17,7 +17,15 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
 }));
 
-const taken = duplicateEntry("a spell with this name and type");
+const taken = nameTaken("Gutter Hex", [
+  nameMatch({
+    kind: "spells",
+    id: 950,
+    name: "Gutter Hex",
+    type: "Lesser Magic",
+    source: "campaign",
+  }),
+]);
 
 beforeEach(() => {
   fakeApi.reset();
@@ -43,7 +51,9 @@ describe("AddSpellForm: a taken name", () => {
     await user.type(screen.getByPlaceholderText("Describe the spell."), "Again.");
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    await expectFieldError(screen.getByPlaceholderText("Fireball"), taken.detail);
+    await expectFieldError(screen.getByPlaceholderText("Fireball"), taken.detail, {
+      describedBy: true,
+    });
     expect(screen.getByRole("button", { name: "Save" })).toBeVisible();
     expect(onCreated).not.toHaveBeenCalled();
   });
@@ -64,7 +74,9 @@ describe("CreateSpellDialog: a taken name", () => {
     await user.type(within(dialog).getByPlaceholderText("Describe the spell."), "Again.");
     await user.click(within(dialog).getByRole("button", { name: "Add spell" }));
 
-    await expectFieldError(within(dialog).getByPlaceholderText("Fireball"), taken.detail);
+    await expectFieldError(within(dialog).getByPlaceholderText("Fireball"), taken.detail, {
+      describedBy: true,
+    });
     expect(screen.getByRole("dialog")).toBeVisible();
   });
 });

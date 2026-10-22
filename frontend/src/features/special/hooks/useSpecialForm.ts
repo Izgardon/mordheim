@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { useCatalogueTypeField } from "@/features/catalogue/hooks/useCatalogueTypeField";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
 import { useFieldErrors } from "@/lib/field-errors";
+import { useNameTakenMatches } from "@/features/catalogue/hooks/useNameTakenMatches";
 
 import { createSpecial } from "../api/special-api";
 
@@ -42,6 +43,11 @@ export function useSpecialForm({
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const fieldErrors = useFieldErrors(["name"], resetKey);
+  const nameTaken = useNameTakenMatches({
+    kind: "specials",
+    campaignId,
+    fieldErrors,
+  });
   const typeField = useCatalogueTypeField({
     value: values.type,
     onChange: (type, typeCommitted) => setValues((prev) => ({ ...prev, type, typeCommitted })),
@@ -96,6 +102,7 @@ export function useSpecialForm({
       setValues((prev) => ({ ...prev, [field]: value })),
     typeField,
     fieldErrors: fieldErrors.errors,
+    nameTaken,
     isSaving,
     formError,
     save,

@@ -58,6 +58,7 @@ export default function ItemFormFields({ layout, form, idSuffix = "" }: ItemForm
       value={values.name}
       onChange={(value) => form.setValue("name", value)}
       error={form.fieldErrors.name}
+      nameTaken={form.nameTaken}
       placeholder="Gutterblade"
     />
   );

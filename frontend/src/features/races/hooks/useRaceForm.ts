@@ -7,6 +7,7 @@ import {
   type StatKey,
 } from "@/features/catalogue/utils/statblock";
 import { useFieldErrors } from "@/lib/field-errors";
+import { useNameTakenMatches } from "@/features/catalogue/hooks/useNameTakenMatches";
 
 import { createRace } from "../api/races-api";
 
@@ -40,6 +41,11 @@ export function useRaceForm({ campaignId, resetKey, onSaved }: UseRaceFormOption
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const fieldErrors = useFieldErrors(["name"], resetKey);
+  const nameTaken = useNameTakenMatches({
+    kind: "races",
+    campaignId,
+    fieldErrors,
+  });
 
   const save = async (after?: () => void) => {
     if (Number.isNaN(campaignId)) {
@@ -90,6 +96,7 @@ export function useRaceForm({ campaignId, resetKey, onSaved }: UseRaceFormOption
     setStat: (key: StatKey, value: string) =>
       setValues((prev) => ({ ...prev, stats: { ...prev.stats, [key]: value } })),
     fieldErrors: fieldErrors.errors,
+    nameTaken,
     isSaving,
     formError,
     save,

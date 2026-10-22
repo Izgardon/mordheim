@@ -1,13 +1,22 @@
 import { describe, expect, it } from "vitest";
 
 import { ApiError } from "./api-client";
-import { fieldErrorsOf, formRefusal } from "./field-errors";
+import { fieldErrorsOf, formRefusal, nameMatchesOf } from "./field-errors";
 
-const DUPLICATE = "This campaign already has a skill with this name and type.";
+const DUPLICATE = "Infiltration is already in the catalogue. Edit one instead.";
+const MATCH = {
+  kind: "skills",
+  id: 1,
+  name: "Infiltration",
+  type: "Dark Elf",
+  source: "book",
+  archived: false,
+};
 const duplicate = new ApiError(DUPLICATE, 400, {
   detail: DUPLICATE,
-  code: "duplicate_entry",
+  code: "name_taken",
   fields: { name: [DUPLICATE] },
+  matches: [MATCH],
 });
 const nested = new ApiError("Invalid", 400, {
   availabilities: [{ cost: ["Ensure this value is greater than or equal to 0."] }, {}],
@@ -29,6 +38,19 @@ describe("fieldErrorsOf", () => {
   it("reads nothing from a refusal that isn't a 400", () => {
     expect(fieldErrorsOf(new ApiError("Forbidden", 403, { detail: "Forbidden" }))).toEqual({});
     expect(fieldErrorsOf(new Error("offline"))).toEqual({});
+  });
+});
+
+describe("nameMatchesOf", () => {
+  it("reads a name_taken refusal's matches, and none from anything else", () => {
+    expect(nameMatchesOf(duplicate)).toEqual([MATCH]);
+    expect(nameMatchesOf(nested)).toEqual([]);
+    expect(nameMatchesOf(new Error("offline"))).toEqual([]);
+  });
+
+  it("keeps the matches out of the field messages", () => {
+    const bare = new ApiError(DUPLICATE, 400, { name: [DUPLICATE], matches: [MATCH] });
+    expect(fieldErrorsOf(bare)).toEqual({ name: DUPLICATE });
   });
 });
 
