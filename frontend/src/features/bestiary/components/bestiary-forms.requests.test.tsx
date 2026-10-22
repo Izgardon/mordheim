@@ -142,8 +142,8 @@ describe("BestiaryEntryFormDialog: create", () => {
 });
 
 describe("HiredSwordProfileFormDialog: create", () => {
-  // Characterises current behaviour (CAT-UX-02, BUG-53, pinned; flips in PR C)
-  it("POSTs the entry, costs and skill lists with no grade, race, rating or restrictions, then marks both lists stale (CAT-UX-02, pinned; flips in PR C)", async () => {
+  // Characterises current behaviour (CAT-UX-02, BUG-53, pinned; left for the bestiary rewrite)
+  it("POSTs the entry, costs and skill lists with no grade, race, rating or restrictions, then marks both lists stale (CAT-UX-02, pinned; left for the bestiary rewrite)", async () => {
     const user = setupUser();
     const queryClient = clientWithLists();
     renderWithQueryClient(

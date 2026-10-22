@@ -69,8 +69,8 @@ beforeEach(() => {
 });
 
 describe("detail panels", () => {
-  // Characterises current behaviour (CAT-UX-02, CAT-NEW-01, pinned; flips in PR C)
-  it("offers only Back on the campaign's own bestiary entry, to an owner holding edit_catalogue (CAT-UX-02, pinned; flips in PR C)", async () => {
+  // Characterises current behaviour (CAT-UX-02, CAT-NEW-01, pinned; left for the bestiary rewrite)
+  it("offers only Back on the campaign's own bestiary entry, to an owner holding edit_catalogue (CAT-UX-02, pinned; left for the bestiary rewrite)", async () => {
     renderCatalogueRoute("/campaigns/1/bestiary?entry=90");
 
     expect(await screen.findByRole("heading", { name: "Sewer Rat" })).toBeVisible();
@@ -78,8 +78,8 @@ describe("detail panels", () => {
     expect(panelButtons("Sewer Rat")).toEqual(["Back"]);
   });
 
-  // Characterises current behaviour (CAT-UX-02, CAT-NEW-01, pinned; flips in PR C)
-  it("offers only Back on the campaign's own hired sword, with its hire and upkeep (CAT-UX-02, pinned; flips in PR C)", async () => {
+  // Characterises current behaviour (CAT-UX-02, CAT-NEW-01, pinned; left for the bestiary rewrite)
+  it("offers only Back on the campaign's own hired sword, with its hire and upkeep (CAT-UX-02, pinned; left for the bestiary rewrite)", async () => {
     renderCatalogueRoute("/campaigns/1/hired-swords?profile=40");
 
     expect(await screen.findByRole("heading", { name: "Pit Fighter" })).toBeVisible();
