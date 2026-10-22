@@ -1,10 +1,5 @@
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import update_last_login
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.core.exceptions import ValidationError
-from django.db.models import Q
-from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from typing import Any
+
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -37,36 +32,25 @@ from .serializers import (
     UserSerializer,
     password_problems,
 )
-from .services.accounts import change_password, rename, set_new_password, sign_out_others
+from .services.accounts import (
+    change_password,
+    rename,
+    reset_link_for,
+    set_new_password,
+    sign_in,
+    sign_out_others,
+    user_for_reset_link,
+)
 from .services.tokens import SessionTokenRefreshSerializer, issue_tokens
 
-
-def _get_user_by_email(email):
-    """The active user with this email, whole: the reset token reads last_login and the password, and loading them
-    here keeps a known address at the one query an unknown one costs (BUG-153)."""
-    user_model = get_user_model()
-    return user_model.objects.filter(Q(email__iexact=email) | Q(username__iexact=email), is_active=True).first()
+RESET_SENT = "If an account exists for that email, a reset link has been sent."
+RESET_LINK_INVALID = "Invalid or expired token."
 
 
-def _get_user_from_uid(uid):
-    """The active user a reset link's uid names, or None. A uid that decodes to something other than an id (letters,
-    or nothing) is refused like any other bad link, as Django's own reset view does (BUG-83)."""
-    user_model = get_user_model()
-    try:
-        user_id = force_str(urlsafe_base64_decode(uid))
-        return user_model.objects.filter(pk=user_id, is_active=True).first()
-    except (TypeError, ValueError, OverflowError, ValidationError):
-        return None
-
-
-def _build_reset_url(uid, token):
-    """The link in the reset email. uid and token ride in the fragment, which browsers never send to a server, so
-    they stay out of access logs; the page strips it once read (SEC-12)."""
-    from django.conf import settings
-
-    base = settings.FRONTEND_URL.rstrip("/")
-    reset_path = "/reset-password"
-    return f"{base}{reset_path}#uid={uid}&token={token}"
+def signed_in(user: Any, tokens: dict[str, str], http_status: int = 200) -> Response:
+    """A pair for this device beside the user as `/me` answers it: sign-up, sign-in, a password change and signing out
+    everywhere else all answer this, so the app needn't ask `/me` (PERF-50)."""
+    return Response({**tokens, "user": UserSerializer(user).data}, status=http_status)
 
 
 class RegisterView(generics.CreateAPIView):
@@ -78,7 +62,7 @@ class RegisterView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        return Response({**issue_tokens(user), "user": UserSerializer(user).data}, status=201)
+        return signed_in(user, issue_tokens(user), http_status=201)
 
 
 class LoginView(APIView):
@@ -90,9 +74,7 @@ class LoginView(APIView):
         serializer = LoginSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
-        update_last_login(type(user), user)  # reset tokens hash last_login: a sign-in spends old links (BUG-154)
-        # The user beside the pair, as register answers, so the app needn't ask /auth/me (PERF-50)
-        return Response({**issue_tokens(user), "user": UserSerializer(user).data})
+        return signed_in(user, sign_in(user))
 
 
 class RefreshView(TokenRefreshView):
@@ -121,19 +103,15 @@ class PasswordResetRequestView(APIView):
     def post(self, request):
         serializer = PasswordResetRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        email = serializer.validated_data["email"]
         if not password_reset_email_available():  # the same answer for every address, before any lookup (BUG-56)
             body = {"detail": RESET_EMAIL_UNAVAILABLE, "code": "email_unavailable", "fields": {}}
             return Response(body, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-        user = _get_user_by_email(email)
-        if user:
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-            token = PasswordResetTokenGenerator().make_token(user)
-            reset_url = _build_reset_url(uid, token)
-            send_password_reset_email(user.email or email, reset_url)
-
-        return Response({"detail": "If an account exists for that email, a reset link has been sent."})
+        link = reset_link_for(serializer.validated_data["email"])
+        if link is not None:
+            to_email, reset_url = link
+            send_password_reset_email(to_email, reset_url)
+        return Response({"detail": RESET_SENT})
 
 
 class PasswordResetConfirmView(APIView):
@@ -143,18 +121,16 @@ class PasswordResetConfirmView(APIView):
     def post(self, request):
         serializer = PasswordResetConfirmSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        uid = serializer.validated_data["uid"]
-        token = serializer.validated_data["token"]
-        new_password = serializer.validated_data["new_password"]
+        data = serializer.validated_data
 
-        user = _get_user_from_uid(uid)
-        if not user or not PasswordResetTokenGenerator().check_token(user, token):
-            return Response({"detail": "Invalid or expired token."}, status=400)
-        problems = password_problems(new_password, user)
+        user = user_for_reset_link(data["uid"], data["token"])
+        if user is None:
+            return Response({"detail": RESET_LINK_INVALID}, status=400)
+        problems = password_problems(data["new_password"], user)  # once the link is good: checked against the user
         if problems:
             return Response({"new_password": problems}, status=400)
 
-        set_new_password(user, new_password)  # ends every session too (SEC-05)
+        set_new_password(user, data["new_password"])  # ends every session too (SEC-05)
         return Response({"detail": "Password has been reset."})
 
 
@@ -168,8 +144,7 @@ class PasswordChangeView(APIView):
     def post(self, request):
         serializer = PasswordChangeSerializer(data=request.data, context={"user": request.user})
         serializer.is_valid(raise_exception=True)
-        tokens = change_password(request.user, serializer.validated_data["new_password"])
-        return Response({**tokens, "user": UserSerializer(request.user).data})
+        return signed_in(request.user, change_password(request.user, serializer.validated_data["new_password"]))
 
 
 class SignOutOthersView(APIView):
@@ -179,7 +154,7 @@ class SignOutOthersView(APIView):
     throttle_classes = ACCOUNT_THROTTLE_CLASSES
 
     def post(self, request):
-        return Response({**sign_out_others(request.user), "user": UserSerializer(request.user).data})
+        return signed_in(request.user, sign_out_others(request.user))
 
 
 class FeedbackReportView(APIView):

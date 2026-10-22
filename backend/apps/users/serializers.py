@@ -3,10 +3,9 @@ from typing import Any
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.db import IntegrityError, transaction
 from rest_framework import serializers
 
-from .models import UserAccount
+from .services.accounts import EmailTaken, create_account
 
 NAME_MAX_LENGTH = 40  # a display name (decision 2)
 EMAIL_MAX_LENGTH = 150  # the email is also the username, a varchar(150) (BUG-84)
@@ -50,18 +49,10 @@ class RegisterSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        name = validated_data.pop("name")
-        email = validated_data.get("email", "")
-        user_model = get_user_model()
-        user = user_model(username=email, email=email, first_name=name)
-        user.set_password(validated_data["password"])
         try:
-            with transaction.atomic():
-                user.save()
-                UserAccount.objects.create(user=user)  # the session key the new pair carries (SEC-05)
-        except IntegrityError:  # a simultaneous sign-up took the address after validate_email's check (BUG-84)
+            return create_account(validated_data["email"], validated_data["name"], validated_data["password"])
+        except EmailTaken:  # a simultaneous sign-up took the address after validate_email's check (BUG-84)
             raise serializers.ValidationError({"email": [EMAIL_TAKEN]}) from None
-        return user
 
 
 class NameSerializer(serializers.Serializer):
