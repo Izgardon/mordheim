@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 
 // routing
-import { Navigate, Outlet, type RouteObject } from "react-router-dom";
+import { Outlet, type RouteObject } from "react-router-dom";
 
 // components
 import ScrollToTop from "../../components/ScrollToTop";
@@ -10,6 +10,7 @@ import { LoadingScreen } from "../../components/ui/loading-screen";
 
 // Route modules load on demand, so the entry chunk carries only the shell (PERF-17).
 const ProtectedLayout = lazy(() => import("./ProtectedLayout"));
+const NotFound = lazy(() => import("./NotFound"));
 const Landing = lazy(() => import("../../features/auth/routes/Landing"));
 const ForgotPassword = lazy(() => import("../../features/auth/routes/ForgotPassword"));
 const ResetPassword = lazy(() => import("../../features/auth/routes/ResetPassword"));
@@ -108,7 +109,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: "*",
-        element: <Navigate to="/" replace />,
+        element: <NotFound />,
       },
     ],
   },

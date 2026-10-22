@@ -65,6 +65,10 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   >([]);
   const [currentBattleSession, setCurrentBattleSessionState] =
     useState<CurrentBattleSession | null>(null);
+  // Nudges (BATL-NEW-08): one per battle, the newest replacing an older one.
+  const [battleNudgeNotifications, setBattleNudgeNotifications] = useState<
+    BattleNudgeNotification[]
+  >([]);
 
   // When the signed-in user changes (sign-out, expiry, another account), drop the previous
   // user's session state before anything renders with it (BUG-22). Done during render, the
@@ -80,6 +84,7 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       setTradeRequestNotifications([]);
       setBattleInviteNotifications([]);
       setBattleResultRequestNotifications([]);
+      setBattleNudgeNotifications([]);
       setCurrentBattleSessionState(null);
     }
   }
@@ -148,10 +153,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
     setBattleResultRequestNotifications([]);
   }, []);
 
-  // Nudges (BATL-NEW-08): one per battle, the newest replacing an older one.
-  const [battleNudgeNotifications, setBattleNudgeNotifications] = useState<
-    BattleNudgeNotification[]
-  >([]);
   const addBattleNudgeNotification = useCallback((notification: BattleNudgeNotification) => {
     setBattleNudgeNotifications((prev) => [
       notification,

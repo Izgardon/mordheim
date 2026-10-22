@@ -10,7 +10,7 @@ import {
   PUSHER_PORT,
 } from "@/config/env";
 import { refreshSession } from "@/lib/api-client";
-import { getToken } from "@/utils/storage";
+import { session } from "@/lib/session";
 
 /**
  * The app's one realtime connection (PERF-18, IMP-14). pusher-js is downloaded the first time
@@ -41,7 +41,7 @@ export const isRealtimeEnabled = () => Boolean(PUSHER_KEY && PUSHER_CLUSTER);
 
 /** Channel auth reads the token at request time, so a refreshed token is always used (BUG-57). */
 const authHeaders = () => {
-  const token = getToken();
+  const token = session.accessToken();
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 

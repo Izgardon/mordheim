@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
@@ -81,6 +82,24 @@ function Harness() {
       </button>
     </>
   );
+}
+
+/** A nudge already in the bell when the subscription mounts: a previous user's, or one answered elsewhere. */
+function StaleNudge() {
+  const { addBattleNudgeNotification } = useAppStore();
+  useEffect(() => {
+    addBattleNudgeNotification({
+      id: "nudge-31",
+      notificationDbId: 31,
+      battleId: 5,
+      campaignId: 7,
+      scenario: "Street Fight",
+      page: "active",
+      fromLabel: "Gone",
+      createdAt: "2026-10-20T19:00:00Z",
+    });
+  }, [addBattleNudgeNotification]);
+  return null;
 }
 
 const renderHarness = (path = "/campaigns/7/skills") =>
@@ -316,6 +335,21 @@ describe("useNotificationSubscription", () => {
     fireEvent.click(within(nudgeToast).getByRole("button", { name: "Go" }));
     expect(screen.getByTestId("location")).toHaveTextContent("/campaigns/7/battles/41/postbattle");
     await waitForToastToGo(toastText);
+  });
+
+  it("replaces the bell with its first list, so a nudge already in the store is dropped (BUG-157)", async () => {
+    vi.mocked(listNotifications).mockResolvedValueOnce([]);
+    renderWithQueryClient(
+      <AppStoreProvider>
+        <MemoryRouter initialEntries={["/campaigns"]}>
+          <StaleNudge />
+          <Harness />
+        </MemoryRouter>
+      </AppStoreProvider>
+    );
+
+    await waitFor(() => expect(listNotifications).toHaveBeenCalledTimes(1));
+    expect(await screen.findByText("No nudges")).toBeInTheDocument();
   });
 
   it("puts a nudge sent while you were away in the bell (BATL-NEW-08)", async () => {

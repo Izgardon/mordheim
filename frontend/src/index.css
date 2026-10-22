@@ -457,6 +457,8 @@ h6 {
 }
 
 /* Landing Page Split Layout */
+/* The page never scrolls (body is overflow: hidden), so the landing box does: one visible
+   screen tall, scrolling when the sign-up form is taller (AUTH-UX-07). */
 .landing {
   display: flex;
   align-items: stretch;
@@ -464,8 +466,10 @@ h6 {
   gap: 0;
   padding: 0;
   height: 100vh;
+  height: 100dvh;
   width: 100vw;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .landing-auth {
@@ -481,7 +485,8 @@ h6 {
 .landing-auth .auth-card {
   margin: -5px 0 -5px -5px;
   padding-left: 10px;
-  height: calc(100% + 10px);
+  height: auto;
+  min-height: calc(100% + 10px);
   max-height: none;
 }
 
@@ -546,6 +551,7 @@ h6 {
     flex-direction: column;
     padding: 0;
     height: 100vh;
+    height: 100dvh;
   }
 
   .landing-auth {

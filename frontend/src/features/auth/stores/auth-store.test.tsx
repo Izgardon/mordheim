@@ -6,8 +6,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import ProtectedRoute from "../../../components/ProtectedRoute";
 import { createQueryWrapper } from "../../../test/query-test-utils";
 import { ApiError, SERVER_UNAVAILABLE_MESSAGE } from "../../../lib/api-client";
-import { getRefreshToken, getToken, setRefreshToken, setToken } from "../../../utils/storage";
-import { AuthProvider, PROFILE_RETRY_DELAYS_MS, useAuthContext } from "./auth-store";
+import { session } from "../../../lib/session";
+import { getRefreshToken, getToken } from "../../../utils/storage";
+import { PROFILE_RETRY_DELAYS_MS } from "../utils/fetch-profile";
+import { AuthProvider, useAuthContext } from "./auth-store";
 
 const { fetchMe, disconnectRealtime } = vi.hoisted(() => ({
   fetchMe: vi.fn(),
@@ -39,8 +41,7 @@ describe("AuthProvider boot", () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     localStorage.clear();
-    setToken("access");
-    setRefreshToken("refresh");
+    session.setTokens({ access: "access", refresh: "refresh" });
     fetchMe.mockReset();
   });
 
@@ -132,8 +133,7 @@ function renderProtectedApp() {
 describe("AuthProvider token refresh (BUG-21)", () => {
   beforeEach(() => {
     localStorage.clear();
-    setToken(accessToken(1, "first"));
-    setRefreshToken("refresh");
+    session.setTokens({ access: accessToken(1, "first"), refresh: "refresh" });
     fetchMe.mockReset();
     fetchMe.mockResolvedValue(profile);
     mountCount.mockReset();
@@ -145,7 +145,7 @@ describe("AuthProvider token refresh (BUG-21)", () => {
     fireEvent.change(input, { target: { value: "Charge the left flank" } });
 
     const refreshed = accessToken(1, "second");
-    act(() => setToken(refreshed));
+    act(() => session.setTokens({ access: refreshed }));
 
     await waitFor(() => expect(screen.getByTestId("token")).toHaveTextContent(refreshed));
     expect(screen.getByLabelText("Chat draft")).toHaveValue("Charge the left flank");
@@ -175,7 +175,7 @@ describe("AuthProvider token refresh (BUG-21)", () => {
     await screen.findByLabelText("Chat draft");
     fetchMe.mockResolvedValue({ id: 2, email: "rival@example.com", name: "Rival" });
 
-    act(() => setToken(accessToken(2, "switch")));
+    act(() => session.setTokens({ access: accessToken(2, "switch") }));
 
     await waitFor(() => expect(fetchMe).toHaveBeenCalledTimes(2));
   });
@@ -184,8 +184,7 @@ describe("AuthProvider token refresh (BUG-21)", () => {
 describe("AuthProvider realtime connection", () => {
   beforeEach(() => {
     localStorage.clear();
-    setToken(accessToken(1, "first"));
-    setRefreshToken("refresh");
+    session.setTokens({ access: accessToken(1, "first"), refresh: "refresh" });
     fetchMe.mockReset();
     fetchMe.mockResolvedValue(profile);
     disconnectRealtime.mockReset();
@@ -195,7 +194,7 @@ describe("AuthProvider realtime connection", () => {
     const { result } = renderHook(() => useAuthContext(), { wrapper });
     await waitFor(() => expect(result.current.user).toEqual(profile));
 
-    act(() => setToken(accessToken(1, "refreshed")));
+    act(() => session.setTokens({ access: accessToken(1, "refreshed") }));
     await waitFor(() => expect(result.current.token).toBe(accessToken(1, "refreshed")));
     expect(disconnectRealtime).not.toHaveBeenCalled();
 

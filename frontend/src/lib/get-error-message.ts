@@ -92,6 +92,15 @@ function throttledMessage(data: unknown) {
  */
 export function getErrorMessage(error: unknown, fallback = DEFAULT_ERROR_MESSAGE): string {
   if (error instanceof ApiError) {
+    // A 503 with a detail is the server saying a feature is off ("email_unavailable"), not an
+    // outage: a proxy's 503 has no JSON body.
+    const unavailableDetail =
+      error.status === 503
+        ? toMessages((error.data as { detail?: unknown } | null)?.detail).join(" ")
+        : "";
+    if (unavailableDetail) {
+      return unavailableDetail;
+    }
     if (
       error.status === 0 ||
       error.status === 502 ||
