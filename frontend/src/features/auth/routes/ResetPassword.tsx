@@ -5,11 +5,12 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
 import { CardBackground } from "@components/card-background";
-import { Input } from "@components/input";
 
 import { getErrorMessage } from "@/lib/get-error-message";
 
+import { AuthField, AuthFormError } from "../components/AuthField";
 import AuthShell from "../components/AuthShell";
+import { PasswordInput } from "../components/PasswordInput";
 import { confirmPasswordReset } from "../api/auth-api";
 import { useAuth } from "../hooks/use-auth";
 
@@ -73,44 +74,28 @@ export default function ResetPassword() {
 
   const form = (
     <form className="space-y-5" onSubmit={handleSubmit}>
-      {!isLinkValid ? (
-        <p role="alert" className="text-sm text-destructive">
-          {INCOMPLETE_LINK_MESSAGE}
-        </p>
-      ) : null}
-      <label className="mx-auto block w-full max-w-[320px] space-y-2 text-sm">
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          New password
-        </span>
-        <Input
-          type="password"
+      <AuthFormError message={isLinkValid ? "" : INCOMPLETE_LINK_MESSAGE} />
+      <AuthField label="New password">
+        <PasswordInput
+          revealable={false}
           value={newPassword}
           onChange={(event) => setNewPassword(event.target.value)}
           placeholder="Keep it secret"
           autoComplete="new-password"
           required
-          className="h-10 max-w-[320px]"
         />
-      </label>
-      <label className="mx-auto block w-full max-w-[320px] space-y-2 text-sm">
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          Confirm password
-        </span>
-        <Input
-          type="password"
+      </AuthField>
+      <AuthField label="Confirm password">
+        <PasswordInput
+          revealable={false}
           value={confirmPassword}
           onChange={(event) => setConfirmPassword(event.target.value)}
           placeholder="Repeat it"
           autoComplete="new-password"
           required
-          className="h-10 max-w-[320px]"
         />
-      </label>
-      {error ? (
-        <p role="alert" className="text-sm text-destructive">
-          {error}
-        </p>
-      ) : null}
+      </AuthField>
+      <AuthFormError message={error} />
       <div className="flex flex-col items-center gap-3">
         <Button size="sm" type="submit" disabled={isSubmitting || !isLinkValid}>
           {isSubmitting ? "Updating..." : "Reset password"}
