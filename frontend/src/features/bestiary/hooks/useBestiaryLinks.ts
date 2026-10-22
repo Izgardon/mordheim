@@ -1,0 +1,141 @@
+import { useCallback, useState } from "react";
+
+import { createSpecial } from "@/features/special/api/special-api";
+import { useCampaignItems } from "@/features/warbands/hooks/campaign/useCampaignItems";
+import { useCampaignSkills } from "@/features/warbands/hooks/campaign/useCampaignSkills";
+import { useCampaignSpecial } from "@/features/warbands/hooks/campaign/useCampaignSpecial";
+import { useCampaignSpells } from "@/features/warbands/hooks/campaign/useCampaignSpells";
+import { useCatalogueCache } from "@/lib/catalogue-queries";
+
+import type { Item } from "@/features/items/types/item-types";
+import type { Skill } from "@/features/skills/types/skill-types";
+import type { Special } from "@/features/special/types/special-types";
+import type { Spell } from "@/features/spells/types/spell-types";
+
+export type SelectedItem = Item & { quantity: number };
+
+/** Adds `entry` unless it is already chosen. */
+const addOnce =
+  <T extends { id: number }>(entry: T) =>
+  (prev: T[]) =>
+    prev.some((chosen) => chosen.id === entry.id) ? prev : [...prev, entry];
+
+type UseBestiaryLinksOptions = {
+  campaignId: number;
+  /** The pickers read the campaign's cached lists only while the dialog is open. */
+  open: boolean;
+  /** The type a special created on the spot takes: "Animal" or "Hired Sword". */
+  specialType: string;
+};
+
+/**
+ * What a bestiary entry links to: its special rules (one can be created on the spot), skills,
+ * spells and equipment with quantities, picked from the campaign's cached lists.
+ */
+export function useBestiaryLinks({ campaignId, open, specialType }: UseBestiaryLinksOptions) {
+  const [specials, setSpecials] = useState<Special[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [spells, setSpells] = useState<Spell[]>([]);
+  const [items, setItems] = useState<SelectedItem[]>([]);
+  const [isCreatingSpecial, setIsCreatingSpecial] = useState(false);
+  const [newSpecialName, setNewSpecialName] = useState("");
+  const [newSpecialDescription, setNewSpecialDescription] = useState("");
+  const [isSavingSpecial, setIsSavingSpecial] = useState(false);
+  const catalogueCache = useCatalogueCache();
+  const hasCampaignId = !Number.isNaN(campaignId);
+  const lookup = { campaignId, hasCampaignId, enabled: open && hasCampaignId };
+  const { availableSpecials } = useCampaignSpecial(lookup);
+  const { availableSkills } = useCampaignSkills(lookup);
+  const { availableSpells } = useCampaignSpells(lookup);
+  const { availableItems } = useCampaignItems(lookup);
+
+  const addSpecial = useCallback((special: Special) => setSpecials(addOnce(special)), []);
+  const addSkill = useCallback((skill: Skill) => setSkills(addOnce(skill)), []);
+  const addSpell = useCallback((spell: Spell) => setSpells(addOnce(spell)), []);
+  const addItem = useCallback(
+    (item: Item) => setItems(addOnce<SelectedItem>({ ...item, quantity: 1 })),
+    []
+  );
+
+  const closeNewSpecial = () => {
+    setIsCreatingSpecial(false);
+    setNewSpecialName("");
+    setNewSpecialDescription("");
+  };
+
+  const createNewSpecial = async () => {
+    const name = newSpecialName.trim();
+    if (!name) return;
+    setIsSavingSpecial(true);
+    try {
+      const created = await createSpecial({
+        campaign_id: campaignId,
+        name,
+        type: specialType,
+        description: newSpecialDescription.trim(),
+      });
+      catalogueCache.upsert("specials", campaignId, created);
+      setSpecials((prev) => [...prev, created]);
+      closeNewSpecial();
+    } catch {
+      // keep form open so user can retry
+    } finally {
+      setIsSavingSpecial(false);
+    }
+  };
+
+  return {
+    available: {
+      specials: availableSpecials,
+      skills: availableSkills,
+      spells: availableSpells,
+      items: availableItems,
+    },
+    specials,
+    skills,
+    spells,
+    items,
+    addSpecial,
+    addSkill,
+    addSpell,
+    addItem,
+    removeSpecial: (id: number) => setSpecials((prev) => prev.filter((s) => s.id !== id)),
+    removeSkill: (id: number) => setSkills((prev) => prev.filter((s) => s.id !== id)),
+    removeSpell: (id: number) => setSpells((prev) => prev.filter((s) => s.id !== id)),
+    removeItem: (id: number) => setItems((prev) => prev.filter((s) => s.id !== id)),
+    setItemQuantity: (id: number, quantity: number) =>
+      setItems((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, quantity: Math.max(1, quantity) } : item))
+      ),
+    isCreatingSpecial,
+    /** "Create new rule" from the special picker, with what was typed as the name. */
+    openNewSpecial: (name: string) => {
+      setIsCreatingSpecial(true);
+      setNewSpecialName(name);
+    },
+    closeNewSpecial,
+    newSpecialName,
+    setNewSpecialName,
+    newSpecialDescription,
+    setNewSpecialDescription,
+    isSavingSpecial,
+    createNewSpecial,
+    /** The links' part of a create body. */
+    payload: () => ({
+      special_ids: specials.map((s) => s.id),
+      skill_ids: skills.map((s) => s.id),
+      spell_ids: spells.map((s) => s.id),
+      item_entries: items.map((item) => ({ item_id: item.id, quantity: item.quantity })),
+    }),
+    /** Nothing linked and no special being created. */
+    reset: () => {
+      setSpecials([]);
+      setSkills([]);
+      setSpells([]);
+      setItems([]);
+      closeNewSpecial();
+    },
+  };
+}
+
+export type BestiaryLinks = ReturnType<typeof useBestiaryLinks>;

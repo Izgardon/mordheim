@@ -6,20 +6,14 @@ import { Tooltip } from "@/components/ui/tooltip";
 import DetailCardContent from "@/features/warbands/components/shared/unit_details/DetailCardContent";
 import type { DetailEntry } from "@/features/warbands/components/shared/unit_details/detail-types";
 import { getHiredSwordProfile } from "../api/bestiary-api";
+import {
+  DETAIL_CHIP_CLASS,
+  DetailHeader,
+  DetailSection,
+  EntryStatTable,
+} from "./detail/entry-detail-parts";
 
 import type { HiredSwordProfile } from "../types/bestiary-types";
-
-const STAT_HEADERS = [
-  { key: "movement", label: "M" },
-  { key: "weapon_skill", label: "WS" },
-  { key: "ballistic_skill", label: "BS" },
-  { key: "strength", label: "S" },
-  { key: "toughness", label: "T" },
-  { key: "wounds", label: "W" },
-  { key: "initiative", label: "I" },
-  { key: "attacks", label: "A" },
-  { key: "leadership", label: "Ld" },
-] as const;
 
 function formatCost(cost: number | null, expression: string): string {
   if (expression) return expression;
@@ -31,11 +25,7 @@ function renderDetailTooltip(key: string, triggerLabel: string, entry: DetailEnt
   return (
     <Tooltip
       key={key}
-      trigger={
-        <span className="cursor-help rounded bg-background/60 px-2 py-0.5 text-xs text-foreground underline decoration-dotted underline-offset-2">
-          {triggerLabel}
-        </span>
-      }
+      trigger={<span className={DETAIL_CHIP_CLASS}>{triggerLabel}</span>}
       content={
         <CardBackground className="surface-panel-strong max-h-[40vh] overflow-y-auto p-5 text-foreground shadow-xl">
           <DetailCardContent entry={entry} />
@@ -103,19 +93,7 @@ export default function HiredSwordProfileDetail({ profileId, onClose }: Props) {
 
   return (
     <CardBackground className="surface-panel-strong space-y-4 p-4 sm:p-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h2 className="font-display text-lg text-foreground">{entry.name}</h2>
-          <p className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">
-            Hired Sword
-            {entry.large ? " \u2022 Large" : ""}
-            {entry.caster !== "No" ? ` \u2022 ${entry.caster}` : ""}
-          </p>
-        </div>
-        <Button variant="secondary" size="sm" onClick={onClose}>
-          Back
-        </Button>
-      </div>
+      <DetailHeader name={entry.name} kind="Hired Sword" entry={entry} onClose={onClose} />
 
       <div className="flex gap-4 text-sm text-muted-foreground">
         <span>
@@ -168,94 +146,53 @@ export default function HiredSwordProfileDetail({ profileId, onClose }: Props) {
         <p className="text-sm text-muted-foreground">{entry.description}</p>
       ) : null}
 
-      <div className="overflow-x-auto rounded border border-border/60 bg-background/60">
-        <table className="min-w-full text-xs text-muted-foreground">
-          <thead className="bg-background/80 uppercase tracking-[0.2em]">
-            <tr>
-              {STAT_HEADERS.map((h) => (
-                <th key={h.key} className="px-3 py-1.5 text-center font-semibold">
-                  {h.label}
-                </th>
-              ))}
-              <th className="px-3 py-1.5 text-center font-semibold">AS</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="border-t border-border/60">
-              {STAT_HEADERS.map((h) => (
-                <td
-                  key={h.key}
-                  className="px-3 py-1.5 text-center text-sm font-semibold text-foreground"
-                >
-                  {entry[h.key]}
-                </td>
-              ))}
-              <td className="px-3 py-1.5 text-center text-sm font-semibold text-foreground">
-                {entry.armour_save != null ? `${entry.armour_save}+` : "-"}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <EntryStatTable entry={entry} />
 
       {entry.skills.length > 0 || entry.specials.length > 0 ? (
-        <section className="space-y-1">
-          <p className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">
-            Skills &amp; Special Rules
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {entry.skills.map((skill) =>
-              renderDetailTooltip(`skill-${skill.id}`, skill.name, {
-                id: skill.id,
-                type: "skill",
-                name: skill.name,
-              })
-            )}
-            {entry.specials.map((special) =>
-              renderDetailTooltip(`special-${special.id}`, special.name, {
-                id: special.id,
-                type: "special",
-                name: special.name,
-              })
-            )}
-          </div>
-        </section>
+        <DetailSection title="Skills & Special Rules">
+          {entry.skills.map((skill) =>
+            renderDetailTooltip(`skill-${skill.id}`, skill.name, {
+              id: skill.id,
+              type: "skill",
+              name: skill.name,
+            })
+          )}
+          {entry.specials.map((special) =>
+            renderDetailTooltip(`special-${special.id}`, special.name, {
+              id: special.id,
+              type: "special",
+              name: special.name,
+            })
+          )}
+        </DetailSection>
       ) : null}
 
       {entry.spells.length > 0 ? (
-        <section className="space-y-1">
-          <p className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">Spells</p>
-          <div className="flex flex-wrap gap-2">
-            {entry.spells.map((spell) =>
-              renderDetailTooltip(`spell-${spell.id}`, spell.name, {
-                id: spell.id,
-                type: "spell",
-                name: spell.name,
-              })
-            )}
-          </div>
-        </section>
+        <DetailSection title="Spells">
+          {entry.spells.map((spell) =>
+            renderDetailTooltip(`spell-${spell.id}`, spell.name, {
+              id: spell.id,
+              type: "spell",
+              name: spell.name,
+            })
+          )}
+        </DetailSection>
       ) : null}
 
       {entry.equipment.length > 0 ? (
-        <section className="space-y-1">
-          <p className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">
-            Equipment
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {entry.equipment.map((equip) =>
-              renderDetailTooltip(
-                `item-${equip.item.id}`,
-                `${equip.item.name}${equip.quantity > 1 ? ` x${equip.quantity}` : ""}`,
-                {
-                  id: equip.item.id,
-                  type: "item",
-                  name: equip.item.name,
-                }
-              )
-            )}
-          </div>
-        </section>
+        <DetailSection title="Equipment">
+          {entry.equipment.map((equip) =>
+            renderDetailTooltip(
+              `item-${equip.item.id}`,
+              `${equip.item.name}${equip.quantity > 1 ? ` x${equip.quantity}` : ""}`,
+              {
+                id: equip.item.id,
+                type: "item",
+                name: equip.item.name,
+              }
+            )
+          )}
+        </DetailSection>
       ) : null}
     </CardBackground>
   );

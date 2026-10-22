@@ -1,5 +1,8 @@
-export type Race = {
+import type { CatalogueBadgeFields } from "@/features/catalogue/types/catalogue-entry";
+
+export type Race = CatalogueBadgeFields & {
   id: number;
+  campaign_id?: number | null;
   name: string;
   movement: number;
   weapon_skill: number;

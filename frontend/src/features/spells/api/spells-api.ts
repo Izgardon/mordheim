@@ -6,6 +6,8 @@ type ListSpellsOptions = {
   type?: string;
   search?: string;
   campaignId?: number;
+  /** Archived entries and book entries removed for the campaign too (`?archived=1`). */
+  archived?: boolean;
   signal?: AbortSignal;
 };
 
@@ -14,7 +16,8 @@ export type SpellCreatePayload = {
   name: string;
   type: string;
   description: string;
-  dc?: number | null;
+  /** The server stores the difficulty as text: "" is none, and null is refused. */
+  dc?: number | "";
   roll?: number | null;
 };
 
@@ -29,6 +32,9 @@ export function listSpells(options: ListSpellsOptions = {}) {
   if (options.campaignId) {
     params.set("campaign_id", String(options.campaignId));
   }
+  if (options.archived) {
+    params.set("archived", "1");
+  }
   const query = params.toString();
   const path = query ? `/spells/?${query}` : "/spells/";
   return apiRequest<Spell[]>(path, { signal: options.signal });
@@ -41,7 +47,8 @@ export function createSpell(payload: SpellCreatePayload) {
   });
 }
 
-export type SpellUpdatePayload = Partial<Omit<SpellCreatePayload, "campaign_id">>;
+/** A book spell's edit names the campaign whose version it makes or changes. */
+export type SpellUpdatePayload = Partial<SpellCreatePayload>;
 
 export function getSpell(spellId: number) {
   return apiRequest<Spell>(`/spells/${spellId}/`);
@@ -51,11 +58,5 @@ export function updateSpell(spellId: number, payload: SpellUpdatePayload) {
   return apiRequest<Spell>(`/spells/${spellId}/`, {
     method: "PATCH",
     body: payload,
-  });
-}
-
-export function deleteSpell(spellId: number) {
-  return apiRequest<void>(`/spells/${spellId}/`, {
-    method: "DELETE",
   });
 }

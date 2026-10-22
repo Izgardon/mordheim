@@ -52,8 +52,18 @@ export const queryKeys = {
     /** What removing one member would close (read each time the remove dialog opens). */
     memberRemoval: (campaignId: number, userId: number) =>
       ["campaign", campaignId, "members", userId, "removal"] as const,
+    /** A kind's catalogue list; every other list of the kind is keyed under it. */
     catalogue: (campaignId: number, kind: CatalogueKind) =>
       ["campaign", campaignId, "catalogue", kind] as const,
+    /** Another list of the kind (`catalogueListVariant`): with the archived entries, ... */
+    catalogueVariant: (campaignId: number, kind: CatalogueKind, variant: string) =>
+      ["campaign", campaignId, "catalogue", kind, variant] as const,
+    /**
+     * What holds one entry (read as its delete confirm opens). Outside the catalogue key, so a
+     * write to the kind's lists doesn't read it again.
+     */
+    catalogueUsage: (campaignId: number, kind: CatalogueKind, entryId: number) =>
+      ["campaign", campaignId, "catalogue-usage", kind, entryId] as const,
     openBattles: (campaignId: number) => ["campaign", campaignId, "battles", "open"] as const,
     /** Your reported results still waiting for answers (the overview's card). */
     pendingResults: (campaignId: number) =>

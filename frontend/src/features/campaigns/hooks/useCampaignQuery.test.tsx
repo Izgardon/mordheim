@@ -15,8 +15,8 @@ const campaign = {
   name: "Shards of the Comet",
   role: "player",
   in_progress: false,
-  permissions: ["add_custom", "manage_items"],
-  capabilities: { add_custom: true, manage_items: true },
+  permissions: ["edit_catalogue", "delete_catalogue"],
+  capabilities: { edit_catalogue: true, delete_catalogue: true },
 } as CampaignSummary;
 
 describe("useCampaignQuery", () => {
@@ -33,8 +33,8 @@ describe("useCampaignQuery", () => {
       { wrapper }
     );
 
-    await waitFor(() => expect(result.current.page.add_custom).toBe(true));
-    expect(result.current.page.manage_items).toBe(true);
+    await waitFor(() => expect(result.current.page.edit_catalogue).toBe(true));
+    expect(result.current.page.delete_catalogue).toBe(true);
     expect(result.current.page.manage_rules).toBe(false);
     expect(getCampaign).toHaveBeenCalledTimes(1);
     expect(getCampaign).toHaveBeenCalledWith(7, { signal: expect.any(AbortSignal) });
@@ -66,7 +66,7 @@ describe("useCampaignQuery", () => {
     act(() => result.current.setCampaign(updated));
 
     await waitFor(() => expect(result.current.query.data?.in_progress).toBe(true));
-    expect(result.current.query.data?.permissions).toEqual(["add_custom", "manage_items"]);
+    expect(result.current.query.data?.permissions).toEqual(["edit_catalogue", "delete_catalogue"]);
     expect(result.current.query.data?.capabilities).toEqual(campaign.capabilities);
   });
 });

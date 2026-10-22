@@ -1,142 +1,64 @@
-import { Fragment, useState } from "react";
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 
-import { ImageScrollArea } from "@components/image-scroll-area";
-import { ChevronDown } from "lucide-react";
+import CatalogueTable from "@/features/catalogue/components/CatalogueTable";
+import { EntryBadge } from "@/features/catalogue/components/EntryBadge";
 
 import type { Skill } from "../types/skill-types";
 
 type SkillsTableProps = {
   skills: Skill[];
-  rowBackground: CSSProperties;
   renderActions: (skill: Skill) => ReactNode;
   isMobile?: boolean;
 };
 
-export default function SkillsTable({
-  skills,
-  rowBackground,
-  renderActions,
-  isMobile,
-}: SkillsTableProps) {
-  const [expandedIds, setExpandedIds] = useState<number[]>([]);
+const formatType = (skill: Skill) => skill.type.replace(/_/g, " ");
 
-  const toggle = (id: number) =>
-    setExpandedIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
-
-  if (isMobile) {
-    return (
-      <ImageScrollArea
-        className="table-scroll table-scroll--full flex-1 min-h-0"
-        showScrollbar={false}
-      >
-        <table className="min-w-full table-fixed divide-y border border-border/60 text-xs">
-          <thead className="table-head-surface border-b border-border/60 text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground">
-            <tr>
-              <th className="w-8 px-2 py-2 text-left font-semibold">
-                <span className="sr-only">Expand</span>
-              </th>
-              <th className="px-2 py-2 text-left font-semibold">Name</th>
-              <th className="w-[30%] px-2 py-2 text-left font-semibold">Type</th>
-              <th className="w-[22%] px-2 py-2 text-left font-semibold"></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border/60 border-b border-border/60">
-            {skills.map((skill, index) => {
-              const isExpanded = expandedIds.includes(skill.id);
-              return (
-                <Fragment key={skill.id}>
-                  <tr
-                    className={[
-                      "cursor-pointer transition-colors",
-                      index % 2 === 0
-                        ? "table-row-even table-row-hover"
-                        : "table-row-odd table-row-hover",
-                    ].join(" ")}
-                    style={rowBackground}
-                    onClick={() => toggle(skill.id)}
-                    role="button"
-                    aria-expanded={isExpanded}
-                    tabIndex={0}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault();
-                        toggle(skill.id);
-                      }
-                    }}
-                  >
-                    <td className="px-2 py-2">
-                      <ChevronDown
-                        className={[
-                          "h-4 w-4 transition-transform",
-                          isExpanded
-                            ? "rotate-0 text-foreground"
-                            : "-rotate-90 text-muted-foreground",
-                        ].join(" ")}
-                        aria-hidden="true"
-                      />
-                    </td>
-                    <td className="px-2 py-2 font-medium text-foreground">{skill.name}</td>
-                    <td className="px-2 py-2 text-muted-foreground">
-                      {skill.type.replace(/_/g, " ")}
-                    </td>
-                    <td
-                      className="px-2 py-2 whitespace-nowrap"
-                      onClick={(event) => event.stopPropagation()}
-                    >
-                      {renderActions(skill)}
-                    </td>
-                  </tr>
-                  {isExpanded ? (
-                    <tr className="bg-background/50">
-                      <td colSpan={4} className="px-4 py-3 text-sm text-foreground/90">
-                        {skill.description?.trim() || "No description available."}
-                      </td>
-                    </tr>
-                  ) : null}
-                </Fragment>
-              );
-            })}
-          </tbody>
-        </table>
-      </ImageScrollArea>
-    );
-  }
-
+/** The Skills page's table: name, list, description and the row's actions. */
+export default function SkillsTable({ skills, renderActions, isMobile }: SkillsTableProps) {
   return (
-    <ImageScrollArea
-      className="table-scroll table-scroll--full flex-1 min-h-0"
-      showScrollbar={false}
-    >
-      <table className="min-w-full table-fixed divide-y border border-border/60 text-sm">
-        <thead className="table-head-surface border-b border-border/60 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          <tr>
-            <th className="w-[20%] px-4 py-3 text-left font-semibold">Name</th>
-            <th className="w-[15%] px-4 py-3 text-left font-semibold">Type</th>
-            <th className="w-[55%] px-4 py-3 text-left font-semibold">Description</th>
-            <th className="w-[10%] px-4 py-3 text-left font-semibold"></th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-border/60 border-b border-border/60">
-          {skills.map((skill, index) => (
-            <tr
-              key={skill.id}
-              className={[
-                "transition-colors",
-                index % 2 === 0
-                  ? "table-row-even table-row-hover"
-                  : "table-row-odd table-row-hover",
-              ].join(" ")}
-              style={rowBackground}
-            >
-              <td className="px-4 py-3 font-medium text-foreground">{skill.name}</td>
-              <td className="px-4 py-3 text-muted-foreground">{skill.type.replace(/_/g, " ")}</td>
-              <td className="px-4 py-3 text-muted-foreground">{skill.description}</td>
-              <td className="px-4 py-3 whitespace-nowrap">{renderActions(skill)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </ImageScrollArea>
+    <CatalogueTable
+      rows={skills}
+      getRowId={(skill) => String(skill.id)}
+      isMobile={isMobile}
+      columns={[
+        {
+          key: "name",
+          label: "Name",
+          headerClassName: "w-[20%]",
+          render: (skill) => (
+            <span className="font-medium text-foreground">
+              {skill.name}
+              <EntryBadge entry={skill} />
+            </span>
+          ),
+        },
+        { key: "type", label: "Type", headerClassName: "w-[15%]", render: formatType },
+        {
+          key: "description",
+          label: "Description",
+          headerClassName: "w-[55%]",
+          render: (skill) => skill.description,
+        },
+        {
+          key: "actions",
+          label: "",
+          headerClassName: "w-[10%]",
+          cellClassName: "whitespace-nowrap",
+          render: renderActions,
+        },
+      ]}
+      mobile={{
+        name: (skill) => (
+          <>
+            {skill.name}
+            <EntryBadge entry={skill} />
+          </>
+        ),
+        second: { label: "Type", className: "w-[30%]", render: formatType },
+        actions: renderActions,
+        details: (skill) => skill.description?.trim() || "No description available.",
+        detailsClassName: "text-sm text-foreground/90",
+      }}
+    />
   );
 }

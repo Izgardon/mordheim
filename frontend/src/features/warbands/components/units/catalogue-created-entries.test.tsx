@@ -87,7 +87,13 @@ vi.mock("@/features/campaigns/hooks/useCampaignStarted", () => ({
 const first = makeVeteranHiredSword({ id: 31, name: "Brother Hal", caster: "Wizard" });
 const second = makeVeteranHiredSword({ id: 32, name: "Sister Ana", caster: "Wizard" });
 
-function Section({ hiredSwords }: { hiredSwords: WarbandHiredSword[] }) {
+function Section({
+  hiredSwords,
+  canAddCustom = true,
+}: {
+  hiredSwords: WarbandHiredSword[];
+  canAddCustom?: boolean;
+}) {
   const [units, setUnits] = useState(hiredSwords);
   const editor = useUnitSectionEditor(hiredSwordKind, {
     warbandId: 9,
@@ -97,7 +103,7 @@ function Section({ hiredSwords }: { hiredSwords: WarbandHiredSword[] }) {
     onUnitsChange: setUnits,
   });
   return (
-    <WarbandCatalogueProvider campaignId={1} canAddCustom>
+    <WarbandCatalogueProvider campaignId={1} canAddCustom={canAddCustom}>
       <UnitSection editor={editor} units={units} warbandId={9} canEdit availableGold={500} />
     </WarbandCatalogueProvider>
   );
@@ -108,8 +114,8 @@ type User = ReturnType<typeof setupUser>;
 /** Each edit card, in roster order. */
 const editCards = () => screen.getAllByRole("group", { name: /^Hired Sword \d+$/ });
 
-const startEditing = async (user: User) => {
-  renderWithQueryClient(<Section hiredSwords={[first, second]} />);
+const startEditing = async (user: User, canAddCustom = true) => {
+  renderWithQueryClient(<Section hiredSwords={[first, second]} canAddCustom={canAddCustom} />);
   await user.click(screen.getAllByRole("button", { name: "Edit Hired Swords" })[0]);
   await waitFor(() => expect(editCards()).toHaveLength(2));
   await waitFor(() => expect(screen.queryByText(/^Loading /)).not.toBeInTheDocument());
@@ -303,5 +309,17 @@ describe("catalogue entries created mid-edit (ROST-NEW-02)", () => {
 
     await openPicker(user, cardB, "Items", "+ Add item");
     expect(within(cardB).getByRole("button", { name: /Gutterblade/ })).toBeInTheDocument();
+  });
+});
+
+describe("creating catalogue entries needs edit_catalogue (BUG-15, BUG-82)", () => {
+  it("offers no Create race, and no Create new in the pickers, to a viewer without it", async () => {
+    const user = setupUser();
+    await startEditing(user, false);
+    const [card] = editCards();
+
+    expect(within(card).queryByRole("button", { name: "Create race" })).toBeNull();
+    await openPicker(user, card, "Skills", "+ Add skill");
+    expect(within(card).queryByRole("button", { name: "Create new" })).toBeNull();
   });
 });

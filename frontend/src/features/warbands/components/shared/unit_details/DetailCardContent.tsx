@@ -1,96 +1,54 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
+import { useParams } from "react-router-dom";
 
-import { getSpecial } from "../../../../special/api/special-api";
-import { getItem, listItemProperties } from "../../../../items/api/items-api";
-import { getSkill } from "../../../../skills/api/skills-api";
-import { getSpell } from "../../../../spells/api/spells-api";
+import { useCatalogue } from "@/lib/catalogue-queries";
+import { getErrorMessage } from "@/lib/get-error-message";
+import { useDetailEntry } from "../../../hooks/shared/useDetailEntry";
 
 import type { Special } from "../../../../special/types/special-types";
-import type { Item, ItemProperty } from "../../../../items/types/item-types";
+import type { Item } from "../../../../items/types/item-types";
 import type { Skill } from "../../../../skills/types/skill-types";
 import type { Spell } from "../../../../spells/types/spell-types";
 import type { DetailEntry } from "./detail-types";
 
+import { ErrorState } from "@components/error-state";
 import { Tooltip } from "@components/tooltip";
 
 type DetailCardContentProps = {
   entry: DetailEntry;
 };
 
+/**
+ * An item, skill, spell or special in a popup or tooltip. The entry and an item's property text
+ * come from the campaign's cached lists where they hold them, read side by side otherwise, and a
+ * failed read says so with Retry (CAT-UX-04, CAT-PERF-03).
+ */
 export default function DetailCardContent({ entry }: DetailCardContentProps) {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [itemData, setItemData] = useState<Item | null>(null);
-  const [itemPropertyMap, setItemPropertyMap] = useState<Record<number, ItemProperty>>({});
-  const [skillData, setSkillData] = useState<Skill | null>(null);
-  const [spellData, setSpellData] = useState<Spell | null>(null);
-  const [specialData, setSpecialData] = useState<Special | null>(null);
+  const campaignId = Number(useParams().id);
+  const detail = useDetailEntry(entry, campaignId);
+  const properties = useCatalogue("item-properties", campaignId, {
+    enabled: entry.type === "item",
+  });
+  const itemPropertyMap = useMemo(
+    () => new Map(properties.data.map((property) => [property.id, property])),
+    [properties.data]
+  );
 
-  useEffect(() => {
-    const fetchDetails = async () => {
-      setLoading(true);
-      setError(null);
-      setItemData(null);
-      setSkillData(null);
-      setSpellData(null);
-      setSpecialData(null);
-
-      try {
-        if (entry.type === "item") {
-          const data = await getItem(entry.id);
-          setItemData(data);
-        } else if (entry.type === "skill") {
-          const data = await getSkill(entry.id);
-          setSkillData(data);
-        } else if (entry.type === "spell") {
-          const data = await getSpell(entry.id);
-          setSpellData(data);
-        } else if (entry.type === "special") {
-          const data = await getSpecial(entry.id);
-          setSpecialData(data);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load details");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDetails();
-  }, [entry.id, entry.type]);
-
-  useEffect(() => {
-    if (!itemData?.type) {
-      setItemPropertyMap({});
-      return;
-    }
-
-    listItemProperties({
-      type: itemData.type,
-      campaignId: itemData.campaign_id ?? undefined,
-    })
-      .then((properties) => {
-        const mapped = properties.reduce<Record<number, ItemProperty>>((acc, property) => {
-          acc[property.id] = property;
-          return acc;
-        }, {});
-        setItemPropertyMap(mapped);
-      })
-      .catch(() => setItemPropertyMap({}));
-  }, [itemData?.type, itemData?.campaign_id]);
-
-  if (loading) {
-    return <p className="text-sm text-muted-foreground">Loading...</p>;
-  }
-
-  if (error) {
-    return <p className="text-sm text-red-500">{error}</p>;
+  if (detail.data === undefined) {
+    return detail.isError ? (
+      <ErrorState
+        message={getErrorMessage(detail.error, "Couldn't load the details.")}
+        onRetry={() => void detail.refetch()}
+        className="px-0 py-2"
+      />
+    ) : (
+      <p className="text-sm text-muted-foreground">Loading...</p>
+    );
   }
 
   switch (entry.type) {
     case "item": {
-      const item = itemData;
-      if (!item) return null;
+      const item = detail.data as Item;
       return (
         <>
           <div className="mb-4 pr-8">
@@ -162,14 +120,20 @@ export default function DetailCardContent({ entry }: DetailCardContentProps) {
                         </span>
                       }
                       content={
-                        itemPropertyMap[prop.id]?.description?.trim()
-                          ? itemPropertyMap[prop.id].description
-                          : "No description available yet."
+                        itemPropertyMap.get(prop.id)?.description?.trim() ||
+                        "No description available yet."
                       }
                       className="inline-flex"
                     />
                   ))}
                 </div>
+                {properties.error ? (
+                  <ErrorState
+                    message="Couldn't load the property descriptions."
+                    onRetry={() => void properties.refetch()}
+                    className="items-start px-0 py-0 text-left"
+                  />
+                ) : null}
               </div>
             ) : null}
           </div>
@@ -177,8 +141,7 @@ export default function DetailCardContent({ entry }: DetailCardContentProps) {
       );
     }
     case "skill": {
-      const skill = skillData;
-      if (!skill) return null;
+      const skill = detail.data as Skill;
       return (
         <>
           <div className="mb-4 pr-8">
@@ -194,8 +157,7 @@ export default function DetailCardContent({ entry }: DetailCardContentProps) {
       );
     }
     case "spell": {
-      const spell = spellData;
-      if (!spell) return null;
+      const spell = detail.data as Spell;
       const displayName = entry.name || spell.name;
       const displayDc = entry.dc ?? spell.dc;
       return (
@@ -220,8 +182,7 @@ export default function DetailCardContent({ entry }: DetailCardContentProps) {
       );
     }
     case "special": {
-      const special = specialData;
-      if (!special) return null;
+      const special = detail.data as Special;
       return (
         <>
           <div className="mb-4 pr-8">

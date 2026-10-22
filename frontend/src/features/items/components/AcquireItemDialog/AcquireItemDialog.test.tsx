@@ -437,6 +437,33 @@ describe("AcquireItemDialog: one request per purchase (BUG-07, ECON-PERF-01)", (
     expect(onClosed).toHaveBeenCalledTimes(1);
   });
 
+  it("shows an archived_entry warning when the item was archived since the list was read: the purchase went ahead (CAT-TWEAK-04)", async () => {
+    const user = setupUser();
+    fakeApi.on(
+      PURCHASE,
+      purchaseAnswer({
+        target_type: "stash",
+        warnings: [
+          {
+            code: "archived_entry",
+            message: "Rope is archived in this campaign's catalogue; it was bought anyway.",
+            item_id: 120,
+          },
+        ],
+      })
+    );
+    const { onClosed } = renderDialog({ presetUnitType: "stash" });
+
+    await clickBuy(user);
+
+    expect(
+      await screen.findByText(
+        "Rope is archived in this campaign's catalogue; it was bought anyway."
+      )
+    ).toBeInTheDocument();
+    expect(onClosed).toHaveBeenCalledTimes(1);
+  });
+
   it("queues a purchase without any request in roster edit mode (deferred commit)", async () => {
     const user = setupUser();
     const onPendingPurchaseAdd = vi.fn();

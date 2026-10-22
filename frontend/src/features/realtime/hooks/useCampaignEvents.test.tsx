@@ -9,6 +9,7 @@ import { PLAYER, campaignFor, patchedCampaign, routeCampaignShell } from "@/test
 import { renderCampaignRoute } from "@/test/campaign-routes";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
+import { catalogueKindOf } from "./useCampaignEvents";
 
 vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
@@ -39,7 +40,7 @@ beforeEach(() => {
 async function openSkills() {
   const view = renderCampaignRoute("/campaigns/1/skills");
   expect(await screen.findByText("Skills page")).toBeInTheDocument();
-  await waitFor(() => expect(fakeRealtime.subscriberCount(EVENTS)).toBe(1));
+  await waitFor(() => expect(fakeRealtime.subscriberCount(EVENTS, "campaign.updated")).toBe(1));
   return view;
 }
 
@@ -73,9 +74,19 @@ describe("campaign.updated (CAMP-NEW-07)", () => {
     });
   });
 
+  it("names the cached list each catalogue.changed kind refreshes, and none for a kind it doesn't cache (BUG-80)", () => {
+    expect(
+      ["items", "item_properties", "skills", "spells", "specials", "races", "bestiary"].map(
+        catalogueKindOf
+      )
+    ).toEqual(["items", "item-properties", "skills", "spells", "specials", "races", "bestiary"]);
+    expect(catalogueKindOf("hired_swords")).toBe("hired-swords");
+    expect(catalogueKindOf("restrictions")).toBeNull();
+  });
+
   it("listens only while you are in that campaign", async () => {
     const view = renderCampaignRoute("/campaigns/1/skills");
-    await waitFor(() => expect(fakeRealtime.subscriberCount(EVENTS)).toBe(1));
+    await waitFor(() => expect(fakeRealtime.subscriberCount(EVENTS, "campaign.updated")).toBe(1));
 
     view.unmount();
 

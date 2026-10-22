@@ -94,7 +94,7 @@ const loaded = vi.hoisted(() => ({
     manage_items: true,
     edit_backstory: true,
     delete: true,
-    add_custom: false,
+    edit_catalogue: false,
   },
   setUnits: {
     hero: mocks.setHeroes,
