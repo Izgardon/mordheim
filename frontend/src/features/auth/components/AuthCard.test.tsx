@@ -24,6 +24,8 @@ vi.mock("@/lib/realtime/client", () => ({ disconnectRealtime: vi.fn() }));
 vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => false }));
 
 const RESET_SENT = "If an account exists for that email, a reset link has been sent.";
+const EMAIL_OFF =
+  "Password reset by email isn't switched on yet. Ask the app's admin to reset your password.";
 
 function renderCard() {
   return render(
@@ -197,9 +199,26 @@ describe("the inline forgot-password form", () => {
     expect(fakeApi.bodyOf("POST /auth/password-reset/")).toEqual({ email: RAIDER.email });
   });
 
-  it("shows the server's 'a reset link has been sent', which it says whether or not email is set up (BUG-56, pinned; flips in PR A)", async () => {
-    // Characterises current behaviour (BUG-56, pinned; flips in PR A: with no RESEND_API_KEY the
-    // server answers 503 email_unavailable, and the card must show that instead)
+  it("with email off, says so and who can reset the password, as the server's 503 email_unavailable does, instead of 'a reset link has been sent' (BUG-56)", async () => {
+    const user = setupUser();
+    fakeApi.fail(
+      "POST /auth/password-reset/",
+      new ApiError(EMAIL_OFF, 503, { detail: EMAIL_OFF, code: "email_unavailable", fields: {} })
+    );
+    renderCard();
+
+    await user.click(screen.getByRole("button", { name: "Forgot password?" }));
+    await user.type(screen.getByLabelText("Email"), RAIDER.email);
+    await user.click(screen.getByRole("button", { name: "Send reset link" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(EMAIL_OFF);
+    expect(screen.queryByText(RESET_SENT)).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "Back to sign in" }));
+    expect(screen.queryByRole("alert")).toBeNull();
+  });
+
+  it("with email on, shows the server's answer, which Back to sign in clears", async () => {
     const user = setupUser();
     fakeApi.on("POST /auth/password-reset/", { detail: RESET_SENT });
     renderCard();
@@ -209,7 +228,6 @@ describe("the inline forgot-password form", () => {
     await user.click(screen.getByRole("button", { name: "Send reset link" }));
 
     expect(await screen.findByText(RESET_SENT)).toBeInTheDocument();
-    expect(screen.queryByRole("status")).toBeNull();
 
     await user.click(screen.getByRole("button", { name: "Back to sign in" }));
     expect(screen.queryByText(RESET_SENT)).toBeNull();
