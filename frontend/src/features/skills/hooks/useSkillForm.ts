@@ -110,6 +110,10 @@ export function useSkillForm({
         ? await updateSkill(skill.id, { ...payload, ...bookCampaign(skill, campaignId) })
         : await createSkill({ ...payload, campaign_id: campaignId });
       catalogueCache.write("skills", campaignId, saved, skill?.id);
+      if (skill) {
+        // The copies now point at the version, or show the edited entry: sheets read them again.
+        void catalogueCache.heldCopiesChanged("skills", campaignId);
+      }
       onSaved(saved);
       after?.();
     } catch (errorResponse) {

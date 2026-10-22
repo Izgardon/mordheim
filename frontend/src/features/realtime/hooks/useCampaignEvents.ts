@@ -1,6 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 
 import { writeCampaignAnswer } from "@/features/campaigns/hooks/useCampaignQuery";
+import { invalidateHeldCopies } from "@/lib/catalogue-queries";
 import { queryKeys, type CatalogueKind } from "@/lib/query-keys";
 import { useCampaignCatalogueChanges, useCampaignUpdates } from "@/lib/realtime";
 
@@ -27,7 +28,9 @@ export const catalogueKindOf = (serverKind: string): CatalogueKind | null =>
  * (a start, settings, a new join code, archive or restore) is written over the cached campaign,
  * keeping the reader's own role, permissions, capabilities and unread count. `catalogue.changed`
  * (BUG-80) marks that kind's lists stale (every variant, e.g. the Archived one): a page showing one
- * reads it again at once, and the others on their next visit.
+ * reads it again at once, and the others on their next visit. For a kind units carry, the
+ * campaign's warband sheets (and stashes, for items) are marked stale too, since another member's
+ * edit or Revert may have moved or changed their copies.
  */
 export function useCampaignEvents(campaignId: number | null) {
   const queryClient = useQueryClient();
@@ -42,6 +45,7 @@ export function useCampaignEvents(campaignId: number | null) {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.campaign.catalogue(campaignId, catalogueKind),
       });
+      void invalidateHeldCopies(queryClient, catalogueKind, campaignId);
     }
   });
 }

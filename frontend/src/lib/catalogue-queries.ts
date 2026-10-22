@@ -200,6 +200,35 @@ export function removeCatalogueEntry(
   void queryClient.invalidateQueries({ queryKey });
 }
 
+/** The kinds whose copies a warband's units carry; a stash holds items only. */
+const HELD_BY_UNITS = new Set<CatalogueKind>(["items", "skills", "spells", "specials", "races"]);
+
+/**
+ * After a write that changes what copies point at or show (a book entry's first edit makes a
+ * version and moves the campaign's copies onto it, a Revert moves them back, an edit changes a
+ * campaign entry in place), the campaign's cached warband sheets (and, for items, stashes) are
+ * marked stale: the one on screen reads its units' current ids and values again, the others on
+ * their next visit. Only that campaign's sheets and stashes; nothing else is read.
+ */
+export function invalidateHeldCopies(
+  queryClient: QueryClient,
+  kind: CatalogueKind,
+  campaignId: number
+) {
+  if (!HELD_BY_UNITS.has(kind) || !isCampaignId(campaignId)) {
+    return Promise.resolve();
+  }
+  const parts = kind === "items" ? ["sheet", "stash"] : ["sheet"];
+  return queryClient.invalidateQueries({
+    predicate: ({ queryKey }) =>
+      queryKey[0] === "campaign" &&
+      queryKey[1] === campaignId &&
+      queryKey[2] === "warband" &&
+      typeof queryKey[3] === "number" &&
+      parts.includes(queryKey[4] as string),
+  });
+}
+
 export function invalidateCatalogue(
   queryClient: QueryClient,
   kind: CatalogueKind,
@@ -231,6 +260,9 @@ export function useCatalogueCache() {
         removeCatalogueEntry(queryClient, kind, campaignId, entryId),
       invalidate: (kind: CatalogueKind, campaignId: number) =>
         invalidateCatalogue(queryClient, kind, campaignId),
+      /** The campaign's warband sheets (and stashes) after copies moved or changed. */
+      heldCopiesChanged: (kind: CatalogueKind, campaignId: number) =>
+        invalidateHeldCopies(queryClient, kind, campaignId),
     }),
     [queryClient]
   );

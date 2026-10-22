@@ -44,6 +44,8 @@ export function useCatalogueRevert<K extends CatalogueEntryKind>({
     try {
       const book = await revertEntry<CatalogueEntry<K>>(kind, entry, campaignId);
       catalogueCache.write(kind, campaignId, book, entry.id);
+      // The campaign's copies went back to the book entry.
+      void catalogueCache.heldCopiesChanged(kind, campaignId);
       setIsOpen(false);
       onReverted?.(book);
       after?.();

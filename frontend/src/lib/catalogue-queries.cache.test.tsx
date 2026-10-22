@@ -42,6 +42,8 @@ vi.mock("@/features/realtime/components/CampaignDiceRollerMenu", () => ({ defaul
 const dirtyFighting = skill({ id: 905, campaign_id: 1, name: "Dirty Fighting", type: "Combat" });
 
 const EVENTS = "private-campaign-1-events";
+/** Your warband's sheet, which the campaign shell holds. */
+const SHEET = `GET /warbands/${OWNER.warband!.id}/sheet/`;
 
 /** Another member's catalogue write, as the server announces it to everyone else. */
 const catalogueChanged = (kind: string) =>
@@ -81,7 +83,7 @@ afterEach(() => {
 });
 
 describe("catalogue cache: other members' writes", () => {
-  it("shows another member's new skill as soon as catalogue.changed {skills} arrives, reading only that list (BUG-80)", async () => {
+  it("shows another member's new skill as soon as catalogue.changed {skills} arrives, reading that list and your warband's sheet, nothing else (BUG-80)", async () => {
     await openSkills();
     await waitFor(() => expect(fakeRealtime.subscriberCount(EVENTS, "catalogue.changed")).toBe(1));
     fakeApi.on(LIST.skills, [dirtyFighting, ...SKILLS]);
@@ -91,7 +93,27 @@ describe("catalogue cache: other members' writes", () => {
 
     expect(await screen.findByRole("row", { name: /^Dirty Fighting/ })).toBeVisible();
     await settle();
-    expect(fakeApi.calls()).toEqual([LIST.skills]);
+    // Units carry skills: the sheet the shell holds is read again for their current ids.
+    expect([...fakeApi.calls()].sort()).toEqual([LIST.skills, SHEET].sort());
+  });
+
+  it("marks the campaign's warband sheets and stashes stale on catalogue.changed {items}, another campaign's not, and reads only what is shown", async () => {
+    await openSkills();
+    await waitFor(() => expect(fakeRealtime.subscriberCount(EVENTS, "catalogue.changed")).toBe(1));
+    const rival = ["campaign", 1, "warband", 102, "sheet"];
+    const stash = ["campaign", 1, "warband", OWNER.warband!.id, "stash"];
+    const elsewhere = ["campaign", 2, "warband", 201, "sheet"];
+    [rival, stash, elsewhere].forEach((key) => queryClient.setQueryData(key, {}));
+    fakeApi.clearRequests();
+
+    await catalogueChanged("items");
+    await settle();
+
+    expect(queryClient.getQueryState(rival)?.isInvalidated).toBe(true);
+    expect(queryClient.getQueryState(stash)?.isInvalidated).toBe(true);
+    expect(queryClient.getQueryState(elsewhere)?.isInvalidated).toBe(false);
+    // Only your own sheet is on screen (the shell's): it alone is read again.
+    expect(fakeApi.calls()).toEqual([SHEET]);
   });
 
   it("marks a list nobody is watching stale, so the next visit reads it; hired_swords is the Hired Swords list (BUG-80)", async () => {
@@ -113,7 +135,8 @@ describe("catalogue cache: other members' writes", () => {
     await catalogueChanged("hired_swords");
     await settle();
 
-    expect(fakeApi.calls()).toEqual([]);
+    // No list is read; only the shell's sheet, for the spells its units know.
+    expect(fakeApi.calls()).toEqual([SHEET]);
     expect(queryClient.getQueryState(["campaign", 1, "catalogue", "spells"])?.isInvalidated).toBe(
       true
     );

@@ -9,7 +9,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError } from "@/lib/api-client";
-import { routeCampaignShell } from "@/test/campaign-fixtures";
+import { OWNER, routeCampaignShell } from "@/test/campaign-fixtures";
 import {
   ITEMS,
   LIST,
@@ -54,6 +54,8 @@ const yourSword = item({
   book: { id: 2, name: "Sword", changes: {}, price: 10 },
 });
 const withoutSword = ITEMS.filter((entry) => entry.name !== "Sword");
+/** Your warband's sheet, which the campaign shell holds. */
+const SHEET = `GET /warbands/${OWNER.warband!.id}/sheet/`;
 
 /**
  * A list route whose answer a write changes, as the server's would: `list.now` is what the next
@@ -86,6 +88,7 @@ describe("Wargear: a book item's version", () => {
       return yourSword;
     });
     await openWargear();
+    const sheetReads = fakeApi.countOf(SHEET);
 
     await user.click(within(itemRows("Sword")[0]).getByRole("button", { name: "Edit item" }));
     const price = screen.getByDisplayValue("10");
@@ -98,6 +101,8 @@ describe("Wargear: a book item's version", () => {
       campaign_id: 1,
       availabilities: [{ cost: 15, rarity: 2 }],
     });
+    // Copies now point at the version: the warband sheet the shell holds is read again.
+    await waitFor(() => expect(fakeApi.countOf(SHEET)).toBe(sheetReads + 1));
     expect(itemRows("Sword")).toHaveLength(1);
     expect(itemRows("Sword")[0]).toHaveTextContent(/SwordHouse rule/);
     expect(itemRows("Sword")[0]).toHaveTextContent(/Common\s*15/);
@@ -124,6 +129,8 @@ describe("Wargear: a book item's version", () => {
 
     await waitFor(() => expect(screen.queryByRole("button", { name: "Save changes" })).toBeNull());
     expect(fakeApi.requests()[0]).toEqual({ method: "POST", path: "/items/270/revert/" });
+    // Copies went back to the book item: the sheet is read again.
+    await waitFor(() => expect(fakeApi.countOf(SHEET)).toBe(1));
     expect(itemRows("Sword")).toHaveLength(1);
     expect(itemRows("Sword")[0]).not.toHaveTextContent("House rule");
     expect(itemRows("Sword")[0]).toHaveTextContent(/Common\s*10/);
@@ -167,6 +174,7 @@ describe("Wargear: a book item's version", () => {
       return detached;
     });
     await openWargear();
+    const sheetReads = fakeApi.countOf(SHEET);
     await user.click(screen.getByRole("button", { name: "Armour" }));
 
     await user.click(
@@ -192,6 +200,8 @@ describe("Wargear: a book item's version", () => {
     await waitFor(() => expect(screen.queryByRole("button", { name: "Save changes" })).toBeNull());
     expect(fakeApi.bodyOf("PATCH /items/250/")).not.toHaveProperty("campaign_id");
     expect(itemRows("Heavy Armour")[0]).toHaveTextContent(/Common\s*20/);
+    // A campaign item's edit changes what its copies show: the sheet is read again too.
+    await waitFor(() => expect(fakeApi.countOf(SHEET)).toBe(sheetReads + 1));
   });
 });
 

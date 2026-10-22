@@ -130,6 +130,10 @@ export function useSpellForm({
         ? await updateSpell(spell.id, { ...payload, ...bookCampaign(spell, campaignId) })
         : await createSpell({ ...payload, campaign_id: campaignId });
       catalogueCache.write("spells", campaignId, saved, spell?.id);
+      if (spell) {
+        // The copies now point at the version, or show the edited entry: sheets read them again.
+        void catalogueCache.heldCopiesChanged("spells", campaignId);
+      }
       onSaved(saved);
       after?.();
     } catch (errorResponse) {

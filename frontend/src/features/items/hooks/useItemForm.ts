@@ -118,6 +118,10 @@ export function useItemForm({
         ? await updateItem(item.id, { ...payload, ...bookCampaign(item, campaignId) })
         : await createItem({ ...payload, campaign_id: campaignId });
       catalogueCache.write("items", campaignId, saved, item?.id);
+      if (item) {
+        // The copies now point at the version, or show the edited entry: sheets read them again.
+        void catalogueCache.heldCopiesChanged("items", campaignId);
+      }
       onSaved(saved);
       after?.();
     } catch (errorResponse) {

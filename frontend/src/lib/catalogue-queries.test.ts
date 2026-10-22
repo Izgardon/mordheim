@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import { createTestQueryClient } from "@/test/query-test-utils";
-import { removeCatalogueEntry, upsertCatalogueEntry } from "./catalogue-queries";
+import {
+  invalidateHeldCopies,
+  removeCatalogueEntry,
+  upsertCatalogueEntry,
+} from "./catalogue-queries";
 import { queryKeys } from "./query-keys";
 
 import type { Skill } from "@/features/skills/types/skill-types";
@@ -56,6 +60,52 @@ describe("catalogue cache writes", () => {
     ]);
     expect(queryClient.getQueryData(entryKey)).toEqual(skill(10, "Sprint"));
     expect(queryClient.getQueryState(entryKey)?.isInvalidated).toBe(true);
+  });
+
+  it("marks the campaign's warband sheets and stashes stale after an item change, and nothing else", () => {
+    const queryClient = createTestQueryClient();
+    const keys = {
+      sheet: queryKeys.campaign.warbandSheet(7, 101),
+      otherSheet: queryKeys.campaign.warbandSheet(7, 102),
+      stash: queryKeys.campaign.warbandStash(7, 101),
+      treasury: queryKeys.campaign.warbandTreasury(7, 101),
+      mine: queryKeys.campaign.myWarband(7),
+      elsewhere: queryKeys.campaign.warbandSheet(8, 201),
+    };
+    Object.values(keys).forEach((key) => queryClient.setQueryData(key, {}));
+    const stale = () =>
+      Object.fromEntries(
+        Object.entries(keys).map(([name, key]) => [
+          name,
+          queryClient.getQueryState(key)?.isInvalidated,
+        ])
+      );
+
+    void invalidateHeldCopies(queryClient, "items", 7);
+
+    expect(stale()).toEqual({
+      sheet: true,
+      otherSheet: true,
+      stash: true,
+      treasury: false,
+      mine: false,
+      elsewhere: false,
+    });
+  });
+
+  it("marks only the sheets stale after a skill change (stashes hold items), and nothing for a kind units don't hold", () => {
+    const queryClient = createTestQueryClient();
+    const sheet = queryKeys.campaign.warbandSheet(7, 101);
+    const stash = queryKeys.campaign.warbandStash(7, 101);
+    queryClient.setQueryData(sheet, {});
+    queryClient.setQueryData(stash, []);
+
+    void invalidateHeldCopies(queryClient, "bestiary", 7);
+    expect(queryClient.getQueryState(sheet)?.isInvalidated).toBe(false);
+
+    void invalidateHeldCopies(queryClient, "skills", 7);
+    expect(queryClient.getQueryState(sheet)?.isInvalidated).toBe(true);
+    expect(queryClient.getQueryState(stash)?.isInvalidated).toBe(false);
   });
 
   it("removes an entry by id", () => {
