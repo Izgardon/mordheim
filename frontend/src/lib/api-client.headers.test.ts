@@ -7,7 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 import { accessToken, RAIDER } from "@/test/auth-fixtures";
 import { fakeFetch, json } from "@/test/fake-fetch";
-import { setRefreshToken, setToken } from "@/utils/storage";
+import { session } from "@/lib/session";
 import { apiRequest } from "./api-client";
 
 const socket = vi.hoisted(() => ({ id: null as string | null }));
@@ -21,8 +21,7 @@ const lastRequest = () => fakeFetch.requests()[fakeFetch.requests().length - 1];
 
 beforeEach(() => {
   localStorage.clear();
-  setToken(STORED);
-  setRefreshToken("refresh-1");
+  session.setTokens({ access: STORED, refresh: "refresh-1" });
   socket.id = null;
   fakeFetch.install();
 });

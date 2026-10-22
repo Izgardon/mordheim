@@ -11,7 +11,7 @@ import { cleanupApps, renderApp } from "@/test/app-routes";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
 import { setupUser } from "@/test/user-event";
-import { clearToken } from "@/utils/storage";
+import { session } from "@/lib/session";
 
 vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
@@ -106,7 +106,7 @@ describe("a session that ends", () => {
     await campaignsPage();
 
     // What api-client does when the refresh token is refused.
-    act(() => clearToken());
+    act(() => session.end());
 
     await landing();
     expect(app.location()).toMatchObject({

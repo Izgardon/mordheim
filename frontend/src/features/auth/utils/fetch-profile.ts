@@ -1,6 +1,7 @@
 // api
 import { fetchMe } from "../api/auth-api";
 import { isSessionExpiredError } from "../../../lib/api-client";
+import { session } from "../../../lib/session";
 
 // types
 import type { AuthUser } from "../types/auth-types";
@@ -32,5 +33,39 @@ export async function revalidateProfile(
     return await fetchMe(accessToken);
   } catch (error) {
     return isSessionExpiredError(error) ? "refused" : "unavailable";
+  }
+}
+
+/**
+ * Loads the session's user while the app waits behind LoadingScreen. A refused session ends; an
+ * outage keeps the tokens and offers a retry (ConnectionErrorScreen).
+ */
+export async function loadSessionProfile(accessToken: string) {
+  session.loadingProfile();
+  try {
+    session.profileLoaded(await fetchProfileWithRetry(accessToken));
+  } catch (error) {
+    if (isSessionExpiredError(error)) {
+      session.end();
+    } else {
+      session.profileUnavailable();
+    }
+    throw error;
+  }
+}
+
+/**
+ * Checks the cached user shown at boot, behind it: a refused session ends here, and an outage
+ * keeps the cached user (the page's own reads say the server is down).
+ */
+export async function revalidateSessionUser(accessToken: string, cached: AuthUser) {
+  const outcome = await revalidateProfile(accessToken);
+  if (session.get().user?.id !== cached.id || outcome === "unavailable") {
+    return; // signed out or switched meanwhile, or the server is down
+  }
+  if (outcome === "refused") {
+    session.end();
+  } else if (outcome.id === cached.id) {
+    session.updateUser(outcome);
   }
 }

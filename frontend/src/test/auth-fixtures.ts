@@ -3,7 +3,8 @@
  * `{id, email, name}`, and login and register answer `{access, refresh, user}`.
  */
 import type { AuthResponse, AuthTokens, AuthUser } from "@/features/auth/types/auth-types";
-import { setTokens } from "@/utils/storage";
+import { session } from "@/lib/session";
+import { writeSession } from "@/utils/storage";
 
 /** An unsigned JWT-shaped token: the client reads only its payload's `user_id`. */
 export function accessToken(userId: number, nonce = "a") {
@@ -38,7 +39,7 @@ export function registerAnswer(user: AuthUser): AuthResponse {
  */
 export function storeSession(user: AuthUser = RAIDER, { cachedUser = true } = {}) {
   const tokens = tokensFor(user, "stored");
-  setTokens({ ...tokens, user: cachedUser ? user : undefined });
+  writeSession({ ...tokens, user: cachedUser ? user : undefined });
   return tokens;
 }
 
@@ -53,15 +54,11 @@ export function deferred<T>() {
   return { promise, resolve, reject };
 }
 
-/** Counts the `auth:tokens-changed` events storage dispatches until `stop()` is called. */
+/** Counts the session's change notifications (one per stored change) until `stop()` is called. */
 export function countTokenEvents() {
   let count = 0;
-  const listener = () => {
+  const stop = session.subscribe(() => {
     count += 1;
-  };
-  window.addEventListener("auth:tokens-changed", listener);
-  return {
-    count: () => count,
-    stop: () => window.removeEventListener("auth:tokens-changed", listener),
-  };
+  });
+  return { count: () => count, stop };
 }

@@ -1,6 +1,7 @@
 import { createContext, useContext } from "react";
 
 // types
+import type { SessionEnd, SessionStatus } from "../../../lib/session";
 import type {
   AuthResponse,
   AuthUser,
@@ -8,12 +9,11 @@ import type {
   RegisterPayload,
 } from "../types/auth-types";
 
-/** How the last session ended: by Log out, or under the user (refused by the server, or another tab). */
-export type SessionEnd = "signed-out" | "ended";
-
 export type AuthContextValue = {
+  status: SessionStatus;
   token: string | null;
   user: AuthUser | null;
+  /** False while the session's user loads (status `booting`). */
   isReady: boolean;
   isSubmitting: boolean;
   /** Set when the profile couldn't be loaded because the server was unreachable; the session is kept. */

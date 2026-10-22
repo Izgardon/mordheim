@@ -1,5 +1,5 @@
 // types
-import type { SessionEnd } from "../stores/auth-context";
+import type { SessionEnd } from "../../../lib/session";
 
 export const SESSION_ENDED_MESSAGE = "Your session ended. Please sign in again.";
 

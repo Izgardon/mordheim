@@ -1,248 +1,120 @@
 import type { PropsWithChildren } from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 // api
 import { loginAccount, registerAccount } from "../api/auth-api";
-import { isSessionExpiredError, SERVER_UNAVAILABLE_MESSAGE } from "../../../lib/api-client";
+import { SERVER_UNAVAILABLE_MESSAGE } from "../../../lib/api-client";
 import { disconnectRealtime } from "../../../lib/realtime/client";
-import { AuthContext, type AuthContextValue, type SessionEnd } from "./auth-context";
+import { session, useSession, type SessionChange } from "../../../lib/session";
+import { AuthContext, type AuthContextValue } from "./auth-context";
 
 // utils
-import { clearToken, getToken, setStoredUser, setTokens } from "../../../utils/storage";
-import { fetchProfileWithRetry, revalidateProfile } from "../utils/fetch-profile";
-import { cachedUserFor, getTokenUserId } from "../utils/token-user";
+import { loadSessionProfile, revalidateSessionUser } from "../utils/fetch-profile";
 
 // types
-import type { AuthTokens, AuthUser, LoginCredentials, RegisterPayload } from "../types/auth-types";
+import type { LoginCredentials, RegisterPayload } from "../types/auth-types";
 
 export { useAuthContext } from "./auth-context";
 
+/**
+ * Puts the session (`lib/session.ts`) in context, and does what the app must when it changes:
+ * drop the previous user's cached data and socket, and load a profile the session lacks.
+ */
 export function AuthProvider({ children }: PropsWithChildren) {
   const queryClient = useQueryClient();
   // A reload renders at once from the user cached beside the tokens and checks /auth/me behind
   // it; a session stored without one waits for /auth/me (PERF-50).
-  const [boot] = useState(() => {
-    const storedToken = getToken();
-    return { token: storedToken, user: cachedUserFor(storedToken) };
-  });
-  const [token, setTokenState] = useState(boot.token);
-  const [user, setUserState] = useState(boot.user);
-  const [isReady, setIsReady] = useState(!boot.token || boot.user !== null);
+  const [boot] = useState(session.boot);
+  const { status, token, user, ended } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [connectionError, setConnectionError] = useState<string | null>(null);
-  const [sessionEnd, setSessionEnd] = useState<SessionEnd | null>(null);
-  // The latest token and user, for the storage listener: this tab's own writes (sign-in, a
-  // refresh) notify at once, before React has re-rendered with the new values (PERF-50).
-  const latest = useRef({ token: boot.token, user: boot.user });
 
-  const setSessionToken = useCallback((nextToken: string | null) => {
-    latest.current.token = nextToken;
-    setTokenState(nextToken);
-  }, []);
+  // Shared devices: nothing cached for one user may reach the next one (BUG-22).
+  const dropUserData = useCallback(() => {
+    queryClient.clear();
+    disconnectRealtime();
+  }, [queryClient]);
 
-  const setUser = useCallback((nextUser: AuthUser | null) => {
-    latest.current.user = nextUser;
-    setUserState(nextUser);
-  }, []);
-
-  const hydrateUser = useCallback(
-    async (accessToken: string) => {
-      setIsReady(false);
-      setConnectionError(null);
-
-      try {
-        const loadedProfile = await fetchProfileWithRetry(accessToken);
-        setUser(loadedProfile);
-        if (getToken()) {
-          setStoredUser(loadedProfile);
-        }
-        setIsReady(true);
-      } catch (error) {
-        if (isSessionExpiredError(error)) {
-          clearToken();
-          setSessionToken(null);
-        } else {
-          // An outage isn't a logout: keep the tokens so the user can retry.
-          setConnectionError(SERVER_UNAVAILABLE_MESSAGE);
-        }
-        setUser(null);
-        setIsReady(true);
-        throw error;
-      }
-    },
-    [setSessionToken, setUser]
-  );
-
-  // The cached user shown at boot, checked behind it: a refused session ends here, and an outage
-  // keeps the cached user (the page's own reads say the server is down).
-  const revalidateUser = useCallback(
-    async (accessToken: string, cached: AuthUser) => {
-      const outcome = await revalidateProfile(accessToken);
-      const current = latest.current.user;
-      if (current?.id !== cached.id || outcome === "unavailable") {
-        return; // signed out or switched meanwhile, or the server is down
-      }
-      if (outcome === "refused") {
-        clearToken();
-      } else if (outcome.id === cached.id) {
-        setStoredUser(outcome);
-        if (JSON.stringify(outcome) !== JSON.stringify(current)) setUser(outcome);
-      }
-    },
-    [setUser]
-  );
-
-  const retryConnection = useCallback(() => {
-    const currentToken = getToken();
-    if (currentToken) {
-      hydrateUser(currentToken).catch(() => {});
-    }
-  }, [hydrateUser]);
-
-  const syncToken = useCallback(() => {
-    const resolvedToken = getToken();
-    if (resolvedToken === latest.current.token) {
-      return;
-    }
-    const { token: currentToken, user: currentUser } = latest.current;
-    setSessionToken(resolvedToken);
-    if (resolvedToken) {
-      // A refreshed token for this account (from this tab or another): swap it and keep the app
-      // mounted, since re-hydrating flips isReady and unmounts everything (BUG-21). Before the
-      // profile has loaded too, so a reload with an expired token loads it once (BUG-158).
-      const accountId = currentUser
-        ? String(currentUser.id)
-        : currentToken && getTokenUserId(currentToken);
-      const tokenUserId = getTokenUserId(resolvedToken);
-      if (tokenUserId !== null && tokenUserId === accountId) {
+  const handleChange = useCallback(
+    (change: SessionChange) => {
+      if (change.kind === "refreshed") {
         return;
       }
-      setSessionEnd(null);
-      if (currentUser) {
-        // Another account signed in (in another tab): drop the previous user's cached data
-        // and the socket authorised as them.
-        queryClient.clear();
-        disconnectRealtime();
+      if (change.kind === "ended" || change.previousUser) {
+        dropUserData();
       }
-      const cached = cachedUserFor(resolvedToken);
-      if (cached) {
-        // Signed in in another tab, which cached the user beside the tokens.
-        setUser(cached);
-        setConnectionError(null);
-        setIsReady(true);
-        return;
+      if (change.kind === "switched" && change.needsProfile) {
+        loadSessionProfile(change.token).catch(() => {});
       }
-      hydrateUser(resolvedToken).catch(() => {});
-    } else {
-      // Signed out elsewhere, or the server refused the session: the next user must not see this
-      // one's data, and the sign-in card says the session ended (AUTH-UX-02).
-      queryClient.clear();
-      disconnectRealtime();
-      setUser(null);
-      setIsReady(true);
-      setSessionEnd("ended");
-    }
-  }, [hydrateUser, queryClient, setSessionToken, setUser]);
+    },
+    [dropUserData]
+  );
 
   useEffect(() => {
-    syncToken();
-    window.addEventListener("storage", syncToken);
-    window.addEventListener("auth:tokens-changed", syncToken);
-    return () => {
-      window.removeEventListener("storage", syncToken);
-      window.removeEventListener("auth:tokens-changed", syncToken);
-    };
-  }, [syncToken]);
+    const stopListening = session.onChange(handleChange);
+    session.sync();
+    return stopListening;
+  }, [handleChange]);
 
   useEffect(() => {
     if (boot.token && boot.user) {
-      void revalidateUser(boot.token, boot.user);
+      void revalidateSessionUser(boot.token, boot.user);
     } else if (boot.token) {
-      hydrateUser(boot.token).catch(() => {});
+      loadSessionProfile(boot.token).catch(() => {});
     }
-  }, [boot, hydrateUser, revalidateUser]);
+  }, [boot]);
 
-  // Sign-in and sign-up store the session in one write, which the listener above then skips:
-  // the user comes with the answer, so nothing reads /auth/me again (PERF-50).
-  const startSession = useCallback(
-    (tokens: AuthTokens, profile: AuthUser) => {
-      setSessionToken(tokens.access);
-      setUser(profile);
-      setConnectionError(null);
-      setSessionEnd(null);
-      setIsReady(true);
-      setTokens({ access: tokens.access, refresh: tokens.refresh, user: profile });
-    },
-    [setSessionToken, setUser]
-  );
+  const retryConnection = useCallback(() => {
+    const storedToken = session.accessToken();
+    if (storedToken) {
+      loadSessionProfile(storedToken).catch(() => {});
+    }
+  }, []);
 
-  const signIn = useCallback(
-    async (credentials: LoginCredentials) => {
-      setIsSubmitting(true);
-      try {
-        const data = await loginAccount(credentials);
-        startSession(data, data.user);
-        return data;
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-    [startSession]
-  );
+  // Sign-in and sign-up store the session in one write: the user comes with the answer, so
+  // nothing reads /auth/me (PERF-50).
+  const signIn = useCallback(async (credentials: LoginCredentials) => {
+    setIsSubmitting(true);
+    try {
+      const data = await loginAccount(credentials);
+      session.start(data, data.user);
+      return data;
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, []);
 
-  const signUp = useCallback(
-    async (payload: RegisterPayload) => {
-      setIsSubmitting(true);
-      try {
-        const data = await registerAccount(payload);
-        startSession(data, data.user);
-        return data;
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-    [startSession]
-  );
+  const signUp = useCallback(async (payload: RegisterPayload) => {
+    setIsSubmitting(true);
+    try {
+      const data = await registerAccount(payload);
+      session.start(data, data.user);
+      return data;
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, []);
 
   const signOut = useCallback(() => {
-    // The state first, so the listener doesn't take the cleared storage for an ended session.
-    setSessionToken(null);
-    setUser(null);
-    setConnectionError(null);
-    setSessionEnd("signed-out");
-    setIsReady(true);
-    clearToken();
-    // Shared devices: nothing cached for this user may reach the next one (BUG-22).
-    queryClient.clear();
-    disconnectRealtime();
-  }, [queryClient, setSessionToken, setUser]);
+    session.signOut();
+    dropUserData();
+  }, [dropUserData]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
+      status,
       token,
       user,
-      isReady,
+      isReady: status !== "booting",
       isSubmitting,
-      connectionError,
-      sessionEnd,
+      connectionError: status === "offline" ? SERVER_UNAVAILABLE_MESSAGE : null,
+      sessionEnd: ended,
       retryConnection,
       signIn,
       signUp,
       signOut,
     }),
-    [
-      token,
-      user,
-      isReady,
-      isSubmitting,
-      connectionError,
-      sessionEnd,
-      retryConnection,
-      signIn,
-      signUp,
-      signOut,
-    ]
+    [status, token, user, isSubmitting, ended, retryConnection, signIn, signUp, signOut]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

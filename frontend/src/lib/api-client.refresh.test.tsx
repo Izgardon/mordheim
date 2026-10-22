@@ -13,7 +13,8 @@ import { AuthProvider, useAuthContext } from "@/features/auth/stores/auth-store"
 import { accessToken, countTokenEvents, deferred, RAIDER } from "@/test/auth-fixtures";
 import { fakeFetch, json } from "@/test/fake-fetch";
 import { createQueryWrapper } from "@/test/query-test-utils";
-import { getRefreshToken, getToken, setRefreshToken, setToken, setTokens } from "@/utils/storage";
+import { session } from "@/lib/session";
+import { getRefreshToken, getToken } from "@/utils/storage";
 import { ApiError, apiRequest } from "./api-client";
 
 vi.mock("@/lib/realtime/client", () => ({ disconnectRealtime: vi.fn() }));
@@ -57,8 +58,7 @@ function renderCampaignsScreen() {
 
 beforeEach(() => {
   localStorage.clear();
-  setToken(OLD_ACCESS);
-  setRefreshToken("refresh-1");
+  session.setTokens({ access: OLD_ACCESS, refresh: "refresh-1" });
   fakeFetch.install();
   fakeFetch.on("POST /auth/refresh/", json(200, { access: NEW_ACCESS }));
 });
@@ -115,7 +115,7 @@ describe("a retry that still gets a 401 after a successful refresh", () => {
     const other = accessToken(2, "signed-in-meanwhile");
     fakeFetch.on("GET /campaigns/", ({ headers }) => {
       if (headers.authorization === `Bearer ${NEW_ACCESS}`) {
-        setTokens({ access: other, refresh: "refresh-2" });
+        session.setTokens({ access: other, refresh: "refresh-2" });
       }
       return userNotFound();
     });

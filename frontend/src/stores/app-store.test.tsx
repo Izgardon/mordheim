@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AuthProvider, useAuthContext } from "@/features/auth/stores/auth-store";
 import { createTestQueryClient } from "@/test/query-test-utils";
-import { clearToken, setRefreshToken, setToken } from "@/utils/storage";
+import { session } from "@/lib/session";
 import { AppStoreProvider, useAppStore } from "./app-store";
 
 import type {
@@ -70,8 +70,7 @@ function expectEmptySession(
 describe("sign-out clears the previous user's data (BUG-22)", () => {
   beforeEach(() => {
     localStorage.clear();
-    setToken("alice-access");
-    setRefreshToken("alice-refresh");
+    session.setTokens({ access: "alice-access", refresh: "alice-refresh" });
     fetchMe.mockReset();
     fetchMe.mockResolvedValue(alice);
     loginAccount.mockReset();
@@ -104,7 +103,7 @@ describe("sign-out clears the previous user's data (BUG-22)", () => {
     seedAliceSession(queryClient, result.current.store);
 
     // What api-client does when /auth/refresh/ answers 401.
-    act(() => clearToken());
+    act(() => session.end());
 
     await waitFor(() => expect(result.current.auth.user).toBeNull());
     expectEmptySession(queryClient, result.current.store);
