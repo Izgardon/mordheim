@@ -96,16 +96,22 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
     new_password = serializers.CharField(write_only=True, min_length=8)  # checked against the user in the view
 
 
-class PasswordChangeSerializer(serializers.Serializer):
-    """The signed-in user's current password and a new one, checked against their email and name (AUTH-CQ-04 b)."""
+class CurrentPasswordSerializer(serializers.Serializer):
+    """The signed-in user's (context `user`) current password, confirming an account change: a password change now,
+    and deleting the account in PR C."""
 
     current_password = serializers.CharField(write_only=True)
-    new_password = serializers.CharField(write_only=True, min_length=8)
 
     def validate_current_password(self, value):
         if not self.context["user"].check_password(value):
             raise serializers.ValidationError(CURRENT_PASSWORD_WRONG)
         return value
+
+
+class PasswordChangeSerializer(CurrentPasswordSerializer):
+    """The current password and a new one, checked against the user's email and name (AUTH-CQ-04 b)."""
+
+    new_password = serializers.CharField(write_only=True, min_length=8)
 
     def validate(self, attrs):
         problems = password_problems(attrs["new_password"], self.context["user"])
