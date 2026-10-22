@@ -472,14 +472,18 @@ h6 {
   overflow-y: auto;
 }
 
+/* Not stretched to the box: a stretched column held the card to one screen, so a long form
+   was cut off instead of scrolling. It follows the card, never shorter than the screen, and
+   clips the card's 5px hidden edges, so a card that fits scrolls nothing (AUTH-UX-07). */
 .landing-auth {
   display: flex;
+  align-self: flex-start;
   align-items: stretch;
   justify-content: flex-start;
   flex: 0 0 min(480px, 42vw);
   min-height: 100%;
   padding: 0;
-  overflow: visible;
+  overflow: clip;
 }
 
 .landing-auth .auth-card {
@@ -490,8 +494,10 @@ h6 {
   max-height: none;
 }
 
+/* Sticky, so the video keeps filling its half while the box scrolls the card. */
 .landing-video {
-  position: relative;
+  position: sticky;
+  top: 0;
   flex: 1 1 auto;
   min-width: 0;
   height: 100%;
@@ -535,10 +541,12 @@ h6 {
 .landing--mobile .landing-auth {
   display: flex;
   flex: 0 0 auto;
+  align-self: stretch;
   width: 100%;
   min-height: 0;
   align-items: flex-start;
   padding-top: env(safe-area-inset-top, 0px);
+  overflow: visible;
 }
 
 .landing--mobile .landing-auth .auth-card {

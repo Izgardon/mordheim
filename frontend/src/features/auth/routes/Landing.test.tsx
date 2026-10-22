@@ -117,4 +117,23 @@ describe("the landing box", () => {
     expect(rule).toMatch(/min-height: calc\(100% \+ 10px\);/);
     expect(rule).not.toMatch(/\sheight: calc/);
   });
+
+  it("sizes the desktop card column to its card, so a short screen scrolls to the sign-up button, and keeps the video in its half (AUTH-UX-07)", () => {
+    // Stretched to the box's one-screen height, the column held the card to it, and the
+    // sign-up button sat out of reach below. The column now follows the card (never shorter
+    // than the screen) and clips the card's 5px hidden edges, so a card that fits scrolls
+    // nothing; the video stays put while the box scrolls.
+    const column = cssRule(".landing-auth");
+    expect(column).toMatch(/align-self: flex-start;/);
+    expect(column).toMatch(/min-height: 100%;/);
+    expect(column).toMatch(/overflow: clip;/);
+    expect(column).not.toMatch(/overflow: visible;/);
+    const video = cssRule(".landing-video");
+    expect(video).toMatch(/position: sticky;/);
+    expect(video).toMatch(/top: 0;/);
+    // The phone's column stays full width and unclipped, so its card's shadow shows.
+    const phoneColumn = cssRule(".landing--mobile .landing-auth");
+    expect(phoneColumn).toMatch(/align-self: stretch;/);
+    expect(phoneColumn).toMatch(/overflow: visible;/);
+  });
 });
