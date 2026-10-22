@@ -1,3 +1,5 @@
+import type { CatalogueBadgeFields } from "@/features/catalogue/types/catalogue-entry";
+
 export type ItemProperty = {
   id: number;
   campaign_id?: number | null;
@@ -39,7 +41,7 @@ export type AvailabilityPayload = {
 /** Where a suggested sale price comes from (decision 3). */
 export type SalePriceBasis = "campaign_price" | "stored_cost";
 
-export type Item = {
+export type Item = CatalogueBadgeFields & {
   id: number;
   campaign_id?: number | null;
   /** Set on a house rule's clone of a catalogue item (BUG-51): it changes with its rule only. */

@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 
 import CollapsibleSection from "@/components/ui/collapsible-section";
+import { EntryBadge } from "@/features/catalogue/components/EntryBadge";
 import type {
   CatalogueColumn,
   CatalogueMobileLayout,
@@ -45,7 +46,10 @@ const column = (
 
 const name = (width: string) =>
   column("name", "Name", width, (item) => (
-    <span className="font-medium text-foreground">{item.name}</span>
+    <span className="font-medium text-foreground">
+      {item.name}
+      <EntryBadge entry={item} />
+    </span>
   ));
 const subtype = (width: string) =>
   column("subtype", "Type", width, (item) => muted(item.subtype || "-"), HIDE_BELOW_LG);

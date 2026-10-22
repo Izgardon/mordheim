@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import CatalogueTable from "@/features/catalogue/components/CatalogueTable";
+import { EntryBadge } from "@/features/catalogue/components/EntryBadge";
 
 import type { Skill } from "../types/skill-types";
 
@@ -24,7 +25,12 @@ export default function SkillsTable({ skills, renderActions, isMobile }: SkillsT
           key: "name",
           label: "Name",
           headerClassName: "w-[20%]",
-          render: (skill) => <span className="font-medium text-foreground">{skill.name}</span>,
+          render: (skill) => (
+            <span className="font-medium text-foreground">
+              {skill.name}
+              <EntryBadge entry={skill} />
+            </span>
+          ),
         },
         { key: "type", label: "Type", headerClassName: "w-[15%]", render: formatType },
         {
@@ -42,7 +48,12 @@ export default function SkillsTable({ skills, renderActions, isMobile }: SkillsT
         },
       ]}
       mobile={{
-        name: (skill) => skill.name,
+        name: (skill) => (
+          <>
+            {skill.name}
+            <EntryBadge entry={skill} />
+          </>
+        ),
         second: { label: "Type", className: "w-[30%]", render: formatType },
         actions: renderActions,
         details: (skill) => skill.description?.trim() || "No description available.",

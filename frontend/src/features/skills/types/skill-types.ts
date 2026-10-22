@@ -1,4 +1,6 @@
-export type Skill = {
+import type { CatalogueBadgeFields } from "@/features/catalogue/types/catalogue-entry";
+
+export type Skill = CatalogueBadgeFields & {
   id: number;
   campaign_id?: number | null;
   name: string;

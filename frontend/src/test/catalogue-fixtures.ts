@@ -101,10 +101,15 @@ export const blowpipe = item({
     }),
   ],
 });
-/** A Half Price Armour clone: a campaign row that changes with its rule only (BUG-51). */
+/**
+ * A Half Price Armour clone: the campaign's version of the book Heavy Armour (id 70, 50 gc) that
+ * changes with its rule only (BUG-51); an edit detaches it.
+ */
 export const halfPriceArmour = item({
   id: 250,
   campaign_id: CAMPAIGN_ID,
+  replaces: 70,
+  book: { id: 70, name: "Heavy Armour", changes: {}, price: 50 },
   name: "Heavy Armour",
   type: "Armour",
   subtype: "Armour",

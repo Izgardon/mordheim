@@ -1,4 +1,6 @@
-export type Spell = {
+import type { CatalogueBadgeFields } from "@/features/catalogue/types/catalogue-entry";
+
+export type Spell = CatalogueBadgeFields & {
   id: number;
   name: string;
   type?: string | null;

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import CatalogueTable from "@/features/catalogue/components/CatalogueTable";
+import { EntryBadge } from "@/features/catalogue/components/EntryBadge";
 
 import type { Spell } from "../types/spell-types";
 
@@ -41,7 +42,12 @@ export default function SpellsTable({ spells, renderActions, isMobile }: SpellsT
           key: "name",
           label: "Name",
           headerClassName: "w-[20%]",
-          render: (spell) => <span className="font-medium text-foreground">{spell.name}</span>,
+          render: (spell) => (
+            <span className="font-medium text-foreground">
+              {spell.name}
+              <EntryBadge entry={spell} />
+            </span>
+          ),
         },
         { key: "type", label: "Type", headerClassName: "w-[12%]", render: formatType },
         { key: "roll", label: "D6", headerClassName: "w-[8%]", render: (s) => s.roll ?? "-" },
@@ -61,7 +67,12 @@ export default function SpellsTable({ spells, renderActions, isMobile }: SpellsT
         },
       ]}
       mobile={{
-        name: (spell) => spell.name,
+        name: (spell) => (
+          <>
+            {spell.name}
+            <EntryBadge entry={spell} />
+          </>
+        ),
         second: { label: "Type", className: "w-[30%]", render: formatType },
         actions: renderActions,
         details: (spell) => <SpellDetails spell={spell} />,

@@ -1,13 +1,14 @@
 /**
  * The Wargear table as the app mounts it (layout, fake server): one row per availability, the
- * name cell holding only the name whatever the row is (CAT-UX-01), each phone row's availability
- * under its name (CAT-UX-03), and one Acquire dialog for the page, mounted on first use (PERF-48).
+ * name cell marking the campaign's own items "Custom" and its versions of book items "House rule"
+ * (CAT-NEW-03), each phone row's availability under its name (CAT-UX-03), and one Acquire dialog
+ * for the page, mounted on first use (PERF-48).
  */
-import { screen, within } from "@testing-library/react";
+import { act, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { routeCampaignShell } from "@/test/campaign-fixtures";
-import { routeCatalogue } from "@/test/catalogue-fixtures";
+import { ITEMS, LIST, availability, item, routeCatalogue } from "@/test/catalogue-fixtures";
 import { renderCatalogueRoute } from "@/test/catalogue-routes";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
@@ -69,18 +70,56 @@ beforeEach(() => {
 });
 
 describe("Wargear: what a row says", () => {
-  // Characterises current behaviour (CAT-UX-01, CAT-NEW-03, pinned; flips in PR C)
-  it("gives a campaign item, a book item and a house rule's clone the same bare name cell (CAT-UX-01, pinned; flips in PR C)", async () => {
+  it("marks the campaign's own items Custom and a house rule's clone House rule; book items carry nothing (CAT-UX-01, CAT-NEW-03)", async () => {
     const user = setupUser();
     await openWargear();
 
-    expect(cells(row("Axe"))[1]).toBe("Axe");
-    expect(cells(row("Rusty Cleaver"))[1]).toBe("Rusty Cleaver");
+    expect(cells(row("Rusty Cleaver"))[1]).toBe("Rusty CleaverCustom");
     expect(cells(row("Sword"))[1]).toBe("Sword");
     await user.click(screen.getByRole("button", { name: "Armour" }));
-    expect(cells(row("Heavy Armour"))[1]).toBe("Heavy Armour");
+    expect(cells(row("Heavy Armour"))[1]).toBe("Heavy ArmourHouse rule");
     expect(row("Heavy Armour")).toHaveTextContent(/Common\s*25/);
-    expect(within(screen.getByRole("table")).queryByText(/custom|house rule/i)).toBeNull();
+  });
+
+  it("says in the badge's tooltip, opened from the keyboard, what set a clone and what the book charges (CAT-NEW-03, CAT-UX-06)", async () => {
+    const user = setupUser();
+    await openWargear();
+    await user.click(screen.getByRole("button", { name: "Armour" }));
+    const badge = within(row("Heavy Armour")).getByText("House rule").parentElement!;
+
+    expect(badge).toHaveAttribute("tabindex", "0");
+    act(() => badge.focus());
+
+    const tooltip = await screen.findByRole("tooltip");
+    expect(tooltip).toHaveTextContent("Set by Half price armour.");
+    expect(tooltip).toHaveTextContent("Book: 50 gc");
+    expect(badge).toHaveAccessibleDescription(/Set by Half price armour/);
+  });
+
+  it("names who changed a hand-made version, when, and the book's values; a click on the badge leaves the row shut (CAT-NEW-03)", async () => {
+    const user = setupUser();
+    const yourSword = item({
+      id: 270,
+      campaign_id: 1,
+      name: "Sword",
+      replaces: 2,
+      updated_by: "Pia",
+      updated_at: "2026-10-21T21:57:08Z",
+      book: { id: 2, name: "Sword", changes: { strength: null }, price: 10 },
+      availabilities: [availability({ id: 90, cost: 15 })],
+    });
+    fakeApi.on(LIST.items, [yourSword, ...ITEMS.filter((entry) => entry.name !== "Sword")]);
+    await openWargear();
+
+    await user.hover(within(row("Sword")).getByText("House rule"));
+
+    const tooltip = await screen.findByRole("tooltip");
+    expect(tooltip).toHaveTextContent("This campaign's version of the book's Sword.");
+    expect(tooltip).toHaveTextContent(/Changed by Pia, .*2026/);
+    expect(tooltip).toHaveTextContent("Book: 10 gc");
+    expect(tooltip).toHaveTextContent("Book strength: none");
+    await user.click(within(row("Sword")).getByText("House rule"));
+    expect(row("Sword")).toHaveAttribute("aria-expanded", "false");
   });
 
   it("shows one row per availability on desktop, each with its restriction, rarer first", async () => {

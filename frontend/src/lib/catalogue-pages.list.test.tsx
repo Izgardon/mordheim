@@ -1,14 +1,22 @@
 /**
  * The catalogue lists as the five pages show them (layout, fake server). The pages render the
  * list exactly as the server merged it: a campaign "Axe" in place of the book Axe, and no merging
- * of their own (BUG-18 is server-side). Nothing marks a campaign entry as custom (CAT-UX-01; PR C
- * adds "Custom" and "House rule" badges, CAT-NEW-03).
+ * of their own (BUG-18 is server-side). Skills and Spells mark the campaign's own entries
+ * "Custom" (CAT-NEW-03); the Bestiary and Hired Swords cards don't yet (left for their rewrite).
  */
 import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { routeCampaignShell } from "@/test/campaign-fixtures";
-import { ITEMS, LIST, campaignAxe, item, routeCatalogue, skill } from "@/test/catalogue-fixtures";
+import {
+  ITEMS,
+  LIST,
+  campaignAxe,
+  item,
+  quickHands,
+  routeCatalogue,
+  skill,
+} from "@/test/catalogue-fixtures";
 import { renderCatalogueRoute } from "@/test/catalogue-routes";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
@@ -67,28 +75,33 @@ describe("the list merge as the pages show it", () => {
   });
 });
 
-describe("nothing marks a custom entry", () => {
-  // Characterises current behaviour (CAT-UX-01, CAT-NEW-03, pinned; flips in PR C)
-  it("Skills: a campaign row and a book row have the same bare name cell (CAT-UX-01, pinned; flips in PR C)", async () => {
+describe("the Custom and House rule badges (CAT-NEW-03)", () => {
+  it("Skills: the campaign's own skill is marked Custom, a book skill is not; a version is House rule", async () => {
+    fakeApi.on(LIST.skills, [
+      quickHands,
+      skill({ id: 908, campaign_id: 1, name: "Sprint", type: "Speed", replaces: 206 }),
+      skill(),
+    ]);
     renderCatalogueRoute("/campaigns/1/skills");
     await screen.findByRole("row", { name: /^Quick Hands/ });
-    expect(firstCell(tableRow("Quick Hands"))).toBe("Quick Hands");
+
+    expect(firstCell(tableRow("Quick Hands"))).toBe("Quick HandsCustom");
+    expect(firstCell(tableRow("Sprint"))).toBe("SprintHouse rule");
     expect(firstCell(tableRow("Strike to Injure"))).toBe("Strike to Injure");
-    expect(within(screen.getByRole("table")).queryByText(/custom|house rule/i)).toBeNull();
   });
 
-  // Characterises current behaviour (CAT-UX-01, CAT-NEW-03, pinned; flips in PR C)
-  it("Spells: a campaign row and a book row have the same bare name cell (CAT-UX-01, pinned; flips in PR C)", async () => {
+  it("Spells: the campaign's own spell is marked Custom, a book spell is not", async () => {
     renderCatalogueRoute("/campaigns/1/spells");
     await screen.findByRole("row", { name: /^Gutter Hex/ });
 
-    expect(firstCell(tableRow("Gutter Hex"))).toBe("Gutter Hex");
+    expect(firstCell(tableRow("Gutter Hex"))).toBe("Gutter HexCustom");
     expect(firstCell(tableRow("Fires of U'Zhul"))).toBe("Fires of U'Zhul");
-    expect(within(screen.getByRole("table")).queryByText(/custom|house rule/i)).toBeNull();
   });
+});
 
-  // Characterises current behaviour (CAT-UX-01, CAT-NEW-03, pinned; flips in PR C)
-  it("Bestiary: a campaign card and a book card carry the same heading and type line (CAT-UX-01, pinned; flips in PR C)", async () => {
+describe("the bestiary pages mark nothing yet", () => {
+  // Characterises current behaviour (CAT-UX-01, CAT-NEW-03, pinned; left for the bestiary rewrite)
+  it("Bestiary: a campaign card and a book card carry the same heading and type line (CAT-UX-01, pinned; left for the bestiary rewrite)", async () => {
     renderCatalogueRoute("/campaigns/1/bestiary");
     await screen.findByText("Sewer Rat");
 
@@ -99,8 +112,8 @@ describe("nothing marks a custom entry", () => {
     expect(within(card("Sewer Rat")).queryByText(/custom|house rule/i)).toBeNull();
   });
 
-  // Characterises current behaviour (CAT-UX-01, CAT-NEW-03, pinned; flips in PR C)
-  it("Hired Swords: a campaign profile and a book profile look alike (CAT-UX-01, pinned; flips in PR C)", async () => {
+  // Characterises current behaviour (CAT-UX-01, CAT-NEW-03, pinned; left for the bestiary rewrite)
+  it("Hired Swords: a campaign profile and a book profile look alike (CAT-UX-01, pinned; left for the bestiary rewrite)", async () => {
     renderCatalogueRoute("/campaigns/1/hired-swords");
     await screen.findByText("Pit Fighter");
 
