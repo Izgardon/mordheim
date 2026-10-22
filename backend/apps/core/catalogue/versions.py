@@ -5,8 +5,8 @@ Editing a book entry in a campaign copies it, with its child rows (`kind.childre
 the catalogue write's one transaction. The book row is locked first, so two first edits at once make one version
 (the second edits the first's version in place). Later edits change the version in place. Revert moves the copies
 back, records the reverted id (open battles still name it: current.py) and deletes the version. Both keep the
-copies' stored costs, and both cost the same whatever the number of copies. A hired sword's version is its entry's,
-with the entry's profile; links a copy carries to other entries point at the campaign's versions of those.
+copies' stored costs, and both cost the same whatever the number of copies. Links a copy carries to other entries
+point at the campaign's versions of those.
 """
 
 from typing import Any
@@ -19,63 +19,46 @@ from apps.core.errors import ApiError
 from apps.core.models import CatalogueEntry, RevertedVersion
 
 from .current import is_entry_table
-from .kinds import CatalogueKindSpec, entry_kind
+from .kinds import CatalogueKindSpec
 from .remap import remap
 
 NOT_A_VERSION = "This entry isn't a campaign's version of a book entry, so there is nothing to revert."
 
 
-def entry_of(kind: CatalogueKindSpec, row: Any) -> Any:
-    """The row of the entry table a kind's row is: itself, or a hired sword's bestiary entry."""
-    return getattr(row, kind.entry_via) if kind.entry_via else row
-
-
-def row_of(kind: CatalogueKindSpec, entry: Any) -> Any:
-    """The kind's row for an entry-table row: itself, or the hired sword whose entry it is."""
-    if not kind.entry_via:
-        return entry
-    return kind.hooks.write_rows(kind).get(**{kind.entry_via: entry})
-
-
-def editable(kind: CatalogueKindSpec, row: Any, campaign_id: int) -> Any:
-    """The row an edit in the campaign writes: a custom entry or a version itself (locked, so a Revert can't take it
+def editable(kind: CatalogueKindSpec, entry: Any, campaign_id: int) -> Any:
+    """The entry an edit in the campaign writes: a custom entry or a version itself (locked, so a Revert can't take it
     mid-edit); for a book entry, the campaign's version of it, made by this first edit. Editing a house rule's clone
     detaches it from the rule (its effect key goes, so the rule leaves it alone from then on)."""
-    entry = entry_of(kind, row)
-    owner = entry_kind(kind)
-    manager = owner.model._default_manager
+    manager = kind.model._default_manager
     if entry.campaign_id is None:
         book = manager.select_for_update().get(pk=entry.pk)
         entry = manager.select_for_update().filter(campaign_id=campaign_id, replaces=book).first()  # vs. a Revert
         if entry is None:
-            entry = copy_entry(owner, book, campaign_id)
-            remap(owner, campaign_id, {book.pk: entry.pk}, fresh=True)
-        row = row_of(kind, entry)
+            entry = copy_entry(kind, book, campaign_id)
+            remap(kind, campaign_id, {book.pk: entry.pk}, fresh=True)
     elif entry.replaces_id is not None and not manager.select_for_update().filter(pk=entry.pk).exists():
         raise NotFound("Not found")  # reverted while this edit was on its way
     if getattr(entry, "generated_effect_key", None):
         manager.filter(pk=entry.pk).update(generated_effect_key=None)
-        row.generated_effect_key = entry.generated_effect_key = None
-    return row
+        entry.generated_effect_key = None
+    return entry
 
 
-def revert(kind: CatalogueKindSpec, row: Any, campaign_id: int) -> Any:
+def revert(kind: CatalogueKindSpec, entry: Any, campaign_id: int) -> Any:
     """Revert the campaign's version (a book id: the campaign's version of it); the campaign's entry for the book entry
-    now, as a row of the kind: the book entry, or the clone a house rule makes of it again (`back_to_book`)."""
-    entry = entry_of(kind, row)
-    owner = entry_kind(kind)
-    manager = owner.model._default_manager
+    now: the book entry, or the clone a house rule makes of it again (`back_to_book`)."""
+    manager = kind.model._default_manager
     if entry.campaign_id is None:
         entry = manager.filter(campaign_id=campaign_id, replaces=entry).first() or entry
     if entry.replaces_id is None:
         raise ApiError(NOT_A_VERSION, code="not_a_version", status=409)
-    owner.hooks.refuse_write(entry, "revert")  # a house rule's clone goes with its rule, not by a Revert
+    kind.hooks.refuse_write(entry, "revert")  # a house rule's clone goes with its rule, not by a Revert
     version = manager.select_for_update().filter(pk=entry.pk).first()
     if version is not None:
-        retire(owner, campaign_id, [version])
-        owner.hooks.back_to_book(campaign_id)
+        retire(kind, campaign_id, [version])
+        kind.hooks.back_to_book(campaign_id)
     current = manager.filter(campaign_id=campaign_id, replaces_id=entry.replaces_id).first()  # a house rule's clone
-    return row_of(kind, current or manager.get(pk=entry.replaces_id))
+    return current or manager.get(pk=entry.replaces_id)
 
 
 def retire(kind: CatalogueKindSpec, campaign_id: int, versions: list[Any]) -> None:

@@ -1,12 +1,12 @@
 """The catalogue kinds registry (design 0.29 for the catalogue, IMP-79): each kind as data.
 
-Items, skills, spells, specials, races, bestiary entries and hired swords, plus the read-only restrictions and the
-add-only item properties. A spec names the kind's model and serializers, how its list is filtered, the child rows
-an entry carries (what a version copies), the tables whose rows hold an entry (`holders`: what a delete can't take
-with it, what `usage/` counts, and what a version's first edit moves onto it and Revert moves back) and the rows
-that follow an entry without holding it (`followers`: a warband's bestiary favourites, an item's animal). A hired
-sword is its bestiary entry for all of that (`entry_via`). Differences that are behaviour are hooks (hooks.py), as
-pass 1 did for units (`warbands/units/kinds.py`).
+Items, skills, spells, specials, races, bestiary entries, hired swords and dramatis personae, plus the read-only
+restrictions and the add-only item properties. A spec names the kind's model and serializers, how its list is
+filtered, the child rows an entry carries (what a version copies), the tables whose rows hold an entry (`holders`:
+what a delete can't take with it, what `usage/` counts, and what a version's first edit moves onto it and Revert
+moves back) and the rows that follow an entry without holding it (`followers`: a warband's bestiary favourites, an
+item's animal). Differences that are behaviour are hooks (hooks.py), as pass 1 did for units
+(`warbands/units/kinds.py`).
 """
 
 from collections.abc import Callable, Mapping
@@ -22,11 +22,11 @@ from apps.bestiary.models import (
     BestiaryEntrySkill,
     BestiaryEntrySpecial,
     BestiaryEntrySpell,
-    HiredSwordProfile,
     WarbandBestiaryFavourite,
 )
-from apps.bestiary.serializers import BestiaryEntryWriteSerializer, HiredSwordWriteSerializer
+from apps.bestiary.serializers import BestiaryEntryWriteSerializer
 from apps.hirelings.models import DramatisPersona, HiredSword
+from apps.hirelings.serializers import DramatisPersonaWriteSerializer, HiredSwordWriteSerializer
 from apps.items.models import Item, ItemProperty
 from apps.items.serializers import ItemPropertySerializer, ItemWriteSerializer
 from apps.races.models import Race
@@ -43,10 +43,12 @@ from apps.warbands.models import WarbandItem
 from apps.warbands.units.kinds import KINDS as UNIT_KINDS
 from apps.warbands.units.kinds import UnitKindKey
 
-from .hooks import BestiaryHooks, CatalogueHooks, HiredSwordHooks, ItemHooks, ItemPropertyHooks, RaceHooks
+from .hooks import BestiaryHooks, CatalogueHooks, HirelingProfileHooks, ItemHooks, ItemPropertyHooks, RaceHooks
 from .rows import (
     BestiaryEntryDetailRowSerializer,
     BestiaryEntryRowSerializer,
+    DramatisPersonaDetailRowSerializer,
+    DramatisPersonaRowSerializer,
     HiredSwordDetailRowSerializer,
     HiredSwordRowSerializer,
     ItemRowSerializer,
@@ -98,8 +100,6 @@ class CatalogueKindSpec:
     name_field: str = "name"  # what the name rule compares (names.py; the restrictions' list merge)
     order: tuple[str, ...] = ("name", "id")  # each part of a list (the campaign's rows, then the book's)
     reread: bool = False  # a write's answer is read again with the detail's prefetch (its links)
-    entry_via: str = ""  # the relation from a row to the entry it is (a hired sword's profile: "bestiary_entry")
-    table_key: str = ""  # the kind owning the entry's table (removals, reverted versions); default: `key`
     lists: tuple[str, ...] = ()  # the lists a write changes (`catalogue.changed` kinds); default: `(key,)`
     children: tuple[str, ...] = ()  # rows an entry carries (CASCADE), parents first; what a version copies
     holders: tuple[Holder, ...] = ()
@@ -109,26 +109,6 @@ class CatalogueKindSpec:
     @property
     def changed_lists(self) -> tuple[str, ...]:
         return self.lists or (self.key,)
-
-    @property
-    def entry_key(self) -> str:
-        return self.table_key or self.key
-
-    @property
-    def entry_model(self) -> type[Model]:
-        """The table that carries `replaces`, `archived_at` and the badges: the model, or a hired sword's entry."""
-        if not self.entry_via:
-            return self.model
-        related: type[Model] = self.model._meta.get_field(self.entry_via).related_model  # type: ignore[assignment]
-        return related
-
-    def entry_path(self, column: str) -> str:
-        """`column` of the entry, from the kind's row: "archived_at", or "bestiary_entry__archived_at"."""
-        return f"{self.entry_via}__{column}" if self.entry_via else column
-
-    def entry_ref(self) -> str:
-        """The row's entry id: "pk", or "bestiary_entry_id"."""
-        return f"{self.entry_via}_id" if self.entry_via else "pk"
 
 
 def _copies(link: str, *others: Holder) -> tuple[Holder, ...]:
@@ -306,18 +286,16 @@ BESTIARY = CatalogueKindSpec(
     row_serializer=BestiaryEntryRowSerializer,
     entry_serializer=BestiaryEntryDetailRowSerializer,
     write_serializer=BestiaryEntryWriteSerializer,
-    named=True,  # with the hired swords: they share the names
+    named=True,
     versioned=True,
     filters=NAME_AND_TYPE,
     reread=True,
-    lists=("bestiary", "hired_swords", "items"),  # an entry may be a hired sword, or an animal an item shows
+    lists=("bestiary", "items"),  # an entry may be the animal an item shows
     children=(
         "bestiary_entry_skills",
         "bestiary_entry_specials",
         "bestiary_entry_spells",
         "bestiary_entry_items",
-        "hired_sword_profile",  # a hired sword's entry carries its profile
-        "hired_sword_profile__restriction_links",
     ),
     followers=(  # units copy what they take from an entry: nothing holds one
         Move(
@@ -330,24 +308,36 @@ BESTIARY = CatalogueKindSpec(
     ),
     hooks=BestiaryHooks(),
 )
+HIRELING_LINKS = ("skill_links", "special_links", "spell_links", "item_links", "restriction_links")
 HIRED_SWORDS = CatalogueKindSpec(
     key="hired_swords",
     noun="hired sword",
-    model=HiredSwordProfile,
-    url_kwarg="profile_id",
+    model=HiredSword,
+    url_kwarg="hired_sword_id",
     row_serializer=HiredSwordRowSerializer,
     entry_serializer=HiredSwordDetailRowSerializer,
     write_serializer=HiredSwordWriteSerializer,
     named=True,
     versioned=True,
-    filters={"search": lambda value: Q(bestiary_entry__name__icontains=value)},
-    name_field="bestiary_entry__name",
-    order=("bestiary_entry__name",),
+    filters={"search": NAME_AND_TYPE["search"]},
     reread=True,
-    entry_via="bestiary_entry",  # a hired sword's version, archive and removal are its entry's (with its profile)
-    lists=("hired_swords", "bestiary"),  # its entry is in the bestiary list too
-    table_key="bestiary",
-    hooks=HiredSwordHooks(),
+    children=HIRELING_LINKS,  # hirelings copy what they take from one on hire: nothing holds it
+    hooks=HirelingProfileHooks(HiredSword),
+)
+DRAMATIS_PERSONAE = CatalogueKindSpec(
+    key="dramatis_personae",
+    noun="dramatis persona",
+    model=DramatisPersona,
+    url_kwarg="dramatis_persona_id",
+    row_serializer=DramatisPersonaRowSerializer,
+    entry_serializer=DramatisPersonaDetailRowSerializer,
+    write_serializer=DramatisPersonaWriteSerializer,
+    named=True,
+    versioned=True,
+    filters={"search": NAME_AND_TYPE["search"]},
+    reread=True,
+    children=HIRELING_LINKS,
+    hooks=HirelingProfileHooks(DramatisPersona),
 )
 RESTRICTIONS = CatalogueKindSpec(  # read-only: the seeders write the book's rows (SEC-06)
     key="restrictions",
@@ -377,18 +367,10 @@ ITEM_PROPERTIES = CatalogueKindSpec(  # added, never edited or deleted
 )
 
 CATALOGUE_KINDS: Mapping[str, CatalogueKindSpec] = {
-    kind.key: kind for kind in (ITEMS, SKILLS, SPELLS, SPECIALS, RACES, BESTIARY, HIRED_SWORDS)
+    kind.key: kind for kind in (ITEMS, SKILLS, SPELLS, SPECIALS, RACES, BESTIARY, HIRED_SWORDS, DRAMATIS_PERSONAE)
 }
 LIST_KINDS: Mapping[str, CatalogueKindSpec] = {
     **CATALOGUE_KINDS,
     "restrictions": RESTRICTIONS,
     "item_properties": ITEM_PROPERTIES,
 }
-ENTRY_KINDS: Mapping[str, CatalogueKindSpec] = {  # the kinds owning an entry table, by `entry_key`
-    kind.key: kind for kind in CATALOGUE_KINDS.values() if not kind.entry_via
-}
-
-
-def entry_kind(kind: CatalogueKindSpec) -> CatalogueKindSpec:
-    """The kind owning the table of `kind`'s entries: itself, or the bestiary for a hired sword."""
-    return ENTRY_KINDS[kind.entry_key]

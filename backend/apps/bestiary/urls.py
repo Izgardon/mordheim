@@ -1,13 +1,11 @@
 from django.urls import path
 
-from apps.core.catalogue.kinds import BESTIARY, HIRED_SWORDS
+from apps.core.catalogue.kinds import BESTIARY
 from apps.core.catalogue.routes import entry_actions
 
 from .views import (
     BestiaryEntryDetailView,
     BestiaryEntryListView,
-    HiredSwordProfileDetailView,
-    HiredSwordProfileListView,
     WarbandBestiaryFavouriteDeleteView,
     WarbandBestiaryFavouriteListView,
 )
@@ -24,17 +22,6 @@ urlpatterns = [
         name="bestiary-detail",
     ),
     *entry_actions("bestiary", BESTIARY, "bestiary"),
-    path(
-        "hired-swords/",
-        HiredSwordProfileListView.as_view(),
-        name="hired-sword-profile-list",
-    ),
-    path(
-        "hired-swords/<int:profile_id>/",
-        HiredSwordProfileDetailView.as_view(),
-        name="hired-sword-profile-detail",
-    ),
-    *entry_actions("hired-swords", HIRED_SWORDS, "hired-sword-profile"),
     path(
         "warbands/<int:warband_id>/bestiary-favourites/",
         WarbandBestiaryFavouriteListView.as_view(),

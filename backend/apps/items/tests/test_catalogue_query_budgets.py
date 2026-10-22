@@ -2,7 +2,7 @@
 
 Requests are authenticated with `force_authenticate`, so production adds one JWT user query to each. A count above
 its budget fails; a change that makes a request cheaper lowers its budget in the same commit. `apps/core/tests/
-test_query_budgets.py` keeps the seven list budgets measured on the reference campaign; these add the item
+test_query_budgets.py` keeps the eight list budgets measured on the reference campaign; these add the item
 properties and restrictions lists, the lists with campaign rows, the details and the writes.
 """
 
@@ -26,6 +26,7 @@ from apps.warbands.tests.roster_support import HERO, make_unit
 
 from .catalogue_support import (
     BESTIARY,
+    DRAMATIS_PERSONAE,
     HIRED_SWORDS,
     ITEMS,
     KINDS,
@@ -48,6 +49,7 @@ LIST_BUDGETS: dict[str, tuple[str, int, int]] = {
     "races": ("/api/races/?campaign_id={campaign}", 2, 2),
     "bestiary": ("/api/bestiary/?campaign_id={campaign}", 2, 2),
     "hired_swords": ("/api/hired-swords/?campaign_id={campaign}", 3, 3),  # + their restrictions (were 5 and 6)
+    "dramatis_personae": ("/api/dramatis-personae/?campaign_id={campaign}", 3, 3),
     "restrictions": ("/api/restrictions/?campaign_id={campaign}", 2, 2),
     "item_properties": ("/api/item-properties/?campaign_id={campaign}", 2, 2),  # one filtered list
     "items_book": ("/api/items/", 5, 5),  # no campaign: the book's version (PERF-13), its rows and their chain (was 6)
@@ -118,13 +120,10 @@ class CatalogueQueryBudgetTests(CatalogueTestCase):
         (PR C: what the lists hide, and show with ?archived=1)."""
         for kind in KINDS:
             book = make_entry(kind, f"{label} book {kind.key}")
-            entry = book.bestiary_entry if kind is HIRED_SWORDS else book
-            make_entry(kind, f"{label} version {kind.key}", campaign=self.campaign, replaces=entry)
+            make_entry(kind, f"{label} version {kind.key}", campaign=self.campaign, replaces=book)
             make_entry(kind, f"{label} archived {kind.key}", campaign=self.campaign, archived_at=timezone.now())
             removed = make_entry(kind, f"{label} removed {kind.key}")
-            table = "bestiary" if kind is HIRED_SWORDS else kind.key
-            entry_id = removed.bestiary_entry_id if kind is HIRED_SWORDS else removed.id
-            CatalogueRemoval.objects.create(campaign=self.campaign, kind=table, entry_id=entry_id)
+            CatalogueRemoval.objects.create(campaign=self.campaign, kind=kind.key, entry_id=removed.id)
 
     def test_lists_keep_their_budgets_with_versions_archives_and_removals(self):
         # CAT-TWEAK-03, -04, CAT-NEW-03: the version and removal rules are EXISTS in the list's own query, and the
@@ -164,8 +163,8 @@ class CatalogueQueryBudgetTests(CatalogueTestCase):
 
     def test_simple_details_cost_one_query_and_a_campaign_entry_two(self):
         for kind in KINDS:
-            if kind in (RACES, BESTIARY, HIRED_SWORDS):
-                continue  # races have no detail read; the bestiary details are below
+            if kind in (RACES, BESTIARY, HIRED_SWORDS, DRAMATIS_PERSONAE):
+                continue  # races have no detail read; the bestiary and hireling details are below
             with self.subTest(kind=kind.key):
                 book = make_entry(kind, f"Book {kind.key}")
                 house = make_entry(kind, f"House {kind.key}", campaign=self.campaign)
@@ -176,18 +175,22 @@ class CatalogueQueryBudgetTests(CatalogueTestCase):
 
 
 class BestiaryDetailBudgetTests(CatalogueTestCase):
-    """CAT-TEST-08, PERF-46: a hired sword like the Bounty Hunter (8 items, 2 skills, 2 specials)."""
+    """CAT-TEST-08, PERF-46: a bestiary entry and a hired sword each kitted like the Bounty Hunter (8 items, 2 skills,
+    2 specials)."""
 
     def setUp(self) -> None:
         super().setUp()
         self.client.force_authenticate(user=self.owner)
-        self.profile = make_entry(HIRED_SWORDS, "Bounty Hunter", hire_cost=40)
-        self.entry = self.profile.bestiary_entry
+        self.entry = make_entry(BESTIARY, "Bounty Hound")
+        self.hired_sword = make_entry(HIRED_SWORDS, "Bounty Hunter", hire_cost=40)
         self.restriction = Restriction.objects.create(restriction="Mordheim only")
         for skill in self.infiltration[:2]:
             BestiaryEntrySkill.objects.create(bestiary_entry=self.entry, skill=skill)
+            self.hired_sword.skill_links.create(skill=skill)
         for name in ("Dead shot", "Tracker"):
-            BestiaryEntrySpecial.objects.create(bestiary_entry=self.entry, special=Special.objects.create(name=name, type="Ability"))  # fmt: skip
+            special = Special.objects.create(name=name, type="Ability")
+            BestiaryEntrySpecial.objects.create(bestiary_entry=self.entry, special=special)
+            self.hired_sword.special_links.create(special=special)
         self.equip(8)
 
     def equip(self, count: int) -> None:
@@ -197,6 +200,7 @@ class BestiaryDetailBudgetTests(CatalogueTestCase):
             ItemPropertyLink.objects.create(item=item, property=self.parry)
             ItemAvailabilityRestriction.objects.create(item_availability=item.availabilities.get(), restriction=self.restriction)  # fmt: skip
             BestiaryEntryItem.objects.create(bestiary_entry=self.entry, item=item)
+            self.hired_sword.item_links.create(item=item)
 
     def count(self, url: str) -> int:
         with CaptureQueriesContext(connection) as captured:
@@ -209,26 +213,28 @@ class BestiaryDetailBudgetTests(CatalogueTestCase):
         # availabilities and restrictions; the hired sword adds its restrictions. A campaign entry adds the
         # membership read.
         self.assertEqual(self.count(BESTIARY.detail_url(self.entry.id)), 8)
-        self.assertEqual(self.count(HIRED_SWORDS.detail_url(self.profile.id)), 9)
+        self.assertEqual(self.count(HIRED_SWORDS.detail_url(self.hired_sword.id)), 9)
 
     def test_the_details_stay_constant_as_equipment_grows(self):
         # PERF-46 (was pinned: 5 more queries per item; flipped in PR A)
-        before = (self.count(BESTIARY.detail_url(self.entry.id)), self.count(HIRED_SWORDS.detail_url(self.profile.id)))
+        urls = (BESTIARY.detail_url(self.entry.id), HIRED_SWORDS.detail_url(self.hired_sword.id))
+        before = tuple(self.count(url) for url in urls)
 
         self.equip(2)
 
-        after = (self.count(BESTIARY.detail_url(self.entry.id)), self.count(HIRED_SWORDS.detail_url(self.profile.id)))
-        self.assertEqual(after, before)
+        self.assertEqual(tuple(self.count(url) for url in urls), before)
 
     def test_an_edit_answers_with_the_same_reads_whatever_the_equipment(self):
         # PERF-46: the PATCH answers read through the details' prefetch
-        profile = make_entry(HIRED_SWORDS, "Duellist", campaign=self.campaign)
-        entry = profile.bestiary_entry
-        BestiaryEntryItem.objects.create(bestiary_entry=entry, item=make_entry(ITEMS, "Dagger"))
+        entry = make_entry(BESTIARY, "Duelling Hound", campaign=self.campaign)
+        hired_sword = make_entry(HIRED_SWORDS, "Duellist", campaign=self.campaign)
+        dagger = make_entry(ITEMS, "Dagger")
+        BestiaryEntryItem.objects.create(bestiary_entry=entry, item=dagger)
+        hired_sword.item_links.create(item=dagger)
 
         def edits() -> tuple[int, int]:
             counts = []
-            for url in (BESTIARY.detail_url(entry.id), HIRED_SWORDS.detail_url(profile.id)):
+            for url in (BESTIARY.detail_url(entry.id), HIRED_SWORDS.detail_url(hired_sword.id)):
                 with CaptureQueriesContext(connection) as captured:
                     self.assertEqual(self.client.patch(url, {"description": "Sharp"}, format="json").status_code, 200)
                 counts.append(len(captured))
@@ -236,7 +242,9 @@ class BestiaryDetailBudgetTests(CatalogueTestCase):
 
         before = edits()
         for index in range(3):
-            BestiaryEntryItem.objects.create(bestiary_entry=entry, item=make_entry(ITEMS, f"Blade {index}"))
+            blade = make_entry(ITEMS, f"Blade {index}")
+            BestiaryEntryItem.objects.create(bestiary_entry=entry, item=blade)
+            hired_sword.item_links.create(item=blade)
 
         self.assertEqual(edits(), before)
 
@@ -271,12 +279,12 @@ class CatalogueWriteBudgetTests(CatalogueTestCase):
         self.assertEqual(self.count(ITEMS.list_url(), self.item_body("Halberd", 2)), 15)
         self.assertEqual(self.count(ITEMS.list_url(), self.item_body("Glaive", 6)), 15)
 
-    def test_a_hired_sword_create_costs_22_queries_however_many_rows_it_links(self):
+    def test_a_hired_sword_create_costs_21_queries_however_many_rows_it_links(self):
         # PERF-44, BUG-53 (was pinned at 96: a get_or_create per link, then the answer's N+1; flipped in PR A). The
-        # write: membership, a scope check per table sent (skills, specials, items), the savepoint pair, the entry,
-        # one INSERT per kind of link, the profile, the campaign's catalogue version (PERF-13) and the name check
-        # (13; CAT-TWEAK-02, PR C: 21 before). The answer: the hired sword detail's 9 prefetched reads, spells and
-        # restrictions included though none were sent. The brief's 10 would need the answer built from what was
+        # write: membership, a scope check per table sent (skills, specials, items), the savepoint pair, the hired
+        # sword, one INSERT per kind of link, the campaign's catalogue version (PERF-13) and the name check (12; 13
+        # while a hired sword was a bestiary entry with a profile). The answer: the hired sword detail's 9
+        # prefetched reads, spells and restrictions included though none were sent. The brief's 10 would need the answer built from what was
         # written instead of read back.
         skills = [Skill.objects.create(name=f"Trick {n}", type="Combat").id for n in range(6)]
         specials = [Special.objects.create(name=f"Gift {n}", type="Ability").id for n in range(3)]
@@ -284,8 +292,8 @@ class CatalogueWriteBudgetTests(CatalogueTestCase):
         sword = HIRED_SWORDS.body("Mercenary", self.campaign, skill_ids=skills, special_ids=specials, item_entries=gear)
         small = HIRED_SWORDS.body("Squire", self.campaign, skill_ids=skills[:1], special_ids=specials[:1], item_entries=gear[:1])  # fmt: skip
 
-        self.assertEqual(self.count(HIRED_SWORDS.list_url(), sword), 22)
-        self.assertEqual(self.count(HIRED_SWORDS.list_url(), small), 22)
+        self.assertEqual(self.count(HIRED_SWORDS.list_url(), sword), 21)
+        self.assertEqual(self.count(HIRED_SWORDS.list_url(), small), 21)
 
     def test_a_skill_create_costs_6_queries(self):
         # membership, the name check (CAT-TWEAK-02, PR C), the savepoint pair, the INSERT and the campaign's catalogue

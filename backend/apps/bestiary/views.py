@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from apps.core.catalogue.kinds import BESTIARY, HIRED_SWORDS
+from apps.core.catalogue.kinds import BESTIARY
 from apps.core.catalogue.views import CatalogueDetailView, CatalogueListView
 from apps.warbands.units.catalogue_scope import current_entry
 from apps.warbands.views.base import WarbandScopedView
@@ -18,14 +18,6 @@ class BestiaryEntryListView(CatalogueListView):
 
 class BestiaryEntryDetailView(CatalogueDetailView):
     kind = BESTIARY
-
-
-class HiredSwordProfileListView(CatalogueListView):
-    kind = HIRED_SWORDS
-
-
-class HiredSwordProfileDetailView(CatalogueDetailView):
-    kind = HIRED_SWORDS
 
 
 def _in_scope(raw_id, campaign_id):

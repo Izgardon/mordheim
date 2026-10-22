@@ -1,8 +1,8 @@
 """The bestiary list's additive query parameters for the Bestiary page and pickers (PERF-47).
 
 `?exclude_type=` leaves out entries of a type (any case, repeatable) after the list rule (merge.py), as the page's own
-filter did, so it can stop fetching the 72 hired swords it drops. `?view=summary` sends each row without its
-description. Without them, the list is unchanged.
+filter did (it dropped the 72 hired swords the bestiary held before they became their own catalogue). `?view=summary`
+sends each row without its description. Without them, the list is unchanged.
 """
 
 from typing import Any
@@ -37,11 +37,11 @@ DEFAULT_KEYS = [
 
 
 class BestiaryListViewsTests(CatalogueTestCase):
-    """The book's Warhound (Animal) and the Ogre Bodyguard (a hired sword's "Hired Sword" entry), plus a campaign
-    monster."""
+    """The book's Warhound (Animal) and Warhorse (Mount), plus a campaign monster."""
 
     def setUp(self) -> None:
         super().setUp()
+        make_entry(BESTIARY, "Warhorse", type="Mount")
         make_entry(BESTIARY, "Rat Ogre", campaign=self.campaign, type="Monster", description="Big.")
 
     def rows(self, query: str = "") -> list[dict[str, Any]]:
@@ -53,24 +53,24 @@ class BestiaryListViewsTests(CatalogueTestCase):
     def test_the_default_list_is_unchanged(self):
         rows = self.rows("&view=full")
 
-        self.assertEqual([(row["name"], row["type"]) for row in rows], [("Rat Ogre", "Monster"), ("Ogre Bodyguard", "Hired Sword"), ("Warhound", "Animal")])  # fmt: skip
+        self.assertEqual([(row["name"], row["type"]) for row in rows], [("Rat Ogre", "Monster"), ("Warhorse", "Mount"), ("Warhound", "Animal")])  # fmt: skip
         self.assertEqual([list(row) for row in rows], [DEFAULT_KEYS] * 3)
         self.assertEqual(rows, self.rows())
 
     def test_exclude_type_leaves_out_a_type_in_any_case_and_repeats(self):
-        self.assertEqual([row["name"] for row in self.rows("&exclude_type=hired sword")], ["Rat Ogre", "Warhound"])
-        self.assertEqual([row["name"] for row in self.rows("&exclude_type=Hired Sword&exclude_type=Monster")], ["Warhound"])  # fmt: skip
+        self.assertEqual([row["name"] for row in self.rows("&exclude_type=mount")], ["Rat Ogre", "Warhound"])
+        self.assertEqual([row["name"] for row in self.rows("&exclude_type=Mount&exclude_type=Monster")], ["Warhound"])  # fmt: skip
         self.assertEqual(len(self.rows("&exclude_type=")), 3)
 
     def test_exclude_type_applies_after_the_list_rule_as_the_page_did(self):
-        # the campaign's version of the book Warhound, typed "Hired Sword", replaces it; leaving out hired swords then
-        # shows neither, as the page's filter did (BUG-18: a same-named entry used to do the replacing, PR C)
-        make_entry(BESTIARY, "War Dog", campaign=self.campaign, type="Hired Sword", replaces=self.warhound)
+        # the campaign's version of the book Warhound, typed "Mount", replaces it; leaving out mounts then shows
+        # neither, as the page's filter did (BUG-18: a same-named entry used to do the replacing, PR C)
+        make_entry(BESTIARY, "War Dog", campaign=self.campaign, type="Mount", replaces=self.warhound)
 
-        self.assertEqual([row["name"] for row in self.rows("&exclude_type=Hired Sword")], ["Rat Ogre"])
+        self.assertEqual([row["name"] for row in self.rows("&exclude_type=Mount")], ["Rat Ogre"])
 
     def test_the_summary_view_drops_the_description_and_keeps_the_rest_in_order(self):
-        rows = self.rows("&view=summary&exclude_type=Hired Sword")
+        rows = self.rows("&view=summary&exclude_type=Mount")
 
         self.assertEqual([row["name"] for row in rows], ["Rat Ogre", "Warhound"])
         self.assertEqual([list(row) for row in rows], [[key for key in DEFAULT_KEYS if key != "description"]] * 2)
@@ -81,4 +81,4 @@ class BestiaryListViewsTests(CatalogueTestCase):
                 self.rows(query)
             return len(captured)
 
-        self.assertEqual(count("&view=summary&exclude_type=Hired Sword"), count(""))
+        self.assertEqual(count("&view=summary&exclude_type=Mount"), count(""))

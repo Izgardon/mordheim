@@ -12,8 +12,9 @@ from typing import Any
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
-from apps.bestiary.models import BestiaryEntry, BestiaryEntryItem, BestiaryEntrySkill, WarbandBestiaryFavourite
+from apps.bestiary.models import BestiaryEntryItem, BestiaryEntrySkill, WarbandBestiaryFavourite
 from apps.core.models import RevertedVersion
+from apps.hirelings.models import HiredSword
 from apps.items.models import Item
 from apps.skills.models import Skill
 from apps.warbands.models import Warband, WarbandItem
@@ -130,13 +131,12 @@ class FirstEditTests(VersionTestCase):
         self.assertEqual(list(WarbandBestiaryFavourite.objects.filter(warband=self.warband).values_list("bestiary_entry_id", flat=True)), [beast_version])  # fmt: skip
         self.assertEqual(Skill.objects.filter(name="Infiltration", campaign__isnull=True).count(), 6)
 
-    def test_a_hired_swords_version_is_a_copied_entry_with_a_copied_profile(self):
+    def test_a_hired_swords_version_is_a_copied_row_in_the_campaign(self):
         response = self.edit(HIRED_SWORDS, self.ogre.id, {"hire_cost": 95})
 
         self.assertEqual(response.status_code, 200, response.data)
-        entry = BestiaryEntry.objects.get(campaign=self.campaign, replaces=self.ogre.bestiary_entry)
-        self.assertEqual((response.data["id"], response.data["hire_cost"]), (entry.hired_sword_profile.id, 95))
-        self.assertEqual(entry.hired_sword_profile.campaign_id, self.campaign.id)
+        version = HiredSword.objects.get(campaign=self.campaign, replaces=self.ogre)
+        self.assertEqual((response.data["id"], response.data["hire_cost"], response.data["replaces"]), (version.id, 95, self.ogre.id))  # fmt: skip
         self.ogre.refresh_from_db()
         self.assertEqual(self.ogre.hire_cost, 80)
 
@@ -181,7 +181,7 @@ class RevertTests(VersionTestCase):
         self.assertEqual((again.status_code, again.json()["code"]), (409, "not_a_version"))
         self.assertEqual((not_one.status_code, not_one.json()["code"]), (409, "not_a_version"))
 
-    def test_a_hired_swords_revert_takes_its_copied_entry_and_profile(self):
+    def test_a_hired_swords_revert_deletes_its_version(self):
         version = self.edit(HIRED_SWORDS, self.ogre.id, {"hire_cost": 95}).data["id"]
 
         response = self.revert(HIRED_SWORDS, version)
@@ -189,7 +189,7 @@ class RevertTests(VersionTestCase):
         self.assertEqual(
             (response.status_code, response.data["id"], response.data["hire_cost"]), (200, self.ogre.id, 80)
         )
-        self.assertFalse(BestiaryEntry.objects.filter(campaign=self.campaign, replaces__isnull=False).exists())
+        self.assertFalse(HiredSword.objects.filter(campaign=self.campaign).exists())
 
 
 class VersionBudgetTests(VersionTestCase):

@@ -2,7 +2,8 @@
 CAT-TEST-24).
 
 A create whose name, trimmed and in any case, any type, is already a book entry's or one of the campaign's (archived
-ones included) answers 400 `name_taken` listing every match; bestiary entries and hired swords share their names.
+ones included) answers 400 `name_taken` listing every match; each kind has its own names (an animal, a hired sword
+and a dramatis persona may share one).
 Another campaign's names don't count. An edit may keep its own name, or take back the name of the book entry it
 replaces; renaming onto any other entry is refused the same way. PR A's `duplicate_entry` is retired: an exact
 duplicate is a taken name, and two creates of one name at once meet the database's constraint, which answers the
@@ -19,6 +20,7 @@ from apps.core.models import CatalogueRemoval
 
 from .catalogue_support import (
     BESTIARY,
+    DRAMATIS_PERSONAE,
     HIRED_SWORDS,
     INFILTRATION_TYPES,
     ITEMS,
@@ -32,10 +34,7 @@ from .catalogue_support import (
 
 
 def count(kind: CatalogueKind, name: str) -> int:
-    rows = kind.model._default_manager
-    if kind is HIRED_SWORDS:
-        return int(rows.filter(bestiary_entry__name__iexact=name).count())
-    return int(rows.filter(name__iexact=name).count())
+    return int(kind.model._default_manager.filter(name__iexact=name).count())
 
 
 class CreateNameTests(CatalogueTestCase):
@@ -58,7 +57,13 @@ class CreateNameTests(CatalogueTestCase):
         self.assertEqual(detail, "Infiltration is already in the catalogue: Dark Elf, Sea Ghosts and 4 more. Edit one instead.")  # fmt: skip
 
     def test_every_kind_refuses_a_campaign_or_book_name_and_writes_nothing(self):
-        books = {ITEMS: "Axe", RACES: "Human", BESTIARY: "Warhound", HIRED_SWORDS: "Ogre Bodyguard"}
+        books = {
+            ITEMS: "Axe",
+            RACES: "Human",
+            BESTIARY: "Warhound",
+            HIRED_SWORDS: "Ogre Bodyguard",
+            DRAMATIS_PERSONAE: "Aenur",
+        }
         for kind in KINDS:
             with self.subTest(kind=kind.key):
                 self.assertEqual(self.create_as(self.owner, kind, f"Twin {kind.key}").status_code, 201)
@@ -79,13 +84,15 @@ class CreateNameTests(CatalogueTestCase):
         self.assertEqual((archived["source"], archived["archived"]), ("campaign", True))
         self.assertEqual([match["archived"] for match in removed if match["id"] == self.infiltration[0].id], [True])
 
-    def test_an_animal_and_a_hired_sword_share_their_names(self):
-        self.assertEqual(self.create_as(self.owner, BESTIARY, "Wolf").status_code, 201)
+    def test_an_animal_a_hired_sword_and_a_dramatis_persona_each_keep_their_own_names(self):
+        # the bestiary rewrite: hired swords are no longer bestiary entries, so they no longer share its names
+        created = [self.create_as(self.owner, kind, "Wolf").status_code for kind in (BESTIARY, HIRED_SWORDS, DRAMATIS_PERSONAE)]  # fmt: skip
 
-        [match] = self.refused(self.create_as(self.owner, HIRED_SWORDS, "Wolf"))
-        ogre = self.refused(self.create_as(self.owner, BESTIARY, "ogre bodyguard"))
+        [match] = self.refused(self.create_as(self.owner, HIRED_SWORDS, "wolf"))
+        ogre = self.refused(self.create_as(self.owner, HIRED_SWORDS, "ogre bodyguard"))
 
-        self.assertEqual((match["kind"], match["type"]), ("bestiary", "Animal"))
+        self.assertEqual(created, [201, 201, 201])
+        self.assertEqual((match["kind"], match["type"], match["source"]), ("hired_swords", None, "campaign"))
         self.assertEqual([(entry["kind"], entry["id"]) for entry in ogre], [("hired_swords", self.ogre.id)])
         self.assertEqual(BestiaryEntry.objects.filter(name="Wolf").count(), 1)
 

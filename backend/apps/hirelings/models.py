@@ -21,25 +21,6 @@ CASTERS = (("No", "No"), ("Wizard", "Wizard"), ("Priest", "Priest"))
 STAYS = (("always", "Always"), ("one_battle", "One battle"))
 
 
-def _campaign(related: str) -> models.ForeignKey:
-    """The campaign whose entry it is; null for the book."""
-    return models.ForeignKey(
-        "campaigns.Campaign", related_name=related, null=True, blank=True, on_delete=models.CASCADE
-    )
-
-
-def _campaign_type(related: str) -> models.ForeignKey:
-    """An add-on's entry (CAT-NEW-04: schema only, always null today)."""
-    return models.ForeignKey(
-        "campaigns.CampaignType", related_name=related, null=True, blank=True, on_delete=models.RESTRICT
-    )
-
-
-def _race(related: str) -> models.ForeignKey:
-    """The race when it is one the catalogue has (RESTRICT, as units hold theirs: BUG-130)."""
-    return models.ForeignKey("races.Race", related_name=related, null=True, blank=True, on_delete=models.RESTRICT)
-
-
 def _owner(model: str, related: str) -> models.ForeignKey:
     """A link's hired sword or dramatis persona: the links go with it."""
     return models.ForeignKey(model, related_name=related, on_delete=models.CASCADE)
@@ -90,9 +71,15 @@ def profile_constraints(prefix: str) -> list[models.BaseConstraint]:
 
 
 class HiredSword(HirelingProfile):
-    campaign = _campaign("hired_swords")
-    campaign_type = _campaign_type("hired_swords")
-    race = _race("hired_swords")
+    campaign = models.ForeignKey(  # null: the book
+        "campaigns.Campaign", related_name="hired_swords", null=True, blank=True, on_delete=models.CASCADE
+    )
+    campaign_type = models.ForeignKey(  # an add-on's entry (CAT-NEW-04: schema only, always null today)
+        "campaigns.CampaignType", related_name="hired_swords", null=True, blank=True, on_delete=models.RESTRICT
+    )
+    race = models.ForeignKey(  # RESTRICT, as units hold theirs (BUG-130)
+        "races.Race", related_name="hired_swords", null=True, blank=True, on_delete=models.RESTRICT
+    )
 
     class Meta:
         db_table = "hired_sword"
@@ -107,9 +94,15 @@ class DramatisPersona(HirelingProfile):
     """A unique character found after a battle: `stays` for good or for one battle, paid in what `payment_note`
     says ("25 gc or 1 shard", a summoning, a favour)."""
 
-    campaign = _campaign("dramatis_personae")
-    campaign_type = _campaign_type("dramatis_personae")
-    race = _race("dramatis_personae")
+    campaign = models.ForeignKey(  # null: the book
+        "campaigns.Campaign", related_name="dramatis_personae", null=True, blank=True, on_delete=models.CASCADE
+    )
+    campaign_type = models.ForeignKey(  # an add-on's entry (CAT-NEW-04: schema only, always null today)
+        "campaigns.CampaignType", related_name="dramatis_personae", null=True, blank=True, on_delete=models.RESTRICT
+    )
+    race = models.ForeignKey(  # RESTRICT, as units hold theirs (BUG-130)
+        "races.Race", related_name="dramatis_personae", null=True, blank=True, on_delete=models.RESTRICT
+    )
     stays = models.CharField(max_length=20, choices=STAYS, default="always")
     payment_note = models.CharField(max_length=200, blank=True, default="")
 

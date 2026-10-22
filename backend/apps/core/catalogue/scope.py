@@ -8,11 +8,13 @@ as DRF's PrimaryKeyRelatedField would (PERF-44). Restrictions and item propertie
 for themselves.
 """
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from typing import Any
 
 from django.db.models import Q, QuerySet
 from rest_framework import serializers
+
+from apps.items.models import Item
 
 from .current import current_rows, is_entry_table
 
@@ -83,3 +85,28 @@ class CatalogueIdsField(serializers.ListField):
         ids = list(dict.fromkeys(super().to_internal_value(data)))
         current = refuse_unknown(self.rows.all(), ids, self.context["campaign_id"])
         return list(dict.fromkeys(current[pk] for pk in ids))
+
+
+class EquipmentInputSerializer(serializers.Serializer):
+    """One item a catalogue entry carries (a bestiary entry's equipment, a hired sword's kit): `{"item_id",
+    "quantity"}`, or a bare item id (one of it)."""
+
+    item_id = serializers.IntegerField(min_value=1)
+    quantity = serializers.IntegerField(min_value=1, max_value=2_147_483_647, default=1)  # the column's largest
+
+    def to_internal_value(self, data: Any) -> Any:
+        return super().to_internal_value(data if isinstance(data, Mapping) else {"item_id": data})
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        return {"quantity": 1, **attrs}  # in a PATCH too, where DRF skips defaults
+
+
+def current_equipment(rows: list[dict[str, Any]], campaign_id: int) -> list[dict[str, Any]]:
+    """Each item once (an item listed twice: its first quantity), as the campaign's current item for it; an item the
+    campaign may not link is refused as an unknown id (one query)."""
+    first = {row["item_id"]: row for row in reversed(rows)}
+    current = refuse_unknown(Item.objects.all(), first, campaign_id)
+    unique: dict[int, dict[str, Any]] = {}
+    for item_id in dict.fromkeys(row["item_id"] for row in rows):
+        unique.setdefault(current[item_id], {**first[item_id], "item_id": current[item_id]})
+    return list(unique.values())

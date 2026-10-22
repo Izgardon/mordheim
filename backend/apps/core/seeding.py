@@ -46,6 +46,14 @@ def parse_int(value: Any, default: int = 0) -> int:
     return int(match.group(0)) if match else default
 
 
+def parse_armour_save(value: Any) -> int | None:
+    """The number in "4+" or "5+"; None when blank or "-"."""
+    if not value or str(value).strip() in ("", "-"):
+        return None
+    match = re.search(r"\d+", str(value))
+    return int(match.group(0)) if match else None
+
+
 def parse_rarity(value: Any) -> int:
     """A rarity between 2 and 20, as ItemAvailability allows; 2 (common) when the value has none."""
     return max(2, min(20, parse_int(value, default=2)))

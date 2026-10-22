@@ -12,13 +12,12 @@ from typing import Any
 
 from django.utils import timezone
 
-from apps.bestiary.models import BestiaryEntry
 from apps.core.models import CatalogueRemoval
 from apps.skills.models import Skill
 from apps.warbands.models import Warband, WarbandItem
 from apps.warbands.tests.roster_support import HERO, make_unit, unit_url
 
-from .catalogue_support import BESTIARY, HIRED_SWORDS, ITEMS, SKILLS, CatalogueTestCase, make_entry
+from .catalogue_support import BESTIARY, DRAMATIS_PERSONAE, HIRED_SWORDS, ITEMS, SKILLS, CatalogueTestCase, make_entry
 
 NO_USE = {"units": 0, "warbands": 0, "stashes": 0, "bestiary_entries": 0, "hired_swords": 0, "dramatis_personae": 0}
 
@@ -54,7 +53,7 @@ class CustomArchiveTests(ArchiveTestCase):
         self.assertEqual(list(self.hero.hero_skills.values_list("skill_id", flat=True)), [ambush.id])
 
     def test_an_unused_entry_is_deleted(self):
-        for kind in (ITEMS, SKILLS, BESTIARY, HIRED_SWORDS):  # nothing holds an entry of the bestiary: always deleted
+        for kind in (ITEMS, SKILLS, BESTIARY, HIRED_SWORDS, DRAMATIS_PERSONAE):  # nothing holds the last three
             with self.subTest(kind=kind.key):
                 entry = make_entry(kind, f"Spare {kind.key}", campaign=self.campaign)
                 self.assertEqual(self.delete_as(self.owner, kind.detail_url(entry.id)).status_code, 204)
@@ -106,13 +105,15 @@ class BookRemovalTests(ArchiveTestCase):
         self.assertIn(self.book_axe.id, self.ids(ITEMS))
         self.assertFalse(CatalogueRemoval.objects.exists())
 
-    def test_a_hired_sword_removed_leaves_both_of_this_campaigns_lists(self):
-        response = self.book_delete(HIRED_SWORDS, self.ogre.id)
+    def test_a_removed_hired_sword_or_dramatis_persona_leaves_this_campaigns_list_alone(self):
+        for kind, entry in ((HIRED_SWORDS, self.ogre), (DRAMATIS_PERSONAE, self.aenur)):
+            with self.subTest(kind=kind.key):
+                response = self.book_delete(kind, entry.id)
 
-        self.assertEqual(response.json()["outcome"], "removed")
-        self.assertNotIn(self.ogre.id, self.ids(HIRED_SWORDS))
-        self.assertNotIn(self.ogre.bestiary_entry_id, self.ids(BESTIARY))
-        self.assertTrue(BestiaryEntry.objects.filter(id=self.ogre.bestiary_entry_id).exists())
+                self.assertEqual(response.json(), {"outcome": "removed", "usage": NO_USE})
+                self.assertNotIn(entry.id, self.ids(kind))
+                self.assertIn(entry.id, self.ids(kind, "&archived=1"))
+                self.assertTrue(kind.model._default_manager.filter(id=entry.id).exists())
 
     def test_removing_a_book_entry_needs_delete_catalogue(self):
         self.assertEqual(self.book_delete(SKILLS, self.infiltration[0].id, user=self.player).status_code, 403)

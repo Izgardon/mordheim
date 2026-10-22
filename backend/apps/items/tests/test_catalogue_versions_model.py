@@ -1,10 +1,10 @@
 """The data model of versions, archiving and removals (pass 5 PR C; decisions 1, 2 and 5, CAT-NEW-03, CAT-NEW-05).
 
-Every entry table (items, skills, spells, specials, races, bestiary entries) gains `replaces` (a campaign's version of
-a book entry, RESTRICT), `archived_at`/`archived_by` and `updated_at`/`updated_by`. A campaign holds one version per
-book entry, and only a campaign's row is a version. A book entry deleted for one campaign is a `CatalogueRemoval`;
-a reverted version leaves a `RevertedVersion`. Deleting a campaign takes all of them; a book entry a campaign has
-a version of can't be deleted.
+Every entry table (items, skills, spells, specials, races, bestiary entries, hired swords, dramatis personae) gains
+`replaces` (a campaign's version of a book entry, RESTRICT), `archived_at`/`archived_by` and `updated_at`/`updated_by`.
+A campaign holds one version per book entry, and only a campaign's row is a version. A book entry deleted for one
+campaign is a `CatalogueRemoval`; a reverted version leaves a `RevertedVersion`. Deleting a campaign takes all of
+them; a book entry a campaign has a version of can't be deleted.
 """
 
 from django.db import IntegrityError, transaction
@@ -14,9 +14,9 @@ from apps.campaigns.models import Campaign
 from apps.core.models import ENTRY_TABLES, CatalogueRemoval, RevertedVersion
 from apps.items.models import Item
 
-from .catalogue_support import BESTIARY, ITEMS, KINDS, RACES, SKILLS, SPECIALS, SPELLS, CatalogueTestCase, make_entry
+from .catalogue_support import ITEMS, KINDS, CatalogueTestCase, make_entry
 
-ENTRY_KINDS = (ITEMS, SKILLS, SPELLS, SPECIALS, RACES, BESTIARY)  # a hired sword's version is its entry's
+ENTRY_KINDS = KINDS  # every kind is an entry table now that hired swords stand alone
 
 
 class VersionColumnTests(CatalogueTestCase):
@@ -78,4 +78,4 @@ class CampaignRecordTests(CatalogueTestCase):
 
     def test_the_record_kinds_are_the_entry_tables(self):
         kinds = {key for key, _label in ENTRY_TABLES}  # the choices of both records' `kind`
-        self.assertEqual(kinds, {kind.key for kind in KINDS} - {"hired_swords"})
+        self.assertEqual(kinds, {kind.key for kind in KINDS})

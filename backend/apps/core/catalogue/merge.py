@@ -24,14 +24,14 @@ def campaign_list[RowsT: QuerySet[Any]](
 ) -> RowsT:
     """The campaign's rows and the book rows it has no version of, without its archived rows and the book rows it
     removed; with them when `archived` (each row then says since when: `archived_at`, or `removed_at`)."""
-    ref = OuterRef(kind.entry_ref())
-    versioned = kind.entry_model._default_manager.filter(campaign_id=campaign_id, replaces_id=ref)
-    removed = CatalogueRemoval.objects.filter(campaign_id=campaign_id, kind=kind.entry_key, entry_id=ref)
+    ref = OuterRef("pk")
+    versioned = kind.model._default_manager.filter(campaign_id=campaign_id, replaces_id=ref)
+    removed = CatalogueRemoval.objects.filter(campaign_id=campaign_id, kind=kind.key, entry_id=ref)
     own, book = Q(campaign_id=campaign_id), Q(campaign__isnull=True) & ~Exists(versioned)
     if archived:
         shown: RowsT = rows.filter(own | book).annotate(removed_at=Subquery(removed.values("removed_at")[:1]))
         return shown
-    shown = rows.filter((own & Q(**{kind.entry_path("archived_at__isnull"): True})) | (book & ~Exists(removed)))
+    shown = rows.filter((own & Q(archived_at__isnull=True)) | (book & ~Exists(removed)))
     return shown
 
 

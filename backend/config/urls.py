@@ -15,5 +15,6 @@ urlpatterns = [
     path("api/", include("apps.warbands.urls")),
     path("api/", include("apps.restrictions.urls")),
     path("api/", include("apps.bestiary.urls")),
+    path("api/", include("apps.hirelings.urls")),
     path("api/", include("apps.notifications.urls")),
 ]

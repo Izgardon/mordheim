@@ -21,6 +21,8 @@ NAME_CONSTRAINTS = frozenset(
         "special_unique_name_type",
         "race_unique_name",
         "bestiary_entry_unique_name",
+        "hired_sword_unique_name",
+        "dramatis_persona_unique_name",
     }
 )
 

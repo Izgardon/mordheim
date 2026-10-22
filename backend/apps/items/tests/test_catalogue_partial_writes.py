@@ -2,9 +2,9 @@
 defaults in an edit as in a create (DRF skips nested defaults in a partial write). A weapon's strength and range
 take theirs only where nothing is stored."""
 
-from apps.bestiary.models import BestiaryEntryItem, HiredSwordProfileRestriction
+from apps.bestiary.models import BestiaryEntryItem
 
-from .catalogue_support import BESTIARY, HIRED_SWORDS, ITEMS, CatalogueTestCase, make_entry
+from .catalogue_support import BESTIARY, DRAMATIS_PERSONAE, HIRED_SWORDS, ITEMS, CatalogueTestCase, make_entry
 
 
 class PartialWriteDefaultsTests(CatalogueTestCase):
@@ -48,10 +48,20 @@ class PartialWriteDefaultsTests(CatalogueTestCase):
         self.assertEqual(list(BestiaryEntryItem.objects.filter(bestiary_entry=entry).values_list("quantity", flat=True)), [1, 1])  # fmt: skip
 
     def test_an_edited_restriction_given_as_a_bare_id_has_no_note(self):
-        profile = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign)
+        for kind in (HIRED_SWORDS, DRAMATIS_PERSONAE):
+            with self.subTest(kind=kind.key):
+                entry = make_entry(kind, "Archer", campaign=self.campaign)
 
-        response = self.patch_as(self.owner, HIRED_SWORDS.detail_url(profile.id), {"restriction_ids": [self.mercenaries.id]})  # fmt: skip
+                response = self.patch_as(self.owner, kind.detail_url(entry.id), {"restriction_ids": [self.mercenaries.id]})  # fmt: skip
+
+                self.assertEqual(response.status_code, 200, response.data)
+                links = entry.restriction_links.values_list("restriction_id", "additional_note")
+                self.assertEqual(list(links), [(self.mercenaries.id, "")])
+
+    def test_hired_sword_equipment_without_a_quantity_carries_one(self):
+        archer = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign)
+
+        response = self.patch_as(self.owner, HIRED_SWORDS.detail_url(archer.id), {"item_entries": [{"item_id": self.book_axe.id}, self.book_sword.id]})  # fmt: skip
 
         self.assertEqual(response.status_code, 200, response.data)
-        links = HiredSwordProfileRestriction.objects.filter(hired_sword_profile=profile)
-        self.assertEqual(list(links.values_list("restriction_id", "additional_note")), [(self.mercenaries.id, "")])
+        self.assertEqual([(row["item"]["name"], row["quantity"]) for row in response.data["equipment"]], [("Axe", 1), ("Sword", 1)])  # fmt: skip

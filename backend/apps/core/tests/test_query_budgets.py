@@ -79,7 +79,8 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     "specials": ("/api/special/?campaign_id={campaign}", 2),
     "races": ("/api/races/?campaign_id={campaign}", 2),
     "bestiary": ("/api/bestiary/?campaign_id={campaign}", 2),
-    "hired_sword_profiles": ("/api/hired-swords/?campaign_id={campaign}", 2),
+    "hired_swords": ("/api/hired-swords/?campaign_id={campaign}", 2),
+    "dramatis_personae": ("/api/dramatis-personae/?campaign_id={campaign}", 2),
     # Battles
     "battle_state": ("/api/campaigns/{campaign}/battles/{battle}/state/", 5),  # first read writes presence once
     # constant in units (pass 3; apps/battles/tests/test_battle_query_budgets.py); first read writes presence once

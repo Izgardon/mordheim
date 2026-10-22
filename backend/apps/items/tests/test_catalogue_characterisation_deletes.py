@@ -156,11 +156,11 @@ class CustomEntryDeleteTests(CatalogueTestCase):
         self.assertIsNone(boar.bestiary_entry_id)
 
     def test_deleting_a_hired_sword_leaves_the_units_hired_from_it(self):
-        profile = make_entry(HIRED_SWORDS, "Ogre Bodyguard", campaign=self.campaign)
+        hired_sword = make_entry(HIRED_SWORDS, "Ogre Bodyguard", campaign=self.campaign)
 
-        self.assertEqual(self.delete_as(self.owner, HIRED_SWORDS.detail_url(profile.id)).status_code, 204)
+        self.assertEqual(self.delete_as(self.owner, HIRED_SWORDS.detail_url(hired_sword.id)).status_code, 204)
 
-        self.assertTrue(Hireling.objects.filter(id=self.sword.id).exists())  # a hired sword copies its profile
+        self.assertTrue(Hireling.objects.filter(id=self.sword.id).exists())  # a hireling is a copy: no link back
 
     def test_deleting_the_last_copy_holder_leaves_the_catalogue_entry(self):
         charm = make_entry(ITEMS, "Lucky Charm", campaign=self.campaign)

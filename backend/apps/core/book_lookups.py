@@ -1,13 +1,16 @@
-"""What seed_bestiary resolves an entry's links against: the book's skills, specials, spells and items (BUG-17), by
-name with apostrophes straightened, through the aliases the bestiary data uses for book names (BUG-54). A hired
-sword's own specials, spells and special skills that the book lacks are created in it under "Hired Sword - <name>".
+"""What the bestiary and hireling seeders resolve an entry's links against: the book's skills, specials, spells and
+items (BUG-17), by name with apostrophes straightened, through the aliases their data uses for book names (BUG-54).
+A hired sword's (or dramatis persona's) own specials, spells and special skills that the book lacks are created in
+it under "Hired Sword - <name>" (or "Dramatis Persona - <name>").
 """
 
 import re
+from dataclasses import dataclass
 from typing import Any
 
 from django.db.models import Model
 
+from apps.core.seeding import parse_int
 from apps.items.models import Item
 from apps.skills.models import Skill
 from apps.special.models import Special
@@ -94,11 +97,23 @@ def spell_fields(spell_item):
     }
 
 
+@dataclass
+class EntryLinks:
+    """What a seeded entry links: its skills, specials and spells, and its equipment (item id -> quantity)."""
+
+    skills: list[Skill]
+    specials: list[Special]
+    spells: list[Spell]
+    quantities: dict[int, int]
+
+
 class BookLookups:
     """One run's caches of the book's skills, specials and spells (by name) and items (by name and type, and by name),
-    and the warnings the run prints: links it couldn't resolve and entries it created."""
+    and the warnings the run prints: links it couldn't resolve and entries it created. An entry's own specials,
+    spells and special skills are created under "<own_type> - <name>" ("Hired Sword - Dark Mage")."""
 
-    def __init__(self) -> None:
+    def __init__(self, own_type: str = "Hired Sword") -> None:
+        self.own_type = own_type
         book = {"campaign__isnull": True, "campaign_type__isnull": True}
         self.skills = {lookup_key(row.name): row for row in Skill.objects.filter(**book)}
         self.specials = {lookup_key(row.name): row for row in Special.objects.filter(**book)}
@@ -108,6 +123,10 @@ class BookLookups:
         for item in Item.objects.filter(**book):
             self.remember_item(item)
         self.warnings: list[str] = []
+
+    def own_type_of(self, owner: str) -> str:
+        """The type an entry's own special, spell or special skill is created under."""
+        return f"{self.own_type} - {owner}"
 
     def remember_item(self, item: Item) -> None:
         self.items[(lookup_key(item.name), lookup_key(item.type))] = item
@@ -137,7 +156,7 @@ class BookLookups:
             return None
         spell = self.spells.get(lookup_key(name))
         if spell is None:  # his own spell (the Dark Mage's six), as specials and skills are (BUG-54)
-            spell_type = f"Hired Sword - {owner}"
+            spell_type = self.own_type_of(owner)
             spell = Spell.objects.create(name=name, type=spell_type, **fields)
             self.spells[lookup_key(name)] = spell
             self.warnings.append(f"  Created spell '{name}' ({spell_type}) for '{owner}'")
@@ -152,6 +171,22 @@ class BookLookups:
             self.warnings.append(f"  Equipment '{line.get('item')}' not found for '{owner}'")
         return found
 
+    def links(self, data: dict[str, Any], owner: str) -> EntryLinks:
+        """The skills, specials, spells and equipment a seeded entry lists, resolved in the book (its own specials and
+        spells created there); unresolved ones are warned about and left out."""
+        links = EntryLinks(
+            skills=[skill for name in data.get("skills", []) if (skill := self.skill(name, owner))],
+            specials=[special for item in data.get("specials", []) if (special := self.special(item, owner))],
+            spells=[spell for item in data.get("spells", []) if (spell := self.spell(item, owner))],
+            quantities={},
+        )
+        for equipment in data.get("equipment", []):
+            line = {"item": equipment, "quantity": 1} if isinstance(equipment, str) else equipment
+            item = self.equipment(line, owner)
+            if item:  # an item listed twice keeps its last quantity
+                links.quantities[item.id] = parse_int(line.get("quantity"), 1)
+        return links
+
     def _own(
         self, model: type[Model], cache: dict[str, Any], name: str, description: str, owner: str, noun: str
     ) -> Any:
@@ -160,7 +195,7 @@ class BookLookups:
         key = lookup_key(name)
         row = cache.get(key)
         if row is None:
-            kind = f"Hired Sword - {owner}"
+            kind = self.own_type_of(owner)
             row = model._default_manager.create(name=name, type=kind, description=description, campaign=None)
             cache[key] = row
             self.warnings.append(f"  Created {noun} '{name}' ({kind}) for '{owner}'")

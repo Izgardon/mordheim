@@ -59,8 +59,7 @@ class BestiaryEntry(StatBlock, CatalogueEntry):
         constraints = [
             *stat_constraints("bestiary_entry"),
             *version_constraints("bestiary_entry"),
-            # one entry per name in the book and in a campaign, as seed_bestiary upserts (BUG-17, IMP-83): an animal
-            # and a hired sword (an entry of type "Hired Sword") share the names
+            # one entry per name in the book and in a campaign, as seed_bestiary upserts (BUG-17, IMP-83)
             models.UniqueConstraint(
                 fields=["campaign", "name"], name="bestiary_entry_unique_name", nulls_distinct=False
             ),
@@ -176,72 +175,3 @@ class WarbandBestiaryFavourite(models.Model):
 
     def __str__(self):
         return f"{self.warband_id}:{self.bestiary_entry_id}"
-
-
-class HiredSwordProfile(models.Model):
-    campaign = models.ForeignKey(
-        "campaigns.Campaign",
-        related_name="hired_sword_profiles",
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-    )
-    campaign_type = models.ForeignKey(  # an add-on's hired sword (CAT-NEW-04: schema only, always null today)
-        "campaigns.CampaignType",
-        related_name="hired_sword_profiles",
-        null=True,
-        blank=True,
-        on_delete=models.RESTRICT,
-    )
-    bestiary_entry = models.OneToOneField(
-        BestiaryEntry,
-        related_name="hired_sword_profile",
-        on_delete=models.CASCADE,
-    )
-    hire_cost = models.PositiveIntegerField(null=True, blank=True)
-    hire_cost_expression = models.CharField(max_length=120, blank=True, default="")
-    upkeep_cost = models.PositiveIntegerField(null=True, blank=True)
-    upkeep_cost_expression = models.CharField(max_length=120, blank=True, default="")
-    rating = models.PositiveIntegerField(null=True, blank=True)
-    grade = models.CharField(max_length=20, blank=True, default="")
-    race = models.CharField(max_length=60, blank=True, default="")
-    available_skill_types = models.JSONField(default=list, blank=True)
-    restrictions: models.ManyToManyField = models.ManyToManyField(
-        "restrictions.Restriction",
-        through="HiredSwordProfileRestriction",
-        related_name="hired_sword_profiles",
-        blank=True,
-    )
-
-    class Meta:
-        db_table = "hired_sword_profile"
-        ordering = ["bestiary_entry__name"]
-
-    def __str__(self):
-        return f"Hired Sword Profile: {self.bestiary_entry.name}"
-
-
-class HiredSwordProfileRestriction(models.Model):
-    hired_sword_profile = models.ForeignKey(
-        HiredSwordProfile,
-        related_name="restriction_links",
-        on_delete=models.CASCADE,
-    )
-    restriction = models.ForeignKey(
-        "restrictions.Restriction",
-        related_name="hired_sword_profile_links",
-        on_delete=models.CASCADE,
-    )
-    additional_note = models.CharField(max_length=200, blank=True, default="")
-
-    class Meta:
-        db_table = "hired_sword_profile_restriction"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["hired_sword_profile", "restriction", "additional_note"],
-                name="unique_hired_sword_profile_restriction",
-            )
-        ]
-
-    def __str__(self):
-        return f"{self.hired_sword_profile_id}:{self.restriction_id}"
