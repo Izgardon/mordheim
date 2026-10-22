@@ -6,7 +6,7 @@
  * `use-media-query` and `CampaignDiceRollerMenu`.
  */
 import type { QueryClient } from "@tanstack/react-query";
-import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
+import { MemoryRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 
 import { AppToaster } from "@/components/ui/toaster";
 import Bestiary from "@/features/bestiary/routes/Bestiary";
@@ -28,6 +28,16 @@ import { makeVeteranHero } from "./warband-fixtures";
 function CurrentPath() {
   const { pathname, search } = useLocation();
   return <output aria-label="Current path">{`${pathname}${search}`}</output>;
+}
+
+/** The browser's own Back button: one step back in the router's history. */
+function BrowserBack() {
+  const navigate = useNavigate();
+  return (
+    <button type="button" onClick={() => navigate(-1)}>
+      Browser back
+    </button>
+  );
 }
 
 /** Stands in for the warband page: a hero's New skill and New spell dialogs, both open. */
@@ -52,6 +62,7 @@ export function renderCatalogueRoute(
         <MemoryRouter initialEntries={[path]}>
           <RealtimeProvider>
             <CurrentPath />
+            <BrowserBack />
             <Routes>
               <Route path="/campaigns/:id" element={<CampaignLayout />}>
                 <Route index element={<p>Overview page</p>} />

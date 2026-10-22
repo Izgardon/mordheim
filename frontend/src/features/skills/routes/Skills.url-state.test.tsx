@@ -1,7 +1,7 @@
 /**
- * Where the Skills and Spells pages keep their search and type filter: in component state only,
- * so leaving the page and coming back clears both, and the URL never carries them (CAT-UX-05).
- * PR C keeps `type` and `q` in the query string (CAT-NEW-02).
+ * Where the Skills and Spells pages keep their search and type filter: in the query string (`q`,
+ * `type`; CAT-NEW-02), so the browser's Back after another page and a shared link restore both
+ * (CAT-UX-05). The rail's link to a page starts it afresh.
  */
 import { screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -36,8 +36,7 @@ beforeEach(() => {
 });
 
 describe("Skills: search and discipline filter", () => {
-  // Characterises current behaviour (CAT-UX-05, CAT-NEW-02, pinned; flips in PR C)
-  it("keeps them out of the URL and forgets them after a visit to Spells (CAT-UX-05, pinned; flips in PR C)", async () => {
+  it("puts them in the URL; the browser's Back after a visit to Spells restores them (CAT-UX-05, CAT-NEW-02)", async () => {
     const user = setupUser();
     renderCatalogueRoute("/campaigns/1/skills");
     await screen.findByRole("row", { name: /^Quick Hands/ });
@@ -45,34 +44,50 @@ describe("Skills: search and discipline filter", () => {
     await chooseOption(user, screen.getByText("All disciplines").closest("button")!, "Speed");
     await user.type(screen.getByRole("searchbox", { name: "Search skills" }), "quick");
     expect(rowNamed("Strike to Injure")).toBeNull();
-    expect(currentPath()).toHaveTextContent(/^\/campaigns\/1\/skills$/);
+    expect(currentPath()).toHaveTextContent("/campaigns/1/skills?type=Speed&q=quick");
+
+    await user.click(screen.getByRole("link", { name: "Spells" }));
+    await screen.findByRole("row", { name: /^Gutter Hex/ });
+    await user.click(screen.getByRole("button", { name: "Browser back" }));
+
+    expect(await screen.findByRole("row", { name: /^Quick Hands/ })).toBeVisible();
+    expect(rowNamed("Strike to Injure")).toBeNull();
+    expect(screen.getByRole("searchbox", { name: "Search skills" })).toHaveValue("quick");
+    expect(screen.queryByText("All disciplines")).toBeNull();
+  });
+
+  it("opens a shared link on its filter and search, and the rail's link starts afresh (CAT-NEW-02)", async () => {
+    const user = setupUser();
+    renderCatalogueRoute("/campaigns/1/skills?type=Combat&q=injure");
+
+    expect(await screen.findByRole("row", { name: /^Strike to Injure/ })).toBeVisible();
+    expect(rowNamed("Quick Hands")).toBeNull();
 
     await user.click(screen.getByRole("link", { name: "Spells" }));
     await screen.findByRole("row", { name: /^Gutter Hex/ });
     await user.click(screen.getByRole("link", { name: "Skills" }));
 
-    expect(await screen.findByRole("row", { name: /^Strike to Injure/ })).toBeVisible();
+    expect(await screen.findByRole("row", { name: /^Quick Hands/ })).toBeVisible();
     expect(screen.getByRole("searchbox", { name: "Search skills" })).toHaveValue("");
-    expect(screen.getByText("All disciplines")).toBeVisible();
   });
 });
 
 describe("Spells: search and type filter", () => {
-  // Characterises current behaviour (CAT-UX-05, CAT-NEW-02, pinned; flips in PR C)
-  it("keeps them out of the URL and forgets them after a visit to Skills (CAT-UX-05, pinned; flips in PR C)", async () => {
+  it("puts them in the URL; the browser's Back after a visit to Skills restores them (CAT-UX-05, CAT-NEW-02)", async () => {
     const user = setupUser();
     renderCatalogueRoute("/campaigns/1/spells");
     await screen.findByRole("row", { name: /^Gutter Hex/ });
 
     await user.type(screen.getByRole("searchbox", { name: "Search spells" }), "cobbles");
     expect(rowNamed("Fires of U'Zhul")).toBeNull();
-    expect(currentPath()).toHaveTextContent(/^\/campaigns\/1\/spells$/);
+    expect(currentPath()).toHaveTextContent("/campaigns/1/spells?q=cobbles");
 
     await user.click(screen.getByRole("link", { name: "Skills" }));
     await screen.findByRole("row", { name: /^Quick Hands/ });
-    await user.click(screen.getByRole("link", { name: "Spells" }));
+    await user.click(screen.getByRole("button", { name: "Browser back" }));
 
-    expect(await screen.findByRole("row", { name: /^Fires of U'Zhul/ })).toBeVisible();
-    expect(screen.getByRole("searchbox", { name: "Search spells" })).toHaveValue("");
+    expect(await screen.findByRole("row", { name: /^Gutter Hex/ })).toBeVisible();
+    expect(rowNamed("Fires of U'Zhul")).toBeNull();
+    expect(screen.getByRole("searchbox", { name: "Search spells" })).toHaveValue("cobbles");
   });
 });

@@ -1,9 +1,8 @@
 /**
- * What the Bestiary and Hired Swords pages keep in the URL: only the open entry (`?entry=`,
- * `?profile=`). Search, type filter and page live in component state: they outlast opening an
- * entry and Back only because the page stays mounted, and a visit to another page clears them
- * (CAT-UX-05). Back is `navigate(-1)`, so on a link opened fresh it goes nowhere (BUG-150).
- * PR C keeps `type`, `q` and `archived` in the query string (CAT-NEW-02).
+ * What the Bestiary and Hired Swords pages keep in the URL (CAT-NEW-02): the search (`q`), the
+ * type filter (`type`), the card page (`page`) and the open entry (`entry`, `profile`), so Back
+ * from an entry, the browser's Back after another page and a shared link restore them
+ * (CAT-UX-05). Back on an entry link opened fresh goes to the list, filters kept (BUG-150).
  */
 import { screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -38,12 +37,10 @@ const currentPath = () => screen.getByLabelText("Current path");
 const card = (name: string) => screen.getByRole("button", { name: new RegExp(`^${name}`) });
 const searchBox = () => screen.getByRole("searchbox", { name: "Search bestiary" });
 
-/** Leaves for Wargear and comes back to the Bestiary by the rail. */
-async function revisitBestiary(user: ReturnType<typeof setupUser>) {
-  await user.click(screen.getByRole("link", { name: "Wargear" }));
-  await screen.findByRole("button", { name: /^Rusty Cleaver/ });
-  await user.click(screen.getByRole("link", { name: "Bestiary" }));
-}
+/** Thirteen rats: two pages of twelve. */
+const many = Array.from({ length: 13 }, (_, index) =>
+  bestiaryEntry({ id: 600 + index, name: `Rat ${String(index + 1).padStart(2, "0")}` })
+);
 
 beforeEach(() => {
   fakeApi.reset();
@@ -55,33 +52,29 @@ beforeEach(() => {
 });
 
 describe("Bestiary: search, type filter and page", () => {
-  // Characterises current behaviour (CAT-UX-05, CAT-NEW-02, pinned; flips in PR C)
-  it("puts only ?entry= in the URL; the search and type outlast Back because the page stays mounted (CAT-UX-05, pinned; flips in PR C)", async () => {
+  it("keeps the type, the search and the open entry in the URL; Back returns to the filtered list (CAT-UX-05, CAT-NEW-02)", async () => {
     const user = setupUser();
     renderCatalogueRoute("/campaigns/1/bestiary");
     await screen.findByText("Sewer Rat");
 
     await chooseOption(user, screen.getByText("All types").closest("button")!, "Attack");
     await user.type(searchBox(), "war");
-    expect(currentPath()).toHaveTextContent(/^\/campaigns\/1\/bestiary$/);
+    expect(currentPath()).toHaveTextContent("/campaigns/1/bestiary?type=Attack&q=war");
     await user.click(card("Warhound"));
 
-    expect(currentPath()).toHaveTextContent(/^\/campaigns\/1\/bestiary\?entry=5$/);
+    expect(currentPath()).toHaveTextContent("/campaigns/1/bestiary?type=Attack&q=war&entry=5");
     expect(await screen.findByRole("heading", { name: "Warhound" })).toBeVisible();
     await user.click(screen.getByRole("button", { name: "Back" }));
 
     expect(await screen.findByRole("button", { name: /^Warhound/ })).toBeVisible();
+    expect(currentPath()).toHaveTextContent("/campaigns/1/bestiary?type=Attack&q=war");
     expect(searchBox()).toHaveValue("war");
     expect(screen.queryByText("Warhorse")).toBeNull();
     expect(screen.queryByText("Sewer Rat")).toBeNull();
   });
 
-  // Characterises current behaviour (CAT-UX-05, CAT-NEW-02, pinned; flips in PR C)
-  it("forgets the search, type and page after a visit to another page (CAT-UX-05, pinned; flips in PR C)", async () => {
+  it("restores the search and page with the browser's Back after another page, and a new search goes back to page 1 (CAT-UX-05, CAT-NEW-02)", async () => {
     const user = setupUser();
-    const many = Array.from({ length: 13 }, (_, index) =>
-      bestiaryEntry({ id: 600 + index, name: `Rat ${String(index + 1).padStart(2, "0")}` })
-    );
     fakeApi.on(LIST.creatures, [
       ...many,
       bestiaryEntry({ id: 6, name: "Warhorse", type: "Mount" }),
@@ -91,19 +84,34 @@ describe("Bestiary: search, type filter and page", () => {
     await user.type(searchBox(), "rat");
     await user.click(screen.getByRole("button", { name: "Next" }));
     expect(screen.getByText("2 / 2")).toBeVisible();
+    expect(currentPath()).toHaveTextContent("/campaigns/1/bestiary?q=rat&page=2");
 
-    await revisitBestiary(user);
+    await user.click(screen.getByRole("link", { name: "Wargear" }));
+    await screen.findByRole("button", { name: /^Rusty Cleaver/ });
+    await user.click(screen.getByRole("button", { name: "Browser back" }));
 
-    expect(await screen.findByText("Rat 01")).toBeVisible();
-    expect(searchBox()).toHaveValue("");
-    expect(screen.getByText("1 / 2")).toBeVisible();
+    expect(await screen.findByText("Rat 13")).toBeVisible();
+    expect(searchBox()).toHaveValue("rat");
+    expect(screen.getByText("2 / 2")).toBeVisible();
+
+    await user.type(searchBox(), " 1");
+    expect(currentPath()).toHaveTextContent("/campaigns/1/bestiary?q=rat+1");
+    // Rat 10 to Rat 13: one page, the first.
+    expect(screen.getByText("Rat 10")).toBeVisible();
+    expect(screen.queryByText("2 / 2")).toBeNull();
+  });
+
+  it("opens a shared link on its search and page", async () => {
+    fakeApi.on(LIST.creatures, many);
+    renderCatalogueRoute("/campaigns/1/bestiary?q=rat&page=2");
+
+    expect(await screen.findByText("Rat 13")).toBeVisible();
+    expect(screen.getByText("2 / 2")).toBeVisible();
+    expect(searchBox()).toHaveValue("rat");
   });
 
   it("keeps the page an entry was opened from: Back returns to page 2", async () => {
     const user = setupUser();
-    const many = Array.from({ length: 13 }, (_, index) =>
-      bestiaryEntry({ id: 600 + index, name: `Rat ${String(index + 1).padStart(2, "0")}` })
-    );
     fakeApi.on(LIST.creatures, many);
     fakeApi.on("GET /bestiary/612/", bestiaryDetail(many[12]));
     renderCatalogueRoute("/campaigns/1/bestiary");
@@ -118,16 +126,16 @@ describe("Bestiary: search, type filter and page", () => {
     expect(screen.getByText("2 / 2")).toBeVisible();
   });
 
-  // Characterises current behaviour (BUG-150, pinned; flips in PR C)
-  it("goes nowhere on Back when the ?entry= link was opened fresh: Back is navigate(-1) (BUG-150, pinned; flips in PR C)", async () => {
+  it("goes to the list on Back when the ?entry= link was opened fresh, keeping its filters (BUG-150)", async () => {
     const user = setupUser();
-    renderCatalogueRoute("/campaigns/1/bestiary?entry=5");
+    renderCatalogueRoute("/campaigns/1/bestiary?type=Attack&entry=5");
     await screen.findByRole("heading", { name: "Warhound" });
 
     await user.click(screen.getByRole("button", { name: "Back" }));
 
-    expect(currentPath()).toHaveTextContent(/^\/campaigns\/1\/bestiary\?entry=5$/);
-    expect(screen.getByRole("heading", { name: "Warhound" })).toBeVisible();
+    expect(await screen.findByRole("button", { name: /^Warhound/ })).toBeVisible();
+    expect(currentPath()).toHaveTextContent(/^\/campaigns\/1\/bestiary\?type=Attack$/);
+    expect(screen.queryByText("Warhorse")).toBeNull();
   });
 
   it("lists the entries again after Back from the cached list, with no request", async () => {
@@ -146,8 +154,7 @@ describe("Bestiary: search, type filter and page", () => {
 });
 
 describe("Hired Swords: search", () => {
-  // Characterises current behaviour (CAT-UX-05, CAT-NEW-02, pinned; flips in PR C)
-  it("puts only ?profile= in the URL, keeps the search over Back and forgets it after another page (CAT-UX-05, pinned; flips in PR C)", async () => {
+  it("keeps the search and the open profile in the URL; Back and the browser's Back after another page restore it (CAT-UX-05, CAT-NEW-02)", async () => {
     const user = setupUser();
     renderCatalogueRoute("/campaigns/1/hired-swords");
     await screen.findByText("Ogre Bodyguard");
@@ -155,7 +162,7 @@ describe("Hired Swords: search", () => {
 
     await user.type(hiredSearch(), "pit");
     await user.click(card("Pit Fighter"));
-    expect(currentPath()).toHaveTextContent(/^\/campaigns\/1\/hired-swords\?profile=40$/);
+    expect(currentPath()).toHaveTextContent("/campaigns/1/hired-swords?q=pit&profile=40");
     expect(await screen.findByRole("heading", { name: "Pit Fighter" })).toBeVisible();
     await user.click(screen.getByRole("button", { name: "Back" }));
 
@@ -165,9 +172,20 @@ describe("Hired Swords: search", () => {
 
     await user.click(screen.getByRole("link", { name: "Wargear" }));
     await screen.findByRole("button", { name: /^Rusty Cleaver/ });
-    await user.click(screen.getByRole("link", { name: "Hired Swords" }));
+    await user.click(screen.getByRole("button", { name: "Browser back" }));
+
+    expect(await screen.findByRole("button", { name: /^Pit Fighter/ })).toBeVisible();
+    expect(hiredSearch()).toHaveValue("pit");
+  });
+
+  it("goes to the list on Back when the ?profile= link was opened fresh (BUG-150)", async () => {
+    const user = setupUser();
+    renderCatalogueRoute("/campaigns/1/hired-swords?profile=40");
+    await screen.findByRole("heading", { name: "Pit Fighter" });
+
+    await user.click(screen.getByRole("button", { name: "Back" }));
 
     expect(await screen.findByText("Ogre Bodyguard")).toBeVisible();
-    expect(hiredSearch()).toHaveValue("");
+    expect(currentPath()).toHaveTextContent(/^\/campaigns\/1\/hired-swords$/);
   });
 });

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import { useNavigate, useOutletContext, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import CataloguePager from "@/features/catalogue/components/CataloguePager";
+import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogueSearchParams";
 import { usePagedList } from "@/features/catalogue/hooks/usePagedList";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import HiredSwordProfileCard from "../components/HiredSwordProfileCard";
@@ -31,12 +32,12 @@ export default function HiredSwords() {
   const isMobile = useMediaQuery("(max-width: 960px)");
 
   const { data: profiles, isLoading, error } = useCatalogue("hired-swords", campaignId);
-  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const selectedProfileId = searchParams.get("profile")
-    ? Number(searchParams.get("profile"))
-    : null;
+  // Search, page and the open profile live in the query string (CAT-NEW-02).
+  const url = useCatalogueSearchParams();
+  const searchQuery = url.get("q");
+  const setSearchQuery = (q: string) => url.set({ q, page: null });
+  const selectedProfileId = url.get("profile") ? Number(url.get("profile")) : null;
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   const canManage = campaignCapabilities(campaign).edit_catalogue;
@@ -57,7 +58,7 @@ export default function HiredSwords() {
       .sort((a, b) => a.bestiary_entry.name.localeCompare(b.bestiary_entry.name));
   }, [profiles, searchQuery]);
 
-  const pages = usePagedList(filteredProfiles, PAGE_SIZE, searchQuery);
+  const pages = usePagedList(filteredProfiles, PAGE_SIZE);
 
   const handleLoadoutTabChange = (tabId: LoadoutTabId) => {
     if (!id) return;
@@ -68,7 +69,10 @@ export default function HiredSwords() {
     return (
       <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-8">
         <PageHeader title="Hired Swords" subtitle="Mercenaries for hire" />
-        <HiredSwordProfileDetail profileId={selectedProfileId} onClose={() => navigate(-1)} />
+        <HiredSwordProfileDetail
+          profileId={selectedProfileId}
+          onClose={() => url.back("profile")}
+        />
       </div>
     );
   }
@@ -117,7 +121,7 @@ export default function HiredSwords() {
                 <HiredSwordProfileCard
                   key={profile.id}
                   profile={profile}
-                  onClick={(p) => navigate(`?profile=${p.id}`)}
+                  onClick={(p) => url.open({ profile: String(p.id) })}
                 />
               ))}
             </div>

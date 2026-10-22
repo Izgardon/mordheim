@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+
+import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogueSearchParams";
 
 import { ITEM_SUBTYPE_OPTIONS } from "../utils/item-form-values";
 
@@ -53,22 +55,32 @@ function toRows(items: Item[]): ItemRow[] {
   });
 }
 
+const isTab = (value: string): value is ItemTabId => value in ITEM_TYPE_BY_TAB;
+
 /**
  * Wargear's tab, subtype and single-use filters, search and opened rows, and the rows they
- * leave. A new tab clears the subtype, the single-use filter and the opened rows.
+ * leave. The filters live in the query string (`tab`, `subtype`, `single`, `q`, CAT-NEW-02),
+ * so Back and shared links restore them; the opened rows don't. A new tab clears the subtype, the
+ * single-use filter and the opened rows.
  */
 export function useItemsFilters(items: Item[]) {
-  const [activeTab, setActiveTab] = useState<ItemTabId>("weapons");
-  const [selectedSubtype, setSelectedSubtype] = useState(ALL_SUBTYPES);
-  const [selectedSingleUse, setSelectedSingleUse] = useState(ALL_SINGLE_USE);
-  const [searchQuery, setSearchQuery] = useState("");
+  const url = useCatalogueSearchParams();
+  const tabParam = url.get("tab");
+  const activeTab: ItemTabId = isTab(tabParam) ? tabParam : "weapons";
+  const selectedSubtype = url.get("subtype", ALL_SUBTYPES);
+  const selectedSingleUse = url.get("single") === "1" ? SINGLE_USE_ONLY : ALL_SINGLE_USE;
+  const searchQuery = url.get("q");
   const [expandedRowIds, setExpandedRowIds] = useState<string[]>([]);
 
-  useEffect(() => {
-    setSelectedSubtype(ALL_SUBTYPES);
-    setSelectedSingleUse(ALL_SINGLE_USE);
+  const setActiveTab = (tab: ItemTabId) => {
+    url.set({ tab: tab === "weapons" ? null : tab, subtype: null, single: null });
     setExpandedRowIds([]);
-  }, [activeTab]);
+  };
+  const setSelectedSubtype = (subtype: string) =>
+    url.set({ subtype: subtype === ALL_SUBTYPES ? null : subtype });
+  const setSelectedSingleUse = (value: string) =>
+    url.set({ single: value === SINGLE_USE_ONLY ? "1" : null });
+  const setSearchQuery = (query: string) => url.set({ q: query });
 
   const rows = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();

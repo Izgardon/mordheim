@@ -1,4 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+
+import { useCatalogueSearchParams } from "./useCatalogueSearchParams";
 
 export const ALL_TYPES = "all";
 
@@ -11,15 +13,19 @@ type UseCatalogueFiltersOptions<T> = {
 
 /**
  * A catalogue page's search and type filter (Skills, Spells): the types the list uses, sorted,
- * and the entries of the chosen type whose text holds the search, in the page's order. Pass
- * module-level `haystack` and `compare` so the list is only rebuilt when the entries change.
+ * and the entries of the chosen type whose text holds the search, in the page's order. Both live
+ * in the query string (`q`, `type`, CAT-NEW-02). Pass module-level `haystack` and `compare` so
+ * the list is only rebuilt when the entries change.
  */
 export function useCatalogueFilters<T extends { type?: string | null }>(
   entries: T[],
   { haystack, compare }: UseCatalogueFiltersOptions<T>
 ) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedType, setSelectedType] = useState(ALL_TYPES);
+  const url = useCatalogueSearchParams();
+  const searchQuery = url.get("q");
+  const selectedType = url.get("type", ALL_TYPES);
+  const setSearchQuery = (query: string) => url.set({ q: query });
+  const setSelectedType = (type: string) => url.set({ type: type === ALL_TYPES ? null : type });
 
   const typeOptions = useMemo(() => {
     const unique = new Set(entries.map((entry) => entry.type).filter(Boolean) as string[]);

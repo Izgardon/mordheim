@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import { useNavigate, useOutletContext, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import { useAppStore } from "@/stores/app-store";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import CataloguePager from "@/features/catalogue/components/CataloguePager";
+import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogueSearchParams";
 import { usePagedList } from "@/features/catalogue/hooks/usePagedList";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { useBestiaryFavourites } from "../hooks/useBestiaryFavourites";
@@ -48,11 +49,15 @@ export default function Bestiary() {
     error,
   } = useCatalogue("bestiary", campaignId, { variant: "creatures" });
   const favourites = useBestiaryFavourites(warband?.id);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedType, setSelectedType] = useState(ALL_TYPES);
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const selectedEntryId = searchParams.get("entry") ? Number(searchParams.get("entry")) : null;
+  // Search, type, page and the open entry live in the query string (CAT-NEW-02).
+  const url = useCatalogueSearchParams();
+  const searchQuery = url.get("q");
+  const selectedType = url.get("type", ALL_TYPES);
+  const setSearchQuery = (q: string) => url.set({ q, page: null });
+  const setSelectedType = (type: string) =>
+    url.set({ type: type === ALL_TYPES ? null : type, page: null });
+  const selectedEntryId = url.get("entry") ? Number(url.get("entry")) : null;
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   const canManage = campaignCapabilities(campaign).edit_catalogue;
@@ -79,11 +84,7 @@ export default function Bestiary() {
     return [...result].sort((a, b) => a.name.localeCompare(b.name));
   }, [entries, selectedType, searchQuery]);
 
-  const pages = usePagedList(
-    filteredEntries,
-    PAGE_SIZE,
-    JSON.stringify([searchQuery, selectedType])
-  );
+  const pages = usePagedList(filteredEntries, PAGE_SIZE);
 
   const handleLoadoutTabChange = (tabId: LoadoutTabId) => {
     if (!id) return;
@@ -94,7 +95,7 @@ export default function Bestiary() {
     return (
       <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-8">
         <PageHeader title="Bestiary" subtitle="Creatures and companions" />
-        <BestiaryEntryDetail entryId={selectedEntryId} onClose={() => navigate(-1)} />
+        <BestiaryEntryDetail entryId={selectedEntryId} onClose={() => url.back("entry")} />
       </div>
     );
   }
@@ -158,7 +159,7 @@ export default function Bestiary() {
                 <BestiaryEntryCard
                   key={entry.id}
                   entry={entry}
-                  onClick={(e) => navigate(`?entry=${e.id}`)}
+                  onClick={(e) => url.open({ entry: String(e.id) })}
                   isFavourite={favourites.favouriteIds.has(entry.id)}
                   onToggleFavourite={warband ? favourites.toggle : undefined}
                 />
