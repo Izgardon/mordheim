@@ -6,7 +6,7 @@
 import { act, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { RAIDER, storeSession, tokensFor } from "@/test/auth-fixtures";
+import { loginAnswer, RAIDER, storeSession } from "@/test/auth-fixtures";
 import { cleanupApps, renderApp } from "@/test/app-routes";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
@@ -37,7 +37,7 @@ beforeEach(() => {
   localStorage.clear();
   fakeApi.reset();
   fakeRealtime.reset();
-  fakeApi.on("POST /auth/login/", tokensFor(RAIDER));
+  fakeApi.on("POST /auth/login/", loginAnswer(RAIDER));
   fakeApi.on("GET /auth/me/", RAIDER);
   fakeApi.on("GET /notifications/", []);
   fakeApi.on("GET /campaigns/", []);

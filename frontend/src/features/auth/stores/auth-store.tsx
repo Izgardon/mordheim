@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 // api
-import { fetchMe, loginAccount, registerAccount } from "../api/auth-api";
+import { loginAccount, registerAccount } from "../api/auth-api";
 import { isSessionExpiredError, SERVER_UNAVAILABLE_MESSAGE } from "../../../lib/api-client";
 import { disconnectRealtime } from "../../../lib/realtime/client";
 import { AuthContext, type AuthContextValue, type SessionEnd } from "./auth-context";
@@ -182,8 +182,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       setIsSubmitting(true);
       try {
         const data = await loginAccount(credentials);
-        // Login sends the user from the server's pass 6 PR A on; before that, one profile read.
-        startSession(data, data.user ?? (await fetchMe(data.access)));
+        startSession(data, data.user);
         return data;
       } finally {
         setIsSubmitting(false);

@@ -8,11 +8,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   deferred,
+  loginAnswer,
   NAMELESS,
   RAIDER,
   registerAnswer,
   storeSession,
-  tokensFor,
 } from "@/test/auth-fixtures";
 import { cleanupApps, renderApp } from "@/test/app-routes";
 import { fakeApi } from "@/test/fake-api";
@@ -122,7 +122,7 @@ describe("a cold start signed in", () => {
 
 describe("signing in or up from the landing page", () => {
   it("signs in with one login and no /auth/me, then one notifications read, one list read and one channel (PERF-50, AUTH-TEST-22)", async () => {
-    fakeApi.on("POST /auth/login/", { ...tokensFor(RAIDER), user: RAIDER });
+    fakeApi.on("POST /auth/login/", loginAnswer(RAIDER));
     fakeApi.on("GET /auth/me/", RAIDER);
     const user = setupUser();
     renderApp("/");
@@ -139,26 +139,6 @@ describe("signing in or up from the landing page", () => {
       "POST /auth/login/",
     ]);
     expect(fakeRealtime.subscriberCount("private-user-1-notifications")).toBe(1);
-  });
-
-  it("signs in with one /auth/me while login's answer has only the tokens (PERF-50)", async () => {
-    fakeApi.on("POST /auth/login/", tokensFor(RAIDER));
-    fakeApi.on("GET /auth/me/", RAIDER);
-    const user = setupUser();
-    renderApp("/");
-    await screen.findByRole("heading", { name: "Mordheim Chronicler" });
-
-    await user.type(screen.getByLabelText("Email"), RAIDER.email);
-    await user.type(screen.getByLabelText("Password"), "wyrdstone");
-    await user.click(submitButton());
-
-    await screen.findByRole("heading", { name: "Welcome back, Raider" });
-    expect(await settledCalls(4)).toEqual([
-      "GET /auth/me/",
-      "GET /campaigns/",
-      "GET /notifications/",
-      "POST /auth/login/",
-    ]);
   });
 
   it("signs up with one register and no /auth/me (PERF-50)", async () => {

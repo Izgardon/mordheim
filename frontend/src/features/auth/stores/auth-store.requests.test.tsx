@@ -11,7 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { listCampaigns } from "@/features/campaigns/api/campaigns-api";
 import { ApiError, SERVER_UNAVAILABLE_MESSAGE } from "@/lib/api-client";
-import { deferred, RAIDER, registerAnswer, storeSession, tokensFor } from "@/test/auth-fixtures";
+import { deferred, loginAnswer, RAIDER, registerAnswer, storeSession } from "@/test/auth-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { createQueryWrapper } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
@@ -39,7 +39,7 @@ beforeEach(() => {
 
 describe("signing in and up (AUTH-TEST-22)", () => {
   it("signs in with the email as typed and reads no /auth/me when login's answer carries the user (PERF-50, AUTH-TEST-22)", async () => {
-    const answer = { ...tokensFor(RAIDER), user: RAIDER };
+    const answer = loginAnswer(RAIDER);
     fakeApi.on("POST /auth/login/", answer);
     fakeApi.on("GET /auth/me/", RAIDER);
     const { result } = renderHook(() => useAuthContext(), { wrapper: authWrapper });
@@ -60,23 +60,6 @@ describe("signing in and up (AUTH-TEST-22)", () => {
     });
     expect(result.current.user).toEqual(RAIDER);
     expect(result.current.token).toBe(answer.access);
-  });
-
-  it("reads /auth/me once when login's answer has only the tokens, as the server sends it before its PR A (PERF-50)", async () => {
-    const tokens = tokensFor(RAIDER);
-    fakeApi.on("POST /auth/login/", tokens);
-    fakeApi.on("GET /auth/me/", RAIDER);
-    const { result } = renderHook(() => useAuthContext(), { wrapper: authWrapper });
-
-    await act(async () => {
-      await result.current.signIn({ email: RAIDER.email, password: "wyrdstone" });
-    });
-
-    expect(fakeApi.calls()).toEqual(["POST /auth/login/", "GET /auth/me/"]);
-    expect(result.current.user).toEqual(RAIDER);
-    expect(result.current.token).toBe(tokens.access);
-    expect(getToken()).toBe(tokens.access);
-    expect(getRefreshToken()).toBe(tokens.refresh);
   });
 
   it("signs up and reads no /auth/me: the answer carries the user (PERF-50, AUTH-TEST-22)", async () => {

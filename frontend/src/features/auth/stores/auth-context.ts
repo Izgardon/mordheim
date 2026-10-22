@@ -3,7 +3,6 @@ import { createContext, useContext } from "react";
 // types
 import type {
   AuthResponse,
-  AuthTokens,
   AuthUser,
   LoginCredentials,
   RegisterPayload,
@@ -22,7 +21,7 @@ export type AuthContextValue = {
   /** Null until a session ends in this visit; the gate tells the sign-in card why (AUTH-UX-02). */
   sessionEnd: SessionEnd | null;
   retryConnection: () => void;
-  signIn: (credentials: LoginCredentials) => Promise<AuthTokens>;
+  signIn: (credentials: LoginCredentials) => Promise<AuthResponse>;
   signUp: (payload: RegisterPayload) => Promise<AuthResponse>;
   signOut: () => void;
 };

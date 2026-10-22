@@ -88,7 +88,7 @@ describe("sign-out clears the previous user's data (BUG-22)", () => {
     await waitFor(() => expect(result.current.auth.user).toBeNull());
     expectEmptySession(queryClient, result.current.store);
 
-    loginAccount.mockResolvedValue({ access: "bob-access", refresh: "bob-refresh" });
+    loginAccount.mockResolvedValue({ access: "bob-access", refresh: "bob-refresh", user: bob });
     fetchMe.mockResolvedValue(bob);
     await act(async () => {
       await result.current.auth.signIn({ email: bob.email, password: "pw" });

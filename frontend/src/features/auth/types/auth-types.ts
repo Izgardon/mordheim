@@ -13,11 +13,6 @@ export type AuthResponse = AuthTokens & {
   user: AuthUser;
 };
 
-/** Login's answer: the server's pass 6 PR A adds the user, as register sends it; until then only the tokens. */
-export type LoginResponse = AuthTokens & {
-  user?: AuthUser;
-};
-
 export type LoginCredentials = {
   email: string;
   password: string;

@@ -7,7 +7,6 @@ import type {
   FeedbackReportPayload,
   AuthUser,
   LoginCredentials,
-  LoginResponse,
   PasswordResetConfirmPayload,
   PasswordResetRequestPayload,
   RegisterPayload,
@@ -22,7 +21,7 @@ export function registerAccount(payload: RegisterPayload) {
 }
 
 export function loginAccount(payload: LoginCredentials) {
-  return apiRequest<LoginResponse>("/auth/login/", {
+  return apiRequest<AuthResponse>("/auth/login/", {
     method: "POST",
     body: payload,
     token: null,

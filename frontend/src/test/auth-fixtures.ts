@@ -1,6 +1,6 @@
 /**
  * Users, tokens and sessions for the auth tests, in the API's shapes: `/auth/me/` answers
- * `{id, email, name}`, login answers `{access, refresh}` and register adds the `user`.
+ * `{id, email, name}`, and login and register answer `{access, refresh, user}`.
  */
 import type { AuthResponse, AuthTokens, AuthUser } from "@/features/auth/types/auth-types";
 import { setTokens } from "@/utils/storage";
@@ -20,6 +20,11 @@ export const NAMELESS: AuthUser = { id: 2, email: "nameless@example.com", name: 
 /** A token pair for `user`, as login or a refresh would issue it. */
 export function tokensFor(user: AuthUser, nonce = "login"): AuthTokens {
   return { access: accessToken(user.id, nonce), refresh: `refresh-${user.id}-${nonce}` };
+}
+
+/** What `POST /auth/login/` answers. */
+export function loginAnswer(user: AuthUser): AuthResponse {
+  return { ...tokensFor(user, "login"), user };
 }
 
 /** What `POST /auth/register/` answers. */

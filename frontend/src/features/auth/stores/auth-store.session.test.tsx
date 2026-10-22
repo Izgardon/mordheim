@@ -13,10 +13,10 @@ import { AppStoreProvider, useAppStore } from "@/stores/app-store";
 import {
   accessToken,
   countTokenEvents,
+  loginAnswer,
   RAIDER,
   registerAnswer,
   storeSession,
-  tokensFor,
 } from "@/test/auth-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { createTestQueryClient } from "@/test/query-test-utils";
@@ -64,7 +64,7 @@ beforeEach(() => {
 
 describe("token storage", () => {
   it("keeps both tokens in localStorage, written together: one change event per sign-in (PERF-50)", async () => {
-    const tokens = tokensFor(RAIDER);
+    const tokens = loginAnswer(RAIDER);
     fakeApi.on("POST /auth/login/", tokens);
     fakeApi.on("GET /auth/me/", RAIDER);
     const { result } = renderSession();
@@ -137,7 +137,7 @@ describe("signing out", () => {
     act(() => result.current.auth.signOut());
     await waitFor(() => expect(result.current.auth.user).toBeNull());
 
-    fakeApi.on("POST /auth/login/", tokensFor(RIVAL));
+    fakeApi.on("POST /auth/login/", loginAnswer(RIVAL));
     fakeApi.on("GET /auth/me/", RIVAL);
     await act(async () => {
       await result.current.auth.signIn({ email: RIVAL.email, password: "wyrdstone" });

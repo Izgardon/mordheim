@@ -10,7 +10,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AuthProvider } from "@/features/auth/stores/auth-store";
 import { ApiError } from "@/lib/api-client";
-import { deferred, RAIDER, registerAnswer, storeSession, tokensFor } from "@/test/auth-fixtures";
+import { deferred, loginAnswer, RAIDER, registerAnswer, storeSession } from "@/test/auth-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { createQueryWrapper } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
@@ -51,7 +51,7 @@ beforeEach(() => {
 describe("signing in", () => {
   it("sends what was typed, says Working... meanwhile, then goes to /campaigns", async () => {
     const user = setupUser();
-    const login = deferred<ReturnType<typeof tokensFor>>();
+    const login = deferred<ReturnType<typeof loginAnswer>>();
     fakeApi.on("POST /auth/login/", () => login.promise);
     fakeApi.on("GET /auth/me/", RAIDER);
     renderCard();
@@ -67,7 +67,7 @@ describe("signing in", () => {
       password: "wyrdstone",
     });
 
-    await act(async () => login.resolve(tokensFor(RAIDER)));
+    await act(async () => login.resolve(loginAnswer(RAIDER)));
 
     expect(await screen.findByText("Campaigns page")).toBeInTheDocument();
   });
