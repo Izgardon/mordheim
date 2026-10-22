@@ -117,6 +117,50 @@ describe("refusals on the sign-in card (AUTH-TEST-26)", () => {
     expect(screen.queryByText("Request failed (500)")).toBeNull();
   });
 
+  it("shows the server's refusal of a display name of spaces, which the browser lets through (decision 2)", async () => {
+    const user = setupUser();
+    fakeFetch.on("POST /auth/register/", json(400, { name: ["This field may not be blank."] }));
+    renderCard();
+
+    await user.click(screen.getByRole("button", { name: "Create Account" }));
+    await user.type(screen.getByLabelText("Display name"), "   ");
+    await user.type(screen.getByLabelText("Email"), RAIDER.email);
+    await user.type(screen.getByLabelText("Password"), "wyrdstone");
+    await user.click(submitButton());
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Name: This field may not be blank."
+    );
+    expect(fakeFetch.requests()[0].body).toMatchObject({ name: "   " });
+  });
+
+  it("shows the server's new password rule, a password too like the email (AUTH-CQ-04)", async () => {
+    fakeFetch.on(
+      "POST /auth/register/",
+      json(400, { password: ["The password is too similar to the email address."] })
+    );
+
+    await signUp();
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Password: The password is too similar to the email address."
+    );
+  });
+
+  it("shows login's refusal of an address the browser accepts but the server doesn't (IMP-95 a)", async () => {
+    const user = setupUser();
+    fakeFetch.on("POST /auth/login/", json(400, { email: ["Enter a valid email address."] }));
+    renderCard();
+
+    await user.type(screen.getByLabelText("Email"), "raider@wyrdstone");
+    await user.type(screen.getByLabelText("Password"), "wyrdstone");
+    await user.click(submitButton());
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Email: Enter a valid email address."
+    );
+  });
+
   it("says a taken email is taken (SEC-11, accepted)", async () => {
     fakeFetch.on("POST /auth/register/", json(400, { email: ["User already exists"] }));
 
