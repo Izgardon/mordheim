@@ -13,7 +13,7 @@ import {
 
 import { makeVeteranHenchmenGroup } from "@/test/warband-fixtures";
 
-describe("hero and hired-sword advance table", () => {
+describe("hero and hired sword advance table", () => {
   it.each([
     [2, "Skill"],
     [5, "Skill"],

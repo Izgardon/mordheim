@@ -4,13 +4,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { WarbandItemMutationResponse } from "@/features/warbands/types/warband-types";
 import { heroKind } from "@/features/warbands/units/kinds/hero";
 import { henchmenKind } from "@/features/warbands/units/kinds/henchmen";
-import { hiredSwordKind } from "@/features/warbands/units/kinds/hired-sword";
-import {
-  makeHenchmenGroup,
-  makeHero,
-  makeHiredSword,
-  makeStashItem,
-} from "@/test/warband-fixtures";
+import { hirelingKind } from "@/features/warbands/units/kinds/hireling";
+import { makeHenchmenGroup, makeHero, makeHireling, makeStashItem } from "@/test/warband-fixtures";
 
 import UnitListBlocks from "./UnitListBlocks";
 
@@ -81,7 +76,7 @@ describe("HeroListBlocks item mutations", () => {
     const detail = mocks.emitWarbandUpdate.mock.calls[0][1];
     expect(detail.heroes.map((unit: { id: number }) => unit.id)).toEqual([3, 3]);
     expect(detail.henchmenGroups).toEqual([target]);
-    expect(detail).not.toHaveProperty("hiredSwords");
+    expect(detail).not.toHaveProperty("hirelings");
   });
 
   it("reports a hero that received the item to onHeroUpdated", () => {
@@ -173,7 +168,7 @@ describe("HenchmenListBlocks item mutations", () => {
     const detail = mocks.emitWarbandUpdate.mock.calls[0][1];
     expect(detail.henchmenGroups.map((unit: { id: number }) => unit.id)).toEqual([5, 5]);
     expect(detail.heroes).toEqual([target]);
-    expect(detail).not.toHaveProperty("hiredSwords");
+    expect(detail).not.toHaveProperty("hirelings");
   });
 
   it("does not report a group that received the item to onGroupUpdated (heroes and hired swords do)", () => {
@@ -202,7 +197,7 @@ describe("HenchmenListBlocks item mutations", () => {
   });
 });
 
-describe("HiredSwordListBlocks item mutations", () => {
+describe("HirelingListBlocks item mutations", () => {
   beforeEach(() => {
     mocks.emitWarbandUpdate.mockReset();
     mocks.useUnitItemMenu.mockReset();
@@ -211,18 +206,13 @@ describe("HiredSwordListBlocks item mutations", () => {
 
   it("only puts hired swords into the hired swords list after a move", () => {
     render(
-      <UnitListBlocks
-        kind={hiredSwordKind}
-        unit={makeHiredSword({ id: 7 })}
-        warbandId={9}
-        canEdit
-      />
+      <UnitListBlocks kind={hirelingKind} unit={makeHireling({ id: 7 })} warbandId={9} canEdit />
     );
     const onMutationComplete = mocks.useUnitItemMenu.mock.calls[0][0].onMutationComplete as (
       result: MutationResult
     ) => void;
-    const source = makeHiredSword({ id: 7 });
-    const hiredSwordTarget = makeHiredSword({ id: 8 });
+    const source = makeHireling({ id: 7 });
+    const hirelingTarget = makeHireling({ id: 8 });
 
     onMutationComplete({
       summary: {},
@@ -233,26 +223,19 @@ describe("HiredSwordListBlocks item mutations", () => {
     onMutationComplete({
       summary: {},
       source,
-      target: hiredSwordTarget,
-      targetUnitType: "hiredswords",
+      target: hirelingTarget,
+      targetUnitType: "hirelings",
     });
 
     const ids = (call: number) =>
-      mocks.emitWarbandUpdate.mock.calls[call][1].hiredSwords.map(
-        (unit: { id: number }) => unit.id
-      );
+      mocks.emitWarbandUpdate.mock.calls[call][1].hirelings.map((unit: { id: number }) => unit.id);
     expect(ids(0)).toEqual([7, 7]);
     expect(ids(1)).toEqual([7, 7, 8]);
   });
 
   it("refreshes the receiving kind's list after a cross-kind move (BUG-86)", () => {
     render(
-      <UnitListBlocks
-        kind={hiredSwordKind}
-        unit={makeHiredSword({ id: 7 })}
-        warbandId={9}
-        canEdit
-      />
+      <UnitListBlocks kind={hirelingKind} unit={makeHireling({ id: 7 })} warbandId={9} canEdit />
     );
     const onMutationComplete = mocks.useUnitItemMenu.mock.calls[0][0].onMutationComplete as (
       result: MutationResult
@@ -261,19 +244,19 @@ describe("HiredSwordListBlocks item mutations", () => {
     const target = makeHenchmenGroup({ id: 5 });
     onMutationComplete({
       summary: {},
-      source: makeHiredSword({ id: 7 }),
+      source: makeHireling({ id: 7 }),
       target,
       targetUnitType: "henchmen",
     });
     onMutationComplete({
       summary: {},
-      source: makeHiredSword({ id: 7 }),
+      source: makeHireling({ id: 7 }),
       target: makeStashItem(),
       targetUnitType: "stash",
     });
 
     const detail = mocks.emitWarbandUpdate.mock.calls[0][1];
-    expect(detail.hiredSwords.map((unit: { id: number }) => unit.id)).toEqual([7, 7]);
+    expect(detail.hirelings.map((unit: { id: number }) => unit.id)).toEqual([7, 7]);
     expect(detail.henchmenGroups).toEqual([target]);
     expect(detail).not.toHaveProperty("heroes");
     const toStash = mocks.emitWarbandUpdate.mock.calls[1][1];
@@ -281,29 +264,29 @@ describe("HiredSwordListBlocks item mutations", () => {
     expect(toStash).not.toHaveProperty("heroes");
   });
 
-  it("reports a hired sword that received the item to onHiredSwordUpdated", () => {
-    const onHiredSwordUpdated = vi.fn();
+  it("reports a hired sword that received the item to onHirelingUpdated", () => {
+    const onHirelingUpdated = vi.fn();
     render(
       <UnitListBlocks
-        kind={hiredSwordKind}
-        unit={makeHiredSword({ id: 7 })}
+        kind={hirelingKind}
+        unit={makeHireling({ id: 7 })}
         warbandId={9}
         canEdit
-        onUnitUpdated={onHiredSwordUpdated}
+        onUnitUpdated={onHirelingUpdated}
       />
     );
     const onMutationComplete = mocks.useUnitItemMenu.mock.calls[0][0].onMutationComplete as (
       result: MutationResult
     ) => void;
-    const target = makeHiredSword({ id: 8 });
+    const target = makeHireling({ id: 8 });
 
     onMutationComplete({
       summary: {},
-      source: makeHiredSword({ id: 7 }),
+      source: makeHireling({ id: 7 }),
       target,
-      targetUnitType: "hiredswords",
+      targetUnitType: "hirelings",
     });
 
-    expect(onHiredSwordUpdated).toHaveBeenCalledWith(target);
+    expect(onHirelingUpdated).toHaveBeenCalledWith(target);
   });
 });

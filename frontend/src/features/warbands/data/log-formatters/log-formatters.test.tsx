@@ -84,14 +84,14 @@ describe("log formatters, by feature", () => {
       [
         "advance:hero",
         "advance:henchmen",
-        "advance:hired_sword",
+        "advance:hireling",
         "trading_action:rarity roll",
         "trading_action:custom_dice_roll",
         "dice_roll:dice_roll",
         "personnel:serious_injury",
         "personnel:stats_kept",
-        "personnel:new_hired_sword",
-        "personnel:remove_hired_sword",
+        "personnel:new_hireling",
+        "personnel:remove_hireling",
         "battle:complete",
         "battle:exploration",
         "battle:finds",
@@ -100,7 +100,7 @@ describe("log formatters, by feature", () => {
         "loadout:hero_item",
         "loadout:henchmen_item",
         "loadout:stash_item",
-        "loadout:hired_sword_item",
+        "loadout:hireling_item",
         "items:sold",
         "items:moved",
         "items:discarded",
@@ -114,7 +114,7 @@ describe("log formatters, by feature", () => {
     expect(textOf(log("advance", "hero", advance))).toBe(
       "Unknown Hero levelled up and gained a +1 WS"
     );
-    expect(textOf(log("advance", "hired_sword", advance))).toBe(
+    expect(textOf(log("advance", "hireling", advance))).toBe(
       "Unknown Hired Sword levelled up and gained a +1 WS"
     );
     expect(textOf(log("advance", "henchmen", { group: "Knives", advance: "+1 BS" }))).toBe(
@@ -130,10 +130,10 @@ describe("log formatters, by feature", () => {
   });
 
   it("say who joined or left, and how a battle went", () => {
-    expect(textOf(log("personnel", "new_hired_sword", { name: "Hal" }))).toBe(
+    expect(textOf(log("personnel", "new_hireling", { name: "Hal" }))).toBe(
       "Hired Hal the Hired Sword"
     );
-    expect(textOf(log("personnel", "remove_hired_sword", {}))).toBe(
+    expect(textOf(log("personnel", "remove_hireling", {}))).toBe(
       "Dismissed Unknown the Hired Sword"
     );
     expect(textOf(log("battle", "complete", { result: "lost", against: ["Rats"] }))).toBe(

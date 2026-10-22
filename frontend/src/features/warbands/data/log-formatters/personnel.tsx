@@ -46,7 +46,7 @@ const statsKept: LogFormatter = (log) => {
   }.`;
 };
 
-type HiredSwordPersonnelPayload = { name?: string; type?: string };
+type HirelingPersonnelPayload = { name?: string; type?: string };
 
 const seriousInjury: LogFormatter = (log) => {
   const payload = payloadOf<SeriousInjuryPayload>(log);
@@ -81,10 +81,10 @@ const seriousInjury: LogFormatter = (log) => {
 };
 
 /** "Hired …" / "Dismissed …" for a hired sword joining or leaving. */
-const hiredSwordMove =
+const hirelingMove =
   (verb: string): LogFormatter =>
   (log) => {
-    const payload = payloadOf<HiredSwordPersonnelPayload>(log);
+    const payload = payloadOf<HirelingPersonnelPayload>(log);
     return `${verb} ${payload.name || "Unknown"} the ${payload.type || "Hired Sword"}`;
   };
 
@@ -92,6 +92,6 @@ const hiredSwordMove =
 export const PERSONNEL_FORMATTERS: Record<string, LogFormatter> = {
   "personnel:serious_injury": seriousInjury,
   "personnel:stats_kept": statsKept,
-  "personnel:new_hired_sword": hiredSwordMove("Hired"),
-  "personnel:remove_hired_sword": hiredSwordMove("Dismissed"),
+  "personnel:new_hireling": hirelingMove("Hired"),
+  "personnel:remove_hireling": hirelingMove("Dismissed"),
 };

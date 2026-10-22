@@ -164,7 +164,7 @@ describe("patchSheetResources", () => {
       capabilities: {},
       heroes: [],
       henchmen_groups: [],
-      hired_swords: [],
+      hirelings: [],
     }) as unknown as WarbandSheet;
   const resourcesOf = (queryClient: ReturnType<typeof createTestQueryClient>) =>
     queryClient.getQueryData<WarbandSheet>(queryKeys.campaign.warbandSheet(7, 9))?.summary
@@ -247,7 +247,7 @@ describe("itemMutationUpdate", () => {
     expect(ids(update.heroes)).toEqual([3, 3]);
     expect(update.removedStashItemIds).toEqual([120]);
     expect(update).not.toHaveProperty("henchmenGroups");
-    expect(update).not.toHaveProperty("hiredSwords");
+    expect(update).not.toHaveProperty("hirelings");
   });
 });
 
@@ -264,7 +264,7 @@ describe("setTradeData marks the traders a completed trade spent (decision 9)", 
       capabilities: {},
       heroes,
       henchmen_groups: [],
-      hired_swords: [],
+      hirelings: [],
     }) as unknown as WarbandSheet;
   const trade = (overrides: Partial<TradeRequest>) =>
     ({

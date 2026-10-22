@@ -252,7 +252,7 @@
       bottom 8px center / 18px 1px no-repeat;
 }
 
-.warband-card--hired-sword {
+.warband-card--hireling {
   --unit-card-border-rgb: 147, 104, 76;
   --unit-card-border-soft-rgb: 219, 180, 151;
   --unit-card-shell-bg: linear-gradient(180deg, rgba(26, 18, 14, 0.97), rgba(18, 13, 10, 0.98));
@@ -283,7 +283,7 @@
     inset 0 0 0 5px rgba(147, 104, 76, 0.04);
 }
 
-.warband-card--hired-sword::before {
+.warband-card--hireling::before {
   inset: 6px;
   border: none;
   background:
@@ -305,7 +305,7 @@
       calc(100% - 28px) no-repeat;
 }
 
-.warband-card--hired-sword::after {
+.warband-card--hireling::after {
   background:
     linear-gradient(135deg, transparent 10px, rgba(219, 180, 151, 0.62) 10px 11px, transparent 11px)
       top left / 42px 42px no-repeat,
@@ -419,7 +419,7 @@
     inset 0 0 0 4px rgba(121, 129, 140, 0.04);
 }
 
-.warband-card-shell.warband-card--hired-sword {
+.warband-card-shell.warband-card--hireling {
   --unit-card-border-rgb: 147, 104, 76;
   --unit-card-border-soft-rgb: 219, 180, 151;
   --unit-card-shell-bg: linear-gradient(180deg, rgba(26, 18, 14, 0.97), rgba(18, 13, 10, 0.98));
@@ -569,7 +569,7 @@
 
   .warband-card--hero::before,
   .warband-card--henchmen::before,
-  .warband-card--hired-sword::before {
+  .warband-card--hireling::before {
     inset: 4px;
     border: 1px solid rgba(var(--unit-card-border-soft-rgb), 0.22);
     background: none;
@@ -578,7 +578,7 @@
 
   .warband-card--hero::after,
   .warband-card--henchmen::after,
-  .warband-card--hired-sword::after {
+  .warband-card--hireling::after {
     background:
       linear-gradient(90deg, rgba(var(--unit-card-border-soft-rgb), 0.75), transparent 34px) top
         left / 64px 1px no-repeat,

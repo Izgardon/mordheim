@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { Label } from "@components/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 
-export type UnitTypeOption = "heroes" | "henchmen" | "hiredswords" | "stash";
+export type UnitTypeOption = "heroes" | "henchmen" | "hirelings" | "stash";
 
 export type UnitSelectEntry = {
   id: number | string;
@@ -31,14 +31,14 @@ type UnitSelectionSectionProps = {
 export const unitTypeLabels: Record<UnitTypeOption, string> = {
   heroes: "Heroes",
   henchmen: "Henchmen",
-  hiredswords: "Hired Swords",
+  hirelings: "Hired Swords",
   stash: "Warband Stash",
 };
 
 export const unitSelectLabels: Record<UnitTypeOption, string> = {
   heroes: "Hero",
   henchmen: "Henchmen Group",
-  hiredswords: "Hired Sword",
+  hirelings: "Hired Sword",
   stash: "Stash",
 };
 

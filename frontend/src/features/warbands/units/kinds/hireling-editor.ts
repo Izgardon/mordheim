@@ -1,4 +1,4 @@
-import HiredSwordAddFields from "../../components/units/kinds/hired-sword/HiredSwordAddFields";
+import HirelingAddFields from "../../components/units/kinds/hireling/HirelingAddFields";
 import { buildPendingChanges } from "../../utils/pending-purchases";
 import { toNullableNumber } from "../../utils/warband-utils";
 import {
@@ -19,7 +19,7 @@ const notBloodPacted = (entry: { blood_pacted?: boolean | null }) => !entry.bloo
  * Hired swords: the hired-sword cap counts those without a blood pact and ignores the warband
  * unit limit; the add form's preset, blood pact and loadout go into the queued recruit.
  */
-export const hiredSwordEditor: UnitEditorConfig<"hired_sword"> = {
+export const hirelingEditor: UnitEditorConfig<"hireling"> = {
   creation: {
     initialForm: {
       name: "",
@@ -44,7 +44,7 @@ export const hiredSwordEditor: UnitEditorConfig<"hired_sword"> = {
     },
     blockedError: "Hired sword limit reached.",
     toFormEntry: (form, name, unitType) => ({
-      draftKey: nextDraftKey("hiredswords"),
+      draftKey: nextDraftKey("hirelings"),
       name,
       unit_type: unitType,
       race_id: form.race_id,
@@ -84,22 +84,22 @@ export const hiredSwordEditor: UnitEditorConfig<"hired_sword"> = {
           form.specials.length > 0
       ),
     recruitCost: (form) => toNullableNumber(form.price) ?? 0,
-    duplicate: (form) => copyBasics(form, "hiredswords"),
+    duplicate: (form) => copyBasics(form, "hirelings"),
   },
   // At the cap the add form still opens: a blood-pacted hired sword doesn't count (decision 12),
   // so only "Create" is refused, and only for one without a blood pact (BUG-102).
   limits: ({ forms, isEditing, newForm, roster }) => {
-    const count = isEditing ? forms.filter(notBloodPacted).length : roster.hiredSwordCount;
+    const count = isEditing ? forms.filter(notBloodPacted).length : roster.hirelingCount;
     const isAtCap = count >= roster.maxHiredSwords;
-    const isHiredSwordLimitReached = isAtCap && !newForm.blood_pacted;
+    const isHirelingLimitReached = isAtCap && !newForm.blood_pacted;
     return {
       titleSuffix: `[${count}/${roster.maxHiredSwords}]`,
-      isCreateBlocked: isHiredSwordLimitReached,
+      isCreateBlocked: isHirelingLimitReached,
       isAddDisabled: false,
       addButtonNotice: isAtCap
         ? `Maximum of ${roster.maxHiredSwords} hired swords reached; a blood-pacted one can still join.`
         : undefined,
-      addFormNotices: isHiredSwordLimitReached
+      addFormNotices: isHirelingLimitReached
         ? [
             `Maximum of ${roster.maxHiredSwords} hired swords reached. Tick Bloodpacted to add one that doesn't count.`,
           ]
@@ -114,5 +114,5 @@ export const hiredSwordEditor: UnitEditorConfig<"hired_sword"> = {
   buildPendingChanges: (purchases) => buildPendingChanges(purchases),
   useFormExtras: useNoFormExtras,
   addCreatedSkill: appendSkill,
-  AddFields: HiredSwordAddFields,
+  AddFields: HirelingAddFields,
 };

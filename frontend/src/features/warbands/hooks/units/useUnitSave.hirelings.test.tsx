@@ -2,15 +2,15 @@ import { act, renderHook as renderBareHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useUnitSave, type UseUnitSaveParams } from "./useUnitSave";
-import { hiredSwordKind, mapHiredSwordToForm } from "@/features/warbands/units/kinds/hired-sword";
+import { hirelingKind, mapHirelingToForm } from "@/features/warbands/units/kinds/hireling";
 
 import type {
-  HiredSwordFormEntry,
-  NewHiredSwordForm,
-  WarbandHiredSword,
+  HirelingFormEntry,
+  NewHirelingForm,
+  WarbandHireling,
 } from "@/features/warbands/types/warband-types";
 import type { PendingPurchase } from "@/features/warbands/utils/pending-purchases";
-import { makeVeteranHiredSword } from "@/test/warband-fixtures";
+import { makeVeteranHireling } from "@/test/warband-fixtures";
 import { createQueryWrapper } from "@/test/query-test-utils";
 import {
   answerBatch,
@@ -25,7 +25,7 @@ import {
 const renderHook = <R,>(hook: () => R) => renderBareHook(hook, { wrapper: createQueryWrapper() });
 
 const apiMocks = vi.hoisted(() => ({
-  batchWarbandHiredSwords: vi.fn(),
+  batchWarbandHirelings: vi.fn(),
   getWarbandSummary: vi.fn(),
   createWarbandLog: vi.fn(),
   createWarbandTrade: vi.fn(),
@@ -44,38 +44,38 @@ vi.mock("@/features/warbands/api/warband-cache", async (importOriginal) => ({
   useWarbandCacheUpdate: () => eventMocks.emitWarbandUpdate,
 }));
 
-/** The hired-sword save's inputs as the tests name them; `hiredParams` maps them onto useUnitSave. */
+/** The hired sword save's inputs as the tests name them; `hirelingParams` maps them onto useUnitSave. */
 type SaveParams = {
   warbandId: number;
   canEdit: boolean;
-  currentHiredSwords: WarbandHiredSword[];
-  hiredSwordForms: HiredSwordFormEntry[];
-  removedHiredSwordIds: number[];
-  isAddingHiredSwordForm: boolean;
-  newHiredSwordForm: NewHiredSwordForm;
+  currentHirelings: WarbandHireling[];
+  hirelingForms: HirelingFormEntry[];
+  removedHirelingIds: number[];
+  isAddingHirelingForm: boolean;
+  newHirelingForm: NewHirelingForm;
   raceQuery: string;
-  originalHiredSwordFormsRef: { current: Map<number, string> };
-  onSuccess: (refreshed: WarbandHiredSword[]) => void;
+  originalHirelingFormsRef: { current: Map<number, string> };
+  onSuccess: (refreshed: WarbandHireling[]) => void;
   pendingPurchases?: PendingPurchase[];
   onPendingCleared?: () => void;
 };
 
-const hiredParams = (params: SaveParams): UseUnitSaveParams<"hired_sword"> => ({
+const hirelingParams = (params: SaveParams): UseUnitSaveParams<"hireling"> => ({
   warbandId: params.warbandId,
   canEdit: params.canEdit,
-  units: params.currentHiredSwords,
-  forms: params.hiredSwordForms,
-  removedIds: params.removedHiredSwordIds,
-  isAdding: params.isAddingHiredSwordForm,
-  newForm: params.newHiredSwordForm,
+  units: params.currentHirelings,
+  forms: params.hirelingForms,
+  removedIds: params.removedHirelingIds,
+  isAdding: params.isAddingHirelingForm,
+  newForm: params.newHirelingForm,
   raceQuery: params.raceQuery,
-  originalFormsRef: params.originalHiredSwordFormsRef,
+  originalFormsRef: params.originalHirelingFormsRef,
   onSuccess: (refreshed) => params.onSuccess(refreshed),
   pendingPurchases: params.pendingPurchases,
   onPendingCleared: params.onPendingCleared,
 });
 
-const baseForm: HiredSwordFormEntry = {
+const baseForm: HirelingFormEntry = {
   id: 7,
   name: "Ogre Bodyguard",
   unit_type: "Ogre",
@@ -102,7 +102,7 @@ const baseForm: HiredSwordFormEntry = {
   specials: [],
 };
 
-const baseHiredSword: WarbandHiredSword = {
+const baseHireling: WarbandHireling = {
   id: 7,
   warband_id: 9,
   name: "Ogre Bodyguard",
@@ -141,7 +141,7 @@ const baseHiredSword: WarbandHiredSword = {
   specials: [],
 };
 
-const blankNewHiredSwordForm = {
+const blankNewHirelingForm = {
   name: "",
   unit_type: "",
   race_id: null,
@@ -166,7 +166,7 @@ const blankNewHiredSwordForm = {
 describe("useUnitSave: hired swords", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    apiMocks.batchWarbandHiredSwords.mockImplementation(answerBatch([baseHiredSword]));
+    apiMocks.batchWarbandHirelings.mockImplementation(answerBatch([baseHireling]));
     apiMocks.getWarbandSummary.mockResolvedValue({});
     apiMocks.getWarbandSummary.mockResolvedValue({});
   });
@@ -179,17 +179,17 @@ describe("useUnitSave: hired swords", () => {
 
     const { result } = renderHook(() =>
       useUnitSave(
-        hiredSwordKind,
-        hiredParams({
+        hirelingKind,
+        hirelingParams({
           warbandId: 9,
           canEdit: true,
-          currentHiredSwords: [baseHiredSword],
-          hiredSwordForms: [{ ...baseForm, id: undefined, draftKey: "draft-1", xp: "5" }],
-          removedHiredSwordIds: [],
-          isAddingHiredSwordForm: false,
-          newHiredSwordForm: blankNewHiredSwordForm,
+          currentHirelings: [baseHireling],
+          hirelingForms: [{ ...baseForm, id: undefined, draftKey: "draft-1", xp: "5" }],
+          removedHirelingIds: [],
+          isAddingHirelingForm: false,
+          newHirelingForm: blankNewHirelingForm,
           raceQuery: "",
-          originalHiredSwordFormsRef: originalRef,
+          originalHirelingFormsRef: originalRef,
           onSuccess,
         })
       )
@@ -199,8 +199,8 @@ describe("useUnitSave: hired swords", () => {
       await result.current.handleSaveChanges();
     });
 
-    expect(batchUpdates(apiMocks.batchWarbandHiredSwords)).toEqual([]);
-    expect(batchCreates(apiMocks.batchWarbandHiredSwords)).toEqual([
+    expect(batchUpdates(apiMocks.batchWarbandHirelings)).toEqual([]);
+    expect(batchCreates(apiMocks.batchWarbandHirelings)).toEqual([
       expect.objectContaining({ xp: 5, level_up: 0, no_level_ups: false }),
     ]);
   });
@@ -213,17 +213,17 @@ describe("useUnitSave: hired swords", () => {
 
     const { result } = renderHook(() =>
       useUnitSave(
-        hiredSwordKind,
-        hiredParams({
+        hirelingKind,
+        hirelingParams({
           warbandId: 9,
           canEdit: true,
-          currentHiredSwords: [baseHiredSword],
-          hiredSwordForms: [{ ...baseForm, xp: "5" }],
-          removedHiredSwordIds: [],
-          isAddingHiredSwordForm: false,
-          newHiredSwordForm: blankNewHiredSwordForm,
+          currentHirelings: [baseHireling],
+          hirelingForms: [{ ...baseForm, xp: "5" }],
+          removedHirelingIds: [],
+          isAddingHirelingForm: false,
+          newHirelingForm: blankNewHirelingForm,
           raceQuery: "",
-          originalHiredSwordFormsRef: originalRef,
+          originalHirelingFormsRef: originalRef,
           onSuccess,
         })
       )
@@ -233,37 +233,37 @@ describe("useUnitSave: hired swords", () => {
       await result.current.handleSaveChanges();
     });
 
-    const payload = batchUpdate(apiMocks.batchWarbandHiredSwords, 7);
+    const payload = batchUpdate(apiMocks.batchWarbandHirelings, 7);
     expect(payload).toMatchObject({ xp: 5, no_level_ups: false });
     expect(payload).not.toHaveProperty("level_up");
   });
 });
 
 describe("useUnitSave: hired swords characterisation", () => {
-  const veteran = makeVeteranHiredSword();
-  const second = makeVeteranHiredSword({ id: 32, name: "Sister Ilse" });
+  const veteran = makeVeteranHireling();
+  const second = makeVeteranHireling({ id: 32, name: "Sister Ilse" });
 
-  const snapshotOf = (forms: HiredSwordFormEntry[]) =>
+  const snapshotOf = (forms: HirelingFormEntry[]) =>
     new Map(forms.map((form) => [form.id as number, JSON.stringify(form)]));
 
   const renderSave = (overrides: Partial<SaveParams> = {}) => {
-    const forms = [veteran, second].map(mapHiredSwordToForm);
+    const forms = [veteran, second].map(mapHirelingToForm);
     const params: SaveParams = {
       warbandId: 9,
       canEdit: true,
-      currentHiredSwords: [veteran, second],
-      hiredSwordForms: forms,
-      removedHiredSwordIds: [],
-      isAddingHiredSwordForm: false,
-      newHiredSwordForm: blankNewHiredSwordForm,
+      currentHirelings: [veteran, second],
+      hirelingForms: forms,
+      removedHirelingIds: [],
+      isAddingHirelingForm: false,
+      newHirelingForm: blankNewHirelingForm,
       raceQuery: "",
-      originalHiredSwordFormsRef: { current: snapshotOf(forms) },
+      originalHirelingFormsRef: { current: snapshotOf(forms) },
       onSuccess: vi.fn(),
       pendingPurchases: [],
       onPendingCleared: vi.fn(),
       ...overrides,
     };
-    const hook = renderHook(() => useUnitSave(hiredSwordKind, hiredParams(params)));
+    const hook = renderHook(() => useUnitSave(hirelingKind, hirelingParams(params)));
     const save = () =>
       act(async () => {
         await hook.result.current.handleSaveChanges();
@@ -273,23 +273,21 @@ describe("useUnitSave: hired swords characterisation", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    apiMocks.batchWarbandHiredSwords.mockImplementation(
-      answerBatch([veteran, second], { gold: 80 })
-    );
+    apiMocks.batchWarbandHirelings.mockImplementation(answerBatch([veteran, second], { gold: 80 }));
     apiMocks.getWarbandSummary.mockResolvedValue({ gold: 80 });
   });
 
   it("round-trips a loaded hired sword into its PATCH body, armour save as a number (decision 11, BUG-87)", async () => {
-    const forms = [veteran].map(mapHiredSwordToForm);
+    const forms = [veteran].map(mapHirelingToForm);
     const { save } = renderSave({
-      currentHiredSwords: [veteran],
-      hiredSwordForms: forms,
-      originalHiredSwordFormsRef: { current: new Map() },
+      currentHirelings: [veteran],
+      hirelingForms: forms,
+      originalHirelingFormsRef: { current: new Map() },
     });
 
     await save();
 
-    expect(batchUpdate(apiMocks.batchWarbandHiredSwords, 31)).toEqual({
+    expect(batchUpdate(apiMocks.batchWarbandHirelings, 31)).toEqual({
       name: "Brother Hal",
       unit_type: "Warrior Priest",
       race: 1,
@@ -325,27 +323,27 @@ describe("useUnitSave: hired swords characterisation", () => {
   });
 
   it("reads a typed ' 5+ ' as the save 5 (decision 11, BUG-87)", async () => {
-    const forms = [veteran].map(mapHiredSwordToForm);
+    const forms = [veteran].map(mapHirelingToForm);
     const { save } = renderSave({
-      currentHiredSwords: [veteran],
-      hiredSwordForms: [{ ...forms[0], armour_save: " 5+ " }],
+      currentHirelings: [veteran],
+      hirelingForms: [{ ...forms[0], armour_save: " 5+ " }],
     });
 
     await save();
 
-    expect(batchUpdate(apiMocks.batchWarbandHiredSwords, 31)?.armour_save).toBe(5);
+    expect(batchUpdate(apiMocks.batchWarbandHirelings, 31)?.armour_save).toBe(5);
   });
 
   it("updates only changed hired swords in one batch, using its summary", async () => {
-    const forms = [veteran, second].map(mapHiredSwordToForm);
+    const forms = [veteran, second].map(mapHirelingToForm);
     const { save } = renderSave({
-      hiredSwordForms: [forms[0], { ...forms[1], blood_pacted: true }],
+      hirelingForms: [forms[0], { ...forms[1], blood_pacted: true }],
     });
 
     await save();
 
-    expect(batchUpdates(apiMocks.batchWarbandHiredSwords).map((entry) => entry.id)).toEqual([32]);
-    expect(batchUpdate(apiMocks.batchWarbandHiredSwords, 32)).toEqual(
+    expect(batchUpdates(apiMocks.batchWarbandHirelings).map((entry) => entry.id)).toEqual([32]);
+    expect(batchUpdate(apiMocks.batchWarbandHirelings, 32)).toEqual(
       expect.objectContaining({ blood_pacted: true })
     );
     expect(apiMocks.getWarbandSummary).not.toHaveBeenCalled();
@@ -353,13 +351,13 @@ describe("useUnitSave: hired swords characterisation", () => {
 
   it("dismisses hired swords in the batch and writes its summary", async () => {
     const { save, params } = renderSave({
-      hiredSwordForms: [mapHiredSwordToForm(veteran)],
-      removedHiredSwordIds: [32],
+      hirelingForms: [mapHirelingToForm(veteran)],
+      removedHirelingIds: [32],
     });
 
     await save();
 
-    expect(batchDismissals(apiMocks.batchWarbandHiredSwords)).toEqual([32]);
+    expect(batchDismissals(apiMocks.batchWarbandHirelings)).toEqual([32]);
     expect(apiMocks.getWarbandSummary).not.toHaveBeenCalled();
     expect(params.onSuccess).toHaveBeenCalledWith([veteran]);
     expect(eventMocks.emitWarbandUpdate).toHaveBeenCalledWith(9, { summary: { gold: 80 } });
@@ -367,7 +365,7 @@ describe("useUnitSave: hired swords characterisation", () => {
 
   it("sends purchases for kept hired swords only, in the batch (decision 1)", async () => {
     const purchase = {
-      unitType: "hiredswords" as const,
+      unitType: "hirelings" as const,
       itemId: 101,
       itemName: "Sword",
       quantity: 1,
@@ -376,8 +374,8 @@ describe("useUnitSave: hired swords characterisation", () => {
       line: { item_id: 101, quantity: 1, price: 10, availability_id: null, is_buying: true },
     };
     const { save, params } = renderSave({
-      hiredSwordForms: [mapHiredSwordToForm(veteran)],
-      removedHiredSwordIds: [32],
+      hirelingForms: [mapHirelingToForm(veteran)],
+      removedHirelingIds: [32],
       pendingPurchases: [
         { ...purchase, unitId: "31" },
         { ...purchase, unitId: "32" },
@@ -386,7 +384,7 @@ describe("useUnitSave: hired swords characterisation", () => {
 
     await save();
 
-    expect(batchPurchases(apiMocks.batchWarbandHiredSwords)).toEqual([
+    expect(batchPurchases(apiMocks.batchWarbandHirelings)).toEqual([
       { unit_id: 31, item_id: 101, quantity: 1, price: 10, availability_id: null, is_buying: true },
     ]);
     expect(apiMocks.createWarbandTrade).not.toHaveBeenCalled();
@@ -395,7 +393,7 @@ describe("useUnitSave: hired swords characterisation", () => {
   });
 
   it("does not require any particular unit to be marked (no leader rule)", async () => {
-    const { save, result } = renderSave({ currentHiredSwords: [], hiredSwordForms: [] });
+    const { save, result } = renderSave({ currentHirelings: [], hirelingForms: [] });
 
     await save();
 
@@ -404,8 +402,8 @@ describe("useUnitSave: hired swords characterisation", () => {
 
   it("blocks the save while the add form has a loadout queued", async () => {
     const { save, result } = renderSave({
-      isAddingHiredSwordForm: true,
-      newHiredSwordForm: { ...blankNewHiredSwordForm, items: [veteran.items[0]] },
+      isAddingHirelingForm: true,
+      newHirelingForm: { ...blankNewHirelingForm, items: [veteran.items[0]] },
     });
 
     await save();
@@ -416,8 +414,8 @@ describe("useUnitSave: hired swords characterisation", () => {
   });
 
   it("shows the error when a write fails", async () => {
-    apiMocks.batchWarbandHiredSwords.mockRejectedValue(new Error("Not found"));
-    const { save, result, params } = renderSave({ removedHiredSwordIds: [32] });
+    apiMocks.batchWarbandHirelings.mockRejectedValue(new Error("Not found"));
+    const { save, result, params } = renderSave({ removedHirelingIds: [32] });
 
     await save();
 

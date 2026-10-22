@@ -35,11 +35,11 @@ export type Warband = {
   unit_count?: number;
   hero_count?: number;
   max_heroes?: number;
-  hired_sword_count?: number;
+  hireling_count?: number;
   max_hired_swords?: number;
   resources?: WarbandResource[];
   heroes?: WarbandHero[];
-  hired_swords?: WarbandHiredSword[];
+  hirelings?: WarbandHireling[];
   henchmen_groups?: HenchmenGroup[];
   restrictions?: Restriction[];
   dice_color?: string | null;
@@ -51,7 +51,7 @@ export type Warband = {
 /**
  * The server's roster counts (decision 12). `unit_count` is the warband size: heroes, living
  * henchmen and blood-pacted hired swords (warn only past `max_units`). `hero_count` and
- * `hired_sword_count` count what the hard caps count: living heroes, and living hired swords
+ * `hireling_count` count what the hard caps count: living heroes, and living hired swords
  * without a blood pact.
  */
 export type WarbandRosterCounts = {
@@ -59,7 +59,7 @@ export type WarbandRosterCounts = {
   max_units?: number;
   hero_count?: number;
   max_heroes?: number;
-  hired_sword_count?: number;
+  hireling_count?: number;
   max_hired_swords?: number;
 };
 
@@ -68,7 +68,7 @@ export type WarbandUnitsSummary = WarbandRosterCounts & {
   rating?: number;
   gold?: number;
   heroes?: WarbandHero[];
-  hired_swords?: WarbandHiredSword[];
+  hirelings?: WarbandHireling[];
   henchmen_groups?: HenchmenGroup[];
 };
 
@@ -179,7 +179,7 @@ export type WarbandHero = {
   spells?: Spell[];
 };
 
-export type WarbandHiredSword = {
+export type WarbandHireling = {
   id: number;
   warband_id: number;
   name: string | null;
@@ -267,7 +267,7 @@ export type WarbandHeroPayload = {
   ignore_max_heroes?: boolean;
 };
 
-export type WarbandHiredSwordPayload = {
+export type WarbandHirelingPayload = {
   name: string | null;
   unit_type: string | null;
   race: number | null;
@@ -334,7 +334,7 @@ export type HeroFormEntry = {
   specials: Special[];
 };
 
-export type HiredSwordFormEntry = HeroFormEntry & {
+export type HirelingFormEntry = HeroFormEntry & {
   upkeep_price: string;
   rating: string;
   blood_pacted: boolean;
@@ -353,7 +353,7 @@ export type NewHeroForm = {
 };
 
 /** The "Add hired sword" form (a preset can fill all of it, loadout included). */
-export type NewHiredSwordForm = {
+export type NewHirelingForm = {
   name: string;
   unit_type: string;
   race_id: number | null;
@@ -572,12 +572,12 @@ export type WarbandItemSummary = {
   sale_price_basis?: SalePriceBasis | null;
 };
 
-export type WarbandUnitDetail = WarbandHero | WarbandHiredSword | HenchmenGroup;
+export type WarbandUnitDetail = WarbandHero | WarbandHireling | HenchmenGroup;
 
 export type WarbandItemTransferPayload = {
-  source_type: "hero" | "hired_sword" | "henchmen_group" | "stash";
+  source_type: "hero" | "hireling" | "henchmen_group" | "stash";
   source_id?: number | null;
-  target_type: "hero" | "hired_sword" | "henchmen_group" | "stash";
+  target_type: "hero" | "hireling" | "henchmen_group" | "stash";
   target_id?: number | null;
   item_id: number;
   quantity: number;
@@ -586,7 +586,7 @@ export type WarbandItemTransferPayload = {
 };
 
 export type WarbandItemSalePayload = {
-  source_type: "hero" | "hired_sword" | "henchmen_group" | "stash";
+  source_type: "hero" | "hireling" | "henchmen_group" | "stash";
   source_id?: number | null;
   item_id: number;
   quantity: number;

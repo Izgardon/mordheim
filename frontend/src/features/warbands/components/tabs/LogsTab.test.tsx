@@ -105,6 +105,25 @@ describe("LogsTab", () => {
     expect(screen.queryByText(/received:/)).not.toBeInTheDocument();
   });
 
+  it("labels a hireling's skill, special and spell entries as a hired sword's, as the site calls the kind", async () => {
+    const payload = { hero: "Brother Hal", skill: "Dodge", special: "Ward", spell: "Smite" };
+    fakeApi.on(
+      FIRST,
+      page(
+        ["hireling_skill", "hireling_special", "hireling_spell"].map((entry_type, index) =>
+          log(index + 1, { entry_type, payload })
+        ),
+        null,
+        true
+      )
+    );
+    renderWithQueryClient(<LogsPanel />);
+
+    expect(await screen.findByText("Loadout: Hired Sword Skill")).toBeInTheDocument();
+    expect(screen.getByText("Loadout: Hired Sword Special")).toBeInTheDocument();
+    expect(screen.getByText("Loadout: Hired Sword Spell")).toBeInTheDocument();
+  });
+
   it("reads the log 12 entries a page from the server, following the cursor (ECON-PERF-06)", async () => {
     const user = setupUser();
     renderWithQueryClient(<LogsPanel />);

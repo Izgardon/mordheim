@@ -25,7 +25,7 @@ import type {
   HenchmenGroup,
   Warband,
   WarbandHero,
-  WarbandHiredSword,
+  WarbandHireling,
 } from "../../types/warband-types";
 
 type WarbandMobileMetaBarProps = {
@@ -34,7 +34,7 @@ type WarbandMobileMetaBarProps = {
   pendingGold?: number;
   warbandRating: number;
   heroes: WarbandHero[];
-  hiredSwords: WarbandHiredSword[];
+  hirelings: WarbandHireling[];
   henchmenGroups: HenchmenGroup[];
   /** The sheet's `manage_items` capability: the stash's item menus. */
   canManageItems: boolean;
@@ -50,7 +50,7 @@ export default function WarbandMobileMetaBar({
   pendingGold = 0,
   warbandRating,
   heroes,
-  hiredSwords,
+  hirelings,
   henchmenGroups,
   canManageItems,
   canInitiateTrade,
@@ -157,7 +157,7 @@ export default function WarbandMobileMetaBar({
         open={isRatingOpen}
         onOpenChange={setIsRatingOpen}
         heroes={heroes}
-        hiredSwords={hiredSwords}
+        hirelings={hirelings}
         henchmenGroups={henchmenGroups}
       />
     </section>

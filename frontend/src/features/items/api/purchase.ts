@@ -39,7 +39,7 @@ export type RarityRollLine = {
   success: boolean;
 };
 
-type ApiTargetType = "stash" | "hero" | "hired_sword" | "henchmen_group";
+type ApiTargetType = "stash" | "hero" | "hireling" | "henchmen_group";
 
 /** `POST warbands/<id>/purchases/`'s answer: what changed, slim (BUG-07). */
 export type PurchaseAnswer = {
@@ -70,13 +70,13 @@ export type PurchaseRequest = {
 const API_TARGETS: Record<PurchaseTarget["kind"], ApiTargetType> = {
   stash: "stash",
   heroes: "hero",
-  hiredswords: "hired_sword",
+  hirelings: "hireling",
   henchmen: "henchmen_group",
 };
 
 const LIST_KEYS = {
   hero: "heroes",
-  hired_sword: "hiredSwords",
+  hireling: "hirelings",
   henchmen_group: "henchmenGroups",
 } as const;
 

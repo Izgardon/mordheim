@@ -10,11 +10,11 @@ const apiMocks = vi.hoisted(() => ({
   createWarbandTrade: vi.fn(),
   getWarbandHenchmenGroupDetail: vi.fn(),
   getWarbandHeroDetail: vi.fn(),
-  getWarbandHiredSwordDetail: vi.fn(),
+  getWarbandHirelingDetail: vi.fn(),
   listWarbandHenchmenGroups: vi.fn(),
   listWarbandHeroes: vi.fn(),
   updateWarbandHenchmenGroup: vi.fn(),
-  updateWarbandHiredSword: vi.fn(),
+  updateWarbandHireling: vi.fn(),
   updateWarbandHero: vi.fn(),
 }));
 
@@ -25,7 +25,7 @@ const eventMocks = vi.hoisted(() => ({
 type MockWarband = {
   id: number;
   heroes: { id: number; name: string; trading_action: boolean }[];
-  hired_swords: unknown[];
+  hirelings: unknown[];
   gold: number;
 };
 
@@ -94,7 +94,7 @@ describe("useAcquireItemDialogShared", () => {
         { id: 1, name: "Hero One", trading_action: true },
         { id: 2, name: "Hero Two", trading_action: true },
       ],
-      hired_swords: [],
+      hirelings: [],
       gold: 100,
     };
 
@@ -103,11 +103,11 @@ describe("useAcquireItemDialogShared", () => {
     apiMocks.createWarbandTrade.mockReset();
     apiMocks.getWarbandHenchmenGroupDetail.mockReset();
     apiMocks.getWarbandHeroDetail.mockReset();
-    apiMocks.getWarbandHiredSwordDetail.mockReset();
+    apiMocks.getWarbandHirelingDetail.mockReset();
     apiMocks.listWarbandHenchmenGroups.mockReset();
     apiMocks.listWarbandHeroes.mockReset();
     apiMocks.updateWarbandHenchmenGroup.mockReset();
-    apiMocks.updateWarbandHiredSword.mockReset();
+    apiMocks.updateWarbandHireling.mockReset();
     apiMocks.updateWarbandHero.mockReset();
     eventMocks.emitWarbandUpdate.mockReset();
 

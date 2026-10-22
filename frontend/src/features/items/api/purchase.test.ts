@@ -102,7 +102,7 @@ describe("applyPurchaseAnswer", () => {
       summary: { gold: 100 },
       heroes: [{ id: 11, name: "Aldric", items: [] }],
       henchmen_groups: [],
-      hired_swords: [],
+      hirelings: [],
     });
     queryClient.setQueryData(queryKeys.campaign.warbandTreasury(7, 9), {
       pages: [{ results: [], next_cursor: null }],

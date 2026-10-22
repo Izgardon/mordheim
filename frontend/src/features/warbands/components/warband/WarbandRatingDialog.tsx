@@ -8,13 +8,13 @@ import {
 
 import ratingIcon from "@/assets/icons/Menu.webp";
 import { toNumber } from "../../utils/warband-utils";
-import type { HenchmenGroup, WarbandHero, WarbandHiredSword } from "../../types/warband-types";
+import type { HenchmenGroup, WarbandHero, WarbandHireling } from "../../types/warband-types";
 
 type WarbandRatingDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   heroes: WarbandHero[];
-  hiredSwords: WarbandHiredSword[];
+  hirelings: WarbandHireling[];
   henchmenGroups: HenchmenGroup[];
 };
 
@@ -22,7 +22,7 @@ export default function WarbandRatingDialog({
   open,
   onOpenChange,
   heroes,
-  hiredSwords,
+  hirelings,
   henchmenGroups,
 }: WarbandRatingDialogProps) {
   const heroCount = heroes.length;
@@ -43,13 +43,13 @@ export default function WarbandRatingDialog({
     return sum + count * ((g.large ? 20 : 5) + toNumber(g.xp));
   }, 0);
 
-  const hiredSwordCount = hiredSwords.length;
-  const hiredSwordTotalXp = hiredSwords.reduce((sum, hs) => sum + toNumber(hs.xp), 0);
-  const hiredSwordRating = hiredSwords.reduce((sum, hs) => {
+  const hirelingCount = hirelings.length;
+  const hirelingTotalXp = hirelings.reduce((sum, hs) => sum + toNumber(hs.xp), 0);
+  const hirelingRating = hirelings.reduce((sum, hs) => {
     return sum + toNumber(hs.rating ?? 0) + toNumber(hs.xp);
   }, 0);
 
-  const totalRating = heroRating + henchmenRating + hiredSwordRating;
+  const totalRating = heroRating + henchmenRating + hirelingRating;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -105,18 +105,18 @@ export default function WarbandRatingDialog({
               </div>
             )}
 
-            {hiredSwordCount > 0 && (
+            {hirelingCount > 0 && (
               <div className="flex items-baseline justify-between gap-2">
                 <span className="text-muted-foreground">
-                  Hired Swords: <span className="text-foreground">{hiredSwordCount}</span>
-                  {hiredSwordTotalXp > 0 && (
+                  Hired Swords: <span className="text-foreground">{hirelingCount}</span>
+                  {hirelingTotalXp > 0 && (
                     <>
                       {" - "}
-                      <span className="text-foreground">{hiredSwordTotalXp} XP</span>
+                      <span className="text-foreground">{hirelingTotalXp} XP</span>
                     </>
                   )}
                 </span>
-                <span className="font-semibold text-foreground">{hiredSwordRating}</span>
+                <span className="font-semibold text-foreground">{hirelingRating}</span>
               </div>
             )}
           </div>

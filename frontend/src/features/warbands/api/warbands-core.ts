@@ -45,7 +45,7 @@ export type RosterStatsRow = {
 export type WarbandRosterStats = {
   heroes: RosterStatsRow[];
   henchmen_groups: RosterStatsRow[];
-  hired_swords: RosterStatsRow[];
+  hirelings: RosterStatsRow[];
 };
 
 /** Every alive, undismissed unit's stat line, by kind, oldest first: one request for any member. */

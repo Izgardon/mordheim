@@ -8,27 +8,27 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAppStore } from "@/stores/app-store";
 
 import { useCatalogue } from "@/lib/catalogue-queries";
-import { updateWarbandHiredSword } from "@/features/warbands/api/warbands-api";
+import { updateWarbandHireling } from "@/features/warbands/api/warbands-api";
 
 import { skillAbbrevToType } from "@/features/warbands/utils/warband-utils";
 
-import type { WarbandHiredSword } from "@/features/warbands/types/warband-types";
+import type { WarbandHireling } from "@/features/warbands/types/warband-types";
 
-type NewHiredSwordSkillDialogProps = {
-  hiredSword: WarbandHiredSword;
+type NewHirelingSkillDialogProps = {
+  hireling: WarbandHireling;
   warbandId: number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onHiredSwordUpdated?: (updated: WarbandHiredSword) => void;
+  onHirelingUpdated?: (updated: WarbandHireling) => void;
 };
 
-export default function NewHiredSwordSkillDialog({
-  hiredSword,
+export default function NewHirelingSkillDialog({
+  hireling,
   warbandId,
   open,
   onOpenChange,
-  onHiredSwordUpdated,
-}: NewHiredSwordSkillDialogProps) {
+  onHirelingUpdated,
+}: NewHirelingSkillDialogProps) {
   const { warband } = useAppStore();
   const [selectedType, setSelectedType] = useState("");
   const [selectedSkillId, setSelectedSkillId] = useState("");
@@ -41,7 +41,7 @@ export default function NewHiredSwordSkillDialog({
   const { data: allSkills } = useCatalogue("skills", campaignId, { enabled: open });
 
   const enabledTypes = useMemo(() => {
-    const raw = hiredSword.available_skills;
+    const raw = hireling.available_skills;
     if (!raw) return new Set<string>();
     if (Array.isArray(raw)) return new Set<string>(raw as string[]);
     if (typeof raw === "object") {
@@ -54,7 +54,7 @@ export default function NewHiredSwordSkillDialog({
       return types;
     }
     return new Set<string>();
-  }, [hiredSword.available_skills]);
+  }, [hireling.available_skills]);
 
   const allowedTypes = useMemo(
     () => [
@@ -70,12 +70,12 @@ export default function NewHiredSwordSkillDialog({
   const knownTypes = useMemo(
     () => [
       ...new Set(
-        (hiredSword.skills ?? [])
+        (hireling.skills ?? [])
           .map((s) => s.type)
           .filter((t): t is string => !!t && t !== "Pending" && enabledTypes.has(t))
       ),
     ],
-    [hiredSword.skills, enabledTypes]
+    [hireling.skills, enabledTypes]
   );
 
   const knownTypeSet = useMemo(() => new Set(knownTypes), [knownTypes]);
@@ -88,8 +88,8 @@ export default function NewHiredSwordSkillDialog({
   }, [open, allowedTypes, knownTypes, selectedType]);
 
   const unitSkillsForType = useMemo(
-    () => (hiredSword.skills ?? []).filter((s) => s.type === selectedType && s.type !== "Pending"),
-    [hiredSword.skills, selectedType]
+    () => (hireling.skills ?? []).filter((s) => s.type === selectedType && s.type !== "Pending"),
+    [hireling.skills, selectedType]
   );
 
   const typeSkills = useMemo(
@@ -105,8 +105,8 @@ export default function NewHiredSwordSkillDialog({
 
   const alreadyKnown = useMemo(() => {
     if (!selectedSkill) return false;
-    return (hiredSword.skills ?? []).some((s) => s.id === selectedSkill.id && s.type !== "Pending");
-  }, [hiredSword.skills, selectedSkill]);
+    return (hireling.skills ?? []).some((s) => s.id === selectedSkill.id && s.type !== "Pending");
+  }, [hireling.skills, selectedSkill]);
 
   const handleOpenChange = (nextOpen: boolean) => {
     onOpenChange(nextOpen);
@@ -129,17 +129,17 @@ export default function NewHiredSwordSkillDialog({
     setError("");
 
     try {
-      const existingSkillIds = (hiredSword.skills ?? [])
+      const existingSkillIds = (hireling.skills ?? [])
         .filter((s) => s.type !== "Pending")
         .map((s) => s.id);
-      const pendingSkills = (hiredSword.skills ?? []).filter((s) => s.type === "Pending");
+      const pendingSkills = (hireling.skills ?? []).filter((s) => s.type === "Pending");
       const pendingIds = pendingSkills.slice(1).map((s) => s.id);
 
       // The PATCH answers with the hired sword as saved: no GET after it.
-      const updated = await updateWarbandHiredSword(warbandId, hiredSword.id, {
+      const updated = await updateWarbandHireling(warbandId, hireling.id, {
         skill_ids: [...existingSkillIds, ...pendingIds, selectedSkill.id],
       });
-      onHiredSwordUpdated?.(updated);
+      onHirelingUpdated?.(updated);
       handleOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to learn skill");

@@ -35,7 +35,7 @@ const sheet = {
   capabilities: {},
   heroes: [{ id: 1, name: "Aldric", xp: 3 }],
   henchmen_groups: [],
-  hired_swords: [],
+  hirelings: [],
 } as unknown as WarbandSheet;
 
 const renderStore = (campaignId: number | null) => {

@@ -40,7 +40,7 @@ export default function Warband() {
   const isViewingOtherWarband = resolvedWarbandId !== null;
 
   const sheet = useWarbandSheet({ campaignId, hasCampaignId, warbandId: resolvedWarbandId });
-  const { warband, heroes, hiredSwords, henchmenGroups, setUnits, mergeWarband } = sheet;
+  const { warband, heroes, hirelings, henchmenGroups, setUnits, mergeWarband } = sheet;
   const { capabilities } = sheet;
   const canEdit = capabilities.edit;
   const { user } = useAuth();
@@ -48,7 +48,7 @@ export default function Warband() {
   const page = useWarbandPage({
     campaign,
     warband,
-    roster: { hero: heroes, henchmen_group: henchmenGroups, hired_sword: hiredSwords },
+    roster: { hero: heroes, henchmen_group: henchmenGroups, hireling: hirelings },
     setUnits,
     onWarbandSaved: mergeWarband,
     canEdit,
@@ -69,15 +69,15 @@ export default function Warband() {
     loadWarchestItems: warchest.loadWarchestItems,
   });
 
-  const roster = { heroes, hiredSwords, henchmenGroups };
+  const roster = { heroes, hirelings, henchmenGroups };
   const replaceHero = useCallback(
     (updated: WarbandHero) =>
       setUnits.hero((prev) => prev.map((hero) => (hero.id === updated.id ? updated : hero))),
     [setUnits]
   );
   const warbandRating = useMemo(
-    () => calculateWarbandRating(heroes, hiredSwords, henchmenGroups, warband?.rating),
-    [heroes, hiredSwords, henchmenGroups, warband?.rating]
+    () => calculateWarbandRating(heroes, hirelings, henchmenGroups, warband?.rating),
+    [heroes, hirelings, henchmenGroups, warband?.rating]
   );
   const canInitiateTrade = Boolean(
     user && warband && canTrade && hasCampaignId && !Number.isNaN(campaignId)

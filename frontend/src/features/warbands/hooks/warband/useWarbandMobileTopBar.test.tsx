@@ -98,6 +98,6 @@ describe("getWarbandMobileTopBarTitle", () => {
 
 describe("getWarbandMobileEditTitle", () => {
   it("uses the shortened hired swords label in the mobile edit top bar", () => {
-    expect(getWarbandMobileEditTitle("hiredswords")).toBe("HS:");
+    expect(getWarbandMobileEditTitle("hirelings")).toBe("HS:");
   });
 });

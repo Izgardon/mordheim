@@ -2,9 +2,9 @@ import { useMemo } from "react";
 
 import { getHiredSwordProfile } from "@/features/bestiary/api/bestiary-api";
 import UnitLoadout from "../../../shared/forms/UnitLoadout";
-import HiredSwordPresetPicker from "./HiredSwordPresetPicker";
+import HirelingPresetPicker from "./HirelingPresetPicker";
 import { TraitToggle } from "../../forms/UnitSkillsTraitsPanel";
-import { presetToNewHiredSwordForm } from "./hired-sword-preset";
+import { presetToNewHirelingForm } from "./hireling-preset";
 import {
   AddNumberField,
   AddRaceField,
@@ -13,13 +13,13 @@ import {
 } from "../../forms/AddFormFields";
 
 import type { Skill } from "@/features/skills/types/skill-types";
-import type { HiredSwordFormEntry } from "../../../../types/warband-types";
+import type { HirelingFormEntry } from "../../../../types/warband-types";
 
 const inputClassName =
   "bg-background/70 border-border/60 text-foreground placeholder:text-muted-foreground";
 
 /** Add hired sword: presets, name, type, race, costs, rating, blood pact and a starting loadout. */
-export default function HiredSwordAddFields(props: AddFieldsSlotProps<"hired_sword">) {
+export default function HirelingAddFields(props: AddFieldsSlotProps<"hireling">) {
   const { campaignId, form, setForm, setError, setRaceQuery } = props;
   const setText = (field: "name" | "unit_type") => (value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -29,7 +29,7 @@ export default function HiredSwordAddFields(props: AddFieldsSlotProps<"hired_swo
     setForm((prev) => ({ ...prev, [field]: value }));
 
   // The loadout editor works on a full form entry; only its loadout and traits flow back.
-  const draftEntry = useMemo<HiredSwordFormEntry>(
+  const draftEntry = useMemo<HirelingFormEntry>(
     () => ({
       ...form,
       deeds: "",
@@ -42,7 +42,7 @@ export default function HiredSwordAddFields(props: AddFieldsSlotProps<"hired_swo
 
   const handleLoadoutUpdate = (
     _index: number,
-    updater: (entry: HiredSwordFormEntry) => HiredSwordFormEntry
+    updater: (entry: HirelingFormEntry) => HirelingFormEntry
   ) => {
     setForm((current) => {
       const updated = updater({ ...draftEntry, ...current });
@@ -69,10 +69,10 @@ export default function HiredSwordAddFields(props: AddFieldsSlotProps<"hired_swo
 
   return (
     <>
-      <HiredSwordPresetPicker
+      <HirelingPresetPicker
         campaignId={campaignId}
         onAddFromPreset={async (profileId) => {
-          const preset = presetToNewHiredSwordForm(
+          const preset = presetToNewHirelingForm(
             await getHiredSwordProfile(profileId),
             props.races
           );
@@ -143,7 +143,7 @@ export default function HiredSwordAddFields(props: AddFieldsSlotProps<"hired_swo
         availableSpecials={props.availableSpecials}
         inputClassName={inputClassName}
         canAddCustom={props.canAddCustom}
-        unitType="hiredswords"
+        unitType="hirelings"
         deferItemCommit
         reservedGold={0}
         onUpdate={handleLoadoutUpdate}

@@ -174,7 +174,7 @@ export default function Spells() {
                       <RestoreButton kind="spells" campaignId={campaignId} entry={spell} />
                     ) : null
                   ) : (
-                    <AttuneSpellDialog spell={spell} unitTypes={["heroes", "hiredswords"]} />
+                    <AttuneSpellDialog spell={spell} unitTypes={["heroes", "hirelings"]} />
                   )}
                   {/* A book spell's edit makes the campaign's version (CAT-TWEAK-01). */}
                   {canEdit && !archive.archived ? (

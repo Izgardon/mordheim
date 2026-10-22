@@ -141,7 +141,7 @@ export type CampaignPivotalMoment = {
 
 export type CampaignTopKiller = {
   unit_id: number;
-  unit_kind: "hero" | "hired_sword" | "henchman";
+  unit_kind: "hero" | "hireling" | "henchman";
   unit_name: string;
   unit_type?: string | null;
   warband_id: number;

@@ -321,7 +321,7 @@ export const mySheet = (resources: { id: number; name: string; amount?: number }
   capabilities: {},
   heroes: [],
   henchmen_groups: [],
-  hired_swords: [],
+  hirelings: [],
 });
 
 /** A promise resolved from outside: holds a fake server's answer until the test releases it. */

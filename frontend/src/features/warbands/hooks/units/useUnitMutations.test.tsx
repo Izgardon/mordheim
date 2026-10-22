@@ -35,7 +35,7 @@ const showSheet = () => {
     capabilities: {},
     heroes: [hero],
     henchmen_groups: [group],
-    hired_swords: [],
+    hirelings: [],
   } as unknown as WarbandSheet);
   const page = new QueryObserver(queryClient, {
     queryKey: sheetKey,

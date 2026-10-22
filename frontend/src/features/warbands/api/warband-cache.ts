@@ -9,7 +9,7 @@ import type { WarbandSheet } from "../types/warband-sheet";
 import type {
   HenchmenGroup,
   WarbandHero,
-  WarbandHiredSword,
+  WarbandHireling,
   WarbandItemSummary,
   WarbandUnitsSummary,
 } from "../types/warband-types";
@@ -23,11 +23,11 @@ export type WarbandUpdate = {
   summary?: WarbandUnitsSummary;
   summaryUnchanged?: boolean;
   heroes?: WarbandHero[];
-  hiredSwords?: WarbandHiredSword[];
+  hirelings?: WarbandHireling[];
   henchmenGroups?: HenchmenGroup[];
   stashItems?: WarbandItemSummary[];
   removedHeroIds?: number[];
-  removedHiredSwordIds?: number[];
+  removedHirelingIds?: number[];
   removedHenchmenGroupIds?: number[];
   removedStashItemIds?: number[];
 };
@@ -69,7 +69,7 @@ export const isWarbandQuery =
 const UNIT_LIST_UPDATES = [
   ["heroes", "heroes", "removedHeroIds"],
   ["henchmen_groups", "henchmenGroups", "removedHenchmenGroupIds"],
-  ["hired_swords", "hiredSwords", "removedHiredSwordIds"],
+  ["hirelings", "hirelings", "removedHirelingIds"],
 ] as const satisfies readonly (readonly [
   UnitCollectionKey,
   keyof WarbandUpdate,

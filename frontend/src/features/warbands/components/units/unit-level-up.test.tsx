@@ -11,12 +11,12 @@ import UnitLevelUpControl from "./UnitLevelUpControl";
 import { DiceContext } from "@/components/dice/dice-context";
 import { heroKind as heroConfig } from "@/features/warbands/units/kinds/hero";
 import { henchmenKind as henchmenConfig } from "@/features/warbands/units/kinds/henchmen";
-import { hiredSwordKind as hiredSwordConfig } from "@/features/warbands/units/kinds/hired-sword";
+import { hirelingKind as hirelingConfig } from "@/features/warbands/units/kinds/hireling";
 
 import type {
   HenchmenGroup,
   WarbandHero,
-  WarbandHiredSword,
+  WarbandHireling,
 } from "@/features/warbands/types/warband-types";
 import { ApiError } from "@/lib/api-client";
 import { createTestQueryClient, renderWithQueryClient } from "@/test/query-test-utils";
@@ -25,16 +25,16 @@ import { setupUser } from "@/test/user-event";
 import {
   makeVeteranHenchmenGroup,
   makeVeteranHero,
-  makeVeteranHiredSword,
+  makeVeteranHireling,
 } from "@/test/warband-fixtures";
 
 const api = vi.hoisted(() => ({
   levelUpWarbandHero: vi.fn(),
   levelUpWarbandHenchmenGroup: vi.fn(),
-  levelUpWarbandHiredSword: vi.fn(),
+  levelUpWarbandHireling: vi.fn(),
   getWarbandHeroDetail: vi.fn(),
   getWarbandHenchmenGroupDetail: vi.fn(),
-  getWarbandHiredSwordDetail: vi.fn(),
+  getWarbandHirelingDetail: vi.fn(),
   promoteWarbandHenchman: vi.fn(),
 }));
 const events = vi.hoisted(() => ({ emitWarbandUpdate: vi.fn() }));
@@ -128,16 +128,16 @@ const kinds: KindCase[] = [
     kind: "hired sword",
     control: (overrides = {}, props = {}) => (
       <UnitLevelUpControl
-        kind={hiredSwordConfig}
-        unit={makeVeteranHiredSword(overrides as Partial<WarbandHiredSword>)}
+        kind={hirelingConfig}
+        unit={makeVeteranHireling(overrides as Partial<WarbandHireling>)}
         warbandId={9}
         onLevelUpLogged={props.onLevelUpLogged}
         trigger={trigger}
       />
     ),
-    make: (overrides = {}) => makeVeteranHiredSword(overrides as Partial<WarbandHiredSword>),
-    levelUpApi: api.levelUpWarbandHiredSword,
-    detailApi: api.getWarbandHiredSwordDetail,
+    make: (overrides = {}) => makeVeteranHireling(overrides as Partial<WarbandHireling>),
+    levelUpApi: api.levelUpWarbandHireling,
+    detailApi: api.getWarbandHirelingDetail,
     unitId: 31,
     nameKey: "hero",
     name: "Brother Hal",
@@ -146,7 +146,7 @@ const kinds: KindCase[] = [
   },
 ];
 
-const [heroKind, henchmenKind, hiredKind] = kinds;
+const [heroKind, henchmenKind, hirelingKind] = kinds;
 
 const renderControl = (element: ReactElement, queryClient = createTestQueryClient()) =>
   renderWithQueryClient(
@@ -351,7 +351,7 @@ describe.each(kinds)("$kind level-up control", (kind) => {
   });
 });
 
-describe.each([heroKind, hiredKind])("$kind advances", (kind) => {
+describe.each([heroKind, hirelingKind])("$kind advances", (kind) => {
   it("asks for a pick when Level up is pressed with none", async () => {
     const user = setupUser();
     const dialog = await openDialog(user, kind.control());
@@ -425,7 +425,7 @@ describe.each([heroKind, hiredKind])("$kind advances", (kind) => {
 });
 
 describe("level-up control divergences", () => {
-  it.each([henchmenKind, hiredKind])(
+  it.each([henchmenKind, hirelingKind])(
     "hides the $kind trigger when the unit takes no level-ups",
     (kind) => {
       renderControl(kind.control({ level_up: 1, no_level_ups: true }));

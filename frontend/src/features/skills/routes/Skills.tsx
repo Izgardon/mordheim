@@ -178,7 +178,7 @@ export default function Skills() {
                       <RestoreButton kind="skills" campaignId={campaignId} entry={skill} />
                     ) : null
                   ) : (
-                    <LearnSkillDialog skill={skill} unitTypes={["heroes", "hiredswords"]} />
+                    <LearnSkillDialog skill={skill} unitTypes={["heroes", "hirelings"]} />
                   )}
                   {/* A book skill's edit makes the campaign's version (CAT-TWEAK-01). */}
                   {canEdit && !archive.archived ? (

@@ -37,14 +37,14 @@ const SUMMARY_FIELDS = [
   "rating",
   "gold",
   "heroes",
-  "hired_swords",
+  "hirelings",
   "henchmen_groups",
   // The roster counts (decision 12): a saved summary must not be shadowed by the stale one.
   "unit_count",
   "max_units",
   "hero_count",
   "max_heroes",
-  "hired_sword_count",
+  "hireling_count",
   "max_hired_swords",
 ] as const satisfies readonly (keyof WarbandUnitsSummary & keyof Warband)[];
 

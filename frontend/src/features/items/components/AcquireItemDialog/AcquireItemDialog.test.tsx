@@ -24,7 +24,7 @@ import {
   makeItem,
   makeVeteranHenchmenGroup,
   makeVeteranHero,
-  makeVeteranHiredSword,
+  makeVeteranHireling,
 } from "@/test/warband-fixtures";
 
 import type { Item } from "@/features/items/types/item-types";
@@ -42,7 +42,7 @@ vi.mock("@/stores/app-store", () => ({
 
 const hero = makeVeteranHero();
 const group = makeVeteranHenchmenGroup();
-const hiredSword = makeVeteranHiredSword();
+const hireling = makeVeteranHireling();
 
 /**
  * The app store's warband as the page fills it: the sheet's warband merged with its summary,
@@ -60,9 +60,7 @@ const storeWarband = (overrides: Record<string, unknown> = {}) => ({
   rating: 99,
   resources: [],
   heroes: [{ id: 11, warband_id: 9, name: hero.name, unit_type: "Captain", xp: 7, large: false }],
-  hired_swords: [
-    { id: 31, warband_id: 9, name: hiredSword.name, unit_type: "Warrior Priest", xp: 4 },
-  ],
+  hirelings: [{ id: 31, warband_id: 9, name: hireling.name, unit_type: "Warrior Priest", xp: 4 }],
   henchmen_groups: [{ id: 21, warband_id: 9, name: group.name, unit_type: "Thugs", xp: 4 }],
   ...overrides,
 });
@@ -116,17 +114,17 @@ const luckyCharm: Item = makeItem({
  * so the dialog can read the warband on screen (the summary carries its gold and unit rows).
  */
 function SheetObserver({ warbandId = 9, gold = 500 }: { warbandId?: number; gold?: number }) {
-  const { heroes, hired_swords, henchmen_groups } = storeWarband();
+  const { heroes, hirelings, henchmen_groups } = storeWarband();
   useQuery({
     queryKey: queryKeys.campaign.warbandSheet(7, warbandId),
     queryFn: () => new Promise<never>(() => undefined),
     initialData: {
       warband: { ...storeWarband(), id: warbandId, gold: undefined },
-      summary: { gold, heroes, hired_swords, henchmen_groups },
+      summary: { gold, heroes, hirelings, henchmen_groups },
       capabilities: {},
       heroes: [],
       henchmen_groups: [],
-      hired_swords: [],
+      hirelings: [],
     },
     staleTime: Infinity,
   });
@@ -312,15 +310,15 @@ describe("AcquireItemDialog: one request per purchase (BUG-07, ECON-PERF-01)", (
 
   it("buys for a hired sword through the same request (ECON-PERF-01, BUG-07)", async () => {
     const user = setupUser();
-    fakeApi.on(PURCHASE, purchaseAnswer({ target_type: "hired_sword", target_id: 31, items: [] }));
-    renderDialog({ presetUnitType: "hiredswords", presetUnitId: 31, disableUnitSelection: true });
+    fakeApi.on(PURCHASE, purchaseAnswer({ target_type: "hireling", target_id: 31, items: [] }));
+    renderDialog({ presetUnitType: "hirelings", presetUnitId: 31, disableUnitSelection: true });
 
     await clickBuy(user);
 
     await waitFor(() => expect(fakeApi.countOf(PURCHASE)).toBe(1));
-    expect(fakeApi.bodyOf(PURCHASE)).toMatchObject({ target_type: "hired_sword", target_id: 31 });
-    expect(fakeApi.calls()).not.toContain("GET /warbands/9/hired-swords/31/");
-    expect(fakeApi.calls()).not.toContain("PATCH /warbands/9/hired-swords/31/");
+    expect(fakeApi.bodyOf(PURCHASE)).toMatchObject({ target_type: "hireling", target_id: 31 });
+    expect(fakeApi.calls()).not.toContain("GET /warbands/9/hirelings/31/");
+    expect(fakeApi.calls()).not.toContain("PATCH /warbands/9/hirelings/31/");
   });
 
   it("buys for a henchmen group with the group's id and no item list (ECON-PERF-01, BUG-07)", async () => {

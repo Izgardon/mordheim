@@ -84,7 +84,7 @@ export function buildLevelUps(
       const found =
         award.unitKind === "hero"
           ? (sheet.heroes ?? []).find((hero) => hero.id === id)
-          : (sheet.hired_swords ?? []).find((hiredSword) => hiredSword.id === id);
+          : (sheet.hirelings ?? []).find((hireling) => hireling.id === id);
       if (!found) continue;
       unit = found;
     }

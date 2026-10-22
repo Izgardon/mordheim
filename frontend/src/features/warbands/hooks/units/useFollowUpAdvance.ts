@@ -12,10 +12,10 @@ import {
 
 import type { LevelUpCore, UnitAdvance } from "./level-up-types";
 
-type FollowUpKind = "hero" | "hired_sword";
+type FollowUpKind = "hero" | "hireling";
 
 /**
- * Hero and hired-sword advances: 2d6 with a 1d6 follow-up on 6/8/9, any stat or a
+ * Hero and hired sword advances: 2d6 with a 1d6 follow-up on 6/8/9, any stat or a
  * Skill/Spell/Special placeholder (Spell for casters only); one POST names the unit under `hero`.
  */
 export function useFollowUpAdvance<K extends FollowUpKind>({

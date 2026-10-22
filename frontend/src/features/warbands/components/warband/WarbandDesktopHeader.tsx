@@ -21,7 +21,7 @@ import type {
   HenchmenGroup,
   Warband,
   WarbandHero,
-  WarbandHiredSword,
+  WarbandHireling,
 } from "../../types/warband-types";
 
 const transparentButton =
@@ -44,7 +44,7 @@ type WarbandDesktopHeaderProps = {
   pendingGold?: number;
   warbandRating: number;
   heroes: WarbandHero[];
-  hiredSwords: WarbandHiredSword[];
+  hirelings: WarbandHireling[];
   henchmenGroups: HenchmenGroup[];
   stash: WarbandStashControls;
   /** The sheet's `manage_items` capability: the stash's item menus. */
@@ -63,7 +63,7 @@ export default function WarbandDesktopHeader({
   pendingGold = 0,
   warbandRating,
   heroes,
-  hiredSwords,
+  hirelings,
   henchmenGroups,
   stash: { isOpen: isStashOpen, onToggle: onToggleStash, ...stash },
   canManageItems,
@@ -109,7 +109,7 @@ export default function WarbandDesktopHeader({
             open={isRatingOpen}
             onOpenChange={setIsRatingOpen}
             heroes={heroes}
-            hiredSwords={hiredSwords}
+            hirelings={hirelings}
             henchmenGroups={henchmenGroups}
           />
         </>

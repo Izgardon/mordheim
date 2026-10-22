@@ -26,12 +26,12 @@ export type WarbandUnitSetters = { [K in UnitKindKey]: (update: UnitsUpdate<K>) 
 const COLLECTIONS = {
   hero: "heroes",
   henchmen_group: "henchmen_groups",
-  hired_sword: "hired_swords",
+  hireling: "hirelings",
 } as const satisfies Record<UnitKindKey, keyof WarbandSheet>;
 
 const NO_HEROES: Unit<"hero">[] = [];
 const NO_GROUPS: Unit<"henchmen_group">[] = [];
-const NO_HIRED_SWORDS: Unit<"hired_sword">[] = [];
+const NO_HIRELINGS: Unit<"hireling">[] = [];
 
 const LOAD_ERROR = "Unable to load warband";
 const messageOf = (error: unknown) =>
@@ -91,7 +91,7 @@ export function useWarbandSheet({ campaignId, hasCampaignId, warbandId }: UseWar
     const setUnits: WarbandUnitSetters = {
       hero: unitsSetter("hero"),
       henchmen_group: unitsSetter("henchmen_group"),
-      hired_sword: unitsSetter("hired_sword"),
+      hireling: unitsSetter("hireling"),
     };
     /** Merges a patch into the shown warband (warband fields and summary fields alike). */
     const mergeWarband = (patch: Partial<Warband>) =>
@@ -110,7 +110,7 @@ export function useWarbandSheet({ campaignId, hasCampaignId, warbandId }: UseWar
     capabilities,
     heroes: data?.heroes ?? NO_HEROES,
     henchmenGroups: data?.henchmen_groups ?? NO_GROUPS,
-    hiredSwords: data?.hired_swords ?? NO_HIRED_SWORDS,
+    hirelings: data?.hirelings ?? NO_HIRELINGS,
     isLoading,
     error: invalidError || (loadError ? messageOf(loadError) : ""),
     ...writers,

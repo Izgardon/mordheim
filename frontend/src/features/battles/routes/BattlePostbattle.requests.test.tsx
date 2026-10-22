@@ -823,7 +823,7 @@ describe("BattlePostbattle requests", () => {
       ...mySheet(RESOURCES),
       warband: { id: ME.warband.id, name: ME.warband.name, gold: 10 },
       heroes: [{ id: 1, xp: 3, half_rate: false }],
-      hired_swords: [{ id: 4, xp: 0, half_rate: false, no_level_ups: false }],
+      hirelings: [{ id: 4, xp: 0, half_rate: false, no_level_ups: false }],
       henchmen_groups: [
         { id: 11, name: "Youngbloods", xp: 1, half_rate: false, henchmen: [{ id: 2 }] },
       ],

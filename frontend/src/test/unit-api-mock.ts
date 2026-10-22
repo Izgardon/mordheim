@@ -35,16 +35,16 @@ const ENDPOINT_NAMES: Record<UnitKindKey, Record<UnitApiMethod, string>> = {
     levelUp: "levelUpWarbandHenchmenGroup",
     batch: "batchWarbandHenchmenGroups",
   },
-  hired_sword: {
-    list: "listWarbandHiredSwords",
-    listDetails: "listWarbandHiredSwordDetails",
-    detail: "getWarbandHiredSwordDetail",
-    killHistory: "getWarbandHiredSwordKillHistory",
-    create: "createWarbandHiredSword",
-    update: "updateWarbandHiredSword",
-    remove: "deleteWarbandHiredSword",
-    levelUp: "levelUpWarbandHiredSword",
-    batch: "batchWarbandHiredSwords",
+  hireling: {
+    list: "listWarbandHirelings",
+    listDetails: "listWarbandHirelingDetails",
+    detail: "getWarbandHirelingDetail",
+    killHistory: "getWarbandHirelingKillHistory",
+    create: "createWarbandHireling",
+    update: "updateWarbandHireling",
+    remove: "deleteWarbandHireling",
+    levelUp: "levelUpWarbandHireling",
+    batch: "batchWarbandHirelings",
   },
 };
 
@@ -64,7 +64,7 @@ export function unitApiModuleMock(api: object) {
     UNIT_URL_SEGMENTS: {
       hero: "heroes",
       henchmen_group: "henchmen-groups",
-      hired_sword: "hired-swords",
+      hireling: "hirelings",
     },
     unitApi: (kind: UnitKindKey) => forKind(kind),
   };

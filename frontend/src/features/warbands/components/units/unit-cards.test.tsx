@@ -12,12 +12,12 @@ import UnitExpandedCard from "./UnitExpandedCard";
 import UnitSummaryCard from "./UnitSummaryCard";
 import { heroKind as heroConfig } from "@/features/warbands/units/kinds/hero";
 import { henchmenKind as henchmenConfig } from "@/features/warbands/units/kinds/henchmen";
-import { hiredSwordKind as hiredSwordConfig } from "@/features/warbands/units/kinds/hired-sword";
+import { hirelingKind as hirelingConfig } from "@/features/warbands/units/kinds/hireling";
 
 import type {
   HenchmenGroup,
   WarbandHero,
-  WarbandHiredSword,
+  WarbandHireling,
 } from "@/features/warbands/types/warband-types";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
@@ -26,19 +26,19 @@ import {
   makeSkill,
   makeVeteranHenchmenGroup,
   makeVeteranHero,
-  makeVeteranHiredSword,
+  makeVeteranHireling,
 } from "@/test/warband-fixtures";
 
 const api = vi.hoisted(() => ({
   getWarbandHeroDetail: vi.fn(),
   getWarbandHenchmenGroupDetail: vi.fn(),
-  getWarbandHiredSwordDetail: vi.fn(),
+  getWarbandHirelingDetail: vi.fn(),
   getWarbandHeroKillHistory: vi.fn(),
   getWarbandHenchmenGroupKillHistory: vi.fn(),
-  getWarbandHiredSwordKillHistory: vi.fn(),
+  getWarbandHirelingKillHistory: vi.fn(),
   updateWarbandHero: vi.fn(),
   updateWarbandHenchmenGroup: vi.fn(),
-  updateWarbandHiredSword: vi.fn(),
+  updateWarbandHireling: vi.fn(),
   listWarbandHenchmenGroups: vi.fn(),
 }));
 
@@ -106,8 +106,8 @@ type KindCase = {
 const heroCard = (overrides: Overrides = {}) => makeVeteranHero(overrides as Partial<WarbandHero>);
 const groupCard = (overrides: Overrides = {}) =>
   makeVeteranHenchmenGroup(overrides as Partial<HenchmenGroup>);
-const hiredCard = (overrides: Overrides = {}) =>
-  makeVeteranHiredSword(overrides as Partial<WarbandHiredSword>);
+const hirelingCard = (overrides: Overrides = {}) =>
+  makeVeteranHireling(overrides as Partial<WarbandHireling>);
 
 const humanRaceStats = (unit: { [key: string]: unknown }, armour: string) => ({
   M: `${unit.movement}/4`,
@@ -278,8 +278,8 @@ const kinds: KindCase[] = [
     kind: "hired sword",
     summary: (overrides, props = {}) => (
       <UnitSummaryCard
-        kind={hiredSwordConfig}
-        unit={hiredCard(overrides)}
+        kind={hirelingConfig}
+        unit={hirelingCard(overrides)}
         warbandId={9}
         canEdit={props.canEdit}
         canManageItems={props.canManageItems}
@@ -294,10 +294,10 @@ const kinds: KindCase[] = [
       />
     ),
     expanded: (overrides, props = {}) => (
-      <CachedUnit unit={hiredCard(overrides)} onUpdated={props.onUpdated}>
+      <CachedUnit unit={hirelingCard(overrides)} onUpdated={props.onUpdated}>
         {(unit, onUnitUpdated) => (
           <UnitExpandedCard
-            kind={hiredSwordConfig}
+            kind={hirelingConfig}
             unit={unit}
             warbandId={9}
             canEdit={props.canEdit}
@@ -310,8 +310,8 @@ const kinds: KindCase[] = [
         )}
       </CachedUnit>
     ),
-    detailApi: api.getWarbandHiredSwordDetail,
-    updateApi: api.updateWarbandHiredSword,
+    detailApi: api.getWarbandHirelingDetail,
+    updateApi: api.updateWarbandHireling,
     unitId: 31,
     name: "Brother Hal",
     // On the heroes' table (decision 8): 4 XP is level 3, next at 6.
@@ -328,7 +328,7 @@ const kinds: KindCase[] = [
       Ld: "8",
       AS: "4+",
     },
-    raceStats: humanRaceStats(makeVeteranHiredSword(), "4+"),
+    raceStats: humanRaceStats(makeVeteranHireling(), "4+"),
     raceLine: "Human - Warrior Priest",
     xp: "4",
     xpLabel: "4 / 6 xp",
@@ -910,13 +910,13 @@ describe("hired sword card extras", () => {
 
   it("steps half-rate XP by 0.5", async () => {
     const user = setupUser();
-    api.updateWarbandHiredSword.mockResolvedValue(hiredCard({ xp: 4.5 }));
+    api.updateWarbandHireling.mockResolvedValue(hirelingCard({ xp: 4.5 }));
     renderWithQueryClient(hired.summary({ half_rate: true }, { canEdit: true }));
 
     await user.click(screen.getByRole("button", { name: XP_PLUS }));
 
     await waitFor(() =>
-      expect(api.updateWarbandHiredSword).toHaveBeenCalledWith(
+      expect(api.updateWarbandHireling).toHaveBeenCalledWith(
         9,
         31,
         expect.objectContaining({ xp: hired.halfRateXpAfterPlus })

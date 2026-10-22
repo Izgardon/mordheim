@@ -124,7 +124,7 @@ describe("CampaignOverview on a started campaign", () => {
     fakeApi.on(`GET /warbands/${warbandId}/roster-stats/`, {
       heroes: [statLine(2, "Black Fang", "Assassin Adept")],
       henchmen_groups: [statLine(5, "Night Runners", "Verminkin")],
-      hired_swords: [statLine(8, "Ogre Bodyguard", "Ogre")],
+      hirelings: [statLine(8, "Ogre Bodyguard", "Ogre")],
     });
     await openOverview();
     fakeApi.clearRequests();
@@ -152,7 +152,7 @@ describe("CampaignOverview roster semantics", () => {
     fakeApi.on(`GET /warbands/${PLAYER.warband!.id}/roster-stats/`, {
       heroes: [],
       henchmen_groups: [],
-      hired_swords: [],
+      hirelings: [],
     });
     await openOverview();
 

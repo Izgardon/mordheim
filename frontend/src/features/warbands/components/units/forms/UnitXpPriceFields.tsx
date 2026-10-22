@@ -14,7 +14,7 @@ type XpPriceForm = UnitFormBase & {
 
 type UnitXpPriceFieldsProps<T extends XpPriceForm> = {
   /** hero: XP | price; hired: XP | rating, then price | upkeep; henchmen: XP | base cost. */
-  variant: "hero" | "hired_sword" | "henchmen";
+  variant: "hero" | "hireling" | "henchmen";
   form: T;
   index: number;
   inputClassName: string;
@@ -124,7 +124,7 @@ export default function UnitXpPriceFields<T extends XpPriceForm>({
     );
   }
 
-  if (variant === "hired_sword") {
+  if (variant === "hireling") {
     return (
       <>
         <div className={xpRowClassName}>

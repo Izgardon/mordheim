@@ -34,7 +34,7 @@ const makeSheet = (): WarbandSheet =>
       { id: 2, name: "Gunther", xp: 0 },
     ],
     henchmen_groups: [{ id: 5, name: "Knives", xp: 1 }],
-    hired_swords: [],
+    hirelings: [],
   }) as unknown as WarbandSheet;
 
 beforeEach(() => {

@@ -4,8 +4,8 @@ import UnitXpPriceFields from "../../forms/UnitXpPriceFields";
 
 import type { UnitFormSlotProps } from "../../forms/form-types";
 
-/** Hired-sword card basics: as heroes, with blood pact, no level-ups, rating and upkeep. */
-export default function HiredSwordFormBasics({
+/** Hired sword card basics: as heroes, with blood pact, no level-ups, rating and upkeep. */
+export default function HirelingFormBasics({
   form,
   index,
   campaignId,
@@ -16,7 +16,7 @@ export default function HiredSwordFormBasics({
   onUpdate,
   onRaceCreated,
   hasFieldError,
-}: UnitFormSlotProps<"hired_sword">) {
+}: UnitFormSlotProps<"hireling">) {
   return (
     <>
       <UnitIdentityFields
@@ -59,7 +59,7 @@ export default function HiredSwordFormBasics({
         }
       />
       <UnitXpPriceFields
-        variant="hired_sword"
+        variant="hireling"
         form={form}
         index={index}
         inputClassName={inputClassName}

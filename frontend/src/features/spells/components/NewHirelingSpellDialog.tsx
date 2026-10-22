@@ -18,30 +18,30 @@ import DiceRoller from "@/components/dice/DiceRoller";
 import { useAppStore } from "@/stores/app-store";
 
 import { useCatalogue } from "@/lib/catalogue-queries";
-import { updateWarbandHiredSword } from "@/features/warbands/api/warbands-api";
+import { updateWarbandHireling } from "@/features/warbands/api/warbands-api";
 import {
   buildSpellCountMap,
   getAdjustedSpellDc,
   getSpellDisplayName,
 } from "@/features/warbands/utils/spell-display";
 
-import type { WarbandHiredSword } from "@/features/warbands/types/warband-types";
+import type { WarbandHireling } from "@/features/warbands/types/warband-types";
 
-type NewHiredSwordSpellDialogProps = {
-  hiredSword: WarbandHiredSword;
+type NewHirelingSpellDialogProps = {
+  hireling: WarbandHireling;
   warbandId: number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onHiredSwordUpdated?: (updated: WarbandHiredSword) => void;
+  onHirelingUpdated?: (updated: WarbandHireling) => void;
 };
 
-export default function NewHiredSwordSpellDialog({
-  hiredSword,
+export default function NewHirelingSpellDialog({
+  hireling,
   warbandId,
   open,
   onOpenChange,
-  onHiredSwordUpdated,
-}: NewHiredSwordSpellDialogProps) {
+  onHirelingUpdated,
+}: NewHirelingSpellDialogProps) {
   const { warband, diceColor } = useAppStore();
   const [selectedType, setSelectedType] = useState("");
   const [selectedSpellId, setSelectedSpellId] = useState("");
@@ -58,12 +58,12 @@ export default function NewHiredSwordSpellDialog({
   const knownTypes = useMemo(
     () => [
       ...new Set(
-        (hiredSword.spells ?? [])
+        (hireling.spells ?? [])
           .map((s) => s.type)
           .filter((t): t is string => !!t && t !== "Pending")
       ),
     ],
-    [hiredSword.spells]
+    [hireling.spells]
   );
 
   const allTypes = useMemo(
@@ -86,13 +86,10 @@ export default function NewHiredSwordSpellDialog({
   }, [open, knownTypes, selectedType]);
 
   const unitSpellsForType = useMemo(
-    () => (hiredSword.spells ?? []).filter((s) => s.type === selectedType && s.type !== "Pending"),
-    [hiredSword.spells, selectedType]
+    () => (hireling.spells ?? []).filter((s) => s.type === selectedType && s.type !== "Pending"),
+    [hireling.spells, selectedType]
   );
-  const spellCounts = useMemo(
-    () => buildSpellCountMap(hiredSword.spells ?? []),
-    [hiredSword.spells]
-  );
+  const spellCounts = useMemo(() => buildSpellCountMap(hireling.spells ?? []), [hireling.spells]);
 
   const typeSpells = useMemo(
     () =>
@@ -116,8 +113,8 @@ export default function NewHiredSwordSpellDialog({
 
   const alreadyKnown = useMemo(() => {
     if (!selectedSpell) return false;
-    return (hiredSword.spells ?? []).some((s) => s.id === selectedSpell.id && s.type !== "Pending");
-  }, [hiredSword.spells, selectedSpell]);
+    return (hireling.spells ?? []).some((s) => s.id === selectedSpell.id && s.type !== "Pending");
+  }, [hireling.spells, selectedSpell]);
 
   const typeSpellsRef = useMemo(() => typeSpells, [typeSpells]);
 
@@ -154,17 +151,17 @@ export default function NewHiredSwordSpellDialog({
     setError("");
 
     try {
-      const existingSpellIds = (hiredSword.spells ?? [])
+      const existingSpellIds = (hireling.spells ?? [])
         .filter((s) => s.type !== "Pending")
         .map((s) => s.id);
-      const pendingSpells = (hiredSword.spells ?? []).filter((s) => s.type === "Pending");
+      const pendingSpells = (hireling.spells ?? []).filter((s) => s.type === "Pending");
       const pendingIds = pendingSpells.slice(1).map((s) => s.id);
 
       // The PATCH answers with the hired sword as saved: no GET after it.
-      const updated = await updateWarbandHiredSword(warbandId, hiredSword.id, {
+      const updated = await updateWarbandHireling(warbandId, hireling.id, {
         spell_ids: [...existingSpellIds, ...pendingIds, selectedSpell.id],
       });
-      onHiredSwordUpdated?.(updated);
+      onHirelingUpdated?.(updated);
       handleOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to learn spell");

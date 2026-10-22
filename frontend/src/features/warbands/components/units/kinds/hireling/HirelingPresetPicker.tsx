@@ -11,16 +11,16 @@ function formatCost(cost: number | null, expression: string): string {
   return "-";
 }
 
-type HiredSwordPresetPickerProps = {
+type HirelingPresetPickerProps = {
   campaignId: number;
   onAddFromPreset: (profileId: number) => Promise<void>;
 };
 
 /** "Add from preset": fills the add form from a hired-sword profile of the campaign. */
-export default function HiredSwordPresetPicker({
+export default function HirelingPresetPicker({
   campaignId,
   onAddFromPreset,
-}: HiredSwordPresetPickerProps) {
+}: HirelingPresetPickerProps) {
   const [presetQuery, setPresetQuery] = useState("");
   const { data: presetProfiles, isLoading: isLoadingPresets } = useCatalogue(
     "hired-swords",

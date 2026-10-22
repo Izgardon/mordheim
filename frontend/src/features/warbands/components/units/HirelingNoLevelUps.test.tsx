@@ -5,27 +5,27 @@ import { describe, expect, it, vi } from "vitest";
 
 import UnitExpandedCard from "./UnitExpandedCard";
 import UnitSummaryCard from "./UnitSummaryCard";
-import { hiredSwordKind } from "../../units/kinds/hired-sword";
+import { hirelingKind } from "../../units/kinds/hireling";
 
-import type { WarbandHiredSword } from "../../types/warband-types";
+import type { WarbandHireling } from "../../types/warband-types";
 
 vi.mock("../shared/unit_details/ExperienceBar", () => ({
   default: () => <div data-testid="experience-bar" />,
 }));
 
 vi.mock("./UnitListBlocks", () => ({
-  default: () => <div data-testid="hired-sword-list-blocks" />,
+  default: () => <div data-testid="hireling-list-blocks" />,
 }));
 
-vi.mock("@/features/spells/components/NewHiredSwordSpellDialog", () => ({
+vi.mock("@/features/spells/components/NewHirelingSpellDialog", () => ({
   default: () => null,
 }));
 
-vi.mock("@/features/skills/components/NewHiredSwordSkillDialog", () => ({
+vi.mock("@/features/skills/components/NewHirelingSkillDialog", () => ({
   default: () => null,
 }));
 
-const baseHiredSword: WarbandHiredSword = {
+const baseHireling: WarbandHireling = {
   id: 2,
   warband_id: 1,
   name: "Ogre Bodyguard",
@@ -81,8 +81,8 @@ describe("Hired sword no level ups", () => {
   it("hides the summary experience bar when no_level_ups is enabled", () => {
     const { rerender } = renderWithQueryClient(
       <UnitSummaryCard
-        kind={hiredSwordKind}
-        unit={baseHiredSword}
+        kind={hirelingKind}
+        unit={baseHireling}
         warbandId={1}
         renderExpandedCard={false}
       />
@@ -92,8 +92,8 @@ describe("Hired sword no level ups", () => {
 
     rerender(
       <UnitSummaryCard
-        kind={hiredSwordKind}
-        unit={{ ...baseHiredSword, no_level_ups: true }}
+        kind={hirelingKind}
+        unit={{ ...baseHireling, no_level_ups: true }}
         warbandId={1}
         renderExpandedCard={false}
       />
@@ -104,20 +104,15 @@ describe("Hired sword no level ups", () => {
 
   it("hides the expanded experience bar when no_level_ups is enabled", () => {
     const { rerender } = renderWithQueryClient(
-      <UnitExpandedCard
-        kind={hiredSwordKind}
-        unit={baseHiredSword}
-        warbandId={1}
-        onClose={() => {}}
-      />
+      <UnitExpandedCard kind={hirelingKind} unit={baseHireling} warbandId={1} onClose={() => {}} />
     );
 
     expect(screen.getByTestId("experience-bar")).toBeInTheDocument();
 
     rerender(
       <UnitExpandedCard
-        kind={hiredSwordKind}
-        unit={{ ...baseHiredSword, no_level_ups: true }}
+        kind={hirelingKind}
+        unit={{ ...baseHireling, no_level_ups: true }}
         warbandId={1}
         onClose={() => {}}
       />

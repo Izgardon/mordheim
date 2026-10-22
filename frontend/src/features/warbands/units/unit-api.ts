@@ -8,7 +8,7 @@ import type { Unit, UnitKindKey, UnitPayload } from "../types/units";
 export const UNIT_URL_SEGMENTS = {
   hero: "heroes",
   henchmen_group: "henchmen-groups",
-  hired_sword: "hired-swords",
+  hireling: "hirelings",
 } as const satisfies Record<UnitKindKey, string>;
 
 /** Which unit a batch line is for: a saved one, or one of the batch's creates (`create.N`). */
@@ -77,7 +77,7 @@ function createUnitApi<K extends UnitKindKey>(kind: K): UnitApi<K> {
 const UNIT_APIS: { [K in UnitKindKey]: UnitApi<K> } = {
   hero: createUnitApi("hero"),
   henchmen_group: createUnitApi("henchmen_group"),
-  hired_sword: createUnitApi("hired_sword"),
+  hireling: createUnitApi("hireling"),
 };
 
 /** The roster endpoints of one unit kind (same URLs, bodies and status codes as before). */

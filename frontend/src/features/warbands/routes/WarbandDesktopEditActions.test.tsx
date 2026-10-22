@@ -15,7 +15,7 @@ const mocks = vi.hoisted(() => ({
   setStoreWarband: vi.fn(),
   setWarband: vi.fn(),
   setHeroes: vi.fn(),
-  setHiredSwords: vi.fn(),
+  setHirelings: vi.fn(),
   setHenchmenGroups: vi.fn(),
   setMobileTopBar: vi.fn(),
 }));
@@ -86,7 +86,7 @@ const loaded = vi.hoisted(() => ({
     max_units: 15,
   },
   heroes: [],
-  hiredSwords: [],
+  hirelings: [],
   henchmenGroups: [],
   capabilities: {
     edit: true,
@@ -99,7 +99,7 @@ const loaded = vi.hoisted(() => ({
   setUnits: {
     hero: mocks.setHeroes,
     henchmen_group: mocks.setHenchmenGroups,
-    hired_sword: mocks.setHiredSwords,
+    hireling: mocks.setHirelings,
   },
 }));
 
@@ -109,7 +109,7 @@ vi.mock("../hooks/warband/useWarbandSheet", () => ({
     mergeWarband: mocks.setWarband,
     showCreated: vi.fn(),
     heroes: loaded.heroes,
-    hiredSwords: loaded.hiredSwords,
+    hirelings: loaded.hirelings,
     henchmenGroups: loaded.henchmenGroups,
     capabilities: loaded.capabilities,
     setUnits: loaded.setUnits,
@@ -247,7 +247,7 @@ type SectionEditorProps = {
 
 vi.mock("../components/warband/WarbandTabContent", () => ({
   default: (props: {
-    sectionActionsHidden?: { heroes?: boolean; henchmen?: boolean; hiredswords?: boolean };
+    sectionActionsHidden?: { heroes?: boolean; henchmen?: boolean; hirelings?: boolean };
     editors: { heroes: SectionEditorProps; henchmen: SectionEditorProps };
   }) => (
     <div>
@@ -255,8 +255,8 @@ vi.mock("../components/warband/WarbandTabContent", () => ({
       <div data-testid="henchmen-hidden">
         {String(props.sectionActionsHidden?.henchmen ?? false)}
       </div>
-      <div data-testid="hiredswords-hidden">
-        {String(props.sectionActionsHidden?.hiredswords ?? false)}
+      <div data-testid="hirelings-hidden">
+        {String(props.sectionActionsHidden?.hirelings ?? false)}
       </div>
       <div data-testid="heroes-editing">{String(Boolean(props.editors.heroes.isEditing))}</div>
       <button type="button" onClick={() => props.editors.heroes.startEditing()}>
@@ -297,7 +297,7 @@ describe("Warband desktop section edit actions", () => {
 
     expect(screen.getByTestId("heroes-hidden")).toHaveTextContent("false");
     expect(screen.getByTestId("henchmen-hidden")).toHaveTextContent("false");
-    expect(screen.getByTestId("hiredswords-hidden")).toHaveTextContent("false");
+    expect(screen.getByTestId("hirelings-hidden")).toHaveTextContent("false");
 
     await act(async () => {
       await user.click(screen.getByRole("button", { name: "Edit heroes section" }));
@@ -305,7 +305,7 @@ describe("Warband desktop section edit actions", () => {
 
     expect(screen.getByTestId("heroes-hidden")).toHaveTextContent("false");
     expect(screen.getByTestId("henchmen-hidden")).toHaveTextContent("true");
-    expect(screen.getByTestId("hiredswords-hidden")).toHaveTextContent("true");
+    expect(screen.getByTestId("hirelings-hidden")).toHaveTextContent("true");
     expect(screen.getByTestId("heroes-editing")).toHaveTextContent("true");
     expect(mocks.listWarbandHeroDetails).not.toHaveBeenCalled();
 
@@ -315,7 +315,7 @@ describe("Warband desktop section edit actions", () => {
 
     await waitFor(() => expect(screen.getByTestId("heroes-hidden")).toHaveTextContent("false"));
     expect(screen.getByTestId("henchmen-hidden")).toHaveTextContent("false");
-    expect(screen.getByTestId("hiredswords-hidden")).toHaveTextContent("false");
+    expect(screen.getByTestId("hirelings-hidden")).toHaveTextContent("false");
   });
 
   it("locks the other sections when henchmen editing becomes active", async () => {
@@ -329,7 +329,7 @@ describe("Warband desktop section edit actions", () => {
 
     expect(screen.getByTestId("heroes-hidden")).toHaveTextContent("true");
     expect(screen.getByTestId("henchmen-hidden")).toHaveTextContent("false");
-    expect(screen.getByTestId("hiredswords-hidden")).toHaveTextContent("true");
+    expect(screen.getByTestId("hirelings-hidden")).toHaveTextContent("true");
 
     await act(async () => {
       await user.click(screen.getByRole("button", { name: "Stop henchmen edit" }));
@@ -337,6 +337,6 @@ describe("Warband desktop section edit actions", () => {
 
     await waitFor(() => expect(screen.getByTestId("heroes-hidden")).toHaveTextContent("false"));
     expect(screen.getByTestId("henchmen-hidden")).toHaveTextContent("false");
-    expect(screen.getByTestId("hiredswords-hidden")).toHaveTextContent("false");
+    expect(screen.getByTestId("hirelings-hidden")).toHaveTextContent("false");
   });
 });

@@ -14,7 +14,7 @@ import { renderWithQueryClient } from "@/test/query-test-utils";
 import {
   makeVeteranHenchmenGroup,
   makeVeteranHero,
-  makeVeteranHiredSword,
+  makeVeteranHireling,
 } from "@/test/warband-fixtures";
 
 const requests = vi.hoisted(() => ({ paths: [] as string[] }));
@@ -56,7 +56,7 @@ const responses: Record<string, () => unknown> = {
     },
     heroes: [makeVeteranHero()],
     henchmen_groups: [makeVeteranHenchmenGroup()],
-    hired_swords: [makeVeteranHiredSword()],
+    hirelings: [makeVeteranHireling()],
   }),
 };
 

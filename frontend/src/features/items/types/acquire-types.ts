@@ -3,7 +3,7 @@ import type { PurchaseLine } from "../api/purchase";
 import type {
   HenchmenGroup,
   WarbandHero,
-  WarbandHiredSword,
+  WarbandHireling,
 } from "@/features/warbands/types/warband-types";
 
 /** What the player chose in the acquire dialog, as the purchase and its callers see it. */
@@ -30,7 +30,7 @@ export type DraftUnit = {
 export type PurchaseTarget =
   | { kind: "stash" }
   | { kind: "heroes"; unit: WarbandHero }
-  | { kind: "hiredswords"; unit: WarbandHiredSword }
+  | { kind: "hirelings"; unit: WarbandHireling }
   | { kind: "henchmen"; unit: HenchmenGroup };
 
 /** A rarity roll as the dialog keeps it for the searching hero. */

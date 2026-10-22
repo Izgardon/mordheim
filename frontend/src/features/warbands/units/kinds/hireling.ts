@@ -1,11 +1,11 @@
 import { getHeroLevelInfo } from "../../components/heroes/utils/hero-level";
-import HiredSwordCardHeader from "../../components/units/kinds/hired-sword/HiredSwordCardHeader";
+import HirelingCardHeader from "../../components/units/kinds/hireling/HirelingCardHeader";
 import {
-  HiredSwordExpandedTiles,
-  HiredSwordExpandedTitle,
-  HiredSwordPendingDialogs,
-} from "../../components/units/kinds/hired-sword/HiredSwordCardSlots";
-import HiredSwordFormBasics from "../../components/units/kinds/hired-sword/HiredSwordFormBasics";
+  HirelingExpandedTiles,
+  HirelingExpandedTitle,
+  HirelingPendingDialogs,
+} from "../../components/units/kinds/hireling/HirelingCardSlots";
+import HirelingFormBasics from "../../components/units/kinds/hireling/HirelingFormBasics";
 import { useFollowUpAdvance } from "../../hooks/units/useFollowUpAdvance";
 import {
   HERO_SELECTABLE_STAT_SET,
@@ -27,50 +27,49 @@ import {
   normalizeCaster,
 } from "../unit-form-helpers";
 import { FOLLOW_UP_ROLL_TABLE } from "./hero";
-import { hiredSwordEditor } from "./hired-sword-editor";
+import { hirelingEditor } from "./hireling-editor";
 import { buildLoadoutPayload, validateHeroForm } from "./hero-forms";
 
-import type { HiredSwordFormEntry, WarbandHiredSword } from "../../types/warband-types";
+import type { HirelingFormEntry, WarbandHireling } from "../../types/warband-types";
 import type { UnitKindConfig } from "../unit-kind-types";
 
-export const mapHiredSwordToForm = (hiredSword: WarbandHiredSword): HiredSwordFormEntry => ({
-  id: hiredSword.id,
-  name: hiredSword.name ?? "",
-  unit_type: hiredSword.unit_type ?? "",
-  race_id: hiredSword.race_id ?? null,
-  race_name: hiredSword.race_name ?? "",
-  race: hiredSword.race ?? null,
-  stats: mapStatsToForm(hiredSword),
-  xp: hiredSword.xp?.toString() ?? "0",
-  ...mapLevelUpToForm(hiredSword),
-  price: hiredSword.price?.toString() ?? "0",
-  upkeep_price: hiredSword.upkeep_price?.toString() ?? "0",
-  rating: hiredSword.rating?.toString() ?? "0",
-  armour_save: armourSaveToForm(hiredSword.armour_save),
-  deeds: hiredSword.deeds ?? "",
+export const mapHirelingToForm = (hireling: WarbandHireling): HirelingFormEntry => ({
+  id: hireling.id,
+  name: hireling.name ?? "",
+  unit_type: hireling.unit_type ?? "",
+  race_id: hireling.race_id ?? null,
+  race_name: hireling.race_name ?? "",
+  race: hireling.race ?? null,
+  stats: mapStatsToForm(hireling),
+  xp: hireling.xp?.toString() ?? "0",
+  ...mapLevelUpToForm(hireling),
+  price: hireling.price?.toString() ?? "0",
+  upkeep_price: hireling.upkeep_price?.toString() ?? "0",
+  rating: hireling.rating?.toString() ?? "0",
+  armour_save: armourSaveToForm(hireling.armour_save),
+  deeds: hireling.deeds ?? "",
   is_leader: false,
   trading_action: false,
-  large: Boolean(hiredSword.large),
-  caster: normalizeCaster(hiredSword.caster),
-  half_rate: Boolean(hiredSword.half_rate),
-  blood_pacted: Boolean(hiredSword.blood_pacted),
-  no_level_ups: Boolean(hiredSword.no_level_ups),
-  available_skills: parseAvailableSkills(hiredSword.available_skills),
-  items: hiredSword.items ?? [],
-  skills: hiredSword.skills ?? [],
-  spells: hiredSword.spells ?? [],
-  specials: hiredSword.specials ?? [],
+  large: Boolean(hireling.large),
+  caster: normalizeCaster(hireling.caster),
+  half_rate: Boolean(hireling.half_rate),
+  blood_pacted: Boolean(hireling.blood_pacted),
+  no_level_ups: Boolean(hireling.no_level_ups),
+  available_skills: parseAvailableSkills(hireling.available_skills),
+  items: hireling.items ?? [],
+  skills: hireling.skills ?? [],
+  spells: hireling.spells ?? [],
+  specials: hireling.specials ?? [],
 });
 
-export const validateHiredSwordForm = (hiredSword: HiredSwordFormEntry) =>
-  validateHeroForm(hiredSword);
+export const validateHirelingForm = (hireling: HirelingFormEntry) => validateHeroForm(hireling);
 
-export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
-  key: "hired_sword",
-  section: "hiredswords",
-  listKey: "hiredSwords",
-  collection: "hired_swords",
-  cardClassName: "warband-card--hired-sword",
+export const hirelingKind: UnitKindConfig<"hireling"> = {
+  key: "hireling",
+  section: "hirelings",
+  listKey: "hirelings",
+  collection: "hirelings",
+  cardClassName: "warband-card--hireling",
   summaryLoadoutClassName: "mt-auto",
   labels: {
     plural: "Hired Swords",
@@ -92,7 +91,7 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
     unknownName: "Unknown Hired Sword",
     newUnit: "New Hired Sword",
     addNew: "Add new",
-    formIdPrefix: "hired-sword",
+    formIdPrefix: "hireling",
   },
   flags: {
     hasSpells: true,
@@ -110,11 +109,11 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
   thresholdsKey: "hero_level_thresholds",
   advanceOptions: [...HERO_SELECTABLE_STATS, ...OTHER_OPTIONS.map((option) => option.id)],
   getLevelInfo: getHeroLevelInfo,
-  showsXpBar: (hiredSword) => !hiredSword.no_level_ups,
-  canLevelUp: (hiredSword) => !hiredSword.no_level_ups && Boolean(hiredSword.level_up),
-  killCount: (hiredSword) => hiredSword.kills ?? 0,
-  mapToForm: mapHiredSwordToForm,
-  validate: validateHiredSwordForm,
+  showsXpBar: (hireling) => !hireling.no_level_ups,
+  canLevelUp: (hireling) => !hireling.no_level_ups && Boolean(hireling.level_up),
+  killCount: (hireling) => hireling.kills ?? 0,
+  mapToForm: mapHirelingToForm,
+  validate: validateHirelingForm,
   // The armour save as a number, like every kind (decision 11, BUG-87).
   buildPayload: (entry, { isSessionCreated }) => ({
     name: entry.name.trim() || null,
@@ -147,11 +146,11 @@ export const hiredSwordKind: UnitKindConfig<"hired_sword"> = {
     buttonWrapperClassName: "scroll-mt-28",
   },
   slots: {
-    SummaryHeader: HiredSwordCardHeader,
-    ExpandedTitle: HiredSwordExpandedTitle,
-    ExpandedTiles: HiredSwordExpandedTiles,
-    PendingAdvanceDialogs: HiredSwordPendingDialogs,
-    FormBasics: HiredSwordFormBasics,
+    SummaryHeader: HirelingCardHeader,
+    ExpandedTitle: HirelingExpandedTitle,
+    ExpandedTiles: HirelingExpandedTiles,
+    PendingAdvanceDialogs: HirelingPendingDialogs,
+    FormBasics: HirelingFormBasics,
   },
-  editor: hiredSwordEditor,
+  editor: hirelingEditor,
 };

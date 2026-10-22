@@ -4,16 +4,16 @@
  */
 import { heroKind } from "./kinds/hero";
 import { henchmenKind } from "./kinds/henchmen";
-import { hiredSwordKind } from "./kinds/hired-sword";
+import { hirelingKind } from "./kinds/hireling";
 
 import type { UnitKindKey } from "../types/units";
 import type { UnitKindConfig } from "./unit-kind-types";
 
-export { heroKind, henchmenKind, hiredSwordKind };
+export { heroKind, henchmenKind, hirelingKind };
 export type { UnitKindConfig } from "./unit-kind-types";
 
 export const unitKinds: { [K in UnitKindKey]: UnitKindConfig<K> } = {
   hero: heroKind,
   henchmen_group: henchmenKind,
-  hired_sword: hiredSwordKind,
+  hireling: hirelingKind,
 };

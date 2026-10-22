@@ -91,7 +91,7 @@ beforeEach(() => {
     capabilities: { edit: true, manage_items: true },
     heroes: [makeVeteranHero()],
     henchmen_groups: [],
-    hired_swords: [],
+    hirelings: [],
   });
   fakeApi.on("GET /warbands/9/trades/?limit=25", { results: [], next_cursor: null });
 });

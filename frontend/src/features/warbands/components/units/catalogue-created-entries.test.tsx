@@ -10,7 +10,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import UnitSection from "./UnitSection";
 import { WarbandCatalogueProvider } from "./catalogue-context";
 import { useUnitSectionEditor } from "@/features/warbands/hooks/units/useUnitSectionEditor";
-import { hiredSwordKind } from "@/features/warbands/units/kinds/hired-sword";
+import { hirelingKind } from "@/features/warbands/units/kinds/hireling";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
 import {
@@ -19,10 +19,10 @@ import {
   makeSkill,
   makeSpecial,
   makeSpell,
-  makeVeteranHiredSword,
+  makeVeteranHireling,
 } from "@/test/warband-fixtures";
 
-import type { WarbandHiredSword } from "@/features/warbands/types/warband-types";
+import type { WarbandHireling } from "@/features/warbands/types/warband-types";
 
 const catalogue = vi.hoisted(() => ({
   listItems: vi.fn(),
@@ -84,22 +84,22 @@ vi.mock("@/features/campaigns/hooks/useCampaignStarted", () => ({
   useCampaignStarted: () => true,
 }));
 
-const first = makeVeteranHiredSword({ id: 31, name: "Brother Hal", caster: "Wizard" });
-const second = makeVeteranHiredSword({ id: 32, name: "Sister Ana", caster: "Wizard" });
+const first = makeVeteranHireling({ id: 31, name: "Brother Hal", caster: "Wizard" });
+const second = makeVeteranHireling({ id: 32, name: "Sister Ana", caster: "Wizard" });
 
 function Section({
-  hiredSwords,
+  hirelings,
   canAddCustom = true,
 }: {
-  hiredSwords: WarbandHiredSword[];
+  hirelings: WarbandHireling[];
   canAddCustom?: boolean;
 }) {
-  const [units, setUnits] = useState(hiredSwords);
-  const editor = useUnitSectionEditor(hiredSwordKind, {
+  const [units, setUnits] = useState(hirelings);
+  const editor = useUnitSectionEditor(hirelingKind, {
     warbandId: 9,
     units,
     canEdit: true,
-    roster: { maxHeroes: 6, maxHiredSwords: 3, heroCount: 0, hiredSwordCount: 0 },
+    roster: { maxHeroes: 6, maxHiredSwords: 3, heroCount: 0, hirelingCount: 0 },
     onUnitsChange: setUnits,
   });
   return (
@@ -115,7 +115,7 @@ type User = ReturnType<typeof setupUser>;
 const editCards = () => screen.getAllByRole("group", { name: /^Hired Sword \d+$/ });
 
 const startEditing = async (user: User, canAddCustom = true) => {
-  renderWithQueryClient(<Section hiredSwords={[first, second]} canAddCustom={canAddCustom} />);
+  renderWithQueryClient(<Section hirelings={[first, second]} canAddCustom={canAddCustom} />);
   await user.click(screen.getAllByRole("button", { name: "Edit Hired Swords" })[0]);
   await waitFor(() => expect(editCards()).toHaveLength(2));
   await waitFor(() => expect(screen.queryByText(/^Loading /)).not.toBeInTheDocument());

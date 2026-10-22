@@ -5,18 +5,18 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import UnitSection from "./UnitSection";
 import { WarbandCatalogueContext, type WarbandCatalogue } from "./catalogue-context";
 import { useUnitSectionEditor } from "@/features/warbands/hooks/units/useUnitSectionEditor";
-import { hiredSwordKind } from "@/features/warbands/units/kinds/hired-sword";
+import { hirelingKind } from "@/features/warbands/units/kinds/hireling";
 
-import type { WarbandHiredSword } from "@/features/warbands/types/warband-types";
+import type { WarbandHireling } from "@/features/warbands/types/warband-types";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { getFieldNear } from "@/test/roster-queries";
 import { setupUser } from "@/test/user-event";
-import { humanRace, makeVeteranHiredSword, warhammer } from "@/test/warband-fixtures";
+import { humanRace, makeVeteranHireling, warhammer } from "@/test/warband-fixtures";
 import { answerBatch, batchCreates, batchDismissals, batchUpdate } from "@/test/batch-mock";
 
 const api = vi.hoisted(() => ({
-  batchWarbandHiredSwords: vi.fn(),
-  getWarbandHiredSwordDetail: vi.fn(),
+  batchWarbandHirelings: vi.fn(),
+  getWarbandHirelingDetail: vi.fn(),
   getWarbandSummary: vi.fn(),
   createWarbandTrade: vi.fn(),
   createWarbandLog: vi.fn(),
@@ -49,7 +49,7 @@ vi.mock("@/lib/catalogue-queries", async (importOriginal) => ({
   }),
 }));
 
-const onHiredSwordsChange = vi.fn();
+const onHirelingsChange = vi.fn();
 
 const catalogue: WarbandCatalogue = {
   campaignId: 1,
@@ -73,35 +73,35 @@ const catalogue: WarbandCatalogue = {
 };
 
 function Section({
-  initialHiredSwords,
+  initialHirelings,
   maxHiredSwords = 3,
   canEdit = true,
 }: {
-  initialHiredSwords: WarbandHiredSword[];
+  initialHirelings: WarbandHireling[];
   maxHiredSwords?: number;
   canEdit?: boolean;
 }) {
-  const [hiredSwords, setHiredSwords] = useState(initialHiredSwords);
-  const editor = useUnitSectionEditor(hiredSwordKind, {
+  const [hirelings, setHirelings] = useState(initialHirelings);
+  const editor = useUnitSectionEditor(hirelingKind, {
     warbandId: 9,
-    units: hiredSwords,
+    units: hirelings,
     canEdit,
     roster: {
       maxHeroes: 6,
       maxHiredSwords,
       heroCount: 0,
-      hiredSwordCount: hiredSwords.filter((hiredSword) => !hiredSword.blood_pacted).length,
+      hirelingCount: hirelings.filter((hireling) => !hireling.blood_pacted).length,
     },
     onUnitsChange: (next) => {
-      onHiredSwordsChange(next);
-      setHiredSwords(next);
+      onHirelingsChange(next);
+      setHirelings(next);
     },
   });
   return (
     <WarbandCatalogueContext.Provider value={catalogue}>
       <UnitSection
         editor={editor}
-        units={hiredSwords}
+        units={hirelings}
         warbandId={9}
         canEdit={canEdit}
         availableGold={200}
@@ -124,7 +124,7 @@ const replaceValue = async (
   await user.type(field, value);
 };
 
-const fillNewHiredSword = async (user: ReturnType<typeof setupUser>) => {
+const fillNewHireling = async (user: ReturnType<typeof setupUser>) => {
   await user.click(screen.getByRole("button", { name: "Add hired sword" }));
   const addForm = screen.getByRole("group", { name: "New Hired Sword" });
   await user.type(within(addForm).getByPlaceholderText("Hired sword name"), "Brother Hal");
@@ -145,27 +145,27 @@ describe("UnitSection: hired swords create and save", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     presets.list = [];
-    api.batchWarbandHiredSwords.mockImplementation(answerBatch([], { gold: 160 }));
+    api.batchWarbandHirelings.mockImplementation(answerBatch([], { gold: 160 }));
     api.getWarbandSummary.mockResolvedValue({ gold: 160 });
   });
 
   it("queues a new hired sword until Save, then creates it with level_up 0 and skill access as a list (decision 1, BUG-101)", async () => {
     const user = setupUser();
-    renderWithQueryClient(<Section initialHiredSwords={[]} />);
+    renderWithQueryClient(<Section initialHirelings={[]} />);
     await startEditing(user);
 
-    await fillNewHiredSword(user);
+    await fillNewHireling(user);
     await user.click(screen.getByRole("button", { name: "Create hired sword" }));
 
     expect(await screen.findByDisplayValue("Brother Hal")).toBeInTheDocument();
     expect(screen.getByText("New recruit: 40 gc, paid when you save.")).toBeInTheDocument();
-    expect(api.batchWarbandHiredSwords).not.toHaveBeenCalled();
+    expect(api.batchWarbandHirelings).not.toHaveBeenCalled();
 
     await replaceValue(user, getFieldNear("Experience"), "6");
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(api.batchWarbandHiredSwords).toHaveBeenCalledTimes(1));
-    expect(batchCreates(api.batchWarbandHiredSwords)).toEqual([
+    await waitFor(() => expect(api.batchWarbandHirelings).toHaveBeenCalledTimes(1));
+    expect(batchCreates(api.batchWarbandHirelings)).toEqual([
       expect.objectContaining({
         name: "Brother Hal",
         unit_type: "Warrior Priest",
@@ -183,14 +183,14 @@ describe("UnitSection: hired swords create and save", () => {
       }),
     ]);
     expect(events.emitWarbandUpdate).toHaveBeenCalledWith(9, { summary: { gold: 160 } });
-    expect(onHiredSwordsChange).toHaveBeenLastCalledWith([
+    expect(onHirelingsChange).toHaveBeenLastCalledWith([
       expect.objectContaining({ id: 900, name: "Brother Hal" }),
     ]);
   });
 
   it("asks for name, type and race before creating", async () => {
     const user = setupUser();
-    renderWithQueryClient(<Section initialHiredSwords={[]} />);
+    renderWithQueryClient(<Section initialHirelings={[]} />);
     await startEditing(user);
 
     await user.click(screen.getByRole("button", { name: "Add hired sword" }));
@@ -202,15 +202,15 @@ describe("UnitSection: hired swords create and save", () => {
 
   it("at the cap, adds only a blood-pacted hired sword, counting only those without a pact (BUG-102)", async () => {
     const user = setupUser();
-    const hired = makeVeteranHiredSword();
-    const pacted = makeVeteranHiredSword({ id: 32, name: "Pacted", blood_pacted: true });
-    renderWithQueryClient(<Section initialHiredSwords={[hired, pacted]} maxHiredSwords={1} />);
+    const hired = makeVeteranHireling();
+    const pacted = makeVeteranHireling({ id: 32, name: "Pacted", blood_pacted: true });
+    renderWithQueryClient(<Section initialHirelings={[hired, pacted]} maxHiredSwords={1} />);
     await startEditing(user);
     expect(
       screen.getByText("Maximum of 1 hired swords reached; a blood-pacted one can still join.")
     ).toBeInTheDocument();
 
-    await fillNewHiredSword(user);
+    await fillNewHireling(user);
     await user.click(screen.getByRole("button", { name: "Create hired sword" }));
     expect(await screen.findByText("Hired sword limit reached.")).toBeInTheDocument();
     expect(screen.queryByText(/New recruit/)).not.toBeInTheDocument();
@@ -222,16 +222,16 @@ describe("UnitSection: hired swords create and save", () => {
     expect(await screen.findByText("New recruit: 40 gc, paid when you save.")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(api.batchWarbandHiredSwords).toHaveBeenCalledTimes(1));
-    expect(batchCreates(api.batchWarbandHiredSwords)).toEqual([
+    await waitFor(() => expect(api.batchWarbandHirelings).toHaveBeenCalledTimes(1));
+    expect(batchCreates(api.batchWarbandHirelings)).toEqual([
       expect.objectContaining({ name: "Brother Hal", blood_pacted: true }),
     ]);
   });
 
   it("leaves Add hired sword quiet below the cap when the others are blood-pacted", async () => {
     const user = setupUser();
-    const pacted = makeVeteranHiredSword({ id: 32, name: "Pacted", blood_pacted: true });
-    renderWithQueryClient(<Section initialHiredSwords={[pacted]} maxHiredSwords={1} />);
+    const pacted = makeVeteranHireling({ id: 32, name: "Pacted", blood_pacted: true });
+    renderWithQueryClient(<Section initialHirelings={[pacted]} maxHiredSwords={1} />);
     await startEditing(user);
 
     expect(screen.getByRole("button", { name: "Add hired sword" })).toBeEnabled();
@@ -240,9 +240,9 @@ describe("UnitSection: hired swords create and save", () => {
 
   it("dismisses a hired sword on Save with no refund, and the dialog says its items are lost (decision 3, BUG-34)", async () => {
     const user = setupUser();
-    const hired = makeVeteranHiredSword();
-    api.batchWarbandHiredSwords.mockImplementation(answerBatch([hired], { gold: 160 }));
-    renderWithQueryClient(<Section initialHiredSwords={[hired]} />);
+    const hired = makeVeteranHireling();
+    api.batchWarbandHirelings.mockImplementation(answerBatch([hired], { gold: 160 }));
+    renderWithQueryClient(<Section initialHirelings={[hired]} />);
     await startEditing(user);
 
     await user.click(screen.getByRole("button", { name: "Dismiss" }));
@@ -253,18 +253,18 @@ describe("UnitSection: hired swords create and save", () => {
     );
     await user.click(within(dialog).getByRole("button", { name: "Dismiss hired sword" }));
 
-    expect(api.batchWarbandHiredSwords).not.toHaveBeenCalled();
+    expect(api.batchWarbandHirelings).not.toHaveBeenCalled();
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(batchDismissals(api.batchWarbandHiredSwords)).toEqual([31]));
+    await waitFor(() => expect(batchDismissals(api.batchWarbandHirelings)).toEqual([31]));
     expect(events.emitWarbandUpdate).toHaveBeenCalledWith(9, { summary: { gold: 160 } });
   });
 
   it("takes an armour save as 5, 5+ or -1+, shows it as N+ and hints at 1+ or better (decision 11)", async () => {
     const user = setupUser();
-    const hired = makeVeteranHiredSword();
-    api.batchWarbandHiredSwords.mockImplementation(answerBatch([hired], { gold: 160 }));
-    renderWithQueryClient(<Section initialHiredSwords={[hired]} />);
+    const hired = makeVeteranHireling();
+    api.batchWarbandHirelings.mockImplementation(answerBatch([hired], { gold: 160 }));
+    renderWithQueryClient(<Section initialHirelings={[hired]} />);
     await startEditing(user);
 
     const save = screen.getByLabelText("Armour save");
@@ -284,17 +284,17 @@ describe("UnitSection: hired swords create and save", () => {
     expect(screen.getByText("A roll of 1 always fails.")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Save" }));
-    await waitFor(() => expect(api.batchWarbandHiredSwords).toHaveBeenCalledTimes(1));
-    expect(batchUpdate(api.batchWarbandHiredSwords, 31)).toEqual(
+    await waitFor(() => expect(api.batchWarbandHirelings).toHaveBeenCalledTimes(1));
+    expect(batchUpdate(api.batchWarbandHirelings, 31)).toEqual(
       expect.objectContaining({ armour_save: -1 })
     );
   });
 
   it("edits the pending level-ups and sends the count only when it changed (decision 5)", async () => {
     const user = setupUser();
-    const hired = makeVeteranHiredSword({ level_up: 2 });
-    api.batchWarbandHiredSwords.mockImplementation(answerBatch([hired], { gold: 160 }));
-    renderWithQueryClient(<Section initialHiredSwords={[hired]} />);
+    const hired = makeVeteranHireling({ level_up: 2 });
+    api.batchWarbandHirelings.mockImplementation(answerBatch([hired], { gold: 160 }));
+    renderWithQueryClient(<Section initialHirelings={[hired]} />);
     await startEditing(user);
 
     const pending = screen.getByLabelText("Pending level-ups");
@@ -302,35 +302,35 @@ describe("UnitSection: hired swords create and save", () => {
     expect(screen.getByText("Lowering XP keeps level-ups already earned.")).toBeInTheDocument();
     await replaceValue(user, getFieldNear("Experience"), "1");
     await user.click(screen.getByRole("button", { name: "Save" }));
-    await waitFor(() => expect(api.batchWarbandHiredSwords).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(api.batchWarbandHirelings).toHaveBeenCalledTimes(1));
     // XP alone: the server keeps the level-ups already earned.
-    expect(batchUpdate(api.batchWarbandHiredSwords, 31)).not.toHaveProperty("level_up");
+    expect(batchUpdate(api.batchWarbandHirelings, 31)).not.toHaveProperty("level_up");
 
     await startEditing(user);
     await replaceValue(user, screen.getByLabelText("Pending level-ups"), "0");
     await user.click(screen.getByRole("button", { name: "Save" }));
-    await waitFor(() => expect(api.batchWarbandHiredSwords).toHaveBeenCalledTimes(2));
-    expect(batchUpdate(api.batchWarbandHiredSwords, 31)).toEqual(
+    await waitFor(() => expect(api.batchWarbandHirelings).toHaveBeenCalledTimes(2));
+    expect(batchUpdate(api.batchWarbandHirelings, 31)).toEqual(
       expect.objectContaining({ level_up: 0 })
     );
   });
 
   it("duplicates a hired sword as a queued recruit with its profile and loadout (ROST-NEW-01)", async () => {
     const user = setupUser();
-    const hired = makeVeteranHiredSword();
-    api.batchWarbandHiredSwords.mockImplementation(answerBatch([hired], { gold: 160 }));
-    renderWithQueryClient(<Section initialHiredSwords={[hired]} />);
+    const hired = makeVeteranHireling();
+    api.batchWarbandHirelings.mockImplementation(answerBatch([hired], { gold: 160 }));
+    renderWithQueryClient(<Section initialHirelings={[hired]} />);
     await startEditing(user);
 
     await user.click(screen.getByRole("button", { name: "Duplicate Brother Hal" }));
 
     expect(await screen.findByDisplayValue("Brother Hal (copy)")).toBeInTheDocument();
     expect(screen.getByText("New recruit: 40 gc, paid when you save.")).toBeInTheDocument();
-    expect(api.batchWarbandHiredSwords).not.toHaveBeenCalled();
+    expect(api.batchWarbandHirelings).not.toHaveBeenCalled();
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(api.batchWarbandHiredSwords).toHaveBeenCalledTimes(1));
-    expect(batchCreates(api.batchWarbandHiredSwords)).toEqual([
+    await waitFor(() => expect(api.batchWarbandHirelings).toHaveBeenCalledTimes(1));
+    expect(batchCreates(api.batchWarbandHirelings)).toEqual([
       expect.objectContaining({
         name: "Brother Hal (copy)",
         unit_type: "Warrior Priest",
@@ -352,9 +352,9 @@ describe("UnitSection: hired swords create and save", () => {
 
   it("offers Duplicate only below the hired-sword cap, or for a blood-pacted copy (ROST-NEW-01)", async () => {
     const user = setupUser();
-    const hired = makeVeteranHiredSword();
-    const pacted = makeVeteranHiredSword({ id: 32, name: "Pacted", blood_pacted: true });
-    renderWithQueryClient(<Section initialHiredSwords={[hired, pacted]} maxHiredSwords={1} />);
+    const hired = makeVeteranHireling();
+    const pacted = makeVeteranHireling({ id: 32, name: "Pacted", blood_pacted: true });
+    renderWithQueryClient(<Section initialHirelings={[hired, pacted]} maxHiredSwords={1} />);
     await startEditing(user);
 
     const blocked = screen.getByRole("button", { name: "Duplicate Brother Hal" });
@@ -365,9 +365,9 @@ describe("UnitSection: hired swords create and save", () => {
 
   it("drops a queued recruit from its card without warning about items it never had", async () => {
     const user = setupUser();
-    renderWithQueryClient(<Section initialHiredSwords={[]} />);
+    renderWithQueryClient(<Section initialHirelings={[]} />);
     await startEditing(user);
-    await fillNewHiredSword(user);
+    await fillNewHireling(user);
     await user.click(screen.getByRole("button", { name: "Create hired sword" }));
     await screen.findByDisplayValue("Brother Hal");
 
@@ -380,31 +380,31 @@ describe("UnitSection: hired swords create and save", () => {
     await user.click(within(dialog).getByRole("button", { name: "Remove" }));
 
     expect(screen.queryByDisplayValue("Brother Hal")).not.toBeInTheDocument();
-    expect(api.batchWarbandHiredSwords).not.toHaveBeenCalled();
+    expect(api.batchWarbandHirelings).not.toHaveBeenCalled();
   });
 
   it("drops a queued hired sword on Cancel without any request (decision 1, BUG-34)", async () => {
     const user = setupUser();
-    renderWithQueryClient(<Section initialHiredSwords={[]} />);
+    renderWithQueryClient(<Section initialHirelings={[]} />);
     await startEditing(user);
-    await fillNewHiredSword(user);
+    await fillNewHireling(user);
     await user.click(screen.getByRole("button", { name: "Create hired sword" }));
     await screen.findByDisplayValue("Brother Hal");
 
     await user.click(screen.getByRole("button", { name: "Cancel" }));
 
-    expect(api.batchWarbandHiredSwords).not.toHaveBeenCalled();
+    expect(api.batchWarbandHirelings).not.toHaveBeenCalled();
     expect(screen.queryByText("Brother Hal")).not.toBeInTheDocument();
   });
 
   it("shows the roster with Level Up! and Edit only to editors", () => {
-    const hired = makeVeteranHiredSword();
-    const { unmount } = renderWithQueryClient(<Section initialHiredSwords={[hired]} />);
+    const hired = makeVeteranHireling();
+    const { unmount } = renderWithQueryClient(<Section initialHirelings={[hired]} />);
     expect(screen.getByRole("button", { name: "Level Up!" })).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: "Edit Hired Swords" })).toHaveLength(2);
     unmount();
 
-    renderWithQueryClient(<Section initialHiredSwords={[hired]} canEdit={false} />);
+    renderWithQueryClient(<Section initialHirelings={[hired]} canEdit={false} />);
     expect(screen.getByText("Brother Hal")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Level Up!" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Edit Hired Swords" })).not.toBeInTheDocument();
@@ -413,9 +413,9 @@ describe("UnitSection: hired swords create and save", () => {
   it("counts only hired swords without a blood pact against the cap in the title", () => {
     renderWithQueryClient(
       <Section
-        initialHiredSwords={[
-          makeVeteranHiredSword(),
-          makeVeteranHiredSword({ id: 32, name: "Pacted", blood_pacted: true }),
+        initialHirelings={[
+          makeVeteranHireling(),
+          makeVeteranHireling({ id: 32, name: "Pacted", blood_pacted: true }),
         ]}
       />
     );
@@ -458,7 +458,7 @@ describe("UnitSection: hired swords create and save", () => {
     };
     presets.list = [profile];
     bestiary.getHiredSwordProfile.mockResolvedValue(profile);
-    renderWithQueryClient(<Section initialHiredSwords={[]} />);
+    renderWithQueryClient(<Section initialHirelings={[]} />);
     await startEditing(user);
 
     await user.click(screen.getByRole("button", { name: "Add hired sword" }));
@@ -470,9 +470,9 @@ describe("UnitSection: hired swords create and save", () => {
     expect(screen.getByLabelText("Armour save")).toHaveValue("5+");
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(api.batchWarbandHiredSwords).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(api.batchWarbandHirelings).toHaveBeenCalledTimes(1));
     expect(bestiary.getHiredSwordProfile).toHaveBeenCalledWith(5);
-    expect(batchCreates(api.batchWarbandHiredSwords)[0]).toEqual({
+    expect(batchCreates(api.batchWarbandHirelings)[0]).toEqual({
       name: "Warrior Priest",
       unit_type: "Warrior Priest",
       race: 1,

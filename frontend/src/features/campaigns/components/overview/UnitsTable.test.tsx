@@ -38,7 +38,7 @@ const units: RosterUnit[] = [
     armour_save: null,
   },
   {
-    id: "hs-3",
+    id: "hireling-3",
     category: "Hired Swords" as const,
     name: "Ogre Bodyguard",
     unit_type: "Brute",

@@ -83,7 +83,7 @@ export type RosterLimits = {
   maxHeroes: number;
   maxHiredSwords: number;
   heroCount: number;
-  hiredSwordCount: number;
+  hirelingCount: number;
 };
 
 export type UnitLimits<K extends UnitKindKey = UnitKindKey> = {
@@ -150,7 +150,7 @@ export type UnitLevelUpConfig<K extends UnitKindKey> = {
   rollTable: { lines: readonly string[]; footnote?: string; maxWidth: number };
   /** Payload name when the unit has neither a name nor a type. */
   nameFallback: string;
-  /** The kind's advance rules: hero/hired-sword follow-up rolls or henchmen Lad's Got Talent. */
+  /** The kind's advance rules: hero/hired sword follow-up rolls or henchmen Lad's Got Talent. */
   useAdvance: (core: LevelUpCore<K>) => UnitAdvance;
 };
 
@@ -166,12 +166,12 @@ export type UnitPayloadContext = {
 export type UnitKindConfig<K extends UnitKindKey> = {
   key: K;
   section: UnitSectionKey;
-  /** Key of the kind's list in a warband update ("heroes", "henchmenGroups", "hiredSwords"). */
+  /** Key of the kind's list in a warband update ("heroes", "henchmenGroups", "hirelings"). */
   listKey: UnitListKey;
-  /** Key of the kind's list in the sheet ("heroes", "henchmen_groups", "hired_swords"). */
+  /** Key of the kind's list in the sheet ("heroes", "henchmen_groups", "hirelings"). */
   collection: UnitCollectionKey;
   labels: UnitKindLabels;
-  /** Card shell class: warband-card--hero / --henchmen / --hired-sword. */
+  /** Card shell class: warband-card--hero / --henchmen / --hireling. */
   cardClassName: string;
   /** Wrapper class around the summary card's loadout ("mt-auto"; heroes have none). */
   summaryLoadoutClassName?: string;

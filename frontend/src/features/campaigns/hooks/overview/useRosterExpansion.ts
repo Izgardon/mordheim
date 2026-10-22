@@ -21,7 +21,7 @@ export function toRosterUnits(stats: WarbandRosterStats): RosterUnit[] {
   return [
     ...stats.heroes.map(toRosterUnit("hero", "Heroes")),
     ...stats.henchmen_groups.map(toRosterUnit("henchmen", "Henchmen")),
-    ...stats.hired_swords.map(toRosterUnit("hs", "Hired Swords")),
+    ...stats.hirelings.map(toRosterUnit("hireling", "Hired Swords")),
   ];
 }
 

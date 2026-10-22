@@ -7,17 +7,17 @@ import type { Race } from "@/features/races/types/race-types";
 import type { Skill } from "@/features/skills/types/skill-types";
 import type { Special } from "@/features/special/types/special-types";
 import type { Spell } from "@/features/spells/types/spell-types";
-import type { HeroCaster, NewHiredSwordForm } from "../../../../types/warband-types";
+import type { HeroCaster, NewHirelingForm } from "../../../../types/warband-types";
 
 type HiredSwordProfile = Awaited<ReturnType<typeof getHiredSwordProfile>>;
 
 /** The add form filled from a hired-sword profile; its race is matched by name. */
-export function presetToNewHiredSwordForm(profile: HiredSwordProfile, races: Race[]) {
+export function presetToNewHirelingForm(profile: HiredSwordProfile, races: Race[]) {
   const entry = profile.bestiary_entry;
   const matchedRace = profile.race
     ? (races.find((r) => r.name.toLowerCase() === profile.race.toLowerCase()) ?? null)
     : null;
-  const form: NewHiredSwordForm = {
+  const form: NewHirelingForm = {
     name: entry.name,
     unit_type: entry.name,
     race_id: matchedRace?.id ?? null,

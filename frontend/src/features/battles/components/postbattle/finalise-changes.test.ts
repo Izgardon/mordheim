@@ -18,7 +18,7 @@ const sheet = {
   warband: { id: ME.warband.id, name: ME.warband.name, gold: 50 },
   summary: {},
   heroes: [{ id: 1, xp: 7, half_rate: true }],
-  hired_swords: [{ id: 4, xp: 1, half_rate: false, no_level_ups: true }],
+  hirelings: [{ id: 4, xp: 1, half_rate: false, no_level_ups: true }],
   henchmen_groups: [
     { id: 11, name: "Youngbloods", xp: 4, half_rate: false, henchmen: [{ id: 2 }] },
   ],

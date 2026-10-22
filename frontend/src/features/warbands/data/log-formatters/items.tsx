@@ -2,7 +2,7 @@ import { payloadOf, renderGoldBadge, type LogFormatter } from "./badges";
 
 import type { WarbandLog } from "../../types/warband-types";
 
-/** Where copies were: `stash`, `hero`, `hired_sword` or `henchmen_group`, with the unit's name. */
+/** Where copies were: `stash`, `hero`, `hireling` or `henchmen_group`, with the unit's name. */
 type Place = { type?: string; name?: string | null };
 
 type ItemCopies = { item?: string; quantity?: number };
@@ -22,7 +22,7 @@ type TradeCompletedPayload = { partner?: string; sent?: TradeSide; received?: Tr
 
 const UNNAMED: Record<string, string> = {
   hero: "a hero",
-  hired_sword: "a hired sword",
+  hireling: "a hired sword",
   henchmen_group: "a henchmen group",
 };
 
