@@ -150,4 +150,21 @@ describe("pages outside the gate", () => {
     expect(app.location().pathname).toBe("/reset-password");
     expect(fakeApi.calls()).toEqual(["GET /auth/me/"]);
   });
+
+  it("after a reset by a signed-in user, Sign in stays on the sign-in card instead of sending them on with a dead session", async () => {
+    storeSession();
+    fakeApi.on("POST /auth/password-reset-confirm/", { detail: "Password has been reset." });
+    const user = setupUser();
+    const app = renderApp("/reset-password#uid=MQ&token=abc");
+    await user.type(await screen.findByLabelText("New password"), "wyrdstone-42");
+    await user.type(screen.getByLabelText("Confirm password"), "wyrdstone-42");
+    await user.click(screen.getByRole("button", { name: "Reset password" }));
+
+    await user.click(await screen.findByRole("link", { name: "Sign in" }));
+
+    await landing();
+    expect(app.location()).toMatchObject({ pathname: "/", state: null });
+    expect(screen.queryByText(SESSION_ENDED)).toBeNull();
+    expect(fakeApi.countOf("GET /campaigns/")).toBe(0);
+  });
 });

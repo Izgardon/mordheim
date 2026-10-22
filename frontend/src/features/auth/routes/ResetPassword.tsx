@@ -11,6 +11,7 @@ import { getErrorMessage } from "@/lib/get-error-message";
 
 import AuthShell from "../components/AuthShell";
 import { confirmPasswordReset } from "../api/auth-api";
+import { useAuth } from "../hooks/use-auth";
 
 const INCOMPLETE_LINK_MESSAGE =
   "This reset link is incomplete. Ask for a new one from the sign-in page.";
@@ -18,6 +19,7 @@ const INCOMPLETE_LINK_MESSAGE =
 export default function ResetPassword() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { token: sessionToken, signOut } = useAuth();
   // The email's link carries uid and token in the fragment (#uid=…&token=…), which no server
   // log or Referer sees (SEC-12). Read once, then dropped from the address bar.
   const [{ uid, token }] = useState(() => {
@@ -58,6 +60,10 @@ export default function ResetPassword() {
       await confirmPasswordReset({ uid, token, new_password: newPassword });
       // The link is used up: the form goes, so it can't be sent again (AUTH-UX-05).
       setIsDone(true);
+      // A reset ends every session on the server, this device's included: drop it here too.
+      if (sessionToken) {
+        signOut();
+      }
     } catch (errorResponse) {
       setError(getErrorMessage(errorResponse, "Unable to reset password."));
     } finally {

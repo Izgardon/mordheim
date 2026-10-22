@@ -6,8 +6,11 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { AuthProvider } from "@/features/auth/stores/auth-store";
 import { ApiError } from "@/lib/api-client";
+import { RAIDER, storeSession } from "@/test/auth-fixtures";
 import { fakeApi } from "@/test/fake-api";
+import { createQueryWrapper } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
 import ResetPassword from "./ResetPassword";
 
@@ -15,6 +18,7 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
 }));
+vi.mock("@/lib/realtime/client", () => ({ disconnectRealtime: vi.fn() }));
 const media = vi.hoisted(() => ({ mobile: false }));
 vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => media.mobile }));
 
@@ -29,13 +33,16 @@ function AddressBar() {
 
 function renderReset(path = LINK) {
   return render(
-    <MemoryRouter initialEntries={[path]}>
-      <Routes>
-        <Route path="/" element={<p>Landing page</p>} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-      </Routes>
-      <AddressBar />
-    </MemoryRouter>
+    <AuthProvider>
+      <MemoryRouter initialEntries={[path]}>
+        <Routes>
+          <Route path="/" element={<p>Landing page</p>} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+        </Routes>
+        <AddressBar />
+      </MemoryRouter>
+    </AuthProvider>,
+    { wrapper: createQueryWrapper() }
   );
 }
 
@@ -44,6 +51,7 @@ const confirmPassword = () => screen.getByLabelText("Confirm password");
 const resetButton = () => screen.getByRole("button", { name: "Reset password" });
 
 beforeEach(() => {
+  localStorage.clear();
   fakeApi.reset();
   media.mobile = false;
 });
@@ -97,6 +105,37 @@ describe("ResetPassword (AUTH-TEST-27)", () => {
 
     expect(screen.getByText("Landing page")).toBeInTheDocument();
     expect(fakeApi.countOf("POST /auth/password-reset-confirm/")).toBe(1);
+  });
+
+  it("signs this device out after a reset, since the server has ended every session, so Sign in starts afresh", async () => {
+    const user = setupUser();
+    storeSession();
+    fakeApi.on("GET /auth/me/", RAIDER);
+    fakeApi.on("POST /auth/password-reset-confirm/", { detail: RESET_DONE });
+    renderReset();
+    await user.type(newPassword(), "wyrdstone-42");
+    await user.type(confirmPassword(), "wyrdstone-42");
+    await user.click(resetButton());
+
+    expect(await screen.findByText("Password updated")).toBeInTheDocument();
+    expect(localStorage.length).toBe(0);
+  });
+
+  it("keeps the session when the reset is refused", async () => {
+    const user = setupUser();
+    const tokens = storeSession();
+    fakeApi.on("GET /auth/me/", RAIDER);
+    fakeApi.fail(
+      "POST /auth/password-reset-confirm/",
+      new ApiError("Invalid or expired token.", 400, { detail: "Invalid or expired token." })
+    );
+    renderReset();
+    await user.type(newPassword(), "wyrdstone-42");
+    await user.type(confirmPassword(), "wyrdstone-42");
+    await user.click(resetButton());
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Invalid or expired token.");
+    expect(localStorage.getItem("mordheim_token")).toBe(tokens.access);
   });
 
   it("says a link missing its token is incomplete, before anything is typed, and disables Reset password (AUTH-UX-05, AUTH-TEST-27)", () => {
