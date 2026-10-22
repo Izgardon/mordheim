@@ -4,10 +4,11 @@ import socket
 import requests
 from django.conf import settings
 from django.test import SimpleTestCase
+from rest_framework.test import APIClient
 
 from apps.realtime.services import get_pusher_client
 from apps.users.emails import send_password_reset_email
-from config.test_runner import EXTERNAL_SERVICE_SETTINGS, ExternalNetworkCallError
+from config.test_runner import EXTERNAL_SERVICE_SETTINGS, TEST_SESSION_ENGINE, ExternalNetworkCallError
 
 
 class NetworkSafetyNetTests(SimpleTestCase):
@@ -40,3 +41,9 @@ class NetworkSafetyNetTests(SimpleTestCase):
                 sock.connect(("93.184.216.34", 443))
         finally:
             sock.close()
+
+    def test_the_test_client_logs_out_without_a_sessions_table(self):
+        # INFRA-CQ-03: the sessions app isn't installed, and DRF's force_authenticate(user=None) logs out through a
+        # session, so the run uses the signed-cookie engine (a SimpleTestCase would refuse a query)
+        self.assertEqual(settings.SESSION_ENGINE, TEST_SESSION_ENGINE)
+        APIClient().force_authenticate(user=None)

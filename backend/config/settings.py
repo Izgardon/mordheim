@@ -43,11 +43,11 @@ elif not DEBUG and len(SECRET_KEY) < SECRET_KEY_MIN_LENGTH:
 allowed_hosts = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,0.0.0.0,backend")
 ALLOWED_HOSTS = [host for host in allowed_hosts.split(",") if host]
 
+# A bearer-token API: no sessions, messages or CSRF cookie (INFRA-CQ-03). staticfiles serves the browsable API's CSS
+# and JS locally.
 INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
@@ -76,11 +76,9 @@ MIDDLEWARE = [
     # Content ETags + 304s for unchanged GET responses (see apps.core.middleware).
     "django.middleware.http.ConditionalGetMiddleware",
     "apps.core.middleware.ApiRevalidateMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
+    # No session, CSRF, authentication or message middleware: DRF authenticates each request from its bearer token,
+    # and every view is a DRF view, which is exempt from CSRF (INFRA-CQ-03)
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
@@ -96,7 +94,6 @@ TEMPLATES = [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
             ],
         },
     }
@@ -235,12 +232,14 @@ CORS_ALLOW_HEADERS = (*default_headers, "x-pusher-socket-id")
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_HSTS_SECONDS = int(os.environ.get("SECURE_HSTS_SECONDS", str(60 * 60 * 24 * 30)))
+    # No cookie is set today; these stay so a later one (an httpOnly refresh cookie, say) starts secure
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
 # Not applicable behind Render: onrender.com is a shared domain (no HSTS
 # subdomains/preload) and Render's proxy already redirects HTTP to HTTPS.
-SILENCED_SYSTEM_CHECKS = ["security.W005", "security.W008", "security.W021"]
+# W003 (no CsrfViewMiddleware): nothing authenticates by cookie, and every view is a DRF view, exempt from CSRF.
+SILENCED_SYSTEM_CHECKS = ["security.W003", "security.W005", "security.W008", "security.W021"]
 
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
 

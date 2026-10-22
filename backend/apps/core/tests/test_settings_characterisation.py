@@ -4,7 +4,8 @@ The fresh-process tests import `config.settings` (or run `check --deploy`) in a 
 switched off, so a local `.env` can't fill what a test leaves unset. `test_settings_guards.py` keeps Phase 0's
 guards: DEBUG off unless set, a missing or old default key refused, the dev fallback key. PR A refuses to start with
 DEBUG off and a key under 50 characters or without RATE_LIMIT_NUM_PROXIES, and, once RESEND_API_KEY is set, without
-real FRONTEND_URL and DEFAULT_FROM_EMAIL values; it adds LOGGING and renders JSON only in production.
+real FRONTEND_URL and DEFAULT_FROM_EMAIL values; it adds LOGGING and renders JSON only in production. PR B drops the
+unused sessions, messages and CSRF machinery.
 """
 
 import json
@@ -16,6 +17,9 @@ from typing import Any
 
 from django.conf import settings
 from django.test import SimpleTestCase
+from rest_framework.test import APIClient
+
+from apps.users.tests.auth_support import LOGIN, ME, PASSWORD, AuthTestCase
 
 BACKEND_DIR = Path(__file__).resolve().parents[3]
 UNSET = (
@@ -162,11 +166,13 @@ class ProductionStartupTests(SimpleTestCase):
 
 
 class DeployCheckTests(SimpleTestCase):
-    def test_check_deploy_reports_only_the_three_silenced_checks(self):
+    def test_check_deploy_reports_only_the_silenced_checks(self):
+        # INFRA-CQ-03 (was 3 silenced; PR B drops CsrfViewMiddleware, so W003 is the fourth: see LoadedSettingsTests).
+        # CI runs the same check with --fail-level WARNING
         result = run(CHECK_DEPLOY, DJANGO_DEBUG="0", DJANGO_SECRET_KEY=LONG_KEY)
 
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("System check identified no issues (3 silenced).", result.stdout)
+        self.assertIn("System check identified no issues (4 silenced).", result.stdout)
 
     def test_check_deploy_cannot_even_start_with_a_short_key(self):
         # SEC-01 rest (was pinned: check --deploy warned W009 about a key that startup accepted; flipped in PR A:
@@ -203,12 +209,28 @@ class LoadedSettingsTests(SimpleTestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout.splitlines(), ["ERROR django.request: Internal Server Error: /api/boom/", "WARNING apps.users.emails: a warning from the app"])  # fmt: skip
 
-    def test_the_unused_session_message_and_csrf_machinery_stays_loaded(self):
-        # Characterises current behaviour (INFRA-CQ-03, pinned; flips in PR B's settings hygiene)
-        self.assertTrue({"django.contrib.sessions", "django.contrib.messages"} <= set(settings.INSTALLED_APPS))
-        unused = {
+    def test_the_session_message_and_csrf_machinery_is_gone(self):
+        # INFRA-CQ-03 (was pinned: the unused sessions and messages apps stayed loaded with their middleware and CSRF's;
+        # flipped in PR B's settings hygiene). Authentication's middleware needs sessions, so it went too: DRF
+        # authenticates each request itself. Without CSRF's middleware, check --deploy's W003 is silenced
+        self.assertFalse({"django.contrib.sessions", "django.contrib.messages"} & set(settings.INSTALLED_APPS))
+        gone = {
             "django.contrib.sessions.middleware.SessionMiddleware",
             "django.middleware.csrf.CsrfViewMiddleware",
+            "django.contrib.auth.middleware.AuthenticationMiddleware",
             "django.contrib.messages.middleware.MessageMiddleware",
         }
-        self.assertTrue(unused <= set(settings.MIDDLEWARE))
+        self.assertFalse(gone & set(settings.MIDDLEWARE))
+        self.assertIn("security.W003", settings.SILENCED_SYSTEM_CHECKS)
+
+
+class CookielessApiTests(AuthTestCase):
+    def test_a_csrf_enforcing_client_signs_in_and_reads_and_no_answer_sets_a_cookie(self):
+        # INFRA-CQ-03: bearer tokens only, so dropping the CSRF and session machinery changes no answer
+        client = APIClient(enforce_csrf_checks=True)
+
+        login = client.post(LOGIN, {"email": "pia@example.com", "password": PASSWORD}, format="json")
+        me = client.get(ME, HTTP_AUTHORIZATION=f"Bearer {login.json()['access']}")
+
+        self.assertEqual((login.status_code, me.status_code), (200, 200))
+        self.assertEqual((dict(login.cookies), dict(me.cookies)), ({}, {}))
