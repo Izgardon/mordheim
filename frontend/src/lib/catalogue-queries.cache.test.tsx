@@ -1,8 +1,9 @@
 /**
  * How long a catalogue list lives on the pages, with the app's own cache rules
- * (`createQueryClient` and the catalogue's 5-minute stale time): another member's new entry stays
- * out of sight until the stale time passes, since nothing on the socket tells the page (BUG-80),
- * while your own write goes into the cached list at once and the list is then read again.
+ * (`createQueryClient` and the catalogue's 5-minute stale time): another member's write reaches
+ * the page as `catalogue.changed {kind}` on the campaign's events channel, which reads that kind's
+ * list again (BUG-80); your own write goes into the cached list at once and the list is then read
+ * again.
  */
 import { act, cleanup, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -41,6 +42,12 @@ vi.mock("@/features/realtime/components/CampaignDiceRollerMenu", () => ({ defaul
 /** Another member's skill, saved after you opened the page. */
 const dirtyFighting = skill({ id: 905, campaign_id: 1, name: "Dirty Fighting", type: "Combat" });
 
+const EVENTS = "private-campaign-1-events";
+
+/** Another member's catalogue write, as the server announces it to everyone else. */
+const catalogueChanged = (kind: string) =>
+  act(() => fakeRealtime.emit(EVENTS, "catalogue.changed", { kind }));
+
 /** Gives a late request the chance to start before counting. */
 const settle = () => act(() => new Promise((resolve) => setTimeout(resolve, 50)));
 
@@ -75,21 +82,53 @@ afterEach(() => {
 });
 
 describe("catalogue cache: other members' writes", () => {
-  // Characterises current behaviour (BUG-80, pinned; flips in PR C)
-  it("keeps another member's new skill out of sight on a revisit within 5 minutes, with no request (BUG-80, pinned; flips in PR C)", async () => {
-    const user = setupUser();
+  it("shows another member's new skill as soon as catalogue.changed {skills} arrives, reading only that list (BUG-80)", async () => {
     await openSkills();
+    await waitFor(() => expect(fakeRealtime.subscriberCount(EVENTS, "catalogue.changed")).toBe(1));
     fakeApi.on(LIST.skills, [dirtyFighting, ...SKILLS]);
     fakeApi.clearRequests();
 
-    await revisitSkills(user);
+    await catalogueChanged("skills");
 
-    expect(fakeApi.countOf(LIST.skills)).toBe(0);
-    expect(screen.queryByText("Dirty Fighting")).toBeNull();
+    expect(await screen.findByRole("row", { name: /^Dirty Fighting/ })).toBeVisible();
+    await settle();
+    expect(fakeApi.calls()).toEqual([LIST.skills]);
   });
 
-  // Characterises current behaviour (BUG-80, pinned; flips in PR C)
-  it("reads nothing again when the window regains focus within those 5 minutes, and reads it after (BUG-80, pinned; flips in PR C)", async () => {
+  it("marks a list nobody is watching stale, so the next visit reads it; hired_swords is the Hired Swords list (BUG-80)", async () => {
+    const user = setupUser();
+    await openSkills();
+    await waitFor(() => expect(fakeRealtime.subscriberCount(EVENTS, "catalogue.changed")).toBe(1));
+    // Spells and Hired Swords were read once already (a visit), then left.
+    await queryClient.prefetchQuery({
+      queryKey: ["campaign", 1, "catalogue", "hired-swords"],
+      queryFn: () => [],
+    });
+    await user.click(screen.getByRole("link", { name: "Spells" }));
+    await screen.findByRole("row", { name: /^Gutter Hex/ });
+    await user.click(screen.getByRole("link", { name: "Skills" }));
+    await screen.findByRole("row", { name: /^Quick Hands/ });
+    fakeApi.clearRequests();
+
+    await catalogueChanged("spells");
+    await catalogueChanged("hired_swords");
+    await settle();
+
+    expect(fakeApi.calls()).toEqual([]);
+    expect(queryClient.getQueryState(["campaign", 1, "catalogue", "spells"])?.isInvalidated).toBe(
+      true
+    );
+    expect(
+      queryClient.getQueryState(["campaign", 1, "catalogue", "hired-swords"])?.isInvalidated
+    ).toBe(true);
+    expect(queryClient.getQueryState(["campaign", 1, "catalogue", "skills"])?.isInvalidated).toBe(
+      false
+    );
+    await user.click(screen.getByRole("link", { name: "Spells" }));
+    await waitFor(() => expect(fakeApi.countOf(LIST.spells)).toBe(1));
+  });
+
+  it("reads nothing again when the window regains focus within those 5 minutes (the socket says when a list changed), and reads it after", async () => {
     await openSkills();
     fakeApi.on(LIST.skills, [dirtyFighting, ...SKILLS]);
     fakeApi.clearRequests();
@@ -123,18 +162,15 @@ describe("catalogue cache: other members' writes", () => {
     expect(await screen.findByRole("row", { name: /^Dirty Fighting/ })).toBeVisible();
   });
 
-  // Characterises current behaviour (BUG-80, pinned; flips in PR C). Pass 4's campaign events
-  // channel is open, but nothing on it touches the catalogue lists yet.
-  it("adds no socket subscription on a catalogue page: the shell's chat, notifications and campaign events only (BUG-80, pinned; flips in PR C)", async () => {
+  it("listens for catalogue.changed on the campaign's events channel the shell already opens: no channel of its own (BUG-80)", async () => {
     await openSkills();
 
-    await waitFor(() =>
-      expect(fakeRealtime.channels()).toEqual([
-        "private-campaign-1-chat",
-        "private-campaign-1-events",
-        `private-user-${OWNER.id}-notifications`,
-      ])
-    );
+    await waitFor(() => expect(fakeRealtime.subscriberCount(EVENTS, "catalogue.changed")).toBe(1));
+    expect(fakeRealtime.channels()).toEqual([
+      "private-campaign-1-chat",
+      EVENTS,
+      `private-user-${OWNER.id}-notifications`,
+    ]);
   });
 });
 

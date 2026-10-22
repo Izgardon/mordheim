@@ -50,9 +50,12 @@ export const fakeRealtime = {
     [...restoredListeners].forEach((listener) => listener());
   },
 
-  /** How many subscribers listen to `channel`. */
-  subscriberCount: (channel: string) =>
-    [...subscriptions].filter((subscription) => subscription.channel === channel).length,
+  /** How many subscribers listen to `channel` (to its `event` only, when given). */
+  subscriberCount: (channel: string, event?: string) =>
+    [...subscriptions].filter(
+      (subscription) =>
+        subscription.channel === channel && (event === undefined || subscription.event === event)
+    ).length,
 
   /** Every channel something listens to, sorted. */
   channels: () =>
