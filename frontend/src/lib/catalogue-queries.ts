@@ -39,9 +39,16 @@ type CatalogueEntries = {
 
 export type CatalogueEntry<K extends CatalogueKind> = CatalogueEntries[K];
 
+/**
+ * A list beside a kind's default one, cached on its own under the kind's key: "creatures" is the
+ * Bestiary page's (the bestiary without its hired swords, PERF-47).
+ */
+export type CatalogueListVariant = "creatures";
+
 type Fetcher<K extends CatalogueKind> = (
   campaignId: number,
-  signal: AbortSignal
+  signal: AbortSignal,
+  variant?: CatalogueListVariant
 ) => Promise<CatalogueEntry<K>[]>;
 
 const fetchers: { [K in CatalogueKind]: Fetcher<K> } = {
@@ -51,9 +58,24 @@ const fetchers: { [K in CatalogueKind]: Fetcher<K> } = {
   spells: (campaignId, signal) => listSpells({ campaignId, signal }),
   specials: (campaignId, signal) => listSpecial({ campaignId, signal }),
   races: (campaignId, signal) => listRaces({ campaignId, signal }),
-  bestiary: (campaignId, signal) => listBestiaryEntries({ campaignId, signal }),
+  bestiary: (campaignId, signal, variant) =>
+    listBestiaryEntries({
+      campaignId,
+      signal,
+      excludeType: variant === "creatures" ? "Hired Sword" : undefined,
+    }),
   "hired-swords": (campaignId, signal) => listHiredSwordProfiles({ campaignId, signal }),
 };
+
+/** The key of one of a kind's lists: the default one, or a variant under it. */
+export const catalogueListKey = (
+  campaignId: number,
+  kind: CatalogueKind,
+  variant?: CatalogueListVariant
+) =>
+  variant
+    ? queryKeys.campaign.catalogueVariant(campaignId, kind, variant)
+    : queryKeys.campaign.catalogue(campaignId, kind);
 
 // The wording the pages showed before the move to TanStack Query.
 const errorLabels: Record<CatalogueKind, string> = {
@@ -75,18 +97,20 @@ function isCampaignId(campaignId: number | null | undefined): campaignId is numb
 
 type UseCatalogueOptions = {
   enabled?: boolean;
+  /** Another list of the kind than the default one. */
+  variant?: CatalogueListVariant;
 };
 
 /** One campaign catalogue list, shared and cached across every component that needs it. */
 export function useCatalogue<K extends CatalogueKind>(
   kind: K,
   campaignId: number | null | undefined,
-  { enabled = true }: UseCatalogueOptions = {}
+  { enabled = true, variant }: UseCatalogueOptions = {}
 ) {
   const hasCampaign = isCampaignId(campaignId);
   const query = useQuery({
-    queryKey: queryKeys.campaign.catalogue(hasCampaign ? campaignId : 0, kind),
-    queryFn: ({ signal }) => (fetchers[kind] as Fetcher<K>)(campaignId as number, signal),
+    queryKey: catalogueListKey(hasCampaign ? campaignId : 0, kind, variant),
+    queryFn: ({ signal }) => (fetchers[kind] as Fetcher<K>)(campaignId as number, signal, variant),
     staleTime: CATALOGUE_STALE_TIME_MS,
     enabled: hasCampaign && enabled,
   });

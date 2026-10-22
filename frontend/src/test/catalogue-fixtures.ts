@@ -23,7 +23,10 @@ export const LIST = {
   skills: `GET /skills/?campaign_id=${CAMPAIGN_ID}`,
   spells: `GET /spells/?campaign_id=${CAMPAIGN_ID}`,
   specials: `GET /special/?campaign_id=${CAMPAIGN_ID}`,
+  /** Every entry, hired swords' included (the prebattle Bestiary picker). */
   bestiary: `GET /bestiary/?campaign_id=${CAMPAIGN_ID}`,
+  /** The Bestiary page's: the server leaves the hired swords out (PERF-47). */
+  creatures: `GET /bestiary/?campaign_id=${CAMPAIGN_ID}&exclude_type=Hired+Sword`,
   hiredSwords: `GET /hired-swords/?campaign_id=${CAMPAIGN_ID}`,
 } as const;
 
@@ -221,7 +224,7 @@ export const sewerRat = bestiaryEntry({
   description: "Bites ankles.",
 });
 export const warhorse = bestiaryEntry({ id: 6, name: "Warhorse", type: "Mount" });
-/** The bestiary list also returns every hired sword's entry; the page drops them (PERF-47). */
+/** The full bestiary list also returns every hired sword's entry; the page's list doesn't (PERF-47). */
 export const ogreEntry = bestiaryEntry({
   id: 31,
   name: "Ogre Bodyguard",
@@ -302,6 +305,10 @@ export function routeCatalogue() {
   fakeApi.on(LIST.spells, SPELLS);
   fakeApi.on(LIST.specials, SPECIALS);
   fakeApi.on(LIST.bestiary, BESTIARY);
+  fakeApi.on(
+    LIST.creatures,
+    BESTIARY.filter((entry) => entry.type !== "Hired Sword")
+  );
   fakeApi.on(LIST.hiredSwords, HIRED_SWORDS);
   fakeApi.on(FAVOURITES, []);
 }

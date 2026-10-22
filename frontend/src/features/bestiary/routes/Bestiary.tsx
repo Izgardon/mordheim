@@ -41,11 +41,12 @@ export default function Bestiary() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const { warband } = useAppStore();
 
-  const { data: allEntries, isLoading, error } = useCatalogue("bestiary", campaignId);
-  const entries = useMemo(
-    () => allEntries.filter((e) => e.type.toLowerCase() !== "hired sword"),
-    [allEntries]
-  );
+  // The server leaves the hired swords out (PERF-47); their page lists them.
+  const {
+    data: entries,
+    isLoading,
+    error,
+  } = useCatalogue("bestiary", campaignId, { variant: "creatures" });
   const favourites = useBestiaryFavourites(warband?.id);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState(ALL_TYPES);
@@ -75,7 +76,7 @@ export default function Bestiary() {
           e.description.toLowerCase().includes(q)
       );
     }
-    return result.sort((a, b) => a.name.localeCompare(b.name));
+    return [...result].sort((a, b) => a.name.localeCompare(b.name));
   }, [entries, selectedType, searchQuery]);
 
   const pages = usePagedList(

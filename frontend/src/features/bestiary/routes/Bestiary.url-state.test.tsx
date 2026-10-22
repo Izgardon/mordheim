@@ -82,7 +82,10 @@ describe("Bestiary: search, type filter and page", () => {
     const many = Array.from({ length: 13 }, (_, index) =>
       bestiaryEntry({ id: 600 + index, name: `Rat ${String(index + 1).padStart(2, "0")}` })
     );
-    fakeApi.on(LIST.bestiary, [...many, bestiaryEntry({ id: 6, name: "Warhorse", type: "Mount" })]);
+    fakeApi.on(LIST.creatures, [
+      ...many,
+      bestiaryEntry({ id: 6, name: "Warhorse", type: "Mount" }),
+    ]);
     renderCatalogueRoute("/campaigns/1/bestiary");
     await screen.findByText("Rat 01");
     await user.type(searchBox(), "rat");
@@ -101,7 +104,7 @@ describe("Bestiary: search, type filter and page", () => {
     const many = Array.from({ length: 13 }, (_, index) =>
       bestiaryEntry({ id: 600 + index, name: `Rat ${String(index + 1).padStart(2, "0")}` })
     );
-    fakeApi.on(LIST.bestiary, many);
+    fakeApi.on(LIST.creatures, many);
     fakeApi.on("GET /bestiary/612/", bestiaryDetail(many[12]));
     renderCatalogueRoute("/campaigns/1/bestiary");
     await screen.findByText("Rat 01");
@@ -138,7 +141,7 @@ describe("Bestiary: search, type filter and page", () => {
     await user.click(screen.getByRole("button", { name: "Back" }));
 
     expect(await screen.findByText("Warhorse")).toBeVisible();
-    expect(fakeApi.countOf(LIST.bestiary)).toBe(0);
+    expect(fakeApi.countOf(LIST.creatures)).toBe(0);
   });
 });
 

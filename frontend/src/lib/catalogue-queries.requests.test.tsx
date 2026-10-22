@@ -1,8 +1,8 @@
 /**
  * Requests the catalogue pages send, with the app's own cache rules (`createQueryClient` and the
  * catalogue's 5-minute stale time): each page's cold load, a tour of all five, and the warband
- * dialogs and the bestiary's Add dialog reading the lists the pages cached. The Bestiary asks for
- * every entry and drops the hired swords' (PERF-47; PR B adds `?exclude_type=`).
+ * dialogs and the bestiary's Add dialog reading the lists the pages cached. The Bestiary asks the
+ * server to leave the hired swords out (`?exclude_type=Hired Sword`, PERF-47).
  */
 import { act, cleanup, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -97,11 +97,13 @@ describe("catalogue pages: cold loads", () => {
     expect(sorted(fakeApi.calls())).toEqual(sorted([...SHELL, LIST.spells]));
   });
 
-  // Characterises current behaviour (PERF-47, pinned; flips in PR B)
-  it("Bestiary: the shell, every entry and your favourites; the hired swords' entries are read and dropped (PERF-47, pinned; flips in PR B)", async () => {
+  it("Bestiary: the shell, the bestiary without its hired swords (?exclude_type=Hired Sword, with descriptions) and your favourites (PERF-47)", async () => {
     await open("Bestiary");
 
-    expect(sorted(fakeApi.calls())).toEqual(sorted([...SHELL, LIST.bestiary, FAVOURITES]));
+    expect(sorted(fakeApi.calls())).toEqual(sorted([...SHELL, LIST.creatures, FAVOURITES]));
+    expect(fakeApi.countOf(LIST.bestiary)).toBe(0);
+    // The default view: the cards keep their descriptions (and search reads them).
+    expect(screen.getByText("Bites ankles.")).toBeVisible();
     expect(screen.getByText("Warhorse")).toBeVisible();
     expect(screen.queryByText("Pit Fighter")).toBeNull();
     expect(screen.queryByText("Ogre Bodyguard")).toBeNull();
@@ -126,10 +128,13 @@ describe("catalogue pages: the shared 5-minute cache", () => {
       await visit(user, page);
     }
 
-    for (const list of Object.values(LIST).filter((list) => list !== LIST.specials)) {
+    // Every page's list once; the full bestiary (the prebattle picker's) and specials not at all.
+    const unread: string[] = [LIST.specials, LIST.bestiary];
+    for (const list of Object.values(LIST).filter((list) => !unread.includes(list))) {
       expect(fakeApi.countOf(list)).toBe(1);
     }
     expect(fakeApi.countOf(LIST.specials)).toBe(0);
+    expect(fakeApi.countOf(LIST.bestiary)).toBe(0);
   });
 
   it("lets the hero's New skill and New spell dialogs read the lists Skills and Spells cached", async () => {
