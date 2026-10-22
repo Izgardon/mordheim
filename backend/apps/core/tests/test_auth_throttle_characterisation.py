@@ -21,7 +21,7 @@ from django.test import override_settings
 from rest_framework.request import Request
 from rest_framework.test import APIRequestFactory
 
-from apps.core.throttling import AuthLoginMinuteIPRateThrottle, EmailRateThrottle, IPRateThrottle, UserOrIPRateThrottle
+from apps.core.throttling import THROTTLES, EmailRateThrottle, IPRateThrottle, UserOrIPRateThrottle
 from apps.core.views import HealthView, KeepAwakeView
 from apps.users import views
 from apps.users.tests.auth_support import (
@@ -139,7 +139,7 @@ class ThrottleIdentityTests(AuthTestCase):
         request = APIRequestFactory().post(LOGIN, REMOTE_ADDR="10.0.0.1")
         if forwarded:
             request.META["HTTP_X_FORWARDED_FOR"] = forwarded
-        key: str | None = AuthLoginMinuteIPRateThrottle().get_cache_key(Request(request), None)
+        key: str | None = THROTTLES["auth_login_minute"]().get_cache_key(Request(request), None)
         return key
 
     @override_settings(REST_FRAMEWORK=rest_framework(None))
