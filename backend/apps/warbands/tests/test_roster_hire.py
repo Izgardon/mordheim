@@ -163,7 +163,7 @@ class HireRuleTests(HireTestCase):
         self.assertEqual(small, 30)
 
 
-class HireKitBoundTests(HireTestCase):
+class HireEdgeCaseTests(HireTestCase):
     def test_a_kit_line_over_the_bound_hires_at_most_the_bound(self):
         # a row written before the bound (or by hand) can't flood the warband with item rows
         self.ogre.item_links.filter(item=self.axe).update(quantity=10_000)
@@ -171,3 +171,15 @@ class HireKitBoundTests(HireTestCase):
         body = self.hire().data
 
         self.assertEqual(sum(1 for item in body["items"] if item["id"] == self.axe.id), MAX_KIT_QUANTITY)
+
+    def test_a_version_reverted_since_hires_the_book_entry(self):
+        # a hire page read before the Revert still names the version; open battles' finds work the same way
+        version = HiredSword.objects.create(name="Ogre Bodyguard", campaign=self.campaign, replaces=self.ogre, hire_cost=95, **STATS)  # fmt: skip
+        self.client.force_authenticate(user=self.campaign_owner)
+        reverted = self.client.post(f"/api/hired-swords/{version.id}/revert/")
+        self.client.force_authenticate(user=self.player)
+
+        response = self.hire(entry_id=version.id)
+
+        self.assertEqual(reverted.status_code, 200, reverted.data)
+        self.assertEqual((response.status_code, response.data["price"]), (201, 80))

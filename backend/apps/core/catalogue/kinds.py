@@ -147,7 +147,8 @@ HIRELING_CATALOGUES: tuple[tuple[type[Model], UsageKey], ...] = (
 
 def _listed_by_hirelings(links: str, target: str) -> tuple[Holder, ...]:
     """The hired swords' and dramatis personae's links of one kind (`links`: "skill_links") holding `target`; a kit
-    lists an item once (its quantity says how many), so a moved item link meeting one merges into it."""
+    lists an item once (its quantity says how many), so a moved item link meeting one merges into it, quantities
+    added."""
     holders = []
     for model, counts_as in HIRELING_CATALOGUES:
         relation = model._meta.get_field(links)
@@ -158,6 +159,7 @@ def _listed_by_hirelings(links: str, target: str) -> tuple[Holder, ...]:
                 field=target,
                 campaign=f"{owner}__campaign_id",
                 unique=(f"{owner}_id",) if target == "item" else (),
+                adds="quantity" if target == "item" else None,  # a merged kit line keeps both quantities
                 counts_as=counts_as,
                 holder_id=f"{owner}_id",
             )
@@ -263,6 +265,7 @@ RACES = CatalogueKindSpec(
     named=True,
     versioned=True,
     filters={"search": NAME_AND_TYPE["search"]},
+    lists=("races", "hired_swords", "dramatis_personae"),  # their rows name their race
     holders=(
         *(
             Holder(

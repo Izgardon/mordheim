@@ -147,3 +147,16 @@ class HirelingCatalogueHolderTests(CatalogueTestCase):
         self.assertEqual((edited.status_code, reverted.status_code), (200, 200))
         self.assertEqual((moved, in_the_book.skill_links.get().skill_id), (edited.data["id"], book.id))
         self.assertEqual(mine.skill_links.get().skill_id, book.id)
+
+    def test_a_kit_line_meeting_another_on_a_revert_adds_its_quantity(self):
+        mine = HiredSword.objects.create(name="Duellist", campaign=self.campaign, **STATS)
+        mine.item_links.create(item=self.book_sword, quantity=1)
+        edited = self.patch_as(self.player, ITEMS.detail_url(self.book_sword.id), {"campaign_id": self.campaign.id, "description": "Sharp."})  # fmt: skip
+        mine.item_links.create(
+            item=self.book_sword, quantity=2
+        )  # the book's sword beside the version (written by hand)
+
+        reverted = self.post_as(self.player, f"{ITEMS.detail_url(edited.data['id'])}revert/")
+
+        self.assertEqual(reverted.status_code, 200)
+        self.assertEqual(list(mine.item_links.values_list("item_id", "quantity")), [(self.book_sword.id, 3)])

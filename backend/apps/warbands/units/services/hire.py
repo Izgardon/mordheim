@@ -18,7 +18,7 @@ from django.db import transaction
 from django.db.models import Exists, OuterRef, Prefetch, QuerySet
 from rest_framework.exceptions import NotFound
 
-from apps.core.catalogue.current import current_rows
+from apps.core.catalogue.current import current_rows, resolve
 from apps.core.models import CatalogueRemoval
 from apps.hirelings.models import MAX_KIT_QUANTITY, DramatisPersona, HiredSword, HirelingProfile
 from apps.hirelings.selectors import link_model
@@ -58,13 +58,14 @@ class Hired:
 
 
 def catalogue_entry(source: str, entry_id: int, campaign_id: int) -> Any:
-    """The campaign's current entry for the id (`removed` for the campaign or not) with its links: five queries.
-    Another campaign's entry, or an unknown id, is not found."""
+    """The campaign's current entry for the id (`removed` for the campaign or not) with its links: five queries; a
+    version reverted since stands for its book entry's current entry (one more query, only then). Another campaign's
+    entry, or an unknown id, is not found."""
     model, kind = SOURCES[source]
     removed = CatalogueRemoval.objects.filter(campaign_id=campaign_id, kind=kind, entry_id=OuterRef("pk"))
     links = [Prefetch(name, queryset=_ordered(model, name)) for name in ("skill_links", "special_links", "spell_links", "item_links")]  # fmt: skip
     rows = model._default_manager.annotate(removed=Exists(removed)).prefetch_related(*links)
-    entry = current_rows(rows, [entry_id], campaign_id).get(entry_id)
+    entry = resolve(rows, kind, [entry_id], campaign_id).get(entry_id)
     if entry is None:
         raise NotFound("Not found")
     return entry
