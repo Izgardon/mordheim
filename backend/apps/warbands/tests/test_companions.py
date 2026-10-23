@@ -166,6 +166,7 @@ class CompanionWarningTests(CompanionTestCase):
 
         self.assertEqual(first.data["warnings"][0]["code"], "group_mounts")
         self.assertEqual((first.data["warnings"][0]["mounts"], first.data["warnings"][0]["members"]), (1, 2))
+        self.assertIn("has 1 mount for 2 living members", first.data["warnings"][0]["message"])
         self.assertEqual(self.codes(second), [])
 
     def test_more_than_two_mounts_in_the_warband_warn(self):

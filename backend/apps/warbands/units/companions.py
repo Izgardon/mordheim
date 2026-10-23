@@ -124,6 +124,10 @@ def mount_bonuses_array(join_model: type[Model], parent_field: str) -> ArraySubq
     return ArraySubquery(rows.order_by("id").values(bonus=Coalesce("item__bestiary_entry__rating_bonus", Value(0))))
 
 
+def _count(number: int, noun: str) -> str:
+    return f"{number} {noun}" if number == 1 else f"{number} {noun}s"
+
+
 def companion_warnings(name: str, rows: Iterable[Any], riders: int | None, warband_mounts: int) -> list[Warning]:
     """Warnings for a unit's companions (`riders`: a group's living members; None for a hero or hired sword) and the
     warband's switched-on mounts. Warn, never block."""
@@ -133,7 +137,7 @@ def companion_warnings(name: str, rows: Iterable[Any], riders: int | None, warba
         message = f"{name} has {mounts} mounts switched on; a rider rides one."
         warnings.append({"code": "two_mounts", "message": message, "mounts": mounts})
     if riders is not None and mounts and mounts != riders:
-        message = f"{name} has {mounts} mounts for {riders} living members: one mount per member."
+        message = f"{name} has {_count(mounts, 'mount')} for {_count(riders, 'living member')}: one mount per member."
         warnings.append({"code": "group_mounts", "message": message, "mounts": mounts, "members": riders})
     if warband_mounts > MAX_WARBAND_MOUNTS:
         message = f"The warband has {warband_mounts} mounts; a Mordheim warband has at most {MAX_WARBAND_MOUNTS}."
