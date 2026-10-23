@@ -5,6 +5,8 @@ import type { BattleParticipant } from "@/features/battles/types/battle-types";
 import BattleUnitStatsAndItems from "@/features/battles/components/shared/BattleUnitStatsAndItems";
 import { getBattleCardThemeStyle } from "@/features/battles/components/shared/battle-card-theme";
 import PrebattleHenchmenGroupRow from "./PrebattleHenchmenGroupRow";
+import { PetChips, RiderMark } from "@/features/battles/components/shared/BattleCompanionParts";
+import { mountedStats } from "@/features/battles/utils/battle-companions";
 
 import type {
   ParticipantRoster,
@@ -94,11 +96,15 @@ export default function PrebattleParticipantRoster({
               disabled={!editable}
               onChange={() => onToggleUnitSelection(unit.key)}
             />
-            <div>
-              <p className="text-sm font-semibold text-foreground">{unit.displayName}</p>
+            <div className="space-y-1">
+              <p className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+                <RiderMark mount={unit.mount} />
+                {unit.displayName}
+              </p>
               <p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
                 {unit.unitType}
               </p>
+              <PetChips pets={unit.pets} />
               {unit.kind === "custom" ? (
                 <p className="mt-1 text-xs text-muted-foreground">Rating: {unit.rating ?? 0}</p>
               ) : null}
@@ -116,6 +122,7 @@ export default function PrebattleParticipantRoster({
             unitKey={unit.key}
             baseStats={unit.stats}
             override={override}
+            mounted={mountedStats(unit, override?.stats)}
             notes={getUnitNotes(unit.key)}
             editable={editable}
             isEditing={isEditing}

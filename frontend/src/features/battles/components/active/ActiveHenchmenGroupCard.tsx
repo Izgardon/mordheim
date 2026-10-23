@@ -11,6 +11,9 @@ import UnitStatsTable from "@/features/warbands/components/shared/unit_details/U
 import "@/features/warbands/styles/warband.css";
 import { getBattleCardThemeStyle } from "@/features/battles/components/shared/battle-card-theme";
 import { getErrorMessage } from "@/lib/get-error-message";
+import CreatureMark from "@/features/warbands/components/units/beasts/CreatureMark";
+import { PetChips } from "@/features/battles/components/shared/BattleCompanionParts";
+import { groupMountedStats } from "@/features/battles/utils/battle-companions";
 
 import ActiveHenchmanRow from "./ActiveHenchmanRow";
 import ActiveKillDialog from "./ActiveKillDialog";
@@ -21,6 +24,8 @@ import { getEffectiveUnitStats, type ActiveBattleUnitOption } from "./active-uti
 type ActiveHenchmenGroupCardProps = {
   groupName: string;
   groupType: string;
+  /** A group recruited from a creature carries the creature mark. */
+  beastKind?: "mount" | "pet" | "creature" | null;
   members: PrebattleUnit[];
   canInteract: boolean;
   unitInformationByKey: Record<string, BattleUnitInformationEntry>;
@@ -47,6 +52,7 @@ type ActiveHenchmenGroupCardProps = {
 export default function ActiveHenchmenGroupCard({
   groupName,
   groupType,
+  beastKind,
   members,
   canInteract,
   unitInformationByKey,
@@ -114,18 +120,23 @@ export default function ActiveHenchmenGroupCard({
       <div className="p-3">
         <div className="grid grid-cols-1 gap-2 md:grid-cols-[minmax(0,13rem)_minmax(0,1fr)] md:items-start">
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-foreground">{groupName}</p>
+            <div className="flex min-w-0 items-center gap-1.5">
+              {beastKind === "creature" ? <CreatureMark /> : null}
+              <p className="truncate text-sm font-semibold text-foreground">{groupName}</p>
+            </div>
             <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
               {groupType}
             </p>
             <p className="mt-1 text-[0.58rem] uppercase tracking-[0.16em] text-muted-foreground">
               {members.length} {members.length === 1 ? "fighter" : "fighters"}
             </p>
+            <PetChips pets={members[0]?.pets} />
           </div>
 
           <div className="battle-stats-shell w-full md:max-w-[30rem] md:justify-self-end">
             <UnitStatsTable
               stats={detailStats}
+              mounted={groupMountedStats(members, detailUnitInfo?.stats_override)}
               variant="summary"
               wrapperClassName="w-full max-w-none"
             />

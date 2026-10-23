@@ -17,6 +17,8 @@ import type {
 import { DEFAULT_STATS, STAT_FIELDS } from "../prebattle/prebattle-types";
 import { parseSpreadsheetValues } from "./battle-stat-inputs";
 
+import type { EffectiveStats } from "@/features/warbands/types/companion-types";
+
 type BattleUnitStatsAndItemsProps = {
   unitKey: string;
   baseStats: UnitStats;
@@ -37,6 +39,8 @@ type BattleUnitStatsAndItemsProps = {
   activeItemActionKey: string | null;
   showItemSection?: boolean;
   constrainStatsToHalfWidth?: boolean;
+  /** A rider's mounted M and save, highlighted (display only; a stat change wins). */
+  mounted?: EffectiveStats | null;
 };
 
 export default function BattleUnitStatsAndItems({
@@ -59,6 +63,7 @@ export default function BattleUnitStatsAndItems({
   activeItemActionKey,
   showItemSection = true,
   constrainStatsToHalfWidth = false,
+  mounted,
 }: BattleUnitStatsAndItemsProps) {
   const hasOverride = Boolean(override && Object.keys(override.stats).length > 0);
   const trimmedNotes = notes.trim();
@@ -151,6 +156,7 @@ export default function BattleUnitStatsAndItems({
 
         <UnitStatsTable
           stats={displayedStats}
+          mounted={mounted}
           variant="summary"
           wrapperClassName="w-full max-w-none p-0"
         />

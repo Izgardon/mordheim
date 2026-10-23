@@ -118,6 +118,7 @@ export default function ActiveParticipantRoster({
                     key={group.id}
                     groupName={group.name}
                     groupType={group.unitType}
+                    beastKind={group.beastKind}
                     members={group.members}
                     canInteract={canInteract}
                     unitInformationByKey={unitInformationByKey}

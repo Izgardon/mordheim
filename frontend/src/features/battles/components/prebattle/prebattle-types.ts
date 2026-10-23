@@ -1,3 +1,5 @@
+import type { BattleRosterCompanionFields } from "@/features/battles/types/battle-types";
+
 export type NumericStatKey =
   | "movement"
   | "weapon_skill"
@@ -36,7 +38,7 @@ export type UnitItemEntry = UnitDetailEntry & {
   singleUse: boolean;
 };
 
-export type PrebattleUnit = {
+export type PrebattleUnit = BattleRosterCompanionFields & {
   key: string;
   id: number | string;
   kind: "hero" | "hireling" | "henchman" | "custom" | "bestiary";
@@ -63,6 +65,9 @@ export type HenchmenGroupRoster = {
   id: number;
   name: string;
   unitType: string;
+  /** A group recruited from a creature: its beast (null otherwise). */
+  sourceBeastId?: number | null;
+  beastKind?: "mount" | "pet" | "creature" | null;
   members: PrebattleUnit[];
 };
 

@@ -1,6 +1,9 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import BattleUnitStatsAndItems from "@/features/battles/components/shared/BattleUnitStatsAndItems";
 import { getBattleCardThemeStyle } from "@/features/battles/components/shared/battle-card-theme";
+import CreatureMark from "@/features/warbands/components/units/beasts/CreatureMark";
+import { PetChips, RiderMark } from "@/features/battles/components/shared/BattleCompanionParts";
+import { groupMountedStats } from "@/features/battles/utils/battle-companions";
 
 import type {
   HenchmenGroupRoster,
@@ -84,11 +87,15 @@ export default function PrebattleHenchmenGroupRow({
   return (
     <div className="battle-card p-4" style={getBattleCardThemeStyle("henchmen_group")}>
       <div className="flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <p className="text-sm font-semibold text-foreground">{group.name}</p>
+        <div className="space-y-1">
+          <p className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+            {group.beastKind === "creature" ? <CreatureMark /> : null}
+            {group.name}
+          </p>
           <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
             {group.unitType} {selectedCount}/{group.members.length}
           </p>
+          <PetChips pets={group.members[0].pets} />
         </div>
       </div>
 
@@ -103,6 +110,7 @@ export default function PrebattleHenchmenGroupRow({
               disabled={!editable}
               onChange={() => onToggleUnitSelection(member.key)}
             />
+            <RiderMark mount={member.mount} />
             <span className="text-xs text-foreground">{member.displayName}</span>
           </label>
         ))}
@@ -113,6 +121,7 @@ export default function PrebattleHenchmenGroupRow({
           unitKey={groupEditKey}
           baseStats={group.members[0].stats}
           override={groupOverride}
+          mounted={groupMountedStats(selectedMembers, groupOverride?.stats)}
           notes={groupNotes}
           editable={editable}
           isEditing={isEditing}

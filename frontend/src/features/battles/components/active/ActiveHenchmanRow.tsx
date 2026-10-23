@@ -9,6 +9,7 @@ import {
   DANGER_ACTION_BUTTON_CLASS,
 } from "./ActiveUnitControls";
 import { getCurrentUnitWounds } from "./active-utils";
+import { RiderMark } from "@/features/battles/components/shared/BattleCompanionParts";
 
 /** One henchman in his group's card: wounds, out of action (and back), and kills. */
 export default function ActiveHenchmanRow({
@@ -40,6 +41,7 @@ export default function ActiveHenchmanRow({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
+            <RiderMark mount={member.mount} />
             <p
               className={`truncate text-sm font-medium ${
                 outOfAction ? "text-muted-foreground/80" : "text-foreground"

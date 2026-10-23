@@ -432,7 +432,32 @@ export type BattleRosterSpellEntry = BattleRosterDetailEntry & {
   dc?: string | number | null;
 };
 
-export type BattleRosterUnit = {
+/** A mount or pet on a battle roster (camelCase like the roster; the stats stay snake_case). */
+export type BattleRosterCompanion = {
+  itemId: number;
+  name: string;
+  hasProfile: boolean;
+  stats: BattleUnitStats | null;
+};
+
+/** The rider's mount: its M (null without a profile) and what it adds to the rating. */
+export type BattleRosterMount = BattleRosterCompanion & {
+  movement: number | null;
+  ratingBonus: number;
+};
+
+/**
+ * A unit's companions as its roster entry carries them (the bestiary rewrite, step 4): a group's
+ * members ride its mounts one each, and every member lists its pets. `effectiveStats`: a mounted
+ * unit's M and save, for display only (null on foot).
+ */
+export type BattleRosterCompanionFields = {
+  mount?: BattleRosterMount | null;
+  pets?: BattleRosterCompanion[];
+  effectiveStats?: { movement: number | null; armour_save: number | null } | null;
+};
+
+export type BattleRosterUnit = BattleRosterCompanionFields & {
   key: string;
   id: number;
   kind: "hero" | "hireling" | "henchman";
@@ -458,6 +483,9 @@ export type BattleRosterGroup = {
   id: number;
   name: string;
   unitType: string;
+  /** A group recruited from a creature: its beast (null otherwise). */
+  sourceBeastId?: number | null;
+  beastKind?: "mount" | "pet" | "creature" | null;
   members: BattleRosterUnit[];
 };
 

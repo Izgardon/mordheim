@@ -13,6 +13,8 @@ import UnitStatsTable from "@/features/warbands/components/shared/unit_details/U
 import "@/features/warbands/styles/warband.css";
 import { getBattleCardThemeStyle } from "@/features/battles/components/shared/battle-card-theme";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { PetChips, RiderMark } from "@/features/battles/components/shared/BattleCompanionParts";
+import { mountedStats } from "@/features/battles/utils/battle-companions";
 
 import ActiveKillDialog from "./ActiveKillDialog";
 import ActiveUnitExpandedDetails from "./ActiveUnitExpandedDetails";
@@ -140,11 +142,15 @@ export default function ActiveUnitCard({
         <div className="grid grid-cols-1 gap-2 md:grid-cols-[minmax(0,12rem)_1fr_auto] md:items-center md:gap-3">
           <div className="min-w-0">
             <div className="flex flex-wrap items-start justify-between gap-2 md:block">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-foreground">{name}</p>
+              <div className="min-w-0 space-y-1">
+                <div className="flex min-w-0 items-center gap-1.5">
+                  <RiderMark mount={unit.mount} />
+                  <p className="truncate text-sm font-semibold text-foreground">{name}</p>
+                </div>
                 <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
                   {unit.unitType}
                 </p>
+                <PetChips pets={unit.pets} />
               </div>
               <div className="ml-auto md:hidden">{actions}</div>
             </div>
@@ -153,6 +159,7 @@ export default function ActiveUnitCard({
           <div className="battle-stats-shell w-full md:max-w-[34rem] md:justify-self-start">
             <UnitStatsTable
               stats={getEffectiveUnitStats(unit, unitInformation)}
+              mounted={mountedStats(unit, unitInformation?.stats_override)}
               variant="summary"
               wrapperClassName="w-full max-w-none"
             />

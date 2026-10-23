@@ -1,0 +1,56 @@
+import { Tooltip } from "@/components/ui/tooltip";
+import { BEAST_KIND_TEXT, BeastKindIcon } from "@/features/bestiary/components/BeastKindIcon";
+import CreatureMark from "@/features/warbands/components/units/beasts/CreatureMark";
+
+import type {
+  BattleRosterCompanion,
+  BattleRosterMount,
+  BattleUnitStats,
+} from "@/features/battles/types/battle-types";
+
+/** The mount's mark before a rider's name ("Rides Warhorse"); nothing on foot. */
+export function RiderMark({ mount }: { mount?: BattleRosterMount | null }) {
+  return mount ? <CreatureMark kind="mount" title={`Rides ${mount.name}`} /> : null;
+}
+
+const LINE: [keyof BattleUnitStats, string][] = [
+  ["movement", "M"],
+  ["weapon_skill", "WS"],
+  ["ballistic_skill", "BS"],
+  ["strength", "S"],
+  ["toughness", "T"],
+  ["wounds", "W"],
+  ["initiative", "I"],
+  ["attacks", "A"],
+  ["leadership", "Ld"],
+];
+
+const profileLine = (pet: BattleRosterCompanion) =>
+  pet.hasProfile && pet.stats
+    ? LINE.map(([key, label]) => `${label} ${pet.stats![key] ?? "-"}`).join(" · ")
+    : "No profile";
+
+/** A unit's pets as chips, each with its profile (or "No profile") in a tooltip. */
+export function PetChips({ pets }: { pets?: BattleRosterCompanion[] }) {
+  if (!pets?.length) return null;
+  return (
+    <span className="flex flex-wrap gap-1">
+      {pets.map((pet) => (
+        <Tooltip
+          key={pet.itemId}
+          trigger={
+            <span
+              className={`battle-chip inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[0.65rem] ${BEAST_KIND_TEXT.pet}`}
+            >
+              <BeastKindIcon kind="pet" className="h-3 w-3" />
+              {pet.name}
+            </span>
+          }
+          content={profileLine(pet)}
+          maxWidth={320}
+          className="inline-flex"
+        />
+      ))}
+    </span>
+  );
+}
