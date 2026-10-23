@@ -25,6 +25,7 @@ from .views import (
     CampaignBattleSkipPostbattleView,
     CampaignBattleStartView,
     CampaignBattleStateView,
+    CampaignBattleUnitDismountView,
     CampaignBattleUnitKillView,
     CampaignBattleUnitOoaView,
     CampaignBattleWithdrawResultView,
@@ -121,6 +122,11 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/unit-ooa/",
         CampaignBattleUnitOoaView.as_view(),
         name="campaigns-battles-unit-ooa",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/unit-dismount/",
+        CampaignBattleUnitDismountView.as_view(),
+        name="campaigns-battles-unit-dismount",
     ),
     path(
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/unit-kill/",

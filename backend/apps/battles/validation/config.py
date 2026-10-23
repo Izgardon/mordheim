@@ -61,6 +61,8 @@ def normalize_unit_information(raw_value: Any) -> dict[str, dict]:
             "out_of_action": bool(info.get("out_of_action", False)),
             "kill_count": max(0, min(9999, kill_count)),
         }
+        if info.get("dismounted"):  # left out when false (services/dismount.py)
+            normalized[normalized_unit_key]["dismounted"] = True
     return normalized
 
 

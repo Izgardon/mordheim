@@ -1,6 +1,11 @@
 from .battles import CampaignBattleListCreateView, CampaignBattleRosterView, CampaignBattleStateView
 from .closing import CampaignBattleClosePostbattleView
-from .combat import CampaignBattleEventCreateView, CampaignBattleUnitKillView, CampaignBattleUnitOoaView
+from .combat import (
+    CampaignBattleEventCreateView,
+    CampaignBattleUnitDismountView,
+    CampaignBattleUnitKillView,
+    CampaignBattleUnitOoaView,
+)
 from .finishing import CampaignBattleFinishMineView, CampaignBattleFinishView, CampaignBattleResultsView
 from .invites import CampaignBattleDeclineView
 from .nudge import CampaignBattleNudgeView
@@ -48,6 +53,7 @@ __all__ = [
     "CampaignBattleEventCreateView",
     "CampaignBattleUnitOoaView",
     "CampaignBattleUnitKillView",
+    "CampaignBattleUnitDismountView",
     "CampaignBattleFinishView",
     "CampaignBattleFinishMineView",
     "CampaignBattleResultsView",

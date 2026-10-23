@@ -78,7 +78,8 @@ def set_out_of_action(battle: Battle, participant: BattleParticipant, unit: dict
     if info["out_of_action"] == out_of_action:
         return []
     info["out_of_action"] = out_of_action
-    if not (info["stats_override"] or info.get("notes", "") or info["out_of_action"] or info["kill_count"]):
+    says = info["stats_override"] or info.get("notes", "") or info["out_of_action"] or info["kill_count"]
+    if not (says or info.get("dismounted")):
         unit_information.pop(unit["unit_key"], None)  # (current wounds aren't kept here, as before)
     participant.unit_information_json = unit_information
     participant.save(update_fields=["unit_information_json", "updated_at"])
