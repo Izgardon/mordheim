@@ -55,3 +55,9 @@ def raven(**fields: Any) -> Item:
 
 def wardogs(**fields: Any) -> Item:
     return make_animal("Wardogs", "creature", cost=25, available_in_shop=True, **DOG_PROFILE, **fields)
+
+
+def beast(item: Item) -> BestiaryEntry:
+    """The beast whose Animal item `item` is."""
+    assert item.bestiary_entry is not None
+    return item.bestiary_entry

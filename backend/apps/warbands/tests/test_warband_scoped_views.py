@@ -31,8 +31,8 @@ class WarbandScopedViewStructureTests(SimpleTestCase):
         scoped = [pattern for pattern in urlpatterns if "<int:warband_id>" in str(pattern.pattern)]
         # + batch/ per kind (decision 1), henchmen-groups promote/ (decision 9), resources sell/ (BUG-68) and
         # trades/<id>/ (pass 2 decision 5), purchases/ (BUG-07), rarity-rolls/ (decision 9), roster-stats/ (PERF-42) and
-        # hirelings hire/ (the bestiary rewrite), and items/<row>/companion/ per kind (step 4)
-        self.assertEqual(len(scoped), 40)
+        # hirelings hire/ (the bestiary rewrite), items/<row>/companion/ per kind, beasts/recruit/ and henchmen-groups back-to-item/ (step 4)
+        self.assertEqual(len(scoped), 42)
         for pattern in scoped:
             with self.subTest(route=pattern.name):
                 self.assertTrue(issubclass(_view_class(pattern), WarbandScopedView))

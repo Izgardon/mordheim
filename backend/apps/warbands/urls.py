@@ -5,6 +5,7 @@ from .units.urls import unit_urlpatterns
 from .views import (
     HeroSpecialDetailView,
     HeroSpellDetailView,
+    WarbandBeastRecruitView,
     WarbandDetailView,
     WarbandItemDetailView,
     WarbandItemListView,
@@ -68,6 +69,11 @@ urlpatterns = [
         "warbands/<int:warband_id>/rarity-rolls/",
         WarbandRarityRollView.as_view(),
         name="warbands-rarity-rolls",
+    ),
+    path(
+        "warbands/<int:warband_id>/beasts/recruit/",
+        WarbandBeastRecruitView.as_view(),
+        name="warbands-beasts-recruit",
     ),
     *unit_urlpatterns(HERO),
     path(

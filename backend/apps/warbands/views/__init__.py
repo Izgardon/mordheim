@@ -1,3 +1,4 @@
+from .beasts import WarbandBeastRecruitView
 from .catalogue import HeroSpecialDetailView, HeroSpellDetailView
 from .items import WarbandItemDetailView, WarbandItemListView, WarbandItemSaleView, WarbandItemTransferView
 from .ledger import (
@@ -19,6 +20,7 @@ from .warbands import (
 )
 
 __all__ = [
+    "WarbandBeastRecruitView",
     "WarbandDetailView",
     "HeroSpecialDetailView",
     "HeroSpellDetailView",

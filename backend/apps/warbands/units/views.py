@@ -9,7 +9,9 @@ from rest_framework.response import Response
 
 from apps.warbands.models import not_dismissed
 from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandSummarySerializer
+from apps.warbands.serializers.beasts import BackToItemSerializer
 from apps.warbands.views.base import WarbandScopedView
+from apps.warbands.views.beasts import back_to_item_answer
 
 from .errors import validation_error
 from .kinds import HERO, UnitKindSpec
@@ -21,6 +23,7 @@ from .serializers import (
     UnitLevelUpSerializer,
     UnitSerializers,
 )
+from .services.back_to_item import back_to_item
 from .services.batch import apply_batch, plan_batch
 from .services.companions import loaded_unit_warnings, switch_companion
 from .services.create import create_unit
@@ -204,3 +207,17 @@ class UnitItemCompanionView(UnitView):
             "warnings": loaded_unit_warnings(self.kind, self.warband, loaded),
         }
         return Response(payload)
+
+
+# The bestiary rewrite step 4: members of a group recruited from a creature back to its item, in the stash (henchmen
+# groups only). No docstring: DRF serves it on OPTIONS.
+class UnitBackToItemView(UnitView):
+    def post(self, request: Request, warband_id: int, **kwargs: Any) -> Response:
+        group = self.kind.visible(self.kind.objects.filter(id=self.unit_id(kwargs), warband=self.warband)).first()
+        if group is None:
+            return Response(NOT_FOUND, status=404)
+        body = BackToItemSerializer(data=request.data)
+        if not body.is_valid():
+            raise validation_error(body.errors)
+        outcome = back_to_item(self.warband, group, body.validated_data)
+        return Response(back_to_item_answer(self.warband, outcome))

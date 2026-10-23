@@ -7,7 +7,7 @@ the group's mount, and a group recruited from a creature names its beast and kin
 from typing import Any
 
 from apps.warbands.models import HenchmenGroup, HenchmenGroupItem, Hero, HeroItem
-from apps.warbands.tests.beast_support import raven, wardogs, warhorse
+from apps.warbands.tests.beast_support import beast, raven, wardogs, warhorse
 from apps.warbands.tests.roster_support import HENCHMEN, make_unit
 
 from .battle_support import BattleTestCase
@@ -46,7 +46,7 @@ class BattleRosterCompanionTests(BattleTestCase):
     def test_a_groups_members_ride_its_mount_and_a_creature_group_names_its_beast(self):
         riders = make_unit(HENCHMEN, self.warband, name="Outriders", members=("A", "B"), movement=4)
         HenchmenGroupItem.objects.create(henchmen_group=riders, item=self.horse, companion=True)
-        kennel = make_unit(HENCHMEN, self.warband, name="Kennel", source_beast=self.dogs.bestiary_entry)
+        kennel = make_unit(HENCHMEN, self.warband, name="Kennel", source_beast=beast(self.dogs))
         battle_id = self.to_prebattle()
 
         groups = {group["name"]: group for group in self.roster(battle_id)["henchmenGroups"]}
@@ -54,6 +54,6 @@ class BattleRosterCompanionTests(BattleTestCase):
         self.assertEqual([member["effectiveStats"]["movement"] for member in groups["Outriders"]["members"]], [8, 8])
         self.assertEqual(groups["Outriders"]["members"][0]["mount"]["name"], "Warhorse")
         self.assertEqual((groups["Outriders"]["sourceBeastId"], groups["Outriders"]["beastKind"]), (None, None))
-        beast = HenchmenGroup.objects.get(pk=kennel.pk).source_beast_id
-        self.assertEqual((groups["Kennel"]["sourceBeastId"], groups["Kennel"]["beastKind"]), (beast, "creature"))
+        source = HenchmenGroup.objects.get(pk=kennel.pk).source_beast_id
+        self.assertEqual((groups["Kennel"]["sourceBeastId"], groups["Kennel"]["beastKind"]), (source, "creature"))
         self.assertEqual(groups["Kennel"]["members"][0]["mount"], None)
