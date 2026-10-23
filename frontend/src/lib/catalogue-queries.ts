@@ -244,10 +244,12 @@ export function invalidateCatalogue(
 /**
  * The lists a write of a kind changes besides its own, as the server announces them (its
  * `catalogue.changed` kinds for the write): a beast's Animal item is written with the beast, so
- * a bestiary write (a save, Revert, delete or restore) changes the items list too.
+ * a bestiary write (a save, Revert, delete or restore) changes the items list too; hired swords
+ * and dramatis personae name their race, so a race write changes their lists.
  */
 const WRITTEN_WITH: Partial<Record<CatalogueKind, CatalogueKind[]>> = {
   bestiary: ["items"],
+  races: ["hired-swords", "dramatis-personae"],
 };
 
 /** `kind` and the kinds its writes change with it. */

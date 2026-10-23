@@ -58,6 +58,20 @@ describe("a beast's writes change the items list too", () => {
     expect(stale(queryClient, stash)).toBe(true);
   });
 
+  it("marks the hired-sword and dramatis-persona lists stale when a race is written: they name their race", () => {
+    const { queryClient, cache } = setup();
+    const hiredSwords = queryKeys.campaign.catalogue(7, "hired-swords");
+    const personae = queryKeys.campaign.catalogue(7, "dramatis-personae");
+    queryClient.setQueryData(hiredSwords, []);
+    queryClient.setQueryData(personae, []);
+
+    cache.upsert("races", 7, { id: 3, name: "Halfling" } as never);
+
+    expect(stale(queryClient, hiredSwords)).toBe(true);
+    expect(stale(queryClient, personae)).toBe(true);
+    expect(stale(queryClient, items)).toBe(false);
+  });
+
   it("leaves the items list alone when a skill is saved", () => {
     const { queryClient, cache } = setup();
 

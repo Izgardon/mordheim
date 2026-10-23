@@ -1,4 +1,5 @@
 import { apiRequest } from "../../../lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 
 import type { Race, RaceCreatePayload } from "../types/race-types";
 
@@ -24,6 +25,7 @@ export function listRaces(options: ListRacesOptions = {}) {
 export function createRace(payload: RaceCreatePayload) {
   return apiRequest<Race>("/races/", {
     method: "POST",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }

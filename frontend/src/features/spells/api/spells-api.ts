@@ -1,4 +1,5 @@
 import { apiRequest } from "../../../lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 
 import type { Spell } from "../types/spell-types";
 
@@ -43,6 +44,7 @@ export function listSpells(options: ListSpellsOptions = {}) {
 export function createSpell(payload: SpellCreatePayload) {
   return apiRequest<Spell>("/spells/", {
     method: "POST",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }
@@ -57,6 +59,7 @@ export function getSpell(spellId: number) {
 export function updateSpell(spellId: number, payload: SpellUpdatePayload) {
   return apiRequest<Spell>(`/spells/${spellId}/`, {
     method: "PATCH",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }

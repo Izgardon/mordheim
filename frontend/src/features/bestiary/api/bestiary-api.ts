@@ -1,4 +1,5 @@
 import { apiRequest } from "../../../lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 
 import type {
   BestiaryEntry,
@@ -33,6 +34,7 @@ export function getBestiaryEntry(entryId: number, signal?: AbortSignal) {
 export function createBestiaryEntry(payload: BestiaryEntryWrite) {
   return apiRequest<BestiaryEntry>("/bestiary/", {
     method: "POST",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }
@@ -40,6 +42,7 @@ export function createBestiaryEntry(payload: BestiaryEntryWrite) {
 export function updateBestiaryEntry(entryId: number, payload: BestiaryEntryWrite) {
   return apiRequest<BestiaryEntry>(`/bestiary/${entryId}/`, {
     method: "PATCH",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }
