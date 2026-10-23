@@ -47,7 +47,8 @@ export function useNotificationSubscription() {
   const applyNotificationList = useApplyNotificationList();
   const reloadNotifications = useReloadNotifications();
 
-  // Only a different user reloads the list; store changes (battle or trade session) don't.
+  // Only a different user reloads the list; store changes (battle or trade session) don't. The
+  // list is the bell's truth, so it replaces whatever the store still holds (BUG-157).
   useEffect(() => {
     if (!userId) {
       return;
@@ -55,7 +56,7 @@ export function useNotificationSubscription() {
     let active = true;
     listNotifications()
       .then((notifications) => {
-        if (active) applyNotificationList(notifications, { replace: false });
+        if (active) applyNotificationList(notifications, { replace: true });
       })
       .catch(() => {});
     return () => {

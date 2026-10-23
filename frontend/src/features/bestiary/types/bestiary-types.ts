@@ -1,3 +1,5 @@
+import type { CatalogueBadgeFields } from "@/features/catalogue/types/catalogue-entry";
+
 export type BestiaryEntryEquipment = {
   item: {
     id: number;
@@ -8,7 +10,7 @@ export type BestiaryEntryEquipment = {
   quantity: number;
 };
 
-export type BestiaryEntrySummary = {
+export type BestiaryEntrySummary = CatalogueBadgeFields & {
   id: number;
   campaign_id: number | null;
   name: string;
@@ -69,7 +71,7 @@ export type HiredSwordProfileRestriction = {
   additional_note: string;
 };
 
-export type HiredSwordProfileSummary = {
+export type HiredSwordProfileSummary = CatalogueBadgeFields & {
   id: number;
   campaign_id: number | null;
   race: string;
@@ -83,7 +85,7 @@ export type HiredSwordProfileSummary = {
   bestiary_entry: BestiaryEntrySummary;
 };
 
-export type HiredSwordProfile = {
+export type HiredSwordProfile = CatalogueBadgeFields & {
   id: number;
   campaign_id: number | null;
   race: string;

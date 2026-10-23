@@ -131,7 +131,7 @@ vi.mock("../hooks/warband/useWarbandSheet", async () => {
         // The backstory is the owner's alone (decision 13).
         edit_backstory: viewer.userId === 7,
         delete: viewer.userId === 7,
-        add_custom: allowed,
+        edit_catalogue: allowed,
       };
       return {
         warband,

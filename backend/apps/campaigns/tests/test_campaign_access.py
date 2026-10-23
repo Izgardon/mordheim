@@ -17,7 +17,6 @@ from django.utils import timezone
 from rest_framework.request import Request
 
 from apps.battles.models import Battle
-from apps.bestiary.models import BestiaryEntry
 from apps.campaigns import views as campaign_views
 from apps.campaigns.access import CAMPAIGN_RULES, CAPABILITIES, load_campaign_access
 from apps.campaigns.constants import PERMISSION_CODES
@@ -31,9 +30,6 @@ from apps.campaigns.models import (
 )
 from apps.campaigns.views.base import CampaignScopedView
 from apps.items.models import Item
-from apps.skills.models import Skill
-from apps.special.models import Special
-from apps.spells.models import Spell
 
 from .campaign_support import CampaignTestCase, make_user
 
@@ -64,7 +60,7 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("POST", "locations/", {"name": "Ruin"}, (403, 201, 201, 201)),
     ("PATCH", "locations/{place}/", {"name": "Ruin 2"}, (403, 200, 200, 200)),
     ("GET", "members/", None, (403, 403, 200, 200)),
-    ("PUT", "members/{rival}/permissions/", {"permissions": ["add_custom"]}, (403, 403, 200, 200)),
+    ("PUT", "members/{rival}/permissions/", {"permissions": ["edit_catalogue"]}, (403, 403, 200, 200)),
     ("PATCH", "members/{rival}/role/", {"role": "player"}, (403, 403, 403, 200)),
     ("GET", "members/{rival}/removal/", None, (403, 403, 200, 200)),
     ("DELETE", "members/{rival}/", None, (403, 403, 204, 204)),
@@ -93,7 +89,7 @@ REPRESENTATIVE: dict[str, tuple[str, str, dict[str, Any] | None]] = {
     "delete": ("DELETE", "", {"name": "Shards"}),
     "regenerate_join_code": ("POST", "join-code/", {}),
     "view_members": ("GET", "members/", None),
-    "grant_permissions": ("PUT", "members/{rival}/permissions/", {"permissions": ["add_custom"]}),
+    "grant_permissions": ("PUT", "members/{rival}/permissions/", {"permissions": ["edit_catalogue"]}),
     "change_roles": ("PATCH", "members/{rival}/role/", {"role": "player"}),
     "remove_members": ("DELETE", "members/{rival}/", None),
     "hand_over": ("POST", "ownership/", {"user_id": "{admin}"}),
@@ -101,16 +97,12 @@ REPRESENTATIVE: dict[str, tuple[str, str, dict[str, Any] | None]] = {
     "restore": ("POST", "restore/", {}),
     "leave": ("POST", "leave/", {}),
     "remove_posts": ("DELETE", "messages/{message}/", None),
-    "add_custom": ("POST", "/api/skills/", {"campaign_id": "{campaign}", "name": "Dodge", "type": "Speed"}),
-    "manage_items": ("DELETE", "/api/items/{item}/", None),
-    "manage_skills": ("DELETE", "/api/skills/{skill}/", None),
-    "manage_spells": ("DELETE", "/api/spells/{spell}/", None),
-    "manage_specials": ("DELETE", "/api/special/{special}/", None),
+    "edit_catalogue": ("POST", "/api/skills/", {"campaign_id": "{campaign}", "name": "Dodge", "type": "Speed"}),
+    "delete_catalogue": ("DELETE", "/api/items/{item}/", None),  # an item nothing holds
     "manage_rules": ("POST", "rules/", {"title": "No running"}),
     "manage_warbands": ("PATCH", "/api/warbands/{rival_warband}/", {"name": "Rats"}),
     "manage_encampments": ("PATCH", "encampments/{camp}/", {"name": "Camp 2"}),  # an encampment nobody owns
     "manage_locations": ("POST", "locations/", {"name": "Ruin"}),
-    "manage_bestiary": ("DELETE", "/api/bestiary/{beast}/", None),
     "manage_battles": ("POST", "active-battles/{battle}/cancel/", {}),
 }
 
@@ -153,10 +145,6 @@ class CampaignAccessFixture(CampaignTestCase):
             "place": CampaignLocation.objects.create(campaign=campaign, name="Old Ruin").id,
             "rule": CampaignHouseRule.objects.create(campaign=campaign, title="Old rule").id,
             "item": Item.objects.create(campaign=campaign, name="Lucky Charm", type="Miscellaneous").id,
-            "skill": Skill.objects.create(campaign=campaign, name="Sprint", type="Speed").id,
-            "spell": Spell.objects.create(campaign=campaign, name="Fireball", type="Fire").id,
-            "special": Special.objects.create(campaign=campaign, name="Fearsome", type="Trait").id,
-            "beast": BestiaryEntry.objects.create(campaign=campaign, name="Rat Ogre", type="Monster").id,
         }
 
     def setUp(self) -> None:

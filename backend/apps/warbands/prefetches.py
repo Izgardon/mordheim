@@ -35,7 +35,7 @@ def item_links_prefetch(relation: str, join_model: type[Model], parent_field: st
     """A unit's copies with their items, and the campaign's house rule for each item read in the same query (the
     sale price, decision 3)."""
     rows = join_model._default_manager.select_related("item")
-    rows = rows.annotate(**house_rule_prices(f"{parent_field}__warband__campaign_id", "item__name"))
+    rows = rows.annotate(**house_rule_prices(f"{parent_field}__warband__campaign_id", "item_id"))
     return Prefetch(relation, queryset=rows.order_by("id"))
 
 

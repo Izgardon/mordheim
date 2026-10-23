@@ -2,7 +2,7 @@
 import { apiRequest } from "../../../lib/api-client";
 
 // types
-import type { CommonRule, HouseRule, HouseRulePayload } from "../types/rule-types";
+import type { CommonRule, HouseRule, HouseRuleAnswer, HouseRulePayload } from "../types/rule-types";
 
 export function listHouseRules(campaignId: number) {
   return apiRequest<HouseRule[]>(`/campaigns/${campaignId}/rules/`);
@@ -14,14 +14,14 @@ export function listCommonRules(campaignId: number) {
 }
 
 export function createHouseRule(campaignId: number, payload: HouseRulePayload) {
-  return apiRequest<HouseRule>(`/campaigns/${campaignId}/rules/`, {
+  return apiRequest<HouseRuleAnswer>(`/campaigns/${campaignId}/rules/`, {
     method: "POST",
     body: payload,
   });
 }
 
 export function updateHouseRule(campaignId: number, ruleId: number, payload: HouseRulePayload) {
-  return apiRequest<HouseRule>(`/campaigns/${campaignId}/rules/${ruleId}/`, {
+  return apiRequest<HouseRuleAnswer>(`/campaigns/${campaignId}/rules/${ruleId}/`, {
     method: "PATCH",
     body: payload,
   });

@@ -1,12 +1,14 @@
 """Single-use items used in battle are used up when the player finalises or skips postbattle (BUG-72).
 
 Each live `item_used` event of the player's removes one copy of the item from the unit that used it (a henchman
-uses his group's); an undone use keeps the item (decision 5). Item rows are locked before they are deleted.
+uses his group's); an undone use keeps the item (decision 5). Item rows are locked before they are deleted. An item
+edited or reverted in the campaign mid-battle is the one the unit carries now (CAT-TWEAK-03).
 """
 
 from collections import Counter
 from collections.abc import Iterable
 
+from apps.core.catalogue.current import resolve
 from apps.items.models import Item
 from apps.warbands.models import Henchman, HenchmenGroupItem, HeroItem, HiredSwordItem
 
@@ -58,6 +60,17 @@ def _item_rows(unit_type: str, unit_id: int, warband_id: int, group_ids: dict[in
     return HenchmenGroupItem.objects.filter(henchmen_group_id=group_id, henchmen_group__warband_id=warband_id)
 
 
+def _single_use(battle: Battle, usage: Usage) -> dict[int, int]:
+    """Each used item id that is single use -> the id of the item the units carry for it now: the campaign's version
+    of it after an edit mid-battle, or the book item after a Revert (CAT-TWEAK-03; one query, more only for an id
+    that isn't found)."""
+    used = {item_id for _, _, item_id in usage}
+    current = resolve(
+        Item.objects.only("id", "campaign_id", "replaces_id", "single_use"), "items", used, battle.campaign_id
+    )
+    return {item_id: item.id for item_id, item in current.items() if item.single_use}
+
+
 def consume_single_use_items(
     battle: Battle, participant: BattleParticipant, payloads: Iterable[object] | None = None
 ) -> None:
@@ -66,9 +79,7 @@ def consume_single_use_items(
     usage = _usage(item_use_payloads(battle, participant) if payloads is None else payloads)
     if not usage:
         return
-    single_use = set(
-        Item.objects.filter(id__in={item_id for _, _, item_id in usage}, single_use=True).values_list("id", flat=True)
-    )
+    single_use = _single_use(battle, usage)
     if not single_use:
         return
     henchman_ids = {unit_id for unit_type, unit_id, _ in usage if unit_type == "henchman"}
@@ -83,6 +94,8 @@ def consume_single_use_items(
         rows = _item_rows(unit_type, unit_id, participant.warband_id, group_ids)
         if rows is None:
             continue
-        row_ids = list(locked(rows.filter(item_id=item_id).order_by("id")).values_list("id", flat=True)[:count])
+        row_ids = list(
+            locked(rows.filter(item_id=single_use[item_id]).order_by("id")).values_list("id", flat=True)[:count]
+        )
         if row_ids:
             rows.model.objects.filter(id__in=row_ids).delete()

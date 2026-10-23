@@ -1,303 +1,60 @@
-import type { FormEvent } from "react";
-import { useEffect, useState } from "react";
-
-// routing
-import { useNavigate } from "react-router-dom";
-
 import "../styles/auth.css";
 
 // components
-import { Button } from "@components/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@components/card";
+import { Card, CardContent, CardFooter } from "@components/card";
 import { CardBackground } from "@components/card-background";
-import { Input } from "@components/input";
-import { Eye, EyeOff } from "lucide-react";
+import { AuthCardHeader } from "./auth-card/AuthCardHeader";
+import { FootageCredit } from "./auth-card/FootageCredit";
+import { ForgotForm } from "./auth-card/ForgotForm";
+import { LoginForm } from "./auth-card/LoginForm";
+import { RegisterForm } from "./auth-card/RegisterForm";
 
 // hooks
-import { requestPasswordReset } from "../api/auth-api";
-import { useAuth } from "../hooks/use-auth";
+import { useAuthCard } from "../hooks/use-auth-card";
+import { useSignInRedirect } from "../hooks/use-sign-in-redirect";
 import { useMediaQuery } from "@/lib/use-media-query";
 import titleImage from "@/assets/background/title.webp";
+
+/** Sign in, create an account, or ask for a reset link; a phone gets the compact layout. */
 export default function AuthCard() {
-  const navigate = useNavigate();
-  const { token, isReady, isSubmitting, signIn, signUp } = useAuth();
+  const sessionNotice = useSignInRedirect();
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const [mode, setMode] = useState<"login" | "register" | "forgot">("login");
-  const [loginForm, setLoginForm] = useState({ email: "", password: "" });
-  const [registerForm, setRegisterForm] = useState({ name: "", email: "", password: "" });
-  const [forgotEmail, setForgotEmail] = useState("");
-  const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
-  const [isForgotSubmitting, setIsForgotSubmitting] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const card = useAuthCard();
 
-  const isRegister = mode === "register";
-  const isForgot = mode === "forgot";
-
-  useEffect(() => {
-    if (isReady && token) {
-      navigate("/campaigns", { replace: true });
-    }
-  }, [isReady, navigate, token]);
-
-  useEffect(() => {
-    setError("");
-    setNotice("");
-    setShowPassword(false);
-  }, [mode]);
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setError("");
-
-    try {
-      if (isForgot) {
-        return;
-      }
-      if (isRegister) {
-        await signUp({
-          name: registerForm.name,
-          email: registerForm.email,
-          password: registerForm.password,
-        });
-      } else {
-        await signIn({
-          email: loginForm.email,
-          password: loginForm.password,
-        });
-      }
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setError(errorResponse.message || "Unable to sign in");
-      } else {
-        setError("Unable to sign in");
-      }
-    }
-  };
-
-  const handleForgotSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setError("");
-    setNotice("");
-    setIsForgotSubmitting(true);
-
-    try {
-      const response = await requestPasswordReset({ email: forgotEmail });
-      setNotice(response.detail);
-    } catch (errorResponse) {
-      if (errorResponse instanceof Error) {
-        setError(errorResponse.message || "Unable to send reset email");
-      } else {
-        setError("Unable to send reset email");
-      }
-    } finally {
-      setIsForgotSubmitting(false);
-    }
-  };
-
-  const headerContent = (
-    <CardHeader className={isMobile ? "space-y-3 px-4 pb-3 pt-4" : "space-y-4 pt-6"}>
-      {!isMobile ? (
-        <div className="flex flex-col items-center gap-3 text-center">
-          <h1 className="mt-10 text-3xl font-semibold uppercase tracking-[0.32em] text-foreground">
-            Mordheim Chronicler
-          </h1>
-          <p className="text-sm font-medium text-foreground/90">
-            The comet fell. The city burned. Chronicle every shard, victory and death across your
-            campaign.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          <div className="flex items-baseline justify-between gap-3">
-            <h1 className="text-xl font-semibold uppercase tracking-[0.25em] text-foreground">
-              Mordheim Chronicler
-            </h1>
-            <span className="shrink-0 text-[0.55rem] uppercase tracking-[0.4em] text-muted-foreground">
-              {isForgot ? "Reset" : isRegister ? "Create" : "Sign in"}
-            </span>
-          </div>
-          <p className="text-[0.65rem] text-muted-foreground">
-            Track every shard, victory and death across your campaign.
-          </p>
-        </div>
-      )}
-      <div
-        className={
-          isMobile
-            ? "flex w-full gap-2"
-            : "mx-auto flex w-fit rounded-full p-1 shadow-[0_10px_20px_rgba(5,20,24,0.35)]"
-        }
-      >
-        <Button
-          type="button"
-          variant={isRegister || isForgot ? "secondary" : "default"}
-          size="sm"
-          className={
-            isMobile
-              ? "flex-1 rounded-full px-3 text-xs leading-none py-2"
-              : "min-w-[110px] rounded-full px-4 text-xs leading-none py-1"
-          }
-          onClick={() => setMode("login")}
-        >
-          Sign in
-        </Button>
-        <Button
-          type="button"
-          variant={isRegister ? "default" : "secondary"}
-          size="sm"
-          className={
-            isMobile
-              ? "flex-1 rounded-full px-3 text-xs leading-none py-2"
-              : "min-w-[110px] rounded-full px-4 text-xs leading-none py-1"
-          }
-          onClick={() => setMode("register")}
-        >
-          Create Account
-        </Button>
-      </div>
-    </CardHeader>
+  const header = (
+    <AuthCardHeader mode={card.mode} isMobile={isMobile} onSelectMode={card.setMode} />
   );
 
   const content = (
     <CardContent className={isMobile ? "px-4 pb-4 pt-2" : "flex-1"}>
-      {isForgot ? (
-        <form className="space-y-5" onSubmit={handleForgotSubmit}>
-          <label className="mx-auto block w-full max-w-[320px] space-y-2 text-sm">
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              Email
-            </span>
-            <Input
-              type="email"
-              value={forgotEmail}
-              onChange={(event) => setForgotEmail(event.target.value)}
-              placeholder="name@wyrdstone.dev"
-              autoComplete="email"
-              required
-              className="h-10 max-w-[320px]"
-            />
-          </label>
-          {notice ? <p className="text-sm">{notice}</p> : null}
-          {error ? <p className="text-sm text-destructive">{error}</p> : null}
-          <div className="flex flex-col items-center gap-3">
-            <Button size="sm" type="submit" disabled={isForgotSubmitting}>
-              {isForgotSubmitting ? "Sending..." : "Send reset link"}
-            </Button>
-            <button
-              type="button"
-              className="text-xs uppercase tracking-[0.2em] text-muted-foreground"
-              onClick={() => setMode("login")}
-            >
-              Back to sign in
-            </button>
-          </div>
-        </form>
+      {sessionNotice ? (
+        <p role="status" className="mx-auto mb-5 max-w-[320px] text-sm">
+          {sessionNotice}
+        </p>
+      ) : null}
+      {card.mode === "forgot" ? (
+        <ForgotForm
+          form={card.forgot}
+          error={card.error}
+          notice={card.notice}
+          onBack={() => card.setMode("login")}
+        />
+      ) : card.mode === "register" ? (
+        <RegisterForm form={card.register} error={card.error} />
       ) : (
-        <form className="space-y-5" onSubmit={handleSubmit}>
-          {isRegister ? (
-            <label className="mx-auto block w-full max-w-[320px] space-y-2 text-sm">
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Alias
-              </span>
-              <Input
-                value={registerForm.name}
-                onChange={(event) =>
-                  setRegisterForm((prev) => ({ ...prev, name: event.target.value }))
-                }
-                placeholder="Gravewatch Captain"
-                autoComplete="name"
-                className="h-10 max-w-[320px]"
-              />
-            </label>
-          ) : null}
-          <label className="mx-auto block w-full max-w-[320px] space-y-2 text-sm">
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              Email
-            </span>
-            <Input
-              type="email"
-              value={isRegister ? registerForm.email : loginForm.email}
-              onChange={(event) =>
-                isRegister
-                  ? setRegisterForm((prev) => ({ ...prev, email: event.target.value }))
-                  : setLoginForm((prev) => ({ ...prev, email: event.target.value }))
-              }
-              placeholder="name@wyrdstone.dev"
-              autoComplete="email"
-              required
-              className="h-10 max-w-[320px]"
-            />
-          </label>
-          <label className="mx-auto block w-full max-w-[320px] space-y-2 text-sm">
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              Password
-            </span>
-            <div className="relative">
-              <Input
-                type={showPassword ? "text" : "password"}
-                value={isRegister ? registerForm.password : loginForm.password}
-                onChange={(event) =>
-                  isRegister
-                    ? setRegisterForm((prev) => ({ ...prev, password: event.target.value }))
-                    : setLoginForm((prev) => ({ ...prev, password: event.target.value }))
-                }
-                placeholder="Keep it secret"
-                autoComplete={isRegister ? "new-password" : "current-password"}
-                required
-                className="h-10 max-w-[320px] pr-10"
-              />
-              <button
-                type="button"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition hover:text-foreground"
-                onClick={() => setShowPassword((prev) => !prev)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
-          </label>
-          {!isRegister ? (
-            <div className="mx-auto w-full max-w-[320px] text-right">
-              <button
-                type="button"
-                className="text-xs uppercase tracking-[0.2em] text-muted-foreground"
-                onClick={() => setMode("forgot")}
-              >
-                Forgot password?
-              </button>
-            </div>
-          ) : null}
-          {error ? <p className="text-sm text-destructive">{error}</p> : null}
-          <div className="flex justify-center">
-            <Button size="sm" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Working..." : isRegister ? "Create account" : "Sign in"}
-            </Button>
-          </div>
-        </form>
+        <LoginForm form={card.login} error={card.error} onForgot={() => card.setMode("forgot")} />
       )}
     </CardContent>
-  );
-
-  const youtubeCredit = (
-    <p className="text-center text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground/50">
-      Background footage by{" "}
-      <a
-        href="https://www.youtube.com/@Styggosaurus"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="transition hover:text-muted-foreground"
-      >
-        Styggosaurus
-      </a>
-    </p>
   );
 
   if (isMobile) {
     return (
       <Card className="auth-card w-full rounded-b-[32px] border-x border-b border-[#241c16] bg-[#070504]/[0.985] shadow-[0_16px_38px_rgba(0,0,0,0.72)] backdrop-blur">
-        {headerContent}
+        {header}
         {content}
-        <div className="px-4 pb-4">{youtubeCredit}</div>
+        <div className="px-4 pb-4">
+          <FootageCredit />
+        </div>
       </Card>
     );
   }
@@ -307,7 +64,7 @@ export default function AuthCard() {
       as={Card}
       className="auth-card flex h-full w-full flex-col border border-emerald-500/32 bg-[linear-gradient(180deg,rgba(9,7,6,0.985),rgba(4,3,2,0.995))] shadow-[0_34px_78px_rgba(0,0,0,0.78),0_0_24px_rgba(0,255,153,0.24),0_0_56px_rgba(0,255,153,0.08),inset_0_0_28px_rgba(0,255,153,0.1)] backdrop-blur-sm"
     >
-      {headerContent}
+      {header}
       {content}
       <CardFooter className="mt-auto flex-col items-center gap-3">
         <img
@@ -315,7 +72,7 @@ export default function AuthCard() {
           alt="Mordheim: City of the Damned"
           className="w-full max-w-[340px] drop-shadow-[0_6px_12px_rgba(0,0,0,0.6)]"
         />
-        {youtubeCredit}
+        <FootageCredit />
       </CardFooter>
     </CardBackground>
   );

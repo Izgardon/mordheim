@@ -91,7 +91,7 @@ const sheetOf = (warbandId: number, heroes: WarbandHero[], gold = 500): WarbandS
     manage_items: true,
     edit_backstory: true,
     delete: true,
-    add_custom: true,
+    edit_catalogue: true,
     trade: true,
   },
   heroes,

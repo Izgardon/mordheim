@@ -11,6 +11,8 @@ from typing import Any, ClassVar
 
 from rest_framework import serializers
 
+from apps.core.catalogue.scope import CatalogueEntryField
+from apps.races.models import Race
 from apps.warbands.models import RosterUnit
 from apps.warbands.prefetches import entries_attr
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
@@ -177,6 +179,7 @@ class UnitWriteSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializ
     kind: ClassVar[UnitKindSpec]
     recruits: tuple[Recruit, ...] = ()  # set by update(): the henchmen it added, to be charged
 
+    race = CatalogueEntryField(queryset=Race.objects.all(), allow_null=True, required=False)  # its version, if any
     armour_save = ArmourSaveField(required=False, allow_null=True)  # decision 11, BUG-87
     xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
     items = serializers.ListField(child=UnitItemEntrySerializer(), write_only=True, required=False)
@@ -190,7 +193,7 @@ class UnitWriteSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializ
         return apply_create(self.kind, validated_data)
 
     def update(self, instance: RosterUnit, validated_data: dict[str, Any]) -> RosterUnit:
-        self.recruits = tuple(apply_update(self.kind, instance, validated_data))
+        self.recruits = tuple(apply_update(self.kind, instance, validated_data, self._campaign_id()))
         return instance
 
 

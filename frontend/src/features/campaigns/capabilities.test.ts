@@ -82,7 +82,9 @@ describe("hasCampaignSettings", () => {
     expect(hasCampaignSettings({ ...none, delete: true })).toBe(true);
     expect(hasCampaignSettings({ ...none, archive: true })).toBe(true);
     expect(hasCampaignSettings({ ...none, restore: true })).toBe(true);
-    expect(hasCampaignSettings({ ...none, add_custom: true, manage_items: true })).toBe(false);
+    expect(hasCampaignSettings({ ...none, edit_catalogue: true, delete_catalogue: true })).toBe(
+      false
+    );
   });
 });
 

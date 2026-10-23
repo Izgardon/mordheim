@@ -133,7 +133,9 @@ class FeedbackReportEmailHelperTests(TestCase):
         requests_post_mock.assert_called_once()
         request_kwargs = requests_post_mock.call_args.kwargs
         self.assertEqual(request_kwargs["json"]["to"], ["bugs@example.com"])
-        self.assertEqual(request_kwargs["json"]["subject"], "Bug")
+        self.assertEqual(
+            request_kwargs["json"]["subject"], "[Mordheim] Bug from Helper: The campaign roster page crashes."
+        )
         self.assertIn("Type: Bug", request_kwargs["json"]["text"])
         self.assertIn(f"User id: {self.user.pk}", request_kwargs["json"]["text"])
         self.assertIn("User name: Helper", request_kwargs["json"]["text"])

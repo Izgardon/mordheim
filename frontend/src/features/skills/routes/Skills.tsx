@@ -1,10 +1,12 @@
-import { useMemo, useRef, useState } from "react";
-import type { CSSProperties } from "react";
+import { useMemo } from "react";
 
 // routing
 import { useOutletContext, useParams, useNavigate } from "react-router-dom";
 
 // data
+import { ALL_TYPES, useCatalogueFilters } from "@/features/catalogue/hooks/useCatalogueFilters";
+import { archivedOnly, useArchivedView } from "@/features/catalogue/hooks/useArchivedView";
+import { useCatalogueEditor } from "@/features/catalogue/hooks/useCatalogueEditor";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { useMediaQuery } from "@/lib/use-media-query";
 
@@ -14,12 +16,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { TableSkeleton } from "@components/table-skeleton";
 import { PageHeader } from "@components/page-header";
 import MobileTabs from "@components/mobile-tabs";
+import { ArchivedToggle, RestoreButton } from "@/features/catalogue/components/ArchivedView";
+import { EditRowButton } from "@/features/catalogue/components/EditRowButton";
 import AddSkillForm from "../components/AddSkillForm";
 import LearnSkillDialog from "../components/LearnSkillDialog";
 import SkillsTable from "../components/SkillsTable";
 import { Input } from "@components/input";
-import { Tooltip } from "@components/tooltip";
-import { Pencil } from "lucide-react";
 
 // api
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
@@ -28,15 +30,30 @@ import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { Skill } from "../types/skill-types";
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
 
-const ALL_TYPES = "all";
-const PRIORITY_TYPES = ["Combat", "Shooting", "Strength", "Speed", "Academic"];
-
 import { LOADOUT_TABS } from "@/lib/loadout-tabs";
 import type { LoadoutTabId } from "@/lib/loadout-tabs";
 
+const PRIORITY_TYPES = ["Combat", "Shooting", "Strength", "Speed", "Academic"];
+
 const formatType = (value: string) => value.replace(/_/g, " ");
 
-const SKILL_ROW_BG_STYLE: CSSProperties = {};
+const skillHaystack = (skill: Skill) => [skill.name, skill.type, skill.description];
+
+/** The five common lists first, in that order, then the rest by list; by name within a list. */
+const compareSkills = (a: Skill, b: Skill) => {
+  const aPriority = PRIORITY_TYPES.indexOf(a.type);
+  const bPriority = PRIORITY_TYPES.indexOf(b.type);
+  const aRank = aPriority === -1 ? Number.POSITIVE_INFINITY : aPriority;
+  const bRank = bPriority === -1 ? Number.POSITIVE_INFINITY : bPriority;
+  if (aRank !== bRank) {
+    return aRank - bRank;
+  }
+  const typeCompare = a.type.localeCompare(b.type);
+  if (typeCompare !== 0) {
+    return typeCompare;
+  }
+  return a.name.localeCompare(b.name);
+};
 
 export default function Skills() {
   const { id } = useParams();
@@ -44,87 +61,23 @@ export default function Skills() {
   const navigate = useNavigate();
   const campaignId = Number(id);
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const { data: skills, isLoading, error } = useCatalogue("skills", campaignId);
-  const [selectedType, setSelectedType] = useState(ALL_TYPES);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
-  const formRef = useRef<HTMLDivElement>(null);
-
-  const canAdd = campaignCapabilities(campaign).add_custom;
-
-  const typeOptions = useMemo(() => {
-    const unique = new Set(skills.map((skill) => skill.type).filter(Boolean));
-    return Array.from(unique).sort((a, b) => a.localeCompare(b));
-  }, [skills]);
-
-  const filteredSkills = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-    const byType =
-      selectedType === ALL_TYPES ? skills : skills.filter((skill) => skill.type === selectedType);
-    if (!query) {
-      return byType.slice().sort((a, b) => {
-        const aPriority = PRIORITY_TYPES.indexOf(a.type);
-        const bPriority = PRIORITY_TYPES.indexOf(b.type);
-        const aRank = aPriority === -1 ? Number.POSITIVE_INFINITY : aPriority;
-        const bRank = bPriority === -1 ? Number.POSITIVE_INFINITY : bPriority;
-        if (aRank !== bRank) {
-          return aRank - bRank;
-        }
-        const typeCompare = a.type.localeCompare(b.type);
-        if (typeCompare !== 0) {
-          return typeCompare;
-        }
-        return a.name.localeCompare(b.name);
-      });
-    }
-    return byType
-      .filter((skill) => {
-        const haystack = [skill.name, skill.type, skill.description]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase();
-        return haystack.includes(query);
-      })
-      .sort((a, b) => {
-        const aPriority = PRIORITY_TYPES.indexOf(a.type);
-        const bPriority = PRIORITY_TYPES.indexOf(b.type);
-        const aRank = aPriority === -1 ? Number.POSITIVE_INFINITY : aPriority;
-        const bRank = bPriority === -1 ? Number.POSITIVE_INFINITY : bPriority;
-        if (aRank !== bRank) {
-          return aRank - bRank;
-        }
-        const typeCompare = a.type.localeCompare(b.type);
-        if (typeCompare !== 0) {
-          return typeCompare;
-        }
-        return a.name.localeCompare(b.name);
-      });
-  }, [skills, searchQuery, selectedType]);
-
+  // The Archived view reads its own list and shows only what is archived (CAT-TWEAK-04).
+  const archive = useArchivedView();
+  const {
+    data: allSkills,
+    isLoading,
+    error,
+  } = useCatalogue("skills", campaignId, archive.listOptions);
+  const skills = useMemo(
+    () => archivedOnly(archive.archived, allSkills),
+    [archive.archived, allSkills]
+  );
+  const filters = useCatalogueFilters(skills, { haystack: skillHaystack, compare: compareSkills });
   // AddSkillForm writes created, edited and deleted skills to the shared cache itself.
-  const handleCreated = (_newSkill: Skill) => {
-    setIsFormOpen(false);
-    setEditingSkill(null);
-  };
+  const editor = useCatalogueEditor<Skill>();
 
-  const handleUpdated = (_updatedSkill: Skill) => {
-    setIsFormOpen(false);
-    setEditingSkill(null);
-  };
-
-  const handleDeleted = (_skillId: number) => {
-    setIsFormOpen(false);
-    setEditingSkill(null);
-  };
-
-  const handleEdit = (skill: Skill) => {
-    setEditingSkill(skill);
-    setIsFormOpen(true);
-    requestAnimationFrame(() => {
-      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  };
+  const capabilities = campaignCapabilities(campaign);
+  const canEdit = capabilities.edit_catalogue;
 
   const handleLoadoutTabChange = (tabId: LoadoutTabId) => {
     if (!id) {
@@ -152,47 +105,56 @@ export default function Skills() {
           <div className="flex flex-col gap-3 sm:flex-row md:min-w-0 md:flex-1 md:flex-nowrap md:items-center">
             <Input
               type="search"
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
+              value={filters.searchQuery}
+              onChange={(event) => filters.setSearchQuery(event.target.value)}
               placeholder="Search skills..."
               aria-label="Search skills"
               className="w-full sm:max-w-sm md:w-full md:max-w-sm md:flex-none"
             />
-            <Select value={selectedType} onValueChange={setSelectedType}>
+            <Select value={filters.selectedType} onValueChange={filters.setSelectedType}>
               <SelectTrigger className="w-full sm:w-56 md:shrink-0">
                 <SelectValue placeholder="Filter by discipline" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={ALL_TYPES}>All disciplines</SelectItem>
-                {typeOptions.map((typeOption) => (
+                {filters.typeOptions.map((typeOption) => (
                   <SelectItem key={typeOption} value={typeOption}>
                     {formatType(typeOption)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            <ArchivedToggle
+              checked={archive.archived}
+              onChange={(on) => {
+                editor.close();
+                archive.setArchived(on);
+              }}
+            />
           </div>
           <div className="flex items-center justify-end md:shrink-0">
-            {canAdd && !isFormOpen ? (
-              <Button size="sm" className="md:h-11" onClick={() => setIsFormOpen(true)}>
+            {canEdit && !editor.isOpen && !archive.archived ? (
+              <Button size="sm" className="md:h-11" onClick={editor.openNew}>
                 Add skill
               </Button>
             ) : null}
           </div>
         </div>
-        {isFormOpen && (
-          <div ref={formRef}>
+        {editor.isOpen && (
+          <div ref={editor.formRef}>
             <AddSkillForm
-              campaignId={Number(id)}
-              onCreated={handleCreated}
-              onUpdated={handleUpdated}
-              onDeleted={handleDeleted}
-              onCancel={() => {
-                setIsFormOpen(false);
-                setEditingSkill(null);
+              campaignId={campaignId}
+              onCreated={editor.close}
+              onUpdated={editor.close}
+              onDeleted={editor.close}
+              onCancel={editor.close}
+              typeOptions={filters.typeOptions}
+              editingSkill={editor.editing}
+              canDelete={capabilities.delete_catalogue}
+              onEditMatch={(match) => {
+                const entry = skills.find((listed) => listed.id === match.id);
+                if (entry) editor.edit(entry);
               }}
-              typeOptions={typeOptions}
-              editingSkill={editingSkill}
             />
           </div>
         )}
@@ -201,32 +163,26 @@ export default function Skills() {
             <TableSkeleton columns={4} rows={12} />
           ) : error ? (
             <p className="text-sm text-red-600">{error}</p>
-          ) : filteredSkills.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No skills logged yet.</p>
+          ) : filters.filtered.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              {archive.archived ? "Nothing archived." : "No skills logged yet."}
+            </p>
           ) : (
             <SkillsTable
-              skills={filteredSkills}
-              rowBackground={SKILL_ROW_BG_STYLE}
+              skills={filters.filtered}
               isMobile={isMobile}
               renderActions={(skill) => (
                 <div className="flex items-center justify-end gap-2">
-                  <LearnSkillDialog skill={skill} unitTypes={["heroes", "hiredswords"]} />
-                  {skill.campaign_id ? (
-                    <Tooltip
-                      trigger={
-                        <Button
-                          type="button"
-                          aria-label="Edit skill"
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => handleEdit(skill)}
-                        >
-                          <Pencil className="h-4 w-4" aria-hidden="true" />
-                        </Button>
-                      }
-                      content="Edit"
-                    />
+                  {archive.archived ? (
+                    canEdit ? (
+                      <RestoreButton kind="skills" campaignId={campaignId} entry={skill} />
+                    ) : null
+                  ) : (
+                    <LearnSkillDialog skill={skill} unitTypes={["heroes", "hiredswords"]} />
+                  )}
+                  {/* A book skill's edit makes the campaign's version (CAT-TWEAK-01). */}
+                  {canEdit && !archive.archived ? (
+                    <EditRowButton label="Edit skill" onClick={() => editor.edit(skill)} />
                   ) : null}
                 </div>
               )}

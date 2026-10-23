@@ -61,8 +61,8 @@ Limits: backend files ≤ 400 lines and functions ≤ 60 (§1); frontend routes 
 | `battles/routes/BattlePrebattle.tsx` | 1,173 | `hooks/{usePrebattleConfig,usePrebattleActions,useUnreadyOnExit}.ts`; shared `useParticipantSelection`, `useUsedSingleUseItems`, `useCustomUnitDraft`, `useCreatorCancel`; data in `BattleLayout` + `BattleContext`; `state/battle-machine.ts` | IMP-51 | Pass 3 |
 | `warbands/routes/Warband.tsx` | 1,070 | Hero editing into `WarbandHeroesSection` / `useUnitSectionEditor`; `WarbandDesktopHeader`; `useWarbandPagePermissions`; `CatalogContext` (ROST-CQ-03 targets < 300; the rule says 250) | IMP-29 | Pass 1 |
 | `items/hooks/useAcquireItemDialogShared.tsx` | 964 | `useAcquireTargets`, `useSpendableGold`, `useRarityRoll`, `useAcquireForm`, one `purchaseItem()` call | IMP-42 | Pass 2 |
-| `items/routes/Items.tsx` | 908 | `items-columns.tsx` (`buildItemColumns`), `useItemsFilters.ts`, `utils/statblock.tsx`, ~200-line route | IMP-82 | Pass 5 |
-| `items/components/ItemFormDialog.tsx` / `AddItemForm.tsx` | 887 / 782 | `useItemForm` + `<ItemFormFields>` (inline or in a dialog); `features/items/utils/statblock.ts` | IMP-80 | Pass 5 |
+| `items/routes/Items.tsx` | 908 | `items-columns.tsx` (`buildItemColumns`), `useItemsFilters.ts`, `utils/statblock.tsx`, ~200-line route | IMP-82 | Pass 5 · **Done** (PR B: 221 lines, 214 after PR C) |
+| `items/components/ItemFormDialog.tsx` / `AddItemForm.tsx` | 887 / 782 | `useItemForm` + `<ItemFormFields>` (inline or in a dialog); `features/items/utils/statblock.ts` | IMP-80 | Pass 5 · **Done** (PR B: 78 / 56; the stat line is in `features/catalogue/utils/statblock.ts`) |
 | `battles/components/postbattle/postbattle-utils.ts` | 852 | Rules move server-side (IMP-52); dead roll helpers deleted (IMP-55); dice maths to `utils/dice-results.ts` | IMP-52, 55, 51 | Pass 3 |
 | `warbands/components/henchmen/forms/HenchmenFormCard.tsx` | 793 | Wrapper over `UnitBasicInfo`/`UnitLoadout variant="henchmen"` plus the member list | IMP-30 | Pass 1 |
 | `campaigns/routes/CampaignLayout.tsx` | 724 | `useCampaign`, `useOwnWarband`, `useCurrentBattle`, `useCampaignMobileTopBar`, `CampaignShell` (`CampaignMobileShell`/`CampaignDesktopShell`), `CampaignTopBarActions`, `RejoinBattleButton`, `getCampaignNavItems` | IMP-13 | Phase 0 |
@@ -71,16 +71,16 @@ Limits: backend files ≤ 400 lines and functions ≤ 60 (§1); frontend routes 
 | `stores/app-store.tsx` | 532 | Disappears into TanStack Query plus a ≤ 100-line Zustand session store | IMP-09 | Phase 0 → end of passes |
 | `components/dice/DiceRoller.tsx` | 490 | `DiceProvider`, `DiceRollButton`, `CustomDicePicker`, `dice-utils.ts` | IMP-15 | Phase 0 |
 | `AddHiredSwordForm.tsx` (`AddHeroForm.tsx` 257) | 462 | One `RacePicker`; add forms driven by `unitKinds` | IMP-30, 27 | Pass 1 |
-| `skills/.../SkillFormDialog.tsx` / `AddSkillForm.tsx` | 449 / 349 | `useSkillForm` + `<SkillFormFields>`; generic `CatalogueTable<T>` | IMP-80 | Pass 5 |
+| `skills/.../SkillFormDialog.tsx` / `AddSkillForm.tsx` | 449 / 349 | `useSkillForm` + `<SkillFormFields>`; generic `CatalogueTable<T>` | IMP-80 | Pass 5 · **Done** (PR B: 80 / 57) |
 | `realtime/hooks/useNotifications.ts` | 449 | `notification-mappers.ts`, `useNotificationList`, `useNotificationSubscription`, `useNotificationActions` | IMP-15 | Phase 0 |
 | `useWarbandHenchmenSave.ts` (hero 244, hired sword 237) | 422 | `useUnitSectionEditor(kind)` | IMP-27 | Pass 1 |
-| `spells/.../AddSpellForm.tsx` / `CreateSpellDialog.tsx` | 414 / 371 | `useSpellForm` + `<SpellFormFields>` | IMP-80 | Pass 5 |
+| `spells/.../AddSpellForm.tsx` / `CreateSpellDialog.tsx` | 414 / 371 | `useSpellForm` + `<SpellFormFields>` | IMP-80 | Pass 5 · **Done** (PR B: 57 / 56) |
 | `components/ui/tooltip.tsx` | 394 | No split proposed (listed over-limit in FE-CQ-05) | IMP-15 | Phase 0 |
 | `warband/resources/WarbandResourceBar.tsx` | ≥ 350 | One `ResourceRow` instead of two duplicated variants | IMP-43 | Pass 2 |
 | `campaigns/routes/Locations.tsx` / `Encampments.tsx` | 339 / 314 | Shared `CampaignRecordsPage` scaffold | IMP-66 | Pass 4 |
 | `useHenchmenLevelUp.ts` (hero 196, hired sword 189) | 332 | One `useUnitLevelUp` via `unitKinds` | IMP-27 | Pass 1 |
-| `auth/components/AuthCard.tsx` | 308 | `LoginForm`, `RegisterForm`, `ForgotForm`, `AuthField`, `PasswordInput` | IMP-94 | Pass 6 |
-| `special/.../CreateSpecialDialog.tsx` / `AddSpecialForm.tsx` | 306 / 259 | `useSpecialForm` + `<SpecialFormFields>` | IMP-80 | Pass 5 |
+| `auth/components/AuthCard.tsx` | 308 | `LoginForm`, `RegisterForm`, `ForgotForm`, `AuthField`, `PasswordInput` | IMP-94 | Pass 6 · **Done** (PR B: 79) |
+| `special/.../CreateSpecialDialog.tsx` / `AddSpecialForm.tsx` | 306 / 259 | `useSpecialForm` + `<SpecialFormFields>` | IMP-80 | Pass 5 · **Done** (PR B: 52; `AddSpecialForm` was unused and is deleted) |
 | `HeroListBlocks` / `HenchmenListBlocks` / `HiredSwordListBlocks` | 261 each | `<UnitListBlocks>` | IMP-27 | Pass 1 |
 
 ## Cross-cutting improvements (Phase 0)
@@ -124,12 +124,14 @@ Limits: backend files ≤ 400 lines and functions ≤ 60 (§1); frontend routes 
 - **Problem:** No `LOGGING`: with `DEBUG` off, 500 tracebacks never reach Render's logs, app `logger.info` calls are dropped, and nothing records request durations.
 - **Change:** stdout `LOGGING` dict (`django.request` at WARNING), gunicorn access log with `%(M)sms`, and an optional middleware logging path, status, ms and query count for requests over 500 ms. Needed to measure the 0.1 quick wins.
 - **Effort:** S · **Plan phase:** 0.1
+- **Status:** done, except the optional slow-request middleware: the access log in Phase 0, `LOGGING` in pass 6 PR A.
 
 #### IMP-07 · P2 · Dockerfile and settings hygiene
 - **Sources:** INFRA-CQ-02, INFRA-CQ-03 · **Kind:** CQ
 - **Problem:** `uv sync` runs without `--frozen` (so `uv.lock` is ignored), `uv:latest` is unpinned, the container runs as root with no `HEALTHCHECK` and a hard-coded port, and migrations run in the entrypoint. Settings parse `DEBUG` differently from other flags, load unused session/CSRF/messages middleware, serve the browsable API in production, and have no dev/prod split.
 - **Change:** Pin uv, copy `uv.lock`, `--frozen`, non-root user, bind `${PORT:-8000}`; `_env_bool` everywhere; JSON renderer only unless `DEBUG`; drop unused middleware and apps after checking the tests; a production startup assertion block (INFRA-SEC-01).
 - **Effort:** S · **Plan phase:** 0.1
+- **Status:** part done in pass 6. PR A: JSON renderer only with `DEBUG` off, and more startup guards (a 50-character key; the email settings once `RESEND_API_KEY` is set). PR B: the Dockerfile pins uv 0.13.1 and installs from `uv.lock` with `--frozen`; the sessions and messages apps and the session, CSRF, messages and authentication middleware are gone; CI runs `check --deploy`. Still open: a non-root user, a `HEALTHCHECK`, binding `$PORT`, `STATIC_ROOT` and a dev/prod settings split; CI's own uv is unpinned.
 
 ### Server state and the frontend platform (PLAN 0.5)
 
@@ -194,6 +196,7 @@ Limits: backend files ≤ 400 lines and functions ≤ 60 (§1); frontend routes 
 - **Problem:** `*` redirects to `/` (the `NotFound` page is unused); `ProtectedRoute` drops `state.from`; `AuthCard` always goes to `/campaigns`; session expiry is silent; `/campaigns/:id/warbands` is a reachable "Coming soon" placeholder.
 - **Change:** `*` → `NotFound` plus a campaign-scoped `*`; `<Navigate to="/" replace state={{ from: location, reason: "expired" }} />` with a "Your session expired" notice and a return to `state.from` after login; remove or hide the placeholder. Refresh rotation (AUTH-SEC-04) removes the hard 30-day wall.
 - **Effort:** S · **Plan phase:** Phase 0
+- **Status:** done in pass 6 PR A: unknown URLs show NotFound with a way back, sign-in returns to `state.from`, an ended session says "Your session ended. Please sign in again.", and refresh tokens rotate. The placeholder wasn't checked.
 
 #### IMP-18 · P2 · Accessible shared primitives
 - **Sources:** FE-UX-05, ROST-UX-02 (component) · **Kind:** UX
@@ -367,21 +370,21 @@ No P1 items. Highest value: **IMP-64** (the three drifted permission lists are t
 
 ### Pass 5 — Catalogue
 
-| IMP | Kind | Title | Sources | Sev | Effort |
-| --- | --- | --- | --- | --- | --- |
-| IMP-79 | CQ | `apps/core/catalogue.py`: `CampaignCatalogueListView`/`DetailView`, `merge_campaign_overrides`, `parse_campaign_id`; skills/spells/special shrink to ~10 lines each | CAT-CQ-01 | P2 | M |
-| IMP-80 | CQ | One `use<Kind>Form` + `<Kind>FormFields` per catalogue kind (inline or in a dialog); `utils/statblock.ts`; `CatalogueTable<T>` | CAT-CQ-02 | P2 | L |
-| IMP-81 | CQ | `apps/core/seeding.py` (`upsert_global`, `resolve_restrictions`, `sync_availabilities`, `parse_int`); every seeder atomic; drop the Sheets fallback | CAT-CQ-04 | P2 | M |
-| IMP-82 | CQ | Split `Items.tsx` (908) and fix its memo deps; module-level `compareSkills` | CAT-CQ-06 | P3 | M |
-| IMP-83 | CQ | `UniqueConstraint(campaign, name, type, nulls_distinct=False)`, unique through-table pairs, `created_by`/`created_at` | CAT-CQ-08 | P3 | M |
-| IMP-84 | CQ | Catalogue dead code; decide on the unseeded `mim-*` and `custom-skills` data | CAT-CQ-07 | P3 | S |
-| IMP-85 | CQ | Rename the `save` serializer field, nested property serializer, typed `races` | CAT-CQ-09 | P3 | S |
-| IMP-86 | UX | "Custom" and "House rule" badges with author and replaced price; custom rows sorted with base rows | CAT-UX-01 | P2 | S (after IMP-83) |
-| IMP-87 | UX | Complete editors: bestiary and hired-sword edit/delete, usage-aware delete confirmation, restriction picker, `grade`/`race` persisted | CAT-UX-02 | P2 | M |
-| IMP-88 | UX | Multi-availability rows show their restriction ("Forest Goblins · Common"), or group into one row | CAT-UX-03 | P3 | S |
-| IMP-89 | UX | Empty states stop lying: inline error with Retry; favourite toggle rolls back with a toast | CAT-UX-04 | P3 | S |
-| IMP-90 | UX | `tab`, `subtype` and `q` in `useSearchParams` | CAT-UX-05 | P3 | S |
-| IMP-91 | UX | Rule tooltips reachable by keyboard (button trigger or `tabIndex` + `aria-describedby`) | CAT-UX-06 | P3 | S |
+| IMP | Kind | Title | Sources | Sev | Effort | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| IMP-79 | CQ | `apps/core/catalogue.py`: `CampaignCatalogueListView`/`DetailView`, `merge_campaign_overrides`, `parse_campaign_id`; skills/spells/special shrink to ~10 lines each | CAT-CQ-01 | P2 | M | **Done** (pass 5 PR B: `apps/core/catalogue/`, generic views on `CampaignScopedView`, skills, spells and specials views at 10 lines each; `parse_campaign_id` in PR A) |
+| IMP-80 | CQ | One `use<Kind>Form` + `<Kind>FormFields` per catalogue kind (inline or in a dialog); `utils/statblock.ts`; `CatalogueTable<T>` | CAT-CQ-02 | P2 | L | **Done** (pass 5 PR B, all seven kinds; catalogue code 13,279 → 11,713 lines) |
+| IMP-81 | CQ | `apps/core/seeding.py` (`upsert_global`, `resolve_restrictions`, `sync_availabilities`, `parse_int`); every seeder atomic; drop the Sheets fallback | CAT-CQ-04 | P2 | M | **Done** (seeders atomic in pass 5 PR A, the rest in PR B) |
+| IMP-82 | CQ | Split `Items.tsx` (908) and fix its memo deps; module-level `compareSkills` | CAT-CQ-06 | P3 | M | **Done** (pass 5 PR B) |
+| IMP-83 | CQ | `UniqueConstraint(campaign, name, type, nulls_distinct=False)`, unique through-table pairs, `created_by`/`created_at` | CAT-CQ-08 | P3 | M | **Mostly done**: the name constraints (pass 5 PR A, with `campaign_type`), and `updated_by` / `updated_at` in place of `created_*` (PR C). Through-table pairs are deduplicated on write, not constrained |
+| IMP-84 | CQ | Catalogue dead code; decide on the unseeded `mim-*` and `custom-skills` data | CAT-CQ-07 | P3 | S | **Part**: `createRestriction` and the old delete functions are gone (pass 5); the Marienburg data is parked (decision 7) |
+| IMP-85 | CQ | Rename the `save` serializer field, nested property serializer, typed `races` | CAT-CQ-09 | P3 | S | **Done** (pass 5 PR B) |
+| IMP-86 | UX | "Custom" and "House rule" badges with author and replaced price; custom rows sorted with base rows | CAT-UX-01 | P2 | S (after IMP-83) | **Done** on Wargear, Skills and Spells (pass 5 PR C); the bestiary pages with the bestiary rewrite |
+| IMP-87 | UX | Complete editors: bestiary and hired-sword edit/delete, usage-aware delete confirmation, restriction picker, `grade`/`race` persisted | CAT-UX-02 | P2 | M | **Part**: usage-aware delete (pass 5 PR C); `grade` and `race` kept by the server (PR A). The bestiary and hired-sword editors are replaced by the bestiary rewrite |
+| IMP-88 | UX | Multi-availability rows show their restriction ("Forest Goblins · Common"), or group into one row | CAT-UX-03 | P3 | S | **Done** (pass 5 PR A; grouping dropped, decision g) |
+| IMP-89 | UX | Empty states stop lying: inline error with Retry; favourite toggle rolls back with a toast | CAT-UX-04 | P3 | S | **Done** for the detail card and the favourite star (pass 5 PR A); the item forms still offer nothing when the property list fails |
+| IMP-90 | UX | `tab`, `subtype` and `q` in `useSearchParams` | CAT-UX-05 | P3 | S | **Done** (pass 5 PR C, all five pages) |
+| IMP-91 | UX | Rule tooltips reachable by keyboard (button trigger or `tabIndex` + `aria-describedby`) | CAT-UX-06 | P3 | S | **Part**: the new badges' tooltips take focus (pass 5 PR C); the property and special-rule tooltips weren't re-checked |
 
 No P1 items. Highest value: **IMP-79** (each catalogue fix currently lands 8 times), **IMP-80** (~3,800 lines of forms where ~1,500 would do) and **IMP-86** (the badges are what explain the "Axe 25 gc" mystery to players). The catalogue cache itself moves to TanStack Query in Phase 0 (IMP-08).
 
@@ -394,15 +397,15 @@ No P1 items. Highest value: **IMP-79** (each catalogue fix currently lands 8 tim
 
 ### Pass 6 — Auth & core
 
-| IMP | Kind | Title | Sources | Sev | Effort |
-| --- | --- | --- | --- | --- | --- |
-| IMP-92 | CQ | One session module (`useSyncExternalStore`, `status: booting/authenticated/anonymous/offline`) instead of localStorage + React state + a window event | AUTH-CQ-05 | P2 | M |
-| IMP-93 | CQ | One `_send_resend_email` helper (also the home for background dispatch and the test guard) | AUTH-CQ-02 | P3 | S |
-| IMP-94 | CQ/UX | One forgot-password flow; `AuthCard` split into forms; shared `PasswordInput`; reset and sign-up polish | AUTH-CQ-03, AUTH-UX-05 | P3 | S |
-| IMP-95 | CQ | Auth serializers: a real `EmailField`, `validate_password` with the user, `filter(username=email)`, `issue_tokens(user)` | AUTH-CQ-04 | P3 | S |
-| IMP-96 | UX | Feedback report: success toast, `maxLength` counter, available outside a campaign, a descriptive subject | AUTH-UX-04 | P3 | S |
-| IMP-97 | UX | Account management: change name and password, delete account, sign out other devices | AUTH-UX-06 | P3 | M |
-| IMP-98 | UX | Auth shell: scrollable on short screens, `role="alert"` errors, `aria-pressed` mode switch, deferred `youtube-nocookie` video | AUTH-UX-07 | P3 | S |
+| IMP | Kind | Title | Sources | Sev | Effort | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| IMP-92 | CQ | One session module (`useSyncExternalStore`, `status: booting/authenticated/anonymous/offline`) instead of localStorage + React state + a window event | AUTH-CQ-05 | P2 | M | **Done** (pass 6 PR B: `lib/session.ts`) |
+| IMP-93 | CQ | One `_send_resend_email` helper (also the home for background dispatch and the test guard) | AUTH-CQ-02 | P3 | S | **Done** (`_post_to_resend` in Phase 0; `email_configured()` and `_queue_email` in pass 6 PR B) |
+| IMP-94 | CQ/UX | One forgot-password flow; `AuthCard` split into forms; shared `PasswordInput`; reset and sign-up polish | AUTH-CQ-03, AUTH-UX-05 | P3 | S | **Part**: the split, `AuthField` and `PasswordInput` (pass 6 PR B) and the reset page's polish (PR A); one forgot flow and the password hint are PR C (AUTH-TWEAK-06, -07) |
+| IMP-95 | CQ | Auth serializers: a real `EmailField`, `validate_password` with the user, `filter(username=email)`, `issue_tokens(user)` | AUTH-CQ-04 | P3 | S | **Done** (a and b in pass 6 PR A; c to e in PR B) |
+| IMP-96 | UX | Feedback report: success toast, `maxLength` counter, available outside a campaign, a descriptive subject | AUTH-UX-04 | P3 | S | **Done** (the toast and `/campaigns` in pass 4; the counter and subject in pass 6 PR A) |
+| IMP-97 | UX | Account management: change name and password, delete account, sign out other devices | AUTH-UX-06 | P3 | M | **Part**: the server half of rename, password change and sign-out-others (pass 6 PR A); the account page and deletion are PR C, after the bestiary rewrite |
+| IMP-98 | UX | Auth shell: scrollable on short screens, `role="alert"` errors, `aria-pressed` mode switch, deferred `youtube-nocookie` video | AUTH-UX-07 | P3 | S | **Part**: scrolling (pass 6 PR A, fixed for short desktop windows by the `release/p5-p6` check), `role="alert"` and `aria-pressed` (PR A); the video is PR C (AUTH-TWEAK-05) |
 
 No P1 items. Highest value: **IMP-92**, the common root of AUTH-BUG-01 (P1: transient failures log users out), AUTH-BUG-02 and AUTH-PERF-01/02. If AUTH-BUG-01 jumps the queue, pull IMP-92 forward with it. The auth error strings and session-expiry handling are already covered in Phase 0 (IMP-10, IMP-17, IMP-12).
 
@@ -422,7 +425,7 @@ Consolidated from every UX section. Each line names the fixing IMP item. Run wit
 - [ ] Race pickers and `SearchableDropdown` usable by keyboard (arrow keys, Enter, Escape; no close-on-blur) — ROST-UX-02, FE-UX-05 → IMP-18, IMP-30
 - [ ] Unit card expand and XP +/- rendered always and shown on `:focus-within`, not only on hover — ROST-UX-03 → IMP-32
 - [ ] Resource +/- reachable without hover — ECON-UX-03 → IMP-47
-- [ ] Rule and property tooltips have focusable triggers — CAT-UX-06 → IMP-91
+- [ ] Rule and property tooltips have focusable triggers — CAT-UX-06 → IMP-91 (the catalogue badges' tooltips do, pass 5 PR C)
 - [ ] Permission dropdown closes on Escape and moves/returns focus (Radix menu) — CAMP-UX-07 → IMP-76
 - [ ] `TabSwitcher`/`MobileTabs` expose `tablist`/`tab`/`aria-selected` — FE-UX-05 → IMP-18
 - [ ] Checkbox shows a visible focus ring — FE-UX-05 → IMP-18
@@ -435,7 +438,7 @@ Consolidated from every UX section. Each line names the fixing IMP item. Run wit
 - [ ] Stash kebab button and log filter `<select>` labelled — ECON-UX-04 → IMP-48
 - [ ] Battle card actions name the unit ("Record kill for {unit}") — BATL-UX-05 → IMP-61
 - [ ] Chat input has `aria-label="Message"` — CAMP-UX-07 → IMP-76
-- [ ] Auth errors are `role="alert"`; the Sign in / Create Account switch has `aria-pressed` — AUTH-UX-07 → IMP-98
+- [x] Auth errors are `role="alert"`; the Sign in / Create Account switch has `aria-pressed` — AUTH-UX-07 → IMP-98 (pass 6 PR A)
 
 **Semantics**
 - [ ] No nested interactive elements (`CampaignCard` link with buttons, `RosterTable` button row with a link, `NavLink` wrapping `Button`) — CAMP-UX-07 → IMP-76
@@ -450,10 +453,10 @@ Consolidated from every UX section. Each line names the fixing IMP item. Run wit
 - [ ] End battle is the default action; Cancel moved to an overflow — BATL-UX-05 → IMP-61
 - [ ] Postbattle back chevron never skips postbattle — BATL-UX-01 → IMP-57
 - [ ] Kill and item-use mis-taps can be undone — BATL-UX-03 → IMP-59
-- [ ] Mobile catalogue rows distinguishable (multi-availability items) — CAT-UX-03 → IMP-88
-- [ ] Catalogue tab/filter/search survive back navigation — CAT-UX-05 → IMP-90
+- [x] Mobile catalogue rows distinguishable (multi-availability items) — CAT-UX-03 → IMP-88 (pass 5 PR A)
+- [x] Catalogue tab/filter/search survive back navigation — CAT-UX-05 → IMP-90 (pass 5 PR C)
 - [ ] One 960 px breakpoint; tablets (768 to 960 px) get one coherent layout; safe-area decision tested on a notched iPhone — FE-UX-06 → IMP-19
-- [ ] Auth pages scroll on short or landscape screens (`min-height: 100dvh`) — AUTH-UX-07 → IMP-98
+- [x] Auth pages scroll on short or landscape screens (`min-height: 100dvh`) — AUTH-UX-07 → IMP-98 (pass 6 PR A and the `release/p5-p6` browser check)
 - [ ] Hover-only controls have a touch path (`@media (hover: none)`) — ROST-UX-03, ECON-UX-03 → IMP-32, IMP-47
 - [ ] Shell renders immediately with skeletons; no full-screen blackout on campaign or battle entry — FE-UX-02 → IMP-12
 - [ ] Cross-refs to verify on a real phone (performance and bug items, not tracked here): the mobile edit-mode re-render loop (ROST-PERF-07), the pull-to-refresh full reload (FE-PERF-02), and the remount when crossing 960 px (FE-BUG-01)

@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+
+/** Any URL no route matches (FE-UX-03); the way back goes to sign-in, or on to the campaigns. */
 export default function NotFound() {
   return (
     <main className="flex min-h-screen items-center justify-center px-6">
@@ -9,6 +12,9 @@ export default function NotFound() {
         <p className="mt-2 text-muted-foreground">
           The streets shift. Head back to the chronicle and try again.
         </p>
+        <Link to="/" className="mt-4 inline-block text-sm text-muted-foreground underline">
+          Back to the chronicle
+        </Link>
       </div>
     </main>
   );

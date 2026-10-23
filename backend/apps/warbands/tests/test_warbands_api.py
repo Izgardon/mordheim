@@ -67,6 +67,18 @@ class WarbandsApiTests(APITestCase):
             first_name=name,
         )
 
+    def test_the_warband_list_filters_by_campaign_and_refuses_a_campaign_id_that_is_not_a_number(self):
+        # BUG-152 (the same class as BUG-79): ?campaign_id=abc was a 500; parse_campaign_id answers the standard 400
+        detail = "campaign_id must be a campaign's id."
+        refused = {"detail": detail, "code": "invalid", "fields": {"campaign_id": [detail]}}
+        for value in ("abc", "1.5"):
+            with self.subTest(campaign_id=value):
+                response = self.client.get(f"/api/warbands/?campaign_id={value}")
+                self.assertEqual((response.status_code, response.json()), (400, refused))
+        listed = self.client.get(f"/api/warbands/?campaign_id={self.campaign.id}").json()
+        self.assertEqual([row["id"] for row in listed], [self.warband.id])
+        self.assertEqual(self.client.get(f"/api/warbands/?campaign_id={self.campaign.id + 1}").json(), [])
+
     def test_add_warband_item_defaults_cost_from_single_availability(self):
         response = self.client.post(
             f"/api/warbands/{self.warband.id}/items/",

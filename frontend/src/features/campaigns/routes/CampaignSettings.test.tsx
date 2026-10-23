@@ -127,7 +127,7 @@ describe("CampaignSettings", () => {
   it("shows Active Battles to an admin, who holds manage_battles like the owner (BATL-NEW-03)", async () => {
     const user = userEvent.setup();
     renderWithQueryClient(
-      <SettingsRoute campaign={buildCampaign("admin", ["manage_battles", "manage_items"])} />
+      <SettingsRoute campaign={buildCampaign("admin", ["manage_battles", "edit_catalogue"])} />
     );
 
     await user.click(screen.getAllByRole("button", { name: "Campaign" })[0]);

@@ -5,6 +5,7 @@ from typing import Any
 
 from rest_framework import serializers
 
+from apps.users.names import display_name
 from apps.warbands.models import LedgerAction, WarbandLog, WarbandTrade
 from apps.warbands.services.economy_log import CLIENT_LOG_ENTRIES, MAX_CLIENT_PAYLOAD
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
@@ -46,10 +47,14 @@ class WarbandLogCreateSerializer(serializers.Serializer):
 
 
 class LedgerAuthorSerializer(serializers.Serializer):
-    """Who entered a ledger row by hand (decision 6)."""
+    """Who entered a ledger row by hand (decision 6), by display name: "Player N" without one, never the email
+    (SEC-13, AUTH-TWEAK-02)."""
 
     id = serializers.IntegerField()
-    name = serializers.CharField(source="first_name")
+    name = serializers.SerializerMethodField()
+
+    def get_name(self, user: Any) -> str:
+        return display_name(user)
 
 
 class WarbandTradeChildSerializer(serializers.ModelSerializer):

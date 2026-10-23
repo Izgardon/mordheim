@@ -1,15 +1,12 @@
-from django.contrib.auth import get_user_model
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.db.models import Q
-from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from typing import Any
+
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView
 
 from apps.core.throttling import (
+    ACCOUNT_THROTTLE_CLASSES,
     FEEDBACK_REPORT_THROTTLE_CLASSES,
     LOGIN_THROTTLE_CLASSES,
     PASSWORD_RESET_CONFIRM_THROTTLE_CLASSES,
@@ -18,41 +15,42 @@ from apps.core.throttling import (
     REGISTER_THROTTLE_CLASSES,
 )
 
-from .emails import send_feedback_report_email, send_password_reset_email
+from .emails import (
+    RESET_EMAIL_UNAVAILABLE,
+    password_reset_email_available,
+    send_feedback_report_email,
+    send_password_reset_email,
+)
 from .serializers import (
-    EmailTokenObtainPairSerializer,
     FeedbackReportSerializer,
+    LoginSerializer,
+    NameSerializer,
+    PasswordChangeSerializer,
     PasswordResetConfirmSerializer,
     PasswordResetRequestSerializer,
     RegisterSerializer,
     UserSerializer,
+    password_problems,
 )
+from .services.accounts import (
+    change_password,
+    rename,
+    reset_link_for,
+    set_new_password,
+    sign_in,
+    sign_out_others,
+    user_for_reset_link,
+)
+from .services.tokens import SessionTokenRefreshSerializer, issue_tokens
+
+RESET_SENT = "If an account exists for that email, a reset link has been sent."
+RESET_LINK_INVALID = "Invalid or expired token."
 
 
-def _get_user_by_email(email):
-    user_model = get_user_model()
-    return (
-        user_model.objects.filter(Q(email__iexact=email) | Q(username__iexact=email), is_active=True)
-        .only("id", "email")
-        .first()
-    )
-
-
-def _get_user_from_uid(uid):
-    user_model = get_user_model()
-    try:
-        user_id = force_str(urlsafe_base64_decode(uid))
-    except (TypeError, ValueError, OverflowError):
-        return None
-    return user_model.objects.filter(pk=user_id, is_active=True).first()
-
-
-def _build_reset_url(uid, token):
-    from django.conf import settings
-
-    base = settings.FRONTEND_URL.rstrip("/")
-    reset_path = "/reset-password"
-    return f"{base}{reset_path}?uid={uid}&token={token}"
+def signed_in(user: Any, tokens: dict[str, str], http_status: int = 200) -> Response:
+    """A pair for this device beside the user as `/me` answers it: sign-up, sign-in, a password change and signing out
+    everywhere else all answer this, so the app needn't ask `/me` (PERF-50)."""
+    return Response({**tokens, "user": UserSerializer(user).data}, status=http_status)
 
 
 class RegisterView(generics.CreateAPIView):
@@ -64,23 +62,23 @@ class RegisterView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        refresh = RefreshToken.for_user(user)
-        return Response(
-            {
-                "access": str(refresh.access_token),  # type: ignore[attr-defined]
-                "refresh": str(refresh),
-                "user": UserSerializer(user).data,
-            },
-            status=201,
-        )
+        return signed_in(user, issue_tokens(user), http_status=201)
 
 
-class LoginView(TokenObtainPairView):
-    serializer_class = EmailTokenObtainPairSerializer  # type: ignore[assignment]
+class LoginView(APIView):
+    authentication_classes = ()  # a stale bearer header never stops a sign-in
+    permission_classes = [permissions.AllowAny]
     throttle_classes = LOGIN_THROTTLE_CLASSES
+
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data["user"]
+        return signed_in(user, sign_in(user))
 
 
 class RefreshView(TokenRefreshView):
+    serializer_class = SessionTokenRefreshSerializer  # type: ignore[assignment]
     throttle_classes = REFRESH_THROTTLE_CLASSES
 
 
@@ -88,6 +86,13 @@ class MeView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
+        return Response(UserSerializer(request.user).data)
+
+    def patch(self, request):
+        """Change the display name (AUTH-NEW-02); `name` is the only field taken."""
+        serializer = NameSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        rename(request.user, serializer.validated_data["name"])
         return Response(UserSerializer(request.user).data)
 
 
@@ -98,16 +103,15 @@ class PasswordResetRequestView(APIView):
     def post(self, request):
         serializer = PasswordResetRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        email = serializer.validated_data["email"]
+        if not password_reset_email_available():  # the same answer for every address, before any lookup (BUG-56)
+            body = {"detail": RESET_EMAIL_UNAVAILABLE, "code": "email_unavailable", "fields": {}}
+            return Response(body, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-        user = _get_user_by_email(email)
-        if user:
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-            token = PasswordResetTokenGenerator().make_token(user)
-            reset_url = _build_reset_url(uid, token)
-            send_password_reset_email(user.email or email, reset_url)
-
-        return Response({"detail": "If an account exists for that email, a reset link has been sent."})
+        link = reset_link_for(serializer.validated_data["email"])
+        if link is not None:
+            to_email, reset_url = link
+            send_password_reset_email(to_email, reset_url)
+        return Response({"detail": RESET_SENT})
 
 
 class PasswordResetConfirmView(APIView):
@@ -117,17 +121,40 @@ class PasswordResetConfirmView(APIView):
     def post(self, request):
         serializer = PasswordResetConfirmSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        uid = serializer.validated_data["uid"]
-        token = serializer.validated_data["token"]
-        new_password = serializer.validated_data["new_password"]
+        data = serializer.validated_data
 
-        user = _get_user_from_uid(uid)
-        if not user or not PasswordResetTokenGenerator().check_token(user, token):
-            return Response({"detail": "Invalid or expired token."}, status=400)
+        user = user_for_reset_link(data["uid"], data["token"])
+        if user is None:
+            return Response({"detail": RESET_LINK_INVALID}, status=400)
+        problems = password_problems(data["new_password"], user)  # once the link is good: checked against the user
+        if problems:
+            return Response({"new_password": problems}, status=400)
 
-        user.set_password(new_password)
-        user.save(update_fields=["password"])
+        set_new_password(user, data["new_password"])  # ends every session too (SEC-05)
         return Response({"detail": "Password has been reset."})
+
+
+class PasswordChangeView(APIView):
+    """`POST auth/password/`: the current and a new password; other devices are signed out, and this one gets a fresh
+    pair (AUTH-NEW-03, decisions 1 and 4)."""
+
+    permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = ACCOUNT_THROTTLE_CLASSES
+
+    def post(self, request):
+        serializer = PasswordChangeSerializer(data=request.data, context={"user": request.user})
+        serializer.is_valid(raise_exception=True)
+        return signed_in(request.user, change_password(request.user, serializer.validated_data["new_password"]))
+
+
+class SignOutOthersView(APIView):
+    """`POST auth/sign-out-others/`: every other device is signed out; this one gets a fresh pair (AUTH-NEW-04)."""
+
+    permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = ACCOUNT_THROTTLE_CLASSES
+
+    def post(self, request):
+        return signed_in(request.user, sign_out_others(request.user))
 
 
 class FeedbackReportView(APIView):

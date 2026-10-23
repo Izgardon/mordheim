@@ -32,15 +32,15 @@ class CampaignDetailPermissionsTests(APITestCase):
 
     def test_player_sees_only_granted_permissions(self):
         url = f"/api/campaigns/{self.campaign_id}/"
-        # Joining grants add_custom (custom catalogue entries) by default.
-        self.assertEqual(self.player_client.get(url).data["permissions"], ["add_custom"])
+        # Joining grants edit_catalogue (add and edit catalogue entries) by default.
+        self.assertEqual(self.player_client.get(url).data["permissions"], ["edit_catalogue"])
 
         membership = CampaignMembership.objects.get(campaign_id=self.campaign_id, user=self.player)
         CampaignMembershipPermission.objects.create(
-            membership=membership, permission=CampaignPermission.objects.get(code="manage_items")
+            membership=membership, permission=CampaignPermission.objects.get(code="delete_catalogue")
         )
 
-        self.assertEqual(self.player_client.get(url).data["permissions"], ["add_custom", "manage_items"])
+        self.assertEqual(self.player_client.get(url).data["permissions"], ["delete_catalogue", "edit_catalogue"])
 
     def test_matches_permissions_me(self):
         detail = self.player_client.get(f"/api/campaigns/{self.campaign_id}/").data["permissions"]

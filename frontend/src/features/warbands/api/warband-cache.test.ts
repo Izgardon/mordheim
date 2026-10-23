@@ -21,7 +21,7 @@ const capabilities = {
   manage_items: true,
   edit_backstory: true,
   delete: true,
-  add_custom: false,
+  edit_catalogue: false,
 };
 
 const makeSheet = (): WarbandSheet =>

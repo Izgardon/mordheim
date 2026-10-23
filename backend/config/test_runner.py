@@ -7,11 +7,13 @@ outbound socket connection that isn't loopback, so a missing mock fails loudly
 instead of reaching a real service.
 """
 
+import logging
 import socket
 from contextlib import ExitStack
 from typing import Any
 from unittest.mock import patch
 
+from django.conf import settings
 from django.test.runner import DiscoverRunner
 from django.test.utils import override_settings
 
@@ -25,6 +27,10 @@ EXTERNAL_SERVICE_SETTINGS = {
     "PUSHER_CLUSTER": "",
 }
 
+# DRF's test client logs out through a session (`force_authenticate(user=None)` calls `logout()`), and the sessions
+# app isn't installed (INFRA-CQ-03), so the run uses the signed-cookie engine, which needs no table
+TEST_SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+
 _LOOPBACK_HOSTS = {"127.0.0.1", "::1", "localhost"}
 
 
@@ -37,15 +43,33 @@ def _refuse_if_external(sock: socket.socket, address: Any) -> None:
         raise ExternalNetworkCallError(f"Test tried to connect to {address!r}. Mock the external service instead.")
 
 
+def _catalogue_cache_off() -> dict[str, Any]:
+    """The catalogue list cache stays off unless a test turns it on (apps/items/tests/catalogue_support.py,
+    `catalogue_cache_on`): tests write catalogue rows directly, without the version bump the write paths, seeders and
+    house rules make, and a class's tests share the versions its fixture leaves."""
+    return {**settings.CACHES, "catalogue": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
+
+
 class NoNetworkTestRunner(DiscoverRunner):
     def setup_test_environment(self, **kwargs: Any) -> None:
         super().setup_test_environment(**kwargs)
-        self._external_settings = override_settings(**EXTERNAL_SERVICE_SETTINGS, EXTERNAL_DISPATCH_SYNC=True)
+        self._external_settings = override_settings(
+            **EXTERNAL_SERVICE_SETTINGS,
+            EXTERNAL_DISPATCH_SYNC=True,
+            CACHES=_catalogue_cache_off(),
+            SESSION_ENGINE=TEST_SESSION_ENGINE,
+        )
         self._external_settings.enable()
         get_pusher_client.cache_clear()
         self._install_socket_guard()
+        # LOGGING prints django.request's 4xx and 5xx answers; here they would only repeat what the tests assert (the
+        # test client raises a view's exception itself), so they stay out of the output
+        self._request_logger = logging.getLogger("django.request")
+        self._request_log_level = self._request_logger.level
+        self._request_logger.setLevel(logging.CRITICAL)
 
     def teardown_test_environment(self, **kwargs: Any) -> None:
+        self._request_logger.setLevel(self._request_log_level)
         self._remove_socket_guard()
         self._external_settings.disable()
         get_pusher_client.cache_clear()

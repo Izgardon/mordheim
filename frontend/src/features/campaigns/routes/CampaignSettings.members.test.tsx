@@ -112,7 +112,7 @@ describe("Settings members list, as the owner", () => {
     const player = row(PLAYER.name);
     expect(player).toHaveTextContent(PLAYER.email);
     expect(within(player).getByRole("checkbox", { name: "Admin" })).not.toBeChecked();
-    expect(within(player).getByRole("button", { name: "Add custom" })).toBeEnabled();
+    expect(within(player).getByRole("button", { name: "Edit catalogue" })).toBeEnabled();
     expect(within(player).getByRole("button", { name: REMOVE })).toBeInTheDocument();
 
     const nameless = row(NAMELESS.name);
@@ -222,19 +222,19 @@ describe("Settings members list, as the owner", () => {
     expect(dialog).not.toHaveTextContent(NAMELESS.email);
   });
 
-  it("offers every code GET permissions/ lists, with the server's labels and descriptions and in its order, spells, specials and battles included (BUG-15, CAMP-TEST-25)", async () => {
+  it("offers every code GET permissions/ lists, with the server's labels and descriptions and in its order: one Edit catalogue and one Delete catalogue code (BUG-15, CAMP-TEST-25, decisions 4 and 5)", async () => {
     const user = setupUser();
     await openMembers(user);
 
-    await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Add custom" }));
+    await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Edit catalogue" }));
 
     const options = within(grantMenu(PLAYER.name)).getAllByRole("menuitemcheckbox");
-    expect(options).toHaveLength(11);
+    expect(options).toHaveLength(7);
     PERMISSION_CATALOGUE.forEach((entry, index) =>
       expect(options[index]).toHaveAccessibleName(`${entry.label} ${entry.description}`)
     );
     expect(options.map((option) => option.getAttribute("aria-checked") === "true")).toEqual(
-      PERMISSION_CATALOGUE.map((entry) => entry.code === "add_custom")
+      PERMISSION_CATALOGUE.map((entry) => entry.code === "edit_catalogue")
     );
     expect(fakeApi.countOf(CATALOGUE)).toBe(1);
   });
@@ -243,21 +243,23 @@ describe("Settings members list, as the owner", () => {
     const user = setupUser();
     fakeApi.fail(
       PERMISSIONS_PUT,
-      new ApiError("Unknown permission: manage_specials.", 400, {
-        detail: "Unknown permission: manage_specials.",
+      new ApiError("Unknown permission: manage_locations.", 400, {
+        detail: "Unknown permission: manage_locations.",
         code: "unknown_permission",
-        fields: { permissions: ["Unknown permission: manage_specials."] },
+        fields: { permissions: ["Unknown permission: manage_locations."] },
       })
     );
     await openMembers(user);
-    await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Add custom" }));
+    await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Edit catalogue" }));
 
-    await user.click(screen.getByRole("menuitemcheckbox", { name: /^Manage specials/ }));
+    await user.click(screen.getByRole("menuitemcheckbox", { name: /^Manage locations/ }));
 
     expect(
-      await within(row(PLAYER.name)).findByText("Permissions: Unknown permission: manage_specials.")
+      await within(row(PLAYER.name)).findByText(
+        "Permissions: Unknown permission: manage_locations."
+      )
     ).toBeInTheDocument();
-    expect(screen.getByRole("menuitemcheckbox", { name: /^Manage specials/ })).not.toBeChecked();
+    expect(screen.getByRole("menuitemcheckbox", { name: /^Manage locations/ })).not.toBeChecked();
     await waitFor(() => expect(fakeApi.countOf(CATALOGUE)).toBe(2));
   });
 
@@ -266,25 +268,27 @@ describe("Settings members list, as the owner", () => {
     const answer = deferred<unknown>();
     fakeApi.on(PERMISSIONS_PUT, () => answer.promise);
     await openMembers(user);
-    await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Add custom" }));
+    await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Edit catalogue" }));
 
-    await user.click(screen.getByRole("menuitemcheckbox", { name: /^Manage items/ }));
+    await user.click(screen.getByRole("menuitemcheckbox", { name: /^Delete catalogue/ }));
 
-    expect(screen.getByRole("menuitemcheckbox", { name: /^Manage items/ })).toBeChecked();
-    expect(screen.getByRole("menuitemcheckbox", { name: /^Manage skills/ })).toHaveAttribute(
+    expect(screen.getByRole("menuitemcheckbox", { name: /^Delete catalogue/ })).toBeChecked();
+    expect(screen.getByRole("menuitemcheckbox", { name: /^Manage rules/ })).toHaveAttribute(
       "aria-disabled",
       "true"
     );
     expect(fakeApi.bodyOf(PERMISSIONS_PUT)).toEqual({
-      permissions: ["add_custom", "manage_items"],
+      permissions: ["edit_catalogue", "delete_catalogue"],
     });
 
-    answer.resolve(grantAnswer({ permissions: ["add_custom", "manage_items"] }));
+    answer.resolve(grantAnswer({ permissions: ["edit_catalogue", "delete_catalogue"] }));
 
     expect(
-      await within(row(PLAYER.name)).findByRole("button", { name: "Add custom, Manage items" })
+      await within(row(PLAYER.name)).findByRole("button", {
+        name: "Edit catalogue, Delete catalogue",
+      })
     ).toBeInTheDocument();
-    expect(screen.getByRole("menuitemcheckbox", { name: /^Manage skills/ })).not.toHaveAttribute(
+    expect(screen.getByRole("menuitemcheckbox", { name: /^Manage rules/ })).not.toHaveAttribute(
       "aria-disabled"
     );
   });
@@ -298,7 +302,7 @@ describe("Settings members list, as the owner", () => {
       })
     );
     await openMembers(user);
-    await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Add custom" }));
+    await user.click(within(row(PLAYER.name)).getByRole("button", { name: "Edit catalogue" }));
 
     await user.click(screen.getByRole("menuitemcheckbox", { name: /^Manage rules/ }));
 
@@ -306,7 +310,7 @@ describe("Settings members list, as the owner", () => {
       await within(row(PLAYER.name)).findByText("Only owners and admins can change permissions.")
     ).toBeInTheDocument();
     expect(
-      within(row(PLAYER.name)).getByRole("button", { name: "Add custom" })
+      within(row(PLAYER.name)).getByRole("button", { name: "Edit catalogue" })
     ).toBeInTheDocument();
     expect(screen.getByRole("menuitemcheckbox", { name: /^Manage rules/ })).not.toBeChecked();
   });
@@ -314,7 +318,7 @@ describe("Settings members list, as the owner", () => {
   it("closes the grant menu on Escape, handing focus back to its button, and on an outside click (CAMP-UX-07)", async () => {
     const user = setupUser();
     await openMembers(user);
-    const trigger = within(row(PLAYER.name)).getByRole("button", { name: "Add custom" });
+    const trigger = within(row(PLAYER.name)).getByRole("button", { name: "Edit catalogue" });
     await user.click(trigger);
     expect(grantMenu(PLAYER.name)).toBeInTheDocument();
 
@@ -332,19 +336,19 @@ describe("Settings members list, as the owner", () => {
     const user = setupUser();
     fakeApi.on(PERMISSIONS_PUT, (body: unknown) => grantAnswer(body));
     await openMembers(user);
-    within(row(PLAYER.name)).getByRole("button", { name: "Add custom" }).focus();
+    within(row(PLAYER.name)).getByRole("button", { name: "Edit catalogue" }).focus();
 
     await user.keyboard("{Enter}");
     await waitFor(() =>
-      expect(screen.getByRole("menuitemcheckbox", { name: /^Add custom/ })).toHaveFocus()
+      expect(screen.getByRole("menuitemcheckbox", { name: /^Edit catalogue/ })).toHaveFocus()
     );
     await user.keyboard("{ArrowDown}");
-    expect(screen.getByRole("menuitemcheckbox", { name: /^Manage items/ })).toHaveFocus();
+    expect(screen.getByRole("menuitemcheckbox", { name: /^Delete catalogue/ })).toHaveFocus();
     await user.keyboard(" ");
 
     await waitFor(() =>
       expect(fakeApi.bodyOf(PERMISSIONS_PUT)).toEqual({
-        permissions: ["add_custom", "manage_items"],
+        permissions: ["edit_catalogue", "delete_catalogue"],
       })
     );
     expect(grantMenu(PLAYER.name)).toBeInTheDocument();
@@ -399,7 +403,7 @@ describe("Settings members list, as an admin", () => {
     const player = row(PLAYER.name);
     expect(within(player).getByRole("checkbox", { name: "Admin" })).toBeDisabled();
     expect(within(row(ADMIN.name)).getByRole("checkbox", { name: "Admin" })).toBeDisabled();
-    expect(within(player).getByRole("button", { name: "Add custom" })).toBeEnabled();
+    expect(within(player).getByRole("button", { name: "Edit catalogue" })).toBeEnabled();
     expect(within(player).getByRole("button", { name: REMOVE })).toBeInTheDocument();
     expect(within(row(NAMELESS.name)).getByRole("button", { name: REMOVE })).toBeInTheDocument();
     expect(within(row(OWNER.name)).queryByRole("button", { name: REMOVE })).toBeNull();

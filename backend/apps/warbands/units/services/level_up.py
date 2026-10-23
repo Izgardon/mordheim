@@ -8,7 +8,7 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
 from django.db import transaction
-from django.db.models import F, Func, JSONField, Model, Value
+from django.db.models import F, Func, JSONField, Value
 from django.db.models.functions import Least
 from django.utils import timezone
 
@@ -86,10 +86,9 @@ def spend_level_up(unit: RosterUnit, *, stat_field: str | None, record: dict[str
 
 
 def pending_placeholder(model: type[Skill] | type[Spell] | type[Special], name: str) -> Any:
-    """The global placeholder entry (e.g. Skill "New Skill", type "Pending"), created if it is missing."""
-    placeholder: Model | None = model.objects.filter(campaign__isnull=True, name=name, type="Pending").first()
-    if placeholder is None:
-        placeholder = model.objects.create(name=name, type="Pending")
+    """The global placeholder entry (e.g. Skill "New Skill", type "Pending"), created if it is missing. The base
+    constraint keeps it to one row, so two level-ups creating it at once share it (BUG-17)."""
+    placeholder, _ = model.objects.get_or_create(campaign=None, campaign_type=None, name=name, type="Pending")
     return placeholder
 
 

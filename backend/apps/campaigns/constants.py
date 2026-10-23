@@ -24,18 +24,27 @@ class PermissionCode:
 
 
 PERMISSIONS: tuple[PermissionCode, ...] = (
-    PermissionCode("add_custom", "Add custom", "Add custom items, skills, spells and specials to the campaign."),
-    PermissionCode("manage_items", "Manage items", "Edit and delete the campaign's custom items."),
-    PermissionCode("manage_skills", "Manage skills", "Edit and delete the campaign's custom skills."),
-    PermissionCode("manage_spells", "Manage spells", "Edit and delete the campaign's custom spells."),
-    PermissionCode("manage_specials", "Manage specials", "Edit and delete the campaign's custom specials."),
+    # one code for the whole catalogue (decision 4), and deleting apart from it (decision 5); they replaced
+    # add_custom, manage_items, manage_skills, manage_spells, manage_specials and manage_bestiary (migration 0023)
+    PermissionCode(
+        "edit_catalogue",
+        "Edit catalogue",
+        "Add items, skills, spells, specials, races, bestiary entries, hired swords and item properties to the"
+        " campaign's catalogue, edit any entry (a book entry through the campaign's own version of it), revert versions"
+        " and restore what was archived.",
+    ),
+    PermissionCode(
+        "delete_catalogue",
+        "Delete catalogue",
+        "Delete the campaign's custom entries (an entry in use is archived instead) and hide book entries from the"
+        " campaign.",
+    ),
     PermissionCode("manage_rules", "Manage rules", "Add, edit and delete the campaign's house rules."),
     PermissionCode("manage_warbands", "Manage warbands", "Edit every warband in the campaign, not just their own."),
     PermissionCode(
         "manage_encampments", "Manage encampments", "Edit, reassign and remove every encampment, not just their own."
     ),
     PermissionCode("manage_locations", "Manage locations", "Add and edit the campaign's locations."),
-    PermissionCode("manage_bestiary", "Manage bestiary", "Add, edit and delete the campaign's bestiary entries."),
     PermissionCode(
         "manage_battles",
         "Manage battles",
@@ -45,4 +54,4 @@ PERMISSIONS: tuple[PermissionCode, ...] = (
 
 PERMISSION_CODES: tuple[str, ...] = tuple(entry.code for entry in PERMISSIONS)
 
-JOIN_GRANTS: tuple[str, ...] = ("add_custom",)  # what a player holds on joining (and again on rejoining)
+JOIN_GRANTS: tuple[str, ...] = ("edit_catalogue",)  # what a player holds on joining (and again on rejoining)

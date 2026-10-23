@@ -1,434 +1,65 @@
-from rest_framework import permissions, status
+from django.db.models import Q
+from rest_framework import status
+from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
-from apps.campaigns.permissions import get_membership, get_writable_membership, has_campaign_permission
-from apps.warbands.models import Warband
+from apps.core.catalogue.kinds import BESTIARY, HIRED_SWORDS
+from apps.core.catalogue.views import CatalogueDetailView, CatalogueListView
+from apps.warbands.units.catalogue_scope import current_entry
+from apps.warbands.views.base import WarbandScopedView
 
-from .models import (
-    BestiaryEntry,
-    BestiaryEntryItem,
-    BestiaryEntrySkill,
-    BestiaryEntrySpecial,
-    BestiaryEntrySpell,
-    HiredSwordProfile,
-    HiredSwordProfileRestriction,
-    WarbandBestiaryFavourite,
-)
-from .serializers import (
-    BestiaryEntryCreateSerializer,
-    BestiaryEntrySerializer,
-    BestiaryEntrySummarySerializer,
-    HiredSwordProfileDetailSerializer,
-    HiredSwordProfileSummarySerializer,
-)
+from .models import BestiaryEntry, WarbandBestiaryFavourite
+from .serializers import BestiaryEntrySummarySerializer
 
 
-class BestiaryEntryListView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request):
-        entries = BestiaryEntry.objects.all()
-
-        entry_type = request.query_params.get("type")
-        if entry_type:
-            entries = entries.filter(type__iexact=entry_type.strip())
-
-        search = request.query_params.get("search")
-        if search:
-            entries = entries.filter(name__icontains=search.strip())
-
-        campaign_id = request.query_params.get("campaign_id")
-        if campaign_id:
-            membership = get_membership(request.user, campaign_id)
-            if not membership:
-                return Response({"detail": "Not found"}, status=404)
-
-            campaign_entries = entries.filter(campaign_id=campaign_id)
-            base_entries = entries.filter(campaign__isnull=True)
-            if campaign_entries.exists():
-                base_entries = base_entries.exclude(name__in=campaign_entries.values_list("name", flat=True))
-            merged = list(campaign_entries.order_by("name", "id")) + list(base_entries.order_by("name", "id"))
-            serializer = BestiaryEntrySummarySerializer(merged, many=True)
-            return Response(serializer.data)
-
-        entries = entries.filter(campaign__isnull=True)
-        serializer = BestiaryEntrySummarySerializer(entries.order_by("name", "id"), many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        campaign_id = request.data.get("campaign_id")
-        membership = get_writable_membership(request.user, campaign_id)
-        if not membership:
-            return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "manage_bestiary"):
-            return Response({"detail": "Forbidden"}, status=403)
-
-        data = request.data.copy()
-        data.pop("campaign_id", None)
-        data["campaign"] = campaign_id
-        serializer = BestiaryEntryCreateSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        entry = serializer.save()
-
-        _sync_m2m(entry, request.data)
-
-        return Response(BestiaryEntrySerializer(entry).data, status=status.HTTP_201_CREATED)
+class BestiaryEntryListView(CatalogueListView):
+    kind = BESTIARY
 
 
-class BestiaryEntryDetailView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+class BestiaryEntryDetailView(CatalogueDetailView):
+    kind = BESTIARY
 
-    def get(self, request, entry_id):
-        entry = (
-            BestiaryEntry.objects.prefetch_related(
-                "bestiary_entry_skills__skill",
-                "bestiary_entry_specials__special",
-                "bestiary_entry_spells__spell",
-                "bestiary_entry_items__item",
-            )
-            .filter(id=entry_id)
-            .first()
+
+class HiredSwordProfileListView(CatalogueListView):
+    kind = HIRED_SWORDS
+
+
+class HiredSwordProfileDetailView(CatalogueDetailView):
+    kind = HIRED_SWORDS
+
+
+def _in_scope(raw_id, campaign_id):
+    """The campaign's current entry for this id (its version of a book entry, CAT-TWEAK-03); another campaign's reads
+    as not found (SEC-07)."""
+    if not str(raw_id).isdigit():
+        return None
+    return current_entry(BestiaryEntry.objects.all(), int(raw_id), campaign_id)
+
+
+class WarbandBestiaryFavouriteListView(WarbandScopedView):
+    # a warband's favourites: read by its campaign's members, changed by its owner or a manage_warbands holder
+
+    def get(self, request: Request, warband_id: int) -> Response:
+        campaign_id = self.warband.campaign_id
+        scope = Q(bestiary_entry__campaign__isnull=True) | Q(bestiary_entry__campaign_id=campaign_id)
+        favourites = WarbandBestiaryFavourite.objects.filter(scope, warband=self.warband).select_related(
+            "bestiary_entry"
         )
-        if not entry:
-            return Response({"detail": "Not found"}, status=404)
-
-        if entry.campaign_id:
-            membership = get_membership(request.user, entry.campaign_id)
-            if not membership:
-                return Response({"detail": "Not found"}, status=404)
-
-        return Response(BestiaryEntrySerializer(entry).data)
-
-    def patch(self, request, entry_id):
-        entry = BestiaryEntry.objects.filter(id=entry_id).first()
-        if not entry:
-            return Response({"detail": "Not found"}, status=404)
-        if not entry.campaign_id:
-            return Response({"detail": "Forbidden"}, status=403)
-
-        membership = get_writable_membership(request.user, entry.campaign_id)
-        if not membership:
-            return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "manage_bestiary"):
-            return Response({"detail": "Forbidden"}, status=403)
-
-        data = request.data.copy()
-        data.pop("campaign_id", None)
-        data.pop("campaign", None)
-        serializer = BestiaryEntryCreateSerializer(entry, data=data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        _sync_m2m(entry, request.data)
-
-        entry.refresh_from_db()
-        return Response(BestiaryEntrySerializer(entry).data)
-
-    def delete(self, request, entry_id):
-        entry = BestiaryEntry.objects.filter(id=entry_id).first()
-        if not entry:
-            return Response({"detail": "Not found"}, status=404)
-        if not entry.campaign_id:
-            return Response({"detail": "Forbidden"}, status=403)
-
-        membership = get_writable_membership(request.user, entry.campaign_id)
-        if not membership:
-            return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "manage_bestiary"):
-            return Response({"detail": "Forbidden"}, status=403)
-
-        entry.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class WarbandBestiaryFavouriteListView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, warband_id):
-        warband = Warband.objects.filter(id=warband_id).first()
-        if not warband:
-            return Response({"detail": "Not found"}, status=404)
-
-        membership = get_membership(request.user, warband.campaign_id)
-        if not membership:
-            return Response({"detail": "Not found"}, status=404)
-
-        favourites = WarbandBestiaryFavourite.objects.filter(warband=warband).select_related("bestiary_entry")
         entries = [f.bestiary_entry for f in favourites]
-        serializer = BestiaryEntrySummarySerializer(entries, many=True)
-        return Response(serializer.data)
+        return Response(BestiaryEntrySummarySerializer(entries, many=True).data)
 
-    def post(self, request, warband_id):
-        warband = Warband.objects.filter(id=warband_id).first()
-        if not warband:
-            return Response({"detail": "Not found"}, status=404)
-
-        membership = get_writable_membership(request.user, warband.campaign_id)
-        if not membership:
-            return Response({"detail": "Not found"}, status=404)
-
-        if warband.user_id != request.user.id:
-            if not has_campaign_permission(membership, "manage_warbands"):
-                return Response({"detail": "Forbidden"}, status=403)
-
-        entry_id = request.data.get("bestiary_entry_id")
-        entry = BestiaryEntry.objects.filter(id=entry_id).first()
+    def post(self, request: Request, warband_id: int) -> Response:
+        entry = _in_scope(request.data.get("bestiary_entry_id"), self.warband.campaign_id)
         if not entry:
             return Response({"detail": "Bestiary entry not found"}, status=404)
 
-        WarbandBestiaryFavourite.objects.get_or_create(warband=warband, bestiary_entry=entry)
+        WarbandBestiaryFavourite.objects.get_or_create(warband=self.warband, bestiary_entry=entry)
         return Response(status=status.HTTP_201_CREATED)
 
 
-class WarbandBestiaryFavouriteDeleteView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def delete(self, request, warband_id, entry_id):
-        warband = Warband.objects.filter(id=warband_id).first()
-        if not warband:
-            return Response({"detail": "Not found"}, status=404)
-
-        membership = get_writable_membership(request.user, warband.campaign_id)
-        if not membership:
-            return Response({"detail": "Not found"}, status=404)
-
-        if warband.user_id != request.user.id:
-            if not has_campaign_permission(membership, "manage_warbands"):
-                return Response({"detail": "Forbidden"}, status=403)
-
-        WarbandBestiaryFavourite.objects.filter(warband=warband, bestiary_entry_id=entry_id).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-def _sync_m2m(entry, data):
-    """Sync M2M relationships from request data if provided."""
-    skill_ids = data.get("skill_ids")
-    if skill_ids is not None:
-        BestiaryEntrySkill.objects.filter(bestiary_entry=entry).delete()
-        for skill_id in skill_ids:
-            BestiaryEntrySkill.objects.get_or_create(bestiary_entry=entry, skill_id=skill_id)
-
-    special_ids = data.get("special_ids")
-    if special_ids is not None:
-        BestiaryEntrySpecial.objects.filter(bestiary_entry=entry).delete()
-        for special_id in special_ids:
-            BestiaryEntrySpecial.objects.get_or_create(bestiary_entry=entry, special_id=special_id)
-
-    spell_ids = data.get("spell_ids")
-    if spell_ids is not None:
-        BestiaryEntrySpell.objects.filter(bestiary_entry=entry).delete()
-        for spell_id in spell_ids:
-            BestiaryEntrySpell.objects.get_or_create(bestiary_entry=entry, spell_id=spell_id)
-
-    item_entries = data.get("item_entries")
-    if item_entries is not None:
-        BestiaryEntryItem.objects.filter(bestiary_entry=entry).delete()
-        for item_entry in item_entries:
-            item_id = item_entry.get("item_id") if isinstance(item_entry, dict) else item_entry
-            quantity = item_entry.get("quantity", 1) if isinstance(item_entry, dict) else 1
-            BestiaryEntryItem.objects.get_or_create(
-                bestiary_entry=entry,
-                item_id=item_id,
-                defaults={"quantity": quantity},
-            )
-
-
-def _sync_hired_sword_profile_restrictions(profile, restriction_entries):
-    HiredSwordProfileRestriction.objects.filter(hired_sword_profile=profile).delete()
-    if not restriction_entries:
-        return
-    for entry in restriction_entries:
-        if isinstance(entry, dict):
-            restriction_id = entry.get("restriction_id")
-            additional_note = entry.get("additional_note", "")
-        else:
-            restriction_id = entry
-            additional_note = ""
-        HiredSwordProfileRestriction.objects.get_or_create(
-            hired_sword_profile=profile,
-            restriction_id=restriction_id,
-            additional_note=additional_note,
-        )
-
-
-class HiredSwordProfileListView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request):
-        profiles = HiredSwordProfile.objects.select_related("bestiary_entry").prefetch_related(
-            "restriction_links__restriction",
-        )
-
-        search = request.query_params.get("search")
-        if search:
-            profiles = profiles.filter(bestiary_entry__name__icontains=search.strip())
-
-        campaign_id = request.query_params.get("campaign_id")
-        if campaign_id:
-            membership = get_membership(request.user, campaign_id)
-            if not membership:
-                return Response({"detail": "Not found"}, status=404)
-
-            campaign_profiles = profiles.filter(campaign_id=campaign_id)
-            base_profiles = profiles.filter(campaign__isnull=True)
-            if campaign_profiles.exists():
-                base_profiles = base_profiles.exclude(
-                    bestiary_entry__name__in=campaign_profiles.values_list("bestiary_entry__name", flat=True)
-                )
-            merged = list(campaign_profiles.order_by("bestiary_entry__name")) + list(
-                base_profiles.order_by("bestiary_entry__name")
-            )
-            serializer = HiredSwordProfileSummarySerializer(merged, many=True)
-            return Response(serializer.data)
-
-        profiles = profiles.filter(campaign__isnull=True)
-        serializer = HiredSwordProfileSummarySerializer(profiles.order_by("bestiary_entry__name"), many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        campaign_id = request.data.get("campaign_id")
-        membership = get_writable_membership(request.user, campaign_id)
-        if not membership:
-            return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "manage_bestiary"):
-            return Response({"detail": "Forbidden"}, status=403)
-
-        data = request.data.copy()
-        data.pop("campaign_id", None)
-        data["campaign"] = campaign_id
-        data.setdefault("type", "Hired Sword")
-
-        hire_cost = data.pop("hire_cost", None)
-        hire_cost_expression = data.pop("hire_cost_expression", "")
-        upkeep_cost = data.pop("upkeep_cost", None)
-        upkeep_cost_expression = data.pop("upkeep_cost_expression", "")
-        rating = data.pop("rating", None)
-        restriction_entries = data.pop("restriction_ids", None)
-        available_skill_types = data.pop("available_skill_types", None)
-        data.pop("available_special_skill_ids", None)
-
-        serializer = BestiaryEntryCreateSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        entry = serializer.save()
-
-        _sync_m2m(entry, request.data)
-
-        profile = HiredSwordProfile.objects.create(
-            campaign_id=campaign_id,
-            bestiary_entry=entry,
-            hire_cost=hire_cost,
-            hire_cost_expression=hire_cost_expression or "",
-            upkeep_cost=upkeep_cost,
-            upkeep_cost_expression=upkeep_cost_expression or "",
-            rating=rating,
-            available_skill_types=available_skill_types or [],
-        )
-
-        if restriction_entries is not None:
-            _sync_hired_sword_profile_restrictions(profile, restriction_entries)
-
-        return Response(
-            HiredSwordProfileDetailSerializer(profile).data,
-            status=status.HTTP_201_CREATED,
-        )
-
-
-class HiredSwordProfileDetailView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, profile_id):
-        profile = (
-            HiredSwordProfile.objects.select_related("bestiary_entry")
-            .prefetch_related(
-                "bestiary_entry__bestiary_entry_skills__skill",
-                "bestiary_entry__bestiary_entry_specials__special",
-                "bestiary_entry__bestiary_entry_spells__spell",
-                "bestiary_entry__bestiary_entry_items__item",
-                "restriction_links__restriction",
-            )
-            .filter(id=profile_id)
-            .first()
-        )
-        if not profile:
-            return Response({"detail": "Not found"}, status=404)
-
-        if profile.campaign_id:
-            membership = get_membership(request.user, profile.campaign_id)
-            if not membership:
-                return Response({"detail": "Not found"}, status=404)
-
-        return Response(HiredSwordProfileDetailSerializer(profile).data)
-
-    def patch(self, request, profile_id):
-        profile = HiredSwordProfile.objects.select_related("bestiary_entry").filter(id=profile_id).first()
-        if not profile:
-            return Response({"detail": "Not found"}, status=404)
-        if not profile.campaign_id:
-            return Response({"detail": "Forbidden"}, status=403)
-
-        membership = get_writable_membership(request.user, profile.campaign_id)
-        if not membership:
-            return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "manage_bestiary"):
-            return Response({"detail": "Forbidden"}, status=403)
-
-        if "hire_cost" in request.data:
-            profile.hire_cost = request.data["hire_cost"]
-        if "hire_cost_expression" in request.data:
-            profile.hire_cost_expression = request.data["hire_cost_expression"]
-        if "upkeep_cost" in request.data:
-            profile.upkeep_cost = request.data["upkeep_cost"]
-        if "upkeep_cost_expression" in request.data:
-            profile.upkeep_cost_expression = request.data["upkeep_cost_expression"]
-        if "rating" in request.data:
-            profile.rating = request.data["rating"]
-        if "available_skill_types" in request.data:
-            profile.available_skill_types = request.data["available_skill_types"]
-        profile.save()
-
-        entry = profile.bestiary_entry
-        entry_data = request.data.copy()
-        for key in (
-            "campaign_id",
-            "campaign",
-            "hire_cost",
-            "hire_cost_expression",
-            "upkeep_cost",
-            "upkeep_cost_expression",
-            "rating",
-            "restriction_ids",
-            "available_skill_types",
-            "available_special_skill_ids",
-        ):
-            entry_data.pop(key, None)
-
-        if entry_data:
-            serializer = BestiaryEntryCreateSerializer(entry, data=entry_data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-
-        _sync_m2m(entry, request.data)
-
-        restriction_entries = request.data.get("restriction_ids")
-        if restriction_entries is not None:
-            _sync_hired_sword_profile_restrictions(profile, restriction_entries)
-
-        profile.refresh_from_db()
-        return Response(HiredSwordProfileDetailSerializer(profile).data)
-
-    def delete(self, request, profile_id):
-        profile = HiredSwordProfile.objects.select_related("bestiary_entry").filter(id=profile_id).first()
-        if not profile:
-            return Response({"detail": "Not found"}, status=404)
-        if not profile.campaign_id:
-            return Response({"detail": "Forbidden"}, status=403)
-
-        membership = get_writable_membership(request.user, profile.campaign_id)
-        if not membership:
-            return Response({"detail": "Not found"}, status=404)
-        if not has_campaign_permission(membership, "manage_bestiary"):
-            return Response({"detail": "Forbidden"}, status=403)
-
-        profile.bestiary_entry.delete()
+class WarbandBestiaryFavouriteDeleteView(WarbandScopedView):
+    def delete(self, request: Request, warband_id: int, entry_id: int) -> Response:
+        # a book id from a list read before the campaign versioned it names the version (CAT-TWEAK-03)
+        version = Q(bestiary_entry__replaces_id=entry_id, bestiary_entry__campaign_id=self.warband.campaign_id)
+        WarbandBestiaryFavourite.objects.filter(Q(bestiary_entry_id=entry_id) | version, warband=self.warband).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

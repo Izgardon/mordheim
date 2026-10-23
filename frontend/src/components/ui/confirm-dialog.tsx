@@ -25,6 +25,10 @@ type ConfirmDialogProps = {
   onConfirm: () => void;
   onCancel?: () => void;
   className?: string;
+  /** More to read under the message, e.g. what the action would affect. */
+  children?: ReactNode;
+  /** Why the last confirm failed: shown here, in the dialog that stays open, not behind it. */
+  error?: string;
 };
 
 export function ConfirmDialog({
@@ -41,6 +45,8 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
   className,
+  children,
+  error,
 }: ConfirmDialogProps) {
   const handleCancel = () => {
     onCancel?.();
@@ -54,6 +60,12 @@ export function ConfirmDialog({
         <DialogDescription asChild className="block text-sm text-muted-foreground">
           <div>{description}</div>
         </DialogDescription>
+        {children}
+        {error ? (
+          <p role="alert" className="text-sm text-red-600">
+            {error}
+          </p>
+        ) : null}
         <DialogFooter>
           <Button variant={cancelVariant} onClick={handleCancel} disabled={isConfirming}>
             {cancelText}

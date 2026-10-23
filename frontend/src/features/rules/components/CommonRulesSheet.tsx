@@ -15,6 +15,7 @@ import { getErrorMessage } from "@/lib/get-error-message";
 
 import { createHouseRule } from "../api/rules-api";
 import { useCommonRules } from "../api/rule-queries";
+import { takeHouseRuleWarnings } from "../utils/house-rule-warnings";
 
 import type { CommonRule, HouseRule } from "../types/rule-types";
 
@@ -93,8 +94,9 @@ export default function CommonRulesSheet({
         })
       )
     );
+    // A rule with item effects may skip the campaign's own versions (house_rule_skipped).
     const created = results.flatMap((result) =>
-      result.status === "fulfilled" ? [result.value] : []
+      result.status === "fulfilled" ? [takeHouseRuleWarnings(result.value)] : []
     );
     const failures = results.flatMap((result, index) =>
       result.status === "rejected" ? [{ rule: selectedRules[index], reason: result.reason }] : []

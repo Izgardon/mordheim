@@ -1,9 +1,10 @@
 from django.db import models
 
+from apps.core.models import CatalogueEntry, version_constraints
 from apps.warbands.models.shared import StatBlock, stat_constraints
 
 
-class BestiaryEntry(StatBlock):
+class BestiaryEntry(StatBlock, CatalogueEntry):
     campaign = models.ForeignKey(
         "campaigns.Campaign",
         related_name="bestiary_entries",
@@ -55,7 +56,15 @@ class BestiaryEntry(StatBlock):
         db_table = "bestiary_entry"
         ordering = ["type", "name"]
         verbose_name_plural = "bestiary entries"
-        constraints = stat_constraints("bestiary_entry")
+        constraints = [
+            *stat_constraints("bestiary_entry"),
+            *version_constraints("bestiary_entry"),
+            # one entry per name in the book and in a campaign, as seed_bestiary upserts (BUG-17, IMP-83): an animal
+            # and a hired sword (an entry of type "Hired Sword") share the names
+            models.UniqueConstraint(
+                fields=["campaign", "name"], name="bestiary_entry_unique_name", nulls_distinct=False
+            ),
+        ]
 
     def __str__(self):
         return f"{self.name} ({self.type})"
@@ -70,7 +79,7 @@ class BestiaryEntrySkill(models.Model):
     skill = models.ForeignKey(
         "skills.Skill",
         related_name="bestiary_entry_skills",
-        on_delete=models.CASCADE,
+        on_delete=models.RESTRICT,  # an entry in use can't be deleted (BUG-16)
     )
 
     class Meta:
@@ -89,7 +98,7 @@ class BestiaryEntrySpecial(models.Model):
     special = models.ForeignKey(
         "special.Special",
         related_name="bestiary_entry_specials",
-        on_delete=models.CASCADE,
+        on_delete=models.RESTRICT,  # an entry in use can't be deleted (BUG-16)
     )
 
     class Meta:
@@ -108,7 +117,7 @@ class BestiaryEntrySpell(models.Model):
     spell = models.ForeignKey(
         "spells.Spell",
         related_name="bestiary_entry_spells",
-        on_delete=models.CASCADE,
+        on_delete=models.RESTRICT,  # an entry in use can't be deleted (BUG-16)
     )
 
     class Meta:
@@ -127,7 +136,7 @@ class BestiaryEntryItem(models.Model):
     item = models.ForeignKey(
         "items.Item",
         related_name="bestiary_entry_items",
-        on_delete=models.CASCADE,
+        on_delete=models.RESTRICT,  # an entry in use can't be deleted (BUG-16)
     )
     quantity = models.PositiveIntegerField(default=1)
 
@@ -176,6 +185,13 @@ class HiredSwordProfile(models.Model):
         null=True,
         blank=True,
         on_delete=models.CASCADE,
+    )
+    campaign_type = models.ForeignKey(  # an add-on's hired sword (CAT-NEW-04: schema only, always null today)
+        "campaigns.CampaignType",
+        related_name="hired_sword_profiles",
+        null=True,
+        blank=True,
+        on_delete=models.RESTRICT,
     )
     bestiary_entry = models.OneToOneField(
         BestiaryEntry,

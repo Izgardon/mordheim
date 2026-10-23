@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
-import { useNavigate, useOutletContext, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,17 +18,15 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 import { useAppStore } from "@/stores/app-store";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
+import CataloguePager from "@/features/catalogue/components/CataloguePager";
+import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogueSearchParams";
+import { usePagedList } from "@/features/catalogue/hooks/usePagedList";
 import { useCatalogue } from "@/lib/catalogue-queries";
-import {
-  listWarbandBestiaryFavourites,
-  addWarbandBestiaryFavourite,
-  removeWarbandBestiaryFavourite,
-} from "../api/bestiary-api";
+import { useBestiaryFavourites } from "../hooks/useBestiaryFavourites";
 import BestiaryEntryCard from "../components/BestiaryEntryCard";
 import BestiaryEntryDetail from "../components/BestiaryEntryDetail";
 import BestiaryEntryFormDialog from "../components/BestiaryEntryFormDialog";
 
-import type { BestiaryEntrySummary } from "../types/bestiary-types";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 
 import { LOADOUT_TABS } from "@/lib/loadout-tabs";
@@ -44,55 +42,25 @@ export default function Bestiary() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const { warband } = useAppStore();
 
-  const { data: allEntries, isLoading, error } = useCatalogue("bestiary", campaignId);
-  const entries = useMemo(
-    () => allEntries.filter((e) => e.type.toLowerCase() !== "hired sword"),
-    [allEntries]
-  );
-  const [favouriteIds, setFavouriteIds] = useState<Set<number>>(new Set());
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedType, setSelectedType] = useState(ALL_TYPES);
-  const [currentPage, setCurrentPage] = useState(0);
+  // The server leaves the hired swords out (PERF-47); their page lists them.
+  const {
+    data: entries,
+    isLoading,
+    error,
+  } = useCatalogue("bestiary", campaignId, { variant: "creatures" });
+  const favourites = useBestiaryFavourites(warband?.id);
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const selectedEntryId = searchParams.get("entry") ? Number(searchParams.get("entry")) : null;
+  // Search, type, page and the open entry live in the query string (CAT-NEW-02).
+  const url = useCatalogueSearchParams();
+  const searchQuery = url.get("q");
+  const selectedType = url.get("type", ALL_TYPES);
+  const setSearchQuery = (q: string) => url.set({ q, page: null });
+  const setSelectedType = (type: string) =>
+    url.set({ type: type === ALL_TYPES ? null : type, page: null });
+  const selectedEntryId = url.get("entry") ? Number(url.get("entry")) : null;
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
-  const canManage = campaignCapabilities(campaign).manage_bestiary;
-
-  useEffect(() => {
-    if (!warband?.id) return;
-    listWarbandBestiaryFavourites(warband.id)
-      .then((favs) => setFavouriteIds(new Set(favs.map((f) => f.id))))
-      .catch(() => setFavouriteIds(new Set()));
-  }, [warband?.id]);
-
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [searchQuery, selectedType]);
-
-  const handleToggleFavourite = useCallback(
-    async (entry: BestiaryEntrySummary) => {
-      if (!warband?.id) return;
-      const isFav = favouriteIds.has(entry.id);
-      try {
-        if (isFav) {
-          await removeWarbandBestiaryFavourite(warband.id, entry.id);
-          setFavouriteIds((prev) => {
-            const next = new Set(prev);
-            next.delete(entry.id);
-            return next;
-          });
-        } else {
-          await addWarbandBestiaryFavourite(warband.id, entry.id);
-          setFavouriteIds((prev) => new Set(prev).add(entry.id));
-        }
-      } catch {
-        // silently fail
-      }
-    },
-    [warband?.id, favouriteIds]
-  );
+  const canManage = campaignCapabilities(campaign).edit_catalogue;
 
   const types = useMemo(() => {
     const unique = new Set(entries.map((e) => e.type));
@@ -113,14 +81,10 @@ export default function Bestiary() {
           e.description.toLowerCase().includes(q)
       );
     }
-    return result.sort((a, b) => a.name.localeCompare(b.name));
+    return [...result].sort((a, b) => a.name.localeCompare(b.name));
   }, [entries, selectedType, searchQuery]);
 
-  const totalPages = Math.ceil(filteredEntries.length / PAGE_SIZE);
-  const pagedEntries = filteredEntries.slice(
-    currentPage * PAGE_SIZE,
-    (currentPage + 1) * PAGE_SIZE
-  );
+  const pages = usePagedList(filteredEntries, PAGE_SIZE);
 
   const handleLoadoutTabChange = (tabId: LoadoutTabId) => {
     if (!id) return;
@@ -131,7 +95,7 @@ export default function Bestiary() {
     return (
       <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-8">
         <PageHeader title="Bestiary" subtitle="Creatures and companions" />
-        <BestiaryEntryDetail entryId={selectedEntryId} onClose={() => navigate(-1)} />
+        <BestiaryEntryDetail entryId={selectedEntryId} onClose={() => url.back("entry")} />
       </div>
     );
   }
@@ -191,42 +155,20 @@ export default function Bestiary() {
             <p className="text-sm text-muted-foreground">No bestiary entries found.</p>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {pagedEntries.map((entry) => (
+              {pages.paged.map((entry) => (
                 <BestiaryEntryCard
                   key={entry.id}
                   entry={entry}
-                  onClick={(e) => navigate(`?entry=${e.id}`)}
-                  isFavourite={favouriteIds.has(entry.id)}
-                  onToggleFavourite={warband ? handleToggleFavourite : undefined}
+                  onClick={(e) => url.open({ entry: String(e.id) })}
+                  isFavourite={favourites.favouriteIds.has(entry.id)}
+                  onToggleFavourite={warband ? favourites.toggle : undefined}
                 />
               ))}
             </div>
           )}
         </div>
 
-        {totalPages > 1 ? (
-          <div className="flex items-center justify-center gap-4 pt-1">
-            <Button
-              size="sm"
-              variant="secondary"
-              disabled={currentPage === 0}
-              onClick={() => setCurrentPage((p) => p - 1)}
-            >
-              Previous
-            </Button>
-            <span className="text-sm text-muted-foreground tabular-nums">
-              {currentPage + 1} / {totalPages}
-            </span>
-            <Button
-              size="sm"
-              variant="secondary"
-              disabled={currentPage >= totalPages - 1}
-              onClick={() => setCurrentPage((p) => p + 1)}
-            >
-              Next
-            </Button>
-          </div>
-        ) : null}
+        <CataloguePager {...pages} />
       </div>
 
       <BestiaryEntryFormDialog

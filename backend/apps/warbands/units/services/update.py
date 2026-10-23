@@ -22,7 +22,9 @@ DISCARDED_FIELDS = ("item_reason", "item_action", "item_price")
 DEFAULT_ENTRY_TYPE = {"skill": "general", "special": "ability", "spell": "magic"}
 
 
-def apply_update(kind: "UnitKindSpec", unit: RosterUnit, data: MutableMapping[str, Any]) -> list["Recruit"]:
+def apply_update(
+    kind: "UnitKindSpec", unit: RosterUnit, data: MutableMapping[str, Any], campaign_id: int
+) -> list["Recruit"]:
     """Write a validated PATCH to `unit`; returns the members it recruited, for the ledger.
 
     A sent list replaces the whole list. XP sent without `level_up` adds the thresholds it crosses above
@@ -33,7 +35,7 @@ def apply_update(kind: "UnitKindSpec", unit: RosterUnit, data: MutableMapping[st
         data.pop(name, None)
     lists = pop_loadout_lists(kind, data)
     members = data.pop("henchmen", None) if kind.has_members else None
-    trait_update = prepare_update_traits(kind, data, lists)
+    trait_update = prepare_update_traits(kind, data, lists, campaign_id)
     fields = frozenset(data)
     previous_xp = unit.xp
     kind.hooks.before_update(unit, fields)

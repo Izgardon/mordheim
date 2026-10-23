@@ -8,6 +8,8 @@ from corsheaders.defaults import default_headers
 from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
+from config.proxies import num_proxies
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -19,34 +21,33 @@ def _env_bool(name: str, default: bool) -> bool:
     return raw_value.strip().lower() in {"1", "true", "yes", "on"}
 
 
-def _env_int(name: str) -> int | None:
-    raw_value = os.environ.get(name)
-    if raw_value is None or not raw_value.strip():
-        return None
-    return int(raw_value)
-
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = _env_bool("DJANGO_DEBUG", False)
 
 # SECRET_KEY also signs JWTs and password-reset tokens, so production must never
-# fall back to a known value. Local dev (DEBUG on) gets a fixed throwaway key.
+# fall back to a known value, nor use a short one (SEC-01; Django's check --deploy
+# asks for 50 characters). Local dev (DEBUG on) gets a fixed throwaway key.
 _DEV_SECRET_KEY = "dev-only-insecure-secret-key-do-not-use-in-production"
+SECRET_KEY_MIN_LENGTH = 50
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "")
 if not SECRET_KEY or SECRET_KEY in {"dev-secret-key", _DEV_SECRET_KEY}:
     if not DEBUG:
         raise ImproperlyConfigured("DJANGO_SECRET_KEY must be set to a unique value when DJANGO_DEBUG is off.")
     SECRET_KEY = _DEV_SECRET_KEY
+elif not DEBUG and len(SECRET_KEY) < SECRET_KEY_MIN_LENGTH:
+    raise ImproperlyConfigured(
+        f"DJANGO_SECRET_KEY must be at least {SECRET_KEY_MIN_LENGTH} characters when DJANGO_DEBUG is off."
+    )
 
 allowed_hosts = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,0.0.0.0,backend")
 ALLOWED_HOSTS = [host for host in allowed_hosts.split(",") if host]
 
+# A bearer-token API: no sessions, messages or CSRF cookie (INFRA-CQ-03). staticfiles serves the browsable API's CSS
+# and JS locally.
 INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
@@ -75,11 +76,9 @@ MIDDLEWARE = [
     # Content ETags + 304s for unchanged GET responses (see apps.core.middleware).
     "django.middleware.http.ConditionalGetMiddleware",
     "apps.core.middleware.ApiRevalidateMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
+    # No session, CSRF, authentication or message middleware: DRF authenticates each request from its bearer token,
+    # and every view is a DRF view, which is exempt from CSRF (INFRA-CQ-03)
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
@@ -95,7 +94,6 @@ TEMPLATES = [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
             ],
         },
     }
@@ -141,17 +139,21 @@ if "-pooler" in str(_default_db.get("HOST", "")):
     _default_db["OPTIONS"] = {**(_default_db.get("OPTIONS") or {}), "prepare_threshold": None}
 
 REST_FRAMEWORK: dict[str, Any] = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
+    # SimpleJWT's bearer tokens, refused once their session key is no longer the user's (SEC-05)
+    "DEFAULT_AUTHENTICATION_CLASSES": ("apps.users.services.tokens.SessionKeyJWTAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    # The auth limits are loose per address, since a table of players shares one, and tight per email (BUG-55)
     "DEFAULT_THROTTLE_RATES": {
-        "auth_login_minute": "5/min",
-        "auth_login_hour": "30/hour",
-        "auth_register_hour": "3/hour",
-        "auth_register_day": "10/day",
-        "auth_password_reset_hour": "3/hour",
-        "auth_password_reset_day": "10/day",
-        "auth_password_reset_confirm_hour": "10/hour",
-        "auth_refresh_minute": "30/min",
+        "auth_login_minute": "30/min",
+        "auth_login_email_minute": "10/min",
+        "auth_login_email_hour": "30/hour",
+        "auth_register_hour": "20/hour",
+        "auth_register_day": "50/day",
+        "auth_password_reset_hour": "20/hour",
+        "auth_password_reset_email_hour": "3/hour",
+        "auth_password_reset_confirm_hour": "20/hour",
+        "auth_refresh_minute": "60/min",
+        "auth_account_user": "5/min",
         "feedback_report_user": "3/min",
         "feedback_report_ip": "10/min",
         "campaign_chat_user": "12/min",
@@ -163,18 +165,31 @@ REST_FRAMEWORK: dict[str, Any] = {
     },
 }
 
-rate_limit_num_proxies = _env_int("RATE_LIMIT_NUM_PROXIES")
+# Production answers JSON only: the browsable API stays a local convenience (INFRA-CQ-03)
+if not DEBUG:
+    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = ("rest_framework.renderers.JSONRenderer",)
+
+# The throttles' client address: RATE_LIMIT_NUM_PROXIES, else 1 (Render's proxy) with DEBUG off (config/proxies.py)
+rate_limit_num_proxies = num_proxies(os.environ, DEBUG)
 if rate_limit_num_proxies is not None:
     REST_FRAMEWORK["NUM_PROXIES"] = rate_limit_num_proxies
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    # Each refresh answers a new 30-day refresh token, so a session lasts while it's used (AUTH-TWEAK-03). No
+    # blacklist: the session key ends sessions instead (apps.users.services.tokens)
+    "ROTATE_REFRESH_TOKENS": True,
 }
+
+# Sign-in loads the user's account (its session key) in the user query
+AUTHENTICATION_BACKENDS = ["apps.users.backends.AccountBackend"]
 
 AUTH_PASSWORD_VALIDATORS = [
     {
+        # The username is the email, so comparing both would only name the username (AUTH-CQ-04 b)
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "OPTIONS": {"user_attributes": ("email", "first_name")},
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
@@ -196,11 +211,22 @@ STATIC_URL = "static/"
 
 RATE_LIMIT_ENABLED = _env_bool("RATE_LIMIT_ENABLED", True)
 
-CACHES = {
+# The throttles' counters, per gunicorn worker (so a limit is at most doubled with 2 workers); room for many
+# addresses and emails before culling starts evicting real histories (SEC-04)
+CACHES: dict[str, dict[str, Any]] = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         "LOCATION": "rate-limit",
-    }
+        "OPTIONS": {"MAX_ENTRIES": 10_000},
+    },
+    # Catalogue list bodies (PERF-13, apps/core/catalogue/cache.py): keyed on catalogue versions read from the
+    # database, so a per-worker cache serves nothing stale. Its own alias, so culling never drops rate-limit counts.
+    "catalogue": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "catalogue-lists",
+        "TIMEOUT": 60 * 60,
+        "OPTIONS": {"MAX_ENTRIES": 300},
+    },
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -214,12 +240,14 @@ CORS_ALLOW_HEADERS = (*default_headers, "x-pusher-socket-id")
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_HSTS_SECONDS = int(os.environ.get("SECURE_HSTS_SECONDS", str(60 * 60 * 24 * 30)))
+    # No cookie is set today; these stay so a later one (an httpOnly refresh cookie, say) starts secure
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
 # Not applicable behind Render: onrender.com is a shared domain (no HSTS
 # subdomains/preload) and Render's proxy already redirects HTTP to HTTPS.
-SILENCED_SYSTEM_CHECKS = ["security.W005", "security.W008", "security.W021"]
+# W003 (no CsrfViewMiddleware): nothing authenticates by cookie, and every view is a DRF view, exempt from CSRF.
+SILENCED_SYSTEM_CHECKS = ["security.W003", "security.W005", "security.W008", "security.W021"]
 
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
 
@@ -228,6 +256,15 @@ RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
 PASSWORD_RESET_EMAIL_SUBJECT = os.environ.get("PASSWORD_RESET_EMAIL_SUBJECT", "Reset your password")
 FEEDBACK_REPORT_TO_EMAIL = os.environ.get("FEEDBACK_REPORT_TO_EMAIL", "")
 PASSWORD_RESET_TIMEOUT = int(os.environ.get("PASSWORD_RESET_TIMEOUT", "3600"))
+
+# Once email is on in production, reset links and the sender must be real, not the local fallbacks (BUG-56)
+if not DEBUG and RESEND_API_KEY:
+    if not FRONTEND_URL.startswith("https://"):
+        raise ImproperlyConfigured("FRONTEND_URL must be the site's https:// address when RESEND_API_KEY is set.")
+    if "@" not in DEFAULT_FROM_EMAIL or DEFAULT_FROM_EMAIL.rstrip(">").endswith("example.com"):
+        raise ImproperlyConfigured(
+            "DEFAULT_FROM_EMAIL must be an address on Resend's verified domain when RESEND_API_KEY is set."
+        )
 
 PUSHER_APP_ID = os.environ.get("PUSHER_APP_ID", "")
 PUSHER_KEY = os.environ.get("PUSHER_KEY", "")
@@ -242,6 +279,24 @@ PUSHER_USE_TLS = _env_bool("PUSHER_USE_TLS", True)
 # Pusher/Resend calls run on a background thread after commit (apps.core.dispatch).
 # The test runner turns this on so dispatched calls run inline and deterministically.
 EXTERNAL_DISPATCH_SYNC = False
+
+# Warnings and errors go to stdout, which Render's log collects: with DEBUG off, a 500's traceback used to reach no
+# handler at all (INFRA-CQ-01). django.request logs a 4xx at WARNING and a 5xx, with its traceback, at ERROR.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {"plain": {"format": "%(levelname)s %(name)s: %(message)s"}},
+    "handlers": {
+        "stdout": {
+            "class": "logging.StreamHandler",
+            "stream": "ext://sys.stdout",
+            "formatter": "plain",
+            "level": "WARNING",
+        }
+    },
+    "root": {"handlers": ["stdout"], "level": "WARNING"},
+    "loggers": {"django.request": {"handlers": ["stdout"], "level": "WARNING", "propagate": False}},
+}
 
 MIGRATION_MODULES = {
     "realtime": None,

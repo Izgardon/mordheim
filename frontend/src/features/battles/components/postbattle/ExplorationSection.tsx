@@ -70,8 +70,9 @@ export default function ExplorationSection({
             disabled={isFinalized || !exploration}
             onCommit={explore.commitDiceCount}
             onFocus={(event) => {
+              const input = event.currentTarget; // gone from the event by the next frame
               window.requestAnimationFrame(() => {
-                event.currentTarget.select();
+                input.select();
               });
             }}
             onMouseUp={(event) => {

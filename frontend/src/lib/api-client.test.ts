@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { getRefreshToken, getToken, setRefreshToken, setToken } from "../utils/storage";
+import { session } from "./session";
+import { getRefreshToken, getToken } from "../utils/storage";
 import {
   ApiError,
   apiRequest,
@@ -26,8 +27,7 @@ function isRefreshCall(input: Parameters<typeof fetch>[0]) {
 describe("apiRequest token refresh", () => {
   beforeEach(() => {
     localStorage.clear();
-    setToken("expired-access");
-    setRefreshToken("refresh-token");
+    session.setTokens({ access: "expired-access", refresh: "refresh-token" });
     fetchMock.mockReset();
     vi.stubGlobal("fetch", fetchMock);
   });
@@ -124,7 +124,7 @@ function trackSettlement(promise: Promise<unknown>) {
 describe("apiRequest timeout and abort (BUG-59)", () => {
   beforeEach(() => {
     localStorage.clear();
-    setToken("access");
+    session.setTokens({ access: "access" });
     fetchMock.mockReset();
     vi.stubGlobal("fetch", fetchMock);
     vi.useFakeTimers();
@@ -171,7 +171,7 @@ describe("apiRequest timeout and abort (BUG-59)", () => {
   });
 
   it("keeps the session when the refresh call times out", async () => {
-    setRefreshToken("refresh-token");
+    session.setTokens({ access: "access", refresh: "refresh-token" });
     fetchMock.mockImplementation(async (input, init) =>
       isRefreshCall(input) ? hangingFetch(input, init) : jsonResponse(401, {})
     );
@@ -188,8 +188,7 @@ describe("apiRequest timeout and abort (BUG-59)", () => {
 describe("apiRequest abort after a refresh", () => {
   beforeEach(() => {
     localStorage.clear();
-    setToken("expired-access");
-    setRefreshToken("refresh-token");
+    session.setTokens({ access: "expired-access", refresh: "refresh-token" });
     fetchMock.mockReset();
     vi.stubGlobal("fetch", fetchMock);
   });

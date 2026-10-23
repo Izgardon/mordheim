@@ -94,7 +94,7 @@ const sheetOf = (warbandId: number, heroes: WarbandHero[]): WarbandSheet => ({
     manage_items: true,
     edit_backstory: true,
     delete: true,
-    add_custom: true,
+    edit_catalogue: true,
     trade: true,
   },
   heroes,

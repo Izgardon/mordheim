@@ -1,3 +1,5 @@
+import uuid
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -31,6 +33,10 @@ class Campaign(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    # the catalogue add-ons the campaign uses (CAT-NEW-04: schema only, nothing sets or reads them yet)
+    campaign_types: models.ManyToManyField = models.ManyToManyField(
+        "CampaignType", through="CampaignCampaignType", related_name="campaigns", blank=True
+    )
 
     class Meta:
         db_table = "campaign"
@@ -39,8 +45,40 @@ class Campaign(models.Model):
         return self.name
 
 
+class CampaignType(models.Model):
+    """A set of catalogue entries a campaign can add to the book (e.g. Marienburg), tagged by the nullable
+    `campaign_type` of items, skills, spells, specials, races, restrictions and hired-sword profiles (CAT-NEW-04).
+    Schema only for now: no rows, no tagging and no filtering."""
+
+    slug = models.SlugField(max_length=40, unique=True)
+    name = models.CharField(max_length=80)
+
+    class Meta:
+        db_table = "campaign_type"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+class CampaignCampaignType(models.Model):
+    campaign = models.ForeignKey(Campaign, related_name="campaign_type_links", on_delete=models.CASCADE)
+    campaign_type = models.ForeignKey(CampaignType, related_name="campaign_links", on_delete=models.RESTRICT)
+
+    class Meta:
+        db_table = "campaign_campaign_type"
+        constraints = [
+            models.UniqueConstraint(fields=["campaign", "campaign_type"], name="unique_campaign_campaign_type")
+        ]
+
+    def __str__(self):
+        return f"{self.campaign_id}:{self.campaign_type_id}"
+
+
 class CampaignSettings(models.Model):
     campaign = models.OneToOneField(Campaign, related_name="settings", on_delete=models.CASCADE)
+    # the campaign's catalogue: a new random value with every write to it, which retires its cached lists (PERF-13)
+    catalogue_version = models.UUIDField(default=uuid.uuid4, editable=False)
     max_players = models.PositiveSmallIntegerField(default=8)
     max_heroes = models.PositiveSmallIntegerField(default=6)
     max_hired_swords = models.PositiveSmallIntegerField(default=3)

@@ -36,7 +36,7 @@ class CampaignTestCase(APITestCase):
     """A campaign made through the API, with one user per role.
 
     `owner` ("Olga") created "Shards"; `admin` ("Ada") joined and was promoted by the owner; `player` ("Pia",
-    warband "Monks") and `rival` ("Rex", warband "Rats") joined and hold only `add_custom`, which joining grants.
+    warband "Monks") and `rival` ("Rex", warband "Rats") joined and hold only `edit_catalogue`, which joining grants.
     `outsider` ("Otto") owns another campaign, `elsewhere`. The owner and the admin have no warband. Every role
     and permission code exists from the start (migration 0014).
     """

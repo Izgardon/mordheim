@@ -46,6 +46,7 @@ Existing tests (138 backend, 115 unique frontend cases) stay and form most of th
 - **Level:** `unit`, `API`, `component` (includes hooks and MSW integration), `manual`, `CI`.
 - **Kind:** `C` characterisation (passes today; write before that pass's refactor) · `R: ID` regression for that finding (fails today; lands with the fix) · `B` query or request budget (baseline at today's count in 0.4, tightened by the named fix) · `N: ID` acceptance test for a planned change, written with PR C · `G` guard or infrastructure.
 - **Phase:** `0.1`-`0.5` are PLAN.md Phase 0 steps; `Pass 1`-`Pass 6` are feature passes. `↑` marks a cheap P0/P1 fix in a file an earlier step already touches; this plan recommends pulling it forward.
+- **Covered** after the phase (added from the pass 5 and 6 close-out on): the test exists and passes on that pass's branch, written in the step named (characterisation, PR A, B or C). A note says where it differs from the row.
 
 ## Test infrastructure work (do first, Phase 0)
 
@@ -104,8 +105,8 @@ These become `QUERY_BUDGETS` entries (T0-5, INFRA-TEST-04). "Measured today" is 
 | `GET /campaigns/:id/battles/` (open / `current/`) | 78 (38 battles, +2 per battle) | ≤ 4, constant 0 vs 30 ended | INFRA-PERF-01, CAMP-PERF-01, BATL-PERF-01 → CAMP-TEST-02 / BATL-TEST-06 / INFRA-TEST-01 | ↑ after 0.1 |
 | `GET /campaigns/:id/players/` | 13 at 3 warbands (4 + 3W) | ≤ 6, constant 2 vs 8 warbands | CAMP-PERF-03, INFRA-PERF-05 → CAMP-TEST-01 / INFRA-TEST-03 | Pass 4 (or 1) |
 | `/campaigns/` · `/campaigns/:id/` · `battle-history/` · `pivotal-moments/` · `top-killers/` · `members/` · `messages/` | 2 · 3 · 3 · 2 · 2 · 4 · 2 | Same, constant in rows | CAMP-TEST-03 | 0.4 (lock) |
-| `GET /auth/me/` (real JWT) | 1 | 1 | AUTH-TEST-08 | Pass 6 |
-| `GET /health/`, `HEAD` and `GET /keep-awake/` | 0 (1 with a token; garbage token → 401) | 0 with any header | AUTH-PERF-04/06 → AUTH-TEST-14 | Pass 6 |
+| `GET /auth/me/` (real JWT) | 1 | 1 | AUTH-TEST-08 | Pass 6 · **Covered** (1, the user joined to the account) |
+| `GET /health/`, `HEAD` and `GET /keep-awake/` | 0 (1 with a token; garbage token → 401) | 0 with any header | AUTH-PERF-04/06 → AUTH-TEST-14 | Pass 6 · **Covered** (PR A: 0 with any header) |
 | `GET /warbands/:id/summary/` | 12 | ≤ 6 | ROST-PERF-04, ECON-PERF-05 → ROST-TEST-01, ECON-TEST-14 | Pass 1 |
 | `GET .../heroes/` · `henchmen-groups/` · `hired-swords/` | 14 · 11 · 13 | ≤ 10 each, constant | ROST-PERF-03/11 → ROST-TEST-01 | Pass 1 |
 | `GET .../heroes/detail/` · `hired-swords/detail/` · `henchmen-groups/detail/` | 37 · 36 · 20 (+ about 3 per distinct item) | ≤ 12 (INFRA ceiling 14), constant 1 vs 10 items | ROST-PERF-02, INFRA-PERF-05 → ROST-TEST-01 / INFRA-TEST-02 | Pass 1 |
@@ -121,16 +122,16 @@ These become `QUERY_BUDGETS` entries (T0-5, INFRA-TEST-04). "Measured today" is 
 | `GET .../battles/:id/rosters/` | 28 incl. 1 UPDATE | ≤ 28 with no UPDATE; lower once rosters are snapshotted | BATL-PERF-07 → INFRA-TEST-05 | Pass 3 |
 | `POST .../finalize-postbattle/` (5 heroes, 2 hired swords, 8 henchmen, 1 find) | about 62-70 (est.) | ≤ 30 | BATL-PERF-04 → BATL-TEST-07 | Pass 3 |
 | Pending reported results (to be routed) | N+1 | Constant with 5 pending | BATL-BUG-09 → BATL-TEST-15 | Pass 3 |
-| `GET /items/?campaign_id=` | 14 | ≤ 8, constant after +50 items; 304 revalidation ≤ 2 | CAT-PERF-07, CAT-PERF-02 → CAT-TEST-07 / -06 | Pass 5 |
-| `skills/` · `spells/` · `special/` · `races/` · `bestiary/` · `hired-swords/` · `item-properties/` | 4 · 4 · 4 · 4 · 4 · 6 · 2 | Same, constant after growth (`restrictions/` locked at its first measurement) | CAT-TEST-07 | 0.4 (lock) |
-| `GET /bestiary/:id/` · `/hired-swords/:id/` | 43 · 45 | ≤ 12 | CAT-PERF-04 → CAT-TEST-08 | Pass 5 |
+| `GET /items/?campaign_id=` | 14 | ≤ 8, constant after +50 items; 304 revalidation ≤ 2 | CAT-PERF-07, CAT-PERF-02 → CAT-TEST-07 / -06 | Pass 5 · **Covered** (PR B: 5 on a miss, constant with versions and archives; a 304 or cached 200 costs 1) |
+| `skills/` · `spells/` · `special/` · `races/` · `bestiary/` · `hired-swords/` · `item-properties/` | 4 · 4 · 4 · 4 · 4 · 6 · 2 | Same, constant after growth (`restrictions/` locked at its first measurement) | CAT-TEST-07 | 0.4 (lock) · **Covered** (pass 5 PR B: 2 each, hired swords 3, item properties 2) |
+| `GET /bestiary/:id/` · `/hired-swords/:id/` | 43 · 45 | ≤ 12 | CAT-PERF-04 → CAT-TEST-08 | Pass 5 · **Covered** (PR A: 8 · 9, constant in equipment) |
 | House-rule PATCH, title only | about 70 + one UPDATE per owned row (est.) | Rule row only; no clone rewrite | CAMP-PERF-08 → CAMP-TEST-14 | Pass 4 |
 
 **Frontend request budgets** (asserted with MSW in Vitest or the Playwright `requestBudget` fixture):
 
 | Screen or action | Today | Budget | Test |
 | --- | --- | --- | --- |
-| Login / register | 3 `/auth/me`, 3 `/notifications/`, 3 Pusher auth / 2 `/auth/me` | 1 / 1 / 1; register 0 `/auth/me` | AUTH-TEST-22 |
+| Login / register | 3 `/auth/me`, 3 `/notifications/`, 3 Pusher auth / 2 `/auth/me` | 1 / 1 / 1; register 0 `/auth/me` | AUTH-TEST-22 · **Covered** (pass 6 PR A: 0 `/auth/me` for both, 1 `/notifications/`, 1 channel; the 3 `/notifications/` were already 1 after pass 2) |
 | Cold campaign overview | about 18 requests, `/battles/` twice | ≤ 12, no endpoint twice | FE-TEST-05, E2E-09 |
 | Return to the overview tab | 4 × `/battles/` (316 queries) | ≤ 1 per 30 s | FE-TEST-07 group |
 | Overview → Warband → Overview | 7 per revisit | 0 within `staleTime` | FE-TEST-06 |
@@ -145,34 +146,34 @@ These become `QUERY_BUDGETS` entries (T0-5, INFRA-TEST-04). "Measured today" is 
 
 | ID | Level | Scenario | Expected | Pri | Kind (covers) | Phase |
 | --- | --- | --- | --- | --- | --- | --- |
-| AUTH-TEST-01 | API | Register with valid email, password, name | 201 `{access, refresh, user}`; email lowercased; `username == email`; `first_name == name` | P1 | C | Pass 6 |
-| AUTH-TEST-02 | API | Register `Foo@X.com` when `foo@x.com` exists | 400 `{"email": [...]}`; no second user | P1 | C | Pass 6 |
-| AUTH-TEST-03 | API | Register with `12345678`, `password`, `short`, and password equal to the email | 400 with all validator messages | P2 | R: AUTH-CQ-04 | Pass 6 |
-| AUTH-TEST-04 | API | Register with a 151-character email or name | 400, not 500 | P2 | R: AUTH-BUG-07 | Pass 6 |
-| AUTH-TEST-05 | API | Login: correct / wrong password / unknown email / inactive user | 200 with tokens / identical 400 "Invalid credentials" for all three failures | P1 | C | Pass 6 |
-| AUTH-TEST-06 | API | Login with `Owner@Example.COM` for `owner@example.com` | 200 | P2 | C (verify; a failure is a new bug) | Pass 6 |
-| AUTH-TEST-07 | API | Refresh with valid, expired (freezegun +31 days) and garbage tokens | 200 new `access` / 401 `token_not_valid` / 401 | P1 | C | Pass 6 |
-| AUTH-TEST-08 | API | `GET /auth/me` with valid, missing and expired tokens | 200 `{id, email, name}` within `assertNumQueries(1)` / 401 / 401 | P1 | C + B | Pass 6 |
-| AUTH-TEST-09 | API | Password reset for existing and unknown email (`send_password_reset_email` mocked) | Identical status and body; mock called once, for the existing user, with a URL starting with `FRONTEND_URL` and containing `uid` and `token` | P1 | C | Pass 6 |
-| AUTH-TEST-10 | API | Reset confirm with a valid token, then the same token again | 200; new password logs in, old fails; reuse 400 "Invalid or expired token" | P1 | C | Pass 6 |
-| AUTH-TEST-11 | API | Reset confirm after `PASSWORD_RESET_TIMEOUT` (freezegun) | 400 | P2 | C | Pass 6 |
-| AUTH-TEST-12 | API | Reset confirm with uid `YWJj`, `!!!`, base64 of a huge number, empty | 400, never 500 | P2 | R: AUTH-BUG-06 | Pass 6 |
-| AUTH-TEST-13 | API | With `CHECK_REVOKE_TOKEN`: issue tokens, reset password, call `/me` with old access and `/refresh` with old refresh | 401; the refreshed access also fails on `/me` | P1 | R: AUTH-SEC-04 | Pass 6 |
-| AUTH-TEST-14 | API | Health and keep-awake via GET and HEAD, with no header and with `Bearer garbage` | 2xx every case, 0 queries | P3 | R: AUTH-PERF-04, AUTH-PERF-06 | Pass 6 |
+| AUTH-TEST-01 | API | Register with valid email, password, name | 201 `{access, refresh, user}`; email lowercased; `username == email`; `first_name == name` | P1 | C | Pass 6 · **Covered** (characterisation) |
+| AUTH-TEST-02 | API | Register `Foo@X.com` when `foo@x.com` exists | 400 `{"email": [...]}`; no second user | P1 | C | Pass 6 · **Covered** (characterisation) |
+| AUTH-TEST-03 | API | Register with `12345678`, `password`, `short`, and password equal to the email | 400 with all validator messages | P2 | R: AUTH-CQ-04 | Pass 6 · **Covered** (PR A; reset and the password change too) |
+| AUTH-TEST-04 | API | Register with a 151-character email or name | 400, not 500 | P2 | R: AUTH-BUG-07 | Pass 6 · **Covered** (PR A; names stop at 40; the simultaneous sign-up race too) |
+| AUTH-TEST-05 | API | Login: correct / wrong password / unknown email / inactive user | 200 with tokens / identical 400 "Invalid credentials" for all three failures | P1 | C | Pass 6 · **Covered** (characterisation; PR A adds `user` to the 200) |
+| AUTH-TEST-06 | API | Login with `Owner@Example.COM` for `owner@example.com` | 200 | P2 | C (verify; a failure is a new bug) | Pass 6 · **Covered** (characterisation) |
+| AUTH-TEST-07 | API | Refresh with valid, expired (freezegun +31 days) and garbage tokens | 200 new `access` / 401 `token_not_valid` / 401 | P1 | C | Pass 6 · **Covered** (expired tokens signed with a past `exp`, no freezegun; PR A: the 200 also rotates `refresh`, and refresh checks the user and session key in 1 query) |
+| AUTH-TEST-08 | API | `GET /auth/me` with valid, missing and expired tokens | 200 `{id, email, name}` within `assertNumQueries(1)` / 401 / 401 | P1 | C + B | Pass 6 · **Covered** (characterisation) |
+| AUTH-TEST-09 | API | Password reset for existing and unknown email (`send_password_reset_email` mocked) | Identical status and body; mock called once, for the existing user, with a URL starting with `FRONTEND_URL` and containing `uid` and `token` | P1 | C | Pass 6 · **Covered** (characterisation; PR A: 1 query either way, the link's fragment, 503 while email is off) |
+| AUTH-TEST-10 | API | Reset confirm with a valid token, then the same token again | 200; new password logs in, old fails; reuse 400 "Invalid or expired token" | P1 | C | Pass 6 · **Covered** (characterisation) |
+| AUTH-TEST-11 | API | Reset confirm after `PASSWORD_RESET_TIMEOUT` (freezegun) | 400 | P2 | C | Pass 6 · **Covered** (characterisation, moving the token generator's clock instead of freezegun) |
+| AUTH-TEST-12 | API | Reset confirm with uid `YWJj`, `!!!`, base64 of a huge number, empty | 400, never 500 | P2 | R: AUTH-BUG-06 | Pass 6 · **Covered** (PR A; an empty uid was already a 400 field error) |
+| AUTH-TEST-13 | API | With `CHECK_REVOKE_TOKEN`: issue tokens, reset password, call `/me` with old access and `/refresh` with old refresh | 401; the refreshed access also fails on `/me` | P1 | R: AUTH-SEC-04 | Pass 6 · **Covered** (PR A, through the session key instead of `CHECK_REVOKE_TOKEN`: 401 `session_ended`) |
+| AUTH-TEST-14 | API | Health and keep-awake via GET and HEAD, with no header and with `Bearer garbage` | 2xx every case, 0 queries | P3 | R: AUTH-PERF-04, AUTH-PERF-06 | Pass 6 · **Covered** (PR A) |
 | AUTH-TEST-15 | unit | Suite-wide guard: `RESEND_API_KEY` empty; any real `requests` call fails | No external HTTP during the suite | P1 | G: AUTH-CQ-01 | 0.2 (T0-1) |
-| AUTH-TEST-16 | unit | `_send_resend_email` when `requests` raises, and on Resend 4xx/5xx | Returns `False` and logs; never raises | P3 | R: AUTH-CQ-02, AUTH-PERF-05 | 0.1 |
-| AUTH-TEST-17 | unit | Throttle identity with `NUM_PROXIES=1` and XFF `"6.6.6.6, 203.0.113.9"` | Bucket keyed on `203.0.113.9`; a rotating spoofed prefix doesn't reset the count | P2 | C (pins the intended config; the production gap is caught by AUTH-TEST-18) | Pass 6 |
-| AUTH-TEST-19 / FE-TEST-01 | unit | `apiRequest`: three concurrent requests get 401; refresh succeeds | Exactly one `POST /auth/refresh/`; all three retried once with the new token and resolve | P1 | C (before wrapping `api-client` in Query) | 0.5 |
-| AUTH-TEST-20 / FE-TEST-02 | unit | `refreshAccessToken` fails with 401, 503, network error | 401 clears both tokens and throws `ApiError` 401; 503 and network keep the tokens | P1 | R: AUTH-BUG-01 | ↑0.5 |
-| AUTH-TEST-21 | unit | The retried request gets 401 again | Throws; one refresh; no loop | P2 | C | 0.5 |
-| AUTH-TEST-22 / FE-TEST-04 | component | `AuthProvider` `signIn` / `signUp` with MSW | One `/auth/me` on login, none on register | P2 | R: AUTH-PERF-02 | Pass 6 |
-| AUTH-TEST-23 | component | Boot with a cached user while `/me` is pending; boot where `/me` returns 500 | Children render immediately; on 500 tokens kept and a retry UI shows | P1 | R: AUTH-PERF-01, AUTH-BUG-01 | ↑0.5 (500 case) / Pass 6 |
+| AUTH-TEST-16 | unit | `_send_resend_email` when `requests` raises, and on Resend 4xx/5xx | Returns `False` and logs; never raises | P3 | R: AUTH-CQ-02, AUTH-PERF-05 | 0.1 · still not written (`_post_to_resend`'s failure branches are uncovered after pass 6) |
+| AUTH-TEST-17 | unit | Throttle identity with `NUM_PROXIES=1` and XFF `"6.6.6.6, 203.0.113.9"` | Bucket keyed on `203.0.113.9`; a rotating spoofed prefix doesn't reset the count | P2 | C (pins the intended config; the production gap is caught by AUTH-TEST-18) | Pass 6 · **Covered** (characterisation, with 0, 1 and 2 proxies; PR A's rates and per-email limits too) |
+| AUTH-TEST-19 / FE-TEST-01 | unit | `apiRequest`: three concurrent requests get 401; refresh succeeds | Exactly one `POST /auth/refresh/`; all three retried once with the new token and resolve | P1 | C (before wrapping `api-client` in Query) | 0.5 · **Covered** (extended in the pass 6 characterisation; PR A: a 401 landing after the refresh retries with the new token) |
+| AUTH-TEST-20 / FE-TEST-02 | unit | `refreshAccessToken` fails with 401, 503, network error | 401 clears both tokens and throws `ApiError` 401; 503 and network keep the tokens | P1 | R: AUTH-BUG-01 | ↑0.5 · **Covered** (pass 6 characterisation) |
+| AUTH-TEST-21 | unit | The retried request gets 401 again | Throws; one refresh; no loop | P2 | C | 0.5 · **Covered** (pass 6 PR A: it also signs out, BUG-141) |
+| AUTH-TEST-22 / FE-TEST-04 | component | `AuthProvider` `signIn` / `signUp` with MSW | One `/auth/me` on login, none on register | P2 | R: AUTH-PERF-02 | Pass 6 · **Covered** (PR A: none on either, since login returns the user) |
+| AUTH-TEST-23 | component | Boot with a cached user while `/me` is pending; boot where `/me` returns 500 | Children render immediately; on 500 tokens kept and a retry UI shows | P1 | R: AUTH-PERF-01, AUTH-BUG-01 | ↑0.5 (500 case) / Pass 6 · **Covered** (PR A) |
 | AUTH-TEST-24 / FE-TEST-03 | component | Token refresh (`auth:tokens-changed`) while a protected child holds typed state | Child mount count stays 1, state survives, no `/auth/me` refetch | P1 | R: AUTH-BUG-02 | Pass 6 |
-| AUTH-TEST-25 / FE-TEST-20 | component | Seed store notifications as user A, `signOut`, sign in as B in the same tab | Store empty for B; no A notifications | P2 | R: AUTH-BUG-03 | Pass 6 |
-| AUTH-TEST-26 | component | `AuthCard` with 429 + `Retry-After`, a fetch `TypeError`, a two-message password error | Friendly throttle text, offline hint, both password messages | P3 | R: AUTH-UX-01 | Pass 6 |
-| AUTH-TEST-27 | component | `ResetPassword` with missing params, mismatched passwords, success | Submit disabled with explanation; "Passwords do not match"; success state with a Sign in link | P3 | N: AUTH-UX-05 | Pass 6 |
-| AUTH-TEST-28 / FE-TEST-18 (deep link) | component | Logged out at `/campaigns/1/settings` or `/campaigns/1/battles/2/active`, then login | Redirect to `/` with `state.from`; lands back on the original URL | P3 | R: AUTH-UX-02, FE-UX-03 | Pass 6 |
-| AUTH-TEST-29 | component | `FeedbackReportCard` with 2001 characters typed, and on success | Capped at 2000 with a counter; success toast | P3 | N: AUTH-UX-04 | Pass 6 |
+| AUTH-TEST-25 / FE-TEST-20 | component | Seed store notifications as user A, `signOut`, sign in as B in the same tab | Store empty for B; no A notifications | P2 | R: AUTH-BUG-03 | Pass 6 · **Covered** (Phase 0's `app-store` test; pass 6 PR A adds battle nudges, BUG-157) |
+| AUTH-TEST-26 | component | `AuthCard` with 429 + `Retry-After`, a fetch `TypeError`, a two-message password error | Friendly throttle text, offline hint, both password messages | P3 | R: AUTH-UX-01 | Pass 6 · **Covered** (PR A) |
+| AUTH-TEST-27 | component | `ResetPassword` with missing params, mismatched passwords, success | Submit disabled with explanation; "Passwords do not match"; success state with a Sign in link | P3 | N: AUTH-UX-05 | Pass 6 · **Covered** (PR A) |
+| AUTH-TEST-28 / FE-TEST-18 (deep link) | component | Logged out at `/campaigns/1/settings` or `/campaigns/1/battles/2/active`, then login | Redirect to `/` with `state.from`; lands back on the original URL | P3 | R: AUTH-UX-02, FE-UX-03 | Pass 6 · **Covered** (PR A) |
+| AUTH-TEST-29 | component | `FeedbackReportCard` with 2001 characters typed, and on success | Capped at 2000 with a counter; success toast | P3 | N: AUTH-UX-04 | Pass 6 · **Covered** (PR A; the success toast since pass 4) |
 | AUTH-TEST-31 / FE-TEST-29 | API + manual | Location content `<img src=x onerror=alert(1)>` saved, fetched, rendered | Stored or returned sanitised (no `onerror`); no alert when expanded | P1 | R: AUTH-SEC-02 | ↑Pass 4 (Locations live in campaigns) |
 
 Elsewhere: AUTH-TEST-18 → 08 (with INFRA-TEST-07); AUTH-TEST-30 → 07 (with FE-TEST-13).
@@ -306,27 +307,32 @@ Elsewhere: BATL-TEST-01/02 → 03 (ROST-TEST-04); BATL-TEST-08 → 08; BATL-TEST
 
 | ID | Level | Scenario | Expected | Pri | Kind (covers) | Phase |
 | --- | --- | --- | --- | --- | --- | --- |
-| CAT-TEST-01 | API | Each list endpoint (`items`, `skills`, `spells`, `special`, `races`, `restrictions`, `bestiary`, `hired-swords`, `item-properties`) with a non-member's `campaign_id` | 404; base-only list still 200 without `campaign_id` | P1 | C (verify) | Pass 5 |
-| CAT-TEST-02 | API | Campaign custom skill "Infiltration" (type Skaven); list skills | Only the Skaven base "Infiltration" hidden; other types remain | P1 | R: CAT-BUG-03 | Pass 5 |
-| CAT-TEST-03 | API | Player with default perms creates a custom item, then PATCHes and DELETEs it | Create 201; edit/delete per the chosen model: 200/204 for own entries, 403 for others | P1 | R: CAT-BUG-04 | Pass 5 |
-| CAT-TEST-04 | API | DELETE a custom item that is in a hero's loadout and a stash | 409 with usage count; owned rows untouched | P1 | R: CAT-BUG-01 | Pass 5 |
-| CAT-TEST-05 | API | POST `/api/restrictions/` as a random user | 403 or 405 | P1 | R: CAT-SEC-01 | Pass 5 |
-| CAT-TEST-06 | API | `GET /api/items/?campaign_id=1` twice with `If-None-Match`; then create a custom item | Second is 304 with ≤ 2 queries; after the create, 200 with a new ETag | P1 | N + B: CAT-PERF-02 | Pass 5 |
-| CAT-TEST-07 | API | Budgets for each list endpoint (items 14 today, others 4-6), then add 50 items | Counts don't grow with rows; items ≤ 8 after CAT-PERF-07 | P1 | B | 0.4 baseline → Pass 5 |
-| CAT-TEST-08 | API | `GET /api/bestiary/:id/` and `/api/hired-swords/:id/` for an entry with 8 equipment items | ≤ 12 queries (43 / 45 today) | P2 | B: CAT-PERF-04 | 0.4 baseline → Pass 5 |
-| CAT-TEST-09 | API | POST item with `availabilities=[{"cost": -5, "rarity": 1}]` | 400 with field errors; no item row | P2 | R: CAT-BUG-05 | Pass 5 |
-| CAT-TEST-10 | API | POST hired sword with `skill_ids=[999999]` | 400; no orphan `BestiaryEntry` | P2 | R: CAT-BUG-05 | Pass 5 |
-| CAT-TEST-11 | API | `?campaign_id=abc` on each list | 400, not 500 | P3 | R: CAT-BUG-07 | Pass 5 |
-| CAT-TEST-12 | unit | (command) Seed, add a campaign override "Axe" and a half-price-armour rule, run `seed_all` again | Succeeds; base rows updated; campaign rows untouched; no duplicates | P1 | R: CAT-BUG-02 | Pass 5 |
-| CAT-TEST-13 | unit | (data) Replay `seed_bestiary` resolution against the committed JSON | Zero unresolved equipment, skills, spells; no entry with S0 and A>0 | P2 | R: CAT-BUG-06 | Pass 5 |
-| CAT-TEST-14 | unit | `parse_unique_to` table: "Goblins only", "Khemri Setting", "Shadow Warriors - Shadow Weavers", "Dark Elves, Lizardmen, Norse and Marauders only", "Pirates only, one per model", every key in `_RESTRICTION_CORRECTIONS` | Matches the docstring examples and corrections | P2 | C | Pass 5 |
-| CAT-TEST-16 | API | Member of campaign A links campaign B's custom skill id to A's bestiary entry | 400 | P3 | R: CAT-SEC-02 | Pass 5 |
-| CAT-TEST-18 | component | `Skills.tsx` as a player without `manage_skills` | No Edit button on custom skills | P2 | R: CAT-BUG-04 | Pass 5 |
-| CAT-TEST-19 | component | `Items.tsx`, item with 2 availabilities, mobile viewport | Two rows, each with its restriction label | P3 | R: CAT-UX-03 | Pass 5 |
-| CAT-TEST-20 | component | `NewSkillDialog` opened twice | `listSkills` called at most once (cache) | P2 | R: CAT-PERF-03 | Pass 5 |
-| CAT-TEST-21 | component | `HiredSwords.tsx` sorting | Original array order unchanged | P3 | R: CAT-BUG-11 | Pass 5 |
+| CAT-TEST-01 | API | Each list endpoint (`items`, `skills`, `spells`, `special`, `races`, `restrictions`, `bestiary`, `hired-swords`, `item-properties`) with a non-member's `campaign_id` | 404; base-only list still 200 without `campaign_id` | P1 | C (verify) | Pass 5 · **Covered** (characterisation) |
+| CAT-TEST-02 | API | Campaign custom skill "Infiltration" (type Skaven); list skills | Only the Skaven base "Infiltration" hidden; other types remain | P1 | R: CAT-BUG-03 | Pass 5 · **Covered** (PR C, as decided: a same-named entry hides nothing; only a version replaces its book entry) |
+| CAT-TEST-03 | API | Player with default perms creates a custom item, then PATCHes and DELETEs it | Create 201; edit/delete per the chosen model: 200/204 for own entries, 403 for others | P1 | R: CAT-BUG-04 | Pass 5 · **Covered** (PR A, as decided: `edit_catalogue` edits any entry; deletes need `delete_catalogue`) |
+| CAT-TEST-04 | API | DELETE a custom item that is in a hero's loadout and a stash | 409 with usage count; owned rows untouched | P1 | R: CAT-BUG-01 | Pass 5 · **Covered** (PR A's 409; PR C archives it instead, decision 5) |
+| CAT-TEST-05 | API | POST `/api/restrictions/` as a random user | 403 or 405 | P1 | R: CAT-SEC-01 | Pass 5 · **Covered** (PR A: 405) |
+| CAT-TEST-06 | API | `GET /api/items/?campaign_id=1` twice with `If-None-Match`; then create a custom item | Second is 304 with ≤ 2 queries; after the create, 200 with a new ETag | P1 | N + B: CAT-PERF-02 | Pass 5 · **Covered** (PR B: a 304 costs 1 query, with no serialisation, for all 10 lists) |
+| CAT-TEST-07 | API | Budgets for each list endpoint (items 14 today, others 4-6), then add 50 items | Counts don't grow with rows; items ≤ 8 after CAT-PERF-07 | P1 | B | 0.4 baseline → Pass 5 · **Covered** (PR B: items 5, others 2) |
+| CAT-TEST-08 | API | `GET /api/bestiary/:id/` and `/api/hired-swords/:id/` for an entry with 8 equipment items | ≤ 12 queries (43 / 45 today) | P2 | B: CAT-PERF-04 | 0.4 baseline → Pass 5 · **Covered** (PR A: 8 / 9) |
+| CAT-TEST-09 | API | POST item with `availabilities=[{"cost": -5, "rarity": 1}]` | 400 with field errors; no item row | P2 | R: CAT-BUG-05 | Pass 5 · **Covered** (PR A, backend and the forms) |
+| CAT-TEST-10 | API | POST hired sword with `skill_ids=[999999]` | 400; no orphan `BestiaryEntry` | P2 | R: CAT-BUG-05 | Pass 5 · **Covered** (PR A) |
+| CAT-TEST-11 | API | `?campaign_id=abc` on each list | 400, not 500 | P3 | R: CAT-BUG-07 | Pass 5 · **Covered** (PR A; the catalogue POSTs and, in PR B, the warband list too) |
+| CAT-TEST-12 | unit | (command) Seed, add a campaign override "Axe" and a half-price-armour rule, run `seed_all` again | Succeeds; base rows updated; campaign rows untouched; no duplicates | P1 | R: CAT-BUG-02 | Pass 5 · **Covered** (PR A; PR C adds campaign versions and the rule's skip) |
+| CAT-TEST-13 | unit | (data) Replay `seed_bestiary` resolution against the committed JSON | Zero unresolved equipment, skills, spells; no entry with S0 and A>0 | P2 | R: CAT-BUG-06 | Pass 5 · **Covered** (PR A, without the S0 check: the Giant Spider is set aside, decision 8) |
+| CAT-TEST-14 | unit | `parse_unique_to` table: "Goblins only", "Khemri Setting", "Shadow Warriors - Shadow Weavers", "Dark Elves, Lizardmen, Norse and Marauders only", "Pirates only, one per model", every key in `_RESTRICTION_CORRECTIONS` | Matches the docstring examples and corrections | P2 | C | Pass 5 · **Covered** (characterisation) |
+| CAT-TEST-16 | API | Member of campaign A links campaign B's custom skill id to A's bestiary entry | 400 | P3 | R: CAT-SEC-02 | Pass 5 · **Covered** (PR A) |
+| CAT-TEST-18 | component | `Skills.tsx` as a player without `manage_skills` | No Edit button on custom skills | P2 | R: CAT-BUG-04 | Pass 5 · **Covered** (PR A, on `edit_catalogue`, for all five pages) |
+| CAT-TEST-19 | component | `Items.tsx`, item with 2 availabilities, mobile viewport | Two rows, each with its restriction label | P3 | R: CAT-UX-03 | Pass 5 · **Covered** (PR A) |
+| CAT-TEST-20 | component | `NewSkillDialog` opened twice | `listSkills` called at most once (cache) | P2 | R: CAT-PERF-03 | Pass 5 · **Covered** (characterisation: the warband's New skill dialog reads nothing after the Skills page) |
+| CAT-TEST-21 | component | `HiredSwords.tsx` sorting | Original array order unchanged | P3 | R: CAT-BUG-11 | Pass 5 · not written: BUG-81 was fixed in pass 2 |
+| CAT-TEST-23 | API | Copy-on-write: a first edit of a book entry, a second edit, Revert, and two first edits at once | One version; hero, henchmen, hired-sword and stash copies move with their costs, other campaigns untouched; the second edit changes it in place; Revert moves them back; one version from two concurrent edits; counts constant in copies | P1 | N: CAT-TWEAK-01 | Pass 5 · **Covered** (PR C) |
+| CAT-TEST-24 | API | Names: a create matching a book or campaign entry in any case and type, archived ones included; an edit keeping its own name | 400 `name_taken` with every match; the edit succeeds | P2 | N: CAT-TWEAK-02 | Pass 5 · **Covered** (PR C) |
+| CAT-TEST-25 | API | Archive: delete an unused entry, delete a used one, restore it, list with and without `?archived=1`, PATCH a unit holding it | Deleted / archived / restored; absent from lists unless asked; still accepted in unit writes | P2 | N: CAT-TWEAK-04, CAT-NEW-05 | Pass 5 · **Covered** (PR C, with book entries removed for one campaign) |
+| CAT-TEST-26 | API | Resolution: Buy again, sale price, a book id from a hire preset or a battle find, trait specials, a same-named entry of another type | Each lands on the campaign's version; the other type changes nothing | P1 | N: CAT-TWEAK-03 | Pass 5 · **Covered** (PR C, open battles and trades included) |
+| CAT-TEST-27 | API | The `edit_catalogue` and `delete_catalogue` matrix on every catalogue route; a revoked player | Each actor gets what the codes allow; the revoked player is refused everywhere | P1 | N: CAT-TWEAK-05 | Pass 5 · **Covered** (PR A; PR B and C extend it to all 40 routes) |
 
-Elsewhere: CAT-TEST-15 → 02 (CAMP-TEST-18); CAT-TEST-17 → 07; CAT-TEST-22 → E2E-11.
+Elsewhere: CAT-TEST-15 → 02 (CAMP-TEST-18); CAT-TEST-17 → 07; CAT-TEST-22 → E2E-11. CAT-TEST-23 to -27 were added by the pass 5 brief, after this plan was built.
 
 ### 07 Frontend platform (`FE`; Phase 0 unless a pass is named)
 
@@ -345,7 +351,7 @@ Elsewhere: CAT-TEST-15 → 02 (CAMP-TEST-18); CAT-TEST-17 → 07; CAT-TEST-22 �
 | FE-TEST-14 | unit | `notification-mappers` extracted from `useNotifications.ts:29-145` | Trade, invite and result payloads map correctly; malformed → `null` | P2 | C (extract and pin before splitting `useNotifications`) | Pass 2 |
 | FE-TEST-15 | component | `NotificationsMenu`: accept trade, API rejects 400 | Menu stays open, row shows the error, no unhandled rejection | P2 | R: FE-BUG-03 | Pass 2 |
 | FE-TEST-17 | component | `DiceRoller` with a mocked DiceBox: mount and unmount 5 times | Engine constructed once; no extra `window` resize listeners | P2 | R: FE-PERF-07, BATL-PERF-08 | Pass 3 |
-| FE-TEST-18 (404) | component | Router: unknown path `/nope` | `NotFound` shown, not a redirect to `/` | P2 | R: FE-UX-03 | Pass 6 |
+| FE-TEST-18 (404) | component | Router: unknown path `/nope` | `NotFound` shown, not a redirect to `/` | P2 | R: FE-UX-03 | Pass 6 · **Covered** (PR A, signed in and out) |
 | FE-TEST-19 | component | Throw inside a route component | `errorElement` renders with Retry; the shell stays intact | P2 | N: FE-UX-01 | 0.5 |
 | FE-TEST-27 | CI | `vite build` with size-limit | Entry chunk ≤ 250 KB gzip; job fails on regression | P2 | G: FE-PERF-03 | 0.3 |
 | FE-TEST-28 | CI | `tsc --noEmit`, `eslint .`, `vitest run` on every push | All green | P1 | G: FE-CQ-01 | 0.3 |
@@ -358,13 +364,13 @@ Elsewhere: FE-TEST-01, -02, -03, -04, -20, -29 → 01; FE-TEST-16 → 02; FE-TES
 | --- | --- | --- | --- | --- | --- | --- |
 | INFRA-TEST-04 | API | Table-driven budget for every endpoint in the 08 Measurements table on the reference fixture (`QUERY_BUDGETS`) | Each within budget; budgets in one dict so a PR that raises one is visible | P1 | G + B | 0.4 |
 | INFRA-TEST-06 / BATL-TEST-08 / ECON-TEST-18 / CAMP-TEST-20 (Pusher) | API | `pusher.Pusher.trigger` (or `send_battle_event`) raises or times out during a battle `unit-kill`, trade create / offer / lock / completion, and a chat POST | 2xx (chat 201); DB change persisted once; error logged; no duplicate rows; remaining queued events still sent | P1 | R: INFRA-BUG-01, BATL-BUG-05, ECON-PERF-07, CAMP-PERF-07 | 0.1 |
-| INFRA-TEST-07 / AUTH-TEST-18 | unit | (subprocess) Import settings with `DJANGO_DEBUG` unset; `DEBUG=0` with the default `SECRET_KEY`; without `RATE_LIMIT_NUM_PROXIES` or `FRONTEND_URL` | `DEBUG is False`; `ImproperlyConfigured` in each bad case | P1 | R: INFRA-SEC-01, AUTH-SEC-01, AUTH-BUG-05, AUTH-SEC-03 | 0.1 |
+| INFRA-TEST-07 / AUTH-TEST-18 | unit | (subprocess) Import settings with `DJANGO_DEBUG` unset; `DEBUG=0` with the default `SECRET_KEY`; without `RATE_LIMIT_NUM_PROXIES` or `FRONTEND_URL` | `DEBUG is False`; `ImproperlyConfigured` in each bad case | P1 | R: INFRA-SEC-01, AUTH-SEC-01, AUTH-BUG-05, AUTH-SEC-03 | 0.1 · **Covered** (pass 6 PR A, as changed: a key under 50 characters is refused; no `RATE_LIMIT_NUM_PROXIES` means 1 with a warning, a non-number is refused; `FRONTEND_URL` and `DEFAULT_FROM_EMAIL` are required only once `RESEND_API_KEY` is set) |
 | INFRA-TEST-08 | unit | Import settings with `DATABASE_URL` set | `CONN_MAX_AGE > 0` and `CONN_HEALTH_CHECKS is True` | P1 | R: INFRA-PERF-03 | 0.1 |
 | INFRA-TEST-09 | unit | (script) `wait_for_db` with only `DATABASE_URL` set; with an unreachable host and a 2 s timeout | Uses the URL; exits non-zero after the timeout without printing the password | P2 | R: INFRA-BUG-02 | 0.1 |
 | INFRA-TEST-10 | CI | (load, optional) `scripts/loadtest.py` GET mix (battle list, items, heroes, summary, players, hired-swords detail, campaign detail), 1/5/20 clients × 15 s, against staging before and after each perf PR | p50 / p95 / req/s recorded in the PR; target p95 < 500 ms at 5 clients against Neon | P1 | G | 0.1 (T0-10), then every perf PR |
 | INFRA-TEST-13 | CI | (container) Build the image, run it with `DATABASE_URL` pointing at a test Postgres | Process is gunicorn, not `runserver`; `/api/health/` 200 within 30 s | P2 | R: INFRA-PERF-02 | 0.1 |
-| INFRA-TEST-14 | API | With `DEBUG=False` and `LOGGING` configured, hit a view that raises | Traceback emitted to stdout via `django.request` | P3 | R: INFRA-CQ-01 | 0.1 |
-| INFRA-TEST-15 | CI | `python manage.py check --deploy` with production-like env | No errors | P3 | G: INFRA-SEC-01, INFRA-SEC-02 | 0.3 |
+| INFRA-TEST-14 | API | With `DEBUG=False` and `LOGGING` configured, hit a view that raises | Traceback emitted to stdout via `django.request` | P3 | R: INFRA-CQ-01 | 0.1 · **Covered** (pass 6 PR A, in a fresh process) |
+| INFRA-TEST-15 | CI | `python manage.py check --deploy` with production-like env | No errors | P3 | G: INFRA-SEC-01, INFRA-SEC-02 | 0.3 · **Covered** (pass 6 PR B: CI runs it at `--fail-level WARNING`) |
 
 Elsewhere: INFRA-TEST-01, -05 → 05; INFRA-TEST-02 → 03; INFRA-TEST-03 → 02; INFRA-TEST-11, -12 → 07.
 
@@ -558,7 +564,9 @@ Aligned with PLAN.md. Every pass follows the loop: lock (characterisation + budg
 **Pass 4 Campaigns.** Lock: CAMP-TEST-03 (already in 0.4), -09, -12, -20, -24 (role mapping), -25 (today's toggles); FE-TEST-09 before the `CampaignShell` split. Fix: CAMP-TEST-01 (if not done), -05 to -08, -10, -11, -14 to -19, -21 / FE-TEST-16, -22, -23, -27, -28; AUTH-TEST-31 / FE-TEST-29 unless already pulled forward. Build: CAMP-TEST-13, -26. Verify: E2E-04, E2E-07 step 4, E2E-01 step 11, manual 11-19, 53, 57.
 
 **Pass 5 Catalogue.** Lock: CAT-TEST-01, -14; CAT-TEST-07/08 baselines. Fix: CAT-TEST-02 to -06, -09 to -13, -16, -18 to -21; tighten budgets. Verify: E2E-11, manual 20-23.
+*Status (2026-10-22): every row above is covered except CAT-TEST-21 (fixed in pass 2), plus CAT-TEST-23 to -27. E2E-11 waits for Playwright. Manual steps 20-23 predate the decisions; the PR C browser checklist (Edit makes a version, Delete archives or removes) passed on `release/p5-p6` in their place.*
 
 **Pass 6 Auth and core.** Lock: AUTH-TEST-01, -02, -05 to -11, -17. Fix: AUTH-TEST-03, -04, -12, -13, -14, -22 / FE-TEST-04, -23 (cached user), -24 / FE-TEST-03, -25 / FE-TEST-20, -26, -28 / FE-TEST-18, FE-TEST-18 (404). Build: AUTH-TEST-27, -29. Verify: E2E-08 step 3, manual 1-10 and 54.
+*Status (2026-10-22): PR A and B cover AUTH-TEST-01 to -14, -17, -19 to -23, -25 to -29, FE-TEST-18 and INFRA-TEST-07, -14 and -15. AUTH-TEST-16 is still open. The account page's tests come with PR C, after the bestiary rewrite. E2E-08 waits for Playwright; the combined browser check on `release/p5-p6` covered the session, refresh and reset paths by hand, with no email sent.*
 
 **Recommended pull-forwards** (each is small and touches a file an earlier step already changes): the battle list fix after 0.1 (P0); AUTH-BUG-01 in 0.5 (P1; users get logged out exactly when Render struggles); AUTH-SEC-02 sanitisation as soon as possible (P1 stored XSS that can read 30-day refresh tokens).

@@ -39,6 +39,12 @@ export type ChatRemoval = {
 /** `campaign.updated` and friends on `private-campaign-{id}-events` (CAMP-NEW-07). */
 export type CampaignEventMessage = Record<string, unknown>;
 
+/**
+ * `catalogue.changed` on the same channel (BUG-80): another member wrote one of the campaign's
+ * catalogue lists. `kind` is the server's name for it ("items", "hired_swords", ...).
+ */
+export type CatalogueChange = { kind: string };
+
 const hasType = (data: unknown): data is { type: string } =>
   Boolean(data && typeof data === "object" && (data as { type?: unknown }).type);
 
@@ -97,6 +103,23 @@ export function useCampaignUpdates(
     (data) => {
       if (data && typeof data === "object" && (data as { id?: unknown }).id) {
         handler(data as CampaignEventMessage);
+      }
+    }
+  );
+}
+
+/** `catalogue.changed` on the campaign's events channel (BUG-80). */
+export function useCampaignCatalogueChanges(
+  campaignId: number | null,
+  handler: (change: CatalogueChange) => void
+) {
+  useChannel<unknown>(
+    campaignId ? `private-campaign-${campaignId}-events` : null,
+    "catalogue.changed",
+    (data) => {
+      const kind = data && typeof data === "object" ? (data as { kind?: unknown }).kind : null;
+      if (typeof kind === "string" && kind) {
+        handler({ kind });
       }
     }
   );
