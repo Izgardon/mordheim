@@ -28,6 +28,11 @@ function NewSpecialRule({ links }: { links: BestiaryLinks }) {
           rows={2}
           className={TEXTAREA_CLASS}
         />
+        {links.specialError ? (
+          <p role="alert" className="text-xs text-red-600">
+            {links.specialError}
+          </p>
+        ) : null}
         <div className="flex gap-2">
           <Button
             type="button"

@@ -6,6 +6,7 @@ import { useCampaignSkills } from "@/features/warbands/hooks/campaign/useCampaig
 import { useCampaignSpecial } from "@/features/warbands/hooks/campaign/useCampaignSpecial";
 import { useCampaignSpells } from "@/features/warbands/hooks/campaign/useCampaignSpells";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
+import { getRefusalMessage } from "@/lib/get-error-message";
 
 import type { Item } from "@/features/items/types/item-types";
 import type { Skill } from "@/features/skills/types/skill-types";
@@ -56,6 +57,8 @@ export function useBestiaryLinks({
   const [newSpecialName, setNewSpecialName] = useState("");
   const [newSpecialDescription, setNewSpecialDescription] = useState("");
   const [isSavingSpecial, setIsSavingSpecial] = useState(false);
+  /** Why the special created on the spot was refused (the form stays open to retry). */
+  const [specialError, setSpecialError] = useState("");
   const catalogueCache = useCatalogueCache();
   const hasCampaignId = !Number.isNaN(campaignId);
   const lookup = { campaignId, hasCampaignId, enabled: open && hasCampaignId };
@@ -76,6 +79,7 @@ export function useBestiaryLinks({
     setIsCreatingSpecial(false);
     setNewSpecialName("");
     setNewSpecialDescription("");
+    setSpecialError("");
   }, []);
 
   /** An edited entry's links (none for a blank form), with no special being created. */
@@ -96,6 +100,7 @@ export function useBestiaryLinks({
     const name = newSpecialName.trim();
     if (!name) return;
     setIsSavingSpecial(true);
+    setSpecialError("");
     try {
       const created = await createSpecial({
         campaign_id: campaignId,
@@ -106,8 +111,9 @@ export function useBestiaryLinks({
       catalogueCache.upsert("specials", campaignId, created);
       setSpecials((prev) => [...prev, created]);
       closeNewSpecial();
-    } catch {
-      // keep form open so user can retry
+    } catch (caught) {
+      // The form stays open so the rule can be fixed and tried again.
+      setSpecialError(getRefusalMessage(caught, "Unable to add the rule."));
     } finally {
       setIsSavingSpecial(false);
     }
@@ -153,6 +159,7 @@ export function useBestiaryLinks({
     newSpecialDescription,
     setNewSpecialDescription,
     isSavingSpecial,
+    specialError,
     createNewSpecial,
     /** The links' part of a create body. */
     payload: () => ({

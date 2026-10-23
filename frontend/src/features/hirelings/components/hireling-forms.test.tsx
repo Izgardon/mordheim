@@ -227,6 +227,29 @@ describe("Add", () => {
   });
 });
 
+describe("a special created on the spot", () => {
+  it("says why the server refused it and keeps its form open to try again (pass 5's found-not-fixed)", async () => {
+    const user = setupUser();
+    fakeApi.fail(
+      "POST /special/",
+      validationError({ name: ["Holy Fury is already in the catalogue."] })
+    );
+    renderCatalogueRoute("/campaigns/1/dramatis-personae");
+    await user.click(await screen.findByRole("button", { name: "Add dramatis persona" }));
+    await screen.findByRole("dialog");
+
+    await user.type(within(dialog()).getByPlaceholderText("Search special rules..."), "Holy Fury");
+    await user.click(within(dialog()).getByRole("button", { name: /Create new rule/ }));
+    await user.click(within(dialog()).getByRole("button", { name: "Add rule" }));
+
+    expect(await within(dialog()).findByRole("alert")).toHaveTextContent(
+      "Holy Fury is already in the catalogue."
+    );
+    expect(within(dialog()).getByPlaceholderText("Rule name")).toHaveValue("Holy Fury");
+    expect(within(dialog()).queryByRole("button", { name: "Remove Holy Fury" })).toBeNull();
+  });
+});
+
 describe("Edit, Revert and Delete", () => {
   it("edits a book hired sword from its panel: the form holds its values and kit, the PATCH names the campaign, and its version takes its place", async () => {
     const user = setupUser();
