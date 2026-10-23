@@ -4,7 +4,6 @@ import { apiRequest } from "../../../lib/api-client";
 // types
 import type {
   AuthResponse,
-  AuthTokens,
   FeedbackReportPayload,
   AuthUser,
   LoginCredentials,
@@ -22,7 +21,7 @@ export function registerAccount(payload: RegisterPayload) {
 }
 
 export function loginAccount(payload: LoginCredentials) {
-  return apiRequest<AuthTokens>("/auth/login/", {
+  return apiRequest<AuthResponse>("/auth/login/", {
     method: "POST",
     body: payload,
     token: null,

@@ -135,6 +135,7 @@ Budgets for after Tiers 0-2. They are realistic because each one comes from a so
 - **Fix:** `LOGGING` to stdout (root `INFO`, `django.request` at `WARNING`), the gunicorn access log with `%(M)sms` (PERF-01), and optionally a 20-line middleware that logs `path, status, ms, query count` when a request exceeds 500 ms.
 - **Expected impact:** no speed change; it makes every later before/after number visible from Render logs.
 - **Effort:** S · **Plan phase:** 0.1
+- **Status:** done. The access log with timings came in Phase 0; `LOGGING` (warnings and errors to stdout, `django.request` included) in pass 6 PR A. The slow-request middleware wasn't built.
 
 #### PERF-04 · P2 · Compress JSON responses and cache hashed static assets
 - **Sources:** [CAT-PERF-02][06] (gzip step), [INFRA-PERF-06][08] (step 4), [INFRA-PERF-12][08], [ECON-PERF-06][04] (no `GZipMiddleware`)
@@ -164,6 +165,7 @@ Budgets for after Tiers 0-2. They are realistic because each one comes from a so
 - **Fix:** move `migrate` to Render's pre-deploy command, or gate it behind `RUN_MIGRATIONS_ON_BOOT` (already in PERF-01's entrypoint). Delete the keep-awake endpoint and monitor, or if you keep it, accept GET and drop auth and throttles on health and keep-awake. Decide consciously about Neon: raise or disable the autosuspend delay, or ping `SELECT 1` every 4 minutes or less, either of which costs compute hours. Fix `wait_for_db.py` so it uses `DATABASE_URL` and has a timeout (a Docker deploy with only `DATABASE_URL` hangs today).
 - **Expected impact:** faster deploys and restarts; no Neon cold start for the first player of the evening (if you pay for it). This is not the multi-user slowdown.
 - **Effort:** S · **Plan phase:** 0.1
+- **Status:** part done. Phase 0 took migrations off the request-serving boot path and fixed `wait_for_db`. Pass 6 PR A: health and keep-awake run no authentication, throttle or query, and keep-awake answers GET and HEAD with 204 (AUTH-TEST-14). Moving `migrate` to Render's pre-deploy command and the Neon autosuspend decision are parked.
 
 #### PERF-08 · P1 · CPU budget: 0.5 vCPU is the ceiling; size workers and plan to it
 - **Sources:** [INFRA-PERF-07][08]
@@ -217,6 +219,7 @@ Budgets for after Tiers 0-2. They are realistic because each one comes from a so
 - **Fix:** add a `catalogue_version` per campaign plus a global one (an `F()`-incremented column on `CampaignSettings`, or a shared cache), bumped by signals on every catalogue model write, inside the house-rule sync, and at the end of each seeder. Cache the rendered body under `(kind, campaign, version, query)` and serve it with an `ETag` and `Cache-Control: private, no-cache`. Do the check after the membership check, so a revalidation is a 304 for 2 queries. LocMem per worker is fine; use Render Key Value if you want it shared. Later (L): a content-hashed static base catalogue on the CDN plus a small campaign delta endpoint.
 - **Expected impact:** repeat catalogue loads become 304s with ≤ 2 queries instead of 5-16 queries plus up to 56 ms CPU each (CAT-TEST-06). The browser sends `If-None-Match` automatically, so no client change is needed.
 - **Effort:** M · **Plan phase:** 0.5 (otherwise pass 5)
+- **Status:** done. Phase 0 added the content ETag (the byte half); pass 5 PR B the server half: a random `CampaignSettings.catalogue_version` plus a book version (`core.CatalogueVersion`), replaced by the one write path, house rules, injury specials and every seeder, and the rendered body cached per kind, campaign, version and query in a per-worker LocMem alias. A 304 or a cached 200 now costs 1 query with no serialisation. Bumps are explicit (`core.catalogue.cache.bump`), not signals.
 
 #### PERF-14 · P1 · TanStack Query foundation: shared, de-duplicated server state
 - **Sources:** [FE-PERF-01][07], [CAT-PERF-03][06]; related [CAT-CQ-03][06]
@@ -414,6 +417,7 @@ Budgets for after Tiers 0-2. They are realistic because each one comes from a so
 - **Fix:** filter client-side from the cached campaign catalogue and item properties. If a server search is kept, require 2 or more characters, debounce 250-300 ms and ignore stale responses.
 - **Expected impact:** 0 requests per keystroke instead of up to 170 KB and 14 queries each.
 - **Effort:** S · **Plan phase:** pass 3 (property search in pass 5)
+- **Status:** the property search is done (pass 5 PR A): both item forms filter the cached `item-properties` list, with no request per keystroke.
 
 **Pass 4: Campaigns**
 
@@ -444,6 +448,7 @@ Budgets for after Tiers 0-2. They are realistic because each one comes from a so
 - **Fix:** skip revert and sync when `effect_key` is unchanged; diff availabilities instead of deleting them; `bulk_update(rows, ["item", "cost"])` for remaps; `bulk_create(…, ignore_conflicts=True)` for links.
 - **Expected impact:** a text edit costs 0 sync queries; remaps take 3-4 statements; purchases are no longer blocked during edits.
 - **Effort:** S (skip on unchanged) / M (bulk rewrite) · **Plan phase:** pass 4 (catalogue writes in pass 5)
+- **Status:** done. Pass 4 did the house-rule half. Pass 5 PR A writes catalogue links in one INSERT per kind (item create 25 → 15 queries, hired-sword create 96 → 20, both constant in rows), and PR C's one remap path moves copies with one UPDATE per table, stash rows included.
 
 #### PERF-45 · P3 · Unbounded campaign lists and a missing chat index
 - **Sources:** [CAMP-PERF-10][02], [CAMP-PERF-11][02], [INFRA-PERF-11][08] (messages half)
@@ -460,6 +465,7 @@ Budgets for after Tiers 0-2. They are realistic because each one comes from a so
 - **Fix:** the `Prefetch` chain sketched in CAT-PERF-04 (items with `property_links__property` and `availabilities__restriction_links__restriction`), reused for POST and PATCH responses.
 - **Expected impact:** 43 / 45 → about 10 queries (≤ 12, CAT-TEST-08).
 - **Effort:** S · **Plan phase:** pass 5
+- **Status:** done (pass 5 PR A): 8 and 9 queries, constant in equipment, through `bestiary/selectors.py`, which the POST and PATCH answers reuse.
 
 #### PERF-47 · P2 · Catalogue lists over-fetch rows and descriptions
 - **Sources:** [CAT-PERF-05][06]
@@ -467,6 +473,7 @@ Budgets for after Tiers 0-2. They are realistic because each one comes from a so
 - **Fix:** `?exclude_type=Hired Sword` on `/api/bestiary/`; `?view=summary` without `description`, `statblock` or the nested `bestiary_entry`; descriptions loaded on expand. Do this after PERF-13.
 - **Expected impact:** 2-5× fewer bytes and less serialization CPU.
 - **Effort:** S · **Plan phase:** pass 5
+- **Status:** done for the bestiary (pass 5 PR B and C): the Bestiary page asks `?exclude_type=Hired Sword` instead of dropping 72 of 86 entries. `?view=summary` exists on the bestiary list, but no page uses it yet (the page's search reads descriptions); the other lists keep their descriptions.
 
 #### PERF-48 · P2 · The Wargear table mounts a full Acquire dialog per row
 - **Sources:** [CAT-PERF-06][06]
@@ -474,6 +481,7 @@ Budgets for after Tiers 0-2. They are realistic because each one comes from a so
 - **Fix:** one page-level `AcquireItemDialog` driven by `selectedRow`; `useCallback` the handlers; fix the memo deps; `React.memo` the rows.
 - **Expected impact:** responsive typing and expanding on low-end phones.
 - **Effort:** M · **Plan phase:** pass 5
+- **Status:** done (pass 5 PR B): Wargear mounts no Acquire dialog until a row's Acquire is pressed, then one for the page, keyed by that row.
 
 #### PERF-49 · P3 · The items list runs its prefetch chain twice
 - **Sources:** [CAT-PERF-07][06]
@@ -481,6 +489,7 @@ Budgets for after Tiers 0-2. They are realistic because each one comes from a so
 - **Fix:** one queryset, `Q(campaign_id=cid) | Q(campaign__isnull=True, ~Exists(same name and type in campaign))`, with one prefetch chain. This also fixes the name-only shadowing (CAT-BUG-03).
 - **Expected impact:** 14 → 8 queries on a cache miss (moot on a 304 after PERF-13).
 - **Effort:** S · **Plan phase:** pass 5
+- **Status:** done (pass 5 PR B): one queryset with one prefetch chain, 14 → 5 queries on a miss (6 with an animal item). PR C then replaced the name rule with `~Exists(campaign version)` in the same query.
 
 **Pass 6: Auth and core**
 
@@ -490,6 +499,7 @@ Budgets for after Tiers 0-2. They are realistic because each one comes from a so
 - **Fix:** persist the user next to the tokens, render the protected tree from the cached user and revalidate `/me` in the background (log out only on a 401, AUTH-BUG-01); add one `setTokens({access, refresh})` that notifies once; make `syncToken` compare against a ref; key effects on `user?.id`.
 - **Expected impact:** one serial round trip off every cold load; login goes from about 9 requests to 3.
 - **Effort:** S · **Plan phase:** pass 6 (consider pulling forward with PERF-14)
+- **Status:** done (pass 6 PR A): login returns the user, so sign-in and sign-up read no `/auth/me`; the user is cached beside the tokens, so a reload renders at once and checks `/me` in the background; one `setTokens()` notifies once. A sign-in is now the login plus the page's own reads (1 `/notifications/`, 1 channel).
 
 #### PERF-51 · P3 · Every authenticated request pays one `auth_user` lookup
 - **Sources:** [AUTH-PERF-04][01] (part 2; part 1 is in PERF-07)
@@ -497,6 +507,7 @@ Budgets for after Tiers 0-2. They are realistic because each one comes from a so
 - **Fix:** optionally, after PERF-02, add a `JWTAuthentication` subclass with a 30-60 s per-process `user_id → user` cache, invalidated on password change. Or accept the cost.
 - **Expected impact:** 1 round trip per request.
 - **Effort:** M · **Plan phase:** pass 6 (optional)
+- **Status:** dropped (pass 6 Calls): a cached user would delay a sign-out. The identity query now also checks the session key, still 1 query (the user joined to its account).
 
 ### Source index
 
@@ -516,9 +527,11 @@ Every PERF finding in the 8 files maps to a canonical item. A source marked "+" 
 
 Step 0: answer the Open questions below and run 08's Render-shell RTT snippet (15 min). Every later number becomes real.
 
+Ticks start at the pass 5 and 6 close-out (2026-10-22); what Phase 0 and passes 1 to 4 did is in PLAN.md and their briefs. PERF-07 and PERF-40 are part done and PERF-51 is dropped: see their status lines.
+
 - [ ] 1. **PERF-01** gunicorn instead of `runserver`: bounded concurrency, no reloader burn · S
 - [ ] 2. **PERF-02** `CONN_MAX_AGE` + health checks (+ `DEBUG` off): about 50-150 ms off every request · S
-- [ ] 3. **PERF-03** `LOGGING` + access-log timings: production numbers become visible · S
+- [x] 3. **PERF-03** `LOGGING` + access-log timings: production numbers become visible · S
 - [ ] 4. **PERF-04** gzip + immutable asset headers: 3-5× smaller JSON · S
 - [ ] 5. **PERF-09** query-budget harness + load-test baseline: before numbers recorded · S
 - [ ] 6. **PERF-10** battle list fix + dedupe: overview 249 → about 100 queries, refocus 316 → about 5 · S+S
@@ -531,7 +544,7 @@ Step 0: answer the Open questions below and run 08's Render-shell RTT snippet (1
 - [ ] 13. **PERF-20** mobile edit loop (verify, then fix): phone CPU · S
 - [ ] 14. **PERF-06** co-locate Neon in Frankfurt if RTT ≥ 8 ms: every query 5-10× cheaper · M
 - [ ] 15. **PERF-05** Vercel `/api` rewrite: about half the requests on a cold visit · S
-- [ ] 16. **PERF-13** catalogue ETag + server cache: repeat loads are 304s for 2 queries · M
+- [x] 16. **PERF-13** catalogue ETag + server cache: repeat loads are 304s for 2 queries · M
 - [ ] 17. **PERF-14** TanStack Query foundation + catalogues: revisits cost 0 requests · M
 - [ ] 18. **PERF-15** permissions in the campaign payload + membership once: 1 request less per page · M
 - [ ] 19. **PERF-16** pull-to-refresh without a reload: about 20 requests less per pull · S
@@ -556,13 +569,13 @@ Step 0: answer the Open questions below and run 08's Render-shell RTT snippet (1
 - [ ] 38. **PERF-39** DiceRoller singleton · M
 - [ ] 39. **PERF-40** client-side search filters · S
 - [ ] 40. **PERF-42** roster-stats endpoint: expand 41 → 3-4 queries · S
-- [ ] 41. **PERF-44** house-rule skip-on-unchanged + bulk remaps · S/M
+- [x] 41. **PERF-44** house-rule skip-on-unchanged + bulk remaps · S/M
 - [ ] 42. **PERF-45** paginate campaign lists, defer JSON, chat index · S
-- [ ] 43. **PERF-46** bestiary/hired-sword detail prefetch: 45 → about 10 · S
-- [ ] 44. **PERF-47** summary views without descriptions · S
-- [ ] 45. **PERF-48** one Acquire dialog per page · M
-- [ ] 46. **PERF-49** single items queryset: 14 → 8 · S
-- [ ] 47. **PERF-50** cached user at boot, one `/auth/me` per login · S
+- [x] 43. **PERF-46** bestiary/hired-sword detail prefetch: 45 → about 10 · S
+- [x] 44. **PERF-47** summary views without descriptions · S
+- [x] 45. **PERF-48** one Acquire dialog per page · M
+- [x] 46. **PERF-49** single items queryset: 14 → 8 · S
+- [x] 47. **PERF-50** cached user at boot, one `/auth/me` per login · S
 - [ ] 48. **PERF-51** (optional) JWT user cache · M
 - [ ] 49. **PERF-07** migrations off boot, keep-awake/Neon decision, `wait_for_db` fix · S
 - [ ] 50. **PERF-08** right-size Render from real p95s · S

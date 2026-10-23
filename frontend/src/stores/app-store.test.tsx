@@ -5,10 +5,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AuthProvider, useAuthContext } from "@/features/auth/stores/auth-store";
 import { createTestQueryClient } from "@/test/query-test-utils";
-import { clearToken, setRefreshToken, setToken } from "@/utils/storage";
+import { session } from "@/lib/session";
 import { AppStoreProvider, useAppStore } from "./app-store";
 
-import type { BattleInviteNotification } from "@/features/battles/types/battle-types";
+import type {
+  BattleInviteNotification,
+  BattleNudgeNotification,
+} from "@/features/battles/types/battle-types";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 import type { Warband } from "@/features/warbands/types/warband-types";
 
@@ -46,6 +49,7 @@ function seedAliceSession(
     store.setWarband({ id: 3, campaign_id: 7, name: "Alice's Wolves" } as Warband);
     store.addTradeRequestNotification({ id: "trade-1" } as TradeNotification);
     store.addBattleInviteNotification({ id: "invite-1" } as BattleInviteNotification);
+    store.addBattleNudgeNotification({ id: "nudge-1", battleId: 31 } as BattleNudgeNotification);
     store.setCurrentBattleSession({ battleId: 31, campaignId: 7, status: "active" });
   });
 }
@@ -59,14 +63,14 @@ function expectEmptySession(
   expect(store.tradeRequestNotifications).toEqual([]);
   expect(store.battleInviteNotifications).toEqual([]);
   expect(store.battleResultRequestNotifications).toEqual([]);
+  expect(store.battleNudgeNotifications).toEqual([]);
   expect(store.currentBattleSession).toBeNull();
 }
 
 describe("sign-out clears the previous user's data (BUG-22)", () => {
   beforeEach(() => {
     localStorage.clear();
-    setToken("alice-access");
-    setRefreshToken("alice-refresh");
+    session.setTokens({ access: "alice-access", refresh: "alice-refresh" });
     fetchMe.mockReset();
     fetchMe.mockResolvedValue(alice);
     loginAccount.mockReset();
@@ -83,7 +87,7 @@ describe("sign-out clears the previous user's data (BUG-22)", () => {
     await waitFor(() => expect(result.current.auth.user).toBeNull());
     expectEmptySession(queryClient, result.current.store);
 
-    loginAccount.mockResolvedValue({ access: "bob-access", refresh: "bob-refresh" });
+    loginAccount.mockResolvedValue({ access: "bob-access", refresh: "bob-refresh", user: bob });
     fetchMe.mockResolvedValue(bob);
     await act(async () => {
       await result.current.auth.signIn({ email: bob.email, password: "pw" });
@@ -99,7 +103,7 @@ describe("sign-out clears the previous user's data (BUG-22)", () => {
     seedAliceSession(queryClient, result.current.store);
 
     // What api-client does when /auth/refresh/ answers 401.
-    act(() => clearToken());
+    act(() => session.end());
 
     await waitFor(() => expect(result.current.auth.user).toBeNull());
     expectEmptySession(queryClient, result.current.store);

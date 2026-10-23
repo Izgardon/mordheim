@@ -10,7 +10,7 @@ Step 1 of the pass loop in [PLAN.md](../PLAN.md). Full detail (repro, fix) is in
 
 **Data is disposable** (`CLAUDE.md`): no backfills; the one new migration must run on an empty database.
 
-**Your part:** every decision is answered (see [Decisions](#decisions-answered-by-william-2026-10-18)). Please confirm the [Calls I made](#calls-i-made).
+**Your part:** every decision is answered (see [Decisions](#decisions-answered-by-william-2026-10-18)). The [Calls I made](#calls-i-made) were confirmed on 2026-10-19. What the agents decided along the way is under [Progress](#progress), for you to change. PR C waits for the bestiary rewrite.
 
 ## What it is today
 
@@ -171,23 +171,54 @@ Types: **New**, **Tweak**, **Remove**. IDs: `AUTH-NEW-NN`, `AUTH-TWEAK-NN`. Stat
 
 | ID | Type | Change | Notes / acceptance | Status |
 | --- | --- | --- | --- | --- |
-| AUTH-NEW-01 | New | Account settings page | Decision 1. `/account`, linked from the Campaigns header and campaign Settings → Personal; sections for display name, password, sessions and deletion. | Agreed |
-| AUTH-NEW-02 | New | Change your display name | Decision 1. Saved through `PATCH auth/me/`; shows everywhere at once, chat and bulletin included. | Agreed |
-| AUTH-NEW-03 | New | Change your password | Decisions 1 and 4. Current and new password, with the toggle and the hint; other devices are signed out; this one stays signed in. | Agreed |
-| AUTH-NEW-04 | New | Sign out everywhere else | Decision 4. One button; every other device's next request lands on sign-in with "Your session ended". | Agreed |
-| AUTH-NEW-05 | New | Delete your account | Decision 1. Password confirm and a preview; owned campaigns with members are handed over first; you show as "Former player"; your warbands stay as retired records; it can't be undone. | Agreed |
-| AUTH-NEW-06 | New | Asked once for a display name | Decision 2. A user with no name gets a one-field dialog on the next signed-in screen; until it's saved, others see "Player N". | Agreed |
-| AUTH-TWEAK-01 | Tweak | Display name required at sign-up | Decision 2. "Display name" replaces "Alias"; 1-40 characters; the server refuses a blank one. | Agreed |
-| AUTH-TWEAK-02 | Tweak | No email shown as a name | Decision 2, SEC-13. Players, members, chat, bulletin, encampments, battle labels, trade names and the ledger show the name, or "Player N"; never an email. | Agreed |
-| AUTH-TWEAK-03 | Tweak | Sessions renew while in use | Decision 4. Each refresh returns a new 30-day refresh token; only 30 idle days sign you out. | Agreed |
-| AUTH-TWEAK-04 | Tweak | Everyone signed out once when this ships | Decision 4. Old tokens are refused; the landing page says "Your session ended. Please sign in again." | Agreed |
-| AUTH-TWEAK-05 | Tweak | Landing video: landing only, late, no-cookie | Decision 5. `youtube-nocookie.com` after load, on desktop Landing only; reset never loads it. | Agreed |
-| AUTH-TWEAK-06 | Tweak | One forgot-password flow | Decision 6. The sign-in card's flow stays; `/forgot-password` and `ForgotPassword.tsx` are deleted (the URL shows NotFound). | Agreed |
-| AUTH-TWEAK-07 | Tweak | Show-password toggle and rules hint | Decision 6. One `PasswordInput` with show and hide on sign-in, sign-up, reset and change password; the hint under every new password. | Agreed |
+| AUTH-NEW-01 | New | Account settings page | Decision 1. `/account`, linked from the Campaigns header and campaign Settings → Personal; sections for display name, password, sessions and deletion. | Agreed (PR C, after the bestiary rewrite) |
+| AUTH-NEW-02 | New | Change your display name | Decision 1. Saved through `PATCH auth/me/`; shows everywhere at once, chat and bulletin included. | Agreed (PR C, after the bestiary rewrite; the server half is done in PR A) |
+| AUTH-NEW-03 | New | Change your password | Decisions 1 and 4. Current and new password, with the toggle and the hint; other devices are signed out; this one stays signed in. | Agreed (PR C, after the bestiary rewrite; the server half is done in PR A) |
+| AUTH-NEW-04 | New | Sign out everywhere else | Decision 4. One button; every other device's next request lands on sign-in with "Your session ended". | Agreed (PR C, after the bestiary rewrite; the server half and the landing reason are done in PR A) |
+| AUTH-NEW-05 | New | Delete your account | Decision 1. Password confirm and a preview; owned campaigns with members are handed over first; you show as "Former player"; your warbands stay as retired records; it can't be undone. | Agreed (PR C, after the bestiary rewrite) |
+| AUTH-NEW-06 | New | Asked once for a display name | Decision 2. A user with no name gets a one-field dialog on the next signed-in screen; until it's saved, others see "Player N". | Not built (decision 2, 2026-10-19: data is disposable) |
+| AUTH-TWEAK-01 | Tweak | Display name required at sign-up | Decision 2. "Display name" replaces "Alias"; 1-40 characters; the server refuses a blank one. | Done |
+| AUTH-TWEAK-02 | Tweak | No email shown as a name | Decision 2, SEC-13. Players, members, chat, bulletin, encampments, battle labels, trade names and the ledger show the name, or "Player N"; never an email. | Done (the members list keeps its email column for owners and admins, pass 4's call) |
+| AUTH-TWEAK-03 | Tweak | Sessions renew while in use | Decision 4. Each refresh returns a new 30-day refresh token; only 30 idle days sign you out. | Done |
+| AUTH-TWEAK-04 | Tweak | Everyone signed out once when this ships | Decision 4. Old tokens are refused; the landing page says "Your session ended. Please sign in again." | Done |
+| AUTH-TWEAK-05 | Tweak | Landing video: landing only, late, no-cookie | Decision 5. `youtube-nocookie.com` after load, on desktop Landing only; reset never loads it. | Agreed (PR C, after the bestiary rewrite) |
+| AUTH-TWEAK-06 | Tweak | One forgot-password flow | Decision 6. The sign-in card's flow stays; `/forgot-password` and `ForgotPassword.tsx` are deleted (the URL shows NotFound). | Agreed (PR C, after the bestiary rewrite) |
+| AUTH-TWEAK-07 | Tweak | Show-password toggle and rules hint | Decision 6. One `PasswordInput` with show and hide on sign-in, sign-up, reset and change password; the hint under every new password. | Agreed (PR C, after the bestiary rewrite; PR B's shared `PasswordInput` already has the toggle on sign-in and sign-up) |
+
+## Progress
+
+| Step | State |
+| --- | --- |
+| Characterisation tests | **Done.** Backend 958 → 1,056 with real JWTs (6 expected failures: BUG-84's two over-long fields and its sign-up race, BUG-140, and BUG-83's two uids); frontend 1,246 → 1,321 through the fake API server, plus a fake `fetch` behind the real api-client. Found BUG-153 to BUG-158. |
+| PR A (fixes) | **Done.** Backend 1,056 → 1,096, every expected failure flipped: a per-user session key (`sk`) in every token, checked on each request and refresh, with rotating refresh tokens; a reset, `POST auth/password/` and `POST auth/sign-out-others/` end every other session (401 `session_ended`); `PATCH auth/me/` renames and restamps the user's chat and bulletin names; a display name of 1 to 40 characters is required at sign-up; login answers `{access, refresh, user}` and records `last_login`; identity-keyed throttles (loose per address, tight per email, 10,000 counters); with `DJANGO_DEBUG` off, a key under 50 characters stops startup, `RATE_LIMIT_NUM_PROXIES` defaults to 1 with a warning, and a set `RESEND_API_KEY` needs real `FRONTEND_URL` and `DEFAULT_FROM_EMAIL` values; reset answers 503 `email_unavailable` while email is off, and its link uses the fragment; health and keep-awake run no authentication or query; `LOGGING` to stdout; JSON-only renderers in production. Frontend 1,321 → 1,356: sign-in and sign-up read no `/auth/me` (3 and 2 before); the user is cached beside the tokens, so a reload paints at once; a 401 after a refresh signs out; sign-in returns to the page you were on, and an ended session says so; unknown URLs show NotFound; the auth forms use `getErrorMessage`, with `role="alert"` and `aria-pressed`; the landing box scrolls; the reset page reads the fragment and ends on "Password updated"; the feedback card stops at 2,000 characters; the rotated refresh token is stored. |
+| PR B (refactor) | **Done.** Backend 1,096 → 1,102 with no query count changed: `apps/users/services/accounts.py` (no view method over 14 lines), the reset finds its user by username (IMP-95 c), throttle scopes come from one table (`SCOPES`), one `email_configured()` and one `_queue_email`, the unused sessions, messages and CSRF machinery is gone and CI runs `check --deploy`, the Dockerfile pins uv 0.13.1 with `--frozen`, and `test_rate_limiting.py` is split. Frontend 1,356 → 1,371: `lib/session.ts` owns the tokens, the cached user and the session's status (`auth-store.tsx` 249 → 121 lines); `AuthCard` 322 → 79 as `LoginForm`, `RegisterForm`, `ForgotForm` and `AuthModeSwitch` on a shared `AuthField` and `PasswordInput`. |
+| PR C (decisions and features) | **Pending, after the bestiary rewrite:** the account page (AUTH-NEW-01 to -05) and the auth pages (AUTH-TWEAK-05 to -07). Ready for it: the server half of rename, password change and sign-out-others; `session.updateUser`; `CurrentPasswordSerializer` for the delete's password confirm; the throttle the delete can join; the fix point for BUG-170. |
+| Combined browser check (`release/p5-p6`) | **Passed**, with no email sent (the reset request was stubbed in the page). It found and fixed BUG-163: the landing box still didn't scroll on a short desktop window. |
+
+William changed one call during PR A: with `RATE_LIMIT_NUM_PROXIES` unset in production, the throttles assume Render's one proxy and gunicorn warns once per start, instead of refusing to start.
+
+Decided during PR A and B (change any of them):
+- The session key lives on a `UserAccount` row, created at sign-up and at the first sign-in for users made another way (`createsuperuser`, the seeders); no signal.
+- A sign-in records `last_login`, which spends any outstanding reset link (BUG-154); login costs 2 queries.
+- The session key changes before the new password is saved, without a transaction: if the save failed, the old password would still work and everyone would just sign in again.
+- `manage.py changepassword`, the admin route while email is off, doesn't end sessions yet (BUG-169).
+- The password change and sign-out-others answer `{access, refresh, user}`, as login does, and share one throttle (5 a minute per user) that the account delete can join.
+- A rename rewrites the user's stored chat and bulletin names, removed posts included, in one transaction, with no realtime event: open chats show it on their next load, and notifications keep the old name.
+- The feedback report bounds its fields but doesn't check that the reporter can see the campaign or warband it names; the email is only for the admin.
+- Register, reset and reset-confirm still answer 401 to a stale bearer header (BUG-173); the app never sends one there.
+- A reset finds its user by username only, as sign-in does, so an account whose username isn't its lowercased email (only `createsuperuser` makes one) gets no link.
+- The cached user is trusted only when its id matches the token's. A background check that meets an outage keeps it, with no error screen.
+- Log out keeps no return path, so the next person on a shared device starts at `/campaigns`. A cold signed-out visit returns to its page with no message; an ended session returns to it with "Your session ended".
+- Any JSON 503 with a `detail` shows that detail (the feedback card's 503 included); a bare 502, 503 or 504 still reads "Can't reach the server".
+- A user's first notifications load replaces the bell, so nothing from before sign-in lingers.
+- Your own header says "Welcome back" with no name, rather than your "Player N".
+- A reset done on a signed-in device signs that device out the way Log out does, with no "session ended" notice.
+- Settings drop `AuthenticationMiddleware` along with sessions (DRF authenticates every request from its token) and silence W003; only the test runner uses a session engine.
 
 ## Production checks
 
 Environment variables only (names, never values). Data is disposable, so there is no SQL to run.
-- **`RATE_LIMIT_NUM_PROXIES`, before PR A deploys** (its startup guard refuses to boot without it). In Render's log, count the addresses in a normal request's `xff="..."` (most likely 1). Then send `curl -H "X-Forwarded-For: 1.2.3.4" https://mordheim-1.onrender.com/api/health/`. The logged `xff` should end with your real IP, the N-th address from the right.
-- **`DJANGO_SECRET_KEY`, rotated in the same deploy as PR A's session key**, to a new random value of 50+ characters. This clears Phase 0's open rotation, and users are signed out only once. Until then, also rotate it whenever the production database is wiped (BUG-140).
-- No email variables: they stay unset until [email is turned on](#parked-for-later).
+- **`DJANGO_SECRET_KEY`: 50+ characters, rotated in this deploy.** With `DJANGO_DEBUG` off, startup now refuses a shorter key, so check it first: gunicorn shows the message, but a failing `manage.py migrate` shows only `AppRegistryNotReady` (BUG-172). A new random value clears Phase 0's open rotation, and everyone is signed out once by the session key anyway. Once the session key is deployed, a wiped database no longer needs a rotation (BUG-140).
+- **`RATE_LIMIT_NUM_PROXIES`: optional** (William's change during PR A). Unset, production assumes 1 proxy and gunicorn logs a warning once per start; a value that isn't a whole number of 0 or more stops startup. To confirm 1 is right, count the addresses in a normal request's `xff="..."` in Render's log (the client's address should be the last), or send `curl -H "X-Forwarded-For: 1.2.3.4" https://mordheim-1.onrender.com/api/health/` and check that the logged `xff` ends with your real IP. Set it to `1` to silence the warning.
+- **No email variables:** they stay unset until [email is turned on](#parked-for-later), so reset answers the 503. Once `RESEND_API_KEY` is set, startup also needs an https `FRONTEND_URL` and a real `DEFAULT_FROM_EMAIL`.
+- **Deploy the backend and frontend together.** The frontend stores the rotated refresh token, sends `name` at sign-up, handles `session_ended` and reads the reset link's fragment. Everyone signs in once (AUTH-TWEAK-04).

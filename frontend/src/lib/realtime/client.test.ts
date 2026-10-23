@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { setToken } from "@/utils/storage";
+import { session } from "@/lib/session";
 
 const { FakePusher, refreshSession } = vi.hoisted(() => {
   class FakeChannel {
@@ -106,12 +106,12 @@ describe("realtime client", () => {
   });
 
   it("authorises channels with the token current at request time (BUG-57)", async () => {
-    setToken("token-at-connect");
+    session.setTokens({ access: "token-at-connect" });
     const { subscribe } = await loadClient();
     subscribe("private-user-1-notifications", "notification", vi.fn());
     const pusher = await connected();
 
-    setToken("refreshed-token");
+    session.setTokens({ access: "refreshed-token" });
 
     expect(pusher.options.channelAuthorization.headersProvider()).toEqual({
       Authorization: "Bearer refreshed-token",

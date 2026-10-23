@@ -12,12 +12,13 @@ def _load_settings(**env: str) -> subprocess.CompletedProcess[str]:
     """Import config.settings in a fresh interpreter with the given environment.
 
     Values are set explicitly (even to "") because settings call load_dotenv(),
-    which only fills variables that are absent.
+    which only fills variables that are absent. RESEND_API_KEY is blanked unless a
+    test sets it, so a developer's local .env can't trip the email guards.
     """
     return subprocess.run(
         [sys.executable, "-c", "import config.settings as s; print(s.DEBUG, len(s.SECRET_KEY))"],
         cwd=BACKEND_DIR,
-        env={**os.environ, **env},
+        env={**os.environ, "RESEND_API_KEY": "", **env},
         capture_output=True,
         text=True,
         timeout=30,
@@ -26,7 +27,9 @@ def _load_settings(**env: str) -> subprocess.CompletedProcess[str]:
 
 class SettingsGuardTests(SimpleTestCase):
     def test_debug_is_off_unless_enabled(self):
-        result = _load_settings(DJANGO_DEBUG="", DJANGO_SECRET_KEY="a-unique-production-key-for-tests")
+        result = _load_settings(
+            DJANGO_DEBUG="", DJANGO_SECRET_KEY="a-unique-production-key-for-the-settings-guard-tests"
+        )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue(result.stdout.startswith("False"))
 

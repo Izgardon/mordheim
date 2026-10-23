@@ -15,6 +15,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { sendFeedbackReport } from "@/features/auth/api/auth-api";
 import { getErrorMessage } from "@/lib/get-error-message";
 
+/** The server's limit on a report (FeedbackReportSerializer). */
+const MAX_REPORT_LENGTH = 2000;
+
 const textareaClassName =
   "min-h-[120px] w-full rounded-2xl border border-border/60 bg-background/70 px-3 py-2 text-sm text-foreground shadow-[0_12px_22px_rgba(5,20,24,0.25)] focus-visible:outline-none focus-visible:shadow-[0_12px_22px_rgba(5,20,24,0.25),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]";
 
@@ -138,7 +141,12 @@ export default function FeedbackReportCard({
                 onChange={(event) => setMessage(event.target.value)}
                 placeholder={REPORT_TYPE_PLACEHOLDERS[reportType]}
                 disabled={isSubmitting}
+                maxLength={MAX_REPORT_LENGTH}
+                aria-describedby="feedback-report-count"
               />
+              <p id="feedback-report-count" className="text-right text-xs text-muted-foreground">
+                {message.length}/{MAX_REPORT_LENGTH} characters
+              </p>
               {error ? <p className="text-sm text-red-600">{error}</p> : null}
             </div>
             <DialogFooter>

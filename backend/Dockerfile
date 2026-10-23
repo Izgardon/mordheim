@@ -1,14 +1,15 @@
 FROM python:3.12-slim AS builder
 
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+# A pinned uv, installing exactly what uv.lock lists (INFRA-CQ-02)
+COPY --from=ghcr.io/astral-sh/uv:0.13.1 /uv /uvx /bin/
 
 ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy
 
 WORKDIR /app
 
-COPY pyproject.toml /app/
-RUN uv sync --no-dev --no-install-project
+COPY pyproject.toml uv.lock /app/
+RUN uv sync --no-dev --no-install-project --frozen
 
 
 FROM python:3.12-slim

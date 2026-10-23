@@ -3,7 +3,7 @@ import { API_BASE_URL } from "../config/env";
 
 // utils
 import { reportApiRefusal } from "./api-refusals";
-import { clearToken, getRefreshToken, getToken, setToken } from "../utils/storage";
+import { session } from "./session";
 
 export class ApiError extends Error {
   status: number;
@@ -75,11 +75,14 @@ type RefreshOutcome =
 
 let refreshPromise: Promise<RefreshOutcome> | null = null;
 
+/** `POST /auth/refresh/`'s answer; `refresh` comes only from a server that rotates them. */
+type RefreshAnswer = { access?: string; refresh?: string };
+
 async function requestNewAccessToken(refreshToken: string): Promise<RefreshOutcome> {
   // Shared by every waiting request, so only the timeout (never one caller) may abort it.
   const request = createRequestSignal();
   let response: Response;
-  let data: { access?: string } | null = null;
+  let data: RefreshAnswer | null = null;
   try {
     response = await fetch(`${API_BASE_URL}/auth/refresh/`, {
       method: "POST",
@@ -90,7 +93,7 @@ async function requestNewAccessToken(refreshToken: string): Promise<RefreshOutco
       signal: request.signal,
     });
     if (response.ok) {
-      data = (await response.json().catch(() => null)) as { access?: string } | null;
+      data = (await response.json().catch(() => null)) as RefreshAnswer | null;
     }
   } catch {
     return { kind: "unavailable", status: 0 };
@@ -99,7 +102,7 @@ async function requestNewAccessToken(refreshToken: string): Promise<RefreshOutco
   }
 
   if (response.status === 400 || response.status === 401) {
-    clearToken();
+    session.end();
     return { kind: "invalid" };
   }
   if (!response.ok) {
@@ -109,7 +112,9 @@ async function requestNewAccessToken(refreshToken: string): Promise<RefreshOutco
   if (!data?.access) {
     return { kind: "unavailable", status: response.status };
   }
-  setToken(data.access);
+  // A server that rotates refresh tokens (pass 6's sessions) sends a new one: keep it, or the
+  // next refresh would offer a stale one (decision 4, AUTH-TWEAK-03).
+  session.setTokens({ access: data.access, refresh: data.refresh });
   return { kind: "refreshed", access: data.access };
 }
 
@@ -127,7 +132,7 @@ function refreshAccessToken(refreshToken: string) {
  * callers that authenticate outside apiRequest (realtime channel auth). True when one was stored.
  */
 export async function refreshSession() {
-  const refreshToken = getRefreshToken();
+  const refreshToken = session.refreshToken();
   if (!refreshToken) {
     return false;
   }
@@ -153,17 +158,48 @@ async function sendRequest(url: string, init: RequestInit, callerSignal?: AbortS
   }
 }
 
+/** A response body: JSON when it parses, else the text itself; null when empty. */
+function parseBody(text: string): unknown {
+  if (!text) {
+    return null;
+  }
+  try {
+    return JSON.parse(text) as unknown;
+  } catch {
+    return text;
+  }
+}
+
+/** An error body's own message: its `error`, its `detail`, or its first field's first message. */
+function bodyMessage(data: unknown): string | undefined {
+  if (!data || typeof data !== "object") {
+    return undefined;
+  }
+  if ("error" in data) {
+    return String((data as { error?: string }).error);
+  }
+  if ("detail" in data) {
+    return String((data as { detail?: string }).detail);
+  }
+  const firstValue = Object.values(data as Record<string, unknown>)[0];
+  if (Array.isArray(firstValue)) {
+    return String(firstValue[0]);
+  }
+  return typeof firstValue === "string" ? firstValue : undefined;
+}
+
 async function apiRequestInternal<T>(
   path: string,
-  { method = "GET", body, token, headers: customHeaders, signal }: ApiRequestOptions = {},
+  options: ApiRequestOptions,
   hasRetried = false
 ): Promise<T> {
+  const { method = "GET", body, token, headers: customHeaders, signal } = options;
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     ...customHeaders,
   };
 
-  const resolvedToken = token === undefined ? getToken() : token;
+  const resolvedToken = token === undefined ? session.accessToken() : token;
   if (resolvedToken) {
     headers.Authorization = `Bearer ${resolvedToken}`;
   }
@@ -178,72 +214,41 @@ async function apiRequestInternal<T>(
     signal
   );
 
-  let data: unknown = null;
-
-  if (text) {
-    try {
-      data = JSON.parse(text) as unknown;
-    } catch {
-      data = text;
-    }
-  }
+  const data = parseBody(text);
 
   if (!response.ok) {
-    const refreshToken = getRefreshToken();
+    const refreshToken = session.refreshToken();
     if (response.status === 401 && !hasRetried && token !== null && refreshToken) {
-      const outcome = await refreshAccessToken(refreshToken);
+      // Sent with a token another request has refreshed since: retry with the stored one. The
+      // shared refresh may have finished before this 401 landed (BUG-158).
+      const storedToken = session.accessToken();
+      const outcome: RefreshOutcome =
+        storedToken && storedToken !== resolvedToken
+          ? { kind: "refreshed", access: storedToken }
+          : await refreshAccessToken(refreshToken);
       if (outcome.kind === "refreshed") {
-        return apiRequestInternal(
-          path,
-          { method, body, token: outcome.access, headers: customHeaders, signal },
-          true
-        );
+        return apiRequestInternal(path, { ...options, token: outcome.access }, true);
       }
       if (outcome.kind === "unavailable") {
         throw new ApiError(SERVER_UNAVAILABLE_MESSAGE, outcome.status, null);
       }
     }
-
-    let message: string | undefined;
-
-    if (data && typeof data === "object" && "error" in data) {
-      message = String((data as { error?: string }).error);
-    } else if (data && typeof data === "object" && "detail" in data) {
-      message = String((data as { detail?: string }).detail);
-    } else if (data && typeof data === "object") {
-      const values = Object.values(data as Record<string, unknown>);
-      if (values.length > 0) {
-        const firstValue = values[0];
-        if (Array.isArray(firstValue)) {
-          message = String(firstValue[0]);
-        } else if (typeof firstValue === "string") {
-          message = firstValue;
-        }
-      }
+    if (response.status === 401 && hasRetried && session.accessToken() === resolvedToken) {
+      // Even the freshly refreshed token is refused: the server has ended the session (the user
+      // is gone or inactive). Sign out rather than refresh and retry on every request (BUG-141).
+      session.end();
     }
 
-    if (!message) {
-      message = `Request failed (${response.status})`;
-    }
-
+    const message = bodyMessage(data) || `Request failed (${response.status})`;
     throw new ApiError(message, response.status, data);
   }
 
   return data as T;
 }
 
-export async function apiRequest<T>(
-  path: string,
-  { method = "GET", body, token, headers: customHeaders, signal }: ApiRequestOptions = {}
-): Promise<T> {
+export async function apiRequest<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
   try {
-    return await apiRequestInternal<T>(path, {
-      method,
-      body,
-      token,
-      headers: customHeaders,
-      signal,
-    });
+    return await apiRequestInternal<T>(path, options);
   } catch (error) {
     reportApiRefusal(error);
     throw error;

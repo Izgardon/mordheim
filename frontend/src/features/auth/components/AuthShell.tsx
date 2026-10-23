@@ -60,7 +60,7 @@ export default function AuthShell({ children }: AuthShellProps) {
 
   return (
     <main
-      className={cn("landing h-screen min-h-screen", isMobile && "landing--mobile")}
+      className={cn("landing", isMobile && "landing--mobile")}
       style={
         isMobile
           ? {
