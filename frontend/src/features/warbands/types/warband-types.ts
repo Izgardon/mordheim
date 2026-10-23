@@ -31,6 +31,8 @@ export type Warband = {
   wins?: number | null;
   losses?: number | null;
   rating?: number;
+  /** The mounts' part of `rating` (step 5), from the summary. */
+  mounts_rating?: number;
   gold?: number;
   max_units?: number | null;
   /** From the summary (the sheet merges it in): see `WarbandRosterCounts`. */
@@ -68,6 +70,8 @@ export type WarbandRosterCounts = {
 export type WarbandUnitsSummary = WarbandRosterCounts & {
   resources?: WarbandResource[];
   rating?: number;
+  /** The mounts' part of `rating` (step 5), from the summary. */
+  mounts_rating?: number;
   gold?: number;
   heroes?: WarbandHero[];
   hirelings?: WarbandHireling[];

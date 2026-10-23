@@ -108,6 +108,8 @@ export default function WarbandDesktopHeader({
           <WarbandRatingDialog
             open={isRatingOpen}
             onOpenChange={setIsRatingOpen}
+            rating={warbandRating}
+            mountsRating={warband.mounts_rating}
             heroes={heroes}
             hirelings={hirelings}
             henchmenGroups={henchmenGroups}

@@ -23,7 +23,7 @@ import { useWarbandTradeSession } from "../hooks/warband/useWarbandTradeSession"
 import { WARBAND_TABS, useWarbandPage } from "../hooks/warband/useWarbandPage";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { createWarband } from "../api/warbands-api";
-import { calculateWarbandRating } from "../utils/warband-utils";
+import { shownWarbandRating } from "../utils/warband-utils";
 
 import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
 import type { WarbandCreatePayload, WarbandHero } from "../types/warband-types";
@@ -75,9 +75,10 @@ export default function Warband() {
       setUnits.hero((prev) => prev.map((hero) => (hero.id === updated.id ? updated : hero))),
     [setUnits]
   );
+  // The server's rating (step 5): the page works one out only without it.
   const warbandRating = useMemo(
-    () => calculateWarbandRating(heroes, hirelings, henchmenGroups, warband?.rating),
-    [heroes, hirelings, henchmenGroups, warband?.rating]
+    () => shownWarbandRating(warband ?? {}, heroes, hirelings, henchmenGroups),
+    [heroes, hirelings, henchmenGroups, warband]
   );
   const canInitiateTrade = Boolean(
     user && warband && canTrade && hasCampaignId && !Number.isNaN(campaignId)

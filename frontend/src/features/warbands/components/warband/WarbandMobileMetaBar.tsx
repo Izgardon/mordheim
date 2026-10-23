@@ -156,6 +156,8 @@ export default function WarbandMobileMetaBar({
       <WarbandRatingDialog
         open={isRatingOpen}
         onOpenChange={setIsRatingOpen}
+        rating={warbandRating}
+        mountsRating={warband.mounts_rating}
         heroes={heroes}
         hirelings={hirelings}
         henchmenGroups={henchmenGroups}

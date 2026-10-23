@@ -7,7 +7,7 @@ import {
 } from "@components/dialog";
 
 import ratingIcon from "@/assets/icons/Menu.webp";
-import { mountsRating, toNumber } from "../../utils/warband-utils";
+import { mountsRating as countMounts, toNumber } from "../../utils/warband-utils";
 import type { HenchmenGroup, WarbandHero, WarbandHireling } from "../../types/warband-types";
 
 type WarbandRatingDialogProps = {
@@ -16,6 +16,9 @@ type WarbandRatingDialogProps = {
   heroes: WarbandHero[];
   hirelings: WarbandHireling[];
   henchmenGroups: HenchmenGroup[];
+  /** The server's rating and its mounts' part (the summary's `rating`, `mounts_rating`). */
+  rating?: number;
+  mountsRating?: number;
 };
 
 export default function WarbandRatingDialog({
@@ -24,6 +27,8 @@ export default function WarbandRatingDialog({
   heroes,
   hirelings,
   henchmenGroups,
+  rating,
+  mountsRating,
 }: WarbandRatingDialogProps) {
   const heroCount = heroes.length;
   const heroLargeCount = heroes.filter((h) => h.large).length;
@@ -49,8 +54,10 @@ export default function WarbandRatingDialog({
     return sum + toNumber(hs.rating ?? 0) + toNumber(hs.xp);
   }, 0);
 
-  const mountRating = mountsRating(heroes, hirelings, henchmenGroups);
-  const totalRating = heroRating + henchmenRating + hirelingRating + mountRating;
+  // The server's numbers when it sends them (step 5: a group on mixed mounts counts each one's);
+  // worked out here only without them.
+  const mountRating = mountsRating ?? countMounts(heroes, hirelings, henchmenGroups);
+  const totalRating = rating ?? heroRating + henchmenRating + hirelingRating + mountRating;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

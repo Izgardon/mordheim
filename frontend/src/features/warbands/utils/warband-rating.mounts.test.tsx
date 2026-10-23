@@ -7,7 +7,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { calculateWarbandRating } from "./warband-utils";
+import { calculateWarbandRating, shownWarbandRating } from "./warband-utils";
 import { unitMountBonus } from "./companions";
 import WarbandRatingDialog from "../components/warband/WarbandRatingDialog";
 import { makeItem, makeVeteranHenchmenGroup, makeVeteranHero } from "@/test/warband-fixtures";
@@ -80,5 +80,37 @@ describe("mounts in the warband rating", () => {
     expect(screen.getByText("Mounts:")).toBeInTheDocument();
     expect(screen.getByText("11")).toBeInTheDocument();
     expect(screen.getAllByText("50")).toHaveLength(2);
+  });
+});
+
+describe("the server's rating on the page (step 5)", () => {
+  // A group on a Warhorse (+5) and a Pony (+2): the payload names only its first mount, so the
+  // page alone would count +10 where the server counts +7.
+  const mixed = makeVeteranHenchmenGroup({
+    henchmen: outriders.henchmen.slice(0, 2),
+    mount: mount(5),
+    items: [horseCopy(2, true), horseCopy(3, true)],
+  });
+
+  it("shows the summary's rating, working one out only without it", () => {
+    expect(shownWarbandRating({ rating: 25 }, [], [], [mixed])).toBe(25);
+    expect(shownWarbandRating({}, [], [], [mixed])).toBe(calculateWarbandRating([], [], [mixed]));
+  });
+
+  it("gives the dialog's total and Mounts line from the server when it sends them", () => {
+    render(
+      <WarbandRatingDialog
+        open
+        onOpenChange={() => undefined}
+        heroes={[]}
+        hirelings={[]}
+        henchmenGroups={[mixed]}
+        rating={25}
+        mountsRating={7}
+      />
+    );
+
+    expect(screen.getByText("Mounts:").nextSibling).toHaveTextContent("7");
+    expect(screen.getAllByText("25")).toHaveLength(2);
   });
 });

@@ -180,6 +180,20 @@ export const calculateWarbandRating = (
   return typeof fallbackRating === "number" ? fallbackRating : 0;
 };
 
+/**
+ * The rating the page shows: the server's (the summary's `rating`, which counts a group on mixed
+ * mounts at each mount's own bonus); worked out here only when the summary has none.
+ */
+export const shownWarbandRating = (
+  warband: { rating?: number | null },
+  heroes: WarbandHero[],
+  hirelings: WarbandHireling[],
+  henchmenGroups: HenchmenGroup[]
+): number =>
+  typeof warband.rating === "number"
+    ? warband.rating
+    : calculateWarbandRating(heroes, hirelings, henchmenGroups);
+
 // ── Warband unit count ───────────────────────────────────────────────────
 
 /**

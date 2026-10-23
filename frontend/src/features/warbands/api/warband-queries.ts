@@ -35,6 +35,7 @@ export const sheetWarband = (sheet: WarbandSheet): Warband => ({
 const SUMMARY_FIELDS = [
   "resources",
   "rating",
+  "mounts_rating",
   "gold",
   "heroes",
   "hirelings",
