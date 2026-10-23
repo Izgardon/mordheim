@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { ApiError } from "@/lib/api-client";
 import { CATALOGUE_STALE_TIME_MS } from "@/lib/catalogue-queries";
 import { queryKeys } from "@/lib/query-keys";
 
@@ -27,5 +28,11 @@ export function useHirelingProfileDetail(
     query.error && query.data === undefined
       ? (query.error instanceof Error && query.error.message) || "Failed to load"
       : "";
-  return { entry: query.data ?? null, isLoading: query.isLoading, error };
+  return {
+    entry: query.data ?? null,
+    isLoading: query.isLoading,
+    error,
+    /** The server answered 404: it has no such entry (a version reverted, an entry deleted). */
+    gone: query.error instanceof ApiError && query.error.status === 404,
+  };
 }
