@@ -29,7 +29,8 @@ PERMISSIONS: tuple[PermissionCode, ...] = (
     PermissionCode(
         "edit_catalogue",
         "Edit catalogue",
-        "Add items, skills, spells, specials, races, bestiary entries, hired swords and item properties to the"
+        "Add items, skills, spells, specials, races, bestiary entries, hired swords, dramatis personae and item"
+        " properties to the"
         " campaign's catalogue, edit any entry (a book entry through the campaign's own version of it), revert versions"
         " and restore what was archived.",
     ),
