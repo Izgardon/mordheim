@@ -165,6 +165,36 @@ describe("postbattle summary", () => {
     expect(summary.mountsLost).toEqual([
       { unitKey: "hero:1", unitName: "Wolf", mount: "Warhorse" },
     ]);
+    // A hero who dies keeps his mount with his items, as finalise does (review finding).
+    const heroDies = buildFinalizeSummary({
+      groups: [
+        {
+          key: "heroes",
+          rows: [{ unitKey: "hero:1", unitName: "Wolf", dead: true, seriousInjuryRolls: [] }],
+        },
+      ] as unknown as PostbattleRenderableGroup[],
+      draft: withMounts,
+      victimsByUnitKey: {},
+      statChangeRows: [],
+      events: [],
+      userId: ME.id,
+      roster,
+      sheet: undefined,
+      campaign: null,
+      suggestion: {
+        unit_results: {},
+        exploration: { dice_count: 0 },
+        upkeep: { entries: {} },
+        mount_survival: {
+          entries: { "hero:1": { unit_name: "Wolf", mount: "Warhorse", dies_on: 2 } },
+        },
+      },
+      resourceAmount: 0,
+      resourceName: null,
+      upkeepRows: [],
+      upkeepTotal: 0,
+    });
+    expect(heroDies.mountsLost).toEqual([]);
   });
 
   it("leaves out every result of a hireling who has left the warband, as finalise does (step 2 browser check)", () => {

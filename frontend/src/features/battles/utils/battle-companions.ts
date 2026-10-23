@@ -48,14 +48,31 @@ export function rosterPetModels(
   );
 }
 
-/** A roster unit's mount, then its pets, as the sources of the entries they bring (step 5). */
+/**
+ * A roster unit's mount, then its pets, as the sources of the entries they bring (step 5). A pet
+ * with a profile fights as its own model and lists its entries there, not on its owner.
+ */
 export const battleCompanionSources = (
   unit: Pick<PrebattleUnit, "mount" | "pets">
 ): CompanionSource[] =>
   uniqueBeasts([
     ...(unit.mount ? [{ ...unit.mount, kind: "mount" as const }] : []),
-    ...(unit.pets ?? []).map((pet) => ({ ...pet, kind: "pet" as const })),
+    ...(unit.pets ?? [])
+      .filter((pet) => !pet.hasProfile)
+      .map((pet) => ({ ...pet, kind: "pet" as const })),
   ]);
+
+/**
+ * A henchmen group's companions as its tabs list them: each member's mount while he rides (not one
+ * dismounted) and the group's pets, each beast once.
+ */
+export const groupCompanionSources = (
+  members: PrebattleUnit[],
+  infoByKey: Record<string, { dismounted?: boolean } | undefined>
+): CompanionSource[] =>
+  uniqueBeasts(
+    members.flatMap((member) => battleCompanionSources(onFoot(member, infoByKey[member.key])))
+  );
 
 type Mounted = Pick<PrebattleUnit, "effectiveStats">;
 type Dismountable = { dismounted?: boolean } | undefined;

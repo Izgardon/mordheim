@@ -13,7 +13,11 @@ import { getBattleCardThemeStyle } from "@/features/battles/components/shared/ba
 import { getErrorMessage } from "@/lib/get-error-message";
 import CreatureMark from "@/features/warbands/components/units/beasts/CreatureMark";
 import { PetChips } from "@/features/battles/components/shared/BattleCompanionParts";
-import { groupMountedStats, onFoot } from "@/features/battles/utils/battle-companions";
+import {
+  groupCompanionSources,
+  groupMountedStats,
+  onFoot,
+} from "@/features/battles/utils/battle-companions";
 
 import ActiveHenchmanRow from "./ActiveHenchmanRow";
 import ActiveKillDialog from "./ActiveKillDialog";
@@ -210,6 +214,7 @@ export default function ActiveHenchmenGroupCard({
               onUndoSingleUseItem ? (itemId) => onUndoSingleUseItem(detailUnit, itemId) : undefined
             }
             activeItemActionKey={activeItemActionKey}
+            companions={groupCompanionSources(members, unitInformationByKey)}
           />
         </div>
       ) : null}

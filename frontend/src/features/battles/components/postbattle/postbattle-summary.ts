@@ -66,8 +66,8 @@ export function hasLeft(hirelingId: number | null, sheet: WarbandSheet | undefin
 }
 
 /**
- * The mounts the draft says died (step 5), as finalise removes them: a henchman marked dead took
- * his ridden copy with his share already, so his mount isn't listed twice.
+ * The mounts the draft says died (step 5), as finalise removes them: a rider marked dead keeps his
+ * with his items (a henchman's share takes his ridden copy), so his mount isn't listed twice.
  */
 function buildMountsLost(
   draft: BattlePostbattleState | null,
@@ -75,8 +75,7 @@ function buildMountsLost(
   rows: PostbattleRenderableGroup["rows"]
 ) {
   const atRisk = suggestion?.mount_survival?.entries ?? {};
-  const diedHere = (unitKey: string) =>
-    unitKey.startsWith("henchman:") && rows.some((row) => row.unitKey === unitKey && row.dead);
+  const diedHere = (unitKey: string) => rows.some((row) => row.unitKey === unitKey && row.dead);
   return Object.entries(draft?.mount_survival ?? {})
     .filter(([unitKey, entry]) => entry.dead && atRisk[unitKey] && !diedHere(unitKey))
     .map(([unitKey]) => ({

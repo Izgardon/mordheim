@@ -11,6 +11,7 @@ import type {
 import type { BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
 import { useUnitNotesAutosave } from "@/features/battles/hooks/useUnitNotesAutosave";
 import { battleCompanionSources, onFoot } from "@/features/battles/utils/battle-companions";
+import type { CompanionSource } from "@/features/warbands/utils/companions";
 import "@/features/warbands/styles/warband.css";
 import { useMediaQuery } from "@/lib/use-media-query";
 
@@ -32,6 +33,8 @@ type ActiveUnitExpandedDetailsProps = {
   /** Undoes the latest use of the item (BUG-11); shown once one is used. */
   onUndoSingleUseItem?: (itemId: number) => Promise<void> | void;
   activeItemActionKey?: string | null;
+  /** Whose entries the tabs list: a group's riding members'; the unit's own by default. */
+  companions?: CompanionSource[];
 };
 
 const ENTRY_BUTTON_CLASS =
@@ -46,6 +49,7 @@ export default function ActiveUnitExpandedDetails({
   getUsedSingleUseItemCount,
   onUndoSingleUseItem,
   activeItemActionKey,
+  companions,
 }: ActiveUnitExpandedDetailsProps) {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [activeTab, setActiveTab] = useState<string | null>(null);
@@ -67,9 +71,9 @@ export default function ActiveUnitExpandedDetails({
         unit,
         itemSource,
         getUsedSingleUseItemCount,
-        battleCompanionSources(onFoot(unit, { dismounted }))
+        companions ?? battleCompanionSources(onFoot(unit, { dismounted }))
       ),
-    [dismounted, getUsedSingleUseItemCount, itemSource, unit]
+    [companions, dismounted, getUsedSingleUseItemCount, itemSource, unit]
   );
 
   useEffect(() => {

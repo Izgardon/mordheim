@@ -71,7 +71,11 @@ export default function ActiveDismountToggle({
       >
         Dismounted
       </button>
-      {error ? <span className="text-xs text-red-500">{error}</span> : null}
+      {error ? (
+        <span role="alert" className="text-xs text-red-500">
+          {error}
+        </span>
+      ) : null}
     </span>
   );
 }

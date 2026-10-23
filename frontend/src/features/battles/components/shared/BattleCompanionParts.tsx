@@ -62,6 +62,8 @@ export function RiderMark({
       }
       content={<BeastDetails title={title} beast={mount} />}
       maxWidth={320}
+      // Keyboard users open it too.
+      tabIndex={0}
       className="inline-flex"
     />
   );
@@ -90,6 +92,8 @@ export function PetChips({ pets }: { pets?: BattleRosterCompanion[] }) {
           }
           content={<BeastDetails beast={pet} />}
           maxWidth={320}
+          // Keyboard users open it too.
+          tabIndex={0}
           className="inline-flex"
         />
       ))}

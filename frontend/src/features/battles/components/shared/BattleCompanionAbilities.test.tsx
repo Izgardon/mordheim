@@ -8,6 +8,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
+import ActiveHenchmenGroupCard from "../active/ActiveHenchmenGroupCard";
 import ActiveUnitCard from "../active/ActiveUnitCard";
 
 import type { PrebattleUnit } from "../prebattle/prebattle-types";
@@ -107,5 +108,79 @@ describe("battle: a companion's entries", () => {
     const pet = tooltips[tooltips.length - 1];
     expect(pet).toHaveTextContent("No profile");
     expect(pet).toHaveTextContent("Specials: Sharp Eyes");
+  });
+});
+
+describe("review findings (step 5)", () => {
+  it("keeps a pet that fights as its own model out of its owner's tabs", async () => {
+    const user = userEvent.setup();
+    const hawk = {
+      key: "pet:hero:12",
+      itemId: 150,
+      name: "Hawk",
+      hasProfile: true,
+      stats,
+      specials: [{ id: 903, name: "Swoop" }],
+    };
+    render(<ActiveUnitCard unit={{ ...rider, pets: [hawk] }} {...cardProps} />);
+
+    await user.click(screen.getByRole("button", { name: "Details for Aldric the Bold" }));
+
+    expect(screen.queryByText("Swoop")).not.toBeInTheDocument();
+  });
+
+  it("lets the keyboard open the mount's tooltip", async () => {
+    const user = userEvent.setup();
+    render(<ActiveUnitCard unit={rider} {...cardProps} />);
+
+    await user.tab();
+
+    expect(document.activeElement).toContainElement(
+      screen.getByRole("img", { name: "Rides Warhorse" })
+    );
+    expect(await screen.findByRole("tooltip")).toHaveTextContent("Skills: Thunderous Charge");
+  });
+
+  it("lists every riding member's mount entries on a group's tabs, not one member's", async () => {
+    const user = userEvent.setup();
+    const member = (id: number, mount: PrebattleUnit["mount"]): PrebattleUnit => ({
+      ...rider,
+      key: `henchman:${id}`,
+      id,
+      kind: "henchman",
+      displayName: `Outrider ${id}`,
+      skills: [],
+      pets: [],
+      mount,
+    });
+    const pony = {
+      ...rider.mount!,
+      itemId: 160,
+      name: "Pony",
+      skills: [{ id: 905, name: "Sure-footed" }],
+    };
+    render(
+      <ActiveHenchmenGroupCard
+        groupName="Outriders"
+        groupType="Outriders"
+        members={[member(2, rider.mount), member(3, pony)]}
+        unitInformationByKey={{
+          "henchman:2": {
+            stats_override: {},
+            out_of_action: false,
+            kill_count: 0,
+            dismounted: true,
+          },
+        }}
+        {...cardProps}
+      />
+    );
+
+    await user.click(screen.getByRole("button", { name: "Details for Outriders" }));
+
+    expect(
+      screen.getByRole("button", { name: "Sure-footed (from Pony, mount)" })
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Thunderous Charge")).not.toBeInTheDocument(); // his rider is dismounted
   });
 });
