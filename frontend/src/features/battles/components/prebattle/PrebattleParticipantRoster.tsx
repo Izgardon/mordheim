@@ -4,9 +4,9 @@ import { NumberInput } from "@/components/ui/number-input";
 import type { BattleParticipant } from "@/features/battles/types/battle-types";
 import BattleUnitStatsAndItems from "@/features/battles/components/shared/BattleUnitStatsAndItems";
 import { getBattleCardThemeStyle } from "@/features/battles/components/shared/battle-card-theme";
+import PrebattleHenchmenGroupRow from "./PrebattleHenchmenGroupRow";
 
 import type {
-  HenchmenGroupRoster,
   ParticipantRoster,
   PrebattleUnit,
   UnitSingleUseItem,
@@ -135,94 +135,6 @@ export default function PrebattleParticipantRoster({
     );
   };
 
-  const renderHenchmenGroupRow = (group: HenchmenGroupRoster) => {
-    if (group.members.length === 0) {
-      return null;
-    }
-
-    const selectedMembers = group.members.filter((member) => isUnitSelected(member.key));
-    const groupEditKey = selectedMembers[0]?.key ?? group.members[0].key;
-    const groupOverrideSource =
-      selectedMembers.find((member) => {
-        const override = getUnitOverride(member.key);
-        return Boolean(override && Object.keys(override.stats).length > 0);
-      }) ??
-      selectedMembers.find((member) => getUnitNotes(member.key).trim()) ??
-      selectedMembers[0] ??
-      group.members[0];
-    const groupOverride = getUnitOverride(groupOverrideSource.key);
-    const groupNotes = getUnitNotes(groupOverrideSource.key);
-    const isEditing = editingUnitKey === groupEditKey;
-    const selectedCount = selectedMembers.length;
-
-    const applyOverrideStatToGroup = (key: StatKey, value: string) => {
-      selectedMembers.forEach((member) => onUpdateOverrideStat(member, key, value));
-    };
-
-    const applyNotesToGroup = (notes: string) => {
-      selectedMembers.forEach((member) => onUpdateUnitNotes(member.key, notes));
-    };
-
-    const clearGroupOverride = () => {
-      selectedMembers.forEach((member) => onClearUnitOverride(member.key));
-    };
-    const groupSingleUseItems = group.members[0].singleUseItems ?? [];
-
-    return (
-      <div
-        key={group.id}
-        className="battle-card p-4"
-        style={getBattleCardThemeStyle("henchmen_group")}
-      >
-        <div className="flex flex-wrap items-start justify-between gap-2">
-          <div>
-            <p className="text-sm font-semibold text-foreground">{group.name}</p>
-            <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
-              {group.unitType} {selectedCount}/{group.members.length}
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-2 flex flex-wrap gap-2">
-          {group.members.map((member) => (
-            <label
-              key={`member-toggle-${member.key}`}
-              className="battle-chip inline-flex items-center gap-2 rounded-md px-2 py-1"
-            >
-              <Checkbox
-                checked={isUnitSelected(member.key)}
-                disabled={!editable}
-                onChange={() => onToggleUnitSelection(member.key)}
-              />
-              <span className="text-xs text-foreground">{member.displayName}</span>
-            </label>
-          ))}
-        </div>
-
-        {selectedCount > 0 ? (
-          <BattleUnitStatsAndItems
-            unitKey={groupEditKey}
-            baseStats={group.members[0].stats}
-            override={groupOverride}
-            notes={groupNotes}
-            editable={editable}
-            isEditing={isEditing}
-            onToggleEditing={() => onToggleEditingUnit(groupEditKey)}
-            onUpdateStat={applyOverrideStatToGroup}
-            onUpdateNotes={applyNotesToGroup}
-            onResetOverride={clearGroupOverride}
-            singleUseItems={groupSingleUseItems}
-            canUseItems={editable && canUseItems}
-            onUseItem={(item) => onUseSingleUseItem(group.members[0], item)}
-            getUsedItemCount={(itemId) => getUsedSingleUseItemCount(groupEditKey, itemId)}
-            activeItemActionKey={activeItemActionKey}
-            constrainStatsToHalfWidth
-          />
-        ) : null}
-      </div>
-    );
-  };
-
   return (
     <div key={participant.id} className="space-y-3">
       <div className="flex items-stretch justify-between gap-2">
@@ -277,7 +189,26 @@ export default function PrebattleParticipantRoster({
                 Henchmen Groups
               </p>
               <div className="space-y-3">
-                {participantRoster.henchmenGroups.map((group) => renderHenchmenGroupRow(group))}
+                {participantRoster.henchmenGroups.map((group) => (
+                  <PrebattleHenchmenGroupRow
+                    key={group.id}
+                    group={group}
+                    editable={editable}
+                    isUnitSelected={isUnitSelected}
+                    getUnitOverride={getUnitOverride}
+                    getUnitNotes={getUnitNotes}
+                    editingUnitKey={editingUnitKey}
+                    onToggleUnitSelection={onToggleUnitSelection}
+                    onToggleEditingUnit={onToggleEditingUnit}
+                    onUpdateOverrideStat={onUpdateOverrideStat}
+                    onUpdateUnitNotes={onUpdateUnitNotes}
+                    onClearUnitOverride={onClearUnitOverride}
+                    canUseItems={canUseItems}
+                    onUseSingleUseItem={onUseSingleUseItem}
+                    getUsedSingleUseItemCount={getUsedSingleUseItemCount}
+                    activeItemActionKey={activeItemActionKey}
+                  />
+                ))}
               </div>
             </section>
           ) : null}
