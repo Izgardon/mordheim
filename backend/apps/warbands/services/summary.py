@@ -48,8 +48,9 @@ class WarbandUnits:
 
     @property
     def hireling_count(self) -> int:
-        """Hired swords towards the hired-sword cap: blood-pacted ones don't count (decision 12)."""
-        return sum(1 for row in self.hirelings if not row["blood_pacted"])
+        """Hired swords towards the hired-sword cap: blood-pacted ones don't count (decision 12), nor do dramatis
+        personae, which sit outside it (their rating counts like a hired sword's)."""
+        return sum(1 for row in self.hirelings if not row["blood_pacted"] and row["kind"] == "hired_sword")
 
     @property
     def unit_count(self) -> int:
@@ -85,7 +86,7 @@ def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
     hirelings = (
         on_roster(Hireling.objects.filter(warband_id__in=ids))
         .order_by("id")
-        .values("id", "warband_id", "name", "unit_type", "rating", "xp", "blood_pacted")
+        .values("id", "warband_id", "name", "unit_type", "kind", "rating", "xp", "blood_pacted")
     )
     for sword_row in hirelings:
         units[sword_row["warband_id"]].hirelings.append(dict(sword_row))

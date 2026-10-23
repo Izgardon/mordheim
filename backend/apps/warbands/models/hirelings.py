@@ -3,8 +3,16 @@ from django.db import models
 from .shared import RosterUnit, stat_constraints
 from .warband import Warband
 
+HIRELING_KINDS = (("hired_sword", "Hired sword"), ("dramatis_persona", "Dramatis persona"))
+INJURY_TABLES = (("henchman", "Henchman"), ("hero", "Hero"))  # a d6, or the campaign's hero death roll
+STAYS = (("always", "Always"), ("one_battle", "One battle"))
+
 
 class Hireling(RosterUnit):
+    """A hired sword or a dramatis persona in a warband: a copy of what it was hired as (or typed by hand) that keeps
+    no link to the catalogue. `injury_table` is the hired sword's henchman d6 or the dramatis persona's hero table,
+    and a house rule may change it; `stays` and `payment_note` come from a dramatis persona."""
+
     warband = models.ForeignKey(Warband, related_name="hirelings", on_delete=models.CASCADE)
     race = models.ForeignKey(
         "races.Race",
@@ -13,9 +21,10 @@ class Hireling(RosterUnit):
         null=True,
         blank=True,
     )
-    hire_cost_expression = models.CharField(max_length=100, default="", blank=True)
+    kind = models.CharField(max_length=20, choices=HIRELING_KINDS, default="hired_sword")
+    hire_cost_expression = models.CharField(max_length=120, default="", blank=True)
     upkeep_price = models.PositiveIntegerField(default=0)
-    upkeep_cost_expression = models.CharField(max_length=100, default="", blank=True)
+    upkeep_cost_expression = models.CharField(max_length=120, default="", blank=True)
     kills = models.PositiveIntegerField(default=0)
     caster = models.CharField(
         max_length=20,
@@ -30,6 +39,9 @@ class Hireling(RosterUnit):
     no_level_ups = models.BooleanField(default=False)
     rating = models.PositiveIntegerField(default=0)
     blood_pacted = models.BooleanField(default=False)
+    injury_table = models.CharField(max_length=20, choices=INJURY_TABLES, default="henchman")
+    stays = models.CharField(max_length=20, choices=STAYS, default="always")
+    payment_note = models.CharField(max_length=200, blank=True, default="")
 
     items: models.ManyToManyField = models.ManyToManyField(
         "items.Item",

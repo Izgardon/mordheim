@@ -15,10 +15,10 @@ sword still lists instead of deleting it.
 from django.db import models
 
 from apps.core.models import CatalogueEntry, version_constraints
+from apps.warbands.models.hirelings import STAYS
 from apps.warbands.models.shared import StatBlock, stat_constraints
 
 CASTERS = (("No", "No"), ("Wizard", "Wizard"), ("Priest", "Priest"))
-STAYS = (("always", "Always"), ("one_battle", "One battle"))
 
 
 def _owner(model: str, related: str) -> models.ForeignKey:

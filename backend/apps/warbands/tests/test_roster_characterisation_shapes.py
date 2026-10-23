@@ -138,6 +138,7 @@ HENCHMEN_DETAIL = {
 }
 HIRELING_SUMMARY = {
     **IDENTITY,
+    "kind": "str",  # the bestiary rewrite: a hired sword or a dramatis persona
     "hire_cost_expression": "str",
     "upkeep_price": "int",
     "upkeep_cost_expression": "str",
@@ -148,6 +149,9 @@ HIRELING_SUMMARY = {
     "half_rate": "bool",
     "no_level_ups": "bool",
     "blood_pacted": "bool",
+    "injury_table": "str",
+    "stays": "str",
+    "payment_note": "str",
     "dead": "bool",
     **STATS,
     "items": [ITEM_SUMMARY],

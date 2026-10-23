@@ -172,8 +172,14 @@ class UnitKindSpec:
 
 
 def _counted_hirelings(units: QuerySet[Any]) -> QuerySet[Any]:
-    """Blood-pacted hired swords don't count towards the hired-sword cap, nor do dead or dismissed ones."""
-    return on_roster(units).filter(blood_pacted=False)
+    """The hired swords the cap counts: not blood-pacted, not dead or dismissed. A dramatis persona is outside it (one
+    of each, which the hire warns about)."""
+    return on_roster(units).filter(blood_pacted=False, kind="hired_sword")
+
+
+def _outside_the_cap(data: Mapping[str, Any]) -> bool:
+    """A new blood-pacted hired sword, or a dramatis persona, doesn't count towards the hired-sword cap."""
+    return bool(data.get("blood_pacted", False)) or data.get("kind") == "dramatis_persona"
 
 
 HERO = UnitKindSpec(
@@ -257,7 +263,7 @@ HIRELING = UnitKindSpec(
         "hired swords",
         "hired_sword_cap_reached",
         counted=_counted_hirelings,
-        exempt=lambda data: bool(data.get("blood_pacted", False)),
+        exempt=_outside_the_cap,
     ),
     unknown_name="Unknown Hired Sword",
     unknown_type="Unknown Type",

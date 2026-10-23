@@ -49,6 +49,7 @@ def _summary_units(rosters: dict[str, list[Any]]) -> WarbandUnits:
                 "warband_id": s.warband_id,
                 "name": s.name,
                 "unit_type": s.unit_type,
+                "kind": s.kind,
                 "rating": s.rating,
                 "blood_pacted": s.blood_pacted,
                 "xp": s.xp,

@@ -1,4 +1,5 @@
-"""Hired sword payloads: the fields each one lists (the shared parts are in apps/warbands/units/serializers.py).
+"""Hireling payloads (hired swords and dramatis personae): the fields each one lists (the shared parts are in
+apps/warbands/units/serializers.py).
 
 `armour_save` is listed twice (once more through STAT_FIELDS), as before; it keeps its first position.
 """
@@ -15,6 +16,7 @@ from apps.warbands.units.serializers import (
 WRITE_FIELDS = (
     "name",
     "unit_type",
+    "kind",
     "race",
     "price",
     "hire_cost_expression",
@@ -32,6 +34,9 @@ WRITE_FIELDS = (
     "half_rate",
     "no_level_ups",
     "blood_pacted",
+    "injury_table",
+    "stays",
+    "payment_note",
     "dead",
     *STAT_FIELDS,
     "items",
@@ -51,6 +56,7 @@ class HirelingSummarySerializer(UnitSummarySerializer):
             "warband_id",
             "name",
             "unit_type",
+            "kind",
             "race_id",
             "race_name",
             "price",
@@ -67,6 +73,9 @@ class HirelingSummarySerializer(UnitSummarySerializer):
             "half_rate",
             "no_level_ups",
             "blood_pacted",
+            "injury_table",
+            "stays",
+            "payment_note",
             "dead",
             *STAT_FIELDS,
             "items",
@@ -86,6 +95,7 @@ class HirelingDetailSerializer(UnitDetailSerializer):
             "warband_id",
             "name",
             "unit_type",
+            "kind",
             "race_id",
             "race_name",
             "race",
@@ -105,6 +115,9 @@ class HirelingDetailSerializer(UnitDetailSerializer):
             "half_rate",
             "no_level_ups",
             "blood_pacted",
+            "injury_table",
+            "stays",
+            "payment_note",
             "dead",
             *STAT_FIELDS,
             "items",
