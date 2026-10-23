@@ -1,17 +1,12 @@
 import type { CatalogueBadgeFields } from "@/features/catalogue/types/catalogue-entry";
-import type { ItemAvailability } from "@/features/items/types/item-types";
+import type { Item, ItemAvailability } from "@/features/items/types/item-types";
+import type { Skill } from "@/features/skills/types/skill-types";
+import type { Special } from "@/features/special/types/special-types";
+import type { Spell } from "@/features/spells/types/spell-types";
 
 import type { BeastKind } from "../bestiary-kinds";
 
-export type BestiaryEntryEquipment = {
-  item: {
-    id: number;
-    name: string;
-    type: string;
-    description: string;
-  };
-  quantity: number;
-};
+export type BestiaryEntryEquipment = { item: Item; quantity: number };
 
 /**
  * The beast's Animal item (every beast has one): what is bought, moved and traded, with its
@@ -58,10 +53,11 @@ export type BestiaryEntrySummary = CatalogueBadgeFields & {
   item?: BestiaryItem | null;
 };
 
+/** One beast (`GET bestiary/:id/` and every write's answer): the row and what it knows and carries. */
 export type BestiaryEntry = BestiaryEntrySummary & {
-  skills: { id: number; name: string; type: string; description: string }[];
-  specials: { id: number; name: string; description: string }[];
-  spells: { id: number; name: string; description: string }[];
+  skills: Skill[];
+  specials: Special[];
+  spells: Spell[];
   equipment: BestiaryEntryEquipment[];
 };
 

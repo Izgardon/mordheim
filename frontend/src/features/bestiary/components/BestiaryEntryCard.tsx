@@ -1,4 +1,5 @@
 import { CardBackground } from "@/components/ui/card-background";
+import { EntryBadge } from "@/features/catalogue/components/EntryBadge";
 import { STAT_FIELDS } from "@/features/catalogue/utils/statblock";
 
 import { BeastKindLabel } from "./BeastKindIcon";
@@ -45,13 +46,18 @@ export function BeastStatLine({ entry }: { entry: BestiaryEntrySummary }) {
 
 type BestiaryEntryCardProps = {
   entry: BestiaryEntrySummary;
+  /** Opens the beast's detail; without it (the Archived list) the card doesn't open. */
   onClick?: (entry: BestiaryEntrySummary) => void;
   isFavourite?: boolean;
   onToggleFavourite?: (entry: BestiaryEntrySummary) => void;
+  /** Beside the star: the Archived list's Restore. */
   actionSlot?: React.ReactNode;
 };
 
-/** A beast in the Bestiary: its name, kind, size and caster, fluff, and stat line. */
+/**
+ * A beast in the Bestiary: its name with its Custom, House rule or Archived badge, its kind, size
+ * and caster, fluff, and stat line.
+ */
 export default function BestiaryEntryCard({
   entry,
   onClick,
@@ -59,20 +65,28 @@ export default function BestiaryEntryCard({
   onToggleFavourite,
   actionSlot,
 }: BestiaryEntryCardProps) {
+  const opens = Boolean(onClick);
   return (
     <div
-      className="cursor-pointer transition hover:brightness-110 sm:min-h-[244px]"
-      onClick={() => onClick?.(entry)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") onClick?.(entry);
-      }}
+      className={`sm:min-h-[244px] ${opens ? "cursor-pointer transition hover:brightness-110" : ""}`}
+      {...(opens
+        ? {
+            role: "button",
+            tabIndex: 0,
+            onClick: () => onClick?.(entry),
+            onKeyDown: (event: React.KeyboardEvent) => {
+              if (event.key === "Enter" || event.key === " ") onClick?.(entry);
+            },
+          }
+        : { role: "article", "aria-label": entry.name })}
     >
       <CardBackground className="surface-panel-strong h-full space-y-2 p-3 sm:p-4">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-sm font-semibold text-foreground">{entry.name}</h3>
+            <h3 className="truncate text-sm font-semibold text-foreground">
+              {entry.name}
+              <EntryBadge entry={entry} />
+            </h3>
             <p className="text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground">
               <BeastKindLabel kind={entry.kind} />
               {entry.large ? " • Large" : ""}

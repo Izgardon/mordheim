@@ -2,8 +2,8 @@
  * The catalogue lists as the five pages show them (layout, fake server). The pages render the
  * list exactly as the server merged it: a campaign "Axe" in place of the book Axe, and no merging
  * of their own (BUG-18 is server-side). Skills and Spells mark the campaign's own entries
- * "Custom" (CAT-NEW-03); the Bestiary's cards don't yet (left for step 3 of the bestiary rewrite).
- * The Hired Swords and Dramatis Personae badges are tested in features/hirelings.
+ * "Custom" (CAT-NEW-03), and so do the Bestiary's cards (the bestiary rewrite, step 3). The Hired
+ * Swords and Dramatis Personae badges are tested in features/hirelings.
  */
 import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -12,11 +12,14 @@ import { routeCampaignShell } from "@/test/campaign-fixtures";
 import {
   ITEMS,
   LIST,
+  bestiaryEntry,
   campaignAxe,
   item,
   quickHands,
   routeCatalogue,
+  sewerRat,
   skill,
+  warhorse,
 } from "@/test/catalogue-fixtures";
 import { renderCatalogueRoute } from "@/test/catalogue-routes";
 import { fakeApi } from "@/test/fake-api";
@@ -100,16 +103,15 @@ describe("the Custom and House rule badges (CAT-NEW-03)", () => {
   });
 });
 
-describe("the Bestiary marks nothing yet", () => {
-  // Characterises current behaviour (CAT-UX-01, CAT-NEW-03, pinned; left for step 3 of the bestiary rewrite)
-  it("Bestiary: a campaign card and a book card carry the same heading and type line (CAT-UX-01, pinned; left for step 3 of the bestiary rewrite)", async () => {
+describe("the Bestiary's badges (CAT-UX-01, CAT-NEW-03, flipped)", () => {
+  it("Bestiary: the campaign's own beast is marked Custom and its version of a book beast House rule; the book's carry none", async () => {
+    const yourHorse = bestiaryEntry({ ...warhorse, id: 34, campaign_id: 1, replaces: 6 });
+    fakeApi.on(LIST.bestiary, [sewerRat, bestiaryEntry(), yourHorse]);
     renderCatalogueRoute("/campaigns/1/bestiary");
     await screen.findByText("Sewer Rat");
 
-    for (const name of ["Sewer Rat", "Warhound"]) {
-      expect(within(card(name)).getByRole("heading", { level: 3 })).toHaveTextContent(name);
-      expect(within(card(name)).getByText("Creature")).toBeVisible();
-    }
-    expect(within(card("Sewer Rat")).queryByText(/custom|house rule/i)).toBeNull();
+    expect(within(card("Sewer Rat")).getByText("Custom")).toBeVisible();
+    expect(within(card("Warhorse")).getByText("House rule")).toBeVisible();
+    expect(within(card("Warhound")).queryByText(/custom|house rule/i)).toBeNull();
   });
 });

@@ -204,7 +204,7 @@ describe("catalogue pages: the shared 5-minute cache", () => {
     fakeApi.clearRequests();
 
     await user.click(screen.getByRole("button", { name: "Add entry" }));
-    expect(await screen.findByRole("dialog", { name: "Add Bestiary Entry" })).toBeVisible();
+    expect(await screen.findByRole("dialog", { name: "Add bestiary entry" })).toBeVisible();
     await settle();
 
     expect(sorted(fakeApi.calls())).toEqual(sorted([LIST.specials, LIST.spells]));
