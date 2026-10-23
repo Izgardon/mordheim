@@ -1,10 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ClipboardEvent, FocusEvent, MouseEvent } from "react";
-import { Check, Pencil, RotateCcw } from "lucide-react";
+import { Pencil } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tooltip } from "@/components/ui/tooltip";
 import UnitStatsTable from "@/features/warbands/components/shared/unit_details/UnitStatsTable";
 import "@/features/warbands/styles/warband.css";
 
@@ -16,6 +14,8 @@ import type {
 } from "../prebattle/prebattle-types";
 import { DEFAULT_STATS, STAT_FIELDS } from "../prebattle/prebattle-types";
 import { parseSpreadsheetValues } from "./battle-stat-inputs";
+import BattleSingleUseItems from "./BattleSingleUseItems";
+import BattleStatEditButtons from "./BattleStatEditButtons";
 
 import type { EffectiveStats } from "@/features/warbands/types/companion-types";
 
@@ -68,7 +68,6 @@ export default function BattleUnitStatsAndItems({
   const hasOverride = Boolean(override && Object.keys(override.stats).length > 0);
   const trimmedNotes = notes.trim();
   const hasSingleUseItems = showItemSection && singleUseItems.length > 0;
-  const showApplyButton = typeof onApplyStatChanges === "function";
   const displayedStats = useMemo<UnitStats>(
     () =>
       Object.fromEntries(
@@ -212,91 +211,31 @@ export default function BattleUnitStatsAndItems({
                 />
               </div>
             ) : null}
-            <div className="flex justify-end gap-2">
-              {showApplyButton ? (
-                <button
-                  type="button"
-                  className="battle-toolbar-button icon-button flex h-11 w-11 items-center justify-center rounded text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                  onClick={onApplyStatChanges}
-                  disabled={Boolean(isApplyingStatChanges)}
-                  aria-label={
-                    isApplyingStatChanges ? "Applying stat changes" : "Apply stat changes"
-                  }
-                  title={isApplyingStatChanges ? "Applying..." : "Apply"}
-                >
-                  <Check className="h-3.5 w-3.5" />
-                </button>
-              ) : null}
-              <button
-                type="button"
-                className="battle-toolbar-button icon-button flex h-11 w-11 items-center justify-center rounded text-muted-foreground transition hover:text-foreground"
-                onClick={() => {
-                  setDraftStatValues(
-                    Object.fromEntries(
-                      STAT_FIELDS.map((stat) => [stat.key, String(baseStats[stat.key] ?? "")])
-                    ) as Record<StatKey, string>
-                  );
-                  onResetOverride();
-                }}
-                aria-label="Reset temporary stat edits"
-                title="Reset temporary stat edits"
-              >
-                <RotateCcw className="h-3.5 w-3.5" />
-              </button>
-            </div>
+            <BattleStatEditButtons
+              onApply={onApplyStatChanges}
+              isApplying={Boolean(isApplyingStatChanges)}
+              onReset={() => {
+                setDraftStatValues(
+                  Object.fromEntries(
+                    STAT_FIELDS.map((stat) => [stat.key, String(baseStats[stat.key] ?? "")])
+                  ) as Record<StatKey, string>
+                );
+                onResetOverride();
+              }}
+            />
           </div>
         ) : null}
       </section>
 
       {hasSingleUseItems ? (
-        <section className="battle-inline-panel rounded-md p-2">
-          <p className="mb-1.5 text-[0.55rem] uppercase tracking-[0.18em] text-muted-foreground">
-            Single-use Items
-          </p>
-          <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-            {singleUseItems.map((item) => {
-              const usedCount = getUsedItemCount(item.id);
-              const exhausted = usedCount >= item.quantity;
-              const actionKey = `${unitKey}:${item.id}`;
-              const isUsing = activeItemActionKey === actionKey;
-              return (
-                <div
-                  key={`${unitKey}-item-${item.id}`}
-                  className="battle-metric-box flex items-center justify-between gap-2 rounded px-2 py-1.5"
-                >
-                  <div className="min-w-0">
-                    {item.description ? (
-                      <Tooltip
-                        trigger={
-                          <p className="cursor-help truncate text-xs font-semibold text-foreground underline decoration-dotted underline-offset-2">
-                            {item.name}
-                          </p>
-                        }
-                        content={item.description}
-                        maxWidth={280}
-                      />
-                    ) : (
-                      <p className="truncate text-xs font-semibold text-foreground">{item.name}</p>
-                    )}
-                    <p className="text-[0.58rem] text-muted-foreground">
-                      {usedCount}/{item.quantity} used
-                    </p>
-                  </div>
-                  {canUseItems ? (
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => onUseItem(item)}
-                      disabled={exhausted || isUsing}
-                    >
-                      {isUsing ? "Using..." : "Use"}
-                    </Button>
-                  ) : null}
-                </div>
-              );
-            })}
-          </div>
-        </section>
+        <BattleSingleUseItems
+          unitKey={unitKey}
+          singleUseItems={singleUseItems}
+          canUseItems={canUseItems}
+          onUseItem={onUseItem}
+          getUsedItemCount={getUsedItemCount}
+          activeItemActionKey={activeItemActionKey}
+        />
       ) : null}
     </div>
   );
