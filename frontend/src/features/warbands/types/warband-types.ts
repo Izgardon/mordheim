@@ -3,6 +3,8 @@ import type { Item, Restriction, SalePriceBasis } from "../../items/types/item-t
 import type { Skill } from "../../skills/types/skill-types";
 import type { Spell } from "../../spells/types/spell-types";
 import type { Special } from "../../special/types/special-types";
+import type { BeastKind } from "../../bestiary/bestiary-kinds";
+import type { CreatureGroupFields, UnitCompanionFields } from "./companion-types";
 
 type RaceStatProfile = {
   id?: number;
@@ -129,7 +131,7 @@ export type HeroSkills = {
 
 export type HeroCaster = "No" | "Wizard" | "Priest";
 
-export type WarbandHero = {
+export type WarbandHero = UnitCompanionFields & {
   id: number;
   warband_id: number;
   name: string | null;
@@ -194,7 +196,7 @@ export type HirelingTerms = {
   payment_note: string;
 };
 
-export type WarbandHireling = {
+export type WarbandHireling = UnitCompanionFields & {
   id: number;
   warband_id: number;
   name: string | null;
@@ -427,54 +429,55 @@ export type Henchman = {
   itemChoices?: HenchmanItemChoice[];
 };
 
-export type HenchmenGroup = {
-  id: number;
-  warband_id: number;
-  name: string | null;
-  unit_type: string | null;
-  race_id: number | null;
-  race_name?: string | null;
-  price: number | null;
-  /** What one more member costs, worked out by the server (decision 7). */
-  hire_cost?: number;
-  xp: number | null;
-  max_size?: number | null;
-  level_up?: number | null;
-  level_up_history?: LevelUpHistoryEntry[];
-  deeds?: string | null;
-  armour_save: number | null;
-  large: boolean | null;
-  half_rate: boolean | null;
-  no_level_ups?: boolean | null;
-  dead: boolean | null;
-  movement: number | null;
-  weapon_skill: number | null;
-  ballistic_skill: number | null;
-  strength: number | null;
-  toughness: number | null;
-  wounds: number | null;
-  initiative: number | null;
-  attacks: number | null;
-  leadership: number | null;
-  /** The group's version: a roster Save sends it back and is refused if it moved (409). */
-  updated_at?: string;
-  race?: {
-    name: string;
-    movement: number;
-    weapon_skill: number;
-    ballistic_skill: number;
-    strength: number;
-    toughness: number;
-    wounds: number;
-    initiative: number;
-    attacks: number;
-    leadership: number;
+export type HenchmenGroup = UnitCompanionFields &
+  CreatureGroupFields & {
+    id: number;
+    warband_id: number;
+    name: string | null;
+    unit_type: string | null;
+    race_id: number | null;
+    race_name?: string | null;
+    price: number | null;
+    /** What one more member costs, worked out by the server (decision 7). */
+    hire_cost?: number;
+    xp: number | null;
+    max_size?: number | null;
+    level_up?: number | null;
+    level_up_history?: LevelUpHistoryEntry[];
+    deeds?: string | null;
+    armour_save: number | null;
+    large: boolean | null;
+    half_rate: boolean | null;
+    no_level_ups?: boolean | null;
+    dead: boolean | null;
+    movement: number | null;
+    weapon_skill: number | null;
+    ballistic_skill: number | null;
+    strength: number | null;
+    toughness: number | null;
+    wounds: number | null;
+    initiative: number | null;
+    attacks: number | null;
+    leadership: number | null;
+    /** The group's version: a roster Save sends it back and is refused if it moved (409). */
+    updated_at?: string;
+    race?: {
+      name: string;
+      movement: number;
+      weapon_skill: number;
+      ballistic_skill: number;
+      strength: number;
+      toughness: number;
+      wounds: number;
+      initiative: number;
+      attacks: number;
+      leadership: number;
+    };
+    items: Item[];
+    skills: Skill[];
+    specials?: Special[];
+    henchmen: Henchman[];
   };
-  items: Item[];
-  skills: Skill[];
-  specials?: Special[];
-  henchmen: Henchman[];
-};
 
 export type HenchmenGroupPayload = {
   name: string | null;
@@ -595,6 +598,8 @@ export type WarbandItemSummary = {
   /** What Buy again charges: the campaign's current price, house rule included (null: unknown). */
   current_price?: number | null;
   sale_price_basis?: SalePriceBasis | null;
+  /** An Animal item's beast kind (null for any other item): a creature's row offers Recruit. */
+  beast_kind?: BeastKind | null;
 };
 
 export type WarbandUnitDetail = WarbandHero | WarbandHireling | HenchmenGroup;

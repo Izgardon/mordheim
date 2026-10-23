@@ -1,5 +1,7 @@
 import type { MouseEvent } from "react";
 
+import BeastItemButton from "./beasts/BeastItemButton";
+
 import type { LoadoutEntry } from "./loadout-blocks";
 
 type LoadoutEntryRowProps = {
@@ -9,6 +11,10 @@ type LoadoutEntryRowProps = {
   canEdit: boolean;
   onClick: (event: MouseEvent) => void;
   onMenuClick: (event: MouseEvent) => void;
+  /** An Animal item's button (switch a mount or pet, recruit a creature); none: no button. */
+  onBeastClick?: (event: MouseEvent) => void;
+  /** Its request is on its way. */
+  beastBusy?: boolean;
 };
 
 const ENTRY_CLASS = "unit-list-entry flex items-start gap-1 rounded px-1.5 py-0.5";
@@ -22,6 +28,8 @@ export default function LoadoutEntryRow({
   canEdit,
   onClick,
   onMenuClick,
+  onBeastClick,
+  beastBusy = false,
 }: LoadoutEntryRowProps) {
   if (entry.type === "roster") {
     return (
@@ -60,6 +68,15 @@ export default function LoadoutEntryRow({
         <span className="unit-list-entry-meta whitespace-nowrap text-[0.6rem] uppercase tracking-[0.3em]">
           DC {entry.dc}
         </span>
+      ) : null}
+      {entry.beast && canEdit && onBeastClick ? (
+        <BeastItemButton
+          kind={entry.beast.kind}
+          on={entry.beast.on}
+          itemLabel={entry.label}
+          disabled={beastBusy}
+          onClick={onBeastClick}
+        />
       ) : null}
       {entry.type === "item" && canEdit && (
         <button

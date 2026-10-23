@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { renderWithQueryClient as render } from "@/test/query-test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { WarbandItemMutationResponse } from "@/features/warbands/types/warband-types";

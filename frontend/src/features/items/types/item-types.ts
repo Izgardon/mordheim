@@ -58,6 +58,12 @@ export type Item = CatalogueBadgeFields & {
   /** A unit's copy: what Buy again charges, the campaign's current price (null: unknown). */
   current_price?: number | null;
   sale_price_basis?: SalePriceBasis | null;
+  /** A unit's copy: its own row (item ids repeat when a unit carries two), which the switch names. */
+  row_id?: number;
+  /** A unit's copy of a mount or pet: switched on for the unit (it rides it, it keeps it). */
+  companion?: boolean;
+  /** A unit's copy of an Animal item: its beast's kind (null for any other item). */
+  beast_kind?: BeastKind | null;
   single_use?: boolean;
   description: string;
   strength?: string | null;

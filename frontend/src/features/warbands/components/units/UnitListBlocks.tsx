@@ -7,6 +7,7 @@ import LoadoutEntryRow from "./LoadoutEntryRow";
 import { itemMutationUpdate } from "../../api/economy-queries";
 import { useWarbandCacheUpdate } from "../../api/warband-cache";
 import useItemActionMenu from "../../hooks/useItemActionMenu";
+import { useCompanionSwitch } from "../../hooks/units/useCompanionSwitch";
 import { buildLoadoutBlocks, type LoadoutBlock, type LoadoutEntry } from "./loadout-blocks";
 
 import type { PopupPosition } from "../shared/unit_details/DetailPopup";
@@ -77,6 +78,17 @@ export default function UnitListBlocks<K extends UnitKindKey>({
       );
     },
   });
+
+  const companionSwitch = useCompanionSwitch(kind, warbandId);
+  /** A mount's or pet's switch: its copy on or off for this unit (creatures recruit instead). */
+  const beastClick = ({ beast, label }: LoadoutEntry) => {
+    if (!beast || beast.kind === "creature" || beast.rowId === null) return undefined;
+    const change = { unitId: unit.id, rowId: beast.rowId, on: !beast.on, name: label };
+    return (event: MouseEvent) => {
+      event.stopPropagation();
+      companionSwitch.mutate(change);
+    };
+  };
 
   const blocks = buildLoadoutBlocks(kind, unit, spellLookup);
 
@@ -158,6 +170,8 @@ export default function UnitListBlocks<K extends UnitKindKey>({
             canEdit={canManageItems}
             onClick={(event) => handleEntryClick(entry, event)}
             onMenuClick={(event) => itemMenu.handleMenuToggle(entry, event)}
+            onBeastClick={beastClick(entry)}
+            beastBusy={companionSwitch.isPending}
           />
         )}
         summaryRowCount={summaryRowCount}
