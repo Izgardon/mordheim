@@ -9,6 +9,7 @@ import type {
   PostbattleRenderableGroup,
 } from "@/features/battles/components/postbattle/postbattle-utils";
 import PostbattlePetRows from "@/features/battles/components/postbattle/PostbattlePetRows";
+import MountSurvivalRows from "@/features/battles/components/postbattle/MountSurvivalRows";
 
 const SECTION_LABELS = { hero: "Heroes", hireling: "Hired Swords", henchman: "Henchmen" };
 
@@ -55,6 +56,7 @@ export default function RosterResultsSection({
           </div>
         );
       })}
+      <MountSurvivalRows tools={tools} />
       <PostbattlePetRows pets={pets} />
     </PostbattleSection>
   );

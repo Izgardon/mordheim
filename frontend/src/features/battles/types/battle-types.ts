@@ -128,6 +128,22 @@ export type BattlePostbattleState = {
   finds: BattlePostbattleFinds;
   upkeep: BattlePostbattleUpkeep;
   unit_results: Record<string, BattlePostbattleUnitResult>;
+  /**
+   * Each at-risk rider's D6 for his mount and whether it died (step 5): the player's roll and
+   * result, never automatic; a dead mount leaves him at finalise. Left out when there is none.
+   */
+  mount_survival?: Record<string, BattlePostbattleMountSurvival>;
+};
+
+export type BattlePostbattleMountSurvival = { roll: number | null; dead: boolean };
+
+/** A rider taken out of action on his mount: what its D6 must beat (step 5). */
+export type BattleMountAtRisk = {
+  unit_name: string;
+  mount: string;
+  /** It dies on this or less: 2, or 1 with Barding or a Farrier. */
+  dies_on: number;
+  saved_by?: ("barding" | "farrier")[];
 };
 
 export type BattleEventType =
@@ -352,6 +368,8 @@ export type BattlePostbattleSuggestion = {
    * one battle. Never automatic; dismissing is `DELETE warbands/<id>/hirelings/<id>/`.
    */
   dismiss?: { entries: Record<string, { unit_name: string; reason: string }> };
+  /** Each selected rider taken out of action on his mount (only when there is one, step 5). */
+  mount_survival?: { entries: Record<string, BattleMountAtRisk> };
 };
 
 /**

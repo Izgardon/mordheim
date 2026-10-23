@@ -118,6 +118,55 @@ describe("postbattle summary", () => {
     expect(summary.upkeepRows).toHaveLength(1);
   });
 
+  it("lists the mounts that die, but not one a henchman who died took with him (step 5)", () => {
+    const groups = [
+      {
+        key: "henchmen:Youngbloods",
+        rows: [{ unitKey: "henchman:2", unitName: "A", dead: true, seriousInjuryRolls: [] }],
+      },
+    ] as unknown as PostbattleRenderableGroup[];
+    const withMounts = {
+      ...draft,
+      mount_survival: {
+        "hero:1": { roll: 2, dead: true },
+        "hero:3": { roll: 5, dead: false },
+        "henchman:2": { roll: 1, dead: true },
+      },
+    } as BattlePostbattleState;
+
+    const summary = buildFinalizeSummary({
+      groups,
+      draft: withMounts,
+      victimsByUnitKey: {},
+      statChangeRows: [],
+      events: [],
+      userId: ME.id,
+      roster,
+      sheet: undefined,
+      campaign: null,
+      suggestion: {
+        unit_results: {},
+        exploration: { dice_count: 0 },
+        upkeep: { entries: {} },
+        mount_survival: {
+          entries: {
+            "hero:1": { unit_name: "Wolf", mount: "Warhorse", dies_on: 2 },
+            "hero:3": { unit_name: "Rolf", mount: "Pony", dies_on: 2 },
+            "henchman:2": { unit_name: "A", mount: "Horse", dies_on: 2 },
+          },
+        },
+      },
+      resourceAmount: 0,
+      resourceName: null,
+      upkeepRows: [],
+      upkeepTotal: 0,
+    });
+
+    expect(summary.mountsLost).toEqual([
+      { unitKey: "hero:1", unitName: "Wolf", mount: "Warhorse" },
+    ]);
+  });
+
   it("leaves out every result of a hireling who has left the warband, as finalise does (step 2 browser check)", () => {
     const frenzy = {
       result_label: "Frenzy",

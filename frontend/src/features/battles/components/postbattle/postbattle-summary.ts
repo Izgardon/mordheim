@@ -66,6 +66,27 @@ export function hasLeft(hirelingId: number | null, sheet: WarbandSheet | undefin
 }
 
 /**
+ * The mounts the draft says died (step 5), as finalise removes them: a henchman marked dead took
+ * his ridden copy with his share already, so his mount isn't listed twice.
+ */
+function buildMountsLost(
+  draft: BattlePostbattleState | null,
+  suggestion: BattlePostbattleSuggestion | undefined,
+  rows: PostbattleRenderableGroup["rows"]
+) {
+  const atRisk = suggestion?.mount_survival?.entries ?? {};
+  const diedHere = (unitKey: string) =>
+    unitKey.startsWith("henchman:") && rows.some((row) => row.unitKey === unitKey && row.dead);
+  return Object.entries(draft?.mount_survival ?? {})
+    .filter(([unitKey, entry]) => entry.dead && atRisk[unitKey] && !diedHere(unitKey))
+    .map(([unitKey]) => ({
+      unitKey,
+      unitName: atRisk[unitKey].unit_name,
+      mount: atRisk[unitKey].mount,
+    }));
+}
+
+/**
  * Every permanent change finalising applies, as the finalise dialog lists it (BATL-NEW-10) and
  * the skip dialog lists what won't be applied. `victimsByUnitKey` is each unit's kill list (who
  * it took out), the number finalise applies (BATL-NEW-06). A unit that has left the warband
@@ -115,6 +136,7 @@ export function buildFinalizeSummary({
   return {
     deaths: rows.filter((row) => row.dead),
     itemsLost: buildItemsLost(rows, roster),
+    mountsLost: buildMountsLost(draft, suggestion, rows),
     injuries: buildInjuries(rows),
     xpAwards: xpRows.map((row) => ({
       unitKey: row.unitKey,

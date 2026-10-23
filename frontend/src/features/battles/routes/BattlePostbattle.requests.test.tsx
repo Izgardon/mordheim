@@ -140,6 +140,36 @@ describe("BattlePostbattle requests", () => {
     routeServer();
   });
 
+  it("rolls a mount's D6 and saves the roll and result with the draft (step 5)", async () => {
+    const user = setupUser();
+    server.suggested_postbattle = {
+      ...server.suggested_postbattle!,
+      mount_survival: {
+        entries: { "hero:3": { unit_name: "Rolf", mount: "Warhorse", dies_on: 2 } },
+      },
+    };
+    await renderPostbattle();
+    const lastMounts = () => draftBodies().slice(-1)[0]?.mount_survival;
+
+    const mount = screen.getByRole("group", { name: "Rolf's Warhorse" });
+    expect(mount).toHaveTextContent("Dies on a 1 or 2");
+    await user.selectOptions(
+      within(mount).getByRole("combobox", { name: "D6 for Rolf's Warhorse" }),
+      "2"
+    );
+
+    await waitFor(() => expect(lastMounts()).toEqual({ "hero:3": { roll: 2, dead: true } }));
+    const dies = within(mount).getByRole("checkbox", { name: "Rolf's Warhorse dies" });
+    expect(dies).toBeChecked();
+    await user.click(dies); // the result is the player's
+    await waitFor(() => expect(lastMounts()).toEqual({ "hero:3": { roll: 2, dead: false } }));
+    await user.selectOptions(
+      within(mount).getByRole("combobox", { name: "D6 for Rolf's Warhorse" }),
+      "5"
+    );
+    await waitFor(() => expect(lastMounts()).toEqual({ "hero:3": { roll: 5, dead: false } }));
+  });
+
   it("shows who is still in postbattle and who has finished or was skipped (BATL-NEW-08)", async () => {
     server.participants[1].status = "confirmed_postbattle";
     server.participants[1].skipped_postbattle = true;

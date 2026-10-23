@@ -50,6 +50,16 @@ describe("log formatters, by feature", () => {
     ).toBe("Lost with the dead: Rolf (Sword, Shield); Youngblood A (Club).");
     expect(
       textOf(
+        log("battle", "mounts_lost", {
+          mounts: [
+            { unit_name: "Aldric", mount: "Warhorse", roll: 2 },
+            { unit_name: "Outrider", mount: "Horse", roll: null },
+          ],
+        })
+      )
+    ).toBe("Mounts lost after the battle: Aldric's Warhorse (rolled 2); Outrider's Horse.");
+    expect(
+      textOf(
         log("battle", "warnings", {
           warnings: [{ code: "unusual_xp", message: "Captain Wolf earned 14 XP in one battle." }],
         })
@@ -96,6 +106,7 @@ describe("log formatters, by feature", () => {
         "battle:exploration",
         "battle:finds",
         "battle:items_lost",
+        "battle:mounts_lost",
         "battle:warnings",
         "loadout:hero_item",
         "loadout:henchmen_item",

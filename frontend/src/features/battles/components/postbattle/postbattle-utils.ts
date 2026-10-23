@@ -424,7 +424,26 @@ export function buildPostbattleDraft(
       entries: nextUpkeepEntries,
     },
     unit_results: nextUnitResults,
+    // The mounts' rolls saved so far (step 5); left out until one is rolled.
+    ...(existing?.mount_survival ? { mount_survival: existing.mount_survival } : {}),
   };
+}
+
+/**
+ * A mount's D6 rolled (or cleared): its suggested result, dead on `dies_on` or less (the
+ * server's number); the player may change the result afterwards.
+ */
+export function mountRollResult(roll: number | null, diesOn: number) {
+  return { roll, dead: roll !== null && roll <= diesOn };
+}
+
+/** The draft with one rider's mount roll and result set (step 5). */
+export function setMountSurvival(
+  draft: BattlePostbattleState,
+  unitKey: string,
+  value: { roll: number | null; dead: boolean }
+): BattlePostbattleState {
+  return { ...draft, mount_survival: { ...draft.mount_survival, [unitKey]: value } };
 }
 
 export function buildRenderableGroups(draft: BattlePostbattleState, roster?: ParticipantRoster) {
