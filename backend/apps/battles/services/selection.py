@@ -1,7 +1,7 @@
 """The units a participant brought to the battle: the keys he selected, and his custom and bestiary units."""
 
 from ..models import BattleParticipant
-from ..validation.unit_keys import is_temporary
+from ..validation.unit_keys import is_pet, is_temporary
 
 
 def custom_unit_keys(participant: BattleParticipant) -> set[str]:
@@ -36,8 +36,9 @@ def selected_unit_keys(participant: BattleParticipant) -> set[str]:
 
 
 def permanent_unit_keys(participant: BattleParticipant) -> set[str]:
-    """The selected units of the participant's warband (postbattle needs a result for each)."""
-    return {key for key in selected_unit_keys(participant) if not is_temporary(key)}
+    """The selected units of the participant's warband (postbattle needs a result for each): a pet fighting as its own
+    model follows its owner and needs none."""
+    return {key for key in selected_unit_keys(participant) if not (is_temporary(key) or is_pet(key))}
 
 
 def custom_unit_entry(participant: BattleParticipant, unit_key: str) -> dict | None:

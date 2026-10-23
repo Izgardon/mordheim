@@ -197,7 +197,7 @@ def _unit_results(raw: dict) -> dict[str, dict]:
         if not isinstance(unit_key, str) or not unit_key.strip():
             raise ValueError("postbattle unit_result keys must be strings")
         parsed_unit = parse_unit_key(unit_key)
-        if parsed_unit["unit_type"] in {"custom", "bestiary"}:
+        if parsed_unit["unit_type"] in {"custom", "bestiary", "pet"}:  # a pet follows its owner (step 5)
             continue
         results[parsed_unit["unit_key"]] = _unit_result(parsed_unit["unit_type"], entry)
     return results

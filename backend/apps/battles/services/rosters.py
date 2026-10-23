@@ -9,6 +9,7 @@ Each unit carries its mount, pets and the Move and save its mount gives it (`eff
 
 from collections import defaultdict
 from collections.abc import Iterable
+from typing import Any
 
 from django.db.models import F, Prefetch
 
@@ -68,11 +69,13 @@ def _spells(links: Iterable) -> list[dict]:
 ROSTER_ABILITY_COLUMNS = {"skills": ("id", "name"), "specials": ("id", "name"), "spells": ("id", "name", "dc")}
 
 
-def _beast(row) -> dict:
+def _beast(row, owner: str | None = None) -> dict:
     """A mount or pet as the roster shows it, with its beast's skills, specials and spells in the roster's own shapes
-    (each left out when empty)."""
+    (each left out when empty). A pet with a profile its `owner` kind brings takes part as its own model (step 5):
+    its unit key is `pet:<owner kind>:<item row id>`."""
     shown = pet_payload(row)
-    entry = {"itemId": shown["item_id"], "name": shown["name"], "hasProfile": shown["has_profile"]}
+    entry: dict[str, Any] = {"key": f"pet:{owner}:{row.pk}"} if owner and shown["has_profile"] else {}
+    entry |= {"itemId": shown["item_id"], "name": shown["name"], "hasProfile": shown["has_profile"]}
     entry["stats"] = shown["stats"]
     for key, columns in ROSTER_ABILITY_COLUMNS.items():
         if shown[key]:
@@ -80,17 +83,17 @@ def _beast(row) -> dict:
     return entry
 
 
-def _companions(unit, links: list, rider: int = 0) -> dict:
+def _companions(unit, links: list, rider: int = 0, owner: str | None = None) -> dict:
     """The unit's mount (its first switched on; a group's `rider`-th member rides the `rider`-th, and goes on foot when
-    there are fewer), its pets and what the mount makes it show (the bestiary rewrite step 4): snapshotted with the
-    rest at start/, so the battle keeps what the rider rode in on."""
+    there are fewer), its pets (keyed as models of an `owner` kind) and what the mount makes it show (the bestiary
+    rewrite step 4): snapshotted with the rest at start/, so the battle keeps what the rider rode in on."""
     found = companions(links)
     mount = found.mounts[rider] if rider < len(found.mounts) else None
     shown = None
     if mount is not None:
         payload = mount_payload(mount)
         shown = {**_beast(mount), "movement": payload["movement"], "ratingBonus": payload["rating_bonus"]}
-    pets = [_beast(row) for row in found.pets]
+    pets = [_beast(row, owner) for row in found.pets]
     return {"mount": shown, "pets": pets, "effectiveStats": effective_stats(unit, mount)}
 
 
@@ -120,7 +123,7 @@ def hero_entry(hero: Hero) -> dict:
         "unitType": hero.unit_type or "Hero",
         "isLeader": bool(hero.is_leader),  # Winning Leader XP (BATL-NEW-09)
         "stats": _stats(hero),
-        **_companions(hero, links),
+        **_companions(hero, links, owner="hero"),
         "items": items,
         "singleUseItems": _single_use(items),
         "skills": _named(hero.hero_skills.all(), "skill"),
@@ -139,7 +142,7 @@ def hireling_entry(hireling: Hireling) -> dict:
         "displayName": hireling.name or f"Hired Sword {hireling.id}",
         "unitType": hireling.unit_type or "Hired Sword",
         "stats": _stats(hireling),
-        **_companions(hireling, links),
+        **_companions(hireling, links, owner="hireling"),
         "upkeepPrice": hireling.upkeep_price,
         "upkeepCostExpression": hireling.upkeep_cost_expression,
         "noLevelUps": bool(hireling.no_level_ups),
@@ -184,6 +187,7 @@ def henchmen_group_entry(group: HenchmenGroup) -> dict:
         "unitType": group.unit_type or "Henchmen",
         "sourceBeastId": group.source_beast_id,  # recruited from a creature: its beast and kind
         "beastKind": getattr(group, "beast_kind", None),
+        "pets": [_beast(row, "henchmen_group") for row in companions(links).pets],  # the group's own: one model each
         "members": members,
     }
 

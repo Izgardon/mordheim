@@ -13,6 +13,7 @@ from .errors import Refused, battle_status_changed
 from .events import append_event
 from .item_use import item_use_payload
 from .locks import locked
+from .roster_units import roster_pet
 from .selection import custom_unit_entry, selected_unit_keys
 from .unit_information import unit_entry
 
@@ -61,6 +62,10 @@ def unit_event_payload(participant: BattleParticipant, unit: dict) -> dict:
             payload["name"] = henchman.name or None
             payload["type_name"] = henchman.group.unit_type or None
             payload["is_large"] = bool(getattr(henchman.group, "large", False))
+        return payload
+    if unit["unit_type"] == "pet":  # a pet fighting as its own model: named from the battle roster (step 5)
+        pet = roster_pet(participant.roster_json, unit["unit_key"])
+        payload["name"], payload["type_name"] = (pet or {}).get("name"), "Pet"
         return payload
     custom_unit = custom_unit_entry(participant, unit["unit_key"])
     if custom_unit:
