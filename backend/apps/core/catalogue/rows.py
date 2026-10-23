@@ -3,6 +3,7 @@ apps' own serializers, which unit payloads and bestiary equipment nest without b
 fields."""
 
 from apps.bestiary.serializers import (
+    BEAST_FIELDS,
     BestiaryEntryBriefSerializer,
     BestiaryEntrySerializer,
     BestiaryEntrySummarySerializer,
@@ -22,7 +23,7 @@ from apps.spells.serializers import SpellSerializer
 from .payloads import STAT_FIELDS, with_badges
 
 ITEM_FIELDS = ("name", "type", "subtype", "grade", "single_use", "description", "strength", "range", "save_value")
-ENTRY_FIELDS = ("name", "type", "description", *STAT_FIELDS, "armour_save", "large", "caster")
+ENTRY_FIELDS = ("name", "kind", "description", *STAT_FIELDS, "armour_save", "large", "caster", *BEAST_FIELDS)
 HIRELING_FIELDS = (
     "name",
     "description",

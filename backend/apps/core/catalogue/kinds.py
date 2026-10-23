@@ -24,6 +24,7 @@ from apps.bestiary.models import (
     BestiaryEntrySpell,
     WarbandBestiaryFavourite,
 )
+from apps.bestiary.selectors import by_kind
 from apps.bestiary.serializers import BestiaryEntryWriteSerializer
 from apps.hirelings.models import DramatisPersona, HiredSword
 from apps.hirelings.serializers import DramatisPersonaWriteSerializer, HiredSwordWriteSerializer
@@ -291,7 +292,7 @@ BESTIARY = CatalogueKindSpec(
     write_serializer=BestiaryEntryWriteSerializer,
     named=True,
     versioned=True,
-    filters=NAME_AND_TYPE,
+    filters={"kind": by_kind, "search": NAME_AND_TYPE["search"]},
     reread=True,
     lists=("bestiary", "items"),  # an entry may be the animal an item shows
     children=(

@@ -2,13 +2,16 @@
 
 The input is already validated (`BestiaryEntryWriteSerializer`): fields and every linked id. Each write runs in the
 catalogue write's transaction (`apps/core/catalogue/writes.py`), so a failure leaves no entry without its links, and
-each kind of link goes in one INSERT. A list a write sends replaces that list; a list it leaves out stays.
+each kind of link goes in one INSERT. A list a write sends replaces that list; a list it leaves out stays. A beast
+without a profile keeps its stats at 0 and its save empty, whatever the write sends.
 """
 
 from collections.abc import Mapping
 from typing import Any
 
 from django.db import models
+
+from apps.core.catalogue.payloads import STAT_FIELDS
 
 from .models import BestiaryEntry, BestiaryEntryItem, BestiaryEntrySkill, BestiaryEntrySpecial, BestiaryEntrySpell
 
@@ -18,10 +21,12 @@ ID_LINKS: tuple[tuple[str, type[models.Model], str], ...] = (
     ("spell_ids", BestiaryEntrySpell, "spell_id"),
 )
 LISTS = ("skill_ids", "special_ids", "spell_ids", "item_entries")
+NO_PROFILE: dict[str, Any] = {**{stat: 0 for stat in STAT_FIELDS}, "armour_save": None}
 
 
-def _entry_fields(data: Mapping[str, Any]) -> dict[str, Any]:
-    return {key: value for key, value in data.items() if key not in LISTS}
+def _entry_fields(data: Mapping[str, Any], has_profile: bool) -> dict[str, Any]:
+    fields = {key: value for key, value in data.items() if key not in LISTS}
+    return fields if has_profile else {**fields, **NO_PROFILE}
 
 
 def _write_links(entry: BestiaryEntry, data: Mapping[str, Any], *, replace: bool) -> None:
@@ -42,13 +47,14 @@ def _write_links(entry: BestiaryEntry, data: Mapping[str, Any], *, replace: bool
 
 
 def create_entry(campaign_id: int, data: Mapping[str, Any]) -> BestiaryEntry:
-    entry = BestiaryEntry.objects.create(campaign_id=campaign_id, **_entry_fields(data))
+    fields = _entry_fields(data, data.get("has_profile", True))
+    entry = BestiaryEntry.objects.create(campaign_id=campaign_id, **fields)
     _write_links(entry, data, replace=False)
     return entry
 
 
 def update_entry(entry: BestiaryEntry, data: Mapping[str, Any]) -> None:
-    fields = _entry_fields(data)
+    fields = _entry_fields(data, data.get("has_profile", entry.has_profile))
     for field, value in fields.items():
         setattr(entry, field, value)
     if fields:

@@ -109,8 +109,7 @@ class CatalogueCollectionView(CatalogueScopedView):
             value = request.query_params.get(param)
             if value:
                 rows = rows.filter(keeps(value.strip()))
-        params = request.query_params
-        listed = kind.hooks.shown(kind.hooks.listed(kind, rows, self.campaign_id, params), params)
+        listed = kind.hooks.listed(kind, rows, self.campaign_id, request.query_params)
         serializer = kind.hooks.row_serializer(kind, request.query_params)
         return serializer(kind.hooks.read(listed), many=True).data
 

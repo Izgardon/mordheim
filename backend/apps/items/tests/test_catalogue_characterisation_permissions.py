@@ -96,7 +96,7 @@ class CatalogueCreatePermissionTests(CataloguePermissionTestCase):
             (SPECIALS, {"name": ""}, "name"),
             (RACES, {"name": "   "}, "name"),
             (RACES, {"movement": 11}, "movement"),
-            (BESTIARY, {"type": ""}, "type"),
+            (BESTIARY, {"kind": ""}, "kind"),
             (HIRED_SWORDS, {"name": ""}, "name"),
             (DRAMATIS_PERSONAE, {"stays": "forever"}, "stays"),
         ]

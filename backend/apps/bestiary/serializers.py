@@ -13,6 +13,8 @@ from apps.spells.serializers import SpellSerializer
 
 from .models import BestiaryEntry, BestiaryEntryItem
 
+BEAST_FIELDS = ("has_profile", "gains_xp", "rating_bonus", "available_in_shop")
+
 
 class BestiaryEntryItemSerializer(serializers.ModelSerializer):
     item = ItemSerializer(read_only=True)
@@ -35,7 +37,7 @@ class BestiaryEntrySerializer(serializers.ModelSerializer):
             "id",
             "campaign_id",
             "name",
-            "type",
+            "kind",
             "description",
             "movement",
             "weapon_skill",
@@ -49,6 +51,7 @@ class BestiaryEntrySerializer(serializers.ModelSerializer):
             "armour_save",
             "large",
             "caster",
+            *BEAST_FIELDS,
             "skills",
             "specials",
             "spells",
@@ -65,7 +68,7 @@ class BestiaryEntrySummarySerializer(serializers.ModelSerializer):
             "id",
             "campaign_id",
             "name",
-            "type",
+            "kind",
             "description",
             "movement",
             "weapon_skill",
@@ -79,6 +82,7 @@ class BestiaryEntrySummarySerializer(serializers.ModelSerializer):
             "armour_save",
             "large",
             "caster",
+            *BEAST_FIELDS,
         )
 
 
@@ -103,7 +107,7 @@ class BestiaryEntryWriteSerializer(serializers.ModelSerializer):
         validators: list = []  # a taken name is the name rule's 400 name_taken (CAT-TWEAK-02), backed by the constraint
         fields: tuple[str, ...] = (
             "name",
-            "type",
+            "kind",
             "description",
             "movement",
             "weapon_skill",
@@ -117,6 +121,7 @@ class BestiaryEntryWriteSerializer(serializers.ModelSerializer):
             "armour_save",
             "large",
             "caster",
+            *BEAST_FIELDS,
             "skill_ids",
             "special_ids",
             "spell_ids",

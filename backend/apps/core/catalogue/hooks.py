@@ -66,10 +66,6 @@ class CatalogueHooks:
             merged = merge.campaign_rows(rows, campaign_id, kind.name_field)
         return merged.order_by(*merge.campaign_first(*kind.order))
 
-    def shown(self, rows: QuerySet[Any], params: QueryDict) -> QuerySet[Any]:
-        """What the list keeps of its merged rows (the bestiary's `?exclude_type=`)."""
-        return rows
-
     def row_serializer(self, kind: "CatalogueKindSpec", params: QueryDict) -> type[Serializer]:
         """The serializer of the list's rows (the bestiary's `?view=summary`)."""
         return kind.row_serializer
@@ -136,15 +132,8 @@ class ItemHooks(CatalogueHooks):
 
 
 class BestiaryHooks(CatalogueHooks):
-    """The Bestiary page's list leaves out a type and the descriptions it doesn't show (PERF-47): additive query
-    parameters, so the default list is unchanged."""
-
-    def shown(self, rows: QuerySet[Any], params: QueryDict) -> QuerySet[Any]:
-        """`?exclude_type=` (repeatable, any case) leaves out entries of the type after the merge, as the page did."""
-        for excluded in params.getlist("exclude_type"):
-            if excluded.strip():
-                rows = rows.exclude(type__iexact=excluded.strip())
-        return rows
+    """The pickers' list leaves out the descriptions they don't show (PERF-47): an additive query parameter, so the
+    default list is unchanged."""
 
     def row_serializer(self, kind: "CatalogueKindSpec", params: QueryDict) -> type[Serializer]:
         """`?view=summary`: each row without its description; any other view is the default row."""

@@ -114,7 +114,7 @@ BESTIARY = CatalogueKind(
     "bestiary",
     "bestiary",
     BestiaryEntry,
-    payload={"type": "Animal", **STATS},
+    payload={"kind": "creature", **STATS},
 )
 HIRED_SWORDS = CatalogueKind(
     "hired_swords",
@@ -131,8 +131,8 @@ DRAMATIS_PERSONAE = CatalogueKind(
 KINDS = (ITEMS, SKILLS, SPELLS, SPECIALS, RACES, BESTIARY, HIRED_SWORDS, DRAMATIS_PERSONAE)
 
 
-def make_entry(kind: CatalogueKind, name: str, campaign: Campaign | None = None, **fields: Any) -> Any:
-    """A catalogue row written directly (`campaign` None: a book row)."""
+def make_entry(kind: CatalogueKind, name: str, /, campaign: Campaign | None = None, **fields: Any) -> Any:
+    """A catalogue row written directly (`campaign` None: a book row; a bestiary entry's `kind` is a field)."""
     if kind is ITEMS:
         values = {"type": "Weapon", "subtype": "Melee", **fields}
         cost = values.pop("cost", 5)
@@ -145,7 +145,7 @@ def make_entry(kind: CatalogueKind, name: str, campaign: Campaign | None = None,
         SPELLS.key: {"type": "Lesser Magic"},
         SPECIALS.key: {"type": "Ability"},
         RACES.key: dict(STATS),
-        BESTIARY.key: {"type": "Animal", **STATS},
+        BESTIARY.key: {"kind": "creature", **STATS},
         HIRED_SWORDS.key: {"hire_cost": 40, **STATS},
         DRAMATIS_PERSONAE.key: {"hire_cost": 25, **STATS},
     }
@@ -158,7 +158,7 @@ class CatalogueTestCase(CampaignTestCase):
 
     the Axe (Weapon, 5 gc), the Sword (Weapon, 10 gc) and Heavy Armour (Armour, 50 gc); "Infiltration" in the six
     book skill types; "Lifestealer" in two spell lores; the trait specials Large (Trait), Wizard and Priest (Caster);
-    the race Human; the restriction "Mercenaries"; the property Parry; the bestiary's Warhound (Animal); the hired
+    the race Human; the restriction "Mercenaries"; the property Parry; the bestiary's Warhound (a creature); the hired
     sword Ogre Bodyguard (80 gc); and the dramatis persona Aenur (25 gc).
     """
 
@@ -203,7 +203,7 @@ class CatalogueTestCase(CampaignTestCase):
 
     # Requests
 
-    def create_as(self, user: Any, kind: CatalogueKind, name: str, **overrides: Any) -> Any:
+    def create_as(self, user: Any, kind: CatalogueKind, name: str, /, **overrides: Any) -> Any:
         """POST a new `name` entry of `kind` into this campaign as `user`."""
         return self.post_as(user, kind.list_url(), kind.body(name, self.campaign, **overrides))
 

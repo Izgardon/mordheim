@@ -3,8 +3,19 @@ from django.db import models
 from apps.core.models import CatalogueEntry, version_constraints
 from apps.warbands.models.shared import StatBlock, stat_constraints
 
+MOUNT, PET, CREATURE = "mount", "pet", "creature"
+BEAST_KINDS = ((MOUNT, "Mount"), (PET, "Pet"), (CREATURE, "Creature"))  # the Animal item's subtype is the label
+
 
 class BestiaryEntry(StatBlock, CatalogueEntry):
+    """A beast: a mount or a pet (a companion: it belongs to the unit carrying its item) or a creature (it becomes
+    henchmen). `available_in_shop` decides whether the shop sells it.
+
+    `has_profile` off: the beast has no stat line (most pets); its stats are kept at 0 and its save empty, and the
+    pages hide them rather than show zeros. `gains_xp` is for creatures, `rating_bonus` for mounts (what the rider's
+    rating gains: a horse 3, a warhorse 5).
+    """
+
     campaign = models.ForeignKey(
         "campaigns.Campaign",
         related_name="bestiary_entries",
@@ -13,8 +24,12 @@ class BestiaryEntry(StatBlock, CatalogueEntry):
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=160)
-    type = models.CharField(max_length=80, db_index=True)
+    kind = models.CharField(max_length=10, choices=BEAST_KINDS, db_index=True)
     description = models.TextField(max_length=4000, blank=True, default="")
+    has_profile = models.BooleanField(default=True)
+    gains_xp = models.BooleanField(default=False)
+    rating_bonus = models.PositiveSmallIntegerField(null=True, blank=True)
+    available_in_shop = models.BooleanField(default=False)
     armour_save = models.SmallIntegerField(null=True, blank=True)
     large = models.BooleanField(default=False)
     caster = models.CharField(
@@ -54,11 +69,12 @@ class BestiaryEntry(StatBlock, CatalogueEntry):
 
     class Meta:
         db_table = "bestiary_entry"
-        ordering = ["type", "name"]
+        ordering = ["kind", "name"]
         verbose_name_plural = "bestiary entries"
         constraints = [
             *stat_constraints("bestiary_entry"),
             *version_constraints("bestiary_entry"),
+            models.CheckConstraint(check=models.Q(kind__in=[MOUNT, PET, CREATURE]), name="bestiary_entry_kind"),
             # one entry per name in the book and in a campaign, as seed_bestiary upserts (BUG-17, IMP-83)
             models.UniqueConstraint(
                 fields=["campaign", "name"], name="bestiary_entry_unique_name", nulls_distinct=False
@@ -66,7 +82,7 @@ class BestiaryEntry(StatBlock, CatalogueEntry):
         ]
 
     def __str__(self):
-        return f"{self.name} ({self.type})"
+        return f"{self.name} ({self.kind})"
 
 
 class BestiaryEntrySkill(models.Model):

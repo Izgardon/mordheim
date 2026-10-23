@@ -79,9 +79,12 @@ class BestiaryEntrySpecialSummarySerializer(serializers.Serializer):
 
 
 class ItemBestiaryEntrySummarySerializer(serializers.Serializer):
+    """An Animal item's beast: its kind and its profile (`has_profile` off: no stat line to show)."""
+
     id = serializers.IntegerField()
     name = serializers.CharField()
-    type = serializers.CharField()
+    kind = serializers.CharField()
+    has_profile = serializers.BooleanField()
     movement = serializers.IntegerField()
     weapon_skill = serializers.IntegerField()
     ballistic_skill = serializers.IntegerField()

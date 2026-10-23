@@ -143,7 +143,7 @@ class CatalogueMergeTests(CatalogueTestCase):
             (SPELLS, self.lifestealer[0], {"type": "Lesser Magic"}),
             (SPECIALS, self.large, {"type": "Ability"}),
             (RACES, self.human, {}),
-            (BESTIARY, self.warhound, {"type": "Monster"}),
+            (BESTIARY, self.warhound, {"kind": "mount"}),
             (HIRED_SWORDS, self.ogre, {}),
             (DRAMATIS_PERSONAE, self.aenur, {}),
         ]

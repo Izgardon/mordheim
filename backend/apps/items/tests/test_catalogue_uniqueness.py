@@ -32,7 +32,7 @@ class BookUniquenessTests(CatalogueTestCase):
             (Spell, {"name": "Lifestealer", "type": "Necromancy"}),
             (Special, {"name": "Large", "type": "Trait"}),
             (Race, {"name": "Human"}),
-            (BestiaryEntry, {"name": "Warhound", "type": "Monster"}),  # the bestiary: on name alone
+            (BestiaryEntry, {"name": "Warhound", "kind": "mount"}),  # the bestiary: on name alone
         ]
         for model, fields in cases:
             with self.subTest(model=model.__name__):

@@ -213,8 +213,8 @@ class SeederUpsertTests(SeederTestCase):
         house = book_item("Warhound", 15, type="Animal", subtype="Animal", campaign=self.campaign)
         shop = {"availabilities": [{"cost": 20, "rarity": 2}]}
         rows: list[dict[str, Any]] = [
-            {"name": "Bear", "type": "Animal", **STATS},
-            {"name": "Warhound", "type": "Animal", **STATS, "shop_item": shop},
+            {"name": "Bear", "kind": "creature", **STATS},
+            {"name": "Warhound", "kind": "creature", **STATS, "shop_item": shop},
         ]
 
         with data_file(rows) as path:
@@ -227,9 +227,9 @@ class SeederUpsertTests(SeederTestCase):
         self.assertEqual(sorted(BestiaryEntry.objects.values_list("name", flat=True)), ["Bear", "Warhound"])
 
     def test_seed_bestiary_matches_entries_in_the_book_only(self):
-        house = BestiaryEntry.objects.create(name="Warhound", type="Animal", campaign=self.campaign, movement=9)
+        house = BestiaryEntry.objects.create(name="Warhound", kind="creature", campaign=self.campaign, movement=9)
         shop = {"availabilities": [{"cost": 15}]}
-        rows = [{"name": "Warhound", "type": "Animal", **STATS, "movement": 6, "shop_item": shop}]
+        rows = [{"name": "Warhound", "kind": "creature", **STATS, "movement": 6, "shop_item": shop}]
 
         with data_file(rows) as path:
             run("seed_bestiary", json_paths=[path])
