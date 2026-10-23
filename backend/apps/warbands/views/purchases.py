@@ -15,10 +15,13 @@ from apps.warbands.services.rarity_rolls import RollRefused, record_roll
 from apps.warbands.services.stash import stash_entry
 from apps.warbands.services.unit_items import unit_item_rows
 from apps.warbands.units.catalogue_scope import current_entry, shop_items
+from apps.warbands.units.companions import companion_fields
 from apps.warbands.units.errors import RosterError, validation_error
+from apps.warbands.units.kinds import HENCHMEN_GROUP
 from apps.warbands.units.serializers import detail_item_entries
 
 from .base import WarbandScopedView
+from .beasts import unit_detail
 
 
 def scoped_item(warband: Any, item_id: int) -> Item:
@@ -31,15 +34,19 @@ def scoped_item(warband: Any, item_id: int) -> Item:
 
 
 def purchase_answer(warband: Any, item: Item, bought: Purchase) -> dict[str, Any]:
-    """The slim answer (ECON-PERF-03): the touched unit's items or the stash entry, the "Buy" row, the summary."""
+    """The slim answer (ECON-PERF-03): the touched unit's items with its mount, pets and mounted stats, or the stash
+    entry, or the group a creature was recruited into; the "Buy" row, the summary."""
     line = bought.line
     unit = line.unit
-    stash = stash_entry(warband.id, item) if unit is None else None
+    rows = unit_item_rows(line.target_type, unit) if unit is not None else []
+    stash = stash_entry(warband.id, item) if unit is None and line.group is None else None
     return {
         "target_type": line.target_type,
         "target_id": unit.pk if unit is not None else None,
         "updated_at": serializers.DateTimeField().to_representation(unit.updated_at) if unit is not None else None,
-        "items": detail_item_entries(unit_item_rows(line.target_type, unit)) if unit is not None else None,
+        "items": detail_item_entries(rows) if unit is not None else None,
+        **companion_fields(unit, rows),
+        "group": unit_detail(HENCHMEN_GROUP.key, line.group.pk) if line.group is not None else None,
         "stash_item": WarbandItemSummarySerializer(stash).data if stash else None,
         "trade": WarbandTradeSerializer(bought.trade).data if bought.trade else None,
         "summary": WarbandSummarySerializer(warband).data,

@@ -102,7 +102,7 @@ def remove_from_stash(
 ) -> StashTake:
     """Take `quantity` copies out (of one cost when `cost` is given), newest row first. StashShortage when the
     stash holds fewer, unless `up_to`, which takes what there is."""
-    rows = _priced(WarbandItem.objects.select_for_update(of=("self",)).select_related("item"))
+    rows = _priced(WarbandItem.objects.select_for_update(of=("self",)).select_related("item__bestiary_entry"))
     held_rows = list(rows.filter(warband_id=warband_id, item_id=item_id).order_by("-id"))
     takeable = held_rows if cost is ANY_COST else [row for row in held_rows if row.cost == cost]
     held = sum(row.quantity for row in takeable)
@@ -141,7 +141,7 @@ def stash_entry(warband_id: int, item: Item) -> StashEntry | None:
 
 def stash_entries(warband: Warband) -> list[StashEntry]:
     """The whole stash, one entry per item, by item name (one query)."""
-    rows = _priced(WarbandItem.objects.filter(warband=warband).select_related("item"))
+    rows = _priced(WarbandItem.objects.filter(warband=warband).select_related("item__bestiary_entry"))
     rows = rows.order_by("item__name", "item__id", "-id")
     grouped: dict[int, list[WarbandItem]] = {}
     for row in rows:

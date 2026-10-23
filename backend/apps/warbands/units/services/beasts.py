@@ -5,8 +5,8 @@ makes them members of a new henchmen group, or of a group already recruited from
 RECRUIT row is written: the creature was paid for as an item. A new group takes the beast's profile (stats, save,
 large, skills and specials as the campaign's current entries; `unit_type` is its name; `no_level_ups` unless it gains
 XP), the race the body names (none by default), and its price from the copies' cost (the first copy taken; the item's
-current price when that isn't known), so a member can go back to an item at the same value. A fixed number of
-queries whatever the quantity.
+current price when that isn't known), so a member can go back to an item at the same value. A purchase recruits
+straight away through `recruit_copies` (services/purchases.py). A fixed number of queries whatever the quantity.
 """
 
 from dataclasses import dataclass
@@ -44,11 +44,11 @@ class Target:
     race: Any = None
 
 
-def creature(item: Item) -> BestiaryEntry:
-    """The creature whose Animal item `item` is; 400 `not_a_creature` for anything else."""
+def creature(item: Item, field: str = "source.item_id") -> BestiaryEntry:
+    """The creature whose Animal item `item` is; 400 `not_a_creature` (on `field`) for anything else."""
     beast: BestiaryEntry | None = beast_of(item)
     if beast is None or beast.kind != CREATURE:
-        raise RosterError(NOT_A_CREATURE, "not_a_creature", {"source.item_id": [NOT_A_CREATURE]})
+        raise RosterError(NOT_A_CREATURE, "not_a_creature", {field: [NOT_A_CREATURE]})
     return beast
 
 

@@ -6,6 +6,8 @@ from rest_framework import serializers
 
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 
+from .beasts import RecruitTargetSerializer
+
 TARGET_TYPES = ("stash", "hero", "hireling", "henchmen_group")
 
 
@@ -31,19 +33,27 @@ class PurchaseLineSerializer(serializers.Serializer):
     is_buying = serializers.BooleanField(required=False, default=True)
     reason = serializers.CharField(required=False, allow_blank=True, max_length=500)
     rarity_roll = RarityRollSerializer(required=False, allow_null=True)
+    companion = serializers.BooleanField(required=False, default=False)  # a mount or pet lands switched on
 
 
 class PurchaseSerializer(PurchaseLineSerializer):
-    """POST purchases/: a line plus where the copies go (the stash, or a unit on the roster)."""
+    """POST purchases/: a line plus where the copies go (the stash, or a unit on the roster). A mount or pet bought for
+    a unit may land switched on (`companion`); a creature may be recruited straight away (`recruit`: a new group or one
+    of the same beast) instead of landing in the stash."""
 
     target_type = serializers.ChoiceField(choices=TARGET_TYPES)
     target_id = serializers.IntegerField(required=False, allow_null=True)
+    recruit = RecruitTargetSerializer(required=False)
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         if attrs["target_type"] == "stash":
             attrs["target_id"] = None
         elif attrs.get("target_id") is None:
             raise serializers.ValidationError({"target_id": ["target_id is required for a unit."]})
+        if attrs.get("companion") and attrs["target_type"] == "stash":
+            raise serializers.ValidationError({"companion": ["Only a unit's mount or pet is switched on."]})
+        if "recruit" in attrs and attrs["target_type"] != "stash":
+            raise serializers.ValidationError({"recruit": ["Recruit with target_type stash: the group takes them."]})
         return attrs
 
 

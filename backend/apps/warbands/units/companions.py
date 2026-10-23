@@ -139,3 +139,14 @@ def companion_warnings(name: str, rows: Iterable[Any], riders: int | None, warba
         message = f"The warband has {warband_mounts} mounts; a Mordheim warband has at most {MAX_WARBAND_MOUNTS}."
         warnings.append({"code": "warband_mounts", "message": message, "mounts": warband_mounts})
     return warnings
+
+
+def companion_fields(unit: Any, rows: Iterable[Any]) -> dict[str, Any]:
+    """A unit's `mount`, `pets` and `effective_stats` as its payload shows them, from its loaded item rows."""
+    found = companions(rows)
+    mount = found.mounts[0] if found.mounts else None
+    return {
+        "mount": mount_payload(mount) if mount is not None else None,
+        "pets": [pet_payload(row) for row in found.pets],
+        "effective_stats": effective_stats(unit, mount),
+    }

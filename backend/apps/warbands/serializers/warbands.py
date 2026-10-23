@@ -9,6 +9,7 @@ from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.services.prices import sale_price
 from apps.warbands.services.resources import MAX_AMOUNT
 from apps.warbands.services.summary import WarbandUnits, load_warband_units
+from apps.warbands.units.companions import beast_kind
 from apps.warbands.units.kinds import HERO, HIRELING
 from apps.warbands.units.services.create import cap_limit
 
@@ -241,6 +242,10 @@ class WarbandItemSummarySerializer(serializers.Serializer):
     current_price = serializers.IntegerField(allow_null=True)  # what Buy again charges (decision 11)
     suggested_sale_price = serializers.SerializerMethodField()  # per copy, decision 3
     sale_price_basis = serializers.SerializerMethodField()
+    beast_kind = serializers.SerializerMethodField()  # a beast's Animal item: a creature can be recruited from here
+
+    def get_beast_kind(self, entry: Any) -> str | None:
+        return beast_kind(entry.item)
 
     def get_suggested_sale_price(self, entry: Any) -> int | None:
         return sale_price(entry.current_price, entry.cost).price

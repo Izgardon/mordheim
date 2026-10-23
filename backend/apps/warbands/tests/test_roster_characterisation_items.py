@@ -29,8 +29,13 @@ from .test_roster_characterisation_shapes import SHAPES
 RESPONSE_KEYS = ["summary", "source", "target", "stash_item", "removed_stash_item_id"]
 
 # decision 3: half the item's current campaign price, rounded up (the Sword lists at 10, the Axe at 5 and 15)
-SWORD_SALE = {"current_price": 10, "suggested_sale_price": 5, "sale_price_basis": "campaign_price"}
-AXE_SALE = {"current_price": 5, "suggested_sale_price": 3, "sale_price_basis": "campaign_price"}
+SWORD_SALE = {
+    "current_price": 10,
+    "suggested_sale_price": 5,
+    "sale_price_basis": "campaign_price",
+    "beast_kind": None,
+}  # beast_kind: step 4
+AXE_SALE = {"current_price": 5, "suggested_sale_price": 3, "sale_price_basis": "campaign_price", "beast_kind": None}
 # the other kind each kind hands an item to in the cross-kind test
 OTHER_KIND = {HERO.key: HENCHMEN, HENCHMEN.key: HIRELING, HIRELING.key: HERO}
 

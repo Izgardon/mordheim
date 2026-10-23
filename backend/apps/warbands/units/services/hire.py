@@ -7,7 +7,8 @@ two swords are two rows) with no cost, since the fee includes it. A dramatis per
 table, no level-ups, how long it stays and what it is paid in. The unit goes through the shared recruit path, so
 the hired-sword cap, the HIRE ledger row (when the fee is a number) and the log are the generic create's. A dramatis
 persona sits outside the cap; hiring one the warband already has warns (one of each), and so does hiring an entry
-the campaign archived or removed. A fixed number of queries whatever the kit's size.
+the campaign archived or removed. A kit's first mount is switched on as its mount (the bestiary rewrite step 4), with the
+companion warnings. A fixed number of queries whatever the kit's size.
 """
 
 from collections.abc import Mapping
@@ -15,9 +16,10 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from django.db import transaction
-from django.db.models import Exists, OuterRef, Prefetch, QuerySet
+from django.db.models import Exists, F, OuterRef, Prefetch, QuerySet
 from rest_framework.exceptions import NotFound
 
+from apps.bestiary.models import MOUNT
 from apps.core.catalogue.current import current_rows, resolve
 from apps.core.models import CatalogueRemoval
 from apps.hirelings.models import MAX_KIT_QUANTITY, DramatisPersona, HiredSword, HirelingProfile
@@ -26,6 +28,7 @@ from apps.items.models import Item
 from apps.warbands.models import Hireling, HirelingItem, Warband, on_roster
 from apps.warbands.units.kinds import HIRELING
 
+from .companions import unit_warnings
 from .create import recruit
 
 SOURCES: Mapping[str, tuple[type[HirelingProfile], str]] = {  # source -> the catalogue table and its kind key
@@ -110,17 +113,24 @@ def _warnings(source: str, entry: Any, warband: Warband) -> list[dict[str, Any]]
     return warnings
 
 
-def _kit(unit: Hireling, entry: Any, campaign_id: int) -> None:
+def _kit(unit: Hireling, entry: Any, campaign_id: int) -> bool:
     """One item row per copy of each kit line (at most MAX_KIT_QUANTITY), as the campaign's current item, with no
-    cost: two queries."""
+    cost, the first mount switched on as its mount (the Freelancer's warhorse): two queries. Whether it rides."""
     lines = list(entry.item_links.all())
-    current = current_rows(Item.objects.only("id", "campaign_id", "replaces_id"), [line.item_id for line in lines], campaign_id)  # fmt: skip
-    HirelingItem.objects.bulk_create(
+    items = Item.objects.only("id", "campaign_id", "replaces_id").annotate(beast_kind=F("bestiary_entry__kind"))
+    current = current_rows(items, [line.item_id for line in lines], campaign_id)
+    rows = [
         HirelingItem(hireling=unit, item_id=current[line.item_id].pk, cost=None)
         for line in lines
         if line.item_id in current
         for _copy in range(min(line.quantity, MAX_KIT_QUANTITY))  # a row written before the bound can't flood it
-    )
+    ]
+    kinds = {item.pk: item.beast_kind for item in current.values()}
+    mount = next((row for row in rows if kinds.get(row.item_id) == MOUNT), None)
+    if mount is not None:
+        mount.companion = True
+    HirelingItem.objects.bulk_create(rows)
+    return mount is not None
 
 
 def hire(warband: Warband, writer: Any, source: str, entry: Any) -> Hired:
@@ -128,5 +138,6 @@ def hire(warband: Warband, writer: Any, source: str, entry: Any) -> Hired:
     with transaction.atomic():
         warnings = _warnings(source, entry, warband)
         unit: Hireling = recruit(HIRELING, warband, writer, sent=writer.initial_data)  # type: ignore[assignment]
-        _kit(unit, entry, warband.campaign_id)
+        if _kit(unit, entry, warband.campaign_id):
+            warnings += unit_warnings(HIRELING, warband, unit)
     return Hired(unit, warnings)

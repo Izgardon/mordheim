@@ -16,7 +16,7 @@ from apps.items.models import Item
 from apps.warbands.models import RosterUnit, Warband
 from apps.warbands.serializers.purchases import BatchPurchaseSerializer, StashTakeSerializer
 from apps.warbands.services import economy_log
-from apps.warbands.services.purchases import Line, Warning, buy_lines, price_line
+from apps.warbands.services.purchases import Line, Warning, buy_lines, check_companion, price_line
 from apps.warbands.services.stash import StashShortage, remove_from_stash
 from apps.warbands.services.unit_items import add_unit_copies
 from apps.warbands.units.catalogue_scope import shop_items
@@ -92,6 +92,7 @@ def plan_lines(
     for line in lines.purchases:
         if line.item is not None:
             try:
+                check_companion(line.item, line.data, line.key)
                 line.price = price_line(warband, line.item, line.data, line.key)
             except RosterError as refused:
                 errors.update(refused.fields)

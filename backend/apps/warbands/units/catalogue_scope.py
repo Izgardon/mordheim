@@ -102,4 +102,5 @@ def shop_items(campaign_id: int) -> QuerySet[Item]:
     """Items as a purchase reads them: their prices, and whether the campaign removed the book item (`removed`), so
     buying an archived or removed item from a list read before can warn (decision 5)."""
     removed = CatalogueRemoval.objects.filter(campaign_id=campaign_id, kind="items", entry_id=OuterRef("pk"))
-    return Item.objects.prefetch_related("availabilities").annotate(removed=Exists(removed))
+    rows = Item.objects.select_related("bestiary_entry").prefetch_related("availabilities")  # a beast: its kind
+    return rows.annotate(removed=Exists(removed))

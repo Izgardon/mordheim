@@ -41,7 +41,7 @@ class WarbandItemListView(WarbandScopedView):
 
         # another campaign's item answers as one that doesn't exist (SEC-07); a book item the campaign has a version of
         # is the version (CAT-TWEAK-03)
-        item = current_entry(Item.objects.all(), item_id, self.warband.campaign_id)
+        item = current_entry(Item.objects.select_related("bestiary_entry"), item_id, self.warband.campaign_id)
         if not item:
             return Response({"detail": "Item not found"}, status=404)
         warband_item = stock_item(self.warband, item, quantity, cost)
@@ -61,9 +61,9 @@ def _item_response(move: Any, warband: Any, data: dict[str, Any], *, scoped: boo
     transfer) only takes the campaign's own or global items (SEC-07); a copy of another campaign's item
     already held can still be sold."""
     if scoped:
-        item = current_entry(Item.objects.all(), data["item_id"], warband.campaign_id)
+        item = current_entry(Item.objects.select_related("bestiary_entry"), data["item_id"], warband.campaign_id)
     else:
-        item = Item.objects.filter(id=data["item_id"]).first()
+        item = Item.objects.select_related("bestiary_entry").filter(id=data["item_id"]).first()
     if not item:
         return Response({"detail": "Item not found"}, status=404)
     try:

@@ -12,7 +12,8 @@ from apps.warbands.services import ledger
 
 from .roster_support import HENCHMEN, HERO, RosterTestCase, log_rows, make_unit, trade_rows, unit_url
 
-ANSWER_KEYS = ["target_type", "target_id", "updated_at", "items", "stash_item", "trade", "summary", "warnings"]
+ANSWER_KEYS = ["target_type", "target_id", "updated_at", "items", "mount", "pets", "effective_stats", "group"]
+ANSWER_KEYS += ["stash_item", "trade", "summary", "warnings"]  # mount to group: the bestiary rewrite step 4
 
 
 class PurchaseTestCase(RosterTestCase):
