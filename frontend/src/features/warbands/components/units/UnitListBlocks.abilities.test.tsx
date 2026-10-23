@@ -10,7 +10,7 @@ import UnitListBlocks from "./UnitListBlocks";
 import { heroKind } from "@/features/warbands/units/kinds/hero";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
-import { makeSkill, makeVeteranHero } from "@/test/warband-fixtures";
+import { makeItem, makeSkill, makeVeteranHero } from "@/test/warband-fixtures";
 
 vi.mock("@/stores/app-store", () => ({
   useAppStore: () => ({ warband: null, diceColor: "#2e8555" }),
@@ -86,5 +86,36 @@ describe("a unit's lists: its companions' entries", () => {
 
     expect(onPendingSkillClick).not.toHaveBeenCalled();
     expect(await screen.findByRole("dialog", { name: "skill 900" })).toBeInTheDocument();
+  });
+});
+
+describe("a ridden mount's item row", () => {
+  it("opens the beast's profile and entries; a spare copy opens the item's card", async () => {
+    const user = setupUser();
+    const horse = {
+      ...makeItem({ id: 140, name: "Warhorse", type: "Animal" }),
+      beast_kind: "mount" as const,
+    };
+    const twoHorses = makeVeteranHero({
+      ...riding,
+      items: [
+        { ...horse, row_id: 2, companion: true },
+        { ...horse, row_id: 5, companion: false },
+      ],
+    });
+    renderWithQueryClient(
+      <UnitListBlocks kind={heroKind} unit={twoHorses} warbandId={9} variant="detailed" />,
+      {}
+    );
+
+    await user.click(screen.getByRole("button", { name: "Warhorse (ridden)" }));
+    const profile = screen.getByRole("dialog", { name: "Warhorse" });
+    expect(within(profile).getByText("Skills:").parentElement).toHaveTextContent(
+      "Skills: Thunderous Charge"
+    );
+    await user.click(within(profile).getByRole("button", { name: "Close" }));
+
+    await user.click(screen.getByRole("button", { name: "Warhorse" }));
+    expect(await screen.findByRole("dialog", { name: "item 140" })).toBeInTheDocument();
   });
 });

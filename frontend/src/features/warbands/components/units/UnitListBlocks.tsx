@@ -4,6 +4,7 @@ import UnitListBlocksShell, { type UnitListPopup } from "../shared/blocks/UnitLi
 import ItemActionDialogs from "../shared/ItemActionDialogs";
 import LoadoutEntryRow from "./LoadoutEntryRow";
 import BeastRecruitDialog, { type RecruitRequest } from "./beasts/BeastRecruitDialog";
+import { companionOfItem, useCompanionProfile } from "./beasts/useCompanionProfile";
 
 import { itemMutationUpdate } from "../../api/economy-queries";
 import { useWarbandCacheUpdate } from "../../api/warband-cache";
@@ -82,6 +83,7 @@ export default function UnitListBlocks<K extends UnitKindKey>({
   });
 
   const companionSwitch = useCompanionSwitch(kind, warbandId);
+  const profile = useCompanionProfile(kind, unit, warbandId, canManageItems);
   /** A mount's or pet's switch: its copy on or off for this unit; a creature's recruit dialog. */
   const beastClick = ({ beast, label, visibleId }: LoadoutEntry) => {
     if (beast?.kind === "creature") {
@@ -129,6 +131,13 @@ export default function UnitListBlocks<K extends UnitKindKey>({
         unit.id,
         entry.type === "skill" ? "skills" : entry.type === "spell" ? "spells" : "special"
       );
+      return;
+    }
+
+    // A switched-on mount or pet opens its profile: stats, entries, Switch off (step 5).
+    const companion = entry.beast?.on ? companionOfItem(unit, entry.visibleId) : null;
+    if (companion) {
+      profile.open(companion);
       return;
     }
 
@@ -194,6 +203,7 @@ export default function UnitListBlocks<K extends UnitKindKey>({
           )
         }
       />
+      {profile.dialog}
       {recruiting ? (
         <BeastRecruitDialog
           {...recruiting}
