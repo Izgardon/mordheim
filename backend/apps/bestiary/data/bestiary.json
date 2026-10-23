@@ -2,6 +2,8 @@
   {
     "name": "Gnoblar Fighter",
     "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
     "available_in_shop": true,
     "description": "Ogres keep Gnoblars as humans keep dogs, except that Ogres don't keep their Gnoblars well. Each Ogre bites his Gnoblar's ear as a form of identification. Once an Ogre starts eating, it's difficult for him to stop. Even if they don't get eaten, the Chaos Dwarfs are likely to round them up and enslave them.\n\nGnoblars do not count as animals. In all other respects they are treated like War Dogs with the following additional special rules. Gnoblars count as Greenskins but do not suffer from Animosity.",
     "movement": 4,
@@ -39,6 +41,8 @@
   {
     "name": "Wardogs",
     "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
     "available_in_shop": true,
     "description": "The men of the Empire have always been experts at raising ferocious bloodhounds to guard their cattle and holdings against roaming Goblins and Beastmen. A highly trained wardog is a dangerous opponent and worth its weight in gold in Mordheim.",
     "movement": 6,
@@ -74,6 +78,8 @@
   {
     "name": "Chaos Steed",
     "kind": "mount",
+    "has_profile": true,
+    "rating_bonus": null,
     "available_in_shop": true,
     "description": "Chaos Steeds are malformed, debased parodies of the magnificent warhorses of the Empire. They are used by Possessed and other Chaos warbands.",
     "movement": 8,
@@ -108,6 +114,8 @@
   {
     "name": "Cold One",
     "kind": "mount",
+    "has_profile": true,
+    "rating_bonus": null,
     "available_in_shop": true,
     "description": "Scaly, mean and stupid, these native creatures of the New World make excellent mounts upon which to fight.",
     "movement": 7,
@@ -144,6 +152,8 @@
   {
     "name": "Elven Steed",
     "kind": "mount",
+    "has_profile": true,
+    "rating_bonus": null,
     "available_in_shop": true,
     "description": "Elven steeds are graceful animals, but have a vicious temperament when called upon to fight. It is rumoured that even Dark Elves breed these fine beasts. Typically, High Elf steeds are grey and white, Wood Elf steeds are tan and white, and Dark Elf steeds are midnight black.",
     "movement": 9,
@@ -178,6 +188,8 @@
   {
     "name": "Giant Spider",
     "kind": "mount",
+    "has_profile": true,
+    "rating_bonus": null,
     "available_in_shop": true,
     "description": "The Giant Spider is the stuff of nightmares. Typically 10 to 12 feet long they are highly prized by Forest Goblins as mounts.",
     "movement": 7,
@@ -213,6 +225,8 @@
   {
     "name": "Giant Wolf",
     "kind": "mount",
+    "has_profile": true,
+    "rating_bonus": null,
     "available_in_shop": true,
     "description": "The giant wolf is common in most of the mountain ranges of the known world. However, catching one of these nasty, fastmoving beasts is another thing - especially if you are a Goblin.",
     "movement": 9,
@@ -245,6 +259,8 @@
   {
     "name": "Mule",
     "kind": "mount",
+    "has_profile": true,
+    "rating_bonus": null,
     "available_in_shop": true,
     "description": "Their stubbornness is legendary, but even so, these beasts of burden are occasionally ridden by Halflings, Dwarfs and even overweight clerics!",
     "movement": 6,
@@ -281,6 +297,8 @@
   {
     "name": "Nightmare",
     "kind": "mount",
+    "has_profile": true,
+    "rating_bonus": null,
     "available_in_shop": true,
     "description": "The Vampire Counts occasionally need fell steeds to carry them about their business. Who cares if they're dead? They still have legs, don't they?",
     "movement": 8,
@@ -317,6 +335,8 @@
   {
     "name": "Rhinox",
     "kind": "mount",
+    "has_profile": true,
+    "rating_bonus": 20,
     "available_in_shop": true,
     "description": "Below the ruined realm of the Sky Titans are the ice fields where Rhinox herds and ice elk graze. Rhinoxen have become a cornerstone of culture in the wild kingdoms. To discipline these illtempered beasts of burden requires a momentous feat of strength.",
     "movement": 7,
@@ -355,6 +375,8 @@
   {
     "name": "Riding/Draft Horse",
     "kind": "mount",
+    "has_profile": true,
+    "rating_bonus": 3,
     "available_in_shop": true,
     "description": "Riding horses are not trained for battle and will not normally attack an enemy. However, they are useful for moving rapidly around the site of a battle.",
     "movement": 8,
@@ -387,6 +409,8 @@
   {
     "name": "Temple Dog",
     "kind": "mount",
+    "has_profile": true,
+    "rating_bonus": 20,
     "available_in_shop": true,
     "description": "Magical constructs, chiselled and set from enchanted stone stand immobile guarding temple grounds from intruders. On closer inspection these avatars seem indistinguishable from a normal statue, only springing into life when certain strictures have been violated on the temple grounds. Heavy weathering on the majority of these constructs indicates they may come from an ancient time and that any such magic harnessed during their creation was lost or remains undiscovered. Fanciful tales of hidden shrines, their priests butchered by defilers, now lie concealed in ruin. Ruins watched over by ever vigilant guardians who shall resist all attempts to settle them back into quiet stone, warding off those who dare to unravel the mystery.",
     "movement": 6,
@@ -426,6 +450,8 @@
   {
     "name": "War Boar",
     "kind": "mount",
+    "has_profile": true,
+    "rating_bonus": null,
     "available_in_shop": true,
     "description": "Large, ferocious and badtempered - a perfect mount for an Orc Warlord. Orc warbands occasionally make use of these noisome beasts while exploring the ruins of Mordheim and beyond. It isn't common though, as the bigger and meaner Orcs tend to take the boars for themselves.",
     "movement": 7,
@@ -461,6 +487,8 @@
   {
     "name": "Warhorse",
     "kind": "mount",
+    "has_profile": true,
+    "rating_bonus": 5,
     "available_in_shop": true,
     "description": "Warhorses are large, welltrained horses, quite at home in battle. They are primarily used by human warbands.",
     "movement": 8,

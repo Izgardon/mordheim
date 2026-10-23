@@ -66,12 +66,12 @@ class SeedAllTests(TestCase):
             {
                 "Race": 26,
                 "Restriction": 133,
-                "Item": 230,
+                "Item": 247,  # 216 + one Animal item per beast (the bestiary rewrite step 3)
                 "ItemProperty": 240,
                 "Skill": 252,
                 "Spell": 189,  # 183 + the Dark Mage's six (BUG-54)
                 "Special": 186,
-                "BestiaryEntry": 14,  # the animals: the 72 hired swords are their own catalogue now
+                "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
                 "DramatisPersona": 0,  # until they are scraped
             },

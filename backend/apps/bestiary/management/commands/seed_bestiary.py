@@ -1,9 +1,12 @@
-"""Seed the book's bestiary from JSON (`apps/bestiary/data/bestiary.json`): the beasts, each a mount, a pet or a
-creature (`kind`), with their skills, specials, spells and equipment, and every beast's Animal item (listed in the
-shop when `available_in_shop`, with the grade and prices of its `shop_item`). Hired swords and dramatis personae are their own catalogue (seed_hired_swords, seed_dramatis_personae).
+"""Seed the book's bestiary from JSON (`apps/bestiary/data/bestiary.json` and Mutiny in Marienburg's
+`mim-bestiary.json`): the beasts, each a mount, a pet or a creature (`kind`), with whether it has a profile
+(`has_profile`: off, its stats are kept at 0 and its save empty), gains XP, what it adds to a rider's rating
+(`rating_bonus`) and whether the shop sells it (`available_in_shop`); their skills, specials, spells and equipment;
+and every beast's Animal item, listed when it is sold, with the grade and prices of its `shop_item`. Hired swords and
+dramatis personae are their own catalogue (seed_hired_swords, seed_dramatis_personae).
 
 Links resolve against the book only (BUG-17), by name with apostrophes straightened. The run is all or nothing: an
-entry without a known kind stops it.
+entry without a known kind, or with a rating bonus that isn't a whole number from 0, stops it.
 """
 
 from collections import Counter
@@ -21,13 +24,14 @@ from apps.bestiary.models import (
     BestiaryEntrySpecial,
     BestiaryEntrySpell,
 )
+from apps.bestiary.writes import NO_PROFILE
 from apps.core.book_lookups import BookLookups
 from apps.core.catalogue.cache import bump
 from apps.core.seeding import clean, parse_armour_save, read_json_list, read_stats, sync_availabilities, upsert_global
 from apps.items.models import Item
 from apps.restrictions.book import BookRestrictions
 
-DEFAULT_JSON_PATHS = [Path("apps/bestiary/data/bestiary.json")]
+DEFAULT_JSON_PATHS = [Path("apps/bestiary/data/bestiary.json"), Path("apps/bestiary/data/mim-bestiary.json")]
 
 
 def _kind(data: dict[str, Any], name: str) -> str:
@@ -37,15 +41,27 @@ def _kind(data: dict[str, Any], name: str) -> str:
     return kind
 
 
+def _rating_bonus(data: dict[str, Any], name: str) -> int | None:
+    bonus = data.get("rating_bonus")
+    if bonus is not None and (isinstance(bonus, bool) or not isinstance(bonus, int) or bonus < 0):
+        raise CommandError(f"Bestiary entry '{name}': rating_bonus is {bonus!r}, not a whole number from 0 or null")
+    return bonus
+
+
 def _upsert_entry(data: dict[str, Any], name: str, kind: str) -> tuple[BestiaryEntry, bool]:
+    has_profile = bool(data.get("has_profile", True))
     defaults = {
         "kind": kind,
         "description": data.get("description", ""),
         "armour_save": parse_armour_save(data.get("armour_save")),
         "large": bool(data.get("large", False)),
         "caster": data.get("caster", "No"),
+        "has_profile": has_profile,
+        "gains_xp": bool(data.get("gains_xp", False)),
+        "rating_bonus": _rating_bonus(data, name),
         "available_in_shop": bool(data.get("available_in_shop", False)),
         **read_stats(data, f"Bestiary entry '{name}'"),  # fail loudly (BUG-54)
+        **({} if has_profile else NO_PROFILE),
     }
     return upsert_global(BestiaryEntry, {"name": name}, defaults)
 
