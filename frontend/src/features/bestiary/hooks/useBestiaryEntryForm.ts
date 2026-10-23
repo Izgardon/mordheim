@@ -12,11 +12,12 @@ import {
 } from "../utils/bestiary-form";
 import { useBestiaryLinks } from "./useBestiaryLinks";
 
+import type { BeastKind } from "../bestiary-kinds";
 import type { BestiaryEntry } from "../types/bestiary-types";
 
-export type BestiaryEntryValues = BestiaryCoreValues & { type: string };
+export type BestiaryEntryValues = BestiaryCoreValues & { kind: BeastKind };
 
-const blank = (): BestiaryEntryValues => ({ ...blankBestiaryCore(), type: "Attack" });
+const blank = (): BestiaryEntryValues => ({ ...blankBestiaryCore(), kind: "creature" });
 
 type UseBestiaryEntryFormOptions = {
   campaignId: number;
@@ -44,14 +45,14 @@ export function useBestiaryEntryForm({
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!values.name.trim() || !values.type) return;
+    if (!values.name.trim()) return;
 
     setIsSaving(true);
     setError("");
     try {
       const entry = await createBestiaryEntry({
         campaign_id: campaignId,
-        type: values.type,
+        kind: values.kind,
         ...bestiaryCorePayload(values),
         ...links.payload(),
       });

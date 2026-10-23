@@ -1,6 +1,6 @@
 /**
- * What the Bestiary page keeps in the URL (CAT-NEW-02): the search (`q`), the type filter
- * (`type`), the card page (`page`) and the open entry (`entry`), so Back
+ * What the Bestiary page keeps in the URL (CAT-NEW-02): the search (`q`), the kind filter
+ * (`kind`), the card page (`page`) and the open entry (`entry`), so Back
  * from an entry, the browser's Back after another page and a shared link restore them
  * (CAT-UX-05). Back on an entry link opened fresh goes to the list, filters kept (BUG-150).
  */
@@ -12,7 +12,6 @@ import { LIST, bestiaryDetail, bestiaryEntry, routeCatalogue } from "@/test/cata
 import { renderCatalogueRoute } from "@/test/catalogue-routes";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
-import { chooseOption } from "@/test/select-option";
 import { setupUser } from "@/test/user-event";
 
 vi.mock("@/lib/api-client", async (importOriginal) => ({
@@ -43,23 +42,23 @@ beforeEach(() => {
   fakeApi.on("GET /bestiary/5/", bestiaryDetail(bestiaryEntry()));
 });
 
-describe("Bestiary: search, type filter and page", () => {
-  it("keeps the type, the search and the open entry in the URL; Back returns to the filtered list (CAT-UX-05, CAT-NEW-02)", async () => {
+describe("Bestiary: search, kind filter and page", () => {
+  it("keeps the kind, the search and the open entry in the URL; Back returns to the filtered list (CAT-UX-05, CAT-NEW-02)", async () => {
     const user = setupUser();
     renderCatalogueRoute("/campaigns/1/bestiary");
     await screen.findByText("Sewer Rat");
 
-    await chooseOption(user, screen.getByText("All types").closest("button")!, "Attack");
+    await user.click(screen.getByRole("button", { name: "Creature" }));
     await user.type(searchBox(), "war");
-    expect(currentPath()).toHaveTextContent("/campaigns/1/bestiary?type=Attack&q=war");
+    expect(currentPath()).toHaveTextContent("/campaigns/1/bestiary?kind=creature&q=war");
     await user.click(card("Warhound"));
 
-    expect(currentPath()).toHaveTextContent("/campaigns/1/bestiary?type=Attack&q=war&entry=5");
+    expect(currentPath()).toHaveTextContent("/campaigns/1/bestiary?kind=creature&q=war&entry=5");
     expect(await screen.findByRole("heading", { name: "Warhound" })).toBeVisible();
     await user.click(screen.getByRole("button", { name: "Back" }));
 
     expect(await screen.findByRole("button", { name: /^Warhound/ })).toBeVisible();
-    expect(currentPath()).toHaveTextContent("/campaigns/1/bestiary?type=Attack&q=war");
+    expect(currentPath()).toHaveTextContent("/campaigns/1/bestiary?kind=creature&q=war");
     expect(searchBox()).toHaveValue("war");
     expect(screen.queryByText("Warhorse")).toBeNull();
     expect(screen.queryByText("Sewer Rat")).toBeNull();
@@ -67,7 +66,7 @@ describe("Bestiary: search, type filter and page", () => {
 
   it("restores the search and page with the browser's Back after another page, and a new search goes back to page 1 (CAT-UX-05, CAT-NEW-02)", async () => {
     const user = setupUser();
-    fakeApi.on(LIST.bestiary, [...many, bestiaryEntry({ id: 6, name: "Warhorse", type: "Mount" })]);
+    fakeApi.on(LIST.bestiary, [...many, bestiaryEntry({ id: 6, name: "Warhorse", kind: "mount" })]);
     renderCatalogueRoute("/campaigns/1/bestiary");
     await screen.findByText("Rat 01");
     await user.type(searchBox(), "rat");
@@ -117,13 +116,13 @@ describe("Bestiary: search, type filter and page", () => {
 
   it("goes to the list on Back when the ?entry= link was opened fresh, keeping its filters (BUG-150)", async () => {
     const user = setupUser();
-    renderCatalogueRoute("/campaigns/1/bestiary?type=Attack&entry=5");
+    renderCatalogueRoute("/campaigns/1/bestiary?kind=creature&entry=5");
     await screen.findByRole("heading", { name: "Warhound" });
 
     await user.click(screen.getByRole("button", { name: "Back" }));
 
     expect(await screen.findByRole("button", { name: /^Warhound/ })).toBeVisible();
-    expect(currentPath()).toHaveTextContent(/^\/campaigns\/1\/bestiary\?type=Attack$/);
+    expect(currentPath()).toHaveTextContent(/^\/campaigns\/1\/bestiary\?kind=creature$/);
     expect(screen.queryByText("Warhorse")).toBeNull();
   });
 

@@ -64,7 +64,8 @@ const fetchers: { [K in CatalogueKind]: Fetcher<K> } = {
     listSpells({ campaignId, signal, ...archivedOf(variant) }),
   specials: (campaignId, signal) => listSpecial({ campaignId, signal }),
   races: (campaignId, signal) => listRaces({ campaignId, signal }),
-  bestiary: (campaignId, signal) => listBestiaryEntries({ campaignId, signal }),
+  bestiary: (campaignId, signal, variant) =>
+    listBestiaryEntries({ campaignId, signal, ...archivedOf(variant) }),
   "hired-swords": (campaignId, signal, variant) =>
     listHirelingProfiles("hired-swords", { campaignId, signal, ...archivedOf(variant) }),
   "dramatis-personae": (campaignId, signal, variant) =>

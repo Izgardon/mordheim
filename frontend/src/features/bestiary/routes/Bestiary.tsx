@@ -4,13 +4,6 @@ import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { PageHeader } from "@/components/ui/page-header";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
 import MobileTabs from "@/components/ui/mobile-tabs";
@@ -22,17 +15,18 @@ import CataloguePager from "@/features/catalogue/components/CataloguePager";
 import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogueSearchParams";
 import { usePagedList } from "@/features/catalogue/hooks/usePagedList";
 import { useCatalogue } from "@/lib/catalogue-queries";
+import { beastKindLabel, isBeastKind } from "../bestiary-kinds";
 import { useBestiaryFavourites } from "../hooks/useBestiaryFavourites";
 import BestiaryEntryCard from "../components/BestiaryEntryCard";
 import BestiaryEntryDetail from "../components/BestiaryEntryDetail";
 import BestiaryEntryFormDialog from "../components/BestiaryEntryFormDialog";
+import BestiaryKindFilter from "../components/BestiaryKindFilter";
 
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 
 import { LOADOUT_TABS } from "@/lib/loadout-tabs";
 import type { LoadoutTabId } from "@/lib/loadout-tabs";
 
-const ALL_TYPES = "all";
 const PAGE_SIZE = 12;
 
 export default function Bestiary() {
@@ -42,44 +36,37 @@ export default function Bestiary() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const { warband } = useAppStore();
 
-  // The bestiary holds the animals only; hired swords have their own catalogue and page. The
-  // prebattle Load from Bestiary picker shares this list.
+  // Every beast, of every kind, in one list the Kind filter narrows; the prebattle Load from
+  // Bestiary picker shares it.
   const { data: entries, isLoading, error } = useCatalogue("bestiary", campaignId);
   const favourites = useBestiaryFavourites(warband?.id);
   const navigate = useNavigate();
-  // Search, type, page and the open entry live in the query string (CAT-NEW-02).
+  // Search, kind, page and the open entry live in the query string (CAT-NEW-02).
   const url = useCatalogueSearchParams();
   const searchQuery = url.get("q");
-  const selectedType = url.get("type", ALL_TYPES);
+  const kindParam = url.get("kind");
+  const selectedKind = isBeastKind(kindParam) ? kindParam : null;
   const setSearchQuery = (q: string) => url.set({ q, page: null });
-  const setSelectedType = (type: string) =>
-    url.set({ type: type === ALL_TYPES ? null : type, page: null });
   const selectedEntryId = url.get("entry") ? Number(url.get("entry")) : null;
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   const canManage = campaignCapabilities(campaign).edit_catalogue;
 
-  const types = useMemo(() => {
-    const unique = new Set(entries.map((e) => e.type));
-    return Array.from(unique).sort();
-  }, [entries]);
-
   const filteredEntries = useMemo(() => {
     let result = entries;
-    if (selectedType !== ALL_TYPES) {
-      result = result.filter((e) => e.type === selectedType);
+    if (selectedKind) {
+      result = result.filter((e) => e.kind === selectedKind);
     }
     const q = searchQuery.trim().toLowerCase();
     if (q) {
-      result = result.filter(
-        (e) =>
-          e.name.toLowerCase().includes(q) ||
-          e.type.toLowerCase().includes(q) ||
-          e.description.toLowerCase().includes(q)
+      result = result.filter((e) =>
+        [e.name, beastKindLabel(e.kind), e.description].some((text) =>
+          text?.toLowerCase().includes(q)
+        )
       );
     }
     return [...result].sort((a, b) => a.name.localeCompare(b.name));
-  }, [entries, selectedType, searchQuery]);
+  }, [entries, selectedKind, searchQuery]);
 
   const pages = usePagedList(filteredEntries, PAGE_SIZE);
 
@@ -119,23 +106,12 @@ export default function Bestiary() {
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search bestiary..."
             aria-label="Search bestiary"
-            className="flex-none w-[calc(50%-6px)] sm:w-full sm:max-w-sm"
+            className="w-full sm:max-w-sm"
           />
-          {types.length > 1 ? (
-            <Select value={selectedType} onValueChange={setSelectedType}>
-              <SelectTrigger className="w-[calc(50%-6px)] sm:w-56">
-                <SelectValue placeholder="Filter by type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={ALL_TYPES}>All types</SelectItem>
-                {types.map((t) => (
-                  <SelectItem key={t} value={t}>
-                    {t}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          ) : null}
+          <BestiaryKindFilter
+            value={selectedKind}
+            onChange={(kind) => url.set({ kind, page: null })}
+          />
           {canManage ? (
             <Button size="sm" className="ml-auto" onClick={() => setShowCreateDialog(true)}>
               Add entry

@@ -1,6 +1,5 @@
 import { statInputs, statNumbers, type StatInputs } from "@/features/catalogue/utils/statblock";
 
-export const BESTIARY_TYPES = ["Attack", "Mount", "Retainer"];
 export const CASTER_OPTIONS = ["No", "Wizard", "Priest"];
 
 /** What a bestiary entry, a hired sword and a dramatis persona all hold, as their forms edit it. */

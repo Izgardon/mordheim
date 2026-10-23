@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { getBestiaryEntry } from "../api/bestiary-api";
+import { beastKindLabel } from "../bestiary-kinds";
 import {
   DETAIL_CHIP_CLASS,
   DetailHeader,
@@ -74,13 +75,22 @@ export default function BestiaryEntryDetail({ entryId, onClose }: BestiaryEntryD
 
   return (
     <Wrapper className={contentClassName}>
-      <DetailHeader name={entry.name} kind={entry.type} entry={entry} onClose={onClose} />
+      <DetailHeader
+        name={entry.name}
+        kind={beastKindLabel(entry.kind)}
+        entry={entry}
+        onClose={onClose}
+      />
 
       {entry.description ? (
         <p className="text-sm text-muted-foreground">{entry.description}</p>
       ) : null}
 
-      <EntryStatTable entry={entry} />
+      {entry.has_profile ? (
+        <EntryStatTable entry={entry} />
+      ) : (
+        <p className="text-sm italic text-muted-foreground">No profile</p>
+      )}
 
       {entry.skills.length > 0 || entry.specials.length > 0 ? (
         <DetailSection title="Skills & Special Rules">

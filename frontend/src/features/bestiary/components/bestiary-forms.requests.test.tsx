@@ -50,7 +50,7 @@ beforeEach(() => {
 });
 
 describe("BestiaryEntryFormDialog: create", () => {
-  it("POSTs the stat line as numbers with the picked skill, special and equipment, then marks the bestiary list stale", async () => {
+  it("POSTs the kind, the stat line as numbers and the picked skill, special and equipment, then marks the bestiary list stale", async () => {
     const user = setupUser();
     const onOpenChange = vi.fn();
     const queryClient = clientWithLists();
@@ -59,6 +59,8 @@ describe("BestiaryEntryFormDialog: create", () => {
       { queryClient }
     );
 
+    expect(screen.getByRole("radio", { name: "Creature" })).toHaveAttribute("aria-checked", "true");
+    await user.click(screen.getByRole("radio", { name: "Mount" }));
     await user.type(screen.getByLabelText("Name"), "Sewer Hound");
     await setStat(user, 0, "6");
     await setStat(user, 3, "4");
@@ -74,7 +76,7 @@ describe("BestiaryEntryFormDialog: create", () => {
     expect(fakeApi.bodyOf("POST /bestiary/")).toEqual({
       campaign_id: 1,
       name: "Sewer Hound",
-      type: "Attack",
+      kind: "mount",
       description: "",
       movement: 6,
       weapon_skill: 0,

@@ -108,7 +108,7 @@ describe("the Bestiary marks nothing yet", () => {
 
     for (const name of ["Sewer Rat", "Warhound"]) {
       expect(within(card(name)).getByRole("heading", { level: 3 })).toHaveTextContent(name);
-      expect(within(card(name)).getByText("Attack")).toBeVisible();
+      expect(within(card(name)).getByText("Creature")).toBeVisible();
     }
     expect(within(card("Sewer Rat")).queryByText(/custom|house rule/i)).toBeNull();
   });
