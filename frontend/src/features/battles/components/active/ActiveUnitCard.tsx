@@ -12,8 +12,9 @@ import "@/features/warbands/styles/warband.css";
 import { getBattleCardThemeStyle } from "@/features/battles/components/shared/battle-card-theme";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { PetChips, RiderMark } from "@/features/battles/components/shared/BattleCompanionParts";
-import { mountedStats } from "@/features/battles/utils/battle-companions";
+import { mountedStats, onFoot } from "@/features/battles/utils/battle-companions";
 
+import ActiveDismountToggle from "./ActiveDismountToggle";
 import ActiveKillDialog from "./ActiveKillDialog";
 import ActiveOutOfActionOverlay from "./ActiveOutOfActionOverlay";
 import ActiveUnitExpandedDetails from "./ActiveUnitExpandedDetails";
@@ -31,6 +32,8 @@ type ActiveUnitCardProps = {
   canInteract: boolean;
   killTargetOptions: ActiveBattleUnitOption[];
   onSetOutOfAction: (unitKey: string, outOfAction: boolean) => Promise<void>;
+  /** A rider off his mount for the rest of the battle, or back on it (step 5). */
+  onSetDismounted?: (unitKey: string, dismounted: boolean) => Promise<void>;
   onAdjustWounds: (unit: PrebattleUnit, delta: number) => Promise<void>;
   /** Saves a battle stat change from the details' stat editor (BATL-NEW-07). */
   onSaveOverride: (unitKeys: string[], override: UnitOverride | undefined) => Promise<void>;
@@ -55,6 +58,7 @@ export default function ActiveUnitCard({
   canInteract,
   killTargetOptions,
   onSetOutOfAction,
+  onSetDismounted,
   onAdjustWounds,
   onSaveOverride,
   onSaveUnitNotes,
@@ -71,6 +75,7 @@ export default function ActiveUnitCard({
   const [error, setError] = useState("");
 
   const outOfAction = Boolean(unitInformation?.out_of_action);
+  const dismounted = Boolean(unitInformation?.dismounted);
   const name = unit.displayName;
   const canAct = canInteract && !outOfAction && !isSavingUnitConfig;
 
@@ -110,13 +115,21 @@ export default function ActiveUnitCard({
             <div className="flex flex-wrap items-start justify-between gap-2 md:block">
               <div className="min-w-0 space-y-1">
                 <div className="flex min-w-0 items-center gap-1.5">
-                  <RiderMark mount={unit.mount} />
+                  <RiderMark mount={unit.mount} dismounted={dismounted} />
                   <p className="truncate text-sm font-semibold text-foreground">{name}</p>
                 </div>
                 <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
                   {unit.unitType}
                 </p>
                 <PetChips pets={unit.pets} />
+                <ActiveDismountToggle
+                  unitKey={unit.key}
+                  name={name}
+                  mount={unit.mount}
+                  dismounted={dismounted}
+                  editable={canAct}
+                  onSetDismounted={onSetDismounted}
+                />
               </div>
               <div className="ml-auto md:hidden">{actions}</div>
             </div>
@@ -125,7 +138,7 @@ export default function ActiveUnitCard({
           <div className="battle-stats-shell w-full md:max-w-[34rem] md:justify-self-start">
             <UnitStatsTable
               stats={getEffectiveUnitStats(unit, unitInformation)}
-              mounted={mountedStats(unit, unitInformation?.stats_override)}
+              mounted={mountedStats(onFoot(unit, unitInformation), unitInformation?.stats_override)}
               variant="summary"
               wrapperClassName="w-full max-w-none"
             />

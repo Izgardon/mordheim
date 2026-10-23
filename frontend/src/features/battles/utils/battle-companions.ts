@@ -12,6 +12,16 @@ export const battleCompanionSources = (
   ]);
 
 type Mounted = Pick<PrebattleUnit, "effectiveStats">;
+type Dismountable = { dismounted?: boolean } | undefined;
+
+/**
+ * A unit as it rides now: a rider marked Dismounted for the rest of the battle (step 5) shows and
+ * fights with his foot M and save, and his mount's entries no longer apply.
+ */
+export const onFoot = <T extends Pick<PrebattleUnit, "effectiveStats" | "mount">>(
+  unit: T,
+  info?: Dismountable
+): T => (info?.dismounted ? { ...unit, effectiveStats: null, mount: null } : unit);
 
 /**
  * A rider's mounted M and save as his roster entry carries them (display only), less any a battle
@@ -31,14 +41,18 @@ export function mountedStats(
 
 /**
  * A unit's stats as the battle helpers use them: its own, the mount's M and save while it rides
- * (the roster's `effectiveStats`), then any battle stat change, which wins.
+ * (the roster's `effectiveStats`; his foot ones once dismounted), then any battle stat change,
+ * which wins.
  */
 export function helperStats(
   unit: Pick<PrebattleUnit, "stats" | "effectiveStats">,
-  overrides: Partial<UnitStats> = {}
+  overrides: Partial<UnitStats> = {},
+  info?: Dismountable
 ): UnitStats {
   const riding = Object.fromEntries(
-    Object.entries(unit.effectiveStats ?? {}).filter(([, value]) => value !== null)
+    Object.entries((info?.dismounted ? null : unit.effectiveStats) ?? {}).filter(
+      ([, value]) => value !== null
+    )
   );
   return { ...unit.stats, ...riding, ...overrides };
 }

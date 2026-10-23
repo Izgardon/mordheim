@@ -129,6 +129,7 @@ export function toUnitInformationMap(raw: unknown): Record<string, BattleUnitInf
       current_wounds: currentWounds,
       out_of_action: outOfAction,
       kill_count: killCount,
+      ...(value.dismounted ? { dismounted: true } : {}),
     };
   }
   return normalized;
@@ -140,6 +141,7 @@ function hasUnitInformationContent(entry: BattleUnitInformationEntry | undefined
   }
   return Boolean(
     entry.out_of_action ||
+      entry.dismounted ||
       entry.kill_count > 0 ||
       (entry.current_wounds !== null && entry.current_wounds !== undefined) ||
       Object.keys(entry.stats_override ?? {}).length > 0 ||

@@ -44,14 +44,22 @@ function BeastDetails({ title, beast }: { title?: string; beast: BattleRosterCom
 
 /**
  * The mount's mark before a rider's name ("Rides Warhorse"), opening the mount's profile and
- * entries; nothing on foot.
+ * entries; dimmed and "Dismounted from Warhorse" once he is off it (step 5); nothing on foot.
  */
-export function RiderMark({ mount }: { mount?: BattleRosterMount | null }) {
+export function RiderMark({
+  mount,
+  dismounted = false,
+}: {
+  mount?: BattleRosterMount | null;
+  dismounted?: boolean;
+}) {
   if (!mount) return null;
-  const title = `Rides ${mount.name}`;
+  const title = dismounted ? `Dismounted from ${mount.name}` : `Rides ${mount.name}`;
   return (
     <Tooltip
-      trigger={<CreatureMark kind="mount" title={title} />}
+      trigger={
+        <CreatureMark kind="mount" title={title} className={dismounted ? "opacity-40" : ""} />
+      }
       content={<BeastDetails title={title} beast={mount} />}
       maxWidth={320}
       className="inline-flex"

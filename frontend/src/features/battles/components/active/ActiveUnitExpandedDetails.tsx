@@ -10,6 +10,7 @@ import type {
 } from "@/features/battles/components/prebattle/prebattle-types";
 import type { BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
 import { useUnitNotesAutosave } from "@/features/battles/hooks/useUnitNotesAutosave";
+import { battleCompanionSources, onFoot } from "@/features/battles/utils/battle-companions";
 import "@/features/warbands/styles/warband.css";
 import { useMediaQuery } from "@/lib/use-media-query";
 
@@ -58,9 +59,17 @@ export default function ActiveUnitExpandedDetails({
 
   const itemSource: UnitItemEntry[] = useMemo(() => activeItemSource(unit), [unit]);
 
+  // A dismounted rider's mount brings nothing more (step 5).
+  const dismounted = Boolean(unitInformation?.dismounted);
   const blocks = useMemo(
-    () => buildActiveBlocks(unit, itemSource, getUsedSingleUseItemCount),
-    [getUsedSingleUseItemCount, itemSource, unit]
+    () =>
+      buildActiveBlocks(
+        unit,
+        itemSource,
+        getUsedSingleUseItemCount,
+        battleCompanionSources(onFoot(unit, { dismounted }))
+      ),
+    [dismounted, getUsedSingleUseItemCount, itemSource, unit]
   );
 
   useEffect(() => {

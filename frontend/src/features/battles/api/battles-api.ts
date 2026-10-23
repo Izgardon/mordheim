@@ -147,6 +147,15 @@ export function setUnitOutOfAction(
   return battleWrite(campaignId, battleId, "unit-ooa/", payload);
 }
 
+/** A rider off his mount for the rest of the battle, or back on it (step 5). */
+export function setUnitDismounted(
+  campaignId: number,
+  battleId: number,
+  payload: { unit_key: string; dismounted: boolean }
+) {
+  return battleWrite(campaignId, battleId, "unit-dismount/", payload);
+}
+
 export function recordUnitKill(
   campaignId: number,
   battleId: number,

@@ -123,6 +123,7 @@ export default function BattleActive() {
           killTargetOptions={page.killTargetOptions}
           canInteract={canInteract}
           onSetOutOfAction={page.setOutOfAction}
+          onSetDismounted={page.setDismounted}
           onAdjustWounds={config.adjustUnitWounds}
           onSaveOverride={config.saveUnitOverride}
           onSaveUnitNotes={config.saveUnitNotes}

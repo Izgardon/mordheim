@@ -13,7 +13,7 @@ import { getBattleCardThemeStyle } from "@/features/battles/components/shared/ba
 import { getErrorMessage } from "@/lib/get-error-message";
 import CreatureMark from "@/features/warbands/components/units/beasts/CreatureMark";
 import { PetChips } from "@/features/battles/components/shared/BattleCompanionParts";
-import { groupMountedStats } from "@/features/battles/utils/battle-companions";
+import { groupMountedStats, onFoot } from "@/features/battles/utils/battle-companions";
 
 import ActiveHenchmanRow from "./ActiveHenchmanRow";
 import ActiveKillDialog from "./ActiveKillDialog";
@@ -31,6 +31,8 @@ type ActiveHenchmenGroupCardProps = {
   unitInformationByKey: Record<string, BattleUnitInformationEntry>;
   killTargetOptions: ActiveBattleUnitOption[];
   onSetOutOfAction: (unitKey: string, outOfAction: boolean) => Promise<void>;
+  /** A rider off his mount for the rest of the battle, or back on it (step 5). */
+  onSetDismounted?: (unitKey: string, dismounted: boolean) => Promise<void>;
   onAdjustWounds: (unit: PrebattleUnit, delta: number) => Promise<void>;
   /** Saves a battle stat change for every member of the group (BATL-NEW-07). */
   onSaveOverride: (unitKeys: string[], override: UnitOverride | undefined) => Promise<void>;
@@ -58,6 +60,7 @@ export default function ActiveHenchmenGroupCard({
   unitInformationByKey,
   killTargetOptions,
   onSetOutOfAction,
+  onSetDismounted,
   onAdjustWounds,
   onSaveOverride,
   onSaveUnitNotes,
@@ -136,7 +139,10 @@ export default function ActiveHenchmenGroupCard({
           <div className="battle-stats-shell w-full md:max-w-[30rem] md:justify-self-end">
             <UnitStatsTable
               stats={detailStats}
-              mounted={groupMountedStats(members, detailUnitInfo?.stats_override)}
+              mounted={groupMountedStats(
+                members.map((member) => onFoot(member, unitInformationByKey[member.key])),
+                detailUnitInfo?.stats_override
+              )}
               variant="summary"
               wrapperClassName="w-full max-w-none"
             />
@@ -157,6 +163,7 @@ export default function ActiveHenchmenGroupCard({
                 void handleSetOutOfAction(member.key, outOfAction)
               }
               onRecordKill={() => setKillDialogMember(member)}
+              onSetDismounted={onSetDismounted}
             />
           ))}
         </div>

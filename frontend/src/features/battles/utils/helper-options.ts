@@ -23,7 +23,11 @@ function unitsInAction(participant: BattleParticipant, roster: ParticipantRoster
     .map(({ unit, sectionLabel }) => ({
       unit,
       sectionLabel,
-      stats: helperStats(unit, unitInformation[unit.key]?.stats_override),
+      stats: helperStats(
+        unit,
+        unitInformation[unit.key]?.stats_override,
+        unitInformation[unit.key]
+      ),
     }));
 }
 

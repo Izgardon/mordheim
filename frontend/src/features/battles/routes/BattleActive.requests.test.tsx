@@ -131,6 +131,51 @@ describe("BattleActive requests", () => {
     fakeApi.reset();
   });
 
+  it("marks a rider dismounted in one request and shows the answer's state (step 5)", async () => {
+    const user = setupUser();
+    routeServer();
+    const rosters = battleRosters();
+    const [wolf] = rosters[String(ME.id)].heroes;
+    rosters[String(ME.id)].heroes[0] = {
+      ...wolf,
+      mount: {
+        itemId: 140,
+        name: "Warhorse",
+        hasProfile: true,
+        stats: null,
+        movement: 8,
+        ratingBonus: 5,
+      },
+      effectiveStats: { movement: 8, armour_save: 4 },
+    };
+    fakeApi.on(`GET ${battlePath("rosters/")}`, rosters);
+    fakeApi.on(`POST ${battlePath("unit-dismount/")}`, (body: unknown) => {
+      const { unit_key, dismounted } = body as { unit_key: string; dismounted: boolean };
+      setMyUnitInformation({
+        ...myRow().unit_information_json,
+        [unit_key]: { ...myUnit(unit_key), dismounted },
+      });
+      return answer();
+    });
+    renderBattleRoute("active");
+    expect(await screen.findByText("Captain Wolf")).toBeInTheDocument();
+    fakeApi.clearRequests();
+
+    await user.click(firstButton("Captain Wolf", "Captain Wolf: Dismounted"));
+
+    await waitFor(() =>
+      expect(firstButton("Captain Wolf", "Captain Wolf: Dismounted")).toHaveAttribute(
+        "aria-pressed",
+        "true"
+      )
+    );
+    expect(fakeApi.calls()).toEqual([`POST ${battlePath("unit-dismount/")}`]);
+    expect(fakeApi.bodyOf(`POST ${battlePath("unit-dismount/")}`)).toEqual({
+      unit_key: "hero:1",
+      dismounted: true,
+    });
+  });
+
   it("shows each player's place in the battle on the active page too (BATL-NEW-08)", async () => {
     await renderActive();
 

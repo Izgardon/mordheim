@@ -54,6 +54,8 @@ export type BattleUnitInformationEntry = {
   current_wounds?: number | null;
   out_of_action: boolean;
   kill_count: number;
+  /** A rider off his mount for the rest of the battle (step 5); left out otherwise. */
+  dismounted?: boolean;
 };
 
 export type BattlePostbattleSeriousInjuryRoll = {
