@@ -81,7 +81,7 @@ class MixedLedgerGoldTests(RosterTestCase):
                 ("Buy", "Sword", -40, None),  # "Bought": stored positive until BUG-37, named "Buy" since decision 4
                 ("Sell", "Sword", 15, None),
                 ("Recruit", "Ana the Champion", -30, None),
-                ("Hire", "Ogre the Ogre", -60, None),
+                ("Hire", "Ogre", -60, None),  # named for its type: once (was "Ogre the Ogre")
                 ("Group", "Recruited 2 Zealots", 0, None),
                 ("Recruit", "Bo into Zealots", -20, "Recruited 2 Zealots"),
                 ("Recruit", "Cy into Zealots", -20, "Recruited 2 Zealots"),

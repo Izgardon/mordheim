@@ -70,6 +70,11 @@ class HireCopyTests(HireTestCase):
         self.assertEqual([row[:3] for row in trade_rows(self.warband)], [("Hire", "Grukk the Ogre Bodyguard", -80)])
         self.assertEqual([(row[0], row[1], row[2]["name"]) for row in log_rows(self.warband)], [("personnel", "new_hireling", "Grukk")])  # fmt: skip
 
+    def test_a_hire_keeping_the_default_name_is_recorded_by_its_name_alone(self):
+        self.hire()  # named for its type: "Ogre Bodyguard the Ogre Bodyguard" said it twice
+
+        self.assertEqual([row[:3] for row in trade_rows(self.warband)], [("Hire", "Ogre Bodyguard", -80)])
+
     def test_a_fee_that_isnt_a_number_hires_for_nothing_and_keeps_its_formula(self):
         HiredSword.objects.filter(id=self.ogre.id).update(hire_cost=None, hire_cost_expression="2 Treasure", upkeep_cost=None, upkeep_cost_expression="1 piece of wyrdstone")  # fmt: skip
 
