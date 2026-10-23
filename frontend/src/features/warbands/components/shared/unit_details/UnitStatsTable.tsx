@@ -1,5 +1,8 @@
 import { cn } from "@/lib/utils";
 import { Tooltip } from "@components/tooltip";
+import MountedStatValue, { mountedValue } from "./MountedStatValue";
+
+import type { EffectiveStats } from "../../../types/companion-types";
 
 export type UnitStats = {
   movement?: number | string | null;
@@ -67,6 +70,11 @@ type UnitStatsTableProps = {
   renderExtraRow?: (label: string) => React.ReactNode;
   showTooltips?: boolean;
   tooltipContentClassName?: string;
+  /**
+   * A mounted unit's M and save from the server (`effective_stats`): shown highlighted in place
+   * of its own, the foot values in a tooltip. Display only; null or left out: on foot.
+   */
+  mounted?: EffectiveStats | null;
 };
 
 const formatStatValue = (value?: number | string | null) => {
@@ -96,6 +104,7 @@ export default function UnitStatsTable({
   renderExtraRow,
   showTooltips = true,
   tooltipContentClassName,
+  mounted,
 }: UnitStatsTableProps) {
   const fields =
     statFields ?? (variant === "race" ? UNIT_STAT_FIELDS_RACE : UNIT_STAT_FIELDS_SUMMARY);
@@ -103,6 +112,21 @@ export default function UnitStatsTable({
 
   const renderStatValue = (field: UnitStatField) => {
     const override = valueOverrides?.[field.label];
+    const own = stats[field.statKey as keyof UnitStats] as number | string | null | undefined;
+    const riding =
+      override === undefined && !valueDelta?.[field.label]
+        ? mountedValue(mounted, String(field.statKey), own)
+        : undefined;
+    if (riding !== undefined) {
+      return (
+        <MountedStatValue
+          statKey={String(field.statKey)}
+          value={riding}
+          own={own}
+          tooltipContentClassName={tooltipContentClassName}
+        />
+      );
+    }
     const baseValue = override !== undefined ? override : stats[field.statKey as keyof UnitStats];
     const delta = valueDelta?.[field.label] ?? 0;
     const numericBase = toNumberOrNull(baseValue as number | string | null | undefined);

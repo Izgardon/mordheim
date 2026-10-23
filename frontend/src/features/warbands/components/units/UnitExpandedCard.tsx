@@ -8,6 +8,7 @@ import ExperienceBar from "../shared/unit_details/ExperienceBar";
 import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "../shared/unit_details/warband-tooltip-styles";
 import { toRaceUnitStats, toUnitStats } from "../shared/utils/unit-stats-mapper";
 import UnitListBlocks, { type PendingTab } from "./UnitListBlocks";
+import CompanionChips from "./beasts/CompanionChips";
 import { cardPanelStyle } from "./expanded/ExpandedTiles";
 import {
   CollapsibleDeeds,
@@ -69,17 +70,27 @@ export default function UnitExpandedCard<K extends UnitKindKey>({
     />
   ) : null;
   const identity = (
-    <ExpandedIdentity
-      title={<ExpandedTitle unit={unit} />}
-      raceName={unit.race_name || unit.race?.name}
-      unitType={unit.unit_type}
-      xp={unit.xp}
-    />
+    <>
+      <ExpandedIdentity
+        title={<ExpandedTitle unit={unit} />}
+        raceName={unit.race_name || unit.race?.name}
+        unitType={unit.unit_type}
+        xp={unit.xp}
+      />
+      <CompanionChips
+        kind={kind}
+        unit={unit}
+        warbandId={warbandId}
+        canManageItems={canManageItems}
+        className="mt-2"
+      />
+    </>
   );
   const statsTable = (
     <UnitStatsTable
       stats={toUnitStats(unit)}
       raceStats={toRaceUnitStats(unit)}
+      mounted={unit.effective_stats}
       variant="race"
       wrapperClassName="h-full w-full max-w-none"
       tooltipContentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}

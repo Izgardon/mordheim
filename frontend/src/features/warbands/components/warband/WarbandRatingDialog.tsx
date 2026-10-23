@@ -7,7 +7,7 @@ import {
 } from "@components/dialog";
 
 import ratingIcon from "@/assets/icons/Menu.webp";
-import { toNumber } from "../../utils/warband-utils";
+import { mountsRating, toNumber } from "../../utils/warband-utils";
 import type { HenchmenGroup, WarbandHero, WarbandHireling } from "../../types/warband-types";
 
 type WarbandRatingDialogProps = {
@@ -49,7 +49,8 @@ export default function WarbandRatingDialog({
     return sum + toNumber(hs.rating ?? 0) + toNumber(hs.xp);
   }, 0);
 
-  const totalRating = heroRating + henchmenRating + hirelingRating;
+  const mountRating = mountsRating(heroes, hirelings, henchmenGroups);
+  const totalRating = heroRating + henchmenRating + hirelingRating + mountRating;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -119,6 +120,12 @@ export default function WarbandRatingDialog({
                 <span className="font-semibold text-foreground">{hirelingRating}</span>
               </div>
             )}
+            {mountRating > 0 && (
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="text-muted-foreground">Mounts:</span>
+                <span className="font-semibold text-foreground">{mountRating}</span>
+              </div>
+            )}
           </div>
 
           <div className="border-t border-[#3b2f25] pt-2">
@@ -130,7 +137,8 @@ export default function WarbandRatingDialog({
 
           <p className="text-xs italic text-muted-foreground">
             Heroes: 5 per hero (20 if Large) + XP. Henchmen: group size &times; (5 per henchman (20
-            if Large) + XP). Hired Swords: base rating + XP.
+            if Large) + XP). Hired Swords: base rating + XP. Mounts: each rider's mount bonus (a
+            group: one per member).
           </p>
         </div>
       </DialogContent>

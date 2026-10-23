@@ -1,5 +1,6 @@
 import { isPendingByName } from "../heroes/utils/pending-entries";
 import { groupItemsById } from "../../utils/warband-utils";
+import { isSwitchedOn } from "../../utils/companions";
 import {
   buildSpellCountMap,
   deduplicateSpells,
@@ -49,10 +50,6 @@ export function itemRows(items: Item[]): ItemRow[] {
   }
   return Array.from(rows.values());
 }
-
-/** A copy of a mount or pet switched on for its unit (a campaign's later change of kind: not). */
-export const isSwitchedOn = (item: Pick<Item, "companion" | "beast_kind">) =>
-  Boolean(item.companion) && (item.beast_kind === "mount" || item.beast_kind === "pet");
 
 const beastOf = (kind: BeastKind, rows: Item[]): LoadoutBeast => {
   const on = isSwitchedOn(rows[0]);

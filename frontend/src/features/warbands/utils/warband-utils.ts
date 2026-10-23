@@ -1,3 +1,5 @@
+import { unitMountBonus } from "./companions";
+
 import type { HenchmenGroup, WarbandHero, WarbandHireling } from "../types/warband-types";
 
 export const statFields = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
@@ -136,6 +138,14 @@ export const toNullableNumber = (value: string) => {
 
 // ── Warband rating ──────────────────────────────────────────────────────
 
+/** Each rider's mount bonus, as the server adds it to the rating (`unitMountBonus`). */
+export const mountsRating = (
+  heroes: WarbandHero[],
+  hirelings: WarbandHireling[],
+  henchmenGroups: HenchmenGroup[]
+) =>
+  [...heroes, ...hirelings, ...henchmenGroups].reduce((sum, unit) => sum + unitMountBonus(unit), 0);
+
 export const calculateWarbandRating = (
   heroes: WarbandHero[],
   hirelings: WarbandHireling[],
@@ -163,7 +173,9 @@ export const calculateWarbandRating = (
   }, 0);
 
   if (heroes.length || hirelings.length || henchmenGroups.length) {
-    return heroRating + hirelingRating + henchmenRating;
+    return (
+      heroRating + hirelingRating + henchmenRating + mountsRating(heroes, hirelings, henchmenGroups)
+    );
   }
   return typeof fallbackRating === "number" ? fallbackRating : 0;
 };
