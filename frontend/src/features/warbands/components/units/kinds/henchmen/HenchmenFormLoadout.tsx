@@ -6,6 +6,7 @@ import SkillFormDialog from "@/features/skills/components/SkillFormDialog";
 import CreateSpecialDialog from "@/features/special/components/CreateSpecialDialog";
 import AcquireItemDialog from "@/features/items/components/AcquireItemDialog/AcquireItemDialog";
 import { getPersistedItemCost } from "@/features/items/utils/acquire-item-costs";
+import { isSold } from "@/features/items/utils/item-listing";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { getLoadoutDropdownDisplayName } from "@/lib/loadout-display";
 import { isPendingByType } from "../../../heroes/utils/pending-entries";
@@ -62,8 +63,9 @@ export default function HenchmenFormLoadout(props: UnitFormSlotProps<"henchmen_g
     return Array.from(unique).sort((a, b) => a.localeCompare(b));
   }, [availableSpecials]);
   const query = (value: string) => value.trim().toLowerCase();
-  const matchingItems = availableItems.filter((item) =>
-    matchesSearchQuery(query(editing.items.query), item.name, item.type)
+  // The shop's items only: an unsold beast isn't offered (its item exists for kits and trades).
+  const matchingItems = availableItems.filter(
+    (item) => isSold(item) && matchesSearchQuery(query(editing.items.query), item.name, item.type)
   );
   const matchingSkills = availableSkills.filter((skill) =>
     matchesSearchQuery(query(editing.skills.query), skill.name, skill.type)

@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from "react";
-import { useOutletContext, useParams } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate, useOutletContext, useParams } from "react-router-dom";
 
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import { archivedOnly, useArchivedView } from "@/features/catalogue/hooks/useArchivedView";
@@ -19,6 +19,12 @@ const PAGE_SIZE = 12;
 
 /** Whether the form is open, and on which beast (none: adding one). */
 type FormState = { open: boolean; editingId: number | null };
+
+/** The beast another page asked to edit (an Animal item's Edit on Wargear), if any. */
+const editRequestOf = (state: unknown) => {
+  const editEntry = (state as { editEntry?: unknown } | null)?.editEntry;
+  return typeof editEntry === "number" ? editEntry : null;
+};
 
 /**
  * The Bestiary page: its list (or the Archived one), the kind, search and page, the open beast
@@ -42,7 +48,19 @@ export function useBestiaryPage() {
   const kindParam = url.get("kind");
   const kind: BeastKind | null = isBeastKind(kindParam) ? kindParam : null;
   const openEntryId = url.get("entry") ? Number(url.get("entry")) : null;
-  const [form, setForm] = useState<FormState>({ open: false, editingId: null });
+  // Arriving from an Animal item's Edit opens its beast's form once; the request is then dropped
+  // from the history entry, so Back and Forward don't open it again.
+  const location = useLocation();
+  const navigate = useNavigate();
+  const editRequest = capabilities.edit_catalogue ? editRequestOf(location.state) : null;
+  const [form, setForm] = useState<FormState>(() =>
+    editRequest === null ? { open: false, editingId: null } : { open: true, editingId: editRequest }
+  );
+  useEffect(() => {
+    if (editRequestOf(location.state) !== null) {
+      navigate({ pathname: location.pathname, search: location.search }, { replace: true });
+    }
+  }, [location.pathname, location.search, location.state, navigate]);
 
   const filtered = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();

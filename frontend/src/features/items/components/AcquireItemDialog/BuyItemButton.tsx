@@ -8,12 +8,13 @@ type BuyItemButtonProps = {
   item: Item;
 } & Omit<React.HTMLAttributes<HTMLSpanElement>, "children" | "content">;
 
+/** "Acquire melee weapon", "Acquire shield"; a beast by its kind: "Acquire mount", "Acquire pet". */
 function getAcquireLabel(item: Item) {
   if (item.type === "Weapon") {
     return `Acquire ${item.subtype?.toLowerCase() || ""} weapon`.replace("  ", " ");
   }
-  if (item.type === "Animal" && item.subtype === "Attack") {
-    return "Acquire attack animal";
+  if (item.type === "Animal") {
+    return `Acquire ${item.bestiary_entry?.kind ?? (item.subtype?.toLowerCase() || "animal")}`;
   }
   return `Acquire ${item.subtype?.toLowerCase() || "item"}`;
 }

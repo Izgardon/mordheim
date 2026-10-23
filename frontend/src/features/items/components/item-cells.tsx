@@ -115,11 +115,13 @@ function StatblockText({ statblock }: { statblock?: string | null }) {
   return <StatLineTable values={values} />;
 }
 
-/** An animal's profile: its bestiary entry's, or the item's own statblock. */
+/** An animal's profile: its beast's ("No profile" for one without), or the item's own statblock. */
 export function AnimalStatsCell({ item }: { item: Item }) {
-  return item.bestiary_entry ? (
-    <StatLineTable values={profileValues(item.bestiary_entry)} />
-  ) : (
-    <StatblockText statblock={item.statblock} />
-  );
+  if (!item.bestiary_entry) {
+    return <StatblockText statblock={item.statblock} />;
+  }
+  if (item.bestiary_entry.has_profile === false) {
+    return <span className="text-xs italic text-muted-foreground">No profile</span>;
+  }
+  return <StatLineTable values={profileValues(item.bestiary_entry)} />;
 }
