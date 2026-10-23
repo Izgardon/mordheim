@@ -65,6 +65,7 @@ export default function UnitSectionEditing<K extends UnitKindKey>({
       {creation.isAdding ? (
         <AddUnitForm
           kind={kind}
+          labels={kind.labelsFor?.(creation.newForm)}
           onCreate={creation.handleAdd}
           onCancel={() => {
             creation.setIsAdding(false);

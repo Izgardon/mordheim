@@ -23,7 +23,7 @@ export function useUnitPendingPurchases<K extends UnitKindKey>(
         .map((form) => {
           const cost = kind.editor.creation.recruitCost(form);
           return {
-            label: `${form.name.trim() || kind.labels.newUnit} (recruit)`,
+            label: `${form.name.trim() || (kind.labelsFor?.(form) ?? kind.labels).newUnit} (recruit)`,
             category: "recruit" as const,
             quantity: 1,
             unitCost: cost,

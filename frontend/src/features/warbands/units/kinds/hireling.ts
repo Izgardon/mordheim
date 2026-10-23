@@ -35,7 +35,7 @@ import { buildLoadoutPayload } from "./hero-forms";
 import { hirelingTermsOf, isDramatisPersona } from "./hireling-terms";
 
 import type { HirelingFormEntry, WarbandHireling } from "../../types/warband-types";
-import type { UnitKindConfig } from "../unit-kind-types";
+import type { UnitKindConfig, UnitKindLabels } from "../unit-kind-types";
 
 export const mapHirelingToForm = (hireling: WarbandHireling): HirelingFormEntry => ({
   id: hireling.id,
@@ -74,6 +74,48 @@ export const mapHirelingToForm = (hireling: WarbandHireling): HirelingFormEntry 
 export const validateHirelingForm = (hireling: HirelingFormEntry) =>
   toValidationError(missingIdentityFields(hireling).filter((field) => field !== "race_id"));
 
+/** What the site calls a hireling, a hired sword ... */
+const HIRED_SWORD_LABELS: UnitKindLabels = {
+  plural: "Hired Swords",
+  singular: "Hired Sword",
+  edit: "Edit Hired Swords",
+  add: "Add hired sword",
+  create: "Create hired sword",
+  fallbackName: (index) => `Hired Sword ${index + 1}`,
+  untitled: "Untitled hired sword",
+  typeFallback: "Hired Sword",
+  unnamed: "Unnamed Hired Sword",
+  killsName: "hired sword",
+  empty: "No hired swords yet.",
+  dismiss: "Dismiss",
+  dismissConfirm: "Dismiss hired sword",
+  dismissVerb: "dismiss",
+  draftNoun: "hired sword",
+  saveError: "Unable to update hired swords",
+  unknownName: "Unknown Hired Sword",
+  newUnit: "New Hired Sword",
+  addNew: "Add new",
+  formIdPrefix: "hireling",
+};
+
+/**
+ * ... or a dramatis persona, on his own card, its dismiss confirm and the add form; the section's
+ * words (its title, Edit, Add, its messages) stay the hired swords'.
+ */
+const DRAMATIS_PERSONA_LABELS: UnitKindLabels = {
+  ...HIRED_SWORD_LABELS,
+  singular: "Dramatis Persona",
+  create: "Create dramatis persona",
+  fallbackName: (index) => `Dramatis Persona ${index + 1}`,
+  untitled: "Untitled dramatis persona",
+  typeFallback: "Dramatis Persona",
+  unnamed: "Unnamed Dramatis Persona",
+  killsName: "dramatis persona",
+  dismissConfirm: "Dismiss dramatis persona",
+  unknownName: "Unknown Dramatis Persona",
+  newUnit: "New Dramatis Persona",
+};
+
 /** A dramatis persona never gains experience, so he has no XP bar and no level-ups. */
 const gainsXp = (hireling: WarbandHireling) =>
   !hireling.no_level_ups && !isDramatisPersona(hireling);
@@ -85,28 +127,8 @@ export const hirelingKind: UnitKindConfig<"hireling"> = {
   collection: "hirelings",
   cardClassName: "warband-card--hireling",
   summaryLoadoutClassName: "mt-auto",
-  labels: {
-    plural: "Hired Swords",
-    singular: "Hired Sword",
-    edit: "Edit Hired Swords",
-    add: "Add hired sword",
-    create: "Create hired sword",
-    fallbackName: (index) => `Hired Sword ${index + 1}`,
-    untitled: "Untitled hired sword",
-    typeFallback: "Hired Sword",
-    unnamed: "Unnamed Hired Sword",
-    killsName: "hired sword",
-    empty: "No hired swords yet.",
-    dismiss: "Dismiss",
-    dismissConfirm: "Dismiss hired sword",
-    dismissVerb: "dismiss",
-    draftNoun: "hired sword",
-    saveError: "Unable to update hired swords",
-    unknownName: "Unknown Hired Sword",
-    newUnit: "New Hired Sword",
-    addNew: "Add new",
-    formIdPrefix: "hireling",
-  },
+  labels: HIRED_SWORD_LABELS,
+  labelsFor: (form) => (isDramatisPersona(form) ? DRAMATIS_PERSONA_LABELS : HIRED_SWORD_LABELS),
   flags: {
     hasSpells: true,
     hasMembers: false,

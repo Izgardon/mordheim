@@ -415,7 +415,7 @@ describe("UnitSection: hired swords create and save", () => {
     expect(within(addForm).getByRole("radio", { name: "Hero" })).toBeChecked();
     await user.click(within(addForm).getByRole("radio", { name: "One battle" }));
     await user.type(within(addForm).getByLabelText("Paid in"), "a favour");
-    await user.click(screen.getByRole("button", { name: "Create hired sword" }));
+    await user.click(screen.getByRole("button", { name: "Create dramatis persona" }));
     expect(await screen.findByText("New recruit: 40 gc, paid when you save.")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Save" }));
 
@@ -430,6 +430,31 @@ describe("UnitSection: hired swords create and save", () => {
         no_level_ups: true,
       }),
     ]);
+  });
+
+  it("calls a dramatis persona one in edit mode: his card, its dismiss confirm, and the add form's name and Create (step 2 browser check)", async () => {
+    const user = setupUser();
+    const bertha = makeVeteranHireling({ id: 33, name: "Bertha", kind: "dramatis_persona" });
+    renderWithQueryClient(<Section initialHirelings={[makeVeteranHireling(), bertha]} />);
+    await startEditing(user);
+
+    expect(screen.getByRole("group", { name: "Hired Sword 1" })).toBeInTheDocument();
+    const card = screen.getByRole("group", { name: "Dramatis Persona 2" });
+    expect(card).toHaveTextContent(/Dramatis Persona 2\s*-\s*Bertha/);
+    await user.click(within(card).getByRole("button", { name: "Dismiss" }));
+    const dialog = await screen.findByRole("dialog");
+    expect(within(dialog).getByRole("button", { name: "Dismiss dramatis persona" })).toBeVisible();
+    await user.click(within(dialog).getByRole("button", { name: "Cancel" }));
+
+    await user.click(screen.getByRole("button", { name: "Add hired sword" }));
+    const addForm = screen.getByRole("group", { name: "New Hired Sword" });
+    expect(within(addForm).getByPlaceholderText("Hired sword name")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Create hired sword" })).toBeInTheDocument();
+    await user.click(within(addForm).getByRole("radio", { name: "Dramatis persona" }));
+
+    expect(addForm).toHaveAccessibleName("New Dramatis Persona");
+    expect(within(addForm).getByPlaceholderText("Dramatis persona name")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Create dramatis persona" })).toBeInTheDocument();
   });
 
   it("saves a hired sword with no race, as one hired from an entry the catalogue's races lack", async () => {

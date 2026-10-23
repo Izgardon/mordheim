@@ -9,6 +9,7 @@ import {
   AddTextField,
   type AddFieldsSlotProps,
 } from "../../forms/AddFormFields";
+import { isDramatisPersona } from "../../../../units/kinds/hireling-terms";
 
 import type { Skill } from "@/features/skills/types/skill-types";
 import type { HirelingFormEntry } from "../../../../types/warband-types";
@@ -76,14 +77,14 @@ export default function HirelingAddFields(props: AddFieldsSlotProps<"hireling">)
           label="Name"
           value={form.name}
           onChange={setText("name")}
-          placeholder="Hired sword name"
+          placeholder={isDramatisPersona(form) ? "Dramatis persona name" : "Hired sword name"}
         />
         <AddTextField
           className="min-w-[160px] flex-1 space-y-2"
           label="Type"
           value={form.unit_type}
           onChange={setText("unit_type")}
-          placeholder="Hired Sword"
+          placeholder={isDramatisPersona(form) ? "Dramatis Persona" : "Hired Sword"}
         />
         <AddRaceField {...props} className="min-w-[200px] flex-[1.2] space-y-2" />
         <AddNumberField

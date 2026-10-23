@@ -4,10 +4,12 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@components/button";
 
 import type { UnitKindKey } from "../../../types/units";
-import type { UnitKindConfig } from "../../../units/unit-kind-types";
+import type { UnitKindConfig, UnitKindLabels } from "../../../units/unit-kind-types";
 
 type AddUnitFormProps<K extends UnitKindKey> = {
   kind: UnitKindConfig<K>;
+  /** The new unit's labels (a hireling's follow the kind picked: "Create dramatis persona"). */
+  labels?: UnitKindLabels;
   onCreate: () => Promise<void> | void;
   onCancel: () => void;
   error: string;
@@ -20,6 +22,7 @@ type AddUnitFormProps<K extends UnitKindKey> = {
 /** The "Add <unit>" form shell: the kind's fields, Cancel and "Create <unit>", errors, limits. */
 export default function AddUnitForm<K extends UnitKindKey>({
   kind,
+  labels = kind.labels,
   onCreate,
   onCancel,
   error,
@@ -50,7 +53,7 @@ export default function AddUnitForm<K extends UnitKindKey>({
             Creating...
           </>
         ) : (
-          kind.labels.create
+          labels.create
         )}
       </Button>
     </>
@@ -59,7 +62,7 @@ export default function AddUnitForm<K extends UnitKindKey>({
   return (
     <div
       role="group"
-      aria-label={kind.labels.newUnit}
+      aria-label={labels.newUnit}
       className="space-y-3 rounded-lg border border-border/60 bg-[rgba(12,9,6,0.92)] p-4 text-foreground shadow-[0_18px_40px_rgba(5,20,24,0.45)]"
     >
       {children}
