@@ -17,7 +17,7 @@ from django.test.utils import CaptureQueriesContext
 
 from apps.campaigns.models import Campaign
 from apps.core.models import CatalogueRemoval
-from apps.hirelings.models import DramatisPersona, HiredSword
+from apps.hirelings.models import MAX_KIT_QUANTITY, DramatisPersona, HiredSword
 from apps.items.models import Item
 from apps.skills.models import Skill
 from apps.warbands.models import Hireling
@@ -161,3 +161,13 @@ class HireRuleTests(HireTestCase):
         # rows written; then the detail (the unit, its items and their three prefetches). A dramatis persona adds
         # its one-of-each check.
         self.assertEqual(small, 30)
+
+
+class HireKitBoundTests(HireTestCase):
+    def test_a_kit_line_over_the_bound_hires_at_most_the_bound(self):
+        # a row written before the bound (or by hand) can't flood the warband with item rows
+        self.ogre.item_links.filter(item=self.axe).update(quantity=10_000)
+
+        body = self.hire().data
+
+        self.assertEqual(sum(1 for item in body["items"] if item["id"] == self.axe.id), MAX_KIT_QUANTITY)

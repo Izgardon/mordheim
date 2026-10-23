@@ -31,8 +31,9 @@ from apps.special.models import Special
 from apps.special.serializers import SpecialSerializer
 from apps.spells.models import Spell
 from apps.spells.serializers import SpellSerializer
+from apps.warbands.utils.armour_save import BEST_ARMOUR_SAVE, WORST_ARMOUR_SAVE
 
-from .models import DramatisPersona, HiredSword
+from .models import MAX_KIT_QUANTITY, DramatisPersona, HiredSword
 
 STAT_FIELDS = (
     "movement",
@@ -152,8 +153,12 @@ def _formula() -> serializers.CharField:
 
 class HirelingProfileWriteSerializer(serializers.ModelSerializer):
     """A create or an edit of a campaign's hired sword or dramatis persona. A list it sends (skills, specials, spells,
-    equipment, restrictions) replaces that list; a list it leaves out stays."""
+    equipment, restrictions) replaces that list; a list it leaves out stays. The armour save and the kit's quantities
+    are bounded as a warband's copies are, since hiring copies them onto one."""
 
+    armour_save = serializers.IntegerField(
+        min_value=BEST_ARMOUR_SAVE, max_value=WORST_ARMOUR_SAVE, allow_null=True, required=False
+    )
     race_id = CatalogueEntryField(source="race", queryset=Race.objects.all(), allow_null=True, required=False)
     hire_cost = _cost()
     hire_cost_expression = _formula()
@@ -174,7 +179,10 @@ class HirelingProfileWriteSerializer(serializers.ModelSerializer):
         return value or ""
 
     def validate_item_entries(self, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        """Each item once (an item listed twice: its first quantity), as the campaign's current item for it."""
+        """Each item once (an item listed twice: its first quantity), as the campaign's current item for it, and at
+        most MAX_KIT_QUANTITY of it: hiring writes a row per copy."""
+        if any(row["quantity"] > MAX_KIT_QUANTITY for row in rows):
+            raise serializers.ValidationError(f"A kit carries at most {MAX_KIT_QUANTITY} of an item.")
         return current_equipment(rows, self.context["campaign_id"])
 
     def validate_restriction_ids(self, notes: list[dict[str, Any]]) -> list[dict[str, Any]]:

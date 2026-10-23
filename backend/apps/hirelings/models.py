@@ -19,6 +19,7 @@ from apps.warbands.models.hirelings import STAYS
 from apps.warbands.models.shared import StatBlock, stat_constraints
 
 CASTERS = (("No", "No"), ("Wizard", "Wizard"), ("Priest", "Priest"))
+MAX_KIT_QUANTITY = 20  # of one item in a kit: hiring writes a row per copy
 
 
 def _owner(model: str, related: str) -> models.ForeignKey:

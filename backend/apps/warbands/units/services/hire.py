@@ -20,7 +20,7 @@ from rest_framework.exceptions import NotFound
 
 from apps.core.catalogue.current import current_rows
 from apps.core.models import CatalogueRemoval
-from apps.hirelings.models import DramatisPersona, HiredSword, HirelingProfile
+from apps.hirelings.models import MAX_KIT_QUANTITY, DramatisPersona, HiredSword, HirelingProfile
 from apps.hirelings.selectors import link_model
 from apps.items.models import Item
 from apps.warbands.models import Hireling, HirelingItem, Warband, on_roster
@@ -110,14 +110,15 @@ def _warnings(source: str, entry: Any, warband: Warband) -> list[dict[str, Any]]
 
 
 def _kit(unit: Hireling, entry: Any, campaign_id: int) -> None:
-    """One item row per copy of each kit line, as the campaign's current item, with no cost: two queries."""
+    """One item row per copy of each kit line (at most MAX_KIT_QUANTITY), as the campaign's current item, with no
+    cost: two queries."""
     lines = list(entry.item_links.all())
     current = current_rows(Item.objects.only("id", "campaign_id", "replaces_id"), [line.item_id for line in lines], campaign_id)  # fmt: skip
     HirelingItem.objects.bulk_create(
         HirelingItem(hireling=unit, item_id=current[line.item_id].pk, cost=None)
         for line in lines
         if line.item_id in current
-        for _copy in range(line.quantity)
+        for _copy in range(min(line.quantity, MAX_KIT_QUANTITY))  # a row written before the bound can't flood it
     )
 
 

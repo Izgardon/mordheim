@@ -13,6 +13,7 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
 from apps.core.catalogue.payloads import BADGES
+from apps.hirelings.models import MAX_KIT_QUANTITY
 from apps.items.tests.catalogue_support import DRAMATIS_PERSONAE, HIRED_SWORDS, ITEMS, CatalogueTestCase, make_entry
 
 STATS = [
@@ -120,3 +121,22 @@ class HirelingPayloadTests(CatalogueTestCase):
 
         self.assertEqual(counts(), before)
         self.assertEqual(before, [3, 3, 9, 9])  # membership, rows, restrictions; a book detail reads no membership
+
+
+class HirelingWriteBoundsTests(CatalogueTestCase):
+    """A kit's quantities and the armour save are bounded as the warband's copies are, so hiring an entry can neither
+    flood the warband with item rows nor fail on a save the unit can't hold."""
+
+    def test_a_kit_quantity_over_the_bound_or_a_save_out_of_range_is_refused(self):
+        cases: tuple[tuple[dict[str, Any], str], ...] = (
+            ({"item_entries": [{"item_id": self.book_sword.id, "quantity": MAX_KIT_QUANTITY + 1}]}, "item_entries"),
+            ({"armour_save": 7}, "armour_save"),
+            ({"armour_save": -6}, "armour_save"),
+        )
+        for kind in (HIRED_SWORDS, DRAMATIS_PERSONAE):
+            for number, (body, field) in enumerate(cases):
+                with self.subTest(kind=kind.key, field=field, body=body):
+                    response = self.create_as(self.owner, kind, f"Bulky {number}", **body)
+                    self.assertEqual((response.status_code, list(response.data)), (400, [field]))
+        kept = self.create_as(self.owner, HIRED_SWORDS, "Bulky", armour_save=-5, item_entries=[{"item_id": self.book_sword.id, "quantity": MAX_KIT_QUANTITY}])  # fmt: skip
+        self.assertEqual((kept.status_code, kept.data["armour_save"]), (201, -5))
