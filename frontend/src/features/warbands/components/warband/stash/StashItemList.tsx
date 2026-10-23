@@ -1,5 +1,8 @@
+import { useState } from "react";
+
 import ItemActionDialogs from "../../shared/ItemActionDialogs";
 import StashItemRow from "./StashItemRow";
+import BeastRecruitDialog, { type RecruitRequest } from "../../units/beasts/BeastRecruitDialog";
 import { itemMutationUpdate } from "../../../api/economy-queries";
 import { useWarbandCacheUpdate } from "../../../api/warband-cache";
 
@@ -35,6 +38,18 @@ export default function StashItemList({
   const isMobile = useMediaQuery("(max-width: 960px)");
   const updateWarbandCache = useWarbandCacheUpdate();
   const entries = stashEntries(items);
+  const [recruiting, setRecruiting] = useState<RecruitRequest | null>(null);
+  /** A creature row's recruit dialog, for the stash's copies of its item. */
+  const recruitFrom = (itemId: number) => {
+    const item = items.find((entry) => entry.id === itemId);
+    if (item?.beast_kind !== "creature") return undefined;
+    return () =>
+      setRecruiting({
+        item: { id: item.id, name: item.name },
+        copies: item.quantity ?? 1,
+        source: { type: "stash", item_id: item.id },
+      });
+  };
   const menu = useItemActionMenu({
     source: { kind: "stash", items },
     warbandId,
@@ -109,6 +124,7 @@ export default function StashItemList({
                   entry={entry}
                   canEdit={canEdit}
                   onMenuClick={(e) => menu.handleMenuToggle(entry, e)}
+                  onRecruit={recruitFrom(entry.visibleId)}
                 />
               ))}
             </div>
@@ -116,6 +132,13 @@ export default function StashItemList({
         </div>
       </div>
       <ItemActionDialogs menu={menu} canEdit={canEdit} menuInPlace={inSheet} />
+      {recruiting ? (
+        <BeastRecruitDialog
+          {...recruiting}
+          warbandId={warbandId}
+          onClose={() => setRecruiting(null)}
+        />
+      ) : null}
     </>
   );
 }

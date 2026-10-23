@@ -3,6 +3,7 @@ import { useEffect, useState, type MouseEvent } from "react";
 import UnitListBlocksShell, { type UnitListPopup } from "../shared/blocks/UnitListBlocks";
 import ItemActionDialogs from "../shared/ItemActionDialogs";
 import LoadoutEntryRow from "./LoadoutEntryRow";
+import BeastRecruitDialog, { type RecruitRequest } from "./beasts/BeastRecruitDialog";
 
 import { itemMutationUpdate } from "../../api/economy-queries";
 import { useWarbandCacheUpdate } from "../../api/warband-cache";
@@ -58,6 +59,7 @@ export default function UnitListBlocks<K extends UnitKindKey>({
 }: UnitListBlocksProps<K>) {
   const [openPopups, setOpenPopups] = useState<UnitListPopup[]>([]);
   const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [recruiting, setRecruiting] = useState<RecruitRequest | null>(null);
   const { hasMembers } = kind.flags;
   const updateWarbandCache = useWarbandCacheUpdate();
 
@@ -80,9 +82,15 @@ export default function UnitListBlocks<K extends UnitKindKey>({
   });
 
   const companionSwitch = useCompanionSwitch(kind, warbandId);
-  /** A mount's or pet's switch: its copy on or off for this unit (creatures recruit instead). */
-  const beastClick = ({ beast, label }: LoadoutEntry) => {
-    if (!beast || beast.kind === "creature" || beast.rowId === null) return undefined;
+  /** A mount's or pet's switch: its copy on or off for this unit; a creature's recruit dialog. */
+  const beastClick = ({ beast, label, visibleId }: LoadoutEntry) => {
+    if (beast?.kind === "creature") {
+      const copies = (unit.items ?? []).filter((item) => item.id === visibleId);
+      const item = { id: visibleId, name: copies[0]?.name ?? label };
+      const source = { type: kind.key, id: unit.id, item_id: visibleId };
+      return () => setRecruiting({ item, copies: copies.length, source });
+    }
+    if (!beast || beast.rowId === null) return undefined;
     const change = { unitId: unit.id, rowId: beast.rowId, on: !beast.on, name: label };
     return (event: MouseEvent) => {
       event.stopPropagation();
@@ -186,6 +194,13 @@ export default function UnitListBlocks<K extends UnitKindKey>({
           )
         }
       />
+      {recruiting ? (
+        <BeastRecruitDialog
+          {...recruiting}
+          warbandId={warbandId}
+          onClose={() => setRecruiting(null)}
+        />
+      ) : null}
       <ItemActionDialogs
         menu={itemMenu}
         canEdit={canManageItems}
