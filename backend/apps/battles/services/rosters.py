@@ -22,7 +22,7 @@ from apps.warbands.models import (
     HirelingItem,
     on_roster,
 )
-from apps.warbands.units.companions import companions, effective_stats, mount_payload, pet_payload
+from apps.warbands.units.companions import companions, effective_stats, mount_payload, pet_payload, with_beasts
 
 from ..models import BattleParticipant
 
@@ -65,14 +65,19 @@ def _spells(links: Iterable) -> list[dict]:
     return entries
 
 
+ROSTER_ABILITY_COLUMNS = {"skills": ("id", "name"), "specials": ("id", "name"), "spells": ("id", "name", "dc")}
+
+
 def _beast(row) -> dict:
+    """A mount or pet as the roster shows it, with its beast's skills, specials and spells in the roster's own shapes
+    (each left out when empty)."""
     shown = pet_payload(row)
-    return {
-        "itemId": shown["item_id"],
-        "name": shown["name"],
-        "hasProfile": shown["has_profile"],
-        "stats": shown["stats"],
-    }
+    entry = {"itemId": shown["item_id"], "name": shown["name"], "hasProfile": shown["has_profile"]}
+    entry["stats"] = shown["stats"]
+    for key, columns in ROSTER_ABILITY_COLUMNS.items():
+        if shown[key]:
+            entry[key] = [{column: ability[column] for column in columns} for ability in shown[key]]
+    return entry
 
 
 def _companions(unit, links: list, rider: int = 0) -> dict:
@@ -191,8 +196,8 @@ def _by_warband(rows: Iterable, entry) -> defaultdict[int, list[dict]]:
 
 
 def _items(relation: str, model) -> Prefetch:
-    """A kind's copies in row order with their items and each Animal item's beast: one query."""
-    return Prefetch(relation, queryset=model.objects.select_related("item__bestiary_entry").order_by("id"))
+    """A kind's copies in row order with their items, each Animal item's beast and its entries: one query."""
+    return Prefetch(relation, queryset=with_beasts(model.objects.all()).order_by("id"))
 
 
 def _live_rosters(warband_ids: list[int]) -> tuple[defaultdict, defaultdict, defaultdict]:

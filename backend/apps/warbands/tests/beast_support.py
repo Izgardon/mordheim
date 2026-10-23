@@ -3,7 +3,7 @@ the bestiary's writes leave them."""
 
 from typing import Any
 
-from apps.bestiary.models import BestiaryEntry
+from apps.bestiary.models import BestiaryEntry, BestiaryEntrySkill, BestiaryEntrySpecial, BestiaryEntrySpell
 from apps.campaigns.models import Campaign
 from apps.items.models import Item, ItemAvailability
 
@@ -61,3 +61,13 @@ def beast(item: Item) -> BestiaryEntry:
     """The beast whose Animal item `item` is."""
     assert item.bestiary_entry is not None
     return item.bestiary_entry
+
+
+def teach(item: Item, *, skills: tuple = (), specials: tuple = (), spells: tuple = ()) -> None:
+    """Give the beast whose Animal item `item` is these skills, specials and spells (its bestiary pivots)."""
+    entry = beast(item)
+    BestiaryEntrySkill.objects.bulk_create(BestiaryEntrySkill(bestiary_entry=entry, skill=row) for row in skills)
+    BestiaryEntrySpecial.objects.bulk_create(
+        BestiaryEntrySpecial(bestiary_entry=entry, special=row) for row in specials
+    )
+    BestiaryEntrySpell.objects.bulk_create(BestiaryEntrySpell(bestiary_entry=entry, spell=row) for row in spells)

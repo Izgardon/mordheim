@@ -7,8 +7,11 @@ and his armour save one better, or 6+ when he has none; his rating gains the mou
 rides one mount per living member. Two mounts on one rider, a group whose mounts don't match its members and more
 than two mounts in the warband warn; nothing is refused.
 
-Everything here reads rows already loaded with their item's beast (`select_related("item__bestiary_entry")`), so
-payloads stay at a fixed number of queries however many units and items there are.
+A companion also brings its beast's skills, specials and spells (step 5), listed with it in the unit's payload and
+never part of the unit's own lists.
+
+Everything here reads rows already loaded with their item's beast and its entries (`with_beasts`), so payloads stay
+at a fixed number of queries however many units and items there are.
 """
 
 from collections.abc import Iterable, Sequence
@@ -16,10 +19,10 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from django.contrib.postgres.expressions import ArraySubquery
-from django.db.models import Model, OuterRef, Value
-from django.db.models.functions import Coalesce
+from django.db.models import Model, OuterRef, QuerySet, Value
+from django.db.models.functions import Coalesce, JSONObject
 
-from apps.bestiary.models import MOUNT, PET
+from apps.bestiary.models import MOUNT, PET, BestiaryEntrySkill, BestiaryEntrySpecial, BestiaryEntrySpell
 from apps.warbands.models.shared import STAT_FIELDS
 from apps.warbands.utils.armour_save import BEST_ARMOUR_SAVE, WORST_ARMOUR_SAVE
 
@@ -64,9 +67,45 @@ def _profile(beast: Any) -> dict[str, Any] | None:
     return {**{name: getattr(beast, name) for name in STAT_FIELDS}, "armour_save": beast.armour_save}
 
 
+# A beast's entries as a companion lists them: the payload key, the pivot, its catalogue field and the columns the
+# unit's own detail lists show.
+ABILITIES: tuple[tuple[str, type[Model], str, tuple[str, ...]], ...] = (
+    ("skills", BestiaryEntrySkill, "skill", ("id", "name", "type")),
+    ("specials", BestiaryEntrySpecial, "special", ("id", "name", "type", "description")),
+    ("spells", BestiaryEntrySpell, "spell", ("id", "name", "type", "dc", "description")),
+)
+
+
+def _ability_array(pivot: type[Model], target: str, columns: tuple[str, ...]) -> ArraySubquery:
+    rows = pivot._default_manager.filter(bestiary_entry_id=OuterRef("item__bestiary_entry_id")).order_by("id")
+    return ArraySubquery(rows.values(entry=JSONObject(**{column: f"{target}__{column}" for column in columns})))
+
+
+def with_beasts(rows: QuerySet) -> QuerySet:
+    """Item rows with each Animal item's beast joined and its skills, specials and spells read in the same query (an
+    empty array for any other item), for `mount_payload` and `pet_payload`."""
+    arrays = {f"beast_{key}": _ability_array(pivot, target, columns) for key, pivot, target, columns in ABILITIES}
+    annotated: QuerySet = rows.select_related("item__bestiary_entry").annotate(**arrays)
+    return annotated
+
+
+def beast_abilities(row: Any) -> dict[str, list[dict[str, Any]]]:
+    """The skills, specials and spells of the beast a companion's row is a copy of: read with the row (`with_beasts`),
+    or from the bestiary's pivots for a row loaded without them (one query each)."""
+    found: dict[str, list[dict[str, Any]]] = {}
+    for key, pivot, target, columns in ABILITIES:
+        entries = getattr(row, f"beast_{key}", None)
+        if entries is None:
+            links = pivot._default_manager.filter(bestiary_entry_id=row.item.bestiary_entry_id)
+            links = links.select_related(target).order_by("id")
+            entries = [{column: getattr(getattr(link, target), column) for column in columns} for link in links]
+        found[key] = list(entries)
+    return found
+
+
 def mount_payload(row: Any) -> dict[str, Any]:
-    """What a unit payload says of its mount: the item row (to switch it off), the beast's Move and rating bonus, and
-    its profile when it has one (`movement` is None without)."""
+    """What a unit payload says of its mount: the item row (to switch it off), the beast's Move and rating bonus, its
+    profile when it has one (`movement` is None without) and its skills, specials and spells."""
     beast = beast_of(row.item)
     return {
         "item_row_id": row.pk,
@@ -76,6 +115,7 @@ def mount_payload(row: Any) -> dict[str, Any]:
         "rating_bonus": beast.rating_bonus or 0,
         "has_profile": beast.has_profile,
         "stats": _profile(beast),
+        **beast_abilities(row),
     }
 
 
@@ -87,6 +127,7 @@ def pet_payload(row: Any) -> dict[str, Any]:
         "name": row.item.name,
         "has_profile": beast.has_profile,
         "stats": _profile(beast),
+        **beast_abilities(row),
     }
 
 

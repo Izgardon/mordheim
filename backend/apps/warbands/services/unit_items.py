@@ -17,6 +17,7 @@ from apps.items.models import Item
 from apps.warbands.models import RosterUnit, Warband
 from apps.warbands.prefetches import item_detail_prefetches
 from apps.warbands.services.prices import house_rule_prices
+from apps.warbands.units.companions import with_beasts
 from apps.warbands.units.kinds import KINDS, UnitKindKey
 
 
@@ -77,6 +78,6 @@ def unit_item_rows(unit_type: str, unit: RosterUnit) -> list[Any]:
     """The unit's copies in id order with their items' details (properties, availabilities), for an answer."""
     kind = KINDS[cast(UnitKindKey, unit_type)]
     links: Any = kind.items.model._default_manager.filter(**{kind.parent_field: unit})
-    links = links.select_related("item__bestiary_entry")
+    links = with_beasts(links)
     links = links.annotate(**house_rule_prices(f"{kind.parent_field}__warband__campaign_id", "item_id"))
     return list(links.prefetch_related(*item_detail_prefetches("item__")).order_by("id"))

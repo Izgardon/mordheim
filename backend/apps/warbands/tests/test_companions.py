@@ -15,6 +15,8 @@ from apps.warbands.models import HenchmenGroupItem, HeroItem, HirelingItem
 from .beast_support import make_animal, raven, wardogs, warhorse
 from .roster_support import HENCHMEN, HERO, HIRELING, RosterTestCase, make_unit, unit_url
 
+NO_ABILITIES: dict[str, list] = {"skills": [], "specials": [], "spells": []}  # the beast's entries (step 5)
+
 
 class CompanionTestCase(RosterTestCase):
     def setUp(self) -> None:
@@ -46,7 +48,7 @@ class CompanionSwitchTests(CompanionTestCase):
         }
         profile |= {"initiative": 3, "attacks": 1, "leadership": 5, "armour_save": None}
         mount = {"item_row_id": row.id, "item_id": self.horse.id, "name": "Warhorse", "movement": 8, "rating_bonus": 5}
-        self.assertEqual(unit["mount"], {**mount, "has_profile": True, "stats": profile})
+        self.assertEqual(unit["mount"], {**mount, "has_profile": True, "stats": profile, **NO_ABILITIES})
         self.assertEqual(unit["effective_stats"], {"movement": 8, "armour_save": 5})
         self.assertEqual((unit["movement"], unit["armour_save"], unit["pets"]), (4, 6, []))
         [item] = unit["items"]
@@ -70,6 +72,7 @@ class CompanionSwitchTests(CompanionTestCase):
         unit = self.switch(row).data["unit"]
 
         pet = {"item_row_id": row.id, "item_id": self.raven.id, "name": "Raven", "has_profile": False, "stats": None}
+        pet |= NO_ABILITIES
         self.assertEqual((unit["pets"], unit["mount"], unit["effective_stats"]), ([pet], None, None))
 
     def test_a_mount_without_a_profile_keeps_his_move_and_still_betters_his_save(self):

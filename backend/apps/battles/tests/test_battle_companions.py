@@ -10,8 +10,10 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
 from apps.battles.services.items_lost import henchman_takes_his_share
+from apps.skills.models import Skill
+from apps.spells.models import Spell
 from apps.warbands.models import HenchmenGroup, HenchmenGroupItem, Hero, HeroItem
-from apps.warbands.tests.beast_support import beast, raven, wardogs, warhorse
+from apps.warbands.tests.beast_support import beast, raven, teach, wardogs, warhorse
 from apps.warbands.tests.roster_support import HENCHMEN, make_unit
 
 from .battle_support import BattleTestCase
@@ -70,7 +72,22 @@ class BattleRosterCompanionTests(BattleTestCase):
             group = make_unit(HENCHMEN, self.warband, members=("A",), source_beast=beast(self.dogs))
             HenchmenGroupItem.objects.create(henchmen_group=group, item=self.horse, companion=True)
 
+    def test_a_mounts_and_a_pets_beast_entries_come_into_the_battle_in_the_rosters_shapes(self):
+        charge = Skill.objects.create(name="Thunderous Charge", type="Mount")
+        hoof = Spell.objects.create(name="Hoof Hex", type="Beast", dc="7", description="Left out of the roster.")
+        teach(self.horse, skills=(charge,), spells=(hoof,))
+        battle_id = self.to_prebattle()
+
+        [hero] = self.roster(battle_id)["heroes"]
+
+        self.assertEqual(hero["mount"]["skills"], [{"id": charge.id, "name": "Thunderous Charge"}])
+        self.assertEqual(hero["mount"]["spells"], [{"id": hoof.id, "name": "Hoof Hex", "dc": "7"}])
+        self.assertNotIn("specials", hero["mount"])  # empty lists are left out
+        self.assertEqual((hero["skills"], hero["spells"]), ([], []))
+        self.assertNotIn("skills", hero["pets"][0])
+
     def test_rosters_read_beasts_in_a_fixed_number_of_queries(self):
+        teach(self.horse, skills=(Skill.objects.create(name="Thunderous Charge", type="Mount"),))
         self.ride(1)
         battle_id = self.to_prebattle()
         self.roster(battle_id)  # the first read in a minute writes presence
