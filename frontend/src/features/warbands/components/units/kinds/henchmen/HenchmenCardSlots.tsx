@@ -4,6 +4,7 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "../../../shared/unit_details/warband-tooltip-styles";
 import { calculateHenchmenReinforceCost } from "../../../henchmen/utils/henchmen-cost";
 import { CostTile, SizeTile } from "../../expanded/ExpandedTiles";
+import BackToItemTile from "../../beasts/BackToItemTile";
 
 import type { HenchmenGroup } from "../../../../types/warband-types";
 import type { ExpandedTilesProps, SummaryHeaderProps } from "../../../../units/unit-slot-types";
@@ -69,11 +70,13 @@ export function HenchmenExpandedTitle({ unit: group }: { unit: HenchmenGroup }) 
 
 /**
  * Size and Reinforce Cost: the server's hire_cost (decision 7), broken down as base + one
- * member's item share + 2 x whole XP.
+ * member's item share + 2 x whole XP. A group recruited from a creature can go back to its item.
  */
 export function HenchmenExpandedTiles({
   unit: group,
+  warbandId,
   layout,
+  canEdit,
 }: ExpandedTilesProps<"henchmen_group">) {
   const { baseCost, xpCost, totalCost, itemBreakdown } = calculateHenchmenReinforceCost({
     price: group.price,
@@ -101,6 +104,9 @@ export function HenchmenExpandedTiles({
         }))}
         extraLines={[{ key: "xp", label: "Experience", cost: xpCost }]}
       />
+      {canEdit && group.source_beast_id != null ? (
+        <BackToItemTile group={group} warbandId={warbandId} layout={layout} />
+      ) : null}
     </>
   );
 }
