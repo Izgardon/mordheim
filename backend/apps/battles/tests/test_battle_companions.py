@@ -1,7 +1,7 @@
 """Battle rosters carry each unit's mount and pets (the bestiary rewrite step 4), read live until the battle starts and
 kept in the start/ snapshot after: the mount (its item, name, Move, rating bonus and profile), the pets, and the Move
 and armour save the mount gives the rider (`effectiveStats`), beside his own `stats`. A henchmen group's members ride
-the group's mount, and a group recruited from a creature names its beast and kind.
+one each of the group's mounts, in order, and a group recruited from a creature names its beast and kind.
 """
 
 from typing import Any
@@ -9,6 +9,7 @@ from typing import Any
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
+from apps.battles.services.items_lost import henchman_takes_his_share
 from apps.warbands.models import HenchmenGroup, HenchmenGroupItem, Hero, HeroItem
 from apps.warbands.tests.beast_support import beast, raven, wardogs, warhorse
 from apps.warbands.tests.roster_support import HENCHMEN, make_unit
@@ -54,8 +55,9 @@ class BattleRosterCompanionTests(BattleTestCase):
 
         groups = {group["name"]: group for group in self.roster(battle_id)["henchmenGroups"]}
 
-        self.assertEqual([member["effectiveStats"]["movement"] for member in groups["Outriders"]["members"]], [8, 8])
-        self.assertEqual(groups["Outriders"]["members"][0]["mount"]["name"], "Warhorse")
+        outriders = groups["Outriders"]["members"]  # one horse for two: the second goes on foot
+        self.assertEqual([(member["mount"] or {}).get("name") for member in outriders], ["Warhorse", None])
+        self.assertEqual([(member["effectiveStats"] or {}).get("movement") for member in outriders], [8, None])
         self.assertEqual((groups["Outriders"]["sourceBeastId"], groups["Outriders"]["beastKind"]), (None, None))
         source = HenchmenGroup.objects.get(pk=kennel.pk).source_beast_id
         self.assertEqual((groups["Kennel"]["sourceBeastId"], groups["Kennel"]["beastKind"]), (source, "creature"))
@@ -80,3 +82,17 @@ class BattleRosterCompanionTests(BattleTestCase):
             self.roster(battle_id)
 
         self.assertEqual(len(many), len(few))
+
+
+class HenchmanLossTests(BattleTestCase):
+    def test_a_henchman_who_dies_takes_a_ridden_copy_first(self):
+        horse = warhorse()
+        group = make_unit(HENCHMEN, self.warband, members=("A", "B"))
+        spare = HenchmenGroupItem.objects.create(henchmen_group=group, item=horse)
+        for _ in range(2):
+            HenchmenGroupItem.objects.create(henchmen_group=group, item=horse, companion=True)
+
+        henchman_takes_his_share(group)
+
+        rows = HenchmenGroupItem.objects.filter(henchmen_group=group).order_by("id")
+        self.assertEqual([(row.id == spare.id, row.companion) for row in rows], [(True, False), (False, True)])

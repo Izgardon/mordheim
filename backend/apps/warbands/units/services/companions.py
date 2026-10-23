@@ -6,6 +6,7 @@ the unit's `updated_at`, like any loadout change. Warnings describe the state af
 rider, a group's mounts against its living members, more than two mounts in the warband (units/companions.py).
 """
 
+from collections.abc import Iterable
 from typing import Any
 
 from django.db import transaction
@@ -13,7 +14,14 @@ from django.db import transaction
 from apps.bestiary.models import MOUNT
 from apps.warbands.models import Henchman, RosterUnit, Warband, on_roster
 from apps.warbands.services.unit_items import touch_unit
-from apps.warbands.units.companions import COMPANION_KINDS, Warning, beast_kind, companion_warnings
+from apps.warbands.units.companions import (
+    COMPANION_KINDS,
+    Warning,
+    beast_kind,
+    companion_warnings,
+    unit_companion_warnings,
+    warband_mount_warnings,
+)
 from apps.warbands.units.errors import RosterError
 from apps.warbands.units.kinds import KINDS, UnitKindSpec
 
@@ -53,12 +61,20 @@ def loaded_unit_warnings(kind: UnitKindSpec, warband: Warband, unit: Any) -> lis
 
 
 def unit_warnings(kind: UnitKindSpec, warband: Warband, unit: RosterUnit) -> list[Warning]:
-    """The companion warnings for a unit read without its loadout: its rows, its living members, the warband's mounts
-    (three queries)."""
-    links: Any = kind.items.model._default_manager
-    rows = list(links.filter(**{kind.parent_field: unit}).select_related("item__bestiary_entry").order_by("id"))
-    riders = on_roster(Henchman.objects.filter(group_id=unit.pk)).count() if kind.has_members else None
-    return companion_warnings(_name(kind, unit), rows, riders, warband_mounts(warband.id))
+    """The companion warnings for a unit read without its loadout (three queries)."""
+    return units_warnings(warband, [(kind, unit)])
+
+
+def units_warnings(warband: Warband, units: Iterable[tuple[UnitKindSpec, RosterUnit]]) -> list[Warning]:
+    """The companion warnings for units read without their loadout, once each (a roster Save may buy several mounts
+    for one): each unit's rows and living members, then the warband's mounts once, after every change."""
+    warnings: list[Warning] = []
+    for kind, unit in {(kind.key, unit.pk): (kind, unit) for kind, unit in units}.values():
+        links: Any = kind.items.model._default_manager
+        rows = list(links.filter(**{kind.parent_field: unit}).select_related("item__bestiary_entry").order_by("id"))
+        riders = on_roster(Henchman.objects.filter(group_id=unit.pk)).count() if kind.has_members else None
+        warnings += unit_companion_warnings(_name(kind, unit), rows, riders)
+    return warnings + warband_mount_warnings(warband_mounts(warband.id))
 
 
 def _name(kind: UnitKindSpec, unit: Any) -> str:

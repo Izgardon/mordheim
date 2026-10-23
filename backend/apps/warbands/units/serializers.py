@@ -211,16 +211,19 @@ class UnitWriteSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializ
         child=serializers.IntegerField(), write_only=True, required=False
     )
 
-    def validate_items(self, entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        """An entry switched on as a companion must be a mount or a pet (one query, only when one is)."""
-        flagged = {entry["id"] for entry in entries if entry.get("companion")}
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        """After the ids point at the campaign's current entries: an item entry switched on as a companion must be a
+        mount or a pet (one query, only when one is)."""
+        attrs = super().validate(attrs)
+        flagged = {entry["id"] for entry in attrs.get("items") or [] if entry.get("companion")}
         if flagged:
             kinds = Item.objects.filter(id__in=flagged).values_list("id", "bestiary_entry__kind")
             wrong = sorted(pk for pk, kind in kinds if kind not in COMPANION_KINDS)
             if wrong:
                 listed = ", ".join(str(pk) for pk in wrong)
-                raise serializers.ValidationError(f"Only a mount or a pet can be a companion (item {listed}).")
-        return entries
+                message = f"Only a mount or a pet can be a companion (item {listed})."
+                raise serializers.ValidationError({"items": [message]})
+        return attrs
 
     def create(self, validated_data: dict[str, Any]) -> RosterUnit:
         return apply_create(self.kind, validated_data)

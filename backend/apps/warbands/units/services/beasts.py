@@ -37,11 +37,13 @@ NOT_THE_SAME_BEAST = "That group wasn't recruited from this beast: join a group 
 
 @dataclass(frozen=True)
 class Target:
-    """Where recruited copies go: an existing group of the same beast, or a new group (`name`, `race`: as sent)."""
+    """Where recruited copies go: an existing group of the same beast, or a new group (`name`, `race`: as sent);
+    `field`: the body's key for it, which errors name ("target" here, a purchase's "recruit")."""
 
     group: HenchmenGroup | None = None
     name: str = ""
     race: Any = None
+    field: str = "target"
 
 
 def creature(item: Item, field: str = "source.item_id") -> BestiaryEntry:
@@ -57,7 +59,7 @@ def resolve_target(warband: Warband, beast: BestiaryEntry, data: dict[str, Any],
     same beast (400 `not_the_same_beast`)."""
     if "group_id" not in data:
         new = data.get("new") or {}
-        return Target(name=new.get("name", ""), race=new.get("race_id"))
+        return Target(name=new.get("name", ""), race=new.get("race_id"), field=key)
     units = HENCHMEN_GROUP.visible(HenchmenGroup.objects.filter(id=data["group_id"], warband=warband))
     group = units.first()
     if group is None:
@@ -66,7 +68,15 @@ def resolve_target(warband: Warband, beast: BestiaryEntry, data: dict[str, Any],
         )
     if group.source_beast_id != beast.pk:
         raise RosterError(NOT_THE_SAME_BEAST, "not_the_same_beast", {f"{key}.group_id": [NOT_THE_SAME_BEAST]})
-    return Target(group=group)
+    return Target(group=group, field=key)
+
+
+def lock_group(group: HenchmenGroup, key: str) -> None:
+    """Lock the group's row for the transaction, if it is still on the roster (404 otherwise), so a recruit joining it
+    and a back to item taking its last members run one at a time (taken before any stash row or member)."""
+    rows = HENCHMEN_GROUP.visible(HenchmenGroup.objects.select_for_update().filter(pk=group.pk))
+    if rows.values_list("id", flat=True).first() is None:
+        raise RosterError("Henchmen group not found.", "not_found", {key: ["Not found."]}, status_code=404)
 
 
 def _group_body(beast: BestiaryEntry, target: Target, price: int, quantity: int) -> dict[str, Any]:
@@ -97,11 +107,11 @@ def _price(warband: Warband, item: Item, costs: list[int | None]) -> int:
 
 
 def _new_group(warband: Warband, beast: BestiaryEntry, item: Item, costs: list[int | None], target: Target) -> Any:
-    """The group the copies form, made through the generic create serializer (a bad race is a 400 on `target.new`)."""
+    """The group the copies form, made through the generic create serializer (a bad race is a 400 on `<field>.new`)."""
     body = _group_body(beast, target, _price(warband, item, costs), len(costs))
     writer = UNIT_SERIALIZERS[HENCHMEN_GROUP.key].create(data=body, context={"campaign_id": warband.campaign_id})
     if not writer.is_valid():
-        raise validation_error(writer.errors, "target.new")
+        raise validation_error(writer.errors, f"{target.field}.new")
     group = writer.save(warband=warband, source_beast=beast)
     formed = {"name": group.name, "type": group.unit_type}
     log_warband_event(warband.id, "personnel", HENCHMEN_GROUP.recruit.log_new, formed)
@@ -121,6 +131,7 @@ def recruit_copies(
     group: HenchmenGroup
     if target.group is not None:
         group = target.group
+        lock_group(group, f"{target.field}.group_id")
         Henchman.objects.bulk_create(Henchman(group=group, name="") for _ in costs)
         touch_unit(HENCHMEN_GROUP.key, group)
     else:
@@ -166,6 +177,8 @@ def recruit_beasts(warband: Warband, data: dict[str, Any]) -> Recruited:
     target = resolve_target(warband, beast, data["target"])
     unit = None if source["type"] == STASH else resolve_unit(warband, source["type"], source.get("id"), "Source")
     with transaction.atomic():
+        if target.group is not None:
+            lock_group(target.group, "target.group_id")  # the group first, then the stash rows
         taken = _taken(warband, item, source, unit, quantity)
         costs = taken.costs if isinstance(taken, StashTake) else taken
         moved_from = (source["type"], economy_log.unit_name(source["type"], unit))

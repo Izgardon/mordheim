@@ -134,3 +134,28 @@ class HiredMountTests(RosterTestCase):
         self.assertEqual((response.data["mount"]["name"], response.data["effective_stats"]), ("Warhorse", {"movement": 8, "armour_save": 3}))  # fmt: skip
         self.assertEqual(sorted(HirelingItem.objects.values_list("item__name", "companion")), [("Sword", False), ("Warhorse", True)])  # fmt: skip
         self.assertEqual(response.data["warnings"], [])
+
+
+class BeastPurchaseReviewTests(BeastPurchaseTestCase):
+    def test_a_purchase_recruits_errors_name_the_recruit_field_and_a_big_group_warns(self):
+        bad = self.buy(item_id=self.dogs.id, target_type="stash", recruit={"new": {"race_id": self.foreign_race.id}})
+        self.assertEqual((bad.status_code, list(bad.data["fields"])), (400, ["recruit.new.race"]))
+
+        body = self.buy(item_id=self.dogs.id, quantity=6, target_type="stash", recruit={"new": {}}).data
+
+        self.assertEqual([warning["code"] for warning in body["warnings"]], ["group_over_size"])
+
+    def test_a_roster_save_warns_about_the_warbands_mounts_once_after_every_line(self):
+        for name in ("Brother", "Cousin"):
+            HeroItem.objects.create(hero=make_unit(HERO, self.warband, name=name), item=self.horse, companion=True)
+        other = make_unit(HERO, self.warband, name="Uncle")
+        lines = [{"unit_id": unit.id, "item_id": self.horse.id, "companion": True} for unit in (self.hero, other)]
+
+        response = self.client.post(
+            unit_url(HERO, self.warband.id, suffix="batch/"), {"purchases": lines}, format="json"
+        )
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(
+            [(warning["code"], warning["mounts"]) for warning in response.data["warnings"]], [("warband_mounts", 4)]
+        )

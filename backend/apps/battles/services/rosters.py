@@ -75,11 +75,12 @@ def _beast(row) -> dict:
     }
 
 
-def _companions(unit, links: list) -> dict:
-    """The unit's mount (its first switched on), its pets and what the mount makes it show (the bestiary rewrite step
-    4): snapshotted with the rest at start/, so the battle keeps what the rider rode in on."""
+def _companions(unit, links: list, rider: int = 0) -> dict:
+    """The unit's mount (its first switched on; a group's `rider`-th member rides the `rider`-th, and goes on foot when
+    there are fewer), its pets and what the mount makes it show (the bestiary rewrite step 4): snapshotted with the
+    rest at start/, so the battle keeps what the rider rode in on."""
     found = companions(links)
-    mount = found.mounts[0] if found.mounts else None
+    mount = found.mounts[rider] if rider < len(found.mounts) else None
     shown = None
     if mount is not None:
         payload = mount_payload(mount)
@@ -152,7 +153,6 @@ def hireling_entry(hireling: Hireling) -> dict:
 def henchmen_group_entry(group: HenchmenGroup) -> dict:
     links = list(group.henchmen_group_items.all())
     items = _item_entries(links)
-    mounted = _companions(group, links)  # each member rides one of the group's mounts
     skills = _named(group.henchmen_group_skills.all(), "skill")
     specials = _named(group.henchmen_group_specials.all(), "special")
     members = [
@@ -163,7 +163,7 @@ def henchmen_group_entry(group: HenchmenGroup) -> dict:
             "displayName": member.name or f"Henchman {member.id}",
             "unitType": group.unit_type or "Henchman",
             "stats": _stats(group),
-            **mounted,
+            **_companions(group, links, rider),  # one mount per member, in order
             "noLevelUps": bool(group.no_level_ups),
             "items": items,
             "singleUseItems": _single_use(items),
@@ -171,7 +171,7 @@ def henchmen_group_entry(group: HenchmenGroup) -> dict:
             "spells": [],
             "specials": specials,
         }
-        for member in group.henchmen.all()
+        for rider, member in enumerate(group.henchmen.all())
     ]
     return {
         "id": group.id,

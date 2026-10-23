@@ -61,7 +61,7 @@ def _hero_fields(warband: Warband, group: HenchmenGroup, name: str, items: list[
         "caster": caster,
         "half_rate": group.half_rate,
         **{field: getattr(group, field) for field in STAT_FIELD_BY_ADVANCE.values()},
-        "items": [{"id": row.item_id, "cost": row.cost} for row in items],
+        "items": [{"id": row.item_id, "cost": row.cost, "companion": row.companion} for row in items],
         "skill_ids": list(group.henchmen_group_skills.order_by("id").values_list("skill_id", flat=True)),
         "special_ids": [link.special_id for link in specials],
         "spell_ids": [],
@@ -69,9 +69,10 @@ def _hero_fields(warband: Warband, group: HenchmenGroup, name: str, items: list[
 
 
 def _his_share_of_items(group: HenchmenGroup) -> list[HenchmenGroupItem]:
-    """One row of each item the group carries (the first by id): what the promoted henchman takes with him."""
+    """One row of each item the group carries (a switched-on mount or pet first, then the first by id): what the
+    promoted henchman takes with him, still riding what he rode."""
     share: dict[int, HenchmenGroupItem] = {}
-    for row in group.henchmen_group_items.order_by("id"):
+    for row in group.henchmen_group_items.order_by("-companion", "id"):  # the one he rides, if he rides
         share.setdefault(row.item_id, row)
     return list(share.values())
 

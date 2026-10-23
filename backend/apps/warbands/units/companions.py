@@ -129,8 +129,12 @@ def _count(number: int, noun: str) -> str:
 
 
 def companion_warnings(name: str, rows: Iterable[Any], riders: int | None, warband_mounts: int) -> list[Warning]:
-    """Warnings for a unit's companions (`riders`: a group's living members; None for a hero or hired sword) and the
-    warband's switched-on mounts. Warn, never block."""
+    """Warnings for a unit's companions and the warband's switched-on mounts. Warn, never block."""
+    return unit_companion_warnings(name, rows, riders) + warband_mount_warnings(warband_mounts)
+
+
+def unit_companion_warnings(name: str, rows: Iterable[Any], riders: int | None) -> list[Warning]:
+    """Two mounts on a hero or hired sword (`riders` None), or a group's mounts against its living members (`riders`)."""
     mounts = len(companions(rows).mounts)
     warnings: list[Warning] = []
     if riders is None and mounts > 1:
@@ -139,10 +143,15 @@ def companion_warnings(name: str, rows: Iterable[Any], riders: int | None, warba
     if riders is not None and mounts and mounts != riders:
         message = f"{name} has {_count(mounts, 'mount')} for {_count(riders, 'living member')}: one mount per member."
         warnings.append({"code": "group_mounts", "message": message, "mounts": mounts, "members": riders})
-    if warband_mounts > MAX_WARBAND_MOUNTS:
-        message = f"The warband has {warband_mounts} mounts; a Mordheim warband has at most {MAX_WARBAND_MOUNTS}."
-        warnings.append({"code": "warband_mounts", "message": message, "mounts": warband_mounts})
     return warnings
+
+
+def warband_mount_warnings(warband_mounts: int) -> list[Warning]:
+    """More than a Mordheim warband's mounts switched on across the roster."""
+    if warband_mounts <= MAX_WARBAND_MOUNTS:
+        return []
+    message = f"The warband has {warband_mounts} mounts; a Mordheim warband has at most {MAX_WARBAND_MOUNTS}."
+    return [{"code": "warband_mounts", "message": message, "mounts": warband_mounts}]
 
 
 def companion_fields(unit: Any, rows: Iterable[Any]) -> dict[str, Any]:

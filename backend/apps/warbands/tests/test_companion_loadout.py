@@ -9,10 +9,12 @@ and the unit's companions leave last, so moving a spare horse keeps the one he r
 
 from typing import Any
 
+from apps.bestiary.models import BestiaryEntry
+from apps.items.models import Item
 from apps.warbands.models import HeroItem, WarbandItem
 
-from .beast_support import make_animal, raven, warhorse
-from .roster_support import HERO, RosterTestCase, make_unit, trade_rows, unit_url
+from .beast_support import beast, make_animal, raven, warhorse
+from .roster_support import HENCHMEN, HERO, RosterTestCase, make_unit, trade_rows, unit_url
 
 
 class CompanionLoadoutTests(RosterTestCase):
@@ -129,3 +131,33 @@ class CompanionMoveTests(RosterTestCase):
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(trade_rows(self.warband), [("Sell", "Mule", 10, None)])
         self.assertEqual(list(self.hero.hero_items.values_list("cost", "companion")), [(40, True)])
+
+
+class CompanionVersionTests(RosterTestCase):
+    def test_a_book_id_is_checked_as_the_campaigns_version_of_it(self):
+        book = make_animal("Hound", "creature")  # the campaign makes its version of the Hound a mount
+        version = make_animal("Hound", "mount", campaign=self.campaign)
+        Item.objects.filter(pk=version.pk).update(replaces=book)
+        BestiaryEntry.objects.filter(pk=beast(version).pk).update(replaces=beast(book))
+        hero = make_unit(HERO, self.warband, name="Aldric")
+
+        response = self.client.patch(unit_url(HERO, self.warband.id, hero.id), {"items": [{"id": book.id, "companion": True}]}, format="json")  # fmt: skip
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(list(hero.hero_items.values_list("item_id", "companion")), [(version.id, True)])
+
+
+class CompanionPromoteTests(RosterTestCase):
+    def test_a_promoted_rider_keeps_riding_his_mount(self):
+        horse = warhorse()
+        group = make_unit(HENCHMEN, self.warband, members=("Alpha", "Beta"), level_up=1)
+        group.henchmen_group_items.create(item=horse, cost=80)  # a spare
+        group.henchmen_group_items.create(item=horse, cost=80, companion=True)
+        alpha = group.henchmen.order_by("id").first()
+        body = {"henchman_id": alpha.id, "advance": {"id": "WS", "label": "Weapon Skill"}}
+
+        response = self.client.post(unit_url(HENCHMEN, self.warband.id, group.id, "promote/"), body, format="json")
+
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data["hero"]["mount"]["name"], "Warhorse")
+        self.assertEqual(list(group.henchmen_group_items.values_list("companion", flat=True)), [False])

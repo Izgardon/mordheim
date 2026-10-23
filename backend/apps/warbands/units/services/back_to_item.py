@@ -4,8 +4,9 @@
 group recruited from a creature back into copies of the beast's Animal item, in the stash at the group's price (what
 recruiting set it from). The members leave the group as records (dismissed, their kills kept); `count` takes the
 newest first. The group goes with its last member, dismissed as any group is, and whatever it still carried goes to
-the stash with its costs rather than being lost. No gold moves and no ledger row is written. A fixed number of queries
-whatever the number of members.
+the stash with its costs rather than being lost. No gold moves and no ledger row is written. The group's row is locked
+first, so a recruit joining it and another back to item wait. A fixed number of queries whatever the number of members
+(a last member's leftover gear adds a stash write and a log row per item it carried; creature groups rarely carry any).
 """
 
 from dataclasses import dataclass, field
@@ -21,6 +22,7 @@ from apps.warbands.services.stash import add_costs, add_to_stash
 from apps.warbands.units.errors import RosterError
 from apps.warbands.units.kinds import HENCHMEN_GROUP
 
+from .beasts import lock_group
 from .dismiss import dismiss
 
 NOT_FROM_A_BEAST = "Only a group recruited from a creature goes back to an item."
@@ -80,6 +82,7 @@ def back_to_item(warband: Warband, group: HenchmenGroup, data: dict[str, Any]) -
     copies land in the stash, and the move is logged."""
     item = _animal_item(group)
     with transaction.atomic():
+        lock_group(group, "group")  # vs. a recruit joining it, or another back to item
         living = list(on_roster(Henchman.objects.filter(group=group)).values_list("id", flat=True))
         leaving = _leaving(living, data)
         left = on_roster(Henchman.objects.filter(group=group, id__in=leaving)).update(dismissed_at=timezone.now())

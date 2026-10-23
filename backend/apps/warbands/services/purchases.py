@@ -27,7 +27,7 @@ from apps.warbands.units.companions import COMPANION_KINDS, beast_kind
 from apps.warbands.units.errors import RosterError
 from apps.warbands.units.kinds import KINDS, UnitKindKey
 from apps.warbands.units.services.beasts import Target, creature, recruit_copies, resolve_target
-from apps.warbands.units.services.companions import NOT_A_COMPANION, unit_warnings
+from apps.warbands.units.services.companions import NOT_A_COMPANION, units_warnings
 
 from . import economy_log, ledger
 from .prices import CampaignPrices
@@ -158,9 +158,17 @@ def _line_warnings(warband: Warband, line: Line) -> list[Warning]:
         warnings.append(archived_entry(line.item))
     if line.item.type == ANIMAL and not line.item.listed:
         warnings.append(unlisted_beast(line.item))
-    if line.unit is not None and line.data.get("companion"):
-        warnings += unit_warnings(KINDS[cast(UnitKindKey, line.target_type)], warband, line.unit)
     return warnings
+
+
+def _companion_warnings(warband: Warband, lines: Sequence[Line]) -> list[Warning]:
+    """After every line: the companion warnings of each unit a line switched a mount or pet on for, once."""
+    riders = [
+        (KINDS[cast(UnitKindKey, line.target_type)], line.unit)
+        for line in lines
+        if line.unit is not None and line.data.get("companion")
+    ]
+    return units_warnings(warband, riders) if riders else []
 
 
 def buy_lines(warband: Warband, lines: Sequence[Line]) -> tuple[list[WarbandTrade], list[Warning]]:
@@ -182,6 +190,7 @@ def buy_lines(warband: Warband, lines: Sequence[Line]) -> tuple[list[WarbandTrad
         _log(warband, line)
         _place(warband, line)
         warnings += _line_warnings(warband, line)
+    warnings += _companion_warnings(warband, lines)
     if charged and warband.gold < 0:
         warnings.append(
             {"code": GOLD_NEGATIVE, "message": f"This leaves the warband at {warband.gold} gc.", "gold": warband.gold}
