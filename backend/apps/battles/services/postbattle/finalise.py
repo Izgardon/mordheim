@@ -67,9 +67,6 @@ def check_draft_against(context: FinaliseContext, draft: dict) -> None:
         (settings.hero_death_roll if settings else None) or "d66",
         resource_found=lambda resource_id: context.resource_found,
         hireling_ids=lambda ids: {sword_id for sword_id in ids if sword_id in context.hirelings},
-        on_hero_table=lambda ids: {
-            sword_id for sword_id in ids if getattr(context.hirelings.get(sword_id), "injury_table", None) == "hero"
-        },
     )
 
 

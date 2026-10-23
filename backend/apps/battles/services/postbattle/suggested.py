@@ -8,8 +8,8 @@
   add up to its `xp_earned`, and the `level_ups` that XP would earn (services/postbattle/level_ups.py);
 - exploration dice: one per selected hero still in action, one more for a winner (the player's own declaration
   while the others still fight, decision 4), at most 10;
-- upkeep: every hireling on the battle's roster, at his upkeep price, with his upkeep formula when he has one (one
-  that isn't gold, "1 piece of wyrdstone", is a reminder: its price is 0);
+- upkeep: every hireling on the battle's roster but one who stays for one battle, at his upkeep price, with his
+  upkeep formula when he has one (one that isn't gold, "1 piece of wyrdstone", is a reminder: its price is 0);
 - dismiss (only when there is one): each selected hireling who stays for one battle, suggested to leave (never
   forced).
 
@@ -95,8 +95,11 @@ def _hireling_results(swords: list[dict], kills: dict[str, int]) -> dict[str, di
 
 
 def _upkeep(hirelings: list[dict]) -> dict[str, dict]:
+    """Each hireling's upkeep, but for one who stays for one battle: he leaves after it, so nothing keeps him on."""
     entries = {}
     for sword in hirelings:
+        if sword.get("stays") == "one_battle":
+            continue
         price = sword.get("upkeepPrice")
         cost = max(0, int(price)) if isinstance(price, int | float) and not isinstance(price, bool) else None
         entry = {"unit_name": sword.get("displayName"), "cost": cost}

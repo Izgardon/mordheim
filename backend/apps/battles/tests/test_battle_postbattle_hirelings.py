@@ -2,12 +2,14 @@
 suggested no XP, one who stays for one battle is suggested to leave, and an upkeep that isn't gold is a reminder.
 
 A hireling on the hero table rolls the campaign's hero death roll and takes the hero results' effects, as heroes do;
-one on the henchman table rolls a d6. The check reads each hireling's table as it is now (finalise from the rows it
-holds); the battle roster, taken at start, shows it to the page.
+one on the henchman table rolls a d6. The battle roster, taken at start, says which table each hireling rolls on, to
+the page and to the check alike, so a table changed on the sheet mid-battle applies from the next battle.
 The leaving suggestion is never forced: finalise keeps the unit, and the page may dismiss it.
 """
 
 from typing import Any
+
+from apps.warbands.models import Hireling
 
 from .battle_support import BattleTestCase, draft, unit_result
 
@@ -88,6 +90,7 @@ class HirelingPostbattleTests(BattleTestCase):
         self.assertEqual(suggested["unit_results"][sword]["xp_earned"], 1)
         self.assertEqual(suggested["dismiss"], {"entries": {persona: {"unit_name": "Bertha", "reason": "stays_one_battle"}}})  # fmt: skip
         upkeep = suggested["upkeep"]["entries"]
+        self.assertNotIn(persona, upkeep)  # he leaves after this battle: nothing to keep him on for
         self.assertEqual(upkeep[sword], {"unit_name": "Grukk", "cost": 30})  # no formula: none sent
         self.assertEqual(upkeep[prospector], {"unit_name": "Pete", "cost": 0, "cost_expression": "1 Treasure"})
 
@@ -107,3 +110,12 @@ class HirelingPostbattleTests(BattleTestCase):
         entry = next(unit for unit in roster["hirelings"] if unit["key"] == self.keys[1])
         kept = {key: entry[key] for key in ("hirelingKind", "injuryTable", "stays", "paymentNote")}
         self.assertEqual(kept, {"hirelingKind": "dramatis_persona", "injuryTable": "hero", "stays": "one_battle", "paymentNote": "a favour"})  # fmt: skip
+
+    def test_a_table_changed_on_the_sheet_mid_battle_applies_from_the_next_battle(self):
+        battle_id = self.postbattle()
+        Hireling.objects.filter(id=self.persona.id).update(injury_table="henchman")  # a house rule, mid-battle
+
+        self.ok(self.finalize(self.player, battle_id, draft(self.results(persona=[roll([3, 2])]))))
+
+        self.persona.refresh_from_db()
+        self.assertEqual(self.persona.initiative, 3)  # the hero table's Nervous Condition, as the page rolled it

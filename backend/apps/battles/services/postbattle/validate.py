@@ -27,6 +27,18 @@ def hero_death_roll(campaign_id: int) -> str:
     )
 
 
+def hero_table_hirelings(participant: BattleParticipant) -> set[int]:
+    """The hirelings the battle roster (taken at start) puts on the hero injury table: dramatis personae, and house
+    rules. The page rolls from the same roster, so a table changed on the sheet mid-battle applies from the next
+    battle; a roster from before the tables existed puts none there."""
+    roster = participant.roster_json or {}
+    return {
+        entry["id"]
+        for entry in roster.get("hirelings", [])
+        if entry.get("injuryTable") == "hero" and isinstance(entry.get("id"), int)
+    }
+
+
 def rolled_hireling_ids(unit_results: dict[str, dict]) -> set[int]:
     """The hirelings whose results carry injury rolls: the ones whose injury table the check needs."""
     ids = set()
@@ -81,14 +93,13 @@ def check_draft(
     *,
     resource_found: Callable[[int], bool],
     hireling_ids: Callable[[list[int]], set[int]],
-    on_hero_table: Callable[[set[int]], set[int]],
 ) -> None:
-    """Check a normalised draft in the order its refusals have always come in; the warband's exploration resource,
-    hired swords and hirelings on the hero injury table are looked up through `resource_found`, `hireling_ids` and
-    `on_hero_table` (ValueError for the first problem)."""
+    """Check a normalised draft in the order its refusals have always come in; the warband's exploration resource
+    and hired swords are looked up through `resource_found` and `hireling_ids` (ValueError for the first problem).
+    The battle roster is read only when a hireling's result has injury rolls."""
     unit_results = draft["unit_results"]
-    rolled = rolled_hireling_ids(unit_results)
-    check_unit_results(participant, unit_results, hero_roll_type, on_hero_table(rolled) if rolled else set())
+    hero_table = hero_table_hirelings(participant) if rolled_hireling_ids(unit_results) else set()
+    check_unit_results(participant, unit_results, hero_roll_type, hero_table)
     check_special_ids(campaign_id, unit_results)
     resource_id = draft["exploration"].get("resource_id")
     if resource_id is not None and not resource_found(resource_id):
@@ -113,9 +124,6 @@ def validate_postbattle(battle: Battle, participant: BattleParticipant, raw_draf
         ).exists(),
         hireling_ids=lambda ids: set(
             Hireling.objects.filter(id__in=ids, warband_id=warband_id).values_list("id", flat=True)
-        ),
-        on_hero_table=lambda ids: set(
-            Hireling.objects.filter(id__in=ids, warband_id=warband_id, injury_table="hero").values_list("id", flat=True)
         ),
     )
     return draft
