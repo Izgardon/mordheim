@@ -47,10 +47,25 @@ def sync_item(entry: BestiaryEntry, data: Mapping[str, Any]) -> Item:
     """The beast's item after an edit: in step with the beast, its grade and prices replaced when `data` sends them
     (kept otherwise, whether or not the beast is sold); made when the beast has none yet."""
     item = Item.objects.filter(bestiary_entry=entry).first()
-    if item is None:
+    if item is None and entry.replaces_id is None:
         return create_item(entry, data)
+    if item is None:
+        item = _version_of_book_item(entry)
     fields = item_fields(entry) | ({"grade": data["grade"]} if "grade" in data else {})
     Item.objects.filter(pk=item.pk).update(**fields)
     if "availabilities" in data:
         replace_availabilities(item, data["availabilities"])
+    return item
+
+
+def _version_of_book_item(version: BestiaryEntry) -> Item:
+    """A version written without its item (a book beast that had none at its first edit): the campaign's version of
+    the book beast's item, made first when the book beast has none, so Revert can take the item back with the beast."""
+    from apps.core.catalogue.kinds import ITEMS  # catalogue -> hooks -> bestiary writes -> here
+    from apps.core.catalogue.versions import editable
+
+    assert version.replaces_id is not None and version.campaign_id is not None  # sync_item's caller: a version
+    book = BestiaryEntry.objects.get(pk=version.replaces_id)
+    book_item = Item.objects.filter(bestiary_entry=book).first() or create_item(book, {})
+    item: Item = editable(ITEMS, book_item, version.campaign_id)  # its copy points at `version` (copy_entry)
     return item

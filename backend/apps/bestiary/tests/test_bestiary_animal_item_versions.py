@@ -102,6 +102,35 @@ class AnimalItemVersionTests(BeastTestCase):
         )
 
 
+class AnimalItemRepairTests(BeastTestCase):
+    """A beast written before every beast had its item (or written directly) gets one when a campaign edits it, so its
+    version always has the version of the book's item, and Revert can take it back."""
+
+    def test_a_book_beast_without_an_item_gets_one_and_its_version_on_a_first_edit(self):
+        version = self.patch_as(self.player, BESTIARY.detail_url(self.warhound.id), {"campaign_id": self.campaign.id, "name": "Hound"})  # fmt: skip
+
+        self.assertEqual(version.status_code, 200, version.data)
+        book = Item.objects.get(bestiary_entry=self.warhound)
+        copy = Item.objects.get(id=version.data["item"]["id"])
+        self.assertEqual(
+            (book.campaign_id, book.name, copy.replaces_id, copy.name), (None, "Warhound", book.id, "Hound")
+        )
+        self.hero.hero_items.create(item=copy, cost=25)
+
+        reverted = self.post_as(self.player, f"{BESTIARY.detail_url(version.data['id'])}revert/")
+
+        self.assertEqual((reverted.status_code, reverted.data["item"]["id"]), (200, book.id))
+        self.assertEqual(self.hero.hero_items.get().item_id, book.id)
+
+    def test_a_version_without_an_item_gets_the_version_of_its_book_beasts_item(self):
+        version = make_entry(BESTIARY, "Charger", campaign=self.campaign, kind="mount", replaces=self.horse)
+
+        edited = self.patch_as(self.player, BESTIARY.detail_url(version.id), {"description": "Proud."})
+
+        copy = Item.objects.get(bestiary_entry=version)
+        self.assertEqual((edited.data["item"]["id"], copy.replaces_id, copy.campaign_id), (copy.id, self.item.id, self.campaign.id))  # fmt: skip
+
+
 class AnimalItemArchiveTests(BeastTestCase):
     def delete(self, beast: BestiaryEntry) -> Any:
         return self.delete_as(self.owner, f"{BESTIARY.detail_url(beast.id)}?campaign_id={self.campaign.id}")

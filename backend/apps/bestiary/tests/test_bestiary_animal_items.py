@@ -168,6 +168,11 @@ class AnimalItemThroughTheItemsRoutesTests(CatalogueTestCase):
         listed = [row["name"] for row in self.get_as(self.player, f"{ITEMS.list_url(self.campaign)}&listed=1").json()]
         animals = [row["name"] for row in self.get_as(self.player, f"{ITEMS.list_url(self.campaign)}&type=Animal").json()]  # fmt: skip
 
+        unlisted = [row["name"] for row in self.get_as(self.player, f"{ITEMS.list_url(self.campaign)}&listed=false").json()]  # fmt: skip
+        junk = self.get_as(self.player, f"{ITEMS.list_url(self.campaign)}&listed=yes")
+
         self.assertIn("Warhorse", listed)
         self.assertNotIn("Mule", listed)
         self.assertEqual(sorted(animals), ["Mule", "Warhorse"])  # the Animals tab shows both
+        self.assertEqual(unlisted, ["Mule"])
+        self.assertEqual((junk.status_code, list(junk.json()["fields"])), (400, ["listed"]))

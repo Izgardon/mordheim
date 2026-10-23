@@ -29,6 +29,7 @@ from apps.bestiary.serializers import BestiaryEntryWriteSerializer
 from apps.hirelings.models import DramatisPersona, HiredSword
 from apps.hirelings.serializers import DramatisPersonaWriteSerializer, HiredSwordWriteSerializer
 from apps.items.models import Item, ItemProperty
+from apps.items.selectors import by_listing
 from apps.items.serializers import ItemPropertySerializer, ItemWriteSerializer
 from apps.races.models import Race
 from apps.races.serializers import RaceCreateSerializer
@@ -215,7 +216,7 @@ ITEMS = CatalogueKindSpec(
     write_serializer=ItemWriteSerializer,
     named=True,
     versioned=True,
-    filters={**NAME_AND_TYPE, "listed": lambda value: Q(listed=value.lower() in ("1", "true"))},  # the shop's
+    filters={**NAME_AND_TYPE, "listed": by_listing},  # the shop's list: ?listed=1
     reread=True,
     children=("availabilities", "availabilities__restriction_links", "property_links"),
     holders=_copies(
