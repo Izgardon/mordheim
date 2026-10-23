@@ -5,6 +5,7 @@ import greedIcon from "@/assets/icons/greed.webp";
 import ratingIcon from "@/assets/icons/Menu.webp";
 import { ChestClosedIcon, ChestOpenIcon } from "./chest-icons";
 import GoldLabel from "./GoldLabel";
+import RatingLabel from "./RatingLabel";
 import WarbandRecordIndicator from "./WarbandRecordIndicator";
 
 import { Tooltip } from "@components/tooltip";
@@ -33,6 +34,8 @@ type WarbandMobileMetaBarProps = {
   /** Gold the open edit session will spend on Save (queued recruits and purchases). */
   pendingGold?: number;
   warbandRating: number;
+  /** A section has unsaved changes, which the server's rating counts only once saved. */
+  ratingUnsaved?: boolean;
   heroes: WarbandHero[];
   hirelings: WarbandHireling[];
   henchmenGroups: HenchmenGroup[];
@@ -49,6 +52,7 @@ export default function WarbandMobileMetaBar({
   warband,
   pendingGold = 0,
   warbandRating,
+  ratingUnsaved = false,
   heroes,
   hirelings,
   henchmenGroups,
@@ -85,7 +89,7 @@ export default function WarbandMobileMetaBar({
             aria-label="Warband rating breakdown"
           >
             <img src={ratingIcon} alt="" className="h-4 w-4" />
-            <span>{warbandRating}</span>
+            <RatingLabel rating={warbandRating} unsaved={ratingUnsaved} />
           </button>
         </div>
         <div className="flex items-center gap-2">

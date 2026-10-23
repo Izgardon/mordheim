@@ -118,6 +118,7 @@ export default function Warband() {
   const header = {
     warband,
     warbandRating,
+    ratingUnsaved: page.hasUnsavedChanges,
     ...roster,
     canManageItems: capabilities.manage_items,
     canInitiateTrade,

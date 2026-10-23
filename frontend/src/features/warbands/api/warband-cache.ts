@@ -97,6 +97,8 @@ export function mergeSheetUpdate(sheet: WarbandSheet, update: WarbandUpdate): Wa
 /**
  * Re-reads the summary (gold, rating, resources, the unit summaries) of each cached sheet of the
  * warband that is on screen, and marks the others stale. A failed read keeps the cached summary.
+ * A read still on its way began before this write, so it is dropped for a new one: reusing it
+ * would leave the header's rating as it was before the write.
  */
 export function refreshSheetSummary(queryClient: QueryClient, warbandId: number) {
   const sheets = queryClient
@@ -108,9 +110,11 @@ export function refreshSheetSummary(queryClient: QueryClient, warbandId: number)
       continue;
     }
     const campaignId = query.queryKey[1] as number;
+    const summaryKey = queryKeys.campaign.warbandSummary(campaignId, warbandId);
+    void queryClient.cancelQueries({ queryKey: summaryKey });
     queryClient
       .fetchQuery({
-        queryKey: queryKeys.campaign.warbandSummary(campaignId, warbandId),
+        queryKey: summaryKey,
         queryFn: () => getWarbandSummary(warbandId),
         staleTime: 0,
         gcTime: 0,

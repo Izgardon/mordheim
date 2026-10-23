@@ -182,6 +182,8 @@ export function useWarbandPage({
       sum + (editors[section].isEditing ? editors[section].purchases.pendingSpend : 0),
     0
   );
+  // The header shows the server's rating: unsaved edits count only once saved, so it says so.
+  const hasUnsavedChanges = SECTIONS.some((section) => editors[section].isDirty);
 
   // Warband size only warns (decision 12). An edit counts its forms, queued recruits included.
   const isAnyEditing = SECTIONS.some((section) => editors[section].isEditing);
@@ -204,6 +206,7 @@ export function useWarbandPage({
     handleTabChange,
     discardDialog,
     pendingGold,
+    hasUnsavedChanges,
     sizeWarning,
     editors,
     sectionActionsHidden,
