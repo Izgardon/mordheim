@@ -98,6 +98,10 @@ def hireling_entry(hireling: Hireling) -> dict:
         "upkeepPrice": hireling.upkeep_price,
         "upkeepCostExpression": hireling.upkeep_cost_expression,
         "noLevelUps": bool(hireling.no_level_ups),
+        "hirelingKind": hireling.kind,  # hired_sword | dramatis_persona
+        "injuryTable": hireling.injury_table,  # henchman: a d6; hero: the campaign's hero death roll
+        "stays": hireling.stays,  # always | one_battle: suggested to leave after it
+        "paymentNote": hireling.payment_note,
         "items": items,
         "singleUseItems": _single_use(items),
         "skills": _named(hireling.hireling_skills.all(), "skill"),

@@ -1,8 +1,9 @@
 """Checking a player's postbattle draft against his units and the campaign, for a draft save and at finalise.
 
 The draft is normalised first (validation/postbattle.py); then, in this order: every selected unit of the warband
-has a result, injury rolls use the campaign's hero death roll (d6 for everyone else), injury specials exist, the
-exploration resource is the warband's and each upkeep entry names one of its hired swords. ValueError otherwise.
+has a result, injury rolls use the campaign's hero death roll (heroes, and hirelings on the hero table; d6 for everyone
+else), injury specials exist, the exploration resource is the warband's and each upkeep entry names one of its hired
+swords. ValueError otherwise.
 """
 
 from collections.abc import Callable
@@ -26,13 +27,29 @@ def hero_death_roll(campaign_id: int) -> str:
     )
 
 
-def check_unit_results(participant: BattleParticipant, unit_results: dict[str, dict], hero_roll_type: str) -> None:
+def rolled_hireling_ids(unit_results: dict[str, dict]) -> set[int]:
+    """The hirelings whose results carry injury rolls: the ones whose injury table the check needs."""
+    ids = set()
+    for unit_key, result in unit_results.items():
+        parsed = parse_unit_key(unit_key)
+        if parsed["unit_type"] == "hireling" and parsed["unit_id"] is not None and result.get("serious_injury_rolls"):
+            ids.add(parsed["unit_id"])
+    return ids
+
+
+def check_unit_results(
+    participant: BattleParticipant, unit_results: dict[str, dict], hero_roll_type: str, hero_table: set[int]
+) -> None:
+    """Every selected unit has a result, and each injury roll is on its unit's table: the campaign's hero death roll
+    for heroes and for the hirelings in `hero_table` (dramatis personae, and house rules), a d6 for everyone else."""
     missing_keys = sorted(permanent_unit_keys(participant) - set(unit_results.keys()))
     if missing_keys:
         raise ValueError("postbattle unit_results are missing selected units")
     for unit_key, result in unit_results.items():
-        unit_type = parse_unit_key(unit_key)["unit_type"]
-        expected_roll_type = hero_roll_type if unit_type == "hero" else "d6"
+        parsed = parse_unit_key(unit_key)
+        unit_type = parsed["unit_type"]
+        on_hero_table = unit_type == "hero" or (unit_type == "hireling" and parsed["unit_id"] in hero_table)
+        expected_roll_type = hero_roll_type if on_hero_table else "d6"
         for roll in result.get("serious_injury_rolls", []):
             if roll.get("roll_type") != expected_roll_type:
                 raise ValueError(f"{unit_type} serious_injury_rolls must use {expected_roll_type}")
@@ -64,12 +81,14 @@ def check_draft(
     *,
     resource_found: Callable[[int], bool],
     hireling_ids: Callable[[list[int]], set[int]],
+    on_hero_table: Callable[[set[int]], set[int]],
 ) -> None:
-    """Check a normalised draft in the order its refusals have always come in; the warband's exploration resource
-    and hired swords are looked up through `resource_found` and `hireling_ids` (ValueError for the first
-    problem)."""
+    """Check a normalised draft in the order its refusals have always come in; the warband's exploration resource,
+    hired swords and hirelings on the hero injury table are looked up through `resource_found`, `hireling_ids` and
+    `on_hero_table` (ValueError for the first problem)."""
     unit_results = draft["unit_results"]
-    check_unit_results(participant, unit_results, hero_roll_type)
+    rolled = rolled_hireling_ids(unit_results)
+    check_unit_results(participant, unit_results, hero_roll_type, on_hero_table(rolled) if rolled else set())
     check_special_ids(campaign_id, unit_results)
     resource_id = draft["exploration"].get("resource_id")
     if resource_id is not None and not resource_found(resource_id):
@@ -94,6 +113,9 @@ def validate_postbattle(battle: Battle, participant: BattleParticipant, raw_draf
         ).exists(),
         hireling_ids=lambda ids: set(
             Hireling.objects.filter(id__in=ids, warband_id=warband_id).values_list("id", flat=True)
+        ),
+        on_hero_table=lambda ids: set(
+            Hireling.objects.filter(id__in=ids, warband_id=warband_id, injury_table="hero").values_list("id", flat=True)
         ),
     )
     return draft
