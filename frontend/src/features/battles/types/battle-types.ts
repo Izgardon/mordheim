@@ -432,12 +432,20 @@ export type BattleRosterSpellEntry = BattleRosterDetailEntry & {
   dc?: string | number | null;
 };
 
-/** A mount or pet on a battle roster (camelCase like the roster; the stats stay snake_case). */
+/**
+ * A mount or pet on a battle roster (camelCase like the roster; the stats stay snake_case), with
+ * its beast's skills, specials and spells (step 5; each left out when empty). A pet with a profile
+ * fights as its own model under `key` (`pet:<owner kind>:<item row id>`).
+ */
 export type BattleRosterCompanion = {
+  key?: string;
   itemId: number;
   name: string;
   hasProfile: boolean;
   stats: BattleUnitStats | null;
+  skills?: BattleRosterDetailEntry[];
+  specials?: BattleRosterDetailEntry[];
+  spells?: BattleRosterSpellEntry[];
 };
 
 /** The rider's mount: its M (null without a profile) and what it adds to the rating. */

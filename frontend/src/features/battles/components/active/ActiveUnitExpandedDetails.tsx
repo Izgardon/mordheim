@@ -13,6 +13,11 @@ import { useUnitNotesAutosave } from "@/features/battles/hooks/useUnitNotesAutos
 import "@/features/warbands/styles/warband.css";
 import { useMediaQuery } from "@/lib/use-media-query";
 
+import {
+  CompanionEntryFrom,
+  CompanionEntryMark,
+} from "@/features/warbands/components/units/beasts/CompanionEntryMark";
+
 import { ActiveNotesBox, ActiveSingleUseControls } from "./ActiveEntryParts";
 import { activeItemSource, buildActiveBlocks, type ActiveBlockEntry } from "./active-blocks";
 
@@ -130,6 +135,7 @@ export default function ActiveUnitExpandedDetails({
           onClick={(event) => handleEntryClick(entry, event)}
         >
           {entry.label}
+          {entry.companion ? <CompanionEntryFrom {...entry.companion} /> : null}
         </button>
         {entry.type === "spell" &&
         entry.dc !== undefined &&
@@ -139,6 +145,7 @@ export default function ActiveUnitExpandedDetails({
             DC {entry.dc}
           </span>
         ) : null}
+        {entry.companion ? <CompanionEntryMark {...entry.companion} /> : null}
         {isSingleUse && entry.item ? (
           <ActiveSingleUseControls
             item={entry.item}

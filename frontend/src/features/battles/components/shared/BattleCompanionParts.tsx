@@ -1,5 +1,6 @@
 import { Tooltip } from "@/components/ui/tooltip";
 import { BEAST_KIND_TEXT, BeastKindIcon } from "@/features/bestiary/components/BeastKindIcon";
+import CompanionAbilityLines from "@/features/warbands/components/units/beasts/CompanionAbilityLines";
 import CreatureMark from "@/features/warbands/components/units/beasts/CreatureMark";
 
 import type {
@@ -7,11 +8,6 @@ import type {
   BattleRosterMount,
   BattleUnitStats,
 } from "@/features/battles/types/battle-types";
-
-/** The mount's mark before a rider's name ("Rides Warhorse"); nothing on foot. */
-export function RiderMark({ mount }: { mount?: BattleRosterMount | null }) {
-  return mount ? <CreatureMark kind="mount" title={`Rides ${mount.name}`} /> : null;
-}
 
 const LINE: [keyof BattleUnitStats, string][] = [
   ["movement", "M"],
@@ -25,12 +21,45 @@ const LINE: [keyof BattleUnitStats, string][] = [
   ["leadership", "Ld"],
 ];
 
-const profileLine = (pet: BattleRosterCompanion) =>
-  pet.hasProfile && pet.stats
-    ? LINE.map(([key, label]) => `${label} ${pet.stats![key] ?? "-"}`).join(" · ")
+const profileLine = (beast: BattleRosterCompanion) =>
+  beast.hasProfile && beast.stats
+    ? LINE.map(([key, label]) => `${label} ${beast.stats![key] ?? "-"}`).join(" · ")
     : "No profile";
 
-/** A unit's pets as chips, each with its profile (or "No profile") in a tooltip. */
+/** A mount's or pet's tooltip: what it is, its profile line and its skills, specials and spells. */
+function BeastDetails({ title, beast }: { title?: string; beast: BattleRosterCompanion }) {
+  return (
+    <span className="block space-y-1">
+      {title ? <span className="block font-semibold">{title}</span> : null}
+      <span className="block">{profileLine(beast)}</span>
+      <CompanionAbilityLines
+        skills={beast.skills}
+        specials={beast.specials}
+        spells={beast.spells}
+        className="space-y-0.5"
+      />
+    </span>
+  );
+}
+
+/**
+ * The mount's mark before a rider's name ("Rides Warhorse"), opening the mount's profile and
+ * entries; nothing on foot.
+ */
+export function RiderMark({ mount }: { mount?: BattleRosterMount | null }) {
+  if (!mount) return null;
+  const title = `Rides ${mount.name}`;
+  return (
+    <Tooltip
+      trigger={<CreatureMark kind="mount" title={title} />}
+      content={<BeastDetails title={title} beast={mount} />}
+      maxWidth={320}
+      className="inline-flex"
+    />
+  );
+}
+
+/** A unit's pets as chips, each with its profile (or "No profile") and entries in a tooltip. */
 export function PetChips({ pets }: { pets?: BattleRosterCompanion[] }) {
   if (!pets?.length) return null;
   return (
@@ -47,7 +76,7 @@ export function PetChips({ pets }: { pets?: BattleRosterCompanion[] }) {
               {pet.name}
             </span>
           }
-          content={profileLine(pet)}
+          content={<BeastDetails beast={pet} />}
           maxWidth={320}
           className="inline-flex"
         />

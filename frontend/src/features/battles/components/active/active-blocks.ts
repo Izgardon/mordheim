@@ -2,6 +2,9 @@ import type {
   PrebattleUnit,
   UnitItemEntry,
 } from "@/features/battles/components/prebattle/prebattle-types";
+import { battleCompanionSources } from "@/features/battles/utils/battle-companions";
+import type { CompanionEntrySource } from "@/features/warbands/components/units/beasts/CompanionEntryMark";
+import { companionEntries } from "@/features/warbands/utils/companions";
 import {
   buildSpellCountMap,
   deduplicateSpells,
@@ -17,6 +20,8 @@ export type ActiveBlockEntry = {
   dc?: string | number | null;
   item?: UnitItemEntry;
   remainingSingleUse?: number;
+  /** A skill, special or spell a switched-on mount or pet brings (read-only, step 5). */
+  companion?: CompanionEntrySource;
 };
 
 export type ActiveBlock = {
@@ -40,12 +45,14 @@ export function activeItemSource(unit: PrebattleUnit): UnitItemEntry[] {
 
 /**
  * An active unit's detail tabs: items (with what is left of each single-use one), skills, spells
- * (deduplicated, with their DC), specials and notes; empty tabs dropped.
+ * (deduplicated, with their DC), specials and notes, its companions' entries after its own
+ * (`companions`: the mount's and pets' by default); empty tabs dropped.
  */
 export function buildActiveBlocks(
   unit: PrebattleUnit,
   itemSource: UnitItemEntry[],
-  getUsedSingleUseItemCount?: (itemId: number) => number
+  getUsedSingleUseItemCount?: (itemId: number) => number,
+  companions = battleCompanionSources(unit)
 ): ActiveBlock[] {
   const itemBlock: ActiveBlockEntry[] = itemSource.map((item) => {
     const used = getUsedSingleUseItemCount?.(item.id) ?? 0;
@@ -90,9 +97,21 @@ export function buildActiveBlocks(
 
   return [
     { id: "items", title: "Items", entries: itemBlock },
-    { id: "skills", title: "Skills", entries: skillBlock },
-    { id: "spells", title: "Spells", entries: spellBlock },
-    { id: "special", title: "Specials", entries: specialBlock },
+    {
+      id: "skills",
+      title: "Skills",
+      entries: [...skillBlock, ...companionEntries(companions, "skill")],
+    },
+    {
+      id: "spells",
+      title: "Spells",
+      entries: [...spellBlock, ...companionEntries(companions, "spell")],
+    },
+    {
+      id: "special",
+      title: "Specials",
+      entries: [...specialBlock, ...companionEntries(companions, "special")],
+    },
     { id: "notes", title: "Notes", entries: notesBlock },
   ].filter((block) => block.entries.length > 0);
 }

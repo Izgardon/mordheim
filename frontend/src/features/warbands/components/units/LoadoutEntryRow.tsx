@@ -1,22 +1,9 @@
 import type { MouseEvent } from "react";
 
 import BeastItemButton from "./beasts/BeastItemButton";
-import { BEAST_KIND_TEXT, BeastKindIcon } from "@/features/bestiary/components/BeastKindIcon";
+import { CompanionEntryFrom, CompanionEntryMark } from "./beasts/CompanionEntryMark";
 
-import type { LoadoutCompanion, LoadoutEntry } from "./loadout-blocks";
-
-/** A companion's entry: the mount's or pet's mark and the beast's name, after the entry. */
-function CompanionMark({ kind, name }: LoadoutCompanion) {
-  return (
-    <span
-      aria-hidden="true"
-      className={`inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-[0.6rem] ${BEAST_KIND_TEXT[kind]}`}
-    >
-      <BeastKindIcon kind={kind} className="h-3 w-3" />
-      {name}
-    </span>
-  );
-}
+import type { LoadoutEntry } from "./loadout-blocks";
 
 type LoadoutEntryRowProps = {
   entry: LoadoutEntry;
@@ -82,19 +69,14 @@ export default function LoadoutEntryRow({
       <button type="button" className={buttonClassName} onClick={onClick}>
         {entry.label}
         {state ? <span className="sr-only"> ({state})</span> : null}
-        {companion ? (
-          <span className="sr-only">
-            {" "}
-            (from {companion.name}, {companion.kind})
-          </span>
-        ) : null}
+        {companion ? <CompanionEntryFrom {...companion} /> : null}
       </button>
       {entry.type === "spell" && entry.dc !== undefined && entry.dc !== null && entry.dc !== "" ? (
         <span className="unit-list-entry-meta whitespace-nowrap text-[0.6rem] uppercase tracking-[0.3em]">
           DC {entry.dc}
         </span>
       ) : null}
-      {companion ? <CompanionMark {...companion} /> : null}
+      {companion ? <CompanionEntryMark {...companion} /> : null}
       {entry.beast && canEdit && onBeastClick ? (
         <BeastItemButton
           kind={entry.beast.kind}

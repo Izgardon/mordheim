@@ -39,6 +39,33 @@ export const companionAbilities = (
 ): { ability: CompanionAbility; source: CompanionSource }[] =>
   sources.flatMap((source) => (source[key] ?? []).map((ability) => ({ ability, source })));
 
+type AbilityType = "skill" | "special" | "spell";
+const ABILITY_KEYS = { skill: "skills", special: "specials", spell: "spells" } as const;
+
+/** A companion's skill, special or spell as a unit's list shows it, marked with its beast. */
+export type CompanionEntry = {
+  id: string;
+  visibleId: number;
+  label: string;
+  type: AbilityType;
+  dc?: string | number | null;
+  companion: { kind: "mount" | "pet"; name: string };
+};
+
+/**
+ * The companions' skills (specials, spells) as entries after the unit's own, on the warband page
+ * and in battle: never pending and never part of the unit's own lists or a PATCH.
+ */
+export const companionEntries = (sources: CompanionSource[], type: AbilityType): CompanionEntry[] =>
+  companionAbilities(sources, ABILITY_KEYS[type]).map(({ ability, source }, index) => ({
+    id: `companion-${type}-${source.kind}-${source.itemId}-${ability.id}-${index}`,
+    visibleId: ability.id,
+    label: ability.name,
+    type,
+    ...(type === "spell" ? { dc: ability.dc ?? null } : {}),
+    companion: { kind: source.kind, name: source.name },
+  }));
+
 /** A copy of a mount or pet switched on for its unit (a campaign's later change of kind: not). */
 export const isSwitchedOn = (item: Pick<Item, "companion" | "beast_kind">) =>
   Boolean(item.companion) && (item.beast_kind === "mount" || item.beast_kind === "pet");

@@ -1,5 +1,15 @@
 import type { EffectiveStats } from "@/features/warbands/types/companion-types";
+import { uniqueBeasts, type CompanionSource } from "@/features/warbands/utils/companions";
 import type { PrebattleUnit, UnitStats } from "../components/prebattle/prebattle-types";
+
+/** A roster unit's mount, then its pets, as the sources of the entries they bring (step 5). */
+export const battleCompanionSources = (
+  unit: Pick<PrebattleUnit, "mount" | "pets">
+): CompanionSource[] =>
+  uniqueBeasts([
+    ...(unit.mount ? [{ ...unit.mount, kind: "mount" as const }] : []),
+    ...(unit.pets ?? []).map((pet) => ({ ...pet, kind: "pet" as const })),
+  ]);
 
 type Mounted = Pick<PrebattleUnit, "effectiveStats">;
 

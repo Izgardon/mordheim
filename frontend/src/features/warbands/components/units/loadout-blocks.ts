@@ -1,11 +1,7 @@
 import { isPendingByName } from "../heroes/utils/pending-entries";
 import { groupItemsById } from "../../utils/warband-utils";
-import {
-  companionAbilities,
-  companionSources,
-  isSwitchedOn,
-  type CompanionSource,
-} from "../../utils/companions";
+import { companionEntries, companionSources, isSwitchedOn } from "../../utils/companions";
+import type { CompanionEntrySource } from "./beasts/CompanionEntryMark";
 import {
   buildSpellCountMap,
   deduplicateSpells,
@@ -26,9 +22,6 @@ export type LoadoutEntryType = "item" | "skill" | "spell" | "special" | "roster"
  */
 export type LoadoutBeast = { kind: BeastKind; on: boolean; rowId: number | null };
 
-/** The switched-on mount or pet a skill, special or spell comes with (read-only, step 5). */
-export type LoadoutCompanion = { kind: "mount" | "pet"; name: string };
-
 export type LoadoutEntry = {
   id: string;
   visibleId: number;
@@ -40,26 +33,8 @@ export type LoadoutEntry = {
   kills?: number;
   count?: number;
   beast?: LoadoutBeast;
-  companion?: LoadoutCompanion;
+  companion?: CompanionEntrySource;
 };
-
-type AbilityType = "skill" | "special" | "spell";
-const ABILITY_KEYS = { skill: "skills", special: "specials", spell: "spells" } as const;
-
-/**
- * The companions' skills (specials, spells) as entries after the unit's own, each marked with its
- * beast: never pending and never part of the unit's own lists or a PATCH.
- */
-export function companionEntries(sources: CompanionSource[], type: AbilityType): LoadoutEntry[] {
-  return companionAbilities(sources, ABILITY_KEYS[type]).map(({ ability, source }, index) => ({
-    id: `companion-${type}-${source.kind}-${source.itemId}-${ability.id}-${index}`,
-    visibleId: ability.id,
-    label: ability.name,
-    type,
-    ...(type === "spell" ? { dc: ability.dc ?? null } : {}),
-    companion: { kind: source.kind, name: source.name },
-  }));
-}
 
 type ItemRow = { key: string; item: Item; rows: Item[] };
 
