@@ -66,6 +66,11 @@ export type EffectiveStats = { movement: number | null; armour_save: number | nu
 /** The companion fields every unit payload carries (older caches may lack them). */
 export type UnitCompanionFields = {
   mount?: UnitMount | null;
+  /**
+   * A henchmen group's: each kind of mount its members ride, its first copy of each (the first is
+   * `mount`), so a group on a Warhorse and a Pony brings both beasts' entries.
+   */
+  mounts?: UnitMount[];
   pets?: UnitPet[];
   effective_stats?: EffectiveStats | null;
 };

@@ -98,6 +98,39 @@ describe("buildLoadoutBlocks", () => {
     expect(blocks.find((block) => block.id === "spells")?.entries).toHaveLength(1);
   });
 
+  it("lists every kind of mount a group rides, not only its first", () => {
+    const mount = { movement: 8, has_profile: true, stats: null, specials: [], spells: [] };
+    const warhorse = {
+      ...mount,
+      item_row_id: 2,
+      item_id: 140,
+      name: "Warhorse",
+      rating_bonus: 5,
+      skills: [{ id: 900, name: "Thunderous Charge", type: "Mount" }],
+    };
+    const pony = {
+      ...mount,
+      item_row_id: 5,
+      item_id: 150,
+      name: "Pony",
+      rating_bonus: 3,
+      skills: [{ id: 903, name: "Sure Footed", type: "Mount" }],
+    };
+    const group = makeVeteranHenchmenGroup({ mount: warhorse, mounts: [warhorse, pony] });
+
+    const blocks = buildLoadoutBlocks(henchmenKind, group);
+    const skills = blocks.find((block) => block.id === "skills")?.entries ?? [];
+
+    expect(skills.filter((entry) => entry.companion).map((entry) => entry.label)).toEqual([
+      "Thunderous Charge",
+      "Sure Footed",
+    ]);
+    expect(skills.find((entry) => entry.label === "Sure Footed")?.companion).toEqual({
+      kind: "mount",
+      name: "Pony",
+    });
+  });
+
   it("drops empty blocks", () => {
     const hero = makeVeteranHero({ items: [], skills: [], spells: [], specials: [] });
 

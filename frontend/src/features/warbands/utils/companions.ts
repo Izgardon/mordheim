@@ -25,10 +25,17 @@ export const uniqueBeasts = (sources: CompanionSource[]) =>
       index
   );
 
-/** A unit payload's mount, then its pets, as the sources of entries it brings (step 5). */
+/**
+ * A unit payload's mounts (a group's every kind, else its one mount), then its pets, as the
+ * sources of entries it brings (step 5).
+ */
 export const companionSources = (unit: UnitCompanionFields): CompanionSource[] =>
   uniqueBeasts([
-    ...(unit.mount ? [{ ...unit.mount, kind: "mount" as const, itemId: unit.mount.item_id }] : []),
+    ...(unit.mounts ?? (unit.mount ? [unit.mount] : [])).map((mount) => ({
+      ...mount,
+      kind: "mount" as const,
+      itemId: mount.item_id,
+    })),
     ...(unit.pets ?? []).map((pet) => ({ ...pet, kind: "pet" as const, itemId: pet.item_id })),
   ]);
 
