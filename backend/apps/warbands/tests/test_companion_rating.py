@@ -52,6 +52,18 @@ class MountRatingTests(RosterTestCase):
         HenchmenGroupItem.objects.filter(id__in=list(spare)).delete()
         self.assertEqual(self.rating(), 3 * 5 + 2 * 5)
 
+    def test_the_summary_names_the_mounts_part_of_the_rating_a_group_on_mixed_mounts_included(self):
+        group = make_unit(HENCHMEN, self.warband, members=("A", "B"))
+        HenchmenGroupItem.objects.create(henchmen_group=group, item=self.horse, companion=True)
+        HenchmenGroupItem.objects.create(henchmen_group=group, item=self.pony, companion=True)
+        HeroItem.objects.create(hero=make_unit(HERO, self.warband), item=self.pony, companion=True)
+
+        summary = self.client.get(f"/api/warbands/{self.warband.id}/summary/").data
+        sheet = self.client.get(f"/api/warbands/{self.warband.id}/sheet/").data["summary"]
+
+        self.assertEqual((summary["mounts_rating"], sheet["mounts_rating"]), (5 + 3 + 3, 5 + 3 + 3))
+        self.assertEqual(float(summary["rating"]), 2 * 5 + 5 + 5 + 3 + 3)
+
     def test_a_dead_or_dismissed_riders_mount_adds_nothing(self):
         for fields in ({"dead": True}, {"dismissed_at": timezone.now()}):
             HeroItem.objects.create(hero=make_unit(HERO, self.warband, **fields), item=self.horse, companion=True)

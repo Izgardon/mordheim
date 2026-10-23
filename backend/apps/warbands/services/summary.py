@@ -44,23 +44,23 @@ class WarbandUnits:
     hirelings: list[dict[str, Any]] = field(default_factory=list)
 
     @property
+    def mounts_rating(self) -> int:
+        """What the mounts add to the rating: each rider's first mount's bonus (a group rides one per living member,
+        each counted at its own bonus, so a group on mixed mounts adds each one's)."""
+        riders = [(row, 1) for row in [*self.heroes, *self.hirelings]]
+        riders += [(row, row["henchmen_count"] or 0) for row in self.henchmen_groups]
+        return sum(mount_rating_bonus(row.get("mount_bonuses"), count) for row, count in riders)
+
+    @property
     def rating(self) -> float | int:
-        """5 a model (20 a large one) and its XP, a hired sword's rating and XP, and each rider's first mount's bonus
-        (a group rides one per living member)."""
-        hero_rating = sum(
-            ((20 if row["large"] else 5) + _as_number(row["xp"]) + mount_rating_bonus(row.get("mount_bonuses"), 1))
-            for row in self.heroes
-        )
+        """5 a model (20 a large one) and its XP, a hired sword's rating and XP, and the mounts' bonuses."""
+        hero_rating = sum(((20 if row["large"] else 5) + _as_number(row["xp"])) for row in self.heroes)
         henchmen_rating = sum(
             (row["henchmen_count"] or 0) * ((20 if row["large"] else 5) + _as_number(row["xp"]))
-            + mount_rating_bonus(row.get("mount_bonuses"), row["henchmen_count"] or 0)
             for row in self.henchmen_groups
         )
-        hired_rating = sum(
-            (_as_number(row["rating"]) + _as_number(row["xp"]) + mount_rating_bonus(row.get("mount_bonuses"), 1))
-            for row in self.hirelings
-        )
-        return hero_rating + henchmen_rating + hired_rating
+        hired_rating = sum((_as_number(row["rating"]) + _as_number(row["xp"])) for row in self.hirelings)
+        return hero_rating + henchmen_rating + hired_rating + self.mounts_rating
 
     @property
     def hero_count(self) -> int:

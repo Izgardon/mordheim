@@ -58,6 +58,7 @@ class WarbandUnitSummarySerializer(serializers.Serializer):
 class WarbandSummarySerializer(serializers.ModelSerializer):
     resources = serializers.SerializerMethodField()
     rating = serializers.SerializerMethodField()
+    mounts_rating = serializers.SerializerMethodField()  # the mounts' part of the rating (bestiary rewrite step 5)
     gold = serializers.SerializerMethodField()
     heroes = serializers.SerializerMethodField()
     hirelings = serializers.SerializerMethodField()
@@ -86,6 +87,9 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
         if resources is None:
             return []
         return WarbandResourceSerializer(resources.all(), many=True).data
+
+    def get_mounts_rating(self, obj) -> int:
+        return self._units(obj).mounts_rating
 
     def get_rating(self, obj):
         return self._units(obj).rating
@@ -121,6 +125,7 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
         fields = (
             "resources",
             "rating",
+            "mounts_rating",
             "gold",
             "heroes",
             "hirelings",
