@@ -6,9 +6,10 @@
 import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { BattleState } from "@/features/battles/types/battle-types";
+import type { BattleParticipant, BattleState } from "@/features/battles/types/battle-types";
 import {
   BATTLE_CHANNEL,
+  CAMPAIGN_ID,
   ME,
   OPPONENT,
   battleEvent,
@@ -20,7 +21,9 @@ import {
   postbattleRules,
   socketMessage,
   statePath,
+  versionedMessage,
 } from "@/test/battle-fixtures";
+import { bestiaryEntry } from "@/test/catalogue-fixtures";
 import { ApiError } from "@/lib/api-client";
 import { renderBattleRoute } from "@/test/battle-routes";
 import { fakeApi } from "@/test/fake-api";
@@ -39,6 +42,20 @@ vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => false }));
 vi.mock("@/features/realtime/components/CampaignDiceRollerMenu", () => ({ default: () => null }));
 
 type UnitInformation = BattleState["participants"][number]["unit_information_json"];
+
+/** A temporary creature's profile (a Giant Rat with no profile in the bestiary yet). */
+const RAT_STATS = {
+  movement: 0,
+  weapon_skill: 0,
+  ballistic_skill: 0,
+  strength: 0,
+  toughness: 0,
+  wounds: 0,
+  initiative: 0,
+  attacks: 0,
+  leadership: 0,
+  armour_save: null,
+};
 
 /** The server's copy of the battle; writes change it as the backend does. */
 let server: BattleState;
@@ -174,6 +191,52 @@ describe("BattleActive requests", () => {
       unit_key: "hero:1",
       dismounted: true,
     });
+  });
+
+  it("adds a creature from the bestiary mid-battle, and shows another player's as it arrives (step 5)", async () => {
+    const user = setupUser();
+    await renderActive();
+    fakeApi.on(`GET /bestiary/?campaign_id=${CAMPAIGN_ID}`, [
+      bestiaryEntry({ id: 40, name: "Wild Dog" }),
+      bestiaryEntry({ id: 41, name: "Warhorse", kind: "mount" }),
+    ]);
+    fakeApi.on(`POST ${battlePath("config/")}`, (body: unknown) => {
+      const sent = body as Pick<BattleParticipant, "custom_units_json" | "selected_unit_keys_json">;
+      Object.assign(myRow(), sent);
+      return answer();
+    });
+
+    await user.click(screen.getByRole("button", { name: "Add Temporary Unit" }));
+    await user.click(screen.getByRole("button", { name: "Load from Bestiary" }));
+    expect(await screen.findByRole("button", { name: /^Wild Dog/ })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^Warhorse/ })).toBeNull(); // creatures only
+    await user.click(screen.getByRole("button", { name: /^Wild Dog/ }));
+    await user.click(screen.getByRole("button", { name: "Save temporary unit" }));
+
+    expect(await screen.findByText("Wild Dog")).toBeInTheDocument();
+    const sent = fakeApi.bodyOf(`POST ${battlePath("config/")}`) as Pick<
+      BattleParticipant,
+      "custom_units_json" | "selected_unit_keys_json"
+    >;
+    expect(sent.custom_units_json).toEqual([
+      expect.objectContaining({ name: "Wild Dog", unit_type: "Creature" }),
+    ]);
+    expect(sent.selected_unit_keys_json).toContain(sent.custom_units_json[0].key);
+
+    const theirs = server.participants.find((entry) => entry.user.id === OPPONENT.id)!;
+    theirs.custom_units_json = [
+      { key: "custom:rat", name: "Giant Rat", unit_type: "Creature", stats: RAT_STATS },
+    ];
+    theirs.selected_unit_keys_json = ["hero:2", "custom:rat"];
+    act(() =>
+      fakeRealtime.emit(
+        BATTLE_CHANNEL,
+        "battle.event",
+        versionedMessage(null, 1, { participants: [structuredClone(theirs)] })
+      )
+    );
+    await user.click(screen.getByRole("button", { name: "Night Razors" }));
+    expect(await screen.findByText("Giant Rat")).toBeInTheDocument();
   });
 
   it("shows each player's place in the battle on the active page too (BATL-NEW-08)", async () => {
