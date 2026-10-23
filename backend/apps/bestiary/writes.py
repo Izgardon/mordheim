@@ -3,7 +3,8 @@
 The input is already validated (`BestiaryEntryWriteSerializer`): fields and every linked id. Each write runs in the
 catalogue write's transaction (`apps/core/catalogue/writes.py`), so a failure leaves no entry without its links, and
 each kind of link goes in one INSERT. A list a write sends replaces that list; a list it leaves out stays. A beast
-without a profile keeps its stats at 0 and its save empty, whatever the write sends.
+without a profile keeps its stats at 0 and its save empty, whatever the write sends. Every write keeps the beast's
+Animal item in step with it (`animal_items.py`), with the grade and prices the write's `item` sends.
 """
 
 from collections.abc import Mapping
@@ -13,6 +14,7 @@ from django.db import models
 
 from apps.core.catalogue.payloads import STAT_FIELDS
 
+from .animal_items import create_item, sync_item
 from .models import BestiaryEntry, BestiaryEntryItem, BestiaryEntrySkill, BestiaryEntrySpecial, BestiaryEntrySpell
 
 ID_LINKS: tuple[tuple[str, type[models.Model], str], ...] = (
@@ -20,7 +22,7 @@ ID_LINKS: tuple[tuple[str, type[models.Model], str], ...] = (
     ("special_ids", BestiaryEntrySpecial, "special_id"),
     ("spell_ids", BestiaryEntrySpell, "spell_id"),
 )
-LISTS = ("skill_ids", "special_ids", "spell_ids", "item_entries")
+LISTS = ("skill_ids", "special_ids", "spell_ids", "item_entries", "item")
 NO_PROFILE: dict[str, Any] = {**{stat: 0 for stat in STAT_FIELDS}, "armour_save": None}
 
 
@@ -50,6 +52,7 @@ def create_entry(campaign_id: int, data: Mapping[str, Any]) -> BestiaryEntry:
     fields = _entry_fields(data, data.get("has_profile", True))
     entry = BestiaryEntry.objects.create(campaign_id=campaign_id, **fields)
     _write_links(entry, data, replace=False)
+    create_item(entry, data.get("item", {}))
     return entry
 
 
@@ -60,3 +63,4 @@ def update_entry(entry: BestiaryEntry, data: Mapping[str, Any]) -> None:
     if fields:
         entry.save(update_fields=list(fields))
     _write_links(entry, data, replace=True)
+    sync_item(entry, data.get("item", {}))

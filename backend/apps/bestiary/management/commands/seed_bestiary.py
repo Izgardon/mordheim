@@ -1,6 +1,6 @@
 """Seed the book's bestiary from JSON (`apps/bestiary/data/bestiary.json`): the beasts, each a mount, a pet or a
-creature (`kind`), with their skills, specials, spells and equipment, and an Animal shop item for each beast sold.
-Hired swords and dramatis personae are their own catalogue (seed_hired_swords, seed_dramatis_personae).
+creature (`kind`), with their skills, specials, spells and equipment, and every beast's Animal item (listed in the
+shop when `available_in_shop`, with the grade and prices of its `shop_item`). Hired swords and dramatis personae are their own catalogue (seed_hired_swords, seed_dramatis_personae).
 
 Links resolve against the book only (BUG-17), by name with apostrophes straightened. The run is all or nothing: an
 entry without a known kind stops it.
@@ -13,8 +13,8 @@ from typing import Any
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
+from apps.bestiary.animal_items import SUBTYPES, sync_item
 from apps.bestiary.models import (
-    BEAST_KINDS,
     BestiaryEntry,
     BestiaryEntryItem,
     BestiaryEntrySkill,
@@ -23,12 +23,11 @@ from apps.bestiary.models import (
 )
 from apps.core.book_lookups import BookLookups
 from apps.core.catalogue.cache import bump
-from apps.core.seeding import parse_armour_save, read_json_list, read_stats, sync_availabilities, upsert_global
+from apps.core.seeding import clean, parse_armour_save, read_json_list, read_stats, sync_availabilities, upsert_global
 from apps.items.models import Item
 from apps.restrictions.book import BookRestrictions
 
 DEFAULT_JSON_PATHS = [Path("apps/bestiary/data/bestiary.json")]
-SUBTYPES = dict(BEAST_KINDS)  # the Animal item's subtype: "Mount", "Pet" or "Creature"
 
 
 def _kind(data: dict[str, Any], name: str) -> str:
@@ -45,6 +44,7 @@ def _upsert_entry(data: dict[str, Any], name: str, kind: str) -> tuple[BestiaryE
         "armour_save": parse_armour_save(data.get("armour_save")),
         "large": bool(data.get("large", False)),
         "caster": data.get("caster", "No"),
+        "available_in_shop": bool(data.get("available_in_shop", False)),
         **read_stats(data, f"Bestiary entry '{name}'"),  # fail loudly (BUG-54)
     }
     return upsert_global(BestiaryEntry, {"name": name}, defaults)
@@ -72,17 +72,11 @@ def _sync_links(entry: BestiaryEntry, data: dict[str, Any], lookups: BookLookups
     )
 
 
-def _sync_shop_item(entry: BestiaryEntry, data: dict[str, Any], lookups: BookLookups, book: BookRestrictions) -> bool:
-    """The Animal item that hires the entry, with its prices; whether it is new."""
-    shop = data["shop_item"]
-    defaults = {
-        "subtype": SUBTYPES[entry.kind],
-        "grade": shop.get("grade", "1a"),
-        "single_use": bool(shop.get("single_use", False)),
-        "description": data.get("description", ""),
-        "bestiary_entry": entry,
-    }
-    item, created = upsert_global(Item, {"name": entry.name, "type": "Animal"}, defaults)
+def _sync_item(entry: BestiaryEntry, data: dict[str, Any], lookups: BookLookups, book: BookRestrictions) -> bool:
+    """The beast's Animal item (every beast has one), with its grade and prices; whether it is new."""
+    shop = data.get("shop_item") or {}
+    created = not Item.objects.filter(bestiary_entry=entry).exists()
+    item = sync_item(entry, {"grade": clean(shop.get("grade")) or "1a"})
     lookups.remember_item(item)  # a later entry may be equipped with it (the Freelancer's Warhorse, BUG-54)
     sync_availabilities(item, shop.get("availabilities", []), book)
     return created
@@ -136,6 +130,5 @@ class Command(BaseCommand):
                 entry, created = _upsert_entry(data, name, _kind(data, name))
                 counts["created" if created else "updated"] += 1
                 _sync_links(entry, data, lookups)
-                if data.get("shop_item"):
-                    counts["items_created" if _sync_shop_item(entry, data, lookups, book) else "items_updated"] += 1
+                counts["items_created" if _sync_item(entry, data, lookups, book) else "items_updated"] += 1
         return counts

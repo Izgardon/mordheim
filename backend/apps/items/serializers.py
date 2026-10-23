@@ -3,12 +3,11 @@ from typing import Any
 from rest_framework import serializers
 from rest_framework.fields import Field
 
-from apps.bestiary.models import BestiaryEntry
-from apps.core.catalogue.scope import CatalogueEntryField, CatalogueIdsField
+from apps.core.catalogue.scope import CatalogueIdsField
 from apps.restrictions.models import Restriction
 from apps.restrictions.serializers import RestrictionNoteSerializer, refuse_unknown_restrictions
 
-from .models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemProperty
+from .models import ANIMAL, Item, ItemAvailability, ItemAvailabilityRestriction, ItemProperty
 
 MAX_COST = 2_147_483_647  # the largest cost the column holds
 WEAPON_DEFAULTS = {"strength": "As user", "range": "Close combat"}
@@ -122,6 +121,7 @@ class ItemSerializer(serializers.ModelSerializer):
             "statblock",
             "properties",
             "availabilities",
+            "listed",  # the shop sells it (an Animal item: its beast is sold)
             "bestiary_entry",
             "generated_effect_key",  # set on a house rule's clone, which can't be edited or deleted (BUG-51)
         )
@@ -152,13 +152,11 @@ class AvailabilityInputSerializer(serializers.Serializer):
 
 class ItemWriteSerializer(serializers.ModelSerializer):
     """A custom item's create or edit. Linked ids are the book's or this campaign's (`context["campaign_id"]`,
-    SEC-07); the campaign itself is never an input."""
+    SEC-07); the campaign itself is never an input. An Animal item is never written here: the bestiary writes each
+    beast's (the items routes refuse one, `ANIMAL_ITEM`)."""
 
     property_ids = CatalogueIdsField(rows=ItemProperty.objects.all(), required=False)
     availabilities = AvailabilityInputSerializer(many=True, required=False)
-    bestiary_entry_id = CatalogueEntryField(
-        queryset=BestiaryEntry.objects.all(), source="bestiary_entry", allow_null=True, required=False
-    )  # the animal an Animal item hires (BUG-146: a raw id was a 500)
 
     class Meta:
         model = Item
@@ -175,11 +173,17 @@ class ItemWriteSerializer(serializers.ModelSerializer):
             "statblock",
             "property_ids",
             "availabilities",
-            "bestiary_entry_id",
         )
 
     def get_fields(self) -> dict[str, Field]:
         return with_save(super().get_fields())
+
+    def validate_type(self, value: str) -> str:
+        if value.strip().lower() == ANIMAL.lower():
+            raise serializers.ValidationError(
+                "Animal items come from the bestiary: add the beast there, with its price."
+            )
+        return value
 
     def validate_availabilities(self, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         links = [link for row in rows for link in row.get("restrictions", [])]

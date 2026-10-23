@@ -98,19 +98,16 @@ class ItemWriteTests(CatalogueTestCase):
             (created.data["campaign_id"], edited.data["campaign_id"]), (self.campaign.id, self.campaign.id)
         )
 
-    def test_an_item_links_its_animal_through_bestiary_entry_id(self):
+    def test_an_animal_item_comes_from_the_bestiary_alone(self):
         # BUG-146 (was pinned: the raw id reached the relation, which needs an instance, so every write was a 500;
-        # flipped in PR A: a scoped related field)
-        theirs = make_entry(BESTIARY, "Their pony", campaign=self.elsewhere)
-
+        # flipped in PR A: a scoped related field). The bestiary rewrite step 3 retired `bestiary_entry_id`: the
+        # bestiary writes each beast's one Animal item, so the items routes make none and link no beast
         created = self.create_as(self.owner, ITEMS, "Hound", type="Animal", bestiary_entry_id=self.warhound.id)
-        unlinked = self.patch_as(self.owner, ITEMS.detail_url(created.data["id"]), {"bestiary_entry_id": None})
-        foreign = self.create_as(self.owner, ITEMS, "Pony", type="Animal", bestiary_entry_id=theirs.id)
+        linked = self.create_as(self.owner, ITEMS, "Leash", type="Equipment", bestiary_entry_id=self.warhound.id)
 
-        self.assertEqual((created.status_code, created.data["bestiary_entry"]["name"]), (201, "Warhound"))
-        self.assertEqual((unlinked.status_code, unlinked.data["bestiary_entry"]), (200, None))
-        self.assertEqual((foreign.status_code, list(foreign.data)), (400, ["bestiary_entry_id"]))
-        self.assertFalse(Item.objects.filter(name="Pony").exists())
+        self.assertEqual((created.status_code, list(created.data)), (400, ["type"]))
+        self.assertEqual((linked.status_code, linked.data["bestiary_entry"]), (201, None))  # the id is ignored
+        self.assertFalse(Item.objects.filter(name="Hound").exists())
 
 
 class CampaignScopeOfWriteIdsTests(CatalogueTestCase):

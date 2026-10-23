@@ -111,7 +111,7 @@ class CatalogueCollectionView(CatalogueScopedView):
                 rows = rows.filter(keeps(value.strip()))
         listed = kind.hooks.listed(kind, rows, self.campaign_id, request.query_params)
         serializer = kind.hooks.row_serializer(kind, request.query_params)
-        return serializer(kind.hooks.read(listed), many=True).data
+        return serializer(kind.hooks.read(listed, request.query_params), many=True).data
 
     def create(self, request: Request) -> Response:
         assert self.campaign_id is not None  # load_scope found it
@@ -166,7 +166,7 @@ class CatalogueEntryView(CatalogueScopedView):
             kind.hooks.check_edit_body(self.request, entry)
         self.campaign_id = campaign_id
         self.enter_campaign(method, campaign_id)
-        if method in self.actions and entry.campaign_id is not None:
+        if method in self.actions:  # a book entry's too: a beast's Animal item is never written here
             kind.hooks.refuse_write(entry, self.actions[method])
         self.check_rule(self.rules.get(method))
 

@@ -6,7 +6,8 @@ the catalogue write's one transaction. The book row is locked first, so two firs
 (the second edits the first's version in place). Later edits change the version in place. Revert moves the copies
 back, records the reverted id (open battles still name it: current.py) and deletes the version. Both keep the
 copies' stored costs, and both cost the same whatever the number of copies. Links a copy carries to other entries
-point at the campaign's versions of those.
+point at the campaign's versions of those. An entry's twin (a beast's Animal item, kinds.py) gets its version with
+the entry's first edit, pointing at the entry's version, and goes back to the book with it.
 """
 
 from typing import Any
@@ -36,6 +37,8 @@ def editable(kind: CatalogueKindSpec, entry: Any, campaign_id: int) -> Any:
         if entry is None:
             entry = copy_entry(kind, book, campaign_id)
             remap(kind, campaign_id, {book.pk: entry.pk}, fresh=True)
+            if kind.twin is not None and (twin := kind.twin.of(book)) is not None:
+                editable(kind.twin.kind, twin, campaign_id)  # its copy points at the entry's version, made first
     elif entry.replaces_id is not None and not manager.select_for_update().filter(pk=entry.pk).exists():
         raise NotFound("Not found")  # reverted while this edit was on its way
     if getattr(entry, "generated_effect_key", None):
@@ -67,6 +70,9 @@ def retire(kind: CatalogueKindSpec, campaign_id: int, versions: list[Any]) -> No
     id_map = {version.pk: version.replaces_id for version in versions if version.replaces_id}
     if not id_map:
         return
+    if kind.twin is not None:  # the twins' versions first: each version's delete takes its twin with it
+        twins = kind.twin.kind.model._default_manager.filter(**{f"{kind.twin.field}__in": list(id_map)})
+        retire(kind.twin.kind, campaign_id, list(twins.filter(replaces__isnull=False).select_for_update()))
     remap(kind, campaign_id, id_map)
     RevertedVersion.objects.bulk_create(
         [

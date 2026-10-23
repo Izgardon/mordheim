@@ -56,16 +56,21 @@ def item_detail_prefetches(prefix: str = "") -> tuple[Prefetch, ...]:
 
     `prefix` reaches the items from a unit, e.g. "hero_items__item__"; without it, prefetch onto items.
     """
-    restrictions = ItemAvailabilityRestriction.objects.select_related("restriction").order_by("id")
     return (
         Prefetch(
             f"{prefix}property_links",
             queryset=ItemPropertyLink.objects.select_related("property").order_by("id"),
         ),
-        Prefetch(
-            f"{prefix}availabilities",
-            queryset=ItemAvailability.objects.prefetch_related(Prefetch("restriction_links", queryset=restrictions)),
-        ),
+        availabilities_prefetch(prefix),
+    )
+
+
+def availabilities_prefetch(prefix: str = "") -> Prefetch:
+    """An item's availabilities with their restrictions (two queries), e.g. a beast's item's ("animal_item__")."""
+    restrictions = ItemAvailabilityRestriction.objects.select_related("restriction").order_by("id")
+    return Prefetch(
+        f"{prefix}availabilities",
+        queryset=ItemAvailability.objects.prefetch_related(Prefetch("restriction_links", queryset=restrictions)),
     )
 
 

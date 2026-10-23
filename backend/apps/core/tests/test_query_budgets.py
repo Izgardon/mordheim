@@ -78,7 +78,7 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     "spells": ("/api/spells/?campaign_id={campaign}", 2),
     "specials": ("/api/special/?campaign_id={campaign}", 2),
     "races": ("/api/races/?campaign_id={campaign}", 2),
-    "bestiary": ("/api/bestiary/?campaign_id={campaign}", 2),
+    "bestiary": ("/api/bestiary/?campaign_id={campaign}", 2),  # 4 once the beasts have their items' prices
     "hired_swords": ("/api/hired-swords/?campaign_id={campaign}", 2),
     "dramatis_personae": ("/api/dramatis-personae/?campaign_id={campaign}", 2),
     # Battles

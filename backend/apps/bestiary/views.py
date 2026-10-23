@@ -5,6 +5,7 @@ from rest_framework.response import Response
 
 from apps.core.catalogue.kinds import BESTIARY
 from apps.core.catalogue.views import CatalogueDetailView, CatalogueListView
+from apps.warbands.prefetches import availabilities_prefetch
 from apps.warbands.units.catalogue_scope import current_entry
 from apps.warbands.views.base import WarbandScopedView
 
@@ -34,8 +35,10 @@ class WarbandBestiaryFavouriteListView(WarbandScopedView):
     def get(self, request: Request, warband_id: int) -> Response:
         campaign_id = self.warband.campaign_id
         scope = Q(bestiary_entry__campaign__isnull=True) | Q(bestiary_entry__campaign_id=campaign_id)
-        favourites = WarbandBestiaryFavourite.objects.filter(scope, warband=self.warband).select_related(
-            "bestiary_entry"
+        favourites = (
+            WarbandBestiaryFavourite.objects.filter(scope, warband=self.warband)
+            .select_related("bestiary_entry__animal_item")
+            .prefetch_related(availabilities_prefetch("bestiary_entry__animal_item__"))
         )
         entries = [f.bestiary_entry for f in favourites]
         return Response(BestiaryEntrySummarySerializer(entries, many=True).data)

@@ -2,7 +2,8 @@
 
 `?kind=` keeps entries of one kind or several (mount, pet, creature) before the list rule (merge.py); the bestiary
 rewrite step 3 replaced `?exclude_type=`, which dropped the 72 hired swords the bestiary held before they became their
-own catalogue. `?view=summary` sends each row without its description. Without them, the list is unchanged.
+own catalogue. `?view=summary` sends each row without its description and its item (the beast's Animal item and
+prices, which the default row carries). Without them, the list is unchanged.
 """
 
 from typing import Any
@@ -36,6 +37,7 @@ DEFAULT_KEYS = [
     "gains_xp",
     "rating_bonus",
     "available_in_shop",
+    "item",  # the beast's Animal item: its id, grade and prices (the bestiary rewrite step 3)
     *BADGES,  # CAT-NEW-03, PR C
 ]
 
@@ -65,7 +67,7 @@ class BestiaryListViewsTests(CatalogueTestCase):
         rows = self.rows("&view=summary&kind=creature")
 
         self.assertEqual([row["name"] for row in rows], ["Rat Ogre", "Warhound"])
-        self.assertEqual([list(row) for row in rows], [[key for key in DEFAULT_KEYS if key != "description"]] * 2)
+        self.assertEqual([list(row) for row in rows], [[key for key in DEFAULT_KEYS if key not in ("description", "item")]] * 2)  # fmt: skip
 
     def test_the_views_cost_what_the_default_list_costs(self):
         def count(query: str) -> int:

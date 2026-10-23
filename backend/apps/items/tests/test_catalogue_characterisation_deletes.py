@@ -145,15 +145,15 @@ class CustomEntryDeleteTests(CatalogueTestCase):
             [1, 1, 1],
         )
 
-    def test_deleting_a_bestiary_entry_drops_its_favourites_and_unlinks_its_shop_item(self):
+    def test_deleting_a_bestiary_entry_drops_its_favourites_and_takes_its_item(self):
+        # the bestiary rewrite step 3 (was: the shop item was unlinked and stayed): an Animal item is its beast's
         WarbandBestiaryFavourite.objects.create(warband=self.warband, bestiary_entry=self.beast)
         boar = make_entry(ITEMS, "War Boar", campaign=self.campaign, type="Animal", bestiary_entry=self.beast)
 
         self.assertEqual(self.delete_as(self.owner, BESTIARY.detail_url(self.beast.id)).status_code, 204)
 
         self.assertFalse(WarbandBestiaryFavourite.objects.filter(warband=self.warband).exists())
-        boar.refresh_from_db()
-        self.assertIsNone(boar.bestiary_entry_id)
+        self.assertFalse(Item.objects.filter(pk=boar.pk).exists())
 
     def test_deleting_a_hired_sword_leaves_the_units_hired_from_it(self):
         hired_sword = make_entry(HIRED_SWORDS, "Ogre Bodyguard", campaign=self.campaign)

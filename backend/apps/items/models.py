@@ -3,8 +3,14 @@ from django.db import models
 
 from apps.core.models import CatalogueEntry, version_constraints
 
+ANIMAL = "Animal"  # the item type of a beast: one per bestiary entry, written by the bestiary only
+
 
 class Item(CatalogueEntry):
+    """A catalogue item. `listed`: the shop sells it (an Animal item's follows its beast's `available_in_shop`; an item
+    that isn't listed still resolves everywhere else). An Animal item is its beast's (`bestiary_entry`, one each),
+    kept in step by the bestiary's writes and versioned, reverted, archived and removed with it."""
+
     campaign = models.ForeignKey(
         "campaigns.Campaign",
         related_name="items",
@@ -28,13 +34,14 @@ class Item(CatalogueEntry):
     # set on a house rule's generated version (its `replaces` is the book item the rule changes); editing the version
     # clears it, and the rule leaves the version alone from then on
     generated_effect_key = models.CharField(max_length=80, blank=True, null=True, db_index=True)
-    bestiary_entry = models.ForeignKey(
+    bestiary_entry = models.OneToOneField(
         "bestiary.BestiaryEntry",
-        related_name="shop_items",
+        related_name="animal_item",
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,  # the item goes with its beast (RESTRICT holders keep both: the beast is archived)
     )
+    listed = models.BooleanField(default=True)
 
     class Meta:
         db_table = "item"
@@ -49,6 +56,11 @@ class Item(CatalogueEntry):
                 fields=["campaign", "campaign_type", "name", "type", "generated_effect_key"],
                 name="item_unique_name_type",
                 nulls_distinct=False,
+            ),
+            models.CheckConstraint(  # an Animal item has its beast, and only an Animal item has one
+                check=models.Q(type=ANIMAL, bestiary_entry__isnull=False)
+                | (~models.Q(type=ANIMAL) & models.Q(bestiary_entry__isnull=True)),
+                name="item_animal_has_its_beast",
             ),
         ]
 

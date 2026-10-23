@@ -84,14 +84,14 @@ class WriteResolutionTests(CatalogueTestCase):
             "Boar", self.campaign, skill_ids=[self.infiltration[2].id], item_entries=[self.book_sword.id]
         )
         entry = self.post_as(self.player, BESTIARY.list_url(), body)
-        animal = self.post_as(self.player, ITEMS.list_url(), ITEMS.body("Hound leash", self.campaign, type="Animal", bestiary_entry_id=self.warhound.id))  # fmt: skip
         favourite = self.post_as(self.player, f"/api/warbands/{self.warband.id}/bestiary-favourites/", {"bestiary_entry_id": self.warhound.id})  # fmt: skip
 
-        self.assertEqual((entry.status_code, animal.status_code, favourite.status_code), (201, 201, 201))
+        # an Animal item's beast is the bestiary's to write since the bestiary rewrite step 3: its item follows its
+        # versions (apps/bestiary/tests/test_bestiary_animal_item_versions.py)
+        self.assertEqual((entry.status_code, favourite.status_code), (201, 201))
         boar = BestiaryEntry.objects.get(id=entry.data["id"])
         self.assertEqual(list(boar.bestiary_entry_skills.values_list("skill_id", flat=True)), [self.skill.id])
         self.assertEqual(list(boar.bestiary_entry_items.values_list("item_id", flat=True)), [self.sword.id])
-        self.assertEqual(animal.data["bestiary_entry"]["id"], version_hound.id)
         self.assertEqual(list(WarbandBestiaryFavourite.objects.filter(warband=self.warband).values_list("bestiary_entry_id", flat=True)), [version_hound.id])  # fmt: skip
 
     def test_unfavouriting_by_the_book_id_removes_the_versions_favourite(self):

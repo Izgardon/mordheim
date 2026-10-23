@@ -4,9 +4,9 @@ Items, skills, spells, specials, races, bestiary entries, hired swords and drama
 restrictions and the add-only item properties. A spec names the kind's model and serializers, how its list is
 filtered, the child rows an entry carries (what a version copies), the tables whose rows hold an entry (`holders`:
 what a delete can't take with it, what `usage/` counts, and what a version's first edit moves onto it and Revert
-moves back) and the rows that follow an entry without holding it (`followers`: a warband's bestiary favourites, an
-item's animal). Differences that are behaviour are hooks (hooks.py), as pass 1 did for units
-(`warbands/units/kinds.py`).
+moves back), the rows that follow an entry without holding it (`followers`: a warband's bestiary favourites) and the
+entry of another kind that goes everywhere it goes (`twin`: a beast's Animal item). Differences that are behaviour
+are hooks (hooks.py), as pass 1 did for units (`warbands/units/kinds.py`).
 """
 
 from collections.abc import Callable, Mapping
@@ -86,6 +86,20 @@ class Holder(Move):
 
 
 @dataclass(frozen=True)
+class Twin:
+    """An entry of another kind held once for each entry (`field`: its one-to-one key to the entry, CASCADE): written
+    by the entry's writes, versioned and reverted with it (versions.py), archived, removed, restored and deleted with
+    it (archive.py), and what holds it is the entry's usage (usage.py). A beast's Animal item."""
+
+    kind: "CatalogueKindSpec"
+    field: str
+
+    def of(self, entry: Any) -> Any:
+        """The entry's twin (`entry`: a row or its id), or None."""
+        return self.kind.model._default_manager.filter(**{self.field: entry}).first()
+
+
+@dataclass(frozen=True)
 class CatalogueKindSpec:
     key: str  # "skills": the list's cache key and the `catalogue.changed` event's kind
     noun: str  # "skill": messages
@@ -105,6 +119,7 @@ class CatalogueKindSpec:
     children: tuple[str, ...] = ()  # rows an entry carries (CASCADE), parents first; what a version copies
     holders: tuple[Holder, ...] = ()
     followers: tuple[Move, ...] = ()
+    twin: Twin | None = None
     hooks: CatalogueHooks = field(default_factory=CatalogueHooks)
 
     @property
@@ -200,7 +215,7 @@ ITEMS = CatalogueKindSpec(
     write_serializer=ItemWriteSerializer,
     named=True,
     versioned=True,
-    filters=NAME_AND_TYPE,
+    filters={**NAME_AND_TYPE, "listed": lambda value: Q(listed=value.lower() in ("1", "true"))},  # the shop's
     reread=True,
     children=("availabilities", "availabilities__restriction_links", "property_links"),
     holders=_copies(
@@ -294,7 +309,7 @@ BESTIARY = CatalogueKindSpec(
     versioned=True,
     filters={"kind": by_kind, "search": NAME_AND_TYPE["search"]},
     reread=True,
-    lists=("bestiary", "items"),  # an entry may be the animal an item shows
+    lists=("bestiary", "items"),  # its Animal item is written with it
     children=(
         "bestiary_entry_skills",
         "bestiary_entry_specials",
@@ -308,8 +323,8 @@ BESTIARY = CatalogueKindSpec(
             campaign="warband__campaign_id",
             unique=("warband_id",),
         ),
-        Move(model=Item, field="bestiary_entry", campaign="campaign_id"),  # the campaign's animals
     ),
+    twin=Twin(ITEMS, "bestiary_entry"),
     hooks=BestiaryHooks(),
 )
 HIRELING_LINKS = ("skill_links", "special_links", "spell_links", "item_links", "restriction_links")

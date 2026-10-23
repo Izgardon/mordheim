@@ -152,6 +152,24 @@ def make_entry(kind: CatalogueKind, name: str, /, campaign: Campaign | None = No
     return kind.model._default_manager.create(name=name, campaign=campaign, **{**defaults[kind.key], **fields})
 
 
+def make_beast(name: str, campaign: Campaign | None = None, cost: int | None = None, **fields: Any) -> BestiaryEntry:
+    """A bestiary entry with its Animal item, written directly as the seeder and the bestiary writes leave them: the
+    item in the beast's campaign, named after it, its subtype the kind's label, listed when the beast is sold, at
+    `cost` (no price when None)."""
+    beast: BestiaryEntry = make_entry(BESTIARY, name, campaign=campaign, **fields)
+    item = Item.objects.create(
+        name=name,
+        campaign=campaign,
+        type="Animal",
+        subtype=beast.get_kind_display(),
+        listed=beast.available_in_shop,
+        bestiary_entry=beast,
+    )
+    if cost is not None:
+        ItemAvailability.objects.create(item=item, cost=cost, rarity=2)
+    return beast
+
+
 class CatalogueTestCase(CampaignTestCase):
     """CampaignTestCase ("Shards": owner Olga, admin Ada, players Pia and Rex holding only `edit_catalogue`, outsider Otto
     with his own campaign `elsewhere`) plus a small book catalogue:

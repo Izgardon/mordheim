@@ -54,8 +54,8 @@ def as_id(value: Any) -> Any:
 
 
 class CatalogueEntryField(serializers.PrimaryKeyRelatedField):
-    """One entry's id (an item's animal, `bestiary_entry_id`; a unit's race), read as the campaign's current entry for
-    it in the field's one query."""
+    """One entry's id (a unit's or a hired sword's race), read as the campaign's current entry for it in the field's
+    one query."""
 
     def campaign_id(self) -> int:
         """The writer's campaign: the serializer's context, else its own (a unit's update reads its warband's)."""

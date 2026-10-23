@@ -22,7 +22,18 @@ from apps.spells.serializers import SpellSerializer
 
 from .payloads import STAT_FIELDS, with_badges
 
-ITEM_FIELDS = ("name", "type", "subtype", "grade", "single_use", "description", "strength", "range", "save_value")
+ITEM_FIELDS = (
+    "name",
+    "type",
+    "subtype",
+    "grade",
+    "single_use",
+    "description",
+    "strength",
+    "range",
+    "save_value",
+    "listed",
+)
 ENTRY_FIELDS = ("name", "kind", "description", *STAT_FIELDS, "armour_save", "large", "caster", *BEAST_FIELDS)
 HIRELING_FIELDS = (
     "name",
