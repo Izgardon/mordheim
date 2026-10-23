@@ -256,7 +256,8 @@ class QueryBudgetTests(TestCase):
         # transaction (ECON-PERF-03). Source and target are resolved with one id-only query each (BUG-06); a stash
         # row is locked and changed in two queries, without re-reading it (BUG-36). Each writes its log entry (+1,
         # ECON-CQ-02); a sale also writes its gold to the stored balance (+1, decision 4); each unit whose copies
-        # change gets a new updated_at, the version a roster Save sends back (+1 per unit, pass 2 decision 1).
+        # change gets a new updated_at, the version a roster Save sends back (+1 per unit, pass 2 decision 1). A move
+        # locks the warband first, as every roster write does (+1, the bestiary rewrite's lock order follow-up).
         client = self.ref.owner_client
         client.force_authenticate(user=self.ref.owner)
         heroes = list(Hero.objects.filter(warband=self.ref.warband).order_by("id").values_list("id", flat=True))
@@ -271,9 +272,9 @@ class QueryBudgetTests(TestCase):
         self._count_writes(
             client,
             [
-                ("move stash to hero", moves, {**stash_to_hero, "quantity": 1}, 20),
-                ("move hero to hero", moves, {**hero_to_hero, "item_id": items[1], "quantity": 1}, 27),
-                ("move hero to stash", moves, {**hero_to_stash, "quantity": 1}, 21),  # onto an existing stash row
+                ("move stash to hero", moves, {**stash_to_hero, "quantity": 1}, 21),
+                ("move hero to hero", moves, {**hero_to_hero, "item_id": items[1], "quantity": 1}, 28),
+                ("move hero to stash", moves, {**hero_to_stash, "quantity": 1}, 22),  # onto an existing stash row
                 (
                     "sell from the stash",
                     sales,

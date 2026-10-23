@@ -181,7 +181,9 @@ def recruit_beasts(warband: Warband, data: dict[str, Any]) -> Recruited:
     unit = None if source["type"] == STASH else resolve_unit(warband, source["type"], source.get("id"), "Source")
     with transaction.atomic():
         if target.group is not None:
-            lock_group(target.group, "target.group_id")  # the group first, then the stash rows
+            lock_group(target.group, "target.group_id")  # the warband, the group, then the stash or unit rows
+        else:
+            lock_warband(warband.id)  # before the source's rows, as every roster write locks them
         taken = _taken(warband, item, source, unit, quantity)
         costs = taken.costs if isinstance(taken, StashTake) else taken
         moved_from = (source["type"], economy_log.unit_name(source["type"], unit))

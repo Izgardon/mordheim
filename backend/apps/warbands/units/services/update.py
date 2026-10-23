@@ -7,6 +7,7 @@ from django.db import transaction
 
 from apps.logs.utils import log_warband_event
 from apps.warbands.models import RosterUnit, Warband
+from apps.warbands.utils.leaders import lock_warband
 
 from .loadout import finish_update_traits, linked_ids, pop_loadout_lists, prepare_update_traits, replace_loadout
 from .xp import record_xp_change
@@ -89,6 +90,10 @@ def save_update(kind: "UnitKindSpec", warband: Warband, writer: "UnitWriteSerial
 
 
 def update_unit(kind: "UnitKindSpec", warband: Warband, writer: "UnitWriteSerializer", *, sent: Any) -> None:
-    """PATCH one unit in its own transaction."""
+    """PATCH one unit in its own transaction. One sending `items` locks the warband before the unit's row, as the
+    companion switch, item moves and recruits do before they touch its item rows (the roster batch's version check
+    already locks it)."""
     with transaction.atomic():
+        if "items" in sent:
+            lock_warband(warband.id)
         save_update(kind, warband, writer, sent=sent)

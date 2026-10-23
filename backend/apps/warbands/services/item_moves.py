@@ -20,6 +20,7 @@ from apps.warbands.services.prices import CampaignPrices
 from apps.warbands.services.stash import ANY_COST, add_costs, remove_from_stash, stash_entry
 from apps.warbands.services.unit_items import add_unit_copies, resolve_unit, take_unit_copies
 from apps.warbands.units.kinds import KINDS, UnitKindKey
+from apps.warbands.utils.leaders import lock_warband
 
 Outcome = tuple[int, dict[str, Any]]
 
@@ -93,6 +94,7 @@ def transfer_item(warband: Warband, item: Item, data: Mapping[str, Any]) -> Outc
     source_unit = None if source_type == "stash" else resolve_unit(warband, source_type, source_id, "Source")
     target_unit = None if target_type == "stash" else resolve_unit(warband, target_type, target_id, "Target")
     with transaction.atomic():
+        lock_warband(warband.id)  # before the stash rows and the units, as a recruit or a PATCH sending items does
         stash_item = removed = None
         if source_unit is None:
             costs, stash_item = _remove_stash_items(warband, item_id, data)

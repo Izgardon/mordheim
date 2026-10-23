@@ -24,6 +24,7 @@ from apps.warbands.units.companions import (
 )
 from apps.warbands.units.errors import RosterError
 from apps.warbands.units.kinds import KINDS, UnitKindSpec
+from apps.warbands.utils.leaders import lock_warband
 
 NOT_A_COMPANION = "Only a mount or a pet can be switched on for its unit; recruit a creature into henchmen instead."
 
@@ -38,6 +39,7 @@ def switch_companion(kind: UnitKindSpec, unit: RosterUnit, row_id: int, on: bool
     if on and beast_kind(row.item) not in COMPANION_KINDS:
         raise RosterError(NOT_A_COMPANION, "not_a_companion", {"on": [NOT_A_COMPANION]})
     with transaction.atomic():
+        lock_warband(unit.warband_id)  # before the item row and the unit, as a PATCH sending items locks them
         links.filter(pk=row.pk).update(companion=on)
         touch_unit(kind.key, unit)
 
