@@ -255,3 +255,15 @@ class UnitBatchSerializer(serializers.Serializer):
             "purchases": serializers.ListField(child=serializers.DictField(), required=False, default=list),
             "stash_takes": serializers.ListField(child=serializers.DictField(), required=False, default=list),
         }
+
+
+class HireSerializer(serializers.Serializer):
+    """POST .../hirelings/hire/: the catalogue entry to hire (`source` names its list), and an optional name (the
+    entry's by default). The fields are built in get_fields() because `source` is also a Field attribute."""
+
+    def get_fields(self) -> dict[str, serializers.Field]:
+        return {
+            "source": serializers.ChoiceField(choices=("hired_sword", "dramatis_persona")),
+            "id": serializers.IntegerField(min_value=1),
+            "name": serializers.CharField(max_length=120, allow_blank=True, required=False),
+        }

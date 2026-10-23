@@ -13,10 +13,17 @@ from apps.warbands.views.base import WarbandScopedView
 
 from .errors import validation_error
 from .kinds import HERO, UnitKindSpec
-from .serializers import HenchmanPromoteSerializer, UnitBatchSerializer, UnitLevelUpSerializer, UnitSerializers
+from .serializers import (
+    HenchmanPromoteSerializer,
+    HireSerializer,
+    UnitBatchSerializer,
+    UnitLevelUpSerializer,
+    UnitSerializers,
+)
 from .services.batch import apply_batch, plan_batch
 from .services.create import create_unit
 from .services.dismiss import dismiss_unit
+from .services.hire import catalogue_entry, hire, hire_payload
 from .services.kill_history import kill_history
 from .services.level_up import LevelUpRejected, apply_advance
 from .services.promote import promote_henchman
@@ -156,3 +163,22 @@ class UnitBatchView(UnitView):
             "warnings": warnings,
         }
         return Response(payload)
+
+
+# The bestiary rewrite: a hired sword or dramatis persona copied from the catalogue (hirelings only). No docstring:
+# DRF serves it on OPTIONS.
+class UnitHireView(UnitView):
+    def post(self, request: Request, warband_id: int) -> Response:
+        body = HireSerializer(data=request.data)
+        if not body.is_valid():
+            raise validation_error(body.errors)
+        source, campaign_id = body.validated_data["source"], self.warband.campaign_id
+        entry = catalogue_entry(source, body.validated_data["id"], campaign_id)
+        payload = hire_payload(source, entry, body.validated_data.get("name"))
+        writer = self.serializers.create(data=payload, context={"campaign_id": campaign_id})
+        writer.is_valid(raise_exception=True)
+        hired = hire(self.warband, writer, source, entry)
+        unit = self.kind.detail_queryset().get(id=hired.unit.pk)
+        return Response(
+            {**self.serializers.detail(unit).data, "warnings": hired.warnings}, status=status.HTTP_201_CREATED
+        )

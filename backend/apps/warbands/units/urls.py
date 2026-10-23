@@ -5,6 +5,7 @@ from .views import (
     UnitBatchView,
     UnitDetailListView,
     UnitDetailView,
+    UnitHireView,
     UnitKillHistoryView,
     UnitLevelUpView,
     UnitListCreateView,
@@ -16,7 +17,7 @@ def unit_urlpatterns(kind: UnitKindSpec) -> list[URLPattern]:
     """The kind's roster endpoints, with the paths, URL kwargs and URL names they have always had.
 
     Every kind also gets `batch/` (the recruit queue's Save); kinds with members (henchmen groups) also
-    get `promote/` (Lad's Got Talent).
+    get `promote/` (Lad's Got Talent), and hirelings `hire/` (a hired sword or dramatis persona from the catalogue).
     """
     segment, unit = kind.url_segment, f"<int:{kind.url_kwarg}>"
     base = f"warbands/<int:warband_id>/{segment}/"
@@ -36,4 +37,6 @@ def unit_urlpatterns(kind: UnitKindSpec) -> list[URLPattern]:
         patterns.append(
             path(f"{base}{unit}/promote/", UnitPromoteView.for_kind(kind), name=f"warbands-{segment}-promote")
         )
+    if kind.hired_from_catalogue:
+        patterns.append(path(f"{base}hire/", UnitHireView.for_kind(kind), name=f"warbands-{segment}-hire"))
     return patterns

@@ -128,6 +128,7 @@ class UnitKindSpec:
     cap: CapSpec | None
     unknown_name: str  # the dismiss and loadout logs' fallback for a unit without a name
     unknown_type: str  # the dismiss log's fallback for a unit without a type
+    hired_from_catalogue: bool = False  # hirelings: `hire/` copies a hired sword or dramatis persona onto the warband
     hooks: UnitHooks = field(default_factory=UnitHooks)  # differences that are behaviour (units/hooks.py)
 
     def links(self) -> tuple[LinkSpec, ...]:
@@ -267,6 +268,7 @@ HIRELING = UnitKindSpec(
     ),
     unknown_name="Unknown Hired Sword",
     unknown_type="Unknown Type",
+    hired_from_catalogue=True,
 )
 
 KINDS: Mapping[UnitKindKey, UnitKindSpec] = {kind.key: kind for kind in (HERO, HENCHMEN_GROUP, HIRELING)}
