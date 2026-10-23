@@ -29,6 +29,20 @@ export function mountedStats(
   };
 }
 
+/**
+ * A unit's stats as the battle helpers use them: its own, the mount's M and save while it rides
+ * (the roster's `effectiveStats`), then any battle stat change, which wins.
+ */
+export function helperStats(
+  unit: Pick<PrebattleUnit, "stats" | "effectiveStats">,
+  overrides: Partial<UnitStats> = {}
+): UnitStats {
+  const riding = Object.fromEntries(
+    Object.entries(unit.effectiveStats ?? {}).filter(([, value]) => value !== null)
+  );
+  return { ...unit.stats, ...riding, ...overrides };
+}
+
 const sameMounted = (left: EffectiveStats | null | undefined, right: EffectiveStats) =>
   left?.movement === right.movement && left?.armour_save === right.armour_save;
 

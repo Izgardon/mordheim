@@ -5,9 +5,11 @@ import {
   toUnitInformationMap,
 } from "@/features/battles/components/active/active-utils";
 import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
+import { helperStats } from "@/features/battles/utils/battle-companions";
 import type { BattleParticipant } from "@/features/battles/types/battle-types";
 
-/** A participant's selected units still in action, with their battle stats and section. */
+/** A participant's selected units still in action, with their battle stats (a rider's mounted M and
+ * save) and section. */
 function unitsInAction(participant: BattleParticipant, roster: ParticipantRoster | undefined) {
   const selected = getParticipantSelectedUnits(participant, roster);
   const unitInformation = toUnitInformationMap(participant.unit_information_json);
@@ -21,7 +23,7 @@ function unitsInAction(participant: BattleParticipant, roster: ParticipantRoster
     .map(({ unit, sectionLabel }) => ({
       unit,
       sectionLabel,
-      stats: { ...unit.stats, ...(unitInformation[unit.key]?.stats_override ?? {}) },
+      stats: helperStats(unit, unitInformation[unit.key]?.stats_override),
     }));
 }
 

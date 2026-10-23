@@ -31,6 +31,41 @@ describe("helper-options", () => {
     expect(meleeUnitOptions([me], rosters, undefined)).toEqual({ yours: [], others: [] });
   });
 
+  it("gives a rider his mounted M and save, with a battle stat change winning (step 5)", () => {
+    const mine = rosters[ME.id];
+    const warhorse = { itemId: 140, name: "Warhorse", hasProfile: true, stats: null };
+    const riding = {
+      ...rosters,
+      [ME.id]: {
+        ...mine,
+        heroes: mine.heroes.map((hero, index) =>
+          index === 0
+            ? {
+                ...hero,
+                mount: { ...warhorse, movement: 8, ratingBonus: 5 },
+                effectiveStats: { movement: 8, armour_save: 4 },
+              }
+            : hero
+        ),
+      },
+    };
+    const plain = myParticipant({ unit_information_json: {} });
+
+    expect(rangedUnitOptions(plain, riding)[0].stats).toMatchObject({
+      movement: 8,
+      armour_save: 4,
+    });
+    const [melee] = meleeUnitOptions([plain, opponentParticipant()], riding, ME.id).yours;
+    expect(melee.stats.armour_save).toBe(4);
+    const changed = myParticipant({
+      unit_information_json: { "hero:1": { stats_override: { movement: 5 } } },
+    });
+    expect(rangedUnitOptions(changed, riding)[0].stats).toMatchObject({
+      movement: 5,
+      armour_save: 4,
+    });
+  });
+
   it("lists your own units in action for ranged", () => {
     const options = rangedUnitOptions(me, rosters);
 
