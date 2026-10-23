@@ -29,6 +29,32 @@ describe("usageSummary", () => {
     );
     expect(usageSummary({ units: 0, warbands: 0, stashes: 0, bestiary_entries: 0 })).toBeNull();
   });
+
+  it("counts the hired swords' and dramatis personae's kits and links as holders too", () => {
+    expect(
+      usageSummary({
+        units: 0,
+        warbands: 0,
+        stashes: 0,
+        bestiary_entries: 0,
+        hired_swords: 1,
+        dramatis_personae: 0,
+      })
+    ).toBe("1 hired sword");
+    expect(
+      usageSummary({
+        units: 2,
+        warbands: 1,
+        stashes: 0,
+        bestiary_entries: 1,
+        hired_swords: 3,
+        dramatis_personae: 2,
+      })
+    ).toBe("2 units in 1 warband, and by 1 bestiary entry, 3 hired swords and 2 dramatis personae");
+    expect(usageSummary({ units: 0, warbands: 0, dramatis_personae: 1 })).toBe(
+      "1 dramatis persona"
+    );
+  });
 });
 
 describe("deleteWording (decision 5, CAT-TWEAK-04, CAT-NEW-05)", () => {

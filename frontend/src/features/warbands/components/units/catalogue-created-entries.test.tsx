@@ -66,9 +66,9 @@ vi.mock("@/features/races/api/races-api", async (importOriginal) => ({
   listRaces: catalogue.listRaces,
   createRace: catalogue.createRace,
 }));
-vi.mock("@/features/bestiary/api/bestiary-api", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("@/features/bestiary/api/bestiary-api")>()),
-  listHiredSwordProfiles: vi.fn(async () => []),
+vi.mock("@/features/hirelings/api/hireling-catalogue-api", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/features/hirelings/api/hireling-catalogue-api")>()),
+  listHirelingProfiles: vi.fn(async () => []),
 }));
 // Creating an item goes on to its buy dialog for that card, which isn't what this file tests.
 vi.mock("@/features/items/components/AcquireItemDialog/AcquireItemDialog", () => ({

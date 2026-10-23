@@ -22,7 +22,7 @@ const api = vi.hoisted(() => ({
   createWarbandLog: vi.fn(),
 }));
 const events = vi.hoisted(() => ({ emitWarbandUpdate: vi.fn() }));
-const bestiary = vi.hoisted(() => ({ getHiredSwordProfile: vi.fn() }));
+const hirelings = vi.hoisted(() => ({ getHirelingProfile: vi.fn() }));
 const presets = vi.hoisted(() => ({ list: [] as unknown[] }));
 
 vi.mock("@/features/warbands/api/warbands-api", () => api);
@@ -39,7 +39,7 @@ vi.mock("@/stores/app-store", () => ({
 vi.mock("@/features/campaigns/hooks/useCampaignStarted", () => ({
   useCampaignStarted: () => true,
 }));
-vi.mock("@/features/bestiary/api/bestiary-api", () => bestiary);
+vi.mock("@/features/hirelings/api/hireling-catalogue-api", () => hirelings);
 vi.mock("@/lib/catalogue-queries", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/catalogue-queries")>()),
   useCatalogue: (kind: string) => ({
@@ -425,7 +425,8 @@ describe("UnitSection: hired swords create and save", () => {
 
   it("creates a hired sword from a preset with the preset's armour save (BUG-100)", async () => {
     const user = setupUser();
-    const entry = {
+    const profile = {
+      id: 5,
       name: "Warrior Priest",
       movement: 4,
       weapon_skill: 4,
@@ -439,14 +440,13 @@ describe("UnitSection: hired swords create and save", () => {
       armour_save: 5,
       large: false,
       caster: "Priest",
-      equipment: [{ item: warhammer }],
+      equipment: [{ item: warhammer, quantity: 1 }],
       skills: [],
       spells: [],
       specials: [],
-    };
-    const profile = {
-      id: 5,
-      race: "Human",
+      race_id: 1,
+      race_name: "Human",
+      race_label: "Human",
       hire_cost: 40,
       hire_cost_expression: "",
       upkeep_cost: 15,
@@ -454,10 +454,9 @@ describe("UnitSection: hired swords create and save", () => {
       rating: 25,
       available_skill_types: ["Combat"],
       restrictions: [],
-      bestiary_entry: entry,
     };
     presets.list = [profile];
-    bestiary.getHiredSwordProfile.mockResolvedValue(profile);
+    hirelings.getHirelingProfile.mockResolvedValue(profile);
     renderWithQueryClient(<Section initialHirelings={[]} />);
     await startEditing(user);
 
@@ -471,7 +470,7 @@ describe("UnitSection: hired swords create and save", () => {
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     await waitFor(() => expect(api.batchWarbandHirelings).toHaveBeenCalledTimes(1));
-    expect(bestiary.getHiredSwordProfile).toHaveBeenCalledWith(5);
+    expect(hirelings.getHirelingProfile).toHaveBeenCalledWith("hired-swords", 5);
     expect(batchCreates(api.batchWarbandHirelings)[0]).toEqual({
       name: "Warrior Priest",
       unit_type: "Warrior Priest",

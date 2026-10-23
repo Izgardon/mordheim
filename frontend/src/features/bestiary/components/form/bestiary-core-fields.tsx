@@ -100,6 +100,7 @@ export function StatsField({ values, onChange }: CoreFieldProps) {
               max={10}
               value={values.stats[field.key]}
               onChange={(e) => setStat(field.key, e.target.value)}
+              aria-label={field.label}
               className="h-8 w-full px-1 text-center text-sm"
             />
           </div>
@@ -109,6 +110,7 @@ export function StatsField({ values, onChange }: CoreFieldProps) {
           <Input
             value={values.armour_save}
             onChange={(e) => onChange({ armour_save: e.target.value })}
+            aria-label="Armour save"
             className="h-8 w-full px-1 text-center text-sm"
             placeholder="-"
           />

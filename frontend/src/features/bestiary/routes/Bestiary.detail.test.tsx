@@ -1,7 +1,8 @@
 /**
- * The bestiary and hired-sword detail panels and the Bestiary's favourite stars, as the app mounts
- * them (layout, fake server). The panels offer only Back, even on a campaign entry viewed by
- * someone holding `edit_catalogue` (CAT-UX-02; PR C adds Edit, Revert and Delete, CAT-NEW-01).
+ * The bestiary detail panel and the Bestiary's favourite stars, as the app mounts them (layout,
+ * fake server). The panel offers only Back, even on a campaign entry viewed by someone holding
+ * `edit_catalogue` (CAT-UX-02; step 3 of the bestiary rewrite adds Edit). The hired-sword panel,
+ * with Edit, is tested in features/hirelings.
  * A star changes at once, and a failed toggle puts it back and says why (CAT-UX-04).
  */
 import { act, screen, waitFor, within } from "@testing-library/react";
@@ -18,8 +19,6 @@ import {
   FAVOURITES,
   bestiaryDetail,
   deferred,
-  hiredSwordDetail,
-  pitFighter,
   routeCatalogue,
   sewerRat,
   skill,
@@ -65,27 +64,16 @@ beforeEach(() => {
     "GET /bestiary/90/",
     bestiaryDetail(sewerRat, { skills: [{ ...skill(), type: "Combat" }] })
   );
-  fakeApi.on("GET /hired-swords/40/", hiredSwordDetail(pitFighter));
 });
 
 describe("detail panels", () => {
-  // Characterises current behaviour (CAT-UX-02, CAT-NEW-01, pinned; left for the bestiary rewrite)
-  it("offers only Back on the campaign's own bestiary entry, to an owner holding edit_catalogue (CAT-UX-02, pinned; left for the bestiary rewrite)", async () => {
+  // Characterises current behaviour (CAT-UX-02, CAT-NEW-01, pinned; left for step 3 of the bestiary rewrite)
+  it("offers only Back on the campaign's own bestiary entry, to an owner holding edit_catalogue (CAT-UX-02, pinned; left for step 3 of the bestiary rewrite)", async () => {
     renderCatalogueRoute("/campaigns/1/bestiary?entry=90");
 
     expect(await screen.findByRole("heading", { name: "Sewer Rat" })).toBeVisible();
     expect(screen.getByText("Strike to Injure")).toBeVisible();
     expect(panelButtons("Sewer Rat")).toEqual(["Back"]);
-  });
-
-  // Characterises current behaviour (CAT-UX-02, CAT-NEW-01, pinned; left for the bestiary rewrite)
-  it("offers only Back on the campaign's own hired sword, with its hire and upkeep (CAT-UX-02, pinned; left for the bestiary rewrite)", async () => {
-    renderCatalogueRoute("/campaigns/1/hired-swords?profile=40");
-
-    expect(await screen.findByRole("heading", { name: "Pit Fighter" })).toBeVisible();
-    expect(screen.getByText("35 gc")).toBeVisible();
-    expect(screen.getByText("15 gc")).toBeVisible();
-    expect(panelButtons("Pit Fighter")).toEqual(["Back"]);
   });
 
   it("reads the entry again each time it is opened: the panel caches nothing", async () => {

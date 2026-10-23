@@ -17,6 +17,7 @@ const CATALOGUE_KINDS: Record<string, CatalogueKind> = {
   races: "races",
   bestiary: "bestiary",
   hired_swords: "hired-swords",
+  dramatis_personae: "dramatis-personae",
 };
 
 /** The cached list a `catalogue.changed` names, or null for a kind this app doesn't cache. */
@@ -44,6 +45,10 @@ export function useCampaignEvents(campaignId: number | null) {
     if (campaignId && catalogueKind) {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.campaign.catalogue(campaignId, catalogueKind),
+      });
+      // The kind's single entries too (a hired sword's detail, open in a panel or a form).
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.campaign.catalogueEntries(campaignId, catalogueKind),
       });
       void invalidateHeldCopies(queryClient, catalogueKind, campaignId);
     }

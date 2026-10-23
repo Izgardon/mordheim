@@ -4,20 +4,29 @@ export type CatalogueUsage = {
   warbands?: number;
   stashes?: number;
   bestiary_entries?: number;
+  /** Hired swords whose kit or links name the entry (or whose race it is). */
+  hired_swords?: number;
+  dramatis_personae?: number;
 };
 
 const counted = (count: number, one: string, many: string) =>
   `${count} ${count === 1 ? one : many}`;
 
+/** "a", "a and b", "a, b and c". */
+const listed = (parts: string[]) =>
+  parts.length > 1 ? `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}` : parts[0];
+
 /**
  * What holds an entry, zero counts left out: "3 units in 2 warbands", "1 unit and 1 stash in 1
- * warband, and by 1 bestiary entry". Null when nothing does.
+ * warband, and by 1 bestiary entry and 2 hired swords". Null when nothing does.
  */
 export function usageSummary({
   units = 0,
   warbands = 0,
   stashes = 0,
   bestiary_entries: entries = 0,
+  hired_swords: hiredSwords = 0,
+  dramatis_personae: personae = 0,
 }: CatalogueUsage): string | null {
   const held = [
     units > 0 ? counted(units, "unit", "units") : "",
@@ -27,10 +36,12 @@ export function usageSummary({
     .join(" and ");
   const inWarbands =
     held && warbands > 0 ? `${held} in ${counted(warbands, "warband", "warbands")}` : held;
-  const parts = [
-    inWarbands,
+  const holders = [
     entries > 0 ? counted(entries, "bestiary entry", "bestiary entries") : "",
+    hiredSwords > 0 ? counted(hiredSwords, "hired sword", "hired swords") : "",
+    personae > 0 ? counted(personae, "dramatis persona", "dramatis personae") : "",
   ].filter(Boolean);
+  const parts = [inWarbands, holders.length > 0 ? listed(holders) : ""].filter(Boolean);
   return parts.length > 0 ? parts.join(", and by ") : null;
 }
 

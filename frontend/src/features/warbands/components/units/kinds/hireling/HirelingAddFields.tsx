@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { getHiredSwordProfile } from "@/features/bestiary/api/bestiary-api";
+import { getHirelingProfile } from "@/features/hirelings/api/hireling-catalogue-api";
 import UnitLoadout from "../../../shared/forms/UnitLoadout";
 import HirelingPresetPicker from "./HirelingPresetPicker";
 import { TraitToggle } from "../../forms/UnitSkillsTraitsPanel";
@@ -73,7 +73,7 @@ export default function HirelingAddFields(props: AddFieldsSlotProps<"hireling">)
         campaignId={campaignId}
         onAddFromPreset={async (profileId) => {
           const preset = presetToNewHirelingForm(
-            await getHiredSwordProfile(profileId),
+            await getHirelingProfile("hired-swords", profileId),
             props.races
           );
           setForm(preset.form);

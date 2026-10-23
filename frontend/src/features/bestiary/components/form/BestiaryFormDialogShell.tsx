@@ -23,7 +23,7 @@ type BestiaryFormDialogShellProps = {
 };
 
 /**
- * The bestiary pages' form dialog (Add Bestiary Entry, Add Hired Sword): a scrolling form,
+ * The Bestiary page's form dialog (Add Bestiary Entry): a scrolling form,
  * the line under it, Cancel and Create. Cancel only closes; what was entered stays for next time.
  */
 export default function BestiaryFormDialogShell({

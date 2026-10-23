@@ -33,7 +33,7 @@ export default function HirelingPresetPicker({
   const filteredPresets = useMemo(() => {
     const q = presetQuery.trim().toLowerCase();
     if (!q) return presetProfiles;
-    return presetProfiles.filter((p) => p.bestiary_entry.name.toLowerCase().includes(q));
+    return presetProfiles.filter((p) => p.name.toLowerCase().includes(q));
   }, [presetProfiles, presetQuery]);
 
   const handlePresetClick = async (profileId: number) => {
@@ -44,7 +44,7 @@ export default function HirelingPresetPicker({
       await onAddFromPreset(profileId);
       const selectedProfile = presetProfiles.find((profile) => profile.id === profileId);
       if (selectedProfile) {
-        setPresetQuery(selectedProfile.bestiary_entry.name);
+        setPresetQuery(selectedProfile.name);
       }
       setHasSelectedPreset(true);
     } catch (err) {
@@ -84,9 +84,7 @@ export default function HirelingPresetPicker({
                   onClick={() => handlePresetClick(profile.id)}
                   className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left transition-colors hover:bg-accent/20 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  <span className="text-xs font-semibold text-foreground">
-                    {profile.bestiary_entry.name}
-                  </span>
+                  <span className="text-xs font-semibold text-foreground">{profile.name}</span>
                   <span className="shrink-0 text-[10px] text-muted-foreground">
                     {isAdding ? (
                       <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />

@@ -81,6 +81,7 @@ describe("campaign.updated (CAMP-NEW-07)", () => {
       )
     ).toEqual(["items", "item-properties", "skills", "spells", "specials", "races", "bestiary"]);
     expect(catalogueKindOf("hired_swords")).toBe("hired-swords");
+    expect(catalogueKindOf("dramatis_personae")).toBe("dramatis-personae");
     expect(catalogueKindOf("restrictions")).toBeNull();
   });
 

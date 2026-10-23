@@ -1,6 +1,6 @@
 /**
  * The catalogue pages as the app mounts them: RealtimeProvider above `CampaignLayout`, with
- * Wargear, Skills, Spells, Bestiary and Hired Swords, a stand-in warband page that opens the
+ * Wargear, Skills, Spells, Bestiary, Hired Swords and Dramatis Personae, a stand-in warband page that opens the
  * hero's New skill and New spell dialogs (they read the same cached lists), and a stand-in battle
  * page with the prebattle Load from Bestiary picker open. Mock in the test
  * file: `@/lib/api-client` (fake-api), `@/lib/realtime/client` (fake-realtime), `use-auth`,
@@ -12,8 +12,9 @@ import { MemoryRouter, Route, Routes, useLocation, useNavigate } from "react-rou
 import { AppToaster } from "@/components/ui/toaster";
 import BestiaryPicker from "@/features/bestiary/components/BestiaryPicker";
 import Bestiary from "@/features/bestiary/routes/Bestiary";
-import HiredSwords from "@/features/bestiary/routes/HiredSwords";
 import CampaignLayout from "@/features/campaigns/routes/CampaignLayout";
+import DramatisPersonae from "@/features/hirelings/routes/DramatisPersonae";
+import HiredSwords from "@/features/hirelings/routes/HiredSwords";
 import Items from "@/features/items/routes/Items";
 import { RealtimeProvider } from "@/features/realtime/components/RealtimeProvider";
 import NewSkillDialog from "@/features/skills/components/NewSkillDialog";
@@ -78,6 +79,7 @@ export function renderCatalogueRoute(
                 <Route path="spells" element={<Spells />} />
                 <Route path="bestiary" element={<Bestiary />} />
                 <Route path="hired-swords" element={<HiredSwords />} />
+                <Route path="dramatis-personae" element={<DramatisPersonae />} />
                 <Route path="warband" element={<WarbandDialogsStandIn />} />
                 <Route path="bestiary-picker" element={<BestiaryPickerStandIn />} />
               </Route>

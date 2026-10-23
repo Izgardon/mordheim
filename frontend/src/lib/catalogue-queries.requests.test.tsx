@@ -47,6 +47,10 @@ const PAGES = {
   Spells: { path: "spells", ready: () => screen.findByRole("row", { name: /^Gutter Hex/ }) },
   Bestiary: { path: "bestiary", ready: () => screen.findByText("Sewer Rat") },
   "Hired Swords": { path: "hired-swords", ready: () => screen.findByText("Pit Fighter") },
+  "Dramatis Personae": {
+    path: "dramatis-personae",
+    ready: () => screen.findByText("No dramatis personae yet"),
+  },
 } as const;
 
 let queryClient: QueryClient;
@@ -112,17 +116,30 @@ describe("catalogue pages: cold loads", () => {
 
     expect(sorted(fakeApi.calls())).toEqual(sorted([...SHELL, LIST.hiredSwords]));
   });
+
+  it("Dramatis Personae: the shell and the dramatis-personae list, once", async () => {
+    await open("Dramatis Personae");
+
+    expect(sorted(fakeApi.calls())).toEqual(sorted([...SHELL, LIST.dramatisPersonae]));
+  });
 });
 
 describe("catalogue pages: the shared 5-minute cache", () => {
-  it("reads each list once over a tour of all five pages and back again", async () => {
+  it("reads each list once over a tour of all six pages and back again", async () => {
     const user = setupUser();
     await open("Wargear");
 
-    for (const page of ["Skills", "Spells", "Bestiary", "Hired Swords", "Wargear"] as const) {
+    for (const page of [
+      "Skills",
+      "Spells",
+      "Bestiary",
+      "Hired Swords",
+      "Dramatis Personae",
+      "Wargear",
+    ] as const) {
       await visit(user, page);
     }
-    for (const page of ["Skills", "Spells", "Hired Swords"] as const) {
+    for (const page of ["Skills", "Spells", "Hired Swords", "Dramatis Personae"] as const) {
       await visit(user, page);
     }
 

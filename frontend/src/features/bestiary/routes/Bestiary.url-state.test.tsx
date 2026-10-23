@@ -1,6 +1,6 @@
 /**
- * What the Bestiary and Hired Swords pages keep in the URL (CAT-NEW-02): the search (`q`), the
- * type filter (`type`), the card page (`page`) and the open entry (`entry`, `profile`), so Back
+ * What the Bestiary page keeps in the URL (CAT-NEW-02): the search (`q`), the type filter
+ * (`type`), the card page (`page`) and the open entry (`entry`), so Back
  * from an entry, the browser's Back after another page and a shared link restore them
  * (CAT-UX-05). Back on an entry link opened fresh goes to the list, filters kept (BUG-150).
  */
@@ -8,14 +8,7 @@ import { screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { routeCampaignShell } from "@/test/campaign-fixtures";
-import {
-  LIST,
-  bestiaryDetail,
-  bestiaryEntry,
-  hiredSwordDetail,
-  pitFighter,
-  routeCatalogue,
-} from "@/test/catalogue-fixtures";
+import { LIST, bestiaryDetail, bestiaryEntry, routeCatalogue } from "@/test/catalogue-fixtures";
 import { renderCatalogueRoute } from "@/test/catalogue-routes";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
@@ -48,7 +41,6 @@ beforeEach(() => {
   routeCampaignShell();
   routeCatalogue();
   fakeApi.on("GET /bestiary/5/", bestiaryDetail(bestiaryEntry()));
-  fakeApi.on("GET /hired-swords/40/", hiredSwordDetail(pitFighter));
 });
 
 describe("Bestiary: search, type filter and page", () => {
@@ -147,42 +139,5 @@ describe("Bestiary: search, type filter and page", () => {
 
     expect(await screen.findByText("Warhorse")).toBeVisible();
     expect(fakeApi.countOf(LIST.bestiary)).toBe(0);
-  });
-});
-
-describe("Hired Swords: search", () => {
-  it("keeps the search and the open profile in the URL; Back and the browser's Back after another page restore it (CAT-UX-05, CAT-NEW-02)", async () => {
-    const user = setupUser();
-    renderCatalogueRoute("/campaigns/1/hired-swords");
-    await screen.findByText("Ogre Bodyguard");
-    const hiredSearch = () => screen.getByRole("searchbox", { name: "Search hired swords" });
-
-    await user.type(hiredSearch(), "pit");
-    await user.click(card("Pit Fighter"));
-    expect(currentPath()).toHaveTextContent("/campaigns/1/hired-swords?q=pit&profile=40");
-    expect(await screen.findByRole("heading", { name: "Pit Fighter" })).toBeVisible();
-    await user.click(screen.getByRole("button", { name: "Back" }));
-
-    expect(await screen.findByRole("button", { name: /^Pit Fighter/ })).toBeVisible();
-    expect(hiredSearch()).toHaveValue("pit");
-    expect(screen.queryByText("Ogre Bodyguard")).toBeNull();
-
-    await user.click(screen.getByRole("link", { name: "Wargear" }));
-    await screen.findByRole("button", { name: /^Rusty Cleaver/ });
-    await user.click(screen.getByRole("button", { name: "Browser back" }));
-
-    expect(await screen.findByRole("button", { name: /^Pit Fighter/ })).toBeVisible();
-    expect(hiredSearch()).toHaveValue("pit");
-  });
-
-  it("goes to the list on Back when the ?profile= link was opened fresh (BUG-150)", async () => {
-    const user = setupUser();
-    renderCatalogueRoute("/campaigns/1/hired-swords?profile=40");
-    await screen.findByRole("heading", { name: "Pit Fighter" });
-
-    await user.click(screen.getByRole("button", { name: "Back" }));
-
-    expect(await screen.findByText("Ogre Bodyguard")).toBeVisible();
-    expect(currentPath()).toHaveTextContent(/^\/campaigns\/1\/hired-swords$/);
   });
 });

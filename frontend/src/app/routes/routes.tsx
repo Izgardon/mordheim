@@ -32,7 +32,8 @@ const BattlePrebattle = lazy(() => import("../../features/battles/routes/BattleP
 const BattleActive = lazy(() => import("../../features/battles/routes/BattleActive"));
 const BattlePostbattle = lazy(() => import("../../features/battles/routes/BattlePostbattle"));
 const Bestiary = lazy(() => import("../../features/bestiary/routes/Bestiary"));
-const HiredSwords = lazy(() => import("../../features/bestiary/routes/HiredSwords"));
+const HiredSwords = lazy(() => import("../../features/hirelings/routes/HiredSwords"));
+const DramatisPersonae = lazy(() => import("../../features/hirelings/routes/DramatisPersonae"));
 
 function RootLayout() {
   return (
@@ -87,6 +88,7 @@ export const routes: RouteObject[] = [
                   { path: "items", element: <Items /> },
                   { path: "bestiary", element: <Bestiary /> },
                   { path: "hired-swords", element: <HiredSwords /> },
+                  { path: "dramatis-personae", element: <DramatisPersonae /> },
                   { path: "locations", element: <Locations /> },
                   { path: "encampments", element: <Encampments /> },
                   { path: "rules", element: <Rules /> },

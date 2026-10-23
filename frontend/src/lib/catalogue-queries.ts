@@ -2,7 +2,8 @@ import { useMemo } from "react";
 import { type QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // api
-import { listBestiaryEntries, listHiredSwordProfiles } from "@/features/bestiary/api/bestiary-api";
+import { listBestiaryEntries } from "@/features/bestiary/api/bestiary-api";
+import { listHirelingProfiles } from "@/features/hirelings/api/hireling-catalogue-api";
 import { listItemProperties, listItems } from "@/features/items/api/items-api";
 import { listRaces } from "@/features/races/api/races-api";
 import { listSkills } from "@/features/skills/api/skills-api";
@@ -13,10 +14,8 @@ import { listSpells } from "@/features/spells/api/spells-api";
 import { type CatalogueKind, queryKeys } from "./query-keys";
 
 // types
-import type {
-  BestiaryEntrySummary,
-  HiredSwordProfileSummary,
-} from "@/features/bestiary/types/bestiary-types";
+import type { BestiaryEntrySummary } from "@/features/bestiary/types/bestiary-types";
+import type { HirelingProfile } from "@/features/hirelings/types/hireling-catalogue-types";
 import type { Item, ItemProperty } from "@/features/items/types/item-types";
 import type { Race } from "@/features/races/types/race-types";
 import type { Skill } from "@/features/skills/types/skill-types";
@@ -34,7 +33,8 @@ type CatalogueEntries = {
   specials: Special;
   races: Race;
   bestiary: BestiaryEntrySummary;
-  "hired-swords": HiredSwordProfileSummary;
+  "hired-swords": HirelingProfile;
+  "dramatis-personae": HirelingProfile;
 };
 
 export type CatalogueEntry<K extends CatalogueKind> = CatalogueEntries[K];
@@ -65,7 +65,10 @@ const fetchers: { [K in CatalogueKind]: Fetcher<K> } = {
   specials: (campaignId, signal) => listSpecial({ campaignId, signal }),
   races: (campaignId, signal) => listRaces({ campaignId, signal }),
   bestiary: (campaignId, signal) => listBestiaryEntries({ campaignId, signal }),
-  "hired-swords": (campaignId, signal) => listHiredSwordProfiles({ campaignId, signal }),
+  "hired-swords": (campaignId, signal, variant) =>
+    listHirelingProfiles("hired-swords", { campaignId, signal, ...archivedOf(variant) }),
+  "dramatis-personae": (campaignId, signal, variant) =>
+    listHirelingProfiles("dramatis-personae", { campaignId, signal, ...archivedOf(variant) }),
 };
 
 /** The key of one of a kind's lists: the default one, or a variant under it. */
@@ -88,6 +91,7 @@ const errorLabels: Record<CatalogueKind, string> = {
   races: "Unable to load races",
   bestiary: "Failed to load bestiary",
   "hired-swords": "Failed to load hired swords",
+  "dramatis-personae": "Failed to load dramatis personae",
 };
 
 const NO_ENTRIES: never[] = [];

@@ -15,6 +15,7 @@ const PATHS: Record<CatalogueEntryKind, string> = {
   races: "races",
   bestiary: "bestiary",
   "hired-swords": "hired-swords",
+  "dramatis-personae": "dramatis-personae",
 };
 
 type Entry = Pick<CatalogueEntryLike, "id" | "campaign_id">;

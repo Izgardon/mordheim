@@ -14,7 +14,8 @@ export type CatalogueKind =
   | "specials"
   | "races"
   | "bestiary"
-  | "hired-swords";
+  | "hired-swords"
+  | "dramatis-personae";
 
 export const queryKeys = {
   /** Item restrictions of one type (catalogue data, not campaign-scoped). */
@@ -58,6 +59,17 @@ export const queryKeys = {
     /** Another list of the kind (`catalogueListVariant`): with the archived entries, ... */
     catalogueVariant: (campaignId: number, kind: CatalogueKind, variant: string) =>
       ["campaign", campaignId, "catalogue", kind, variant] as const,
+    /**
+     * A kind's single entries with their links (hired swords', dramatis personae's details), or
+     * one of them. Outside the lists' key, so a write to the lists doesn't read an entry it just
+     * deleted or reverted; the writes cache their answer, and `catalogue.changed` marks them stale.
+     */
+    catalogueEntries: (campaignId: number, kind: CatalogueKind) =>
+      ["campaign", campaignId, "catalogue-entry", kind] as const,
+    catalogueEntry: (campaignId: number, kind: CatalogueKind, entryId: number) =>
+      ["campaign", campaignId, "catalogue-entry", kind, entryId] as const,
+    /** The restrictions the campaign's catalogue entries can name (book and campaign rows). */
+    restrictions: (campaignId: number) => ["campaign", campaignId, "restrictions"] as const,
     /**
      * What holds one entry (read as its delete confirm opens). Outside the catalogue key, so a
      * write to the kind's lists doesn't read it again.

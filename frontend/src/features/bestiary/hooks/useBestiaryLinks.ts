@@ -14,6 +14,14 @@ import type { Spell } from "@/features/spells/types/spell-types";
 
 export type SelectedItem = Item & { quantity: number };
 
+/** What an edited entry already links to (a hired sword's or dramatis persona's detail). */
+export type LinkedEntry = {
+  skills: Skill[];
+  specials: Special[];
+  spells: Spell[];
+  equipment: { item: Item; quantity: number }[];
+};
+
 /** Adds `entry` unless it is already chosen. */
 const addOnce =
   <T extends { id: number }>(entry: T) =>
@@ -24,15 +32,22 @@ type UseBestiaryLinksOptions = {
   campaignId: number;
   /** The pickers read the campaign's cached lists only while the dialog is open. */
   open: boolean;
-  /** The type a special created on the spot takes: "Animal" or "Hired Sword". */
+  /** The type a special created on the spot takes: "Animal", "Hired Sword", "Dramatis Persona". */
   specialType: string;
+  /** The most of one item the equipment may carry (a hireling's kit: 20). */
+  maxQuantity?: number;
 };
 
 /**
  * What a bestiary entry links to: its special rules (one can be created on the spot), skills,
  * spells and equipment with quantities, picked from the campaign's cached lists.
  */
-export function useBestiaryLinks({ campaignId, open, specialType }: UseBestiaryLinksOptions) {
+export function useBestiaryLinks({
+  campaignId,
+  open,
+  specialType,
+  maxQuantity = 99,
+}: UseBestiaryLinksOptions) {
   const [specials, setSpecials] = useState<Special[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [spells, setSpells] = useState<Spell[]>([]);
@@ -57,11 +72,25 @@ export function useBestiaryLinks({ campaignId, open, specialType }: UseBestiaryL
     []
   );
 
-  const closeNewSpecial = () => {
+  const closeNewSpecial = useCallback(() => {
     setIsCreatingSpecial(false);
     setNewSpecialName("");
     setNewSpecialDescription("");
-  };
+  }, []);
+
+  /** An edited entry's links (none for a blank form), with no special being created. */
+  const load = useCallback(
+    (entry: LinkedEntry | null) => {
+      setSpecials(entry?.specials ?? []);
+      setSkills(entry?.skills ?? []);
+      setSpells(entry?.spells ?? []);
+      setItems(
+        entry?.equipment.map(({ item, quantity }) => ({ ...item, quantity: quantity || 1 })) ?? []
+      );
+      closeNewSpecial();
+    },
+    [closeNewSpecial]
+  );
 
   const createNewSpecial = async () => {
     const name = newSpecialName.trim();
@@ -103,9 +132,14 @@ export function useBestiaryLinks({ campaignId, open, specialType }: UseBestiaryL
     removeSkill: (id: number) => setSkills((prev) => prev.filter((s) => s.id !== id)),
     removeSpell: (id: number) => setSpells((prev) => prev.filter((s) => s.id !== id)),
     removeItem: (id: number) => setItems((prev) => prev.filter((s) => s.id !== id)),
+    maxQuantity,
     setItemQuantity: (id: number, quantity: number) =>
       setItems((prev) =>
-        prev.map((item) => (item.id === id ? { ...item, quantity: Math.max(1, quantity) } : item))
+        prev.map((item) =>
+          item.id === id
+            ? { ...item, quantity: Math.min(maxQuantity, Math.max(1, quantity)) }
+            : item
+        )
       ),
     isCreatingSpecial,
     /** "Create new rule" from the special picker, with what was typed as the name. */
@@ -127,14 +161,9 @@ export function useBestiaryLinks({ campaignId, open, specialType }: UseBestiaryL
       spell_ids: spells.map((s) => s.id),
       item_entries: items.map((item) => ({ item_id: item.id, quantity: item.quantity })),
     }),
+    load,
     /** Nothing linked and no special being created. */
-    reset: () => {
-      setSpecials([]);
-      setSkills([]);
-      setSpells([]);
-      setItems([]);
-      closeNewSpecial();
-    },
+    reset: () => load(null),
   };
 }
 

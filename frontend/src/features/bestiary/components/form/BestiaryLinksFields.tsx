@@ -94,7 +94,7 @@ export default function BestiaryLinksFields({ links }: { links: BestiaryLinks })
           <input
             type="number"
             min={1}
-            max={99}
+            max={links.maxQuantity}
             value={(item as SelectedItem).quantity}
             onChange={(e) => links.setItemQuantity(item.id, Number(e.target.value) || 1)}
             onClick={(e) => e.stopPropagation()}

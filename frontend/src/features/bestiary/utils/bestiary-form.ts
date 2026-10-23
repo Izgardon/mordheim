@@ -3,7 +3,7 @@ import { statInputs, statNumbers, type StatInputs } from "@/features/catalogue/u
 export const BESTIARY_TYPES = ["Attack", "Mount", "Retainer"];
 export const CASTER_OPTIONS = ["No", "Wizard", "Priest"];
 
-/** What a bestiary entry and a hired sword's entry both hold, as their forms edit it. */
+/** What a bestiary entry, a hired sword and a dramatis persona all hold, as their forms edit it. */
 export type BestiaryCoreValues = {
   name: string;
   description: string;
