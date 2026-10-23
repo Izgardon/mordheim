@@ -51,6 +51,11 @@ type ActiveHenchmenGroupCardProps = {
   savingUnitKeys?: Record<string, boolean>;
 };
 
+/** The members' grid: one column on a phone, up to three side by side on wider screens. */
+const MEMBER_GRID: Record<number, string> = { 2: "md:grid-cols-2", 3: "md:grid-cols-3" };
+const memberGrid = (count: number) =>
+  count >= 4 ? "md:grid-cols-2 xl:grid-cols-3" : (MEMBER_GRID[count] ?? "");
+
 export default function ActiveHenchmenGroupCard({
   groupName,
   groupType,
@@ -90,18 +95,7 @@ export default function ActiveHenchmenGroupCard({
   const detailUnitInfo = unitInformationByKey[detailUnit.key];
   const detailStats = getEffectiveUnitStats(detailUnit, detailUnitInfo);
   const themeStyle = getBattleCardThemeStyle("henchmen_group");
-  const memberGridClass = useMemo(() => {
-    if (members.length >= 4) {
-      return "md:grid-cols-2 xl:grid-cols-3";
-    }
-    if (members.length === 3) {
-      return "md:grid-cols-3";
-    }
-    if (members.length === 2) {
-      return "md:grid-cols-2";
-    }
-    return "";
-  }, [members.length]);
+  const memberGridClass = memberGrid(members.length);
 
   const handleSetOutOfAction = async (unitKey: string, nextOutOfAction: boolean) => {
     if (!canInteract || updatingOutOfActionKeys[unitKey]) {
