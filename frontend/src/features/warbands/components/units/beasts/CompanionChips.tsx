@@ -44,7 +44,8 @@ export default function CompanionChips<K extends UnitKindKey>({
   const companionSwitch = useCompanionSwitch(kind, warbandId);
   const { mount, pets = [] } = unit;
   if (!mount && pets.length === 0) return null;
-  const mounts = unit.henchmen ? ridden(unit.items) : 1;
+  // A group rides its mount once per copy switched on (another mount's copies aren't this one).
+  const mounts = unit.henchmen && mount ? ridden(unit.items, mount.item_id) : 1;
   const mountChip = mount && {
     kind: "mount" as const,
     companion: mount,

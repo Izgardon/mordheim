@@ -9,12 +9,20 @@ import type { UnitCompanionFields, CreatureGroupFields } from "../types/companio
 export const isSwitchedOn = (item: Pick<Item, "companion" | "beast_kind">) =>
   Boolean(item.companion) && (item.beast_kind === "mount" || item.beast_kind === "pet");
 
-/** A unit's switched-on mounts, as its item rows show them. */
-export const ridden = (items: Pick<Item, "companion" | "beast_kind">[] = []) =>
-  items.filter((item) => isSwitchedOn(item) && item.beast_kind === "mount").length;
+/** A unit's switched-on mounts as its item rows show them (only copies of `itemId` when given). */
+export const ridden = (
+  items: Pick<Item, "id" | "companion" | "beast_kind">[] = [],
+  itemId?: number
+) =>
+  items.filter(
+    (item) =>
+      isSwitchedOn(item) &&
+      item.beast_kind === "mount" &&
+      (itemId === undefined || item.id === itemId)
+  ).length;
 
 type MountedUnit = UnitCompanionFields & {
-  items?: Pick<Item, "companion" | "beast_kind">[];
+  items?: Pick<Item, "id" | "companion" | "beast_kind">[];
   henchmen?: unknown[];
 };
 

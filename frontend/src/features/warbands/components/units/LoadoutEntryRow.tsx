@@ -52,6 +52,8 @@ export default function LoadoutEntryRow({
     : entry.pending
       ? "unit-list-entry unit-list-entry--pending flex items-start gap-1 rounded px-1.5 py-0.5 transition-colors duration-150"
       : `${ENTRY_CLASS} transition-colors duration-150`;
+  // A switched-on row is named apart from the same item's spare row for screen readers.
+  const state = entry.beast?.on ? (entry.beast.kind === "mount" ? "ridden" : "kept as a pet") : "";
   const buttonClassName = entry.pending
     ? BUTTON_CLASS.replace(
         "unit-list-entry-button",
@@ -63,6 +65,7 @@ export default function LoadoutEntryRow({
     <div className={entryClassName}>
       <button type="button" className={buttonClassName} onClick={onClick}>
         {entry.label}
+        {state ? <span className="sr-only"> ({state})</span> : null}
       </button>
       {entry.type === "spell" && entry.dc !== undefined && entry.dc !== null && entry.dc !== "" ? (
         <span className="unit-list-entry-meta whitespace-nowrap text-[0.6rem] uppercase tracking-[0.3em]">
@@ -83,7 +86,7 @@ export default function LoadoutEntryRow({
           type="button"
           className="unit-list-entry-menu flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-colors duration-150"
           onClick={onMenuClick}
-          aria-label={`Actions for ${entry.label}`}
+          aria-label={`Actions for ${entry.label}${state ? ` (${state})` : ""}`}
         >
           <svg width="3" height="13" viewBox="0 0 3 13" fill="currentColor" aria-hidden="true">
             <circle cx="1.5" cy="1.5" r="1.5" />

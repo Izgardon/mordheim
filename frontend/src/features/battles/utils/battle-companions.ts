@@ -19,14 +19,19 @@ export function mountedStats(
   };
 }
 
+const sameMounted = (left: EffectiveStats | null | undefined, right: EffectiveStats) =>
+  left?.movement === right.movement && left?.armour_save === right.armour_save;
+
 /**
- * A group's one stats line shows its mounted M and save only when every member shown rides; a
- * group riding in part shows foot stats, and each rider's mark says who rides.
+ * A group's one stats line shows its mounted M and save only when every member shown rides with
+ * the same ones; a group riding in part, or on mounts of different Move, shows foot stats, and
+ * each rider's mark says who rides what.
  */
 export function groupMountedStats(
   members: Mounted[],
   overrides: Partial<UnitStats> = {}
 ): EffectiveStats | null {
-  if (members.length === 0 || members.some((member) => !member.effectiveStats)) return null;
+  const first = members[0]?.effectiveStats;
+  if (!first || members.some((member) => !sameMounted(member.effectiveStats, first))) return null;
   return mountedStats(members[0], overrides);
 }

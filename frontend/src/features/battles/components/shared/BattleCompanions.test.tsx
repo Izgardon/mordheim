@@ -115,6 +115,32 @@ describe("active battle: a rider", () => {
   });
 });
 
+describe("review findings", () => {
+  it("shows two pets of one item as two chips, with no duplicate key", () => {
+    const errors = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    render(<ActiveUnitCard unit={{ ...rider, pets: [raven, raven] }} {...activeCardProps} />);
+
+    expect(screen.getAllByText("Raven")).toHaveLength(2);
+    expect(errors.mock.calls.flat().join(" ")).not.toMatch(/same key/);
+    errors.mockRestore();
+  });
+
+  it("shows a group's foot stats when its members ride mounts of different Move", () => {
+    const pony = { ...outrider(3, true), effectiveStats: { movement: 7, armour_save: 5 } };
+    render(
+      <ActiveHenchmenGroupCard
+        groupName="Outriders"
+        groupType="Outriders"
+        members={[outrider(2, true), pony]}
+        unitInformationByKey={{}}
+        {...activeCardProps}
+      />
+    );
+
+    expect(statCell(screen.getByRole("table"), "M")).toHaveTextContent(/^4$/);
+  });
+});
+
 describe("active battle: a henchmen group", () => {
   it("marks a creature group, and each member who rides", () => {
     render(

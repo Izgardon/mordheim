@@ -35,9 +35,10 @@ export function PetChips({ pets }: { pets?: BattleRosterCompanion[] }) {
   if (!pets?.length) return null;
   return (
     <span className="flex flex-wrap gap-1">
-      {pets.map((pet) => (
+      {pets.map((pet, index) => (
         <Tooltip
-          key={pet.itemId}
+          // Two copies of one pet share an item id: the roster names no row.
+          key={`${pet.itemId}-${index}`}
           trigger={
             <span
               className={`battle-chip inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[0.65rem] ${BEAST_KIND_TEXT.pet}`}

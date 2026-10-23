@@ -206,6 +206,18 @@ describe("item rows: the companion switch", () => {
     expect(await screen.findByRole("button", { name: "Warhorse x 2: Switch off" })).toBeVisible();
   });
 
+  it("names a ridden row's entry and menu apart from the spare row's", async () => {
+    renderHero({ ...aldric, items: [warhorse(1, true), warhorse(4), raven(2, true)] });
+
+    expect(await screen.findByRole("button", { name: "Warhorse (ridden)" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Warhorse" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Actions for Warhorse (ridden)" })
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Actions for Warhorse" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Raven (kept as a pet)" })).toBeInTheDocument();
+  });
+
   it("offers no switch to a member who can't manage the warband's items", async () => {
     renderHero(aldric, false);
 
@@ -246,7 +258,7 @@ describe("item rows: a henchmen group's mounts", () => {
     utils.queryClient.setQueryData(sheetKey, sheetOf([], [riders]));
     await user.click(await screen.findByRole("button", { name: "Equipment" }));
 
-    const ridden = screen.getByRole("button", { name: "Warhorse x 2" }).parentElement!;
+    const ridden = screen.getByRole("button", { name: "Warhorse x 2 (ridden)" }).parentElement!;
     expect(ridden).not.toHaveClass("unit-list-entry--alert");
     await user.click(screen.getByRole("button", { name: "Warhorse: Ride it" }));
 

@@ -217,6 +217,30 @@ describe("the unit card's companions", () => {
   });
 });
 
+describe("a group's mount chip", () => {
+  it("counts the ridden copies of its mount, not every ridden mount", () => {
+    const pony = makeItem({ id: 150, name: "Pony", type: "Animal", beast_kind: "mount" });
+    const outriders = makeVeteranHenchmenGroup({
+      items: [
+        { ...horse, row_id: 1, companion: true },
+        { ...horse, row_id: 2, companion: true },
+        { ...pony, row_id: 3, companion: true },
+      ],
+      mount: { ...riding.mount!, item_row_id: 1 },
+    });
+    renderWithQueryClient(
+      <UnitSummaryCard
+        kind={henchmenKind}
+        unit={outriders}
+        warbandId={1}
+        renderExpandedCard={false}
+      />
+    );
+
+    expect(screen.getByRole("button", { name: "Mount: Warhorse x 2" })).toBeInTheDocument();
+  });
+});
+
 describe("a creature group's card", () => {
   it("carries the creature mark; another group doesn't", () => {
     const kennel = makeVeteranHenchmenGroup({
