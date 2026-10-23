@@ -7,6 +7,7 @@ from rest_framework import serializers
 
 from apps.warbands.models import Henchman, HenchmenGroup
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
+from apps.warbands.units.companions import companions, mount_payload
 from apps.warbands.units.kinds import HENCHMEN_GROUP
 from apps.warbands.units.serializers import (
     COMPANION_FIELDS,
@@ -84,6 +85,15 @@ class HenchmenMembersMixin(serializers.Serializer):
     hire_cost = serializers.SerializerMethodField()
     source_beast_id = serializers.IntegerField(read_only=True)  # the creature it was recruited from, or None
     beast_kind = serializers.SerializerMethodField()
+    mounts = serializers.SerializerMethodField()
+
+    def get_mounts(self, group: HenchmenGroup) -> list[dict[str, Any]]:
+        """Each kind of mount the members ride, the first switched-on copy of each item in row order (`mount` is the
+        first), so the page lists every kind's entries for a group on a Warhorse and a Pony. No query of its own."""
+        first: dict[int, Any] = {}
+        for row in companions(get_prefetched_or_query(group, "henchmen_group_items", "henchmen_group_items")).mounts:
+            first.setdefault(row.item_id, row)
+        return [mount_payload(row) for row in first.values()]
 
     def get_beast_kind(self, group: HenchmenGroup) -> str | None:
         """The source beast's kind, read with the group's row (`UnitKindSpec.row_annotations`)."""
@@ -128,6 +138,7 @@ class HenchmenGroupSummarySerializer(HenchmenMembersMixin, UnitSummarySerializer
             "beast_kind",
             *STAT_FIELDS,
             *COMPANION_FIELDS,
+            "mounts",
             "items",
             "skills",
             "specials",
@@ -162,6 +173,7 @@ class HenchmenGroupDetailSerializer(HenchmenMembersMixin, UnitDetailSerializer):
             "beast_kind",
             *STAT_FIELDS,
             *COMPANION_FIELDS,
+            "mounts",
             "items",
             "skills",
             "specials",

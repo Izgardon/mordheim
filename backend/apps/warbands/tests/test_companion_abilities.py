@@ -26,6 +26,8 @@ class CompanionAbilityTests(RosterTestCase):
         self.hoof = Spell.objects.create(name="Hoof Hex", type="Beast", dc="7", description="A hex.")
         teach(self.horse, skills=(self.charge,), specials=(self.kick,), spells=(self.hoof,))
         self.hero = make_unit(HERO, self.warband, name="Aldric", movement=4)
+        self.steed = make_animal("Elven Steed", "mount")  # a group's second kind of mount (its `mounts`)
+        teach(self.steed, specials=(self.kick,))
 
     def hero_payload(self, url: str) -> Any:
         response = self.client.get(url)
@@ -75,13 +77,31 @@ class CompanionAbilityTests(RosterTestCase):
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(response.data["mount"]["spells"][0]["name"], "Hoof Hex")
 
+    def test_a_group_on_mixed_mounts_lists_each_kind_once_in_mounts(self):
+        pony, footed = make_animal("Pony", "mount"), Skill.objects.create(name="Sure Footed", type="Mount")
+        teach(pony, skills=(footed,))
+        group = make_unit(HENCHMEN, self.warband, members=("A", "B", "C"))
+        for item in (self.horse, pony, self.horse):
+            HenchmenGroupItem.objects.create(henchmen_group=group, item=item, companion=True)
+        HenchmenGroupItem.objects.create(henchmen_group=group, item=pony)  # a spare brings nothing
+
+        for url in (f"/api/warbands/{self.warband.id}/sheet/", unit_url(HENCHMEN, self.warband.id)):
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                groups = response.data["henchmen_groups"] if "henchmen_groups" in response.data else response.data
+                unit = next(entry for entry in groups if entry["id"] == group.id)
+                mounts = [(mount["name"], [skill["name"] for skill in mount["skills"]]) for mount in unit["mounts"]]
+                self.assertEqual(mounts, [("Warhorse", ["Thunderous Charge"]), ("Pony", ["Sure Footed"])])
+                self.assertEqual(unit["mount"]["name"], "Warhorse")
+
     def ride(self, count: int) -> None:
         for _ in range(count):
             hero = make_unit(HERO, self.warband)
             HeroItem.objects.create(hero=hero, item=self.horse, companion=True)
             HeroItem.objects.create(hero=hero, item=self.raven, companion=True)
-            group = make_unit(HENCHMEN, self.warband, members=("A",))
+            group = make_unit(HENCHMEN, self.warband, members=("A", "B"))
             HenchmenGroupItem.objects.create(henchmen_group=group, item=self.horse, companion=True)
+            HenchmenGroupItem.objects.create(henchmen_group=group, item=self.steed, companion=True)
             sword = make_unit(HIRELING, self.warband)
             HirelingItem.objects.create(hireling=sword, item=self.horse, companion=True)
 

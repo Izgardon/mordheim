@@ -142,6 +142,7 @@ HENCHMEN_SUMMARY = {
     "beast_kind": None,
     **STATS,
     **COMPANIONS,
+    "mounts": [],  # each kind of mount the members ride (the step 5 follow-up)
     "items": [ITEM_SUMMARY],
     "skills": [NAMED],
     "specials": [NAMED],
