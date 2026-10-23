@@ -67,12 +67,16 @@ export function RiderMark({
   );
 }
 
-/** A unit's pets as chips, each with its profile (or "No profile") and entries in a tooltip. */
+/**
+ * A unit's pets as chips, each with "No profile" and its entries in a tooltip. A pet with a
+ * profile fights as its own model next to its owner (step 5), so it has no chip.
+ */
 export function PetChips({ pets }: { pets?: BattleRosterCompanion[] }) {
-  if (!pets?.length) return null;
+  const chips = (pets ?? []).filter((pet) => !pet.hasProfile);
+  if (!chips.length) return null;
   return (
     <span className="flex flex-wrap gap-1">
-      {pets.map((pet, index) => (
+      {chips.map((pet, index) => (
         <Tooltip
           // Two copies of one pet share an item id: the roster names no row.
           key={`${pet.itemId}-${index}`}

@@ -2,6 +2,7 @@ import { NumberInput } from "@/components/ui/number-input";
 import type { BattleParticipant } from "@/features/battles/types/battle-types";
 import PrebattleHenchmenGroupRow from "./PrebattleHenchmenGroupRow";
 import PrebattleUnitRow, { type PrebattleRowTools } from "./PrebattleUnitRow";
+import { withPetModels } from "../active/active-utils";
 
 import type {
   ParticipantRoster,
@@ -95,6 +96,12 @@ export default function PrebattleParticipantRoster({
   const renderUnitRow = (unit: PrebattleUnit) => (
     <PrebattleUnitRow key={unit.key} unit={unit} tools={tools} />
   );
+  // Each pet fighting as its own model is picked right after its owner (step 5).
+  const pets = participantRoster?.petModels ?? [];
+  const ownedBy = (prefix: string) => (pet: PrebattleUnit) =>
+    (pet.ownerKey ?? "").startsWith(prefix);
+  const unitRows = (units: PrebattleUnit[], prefix: string) =>
+    withPetModels(units, pets, (unit) => unit.key, ownedBy(prefix)).map(renderUnitRow);
 
   return (
     <div key={participant.id} className="space-y-3">
@@ -136,9 +143,7 @@ export default function PrebattleParticipantRoster({
           {participantRoster.heroes.length ? (
             <section id={sectionIds?.heroes} className="space-y-2 scroll-mt-28">
               <p className={SECTION_TITLE_CLASS}>Heroes</p>
-              <div className="space-y-2">
-                {participantRoster.heroes.map((unit) => renderUnitRow(unit))}
-              </div>
+              <div className="space-y-2">{unitRows(participantRoster.heroes, "hero:")}</div>
             </section>
           ) : null}
 
@@ -146,9 +151,18 @@ export default function PrebattleParticipantRoster({
             <section id={sectionIds?.henchmen} className="space-y-2 scroll-mt-28">
               <p className={SECTION_TITLE_CLASS}>Henchmen Groups</p>
               <div className="space-y-3">
-                {participantRoster.henchmenGroups.map((group) => (
-                  <PrebattleHenchmenGroupRow key={group.id} group={group} {...tools} />
-                ))}
+                {withPetModels(
+                  participantRoster.henchmenGroups,
+                  pets,
+                  (group) => `group:${group.id}`,
+                  ownedBy("group:")
+                ).map((entry) =>
+                  "members" in entry ? (
+                    <PrebattleHenchmenGroupRow key={entry.id} group={entry} {...tools} />
+                  ) : (
+                    renderUnitRow(entry)
+                  )
+                )}
               </div>
             </section>
           ) : null}
@@ -156,9 +170,7 @@ export default function PrebattleParticipantRoster({
           {participantRoster.hirelings.length ? (
             <section id={sectionIds?.hirelings} className="space-y-2 scroll-mt-28">
               <p className={SECTION_TITLE_CLASS}>Hired Swords</p>
-              <div className="space-y-2">
-                {participantRoster.hirelings.map((unit) => renderUnitRow(unit))}
-              </div>
+              <div className="space-y-2">{unitRows(participantRoster.hirelings, "hireling:")}</div>
             </section>
           ) : null}
 

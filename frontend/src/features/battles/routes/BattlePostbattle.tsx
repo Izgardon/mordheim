@@ -134,6 +134,7 @@ export default function BattlePostbattle() {
           <RosterResultsSection
             isMobile={isMobile}
             groups={page.groups}
+            pets={page.petRows}
             rosterLoading={page.rosterLoading}
             rosterError={page.rosterError}
             tools={page.rowTools}

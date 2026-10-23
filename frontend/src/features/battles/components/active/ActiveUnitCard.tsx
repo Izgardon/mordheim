@@ -203,8 +203,8 @@ export default function ActiveUnitCard({
         onOpenChange={setIsKillDialogOpen}
         killerName={name}
         killerUnitKey={unit.key}
-        showEarnedXpOption={unit.kind !== "custom"}
-        defaultEarnedXp={unit.kind !== "henchman"}
+        showEarnedXpOption={unit.kind !== "custom" && unit.kind !== "pet"}
+        defaultEarnedXp={unit.kind !== "henchman" && unit.kind !== "pet"}
         options={killTargetOptions}
         onConfirm={({ victimUnitKey, victimName, notes, earnedXp }) =>
           onRecordKill({ killerUnitKey: unit.key, victimUnitKey, victimName, notes, earnedXp })

@@ -496,6 +496,8 @@ export type BattleRosterGroup = {
   /** A group recruited from a creature: its beast (null otherwise). */
   sourceBeastId?: number | null;
   beastKind?: "mount" | "pet" | "creature" | null;
+  /** The group's own pets (a keyed one fights as its own model, step 5). */
+  pets?: BattleRosterCompanion[];
   members: BattleRosterUnit[];
 };
 

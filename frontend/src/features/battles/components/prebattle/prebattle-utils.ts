@@ -66,7 +66,7 @@ export function flattenRosterUnits(roster: ParticipantRoster | undefined): Preba
     return [];
   }
   const henchmenMembers = roster.henchmenGroups.flatMap((group) => group.members);
-  return [...roster.heroes, ...roster.hirelings, ...henchmenMembers];
+  return [...roster.heroes, ...roster.hirelings, ...henchmenMembers, ...(roster.petModels ?? [])];
 }
 
 export function extractUnitItems(rawItems: unknown): UnitItemEntry[] {

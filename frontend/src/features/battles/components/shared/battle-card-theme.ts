@@ -6,7 +6,8 @@ type BattleCardThemeKind =
   | "henchmen_group"
   | "hireling"
   | "custom"
-  | "bestiary";
+  | "bestiary"
+  | "pet";
 
 type ThemeTokens = {
   battleCardBorder: string;

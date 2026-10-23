@@ -13,7 +13,7 @@ import type {
 import ActiveUnitCard from "./ActiveUnitCard";
 import ActiveHenchmenGroupCard from "./ActiveHenchmenGroupCard";
 import type { ActiveBattleUnitOption } from "./active-utils";
-import { getParticipantSelectedUnits } from "./active-utils";
+import { getParticipantSelectedUnits, withPetModels } from "./active-utils";
 
 type ActiveParticipantRosterProps = {
   participant: BattleParticipant;
@@ -66,16 +66,21 @@ export default function ActiveParticipantRoster({
     }))
     .filter((group) => group.members.length > 0);
 
-  const renderUnitCards = (units: PrebattleUnit[]) =>
-    units.map((unit) => (
-      <ActiveUnitCard
-        key={unit.key}
-        unit={unit}
-        unitInformation={unitInformationByKey[unit.key]}
-        isSavingUnitConfig={Boolean(savingUnitKeys[unit.key])}
-        {...cardProps}
-      />
-    ));
+  const renderUnitCard = (unit: PrebattleUnit) => (
+    <ActiveUnitCard
+      key={unit.key}
+      unit={unit}
+      unitInformation={unitInformationByKey[unit.key]}
+      isSavingUnitConfig={Boolean(savingUnitKeys[unit.key])}
+      {...cardProps}
+    />
+  );
+  // Each pet fighting as its own model follows its owner's card (step 5).
+  const { pets } = selectedUnits;
+  const ownedBy = (prefix: string) => (pet: PrebattleUnit) =>
+    (pet.ownerKey ?? "").startsWith(prefix);
+  const unitCards = (units: PrebattleUnit[], prefix: string) =>
+    withPetModels(units, pets, (unit) => unit.key, ownedBy(prefix)).map(renderUnitCard);
 
   const section = (id: string | undefined, title: string, cards: React.ReactNode[]) =>
     cards.length ? (
@@ -85,24 +90,34 @@ export default function ActiveParticipantRoster({
       </section>
     ) : null;
 
-  const groupCards = selectedHenchmenGroups.map((group) => (
-    <ActiveHenchmenGroupCard
-      key={group.id}
-      groupName={group.name}
-      groupType={group.unitType}
-      beastKind={group.beastKind}
-      members={group.members}
-      unitInformationByKey={unitInformationByKey}
-      savingUnitKeys={savingUnitKeys}
-      {...cardProps}
-    />
-  ));
+  const groupCards = withPetModels(
+    selectedHenchmenGroups,
+    pets,
+    (group) => `group:${group.id}`,
+    ownedBy("group:")
+  ).map((group) =>
+    !("members" in group) ? (
+      renderUnitCard(group)
+    ) : (
+      <ActiveHenchmenGroupCard
+        key={group.id}
+        groupName={group.name}
+        groupType={group.unitType}
+        beastKind={group.beastKind}
+        members={group.members}
+        unitInformationByKey={unitInformationByKey}
+        savingUnitKeys={savingUnitKeys}
+        {...cardProps}
+      />
+    )
+  );
 
   const nothingSelected =
     !selectedUnits.heroes.length &&
     !selectedHenchmenGroups.length &&
     !selectedUnits.hirelings.length &&
-    !selectedUnits.temporary.length;
+    !selectedUnits.temporary.length &&
+    !pets.length;
 
   return (
     <div className="space-y-4">
@@ -112,13 +127,17 @@ export default function ActiveParticipantRoster({
         <p className="text-sm text-red-600">{rosterError}</p>
       ) : (
         <div className="space-y-4">
-          {section(sectionIds?.heroes, "Heroes", renderUnitCards(selectedUnits.heroes))}
+          {section(sectionIds?.heroes, "Heroes", unitCards(selectedUnits.heroes, "hero:"))}
           {section(sectionIds?.henchmen, "Henchmen", groupCards)}
-          {section(sectionIds?.hirelings, "Hired Swords", renderUnitCards(selectedUnits.hirelings))}
+          {section(
+            sectionIds?.hirelings,
+            "Hired Swords",
+            unitCards(selectedUnits.hirelings, "hireling:")
+          )}
           {section(
             sectionIds?.temporary,
             "Temporary Units",
-            renderUnitCards(selectedUnits.temporary)
+            selectedUnits.temporary.map(renderUnitCard)
           )}
           {nothingSelected ? (
             <p className="text-sm text-muted-foreground">No units selected for this battle.</p>

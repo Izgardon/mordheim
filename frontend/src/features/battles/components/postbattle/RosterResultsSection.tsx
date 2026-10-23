@@ -4,20 +4,27 @@ import PostbattleSection, {
 } from "@/features/battles/components/postbattle/PostbattleSection";
 import UnitResultCard from "@/features/battles/components/postbattle/UnitResultCard";
 import type { PostbattleRowTools } from "@/features/battles/components/postbattle/postbattle-row-tools";
-import type { PostbattleRenderableGroup } from "@/features/battles/components/postbattle/postbattle-utils";
+import type {
+  PostbattlePetRow,
+  PostbattleRenderableGroup,
+} from "@/features/battles/components/postbattle/postbattle-utils";
+import PostbattlePetRows from "@/features/battles/components/postbattle/PostbattlePetRows";
 
 const SECTION_LABELS = { hero: "Heroes", hireling: "Hired Swords", henchman: "Henchmen" };
 
-/** Roster: every unit's results, heroes, hired swords and henchmen groups under their headings. */
+/** Roster: every unit's results, heroes, hired swords and henchmen groups under their headings,
+ * then the pets that fought as their own models (step 5). */
 export default function RosterResultsSection({
   isMobile,
   groups,
+  pets = [],
   rosterLoading,
   rosterError,
   tools,
 }: {
   isMobile: boolean;
   groups: PostbattleRenderableGroup[];
+  pets?: PostbattlePetRow[];
   rosterLoading: boolean;
   rosterError: string | undefined;
   tools: PostbattleRowTools;
@@ -48,6 +55,7 @@ export default function RosterResultsSection({
           </div>
         );
       })}
+      <PostbattlePetRows pets={pets} />
     </PostbattleSection>
   );
 }

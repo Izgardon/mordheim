@@ -11,6 +11,7 @@ import {
 } from "@/features/battles/components/postbattle/postbattle-summary";
 import {
   buildRenderableGroups,
+  petResultRows,
   getPostbattleUpkeepTotal,
   isPostbattleDraftValid,
 } from "@/features/battles/components/postbattle/postbattle-utils";
@@ -121,6 +122,11 @@ export function usePostbattlePage(campaign: CampaignSummary | null | undefined) 
     [currentRoster, draft]
   );
   const upkeepRows = useMemo(() => buildUpkeepRows(draft, currentRoster), [currentRoster, draft]);
+  // The pets that fought as their own models: shown, never a result (step 5).
+  const petRows = useMemo(
+    () => (currentParticipant ? petResultRows(currentParticipant, currentRoster) : []),
+    [currentParticipant, currentRoster]
+  );
   // Who the server suggests should leave now (one-battle hirelings), with their unit ids, and
   // whether each has left (dismissed: the sheet no longer has him).
   const sheet = sheetQuery.data;
@@ -192,6 +198,7 @@ export function usePostbattlePage(campaign: CampaignSummary | null | undefined) 
     results,
     groups,
     upkeepRows,
+    petRows,
     upkeepTotal,
     leaving,
     summary,

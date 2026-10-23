@@ -627,3 +627,30 @@ export function isPostbattleDraftValid(draft: BattlePostbattleState | null) {
   }
   return Object.keys(draft.unit_results).length > 0;
 }
+
+/** A pet that fought as its own model, as postbattle shows it (step 5). */
+export type PostbattlePetRow = {
+  unitKey: string;
+  name: string;
+  owner: string;
+  outOfAction: boolean;
+  kills: number;
+};
+
+/**
+ * The selected pets that fought as their own models: each follows its owner after the battle
+ * (no XP, no injury roll, no result of its own), so postbattle only shows how it ended.
+ */
+export function petResultRows(
+  participant: BattleParticipant,
+  roster: ParticipantRoster | undefined
+): PostbattlePetRow[] {
+  const unitInformation = toUnitInformationMap(participant.unit_information_json);
+  return getParticipantSelectedUnits(participant, roster).pets.map((pet) => ({
+    unitKey: pet.key,
+    name: pet.displayName,
+    owner: pet.unitType,
+    outOfAction: Boolean(unitInformation[pet.key]?.out_of_action),
+    kills: unitInformation[pet.key]?.kill_count ?? 0,
+  }));
+}

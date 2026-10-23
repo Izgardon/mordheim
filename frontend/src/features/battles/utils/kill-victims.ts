@@ -12,6 +12,7 @@ function rosterUnits(roster: ParticipantRoster | undefined): PrebattleUnit[] {
     ...(roster?.heroes ?? []),
     ...(roster?.hirelings ?? []),
     ...(roster?.henchmenGroups ?? []).flatMap((group) => group.members),
+    ...(roster?.petModels ?? []),
   ];
 }
 
