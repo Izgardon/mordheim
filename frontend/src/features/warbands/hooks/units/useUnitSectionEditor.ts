@@ -204,6 +204,11 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
     onUnitsChange(units.map((unit) => (unit.id === updated.id ? updated : unit)));
   };
 
+  /** A unit added outside an edit (a hire; its own mutation already updated the sheet). */
+  const addUnit = (added: Unit<K>) => {
+    onUnitsChange([...units.filter((unit) => unit.id !== added.id), added]);
+  };
+
   /** Henchmen: Lad's Got Talent promoted the group's last member (promote/ wrote the summary). */
   const removeUnit = (unitId: number) => {
     onUnitsChange(units.filter((unit) => unit.id !== unitId));
@@ -229,8 +234,11 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
     duplicateForm,
     addCreatedSkill,
     replaceUnit,
+    addUnit,
     removeUnit,
     navigationItems,
+    /** The caps and counts the section compares against. */
+    roster,
     toggleExpanded: (unitId: number) =>
       forms.setExpandedId(forms.expandedId === unitId ? null : unitId),
   };

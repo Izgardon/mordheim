@@ -40,6 +40,7 @@ export default function UnitSection<K extends UnitKindKey>({
 }: UnitSectionProps<K>) {
   const catalogue = useWarbandCatalogue();
   const { kind, isEditing, save, purchases } = editor;
+  const { SectionActions } = kind.slots;
   const isMobileLayout = layoutVariant === "mobile";
   const { visuallyExpandedId, sectionRef } = useSectionExpansion(editor.forms.expandedId, {
     scrollIntoView: kind.flags.scrollsIntoViewOnExpand,
@@ -75,6 +76,18 @@ export default function UnitSection<K extends UnitKindKey>({
         headerClassName={isMobileLayout ? "gap-2" : undefined}
         actionsHidden={actionsHidden}
         editLabel={kind.labels.edit}
+        headerActions={
+          SectionActions && canEdit ? (
+            <SectionActions
+              warbandId={warbandId}
+              campaignId={catalogue.campaignId}
+              units={units}
+              roster={editor.roster}
+              availableGold={availableGold}
+              onUnitAdded={editor.addUnit}
+            />
+          ) : null
+        }
         onEdit={editor.startEditing}
         onCancel={editor.requestCancel}
         onSave={save.handleSaveChanges}

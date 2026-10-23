@@ -12,7 +12,7 @@ import type { WarbandHireling } from "@/features/warbands/types/warband-types";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { getFieldNear } from "@/test/roster-queries";
 import { setupUser } from "@/test/user-event";
-import { humanRace, makeVeteranHireling, warhammer } from "@/test/warband-fixtures";
+import { humanRace, makeVeteranHireling } from "@/test/warband-fixtures";
 import { answerBatch, batchCreates, batchDismissals, batchUpdate } from "@/test/batch-mock";
 
 const api = vi.hoisted(() => ({
@@ -23,8 +23,6 @@ const api = vi.hoisted(() => ({
   createWarbandLog: vi.fn(),
 }));
 const events = vi.hoisted(() => ({ emitWarbandUpdate: vi.fn() }));
-const hirelings = vi.hoisted(() => ({ getHirelingProfile: vi.fn() }));
-const presets = vi.hoisted(() => ({ list: [] as unknown[] }));
 
 vi.mock("@/features/warbands/api/warbands-api", () => api);
 vi.mock("@/features/warbands/units/unit-api", async () =>
@@ -39,15 +37,6 @@ vi.mock("@/stores/app-store", () => ({
 }));
 vi.mock("@/features/campaigns/hooks/useCampaignStarted", () => ({
   useCampaignStarted: () => true,
-}));
-vi.mock("@/features/hirelings/api/hireling-catalogue-api", () => hirelings);
-vi.mock("@/lib/catalogue-queries", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("@/lib/catalogue-queries")>()),
-  useCatalogue: (kind: string) => ({
-    data: kind === "hired-swords" ? presets.list : [],
-    isLoading: false,
-    error: "",
-  }),
 }));
 
 const onHirelingsChange = vi.fn();
@@ -146,7 +135,6 @@ describe("UnitSection: hired swords create and save", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    presets.list = [];
     api.batchWarbandHirelings.mockImplementation(answerBatch([], { gold: 160 }));
     api.getWarbandSummary.mockResolvedValue({ gold: 160 });
   });
@@ -503,93 +491,5 @@ describe("UnitSection: hired swords create and save", () => {
     );
 
     expect(screen.getByText("[1/3]")).toBeInTheDocument();
-  });
-
-  it("creates a hired sword from a preset with the preset's armour save (BUG-100)", async () => {
-    const user = setupUser();
-    const profile = {
-      id: 5,
-      name: "Warrior Priest",
-      movement: 4,
-      weapon_skill: 4,
-      ballistic_skill: 3,
-      strength: 3,
-      toughness: 3,
-      wounds: 1,
-      initiative: 3,
-      attacks: 1,
-      leadership: 8,
-      armour_save: 5,
-      large: false,
-      caster: "Priest",
-      equipment: [{ item: warhammer, quantity: 1 }],
-      skills: [],
-      spells: [],
-      specials: [],
-      race_id: 1,
-      race_name: "Human",
-      race_label: "Human",
-      hire_cost: 40,
-      hire_cost_expression: "",
-      upkeep_cost: 15,
-      upkeep_cost_expression: "",
-      rating: 25,
-      available_skill_types: ["Combat"],
-      restrictions: [],
-    };
-    presets.list = [profile];
-    hirelings.getHirelingProfile.mockResolvedValue(profile);
-    renderWithQueryClient(<Section initialHirelings={[]} />);
-    await startEditing(user);
-
-    await user.click(screen.getByRole("button", { name: "Add hired sword" }));
-    await user.click(screen.getByRole("button", { name: /^Warrior Priest/ }));
-    await screen.findByDisplayValue("Human");
-    await user.click(screen.getByRole("button", { name: "Create hired sword" }));
-    // The queued form shows the preset's save, and Save creates the unit with it.
-    expect(await screen.findByText("New recruit: 40 gc, paid when you save.")).toBeInTheDocument();
-    expect(screen.getByLabelText("Armour save")).toHaveValue("5+");
-    await user.click(screen.getByRole("button", { name: "Save" }));
-
-    await waitFor(() => expect(api.batchWarbandHirelings).toHaveBeenCalledTimes(1));
-    expect(hirelings.getHirelingProfile).toHaveBeenCalledWith("hired-swords", 5);
-    expect(batchCreates(api.batchWarbandHirelings)[0]).toEqual({
-      name: "Warrior Priest",
-      unit_type: "Warrior Priest",
-      race: 1,
-      price: 40,
-      upkeep_price: 15,
-      rating: 25,
-      xp: 0,
-      level_up: 0,
-      deeds: null,
-      armour_save: 5,
-      large: false,
-      caster: "Priest",
-      half_rate: false,
-      no_level_ups: false,
-      blood_pacted: false,
-      kind: "hired_sword",
-      injury_table: "henchman",
-      stays: "always",
-      payment_note: "",
-      available_skills: ["Combat"],
-      movement: 4,
-      weapon_skill: 4,
-      ballistic_skill: 3,
-      strength: 3,
-      toughness: 3,
-      wounds: 1,
-      initiative: 3,
-      attacks: 1,
-      leadership: 8,
-      items: [{ id: 105, cost: 3 }],
-      skill_ids: [],
-      special_ids: [],
-      spell_ids: [],
-    });
-    await waitFor(() =>
-      expect(screen.queryByRole("button", { name: "Save" })).not.toBeInTheDocument()
-    );
   });
 });

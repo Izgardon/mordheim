@@ -377,7 +377,7 @@ export type NewHeroForm = {
   is_leader: boolean;
 };
 
-/** The "Add hired sword" form (a preset can fill all of it, loadout included). */
+/** The "Add hired sword" form: a hireling typed by hand (Hire copies one from the catalogue). */
 export type NewHirelingForm = HirelingTerms & {
   name: string;
   unit_type: string;

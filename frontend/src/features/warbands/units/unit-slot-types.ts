@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 
 import type { Unit, UnitKindKey } from "../types/units";
 import type { UnitFormSlotProps } from "../components/units/forms/form-types";
+import type { RosterLimits } from "./unit-kind-types";
 
 export type CardLayout = "mobile" | "default";
 
@@ -34,6 +35,16 @@ export type PendingAdvanceDialogsProps<K extends UnitKindKey> = {
   onUnitUpdated?: (updated: Unit<K>) => void;
 };
 
+export type SectionActionsProps<K extends UnitKindKey> = {
+  warbandId: number;
+  campaignId: number;
+  units: Unit<K>[];
+  roster: RosterLimits;
+  availableGold: number;
+  /** A unit the action added, already written into the cached sheet. */
+  onUnitAdded: (unit: Unit<K>) => void;
+};
+
 /** Card differences that are markup or behaviour (design 0.28 §5.2 slots). */
 export type UnitCardSlots<K extends UnitKindKey> = {
   /** Name, level line and the kind's badges on the summary card. */
@@ -48,4 +59,6 @@ export type UnitCardSlots<K extends UnitKindKey> = {
   FormBasics: ComponentType<UnitFormSlotProps<K>>;
   /** The edit card's loadout; heroes and hired swords use the shared UnitLoadout. */
   FormLoadout?: ComponentType<UnitFormSlotProps<K>>;
+  /** Beside the section's Edit, outside an edit (hired swords: Hire, done by the server). */
+  SectionActions?: ComponentType<SectionActionsProps<K>>;
 };

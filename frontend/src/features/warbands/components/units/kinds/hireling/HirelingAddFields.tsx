@@ -1,11 +1,8 @@
 import { useMemo } from "react";
 
-import { getHirelingProfile } from "@/features/hirelings/api/hireling-catalogue-api";
 import UnitLoadout from "../../../shared/forms/UnitLoadout";
-import HirelingPresetPicker from "./HirelingPresetPicker";
 import HirelingTermsFields from "./HirelingTermsFields";
 import { TraitToggle } from "../../forms/UnitSkillsTraitsPanel";
-import { presetToNewHirelingForm } from "./hireling-preset";
 import {
   AddNumberField,
   AddRaceField,
@@ -19,9 +16,12 @@ import type { HirelingFormEntry } from "../../../../types/warband-types";
 const inputClassName =
   "bg-background/70 border-border/60 text-foreground placeholder:text-muted-foreground";
 
-/** Add hired sword: presets, name, type, race, costs, rating, blood pact and a starting loadout. */
+/**
+ * Add hired sword, typed by hand (Hire copies one from the catalogue): name, type, race, costs,
+ * rating, blood pact, kind and terms, and a starting loadout.
+ */
 export default function HirelingAddFields(props: AddFieldsSlotProps<"hireling">) {
-  const { campaignId, form, setForm, setError, setRaceQuery } = props;
+  const { campaignId, form, setForm, setError } = props;
   const setText = (field: "name" | "unit_type") => (value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setError("");
@@ -70,19 +70,6 @@ export default function HirelingAddFields(props: AddFieldsSlotProps<"hireling">)
 
   return (
     <>
-      <HirelingPresetPicker
-        campaignId={campaignId}
-        onAddFromPreset={async (profileId) => {
-          const preset = presetToNewHirelingForm(
-            await getHirelingProfile("hired-swords", profileId),
-            props.races
-          );
-          setForm(preset.form);
-          setRaceQuery(preset.raceQuery);
-          setError("");
-        }}
-      />
-
       <div className="flex flex-wrap gap-3">
         <AddTextField
           className="min-w-[180px] flex-1 space-y-2"

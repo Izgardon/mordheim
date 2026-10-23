@@ -6,6 +6,7 @@ import {
   HirelingPendingDialogs,
 } from "../../components/units/kinds/hireling/HirelingCardSlots";
 import HirelingFormBasics from "../../components/units/kinds/hireling/HirelingFormBasics";
+import HireHirelingControl from "../../components/units/kinds/hireling/hire/HireHirelingControl";
 import { useFollowUpAdvance } from "../../hooks/units/useFollowUpAdvance";
 import {
   HERO_SELECTABLE_STAT_SET,
@@ -168,6 +169,7 @@ export const hirelingKind: UnitKindConfig<"hireling"> = {
     ExpandedTiles: HirelingExpandedTiles,
     PendingAdvanceDialogs: HirelingPendingDialogs,
     FormBasics: HirelingFormBasics,
+    SectionActions: HireHirelingControl,
   },
   editor: hirelingEditor,
 };
