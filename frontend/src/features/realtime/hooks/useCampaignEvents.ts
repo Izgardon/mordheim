@@ -28,8 +28,9 @@ export const catalogueKindOf = (serverKind: string): CatalogueKind | null =>
  * Campaign changes made by other members reach this one live (CAMP-NEW-07): `campaign.updated`
  * (a start, settings, a new join code, archive or restore) is written over the cached campaign,
  * keeping the reader's own role, permissions, capabilities and unread count. `catalogue.changed`
- * (BUG-80) marks that kind's lists stale (every variant, e.g. the Archived one): a page showing one
- * reads it again at once, and the others on their next visit. For a kind units carry, the
+ * (BUG-80) marks that kind's lists stale (every variant, e.g. the Archived one) and its cached
+ * single entries (a hired sword's detail): what is on screen reads again at once, the rest on its
+ * next visit. For a kind units carry, the
  * campaign's warband sheets (and stashes, for items) are marked stale too, since another member's
  * edit or Revert may have moved or changed their copies.
  */

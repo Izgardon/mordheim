@@ -95,11 +95,18 @@ export function useHirelingProfileForm({
     noun: config.labels.noun,
     onDeleted,
   });
-  const revert = useCatalogueRevert({ kind, campaignId, entry, onReverted });
-
-  /** The answer, cached as its entry's detail (the panel shows it with no read). */
+  /** A write's answer (the entry as its detail reads), cached: the panel shows it with no read. */
   const cacheDetail = (saved: HirelingProfileDetail) =>
     queryClient.setQueryData(queryKeys.campaign.catalogueEntry(campaignId, kind, saved.id), saved);
+  const revert = useCatalogueRevert({
+    kind,
+    campaignId,
+    entry,
+    onReverted: (book) => {
+      cacheDetail(book as HirelingProfileDetail);
+      onReverted?.(book);
+    },
+  });
 
   const save = async (after?: () => void) => {
     if (!values.name.trim()) {

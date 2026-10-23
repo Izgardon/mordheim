@@ -330,6 +330,8 @@ describe("Edit, Revert and Delete", () => {
     });
     expect(await screen.findByRole("heading", { name: "Ogre Bodyguard" })).toBeVisible();
     expect(screen.queryByText("House rule")).toBeNull();
+    // The answer is the book entry's detail: the panel shows it without reading it.
+    expect(fakeApi.countOf("GET /hired-swords/17/")).toBe(0);
   });
 
   it("deletes an unused custom hired sword for good after asking what uses it, and closes its panel", async () => {
