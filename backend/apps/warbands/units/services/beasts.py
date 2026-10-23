@@ -29,6 +29,7 @@ from apps.warbands.units.catalogue_scope import current_entry
 from apps.warbands.units.companions import Warning, beast_of
 from apps.warbands.units.errors import RosterError, validation_error
 from apps.warbands.units.kinds import HENCHMEN_GROUP
+from apps.warbands.utils.leaders import lock_warband
 
 STASH = "stash"
 NOT_A_CREATURE = "Only a creature is recruited into henchmen; switch a mount or a pet on for the unit holding it."
@@ -73,7 +74,9 @@ def resolve_target(warband: Warband, beast: BestiaryEntry, data: dict[str, Any],
 
 def lock_group(group: HenchmenGroup, key: str) -> None:
     """Lock the group's row for the transaction, if it is still on the roster (404 otherwise), so a recruit joining it
-    and a back to item taking its last members run one at a time (taken before any stash row or member)."""
+    and a back to item taking its last members run one at a time (taken before any stash row or member). The warband's
+    row is locked first, as every roster write that charges or recruits locks them (a purchase, a group PATCH)."""
+    lock_warband(group.warband_id)
     rows = HENCHMEN_GROUP.visible(HenchmenGroup.objects.select_for_update().filter(pk=group.pk))
     if rows.values_list("id", flat=True).first() is None:
         raise RosterError("Henchmen group not found.", "not_found", {key: ["Not found."]}, status_code=404)

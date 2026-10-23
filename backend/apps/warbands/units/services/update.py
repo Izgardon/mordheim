@@ -38,7 +38,7 @@ def apply_update(
     trait_update = prepare_update_traits(kind, data, lists, campaign_id)
     fields = frozenset(data)
     previous_xp = unit.xp
-    kind.hooks.before_update(unit, fields)
+    kind.hooks.before_update(unit, fields, members)
     for name, value in data.items():
         setattr(unit, name, value)
     if "xp" in fields:

@@ -36,8 +36,8 @@ class UnitHooks:
     def after_create(self, unit: RosterUnit, members: MemberEntries | None) -> None:
         """Runs in the create's transaction once the unit and its loadout exist."""
 
-    def before_update(self, unit: RosterUnit, fields: Set[str]) -> None:
-        """Runs before a PATCH saves `fields` (the scalar fields it sends)."""
+    def before_update(self, unit: RosterUnit, fields: Set[str], members: MemberEntries | None) -> None:
+        """Runs before a PATCH saves `fields` (the scalar fields it sends) and its `members` (a group's, if sent)."""
 
     def after_update(self, unit: RosterUnit, fields: Set[str], members: MemberEntries | None) -> list[Recruit]:
         """Runs once the PATCH saved the unit's fields, before its loadout lists are replaced.
@@ -87,7 +87,7 @@ class LeaderHooks(UnitHooks):
     def after_create(self, unit: RosterUnit, members: MemberEntries | None) -> None:
         self._crown(unit)
 
-    def before_update(self, unit: RosterUnit, fields: Set[str]) -> None:
+    def before_update(self, unit: RosterUnit, fields: Set[str], members: MemberEntries | None) -> None:
         if self._may_move_crown(fields):
             lock_warband(unit.warband_id)
 
@@ -207,6 +207,12 @@ class HenchmenHooks(UnitHooks):
     def after_create(self, unit: RosterUnit, members: MemberEntries | None) -> None:
         group = cast(HenchmenGroup, unit)
         Henchman.objects.bulk_create([Henchman(group=group, name=entry.get("name", "")) for entry in members or []])
+
+    def before_update(self, unit: RosterUnit, fields: Set[str], members: MemberEntries | None) -> None:
+        """A members list may recruit, and recruits are charged: the warband (the ledger's balance) is locked before
+        the group's row, as a purchase recruiting into the group and the roster batch lock them."""
+        if members is not None:
+            lock_warband(unit.warband_id)
 
     def after_update(self, unit: RosterUnit, fields: Set[str], members: MemberEntries | None) -> list[Recruit]:
         if members is None:
