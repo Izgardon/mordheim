@@ -12,10 +12,28 @@ export type BattleWarning = {
   [field: string]: unknown;
 };
 
-/** Shows each warning as a toast; the write itself went through. */
-export function toastBattleWarnings(warnings: BattleWarning[] | undefined) {
+/**
+ * A warning's words: the server's, but a unit that left the warband is worded neutrally, with the
+ * unit's name as the page has it (the server's message says "his" for anyone).
+ */
+export function battleWarningText(warning: BattleWarning, unitName?: string) {
+  if (warning.code === "unit_left_warband" && unitName) {
+    return `${unitName} has left the warband, so their results were not applied.`;
+  }
+  return warning.message;
+}
+
+/**
+ * Shows each warning as a toast; the write itself went through. `unitName` names a warning's unit
+ * by its key (finalise: the draft's names).
+ */
+export function toastBattleWarnings(
+  warnings: BattleWarning[] | undefined,
+  unitName: (unitKey: string) => string | undefined = () => undefined
+) {
   for (const warning of warnings ?? []) {
-    toast.warning(warning.message, {
+    const name = warning.unit_key ? unitName(warning.unit_key) : undefined;
+    toast.warning(battleWarningText(warning, name), {
       id: `battle-warning-${warning.code}-${warning.user_id ?? warning.unit_key ?? ""}`,
     });
   }

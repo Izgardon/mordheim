@@ -12,8 +12,16 @@ import { useWarbandCacheUpdate } from "@/features/warbands/api/warband-cache";
 import DismissUnitDescription from "@/features/warbands/components/units/DismissUnitDescription";
 import { getRefusalMessage } from "@/lib/get-error-message";
 
-/** A hireling the server suggests should leave now (`suggested_postbattle.dismiss`). */
-export type LeavingEntry = { unitKey: string; unitName: string; hirelingId: number | null };
+/**
+ * A hireling the server suggests should leave now (`suggested_postbattle.dismiss`), and whether he
+ * has left (the warband's sheet no longer has him, e.g. dismissed before a reload).
+ */
+export type LeavingEntry = {
+  unitKey: string;
+  unitName: string;
+  hirelingId: number | null;
+  left?: boolean;
+};
 
 /**
  * Who leaves after this battle: each hireling who stays for one battle, suggested to leave, never
@@ -31,14 +39,15 @@ export default function LeavingSection({
 }) {
   const updateWarbandCache = useWarbandCacheUpdate();
   const [confirming, setConfirming] = useState<LeavingEntry | null>(null);
-  const [gone, setGone] = useState<string[]>([]);
+  const [dismissed, setDismissed] = useState<string[]>([]);
+  const hasGone = (entry: LeavingEntry) => entry.left || dismissed.includes(entry.unitKey);
   const dismiss = useMutation({
     mutationFn: (entry: LeavingEntry) => deleteWarbandHireling(warbandId, entry.hirelingId ?? 0),
     onSuccess: (_answer, entry) => {
       if (entry.hirelingId !== null) {
         updateWarbandCache(warbandId, { removedHirelingIds: [entry.hirelingId] });
       }
-      setGone((current) => [...current, entry.unitKey]);
+      setDismissed((current) => [...current, entry.unitKey]);
       setConfirming(null);
       toast.success(`${entry.unitName} has left the warband.`);
     },
@@ -60,12 +69,12 @@ export default function LeavingSection({
             <div className="min-w-0">
               <p className="font-semibold text-foreground">{entry.unitName}</p>
               <p className="text-xs text-muted-foreground">
-                {gone.includes(entry.unitKey)
+                {hasGone(entry)
                   ? "Has left the warband."
                   : "Stays for one battle: suggested to leave now."}
               </p>
             </div>
-            {gone.includes(entry.unitKey) || entry.hirelingId === null ? null : (
+            {hasGone(entry) || entry.hirelingId === null ? null : (
               <Button
                 type="button"
                 size="sm"

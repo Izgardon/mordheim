@@ -38,6 +38,7 @@ export function usePostbattleSummary({
   upkeepTotal,
   sheet,
   campaign,
+  leftUnitKeys,
 }: {
   battleState: BattleState;
   rosters: Record<number, ParticipantRoster>;
@@ -52,6 +53,8 @@ export function usePostbattleSummary({
   upkeepTotal: number;
   sheet: WarbandSheet | undefined;
   campaign: CampaignSummary | null | undefined;
+  /** Units that have left the warband since the battle began: their results are left out. */
+  leftUnitKeys?: string[];
 }) {
   const { participants, events } = battleState;
   const victimName = useCallback(
@@ -101,8 +104,10 @@ export function usePostbattleSummary({
         resourceName,
         upkeepRows,
         upkeepTotal,
+        leftUnitKeys,
       }),
     [
+      leftUnitKeys,
       battleState.suggested_postbattle,
       campaign,
       currentRoster,

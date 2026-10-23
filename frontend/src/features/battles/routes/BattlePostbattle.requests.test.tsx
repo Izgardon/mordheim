@@ -614,7 +614,7 @@ describe("BattlePostbattle requests", () => {
     ).toBeInTheDocument();
   });
 
-  it("keeps battle stat changes only when ticked, and shows what finalise warns about (SEC-10)", async () => {
+  it("keeps battle stat changes only when ticked, and shows what finalise warns about in neutral words (SEC-10)", async () => {
     const user = setupUser();
     fakeApi.on(`POST ${battlePath("finalize-postbattle/")}`, () => ({
       ...battleState({ status: "postbattle", me: { status: "confirmed_postbattle" } }),
@@ -646,9 +646,11 @@ describe("BattlePostbattle requests", () => {
       })
     );
 
+    // The server words it "his" for anyone: the toast names the unit from the draft, neutrally.
     expect(
-      await screen.findByText("Rolf has left the warband, so his results were not applied.")
+      await screen.findByText("Rolf has left the warband, so their results were not applied.")
     ).toBeInTheDocument();
+    expect(screen.queryByText(/so his results/)).toBeNull();
     const finalised = fakeApi.bodyOf(`POST ${battlePath("finalize-postbattle/")}`) as {
       postbattle_json: BattlePostbattleState;
     };

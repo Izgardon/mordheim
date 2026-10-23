@@ -54,9 +54,22 @@ export function buildUpkeepRows(
 }
 
 /**
+ * Whether a hireling the server suggested should leave has left: dismissed (from the Leaving
+ * section, now or before a reload), so the warband's sheet no longer has him. Without the sheet,
+ * he hasn't.
+ */
+export function hasLeft(hirelingId: number | null, sheet: WarbandSheet | undefined) {
+  return (
+    Boolean(sheet && hirelingId !== null) &&
+    !sheet!.hirelings.some((unit) => unit.id === hirelingId)
+  );
+}
+
+/**
  * Every permanent change finalising applies, as the finalise dialog lists it (BATL-NEW-10) and
  * the skip dialog lists what won't be applied. `victimsByUnitKey` is each unit's kill list (who
- * it took out), the number finalise applies (BATL-NEW-06).
+ * it took out), the number finalise applies (BATL-NEW-06). A unit that has left the warband
+ * (`leftUnitKeys`: a dismissed hireling) gets nothing: finalise leaves its results out.
  */
 export function buildFinalizeSummary({
   groups,
@@ -73,6 +86,7 @@ export function buildFinalizeSummary({
   resourceName,
   upkeepRows,
   upkeepTotal,
+  leftUnitKeys = [],
 }: {
   groups: PostbattleRenderableGroup[];
   draft: BattlePostbattleState | null;
@@ -89,8 +103,12 @@ export function buildFinalizeSummary({
   resourceName: string | null;
   upkeepRows: UpkeepRow[];
   upkeepTotal: number;
+  /** Units that have left the warband since the battle began (dismissed hirelings). */
+  leftUnitKeys?: string[];
 }) {
-  const rows = groups.flatMap((group) => group.rows);
+  const stays = (unitKey: string) => !leftUnitKeys.includes(unitKey);
+  const rows = groups.flatMap((group) => group.rows).filter((row) => stays(row.unitKey));
+  const statChanges = statChangeRows.filter((row) => row.unitKeys.some(stays));
   const xpRows = rows.filter((row) => row.canGainXp && row.xpEarned > 0);
   const payUpkeep = Boolean(draft?.upkeep.pay_upkeep);
   const findsGoldCrowns = draft?.finds.gold_crowns ?? 0;
@@ -104,8 +122,8 @@ export function buildFinalizeSummary({
       xpEarned: row.xpEarned,
     })),
     levelUps: buildLevelUps(xpRows, sheet, campaign, suggestion?.unit_results),
-    keptStatChanges: statChangeRows.filter((row) => row.kept),
-    droppedStatChanges: statChangeRows.filter((row) => !row.kept),
+    keptStatChanges: statChanges.filter((row) => row.kept),
+    droppedStatChanges: statChanges.filter((row) => !row.kept),
     itemsUsed: buildItemsUsed(events, userId, roster),
     gold: buildGold({ sheet, findsGoldCrowns, upkeepPaid: payUpkeep ? upkeepTotal : 0 }),
     kills: rows
@@ -119,7 +137,9 @@ export function buildFinalizeSummary({
     findsItems: draft?.finds.items ?? [],
     resourceAmount,
     resourceName,
-    upkeepRows: upkeepRows.filter((row) => !row.dead && typeof row.cost === "number"),
+    upkeepRows: upkeepRows.filter(
+      (row) => !row.dead && typeof row.cost === "number" && stays(row.unitKey)
+    ),
     upkeepTotal,
     payUpkeep,
   };
