@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import { archivedOnly, useArchivedView } from "@/features/catalogue/hooks/useArchivedView";
 import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogueSearchParams";
+import { useFollowedEntry } from "@/features/catalogue/hooks/useFollowedEntry";
 import { usePagedList } from "@/features/catalogue/hooks/usePagedList";
 import { useCatalogue } from "@/lib/catalogue-queries";
 
@@ -19,30 +20,6 @@ const PAGE_SIZE = 12;
 
 /** Whether the form is open, and on which entry (none: adding one). */
 type FormState = { open: boolean; editingId: number | null };
-
-/**
- * The entry the campaign now uses in place of the open one, or null: the campaign's version of
- * an open book entry, or, for an open version the server no longer has (`gone`) and the list no
- * longer holds, the book entry its last read (`open`) names.
- */
-function followedEntryId(
-  rows: HirelingProfile[],
-  openEntryId: number | null,
-  open: { entry: HirelingProfile | null; gone: boolean }
-) {
-  if (openEntryId === null) {
-    return null;
-  }
-  const version = rows.find((row) => row.replaces === openEntryId);
-  if (version) {
-    return version.id;
-  }
-  const book = open.entry?.replaces ?? null;
-  if (!open.gone || book === null || rows.some((row) => row.id === openEntryId)) {
-    return null;
-  }
-  return rows.some((row) => row.id === book) ? book : null;
-}
 
 /**
  * A hired-sword or dramatis-persona catalogue page: its list (or the Archived one), the search and
@@ -85,13 +62,9 @@ export function useHirelingCataloguePage(config: HirelingCatalogueConfig) {
   // version back to its book entry), so the panel follows it rather than show an entry the
   // campaign no longer uses.
   const openDetail = useHirelingProfileDetail(config.kind, campaignId, openEntryId);
-  const movedTo = followedEntryId(archive.archived ? [] : list.data, openEntryId, openDetail);
   const { set: setUrl } = url;
-  useEffect(() => {
-    if (movedTo !== null) {
-      setUrl({ entry: String(movedTo) });
-    }
-  }, [movedTo, setUrl]);
+  const follow = useCallback((entryId: number) => setUrl({ entry: String(entryId) }), [setUrl]);
+  useFollowedEntry(archive.archived ? [] : list.data, openEntryId, openDetail, follow);
 
   return {
     config,
