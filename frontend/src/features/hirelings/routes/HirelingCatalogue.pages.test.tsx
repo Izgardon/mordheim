@@ -8,6 +8,7 @@
 import { act, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { ApiError } from "@/lib/api-client";
 import {
   OWNER,
   PLAYER,
@@ -216,6 +217,38 @@ describe("the detail panel", () => {
 
     expect(await screen.findByText("45 gc")).toBeVisible();
     expect(fakeApi.countOf("GET /hired-swords/40/")).toBe(2);
+  });
+
+  it("follows the campaign's version when another member's first edit of the open book entry makes one", async () => {
+    fakeApi.on("GET /hired-swords/17/", hiredSwordDetail(hiredSword()));
+    renderCatalogueRoute("/campaigns/1/hired-swords?entry=17");
+    await screen.findByText("80 gc");
+    await waitFor(() => expect(fakeRealtime.subscriberCount(EVENTS, "catalogue.changed")).toBe(1));
+    fakeApi.on(LIST.hiredSwords, [pitFighter, yourOgre]);
+    fakeApi.on("GET /hired-swords/73/", hiredSwordDetail(yourOgre));
+
+    act(() => fakeRealtime.emit(EVENTS, "catalogue.changed", { kind: "hired_swords" }));
+
+    expect(await screen.findByText("95 gc")).toBeVisible();
+    expect(screen.getByText("House rule")).toBeVisible();
+    expect(currentPath()).toHaveTextContent("/campaigns/1/hired-swords?entry=73");
+  });
+
+  it("goes back to the book entry when another member reverts the open version", async () => {
+    fakeApi.on(LIST.hiredSwords, [pitFighter, yourOgre]);
+    fakeApi.on("GET /hired-swords/73/", hiredSwordDetail(yourOgre));
+    renderCatalogueRoute("/campaigns/1/hired-swords?entry=73");
+    await screen.findByText("95 gc");
+    await waitFor(() => expect(fakeRealtime.subscriberCount(EVENTS, "catalogue.changed")).toBe(1));
+    fakeApi.on(LIST.hiredSwords, HIRED_SWORDS);
+    fakeApi.fail("GET /hired-swords/73/", new ApiError("Not found", 404, { detail: "Not found" }));
+    fakeApi.on("GET /hired-swords/17/", hiredSwordDetail(hiredSword()));
+
+    act(() => fakeRealtime.emit(EVENTS, "catalogue.changed", { kind: "hired_swords" }));
+
+    expect(await screen.findByText("80 gc")).toBeVisible();
+    expect(screen.queryByText("House rule")).toBeNull();
+    expect(currentPath()).toHaveTextContent("/campaigns/1/hired-swords?entry=17");
   });
 });
 
