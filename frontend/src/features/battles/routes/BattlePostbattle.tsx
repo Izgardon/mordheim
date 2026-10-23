@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import type { BattleLayoutContext } from "@/features/battles/components/layout/battle-shell-types";
 import ExplorationSection from "@/features/battles/components/postbattle/ExplorationSection";
+import LeavingSection from "@/features/battles/components/postbattle/LeavingSection";
 import FinalizeSummaryDialog from "@/features/battles/components/postbattle/FinalizeSummaryDialog";
 import FindsSection from "@/features/battles/components/postbattle/FindsSection";
 import PostbattleResultsBanner from "@/features/battles/components/postbattle/PostbattleResultsBanner";
@@ -50,6 +51,7 @@ export default function BattlePostbattle() {
     isMobile,
     hasUpkeep: page.upkeepRows.length > 0,
     hasStatChanges: page.statChangeRows.length > 0,
+    hasLeaving: page.leaving.length > 0,
   });
   usePostbattleMobileBars({
     isMobile,
@@ -169,6 +171,14 @@ export default function BattlePostbattle() {
           ) : null}
         </>
       )}
+      {/* Before or after finalising: leaving is a suggestion, never part of finalise. */}
+      {page.leaving.length > 0 ? (
+        <LeavingSection
+          isMobile={isMobile}
+          warbandId={currentParticipant.warband.id}
+          entries={page.leaving}
+        />
+      ) : null}
 
       <BattleResultsDialog
         open={page.results.isOpen}

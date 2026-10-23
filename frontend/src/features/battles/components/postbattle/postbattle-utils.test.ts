@@ -417,6 +417,80 @@ describe("postbattle-utils", () => {
     ).toBe(true);
   });
 
+  describe("hirelings by kind (the bestiary rewrite's step 2)", () => {
+    /** Johann a hired sword on the henchman table; Shade a one-battle dramatis persona on the hero table. */
+    const kindsRoster: ParticipantRoster = {
+      ...roster,
+      hirelings: [
+        { ...roster.hirelings[0], hirelingKind: "hired_sword", injuryTable: "henchman" },
+        {
+          ...roster.hirelings[1],
+          hirelingKind: "dramatis_persona",
+          injuryTable: "hero",
+          stays: "one_battle",
+          paymentNote: "a favour",
+        },
+      ],
+    };
+    const kindsParticipant: BattleParticipant = {
+      ...participant,
+      selected_unit_keys_json: ["hero:1", "hireling:21", "hireling:22"],
+      unit_information_json: {
+        "hero:1": { stats_override: {}, out_of_action: true, kill_count: 0 },
+        "hireling:21": { stats_override: {}, out_of_action: true, kill_count: 0 },
+        "hireling:22": { stats_override: {}, out_of_action: true, kill_count: 0 },
+      },
+    };
+    const kindsSuggestion: BattlePostbattleSuggestion = {
+      unit_results: {
+        "hero:1": { xp_earned: 1 },
+        "hireling:21": { xp_earned: 1 },
+        "hireling:22": { xp_earned: 0, reasons: [{ label: "dramatis persona", xp: 0 }] },
+      },
+      exploration: { dice_count: 0 },
+      upkeep: {
+        entries: {
+          "hireling:21": { unit_name: "Johann", cost: 0, cost_expression: "1 piece of wyrdstone" },
+        },
+      },
+      dismiss: { entries: { "hireling:22": { unit_name: "Shade", reason: "stays_one_battle" } } },
+    };
+    const rows = () => {
+      const draft = buildPostbattleDraft(kindsParticipant, kindsRoster, [], kindsSuggestion);
+      return buildRenderableGroups(draft, kindsRoster).flatMap((group) => group.rows);
+    };
+    const row = (unitKey: string) => rows().find((entry) => entry.unitKey === unitKey)!;
+
+    it("rolls each hireling on the table its battle roster names: the hero table for a dramatis persona, a D6 otherwise", () => {
+      expect(row("hero:1").injuryTable).toBe("hero");
+      expect(row("hireling:21").injuryTable).toBe("henchman");
+      expect(row("hireling:22").injuryTable).toBe("hero");
+      // A roster from before the rewrite names no table: the D6.
+      const old = buildRenderableGroups(
+        buildPostbattleDraft(kindsParticipant, roster, [], kindsSuggestion),
+        roster
+      ).flatMap((group) => group.rows);
+      expect(old.find((entry) => entry.unitKey === "hireling:22")?.injuryTable).toBe("henchman");
+    });
+
+    it("gives a dramatis persona no XP, by kind, even without no level-ups", () => {
+      expect(row("hireling:21").canGainXp).toBe(true);
+      expect(row("hireling:22").canGainXp).toBe(false);
+      expect(row("hireling:22").xpEarned).toBe(0);
+    });
+
+    it("drafts no upkeep for a hireling who stays for one battle, and keeps the suggestion's formula", () => {
+      const draft = buildPostbattleDraft(kindsParticipant, kindsRoster, [], kindsSuggestion);
+
+      expect(Object.keys(draft.upkeep.entries)).toEqual(["hireling:21"]);
+      expect(draft.upkeep.entries["hireling:21"]).toEqual({
+        unit_name: "Johann",
+        cost: 0,
+        cost_expression: "1 piece of wyrdstone",
+      });
+    });
+  });
+
   it("restores a roll saved with the draft, and calls it settled only once every die is set (BUG-71)", () => {
     const saved = buildLocalExplorationState(
       {

@@ -82,14 +82,15 @@ export function heroDeathRollFor(rules: Rules): CampaignHeroDeathRoll {
   return rules?.hero_death_roll ?? "d66";
 }
 
-export type InjuryRollUnitKind = "hero" | "hireling" | "henchman";
+/**
+ * The serious-injury table a unit rolls on: the campaign's hero table (heroes, and hirelings whose
+ * battle roster says so: dramatis personae, or a house rule), or the henchman's D6 (the rest).
+ */
+export type InjuryTable = "hero" | "henchman";
 
-/** The dice a serious-injury roll takes: 2D6 (D66) or D100 for heroes, a D6 for the rest. */
-export function seriousInjuryNotation(
-  unitKind: InjuryRollUnitKind | null,
-  heroRoll: CampaignHeroDeathRoll
-) {
-  if (unitKind === "hero") {
+/** The dice a serious-injury roll takes: 2D6 (D66) or D100 on the hero table, a D6 otherwise. */
+export function seriousInjuryNotation(table: InjuryTable | null, heroRoll: CampaignHeroDeathRoll) {
+  if (table === "hero") {
     return heroRoll === "d100" ? "1d100" : "2d6";
   }
   return "1d6";
@@ -97,13 +98,13 @@ export function seriousInjuryNotation(
 
 const clamp = (value: number, max: number) => Math.max(1, Math.min(max, Math.trunc(value || 1)));
 
-/** The serious-injury entry for the rolled dice, from the server's table for the unit's kind. */
+/** The serious-injury entry for the rolled dice, from the server's table the unit rolls on. */
 export function seriousInjuryRoll(
-  unitKind: InjuryRollUnitKind,
+  table: InjuryTable,
   values: number[],
   rules: Rules
 ): BattlePostbattleSeriousInjuryRoll {
-  const rollType = unitKind === "hero" ? heroDeathRollFor(rules) : "d6";
+  const rollType = table === "hero" ? heroDeathRollFor(rules) : "d6";
   let rolls: number[];
   let code: number;
   let resultCode: string;

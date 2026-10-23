@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -174,6 +174,7 @@ const mocks = vi.hoisted(() => {
           unitType: "Hero",
           unitKind: "hero",
           canGainXp: true,
+          injuryTable: "hero",
           xpEarned: 2,
           killCount: 1,
           dead: false,
@@ -203,6 +204,9 @@ const mocks = vi.hoisted(() => {
     confirmBattlePostbattle: vi.fn(async () => battleState),
     getWarbandSheet: vi.fn(async () => ({
       summary: { resources: [{ id: 9, name: "Wyrdstone" }] },
+      heroes: [],
+      henchmen_groups: [],
+      hirelings: [],
     })),
     listItems: vi.fn(async () => [
       {
@@ -217,6 +221,7 @@ const mocks = vi.hoisted(() => {
       },
     ]),
     useBattleEvents: vi.fn(),
+    deleteWarbandHireling: vi.fn(async () => undefined),
     refreshOpenBattles: vi.fn(async () => undefined),
     clearCurrentBattleSession: vi.fn(),
   };
@@ -271,6 +276,10 @@ vi.mock("@/features/battles/api/battles-api", () => ({
 vi.mock("@/features/warbands/api/warbands-api", () => ({
   getWarband: vi.fn(),
   getWarbandSheet: mocks.getWarbandSheet,
+}));
+
+vi.mock("@/features/warbands/api/warbands-hirelings", () => ({
+  deleteWarbandHireling: mocks.deleteWarbandHireling,
 }));
 
 vi.mock("@/features/items/api/items-api", () => ({
@@ -431,9 +440,34 @@ vi.mock("@/features/battles/components/shared/BattleNotesDialog", () => ({
     ) : null,
 }));
 
+/** A hireling's row in the roster results: Bertha, taken out of action, on `injuryTable`. */
+const hirelingGroup = (injuryTable: "hero" | "henchman"): PostbattleRenderableGroup => ({
+  key: "hirelings",
+  unitKind: "hireling",
+  label: "Hired Swords",
+  rows: [
+    {
+      unitKey: "hireling-1",
+      unitName: "Bertha",
+      unitType: "Bertha Bestraufrung",
+      unitKind: "hireling",
+      canGainXp: false,
+      injuryTable,
+      xpEarned: 0,
+      killCount: 0,
+      dead: false,
+      outOfAction: true,
+      groupName: "",
+      specialIds: [],
+      seriousInjuryRolls: [],
+    },
+  ],
+});
+
 describe("BattlePostbattle", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    delete (mocks.battleState as { suggested_postbattle?: unknown }).suggested_postbattle;
     mocks.useMediaQuery.mockReturnValue(false);
     mocks.groups = [
       {
@@ -447,6 +481,7 @@ describe("BattlePostbattle", () => {
             unitType: "Hero",
             unitKind: "hero",
             canGainXp: true,
+            injuryTable: "hero",
             xpEarned: 2,
             killCount: 1,
             dead: false,
@@ -569,6 +604,78 @@ describe("BattlePostbattle", () => {
     expect(screen.getByRole("heading", { name: "Skip postbattle" })).toBeInTheDocument();
   });
 
+  it("rolls the campaign's hero table for a hireling on it (a dramatis persona), as for a hero", async () => {
+    const user = userEvent.setup();
+    mocks.groups = [hirelingGroup("hero")];
+    renderWithQueryClient(
+      <BattleProvider phase="postbattle">
+        <BattlePostbattle />
+      </BattleProvider>
+    );
+
+    const roll = await screen.findByRole("button", { name: "Serious Injury Roll" });
+    await act(async () => {
+      await user.click(roll);
+    });
+
+    expect(screen.getByText("Roll a D66 guide for Bertha.")).toBeInTheDocument();
+    expect(within(screen.getByRole("dialog")).getByTestId("dice-roller-2d6")).toBeInTheDocument();
+  });
+
+  it("rolls a D6 for a hireling on the henchman table", async () => {
+    const user = userEvent.setup();
+    mocks.groups = [hirelingGroup("henchman")];
+    renderWithQueryClient(
+      <BattleProvider phase="postbattle">
+        <BattlePostbattle />
+      </BattleProvider>
+    );
+
+    const roll = await screen.findByRole("button", { name: "Serious Injury Roll" });
+    await act(async () => {
+      await user.click(roll);
+    });
+
+    expect(within(screen.getByRole("dialog")).getByTestId("dice-roller-1d6")).toBeInTheDocument();
+  });
+
+  it("suggests a one-battle hireling leaves, and dismisses him only when asked, saying his items go with him", async () => {
+    const user = userEvent.setup();
+    Object.assign(mocks.battleState, {
+      suggested_postbattle: {
+        unit_results: {},
+        exploration: { dice_count: 0 },
+        upkeep: { entries: {} },
+        dismiss: { entries: { "hireling-1": { unit_name: "Bertha", reason: "stays_one_battle" } } },
+      },
+    });
+    renderWithQueryClient(
+      <BattleProvider phase="postbattle">
+        <BattlePostbattle />
+      </BattleProvider>
+    );
+
+    expect(
+      await screen.findByText("Stays for one battle: suggested to leave now.")
+    ).toBeInTheDocument();
+    expect(mocks.deleteWarbandHireling).not.toHaveBeenCalled();
+    await act(async () => {
+      await user.click(screen.getByRole("button", { name: "Dismiss Bertha" }));
+    });
+    expect(
+      screen.getByText(
+        "All items this unit carries are lost. Move them to the stash first to keep them."
+      )
+    ).toBeInTheDocument();
+    await act(async () => {
+      await user.click(screen.getByRole("button", { name: "Dismiss" }));
+    });
+
+    await waitFor(() => expect(mocks.deleteWarbandHireling).toHaveBeenCalledWith(3, 201));
+    expect(await screen.findByText("Has left the warband.")).toBeInTheDocument();
+    expect(mocks.finalizeBattlePostbattle).not.toHaveBeenCalled();
+  });
+
   it("hides xp controls and xp awards for units that cannot gain xp", async () => {
     const user = userEvent.setup();
     mocks.groups = [
@@ -583,6 +690,7 @@ describe("BattlePostbattle", () => {
             unitType: "Hired Sword",
             unitKind: "hireling",
             canGainXp: false,
+            injuryTable: "henchman",
             xpEarned: 3,
             killCount: 0,
             dead: false,

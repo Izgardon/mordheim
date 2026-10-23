@@ -100,6 +100,8 @@ export type BattlePostbattleExploration = {
 export type BattlePostbattleUpkeepEntry = {
   unit_name: string;
   cost: number | null;
+  /** The suggestion's upkeep formula ("1 piece of wyrdstone"): a reminder, never saved. */
+  cost_expression?: string;
 };
 
 export type BattlePostbattleUpkeep = {
@@ -323,7 +325,7 @@ export type BattlePostbattleRules = {
   /** Ascending; the first row whose `max_total` (null: no limit) covers the dice total. */
   exploration_table: { max_total: number | null; amount: number }[];
   exploration_dice: { max: number; max_chosen: number };
-  /** Heroes' serious-injury table; henchmen and hired swords roll d6. */
+  /** Heroes' (and hero-table hirelings') serious-injury table; the rest roll d6. */
   hero_death_roll: CampaignHeroDeathRoll;
   injury_tables: Record<"d6" | "d66" | "d100", BattleInjuryTableRow[]>;
 };
@@ -339,7 +341,15 @@ export type BattlePostbattleSuggestion = {
     { xp_earned: number; reasons?: { label: string; xp: number }[]; level_ups?: number }
   >;
   exploration: { dice_count: number };
-  upkeep: { entries: Record<string, { unit_name: string; cost: number | null }> };
+  /** Every hireling but one who stays for one battle; a formula is a reminder beside the cost. */
+  upkeep: {
+    entries: Record<string, { unit_name: string; cost: number | null; cost_expression?: string }>;
+  };
+  /**
+   * Who is suggested to leave now (only when someone is): each selected hireling who stays for
+   * one battle. Never automatic; dismissing is `DELETE warbands/<id>/hirelings/<id>/`.
+   */
+  dismiss?: { entries: Record<string, { unit_name: string; reason: string }> };
 };
 
 /**
@@ -437,6 +447,11 @@ export type BattleRosterUnit = {
   upkeepPrice?: number | null;
   upkeepCostExpression?: string | null;
   noLevelUps?: boolean;
+  /** Hirelings: what it is, the injury table it rolls on, how long it stays, what it is paid in. */
+  hirelingKind?: "hired_sword" | "dramatis_persona";
+  injuryTable?: "henchman" | "hero";
+  stays?: "always" | "one_battle";
+  paymentNote?: string;
 };
 
 export type BattleRosterGroup = {

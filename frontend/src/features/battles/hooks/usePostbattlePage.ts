@@ -118,6 +118,15 @@ export function usePostbattlePage(campaign: CampaignSummary | null | undefined) 
     [currentRoster, draft]
   );
   const upkeepRows = useMemo(() => buildUpkeepRows(draft, currentRoster), [currentRoster, draft]);
+  // Who the server suggests should leave now (one-battle hirelings), with their unit ids.
+  const leaving = useMemo(
+    () =>
+      Object.entries(suggestion?.dismiss?.entries ?? {}).map(([unitKey, entry]) => {
+        const unit = currentRoster?.hirelings.find((hireling) => hireling.key === unitKey);
+        return { unitKey, unitName: entry.unit_name, hirelingId: unit ? Number(unit.id) : null };
+      }),
+    [currentRoster, suggestion]
+  );
   const upkeepTotal = useMemo(() => getPostbattleUpkeepTotal(draft), [draft]);
   const { victimName, statChangeRows, summary } = usePostbattleSummary({
     battleState,
@@ -173,6 +182,7 @@ export function usePostbattlePage(campaign: CampaignSummary | null | undefined) 
     groups,
     upkeepRows,
     upkeepTotal,
+    leaving,
     summary,
     statChangeRows,
     rowTools,

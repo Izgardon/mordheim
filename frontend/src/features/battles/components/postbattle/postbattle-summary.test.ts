@@ -35,6 +35,35 @@ describe("postbattle summary", () => {
     expect(buildUpkeepRows(null, roster)).toEqual([]);
   });
 
+  it("lists no upkeep for a hireling who stays for one battle, and takes the suggestion's formula as the reminder", () => {
+    const [ogre] = roster.hirelings;
+    const kinds = {
+      ...roster,
+      hirelings: [
+        { ...ogre, upkeepPrice: 0, upkeepCostExpression: "" },
+        { ...ogre, key: "hireling:5", displayName: "Bertha", stays: "one_battle" as const },
+      ],
+    };
+    const withFormula = {
+      ...draft,
+      upkeep: {
+        pay_upkeep: true,
+        entries: {
+          "hireling:4": { unit_name: "Ogre", cost: 0, cost_expression: "1 piece of wyrdstone" },
+        },
+      },
+    } as BattlePostbattleState;
+
+    expect(buildUpkeepRows(withFormula, kinds)).toEqual([
+      expect.objectContaining({
+        unitKey: "hireling:4",
+        cost: 0,
+        costExpression: "1 piece of wyrdstone",
+        hasFixedCost: true,
+      }),
+    ]);
+  });
+
   it("sums up deaths, XP, the kill lists, finds and the upkeep that is paid", () => {
     const groups = [
       {

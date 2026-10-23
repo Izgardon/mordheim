@@ -22,6 +22,8 @@ import {
   DEFAULT_EXPLORATION_DICE,
   type ExplorationDiceLimits,
 } from "@/features/battles/components/postbattle/exploration-dice";
+import type { InjuryTable } from "@/features/battles/components/postbattle/postbattle-rules";
+import { paysUpkeep } from "@/features/battles/components/postbattle/upkeep-rules";
 
 export type LocalExplorationState = {
   diceCount: number;
@@ -38,6 +40,8 @@ export type PostbattleRenderableRow = {
   unitType: string;
   unitKind: "hero" | "hireling" | "henchman";
   canGainXp: boolean;
+  /** The serious-injury table the unit rolls on (a hireling's comes from its battle roster). */
+  injuryTable: InjuryTable;
   groupName: string;
   outOfAction: boolean;
   killCount: number;
@@ -368,7 +372,8 @@ export function buildPostbattleDraft(
     };
   }
 
-  for (const hireling of roster?.hirelings ?? []) {
+  // A hireling who stays for one battle leaves after it: no upkeep keeps him (the server agrees).
+  for (const hireling of (roster?.hirelings ?? []).filter(paysUpkeep)) {
     nextUpkeepEntries[hireling.key] = {
       ...(suggestion?.upkeep.entries[hireling.key] ?? {
         unit_name: hireling.displayName,
@@ -427,12 +432,18 @@ export function buildRenderableGroups(draft: BattlePostbattleState, roster?: Par
   const hirelings: PostbattleRenderableRow[] = [];
   const henchmenGroups = new Map<string, PostbattleRenderableRow[]>();
   const xpEligibilityByUnitKey = new Map<string, boolean>();
+  const injuryTableByUnitKey = new Map<string, InjuryTable>();
 
   for (const hero of roster?.heroes ?? []) {
     xpEligibilityByUnitKey.set(hero.key, true);
   }
   for (const hireling of roster?.hirelings ?? []) {
-    xpEligibilityByUnitKey.set(hireling.key, !hireling.noLevelUps);
+    // A dramatis persona gains no XP, by kind (the server suggests none either).
+    xpEligibilityByUnitKey.set(
+      hireling.key,
+      !hireling.noLevelUps && hireling.hirelingKind !== "dramatis_persona"
+    );
+    injuryTableByUnitKey.set(hireling.key, hireling.injuryTable === "hero" ? "hero" : "henchman");
   }
   for (const group of roster?.henchmenGroups ?? []) {
     for (const member of group.members) {
@@ -447,6 +458,8 @@ export function buildRenderableGroups(draft: BattlePostbattleState, roster?: Par
       unitType: result.unit_type,
       unitKind: result.unit_kind,
       canGainXp: xpEligibilityByUnitKey.get(unitKey) ?? true,
+      injuryTable:
+        result.unit_kind === "hero" ? "hero" : (injuryTableByUnitKey.get(unitKey) ?? "henchman"),
       groupName: result.group_name,
       outOfAction: result.out_of_action,
       killCount: result.kill_count,

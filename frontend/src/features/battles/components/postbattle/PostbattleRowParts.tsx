@@ -94,7 +94,7 @@ export function PostbattleInjuryRollButton({
         tools.actions.setRollTarget({
           unitKey: row.unitKey,
           unitName: row.unitName,
-          unitKind: row.unitKind,
+          injuryTable: row.injuryTable,
         })
       }
     >

@@ -6,6 +6,7 @@ import {
   buildLevelUps,
 } from "@/features/battles/components/postbattle/finalise-changes";
 import type { PostbattleRenderableGroup } from "@/features/battles/components/postbattle/postbattle-utils";
+import { paysUpkeep } from "@/features/battles/components/postbattle/upkeep-rules";
 import type { StatChangeRow } from "@/features/battles/components/postbattle/stat-changes";
 import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
 import type {
@@ -21,12 +22,16 @@ export type UpkeepRow = {
   unitName: string;
   unitType: string;
   cost: number | null;
+  /** An upkeep formula ("1 piece of wyrdstone"): owed besides the gold, as a reminder. */
   costExpression: string | null;
   hasFixedCost: boolean;
   dead: boolean;
 };
 
-/** One upkeep row per hired sword, with the draft's cost and whether he is marked dead. */
+/**
+ * One upkeep row per hireling who owes upkeep (not one who stays for one battle), with the draft's
+ * cost, the suggestion's formula (or the roster's) and whether he is marked dead.
+ */
 export function buildUpkeepRows(
   draft: BattlePostbattleState | null,
   roster: ParticipantRoster | undefined
@@ -34,14 +39,14 @@ export function buildUpkeepRows(
   if (!draft || !roster) {
     return [];
   }
-  return roster.hirelings.map((hireling) => {
+  return roster.hirelings.filter(paysUpkeep).map((hireling) => {
     const savedEntry = draft.upkeep.entries[hireling.key];
     return {
       unitKey: hireling.key,
       unitName: savedEntry?.unit_name ?? hireling.displayName,
       unitType: hireling.unitType,
       cost: typeof savedEntry?.cost === "number" ? savedEntry.cost : null,
-      costExpression: hireling.upkeepCostExpression ?? null,
+      costExpression: savedEntry?.cost_expression || hireling.upkeepCostExpression || null,
       hasFixedCost: typeof hireling.upkeepPrice === "number",
       dead: Boolean(draft.unit_results[hireling.key]?.dead),
     };

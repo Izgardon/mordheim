@@ -52,6 +52,11 @@ export type PrebattleUnit = {
   specials?: UnitDetailEntry[];
   rating?: number;
   noLevelUps?: boolean;
+  /** Hirelings: what it is, the injury table it rolls on, how long it stays, what it is paid in. */
+  hirelingKind?: "hired_sword" | "dramatis_persona";
+  injuryTable?: "henchman" | "hero";
+  stays?: "always" | "one_battle";
+  paymentNote?: string;
 };
 
 export type HenchmenGroupRoster = {

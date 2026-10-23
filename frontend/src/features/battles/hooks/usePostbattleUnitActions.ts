@@ -70,7 +70,7 @@ export function usePostbattleUnitActions({
         setDraftError("Unable to read serious injury roll.");
         return;
       }
-      const roll = seriousInjuryRoll(rollTarget.unitKind, values, rules);
+      const roll = seriousInjuryRoll(rollTarget.injuryTable, values, rules);
       setIsInjuryRolling(false);
       setRollTarget(null);
       await persistDraft(

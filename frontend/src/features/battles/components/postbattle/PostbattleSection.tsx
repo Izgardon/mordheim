@@ -3,7 +3,13 @@ import type { ReactNode } from "react";
 import { CardBackground } from "@/components/ui/card-background";
 import { cn } from "@/lib/utils";
 
-export type PostbattleSectionKey = "exploration" | "roster" | "stats" | "finds" | "upkeep";
+export type PostbattleSectionKey =
+  | "exploration"
+  | "roster"
+  | "stats"
+  | "finds"
+  | "upkeep"
+  | "leaving";
 
 export const POSTBATTLE_SECTION_LABELS: Record<PostbattleSectionKey, string> = {
   exploration: "Exploration",
@@ -11,6 +17,7 @@ export const POSTBATTLE_SECTION_LABELS: Record<PostbattleSectionKey, string> = {
   stats: "Stat changes",
   finds: "Finds",
   upkeep: "Upkeep",
+  leaving: "Leaving",
 };
 
 export const getPostbattleSectionId = (section: PostbattleSectionKey) =>
