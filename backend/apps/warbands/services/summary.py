@@ -2,6 +2,8 @@
 
 Rating and the unit name lists read the same three unit tables, so each table is
 queried once for any number of warbands (the campaign roster rates every warband).
+A unit's switched-on mounts come with its row (`mount_bonuses`): each rider adds his
+first mount's rating bonus (units/companions.py).
 """
 
 from collections.abc import Iterable
@@ -10,7 +12,17 @@ from typing import Any
 
 from django.db.models import Count, Q
 
-from apps.warbands.models import HenchmenGroup, Hero, Hireling, Warband, on_roster
+from apps.warbands.models import (
+    HenchmenGroup,
+    HenchmenGroupItem,
+    Hero,
+    HeroItem,
+    Hireling,
+    HirelingItem,
+    Warband,
+    on_roster,
+)
+from apps.warbands.units.companions import mount_bonuses_array, mount_rating_bonus
 
 # A group's members on the roster (on_roster, through the group).
 LIVING_MEMBERS = Q(henchmen__dead=False, henchmen__dismissed_at__isnull=True)
@@ -33,12 +45,21 @@ class WarbandUnits:
 
     @property
     def rating(self) -> float | int:
-        hero_rating = sum(((20 if row["large"] else 5) + _as_number(row["xp"])) for row in self.heroes)
+        """5 a model (20 a large one) and its XP, a hired sword's rating and XP, and each rider's first mount's bonus
+        (a group rides one per living member)."""
+        hero_rating = sum(
+            ((20 if row["large"] else 5) + _as_number(row["xp"]) + mount_rating_bonus(row.get("mount_bonuses"), 1))
+            for row in self.heroes
+        )
         henchmen_rating = sum(
             (row["henchmen_count"] or 0) * ((20 if row["large"] else 5) + _as_number(row["xp"]))
+            + mount_rating_bonus(row.get("mount_bonuses"), row["henchmen_count"] or 0)
             for row in self.henchmen_groups
         )
-        hired_rating = sum((_as_number(row["rating"]) + _as_number(row["xp"])) for row in self.hirelings)
+        hired_rating = sum(
+            (_as_number(row["rating"]) + _as_number(row["xp"]) + mount_rating_bonus(row.get("mount_bonuses"), 1))
+            for row in self.hirelings
+        )
         return hero_rating + henchmen_rating + hired_rating
 
     @property
@@ -68,8 +89,9 @@ def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
 
     heroes = (
         on_roster(Hero.objects.filter(warband_id__in=ids))
+        .annotate(mount_bonuses=mount_bonuses_array(HeroItem, "hero"))
         .order_by("id")
-        .values("id", "warband_id", "name", "unit_type", "xp", "large")
+        .values("id", "warband_id", "name", "unit_type", "xp", "large", "mount_bonuses")
     )
     for hero_row in heroes:
         units[hero_row["warband_id"]].heroes.append(dict(hero_row))
@@ -77,16 +99,18 @@ def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
     groups = (
         on_roster(HenchmenGroup.objects.filter(warband_id__in=ids))
         .annotate(henchmen_count=Count("henchmen", filter=LIVING_MEMBERS))
+        .annotate(mount_bonuses=mount_bonuses_array(HenchmenGroupItem, "henchmen_group"))
         .order_by("id")
-        .values("id", "warband_id", "name", "unit_type", "xp", "large", "henchmen_count")
+        .values("id", "warband_id", "name", "unit_type", "xp", "large", "henchmen_count", "mount_bonuses")
     )
     for group_row in groups:
         units[group_row["warband_id"]].henchmen_groups.append(dict(group_row))
 
     hirelings = (
         on_roster(Hireling.objects.filter(warband_id__in=ids))
+        .annotate(mount_bonuses=mount_bonuses_array(HirelingItem, "hireling"))
         .order_by("id")
-        .values("id", "warband_id", "name", "unit_type", "kind", "rating", "xp", "blood_pacted")
+        .values("id", "warband_id", "name", "unit_type", "kind", "rating", "xp", "blood_pacted", "mount_bonuses")
     )
     for sword_row in hirelings:
         units[sword_row["warband_id"]].hirelings.append(dict(sword_row))

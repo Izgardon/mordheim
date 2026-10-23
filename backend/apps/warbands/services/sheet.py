@@ -14,6 +14,7 @@ from apps.warbands.models import Warband
 from apps.warbands.prefetches import item_detail_prefetches
 from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandSerializer, WarbandSummarySerializer
 from apps.warbands.services.summary import WarbandUnits, load_warband_units
+from apps.warbands.units.companions import mount_bonuses
 from apps.warbands.units.kinds import HENCHMEN_GROUP, HERO, HIRELING, KINDS
 
 
@@ -28,6 +29,7 @@ def _summary_units(rosters: dict[str, list[Any]]) -> WarbandUnits:
                 "unit_type": h.unit_type,
                 "xp": h.xp,
                 "large": h.large,
+                "mount_bonuses": mount_bonuses(h.hero_items.all()),
             }
             for h in rosters[HERO.key]
         ],
@@ -40,6 +42,7 @@ def _summary_units(rosters: dict[str, list[Any]]) -> WarbandUnits:
                 "xp": g.xp,
                 "large": g.large,
                 "henchmen_count": len(g.henchmen.all()),  # the prefetch holds living members only
+                "mount_bonuses": mount_bonuses(g.henchmen_group_items.all()),
             }
             for g in rosters[HENCHMEN_GROUP.key]
         ],
@@ -53,6 +56,7 @@ def _summary_units(rosters: dict[str, list[Any]]) -> WarbandUnits:
                 "rating": s.rating,
                 "blood_pacted": s.blood_pacted,
                 "xp": s.xp,
+                "mount_bonuses": mount_bonuses(s.hireling_items.all()),
             }
             for s in rosters[HIRELING.key]
         ],

@@ -3,14 +3,26 @@
 Read live from the warbands until the battle starts; `start/` stores each roster on its participant
 (`roster_json`), and from then on the battle keeps that snapshot, so a unit killed or dismissed on the sheet
 mid-battle stays in it. Every unit kind is read in one query plus its link tables, whatever the number of units.
+Each unit carries its mount, pets and the Move and save its mount gives it (`effectiveStats`, beside its own
+`stats`), and a group recruited from a creature its beast and kind, so the snapshot keeps them too.
 """
 
 from collections import defaultdict
 from collections.abc import Iterable
 
-from django.db.models import Prefetch
+from django.db.models import F, Prefetch
 
-from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling, on_roster
+from apps.warbands.models import (
+    Henchman,
+    HenchmenGroup,
+    HenchmenGroupItem,
+    Hero,
+    HeroItem,
+    Hireling,
+    HirelingItem,
+    on_roster,
+)
+from apps.warbands.units.companions import companions, effective_stats, mount_payload, pet_payload
 
 from ..models import BattleParticipant
 
@@ -53,6 +65,29 @@ def _spells(links: Iterable) -> list[dict]:
     return entries
 
 
+def _beast(row) -> dict:
+    shown = pet_payload(row)
+    return {
+        "itemId": shown["item_id"],
+        "name": shown["name"],
+        "hasProfile": shown["has_profile"],
+        "stats": shown["stats"],
+    }
+
+
+def _companions(unit, links: list) -> dict:
+    """The unit's mount (its first switched on), its pets and what the mount makes it show (the bestiary rewrite step
+    4): snapshotted with the rest at start/, so the battle keeps what the rider rode in on."""
+    found = companions(links)
+    mount = found.mounts[0] if found.mounts else None
+    shown = None
+    if mount is not None:
+        payload = mount_payload(mount)
+        shown = {**_beast(mount), "movement": payload["movement"], "ratingBonus": payload["rating_bonus"]}
+    pets = [_beast(row) for row in found.pets]
+    return {"mount": shown, "pets": pets, "effectiveStats": effective_stats(unit, mount)}
+
+
 def _stats(unit) -> dict:
     return {
         "movement": unit.movement,
@@ -69,7 +104,8 @@ def _stats(unit) -> dict:
 
 
 def hero_entry(hero: Hero) -> dict:
-    items = _item_entries(hero.hero_items.all())
+    links = list(hero.hero_items.all())
+    items = _item_entries(links)
     return {
         "key": f"hero:{hero.id}",
         "id": hero.id,
@@ -78,6 +114,7 @@ def hero_entry(hero: Hero) -> dict:
         "unitType": hero.unit_type or "Hero",
         "isLeader": bool(hero.is_leader),  # Winning Leader XP (BATL-NEW-09)
         "stats": _stats(hero),
+        **_companions(hero, links),
         "items": items,
         "singleUseItems": _single_use(items),
         "skills": _named(hero.hero_skills.all(), "skill"),
@@ -87,7 +124,8 @@ def hero_entry(hero: Hero) -> dict:
 
 
 def hireling_entry(hireling: Hireling) -> dict:
-    items = _item_entries(hireling.hireling_items.all())
+    links = list(hireling.hireling_items.all())
+    items = _item_entries(links)
     return {
         "key": f"hireling:{hireling.id}",
         "id": hireling.id,
@@ -95,6 +133,7 @@ def hireling_entry(hireling: Hireling) -> dict:
         "displayName": hireling.name or f"Hired Sword {hireling.id}",
         "unitType": hireling.unit_type or "Hired Sword",
         "stats": _stats(hireling),
+        **_companions(hireling, links),
         "upkeepPrice": hireling.upkeep_price,
         "upkeepCostExpression": hireling.upkeep_cost_expression,
         "noLevelUps": bool(hireling.no_level_ups),
@@ -111,7 +150,9 @@ def hireling_entry(hireling: Hireling) -> dict:
 
 
 def henchmen_group_entry(group: HenchmenGroup) -> dict:
-    items = _item_entries(group.henchmen_group_items.all())
+    links = list(group.henchmen_group_items.all())
+    items = _item_entries(links)
+    mounted = _companions(group, links)  # each member rides one of the group's mounts
     skills = _named(group.henchmen_group_skills.all(), "skill")
     specials = _named(group.henchmen_group_specials.all(), "special")
     members = [
@@ -122,6 +163,7 @@ def henchmen_group_entry(group: HenchmenGroup) -> dict:
             "displayName": member.name or f"Henchman {member.id}",
             "unitType": group.unit_type or "Henchman",
             "stats": _stats(group),
+            **mounted,
             "noLevelUps": bool(group.no_level_ups),
             "items": items,
             "singleUseItems": _single_use(items),
@@ -135,6 +177,8 @@ def henchmen_group_entry(group: HenchmenGroup) -> dict:
         "id": group.id,
         "name": group.name or f"Henchmen Group {group.id}",
         "unitType": group.unit_type or "Henchmen",
+        "sourceBeastId": group.source_beast_id,  # recruited from a creature: its beast and kind
+        "beastKind": getattr(group, "beast_kind", None),
         "members": members,
     }
 
@@ -146,19 +190,27 @@ def _by_warband(rows: Iterable, entry) -> defaultdict[int, list[dict]]:
     return grouped
 
 
+def _items(relation: str, model) -> Prefetch:
+    """A kind's copies in row order with their items and each Animal item's beast: one query."""
+    return Prefetch(relation, queryset=model.objects.select_related("item__bestiary_entry").order_by("id"))
+
+
 def _live_rosters(warband_ids: list[int]) -> tuple[defaultdict, defaultdict, defaultdict]:
     heroes = on_roster(Hero.objects.filter(warband_id__in=warband_ids)).prefetch_related(
-        "hero_items__item", "hero_skills__skill", "hero_specials__special", "hero_spells__spell"
+        _items("hero_items", HeroItem), "hero_skills__skill", "hero_specials__special", "hero_spells__spell"
     )
     hirelings = on_roster(Hireling.objects.filter(warband_id__in=warband_ids)).prefetch_related(
-        "hireling_items__item",
+        _items("hireling_items", HirelingItem),
         "hireling_skills__skill",
         "hireling_specials__special",
         "hireling_spells__spell",
     )
     living_henchmen = Prefetch("henchmen", queryset=on_roster(Henchman.objects.all()).order_by("id"))
-    groups = on_roster(HenchmenGroup.objects.filter(warband_id__in=warband_ids)).prefetch_related(
-        "henchmen_group_items__item",
+    groups = on_roster(HenchmenGroup.objects.filter(warband_id__in=warband_ids)).annotate(
+        beast_kind=F("source_beast__kind")
+    )
+    groups = groups.prefetch_related(
+        _items("henchmen_group_items", HenchmenGroupItem),
         "henchmen_group_skills__skill",
         "henchmen_group_specials__special",
         living_henchmen,
