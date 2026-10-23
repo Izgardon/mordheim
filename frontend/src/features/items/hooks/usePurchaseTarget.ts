@@ -178,6 +178,8 @@ export function usePurchaseTarget({
     selectedUnitLabel,
     canProceed,
     suggestedQuantity,
+    /** The warband's henchmen groups as read on open (a creature's recruit options). */
+    henchmenGroups,
     resolve,
     reset,
   };
