@@ -106,6 +106,43 @@ class MountSurvivalTests(BattleTestCase):
         group_rows = HenchmenGroupItem.objects.filter(henchmen_group=self.outriders)
         self.assertEqual(sorted(group_rows.values_list("companion", flat=True)), [False, True])  # his share only
 
+    def test_a_groups_barding_saves_as_many_riders_as_it_has_copies(self):
+        HenchmenGroupItem.objects.create(henchmen_group=self.outriders, item=catalogue_item("Barding", 30))
+        battle_id = self.fought(self.m1, self.m2, out=(self.m1, self.m2))
+
+        entries = self.suggested(battle_id)["mount_survival"]["entries"]
+
+        self.assertEqual((entries[self.m1]["dies_on"], entries[self.m1].get("saved_by")), (1, ["barding"]))
+        self.assertEqual((entries[self.m2]["dies_on"], entries[self.m2].get("saved_by")), (2, None))
+
+    def test_finalise_takes_only_a_mount_the_server_put_at_risk(self):
+        battle_id = self.fought(self.a, self.m1)  # nobody taken out of action
+        mounts = {self.a: {"roll": 1, "dead": True}}
+
+        self.ok(self.finalize(self.player, battle_id, draft(self.results(self.a, self.m1), mount_survival=mounts)))
+
+        self.assertTrue(HeroItem.objects.filter(hero=self.aldric, companion=True).exists())
+        self.assertFalse(WarbandLog.objects.filter(warband=self.warband, entry_type="mounts_lost").exists())
+
+    def test_a_mount_gone_before_finalise_is_not_logged_as_lost(self):
+        battle_id = self.fought(self.a, out=(self.a,))
+        HeroItem.objects.filter(hero=self.aldric).delete()  # sold mid-battle
+        mounts = {self.a: {"roll": 1, "dead": True}}
+
+        self.ok(self.finalize(self.player, battle_id, draft(self.results(self.a), mount_survival=mounts)))
+
+        self.assertFalse(WarbandLog.objects.filter(warband=self.warband, entry_type="mounts_lost").exists())
+
+    def test_a_dead_riders_mount_goes_with_his_items_not_twice(self):
+        battle_id = self.fought(self.a, out=(self.a,))
+        mounts = {self.a: {"roll": 1, "dead": True}}
+
+        self.ok(self.finalize(self.player, battle_id, draft(self.results(self.a, dead=(self.a,)), mount_survival=mounts)))  # fmt: skip
+
+        self.assertTrue(HeroItem.objects.filter(hero=self.aldric, companion=True).exists())  # on his record
+        self.assertFalse(WarbandLog.objects.filter(warband=self.warband, entry_type="mounts_lost").exists())
+        self.assertTrue(WarbandLog.objects.filter(warband=self.warband, entry_type="items_lost").exists())
+
     def test_the_draft_keeps_the_rolls_and_refuses_a_bad_one(self):
         battle_id = self.fought(self.a, out=(self.a,))
         save = self.url(battle_id, "postbattle")

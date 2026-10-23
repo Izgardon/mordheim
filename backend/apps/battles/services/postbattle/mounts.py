@@ -2,13 +2,16 @@
 
 The suggestion: each selected rider of the participant's battle roster (a hero, a hired sword, or a henchmen group's
 member riding one of its mounts) who went out of action on his mount (not dismounted: services/dismount.py) rolls a
-D6 for it. It dies on a 1 or 2, or only on a 1 when he carries Barding or a Farrier (a hired sword's special rule) is
-on the warband's battle roster. The roll and its result are the player's (`postbattle_json.mount_survival`), never
-automatic: at finalise a dead mount's copy leaves its rider, his ridden copy first (a henchman who died here already
-took his share with him: services/items_lost.py), with a `mounts_lost` log row; a mount that survives stays.
+D6 for it. It dies on a 1 or 2, or only on a 1 when he has Barding (a group's copies go to its first riders, one each)
+or a Farrier (a hired sword's special rule) is on the warband's battle roster. The roll and its result are the
+player's (`postbattle_json.mount_survival`), never automatic: at finalise a dead mount's copy leaves its rider, his
+ridden copy first, with a `mounts_lost` log row for each copy removed; a mount that survives stays. Only a mount the
+server put at risk can die, and a rider who died here keeps his with his items (a henchman's share takes his ridden
+copy first: services/items_lost.py).
 """
 
 from collections import defaultdict
+from collections.abc import Iterator
 from dataclasses import dataclass
 from typing import Any
 
@@ -21,7 +24,8 @@ from apps.warbands.models import HenchmenGroupItem, HeroItem, HirelingItem
 from ...models import BattleParticipant
 from ...validation.unit_keys import parse_unit_key
 from ..locks import locked
-from ..roster_units import roster_entry, roster_units
+from ..roster_units import roster_entry
+from ..selection import selected_unit_keys
 from .context import FinaliseContext
 
 DIES_ON, SAVED_DIES_ON = 2, 1  # a 1-2 kills the mount; a 1 with Barding or a Farrier
@@ -32,8 +36,22 @@ ROWS: dict[str, tuple[type[Model], str]] = {  # a rider's kind -> where his copi
 }
 
 
-def _carries_barding(unit: dict[str, Any]) -> bool:
-    return any("barding" in str(item.get("name", "")).lower() for item in unit.get("items", []))
+def _barding(unit: dict[str, Any]) -> int:
+    """The copies of Barding a roster entry carries (a group's members list the group's items)."""
+    items = unit.get("items", [])
+    return sum(int(item.get("count") or 1) for item in items if "barding" in str(item.get("name", "")).lower())
+
+
+def _riders(roster: dict[str, Any]) -> Iterator[tuple[dict[str, Any], bool]]:
+    """Each unit of the roster and whether it has Barding for its mount: a hero or hired sword who carries one, a
+    group's members one copy each, in the order they ride its mounts."""
+    for unit in [*roster.get("heroes", []), *roster.get("hirelings", [])]:
+        yield unit, _barding(unit) > 0
+    for group in roster.get("henchmenGroups", []):
+        members = group.get("members", [])
+        copies = _barding(members[0]) if members else 0
+        for rider, member in enumerate(members):
+            yield member, rider < copies
 
 
 def _has_farrier(roster: dict[str, Any]) -> bool:
@@ -47,11 +65,11 @@ def mount_survival(participant: BattleParticipant, selected: set[str], informati
     roster = participant.roster_json or {}
     farrier = _has_farrier(roster)
     entries: dict[str, dict[str, Any]] = {}
-    for unit in roster_units(roster):
+    for unit, barded in _riders(roster):
         key, mount, info = unit.get("key"), unit.get("mount"), information.get(unit.get("key") or "", {})
         if key not in selected or not mount or not info.get("out_of_action") or info.get("dismounted"):
             continue
-        saved_by = [reason for reason, saves in (("barding", _carries_barding(unit)), ("farrier", farrier)) if saves]
+        saved_by = [reason for reason, saves in (("barding", barded), ("farrier", farrier)) if saves]
         entry = {"unit_name": unit.get("displayName"), "mount": mount.get("name")}
         entry["dies_on"] = SAVED_DIES_ON if saved_by else DIES_ON
         if saved_by:  # left out otherwise: the broadcast fits Pusher's 10 KB (item 8)
@@ -68,6 +86,16 @@ class _Loss:
     log: dict[str, Any]
 
 
+def _owner(context: FinaliseContext, members: dict, unit_type: str, unit_id: int) -> int | None:
+    """Whose copies carry the rider's mount: his own, or his group's for a henchman; None for a rider gone since,
+    or one who died here, whose items go with him (a henchman's share takes his ridden copy first)."""
+    if unit_type == "henchman":
+        member = members.get(unit_id)
+        return None if member is None or member.dead else member.group_id
+    rider = context.hero(unit_id) if unit_type == "hero" else context.hirelings.get(unit_id)
+    return None if rider is None or rider.dismissed_at is not None or rider.dead else unit_id
+
+
 def _losses(context: FinaliseContext, chosen: dict[str, dict]) -> list[_Loss]:
     roster = context.participant.roster_json or {}
     members = {member.id: member for member in context.henchmen}
@@ -77,19 +105,19 @@ def _losses(context: FinaliseContext, chosen: dict[str, dict]) -> list[_Loss]:
         mount = (unit or {}).get("mount")
         if not mount or parsed["unit_type"] not in ROWS:
             continue
-        owner_id = parsed["unit_id"]
-        if parsed["unit_type"] == "henchman":
-            member = members.get(owner_id)
-            if member is None or member.dead:  # gone, or died here and took his share (his ridden copy first)
-                continue
-            owner_id = member.group_id
+        owner_id = _owner(context, members, parsed["unit_type"], parsed["unit_id"])
+        if owner_id is None:
+            continue
         log = {"unit_name": (unit or {}).get("displayName"), "mount": mount.get("name"), "roll": entry["roll"]}
         losses.append(_Loss(parsed["unit_type"], owner_id, mount["itemId"], log))
     return losses
 
 
-def _rows_to_delete(context: FinaliseContext, unit_type: str, losses: list[_Loss], current: dict) -> list[int]:
-    """One copy per loss, the owner's ridden copies first, read and locked in one query for the kind."""
+def _rows_to_delete(
+    context: FinaliseContext, unit_type: str, losses: list[_Loss], current: dict
+) -> list[tuple[_Loss, int]]:
+    """One copy per loss that still has one, the owner's ridden copies first, read and locked in one query for the
+    kind."""
     model, owner_column = ROWS[unit_type]
     wanted = {loss.item_id for loss in losses} | {item.id for item in current.values()}
     rows = model._default_manager.filter(**{f"{owner_column}__in": {loss.owner_id for loss in losses}})
@@ -105,14 +133,19 @@ def _rows_to_delete(context: FinaliseContext, unit_type: str, losses: list[_Loss
         candidates = [loss.item_id, *([item.id] if item is not None else [])]
         copies = next((spare[(loss.owner_id, pk)] for pk in candidates if spare.get((loss.owner_id, pk))), None)
         if copies:
-            chosen.append(copies.pop(0))
+            chosen.append((loss, copies.pop(0)))
     return chosen
 
 
-def lose_mounts(context: FinaliseContext, draft: dict) -> list[dict[str, Any]]:
-    """Remove each mount the draft says died from its rider; returns the log's entries. Constant in units: the
-    current items in one query, then a read and a delete per kind of rider."""
-    chosen = {key: entry for key, entry in draft.get("mount_survival", {}).items() if entry["dead"]}
+def lose_mounts(context: FinaliseContext, draft: dict, unit_information: dict[str, dict]) -> list[dict[str, Any]]:
+    """Remove each mount the draft says died from its rider, only one the server put at risk (`mount_survival`);
+    returns the log's entries, for the copies removed. Constant in units: the current items in one query, then a read
+    and a delete per kind of rider."""
+    dead = {key: entry for key, entry in draft.get("mount_survival", {}).items() if entry["dead"]}
+    if not dead:  # no read of the battle roster for a draft without a mount lost
+        return []
+    at_risk = mount_survival(context.participant, selected_unit_keys(context.participant), unit_information)
+    chosen = {key: entry for key, entry in dead.items() if key in at_risk}
     losses = _losses(context, chosen) if chosen else []
     if not losses:
         return []
@@ -121,7 +154,9 @@ def lose_mounts(context: FinaliseContext, draft: dict) -> list[dict[str, Any]]:
     by_kind: defaultdict[str, list[_Loss]] = defaultdict(list)
     for loss in losses:
         by_kind[loss.unit_type].append(loss)
+    removed: list[tuple[_Loss, int]] = []
     for unit_type, kind_losses in by_kind.items():
-        row_ids = _rows_to_delete(context, unit_type, kind_losses, current)
-        ROWS[unit_type][0]._default_manager.filter(id__in=row_ids).delete()
-    return [loss.log for loss in losses]
+        found = _rows_to_delete(context, unit_type, kind_losses, current)
+        ROWS[unit_type][0]._default_manager.filter(id__in=[row_id for _, row_id in found]).delete()
+        removed += found
+    return [loss.log for loss in losses if any(loss is gone for gone, _ in removed)]

@@ -74,7 +74,7 @@ def check_draft_against(context: FinaliseContext, draft: dict) -> None:
 def _apply(context: FinaliseContext, draft: dict) -> list[Warning]:
     unit_information = normalize_unit_information(context.participant.unit_information_json)
     units = UnitResults(context, unit_information).apply(draft["unit_results"])
-    units.mounts_lost = lose_mounts(context, draft)  # after the dead henchmen took their shares
+    units.mounts_lost = lose_mounts(context, draft, unit_information)  # after the dead took their items
     explored = apply_exploration(context, draft["exploration"])
     finds = apply_upkeep_and_finds(
         context, draft.get("upkeep", {}), draft.get("finds", {"gold_crowns": 0, "items": []})
