@@ -33,6 +33,7 @@ from ..warnings import Warning
 from .context import FinaliseContext, load_context
 from .items import consume_single_use_items
 from .logs import write_battle_logs
+from .mounts import lose_mounts
 from .rewards import apply_exploration, apply_upkeep_and_finds
 from .units import UnitResults
 from .validate import check_draft, validate_postbattle
@@ -73,6 +74,7 @@ def check_draft_against(context: FinaliseContext, draft: dict) -> None:
 def _apply(context: FinaliseContext, draft: dict) -> list[Warning]:
     unit_information = normalize_unit_information(context.participant.unit_information_json)
     units = UnitResults(context, unit_information).apply(draft["unit_results"])
+    units.mounts_lost = lose_mounts(context, draft)  # after the dead henchmen took their shares
     explored = apply_exploration(context, draft["exploration"])
     finds = apply_upkeep_and_finds(
         context, draft.get("upkeep", {}), draft.get("finds", {"gold_crowns": 0, "items": []})

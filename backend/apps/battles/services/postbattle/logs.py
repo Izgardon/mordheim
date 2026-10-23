@@ -1,5 +1,5 @@
 """The warband log entries a finalise writes, in one INSERT and in this order: exploration, finds, each unit's
-serious injury, kept stat changes, items lost with dead units and the unusual values that were allowed (PERF-36:
+serious injury, kept stat changes, items lost with dead units, mounts lost and the unusual values that were allowed (PERF-36:
 they were written one by one). The battle's result is logged when the battle ends (services/lifecycle.py)."""
 
 from apps.warbands.models import WarbandLog
@@ -35,6 +35,8 @@ def write_battle_logs(
     entries += [("personnel", "stats_kept", stat_log) for stat_log in units.stat_logs]
     if any(units.items_lost):
         entries.append(("battle", "items_lost", {"units": [entry for entry in units.items_lost if entry]}))
+    if units.mounts_lost:  # mounts that died after the battle: rider, mount, the roll (bestiary rewrite step 5)
+        entries.append(("battle", "mounts_lost", {"mounts": units.mounts_lost}))
     if unusual:  # allowed, answered and logged (decision 9)
         entries.append(("battle", "warnings", {"warnings": unusual}))
     WarbandLog.objects.bulk_create(

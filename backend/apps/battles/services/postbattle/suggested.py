@@ -11,7 +11,9 @@
 - upkeep: every hireling on the battle's roster but one who stays for one battle, at his upkeep price, with his
   upkeep formula when he has one (one that isn't gold, "1 piece of wyrdstone", is a reminder: its price is 0);
 - dismiss (only when there is one): each selected hireling who stays for one battle, suggested to leave (never
-  forced).
+  forced);
+- mount survival (only when there is one): a D6 for each selected rider taken out of action on his mount
+  (services/postbattle/mounts.py).
 
 `rules` are the exploration chart and dice limits, and the serious injury tables with the campaign's hero death roll
 (henchmen, and hirelings on the henchman table, roll a d6; the battle roster shows each hireling's `injuryTable`).
@@ -32,6 +34,7 @@ from ..selection import selected_unit_keys
 from ..unusual import MAX_EXPLORATION_DICE as MAX_CHOSEN_DICE
 from .kill_list import unit_kills
 from .level_ups import add_level_ups, unit_rows
+from .mounts import mount_survival
 
 
 def _xp_kills(kill_payloads: Iterable[Any], warband_id: int) -> dict[str, int]:
@@ -146,6 +149,8 @@ def suggested_postbattle(battle: Battle, participant: BattleParticipant, kill_pa
     leaving = _dismiss(swords)
     if leaving:  # only when someone leaves, as an empty upkeep formula is left out: the broadcast's 10 KB (item 8)
         suggested["dismiss"] = {"entries": leaving}
+    if at_risk := mount_survival(participant, selected, information):  # only when a mount may die (step 5)
+        suggested["mount_survival"] = {"entries": at_risk}
     return suggested
 
 

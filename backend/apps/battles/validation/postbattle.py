@@ -203,15 +203,49 @@ def _unit_results(raw: dict) -> dict[str, dict]:
     return results
 
 
+RIDER_TYPES = {"hero", "hireling", "henchman"}
+D6_FACES = {"1", "2", "3", "4", "5", "6"}
+
+
+def _mount_roll(value: Any) -> int | None:
+    if value in (None, ""):
+        return None
+    if isinstance(value, bool) or not isinstance(value, int | str) or str(value).strip() not in D6_FACES:
+        raise ValueError("postbattle mount_survival roll must be from 1 to 6")
+    return int(value)
+
+
+def _mount_survival(raw: dict) -> dict[str, dict]:
+    """Each rider's roll for his mount (a D6, or None before it is rolled) and whether it died (the player's result,
+    the bestiary rewrite step 5)."""
+    section = _section(raw, "mount_survival", "postbattle mount_survival")
+    entries = {}
+    for unit_key, entry in section.items():
+        parsed_unit = parse_unit_key(unit_key)
+        if parsed_unit["unit_type"] not in RIDER_TYPES:
+            continue
+        if not isinstance(entry, dict):
+            raise ValueError("Each postbattle mount_survival entry must be an object")
+        entries[parsed_unit["unit_key"]] = {
+            "roll": _mount_roll(entry.get("roll")),
+            "dead": coerce_bool(entry.get("dead", False), field_name="postbattle mount_survival dead"),
+        }
+    return entries
+
+
 def normalize_postbattle(raw_value: Any) -> dict[str, Any]:
-    """The cleaned draft, or ValueError for the first thing wrong (exploration, finds, upkeep, then units)."""
+    """The cleaned draft, or ValueError for the first thing wrong (exploration, finds, upkeep, units, then mounts).
+    `mount_survival` is left out when there is none."""
     if raw_value is None:
         return empty_draft()
     if not isinstance(raw_value, dict):
         raise ValueError("postbattle_json must be an object")
-    return {
+    draft = {
         "exploration": _exploration(raw_value),
         "finds": _finds(raw_value),
         "upkeep": _upkeep(raw_value),
         "unit_results": _unit_results(raw_value),
     }
+    if mounts := _mount_survival(raw_value):
+        draft["mount_survival"] = mounts
+    return draft
