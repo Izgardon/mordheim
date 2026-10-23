@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useUnitSave, type UseUnitSaveParams } from "./useUnitSave";
 import { hirelingKind, mapHirelingToForm } from "@/features/warbands/units/kinds/hireling";
+import { HIRED_SWORD_TERMS } from "@/features/warbands/units/kinds/hireling-terms";
 
 import type {
   HirelingFormEntry,
@@ -76,6 +77,7 @@ const hirelingParams = (params: SaveParams): UseUnitSaveParams<"hireling"> => ({
 });
 
 const baseForm: HirelingFormEntry = {
+  ...HIRED_SWORD_TERMS,
   id: 7,
   name: "Ogre Bodyguard",
   unit_type: "Ogre",
@@ -142,6 +144,7 @@ const baseHireling: WarbandHireling = {
 };
 
 const blankNewHirelingForm = {
+  ...HIRED_SWORD_TERMS,
   name: "",
   unit_type: "",
   race_id: null,
@@ -302,6 +305,10 @@ describe("useUnitSave: hired swords characterisation", () => {
       half_rate: false,
       no_level_ups: false,
       blood_pacted: false,
+      kind: "hired_sword",
+      injury_table: "henchman",
+      stays: "always",
+      payment_note: "",
       available_skills: ["Combat", "Academic"],
       movement: 4,
       weapon_skill: 4,

@@ -1,6 +1,7 @@
 import NewHirelingSkillDialog from "@/features/skills/components/NewHirelingSkillDialog";
 import NewHirelingSpellDialog from "@/features/spells/components/NewHirelingSpellDialog";
 import { calculateUnitTotalPrice } from "../../../../utils/warband-utils";
+import { isDramatisPersona } from "../../../../units/kinds/hireling-terms";
 import { CasterTile, CostTile, SizeTile, StatTile } from "../../expanded/ExpandedTiles";
 
 import type { WarbandHireling } from "../../../../types/warband-types";
@@ -15,7 +16,11 @@ export function HirelingExpandedTitle({ unit: hireling }: { unit: WarbandHirelin
   );
 }
 
-/** Size, Caster, Bloodpacted, Total Cost = base + items (upkeep excluded) and Upkeep. */
+/**
+ * Size, Caster, Bloodpacted, Total Cost = base + items (upkeep excluded), Upkeep (its formula when
+ * it has one: a reminder of what is owed), the hero injury table when it rolls on it, and a dramatis
+ * persona's stay and pay.
+ */
 export function HirelingExpandedTiles({ unit: hireling, layout }: ExpandedTilesProps<"hireling">) {
   const { basePrice, totalPrice } = calculateUnitTotalPrice(hireling);
   return (
@@ -37,9 +42,18 @@ export function HirelingExpandedTiles({ unit: hireling, layout }: ExpandedTilesP
       <StatTile
         layout={layout}
         label="Upkeep"
-        value={Number(hireling.upkeep_price ?? 0) || 0}
+        value={hireling.upkeep_cost_expression || Number(hireling.upkeep_price ?? 0) || 0}
         className={layout === "mobile" ? undefined : "self-start"}
       />
+      {hireling.injury_table === "hero" ? (
+        <StatTile layout={layout} label="Injuries" value="Hero table" />
+      ) : null}
+      {isDramatisPersona(hireling) && hireling.stays === "one_battle" ? (
+        <StatTile layout={layout} label="Stays" value="One battle" />
+      ) : null}
+      {isDramatisPersona(hireling) && hireling.payment_note ? (
+        <StatTile layout={layout} label="Paid in" value={hireling.payment_note} />
+      ) : null}
     </>
   );
 }

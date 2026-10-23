@@ -1,4 +1,5 @@
 import { armourSaveToForm } from "../../../../units/unit-form-helpers";
+import { HIRED_SWORD_TERMS } from "../../../../units/kinds/hireling-terms";
 import { parseAvailableSkills } from "../../../../utils/warband-utils";
 
 import type { HirelingProfileDetail } from "@/features/hirelings/types/hireling-catalogue-types";
@@ -14,6 +15,7 @@ export function presetToNewHirelingForm(profile: HirelingProfileDetail, races: R
   const entry = profile;
   const matchedRace = races.find((r) => r.id === profile.race_id) ?? null;
   const form: NewHirelingForm = {
+    ...HIRED_SWORD_TERMS,
     name: entry.name,
     unit_type: entry.name,
     race_id: matchedRace?.id ?? null,

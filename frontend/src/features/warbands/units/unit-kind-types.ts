@@ -77,7 +77,8 @@ export type UnitKindFlags = {
 /** Caps and counts the sections compare against (campaign settings, warband size, roster). */
 /**
  * The hard caps (decision 12) and what they count outside an edit, from the server's summary:
- * living heroes, and living hired swords without a blood pact. An edit counts its forms.
+ * living heroes, and living hired swords without a blood pact (dramatis personae sit outside the
+ * cap). An edit counts its forms.
  */
 export type RosterLimits = {
   maxHeroes: number;
@@ -102,6 +103,8 @@ export type UnitLimits<K extends UnitKindKey = UnitKindKey> = {
 export type UnitCreationConfig<K extends UnitKindKey> = {
   initialForm: UnitNewForm<K>;
   blockedError: string;
+  /** The add form takes a unit without a race (hired swords: not every one has a catalogue race). */
+  optionalRace?: boolean;
   /** A check beyond name, type and race (henchmen need a first member). */
   extraError?: (form: UnitNewForm<K>) => string | null;
   /** The add form's entry, queued as a new unit's edit form until Save (decision 1). */

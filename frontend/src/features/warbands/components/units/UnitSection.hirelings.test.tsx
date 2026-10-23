@@ -6,6 +6,7 @@ import UnitSection from "./UnitSection";
 import { WarbandCatalogueContext, type WarbandCatalogue } from "./catalogue-context";
 import { useUnitSectionEditor } from "@/features/warbands/hooks/units/useUnitSectionEditor";
 import { hirelingKind } from "@/features/warbands/units/kinds/hireling";
+import { takesHiredSwordPlace } from "@/features/warbands/units/kinds/hireling-terms";
 
 import type { WarbandHireling } from "@/features/warbands/types/warband-types";
 import { renderWithQueryClient } from "@/test/query-test-utils";
@@ -90,7 +91,8 @@ function Section({
       maxHeroes: 6,
       maxHiredSwords,
       heroCount: 0,
-      hirelingCount: hirelings.filter((hireling) => !hireling.blood_pacted).length,
+      // As the server's summary counts: hired swords without a blood pact.
+      hirelingCount: hirelings.filter(takesHiredSwordPlace).length,
     },
     onUnitsChange: (next) => {
       onHirelingsChange(next);
@@ -188,7 +190,7 @@ describe("UnitSection: hired swords create and save", () => {
     ]);
   });
 
-  it("asks for name, type and race before creating", async () => {
+  it("asks for name and type before creating, leaving the race optional", async () => {
     const user = setupUser();
     renderWithQueryClient(<Section initialHirelings={[]} />);
     await startEditing(user);
@@ -196,7 +198,7 @@ describe("UnitSection: hired swords create and save", () => {
     await user.click(screen.getByRole("button", { name: "Add hired sword" }));
     await user.click(screen.getByRole("button", { name: "Create hired sword" }));
 
-    expect(screen.getByText("Name, type, and race are required.")).toBeInTheDocument();
+    expect(screen.getByText("Name and type are required.")).toBeInTheDocument();
     expect(screen.queryByText(/New recruit/)).not.toBeInTheDocument();
   });
 
@@ -207,7 +209,9 @@ describe("UnitSection: hired swords create and save", () => {
     renderWithQueryClient(<Section initialHirelings={[hired, pacted]} maxHiredSwords={1} />);
     await startEditing(user);
     expect(
-      screen.getByText("Maximum of 1 hired swords reached; a blood-pacted one can still join.")
+      screen.getByText(
+        "Maximum of 1 hired swords reached; a blood-pacted one or a dramatis persona can still join."
+      )
     ).toBeInTheDocument();
 
     await fillNewHireling(user);
@@ -410,6 +414,84 @@ describe("UnitSection: hired swords create and save", () => {
     expect(screen.queryByRole("button", { name: "Edit Hired Swords" })).not.toBeInTheDocument();
   });
 
+  it("adds a dramatis persona by hand even at the cap: hero table, his stay and pay, no level-ups", async () => {
+    const user = setupUser();
+    renderWithQueryClient(
+      <Section initialHirelings={[makeVeteranHireling()]} maxHiredSwords={1} />
+    );
+    await startEditing(user);
+
+    await fillNewHireling(user);
+    const addForm = screen.getByRole("group", { name: "New Hired Sword" });
+    await user.click(within(addForm).getByRole("radio", { name: "Dramatis persona" }));
+    expect(within(addForm).getByRole("radio", { name: "Hero" })).toBeChecked();
+    await user.click(within(addForm).getByRole("radio", { name: "One battle" }));
+    await user.type(within(addForm).getByLabelText("Paid in"), "a favour");
+    await user.click(screen.getByRole("button", { name: "Create hired sword" }));
+    expect(await screen.findByText("New recruit: 40 gc, paid when you save.")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(api.batchWarbandHirelings).toHaveBeenCalledTimes(1));
+    expect(batchCreates(api.batchWarbandHirelings)).toEqual([
+      expect.objectContaining({
+        name: "Brother Hal",
+        kind: "dramatis_persona",
+        injury_table: "hero",
+        stays: "one_battle",
+        payment_note: "a favour",
+        no_level_ups: true,
+      }),
+    ]);
+  });
+
+  it("saves a hired sword with no race, as one hired from an entry the catalogue's races lack", async () => {
+    const user = setupUser();
+    const skink = makeVeteranHireling({ race_id: null, race_name: null });
+    api.batchWarbandHirelings.mockImplementation(answerBatch([skink], { gold: 160 }));
+    renderWithQueryClient(<Section initialHirelings={[skink]} />);
+    await startEditing(user);
+
+    await replaceValue(user, getFieldNear("Experience"), "5");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(api.batchWarbandHirelings).toHaveBeenCalledTimes(1));
+    expect(batchUpdate(api.batchWarbandHirelings, 31)).toEqual(
+      expect.objectContaining({ race: null, xp: 5 })
+    );
+  });
+
+  it("moves a hired sword to the hero injury table on its edit card (a house rule)", async () => {
+    const user = setupUser();
+    const hired = makeVeteranHireling();
+    api.batchWarbandHirelings.mockImplementation(answerBatch([hired], { gold: 160 }));
+    renderWithQueryClient(<Section initialHirelings={[hired]} />);
+    await startEditing(user);
+
+    expect(screen.queryByRole("radio", { name: "Dramatis persona" })).toBeNull();
+    await user.click(screen.getByRole("radio", { name: "Hero" }));
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(api.batchWarbandHirelings).toHaveBeenCalledTimes(1));
+    expect(batchUpdate(api.batchWarbandHirelings, 31)).toEqual(
+      expect.objectContaining({ kind: "hired_sword", injury_table: "hero" })
+    );
+  });
+
+  it("leaves dramatis personae out of the count in the title while editing", async () => {
+    const user = setupUser();
+    renderWithQueryClient(
+      <Section
+        initialHirelings={[
+          makeVeteranHireling(),
+          makeVeteranHireling({ id: 33, name: "Bertha", kind: "dramatis_persona" }),
+        ]}
+      />
+    );
+    await startEditing(user);
+
+    expect(screen.getByText("[1/3]")).toBeInTheDocument();
+  });
+
   it("counts only hired swords without a blood pact against the cap in the title", () => {
     renderWithQueryClient(
       <Section
@@ -487,6 +569,10 @@ describe("UnitSection: hired swords create and save", () => {
       half_rate: false,
       no_level_ups: false,
       blood_pacted: false,
+      kind: "hired_sword",
+      injury_table: "henchman",
+      stays: "always",
+      payment_note: "",
       available_skills: ["Combat"],
       movement: 4,
       weapon_skill: 4,

@@ -117,9 +117,10 @@ describe("hireling editor limits", () => {
       isCreateBlocked: true,
       // The form still opens: a blood-pacted hire doesn't count (BUG-102).
       isAddDisabled: false,
-      addButtonNotice: "Maximum of 1 hired swords reached; a blood-pacted one can still join.",
+      addButtonNotice:
+        "Maximum of 1 hired swords reached; a blood-pacted one or a dramatis persona can still join.",
       addFormNotices: [
-        "Maximum of 1 hired swords reached. Tick Bloodpacted to add one that doesn't count.",
+        "Maximum of 1 hired swords reached. Tick Bloodpacted, or add a dramatis persona, for one that doesn't count.",
       ],
       duplicateBlockedReason: expect.any(Function),
     });
@@ -139,6 +140,22 @@ describe("hireling editor limits", () => {
 
     expect(limits.isCreateBlocked).toBe(false);
     expect(limits.addFormNotices).toEqual([]);
+  });
+
+  it("leaves dramatis personae out of the cap: they never take a place, and one may join at the cap", () => {
+    const persona = makeVeteranHireling({ id: 33, name: "Bertha", kind: "dramatis_persona" });
+    const limits = hirelingKind.editor.limits({
+      units: [hired, persona],
+      forms: [hirelingKind.mapToForm(hired), hirelingKind.mapToForm(persona)],
+      isEditing: true,
+      newForm: { ...newForm, kind: "dramatis_persona" },
+      roster: roster({ maxHiredSwords: 1 }),
+    });
+
+    expect(limits.titleSuffix).toBe("[1/1]");
+    expect(limits.isCreateBlocked).toBe(false);
+    expect(limits.duplicateBlockedReason(hirelingKind.mapToForm(persona))).toBeNull();
+    expect(limits.duplicateBlockedReason(hirelingKind.mapToForm(hired))).toMatch(/Maximum/);
   });
 });
 

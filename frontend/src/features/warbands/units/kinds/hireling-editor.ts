@@ -10,18 +10,19 @@ import {
   noSkillAccess,
   useNoFormExtras,
 } from "./editor-helpers";
+import { HIRED_SWORD_TERMS, isDramatisPersona, takesHiredSwordPlace } from "./hireling-terms";
 
 import type { UnitEditorConfig } from "../unit-kind-types";
 
-const notBloodPacted = (entry: { blood_pacted?: boolean | null }) => !entry.blood_pacted;
-
 /**
- * Hired swords: the hired-sword cap counts those without a blood pact and ignores the warband
- * unit limit; the add form's preset, blood pact and loadout go into the queued recruit.
+ * Hired swords and dramatis personae: the hired-sword cap counts hired swords without a blood pact
+ * (dramatis personae sit outside it) and ignores the warband unit limit; the add form's kind,
+ * terms, blood pact and loadout go into the queued recruit.
  */
 export const hirelingEditor: UnitEditorConfig<"hireling"> = {
   creation: {
     initialForm: {
+      ...HIRED_SWORD_TERMS,
       name: "",
       unit_type: "",
       race_id: null,
@@ -43,10 +44,16 @@ export const hirelingEditor: UnitEditorConfig<"hireling"> = {
       specials: [],
     },
     blockedError: "Hired sword limit reached.",
+    // A hireling may have no race: one hired from an entry whose race the catalogue lacks.
+    optionalRace: true,
     toFormEntry: (form, name, unitType) => ({
       draftKey: nextDraftKey("hirelings"),
       name,
       unit_type: unitType,
+      kind: form.kind,
+      injury_table: form.injury_table,
+      stays: form.stays,
+      payment_note: form.payment_note,
       race_id: form.race_id,
       race_name: form.race_name,
       stats: form.stats,
@@ -62,7 +69,8 @@ export const hirelingEditor: UnitEditorConfig<"hireling"> = {
       large: form.large,
       half_rate: form.half_rate,
       blood_pacted: form.blood_pacted,
-      no_level_ups: false,
+      // A dramatis persona never gains experience.
+      no_level_ups: isDramatisPersona(form),
       available_skills: form.available_skills,
       items: form.items,
       skills: form.skills,
@@ -73,6 +81,7 @@ export const hirelingEditor: UnitEditorConfig<"hireling"> = {
       Boolean(
         form.name.trim() ||
           form.unit_type.trim() ||
+          form.payment_note.trim() ||
           raceQuery.trim() ||
           isSet(form.price) ||
           isSet(form.upkeep_price) ||
@@ -86,27 +95,27 @@ export const hirelingEditor: UnitEditorConfig<"hireling"> = {
     recruitCost: (form) => toNullableNumber(form.price) ?? 0,
     duplicate: (form) => copyBasics(form, "hirelings"),
   },
-  // At the cap the add form still opens: a blood-pacted hired sword doesn't count (decision 12),
-  // so only "Create" is refused, and only for one without a blood pact (BUG-102).
+  // At the cap the add form still opens: a blood-pacted hired sword (decision 12) and a dramatis
+  // persona don't count, so only "Create" is refused, and only for one that would (BUG-102).
   limits: ({ forms, isEditing, newForm, roster }) => {
-    const count = isEditing ? forms.filter(notBloodPacted).length : roster.hirelingCount;
+    const count = isEditing ? forms.filter(takesHiredSwordPlace).length : roster.hirelingCount;
     const isAtCap = count >= roster.maxHiredSwords;
-    const isHirelingLimitReached = isAtCap && !newForm.blood_pacted;
+    const isHirelingLimitReached = isAtCap && takesHiredSwordPlace(newForm);
     return {
       titleSuffix: `[${count}/${roster.maxHiredSwords}]`,
       isCreateBlocked: isHirelingLimitReached,
       isAddDisabled: false,
       addButtonNotice: isAtCap
-        ? `Maximum of ${roster.maxHiredSwords} hired swords reached; a blood-pacted one can still join.`
+        ? `Maximum of ${roster.maxHiredSwords} hired swords reached; a blood-pacted one or a dramatis persona can still join.`
         : undefined,
       addFormNotices: isHirelingLimitReached
         ? [
-            `Maximum of ${roster.maxHiredSwords} hired swords reached. Tick Bloodpacted to add one that doesn't count.`,
+            `Maximum of ${roster.maxHiredSwords} hired swords reached. Tick Bloodpacted, or add a dramatis persona, for one that doesn't count.`,
           ]
         : [],
-      // A blood-pacted copy doesn't count towards the cap (decision 12).
+      // A blood-pacted copy (decision 12) or a dramatis persona doesn't count towards the cap.
       duplicateBlockedReason: (form) =>
-        isAtCap && !form.blood_pacted
+        isAtCap && takesHiredSwordPlace(form)
           ? `Maximum of ${roster.maxHiredSwords} hired swords reached.`
           : null,
     };

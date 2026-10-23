@@ -6,6 +6,7 @@ import { useDiscardGuard } from "./useDiscardGuard";
 import { useWarbandMobileTopBar, type WarbandRosterEditSection } from "./useWarbandMobileTopBar";
 import { heroKind, henchmenKind, hirelingKind } from "../../units/unit-kinds";
 import { getWarbandUnitCount } from "../../utils/warband-utils";
+import { takesHiredSwordPlace } from "../../units/kinds/hireling-terms";
 
 import type { CampaignLayoutContext } from "../../../campaigns/routes/CampaignLayout";
 import type { Unit, UnitKindKey } from "../../types/units";
@@ -98,8 +99,7 @@ export function useWarbandPage({
     maxHeroes: warband?.max_heroes ?? campaign?.max_heroes ?? 6,
     maxHiredSwords: warband?.max_hired_swords ?? campaign?.max_hired_swords ?? 3,
     heroCount: warband?.hero_count ?? roster.hero.length,
-    hirelingCount:
-      warband?.hireling_count ?? roster.hireling.filter((hs) => !hs.blood_pacted).length,
+    hirelingCount: warband?.hireling_count ?? roster.hireling.filter(takesHiredSwordPlace).length,
   };
   const shared = { warbandId: warband?.id ?? 0, canEdit, roster: limits, confirmDiscard };
   const editors: WarbandEditors = {

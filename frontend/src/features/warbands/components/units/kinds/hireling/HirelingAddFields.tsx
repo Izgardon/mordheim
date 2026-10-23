@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { getHirelingProfile } from "@/features/hirelings/api/hireling-catalogue-api";
 import UnitLoadout from "../../../shared/forms/UnitLoadout";
 import HirelingPresetPicker from "./HirelingPresetPicker";
+import HirelingTermsFields from "./HirelingTermsFields";
 import { TraitToggle } from "../../forms/UnitSkillsTraitsPanel";
 import { presetToNewHirelingForm } from "./hireling-preset";
 import {
@@ -133,6 +134,12 @@ export default function HirelingAddFields(props: AddFieldsSlotProps<"hireling">)
           Blood-pacted hired swords don&apos;t count towards the hired-sword limit.
         </p>
       </div>
+      <HirelingTermsFields
+        idPrefix="new-hireling"
+        terms={form}
+        onChange={(patch) => setForm((prev) => ({ ...prev, ...patch }))}
+        showKind
+      />
       <UnitLoadout
         unit={draftEntry}
         index={0}

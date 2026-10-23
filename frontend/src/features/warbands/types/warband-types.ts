@@ -179,11 +179,31 @@ export type WarbandHero = {
   spells?: Spell[];
 };
 
+/** What a hireling is: a hired sword, or a dramatis persona ("hireling" is the code's word only). */
+export type HirelingKind = "hired_sword" | "dramatis_persona";
+/** The serious-injury table a hireling rolls on: a henchman's D6, or the campaign's hero table. */
+export type HirelingInjuryTable = "henchman" | "hero";
+/** How long a hireling stays: until dismissed, or for one battle (a dramatis persona's). */
+export type HirelingStays = "always" | "one_battle";
+
+/** The hireling fields that say what it is, how it is hurt, how long it stays and its pay. */
+export type HirelingTerms = {
+  kind: HirelingKind;
+  injury_table: HirelingInjuryTable;
+  stays: HirelingStays;
+  payment_note: string;
+};
+
 export type WarbandHireling = {
   id: number;
   warband_id: number;
   name: string | null;
   unit_type: string | null;
+  /** Older payloads leave these out: a hired sword on the henchman table who stays. */
+  kind?: HirelingKind;
+  injury_table?: HirelingInjuryTable;
+  stays?: HirelingStays;
+  payment_note?: string;
   race_id: number | null;
   race_name?: string | null;
   price: number | null;
@@ -287,6 +307,10 @@ export type WarbandHirelingPayload = {
   half_rate?: boolean | null;
   no_level_ups?: boolean | null;
   blood_pacted?: boolean | null;
+  kind?: HirelingKind;
+  injury_table?: HirelingInjuryTable;
+  stays?: HirelingStays;
+  payment_note?: string;
   dead?: boolean | null;
   movement?: number | null;
   weapon_skill?: number | null;
@@ -334,12 +358,13 @@ export type HeroFormEntry = {
   specials: Special[];
 };
 
-export type HirelingFormEntry = HeroFormEntry & {
-  upkeep_price: string;
-  rating: string;
-  blood_pacted: boolean;
-  no_level_ups: boolean;
-};
+export type HirelingFormEntry = HeroFormEntry &
+  HirelingTerms & {
+    upkeep_price: string;
+    rating: string;
+    blood_pacted: boolean;
+    no_level_ups: boolean;
+  };
 
 /** The "Add hero" form. */
 export type NewHeroForm = {
@@ -353,7 +378,7 @@ export type NewHeroForm = {
 };
 
 /** The "Add hired sword" form (a preset can fill all of it, loadout included). */
-export type NewHirelingForm = {
+export type NewHirelingForm = HirelingTerms & {
   name: string;
   unit_type: string;
   race_id: number | null;

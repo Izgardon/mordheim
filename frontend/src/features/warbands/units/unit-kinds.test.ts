@@ -128,13 +128,24 @@ describe("mapHeroToForm", () => {
 });
 
 describe("mapHirelingToForm", () => {
-  it("maps hero fields plus upkeep, rating and the hired sword flags", () => {
-    const hireling = makeVeteranHireling({ blood_pacted: true, no_level_ups: true });
+  it("maps hero fields plus upkeep, rating, the hired sword flags and its terms", () => {
+    const hireling = makeVeteranHireling({
+      blood_pacted: true,
+      no_level_ups: true,
+      kind: "dramatis_persona",
+      injury_table: "hero",
+      stays: "one_battle",
+      payment_note: "a favour",
+    });
 
     expect(mapHirelingToForm(hireling)).toEqual({
       id: 31,
       name: "Brother Hal",
       unit_type: "Warrior Priest",
+      kind: "dramatis_persona",
+      injury_table: "hero",
+      stays: "one_battle",
+      payment_note: "a favour",
       race_id: 1,
       race_name: "Human",
       race: hireling.race,
@@ -236,12 +247,21 @@ describe("form validators", () => {
     expect(validateHeroForm(mapHeroToForm(makeVeteranHero()))).toBeNull();
   });
 
-  it("validates hired swords exactly like heroes", () => {
+  it("validates hired swords on name and type, leaving the race optional (a hire may have none)", () => {
     const form = mapHirelingToForm(makeHireling({ name: "", race_id: null }));
 
-    expect(validateHirelingForm(form)).toEqual({
-      fields: ["name", "race_id"],
-      message: "Missing: Name, Race",
+    expect(validateHirelingForm(form)).toEqual({ fields: ["name"], message: "Missing: Name" });
+    expect(validateHirelingForm({ ...form, name: "Grukk" })).toBeNull();
+  });
+
+  it("reads an older payload without terms as a hired sword on the henchman table who stays", () => {
+    const form = mapHirelingToForm(makeHireling());
+
+    expect(form).toMatchObject({
+      kind: "hired_sword",
+      injury_table: "henchman",
+      stays: "always",
+      payment_note: "",
     });
   });
 

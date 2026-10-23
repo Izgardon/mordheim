@@ -1,10 +1,15 @@
 import UnitIdentityFields from "../../forms/UnitIdentityFields";
 import UnitSkillsTraitsPanel, { TraitToggle } from "../../forms/UnitSkillsTraitsPanel";
 import UnitXpPriceFields from "../../forms/UnitXpPriceFields";
+import HirelingTermsFields from "./HirelingTermsFields";
+import { hirelingTermsOf } from "../../../../units/kinds/hireling-terms";
 
 import type { UnitFormSlotProps } from "../../forms/form-types";
 
-/** Hired sword card basics: as heroes, with blood pact, no level-ups, rating and upkeep. */
+/**
+ * Hired sword card basics: as heroes, with blood pact, no level-ups, rating and upkeep, and its
+ * terms (the kind for a queued recruit; the injury table; a dramatis persona's stay and pay).
+ */
 export default function HirelingFormBasics({
   form,
   index,
@@ -65,6 +70,13 @@ export default function HirelingFormBasics({
         inputClassName={inputClassName}
         onUpdate={onUpdate}
         priceLabel="Hire price"
+      />
+      <HirelingTermsFields
+        idPrefix={`hireling-${form.id ?? form.draftKey ?? index}`}
+        terms={hirelingTermsOf(form)}
+        onChange={(patch) => onUpdate(index, (current) => ({ ...current, ...patch }))}
+        showKind={!form.id}
+        inputClassName={inputClassName}
       />
     </>
   );
