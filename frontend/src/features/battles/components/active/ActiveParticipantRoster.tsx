@@ -51,19 +51,9 @@ export default function ActiveParticipantRoster({
   rosterLoading,
   rosterError,
   unitInformationByKey,
-  killTargetOptions,
-  canInteract,
-  onSetOutOfAction,
-  onAdjustWounds,
-  onSaveOverride,
-  onSaveUnitNotes,
-  onRecordKill,
-  onUseSingleUseItem,
-  getUsedSingleUseItemCount,
-  onUndoSingleUseItem,
-  activeItemActionKey,
   savingUnitKeys = {},
   sectionIds,
+  ...cardProps
 }: ActiveParticipantRosterProps) {
   const selectedUnits = getParticipantSelectedUnits(participant, participantRoster);
   const selectedUnitKeySet = new Set(participant.selected_unit_keys_json ?? []);
@@ -74,6 +64,44 @@ export default function ActiveParticipantRoster({
     }))
     .filter((group) => group.members.length > 0);
 
+  const renderUnitCards = (units: PrebattleUnit[]) =>
+    units.map((unit) => (
+      <ActiveUnitCard
+        key={unit.key}
+        unit={unit}
+        unitInformation={unitInformationByKey[unit.key]}
+        isSavingUnitConfig={Boolean(savingUnitKeys[unit.key])}
+        {...cardProps}
+      />
+    ));
+
+  const section = (id: string | undefined, title: string, cards: React.ReactNode[]) =>
+    cards.length ? (
+      <section id={id} className="space-y-2 scroll-mt-28">
+        <p className={SECTION_TITLE_CLASS}>{title}</p>
+        <div className="space-y-2">{cards}</div>
+      </section>
+    ) : null;
+
+  const groupCards = selectedHenchmenGroups.map((group) => (
+    <ActiveHenchmenGroupCard
+      key={group.id}
+      groupName={group.name}
+      groupType={group.unitType}
+      beastKind={group.beastKind}
+      members={group.members}
+      unitInformationByKey={unitInformationByKey}
+      savingUnitKeys={savingUnitKeys}
+      {...cardProps}
+    />
+  ));
+
+  const nothingSelected =
+    !selectedUnits.heroes.length &&
+    !selectedHenchmenGroups.length &&
+    !selectedUnits.hirelings.length &&
+    !selectedUnits.temporary.length;
+
   return (
     <div className="space-y-4">
       {rosterLoading ? (
@@ -82,121 +110,15 @@ export default function ActiveParticipantRoster({
         <p className="text-sm text-red-600">{rosterError}</p>
       ) : (
         <div className="space-y-4">
-          {selectedUnits.heroes.length ? (
-            <section id={sectionIds?.heroes} className="space-y-2 scroll-mt-28">
-              <p className={SECTION_TITLE_CLASS}>Heroes</p>
-              <div className="space-y-2">
-                {selectedUnits.heroes.map((unit) => (
-                  <ActiveUnitCard
-                    key={unit.key}
-                    unit={unit}
-                    unitInformation={unitInformationByKey[unit.key]}
-                    canInteract={canInteract}
-                    killTargetOptions={killTargetOptions}
-                    onSetOutOfAction={onSetOutOfAction}
-                    onAdjustWounds={onAdjustWounds}
-                    onSaveOverride={onSaveOverride}
-                    onSaveUnitNotes={onSaveUnitNotes}
-                    onRecordKill={onRecordKill}
-                    onUseSingleUseItem={onUseSingleUseItem}
-                    getUsedSingleUseItemCount={getUsedSingleUseItemCount}
-                    onUndoSingleUseItem={onUndoSingleUseItem}
-                    activeItemActionKey={activeItemActionKey}
-                    isSavingUnitConfig={Boolean(savingUnitKeys[unit.key])}
-                  />
-                ))}
-              </div>
-            </section>
-          ) : null}
-
-          {selectedHenchmenGroups.length ? (
-            <section id={sectionIds?.henchmen} className="space-y-2 scroll-mt-28">
-              <p className={SECTION_TITLE_CLASS}>Henchmen</p>
-              <div className="space-y-2">
-                {selectedHenchmenGroups.map((group) => (
-                  <ActiveHenchmenGroupCard
-                    key={group.id}
-                    groupName={group.name}
-                    groupType={group.unitType}
-                    beastKind={group.beastKind}
-                    members={group.members}
-                    canInteract={canInteract}
-                    unitInformationByKey={unitInformationByKey}
-                    killTargetOptions={killTargetOptions}
-                    onSetOutOfAction={onSetOutOfAction}
-                    onAdjustWounds={onAdjustWounds}
-                    onSaveOverride={onSaveOverride}
-                    onSaveUnitNotes={onSaveUnitNotes}
-                    onRecordKill={onRecordKill}
-                    onUseSingleUseItem={onUseSingleUseItem}
-                    getUsedSingleUseItemCount={getUsedSingleUseItemCount}
-                    onUndoSingleUseItem={onUndoSingleUseItem}
-                    activeItemActionKey={activeItemActionKey}
-                    savingUnitKeys={savingUnitKeys}
-                  />
-                ))}
-              </div>
-            </section>
-          ) : null}
-
-          {selectedUnits.hirelings.length ? (
-            <section id={sectionIds?.hirelings} className="space-y-2 scroll-mt-28">
-              <p className={SECTION_TITLE_CLASS}>Hired Swords</p>
-              <div className="space-y-2">
-                {selectedUnits.hirelings.map((unit) => (
-                  <ActiveUnitCard
-                    key={unit.key}
-                    unit={unit}
-                    unitInformation={unitInformationByKey[unit.key]}
-                    canInteract={canInteract}
-                    killTargetOptions={killTargetOptions}
-                    onSetOutOfAction={onSetOutOfAction}
-                    onAdjustWounds={onAdjustWounds}
-                    onSaveOverride={onSaveOverride}
-                    onSaveUnitNotes={onSaveUnitNotes}
-                    onRecordKill={onRecordKill}
-                    onUseSingleUseItem={onUseSingleUseItem}
-                    getUsedSingleUseItemCount={getUsedSingleUseItemCount}
-                    onUndoSingleUseItem={onUndoSingleUseItem}
-                    activeItemActionKey={activeItemActionKey}
-                    isSavingUnitConfig={Boolean(savingUnitKeys[unit.key])}
-                  />
-                ))}
-              </div>
-            </section>
-          ) : null}
-
-          {selectedUnits.temporary.length ? (
-            <section id={sectionIds?.temporary} className="space-y-2 scroll-mt-28">
-              <p className={SECTION_TITLE_CLASS}>Temporary Units</p>
-              <div className="space-y-2">
-                {selectedUnits.temporary.map((unit) => (
-                  <ActiveUnitCard
-                    key={unit.key}
-                    unit={unit}
-                    unitInformation={unitInformationByKey[unit.key]}
-                    canInteract={canInteract}
-                    killTargetOptions={killTargetOptions}
-                    onSetOutOfAction={onSetOutOfAction}
-                    onAdjustWounds={onAdjustWounds}
-                    onSaveOverride={onSaveOverride}
-                    onSaveUnitNotes={onSaveUnitNotes}
-                    onRecordKill={onRecordKill}
-                    onUseSingleUseItem={onUseSingleUseItem}
-                    getUsedSingleUseItemCount={getUsedSingleUseItemCount}
-                    onUndoSingleUseItem={onUndoSingleUseItem}
-                    activeItemActionKey={activeItemActionKey}
-                    isSavingUnitConfig={Boolean(savingUnitKeys[unit.key])}
-                  />
-                ))}
-              </div>
-            </section>
-          ) : null}
-
-          {!selectedUnits.heroes.length &&
-          !selectedHenchmenGroups.length &&
-          !selectedUnits.hirelings.length &&
-          !selectedUnits.temporary.length ? (
+          {section(sectionIds?.heroes, "Heroes", renderUnitCards(selectedUnits.heroes))}
+          {section(sectionIds?.henchmen, "Henchmen", groupCards)}
+          {section(sectionIds?.hirelings, "Hired Swords", renderUnitCards(selectedUnits.hirelings))}
+          {section(
+            sectionIds?.temporary,
+            "Temporary Units",
+            renderUnitCards(selectedUnits.temporary)
+          )}
+          {nothingSelected ? (
             <p className="text-sm text-muted-foreground">No units selected for this battle.</p>
           ) : null}
         </div>

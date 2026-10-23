@@ -1,12 +1,7 @@
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { NumberInput } from "@/components/ui/number-input";
 import type { BattleParticipant } from "@/features/battles/types/battle-types";
-import BattleUnitStatsAndItems from "@/features/battles/components/shared/BattleUnitStatsAndItems";
-import { getBattleCardThemeStyle } from "@/features/battles/components/shared/battle-card-theme";
 import PrebattleHenchmenGroupRow from "./PrebattleHenchmenGroupRow";
-import { PetChips, RiderMark } from "@/features/battles/components/shared/BattleCompanionParts";
-import { mountedStats } from "@/features/battles/utils/battle-companions";
+import PrebattleUnitRow, { type PrebattleRowTools } from "./PrebattleUnitRow";
 
 import type {
   ParticipantRoster,
@@ -44,6 +39,9 @@ type PrebattleParticipantRosterProps = {
   sectionIds?: Partial<Record<"heroes" | "henchmen" | "hirelings" | "temporary", string>>;
 };
 
+const SECTION_TITLE_CLASS =
+  "text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground";
+
 export default function PrebattleParticipantRoster({
   participant,
   editable,
@@ -73,74 +71,30 @@ export default function PrebattleParticipantRoster({
   const showAllAsSelectedForReadOnly = !editable && participantSelectedKeys.length === 0;
   const ratingDisplayValue = ratingInputValue.trim() === "" ? "-" : ratingInputValue;
 
-  const isUnitSelected = (unitKey: string) =>
-    editable
-      ? selectedUnitKeys.includes(unitKey)
-      : showAllAsSelectedForReadOnly || participantSelectedKeys.includes(unitKey);
-
-  const getUnitOverride = (unitKey: string) => participantOverrides[unitKey];
-
-  const getUnitNotes = (unitKey: string) => participantNotes[unitKey] ?? "";
-
-  const renderUnitRow = (unit: PrebattleUnit) => {
-    const selected = isUnitSelected(unit.key);
-    const override = getUnitOverride(unit.key);
-    const isEditing = editingUnitKey === unit.key;
-
-    return (
-      <div key={unit.key} className="battle-card p-4" style={getBattleCardThemeStyle(unit.kind)}>
-        <div className="flex flex-wrap items-start justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Checkbox
-              checked={selected}
-              disabled={!editable}
-              onChange={() => onToggleUnitSelection(unit.key)}
-            />
-            <div className="space-y-1">
-              <p className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
-                <RiderMark mount={unit.mount} />
-                {unit.displayName}
-              </p>
-              <p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
-                {unit.unitType}
-              </p>
-              <PetChips pets={unit.pets} />
-              {unit.kind === "custom" ? (
-                <p className="mt-1 text-xs text-muted-foreground">Rating: {unit.rating ?? 0}</p>
-              ) : null}
-            </div>
-          </div>
-          {editable && unit.kind === "custom" ? (
-            <Button variant="destructive" size="sm" onClick={() => onRemoveCustomUnit(unit.key)}>
-              Remove
-            </Button>
-          ) : null}
-        </div>
-
-        {selected ? (
-          <BattleUnitStatsAndItems
-            unitKey={unit.key}
-            baseStats={unit.stats}
-            override={override}
-            mounted={mountedStats(unit, override?.stats)}
-            notes={getUnitNotes(unit.key)}
-            editable={editable}
-            isEditing={isEditing}
-            onToggleEditing={() => onToggleEditingUnit(unit.key)}
-            onUpdateStat={(key, value) => onUpdateOverrideStat(unit, key, value)}
-            onUpdateNotes={(notes) => onUpdateUnitNotes(unit.key, notes)}
-            onResetOverride={() => onClearUnitOverride(unit.key)}
-            singleUseItems={unit.singleUseItems ?? []}
-            canUseItems={editable && canUseItems}
-            onUseItem={(item) => onUseSingleUseItem(unit, item)}
-            getUsedItemCount={(itemId) => getUsedSingleUseItemCount(unit.key, itemId)}
-            activeItemActionKey={activeItemActionKey}
-            constrainStatsToHalfWidth
-          />
-        ) : null}
-      </div>
-    );
+  const tools: PrebattleRowTools = {
+    editable,
+    isUnitSelected: (unitKey: string) =>
+      editable
+        ? selectedUnitKeys.includes(unitKey)
+        : showAllAsSelectedForReadOnly || participantSelectedKeys.includes(unitKey),
+    getUnitOverride: (unitKey: string) => participantOverrides[unitKey],
+    getUnitNotes: (unitKey: string) => participantNotes[unitKey] ?? "",
+    editingUnitKey,
+    onToggleUnitSelection,
+    onToggleEditingUnit,
+    onUpdateOverrideStat,
+    onUpdateUnitNotes,
+    onClearUnitOverride,
+    onRemoveCustomUnit,
+    canUseItems,
+    onUseSingleUseItem,
+    getUsedSingleUseItemCount,
+    activeItemActionKey,
   };
+
+  const renderUnitRow = (unit: PrebattleUnit) => (
+    <PrebattleUnitRow key={unit.key} unit={unit} tools={tools} />
+  );
 
   return (
     <div key={participant.id} className="space-y-3">
@@ -181,9 +135,7 @@ export default function PrebattleParticipantRoster({
         <div className="space-y-4">
           {participantRoster.heroes.length ? (
             <section id={sectionIds?.heroes} className="space-y-2 scroll-mt-28">
-              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Heroes
-              </p>
+              <p className={SECTION_TITLE_CLASS}>Heroes</p>
               <div className="space-y-2">
                 {participantRoster.heroes.map((unit) => renderUnitRow(unit))}
               </div>
@@ -192,29 +144,10 @@ export default function PrebattleParticipantRoster({
 
           {participantRoster.henchmenGroups.length ? (
             <section id={sectionIds?.henchmen} className="space-y-2 scroll-mt-28">
-              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Henchmen Groups
-              </p>
+              <p className={SECTION_TITLE_CLASS}>Henchmen Groups</p>
               <div className="space-y-3">
                 {participantRoster.henchmenGroups.map((group) => (
-                  <PrebattleHenchmenGroupRow
-                    key={group.id}
-                    group={group}
-                    editable={editable}
-                    isUnitSelected={isUnitSelected}
-                    getUnitOverride={getUnitOverride}
-                    getUnitNotes={getUnitNotes}
-                    editingUnitKey={editingUnitKey}
-                    onToggleUnitSelection={onToggleUnitSelection}
-                    onToggleEditingUnit={onToggleEditingUnit}
-                    onUpdateOverrideStat={onUpdateOverrideStat}
-                    onUpdateUnitNotes={onUpdateUnitNotes}
-                    onClearUnitOverride={onClearUnitOverride}
-                    canUseItems={canUseItems}
-                    onUseSingleUseItem={onUseSingleUseItem}
-                    getUsedSingleUseItemCount={getUsedSingleUseItemCount}
-                    activeItemActionKey={activeItemActionKey}
-                  />
+                  <PrebattleHenchmenGroupRow key={group.id} group={group} {...tools} />
                 ))}
               </div>
             </section>
@@ -222,9 +155,7 @@ export default function PrebattleParticipantRoster({
 
           {participantRoster.hirelings.length ? (
             <section id={sectionIds?.hirelings} className="space-y-2 scroll-mt-28">
-              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Hired Swords
-              </p>
+              <p className={SECTION_TITLE_CLASS}>Hired Swords</p>
               <div className="space-y-2">
                 {participantRoster.hirelings.map((unit) => renderUnitRow(unit))}
               </div>
@@ -233,9 +164,7 @@ export default function PrebattleParticipantRoster({
 
           {participantCustomUnits.length ? (
             <section id={sectionIds?.temporary} className="space-y-2 scroll-mt-28">
-              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Temporary Units
-              </p>
+              <p className={SECTION_TITLE_CLASS}>Temporary Units</p>
               <div className="space-y-2">
                 {participantCustomUnits.map((unit) => renderUnitRow(unit))}
               </div>

@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-import scull2Icon from "@/assets/icons/Scull2.webp";
-
 import type { BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
 import {
   type PrebattleUnit,
@@ -17,6 +15,7 @@ import { PetChips, RiderMark } from "@/features/battles/components/shared/Battle
 import { mountedStats } from "@/features/battles/utils/battle-companions";
 
 import ActiveKillDialog from "./ActiveKillDialog";
+import ActiveOutOfActionOverlay from "./ActiveOutOfActionOverlay";
 import ActiveUnitExpandedDetails from "./ActiveUnitExpandedDetails";
 import ActiveUnitStatEditor from "./ActiveUnitStatEditor";
 import { ActiveUnitActions } from "./ActiveUnitControls";
@@ -49,39 +48,6 @@ type ActiveUnitCardProps = {
   activeItemActionKey: string | null;
   isSavingUnitConfig?: boolean;
 };
-
-/** The skull over a unit out of action; yours brings it back in action. */
-function OutOfActionOverlay({
-  name,
-  canInteract,
-  disabled,
-  onBackInAction,
-}: {
-  name: string;
-  canInteract: boolean;
-  disabled: boolean;
-  onBackInAction: () => void;
-}) {
-  return (
-    <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/65">
-      {canInteract ? (
-        <button
-          type="button"
-          className="icon-button flex h-14 w-14 items-center justify-center rounded-full border-none bg-transparent text-[#d6c8aa] shadow-none transition hover:bg-transparent hover:text-foreground"
-          onClick={onBackInAction}
-          disabled={disabled}
-          aria-label={`Set ${name} back in action`}
-        >
-          <img src={scull2Icon} alt="" className="h-10 w-10 object-contain" />
-        </button>
-      ) : (
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-transparent text-[#d6c8aa]">
-          <img src={scull2Icon} alt="" className="h-10 w-10 object-contain" />
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function ActiveUnitCard({
   unit,
@@ -211,7 +177,7 @@ export default function ActiveUnitCard({
       ) : null}
 
       {outOfAction ? (
-        <OutOfActionOverlay
+        <ActiveOutOfActionOverlay
           name={name}
           canInteract={canInteract}
           disabled={isUpdatingOutOfAction}
