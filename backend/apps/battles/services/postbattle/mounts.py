@@ -3,7 +3,8 @@
 The suggestion: each selected rider of the participant's battle roster (a hero, a hired sword, or a henchmen group's
 member riding one of its mounts) who went out of action on his mount (not dismounted: services/dismount.py) rolls a
 D6 for it. It dies on a 1 or 2, or only on a 1 when he has Barding (a group's copies go to its first riders, one each)
-or a Farrier (a hired sword's special rule) is on the warband's battle roster. The roll and its result are the
+or, for a horse-type mount (`is_equine`), a Farrier (a hired sword's special rule) is on the warband's battle roster.
+Barding keeps its own rule: it saves whatever wears it, as the shop sells it for a warhorse only. The roll and its result are the
 player's (`postbattle_json.mount_survival`), never automatic: at finalise a dead mount's copy leaves its rider, his
 ridden copy first, with a `mounts_lost` log row for each copy removed; a mount that survives stays. Only a mount the
 server put at risk can die, and a rider who died here keeps his with his items (a henchman's share takes his ridden
@@ -34,6 +35,16 @@ ROWS: dict[str, tuple[type[Model], str]] = {  # a rider's kind -> where his copi
     "hireling": (HirelingItem, "hireling_id"),
     "henchman": (HenchmenGroupItem, "henchmen_group_id"),
 }
+# The Farrier shoes "equine beasts" (his rule names a Horse, Mule, Warhorse, Elven Steed or Chaos Centaur): a mount
+# whose name says so. That covers the bestiary's Riding/Draft Horse, Warhorse, Mule, Elven Steed, Chaos Steed and
+# Nightmare (and a custom beast named so), not a Cold One, a boar, a wolf, a spider, a Rhinox, a Temple Dog or a Camel.
+EQUINE_WORDS = ("horse", "steed", "mule", "pony", "nightmare")
+
+
+def is_equine(mount_name: str) -> bool:
+    """Whether a Farrier's shoes save the mount called `mount_name` (a horse-type beast)."""
+    name = mount_name.lower()
+    return any(word in name for word in EQUINE_WORDS)
 
 
 def _barding(unit: dict[str, Any]) -> int:
@@ -69,7 +80,8 @@ def mount_survival(participant: BattleParticipant, selected: set[str], informati
         key, mount, info = unit.get("key"), unit.get("mount"), information.get(unit.get("key") or "", {})
         if key not in selected or not mount or not info.get("out_of_action") or info.get("dismounted"):
             continue
-        saved_by = [reason for reason, saves in (("barding", barded), ("farrier", farrier)) if saves]
+        shod = farrier and is_equine(str(mount.get("name") or ""))
+        saved_by = [reason for reason, saves in (("barding", barded), ("farrier", shod)) if saves]
         entry = {"unit_name": unit.get("displayName"), "mount": mount.get("name")}
         entry["dies_on"] = SAVED_DIES_ON if saved_by else DIES_ON
         if saved_by:  # left out otherwise: the broadcast fits Pusher's 10 KB (item 8)

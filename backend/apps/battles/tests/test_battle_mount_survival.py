@@ -1,8 +1,8 @@
 """After a battle, a mount whose rider was taken out of action may die (the bestiary rewrite step 5).
 
 Postbattle suggests a D6 for each selected rider who went out of action on his mount (not dismounted): it dies on
-a 1 or 2, or only on a 1 when the rider carries Barding or a Farrier is on the warband's battle roster
-(`suggested_postbattle.mount_survival`, left out when nobody rides at risk). Like an injury, the roll and its result are
+a 1 or 2, or only on a 1 when the rider carries Barding or, for a horse-type mount, a Farrier is on the warband's battle
+roster (`suggested_postbattle.mount_survival`, left out when nobody rides at risk). Like an injury, the roll and its result are
 the player's (`postbattle_json.mount_survival`: `{unit key: {roll, dead}}`), never automatic. At finalise a dead
 mount's copy leaves the rider (his ridden copy first; a henchman who died already took his), with a log row; one that
 survives stays. Finalise stays constant in units.
@@ -13,11 +13,13 @@ from typing import Any
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
+from apps.bestiary.models import MOUNT
 from apps.special.models import Special
 from apps.warbands.models import HenchmenGroupItem, Hero, HeroItem, HirelingSpecial, WarbandLog
-from apps.warbands.tests.beast_support import warhorse
+from apps.warbands.tests.beast_support import make_animal, warhorse
 from apps.warbands.tests.roster_support import HENCHMEN, make_unit
 
+from ..services.postbattle.mounts import is_equine
 from .battle_support import BattleTestCase, catalogue_item, draft, unit_result
 
 
@@ -76,6 +78,25 @@ class MountSurvivalTests(BattleTestCase):
 
         self.assertEqual((entries[self.a]["dies_on"], entries[self.a]["saved_by"]), (1, ["barding", "farrier"]))
         self.assertEqual((entries[self.m1]["dies_on"], entries[self.m1]["saved_by"]), (1, ["farrier"]))
+
+    def test_a_farrier_saves_only_a_horse_type_mount(self):
+        tusker = Hero.objects.create(warband=self.warband, name="Tusker", unit_type="Boar Boy")
+        HeroItem.objects.create(hero=tusker, item=make_animal("War Boar", MOUNT), companion=True)
+        sword = self.warband.hirelings.create(name="Smith", unit_type="Swordsmith")
+        HirelingSpecial.objects.create(hireling=sword, special=Special.objects.create(name="Farrier", type="Ability"))
+        boar = f"hero:{tusker.id}"
+        battle_id = self.fought(self.a, boar, out=(self.a, boar))
+
+        entries = self.suggested(battle_id)["mount_survival"]["entries"]
+
+        self.assertEqual((entries[self.a]["dies_on"], entries[self.a]["saved_by"]), (1, ["farrier"]))
+        self.assertEqual(entries[boar], {"unit_name": "Tusker", "mount": "War Boar", "dies_on": 2})
+
+    def test_horse_type_mounts_are_told_by_name(self):
+        equines = ["Riding/Draft Horse", "Warhorse", "Mule", "Elven Steed", "Chaos Steed", "Nightmare", "Pony"]
+        others = ["Cold One", "War Boar", "Giant Wolf", "Giant Spider", "Rhinox", "Temple Dog", "Camel"]
+
+        self.assertEqual([name for name in equines + others if is_equine(name)], equines)
 
     def results(self, *keys: str, dead: tuple[str, ...] = ()) -> dict[str, Any]:
         return {key: unit_result(key, dead=key in dead) for key in keys}
