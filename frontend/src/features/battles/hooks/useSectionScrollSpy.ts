@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   getPostbattleSectionId,
@@ -17,7 +17,8 @@ const sectionTop = (section: PostbattleSectionKey) => {
 /**
  * The phone's postbattle section picker: its options (Stat changes only when the battle changed
  * any, Upkeep only with hired swords, Leaving only when someone is suggested to leave), jumping to a
- * section, and following the section scrolled to.
+ * section, and following the section scrolled to. A section picked stays picked while its jump
+ * scrolls the page (the last, short one never reaches the top), until the player scrolls.
  */
 export function useSectionScrollSpy({
   isMobile,
@@ -31,6 +32,8 @@ export function useSectionScrollSpy({
   hasLeaving?: boolean;
 }) {
   const [selectedSection, setSelectedSection] = useState<PostbattleSectionKey>("exploration");
+  /** The section picked from the picker, until the player's own scroll (a touch, wheel or key). */
+  const picked = useRef<PostbattleSectionKey | null>(null);
   const sectionOptions = useMemo(
     () => [
       { value: "exploration" as const, label: POSTBATTLE_SECTION_LABELS.exploration },
@@ -49,6 +52,7 @@ export function useSectionScrollSpy({
 
   const changeSection = useCallback((nextSectionValue: string) => {
     const nextSection = nextSectionValue as PostbattleSectionKey;
+    picked.current = nextSection;
     setSelectedSection(nextSection);
     document
       .getElementById(getPostbattleSectionId(nextSection))
@@ -70,6 +74,9 @@ export function useSectionScrollSpy({
 
     const syncSectionFromScroll = () => {
       frameHandle = 0;
+      if (picked.current) {
+        return;
+      }
       let nextSection: PostbattleSectionKey | null = null;
       // The last section whose top has passed the bars...
       let bestPassedTop = Number.NEGATIVE_INFINITY;
@@ -101,13 +108,23 @@ export function useSectionScrollSpy({
       frameHandle = window.requestAnimationFrame(syncSectionFromScroll);
     };
 
+    // The player scrolling by hand hands the picker back to the scroll.
+    const release = () => {
+      picked.current = null;
+    };
+    const userScrolls = ["touchstart", "wheel", "keydown"] as const;
+
     window.addEventListener("scroll", onScroll, { passive: true, capture: true });
     window.addEventListener("resize", onScroll, { passive: true });
+    userScrolls.forEach((type) =>
+      window.addEventListener(type, release, { passive: true, capture: true })
+    );
     onScroll();
 
     return () => {
       window.removeEventListener("scroll", onScroll, true);
       window.removeEventListener("resize", onScroll);
+      userScrolls.forEach((type) => window.removeEventListener(type, release, true));
       if (frameHandle !== 0) {
         window.cancelAnimationFrame(frameHandle);
       }

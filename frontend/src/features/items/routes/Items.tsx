@@ -30,6 +30,7 @@ import {
 
 // utils
 import { formatAvailabilitySummary } from "../utils/availability-format";
+import { beastEditLink, beastOf } from "../utils/item-listing";
 
 // api
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
@@ -166,7 +167,14 @@ export default function Items() {
               canDelete={capabilities.delete_catalogue}
               onEditMatch={(match) => {
                 const entry = items.find((listed) => listed.id === match.id);
-                if (entry) editor.edit(entry);
+                // An Animal item is its beast's: the bestiary edits it.
+                const beast = entry ? beastOf(entry) : null;
+                if (beast) {
+                  const link = beastEditLink(campaignId, beast.id);
+                  navigate(link.to, { state: link.state });
+                } else if (entry) {
+                  editor.edit(entry);
+                }
               }}
             />
           </div>

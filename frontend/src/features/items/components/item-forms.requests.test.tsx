@@ -4,7 +4,7 @@
  * (nested availability serializers, cost >= 0, rarity 2 to 20, scoped ids), so this is the
  * baseline the frontend may have to adapt from.
  */
-import { screen, within } from "@testing-library/react";
+import { act, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
@@ -78,36 +78,16 @@ describe("AddItemForm: create", () => {
     });
   });
 
-  it("sends an Animal's statblock as a JSON string of every stat, typed or not", async () => {
+  it("offers no Animal type: an Animal item is its beast's, written by the bestiary (flipped: it sent an Animal's statblock)", async () => {
     const user = setupUser();
     renderWithQueryClient(<AddItemForm campaignId={1} onCreated={vi.fn()} onCancel={vi.fn()} />);
 
-    await user.type(screen.getByPlaceholderText("Gutterblade"), "War Boar");
-    await chooseOption(user, typeSelect(), "Animal");
-    const stat = (key: string) =>
-      screen.getByText(key, { selector: "label" }).parentElement!.querySelector("input")!;
-    await user.type(stat("M"), "7");
-    await user.type(stat("S"), "4");
-    await user.type(screen.getByPlaceholderText("25"), "40");
-    await user.type(screen.getByPlaceholderText("2"), "8");
-    await user.click(screen.getByRole("button", { name: "Save" }));
+    act(() => typeSelect().focus());
+    await user.keyboard("{Enter}");
 
-    expect(fakeApi.bodyOf("POST /items/")).toMatchObject({
-      type: "Animal",
-      subtype: "Mount",
-      strength: null,
-      statblock: JSON.stringify({
-        M: "7",
-        WS: "",
-        BS: "",
-        S: "4",
-        T: "",
-        W: "",
-        I: "",
-        A: "",
-        Ld: "",
-      }),
-    });
+    const options = (await screen.findAllByRole("option")).map((option) => option.textContent);
+    expect(options).toEqual(["Weapon", "Armour", "Miscellaneous"]);
+    expect(screen.queryByText("Statblock")).toBeNull();
   });
 
   it("refuses a negative price before sending, as it refuses a rarity outside 2 to 20, each under its own field (BUG-53, CAT-TEST-09)", async () => {

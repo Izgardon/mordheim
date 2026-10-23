@@ -1,4 +1,5 @@
 import { apiRequest } from "../../../lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 
 import type { Special } from "../types/special-types";
 
@@ -35,6 +36,7 @@ export function listSpecial(options: ListSpecialOptions = {}) {
 export function createSpecial(payload: SpecialCreatePayload) {
   return apiRequest<Special>("/special/", {
     method: "POST",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }

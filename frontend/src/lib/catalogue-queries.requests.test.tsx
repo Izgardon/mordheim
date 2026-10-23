@@ -150,7 +150,7 @@ describe("catalogue pages: the shared 5-minute cache", () => {
     expect(fakeApi.countOf(LIST.specials)).toBe(0);
   });
 
-  it("lets the prebattle Load from Bestiary picker read the list the Bestiary page cached, and list just those animals", async () => {
+  it("lets the prebattle Load from Bestiary picker read the list the Bestiary page cached, and list its creatures only", async () => {
     await open("Bestiary");
     cleanup();
     fakeApi.clearRequests();
@@ -161,9 +161,9 @@ describe("catalogue pages: the shared 5-minute cache", () => {
 
     expect(fakeApi.countOf(LIST.bestiary)).toBe(0);
     const listed = screen.getAllByRole("button").map((button) => button.textContent);
-    expect(listed.filter((text) => /^(Sewer Rat|Warhound|Warhorse)/.test(text ?? ""))).toHaveLength(
-      3
-    );
+    expect(listed.filter((text) => /^(Sewer Rat|Warhound)/.test(text ?? ""))).toHaveLength(2);
+    expect(screen.queryByText("Warhorse")).toBeNull();
+    expect(screen.queryByText("Raven")).toBeNull();
   });
 
   it("lets the hero's New skill and New spell dialogs read the lists Skills and Spells cached", async () => {
@@ -204,7 +204,7 @@ describe("catalogue pages: the shared 5-minute cache", () => {
     fakeApi.clearRequests();
 
     await user.click(screen.getByRole("button", { name: "Add entry" }));
-    expect(await screen.findByRole("dialog", { name: "Add Bestiary Entry" })).toBeVisible();
+    expect(await screen.findByRole("dialog", { name: "Add bestiary entry" })).toBeVisible();
     await settle();
 
     expect(sorted(fakeApi.calls())).toEqual(sorted([LIST.specials, LIST.spells]));

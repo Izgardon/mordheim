@@ -8,11 +8,20 @@ import type { HirelingRestrictions } from "../../hooks/useHirelingRestrictions";
 
 const NOTHING_PICKED: { id: number; name: string; description: string }[] = [];
 
-/** Who may hire the entry: restrictions picked from the campaign's, each with an optional note. */
+/** What the field edits: the chosen restrictions with their notes, and what may be picked. */
+export type RestrictionsPicker = Pick<
+  HirelingRestrictions,
+  "available" | "rows" | "add" | "remove" | "setNote"
+>;
+
+/**
+ * Who may hire the entry (or buy a beast at a price): restrictions picked from the campaign's,
+ * each with an optional note.
+ */
 export default function HirelingRestrictionsField({
   restrictions,
 }: {
-  restrictions: HirelingRestrictions;
+  restrictions: RestrictionsPicker;
 }) {
   // The picker offers every restriction each time: one can be listed again with another note.
   const options = restrictions.available.map((restriction) => ({

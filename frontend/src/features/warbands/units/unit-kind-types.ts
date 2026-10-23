@@ -174,6 +174,11 @@ export type UnitKindConfig<K extends UnitKindKey> = {
   /** Key of the kind's list in the sheet ("heroes", "henchmen_groups", "hirelings"). */
   collection: UnitCollectionKey;
   labels: UnitKindLabels;
+  /**
+   * One unit's labels where they depend on it (a hireling is a hired sword or a dramatis
+   * persona): its edit card, its dismiss confirm, the add form's Create. The kind's own otherwise.
+   */
+  labelsFor?: (form: UnitForm<K> | UnitNewForm<K>) => UnitKindLabels;
   /** Card shell class: warband-card--hero / --henchmen / --hireling. */
   cardClassName: string;
   /** Wrapper class around the summary card's loadout ("mt-auto"; heroes have none). */

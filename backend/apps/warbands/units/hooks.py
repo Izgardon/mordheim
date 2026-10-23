@@ -47,11 +47,13 @@ class UnitHooks:
         return []
 
     def record_recruit(self, kind: "UnitKindSpec", warband: Warband, unit: RosterUnit, sent: Any) -> None:
-        """The new unit's log row and, when it cost anything, its recruit trade."""
+        """The new unit's log row and, when it cost anything, its recruit trade: "Grukk the Ogre Bodyguard", or just
+        the name when the unit is named for its type (a hire keeping the default name)."""
         name, unit_type = unit.name or "Unknown", unit.unit_type or "Unknown"
         log_warband_event(warband.id, "personnel", kind.recruit.log_new, {"name": name, "type": unit_type})
         if unit.price and unit.price > 0:
-            ledger.record(warband, kind.recruit.trade_action, -unit.price, f"{name} the {unit_type}")
+            note = name if name == unit_type else f"{name} the {unit_type}"
+            ledger.record(warband, kind.recruit.trade_action, -unit.price, note)
 
     def record_recruits(self, warband: Warband, unit: RosterUnit, recruits: list[Recruit]) -> None:
         """Charges and logs the members a PATCH recruited (only henchmen groups have members)."""

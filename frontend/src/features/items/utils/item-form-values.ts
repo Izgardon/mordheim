@@ -1,18 +1,16 @@
-import {
-  blankItemStatblock,
-  parseItemStatblock,
-  STAT_LABELS,
-  type ItemStatblock,
-} from "@/features/catalogue/utils/statblock";
-
 import type { Item, ItemProperty, Restriction } from "../types/item-types";
 
-export const ITEM_TYPE_OPTIONS = ["Weapon", "Armour", "Animal", "Miscellaneous"];
+/**
+ * The types the items form writes. Animal items come from the bestiary (one per beast, written by
+ * its form), so the items form never offers them.
+ */
+export const ITEM_TYPE_OPTIONS = ["Weapon", "Armour", "Miscellaneous"];
 
+/** Each type's subtypes (the Wargear filter's too): an Animal item's is its beast's kind. */
 export const ITEM_SUBTYPE_OPTIONS: Record<string, string[]> = {
   Weapon: ["Melee", "Ranged", "Blackpowder"],
   Armour: ["Armour", "Shield", "Helmet", "Barding"],
-  Animal: ["Mount", "Attack"],
+  Animal: ["Mount", "Pet", "Creature"],
 };
 
 /** Weapons, armour and animals have a subtype; miscellaneous items don't. */
@@ -44,7 +42,6 @@ export type ItemFormValues = {
   strength: string;
   range: string;
   save: string;
-  statblock: ItemStatblock;
   availabilities: AvailabilityRow[];
 };
 
@@ -69,7 +66,6 @@ export function itemValuesOf(item: Item | null): ItemFormValues {
     strength: item?.strength ?? "",
     range: item?.range ?? "",
     save: item?.save ?? "",
-    statblock: item ? parseItemStatblock(item.statblock) : blankItemStatblock(),
     availabilities:
       item && item.availabilities?.length > 0
         ? item.availabilities.map((availability) => ({
@@ -105,7 +101,6 @@ export function itemTypeOptions(item: Item | null) {
 
 /** The body an item create or edit sends (an edit sends no campaign_id). */
 export function itemPayload(values: ItemFormValues, propertyIds: number[]) {
-  const hasStatblockValues = STAT_LABELS.some((label) => values.statblock[label].trim());
   return {
     name: values.name.trim(),
     type: values.type.trim(),
@@ -115,8 +110,8 @@ export function itemPayload(values: ItemFormValues, propertyIds: number[]) {
     strength: values.strength.trim() || null,
     range: values.range.trim() || null,
     save: values.save.trim() || null,
-    statblock:
-      values.type === "Animal" && hasStatblockValues ? JSON.stringify(values.statblock) : null,
+    // Only Animal items carried a statblock; their beasts' profiles replaced it.
+    statblock: null,
     property_ids: propertyIds,
     availabilities: values.availabilities.map((row) => ({
       cost: Number(row.cost),

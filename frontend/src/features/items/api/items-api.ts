@@ -1,5 +1,6 @@
 // api
 import { apiRequest } from "../../../lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 
 // types
 import type {
@@ -59,6 +60,7 @@ export function listItems(options: ListItemsOptions = {}) {
 export function createItem(payload: ItemCreatePayload) {
   return apiRequest<Item>("/items/", {
     method: "POST",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }
@@ -66,6 +68,7 @@ export function createItem(payload: ItemCreatePayload) {
 export function updateItem(itemId: number, payload: ItemUpdatePayload) {
   return apiRequest<Item>(`/items/${itemId}/`, {
     method: "PATCH",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }
@@ -89,6 +92,7 @@ export function listItemProperties(options: ListItemPropertiesOptions = {}) {
 export function createItemProperty(payload: CreateItemPropertyPayload) {
   return apiRequest<ItemProperty>("/item-properties/", {
     method: "POST",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }

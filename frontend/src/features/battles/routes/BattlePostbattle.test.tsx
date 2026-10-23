@@ -649,6 +649,13 @@ describe("BattlePostbattle", () => {
         dismiss: { entries: { "hireling-1": { unit_name: "Bertha", reason: "stays_one_battle" } } },
       },
     });
+    // The warband still has Bertha until she is dismissed.
+    mocks.getWarbandSheet.mockResolvedValueOnce({
+      summary: { resources: [{ id: 9, name: "Wyrdstone" }] },
+      heroes: [],
+      henchmen_groups: [],
+      hirelings: [{ id: 201, name: "Bertha" }] as never[],
+    });
     renderWithQueryClient(
       <BattleProvider phase="postbattle">
         <BattlePostbattle />
@@ -674,6 +681,25 @@ describe("BattlePostbattle", () => {
     await waitFor(() => expect(mocks.deleteWarbandHireling).toHaveBeenCalledWith(3, 201));
     expect(await screen.findByText("Has left the warband.")).toBeInTheDocument();
     expect(mocks.finalizeBattlePostbattle).not.toHaveBeenCalled();
+  });
+
+  it("shows a suggested leaver the warband no longer has (dismissed before a reload) as gone, with no Dismiss", async () => {
+    Object.assign(mocks.battleState, {
+      suggested_postbattle: {
+        unit_results: {},
+        exploration: { dice_count: 0 },
+        upkeep: { entries: {} },
+        dismiss: { entries: { "hireling-1": { unit_name: "Bertha", reason: "stays_one_battle" } } },
+      },
+    });
+    renderWithQueryClient(
+      <BattleProvider phase="postbattle">
+        <BattlePostbattle />
+      </BattleProvider>
+    );
+
+    expect(await screen.findByText("Has left the warband.")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Dismiss Bertha" })).toBeNull();
   });
 
   it("hides xp controls and xp awards for units that cannot gain xp", async () => {

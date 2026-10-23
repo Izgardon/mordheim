@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 
 import CollapsibleSection from "@/components/ui/collapsible-section";
+import { BeastKindLabel } from "@/features/bestiary/components/BeastKindIcon";
 import { EntryBadge } from "@/features/catalogue/components/EntryBadge";
 import type {
   CatalogueColumn,
@@ -53,6 +54,15 @@ const name = (width: string) =>
   ));
 const subtype = (width: string) =>
   column("subtype", "Type", width, (item) => muted(item.subtype || "-"), HIDE_BELOW_LG);
+/** An Animal item's kind, its beast's (Mount, Pet, Creature) with the kind's mark. */
+const kind = (width: string) =>
+  column("kind", "Kind", width, (item) =>
+    item.bestiary_entry ? (
+      <BeastKindLabel kind={item.bestiary_entry.kind} className="text-xs" />
+    ) : (
+      muted(item.subtype || "-")
+    )
+  );
 const restricted = (width: string) =>
   column("restricted", "Restricted to", width, (item) =>
     muted(formatRestrictions(item._availability))
@@ -118,7 +128,7 @@ export function itemColumns(tab: ItemTabId, { propertyMap, actions }: ItemColumn
     ],
     animals: [
       name("w-[16%]"),
-      subtype("w-[8%]"),
+      kind("w-[8%]"),
       column(
         "statblock",
         "Stats",

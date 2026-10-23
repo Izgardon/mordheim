@@ -312,6 +312,27 @@ describe("catalogue entries created mid-edit (ROST-NEW-02)", () => {
   });
 });
 
+describe("the shop's items only (the bestiary rewrite, step 3)", () => {
+  it("leaves an unsold beast's item out of a card's item picker, and offers a sold one", async () => {
+    const user = setupUser();
+    const beast = (id: number, name: string, listed: boolean) =>
+      makeItem({ id, name, type: "Animal", subtype: "Mount", listed });
+    server.items = [
+      makeItem({ id: 101, name: "Sword" }),
+      beast(230, "Warhorse", true),
+      beast(270, "Wild Boar", false),
+    ];
+    await startEditing(user);
+    const [card] = editCards();
+
+    await openPicker(user, card, "Items", "+ Add item");
+
+    expect(await within(card).findByRole("button", { name: /Warhorse/ })).toBeInTheDocument();
+    expect(within(card).getByRole("button", { name: /Sword/ })).toBeInTheDocument();
+    expect(within(card).queryByRole("button", { name: /Wild Boar/ })).toBeNull();
+  });
+});
+
 describe("creating catalogue entries needs edit_catalogue (BUG-15, BUG-82)", () => {
   it("offers no Create race, and no Create new in the pickers, to a viewer without it", async () => {
     const user = setupUser();

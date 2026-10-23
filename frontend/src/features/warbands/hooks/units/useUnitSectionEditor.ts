@@ -182,7 +182,7 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
       const value = form.id ? `${kind.labels.formIdPrefix}-${form.id}` : `draft-${index}`;
       return {
         value,
-        label: form.name.trim() || kind.labels.newUnit,
+        label: form.name.trim() || (kind.labelsFor?.(form) ?? kind.labels).newUnit,
         elementId: getWarbandMobileEditItemId(kind.section, value),
       };
     });

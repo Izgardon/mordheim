@@ -5,7 +5,10 @@ import { useAuth } from "@/features/auth/hooks/use-auth";
 import { saveBattleParticipantConfig } from "@/features/battles/api/battles-api";
 import { heroDeathRollFor } from "@/features/battles/components/postbattle/postbattle-rules";
 import type { PostbattleRowTools } from "@/features/battles/components/postbattle/postbattle-row-tools";
-import { buildUpkeepRows } from "@/features/battles/components/postbattle/postbattle-summary";
+import {
+  buildUpkeepRows,
+  hasLeft,
+} from "@/features/battles/components/postbattle/postbattle-summary";
 import {
   buildRenderableGroups,
   getPostbattleUpkeepTotal,
@@ -118,14 +121,21 @@ export function usePostbattlePage(campaign: CampaignSummary | null | undefined) 
     [currentRoster, draft]
   );
   const upkeepRows = useMemo(() => buildUpkeepRows(draft, currentRoster), [currentRoster, draft]);
-  // Who the server suggests should leave now (one-battle hirelings), with their unit ids.
+  // Who the server suggests should leave now (one-battle hirelings), with their unit ids, and
+  // whether each has left (dismissed: the sheet no longer has him).
+  const sheet = sheetQuery.data;
   const leaving = useMemo(
     () =>
       Object.entries(suggestion?.dismiss?.entries ?? {}).map(([unitKey, entry]) => {
         const unit = currentRoster?.hirelings.find((hireling) => hireling.key === unitKey);
-        return { unitKey, unitName: entry.unit_name, hirelingId: unit ? Number(unit.id) : null };
+        const hirelingId = unit ? Number(unit.id) : null;
+        return { unitKey, unitName: entry.unit_name, hirelingId, left: hasLeft(hirelingId, sheet) };
       }),
-    [currentRoster, suggestion]
+    [currentRoster, sheet, suggestion]
+  );
+  const leftUnitKeys = useMemo(
+    () => leaving.filter((entry) => entry.left).map((entry) => entry.unitKey),
+    [leaving]
   );
   const upkeepTotal = useMemo(() => getPostbattleUpkeepTotal(draft), [draft]);
   const { victimName, statChangeRows, summary } = usePostbattleSummary({
@@ -140,8 +150,9 @@ export function usePostbattlePage(campaign: CampaignSummary | null | undefined) 
     resourceName: explore.resource?.name ?? null,
     upkeepRows,
     upkeepTotal,
-    sheet: sheetQuery.data,
+    sheet,
     campaign,
+    leftUnitKeys,
   });
   const saveBattleNotes = useCallback(
     async (battleNotes: string) => {

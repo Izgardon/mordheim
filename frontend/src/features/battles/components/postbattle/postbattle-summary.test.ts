@@ -3,11 +3,12 @@ import { describe, expect, it } from "vitest";
 import { toParticipantRosters } from "@/features/battles/api/battle-queries";
 import type { Item } from "@/features/items/types/item-types";
 import type { BattlePostbattleState } from "@/features/battles/types/battle-types";
+import type { WarbandSheet } from "@/features/warbands/types/warband-sheet";
 import { ME, battleRosters } from "@/test/battle-fixtures";
 
 import { getItemAvailabilityCostLabel, resolveFindItemCost } from "./find-items";
 import { heroDeathRollFor, seriousInjuryNotation } from "./postbattle-rules";
-import { buildFinalizeSummary, buildUpkeepRows } from "./postbattle-summary";
+import { buildFinalizeSummary, buildUpkeepRows, hasLeft } from "./postbattle-summary";
 import type { PostbattleRenderableGroup } from "./postbattle-utils";
 
 const roster = toParticipantRosters(battleRosters())[ME.id];
@@ -115,6 +116,87 @@ describe("postbattle summary", () => {
     ]);
     expect(summary).toMatchObject({ findsGoldCrowns: 12, payUpkeep: true, upkeepTotal: 15 });
     expect(summary.upkeepRows).toHaveLength(1);
+  });
+
+  it("leaves out every result of a hireling who has left the warband, as finalise does (step 2 browser check)", () => {
+    const frenzy = {
+      result_label: "Frenzy",
+      effect: { kind: "special", special: "Frenzy" },
+      apply: true,
+    };
+    const groups = [
+      {
+        key: "heroes",
+        rows: [
+          { unitKey: "hero:1", unitName: "Wolf", dead: false, canGainXp: true, xpEarned: 2 },
+          { unitKey: "hero:3", unitName: "Rolf", dead: true, canGainXp: true, xpEarned: 1 },
+        ],
+      },
+      {
+        key: "hirelings",
+        rows: [
+          {
+            unitKey: "hireling:4",
+            unitName: "Ogre",
+            dead: false,
+            canGainXp: true,
+            xpEarned: 1,
+            seriousInjuryRolls: [frenzy],
+          },
+          {
+            unitKey: "hireling:5",
+            unitName: "Bertha",
+            dead: false,
+            canGainXp: true,
+            xpEarned: 1,
+            seriousInjuryRolls: [frenzy],
+          },
+        ],
+      },
+    ].map((group) => ({
+      ...group,
+      rows: group.rows.map((row) => ({ seriousInjuryRolls: [], killCount: 0, ...row })),
+    })) as unknown as PostbattleRenderableGroup[];
+
+    const summary = buildFinalizeSummary({
+      groups,
+      draft,
+      victimsByUnitKey: { "hireling:5": ["Player's Black Fang"] },
+      statChangeRows: [
+        { key: "hireling:5", unitKeys: ["hireling:5"], kept: true },
+        { key: "hireling:4", unitKeys: ["hireling:4"], kept: true },
+      ] as never,
+      events: [],
+      userId: ME.id,
+      roster,
+      sheet: undefined,
+      campaign: null,
+      resourceAmount: 0,
+      resourceName: null,
+      upkeepRows: [
+        { unitKey: "hireling:5", unitName: "Bertha", cost: 10, dead: false },
+        { unitKey: "hireling:4", unitName: "Ogre", cost: 15, dead: false },
+      ] as never,
+      upkeepTotal: 15,
+      // Bertha (hireling 5) was dismissed from the Leaving section.
+      leftUnitKeys: ["hireling:5"],
+    });
+
+    expect(summary.injuries.map((line) => line.text)).toEqual(["Ogre: Frenzy (Gains Frenzy)"]);
+    expect(summary.xpAwards.map((award) => award.unitName)).toEqual(["Wolf", "Rolf", "Ogre"]);
+    expect(summary.deaths.map((row) => row.unitKey)).toEqual(["hero:3"]);
+    expect(summary.kills).toEqual([]);
+    expect(summary.keptStatChanges.map((change) => change.key)).toEqual(["hireling:4"]);
+    expect(summary.upkeepRows.map((row) => row.unitKey)).toEqual(["hireling:4"]);
+  });
+
+  it("counts a suggested leaver as gone once the warband's sheet no longer has him, and nobody before the sheet arrives", () => {
+    const sheet = { hirelings: [{ id: 4 }] } as unknown as WarbandSheet;
+
+    expect(hasLeft(5, sheet)).toBe(true);
+    expect(hasLeft(4, sheet)).toBe(false);
+    expect(hasLeft(5, undefined)).toBe(false);
+    expect(hasLeft(null, sheet)).toBe(false);
   });
 
   it("values a find at its cheapest availability", () => {

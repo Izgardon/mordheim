@@ -64,7 +64,8 @@ const fetchers: { [K in CatalogueKind]: Fetcher<K> } = {
     listSpells({ campaignId, signal, ...archivedOf(variant) }),
   specials: (campaignId, signal) => listSpecial({ campaignId, signal }),
   races: (campaignId, signal) => listRaces({ campaignId, signal }),
-  bestiary: (campaignId, signal) => listBestiaryEntries({ campaignId, signal }),
+  bestiary: (campaignId, signal, variant) =>
+    listBestiaryEntries({ campaignId, signal, ...archivedOf(variant) }),
   "hired-swords": (campaignId, signal, variant) =>
     listHirelingProfiles("hired-swords", { campaignId, signal, ...archivedOf(variant) }),
   "dramatis-personae": (campaignId, signal, variant) =>
@@ -240,28 +241,63 @@ export function invalidateCatalogue(
   });
 }
 
-/** Cache writes for components that create, edit or delete catalogue entries. */
+/**
+ * The lists a write of a kind changes besides its own, as the server announces them (its
+ * `catalogue.changed` kinds for the write): a beast's Animal item is written with the beast, so
+ * a bestiary write (a save, Revert, delete or restore) changes the items list too; hired swords
+ * and dramatis personae name their race, so a race write changes their lists.
+ */
+const WRITTEN_WITH: Partial<Record<CatalogueKind, CatalogueKind[]>> = {
+  bestiary: ["items"],
+  races: ["hired-swords", "dramatis-personae"],
+};
+
+/** `kind` and the kinds its writes change with it. */
+const writtenKinds = (kind: CatalogueKind) => [kind, ...(WRITTEN_WITH[kind] ?? [])];
+
+/**
+ * Cache writes for components that create, edit or delete catalogue entries. Each also marks
+ * stale the lists the write changed with its own kind (`WRITTEN_WITH`): the server's event for
+ * them goes to the other members only.
+ */
 export function useCatalogueCache() {
   const queryClient = useQueryClient();
-  return useMemo(
-    () => ({
-      upsert: <K extends CatalogueKind>(kind: K, campaignId: number, entry: CatalogueEntry<K>) =>
-        upsertCatalogueEntry(queryClient, kind, campaignId, entry),
+  return useMemo(() => {
+    const alsoChanged = (kind: CatalogueKind, campaignId: number) =>
+      (WRITTEN_WITH[kind] ?? []).forEach(
+        (other) => void invalidateCatalogue(queryClient, other, campaignId)
+      );
+    return {
+      upsert: <K extends CatalogueKind>(kind: K, campaignId: number, entry: CatalogueEntry<K>) => {
+        upsertCatalogueEntry(queryClient, kind, campaignId, entry);
+        alsoChanged(kind, campaignId);
+      },
       /** A write's answer in place of the row it stands in for (a version for its book entry). */
       write: <K extends CatalogueKind>(
         kind: K,
         campaignId: number,
         entry: CatalogueEntry<K>,
         replacedId?: number
-      ) => upsertCatalogueEntry(queryClient, kind, campaignId, entry, replacedId),
-      remove: (kind: CatalogueKind, campaignId: number, entryId: number) =>
-        removeCatalogueEntry(queryClient, kind, campaignId, entryId),
+      ) => {
+        upsertCatalogueEntry(queryClient, kind, campaignId, entry, replacedId);
+        alsoChanged(kind, campaignId);
+      },
+      remove: (kind: CatalogueKind, campaignId: number, entryId: number) => {
+        removeCatalogueEntry(queryClient, kind, campaignId, entryId);
+        alsoChanged(kind, campaignId);
+      },
       invalidate: (kind: CatalogueKind, campaignId: number) =>
-        invalidateCatalogue(queryClient, kind, campaignId),
-      /** The campaign's warband sheets (and stashes) after copies moved or changed. */
+        Promise.all(
+          writtenKinds(kind).map((each) => invalidateCatalogue(queryClient, each, campaignId))
+        ),
+      /**
+       * The campaign's warband sheets (and stashes) after copies moved or changed: a beast's
+       * first edit or Revert moves the copies of its Animal item.
+       */
       heldCopiesChanged: (kind: CatalogueKind, campaignId: number) =>
-        invalidateHeldCopies(queryClient, kind, campaignId),
-    }),
-    [queryClient]
-  );
+        Promise.all(
+          writtenKinds(kind).map((each) => invalidateHeldCopies(queryClient, each, campaignId))
+        ),
+    };
+  }, [queryClient]);
 }

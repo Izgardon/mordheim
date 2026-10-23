@@ -1,5 +1,6 @@
 // api
 import { apiRequest } from "../../../lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 
 // types
 import type { Skill, SkillCreatePayload, SkillUpdatePayload } from "../types/skill-types";
@@ -39,6 +40,7 @@ export function listSkills(options: ListSkillsOptions = {}) {
 export function createSkill(payload: SkillCreatePayload) {
   return apiRequest<Skill>("/skills/", {
     method: "POST",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }
@@ -46,6 +48,7 @@ export function createSkill(payload: SkillCreatePayload) {
 export function updateSkill(skillId: number, payload: SkillUpdatePayload) {
   return apiRequest<Skill>(`/skills/${skillId}/`, {
     method: "PATCH",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }

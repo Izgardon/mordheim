@@ -1,4 +1,5 @@
 import { apiRequest } from "@/lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 
 import type { HirelingCatalogueKind } from "../hireling-catalogue-kinds";
 import type {
@@ -29,7 +30,11 @@ export function getHirelingProfile(kind: HirelingCatalogueKind, id: number, sign
 }
 
 export function createHirelingProfile(kind: HirelingCatalogueKind, payload: HirelingProfileWrite) {
-  return apiRequest<HirelingProfileDetail>(`/${kind}/`, { method: "POST", body: payload });
+  return apiRequest<HirelingProfileDetail>(`/${kind}/`, {
+    method: "POST",
+    headers: socketIdHeaders(),
+    body: payload,
+  });
 }
 
 export function updateHirelingProfile(
@@ -37,5 +42,9 @@ export function updateHirelingProfile(
   id: number,
   payload: HirelingProfileWrite
 ) {
-  return apiRequest<HirelingProfileDetail>(`/${kind}/${id}/`, { method: "PATCH", body: payload });
+  return apiRequest<HirelingProfileDetail>(`/${kind}/${id}/`, {
+    method: "PATCH",
+    headers: socketIdHeaders(),
+    body: payload,
+  });
 }
