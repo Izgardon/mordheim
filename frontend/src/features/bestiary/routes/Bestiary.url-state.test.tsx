@@ -75,10 +75,7 @@ describe("Bestiary: search, type filter and page", () => {
 
   it("restores the search and page with the browser's Back after another page, and a new search goes back to page 1 (CAT-UX-05, CAT-NEW-02)", async () => {
     const user = setupUser();
-    fakeApi.on(LIST.creatures, [
-      ...many,
-      bestiaryEntry({ id: 6, name: "Warhorse", type: "Mount" }),
-    ]);
+    fakeApi.on(LIST.bestiary, [...many, bestiaryEntry({ id: 6, name: "Warhorse", type: "Mount" })]);
     renderCatalogueRoute("/campaigns/1/bestiary");
     await screen.findByText("Rat 01");
     await user.type(searchBox(), "rat");
@@ -102,7 +99,7 @@ describe("Bestiary: search, type filter and page", () => {
   });
 
   it("opens a shared link on its search and page", async () => {
-    fakeApi.on(LIST.creatures, many);
+    fakeApi.on(LIST.bestiary, many);
     renderCatalogueRoute("/campaigns/1/bestiary?q=rat&page=2");
 
     expect(await screen.findByText("Rat 13")).toBeVisible();
@@ -112,7 +109,7 @@ describe("Bestiary: search, type filter and page", () => {
 
   it("keeps the page an entry was opened from: Back returns to page 2", async () => {
     const user = setupUser();
-    fakeApi.on(LIST.creatures, many);
+    fakeApi.on(LIST.bestiary, many);
     fakeApi.on("GET /bestiary/612/", bestiaryDetail(many[12]));
     renderCatalogueRoute("/campaigns/1/bestiary");
     await screen.findByText("Rat 01");
@@ -149,7 +146,7 @@ describe("Bestiary: search, type filter and page", () => {
     await user.click(screen.getByRole("button", { name: "Back" }));
 
     expect(await screen.findByText("Warhorse")).toBeVisible();
-    expect(fakeApi.countOf(LIST.creatures)).toBe(0);
+    expect(fakeApi.countOf(LIST.bestiary)).toBe(0);
   });
 });
 

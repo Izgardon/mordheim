@@ -42,12 +42,9 @@ export default function Bestiary() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const { warband } = useAppStore();
 
-  // The server leaves the hired swords out (PERF-47); their page lists them.
-  const {
-    data: entries,
-    isLoading,
-    error,
-  } = useCatalogue("bestiary", campaignId, { variant: "creatures" });
+  // The bestiary holds the animals only; hired swords have their own catalogue and page. The
+  // prebattle Load from Bestiary picker shares this list.
+  const { data: entries, isLoading, error } = useCatalogue("bestiary", campaignId);
   const favourites = useBestiaryFavourites(warband?.id);
   const navigate = useNavigate();
   // Search, type, page and the open entry live in the query string (CAT-NEW-02).

@@ -15,8 +15,6 @@ type ListBestiaryOptions = {
   type?: string;
   search?: string;
   campaignId?: number;
-  /** Leaves out entries of this type, after the campaign's merge (PERF-47). */
-  excludeType?: string;
   signal?: AbortSignal;
 };
 
@@ -30,9 +28,6 @@ export function listBestiaryEntries(options: ListBestiaryOptions = {}) {
   }
   if (options.campaignId) {
     params.set("campaign_id", String(options.campaignId));
-  }
-  if (options.excludeType) {
-    params.set("exclude_type", options.excludeType);
   }
   const query = params.toString();
   const path = query ? `/bestiary/?${query}` : "/bestiary/";

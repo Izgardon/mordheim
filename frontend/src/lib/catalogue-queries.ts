@@ -41,10 +41,9 @@ export type CatalogueEntry<K extends CatalogueKind> = CatalogueEntries[K];
 
 /**
  * A list beside a kind's default one, cached on its own under the kind's key: "archived" adds the
- * campaign's archived entries and removed book entries (`?archived=1`, CAT-TWEAK-04); "creatures"
- * is the Bestiary page's (the bestiary without its hired swords, PERF-47).
+ * campaign's archived entries and removed book entries (`?archived=1`, CAT-TWEAK-04).
  */
-export type CatalogueListVariant = "archived" | "creatures";
+export type CatalogueListVariant = "archived";
 
 type Fetcher<K extends CatalogueKind> = (
   campaignId: number,
@@ -65,12 +64,7 @@ const fetchers: { [K in CatalogueKind]: Fetcher<K> } = {
     listSpells({ campaignId, signal, ...archivedOf(variant) }),
   specials: (campaignId, signal) => listSpecial({ campaignId, signal }),
   races: (campaignId, signal) => listRaces({ campaignId, signal }),
-  bestiary: (campaignId, signal, variant) =>
-    listBestiaryEntries({
-      campaignId,
-      signal,
-      excludeType: variant === "creatures" ? "Hired Sword" : undefined,
-    }),
+  bestiary: (campaignId, signal) => listBestiaryEntries({ campaignId, signal }),
   "hired-swords": (campaignId, signal) => listHiredSwordProfiles({ campaignId, signal }),
 };
 
