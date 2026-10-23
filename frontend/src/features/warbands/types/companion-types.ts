@@ -19,8 +19,27 @@ export type CompanionStats = {
   armour_save: number | null;
 };
 
+/** A beast's skill, special or spell as a companion brings it (the unit's detail columns). */
+export type CompanionAbility = {
+  id: number;
+  name: string;
+  type?: string;
+  description?: string;
+  dc?: string | number | null;
+};
+
+/**
+ * What a switched-on companion brings to its unit (step 5): its beast's skills, specials and
+ * spells, shown with the unit's own and never part of them (older caches may lack them).
+ */
+export type CompanionAbilities = {
+  skills?: CompanionAbility[];
+  specials?: CompanionAbility[];
+  spells?: CompanionAbility[];
+};
+
 /** The unit's mount: its first switched-on mount, by item row. */
-export type UnitMount = {
+export type UnitMount = CompanionAbilities & {
   /** The copy the switch names to switch it off. */
   item_row_id: number;
   item_id: number;
@@ -33,7 +52,7 @@ export type UnitMount = {
   stats: CompanionStats | null;
 };
 
-export type UnitPet = {
+export type UnitPet = CompanionAbilities & {
   item_row_id: number;
   item_id: number;
   name: string;

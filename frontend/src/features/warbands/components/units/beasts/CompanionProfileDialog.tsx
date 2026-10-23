@@ -9,6 +9,7 @@ import {
 import { Button } from "@components/button";
 import { BeastKindLabel } from "@/features/bestiary/components/BeastKindIcon";
 import UnitStatsTable from "../../shared/unit_details/UnitStatsTable";
+import CompanionAbilityLines from "./CompanionAbilityLines";
 
 import type { UnitMount, UnitPet } from "../../../types/companion-types";
 
@@ -50,6 +51,11 @@ export default function CompanionProfileDialog({
           <p className="text-sm text-muted-foreground">No profile</p>
         )}
         {bonus ? <p className="text-sm text-foreground">Rider rating: +{bonus}</p> : null}
+        <CompanionAbilityLines
+          skills={companion.skills}
+          specials={companion.specials}
+          spells={companion.spells}
+        />
         <DialogFooter>
           <Button variant="secondary" onClick={onClose}>
             Close

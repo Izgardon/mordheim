@@ -1,6 +1,11 @@
 import { isPendingByName } from "../heroes/utils/pending-entries";
 import { groupItemsById } from "../../utils/warband-utils";
-import { isSwitchedOn } from "../../utils/companions";
+import {
+  companionAbilities,
+  companionSources,
+  isSwitchedOn,
+  type CompanionSource,
+} from "../../utils/companions";
 import {
   buildSpellCountMap,
   deduplicateSpells,
@@ -21,6 +26,9 @@ export type LoadoutEntryType = "item" | "skill" | "spell" | "special" | "roster"
  */
 export type LoadoutBeast = { kind: BeastKind; on: boolean; rowId: number | null };
 
+/** The switched-on mount or pet a skill, special or spell comes with (read-only, step 5). */
+export type LoadoutCompanion = { kind: "mount" | "pet"; name: string };
+
 export type LoadoutEntry = {
   id: string;
   visibleId: number;
@@ -32,7 +40,26 @@ export type LoadoutEntry = {
   kills?: number;
   count?: number;
   beast?: LoadoutBeast;
+  companion?: LoadoutCompanion;
 };
+
+type AbilityType = "skill" | "special" | "spell";
+const ABILITY_KEYS = { skill: "skills", special: "specials", spell: "spells" } as const;
+
+/**
+ * The companions' skills (specials, spells) as entries after the unit's own, each marked with its
+ * beast: never pending and never part of the unit's own lists or a PATCH.
+ */
+export function companionEntries(sources: CompanionSource[], type: AbilityType): LoadoutEntry[] {
+  return companionAbilities(sources, ABILITY_KEYS[type]).map(({ ability, source }, index) => ({
+    id: `companion-${type}-${source.kind}-${source.itemId}-${ability.id}-${index}`,
+    visibleId: ability.id,
+    label: ability.name,
+    type,
+    ...(type === "spell" ? { dc: ability.dc ?? null } : {}),
+    companion: { kind: source.kind, name: source.name },
+  }));
+}
 
 type ItemRow = { key: string; item: Item; rows: Item[] };
 
@@ -122,14 +149,31 @@ export function buildLoadoutBlocks<K extends UnitKindKey>(
       kills: henchman.kills ?? 0,
     }));
   const maxSize = "max_size" in unit ? (unit.max_size ?? 5) : 5;
+  const companions = companionSources(unit);
+  const companionSpells = companionEntries(companions, "spell");
+  const spellBlock = [...(hasSpells ? spellEntries : []), ...companionSpells];
 
   return [
     ...(hasMembers
       ? [{ id: "roster", title: `Roster ${members.length}/${maxSize}`, entries: roster }]
       : []),
     { id: "items", title: "Items", entries: items },
-    { id: "skills", title: "Skills", entries: named("skill", unit.skills ?? []) },
-    ...(hasSpells ? [{ id: "spells", title: "Spells", entries: spellEntries }] : []),
-    { id: "special", title: "Specials", entries: named("special", unit.specials ?? []) },
+    {
+      id: "skills",
+      title: "Skills",
+      entries: [...named("skill", unit.skills ?? []), ...companionEntries(companions, "skill")],
+    },
+    // A kind without spells still lists its companions' (a group riding a mount that casts).
+    ...(hasSpells || companionSpells.length
+      ? [{ id: "spells", title: "Spells", entries: spellBlock }]
+      : []),
+    {
+      id: "special",
+      title: "Specials",
+      entries: [
+        ...named("special", unit.specials ?? []),
+        ...companionEntries(companions, "special"),
+      ],
+    },
   ].filter((block) => block.entries.length > 0);
 }

@@ -3,7 +3,41 @@
  * out the mount, the pets and what a mount changes; these helpers only read what it sent.
  */
 import type { Item } from "@/features/items/types/item-types";
-import type { UnitCompanionFields, CreatureGroupFields } from "../types/companion-types";
+import type {
+  CompanionAbilities,
+  CompanionAbility,
+  UnitCompanionFields,
+  CreatureGroupFields,
+} from "../types/companion-types";
+
+/** A switched-on companion as the unit's lists mark its entries: its kind, beast and entries. */
+export type CompanionSource = CompanionAbilities & {
+  kind: "mount" | "pet";
+  name: string;
+  itemId: number;
+};
+
+/** Companions with their beast's entries, each beast once (two ravens bring theirs once). */
+export const uniqueBeasts = (sources: CompanionSource[]) =>
+  sources.filter(
+    (source, index) =>
+      sources.findIndex((other) => other.kind === source.kind && other.itemId === source.itemId) ===
+      index
+  );
+
+/** A unit payload's mount, then its pets, as the sources of entries it brings (step 5). */
+export const companionSources = (unit: UnitCompanionFields): CompanionSource[] =>
+  uniqueBeasts([
+    ...(unit.mount ? [{ ...unit.mount, kind: "mount" as const, itemId: unit.mount.item_id }] : []),
+    ...(unit.pets ?? []).map((pet) => ({ ...pet, kind: "pet" as const, itemId: pet.item_id })),
+  ]);
+
+/** Every companion's skills (specials, spells), each with the companion that brings it. */
+export const companionAbilities = (
+  sources: CompanionSource[],
+  key: keyof CompanionAbilities
+): { ability: CompanionAbility; source: CompanionSource }[] =>
+  sources.flatMap((source) => (source[key] ?? []).map((ability) => ({ ability, source })));
 
 /** A copy of a mount or pet switched on for its unit (a campaign's later change of kind: not). */
 export const isSwitchedOn = (item: Pick<Item, "companion" | "beast_kind">) =>

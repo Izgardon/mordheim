@@ -190,6 +190,33 @@ describe("the unit card's companions", () => {
     expect(statCell("M")).toHaveTextContent(/^4$/);
   });
 
+  it("lists the beast's skills, specials and spells in its profile (step 5)", async () => {
+    const user = setupUser();
+    const taught = {
+      ...riding,
+      mount: {
+        ...riding.mount!,
+        skills: [{ id: 900, name: "Thunderous Charge", type: "Mount" }],
+        specials: [{ id: 901, name: "Kick", type: "Ability", description: "" }],
+        spells: [{ id: 902, name: "Hoof Hex", type: "Beast", dc: "7", description: "" }],
+      },
+    };
+    renderCard(taught);
+
+    await user.click(await screen.findByRole("button", { name: "Mount: Warhorse" }));
+
+    const profile = screen.getByRole("dialog", { name: "Warhorse" });
+    expect(within(profile).getByText("Skills:").parentElement).toHaveTextContent(
+      "Skills: Thunderous Charge"
+    );
+    expect(within(profile).getByText("Specials:").parentElement).toHaveTextContent(
+      "Specials: Kick"
+    );
+    expect(within(profile).getByText("Spells:").parentElement).toHaveTextContent(
+      "Spells: Hoof Hex (DC 7)"
+    );
+  });
+
   it("says a pet has no profile, and offers no Switch off to a viewer", async () => {
     const user = setupUser();
     renderCard(riding, { canEdit: false });
