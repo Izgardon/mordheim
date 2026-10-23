@@ -2,19 +2,16 @@ import { FieldError } from "@/components/ui/field-error";
 import { CatalogueNameField } from "@/features/catalogue/components/form-layout";
 
 import BeastKindField from "./BeastKindField";
+import BeastProfileFields from "./BeastProfileFields";
 import BestiaryLinksFields from "./BestiaryLinksFields";
-import {
-  CasterField,
-  DescriptionField,
-  LargeTargetField,
-  StatsField,
-} from "./bestiary-core-fields";
+import ShopFields from "./ShopFields";
+import { CasterField, DescriptionField, LargeTargetField } from "./bestiary-core-fields";
 
 import type { BestiaryEntryFormState } from "../../hooks/useBestiaryEntryForm";
 
 /**
- * A beast's fields: its kind and name (with a taken name's matches), caster and size, fluff, the
- * profile, and what it knows and carries.
+ * A beast's fields (the plan's mock): its kind and name (with a taken name's matches), the profile
+ * and what its kind adds, caster and size, fluff, what it knows and carries, and the shop.
  */
 export default function BestiaryEntryFormFields({ form }: { form: BestiaryEntryFormState }) {
   const { values, change } = form;
@@ -32,6 +29,7 @@ export default function BestiaryEntryFormFields({ form }: { form: BestiaryEntryF
         placeholder="e.g. War Hound"
         required
       />
+      <BeastProfileFields form={form} />
       <div className="flex flex-wrap items-end gap-3">
         <CasterField values={values} onChange={change} className="flex flex-1 flex-col gap-1.5" />
         <div className="pb-2">
@@ -39,12 +37,9 @@ export default function BestiaryEntryFormFields({ form }: { form: BestiaryEntryF
         </div>
       </div>
       <DescriptionField values={values} onChange={change} id="bestiary-desc" />
-      <div className="flex flex-col gap-1">
-        <StatsField values={values} onChange={change} />
-        <FieldError message={form.fieldErrors.armour_save} />
-      </div>
       <BestiaryLinksFields links={form.links} />
       <FieldError message={form.fieldErrors.item_entries} />
+      <ShopFields form={form} />
     </div>
   );
 }

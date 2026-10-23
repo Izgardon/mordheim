@@ -1,7 +1,11 @@
 import { statInputs, statNumbers, type StatInputs } from "@/features/catalogue/utils/statblock";
 
 import type { BeastKind } from "../bestiary-kinds";
-import type { BestiaryEntry, BestiaryEntryWrite } from "../types/bestiary-types";
+import type {
+  BestiaryAvailabilityWrite,
+  BestiaryEntry,
+  BestiaryEntryWrite,
+} from "../types/bestiary-types";
 
 export const CASTER_OPTIONS = ["No", "Wizard", "Priest"];
 
@@ -38,8 +42,18 @@ export function bestiaryCorePayload(values: BestiaryCoreValues) {
   };
 }
 
-/** What the bestiary form edits: the beast's kind and its profile. */
-export type BestiaryEntryValues = BestiaryCoreValues & { kind: BeastKind };
+/**
+ * What the bestiary form edits: the beast's kind, profile and shop flag, a mount's rating bonus
+ * (text, blank for none) and whether a creature gains experience. The item's prices are the shop
+ * section's own rows.
+ */
+export type BestiaryEntryValues = BestiaryCoreValues & {
+  kind: BeastKind;
+  has_profile: boolean;
+  gains_xp: boolean;
+  rating_bonus: string;
+  available_in_shop: boolean;
+};
 
 const text = (value: number | null | undefined) =>
   value === null || value === undefined ? "" : String(value);
@@ -50,10 +64,21 @@ export function bestiaryValuesOf(
   kind: BeastKind = "creature"
 ): BestiaryEntryValues {
   if (!entry) {
-    return { ...blankBestiaryCore(), kind };
+    return {
+      ...blankBestiaryCore(),
+      kind,
+      has_profile: true,
+      gains_xp: false,
+      rating_bonus: "",
+      available_in_shop: false,
+    };
   }
   return {
     kind: entry.kind,
+    has_profile: entry.has_profile,
+    gains_xp: entry.gains_xp,
+    rating_bonus: text(entry.rating_bonus),
+    available_in_shop: entry.available_in_shop,
     name: entry.name,
     description: entry.description ?? "",
     stats: statInputs("0", {
@@ -75,11 +100,25 @@ export function bestiaryValuesOf(
 
 type Links = Pick<BestiaryEntryWrite, "skill_ids" | "special_ids" | "spell_ids" | "item_entries">;
 
-/** The write body: the kind, the profile and every link list. */
-export function bestiaryPayload(values: BestiaryEntryValues, links: Links): BestiaryEntryWrite {
+/**
+ * The write body: the kind, the profile, the shop flag with the item's prices, and every link
+ * list. A rating bonus is a mount's only and gaining experience a creature's only: another kind
+ * sends none, so a beast whose kind changed keeps nothing hidden.
+ */
+export function bestiaryPayload(
+  values: BestiaryEntryValues,
+  links: Links,
+  prices: BestiaryAvailabilityWrite[]
+): BestiaryEntryWrite {
+  const bonus = values.rating_bonus.trim();
   return {
     kind: values.kind,
     ...bestiaryCorePayload(values),
+    has_profile: values.has_profile,
+    gains_xp: values.kind === "creature" && values.gains_xp,
+    rating_bonus: values.kind === "mount" && bonus ? Number(bonus) : null,
+    available_in_shop: values.available_in_shop,
+    item: { availabilities: prices },
     ...links,
   };
 }

@@ -8,6 +8,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 import { beastKindLabel } from "../bestiary-kinds";
 import { useBestiaryEntryDetail } from "../hooks/useBestiaryEntryDetail";
+import { BeastFacts } from "./BestiaryEntryCard";
 import {
   DETAIL_CHIP_CLASS,
   DetailHeader,
@@ -44,8 +45,8 @@ type BestiaryEntryDetailProps = {
 };
 
 /**
- * One beast: its name and badge, Edit and Back, its kind, fluff, profile (or "No profile"), and
- * what it knows and carries.
+ * One beast: its name and badge, Edit and Back, its kind, the shop's price (or "Not sold"), a
+ * mount's rating bonus, fluff, profile (or "No profile"), and what it knows and carries.
  */
 export default function BestiaryEntryDetail({
   campaignId,
@@ -94,6 +95,8 @@ export default function BestiaryEntryDetail({
           ) : null
         }
       />
+
+      <BeastFacts entry={entry} />
 
       {entry.description ? (
         <p className="text-sm text-muted-foreground">{entry.description}</p>

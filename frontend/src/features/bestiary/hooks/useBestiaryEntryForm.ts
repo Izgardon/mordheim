@@ -15,13 +15,25 @@ import {
   bestiaryValuesOf,
   type BestiaryEntryValues,
 } from "../utils/bestiary-form";
+import { shopPayload, shopProblems } from "../utils/beast-shop";
 import { useBestiaryLinks } from "./useBestiaryLinks";
+import { useShopPrices } from "./useShopPrices";
 
 import type { BeastKind } from "../bestiary-kinds";
 import type { BestiaryEntry, BestiaryEntrySummary } from "../types/bestiary-types";
 
 /** The fields a refusal can name that the form shows by their input. */
-const SHOWN_FIELDS = ["name", "kind", "armour_save", "item_entries"];
+const SHOWN_FIELDS = [
+  "name",
+  "kind",
+  "armour_save",
+  "rating_bonus",
+  "item_entries",
+  "item.availabilities",
+  "item.availabilities.*.cost",
+  "item.availabilities.*.rarity",
+  "item.availabilities.*.variable_cost",
+];
 
 type UseBestiaryEntryFormOptions = {
   campaignId: number;
@@ -43,7 +55,8 @@ type UseBestiaryEntryFormOptions = {
 };
 
 /**
- * The bestiary's Add or Edit form (`use<Kind>Form`): the beast's kind, profile and links; the save
+ * The bestiary's Add or Edit form (`use<Kind>Form`): the beast's kind, profile, links and its
+ * item's shop prices (kept while folded away); the save
  * (a book beast's first edit makes the campaign's version, written in its place, and its Animal
  * item's copies move with it), Delete with its usage check, and Revert. A taken name keeps the
  * form open with its matches.
@@ -66,6 +79,7 @@ export function useBestiaryEntryForm({
   const [formError, setFormError] = useState("");
   const fieldErrors = useFieldErrors(SHOWN_FIELDS, resetKey);
   const links = useBestiaryLinks({ campaignId, open, specialType: "Animal" });
+  const shop = useShopPrices({ campaignId, enabled: open && values.available_in_shop });
   const nameTaken = useNameTakenMatches({ kind: "bestiary", campaignId, fieldErrors, onEditMatch });
   const deletion = useCatalogueDelete({
     kind: "bestiary",
@@ -95,9 +109,17 @@ export function useBestiaryEntryForm({
       setFormError("A name is required.");
       return;
     }
+    // The server's limits on the prices, checked before sending, under the fields they concern.
+    const problems = shopProblems(shop.rows, values.available_in_shop);
+    if (problems.line || Object.keys(problems.fields).length > 0) {
+      setFormError(problems.line);
+      fieldErrors.show(problems.fields);
+      return;
+    }
     setIsSaving(true);
     setFormError("");
-    const payload = bestiaryPayload(values, links.payload());
+    const prices = shopPayload(shop.rows, values.available_in_shop);
+    const payload = bestiaryPayload(values, links.payload(), prices);
     try {
       const saved = entry
         ? await updateBestiaryEntry(entry.id, { ...payload, ...bookCampaign(entry, campaignId) })
@@ -118,16 +140,21 @@ export function useBestiaryEntryForm({
   };
 
   const { load: loadLinks } = links;
+  const { load: loadPrices, ensureOne } = shop;
   const { clear: clearFieldErrors } = fieldErrors;
-  /** Back to `next`'s values and links (a blank form of `kind` for null), with no message. */
+  /** Back to `next`'s values, links and prices (a blank form of `kind` for null), no message. */
   const load = useCallback(
     (next: BestiaryEntry | null, kind?: BeastKind) => {
       setValues(bestiaryValuesOf(next, kind));
       loadLinks(next);
+      loadPrices(next?.item);
+      if (next?.available_in_shop) {
+        ensureOne();
+      }
       setFormError("");
       clearFieldErrors();
     },
-    [clearFieldErrors, loadLinks]
+    [clearFieldErrors, ensureOne, loadLinks, loadPrices]
   );
 
   return {
@@ -135,6 +162,14 @@ export function useBestiaryEntryForm({
     values,
     change: (patch: Partial<BestiaryEntryValues>) => setValues((prev) => ({ ...prev, ...patch })),
     links,
+    shop,
+    /** Ticking it shows the prices (one blank to start, if none); unticking folds and keeps them. */
+    setAvailableInShop: (sold: boolean) => {
+      setValues((prev) => ({ ...prev, available_in_shop: sold }));
+      if (sold) {
+        ensureOne();
+      }
+    },
     fieldErrors: fieldErrors.errors,
     nameTaken,
     isSaving: isSaving || deletion.isDeleting,

@@ -2,9 +2,30 @@ import { CardBackground } from "@/components/ui/card-background";
 import { EntryBadge } from "@/features/catalogue/components/EntryBadge";
 import { STAT_FIELDS } from "@/features/catalogue/utils/statblock";
 
+import { shopLine } from "../utils/beast-shop";
 import { BeastKindLabel } from "./BeastKindIcon";
 
 import type { BestiaryEntrySummary } from "../types/bestiary-types";
+
+/**
+ * What the beast is worth beyond its profile: the shop's price ("80 gc · Rare 11", or "Not sold"),
+ * a mount's bonus to its rider's rating, and whether a creature gains experience.
+ */
+export function BeastFacts({ entry }: { entry: BestiaryEntrySummary }) {
+  return (
+    <p className="flex flex-wrap gap-x-3 text-xs text-muted-foreground">
+      <span>
+        Shop: <span className="font-semibold text-foreground">{shopLine(entry)}</span>
+      </span>
+      {entry.kind === "mount" && entry.rating_bonus ? (
+        <span>
+          Rider rating: <span className="font-semibold text-foreground">+{entry.rating_bonus}</span>
+        </span>
+      ) : null}
+      {entry.kind === "creature" && entry.gains_xp ? <span>Gains experience</span> : null}
+    </p>
+  );
+}
 
 /** The beast's stat line, M to Ld and its save; "No profile" for one without (most pets). */
 export function BeastStatLine({ entry }: { entry: BestiaryEntrySummary }) {
@@ -108,6 +129,8 @@ export default function BestiaryEntryCard({
             {actionSlot}
           </div>
         </div>
+
+        <BeastFacts entry={entry} />
 
         {entry.description ? (
           <p className="line-clamp-2 text-xs text-muted-foreground">{entry.description}</p>
