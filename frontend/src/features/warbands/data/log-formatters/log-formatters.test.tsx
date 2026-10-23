@@ -141,6 +141,17 @@ describe("log formatters, by feature", () => {
     );
   });
 
+  it('name a hire that kept its type as its name once (step 2 browser check: "Hired Old Prospector the Old Prospector")', () => {
+    const prospector = { name: "Old Prospector", type: "Old Prospector" };
+    expect(textOf(log("personnel", "new_hireling", prospector))).toBe("Hired Old Prospector");
+    expect(textOf(log("personnel", "remove_hireling", prospector))).toBe(
+      "Dismissed Old Prospector"
+    );
+    expect(textOf(log("personnel", "new_hireling", { name: "Grukk", type: "Ogre" }))).toBe(
+      "Hired Grukk the Ogre"
+    );
+  });
+
   it("read the server's entries for item sales, moves and discards", () => {
     const sale = { item: "Sword", quantity: 2, price: 10, source_type: "stash", source_name: null };
     expect(textOf(log("items", "sold", sale))).toBe("Sold Sword x 2 from the stash(10 gc)");
