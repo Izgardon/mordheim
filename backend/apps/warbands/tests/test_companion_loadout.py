@@ -11,8 +11,8 @@ from typing import Any
 
 from apps.warbands.models import HeroItem, WarbandItem
 
-from .beast_support import raven, warhorse
-from .roster_support import HERO, RosterTestCase, make_unit, unit_url
+from .beast_support import make_animal, raven, warhorse
+from .roster_support import HERO, RosterTestCase, make_unit, trade_rows, unit_url
 
 
 class CompanionLoadoutTests(RosterTestCase):
@@ -117,3 +117,15 @@ class CompanionMoveTests(RosterTestCase):
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(list(self.hero.hero_items.values_list("id", flat=True)), [ridden.id])
         self.assertEqual(response.data["source"]["mount"]["item_row_id"], ridden.id)
+
+    def test_the_suggested_sale_price_is_the_spares(self):
+        mule = make_animal("Mule", "mount")  # no shop price: the sale suggests half the stored cost
+        HeroItem.objects.create(hero=self.hero, item=mule, cost=20)
+        HeroItem.objects.create(hero=self.hero, item=mule, cost=40, companion=True)
+        body = {"source_type": "hero", "source_id": self.hero.id, "item_id": mule.id, "quantity": 1}
+
+        response = self.client.post(f"/api/warbands/{self.warband.id}/item-sales/", body, format="json")
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(trade_rows(self.warband), [("Sell", "Mule", 10, None)])
+        self.assertEqual(list(self.hero.hero_items.values_list("cost", "companion")), [(40, True)])

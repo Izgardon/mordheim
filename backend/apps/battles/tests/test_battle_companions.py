@@ -6,6 +6,9 @@ the group's mount, and a group recruited from a creature names its beast and kin
 
 from typing import Any
 
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
+
 from apps.warbands.models import HenchmenGroup, HenchmenGroupItem, Hero, HeroItem
 from apps.warbands.tests.beast_support import beast, raven, wardogs, warhorse
 from apps.warbands.tests.roster_support import HENCHMEN, make_unit
@@ -57,3 +60,23 @@ class BattleRosterCompanionTests(BattleTestCase):
         source = HenchmenGroup.objects.get(pk=kennel.pk).source_beast_id
         self.assertEqual((groups["Kennel"]["sourceBeastId"], groups["Kennel"]["beastKind"]), (source, "creature"))
         self.assertEqual(groups["Kennel"]["members"][0]["mount"], None)
+
+    def ride(self, count: int) -> None:
+        for _ in range(count):
+            hero = Hero.objects.create(warband=self.warband, name="Rider", unit_type="Knight")
+            HeroItem.objects.create(hero=hero, item=self.horse, companion=True)
+            group = make_unit(HENCHMEN, self.warband, members=("A",), source_beast=beast(self.dogs))
+            HenchmenGroupItem.objects.create(henchmen_group=group, item=self.horse, companion=True)
+
+    def test_rosters_read_beasts_in_a_fixed_number_of_queries(self):
+        self.ride(1)
+        battle_id = self.to_prebattle()
+        self.roster(battle_id)  # the first read in a minute writes presence
+        with CaptureQueriesContext(connection) as few:
+            self.roster(battle_id)
+        self.ride(3)
+
+        with CaptureQueriesContext(connection) as many:
+            self.roster(battle_id)
+
+        self.assertEqual(len(many), len(few))

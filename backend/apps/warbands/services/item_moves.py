@@ -61,12 +61,13 @@ def _sale_total(warband: Warband, item: Item, data: Mapping[str, Any], unit: Ros
     if data.get("price") is not None:
         return int(data["price"])
     if unit is None:
-        rows: Any = WarbandItem.objects.filter(warband=warband, item=item)
+        rows: Any = WarbandItem.objects.filter(warband=warband, item=item).order_by("-id")
         rows = rows.filter(cost=data["cost"]) if data.get("cost") is not None else rows
     else:
         kind = KINDS[cast(UnitKindKey, data["source_type"])]
         rows = kind.items.model._default_manager.filter(**{kind.parent_field: unit, "item": item})
-    stored = rows.order_by("-id").values_list("cost", flat=True).first()
+        rows = rows.order_by("companion", "-id")  # as take_unit_copies takes them: the one he rides last
+    stored = rows.values_list("cost", flat=True).first()
     sale = CampaignPrices(warband.campaign_id).sale_price(item, stored)
     if sale.price is None:
         raise ValueError("No price is known for this item; send one.")
