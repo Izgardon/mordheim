@@ -52,6 +52,18 @@ export default function MobileTabs<T extends string>({
     };
   }, [checkScroll]);
 
+  // The active tab scrolls into view, centred, when the row opens on it and when it changes: a
+  // tab past the screen's edge (Hired Swords, Dramatis Personae on a phone) is otherwise hidden.
+  useEffect(() => {
+    const el = scrollRef.current;
+    const chip = el?.querySelector<HTMLElement>("[data-active=true]");
+    if (!el || !chip) return;
+    const row = el.getBoundingClientRect();
+    const box = chip.getBoundingClientRect();
+    if (box.left >= row.left && box.right <= row.right) return;
+    el.scrollLeft += box.left - row.left - (row.width - box.width) / 2;
+  }, [activeTab]);
+
   const scroll = (direction: "left" | "right") => {
     const el = scrollRef.current;
     if (!el) return;
@@ -85,6 +97,7 @@ export default function MobileTabs<T extends string>({
                   type="button"
                   onClick={() => onTabChange(tab.id)}
                   disabled={tab.disabled}
+                  data-active={isActive}
                   className={cn(
                     "mobile-tab-chip flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-[0.6rem] font-semibold uppercase tracking-[0.25em] transition disabled:pointer-events-none disabled:opacity-60",
                     isActive && "mobile-tab-chip--active"
