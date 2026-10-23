@@ -7,6 +7,7 @@ apps/warbands/units/serializers.py).
 from apps.warbands.models import Hireling
 from apps.warbands.units.kinds import HIRELING
 from apps.warbands.units.serializers import (
+    COMPANION_FIELDS,
     STAT_FIELDS,
     UnitDetailSerializer,
     UnitSummarySerializer,
@@ -78,6 +79,7 @@ class HirelingSummarySerializer(UnitSummarySerializer):
             "payment_note",
             "dead",
             *STAT_FIELDS,
+            *COMPANION_FIELDS,
             "items",
             "skills",
             "specials",
@@ -120,6 +122,7 @@ class HirelingDetailSerializer(UnitDetailSerializer):
             "payment_note",
             "dead",
             *STAT_FIELDS,
+            *COMPANION_FIELDS,
             "items",
             "skills",
             "specials",

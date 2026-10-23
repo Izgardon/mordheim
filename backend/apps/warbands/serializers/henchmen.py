@@ -1,7 +1,7 @@
 """Henchmen group payloads: their fields and members (the shared parts are in apps/warbands/units/serializers.py)."""
 
 import math
-from typing import Any
+from typing import Any, cast
 
 from rest_framework import serializers
 
@@ -9,6 +9,7 @@ from apps.warbands.models import Henchman, HenchmenGroup
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.units.kinds import HENCHMEN_GROUP
 from apps.warbands.units.serializers import (
+    COMPANION_FIELDS,
     STAT_FIELDS,
     UnitDetailSerializer,
     UnitSummarySerializer,
@@ -81,6 +82,15 @@ class HenchmenMembersMixin(serializers.Serializer):
 
     henchmen = serializers.SerializerMethodField()
     hire_cost = serializers.SerializerMethodField()
+    source_beast_id = serializers.IntegerField(read_only=True)  # the creature it was recruited from, or None
+    beast_kind = serializers.SerializerMethodField()
+
+    def get_beast_kind(self, group: HenchmenGroup) -> str | None:
+        """The source beast's kind, read with the group's row (`UnitKindSpec.row_annotations`)."""
+        if hasattr(group, "beast_kind"):
+            return cast(str | None, group.beast_kind)
+        beast = group.source_beast
+        return beast.kind if beast is not None else None
 
     def get_henchmen(self, group: HenchmenGroup) -> Any:
         return HenchmanSerializer(get_prefetched_or_query(group, "henchmen", "henchmen"), many=True).data
@@ -114,7 +124,10 @@ class HenchmenGroupSummarySerializer(HenchmenMembersMixin, UnitSummarySerializer
             "half_rate",
             "no_level_ups",
             "dead",
+            "source_beast_id",
+            "beast_kind",
             *STAT_FIELDS,
+            *COMPANION_FIELDS,
             "items",
             "skills",
             "specials",
@@ -145,7 +158,10 @@ class HenchmenGroupDetailSerializer(HenchmenMembersMixin, UnitDetailSerializer):
             "half_rate",
             "no_level_ups",
             "dead",
+            "source_beast_id",
+            "beast_kind",
             *STAT_FIELDS,
+            *COMPANION_FIELDS,
             "items",
             "skills",
             "specials",

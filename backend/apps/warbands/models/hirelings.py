@@ -80,6 +80,7 @@ class HirelingItem(models.Model):
     hireling = models.ForeignKey(Hireling, related_name="hireling_items", on_delete=models.CASCADE)
     item = models.ForeignKey("items.Item", related_name="hireling_items", on_delete=models.RESTRICT)
     cost = models.PositiveIntegerField(null=True, blank=True)
+    companion = models.BooleanField(default=False)  # a mount or pet switched on for it (units/companions.py)
 
     class Meta:
         db_table = "hireling_item"

@@ -138,15 +138,16 @@ class BestiaryVersionBudgetTests(BestiaryBudgetTestCase):
         edited = self.count(edit)
         return edited, self.count(lambda: self.client.post(f"{BESTIARY.detail_url(version['id'])}revert/"))
 
-    def test_a_first_edit_costs_45_queries_and_its_revert_51_however_many_copies_hold_the_item(self):
+    def test_a_first_edit_costs_46_queries_and_its_revert_53_however_many_copies_hold_the_item(self):
         # first edit: pass 5's beast version (the book row locked, its version looked for, the copy and its four link
-        # tables, the favourites moved), then the item's (the book item found and locked, its version looked for, the
-        # copy pointed at the beast's version, its prices, restrictions and properties copied, one UPDATE per table
-        # of copies), the edit with its item, the catalogue version and the answer. Revert: the item's version goes
-        # first (copies moved back or merged, the reverted id recorded, Django's reads before its delete), then the
-        # beast's (favourites, the reverted id, its delete), the catalogue version and the answer
+        # tables, the groups recruited from it and the favourites moved), then the item's (the book item found and
+        # locked, its version looked for, the copy pointed at the beast's version, its prices, restrictions and
+        # properties copied, one UPDATE per table of copies), the edit with its item, the catalogue version and the
+        # answer. Revert: the item's version goes first (copies moved back or merged, the reverted id recorded,
+        # Django's reads before its delete), then the beast's (groups and favourites, the reverted id, Django's read
+        # of its groups before its delete), the catalogue version and the answer
         few, many = self.beasts("Horse", 2)
         self.hold(few.animal_item, 1)
         self.hold(many.animal_item, 4)
 
-        self.assertEqual((self.first_edit_and_revert(few), self.first_edit_and_revert(many)), ((45, 51), (45, 51)))
+        self.assertEqual((self.first_edit_and_revert(few), self.first_edit_and_revert(many)), ((46, 53), (46, 53)))

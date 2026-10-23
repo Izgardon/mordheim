@@ -41,7 +41,7 @@ from apps.special.models import Special
 from apps.special.serializers import SpecialCreateSerializer
 from apps.spells.models import Spell
 from apps.spells.serializers import SpellCreateSerializer
-from apps.warbands.models import WarbandItem
+from apps.warbands.models import HenchmenGroup, WarbandItem
 from apps.warbands.units.kinds import KINDS as UNIT_KINDS
 from apps.warbands.units.kinds import UnitKindKey
 
@@ -200,6 +200,13 @@ STASH = Holder(
     holder_id="warband_id",
     warband="warband_id",
 )
+BEAST_GROUPS = Holder(  # a henchmen group recruited from a creature: joining and back to item need its beast
+    model=HenchmenGroup,
+    field="source_beast",
+    campaign="warband__campaign_id",
+    warband="warband_id",
+    unit_kind="henchmen_group",
+)
 NAME_AND_TYPE: Mapping[str, Filter] = {
     "type": lambda value: Q(type__iexact=value),
     "search": lambda value: Q(name__icontains=value),
@@ -311,13 +318,9 @@ BESTIARY = CatalogueKindSpec(
     filters={"kind": by_kind, "search": NAME_AND_TYPE["search"]},
     reread=True,
     lists=("bestiary", "items"),  # its Animal item is written with it
-    children=(
-        "bestiary_entry_skills",
-        "bestiary_entry_specials",
-        "bestiary_entry_spells",
-        "bestiary_entry_items",
-    ),
-    followers=(  # units copy what they take from an entry: nothing holds one
+    children=("bestiary_entry_skills", "bestiary_entry_specials", "bestiary_entry_spells", "bestiary_entry_items"),
+    holders=(BEAST_GROUPS,),  # units copy their profile from it; only a group recruited from it holds it
+    followers=(
         Move(
             model=WarbandBestiaryFavourite,
             field="bestiary_entry",

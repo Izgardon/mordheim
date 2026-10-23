@@ -64,6 +64,7 @@ class HeroItem(models.Model):
     hero = models.ForeignKey(Hero, related_name="hero_items", on_delete=models.CASCADE)
     item = models.ForeignKey("items.Item", related_name="hero_items", on_delete=models.RESTRICT)
     cost = models.PositiveIntegerField(null=True, blank=True)
+    companion = models.BooleanField(default=False)  # a mount or pet switched on for him (units/companions.py)
 
     class Meta:
         db_table = "hero_item"

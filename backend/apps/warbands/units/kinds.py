@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from typing import Any, Literal
 
 from django.db import models
-from django.db.models import Prefetch, QuerySet
+from django.db.models import F, Prefetch, QuerySet
 
 from apps.warbands.models import (
     HenchmenGroup,
@@ -129,6 +129,7 @@ class UnitKindSpec:
     unknown_name: str  # the dismiss and loadout logs' fallback for a unit without a name
     unknown_type: str  # the dismiss log's fallback for a unit without a type
     hired_from_catalogue: bool = False  # hirelings: `hire/` copies a hired sword or dramatis persona onto the warband
+    row_annotations: Mapping[str, Any] = field(default_factory=dict)  # read with each unit's row for its payloads
     hooks: UnitHooks = field(default_factory=UnitHooks)  # differences that are behaviour (units/hooks.py)
 
     def links(self) -> tuple[LinkSpec, ...]:
@@ -159,7 +160,7 @@ class UnitKindSpec:
             prefetch += item_detail_prefetches(f"{self.items.relation}__item__")
         if self.has_members and living_members:
             prefetch.append(alive_henchmen_prefetch())
-        loaded: QuerySet[Any] = units.annotate(**entries).prefetch_related(*prefetch)
+        loaded: QuerySet[Any] = units.annotate(**entries, **self.row_annotations).prefetch_related(*prefetch)
         return loaded
 
     def roster(self, warband: Warband, *, detail: bool) -> QuerySet[Any]:
@@ -235,6 +236,7 @@ HENCHMEN_GROUP = UnitKindSpec(
     unknown_name="Unknown",
     unknown_type="Unknown",
     hooks=HenchmenHooks(),
+    row_annotations={"beast_kind": F("source_beast__kind")},  # a group recruited from a creature: its kind
 )
 
 HIRELING = UnitKindSpec(

@@ -52,7 +52,15 @@ IDENTITY = {
     "xp": "float",
     "level_up": "int",
 }
-ITEM_SUMMARY = {"id": "int", "name": "str", "type": "str", "cost": "int"}
+ITEM_SUMMARY = {
+    "id": "int",
+    "name": "str",
+    "type": "str",
+    "cost": "int",
+    "row_id": "int",
+    "companion": "bool",
+    "beast_kind": None,
+}
 ITEM_DETAIL = {
     "id": "int",
     "campaign_id": None,
@@ -64,6 +72,9 @@ ITEM_DETAIL = {
     "range": "str",
     "save": "str",
     "statblock": None,
+    "row_id": "int",  # the bestiary rewrite step 4: this copy, its companion switch, the beast's kind
+    "companion": "bool",
+    "beast_kind": None,
     "properties": [{"id": "int", "name": "str"}],
     "availabilities": [
         {
@@ -86,6 +97,11 @@ SKILL_DETAIL = {"id": "int", "name": "str", "type": "str"}
 SPECIAL_DETAIL = {"id": "int", "name": "str", "type": "str", "description": "str"}
 SPELL_DETAIL = {"id": "int", "name": "str", "type": "str", "dc": "str", "description": "str"}
 MEMBER = {"id": "int", "name": "str", "kills": "int", "dead": "bool"}
+COMPANIONS: dict[str, Any] = {
+    "effective_stats": None,
+    "mount": None,
+    "pets": [],
+}  # the bestiary rewrite step 4: on foot
 
 HERO_SUMMARY = {
     **IDENTITY,
@@ -96,6 +112,7 @@ HERO_SUMMARY = {
     "trading_action": "bool",
     "available_skills": {},
     **STATS,
+    **COMPANIONS,
     "items": [ITEM_SUMMARY],
     "skills": [NAMED],
     "specials": [NAMED],
@@ -121,7 +138,10 @@ HENCHMEN_SUMMARY = {
     "half_rate": "bool",
     "no_level_ups": "bool",
     "dead": "bool",
+    "source_beast_id": None,  # recruited from a creature: its beast and kind
+    "beast_kind": None,
     **STATS,
+    **COMPANIONS,
     "items": [ITEM_SUMMARY],
     "skills": [NAMED],
     "specials": [NAMED],
@@ -154,6 +174,7 @@ HIRELING_SUMMARY = {
     "payment_note": "str",
     "dead": "bool",
     **STATS,
+    **COMPANIONS,
     "items": [ITEM_SUMMARY],
     "skills": [NAMED],
     "specials": [NAMED],

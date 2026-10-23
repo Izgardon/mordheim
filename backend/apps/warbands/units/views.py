@@ -14,6 +14,7 @@ from apps.warbands.views.base import WarbandScopedView
 from .errors import validation_error
 from .kinds import HERO, UnitKindSpec
 from .serializers import (
+    CompanionSwitchSerializer,
     HenchmanPromoteSerializer,
     HireSerializer,
     UnitBatchSerializer,
@@ -21,6 +22,7 @@ from .serializers import (
     UnitSerializers,
 )
 from .services.batch import apply_batch, plan_batch
+from .services.companions import loaded_unit_warnings, switch_companion
 from .services.create import create_unit
 from .services.dismiss import dismiss_unit
 from .services.hire import catalogue_entry, hire, hire_payload
@@ -182,3 +184,23 @@ class UnitHireView(UnitView):
         return Response(
             {**self.serializers.detail(unit).data, "warnings": hired.warnings}, status=status.HTTP_201_CREATED
         )
+
+
+# The bestiary rewrite step 4: a mount or pet in the unit's items switched on or off for him (only the unit holding the
+# item). No docstring: DRF serves it on OPTIONS.
+class UnitItemCompanionView(UnitView):
+    def post(self, request: Request, warband_id: int, **kwargs: Any) -> Response:
+        unit = self.kind.visible(self.kind.objects.filter(id=self.unit_id(kwargs), warband=self.warband)).first()
+        if unit is None:
+            return Response(NOT_FOUND, status=404)
+        body = CompanionSwitchSerializer(data=request.data)
+        if not body.is_valid():
+            raise validation_error(body.errors)
+        switch_companion(self.kind, unit, int(kwargs["item_row_id"]), body.validated_data["on"])
+        loaded = self.kind.detail_queryset().get(id=unit.pk)
+        payload = {
+            "unit": self.serializers.detail(loaded).data,
+            "summary": WarbandSummarySerializer(self.warband).data,
+            "warnings": loaded_unit_warnings(self.kind, self.warband, loaded),
+        }
+        return Response(payload)

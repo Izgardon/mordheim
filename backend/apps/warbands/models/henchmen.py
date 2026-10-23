@@ -15,6 +15,11 @@ class HenchmenGroup(RosterUnit):
     )
     max_size = models.PositiveIntegerField(default=5)
     no_level_ups = models.BooleanField(default=False)
+    # the creature the group was recruited from (units/services/beasts.py): joining needs the same beast, and its
+    # Animal item is what a member turns back into; held with RESTRICT, so the beast is archived, not deleted
+    source_beast = models.ForeignKey(
+        "bestiary.BestiaryEntry", related_name="henchmen_groups", on_delete=models.RESTRICT, null=True, blank=True
+    )
 
     items: models.ManyToManyField = models.ManyToManyField(
         "items.Item",
@@ -61,6 +66,7 @@ class HenchmenGroupItem(models.Model):
     henchmen_group = models.ForeignKey(HenchmenGroup, related_name="henchmen_group_items", on_delete=models.CASCADE)
     item = models.ForeignKey("items.Item", related_name="henchmen_group_items", on_delete=models.RESTRICT)
     cost = models.PositiveIntegerField(null=True, blank=True)
+    companion = models.BooleanField(default=False)  # a mount or pet switched on for the group (units/companions.py)
 
     class Meta:
         db_table = "henchmen_group_item"
