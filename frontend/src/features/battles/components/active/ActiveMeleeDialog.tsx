@@ -15,6 +15,7 @@ import {
   HELPER_NATIVE_SELECT_CLASS,
   HELPER_NATIVE_SELECT_STYLE,
 } from "./helper-dialog-styles";
+import { groupOptionsBySection } from "./unit-sections";
 
 export type ActiveMeleeUnitOption = {
   value: string;
@@ -113,14 +114,6 @@ const resolveSavedRoll = (baseArmourSave: number | null, penalty: number) => {
 
 const STATS_TABLE_CLASS =
   "[&_th]:border [&_th]:border-[hsl(var(--primary)/0.2)] [&_th]:px-1 [&_th]:py-1 [&_th]:text-[0.62rem] [&_th]:uppercase [&_th]:tracking-[0.2em] [&_th]:text-muted-foreground [&_td]:border [&_td]:border-[hsl(var(--primary)/0.2)] [&_td]:px-1 [&_td]:py-1 [&_td]:text-[0.82rem] [&_td]:font-semibold [&_td]:text-foreground";
-
-const SECTION_ORDER = ["Heroes", "Henchmen", "Hired Swords", "Temporary Units"] as const;
-
-const groupOptionsBySection = (options: ActiveMeleeUnitOption[]) =>
-  SECTION_ORDER.map((sectionLabel) => ({
-    sectionLabel,
-    options: options.filter((option) => option.sectionLabel === sectionLabel),
-  })).filter((group) => group.options.length > 0);
 
 export default function ActiveMeleeDialog({
   open,

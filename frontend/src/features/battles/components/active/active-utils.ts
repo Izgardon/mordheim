@@ -16,6 +16,8 @@ import {
 } from "@/features/battles/components/prebattle/prebattle-utils";
 import { STAT_FIELDS } from "@/features/battles/components/prebattle/prebattle-types";
 
+import { UNIT_SECTION_ORDER } from "./unit-sections";
+
 export type ActiveSectionUnits = {
   heroes: PrebattleUnit[];
   henchmen: PrebattleUnit[];
@@ -84,7 +86,7 @@ export function buildBattleUnitOptions(
   rosters: Record<number, ParticipantRoster | undefined>
 ) {
   const options: ActiveBattleUnitOption[] = [];
-  const sectionOrder = ["Heroes", "Henchmen", "Hired Swords", "Pets", "Temporary Units"];
+  const sectionOrder = UNIT_SECTION_ORDER;
   for (const participant of participants) {
     const selectedUnits = getParticipantSelectedUnits(participant, rosters[participant.user.id]);
     const units = [
