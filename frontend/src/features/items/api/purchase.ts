@@ -46,8 +46,8 @@ type ApiTargetType = "stash" | "hero" | "hireling" | "henchmen_group";
 
 /**
  * `POST warbands/<id>/purchases/`'s answer: what changed, slim (BUG-07). A unit target's
- * `mount`, `pets` and `effective_stats` describe it after the purchase; a recruit's `group` is
- * the group the copies joined or formed.
+ * `mount`, `pets` and `effective_stats` (and a group's `mounts`) describe it after the purchase;
+ * a recruit's `group` is the group the copies joined or formed.
  */
 export type PurchaseAnswer = UnitCompanionFields & {
   target_type: ApiTargetType;
@@ -128,12 +128,14 @@ export function applyPurchaseAnswer(
     stashItems: answer.stash_item ? [answer.stash_item] : undefined,
   };
   if (answer.target_type !== "stash" && answer.target_id !== null) {
-    const { mount, pets, effective_stats } = answer;
+    const { mount, pets, effective_stats, mounts } = answer;
     const unit = {
       id: answer.target_id,
       items: answer.items ?? [],
       updated_at: answer.updated_at,
       ...(answer.mount !== undefined ? { mount, pets, effective_stats } : {}),
+      // A group's every kind of mount: its list of mount entries reads these, not `mount`.
+      ...(mounts !== undefined ? { mounts } : {}),
     };
     Object.assign(update, { [LIST_KEYS[answer.target_type]]: [unit] });
   }

@@ -132,6 +132,46 @@ describe("applyPurchaseAnswer", () => {
     });
   });
 
+  it("gives a group the answer's mounts, each kind it rides, in place of its last read's", () => {
+    // The page lists a group's mount entries from `mounts`: a Pony bought for a group on a
+    // Warhorse showed none of the Pony's until a re-read.
+    const queryClient = createTestQueryClient();
+    const warhorse = { item_row_id: 1, item_id: 50, name: "Warhorse", skills: [] };
+    const pony = {
+      item_row_id: 4,
+      item_id: 51,
+      name: "Pony",
+      skills: [{ id: 9, name: "Sure Footed" }],
+    };
+    queryClient.setQueryData(queryKeys.campaign.warbandSheet(7, 9), {
+      warband: {},
+      summary: { gold: 100 },
+      heroes: [],
+      henchmen_groups: [
+        { id: 21, name: "Outriders", items: [], mount: warhorse, mounts: [warhorse] },
+      ],
+      hirelings: [],
+    });
+
+    applyPurchaseAnswer(
+      queryClient,
+      9,
+      answer({
+        target_type: "henchmen_group",
+        target_id: 21,
+        items: [],
+        mount: warhorse,
+        mounts: [warhorse, pony],
+        pets: [],
+        effective_stats: null,
+      } as never)
+    );
+
+    expect(queryClient.getQueryData(queryKeys.campaign.warbandSheet(7, 9))).toMatchObject({
+      henchmen_groups: [{ id: 21, mount: warhorse, mounts: [warhorse, pony] }],
+    });
+  });
+
   it("merges the stash entry into the cached stash", () => {
     const queryClient = createTestQueryClient();
     queryClient.setQueryData(queryKeys.campaign.warbandStash(7, 9), [
