@@ -384,4 +384,37 @@ describe("an unsold beast", () => {
     expect(await screen.findByText(message)).toBeInTheDocument();
     expect(within(document.body).queryByRole("dialog")).not.toBeInTheDocument();
   });
+
+  it("buys again at the price shown when it has no current price (no availability)", async () => {
+    // Was: Buy again sent no price, and the server, with none to charge, refused it (400).
+    const user = setupUser();
+    fakeApi.on(PURCHASE, answer({ target_type: "hero", target_id: 11, items: [] }));
+    const wildDog = {
+      ...animal(143, "Wild Dog", "creature", 10),
+      listed: false,
+      availabilities: [],
+      bestiary_entry: beast(9, "Wild Dog", "creature"),
+    };
+    renderDialog({
+      item: wildDog,
+      variant: "buy-again",
+      currentPrice: null,
+      presetUnitType: "heroes",
+      presetUnitId: 11,
+      disableUnitSelection: true,
+    });
+
+    await clickBuy(user);
+
+    await waitFor(() => expect(fakeApi.countOf(PURCHASE)).toBe(1));
+    expect(fakeApi.bodyOf(PURCHASE)).toEqual({
+      item_id: 143,
+      quantity: 1,
+      price: 0,
+      availability_id: null,
+      is_buying: true,
+      target_type: "hero",
+      target_id: 11,
+    });
+  });
 });

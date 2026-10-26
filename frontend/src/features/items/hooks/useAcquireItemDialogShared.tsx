@@ -170,7 +170,10 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
         return;
       }
       // One request; the answer goes into the cache (the unit's items, the stash, gold, the row).
-      const atCurrentPrice = Boolean(params.atCurrentPrice) && !form.priceEdited;
+      // An item with no current price and no availability (an unsold beast) has none for the
+      // server to charge: Buy again sends the price shown instead.
+      const priceKnown = params.currentPrice != null || form.resolvedAvailability !== null;
+      const atCurrentPrice = Boolean(params.atCurrentPrice) && !form.priceEdited && priceKnown;
       await purchase(
         {
           ...choice,
