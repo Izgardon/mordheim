@@ -195,6 +195,15 @@ def warband_mount_warnings(warband_mounts: int) -> list[Warning]:
     return [{"code": "warband_mounts", "message": message, "mounts": warband_mounts}]
 
 
+def mount_kinds(rows: Iterable[Any]) -> list[Any]:
+    """Each kind of mount switched on, the first copy of each item in row order (the first is `mount`): a group's
+    `mounts`, so the page lists every kind's entries for a group on a Warhorse and a Pony."""
+    first: dict[int, Any] = {}
+    for row in companions(rows).mounts:
+        first.setdefault(row.item_id, row)
+    return list(first.values())
+
+
 def companion_fields(unit: Any, rows: Iterable[Any]) -> dict[str, Any]:
     """A unit's `mount`, `pets` and `effective_stats` as its payload shows them, from its loaded item rows."""
     found = companions(rows)

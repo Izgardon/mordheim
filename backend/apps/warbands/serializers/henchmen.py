@@ -7,7 +7,7 @@ from rest_framework import serializers
 
 from apps.warbands.models import Henchman, HenchmenGroup
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
-from apps.warbands.units.companions import companions, mount_payload
+from apps.warbands.units.companions import mount_kinds, mount_payload
 from apps.warbands.units.kinds import HENCHMEN_GROUP
 from apps.warbands.units.serializers import (
     COMPANION_FIELDS,
@@ -90,10 +90,8 @@ class HenchmenMembersMixin(serializers.Serializer):
     def get_mounts(self, group: HenchmenGroup) -> list[dict[str, Any]]:
         """Each kind of mount the members ride, the first switched-on copy of each item in row order (`mount` is the
         first), so the page lists every kind's entries for a group on a Warhorse and a Pony. No query of its own."""
-        first: dict[int, Any] = {}
-        for row in companions(get_prefetched_or_query(group, "henchmen_group_items", "henchmen_group_items")).mounts:
-            first.setdefault(row.item_id, row)
-        return [mount_payload(row) for row in first.values()]
+        rows = get_prefetched_or_query(group, "henchmen_group_items", "henchmen_group_items")
+        return [mount_payload(row) for row in mount_kinds(rows)]
 
     def get_beast_kind(self, group: HenchmenGroup) -> str | None:
         """The source beast's kind, read with the group's row (`UnitKindSpec.row_annotations`)."""

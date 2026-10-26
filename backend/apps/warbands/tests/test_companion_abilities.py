@@ -77,6 +77,22 @@ class CompanionAbilityTests(RosterTestCase):
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(response.data["mount"]["spells"][0]["name"], "Hoof Hex")
 
+    def test_a_purchase_for_a_group_lists_each_kind_of_mount_it_rides_in_mounts(self):
+        # The page lists a group's mount entries from `mounts`; a purchase answer without it left the group's last
+        # read in place (a Pony bought for a group on a Warhorse showed no Pony entries until a re-read).
+        pony, footed = make_animal("Pony", "mount", cost=30, available_in_shop=True), Skill.objects.create(name="Sure Footed", type="Mount")  # fmt: skip
+        teach(pony, skills=(footed,))
+        group = make_unit(HENCHMEN, self.warband, members=("A", "B"))
+        HenchmenGroupItem.objects.create(henchmen_group=group, item=self.horse, companion=True)
+        body = {"item_id": pony.id, "target_type": "henchmen_group", "target_id": group.id, "companion": True}
+
+        response = self.client.post(f"/api/warbands/{self.warband.id}/purchases/", body, format="json")
+
+        self.assertEqual(response.status_code, 201, response.data)
+        mounts = [(mount["name"], [skill["name"] for skill in mount["skills"]]) for mount in response.data["mounts"]]
+        self.assertEqual(mounts, [("Warhorse", ["Thunderous Charge"]), ("Pony", ["Sure Footed"])])
+        self.assertEqual(response.data["mount"]["name"], "Warhorse")
+
     def test_a_group_on_mixed_mounts_lists_each_kind_once_in_mounts(self):
         pony, footed = make_animal("Pony", "mount"), Skill.objects.create(name="Sure Footed", type="Mount")
         teach(pony, skills=(footed,))
