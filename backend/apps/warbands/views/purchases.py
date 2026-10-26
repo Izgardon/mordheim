@@ -72,6 +72,8 @@ class WarbandPurchaseView(WarbandScopedView):
             raise validation_error(body.errors)
         item = scoped_item(self.warband, body.validated_data["item_id"])
         bought = purchase(self.warband, item, body.validated_data)
+        if body.validated_data.get("recruit"):
+            self.announce_change()  # creatures recruited straight away, as beasts/recruit/ announces them
         return Response(purchase_answer(self.warband, item, bought), status=status.HTTP_201_CREATED)
 
 

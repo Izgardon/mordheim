@@ -60,4 +60,5 @@ class WarbandBeastRecruitView(WarbandScopedView):
         if not body.is_valid():
             raise validation_error(body.errors)
         recruited = recruit_beasts(self.warband, body.validated_data)
+        self.announce_change()
         return Response(recruit_answer(self.warband, recruited), status=status.HTTP_201_CREATED)

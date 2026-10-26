@@ -200,6 +200,7 @@ class UnitItemCompanionView(UnitView):
         if not body.is_valid():
             raise validation_error(body.errors)
         switch_companion(self.kind, unit, int(kwargs["item_row_id"]), body.validated_data["on"])
+        self.announce_change()
         loaded = self.kind.detail_queryset().get(id=unit.pk)
         payload = {
             "unit": self.serializers.detail(loaded).data,
@@ -220,4 +221,5 @@ class UnitBackToItemView(UnitView):
         if not body.is_valid():
             raise validation_error(body.errors)
         outcome = back_to_item(self.warband, group, body.validated_data)
+        self.announce_change()
         return Response(back_to_item_answer(self.warband, outcome))

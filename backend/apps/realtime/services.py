@@ -136,6 +136,16 @@ def send_campaign_chat_removed(campaign_id: int, message_id: int, removed_at: st
     return _trigger(get_campaign_chat_channel_name(campaign_id), "chat.removed", payload)
 
 
+def send_warband_changed(campaign_id: int, warband_id: int, socket_id: str | None = None) -> bool:
+    """`warband.changed` {warband_id} on the campaign's events channel, after commit: what the warband's page shows
+    changed (a companion switched on or off, creatures recruited into henchmen, members back to their item), so a
+    member with that page open reads its sheet again. It names the warband rather than carrying the units: a unit's
+    detail can pass Pusher's 10 KB message limit, and the sheet's capabilities are each reader's own. The writer's own
+    socket is skipped: it has the answer."""
+    payload = {"warband_id": warband_id}
+    return _trigger(get_campaign_events_channel_name(campaign_id), "warband.changed", payload, socket_id)
+
+
 def send_catalogue_changed(campaign_id: int, kind: str, socket_id: str | None = None) -> bool:
     """`catalogue.changed` {kind} on the campaign's events channel, after commit: the kind's list changed (an entry
     written, versioned, reverted, archived, removed or restored, a house rule's clones), so every member's page
