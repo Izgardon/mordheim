@@ -1,10 +1,10 @@
 """Campaign roles and permission codes: the one list every reader uses (BUG-15, IMP-64, design 0.29 Q1 and Q4).
 
-The rows are seeded by migrations (0014, from a frozen copy of these lists), so a fresh database has every role and
-code before its first request and nothing creates them on the request path. Adding a code means adding it here and
-in a new data migration (`test_campaign_characterisation_permissions.py` fails until both exist). Owners and admins
-hold every code (`permissions.IMPLICIT_PERMISSION_ROLES`); a player holds what joining grants (`JOIN_GRANTS`) and
-what an owner or admin grants him.
+The rows are seeded by migration `0003_seed_roles_and_permissions` (from a frozen copy of these lists), so a fresh
+database has every role and code before its first request and nothing creates them on the request path. Adding a
+code means adding it here and in a new data migration (`test_campaign_characterisation_permissions.py` fails until
+both exist). Owners and admins hold every code (`permissions.IMPLICIT_PERMISSION_ROLES`); a player holds what joining
+grants (`JOIN_GRANTS`) and what an owner or admin grants him.
 """
 
 from dataclasses import dataclass
@@ -25,7 +25,7 @@ class PermissionCode:
 
 PERMISSIONS: tuple[PermissionCode, ...] = (
     # one code for the whole catalogue (decision 4), and deleting apart from it (decision 5); they replaced
-    # add_custom, manage_items, manage_skills, manage_spells, manage_specials and manage_bestiary (migration 0023)
+    # add_custom, manage_items, manage_skills, manage_spells, manage_specials and manage_bestiary (pass 5)
     PermissionCode(
         "edit_catalogue",
         "Edit catalogue",

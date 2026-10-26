@@ -1,16 +1,14 @@
 """Roles and permission codes: where they come from, the grant PUT and the code catalogue (BUG-15, CAMP-TEST-08).
 
-Migration 0014 seeds every role and code from a frozen copy of `apps/campaigns/constants.py`, so a fresh database
+Migration 0003 seeds every role and code from a frozen copy of `apps/campaigns/constants.py`, so a fresh database
 has them before its first request and no request creates them (design 0.29 Q4). The seed command reads the same
 constants, and every code a view checks is in them.
 """
 
-import importlib
 import io
 import re
 from pathlib import Path
 
-from django.apps import apps as django_apps
 from django.conf import settings
 from django.core.cache import cache
 from django.core.management import call_command
@@ -43,7 +41,7 @@ class FreshDatabaseTests(APITestCase):
         cache.clear()
 
     def test_a_fresh_database_holds_every_role_and_code(self):
-        # BUG-15 / design 0.29 Q4: seeded by migration 0014
+        # BUG-15 / design 0.29 Q4: seeded by migration 0003
         self.assertEqual(sorted(CampaignRole.objects.values_list("slug", flat=True)), ["admin", "owner", "player"])
         labels = dict(CampaignPermission.objects.values_list("code", "name"))
         self.assertEqual(labels, {entry.code: entry.label for entry in PERMISSIONS})
@@ -76,7 +74,7 @@ class FreshDatabaseTests(APITestCase):
 class PermissionCatalogueTests(CampaignTestCase):
     def test_the_constants_list_seven_codes(self):
         # pass 5 decisions 4 and 5: edit_catalogue and delete_catalogue replaced add_custom, manage_items,
-        # manage_skills, manage_spells, manage_specials and manage_bestiary (migration 0023)
+        # manage_skills, manage_spells, manage_specials and manage_bestiary
         self.assertEqual(
             list(PERMISSION_CODES),
             [
@@ -199,24 +197,3 @@ class GrantTests(CampaignTestCase):
         self.put_grants(self.owner, self.player, ["manage_encampments"])
 
         self.assertEqual(self.patch_as(self.player, url, {"name": "Wharf"}).status_code, 200)
-
-
-class CatalogueCodesMigrationTests(CampaignTestCase):
-    """Migration 0023 on a database migrated before pass 5 (it also runs on every test database, from empty)."""
-
-    def test_add_custom_becomes_edit_catalogue_with_its_grants_and_the_per_kind_codes_go(self):
-        old_join = CampaignPermission.objects.get(code=EDIT)
-        old_join.code, old_join.name = "add_custom", "Add custom"  # what the player's join grant was
-        old_join.save()
-        CampaignPermission.objects.filter(code="delete_catalogue").delete()
-        manage_items = CampaignPermission.objects.create(code="manage_items", name="Manage items")
-        self.grant(self.player, "manage_items")
-        migration = importlib.import_module("apps.campaigns.migrations.0023_catalogue_permissions")
-
-        migration.forwards(django_apps, None)
-        migration.forwards(django_apps, None)  # and again: nothing changes
-
-        self.assertEqual(self.codes(self.player), [EDIT])
-        self.assertFalse(CampaignPermission.objects.filter(id=manage_items.id).exists())
-        labels = dict(CampaignPermission.objects.values_list("code", "name"))
-        self.assertEqual(labels, {entry.code: entry.label for entry in PERMISSIONS})

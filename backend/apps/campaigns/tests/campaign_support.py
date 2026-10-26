@@ -4,7 +4,7 @@ The `test_campaign_characterisation_*` modules lock in how the campaign endpoint
 them and PR B splits `campaigns/views.py`. Known bugs are pinned with their BUGS.md ID and the comment
 "Characterises current behaviour (BUG-NN, pinned; flips in PR A)" (or the PR or decision that changes it).
 
-Roles and permission codes are seeded by migration 0014 (BUG-15), so every test database has them.
+Roles and permission codes are seeded by migration 0003 (BUG-15), so every test database has them.
 """
 
 from typing import Any
@@ -38,7 +38,7 @@ class CampaignTestCase(APITestCase):
     `owner` ("Olga") created "Shards"; `admin` ("Ada") joined and was promoted by the owner; `player` ("Pia",
     warband "Monks") and `rival` ("Rex", warband "Rats") joined and hold only `edit_catalogue`, which joining grants.
     `outsider` ("Otto") owns another campaign, `elsewhere`. The owner and the admin have no warband. Every role
-    and permission code exists from the start (migration 0014).
+    and permission code exists from the start (migration 0003).
     """
 
     client: APIClient

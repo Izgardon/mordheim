@@ -1,8 +1,11 @@
-"""Seed the campaign roles and permission codes (BUG-15, design 0.29 Q4).
+"""Seed the campaign roles and permission codes (BUG-15, design 0.29 Q4; pass 5 decisions 4 and 5).
 
-A frozen copy of `apps/campaigns/constants.py` as it stands at this migration, so later edits to the constants never
-change what this migration writes. Upserts: a database whose rows were created lazily by older code keeps them, with
-their names brought up to date. Reversing leaves the rows (memberships protect the roles).
+Why a migration: the request path never creates these rows (it points at them by slug or code inside its own INSERT
+or UPDATE, `apps/campaigns/services/codes.py`), so a fresh database must hold every role and code before its first
+request. A frozen copy of `apps/campaigns/constants.py` as it stands at this migration, so later edits to the
+constants never change what this migration writes: adding a code means adding it to the constants and in a new data
+migration (`test_campaign_characterisation_permissions.py` fails until both exist). Upserts, so it is safe on a
+database whose rows already exist. Reversing leaves the rows (memberships protect the roles).
 """
 
 from django.db import migrations
@@ -10,16 +13,12 @@ from django.db import migrations
 ROLES = (("owner", "Owner"), ("admin", "Admin"), ("player", "Player"))
 
 PERMISSIONS = (
-    ("add_custom", "Add custom"),
-    ("manage_items", "Manage items"),
-    ("manage_skills", "Manage skills"),
-    ("manage_spells", "Manage spells"),
-    ("manage_specials", "Manage specials"),
+    ("edit_catalogue", "Edit catalogue"),
+    ("delete_catalogue", "Delete catalogue"),
     ("manage_rules", "Manage rules"),
     ("manage_warbands", "Manage warbands"),
     ("manage_encampments", "Manage encampments"),
     ("manage_locations", "Manage locations"),
-    ("manage_bestiary", "Manage bestiary"),
     ("manage_battles", "Manage battles"),
 )
 
@@ -35,7 +34,7 @@ def seed(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("campaigns", "0013_sanitize_location_content"),
+        ("campaigns", "0002_initial"),
     ]
 
     operations = [

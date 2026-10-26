@@ -1,9 +1,8 @@
 """manage.py check_gold [--fix]: compare every warband's stored gold with the sum of its ledger (decision 4).
 
-Run it after deploying the ledger migrations, and whenever the header gold looks wrong. It exits with an error
-when any warband differs, or when rows carry an action name outside the vocabulary (written by the previous
-release while this one deployed). `--fix` renames and signs those rows as the migrations did, then sets each
-differing warband's gold to its ledger sum.
+Run it whenever the header gold looks wrong. It exits with an error when any warband differs, or when rows carry
+an action name outside the vocabulary (written by an older release). `--fix` renames and signs those rows as the
+ledger's data migrations did, then sets each differing warband's gold to its ledger sum.
 """
 
 from typing import Any

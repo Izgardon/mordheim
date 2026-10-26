@@ -1,6 +1,6 @@
 """Roles and permission codes on the request path: read, never created (BUG-15, CAMP-CQ-03).
 
-Migration 0014 seeds the rows, so writes point at them by slug or code inside their own INSERT or UPDATE
+Migration 0003 seeds the rows, so writes point at them by slug or code inside their own INSERT or UPDATE
 (`role_ref`, `permission_ref`): no read first, no per-process cache to go stale. `seed_roles_and_codes` upserts
 them from the constants, for the seed command and for tests that start from an emptied database.
 """

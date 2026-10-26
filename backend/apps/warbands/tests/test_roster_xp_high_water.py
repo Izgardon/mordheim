@@ -6,10 +6,7 @@ explicit `level_up` in a PATCH (the pending level-ups editor) still sets the cou
 """
 
 from decimal import Decimal
-from importlib import import_module
 from typing import Any
-
-from django.apps import apps as django_apps
 
 from .roster_support import (
     HENCHMEN,
@@ -22,13 +19,6 @@ from .roster_support import (
     make_unit,
     unit_url,
 )
-
-
-class _AppsAsOf0025:
-    """The live models under the names migration 0025 knew them by: the hired sword is the hireling since 0036."""
-
-    def get_model(self, app_label: str, model_name: str) -> Any:
-        return django_apps.get_model(app_label, {"HiredSword": "Hireling"}.get(model_name, model_name))
 
 
 class XpHighWaterTests(RosterTestCase):
@@ -99,15 +89,3 @@ class XpHighWaterTests(RosterTestCase):
         sword.refresh_from_db()
         self.assertEqual([(hero.xp, hero.level_up), (sword.xp, sword.level_up)], [(9, 4), (Decimal("9.5"), 3)])
         self.assertEqual([hero.xp_high_water, sword.xp_high_water], [9, Decimal("9.5")])
-
-    def test_the_migration_backfills_the_mark_with_current_xp(self):
-        migration = import_module("apps.warbands.migrations.0025_unit_xp_high_water")
-        units = [make_unit(kind, self.warband, xp=Decimal("7.5"), dead=kind is HERO) for kind in KINDS]
-        for unit in units:
-            type(unit).objects.filter(id=unit.id).update(xp_high_water=0)
-
-        migration.backfill_high_water(_AppsAsOf0025(), None)
-
-        for unit in units:
-            unit.refresh_from_db()
-            self.assertEqual(unit.xp_high_water, Decimal("7.5"))

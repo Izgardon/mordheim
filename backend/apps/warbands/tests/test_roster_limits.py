@@ -6,13 +6,10 @@ transaction with the warband locked, and answer 400 with a stable `code`. Warban
 group's `max_size` only warn: the summary reports what the client needs to say so.
 """
 
-from importlib import import_module
-
-from django.apps import apps as django_apps
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
-from apps.warbands.models import Henchman, Warband
+from apps.warbands.models import Henchman
 
 from .roster_support import (
     HENCHMEN,
@@ -137,15 +134,3 @@ class WarbandSizeTests(RosterTestCase):
             format="json",
         )
         self.assertEqual((response.status_code, response.json()["max_units"]), (201, 15))
-
-    def test_the_migration_sets_unset_limits_to_fifteen(self):
-        migration = import_module("apps.warbands.migrations.0026_warband_max_units_15")
-        Warband.objects.filter(id=self.warband.id).update(max_units=0)
-        Warband.objects.filter(id=self.rival.id).update(max_units=9)
-
-        migration.set_unset_limits(django_apps, None)
-
-        self.assertEqual(
-            dict(Warband.objects.filter(id__in=(self.warband.id, self.rival.id)).values_list("id", "max_units")),
-            {self.warband.id: 15, self.rival.id: 9},
-        )
