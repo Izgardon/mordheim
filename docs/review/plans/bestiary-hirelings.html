@@ -756,7 +756,7 @@ table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nu
           <tr><td>The browser's hire preset copy</td><td>POST hirelings/hire/</td><td>copy on the server</td></tr>
           <tr><td>Catalogue special cases for hired swords</td><td>two ordinary catalogue kinds</td><td><code>entry_via</code>, <code>table_key</code> and the name, payload and row branches go</td></tr>
           <tr><td>"Load from Bestiary" lists all 86</td><td>lists creatures</td><td>and works in active battles too</td></tr>
-          <tr><td>140 migrations</td><td>a fresh 0001 per app</td><td>recreates the roles and codes seed, the catalogue version row and the kill-history index; local and production databases are wiped and the catalogue reseeds itself on boot. Done now, while there are no real users; never again after</td></tr>
+          <tr><td>150 migrations</td><td>a fresh 0001 per app (21 files)</td><td>recreates the roles and codes seed, the catalogue version row and the kill-history index; local and production databases are wiped and the catalogue reseeds itself on boot. Done now, while there are no real users; never again after</td></tr>
           <tr><td>seed_bestiary (one command)</td><td>seed_bestiary, seed_hired_swords, seed_dramatis_personae</td><td>the "catalogue is ready" check moves to the last seeder</td></tr>
         </tbody>
       </table>
