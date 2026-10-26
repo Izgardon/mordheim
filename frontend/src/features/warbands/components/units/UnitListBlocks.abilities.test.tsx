@@ -65,6 +65,23 @@ describe("a unit's lists: its companions' entries", () => {
     ).toBeInTheDocument();
   });
 
+  it("lets a companion's mark wrap under its name in a narrow column, and not the unit's own", () => {
+    // At ~1100 px the card's four loadout columns are ~130 px wide: the mark and a spell's DC
+    // squeezed the name to a letter per line ("Lu / ck / of / Sh..."). Its row now wraps instead.
+    renderWithQueryClient(
+      <UnitListBlocks kind={heroKind} unit={riding} warbandId={9} variant="detailed" canEdit />,
+      {}
+    );
+
+    const charge = screen.getByRole("button", { name: "Thunderous Charge (from Warhorse, mount)" });
+    expect(charge.closest(".unit-list-entry")).toHaveClass("flex-wrap");
+    expect(charge).toHaveClass("flex-auto");
+    expect(charge).not.toHaveClass("flex-1");
+    const own = screen.getByRole("button", { name: "New Skill" });
+    expect(own.closest(".unit-list-entry")).not.toHaveClass("flex-wrap");
+    expect(own).toHaveClass("flex-1");
+  });
+
   it("opens a companion's skill like any other, and never as a pending pick", async () => {
     const user = setupUser();
     const onPendingSkillClick = vi.fn();
@@ -90,6 +107,30 @@ describe("a unit's lists: its companions' entries", () => {
 });
 
 describe("a ridden mount's item row", () => {
+  it("lets its switch and menu wrap under its name in a narrow column", () => {
+    // "Warh / orse": the switch and the menu left a ~40 px name in a ~96 px column.
+    const horse = {
+      ...makeItem({ id: 140, name: "Warhorse", type: "Animal" }),
+      beast_kind: "mount" as const,
+    };
+    const rope = makeItem({ id: 150, name: "Rope" });
+    const mounted = makeVeteranHero({
+      ...riding,
+      items: [{ ...horse, row_id: 2, companion: true }, rope],
+    });
+    renderWithQueryClient(
+      <UnitListBlocks kind={heroKind} unit={mounted} warbandId={9} variant="detailed" canEdit />,
+      {}
+    );
+
+    const ridden = screen.getByRole("button", { name: "Warhorse (ridden)" });
+    expect(ridden.closest(".unit-list-entry")).toHaveClass("flex-wrap");
+    expect(ridden).toHaveClass("flex-auto");
+    expect(
+      screen.getByRole("button", { name: "Rope" }).closest(".unit-list-entry")
+    ).not.toHaveClass("flex-wrap");
+  });
+
   it("opens the beast's profile and entries; a spare copy opens the item's card", async () => {
     const user = setupUser();
     const horse = {

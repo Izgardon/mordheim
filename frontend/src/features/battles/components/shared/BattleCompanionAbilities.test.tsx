@@ -91,6 +91,22 @@ describe("battle: a companion's entries", () => {
     ).toBeInTheDocument();
   });
 
+  it("lets a companion's mark wrap under its name in a narrow column, and not the unit's own", async () => {
+    // The mark and a spell's DC squeezed the name to a letter per line in a narrow column; a
+    // companion's row now wraps them under the name instead.
+    const user = userEvent.setup();
+    render(<ActiveUnitCard unit={rider} {...cardProps} />);
+
+    await user.click(screen.getByRole("button", { name: "Details for Aldric the Bold" }));
+
+    const hex = screen.getByRole("button", { name: "Hoof Hex (from Warhorse, mount)" });
+    expect(hex.closest(".unit-list-entry")).toHaveClass("flex-wrap");
+    expect(hex).toHaveClass("flex-auto");
+    const own = screen.getByRole("button", { name: "Mighty Blow" });
+    expect(own.closest(".unit-list-entry")).not.toHaveClass("flex-wrap");
+    expect(own).toHaveClass("flex-1");
+  });
+
   it("shows the mount's profile and entries from its mark, and a pet's from its chip", async () => {
     const user = userEvent.setup();
     render(<ActiveUnitCard unit={rider} {...cardProps} />);

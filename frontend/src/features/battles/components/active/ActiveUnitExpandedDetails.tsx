@@ -18,6 +18,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import {
   CompanionEntryFrom,
   CompanionEntryMark,
+  entryFlex,
 } from "@/features/warbands/components/units/beasts/CompanionEntryMark";
 
 import { ActiveNotesBox, ActiveSingleUseControls } from "./ActiveEntryParts";
@@ -38,7 +39,7 @@ type ActiveUnitExpandedDetailsProps = {
 };
 
 const ENTRY_BUTTON_CLASS =
-  "unit-list-entry-button min-w-0 flex-1 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit transition-colors duration-150";
+  "unit-list-entry-button min-w-0 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit transition-colors duration-150";
 
 export default function ActiveUnitExpandedDetails({
   unit,
@@ -139,12 +140,15 @@ export default function ActiveUnitExpandedDetails({
 
     const isSingleUse = entry.type === "item" && Boolean(entry.item?.singleUse);
     const actionKey = `${unit.key}:${entry.visibleId}`;
+    const flex = entryFlex(entry.companion);
 
     return (
-      <div className="unit-list-entry flex items-start gap-1 rounded px-1.5 py-0.5 transition-colors duration-150">
+      <div
+        className={`unit-list-entry flex items-start gap-1 rounded px-1.5 py-0.5 transition-colors duration-150 ${flex.row}`}
+      >
         <button
           type="button"
-          className={ENTRY_BUTTON_CLASS}
+          className={`${ENTRY_BUTTON_CLASS} ${flex.button}`}
           onClick={(event) => handleEntryClick(entry, event)}
         >
           {entry.label}

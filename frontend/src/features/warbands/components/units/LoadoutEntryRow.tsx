@@ -1,7 +1,7 @@
 import type { MouseEvent } from "react";
 
 import BeastItemButton from "./beasts/BeastItemButton";
-import { CompanionEntryFrom, CompanionEntryMark } from "./beasts/CompanionEntryMark";
+import { CompanionEntryFrom, CompanionEntryMark, entryFlex } from "./beasts/CompanionEntryMark";
 
 import type { LoadoutEntry } from "./loadout-blocks";
 
@@ -20,7 +20,7 @@ type LoadoutEntryRowProps = {
 
 const ENTRY_CLASS = "unit-list-entry flex items-start gap-1 rounded px-1.5 py-0.5";
 const BUTTON_CLASS =
-  "unit-list-entry-button min-w-0 flex-1 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit transition-colors duration-150";
+  "unit-list-entry-button min-w-0 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit transition-colors duration-150";
 
 /** One loadout entry: a roster member, or an item/skill/spell/special with its menu and DC. */
 export default function LoadoutEntryRow({
@@ -63,10 +63,12 @@ export default function LoadoutEntryRow({
     : BUTTON_CLASS;
 
   const { companion } = entry;
+  // A companion's entry (its mark) and a mount's or pet's item row (its switch) can be too wide.
+  const flex = entryFlex(companion ?? entry.beast);
 
   return (
-    <div className={entryClassName}>
-      <button type="button" className={buttonClassName} onClick={onClick}>
+    <div className={`${entryClassName} ${flex.row}`}>
+      <button type="button" className={`${buttonClassName} ${flex.button}`} onClick={onClick}>
         {entry.label}
         {state ? <span className="sr-only"> ({state})</span> : null}
         {companion ? <CompanionEntryFrom {...companion} /> : null}
