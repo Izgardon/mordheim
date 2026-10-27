@@ -40,18 +40,22 @@ export type AcquireBeastView =
 
 /**
  * The companion box's words: a group's name takes a plural verb ("Outriders ride them straight
- * away", "Outriders keep it as a pet"), and several copies are "them" (or "pets").
+ * away", "Outriders keep it as a pet"), and several copies are "them" (or "pets"). Before a unit
+ * is picked (`unitLabel` empty) it is one unit: "The unit rides it…", "Keep as the unit's pet".
  */
 export function companionLabel(
   kind: "mount" | "pet",
-  who: string,
+  unitLabel: string,
   { group, quantity }: { group: boolean; quantity: number }
 ) {
   const several = quantity > 1;
   const it = several ? "them" : "it";
-  if (kind === "mount") return `${who} ${group ? "ride" : "rides"} ${it} straight away`;
-  if (group) return `${who} keep ${it} as ${several ? "pets" : "a pet"}`;
-  return `Keep as ${who}'s ${several ? "pets" : "pet"}`;
+  const plural = group && unitLabel !== "";
+  if (kind === "mount") {
+    return `${unitLabel || "The unit"} ${plural ? "ride" : "rides"} ${it} straight away`;
+  }
+  if (plural) return `${unitLabel} keep ${it} as ${several ? "pets" : "a pet"}`;
+  return `Keep as ${unitLabel || "the unit"}'s ${several ? "pets" : "pet"}`;
 }
 
 /**
@@ -76,12 +80,11 @@ export function useAcquireBeastChoice({
   const offersRecruit = unitType === "stash" && beast?.kind === "creature" && !deferCommit;
   const sameBeast = offersRecruit ? groupsOfBeast(groups, beast?.id) : [];
   const choice = picked ?? defaultRecruitChoice(sameBeast);
-  const who = unitLabel || "The unit";
 
   const view: AcquireBeastView | null = offersCompanion
     ? {
         kind: "companion",
-        label: companionLabel(beast?.kind === "mount" ? "mount" : "pet", who, {
+        label: companionLabel(beast?.kind === "mount" ? "mount" : "pet", unitLabel, {
           group: unitType === "henchmen",
           quantity,
         }),

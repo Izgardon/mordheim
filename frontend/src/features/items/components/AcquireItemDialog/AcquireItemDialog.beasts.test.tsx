@@ -252,6 +252,19 @@ describe("buying a mount or a pet for a unit", () => {
     ).toBeChecked();
   });
 
+  it("words the box for one unit while no unit is picked yet", async () => {
+    // Was "The unit ride it straight away" before a group was chosen.
+    const group = renderDialog({ item: warhorse, presetUnitType: "henchmen" });
+    expect(
+      await screen.findByRole("checkbox", { name: "The unit rides it straight away" })
+    ).toBeChecked();
+    group.unmount();
+
+    // Was "Keep as The unit's pet" before a hero was chosen.
+    renderDialog({ item: raven, presetUnitType: "heroes" });
+    expect(await screen.findByRole("checkbox", { name: "Keep as the unit's pet" })).toBeChecked();
+  });
+
   it("words a group's pets, and a hero's when he buys several", async () => {
     const user = setupUser();
     const group = renderDialog({ item: raven, presetUnitType: "henchmen", presetUnitId: 21 });
