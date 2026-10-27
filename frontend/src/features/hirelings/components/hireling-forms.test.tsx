@@ -405,7 +405,9 @@ describe("refusals", () => {
 
     await expectFieldError(field("Name"), taken.detail, { describedBy: true });
     expect(within(dialog()).getByText("Ogre Bodyguard · book")).toBeVisible();
-    await user.click(within(dialog()).getByRole("button", { name: "Edit Ogre Bodyguard instead" }));
+    await user.click(
+      within(dialog()).getByRole("button", { name: "Edit the book Ogre Bodyguard instead" })
+    );
 
     expect(await screen.findByRole("dialog", { name: "Edit hired sword" })).toBeVisible();
     await waitFor(() => expect(field("Name")).toHaveValue("Ogre Bodyguard"));

@@ -174,7 +174,7 @@ describe("Wargear: an Animal item is edited in the bestiary", () => {
     await user.type(screen.getByPlaceholderText("2"), "2");
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    await user.click(await screen.findByRole("button", { name: "Edit Warhound instead" }));
+    await user.click(await screen.findByRole("button", { name: "Edit the book Warhound instead" }));
 
     expect(await screen.findByRole("dialog", { name: "Edit bestiary entry" })).toBeVisible();
     expect(currentPath()).toHaveTextContent("/campaigns/1/bestiary?entry=5");

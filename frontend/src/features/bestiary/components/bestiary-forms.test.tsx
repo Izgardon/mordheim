@@ -369,11 +369,41 @@ describe("refusals", () => {
 
     await expectFieldError(field("Name"), taken.detail, { describedBy: true });
     expect(within(dialog()).getByText("Warhorse · book")).toBeVisible();
-    await user.click(within(dialog()).getByRole("button", { name: "Edit Warhorse instead" }));
+    await user.click(
+      within(dialog()).getByRole("button", { name: "Edit the book Warhorse instead" })
+    );
 
     expect(await screen.findByRole("dialog", { name: "Edit bestiary entry" })).toBeVisible();
     await waitFor(() => expect(field("Name")).toHaveValue("Warhorse"));
     expect(field("M")).toHaveValue(8);
+  });
+
+  it("names this campaign's match and the book's apart for screen readers", async () => {
+    // Was: both were "Edit Warhorse instead".
+    const user = setupUser();
+    const taken = nameTaken("Warhorse", [
+      nameMatch({ kind: "bestiary", id: 32, name: "Warhorse", source: "campaign" }),
+      nameMatch({ kind: "bestiary", id: 6, name: "Warhorse", source: "book" }),
+    ]);
+    fakeApi.fail("POST /bestiary/", taken.error);
+    renderCatalogueRoute("/campaigns/1/bestiary");
+    await screen.findByText("Sewer Rat");
+    await user.click(screen.getByRole("button", { name: "Add entry" }));
+    await screen.findByRole("dialog", { name: "Add bestiary entry" });
+
+    await type(user, "Name", "warhorse");
+    await user.click(within(dialog()).getByRole("button", { name: "Create" }));
+
+    await expectFieldError(field("Name"), taken.detail, { describedBy: true });
+    const [campaign, book] = within(dialog()).getAllByRole("listitem");
+    expect(campaign).toHaveTextContent("Warhorse · this campaign");
+    expect(
+      within(campaign).getByRole("button", { name: "Edit this campaign's Warhorse instead" })
+    ).toBeVisible();
+    expect(book).toHaveTextContent("Warhorse · book");
+    expect(
+      within(book).getByRole("button", { name: "Edit the book Warhorse instead" })
+    ).toBeVisible();
   });
 
   it("shows a refused armour save under the stats and a refused kit under the equipment, keeping the form open", async () => {
