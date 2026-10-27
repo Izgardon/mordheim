@@ -170,6 +170,30 @@ describe("BattlePostbattle requests", () => {
     await waitFor(() => expect(lastMounts()).toEqual({ "hero:3": { roll: 5, dead: false } }));
   });
 
+  it("names each mount's Roll button with its rider for screen readers", async () => {
+    // Was: every row's button was named "Roll".
+    const user = setupUser();
+    server.suggested_postbattle = {
+      ...server.suggested_postbattle!,
+      mount_survival: {
+        entries: {
+          "hero:3": { unit_name: "Rolf", mount: "Warhorse", dies_on: 2 },
+          "hero:4": { unit_name: "Aldric", mount: "War Boar", dies_on: 2 },
+        },
+      },
+    };
+    await renderPostbattle();
+
+    const rolf = screen.getByRole("group", { name: "Rolf's Warhorse" });
+    expect(within(rolf).getByRole("button", { name: "Roll for Rolf's Warhorse" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Roll for Aldric's War Boar" })).toBeVisible();
+    expect(within(rolf).queryByRole("button", { name: "Roll" })).not.toBeInTheDocument();
+    await user.click(within(rolf).getByRole("button", { name: "Roll for Rolf's Warhorse" }));
+    await waitFor(() =>
+      expect(draftBodies().slice(-1)[0]?.mount_survival?.["hero:3"]?.roll).toBeGreaterThan(0)
+    );
+  });
+
   it("shows who is still in postbattle and who has finished or was skipped (BATL-NEW-08)", async () => {
     server.participants[1].status = "confirmed_postbattle";
     server.participants[1].skipped_postbattle = true;

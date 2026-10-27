@@ -69,6 +69,8 @@ export default function MountSurvivalRows({ tools }: { tools: PostbattleRowTools
                 variant="secondary"
                 size="sm"
                 className="h-11"
+                // One per rider: named with him, as the D6 and Dies are.
+                aria-label={`Roll for ${name}`}
                 disabled={disabled}
                 onClick={() => roll(FACES[Math.floor(Math.random() * FACES.length)])}
               >
