@@ -3,7 +3,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { writeCampaignAnswer } from "@/features/campaigns/hooks/useCampaignQuery";
 import { invalidateHeldCopies } from "@/lib/catalogue-queries";
 import { queryKeys, type CatalogueKind } from "@/lib/query-keys";
-import { useCampaignCatalogueChanges, useCampaignUpdates } from "@/lib/realtime";
+import {
+  useCampaignCatalogueChanges,
+  useCampaignUpdates,
+  useCampaignWarbandChanges,
+} from "@/lib/realtime";
 
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
@@ -32,7 +36,9 @@ export const catalogueKindOf = (serverKind: string): CatalogueKind | null =>
  * single entries (a hired sword's detail): what is on screen reads again at once, the rest on its
  * next visit. For a kind units carry, the
  * campaign's warband sheets (and stashes, for items) are marked stale too, since another member's
- * edit or Revert may have moved or changed their copies.
+ * edit or Revert may have moved or changed their copies. `warband.changed {warband_id}` (another
+ * member switched a companion, recruited creatures or sent some back to their item) marks that
+ * warband's entries stale: its sheet on screen reads again, its stash, logs and the rest on view.
  */
 export function useCampaignEvents(campaignId: number | null) {
   const queryClient = useQueryClient();
@@ -52,6 +58,13 @@ export function useCampaignEvents(campaignId: number | null) {
         queryKey: queryKeys.campaign.catalogueEntries(campaignId, catalogueKind),
       });
       void invalidateHeldCopies(queryClient, catalogueKind, campaignId);
+    }
+  });
+  useCampaignWarbandChanges(campaignId, ({ warband_id }) => {
+    if (campaignId) {
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.campaign.warband(campaignId, warband_id),
+      });
     }
   });
 }

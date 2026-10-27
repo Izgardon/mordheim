@@ -1,4 +1,5 @@
 import { apiRequest } from "@/lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 import { UNIT_URL_SEGMENTS } from "../units/unit-api";
 
 import type { ServerWarning } from "../types/companion-types";
@@ -13,7 +14,8 @@ import type {
 /*
  * Beasts in the warband (the bestiary rewrite, step 4): the switch that turns a mount or a pet in a
  * unit's items on for that unit, recruiting a creature's copies into henchmen, and members of a
- * creature group going back to the item. No gold moves: the beast was paid for as an item.
+ * creature group going back to the item. No gold moves: the beast was paid for as an item. Each
+ * names this browser's socket, so the `warband.changed` it sends the other members skips it.
  */
 
 /** The switch's answer: the unit's detail, the summary (rating changes) and its warnings. */
@@ -33,7 +35,7 @@ export const switchCompanion = <K extends UnitKindKey>(
 ) =>
   apiRequest<CompanionSwitchAnswer<K>>(
     `/warbands/${warbandId}/${UNIT_URL_SEGMENTS[kind]}/${unitId}/items/${rowId}/companion/`,
-    { method: "POST", body: { on } }
+    { method: "POST", headers: socketIdHeaders(), body: { on } }
   );
 
 /** Where recruited copies come from: the stash, or a unit of the roster holding them. */
@@ -59,6 +61,7 @@ export type RecruitAnswer = {
 export const recruitBeasts = (warbandId: number, body: RecruitBody) =>
   apiRequest<RecruitAnswer>(`/warbands/${warbandId}/beasts/recruit/`, {
     method: "POST",
+    headers: socketIdHeaders(),
     body,
   });
 
@@ -74,5 +77,6 @@ export type BackToItemAnswer = {
 export const sendBackToItem = (warbandId: number, groupId: number, body: BackToItemBody) =>
   apiRequest<BackToItemAnswer>(`/warbands/${warbandId}/henchmen-groups/${groupId}/back-to-item/`, {
     method: "POST",
+    headers: socketIdHeaders(),
     body,
   });

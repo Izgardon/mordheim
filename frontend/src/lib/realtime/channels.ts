@@ -45,6 +45,12 @@ export type CampaignEventMessage = Record<string, unknown>;
  */
 export type CatalogueChange = { kind: string };
 
+/**
+ * `warband.changed` on the same channel: another member changed what a warband's page shows (a
+ * companion switched, creatures recruited or sent back to their item).
+ */
+export type WarbandChange = { warband_id: number };
+
 const hasType = (data: unknown): data is { type: string } =>
   Boolean(data && typeof data === "object" && (data as { type?: unknown }).type);
 
@@ -120,6 +126,24 @@ export function useCampaignCatalogueChanges(
       const kind = data && typeof data === "object" ? (data as { kind?: unknown }).kind : null;
       if (typeof kind === "string" && kind) {
         handler({ kind });
+      }
+    }
+  );
+}
+
+/** `warband.changed` on the campaign's events channel. */
+export function useCampaignWarbandChanges(
+  campaignId: number | null,
+  handler: (change: WarbandChange) => void
+) {
+  useChannel<unknown>(
+    campaignId ? `private-campaign-${campaignId}-events` : null,
+    "warband.changed",
+    (data) => {
+      const id =
+        data && typeof data === "object" ? (data as { warband_id?: unknown }).warband_id : null;
+      if (typeof id === "number" && id > 0) {
+        handler({ warband_id: id });
       }
     }
   );

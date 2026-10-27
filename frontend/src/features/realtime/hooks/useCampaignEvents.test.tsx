@@ -1,6 +1,7 @@
 /**
  * Live campaign changes (CAMP-NEW-07) as the app receives them (RealtimeProvider above the layout,
- * fake socket and server): `campaign.updated` on the campaign's events channel.
+ * fake socket and server): `campaign.updated` on the campaign's events channel, and
+ * `warband.changed` {warband_id} (another member's change to a warband's beasts).
  */
 import { act, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -92,5 +93,40 @@ describe("campaign.updated (CAMP-NEW-07)", () => {
     view.unmount();
 
     expect(fakeRealtime.subscriberCount(EVENTS)).toBe(0);
+  });
+});
+
+describe("warband.changed (the bestiary rewrite's browser check)", () => {
+  it("reads a warband's sheet again and marks its other entries stale, no other warband's", async () => {
+    const { queryClient } = await openSkills();
+    await waitFor(() => expect(fakeRealtime.subscriberCount(EVENTS, "warband.changed")).toBe(1));
+    const stash = ["campaign", 1, "warband", 102, "stash"];
+    const rival = ["campaign", 1, "warband", 101, "sheet"];
+    const elsewhere = ["campaign", 2, "warband", 102, "sheet"];
+    [stash, rival, elsewhere].forEach((key) => queryClient.setQueryData(key, {}));
+    fakeApi.clearRequests();
+
+    // Another member switched a companion, recruited creatures or sent some back to their item.
+    act(() => fakeRealtime.emit(EVENTS, "warband.changed", { warband_id: 102 }));
+
+    // The shell's sheet (Mira's warband) is on screen: it alone is read again.
+    await waitFor(() => expect(fakeApi.calls()).toEqual(["GET /warbands/102/sheet/"]));
+    expect(queryClient.getQueryState(stash)?.isInvalidated).toBe(true);
+    expect(queryClient.getQueryState(rival)?.isInvalidated).toBe(false);
+    expect(queryClient.getQueryState(elsewhere)?.isInvalidated).toBe(false);
+  });
+
+  it("ignores a warband.changed that names no warband", async () => {
+    const { queryClient } = await openSkills();
+    await waitFor(() => expect(fakeRealtime.subscriberCount(EVENTS, "warband.changed")).toBe(1));
+    fakeApi.clearRequests();
+
+    act(() => fakeRealtime.emit(EVENTS, "warband.changed", { warband_id: "102" }));
+    await act(() => new Promise((resolve) => setTimeout(resolve, 50)));
+
+    expect(fakeApi.calls()).toEqual([]);
+    expect(queryClient.getQueryState(["campaign", 1, "warband", 102, "sheet"])?.isInvalidated).toBe(
+      false
+    );
   });
 });

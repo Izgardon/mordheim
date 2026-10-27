@@ -2,6 +2,7 @@ import type { QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { apiRequest } from "@/lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 import {
   applyWarbandUpdate,
   markLedgerStale,
@@ -167,6 +168,8 @@ export async function purchase(request: PurchaseRequest, queryClient: QueryClien
   const { warbandId, target, recruit } = request;
   const answer = await apiRequest<PurchaseAnswer>(`/warbands/${warbandId}/purchases/`, {
     method: "POST",
+    // A purchase that recruits tells the other members (`warband.changed`), not this browser.
+    headers: socketIdHeaders(),
     body: {
       ...purchaseLine(request),
       target_type: API_TARGETS[target.kind],

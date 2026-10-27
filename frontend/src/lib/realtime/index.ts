@@ -6,6 +6,7 @@ export {
   useCampaignCatalogueChanges,
   useCampaignChatRemovals,
   useCampaignUpdates,
+  useCampaignWarbandChanges,
   useTradeEvents,
   useUserNotifications,
 } from "./channels";
@@ -17,4 +18,5 @@ export type {
   ChatRemoval,
   NotificationMessage,
   TradeEventMessage,
+  WarbandChange,
 } from "./channels";
