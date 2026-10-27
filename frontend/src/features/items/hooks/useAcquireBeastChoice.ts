@@ -17,6 +17,8 @@ type UseAcquireBeastChoiceOptions = {
   unitType: UnitTypeOption | "";
   /** The receiving unit's name, as the picker shows it. */
   unitLabel: string;
+  /** How many copies are bought (the box's wording follows it). */
+  quantity: number;
   /** The warband's henchmen groups (a creature joins one of the same beast). */
   groups: HenchmenGroup[];
   /** Queued for a roster Save: a Save's lines can't recruit. */
@@ -37,6 +39,22 @@ export type AcquireBeastView =
     };
 
 /**
+ * The companion box's words: a group's name takes a plural verb ("Outriders ride them straight
+ * away", "Outriders keep it as a pet"), and several copies are "them" (or "pets").
+ */
+export function companionLabel(
+  kind: "mount" | "pet",
+  who: string,
+  { group, quantity }: { group: boolean; quantity: number }
+) {
+  const several = quantity > 1;
+  const it = several ? "them" : "it";
+  if (kind === "mount") return `${who} ${group ? "ride" : "rides"} ${it} straight away`;
+  if (group) return `${who} keep ${it} as ${several ? "pets" : "a pet"}`;
+  return `Keep as ${who}'s ${several ? "pets" : "pet"}`;
+}
+
+/**
  * Buying a beast (the plan's Acquire mock): a mount or pet bought for a unit is switched on for it
  * straight away unless unticked; a creature bought for the stash is recruited straight away into
  * a group of the same beast (offered first) or a new group, or kept as items.
@@ -45,6 +63,7 @@ export function useAcquireBeastChoice({
   item,
   unitType,
   unitLabel,
+  quantity,
   groups,
   deferCommit,
 }: UseAcquireBeastChoiceOptions) {
@@ -62,7 +81,10 @@ export function useAcquireBeastChoice({
   const view: AcquireBeastView | null = offersCompanion
     ? {
         kind: "companion",
-        label: beast?.kind === "mount" ? `${who} rides it straight away` : `Keep as ${who}'s pet`,
+        label: companionLabel(beast?.kind === "mount" ? "mount" : "pet", who, {
+          group: unitType === "henchmen",
+          quantity,
+        }),
         checked: companion,
         onChange: setCompanion,
       }

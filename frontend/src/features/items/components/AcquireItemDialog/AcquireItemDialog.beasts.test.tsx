@@ -18,6 +18,7 @@ import { AppToaster } from "@/components/ui/toaster";
 import { TestDiceProvider } from "@/test/dice";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
+import { chooseOption, selectNear } from "@/test/select-option";
 import { setupUser } from "@/test/user-event";
 import { makeItem, makeVeteranHenchmenGroup, makeVeteranHero } from "@/test/warband-fixtures";
 
@@ -235,6 +236,41 @@ describe("buying a mount or a pet for a unit", () => {
 
     await waitFor(() => expect(fakeApi.countOf(PURCHASE)).toBe(1));
     expect(fakeApi.bodyOf(PURCHASE)).not.toHaveProperty("companion");
+  });
+
+  it("words a group's box for the group and for how many are bought", async () => {
+    // Was "Black Knives rides it straight away", however many were bought.
+    const user = setupUser();
+    renderDialog({ item: warhorse, presetUnitType: "henchmen", presetUnitId: 21 });
+
+    expect(
+      await screen.findByRole("checkbox", { name: "Black Knives ride it straight away" })
+    ).toBeChecked();
+    await chooseOption(user, selectNear("Qty"), "3");
+    expect(
+      screen.getByRole("checkbox", { name: "Black Knives ride them straight away" })
+    ).toBeChecked();
+  });
+
+  it("words a group's pets, and a hero's when he buys several", async () => {
+    const user = setupUser();
+    const group = renderDialog({ item: raven, presetUnitType: "henchmen", presetUnitId: 21 });
+
+    expect(
+      await screen.findByRole("checkbox", { name: "Black Knives keep it as a pet" })
+    ).toBeInTheDocument();
+    await chooseOption(user, selectNear("Qty"), "2");
+    expect(
+      screen.getByRole("checkbox", { name: "Black Knives keep them as pets" })
+    ).toBeInTheDocument();
+    group.unmount();
+
+    renderDialog({ item: raven, presetUnitType: "heroes", presetUnitId: 11 });
+    await screen.findByRole("checkbox", { name: "Keep as Aldric the Bold's pet" });
+    await chooseOption(user, selectNear("Qty"), "2");
+    expect(
+      screen.getByRole("checkbox", { name: "Keep as Aldric the Bold's pets" })
+    ).toBeInTheDocument();
   });
 
   it("offers nothing extra for a mount bought for the stash", async () => {
