@@ -92,14 +92,18 @@ export function useItemsFilters(items: Item[]) {
     const type = ITEM_TYPE_BY_TAB[activeTab];
     const bySubtype = selectedSubtype !== ALL_SUBTYPES && selectedSubtype.trim();
     const singleUseOnly = activeTab === "misc" && selectedSingleUse !== ALL_SINGLE_USE;
+    // By name, as the other catalogue pages list theirs: the server sends the campaign's rows
+    // (Custom, House rule) first. `filter` made a copy: the list is the shared query cache.
     return toRows(
-      items.filter(
-        (item) =>
-          (!query || matchesQuery(item, query)) &&
-          item.type === type &&
-          (!bySubtype || (item.subtype ?? "").toLowerCase() === selectedSubtype.toLowerCase()) &&
-          (!singleUseOnly || item.single_use)
-      )
+      items
+        .filter(
+          (item) =>
+            (!query || matchesQuery(item, query)) &&
+            item.type === type &&
+            (!bySubtype || (item.subtype ?? "").toLowerCase() === selectedSubtype.toLowerCase()) &&
+            (!singleUseOnly || item.single_use)
+        )
+        .sort((a, b) => a.name.localeCompare(b.name))
     );
   }, [items, searchQuery, activeTab, selectedSubtype, selectedSingleUse]);
 
