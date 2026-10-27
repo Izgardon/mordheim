@@ -5,7 +5,7 @@
  * tooltip), never written to the unit; edit mode keeps the unit's own stats. A creature group
  * carries the creature mark. `apiRequest` is answered by a fake server.
  */
-import { screen, waitFor, within } from "@testing-library/react";
+import { act, screen, waitFor, within } from "@testing-library/react";
 import { useQuery } from "@tanstack/react-query";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -159,6 +159,23 @@ describe("the unit card's companions", () => {
     const cached = queryClient.getQueryData<WarbandSheet>(sheetKey)?.heroes[0];
     expect(cached?.movement).toBe(4);
     expect(cached?.armour_save).toBe(5);
+  });
+
+  it("lets the keyboard open a mounted stat's On foot tooltip, as the battle marks do", async () => {
+    renderCard(riding);
+    await screen.findByRole("button", { name: "Mount: Warhorse" });
+
+    for (const [label, mounted, own] of [
+      ["M", "8", "On foot: 4"],
+      ["AS", "4+", "On foot: 5+"],
+    ]) {
+      const trigger = within(statCell(label)).getByText(mounted).closest("[tabindex]");
+      expect(trigger).toHaveAttribute("tabindex", "0");
+      act(() => (trigger as HTMLElement).focus());
+      expect(await screen.findByRole("tooltip")).toHaveTextContent(own);
+      act(() => (trigger as HTMLElement).blur());
+      await waitFor(() => expect(screen.queryByRole("tooltip")).not.toBeInTheDocument());
+    }
   });
 
   it("opens a beast's profile from its chip, with Switch off naming the mount's row", async () => {

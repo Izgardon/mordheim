@@ -54,6 +54,8 @@ export default function MountedStatValue({
         </span>
       }
       content={`On foot: ${formatStat(statKey, own)}`}
+      // Keyboard users open it too, as they do the battle marks.
+      tabIndex={0}
       className="inline-flex cursor-help"
       contentClassName={tooltipContentClassName}
       minWidth={120}
