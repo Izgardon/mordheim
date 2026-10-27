@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogueSearchParams";
 
 import { ITEM_SUBTYPE_OPTIONS } from "../utils/item-form-values";
+import { isSold } from "../utils/item-listing";
 
 import type { ItemRow, ItemTabId } from "../components/items-columns";
 import type { Item } from "../types/item-types";
@@ -38,11 +39,15 @@ const matchesQuery = (item: Item, query: string) =>
     .toLowerCase()
     .includes(query);
 
-/** One row per availability, the rarer first; an item with none gets one row. */
+/**
+ * One row per availability, the rarer first; an item with none gets one row, and so does a beast
+ * the shop doesn't sell: the prices its bestiary entry keeps for the shop (or the book's, as the
+ * Giant Rat's warptoken price) aren't on offer, so its row shows none.
+ */
 function toRows(items: Item[]): ItemRow[] {
   return items.flatMap((item): ItemRow[] => {
     const availabilities = item.availabilities ?? [];
-    if (availabilities.length === 0) {
+    if (availabilities.length === 0 || !isSold(item)) {
       return [{ ...item, _availability: null, _rowId: rowId(item.id) }];
     }
     return [...availabilities]

@@ -119,6 +119,19 @@ describe("Wargear: the Animals tab", () => {
     expect(within(row("Raven")).getByText("Not sold")).toBeVisible();
   });
 
+  it("shows an unsold beast's restriction, rarity and price as '-', whatever prices it keeps for the shop", async () => {
+    // Was: the Raven's kept price read "8 / 60" (as the seeded Giant Rat's "9 / 0"), where an
+    // unsold beast without one read "- / -".
+    await openAnimals();
+    /** Restricted to, Rarity and Price: the cells before Grade and the buttons. */
+    const shop = (name: string) =>
+      [...row(name).querySelectorAll("td")].map((cell) => cell.textContent).slice(-5, -2);
+
+    expect(screen.getAllByRole("button", { name: /^Raven/ })).toHaveLength(1);
+    expect(shop("Raven")).toEqual(["-", "-", "-"]);
+    expect(shop("Warhorse")).toEqual(["-", "11", "80"]);
+  });
+
   it('says "No profile" for a beast without one, where the others show their stat line', async () => {
     await openAnimals();
 
