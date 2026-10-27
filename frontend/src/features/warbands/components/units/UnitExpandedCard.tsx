@@ -19,7 +19,9 @@ import {
 } from "./expanded/ExpandedParts";
 import { useUnitXpSaver } from "../../hooks/units/useUnitMutations";
 import { unitApi } from "../../units/unit-api";
+import { isCreatureGroup } from "../../utils/companions";
 
+import type { CreatureGroupFields } from "../../types/companion-types";
 import type { Unit, UnitKindKey } from "../../types/units";
 import type { UnitKindConfig } from "../../units/unit-kind-types";
 
@@ -76,6 +78,7 @@ export default function UnitExpandedCard<K extends UnitKindKey>({
         raceName={unit.race_name || unit.race?.name}
         unitType={unit.unit_type}
         xp={unit.xp}
+        creature={isCreatureGroup(unit as CreatureGroupFields)}
       />
       <CompanionChips
         kind={kind}

@@ -307,4 +307,31 @@ describe("a creature group's card", () => {
     );
     expect(screen.queryByRole("img", { name: "Creature" })).not.toBeInTheDocument();
   });
+
+  it("names its beast under the title, with no race (it has none by design), and a race when given one", () => {
+    // Was "Unknown Race - Wardogs".
+    const kennel = makeVeteranHenchmenGroup({
+      name: "Kennel",
+      unit_type: "Wardogs",
+      race_id: null,
+      race_name: null,
+      race: undefined,
+      source_beast_id: 3,
+      beast_kind: "creature",
+    });
+    const card = (unit: typeof kennel) => (
+      <UnitExpandedCard kind={henchmenKind} unit={unit} warbandId={1} onClose={() => undefined} />
+    );
+    const { rerender } = renderWithQueryClient(card(kennel));
+
+    expect(screen.getByText("Wardogs", { selector: "p" })).toBeInTheDocument();
+    expect(screen.queryByText(/Unknown Race/)).not.toBeInTheDocument();
+
+    rerender(card({ ...kennel, race_name: "Human" }));
+    expect(screen.getByText("Human - Wardogs")).toBeInTheDocument();
+
+    // Any other unit without a race still says so.
+    rerender(card({ ...kennel, source_beast_id: null, beast_kind: null }));
+    expect(screen.getByText("Unknown Race - Wardogs")).toBeInTheDocument();
+  });
 });

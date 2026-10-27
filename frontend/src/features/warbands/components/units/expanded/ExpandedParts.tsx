@@ -11,16 +11,28 @@ type ExpandedIdentityProps = {
   raceName: string | null | undefined;
   unitType: string | null;
   xp: number | null;
+  /** A group recruited from a creature: formed with no race by design, its type is its beast. */
+  creature?: boolean;
 };
 
-/** Heading, "Race - Type" line and the XP total. */
-export function ExpandedIdentity({ title, raceName, unitType, xp }: ExpandedIdentityProps) {
+/**
+ * Heading, "Race - Type" line and the XP total. A creature group without a race shows its beast
+ * (the type) alone, never "Unknown Race".
+ */
+export function ExpandedIdentity({
+  title,
+  raceName,
+  unitType,
+  xp,
+  creature = false,
+}: ExpandedIdentityProps) {
+  const type = unitType || "Unknown Type";
   return (
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div>
         {title}
         <p className="text-sm text-muted-foreground">
-          {raceName || "Unknown Race"} - {unitType || "Unknown Type"}
+          {raceName || !creature ? `${raceName || "Unknown Race"} - ${type}` : type}
         </p>
       </div>
       <div className="text-right">
