@@ -4,7 +4,7 @@ import { BEAST_KINDS, beastKindLabel, type BeastKind } from "../bestiary-kinds";
 import { BEAST_KIND_TEXT, BeastKindIcon } from "./BeastKindIcon";
 
 const BUTTON_CLASS =
-  "inline-flex flex-1 items-center justify-center gap-1.5 px-3 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring sm:flex-none";
+  "touch-target-y inline-flex flex-1 items-center justify-center gap-1.5 px-3 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring sm:flex-none";
 
 /**
  * The Bestiary's Kind filter: All, or one of Mount, Pet and Creature with its mark. A pressed
@@ -26,7 +26,8 @@ export default function BestiaryKindFilter({
     <div
       role="group"
       aria-label="Kind"
-      className="flex w-full overflow-hidden rounded-md border border-border/60 sm:w-auto"
+      // Nothing clips the buttons' taps above and below them on a phone (`touch-target-y`).
+      className="flex w-full rounded-md border border-border/60 sm:w-auto"
     >
       {options.map(({ kind, label }) => {
         const pressed = value === kind;

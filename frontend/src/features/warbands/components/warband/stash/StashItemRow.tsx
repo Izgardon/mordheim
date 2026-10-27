@@ -50,7 +50,7 @@ export default function StashItemRow({
       {canEdit ? (
         <button
           type="button"
-          className="flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-foreground/50 transition-colors duration-150 hover:text-foreground"
+          className="touch-target flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-foreground/50 transition-colors duration-150 hover:text-foreground"
           onClick={onMenuClick}
           aria-label={`Actions for ${entry.label}`}
         >

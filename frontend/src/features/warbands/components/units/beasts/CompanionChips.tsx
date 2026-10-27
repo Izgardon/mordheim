@@ -65,13 +65,18 @@ export default function CompanionChips<K extends UnitKindKey>({
           type="button"
           aria-label={`${target.kind === "mount" ? "Mount" : "Pet"}: ${label}`}
           onClick={() => profile.open(target)}
-          className={cn(
-            "inline-flex items-center gap-1 rounded-full border border-current/40 bg-black/20 px-2 py-0.5 text-xs transition-colors hover:bg-black/40",
-            BEAST_KIND_TEXT[target.kind]
-          )}
+          // The pill is its look; on a phone the box grows to a 44 px touch target around it.
+          className="touch-target group/chip inline-flex items-center justify-center border-0 bg-transparent p-0"
         >
-          <BeastKindIcon kind={target.kind} className="h-3 w-3" />
-          {label}
+          <span
+            className={cn(
+              "inline-flex items-center gap-1 rounded-full border border-current/40 bg-black/20 px-2 py-0.5 text-xs transition-colors group-hover/chip:bg-black/40",
+              BEAST_KIND_TEXT[target.kind]
+            )}
+          >
+            <BeastKindIcon kind={target.kind} className="h-3 w-3" />
+            {label}
+          </span>
         </button>
       ))}
       {profile.dialog}

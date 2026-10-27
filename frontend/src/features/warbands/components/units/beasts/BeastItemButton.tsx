@@ -31,7 +31,8 @@ type BeastItemButtonProps = {
 
 /**
  * The button beside an Animal item's menu (the plan's mock): a switch for a mount or a pet, filled
- * when on, and a recruit button for a creature. Its title says what a tap does.
+ * when on, and a recruit button for a creature. Its title says what a tap does. The 20 px square is
+ * its look; on a phone its box grows to a 44 px touch target around it (`touch-target`).
  */
 export default function BeastItemButton({
   kind,
@@ -51,12 +52,20 @@ export default function BeastItemButton({
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        "flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center rounded border p-0 transition-colors duration-150 disabled:cursor-wait disabled:opacity-50",
-        BEAST_KIND_TEXT[kind],
-        isSwitch && on ? ON_CLASS[kind] : "border-white/15 bg-transparent hover:border-white/40"
+        "touch-target group/beast flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center border-0 bg-transparent p-0 disabled:cursor-wait disabled:opacity-50",
+        BEAST_KIND_TEXT[kind]
       )}
     >
-      <BeastKindIcon kind={kind} className="h-3 w-3" />
+      <span
+        className={cn(
+          "flex h-5 w-5 items-center justify-center rounded border transition-colors duration-150",
+          isSwitch && on
+            ? ON_CLASS[kind]
+            : "border-white/15 bg-transparent group-hover/beast:border-white/40"
+        )}
+      >
+        <BeastKindIcon kind={kind} className="h-3 w-3" />
+      </span>
     </button>
   );
 }

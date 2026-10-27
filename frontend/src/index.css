@@ -332,6 +332,38 @@ input[type="number"] {
     color: hsl(var(--primary-foreground));
     box-shadow: 0 12px 24px rgba(3, 10, 7, 0.32);
   }
+
+  /*
+   * Touch targets: on a touch or narrow screen a small control answers a 44 px tap, as the battle
+   * cards' controls do (BATL-UX-05), and keeps its look. `touch-target`: the control's box grows to
+   * 44 x 44 around its visible part (an inner element, or a glyph), so a list of them grows and no
+   * two taps overlap; `touch-target-row` centres a row's text on such a box. `touch-target-y`: a
+   * control whose look is its own box (a segmented filter's button) takes taps above and below it
+   * with a transparent ::after, up to 44 px; what sits above and below must leave that room.
+   */
+  @media (pointer: coarse), (max-width: 960px) {
+    .touch-target {
+      min-width: 2.75rem;
+      min-height: 2.75rem;
+    }
+
+    .touch-target-row {
+      align-items: center;
+    }
+
+    .touch-target-y {
+      position: relative;
+    }
+
+    .touch-target-y::after {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      top: 50%;
+      height: max(100%, 2.75rem);
+      transform: translateY(-50%);
+    }
+  }
 }
 
 /* Settings gear button hover brightness */

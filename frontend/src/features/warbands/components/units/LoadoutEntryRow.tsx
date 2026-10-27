@@ -65,9 +65,11 @@ export default function LoadoutEntryRow({
   const { companion } = entry;
   // A companion's entry (its mark) and a mount's or pet's item row (its switch) can be too wide.
   const flex = entryFlex(companion ?? entry.beast);
+  // An editor's item row holds the menu (and a beast's switch): 44 px taps on a phone, centred.
+  const touchRow = entry.type === "item" && canEdit ? "touch-target-row" : "";
 
   return (
-    <div className={`${entryClassName} ${flex.row}`}>
+    <div className={`${entryClassName} ${flex.row} ${touchRow}`}>
       <button type="button" className={`${buttonClassName} ${flex.button}`} onClick={onClick}>
         {entry.label}
         {state ? <span className="sr-only"> ({state})</span> : null}
@@ -91,7 +93,7 @@ export default function LoadoutEntryRow({
       {entry.type === "item" && canEdit && (
         <button
           type="button"
-          className="unit-list-entry-menu flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-colors duration-150"
+          className="unit-list-entry-menu touch-target flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-colors duration-150"
           onClick={onMenuClick}
           aria-label={`Actions for ${entry.label}${state ? ` (${state})` : ""}`}
         >
