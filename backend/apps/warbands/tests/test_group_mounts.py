@@ -9,7 +9,7 @@ member recruited after the group mounted shows it too.
 
 from typing import Any
 
-from apps.warbands.models import Henchman, HenchmenGroupItem, HeroItem
+from apps.warbands.models import Henchman, HenchmenGroupItem, HeroItem, WarbandItem
 from apps.warbands.units.companions import group_mount_warnings
 
 from .beast_support import make_animal
@@ -172,6 +172,76 @@ class GroupMountWarningTests(GroupMountTestCase):
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual([warning["code"] for warning in response.data["mount_warnings"]], ["group_mounts"])
         self.assertEqual([warning["code"] for warning in response.data["warnings"]], ["group_mounts"])
+
+
+class LaterCopyTests(GroupMountTestCase):
+    """A copy that arrives after the group mounted rides with the rest when the group already rides that kind, so the
+    group stays one decision; otherwise it lands switched off, as every arriving copy did."""
+
+    def stash(self, item: Any, quantity: int = 1) -> None:
+        WarbandItem.objects.create(warband=self.warband, item=item, quantity=quantity, cost=80)
+
+    def move_in(self, item: Any) -> Any:
+        body = {"source_type": "stash", "target_type": HENCHMEN.key, "target_id": self.group.id, "item_id": item.id}
+        response = self.client.post(f"/api/warbands/{self.warband.id}/item-transfers/", {**body, "quantity": 1}, format="json")  # fmt: skip
+        self.assertEqual(response.status_code, 200, response.data)
+        return response
+
+    def buy(self, target: str, unit: Any, item: Any) -> Any:
+        body = {"item_id": item.id, "price": 0, "target_type": target, "target_id": unit.id}
+        response = self.client.post(f"/api/warbands/{self.warband.id}/purchases/", body, format="json")
+        self.assertEqual(response.status_code, 201, response.data)
+        return response
+
+    def test_a_copy_moved_into_a_group_riding_that_kind_is_ridden(self):
+        self.copies(self.horse, 2, companion=True)
+        self.stash(self.horse)
+
+        self.move_in(self.horse)
+
+        self.assertEqual(self.switched(self.horse), [True, True, True])
+
+    def test_a_copy_moved_into_a_group_on_foot_or_riding_another_kind_stays_switched_off(self):
+        self.copies(self.horse, 1)  # a spare: the group doesn't ride
+        self.copies(self.pony, 1, companion=True)
+        self.stash(self.horse)
+
+        self.move_in(self.horse)
+
+        self.assertEqual(self.switched(self.horse), [False, False])
+
+    def test_a_pet_moved_in_stays_one_copy_switched_off(self):
+        self.copies(self.raven, 1, companion=True)
+        self.stash(self.raven)
+
+        self.move_in(self.raven)
+
+        self.assertEqual(self.switched(self.raven), [True, False])
+
+    def test_a_copy_bought_for_a_group_riding_that_kind_is_ridden_even_without_companion(self):
+        self.copies(self.horse, 2, companion=True)
+
+        response = self.buy(HENCHMEN.key, self.group, self.horse)
+
+        self.assertEqual(self.switched(self.horse), [True, True, True])
+        self.assertEqual(response.data["mount_warnings"], [])  # three mounts for three members
+
+    def test_a_hero_keeps_a_copy_bought_without_companion_switched_off(self):
+        HeroItem.objects.create(hero=self.hero, item=self.horse, companion=True)
+
+        self.buy(HERO.key, self.hero, self.horse)
+
+        self.assertEqual([row.companion for row in self.hero.hero_items.order_by("id")], [True, False])
+
+    def test_a_roster_saves_stash_take_into_a_group_riding_that_kind_is_ridden(self):
+        self.copies(self.horse, 2, companion=True)
+        self.stash(self.horse)
+        take = {"unit_id": self.group.id, "item_id": self.horse.id, "quantity": 1}
+
+        response = self.client.post(unit_url(HENCHMEN, self.warband.id, suffix="batch/"), {"stash_takes": [take]}, format="json")  # fmt: skip
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(self.switched(self.horse), [True, True, True])
 
 
 class GroupMountWordingTests(GroupMountTestCase):
