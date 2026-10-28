@@ -109,7 +109,10 @@ describe("Campaigns list and the join code", () => {
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
     expect(fakeApi.bodyOf("POST /campaigns/join/")).toEqual({ join_code: "PIT777" });
     expect(screen.getByText("2 campaigns")).toBeInTheDocument();
-    expect(screen.getAllByRole("link").map((link) => link.textContent)).toEqual([
+    const campaignLinks = screen
+      .getAllByRole("link")
+      .filter((link) => link.getAttribute("href")?.startsWith("/campaigns/"));
+    expect(campaignLinks.map((link) => link.textContent)).toEqual([
       "The Pit Fights",
       "Shards of the Comet",
     ]);

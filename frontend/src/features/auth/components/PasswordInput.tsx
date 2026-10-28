@@ -6,6 +6,10 @@ import { Input } from "@components/input";
 import { Eye, EyeOff } from "lucide-react";
 import { AuthField } from "./AuthField";
 
+/** The server's password rules in a sentence, under every new password (AUTH-TWEAK-07). */
+export const PASSWORD_HINT =
+  "At least 8 characters. Not a common password, not all numbers, and not too like your name or email.";
+
 type PasswordInputProps = Omit<ComponentPropsWithoutRef<typeof Input>, "type" | "className"> & {
   /** A show/hide toggle inside the field; hidden again whenever the field remounts. */
   revealable?: boolean;
@@ -42,24 +46,32 @@ type PasswordFieldProps = {
   value: string;
   onChange: (value: string) => void;
   autoComplete: "current-password" | "new-password";
+  /** The rules under the field: for a new password, not for its confirmation (AUTH-TWEAK-07). */
+  showRules?: boolean;
   /** The server's refusal of this field, under it (BUG-171). */
   error?: string;
   placeholder?: string;
   className?: string;
 };
 
-/** A labelled password field with the show/hide toggle and its own error. */
+/** A labelled password field with the show/hide toggle, the rules when asked, and its own error. */
 export function PasswordField({
   label,
   value,
   onChange,
   autoComplete,
+  showRules = false,
   error,
   placeholder = "Keep it secret",
   className,
 }: PasswordFieldProps) {
   return (
-    <AuthField label={label} error={error} className={className}>
+    <AuthField
+      label={label}
+      hint={showRules ? PASSWORD_HINT : undefined}
+      error={error}
+      className={className}
+    >
       {(describedBy) => (
         <PasswordInput
           value={value}

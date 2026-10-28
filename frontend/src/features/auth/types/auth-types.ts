@@ -34,6 +34,11 @@ export type PasswordResetConfirmPayload = {
   new_password: string;
 };
 
+export type PasswordChangePayload = {
+  current_password: string;
+  new_password: string;
+};
+
 export type FeedbackReportPayload = {
   report_type: "Bug" | "Feedback";
   message: string;

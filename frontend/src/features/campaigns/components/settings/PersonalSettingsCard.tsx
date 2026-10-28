@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 import { Button } from "@components/button";
 import { CardBackground } from "@components/card-background";
 
@@ -6,6 +8,7 @@ type PersonalSettingsCardProps = {
   onOpenCampaigns?: () => void;
 };
 
+/** Settings → Personal → Account: the account page (AUTH-NEW-01), the campaigns list and Log out. */
 export default function PersonalSettingsCard({
   onSignOut,
   onOpenCampaigns,
@@ -14,7 +17,10 @@ export default function PersonalSettingsCard({
     <CardBackground className="space-y-2 p-3 bg-[rgba(12,9,6,0.92)] sm:space-y-3 sm:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <h3 className="text-lg font-semibold text-foreground">Account</h3>
-        <div className="flex items-center gap-2 self-end sm:self-auto">
+        <div className="flex flex-wrap items-center justify-end gap-2 self-end sm:self-auto">
+          <Button asChild variant="secondary" size="sm">
+            <Link to="/account">Manage account</Link>
+          </Button>
           {onOpenCampaigns ? (
             <Button variant="secondary" size="sm" onClick={onOpenCampaigns}>
               Campaigns

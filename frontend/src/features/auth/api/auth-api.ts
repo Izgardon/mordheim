@@ -7,6 +7,7 @@ import type {
   FeedbackReportPayload,
   AuthUser,
   LoginCredentials,
+  PasswordChangePayload,
   PasswordResetConfirmPayload,
   PasswordResetRequestPayload,
   RegisterPayload,
@@ -37,6 +38,16 @@ export function fetchMe(token: string) {
 /** Changes the display name; the server trims it and answers the user (AUTH-NEW-02). */
 export function renameAccount(name: string) {
   return apiRequest<AuthUser>("/auth/me/", { method: "PATCH", body: { name } });
+}
+
+/** Changes the password: every other device is signed out; this one gets a fresh pair (AUTH-NEW-03). */
+export function changePassword(payload: PasswordChangePayload) {
+  return apiRequest<AuthResponse>("/auth/password/", { method: "POST", body: payload });
+}
+
+/** Signs out every other device; this one gets a fresh pair (AUTH-NEW-04). */
+export function signOutOtherSessions() {
+  return apiRequest<AuthResponse>("/auth/sign-out-others/", { method: "POST" });
 }
 
 export function requestPasswordReset(payload: PasswordResetRequestPayload) {
