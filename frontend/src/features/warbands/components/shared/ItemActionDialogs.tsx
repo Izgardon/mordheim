@@ -4,7 +4,7 @@ import FloatingItemMenu from "./FloatingItemMenu";
 import AcquireItemDialog from "../../../items/components/AcquireItemDialog/AcquireItemDialog";
 
 import type { UnitTypeOption } from "@components/unit-selection-section";
-import type { HenchmenGroup, WarbandHero, WarbandHiredSword } from "../../types/warband-types";
+import type { HenchmenGroup, WarbandHero, WarbandHireling } from "../../types/warband-types";
 import type { ItemActionMenu } from "../../hooks/useItemActionMenu";
 
 const MENU_ACTIONS = ["Sell", "Move", "Buy again"] as const;
@@ -20,7 +20,7 @@ type ItemActionDialogsProps = {
   onAcquire?: () => void;
 };
 
-type MoveUnit = WarbandHero | WarbandHiredSword | HenchmenGroup;
+type MoveUnit = WarbandHero | WarbandHireling | HenchmenGroup;
 
 /** The item menu and what it opens: Sell, Move (to the warband on screen) and Buy again. */
 export default function ItemActionDialogs({
@@ -35,12 +35,12 @@ export default function ItemActionDialogs({
     owner?.kind === kind ? units.filter((unit) => unit.id !== owner.id) : units;
   const moveUnits: Partial<Record<UnitTypeOption, MoveUnit[]>> = {
     heroes: others("heroes", warband?.heroes),
-    hiredswords: others("hiredswords", warband?.hired_swords),
+    hirelings: others("hirelings", warband?.hirelings),
     henchmen: others("henchmen", warband?.henchmen_groups),
   };
   const moveTypes: UnitTypeOption[] = owner
-    ? ["heroes", "hiredswords", "henchmen", "stash"]
-    : ["heroes", "hiredswords", "henchmen"];
+    ? ["heroes", "hirelings", "henchmen", "stash"]
+    : ["heroes", "hirelings", "henchmen"];
 
   return (
     <>

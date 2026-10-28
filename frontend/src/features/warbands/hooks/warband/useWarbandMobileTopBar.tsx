@@ -10,7 +10,7 @@ import {
 } from "react";
 import { Check, ChevronDown, Loader2, X } from "lucide-react";
 
-export type WarbandRosterEditSection = "heroes" | "henchmen" | "hiredswords";
+export type WarbandRosterEditSection = "heroes" | "henchmen" | "hirelings";
 
 export type MobileEditSection = WarbandRosterEditSection;
 
@@ -74,7 +74,7 @@ export function getWarbandMobileEditTitle(section: MobileEditSection) {
       return "Heroes:";
     case "henchmen":
       return "Henchmen:";
-    case "hiredswords":
+    case "hirelings":
       return "HS:";
     default:
       return "Warband:";

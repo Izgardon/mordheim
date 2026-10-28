@@ -106,6 +106,13 @@ export default function FinalizeSummaryPanels({
         }))}
       />
       <OptionalPanel
+        title="Mounts lost"
+        lines={summary.mountsLost.map((row) => ({
+          key: `mount-${row.unitKey}`,
+          text: `${row.unitName}'s ${row.mount} dies.`,
+        }))}
+      />
+      <OptionalPanel
         title="Serious injuries"
         lines={summary.injuries.map((row) => ({
           key: `injury-${row.unitKey}`,

@@ -3,6 +3,7 @@ import { queryOptions, type QueryClient } from "@tanstack/react-query";
 import { getBattleRosters, getBattleState } from "@/features/battles/api/battles-api";
 import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
 import { getBattleStateLastEventId, mergeBattleState } from "@/features/battles/state/battle-cache";
+import { rosterPetModels } from "@/features/battles/utils/battle-companions";
 import type {
   BattleRosterMap,
   BattleState,
@@ -62,14 +63,16 @@ export function toParticipantRosters(
     if (!Number.isFinite(userId)) {
       continue;
     }
-    normalized[userId] = {
+    const units = {
       heroes: roster.heroes.map((hero) => ({ ...hero })),
-      hiredSwords: roster.hiredSwords.map((hiredSword) => ({ ...hiredSword })),
+      hirelings: roster.hirelings.map((hireling) => ({ ...hireling })),
       henchmenGroups: roster.henchmenGroups.map((group) => ({
         ...group,
         members: group.members.map((member) => ({ ...member })),
       })),
     };
+    // Pets with a profile fight as their own models, built once here (step 5).
+    normalized[userId] = { ...units, petModels: rosterPetModels(units) };
   }
   return normalized;
 }

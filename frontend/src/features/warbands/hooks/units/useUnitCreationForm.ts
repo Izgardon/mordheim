@@ -36,7 +36,13 @@ export function useUnitCreationForm<K extends UnitKindKey>(
 
     const name = newForm.name.trim();
     const unitType = newForm.unit_type.trim();
-    if (!name || !unitType || !newForm.race_id) {
+    if (!name || !unitType) {
+      setNewError(
+        creation.optionalRace ? "Name and type are required." : "Name, type, and race are required."
+      );
+      return;
+    }
+    if (!creation.optionalRace && !newForm.race_id) {
       setNewError("Name, type, and race are required.");
       return;
     }

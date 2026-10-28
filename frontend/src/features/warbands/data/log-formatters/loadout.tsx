@@ -56,6 +56,5 @@ export const LOADOUT_FORMATTERS: Record<string, LogFormatter> = {
   "loadout:hero_item": (log) => formatLoadoutItem(log, { reasonFallback: "No reason given" }),
   "loadout:henchmen_item": (log) => formatLoadoutItem(log),
   "loadout:stash_item": (log) => formatLoadoutItem(log, { lead: "Added to the stash:" }),
-  "loadout:hired_sword_item": (log) =>
-    formatLoadoutItem(log, { reasonFallback: "No reason given" }),
+  "loadout:hireling_item": (log) => formatLoadoutItem(log, { reasonFallback: "No reason given" }),
 };

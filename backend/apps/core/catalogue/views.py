@@ -28,7 +28,7 @@ from apps.realtime.services import sender_socket_id
 
 from . import archive, cache, names, versions
 from .hooks import CampaignRequired
-from .kinds import CatalogueKindSpec, entry_kind
+from .kinds import CatalogueKindSpec
 from .usage import count_usage
 from .writes import catalogue_write
 
@@ -109,10 +109,9 @@ class CatalogueCollectionView(CatalogueScopedView):
             value = request.query_params.get(param)
             if value:
                 rows = rows.filter(keeps(value.strip()))
-        params = request.query_params
-        listed = kind.hooks.shown(kind.hooks.listed(kind, rows, self.campaign_id, params), params)
+        listed = kind.hooks.listed(kind, rows, self.campaign_id, request.query_params)
         serializer = kind.hooks.row_serializer(kind, request.query_params)
-        return serializer(kind.hooks.read(listed), many=True).data
+        return serializer(kind.hooks.read(listed, request.query_params), many=True).data
 
     def create(self, request: Request) -> Response:
         assert self.campaign_id is not None  # load_scope found it
@@ -167,8 +166,8 @@ class CatalogueEntryView(CatalogueScopedView):
             kind.hooks.check_edit_body(self.request, entry)
         self.campaign_id = campaign_id
         self.enter_campaign(method, campaign_id)
-        if method in self.actions and entry.campaign_id is not None:
-            kind.hooks.refuse_write(versions.entry_of(kind, entry), self.actions[method])
+        if method in self.actions:  # a book entry's too: a beast's Animal item is never written here
+            kind.hooks.refuse_write(entry, self.actions[method])
         self.check_rule(self.rules.get(method))
 
     def read(self) -> Response:
@@ -179,17 +178,15 @@ class CatalogueEntryView(CatalogueScopedView):
         campaign makes the campaign's version of it, which the answer is (CAT-TWEAK-01)."""
         assert self.campaign_id is not None  # the book itself is never written
         kind = self.kind
-        serializer = self.write_serializer(
-            kind.hooks.write_instance(self.entry), data=self.request.data, partial=partial
-        )
+        serializer = self.write_serializer(self.entry, data=self.request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        name, shown = serializer.validated_data.get("name"), versions.entry_of(kind, self.entry)
-        names.check_edit(kind, shown, self.campaign_id, name)  # its own name, or its book entry's, stays allowed
+        name = serializer.validated_data.get("name")
+        names.check_edit(kind, self.entry, self.campaign_id, name)  # its own name, or its book entry's, stays allowed
         self.stamp(serializer)
-        allowed = [shown.pk, shown.replaces_id or shown.pk]
+        allowed = [self.entry.pk, self.entry.replaces_id or self.entry.pk]
         with catalogue_write(kind, self.campaign_id, name, allowed, self.socket_id()):
             entry = versions.editable(kind, self.entry, self.campaign_id)
-            serializer.instance = kind.hooks.write_instance(entry)
+            serializer.instance = entry
             kind.hooks.update(entry, serializer)
         return Response(self.answer(entry))
 
@@ -253,5 +250,4 @@ class CatalogueUsageView(CatalogueEntryView):
     def get(self, request: Request, **kwargs: Any) -> Response:
         if self.campaign_id is None:
             raise CampaignRequired()
-        entry = versions.entry_of(self.kind, self.entry)
-        return Response(count_usage(entry_kind(self.kind), entry.pk, self.campaign_id))
+        return Response(count_usage(self.kind, self.entry.pk, self.campaign_id))

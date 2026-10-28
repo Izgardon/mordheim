@@ -4,6 +4,7 @@ import { Tooltip } from "@components/tooltip";
 import { RestoreButton } from "@/features/catalogue/components/ArchivedView";
 import { EditRowButton } from "@/features/catalogue/components/EditRowButton";
 
+import { beastEditLink, beastOf, isSold } from "../utils/item-listing";
 import BuyItemButton from "./AcquireItemDialog/BuyItemButton";
 
 import type { ItemRow } from "./items-columns";
@@ -11,20 +12,20 @@ import type { ItemRow } from "./items-columns";
 type ItemRowActionsProps = {
   item: ItemRow;
   campaignId: number;
-  /** \`edit_catalogue\`: Edit, or Restore in the Archived list. */
+  /** `edit_catalogue`: Edit, or Restore in the Archived list. */
   canEdit: boolean;
   /** The row is in the Archived list: Restore is all it offers. */
   archived: boolean;
-  /** This row's Acquire dialog is open (\`aria-expanded\`). */
+  /** This row's Acquire dialog is open (`aria-expanded`). */
   isAcquiring: boolean;
   onAcquire: () => void;
   onEdit: () => void;
 };
 
 /**
- * A Wargear row's buttons: its animal's bestiary entry, Acquire and Edit (every item: a book
- * item's edit makes the campaign's version, a rule's clone detaches); in the Archived list,
- * Restore.
+ * A Wargear row's buttons: its animal's bestiary entry, Acquire (only for what the shop sells)
+ * and Edit (every item: a book item's edit makes the campaign's version, a rule's clone detaches;
+ * an Animal item's Edit goes to its beast, which writes it); in the Archived list, Restore.
  */
 export default function ItemRowActions({
   item,
@@ -43,6 +44,7 @@ export default function ItemRowActions({
       </div>
     );
   }
+  const beast = beastOf(item);
   return (
     <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
       {item.bestiary_entry ? (
@@ -62,13 +64,27 @@ export default function ItemRowActions({
           content="View bestiary entry"
         />
       ) : null}
-      <BuyItemButton
-        item={item}
-        aria-haspopup="dialog"
-        aria-expanded={isAcquiring}
-        onClick={onAcquire}
-      />
-      {canEdit ? <EditRowButton label="Edit item" onClick={onEdit} /> : null}
+      {isSold(item) ? (
+        <BuyItemButton
+          item={item}
+          aria-haspopup="dialog"
+          aria-expanded={isAcquiring}
+          onClick={onAcquire}
+        />
+      ) : (
+        <span className="text-xs italic text-muted-foreground">Not sold</span>
+      )}
+      {canEdit && beast ? (
+        <EditRowButton
+          label="Edit in the bestiary"
+          onClick={() => {
+            const link = beastEditLink(campaignId, beast.id);
+            navigate(link.to, { state: link.state });
+          }}
+        />
+      ) : canEdit ? (
+        <EditRowButton label="Edit item" onClick={onEdit} />
+      ) : null}
     </div>
   );
 }

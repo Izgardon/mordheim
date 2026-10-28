@@ -12,6 +12,7 @@ from apps.restrictions.models import Restriction
 
 from .catalogue_support import (
     BESTIARY,
+    DRAMATIS_PERSONAE,
     HIRED_SWORDS,
     INFILTRATION_TYPES,
     ITEMS,
@@ -142,12 +143,13 @@ class CatalogueMergeTests(CatalogueTestCase):
             (SPELLS, self.lifestealer[0], {"type": "Lesser Magic"}),
             (SPECIALS, self.large, {"type": "Ability"}),
             (RACES, self.human, {}),
-            (BESTIARY, self.warhound, {"type": "Monster"}),
+            (BESTIARY, self.warhound, {"kind": "mount"}),
             (HIRED_SWORDS, self.ogre, {}),
+            (DRAMATIS_PERSONAE, self.aenur, {}),
         ]
         for kind, book, fields in cases:
             with self.subTest(kind=kind.key):
-                entry = book.bestiary_entry if kind is HIRED_SWORDS else book
+                entry = book
                 same_name = make_entry(kind, entry.name, campaign=self.campaign, **fields)
                 listed = [row["id"] for row in self.get_as(self.player, kind.list_url(self.campaign)).json()]
                 self.assertLessEqual({same_name.id, book.id}, set(listed))

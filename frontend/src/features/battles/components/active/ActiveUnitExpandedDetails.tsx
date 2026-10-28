@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import UnitListBlocks, {
   type UnitListPopup,
@@ -9,14 +9,20 @@ import type {
   UnitItemEntry,
 } from "@/features/battles/components/prebattle/prebattle-types";
 import type { BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
+import { useUnitNotesAutosave } from "@/features/battles/hooks/useUnitNotesAutosave";
+import { battleCompanionSources, onFoot } from "@/features/battles/utils/battle-companions";
+import type { CompanionSource } from "@/features/warbands/utils/companions";
 import "@/features/warbands/styles/warband.css";
 import { useMediaQuery } from "@/lib/use-media-query";
+
 import {
-  buildSpellCountMap,
-  deduplicateSpells,
-  getAdjustedSpellDc,
-  getSpellDisplayName,
-} from "@/features/warbands/utils/spell-display";
+  CompanionEntryFrom,
+  CompanionEntryMark,
+  entryFlex,
+} from "@/features/warbands/components/units/beasts/CompanionEntryMark";
+
+import { ActiveNotesBox, ActiveSingleUseControls } from "./ActiveEntryParts";
+import { activeItemSource, buildActiveBlocks, type ActiveBlockEntry } from "./active-blocks";
 
 type ActiveUnitExpandedDetailsProps = {
   unit: PrebattleUnit;
@@ -28,23 +34,12 @@ type ActiveUnitExpandedDetailsProps = {
   /** Undoes the latest use of the item (BUG-11); shown once one is used. */
   onUndoSingleUseItem?: (itemId: number) => Promise<void> | void;
   activeItemActionKey?: string | null;
+  /** Whose entries the tabs list: a group's riding members'; the unit's own by default. */
+  companions?: CompanionSource[];
 };
 
-type BlockEntry = {
-  id: string;
-  visibleId: number;
-  label: string;
-  type: "item" | "skill" | "spell" | "special" | "notes";
-  dc?: string | number | null;
-  item?: UnitItemEntry;
-  remainingSingleUse?: number;
-};
-
-type NormalizedBlock = {
-  id: string;
-  title: string;
-  entries: BlockEntry[];
-};
+const ENTRY_BUTTON_CLASS =
+  "unit-list-entry-button min-w-0 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit transition-colors duration-150";
 
 export default function ActiveUnitExpandedDetails({
   unit,
@@ -55,85 +50,32 @@ export default function ActiveUnitExpandedDetails({
   getUsedSingleUseItemCount,
   onUndoSingleUseItem,
   activeItemActionKey,
+  companions,
 }: ActiveUnitExpandedDetailsProps) {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [openPopups, setOpenPopups] = useState<UnitListPopup[]>([]);
-  const sourceNotes = unitInformation?.notes ?? "";
-  const [draftNotes, setDraftNotes] = useState(sourceNotes);
-  const [lastSavedNotes, setLastSavedNotes] = useState(sourceNotes);
-  const [saveState, setSaveState] = useState<"idle" | "pending" | "saving" | "saved" | "error">(
-    "idle"
+  const notes = useUnitNotesAutosave({
+    sourceNotes: unitInformation?.notes ?? "",
+    unitKey: unit.key,
+    canSave: canInteract,
+    onSaveNotes,
+  });
+
+  const itemSource: UnitItemEntry[] = useMemo(() => activeItemSource(unit), [unit]);
+
+  // A dismounted rider's mount brings nothing more (step 5).
+  const dismounted = Boolean(unitInformation?.dismounted);
+  const blocks = useMemo(
+    () =>
+      buildActiveBlocks(
+        unit,
+        itemSource,
+        getUsedSingleUseItemCount,
+        companions ?? battleCompanionSources(onFoot(unit, { dismounted }))
+      ),
+    [companions, dismounted, getUsedSingleUseItemCount, itemSource, unit]
   );
-  const saveSequenceRef = useRef(0);
-
-  const itemSource: UnitItemEntry[] = useMemo(() => {
-    if (unit.items?.length) {
-      return unit.items;
-    }
-    return (unit.singleUseItems ?? []).map((item) => ({
-      id: item.id,
-      name: item.name,
-      count: item.quantity,
-      singleUse: true,
-    }));
-  }, [unit.items, unit.singleUseItems]);
-
-  const blocks: NormalizedBlock[] = useMemo(() => {
-    const itemBlock: BlockEntry[] = itemSource.map((item) => {
-      const used = getUsedSingleUseItemCount?.(item.id) ?? 0;
-      const remainingSingleUse = item.singleUse ? Math.max(0, item.count - used) : 0;
-      return {
-        id: `item-${item.id}`,
-        visibleId: item.id,
-        label: item.count > 1 ? `${item.name} x ${item.count}` : item.name,
-        type: "item",
-        item,
-        remainingSingleUse,
-      };
-    });
-
-    const skillBlock: BlockEntry[] = (unit.skills ?? []).map((skill, index) => ({
-      id: `skill-${skill.id}-${index}`,
-      visibleId: skill.id,
-      label: skill.name,
-      type: "skill",
-    }));
-
-    const spells = unit.spells ?? [];
-    const spellCounts = buildSpellCountMap(spells);
-    const spellBlock: BlockEntry[] = deduplicateSpells(spells).map((spell, index) => ({
-      id: `spell-${spell.id}-${index}`,
-      visibleId: spell.id,
-      label: getSpellDisplayName(spell, spellCounts),
-      type: "spell",
-      dc: getAdjustedSpellDc(spell.dc ?? null, spell, spellCounts),
-    }));
-
-    const specialBlock: BlockEntry[] = (unit.specials ?? []).map((special, index) => ({
-      id: `special-${special.id}-${index}`,
-      visibleId: special.id,
-      label: special.name,
-      type: "special",
-    }));
-
-    const notesBlock: BlockEntry[] = [
-      {
-        id: `notes-${unit.key}`,
-        visibleId: 0,
-        label: "",
-        type: "notes",
-      },
-    ];
-
-    return [
-      { id: "items", title: "Items", entries: itemBlock },
-      { id: "skills", title: "Skills", entries: skillBlock },
-      { id: "spells", title: "Spells", entries: spellBlock },
-      { id: "special", title: "Specials", entries: specialBlock },
-      { id: "notes", title: "Notes", entries: notesBlock },
-    ].filter((block) => block.entries.length > 0);
-  }, [getUsedSingleUseItemCount, itemSource, unit.key, unit.skills, unit.specials, unit.spells]);
 
   useEffect(() => {
     if (!activeTab || !blocks.some((block) => block.id === activeTab)) {
@@ -141,54 +83,7 @@ export default function ActiveUnitExpandedDetails({
     }
   }, [activeTab, blocks]);
 
-  useEffect(() => {
-    setDraftNotes(sourceNotes);
-    setLastSavedNotes(sourceNotes);
-    setSaveState("idle");
-  }, [sourceNotes, unit.key]);
-
-  useEffect(() => {
-    if (!canInteract || !onSaveNotes) {
-      return;
-    }
-
-    if (draftNotes === lastSavedNotes) {
-      return;
-    }
-
-    setSaveState("pending");
-    const nextSequence = saveSequenceRef.current + 1;
-    saveSequenceRef.current = nextSequence;
-
-    const timeoutHandle = window.setTimeout(() => {
-      setSaveState("saving");
-      Promise.resolve(onSaveNotes(draftNotes))
-        .then(() => {
-          if (saveSequenceRef.current !== nextSequence) {
-            return;
-          }
-          setLastSavedNotes(draftNotes);
-          setSaveState("saved");
-          window.setTimeout(() => {
-            if (saveSequenceRef.current === nextSequence) {
-              setSaveState("idle");
-            }
-          }, 1200);
-        })
-        .catch(() => {
-          if (saveSequenceRef.current !== nextSequence) {
-            return;
-          }
-          setSaveState("error");
-        });
-    }, 1000);
-
-    return () => {
-      window.clearTimeout(timeoutHandle);
-    };
-  }, [canInteract, draftNotes, lastSavedNotes, onSaveNotes]);
-
-  const handleEntryClick = (entry: BlockEntry, event: React.MouseEvent) => {
+  const handleEntryClick = (entry: ActiveBlockEntry, event: React.MouseEvent) => {
     if (entry.type === "notes") {
       return;
     }
@@ -226,41 +121,38 @@ export default function ActiveUnitExpandedDetails({
     );
   };
 
-  const renderEntry = (entry: BlockEntry) => {
+  const renderEntry = (entry: ActiveBlockEntry) => {
     if (entry.type === "notes") {
       return (
-        <div>
-          <textarea
-            value={draftNotes}
-            onChange={(event) => {
-              setDraftNotes(event.currentTarget.value.slice(0, 500));
-              if (saveState === "error") {
-                setSaveState("idle");
-              }
-            }}
-            readOnly={!canInteract || !onSaveNotes}
-            maxLength={500}
-            placeholder="Add unit notes..."
-            aria-label={`Notes for ${unit.displayName}`}
-            className="min-h-[8.5rem] max-h-[14rem] w-full resize-none overflow-y-auto rounded-md border border-border/60 bg-black/25 px-3 py-2 text-sm text-foreground outline-none transition placeholder:text-muted-foreground/70 focus:border-[#8b6a31] focus:ring-1 focus:ring-[#8b6a31]/50 read-only:cursor-default read-only:opacity-80"
-          />
-        </div>
+        <ActiveNotesBox
+          name={unit.displayName}
+          value={notes.draftNotes}
+          readOnly={!canInteract || !onSaveNotes}
+          onChange={(value) => {
+            notes.setDraftNotes(value);
+            if (notes.saveState === "error") {
+              notes.setSaveState("idle");
+            }
+          }}
+        />
       );
     }
 
     const isSingleUse = entry.type === "item" && Boolean(entry.item?.singleUse);
-    const remaining = entry.remainingSingleUse ?? 0;
     const actionKey = `${unit.key}:${entry.visibleId}`;
-    const isUsingItem = activeItemActionKey === actionKey;
+    const flex = entryFlex(entry.companion);
 
     return (
-      <div className="unit-list-entry flex items-start gap-1 rounded px-1.5 py-0.5 transition-colors duration-150">
+      <div
+        className={`unit-list-entry flex items-start gap-1 rounded px-1.5 py-0.5 transition-colors duration-150 ${flex.row}`}
+      >
         <button
           type="button"
-          className="unit-list-entry-button min-w-0 flex-1 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit transition-colors duration-150"
+          className={`${ENTRY_BUTTON_CLASS} ${flex.button}`}
           onClick={(event) => handleEntryClick(entry, event)}
         >
           {entry.label}
+          {entry.companion ? <CompanionEntryFrom {...entry.companion} /> : null}
         </button>
         {entry.type === "spell" &&
         entry.dc !== undefined &&
@@ -270,38 +162,16 @@ export default function ActiveUnitExpandedDetails({
             DC {entry.dc}
           </span>
         ) : null}
-        {isSingleUse ? (
-          <div className="flex items-center gap-1">
-            <span className="unit-list-entry-meta text-[0.58rem] uppercase tracking-[0.18em]">
-              {remaining}/{entry.item?.count ?? 0}
-            </span>
-            {canInteract && onUseSingleUseItem ? (
-              <button
-                type="button"
-                className="battle-toolbar-button px-1.5 py-0.5 text-[0.58rem] uppercase tracking-[0.16em] text-foreground disabled:opacity-50"
-                onClick={() => {
-                  if (!entry.item || remaining <= 0 || isUsingItem) {
-                    return;
-                  }
-                  void onUseSingleUseItem(entry.item);
-                }}
-                disabled={remaining <= 0 || isUsingItem}
-              >
-                {isUsingItem ? "..." : "Use"}
-              </button>
-            ) : null}
-            {canInteract && onUndoSingleUseItem && entry.item && remaining < entry.item.count ? (
-              <button
-                type="button"
-                className="battle-toolbar-button px-1.5 py-0.5 text-[0.58rem] uppercase tracking-[0.16em] text-muted-foreground disabled:opacity-50"
-                onClick={() => entry.item && void onUndoSingleUseItem(entry.item.id)}
-                disabled={isUsingItem}
-                aria-label={`Undo using ${entry.item.name}`}
-              >
-                Undo
-              </button>
-            ) : null}
-          </div>
+        {entry.companion ? <CompanionEntryMark {...entry.companion} /> : null}
+        {isSingleUse && entry.item ? (
+          <ActiveSingleUseControls
+            item={entry.item}
+            remaining={entry.remainingSingleUse ?? 0}
+            canInteract={canInteract}
+            isUsingItem={activeItemActionKey === actionKey}
+            onUse={onUseSingleUseItem}
+            onUndo={onUndoSingleUseItem}
+          />
         ) : null}
       </div>
     );

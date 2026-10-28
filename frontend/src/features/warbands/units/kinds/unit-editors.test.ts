@@ -1,20 +1,20 @@
 import { describe, expect, it } from "vitest";
 
-import { heroKind, henchmenKind, hiredSwordKind } from "../unit-kinds";
+import { heroKind, henchmenKind, hirelingKind } from "../unit-kinds";
 import { isSet } from "./editor-helpers";
 
 import type { RosterLimits } from "../unit-kind-types";
 import {
   makeVeteranHenchmenGroup,
   makeVeteranHero,
-  makeVeteranHiredSword,
+  makeVeteranHireling,
 } from "@/test/warband-fixtures";
 
 const roster = (overrides: Partial<RosterLimits> = {}): RosterLimits => ({
   maxHeroes: 6,
   maxHiredSwords: 3,
   heroCount: 0,
-  hiredSwordCount: 0,
+  hirelingCount: 0,
   ...overrides,
 });
 
@@ -97,19 +97,19 @@ describe("henchmen editor limits", () => {
   });
 });
 
-describe("hired-sword editor limits", () => {
-  const hired = makeVeteranHiredSword();
-  const pacted = makeVeteranHiredSword({ id: 32, blood_pacted: true });
-  const forms = [hired, pacted].map(hiredSwordKind.mapToForm);
-  const newForm = hiredSwordKind.editor.creation.initialForm;
+describe("hireling editor limits", () => {
+  const hired = makeVeteranHireling();
+  const pacted = makeVeteranHireling({ id: 32, blood_pacted: true });
+  const forms = [hired, pacted].map(hirelingKind.mapToForm);
+  const newForm = hirelingKind.editor.creation.initialForm;
 
   it("leaves blood-pacted hired swords out of the cap", () => {
-    const limits = hiredSwordKind.editor.limits({
+    const limits = hirelingKind.editor.limits({
       units: [hired, pacted],
       forms,
       isEditing: true,
       newForm,
-      roster: roster({ maxHiredSwords: 1, hiredSwordCount: 5 }),
+      roster: roster({ maxHiredSwords: 1, hirelingCount: 5 }),
     });
 
     expect(limits).toEqual({
@@ -117,9 +117,10 @@ describe("hired-sword editor limits", () => {
       isCreateBlocked: true,
       // The form still opens: a blood-pacted hire doesn't count (BUG-102).
       isAddDisabled: false,
-      addButtonNotice: "Maximum of 1 hired swords reached; a blood-pacted one can still join.",
+      addButtonNotice:
+        "Maximum of 1 hired swords reached; a blood-pacted one or a dramatis persona can still join.",
       addFormNotices: [
-        "Maximum of 1 hired swords reached. Tick Bloodpacted to add one that doesn't count.",
+        "Maximum of 1 hired swords reached. Tick Bloodpacted, or add a dramatis persona, for one that doesn't count.",
       ],
       duplicateBlockedReason: expect.any(Function),
     });
@@ -129,9 +130,9 @@ describe("hired-sword editor limits", () => {
   });
 
   it("lets a blood-pacted hire through at the cap", () => {
-    const limits = hiredSwordKind.editor.limits({
+    const limits = hirelingKind.editor.limits({
       units: [hired],
-      forms: [hiredSwordKind.mapToForm(hired)],
+      forms: [hirelingKind.mapToForm(hired)],
       isEditing: true,
       newForm: { ...newForm, blood_pacted: true },
       roster: roster({ maxHiredSwords: 1 }),
@@ -139,6 +140,22 @@ describe("hired-sword editor limits", () => {
 
     expect(limits.isCreateBlocked).toBe(false);
     expect(limits.addFormNotices).toEqual([]);
+  });
+
+  it("leaves dramatis personae out of the cap: they never take a place, and one may join at the cap", () => {
+    const persona = makeVeteranHireling({ id: 33, name: "Bertha", kind: "dramatis_persona" });
+    const limits = hirelingKind.editor.limits({
+      units: [hired, persona],
+      forms: [hirelingKind.mapToForm(hired), hirelingKind.mapToForm(persona)],
+      isEditing: true,
+      newForm: { ...newForm, kind: "dramatis_persona" },
+      roster: roster({ maxHiredSwords: 1 }),
+    });
+
+    expect(limits.titleSuffix).toBe("[1/1]");
+    expect(limits.isCreateBlocked).toBe(false);
+    expect(limits.duplicateBlockedReason(hirelingKind.mapToForm(persona))).toBeNull();
+    expect(limits.duplicateBlockedReason(hirelingKind.mapToForm(hired))).toMatch(/Maximum/);
   });
 });
 
@@ -151,7 +168,7 @@ describe("add form draft detection", () => {
       henchmenKind.editor.creation.isDraftDirty(henchmenKind.editor.creation.initialForm, "")
     ).toBe(false);
     expect(
-      hiredSwordKind.editor.creation.isDraftDirty(hiredSwordKind.editor.creation.initialForm, "")
+      hirelingKind.editor.creation.isDraftDirty(hirelingKind.editor.creation.initialForm, "")
     ).toBe(false);
   });
 
@@ -166,9 +183,9 @@ describe("add form draft detection", () => {
       henchmenKind.editor.creation.isDraftDirty({ ...group, firstHenchmanName: "Bolt" }, "")
     ).toBe(true);
 
-    const hired = hiredSwordKind.editor.creation.initialForm;
-    const withItem = { ...hired, items: makeVeteranHiredSword().items };
-    expect(hiredSwordKind.editor.creation.isDraftDirty(withItem, "")).toBe(true);
+    const hired = hirelingKind.editor.creation.initialForm;
+    const withItem = { ...hired, items: makeVeteranHireling().items };
+    expect(hirelingKind.editor.creation.isDraftDirty(withItem, "")).toBe(true);
   });
 });
 

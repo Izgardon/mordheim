@@ -11,14 +11,14 @@ from typing import Any
 from django.db.models import Q
 
 from apps.core.models import RevertedVersion
-from apps.warbands.models import HenchmenGroupItem, HeroItem, HiredSwordItem
+from apps.warbands.models import HenchmenGroupItem, HeroItem, HirelingItem
 
 from ..models import BattleParticipant
 from .errors import BattleError
 
 MAX_EVENT_PAYLOAD_BYTES = 2048
 ITEM_USE_KEYS = frozenset({"participant_user_id", "unit_key", "unit_id", "unit_type", "item_id", "item_name"})
-ITEM_UNIT_TYPES = ("hero", "hired_sword", "henchman")
+ITEM_UNIT_TYPES = ("hero", "hireling", "henchman")
 
 
 def check_payload_size(payload: dict[str, Any]) -> None:
@@ -34,7 +34,7 @@ def _unit(payload: dict[str, Any]) -> tuple[str, str, int]:
     if unit_type not in ITEM_UNIT_TYPES or not raw_id.isdigit() or int(raw_id) <= 0:
         raise BattleError(
             "unit_key must name a hero, hired sword or henchman",
-            fields={"unit_key": ["Use <hero|hired_sword|henchman>:<id>."]},
+            fields={"unit_key": ["Use <hero|hireling|henchman>:<id>."]},
         )
     return unit_key, unit_type, int(raw_id)
 
@@ -49,8 +49,8 @@ def _item_id(payload: dict[str, Any]) -> int:
 def _carried_links(warband_id: int, unit_type: str, unit_id: int) -> Any:
     if unit_type == "hero":
         return HeroItem.objects.filter(hero_id=unit_id, hero__warband_id=warband_id)
-    if unit_type == "hired_sword":
-        return HiredSwordItem.objects.filter(hired_sword_id=unit_id, hired_sword__warband_id=warband_id)
+    if unit_type == "hireling":
+        return HirelingItem.objects.filter(hireling_id=unit_id, hireling__warband_id=warband_id)
     return HenchmenGroupItem.objects.filter(henchmen_group__henchmen__id=unit_id, henchmen_group__warband_id=warband_id)
 
 

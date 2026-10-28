@@ -3,10 +3,13 @@ import { useEffect, useState, type MouseEvent } from "react";
 import UnitListBlocksShell, { type UnitListPopup } from "../shared/blocks/UnitListBlocks";
 import ItemActionDialogs from "../shared/ItemActionDialogs";
 import LoadoutEntryRow from "./LoadoutEntryRow";
+import BeastRecruitDialog, { type RecruitRequest } from "./beasts/BeastRecruitDialog";
+import { companionOfItem, useCompanionProfile } from "./beasts/useCompanionProfile";
 
 import { itemMutationUpdate } from "../../api/economy-queries";
 import { useWarbandCacheUpdate } from "../../api/warband-cache";
 import useItemActionMenu from "../../hooks/useItemActionMenu";
+import { useCompanionSwitch } from "../../hooks/units/useCompanionSwitch";
 import { buildLoadoutBlocks, type LoadoutBlock, type LoadoutEntry } from "./loadout-blocks";
 
 import type { PopupPosition } from "../shared/unit_details/DetailPopup";
@@ -57,6 +60,7 @@ export default function UnitListBlocks<K extends UnitKindKey>({
 }: UnitListBlocksProps<K>) {
   const [openPopups, setOpenPopups] = useState<UnitListPopup[]>([]);
   const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [recruiting, setRecruiting] = useState<RecruitRequest | null>(null);
   const { hasMembers } = kind.flags;
   const updateWarbandCache = useWarbandCacheUpdate();
 
@@ -77,6 +81,24 @@ export default function UnitListBlocks<K extends UnitKindKey>({
       );
     },
   });
+
+  const companionSwitch = useCompanionSwitch(kind, warbandId);
+  const profile = useCompanionProfile(kind, unit, warbandId, canManageItems);
+  /** A mount's or pet's switch: its copy on or off for this unit; a creature's recruit dialog. */
+  const beastClick = ({ beast, label, visibleId }: LoadoutEntry) => {
+    if (beast?.kind === "creature") {
+      const copies = (unit.items ?? []).filter((item) => item.id === visibleId);
+      const item = { id: visibleId, name: copies[0]?.name ?? label };
+      const source = { type: kind.key, id: unit.id, item_id: visibleId };
+      return () => setRecruiting({ item, copies: copies.length, source });
+    }
+    if (!beast || beast.rowId === null) return undefined;
+    const change = { unitId: unit.id, rowId: beast.rowId, on: !beast.on, name: label };
+    return (event: MouseEvent) => {
+      event.stopPropagation();
+      companionSwitch.mutate(change);
+    };
+  };
 
   const blocks = buildLoadoutBlocks(kind, unit, spellLookup);
 
@@ -109,6 +131,13 @@ export default function UnitListBlocks<K extends UnitKindKey>({
         unit.id,
         entry.type === "skill" ? "skills" : entry.type === "spell" ? "spells" : "special"
       );
+      return;
+    }
+
+    // A switched-on mount or pet opens its profile: stats, entries, Switch off (step 5).
+    const companion = entry.beast?.on ? companionOfItem(unit, entry.visibleId) : null;
+    if (companion) {
+      profile.open(companion);
       return;
     }
 
@@ -158,6 +187,8 @@ export default function UnitListBlocks<K extends UnitKindKey>({
             canEdit={canManageItems}
             onClick={(event) => handleEntryClick(entry, event)}
             onMenuClick={(event) => itemMenu.handleMenuToggle(entry, event)}
+            onBeastClick={beastClick(entry)}
+            beastBusy={companionSwitch.isPending}
           />
         )}
         summaryRowCount={summaryRowCount}
@@ -172,6 +203,14 @@ export default function UnitListBlocks<K extends UnitKindKey>({
           )
         }
       />
+      {profile.dialog}
+      {recruiting ? (
+        <BeastRecruitDialog
+          {...recruiting}
+          warbandId={warbandId}
+          onClose={() => setRecruiting(null)}
+        />
+      ) : null}
       <ItemActionDialogs
         menu={itemMenu}
         canEdit={canManageItems}

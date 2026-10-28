@@ -1,4 +1,4 @@
-import { Check, CircleHelp, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 
 // components
 import {
@@ -8,14 +8,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@components/dialog";
-import { Tooltip } from "@components/tooltip";
 import { UnitSelectionSection } from "@components/unit-selection-section";
 import CollapsibleSection from "@/components/ui/collapsible-section";
 import SummaryPill from "./SummaryPill";
 import PriceSection from "./PriceSection";
 import RaritySection from "./RaritySection";
 import AcquireActions from "./AcquireActions";
+import AcquireBeastOptions from "./AcquireBeastOptions";
 import {
+  AcquireHelpButton,
   AcquireModeToggle,
   AcquiringItemLabel,
   AvailabilitySelect,
@@ -87,6 +88,7 @@ export default function AcquireItemDialogContent({
   selectedAvailabilityId,
   setSelectedAvailabilityId,
   resolvedAvailability,
+  beast,
 }: AcquireItemDialogContentProps) {
   const selectionSummaryNode = (
     <SummaryPill className="min-w-[200px] text-center">{selectionSummary.label}</SummaryPill>
@@ -125,22 +127,7 @@ export default function AcquireItemDialogContent({
         <DialogDescription className="sr-only">
           Buy or give {item.name} to a unit or the warband stash.
         </DialogDescription>
-        <div className="absolute left-1 top-1">
-          <Tooltip
-            trigger={
-              <button
-                type="button"
-                tabIndex={-1}
-                className="icon-button flex h-7 w-7 items-center justify-center rounded-full border border-border/60 bg-background/70 text-muted-foreground transition hover:text-foreground"
-                aria-label="Acquire item help"
-              >
-                <CircleHelp className="h-4 w-4" />
-              </button>
-            }
-            content="Buying uses rarity and price checks. Turn it off to give the item directly without paying."
-            className="inline-flex"
-          />
-        </div>
+        <AcquireHelpButton />
         <div className="space-y-6 pr-3">
           <AcquireModeToggle isBuying={isBuying} onChange={setIsBuying} />
           <AcquiringItemLabel item={item} availability={resolvedAvailability} />
@@ -165,6 +152,7 @@ export default function AcquireItemDialogContent({
               disableUnitSelect={disableUnitSelection}
             />
           </CollapsibleSection>
+          <AcquireBeastOptions itemName={item.name} {...beast} />
           <div className="mx-auto w-4/5 border-t border-border/40" />
           {availabilities.length > 1 && (
             <AvailabilitySelect

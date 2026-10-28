@@ -112,10 +112,10 @@ vi.mock("../hooks/warband/useWarbandSheet", async () => {
         ...loader.summary,
       });
       const [heroes, setHeroes] = React.useState(loader.heroes);
-      const [hiredSwords, setHiredSwords] = React.useState([]);
+      const [hirelings, setHirelings] = React.useState([]);
       const [henchmenGroups, setHenchmenGroups] = React.useState([]);
       const setUnits = React.useMemo(
-        () => ({ hero: setHeroes, henchmen_group: setHenchmenGroups, hired_sword: setHiredSwords }),
+        () => ({ hero: setHeroes, henchmen_group: setHenchmenGroups, hireling: setHirelings }),
         []
       );
       const mergeWarband = React.useCallback(
@@ -139,7 +139,7 @@ vi.mock("../hooks/warband/useWarbandSheet", async () => {
         mergeWarband,
         showCreated: vi.fn(),
         heroes,
-        hiredSwords,
+        hirelings,
         henchmenGroups,
         setUnits,
         isLoading: false,
@@ -191,7 +191,7 @@ vi.mock("../components/warband/WarbandPdfViewerDialog", nothing);
 vi.mock("../components/warband/WarbandRatingDialog", nothing);
 vi.mock("../components/warband/WarbandRecordIndicator", nothing);
 vi.mock("../components/warband/resources/WarbandResourceBar", nothing);
-// Only the heroes section renders for real; the henchmen and hired-sword sections stay out.
+// Only the heroes section renders for real; the henchmen and hired sword sections stay out.
 vi.mock("../components/units/UnitSection", async () => {
   const actual = await vi.importActual<typeof import("../components/units/UnitSection")>(
     "../components/units/UnitSection"

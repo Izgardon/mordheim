@@ -1,11 +1,21 @@
 """How items are read for their payload: the list, the detail and a write's answer (PERF-49, CAT-NEW-03)."""
 
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 
+from apps.core.errors import ApiError
 from apps.warbands.prefetches import item_detail_prefetches
 from apps.warbands.services.prices import own_price_of
 
 from .models import Item
+
+
+def by_listing(value: str) -> Q:
+    """`?listed=1` (or `true`): the items the shop sells; `0` (or `false`): the ones it doesn't; anything else is a 400."""
+    choice = {"1": True, "true": True, "0": False, "false": False}.get(value.lower())
+    if choice is None:
+        message = f'"{value}" is not a listing: use 1 (sold in the shop) or 0.'
+        raise ApiError(message, code="invalid", fields={"listed": [message]})
+    return Q(listed=choice)
 
 
 def item_rows(rows: QuerySet[Item] | None = None) -> QuerySet[Item]:

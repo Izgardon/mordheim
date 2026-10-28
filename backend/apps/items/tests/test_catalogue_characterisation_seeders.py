@@ -30,7 +30,7 @@ from apps.skills.models import Skill
 from apps.spells.models import Spell
 from apps.warbands.models import Hero, Warband
 
-from .catalogue_support import STATS
+from .catalogue_support import STATS, make_beast
 
 
 @contextmanager
@@ -209,27 +209,31 @@ class SeederUpsertTests(SeederTestCase):
         self.assertEqual(house.description, "House")
 
     def test_seed_bestiary_writes_the_book_animal_item_beside_a_campaign_one(self):
-        # BUG-17 (was pinned: seed_bestiary stopped at the campaign's Warhound item and kept nothing; flipped in PR A)
-        house = book_item("Warhound", 15, type="Animal", subtype="Animal", campaign=self.campaign)
+        # BUG-17 (was pinned: seed_bestiary stopped at the campaign's Warhound item and kept nothing; flipped in PR A).
+        # Since the bestiary rewrite step 3 every beast has its item, the campaign's Warhound too
+        house = make_beast("Warhound", campaign=self.campaign, cost=15).animal_item
         shop = {"availabilities": [{"cost": 20, "rarity": 2}]}
         rows: list[dict[str, Any]] = [
-            {"name": "Bear", "type": "Animal", **STATS},
-            {"name": "Warhound", "type": "Animal", **STATS, "shop_item": shop},
+            {"name": "Bear", "kind": "creature", **STATS},
+            {"name": "Warhound", "kind": "creature", **STATS, "shop_item": shop},
         ]
 
         with data_file(rows) as path:
             run("seed_bestiary", json_paths=[path])
 
-        book = Item.objects.select_related("bestiary_entry").get(name="Warhound", type="Animal", campaign__isnull=True)
-        self.assertEqual((costs(book), book.bestiary_entry.name if book.bestiary_entry else None), ([20], "Warhound"))
+        book = Item.objects.get(name="Warhound", type="Animal", campaign__isnull=True)
+        beasts: dict[int | None, int] = dict(
+            BestiaryEntry.objects.filter(name="Warhound").values_list("campaign_id", "id")
+        )
         house.refresh_from_db()
-        self.assertEqual((costs(house), house.bestiary_entry_id), ([15], None))
-        self.assertEqual(sorted(BestiaryEntry.objects.values_list("name", flat=True)), ["Bear", "Warhound"])
+        self.assertEqual((costs(book), book.bestiary_entry_id), ([20], beasts[None]))
+        self.assertEqual((costs(house), house.bestiary_entry_id), ([15], beasts[self.campaign.id]))
+        self.assertEqual(sorted(BestiaryEntry.objects.filter(campaign__isnull=True).values_list("name", flat=True)), ["Bear", "Warhound"])  # fmt: skip
 
     def test_seed_bestiary_matches_entries_in_the_book_only(self):
-        house = BestiaryEntry.objects.create(name="Warhound", type="Animal", campaign=self.campaign, movement=9)
+        house = BestiaryEntry.objects.create(name="Warhound", kind="creature", campaign=self.campaign, movement=9)
         shop = {"availabilities": [{"cost": 15}]}
-        rows = [{"name": "Warhound", "type": "Animal", **STATS, "movement": 6, "shop_item": shop}]
+        rows = [{"name": "Warhound", "kind": "creature", **STATS, "movement": 6, "shop_item": shop}]
 
         with data_file(rows) as path:
             run("seed_bestiary", json_paths=[path])

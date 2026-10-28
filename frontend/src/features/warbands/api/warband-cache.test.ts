@@ -34,7 +34,7 @@ const makeSheet = (): WarbandSheet =>
       { id: 2, name: "Gunther", xp: 0 },
     ],
     henchmen_groups: [{ id: 5, name: "Knives", xp: 1 }],
-    hired_swords: [],
+    hirelings: [],
   }) as unknown as WarbandSheet;
 
 beforeEach(() => {
@@ -184,6 +184,30 @@ describe("applyWarbandUpdate", () => {
     expect(api.getWarbandSummary).toHaveBeenCalledTimes(1);
     expect(api.getWarbandSummary).toHaveBeenCalledWith(9);
     expect(fetchSheet).not.toHaveBeenCalled();
+    stopPage();
+  });
+
+  it("re-reads again for a second write while the first write's read is on its way", async () => {
+    const queryClient = seed();
+    let answerFirst: (summary: unknown) => void = () => undefined;
+    api.getWarbandSummary
+      .mockReturnValueOnce(new Promise((resolve) => (answerFirst = resolve)))
+      .mockResolvedValueOnce({ gold: 100, rating: 120 });
+    const page = new QueryObserver(queryClient, {
+      queryKey: sheetKey,
+      queryFn: async () => makeSheet(),
+      staleTime: Infinity,
+    });
+    const stopPage = page.subscribe(() => undefined);
+
+    applyWarbandUpdate(queryClient, 9);
+    applyWarbandUpdate(queryClient, 9);
+    answerFirst({ gold: 100, rating: 95 });
+
+    await vi.waitFor(() => expect(sheetOf(queryClient).summary.rating).toBe(120));
+    await vi.waitFor(() => expect(queryClient.isFetching()).toBe(0));
+    expect(api.getWarbandSummary).toHaveBeenCalledTimes(2);
+    expect(sheetOf(queryClient).summary.rating).toBe(120);
     stopPage();
   });
 

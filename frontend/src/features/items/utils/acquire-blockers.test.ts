@@ -47,11 +47,11 @@ describe("acquireBlockers", () => {
   });
 
   it("asks for a receiver of the chosen kind", () => {
-    const pick = (unitType: "heroes" | "hiredswords" | "henchmen" | "") =>
+    const pick = (unitType: "heroes" | "hirelings" | "henchmen" | "") =>
       acquireBlockers({ ...ready, canProceed: false, unitType }).actionDisabledReason;
     expect(pick("")).toBe("Select who receives the item.");
     expect(pick("heroes")).toBe("Select a hero to receive the item.");
-    expect(pick("hiredswords")).toBe("Select a hired sword to receive the item.");
+    expect(pick("hirelings")).toBe("Select a hired sword to receive the item.");
     expect(pick("henchmen")).toBe("Select a henchmen group to receive the item.");
   });
 

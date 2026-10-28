@@ -1,8 +1,8 @@
 """The base uniqueness constraints of the catalogue tables (BUG-17, IMP-83, CAT-TEST-12).
 
 One row per name (and type) in the book, in an add-on and in a campaign, NULLs not distinct: items, skills, spells
-and specials on name and type, races on name, the bestiary on name (an animal and a hired sword share the names, as
-seed_bestiary upserts them). A campaign version keeps its book entry's name, since the campaign is part of the key.
+and specials on name and type, races on name, the bestiary, hired swords and dramatis personae on name (as their
+seeders upsert them). A campaign version keeps its book entry's name, since the campaign is part of the key.
 House-rule clones are left out of the item constraint (a custom "Heavy Armour" written before PR C and the
 half-price clone of the book's may live side by side). The API's wider name rule (CAT-TWEAK-02) is
 test_catalogue_names.py's; the constraint backs it when two writes take one name at once.
@@ -32,7 +32,7 @@ class BookUniquenessTests(CatalogueTestCase):
             (Spell, {"name": "Lifestealer", "type": "Necromancy"}),
             (Special, {"name": "Large", "type": "Trait"}),
             (Race, {"name": "Human"}),
-            (BestiaryEntry, {"name": "Warhound", "type": "Monster"}),  # the bestiary: on name alone
+            (BestiaryEntry, {"name": "Warhound", "kind": "mount"}),  # the bestiary: on name alone
         ]
         for model, fields in cases:
             with self.subTest(model=model.__name__):

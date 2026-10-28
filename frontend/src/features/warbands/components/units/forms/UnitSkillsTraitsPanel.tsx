@@ -24,7 +24,7 @@ type UnitSkillsTraitsPanelProps<T extends CasterUnitForm> = {
 
 const traitLabelClassName = "flex items-center gap-2 text-xs text-foreground";
 
-/** Skill access (C Sh A St Sp + special lists) and traits, on hero and hired-sword cards. */
+/** Skill access (C Sh A St Sp + special lists) and traits, on hero and hired sword cards. */
 export default function UnitSkillsTraitsPanel<T extends CasterUnitForm>({
   form,
   index,

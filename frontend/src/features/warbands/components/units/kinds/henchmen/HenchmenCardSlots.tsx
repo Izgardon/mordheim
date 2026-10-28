@@ -4,6 +4,9 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "../../../shared/unit_details/warband-tooltip-styles";
 import { calculateHenchmenReinforceCost } from "../../../henchmen/utils/henchmen-cost";
 import { CostTile, SizeTile } from "../../expanded/ExpandedTiles";
+import BackToItemTile from "../../beasts/BackToItemTile";
+import CreatureMark from "../../beasts/CreatureMark";
+import { isCreatureGroup } from "../../../../utils/companions";
 
 import type { HenchmenGroup } from "../../../../types/warband-types";
 import type { ExpandedTilesProps, SummaryHeaderProps } from "../../../../units/unit-slot-types";
@@ -30,7 +33,10 @@ export function HenchmenCardHeader({ unit: group, level }: SummaryHeaderProps<"h
   return (
     <div className="flex items-start justify-between gap-4 py-1 px-4">
       <div className="min-w-0">
-        <p className="text-xl font-bold text-foreground">{group.name || "Untitled group"}</p>
+        <p className="flex items-center gap-1.5 text-xl font-bold text-foreground">
+          {isCreatureGroup(group) ? <CreatureMark /> : null}
+          {group.name || "Untitled group"}
+        </p>
         <p className="text-sm text-muted-foreground">
           Level {level} {group.unit_type || "Henchmen"}{" "}
           <span className="text-xs">
@@ -54,6 +60,7 @@ export function HenchmenCardHeader({ unit: group, level }: SummaryHeaderProps<"h
 export function HenchmenExpandedTitle({ unit: group }: { unit: HenchmenGroup }) {
   return (
     <h2 className="flex items-center gap-1.5 text-2xl font-bold text-foreground">
+      {isCreatureGroup(group) ? <CreatureMark /> : null}
       {group.name || "Unnamed Group"}
       {hasItemMismatch(group) && (
         <Tooltip
@@ -69,11 +76,13 @@ export function HenchmenExpandedTitle({ unit: group }: { unit: HenchmenGroup }) 
 
 /**
  * Size and Reinforce Cost: the server's hire_cost (decision 7), broken down as base + one
- * member's item share + 2 x whole XP.
+ * member's item share + 2 x whole XP. A group recruited from a creature can go back to its item.
  */
 export function HenchmenExpandedTiles({
   unit: group,
+  warbandId,
   layout,
+  canEdit,
 }: ExpandedTilesProps<"henchmen_group">) {
   const { baseCost, xpCost, totalCost, itemBreakdown } = calculateHenchmenReinforceCost({
     price: group.price,
@@ -101,6 +110,9 @@ export function HenchmenExpandedTiles({
         }))}
         extraLines={[{ key: "xp", label: "Experience", cost: xpCost }]}
       />
+      {canEdit && group.source_beast_id != null ? (
+        <BackToItemTile group={group} warbandId={warbandId} layout={layout} />
+      ) : null}
     </>
   );
 }

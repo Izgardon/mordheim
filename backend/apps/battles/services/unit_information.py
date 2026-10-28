@@ -1,9 +1,11 @@
 """A battle participant's live unit information, and what a config save may change in it (BUG-44).
 
 `BattleParticipant.unit_information_json` maps unit keys to `{stats_override, notes, current_wounds,
-out_of_action, kill_count}`. A config save changes only the first three (the editable fields), merged into what is
-stored under the participant's lock; `out_of_action` and `kill_count` change only through their own endpoints, so a
-save built before a kill or an out-of-action tap can't undo it, even from an older client sending the whole map.
+out_of_action, kill_count}`, plus `dismounted: true` for a rider who got off his mount (left out otherwise, the
+bestiary rewrite step 5). A config save changes only the first three (the editable fields), merged into what is
+stored under the participant's lock; `out_of_action`, `kill_count` and `dismounted` change only through their own
+endpoints, so a save built before a kill or an out-of-action tap can't undo it, even from an older client sending the
+whole map.
 """
 
 from typing import Any
@@ -93,13 +95,14 @@ def clean_editable_fields(info: dict[str, Any], *, only_present: bool = False) -
 
 
 def is_empty(entry: dict[str, Any]) -> bool:
-    """An entry that says nothing: no override, notes or wounds, not out of action and no kills."""
+    """An entry that says nothing: no override, notes or wounds, not out of action or dismounted, and no kills."""
     return not (
         entry.get("stats_override")
         or entry.get("notes")
         or entry.get("current_wounds") is not None
         or entry.get("out_of_action")
         or entry.get("kill_count")
+        or entry.get("dismounted")
     )
 
 
@@ -164,6 +167,8 @@ def unit_entry(unit_information: dict[str, dict[str, Any]], unit_key: str) -> di
         "out_of_action": bool(existing.get("out_of_action", False)),
         "kill_count": max(0, existing_kill_count),
     }
+    if existing.get("dismounted"):
+        entry["dismounted"] = True
     unit_information[unit_key] = entry
     return entry
 

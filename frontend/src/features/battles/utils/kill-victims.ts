@@ -10,8 +10,9 @@ const text = (value: unknown) => (typeof value === "string" ? value.trim() : "")
 function rosterUnits(roster: ParticipantRoster | undefined): PrebattleUnit[] {
   return [
     ...(roster?.heroes ?? []),
-    ...(roster?.hiredSwords ?? []),
+    ...(roster?.hirelings ?? []),
     ...(roster?.henchmenGroups ?? []).flatMap((group) => group.members),
+    ...(roster?.petModels ?? []),
   ];
 }
 

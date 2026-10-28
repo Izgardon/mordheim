@@ -1,5 +1,7 @@
 """Catalogue entries as unit payloads show them: items, skills, specials, spells and the race."""
 
+from typing import Any
+
 from rest_framework import serializers
 from rest_framework.fields import Field
 
@@ -8,6 +10,8 @@ from apps.items.serializers import ItemAvailabilitySerializer, with_save
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
+
+from .companions import beast_kind
 
 
 class ItemPropertySummarySerializer(serializers.ModelSerializer):
@@ -26,9 +30,15 @@ class ItemSummarySerializer(serializers.Serializer):
     name = serializers.CharField(source="item.name")
     type = serializers.CharField(source="item.type")
     cost = serializers.SerializerMethodField()
+    row_id = serializers.IntegerField(source="pk")  # this copy: what the companion switch names
+    companion = serializers.BooleanField()
+    beast_kind = serializers.SerializerMethodField()  # mount, pet or creature for an Animal item
 
     def get_cost(self, obj):
         return getattr(obj, "cost", None)
+
+    def get_beast_kind(self, obj: Any) -> str | None:
+        return beast_kind(obj.item)
 
 
 class ItemDetailSerializer(serializers.ModelSerializer):

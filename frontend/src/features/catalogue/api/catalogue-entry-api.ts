@@ -1,4 +1,5 @@
 import { apiRequest } from "@/lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 
 import type { CatalogueUsage } from "@/lib/catalogue-delete";
 import type { CatalogueKind } from "@/lib/query-keys";
@@ -15,6 +16,7 @@ const PATHS: Record<CatalogueEntryKind, string> = {
   races: "races",
   bestiary: "bestiary",
   "hired-swords": "hired-swords",
+  "dramatis-personae": "dramatis-personae",
 };
 
 type Entry = Pick<CatalogueEntryLike, "id" | "campaign_id">;
@@ -50,6 +52,7 @@ export type DeleteOutcome = { outcome: "archived" | "removed"; usage: CatalogueU
 export function deleteEntry(kind: CatalogueEntryKind, entry: Entry, campaignId: number) {
   return apiRequest<DeleteOutcome>(`${entryPath(kind, entry)}${bookQuery(entry, campaignId)}`, {
     method: "DELETE",
+    headers: socketIdHeaders(),
   });
 }
 
@@ -61,6 +64,7 @@ export function restoreEntry<T>(kind: CatalogueEntryKind, entry: Entry, campaign
   const body = bookCampaign(entry, campaignId);
   return apiRequest<T>(entryPath(kind, entry, "restore"), {
     method: "POST",
+    headers: socketIdHeaders(),
     body: "campaign_id" in body ? body : undefined,
   });
 }
@@ -74,6 +78,7 @@ export function revertEntry<T>(kind: CatalogueEntryKind, entry: Entry, campaignI
   const body = bookCampaign(entry, campaignId);
   return apiRequest<T>(entryPath(kind, entry, "revert"), {
     method: "POST",
+    headers: socketIdHeaders(),
     body: "campaign_id" in body ? body : undefined,
   });
 }

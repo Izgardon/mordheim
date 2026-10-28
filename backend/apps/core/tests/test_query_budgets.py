@@ -25,7 +25,7 @@ from apps.core.testing import (
 )
 from apps.items.models import Item
 from apps.trades.models import TradeRequest
-from apps.warbands.models import HenchmenGroup, Hero, HiredSword
+from apps.warbands.models import HenchmenGroup, Hero, Hireling
 
 # endpoint name -> (url template, budget)
 QUERY_BUDGETS: dict[str, tuple[str, int]] = {
@@ -49,18 +49,18 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     "warband_sheet": ("/api/warbands/{warband}/sheet/", 15),  # constant in units (test below); one request for 5
     "warband_heroes": ("/api/warbands/{warband}/heroes/", 4),  # constant in units
     "warband_henchmen": ("/api/warbands/{warband}/henchmen-groups/", 5),  # constant in units
-    "warband_hired_swords": ("/api/warbands/{warband}/hired-swords/", 4),  # constant in units
+    "warband_hirelings": ("/api/warbands/{warband}/hirelings/", 4),  # constant in units
     "warband_hero": ("/api/warbands/{warband}/heroes/{hero}/", 7),
     "warband_henchmen_group": ("/api/warbands/{warband}/henchmen-groups/{group}/", 8),
-    "warband_hired_sword": ("/api/warbands/{warband}/hired-swords/{sword}/", 7),
+    "warband_hireling": ("/api/warbands/{warband}/hirelings/{sword}/", 7),
     "warband_hero_kill_history": ("/api/warbands/{warband}/heroes/{hero}/kill-history/", 4),
     "warband_heroes_detail": ("/api/warbands/{warband}/heroes/detail/", 7),  # constant in units (test below)
     "warband_henchmen_detail": (
         "/api/warbands/{warband}/henchmen-groups/detail/",
         8,
     ),  # constant in units
-    "warband_hired_swords_detail": (
-        "/api/warbands/{warband}/hired-swords/detail/",
+    "warband_hirelings_detail": (
+        "/api/warbands/{warband}/hirelings/detail/",
         7,
     ),  # constant in units
     "warband_items": ("/api/warbands/{warband}/items/", 3),
@@ -78,8 +78,9 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     "spells": ("/api/spells/?campaign_id={campaign}", 2),
     "specials": ("/api/special/?campaign_id={campaign}", 2),
     "races": ("/api/races/?campaign_id={campaign}", 2),
-    "bestiary": ("/api/bestiary/?campaign_id={campaign}", 2),
-    "hired_sword_profiles": ("/api/hired-swords/?campaign_id={campaign}", 2),
+    "bestiary": ("/api/bestiary/?campaign_id={campaign}", 2),  # 4 once the beasts have their items' prices
+    "hired_swords": ("/api/hired-swords/?campaign_id={campaign}", 2),
+    "dramatis_personae": ("/api/dramatis-personae/?campaign_id={campaign}", 2),
     # Battles
     "battle_state": ("/api/campaigns/{campaign}/battles/{battle}/state/", 5),  # first read writes presence once
     # constant in units (pass 3; apps/battles/tests/test_battle_query_budgets.py); first read writes presence once
@@ -93,7 +94,7 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
 WRITE_QUERY_BUDGETS: dict[str, tuple[str, str, dict[str, Any], int]] = {
     "hero_patch_xp": ("patch", "/api/warbands/{warband}/heroes/{hero}/", {"xp": 3}, 11),
     "henchmen_group_patch_xp": ("patch", "/api/warbands/{warband}/henchmen-groups/{group}/", {"xp": 3}, 12),
-    "hired_sword_patch_xp": ("patch", "/api/warbands/{warband}/hired-swords/{sword}/", {"xp": 3}, 11),
+    "hireling_patch_xp": ("patch", "/api/warbands/{warband}/hirelings/{sword}/", {"xp": 3}, 11),
     "hero_level_up": (
         "post",
         "/api/warbands/{warband}/heroes/{hero}/level-up/",
@@ -106,9 +107,9 @@ WRITE_QUERY_BUDGETS: dict[str, tuple[str, str, dict[str, Any], int]] = {
         {"payload": {"advance": {"id": "WS"}}},
         13,
     ),
-    "hired_sword_level_up": (
+    "hireling_level_up": (
         "post",
-        "/api/warbands/{warband}/hired-swords/{sword}/level-up/",
+        "/api/warbands/{warband}/hirelings/{sword}/level-up/",
         {"payload": {"advance": {"id": "WS"}}},
         12,
     ),
@@ -126,7 +127,7 @@ class QueryBudgetTests(TestCase):
         cls.unit_ids = {
             "hero": Hero.objects.filter(warband=warband).order_by("id")[0].id,
             "group": HenchmenGroup.objects.filter(warband=warband).order_by("id")[0].id,
-            "sword": HiredSword.objects.filter(warband=warband).order_by("id")[0].id,
+            "sword": Hireling.objects.filter(warband=warband).order_by("id")[0].id,
         }
 
     def _url(self, template: str) -> str:
@@ -154,10 +155,10 @@ class QueryBudgetTests(TestCase):
             "warband_sheet",
             "warband_heroes",
             "warband_henchmen",
-            "warband_hired_swords",
+            "warband_hirelings",
             "warband_heroes_detail",
             "warband_henchmen_detail",
-            "warband_hired_swords_detail",
+            "warband_hirelings_detail",
         ]
         # Start from a warband that already has restriction-linked items: the first link adds
         # one fixed query (restrictions are only fetched when some exist), which isn't growth.
@@ -175,7 +176,7 @@ class QueryBudgetTests(TestCase):
         client.force_authenticate(user=self.ref.owner)
         Hero.objects.filter(warband=self.ref.warband).update(level_up=1)
         HenchmenGroup.objects.filter(warband=self.ref.warband).update(level_up=1)
-        HiredSword.objects.filter(warband=self.ref.warband).update(level_up=1)
+        Hireling.objects.filter(warband=self.ref.warband).update(level_up=1)
         for name, (method, template, body, budget) in WRITE_QUERY_BUDGETS.items():
             with self.subTest(endpoint=name):
                 with CaptureQueriesContext(connection) as captured:
@@ -219,7 +220,7 @@ class QueryBudgetTests(TestCase):
         warband = self.ref.warband
         Hero.objects.filter(warband=warband).update(level_up=2)
         HenchmenGroup.objects.filter(warband=warband).update(level_up=2)
-        HiredSword.objects.filter(warband=warband).update(level_up=2)
+        Hireling.objects.filter(warband=warband).update(level_up=2)
 
         def count(name: str, xp: int) -> int:
             method, template, body, _ = WRITE_QUERY_BUDGETS[name]
@@ -232,7 +233,7 @@ class QueryBudgetTests(TestCase):
         units = (
             Hero.objects.get(id=self.unit_ids["hero"]),
             HenchmenGroup.objects.get(id=self.unit_ids["group"]),
-            HiredSword.objects.get(id=self.unit_ids["sword"]),
+            Hireling.objects.get(id=self.unit_ids["sword"]),
         )
         # Seed one restriction-linked item first: the first link adds one fixed query, which isn't growth.
         add_items_to_units(*units, count=1, label="Seed")
@@ -255,7 +256,8 @@ class QueryBudgetTests(TestCase):
         # transaction (ECON-PERF-03). Source and target are resolved with one id-only query each (BUG-06); a stash
         # row is locked and changed in two queries, without re-reading it (BUG-36). Each writes its log entry (+1,
         # ECON-CQ-02); a sale also writes its gold to the stored balance (+1, decision 4); each unit whose copies
-        # change gets a new updated_at, the version a roster Save sends back (+1 per unit, pass 2 decision 1).
+        # change gets a new updated_at, the version a roster Save sends back (+1 per unit, pass 2 decision 1). A move
+        # locks the warband first, as every roster write does (+1, the bestiary rewrite's lock order follow-up).
         client = self.ref.owner_client
         client.force_authenticate(user=self.ref.owner)
         heroes = list(Hero.objects.filter(warband=self.ref.warband).order_by("id").values_list("id", flat=True))
@@ -270,9 +272,9 @@ class QueryBudgetTests(TestCase):
         self._count_writes(
             client,
             [
-                ("move stash to hero", moves, {**stash_to_hero, "quantity": 1}, 20),
-                ("move hero to hero", moves, {**hero_to_hero, "item_id": items[1], "quantity": 1}, 27),
-                ("move hero to stash", moves, {**hero_to_stash, "quantity": 1}, 21),  # onto an existing stash row
+                ("move stash to hero", moves, {**stash_to_hero, "quantity": 1}, 21),
+                ("move hero to hero", moves, {**hero_to_hero, "item_id": items[1], "quantity": 1}, 28),
+                ("move hero to stash", moves, {**hero_to_stash, "quantity": 1}, 22),  # onto an existing stash row
                 (
                     "sell from the stash",
                     sales,

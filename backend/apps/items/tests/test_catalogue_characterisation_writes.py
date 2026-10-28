@@ -8,7 +8,8 @@ in `test_catalogue_transactions.py`; what they tell the other members (BUG-80), 
 
 from django.db import IntegrityError, transaction
 
-from apps.bestiary.models import BestiaryEntry, HiredSwordProfile, WarbandBestiaryFavourite
+from apps.bestiary.models import BestiaryEntry, WarbandBestiaryFavourite
+from apps.hirelings.models import HiredSword
 from apps.items.models import Item, ItemAvailability, ItemProperty
 from apps.races.models import Race
 from apps.restrictions.models import Restriction
@@ -97,19 +98,16 @@ class ItemWriteTests(CatalogueTestCase):
             (created.data["campaign_id"], edited.data["campaign_id"]), (self.campaign.id, self.campaign.id)
         )
 
-    def test_an_item_links_its_animal_through_bestiary_entry_id(self):
+    def test_an_animal_item_comes_from_the_bestiary_alone(self):
         # BUG-146 (was pinned: the raw id reached the relation, which needs an instance, so every write was a 500;
-        # flipped in PR A: a scoped related field)
-        theirs = make_entry(BESTIARY, "Their pony", campaign=self.elsewhere)
-
+        # flipped in PR A: a scoped related field). The bestiary rewrite step 3 retired `bestiary_entry_id`: the
+        # bestiary writes each beast's one Animal item, so the items routes make none and link no beast
         created = self.create_as(self.owner, ITEMS, "Hound", type="Animal", bestiary_entry_id=self.warhound.id)
-        unlinked = self.patch_as(self.owner, ITEMS.detail_url(created.data["id"]), {"bestiary_entry_id": None})
-        foreign = self.create_as(self.owner, ITEMS, "Pony", type="Animal", bestiary_entry_id=theirs.id)
+        linked = self.create_as(self.owner, ITEMS, "Leash", type="Equipment", bestiary_entry_id=self.warhound.id)
 
-        self.assertEqual((created.status_code, created.data["bestiary_entry"]["name"]), (201, "Warhound"))
-        self.assertEqual((unlinked.status_code, unlinked.data["bestiary_entry"]), (200, None))
-        self.assertEqual((foreign.status_code, list(foreign.data)), (400, ["bestiary_entry_id"]))
-        self.assertFalse(Item.objects.filter(name="Pony").exists())
+        self.assertEqual((created.status_code, list(created.data)), (400, ["type"]))
+        self.assertEqual((linked.status_code, linked.data["bestiary_entry"]), (201, None))  # the id is ignored
+        self.assertFalse(Item.objects.filter(name="Hound").exists())
 
 
 class CampaignScopeOfWriteIdsTests(CatalogueTestCase):
@@ -164,7 +162,7 @@ class CampaignScopeOfWriteIdsTests(CatalogueTestCase):
         response = self.create_as(self.owner, HIRED_SWORDS, "Mole", restriction_ids=[{"restriction_id": theirs.id, "additional_note": "x"}])  # fmt: skip
 
         self.assertEqual(response.json(), {"restriction_ids": [f'Invalid pk "{theirs.id}" - object does not exist.']})
-        self.assertFalse(BestiaryEntry.objects.filter(name="Mole").exists())
+        self.assertFalse(HiredSword.objects.filter(name="Mole").exists())
 
     def test_a_warband_cannot_favourite_another_campaigns_bestiary_entry_or_read_it(self):
         # SEC-07 (was pinned: favourited, and its stats read back; flipped in PR A: not found, and a favourite left
@@ -284,41 +282,45 @@ class BestiaryWriteTests(CatalogueTestCase):
         self.assertEqual([row["name"] for row in edited.data["skills"]], ["Sprint"])
         self.assertEqual(([row["name"] for row in edited.data["specials"]], edited.data["large"]), (["Large"], True))
 
-    def test_a_hired_sword_is_created_with_the_grade_and_race_it_was_sent(self):
-        # BUG-53, CAT-UX-02 (was pinned: create dropped them; flipped in PR A); an edit changes them too
-        response = self.create_as(self.owner, HIRED_SWORDS, "Duellist", grade="1b", race="Human", available_skill_types=["Combat"])  # fmt: skip
-        edited = self.patch_as(self.owner, HIRED_SWORDS.detail_url(response.data["id"]), {"grade": "2a", "race": "Elf"})
+    def test_a_hired_sword_is_created_with_the_grade_race_and_skill_types_it_was_sent(self):
+        # BUG-53, CAT-UX-02 (was pinned: create dropped them; flipped in PR A); an edit changes them too. The race is
+        # the catalogue's (`race_id`), and its label the text the source gave
+        sent = {"grade": "1b", "race_id": self.human.id, "race_label": "Human", "available_skill_types": ["Combat"]}
+        response = self.create_as(self.owner, HIRED_SWORDS, "Duellist", **sent)
+        edited = self.patch_as(self.owner, HIRED_SWORDS.detail_url(response.data["id"]), {"grade": "2a", "race_id": None, "race_label": "Elf"})  # fmt: skip
 
         self.assertEqual(response.status_code, 201, response.data)
         body = response.data
-        self.assertEqual((body["grade"], body["race"], body["available_skill_types"]), ("1b", "Human", ["Combat"]))
+        self.assertEqual((body["grade"], body["race_id"], body["race_name"], body["race_label"]), ("1b", self.human.id, "Human", "Human"))  # fmt: skip
+        self.assertEqual((body["available_skill_types"], body["campaign_id"]), (["Combat"], self.campaign.id))
         self.assertEqual((body["hire_cost"], body["upkeep_cost"], body["rating"]), (30, 15, 12))
-        self.assertEqual((body["bestiary_entry"]["type"], body["campaign_id"]), ("Hired Sword", self.campaign.id))
-        self.assertEqual((edited.data["grade"], edited.data["race"]), ("2a", "Elf"))
+        self.assertEqual((edited.data["grade"], edited.data["race_id"], edited.data["race_label"]), ("2a", None, "Elf"))
 
     def test_a_hired_sword_edit_with_a_bad_field_saves_nothing(self):
         # BUG-53 (was pinned: the costs were saved, then the bad name was a 400; flipped in PR A)
-        profile = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign)
+        archer = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign)
 
-        response = self.patch_as(self.owner, HIRED_SWORDS.detail_url(profile.id), {"hire_cost": 99, "name": ""})
+        response = self.patch_as(self.owner, HIRED_SWORDS.detail_url(archer.id), {"hire_cost": 99, "name": ""})
 
         self.assertEqual((response.status_code, list(response.data)), (400, ["name"]))
-        self.assertEqual(HiredSwordProfile.objects.get(id=profile.id).hire_cost, 40)
+        self.assertEqual(HiredSword.objects.get(id=archer.id).hire_cost, 40)
 
     def test_a_hired_sword_edit_with_a_cost_that_is_not_a_whole_number_of_0_or_more_is_a_400(self):
         # BUG-53 (was pinned: "abc" was a 500; flipped in PR A: the PATCH validates its costs)
-        profile = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign)
+        archer = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign)
         cases = [("hire_cost", "abc"), ("upkeep_cost", -1), ("rating", 1.5), ("hire_cost_expression", "x" * 121)]
         for field, value in cases:
             with self.subTest(field=field, value=value):
-                response = self.patch_as(self.owner, HIRED_SWORDS.detail_url(profile.id), {field: value})
+                response = self.patch_as(self.owner, HIRED_SWORDS.detail_url(archer.id), {field: value})
                 self.assertEqual((response.status_code, list(response.data)), (400, [field]))
-        cleared = self.patch_as(self.owner, HIRED_SWORDS.detail_url(profile.id), {"hire_cost": None, "upkeep_cost": 0})
+        cleared = self.patch_as(self.owner, HIRED_SWORDS.detail_url(archer.id), {"hire_cost": None, "upkeep_cost": 0})
         self.assertEqual((cleared.data["hire_cost"], cleared.data["upkeep_cost"]), (None, 0))
 
-    def test_deleting_a_hired_sword_deletes_its_entry(self):
-        profile = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign)
+    def test_deleting_a_hired_sword_deletes_it_with_its_links(self):
+        archer = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign)
+        archer.skill_links.create(skill=self.infiltration[0])
 
-        self.assertEqual(self.delete_as(self.owner, HIRED_SWORDS.detail_url(profile.id)).status_code, 204)
+        self.assertEqual(self.delete_as(self.owner, HIRED_SWORDS.detail_url(archer.id)).status_code, 204)
 
-        self.assertFalse(BestiaryEntry.objects.filter(id=profile.bestiary_entry_id).exists())
+        self.assertFalse(HiredSword.objects.filter(id=archer.id).exists())
+        self.assertFalse(archer.skill_links.model.objects.filter(hired_sword_id=archer.id).exists())

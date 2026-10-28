@@ -76,9 +76,13 @@ export default function LogsTab({ warband }: LogsTabProps) {
     personnel: "Personnel",
   };
 
+  /** The site keeps the game's name for the hireling kind: "hireling_skill" reads "Hired Sword Skill". */
   const formatLogLabel = (value: string) =>
     featureLabelMap[value] ??
-    value.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+    value
+      .replace(/(^|_)hireling(?=_|$)/g, "$1hired_sword")
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (letter) => letter.toUpperCase());
 
   const formatLogLine = (log: WarbandLog): ReactNode => {
     const key = `${log.feature}:${log.entry_type}`;

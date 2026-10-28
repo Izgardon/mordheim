@@ -84,7 +84,7 @@ export function buildLevelUps(
       const found =
         award.unitKind === "hero"
           ? (sheet.heroes ?? []).find((hero) => hero.id === id)
-          : (sheet.hired_swords ?? []).find((hiredSword) => hiredSword.id === id);
+          : (sheet.hirelings ?? []).find((hireling) => hireling.id === id);
       if (!found) continue;
       unit = found;
     }
@@ -101,7 +101,7 @@ export function buildLevelUps(
 
 const rosterUnits = (roster: ParticipantRoster | undefined) => [
   ...(roster?.heroes ?? []),
-  ...(roster?.hiredSwords ?? []),
+  ...(roster?.hirelings ?? []),
   ...(roster?.henchmenGroups ?? []).flatMap((group) => group.members),
 ];
 

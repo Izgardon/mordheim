@@ -15,7 +15,8 @@ from .models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemPro
 LINKS = ("availabilities", "property_ids")
 
 
-def _write_availabilities(item: Item, rows: list[Mapping[str, Any]]) -> None:
+def write_availabilities(item: Item, rows: list[Mapping[str, Any]]) -> None:
+    """The item's new prices with their restrictions (also a beast's Animal item, from the bestiary's writes)."""
     created = ItemAvailability.objects.bulk_create(
         [
             ItemAvailability(
@@ -41,11 +42,16 @@ def _write_properties(item: Item, property_ids: list[int]) -> None:
     ItemPropertyLink.objects.bulk_create([ItemPropertyLink(item=item, property_id=pk) for pk in property_ids])
 
 
+def replace_availabilities(item: Item, rows: list[Mapping[str, Any]]) -> None:
+    ItemAvailability.objects.filter(item=item).delete()
+    write_availabilities(item, rows)
+
+
 def create_item(campaign_id: int, data: Mapping[str, Any]) -> Item:
     """The campaign's new item with its prices and properties."""
     fields = {key: value for key, value in data.items() if key not in LINKS}
     item = Item.objects.create(campaign_id=campaign_id, **fields)
-    _write_availabilities(item, data.get("availabilities", []))
+    write_availabilities(item, data.get("availabilities", []))
     _write_properties(item, data.get("property_ids", []))
     return item
 
@@ -58,8 +64,7 @@ def update_item(item: Item, data: Mapping[str, Any]) -> Item:
     if fields:
         item.save(update_fields=list(fields))
     if "availabilities" in data:
-        ItemAvailability.objects.filter(item=item).delete()
-        _write_availabilities(item, data["availabilities"])
+        replace_availabilities(item, data["availabilities"])
     if "property_ids" in data:
         ItemPropertyLink.objects.filter(item=item).delete()
         _write_properties(item, data["property_ids"])

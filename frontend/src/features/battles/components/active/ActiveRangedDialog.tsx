@@ -18,6 +18,7 @@ import {
   HELPER_NATIVE_SELECT_CLASS,
   HELPER_NATIVE_SELECT_STYLE,
 } from "./helper-dialog-styles";
+import { groupOptionsBySection } from "./unit-sections";
 
 export type ActiveRangedUnitOption = {
   value: string;
@@ -67,14 +68,6 @@ const DEFAULT_MODIFIERS: ModifierState = {
   movingAndShooting: false,
   largeTarget: false,
 };
-
-const SECTION_ORDER = ["Heroes", "Henchmen", "Hired Swords", "Temporary Units"] as const;
-
-const groupOptionsBySection = (options: ActiveRangedUnitOption[]) =>
-  SECTION_ORDER.map((sectionLabel) => ({
-    sectionLabel,
-    options: options.filter((option) => option.sectionLabel === sectionLabel),
-  })).filter((group) => group.options.length > 0);
 
 export default function ActiveRangedDialog({
   open,

@@ -1,48 +1,46 @@
-"""How bestiary entries and hired swords are read for their detail payloads (PERF-46, CAT-PERF-04, CAT-TEST-08).
+"""How bestiary entries are read for their payloads (PERF-46, CAT-PERF-04, CAT-TEST-08), and the list's kind filter.
 
-A fixed number of queries whatever the equipment: the skills, specials and spells in one query each, the equipment
-links with their items, then the items' properties, availabilities (with their restrictions) and, for an animal's
-item, its entry's specials. The GETs and the POST and PATCH answers read through here.
+A detail costs a fixed number of queries whatever the equipment: the beast's own item joined to it with its prices
+(two queries), the skills, specials and spells in one query each, the equipment links with their items, then the
+items' properties, availabilities (with their restrictions) and, for an animal's item, its entry's specials. The GETs
+and the POST and PATCH answers read through here. A list row adds its item and prices: two queries for any number of
+rows.
 """
 
-from django.db.models import Prefetch, QuerySet
+from django.db.models import Prefetch, Q, QuerySet
 
 from apps.core.catalogue.payloads import badge_joins
-from apps.warbands.prefetches import item_detail_prefetches
+from apps.core.errors import ApiError
+from apps.warbands.prefetches import availabilities_prefetch, item_detail_prefetches
 
-from .models import BestiaryEntry, BestiaryEntryItem, HiredSwordProfile, HiredSwordProfileRestriction
+from .models import BEAST_KINDS, BestiaryEntry, BestiaryEntryItem
+
+KIND_VALUES = tuple(value for value, _ in BEAST_KINDS)
 
 
-def _entry_prefetches(prefix: str = "") -> tuple[str | Prefetch, ...]:
-    """What BestiaryEntrySerializer reads; `prefix` reaches the entry from another row (a hired sword's profile)."""
+def by_kind(value: str) -> Q:
+    """`?kind=mount` or `?kind=mount,pet` (any case): the entries of those kinds; an unknown kind is a 400."""
+    wanted = [part.strip().lower() for part in value.split(",") if part.strip()]
+    unknown = [part for part in wanted if part not in KIND_VALUES]
+    if unknown:
+        message = f'"{unknown[0]}" is not a kind: use {", ".join(KIND_VALUES)}.'
+        raise ApiError(message, code="invalid", fields={"kind": [message]})
+    return Q(kind__in=wanted) if wanted else Q()
+
+
+def with_items(rows: QuerySet[BestiaryEntry]) -> QuerySet[BestiaryEntry]:
+    """`rows` with each beast's Animal item joined and its prices prefetched (two queries, none without items)."""
+    return rows.select_related("animal_item").prefetch_related(availabilities_prefetch("animal_item__"))
+
+
+def entry_details() -> QuerySet[BestiaryEntry]:
+    """Bestiary entries read for the detail payload: 10 queries, 11 when an equipment item is an animal's."""
     equipment = (
         BestiaryEntryItem.objects.select_related("item__bestiary_entry")
         .prefetch_related(*item_detail_prefetches("item__"), "item__bestiary_entry__specials")
         .order_by("id")
     )
-    return (
-        f"{prefix}skills",
-        f"{prefix}specials",
-        f"{prefix}spells",
-        Prefetch(f"{prefix}bestiary_entry_items", queryset=equipment),
+    rows = BestiaryEntry.objects.select_related(*badge_joins()).prefetch_related(
+        "skills", "specials", "spells", Prefetch("bestiary_entry_items", queryset=equipment)
     )
-
-
-def entry_details() -> QuerySet[BestiaryEntry]:
-    """Bestiary entries read for the detail payload: 8 queries, 9 when an item is an animal's."""
-    return BestiaryEntry.objects.select_related(*badge_joins()).prefetch_related(*_entry_prefetches())
-
-
-def hired_sword_rows(rows: QuerySet[HiredSwordProfile]) -> QuerySet[HiredSwordProfile]:
-    """Hired-sword profiles read for the list payload: each entry with its profile's row, the restrictions (with
-    their text) in one query (PERF-49)."""
-    restrictions = HiredSwordProfileRestriction.objects.select_related("restriction").order_by("id")
-    return rows.select_related("bestiary_entry").prefetch_related(Prefetch("restriction_links", queryset=restrictions))
-
-
-def hired_sword_details() -> QuerySet[HiredSwordProfile]:
-    """Hired-sword profiles read for the detail payload: their entry's as above, plus the profile's restrictions."""
-    restrictions = HiredSwordProfileRestriction.objects.select_related("restriction").order_by("id")
-    return HiredSwordProfile.objects.select_related("bestiary_entry", *badge_joins("bestiary_entry")).prefetch_related(
-        *_entry_prefetches("bestiary_entry__"), Prefetch("restriction_links", queryset=restrictions)
-    )
+    return with_items(rows)

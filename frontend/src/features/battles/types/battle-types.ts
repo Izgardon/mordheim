@@ -54,6 +54,8 @@ export type BattleUnitInformationEntry = {
   current_wounds?: number | null;
   out_of_action: boolean;
   kill_count: number;
+  /** A rider off his mount for the rest of the battle (step 5); left out otherwise. */
+  dismounted?: boolean;
 };
 
 export type BattlePostbattleSeriousInjuryRoll = {
@@ -75,7 +77,7 @@ export type BattlePostbattleSeriousInjuryRoll = {
 
 export type BattlePostbattleUnitResult = {
   unit_name: string;
-  unit_kind: "hero" | "hired_sword" | "henchman";
+  unit_kind: "hero" | "hireling" | "henchman";
   unit_type: string;
   group_name: string;
   out_of_action: boolean;
@@ -100,6 +102,8 @@ export type BattlePostbattleExploration = {
 export type BattlePostbattleUpkeepEntry = {
   unit_name: string;
   cost: number | null;
+  /** The suggestion's upkeep formula ("1 piece of wyrdstone"): a reminder, never saved. */
+  cost_expression?: string;
 };
 
 export type BattlePostbattleUpkeep = {
@@ -124,6 +128,22 @@ export type BattlePostbattleState = {
   finds: BattlePostbattleFinds;
   upkeep: BattlePostbattleUpkeep;
   unit_results: Record<string, BattlePostbattleUnitResult>;
+  /**
+   * Each at-risk rider's D6 for his mount and whether it died (step 5): the player's roll and
+   * result, never automatic; a dead mount leaves him at finalise. Left out when there is none.
+   */
+  mount_survival?: Record<string, BattlePostbattleMountSurvival>;
+};
+
+export type BattlePostbattleMountSurvival = { roll: number | null; dead: boolean };
+
+/** A rider taken out of action on his mount: what its D6 must beat (step 5). */
+export type BattleMountAtRisk = {
+  unit_name: string;
+  mount: string;
+  /** It dies on this or less: 2, or 1 with Barding or a Farrier. */
+  dies_on: number;
+  saved_by?: ("barding" | "farrier")[];
 };
 
 export type BattleEventType =
@@ -323,7 +343,7 @@ export type BattlePostbattleRules = {
   /** Ascending; the first row whose `max_total` (null: no limit) covers the dice total. */
   exploration_table: { max_total: number | null; amount: number }[];
   exploration_dice: { max: number; max_chosen: number };
-  /** Heroes' serious-injury table; henchmen and hired swords roll d6. */
+  /** Heroes' (and hero-table hirelings') serious-injury table; the rest roll d6. */
   hero_death_roll: CampaignHeroDeathRoll;
   injury_tables: Record<"d6" | "d66" | "d100", BattleInjuryTableRow[]>;
 };
@@ -339,7 +359,17 @@ export type BattlePostbattleSuggestion = {
     { xp_earned: number; reasons?: { label: string; xp: number }[]; level_ups?: number }
   >;
   exploration: { dice_count: number };
-  upkeep: { entries: Record<string, { unit_name: string; cost: number | null }> };
+  /** Every hireling but one who stays for one battle; a formula is a reminder beside the cost. */
+  upkeep: {
+    entries: Record<string, { unit_name: string; cost: number | null; cost_expression?: string }>;
+  };
+  /**
+   * Who is suggested to leave now (only when someone is): each selected hireling who stays for
+   * one battle. Never automatic; dismissing is `DELETE warbands/<id>/hirelings/<id>/`.
+   */
+  dismiss?: { entries: Record<string, { unit_name: string; reason: string }> };
+  /** Each selected rider taken out of action on his mount (only when there is one, step 5). */
+  mount_survival?: { entries: Record<string, BattleMountAtRisk> };
 };
 
 /**
@@ -422,10 +452,43 @@ export type BattleRosterSpellEntry = BattleRosterDetailEntry & {
   dc?: string | number | null;
 };
 
-export type BattleRosterUnit = {
+/**
+ * A mount or pet on a battle roster (camelCase like the roster; the stats stay snake_case), with
+ * its beast's skills, specials and spells (step 5; each left out when empty). A pet with a profile
+ * fights as its own model under `key` (`pet:<owner kind>:<item row id>`).
+ */
+export type BattleRosterCompanion = {
+  key?: string;
+  itemId: number;
+  name: string;
+  hasProfile: boolean;
+  stats: BattleUnitStats | null;
+  skills?: BattleRosterDetailEntry[];
+  specials?: BattleRosterDetailEntry[];
+  spells?: BattleRosterSpellEntry[];
+};
+
+/** The rider's mount: its M (null without a profile) and what it adds to the rating. */
+export type BattleRosterMount = BattleRosterCompanion & {
+  movement: number | null;
+  ratingBonus: number;
+};
+
+/**
+ * A unit's companions as its roster entry carries them (the bestiary rewrite, step 4): a group's
+ * members ride its mounts one each, and every member lists its pets. `effectiveStats`: a mounted
+ * unit's M and save, for display only (null on foot).
+ */
+export type BattleRosterCompanionFields = {
+  mount?: BattleRosterMount | null;
+  pets?: BattleRosterCompanion[];
+  effectiveStats?: { movement: number | null; armour_save: number | null } | null;
+};
+
+export type BattleRosterUnit = BattleRosterCompanionFields & {
   key: string;
   id: number;
-  kind: "hero" | "hired_sword" | "henchman";
+  kind: "hero" | "hireling" | "henchman";
   displayName: string;
   unitType: string;
   stats: BattleUnitStats;
@@ -437,18 +500,28 @@ export type BattleRosterUnit = {
   upkeepPrice?: number | null;
   upkeepCostExpression?: string | null;
   noLevelUps?: boolean;
+  /** Hirelings: what it is, the injury table it rolls on, how long it stays, what it is paid in. */
+  hirelingKind?: "hired_sword" | "dramatis_persona";
+  injuryTable?: "henchman" | "hero";
+  stays?: "always" | "one_battle";
+  paymentNote?: string;
 };
 
 export type BattleRosterGroup = {
   id: number;
   name: string;
   unitType: string;
+  /** A group recruited from a creature: its beast (null otherwise). */
+  sourceBeastId?: number | null;
+  beastKind?: "mount" | "pet" | "creature" | null;
+  /** The group's own pets (a keyed one fights as its own model, step 5). */
+  pets?: BattleRosterCompanion[];
   members: BattleRosterUnit[];
 };
 
 export type BattleParticipantRoster = {
   heroes: BattleRosterUnit[];
-  hiredSwords: BattleRosterUnit[];
+  hirelings: BattleRosterUnit[];
   henchmenGroups: BattleRosterGroup[];
 };
 

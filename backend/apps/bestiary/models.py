@@ -3,8 +3,19 @@ from django.db import models
 from apps.core.models import CatalogueEntry, version_constraints
 from apps.warbands.models.shared import StatBlock, stat_constraints
 
+MOUNT, PET, CREATURE = "mount", "pet", "creature"
+BEAST_KINDS = ((MOUNT, "Mount"), (PET, "Pet"), (CREATURE, "Creature"))  # the Animal item's subtype is the label
+
 
 class BestiaryEntry(StatBlock, CatalogueEntry):
+    """A beast: a mount or a pet (a companion: it belongs to the unit carrying its item) or a creature (it becomes
+    henchmen). `available_in_shop` decides whether the shop sells it.
+
+    `has_profile` off: the beast has no stat line (most pets); its stats are kept at 0 and its save empty, and the
+    pages hide them rather than show zeros. `gains_xp` is for creatures, `rating_bonus` for mounts (what the rider's
+    rating gains: a horse 3, a warhorse 5).
+    """
+
     campaign = models.ForeignKey(
         "campaigns.Campaign",
         related_name="bestiary_entries",
@@ -13,8 +24,12 @@ class BestiaryEntry(StatBlock, CatalogueEntry):
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=160)
-    type = models.CharField(max_length=80, db_index=True)
+    kind = models.CharField(max_length=10, choices=BEAST_KINDS, db_index=True)
     description = models.TextField(max_length=4000, blank=True, default="")
+    has_profile = models.BooleanField(default=True)
+    gains_xp = models.BooleanField(default=False)
+    rating_bonus = models.PositiveSmallIntegerField(null=True, blank=True)
+    available_in_shop = models.BooleanField(default=False)
     armour_save = models.SmallIntegerField(null=True, blank=True)
     large = models.BooleanField(default=False)
     caster = models.CharField(
@@ -54,20 +69,20 @@ class BestiaryEntry(StatBlock, CatalogueEntry):
 
     class Meta:
         db_table = "bestiary_entry"
-        ordering = ["type", "name"]
+        ordering = ["kind", "name"]
         verbose_name_plural = "bestiary entries"
         constraints = [
             *stat_constraints("bestiary_entry"),
             *version_constraints("bestiary_entry"),
-            # one entry per name in the book and in a campaign, as seed_bestiary upserts (BUG-17, IMP-83): an animal
-            # and a hired sword (an entry of type "Hired Sword") share the names
+            models.CheckConstraint(check=models.Q(kind__in=[MOUNT, PET, CREATURE]), name="bestiary_entry_kind"),
+            # one entry per name in the book and in a campaign, as seed_bestiary upserts (BUG-17, IMP-83)
             models.UniqueConstraint(
                 fields=["campaign", "name"], name="bestiary_entry_unique_name", nulls_distinct=False
             ),
         ]
 
     def __str__(self):
-        return f"{self.name} ({self.type})"
+        return f"{self.name} ({self.kind})"
 
 
 class BestiaryEntrySkill(models.Model):
@@ -176,72 +191,3 @@ class WarbandBestiaryFavourite(models.Model):
 
     def __str__(self):
         return f"{self.warband_id}:{self.bestiary_entry_id}"
-
-
-class HiredSwordProfile(models.Model):
-    campaign = models.ForeignKey(
-        "campaigns.Campaign",
-        related_name="hired_sword_profiles",
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-    )
-    campaign_type = models.ForeignKey(  # an add-on's hired sword (CAT-NEW-04: schema only, always null today)
-        "campaigns.CampaignType",
-        related_name="hired_sword_profiles",
-        null=True,
-        blank=True,
-        on_delete=models.RESTRICT,
-    )
-    bestiary_entry = models.OneToOneField(
-        BestiaryEntry,
-        related_name="hired_sword_profile",
-        on_delete=models.CASCADE,
-    )
-    hire_cost = models.PositiveIntegerField(null=True, blank=True)
-    hire_cost_expression = models.CharField(max_length=120, blank=True, default="")
-    upkeep_cost = models.PositiveIntegerField(null=True, blank=True)
-    upkeep_cost_expression = models.CharField(max_length=120, blank=True, default="")
-    rating = models.PositiveIntegerField(null=True, blank=True)
-    grade = models.CharField(max_length=20, blank=True, default="")
-    race = models.CharField(max_length=60, blank=True, default="")
-    available_skill_types = models.JSONField(default=list, blank=True)
-    restrictions: models.ManyToManyField = models.ManyToManyField(
-        "restrictions.Restriction",
-        through="HiredSwordProfileRestriction",
-        related_name="hired_sword_profiles",
-        blank=True,
-    )
-
-    class Meta:
-        db_table = "hired_sword_profile"
-        ordering = ["bestiary_entry__name"]
-
-    def __str__(self):
-        return f"Hired Sword Profile: {self.bestiary_entry.name}"
-
-
-class HiredSwordProfileRestriction(models.Model):
-    hired_sword_profile = models.ForeignKey(
-        HiredSwordProfile,
-        related_name="restriction_links",
-        on_delete=models.CASCADE,
-    )
-    restriction = models.ForeignKey(
-        "restrictions.Restriction",
-        related_name="hired_sword_profile_links",
-        on_delete=models.CASCADE,
-    )
-    additional_note = models.CharField(max_length=200, blank=True, default="")
-
-    class Meta:
-        db_table = "hired_sword_profile_restriction"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["hired_sword_profile", "restriction", "additional_note"],
-                name="unique_hired_sword_profile_restriction",
-            )
-        ]
-
-    def __str__(self):
-        return f"{self.hired_sword_profile_id}:{self.restriction_id}"

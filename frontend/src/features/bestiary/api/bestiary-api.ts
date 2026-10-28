@@ -1,65 +1,49 @@
 import { apiRequest } from "../../../lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 
 import type {
   BestiaryEntry,
-  BestiaryEntryCreatePayload,
   BestiaryEntrySummary,
-  BestiaryEntryUpdatePayload,
-  HiredSwordProfile,
-  HiredSwordProfileCreatePayload,
-  HiredSwordProfileSummary,
-  HiredSwordProfileUpdatePayload,
+  BestiaryEntryWrite,
 } from "../types/bestiary-types";
 
 type ListBestiaryOptions = {
-  type?: string;
-  search?: string;
-  campaignId?: number;
-  /** Leaves out entries of this type, after the campaign's merge (PERF-47). */
-  excludeType?: string;
+  campaignId: number;
+  /** Archived entries and book entries removed for the campaign too (`?archived=1`). */
+  archived?: boolean;
   signal?: AbortSignal;
 };
 
-export function listBestiaryEntries(options: ListBestiaryOptions = {}) {
-  const params = new URLSearchParams();
-  if (options.type) {
-    params.set("type", options.type);
+/**
+ * `GET bestiary/?campaign_id=`: every beast the campaign has, of every kind, with its item's
+ * prices. The pages filter by kind themselves, so one cached list serves them all.
+ */
+export function listBestiaryEntries(options: ListBestiaryOptions) {
+  const params = new URLSearchParams({ campaign_id: String(options.campaignId) });
+  if (options.archived) {
+    params.set("archived", "1");
   }
-  if (options.search) {
-    params.set("search", options.search);
-  }
-  if (options.campaignId) {
-    params.set("campaign_id", String(options.campaignId));
-  }
-  if (options.excludeType) {
-    params.set("exclude_type", options.excludeType);
-  }
-  const query = params.toString();
-  const path = query ? `/bestiary/?${query}` : "/bestiary/";
-  return apiRequest<BestiaryEntrySummary[]>(path, { signal: options.signal });
+  return apiRequest<BestiaryEntrySummary[]>(`/bestiary/?${params}`, { signal: options.signal });
 }
 
-export function getBestiaryEntry(entryId: number) {
-  return apiRequest<BestiaryEntry>(`/bestiary/${entryId}/`);
+/** One beast with its skills, specials, spells and equipment. */
+export function getBestiaryEntry(entryId: number, signal?: AbortSignal) {
+  return apiRequest<BestiaryEntry>(`/bestiary/${entryId}/`, { signal });
 }
 
-export function createBestiaryEntry(payload: BestiaryEntryCreatePayload) {
+export function createBestiaryEntry(payload: BestiaryEntryWrite) {
   return apiRequest<BestiaryEntry>("/bestiary/", {
     method: "POST",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }
 
-export function updateBestiaryEntry(entryId: number, payload: BestiaryEntryUpdatePayload) {
+export function updateBestiaryEntry(entryId: number, payload: BestiaryEntryWrite) {
   return apiRequest<BestiaryEntry>(`/bestiary/${entryId}/`, {
     method: "PATCH",
+    headers: socketIdHeaders(),
     body: payload,
-  });
-}
-
-export function deleteBestiaryEntry(entryId: number) {
-  return apiRequest<void>(`/bestiary/${entryId}/`, {
-    method: "DELETE",
   });
 }
 
@@ -76,54 +60,6 @@ export function addWarbandBestiaryFavourite(warbandId: number, bestiaryEntryId: 
 
 export function removeWarbandBestiaryFavourite(warbandId: number, bestiaryEntryId: number) {
   return apiRequest<void>(`/warbands/${warbandId}/bestiary-favourites/${bestiaryEntryId}/`, {
-    method: "DELETE",
-  });
-}
-
-// Hired Sword Profiles
-
-type ListHiredSwordProfilesOptions = {
-  search?: string;
-  campaignId?: number;
-  signal?: AbortSignal;
-};
-
-export function listHiredSwordProfiles(options: ListHiredSwordProfilesOptions = {}) {
-  const params = new URLSearchParams();
-  if (options.search) {
-    params.set("search", options.search);
-  }
-  if (options.campaignId) {
-    params.set("campaign_id", String(options.campaignId));
-  }
-  const query = params.toString();
-  const path = query ? `/hired-swords/?${query}` : "/hired-swords/";
-  return apiRequest<HiredSwordProfileSummary[]>(path, { signal: options.signal });
-}
-
-export function getHiredSwordProfile(profileId: number) {
-  return apiRequest<HiredSwordProfile>(`/hired-swords/${profileId}/`);
-}
-
-export function createHiredSwordProfile(payload: HiredSwordProfileCreatePayload) {
-  return apiRequest<HiredSwordProfile>("/hired-swords/", {
-    method: "POST",
-    body: payload,
-  });
-}
-
-export function updateHiredSwordProfile(
-  profileId: number,
-  payload: HiredSwordProfileUpdatePayload
-) {
-  return apiRequest<HiredSwordProfile>(`/hired-swords/${profileId}/`, {
-    method: "PATCH",
-    body: payload,
-  });
-}
-
-export function deleteHiredSwordProfile(profileId: number) {
-  return apiRequest<void>(`/hired-swords/${profileId}/`, {
     method: "DELETE",
   });
 }

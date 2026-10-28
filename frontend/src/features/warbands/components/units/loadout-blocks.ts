@@ -1,5 +1,7 @@
 import { isPendingByName } from "../heroes/utils/pending-entries";
 import { groupItemsById } from "../../utils/warband-utils";
+import { companionEntries, companionSources, isSwitchedOn } from "../../utils/companions";
+import type { CompanionEntrySource } from "./beasts/CompanionEntryMark";
 import {
   buildSpellCountMap,
   deduplicateSpells,
@@ -7,10 +9,18 @@ import {
   getSpellDisplayName,
 } from "../../utils/spell-display";
 
+import type { BeastKind } from "@/features/bestiary/bestiary-kinds";
+import type { Item } from "@/features/items/types/item-types";
 import type { Unit, UnitKindKey } from "../../types/units";
 import type { UnitKindConfig } from "../../units/unit-kind-types";
 
 export type LoadoutEntryType = "item" | "skill" | "spell" | "special" | "roster";
+
+/**
+ * An Animal item's row: its beast's kind, whether its copies are switched on for the unit, and
+ * the copy the button acts on (a spare to switch on, the newest ridden one to switch off).
+ */
+export type LoadoutBeast = { kind: BeastKind; on: boolean; rowId: number | null };
 
 export type LoadoutEntry = {
   id: string;
@@ -22,6 +32,31 @@ export type LoadoutEntry = {
   dead?: boolean;
   kills?: number;
   count?: number;
+  beast?: LoadoutBeast;
+  companion?: CompanionEntrySource;
+};
+
+type ItemRow = { key: string; item: Item; rows: Item[] };
+
+/**
+ * A unit's copies as its item rows: one per item, except a mount or pet whose switched-on copies
+ * get their own row (`item-<id>-on`), so each row's switch has one state.
+ */
+export function itemRows(items: Item[]): ItemRow[] {
+  const rows = new Map<string, ItemRow>();
+  for (const item of items) {
+    const key = isSwitchedOn(item) ? `item-${item.id}-on` : `item-${item.id}`;
+    const row = rows.get(key);
+    if (row) row.rows.push(item);
+    else rows.set(key, { key, item, rows: [item] });
+  }
+  return Array.from(rows.values());
+}
+
+const beastOf = (kind: BeastKind, rows: Item[]): LoadoutBeast => {
+  const on = isSwitchedOn(rows[0]);
+  const copy = on ? rows[rows.length - 1] : rows[0];
+  return { kind, on, rowId: copy?.row_id ?? null };
 };
 
 export type LoadoutBlock = {
@@ -54,12 +89,16 @@ export function buildLoadoutBlocks<K extends UnitKindKey>(
       ...pending(type, entry.name),
     }));
 
-  const items: LoadoutEntry[] = groupItemsById(unit.items ?? []).map(({ item, count }) => ({
-    id: `item-${item.id}`,
+  const copiesOf = new Map<number, number>();
+  for (const { item, count } of groupItemsById(unit.items ?? [])) copiesOf.set(item.id, count);
+  const items: LoadoutEntry[] = itemRows(unit.items ?? []).map(({ key, item, rows }) => ({
+    id: key,
     visibleId: item.id,
-    label: count >= 2 ? `${item.name} x ${count}` : item.name,
+    label: rows.length >= 2 ? `${item.name} x ${rows.length}` : item.name,
     type: "item",
-    ...(hasMembers ? { count } : {}),
+    // A split item's copies divide across the members together (its ridden and spare rows).
+    ...(hasMembers ? { count: copiesOf.get(item.id) ?? rows.length } : {}),
+    ...(item.beast_kind ? { beast: beastOf(item.beast_kind, rows) } : {}),
   }));
 
   const spells = "spells" in unit ? (unit.spells ?? []) : [];
@@ -85,14 +124,31 @@ export function buildLoadoutBlocks<K extends UnitKindKey>(
       kills: henchman.kills ?? 0,
     }));
   const maxSize = "max_size" in unit ? (unit.max_size ?? 5) : 5;
+  const companions = companionSources(unit);
+  const companionSpells = companionEntries(companions, "spell");
+  const spellBlock = [...(hasSpells ? spellEntries : []), ...companionSpells];
 
   return [
     ...(hasMembers
       ? [{ id: "roster", title: `Roster ${members.length}/${maxSize}`, entries: roster }]
       : []),
     { id: "items", title: "Items", entries: items },
-    { id: "skills", title: "Skills", entries: named("skill", unit.skills ?? []) },
-    ...(hasSpells ? [{ id: "spells", title: "Spells", entries: spellEntries }] : []),
-    { id: "special", title: "Specials", entries: named("special", unit.specials ?? []) },
+    {
+      id: "skills",
+      title: "Skills",
+      entries: [...named("skill", unit.skills ?? []), ...companionEntries(companions, "skill")],
+    },
+    // A kind without spells still lists its companions' (a group riding a mount that casts).
+    ...(hasSpells || companionSpells.length
+      ? [{ id: "spells", title: "Spells", entries: spellBlock }]
+      : []),
+    {
+      id: "special",
+      title: "Specials",
+      entries: [
+        ...named("special", unit.specials ?? []),
+        ...companionEntries(companions, "special"),
+      ],
+    },
   ].filter((block) => block.entries.length > 0);
 }

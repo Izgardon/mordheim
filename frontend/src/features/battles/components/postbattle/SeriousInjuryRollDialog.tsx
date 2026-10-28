@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   seriousInjuryNotation,
-  type InjuryRollUnitKind,
+  type InjuryTable,
 } from "@/features/battles/components/postbattle/postbattle-rules";
 import { HELPER_DIALOG_CONTENT_CLASS } from "@/features/battles/components/shared/battle-dialog-styles";
 import type { CampaignHeroDeathRoll } from "@/features/campaigns/types/campaign-types";
@@ -18,10 +18,14 @@ import type { CampaignHeroDeathRoll } from "@/features/campaigns/types/campaign-
 export type InjuryRollTarget = {
   unitKey: string;
   unitName: string;
-  unitKind: InjuryRollUnitKind;
+  /** The table it rolls on: the campaign's hero table, or a D6. */
+  injuryTable: InjuryTable;
 } | null;
 
-/** The serious-injury roll for a unit taken out of action: the campaign's table for heroes. */
+/**
+ * The serious-injury roll for a unit taken out of action: the campaign's table for heroes and
+ * hero-table hirelings, a D6 for the rest.
+ */
 export default function SeriousInjuryRollDialog({
   target,
   heroRollType,
@@ -42,9 +46,9 @@ export default function SeriousInjuryRollDialog({
   onRollingChange: (isRolling: boolean) => void;
 }) {
   if (!target) return null;
-  const isHero = target.unitKind === "hero";
+  const isHero = target.injuryTable === "hero";
   const heroRollLabel = heroRollType.toUpperCase();
-  const notation = seriousInjuryNotation(target.unitKind, heroRollType);
+  const notation = seriousInjuryNotation(target.injuryTable, heroRollType);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`max-w-lg ${HELPER_DIALOG_CONTENT_CLASS}`}>

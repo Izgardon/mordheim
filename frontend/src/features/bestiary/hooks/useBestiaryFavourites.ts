@@ -52,3 +52,5 @@ export function useBestiaryFavourites(warbandId: number | undefined) {
 
   return { favouriteIds, toggle };
 }
+
+export type BestiaryFavourites = ReturnType<typeof useBestiaryFavourites>;

@@ -4,13 +4,8 @@ A trader's trading action is spent only when the trade completes (decision 9), s
 anything to give back (see test_trade_trading_actions.py).
 """
 
-from datetime import timedelta
-from importlib import import_module
-
-from django.apps import apps as django_apps
 from django.utils import timezone
 
-from apps.trades.models import TradeRequest
 from apps.warbands.models import Hero
 
 from .trade_support import TradeTestCase
@@ -66,35 +61,3 @@ class TradeTraderTests(TradeTestCase):
                 self.assertNotEqual(response.json(), {"detail": "Trade request expired"})
         self.assertEqual(self.get_as(self.player, self.trade_url(self.trade)).json()["status"], "completed")
         self.assertEqual(self.state(self.trade)[0], "completed")
-
-
-class TraderSpentBackfillTests(TradeTestCase):
-    """Migration 0005 records the traders that trades still open at deploy time had already spent."""
-
-    def test_locked_sides_of_open_trades_get_their_trader_recorded(self):
-        backfill = import_module("apps.trades.migrations.0005_backfill_trader_spent").record_spent_traders
-        hero, rat = self.trader(self.warband), self.trader(self.rival, name="Rat")
-        expires = timezone.now() + timedelta(minutes=5)
-        base = {"campaign": self.campaign, "from_user": self.player, "to_user": self.viewer, "expires_at": expires}
-        base |= {"from_warband": self.warband, "to_warband": self.rival}
-        locked = TradeRequest.objects.create(
-            **base,
-            status="accepted",
-            from_accepted=True,
-            from_offer={"trader_id": hero.id},
-            to_offer={"trader_id": rat.id},
-        )
-        foreign = TradeRequest.objects.create(
-            **base, status="accepted", from_accepted=True, from_offer={"trader_id": rat.id}
-        )
-        finished = TradeRequest.objects.create(
-            **base, status="completed", from_accepted=True, to_accepted=True, from_offer={"trader_id": hero.id}
-        )
-
-        backfill(django_apps, None)
-
-        spent = {
-            trade.id: (trade.from_trader_spent_id, trade.to_trader_spent_id)
-            for trade in TradeRequest.objects.filter(id__in=[locked.id, foreign.id, finished.id])
-        }
-        self.assertEqual(spent, {locked.id: (hero.id, None), foreign.id: (None, None), finished.id: (None, None)})

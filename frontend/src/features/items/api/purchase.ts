@@ -2,6 +2,7 @@ import type { QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { apiRequest } from "@/lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 import {
   applyWarbandUpdate,
   markLedgerStale,
@@ -12,8 +13,11 @@ import { prependTreasuryRow } from "@/features/warbands/api/economy-queries";
 import { getPersistedItemCost } from "../utils/acquire-item-costs";
 
 import type { Item } from "../types/item-types";
+import type { RecruitTarget } from "@/features/warbands/api/beasts-api";
+import type { UnitCompanionFields } from "@/features/warbands/types/companion-types";
 import type { AcquireItemMeta, PurchaseTarget } from "../types/acquire-types";
 import type {
+  HenchmenGroup,
   WarbandItemSummary,
   WarbandTrade,
   WarbandUnitsSummary,
@@ -39,16 +43,21 @@ export type RarityRollLine = {
   success: boolean;
 };
 
-type ApiTargetType = "stash" | "hero" | "hired_sword" | "henchmen_group";
+type ApiTargetType = "stash" | "hero" | "hireling" | "henchmen_group";
 
-/** `POST warbands/<id>/purchases/`'s answer: what changed, slim (BUG-07). */
-export type PurchaseAnswer = {
+/**
+ * `POST warbands/<id>/purchases/`'s answer: what changed, slim (BUG-07). A unit target's
+ * `mount`, `pets` and `effective_stats` (and a group's `mounts`) describe it after the purchase;
+ * a recruit's `group` is the group the copies joined or formed.
+ */
+export type PurchaseAnswer = UnitCompanionFields & {
   target_type: ApiTargetType;
   target_id: number | null;
   updated_at: string | null;
   /** The unit's items in detail shape (null for the stash). */
   items: Item[] | null;
   stash_item: WarbandItemSummary | null;
+  group?: HenchmenGroup | null;
   /** The "Buy" ledger row (null for a gift or a free purchase). */
   trade: WarbandTrade | null;
   summary: WarbandUnitsSummary;
@@ -65,18 +74,22 @@ export type PurchaseRequest = {
   /** "Buy again" (decision 11): the server charges the campaign's current price. */
   atCurrentPrice?: boolean;
   rarityRoll?: RarityRollLine | null;
+  /** A mount or pet bought for a unit: every copy lands switched on for it. */
+  companion?: boolean;
+  /** A creature bought for the stash: recruited straight away instead (POST purchases/ only). */
+  recruit?: RecruitTarget | null;
 };
 
 const API_TARGETS: Record<PurchaseTarget["kind"], ApiTargetType> = {
   stash: "stash",
   heroes: "hero",
-  hiredswords: "hired_sword",
+  hirelings: "hireling",
   henchmen: "henchmen_group",
 };
 
 const LIST_KEYS = {
   hero: "heroes",
-  hired_sword: "hiredSwords",
+  hireling: "hirelings",
   henchmen_group: "henchmenGroups",
 } as const;
 
@@ -87,7 +100,8 @@ export function purchaseLine({
   availabilityId,
   atCurrentPrice,
   rarityRoll,
-}: Omit<PurchaseRequest, "warbandId" | "target">) {
+  companion,
+}: Omit<PurchaseRequest, "warbandId" | "target" | "recruit">) {
   // A copy's price: what one costs when buying, the cost it keeps for resale when given.
   const price = meta.isBuying ? meta.unitPrice : getPersistedItemCost(item, meta);
   const reason = meta.reason.trim();
@@ -98,6 +112,7 @@ export function purchaseLine({
     is_buying: meta.isBuying,
     ...(reason ? { reason } : {}),
     ...(rarityRoll ? { rarity_roll: rarityRoll } : {}),
+    ...(companion ? { companion: true } : {}),
   };
 }
 
@@ -114,8 +129,19 @@ export function applyPurchaseAnswer(
     stashItems: answer.stash_item ? [answer.stash_item] : undefined,
   };
   if (answer.target_type !== "stash" && answer.target_id !== null) {
-    const unit = { id: answer.target_id, items: answer.items ?? [], updated_at: answer.updated_at };
+    const { mount, pets, effective_stats, mounts } = answer;
+    const unit = {
+      id: answer.target_id,
+      items: answer.items ?? [],
+      updated_at: answer.updated_at,
+      ...(answer.mount !== undefined ? { mount, pets, effective_stats } : {}),
+      // A group's every kind of mount: its list of mount entries reads these, not `mount`.
+      ...(mounts !== undefined ? { mounts } : {}),
+    };
     Object.assign(update, { [LIST_KEYS[answer.target_type]]: [unit] });
+  }
+  if (answer.group) {
+    update.henchmenGroups = [...(update.henchmenGroups ?? []), answer.group];
   }
   applyWarbandUpdate(queryClient, warbandId, update);
   if (answer.trade) {
@@ -139,13 +165,16 @@ export function toastPurchaseWarnings(warnings: PurchaseWarning[] = []) {
  * the log and any rarity roll in one transaction, refuses as a whole, and answers what changed.
  */
 export async function purchase(request: PurchaseRequest, queryClient: QueryClient) {
-  const { warbandId, target } = request;
+  const { warbandId, target, recruit } = request;
   const answer = await apiRequest<PurchaseAnswer>(`/warbands/${warbandId}/purchases/`, {
     method: "POST",
+    // A purchase that recruits tells the other members (`warband.changed`), not this browser.
+    headers: socketIdHeaders(),
     body: {
       ...purchaseLine(request),
       target_type: API_TARGETS[target.kind],
       ...(target.kind === "stash" ? {} : { target_id: target.unit.id }),
+      ...(recruit ? { recruit } : {}),
     },
   });
   applyPurchaseAnswer(queryClient, warbandId, answer);

@@ -6,15 +6,12 @@ explicit `level_up` in a PATCH (the pending level-ups editor) still sets the cou
 """
 
 from decimal import Decimal
-from importlib import import_module
 from typing import Any
-
-from django.apps import apps as django_apps
 
 from .roster_support import (
     HENCHMEN,
     HERO,
-    HIRED_SWORD,
+    HIRELING,
     KINDS,
     Kind,
     RosterTestCase,
@@ -32,7 +29,7 @@ class XpHighWaterTests(RosterTestCase):
 
     def test_only_thresholds_above_the_mark_are_awarded(self):
         # hero table 2, 4, 6, 8, ...; henchmen table 2, 5, 9, 14 (hired swords too, until decision 8)
-        above_six = {HERO.key: 1, HENCHMEN.key: 1, HIRED_SWORD.key: 1}  # (6, 9]: 8, or 9
+        above_six = {HERO.key: 1, HENCHMEN.key: 1, HIRELING.key: 1}  # (6, 9]: 8, or 9
         for kind in KINDS:
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband)
@@ -69,7 +66,7 @@ class XpHighWaterTests(RosterTestCase):
                 self.assertEqual(self._set_xp(kind, unit, 10), 2)
 
     def test_no_level_ups_still_moves_the_mark(self):
-        for kind in (HENCHMEN, HIRED_SWORD):
+        for kind in (HENCHMEN, HIRELING):
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband, no_level_ups=True)
                 self.assertEqual(self._set_xp(kind, unit, 6), 0)
@@ -78,29 +75,17 @@ class XpHighWaterTests(RosterTestCase):
 
     def test_postbattle_awards_only_above_the_mark(self):
         hero = make_unit(HERO, self.warband, xp=6, level_up=3)
-        sword = make_unit(HIRED_SWORD, self.warband, xp=6, level_up=2, half_rate=True)
+        sword = make_unit(HIRELING, self.warband, xp=6, level_up=2, half_rate=True)
         self._set_xp(HERO, hero, 1)
-        self._set_xp(HIRED_SWORD, sword, 1)
+        self._set_xp(HIRELING, sword, 1)
 
-        self.play_battle({f"hero:{hero.id}": 5, f"hired_sword:{sword.id}": 10})  # back to 6 for both
+        self.play_battle({f"hero:{hero.id}": 5, f"hireling:{sword.id}": 10})  # back to 6 for both
         hero.refresh_from_db()
         sword.refresh_from_db()
         self.assertEqual([(hero.xp, hero.level_up), (sword.xp, sword.level_up)], [(6, 3), (6, 2)])
 
-        self.play_battle({f"hero:{hero.id}": 3, f"hired_sword:{sword.id}": 7})  # 9 and 9.5
+        self.play_battle({f"hero:{hero.id}": 3, f"hireling:{sword.id}": 7})  # 9 and 9.5
         hero.refresh_from_db()
         sword.refresh_from_db()
         self.assertEqual([(hero.xp, hero.level_up), (sword.xp, sword.level_up)], [(9, 4), (Decimal("9.5"), 3)])
         self.assertEqual([hero.xp_high_water, sword.xp_high_water], [9, Decimal("9.5")])
-
-    def test_the_migration_backfills_the_mark_with_current_xp(self):
-        migration = import_module("apps.warbands.migrations.0025_unit_xp_high_water")
-        units = [make_unit(kind, self.warband, xp=Decimal("7.5"), dead=kind is HERO) for kind in KINDS]
-        for unit in units:
-            type(unit).objects.filter(id=unit.id).update(xp_high_water=0)
-
-        migration.backfill_high_water(django_apps, None)
-
-        for unit in units:
-            unit.refresh_from_db()
-            self.assertEqual(unit.xp_high_water, Decimal("7.5"))

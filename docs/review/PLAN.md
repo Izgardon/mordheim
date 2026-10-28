@@ -160,14 +160,21 @@ Types: **New** (new functionality), **Tweak** (change to existing behaviour), **
 | 2 Economy and trades | [Done](briefs/pass-2-economy-trades.md) | Answered 2026-10-17 | 90 backend + 89 frontend tests | Done | Done | Done | 2026-10-18 |
 | 3 Battles | [Done](briefs/pass-3-battles.md) | Answered 2026-10-18 | 80 backend (2 expected failures) + 26 frontend tests (`pass3/battles`) | Done | Done | Done | 2026-10-20 |
 | 4 Campaigns | [Done](briefs/pass-4-campaigns.md) | Answered 2026-10-18 | 79 backend (3 expected failures) + 53 frontend tests | Done | Done | Done | **Merged to main and deployed 2026-10-20** (`3d0cf09`) |
-| 5 Catalogue | [Done](briefs/pass-5-catalogue.md) | Answered 2026-10-19 | 114 backend (4 expected failures) + 108 frontend tests | Done | Done | Done (CAT-NEW-01 replaced by the bestiary rewrite) | Ready to merge (`release/p5-p6`) |
-| 6 Auth and core | [Done](briefs/pass-6-auth-core.md) | Answered 2026-10-19 | 98 backend (6 expected failures) + 75 frontend tests | Done | Done | Pending (after the bestiary rewrite) | PR A and B ready to merge (`release/p5-p6`); read the brief's [Production checks](briefs/pass-6-auth-core.md#production-checks) before deploying |
+| 5 Catalogue | [Done](briefs/pass-5-catalogue.md) | Answered 2026-10-19 | 114 backend (4 expected failures) + 108 frontend tests | Done | Done | Done (CAT-NEW-01 replaced by the bestiary rewrite) | **Merged to main and deployed 2026-10-23** (`02dd927f`) |
+| 6 Auth and core | [Done](briefs/pass-6-auth-core.md) | Answered 2026-10-19 | 98 backend (6 expected failures) + 75 frontend tests | Done | Done | Pending (after the bestiary rewrite) | PR A and B **merged to main and deployed 2026-10-23** (`02dd927f`); PR C next |
 
 ## After the passes
 
-Work William has asked for once `release/p5-p6` (pass 5, and pass 6's PR A and B) is merged.
+Work William has asked for since passes 5 and 6 (PR A and B) were deployed.
 
-- **The bestiary rewrite, then grading (plans in `docs/review/plans/`).** The plans (`bestiary-hirelings.html`, `grades-settings-warbands.html`) are on the `rewrite/*` branches for now and will be committed here later. The bestiary rewrite replaces pass 5's CAT-NEW-01 (bestiary and hired-sword edit panels), and pass 6's PR C waits for it.
+- **The bestiary rewrite: merged to main and deployed 2026-10-28,** with fresh migrations (the production schema was wiped first). The plan is `docs/review/plans/bestiary-hirelings.html`. It replaced pass 5's CAT-NEW-01 (bestiary and hired-sword edit panels). Grading (`plans/grades-settings-warbands.html`) and pass 6's PR C come next. Left from its final two-player check:
+  - **A question for William:** on the warband page, a group where only some members ride shows the mount's M and save, while the battle screens show foot stats.
+  - **Creature group members** are named "Henchman 6", "Henchman 7" in battle.
+  - **At 1280 px:** the Bestiary cards' stat lines scroll sideways, the header tab strips show scrollbars, and two forms clip.
+  - **The dramatis persona card** prints its name twice.
+  - **The postbattle section picker** has no accessible name.
+  - **Realtime gaps:** only beast writes send `warband.changed`. Purchases, renames, roster saves, XP, transfers and sales don't yet.
+  - **Unchecked:** the Skills and Spells pages may list one row fewer than the database.
 - **An easier email sender (asked 2026-10-20).** Production sends no email today: `RESEND_API_KEY` isn't set, and Resend only delivers to other people's addresses once a domain is verified, which is why email verification waits for a custom domain. Compare low-effort senders on these points:
   - Can it send to any address without a domain we own (e.g. a verified single sender, or SMTP through a free mailbox)?
   - Free-tier limits.
@@ -176,3 +183,8 @@ Work William has asked for once `release/p5-p6` (pass 5, and pass 6's PR A and B
   - Whether it still suits a custom domain later.
 
   Bring a recommendation; pass 6's BUG-56 (503 `email_unavailable` when no sender is configured) works with any provider.
+
+  **Researched 2026-10-26 (awaiting William's choice):**
+  - **With a domain (best):** a cheap domain (about $5 a year for .uk at Cloudflare Registrar) plus Resend's free tier, with no code change.
+  - **With no domain:** Gmail SMTP with an app password, after `emails.py` moves to `django.core.mail`; `django-anymail` then makes the provider a settings choice. Render blocks SMTP only on free web services.
+  - **Either way:** the settings guard should also reject `resend.dev` From addresses.

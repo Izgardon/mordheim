@@ -1,4 +1,6 @@
-import type { HenchmenGroup, WarbandHero, WarbandHiredSword } from "../types/warband-types";
+import { unitMountBonus } from "./companions";
+
+import type { HenchmenGroup, WarbandHero, WarbandHireling } from "../types/warband-types";
 
 export const statFields = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
 
@@ -136,9 +138,17 @@ export const toNullableNumber = (value: string) => {
 
 // ── Warband rating ──────────────────────────────────────────────────────
 
+/** Each rider's mount bonus, as the server adds it to the rating (`unitMountBonus`). */
+export const mountsRating = (
+  heroes: WarbandHero[],
+  hirelings: WarbandHireling[],
+  henchmenGroups: HenchmenGroup[]
+) =>
+  [...heroes, ...hirelings, ...henchmenGroups].reduce((sum, unit) => sum + unitMountBonus(unit), 0);
+
 export const calculateWarbandRating = (
   heroes: WarbandHero[],
-  hiredSwords: WarbandHiredSword[],
+  hirelings: WarbandHireling[],
   henchmenGroups: HenchmenGroup[],
   fallbackRating?: number
 ): number => {
@@ -148,7 +158,7 @@ export const calculateWarbandRating = (
     return total + base + xp;
   }, 0);
 
-  const hiredSwordRating = hiredSwords.reduce((total, hs) => {
+  const hirelingRating = hirelings.reduce((total, hs) => {
     const base = toNumber(hs.rating ?? 0);
     const xp = toNumber(hs.xp);
     return total + base + xp;
@@ -162,11 +172,27 @@ export const calculateWarbandRating = (
     return total + count * (base + xp);
   }, 0);
 
-  if (heroes.length || hiredSwords.length || henchmenGroups.length) {
-    return heroRating + hiredSwordRating + henchmenRating;
+  if (heroes.length || hirelings.length || henchmenGroups.length) {
+    return (
+      heroRating + hirelingRating + henchmenRating + mountsRating(heroes, hirelings, henchmenGroups)
+    );
   }
   return typeof fallbackRating === "number" ? fallbackRating : 0;
 };
+
+/**
+ * The rating the page shows: the server's (the summary's `rating`, which counts a group on mixed
+ * mounts at each mount's own bonus); worked out here only when the summary has none.
+ */
+export const shownWarbandRating = (
+  warband: { rating?: number | null },
+  heroes: WarbandHero[],
+  hirelings: WarbandHireling[],
+  henchmenGroups: HenchmenGroup[]
+): number =>
+  typeof warband.rating === "number"
+    ? warband.rating
+    : calculateWarbandRating(heroes, hirelings, henchmenGroups);
 
 // ── Warband unit count ───────────────────────────────────────────────────
 
@@ -177,11 +203,11 @@ export const calculateWarbandRating = (
  */
 export const getWarbandUnitCount = (
   heroes: readonly unknown[],
-  hiredSwords: readonly { blood_pacted?: boolean | null }[],
+  hirelings: readonly { blood_pacted?: boolean | null }[],
   henchmenGroups: readonly { henchmen?: readonly unknown[] | null }[]
 ): number => {
   const heroCount = heroes.length;
-  const bloodPactedCount = hiredSwords.filter((hs) => hs.blood_pacted).length;
+  const bloodPactedCount = hirelings.filter((hs) => hs.blood_pacted).length;
   const henchmenCount = henchmenGroups.reduce(
     (total, group) => total + (group.henchmen?.length ?? 0),
     0
@@ -199,7 +225,7 @@ export const formatTradeDate = (value: string): string => {
 
 // ── Unit price calculation ──────────────────────────────────────────────
 
-/** Base price plus item costs (heroes and hired swords; hired-sword upkeep is separate). */
+/** Base price plus item costs (heroes and hired swords; hired sword upkeep is separate). */
 export const calculateUnitTotalPrice = (
   hero: Pick<WarbandHero, "price" | "items">
 ): {

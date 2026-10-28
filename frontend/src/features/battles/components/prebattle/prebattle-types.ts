@@ -1,3 +1,8 @@
+import type {
+  BattleRosterCompanion,
+  BattleRosterCompanionFields,
+} from "@/features/battles/types/battle-types";
+
 export type NumericStatKey =
   | "movement"
   | "weapon_skill"
@@ -36,10 +41,12 @@ export type UnitItemEntry = UnitDetailEntry & {
   singleUse: boolean;
 };
 
-export type PrebattleUnit = {
+export type PrebattleUnit = BattleRosterCompanionFields & {
   key: string;
   id: number | string;
-  kind: "hero" | "hired_sword" | "henchman" | "custom" | "bestiary";
+  kind: "hero" | "hireling" | "henchman" | "custom" | "bestiary" | "pet";
+  /** A pet fighting as its own model (step 5): its owner's unit key, or `group:<id>`. */
+  ownerKey?: string;
   displayName: string;
   unitType: string;
   stats: UnitStats;
@@ -52,19 +59,31 @@ export type PrebattleUnit = {
   specials?: UnitDetailEntry[];
   rating?: number;
   noLevelUps?: boolean;
+  /** Hirelings: what it is, the injury table it rolls on, how long it stays, what it is paid in. */
+  hirelingKind?: "hired_sword" | "dramatis_persona";
+  injuryTable?: "henchman" | "hero";
+  stays?: "always" | "one_battle";
+  paymentNote?: string;
 };
 
 export type HenchmenGroupRoster = {
   id: number;
   name: string;
   unitType: string;
+  /** A group recruited from a creature: its beast (null otherwise). */
+  sourceBeastId?: number | null;
+  beastKind?: "mount" | "pet" | "creature" | null;
+  /** The group's own pets (a keyed one fights as its own model, step 5). */
+  pets?: BattleRosterCompanion[];
   members: PrebattleUnit[];
 };
 
 export type ParticipantRoster = {
   heroes: PrebattleUnit[];
-  hiredSwords: PrebattleUnit[];
+  hirelings: PrebattleUnit[];
   henchmenGroups: HenchmenGroupRoster[];
+  /** Its pets with a profile, as models next to their owners (step 5; built from the roster). */
+  petModels?: PrebattleUnit[];
 };
 
 export type UnitOverride = {

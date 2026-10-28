@@ -14,15 +14,8 @@ import { Input } from "@/components/ui/input";
 
 import type { ActiveBattleUnitOption } from "./active-utils";
 import { HELPER_NATIVE_SELECT_CLASS, HELPER_NATIVE_SELECT_STYLE } from "./helper-dialog-styles";
+import { groupOptionsBySection } from "./unit-sections";
 import { getErrorMessage } from "@/lib/get-error-message";
-
-const SECTION_ORDER = ["Heroes", "Henchmen", "Hired Swords", "Temporary Units"] as const;
-
-const groupOptionsBySection = (options: ActiveBattleUnitOption[]) =>
-  SECTION_ORDER.map((sectionLabel) => ({
-    sectionLabel,
-    options: options.filter((option) => option.sectionLabel === sectionLabel),
-  })).filter((group) => group.options.length > 0);
 
 type ActiveKillDialogProps = {
   open: boolean;

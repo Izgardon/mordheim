@@ -82,6 +82,24 @@ const itemsLost: LogFormatter = (log) => {
     : "Items lost with the dead.";
 };
 
+type MountsLostPayload = {
+  mounts?: Array<{ unit_name?: string; mount?: string; roll?: number | null } | null>;
+};
+
+/** Mounts that died after the battle, their riders taken out (the bestiary rewrite, step 5). */
+const mountsLost: LogFormatter = (log) => {
+  const mounts = (payloadOf<MountsLostPayload>(log).mounts ?? [])
+    .map((entry) => {
+      if (!entry?.mount) return null;
+      const rolled = typeof entry.roll === "number" ? ` (rolled ${entry.roll})` : "";
+      return `${entry.unit_name ? `${entry.unit_name}'s ` : ""}${entry.mount}${rolled}`;
+    })
+    .filter((entry): entry is string => entry !== null);
+  return mounts.length > 0
+    ? `Mounts lost after the battle: ${mounts.join("; ")}.`
+    : "Mounts lost after the battle.";
+};
+
 /** Unusual numbers finalise went ahead with (decision 9). */
 const warnings: LogFormatter = (log) => {
   const messages = (payloadOf<WarningsPayload>(log).warnings ?? [])
@@ -131,5 +149,6 @@ export const BATTLE_FORMATTERS: Record<string, LogFormatter> = {
   "battle:exploration": exploration,
   "battle:finds": finds,
   "battle:items_lost": itemsLost,
+  "battle:mounts_lost": mountsLost,
   "battle:warnings": warnings,
 };

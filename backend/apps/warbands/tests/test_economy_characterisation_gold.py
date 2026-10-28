@@ -2,9 +2,9 @@
 
 Gold is the stored balance `Warband.gold`, which `services/ledger.py` changes with every signed ledger row it
 writes (decision 4). Until PR B it was summed from the rows by a rule on the action text (abs(price),
-subtracted for the spending actions); migration 0027 stored every row signed by that rule and 0029 filled in
-the balance with it (both checked in test_ledger_migrations). This is the safety net for the ledger
-refactor: every number asserted on `summary.gold` must stay.
+subtracted for the spending actions); the ledger's data migrations stored every row signed by that rule and
+filled in the balance with it (gone since the migrations were reset to a fresh 0001). This is the safety net for
+the ledger refactor: every number asserted on `summary.gold` must stay.
 """
 
 from typing import Any
@@ -19,7 +19,7 @@ from .roster_support import RosterTestCase, trade_rows
 
 
 class GoldTests(RosterTestCase):
-    """ECON-TEST-11 (the per-action rule now lives in the migrations: test_ledger_migrations)."""
+    """ECON-TEST-11 (the per-action rule now lives in `services/ledger_names.py`, for `check_gold --fix`)."""
 
     def test_no_ledger_rows_is_zero_gold(self):
         self.assertEqual(warband_gold(self.warband.id), 0)
@@ -49,7 +49,7 @@ class MixedLedgerGoldTests(RosterTestCase):
         sale = {"source_type": "stash", "item_id": self.sword.id, "quantity": 1, "price": 15}
         self._post("item-sales/", sale, status=200)
         self._post("heroes/", {"name": "Ana", "unit_type": "Champion", "price": 30})
-        self._post("hired-swords/", {"name": "Ogre", "unit_type": "Ogre", "price": 60})
+        self._post("hirelings/", {"name": "Ogre", "unit_type": "Ogre", "price": 60})
         # two henchmen recruited together: a Group header with a Recruit child each (20 apiece)
         self._post(
             "henchmen-groups/",
@@ -81,7 +81,7 @@ class MixedLedgerGoldTests(RosterTestCase):
                 ("Buy", "Sword", -40, None),  # "Bought": stored positive until BUG-37, named "Buy" since decision 4
                 ("Sell", "Sword", 15, None),
                 ("Recruit", "Ana the Champion", -30, None),
-                ("Hire", "Ogre the Ogre", -60, None),
+                ("Hire", "Ogre", -60, None),  # named for its type: once (was "Ogre the Ogre")
                 ("Group", "Recruited 2 Zealots", 0, None),
                 ("Recruit", "Bo into Zealots", -20, "Recruited 2 Zealots"),
                 ("Recruit", "Cy into Zealots", -20, "Recruited 2 Zealots"),

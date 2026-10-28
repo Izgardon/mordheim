@@ -8,7 +8,7 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 from django.utils import timezone
 
-from .roster_support import HENCHMEN, HERO, HIRED_SWORD, RosterTestCase, make_unit
+from .roster_support import HENCHMEN, HERO, HIRELING, RosterTestCase, make_unit
 
 
 class RosterStatsTests(RosterTestCase):
@@ -24,7 +24,7 @@ class RosterStatsTests(RosterTestCase):
         make_unit(HERO, self.warband, name="Fallen", dead=True)
         make_unit(HERO, self.warband, name="Gone", dismissed_at=timezone.now())
         group = make_unit(HENCHMEN, self.warband, name="Swordsmen", strength=3)
-        ogre = make_unit(HIRED_SWORD, self.warband, name="Ogre", wounds=3, unit_type="Ogre Bodyguard")
+        ogre = make_unit(HIRELING, self.warband, name="Ogre", wounds=3, unit_type="Ogre Bodyguard")
 
         response = self.stats()
 
@@ -37,7 +37,7 @@ class RosterStatsTests(RosterTestCase):
         )
         self.assertEqual((data["henchmen_groups"][0]["id"], data["henchmen_groups"][0]["strength"]), (group.id, 3))
         self.assertEqual(
-            {key: data["hired_swords"][0][key] for key in ("id", "unit_type", "wounds")},
+            {key: data["hirelings"][0][key] for key in ("id", "unit_type", "wounds")},
             {"id": ogre.id, "unit_type": "Ogre Bodyguard", "wounds": 3},
         )
         expected = {"id", "name", "unit_type", "armour_save", "movement", "weapon_skill", "ballistic_skill"}
@@ -54,10 +54,10 @@ class RosterStatsTests(RosterTestCase):
                 self.assertEqual(self.stats().status_code, 200)
             return len(captured)
 
-        for kind in (HERO, HENCHMEN, HIRED_SWORD):
+        for kind in (HERO, HENCHMEN, HIRELING):
             make_unit(kind, self.warband)
         small = count()
-        for kind in (HERO, HENCHMEN, HIRED_SWORD) * 4:
+        for kind in (HERO, HENCHMEN, HIRELING) * 4:
             make_unit(kind, self.warband)
 
         self.assertEqual((small, count()), (3, 3))  # the warband, the membership, the units (target <= 4)

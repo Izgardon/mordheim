@@ -5,7 +5,10 @@ import PostbattleSection, {
 import PostbattleStepperInput from "@/features/battles/components/postbattle/PostbattleStepperInput";
 import type { UpkeepRow } from "@/features/battles/components/postbattle/postbattle-summary";
 
-/** Upkeep: each hired sword's cost (none for the dead), the total, and Pay upkeep. */
+/**
+ * Upkeep: each hireling's cost (none for the dead) with his formula as a reminder ("Upkeep: 1
+ * piece of wyrdstone"), the total, and Pay upkeep.
+ */
 export default function UpkeepSection({
   isMobile,
   rows,
@@ -66,6 +69,9 @@ export default function UpkeepSection({
                 </div>
               )}
             </div>
+            {row.hasFixedCost && row.costExpression ? (
+              <p className="text-xs text-muted-foreground">Upkeep: {row.costExpression}</p>
+            ) : null}
             {row.dead ? (
               <p className="text-xs text-muted-foreground">
                 Excluded from upkeep total because this hired sword is marked dead.

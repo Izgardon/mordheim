@@ -20,6 +20,7 @@ from apps.warbands.services.prices import CampaignPrices
 from apps.warbands.services.stash import ANY_COST, add_costs, remove_from_stash, stash_entry
 from apps.warbands.services.unit_items import add_unit_copies, resolve_unit, take_unit_copies
 from apps.warbands.units.kinds import KINDS, UnitKindKey
+from apps.warbands.utils.leaders import lock_warband
 
 Outcome = tuple[int, dict[str, Any]]
 
@@ -61,12 +62,13 @@ def _sale_total(warband: Warband, item: Item, data: Mapping[str, Any], unit: Ros
     if data.get("price") is not None:
         return int(data["price"])
     if unit is None:
-        rows: Any = WarbandItem.objects.filter(warband=warband, item=item)
+        rows: Any = WarbandItem.objects.filter(warband=warband, item=item).order_by("-id")
         rows = rows.filter(cost=data["cost"]) if data.get("cost") is not None else rows
     else:
         kind = KINDS[cast(UnitKindKey, data["source_type"])]
         rows = kind.items.model._default_manager.filter(**{kind.parent_field: unit, "item": item})
-    stored = rows.order_by("-id").values_list("cost", flat=True).first()
+        rows = rows.order_by("companion", "-id")  # as take_unit_copies takes them: the one he rides last
+    stored = rows.values_list("cost", flat=True).first()
     sale = CampaignPrices(warband.campaign_id).sale_price(item, stored)
     if sale.price is None:
         raise ValueError("No price is known for this item; send one.")
@@ -92,6 +94,7 @@ def transfer_item(warband: Warband, item: Item, data: Mapping[str, Any]) -> Outc
     source_unit = None if source_type == "stash" else resolve_unit(warband, source_type, source_id, "Source")
     target_unit = None if target_type == "stash" else resolve_unit(warband, target_type, target_id, "Target")
     with transaction.atomic():
+        lock_warband(warband.id)  # before the stash rows and the units, as a recruit or a PATCH sending items does
         stash_item = removed = None
         if source_unit is None:
             costs, stash_item = _remove_stash_items(warband, item_id, data)

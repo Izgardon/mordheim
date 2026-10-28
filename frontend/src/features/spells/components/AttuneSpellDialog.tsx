@@ -14,15 +14,15 @@ import { unitTypeLabels, unitSelectLabels } from "@components/unit-selection-sec
 import { useAppStore } from "@/stores/app-store";
 
 // api
-import { updateWarbandHero, updateWarbandHiredSword } from "@/features/warbands/api/warbands-api";
+import { updateWarbandHero, updateWarbandHireling } from "@/features/warbands/api/warbands-api";
 
 import { useUnitSummaryLists } from "@/features/warbands/hooks/useUnitSummaryLists";
 
 // types
-import type { WarbandHero, WarbandHiredSword } from "@/features/warbands/types/warband-types";
+import type { WarbandHero, WarbandHireling } from "@/features/warbands/types/warband-types";
 import type { Spell } from "../types/spell-types";
 
-export type UnitType = "heroes" | "hiredswords";
+export type UnitType = "heroes" | "hirelings";
 
 type AttuneSpellDialogProps = {
   spell: Spell;
@@ -79,8 +79,8 @@ export default function AttuneSpellDialog({
 
     try {
       const existingSpellIds = (unit.spells ?? []).map((s) => s.id);
-      if (selectedUnitType === "hiredswords") {
-        await updateWarbandHiredSword(warband.id, unitId, {
+      if (selectedUnitType === "hirelings") {
+        await updateWarbandHireling(warband.id, unitId, {
           spell_ids: [...existingSpellIds, spell.id],
         });
       } else {
@@ -117,18 +117,18 @@ export default function AttuneSpellDialog({
     activeUnitType: selectedUnitType,
   });
 
-  const units = useMemo<(WarbandHero | WarbandHiredSword)[]>(() => {
+  const units = useMemo<(WarbandHero | WarbandHireling)[]>(() => {
     if (!selectedUnitType) {
       return [];
     }
 
-    let allUnits: (WarbandHero | WarbandHiredSword)[] = [];
+    let allUnits: (WarbandHero | WarbandHireling)[] = [];
     switch (selectedUnitType) {
       case "heroes":
         allUnits = unitsByType.heroes;
         break;
-      case "hiredswords":
-        allUnits = unitsByType.hiredswords;
+      case "hirelings":
+        allUnits = unitsByType.hirelings;
         break;
       default:
         allUnits = [];
@@ -136,7 +136,7 @@ export default function AttuneSpellDialog({
 
     // Filter to only casters
     return allUnits.filter((unit) => unit.caster && unit.caster !== "No");
-  }, [selectedUnitType, unitsByType.heroes, unitsByType.hiredswords]);
+  }, [selectedUnitType, unitsByType.heroes, unitsByType.hirelings]);
 
   const handleUnitTypeChange = (value: string) => {
     setSelectedUnitType(value as UnitType);

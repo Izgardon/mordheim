@@ -16,6 +16,7 @@ from apps.items.models import ItemAvailability, ItemAvailabilityRestriction, Ite
 from apps.warbands.models import Henchman, on_roster
 from apps.warbands.services.prices import house_rule_prices
 from apps.warbands.units.catalogue import SkillDetailSerializer, SpecialDetailSerializer, SpellDetailSerializer
+from apps.warbands.units.companions import with_beasts
 
 # The catalogue columns a unit payload shows for each kind of entry: the detail serializers' fields, which
 # include the summary ones.
@@ -32,9 +33,10 @@ def links_prefetch(relation: str, join_model: type[Model], target: str) -> Prefe
 
 
 def item_links_prefetch(relation: str, join_model: type[Model], parent_field: str) -> Prefetch:
-    """A unit's copies with their items, and the campaign's house rule for each item read in the same query (the
-    sale price, decision 3)."""
-    rows = join_model._default_manager.select_related("item")
+    """A unit's copies with their items and each Animal item's beast and its entries (its mount or pet:
+    units/companions.py), and the campaign's house rule for each item read in the same query (the sale price,
+    decision 3)."""
+    rows = with_beasts(join_model._default_manager.all())
     rows = rows.annotate(**house_rule_prices(f"{parent_field}__warband__campaign_id", "item_id"))
     return Prefetch(relation, queryset=rows.order_by("id"))
 
@@ -56,16 +58,21 @@ def item_detail_prefetches(prefix: str = "") -> tuple[Prefetch, ...]:
 
     `prefix` reaches the items from a unit, e.g. "hero_items__item__"; without it, prefetch onto items.
     """
-    restrictions = ItemAvailabilityRestriction.objects.select_related("restriction").order_by("id")
     return (
         Prefetch(
             f"{prefix}property_links",
             queryset=ItemPropertyLink.objects.select_related("property").order_by("id"),
         ),
-        Prefetch(
-            f"{prefix}availabilities",
-            queryset=ItemAvailability.objects.prefetch_related(Prefetch("restriction_links", queryset=restrictions)),
-        ),
+        availabilities_prefetch(prefix),
+    )
+
+
+def availabilities_prefetch(prefix: str = "") -> Prefetch:
+    """An item's availabilities with their restrictions (two queries), e.g. a beast's item's ("animal_item__")."""
+    restrictions = ItemAvailabilityRestriction.objects.select_related("restriction").order_by("id")
+    return Prefetch(
+        f"{prefix}availabilities",
+        queryset=ItemAvailability.objects.prefetch_related(Prefetch("restriction_links", queryset=restrictions)),
     )
 
 

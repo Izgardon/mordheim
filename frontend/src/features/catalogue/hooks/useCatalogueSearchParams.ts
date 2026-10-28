@@ -27,10 +27,17 @@ export function useCatalogueSearchParams() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // A link opened fresh has no history in the app; a change that replaces its history entry (a
+  // filter, or the entry an edit moved to) keeps it marked fresh, so Back still knows (BUG-150).
+  const isFresh =
+    location.key === "default" || Boolean((location.state as { fresh?: boolean } | null)?.fresh);
   const set = useCallback(
     (changes: SearchParamChanges) =>
-      setParams((current) => applied(current, changes), { replace: true }),
-    [setParams]
+      setParams((current) => applied(current, changes), {
+        replace: true,
+        state: isFresh ? { fresh: true } : undefined,
+      }),
+    [isFresh, setParams]
   );
 
   return {
@@ -46,7 +53,7 @@ export function useCatalogueSearchParams() {
      * fresh (no history in the app, BUG-150), the same page without `names`, its filters kept.
      */
     back: (...names: string[]) => {
-      if (location.key !== "default") {
+      if (!isFresh) {
         navigate(-1);
         return;
       }
@@ -54,7 +61,7 @@ export function useCatalogueSearchParams() {
       const search = remaining.toString();
       navigate(
         { pathname: location.pathname, search: search ? `?${search}` : "" },
-        { replace: true }
+        { replace: true, state: { fresh: true } }
       );
     },
   };

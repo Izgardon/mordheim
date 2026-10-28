@@ -3,14 +3,27 @@
 Read live from the warbands until the battle starts; `start/` stores each roster on its participant
 (`roster_json`), and from then on the battle keeps that snapshot, so a unit killed or dismissed on the sheet
 mid-battle stays in it. Every unit kind is read in one query plus its link tables, whatever the number of units.
+Each unit carries its mount, pets and the Move and save its mount gives it (`effectiveStats`, beside its own
+`stats`), and a group recruited from a creature its beast and kind, so the snapshot keeps them too.
 """
 
 from collections import defaultdict
 from collections.abc import Iterable
+from typing import Any
 
-from django.db.models import Prefetch
+from django.db.models import F, Prefetch
 
-from apps.warbands.models import Henchman, HenchmenGroup, Hero, HiredSword, on_roster
+from apps.warbands.models import (
+    Henchman,
+    HenchmenGroup,
+    HenchmenGroupItem,
+    Hero,
+    HeroItem,
+    Hireling,
+    HirelingItem,
+    on_roster,
+)
+from apps.warbands.units.companions import companions, effective_stats, mount_payload, pet_payload, with_beasts
 
 from ..models import BattleParticipant
 
@@ -53,6 +66,37 @@ def _spells(links: Iterable) -> list[dict]:
     return entries
 
 
+ROSTER_ABILITY_COLUMNS = {"skills": ("id", "name"), "specials": ("id", "name"), "spells": ("id", "name", "dc")}
+
+
+def _beast(row, owner: str | None = None) -> dict:
+    """A mount or pet as the roster shows it, with its beast's skills, specials and spells in the roster's own shapes
+    (each left out when empty). A pet with a profile its `owner` kind brings takes part as its own model (step 5):
+    its unit key is `pet:<owner kind>:<item row id>`."""
+    shown = pet_payload(row)
+    entry: dict[str, Any] = {"key": f"pet:{owner}:{row.pk}"} if owner and shown["has_profile"] else {}
+    entry |= {"itemId": shown["item_id"], "name": shown["name"], "hasProfile": shown["has_profile"]}
+    entry["stats"] = shown["stats"]
+    for key, columns in ROSTER_ABILITY_COLUMNS.items():
+        if shown[key]:
+            entry[key] = [{column: ability[column] for column in columns} for ability in shown[key]]
+    return entry
+
+
+def _companions(unit, links: list, rider: int = 0, owner: str | None = None) -> dict:
+    """The unit's mount (its first switched on; a group's `rider`-th member rides the `rider`-th, and goes on foot when
+    there are fewer), its pets (keyed as models of an `owner` kind) and what the mount makes it show (the bestiary
+    rewrite step 4): snapshotted with the rest at start/, so the battle keeps what the rider rode in on."""
+    found = companions(links)
+    mount = found.mounts[rider] if rider < len(found.mounts) else None
+    shown = None
+    if mount is not None:
+        payload = mount_payload(mount)
+        shown = {**_beast(mount), "movement": payload["movement"], "ratingBonus": payload["rating_bonus"]}
+    pets = [_beast(row, owner) for row in found.pets]
+    return {"mount": shown, "pets": pets, "effectiveStats": effective_stats(unit, mount)}
+
+
 def _stats(unit) -> dict:
     return {
         "movement": unit.movement,
@@ -69,7 +113,8 @@ def _stats(unit) -> dict:
 
 
 def hero_entry(hero: Hero) -> dict:
-    items = _item_entries(hero.hero_items.all())
+    links = list(hero.hero_items.all())
+    items = _item_entries(links)
     return {
         "key": f"hero:{hero.id}",
         "id": hero.id,
@@ -78,6 +123,7 @@ def hero_entry(hero: Hero) -> dict:
         "unitType": hero.unit_type or "Hero",
         "isLeader": bool(hero.is_leader),  # Winning Leader XP (BATL-NEW-09)
         "stats": _stats(hero),
+        **_companions(hero, links, owner="hero"),
         "items": items,
         "singleUseItems": _single_use(items),
         "skills": _named(hero.hero_skills.all(), "skill"),
@@ -86,28 +132,35 @@ def hero_entry(hero: Hero) -> dict:
     }
 
 
-def hired_sword_entry(hired_sword: HiredSword) -> dict:
-    items = _item_entries(hired_sword.hired_sword_items.all())
+def hireling_entry(hireling: Hireling) -> dict:
+    links = list(hireling.hireling_items.all())
+    items = _item_entries(links)
     return {
-        "key": f"hired_sword:{hired_sword.id}",
-        "id": hired_sword.id,
-        "kind": "hired_sword",
-        "displayName": hired_sword.name or f"Hired Sword {hired_sword.id}",
-        "unitType": hired_sword.unit_type or "Hired Sword",
-        "stats": _stats(hired_sword),
-        "upkeepPrice": hired_sword.upkeep_price,
-        "upkeepCostExpression": hired_sword.upkeep_cost_expression,
-        "noLevelUps": bool(hired_sword.no_level_ups),
+        "key": f"hireling:{hireling.id}",
+        "id": hireling.id,
+        "kind": "hireling",
+        "displayName": hireling.name or f"Hired Sword {hireling.id}",
+        "unitType": hireling.unit_type or "Hired Sword",
+        "stats": _stats(hireling),
+        **_companions(hireling, links, owner="hireling"),
+        "upkeepPrice": hireling.upkeep_price,
+        "upkeepCostExpression": hireling.upkeep_cost_expression,
+        "noLevelUps": bool(hireling.no_level_ups),
+        "hirelingKind": hireling.kind,  # hired_sword | dramatis_persona
+        "injuryTable": hireling.injury_table,  # henchman: a d6; hero: the campaign's hero death roll
+        "stays": hireling.stays,  # always | one_battle: suggested to leave after it
+        "paymentNote": hireling.payment_note,
         "items": items,
         "singleUseItems": _single_use(items),
-        "skills": _named(hired_sword.hired_sword_skills.all(), "skill"),
-        "spells": _spells(hired_sword.hired_sword_spells.all()),
-        "specials": _named(hired_sword.hired_sword_specials.all(), "special"),
+        "skills": _named(hireling.hireling_skills.all(), "skill"),
+        "spells": _spells(hireling.hireling_spells.all()),
+        "specials": _named(hireling.hireling_specials.all(), "special"),
     }
 
 
 def henchmen_group_entry(group: HenchmenGroup) -> dict:
-    items = _item_entries(group.henchmen_group_items.all())
+    links = list(group.henchmen_group_items.all())
+    items = _item_entries(links)
     skills = _named(group.henchmen_group_skills.all(), "skill")
     specials = _named(group.henchmen_group_specials.all(), "special")
     members = [
@@ -118,6 +171,7 @@ def henchmen_group_entry(group: HenchmenGroup) -> dict:
             "displayName": member.name or f"Henchman {member.id}",
             "unitType": group.unit_type or "Henchman",
             "stats": _stats(group),
+            **_companions(group, links, rider),  # one mount per member, in order
             "noLevelUps": bool(group.no_level_ups),
             "items": items,
             "singleUseItems": _single_use(items),
@@ -125,12 +179,15 @@ def henchmen_group_entry(group: HenchmenGroup) -> dict:
             "spells": [],
             "specials": specials,
         }
-        for member in group.henchmen.all()
+        for rider, member in enumerate(group.henchmen.all())
     ]
     return {
         "id": group.id,
         "name": group.name or f"Henchmen Group {group.id}",
         "unitType": group.unit_type or "Henchmen",
+        "sourceBeastId": group.source_beast_id,  # recruited from a creature: its beast and kind
+        "beastKind": getattr(group, "beast_kind", None),
+        "pets": [_beast(row, "henchmen_group") for row in companions(links).pets],  # the group's own: one model each
         "members": members,
     }
 
@@ -142,26 +199,34 @@ def _by_warband(rows: Iterable, entry) -> defaultdict[int, list[dict]]:
     return grouped
 
 
+def _items(relation: str, model) -> Prefetch:
+    """A kind's copies in row order with their items, each Animal item's beast and its entries: one query."""
+    return Prefetch(relation, queryset=with_beasts(model.objects.all()).order_by("id"))
+
+
 def _live_rosters(warband_ids: list[int]) -> tuple[defaultdict, defaultdict, defaultdict]:
     heroes = on_roster(Hero.objects.filter(warband_id__in=warband_ids)).prefetch_related(
-        "hero_items__item", "hero_skills__skill", "hero_specials__special", "hero_spells__spell"
+        _items("hero_items", HeroItem), "hero_skills__skill", "hero_specials__special", "hero_spells__spell"
     )
-    hired_swords = on_roster(HiredSword.objects.filter(warband_id__in=warband_ids)).prefetch_related(
-        "hired_sword_items__item",
-        "hired_sword_skills__skill",
-        "hired_sword_specials__special",
-        "hired_sword_spells__spell",
+    hirelings = on_roster(Hireling.objects.filter(warband_id__in=warband_ids)).prefetch_related(
+        _items("hireling_items", HirelingItem),
+        "hireling_skills__skill",
+        "hireling_specials__special",
+        "hireling_spells__spell",
     )
     living_henchmen = Prefetch("henchmen", queryset=on_roster(Henchman.objects.all()).order_by("id"))
-    groups = on_roster(HenchmenGroup.objects.filter(warband_id__in=warband_ids)).prefetch_related(
-        "henchmen_group_items__item",
+    groups = on_roster(HenchmenGroup.objects.filter(warband_id__in=warband_ids)).annotate(
+        beast_kind=F("source_beast__kind")
+    )
+    groups = groups.prefetch_related(
+        _items("henchmen_group_items", HenchmenGroupItem),
         "henchmen_group_skills__skill",
         "henchmen_group_specials__special",
         living_henchmen,
     )
     return (
         _by_warband(heroes.order_by("warband_id", "id"), hero_entry),
-        _by_warband(hired_swords.order_by("warband_id", "id"), hired_sword_entry),
+        _by_warband(hirelings.order_by("warband_id", "id"), hireling_entry),
         _by_warband(groups.order_by("warband_id", "id"), henchmen_group_entry),
     )
 
@@ -174,11 +239,11 @@ def battle_rosters_payload(battle_id: int) -> dict:
     warband_ids = [participant.warband_id for participant in participants]
     if not warband_ids:
         return {}
-    heroes, hired_swords, groups = _live_rosters(warband_ids)
+    heroes, hirelings, groups = _live_rosters(warband_ids)
     return {
         str(participant.user_id): {
             "heroes": heroes[participant.warband_id],
-            "hiredSwords": hired_swords[participant.warband_id],
+            "hirelings": hirelings[participant.warband_id],
             "henchmenGroups": groups[participant.warband_id],
         }
         for participant in participants

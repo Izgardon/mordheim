@@ -6,7 +6,7 @@ import type { Spell } from "@/features/spells/types/spell-types";
 import type {
   HenchmenGroup,
   WarbandHero,
-  WarbandHiredSword,
+  WarbandHireling,
   WarbandItemSummary,
 } from "@/features/warbands/types/warband-types";
 
@@ -43,7 +43,7 @@ export const makeHero = (overrides: Partial<WarbandHero> = {}): WarbandHero => (
   ...overrides,
 });
 
-export const makeHiredSword = (overrides: Partial<WarbandHiredSword> = {}): WarbandHiredSword => ({
+export const makeHireling = (overrides: Partial<WarbandHireling> = {}): WarbandHireling => ({
   ...baseUnit,
   id: 1,
   name: "Ogre Bodyguard",
@@ -219,9 +219,7 @@ export const makeVeteranHenchmenGroup = (
 });
 
 /** Hired sword: priest with upkeep, not blood-pacted, 4 XP (level 2 on the henchmen table). */
-export const makeVeteranHiredSword = (
-  overrides: Partial<WarbandHiredSword> = {}
-): WarbandHiredSword => ({
+export const makeVeteranHireling = (overrides: Partial<WarbandHireling> = {}): WarbandHireling => ({
   ...baseUnit,
   id: 31,
   warband_id: VETERAN_WARBAND_ID,

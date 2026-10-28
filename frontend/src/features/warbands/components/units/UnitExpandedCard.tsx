@@ -8,6 +8,7 @@ import ExperienceBar from "../shared/unit_details/ExperienceBar";
 import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "../shared/unit_details/warband-tooltip-styles";
 import { toRaceUnitStats, toUnitStats } from "../shared/utils/unit-stats-mapper";
 import UnitListBlocks, { type PendingTab } from "./UnitListBlocks";
+import CompanionChips from "./beasts/CompanionChips";
 import { cardPanelStyle } from "./expanded/ExpandedTiles";
 import {
   CollapsibleDeeds,
@@ -18,7 +19,9 @@ import {
 } from "./expanded/ExpandedParts";
 import { useUnitXpSaver } from "../../hooks/units/useUnitMutations";
 import { unitApi } from "../../units/unit-api";
+import { isCreatureGroup } from "../../utils/companions";
 
+import type { CreatureGroupFields } from "../../types/companion-types";
 import type { Unit, UnitKindKey } from "../../types/units";
 import type { UnitKindConfig } from "../../units/unit-kind-types";
 
@@ -69,17 +72,28 @@ export default function UnitExpandedCard<K extends UnitKindKey>({
     />
   ) : null;
   const identity = (
-    <ExpandedIdentity
-      title={<ExpandedTitle unit={unit} />}
-      raceName={unit.race_name || unit.race?.name}
-      unitType={unit.unit_type}
-      xp={unit.xp}
-    />
+    <>
+      <ExpandedIdentity
+        title={<ExpandedTitle unit={unit} />}
+        raceName={unit.race_name || unit.race?.name}
+        unitType={unit.unit_type}
+        xp={unit.xp}
+        creature={isCreatureGroup(unit as CreatureGroupFields)}
+      />
+      <CompanionChips
+        kind={kind}
+        unit={unit}
+        warbandId={warbandId}
+        canManageItems={canManageItems}
+        className="mt-2"
+      />
+    </>
   );
   const statsTable = (
     <UnitStatsTable
       stats={toUnitStats(unit)}
       raceStats={toRaceUnitStats(unit)}
+      mounted={unit.effective_stats}
       variant="race"
       wrapperClassName="h-full w-full max-w-none"
       tooltipContentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}

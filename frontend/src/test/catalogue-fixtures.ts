@@ -3,12 +3,11 @@
  * (`campaign_id: null`) and the campaign's own rows, already merged by the server (a campaign
  * row hides every book row of its name, BUG-18). Pages read these through `useCatalogue`.
  */
+import type { BestiaryEntry, BestiaryEntrySummary } from "@/features/bestiary/types/bestiary-types";
 import type {
-  BestiaryEntry,
-  BestiaryEntrySummary,
-  HiredSwordProfile,
-  HiredSwordProfileSummary,
-} from "@/features/bestiary/types/bestiary-types";
+  HirelingProfile,
+  HirelingProfileDetail,
+} from "@/features/hirelings/types/hireling-catalogue-types";
 import type { Item, ItemAvailability, ItemProperty } from "@/features/items/types/item-types";
 import type { Skill } from "@/features/skills/types/skill-types";
 import type { Special } from "@/features/special/types/special-types";
@@ -23,11 +22,10 @@ export const LIST = {
   skills: `GET /skills/?campaign_id=${CAMPAIGN_ID}`,
   spells: `GET /spells/?campaign_id=${CAMPAIGN_ID}`,
   specials: `GET /special/?campaign_id=${CAMPAIGN_ID}`,
-  /** Every entry, hired swords' included (the prebattle Bestiary picker). */
+  /** The animals (the Bestiary page and the prebattle Load from Bestiary picker share it). */
   bestiary: `GET /bestiary/?campaign_id=${CAMPAIGN_ID}`,
-  /** The Bestiary page's: the server leaves the hired swords out (PERF-47). */
-  creatures: `GET /bestiary/?campaign_id=${CAMPAIGN_ID}&exclude_type=Hired+Sword`,
   hiredSwords: `GET /hired-swords/?campaign_id=${CAMPAIGN_ID}`,
+  dramatisPersonae: `GET /dramatis-personae/?campaign_id=${CAMPAIGN_ID}`,
 } as const;
 
 /** Your warband's bestiary favourites (the Bestiary page reads them for the stars). */
@@ -119,19 +117,21 @@ export const halfPriceArmour = item({
   generated_effect_key: "half_price_armour",
   availabilities: [availability({ id: 43, cost: 25 })],
 });
-/** A book Animal that links its bestiary entry (the row's "Bestiary" button). */
+/** The book Warhound's Animal item: a creature, sold (the row's "Bestiary" button). */
 export const warhoundItem = item({
   id: 260,
   name: "Warhound",
   type: "Animal",
-  subtype: "Attack",
+  subtype: "Creature",
   strength: null,
   range: null,
   availabilities: [availability({ id: 44, cost: 15, rarity: 2 })],
+  listed: true,
   bestiary_entry: {
     id: 5,
     name: "Warhound",
-    type: "Attack",
+    kind: "creature",
+    has_profile: true,
     movement: 6,
     weapon_skill: 4,
     ballistic_skill: 0,
@@ -200,13 +200,21 @@ export const SPECIALS: Special[] = [
   { id: 401, campaign_id: null, name: "Leader", type: "Trait", description: "Leads." },
 ];
 
+/** A beast's Animal item, sold for `cost` gc at `rarity`. */
+export const beastItem = (id: number, cost: number, rarity: number, availabilityId = id + 100) => ({
+  id,
+  grade: "1a",
+  availabilities: [availability({ id: availabilityId, cost, rarity })],
+});
+
+/** The book Warhound, a creature sold for 15 gc (its item is the Wargear's Warhound). */
 export const bestiaryEntry = (
   overrides: Partial<BestiaryEntrySummary> = {}
 ): BestiaryEntrySummary => ({
   id: 5,
   campaign_id: null,
   name: "Warhound",
-  type: "Attack",
+  kind: "creature",
   description: "A hound bred for war.",
   movement: 6,
   weapon_skill: 4,
@@ -220,37 +228,59 @@ export const bestiaryEntry = (
   armour_save: null,
   large: false,
   caster: "No",
+  has_profile: true,
+  gains_xp: false,
+  rating_bonus: null,
+  available_in_shop: true,
+  item: { id: 260, grade: "1a", availabilities: [availability({ id: 44, cost: 15, rarity: 2 })] },
+  replaces: null,
+  archived_at: null,
+  updated_by: null,
+  updated_at: null,
+  book: null,
   ...overrides,
 });
+/** The campaign's own creature, not sold. */
 export const sewerRat = bestiaryEntry({
   id: 90,
   campaign_id: CAMPAIGN_ID,
   name: "Sewer Rat",
   description: "Bites ankles.",
+  available_in_shop: false,
+  item: { id: 290, grade: "", availabilities: [] },
 });
-export const warhorse = bestiaryEntry({ id: 6, name: "Warhorse", type: "Mount" });
-/** The full bestiary list also returns every hired sword's entry; the page's list doesn't (PERF-47). */
-export const ogreEntry = bestiaryEntry({
-  id: 31,
-  name: "Ogre Bodyguard",
-  type: "Hired Sword",
-  description: "Big and loyal while paid.",
-  large: true,
+/** A book mount: 80 gc, Rare 11, and +5 to its rider's rating. */
+export const warhorse = bestiaryEntry({
+  id: 6,
+  name: "Warhorse",
+  kind: "mount",
+  description: "A knight's charger.",
+  movement: 8,
+  weapon_skill: 3,
+  strength: 3,
+  rating_bonus: 5,
+  item: beastItem(230, 80, 11, 242),
 });
-export const pitFighterEntry = bestiaryEntry({
-  id: 91,
-  campaign_id: CAMPAIGN_ID,
-  name: "Pit Fighter",
-  type: "Hired Sword",
-  description: "Fights for coin.",
+/** A book pet with no profile: every stat stored as 0. */
+export const raven = bestiaryEntry({
+  id: 20,
+  name: "Raven",
+  kind: "pet",
+  description: "A clever black bird.",
+  has_profile: false,
+  movement: 0,
+  weapon_skill: 0,
+  ballistic_skill: 0,
+  strength: 0,
+  toughness: 0,
+  wounds: 0,
+  initiative: 0,
+  attacks: 0,
+  leadership: 0,
+  item: beastItem(270, 60, 8),
 });
-export const BESTIARY: BestiaryEntrySummary[] = [
-  sewerRat,
-  pitFighterEntry,
-  bestiaryEntry(),
-  warhorse,
-  ogreEntry,
-];
+/** The bestiary's three kinds: two creatures, a mount and a pet. */
+export const BESTIARY: BestiaryEntrySummary[] = [sewerRat, bestiaryEntry(), warhorse, raven];
 
 /** `GET bestiary/:id/`: the summary with its links. */
 export const bestiaryDetail = (
@@ -265,41 +295,95 @@ export const bestiaryDetail = (
   ...overrides,
 });
 
-export const hiredSword = (
-  overrides: Partial<HiredSwordProfileSummary> = {}
-): HiredSwordProfileSummary => ({
+/** A hired sword or dramatis persona as the catalogue lists it (the book's Ogre Bodyguard). */
+export const hiredSword = (overrides: Partial<HirelingProfile> = {}): HirelingProfile => ({
   id: 17,
   campaign_id: null,
-  race: "Ogre",
+  campaign_type_id: null,
+  name: "Ogre Bodyguard",
+  description: "Big and loyal while paid.",
+  movement: 6,
+  weapon_skill: 3,
+  ballistic_skill: 2,
+  strength: 4,
+  toughness: 4,
+  wounds: 3,
+  initiative: 3,
+  attacks: 2,
+  leadership: 7,
+  armour_save: null,
+  large: true,
+  caster: "No",
+  race_id: 4,
+  race_name: "Ogre",
+  race_label: "Ogre",
   hire_cost: 80,
   hire_cost_expression: "",
   upkeep_cost: 30,
   upkeep_cost_expression: "",
   rating: 25,
   available_skill_types: ["Combat", "Strength"],
+  grade: "1a",
   restrictions: [],
-  bestiary_entry: ogreEntry,
+  replaces: null,
+  archived_at: null,
+  updated_by: null,
+  updated_at: null,
+  book: null,
   ...overrides,
 });
+/** The campaign's own hired sword. */
 export const pitFighter = hiredSword({
   id: 40,
   campaign_id: CAMPAIGN_ID,
-  race: "Human",
+  name: "Pit Fighter",
+  description: "Fights for coin.",
+  large: false,
+  movement: 4,
+  race_id: 1,
+  race_name: "Human",
+  race_label: "Human",
   hire_cost: 35,
   upkeep_cost: 15,
   rating: 12,
   available_skill_types: ["Combat"],
-  bestiary_entry: pitFighterEntry,
+  grade: "",
 });
-export const HIRED_SWORDS: HiredSwordProfileSummary[] = [pitFighter, hiredSword()];
+export const HIRED_SWORDS: HirelingProfile[] = [pitFighter, hiredSword()];
 
-/** `GET hired-swords/:id/`: the profile with its entry's links. */
+/** The campaign's own dramatis persona, who stays for one battle (the book has none yet). */
+export const bertha = hiredSword({
+  id: 60,
+  campaign_id: CAMPAIGN_ID,
+  name: "Bertha Bestraufrung",
+  description: "A priestess of Sigmar on a crusade.",
+  large: false,
+  caster: "Priest",
+  race_id: 1,
+  race_name: "Human",
+  race_label: "Human",
+  hire_cost: null,
+  hire_cost_expression: "2 Treasure",
+  upkeep_cost: null,
+  upkeep_cost_expression: "",
+  rating: 40,
+  available_skill_types: [],
+  grade: "",
+  stays: "one_battle",
+  payment_note: "25 gc or 1 shard",
+});
+
+/** `GET <kind>/:id/` (and every write's answer): the row with its links. */
 export const hiredSwordDetail = (
-  profile: HiredSwordProfileSummary,
-  entry: Partial<BestiaryEntry> = {}
-): HiredSwordProfile => ({
-  ...profile,
-  bestiary_entry: bestiaryDetail(profile.bestiary_entry, entry),
+  entry: HirelingProfile,
+  overrides: Partial<HirelingProfileDetail> = {}
+): HirelingProfileDetail => ({
+  ...entry,
+  skills: [],
+  specials: [],
+  spells: [],
+  equipment: [],
+  ...overrides,
 });
 
 /** Answers every catalogue list (and your favourites) with the fixtures above. */
@@ -310,11 +394,8 @@ export function routeCatalogue() {
   fakeApi.on(LIST.spells, SPELLS);
   fakeApi.on(LIST.specials, SPECIALS);
   fakeApi.on(LIST.bestiary, BESTIARY);
-  fakeApi.on(
-    LIST.creatures,
-    BESTIARY.filter((entry) => entry.type !== "Hired Sword")
-  );
   fakeApi.on(LIST.hiredSwords, HIRED_SWORDS);
+  fakeApi.on(LIST.dramatisPersonae, []);
   fakeApi.on(FAVOURITES, []);
 }
 

@@ -346,7 +346,7 @@ const sheetOf = (person: Person) => ({
   capabilities: {},
   heroes: [],
   henchmen_groups: [],
-  hired_swords: [],
+  hirelings: [],
 });
 
 /**

@@ -1,0 +1,666 @@
+<title>Grades, Settings and Warbands</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Manrope:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+/* Layout: one reading column (~70ch) with wide figures that scroll inside their own frames. Dark-first, taken from the Chronicler app's own tokens. */
+:root {
+  --bg: hsl(26 32% 6%);
+  --surface: hsl(28 24% 10%);
+  --surface-2: hsl(30 20% 14%);
+  --fg: hsl(40 45% 88%);
+  --muted: hsl(36 16% 64%);
+  --line: hsl(32 18% 24%);
+  --accent: hsl(41 58% 63%);
+  --accent-soft: hsla(41, 58%, 63%, 0.16);
+  --changed: hsl(16 62% 64%);
+  --changed-soft: hsla(16, 62%, 64%, 0.16);
+  --warn: hsl(38 85% 60%);
+  --font-head: "Fraunces", "Times New Roman", serif;
+  --font-body: "Manrope", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: hsl(40 33% 95%); --surface: hsl(40 36% 99%); --surface-2: hsl(38 28% 91%);
+    --fg: hsl(26 35% 12%); --muted: hsl(30 14% 38%); --line: hsl(34 22% 80%);
+    --accent: hsl(36 72% 30%); --accent-soft: hsla(36, 72%, 30%, 0.12);
+    --changed: hsl(14 62% 40%); --changed-soft: hsla(14, 62%, 40%, 0.12);
+    --warn: hsl(32 90% 34%);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: hsl(40 33% 95%); --surface: hsl(40 36% 99%); --surface-2: hsl(38 28% 91%);
+  --fg: hsl(26 35% 12%); --muted: hsl(30 14% 38%); --line: hsl(34 22% 80%);
+  --accent: hsl(36 72% 30%); --accent-soft: hsla(36, 72%, 30%, 0.12);
+  --changed: hsl(14 62% 40%); --changed-soft: hsla(14, 62%, 40%, 0.12);
+  --warn: hsl(32 90% 34%);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 72px;
+}
+main { max-width: 980px; margin: 0 auto; display: grid; gap: 56px; }
+.prose { max-width: 70ch; }
+h1, h2, h3 { font-family: var(--font-head); font-weight: 650; text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -0.01em; }
+h2 { font-size: 1.65rem; }
+h3 { font-size: 1.15rem; font-weight: 500; }
+p { margin: 0; }
+section { display: grid; gap: 18px; min-width: 0; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.lede { font-size: 1.12rem; max-width: 64ch; }
+.muted { color: var(--muted); }
+.small { font-size: 0.875rem; }
+code, .mono { font-family: var(--font-mono); font-size: 0.85em; }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.status { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.04em; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.chip.gold { border-color: var(--accent); color: var(--accent); }
+.box-note { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 16px 18px; display: grid; gap: 8px; max-width: 74ch; }
+.box-note ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 4px; font-size: 0.92rem; }
+.findings { display: grid; gap: 14px; padding: 0; margin: 0; list-style: none; }
+.findings li { display: grid; grid-template-columns: 5.5rem 1fr; gap: 16px; align-items: baseline; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.findings li:last-child { border-bottom: 0; padding-bottom: 0; }
+.findings .num { font-family: var(--font-head); font-size: 1.6rem; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1; }
+.findings .num small { font-family: var(--font-body); font-size: 0.75rem; color: var(--muted); display: block; margin-top: 4px; }
+figure { margin: 0; display: grid; gap: 10px; min-width: 0; }
+figcaption { font-size: 0.875rem; color: var(--muted); max-width: 72ch; }
+.frame { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 16px; }
+.frame svg { display: block; max-width: 100%; height: auto; color: var(--fg); font-family: var(--font-body); }
+.frame.wide svg { min-width: 760px; }
+.t-m { fill: var(--muted); font-size: 11px; }
+.t-h { fill: currentColor; font-size: 13px; font-weight: 700; }
+.t-code { fill: currentColor; font-family: var(--font-mono); font-size: 11px; }
+.t-add { fill: var(--accent); font-family: var(--font-mono); font-size: 11px; }
+.t-del { fill: var(--muted); font-family: var(--font-mono); font-size: 11px; text-decoration: line-through; }
+.box { fill: var(--surface-2); stroke: var(--line); stroke-width: 1; }
+.box-new { fill: var(--surface-2); stroke: var(--accent); stroke-width: 1.6; }
+.box-chg { fill: var(--surface-2); stroke: var(--changed); stroke-width: 1.4; }
+.hd { fill: var(--bg); opacity: 0.55; }
+.hd-new { fill: var(--accent-soft); }
+.hd-chg { fill: var(--changed-soft); }
+.edge { fill: none; stroke: var(--muted); stroke-width: 1.3; }
+.edge-new { fill: none; stroke: var(--accent); stroke-width: 1.4; }
+.arrow-m { fill: var(--muted); }
+.arrow-a { fill: var(--accent); }
+.flow-box { fill: var(--surface-2); stroke: var(--line); }
+.flow-key { fill: var(--accent-soft); stroke: var(--accent); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 0.8rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.sw { width: 14px; height: 10px; border-radius: 2px; display: inline-block; }
+.controls { display: grid; gap: 14px; }
+.control-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.control-row > .lbl { font-size: 0.8rem; color: var(--muted); min-width: 7.5rem; }
+.toggle { position: relative; }
+.toggle input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.toggle input:disabled { cursor: default; }
+.toggle span { display: inline-block; font-size: 0.82rem; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); cursor: pointer; user-select: none; }
+.toggle span .g { font-family: var(--font-mono); font-size: 0.7rem; opacity: 0.8; margin-left: 4px; }
+.toggle input:checked + span { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.toggle input:disabled + span { border-style: dashed; cursor: default; }
+.toggle input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rule-note { font-size: 0.9rem; max-width: 70ch; }
+.readout { display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: baseline; }
+.readout b { font-family: var(--font-head); font-size: 2rem; font-weight: 650; color: var(--accent); font-variant-numeric: tabular-nums; }
+.readout .r2 b { color: var(--muted); }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+.grid-table th, .grid-table td { padding: 6px 8px; text-align: center; font-size: 0.85rem; border-bottom: 1px solid var(--line); }
+.grid-table th:first-child, .grid-table td:first-child { text-align: left; white-space: nowrap; }
+.grid-table thead th { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); font-weight: 400; }
+.grid-table td.c { font-family: var(--font-mono); border-radius: 4px; }
+.grid-table td.in { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.grid-table td.out { color: var(--muted); opacity: 0.5; }
+.grid-table td:first-child small { color: var(--muted); font-family: var(--font-mono); font-size: 0.7rem; margin-left: 6px; }
+.schema { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.tbl { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); overflow: hidden; min-width: 0; }
+.tbl header { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.tbl header h3 { font-family: var(--font-mono); font-size: 0.9rem; font-weight: 700; }
+.tbl.new header { background: var(--accent-soft); }
+.tbl.chg header { background: var(--changed-soft); }
+.tbl .tag { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; }
+.tbl.new .tag { color: var(--accent); }
+.tbl.chg .tag { color: var(--changed); }
+.tbl table td { padding: 6px 14px; font-size: 0.82rem; vertical-align: top; border-bottom: 1px solid var(--line); }
+.tbl table tr:last-child td { border-bottom: 0; }
+.tbl table td:first-child { font-family: var(--font-mono); font-size: 0.78rem; white-space: nowrap; }
+.tbl table td:last-child { color: var(--muted); }
+.tbl td.note { font-family: var(--font-body) !important; white-space: normal !important; color: var(--muted); }
+.add { color: var(--accent); }
+.del { color: var(--muted); text-decoration: line-through; }
+.settings-list { columns: 2 240px; column-gap: 24px; margin: 0; padding: 0; list-style: none; font-size: 0.85rem; }
+.settings-list li { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0; border-bottom: 1px solid var(--line); break-inside: avoid; }
+.settings-list li span:last-child { font-family: var(--font-mono); color: var(--muted); }
+.mocks { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-items: start; }
+.mock { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 18px; display: grid; gap: 14px; min-width: 0; }
+.mock-title { font-family: var(--font-head); font-size: 1.05rem; letter-spacing: 0.04em; text-transform: uppercase; }
+.mock-tag { font-family: var(--font-mono); font-size: 0.68rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+.field { display: grid; gap: 6px; }
+.field > .fl { font-size: 0.78rem; color: var(--muted); }
+.input { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--bg); font-size: 0.9rem; overflow-wrap: anywhere; }
+.input.focus { border-color: var(--accent); }
+.combo { border: 1px solid var(--line); border-radius: 8px; background: var(--bg); overflow: hidden; }
+.combo .grp { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 8px 10px 4px; }
+.opt { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 7px 10px; font-size: 0.88rem; border-top: 1px solid var(--line); }
+.opt .meta { grid-column: 1 / -1; font-size: 0.74rem; color: var(--muted); }
+.opt.sel { background: var(--accent-soft); }
+.opt.dim { opacity: 0.55; }
+.opt .warn { grid-column: 1 / -1; font-size: 0.74rem; color: var(--warn); }
+.opt.add-custom { color: var(--accent); }
+.grade { font-family: var(--font-mono); font-size: 0.7rem; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--line); color: var(--muted); align-self: center; }
+.grade.ok { border-color: var(--accent); color: var(--accent); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips .chip { font-family: var(--font-body); font-size: 0.78rem; }
+.chips .chip.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.chips .chip b { font-family: var(--font-mono); font-weight: 400; font-size: 0.68rem; margin-left: 4px; opacity: 0.8; }
+.seg { display: flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg span { flex: 1 1 auto; text-align: center; font-family: var(--font-mono); font-size: 0.75rem; padding: 6px 8px; border-right: 1px solid var(--line); color: var(--muted); }
+.seg span:last-child { border-right: 0; }
+.seg span.on { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.btnrow { display: flex; justify-content: flex-end; gap: 8px; }
+.btn { font-size: 0.82rem; padding: 6px 14px; border-radius: 8px; border: 1px solid var(--line); color: var(--muted); }
+.btn.primary { border-color: var(--accent); color: var(--bg); background: var(--accent); font-weight: 600; }
+.hint { font-size: 0.74rem; color: var(--muted); }
+.compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.compare > div { border-top: 2px solid var(--line); padding-top: 12px; display: grid; gap: 8px; min-width: 0; }
+.compare > div.to { border-top-color: var(--accent); }
+.compare ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 6px; font-size: 0.92rem; }
+.phases td, .phases th { padding: 10px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); font-size: 0.9rem; }
+.phases thead th { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
+.phases td:first-child { font-family: var(--font-head); font-size: 1.05rem; color: var(--accent); white-space: nowrap; }
+.phases tr.later td:first-child { color: var(--muted); }
+.phases td.n { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.scroll { overflow-x: auto; }
+.scroll table { min-width: 640px; }
+.decisions { margin: 0; padding-left: 1.4rem; display: grid; gap: 14px; max-width: 74ch; }
+.decisions li::marker { font-family: var(--font-head); color: var(--accent); }
+.rec { color: var(--accent); font-size: 0.85rem; display: block; margin-top: 2px; }
+.callout { border-left: 2px solid var(--accent); padding: 4px 0 4px 16px; max-width: 70ch; }
+@media (max-width: 520px) {
+  .findings li { grid-template-columns: 1fr; gap: 4px; }
+  .control-row > .lbl { min-width: 100%; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .grid-table td.c { transition: background-color 160ms ease, color 160ms ease; }
+}
+</style>
+
+<main>
+  <header style="display:grid;gap:16px">
+    <div class="eyebrow">Mordheim Chronicler · plan for review · version 5</div>
+    <h1>Grades, settings and warband types</h1>
+    <p class="lede">A list of warband types with their grade, setting and link; settings that carry a grade; and how a campaign chooses what is in play. Cut back to what we agreed. The bestiary rewrite has its own plan and comes first.</p>
+    <div class="status">
+      <span class="chip gold">Plan only, nothing built</span>
+      <span class="chip">Updated 22 Oct 2026</span>
+      <span class="chip">Builds after the bestiary rewrite</span>
+    </div>
+  </header>
+
+  <div class="box-note">
+    <h3>Agreed so far</h3>
+    <ul>
+      <li>Grades are 1a, 1b, 1c, 2a, 2b and 3. Rulebook content is 1a; there is no "core".</li>
+      <li>Mordheim and "No setting" are real settings. Every setting has a grade, and picking the campaign's grade selects the settings at or below it. The 1b and 2a warbands without a setting belong to Mordheim; "No setting" (grade 3) holds the grade-3 web warbands.</li>
+      <li>For now: a list of warband types (name, grade, setting, link) with no parsing, and a grade on the catalogue rows we already have.</li>
+      <li>Raising a warband uses the searchable warband type picker as mocked. The type's link fills the existing warband link field, which the player can replace.</li>
+    </ul>
+  </div>
+
+  <section>
+    <h2>What the research found</h2>
+    <ul class="findings">
+      <li><span class="num">162<small>warband types</small></span><p><b>Broheim is the complete list.</b> It has 162 warbands across grades 1a to 3, each with a source code and a PDF link. That is everything the list needs.</p></li>
+      <li><span class="num">75<small>on mordheimer</small></span><p><b>mordheimer.net adds settings and nicer links.</b> Its warband index gives a setting for 75 of them, and a page that reads better than a PDF. Its catalogue data tags every item, skill and spell with a grade and a setting.</p></li>
+      <li><span class="num">209/216<small>items match</small></span><p><b>Our catalogue already came from mordheimer,</b> so grading what we have is a name lookup: items 209 of 216, spells 164 of 167. The few misses are checked by hand.</p></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Settings carry a grade</h2>
+    <div class="prose" style="display:grid;gap:12px">
+      <p>A <b>setting</b> is the world or supplement a warband belongs to. Every setting has its own grade, taken from mordheimer's menu badges and, for Broheim-only supplements, from their warbands. When an owner picks the campaign's grade, every setting at or below it is selected, and they can then add or remove settings by hand.</p>
+      <p>One question is left: what happens inside a selected setting that has warbands above the campaign's grade? Lustria is a 1b setting but also holds four 2b supplement warbands, and Khemri (1b) holds eight grade-3 ones. <b>Rule C</b> trims each setting to the higher of the campaign's grade and the setting's own grade, so Lustria at 1c brings its 1b warbands but not its 2b ones, while a 2b setting added by hand still brings all of its warbands. <b>Rule A</b> lets a selected setting bring everything in it.</p>
+    </div>
+
+    <figure aria-label="Scope explorer">
+      <div class="frame" style="display:grid;gap:16px">
+        <div class="controls">
+          <div class="control-row" role="radiogroup" aria-label="Campaign grade" id="grade-row"><span class="lbl">Campaign grade</span></div>
+          <div class="control-row" aria-label="Settings in play" id="setting-row"><span class="lbl">Settings</span></div>
+          <div class="control-row" role="radiogroup" aria-label="Rule inside a setting">
+            <span class="lbl">Inside a setting</span>
+            <label class="toggle"><input type="radio" name="rule" id="rule-c" value="C" checked><span>C · up to the higher grade</span></label>
+            <label class="toggle"><input type="radio" name="rule" id="rule-a" value="A"><span>A · everything in it</span></label>
+          </div>
+        </div>
+        <p class="rule-note muted" id="rule-note"></p>
+        <div class="readout" aria-live="polite">
+          <div><b id="in-count">0</b> <span class="muted">warband types in scope</span></div>
+          <div class="r2"><b id="out-count">0</b> <span class="muted">still listed, greyed out with a warning</span></div>
+        </div>
+        <div class="scroll"><table class="grid-table" id="grid"></table></div>
+      </div>
+      <figcaption>Warband counts by setting and grade, from the merged Broheim and mordheimer lists. The small code beside each setting is its own grade. Picking a grade resets the settings to that grade's set; you can then toggle them. Out-of-scope types stay in the picker, greyed out with a warning.</figcaption>
+    </figure>
+
+    <p class="callout"><b>Recommendation: Rule C.</b> It keeps the campaign's grade meaningful inside every setting (a 1c campaign doesn't suddenly get Khemri's grade-3 drafts), while a supplement added on purpose still brings its own warbands.</p>
+
+    <ul class="settings-list" aria-label="Settings and their grades">
+      <li><span>Mordheim</span><span>1a</span></li>
+      <li><span>Empire in Flames</span><span>1a</span></li>
+      <li><span>Lustria</span><span>1b</span></li>
+      <li><span>Khemri</span><span>1b</span></li>
+      <li><span>Albion (rules only, no warbands)</span><span>1b</span></li>
+      <li><span>The Nemesis Crown</span><span>1b</span></li>
+      <li><span>Border Town Burning</span><span>1c</span></li>
+      <li><span>Sylvania</span><span>2a</span></li>
+      <li><span>Mutiny in Marienburg</span><span>2b</span></li>
+      <li><span>Sartosa</span><span>2b</span></li>
+      <li><span>Mousillon</span><span>2b</span></li>
+      <li><span>Karak Azgal</span><span>2b</span></li>
+      <li><span>Relics of the Crusades</span><span>2b</span></li>
+      <li><span>The Sealed City</span><span>2b</span></li>
+      <li><span>Karak Eight Peaks</span><span>2b</span></li>
+      <li><span>Athel Loren</span><span>3</span></li>
+      <li><span>No setting</span><span>3</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Database design</h2>
+    <p class="prose">Two new tables (grades and warband types) and a grade on settings. The settings themselves use pass 5's empty <code>campaign_type</code> table and the campaign's pivot to it. Every catalogue table already has a nullable <code>campaign_type_id</code>, so grading what we have is one new column.</p>
+    <figure>
+      <div class="frame wide">
+        <svg viewBox="0 0 1040 440" role="img" aria-label="Entity diagram. New tables publication_grade and warband_type. campaign_type gains grade_id. warband gains warband_type_id in place of faction, and its warband_link is prefilled from the type. campaign_settings gains max_grade_id. Catalogue entries gain grade_id.">
+          <defs>
+            <marker id="am" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrow-m"/></marker>
+            <marker id="aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrow-a"/></marker>
+          </defs>
+          <path class="edge" d="M136,101 V130" marker-end="url(#am)"/>
+          <path class="edge" d="M16,58 H8 V282 H16" marker-end="url(#am)"/>
+          <path class="edge" d="M256,164 H266 V67 H286" marker-end="url(#am)"/>
+          <path class="edge-new" d="M256,302 H276 V360 H286" marker-end="url(#aa)"/>
+          <path class="edge" d="M380,150 V118" marker-end="url(#am)"/>
+          <path class="edge-new" d="M380,286 V330" marker-end="url(#aa)"/>
+          <path class="edge-new" d="M526,110 H531 V360 H526" marker-end="url(#aa)"/>
+          <path class="edge-new" d="M556,88 H546 V67 H526" marker-end="url(#aa)"/>
+          <path class="edge-new" d="M556,105 H536 V395 H526" marker-end="url(#aa)"/>
+          <path class="edge-new" d="M826,88 H796" marker-end="url(#aa)"/>
+          <path class="edge-new" d="M796,139 H811 V122 H826" stroke-dasharray="4 3"/>
+          <text class="t-m" x="811" y="186" text-anchor="middle">prefills link</text>
+
+          <rect class="box" x="16" y="16" width="240" height="85" rx="6"/>
+          <rect class="hd" x="16" y="16" width="240" height="26" rx="6"/>
+          <text class="t-h" x="28" y="33">campaign</text>
+          <text class="t-code" x="28" y="54">id</text>
+          <text class="t-code" x="28" y="71">name, owner_id</text>
+          <text class="t-code" x="28" y="88">archived_at</text>
+
+          <rect class="box" x="16" y="130" width="240" height="68" rx="6"/>
+          <rect class="hd" x="16" y="130" width="240" height="26" rx="6"/>
+          <text class="t-h" x="28" y="147">campaign_campaign_type</text>
+          <text class="t-m" x="244" y="147" text-anchor="end">settings in play</text>
+          <text class="t-code" x="28" y="168">campaign_id</text>
+          <text class="t-code" x="28" y="185">campaign_type_id</text>
+
+          <rect class="box-chg" x="16" y="230" width="240" height="102" rx="6"/>
+          <rect class="hd-chg" x="16" y="230" width="240" height="26" rx="6"/>
+          <text class="t-h" x="28" y="247">campaign_settings</text>
+          <text class="t-code" x="28" y="268">campaign_id   1 : 1</text>
+          <text class="t-code" x="28" y="285">starting_gold, limits …</text>
+          <text class="t-add" x="28" y="302">+ max_grade_id</text>
+          <text class="t-del" x="28" y="319">item_settings</text>
+
+          <rect class="box-chg" x="286" y="16" width="240" height="102" rx="6"/>
+          <rect class="hd-chg" x="286" y="16" width="240" height="26" rx="6"/>
+          <text class="t-h" x="298" y="33">campaign_type</text>
+          <text class="t-m" x="514" y="33" text-anchor="end">the setting</text>
+          <text class="t-code" x="298" y="54">slug, name</text>
+          <text class="t-add" x="298" y="71">+ sort_order</text>
+          <text class="t-m" x="298" y="88">17 rows, Mordheim to No setting</text>
+          <text class="t-add" x="298" y="105">+ grade_id</text>
+
+          <rect class="box-chg" x="286" y="150" width="240" height="136" rx="6"/>
+          <rect class="hd-chg" x="286" y="150" width="240" height="26" rx="6"/>
+          <text class="t-h" x="298" y="167">catalogue entries</text>
+          <text class="t-m" x="514" y="167" text-anchor="end">each table</text>
+          <text class="t-m" x="298" y="188">item · skill · spell · special · race</text>
+          <text class="t-m" x="298" y="205">bestiary · hired sword · dramatis</text>
+          <text class="t-code" x="298" y="222">campaign_id   null = book</text>
+          <text class="t-code" x="298" y="239">campaign_type_id</text>
+          <text class="t-add" x="298" y="256">+ grade_id</text>
+          <text class="t-del" x="298" y="273">grade (free text)</text>
+
+          <rect class="box-new" x="286" y="330" width="240" height="85" rx="6"/>
+          <rect class="hd-new" x="286" y="330" width="240" height="26" rx="6"/>
+          <text class="t-h" x="298" y="347">publication_grade</text>
+          <text class="t-code" x="298" y="368">code   1a 1b 1c 2a 2b 3</text>
+          <text class="t-code" x="298" y="385">rank   1 … 6</text>
+          <text class="t-code" x="298" y="402">label, description</text>
+
+          <rect class="box-new" x="556" y="16" width="240" height="153" rx="6"/>
+          <rect class="hd-new" x="556" y="16" width="240" height="26" rx="6"/>
+          <text class="t-h" x="568" y="33">warband_type</text>
+          <text class="t-code" x="568" y="54">campaign_id   null = book</text>
+          <text class="t-code" x="568" y="71">name, slug</text>
+          <text class="t-code" x="568" y="88">campaign_type_id</text>
+          <text class="t-code" x="568" y="105">grade_id</text>
+          <text class="t-code" x="568" y="122">source_code   TC11, LUS</text>
+          <text class="t-code" x="568" y="139">link_url</text>
+          <text class="t-code" x="568" y="156">archived_at</text>
+
+          <rect class="box-chg" x="826" y="16" width="196" height="119" rx="6"/>
+          <rect class="hd-chg" x="826" y="16" width="196" height="26" rx="6"/>
+          <text class="t-h" x="838" y="33">warband</text>
+          <text class="t-m" x="1010" y="33" text-anchor="end">a player's band</text>
+          <text class="t-code" x="838" y="54">campaign_id, user_id</text>
+          <text class="t-code" x="838" y="71">name</text>
+          <text class="t-add" x="838" y="88">+ warband_type_id</text>
+          <text class="t-del" x="838" y="105">faction (free text)</text>
+          <text class="t-code" x="838" y="122">warband_link</text>
+        </svg>
+        <div class="legend" style="margin-top:12px">
+          <span><i class="sw" style="border:1.6px solid var(--accent);background:var(--accent-soft)"></i>New table</span>
+          <span><i class="sw" style="border:1.4px solid var(--changed);background:var(--changed-soft)"></i>Changed table</span>
+          <span><i class="sw" style="border:1px solid var(--line)"></i>Unchanged</span>
+          <span><span class="mono add">+ column</span> added</span>
+          <span><span class="mono del">column</span> removed</span>
+          <span>Arrows point at the referenced table; dashed means "copied once"</span>
+        </div>
+      </div>
+      <figcaption>Gold arrows are the new links. A warband points at its type, and the type's link is copied into the warband's existing link field when it is raised. After that the field is the player's to replace.</figcaption>
+    </figure>
+
+    <div class="schema">
+      <div class="tbl new">
+        <header><h3>publication_grade</h3><span class="tag">new · 6 rows</span></header>
+        <table>
+          <tr><td>code</td><td>unique: 1a, 1b, 1c, 2a, 2b, 3</td></tr>
+          <tr><td>rank</td><td>1 to 6, the ordering every "up to" check uses</td></tr>
+          <tr><td>label</td><td>Official, Unofficial, Experimental, Reliable, Supplemental, Draft</td></tr>
+          <tr><td>description</td><td>Broheim's wording, for tooltips</td></tr>
+        </table>
+      </div>
+      <div class="tbl chg">
+        <header><h3>campaign_type</h3><span class="tag">changed · 17 rows</span></header>
+        <table>
+          <tr><td>slug, name</td><td>mordheim … no-setting (exists, empty today)</td></tr>
+          <tr><td class="add">+ grade_id</td><td>the setting's own grade, which drives the auto-select</td></tr>
+          <tr><td class="add">+ sort_order</td><td>the order chips appear in</td></tr>
+        </table>
+      </div>
+      <div class="tbl new">
+        <header><h3>warband_type</h3><span class="tag">new · ~162 rows</span></header>
+        <table>
+          <tr><td>campaign_id</td><td>null for the list; set for a custom type added in one campaign</td></tr>
+          <tr><td>name, slug</td><td>"Skaven of Clan Pestilens"</td></tr>
+          <tr><td>campaign_type_id</td><td>→ setting; every listed type has one</td></tr>
+          <tr><td>grade_id</td><td>→ publication_grade; null for custom</td></tr>
+          <tr><td>source_code</td><td>TC11, LUS, MHR: tells same-named types apart</td></tr>
+          <tr><td>link_url</td><td>the mordheimer page if there is one, else the Broheim PDF</td></tr>
+          <tr><td>archived_at</td><td>same archive rule as the catalogue</td></tr>
+          <tr><td colspan="2" class="note">Unique on (campaign, name, grade, setting), nulls not distinct. Lizardmen exists at 1b and 2b in Lustria; the picker labels them "Lizardmen · 1b" and "Lizardmen · 2b".</td></tr>
+        </table>
+      </div>
+      <div class="tbl chg">
+        <header><h3>warband</h3><span class="tag">changed</span></header>
+        <table>
+          <tr><td class="add">+ warband_type_id</td><td>→ warband_type, RESTRICT, required</td></tr>
+          <tr><td class="del">faction</td><td>dropped; data is disposable</td></tr>
+          <tr><td>warband_link</td><td>the existing field: filled from the type's link when raised, then the player's to replace</td></tr>
+        </table>
+      </div>
+      <div class="tbl chg">
+        <header><h3>campaign_settings</h3><span class="tag">changed</span></header>
+        <table>
+          <tr><td class="add">+ max_grade_id</td><td>→ publication_grade; default to decide</td></tr>
+          <tr><td class="del">item_settings</td><td>its three "Setting" restrictions become settings in the pivot</td></tr>
+          <tr><td colspan="2" class="note">Saving bumps <code>catalogue_version</code> (list cache) and sends <code>campaign.updated</code>, both already built.</td></tr>
+        </table>
+      </div>
+      <div class="tbl chg">
+        <header><h3>catalogue entries</h3><span class="tag">changed</span></header>
+        <table>
+          <tr><td class="add">+ grade_id</td><td>on every catalogue table, including the new hired sword, dramatis persona and bestiary tables from the bestiary rewrite</td></tr>
+          <tr><td class="del">grade</td><td>the free-text column on items and hired swords</td></tr>
+          <tr><td>campaign_type_id</td><td>set only where mordheimer tags a row with a setting; others are Mordheim</td></tr>
+          <tr><td colspan="2" class="note">Grades come from mordheimer's tags by name; misses are reviewed by hand. The item clean-up comes later.</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Raising a warband</h2>
+    <p class="prose"><b>Agreed.</b> The free-text Faction field becomes a searchable warband type picker. Picking a type fills the warband link field that already exists on the form; the player can replace it with their own link or clear it.</p>
+    <div class="compare">
+      <div><h3>Today</h3><ul>
+        <li>"Faction" is free text, so "Skaven", "skaven" and "Clan Eshin" are three factions</li>
+        <li>No grade, and the link field starts empty</li>
+        <li>Can't be changed after creation</li>
+      </ul></div>
+      <div class="to"><h3>Agreed</h3><ul>
+        <li>"Warband type": a search over the list, with grade and setting on each row</li>
+        <li>Types outside the campaign's settings or grade are listed greyed out. Picking one shows a warning, and it goes through</li>
+        <li>"Add a custom warband type" creates one for this campaign, which other players there can pick too</li>
+        <li>The type's link fills the warband link field, which stays editable. The type can be changed later in Settings → Personal</li>
+      </ul></div>
+    </div>
+
+    <div class="mocks">
+      <div class="mock" aria-label="Mock of the Raise your warband dialog">
+        <div class="mock-tag">Mock · Raise your warband</div>
+        <div class="mock-title">Raise your warband</div>
+        <div class="field"><span class="fl">Warband name</span><div class="input">Ashen Crows</div></div>
+        <div class="field">
+          <span class="fl">Warband type</span>
+          <div class="input focus">skav<span class="muted">|</span></div>
+          <div class="combo" role="listbox">
+            <div class="grp">In this campaign</div>
+            <div class="opt sel"><span>Skaven (Clan Eshin)</span><span class="grade ok">1a</span><span class="meta">Mordheim · Rulebook</span></div>
+            <div class="grp">Outside this campaign</div>
+            <div class="opt dim"><span>Skaven of Clan Pestilens</span><span class="grade">2b</span><span class="meta">Mousillon supplement</span><span class="warn">Mousillon isn't in this campaign</span></div>
+            <div class="opt add-custom"><span>+ Add "skav" as a custom warband type</span></div>
+          </div>
+        </div>
+        <div class="field"><span class="fl">Warband link</span><div class="input">mordheimer.net/docs/warbands/core-warbands/skaven-eshin</div><span class="hint">Filled from Skaven (Clan Eshin). Replace it with your own if you like.</span></div>
+        <div class="field"><span class="fl">Max units</span><div class="input">15</div></div>
+        <div class="btnrow"><span class="btn">Cancel</span><span class="btn primary">Raise warband</span></div>
+      </div>
+
+      <div class="mock" aria-label="Mock of the campaign content settings card">
+        <div class="mock-tag">Mock · campaign setup, and Settings → Campaign</div>
+        <div class="mock-title">Content in play</div>
+        <div class="field"><span class="fl">Campaign grade</span>
+          <div class="seg"><span>1a</span><span>1b</span><span class="on">1c</span><span>2a</span><span>2b</span><span>3</span></div>
+          <span class="hint">1c Experimental. Picking a grade selects every setting at or below it.</span>
+        </div>
+        <div class="field"><span class="fl">Settings</span>
+          <div class="chips">
+            <span class="chip on">Mordheim<b>1a</b></span>
+            <span class="chip on">Empire in Flames<b>1a</b></span>
+            <span class="chip on">Lustria<b>1b</b></span>
+            <span class="chip on">Khemri<b>1b</b></span>
+            <span class="chip on">Albion<b>1b</b></span>
+            <span class="chip on">Nemesis Crown<b>1b</b></span>
+            <span class="chip on">Border Town Burning<b>1c</b></span>
+            <span class="chip on">Mutiny in Marienburg<b>2b</b></span>
+            <span class="chip">Sylvania<b>2a</b></span>
+            <span class="chip">+ 8 more</span>
+          </div>
+          <span class="hint">Mutiny in Marienburg was added by hand.</span>
+        </div>
+        <p class="small muted">69 warband types in scope. The rest stay listed, greyed out.</p>
+        <div class="btnrow"><span class="btn primary">Save</span></div>
+      </div>
+    </div>
+    <p class="prose small muted">The same card appears at campaign setup and in the owner's Settings. It replaces the create dialog's "Standard / Marienburg" choice and the item settings picker.</p>
+  </section>
+
+  <section>
+    <h2>How the data gets in</h2>
+    <p class="prose">One snapshot of two listing pages and one JSON bundle, merged by a script into seed files we commit and review as a git diff. The seeders then load them as they do today. Nothing is fetched at runtime and nothing is parsed out of PDFs.</p>
+    <figure>
+      <div class="frame wide">
+        <svg viewBox="0 0 1000 220" role="img" aria-label="Data flow. Broheim's warband tables and mordheimer's warband index merge into warband-types.json. mordheimer's catalogue JSON adds grade and setting keys to our existing seed files. Both load through the seeders.">
+          <defs><marker id="pm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrow-m"/></marker></defs>
+          <g class="t-m" text-anchor="middle"><text x="105" y="18">Source</text><text x="345" y="18">Merge</text><text x="585" y="18">Seed files in repo</text><text x="845" y="18">Load</text></g>
+          <rect class="flow-key" x="10" y="32" width="190" height="46" rx="6"/>
+          <text class="t-h" x="22" y="52">Broheim warband tables</text><text class="t-m" x="22" y="68">162 rows · name, grade, PDF</text>
+          <rect class="flow-key" x="10" y="92" width="190" height="46" rx="6"/>
+          <text class="t-h" x="22" y="112">mordheimer warband index</text><text class="t-m" x="22" y="128">setting, page link</text>
+          <rect class="flow-key" x="10" y="152" width="190" height="46" rx="6"/>
+          <text class="t-h" x="22" y="172">mordheimer catalogue JSON</text><text class="t-m" x="22" y="188">grade + setting per row</text>
+          <rect class="flow-box" x="260" y="62" width="170" height="76" rx="6"/>
+          <text class="t-h" x="272" y="84">Merge by name + grade</text>
+          <text class="t-m" x="272" y="102">setting from either site</text>
+          <text class="t-m" x="272" y="118">1b/2a no-setting → Mordheim</text>
+          <rect class="flow-box" x="260" y="152" width="170" height="46" rx="6"/>
+          <text class="t-h" x="272" y="172">Match by name</text>
+          <text class="t-m" x="272" y="188">misses reviewed by hand</text>
+          <path class="edge" d="M200,55 H230 V92 H260" marker-end="url(#pm)"/>
+          <path class="edge" d="M200,115 H230 V108 H260" marker-end="url(#pm)"/>
+          <path class="edge" d="M200,175 H260" marker-end="url(#pm)"/>
+          <rect class="flow-key" x="490" y="62" width="190" height="46" rx="6"/>
+          <text class="t-h" x="502" y="82">warband-types.json</text><text class="t-m" x="502" y="98">new</text>
+          <rect class="flow-key" x="490" y="140" width="190" height="58" rx="6"/>
+          <text class="t-h" x="502" y="160">items, skills, spells …</text><text class="t-m" x="502" y="176">existing files gain</text><text class="t-m" x="502" y="190">grade and setting keys</text>
+          <path class="edge" d="M430,92 H490" marker-end="url(#pm)"/>
+          <path class="edge" d="M430,175 H490" marker-end="url(#pm)"/>
+          <rect class="flow-box" x="740" y="92" width="200" height="76" rx="6"/>
+          <text class="t-h" x="752" y="114">Seeders → Postgres</text>
+          <text class="t-m" x="752" y="132">upsert by natural key,</text>
+          <text class="t-m" x="752" y="148">grade and setting in the key</text>
+          <path class="edge" d="M680,85 H710 V120 H740" marker-end="url(#pm)"/>
+          <path class="edge" d="M680,169 H710 V140 H740" marker-end="url(#pm)"/>
+        </svg>
+      </div>
+      <figcaption>A setting comes from mordheimer where it lists the warband, otherwise from Broheim's source code (LUS is Lustria, MIM is Mutiny in Marienburg, and so on).</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Phases</h2>
+    <div class="scroll">
+      <table class="phases">
+        <thead><tr><th>When</th><th>What lands</th><th>Build</th><th>Your review</th></tr></thead>
+        <tbody>
+          <tr><td>First</td><td><b>The bestiary rewrite</b>, from its own plan.</td><td class="n">see that plan</td><td class="n">—</td></tr>
+          <tr><td>Then</td><td><b>Warband types and campaign content.</b> The grade table, 17 settings with their grades, the warband type list, the picker with custom types and the link prefill, and the content card at setup and in owner Settings with grade auto-select. "Standard / Marienburg" and item settings retired.</td><td class="n">2 days</td><td class="n">~1 h</td></tr>
+          <tr><td>Then</td><td><b>Grade the catalogue we have.</b> A grade on every catalogue table and setting tags where mordheimer has one, with greyed pickers and warnings for out-of-scope rows.</td><td class="n">1–2 days</td><td class="n">~1 h</td></tr>
+          <tr class="later"><td>Later</td><td>Item clean-up; restrictions mapped to warband types ("not usually available to your warband"); warband templates (units, equipment lists, skill access).</td><td class="n">—</td><td class="n">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Questions for you</h2>
+    <ol class="decisions">
+      <li><b>Inside a selected setting:</b> Rule C (up to the higher of the campaign's grade and the setting's grade) or Rule A (everything in it). Under A, a 1c campaign picks up Khemri's eight grade-3 warbands because Khemri is a 1b setting.<span class="rec">Recommended: C</span></li>
+      <li><b>Can Mordheim be turned off</b>, say for a pure Lustria campaign, or is it always on?<span class="rec">Suggested: always on</span></li>
+      <li><b>The setting grades listed above.</b> They come from mordheimer's badges and, for Broheim-only supplements, from their warbands.<span class="rec">Confirm or adjust</span></li>
+      <li><b>Changing the grade after editing settings by hand</b> resets the settings to that grade's set, after a confirm if hand edits would be lost.<span class="rec">Suggested: reset with a confirm</span></li>
+      <li><b>Default grade</b> for a new campaign: 1a, 1b or 1c.<span class="rec">Suggested: 1c</span></li>
+      <li><b>Encampments and locations</b> become their own toggles at setup, no longer tied to "Marienburg".<span class="rec">Recommended</span></li>
+    </ol>
+  </section>
+</main>
+
+<script>
+(function () {
+  var GRADES = ["1a", "1b", "1c", "2a", "2b", "3"];
+  var ROWS = [
+    { id: "mordheim", name: "Mordheim", g: 0, lock: true, c: [13, 10, 7, 15, 0, 0] },
+    { id: "eif", name: "Empire in Flames", g: 0, c: [2, 0, 0, 0, 0, 0] },
+    { id: "lustria", name: "Lustria", g: 1, c: [0, 8, 0, 0, 4, 0] },
+    { id: "khemri", name: "Khemri", g: 1, c: [0, 2, 0, 0, 0, 8] },
+    { id: "albion", name: "Albion", g: 1, c: [0, 0, 0, 0, 0, 0] },
+    { id: "nc", name: "The Nemesis Crown", g: 1, c: [0, 7, 0, 0, 0, 0] },
+    { id: "btb", name: "Border Town Burning", g: 2, c: [0, 0, 7, 0, 0, 0] },
+    { id: "syl", name: "Sylvania", g: 3, c: [0, 0, 0, 5, 0, 0] },
+    { id: "mim", name: "Mutiny in Marienburg", g: 4, c: [0, 0, 0, 0, 13, 0] },
+    { id: "sar", name: "Sartosa", g: 4, c: [0, 0, 0, 0, 11, 0] },
+    { id: "mou", name: "Mousillon", g: 4, c: [0, 0, 0, 0, 10, 0] },
+    { id: "kaz", name: "Karak Azgal", g: 4, c: [0, 0, 0, 0, 8, 0] },
+    { id: "rel", name: "Relics of the Crusades", g: 4, c: [0, 0, 0, 0, 6, 0] },
+    { id: "sc", name: "The Sealed City", g: 4, c: [0, 0, 0, 0, 5, 0] },
+    { id: "kep", name: "Karak Eight Peaks", g: 4, c: [0, 0, 0, 0, 3, 0] },
+    { id: "ath", name: "Athel Loren", g: 5, c: [0, 0, 0, 0, 0, 4] },
+    { id: "none", name: "No setting", g: 5, c: [0, 0, 0, 0, 0, 14] }
+  ];
+  var state = { rule: "C", max: 2, selected: {} };
+  function selectForGrade() {
+    state.selected = {};
+    ROWS.forEach(function (r) { if (r.g <= state.max) state.selected[r.id] = true; });
+  }
+  selectForGrade();
+  state.selected.mim = true;
+
+  var gradeRow = document.getElementById("grade-row");
+  GRADES.forEach(function (g, i) {
+    var l = document.createElement("label"); l.className = "toggle";
+    l.innerHTML = '<input type="radio" name="maxgrade" id="g-' + g + '" value="' + i + '"' + (i === state.max ? " checked" : "") + '><span class="mono">' + g + "</span>";
+    gradeRow.appendChild(l);
+  });
+  var settingRow = document.getElementById("setting-row");
+  ROWS.forEach(function (r) {
+    var l = document.createElement("label"); l.className = "toggle";
+    l.innerHTML = '<input type="checkbox" id="s-' + r.id + '" value="' + r.id + '"' + (r.lock ? " disabled" : "") + '><span>' + r.name + '<span class="g">' + GRADES[r.g] + "</span></span>";
+    settingRow.appendChild(l);
+  });
+  function syncChecks() {
+    ROWS.forEach(function (r) { document.getElementById("s-" + r.id).checked = !!state.selected[r.id]; });
+  }
+  function inScope(row, gi) {
+    if (!state.selected[row.id]) return false;
+    if (state.rule === "A") return row.lock ? gi <= state.max : true;
+    return gi <= Math.max(state.max, row.g);
+  }
+  function render() {
+    syncChecks();
+    var html = "<thead><tr><th scope=\"col\">Setting</th>";
+    GRADES.forEach(function (g) { html += "<th scope=\"col\">" + g + "</th>"; });
+    html += "</tr></thead><tbody>";
+    var inN = 0, outN = 0;
+    ROWS.forEach(function (r) {
+      if (!r.c.some(function (n) { return n; })) return;
+      html += "<tr><td>" + r.name + "<small>" + GRADES[r.g] + "</small></td>";
+      r.c.forEach(function (n, gi) {
+        if (!n) { html += "<td></td>"; return; }
+        var ok = inScope(r, gi);
+        if (ok) inN += n; else outN += n;
+        html += "<td class=\"c " + (ok ? "in" : "out") + "\">" + n + "</td>";
+      });
+      html += "</tr>";
+    });
+    html += "</tbody>";
+    document.getElementById("grid").innerHTML = html;
+    document.getElementById("in-count").textContent = inN;
+    document.getElementById("out-count").textContent = outN;
+    var g = GRADES[state.max];
+    document.getElementById("rule-note").textContent = state.rule === "C"
+      ? "Rule C: Mordheim up to " + g + ". Each other selected setting up to " + g + " or its own grade, whichever is higher."
+      : "Rule A: Mordheim up to " + g + ". Each other selected setting brings everything in it, whatever its grade.";
+  }
+  document.addEventListener("change", function (e) {
+    var t = e.target;
+    if (t.name === "rule") state.rule = t.value;
+    else if (t.name === "maxgrade") { state.max = parseInt(t.value, 10); selectForGrade(); }
+    else if (t.id && t.id.indexOf("s-") === 0) state.selected[t.value] = t.checked;
+    else return;
+    render();
+  });
+  render();
+})();
+</script>

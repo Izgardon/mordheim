@@ -5,7 +5,7 @@ A kill is an event that names the killer and the victim (decision 5): tapped in 
 postbattle (`source: "postbattle"`).
 """
 
-from apps.warbands.models import Henchman, Hero, HiredSword
+from apps.warbands.models import Henchman, Hero, Hireling
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..validation.config import normalize_unit_information
@@ -13,6 +13,7 @@ from .errors import Refused, battle_status_changed
 from .events import append_event
 from .item_use import item_use_payload
 from .locks import locked
+from .roster_units import roster_pet
 from .selection import custom_unit_entry, selected_unit_keys
 from .unit_information import unit_entry
 
@@ -37,13 +38,13 @@ def _blank_unit_payload(unit: dict, warband_id: int | None) -> dict:
 def unit_event_payload(participant: BattleParticipant, unit: dict) -> dict:
     """What a kill event says about one of the participant's units (a parsed unit key)."""
     payload = _blank_unit_payload(unit, participant.warband_id)
-    if unit["unit_type"] in ("hero", "hired_sword"):
-        row: Hero | HiredSword | None
+    if unit["unit_type"] in ("hero", "hireling"):
+        row: Hero | Hireling | None
         if unit["unit_type"] == "hero":
             row = Hero.objects.filter(id=unit["unit_id"], warband_id=participant.warband_id).first()
             payload["is_leader"] = bool(row and row.is_leader)
         else:
-            row = HiredSword.objects.filter(id=unit["unit_id"], warband_id=participant.warband_id).first()
+            row = Hireling.objects.filter(id=unit["unit_id"], warband_id=participant.warband_id).first()
         if row:
             payload["name"] = row.name or None
             payload["type_name"] = row.unit_type or None
@@ -62,6 +63,10 @@ def unit_event_payload(participant: BattleParticipant, unit: dict) -> dict:
             payload["type_name"] = henchman.group.unit_type or None
             payload["is_large"] = bool(getattr(henchman.group, "large", False))
         return payload
+    if unit["unit_type"] == "pet":  # a pet fighting as its own model: named from the battle roster (step 5)
+        pet = roster_pet(participant.roster_json, unit["unit_key"])
+        payload["name"], payload["type_name"] = (pet or {}).get("name"), "Pet"
+        return payload
     custom_unit = custom_unit_entry(participant, unit["unit_key"])
     if custom_unit:
         payload["name"] = str(custom_unit.get("name", "")).strip() or None
@@ -78,7 +83,8 @@ def set_out_of_action(battle: Battle, participant: BattleParticipant, unit: dict
     if info["out_of_action"] == out_of_action:
         return []
     info["out_of_action"] = out_of_action
-    if not (info["stats_override"] or info.get("notes", "") or info["out_of_action"] or info["kill_count"]):
+    says = info["stats_override"] or info.get("notes", "") or info["out_of_action"] or info["kill_count"]
+    if not (says or info.get("dismounted")):
         unit_information.pop(unit["unit_key"], None)  # (current wounds aren't kept here, as before)
     participant.unit_information_json = unit_information
     participant.save(update_fields=["unit_information_json", "updated_at"])

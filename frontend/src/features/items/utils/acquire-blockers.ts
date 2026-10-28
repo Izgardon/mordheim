@@ -4,7 +4,7 @@ export const NO_WARBAND_NOTICE = "You need a warband in this campaign to buy or 
 
 const RECEIVER_PROMPTS: Partial<Record<UnitTypeOption, string>> = {
   heroes: "Select a hero to receive the item.",
-  hiredswords: "Select a hired sword to receive the item.",
+  hirelings: "Select a hired sword to receive the item.",
   henchmen: "Select a henchmen group to receive the item.",
 };
 

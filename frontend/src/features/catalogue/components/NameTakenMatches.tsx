@@ -7,6 +7,13 @@ import type { NameTakenState } from "../hooks/useNameTakenMatches";
 
 const label = (match: NameMatch) => (match.type ? `${match.name} (${match.type})` : match.name);
 
+/**
+ * A match as its buttons name it for screen readers, with where it comes from, as its line says:
+ * "the book Warhorse", "this campaign's Warhorse" (a book entry and its version share a name).
+ */
+const named = (match: NameMatch) =>
+  `${match.source === "book" ? "the book" : "this campaign's"} ${label(match)}`;
+
 const LINK_CLASS =
   "text-xs text-foreground underline underline-offset-2 hover:text-foreground/80 disabled:opacity-50";
 
@@ -47,7 +54,7 @@ export function NameTakenMatches({ id, nameTaken }: { id: string; nameTaken: Nam
               <button
                 type="button"
                 className={LINK_CLASS}
-                aria-label={`Restore ${label(match)}`}
+                aria-label={`Restore ${named(match)}`}
                 disabled={restoring !== null}
                 onClick={() => void restore(match)}
               >
@@ -57,7 +64,7 @@ export function NameTakenMatches({ id, nameTaken }: { id: string; nameTaken: Nam
               <button
                 type="button"
                 className={LINK_CLASS}
-                aria-label={`Edit ${label(match)} instead`}
+                aria-label={`Edit ${named(match)} instead`}
                 onClick={() => nameTaken.onEdit?.(match)}
               >
                 Edit this instead

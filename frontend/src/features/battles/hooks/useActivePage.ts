@@ -2,7 +2,11 @@ import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { recordUnitKill, setUnitOutOfAction } from "@/features/battles/api/battles-api";
+import {
+  recordUnitKill,
+  setUnitDismounted,
+  setUnitOutOfAction,
+} from "@/features/battles/api/battles-api";
 import { buildBattleUnitOptions } from "@/features/battles/components/active/active-utils";
 import { useActiveConfigSave } from "@/features/battles/hooks/useActiveConfigSave";
 import { useBattleNotesDialog } from "@/features/battles/hooks/useBattleNotesDialog";
@@ -92,6 +96,16 @@ export function useActivePage() {
     [applyBattleResponse, battleId, campaignId]
   );
 
+  // A rider off his mount for the rest of the battle, or back on it (step 5).
+  const setDismounted = useCallback(
+    async (unitKey: string, dismounted: boolean) => {
+      applyBattleResponse(
+        await setUnitDismounted(campaignId, battleId, { unit_key: unitKey, dismounted })
+      );
+    },
+    [applyBattleResponse, battleId, campaignId]
+  );
+
   const recordKill = useCallback(
     async (kill: KillInput) => {
       const next = await recordUnitKill(campaignId, battleId, {
@@ -129,6 +143,7 @@ export function useActivePage() {
     meleeOptions,
     rangedOptions,
     setOutOfAction,
+    setDismounted,
     recordKill,
     // The server's capabilities decide Finish my battle and Cancel; without them, the old rules.
     canFinishMine: battle.capabilities

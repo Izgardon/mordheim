@@ -1,7 +1,8 @@
 /**
  * The catalogue pages as the app mounts them: RealtimeProvider above `CampaignLayout`, with
- * Wargear, Skills, Spells, Bestiary and Hired Swords, and a stand-in warband page that opens the
- * hero's New skill and New spell dialogs (they read the same cached lists). Mock in the test
+ * Wargear, Skills, Spells, Bestiary, Hired Swords and Dramatis Personae, a stand-in warband page that opens the
+ * hero's New skill and New spell dialogs (they read the same cached lists), and a stand-in battle
+ * page with the prebattle Load from Bestiary picker open. Mock in the test
  * file: `@/lib/api-client` (fake-api), `@/lib/realtime/client` (fake-realtime), `use-auth`,
  * `use-media-query` and `CampaignDiceRollerMenu`.
  */
@@ -9,9 +10,11 @@ import type { QueryClient } from "@tanstack/react-query";
 import { MemoryRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 
 import { AppToaster } from "@/components/ui/toaster";
+import BestiaryPicker from "@/features/bestiary/components/BestiaryPicker";
 import Bestiary from "@/features/bestiary/routes/Bestiary";
-import HiredSwords from "@/features/bestiary/routes/HiredSwords";
 import CampaignLayout from "@/features/campaigns/routes/CampaignLayout";
+import DramatisPersonae from "@/features/hirelings/routes/DramatisPersonae";
+import HiredSwords from "@/features/hirelings/routes/HiredSwords";
 import Items from "@/features/items/routes/Items";
 import { RealtimeProvider } from "@/features/realtime/components/RealtimeProvider";
 import NewSkillDialog from "@/features/skills/components/NewSkillDialog";
@@ -52,6 +55,11 @@ function WarbandDialogsStandIn() {
   );
 }
 
+/** Stands in for a battle page: the prebattle Load from Bestiary picker, open. */
+function BestiaryPickerStandIn() {
+  return <BestiaryPicker campaignId={1} onSelect={() => undefined} onClose={() => undefined} />;
+}
+
 export function renderCatalogueRoute(
   path: string,
   { queryClient }: { queryClient?: QueryClient } = {}
@@ -71,7 +79,9 @@ export function renderCatalogueRoute(
                 <Route path="spells" element={<Spells />} />
                 <Route path="bestiary" element={<Bestiary />} />
                 <Route path="hired-swords" element={<HiredSwords />} />
+                <Route path="dramatis-personae" element={<DramatisPersonae />} />
                 <Route path="warband" element={<WarbandDialogsStandIn />} />
+                <Route path="bestiary-picker" element={<BestiaryPickerStandIn />} />
               </Route>
             </Routes>
           </RealtimeProvider>

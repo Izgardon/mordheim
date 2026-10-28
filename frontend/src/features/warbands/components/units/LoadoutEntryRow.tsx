@@ -1,5 +1,8 @@
 import type { MouseEvent } from "react";
 
+import BeastItemButton from "./beasts/BeastItemButton";
+import { CompanionEntryFrom, CompanionEntryMark, entryFlex } from "./beasts/CompanionEntryMark";
+
 import type { LoadoutEntry } from "./loadout-blocks";
 
 type LoadoutEntryRowProps = {
@@ -9,11 +12,15 @@ type LoadoutEntryRowProps = {
   canEdit: boolean;
   onClick: (event: MouseEvent) => void;
   onMenuClick: (event: MouseEvent) => void;
+  /** An Animal item's button (switch a mount or pet, recruit a creature); none: no button. */
+  onBeastClick?: (event: MouseEvent) => void;
+  /** Its request is on its way. */
+  beastBusy?: boolean;
 };
 
 const ENTRY_CLASS = "unit-list-entry flex items-start gap-1 rounded px-1.5 py-0.5";
 const BUTTON_CLASS =
-  "unit-list-entry-button min-w-0 flex-1 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit transition-colors duration-150";
+  "unit-list-entry-button min-w-0 cursor-pointer whitespace-normal break-words border-none bg-transparent p-0 text-left font-inherit transition-colors duration-150";
 
 /** One loadout entry: a roster member, or an item/skill/spell/special with its menu and DC. */
 export default function LoadoutEntryRow({
@@ -22,6 +29,8 @@ export default function LoadoutEntryRow({
   canEdit,
   onClick,
   onMenuClick,
+  onBeastClick,
+  beastBusy = false,
 }: LoadoutEntryRowProps) {
   if (entry.type === "roster") {
     return (
@@ -44,6 +53,8 @@ export default function LoadoutEntryRow({
     : entry.pending
       ? "unit-list-entry unit-list-entry--pending flex items-start gap-1 rounded px-1.5 py-0.5 transition-colors duration-150"
       : `${ENTRY_CLASS} transition-colors duration-150`;
+  // A switched-on row is named apart from the same item's spare row for screen readers.
+  const state = entry.beast?.on ? (entry.beast.kind === "mount" ? "ridden" : "kept as a pet") : "";
   const buttonClassName = entry.pending
     ? BUTTON_CLASS.replace(
         "unit-list-entry-button",
@@ -51,22 +62,40 @@ export default function LoadoutEntryRow({
       )
     : BUTTON_CLASS;
 
+  const { companion } = entry;
+  // A companion's entry (its mark) and a mount's or pet's item row (its switch) can be too wide.
+  const flex = entryFlex(companion ?? entry.beast);
+  // An editor's item row holds the menu (and a beast's switch): 44 px taps on a phone, centred.
+  const touchRow = entry.type === "item" && canEdit ? "touch-target-row" : "";
+
   return (
-    <div className={entryClassName}>
-      <button type="button" className={buttonClassName} onClick={onClick}>
+    <div className={`${entryClassName} ${flex.row} ${touchRow}`}>
+      <button type="button" className={`${buttonClassName} ${flex.button}`} onClick={onClick}>
         {entry.label}
+        {state ? <span className="sr-only"> ({state})</span> : null}
+        {companion ? <CompanionEntryFrom {...companion} /> : null}
       </button>
       {entry.type === "spell" && entry.dc !== undefined && entry.dc !== null && entry.dc !== "" ? (
         <span className="unit-list-entry-meta whitespace-nowrap text-[0.6rem] uppercase tracking-[0.3em]">
           DC {entry.dc}
         </span>
       ) : null}
+      {companion ? <CompanionEntryMark {...companion} /> : null}
+      {entry.beast && canEdit && onBeastClick ? (
+        <BeastItemButton
+          kind={entry.beast.kind}
+          on={entry.beast.on}
+          itemLabel={entry.label}
+          disabled={beastBusy}
+          onClick={onBeastClick}
+        />
+      ) : null}
       {entry.type === "item" && canEdit && (
         <button
           type="button"
-          className="unit-list-entry-menu flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-colors duration-150"
+          className="unit-list-entry-menu touch-target flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 transition-colors duration-150"
           onClick={onMenuClick}
-          aria-label={`Actions for ${entry.label}`}
+          aria-label={`Actions for ${entry.label}${state ? ` (${state})` : ""}`}
         >
           <svg width="3" height="13" viewBox="0 0 3 13" fill="currentColor" aria-hidden="true">
             <circle cx="1.5" cy="1.5" r="1.5" />

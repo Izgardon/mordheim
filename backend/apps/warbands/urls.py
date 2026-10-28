@@ -1,10 +1,11 @@
 from django.urls import path
 
-from .units.kinds import HENCHMEN_GROUP, HERO, HIRED_SWORD
+from .units.kinds import HENCHMEN_GROUP, HERO, HIRELING
 from .units.urls import unit_urlpatterns
 from .views import (
     HeroSpecialDetailView,
     HeroSpellDetailView,
+    WarbandBeastRecruitView,
     WarbandDetailView,
     WarbandItemDetailView,
     WarbandItemListView,
@@ -69,6 +70,11 @@ urlpatterns = [
         WarbandRarityRollView.as_view(),
         name="warbands-rarity-rolls",
     ),
+    path(
+        "warbands/<int:warband_id>/beasts/recruit/",
+        WarbandBeastRecruitView.as_view(),
+        name="warbands-beasts-recruit",
+    ),
     *unit_urlpatterns(HERO),
     path(
         "warbands/hero-specials/<int:special_id>/",
@@ -81,7 +87,7 @@ urlpatterns = [
         name="warbands-hero-spell-detail",
     ),
     *unit_urlpatterns(HENCHMEN_GROUP),
-    *unit_urlpatterns(HIRED_SWORD),
+    *unit_urlpatterns(HIRELING),
     path(
         "warbands/<int:warband_id>/restrictions/",
         WarbandRestrictionsView.as_view(),

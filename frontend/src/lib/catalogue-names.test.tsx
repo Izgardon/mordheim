@@ -81,11 +81,13 @@ describe("Skills: a taken name", () => {
     const [book, archived] = within(matchesList()).getAllByRole("listitem");
     expect(book).toHaveTextContent("Strike to Injure (Combat) · book");
     expect(
-      within(book).getByRole("button", { name: "Edit Strike to Injure (Combat) instead" })
+      within(book).getByRole("button", { name: "Edit the book Strike to Injure (Combat) instead" })
     ).toBeVisible();
     expect(archived).toHaveTextContent("Strike to Injure (Speed) · this campaign · archived");
     expect(
-      within(archived).getByRole("button", { name: "Restore Strike to Injure (Speed)" })
+      within(archived).getByRole("button", {
+        name: "Restore this campaign's Strike to Injure (Speed)",
+      })
     ).toBeVisible();
     expect(within(archived).queryByRole("button", { name: /instead/ })).toBeNull();
     expect(screen.getByRole("button", { name: "Save" })).toBeVisible();
@@ -96,7 +98,7 @@ describe("Skills: a taken name", () => {
     await addTakenSkill(user);
 
     await user.click(
-      screen.getByRole("button", { name: "Edit Strike to Injure (Combat) instead" })
+      screen.getByRole("button", { name: "Edit the book Strike to Injure (Combat) instead" })
     );
 
     expect(screen.getByRole("button", { name: "Save changes" })).toBeVisible();
@@ -113,10 +115,12 @@ describe("Skills: a taken name", () => {
     });
     await addTakenSkill(user);
 
-    await user.click(screen.getByRole("button", { name: "Restore Strike to Injure (Speed)" }));
+    await user.click(
+      screen.getByRole("button", { name: "Restore this campaign's Strike to Injure (Speed)" })
+    );
 
     const edit = await screen.findByRole("button", {
-      name: "Edit Strike to Injure (Speed) instead",
+      name: "Edit this campaign's Strike to Injure (Speed) instead",
     });
     expect(fakeApi.requests().filter((request) => request.path.includes("restore"))).toEqual([
       { method: "POST", path: "/skills/951/restore/" },
@@ -145,7 +149,9 @@ describe("Wargear: a taken name", () => {
     await user.type(screen.getByPlaceholderText("25"), "12");
     await user.type(screen.getByPlaceholderText("2"), "2");
     await user.click(screen.getByRole("button", { name: "Save" }));
-    await user.click(await screen.findByRole("button", { name: "Edit Sword (Weapon) instead" }));
+    await user.click(
+      await screen.findByRole("button", { name: "Edit the book Sword (Weapon) instead" })
+    );
 
     expect(screen.getByRole("button", { name: "Save changes" })).toBeVisible();
     expect(screen.getByDisplayValue("Sword")).toBeVisible();
@@ -177,7 +183,7 @@ describe("a warband page's dialog: a taken name", () => {
       await screen.findByRole("list", { name: "Entries with this name" })
     ).getAllByRole("listitem");
     expect(match).toHaveTextContent("Ogre · book · archived");
-    await user.click(within(match).getByRole("button", { name: "Restore Ogre" }));
+    await user.click(within(match).getByRole("button", { name: "Restore the book Ogre" }));
 
     await waitFor(() => expect(match).not.toHaveTextContent("archived"));
     expect(fakeApi.bodyOf("POST /races/12/restore/")).toEqual({ campaign_id: 1 });

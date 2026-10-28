@@ -1,8 +1,8 @@
 /**
  * Requests the catalogue pages send, with the app's own cache rules (`createQueryClient` and the
  * catalogue's 5-minute stale time): each page's cold load, a tour of all five, and the warband
- * dialogs and the bestiary's Add dialog reading the lists the pages cached. The Bestiary asks the
- * server to leave the hired swords out (`?exclude_type=Hired Sword`, PERF-47).
+ * dialogs and the bestiary's Add dialog reading the lists the pages cached. The bestiary holds the
+ * animals only, so the Bestiary page and the prebattle Load from Bestiary picker share one list.
  */
 import { act, cleanup, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -47,6 +47,10 @@ const PAGES = {
   Spells: { path: "spells", ready: () => screen.findByRole("row", { name: /^Gutter Hex/ }) },
   Bestiary: { path: "bestiary", ready: () => screen.findByText("Sewer Rat") },
   "Hired Swords": { path: "hired-swords", ready: () => screen.findByText("Pit Fighter") },
+  "Dramatis Personae": {
+    path: "dramatis-personae",
+    ready: () => screen.findByText("No dramatis personae yet"),
+  },
 } as const;
 
 let queryClient: QueryClient;
@@ -97,16 +101,14 @@ describe("catalogue pages: cold loads", () => {
     expect(sorted(fakeApi.calls())).toEqual(sorted([...SHELL, LIST.spells]));
   });
 
-  it("Bestiary: the shell, the bestiary without its hired swords (?exclude_type=Hired Sword, with descriptions) and your favourites (PERF-47)", async () => {
+  it("Bestiary: the shell, the bestiary as the server lists it (no exclude_type, with descriptions) and your favourites", async () => {
     await open("Bestiary");
 
-    expect(sorted(fakeApi.calls())).toEqual(sorted([...SHELL, LIST.creatures, FAVOURITES]));
-    expect(fakeApi.countOf(LIST.bestiary)).toBe(0);
-    // The default view: the cards keep their descriptions (and search reads them).
+    expect(sorted(fakeApi.calls())).toEqual(sorted([...SHELL, LIST.bestiary, FAVOURITES]));
+    expect(fakeApi.calls().some((call) => call.includes("exclude_type"))).toBe(false);
+    // The cards keep their descriptions (and search reads them).
     expect(screen.getByText("Bites ankles.")).toBeVisible();
     expect(screen.getByText("Warhorse")).toBeVisible();
-    expect(screen.queryByText("Pit Fighter")).toBeNull();
-    expect(screen.queryByText("Ogre Bodyguard")).toBeNull();
   });
 
   it("Hired Swords: the shell and the hired-swords list, once", async () => {
@@ -114,27 +116,54 @@ describe("catalogue pages: cold loads", () => {
 
     expect(sorted(fakeApi.calls())).toEqual(sorted([...SHELL, LIST.hiredSwords]));
   });
+
+  it("Dramatis Personae: the shell and the dramatis-personae list, once", async () => {
+    await open("Dramatis Personae");
+
+    expect(sorted(fakeApi.calls())).toEqual(sorted([...SHELL, LIST.dramatisPersonae]));
+  });
 });
 
 describe("catalogue pages: the shared 5-minute cache", () => {
-  it("reads each list once over a tour of all five pages and back again", async () => {
+  it("reads each list once over a tour of all six pages and back again", async () => {
     const user = setupUser();
     await open("Wargear");
 
-    for (const page of ["Skills", "Spells", "Bestiary", "Hired Swords", "Wargear"] as const) {
+    for (const page of [
+      "Skills",
+      "Spells",
+      "Bestiary",
+      "Hired Swords",
+      "Dramatis Personae",
+      "Wargear",
+    ] as const) {
       await visit(user, page);
     }
-    for (const page of ["Skills", "Spells", "Hired Swords"] as const) {
+    for (const page of ["Skills", "Spells", "Hired Swords", "Dramatis Personae"] as const) {
       await visit(user, page);
     }
 
-    // Every page's list once; the full bestiary (the prebattle picker's) and specials not at all.
-    const unread: string[] = [LIST.specials, LIST.bestiary];
-    for (const list of Object.values(LIST).filter((list) => !unread.includes(list))) {
+    // Every page's list once, and specials not at all.
+    for (const list of Object.values(LIST).filter((list) => list !== LIST.specials)) {
       expect(fakeApi.countOf(list)).toBe(1);
     }
     expect(fakeApi.countOf(LIST.specials)).toBe(0);
+  });
+
+  it("lets the prebattle Load from Bestiary picker read the list the Bestiary page cached, and list its creatures only", async () => {
+    await open("Bestiary");
+    cleanup();
+    fakeApi.clearRequests();
+
+    renderCatalogueRoute("/campaigns/1/bestiary-picker", { queryClient });
+    expect(await screen.findByText("Sewer Rat")).toBeVisible();
+    await settle();
+
     expect(fakeApi.countOf(LIST.bestiary)).toBe(0);
+    const listed = screen.getAllByRole("button").map((button) => button.textContent);
+    expect(listed.filter((text) => /^(Sewer Rat|Warhound)/.test(text ?? ""))).toHaveLength(2);
+    expect(screen.queryByText("Warhorse")).toBeNull();
+    expect(screen.queryByText("Raven")).toBeNull();
   });
 
   it("lets the hero's New skill and New spell dialogs read the lists Skills and Spells cached", async () => {
@@ -175,7 +204,7 @@ describe("catalogue pages: the shared 5-minute cache", () => {
     fakeApi.clearRequests();
 
     await user.click(screen.getByRole("button", { name: "Add entry" }));
-    expect(await screen.findByRole("dialog", { name: "Add Bestiary Entry" })).toBeVisible();
+    expect(await screen.findByRole("dialog", { name: "Add bestiary entry" })).toBeVisible();
     await settle();
 
     expect(sorted(fakeApi.calls())).toEqual(sorted([LIST.specials, LIST.spells]));

@@ -33,8 +33,8 @@ from apps.warbands.models import (
     HeroSkill,
     HeroSpecial,
     HeroSpell,
-    HiredSword,
-    HiredSwordItem,
+    Hireling,
+    HirelingItem,
     LedgerAction,
     Warband,
     WarbandItem,
@@ -114,8 +114,8 @@ def build_reference_campaign(unit_count: int = 3) -> ReferenceCampaign:
         Henchman.objects.bulk_create([Henchman(group=group, name=f"Henchman {index}.{n}") for n in range(3)])
         HenchmenGroupItem.objects.create(henchmen_group=group, item=items[index])
 
-        sword = HiredSword.objects.create(warband=warband, race=race, name=f"Sword {index}", unit_type="Ogre")
-        HiredSwordItem.objects.create(hired_sword=sword, item=items[index])
+        sword = Hireling.objects.create(warband=warband, race=race, name=f"Sword {index}", unit_type="Ogre")
+        HirelingItem.objects.create(hireling=sword, item=items[index])
 
         WarbandItem.objects.create(warband=warband, item=items[index], quantity=1)
         ledger.record(warband, LedgerAction.BUY, -10, f"Sword {index}")
@@ -171,11 +171,11 @@ def add_units_with_items(warband: Warband, count: int, label: str) -> None:
         HeroItem.objects.bulk_create([HeroItem(hero=hero, item=item) for item in items])
         group = HenchmenGroup.objects.create(warband=warband, race=race, name=f"{label} group {index}")
         HenchmenGroupItem.objects.bulk_create([HenchmenGroupItem(henchmen_group=group, item=item) for item in items])
-        sword = HiredSword.objects.create(warband=warband, race=race, name=f"{label} sword {index}")
-        HiredSwordItem.objects.bulk_create([HiredSwordItem(hired_sword=sword, item=item) for item in items])
+        sword = Hireling.objects.create(warband=warband, race=race, name=f"{label} sword {index}")
+        HirelingItem.objects.bulk_create([HirelingItem(hireling=sword, item=item) for item in items])
 
 
-def add_items_to_units(hero: Hero, group: HenchmenGroup, sword: HiredSword, count: int, label: str) -> None:
+def add_items_to_units(hero: Hero, group: HenchmenGroup, sword: Hireling, count: int, label: str) -> None:
     """Give one unit of each kind `count` more items, each with a restriction-linked availability."""
     restriction, _ = Restriction.objects.get_or_create(type="Warband", restriction=f"{label} only")
     items = [_catalogue_item(f"{label} item {index}", 5 + index) for index in range(count)]
@@ -183,7 +183,7 @@ def add_items_to_units(hero: Hero, group: HenchmenGroup, sword: HiredSword, coun
         ItemAvailabilityRestriction.objects.create(item_availability=item.availabilities.get(), restriction=restriction)
     HeroItem.objects.bulk_create([HeroItem(hero=hero, item=item) for item in items])
     HenchmenGroupItem.objects.bulk_create([HenchmenGroupItem(henchmen_group=group, item=item) for item in items])
-    HiredSwordItem.objects.bulk_create([HiredSwordItem(hired_sword=sword, item=item) for item in items])
+    HirelingItem.objects.bulk_create([HirelingItem(hireling=sword, item=item) for item in items])
 
 
 def count_get_queries(client: APIClient, url: str) -> int:

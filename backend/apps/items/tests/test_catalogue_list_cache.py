@@ -156,7 +156,7 @@ class CacheInvalidationTests(CatalogueListCacheTestCase):
             "seed_restrictions": [{"restriction": "Gnomes", "type": "Warband"}],
             "seed_items": [{"name": "Gnome hammer", "type": "Weapon", "cost": 5}],
             "seed_skills": [{"name": "Tinker", "type": "Gnome", "description": "Fixes things."}],
-            "seed_bestiary": [{"name": "Gnome", "type": "Animal", **STATS}],
+            "seed_bestiary": [{"name": "Gnome", "kind": "creature", **STATS}],
         }
         with data_file([]) as no_properties:
             for command, data in rows.items():

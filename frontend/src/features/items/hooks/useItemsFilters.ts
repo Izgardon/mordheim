@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogueSearchParams";
 
 import { ITEM_SUBTYPE_OPTIONS } from "../utils/item-form-values";
+import { isSold } from "../utils/item-listing";
 
 import type { ItemRow, ItemTabId } from "../components/items-columns";
 import type { Item } from "../types/item-types";
@@ -38,11 +39,15 @@ const matchesQuery = (item: Item, query: string) =>
     .toLowerCase()
     .includes(query);
 
-/** One row per availability, the rarer first; an item with none gets one row. */
+/**
+ * One row per availability, the rarer first; an item with none gets one row, and so does a beast
+ * the shop doesn't sell: the prices its bestiary entry keeps for the shop (or the book's, as the
+ * Giant Rat's warptoken price) aren't on offer, so its row shows none.
+ */
 function toRows(items: Item[]): ItemRow[] {
   return items.flatMap((item): ItemRow[] => {
     const availabilities = item.availabilities ?? [];
-    if (availabilities.length === 0) {
+    if (availabilities.length === 0 || !isSold(item)) {
       return [{ ...item, _availability: null, _rowId: rowId(item.id) }];
     }
     return [...availabilities]
@@ -87,14 +92,18 @@ export function useItemsFilters(items: Item[]) {
     const type = ITEM_TYPE_BY_TAB[activeTab];
     const bySubtype = selectedSubtype !== ALL_SUBTYPES && selectedSubtype.trim();
     const singleUseOnly = activeTab === "misc" && selectedSingleUse !== ALL_SINGLE_USE;
+    // By name, as the other catalogue pages list theirs: the server sends the campaign's rows
+    // (Custom, House rule) first. `filter` made a copy: the list is the shared query cache.
     return toRows(
-      items.filter(
-        (item) =>
-          (!query || matchesQuery(item, query)) &&
-          item.type === type &&
-          (!bySubtype || (item.subtype ?? "").toLowerCase() === selectedSubtype.toLowerCase()) &&
-          (!singleUseOnly || item.single_use)
-      )
+      items
+        .filter(
+          (item) =>
+            (!query || matchesQuery(item, query)) &&
+            item.type === type &&
+            (!bySubtype || (item.subtype ?? "").toLowerCase() === selectedSubtype.toLowerCase()) &&
+            (!singleUseOnly || item.single_use)
+        )
+        .sort((a, b) => a.name.localeCompare(b.name))
     );
   }, [items, searchQuery, activeTab, selectedSubtype, selectedSingleUse]);
 

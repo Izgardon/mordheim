@@ -6,16 +6,16 @@ import { currentHireCost } from "../components/henchmen/utils/henchmen-cost";
 import { useUnitXpSaver } from "../hooks/units/useUnitMutations";
 import { heroKind, mapHeroToForm, validateHeroForm } from "./kinds/hero";
 import { henchmenKind, mapHenchmenGroupToForm, validateHenchmenGroupForm } from "./kinds/henchmen";
-import { hiredSwordKind, mapHiredSwordToForm, validateHiredSwordForm } from "./kinds/hired-sword";
+import { hirelingKind, mapHirelingToForm, validateHirelingForm } from "./kinds/hireling";
 import { unitKinds } from "./unit-kinds";
 
 import {
   makeHenchmenGroup,
   makeHero,
-  makeHiredSword,
+  makeHireling,
   makeVeteranHenchmenGroup,
   makeVeteranHero,
-  makeVeteranHiredSword,
+  makeVeteranHireling,
 } from "@/test/warband-fixtures";
 import { createQueryWrapper } from "@/test/query-test-utils";
 
@@ -24,7 +24,7 @@ import type { UnitKindConfig } from "./unit-kind-types";
 
 const api = vi.hoisted(() => ({
   updateWarbandHero: vi.fn(),
-  updateWarbandHiredSword: vi.fn(),
+  updateWarbandHireling: vi.fn(),
   updateWarbandHenchmenGroup: vi.fn(),
 }));
 
@@ -127,17 +127,28 @@ describe("mapHeroToForm", () => {
   });
 });
 
-describe("mapHiredSwordToForm", () => {
-  it("maps hero fields plus upkeep, rating and the hired-sword flags", () => {
-    const hiredSword = makeVeteranHiredSword({ blood_pacted: true, no_level_ups: true });
+describe("mapHirelingToForm", () => {
+  it("maps hero fields plus upkeep, rating, the hired sword flags and its terms", () => {
+    const hireling = makeVeteranHireling({
+      blood_pacted: true,
+      no_level_ups: true,
+      kind: "dramatis_persona",
+      injury_table: "hero",
+      stays: "one_battle",
+      payment_note: "a favour",
+    });
 
-    expect(mapHiredSwordToForm(hiredSword)).toEqual({
+    expect(mapHirelingToForm(hireling)).toEqual({
       id: 31,
       name: "Brother Hal",
       unit_type: "Warrior Priest",
+      kind: "dramatis_persona",
+      injury_table: "hero",
+      stays: "one_battle",
+      payment_note: "a favour",
       race_id: 1,
       race_name: "Human",
-      race: hiredSword.race,
+      race: hireling.race,
       stats: { M: "4", WS: "4", BS: "3", S: "3", T: "3", W: "1", I: "3", A: "1", Ld: "8" },
       xp: "4",
       level_up: "1",
@@ -155,16 +166,16 @@ describe("mapHiredSwordToForm", () => {
       blood_pacted: true,
       no_level_ups: true,
       available_skills: { C: true, Sh: false, A: true, St: false, Sp: false, Spc: false },
-      items: hiredSword.items,
-      skills: hiredSword.skills,
-      spells: hiredSword.spells,
-      specials: hiredSword.specials,
+      items: hireling.items,
+      skills: hireling.skills,
+      spells: hireling.spells,
+      specials: hireling.specials,
     });
   });
 
   it("never carries a leader or trading action, whatever the payload says", () => {
-    const form = mapHiredSwordToForm({
-      ...makeHiredSword(),
+    const form = mapHirelingToForm({
+      ...makeHireling(),
       is_leader: true,
       trading_action: true,
     } as never);
@@ -174,7 +185,7 @@ describe("mapHiredSwordToForm", () => {
   });
 
   it("defaults upkeep and rating to 0", () => {
-    const form = mapHiredSwordToForm(makeHiredSword({ upkeep_price: null, rating: null }));
+    const form = mapHirelingToForm(makeHireling({ upkeep_price: null, rating: null }));
 
     expect(form.upkeep_price).toBe("0");
     expect(form.rating).toBe("0");
@@ -236,12 +247,21 @@ describe("form validators", () => {
     expect(validateHeroForm(mapHeroToForm(makeVeteranHero()))).toBeNull();
   });
 
-  it("validates hired swords exactly like heroes", () => {
-    const form = mapHiredSwordToForm(makeHiredSword({ name: "", race_id: null }));
+  it("validates hired swords on name and type, leaving the race optional (a hire may have none)", () => {
+    const form = mapHirelingToForm(makeHireling({ name: "", race_id: null }));
 
-    expect(validateHiredSwordForm(form)).toEqual({
-      fields: ["name", "race_id"],
-      message: "Missing: Name, Race",
+    expect(validateHirelingForm(form)).toEqual({ fields: ["name"], message: "Missing: Name" });
+    expect(validateHirelingForm({ ...form, name: "Grukk" })).toBeNull();
+  });
+
+  it("reads an older payload without terms as a hired sword on the henchman table who stays", () => {
+    const form = mapHirelingToForm(makeHireling());
+
+    expect(form).toMatchObject({
+      kind: "hired_sword",
+      injury_table: "henchman",
+      stays: "always",
+      payment_note: "",
     });
   });
 
@@ -275,12 +295,10 @@ describe("stat payload builders", () => {
 
   it("round-trips the stat profile of every kind through its form", () => {
     const hero = makeVeteranHero();
-    const hiredSword = makeVeteranHiredSword();
+    const hireling = makeVeteranHireling();
 
     expect(buildStatPayload(mapHeroToForm(hero))).toEqual(profileOf(hero));
-    expect(buildStatPayload(mapHiredSwordToForm(hiredSword))).toEqual(
-      profileOf(hiredSword as never)
-    );
+    expect(buildStatPayload(mapHirelingToForm(hireling))).toEqual(profileOf(hireling as never));
     expect(buildStatPayload(mapHenchmenGroupToForm(group))).toEqual(profileOf(group));
   });
 
@@ -305,16 +323,16 @@ describe("XP savers (XP +/- on the cards)", () => {
     const hero = makeVeteranHero();
     const onUpdated = vi.fn();
     api.updateWarbandHero.mockResolvedValue({ ...hero, xp: 8 });
-    api.updateWarbandHiredSword.mockResolvedValue({ ...makeVeteranHiredSword(), xp: 5 });
+    api.updateWarbandHireling.mockResolvedValue({ ...makeVeteranHireling(), xp: 5 });
     api.updateWarbandHenchmenGroup.mockResolvedValue({ ...makeVeteranHenchmenGroup(), xp: 5 });
 
     const resolved = await createUnitXpSaver(heroKind, 9, hero, onUpdated)(8);
-    await createUnitXpSaver(hiredSwordKind, 9, makeVeteranHiredSword())(5);
+    await createUnitXpSaver(hirelingKind, 9, makeVeteranHireling())(5);
     await createUnitXpSaver(henchmenKind, 9, makeVeteranHenchmenGroup())(5);
 
     // No name, type, race or price from a possibly stale card to undo edits made elsewhere.
     expect(api.updateWarbandHero).toHaveBeenCalledWith(9, 11, { xp: 8 });
-    expect(api.updateWarbandHiredSword).toHaveBeenCalledWith(9, 31, { xp: 5 });
+    expect(api.updateWarbandHireling).toHaveBeenCalledWith(9, 31, { xp: 5 });
     expect(api.updateWarbandHenchmenGroup).toHaveBeenCalledWith(9, 21, { xp: 5 });
     expect(onUpdated).toHaveBeenCalledWith({ ...hero, xp: 8 });
     expect(resolved).toBe(8);
@@ -339,7 +357,7 @@ describe("kind registry", () => {
   it("keys each kind by its item-transfer type and its section", () => {
     expect(unitKinds.hero.section).toBe("heroes");
     expect(unitKinds.henchmen_group.section).toBe("henchmen");
-    expect(unitKinds.hired_sword.section).toBe("hiredswords");
+    expect(unitKinds.hireling.section).toBe("hirelings");
     for (const [key, kind] of Object.entries(unitKinds)) {
       expect(kind.key).toBe(key);
     }
@@ -347,38 +365,36 @@ describe("kind registry", () => {
 
   it("counts heroes and hired swords on the heroes' table and fractional XP, henchmen on whole XP (decision 8)", () => {
     expect(heroKind.getLevelInfo(7.5).level).toBe(4);
-    expect(hiredSwordKind.getLevelInfo(7.5).level).toBe(4);
-    expect(hiredSwordKind.getLevelInfo(4.5).nextLevelAt).toBe(6);
-    expect(hiredSwordKind.thresholdsKey).toBe("hero_level_thresholds");
+    expect(hirelingKind.getLevelInfo(7.5).level).toBe(4);
+    expect(hirelingKind.getLevelInfo(4.5).nextLevelAt).toBe(6);
+    expect(hirelingKind.thresholdsKey).toBe("hero_level_thresholds");
     expect(henchmenKind.getLevelInfo(4.5).nextLevelAt).toBe(5);
   });
 
   it("names each kind's list in the sheet payload", () => {
     expect(heroKind.collection).toBe("heroes");
     expect(henchmenKind.collection).toBe("henchmen_groups");
-    expect(hiredSwordKind.collection).toBe("hired_swords");
+    expect(hirelingKind.collection).toBe("hirelings");
   });
 
   it("lets only henchmen and hired swords switch off XP and level-ups", () => {
     expect(heroKind.showsXpBar(makeHero({ no_level_ups: true } as never))).toBe(true);
     expect(heroKind.canLevelUp(makeHero({ level_up: 1, no_level_ups: true } as never))).toBe(true);
     expect(henchmenKind.showsXpBar(makeHenchmenGroup({ no_level_ups: true }))).toBe(false);
-    expect(hiredSwordKind.canLevelUp(makeHiredSword({ level_up: 1, no_level_ups: true }))).toBe(
-      false
-    );
-    expect(hiredSwordKind.canLevelUp(makeHiredSword({ level_up: 1 }))).toBe(true);
+    expect(hirelingKind.canLevelUp(makeHireling({ level_up: 1, no_level_ups: true }))).toBe(false);
+    expect(hirelingKind.canLevelUp(makeHireling({ level_up: 1 }))).toBe(true);
   });
 
   it("sends level_up 0 for a session-created unit of every kind (BUG-65)", () => {
     const hero = mapHeroToForm(makeVeteranHero());
     const group = mapHenchmenGroupToForm(makeVeteranHenchmenGroup());
-    const hired = mapHiredSwordToForm(makeVeteranHiredSword());
+    const hired = mapHirelingToForm(makeVeteranHireling());
 
     expect(heroKind.buildPayload(hero, { isSessionCreated: true }).level_up).toBe(0);
     expect(heroKind.buildPayload(hero, { isSessionCreated: false })).not.toHaveProperty("level_up");
     expect(henchmenKind.buildPayload(group, { isSessionCreated: true }).level_up).toBe(0);
-    expect(hiredSwordKind.buildPayload(hired, { isSessionCreated: true }).level_up).toBe(0);
-    expect(hiredSwordKind.buildPayload(hired, { isSessionCreated: false })).not.toHaveProperty(
+    expect(hirelingKind.buildPayload(hired, { isSessionCreated: true }).level_up).toBe(0);
+    expect(hirelingKind.buildPayload(hired, { isSessionCreated: false })).not.toHaveProperty(
       "level_up"
     );
   });
@@ -406,7 +422,7 @@ describe("kind registry", () => {
   });
 
   it("offers the kind's advances", () => {
-    expect(heroKind.advanceOptions).toEqual(hiredSwordKind.advanceOptions);
+    expect(heroKind.advanceOptions).toEqual(hirelingKind.advanceOptions);
     expect(heroKind.advanceOptions).toContain("Spell");
     expect(henchmenKind.advanceOptions).toEqual(["WS", "BS", "S", "I", "A", "Ld"]);
   });

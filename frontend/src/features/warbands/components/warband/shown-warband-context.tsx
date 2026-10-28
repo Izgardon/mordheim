@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { sheetWarband, warbandSheetQuery } from "../../api/warband-queries";
 import { useAppStore } from "@/stores/app-store";
 
+import type { WarbandSheet } from "../../types/warband-sheet";
 import type { Warband } from "../../types/warband-types";
 
 /** Which warband a page shows: the key of its sheet in the query cache. */
@@ -37,4 +38,17 @@ export function useActingWarband(): Warband | null {
     select: sheetWarband,
   });
   return shown ? (sheet.data ?? null) : mine;
+}
+
+/**
+ * The cached sheet of the warband on screen, its units in the detail shape (a creature group's
+ * beast, a unit's mount); undefined off a warband page. Only reads the page's cached copy.
+ */
+export function useShownSheet(): WarbandSheet | undefined {
+  const shown = useContext(ShownWarbandContext);
+  const sheet = useQuery({
+    ...warbandSheetQuery(shown?.campaignId ?? 0, shown?.warbandId ?? 0),
+    enabled: false,
+  });
+  return shown ? sheet.data : undefined;
 }

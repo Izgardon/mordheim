@@ -23,12 +23,12 @@ from apps.items.models import ItemProperty
 from apps.warbands.access import WARBAND_RULES
 from apps.warbands.views.base import WarbandScopedView
 
-from .catalogue_support import DELETE, HIRED_SWORDS, KINDS, RACES, CatalogueKind, CatalogueTestCase, make_entry
+from .catalogue_support import DELETE, KINDS, RACES, CatalogueKind, CatalogueTestCase, make_entry
 
 ACTORS = ("player", "rival", "admin", "owner", "outsider")
 Row = tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int, int]]
 EDITED: dict[str, dict[str, Any]] = {"races": {"movement": 5}}  # every other kind: a new description
-CATALOGUE_APPS = ("items", "skills", "spells", "special", "races", "restrictions", "bestiary")
+CATALOGUE_APPS = ("items", "skills", "spells", "special", "races", "restrictions", "bestiary", "hirelings")
 FAVOURITES = {"warband-bestiary-favourites", "warband-bestiary-favourite-delete"}  # warband routes
 
 
@@ -47,8 +47,7 @@ class CatalogueAccessFixture(CatalogueTestCase):
         cls.version = {}
         for kind in KINDS:
             spare = make_entry(kind, f"Spare {kind.key}")
-            book = spare.bestiary_entry if kind is HIRED_SWORDS else spare
-            cls.version[kind.key] = make_entry(kind, f"Spare {kind.key}", campaign=cls.campaign, replaces=book).id
+            cls.version[kind.key] = make_entry(kind, f"Spare {kind.key}", campaign=cls.campaign, replaces=spare).id
 
     def setUp(self) -> None:
         super().setUp()
@@ -59,6 +58,7 @@ class CatalogueAccessFixture(CatalogueTestCase):
         return {
             **{kind.key: entry.pk for kind, entry in zip(KINDS[:6], entries, strict=True)},
             "hired_swords": self.ogre.id,
+            "dramatis_personae": self.aenur.id,
         }
 
     def kind_rows(self, kind: CatalogueKind) -> list[Row]:
@@ -159,7 +159,7 @@ def catalogue_patterns() -> list[URLPattern]:
         for entry in get_resolver(f"apps.{app}.urls").url_patterns
         if isinstance(entry, URLPattern)
     ]
-    assert len(patterns) == 40, [pattern.name for pattern in patterns]
+    assert len(patterns) == 45, [pattern.name for pattern in patterns]
     return patterns
 
 

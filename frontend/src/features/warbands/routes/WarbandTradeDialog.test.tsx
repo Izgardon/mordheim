@@ -120,7 +120,7 @@ beforeEach(() => {
     capabilities: {},
     heroes: [vargo],
     henchmen_groups: [],
-    hired_swords: [],
+    hirelings: [],
   });
   fakeApi.on("GET /warbands/15/items/", [
     makeStashItem({ id: 300, name: "Wyrdstone", cost: 0, quantity: 3 }),
@@ -133,7 +133,7 @@ beforeEach(() => {
     capabilities: { edit: true, manage_items: true, trade: true },
     heroes: [aldric],
     henchmen_groups: [],
-    hired_swords: [],
+    hirelings: [],
   });
   fakeApi.on("GET /warbands/9/items/", [
     makeStashItem({ id: 101, name: "Sword", cost: 10, quantity: 2 }),
@@ -175,7 +175,7 @@ describe("Warband page: the trade dialog", () => {
       capabilities: { edit: true, manage_items: true, trade: false },
       heroes: [aldric],
       henchmen_groups: [],
-      hired_swords: [],
+      hirelings: [],
     });
     renderPage(`/campaigns/7/warband${runningTrade}`);
 

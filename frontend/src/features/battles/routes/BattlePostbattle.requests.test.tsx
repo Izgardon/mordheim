@@ -92,11 +92,11 @@ function routeServer() {
     unit_results: {
       "hero:1": { xp_earned: 3 },
       "hero:3": { xp_earned: 1 },
-      "hired_sword:4": { xp_earned: 1 },
+      "hireling:4": { xp_earned: 1 },
       "henchman:2": { xp_earned: 1 },
     },
     exploration: { dice_count: 2 },
-    upkeep: { entries: { "hired_sword:4": { unit_name: "Ogre Bodyguard", cost: 15 } } },
+    upkeep: { entries: { "hireling:4": { unit_name: "Ogre Bodyguard", cost: 15 } } },
   };
   fakeApi.on(`GET ${statePath("postbattle")}`, () => answer());
   fakeApi.on(`GET ${battlePath("rosters/")}`, battleRosters());
@@ -138,6 +138,60 @@ describe("BattlePostbattle requests", () => {
     fakeApi.reset();
     media.mobile = false;
     routeServer();
+  });
+
+  it("rolls a mount's D6 and saves the roll and result with the draft (step 5)", async () => {
+    const user = setupUser();
+    server.suggested_postbattle = {
+      ...server.suggested_postbattle!,
+      mount_survival: {
+        entries: { "hero:3": { unit_name: "Rolf", mount: "Warhorse", dies_on: 2 } },
+      },
+    };
+    await renderPostbattle();
+    const lastMounts = () => draftBodies().slice(-1)[0]?.mount_survival;
+
+    const mount = screen.getByRole("group", { name: "Rolf's Warhorse" });
+    expect(mount).toHaveTextContent("Dies on a 1 or 2");
+    await user.selectOptions(
+      within(mount).getByRole("combobox", { name: "D6 for Rolf's Warhorse" }),
+      "2"
+    );
+
+    await waitFor(() => expect(lastMounts()).toEqual({ "hero:3": { roll: 2, dead: true } }));
+    const dies = within(mount).getByRole("checkbox", { name: "Rolf's Warhorse dies" });
+    expect(dies).toBeChecked();
+    await user.click(dies); // the result is the player's
+    await waitFor(() => expect(lastMounts()).toEqual({ "hero:3": { roll: 2, dead: false } }));
+    await user.selectOptions(
+      within(mount).getByRole("combobox", { name: "D6 for Rolf's Warhorse" }),
+      "5"
+    );
+    await waitFor(() => expect(lastMounts()).toEqual({ "hero:3": { roll: 5, dead: false } }));
+  });
+
+  it("names each mount's Roll button with its rider for screen readers", async () => {
+    // Was: every row's button was named "Roll".
+    const user = setupUser();
+    server.suggested_postbattle = {
+      ...server.suggested_postbattle!,
+      mount_survival: {
+        entries: {
+          "hero:3": { unit_name: "Rolf", mount: "Warhorse", dies_on: 2 },
+          "hero:4": { unit_name: "Aldric", mount: "War Boar", dies_on: 2 },
+        },
+      },
+    };
+    await renderPostbattle();
+
+    const rolf = screen.getByRole("group", { name: "Rolf's Warhorse" });
+    expect(within(rolf).getByRole("button", { name: "Roll for Rolf's Warhorse" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Roll for Aldric's War Boar" })).toBeVisible();
+    expect(within(rolf).queryByRole("button", { name: "Roll" })).not.toBeInTheDocument();
+    await user.click(within(rolf).getByRole("button", { name: "Roll for Rolf's Warhorse" }));
+    await waitFor(() =>
+      expect(draftBodies().slice(-1)[0]?.mount_survival?.["hero:3"]?.roll).toBeGreaterThan(0)
+    );
   });
 
   it("shows who is still in postbattle and who has finished or was skipped (BATL-NEW-08)", async () => {
@@ -423,7 +477,7 @@ describe("BattlePostbattle requests", () => {
           ],
           level_ups: 1,
         },
-        "hired_sword:4": {
+        "hireling:4": {
           xp_earned: 0,
           reasons: [{ label: "no level-ups", xp: 0 }],
           level_ups: 0,
@@ -515,13 +569,13 @@ describe("BattlePostbattle requests", () => {
 
     // The Dead tick waits for the XP save; Finalise waits for both.
     expect(draftBodies()).toHaveLength(1);
-    expect(draftBodies()[0].unit_results["hired_sword:4"].dead).toBe(false);
+    expect(draftBodies()[0].unit_results["hireling:4"].dead).toBe(false);
     expect(dead()).toBeChecked();
     expect(screen.getByRole("button", { name: "Finalise Postbattle" })).toBeDisabled();
 
     await act(async () => held[0].release());
     await waitFor(() => expect(draftBodies()).toHaveLength(2));
-    expect(draftBodies()[1].unit_results["hired_sword:4"].dead).toBe(true);
+    expect(draftBodies()[1].unit_results["hireling:4"].dead).toBe(true);
     expect(draftBodies()[1].unit_results["hero:1"].xp_earned).toBe(5);
     expect(dead()).toBeChecked();
 
@@ -614,7 +668,7 @@ describe("BattlePostbattle requests", () => {
     ).toBeInTheDocument();
   });
 
-  it("keeps battle stat changes only when ticked, and shows what finalise warns about (SEC-10)", async () => {
+  it("keeps battle stat changes only when ticked, and shows what finalise warns about in neutral words (SEC-10)", async () => {
     const user = setupUser();
     fakeApi.on(`POST ${battlePath("finalize-postbattle/")}`, () => ({
       ...battleState({ status: "postbattle", me: { status: "confirmed_postbattle" } }),
@@ -646,9 +700,11 @@ describe("BattlePostbattle requests", () => {
       })
     );
 
+    // The server words it "his" for anyone: the toast names the unit from the draft, neutrally.
     expect(
-      await screen.findByText("Rolf has left the warband, so his results were not applied.")
+      await screen.findByText("Rolf has left the warband, so their results were not applied.")
     ).toBeInTheDocument();
+    expect(screen.queryByText(/so his results/)).toBeNull();
     const finalised = fakeApi.bodyOf(`POST ${battlePath("finalize-postbattle/")}`) as {
       postbattle_json: BattlePostbattleState;
     };
@@ -661,7 +717,7 @@ describe("BattlePostbattle requests", () => {
     mine.unit_information_json = {
       ...mine.unit_information_json,
       "henchman:2": { stats_override: { toughness: 4 }, out_of_action: false, kill_count: 0 },
-      "hired_sword:4": {
+      "hireling:4": {
         stats_override: { strength: 4, attacks: 2 },
         out_of_action: false,
         kill_count: 0,
@@ -823,7 +879,7 @@ describe("BattlePostbattle requests", () => {
       ...mySheet(RESOURCES),
       warband: { id: ME.warband.id, name: ME.warband.name, gold: 10 },
       heroes: [{ id: 1, xp: 3, half_rate: false }],
-      hired_swords: [{ id: 4, xp: 0, half_rate: false, no_level_ups: false }],
+      hirelings: [{ id: 4, xp: 0, half_rate: false, no_level_ups: false }],
       henchmen_groups: [
         { id: 11, name: "Youngbloods", xp: 1, half_rate: false, henchmen: [{ id: 2 }] },
       ],

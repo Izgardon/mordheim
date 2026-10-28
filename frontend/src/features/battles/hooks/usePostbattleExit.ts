@@ -96,7 +96,7 @@ export function usePostbattleExit({
       const finalised = await finalizeBattlePostbattle(campaignId, battleId, {
         postbattle_json: { ...draft, exploration: toPostbattleExplorationPayload(exploration) },
       });
-      toastBattleWarnings(finalised.warnings);
+      toastBattleWarnings(finalised.warnings, (unitKey) => draft.unit_results[unitKey]?.unit_name);
       if (warbandId !== null) {
         // Finalising changed the warband (XP, gold, items): its pages read it afresh.
         void queryClient.invalidateQueries({

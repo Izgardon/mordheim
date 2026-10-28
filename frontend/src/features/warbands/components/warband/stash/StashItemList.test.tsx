@@ -60,7 +60,7 @@ const myStoreWarband = {
   gold: 500,
   resources: [],
   heroes: [{ id: 11, warband_id: MY_WARBAND, name: aldric.name, unit_type: "Captain", xp: 7 }],
-  hired_swords: [],
+  hirelings: [],
 };
 
 const sword = makeStashItem({ id: 101, name: "Sword", cost: 10, quantity: 2 });
@@ -77,12 +77,12 @@ const summaryRow = ({ id, warband_id, name, unit_type, xp, large }: WarbandHero)
 });
 
 const sheetOf = (warbandId: number, heroes: WarbandHero[], gold = 500): WarbandSheet => ({
-  warband: { ...myStoreWarband, id: warbandId, heroes: undefined, hired_swords: undefined },
+  warband: { ...myStoreWarband, id: warbandId, heroes: undefined, hirelings: undefined },
   summary: {
     gold,
     rating: 99,
     heroes: heroes.map(summaryRow) as WarbandHero[],
-    hired_swords: [],
+    hirelings: [],
     henchmen_groups: warbandId === MY_WARBAND ? [myGroup] : [],
   },
   capabilities: {
@@ -96,7 +96,7 @@ const sheetOf = (warbandId: number, heroes: WarbandHero[], gold = 500): WarbandS
   },
   heroes,
   henchmen_groups: [],
-  hired_swords: [],
+  hirelings: [],
 });
 
 /** The page's header gold, read from the cached sheet as the page shows it. */

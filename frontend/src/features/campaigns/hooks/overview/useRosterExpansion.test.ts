@@ -25,18 +25,18 @@ describe("toRosterUnits", () => {
     const units = toRosterUnits({
       heroes: [row(1, "Captain Wolf")],
       henchmen_groups: [row(1, "Bowmen")],
-      hired_swords: [row(1, "Ogre Bodyguard")],
+      hirelings: [row(1, "Ogre Bodyguard")],
     });
 
     expect(units.map((unit) => [unit.id, unit.category, unit.name])).toEqual([
       ["hero-1", "Heroes", "Captain Wolf"],
       ["henchmen-1", "Henchmen", "Bowmen"],
-      ["hs-1", "Hired Swords", "Ogre Bodyguard"],
+      ["hireling-1", "Hired Swords", "Ogre Bodyguard"],
     ]);
     expect(units[0]).toMatchObject({ movement: 4, leadership: 7, armour_save: null });
   });
 
   it("is empty for a warband with no units on its roster", () => {
-    expect(toRosterUnits({ heroes: [], henchmen_groups: [], hired_swords: [] })).toEqual([]);
+    expect(toRosterUnits({ heroes: [], henchmen_groups: [], hirelings: [] })).toEqual([]);
   });
 });

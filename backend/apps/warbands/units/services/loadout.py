@@ -1,10 +1,12 @@
 """A unit's loadout lists and trait specials, written the same way for every kind.
 
 A create or PATCH that sends a list (`items`, `skill_ids`, `special_ids`, `spell_ids`) replaces that whole
-list; unknown catalogue ids are skipped. The trait flags keep their specials in step: `large` with the
+list; unknown catalogue ids are skipped, and the items list keeps the unit's mounts and pets switched on unless an
+entry says otherwise (its `companion`). The trait flags keep their specials in step: `large` with the
 "Large" special for every kind, and `caster` with "Wizard" / "Priest" where the kind has casters.
 """
 
+from collections import Counter
 from collections.abc import Iterable, Mapping, MutableMapping
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
@@ -47,16 +49,33 @@ def pop_loadout_lists(kind: "UnitKindSpec", data: MutableMapping[str, Any]) -> L
     return {link.write_field: data.pop(link.write_field, None) for link in kind.links()}
 
 
-def build_item_rows(kind: "UnitKindSpec", unit: RosterUnit, items_data: list[dict[str, Any]]) -> list[Any]:
-    """Join rows from a list of {id, cost} dicts; an item with one availability defaults to its cost."""
+def _companion_flags(items_data: list[dict[str, Any]], kept: Counter[int]) -> list[bool]:
+    """Each entry's companion switch: as sent, else carried over from the rows the list replaces. `kept` counts the
+    unit's switched-on rows per item before the write; an item's entries that don't say take them in list order
+    (after any sent switched on), so a full-list PATCH from a client that doesn't send the flag keeps every mount."""
+    left = kept - Counter(entry["id"] for entry in items_data if entry.get("companion"))
+    flags = []
+    for entry in items_data:
+        if "companion" in entry:
+            flags.append(bool(entry["companion"]))
+            continue
+        flags.append(left[entry["id"]] > 0)
+        left[entry["id"]] -= 1
+    return flags
+
+
+def build_item_rows(
+    kind: "UnitKindSpec", unit: RosterUnit, items_data: list[dict[str, Any]], kept: Counter[int] | None = None
+) -> list[Any]:
+    """Join rows from a list of {id, cost, companion?} dicts; an item with one availability defaults to its cost."""
     item_ids = [entry["id"] for entry in items_data]
     items_by_id = {item.id: item for item in Item.objects.filter(id__in=item_ids).prefetch_related("availabilities")}
     rows = []
-    for entry in items_data:
+    for entry, companion in zip(items_data, _companion_flags(items_data, kept or Counter()), strict=True):
         item = items_by_id.get(entry["id"])
         if item is None:
             continue
-        kwargs: dict[str, Any] = {kind.parent_field: unit, "item": item}
+        kwargs: dict[str, Any] = {kind.parent_field: unit, "item": item, "companion": companion}
         cost = entry.get("cost")
         if cost is None:
             availabilities = list(item.availabilities.all())
@@ -75,17 +94,20 @@ def _catalogue_rows(kind: "UnitKindSpec", link: "LinkSpec", unit: RosterUnit, id
 
 
 def replace_loadout(kind: "UnitKindSpec", unit: RosterUnit, lists: Mapping[str, Any], *, fresh: bool = False) -> None:
-    """Replace every list the write sent; `fresh` skips the delete for a unit created in this write."""
+    """Replace every list the write sent; `fresh` skips the delete for a unit created in this write. The items list
+    keeps the unit's companions (`_companion_flags`): one more query, to read them before the delete."""
     for link in kind.links():
         values = lists.get(link.write_field)
         if values is None:
             continue
-        if not fresh:
-            getattr(unit, link.relation).all().delete()
+        relation = getattr(unit, link.relation)
         if link is kind.items:
-            rows = build_item_rows(kind, unit, values)
+            kept = Counter() if fresh else Counter(relation.filter(companion=True).values_list("item_id", flat=True))
+            rows = build_item_rows(kind, unit, values, kept)
         else:
             rows = _catalogue_rows(kind, link, unit, values)
+        if not fresh:
+            relation.all().delete()
         link.model._default_manager.bulk_create(rows)
 
 

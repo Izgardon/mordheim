@@ -5,6 +5,7 @@ from rest_framework import serializers
 from apps.warbands.models import Hero
 from apps.warbands.units.kinds import HERO
 from apps.warbands.units.serializers import (
+    COMPANION_FIELDS,
     STAT_FIELDS,
     UnitDetailSerializer,
     UnitSummarySerializer,
@@ -54,6 +55,7 @@ class HeroSummarySerializer(UnitSummarySerializer):
             "trading_action",
             "available_skills",
             *STAT_FIELDS,
+            *COMPANION_FIELDS,
             "items",
             "skills",
             "specials",
@@ -87,6 +89,7 @@ class HeroDetailSerializer(UnitDetailSerializer):
             "dead",
             "available_skills",
             *STAT_FIELDS,
+            *COMPANION_FIELDS,
             "items",
             "skills",
             "specials",

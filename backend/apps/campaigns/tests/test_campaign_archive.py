@@ -179,7 +179,7 @@ class ArchivedEverywhereTests(ArchiveTestCase):
             (self.player, "post", "/api/skills/", {"campaign_id": campaign, "name": "Dodge", "type": "Speed"}),
             (self.owner, "patch", f"/api/items/{item.id}/", {"name": "Charm"}),
             (self.owner, "delete", f"/api/items/{item.id}/", None),
-            (self.owner, "post", "/api/bestiary/", {"campaign_id": campaign, "name": "Rat Ogre", "type": "Monster"}),
+            (self.owner, "post", "/api/bestiary/", {"campaign_id": campaign, "name": "Rat Ogre", "kind": "creature"}),
             (self.owner, "post", "/api/races/", {"campaign_id": campaign, "name": "Ogre"}),
         )
         for user, method, url, body in writes:

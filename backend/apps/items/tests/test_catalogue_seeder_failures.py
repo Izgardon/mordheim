@@ -41,7 +41,7 @@ class SeederFailureTests(SeederTestCase):
         partial = {key: value for key, value in STATS.items() if key not in ("strength", "leadership")}
         cases = [
             ("seed_races", {"json_path"}, [{"name": "Gnome", **partial}], "Race 'Gnome'"),
-            ("seed_bestiary", {"json_paths"}, [{"name": "Boar", "type": "Animal", **partial}], "Bestiary entry 'Boar'"),
+            ("seed_bestiary", {"json_paths"}, [{"name": "Boar", "kind": "mount", **partial}], "Bestiary entry 'Boar'"),
         ]
         for command, (option,), rows, label in cases:
             with self.subTest(command=command), data_file(rows) as path:

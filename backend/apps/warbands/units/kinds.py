@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from typing import Any, Literal
 
 from django.db import models
-from django.db.models import Prefetch, QuerySet
+from django.db.models import F, Prefetch, QuerySet
 
 from apps.warbands.models import (
     HenchmenGroup,
@@ -22,11 +22,11 @@ from apps.warbands.models import (
     HeroSkill,
     HeroSpecial,
     HeroSpell,
-    HiredSword,
-    HiredSwordItem,
-    HiredSwordSkill,
-    HiredSwordSpecial,
-    HiredSwordSpell,
+    Hireling,
+    HirelingItem,
+    HirelingSkill,
+    HirelingSpecial,
+    HirelingSpell,
     LedgerAction,
     RosterUnit,
     Warband,
@@ -44,7 +44,7 @@ from apps.warbands.utils.hero_level import count_new_level_ups
 
 from .hooks import HenchmenHooks, LeaderHooks, UnitHooks
 
-UnitKindKey = Literal["hero", "henchmen_group", "hired_sword"]  # also the item-transfer source/target types
+UnitKindKey = Literal["hero", "henchmen_group", "hireling"]  # also the item-transfer source/target types
 
 # Level-up advance code -> stat field.
 STAT_FIELD_BY_ADVANCE: Mapping[str, str] = {
@@ -128,6 +128,8 @@ class UnitKindSpec:
     cap: CapSpec | None
     unknown_name: str  # the dismiss and loadout logs' fallback for a unit without a name
     unknown_type: str  # the dismiss log's fallback for a unit without a type
+    hired_from_catalogue: bool = False  # hirelings: `hire/` copies a hired sword or dramatis persona onto the warband
+    row_annotations: Mapping[str, Any] = field(default_factory=dict)  # read with each unit's row for its payloads
     hooks: UnitHooks = field(default_factory=UnitHooks)  # differences that are behaviour (units/hooks.py)
 
     def links(self) -> tuple[LinkSpec, ...]:
@@ -158,7 +160,7 @@ class UnitKindSpec:
             prefetch += item_detail_prefetches(f"{self.items.relation}__item__")
         if self.has_members and living_members:
             prefetch.append(alive_henchmen_prefetch())
-        loaded: QuerySet[Any] = units.annotate(**entries).prefetch_related(*prefetch)
+        loaded: QuerySet[Any] = units.annotate(**entries, **self.row_annotations).prefetch_related(*prefetch)
         return loaded
 
     def roster(self, warband: Warband, *, detail: bool) -> QuerySet[Any]:
@@ -171,9 +173,15 @@ class UnitKindSpec:
         return self.with_loadout(self.objects.select_related("race"), detail=True)
 
 
-def _counted_hired_swords(units: QuerySet[Any]) -> QuerySet[Any]:
-    """Blood-pacted hired swords don't count towards the hired-sword cap, nor do dead or dismissed ones."""
-    return on_roster(units).filter(blood_pacted=False)
+def _counted_hirelings(units: QuerySet[Any]) -> QuerySet[Any]:
+    """The hired swords the cap counts: not blood-pacted, not dead or dismissed. A dramatis persona is outside it (one
+    of each, which the hire warns about)."""
+    return on_roster(units).filter(blood_pacted=False, kind="hired_sword")
+
+
+def _outside_the_cap(data: Mapping[str, Any]) -> bool:
+    """A new blood-pacted hired sword, or a dramatis persona, doesn't count towards the hired-sword cap."""
+    return bool(data.get("blood_pacted", False)) or data.get("kind") == "dramatis_persona"
 
 
 HERO = UnitKindSpec(
@@ -228,42 +236,42 @@ HENCHMEN_GROUP = UnitKindSpec(
     unknown_name="Unknown",
     unknown_type="Unknown",
     hooks=HenchmenHooks(),
+    row_annotations={"beast_kind": F("source_beast__kind")},  # a group recruited from a creature: its kind
 )
 
-HIRED_SWORD = UnitKindSpec(
-    key="hired_sword",
-    url_segment="hired-swords",
-    url_kwarg="hired_sword_id",
-    collection="hired_swords",
-    model=HiredSword,
-    parent_field="hired_sword",
-    items=LinkSpec("hired_sword_items", HiredSwordItem, "item", "items"),
-    skills=LinkSpec("hired_sword_skills", HiredSwordSkill, "skill", "skill_ids", log_entry="hired_sword_skill"),
-    specials=LinkSpec(
-        "hired_sword_specials", HiredSwordSpecial, "special", "special_ids", log_entry="hired_sword_special"
-    ),
-    spells=LinkSpec("hired_sword_spells", HiredSwordSpell, "spell", "spell_ids", log_entry="hired_sword_spell"),
+HIRELING = UnitKindSpec(
+    key="hireling",
+    url_segment="hirelings",
+    url_kwarg="hireling_id",
+    collection="hirelings",
+    model=Hireling,
+    parent_field="hireling",
+    items=LinkSpec("hireling_items", HirelingItem, "item", "items"),
+    skills=LinkSpec("hireling_skills", HirelingSkill, "skill", "skill_ids", log_entry="hireling_skill"),
+    specials=LinkSpec("hireling_specials", HirelingSpecial, "special", "special_ids", log_entry="hireling_special"),
+    spells=LinkSpec("hireling_spells", HirelingSpell, "spell", "spell_ids", log_entry="hireling_spell"),
     has_members=False,
     thresholds_setting="hero_level_thresholds",  # hired swords advance like heroes (decision 8)
     count_level_ups=count_new_level_ups,
     has_no_level_ups=True,
     stat_advances=STAT_FIELD_BY_ADVANCE,
     placeholder_advances=True,
-    advance_log_type="hired_sword",
+    advance_log_type="hireling",
     caster_traits=True,
     can_lead=False,
-    recruit=RecruitSpec(LedgerAction.HIRE, "new_hired_sword", "remove_hired_sword"),
+    recruit=RecruitSpec(LedgerAction.HIRE, "new_hireling", "remove_hireling"),
     cap=CapSpec(
         "max_hired_swords",
         3,
         "hired swords",
         "hired_sword_cap_reached",
-        counted=_counted_hired_swords,
-        exempt=lambda data: bool(data.get("blood_pacted", False)),
+        counted=_counted_hirelings,
+        exempt=_outside_the_cap,
     ),
     unknown_name="Unknown Hired Sword",
     unknown_type="Unknown Type",
+    hired_from_catalogue=True,
 )
 
-KINDS: Mapping[UnitKindKey, UnitKindSpec] = {kind.key: kind for kind in (HERO, HENCHMEN_GROUP, HIRED_SWORD)}
+KINDS: Mapping[UnitKindKey, UnitKindSpec] = {kind.key: kind for kind in (HERO, HENCHMEN_GROUP, HIRELING)}
 KIND_BY_MODEL: Mapping[type[RosterUnit], UnitKindSpec] = {kind.model: kind for kind in KINDS.values()}

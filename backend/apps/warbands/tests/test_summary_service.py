@@ -7,7 +7,7 @@ from django.test.utils import CaptureQueriesContext
 
 from apps.campaigns.models import CampaignMembership, CampaignRole
 from apps.core.testing import ReferenceCampaign, build_reference_campaign
-from apps.warbands.models import Henchman, HenchmenGroup, Hero, HiredSword, LedgerAction, Warband
+from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling, LedgerAction, Warband
 from apps.warbands.services import ledger
 from apps.warbands.services.summary import load_warband_units, warband_gold
 
@@ -52,7 +52,7 @@ class WarbandSummaryServiceTests(TestCase):
                 Henchman(group=group, name="C", dead=True),
             ]
         )
-        HiredSword.objects.create(warband=self.warband, name="Ranger", rating=18, xp=Decimal("4"))
+        Hireling.objects.create(warband=self.warband, name="Ranger", rating=18, xp=Decimal("4"))
 
         units = load_warband_units([self.warband.id])[self.warband.id]
 

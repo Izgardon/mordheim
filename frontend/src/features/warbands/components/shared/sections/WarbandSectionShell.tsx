@@ -18,6 +18,8 @@ type WarbandSectionShellProps = {
   actionsClassName?: string;
   actionsHidden?: boolean;
   editLabel?: string;
+  /** Beside Edit, outside an edit (the hired swords' Hire). */
+  headerActions?: ReactNode;
   onEdit?: () => void;
   onCancel?: () => void;
   onSave?: () => void;
@@ -41,6 +43,7 @@ export default function WarbandSectionShell({
   actionsClassName,
   actionsHidden = false,
   editLabel,
+  headerActions,
   onEdit,
   onCancel,
   onSave,
@@ -97,6 +100,7 @@ export default function WarbandSectionShell({
             actionsHidden && "hidden"
           )}
         >
+          {!actionsHidden && !isEditing ? headerActions : null}
           {!actionsHidden && !isEditing && canEdit && onEdit ? (
             <>
               <Button

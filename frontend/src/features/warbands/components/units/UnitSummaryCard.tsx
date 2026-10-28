@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import UnitExpandedCard from "./UnitExpandedCard";
 import UnitListBlocks, { type PendingTab } from "./UnitListBlocks";
+import CompanionChips from "./beasts/CompanionChips";
 import ExperienceBar from "../shared/unit_details/ExperienceBar";
 import UnitStatsTable from "../shared/unit_details/UnitStatsTable";
 import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "../shared/unit_details/warband-tooltip-styles";
@@ -129,10 +130,18 @@ export default function UnitSummaryCard<K extends UnitKindKey>({
               canEdit={canEdit}
               onUnitUpdated={onUnitUpdated}
             />
+            <CompanionChips
+              kind={kind}
+              unit={unit}
+              warbandId={warbandId}
+              canManageItems={canManageItems}
+              className="px-4 pb-2"
+            />
           </div>
           <div style={cardPanelStyle}>
             <UnitStatsTable
               stats={toUnitStats(unit)}
+              mounted={unit.effective_stats}
               variant="summary"
               tooltipContentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
             />

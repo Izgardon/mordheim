@@ -55,7 +55,7 @@ def parse_action(text: str) -> ParsedAction | None:
 
 
 def normalise_legacy_rows() -> int:
-    """Rename and sign rows that carry a name outside the vocabulary, as migrations 0027 and 0030 did: signed by
+    """Rename and sign rows that carry a name outside the vocabulary, as the ledger's data migrations did: signed by
     the old gold rule, named by `parse_action`, free text kept in the description of an "Adjustment". Their
     gold doesn't change. Returns how many rows were rewritten."""
     with transaction.atomic():

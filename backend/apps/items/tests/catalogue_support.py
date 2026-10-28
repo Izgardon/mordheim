@@ -1,7 +1,7 @@
 """Shared fixtures for the catalogue characterisation tests (pass 5).
 
 The `test_catalogue_characterisation_*` modules lock in how the catalogue behaves today (the item, skill, spell,
-special, race, restriction, bestiary and hired-sword endpoints, the seeders, and how prices, pickers and trait
+special, race, restriction, bestiary, hired-sword and dramatis-persona endpoints, the seeders, and how prices, pickers and trait
 specials find a campaign's entries) before PR A fixes it, PR B moves it onto generic views and PR C adds versions.
 Known bugs are pinned with their BUGS.md ID and the comment "Characterises current behaviour (BUG-NN, pinned; flips
 in PR A)" (or the PR that changes it); a test written as the fixed behaviour is an `expectedFailure`.
@@ -16,9 +16,10 @@ from django.conf import settings
 from django.db.models import Model
 from django.test.utils import override_settings
 
-from apps.bestiary.models import BestiaryEntry, HiredSwordProfile
+from apps.bestiary.models import BestiaryEntry
 from apps.campaigns.models import Campaign, CampaignMembershipPermission
 from apps.campaigns.tests.campaign_support import CampaignTestCase
+from apps.hirelings.models import DramatisPersona, HiredSword
 from apps.items.models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemProperty, ItemPropertyLink
 from apps.races.models import Race
 from apps.restrictions.models import Restriction
@@ -113,21 +114,25 @@ BESTIARY = CatalogueKind(
     "bestiary",
     "bestiary",
     BestiaryEntry,
-    payload={"type": "Animal", **STATS},
+    payload={"kind": "creature", **STATS},
 )
 HIRED_SWORDS = CatalogueKind(
     "hired_swords",
     "hired-swords",
-    HiredSwordProfile,
-    name_path=("bestiary_entry", "name"),
+    HiredSword,
     payload={"hire_cost": 30, "upkeep_cost": 15, "rating": 12, **STATS},
 )
-KINDS = (ITEMS, SKILLS, SPELLS, SPECIALS, RACES, BESTIARY, HIRED_SWORDS)
+DRAMATIS_PERSONAE = CatalogueKind(
+    "dramatis_personae",
+    "dramatis-personae",
+    DramatisPersona,
+    payload={"hire_cost": 25, "stays": "one_battle", "payment_note": "25 gc or 1 shard", **STATS},
+)
+KINDS = (ITEMS, SKILLS, SPELLS, SPECIALS, RACES, BESTIARY, HIRED_SWORDS, DRAMATIS_PERSONAE)
 
 
-def make_entry(kind: CatalogueKind, name: str, campaign: Campaign | None = None, **fields: Any) -> Any:
-    """A catalogue row written directly (`campaign` None: a book row). For hired swords, the profile (its entry is
-    a "Hired Sword" bestiary entry of the same campaign)."""
+def make_entry(kind: CatalogueKind, name: str, /, campaign: Campaign | None = None, **fields: Any) -> Any:
+    """A catalogue row written directly (`campaign` None: a book row; a bestiary entry's `kind` is a field)."""
     if kind is ITEMS:
         values = {"type": "Weapon", "subtype": "Melee", **fields}
         cost = values.pop("cost", 5)
@@ -135,18 +140,34 @@ def make_entry(kind: CatalogueKind, name: str, campaign: Campaign | None = None,
         if cost is not None:
             ItemAvailability.objects.create(item=item, cost=cost, rarity=2)
         return item
-    if kind is HIRED_SWORDS:
-        hire_cost = fields.pop("hire_cost", 40)
-        entry = BestiaryEntry.objects.create(name=name, type="Hired Sword", campaign=campaign, **STATS, **fields)
-        return HiredSwordProfile.objects.create(bestiary_entry=entry, campaign=campaign, hire_cost=hire_cost)
     defaults: dict[str, dict[str, Any]] = {
         SKILLS.key: {"type": "Combat"},
         SPELLS.key: {"type": "Lesser Magic"},
         SPECIALS.key: {"type": "Ability"},
         RACES.key: dict(STATS),
-        BESTIARY.key: {"type": "Animal", **STATS},
+        BESTIARY.key: {"kind": "creature", **STATS},
+        HIRED_SWORDS.key: {"hire_cost": 40, **STATS},
+        DRAMATIS_PERSONAE.key: {"hire_cost": 25, **STATS},
     }
     return kind.model._default_manager.create(name=name, campaign=campaign, **{**defaults[kind.key], **fields})
+
+
+def make_beast(name: str, campaign: Campaign | None = None, cost: int | None = None, **fields: Any) -> BestiaryEntry:
+    """A bestiary entry with its Animal item, written directly as the seeder and the bestiary writes leave them: the
+    item in the beast's campaign, named after it, its subtype the kind's label, listed when the beast is sold, at
+    `cost` (no price when None)."""
+    beast: BestiaryEntry = make_entry(BESTIARY, name, campaign=campaign, **fields)
+    item = Item.objects.create(
+        name=name,
+        campaign=campaign,
+        type="Animal",
+        subtype=beast.get_kind_display(),
+        listed=beast.available_in_shop,
+        bestiary_entry=beast,
+    )
+    if cost is not None:
+        ItemAvailability.objects.create(item=item, cost=cost, rarity=2)
+    return beast
 
 
 class CatalogueTestCase(CampaignTestCase):
@@ -155,8 +176,8 @@ class CatalogueTestCase(CampaignTestCase):
 
     the Axe (Weapon, 5 gc), the Sword (Weapon, 10 gc) and Heavy Armour (Armour, 50 gc); "Infiltration" in the six
     book skill types; "Lifestealer" in two spell lores; the trait specials Large (Trait), Wizard and Priest (Caster);
-    the race Human; the restriction "Mercenaries"; the property Parry; the bestiary's Warhound (Animal); and the hired
-    sword Ogre Bodyguard (80 gc).
+    the race Human; the restriction "Mercenaries"; the property Parry; the bestiary's Warhound (a creature); the hired
+    sword Ogre Bodyguard (80 gc); and the dramatis persona Aenur (25 gc).
     """
 
     book_axe: Item
@@ -169,7 +190,8 @@ class CatalogueTestCase(CampaignTestCase):
     mercenaries: Restriction
     parry: ItemProperty
     warhound: BestiaryEntry
-    ogre: HiredSwordProfile
+    ogre: HiredSword
+    aenur: DramatisPersona
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -195,10 +217,11 @@ class CatalogueTestCase(CampaignTestCase):
         cls.human = make_entry(RACES, "Human")
         cls.warhound = make_entry(BESTIARY, "Warhound")
         cls.ogre = make_entry(HIRED_SWORDS, "Ogre Bodyguard", hire_cost=80)
+        cls.aenur = make_entry(DRAMATIS_PERSONAE, "Aenur")
 
     # Requests
 
-    def create_as(self, user: Any, kind: CatalogueKind, name: str, **overrides: Any) -> Any:
+    def create_as(self, user: Any, kind: CatalogueKind, name: str, /, **overrides: Any) -> Any:
         """POST a new `name` entry of `kind` into this campaign as `user`."""
         return self.post_as(user, kind.list_url(), kind.body(name, self.campaign, **overrides))
 

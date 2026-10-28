@@ -9,14 +9,26 @@ from rest_framework.response import Response
 
 from apps.warbands.models import not_dismissed
 from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandSummarySerializer
+from apps.warbands.serializers.beasts import BackToItemSerializer
 from apps.warbands.views.base import WarbandScopedView
+from apps.warbands.views.beasts import back_to_item_answer
 
 from .errors import validation_error
 from .kinds import HERO, UnitKindSpec
-from .serializers import HenchmanPromoteSerializer, UnitBatchSerializer, UnitLevelUpSerializer, UnitSerializers
+from .serializers import (
+    CompanionSwitchSerializer,
+    HenchmanPromoteSerializer,
+    HireSerializer,
+    UnitBatchSerializer,
+    UnitLevelUpSerializer,
+    UnitSerializers,
+)
+from .services.back_to_item import back_to_item
 from .services.batch import apply_batch, plan_batch
+from .services.companions import loaded_unit_warnings, switch_companion
 from .services.create import create_unit
 from .services.dismiss import dismiss_unit
+from .services.hire import catalogue_entry, hire, hire_payload
 from .services.kill_history import kill_history
 from .services.level_up import LevelUpRejected, apply_advance
 from .services.promote import promote_henchman
@@ -156,3 +168,58 @@ class UnitBatchView(UnitView):
             "warnings": warnings,
         }
         return Response(payload)
+
+
+# The bestiary rewrite: a hired sword or dramatis persona copied from the catalogue (hirelings only). No docstring:
+# DRF serves it on OPTIONS.
+class UnitHireView(UnitView):
+    def post(self, request: Request, warband_id: int) -> Response:
+        body = HireSerializer(data=request.data)
+        if not body.is_valid():
+            raise validation_error(body.errors)
+        source, campaign_id = body.validated_data["source"], self.warband.campaign_id
+        entry = catalogue_entry(source, body.validated_data["id"], campaign_id)
+        payload = hire_payload(source, entry, body.validated_data.get("name"))
+        writer = self.serializers.create(data=payload, context={"campaign_id": campaign_id})
+        writer.is_valid(raise_exception=True)
+        hired = hire(self.warband, writer, source, entry)
+        unit = self.kind.detail_queryset().get(id=hired.unit.pk)
+        return Response(
+            {**self.serializers.detail(unit).data, "warnings": hired.warnings}, status=status.HTTP_201_CREATED
+        )
+
+
+# The bestiary rewrite step 4: a mount or pet in the unit's items switched on or off for him (only the unit holding the
+# item). No docstring: DRF serves it on OPTIONS.
+class UnitItemCompanionView(UnitView):
+    def post(self, request: Request, warband_id: int, **kwargs: Any) -> Response:
+        unit = self.kind.visible(self.kind.objects.filter(id=self.unit_id(kwargs), warband=self.warband)).first()
+        if unit is None:
+            return Response(NOT_FOUND, status=404)
+        body = CompanionSwitchSerializer(data=request.data)
+        if not body.is_valid():
+            raise validation_error(body.errors)
+        switch_companion(self.kind, unit, int(kwargs["item_row_id"]), body.validated_data["on"])
+        self.announce_change()
+        loaded = self.kind.detail_queryset().get(id=unit.pk)
+        payload = {
+            "unit": self.serializers.detail(loaded).data,
+            "summary": WarbandSummarySerializer(self.warband).data,
+            "warnings": loaded_unit_warnings(self.kind, self.warband, loaded),
+        }
+        return Response(payload)
+
+
+# The bestiary rewrite step 4: members of a group recruited from a creature back to its item, in the stash (henchmen
+# groups only). No docstring: DRF serves it on OPTIONS.
+class UnitBackToItemView(UnitView):
+    def post(self, request: Request, warband_id: int, **kwargs: Any) -> Response:
+        group = self.kind.visible(self.kind.objects.filter(id=self.unit_id(kwargs), warband=self.warband)).first()
+        if group is None:
+            return Response(NOT_FOUND, status=404)
+        body = BackToItemSerializer(data=request.data)
+        if not body.is_valid():
+            raise validation_error(body.errors)
+        outcome = back_to_item(self.warband, group, body.validated_data)
+        self.announce_change()
+        return Response(back_to_item_answer(self.warband, outcome))

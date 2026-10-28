@@ -20,7 +20,7 @@ describe("prebattle-config", () => {
   it("starts with every unit selected when nothing was saved, keeping the server's hash", () => {
     const initial = initialPrebattleConfig(myParticipant({ selected_unit_keys_json: [] }), roster);
 
-    expect(initial.selectedKeys).toEqual(["hero:1", "hero:3", "hired_sword:4", "henchman:2"]);
+    expect(initial.selectedKeys).toEqual(["hero:1", "hero:3", "hireling:4", "henchman:2"]);
     expect(JSON.parse(initial.savedHash).selected_unit_keys_json).toEqual([]);
   });
 

@@ -1,8 +1,8 @@
 """The catalogue seeders on the committed data (pass 5; BUG-17, BUG-51, BUG-54, CAT-TEST-12, -13).
 
-`seed_all` runs `seed_races`, `seed_restrictions`, `seed_items`, `seed_skills`, `seed_spells_and_special`, then
-`seed_bestiary`, each upserting the book by name (and type) in its own transaction, and `seed_catalogue_if_empty`
-runs it on a wiped production database. It works on an empty database and again later, also once a campaign holds
+`seed_all` runs `seed_races`, `seed_restrictions`, `seed_items`, `seed_skills`, `seed_spells_and_special`,
+`seed_bestiary`, `seed_dramatis_personae`, then `seed_hired_swords`, each upserting the book by name (and type) in its
+own transaction, and `seed_catalogue_if_empty` runs it on a wiped production database. It works on an empty database and again later, also once a campaign holds
 an entry of a book entry's name and type (a custom override, a house-rule clone, and every version PR C's
 copy-on-write makes): the seeders read and write the book only (BUG-17). Small, file-driven seeder cases are in
 `test_catalogue_characterisation_seeders.py`.
@@ -18,8 +18,9 @@ from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
 from rest_framework.test import APIClient
 
-from apps.bestiary.models import BestiaryEntry, BestiaryEntryItem, HiredSwordProfile
+from apps.bestiary.models import BestiaryEntry
 from apps.campaigns.models import Campaign, CampaignHouseRule, CampaignType
+from apps.hirelings.models import DramatisPersona, HiredSword, HiredSwordItem, HiredSwordSkill
 from apps.items.models import Item, ItemAvailability, ItemProperty
 from apps.items.services import sync_half_price_armour_for_campaign
 from apps.races.models import Race
@@ -28,7 +29,7 @@ from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
 
-BOOK_MODELS = (Race, Restriction, Item, ItemProperty, Skill, Spell, Special, BestiaryEntry, HiredSwordProfile)
+BOOK_MODELS = (Race, Restriction, Item, ItemProperty, Skill, Spell, Special, BestiaryEntry, HiredSword, DramatisPersona)
 
 
 def seed_all() -> str:
@@ -65,13 +66,14 @@ class SeedAllTests(TestCase):
             {
                 "Race": 26,
                 "Restriction": 133,
-                "Item": 230,
+                "Item": 247,  # 216 + one Animal item per beast (the bestiary rewrite step 3)
                 "ItemProperty": 240,
                 "Skill": 252,
                 "Spell": 189,  # 183 + the Dark Mage's six (BUG-54)
                 "Special": 186,
-                "BestiaryEntry": 86,
-                "HiredSwordProfile": 72,
+                "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
+                "HiredSword": 72,
+                "DramatisPersona": 0,  # until they are scraped
             },
         )
         for model in BOOK_MODELS:
@@ -95,17 +97,14 @@ class SeedAllTests(TestCase):
         # every availability is deleted and written again under a new id (CAT-BUG-08's id churn)
         self.assertEqual(set(ItemAvailability.objects.values_list("id", flat=True)) & availabilities, set())
 
-    def test_the_seeded_bounty_hunter_details_cost_8_and_9_queries(self):
+    def test_the_seeded_bounty_hunter_detail_costs_9_queries(self):
         # PERF-46, CAT-TEST-08 (was pinned: 43 and 45, each of his 8 items read on its own; flipped in PR A)
         client = APIClient()
         client.force_authenticate(user=get_user_model().objects.create_user(username="reader@example.com"))
-        profile = HiredSwordProfile.objects.select_related("bestiary_entry").get(bestiary_entry__name="Bounty Hunter")
-        counts = []
-        for url in (f"/api/bestiary/{profile.bestiary_entry_id}/", f"/api/hired-swords/{profile.id}/"):
-            with CaptureQueriesContext(connection) as captured:
-                self.assertEqual(client.get(url).status_code, 200)
-            counts.append(len(captured))
-        self.assertEqual(counts, [8, 9])  # bestiary entry, hired sword: constant whatever the equipment
+        hunter = HiredSword.objects.get(name="Bounty Hunter", campaign__isnull=True)
+        with CaptureQueriesContext(connection) as captured:
+            self.assertEqual(client.get(f"/api/hired-swords/{hunter.id}/").status_code, 200)
+        self.assertEqual(len(captured), 9)  # constant whatever the equipment
 
     def test_every_seeded_link_resolves(self):
         # BUG-54, CAT-TEST-13 (was pinned: 16 links unresolved; flipped in PR A: prefixes stripped, apostrophes
@@ -119,17 +118,28 @@ class SeedAllTests(TestCase):
             ("Hobgoblin Scout", "Giant Wolf"),
             ("Priest of Morr", "Double-handed weapon"),
         }
-        equipped = set(BestiaryEntryItem.objects.values_list("bestiary_entry__name", "item__name"))
+        equipped = set(HiredSwordItem.objects.values_list("hired_sword__name", "item__name"))
         self.assertLessEqual(links, equipped)
-        ninja = set(BestiaryEntry.objects.get(name="Ninja").skills.values_list("name", flat=True))
+        ninja = set(HiredSwordSkill.objects.filter(hired_sword__name="Ninja").values_list("skill__name", flat=True))
         self.assertLessEqual({"Leap", "Lightning Reflexes"}, ninja)
-        knight = BestiaryEntry.objects.get(name="Knight of the White Wolf").skills.values_list("name", flat=True)
+        knight = HiredSwordSkill.objects.filter(hired_sword__name="Knight of the White Wolf").values_list("skill__name", flat=True)  # fmt: skip
         self.assertIn("Ride [Animal]", knight)
+
+    def test_the_ogre_keeps_both_swords_and_the_formulas_are_kept_beside_the_costs(self):
+        # the bestiary rewrite: the browser's hire copy dropped quantities and formulas; the catalogue keeps them
+        ogre = HiredSword.objects.get(name="Ogre Bodyguard")
+        ninja = HiredSword.objects.get(name="Ninja")
+        rat_ogre = HiredSword.objects.get(name="Clan Skryre Rat Ogre")
+
+        self.assertIn(("Sword", 2), set(ogre.item_links.values_list("item__name", "quantity")))
+        self.assertEqual((ninja.hire_cost, ninja.hire_cost_expression), (70, "70+3D6"))
+        self.assertEqual((rat_ogre.upkeep_cost, rat_ogre.upkeep_cost_expression), (None, "1 piece of Wyrdstone"))
+        self.assertEqual((ogre.race.name if ogre.race else None, ogre.race_label), ("Ogre", "Ogre"))
 
     def test_the_dark_mage_knows_his_six_spells(self):
         # BUG-54, CAT-TEST-13: the "1 - " to "6 - " prefixes kept his spells from matching; they are his own spells,
         # written as book spells of his type with the roll from the prefix and the difficulty from the text
-        spells = BestiaryEntry.objects.get(name="Dark Mage").spells.order_by("roll")
+        spells = Spell.objects.filter(hired_sword_spells__hired_sword__name="Dark Mage").order_by("roll")
 
         self.assertEqual(
             [(spell.roll, spell.name, spell.dc, spell.type) for spell in spells],

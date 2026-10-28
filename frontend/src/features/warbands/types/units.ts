@@ -12,15 +12,15 @@ import type {
   HeroFormEntry,
   NewHenchmenGroupForm,
   NewHeroForm,
-  NewHiredSwordForm,
-  HiredSwordFormEntry,
+  NewHirelingForm,
+  HirelingFormEntry,
   WarbandHero,
   WarbandHeroPayload,
-  WarbandHiredSword,
-  WarbandHiredSwordPayload,
+  WarbandHireling,
+  WarbandHirelingPayload,
 } from "./warband-types";
 
-export type UnitKindKey = "hero" | "henchmen_group" | "hired_sword";
+export type UnitKindKey = "hero" | "henchmen_group" | "hireling";
 
 type UnitShapes = {
   hero: {
@@ -35,11 +35,11 @@ type UnitShapes = {
     newForm: NewHenchmenGroupForm;
     payload: HenchmenGroupPayload;
   };
-  hired_sword: {
-    unit: WarbandHiredSword;
-    form: HiredSwordFormEntry;
-    newForm: NewHiredSwordForm;
-    payload: WarbandHiredSwordPayload;
+  hireling: {
+    unit: WarbandHireling;
+    form: HirelingFormEntry;
+    newForm: NewHirelingForm;
+    payload: WarbandHirelingPayload;
   };
 };
 
@@ -54,7 +54,7 @@ export type UnitNewForm<K extends UnitKindKey = UnitKindKey> = UnitShapes[K]["ne
 export type UnitSectionKey = Exclude<UnitTypeOption, "stash">;
 
 /** The kind's list in a warband update (`WarbandUpdate`). */
-export type UnitListKey = "heroes" | "henchmenGroups" | "hiredSwords";
+export type UnitListKey = "heroes" | "henchmenGroups" | "hirelings";
 
 /** The kind's list in the sheet payload (the server's `kind.collection`). */
-export type UnitCollectionKey = "heroes" | "henchmen_groups" | "hired_swords";
+export type UnitCollectionKey = "heroes" | "henchmen_groups" | "hirelings";

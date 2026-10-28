@@ -77,5 +77,5 @@ const henchmenAdvance: LogFormatter = (log) => {
 export const ADVANCE_FORMATTERS: Record<string, LogFormatter> = {
   "advance:hero": unitAdvance("Unknown Hero"),
   "advance:henchmen": henchmenAdvance,
-  "advance:hired_sword": unitAdvance("Unknown Hired Sword"),
+  "advance:hireling": unitAdvance("Unknown Hired Sword"),
 };

@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-import scull2Icon from "@/assets/icons/Scull2.webp";
-
 import type { BattleUnitInformationEntry } from "@/features/battles/types/battle-types";
 import {
   type PrebattleUnit,
@@ -13,8 +11,12 @@ import UnitStatsTable from "@/features/warbands/components/shared/unit_details/U
 import "@/features/warbands/styles/warband.css";
 import { getBattleCardThemeStyle } from "@/features/battles/components/shared/battle-card-theme";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { PetChips, RiderMark } from "@/features/battles/components/shared/BattleCompanionParts";
+import { mountedStats, onFoot } from "@/features/battles/utils/battle-companions";
 
+import ActiveDismountToggle from "./ActiveDismountToggle";
 import ActiveKillDialog from "./ActiveKillDialog";
+import ActiveOutOfActionOverlay from "./ActiveOutOfActionOverlay";
 import ActiveUnitExpandedDetails from "./ActiveUnitExpandedDetails";
 import ActiveUnitStatEditor from "./ActiveUnitStatEditor";
 import { ActiveUnitActions } from "./ActiveUnitControls";
@@ -30,6 +32,8 @@ type ActiveUnitCardProps = {
   canInteract: boolean;
   killTargetOptions: ActiveBattleUnitOption[];
   onSetOutOfAction: (unitKey: string, outOfAction: boolean) => Promise<void>;
+  /** A rider off his mount for the rest of the battle, or back on it (step 5). */
+  onSetDismounted?: (unitKey: string, dismounted: boolean) => Promise<void>;
   onAdjustWounds: (unit: PrebattleUnit, delta: number) => Promise<void>;
   /** Saves a battle stat change from the details' stat editor (BATL-NEW-07). */
   onSaveOverride: (unitKeys: string[], override: UnitOverride | undefined) => Promise<void>;
@@ -48,45 +52,13 @@ type ActiveUnitCardProps = {
   isSavingUnitConfig?: boolean;
 };
 
-/** The skull over a unit out of action; yours brings it back in action. */
-function OutOfActionOverlay({
-  name,
-  canInteract,
-  disabled,
-  onBackInAction,
-}: {
-  name: string;
-  canInteract: boolean;
-  disabled: boolean;
-  onBackInAction: () => void;
-}) {
-  return (
-    <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/65">
-      {canInteract ? (
-        <button
-          type="button"
-          className="icon-button flex h-14 w-14 items-center justify-center rounded-full border-none bg-transparent text-[#d6c8aa] shadow-none transition hover:bg-transparent hover:text-foreground"
-          onClick={onBackInAction}
-          disabled={disabled}
-          aria-label={`Set ${name} back in action`}
-        >
-          <img src={scull2Icon} alt="" className="h-10 w-10 object-contain" />
-        </button>
-      ) : (
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-transparent text-[#d6c8aa]">
-          <img src={scull2Icon} alt="" className="h-10 w-10 object-contain" />
-        </div>
-      )}
-    </div>
-  );
-}
-
 export default function ActiveUnitCard({
   unit,
   unitInformation,
   canInteract,
   killTargetOptions,
   onSetOutOfAction,
+  onSetDismounted,
   onAdjustWounds,
   onSaveOverride,
   onSaveUnitNotes,
@@ -103,6 +75,7 @@ export default function ActiveUnitCard({
   const [error, setError] = useState("");
 
   const outOfAction = Boolean(unitInformation?.out_of_action);
+  const dismounted = Boolean(unitInformation?.dismounted);
   const name = unit.displayName;
   const canAct = canInteract && !outOfAction && !isSavingUnitConfig;
 
@@ -140,11 +113,23 @@ export default function ActiveUnitCard({
         <div className="grid grid-cols-1 gap-2 md:grid-cols-[minmax(0,12rem)_1fr_auto] md:items-center md:gap-3">
           <div className="min-w-0">
             <div className="flex flex-wrap items-start justify-between gap-2 md:block">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-foreground">{name}</p>
+              <div className="min-w-0 space-y-1">
+                <div className="flex min-w-0 items-center gap-1.5">
+                  <RiderMark mount={unit.mount} dismounted={dismounted} />
+                  <p className="truncate text-sm font-semibold text-foreground">{name}</p>
+                </div>
                 <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
                   {unit.unitType}
                 </p>
+                <PetChips pets={unit.pets} />
+                <ActiveDismountToggle
+                  unitKey={unit.key}
+                  name={name}
+                  mount={unit.mount}
+                  dismounted={dismounted}
+                  editable={canAct}
+                  onSetDismounted={onSetDismounted}
+                />
               </div>
               <div className="ml-auto md:hidden">{actions}</div>
             </div>
@@ -153,6 +138,7 @@ export default function ActiveUnitCard({
           <div className="battle-stats-shell w-full md:max-w-[34rem] md:justify-self-start">
             <UnitStatsTable
               stats={getEffectiveUnitStats(unit, unitInformation)}
+              mounted={mountedStats(onFoot(unit, unitInformation), unitInformation?.stats_override)}
               variant="summary"
               wrapperClassName="w-full max-w-none"
             />
@@ -204,7 +190,7 @@ export default function ActiveUnitCard({
       ) : null}
 
       {outOfAction ? (
-        <OutOfActionOverlay
+        <ActiveOutOfActionOverlay
           name={name}
           canInteract={canInteract}
           disabled={isUpdatingOutOfAction}
@@ -217,8 +203,8 @@ export default function ActiveUnitCard({
         onOpenChange={setIsKillDialogOpen}
         killerName={name}
         killerUnitKey={unit.key}
-        showEarnedXpOption={unit.kind !== "custom"}
-        defaultEarnedXp={unit.kind !== "henchman"}
+        showEarnedXpOption={unit.kind !== "custom" && unit.kind !== "pet"}
+        defaultEarnedXp={unit.kind !== "henchman" && unit.kind !== "pet"}
         options={killTargetOptions}
         onConfirm={({ victimUnitKey, victimName, notes, earnedXp }) =>
           onRecordKill({ killerUnitKey: unit.key, victimUnitKey, victimName, notes, earnedXp })

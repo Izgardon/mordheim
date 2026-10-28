@@ -17,13 +17,13 @@ import { ANY_COST, pickedCost } from "../../../utils/stash-costs";
 
 import type {
   WarbandHero,
-  WarbandHiredSword,
+  WarbandHireling,
   HenchmenGroup,
   StashCost,
 } from "@/features/warbands/types/warband-types";
 
 type UnitsByType = Partial<
-  Record<UnitTypeOption, (WarbandHero | WarbandHiredSword | HenchmenGroup)[]>
+  Record<UnitTypeOption, (WarbandHero | WarbandHireling | HenchmenGroup)[]>
 >;
 
 type ItemMoveDialogProps = {

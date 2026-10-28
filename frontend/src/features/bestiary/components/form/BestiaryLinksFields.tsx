@@ -28,6 +28,11 @@ function NewSpecialRule({ links }: { links: BestiaryLinks }) {
           rows={2}
           className={TEXTAREA_CLASS}
         />
+        {links.specialError ? (
+          <p role="alert" className="text-xs text-red-600">
+            {links.specialError}
+          </p>
+        ) : null}
         <div className="flex gap-2">
           <Button
             type="button"
@@ -94,7 +99,7 @@ export default function BestiaryLinksFields({ links }: { links: BestiaryLinks })
           <input
             type="number"
             min={1}
-            max={99}
+            max={links.maxQuantity}
             value={(item as SelectedItem).quantity}
             onChange={(e) => links.setItemQuantity(item.id, Number(e.target.value) || 1)}
             onClick={(e) => e.stopPropagation()}

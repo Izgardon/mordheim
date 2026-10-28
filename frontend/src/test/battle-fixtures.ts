@@ -71,11 +71,11 @@ export const battleRosters = (): BattleRosterMap => ({
       }),
       rosterUnit({ key: "hero:3", id: 3, kind: "hero", displayName: "Rolf", unitType: "Champion" }),
     ],
-    hiredSwords: [
+    hirelings: [
       rosterUnit({
-        key: "hired_sword:4",
+        key: "hireling:4",
         id: 4,
-        kind: "hired_sword",
+        kind: "hireling",
         displayName: "Ogre Bodyguard",
         unitType: "Ogre",
         stats: stats({ wounds: 3 }),
@@ -110,12 +110,12 @@ export const battleRosters = (): BattleRosterMap => ({
         unitType: "Assassin",
       }),
     ],
-    hiredSwords: [],
+    hirelings: [],
     henchmenGroups: [],
   },
 });
 
-export const MY_UNIT_KEYS = ["hero:1", "hero:3", "henchman:2", "hired_sword:4"];
+export const MY_UNIT_KEYS = ["hero:1", "hero:3", "henchman:2", "hireling:4"];
 
 type ParticipantOptions = Partial<Omit<BattleParticipant, "unit_information_json">> & {
   unit_information_json?: Record<string, Partial<BattleUnitInformationEntry>>;
@@ -321,7 +321,7 @@ export const mySheet = (resources: { id: number; name: string; amount?: number }
   capabilities: {},
   heroes: [],
   henchmen_groups: [],
-  hired_swords: [],
+  hirelings: [],
 });
 
 /** A promise resolved from outside: holds a fake server's answer until the test releases it. */

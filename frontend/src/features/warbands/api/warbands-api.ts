@@ -5,4 +5,4 @@ export * from "./warbands-logs";
 export * from "./warbands-resources";
 export * from "./warbands-trades";
 export * from "./warbands-henchmen";
-export * from "./warbands-hiredswords";
+export * from "./warbands-hirelings";

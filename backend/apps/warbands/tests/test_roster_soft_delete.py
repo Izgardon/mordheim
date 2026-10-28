@@ -12,7 +12,7 @@ from apps.trades.services.errors import TradeError
 from apps.trades.services.offers import build_offer
 from apps.warbands.models import Henchman, Hero
 
-from .roster_support import HENCHMEN, HERO, HIRED_SWORD, KINDS, Kind, RosterTestCase, make_unit, unit_url
+from .roster_support import HENCHMEN, HERO, HIRELING, KINDS, Kind, RosterTestCase, make_unit, unit_url
 
 
 class DismissedUnitTests(RosterTestCase):
@@ -31,7 +31,7 @@ class DismissedUnitTests(RosterTestCase):
                     self.assertEqual([row["id"] for row in listed], [kept.id])
                 self.assertEqual(self.client.get(unit_url(kind, self.warband.id, gone.id)).status_code, 404)
                 sheet = self.client.get(f"/api/warbands/{self.warband.id}/sheet/").json()
-                collection = {HERO.key: "heroes", HENCHMEN.key: "henchmen_groups", HIRED_SWORD.key: "hired_swords"}
+                collection = {HERO.key: "heroes", HENCHMEN.key: "henchmen_groups", HIRELING.key: "hirelings"}
                 self.assertNotIn(gone.id, [row["id"] for row in sheet[collection[kind.key]]])
                 self.assertNotIn(gone.id, [row["id"] for row in sheet["summary"][collection[kind.key]]])
                 kind.model.objects.filter(id=kept.id).delete()
@@ -65,13 +65,13 @@ class DismissedUnitTests(RosterTestCase):
 
     def test_dismissed_units_and_members_still_count_in_top_killers(self):
         hero = make_unit(HERO, self.warband, name="Gone hero", kills=4)
-        sword = make_unit(HIRED_SWORD, self.warband, name="Gone sword", kills=3)
+        sword = make_unit(HIRELING, self.warband, name="Gone sword", kills=3)
         group = make_unit(HENCHMEN, self.warband, members=())
         Henchman.objects.create(group=group, name="Gone group member", kills=2)
         kept = make_unit(HENCHMEN, self.warband, members=())
         Henchman.objects.create(group=kept, name="Stays", kills=0)
         left_out = Henchman.objects.create(group=kept, name="Left out", kills=1)
-        for kind, unit in ((HERO, hero), (HIRED_SWORD, sword), (HENCHMEN, group)):
+        for kind, unit in ((HERO, hero), (HIRELING, sword), (HENCHMEN, group)):
             self._dismiss(kind, unit)
         stays = kept.henchmen.get(name="Stays")
         self.client.patch(unit_url(HENCHMEN, self.warband.id, kept.id), {"henchmen": [{"id": stays.id}]}, format="json")
@@ -94,7 +94,7 @@ class DismissedUnitTests(RosterTestCase):
         self.campaign_settings.max_heroes = 1
         self.campaign_settings.max_hired_swords = 1
         self.campaign_settings.save()
-        for kind in (HERO, HIRED_SWORD):
+        for kind in (HERO, HIRELING):
             with self.subTest(kind=kind.key):
                 self._dismiss(kind, make_unit(kind, self.warband))
                 payload = {"name": "Replacement", "unit_type": "Trooper"}
@@ -121,10 +121,10 @@ class DismissedUnitTests(RosterTestCase):
         group = make_unit(HENCHMEN, self.warband, members=("Alpha", "Beta"))
         alpha = group.henchmen.get(name="Alpha")
         gone_group = make_unit(HENCHMEN, self.warband, members=("Gamma",))
-        gone_sword = make_unit(HIRED_SWORD, self.warband)
+        gone_sword = make_unit(HIRELING, self.warband)
         self._dismiss(HERO, gone_hero)
         self._dismiss(HENCHMEN, gone_group)
-        self._dismiss(HIRED_SWORD, gone_sword)
+        self._dismiss(HIRELING, gone_sword)
         self.client.patch(
             unit_url(HENCHMEN, self.warband.id, group.id), {"henchmen": [{"id": alpha.id}]}, format="json"
         )
@@ -134,7 +134,7 @@ class DismissedUnitTests(RosterTestCase):
         roster = battle_rosters_payload(battle.id)[str(self.player.id)]
 
         self.assertEqual([entry["id"] for entry in roster["heroes"]], [hero.id])
-        self.assertEqual(roster["hiredSwords"], [])
+        self.assertEqual(roster["hirelings"], [])
         self.assertEqual([entry["id"] for entry in roster["henchmenGroups"]], [group.id])
         self.assertEqual([member["id"] for member in roster["henchmenGroups"][0]["members"]], [alpha.id])
         with self.assertRaisesMessage(TradeError, "Trader not found."):

@@ -4,6 +4,7 @@ import { recordUnitKill } from "@/features/battles/api/battles-api";
 import { buildBattleUnitOptions } from "@/features/battles/components/active/active-utils";
 import { seriousInjuryRoll } from "@/features/battles/components/postbattle/postbattle-rules";
 import {
+  setMountSurvival,
   setPostbattlePayUpkeep,
   updateGroupXp,
   updatePostbattleUpkeepEntry,
@@ -21,7 +22,8 @@ type KillInput = { victimUnitKey?: string; victimName?: string; notes?: string; 
 
 /**
  * What a postbattle row changes: XP, the Dead tick, serious-injury rolls and their Apply tick,
- * kept stat changes, kills, and the hired swords' upkeep. Draft edits save through `persistDraft`.
+ * kept stat changes, kills, the hired swords' upkeep and the mounts' rolls (step 5). Draft edits
+ * save through `persistDraft`.
  */
 export function usePostbattleUnitActions({
   campaignId,
@@ -70,7 +72,7 @@ export function usePostbattleUnitActions({
         setDraftError("Unable to read serious injury roll.");
         return;
       }
-      const roll = seriousInjuryRoll(rollTarget.unitKind, values, rules);
+      const roll = seriousInjuryRoll(rollTarget.injuryTable, values, rules);
       setIsInjuryRolling(false);
       setRollTarget(null);
       await persistDraft(
@@ -154,6 +156,15 @@ export function usePostbattleUnitActions({
     [draft, persistDraft]
   );
 
+  // A rider's mount roll and its result, the player's to change (step 5).
+  const changeMountSurvival = useCallback(
+    (unitKey: string, value: { roll: number | null; dead: boolean }) => {
+      if (!draft) return;
+      void persistDraft(setMountSurvival(draft, unitKey, value));
+    },
+    [draft, persistDraft]
+  );
+
   // Kills are the kill events that still count, the number finalise applies (BUG-11): Plus records
   // one more (source postbattle), Minus undoes the latest. The draft's kill_count is ignored.
   const killTargetOptions = useMemo(
@@ -192,6 +203,7 @@ export function usePostbattleUnitActions({
     commitGroupXp,
     commitUpkeepCost,
     togglePayUpkeep,
+    changeMountSurvival,
     killTargetOptions,
     addKill,
     undoKill,

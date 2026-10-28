@@ -5,6 +5,7 @@ import greedIcon from "@/assets/icons/greed.webp";
 import ratingIcon from "@/assets/icons/Menu.webp";
 import { ChestClosedIcon, ChestOpenIcon } from "./chest-icons";
 import GoldLabel from "./GoldLabel";
+import RatingLabel from "./RatingLabel";
 import WarbandRecordIndicator from "./WarbandRecordIndicator";
 
 import { Tooltip } from "@components/tooltip";
@@ -25,7 +26,7 @@ import type {
   HenchmenGroup,
   Warband,
   WarbandHero,
-  WarbandHiredSword,
+  WarbandHireling,
 } from "../../types/warband-types";
 
 type WarbandMobileMetaBarProps = {
@@ -33,8 +34,10 @@ type WarbandMobileMetaBarProps = {
   /** Gold the open edit session will spend on Save (queued recruits and purchases). */
   pendingGold?: number;
   warbandRating: number;
+  /** A section has unsaved changes, which the server's rating counts only once saved. */
+  ratingUnsaved?: boolean;
   heroes: WarbandHero[];
-  hiredSwords: WarbandHiredSword[];
+  hirelings: WarbandHireling[];
   henchmenGroups: HenchmenGroup[];
   /** The sheet's `manage_items` capability: the stash's item menus. */
   canManageItems: boolean;
@@ -49,8 +52,9 @@ export default function WarbandMobileMetaBar({
   warband,
   pendingGold = 0,
   warbandRating,
+  ratingUnsaved = false,
   heroes,
-  hiredSwords,
+  hirelings,
   henchmenGroups,
   canManageItems,
   canInitiateTrade,
@@ -85,7 +89,7 @@ export default function WarbandMobileMetaBar({
             aria-label="Warband rating breakdown"
           >
             <img src={ratingIcon} alt="" className="h-4 w-4" />
-            <span>{warbandRating}</span>
+            <RatingLabel rating={warbandRating} unsaved={ratingUnsaved} />
           </button>
         </div>
         <div className="flex items-center gap-2">
@@ -156,8 +160,10 @@ export default function WarbandMobileMetaBar({
       <WarbandRatingDialog
         open={isRatingOpen}
         onOpenChange={setIsRatingOpen}
+        rating={warbandRating}
+        mountsRating={warband.mounts_rating}
         heroes={heroes}
-        hiredSwords={hiredSwords}
+        hirelings={hirelings}
         henchmenGroups={henchmenGroups}
       />
     </section>

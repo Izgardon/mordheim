@@ -9,7 +9,7 @@ vi.mock("@/lib/api-client", () => ({ apiRequest: mocks.apiRequest }));
 describe.each([
   ["hero", "heroes"],
   ["henchmen_group", "henchmen-groups"],
-  ["hired_sword", "hired-swords"],
+  ["hireling", "hirelings"],
 ] as const)("unitApi(%s)", (kind, segment) => {
   const base = `/warbands/9/${segment}/`;
 

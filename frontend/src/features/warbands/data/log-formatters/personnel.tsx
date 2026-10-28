@@ -46,7 +46,7 @@ const statsKept: LogFormatter = (log) => {
   }.`;
 };
 
-type HiredSwordPersonnelPayload = { name?: string; type?: string };
+type HirelingPersonnelPayload = { name?: string; type?: string };
 
 const seriousInjury: LogFormatter = (log) => {
   const payload = payloadOf<SeriousInjuryPayload>(log);
@@ -80,18 +80,23 @@ const seriousInjury: LogFormatter = (log) => {
   );
 };
 
-/** "Hired …" / "Dismissed …" for a hired sword joining or leaving. */
-const hiredSwordMove =
+/**
+ * "Hired Grukk the Ogre Bodyguard" / "Dismissed …" for a hired sword joining or leaving; one named
+ * for his type (a hire keeping the default name) is named once: "Hired Old Prospector".
+ */
+const hirelingMove =
   (verb: string): LogFormatter =>
   (log) => {
-    const payload = payloadOf<HiredSwordPersonnelPayload>(log);
-    return `${verb} ${payload.name || "Unknown"} the ${payload.type || "Hired Sword"}`;
+    const payload = payloadOf<HirelingPersonnelPayload>(log);
+    const name = payload.name || "Unknown";
+    const type = payload.type || "Hired Sword";
+    return name === type ? `${verb} ${name}` : `${verb} ${name} the ${type}`;
   };
 
 /** Injuries, and hired swords joining or leaving (recruits use the templates). */
 export const PERSONNEL_FORMATTERS: Record<string, LogFormatter> = {
   "personnel:serious_injury": seriousInjury,
   "personnel:stats_kept": statsKept,
-  "personnel:new_hired_sword": hiredSwordMove("Hired"),
-  "personnel:remove_hired_sword": hiredSwordMove("Dismissed"),
+  "personnel:new_hireling": hirelingMove("Hired"),
+  "personnel:remove_hireling": hirelingMove("Dismissed"),
 };

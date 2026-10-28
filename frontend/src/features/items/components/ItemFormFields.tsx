@@ -11,7 +11,6 @@ import {
   fieldId,
   type FormLayout,
 } from "@/features/catalogue/components/form-layout";
-import { STAT_LABELS } from "@/features/catalogue/utils/statblock";
 
 import { hasSubtype } from "../utils/item-form-values";
 import ItemAvailabilityFields from "./ItemAvailabilityFields";
@@ -90,33 +89,6 @@ export default function ItemFormFields({ layout, form, idSuffix = "" }: ItemForm
       </>
     ) : null;
   const armour = values.type === "Armour" ? textField("save", "Save", "6+") : null;
-  const statblock =
-    values.type === "Animal" ? (
-      <CatalogueField layout={layout} label="Statblock">
-        <div className={`grid grid-cols-3 sm:grid-cols-9 ${isDialog ? "gap-3" : "gap-2"}`}>
-          {STAT_LABELS.map((label) => (
-            <div key={label} className={isDialog ? "space-y-1" : undefined}>
-              <Label
-                htmlFor={fieldId(layout, `item-stat${idSuffix}-${label}`)}
-                className={
-                  isDialog
-                    ? "text-xs uppercase tracking-[0.2em]"
-                    : "text-[10px] uppercase tracking-[0.2em]"
-                }
-              >
-                {label}
-              </Label>
-              <Input
-                id={fieldId(layout, `item-stat${idSuffix}-${label}`)}
-                value={values.statblock[label]}
-                onChange={(event) => form.setStat(label, event.target.value)}
-                className="h-9 px-2 text-center text-xs"
-              />
-            </div>
-          ))}
-        </div>
-      </CatalogueField>
-    ) : null;
   const singleUse =
     values.type === "Miscellaneous" ? (
       <div className={isDialog ? "flex items-center gap-2" : "flex items-end gap-2 pb-2"}>
@@ -170,7 +142,6 @@ export default function ItemFormFields({ layout, form, idSuffix = "" }: ItemForm
         {fluff}
         {weapon ? <div className="grid gap-4 sm:grid-cols-2">{weapon}</div> : null}
         {armour}
-        {statblock}
         {singleUse}
         {availabilities}
       </>
@@ -185,7 +156,6 @@ export default function ItemFormFields({ layout, form, idSuffix = "" }: ItemForm
         {weapon}
         {armour}
       </div>
-      {statblock}
       {availabilities}
       {singleUse}
       {properties}

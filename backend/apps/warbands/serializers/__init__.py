@@ -14,11 +14,11 @@ from .heroes import (
     HeroSummarySerializer,
     HeroUpdateSerializer,
 )
-from .hired_swords import (
-    HiredSwordCreateSerializer,
-    HiredSwordDetailSerializer,
-    HiredSwordSummarySerializer,
-    HiredSwordUpdateSerializer,
+from .hirelings import (
+    HirelingCreateSerializer,
+    HirelingDetailSerializer,
+    HirelingSummarySerializer,
+    HirelingUpdateSerializer,
 )
 from .ledger import (
     WarbandLogCreateSerializer,
@@ -50,10 +50,10 @@ __all__ = [
     "HenchmenGroupDetailSerializer",
     "HenchmenGroupSummarySerializer",
     "HenchmenGroupUpdateSerializer",
-    "HiredSwordCreateSerializer",
-    "HiredSwordDetailSerializer",
-    "HiredSwordSummarySerializer",
-    "HiredSwordUpdateSerializer",
+    "HirelingCreateSerializer",
+    "HirelingDetailSerializer",
+    "HirelingSummarySerializer",
+    "HirelingUpdateSerializer",
     "ItemSummarySerializer",
     "SpecialDetailSerializer",
     "SpellDetailSerializer",
@@ -84,7 +84,7 @@ UNIT_SERIALIZERS: dict[UnitKindKey, UnitSerializers] = {
         HenchmenGroupCreateSerializer,
         HenchmenGroupUpdateSerializer,
     ),
-    "hired_sword": UnitSerializers(
-        HiredSwordSummarySerializer, HiredSwordDetailSerializer, HiredSwordCreateSerializer, HiredSwordUpdateSerializer
+    "hireling": UnitSerializers(
+        HirelingSummarySerializer, HirelingDetailSerializer, HirelingCreateSerializer, HirelingUpdateSerializer
     ),
 }

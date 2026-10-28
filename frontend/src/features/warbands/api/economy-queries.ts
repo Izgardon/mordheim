@@ -143,7 +143,7 @@ export function useItemMove(warbandId: number) {
 const LIST_KEY_BY_SECTION: Partial<Record<string, UnitListKey>> = {
   heroes: "heroes",
   henchmen: "henchmenGroups",
-  hiredswords: "hiredSwords",
+  hirelings: "hirelings",
 };
 
 const isUnit = (entry: unknown): entry is WarbandUnitDetail =>

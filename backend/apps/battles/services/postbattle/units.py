@@ -15,7 +15,7 @@ from typing import Any
 from django.db.models import Model
 from django.utils import timezone
 
-from apps.warbands.models import HenchmenGroup, Hero, HeroSpecial, HiredSword
+from apps.warbands.models import HenchmenGroup, Hero, HeroSpecial, Hireling
 from apps.warbands.units.services.xp import XP_FIELDS, apply_xp_gain
 from apps.warbands.utils.leaders import choose_leader
 
@@ -36,6 +36,7 @@ class UnitOutcome:
     injury_logs: list[dict] = field(default_factory=list)
     stat_logs: list[dict] = field(default_factory=list)
     items_lost: list[dict | None] = field(default_factory=list)  # what each unit dying here takes with him
+    mounts_lost: list[dict] = field(default_factory=list)  # each mount that died after the battle (mounts.py)
 
 
 @dataclass
@@ -88,7 +89,7 @@ class UnitResults:
         self.henchmen = {key: member for key, member in results_henchmen.items() if member.group_id in context.groups}
 
     def apply(self, unit_results: dict[str, dict]) -> UnitOutcome:
-        handlers = {"hero": self._hero, "hired_sword": self._hired_sword, "henchman": self._henchman}
+        handlers = {"hero": self._hero, "hireling": self._hireling, "henchman": self._henchman}
         for unit_key, raw in unit_results.items():
             parsed = parse_unit_key(unit_key)
             handler = handlers.get(parsed["unit_type"])
@@ -118,7 +119,7 @@ class UnitResults:
     def _left(self, result: _Result) -> None:
         self.outcome.warnings.append(unit_left_warband(result.unit_key, result.name))
 
-    def _apply_to_unit(self, unit: Hero | HiredSword, result: _Result, xp: int) -> None:
+    def _apply_to_unit(self, unit: Hero | Hireling, result: _Result, xp: int) -> None:
         """Kept stats, injury effects, kills, XP and death for a hero or hired sword."""
         self.outcome.injury_logs.append(result.injury.log or {})
         fields = (
@@ -148,11 +149,11 @@ class UnitResults:
         ]
         return None
 
-    def _hired_sword(self, result: _Result) -> None:
-        hired_sword = self.context.hired_swords.get(result.unit_id)
-        if not hired_sword or hired_sword.dismissed_at is not None:
+    def _hireling(self, result: _Result) -> None:
+        hireling = self.context.hirelings.get(result.unit_id)
+        if not hireling or hireling.dismissed_at is not None:
             return self._left(result)
-        self._apply_to_unit(hired_sword, result, 0 if hired_sword.no_level_ups else result.xp)
+        self._apply_to_unit(hireling, result, 0 if hireling.no_level_ups else result.xp)
         return None
 
     def _keep_group_stats(self, group: HenchmenGroup, result: _Result) -> None:

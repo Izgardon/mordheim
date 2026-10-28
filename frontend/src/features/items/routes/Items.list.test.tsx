@@ -122,6 +122,17 @@ describe("Wargear: what a row says", () => {
     expect(row("Sword")).toHaveAttribute("aria-expanded", "false");
   });
 
+  it("lists a tab's items by name, the campaign's own among the book's, as the other catalogue pages do", async () => {
+    // Was the server's order: the campaign's rows (Custom, House rule) before the book's.
+    await openWargear();
+    const buttons = screen.getAllByRole("button");
+    const positions = ["Axe", "Blowpipe", "Rusty Cleaver", "Sword"].map((name) =>
+      buttons.indexOf(row(name))
+    );
+
+    expect(positions).toEqual([...positions].sort((a, b) => a - b));
+  });
+
   it("shows one row per availability on desktop, each with its restriction, rarer first", async () => {
     await openWargear();
 

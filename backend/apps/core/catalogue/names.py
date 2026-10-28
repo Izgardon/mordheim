@@ -2,9 +2,8 @@
 
 A name is taken when an entry of the kind already has it, compared trimmed and in any case, whatever its type: one
 of the campaign's (archived ones included, which Restore brings back) or one of the book's (removed for the campaign
-or not). Bestiary entries and hired swords share their names. A create of a taken name answers 400 `name_taken` with
-every match, so the page can offer "Edit this instead"; an edit may keep its own name, or take back the name of the
-book entry it replaces. Two creates of one exact name at once meet the database's constraint, which answers the same
+or not). A create of a taken name answers 400 `name_taken` with every match, so the page can offer "Edit this
+instead"; an edit may keep its own name, or take back the name of the book entry it replaces. Two creates of one exact name at once meet the database's constraint, which answers the same
 way (the 400 `duplicate_entry` of PR A is retired: every duplicate it caught is a taken name).
 """
 
@@ -17,8 +16,6 @@ from django.db.models.functions import Lower, Trim
 from apps.core.errors import ApiError
 from apps.core.models import CatalogueRemoval
 
-from .kinds import entry_kind
-
 if TYPE_CHECKING:
     from .kinds import CatalogueKindSpec
 
@@ -26,31 +23,26 @@ if TYPE_CHECKING:
 def matches(
     kind: "CatalogueKindSpec", campaign_id: int, name: str, allowed: Iterable[Any] = ()
 ) -> list[dict[str, Any]]:
-    """The book's and the campaign's entries of the kind named `name` (trimmed, any case), but `allowed` (entry-table
+    """The book's and the campaign's entries of the kind named `name` (trimmed, any case), but `allowed` (entry
     ids), as `{kind, id, name, type, source, archived}`: one query."""
-    owner = entry_kind(kind)
-    rows = owner.model._default_manager.annotate(folded=Lower(Trim("name"))).filter(
+    rows = kind.model._default_manager.annotate(folded=Lower(Trim("name"))).filter(
         Q(campaign__isnull=True) | Q(campaign_id=campaign_id), folded=name.strip().lower()
     )
-    if owner.excluded_types:
-        rows = rows.exclude(type__in=owner.excluded_types)
-    removed = CatalogueRemoval.objects.filter(campaign_id=campaign_id, kind=owner.key, entry_id=OuterRef("pk"))
+    if kind.excluded_types:
+        rows = rows.exclude(type__in=kind.excluded_types)
+    removed = CatalogueRemoval.objects.filter(campaign_id=campaign_id, kind=kind.key, entry_id=OuterRef("pk"))
     allowed = list(allowed)  # and the campaign's version of an allowed book entry
     rows = rows.exclude(pk__in=allowed).exclude(replaces_id__in=allowed).annotate(removed=Exists(removed))
-    has_type = any(field.name == "type" for field in owner.model._meta.fields)
+    has_type = any(field.name == "type" for field in kind.model._meta.fields)
     columns = ["id", "name", "campaign_id", "archived_at", "removed", *(["type"] if has_type else [])]
-    if owner.key == "bestiary":
-        rows = rows.annotate(profile_id=F("hired_sword_profile__id"))
-        columns.append("profile_id")
     found = rows.order_by(F("campaign_id").asc(nulls_last=True), "name", "id").values(*columns)
-    return [_match(owner.key, row) for row in found]
+    return [_match(kind.key, row) for row in found]
 
 
 def _match(key: str, row: dict[str, Any]) -> dict[str, Any]:
-    profile_id = row.get("profile_id")
     return {
-        "kind": "hired_swords" if profile_id else key,
-        "id": profile_id or row["id"],
+        "kind": key,
+        "id": row["id"],
         "name": row["name"],
         "type": row.get("type"),
         "source": "book" if row["campaign_id"] is None else "campaign",

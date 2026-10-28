@@ -7,8 +7,8 @@ an item's animal and favourites. A campaign entry that merely shares the name, o
 """
 
 from apps.bestiary.models import BestiaryEntry, WarbandBestiaryFavourite
-from apps.warbands.models import HiredSword, WarbandItem
-from apps.warbands.tests.roster_support import HERO, HIRED_SWORD, create_payload, make_unit, unit_url
+from apps.warbands.models import Hireling, WarbandItem
+from apps.warbands.tests.roster_support import HERO, HIRELING, create_payload, make_unit, unit_url
 
 from .catalogue_support import BESTIARY, ITEMS, RACES, SKILLS, SPECIALS, SPELLS, CatalogueTestCase, make_entry
 
@@ -25,7 +25,7 @@ class WriteResolutionTests(CatalogueTestCase):
 
     def test_a_hire_preset_of_book_ids_hires_with_the_campaigns_versions(self):
         payload = create_payload(
-            HIRED_SWORD,
+            HIRELING,
             race=self.human.id,
             skill_ids=[self.infiltration[2].id, self.skill.id],  # a stale list and a fresh one: the skill once
             special_ids=[self.large.id],
@@ -33,15 +33,15 @@ class WriteResolutionTests(CatalogueTestCase):
             items=[{"id": self.book_sword.id}],
         )
 
-        response = self.client.post(unit_url(HIRED_SWORD, self.warband.id), payload, format="json")
+        response = self.client.post(unit_url(HIRELING, self.warband.id), payload, format="json")
 
         self.assertEqual(response.status_code, 201, response.data)
-        unit = HiredSword.objects.get(id=response.data["id"])
+        unit = Hireling.objects.get(id=response.data["id"])
         self.assertEqual(unit.race_id, self.race.id)
-        self.assertEqual(list(unit.hired_sword_skills.values_list("skill_id", flat=True)), [self.skill.id])
-        self.assertEqual(list(unit.hired_sword_spells.values_list("spell_id", flat=True)), [self.spell.id])
-        self.assertIn(self.special.id, unit.hired_sword_specials.values_list("special_id", flat=True))
-        self.assertEqual(list(unit.hired_sword_items.values_list("item_id", "cost")), [(self.sword.id, 30)])
+        self.assertEqual(list(unit.hireling_skills.values_list("skill_id", flat=True)), [self.skill.id])
+        self.assertEqual(list(unit.hireling_spells.values_list("spell_id", flat=True)), [self.spell.id])
+        self.assertIn(self.special.id, unit.hireling_specials.values_list("special_id", flat=True))
+        self.assertEqual(list(unit.hireling_items.values_list("item_id", "cost")), [(self.sword.id, 30)])
 
     def test_a_full_list_patch_resending_book_ids_keeps_the_versions(self):
         hero = make_unit(HERO, self.warband)
@@ -84,14 +84,14 @@ class WriteResolutionTests(CatalogueTestCase):
             "Boar", self.campaign, skill_ids=[self.infiltration[2].id], item_entries=[self.book_sword.id]
         )
         entry = self.post_as(self.player, BESTIARY.list_url(), body)
-        animal = self.post_as(self.player, ITEMS.list_url(), ITEMS.body("Hound leash", self.campaign, type="Animal", bestiary_entry_id=self.warhound.id))  # fmt: skip
         favourite = self.post_as(self.player, f"/api/warbands/{self.warband.id}/bestiary-favourites/", {"bestiary_entry_id": self.warhound.id})  # fmt: skip
 
-        self.assertEqual((entry.status_code, animal.status_code, favourite.status_code), (201, 201, 201))
+        # an Animal item's beast is the bestiary's to write since the bestiary rewrite step 3: its item follows its
+        # versions (apps/bestiary/tests/test_bestiary_animal_item_versions.py)
+        self.assertEqual((entry.status_code, favourite.status_code), (201, 201))
         boar = BestiaryEntry.objects.get(id=entry.data["id"])
         self.assertEqual(list(boar.bestiary_entry_skills.values_list("skill_id", flat=True)), [self.skill.id])
         self.assertEqual(list(boar.bestiary_entry_items.values_list("item_id", flat=True)), [self.sword.id])
-        self.assertEqual(animal.data["bestiary_entry"]["id"], version_hound.id)
         self.assertEqual(list(WarbandBestiaryFavourite.objects.filter(warband=self.warband).values_list("bestiary_entry_id", flat=True)), [version_hound.id])  # fmt: skip
 
     def test_unfavouriting_by_the_book_id_removes_the_versions_favourite(self):

@@ -1,17 +1,11 @@
-from collections.abc import Mapping
 from typing import Any
 
 from rest_framework import serializers
 
-from apps.core.catalogue.scope import CatalogueIdsField, refuse_unknown
+from apps.core.catalogue.scope import CatalogueIdsField, EquipmentInputSerializer, current_equipment
 from apps.items.models import Item
-from apps.items.serializers import MAX_COST, ItemSerializer
-from apps.restrictions.models import Restriction
-from apps.restrictions.serializers import (
-    RestrictionNoteSerializer,
-    refuse_unknown_restrictions,
-    unique_restriction_notes,
-)
+from apps.items.serializers import AvailabilityInputSerializer, ItemAvailabilitySerializer, ItemSerializer
+from apps.restrictions.serializers import refuse_unknown_restrictions
 from apps.skills.models import Skill
 from apps.skills.serializers import SkillSerializer
 from apps.special.models import Special
@@ -19,7 +13,32 @@ from apps.special.serializers import SpecialSerializer
 from apps.spells.models import Spell
 from apps.spells.serializers import SpellSerializer
 
-from .models import BestiaryEntry, BestiaryEntryItem, HiredSwordProfile, HiredSwordProfileRestriction
+from .models import BestiaryEntry, BestiaryEntryItem
+
+BEAST_FIELDS = ("has_profile", "gains_xp", "rating_bonus", "available_in_shop")
+
+
+class AnimalItemSerializer(serializers.ModelSerializer):
+    """A beast's Animal item as the bestiary shows it: its id (what is bought, moved and traded), grade and prices."""
+
+    availabilities = ItemAvailabilitySerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Item
+        fields = ("id", "grade", "availabilities")
+
+
+class AnimalItemInputSerializer(serializers.Serializer):
+    """A bestiary write's `item`: the beast's item's grade and prices, each replacing the item's when sent. Prices
+    sent while the beast isn't sold are kept for when it is."""
+
+    grade = serializers.CharField(max_length=20, allow_blank=True, required=False)
+    availabilities = AvailabilityInputSerializer(many=True, required=False)
+
+    def validate_availabilities(self, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        links = [link for row in rows for link in row.get("restrictions", [])]
+        refuse_unknown_restrictions(links, self.context["campaign_id"])  # the book's or the campaign's (SEC-07)
+        return rows
 
 
 class BestiaryEntryItemSerializer(serializers.ModelSerializer):
@@ -36,6 +55,7 @@ class BestiaryEntrySerializer(serializers.ModelSerializer):
     specials = SpecialSerializer(many=True, read_only=True)
     spells = SpellSerializer(many=True, read_only=True)
     equipment = BestiaryEntryItemSerializer(source="bestiary_entry_items", many=True, read_only=True)
+    item = AnimalItemSerializer(source="animal_item", read_only=True)
 
     class Meta:
         model = BestiaryEntry
@@ -43,7 +63,7 @@ class BestiaryEntrySerializer(serializers.ModelSerializer):
             "id",
             "campaign_id",
             "name",
-            "type",
+            "kind",
             "description",
             "movement",
             "weapon_skill",
@@ -57,6 +77,8 @@ class BestiaryEntrySerializer(serializers.ModelSerializer):
             "armour_save",
             "large",
             "caster",
+            *BEAST_FIELDS,
+            "item",
             "skills",
             "specials",
             "spells",
@@ -66,6 +88,7 @@ class BestiaryEntrySerializer(serializers.ModelSerializer):
 
 class BestiaryEntrySummarySerializer(serializers.ModelSerializer):
     campaign_id = serializers.IntegerField(read_only=True)
+    item = AnimalItemSerializer(source="animal_item", read_only=True)
 
     class Meta:
         model = BestiaryEntry
@@ -73,7 +96,7 @@ class BestiaryEntrySummarySerializer(serializers.ModelSerializer):
             "id",
             "campaign_id",
             "name",
-            "type",
+            "kind",
             "description",
             "movement",
             "weapon_skill",
@@ -87,27 +110,18 @@ class BestiaryEntrySummarySerializer(serializers.ModelSerializer):
             "armour_save",
             "large",
             "caster",
+            *BEAST_FIELDS,
+            "item",
         )
 
 
 class BestiaryEntryBriefSerializer(BestiaryEntrySummarySerializer):
-    """A list row without its description, for `GET bestiary/?view=summary` (PERF-47): what pickers show."""
+    """A list row without its description and item, for `GET bestiary/?view=summary` (PERF-47): what pickers show."""
 
     class Meta(BestiaryEntrySummarySerializer.Meta):
-        fields = tuple(name for name in BestiaryEntrySummarySerializer.Meta.fields if name != "description")
-
-
-class EquipmentInputSerializer(serializers.Serializer):
-    """One item an entry carries: `{"item_id", "quantity"}`, or a bare item id (one of it)."""
-
-    item_id = serializers.IntegerField(min_value=1)
-    quantity = serializers.IntegerField(min_value=1, max_value=MAX_COST, default=1)
-
-    def to_internal_value(self, data: Any) -> Any:
-        return super().to_internal_value(data if isinstance(data, Mapping) else {"item_id": data})
-
-    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
-        return {"quantity": 1, **attrs}  # in a PATCH too, where DRF skips defaults
+        fields = tuple(
+            name for name in BestiaryEntrySummarySerializer.Meta.fields if name not in ("description", "item")
+        )
 
 
 class BestiaryEntryWriteSerializer(serializers.ModelSerializer):
@@ -118,13 +132,14 @@ class BestiaryEntryWriteSerializer(serializers.ModelSerializer):
     special_ids = CatalogueIdsField(rows=Special.objects.all(), required=False)
     spell_ids = CatalogueIdsField(rows=Spell.objects.all(), required=False)
     item_entries = EquipmentInputSerializer(many=True, required=False)
+    item = AnimalItemInputSerializer(required=False)
 
     class Meta:
         model = BestiaryEntry
         validators: list = []  # a taken name is the name rule's 400 name_taken (CAT-TWEAK-02), backed by the constraint
         fields: tuple[str, ...] = (
             "name",
-            "type",
+            "kind",
             "description",
             "movement",
             "weapon_skill",
@@ -138,6 +153,8 @@ class BestiaryEntryWriteSerializer(serializers.ModelSerializer):
             "armour_save",
             "large",
             "caster",
+            *BEAST_FIELDS,
+            "item",
             "skill_ids",
             "special_ids",
             "spell_ids",
@@ -146,108 +163,4 @@ class BestiaryEntryWriteSerializer(serializers.ModelSerializer):
 
     def validate_item_entries(self, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Each item once (an item listed twice: its first quantity), as the campaign's current item for it."""
-        first = {row["item_id"]: row for row in reversed(rows)}
-        current = refuse_unknown(Item.objects.all(), first, self.context["campaign_id"])
-        unique: dict[int, dict[str, Any]] = {}
-        for item_id in dict.fromkeys(row["item_id"] for row in rows):
-            unique.setdefault(current[item_id], {**first[item_id], "item_id": current[item_id]})
-        return list(unique.values())
-
-
-class HiredSwordWriteSerializer(BestiaryEntryWriteSerializer):
-    """A hired sword's create or edit: its entry, as above, and its profile (costs, grade, race, restrictions)."""
-
-    hire_cost = serializers.IntegerField(min_value=0, max_value=MAX_COST, allow_null=True, required=False)
-    hire_cost_expression = serializers.CharField(max_length=120, allow_blank=True, allow_null=True, required=False)
-    upkeep_cost = serializers.IntegerField(min_value=0, max_value=MAX_COST, allow_null=True, required=False)
-    upkeep_cost_expression = serializers.CharField(max_length=120, allow_blank=True, allow_null=True, required=False)
-    rating = serializers.IntegerField(min_value=0, max_value=MAX_COST, allow_null=True, required=False)
-    grade = serializers.CharField(max_length=20, allow_blank=True, required=False)
-    race = serializers.CharField(max_length=60, allow_blank=True, required=False)
-    available_skill_types = serializers.ListField(child=serializers.CharField(max_length=80), required=False)
-    restriction_ids = RestrictionNoteSerializer(many=True, required=False)
-
-    class Meta(BestiaryEntryWriteSerializer.Meta):
-        fields = (
-            *BestiaryEntryWriteSerializer.Meta.fields,
-            "hire_cost",
-            "hire_cost_expression",
-            "upkeep_cost",
-            "upkeep_cost_expression",
-            "rating",
-            "grade",
-            "race",
-            "available_skill_types",
-            "restriction_ids",
-        )
-        extra_kwargs = {"type": {"required": False}}  # a new hired sword's entry is a "Hired Sword"
-
-    def validate_hire_cost_expression(self, value: str | None) -> str:
-        return value or ""
-
-    def validate_upkeep_cost_expression(self, value: str | None) -> str:
-        return value or ""
-
-    def validate_restriction_ids(self, notes: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        refuse_unknown_restrictions(notes, self.context["campaign_id"])
-        return unique_restriction_notes(notes)
-
-
-class _HiredSwordRestrictionInlineSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Restriction
-        fields = ("id", "type", "restriction")
-
-
-class HiredSwordProfileRestrictionSerializer(serializers.ModelSerializer):
-    restriction = _HiredSwordRestrictionInlineSerializer(read_only=True)
-
-    class Meta:
-        model = HiredSwordProfileRestriction
-        fields = ("restriction", "additional_note")
-
-
-class HiredSwordProfileSummarySerializer(serializers.ModelSerializer):
-    bestiary_entry = BestiaryEntrySummarySerializer(read_only=True)
-    restrictions = HiredSwordProfileRestrictionSerializer(source="restriction_links", many=True, read_only=True)
-
-    class Meta:
-        model = HiredSwordProfile
-        fields = (
-            "id",
-            "campaign_id",
-            "campaign_type_id",  # CAT-NEW-04: always null today
-            "grade",
-            "race",
-            "hire_cost",
-            "hire_cost_expression",
-            "upkeep_cost",
-            "upkeep_cost_expression",
-            "rating",
-            "available_skill_types",
-            "restrictions",
-            "bestiary_entry",
-        )
-
-
-class HiredSwordProfileDetailSerializer(serializers.ModelSerializer):
-    bestiary_entry = BestiaryEntrySerializer(read_only=True)
-    restrictions = HiredSwordProfileRestrictionSerializer(source="restriction_links", many=True, read_only=True)
-
-    class Meta:
-        model = HiredSwordProfile
-        fields = (
-            "id",
-            "campaign_id",
-            "campaign_type_id",  # CAT-NEW-04: always null today
-            "grade",
-            "race",
-            "hire_cost",
-            "hire_cost_expression",
-            "upkeep_cost",
-            "upkeep_cost_expression",
-            "rating",
-            "available_skill_types",
-            "restrictions",
-            "bestiary_entry",
-        )
+        return current_equipment(rows, self.context["campaign_id"])

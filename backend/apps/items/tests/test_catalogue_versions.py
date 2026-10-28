@@ -12,12 +12,13 @@ from typing import Any
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
-from apps.bestiary.models import BestiaryEntry, BestiaryEntryItem, BestiaryEntrySkill, WarbandBestiaryFavourite
+from apps.bestiary.models import BestiaryEntryItem, BestiaryEntrySkill, WarbandBestiaryFavourite
 from apps.core.models import RevertedVersion
+from apps.hirelings.models import HiredSword
 from apps.items.models import Item
 from apps.skills.models import Skill
 from apps.warbands.models import Warband, WarbandItem
-from apps.warbands.tests.roster_support import HENCHMEN, HERO, HIRED_SWORD, make_unit
+from apps.warbands.tests.roster_support import HENCHMEN, HERO, HIRELING, make_unit
 
 from .catalogue_support import BESTIARY, HIRED_SWORDS, ITEMS, RACES, SKILLS, CatalogueTestCase, make_entry
 
@@ -27,7 +28,7 @@ class VersionTestCase(CatalogueTestCase):
         super().setUp()
         self.hero = make_unit(HERO, self.warband, name="Abbess")
         self.group = make_unit(HENCHMEN, self.rival_warband, name="Rats")
-        self.sword_unit = make_unit(HIRED_SWORD, self.rival_warband, name="Ogre")
+        self.sword_unit = make_unit(HIRELING, self.rival_warband, name="Ogre")
         self.beast = make_entry(BESTIARY, "War Boar", campaign=self.campaign)
         self.far = Warband.objects.create(campaign=self.elsewhere, user=self.outsider, name="Far", faction="Skaven")
 
@@ -41,7 +42,7 @@ class VersionTestCase(CatalogueTestCase):
         """Every kind of copy of the book Sword in this campaign, and one in another campaign's stash."""
         self.hero.hero_items.create(item=self.book_sword, cost=7)
         self.group.henchmen_group_items.create(item=self.book_sword, cost=10)
-        self.sword_unit.hired_sword_items.create(item=self.book_sword, cost=12)
+        self.sword_unit.hireling_items.create(item=self.book_sword, cost=12)
         WarbandItem.objects.create(warband=self.warband, item=self.book_sword, quantity=2, cost=10)
         BestiaryEntryItem.objects.create(bestiary_entry=self.beast, item=self.book_sword, quantity=2)
         WarbandItem.objects.create(warband=self.far, item=self.book_sword, quantity=1, cost=10)
@@ -51,7 +52,7 @@ class VersionTestCase(CatalogueTestCase):
         rows = [
             ("hero", *self.hero.hero_items.values_list("item_id", "cost").get()),
             ("henchmen", *self.group.henchmen_group_items.values_list("item_id", "cost").get()),
-            ("hired sword", *self.sword_unit.hired_sword_items.values_list("item_id", "cost").get()),
+            ("hired sword", *self.sword_unit.hireling_items.values_list("item_id", "cost").get()),
             (
                 "bestiary",
                 *BestiaryEntryItem.objects.filter(bestiary_entry=self.beast).values_list("item_id", "quantity").get(),
@@ -130,13 +131,12 @@ class FirstEditTests(VersionTestCase):
         self.assertEqual(list(WarbandBestiaryFavourite.objects.filter(warband=self.warband).values_list("bestiary_entry_id", flat=True)), [beast_version])  # fmt: skip
         self.assertEqual(Skill.objects.filter(name="Infiltration", campaign__isnull=True).count(), 6)
 
-    def test_a_hired_swords_version_is_a_copied_entry_with_a_copied_profile(self):
+    def test_a_hired_swords_version_is_a_copied_row_in_the_campaign(self):
         response = self.edit(HIRED_SWORDS, self.ogre.id, {"hire_cost": 95})
 
         self.assertEqual(response.status_code, 200, response.data)
-        entry = BestiaryEntry.objects.get(campaign=self.campaign, replaces=self.ogre.bestiary_entry)
-        self.assertEqual((response.data["id"], response.data["hire_cost"]), (entry.hired_sword_profile.id, 95))
-        self.assertEqual(entry.hired_sword_profile.campaign_id, self.campaign.id)
+        version = HiredSword.objects.get(campaign=self.campaign, replaces=self.ogre)
+        self.assertEqual((response.data["id"], response.data["hire_cost"], response.data["replaces"]), (version.id, 95, self.ogre.id))  # fmt: skip
         self.ogre.refresh_from_db()
         self.assertEqual(self.ogre.hire_cost, 80)
 
@@ -181,7 +181,7 @@ class RevertTests(VersionTestCase):
         self.assertEqual((again.status_code, again.json()["code"]), (409, "not_a_version"))
         self.assertEqual((not_one.status_code, not_one.json()["code"]), (409, "not_a_version"))
 
-    def test_a_hired_swords_revert_takes_its_copied_entry_and_profile(self):
+    def test_a_hired_swords_revert_deletes_its_version(self):
         version = self.edit(HIRED_SWORDS, self.ogre.id, {"hire_cost": 95}).data["id"]
 
         response = self.revert(HIRED_SWORDS, version)
@@ -189,7 +189,7 @@ class RevertTests(VersionTestCase):
         self.assertEqual(
             (response.status_code, response.data["id"], response.data["hire_cost"]), (200, self.ogre.id, 80)
         )
-        self.assertFalse(BestiaryEntry.objects.filter(campaign=self.campaign, replaces__isnull=False).exists())
+        self.assertFalse(HiredSword.objects.filter(campaign=self.campaign).exists())
 
 
 class VersionBudgetTests(VersionTestCase):
@@ -205,7 +205,7 @@ class VersionBudgetTests(VersionTestCase):
         for index in range(count):
             make_unit(HERO, self.warband, name=f"Hero {item.id} {index}").hero_items.create(item=item, cost=index)
             self.group.henchmen_group_items.create(item=item, cost=index)
-            self.sword_unit.hired_sword_items.create(item=item, cost=index)
+            self.sword_unit.hireling_items.create(item=item, cost=index)
             WarbandItem.objects.create(warband=self.warband, item=item, quantity=1, cost=index)
             BestiaryEntryItem.objects.create(bestiary_entry=make_entry(BESTIARY, f"Beast {item.id} {index}", campaign=self.campaign), item=item)  # fmt: skip
 

@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from apps.campaigns.errors import CampaignArchived
 from apps.campaigns.models import CampaignMembership
 from apps.campaigns.permissions import get_membership
+from apps.realtime.services import send_warband_changed, sender_socket_id
 from apps.warbands.access import WARBAND_RULES, warband_capabilities
 from apps.warbands.models import Warband
 
@@ -51,3 +52,8 @@ class WarbandScopedView(APIView):
 
     def capabilities(self) -> dict[str, bool]:
         return warband_capabilities(self.request.user, self.warband, self.membership)
+
+    def announce_change(self) -> None:
+        """`warband.changed` to the campaign's other members once the write commits, so their open page of this
+        warband reads it again (not to the writer's socket, which has the answer)."""
+        send_warband_changed(self.warband.campaign_id, self.warband.id, sender_socket_id(self.request))

@@ -8,7 +8,7 @@ import type { HenchmenGroup } from "@/features/warbands/types/warband-types";
 import type { DraftUnit, PurchaseTarget } from "../types/acquire-types";
 
 /** Who can receive an item, in the order the receiver picker offers them. */
-export const UNIT_TYPES: UnitTypeOption[] = ["heroes", "hiredswords", "henchmen", "stash"];
+export const UNIT_TYPES: UnitTypeOption[] = ["heroes", "hirelings", "henchmen", "stash"];
 
 /**
  * How many copies to suggest for a henchmen group: enough to reach the next multiple of the
@@ -56,9 +56,9 @@ export function usePurchaseTarget({
   const [selectedUnitId, setSelectedUnitId] = useState("");
   const [henchmenGroups, setHenchmenGroups] = useState<HenchmenGroup[]>([]);
   const heroes = warband?.heroes;
-  const hiredSwords = warband?.hired_swords;
+  const hirelings = warband?.hirelings;
   const heroUnits = useMemo(() => heroes ?? [], [heroes]);
-  const hiredSwordUnits = useMemo(() => hiredSwords ?? [], [hiredSwords]);
+  const hirelingUnits = useMemo(() => hirelings ?? [], [hirelings]);
 
   const resolvedUnitType = (selectedUnitType || presetUnitType || "") as UnitTypeOption | "";
   const resolvedUnitId =
@@ -101,7 +101,7 @@ export function usePurchaseTarget({
   const units = useMemo<UnitSelectEntry[]>(() => {
     const lists: Partial<Record<UnitTypeOption, UnitSelectEntry[]>> = {
       heroes: heroUnits,
-      hiredswords: hiredSwordUnits,
+      hirelings: hirelingUnits,
       henchmen: henchmenGroups,
     };
     const base = resolvedUnitType ? lists[resolvedUnitType] : undefined;
@@ -118,7 +118,7 @@ export function usePurchaseTarget({
           },
         ]
       : base;
-  }, [resolvedUnitType, draftUnit, heroUnits, hiredSwordUnits, henchmenGroups]);
+  }, [resolvedUnitType, draftUnit, heroUnits, hirelingUnits, henchmenGroups]);
 
   const selectedUnitLabel = useMemo(() => {
     if (!resolvedUnitType) {
@@ -145,10 +145,10 @@ export function usePurchaseTarget({
       return { target: { kind: "stash" } };
     }
     const unitId = Number(resolvedUnitId);
-    if (resolvedUnitType === "hiredswords") {
+    if (resolvedUnitType === "hirelings") {
       if (Number.isNaN(unitId)) return { error: "Select a saved hired sword." };
-      const unit = hiredSwordUnits.find((entry) => entry.id === unitId);
-      return unit ? { target: { kind: "hiredswords", unit } } : null;
+      const unit = hirelingUnits.find((entry) => entry.id === unitId);
+      return unit ? { target: { kind: "hirelings", unit } } : null;
     }
     if (resolvedUnitType === "henchmen") {
       if (Number.isNaN(unitId)) return { error: "Select a saved henchmen group." };
@@ -178,6 +178,8 @@ export function usePurchaseTarget({
     selectedUnitLabel,
     canProceed,
     suggestedQuantity,
+    /** The warband's henchmen groups as read on open (a creature's recruit options). */
+    henchmenGroups,
     resolve,
     reset,
   };

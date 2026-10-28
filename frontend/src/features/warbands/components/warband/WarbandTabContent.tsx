@@ -7,7 +7,7 @@ import type { WarbandRosterEditSection } from "../../hooks/warband/useWarbandMob
 import type {
   HenchmenGroup,
   WarbandHero,
-  WarbandHiredSword,
+  WarbandHireling,
   WarbandResource,
 } from "../../types/warband-types";
 
@@ -18,11 +18,11 @@ type WarbandTabContentProps = {
   editors: WarbandEditors;
   heroes: WarbandHero[];
   henchmenGroups: HenchmenGroup[];
-  hiredSwords: WarbandHiredSword[];
+  hirelings: WarbandHireling[];
   levelThresholds: {
     heroes?: readonly number[];
     henchmen?: readonly number[];
-    hiredswords?: readonly number[];
+    hirelings?: readonly number[];
   };
   availableGold: number;
   layoutVariant?: "default" | "mobile";
@@ -43,7 +43,7 @@ export default function WarbandTabContent({
   editors,
   heroes,
   henchmenGroups,
-  hiredSwords,
+  hirelings,
   levelThresholds,
   availableGold,
   layoutVariant = "default",
@@ -92,10 +92,10 @@ export default function WarbandTabContent({
       />
       <UnitSection
         {...shared}
-        editor={editors.hiredswords}
-        units={hiredSwords}
-        actionsHidden={sectionActionsHidden?.hiredswords ?? false}
-        levelThresholds={levelThresholds.hiredswords}
+        editor={editors.hirelings}
+        units={hirelings}
+        actionsHidden={sectionActionsHidden?.hirelings ?? false}
+        levelThresholds={levelThresholds.hirelings}
       />
     </>
   );

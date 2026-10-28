@@ -5,6 +5,7 @@ from rest_framework.response import Response
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..services.combat import record_item_use, record_kill, set_out_of_action
+from ..services.dismount import set_dismounted
 from ..services.errors import BattleError, battle_status_changed
 from ..services.item_use import check_payload_size
 from ..validation.coerce import coerce_bool
@@ -58,6 +59,27 @@ class CampaignBattleUnitOoaView(BattleWriteView):
         if not events:
             return Unchanged()
         return Written(events, changed=[scope.player.id], status=status.HTTP_201_CREATED)
+
+
+class CampaignBattleUnitDismountView(BattleWriteView):
+    """POST unit-dismount/ {unit_key, dismounted}: a rider off his mount for the rest of the battle, or back on it
+    (services/dismount.py); the other players see it through the broadcast."""
+
+    rules = CampaignBattleUnitOoaView.rules
+
+    def parse(self, request):
+        try:
+            unit = parse_unit_key(request.data.get("unit_key"))
+            dismounted = coerce_bool(request.data.get("dismounted"), field_name="dismounted")
+        except ValueError as exc:
+            return Response({"detail": str(exc)}, status=400)
+        return unit, dismounted
+
+    def act(self, scope: Scope):
+        unit, dismounted = self.input
+        if not set_dismounted(scope.player, unit, dismounted):
+            return Unchanged()
+        return Written([], changed=[scope.player.id], reason="unit_dismounted")
 
 
 def _text(data, field: str, limit: int) -> str:

@@ -10,7 +10,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import UnitSection from "./UnitSection";
 import { WarbandCatalogueProvider } from "./catalogue-context";
 import { useUnitSectionEditor } from "@/features/warbands/hooks/units/useUnitSectionEditor";
-import { hiredSwordKind } from "@/features/warbands/units/kinds/hired-sword";
+import { hirelingKind } from "@/features/warbands/units/kinds/hireling";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
 import {
@@ -19,10 +19,10 @@ import {
   makeSkill,
   makeSpecial,
   makeSpell,
-  makeVeteranHiredSword,
+  makeVeteranHireling,
 } from "@/test/warband-fixtures";
 
-import type { WarbandHiredSword } from "@/features/warbands/types/warband-types";
+import type { WarbandHireling } from "@/features/warbands/types/warband-types";
 
 const catalogue = vi.hoisted(() => ({
   listItems: vi.fn(),
@@ -66,9 +66,9 @@ vi.mock("@/features/races/api/races-api", async (importOriginal) => ({
   listRaces: catalogue.listRaces,
   createRace: catalogue.createRace,
 }));
-vi.mock("@/features/bestiary/api/bestiary-api", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("@/features/bestiary/api/bestiary-api")>()),
-  listHiredSwordProfiles: vi.fn(async () => []),
+vi.mock("@/features/hirelings/api/hireling-catalogue-api", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/features/hirelings/api/hireling-catalogue-api")>()),
+  listHirelingProfiles: vi.fn(async () => []),
 }));
 // Creating an item goes on to its buy dialog for that card, which isn't what this file tests.
 vi.mock("@/features/items/components/AcquireItemDialog/AcquireItemDialog", () => ({
@@ -84,22 +84,22 @@ vi.mock("@/features/campaigns/hooks/useCampaignStarted", () => ({
   useCampaignStarted: () => true,
 }));
 
-const first = makeVeteranHiredSword({ id: 31, name: "Brother Hal", caster: "Wizard" });
-const second = makeVeteranHiredSword({ id: 32, name: "Sister Ana", caster: "Wizard" });
+const first = makeVeteranHireling({ id: 31, name: "Brother Hal", caster: "Wizard" });
+const second = makeVeteranHireling({ id: 32, name: "Sister Ana", caster: "Wizard" });
 
 function Section({
-  hiredSwords,
+  hirelings,
   canAddCustom = true,
 }: {
-  hiredSwords: WarbandHiredSword[];
+  hirelings: WarbandHireling[];
   canAddCustom?: boolean;
 }) {
-  const [units, setUnits] = useState(hiredSwords);
-  const editor = useUnitSectionEditor(hiredSwordKind, {
+  const [units, setUnits] = useState(hirelings);
+  const editor = useUnitSectionEditor(hirelingKind, {
     warbandId: 9,
     units,
     canEdit: true,
-    roster: { maxHeroes: 6, maxHiredSwords: 3, heroCount: 0, hiredSwordCount: 0 },
+    roster: { maxHeroes: 6, maxHiredSwords: 3, heroCount: 0, hirelingCount: 0 },
     onUnitsChange: setUnits,
   });
   return (
@@ -115,7 +115,7 @@ type User = ReturnType<typeof setupUser>;
 const editCards = () => screen.getAllByRole("group", { name: /^Hired Sword \d+$/ });
 
 const startEditing = async (user: User, canAddCustom = true) => {
-  renderWithQueryClient(<Section hiredSwords={[first, second]} canAddCustom={canAddCustom} />);
+  renderWithQueryClient(<Section hirelings={[first, second]} canAddCustom={canAddCustom} />);
   await user.click(screen.getAllByRole("button", { name: "Edit Hired Swords" })[0]);
   await waitFor(() => expect(editCards()).toHaveLength(2));
   await waitFor(() => expect(screen.queryByText(/^Loading /)).not.toBeInTheDocument());
@@ -309,6 +309,27 @@ describe("catalogue entries created mid-edit (ROST-NEW-02)", () => {
 
     await openPicker(user, cardB, "Items", "+ Add item");
     expect(within(cardB).getByRole("button", { name: /Gutterblade/ })).toBeInTheDocument();
+  });
+});
+
+describe("the shop's items only (the bestiary rewrite, step 3)", () => {
+  it("leaves an unsold beast's item out of a card's item picker, and offers a sold one", async () => {
+    const user = setupUser();
+    const beast = (id: number, name: string, listed: boolean) =>
+      makeItem({ id, name, type: "Animal", subtype: "Mount", listed });
+    server.items = [
+      makeItem({ id: 101, name: "Sword" }),
+      beast(230, "Warhorse", true),
+      beast(270, "Wild Boar", false),
+    ];
+    await startEditing(user);
+    const [card] = editCards();
+
+    await openPicker(user, card, "Items", "+ Add item");
+
+    expect(await within(card).findByRole("button", { name: /Warhorse/ })).toBeInTheDocument();
+    expect(within(card).getByRole("button", { name: /Sword/ })).toBeInTheDocument();
+    expect(within(card).queryByRole("button", { name: /Wild Boar/ })).toBeNull();
   });
 });
 

@@ -6,12 +6,12 @@ from .henchmen import (
     HenchmenGroupSpecial,
 )
 from .heroes import Hero, HeroItem, HeroSkill, HeroSpecial, HeroSpell
-from .hired_swords import (
-    HiredSword,
-    HiredSwordItem,
-    HiredSwordSkill,
-    HiredSwordSpecial,
-    HiredSwordSpell,
+from .hirelings import (
+    Hireling,
+    HirelingItem,
+    HirelingSkill,
+    HirelingSpecial,
+    HirelingSpell,
 )
 from .shared import RosterUnit, not_dismissed, on_roster
 from .warband import LedgerAction, Warband, WarbandItem, WarbandLog, WarbandResource, WarbandTrade
@@ -36,9 +36,9 @@ __all__ = [
     "HenchmenGroupItem",
     "HenchmenGroupSpecial",
     "HenchmenGroupSkill",
-    "HiredSword",
-    "HiredSwordItem",
-    "HiredSwordSpecial",
-    "HiredSwordSkill",
-    "HiredSwordSpell",
+    "Hireling",
+    "HirelingItem",
+    "HirelingSpecial",
+    "HirelingSkill",
+    "HirelingSpell",
 ]

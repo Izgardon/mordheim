@@ -32,7 +32,7 @@ export type UnitFormBase = Pick<
   | "specials"
 >;
 
-/** Hero and hired-sword forms: the base plus caster, skill access, spells and the hero flags. */
+/** Hero and hired sword forms: the base plus caster, skill access, spells and the hero flags. */
 export type CasterUnitForm = HeroFormEntry & {
   upkeep_price?: string;
   rating?: string;

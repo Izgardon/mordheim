@@ -1,3 +1,4 @@
+import type { BeastKind } from "@/features/bestiary/bestiary-kinds";
 import type { CatalogueBadgeFields } from "@/features/catalogue/types/catalogue-entry";
 
 export type ItemProperty = {
@@ -57,6 +58,12 @@ export type Item = CatalogueBadgeFields & {
   /** A unit's copy: what Buy again charges, the campaign's current price (null: unknown). */
   current_price?: number | null;
   sale_price_basis?: SalePriceBasis | null;
+  /** A unit's copy: its own row (item ids repeat when a unit carries two), which the switch names. */
+  row_id?: number;
+  /** A unit's copy of a mount or pet: switched on for the unit (it rides it, it keeps it). */
+  companion?: boolean;
+  /** A unit's copy of an Animal item: its beast's kind (null for any other item). */
+  beast_kind?: BeastKind | null;
   single_use?: boolean;
   description: string;
   strength?: string | null;
@@ -65,10 +72,18 @@ export type Item = CatalogueBadgeFields & {
   statblock?: string | null;
   properties?: { id: number; name: string; type: string }[];
   availabilities: ItemAvailability[];
+  /**
+   * The shop sells it (default). Only an Animal item can be unlisted: its beast's "Available in
+   * the shop" is off, so the shop and Acquire leave it out.
+   */
+  listed?: boolean;
+  /** An Animal item's beast: every beast has one item, written only through the bestiary. */
   bestiary_entry?: {
     id: number;
     name: string;
-    type: string;
+    kind: BeastKind;
+    /** Off: the stats are stored as 0 and shown as "No profile". */
+    has_profile: boolean;
     movement: number;
     weapon_skill: number;
     ballistic_skill: number;

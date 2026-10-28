@@ -63,7 +63,7 @@ const myStoreWarband = {
   gold: 500,
   resources: [],
   heroes: [{ id: 11, warband_id: MY_WARBAND, name: aldric.name, unit_type: "Captain", xp: 7 }],
-  hired_swords: [],
+  hirelings: [],
 };
 
 const sheetKey = (warbandId: number) => queryKeys.campaign.warbandSheet(7, warbandId);
@@ -80,12 +80,12 @@ const summaryRow = ({ id, warband_id, name, unit_type, xp, large }: WarbandHero)
 });
 
 const sheetOf = (warbandId: number, heroes: WarbandHero[]): WarbandSheet => ({
-  warband: { ...myStoreWarband, id: warbandId, heroes: undefined, hired_swords: undefined },
+  warband: { ...myStoreWarband, id: warbandId, heroes: undefined, hirelings: undefined },
   summary: {
     gold: 500,
     rating: 99,
     heroes: heroes.map(summaryRow) as WarbandHero[],
-    hired_swords: [],
+    hirelings: [],
     henchmen_groups: warbandId === MY_WARBAND ? [myGroup] : [],
   },
   capabilities: {
@@ -99,7 +99,7 @@ const sheetOf = (warbandId: number, heroes: WarbandHero[]): WarbandSheet => ({
   },
   heroes,
   henchmen_groups: warbandId === MY_WARBAND ? [myGroup] : [],
-  hired_swords: [],
+  hirelings: [],
 });
 
 /** A hero card's loadout, fed from the cached sheet and written back to it, as on the page. */

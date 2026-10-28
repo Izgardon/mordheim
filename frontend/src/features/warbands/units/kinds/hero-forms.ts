@@ -40,7 +40,7 @@ export const mapHeroToForm = (hero: WarbandHero): HeroFormEntry => ({
 export const validateHeroForm = (hero: HeroFormEntry) =>
   toValidationError(missingIdentityFields(hero));
 
-/** The hero and hired-sword loadout lists, as the PATCH sends them. */
+/** The hero and hired sword loadout lists, as the PATCH sends them. */
 export const buildLoadoutPayload = (form: HeroFormEntry) => ({
   items: toItemEntries(form.items),
   skill_ids: form.skills.map((skill) => skill.id),

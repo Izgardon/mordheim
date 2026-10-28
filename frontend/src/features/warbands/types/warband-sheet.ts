@@ -2,7 +2,7 @@ import type {
   HenchmenGroup,
   Warband,
   WarbandHero,
-  WarbandHiredSword,
+  WarbandHireling,
   WarbandUnitsSummary,
 } from "./warband-types";
 
@@ -40,5 +40,5 @@ export type WarbandSheet = {
   capabilities: WarbandCapabilities;
   heroes: WarbandHero[];
   henchmen_groups: HenchmenGroup[];
-  hired_swords: WarbandHiredSword[];
+  hirelings: WarbandHireling[];
 };

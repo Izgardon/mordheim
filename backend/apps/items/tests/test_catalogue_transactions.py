@@ -3,7 +3,7 @@
 `TransactionTestCase`: each request commits as it would in production (there is no ATOMIC_REQUESTS), so what a
 failed write leaves behind can be read afterwards. Since PR A the input is validated in nested serializers (a 400
 with field errors before anything is written) and every item, bestiary and hired-sword write runs in one
-transaction; before, a failed write kept the item without its prices, or an entry without its links or profile.
+transaction; before, a failed write kept the item without its prices, or an entry without its links.
 """
 
 import logging
@@ -14,12 +14,13 @@ from django.core.cache import cache
 from django.test import TransactionTestCase, override_settings
 from rest_framework.test import APIClient
 
-from apps.bestiary.models import BestiaryEntry, HiredSwordProfile
+from apps.bestiary.models import BestiaryEntry
 from apps.campaigns.models import Campaign
 from apps.campaigns.services.codes import seed_roles_and_codes
 from apps.campaigns.tests.campaign_support import make_user
 from apps.core.catalogue import versions
 from apps.core.testing import Rendezvous, run_concurrently
+from apps.hirelings.models import HiredSword
 from apps.items.models import Item, ItemAvailability
 
 from .catalogue_support import BESTIARY, HIRED_SWORDS, ITEMS, make_entry
@@ -89,8 +90,8 @@ class CatalogueTransactionTests(TransactionTestCase):
         response = self.post(HIRED_SWORDS.list_url(), HIRED_SWORDS.body("Ghost", skill_ids=[999999]))
 
         self.assertEqual((response.status_code, list(response.json())), (400, ["skill_ids"]))
-        self.assertFalse(BestiaryEntry.objects.exists())
-        self.assertEqual(self.client.get(BESTIARY.list_url(self.campaign)).json(), [])
+        self.assertFalse(HiredSword.objects.exists())
+        self.assertEqual(self.client.get(HIRED_SWORDS.list_url(self.campaign)).json(), [])
 
     def test_a_bestiary_entry_with_an_unknown_link_is_refused_and_writes_nothing(self):
         # BUG-53 (was pinned: a 500 that kept the entry with the links before the bad one; flipped in PR A)
@@ -103,21 +104,21 @@ class CatalogueTransactionTests(TransactionTestCase):
 
     def test_a_hired_sword_edit_with_a_negative_cost_is_a_400(self):
         # BUG-53 (was pinned: a 500; flipped in PR A)
-        profile = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign, hire_cost=40)
+        archer = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign, hire_cost=40)
 
-        response = self.client.patch(HIRED_SWORDS.detail_url(profile.id), {"hire_cost": -5}, format="json")
+        response = self.client.patch(HIRED_SWORDS.detail_url(archer.id), {"hire_cost": -5}, format="json")
 
         self.assertEqual((response.status_code, list(response.json())), (400, ["hire_cost"]))
-        self.assertEqual(HiredSwordProfile.objects.get(id=profile.id).hire_cost, 40)
+        self.assertEqual(HiredSword.objects.get(id=archer.id).hire_cost, 40)
 
     def test_a_hired_sword_write_failing_after_validation_keeps_nothing(self):
-        # BUG-53: the entry, its links, the profile and its restrictions are one transaction
+        # BUG-53: the hired sword and its links are one transaction
         body = HIRED_SWORDS.body("Ghost", restriction_ids=[])
-        with mock.patch("apps.bestiary.writes._write_restrictions", side_effect=RuntimeError("disk full")):
+        with mock.patch("apps.hirelings.writes.write_links", side_effect=RuntimeError("disk full")):
             response = self.post(HIRED_SWORDS.list_url(), body)
 
         self.assertEqual(response.status_code, 500)
-        self.assertEqual((BestiaryEntry.objects.count(), HiredSwordProfile.objects.count()), (0, 0))
+        self.assertEqual(HiredSword.objects.count(), 0)
 
     def test_two_first_edits_of_a_book_entry_at_once_make_one_version(self):
         # CAT-TEST-23: both requests reach the copy-on-write before either writes; the book row's lock makes the second

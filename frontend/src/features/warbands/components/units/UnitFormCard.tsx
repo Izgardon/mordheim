@@ -37,7 +37,9 @@ export default function UnitFormCard<K extends UnitKindKey>({
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
   const [isDeedsOpen, setIsDeedsOpen] = useState(false);
   const { FormBasics, FormLoadout } = kind.slots;
-  const unitName = form.name?.trim() || kind.labels.fallbackName(index);
+  // A dramatis persona's card says so, though he is in the Hired Swords section.
+  const labels = kind.labelsFor?.(form) ?? kind.labels;
+  const unitName = form.name?.trim() || labels.fallbackName(index);
   const slotProps: UnitFormSlotProps<K> = {
     ...props,
     inputClassName,
@@ -47,7 +49,7 @@ export default function UnitFormCard<K extends UnitKindKey>({
   return (
     <div
       role="group"
-      aria-label={`${kind.labels.singular} ${index + 1}`}
+      aria-label={`${labels.singular} ${index + 1}`}
       className="relative space-y-4 overflow-visible rounded-lg border border-border/60 bg-[rgba(12,9,6,0.92)] p-4 text-foreground shadow-[0_18px_40px_rgba(5,20,24,0.45)]"
     >
       <div className="absolute right-2 top-2 flex items-center gap-2">
@@ -70,7 +72,7 @@ export default function UnitFormCard<K extends UnitKindKey>({
           size="sm"
           onClick={() => setIsRemoveDialogOpen(true)}
         >
-          {kind.labels.dismiss}
+          {labels.dismiss}
         </Button>
       </div>
 
@@ -78,13 +80,9 @@ export default function UnitFormCard<K extends UnitKindKey>({
         open={isRemoveDialogOpen}
         onOpenChange={setIsRemoveDialogOpen}
         description={
-          <DismissUnitDescription
-            verb={kind.labels.dismissVerb}
-            name={unitName}
-            isQueued={!form.id}
-          />
+          <DismissUnitDescription verb={labels.dismissVerb} name={unitName} isQueued={!form.id} />
         }
-        confirmText={!form.id ? "Remove" : kind.labels.dismissConfirm}
+        confirmText={!form.id ? "Remove" : labels.dismissConfirm}
         onConfirm={() => {
           setIsRemoveDialogOpen(false);
           onRemove(index);
@@ -94,7 +92,7 @@ export default function UnitFormCard<K extends UnitKindKey>({
 
       <p className="pr-40 text-sm font-semibold tracking-[0.08em] text-foreground">
         <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-          {kind.labels.singular} {index + 1}
+          {labels.singular} {index + 1}
         </span>
         <span className="mx-2 text-muted-foreground">-</span>
         <span className="text-lg font-bold leading-tight text-foreground">{unitName}</span>

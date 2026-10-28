@@ -12,7 +12,7 @@ import { UnitSelectionSection, type UnitTypeOption } from "@components/unit-sele
 import { useAppStore } from "@/stores/app-store";
 
 // api
-import { updateWarbandHero, updateWarbandHiredSword } from "@/features/warbands/api/warbands-api";
+import { updateWarbandHero, updateWarbandHireling } from "@/features/warbands/api/warbands-api";
 
 import {
   useUnitSummaryLists,
@@ -21,7 +21,7 @@ import {
 
 // types
 import type { Skill } from "../types/skill-types";
-import type { WarbandHero, WarbandHiredSword } from "@/features/warbands/types/warband-types";
+import type { WarbandHero, WarbandHireling } from "@/features/warbands/types/warband-types";
 
 type LearnSkillDialogProps = {
   skill: Skill;
@@ -78,8 +78,8 @@ export default function LearnSkillDialog({
 
     try {
       const existingSkillIds = (unit.skills ?? []).map((s) => s.id);
-      if (selectedUnitType === "hiredswords") {
-        await updateWarbandHiredSword(warband.id, unitId, {
+      if (selectedUnitType === "hirelings") {
+        await updateWarbandHireling(warband.id, unitId, {
           skill_ids: [...existingSkillIds, skill.id],
         });
       } else {
@@ -108,13 +108,13 @@ export default function LearnSkillDialog({
   const summaryUnitTypes = useMemo(
     () =>
       unitTypes.filter(
-        (type): type is UnitSummaryType => type === "heroes" || type === "hiredswords"
+        (type): type is UnitSummaryType => type === "heroes" || type === "hirelings"
       ),
     [unitTypes]
   );
 
   const activeSummaryType =
-    selectedUnitType === "heroes" || selectedUnitType === "hiredswords"
+    selectedUnitType === "heroes" || selectedUnitType === "hirelings"
       ? (selectedUnitType as UnitSummaryType)
       : "";
 
@@ -129,7 +129,7 @@ export default function LearnSkillDialog({
     activeUnitType: activeSummaryType,
   });
 
-  const units = useMemo<(WarbandHero | WarbandHiredSword)[]>(() => {
+  const units = useMemo<(WarbandHero | WarbandHireling)[]>(() => {
     if (!selectedUnitType) {
       return [];
     }
@@ -140,14 +140,14 @@ export default function LearnSkillDialog({
       case "henchmen":
         // Future: return warband.henchmen ?? [];
         return [];
-      case "hiredswords":
-        return unitsByType.hiredswords;
+      case "hirelings":
+        return unitsByType.hirelings;
       case "stash":
         return [];
       default:
         return [];
     }
-  }, [selectedUnitType, unitsByType.heroes, unitsByType.hiredswords]);
+  }, [selectedUnitType, unitsByType.heroes, unitsByType.hirelings]);
 
   const handleUnitTypeChange = (value: UnitTypeOption | "") => {
     setSelectedUnitType(value);

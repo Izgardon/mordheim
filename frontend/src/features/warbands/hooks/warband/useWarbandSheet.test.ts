@@ -11,7 +11,7 @@ import type {
   HenchmenGroup,
   Warband,
   WarbandHero,
-  WarbandHiredSword,
+  WarbandHireling,
 } from "@/features/warbands/types/warband-types";
 
 type Deferred<T> = {
@@ -53,7 +53,7 @@ const summaryWarbandState = {
   rating: 140,
   resources: [],
   heroes: [{ id: 1, name: "Captain", unit_type: "Mercenary" }],
-  hired_swords: [{ id: 2, name: "Ogre", unit_type: "Hired Sword" }],
+  hirelings: [{ id: 2, name: "Ogre", unit_type: "Hired Sword" }],
   henchmen_groups: [{ id: 3, name: "Marksmen", unit_type: "Henchmen" }],
 };
 
@@ -88,7 +88,7 @@ const richHero = {
   spells: [],
 } as WarbandHero;
 
-const richHiredSword = {
+const richHireling = {
   id: 2,
   warband_id: 9,
   name: "Ogre",
@@ -123,7 +123,7 @@ const richHiredSword = {
   skills: [],
   specials: [],
   spells: [],
-} as WarbandHiredSword;
+} as WarbandHireling;
 
 const richGroup = {
   id: 3,
@@ -171,7 +171,7 @@ const sheetOf = (overrides: Partial<WarbandSheet> = {}): WarbandSheet => ({
   capabilities,
   heroes: [richHero],
   henchmen_groups: [richGroup],
-  hired_swords: [richHiredSword],
+  hirelings: [richHireling],
   ...overrides,
 });
 
@@ -213,7 +213,7 @@ describe("useWarbandSheet", () => {
       trade: false,
     });
     expect(result.current.heroes).toEqual([richHero]);
-    expect(result.current.hiredSwords).toEqual([richHiredSword]);
+    expect(result.current.hirelings).toEqual([richHireling]);
     expect(result.current.henchmenGroups).toEqual([richGroup]);
     expect(apiMocks.getWarbandSheet).toHaveBeenCalledTimes(1);
     expect(apiMocks.getWarbandSheet).toHaveBeenCalledWith(9);
@@ -265,7 +265,7 @@ describe("useWarbandSheet", () => {
     expect(result.current.warband?.rating).toBe(222);
     expect(result.current.heroes[0]?.xp).toBe(12);
     expect(result.current.heroes[0]?.level_up).toBe(1);
-    expect(result.current.hiredSwords[0]?.level_up).toBe(2);
+    expect(result.current.hirelings[0]?.level_up).toBe(2);
     expect(result.current.henchmenGroups[0]?.level_up).toBe(1);
   });
 
@@ -290,7 +290,7 @@ describe("useWarbandSheet", () => {
     expect(result.current.warband).toBeNull();
     expect(Object.values(result.current.capabilities)).not.toContain(true);
     expect(result.current.heroes).toEqual([]);
-    expect(result.current.hiredSwords).toEqual([]);
+    expect(result.current.hirelings).toEqual([]);
     expect(result.current.henchmenGroups).toEqual([]);
     expect(result.current.isLoading).toBe(true);
   });

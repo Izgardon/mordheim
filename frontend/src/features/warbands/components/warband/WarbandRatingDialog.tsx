@@ -7,23 +7,28 @@ import {
 } from "@components/dialog";
 
 import ratingIcon from "@/assets/icons/Menu.webp";
-import { toNumber } from "../../utils/warband-utils";
-import type { HenchmenGroup, WarbandHero, WarbandHiredSword } from "../../types/warband-types";
+import { mountsRating as countMounts, toNumber } from "../../utils/warband-utils";
+import type { HenchmenGroup, WarbandHero, WarbandHireling } from "../../types/warband-types";
 
 type WarbandRatingDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   heroes: WarbandHero[];
-  hiredSwords: WarbandHiredSword[];
+  hirelings: WarbandHireling[];
   henchmenGroups: HenchmenGroup[];
+  /** The server's rating and its mounts' part (the summary's `rating`, `mounts_rating`). */
+  rating?: number;
+  mountsRating?: number;
 };
 
 export default function WarbandRatingDialog({
   open,
   onOpenChange,
   heroes,
-  hiredSwords,
+  hirelings,
   henchmenGroups,
+  rating,
+  mountsRating,
 }: WarbandRatingDialogProps) {
   const heroCount = heroes.length;
   const heroLargeCount = heroes.filter((h) => h.large).length;
@@ -43,13 +48,16 @@ export default function WarbandRatingDialog({
     return sum + count * ((g.large ? 20 : 5) + toNumber(g.xp));
   }, 0);
 
-  const hiredSwordCount = hiredSwords.length;
-  const hiredSwordTotalXp = hiredSwords.reduce((sum, hs) => sum + toNumber(hs.xp), 0);
-  const hiredSwordRating = hiredSwords.reduce((sum, hs) => {
+  const hirelingCount = hirelings.length;
+  const hirelingTotalXp = hirelings.reduce((sum, hs) => sum + toNumber(hs.xp), 0);
+  const hirelingRating = hirelings.reduce((sum, hs) => {
     return sum + toNumber(hs.rating ?? 0) + toNumber(hs.xp);
   }, 0);
 
-  const totalRating = heroRating + henchmenRating + hiredSwordRating;
+  // The server's numbers when it sends them (step 5: a group on mixed mounts counts each one's);
+  // worked out here only without them.
+  const mountRating = mountsRating ?? countMounts(heroes, hirelings, henchmenGroups);
+  const totalRating = rating ?? heroRating + henchmenRating + hirelingRating + mountRating;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -105,18 +113,24 @@ export default function WarbandRatingDialog({
               </div>
             )}
 
-            {hiredSwordCount > 0 && (
+            {hirelingCount > 0 && (
               <div className="flex items-baseline justify-between gap-2">
                 <span className="text-muted-foreground">
-                  Hired Swords: <span className="text-foreground">{hiredSwordCount}</span>
-                  {hiredSwordTotalXp > 0 && (
+                  Hired Swords: <span className="text-foreground">{hirelingCount}</span>
+                  {hirelingTotalXp > 0 && (
                     <>
                       {" - "}
-                      <span className="text-foreground">{hiredSwordTotalXp} XP</span>
+                      <span className="text-foreground">{hirelingTotalXp} XP</span>
                     </>
                   )}
                 </span>
-                <span className="font-semibold text-foreground">{hiredSwordRating}</span>
+                <span className="font-semibold text-foreground">{hirelingRating}</span>
+              </div>
+            )}
+            {mountRating > 0 && (
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="text-muted-foreground">Mounts:</span>
+                <span className="font-semibold text-foreground">{mountRating}</span>
               </div>
             )}
           </div>
@@ -130,7 +144,8 @@ export default function WarbandRatingDialog({
 
           <p className="text-xs italic text-muted-foreground">
             Heroes: 5 per hero (20 if Large) + XP. Henchmen: group size &times; (5 per henchman (20
-            if Large) + XP). Hired Swords: base rating + XP.
+            if Large) + XP). Hired Swords: base rating + XP. Mounts: each rider's mount bonus (a
+            group: one per member).
           </p>
         </div>
       </DialogContent>

@@ -14,7 +14,7 @@ import type {
   WarbandUnitDetail,
 } from "../types/warband-types";
 
-export type UnitType = "heroes" | "hiredswords" | "henchmen";
+export type UnitType = "heroes" | "hirelings" | "henchmen";
 
 /** Whose item the menu acts on: the stash's rows, or one unit's items. */
 export type ItemActionSource<U extends WarbandUnitDetail = WarbandUnitDetail> =
@@ -38,7 +38,7 @@ type ApiUnitType = WarbandItemSalePayload["source_type"];
 
 const API_TYPES: Record<string, ApiUnitType> = {
   heroes: "hero",
-  hiredswords: "hired_sword",
+  hirelings: "hireling",
   henchmen: "henchmen_group",
   stash: "stash",
 };
@@ -50,6 +50,7 @@ export const stashEntries = (items: WarbandItemSummary[]) =>
     visibleId: item.id,
     label: item.quantity && item.quantity > 1 ? `${item.name} x ${item.quantity}` : item.name,
     costs: costsSummary(item.costs),
+    beastKind: item.beast_kind ?? null,
   }));
 
 /** The item a row shows and how many copies the source holds. */

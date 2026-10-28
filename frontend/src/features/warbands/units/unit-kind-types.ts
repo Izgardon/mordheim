@@ -77,13 +77,14 @@ export type UnitKindFlags = {
 /** Caps and counts the sections compare against (campaign settings, warband size, roster). */
 /**
  * The hard caps (decision 12) and what they count outside an edit, from the server's summary:
- * living heroes, and living hired swords without a blood pact. An edit counts its forms.
+ * living heroes, and living hired swords without a blood pact (dramatis personae sit outside the
+ * cap). An edit counts its forms.
  */
 export type RosterLimits = {
   maxHeroes: number;
   maxHiredSwords: number;
   heroCount: number;
-  hiredSwordCount: number;
+  hirelingCount: number;
 };
 
 export type UnitLimits<K extends UnitKindKey = UnitKindKey> = {
@@ -102,6 +103,8 @@ export type UnitLimits<K extends UnitKindKey = UnitKindKey> = {
 export type UnitCreationConfig<K extends UnitKindKey> = {
   initialForm: UnitNewForm<K>;
   blockedError: string;
+  /** The add form takes a unit without a race (hired swords: not every one has a catalogue race). */
+  optionalRace?: boolean;
   /** A check beyond name, type and race (henchmen need a first member). */
   extraError?: (form: UnitNewForm<K>) => string | null;
   /** The add form's entry, queued as a new unit's edit form until Save (decision 1). */
@@ -150,7 +153,7 @@ export type UnitLevelUpConfig<K extends UnitKindKey> = {
   rollTable: { lines: readonly string[]; footnote?: string; maxWidth: number };
   /** Payload name when the unit has neither a name nor a type. */
   nameFallback: string;
-  /** The kind's advance rules: hero/hired-sword follow-up rolls or henchmen Lad's Got Talent. */
+  /** The kind's advance rules: hero/hired sword follow-up rolls or henchmen Lad's Got Talent. */
   useAdvance: (core: LevelUpCore<K>) => UnitAdvance;
 };
 
@@ -166,12 +169,17 @@ export type UnitPayloadContext = {
 export type UnitKindConfig<K extends UnitKindKey> = {
   key: K;
   section: UnitSectionKey;
-  /** Key of the kind's list in a warband update ("heroes", "henchmenGroups", "hiredSwords"). */
+  /** Key of the kind's list in a warband update ("heroes", "henchmenGroups", "hirelings"). */
   listKey: UnitListKey;
-  /** Key of the kind's list in the sheet ("heroes", "henchmen_groups", "hired_swords"). */
+  /** Key of the kind's list in the sheet ("heroes", "henchmen_groups", "hirelings"). */
   collection: UnitCollectionKey;
   labels: UnitKindLabels;
-  /** Card shell class: warband-card--hero / --henchmen / --hired-sword. */
+  /**
+   * One unit's labels where they depend on it (a hireling is a hired sword or a dramatis
+   * persona): its edit card, its dismiss confirm, the add form's Create. The kind's own otherwise.
+   */
+  labelsFor?: (form: UnitForm<K> | UnitNewForm<K>) => UnitKindLabels;
+  /** Card shell class: warband-card--hero / --henchmen / --hireling. */
   cardClassName: string;
   /** Wrapper class around the summary card's loadout ("mt-auto"; heroes have none). */
   summaryLoadoutClassName?: string;

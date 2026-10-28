@@ -163,7 +163,7 @@ const mocks = vi.hoisted(() => {
           specialRules: [],
         },
       ],
-      hiredSwords: [],
+      hirelings: [],
       warbandRating: null,
     },
     9: {
@@ -189,7 +189,7 @@ const mocks = vi.hoisted(() => {
         },
       ],
       henchmenGroups: [],
-      hiredSwords: [],
+      hirelings: [],
       warbandRating: null,
     },
   };

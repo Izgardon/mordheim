@@ -1,0 +1,792 @@
+<title>Bestiary and Hirelings</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Manrope:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+/* Layout: one reading column (~70ch) with wide figures in their own scrolling frames. Dark-first, from the Chronicler app's tokens; same family as the grades plan. */
+:root {
+  --bg: hsl(26 32% 6%);
+  --surface: hsl(28 24% 10%);
+  --surface-2: hsl(30 20% 14%);
+  --fg: hsl(40 45% 88%);
+  --muted: hsl(36 16% 64%);
+  --line: hsl(32 18% 24%);
+  --accent: hsl(41 58% 63%);
+  --accent-soft: hsla(41, 58%, 63%, 0.16);
+  --changed: hsl(16 62% 64%);
+  --changed-soft: hsla(16, 62%, 64%, 0.16);
+  --renamed: hsl(200 45% 62%);
+  --renamed-soft: hsla(200, 45%, 62%, 0.16);
+  --warn: hsl(38 85% 60%);
+  --font-head: "Fraunces", "Times New Roman", serif;
+  --font-body: "Manrope", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: hsl(40 33% 95%); --surface: hsl(40 36% 99%); --surface-2: hsl(38 28% 91%);
+    --fg: hsl(26 35% 12%); --muted: hsl(30 14% 38%); --line: hsl(34 22% 80%);
+    --accent: hsl(36 72% 30%); --accent-soft: hsla(36, 72%, 30%, 0.12);
+    --changed: hsl(14 62% 40%); --changed-soft: hsla(14, 62%, 40%, 0.12);
+    --renamed: hsl(204 55% 34%); --renamed-soft: hsla(204, 55%, 34%, 0.12);
+    --warn: hsl(32 90% 34%);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: hsl(40 33% 95%); --surface: hsl(40 36% 99%); --surface-2: hsl(38 28% 91%);
+  --fg: hsl(26 35% 12%); --muted: hsl(30 14% 38%); --line: hsl(34 22% 80%);
+  --accent: hsl(36 72% 30%); --accent-soft: hsla(36, 72%, 30%, 0.12);
+  --changed: hsl(14 62% 40%); --changed-soft: hsla(14, 62%, 40%, 0.12);
+  --renamed: hsl(204 55% 34%); --renamed-soft: hsla(204, 55%, 34%, 0.12);
+  --warn: hsl(32 90% 34%);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 72px;
+}
+main { max-width: 1000px; margin: 0 auto; display: grid; gap: 56px; }
+.prose { max-width: 70ch; display: grid; gap: 10px; }
+h1, h2, h3 { font-family: var(--font-head); font-weight: 650; text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -0.01em; }
+h2 { font-size: 1.65rem; }
+h3 { font-size: 1.15rem; font-weight: 500; }
+p { margin: 0; }
+ul.plain { margin: 0; padding-left: 1.1rem; display: grid; gap: 6px; }
+section { display: grid; gap: 18px; min-width: 0; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.lede { font-size: 1.12rem; max-width: 66ch; }
+.muted { color: var(--muted); }
+.small { font-size: 0.875rem; }
+code, .mono { font-family: var(--font-mono); font-size: 0.85em; }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.status { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.04em; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.chip.gold { border-color: var(--accent); color: var(--accent); }
+.box-note { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 16px 18px; display: grid; gap: 8px; max-width: 78ch; }
+.box-note ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 5px; font-size: 0.93rem; }
+figure { margin: 0; display: grid; gap: 10px; min-width: 0; }
+figcaption { font-size: 0.875rem; color: var(--muted); max-width: 74ch; }
+.frame { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 16px; }
+.frame svg.fig { display: block; max-width: 100%; height: auto; color: var(--fg); font-family: var(--font-body); }
+.frame.wide svg.fig { min-width: 780px; }
+.t-m { fill: var(--muted); font-size: 11px; }
+.t-h { fill: currentColor; font-size: 13px; font-weight: 700; }
+.t-big { fill: currentColor; font-size: 15px; font-weight: 700; font-family: var(--font-head); }
+.t-code { fill: currentColor; font-family: var(--font-mono); font-size: 11px; }
+.t-add { fill: var(--accent); font-family: var(--font-mono); font-size: 11px; }
+.box { fill: var(--surface-2); stroke: var(--line); stroke-width: 1; }
+.box-new { fill: var(--surface-2); stroke: var(--accent); stroke-width: 1.6; }
+.box-chg { fill: var(--surface-2); stroke: var(--changed); stroke-width: 1.4; }
+.box-ren { fill: var(--surface-2); stroke: var(--renamed); stroke-width: 1.4; }
+.hd { fill: var(--bg); opacity: 0.55; }
+.hd-new { fill: var(--accent-soft); }
+.hd-chg { fill: var(--changed-soft); }
+.hd-ren { fill: var(--renamed-soft); }
+.edge { fill: none; stroke: var(--muted); stroke-width: 1.3; }
+.edge-new { fill: none; stroke: var(--accent); stroke-width: 1.4; }
+.edge-copy { fill: none; stroke: var(--accent); stroke-width: 1.4; stroke-dasharray: 5 4; }
+.edge-back { fill: none; stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 3 3; }
+.divider { stroke: var(--line); stroke-width: 1; }
+.arrow-m { fill: var(--muted); }
+.arrow-a { fill: var(--accent); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 0.8rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.sw { width: 14px; height: 10px; border-radius: 2px; display: inline-block; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+.scroll { overflow-x: auto; }
+.data td, .data th { padding: 8px 10px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); font-size: 0.88rem; }
+.data thead th { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 400; white-space: nowrap; }
+.data td:first-child { font-weight: 700; white-space: nowrap; }
+.scroll table.data { min-width: 720px; }
+.kind { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 0.74rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); white-space: nowrap; }
+.kind.mount { color: var(--accent); border-color: var(--accent); }
+.kind.creature { color: var(--changed); border-color: var(--changed); }
+.kind.pet { color: var(--renamed); border-color: var(--renamed); }
+.kind.drop { color: var(--muted); text-decoration: line-through; }
+.ic { width: 16px; height: 16px; display: inline-block; vertical-align: -3px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.ic.fill { fill: currentColor; stroke: none; }
+.schema { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 16px; }
+.tbl { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); overflow: hidden; min-width: 0; }
+.tbl header { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.tbl header h3 { font-family: var(--font-mono); font-size: 0.88rem; font-weight: 700; overflow-wrap: anywhere; }
+.tbl.new header { background: var(--accent-soft); }
+.tbl.chg header { background: var(--changed-soft); }
+.tbl.ren header { background: var(--renamed-soft); }
+.tbl .tag { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+.tbl.new .tag { color: var(--accent); }
+.tbl.chg .tag { color: var(--changed); }
+.tbl.ren .tag { color: var(--renamed); }
+.tbl table td { padding: 6px 14px; font-size: 0.82rem; vertical-align: top; border-bottom: 1px solid var(--line); }
+.tbl table tr:last-child td { border-bottom: 0; }
+.tbl table td:first-child { font-family: var(--font-mono); font-size: 0.77rem; white-space: nowrap; }
+.tbl table td:last-child { color: var(--muted); }
+.tbl td.note { font-family: var(--font-body) !important; white-space: normal !important; color: var(--muted); }
+.add { color: var(--accent); }
+.renames td:first-child, .renames td:nth-child(2) { font-family: var(--font-mono); font-size: 0.8rem; font-weight: 400; white-space: normal; }
+.renames td:nth-child(2) { color: var(--renamed); }
+.mocks { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-items: start; }
+.mock { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.mock-tag { font-family: var(--font-mono); font-size: 0.66rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+.mock-title { font-family: var(--font-head); font-size: 1.02rem; letter-spacing: 0.04em; text-transform: uppercase; }
+.mock-sub { font-size: 0.74rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; font-family: var(--font-mono); }
+.row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 0.88rem; }
+.row .sub { display: block; font-size: 0.72rem; color: var(--muted); }
+.ibtn { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--line); color: var(--muted); }
+.ibtn.on { border-color: var(--accent); color: var(--bg); background: var(--accent); }
+.ibtn.mount { border-color: var(--accent); color: var(--accent); }
+.ibtn.creature { border-color: var(--changed); color: var(--changed); background: var(--changed-soft); }
+.ibtn.pet { border-color: var(--renamed); color: var(--renamed); }
+.pick { display: grid; gap: 6px; }
+.pick .opt { display: flex; justify-content: space-between; gap: 8px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 0.86rem; }
+.pick .opt.sel { border-color: var(--accent); background: var(--accent-soft); }
+.pick .opt span:last-child { color: var(--muted); font-size: 0.76rem; }
+.warnline { font-size: 0.76rem; color: var(--warn); }
+.unitcard { border: 1px solid var(--line); border-radius: 10px; background: var(--bg); padding: 12px; display: grid; gap: 10px; }
+.uname { font-family: var(--font-head); font-size: 1.05rem; }
+.utype { font-size: 0.78rem; color: var(--muted); }
+.attach { display: flex; flex-wrap: wrap; gap: 6px; }
+.attach span { display: inline-flex; align-items: center; gap: 5px; font-size: 0.76rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); }
+.attach .m { color: var(--accent); border-color: var(--accent); }
+.attach .c { color: var(--renamed); border-color: var(--renamed); }
+.stats { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); text-align: center; font-family: var(--font-mono); font-size: 0.78rem; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.stats div { padding: 4px 0; border-right: 1px solid var(--line); }
+.stats div:last-child { border-right: 0; }
+.stats .h { color: var(--muted); font-size: 0.66rem; border-bottom: 1px solid var(--line); }
+.stats .mv { color: var(--accent); font-weight: 700; background: var(--accent-soft); }
+.stats.s10 { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+.seg { display: flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg span { flex: 1 1 auto; display: inline-flex; justify-content: center; align-items: center; gap: 5px; font-size: 0.78rem; padding: 6px 8px; border-right: 1px solid var(--line); color: var(--muted); }
+.seg span:last-child { border-right: 0; }
+.seg span.on { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.field { display: grid; gap: 5px; }
+.field > .fl { font-size: 0.76rem; color: var(--muted); }
+.input { border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; background: var(--bg); font-size: 0.86rem; }
+.check { display: flex; align-items: center; gap: 8px; font-size: 0.86rem; }
+.box-tick { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid var(--accent); background: var(--accent-soft); display: inline-flex; align-items: center; justify-content: center; color: var(--accent); font-size: 11px; font-weight: 700; flex: none; }
+.reveal { border-left: 2px solid var(--accent); padding-left: 10px; display: grid; gap: 8px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.btnrow { display: flex; justify-content: flex-end; gap: 8px; }
+.btn { font-size: 0.8rem; padding: 5px 12px; border-radius: 8px; border: 1px solid var(--line); color: var(--muted); }
+.btn.primary { border-color: var(--accent); color: var(--bg); background: var(--accent); font-weight: 600; }
+.battle { border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 8px; background: var(--bg); padding: 10px 12px; display: grid; gap: 8px; }
+.battle .top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.phases td, .phases th { padding: 10px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); font-size: 0.9rem; }
+.phases thead th { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
+.phases td:first-child { font-family: var(--font-head); font-size: 1.1rem; color: var(--accent); white-space: nowrap; }
+.phases td.n { white-space: nowrap; }
+.scroll table.phases { min-width: 680px; }
+.decisions { margin: 0; padding-left: 1.4rem; display: grid; gap: 14px; max-width: 76ch; }
+.decisions li::marker { font-family: var(--font-head); color: var(--accent); }
+.rec { color: var(--accent); font-size: 0.85rem; display: block; margin-top: 2px; }
+@media (max-width: 520px) { .two { grid-template-columns: 1fr; } }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-mount" viewBox="0 0 24 24"><path d="M6 3v8a6 6 0 0 0 12 0V3"/><path d="M4 3h4M16 3h4"/><circle cx="6.2" cy="8" r=".6"/><circle cx="17.8" cy="8" r=".6"/></symbol>
+  <symbol id="i-creature" viewBox="0 0 24 24"><ellipse cx="12" cy="15.5" rx="4.6" ry="3.8"/><circle cx="5.5" cy="10" r="1.8"/><circle cx="9.5" cy="6.2" r="1.8"/><circle cx="14.5" cy="6.2" r="1.8"/><circle cx="18.5" cy="10" r="1.8"/></symbol>
+  <symbol id="i-pet" viewBox="0 0 24 24"><path d="M20 4C11 4 6 9.5 6 17v3h3c7.5 0 11-5.5 11-16z"/><path d="M6 20l8-8"/></symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></symbol>
+</svg>
+
+<main>
+  <header style="display:grid;gap:16px">
+    <div class="eyebrow">Mordheim Chronicler · rewrite plan · version 3 · comes before grading</div>
+    <h1>Bestiary and hirelings</h1>
+    <p class="lede">Split today's bestiary into what it really holds. Hired swords and dramatis personae get their own catalogue tables and copy into one warband unit kind, the hireling. The bestiary keeps three kinds of beast. Every beast is an item first: a mount or pet is switched on for the unit carrying it, and a creature turns into henchmen.</p>
+    <div class="status">
+      <span class="chip gold">Plan only, nothing built</span>
+      <span class="chip">22 Oct 2026</span>
+      <span class="chip">Built from our current data</span>
+      <span class="chip">Fresh migrations and seeders</span>
+    </div>
+  </header>
+
+  <div class="box-note">
+    <h3>In short</h3>
+    <ul>
+      <li><b>Hirelings.</b> The warband's <code>hired_sword</code> unit and its tables are renamed <code>hireling</code>. A hireling is a hired sword or a dramatis persona; it holds every field itself and points at nothing.</li>
+      <li><b>Two catalogue tables.</b> <code>hired_sword</code> and <code>dramatis_persona</code> stand alone, with no bestiary link, each with its own skills, specials, spells, items and restrictions. Hiring copies one onto the warband, minus its fluff, on the server.</li>
+      <li><b>Three kinds of beast.</b> A <b>companion</b> belongs to one unit and is either a <span class="kind mount"><svg class="ic"><use href="#i-mount"/></svg>mount</span>, which changes the rider's shown M and armour save, or a <span class="kind pet"><svg class="ic"><use href="#i-pet"/></svg>pet</span>, with or without stats. A <span class="kind creature"><svg class="ic"><use href="#i-creature"/></svg>creature</span> becomes henchmen or joins a group of the same beast.</li>
+      <li><b>Every beast has its item.</b> "Available in the shop" only decides whether the item is sold; ticking it in the form reveals the price fields.</li>
+      <li><b>One button, on the unit that holds the item.</b> A mount or pet in a unit's items is switched on for that unit and back off. A creature, in a unit's items or the stash, is recruited into henchmen and can go back to an item. Buying offers both straight away.</li>
+      <li><b>Rebuilt, not patched.</b> The old profile link, the client-side hire copy and the catalogue's hired-sword special cases go. Migrations restart from a fresh 0001 and the seeders are rebuilt from today's data files.</li>
+    </ul>
+  </div>
+
+  <div class="box-note">
+    <h3>Decided since version 2</h3>
+    <ul>
+      <li>Every beast always has its Animal item. The shop checkbox lists it or hides it; it never removes it.</li>
+      <li>A mount or pet is a state of the item row it already sits in, not a new table. It can only be switched on for the unit that holds the item; to give it to someone else, move the item first.</li>
+      <li>"Companion" is the joint term; its two kinds are Mount and Pet.</li>
+      <li>Buying a mount or pet offers "assign straight away", and buying a creature offers "recruit straight away".</li>
+      <li>The smaller points: recruiting from an item never charges again; henchmen groups can ride, one mount per member; the rename ships alone first; migrations reset now, while there are no real users.</li>
+    </ul>
+  </div>
+
+  <div class="box-note">
+    <h3>Decided in version 4</h3>
+    <ul>
+      <li><b>Names:</b> "hireling" in the code only. The site says "Hired sword" and "Dramatis persona".</li>
+      <li><b>A mount changes Move and armour save,</b> for display only: the rider's M and save are worked out from the mount and highlighted on the warband page and in battle. The unit's own stats in the database never change.</li>
+      <li><b>Warnings, never blocks,</b> for two mounts on one unit and for more than two mounts in a Mordheim warband.</li>
+      <li><b>When a unit dies,</b> its companions follow its items.</li>
+      <li><b>Mount survival</b> is a suggested roll in postbattle when the rider was taken out of action.</li>
+      <li><b>Mutiny in Marienburg beasts</b> are seeded now; the duplicate Wardog is dropped.</li>
+      <li><b>Pets with a profile</b> can take part in a battle as their own model (step 5).</li>
+    </ul>
+  </div>
+
+  <section>
+    <h2>Today and after</h2>
+    <figure>
+      <div class="frame wide">
+        <svg class="fig" viewBox="0 0 1000 330" role="img" aria-label="Today: 86 bestiary entries mix 14 animals with 72 hired swords, each hired sword profile is one-to-one with an entry, and a bought animal is only an item. After: the bestiary holds mounts, pets and creatures, each with an Animal item; hired swords and dramatis personae are their own tables copied into a hireling unit; a bought beast is switched on as its unit's companion or recruited into henchmen.">
+          <defs>
+            <marker id="o-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrow-m"/></marker>
+            <marker id="o-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrow-a"/></marker>
+          </defs>
+          <text class="t-big" x="20" y="22">Today</text>
+          <text class="t-big" x="540" y="22">After</text>
+          <line class="divider" x1="500" y1="10" x2="500" y2="320"/>
+
+          <rect class="box" x="20" y="40" width="200" height="62" rx="6"/>
+          <text class="t-h" x="32" y="60">bestiary_entry · 86</text>
+          <text class="t-m" x="32" y="77">14 animals and mounts</text>
+          <text class="t-m" x="32" y="92">72 hired swords, typed as text</text>
+          <rect class="box" x="270" y="40" width="200" height="62" rx="6"/>
+          <text class="t-h" x="282" y="60">hired_sword_profile</text>
+          <text class="t-m" x="282" y="77">one-to-one with an entry</text>
+          <text class="t-m" x="282" y="92">costs, rating, race as text</text>
+          <path class="edge" d="M270,71 H220" marker-end="url(#o-m)"/>
+
+          <rect class="box" x="20" y="150" width="200" height="62" rx="6"/>
+          <text class="t-h" x="32" y="170">item · Animal · 14</text>
+          <text class="t-m" x="32" y="187">points at its entry</text>
+          <text class="t-m" x="32" y="202">bought like any item</text>
+          <path class="edge" d="M120,150 V102" marker-end="url(#o-m)"/>
+
+          <rect class="box" x="270" y="150" width="200" height="62" rx="6"/>
+          <text class="t-h" x="282" y="170">hired_sword (unit)</text>
+          <text class="t-m" x="282" y="187">copied by the browser</text>
+          <text class="t-m" x="282" y="202">quantities, formulas lost</text>
+          <path class="edge-back" d="M370,102 V150" marker-end="url(#o-m)"/>
+
+          <rect class="box" x="20" y="250" width="200" height="56" rx="6"/>
+          <text class="t-h" x="32" y="270">a unit's items or stash</text>
+          <text class="t-m" x="32" y="287">a horse is just an item row</text>
+          <path class="edge" d="M120,212 V250" marker-end="url(#o-m)"/>
+          <text class="t-m" x="130" y="236">buy</text>
+
+          <rect class="box-chg" x="540" y="40" width="200" height="62" rx="6"/>
+          <text class="t-h" x="552" y="60">bestiary_entry</text>
+          <text class="t-m" x="552" y="77">mount · pet · creature</text>
+          <text class="t-m" x="552" y="92">sold in the shop?</text>
+          <rect class="box-new" x="780" y="40" width="200" height="62" rx="6"/>
+          <text class="t-h" x="792" y="60">hired_sword · dramatis</text>
+          <text class="t-m" x="792" y="77">own tables and pivots</text>
+          <text class="t-m" x="792" y="92">no bestiary link</text>
+
+          <rect class="box" x="540" y="150" width="200" height="62" rx="6"/>
+          <text class="t-h" x="552" y="170">item · Animal</text>
+          <text class="t-m" x="552" y="187">one for every beast</text>
+          <text class="t-m" x="552" y="202">subtype = the kind</text>
+          <path class="edge" d="M640,150 V102" marker-end="url(#o-m)"/>
+
+          <rect class="box-ren" x="780" y="150" width="200" height="62" rx="6"/>
+          <text class="t-h" x="792" y="170">hireling (unit)</text>
+          <text class="t-m" x="792" y="187">copied on the server</text>
+          <text class="t-m" x="792" y="202">stands alone afterwards</text>
+          <path class="edge-copy" d="M880,102 V150" marker-end="url(#o-a)"/>
+          <text class="t-m" x="890" y="130">hire</text>
+
+          <rect class="box-new" x="540" y="250" width="440" height="56" rx="6"/>
+          <text class="t-h" x="552" y="270">in the warband</text>
+          <text class="t-m" x="552" y="287">mount or pet switched on for its unit · creature recruited into henchmen · both reversible</text>
+          <path class="edge-new" d="M640,212 V250" marker-end="url(#o-a)" marker-start="url(#o-a)"/>
+          <text class="t-m" x="650" y="236">assign or recruit · back to item</text>
+        </svg>
+      </div>
+      <figcaption>The bestiary stops holding hired swords. Hired swords and dramatis personae become their own catalogue and are copied into a standalone hireling. Every beast keeps an Animal item, which is how it is bought, moved, traded and sold.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>What each kind does</h2>
+    <p class="prose">From the rules research (mordheimer's rules pages, the rulebook FAQ, Blazing Saddles and Mutiny in Marienburg), trimmed to what the app has to know. A <b>companion</b> is a mount or a pet: the beasts that belong to one unit.</p>
+    <div class="scroll">
+      <table class="data">
+        <thead><tr><th>Kind</th><th>Where it comes from</th><th>In the warband</th><th>In battle</th><th>After battle</th><th>XP</th></tr></thead>
+        <tbody>
+          <tr><td><span class="kind mount"><svg class="ic"><use href="#i-mount"/></svg>Mount</span></td><td>Shop (warhorse 80 gc, Rare 11), or a hired sword's kit</td><td>A companion on the unit carrying it; M and save shown from the mount; rating +3 horse, +5 warhorse, +20 Rhinox</td><td>Rider uses the mount's M and +1 armour save (6+ if he has none); icon on the unit</td><td>If the rider went out of action: dies on 1–2 (1 if barded)</td><td>Never</td></tr>
+          <tr><td><span class="kind pet"><svg class="ic"><use href="#i-pet"/></svg>Pet</span></td><td>Shop, mostly Mutiny in Marienburg (raven 60 gc, polecat 50 gc)</td><td>A companion on the unit carrying it; may have no profile</td><td>Shown on the unit; one with a profile can take part as its own model</td><td>Follows its owner's items</td><td>Never</td></tr>
+          <tr><td><span class="kind creature"><svg class="ic"><use href="#i-creature"/></svg>Creature</span></td><td>Shop (wardogs 25+2D6 gc, Rare 10), or an ally mid-battle</td><td>A henchmen group; joins a group of the same beast</td><td>Fights as henchmen; can also be a temporary ally or enemy</td><td>Henchman roll, 1–2 lost</td><td>Never (the flag allows exceptions)</td></tr>
+          <tr><td>Hired sword</td><td>Hire fee, then upkeep after every battle</td><td>A hireling; one of each type</td><td>Its own model</td><td>Henchman roll; leaves if unpaid</td><td>Yes, Hero advances</td></tr>
+          <tr><td>Dramatis persona</td><td>Found after a battle; paid in gold, wyrdstone or treasure</td><td>A hireling, often for one battle</td><td>Its own model</td><td>Hero serious-injury table</td><td>Never</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Database design</h2>
+    <p class="prose">The hireling catalogue on the left, the warband in the middle, the bestiary on the right. Everything registers with pass 5's catalogue framework, so book entries get campaign versions, Revert, archiving and badges without new code. Companions need no table of their own: one column on the item rows units already have.</p>
+    <figure>
+      <div class="frame wide">
+        <svg class="fig" viewBox="0 0 1100 480" role="img" aria-label="Entity diagram. hired_sword and dramatis_persona catalogue tables are copied into the renamed hireling unit, which has its own item, skill, spell and special tables. The item rows of heroes, henchmen groups and hirelings gain a companion column. henchmen_group gains source_beast_id for creature groups. bestiary_entry gains a kind, a profile flag, gains_xp, rating_bonus and available_in_shop, and every entry has an Animal item.">
+          <defs>
+            <marker id="e-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrow-m"/></marker>
+            <marker id="e-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrow-a"/></marker>
+          </defs>
+          <text class="t-m" x="16" y="10">CATALOGUE</text>
+          <text class="t-m" x="556" y="10">WARBAND</text>
+          <text class="t-m" x="826" y="10">CATALOGUE</text>
+
+          <path class="edge-copy" d="M246,60 H286" marker-end="url(#e-a)"/>
+          <path class="edge-copy" d="M246,262 H266 V120 H286" marker-end="url(#e-a)"/>
+          <text class="t-m" x="266" y="52" text-anchor="middle">copy</text>
+          <path class="edge" d="M400,233 V203" marker-end="url(#e-m)"/>
+          <path class="edge" d="M556,290 H536 V120 H516" marker-end="url(#e-m)"/>
+          <path class="edge" d="M556,272 H546 V50 H556" marker-end="url(#e-m)"/>
+          <path class="edge" d="M650,260 V199" marker-end="url(#e-m)"/>
+          <path class="edge" d="M786,350 H826" marker-end="url(#e-m)"/>
+          <path class="edge-new" d="M786,150 H826" marker-end="url(#e-a)"/>
+          <path class="edge" d="M950,216 V186" marker-end="url(#e-m)"/>
+          <path class="edge" d="M1076,340 H1088 V100 H1076" marker-end="url(#e-m)"/>
+
+          <rect class="box-new" x="16" y="16" width="230" height="170" rx="6"/>
+          <rect class="hd-new" x="16" y="16" width="230" height="26" rx="6"/>
+          <text class="t-h" x="28" y="33">hired_sword</text>
+          <text class="t-code" x="28" y="54">campaign_id   null = book</text>
+          <text class="t-code" x="28" y="71">name, description</text>
+          <text class="t-code" x="28" y="88">stats, save, large, caster</text>
+          <text class="t-code" x="28" y="105">race_id, race_label</text>
+          <text class="t-code" x="28" y="122">hire_cost + formula</text>
+          <text class="t-code" x="28" y="139">upkeep_cost + formula</text>
+          <text class="t-code" x="28" y="156">rating, skill_types</text>
+          <text class="t-code" x="28" y="173">grade, campaign_type_id</text>
+
+          <rect class="box-new" x="16" y="216" width="230" height="102" rx="6"/>
+          <rect class="hd-new" x="16" y="216" width="230" height="26" rx="6"/>
+          <text class="t-h" x="28" y="233">dramatis_persona</text>
+          <text class="t-m" x="28" y="254">every hired_sword column, plus</text>
+          <text class="t-add" x="28" y="271">+ stays   always · 1 battle</text>
+          <text class="t-add" x="28" y="288">+ payment_note</text>
+          <text class="t-m" x="28" y="305">no XP · Hero injury table</text>
+
+          <rect class="box-new" x="16" y="348" width="230" height="102" rx="6"/>
+          <rect class="hd-new" x="16" y="348" width="230" height="26" rx="6"/>
+          <text class="t-h" x="28" y="365">their pivots</text>
+          <text class="t-code" x="28" y="386">_skill · _special · _spell</text>
+          <text class="t-code" x="28" y="403">_item (quantity)</text>
+          <text class="t-code" x="28" y="420">_restriction (note)</text>
+          <text class="t-m" x="28" y="437">one set per table</text>
+          <path class="edge" d="M130,348 V318" marker-end="url(#e-m)"/>
+
+          <rect class="box-ren" x="286" y="16" width="230" height="187" rx="6"/>
+          <rect class="hd-ren" x="286" y="16" width="230" height="26" rx="6"/>
+          <text class="t-h" x="298" y="33">hireling</text>
+          <text class="t-m" x="504" y="33" text-anchor="end">was hired_sword</text>
+          <text class="t-code" x="298" y="54">warband_id</text>
+          <text class="t-add" x="298" y="71">+ kind   sword · persona</text>
+          <text class="t-code" x="298" y="88">name, unit_type, race_id</text>
+          <text class="t-code" x="298" y="105">stats, xp, level-ups</text>
+          <text class="t-code" x="298" y="122">price, upkeep + formula</text>
+          <text class="t-code" x="298" y="139">rating, skill types</text>
+          <text class="t-add" x="298" y="156">+ injury_table, stays</text>
+          <text class="t-add" x="298" y="173">+ payment_note</text>
+          <text class="t-code" x="298" y="190">blood_pacted, dead</text>
+
+          <rect class="box-ren" x="286" y="233" width="230" height="68" rx="6"/>
+          <rect class="hd-ren" x="286" y="233" width="230" height="26" rx="6"/>
+          <text class="t-h" x="298" y="250">hireling pivots</text>
+          <text class="t-code" x="298" y="271">_skill · _spell · _special</text>
+          <text class="t-m" x="298" y="288">items: see unit item rows</text>
+
+          <rect class="box" x="556" y="16" width="230" height="68" rx="6"/>
+          <rect class="hd" x="556" y="16" width="230" height="26" rx="6"/>
+          <text class="t-h" x="568" y="33">hero</text>
+          <text class="t-code" x="568" y="54">name, unit_type</text>
+          <text class="t-code" x="568" y="71">items, skills …</text>
+
+          <rect class="box-chg" x="556" y="114" width="230" height="85" rx="6"/>
+          <rect class="hd-chg" x="556" y="114" width="230" height="26" rx="6"/>
+          <text class="t-h" x="568" y="131">henchmen_group</text>
+          <text class="t-add" x="568" y="152">+ source_beast_id</text>
+          <text class="t-code" x="568" y="169">name, unit_type, race?</text>
+          <text class="t-code" x="568" y="186">members: henchman</text>
+
+          <rect class="box-chg" x="556" y="260" width="230" height="119" rx="6"/>
+          <rect class="hd-chg" x="556" y="260" width="230" height="26" rx="6"/>
+          <text class="t-h" x="568" y="277">unit item rows ×3</text>
+          <text class="t-code" x="568" y="298">hero_item</text>
+          <text class="t-code" x="568" y="315">henchmen_group_item</text>
+          <text class="t-code" x="568" y="332">hireling_item</text>
+          <text class="t-code" x="568" y="349">item_id, cost</text>
+          <text class="t-add" x="568" y="366">+ companion</text>
+
+          <rect class="box-chg" x="826" y="16" width="250" height="170" rx="6"/>
+          <rect class="hd-chg" x="826" y="16" width="250" height="26" rx="6"/>
+          <text class="t-h" x="838" y="33">bestiary_entry</text>
+          <text class="t-code" x="838" y="54">campaign_id   null = book</text>
+          <text class="t-add" x="838" y="71">+ kind   mount · pet · creature</text>
+          <text class="t-code" x="838" y="88">name, description</text>
+          <text class="t-add" x="838" y="105">+ has_profile, stats</text>
+          <text class="t-code" x="838" y="122">save, large, caster</text>
+          <text class="t-add" x="838" y="139">+ gains_xp   creatures</text>
+          <text class="t-add" x="838" y="156">+ rating_bonus   mounts</text>
+          <text class="t-add" x="838" y="173">+ available_in_shop</text>
+
+          <rect class="box" x="826" y="216" width="250" height="68" rx="6"/>
+          <rect class="hd" x="826" y="216" width="250" height="26" rx="6"/>
+          <text class="t-h" x="838" y="233">bestiary pivots</text>
+          <text class="t-code" x="838" y="254">_skill · _special · _spell</text>
+          <text class="t-code" x="838" y="271">_item (quantity)</text>
+
+          <rect class="box-chg" x="826" y="314" width="250" height="102" rx="6"/>
+          <rect class="hd-chg" x="826" y="314" width="250" height="26" rx="6"/>
+          <text class="t-h" x="838" y="331">item · Animal</text>
+          <text class="t-code" x="838" y="352">subtype   = the kind</text>
+          <text class="t-code" x="838" y="369">bestiary_entry_id</text>
+          <text class="t-code" x="838" y="386">availabilities</text>
+          <text class="t-m" x="838" y="403">one for every beast</text>
+        </svg>
+        <div class="legend" style="margin-top:12px">
+          <span><i class="sw" style="border:1.6px solid var(--accent);background:var(--accent-soft)"></i>New</span>
+          <span><i class="sw" style="border:1.4px solid var(--changed);background:var(--changed-soft)"></i>Changed</span>
+          <span><i class="sw" style="border:1.4px solid var(--renamed);background:var(--renamed-soft)"></i>Renamed</span>
+          <span><i class="sw" style="border:1px solid var(--line)"></i>Unchanged</span>
+          <span><span class="mono add">+ column</span> added</span>
+          <span>Dashed gold: copied once on hire</span>
+          <span>Arrows point at the referenced table</span>
+        </div>
+      </div>
+      <figcaption>A hireling keeps no link to what it was hired from; the copy is the record. A beast is reached through its item, so the unit item rows that already exist carry the companion switch. A campaign's edit of the Warhorse reaches every warhorse already owned, because those rows point at the item, the same way pass 5 versions reach other items.</figcaption>
+    </figure>
+
+    <div class="schema">
+      <div class="tbl chg">
+        <header><h3>bestiary_entry</h3><span class="tag">changed</span></header>
+        <table>
+          <tr><td class="add">+ kind</td><td>mount, pet or creature; required, replaces the free-text <code>type</code></td></tr>
+          <tr><td class="add">+ has_profile</td><td>off for pets without stats; the stat line is hidden, not zeroed</td></tr>
+          <tr><td class="add">+ gains_xp</td><td>creatures; off by default, copied to the henchmen group's no-level-ups</td></tr>
+          <tr><td class="add">+ rating_bonus</td><td>mounts: 3, 5 or 20 added to the rider's rating</td></tr>
+          <tr><td class="add">+ available_in_shop</td><td>lists the beast's item in the shop or hides it; the item always exists</td></tr>
+          <tr><td>name, description, stats</td><td>as today, plus the catalogue columns (campaign, versions, archive, badges)</td></tr>
+          <tr><td>skills, specials, spells, items</td><td>the existing pivots, for all three kinds</td></tr>
+        </table>
+      </div>
+      <div class="tbl chg">
+        <header><h3>item · Animal</h3><span class="tag">changed</span></header>
+        <table>
+          <tr><td>bestiary_entry_id</td><td>required for Animal items; one item per beast, created and kept in step with it</td></tr>
+          <tr><td>subtype</td><td>Mount, Pet or Creature, from the beast's kind</td></tr>
+          <tr><td>availabilities</td><td>the price fields the bestiary form reveals; a hidden item keeps them</td></tr>
+          <tr><td colspan="2" class="note">Hiding is the item's shop visibility, not deletion, so kit references, trades and "back to item" never dead-end.</td></tr>
+        </table>
+      </div>
+      <div class="tbl chg">
+        <header><h3>hero_item · henchmen_group_item · hireling_item</h3><span class="tag">changed</span></header>
+        <table>
+          <tr><td class="add">+ companion</td><td>true when this mount or pet is switched on for the unit holding it</td></tr>
+          <tr><td>item_id, cost</td><td>unchanged; the beast is reached through the item</td></tr>
+          <tr><td colspan="2" class="note">Only Mount and Pet items can be switched on. Moving, selling or trading the item clears the switch. A henchmen group rides with one mount per living member; a mismatch warns.</td></tr>
+        </table>
+      </div>
+      <div class="tbl chg">
+        <header><h3>henchmen_group</h3><span class="tag">changed</span></header>
+        <table>
+          <tr><td class="add">+ source_beast_id</td><td>set when a creature becomes the group; "same type" means same beast</td></tr>
+          <tr><td>race_id</td><td>optional for creature groups (the form requires it today)</td></tr>
+          <tr><td>no_level_ups</td><td>copied from the beast's gains_xp</td></tr>
+          <tr><td colspan="2" class="note">Recruiting from an item writes no RECRUIT ledger row: the creature was paid for as an item. The group's price is set from the item's cost, so a member can go back to an item at the same value.</td></tr>
+        </table>
+      </div>
+      <div class="tbl new">
+        <header><h3>hired_sword</h3><span class="tag">new · 72 rows</span></header>
+        <table>
+          <tr><td>name, description</td><td>description is fluff: shown in the catalogue, never copied</td></tr>
+          <tr><td>stats, armour_save</td><td>with large and caster</td></tr>
+          <tr><td>race_id, race_label</td><td>race when it matches one we have; the label keeps "Chameleon Skink" when it doesn't</td></tr>
+          <tr><td>hire_cost, hire_cost_formula</td><td>"70+3D6" kept beside the number</td></tr>
+          <tr><td>upkeep_cost, upkeep_cost_formula</td><td>"1 piece of wyrdstone" kept as the formula</td></tr>
+          <tr><td>rating, skill_types</td><td>skill access, including Cavalry and its special skills</td></tr>
+          <tr><td>grade, campaign_type_id</td><td>graded properly in the grading plan</td></tr>
+          <tr><td colspan="2" class="note">Pivots: <code>hired_sword_skill</code>, <code>_special</code>, <code>_spell</code>, <code>_item</code> (with quantity, so the Ogre keeps both swords), <code>_restriction</code> (with note).</td></tr>
+        </table>
+      </div>
+      <div class="tbl new">
+        <header><h3>dramatis_persona</h3><span class="tag">new · empty until scraped</span></header>
+        <table>
+          <tr><td>every hired_sword column</td><td>and the same five pivots</td></tr>
+          <tr><td class="add">+ stays</td><td>always, or one battle</td></tr>
+          <tr><td class="add">+ payment_note</td><td>"25 gc or 1 shard", a summoning, a favour</td></tr>
+          <tr><td colspan="2" class="note">No XP and the Hero injury table come from the kind, so they don't need columns. The table starts empty and fills with the future scrape.</td></tr>
+        </table>
+      </div>
+      <div class="tbl ren">
+        <header><h3>hireling</h3><span class="tag">renamed from hired_sword</span></header>
+        <table>
+          <tr><td class="add">+ kind</td><td>hired sword or dramatis persona</td></tr>
+          <tr><td>name, unit_type</td><td>unit_type keeps what it was hired as ("Ogre Bodyguard")</td></tr>
+          <tr><td>price</td><td>the hire fee paid, as a ledger HIRE row</td></tr>
+          <tr><td>upkeep_price, upkeep_formula</td><td>suggested after each battle; a formula that isn't gold becomes a reminder</td></tr>
+          <tr><td class="add">+ injury_table</td><td>henchman (hired swords) or hero (dramatis personae); editable for house rules</td></tr>
+          <tr><td class="add">+ stays, payment_note</td><td>copied from a dramatis persona</td></tr>
+          <tr><td>stats, xp, rating, skills…</td><td>everything else the unit has today, unchanged</td></tr>
+          <tr><td colspan="2" class="note">Pivots renamed: <code>hireling_item</code>, <code>_skill</code>, <code>_spell</code>, <code>_special</code>. No foreign key to the catalogue.</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>A beast in the warband</h2>
+    <figure>
+      <div class="frame wide">
+        <svg class="fig" viewBox="0 0 1000 320" role="img" aria-label="A beast is bought as an Animal item, with optional assign or recruit straight away. In a unit's items, a mount or pet is switched on for that unit as its companion, and switched off again. A creature, in a unit's items or the stash, is recruited into a new henchmen group or a group of the same beast, and can go back to an item. In battle a mount gives its rider an icon and its M, a pet shows on the unit, and creatures fight as henchmen.">
+          <defs>
+            <marker id="l-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrow-m"/></marker>
+            <marker id="l-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrow-a"/></marker>
+          </defs>
+          <g class="t-m" text-anchor="middle"><text x="95" y="16">Shop</text><text x="315" y="16">As an item</text><text x="595" y="16">In the warband</text><text x="880" y="16">In battle</text></g>
+
+          <rect class="box" x="20" y="120" width="150" height="80" rx="6"/>
+          <text class="t-h" x="32" y="142">Acquire</text>
+          <text class="t-m" x="32" y="160">optional: assign or</text>
+          <text class="t-m" x="32" y="175">recruit straight away</text>
+
+          <path class="edge" d="M170,104 H230" marker-end="url(#l-m)"/>
+          <text class="t-m" x="200" y="96" text-anchor="middle">buy</text>
+          <path class="edge" d="M170,216 H230" marker-end="url(#l-m)"/>
+          <text class="t-m" x="200" y="232" text-anchor="middle">buy</text>
+
+          <rect class="box-chg" x="230" y="70" width="170" height="68" rx="6"/>
+          <text class="t-h" x="242" y="92">In a unit's items</text>
+          <text class="t-m" x="242" y="110">mount, pet or creature</text>
+          <text class="t-m" x="242" y="125">button beside the menu</text>
+
+          <rect class="box-chg" x="230" y="182" width="170" height="68" rx="6"/>
+          <text class="t-h" x="242" y="204">In the stash</text>
+          <text class="t-m" x="242" y="222">creatures: recruit button</text>
+          <text class="t-m" x="242" y="237">mounts, pets: move first</text>
+
+          <path class="edge-new" d="M400,90 H440 V58 H480" marker-end="url(#l-a)" marker-start="url(#l-a)"/>
+          <path class="edge-new" d="M400,110 H450 V160 H480" marker-end="url(#l-a)" marker-start="url(#l-a)"/>
+          <path class="edge-new" d="M400,128 H420 V262 H480" marker-end="url(#l-a)"/>
+          <path class="edge-new" d="M400,232 H430 V272 H480" marker-end="url(#l-a)"/>
+          <path class="edge-back" d="M595,290 V308 H315 V250" marker-end="url(#l-m)"/>
+          <text class="t-m" x="455" y="302" text-anchor="middle">back to item (to the stash)</text>
+          <text class="t-m" x="444" y="50">on / off</text>
+
+          <rect class="box-new" x="480" y="30" width="230" height="56" rx="6"/>
+          <use href="#i-mount" x="492" y="40" width="18" height="18" class="ic" style="color:var(--accent)"/>
+          <text class="t-h" x="518" y="54">Mount: its unit rides it</text>
+          <text class="t-m" x="492" y="74">companion switched on</text>
+
+          <rect class="box-new" x="480" y="132" width="230" height="56" rx="6"/>
+          <use href="#i-pet" x="492" y="142" width="18" height="18" class="ic" style="color:var(--renamed)"/>
+          <text class="t-h" x="518" y="156">Pet: goes with its unit</text>
+          <text class="t-m" x="492" y="176">companion switched on</text>
+
+          <rect class="box-new" x="480" y="234" width="230" height="56" rx="6"/>
+          <use href="#i-creature" x="492" y="244" width="18" height="18" class="ic" style="color:var(--changed)"/>
+          <text class="t-h" x="518" y="258">Henchmen</text>
+          <text class="t-m" x="492" y="278">new group, or join the same beast</text>
+
+          <path class="edge" d="M710,58 H770" marker-end="url(#l-m)"/>
+          <path class="edge" d="M710,160 H770" marker-end="url(#l-m)"/>
+          <path class="edge" d="M710,262 H770" marker-end="url(#l-m)"/>
+
+          <rect class="box" x="770" y="30" width="210" height="56" rx="6"/>
+          <text class="t-h" x="782" y="52">Icon on the rider</text>
+          <text class="t-m" x="782" y="70">M from the mount</text>
+          <rect class="box" x="770" y="132" width="210" height="56" rx="6"/>
+          <text class="t-h" x="782" y="154">Shown on the unit</text>
+          <text class="t-m" x="782" y="172">stats in a tooltip</text>
+          <rect class="box" x="770" y="234" width="210" height="56" rx="6"/>
+          <text class="t-h" x="782" y="256">Fights as henchmen</text>
+          <text class="t-m" x="782" y="274">henchman roll after</text>
+        </svg>
+      </div>
+      <figcaption>A mount or pet is only ever switched on for the unit holding its item, so there is no "assign to whom" step; to give it to someone else, move the item first. No gold changes hands when a beast is switched on, recruited or turned back: it was paid for once, as an item.</figcaption>
+    </figure>
+
+    <div class="mocks">
+      <div class="mock" aria-label="Mock of item rows with the new button">
+        <div class="mock-tag">Mock · Aldric's items, and the stash</div>
+        <div class="mock-sub">Aldric the Bold</div>
+        <div class="row"><span>Warhorse<span class="sub">Mount · ridden</span></span><span class="ibtn on" title="Riding: tap to dismount for good"><svg class="ic"><use href="#i-mount"/></svg></span><span class="ibtn"><svg class="ic fill"><use href="#i-dots"/></svg></span></div>
+        <div class="row"><span>Raven<span class="sub">Pet · not switched on</span></span><span class="ibtn pet" title="Keep as Aldric's pet"><svg class="ic"><use href="#i-pet"/></svg></span><span class="ibtn"><svg class="ic fill"><use href="#i-dots"/></svg></span></div>
+        <div class="row"><span>Sword<span class="sub">Weapon</span></span><span></span><span class="ibtn"><svg class="ic fill"><use href="#i-dots"/></svg></span></div>
+        <div class="mock-sub" style="margin-top:4px">Stash</div>
+        <div class="row"><span>Wardogs ×2<span class="sub">Creature</span></span><span class="ibtn creature" title="Recruit as henchmen"><svg class="ic"><use href="#i-creature"/></svg></span><span class="ibtn"><svg class="ic fill"><use href="#i-dots"/></svg></span></div>
+        <div class="row"><span>Mule<span class="sub">Mount · move it to a unit to ride it</span></span><span></span><span class="ibtn"><svg class="ic fill"><use href="#i-dots"/></svg></span></div>
+        <p class="small muted">The button is a switch for mounts and pets (filled when on), and a recruit button for creatures. Weapons and armour keep just the menu.</p>
+      </div>
+
+      <div class="mock" aria-label="Mock of the acquire dialog with assign and recruit straight away">
+        <div class="mock-tag">Mock · Acquire</div>
+        <div class="mock-title">Acquire Warhorse</div>
+        <div class="field"><span class="fl">Give to</span><div class="input">Aldric the Bold</div></div>
+        <div class="check"><span class="box-tick">✓</span>Aldric rides it straight away</div>
+        <div class="btnrow"><span class="btn">Cancel</span><span class="btn primary">Buy · 80 gc</span></div>
+        <div class="mock-title" style="margin-top:6px">Acquire Wardogs ×2</div>
+        <div class="pick">
+          <div class="opt sel"><span>Recruit: join "Kennel"</span><span>Wardogs · 2 members</span></div>
+          <div class="opt"><span>Recruit: new group</span><span>named Wardogs</span></div>
+          <div class="opt"><span>Keep as items</span><span>in the stash</span></div>
+        </div>
+        <div class="btnrow"><span class="btn">Cancel</span><span class="btn primary">Buy · 2 × 33 gc</span></div>
+      </div>
+
+      <div class="mock" aria-label="Mock of a unit card with a mount and a pet">
+        <div class="mock-tag">Mock · unit card, no new tab</div>
+        <div class="unitcard">
+          <div><div class="uname">Aldric the Bold</div><div class="utype">Captain · Level 4</div></div>
+          <div class="attach">
+            <span class="m"><svg class="ic"><use href="#i-mount"/></svg>Warhorse</span>
+            <span class="c"><svg class="ic"><use href="#i-pet"/></svg>Raven</span>
+          </div>
+          <div class="stats s10">
+            <div class="h">M</div><div class="h">WS</div><div class="h">BS</div><div class="h">S</div><div class="h">T</div><div class="h">W</div><div class="h">I</div><div class="h">A</div><div class="h">Ld</div><div class="h">Sv</div>
+            <div class="mv">8</div><div>4</div><div>4</div><div>3</div><div>3</div><div>1</div><div>4</div><div>1</div><div>8</div><div class="mv">5+</div>
+          </div>
+          <p class="small muted">Highlighted while mounted: M 8 (4 on foot) and save 5+ (6+ from light armour, +1 for the mount). Nothing is written to Aldric's stats; switching the mount off puts the display back. Tapping a chip shows the beast's profile and a "Switch off" action.</p>
+        </div>
+      </div>
+
+      <div class="mock" aria-label="Mock of battle mode with a mount, a pet and a creature group">
+        <div class="mock-tag">Mock · battle mode</div>
+        <div class="battle">
+          <div class="top"><svg class="ic" style="color:var(--accent)"><use href="#i-mount"/></svg><b>Aldric the Bold</b><span class="small muted">Captain</span><span class="attach" style="margin-left:auto"><span class="c"><svg class="ic"><use href="#i-pet"/></svg>Raven</span></span></div>
+          <div class="stats s10">
+            <div class="h">M</div><div class="h">WS</div><div class="h">BS</div><div class="h">S</div><div class="h">T</div><div class="h">W</div><div class="h">I</div><div class="h">A</div><div class="h">Ld</div><div class="h">Sv</div>
+            <div class="mv">8</div><div>4</div><div>4</div><div>3</div><div>3</div><div>1</div><div>4</div><div>1</div><div>8</div><div class="mv">5+</div>
+          </div>
+        </div>
+        <div class="battle" style="border-left-color:var(--changed)">
+          <div class="top"><svg class="ic" style="color:var(--changed)"><use href="#i-creature"/></svg><b>Kennel</b><span class="small muted">Wardogs · 4</span></div>
+          <div class="stats">
+            <div class="h">M</div><div class="h">WS</div><div class="h">BS</div><div class="h">S</div><div class="h">T</div><div class="h">W</div><div class="h">I</div><div class="h">A</div><div class="h">Ld</div>
+            <div>6</div><div>4</div><div>0</div><div>4</div><div>3</div><div>1</div><div>4</div><div>1</div><div>5</div>
+          </div>
+        </div>
+        <p class="small muted">The rider's M and save come from the mount and are highlighted, with the foot values in a tooltip. Creature groups get the creature icon. Temporary allies and enemies are picked from creatures only. A pet with a profile can be brought in as its own model next to its owner.</p>
+      </div>
+
+      <div class="mock" aria-label="Mock of the bestiary form with the shop section">
+        <div class="mock-tag">Mock · bestiary form</div>
+        <div class="seg"><span class="on"><svg class="ic"><use href="#i-mount"/></svg>Mount</span><span><svg class="ic"><use href="#i-pet"/></svg>Pet</span><span><svg class="ic"><use href="#i-creature"/></svg>Creature</span></div>
+        <div class="field"><span class="fl">Name</span><div class="input">Warhorse</div></div>
+        <div class="check"><span class="box-tick">✓</span>Has a profile</div>
+        <div class="field"><span class="fl">Rating bonus for the rider</span><div class="input">5</div></div>
+        <div class="check"><span class="box-tick">✓</span>Available in the shop</div>
+        <div class="reveal">
+          <div class="two">
+            <div class="field"><span class="fl">Price</span><div class="input">80</div></div>
+            <div class="field"><span class="fl">Rarity</span><div class="input">11</div></div>
+          </div>
+          <div class="field"><span class="fl">Variable cost</span><div class="input muted">e.g. +2D6</div></div>
+          <div class="field"><span class="fl">Restrictions</span><div class="input">Humans only</div></div>
+        </div>
+        <p class="small muted">Untick "Available in the shop" and the price fields fold away. The warhorse item still exists, so kits, trades and owned warhorses keep working; it just isn't sold.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Hiring</h2>
+    <div class="prose">
+      <p>Hiring moves to the server: <code>POST hirelings/hire/</code> with the catalogue row's id. "Hireling" is the code's name only; the site keeps saying "Hired sword" and "Dramatis persona". The server copies the profile minus its description, with item quantities and both cost formulas, records the HIRE ledger row and answers the new hireling. That removes the browser copy that drops the Ogre's second sword and every formula today.</p>
+      <ul class="plain">
+        <li><b>One "Hire" button</b> with two lists: hired swords and dramatis personae (empty until they are scraped).</li>
+        <li><b>Mounts in a kit:</b> the Freelancer, Highwayman, Roadwarden and Hobgoblin Scout come with an Animal item, switched on as their mount on hire and included in the fee.</li>
+        <li><b>Dramatis personae</b> copy with no XP, the Hero injury table, how long they stay and what they're paid in. After a battle, one who stays for one battle is suggested to leave.</li>
+        <li><b>Upkeep</b> is suggested after each battle as today. A formula that isn't gold ("1 piece of wyrdstone") shows as a reminder rather than a charge.</li>
+        <li><b>The cap</b> stays on hired swords (max 3). Dramatis personae are one of each, with a warning, never a block.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Where today's data goes</h2>
+    <p class="prose">Everything comes from the files we already have. Nothing is scraped for this rewrite. Every beast gets its Animal item; the shop column says whether it is sold.</p>
+    <div class="scroll">
+      <table class="data">
+        <thead><tr><th>Source</th><th>Entries</th><th>Becomes</th><th>Sold</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>bestiary.json</td><td>Warhorse, Riding Horse, Mule, Elven Steed, Chaos Steed, Cold One, Giant Spider, Giant Wolf, Nightmare, War Boar, Rhinox, Temple Dog</td><td><span class="kind mount">mount</span></td><td>yes</td><td>Rating bonus: horse 3, warhorse 5, Rhinox and Temple Dog 20; the rest to set</td></tr>
+          <tr><td>bestiary.json</td><td>Wardogs, Gnoblar Fighter</td><td><span class="kind creature">creature</span></td><td>yes</td><td>Henchmen when recruited</td></tr>
+          <tr><td>mim-bestiary.json</td><td>Bear, Tiger, Fighting Monkey, Cathayan Temple Rooster, Geckamand, Dragon Turtle</td><td><span class="kind creature">creature</span></td><td>yes</td><td>Mutiny in Marienburg; seeded for the first time</td></tr>
+          <tr><td>mim-bestiary.json</td><td>Wild Dog, Wyvern, Giant Rat</td><td><span class="kind creature">creature</span></td><td>no</td><td>Allies only, or paid in warptokens; usable mid-battle, and as items if one joins</td></tr>
+          <tr><td>mim-bestiary.json</td><td>Raven, Polecat, Pelican, Lizard-Hawk, Snake, Sacrificial Goat/Sheep</td><td><span class="kind pet">pet</span></td><td>yes</td><td>No profile yet (has_profile off)</td></tr>
+          <tr><td>mim-bestiary.json</td><td>Camel, Wild Boar/Pig</td><td><span class="kind mount">mount</span></td><td>yes</td><td>Boar/Pig has no profile yet</td></tr>
+          <tr><td>mim-bestiary.json</td><td>Wardog</td><td><span class="kind drop">dropped</span></td><td>—</td><td>Duplicate of Wardogs with an empty profile</td></tr>
+          <tr><td>hired-swords.json</td><td>72 hired swords</td><td><code>hired_sword</code></td><td>—</td><td>Kit quantities and formulas kept; their own skills and specials move to the hired sword's pivots</td></tr>
+          <tr><td>none yet</td><td>Dramatis personae</td><td><code>dramatis_persona</code></td><td>—</td><td>Table ready, filled by the future scrape</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>What gets removed and rebuilt</h2>
+    <div class="scroll">
+      <table class="data renames">
+        <thead><tr><th>Today</th><th>After</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td>HiredSword unit, hired_sword_item / _skill / _spell / _special</td><td>Hireling, hireling_item / _skill / _spell / _special</td><td>about 60 backend and 125 frontend files; unit keys become <code>hireling:&lt;id&gt;</code>; ships alone first, no behaviour change</td></tr>
+          <tr><td>/warbands/:id/hired-swords/</td><td>/warbands/:id/hirelings/ (+ hire/)</td><td>the generic unit views carry on</td></tr>
+          <tr><td>HiredSwordProfile, one-to-one with an entry</td><td>hired_sword table + 5 pivots</td><td>the bestiary loses 72 "Hired Sword" entries</td></tr>
+          <tr><td>—</td><td>dramatis_persona table + 5 pivots</td><td>new</td></tr>
+          <tr><td>BestiaryEntry.type (free text)</td><td>BestiaryEntry.kind</td><td>Mount stays Mount, Attack becomes creature, Retainer becomes pet</td></tr>
+          <tr><td>Animal item only when seeded with a shop block</td><td>one Animal item per beast</td><td>the shop flag lists or hides it</td></tr>
+          <tr><td>—</td><td>companion column on hero_item, henchmen_group_item, hireling_item</td><td>instead of new attachment tables</td></tr>
+          <tr><td>The browser's hire preset copy</td><td>POST hirelings/hire/</td><td>copy on the server</td></tr>
+          <tr><td>Catalogue special cases for hired swords</td><td>two ordinary catalogue kinds</td><td><code>entry_via</code>, <code>table_key</code> and the name, payload and row branches go</td></tr>
+          <tr><td>"Load from Bestiary" lists all 86</td><td>lists creatures</td><td>and works in active battles too</td></tr>
+          <tr><td>150 migrations</td><td>a fresh 0001 per app (21 files)</td><td>recreates the roles and codes seed, the catalogue version row and the kill-history index; local and production databases are wiped and the catalogue reseeds itself on boot. Done now, while there are no real users; never again after</td></tr>
+          <tr><td>seed_bestiary (one command)</td><td>seed_bestiary, seed_hired_swords, seed_dramatis_personae</td><td>the "catalogue is ready" check moves to the last seeder</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Order of work</h2>
+    <div class="scroll">
+      <table class="phases">
+        <thead><tr><th>Step</th><th>What lands</th><th>Build</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td><b>Land passes 5 and 6.</b> Finish pass 5's frontend without its bestiary and hired-sword edit panels, which this rewrite rebuilds; merge and deploy both passes.</td><td class="n">2–3 days</td></tr>
+          <tr><td>1</td><td><b>The hireling rename, on its own.</b> Units, battles, postbattle, frontend kinds and types. A rename only, behaviour unchanged, so every test still passes.</td><td class="n">1–1.5 days</td></tr>
+          <tr><td>2</td><td><b>Hired swords and dramatis personae.</b> The two catalogue tables and pivots, the seeder, catalogue pages and forms on pass 5's framework, server-side hire, kit mounts switched on, dramatis rules in postbattle.</td><td class="n">3 days</td></tr>
+          <tr><td>3</td><td><b>The bestiary by kind.</b> kind, has_profile, gains_xp, rating_bonus, one Animal item per beast with the shop flag, the form with its shop section, the Bestiary page by kind, Marienburg beasts seeded.</td><td class="n">2 days</td></tr>
+          <tr><td>4</td><td><b>Beasts in the warband.</b> The companion column, the item button (switch on and off for the holding unit, recruit into a new or matching group with no second charge, back to item), assign and recruit straight away in Acquire, chips on the unit card, M and rating from the mount, group mounts per member.</td><td class="n">2–2.5 days</td></tr>
+          <tr><td>5</td><td><b>Battle mode.</b> Mount icon with M and save in prebattle and active, pets on the unit, pets with a profile as their own model, creature icon on groups, creatures as temporary allies and enemies in active battles, postbattle suggestions (mount survival, dramatis personae leaving).</td><td class="n">2–2.5 days</td></tr>
+          <tr><td>6</td><td><b>Fresh migrations and seeders,</b> two-player browser check, then deploy with a wiped database (production wipe confirmed with you at the time).</td><td class="n">1–2 days</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="prose small muted">The grading and settings plan follows once this lands; its grade column goes onto these new tables as well.</p>
+  </section>
+
+  <section>
+    <h2>Questions for you</h2>
+    <ol class="decisions">
+      <li><b>Dramatis personae and the hired sword cap.</b> Under the rules a dramatis persona is a unique character found after a battle, often for one battle only, who never gains XP and uses the Hero injury table. Hired swords have no numeric limit in the rules beyond one of each type; the max of 3 is our campaign setting. So: should a dramatis persona take one of those 3 slots, or sit outside them (one of each, warned)? A third option is a separate campaign setting for dramatis personae.<span class="rec">Suggested: outside the cap, one of each, warned</span></li>
+      <li><b>A "dismount" toggle in battle</b> that puts the rider's foot M and save back for the rest of the battle, if he gets off his horse.<span class="rec">Optional: in step 5 or later</span></li>
+    </ol>
+  </section>
+</main>

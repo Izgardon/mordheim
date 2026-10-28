@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { listWarbandHeroes, listWarbandHiredSwords } from "@/features/warbands/api/warbands-api";
+import { listWarbandHeroes, listWarbandHirelings } from "@/features/warbands/api/warbands-api";
 
-import type { WarbandHero, WarbandHiredSword } from "@/features/warbands/types/warband-types";
+import type { WarbandHero, WarbandHireling } from "@/features/warbands/types/warband-types";
 
-export type UnitSummaryType = "heroes" | "hiredswords";
+export type UnitSummaryType = "heroes" | "hirelings";
 
 type UnitsByType = {
   heroes: WarbandHero[];
-  hiredswords: WarbandHiredSword[];
+  hirelings: WarbandHireling[];
 };
 
 type LoadingByType = Record<UnitSummaryType, boolean>;
@@ -20,8 +20,8 @@ type UseUnitSummaryListsParams = {
   activeUnitType?: UnitSummaryType | "";
 };
 
-const emptyUnits: UnitsByType = { heroes: [], hiredswords: [] };
-const emptyLoading: LoadingByType = { heroes: false, hiredswords: false };
+const emptyUnits: UnitsByType = { heroes: [], hirelings: [] };
+const emptyLoading: LoadingByType = { heroes: false, hirelings: false };
 
 export function useUnitSummaryLists({
   warbandId,
@@ -56,7 +56,7 @@ export function useUnitSummaryLists({
         const data =
           type === "heroes"
             ? await listWarbandHeroes(warbandId)
-            : await listWarbandHiredSwords(warbandId);
+            : await listWarbandHirelings(warbandId);
         loadedTypesRef.current.add(type);
         setUnitsByType((prev) => ({ ...prev, [type]: data }));
       } catch (err) {

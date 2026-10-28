@@ -161,7 +161,7 @@ class PostbattleDraftTests(BattleTestCase):
     def test_finalise_validation(self):
         battle_id = self.postbattle()
         other_resource = WarbandResource.objects.create(warband=self.rival, name="Shards")
-        rival_sword = self.rival.hired_swords.create(name="Ogre", unit_type="Ogre")
+        rival_sword = self.rival.hirelings.create(name="Ogre", unit_type="Ogre")
         d6_hero = {self.h: {"rolls": [injury_roll([3], roll_type="d6")]}}
         d66_henchman = {self.s: {"rolls": [injury_roll([3, 3])]}}
         cases: list[tuple[Any, str]] = [
@@ -173,7 +173,7 @@ class PostbattleDraftTests(BattleTestCase):
             (draft(self.results(**{self.h: {"specials": [999_999]}})), "One or more selected injury specials are invalid"),
             (draft(self.results(), exploration={"resource_id": other_resource.id}), "Selected exploration resource is invalid"),
             (draft(self.results(), exploration={"dice_values": [1] * 11}), "postbattle exploration dice_values must contain at most 10 entries"),
-            (draft(self.results(), upkeep={"entries": {f"hired_sword:{rival_sword.id}": {"cost": 5}}}), "One or more upkeep hired swords are invalid"),
+            (draft(self.results(), upkeep={"entries": {f"hireling:{rival_sword.id}": {"cost": 5}}}), "One or more upkeep hired swords are invalid"),
         ]  # fmt: skip
         for postbattle_json, detail in cases:
             with self.subTest(detail=detail):

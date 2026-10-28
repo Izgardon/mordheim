@@ -182,7 +182,7 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
       const value = form.id ? `${kind.labels.formIdPrefix}-${form.id}` : `draft-${index}`;
       return {
         value,
-        label: form.name.trim() || kind.labels.newUnit,
+        label: form.name.trim() || (kind.labelsFor?.(form) ?? kind.labels).newUnit,
         elementId: getWarbandMobileEditItemId(kind.section, value),
       };
     });
@@ -202,6 +202,11 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
   /** A card's unit changed (its own mutation already updated the sheet and its summary). */
   const replaceUnit = (updated: Unit<K>) => {
     onUnitsChange(units.map((unit) => (unit.id === updated.id ? updated : unit)));
+  };
+
+  /** A unit added outside an edit (a hire; its own mutation already updated the sheet). */
+  const addUnit = (added: Unit<K>) => {
+    onUnitsChange([...units.filter((unit) => unit.id !== added.id), added]);
   };
 
   /** Henchmen: Lad's Got Talent promoted the group's last member (promote/ wrote the summary). */
@@ -229,8 +234,11 @@ export function useUnitSectionEditor<K extends UnitKindKey>(
     duplicateForm,
     addCreatedSkill,
     replaceUnit,
+    addUnit,
     removeUnit,
     navigationItems,
+    /** The caps and counts the section compares against. */
+    roster,
     toggleExpanded: (unitId: number) =>
       forms.setExpandedId(forms.expandedId === unitId ? null : unitId),
   };

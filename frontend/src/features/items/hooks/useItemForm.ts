@@ -1,7 +1,5 @@
 import { useCallback, useState } from "react";
 
-import type { StatLabel } from "@/features/catalogue/utils/statblock";
-import { blankItemStatblock } from "@/features/catalogue/utils/statblock";
 import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
 import { useNameTakenMatches } from "@/features/catalogue/hooks/useNameTakenMatches";
 import { useCatalogueDelete } from "@/features/catalogue/hooks/useCatalogueDelete";
@@ -151,18 +149,15 @@ export function useItemForm({
     subtypeOptions: ITEM_SUBTYPE_OPTIONS[values.type] ?? [],
     setValue: (field: ItemTextField, value: string) =>
       setValues((prev) => ({ ...prev, [field]: value })),
-    /** A new type starts at its first subtype; only animals keep a statblock, only misc single use. */
+    /** A new type starts at its first subtype; only misc is single use. */
     setType: (type: string) =>
       setValues((prev) => ({
         ...prev,
         type,
         subtype: ITEM_SUBTYPE_OPTIONS[type]?.[0] ?? "",
-        statblock: type === "Animal" ? prev.statblock : blankItemStatblock(),
         singleUse: type === "Miscellaneous" ? prev.singleUse : false,
       })),
     setSingleUse: (singleUse: boolean) => setValues((prev) => ({ ...prev, singleUse })),
-    setStat: (label: StatLabel, value: string) =>
-      setValues((prev) => ({ ...prev, statblock: { ...prev.statblock, [label]: value } })),
     addAvailability: () => setRows((rows) => [...rows, blankAvailability()]),
     removeAvailability: (index: number) => setRows((rows) => rows.filter((_, i) => i !== index)),
     setAvailability: (index: number, field: AvailabilityTextField, value: string) =>

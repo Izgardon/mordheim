@@ -1,12 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { NumberInput } from "@/components/ui/number-input";
 import type { BattleParticipant } from "@/features/battles/types/battle-types";
-import BattleUnitStatsAndItems from "@/features/battles/components/shared/BattleUnitStatsAndItems";
-import { getBattleCardThemeStyle } from "@/features/battles/components/shared/battle-card-theme";
+import PrebattleHenchmenGroupRow from "./PrebattleHenchmenGroupRow";
+import PrebattleUnitRow, { type PrebattleRowTools } from "./PrebattleUnitRow";
+import { withPetModels } from "../active/active-utils";
 
 import type {
-  HenchmenGroupRoster,
   ParticipantRoster,
   PrebattleUnit,
   UnitSingleUseItem,
@@ -39,8 +37,11 @@ type PrebattleParticipantRosterProps = {
   onUseSingleUseItem: (unit: PrebattleUnit, item: UnitSingleUseItem) => void;
   getUsedSingleUseItemCount: (unitKey: string, itemId: number) => number;
   activeItemActionKey: string | null;
-  sectionIds?: Partial<Record<"heroes" | "henchmen" | "hired_swords" | "temporary", string>>;
+  sectionIds?: Partial<Record<"heroes" | "henchmen" | "hirelings" | "temporary", string>>;
 };
+
+const SECTION_TITLE_CLASS =
+  "text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground";
 
 export default function PrebattleParticipantRoster({
   participant,
@@ -71,157 +72,36 @@ export default function PrebattleParticipantRoster({
   const showAllAsSelectedForReadOnly = !editable && participantSelectedKeys.length === 0;
   const ratingDisplayValue = ratingInputValue.trim() === "" ? "-" : ratingInputValue;
 
-  const isUnitSelected = (unitKey: string) =>
-    editable
-      ? selectedUnitKeys.includes(unitKey)
-      : showAllAsSelectedForReadOnly || participantSelectedKeys.includes(unitKey);
-
-  const getUnitOverride = (unitKey: string) => participantOverrides[unitKey];
-
-  const getUnitNotes = (unitKey: string) => participantNotes[unitKey] ?? "";
-
-  const renderUnitRow = (unit: PrebattleUnit) => {
-    const selected = isUnitSelected(unit.key);
-    const override = getUnitOverride(unit.key);
-    const isEditing = editingUnitKey === unit.key;
-
-    return (
-      <div key={unit.key} className="battle-card p-4" style={getBattleCardThemeStyle(unit.kind)}>
-        <div className="flex flex-wrap items-start justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Checkbox
-              checked={selected}
-              disabled={!editable}
-              onChange={() => onToggleUnitSelection(unit.key)}
-            />
-            <div>
-              <p className="text-sm font-semibold text-foreground">{unit.displayName}</p>
-              <p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
-                {unit.unitType}
-              </p>
-              {unit.kind === "custom" ? (
-                <p className="mt-1 text-xs text-muted-foreground">Rating: {unit.rating ?? 0}</p>
-              ) : null}
-            </div>
-          </div>
-          {editable && unit.kind === "custom" ? (
-            <Button variant="destructive" size="sm" onClick={() => onRemoveCustomUnit(unit.key)}>
-              Remove
-            </Button>
-          ) : null}
-        </div>
-
-        {selected ? (
-          <BattleUnitStatsAndItems
-            unitKey={unit.key}
-            baseStats={unit.stats}
-            override={override}
-            notes={getUnitNotes(unit.key)}
-            editable={editable}
-            isEditing={isEditing}
-            onToggleEditing={() => onToggleEditingUnit(unit.key)}
-            onUpdateStat={(key, value) => onUpdateOverrideStat(unit, key, value)}
-            onUpdateNotes={(notes) => onUpdateUnitNotes(unit.key, notes)}
-            onResetOverride={() => onClearUnitOverride(unit.key)}
-            singleUseItems={unit.singleUseItems ?? []}
-            canUseItems={editable && canUseItems}
-            onUseItem={(item) => onUseSingleUseItem(unit, item)}
-            getUsedItemCount={(itemId) => getUsedSingleUseItemCount(unit.key, itemId)}
-            activeItemActionKey={activeItemActionKey}
-            constrainStatsToHalfWidth
-          />
-        ) : null}
-      </div>
-    );
+  const tools: PrebattleRowTools = {
+    editable,
+    isUnitSelected: (unitKey: string) =>
+      editable
+        ? selectedUnitKeys.includes(unitKey)
+        : showAllAsSelectedForReadOnly || participantSelectedKeys.includes(unitKey),
+    getUnitOverride: (unitKey: string) => participantOverrides[unitKey],
+    getUnitNotes: (unitKey: string) => participantNotes[unitKey] ?? "",
+    editingUnitKey,
+    onToggleUnitSelection,
+    onToggleEditingUnit,
+    onUpdateOverrideStat,
+    onUpdateUnitNotes,
+    onClearUnitOverride,
+    onRemoveCustomUnit,
+    canUseItems,
+    onUseSingleUseItem,
+    getUsedSingleUseItemCount,
+    activeItemActionKey,
   };
 
-  const renderHenchmenGroupRow = (group: HenchmenGroupRoster) => {
-    if (group.members.length === 0) {
-      return null;
-    }
-
-    const selectedMembers = group.members.filter((member) => isUnitSelected(member.key));
-    const groupEditKey = selectedMembers[0]?.key ?? group.members[0].key;
-    const groupOverrideSource =
-      selectedMembers.find((member) => {
-        const override = getUnitOverride(member.key);
-        return Boolean(override && Object.keys(override.stats).length > 0);
-      }) ??
-      selectedMembers.find((member) => getUnitNotes(member.key).trim()) ??
-      selectedMembers[0] ??
-      group.members[0];
-    const groupOverride = getUnitOverride(groupOverrideSource.key);
-    const groupNotes = getUnitNotes(groupOverrideSource.key);
-    const isEditing = editingUnitKey === groupEditKey;
-    const selectedCount = selectedMembers.length;
-
-    const applyOverrideStatToGroup = (key: StatKey, value: string) => {
-      selectedMembers.forEach((member) => onUpdateOverrideStat(member, key, value));
-    };
-
-    const applyNotesToGroup = (notes: string) => {
-      selectedMembers.forEach((member) => onUpdateUnitNotes(member.key, notes));
-    };
-
-    const clearGroupOverride = () => {
-      selectedMembers.forEach((member) => onClearUnitOverride(member.key));
-    };
-    const groupSingleUseItems = group.members[0].singleUseItems ?? [];
-
-    return (
-      <div
-        key={group.id}
-        className="battle-card p-4"
-        style={getBattleCardThemeStyle("henchmen_group")}
-      >
-        <div className="flex flex-wrap items-start justify-between gap-2">
-          <div>
-            <p className="text-sm font-semibold text-foreground">{group.name}</p>
-            <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
-              {group.unitType} {selectedCount}/{group.members.length}
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-2 flex flex-wrap gap-2">
-          {group.members.map((member) => (
-            <label
-              key={`member-toggle-${member.key}`}
-              className="battle-chip inline-flex items-center gap-2 rounded-md px-2 py-1"
-            >
-              <Checkbox
-                checked={isUnitSelected(member.key)}
-                disabled={!editable}
-                onChange={() => onToggleUnitSelection(member.key)}
-              />
-              <span className="text-xs text-foreground">{member.displayName}</span>
-            </label>
-          ))}
-        </div>
-
-        {selectedCount > 0 ? (
-          <BattleUnitStatsAndItems
-            unitKey={groupEditKey}
-            baseStats={group.members[0].stats}
-            override={groupOverride}
-            notes={groupNotes}
-            editable={editable}
-            isEditing={isEditing}
-            onToggleEditing={() => onToggleEditingUnit(groupEditKey)}
-            onUpdateStat={applyOverrideStatToGroup}
-            onUpdateNotes={applyNotesToGroup}
-            onResetOverride={clearGroupOverride}
-            singleUseItems={groupSingleUseItems}
-            canUseItems={editable && canUseItems}
-            onUseItem={(item) => onUseSingleUseItem(group.members[0], item)}
-            getUsedItemCount={(itemId) => getUsedSingleUseItemCount(groupEditKey, itemId)}
-            activeItemActionKey={activeItemActionKey}
-            constrainStatsToHalfWidth
-          />
-        ) : null}
-      </div>
-    );
-  };
+  const renderUnitRow = (unit: PrebattleUnit) => (
+    <PrebattleUnitRow key={unit.key} unit={unit} tools={tools} />
+  );
+  // Each pet fighting as its own model is picked right after its owner (step 5).
+  const pets = participantRoster?.petModels ?? [];
+  const ownedBy = (prefix: string) => (pet: PrebattleUnit) =>
+    (pet.ownerKey ?? "").startsWith(prefix);
+  const unitRows = (units: PrebattleUnit[], prefix: string) =>
+    withPetModels(units, pets, (unit) => unit.key, ownedBy(prefix)).map(renderUnitRow);
 
   return (
     <div key={participant.id} className="space-y-3">
@@ -262,42 +142,41 @@ export default function PrebattleParticipantRoster({
         <div className="space-y-4">
           {participantRoster.heroes.length ? (
             <section id={sectionIds?.heroes} className="space-y-2 scroll-mt-28">
-              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Heroes
-              </p>
-              <div className="space-y-2">
-                {participantRoster.heroes.map((unit) => renderUnitRow(unit))}
-              </div>
+              <p className={SECTION_TITLE_CLASS}>Heroes</p>
+              <div className="space-y-2">{unitRows(participantRoster.heroes, "hero:")}</div>
             </section>
           ) : null}
 
           {participantRoster.henchmenGroups.length ? (
             <section id={sectionIds?.henchmen} className="space-y-2 scroll-mt-28">
-              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Henchmen Groups
-              </p>
+              <p className={SECTION_TITLE_CLASS}>Henchmen Groups</p>
               <div className="space-y-3">
-                {participantRoster.henchmenGroups.map((group) => renderHenchmenGroupRow(group))}
+                {withPetModels(
+                  participantRoster.henchmenGroups,
+                  pets,
+                  (group) => `group:${group.id}`,
+                  ownedBy("group:")
+                ).map((entry) =>
+                  "members" in entry ? (
+                    <PrebattleHenchmenGroupRow key={entry.id} group={entry} {...tools} />
+                  ) : (
+                    renderUnitRow(entry)
+                  )
+                )}
               </div>
             </section>
           ) : null}
 
-          {participantRoster.hiredSwords.length ? (
-            <section id={sectionIds?.hired_swords} className="space-y-2 scroll-mt-28">
-              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Hired Swords
-              </p>
-              <div className="space-y-2">
-                {participantRoster.hiredSwords.map((unit) => renderUnitRow(unit))}
-              </div>
+          {participantRoster.hirelings.length ? (
+            <section id={sectionIds?.hirelings} className="space-y-2 scroll-mt-28">
+              <p className={SECTION_TITLE_CLASS}>Hired Swords</p>
+              <div className="space-y-2">{unitRows(participantRoster.hirelings, "hireling:")}</div>
             </section>
           ) : null}
 
           {participantCustomUnits.length ? (
             <section id={sectionIds?.temporary} className="space-y-2 scroll-mt-28">
-              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Temporary Units
-              </p>
+              <p className={SECTION_TITLE_CLASS}>Temporary Units</p>
               <div className="space-y-2">
                 {participantCustomUnits.map((unit) => renderUnitRow(unit))}
               </div>

@@ -12,7 +12,7 @@ from typing import Any
 from apps.warbands.models import (
     HenchmenGroupItem,
     HeroItem,
-    HiredSwordItem,
+    HirelingItem,
     Warband,
     WarbandItem,
     WarbandLog,
@@ -29,7 +29,7 @@ class FixturePostbattleTests(BattleTestCase):
         self.rope = catalogue_item("Rope", 5)
         self.charm = catalogue_item("Lucky Charm", 10)
         self.fixture = build_fixture_warband(self.warband, self.rope)
-        self.heroes, self.swords, self.groups = self.fixture.heroes, self.fixture.hired_swords, self.fixture.groups
+        self.heroes, self.swords, self.groups = self.fixture.heroes, self.fixture.hirelings, self.fixture.groups
         self.henchmen = self.fixture.henchmen  # groups of 3, 3 and 2
         self.rat = f"hero:{self.rival.heroes.create(name='Rat', unit_type='Assassin').id}"
         self.resource = WarbandResource.objects.create(warband=self.warband, name="Wyrdstone", amount=1)
@@ -47,7 +47,7 @@ class FixturePostbattleTests(BattleTestCase):
         return {key: unit_result(key, **changes.get(key, {})) for key in self.fixture.keys}
 
     def key(self, unit: Any) -> str:
-        kind = {"Hero": "hero", "HiredSword": "hired_sword", "Henchman": "henchman"}[type(unit).__name__]
+        kind = {"Hero": "hero", "Hireling": "hireling", "Henchman": "henchman"}[type(unit).__name__]
         return f"{kind}:{unit.id}"
 
     def test_finalise_applies_xp_deaths_exploration_upkeep_reward_and_finds(self):
@@ -229,7 +229,7 @@ class FixturePostbattleTests(BattleTestCase):
         self.ok(self.finalize(self.player, battle_id, draft(self.results(**changes))))
 
         self.assertEqual(HeroItem.objects.filter(hero=self.heroes[1]).count(), 1)
-        self.assertEqual(HiredSwordItem.objects.filter(hired_sword=self.swords[0]).count(), 1)
+        self.assertEqual(HirelingItem.objects.filter(hireling=self.swords[0]).count(), 1)
         self.assertEqual(list(group.henchmen_group_items.values_list("item__name", flat=True)), ["Rope"])
         self.assertFalse(HenchmenGroupItem.objects.filter(henchmen_group=self.groups[2]).exists())
         lost = WarbandLog.objects.get(warband=self.warband, entry_type="items_lost").payload["units"]

@@ -9,7 +9,7 @@ group's.
 from collections.abc import Iterable
 
 from apps.campaigns.models import CampaignSettings
-from apps.warbands.models import HenchmenGroup, Hero, HiredSword, RosterUnit
+from apps.warbands.models import HenchmenGroup, Hero, Hireling, RosterUnit
 from apps.warbands.units.services.xp import predicted_level_ups
 
 XP_COLUMNS = ("id", "xp", "xp_high_water", "half_rate")
@@ -19,7 +19,7 @@ def _wanted(rosters: Iterable[dict], keys: set[str]) -> tuple[set[int], set[int]
     heroes, swords, group_of = set(), set(), {}
     for roster in rosters:
         heroes |= {hero["id"] for hero in roster.get("heroes", []) if hero.get("key") in keys}
-        swords |= {sword["id"] for sword in roster.get("hiredSwords", []) if sword.get("key") in keys}
+        swords |= {sword["id"] for sword in roster.get("hirelings", []) if sword.get("key") in keys}
         for group in roster.get("henchmenGroups", []):
             group_of.update({member["key"]: group["id"] for member in group.get("members", []) if member.get("key") in keys})  # fmt: skip
     return heroes, swords, group_of
@@ -32,8 +32,8 @@ def unit_rows(rosters: Iterable[dict], keys: set[str]) -> dict[str, RosterUnit]:
     if hero_ids:
         rows.update({f"hero:{hero.id}": hero for hero in Hero.objects.filter(id__in=hero_ids).only(*XP_COLUMNS)})
     if sword_ids:
-        swords = HiredSword.objects.filter(id__in=sword_ids).only(*XP_COLUMNS, "no_level_ups")
-        rows.update({f"hired_sword:{sword.id}": sword for sword in swords})
+        swords = Hireling.objects.filter(id__in=sword_ids).only(*XP_COLUMNS, "no_level_ups")
+        rows.update({f"hireling:{sword.id}": sword for sword in swords})
     if group_of:
         groups = HenchmenGroup.objects.filter(id__in=set(group_of.values())).only(*XP_COLUMNS, "no_level_ups")
         by_id = {group.id: group for group in groups}

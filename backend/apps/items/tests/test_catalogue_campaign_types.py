@@ -1,13 +1,14 @@
 """Campaign types, schema only (CAT-NEW-04, decision "New"): the `campaign_type` table, the
-`campaign_campaign_type` pivot and a nullable `campaign_type` on seven catalogue tables (not the bestiary). No rows,
+`campaign_campaign_type` pivot and a nullable `campaign_type` on eight catalogue tables (not the bestiary). No rows,
 no tagging and no filtering yet; the seeders leave the column null (`seed_all` twice: the seeding tests).
 """
 
 from django.db import IntegrityError, transaction
 from django.db.models import RestrictedError
 
-from apps.bestiary.models import BestiaryEntry, HiredSwordProfile
+from apps.bestiary.models import BestiaryEntry
 from apps.campaigns.models import CampaignCampaignType, CampaignType
+from apps.hirelings.models import DramatisPersona, HiredSword
 from apps.items.models import Item, ItemProperty
 from apps.races.models import Race
 from apps.restrictions.models import Restriction
@@ -17,14 +18,14 @@ from apps.spells.models import Spell
 
 from .catalogue_support import BESTIARY, ITEMS, KINDS, CatalogueTestCase, make_entry
 
-TYPED = (Item, Skill, Spell, Special, Race, Restriction, HiredSwordProfile)
+TYPED = (Item, Skill, Spell, Special, Race, Restriction, HiredSword, DramatisPersona)
 
 
 class CampaignTypeSchemaTests(CatalogueTestCase):
     def test_a_fresh_database_has_no_campaign_types(self):
         self.assertEqual((CampaignType.objects.count(), CampaignCampaignType.objects.count()), (0, 0))
 
-    def test_seven_catalogue_tables_take_a_nullable_campaign_type_and_the_bestiary_none(self):
+    def test_eight_catalogue_tables_take_a_nullable_campaign_type_and_the_bestiary_none(self):
         for model in TYPED:
             with self.subTest(model=model.__name__):
                 field = model._meta.get_field("campaign_type")

@@ -89,7 +89,7 @@ function Section({
     units: groups,
     canEdit,
     confirmDiscard,
-    roster: { maxHeroes: 6, maxHiredSwords: 3, heroCount: 0, hiredSwordCount: 0 },
+    roster: { maxHeroes: 6, maxHiredSwords: 3, heroCount: 0, hirelingCount: 0 },
     onUnitsChange: (next) => {
       onGroupsChanged(next);
       setGroups(next);

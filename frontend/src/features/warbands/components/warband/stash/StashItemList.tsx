@@ -1,4 +1,8 @@
+import { useState } from "react";
+
 import ItemActionDialogs from "../../shared/ItemActionDialogs";
+import StashItemRow from "./StashItemRow";
+import BeastRecruitDialog, { type RecruitRequest } from "../../units/beasts/BeastRecruitDialog";
 import { itemMutationUpdate } from "../../../api/economy-queries";
 import { useWarbandCacheUpdate } from "../../../api/warband-cache";
 
@@ -34,6 +38,18 @@ export default function StashItemList({
   const isMobile = useMediaQuery("(max-width: 960px)");
   const updateWarbandCache = useWarbandCacheUpdate();
   const entries = stashEntries(items);
+  const [recruiting, setRecruiting] = useState<RecruitRequest | null>(null);
+  /** A creature row's recruit dialog, for the stash's copies of its item. */
+  const recruitFrom = (itemId: number) => {
+    const item = items.find((entry) => entry.id === itemId);
+    if (item?.beast_kind !== "creature") return undefined;
+    return () =>
+      setRecruiting({
+        item: { id: item.id, name: item.name },
+        copies: item.quantity ?? 1,
+        source: { type: "stash", item_id: item.id },
+      });
+  };
   const menu = useItemActionMenu({
     source: { kind: "stash", items },
     warbandId,
@@ -103,45 +119,26 @@ export default function StashItemList({
           ) : (
             <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-sm">
               {entries.map((entry) => (
-                <div
+                <StashItemRow
                   key={entry.id}
-                  className="flex items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 transition-colors duration-150 hover:border-white/40"
-                >
-                  <span className="min-w-0 flex-1 truncate text-foreground">
-                    {entry.label}
-                    {entry.costs ? (
-                      <span className="block truncate text-xs text-muted-foreground">
-                        {entry.costs}
-                      </span>
-                    ) : null}
-                  </span>
-                  {canEdit ? (
-                    <button
-                      type="button"
-                      className="flex h-5 w-4 flex-shrink-0 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-foreground/50 transition-colors duration-150 hover:text-foreground"
-                      onClick={(e) => menu.handleMenuToggle(entry, e)}
-                      aria-label={`Actions for ${entry.label}`}
-                    >
-                      <svg
-                        width="3"
-                        height="13"
-                        viewBox="0 0 3 13"
-                        fill="currentColor"
-                        aria-hidden="true"
-                      >
-                        <circle cx="1.5" cy="1.5" r="1.5" />
-                        <circle cx="1.5" cy="6.5" r="1.5" />
-                        <circle cx="1.5" cy="11.5" r="1.5" />
-                      </svg>
-                    </button>
-                  ) : null}
-                </div>
+                  entry={entry}
+                  canEdit={canEdit}
+                  onMenuClick={(e) => menu.handleMenuToggle(entry, e)}
+                  onRecruit={recruitFrom(entry.visibleId)}
+                />
               ))}
             </div>
           )}
         </div>
       </div>
       <ItemActionDialogs menu={menu} canEdit={canEdit} menuInPlace={inSheet} />
+      {recruiting ? (
+        <BeastRecruitDialog
+          {...recruiting}
+          warbandId={warbandId}
+          onClose={() => setRecruiting(null)}
+        />
+      ) : null}
     </>
   );
 }

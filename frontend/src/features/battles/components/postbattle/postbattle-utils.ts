@@ -22,6 +22,8 @@ import {
   DEFAULT_EXPLORATION_DICE,
   type ExplorationDiceLimits,
 } from "@/features/battles/components/postbattle/exploration-dice";
+import type { InjuryTable } from "@/features/battles/components/postbattle/postbattle-rules";
+import { paysUpkeep } from "@/features/battles/components/postbattle/upkeep-rules";
 
 export type LocalExplorationState = {
   diceCount: number;
@@ -36,8 +38,10 @@ export type PostbattleRenderableRow = {
   unitKey: string;
   unitName: string;
   unitType: string;
-  unitKind: "hero" | "hired_sword" | "henchman";
+  unitKind: "hero" | "hireling" | "henchman";
   canGainXp: boolean;
+  /** The serious-injury table the unit rolls on (a hireling's comes from its battle roster). */
+  injuryTable: InjuryTable;
   groupName: string;
   outOfAction: boolean;
   killCount: number;
@@ -50,7 +54,7 @@ export type PostbattleRenderableRow = {
 export type PostbattleRenderableGroup = {
   key: string;
   label: string;
-  unitKind: "hero" | "hired_sword" | "henchman";
+  unitKind: "hero" | "hireling" | "henchman";
   rows: PostbattleRenderableRow[];
 };
 
@@ -74,7 +78,7 @@ function createDefaultUnitResult(
   groupName = ""
 ): BattlePostbattleUnitResult {
   const unitKind =
-    unit.kind === "hero" ? "hero" : unit.kind === "hired_sword" ? "hired_sword" : "henchman";
+    unit.kind === "hero" ? "hero" : unit.kind === "hireling" ? "hireling" : "henchman";
   return {
     unit_name: unit.displayName,
     unit_kind: unitKind,
@@ -356,28 +360,26 @@ export function buildPostbattleDraft(
     };
   }
 
-  for (const hiredSword of selected.hiredSwords) {
-    const unitInformation = getUnitInformationEntry(unitInformationByKey, hiredSword.key);
+  for (const hireling of selected.hirelings) {
+    const unitInformation = getUnitInformationEntry(unitInformationByKey, hireling.key);
     const defaultResult = createDefaultUnitResult(
-      hiredSword,
+      hireling,
       unitInformation,
-      suggestedXp(hiredSword.key)
+      suggestedXp(hireling.key)
     );
-    nextUnitResults[hiredSword.key] = {
-      ...mergeUnitResultWithExisting(
-        defaultResult,
-        getExistingUnitResult(existing, hiredSword.key)
-      ),
+    nextUnitResults[hireling.key] = {
+      ...mergeUnitResultWithExisting(defaultResult, getExistingUnitResult(existing, hireling.key)),
     };
   }
 
-  for (const hiredSword of roster?.hiredSwords ?? []) {
-    nextUpkeepEntries[hiredSword.key] = {
-      ...(suggestion?.upkeep.entries[hiredSword.key] ?? {
-        unit_name: hiredSword.displayName,
+  // A hireling who stays for one battle leaves after it: no upkeep keeps him (the server agrees).
+  for (const hireling of (roster?.hirelings ?? []).filter(paysUpkeep)) {
+    nextUpkeepEntries[hireling.key] = {
+      ...(suggestion?.upkeep.entries[hireling.key] ?? {
+        unit_name: hireling.displayName,
         cost: null,
       }),
-      ...getExistingUpkeepEntry(existing, hiredSword.key),
+      ...getExistingUpkeepEntry(existing, hireling.key),
     };
   }
 
@@ -422,20 +424,45 @@ export function buildPostbattleDraft(
       entries: nextUpkeepEntries,
     },
     unit_results: nextUnitResults,
+    // The mounts' rolls saved so far (step 5); left out until one is rolled.
+    ...(existing?.mount_survival ? { mount_survival: existing.mount_survival } : {}),
   };
+}
+
+/**
+ * A mount's D6 rolled (or cleared): its suggested result, dead on `dies_on` or less (the
+ * server's number); the player may change the result afterwards.
+ */
+export function mountRollResult(roll: number | null, diesOn: number) {
+  return { roll, dead: roll !== null && roll <= diesOn };
+}
+
+/** The draft with one rider's mount roll and result set (step 5). */
+export function setMountSurvival(
+  draft: BattlePostbattleState,
+  unitKey: string,
+  value: { roll: number | null; dead: boolean }
+): BattlePostbattleState {
+  return { ...draft, mount_survival: { ...draft.mount_survival, [unitKey]: value } };
 }
 
 export function buildRenderableGroups(draft: BattlePostbattleState, roster?: ParticipantRoster) {
   const heroes: PostbattleRenderableRow[] = [];
-  const hiredSwords: PostbattleRenderableRow[] = [];
+  const hirelings: PostbattleRenderableRow[] = [];
   const henchmenGroups = new Map<string, PostbattleRenderableRow[]>();
   const xpEligibilityByUnitKey = new Map<string, boolean>();
+  const injuryTableByUnitKey = new Map<string, InjuryTable>();
 
   for (const hero of roster?.heroes ?? []) {
     xpEligibilityByUnitKey.set(hero.key, true);
   }
-  for (const hiredSword of roster?.hiredSwords ?? []) {
-    xpEligibilityByUnitKey.set(hiredSword.key, !hiredSword.noLevelUps);
+  for (const hireling of roster?.hirelings ?? []) {
+    // A dramatis persona gains no XP, by kind (the server suggests none either).
+    xpEligibilityByUnitKey.set(
+      hireling.key,
+      !hireling.noLevelUps && hireling.hirelingKind !== "dramatis_persona"
+    );
+    injuryTableByUnitKey.set(hireling.key, hireling.injuryTable === "hero" ? "hero" : "henchman");
   }
   for (const group of roster?.henchmenGroups ?? []) {
     for (const member of group.members) {
@@ -450,6 +477,8 @@ export function buildRenderableGroups(draft: BattlePostbattleState, roster?: Par
       unitType: result.unit_type,
       unitKind: result.unit_kind,
       canGainXp: xpEligibilityByUnitKey.get(unitKey) ?? true,
+      injuryTable:
+        result.unit_kind === "hero" ? "hero" : (injuryTableByUnitKey.get(unitKey) ?? "henchman"),
       groupName: result.group_name,
       outOfAction: result.out_of_action,
       killCount: result.kill_count,
@@ -462,8 +491,8 @@ export function buildRenderableGroups(draft: BattlePostbattleState, roster?: Par
       heroes.push(row);
       continue;
     }
-    if (result.unit_kind === "hired_sword") {
-      hiredSwords.push(row);
+    if (result.unit_kind === "hireling") {
+      hirelings.push(row);
       continue;
     }
     const groupKey = result.group_name || "Henchmen";
@@ -479,12 +508,12 @@ export function buildRenderableGroups(draft: BattlePostbattleState, roster?: Par
   for (const [groupName, rows] of henchmenGroups.entries()) {
     groups.push({ key: `henchmen:${groupName}`, label: groupName, unitKind: "henchman", rows });
   }
-  if (hiredSwords.length > 0) {
+  if (hirelings.length > 0) {
     groups.push({
-      key: "hired-swords",
+      key: "hirelings",
       label: "Hired Swords",
-      unitKind: "hired_sword",
-      rows: hiredSwords,
+      unitKind: "hireling",
+      rows: hirelings,
     });
   }
 
@@ -616,4 +645,31 @@ export function isPostbattleDraftValid(draft: BattlePostbattleState | null) {
     return false;
   }
   return Object.keys(draft.unit_results).length > 0;
+}
+
+/** A pet that fought as its own model, as postbattle shows it (step 5). */
+export type PostbattlePetRow = {
+  unitKey: string;
+  name: string;
+  owner: string;
+  outOfAction: boolean;
+  kills: number;
+};
+
+/**
+ * The selected pets that fought as their own models: each follows its owner after the battle
+ * (no XP, no injury roll, no result of its own), so postbattle only shows how it ended.
+ */
+export function petResultRows(
+  participant: BattleParticipant,
+  roster: ParticipantRoster | undefined
+): PostbattlePetRow[] {
+  const unitInformation = toUnitInformationMap(participant.unit_information_json);
+  return getParticipantSelectedUnits(participant, roster).pets.map((pet) => ({
+    unitKey: pet.key,
+    name: pet.displayName,
+    owner: pet.unitType,
+    outOfAction: Boolean(unitInformation[pet.key]?.out_of_action),
+    kills: unitInformation[pet.key]?.kill_count ?? 0,
+  }));
 }

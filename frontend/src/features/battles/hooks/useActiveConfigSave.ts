@@ -145,8 +145,9 @@ export function useActiveConfigSave({
       const units = [
         ...selected.heroes,
         ...selected.henchmen,
-        ...selected.hiredSwords,
+        ...selected.hirelings,
         ...selected.temporary,
+        ...selected.pets,
       ];
       const unitInformation = toUnitInformationMap(participant.unit_information_json);
       const patch: NonNullable<ParticipantConfigPatch["unit_information_patch"]> = {};

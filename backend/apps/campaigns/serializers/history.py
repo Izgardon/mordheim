@@ -32,7 +32,7 @@ class PivotalMomentSerializer(serializers.ModelSerializer):
 
 class CampaignTopKillerSerializer(serializers.Serializer):
     unit_id = serializers.IntegerField()
-    unit_kind = serializers.ChoiceField(choices=["hero", "hired_sword", "henchman"])
+    unit_kind = serializers.ChoiceField(choices=["hero", "hireling", "henchman"])
     unit_name = serializers.CharField()
     unit_type = serializers.CharField(allow_null=True, required=False)
     warband_id = serializers.IntegerField()

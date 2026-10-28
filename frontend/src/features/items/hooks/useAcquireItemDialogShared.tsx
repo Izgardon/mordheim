@@ -8,6 +8,7 @@ import { acquireBlockers } from "../utils/acquire-blockers";
 import { useAcquireForm } from "./useAcquireForm";
 import { usePurchaseTarget, UNIT_TYPES } from "./usePurchaseTarget";
 import { useRarityRoll } from "./useRarityRoll";
+import { useAcquireBeastChoice } from "./useAcquireBeastChoice";
 
 import type { Item } from "../types/item-types";
 import type { AcquireItemMeta, DraftUnit } from "../types/acquire-types";
@@ -93,6 +94,15 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
     rarity: form.rarity,
   });
 
+  const beast = useAcquireBeastChoice({
+    item,
+    unitType: resolvedUnitType,
+    unitLabel: target.selectedUnitLabel,
+    quantity: count,
+    groups: target.henchmenGroups,
+    deferCommit,
+  });
+
   // The server's gold, from the warband sheet's summary (BUG-37): never re-derived here.
   const { notice, actionDisabled, actionDisabledReason, overspend } = acquireBlockers({
     hasWarband: warband !== null,
@@ -118,6 +128,7 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
       target.reset();
       form.reset();
       rarity.reset();
+      beast.reset();
     }
   };
 
@@ -140,7 +151,7 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
       // A rare item's roll goes with it, spending the searcher's trading action.
       const rarityRoll = isBuying && !form.isCommonRarity ? rarity.rollForPurchase() : null;
       const availabilityId = form.resolvedAvailability?.id ?? null;
-      const choice = { item, meta, availabilityId, rarityRoll };
+      const choice = { item, meta, availabilityId, rarityRoll, companion: beast.companion };
       if (deferCommit) {
         // Queued: the roster Save sends the line in its batch (decision 1), roll included.
         rarity.markRollSent(rarityRoll, false);
@@ -160,9 +171,18 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
         return;
       }
       // One request; the answer goes into the cache (the unit's items, the stash, gold, the row).
-      const atCurrentPrice = Boolean(params.atCurrentPrice) && !form.priceEdited;
+      // An item with no current price and no availability (an unsold beast) has none for the
+      // server to charge: Buy again sends the price shown instead.
+      const priceKnown = params.currentPrice != null || form.resolvedAvailability !== null;
+      const atCurrentPrice = Boolean(params.atCurrentPrice) && !form.priceEdited && priceKnown;
       await purchase(
-        { ...choice, warbandId: warband.id, target: resolved.target, atCurrentPrice },
+        {
+          ...choice,
+          warbandId: warband.id,
+          target: resolved.target,
+          atCurrentPrice,
+          recruit: beast.recruit,
+        },
         queryClient
       );
       didCommit = true;
@@ -244,5 +264,7 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
     selectedAvailabilityId: form.selectedAvailabilityId,
     setSelectedAvailabilityId: form.setSelectedAvailabilityId,
     resolvedAvailability: form.resolvedAvailability,
+    /** A beast's extra choice (switch on, recruit) and whether the shop sells it. */
+    beast: { view: beast.view, unlisted: beast.unlisted },
   };
 }

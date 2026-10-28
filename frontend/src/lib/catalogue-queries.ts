@@ -2,7 +2,8 @@ import { useMemo } from "react";
 import { type QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // api
-import { listBestiaryEntries, listHiredSwordProfiles } from "@/features/bestiary/api/bestiary-api";
+import { listBestiaryEntries } from "@/features/bestiary/api/bestiary-api";
+import { listHirelingProfiles } from "@/features/hirelings/api/hireling-catalogue-api";
 import { listItemProperties, listItems } from "@/features/items/api/items-api";
 import { listRaces } from "@/features/races/api/races-api";
 import { listSkills } from "@/features/skills/api/skills-api";
@@ -13,10 +14,8 @@ import { listSpells } from "@/features/spells/api/spells-api";
 import { type CatalogueKind, queryKeys } from "./query-keys";
 
 // types
-import type {
-  BestiaryEntrySummary,
-  HiredSwordProfileSummary,
-} from "@/features/bestiary/types/bestiary-types";
+import type { BestiaryEntrySummary } from "@/features/bestiary/types/bestiary-types";
+import type { HirelingProfile } from "@/features/hirelings/types/hireling-catalogue-types";
 import type { Item, ItemProperty } from "@/features/items/types/item-types";
 import type { Race } from "@/features/races/types/race-types";
 import type { Skill } from "@/features/skills/types/skill-types";
@@ -34,17 +33,17 @@ type CatalogueEntries = {
   specials: Special;
   races: Race;
   bestiary: BestiaryEntrySummary;
-  "hired-swords": HiredSwordProfileSummary;
+  "hired-swords": HirelingProfile;
+  "dramatis-personae": HirelingProfile;
 };
 
 export type CatalogueEntry<K extends CatalogueKind> = CatalogueEntries[K];
 
 /**
  * A list beside a kind's default one, cached on its own under the kind's key: "archived" adds the
- * campaign's archived entries and removed book entries (`?archived=1`, CAT-TWEAK-04); "creatures"
- * is the Bestiary page's (the bestiary without its hired swords, PERF-47).
+ * campaign's archived entries and removed book entries (`?archived=1`, CAT-TWEAK-04).
  */
-export type CatalogueListVariant = "archived" | "creatures";
+export type CatalogueListVariant = "archived";
 
 type Fetcher<K extends CatalogueKind> = (
   campaignId: number,
@@ -66,12 +65,11 @@ const fetchers: { [K in CatalogueKind]: Fetcher<K> } = {
   specials: (campaignId, signal) => listSpecial({ campaignId, signal }),
   races: (campaignId, signal) => listRaces({ campaignId, signal }),
   bestiary: (campaignId, signal, variant) =>
-    listBestiaryEntries({
-      campaignId,
-      signal,
-      excludeType: variant === "creatures" ? "Hired Sword" : undefined,
-    }),
-  "hired-swords": (campaignId, signal) => listHiredSwordProfiles({ campaignId, signal }),
+    listBestiaryEntries({ campaignId, signal, ...archivedOf(variant) }),
+  "hired-swords": (campaignId, signal, variant) =>
+    listHirelingProfiles("hired-swords", { campaignId, signal, ...archivedOf(variant) }),
+  "dramatis-personae": (campaignId, signal, variant) =>
+    listHirelingProfiles("dramatis-personae", { campaignId, signal, ...archivedOf(variant) }),
 };
 
 /** The key of one of a kind's lists: the default one, or a variant under it. */
@@ -94,6 +92,7 @@ const errorLabels: Record<CatalogueKind, string> = {
   races: "Unable to load races",
   bestiary: "Failed to load bestiary",
   "hired-swords": "Failed to load hired swords",
+  "dramatis-personae": "Failed to load dramatis personae",
 };
 
 const NO_ENTRIES: never[] = [];
@@ -242,28 +241,63 @@ export function invalidateCatalogue(
   });
 }
 
-/** Cache writes for components that create, edit or delete catalogue entries. */
+/**
+ * The lists a write of a kind changes besides its own, as the server announces them (its
+ * `catalogue.changed` kinds for the write): a beast's Animal item is written with the beast, so
+ * a bestiary write (a save, Revert, delete or restore) changes the items list too; hired swords
+ * and dramatis personae name their race, so a race write changes their lists.
+ */
+const WRITTEN_WITH: Partial<Record<CatalogueKind, CatalogueKind[]>> = {
+  bestiary: ["items"],
+  races: ["hired-swords", "dramatis-personae"],
+};
+
+/** `kind` and the kinds its writes change with it. */
+const writtenKinds = (kind: CatalogueKind) => [kind, ...(WRITTEN_WITH[kind] ?? [])];
+
+/**
+ * Cache writes for components that create, edit or delete catalogue entries. Each also marks
+ * stale the lists the write changed with its own kind (`WRITTEN_WITH`): the server's event for
+ * them goes to the other members only.
+ */
 export function useCatalogueCache() {
   const queryClient = useQueryClient();
-  return useMemo(
-    () => ({
-      upsert: <K extends CatalogueKind>(kind: K, campaignId: number, entry: CatalogueEntry<K>) =>
-        upsertCatalogueEntry(queryClient, kind, campaignId, entry),
+  return useMemo(() => {
+    const alsoChanged = (kind: CatalogueKind, campaignId: number) =>
+      (WRITTEN_WITH[kind] ?? []).forEach(
+        (other) => void invalidateCatalogue(queryClient, other, campaignId)
+      );
+    return {
+      upsert: <K extends CatalogueKind>(kind: K, campaignId: number, entry: CatalogueEntry<K>) => {
+        upsertCatalogueEntry(queryClient, kind, campaignId, entry);
+        alsoChanged(kind, campaignId);
+      },
       /** A write's answer in place of the row it stands in for (a version for its book entry). */
       write: <K extends CatalogueKind>(
         kind: K,
         campaignId: number,
         entry: CatalogueEntry<K>,
         replacedId?: number
-      ) => upsertCatalogueEntry(queryClient, kind, campaignId, entry, replacedId),
-      remove: (kind: CatalogueKind, campaignId: number, entryId: number) =>
-        removeCatalogueEntry(queryClient, kind, campaignId, entryId),
+      ) => {
+        upsertCatalogueEntry(queryClient, kind, campaignId, entry, replacedId);
+        alsoChanged(kind, campaignId);
+      },
+      remove: (kind: CatalogueKind, campaignId: number, entryId: number) => {
+        removeCatalogueEntry(queryClient, kind, campaignId, entryId);
+        alsoChanged(kind, campaignId);
+      },
       invalidate: (kind: CatalogueKind, campaignId: number) =>
-        invalidateCatalogue(queryClient, kind, campaignId),
-      /** The campaign's warband sheets (and stashes) after copies moved or changed. */
+        Promise.all(
+          writtenKinds(kind).map((each) => invalidateCatalogue(queryClient, each, campaignId))
+        ),
+      /**
+       * The campaign's warband sheets (and stashes) after copies moved or changed: a beast's
+       * first edit or Revert moves the copies of its Animal item.
+       */
       heldCopiesChanged: (kind: CatalogueKind, campaignId: number) =>
-        invalidateHeldCopies(queryClient, kind, campaignId),
-    }),
-    [queryClient]
-  );
+        Promise.all(
+          writtenKinds(kind).map((each) => invalidateHeldCopies(queryClient, each, campaignId))
+        ),
+    };
+  }, [queryClient]);
 }

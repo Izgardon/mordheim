@@ -3,9 +3,9 @@
 Every write that changes what a campaign's list shows sends `catalogue.changed` {kind} on
 `private-campaign-{id}-events` after its commit, skipping the writer's socket: creates, edits (a book entry's
 version included), reverts, deletes, archives, removals and restores, a house rule's clones, and an injury's new
-special. A bestiary or hired-sword write names both lists (a bestiary entry's, the items list too: an Animal item
-shows its entry). A refused write sends nothing; a seed (a book change) sends nothing per campaign. Pusher is
-replaced by a mock that records triggers.
+special. A bestiary write names the items list too (an Animal item shows its entry), and a race write the hired
+sword and dramatis persona lists (their rows name their race). A refused write sends nothing; a seed (a book change)
+sends nothing per campaign. Pusher is replaced by a mock that records triggers.
 """
 
 from io import StringIO
@@ -17,7 +17,17 @@ from django.test import override_settings
 
 from apps.items.services import HALF_PRICE_ARMOUR_EFFECT_KEY
 
-from .catalogue_support import BESTIARY, HIRED_SWORDS, ITEMS, KINDS, SKILLS, CatalogueTestCase, make_entry
+from .catalogue_support import (
+    BESTIARY,
+    DRAMATIS_PERSONAE,
+    HIRED_SWORDS,
+    ITEMS,
+    KINDS,
+    RACES,
+    SKILLS,
+    CatalogueTestCase,
+    make_entry,
+)
 
 SOCKET = "123.456"
 
@@ -53,8 +63,8 @@ class CatalogueEventTests(CatalogueTestCase):
         # BUG-80 (was pinned: nothing was sent, so members saw a change only after the 5-minute stale time; PR C)
         for kind in KINDS:
             with self.subTest(kind=kind.key):
-                lists = {BESTIARY.key, HIRED_SWORDS.key} if kind in (BESTIARY, HIRED_SWORDS) else {kind.key}
-                lists |= {ITEMS.key} if kind is BESTIARY else set()  # an item shows the animal it hires
+                lists = {kind.key, ITEMS.key} if kind is BESTIARY else {kind.key}  # an item shows the animal it hires
+                lists |= {HIRED_SWORDS.key, DRAMATIS_PERSONAE.key} if kind is RACES else set()  # their rows name it
                 created = self.send("post", kind.list_url(), kind.body(f"Live {kind.key}", self.campaign))
                 url = kind.detail_url(created.data["id"])
                 statuses = [created.status_code, self.send("patch", url, {"name": "Changed"}).status_code]

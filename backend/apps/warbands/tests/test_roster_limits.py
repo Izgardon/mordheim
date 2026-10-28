@@ -6,18 +6,15 @@ transaction with the warband locked, and answer 400 with a stable `code`. Warban
 group's `max_size` only warn: the summary reports what the client needs to say so.
 """
 
-from importlib import import_module
-
-from django.apps import apps as django_apps
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
-from apps.warbands.models import Henchman, Warband
+from apps.warbands.models import Henchman
 
 from .roster_support import (
     HENCHMEN,
     HERO,
-    HIRED_SWORD,
+    HIRELING,
     RosterTestCase,
     cap_error,
     create_payload,
@@ -29,7 +26,7 @@ from .roster_support import (
 class CapTests(RosterTestCase):
     def test_each_cap_is_checked_under_the_warband_lock_inside_the_create(self):
         # BUG-105: the count ran before the transaction, so two concurrent creates could both pass
-        for kind, table in ((HERO, "hero"), (HIRED_SWORD, "hired_sword")):
+        for kind, table in ((HERO, "hero"), (HIRELING, "hireling")):
             with self.subTest(kind=kind.key):
                 with CaptureQueriesContext(connection) as captured:
                     response = self.client.post(unit_url(kind, self.warband.id), create_payload(kind), format="json")
@@ -54,25 +51,25 @@ class CapTests(RosterTestCase):
         self.assertEqual((response.status_code, response.json()), (400, cap_error("Warband already has 1 heroes")))
         self.assertEqual((self.warband.heroes.count(), self.warband.trades.count()), (1, trades_before))
 
-    def test_blood_pacted_hired_swords_are_exempt_and_uncounted(self):
+    def test_blood_pacted_hirelings_are_exempt_and_uncounted(self):
         self.campaign_settings.max_hired_swords = 1
         self.campaign_settings.save()
-        url = unit_url(HIRED_SWORD, self.warband.id)
+        url = unit_url(HIRELING, self.warband.id)
         for _ in range(2):
-            pacted = self.client.post(url, create_payload(HIRED_SWORD, blood_pacted=True), format="json")
+            pacted = self.client.post(url, create_payload(HIRELING, blood_pacted=True), format="json")
             self.assertEqual(pacted.status_code, 201)
-        self.assertEqual(self.client.post(url, create_payload(HIRED_SWORD), format="json").status_code, 201)
-        refused = self.client.post(url, create_payload(HIRED_SWORD), format="json")
+        self.assertEqual(self.client.post(url, create_payload(HIRELING), format="json").status_code, 201)
+        refused = self.client.post(url, create_payload(HIRELING), format="json")
         self.assertEqual(refused.json()["code"], "hired_sword_cap_reached")
 
     def test_editing_existing_units_never_hits_a_cap(self):
         self.campaign_settings.max_hired_swords = 1
         self.campaign_settings.save()
-        make_unit(HIRED_SWORD, self.warband)
-        pacted = make_unit(HIRED_SWORD, self.warband, blood_pacted=True)
+        make_unit(HIRELING, self.warband)
+        pacted = make_unit(HIRELING, self.warband, blood_pacted=True)
 
         response = self.client.patch(
-            unit_url(HIRED_SWORD, self.warband.id, pacted.id), {"blood_pacted": False}, format="json"
+            unit_url(HIRELING, self.warband.id, pacted.id), {"blood_pacted": False}, format="json"
         )
 
         self.assertEqual(response.status_code, 200)  # two counted hired swords now: allowed, not added directly
@@ -92,16 +89,16 @@ class WarbandSizeTests(RosterTestCase):
         Henchman.objects.create(group=group, name="Fallen", dead=True)
         Henchman.objects.create(group=group, name="Gone", dismissed_at="2026-01-01T00:00:00Z")
         make_unit(HENCHMEN, self.warband, members=("X",), dismissed_at="2026-01-01T00:00:00Z")
-        make_unit(HIRED_SWORD, self.warband)
-        make_unit(HIRED_SWORD, self.warband, blood_pacted=True)
-        make_unit(HIRED_SWORD, self.warband, blood_pacted=True, dead=True)
+        make_unit(HIRELING, self.warband)
+        make_unit(HIRELING, self.warband, blood_pacted=True)
+        make_unit(HIRELING, self.warband, blood_pacted=True, dead=True)
         self.campaign_settings.max_heroes = 4
         self.campaign_settings.save()
 
         summary = self._summary()
 
         counts = {key: summary[key] for key in ("unit_count", "max_units", "hero_count", "max_heroes")}
-        counts |= {key: summary[key] for key in ("hired_sword_count", "max_hired_swords")}
+        counts |= {key: summary[key] for key in ("hireling_count", "max_hired_swords")}
         # size: 1 hero + 3 living henchmen + 1 blood-pacted hired sword; caps: 1 hero, 1 hired sword
         self.assertEqual(
             counts,
@@ -110,7 +107,7 @@ class WarbandSizeTests(RosterTestCase):
                 "max_units": 15,
                 "hero_count": 1,
                 "max_heroes": 4,
-                "hired_sword_count": 1,
+                "hireling_count": 1,
                 "max_hired_swords": 3,
             },
         )
@@ -137,15 +134,3 @@ class WarbandSizeTests(RosterTestCase):
             format="json",
         )
         self.assertEqual((response.status_code, response.json()["max_units"]), (201, 15))
-
-    def test_the_migration_sets_unset_limits_to_fifteen(self):
-        migration = import_module("apps.warbands.migrations.0026_warband_max_units_15")
-        Warband.objects.filter(id=self.warband.id).update(max_units=0)
-        Warband.objects.filter(id=self.rival.id).update(max_units=9)
-
-        migration.set_unset_limits(django_apps, None)
-
-        self.assertEqual(
-            dict(Warband.objects.filter(id__in=(self.warband.id, self.rival.id)).values_list("id", "max_units")),
-            {self.warband.id: 15, self.rival.id: 9},
-        )

@@ -91,13 +91,13 @@ beforeEach(() => {
       rating: 40,
       resources: [],
       heroes: [{ id: 51, warband_id: 15, name: "Vargo", unit_type: "Necromancer", xp: 7 }],
-      hired_swords: [],
+      hirelings: [],
       henchmen_groups: [],
     },
     capabilities: { edit: true, manage_items: true },
     heroes: [vargo],
     henchmen_groups: [],
-    hired_swords: [],
+    hirelings: [],
   });
   fakeApi.on("GET /warbands/15/items/", [
     makeStashItem({ id: 300, name: "Wyrdstone", cost: 0, quantity: 3 }),

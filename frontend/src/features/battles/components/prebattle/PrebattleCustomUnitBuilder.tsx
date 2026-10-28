@@ -4,6 +4,7 @@ import type { ClipboardEvent, FocusEvent, MouseEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NumberInput } from "@/components/ui/number-input";
+import { beastKindLabel } from "@/features/bestiary/bestiary-kinds";
 import BestiaryPicker from "@/features/bestiary/components/BestiaryPicker";
 import type { BestiaryEntrySummary } from "@/features/bestiary/types/bestiary-types";
 
@@ -42,7 +43,7 @@ export default function PrebattleCustomUnitBuilder({
     onDraftChange({
       ...draft,
       name: entry.name,
-      unitType: entry.type,
+      unitType: beastKindLabel(entry.kind),
       stats: {
         movement: String(entry.movement),
         weapon_skill: String(entry.weapon_skill),

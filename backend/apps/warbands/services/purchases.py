@@ -6,18 +6,28 @@ hero's trading action. Nothing is refused for game reasons (decisions 2 and 9): 
 who already used his trading action may search again; each comes back as a warning (the client showed it before
 it confirmed). With no price sent, a copy costs the item's current campaign price (decision 11, "Buy again").
 
+Beasts (the bestiary rewrite step 4): a mount or pet bought for a unit may land switched on as his (`companion`), with
+the companion warnings; a creature may be recruited straight away (`recruit`, POST purchases/ only) into a new group
+or one of the same beast instead of landing in the stash, charged once as the item and never as a recruit. Buying a
+beast the shop doesn't sell goes through with `unlisted_beast`.
+
 Refusals are RosterErrors in the standard shape, their field keys prefixed with the line's key in a batch.
 """
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 from django.db import transaction
 
-from apps.items.models import Item
-from apps.warbands.models import LedgerAction, RosterUnit, Warband, WarbandTrade
+from apps.bestiary.models import BestiaryEntry
+from apps.items.models import ANIMAL, Item
+from apps.warbands.models import HenchmenGroup, LedgerAction, RosterUnit, Warband, WarbandTrade
+from apps.warbands.units.companions import COMPANION_KINDS, beast_kind
 from apps.warbands.units.errors import RosterError
+from apps.warbands.units.kinds import KINDS, UnitKindKey
+from apps.warbands.units.services.beasts import Target, creature, recruit_copies, resolve_target
+from apps.warbands.units.services.companions import NOT_A_COMPANION, units_warnings
 
 from . import economy_log, ledger
 from .prices import CampaignPrices
@@ -28,13 +38,22 @@ from .unit_items import add_unit_copies, resolve_unit
 Warning = dict[str, Any]  # {"code", "message", ...}, the shape trades answer
 GOLD_NEGATIVE = "gold_negative"
 ARCHIVED_ENTRY = "archived_entry"
+UNLISTED_BEAST = "unlisted_beast"
 STASH = "stash"
 LOG_ENTRY = {
     "hero": "hero_item",
     "henchmen_group": "henchmen_item",
-    "hired_sword": "hired_sword_item",
+    "hireling": "hireling_item",
     STASH: "stash_item",
 }
+
+
+@dataclass(frozen=True)
+class Recruiting:
+    """A creature line recruited straight away: its beast and where it goes."""
+
+    beast: BestiaryEntry
+    target: Target
 
 
 @dataclass
@@ -45,6 +64,8 @@ class Line:
     data: Mapping[str, Any]  # a validated purchase line
     price: int | None  # one copy's cost (resolved by `price_line`)
     key: str = ""  # the line's place in a batch ("purchases.0"), for error keys
+    recruit: Recruiting | None = None  # a creature recruited straight away
+    group: HenchmenGroup | None = None  # the group it joined or formed (set by `buy_lines`)
 
     @property
     def total(self) -> int:
@@ -58,8 +79,21 @@ def archived_entry(item: Item) -> Warning:
     return {"code": ARCHIVED_ENTRY, "message": message, "item_id": item.id}
 
 
+def unlisted_beast(item: Item) -> Warning:
+    """A beast the shop doesn't sell (from a list read before, or a game master's gift): bought anyway."""
+    message = f"{item.name} isn't sold in this campaign's shop; it was bought anyway."
+    return {"code": UNLISTED_BEAST, "message": message, "item_id": item.id}
+
+
 def refused(key: str, name: str, message: str) -> RosterError:
     return RosterError(message, "invalid", {f"{key}.{name}" if key else name: [message]})
+
+
+def check_companion(item: Item, data: Mapping[str, Any], key: str = "") -> None:
+    """A line landing switched on must be a mount or a pet: 400 `not_a_companion` otherwise."""
+    if data.get("companion") and beast_kind(item) not in COMPANION_KINDS:
+        field = f"{key}.companion" if key else "companion"
+        raise RosterError(NOT_A_COMPANION, "not_a_companion", {field: [NOT_A_COMPANION]})
 
 
 def price_line(warband: Warband, item: Item, data: Mapping[str, Any], key: str = "") -> int | None:
@@ -107,6 +141,36 @@ def _header(warband: Warband, charged: Sequence[Line]) -> WarbandTrade | None:
     return ledger.group_header(warband, f"Equipped {', '.join(names)} ({len(charged)} items, {total} gc)")
 
 
+def _place(warband: Warband, line: Line) -> None:
+    """The copies go to the unit (switched on when asked), into a creature group, or to the stash."""
+    costs = [line.price] * line.data["quantity"]
+    if line.recruit is not None:
+        line.group = recruit_copies(warband, line.recruit.beast, line.item, costs, line.recruit.target, (STASH, None))
+    elif line.unit is None:
+        add_to_stash(warband.id, line.item.id, line.data["quantity"], line.price)
+    else:
+        add_unit_copies(line.target_type, line.unit, line.item, costs, companion=bool(line.data.get("companion")))
+
+
+def _line_warnings(warband: Warband, line: Line) -> list[Warning]:
+    warnings = []
+    if line.item.archived_at is not None or getattr(line.item, "removed", False):
+        warnings.append(archived_entry(line.item))
+    if line.item.type == ANIMAL and not line.item.listed:
+        warnings.append(unlisted_beast(line.item))
+    return warnings
+
+
+def _companion_warnings(warband: Warband, lines: Sequence[Line]) -> list[Warning]:
+    """After every line: the companion warnings of each unit a line switched a mount or pet on for, once."""
+    riders = [
+        (KINDS[cast(UnitKindKey, line.target_type)], line.unit)
+        for line in lines
+        if line.unit is not None and line.data.get("companion")
+    ]
+    return units_warnings(warband, riders) if riders else []
+
+
 def buy_lines(warband: Warband, lines: Sequence[Line]) -> tuple[list[WarbandTrade], list[Warning]]:
     """Inside the caller's transaction: charge, save the rolls, append the copies and log each line; the "Buy"
     rows and the warnings. The gold goes first: it locks the warband before the hero and stash rows."""
@@ -123,13 +187,10 @@ def buy_lines(warband: Warband, lines: Sequence[Line]) -> tuple[list[WarbandTrad
                 warnings += record_roll(warband, line.item, line.data["rarity_roll"])
             except RollRefused as refusal:
                 raise refused(line.key, "rarity_roll.hero_id", str(refusal)) from None
-        if line.unit is None:
-            add_to_stash(warband.id, line.item.id, line.data["quantity"], line.price)
-        else:
-            add_unit_copies(line.target_type, line.unit, line.item, [line.price] * line.data["quantity"])
         _log(warband, line)
-        if line.item.archived_at is not None or getattr(line.item, "removed", False):
-            warnings.append(archived_entry(line.item))
+        _place(warband, line)
+        warnings += _line_warnings(warband, line)
+    warnings += _companion_warnings(warband, lines)
     if charged and warband.gold < 0:
         warnings.append(
             {"code": GOLD_NEGATIVE, "message": f"This leaves the warband at {warband.gold} gc.", "gold": warband.gold}
@@ -148,7 +209,12 @@ def purchase(warband: Warband, item: Item, data: Mapping[str, Any]) -> Purchase:
     """POST purchases/: buy or give `quantity` copies of `item` to the target of a validated body."""
     target_type = data["target_type"]
     unit = None if target_type == STASH else resolve_unit(warband, target_type, data.get("target_id"), "Target")
-    line = Line(item, target_type, unit, data, price_line(warband, item, data))
+    check_companion(item, data)
+    recruiting = None
+    if data.get("recruit") is not None:
+        beast = creature(item, "item_id")
+        recruiting = Recruiting(beast, resolve_target(warband, beast, data["recruit"], key="recruit"))
+    line = Line(item, target_type, unit, data, price_line(warband, item, data), recruit=recruiting)
     with transaction.atomic():
         trades, warnings = buy_lines(warband, [line])
     return Purchase(line, trades[0] if trades else None, warnings)

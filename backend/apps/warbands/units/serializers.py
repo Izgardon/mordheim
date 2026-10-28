@@ -12,6 +12,7 @@ from typing import Any, ClassVar
 from rest_framework import serializers
 
 from apps.core.catalogue.scope import CatalogueEntryField
+from apps.items.models import Item
 from apps.races.models import Race
 from apps.warbands.models import RosterUnit
 from apps.warbands.prefetches import entries_attr
@@ -31,6 +32,7 @@ from .catalogue import (
     SpellSummarySerializer,
 )
 from .catalogue_scope import CampaignCatalogueScopeMixin
+from .companions import COMPANION_KINDS, beast_kind, companions, effective_stats, mount_payload, pet_payload
 from .hooks import Recruit
 from .kinds import HERO, LinkSpec, UnitKindSpec
 from .services.create import apply_create
@@ -49,6 +51,7 @@ STAT_FIELDS = (
     "leadership",
     "armour_save",
 )
+COMPANION_FIELDS = ("effective_stats", "mount", "pets")  # every read payload, after the stats
 
 
 def get_prefetched_or_query(obj: Any, prefetch_key: str, queryset_attr: str) -> list[Any]:
@@ -72,9 +75,26 @@ class UnitReadSerializer(serializers.ModelSerializer):
     skills = serializers.SerializerMethodField()
     specials = serializers.SerializerMethodField()
     spells = serializers.SerializerMethodField()  # left out of Meta.fields by kinds without spells
+    mount = serializers.SerializerMethodField()  # the first mount switched on, or None (units/companions.py)
+    pets = serializers.SerializerMethodField()
+    effective_stats = serializers.SerializerMethodField()  # what the mount makes him show; None on foot
 
     def _entries(self, unit: RosterUnit, link: LinkSpec) -> list[Any]:
         return get_prefetched_or_query(unit, link.relation, link.relation)
+
+    def _first_mount(self, unit: RosterUnit) -> Any:
+        mounts = companions(self._entries(unit, self.kind.items)).mounts
+        return mounts[0] if mounts else None
+
+    def get_mount(self, unit: RosterUnit) -> dict[str, Any] | None:
+        mount = self._first_mount(unit)
+        return mount_payload(mount) if mount is not None else None
+
+    def get_pets(self, unit: RosterUnit) -> list[dict[str, Any]]:
+        return [pet_payload(row) for row in companions(self._entries(unit, self.kind.items)).pets]
+
+    def get_effective_stats(self, unit: RosterUnit) -> dict[str, Any] | None:
+        return effective_stats(unit, self._first_mount(unit))
 
     def _catalogue(self, unit: RosterUnit, link: LinkSpec | None) -> list[Any]:
         if link is None:
@@ -134,6 +154,7 @@ def detail_item_entries(rows: Iterable[Any]) -> list[Any]:
         if not row.item_id:
             continue
         data = ItemDetailSerializer(row.item).data
+        data["row_id"], data["companion"], data["beast_kind"] = row.pk, row.companion, beast_kind(row.item)
         data["cost"] = getattr(row, "cost", None)
         data["current_price"] = annotated_current(row, own_price(row.item))  # what Buy again charges
         sale = sale_price(data["current_price"], data["cost"])
@@ -150,6 +171,7 @@ class UnitItemEntrySerializer(serializers.Serializer):
 
     id = serializers.IntegerField()
     cost = serializers.IntegerField(required=False, allow_null=True, min_value=0, max_value=MAX_TRADE_PRICE)
+    companion = serializers.BooleanField(required=False)  # left out: the copy keeps its switch (loadout.py)
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         if "id" not in attrs:  # a PATCH is partial all the way down, so `required` alone doesn't catch it
@@ -188,6 +210,20 @@ class UnitWriteSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializ
     spell_ids = serializers.ListField(  # left out of Meta.fields by kinds without spells
         child=serializers.IntegerField(), write_only=True, required=False
     )
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        """After the ids point at the campaign's current entries: an item entry switched on as a companion must be a
+        mount or a pet (one query, only when one is)."""
+        attrs = super().validate(attrs)
+        flagged = {entry["id"] for entry in attrs.get("items") or [] if entry.get("companion")}
+        if flagged:
+            kinds = Item.objects.filter(id__in=flagged).values_list("id", "bestiary_entry__kind")
+            wrong = sorted(pk for pk, kind in kinds if kind not in COMPANION_KINDS)
+            if wrong:
+                listed = ", ".join(str(pk) for pk in wrong)
+                message = f"Only a mount or a pet can be a companion (item {listed})."
+                raise serializers.ValidationError({"items": [message]})
+        return attrs
 
     def create(self, validated_data: dict[str, Any]) -> RosterUnit:
         return apply_create(self.kind, validated_data)
@@ -254,4 +290,22 @@ class UnitBatchSerializer(serializers.Serializer):
             # pass 2, decision 1 and BUG-108: copies bought or taken from the stash for the batch's units
             "purchases": serializers.ListField(child=serializers.DictField(), required=False, default=list),
             "stash_takes": serializers.ListField(child=serializers.DictField(), required=False, default=list),
+        }
+
+
+class CompanionSwitchSerializer(serializers.Serializer):
+    """POST .../<unit>/items/<item row id>/companion/: switch the copy on (true) or off (false) as his mount or pet."""
+
+    on = serializers.BooleanField()
+
+
+class HireSerializer(serializers.Serializer):
+    """POST .../hirelings/hire/: the catalogue entry to hire (`source` names its list), and an optional name (the
+    entry's by default). The fields are built in get_fields() because `source` is also a Field attribute."""
+
+    def get_fields(self) -> dict[str, serializers.Field]:
+        return {
+            "source": serializers.ChoiceField(choices=("hired_sword", "dramatis_persona")),
+            "id": serializers.IntegerField(min_value=1),
+            "name": serializers.CharField(max_length=120, allow_blank=True, required=False),
         }

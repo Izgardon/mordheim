@@ -1,7 +1,7 @@
 """Who may create, edit and delete each catalogue kind (pass 5; BUG-15, BUG-82, CAT-TEST-03, CAT-TEST-27).
 
-Since PR A one code, `edit_catalogue`, covers creating and editing all seven kinds (items, skills, spells, specials,
-races, bestiary entries, hired swords) and adding item properties; joining grants it (decision 4). Deleting needs
+Since PR A one code, `edit_catalogue`, covers creating and editing every kind (items, skills, spells, specials,
+races, bestiary entries, hired swords, dramatis personae) and adding item properties; joining grants it (decision 4). Deleting needs
 `delete_catalogue`, which joining doesn't grant (decision 5). Owners and admins hold both. Before, creating needed
 `add_custom`, editing and deleting a per-kind `manage_*` code (so a player couldn't fix his own typo), any member
 created a race and only owners and admins edited one, and nothing deleted a race. Book entries can't be edited or
@@ -12,13 +12,13 @@ from typing import Any
 
 from django.utils import timezone
 
-from apps.bestiary.models import BestiaryEntry
 from apps.campaigns.models import Campaign
 from apps.warbands.tests.roster_support import HERO, make_unit
 
 from .catalogue_support import (
     BESTIARY,
     DELETE,
+    DRAMATIS_PERSONAE,
     EDIT,
     HIRED_SWORDS,
     ITEMS,
@@ -71,8 +71,7 @@ class CatalogueCreatePermissionTests(CataloguePermissionTestCase):
             with self.subTest(kind=kind.key):
                 response = self.create_as(self.player, kind, "Refused")
                 self.assertEqual((response.status_code, response.data), (403, FORBIDDEN))
-                rows = BestiaryEntry.objects if kind is HIRED_SWORDS else kind.model._default_manager
-                self.assertFalse(rows.filter(name="Refused").exists())
+                self.assertFalse(kind.model._default_manager.filter(name="Refused").exists())
 
     def test_owners_and_admins_create_every_kind(self):
         for user in (self.owner, self.admin):
@@ -97,8 +96,9 @@ class CatalogueCreatePermissionTests(CataloguePermissionTestCase):
             (SPECIALS, {"name": ""}, "name"),
             (RACES, {"name": "   "}, "name"),
             (RACES, {"movement": 11}, "movement"),
-            (BESTIARY, {"type": ""}, "type"),
+            (BESTIARY, {"kind": ""}, "kind"),
             (HIRED_SWORDS, {"name": ""}, "name"),
+            (DRAMATIS_PERSONAE, {"stays": "forever"}, "stays"),
         ]
         for kind, overrides, field in cases:
             with self.subTest(kind=kind.key, field=field):
@@ -178,6 +178,7 @@ class CatalogueEditPermissionTests(CataloguePermissionTestCase):
             RACES: self.human,
             BESTIARY: self.warhound,
             HIRED_SWORDS: self.ogre,
+            DRAMATIS_PERSONAE: self.aenur,
         }
         for kind, book in books.items():
             with self.subTest(kind=kind.key):
@@ -219,8 +220,7 @@ class CatalogueEditPermissionTests(CataloguePermissionTestCase):
                 self.assertEqual((self.edit(self.player, kind, entry), self.delete(self.player, kind, entry)), (403, 403))  # fmt: skip
                 # PR C: a book entry's version, Revert and Restore need edit_catalogue too
                 book = make_entry(kind, f"Book {kind.key}")
-                replaced = book.bestiary_entry if kind is HIRED_SWORDS else book
-                version = make_entry(kind, f"Version {kind.key}", campaign=self.campaign, replaces=replaced)
+                version = make_entry(kind, f"Version {kind.key}", campaign=self.campaign, replaces=book)
                 writes = [
                     self.patch_as(
                         self.player, kind.detail_url(book.id), {"campaign_id": self.campaign.id, "name": "X"}

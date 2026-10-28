@@ -6,6 +6,7 @@ import type { Skill } from "@/features/skills/types/skill-types";
 import type { HeroFormEntry } from "../../types/warband-types";
 import { isPendingByType } from "../../components/heroes/utils/pending-entries";
 import type { UnitTypeOption } from "@/components/ui/unit-selection-section";
+import { isSold } from "@/features/items/utils/item-listing";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
 
 const isNonEmptyString = (value: unknown): value is string =>
@@ -127,7 +128,10 @@ export function useUnitLoadout<T extends HeroFormEntry>({
   // Filtered item/skill/spell/special lists
   const matchingItems = useMemo(() => {
     const query = itemQuery.trim().toLowerCase();
-    return availableItems.filter((item) => matchesSearchQuery(query, item.name, item.type));
+    // The shop's items only: an unsold beast isn't offered (its item exists for kits and trades).
+    return availableItems.filter(
+      (item) => isSold(item) && matchesSearchQuery(query, item.name, item.type)
+    );
   }, [availableItems, itemQuery]);
 
   const matchingSkills = useMemo(() => {

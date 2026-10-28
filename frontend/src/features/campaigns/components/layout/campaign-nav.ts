@@ -1,6 +1,7 @@
 import {
   Book,
   Castle,
+  Drama,
   House,
   Map,
   PawPrint,
@@ -26,6 +27,7 @@ export function getCampaignNavItems(campaign: CampaignNavFlags) {
     { label: "Wargear", path: "items", icon: Shield },
     { label: "Bestiary", path: "bestiary", icon: PawPrint },
     { label: "Hired Swords", path: "hired-swords", icon: Sword },
+    { label: "Dramatis Personae", path: "dramatis-personae", icon: Drama },
     ...(campaign.enable_locations ? [{ label: "Locations", path: "locations", icon: Map }] : []),
     ...(campaign.enable_encampments
       ? [{ label: "Encampments", path: "encampments", icon: Tent }]
@@ -44,6 +46,7 @@ const SECTION_TITLES: Record<string, string> = {
   spells: "Spells",
   bestiary: "Bestiary",
   "hired-swords": "Hired Swords",
+  "dramatis-personae": "Dramatis Personae",
   rules: "Rules",
   "house-rules": "House Rules",
   settings: "Settings",
@@ -80,7 +83,8 @@ export function getMobileNavActiveId(path: string) {
     path.includes("/skills") ||
     path.includes("/spells") ||
     path.includes("/bestiary") ||
-    path.includes("/hired-swords")
+    path.includes("/hired-swords") ||
+    path.includes("/dramatis-personae")
   ) {
     return "loadout" as const;
   }

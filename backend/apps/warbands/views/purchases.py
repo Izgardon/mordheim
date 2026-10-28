@@ -13,12 +13,17 @@ from apps.warbands.serializers.purchases import PurchaseSerializer, RarityRollRe
 from apps.warbands.services.purchases import Purchase, purchase
 from apps.warbands.services.rarity_rolls import RollRefused, record_roll
 from apps.warbands.services.stash import stash_entry
+from apps.warbands.services.summary import load_warband_units
 from apps.warbands.services.unit_items import unit_item_rows
 from apps.warbands.units.catalogue_scope import current_entry, shop_items
+from apps.warbands.units.companions import companion_fields, mount_kinds, mount_payload
 from apps.warbands.units.errors import RosterError, validation_error
+from apps.warbands.units.kinds import HENCHMEN_GROUP
 from apps.warbands.units.serializers import detail_item_entries
+from apps.warbands.units.services.beasts import size_warnings
 
 from .base import WarbandScopedView
+from .beasts import unit_detail
 
 
 def scoped_item(warband: Any, item_id: int) -> Item:
@@ -31,19 +36,30 @@ def scoped_item(warband: Any, item_id: int) -> Item:
 
 
 def purchase_answer(warband: Any, item: Item, bought: Purchase) -> dict[str, Any]:
-    """The slim answer (ECON-PERF-03): the touched unit's items or the stash entry, the "Buy" row, the summary."""
+    """The slim answer (ECON-PERF-03): the touched unit's items with its mount, pets and mounted stats, or the stash
+    entry, or the group a creature was recruited into; the "Buy" row, the summary."""
     line = bought.line
     unit = line.unit
-    stash = stash_entry(warband.id, item) if unit is None else None
+    rows = unit_item_rows(line.target_type, unit) if unit is not None else []
+    stash = stash_entry(warband.id, item) if unit is None and line.group is None else None
+    group = unit_detail(HENCHMEN_GROUP.key, line.group.pk) if line.group is not None else None
+    units = load_warband_units([warband.id])[warband.id]
+    # A group's every kind of mount, as its payloads list them: the page reads its mount entries from `mounts`.
+    group_mounts = (
+        {"mounts": [mount_payload(row) for row in mount_kinds(rows)]} if line.target_type == HENCHMEN_GROUP.key else {}
+    )
     return {
         "target_type": line.target_type,
         "target_id": unit.pk if unit is not None else None,
         "updated_at": serializers.DateTimeField().to_representation(unit.updated_at) if unit is not None else None,
-        "items": detail_item_entries(unit_item_rows(line.target_type, unit)) if unit is not None else None,
+        "items": detail_item_entries(rows) if unit is not None else None,
+        **companion_fields(unit, rows),
+        **group_mounts,
+        "group": group,
         "stash_item": WarbandItemSummarySerializer(stash).data if stash else None,
         "trade": WarbandTradeSerializer(bought.trade).data if bought.trade else None,
-        "summary": WarbandSummarySerializer(warband).data,
-        "warnings": bought.warnings,
+        "summary": WarbandSummarySerializer(warband, context={"warband_units": units}).data,
+        "warnings": bought.warnings + (size_warnings(warband, group, units) if group else []),
     }
 
 
@@ -56,6 +72,8 @@ class WarbandPurchaseView(WarbandScopedView):
             raise validation_error(body.errors)
         item = scoped_item(self.warband, body.validated_data["item_id"])
         bought = purchase(self.warband, item, body.validated_data)
+        if body.validated_data.get("recruit"):
+            self.announce_change()  # creatures recruited straight away, as beasts/recruit/ announces them
         return Response(purchase_answer(self.warband, item, bought), status=status.HTTP_201_CREATED)
 
 

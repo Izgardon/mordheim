@@ -1,12 +1,12 @@
 """The catalogue kinds registry (design 0.29 for the catalogue, IMP-79): each kind as data.
 
-Items, skills, spells, specials, races, bestiary entries and hired swords, plus the read-only restrictions and the
-add-only item properties. A spec names the kind's model and serializers, how its list is filtered, the child rows
-an entry carries (what a version copies), the tables whose rows hold an entry (`holders`: what a delete can't take
-with it, what `usage/` counts, and what a version's first edit moves onto it and Revert moves back) and the rows
-that follow an entry without holding it (`followers`: a warband's bestiary favourites, an item's animal). A hired
-sword is its bestiary entry for all of that (`entry_via`). Differences that are behaviour are hooks (hooks.py), as
-pass 1 did for units (`warbands/units/kinds.py`).
+Items, skills, spells, specials, races, bestiary entries, hired swords and dramatis personae, plus the read-only
+restrictions and the add-only item properties. A spec names the kind's model and serializers, how its list is
+filtered, the child rows an entry carries (what a version copies), the tables whose rows hold an entry (`holders`:
+what a delete can't take with it, what `usage/` counts, and what a version's first edit moves onto it and Revert
+moves back), the rows that follow an entry without holding it (`followers`: a warband's bestiary favourites) and the
+entry of another kind that goes everywhere it goes (`twin`: a beast's Animal item). Differences that are behaviour
+are hooks (hooks.py), as pass 1 did for units (`warbands/units/kinds.py`).
 """
 
 from collections.abc import Callable, Mapping
@@ -22,11 +22,14 @@ from apps.bestiary.models import (
     BestiaryEntrySkill,
     BestiaryEntrySpecial,
     BestiaryEntrySpell,
-    HiredSwordProfile,
     WarbandBestiaryFavourite,
 )
-from apps.bestiary.serializers import BestiaryEntryWriteSerializer, HiredSwordWriteSerializer
+from apps.bestiary.selectors import by_kind
+from apps.bestiary.serializers import BestiaryEntryWriteSerializer
+from apps.hirelings.models import DramatisPersona, HiredSword
+from apps.hirelings.serializers import DramatisPersonaWriteSerializer, HiredSwordWriteSerializer
 from apps.items.models import Item, ItemProperty
+from apps.items.selectors import by_listing
 from apps.items.serializers import ItemPropertySerializer, ItemWriteSerializer
 from apps.races.models import Race
 from apps.races.serializers import RaceCreateSerializer
@@ -38,14 +41,16 @@ from apps.special.models import Special
 from apps.special.serializers import SpecialCreateSerializer
 from apps.spells.models import Spell
 from apps.spells.serializers import SpellCreateSerializer
-from apps.warbands.models import WarbandItem
+from apps.warbands.models import HenchmenGroup, WarbandItem
 from apps.warbands.units.kinds import KINDS as UNIT_KINDS
 from apps.warbands.units.kinds import UnitKindKey
 
-from .hooks import BestiaryHooks, CatalogueHooks, HiredSwordHooks, ItemHooks, ItemPropertyHooks, RaceHooks
+from .hooks import BestiaryHooks, CatalogueHooks, HirelingProfileHooks, ItemHooks, ItemPropertyHooks, RaceHooks
 from .rows import (
     BestiaryEntryDetailRowSerializer,
     BestiaryEntryRowSerializer,
+    DramatisPersonaDetailRowSerializer,
+    DramatisPersonaRowSerializer,
     HiredSwordDetailRowSerializer,
     HiredSwordRowSerializer,
     ItemRowSerializer,
@@ -56,6 +61,7 @@ from .rows import (
 )
 
 Filter = Callable[[str], Q]  # a query parameter's stripped value -> the rows it keeps
+UsageKey = Literal["units", "stashes", "bestiary_entries", "hired_swords", "dramatis_personae"]  # usage.py's counts
 
 
 @dataclass(frozen=True)
@@ -72,12 +78,26 @@ class Move:
 @dataclass(frozen=True)
 class Holder(Move):
     """A table whose rows hold an entry, with RESTRICT: a unit's copy (or a unit of a race), a stash row, a bestiary
-    entry's link."""
+    entry's, hired sword's or dramatis persona's link (or one of their races)."""
 
-    counts_as: Literal["units", "stashes", "bestiary_entries"] = "units"  # the usage key it adds to
-    holder_id: str = "pk"  # the attribute naming who holds it: the unit, the warband (a stash), the bestiary entry
-    warband: str | None = None  # the path to the holder's warband id; None for a bestiary entry's link
+    counts_as: UsageKey = "units"  # the usage key it adds to
+    holder_id: str = "pk"  # the attribute naming who holds it: the unit, the warband (a stash), the catalogue entry
+    warband: str | None = None  # the path to the holder's warband id; None for a catalogue entry's link
     unit_kind: UnitKindKey | None = None  # for units: their kind
+
+
+@dataclass(frozen=True)
+class Twin:
+    """An entry of another kind held once for each entry (`field`: its one-to-one key to the entry, CASCADE): written
+    by the entry's writes, versioned and reverted with it (versions.py), archived, removed, restored and deleted with
+    it (archive.py), and what holds it is the entry's usage (usage.py). A beast's Animal item."""
+
+    kind: "CatalogueKindSpec"
+    field: str
+
+    def of(self, entry: Any) -> Any:
+        """The entry's twin (`entry`: a row or its id), or None."""
+        return self.kind.model._default_manager.filter(**{self.field: entry}).first()
 
 
 @dataclass(frozen=True)
@@ -96,37 +116,16 @@ class CatalogueKindSpec:
     name_field: str = "name"  # what the name rule compares (names.py; the restrictions' list merge)
     order: tuple[str, ...] = ("name", "id")  # each part of a list (the campaign's rows, then the book's)
     reread: bool = False  # a write's answer is read again with the detail's prefetch (its links)
-    entry_via: str = ""  # the relation from a row to the entry it is (a hired sword's profile: "bestiary_entry")
-    table_key: str = ""  # the kind owning the entry's table (removals, reverted versions); default: `key`
     lists: tuple[str, ...] = ()  # the lists a write changes (`catalogue.changed` kinds); default: `(key,)`
     children: tuple[str, ...] = ()  # rows an entry carries (CASCADE), parents first; what a version copies
     holders: tuple[Holder, ...] = ()
     followers: tuple[Move, ...] = ()
+    twin: Twin | None = None
     hooks: CatalogueHooks = field(default_factory=CatalogueHooks)
 
     @property
     def changed_lists(self) -> tuple[str, ...]:
         return self.lists or (self.key,)
-
-    @property
-    def entry_key(self) -> str:
-        return self.table_key or self.key
-
-    @property
-    def entry_model(self) -> type[Model]:
-        """The table that carries `replaces`, `archived_at` and the badges: the model, or a hired sword's entry."""
-        if not self.entry_via:
-            return self.model
-        related: type[Model] = self.model._meta.get_field(self.entry_via).related_model  # type: ignore[assignment]
-        return related
-
-    def entry_path(self, column: str) -> str:
-        """`column` of the entry, from the kind's row: "archived_at", or "bestiary_entry__archived_at"."""
-        return f"{self.entry_via}__{column}" if self.entry_via else column
-
-    def entry_ref(self) -> str:
-        """The row's entry id: "pk", or "bestiary_entry_id"."""
-        return f"{self.entry_via}_id" if self.entry_via else "pk"
 
 
 def _copies(link: str, *others: Holder) -> tuple[Holder, ...]:
@@ -157,6 +156,40 @@ def _linked_by(model: type[Model], target: str, unique: tuple[str, ...] = ()) ->
     )
 
 
+HIRELING_CATALOGUES: tuple[tuple[type[Model], UsageKey], ...] = (
+    (HiredSword, "hired_swords"),
+    (DramatisPersona, "dramatis_personae"),
+)
+
+
+def _listed_by_hirelings(links: str, target: str) -> tuple[Holder, ...]:
+    """The hired swords' and dramatis personae's links of one kind (`links`: "skill_links") holding `target`; a kit
+    lists an item once (its quantity says how many), so a moved item link meeting one merges into it, quantities
+    added."""
+    holders = []
+    for model, counts_as in HIRELING_CATALOGUES:
+        relation = model._meta.get_field(links)
+        owner = relation.field.name  # type: ignore[union-attr]
+        holders.append(
+            Holder(
+                model=relation.related_model,  # type: ignore[arg-type]
+                field=target,
+                campaign=f"{owner}__campaign_id",
+                unique=(f"{owner}_id",) if target == "item" else (),
+                adds="quantity" if target == "item" else None,  # a merged kit line keeps both quantities
+                counts_as=counts_as,
+                holder_id=f"{owner}_id",
+            )
+        )
+    return tuple(holders)
+
+
+HIRELING_RACES = tuple(
+    Holder(model=model, field="race", campaign="campaign_id", counts_as=counts_as)
+    for model, counts_as in HIRELING_CATALOGUES
+)
+
+
 STASH = Holder(
     model=WarbandItem,
     field="item",
@@ -166,6 +199,13 @@ STASH = Holder(
     counts_as="stashes",
     holder_id="warband_id",
     warband="warband_id",
+)
+BEAST_GROUPS = Holder(  # a henchmen group recruited from a creature: joining and back to item need its beast
+    model=HenchmenGroup,
+    field="source_beast",
+    campaign="warband__campaign_id",
+    warband="warband_id",
+    unit_kind="henchmen_group",
 )
 NAME_AND_TYPE: Mapping[str, Filter] = {
     "type": lambda value: Q(type__iexact=value),
@@ -183,10 +223,15 @@ ITEMS = CatalogueKindSpec(
     write_serializer=ItemWriteSerializer,
     named=True,
     versioned=True,
-    filters=NAME_AND_TYPE,
+    filters={**NAME_AND_TYPE, "listed": by_listing},  # the shop's list: ?listed=1
     reread=True,
     children=("availabilities", "availabilities__restriction_links", "property_links"),
-    holders=_copies("items", STASH, _linked_by(BestiaryEntryItem, "item", unique=("bestiary_entry_id",))),
+    holders=_copies(
+        "items",
+        STASH,
+        _linked_by(BestiaryEntryItem, "item", unique=("bestiary_entry_id",)),
+        *_listed_by_hirelings("item_links", "item"),
+    ),
     hooks=ItemHooks(),
 )
 SKILLS = CatalogueKindSpec(
@@ -201,7 +246,7 @@ SKILLS = CatalogueKindSpec(
     versioned=True,
     filters=NAME_AND_TYPE,
     excluded_types=PLACEHOLDERS,
-    holders=_copies("skills", _linked_by(BestiaryEntrySkill, "skill")),
+    holders=_copies("skills", _linked_by(BestiaryEntrySkill, "skill"), *_listed_by_hirelings("skill_links", "skill")),
 )
 SPELLS = CatalogueKindSpec(
     key="spells",
@@ -215,7 +260,7 @@ SPELLS = CatalogueKindSpec(
     versioned=True,
     filters=NAME_AND_TYPE,
     excluded_types=PLACEHOLDERS,
-    holders=_copies("spells", _linked_by(BestiaryEntrySpell, "spell")),
+    holders=_copies("spells", _linked_by(BestiaryEntrySpell, "spell"), *_listed_by_hirelings("spell_links", "spell")),
 )
 SPECIALS = CatalogueKindSpec(
     key="specials",
@@ -229,7 +274,9 @@ SPECIALS = CatalogueKindSpec(
     versioned=True,
     filters=NAME_AND_TYPE,
     excluded_types=PLACEHOLDERS,
-    holders=_copies("specials", _linked_by(BestiaryEntrySpecial, "special")),
+    holders=_copies(
+        "specials", _linked_by(BestiaryEntrySpecial, "special"), *_listed_by_hirelings("special_links", "special")
+    ),
 )
 RACES = CatalogueKindSpec(
     key="races",
@@ -242,11 +289,19 @@ RACES = CatalogueKindSpec(
     named=True,
     versioned=True,
     filters={"search": NAME_AND_TYPE["search"]},
-    holders=tuple(
-        Holder(
-            model=unit.model, field="race", campaign="warband__campaign_id", warband="warband_id", unit_kind=unit.key
-        )
-        for unit in UNIT_KINDS.values()
+    lists=("races", "hired_swords", "dramatis_personae"),  # their rows name their race
+    holders=(
+        *(
+            Holder(
+                model=unit.model,
+                field="race",
+                campaign="warband__campaign_id",
+                warband="warband_id",
+                unit_kind=unit.key,
+            )
+            for unit in UNIT_KINDS.values()
+        ),
+        *HIRELING_RACES,
     ),
     hooks=RaceHooks(),
 )
@@ -258,48 +313,54 @@ BESTIARY = CatalogueKindSpec(
     row_serializer=BestiaryEntryRowSerializer,
     entry_serializer=BestiaryEntryDetailRowSerializer,
     write_serializer=BestiaryEntryWriteSerializer,
-    named=True,  # with the hired swords: they share the names
+    named=True,
     versioned=True,
-    filters=NAME_AND_TYPE,
+    filters={"kind": by_kind, "search": NAME_AND_TYPE["search"]},
     reread=True,
-    lists=("bestiary", "hired_swords", "items"),  # an entry may be a hired sword, or an animal an item shows
-    children=(
-        "bestiary_entry_skills",
-        "bestiary_entry_specials",
-        "bestiary_entry_spells",
-        "bestiary_entry_items",
-        "hired_sword_profile",  # a hired sword's entry carries its profile
-        "hired_sword_profile__restriction_links",
-    ),
-    followers=(  # units copy what they take from an entry: nothing holds one
+    lists=("bestiary", "items"),  # its Animal item is written with it
+    children=("bestiary_entry_skills", "bestiary_entry_specials", "bestiary_entry_spells", "bestiary_entry_items"),
+    holders=(BEAST_GROUPS,),  # units copy their profile from it; only a group recruited from it holds it
+    followers=(
         Move(
             model=WarbandBestiaryFavourite,
             field="bestiary_entry",
             campaign="warband__campaign_id",
             unique=("warband_id",),
         ),
-        Move(model=Item, field="bestiary_entry", campaign="campaign_id"),  # the campaign's animals
     ),
+    twin=Twin(ITEMS, "bestiary_entry"),
     hooks=BestiaryHooks(),
 )
+HIRELING_LINKS = ("skill_links", "special_links", "spell_links", "item_links", "restriction_links")
 HIRED_SWORDS = CatalogueKindSpec(
     key="hired_swords",
     noun="hired sword",
-    model=HiredSwordProfile,
-    url_kwarg="profile_id",
+    model=HiredSword,
+    url_kwarg="hired_sword_id",
     row_serializer=HiredSwordRowSerializer,
     entry_serializer=HiredSwordDetailRowSerializer,
     write_serializer=HiredSwordWriteSerializer,
     named=True,
     versioned=True,
-    filters={"search": lambda value: Q(bestiary_entry__name__icontains=value)},
-    name_field="bestiary_entry__name",
-    order=("bestiary_entry__name",),
+    filters={"search": NAME_AND_TYPE["search"]},
     reread=True,
-    entry_via="bestiary_entry",  # a hired sword's version, archive and removal are its entry's (with its profile)
-    lists=("hired_swords", "bestiary"),  # its entry is in the bestiary list too
-    table_key="bestiary",
-    hooks=HiredSwordHooks(),
+    children=HIRELING_LINKS,  # hirelings copy what they take from one on hire: nothing holds it
+    hooks=HirelingProfileHooks(HiredSword),
+)
+DRAMATIS_PERSONAE = CatalogueKindSpec(
+    key="dramatis_personae",
+    noun="dramatis persona",
+    model=DramatisPersona,
+    url_kwarg="dramatis_persona_id",
+    row_serializer=DramatisPersonaRowSerializer,
+    entry_serializer=DramatisPersonaDetailRowSerializer,
+    write_serializer=DramatisPersonaWriteSerializer,
+    named=True,
+    versioned=True,
+    filters={"search": NAME_AND_TYPE["search"]},
+    reread=True,
+    children=HIRELING_LINKS,
+    hooks=HirelingProfileHooks(DramatisPersona),
 )
 RESTRICTIONS = CatalogueKindSpec(  # read-only: the seeders write the book's rows (SEC-06)
     key="restrictions",
@@ -329,18 +390,10 @@ ITEM_PROPERTIES = CatalogueKindSpec(  # added, never edited or deleted
 )
 
 CATALOGUE_KINDS: Mapping[str, CatalogueKindSpec] = {
-    kind.key: kind for kind in (ITEMS, SKILLS, SPELLS, SPECIALS, RACES, BESTIARY, HIRED_SWORDS)
+    kind.key: kind for kind in (ITEMS, SKILLS, SPELLS, SPECIALS, RACES, BESTIARY, HIRED_SWORDS, DRAMATIS_PERSONAE)
 }
 LIST_KINDS: Mapping[str, CatalogueKindSpec] = {
     **CATALOGUE_KINDS,
     "restrictions": RESTRICTIONS,
     "item_properties": ITEM_PROPERTIES,
 }
-ENTRY_KINDS: Mapping[str, CatalogueKindSpec] = {  # the kinds owning an entry table, by `entry_key`
-    kind.key: kind for kind in CATALOGUE_KINDS.values() if not kind.entry_via
-}
-
-
-def entry_kind(kind: CatalogueKindSpec) -> CatalogueKindSpec:
-    """The kind owning the table of `kind`'s entries: itself, or the bestiary for a hired sword."""
-    return ENTRY_KINDS[kind.entry_key]

@@ -329,7 +329,7 @@ class BattleReadAccessTests(BattleTestCase):
 
         rosters = self.ok(self.get_as(self.viewer, url)).data
         self.assertEqual(sorted(rosters), sorted([str(self.player.id), str(self.viewer.id)]))
-        self.assertEqual(list(rosters[str(self.player.id)]), ["heroes", "hiredSwords", "henchmenGroups"])
+        self.assertEqual(list(rosters[str(self.player.id)]), ["heroes", "hirelings", "henchmenGroups"])
         late = Hero.objects.create(warband=self.warband, name="Late", unit_type="Novice")  # prebattle: live
         heroes = self.ok(self.get_as(self.viewer, url)).data[str(self.player.id)]["heroes"]
         self.assertEqual([entry["key"] for entry in heroes], [f"hero:{hero.id}", f"hero:{late.id}"])

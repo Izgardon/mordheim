@@ -6,6 +6,7 @@ import { PageSubnav } from "@/components/ui/page-subnav";
 import greedIcon from "@/assets/icons/greed.webp";
 import ratingIcon from "@/assets/icons/Menu.webp";
 import GoldLabel from "./GoldLabel";
+import RatingLabel from "./RatingLabel";
 import HeaderIconButton from "./HeaderIconButton";
 import StashItemList from "./stash/StashItemList";
 import WarbandPdfViewerDialog from "./WarbandPdfViewerDialog";
@@ -21,7 +22,7 @@ import type {
   HenchmenGroup,
   Warband,
   WarbandHero,
-  WarbandHiredSword,
+  WarbandHireling,
 } from "../../types/warband-types";
 
 const transparentButton =
@@ -43,8 +44,10 @@ type WarbandDesktopHeaderProps = {
   /** Gold the open edit session will spend on Save (queued recruits and purchases). */
   pendingGold?: number;
   warbandRating: number;
+  /** A section has unsaved changes, which the server's rating counts only once saved. */
+  ratingUnsaved?: boolean;
   heroes: WarbandHero[];
-  hiredSwords: WarbandHiredSword[];
+  hirelings: WarbandHireling[];
   henchmenGroups: HenchmenGroup[];
   stash: WarbandStashControls;
   /** The sheet's `manage_items` capability: the stash's item menus. */
@@ -62,8 +65,9 @@ export default function WarbandDesktopHeader({
   onTabChange,
   pendingGold = 0,
   warbandRating,
+  ratingUnsaved = false,
   heroes,
-  hiredSwords,
+  hirelings,
   henchmenGroups,
   stash: { isOpen: isStashOpen, onToggle: onToggleStash, ...stash },
   canManageItems,
@@ -99,17 +103,19 @@ export default function WarbandDesktopHeader({
           />
           <HeaderIconButton
             icon={ratingIcon}
-            label={warbandRating}
-            tooltip="Warband rating"
+            label={<RatingLabel rating={warbandRating} unsaved={ratingUnsaved} />}
+            tooltip={ratingUnsaved ? "Warband rating as saved" : "Warband rating"}
             ariaLabel="Warband rating"
             onClick={() => setIsRatingOpen(true)}
-            buttonClassName={`border-0 ${transparentButton}`}
+            buttonClassName={`border-0 ${transparentButton}${ratingUnsaved ? " !w-auto" : ""}`}
           />
           <WarbandRatingDialog
             open={isRatingOpen}
             onOpenChange={setIsRatingOpen}
+            rating={warbandRating}
+            mountsRating={warband.mounts_rating}
             heroes={heroes}
-            hiredSwords={hiredSwords}
+            hirelings={hirelings}
             henchmenGroups={henchmenGroups}
           />
         </>

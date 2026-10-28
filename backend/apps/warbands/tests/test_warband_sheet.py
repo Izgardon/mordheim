@@ -4,7 +4,7 @@ from apps.campaigns.models import CampaignMembership, CampaignMembershipPermissi
 from apps.warbands.models import Henchman, LedgerAction, WarbandResource
 from apps.warbands.services import ledger
 
-from .roster_support import HENCHMEN, HERO, HIRED_SWORD, RosterTestCase, make_unit
+from .roster_support import HENCHMEN, HERO, HIRELING, RosterTestCase, make_unit
 
 ALL_FLAGS = ("edit", "level_up", "manage_items", "edit_backstory", "delete", "edit_catalogue", "trade")
 
@@ -32,9 +32,9 @@ class WarbandSheetTests(RosterTestCase):
         Henchman.objects.create(group=group, name="Fallen", dead=True)
         group.henchmen_group_items.create(item=self.sword, cost=10)
         group.henchmen_group_skills.create(skill=self.skills[1])
-        sword = make_unit(HIRED_SWORD, self.warband, rating=12, xp=1)
-        sword.hired_sword_items.create(item=self.axe, cost=5)
-        sword.hired_sword_specials.create(special=self.large)
+        sword = make_unit(HIRELING, self.warband, rating=12, xp=1)
+        sword.hireling_items.create(item=self.axe, cost=5)
+        sword.hireling_specials.create(special=self.large)
         WarbandResource.objects.create(warband=self.warband, name="Wyrdstone", amount=2)
         ledger.record(self.warband, LedgerAction.STARTING_GOLD, 500, "Gold")
         ledger.record(self.warband, LedgerAction.BUY, -10, "Sword")
@@ -45,15 +45,13 @@ class WarbandSheetTests(RosterTestCase):
 
         sheet = self.client.get(self._url()).json()
 
-        self.assertEqual(
-            list(sheet), ["warband", "summary", "capabilities", "heroes", "henchmen_groups", "hired_swords"]
-        )
+        self.assertEqual(list(sheet), ["warband", "summary", "capabilities", "heroes", "henchmen_groups", "hirelings"])
         self.assertEqual(sheet["warband"], self.client.get(base).json())
         self.assertEqual(sheet["summary"], self.client.get(f"{base}summary/").json())
         for key, segment in (
             ("heroes", "heroes"),
             ("henchmen_groups", "henchmen-groups"),
-            ("hired_swords", "hired-swords"),
+            ("hirelings", "hirelings"),
         ):
             with self.subTest(units=key):
                 self.assertEqual(sheet[key], self.client.get(f"{base}{segment}/detail/").json())
@@ -62,7 +60,7 @@ class WarbandSheetTests(RosterTestCase):
 
     def test_an_empty_warband_has_an_empty_roster(self):
         sheet = self.client.get(self._url()).json()
-        self.assertEqual((sheet["heroes"], sheet["henchmen_groups"], sheet["hired_swords"]), ([], [], []))
+        self.assertEqual((sheet["heroes"], sheet["henchmen_groups"], sheet["hirelings"]), ([], [], []))
         self.assertEqual((sheet["summary"]["rating"], sheet["summary"]["gold"]), (0, 0))
 
     def test_capabilities_follow_todays_permission_checks(self):

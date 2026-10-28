@@ -3,10 +3,10 @@
 The generic views (views.py) call these hooks. `CatalogueHooks` is what skills, spells, specials and restrictions
 need: every row of the model with what its badges read, the list rule (merge.py), a create that saves the serializer
 in the campaign, an edit that saves it, a delete of the entry. Items refuse deleting or reverting a house rule's
-clone and write through `items/writes.py`; bestiary entries and hired swords write through `bestiary/writes.py` and
-read their details through `bestiary/selectors.py`, and a hired sword is edited and deleted through its entry; a
-race edit naming another campaign is refused (BUG-147); item properties list the book's and the campaign's side by
-side.
+clone and any write of a beast's Animal item, and write through `items/writes.py`; bestiary entries write through
+`bestiary/writes.py` (their Animal item too) and read their rows and details through `bestiary/selectors.py`, hired
+swords and dramatis personae through `hirelings/writes.py` and `hirelings/selectors.py`; a race edit naming another
+campaign is refused (BUG-147); item properties list the book's and the campaign's side by side.
 """
 
 from typing import TYPE_CHECKING, Any
@@ -18,8 +18,10 @@ from rest_framework.request import Request
 from rest_framework.serializers import BaseSerializer
 
 from apps.bestiary import writes as bestiary_writes
-from apps.bestiary.models import HiredSwordProfile
-from apps.bestiary.selectors import entry_details, hired_sword_details, hired_sword_rows
+from apps.bestiary.selectors import entry_details, with_items
+from apps.hirelings import selectors as hireling_selectors
+from apps.hirelings import writes as hireling_writes
+from apps.hirelings.models import HirelingProfile
 from apps.items import writes as item_writes
 from apps.items.selectors import item_rows
 
@@ -36,6 +38,11 @@ HOUSE_RULE_ITEM = {
     " change the house rule instead.",
     "code": "house_rule_item",
 }  # BUG-51: deleting or reverting a generated clone would fight its rule; an edit detaches it (PR C's Calls)
+ANIMAL_ITEM = {
+    "detail": "This item is a bestiary beast's and changes with it. Edit, delete or revert the beast in the bestiary"
+    " instead.",
+    "code": "animal_item",
+}  # the bestiary rewrite step 3: one item per beast, kept in step by the bestiary's writes
 
 
 class CampaignRequired(APIException):
@@ -48,7 +55,7 @@ class CatalogueHooks:
     def rows(self, kind: "CatalogueKindSpec") -> QuerySet[Any]:
         """Every row of the kind: what a list filters and the detail reads, with what its badges read (CAT-NEW-03)."""
         rows = kind.model._default_manager.all()
-        return rows.select_related(*badge_joins(kind.entry_via)) if kind.versioned else rows
+        return rows.select_related(*badge_joins()) if kind.versioned else rows
 
     def listed(
         self, kind: "CatalogueKindSpec", rows: QuerySet[Any], campaign_id: int | None, params: QueryDict
@@ -64,15 +71,11 @@ class CatalogueHooks:
             merged = merge.campaign_rows(rows, campaign_id, kind.name_field)
         return merged.order_by(*merge.campaign_first(*kind.order))
 
-    def shown(self, rows: QuerySet[Any], params: QueryDict) -> QuerySet[Any]:
-        """What the list keeps of its merged rows (the bestiary's `?exclude_type=`)."""
-        return rows
-
     def row_serializer(self, kind: "CatalogueKindSpec", params: QueryDict) -> type[Serializer]:
         """The serializer of the list's rows (the bestiary's `?view=summary`)."""
         return kind.row_serializer
 
-    def read(self, rows: QuerySet[Any]) -> QuerySet[Any]:
+    def read(self, rows: QuerySet[Any], params: QueryDict) -> QuerySet[Any]:
         """The list's rows with what its serializer reads."""
         return rows
 
@@ -92,17 +95,12 @@ class CatalogueHooks:
         """Runs before an edit (PUT, PATCH) loads the caller's access."""
 
     def refuse_write(self, entry: Any, action: str = "edit") -> None:
-        """Runs once the caller is known to be a member, before the method's rule: an entry `action` (edit, delete,
-        revert, restore) may not touch."""
+        """Runs once the caller is known to be a member, before the method's rule: an entry (the campaign's or the
+        book's) `action` (edit, delete, revert, restore) may not touch."""
 
     def create(self, serializer: Serializer, campaign_id: int) -> Model:
         entry: Model = serializer.save(campaign_id=campaign_id)
         return entry
-
-    def write_instance(self, entry: Any) -> Model:
-        """What the write serializer edits."""
-        written: Model = entry
-        return written
 
     def update(self, entry: Any, serializer: Serializer) -> None:
         serializer.save()
@@ -115,13 +113,15 @@ class CatalogueHooks:
 
 
 class ItemHooks(CatalogueHooks):
-    def read(self, rows: QuerySet[Any]) -> QuerySet[Any]:
+    def read(self, rows: QuerySet[Any], params: QueryDict) -> QuerySet[Any]:
         return item_rows(rows)
 
     def detail_rows(self, kind: "CatalogueKindSpec") -> QuerySet[Any]:
         return item_rows()
 
     def refuse_write(self, entry: Any, action: str = "edit") -> None:
+        if entry.bestiary_entry_id is not None:  # the bestiary writes it, with its beast (book entries too)
+            raise PermissionDenied(ANIMAL_ITEM)
         if entry.generated_effect_key and action != "edit":  # an edit detaches the clone (versions.editable)
             raise PermissionDenied(HOUSE_RULE_ITEM)
 
@@ -139,19 +139,15 @@ class ItemHooks(CatalogueHooks):
 
 
 class BestiaryHooks(CatalogueHooks):
-    """The Bestiary page's list leaves out the hired swords and the descriptions it doesn't show (PERF-47): additive
-    query parameters, so the default list is unchanged."""
-
-    def shown(self, rows: QuerySet[Any], params: QueryDict) -> QuerySet[Any]:
-        """`?exclude_type=` (repeatable, any case) leaves out entries of the type after the merge, as the page did."""
-        for excluded in params.getlist("exclude_type"):
-            if excluded.strip():
-                rows = rows.exclude(type__iexact=excluded.strip())
-        return rows
+    """A list row carries the beast's item and prices; the pickers' list leaves out the descriptions and items they
+    don't show (PERF-47): an additive query parameter, so the default list is unchanged."""
 
     def row_serializer(self, kind: "CatalogueKindSpec", params: QueryDict) -> type[Serializer]:
-        """`?view=summary`: each row without its description; any other view is the default row."""
+        """`?view=summary`: each row without its description and item; any other view is the default row."""
         return BestiaryEntryBriefRowSerializer if params.get("view") == "summary" else kind.row_serializer
+
+    def read(self, rows: QuerySet[Any], params: QueryDict) -> QuerySet[Any]:
+        return rows if params.get("view") == "summary" else with_items(rows)
 
     def detail_rows(self, kind: "CatalogueKindSpec") -> QuerySet[Any]:
         return entry_details()
@@ -163,30 +159,24 @@ class BestiaryHooks(CatalogueHooks):
         bestiary_writes.update_entry(entry, serializer.validated_data)
 
 
-class HiredSwordHooks(CatalogueHooks):
-    """A hired sword is its profile; the write serializer edits its bestiary entry, and the writes save both."""
+class HirelingProfileHooks(CatalogueHooks):
+    """Hired swords and dramatis personae (apps/hirelings): their race and restrictions with the list, their links
+    with the detail, and writes that save their links too."""
 
-    def read(self, rows: QuerySet[Any]) -> QuerySet[Any]:
-        return hired_sword_rows(rows)
+    def __init__(self, model: type[HirelingProfile]) -> None:
+        self.model = model
+
+    def read(self, rows: QuerySet[Any], params: QueryDict) -> QuerySet[Any]:
+        return hireling_selectors.profile_rows(rows)
 
     def detail_rows(self, kind: "CatalogueKindSpec") -> QuerySet[Any]:
-        return hired_sword_details()
-
-    def write_rows(self, kind: "CatalogueKindSpec") -> QuerySet[Any]:
-        return HiredSwordProfile.objects.select_related("bestiary_entry")
-
-    def write_instance(self, entry: Any) -> Model:
-        written: Model = entry.bestiary_entry
-        return written
+        return hireling_selectors.profile_details(self.model)
 
     def create(self, serializer: Serializer, campaign_id: int) -> Model:
-        return bestiary_writes.create_hired_sword(campaign_id, serializer.validated_data)
+        return hireling_writes.create_profile(self.model, campaign_id, serializer.validated_data)
 
     def update(self, entry: Any, serializer: Serializer) -> None:
-        bestiary_writes.update_hired_sword(entry, serializer.validated_data)
-
-    def delete(self, entry: Any) -> None:
-        entry.bestiary_entry.delete()  # the profile goes with it
+        hireling_writes.update_profile(entry, serializer.validated_data)
 
 
 class RaceHooks(CatalogueHooks):

@@ -33,7 +33,7 @@ class FinaliseRollbackTests(BattleTestCase):
     def postbattle_draft(self, finds: list[dict[str, Any]], **changes: dict[str, Any]) -> dict[str, Any]:
         """Every fixture unit; the first hero earns 3 XP, then exploration, upkeep and `finds` follow."""
         changes = {self.key("hero", self.fixture.heroes[0]): {"xp": 3}, **changes}
-        sword = self.key("hired_sword", self.fixture.hired_swords[0])
+        sword = self.key("hireling", self.fixture.hirelings[0])
         return draft(
             {key: unit_result(key, **changes.get(key, {})) for key in self.fixture.keys},
             exploration={"dice_values": [3], "resource_id": self.resource.id},

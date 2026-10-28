@@ -154,7 +154,7 @@ def apply_stat_and_special(unit: Any, outcome: InjuryOutcome, campaign_id: int) 
         fields.append(outcome.stat)
     if outcome.special:
         special = injury_special(outcome.special, campaign_id)
-        links = unit.hero_specials if hasattr(unit, "hero_specials") else unit.hired_sword_specials
+        links = unit.hero_specials if hasattr(unit, "hero_specials") else unit.hireling_specials
         if not links.filter(special=special).exists():
             links.create(special=special)
     return fields
@@ -166,6 +166,6 @@ def _rows(ranges: list[tuple[int, int, str, dict[str, Any]]]) -> list[dict[str, 
 
 def injury_tables() -> dict[str, list[dict[str, Any]]]:
     """The tables as postbattle shows them (IMP-52): each result's roll range (a d66 range runs over its codes),
-    label and effect. A d6 (henchmen, hired swords) is Dead on 1-2."""
+    label and effect. A d6 (henchmen, and hirelings on the henchman table) is Dead on 1-2."""
     d6 = [(1, 2, "Dead", DEAD), (3, 6, "Survives", NONE)]
     return {"d6": _rows(d6), "d66": _rows(_D66_RANGES), "d100": _rows(_D100_RANGES)}

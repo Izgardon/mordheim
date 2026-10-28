@@ -10,8 +10,8 @@ from django.utils import timezone
 
 BOOK = 1  # the row's id: there is one
 
-# The tables whose entries a campaign versions, archives or removes, by the catalogue kind that owns each (a hired
-# sword is its bestiary entry): the `kind` of a removal or a reverted version.
+# The tables whose entries a campaign versions, archives or removes, by the catalogue kind that owns each: the `kind`
+# of a removal or a reverted version.
 ENTRY_TABLES = (
     ("items", "Item"),
     ("skills", "Skill"),
@@ -19,6 +19,8 @@ ENTRY_TABLES = (
     ("specials", "Special"),
     ("races", "Race"),
     ("bestiary", "Bestiary entry"),
+    ("hired_swords", "Hired sword"),
+    ("dramatis_personae", "Dramatis persona"),
 )
 
 
@@ -39,8 +41,8 @@ class CatalogueVersion(models.Model):
 
 
 class CatalogueEntry(models.Model):
-    """What every catalogue entry table carries besides its own columns (items, skills, spells, specials, races and
-    bestiary entries; a hired sword's are its entry's).
+    """What every catalogue entry table carries besides its own columns (items, skills, spells, specials, races,
+    bestiary entries, hired swords and dramatis personae).
 
     `replaces`: a campaign's version of a book entry points at the entry it stands in for (decisions 1 and 2): the
     campaign's lists, prices and pickers find it through this reference, never through the name. A house rule's
@@ -83,10 +85,10 @@ class CatalogueRemoval(models.Model):
     """A book entry deleted for one campaign (CAT-NEW-05): hidden from that campaign's lists, shops and pickers; the
     book and every other campaign keep it, copies stay valid, and restoring deletes the record.
 
-    One table for every kind, keyed by the kind that owns the entry's table (`ENTRY_TABLES`), rather than six
-    identical tables: lists, pickers and restore read it through one path, as they read the kinds registry. The id
-    has no foreign key, but book rows are never deleted (the seeders upsert, copies hold them with RESTRICT, the
-    API never deletes one), and the record goes with its campaign."""
+    One table for every kind, keyed by the kind that owns the entry's table (`ENTRY_TABLES`), rather than one
+    identical table per kind: lists, pickers and restore read it through one path, as they read the kinds registry.
+    The id has no foreign key, but book rows are never deleted (the seeders upsert, copies hold them with RESTRICT,
+    the API never deletes one), and the record goes with its campaign."""
 
     campaign = models.ForeignKey("campaigns.Campaign", related_name="catalogue_removals", on_delete=models.CASCADE)
     kind = models.CharField(max_length=20, choices=ENTRY_TABLES)

@@ -7,12 +7,12 @@ import type {
   PrebattleUnit,
 } from "@/features/battles/components/prebattle/prebattle-types";
 
-export type UnitSectionKey = "heroes" | "henchmen" | "hired_swords" | "temporary";
+export type UnitSectionKey = "heroes" | "henchmen" | "hirelings" | "temporary";
 
 export const UNIT_SECTION_LABELS: Record<UnitSectionKey, string> = {
   heroes: "Heroes",
   henchmen: "Henchmen",
-  hired_swords: "Hired Swords",
+  hirelings: "Hired Swords",
   temporary: "Temporary",
 };
 
@@ -55,8 +55,8 @@ export function useBattleMobileTopBar({
     if (selectedParticipantRoster?.henchmenGroups.length) {
       options.push({ value: "henchmen", label: UNIT_SECTION_LABELS.henchmen });
     }
-    if (selectedParticipantRoster?.hiredSwords.length) {
-      options.push({ value: "hired_swords", label: UNIT_SECTION_LABELS.hired_swords });
+    if (selectedParticipantRoster?.hirelings.length) {
+      options.push({ value: "hirelings", label: UNIT_SECTION_LABELS.hirelings });
     }
     if (selectedParticipantCustomUnits.length) {
       options.push({ value: "temporary", label: UNIT_SECTION_LABELS.temporary });
@@ -71,7 +71,7 @@ export function useBattleMobileTopBar({
     return {
       heroes: getUnitSectionId(selectedParticipant.user.id, "heroes"),
       henchmen: getUnitSectionId(selectedParticipant.user.id, "henchmen"),
-      hired_swords: getUnitSectionId(selectedParticipant.user.id, "hired_swords"),
+      hirelings: getUnitSectionId(selectedParticipant.user.id, "hirelings"),
       temporary: getUnitSectionId(selectedParticipant.user.id, "temporary"),
     };
   }, [selectedParticipant]);

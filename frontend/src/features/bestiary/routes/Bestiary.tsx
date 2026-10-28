@@ -1,114 +1,76 @@
-import { useMemo, useState } from "react";
-
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { PageHeader } from "@/components/ui/page-header";
-import { TableSkeleton } from "@/components/ui/table-skeleton";
 import MobileTabs from "@/components/ui/mobile-tabs";
+import { PageHeader } from "@/components/ui/page-header";
+import { ArchivedToggle } from "@/features/catalogue/components/ArchivedView";
+import { LOADOUT_TABS, type LoadoutTabId } from "@/lib/loadout-tabs";
 import { useMediaQuery } from "@/lib/use-media-query";
-
 import { useAppStore } from "@/stores/app-store";
-import { campaignCapabilities } from "@/features/campaigns/capabilities";
-import CataloguePager from "@/features/catalogue/components/CataloguePager";
-import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogueSearchParams";
-import { usePagedList } from "@/features/catalogue/hooks/usePagedList";
-import { useCatalogue } from "@/lib/catalogue-queries";
-import { useBestiaryFavourites } from "../hooks/useBestiaryFavourites";
-import BestiaryEntryCard from "../components/BestiaryEntryCard";
+
 import BestiaryEntryDetail from "../components/BestiaryEntryDetail";
 import BestiaryEntryFormDialog from "../components/BestiaryEntryFormDialog";
+import BestiaryKindFilter from "../components/BestiaryKindFilter";
+import BestiaryList from "../components/BestiaryList";
+import { useBestiaryFavourites } from "../hooks/useBestiaryFavourites";
+import { useBestiaryPage } from "../hooks/useBestiaryPage";
 
-import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
+const TITLE = "Bestiary";
+const SUBTITLE = "Mounts, pets and creatures";
 
-import { LOADOUT_TABS } from "@/lib/loadout-tabs";
-import type { LoadoutTabId } from "@/lib/loadout-tabs";
-
-const ALL_TYPES = "all";
-const PAGE_SIZE = 12;
-
+/**
+ * The Bestiary (pass 5's catalogue on cards, by kind): the Kind filter, search, the Archived list
+ * with Restore, Add, and a beast's detail with Edit; the form edits book and custom beasts alike
+ * (a book beast's first save makes the campaign's version), with Delete or Revert.
+ */
 export default function Bestiary() {
-  const { id } = useParams();
-  const { campaign } = useOutletContext<CampaignLayoutContext>();
-  const campaignId = Number(id);
+  const page = useBestiaryPage();
+  const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const { warband } = useAppStore();
-
-  // The server leaves the hired swords out (PERF-47); their page lists them.
-  const {
-    data: entries,
-    isLoading,
-    error,
-  } = useCatalogue("bestiary", campaignId, { variant: "creatures" });
   const favourites = useBestiaryFavourites(warband?.id);
-  const navigate = useNavigate();
-  // Search, type, page and the open entry live in the query string (CAT-NEW-02).
-  const url = useCatalogueSearchParams();
-  const searchQuery = url.get("q");
-  const selectedType = url.get("type", ALL_TYPES);
-  const setSearchQuery = (q: string) => url.set({ q, page: null });
-  const setSelectedType = (type: string) =>
-    url.set({ type: type === ALL_TYPES ? null : type, page: null });
-  const selectedEntryId = url.get("entry") ? Number(url.get("entry")) : null;
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
 
-  const canManage = campaignCapabilities(campaign).edit_catalogue;
+  const formDialog = (
+    <BestiaryEntryFormDialog
+      campaignId={page.campaignId}
+      open={page.form.open}
+      onOpenChange={page.form.onOpenChange}
+      editingId={page.form.editingId}
+      defaultKind={page.kind ?? undefined}
+      canDelete={page.canDelete}
+      onSaved={page.form.onSaved}
+      onDeleted={page.form.onDeleted}
+      onReverted={page.form.onReverted}
+      onEditMatch={page.form.onEditMatch}
+    />
+  );
 
-  const types = useMemo(() => {
-    const unique = new Set(entries.map((e) => e.type));
-    return Array.from(unique).sort();
-  }, [entries]);
-
-  const filteredEntries = useMemo(() => {
-    let result = entries;
-    if (selectedType !== ALL_TYPES) {
-      result = result.filter((e) => e.type === selectedType);
-    }
-    const q = searchQuery.trim().toLowerCase();
-    if (q) {
-      result = result.filter(
-        (e) =>
-          e.name.toLowerCase().includes(q) ||
-          e.type.toLowerCase().includes(q) ||
-          e.description.toLowerCase().includes(q)
-      );
-    }
-    return [...result].sort((a, b) => a.name.localeCompare(b.name));
-  }, [entries, selectedType, searchQuery]);
-
-  const pages = usePagedList(filteredEntries, PAGE_SIZE);
-
-  const handleLoadoutTabChange = (tabId: LoadoutTabId) => {
-    if (!id) return;
-    navigate(`/campaigns/${id}/${tabId}`);
-  };
-
-  if (selectedEntryId !== null) {
+  if (page.openEntryId !== null) {
+    const entryId = page.openEntryId;
     return (
       <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-8">
-        <PageHeader title="Bestiary" subtitle="Creatures and companions" />
-        <BestiaryEntryDetail entryId={selectedEntryId} onClose={() => url.back("entry")} />
+        <PageHeader title={TITLE} subtitle={SUBTITLE} />
+        <BestiaryEntryDetail
+          campaignId={page.campaignId}
+          entryId={entryId}
+          onClose={page.closeEntry}
+          onEdit={page.canEdit ? () => page.form.edit(entryId) : undefined}
+        />
+        {formDialog}
       </div>
     );
   }
 
   return (
     <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-8">
-      <PageHeader title="Bestiary" subtitle="Creatures and companions" />
+      <PageHeader title={TITLE} subtitle={SUBTITLE} />
 
       {isMobile ? (
         <MobileTabs
           tabs={LOADOUT_TABS}
           activeTab="bestiary"
-          onTabChange={handleLoadoutTabChange}
+          onTabChange={(tabId: LoadoutTabId) => navigate(`/campaigns/${page.campaignId}/${tabId}`)}
           className="mt-2"
           showDivider
         />
@@ -118,64 +80,25 @@ export default function Bestiary() {
         <div className="flex flex-wrap items-center gap-3">
           <Input
             type="search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={page.searchQuery}
+            onChange={(event) => page.setSearchQuery(event.target.value)}
             placeholder="Search bestiary..."
             aria-label="Search bestiary"
-            className="flex-none w-[calc(50%-6px)] sm:w-full sm:max-w-sm"
+            className="w-full sm:max-w-sm"
           />
-          {types.length > 1 ? (
-            <Select value={selectedType} onValueChange={setSelectedType}>
-              <SelectTrigger className="w-[calc(50%-6px)] sm:w-56">
-                <SelectValue placeholder="Filter by type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={ALL_TYPES}>All types</SelectItem>
-                {types.map((t) => (
-                  <SelectItem key={t} value={t}>
-                    {t}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          ) : null}
-          {canManage ? (
-            <Button size="sm" className="ml-auto" onClick={() => setShowCreateDialog(true)}>
+          <BestiaryKindFilter value={page.kind} onChange={page.setKind} />
+          <ArchivedToggle checked={page.archive.archived} onChange={page.archive.setArchived} />
+          {page.canEdit && !page.archive.archived ? (
+            <Button size="sm" className="ml-auto" onClick={page.form.add}>
               Add entry
             </Button>
           ) : null}
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto">
-          {isLoading ? (
-            <TableSkeleton columns={4} rows={8} />
-          ) : error ? (
-            <p className="text-sm text-red-600">{error}</p>
-          ) : filteredEntries.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No bestiary entries found.</p>
-          ) : (
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {pages.paged.map((entry) => (
-                <BestiaryEntryCard
-                  key={entry.id}
-                  entry={entry}
-                  onClick={(e) => url.open({ entry: String(e.id) })}
-                  isFavourite={favourites.favouriteIds.has(entry.id)}
-                  onToggleFavourite={warband ? favourites.toggle : undefined}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-
-        <CataloguePager {...pages} />
+        <BestiaryList page={page} favourites={warband ? favourites : null} />
       </div>
 
-      <BestiaryEntryFormDialog
-        open={showCreateDialog}
-        onOpenChange={setShowCreateDialog}
-        campaignId={campaignId}
-      />
+      {formDialog}
     </div>
   );
 }

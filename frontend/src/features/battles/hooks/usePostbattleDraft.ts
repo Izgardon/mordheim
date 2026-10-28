@@ -72,6 +72,7 @@ export function usePostbattleDraft({
           finds: nextDraft.finds,
           upkeep: nextDraft.upkeep,
           unit_results: nextDraft.unit_results,
+          ...(nextDraft.mount_survival ? { mount_survival: nextDraft.mount_survival } : {}),
         },
       }),
     [battleId, campaignId]

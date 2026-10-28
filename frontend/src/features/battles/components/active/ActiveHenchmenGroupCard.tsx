@@ -11,6 +11,13 @@ import UnitStatsTable from "@/features/warbands/components/shared/unit_details/U
 import "@/features/warbands/styles/warband.css";
 import { getBattleCardThemeStyle } from "@/features/battles/components/shared/battle-card-theme";
 import { getErrorMessage } from "@/lib/get-error-message";
+import CreatureMark from "@/features/warbands/components/units/beasts/CreatureMark";
+import { PetChips } from "@/features/battles/components/shared/BattleCompanionParts";
+import {
+  groupCompanionSources,
+  groupMountedStats,
+  onFoot,
+} from "@/features/battles/utils/battle-companions";
 
 import ActiveHenchmanRow from "./ActiveHenchmanRow";
 import ActiveKillDialog from "./ActiveKillDialog";
@@ -21,11 +28,15 @@ import { getEffectiveUnitStats, type ActiveBattleUnitOption } from "./active-uti
 type ActiveHenchmenGroupCardProps = {
   groupName: string;
   groupType: string;
+  /** A group recruited from a creature carries the creature mark. */
+  beastKind?: "mount" | "pet" | "creature" | null;
   members: PrebattleUnit[];
   canInteract: boolean;
   unitInformationByKey: Record<string, BattleUnitInformationEntry>;
   killTargetOptions: ActiveBattleUnitOption[];
   onSetOutOfAction: (unitKey: string, outOfAction: boolean) => Promise<void>;
+  /** A rider off his mount for the rest of the battle, or back on it (step 5). */
+  onSetDismounted?: (unitKey: string, dismounted: boolean) => Promise<void>;
   onAdjustWounds: (unit: PrebattleUnit, delta: number) => Promise<void>;
   /** Saves a battle stat change for every member of the group (BATL-NEW-07). */
   onSaveOverride: (unitKeys: string[], override: UnitOverride | undefined) => Promise<void>;
@@ -44,14 +55,21 @@ type ActiveHenchmenGroupCardProps = {
   savingUnitKeys?: Record<string, boolean>;
 };
 
+/** The members' grid: one column on a phone, up to three side by side on wider screens. */
+const MEMBER_GRID: Record<number, string> = { 2: "md:grid-cols-2", 3: "md:grid-cols-3" };
+const memberGrid = (count: number) =>
+  count >= 4 ? "md:grid-cols-2 xl:grid-cols-3" : (MEMBER_GRID[count] ?? "");
+
 export default function ActiveHenchmenGroupCard({
   groupName,
   groupType,
+  beastKind,
   members,
   canInteract,
   unitInformationByKey,
   killTargetOptions,
   onSetOutOfAction,
+  onSetDismounted,
   onAdjustWounds,
   onSaveOverride,
   onSaveUnitNotes,
@@ -81,18 +99,7 @@ export default function ActiveHenchmenGroupCard({
   const detailUnitInfo = unitInformationByKey[detailUnit.key];
   const detailStats = getEffectiveUnitStats(detailUnit, detailUnitInfo);
   const themeStyle = getBattleCardThemeStyle("henchmen_group");
-  const memberGridClass = useMemo(() => {
-    if (members.length >= 4) {
-      return "md:grid-cols-2 xl:grid-cols-3";
-    }
-    if (members.length === 3) {
-      return "md:grid-cols-3";
-    }
-    if (members.length === 2) {
-      return "md:grid-cols-2";
-    }
-    return "";
-  }, [members.length]);
+  const memberGridClass = memberGrid(members.length);
 
   const handleSetOutOfAction = async (unitKey: string, nextOutOfAction: boolean) => {
     if (!canInteract || updatingOutOfActionKeys[unitKey]) {
@@ -114,18 +121,26 @@ export default function ActiveHenchmenGroupCard({
       <div className="p-3">
         <div className="grid grid-cols-1 gap-2 md:grid-cols-[minmax(0,13rem)_minmax(0,1fr)] md:items-start">
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-foreground">{groupName}</p>
+            <div className="flex min-w-0 items-center gap-1.5">
+              {beastKind === "creature" ? <CreatureMark /> : null}
+              <p className="truncate text-sm font-semibold text-foreground">{groupName}</p>
+            </div>
             <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
               {groupType}
             </p>
             <p className="mt-1 text-[0.58rem] uppercase tracking-[0.16em] text-muted-foreground">
               {members.length} {members.length === 1 ? "fighter" : "fighters"}
             </p>
+            <PetChips pets={members[0]?.pets} />
           </div>
 
           <div className="battle-stats-shell w-full md:max-w-[30rem] md:justify-self-end">
             <UnitStatsTable
               stats={detailStats}
+              mounted={groupMountedStats(
+                members.map((member) => onFoot(member, unitInformationByKey[member.key])),
+                detailUnitInfo?.stats_override
+              )}
               variant="summary"
               wrapperClassName="w-full max-w-none"
             />
@@ -146,6 +161,7 @@ export default function ActiveHenchmenGroupCard({
                 void handleSetOutOfAction(member.key, outOfAction)
               }
               onRecordKill={() => setKillDialogMember(member)}
+              onSetDismounted={onSetDismounted}
             />
           ))}
         </div>
@@ -198,6 +214,7 @@ export default function ActiveHenchmenGroupCard({
               onUndoSingleUseItem ? (itemId) => onUndoSingleUseItem(detailUnit, itemId) : undefined
             }
             activeItemActionKey={activeItemActionKey}
+            companions={groupCompanionSources(members, unitInformationByKey)}
           />
         </div>
       ) : null}
