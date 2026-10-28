@@ -69,7 +69,7 @@ class SeedAllTests(TestCase):
                 "Restriction": 133,
                 "Item": 247,  # 216 + one Animal item per beast (the bestiary rewrite step 3)
                 "ItemProperty": 240,
-                "Skill": 252,
+                "Skill": 255,
                 "Spell": 189,  # 183 + the Dark Mage's six (BUG-54)
                 "Special": 186,
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
@@ -105,6 +105,18 @@ class SeedAllTests(TestCase):
         self.assertIn("Races import complete. Created: 27, Updated: 0", self.output)
         skaven = {race.name: (race.movement, race.toughness) for race in Race.objects.filter(name__startswith="Skaven")}
         self.assertEqual(skaven, {"Skaven": (6, 4), "Skaven (Clan Pestilens)": (5, 5)})
+
+    def test_both_pirates_lists_keep_their_own_sea_legs(self):
+        # the 2026-10-28 data audit: skills.json held a second Pirates list (sourced "TBMF") under the same type, and
+        # seed_skills upserts on name and type, so its Sea Legs, Cutlass Master and Swashbuckler overwrote Town Cryer
+        # 9's (a fresh seed said "Updated: 3") and the Pirates' Sea Legs was the other list's rope-and-rigging rule
+        self.assertIn("Skills import complete. Created: 231, Updated: 0", self.output)
+        sea_legs = {skill.type: skill.description for skill in Skill.objects.filter(name="Sea Legs")}
+        self.assertEqual(set(sea_legs), {"Pirates", "Pirates (TBMF)"})
+        self.assertIn("If he Falls during a battle", sea_legs["Pirates"])
+        self.assertIn("swings through rope and rigging", sea_legs["Pirates (TBMF)"])
+        second = set(Skill.objects.filter(type="Pirates (TBMF)").values_list("name", flat=True))
+        self.assertEqual(second, {"Captain Blood", "Sea Legs", "Cutlass Master", "Treasure Hunter", "Swashbuckler"})
 
     def test_the_seeded_bounty_hunter_detail_costs_9_queries(self):
         # PERF-46, CAT-TEST-08 (was pinned: 43 and 45, each of his 8 items read on its own; flipped in PR A)

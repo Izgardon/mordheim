@@ -581,27 +581,27 @@
   },
   {
     "name": "Captain Blood",
-    "type": "Pirates",
+    "type": "Pirates (TBMF)",
     "description": "The pirate is adept at leaping from the Tops into the melee below.  When making attacks during a Diving Charge, the pirate makes Critical Hits on a 5+ instead of a 6+. (TBMF)"
   },
   {
     "name": "Sea Legs",
-    "type": "Pirates",
+    "type": "Pirates (TBMF)",
     "description": "The pirate swings through rope and rigging with ease.  When attempting a Diving Charge, the pirate may re-roll a failed Initiative Test, as if he had the Acrobat skill.  He may also fall or jump up to 12” without taking any damage if he passes a single Initiative Test (Note: Mates do not have access to Speed skills, so this duplication of the Acrobat skill is intentional). (TBMF)"
   },
   {
     "name": "Cutlass Master",
-    "type": "Pirates",
+    "type": "Pirates (TBMF)",
     "description": "These short, single bladed swords are the mainstay weapon of any pirate crew, and in the hands of a trained seaman they are superb weapons for close quarters fighting. If the pirate is equipped with a Sword, this skill will give him the additional benefit of also being able to parry successfully if the player rolls equal to the number rolled to hit, not just higher as normal. (FO 65)"
   },
   {
     "name": "Treasure Hunter",
-    "type": "Pirates",
+    "type": "Pirates (TBMF)",
     "description": "(Captain only)  The pirate may modify one Exploration die by +1 or -1, so long as they were not taken Out of Action during the scenario. (TBMF)"
   },
   {
     "name": "Swashbuckler",
-    "type": "Pirates",
+    "type": "Pirates (TBMF)",
     "description": "The pirate cuts a dashing figure in combat, mixing dazzling swordplay and acrobatic feats with charm and witty comments.  Even the basest villains in Mordheim respect (and curse) his ability to always seem to effortlessly slip from their grasp.  The pirate may make a Leadership Test at the end of any Hand to Hand phase (pirate’s or enemy’s turn) if he is still in base contact with any enemy models.  If he passes, he may make an immediate normal movement away from the enemy (but may not run or charge), without the enemy striking any blows on him.  If he fails the test he remains in melee combat and must fight as normal in the following turn. (FO 65)"
   },
   {
