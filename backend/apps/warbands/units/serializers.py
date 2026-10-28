@@ -37,6 +37,7 @@ from .hooks import Recruit
 from .kinds import HERO, LinkSpec, UnitKindSpec
 from .services.create import apply_create
 from .services.level_up import LevelUpRejected, valid_advance_id
+from .services.missing import MAX_MISSING_GAMES
 from .services.update import apply_update
 
 STAT_FIELDS = (
@@ -52,6 +53,7 @@ STAT_FIELDS = (
     "armour_save",
 )
 COMPANION_FIELDS = ("effective_stats", "mount", "pets")  # every read payload, after the stats
+MISSING_FIELDS = ("missing_games", "missing_reason")  # every read payload; only the update serializers write them
 
 
 def get_prefetched_or_query(obj: Any, prefetch_key: str, queryset_attr: str) -> list[Any]:
@@ -210,10 +212,13 @@ class UnitWriteSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializ
     spell_ids = serializers.ListField(  # left out of Meta.fields by kinds without spells
         child=serializers.IntegerField(), write_only=True, required=False
     )
+    # Missing games (edit mode): only a unit already on the roster misses games, so only updates list them
+    missing_games = serializers.IntegerField(min_value=0, max_value=MAX_MISSING_GAMES, required=False)
+    missing_reason = serializers.CharField(max_length=120, allow_blank=True, required=False)
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         """After the ids point at the campaign's current entries: an item entry switched on as a companion must be a
-        mount or a pet (one query, only when one is)."""
+        mount or a pet (one query, only when one is); a dead unit can't be set missing."""
         attrs = super().validate(attrs)
         flagged = {entry["id"] for entry in attrs.get("items") or [] if entry.get("companion")}
         if flagged:
@@ -223,6 +228,8 @@ class UnitWriteSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializ
                 listed = ", ".join(str(pk) for pk in wrong)
                 message = f"Only a mount or a pet can be a companion (item {listed})."
                 raise serializers.ValidationError({"items": [message]})
+        if attrs.get("missing_games") and (attrs.get("dead") or getattr(self.instance, "dead", False)):
+            raise serializers.ValidationError({"missing_games": ["A dead unit can't miss games."]})
         return attrs
 
     def create(self, validated_data: dict[str, Any]) -> RosterUnit:

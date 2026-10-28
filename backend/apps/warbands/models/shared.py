@@ -85,6 +85,10 @@ class RosterUnit(StatBlock):
     half_rate = models.BooleanField(default=False)
     dead = models.BooleanField(default=False)
     dismissed_at = models.DateTimeField(null=True, blank=True)  # dismissed units are kept as records
+    # Missing games: out for this many of the warband's battles (each one it finalises counts one), then back on its
+    # own. A missing unit stays on the roster and counts towards warband size, but not the rating or upkeep.
+    missing_games = models.PositiveSmallIntegerField(default=0)
+    missing_reason = models.CharField(max_length=120, blank=True, default="")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

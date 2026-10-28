@@ -8,6 +8,7 @@ from apps.warbands.models import Hireling
 from apps.warbands.units.kinds import HIRELING
 from apps.warbands.units.serializers import (
     COMPANION_FIELDS,
+    MISSING_FIELDS,
     STAT_FIELDS,
     UnitDetailSerializer,
     UnitSummarySerializer,
@@ -78,6 +79,7 @@ class HirelingSummarySerializer(UnitSummarySerializer):
             "stays",
             "payment_note",
             "dead",
+            *MISSING_FIELDS,
             *STAT_FIELDS,
             *COMPANION_FIELDS,
             "items",
@@ -121,6 +123,7 @@ class HirelingDetailSerializer(UnitDetailSerializer):
             "stays",
             "payment_note",
             "dead",
+            *MISSING_FIELDS,
             *STAT_FIELDS,
             *COMPANION_FIELDS,
             "items",
@@ -144,4 +147,4 @@ class HirelingUpdateSerializer(UnitWriteSerializer):
 
     class Meta:
         model = Hireling
-        fields = WRITE_FIELDS
+        fields = (*WRITE_FIELDS, *MISSING_FIELDS)

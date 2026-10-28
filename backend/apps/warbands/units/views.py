@@ -98,7 +98,8 @@ class UnitDetailView(UnitView):
         context = {"campaign_id": self.warband.campaign_id}
         writer = self.serializers.update(unit, data=request.data, partial=True, context=context)
         writer.is_valid(raise_exception=True)
-        update_unit(self.kind, self.warband, writer, sent=request.data)
+        if update_unit(self.kind, self.warband, writer, sent=request.data):
+            self.announce_change()  # missing games: other members' open pages of the warband follow
         return self.detail_response(unit.id)
 
     def delete(self, request: Request, warband_id: int, **kwargs: Any) -> Response:
@@ -161,6 +162,8 @@ class UnitBatchView(UnitView):
             raise validation_error(shape.errors)
         plan = plan_batch(self.kind, self.serializers, self.warband, shape.validated_data)
         warnings = apply_batch(self.kind, self.warband, plan)
+        if plan.missing_changed:
+            self.announce_change()
         units = self.kind.roster(self.warband, detail=True)
         payload = {
             "units": self.serializers.detail(units, many=True).data,

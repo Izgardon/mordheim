@@ -10,6 +10,7 @@ from apps.warbands.models import RosterUnit, Warband
 from apps.warbands.utils.leaders import lock_warband
 
 from .loadout import finish_update_traits, linked_ids, pop_loadout_lists, prepare_update_traits, replace_loadout
+from .missing import missing_change_log, missing_state, settle_missing
 from .xp import record_xp_change
 
 if TYPE_CHECKING:
@@ -45,6 +46,7 @@ def apply_update(
     if "xp" in fields:
         settings = getattr(unit.warband.campaign, "settings", None)
         record_xp_change(kind, unit, previous_xp, settings, award="level_up" not in fields)
+    settle_missing(unit)
     unit.save()
     recruits = kind.hooks.after_update(unit, fields, members)  # before the lists: hire costs read the old items
     replace_loadout(kind, unit, lists)
@@ -78,22 +80,33 @@ def _log_loadout_additions(
             log_warband_event(warband.id, "loadout", str(link.log_entry), payload)
 
 
-def save_update(kind: "UnitKindSpec", warband: Warband, writer: "UnitWriteSerializer", *, sent: Any) -> None:
-    """Inside the caller's transaction: save a validated update serializer, log loadout additions, charge recruits."""
+def _log_missing_change(kind: "UnitKindSpec", warband: Warband, unit: RosterUnit, before: tuple[int, str]) -> bool:
+    """The missing games log row ("misses 2 games", "returns") when the update changed them; whether it did."""
+    entry = missing_change_log(unit.name or unit.unit_type or kind.unknown_name, before, missing_state(unit))
+    if entry is not None:
+        log_warband_event(warband.id, *entry)
+    return before != missing_state(unit)
+
+
+def save_update(kind: "UnitKindSpec", warband: Warband, writer: "UnitWriteSerializer", *, sent: Any) -> bool:
+    """Inside the caller's transaction: save a validated update serializer, log loadout additions and missing games,
+    charge recruits. Returns whether the unit's missing games changed (other members' pages are told)."""
     unit = cast(RosterUnit, writer.instance)
     before = _logged_ids_before(kind, unit, sent)
+    missing_before = missing_state(unit)
     writer.save()
     _log_loadout_additions(kind, warband, unit, before, sent)
     recruits = writer.recruits
     if recruits:
         kind.hooks.record_recruits(warband, unit, list(recruits))
+    return _log_missing_change(kind, warband, unit, missing_before)
 
 
-def update_unit(kind: "UnitKindSpec", warband: Warband, writer: "UnitWriteSerializer", *, sent: Any) -> None:
+def update_unit(kind: "UnitKindSpec", warband: Warband, writer: "UnitWriteSerializer", *, sent: Any) -> bool:
     """PATCH one unit in its own transaction. One sending `items` locks the warband before the unit's row, as the
     companion switch, item moves and recruits do before they touch its item rows (the roster batch's version check
-    already locks it)."""
+    already locks it). Returns whether its missing games changed."""
     with transaction.atomic():
         if "items" in sent:
             lock_warband(warband.id)
-        save_update(kind, warband, writer, sent=sent)
+        return save_update(kind, warband, writer, sent=sent)

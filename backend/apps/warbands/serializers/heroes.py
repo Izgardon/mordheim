@@ -6,6 +6,7 @@ from apps.warbands.models import Hero
 from apps.warbands.units.kinds import HERO
 from apps.warbands.units.serializers import (
     COMPANION_FIELDS,
+    MISSING_FIELDS,
     STAT_FIELDS,
     UnitDetailSerializer,
     UnitSummarySerializer,
@@ -54,6 +55,7 @@ class HeroSummarySerializer(UnitSummarySerializer):
             "half_rate",
             "trading_action",
             "available_skills",
+            *MISSING_FIELDS,
             *STAT_FIELDS,
             *COMPANION_FIELDS,
             "items",
@@ -88,6 +90,7 @@ class HeroDetailSerializer(UnitDetailSerializer):
             "trading_action",
             "dead",
             "available_skills",
+            *MISSING_FIELDS,
             *STAT_FIELDS,
             *COMPANION_FIELDS,
             "items",
@@ -116,4 +119,13 @@ class HeroUpdateSerializer(UnitWriteSerializer):
 
     class Meta:
         model = Hero
-        fields = (*WRITE_FIELDS, "item_reason", "item_action", "item_price", "skill_ids", "special_ids", "spell_ids")
+        fields = (
+            *WRITE_FIELDS,
+            *MISSING_FIELDS,
+            "item_reason",
+            "item_action",
+            "item_price",
+            "skill_ids",
+            "special_ids",
+            "spell_ids",
+        )
