@@ -503,6 +503,35 @@ describe("useUnitSave: henchmen characterisation", () => {
     expect(apiMocks.batchWarbandHenchmenGroups).not.toHaveBeenCalled();
   });
 
+  it("saves beside a group recruited from a creature, which has no race and unnamed members by design", async () => {
+    // A creature group on the roster refused every henchmen Save ("Missing: Race, Henchmen names").
+    const kennel = makeVeteranHenchmenGroup({
+      id: 23,
+      name: "Kennel",
+      unit_type: "Wardogs",
+      race_id: null,
+      race_name: null,
+      items: [],
+      source_beast_id: 3,
+      beast_kind: "creature",
+      henchmen: [{ id: 81, name: "", kills: 0, dead: false }],
+    });
+    const forms = [veteran, kennel].map(mapHenchmenGroupToForm);
+    const renamed = [{ ...forms[0], name: "Black Blades" }, forms[1]];
+    const { save, result } = renderSave({
+      currentGroups: [veteran, kennel],
+      groupForms: renamed,
+      originalGroupFormsRef: { current: snapshotOf(forms) },
+    });
+
+    await save();
+
+    expect(result.current.saveError).toBeFalsy();
+    expect(batchUpdates(apiMocks.batchWarbandHenchmenGroups).map((entry) => entry.id)).toEqual([
+      21,
+    ]);
+  });
+
   it("blocks the save while the add-group draft has a first henchman typed", async () => {
     const { save, result } = renderSave({
       isAddingGroupForm: true,
