@@ -1,8 +1,8 @@
 /**
- * Pass 6 characterisation: the landing page as a signed-out visitor sees it today (the video
- * decision lands in PR C): the background video, the card, and the box it all sits in.
+ * The landing page as a signed-out visitor sees it: the background video (decision 5, landed in
+ * PR C), the card, and the box it all sits in.
  */
-import { render, screen } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -47,22 +47,43 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
+/** Lets the effects' timers run. */
+const nextTask = () => act(() => new Promise<void>((resolve) => setTimeout(resolve, 10)));
+
 describe("Landing on desktop", () => {
-  it("embeds the youtube.com video at once, autoplaying muted from a random start (decision 5, AUTH-TWEAK-05, pinned; flips in PR C)", () => {
-    // Characterises current behaviour (decision 5, AUTH-TWEAK-05, pinned; flips in PR C:
-    // youtube-nocookie.com, mounted after load)
+  it("embeds YouTube's no-cookie video only after the page has loaded, autoplaying muted from a random start (decision 5, AUTH-TWEAK-05)", async () => {
     vi.spyOn(Math, "random").mockReturnValue(0);
     const { container } = renderLanding();
+    expect(container.querySelector("iframe")).toBeNull(); // not in the first render
+
+    await waitFor(() => expect(container.querySelector("iframe")).not.toBeNull());
 
     const iframe = container.querySelector("iframe");
     expect(iframe).toHaveAttribute("title", "Mordheim atmosphere video");
     const src = new URL(iframe!.getAttribute("src")!);
-    expect(src.origin).toBe("https://www.youtube.com");
+    expect(src.origin).toBe("https://www.youtube-nocookie.com");
     expect(src.pathname).toBe("/embed/WCB10AkLI4k");
     expect(src.searchParams.get("autoplay")).toBe("1");
     expect(src.searchParams.get("mute")).toBe("1");
     expect(src.searchParams.get("start")).toBe("10");
     expect(iframe!.closest("section")).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("waits for the window's load event while the page is still loading (decision 5, AUTH-TWEAK-05)", async () => {
+    Object.defineProperty(document, "readyState", { configurable: true, get: () => "loading" });
+    try {
+      const { container } = renderLanding();
+      await nextTask();
+      expect(container.querySelector("iframe")).toBeNull();
+
+      act(() => {
+        window.dispatchEvent(new Event("load"));
+      });
+
+      expect(container.querySelector("iframe")).not.toBeNull();
+    } finally {
+      delete (document as { readyState?: unknown }).readyState; // back to Document's own getter
+    }
   });
 
   it("shows the card with the title art and the footage credit, and sends no request", () => {

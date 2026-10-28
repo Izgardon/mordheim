@@ -2,7 +2,7 @@
  * The reset-password page (AUTH-TEST-27) as a link from the reset email opens it, over the fake
  * API server: where it reads the link, what it posts, and the page after success.
  */
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -210,13 +210,13 @@ describe("ResetPassword (AUTH-TEST-27)", () => {
     expect(screen.queryByText(/at least 8 characters/i)).toBeNull();
   });
 
-  it("loads the youtube.com background video on desktop (decision 5, AUTH-TWEAK-05, pinned; flips in PR C)", () => {
-    // Characterises current behaviour (decision 5, AUTH-TWEAK-05, pinned; flips in PR C)
+  it("loads no video on desktop either, only the dark half beside the card (decision 5, AUTH-TWEAK-05)", async () => {
     const { container } = renderReset();
 
-    expect(container.querySelector("iframe")?.getAttribute("src")).toMatch(
-      /^https:\/\/www\.youtube\.com\/embed\//
-    );
+    await act(() => new Promise<void>((resolve) => setTimeout(resolve, 10)));
+
+    expect(container.querySelector("iframe")).toBeNull();
+    expect(container.querySelector(".landing-video")).toHaveAttribute("aria-hidden", "true");
   });
 
   it("loads no video on a phone", () => {
