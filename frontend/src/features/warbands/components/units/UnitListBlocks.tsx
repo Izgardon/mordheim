@@ -11,6 +11,7 @@ import { useWarbandCacheUpdate } from "../../api/warband-cache";
 import useItemActionMenu from "../../hooks/useItemActionMenu";
 import { useCompanionSwitch } from "../../hooks/units/useCompanionSwitch";
 import { buildLoadoutBlocks, type LoadoutBlock, type LoadoutEntry } from "./loadout-blocks";
+import { groupLabel } from "../../utils/companions";
 
 import type { PopupPosition } from "../shared/unit_details/DetailPopup";
 import type { Unit, UnitKindKey } from "../../types/units";
@@ -84,7 +85,10 @@ export default function UnitListBlocks<K extends UnitKindKey>({
 
   const companionSwitch = useCompanionSwitch(kind, warbandId);
   const profile = useCompanionProfile(kind, unit, warbandId, canManageItems);
-  /** A mount's or pet's switch: its copy on or off for this unit; a creature's recruit dialog. */
+  /**
+   * A mount's or pet's switch: its copy on or off for this unit (a group's mount: every copy, as
+   * the server switches them); a creature's recruit dialog.
+   */
   const beastClick = ({ beast, label, visibleId }: LoadoutEntry) => {
     if (beast?.kind === "creature") {
       const copies = (unit.items ?? []).filter((item) => item.id === visibleId);
@@ -184,6 +188,7 @@ export default function UnitListBlocks<K extends UnitKindKey>({
             memberCount={
               hasMembers ? ("henchmen" in unit ? (unit.henchmen ?? []).length : 0) : null
             }
+            groupName={hasMembers ? groupLabel(unit) : undefined}
             canEdit={canManageItems}
             onClick={(event) => handleEntryClick(entry, event)}
             onMenuClick={(event) => itemMenu.handleMenuToggle(entry, event)}

@@ -1,6 +1,7 @@
 import { TriangleAlert } from "lucide-react";
 
 import { Tooltip } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 import { WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME } from "../../../shared/unit_details/warband-tooltip-styles";
 import { calculateHenchmenReinforceCost } from "../../../henchmen/utils/henchmen-cost";
 import { CostTile, SizeTile } from "../../expanded/ExpandedTiles";
@@ -28,7 +29,51 @@ export const hasItemMismatch = (group: HenchmenGroup) => {
   );
 };
 
-/** Group summary header: name, level line with members/max size (default 5), item warning. */
+/**
+ * The group's warnings, the server's mount warnings first (every member carries the same gear, so
+ * a mounted group needs one mount per living member, all of one kind), then uneven items.
+ */
+const groupWarnings = (group: HenchmenGroup) => [
+  ...(group.mount_warnings ?? []).map((warning) => warning.message),
+  ...(hasItemMismatch(group) ? [MISMATCH_WARNING] : []),
+];
+
+/**
+ * A warning mark beside the group's name (warn, never block): its tooltip lists the warnings, and
+ * it is named by them and takes keyboard focus.
+ */
+function GroupWarningsMark({
+  group,
+  size,
+  className,
+}: {
+  group: HenchmenGroup;
+  size: string;
+  className?: string;
+}) {
+  const warnings = groupWarnings(group);
+  if (warnings.length === 0) return null;
+  return (
+    <Tooltip
+      trigger={<TriangleAlert className={cn(size, "shrink-0 text-amber-400")} aria-hidden="true" />}
+      content={
+        <ul className="space-y-1.5">
+          {warnings.map((warning) => (
+            <li key={warning}>{warning}</li>
+          ))}
+        </ul>
+      }
+      maxWidth={280}
+      className={className}
+      contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
+      role="img"
+      aria-label={`Warning: ${warnings.join(" ")}`}
+      tabIndex={0}
+    />
+  );
+}
+
+/** Group summary header: name, level line with members/max size (default 5), its warnings. */
 export function HenchmenCardHeader({ unit: group, level }: SummaryHeaderProps<"henchmen_group">) {
   return (
     <div className="flex items-start justify-between gap-4 py-1 px-4">
@@ -44,15 +89,7 @@ export function HenchmenCardHeader({ unit: group, level }: SummaryHeaderProps<"h
           </span>
         </p>
       </div>
-      {hasItemMismatch(group) ? (
-        <Tooltip
-          trigger={<TriangleAlert className="h-4 w-4 shrink-0 text-amber-400" />}
-          content={MISMATCH_WARNING}
-          maxWidth={240}
-          className="mt-1"
-          contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
-        />
-      ) : null}
+      <GroupWarningsMark group={group} size="h-4 w-4" className="mt-1" />
     </div>
   );
 }
@@ -62,14 +99,7 @@ export function HenchmenExpandedTitle({ unit: group }: { unit: HenchmenGroup }) 
     <h2 className="flex items-center gap-1.5 text-2xl font-bold text-foreground">
       {isCreatureGroup(group) ? <CreatureMark /> : null}
       {group.name || "Unnamed Group"}
-      {hasItemMismatch(group) && (
-        <Tooltip
-          trigger={<TriangleAlert className="h-5 w-5 shrink-0 text-amber-400" />}
-          content={MISMATCH_WARNING}
-          maxWidth={240}
-          contentClassName={WARBAND_DARK_TOOLTIP_CONTENT_CLASSNAME}
-        />
-      )}
+      <GroupWarningsMark group={group} size="h-5 w-5" />
     </h2>
   );
 }

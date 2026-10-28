@@ -105,6 +105,12 @@ export function unitMountBonus(unit: MountedUnit) {
   return Math.min(ridden(unit.items), unit.henchmen.length) * bonus;
 }
 
+/**
+ * A henchmen group as its mount switch names it (the group mounts as one): its name, else all of
+ * its members ("All members ride them").
+ */
+export const groupLabel = (group: { name: string | null }) => group.name?.trim() || "All members";
+
 /** A henchmen group recruited from a creature (it can go back to its item). */
 export const isCreatureGroup = (group: CreatureGroupFields) =>
   group.source_beast_id != null || group.beast_kind === "creature";

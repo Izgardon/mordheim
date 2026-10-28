@@ -5,9 +5,21 @@ import { BEAST_KIND_TEXT, BeastKindIcon } from "@/features/bestiary/components/B
 
 import type { BeastKind } from "@/features/bestiary/bestiary-kinds";
 
-/** What the button does, as its title says it: switch a mount or pet on or off, recruit a creature. */
-export function beastActionLabel(kind: BeastKind, on: boolean) {
+/**
+ * A henchmen group's mount row: the switch mounts or dismounts the whole group (every member
+ * carries the same gear), named for the group, with how many copies the group holds.
+ */
+export type GroupMount = { name: string; copies: number };
+
+/**
+ * What the button does, as its title says it: switch a mount or pet on or off, recruit a
+ * creature. A group's mount is the group's: "Outriders ride them", "Outriders dismount".
+ */
+export function beastActionLabel(kind: BeastKind, on: boolean, group?: GroupMount) {
   if (kind === "creature") return "Recruit as henchmen";
+  if (group && kind === "mount") {
+    return on ? `${group.name} dismount` : `${group.name} ride ${group.copies > 1 ? "them" : "it"}`;
+  }
   if (on) return "Switch off";
   return kind === "mount" ? "Ride it" : "Keep as pet";
 }
@@ -25,6 +37,8 @@ type BeastItemButtonProps = {
   on: boolean;
   /** The row's label ("Warhorse x 2"), which names the button for screen readers. */
   itemLabel: string;
+  /** A henchmen group's row: its mount switch acts for the whole group. */
+  group?: GroupMount;
   disabled?: boolean;
   onClick: (event: MouseEvent<HTMLButtonElement>) => void;
 };
@@ -38,10 +52,11 @@ export default function BeastItemButton({
   kind,
   on,
   itemLabel,
+  group,
   disabled = false,
   onClick,
 }: BeastItemButtonProps) {
-  const action = beastActionLabel(kind, on);
+  const action = beastActionLabel(kind, on, group);
   const isSwitch = kind !== "creature";
   return (
     <button

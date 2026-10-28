@@ -283,6 +283,94 @@ describe("a group's mount chip", () => {
 
     expect(screen.getByRole("button", { name: "Mount: Warhorse x 2" })).toBeInTheDocument();
   });
+
+  it("opens the profile with the group's dismount, which the whole group takes", async () => {
+    const user = setupUser();
+    const outriders = makeVeteranHenchmenGroup({
+      items: [
+        { ...horse, row_id: 1, companion: true },
+        { ...horse, row_id: 2, companion: true },
+        { ...horse, row_id: 3, companion: true },
+      ],
+      mount: { ...riding.mount!, item_row_id: 1 },
+    });
+    renderWithQueryClient(
+      <UnitSummaryCard
+        kind={henchmenKind}
+        unit={outriders}
+        warbandId={1}
+        renderExpandedCard={false}
+        canEdit
+      />
+    );
+
+    await user.click(screen.getByRole("button", { name: "Mount: Warhorse x 3" }));
+
+    const profile = screen.getByRole("dialog", { name: "Warhorse" });
+    expect(within(profile).getByRole("button", { name: "Black Knives dismount" })).toBeVisible();
+    expect(within(profile).queryByRole("button", { name: "Switch off" })).not.toBeInTheDocument();
+  });
+});
+
+describe("a mounted group's warnings", () => {
+  const message =
+    "Every member of a group carries the same gear, so Black Knives can't take the field until each of its 3 members has a Warhorse (it has 1).";
+  const shortOfHorses = makeVeteranHenchmenGroup({
+    items: [{ ...horse, row_id: 1, companion: true }],
+    mount: { ...riding.mount!, item_row_id: 1 },
+    mount_warnings: [{ code: "group_mounts", message, mounts: 1, members: 3 }],
+  });
+
+  it("shows the server's mount warnings beside the group's name, first, with the keyboard too", async () => {
+    renderWithQueryClient(
+      <UnitSummaryCard
+        kind={henchmenKind}
+        unit={shortOfHorses}
+        warbandId={1}
+        renderExpandedCard={false}
+      />
+    );
+
+    const mark = screen.getByRole("img", { name: /^Warning: Every member of a group/ });
+    expect(mark).toHaveAccessibleName(
+      `Warning: ${message} Some items don't divide evenly across all henchmen — adjust item counts to match the group size.`
+    );
+    expect(mark).toHaveAttribute("tabindex", "0");
+    act(() => mark.focus());
+    const tooltip = await screen.findByRole("tooltip");
+    expect(
+      within(tooltip)
+        .getAllByRole("listitem")
+        .map((item) => item.textContent)
+    ).toEqual([
+      message,
+      "Some items don't divide evenly across all henchmen — adjust item counts to match the group size.",
+    ]);
+  });
+
+  it("shows them on the expanded card too, and nothing for a group without any", () => {
+    const { rerender } = renderWithQueryClient(
+      <UnitExpandedCard
+        kind={henchmenKind}
+        unit={shortOfHorses}
+        warbandId={1}
+        onClose={() => undefined}
+      />
+    );
+    expect(
+      screen.getByRole("img", { name: /^Warning: Every member of a group/ })
+    ).toBeInTheDocument();
+
+    rerender(
+      <UnitExpandedCard
+        kind={henchmenKind}
+        unit={makeVeteranHenchmenGroup({ mount_warnings: [] })}
+        warbandId={1}
+        onClose={() => undefined}
+      />
+    );
+    expect(screen.queryByRole("img", { name: /^Warning/ })).not.toBeInTheDocument();
+  });
 });
 
 describe("a creature group's card", () => {

@@ -172,6 +172,41 @@ describe("applyPurchaseAnswer", () => {
     });
   });
 
+  it("gives a group the answer's mount warnings, so its card says what it lacks", () => {
+    const queryClient = createTestQueryClient();
+    const warning = {
+      code: "group_mounts",
+      message:
+        "Every member of a group carries the same gear, so Outriders can't take the field until each of its 3 members has a Warhorse (it has 2).",
+    };
+    queryClient.setQueryData(queryKeys.campaign.warbandSheet(7, 9), {
+      warband: {},
+      summary: { gold: 100 },
+      heroes: [],
+      henchmen_groups: [{ id: 21, name: "Outriders", items: [], mount_warnings: [] }],
+      hirelings: [],
+    });
+
+    applyPurchaseAnswer(
+      queryClient,
+      9,
+      answer({
+        target_type: "henchmen_group",
+        target_id: 21,
+        items: [],
+        mount: null,
+        mounts: [],
+        mount_warnings: [warning],
+        pets: [],
+        effective_stats: null,
+      } as never)
+    );
+
+    expect(queryClient.getQueryData(queryKeys.campaign.warbandSheet(7, 9))).toMatchObject({
+      henchmen_groups: [{ id: 21, mount_warnings: [warning] }],
+    });
+  });
+
   it("merges the stash entry into the cached stash", () => {
     const queryClient = createTestQueryClient();
     queryClient.setQueryData(queryKeys.campaign.warbandStash(7, 9), [

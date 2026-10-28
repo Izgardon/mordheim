@@ -516,6 +516,11 @@ export type BattleRosterGroup = {
   beastKind?: "mount" | "pet" | "creature" | null;
   /** The group's own pets (a keyed one fights as its own model, step 5). */
   pets?: BattleRosterCompanion[];
+  /**
+   * A mounted group's mount warnings (the warband page's): every member carries the same gear, so
+   * a group short of mounts, or on more than one kind, is noted in prebattle. Never a block.
+   */
+  mountWarnings?: BattleWarning[];
   members: BattleRosterUnit[];
 };
 

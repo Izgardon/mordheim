@@ -14,9 +14,11 @@ type KindRef<K extends UnitKindKey> = Pick<UnitKindConfig<K>, "key" | "listKey">
 export type CompanionSwitch = { unitId: number; rowId: number; on: boolean; name: string };
 
 /**
- * Switches a mount or pet on for the unit holding it, or off (one request). The answer's unit and
+ * Switches a mount or pet on for the unit holding it, or off (one request); a henchmen group's
+ * mount mounts or dismounts the whole group, every copy (the server's rule). The answer's unit and
  * summary (the rating moves) go straight into the cached sheet: nothing is read again. Its
- * warnings (two mounts, a group's mounts against its members, the warband's mounts) are toasts.
+ * warnings (two mounts, a group's mounts against its members or of two kinds, the warband's
+ * mounts) are toasts.
  */
 export function useCompanionSwitch<K extends UnitKindKey>(kind: KindRef<K>, warbandId: number) {
   const updateWarbandCache = useWarbandCacheUpdate();

@@ -2,6 +2,7 @@ import type {
   BattleRosterCompanion,
   BattleRosterCompanionFields,
 } from "@/features/battles/types/battle-types";
+import type { BattleWarning } from "@/features/battles/utils/battle-warnings";
 
 export type NumericStatKey =
   | "movement"
@@ -75,6 +76,11 @@ export type HenchmenGroupRoster = {
   beastKind?: "mount" | "pet" | "creature" | null;
   /** The group's own pets (a keyed one fights as its own model, step 5). */
   pets?: BattleRosterCompanion[];
+  /**
+   * A mounted group's mount warnings (the warband page's): every member carries the same gear, so
+   * a group short of mounts, or on more than one kind, is noted in prebattle. Never a block.
+   */
+  mountWarnings?: BattleWarning[];
   members: PrebattleUnit[];
 };
 

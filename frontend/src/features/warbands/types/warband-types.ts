@@ -4,7 +4,7 @@ import type { Skill } from "../../skills/types/skill-types";
 import type { Spell } from "../../spells/types/spell-types";
 import type { Special } from "../../special/types/special-types";
 import type { BeastKind } from "../../bestiary/bestiary-kinds";
-import type { CreatureGroupFields, UnitCompanionFields } from "./companion-types";
+import type { CreatureGroupFields, GroupMountFields, UnitCompanionFields } from "./companion-types";
 
 type RaceStatProfile = {
   id?: number;
@@ -434,7 +434,8 @@ export type Henchman = {
 };
 
 export type HenchmenGroup = UnitCompanionFields &
-  CreatureGroupFields & {
+  CreatureGroupFields &
+  GroupMountFields & {
     id: number;
     warband_id: number;
     name: string | null;

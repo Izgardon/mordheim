@@ -1,7 +1,9 @@
 import { useState } from "react";
 
 import CompanionProfileDialog from "./CompanionProfileDialog";
+import { beastActionLabel } from "./BeastItemButton";
 import { useCompanionSwitch } from "../../../hooks/units/useCompanionSwitch";
+import { groupLabel } from "../../../utils/companions";
 
 import type { UnitCompanionFields, UnitMount, UnitPet } from "../../../types/companion-types";
 import type { UnitKindKey } from "../../../types/units";
@@ -23,7 +25,8 @@ export function companionOfItem(
 
 /**
  * A mount's or pet's profile, opened from its chip or its switched-on item row (step 5): its
- * stats, entries and rider rating, with Switch off for editors.
+ * stats, entries and rider rating, with Switch off for editors (a group's mount: the whole group
+ * dismounts, as the server switches every copy).
  */
 export function useCompanionProfile<K extends UnitKindKey>(
   kind: Pick<UnitKindConfig<K>, "key" | "listKey">,
@@ -40,11 +43,13 @@ export function useCompanionProfile<K extends UnitKindKey>(
     setShown(null);
   };
 
+  const group = kind.key === "henchmen_group" ? { name: groupLabel(unit), copies: 1 } : undefined;
   const dialog = shown ? (
     <CompanionProfileDialog
       {...shown}
       unitName={unit.name || "This unit"}
       canSwitchOff={canManageItems}
+      switchOffLabel={beastActionLabel(shown.kind, true, group)}
       busy={companionSwitch.isPending}
       onSwitchOff={() => void switchOff(shown.companion).catch(() => undefined)}
       onClose={() => setShown(null)}

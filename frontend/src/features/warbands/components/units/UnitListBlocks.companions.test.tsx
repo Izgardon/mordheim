@@ -238,8 +238,22 @@ describe("item rows: a henchmen group's mounts", () => {
     return <UnitListBlocks kind={henchmenKind} unit={unit} warbandId={WARBAND} canEdit />;
   }
 
-  it("counts a split item's copies together against the members, and switches one copy on at a time", async () => {
+  const renderGroup = async (group: HenchmenGroup) => {
     const user = setupUser();
+    const utils = renderWithQueryClient(
+      <ShownWarbandProvider campaignId={7} warbandId={WARBAND}>
+        <AppToaster />
+        <CachedGroup />
+      </ShownWarbandProvider>,
+      {}
+    );
+    utils.queryClient.setQueryData(sheetKey, sheetOf([], [group]));
+    await user.click(await screen.findByRole("button", { name: "Equipment" }));
+    return user;
+  };
+
+  it("counts a split item's copies together against the members, and one tap mounts the whole group", async () => {
+    // The server switches every copy of a group's mount: every member carries the same gear.
     const riders = makeVeteranHenchmenGroup({
       items: [warhorse(7, true), warhorse(8, true), warhorse(9)],
     });
@@ -248,25 +262,30 @@ describe("item rows: a henchmen group's mounts", () => {
       summary: { gold: 500, rating: 120 },
       warnings: [],
     });
-    const utils = renderWithQueryClient(
-      <ShownWarbandProvider campaignId={7} warbandId={WARBAND}>
-        <AppToaster />
-        <CachedGroup />
-      </ShownWarbandProvider>,
-      {}
-    );
-    utils.queryClient.setQueryData(sheetKey, sheetOf([], [riders]));
-    await user.click(await screen.findByRole("button", { name: "Equipment" }));
+    const user = await renderGroup(riders);
 
     const ridden = screen.getByRole("button", { name: "Warhorse x 2 (ridden)" }).parentElement!;
     expect(ridden).not.toHaveClass("unit-list-entry--alert");
-    await user.click(screen.getByRole("button", { name: "Warhorse: Ride it" }));
+    expect(
+      screen.getByRole("button", { name: "Warhorse x 2: Black Knives dismount" })
+    ).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Warhorse: Black Knives ride them" }));
 
-    await waitFor(() =>
-      expect(screen.getByRole("button", { name: "Warhorse x 3: Switch off" })).toBeVisible()
-    );
+    const dismount = await screen.findByRole("button", {
+      name: "Warhorse x 3: Black Knives dismount",
+    });
+    expect(dismount).toHaveAttribute("title", "Black Knives dismount");
+    expect(dismount).toHaveAttribute("aria-pressed", "true");
     expect(fakeApi.calls()).toEqual([
       `POST /warbands/${WARBAND}/henchmen-groups/21/items/9/companion/`,
     ]);
+  });
+
+  it("words the switch for the whole group (all members when unnamed); a group's pet keeps its own", async () => {
+    await renderGroup(makeVeteranHenchmenGroup({ name: null, items: [warhorse(7), raven(8)] }));
+
+    const ride = screen.getByRole("button", { name: "Warhorse: All members ride it" });
+    expect(ride).toHaveAttribute("title", "All members ride it");
+    expect(screen.getByRole("button", { name: "Raven: Keep as pet" })).toBeVisible();
   });
 });
