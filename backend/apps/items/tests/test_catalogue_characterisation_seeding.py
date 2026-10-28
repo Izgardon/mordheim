@@ -151,8 +151,8 @@ class SeedAllTests(TestCase):
 
     def test_every_seeded_link_resolves(self):
         # BUG-54, CAT-TEST-13 (was pinned: 16 links unresolved; flipped in PR A: prefixes stripped, apostrophes
-        # straightened, aliases added, Animal items cached as they are written; the Giant Spider's S0 is set aside,
-        # decision 8)
+        # straightened, aliases added, Animal items cached as they are written; the Giant Spider's S0, set aside by
+        # decision 8, is checked in the next test)
         self.assertEqual(self.unresolved(self.output), [])
         links = {
             ("Highwayman", "Riding/Draft Horse"),
@@ -167,6 +167,27 @@ class SeedAllTests(TestCase):
         self.assertLessEqual({"Leap", "Lightning Reflexes"}, ninja)
         knight = HiredSwordSkill.objects.filter(hired_sword__name="Knight of the White Wolf").values_list("skill__name", flat=True)  # fmt: skip
         self.assertIn("Ride [Animal]", knight)
+
+    def test_no_seeded_profile_attacks_with_strength_0(self):
+        # BUG-54's last part, CAT-TEST-13: the Giant Spider was seeded with S0; mordheimer gives "3(4)", S3 with its
+        # Poisoned Attack counting as S4
+        for model in (BestiaryEntry, HiredSword):
+            with self.subTest(model=model.__name__):
+                self.assertFalse(model.objects.filter(strength=0, attacks__gt=0).exists())
+        self.assertEqual(BestiaryEntry.objects.get(name="Giant Spider").strength, 3)
+
+    def test_hired_swords_take_mordheimers_initiative_skill_lists_and_races(self):
+        # the 2026-10-28 data audit: the Norse Shaman had I3, the Human Scout lacked Shooting and the Mule Skinner
+        # Academic, and nine race labels matched no book race; five of them name one under mordheimer's race
+        shaman, scout, skinner = (HiredSword.objects.get(name=name) for name in ("Norse Shaman", "Human Scout", "Mule Skinner"))  # fmt: skip
+        self.assertEqual(shaman.initiative, 4)
+        self.assertLessEqual({"Combat", "Shooting", "Speed"}, set(scout.available_skill_types))
+        self.assertLessEqual({"Combat", "Academic", "Strength"}, set(skinner.available_skill_types))
+        races = dict(HiredSword.objects.values_list("name", "race__name"))
+        self.assertEqual({name for name, race in races.items() if race is None}, {"Bone Goliath", "Chaos Centaur", "Chaos Fury", "Ninja Gnoblar"})  # fmt: skip
+        mapped = {"Chameleon Skink": "Skinks", "Dark Elf Assassin": "Elf", "Shadow Warrior": "Elf"}
+        mapped |= {"Wood Elf Hunter": "Elf", "Ungor Trapper": "Ungor"}
+        self.assertEqual({name: races[name] for name in mapped}, mapped)
 
     def test_the_ogre_keeps_both_swords_and_the_formulas_are_kept_beside_the_costs(self):
         # the bestiary rewrite: the browser's hire copy dropped quantities and formulas; the catalogue keeps them

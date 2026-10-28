@@ -1124,7 +1124,7 @@
       "available_special_skills": [],
       "grade": "1b",
       "rating": 16,
-      "race": "Lizardman"
+      "race": "Skinks"
     }
   },
   {
@@ -1270,7 +1270,7 @@
       "available_special_skills": [],
       "grade": "1b",
       "rating": 25,
-      "race": "Dark Elf"
+      "race": "Elf"
     }
   },
   {
@@ -1746,6 +1746,7 @@
       "unique_to": "Any warband except Orcs, Goblins, Beastmen or Possessed",
       "available_skill_types": [
         "Combat",
+        "Shooting",
         "Speed"
       ],
       "available_special_skills": [
@@ -1879,6 +1880,7 @@
       "unique_to": "Any warband, except Possessed, Skaven, or any Undead warband",
       "available_skill_types": [
         "Combat",
+        "Academic",
         "Strength"
       ],
       "available_special_skills": [
@@ -1952,7 +1954,7 @@
     "strength": 3,
     "toughness": 3,
     "wounds": 1,
-    "initiative": 3,
+    "initiative": 4,
     "attacks": 1,
     "leadership": 8,
     "armour_save": null,
@@ -2338,7 +2340,7 @@
       "available_special_skills": [],
       "grade": "1b",
       "rating": 12,
-      "race": "High Elf"
+      "race": "Elf"
     }
   },
   {
@@ -4494,7 +4496,7 @@
       ],
       "grade": "2a",
       "rating": 12,
-      "race": "Beastman"
+      "race": "Ungor"
     }
   },
   {
@@ -4622,7 +4624,7 @@
       "available_special_skills": [],
       "grade": "2a",
       "rating": 22,
-      "race": "Wood Elf"
+      "race": "Elf"
     }
   }
 ]
