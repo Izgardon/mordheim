@@ -85,15 +85,31 @@ export function useWarbandTradeSession({
     [userId]
   );
 
+  // The trade this page last showed open (a completion moves its gold and stash).
+  const shownTrade = useRef<string | null>(null);
+  const sessionId = session?.requestId ?? null;
+  useEffect(() => {
+    if (sessionId) {
+      shownTrade.current = sessionId;
+    }
+  }, [sessionId]);
+
   // A trade that has ended (a link to it, or the server saying so) leaves the URL, with why.
   useEffect(() => {
     if (request && isTradeOver(request)) {
       setTradeParam(null);
       if (handledEnd.current !== request.id) {
         announceEnd(request);
+        // The open trade completed but its completion never came: `trade_closed` (sent first)
+        // ended it and closed its channel. The warband's gold and stash are read again.
+        if (request.status === "completed" && shownTrade.current === request.id && warbandId) {
+          handledEnd.current = request.id;
+          updateWarbandCache(warbandId);
+          loadWarchestItems();
+        }
       }
     }
-  }, [announceEnd, request, setTradeParam]);
+  }, [announceEnd, loadWarchestItems, request, setTradeParam, updateWarbandCache, warbandId]);
 
   // The warchest is offered once the trade is open.
   const sessionStatus = session?.status;

@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useWarbandTradeSession } from "./useWarbandTradeSession";
+import { setTradeData } from "../../api/economy-queries";
 import { AppToaster } from "@/components/ui/toaster";
 import { ApiError } from "@/lib/api-client";
 import { AppStoreProvider } from "@/stores/app-store";
@@ -332,6 +333,25 @@ describe("useWarbandTradeSession: realtime events", () => {
     await deliver({ type: "trade.completed", payload: request({ status: "completed" }) });
 
     await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/summary/")).toBe(1));
+  });
+
+  it("re-reads the gold and stash when trade_closed ends the open trade before trade.completed", async () => {
+    // The server sends trade_closed (user channel) before trade.completed (trade channel): the
+    // trade ends here first, its channel closes, and the completion never reached the page, which
+    // kept the gold and stash it had before the trade.
+    const { loadWarchestItems, queryClient } = await openOnTrade();
+    fakeApi.clearRequests();
+
+    act(() => setTradeData(queryClient, request({ status: "completed" })));
+    await act(() => new Promise((resolve) => setTimeout(resolve, 0)));
+    expect(screen.getByText("Session: none")).toBeInTheDocument();
+    // Too late: the page no longer listens to this trade.
+    await deliver({ type: "trade.completed", payload: completed() });
+
+    expect(screen.getByText("Session: none")).toBeInTheDocument();
+    expect(screen.getByText("URL: (none)")).toBeInTheDocument();
+    await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/summary/")).toBe(1));
+    expect(loadWarchestItems).toHaveBeenCalledTimes(2);
   });
 
   it("ends the session from the completing lock's own answer, with no event (ECON-PERF-02)", async () => {
