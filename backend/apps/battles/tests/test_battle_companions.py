@@ -60,6 +60,9 @@ class BattleRosterCompanionTests(BattleTestCase):
         outriders = groups["Outriders"]["members"]  # one horse for two: the second goes on foot
         self.assertEqual([(member["mount"] or {}).get("name") for member in outriders], ["Warhorse", None])
         self.assertEqual([(member["effectiveStats"] or {}).get("movement") for member in outriders], [8, None])
+        message = "Every member of a group carries the same gear, so Outriders can't take the field until each of its 2 members has a Warhorse (it has 1)."  # fmt: skip
+        warning = {"code": "group_mounts", "message": message, "mounts": 1, "members": 2}
+        self.assertEqual((groups["Outriders"]["mountWarnings"], groups["Kennel"]["mountWarnings"]), ([warning], []))
         self.assertEqual((groups["Outriders"]["sourceBeastId"], groups["Outriders"]["beastKind"]), (None, None))
         source = HenchmenGroup.objects.get(pk=kennel.pk).source_beast_id
         self.assertEqual((groups["Kennel"]["sourceBeastId"], groups["Kennel"]["beastKind"]), (source, "creature"))
