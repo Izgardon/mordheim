@@ -11,7 +11,7 @@ import { useWarbandCacheUpdate } from "../../api/warband-cache";
 import useItemActionMenu from "../../hooks/useItemActionMenu";
 import { useCompanionSwitch } from "../../hooks/units/useCompanionSwitch";
 import { buildLoadoutBlocks, type LoadoutBlock, type LoadoutEntry } from "./loadout-blocks";
-import { groupLabel } from "../../utils/companions";
+import { groupLabel, riddenKinds } from "../../utils/companions";
 
 import type { PopupPosition } from "../shared/unit_details/DetailPopup";
 import type { Unit, UnitKindKey } from "../../types/units";
@@ -188,7 +188,9 @@ export default function UnitListBlocks<K extends UnitKindKey>({
             memberCount={
               hasMembers ? ("henchmen" in unit ? (unit.henchmen ?? []).length : 0) : null
             }
-            groupName={hasMembers ? groupLabel(unit) : undefined}
+            group={
+              hasMembers ? { name: groupLabel(unit), kinds: riddenKinds(unit.items) } : undefined
+            }
             canEdit={canManageItems}
             onClick={(event) => handleEntryClick(entry, event)}
             onMenuClick={(event) => itemMenu.handleMenuToggle(entry, event)}

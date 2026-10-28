@@ -89,6 +89,12 @@ export const ridden = (
       (itemId === undefined || item.id === itemId)
   ).length;
 
+/** How many kinds of mount a unit's copies switched on are (a group on Warhorses and a Pony: 2). */
+export const riddenKinds = (items: Pick<Item, "id" | "companion" | "beast_kind">[] = []) =>
+  new Set(
+    items.filter((item) => isSwitchedOn(item) && item.beast_kind === "mount").map((item) => item.id)
+  ).size;
+
 type MountedUnit = UnitCompanionFields & {
   items?: Pick<Item, "id" | "companion" | "beast_kind">[];
   henchmen?: unknown[];

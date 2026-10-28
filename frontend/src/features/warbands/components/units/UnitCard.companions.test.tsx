@@ -309,6 +309,47 @@ describe("a group's mount chip", () => {
     const profile = screen.getByRole("dialog", { name: "Warhorse" });
     expect(within(profile).getByRole("button", { name: "Black Knives dismount" })).toBeVisible();
     expect(within(profile).queryByRole("button", { name: "Switch off" })).not.toBeInTheDocument();
+    await user.click(within(profile).getByRole("button", { name: "Black Knives dismount" }));
+    expect(within(profile).getByRole("button", { name: "Dismounting..." })).toBeDisabled();
+  });
+
+  it("shows a chip for each kind a group rides, each opening its own profile and dismount", async () => {
+    const user = setupUser();
+    const pony = makeItem({ id: 150, name: "Pony", type: "Animal", beast_kind: "mount" });
+    const horseMount = { ...riding.mount!, item_row_id: 1 };
+    const ponyMount = {
+      ...horseMount,
+      item_row_id: 3,
+      item_id: 150,
+      name: "Pony",
+      rating_bonus: 2,
+    };
+    const mixed = makeVeteranHenchmenGroup({
+      items: [
+        { ...horse, row_id: 1, companion: true },
+        { ...horse, row_id: 2, companion: true },
+        { ...pony, row_id: 3, companion: true },
+      ],
+      mount: horseMount,
+      mounts: [horseMount, ponyMount],
+    });
+    renderWithQueryClient(
+      <UnitSummaryCard
+        kind={henchmenKind}
+        unit={mixed}
+        warbandId={1}
+        renderExpandedCard={false}
+        canEdit
+      />
+    );
+
+    expect(screen.getByRole("button", { name: "Mount: Warhorse x 2" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Mount: Pony" }));
+
+    const profile = screen.getByRole("dialog", { name: "Pony" });
+    expect(
+      within(profile).getByRole("button", { name: "Black Knives dismount (Pony only)" })
+    ).toBeVisible();
   });
 });
 

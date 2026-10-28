@@ -21,6 +21,8 @@ type CompanionProfileDialogProps = {
   canSwitchOff: boolean;
   /** What Switch off reads: a group's mount dismounts the whole group ("Outriders dismount"). */
   switchOffLabel?: string;
+  /** What it reads while its request is on its way ("Dismounting..." for a group's mount). */
+  busyLabel?: string;
   busy: boolean;
   onSwitchOff: () => void;
   onClose: () => void;
@@ -33,6 +35,7 @@ export default function CompanionProfileDialog({
   unitName,
   canSwitchOff,
   switchOffLabel = "Switch off",
+  busyLabel = "Switching off...",
   busy,
   onSwitchOff,
   onClose,
@@ -65,7 +68,7 @@ export default function CompanionProfileDialog({
           </Button>
           {canSwitchOff ? (
             <Button onClick={onSwitchOff} disabled={busy}>
-              {busy ? "Switching off..." : switchOffLabel}
+              {busy ? busyLabel : switchOffLabel}
             </Button>
           ) : null}
         </DialogFooter>

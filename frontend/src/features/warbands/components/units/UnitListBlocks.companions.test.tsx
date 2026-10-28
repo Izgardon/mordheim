@@ -281,6 +281,27 @@ describe("item rows: a henchmen group's mounts", () => {
     ]);
   });
 
+  it("says which kind a ridden row dismounts while the group rides two kinds", async () => {
+    const pony = (rowId: number) =>
+      copy("Pony", {
+        id: 150,
+        subtype: "Mount",
+        beast_kind: "mount",
+        row_id: rowId,
+        companion: true,
+      });
+    await renderGroup(
+      makeVeteranHenchmenGroup({ items: [warhorse(7, true), warhorse(8, true), pony(9)] })
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Warhorse x 2: Black Knives dismount (Warhorse only)" })
+    ).toBeVisible();
+    expect(
+      screen.getByRole("button", { name: "Pony: Black Knives dismount (Pony only)" })
+    ).toBeVisible();
+  });
+
   it("words the switch for the whole group (all members when unnamed); a group's pet keeps its own", async () => {
     await renderGroup(makeVeteranHenchmenGroup({ name: null, items: [warhorse(7), raven(8)] }));
 

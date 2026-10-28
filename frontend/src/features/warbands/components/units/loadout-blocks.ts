@@ -17,10 +17,11 @@ import type { UnitKindConfig } from "../../units/unit-kind-types";
 export type LoadoutEntryType = "item" | "skill" | "spell" | "special" | "roster";
 
 /**
- * An Animal item's row: its beast's kind, whether its copies are switched on for the unit, and
- * the copy the button acts on (a spare to switch on, the newest ridden one to switch off).
+ * An Animal item's row: its beast's kind, whether its copies are switched on for the unit, the
+ * copy the button acts on (a spare to switch on, the newest ridden one to switch off), and the
+ * item's name (a group's switch names it while the group rides two kinds).
  */
-export type LoadoutBeast = { kind: BeastKind; on: boolean; rowId: number | null };
+export type LoadoutBeast = { kind: BeastKind; on: boolean; rowId: number | null; name?: string };
 
 export type LoadoutEntry = {
   id: string;
@@ -56,7 +57,7 @@ export function itemRows(items: Item[]): ItemRow[] {
 const beastOf = (kind: BeastKind, rows: Item[]): LoadoutBeast => {
   const on = isSwitchedOn(rows[0]);
   const copy = on ? rows[rows.length - 1] : rows[0];
-  return { kind, on, rowId: copy?.row_id ?? null };
+  return { kind, on, rowId: copy?.row_id ?? null, name: rows[0]?.name };
 };
 
 export type LoadoutBlock = {

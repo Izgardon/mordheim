@@ -9,8 +9,8 @@ type LoadoutEntryRowProps = {
   entry: LoadoutEntry;
   /** Henchmen: the member count items must divide by (null for the other kinds). */
   memberCount: number | null;
-  /** Henchmen: the group's name as its mount switch says it ("Outriders ride them"). */
-  groupName?: string;
+  /** Henchmen: the group as its mount switch names it ("Outriders ride them"), and how many kinds it rides. */
+  group?: { name: string; kinds: number };
   canEdit: boolean;
   onClick: (event: MouseEvent) => void;
   onMenuClick: (event: MouseEvent) => void;
@@ -28,7 +28,7 @@ const BUTTON_CLASS =
 export default function LoadoutEntryRow({
   entry,
   memberCount,
-  groupName,
+  group,
   canEdit,
   onClick,
   onMenuClick,
@@ -89,7 +89,9 @@ export default function LoadoutEntryRow({
           kind={entry.beast.kind}
           on={entry.beast.on}
           itemLabel={entry.label}
-          group={groupName ? { name: groupName, copies: entry.count ?? 1 } : undefined}
+          group={
+            group ? { ...group, copies: entry.count ?? 1, itemName: entry.beast.name } : undefined
+          }
           disabled={beastBusy}
           onClick={onBeastClick}
         />
