@@ -38,16 +38,19 @@ export async function revalidateProfile(
 
 /**
  * Loads the session's user while the app waits behind LoadingScreen. A refused session ends; an
- * outage keeps the tokens and offers a retry (ConnectionErrorScreen).
+ * outage keeps the tokens and offers a retry (ConnectionErrorScreen). Once the session has moved
+ * on (signed out, or another account), the outcome changes nothing (BUG-170).
  */
 export async function loadSessionProfile(accessToken: string) {
   session.loadingProfile();
   try {
-    session.profileLoaded(await fetchProfileWithRetry(accessToken));
+    session.profileLoaded(accessToken, await fetchProfileWithRetry(accessToken));
   } catch (error) {
-    if (isSessionExpiredError(error)) {
+    // Signed out or switched meanwhile: ending "this" session now would end the new one.
+    const stillCurrent = session.isFor(accessToken);
+    if (stillCurrent && isSessionExpiredError(error)) {
       session.end();
-    } else {
+    } else if (stillCurrent) {
       session.profileUnavailable();
     }
     throw error;
