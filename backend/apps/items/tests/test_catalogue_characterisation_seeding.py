@@ -8,6 +8,7 @@ copy-on-write makes): the seeders read and write the book only (BUG-17). Small, 
 `test_catalogue_characterisation_seeders.py`.
 """
 
+import re
 from contextlib import redirect_stdout
 from io import StringIO
 
@@ -64,7 +65,7 @@ class SeedAllTests(TestCase):
         self.assertEqual(
             self.seeded,
             {
-                "Race": 26,
+                "Race": 27,
                 "Restriction": 133,
                 "Item": 247,  # 216 + one Animal item per beast (the bestiary rewrite step 3)
                 "ItemProperty": 240,
@@ -92,10 +93,18 @@ class SeedAllTests(TestCase):
         output = seed_all()
 
         self.assertIn("All seed commands completed successfully!", output)
+        self.assertEqual(re.findall(r"(?i)created:? ([1-9]\d*|skill|special|spell)", output), [])  # nothing new
         self.assertEqual(counts(), self.seeded)
         self.assertEqual(set(Item.objects.values_list("id", "name", "type")), items)
         # every availability is deleted and written again under a new id (CAT-BUG-08's id churn)
         self.assertEqual(set(ItemAvailability.objects.values_list("id", flat=True)) & availabilities, set())
+
+    def test_skaven_and_clan_pestilens_keep_their_own_maximums(self):
+        # the 2026-10-28 data audit: races.json held Clan Pestilens' maximums under the name "Skaven" too, and
+        # seed_races upserts by name, so the Skaven race had M5 T5 instead of M6 T4
+        self.assertIn("Races import complete. Created: 27, Updated: 0", self.output)
+        skaven = {race.name: (race.movement, race.toughness) for race in Race.objects.filter(name__startswith="Skaven")}
+        self.assertEqual(skaven, {"Skaven": (6, 4), "Skaven (Clan Pestilens)": (5, 5)})
 
     def test_the_seeded_bounty_hunter_detail_costs_9_queries(self):
         # PERF-46, CAT-TEST-08 (was pinned: 43 and 45, each of his 8 items read on its own; flipped in PR A)
