@@ -163,13 +163,16 @@ describe("signing in or up from the landing page", () => {
   });
 });
 
-describe("a user with no name (signed up before names were required)", () => {
-  it("is welcomed without a name, never by their email (SEC-13, AUTH-TWEAK-02)", async () => {
+describe("a user with no name (made by createsuperuser or a seeder)", () => {
+  it("is welcomed without a name, never by their email, behind the prompt for one (SEC-13, AUTH-TWEAK-02, AUTH-NEW-06)", async () => {
     storeSession({ ...NAMELESS, name: "  " });
     fakeApi.on("GET /auth/me/", { ...NAMELESS, name: "  " });
     renderApp("/campaigns");
 
-    expect(await screen.findByRole("heading", { name: "Welcome back" })).toBeInTheDocument();
+    // The prompt is modal, so the page behind it is hidden from the accessibility tree
+    const heading = await screen.findByRole("heading", { name: "Welcome back", hidden: true });
+    expect(heading).toBeInTheDocument();
+    expect(screen.getByRole("dialog", { name: "Choose a display name" })).toBeInTheDocument();
     expect(screen.queryByText(/nameless@example\.com/)).toBeNull();
   });
 });

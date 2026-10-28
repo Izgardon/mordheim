@@ -34,6 +34,11 @@ export function fetchMe(token: string) {
   });
 }
 
+/** Changes the display name; the server trims it and answers the user (AUTH-NEW-02). */
+export function renameAccount(name: string) {
+  return apiRequest<AuthUser>("/auth/me/", { method: "PATCH", body: { name } });
+}
+
 export function requestPasswordReset(payload: PasswordResetRequestPayload) {
   return apiRequest<{ detail: string }>("/auth/password-reset/", {
     method: "POST",
