@@ -161,13 +161,13 @@ Types: **New** (new functionality), **Tweak** (change to existing behaviour), **
 | 3 Battles | [Done](briefs/pass-3-battles.md) | Answered 2026-10-18 | 80 backend (2 expected failures) + 26 frontend tests (`pass3/battles`) | Done | Done | Done | 2026-10-20 |
 | 4 Campaigns | [Done](briefs/pass-4-campaigns.md) | Answered 2026-10-18 | 79 backend (3 expected failures) + 53 frontend tests | Done | Done | Done | **Merged to main and deployed 2026-10-20** (`3d0cf09`) |
 | 5 Catalogue | [Done](briefs/pass-5-catalogue.md) | Answered 2026-10-19 | 114 backend (4 expected failures) + 108 frontend tests | Done | Done | Done (CAT-NEW-01 replaced by the bestiary rewrite) | **Merged to main and deployed 2026-10-23** (`02dd927f`) |
-| 6 Auth and core | [Done](briefs/pass-6-auth-core.md) | Answered 2026-10-19 | 98 backend (6 expected failures) + 75 frontend tests | Done | Done | Pending (after the bestiary rewrite) | PR A and B **merged to main and deployed 2026-10-23** (`02dd927f`); PR C next |
+| 6 Auth and core | [Done](briefs/pass-6-auth-core.md) | Answered 2026-10-19 | 98 backend (6 expected failures) + 75 frontend tests | Done | Done | Done (`pass6/pr-c`, 2026-10-28) | PR A and B **merged to main and deployed 2026-10-23** (`02dd927f`); PR C built on `pass6/pr-c`, waiting for its two-player browser check |
 
 ## After the passes
 
 Work William has asked for since passes 5 and 6 (PR A and B) were deployed.
 
-- **The bestiary rewrite: merged to main and deployed 2026-10-28,** with fresh migrations (the production schema was wiped first). The plan is `docs/review/plans/bestiary-hirelings.html`. It replaced pass 5's CAT-NEW-01 (bestiary and hired-sword edit panels). Grading (`plans/grades-settings-warbands.html`) and pass 6's PR C come next. Left from its final two-player check:
+- **The bestiary rewrite: merged to main and deployed 2026-10-28,** with fresh migrations (the production schema was wiped first). The plan is `docs/review/plans/bestiary-hirelings.html`. It replaced pass 5's CAT-NEW-01 (bestiary and hired-sword edit panels). Pass 6's PR C is built on `pass6/pr-c` (its browser check is next); grading (`plans/grades-settings-warbands.html`) follows. Left from its final two-player check:
   - **A question for William:** on the warband page, a group where only some members ride shows the mount's M and save, while the battle screens show foot stats.
   - **Creature group members** are named "Henchman 6", "Henchman 7" in battle.
   - **At 1280 px:** the Bestiary cards' stat lines scroll sideways, the header tab strips show scrollbars, and two forms clip.
