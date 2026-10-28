@@ -68,7 +68,7 @@ class SeedAllTests(TestCase):
                 "Race": 27,
                 "Restriction": 133,
                 "Item": 247,  # 216 + one Animal item per beast (the bestiary rewrite step 3)
-                "ItemProperty": 240,
+                "ItemProperty": 241,  # "Two Handed" merged into "Two-handed"; "+1 Enemy armour save" and "-1 Save"
                 "Skill": 255,
                 "Spell": 189,  # 183 + the Dark Mage's six (BUG-54)
                 "Special": 186,
@@ -117,6 +117,28 @@ class SeedAllTests(TestCase):
         self.assertIn("swings through rope and rigging", sea_legs["Pirates (TBMF)"])
         second = set(Skill.objects.filter(type="Pirates (TBMF)").values_list("name", flat=True))
         self.assertEqual(second, {"Captain Blood", "Sea Legs", "Cutlass Master", "Treasure Hunter", "Swashbuckler"})
+
+    def test_knives_and_cleavers_carry_their_save_modifiers_and_two_handed_is_one_property(self):
+        # the 2026-10-28 data audit against mordheimer: the knives lacked "+1 Enemy armour save", Cleaver and Katar
+        # "-1 Save", and "Two Handed" (212) and "Two-handed" (213) were one rule twice
+        def holders(name: str) -> set[str]:
+            items = Item.objects.filter(campaign__isnull=True, property_links__property__name=name)
+            return set(items.values_list("name", flat=True))
+
+        knives = {"Dagger", "Disease Dagger", "Hobgoblin Poisoned Daggers", "Kitchen Knife", "Main Gauche"}
+        knives |= {"Misericordia", "Poison Daggers", "Shortsword", "Starblade"}
+        self.assertEqual(holders("+1 Enemy armour save"), knives)
+        self.assertEqual(holders("-1 Save"), {"Cleaver", "Katar"})
+        two_handed = ItemProperty.objects.filter(name__iregex=r"^two.handed$")
+        self.assertEqual(list(two_handed.values_list("id", "name")), [(213, "Two-handed")])
+        self.assertLessEqual({"Boat Hook", "Brazier Iron", "Pike", "Flail", "Halberd"}, holders("Two-handed"))
+
+    def test_item_values_match_mordheimer(self):
+        # the 2026-10-28 data audit: transcription errors in a price, a save and a strength
+        helmet = Item.objects.get(campaign__isnull=True, name="Cooking Pot Helmet")
+        self.assertEqual(list(helmet.availabilities.values_list("cost", flat=True)), [8])
+        self.assertEqual(Item.objects.get(campaign__isnull=True, name="Mechanical Suit").save_value, "4+")
+        self.assertEqual(Item.objects.get(campaign__isnull=True, name="Fighting Claws").strength, "As user")
 
     def test_the_seeded_bounty_hunter_detail_costs_9_queries(self):
         # PERF-46, CAT-TEST-08 (was pinned: 43 and 45, each of his 8 items read on its own; flipped in PR A)

@@ -1266,15 +1266,9 @@
     "type": "Miscellaneous"
   },
   {
-    "id": 212,
-    "name": "Two Handed",
-    "description": "This weapon requires two hands to wield effectively. The warrior may not use a shield or another hand weapon or buckler in close combat. They may still use a shield for the purposes of missile fire.",
-    "type": "Weapon"
-  },
-  {
     "id": 213,
     "name": "Two-handed",
-    "description": "Requires two hands to wield",
+    "description": "This weapon requires two hands to wield effectively. The warrior may not use a shield or another hand weapon or buckler in close combat. They may still use a shield for the purposes of missile fire.",
     "type": "Weapon"
   },
   {
@@ -1438,5 +1432,17 @@
     "name": "Parry",
     "description": "This shield may parry enemy blows. If it is combined with a weapon that can parry, then the model may reroll a parry roll",
     "type": "Armour"
+  },
+  {
+    "id": 241,
+    "name": "+1 Enemy armour save",
+    "description": "Daggers are not the best weapons to use for penetrating an enemy model's armour. An enemy wounded by a dagger gains a +1 bonus to his armour save, and a 6+ armour save if he has none normally.",
+    "type": "Weapon"
+  },
+  {
+    "id": 242,
+    "name": "-1 Save",
+    "description": "Target gets -1 to armour save.",
+    "type": "Weapon"
   }
 ]
