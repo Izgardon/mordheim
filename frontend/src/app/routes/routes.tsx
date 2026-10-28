@@ -12,7 +12,6 @@ import { LoadingScreen } from "../../components/ui/loading-screen";
 const ProtectedLayout = lazy(() => import("./ProtectedLayout"));
 const NotFound = lazy(() => import("./NotFound"));
 const Landing = lazy(() => import("../../features/auth/routes/Landing"));
-const ForgotPassword = lazy(() => import("../../features/auth/routes/ForgotPassword"));
 const ResetPassword = lazy(() => import("../../features/auth/routes/ResetPassword"));
 const Account = lazy(() => import("../../features/auth/routes/Account"));
 const CampaignLayout = lazy(() => import("../../features/campaigns/routes/CampaignLayout"));
@@ -55,10 +54,6 @@ export const routes: RouteObject[] = [
       {
         path: "/",
         element: <Landing />,
-      },
-      {
-        path: "/forgot-password",
-        element: <ForgotPassword />,
       },
       {
         path: "/reset-password",

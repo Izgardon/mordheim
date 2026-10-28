@@ -85,6 +85,14 @@ describe("an unknown URL", () => {
     await landing();
   });
 
+  it("includes /forgot-password: the sign-in card's flow is the only one (AUTH-TWEAK-06, decision 6)", async () => {
+    const app = renderApp("/forgot-password");
+
+    expect(await screen.findByRole("heading", { name: "LOST IN THE RUINS" })).toBeInTheDocument();
+    expect(app.location().pathname).toBe("/forgot-password");
+    expect(screen.queryByText("Recover your account")).toBeNull();
+  });
+
   it("shows NotFound to a signed-in visitor too, and the way back goes on to the campaigns list (FE-TEST-18, FE-UX-03)", async () => {
     storeSession();
     const app = renderApp("/campaigns/1/nope/deeper");
