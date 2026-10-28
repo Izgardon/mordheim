@@ -117,7 +117,7 @@ REGISTER_THROTTLE_CLASSES = throttle_classes("auth_register_hour", "auth_registe
 PASSWORD_RESET_REQUEST_THROTTLE_CLASSES = throttle_classes("auth_password_reset_hour", "auth_password_reset_email_hour")
 PASSWORD_RESET_CONFIRM_THROTTLE_CLASSES = throttle_classes("auth_password_reset_confirm_hour")
 REFRESH_THROTTLE_CLASSES = throttle_classes("auth_refresh_minute")
-# The password change and "sign out everywhere else" share one budget per user
+# The password change, "sign out everywhere else" and deleting the account share one budget per user
 ACCOUNT_THROTTLE_CLASSES = throttle_classes("auth_account_user")
 FEEDBACK_REPORT_THROTTLE_CLASSES = throttle_classes("feedback_report_user", "feedback_report_ip")
 CAMPAIGN_CHAT_THROTTLE_CLASSES = throttle_classes("campaign_chat_user", "campaign_chat_ip")

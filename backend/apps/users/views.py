@@ -13,6 +13,7 @@ from apps.core.throttling import (
     PASSWORD_RESET_REQUEST_THROTTLE_CLASSES,
     REFRESH_THROTTLE_CLASSES,
     REGISTER_THROTTLE_CLASSES,
+    MethodScopedThrottleMixin,
 )
 
 from .emails import (
@@ -22,6 +23,7 @@ from .emails import (
     send_password_reset_email,
 )
 from .serializers import (
+    CurrentPasswordSerializer,
     FeedbackReportSerializer,
     LoginSerializer,
     NameSerializer,
@@ -32,6 +34,7 @@ from .serializers import (
     UserSerializer,
     password_problems,
 )
+from .services import deletion
 from .services.accounts import (
     change_password,
     rename,
@@ -45,6 +48,7 @@ from .services.tokens import SessionTokenRefreshSerializer, issue_tokens
 
 RESET_SENT = "If an account exists for that email, a reset link has been sent."
 RESET_LINK_INVALID = "Invalid or expired token."
+HAND_OVER_FIRST = "Hand these campaigns to an admin before you delete your account."
 
 
 def signed_in(user: Any, tokens: dict[str, str], http_status: int = 200) -> Response:
@@ -155,6 +159,28 @@ class SignOutOthersView(APIView):
 
     def post(self, request):
         return signed_in(request.user, sign_out_others(request.user))
+
+
+class AccountDeletionView(MethodScopedThrottleMixin, APIView):
+    """`GET auth/me/deletion/`: what deleting the account does to each campaign; `POST` with the current password
+    deletes it, answering 204, or 400 `hand_over_first` with the campaigns to hand to an admin first (AUTH-NEW-05,
+    decision 1). Only the POST counts against the account throttle."""
+
+    permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = ACCOUNT_THROTTLE_CLASSES
+
+    def get(self, request):
+        return Response(deletion.preview(request.user))
+
+    def post(self, request):
+        serializer = CurrentPasswordSerializer(data=request.data, context={"user": request.user})
+        serializer.is_valid(raise_exception=True)
+        try:
+            deletion.delete_account(request.user)
+        except deletion.HandOverFirst as refusal:
+            body = {"detail": HAND_OVER_FIRST, "code": "hand_over_first", "fields": {}, "campaigns": refusal.campaigns}
+            return Response(body, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class FeedbackReportView(APIView):
