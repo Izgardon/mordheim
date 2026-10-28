@@ -30,6 +30,7 @@ export function RegisterForm({ form, error }: RegisterFormProps) {
         value={form.values.password}
         onChange={(password) => form.setField("password", password)}
         autoComplete="new-password"
+        showRules
         error={form.errors.password}
       />
       <AuthFormError message={error} />

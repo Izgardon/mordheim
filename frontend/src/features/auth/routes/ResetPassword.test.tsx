@@ -6,6 +6,7 @@ import { act, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { PASSWORD_HINT } from "@/features/auth/components/PasswordInput";
 import { AuthProvider } from "@/features/auth/stores/auth-store";
 import { ApiError } from "@/lib/api-client";
 import { RAIDER, storeSession } from "@/test/auth-fixtures";
@@ -201,13 +202,18 @@ describe("ResetPassword (AUTH-TEST-27)", () => {
     expect(screen.queryByText(/a short time/)).toBeNull();
   });
 
-  it("has no show-password toggle and no password hint (AUTH-TWEAK-07, pinned; flips in PR C)", () => {
-    // Characterises current behaviour (AUTH-TWEAK-07, pinned; flips in PR C)
+  it("has the show-password toggle on both fields and the rules under the new one (AUTH-TWEAK-07, decision 6)", async () => {
+    const user = setupUser();
     renderReset();
+    const toggles = screen.getAllByRole("button", { name: "Show password" });
+    expect(toggles).toHaveLength(2);
+    expect(newPassword()).toHaveAccessibleDescription(PASSWORD_HINT);
+    expect(confirmPassword()).not.toHaveAccessibleDescription();
 
-    expect(newPassword()).toHaveAttribute("type", "password");
-    expect(screen.queryByRole("button", { name: /show password/i })).toBeNull();
-    expect(screen.queryByText(/at least 8 characters/i)).toBeNull();
+    await user.click(toggles[0]);
+
+    expect(newPassword()).toHaveAttribute("type", "text");
+    expect(confirmPassword()).toHaveAttribute("type", "password");
   });
 
   it("loads no video on desktop either, only the dark half beside the card (decision 5, AUTH-TWEAK-05)", async () => {

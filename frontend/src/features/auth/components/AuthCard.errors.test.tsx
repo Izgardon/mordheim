@@ -7,6 +7,7 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { PASSWORD_HINT } from "@/features/auth/components/PasswordInput";
 import { AuthProvider } from "@/features/auth/stores/auth-store";
 import { ApiError, SERVER_UNAVAILABLE_MESSAGE } from "@/lib/api-client";
 import { getErrorMessage, SERVER_ERROR_MESSAGE } from "@/lib/get-error-message";
@@ -98,7 +99,7 @@ describe("refusals on the sign-in card (AUTH-TEST-26)", () => {
 
     expect(await screen.findByRole("alert")).toHaveTextContent(`${TOO_SHORT} ${TOO_COMMON}`);
     expect(screen.getByLabelText("Password")).toHaveAccessibleDescription(
-      `${TOO_SHORT} ${TOO_COMMON}`
+      `${PASSWORD_HINT} ${TOO_SHORT} ${TOO_COMMON}` // the rules hint, then the refusal
     );
   });
 
@@ -151,7 +152,7 @@ describe("refusals on the sign-in card (AUTH-TEST-26)", () => {
       /^The password is too similar to the email address\.$/
     );
     expect(screen.getByLabelText("Password")).toHaveAccessibleDescription(
-      "The password is too similar to the email address."
+      `${PASSWORD_HINT} The password is too similar to the email address.`
     );
   });
 

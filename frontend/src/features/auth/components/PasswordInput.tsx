@@ -10,17 +10,11 @@ import { AuthField } from "./AuthField";
 export const PASSWORD_HINT =
   "At least 8 characters. Not a common password, not all numbers, and not too like your name or email.";
 
-type PasswordInputProps = Omit<ComponentPropsWithoutRef<typeof Input>, "type" | "className"> & {
-  /** A show/hide toggle inside the field; hidden again whenever the field remounts. */
-  revealable?: boolean;
-};
+type PasswordInputProps = Omit<ComponentPropsWithoutRef<typeof Input>, "type" | "className">;
 
-export function PasswordInput({ revealable = true, ...props }: PasswordInputProps) {
+/** A password with a show/hide toggle inside the field, hidden again whenever it remounts. */
+export function PasswordInput(props: PasswordInputProps) {
   const [isRevealed, setIsRevealed] = useState(false);
-
-  if (!revealable) {
-    return <Input type="password" className="h-10 max-w-[320px]" {...props} />;
-  }
 
   return (
     <div className="relative">
@@ -48,13 +42,13 @@ type PasswordFieldProps = {
   autoComplete: "current-password" | "new-password";
   /** The rules under the field: for a new password, not for its confirmation (AUTH-TWEAK-07). */
   showRules?: boolean;
-  /** The server's refusal of this field, under it (BUG-171). */
+  /** The server's refusal of this field (BUG-171). */
   error?: string;
   placeholder?: string;
   className?: string;
 };
 
-/** A labelled password field with the show/hide toggle, the rules when asked, and its own error. */
+/** A labelled password field with the toggle, the rules hint when asked, and its own error. */
 export function PasswordField({
   label,
   value,
