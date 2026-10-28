@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 
 // components
 import { Button } from "@components/button";
+import { DeleteAccountSection } from "../components/account/DeleteAccountSection";
 import { DisplayNameSection } from "../components/account/DisplayNameSection";
 import { PasswordSection } from "../components/account/PasswordSection";
 import { SignOutOthersSection } from "../components/account/SignOutOthersSection";
@@ -14,8 +15,8 @@ import siteBackground from "@/assets/background/campaign_background.webp";
 import "@/features/campaigns/styles/campaigns.css";
 
 /**
- * Your account (AUTH-NEW-01, decision 1): the display name others see, your password and signing
- * out everywhere else. Linked from the campaigns list beside Log out
+ * Your account (AUTH-NEW-01, decision 1): the display name others see, your password, signing
+ * out everywhere else, and deleting the account. Linked from the campaigns list beside Log out
  * and from a campaign's Settings → Personal.
  */
 export default function Account() {
@@ -53,6 +54,7 @@ export default function Account() {
         {user ? <DisplayNameSection key={user.id} user={user} /> : null}
         <PasswordSection />
         <SignOutOthersSection />
+        <DeleteAccountSection />
       </div>
     </main>
   );

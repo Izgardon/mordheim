@@ -54,11 +54,11 @@ describe("reaching the account page (AUTH-NEW-01)", () => {
     expect(screen.getByText(`Signed in as ${RAIDER.email}`)).toBeInTheDocument();
   });
 
-  it("has its sections, a way back to the campaigns and Log out", async () => {
+  it("has its four sections, a way back to the campaigns and Log out", async () => {
     renderApp("/account");
     await accountPage();
 
-    for (const name of ["Display name", "Password", "Sign out everywhere else"]) {
+    for (const name of ["Display name", "Password", "Sign out everywhere else", "Delete account"]) {
       expect(section(name)).toBeInTheDocument();
     }
     expect(screen.getByRole("link", { name: "Campaigns" })).toHaveAttribute("href", "/campaigns");
