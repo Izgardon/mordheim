@@ -98,6 +98,7 @@ export function useAcquireItemDialogShared(params: AcquireItemDialogSharedParams
     item,
     unitType: resolvedUnitType,
     unitLabel: target.selectedUnitLabel,
+    unitId: resolvedUnitId,
     quantity: count,
     groups: target.henchmenGroups,
     deferCommit,

@@ -252,6 +252,30 @@ describe("buying a mount or a pet for a unit", () => {
     ).toBeChecked();
   });
 
+  it("says a copy bought for a group already riding that mount joins the ridden ones (the server rides it)", async () => {
+    const user = setupUser();
+    const riding = {
+      ...thugs,
+      items: [
+        ...thugs.items,
+        { ...warhorse, row_id: 9, companion: true, beast_kind: "mount" as const },
+      ],
+    };
+    fakeApi.on("GET /warbands/9/henchmen-groups/", [riding, kennel]);
+    fakeApi.on(PURCHASE, answer({ target_type: "henchmen_group", target_id: 21, items: [] }));
+    renderDialog({ item: warhorse, presetUnitType: "henchmen", presetUnitId: 21 });
+
+    const joins = await screen.findByRole("checkbox", {
+      name: "Black Knives already ride this mount, so it joins the ridden ones",
+    });
+    expect(joins).toBeChecked();
+    expect(joins).toBeDisabled();
+    await clickBuy(user);
+
+    await waitFor(() => expect(fakeApi.countOf(PURCHASE)).toBe(1));
+    expect(fakeApi.bodyOf(PURCHASE)).toMatchObject({ companion: true, target_id: 21 });
+  });
+
   it("words the box for one unit while no unit is picked yet", async () => {
     // Was "The unit ride it straight away" before a group was chosen.
     const group = renderDialog({ item: warhorse, presetUnitType: "henchmen" });
