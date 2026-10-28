@@ -258,11 +258,14 @@ PASSWORD_RESET_EMAIL_SUBJECT = os.environ.get("PASSWORD_RESET_EMAIL_SUBJECT", "R
 FEEDBACK_REPORT_TO_EMAIL = os.environ.get("FEEDBACK_REPORT_TO_EMAIL", "")
 PASSWORD_RESET_TIMEOUT = int(os.environ.get("PASSWORD_RESET_TIMEOUT", "3600"))
 
-# Once email is on in production, reset links and the sender must be real, not the local fallbacks (BUG-56)
+# Once email is on in production, reset links and the sender must be real, not the local fallbacks (BUG-56). Resend's
+# shared resend.dev sender is refused too: it delivers only to the Resend account's own address, so players would
+# never get their reset links.
 if not DEBUG and RESEND_API_KEY:
     if not FRONTEND_URL.startswith("https://"):
         raise ImproperlyConfigured("FRONTEND_URL must be the site's https:// address when RESEND_API_KEY is set.")
-    if "@" not in DEFAULT_FROM_EMAIL or DEFAULT_FROM_EMAIL.rstrip(">").endswith("example.com"):
+    sender_domain = DEFAULT_FROM_EMAIL.strip().rstrip(">").rpartition("@")[2].strip().lower()
+    if "@" not in DEFAULT_FROM_EMAIL or sender_domain.endswith(("example.com", "resend.dev")):
         raise ImproperlyConfigured(
             "DEFAULT_FROM_EMAIL must be an address on Resend's verified domain when RESEND_API_KEY is set."
         )
