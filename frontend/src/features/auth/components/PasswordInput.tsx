@@ -4,6 +4,7 @@ import { useState } from "react";
 // components
 import { Input } from "@components/input";
 import { Eye, EyeOff } from "lucide-react";
+import { AuthField } from "./AuthField";
 
 type PasswordInputProps = Omit<ComponentPropsWithoutRef<typeof Input>, "type" | "className"> & {
   /** A show/hide toggle inside the field; hidden again whenever the field remounts. */
@@ -33,5 +34,43 @@ export function PasswordInput({ revealable = true, ...props }: PasswordInputProp
         {isRevealed ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
       </button>
     </div>
+  );
+}
+
+type PasswordFieldProps = {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  autoComplete: "current-password" | "new-password";
+  /** The server's refusal of this field, under it (BUG-171). */
+  error?: string;
+  placeholder?: string;
+  className?: string;
+};
+
+/** A labelled password field with the show/hide toggle and its own error. */
+export function PasswordField({
+  label,
+  value,
+  onChange,
+  autoComplete,
+  error,
+  placeholder = "Keep it secret",
+  className,
+}: PasswordFieldProps) {
+  return (
+    <AuthField label={label} error={error} className={className}>
+      {(describedBy) => (
+        <PasswordInput
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder={placeholder}
+          autoComplete={autoComplete}
+          required
+          aria-describedby={describedBy}
+          aria-invalid={error ? true : undefined}
+        />
+      )}
+    </AuthField>
   );
 }
