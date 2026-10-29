@@ -195,7 +195,7 @@
     "movement": 7,
     "weapon_skill": 3,
     "ballistic_skill": 0,
-    "strength": 0,
+    "strength": 3,
     "toughness": 3,
     "wounds": 1,
     "initiative": 4,

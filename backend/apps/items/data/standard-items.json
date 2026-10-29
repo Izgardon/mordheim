@@ -92,7 +92,7 @@
     "range": "Close Combat",
     "properties": [
       190,
-      212
+      213
     ],
     "availabilities": [
       {
@@ -152,7 +152,7 @@
     "strength": "As user +1",
     "range": "Close Combat",
     "properties": [
-      212,
+      213,
       69
     ],
     "availabilities": [
@@ -291,7 +291,9 @@
     "description": "Cleavers are one of the best kitchen tools for fighting with, it's fairly light and can cut through things rather like an axe.",
     "strength": "As user",
     "range": "Close Combat",
-    "properties": [],
+    "properties": [
+      242
+    ],
     "availabilities": [
       {
         "cost": 3,
@@ -326,7 +328,9 @@
     "description": "Daggers and knives are extremely common, and men are allowed to carry them in enclaves where weapons are otherwise forbidden. Many a warrior in Mordheim has died with a dagger in his back.",
     "strength": "As user",
     "range": "Close Combat",
-    "properties": [],
+    "properties": [
+      241
+    ],
     "availabilities": [
       {
         "cost": 2,
@@ -364,6 +368,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
+      241,
       104
     ],
     "availabilities": [
@@ -444,7 +449,7 @@
     "subtype": "Melee",
     "grade": "1a",
     "description": "The martial arts practised by Clan Eshin employ many unusual weapons. The most famous of these are the Eshin Fighting Claws: sharp metal blades attached to the paws of a Skaven warrior. It takes a real expert to use them effectively, but an adept of Clan Eshin is a fearsome opponent when armed this way.",
-    "strength": "As user -1",
+    "strength": "As user",
     "range": "Close Combat",
     "properties": [
       139
@@ -543,6 +548,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
+      241,
       141,
       198,
       150
@@ -622,7 +628,9 @@
     "description": "This is an Arabian-style punch dagger. It has a handle perpendicular to the blade and is used in a punching thrusting manner.",
     "strength": "As user",
     "range": "Close Combat",
-    "properties": [],
+    "properties": [
+      242
+    ],
     "availabilities": [
       {
         "cost": 5,
@@ -639,7 +647,9 @@
     "description": "The common kitchen knife does not only have to be used for chopping vegetables, in the chubby but expert hands of a Master Chef it can make an awful mess of his enemies!",
     "strength": "As user",
     "range": "Close Combat",
-    "properties": [],
+    "properties": [
+      241
+    ],
     "availabilities": [
       {
         "cost": 2,
@@ -696,6 +706,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
+      241,
       144
     ],
     "availabilities": [
@@ -735,6 +746,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
+      241,
       5
     ],
     "availabilities": [
@@ -815,7 +827,7 @@
     "range": "Close Combat",
     "properties": [
       190,
-      212
+      213
     ],
     "availabilities": [
       {
@@ -839,6 +851,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
+      241,
       142,
       150
     ],
@@ -920,6 +933,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
+      241,
       144
     ],
     "availabilities": [
@@ -1018,6 +1032,7 @@
     "strength": "As user",
     "range": "Close Combat",
     "properties": [
+      241,
       153
     ],
     "availabilities": [
@@ -2100,7 +2115,7 @@
     ],
     "availabilities": [
       {
-        "cost": 10,
+        "cost": 8,
         "rarity": 2,
         "unique_to": "Mootlanders only"
       }
@@ -2263,7 +2278,7 @@
     "description": "The Curse of Stone comes to all Chaos Dwarf Sorcerers, gradually transforming them to rock from the feet up. Engineers have crafted machines which can transport their Priests as they begin to pay the price for working dark rituals.",
     "strength": null,
     "range": null,
-    "save": "Special",
+    "save": "4+",
     "statblock": null,
     "properties": [
       161,

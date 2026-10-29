@@ -8,7 +8,7 @@
     "strength": "As user +?",
     "range": "Close Combat",
     "properties": [
-      0
+      213
     ],
     "availabilities": [
       {
@@ -47,9 +47,7 @@
     "description": "Elven blade imbued with magic; details in rules.",
     "strength": "As user",
     "range": "Close Combat",
-    "properties": [
-      0
-    ],
+    "properties": [],
     "availabilities": [
       {
         "cost": 200,
@@ -66,9 +64,7 @@
     "description": "Ogre weapon; heavy striking fist weapon.",
     "strength": "As user",
     "range": "Close Combat",
-    "properties": [
-      0
-    ],
+    "properties": [],
     "availabilities": [
       {
         "cost": 65,
@@ -105,9 +101,7 @@
     "description": "Slim stabbing blade favoured by assassins; details in rules.",
     "strength": "As user",
     "range": "Close Combat",
-    "properties": [
-      0
-    ],
+    "properties": [],
     "availabilities": [
       {
         "cost": 20,
@@ -144,9 +138,7 @@
     "description": "Explosive/firework-style weapons from Cathay; details in rules.",
     "strength": "Varies",
     "range": "Varies",
-    "properties": [
-      0
-    ],
+    "properties": [],
     "availabilities": [
       {
         "cost": 25,
@@ -163,9 +155,7 @@
     "description": "Expensive double-barrelled rifle; details in rules.",
     "strength": "Varies",
     "range": "Varies",
-    "properties": [
-      0
-    ],
+    "properties": [],
     "availabilities": [
       {
         "cost": 300,
@@ -181,9 +171,7 @@
     "description": "Long-range Hochland-pattern hunting rifle.",
     "strength": "Varies",
     "range": "Varies",
-    "properties": [
-      0
-    ],
+    "properties": [],
     "availabilities": [
       {
         "cost": 200,
@@ -199,9 +187,7 @@
     "description": "Master-crafted throwing knife; critical hits on 5+ (weighted).",
     "strength": "As user",
     "range": "8\"",
-    "properties": [
-      0
-    ],
+    "properties": [],
     "availabilities": [
       {
         "cost": 45,
@@ -217,9 +203,7 @@
     "description": "Fine throwing axe; Strength +1 when thrown.",
     "strength": "As user +1",
     "range": "6\"",
-    "properties": [
-      0
-    ],
+    "properties": [],
     "availabilities": [
       {
         "cost": 30,
@@ -235,9 +219,7 @@
     "description": "Powerful rocket weapon from Nippon; extremely rare.",
     "strength": "Varies",
     "range": "Varies",
-    "properties": [
-      0
-    ],
+    "properties": [],
     "availabilities": [
       {
         "cost": 150,
@@ -254,9 +236,7 @@
     "description": "Skaven gas bomb weapon; details in rules.",
     "strength": "Varies",
     "range": "Varies",
-    "properties": [
-      0
-    ],
+    "properties": [],
     "availabilities": [
       {
         "cost": 20,
@@ -295,7 +275,8 @@
     "strength": "5",
     "range": "36\"",
     "properties": [
-      0
+      130,
+      156
     ],
     "availabilities": [
       {
@@ -313,9 +294,7 @@
     "description": "Special ammunition/weapon for entangling or hunting; details in rules.",
     "strength": "Varies",
     "range": "Varies",
-    "properties": [
-      0
-    ],
+    "properties": [],
     "availabilities": [
       {
         "cost": 10,
@@ -334,9 +313,7 @@
     "range": null,
     "save": "+? (see rules)",
     "statblock": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "availabilities": [
       {
         "cost": 130,
@@ -356,9 +333,7 @@
     "range": null,
     "save": "+? (see rules)",
     "statblock": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "availabilities": [
       {
         "cost": 25,
@@ -377,9 +352,7 @@
     "range": null,
     "save": "+? (see rules)",
     "statblock": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "availabilities": [
       {
         "cost": 165,
@@ -399,9 +372,7 @@
     "range": null,
     "save": "+? (see rules)",
     "statblock": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "availabilities": [
       {
         "cost": 150,
@@ -421,9 +392,7 @@
     "range": null,
     "save": "+? (see rules)",
     "statblock": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "availabilities": [
       {
         "cost": 70,
@@ -443,9 +412,7 @@
     "range": null,
     "save": "+? (see rules)",
     "statblock": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "availabilities": [
       {
         "cost": 75,
@@ -464,9 +431,7 @@
     "range": null,
     "save": "+? (see rules)",
     "statblock": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "availabilities": [
       {
         "cost": 10,
@@ -483,9 +448,7 @@
     "description": "Illicit drug/compound; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": true,
     "availabilities": [
       {
@@ -503,9 +466,7 @@
     "description": "Highly dangerous narcotic/warp-tainted dust; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": true,
     "availabilities": [
       {
@@ -523,9 +484,7 @@
     "description": "Rare narcotic; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": true,
     "availabilities": [
       {
@@ -543,9 +502,7 @@
     "description": "Rare cloth from Albion; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -562,9 +519,7 @@
     "description": "Strong spirits (e.g., Albion whiskey, Bretonnian brandy, Kislev vodka, Norscan aquavit).",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": true,
     "availabilities": [
       {
@@ -582,9 +537,7 @@
     "description": "Religious circlet for Warrior-Priests of Sigmar.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -602,9 +555,7 @@
     "description": "Wizard-only scroll that can dispel magic; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": true,
     "availabilities": [
       {
@@ -623,9 +574,7 @@
     "description": "Glove used by falconers to handle hunting birds.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -642,9 +591,7 @@
     "description": "Magical scarab; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -662,9 +609,7 @@
     "description": "Special witch hunter ammunition; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -682,9 +627,7 @@
     "description": "Ring granting good fortune; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -702,9 +645,7 @@
     "description": "Protective mask against gas attacks; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -721,9 +662,7 @@
     "description": "Ogre-only item; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -741,9 +680,7 @@
     "description": "Magical gem of cold; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -761,9 +698,7 @@
     "description": "Fence's iron strongbox with hidden compartment; can conceal one item (including wyrdstone item).",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -781,9 +716,7 @@
     "description": "Expensive jewellery; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -801,9 +734,7 @@
     "description": "Magical lamp; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -821,9 +752,7 @@
     "description": "Musical instrument; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -840,9 +769,7 @@
     "description": "Rare magical acorn; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -859,9 +786,7 @@
     "description": "Medical supplies chest; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -879,9 +804,7 @@
     "description": "Lucky/accursed charm; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -899,9 +822,7 @@
     "description": "Elf Ranger item; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -919,9 +840,7 @@
     "description": "Boots made from skinkskin; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -939,9 +858,7 @@
     "description": "Albion Truthsayer staff; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -959,9 +876,7 @@
     "description": "Cloak used by thieves; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -978,9 +893,7 @@
     "description": "Human priest-only circlet; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -998,9 +911,7 @@
     "description": "Cursed trinket of Stromfels; transforms wearer into Harbinger under conditions.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -1018,9 +929,7 @@
     "description": "Enchanted carved ivory; grants 4+ save vs attacks from aquatic models.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -1037,9 +946,7 @@
     "description": "Necklace of shark teeth used by Mutant-Priest of Stromfels; enables special recruitment/hex rules.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -1057,9 +964,7 @@
     "description": "Transport or watercraft item from the price chart.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -1076,9 +981,7 @@
     "description": "Transport or watercraft item from the price chart.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -1095,9 +998,7 @@
     "description": "Transport or watercraft item from the price chart.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -1114,9 +1015,7 @@
     "description": "Transport or watercraft item from the price chart.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -1133,9 +1032,7 @@
     "description": "Transport or watercraft item from the price chart.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -1152,9 +1049,7 @@
     "description": "Transport or watercraft item from the price chart.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -1171,9 +1066,7 @@
     "description": "Transport or watercraft item from the price chart.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
@@ -1190,9 +1083,7 @@
     "description": "Explosive rigged cart/ship upgrade; can be detonated to destroy itself and hit all onboard with D3 S10 hits.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": true,
     "availabilities": [
       {
@@ -1209,9 +1100,7 @@
     "description": "Boat propulsion upgrade; adds D3+2\" movement; cannot combine with other propulsion modes.",
     "strength": null,
     "range": null,
-    "properties": [
-      0
-    ],
+    "properties": [],
     "single_use": false,
     "availabilities": [
       {
