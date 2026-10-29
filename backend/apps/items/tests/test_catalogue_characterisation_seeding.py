@@ -178,15 +178,18 @@ class SeedAllTests(TestCase):
 
     def test_hired_swords_take_mordheimers_initiative_skill_lists_and_races(self):
         # the 2026-10-28 data audit: the Norse Shaman had I3, the Human Scout lacked Shooting and the Mule Skinner
-        # Academic, and nine race labels matched no book race; five of them name one under mordheimer's race
+        # Academic, and nine race labels matched no book race; five of them name one under mordheimer's race, and
+        # two more take the book race that fits (a Chaos Centaur is a Centigors-sized centaur, and the bestiary says
+        # "Gnoblars count as Greenskins"); the Bone Goliath (undead construct) and Chaos Fury (daemon) have none
         shaman, scout, skinner = (HiredSword.objects.get(name=name) for name in ("Norse Shaman", "Human Scout", "Mule Skinner"))  # fmt: skip
         self.assertEqual(shaman.initiative, 4)
         self.assertLessEqual({"Combat", "Shooting", "Speed"}, set(scout.available_skill_types))
         self.assertLessEqual({"Combat", "Academic", "Strength"}, set(skinner.available_skill_types))
         races = dict(HiredSword.objects.values_list("name", "race__name"))
-        self.assertEqual({name for name, race in races.items() if race is None}, {"Bone Goliath", "Chaos Centaur", "Chaos Fury", "Ninja Gnoblar"})  # fmt: skip
+        self.assertEqual({name for name, race in races.items() if race is None}, {"Bone Goliath", "Chaos Fury"})
         mapped = {"Chameleon Skink": "Skinks", "Dark Elf Assassin": "Elf", "Shadow Warrior": "Elf"}
         mapped |= {"Wood Elf Hunter": "Elf", "Ungor Trapper": "Ungor"}
+        mapped |= {"Chaos Centaur": "Centigors", "Ninja Gnoblar": "Goblin"}
         self.assertEqual({name: races[name] for name in mapped}, mapped)
 
     def test_the_ogre_keeps_both_swords_and_the_formulas_are_kept_beside_the_costs(self):
