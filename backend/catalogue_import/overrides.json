@@ -1,10 +1,29 @@
 {
-  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out). group_members: add/remove type slugs per group slug. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway.",
+  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out). extra_warband_types: warbands neither Broheim nor mordheimer lists. group_members: add/remove type slugs per group slug. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_warbands: item name -> the only type slugs that may buy it, and why. whole_names: names matched as a whole on the same-name list, not split at the slash.",
   "warband_aliases": {},
+  "extra_warband_types": [
+    { "name": "Albion Commandos", "race": "Human", "setting": "mutiny-in-marienburg", "source": "Mutiny in Marienburg" },
+    { "name": "Stromfels Reavers", "race": "Human", "setting": "mutiny-in-marienburg", "source": "Mutiny in Marienburg" }
+  ],
   "group_members": {
-    "add": {},
+    "add": {
+      "mercenaries": ["ostlanders", "miragleans", "remasens", "tileans", "trantios"],
+      "sigmarite": ["protectorate-of-sigmar"]
+    },
     "remove": {}
   },
   "setting_grades": {},
-  "keep_hidden_items": []
+  "keep_hidden_items": [],
+  "drop_items": ["Swivel Gun"],
+  "item_warbands": {
+    "Katar": {
+      "warbands": ["arabian-tomb-raiders"],
+      "why": "on the Arabian Tomb Raiders' Slave equipment list, not on Khemri's trading chart"
+    },
+    "Tufenk": {
+      "warbands": ["arabian-tomb-raiders"],
+      "why": "on the Arabian Tomb Raiders' Warrior equipment list, not on Khemri's trading chart"
+    }
+  },
+  "whole_names": ["Harpoon Gun/Crossbow"]
 }

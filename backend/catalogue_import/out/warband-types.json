@@ -2266,5 +2266,33 @@
     "link_url": "https://www.broheim.net/downloads/warbands/experimental/Wood%20Elves,%20the%20Asrai%20Way-farers.pdf",
     "broheim_url": "https://www.broheim.net/downloads/warbands/experimental/Wood%20Elves,%20the%20Asrai%20Way-farers.pdf",
     "mordheimer_url": ""
+  },
+  {
+    "slug": "albion-commandos",
+    "name": "Albion Commandos",
+    "setting": "mutiny-in-marienburg",
+    "setting_assumed": false,
+    "race": "Human",
+    "broheim_grade": null,
+    "mordheimer_grade": null,
+    "source": "Mutiny in Marienburg",
+    "source_code": "",
+    "link_url": "",
+    "broheim_url": "",
+    "mordheimer_url": ""
+  },
+  {
+    "slug": "stromfels-reavers",
+    "name": "Stromfels Reavers",
+    "setting": "mutiny-in-marienburg",
+    "setting_assumed": false,
+    "race": "Human",
+    "broheim_grade": null,
+    "mordheimer_grade": null,
+    "source": "Mutiny in Marienburg",
+    "source_code": "",
+    "link_url": "",
+    "broheim_url": "",
+    "mordheimer_url": ""
   }
 ]

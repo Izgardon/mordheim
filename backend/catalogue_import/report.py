@@ -40,6 +40,10 @@ def _counts(data: ReportData) -> list[str]:
     return ["## Counts", "", *_table(["What", "Rows"], rows), ""]
 
 
+def _not_on_mordheimer(data: ReportData) -> int:
+    return sum(1 for row in data.types if not row["mordheimer_url"])
+
+
 def _top(data: ReportData) -> list[str]:
     questions = sum(len(items) for items in data.group_questions.values())
     nobody = [c for c in data.conflicts if c["issue"].startswith("Its lists let no one buy it")]
@@ -47,8 +51,8 @@ def _top(data: ReportData) -> list[str]:
     return [
         "## Start here",
         "",
-        f"1. **Same-name list:** {len(data.same_names)} names appear more than once across mordheimer and MiM. Mark each main or other (below).",
-        f"2. **Warband groups:** {questions} membership questions. The big ones: whether chaos humans count as Humans, and that Good, Evil and Mercenaries hold only the 75 warbands mordheimer has (they come from its hiring lists).",
+        f"1. **Same-name list:** {len(data.same_names)} names appear more than once across mordheimer and MiM. mordheimer's entry is the main one; the PDF pass settles each MiM twin (below).",
+        f"2. **Warband groups:** {questions} membership questions left, each about types some mordheimer lists name or leave out. Good, Evil and Mercenaries come from mordheimer's hiring lists, so the {_not_on_mordheimer(data)} types mordheimer lacks get their sides in the hired-swords pass.",
         f"3. **Items no one may buy:** {len(nobody)} mordheimer items exclude every warband and permit none, mostly Khemri's. Defaults are in the contradictions table.",
         f"4. **mordheimer's contradictions:** {len(data.conflicts)} places where an item's lists and its own notes disagree, each with the default taken.",
         f'5. **Warband names:** {len(unmatched)} names in mordheimer\'s data match no warband type, or more than one. "Chaos Dwarfs" is mapped to Black Dwarfs and Wolfcloak\'s "Mercenaries" is left out; please check.',
@@ -84,15 +88,19 @@ def _same_names(data: ReportData) -> list[str]:
     rows = []
     for cluster in data.same_names:
         entries = "; ".join(f"{item['name']} ({item['origin']}, `{item['slug']}`)" for item in cluster)
-        rows.append([cluster[0]["name"], entries, ""])
-    intro = 'Both entries are kept for now, the MiM one with the variant "Mutiny in Marienburg".'
-    return ["## Same-name list", "", intro, "", *_table(["Name", "Entries", "Main / other?"], rows), ""]
+        main = next((item["slug"] for item in cluster if not item["variant"]), "")
+        rows.append([cluster[0]["name"], entries, f"`{main}`" if main else ""])
+    intro = (
+        'mordheimer\'s entry is the main one. The MiM one keeps the variant "Mutiny in Marienburg" until the PDF pass '
+        "shows whether it is the same item at another price (a price row) or a different item."
+    )
+    return ["## Same-name list", "", intro, "", *_table(["Name", "Entries", "Main"], rows), ""]
 
 
 def _groups(data: ReportData) -> list[str]:
     lines = ["## Warband group questions", ""]
     lines.append(
-        "Good, Evil and Mercenaries come from mordheimer's hiring lists, so the 88 Broheim-only warband types are in no side group yet. Fill them in later, or leave them?"
+        f"Good, Evil and Mercenaries come from mordheimer's hiring lists, so the {_not_on_mordheimer(data)} warband types mordheimer lacks are in no side group yet; the hired-swords pass fills them in."
     )
     lines.append("")
     for group in data.groups:
@@ -115,11 +123,14 @@ def _settings(data: ReportData) -> list[str]:
         if len(row["grades_seen"]) > 1 and row["grade_basis"].startswith("majority")
     ]
     assumed = [row["name"] for row in data.types if row["setting_assumed"]]
+    added = [row["name"] for row in data.types if not row["broheim_url"] and not row["mordheimer_url"]]
     lines = ["## Settings and grades", "", *_table(["Setting", "Grade", "How", "Grades of its contents"], rows), ""]
     lines.append(f"Named settings that mix grades, kept whole at the majority grade: {', '.join(mixed) or 'none'}.")
     lines.append(
         f"Warband types with no setting in either source, placed in Mordheim's part for their grade: {', '.join(assumed)}."
     )
+    if added:
+        lines.append(f"Warband types on neither site, added in overrides.json: {', '.join(added)}.")
     odd = sorted({grade for _setting, _name, grade in data.odd_grades if grade not in ("None", "")})
     if odd:
         lines.append(f"Grades not counted (not 1a to 3): {', '.join(odd)}, all on MiM items.")
@@ -152,7 +163,7 @@ def _mim(data: ReportData) -> list[str]:
     if data.mim_log.as_notes:
         rows = [[item, text] for item, text in data.mim_log.as_notes]
         lines += [
-            "Restrictions that name no warband type or group, kept as notes. Two name warbands we have no type for (Albion Commandos, Stromfels Reavers), so those rows list no warbands and read as not usually available to anyone; the rest limit a unit and leave the row open to everyone:",
+            "Restrictions that name no warband type or group, kept as notes on a row open to everyone (most limit which unit may carry the item):",
             "",
             *_table(["Item", "Restriction"], rows),
             "",
@@ -167,6 +178,8 @@ def _dropped(data: ReportData) -> list[str]:
     if renamed:
         moved = "; ".join(f"{old} -> {', '.join(new)}" for old, new in renamed)
         lines.append(f"In our current seed under another name (not dropped): {moved}.")
+    if data.item_log.dropped:
+        lines.append(f"mordheimer items dropped in overrides.json: {', '.join(data.item_log.dropped)}.")
     if data.item_log.hidden:
         lines.append(
             f'mordheimer items it hides as aliases of "Club, Mace or Hammer" (their names are its tags), not imported: {", ".join(data.item_log.hidden)}. List any in `keep_hidden_items` to import it.'

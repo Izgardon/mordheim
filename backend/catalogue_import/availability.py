@@ -15,10 +15,20 @@ class Context:
     reader: PhraseReader
     groups: list[dict[str, Any]]
     names: dict[str, str]
+    chosen: dict[str, tuple[list[str], str]] = field(default_factory=dict)  # overrides.json "item_warbands"
     conflicts: list[dict[str, str]] = field(default_factory=list)
 
     def conflict(self, item: str, issue: str, default: str) -> None:
         self.conflicts.append({"item": item, "issue": issue, "default": default})
+
+    def settle(self, item: str, slugs: list[str], why: str) -> None:
+        """overrides.json names who may buy the item: that becomes the default of each of its contradictions."""
+        default = f"only {self.label(slugs)}, set in overrides.json ({why})"
+        mine = [row for row in self.conflicts if row["item"] == item]
+        for row in mine:
+            row["default"] = default
+        if not mine:
+            self.conflict(item, "overrides.json sets who may buy it", default)
 
     def label(self, slugs: list[str] | set[str]) -> str:
         return ", ".join(sorted(self.names.get(slug, slug) for slug in slugs)) or "no one"
@@ -45,6 +55,16 @@ def _row(
 
 
 def _who(item: dict[str, Any], found: Statements, ctx: Context) -> tuple[bool, list[str], list[str]]:
+    """(for everyone, included types, excluded types), unless overrides.json names who may buy the item."""
+    listed = _listed(item, found, ctx)
+    if item["name"] not in ctx.chosen:
+        return listed
+    slugs, why = ctx.chosen[item["name"]]
+    ctx.settle(item["name"], slugs, why)
+    return False, slugs, []
+
+
+def _listed(item: dict[str, Any], found: Statements, ctx: Context) -> tuple[bool, list[str], list[str]]:
     """(for everyone, included types, excluded types) from the structured lists, checked against the notes."""
     resolve = ctx.reader.resolver.resolve_all
     name, permitted, excluded = item["name"], as_list(item.get("permittedWarbands")), item.get("excludedWarbands")

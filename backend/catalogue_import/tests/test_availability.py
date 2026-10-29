@@ -83,6 +83,16 @@ class PriceRowTests(SimpleTestCase):
         self.assertTrue(rows[0]["for_everyone"])
         self.assertEqual(len(self.ctx.conflicts), 1)
 
+    def test_overrides_name_who_may_buy_and_settle_the_contradiction(self) -> None:
+        self.ctx.chosen["Thing"] = (["skaven"], "on the Skaven list")
+        rows = mordheimer_rows(item(excludedWarbands="all", campaignSetting="khemri"), self.ctx)
+        self.assertFalse(rows[0]["for_everyone"])
+        self.assertEqual(rows[0]["warbands"], [{"type": "skaven", "excluded": False}])
+        self.assertEqual(
+            [conflict["default"] for conflict in self.ctx.conflicts],
+            ["only Skaven, set in overrides.json (on the Skaven list)"],
+        )
+
     def test_nothing_to_buy_gives_no_rows(self) -> None:
         self.assertEqual(mordheimer_rows(item(excludedWarbands="all", cost=None, availability=""), self.ctx), [])
 

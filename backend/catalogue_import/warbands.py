@@ -32,6 +32,24 @@ ALIASES: dict[str, tuple[list[str], str]] = {
 }
 
 
+def extra_rows(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """overrides.json "extra_warband_types" in warbands-merged.json's shape: no grade, no links."""
+    return [
+        {
+            "name": entry["name"],
+            "race": entry.get("race", ""),
+            "broheim_grade": None,
+            "mordheimer_grade": None,
+            "setting": entry["setting"],
+            "source_code": entry.get("source_code", ""),
+            "source": entry.get("source", ""),
+            "broheim_pdf": "",
+            "mordheimer_url": "",
+        }
+        for entry in entries
+    ]
+
+
 def build_warband_types(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """One row per Broheim warband. A name used by several types gets its source code in the slug."""
     clashes = Counter(slugify(row["name"]) for row in rows)

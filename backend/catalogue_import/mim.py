@@ -13,8 +13,6 @@ from catalogue_import.text import clean_inline
 from catalogue_import.warbands import ALIASES, Resolver
 
 SETTING = "mutiny-in-marienburg"
-# Restrictions naming a warband we have no type for: who may buy, so the row lists no one rather than everyone.
-UNKNOWN_WARBANDS = {"albion commandos only", "stromfels reavers only"}
 
 
 @dataclass
@@ -90,7 +88,7 @@ def _availability(item: dict[str, Any], row: dict[str, Any], reader: MimReader, 
         "label": "",
         **mim_cost(row.get("cost"), row.get("variable_cost")),
         "rarity": rarity,
-        "for_everyone": warbands is None and norm_name(restriction) not in UNKNOWN_WARBANDS,
+        "for_everyone": warbands is None,
         "warbands": warbands or [],
         "note": note,
     }

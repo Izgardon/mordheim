@@ -31,28 +31,21 @@ GROUP_DEFS = [
         "race",
         {"Human", "Human Wizard", "Human Mutant", "Chaos Human", "Chaos Human/Demon"},
         hire_pattern=r"any human warband",
-        item_phrase="humans",
-        questions=[
-            "Chaos humans (the Possessed, Norse, Marauders, Carnival of Chaos) are in Humans as well as Chaos. Keep them?"
-        ],
+        item_phrase="humans",  # chaos humans count too (William, 29 Oct 2026)
     ),
     GroupDef(
         "elves",
         "Elves",
         "race",
         {"High Elf", "Wood Elf", "Dark Elf"},
-        item_phrase="elves",
-        questions=[
-            'Dark Elves are in Elves, as mordheimer\'s "Elves only" Elven Steed reads. MiM\'s Eagle-eye Bolt Thrower says "Elves & Dark Elves", as if Elves meant good elves. Keep Dark Elves in?'
-        ],
+        item_phrase="elves",  # Dark Elves count, as mordheimer's "Elves only" Elven Steed reads (William, 29 Oct 2026)
     ),
     GroupDef(
         "dwarfs",
         "Dwarfs",
         "race",
         {"Dwarf"},
-        item_phrase="dwarfs",
-        questions=["Chaos Dwarfs (Black Dwarfs, Sons of Hashut) have their own group and are not in Dwarfs. Right?"],
+        item_phrase="dwarfs",  # Chaos Dwarfs are their own group, not Dwarfs (William, 29 Oct 2026)
     ),
     GroupDef("chaos-dwarfs", "Chaos Dwarfs", "race", {"Chaos Dwarf"}, item_phrase="chaos dwarfs"),
     GroupDef("halflings", "Halflings", "race", {"Halfling"}),
@@ -72,9 +65,9 @@ GROUP_DEFS = [
         "race",
         {"Goblin", "Night Goblin", "Skaven/Goblin"},
         item_phrase="goblins",
-        include={
-            "orc-mob": 'mordheimer\'s "Goblins only" items (Giant Spider, Giant Wolf, Ball and Chain) list the Orc Mob, which fields goblins'
-        },
+        # mordheimer's "Goblins only" items (Giant Spider, Giant Wolf, Ball and Chain) list the Orc Mob, which fields
+        # goblins (kept in: William, 29 Oct 2026)
+        include={"orc-mob": ""},
     ),
     GroupDef("orcs", "Orcs", "race", {"Orcs & Goblins"}, item_phrase="orcs"),
     GroupDef(
@@ -102,10 +95,6 @@ GROUP_DEFS = [
         "Sigmarite",
         "side",
         include={"witch-hunters": "", "sisters-of-sigmar": ""},  # mordheimer's "not available to" pairs
-        questions=[
-            "Sigmarite is the Witch Hunters and the Sisters of Sigmar, the pair mordheimer's exclusions name. "
-            "Should the Protectorate of Sigmar join? Every item that excludes Sigmarite would then exclude it too."
-        ],
     ),
     GroupDef(
         "mercenaries",
@@ -114,9 +103,6 @@ GROUP_DEFS = [
         exclude={"witch-hunters"},
         by_evidence=True,
         hire_pattern=r"^(human )?mercenaries( and witch hunters)? may hire",
-        questions=[
-            'The Ostlanders and the four Tilean warbands are mercenaries in their books, but no "Mercenaries may hire" list on mordheimer names them, so they are out. Add them?'
-        ],
     ),
     GroupDef("good", "Good", "side", by_evidence=True, hire_pattern=r"any (good[- ]aligned|good|non-evil) warband"),
     GroupDef(
@@ -217,11 +203,13 @@ def build_groups(
         if gdef.by_evidence:
             members |= _majority(lists, gdef.exclude)[0]
         questions[gdef.slug] = _questions(gdef, members, lists, ctx)
-        members = (members | set(overrides.get("add", {}).get(gdef.slug, []))) - set(
-            overrides.get("remove", {}).get(gdef.slug, [])
-        )
+        added = set(overrides.get("add", {}).get(gdef.slug, []))
+        removed = set(overrides.get("remove", {}).get(gdef.slug, []))
+        members = (members | added) - removed
         members &= set(ctx["order"])  # a slug in overrides.json that names no type is ignored
         basis = f"most of {len(lists)} mordheimer hiring lists" if gdef.by_evidence else "race field and named types"
+        if added or removed:
+            basis += ", adjusted in overrides.json"
         groups.append(
             {
                 "slug": gdef.slug,

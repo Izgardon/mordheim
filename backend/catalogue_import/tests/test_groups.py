@@ -4,7 +4,7 @@ from django.test import SimpleTestCase
 
 from catalogue_import.groups import build_groups, collapse
 from catalogue_import.tests.world import warband, world
-from catalogue_import.warbands import Resolver, build_warband_types
+from catalogue_import.warbands import Resolver, build_warband_types, extra_rows
 
 GROUPS = [
     {"slug": "solo", "members": ["skaven"]},
@@ -64,6 +64,17 @@ class BuildGroupTests(SimpleTestCase):
 
 
 class ResolverTests(SimpleTestCase):
+    def test_extra_types_from_overrides_resolve_by_name(self) -> None:
+        extra = [{"name": "Stromfels Reavers", "race": "Human", "setting": "mutiny-in-marienburg"}]
+        types = build_warband_types([warband("Skaven", "Skaven"), *extra_rows(extra)])
+        reavers = types[1]
+        self.assertEqual(
+            (reavers["slug"], reavers["setting"], reavers["setting_assumed"]),
+            ("stromfels-reavers", "mutiny-in-marienburg", False),
+        )
+        self.assertEqual((reavers["link_url"], reavers["broheim_grade"]), ("", None))
+        self.assertEqual(Resolver(types).resolve("Stromfels Reavers", "items"), ["stromfels-reavers"])
+
     def test_shared_names_get_their_source_code_and_odd_names_are_logged(self) -> None:
         rows = [warband("Night Goblins", "Night Goblin", "MIC"), warband("Night Goblins", "Night Goblin", "WEB")]
         types = build_warband_types(rows)

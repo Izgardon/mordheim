@@ -2,6 +2,7 @@
 
 import re
 from collections import Counter
+from collections.abc import Collection
 from pathlib import Path
 from typing import Any
 
@@ -15,7 +16,7 @@ from catalogue_import.report import ReportData, render_report
 from catalogue_import.rules import build_shared_rules, index_rules
 from catalogue_import.sources import ITEM_DATA, PACKAGE, Sources, load_sources
 from catalogue_import.statements import PhraseReader
-from catalogue_import.warbands import Resolver, build_warband_types
+from catalogue_import.warbands import Resolver, build_warband_types, extra_rows
 
 MIM_VARIANT = "Mutiny in Marienburg"
 
@@ -26,8 +27,9 @@ def name_keys(name: str) -> set[str]:
     return {loose_key(part) for part in parts if loose_key(part)}
 
 
-def same_name_clusters(items: list[dict[str, Any]]) -> list[list[int]]:
-    """Indexes of items that share a name once case, spacing and punctuation are ignored."""
+def same_name_clusters(items: list[dict[str, Any]], whole: Collection[str] = ()) -> list[list[int]]:
+    """Indexes of items that share a name once case, spacing and punctuation are ignored. A name in whole matches
+    only as a whole ("Harpoon Gun/Crossbow" is not a Crossbow)."""
     parent = list(range(len(items)))
 
     def root(index: int) -> int:
@@ -37,7 +39,8 @@ def same_name_clusters(items: list[dict[str, Any]]) -> list[list[int]]:
 
     owner: dict[str, int] = {}
     for index, item in enumerate(items):
-        for key in sorted(name_keys(item["name"])):
+        keys = {loose_key(item["name"])} if item["name"] in whole else name_keys(item["name"])
+        for key in sorted(keys):
             if key in owner:
                 parent[root(index)] = root(owner[key])
             else:
@@ -48,9 +51,10 @@ def same_name_clusters(items: list[dict[str, Any]]) -> list[list[int]]:
     return [members for members in clusters.values() if len(members) > 1]
 
 
-def assign_slugs(items: list[dict[str, Any]]) -> list[list[dict[str, Any]]]:
-    """Slugs from names; a MiM item that shares a name with a mordheimer one gets the MiM variant and suffix."""
-    clusters = same_name_clusters(items)
+def assign_slugs(items: list[dict[str, Any]], whole: Collection[str] = ()) -> list[list[dict[str, Any]]]:
+    """Slugs from names. mordheimer's entry is the main one: a MiM item sharing its name gets the MiM variant and
+    suffix."""
+    clusters = same_name_clusters(items, whole)
     for members in clusters:
         if any(items[i]["origin"] == "mordheimer" for i in members):
             for i in members:
@@ -93,12 +97,15 @@ def display_names(types: list[dict[str, Any]]) -> dict[str, str]:
     }
 
 
-def seed_changes(seed_names: list[str], items: list[dict[str, Any]]) -> tuple[list[tuple[str, list[str]]], list[str]]:
-    """Seed items found only under another name (with what they became), and seed items dropped."""
+def seed_changes(
+    seed_names: list[str], items: list[dict[str, Any]], dropped_on_purpose: Collection[str] = ()
+) -> tuple[list[tuple[str, list[str]]], list[str]]:
+    """Seed items found only under another name (with what they became), and seed items on neither list (the ones
+    overrides.json drops are reported on their own)."""
     kept = set().union(*(name_keys(item["name"]) for item in items))
     renamed, dropped = [], []
     for name in seed_names:
-        if name_keys(name) & kept:
+        if name_keys(name) & kept or name in dropped_on_purpose:
             continue
         matches = [item["name"] for item in items if _base_key(item["name"]) == _base_key(name)]
         if matches:
@@ -111,7 +118,7 @@ def seed_changes(seed_names: list[str], items: list[dict[str, Any]]) -> tuple[li
 def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str]:
     sources = load_sources(package, item_data)
     overrides = sources.overrides
-    types = build_warband_types(sources.warbands)
+    types = build_warband_types(sources.warbands + extra_rows(overrides.get("extra_warband_types", [])))
     resolver = Resolver(types, overrides.get("warband_aliases"))
     evidence = collect_evidence(types, sources)
     settings = build_settings(evidence, overrides.get("setting_grades", {}))
@@ -119,13 +126,16 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     shared = build_shared_rules(sources.items)
     index = index_rules(shared)
     names = display_names(types)
-    ctx = Context(PhraseReader(resolver, groups), groups, names)
+    chosen = {name: (entry["warbands"], entry["why"]) for name, entry in overrides.get("item_warbands", {}).items()}
+    ctx = Context(PhraseReader(resolver, groups), groups, names, chosen)
     item_log, mim_log = ItemLog(), MimLog()
-    items = mordheimer_items(sources.items, overrides.get("keep_hidden_items", []), index, ctx, item_log)
+    items = mordheimer_items(
+        sources.items, overrides.get("keep_hidden_items", []), overrides.get("drop_items", []), index, ctx, item_log
+    )
     reader = MimReader(resolver, groups)
     mim = [mim_item(item, sources.properties, index, reader, mim_log) for item in sources.mim_items]
     everything = items + mim
-    same_names = assign_slugs(everything)
+    same_names = assign_slugs(everything, overrides.get("whole_names", []))
     _resolve_everything(sources, resolver)
     counts = {
         "settings": len(settings),
@@ -148,7 +158,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         mim,
         mim_log,
         item_log,
-        seed_changes(sources.seed_names, everything),
+        seed_changes(sources.seed_names, everything, item_log.dropped),
         shared,
         evidence.odd_grades,
         names,

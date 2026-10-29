@@ -3146,75 +3146,6 @@
     ]
   },
   {
-    "slug": "swivel-gun",
-    "name": "Swivel Gun",
-    "variant": "",
-    "origin": "mordheimer",
-    "type": "Weapon",
-    "subtype": "Blackpowder",
-    "setting": "mordheim-1b",
-    "source": "Town Cryer #9",
-    "link_url": "https://mordheimer.net/docs/weapons-armour/blackpowder#swivel-gun",
-    "tags": [
-      "swivel gun",
-      "swivel guns"
-    ],
-    "flavour": "Pirate Gunners sometimes construct and carry into battle a smaller and lighter version of the real swivel cannons normally attached to pivoting mounts on the ship's railing or sides. Though smaller than regular cannons, swivel guns are larger than normal handguns, so big that they must be held up with the support of wooden support. They are cumbersome, and prone to failure due to imperfect castings or poorly mixed blackpowder, but most gunners agree that they make up for it in sheer power.",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": false,
-    "rules": [
-      {
-        "rule": "prepare-shot"
-      },
-      {
-        "rule": "move-or-fire"
-      },
-      {
-        "name": "Maximum 1 per warband",
-        "summary": "A Pirate Warband may have only one Swivel Gun at a time.",
-        "text": "A Pirate Warband may have only one Swivel Gun at a time, due to the time it takes the ship’s Master Gunner to construct one.",
-        "tables": []
-      },
-      {
-        "rule": "cumbersome"
-      },
-      {
-        "name": "Blackpowder Rules",
-        "summary": "Always uses optional Blackpowder Weapons rules.",
-        "text": "The normally optional rules for Blackpowder weapons are always in effect for Swivel Guns, due to unpredictable nature of the local materials used in their construction.",
-        "tables": []
-      },
-      {
-        "name": "Special Ammunition",
-        "summary": "Ammo must be bought for each game and declared before firing.",
-        "text": "Swivel Guns use nonstandard ammunition types, which must be bought for each game. Each type only lasts one game, so if it is used in a game it cannot be used again until another supply is bought. Before firing, the Gunner must declare which type is being used, if he has more than one type available in the game.\n\nBall Shot\n\nA Swivel Gun firing these heavy lead balls can stop even a charging Ogre dead in his tracks!\n\nCost: 5 gc\n\nMaximum Range: 36\";\nStrength: 5;\nSpecial Rule: Armour Save -2, Concussion.\n\nConcussion: The impact of the heavy lead projectile is enough to rattle even the hardiest warrior. Treat any resulting Injury Rolls of 2-4 as a Stunned result.\n\nChain Shot\n\nThese lengths of chain and linked metal don't cause as much damage, but can entangle an enemy model and bring him to his knees.\n\nCost: 2 gc\n\nMaximum Range: 24\";\nStrength: 4;\nSpecial Rule: Armour Save -1, All Wrapped Up!\n\nAll Wrapped Up! Enemy hit by Chain Shot which are not wounded are Knocked Down on a roll of 4+, even if they normally can never be Knocked Down.\n\nGrape Shot\n\nVery small pellets, rocks, metal scrap, even rock salt are poured into the barrel from prepared canisters, producing a cloud of shrapnel when fired.\n\nCost: 2 gc\n\nMaximum Range: 24\";\nStrength: 3;\nSpecial Rule: It's Everywhere!\n\nIt's Everywhere! If a hit is scored, D6 other enemy models within 4\" of the target and also in Line of Sight will automatically take a single hit. If the original target was in the open, no hits can be applied to models in cover though (only if the original target was in cover can hits go to models in cover as well). The closest enemy model to the target must take the first hit, then the next closest, and so on. Models in Hiding will also count towards being close to the target, and can be hit as well. There is no Armour Save modifier from Grape Shot hits. Pirates know to duck out of the way when they hear a Swivel Gun going off, and thus are never hit by friendly Grape Shot.",
-        "tables": []
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 65,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "pirates",
-            "excluded": false
-          }
-        ],
-        "note": "Gunners only; max one per warband"
-      }
-    ]
-  },
-  {
     "slug": "warplock-pistol",
     "name": "Warplock pistol",
     "variant": "",
@@ -5043,8 +4974,13 @@
         "dice_multiplier": null,
         "cost_note": "",
         "rarity": 4,
-        "for_everyone": true,
-        "warbands": [],
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "arabian-tomb-raiders",
+            "excluded": false
+          }
+        ],
         "note": ""
       }
     ]
@@ -6793,7 +6729,11 @@
         "for_everyone": true,
         "warbands": [
           {
-            "group": "sigmarite",
+            "type": "sisters-of-sigmar",
+            "excluded": true
+          },
+          {
+            "type": "witch-hunters",
             "excluded": true
           }
         ],
@@ -6940,7 +6880,11 @@
         "for_everyone": false,
         "warbands": [
           {
-            "group": "sigmarite",
+            "type": "sisters-of-sigmar",
+            "excluded": false
+          },
+          {
+            "type": "witch-hunters",
             "excluded": false
           }
         ],
@@ -7459,7 +7403,11 @@
         "for_everyone": true,
         "warbands": [
           {
-            "group": "sigmarite",
+            "type": "sisters-of-sigmar",
+            "excluded": true
+          },
+          {
+            "type": "witch-hunters",
             "excluded": true
           }
         ],
@@ -8443,7 +8391,11 @@
         "for_everyone": false,
         "warbands": [
           {
-            "group": "sigmarite",
+            "type": "witch-hunters",
+            "excluded": false
+          },
+          {
+            "type": "sisters-of-sigmar",
             "excluded": false
           }
         ],
@@ -8491,7 +8443,11 @@
         "for_everyone": false,
         "warbands": [
           {
-            "group": "sigmarite",
+            "type": "sisters-of-sigmar",
+            "excluded": false
+          },
+          {
+            "type": "witch-hunters",
             "excluded": false
           }
         ],
@@ -11417,7 +11373,11 @@
         "for_everyone": true,
         "warbands": [
           {
-            "group": "sigmarite",
+            "type": "sisters-of-sigmar",
+            "excluded": true
+          },
+          {
+            "type": "witch-hunters",
             "excluded": true
           }
         ],
@@ -13510,8 +13470,13 @@
         "dice_multiplier": null,
         "cost_note": "",
         "rarity": 10,
-        "for_everyone": true,
-        "warbands": [],
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "arabian-tomb-raiders",
+            "excluded": false
+          }
+        ],
         "note": ""
       }
     ]
@@ -13554,8 +13519,13 @@
         "cost_note": "",
         "rarity": null,
         "for_everyone": false,
-        "warbands": [],
-        "note": "Albion Commandos only"
+        "warbands": [
+          {
+            "type": "albion-commandos",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -14148,9 +14118,9 @@
     ]
   },
   {
-    "slug": "harpoon-gun-crossbow-mim",
+    "slug": "harpoon-gun-crossbow",
     "name": "Harpoon Gun/Crossbow",
-    "variant": "Mutiny in Marienburg",
+    "variant": "",
     "origin": "mim",
     "type": "Weapon",
     "subtype": "Ranged",
@@ -15685,8 +15655,13 @@
         "cost_note": "",
         "rarity": 10,
         "for_everyone": false,
-        "warbands": [],
-        "note": "Stromfels Reavers only"
+        "warbands": [
+          {
+            "type": "stromfels-reavers",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },

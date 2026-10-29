@@ -26,6 +26,7 @@ class ItemLog:
     """What the report needs from the item pass."""
 
     hidden: list[str] = field(default_factory=list)
+    dropped: list[str] = field(default_factory=list)
     shortened: list[tuple[str, str, str]] = field(default_factory=list)
 
 
@@ -78,11 +79,20 @@ def mordheimer_item(
 
 
 def mordheimer_items(
-    items: list[dict[str, Any]], keep_hidden: list[str], index: dict[str, dict[str, Any]], ctx: Context, log: ItemLog
+    items: list[dict[str, Any]],
+    keep_hidden: list[str],
+    drop: list[str],
+    index: dict[str, dict[str, Any]],
+    ctx: Context,
+    log: ItemLog,
 ) -> list[dict[str, Any]]:
-    """Every mordheimer item except the ones it hides (Club, Mace, Hammer, Staff: aliases of "Club, Mace or Hammer")."""
+    """Every mordheimer item except the ones it hides (Club, Mace, Hammer, Staff: aliases of "Club, Mace or Hammer")
+    and the ones overrides.json drops."""
     converted = []
     for item in items:
+        if item["name"] in drop:
+            log.dropped.append(item["name"])
+            continue
         if item.get("hideFromContent") and item["name"] not in keep_hidden:
             log.hidden.append(item["name"])
             continue

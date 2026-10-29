@@ -90,7 +90,9 @@
       "mordheimers-fanatics",
       "ostermark-roadwardens",
       "the-innocents",
-      "tilean-thespian-troupe"
+      "tilean-thespian-troupe",
+      "albion-commandos",
+      "stromfels-reavers"
     ]
   },
   {
@@ -376,18 +378,19 @@
     "slug": "sigmarite",
     "name": "Sigmarite",
     "kind": "side",
-    "basis": "race field and named types",
+    "basis": "race field and named types, adjusted in overrides.json",
     "evidence": [],
     "members": [
       "sisters-of-sigmar",
-      "witch-hunters"
+      "witch-hunters",
+      "protectorate-of-sigmar"
     ]
   },
   {
     "slug": "mercenaries",
     "name": "Mercenaries",
     "kind": "side",
-    "basis": "most of 6 mordheimer hiring lists",
+    "basis": "most of 6 mordheimer hiring lists, adjusted in overrides.json",
     "evidence": [
       "Dwarf Troll Slayer",
       "Elf Ranger",
@@ -401,10 +404,15 @@
       "kislevites",
       "marienburgers",
       "middenheimers",
+      "ostlanders",
       "reiklanders",
       "hochland-bandits",
+      "miragleans",
       "ostermarkers",
       "pirates",
+      "remasens",
+      "tileans",
+      "trantios",
       "merchant-caravans",
       "dreamwalkers-cult-of-morr",
       "mazzalupo",
