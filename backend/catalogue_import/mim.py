@@ -36,7 +36,8 @@ class MimReader:
             if form in self.by_group:
                 return list(self.by_group[form]["members"])
             form = SHORT_FORMS.get(form, form)
-            slugs = self.resolver.by_name.get(form) or (ALIASES[form][0] if form in ALIASES else None)
+            known = self.resolver.overrides.get(form) or self.resolver.by_name.get(form)
+            slugs = known or (ALIASES[form][0] if form in ALIASES else None)
             if slugs:
                 return list(slugs)
         return None

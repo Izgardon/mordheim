@@ -72,6 +72,16 @@ def assign_slugs(items: list[dict[str, Any]], whole: Collection[str] = ()) -> li
     return [[items[i] for i in members] for members in clusters]
 
 
+def add_notes(items: list[dict[str, Any]], notes: dict[str, str]) -> None:
+    """overrides.json "item_notes": a soft note on every price row of the named item."""
+    for item in items:
+        note = notes.get(item["name"])
+        if not note:
+            continue
+        for row in item["availabilities"]:
+            row["note"] = "; ".join(filter(None, [row["note"], note]))
+
+
 def _resolve_everything(sources: Sources, resolver: Resolver) -> None:
     """Runs every warband name through the resolver so the report lists all that needed help."""
     for kind, rows in (
@@ -135,6 +145,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     reader = MimReader(resolver, groups)
     mim = [mim_item(item, sources.properties, index, reader, mim_log) for item in sources.mim_items]
     everything = items + mim
+    add_notes(everything, overrides.get("item_notes", {}))
     same_names = assign_slugs(everything, overrides.get("whole_names", []))
     _resolve_everything(sources, resolver)
     counts = {

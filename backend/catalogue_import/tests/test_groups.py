@@ -65,15 +65,15 @@ class BuildGroupTests(SimpleTestCase):
 
 class ResolverTests(SimpleTestCase):
     def test_extra_types_from_overrides_resolve_by_name(self) -> None:
-        extra = [{"name": "Stromfels Reavers", "race": "Human", "setting": "mutiny-in-marienburg"}]
+        extra = [{"name": "Albion Commandos", "race": "Human", "setting": "mutiny-in-marienburg"}]
         types = build_warband_types([warband("Skaven", "Skaven"), *extra_rows(extra)])
-        reavers = types[1]
+        commandos = types[1]
         self.assertEqual(
-            (reavers["slug"], reavers["setting"], reavers["setting_assumed"]),
-            ("stromfels-reavers", "mutiny-in-marienburg", False),
+            (commandos["slug"], commandos["setting"], commandos["setting_assumed"]),
+            ("albion-commandos", "mutiny-in-marienburg", False),
         )
-        self.assertEqual((reavers["link_url"], reavers["broheim_grade"]), ("", None))
-        self.assertEqual(Resolver(types).resolve("Stromfels Reavers", "items"), ["stromfels-reavers"])
+        self.assertEqual((commandos["link_url"], commandos["broheim_grade"]), ("", None))
+        self.assertEqual(Resolver(types).resolve("Albion Commandos", "items"), ["albion-commandos"])
 
     def test_shared_names_get_their_source_code_and_odd_names_are_logged(self) -> None:
         rows = [warband("Night Goblins", "Night Goblin", "MIC"), warband("Night Goblins", "Night Goblin", "WEB")]

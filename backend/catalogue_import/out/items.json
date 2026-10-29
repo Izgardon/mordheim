@@ -15657,11 +15657,11 @@
         "for_everyone": false,
         "warbands": [
           {
-            "type": "stromfels-reavers",
+            "type": "shallows-beasts",
             "excluded": false
           }
         ],
-        "note": ""
+        "note": "Priest of Stromfels only"
       }
     ]
   },

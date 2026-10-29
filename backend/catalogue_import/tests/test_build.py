@@ -1,11 +1,13 @@
-from typing import ClassVar
+from typing import Any, ClassVar
 
 from django.test import SimpleTestCase
 
 from catalogue_import.items import ItemLog, mordheimer_items
-from catalogue_import.pipeline import build, same_name_clusters, seed_changes
+from catalogue_import.mim import MimReader
+from catalogue_import.pipeline import add_notes, build, same_name_clusters, seed_changes
 from catalogue_import.sources import OUT
 from catalogue_import.tests.world import world
+from catalogue_import.warbands import Resolver
 
 
 class BuildTests(SimpleTestCase):
@@ -42,3 +44,11 @@ class BuildTests(SimpleTestCase):
         self.assertEqual([item["name"] for item in items], ["Sword"])
         self.assertEqual(log.dropped, ["Swivel Gun"])
         self.assertEqual(seed_changes(["Sword", "Swivel Gun", "Ladders"], items, log.dropped), ([], ["Ladders"]))
+
+    def test_a_mim_restriction_follows_a_warband_alias_and_item_notes_are_added(self) -> None:
+        types, _resolver, groups, _ctx = world()
+        reader = MimReader(Resolver(types, {"Stromfels Reavers": ["skaven"]}), groups)
+        self.assertEqual(reader.warbands("Stromfels Reavers only"), [{"type": "skaven", "excluded": False}])
+        items: list[dict[str, Any]] = [{"name": "Heart", "availabilities": [{"note": ""}, {"note": "Rare 10"}]}]
+        add_notes(items, {"Heart": "Priest only"})
+        self.assertEqual([row["note"] for row in items[0]["availabilities"]], ["Priest only", "Rare 10; Priest only"])

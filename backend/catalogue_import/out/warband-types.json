@@ -2280,19 +2280,5 @@
     "link_url": "",
     "broheim_url": "",
     "mordheimer_url": ""
-  },
-  {
-    "slug": "stromfels-reavers",
-    "name": "Stromfels Reavers",
-    "setting": "mutiny-in-marienburg",
-    "setting_assumed": false,
-    "race": "Human",
-    "broheim_grade": null,
-    "mordheimer_grade": null,
-    "source": "Mutiny in Marienburg",
-    "source_code": "",
-    "link_url": "",
-    "broheim_url": "",
-    "mordheimer_url": ""
   }
 ]
