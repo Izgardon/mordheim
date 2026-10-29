@@ -121,7 +121,7 @@ export function seriousInjuryRoll(
     code = rolls[0];
     resultCode = String(code);
   }
-  const row: BattleInjuryTableRow | undefined = rules?.injury_tables[rollType].find(
+  const row: BattleInjuryTableRow | undefined = rules?.injury_tables[rollType]?.find(
     (entry) => code >= entry.low && code <= entry.high
   );
   return {

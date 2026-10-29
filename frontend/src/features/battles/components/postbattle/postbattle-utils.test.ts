@@ -489,6 +489,21 @@ describe("postbattle-utils", () => {
         cost_expression: "1 piece of wyrdstone",
       });
     });
+
+    it("drafts no upkeep for a hireling missing games: he missed this battle", () => {
+      const [johann, shade] = kindsRoster.hirelings;
+      const missing = {
+        ...kindsRoster,
+        hirelings: [
+          { ...johann, missingGames: 2 },
+          { ...shade, stays: "always" as const },
+        ],
+      };
+
+      const draft = buildPostbattleDraft(kindsParticipant, missing, [], kindsSuggestion);
+
+      expect(Object.keys(draft.upkeep.entries)).toEqual(["hireling:22"]);
+    });
   });
 
   it("restores a roll saved with the draft, and calls it settled only once every die is set (BUG-71)", () => {

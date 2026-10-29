@@ -120,6 +120,7 @@ export default function FinalizeSummaryPanels({
           className: row.byHand ? "text-amber-300" : undefined,
         }))}
       />
+      <OptionalPanel title="Missing games" lines={summary.missingGames} />
       <SummaryPanel title="XP Awards">
         <SummaryLines
           lines={summary.xpAwards.map((row) => ({

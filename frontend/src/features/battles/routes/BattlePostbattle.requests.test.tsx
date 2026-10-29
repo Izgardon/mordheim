@@ -464,6 +464,80 @@ describe("BattlePostbattle requests", () => {
     expect(screen.queryByRole("checkbox", { name: /^Apply Arm Wound/ })).toBeNull();
   });
 
+  it("offers the missing games an injury keeps a hero out for, unticked; ticking saves them and the summary lists them", async () => {
+    const user = setupUser();
+    const mine = server.participants.find((entry) => entry.user.id === ME.id)!;
+    const deepWound = {
+      roll_type: "d66",
+      rolls: [4, 7],
+      result_code: "47",
+      result_label: "Deep Wound",
+      dead_suggestion: false,
+      effect: { kind: "manual", misses: { games: 2, dice: "D3" } },
+    };
+    mine.postbattle_json = {
+      exploration: { dice_values: [], resource_id: null },
+      finds: { gold_crowns: 0, items: [] },
+      upkeep: { pay_upkeep: true, entries: {} },
+      unit_results: { "hero:3": { serious_injury_rolls: [deepWound] } },
+    } as unknown as BattlePostbattleState;
+    await renderPostbattle();
+
+    const tick = screen.getByRole("checkbox", { name: "Set Missing games at finalise for Rolf" });
+    expect(tick).not.toBeChecked();
+    const games = within(row("Rolf")).getByRole("spinbutton", { name: /the book rolls D3/ });
+    expect(games).toHaveValue(2);
+    await commit(user, games, "3");
+    expect(draftBodies()).toHaveLength(0); // a number alone sets nothing
+    await user.click(tick);
+
+    await waitFor(() => expect(draftBodies()).toHaveLength(1));
+    expect(draftBodies()[0].unit_results["hero:3"].missing_games).toEqual({
+      games: 3,
+      reason: "Deep Wound",
+    });
+    await user.click(screen.getByRole("button", { name: "Finalise Postbattle" }));
+    const dialog = screen.getByRole("dialog", { name: "Finalise Postbattle" });
+    expect(dialog).toHaveTextContent("Missing games");
+    expect(dialog).toHaveTextContent("Rolf will miss the next 3 games: Deep Wound.");
+  });
+
+  it("takes back the ticked missing games when the hero rolls again", async () => {
+    const user = setupUser();
+    const mine = server.participants.find((entry) => entry.user.id === ME.id)!;
+    mine.postbattle_json = {
+      exploration: { dice_values: [], resource_id: null },
+      finds: { gold_crowns: 0, items: [] },
+      upkeep: { pay_upkeep: true, entries: {} },
+      unit_results: {
+        "hero:3": {
+          missing_games: { games: 1, reason: "Captured" },
+          serious_injury_rolls: [
+            {
+              roll_type: "d66",
+              rolls: [6, 1],
+              result_code: "61",
+              result_label: "Captured",
+              dead_suggestion: false,
+              effect: { kind: "manual", misses: { games: 1 } },
+            },
+          ],
+        },
+      },
+    } as unknown as BattlePostbattleState;
+    await renderPostbattle();
+    expect(
+      screen.getByRole("checkbox", { name: "Set Missing games at finalise for Rolf" })
+    ).toBeChecked();
+
+    await user.click(within(row("Rolf")).getByRole("button", { name: "Serious Injury Roll" }));
+    const dialog = screen.getByRole("dialog", { name: "Serious Injury Roll" });
+    await user.click(within(dialog).getByRole("button", { name: /^Roll/ }));
+
+    await waitFor(() => expect(draftBodies()).toHaveLength(1));
+    expect(draftBodies()[0].unit_results["hero:3"]).not.toHaveProperty("missing_games");
+  });
+
   it("says why each XP is suggested, and counts the server's level-ups in the summary (BATL-NEW-09, -10)", async () => {
     const user = setupUser();
     server.suggested_postbattle = {
