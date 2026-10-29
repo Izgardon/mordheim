@@ -2,8 +2,9 @@
 
 The rows are locked in the battle lock order (services/locks.py): the warband, then its heroes, the hired swords the
 draft names, the henchmen of the groups it names and those groups; the battle row is not held. Each unit comes with
-the names of what it carries (for a unit that dies here), the warband with the draft's exploration resource, and the
-battle's live kill events and the player's own item uses come in one read.
+the names of what it carries (for a unit that dies here), the warband with the draft's exploration resource and
+whether any unit of it misses games, and the battle's live kill events and the player's own item uses come in one
+read.
 """
 
 from dataclasses import dataclass, field
@@ -22,6 +23,7 @@ from apps.warbands.models import (
     HirelingItem,
     Warband,
     WarbandResource,
+    on_roster,
 )
 
 from ...models import Battle, BattleEvent, BattleParticipant
@@ -39,6 +41,7 @@ class FinaliseContext:
     warband: Warband
     resource_found: bool
     resource_name: str | None
+    has_missing: bool  # a unit of the warband misses games: finalise counts this battle off (missing.py)
     heroes: list[Hero]  # every hero of the warband, in id order (the crown is chosen among them)
     hirelings: dict[int, Hireling]  # those the draft names, as results or upkeep
     henchmen: list[Henchman]  # every member of the groups the draft names
@@ -61,9 +64,17 @@ def _ids(draft: dict, unit_type: str) -> list[int]:
     return [parsed["unit_id"] for parsed in keys if parsed["unit_type"] == unit_type]
 
 
+MISSING_UNITS: dict[str, Any] = {"missing_heroes": Hero, "missing_groups": HenchmenGroup, "missing_hirelings": Hireling}
+
+
 def _locked_warband(warband_id: int, resource_id: int | None) -> Warband:
-    """The warband, locked, with the draft's exploration resource (`resource_found`, `resource_name`)."""
-    warbands = locked(Warband.objects.all())
+    """The warband, locked, with the draft's exploration resource (`resource_found`, `resource_name`) and whether any of
+    its units misses games (one per kind), so a finalise without them reads none."""
+    missing = {
+        name: Exists(on_roster(model.objects.filter(warband_id=OuterRef("pk"), missing_games__gt=0)))
+        for name, model in MISSING_UNITS.items()
+    }
+    warbands = locked(Warband.objects.annotate(**missing))
     if resource_id is not None:
         resources = WarbandResource.objects.filter(id=resource_id, warband_id=OuterRef("pk"))
         warbands = warbands.annotate(
@@ -118,6 +129,7 @@ def load_context(battle: Battle, participant: BattleParticipant, draft: dict) ->
         warband=warband,
         resource_found=bool(getattr(warband, "resource_found", False)),
         resource_name=getattr(warband, "resource_name", None),
+        has_missing=any(getattr(warband, name) for name in MISSING_UNITS),
         heroes=heroes,
         hirelings=hirelings,
         henchmen=henchmen,

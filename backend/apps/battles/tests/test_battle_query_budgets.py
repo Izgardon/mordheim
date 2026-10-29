@@ -242,5 +242,6 @@ class BattleQueryBudgetTests(BattleTestCase):
         sql = [query["sql"] for query in captured]
 
         warband = next(i for i, text in enumerate(sql) if "FOR UPDATE" in text and 'FROM "warband" WHERE' in text)
-        hero = next(i for i, text in enumerate(sql) if "FOR UPDATE" in text and 'FROM "hero"' in text)
+        # the warband's lock reads whether a unit misses games in subqueries (FROM "hero" U0), which lock nothing
+        hero = next(i for i, text in enumerate(sql) if "FOR UPDATE" in text and 'FROM "hero" WHERE' in text)
         self.assertLess(warband, hero)

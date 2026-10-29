@@ -37,6 +37,7 @@ class UnitOutcome:
     stat_logs: list[dict] = field(default_factory=list)
     items_lost: list[dict | None] = field(default_factory=list)  # what each unit dying here takes with him
     mounts_lost: list[dict] = field(default_factory=list)  # each mount that died after the battle (mounts.py)
+    missing_logs: list[tuple[str, str, dict]] = field(default_factory=list)  # missing games counted down (missing.py)
 
 
 @dataclass

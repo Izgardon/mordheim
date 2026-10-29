@@ -112,6 +112,12 @@ def _stats(unit) -> dict:
     }
 
 
+def _missing(unit) -> dict:
+    """How many more games the unit misses and why: prebattle leaves it out at first, and the player may bring it anyway
+    (0 and "" when it isn't missing)."""
+    return {"missingGames": unit.missing_games, "missingReason": unit.missing_reason}
+
+
 def hero_entry(hero: Hero) -> dict:
     links = list(hero.hero_items.all())
     items = _item_entries(links)
@@ -122,6 +128,7 @@ def hero_entry(hero: Hero) -> dict:
         "displayName": hero.name or f"Hero {hero.id}",
         "unitType": hero.unit_type or "Hero",
         "isLeader": bool(hero.is_leader),  # Winning Leader XP (BATL-NEW-09)
+        **_missing(hero),
         "stats": _stats(hero),
         **_companions(hero, links, owner="hero"),
         "items": items,
@@ -141,6 +148,7 @@ def hireling_entry(hireling: Hireling) -> dict:
         "kind": "hireling",
         "displayName": hireling.name or f"Hired Sword {hireling.id}",
         "unitType": hireling.unit_type or "Hired Sword",
+        **_missing(hireling),
         "stats": _stats(hireling),
         **_companions(hireling, links, owner="hireling"),
         "upkeepPrice": hireling.upkeep_price,
@@ -170,6 +178,7 @@ def henchmen_group_entry(group: HenchmenGroup) -> dict:
             "kind": "henchman",
             "displayName": member.name or f"Henchman {member.id}",
             "unitType": group.unit_type or "Henchman",
+            **_missing(group),  # the whole group misses games
             "stats": _stats(group),
             **_companions(group, links, rider),  # one mount per member, in order
             "noLevelUps": bool(group.no_level_ups),
@@ -185,6 +194,7 @@ def henchmen_group_entry(group: HenchmenGroup) -> dict:
         "id": group.id,
         "name": group.name or f"Henchmen Group {group.id}",
         "unitType": group.unit_type or "Henchmen",
+        **_missing(group),
         "sourceBeastId": group.source_beast_id,  # recruited from a creature: its beast and kind
         "beastKind": getattr(group, "beast_kind", None),
         "pets": [_beast(row, "henchmen_group") for row in companions(links).pets],  # the group's own: one model each
