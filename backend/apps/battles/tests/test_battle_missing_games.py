@@ -66,6 +66,19 @@ class MissingGamesCountdownTests(BattleTestCase):
 
         self.assertEqual(self.counts()[0], 1)
 
+    def test_a_unit_that_dies_here_is_missing_no_more(self):
+        # as one killed in edit mode: a hero brought anyway, and a group whose last member dies
+        wounded, hans = f"hero:{self.wounded.id}", f"henchman:{Henchman.objects.get(group=self.group).id}"
+        battle_id = self.to_postbattle({self.player: [self.mine, wounded, hans], self.viewer: [self.rat]})
+
+        results = {key: unit_result(key, dead=key != self.mine) for key in (self.mine, wounded, hans)}
+        self.ok(self.finalize(self.player, battle_id, draft(results)))
+
+        hero, group = Hero.objects.get(id=self.wounded.id), HenchmenGroup.objects.get(id=self.group.id)
+        self.assertEqual((hero.dead, hero.missing_games, hero.missing_reason), (True, 0, ""))
+        self.assertEqual((group.dead, group.missing_games, group.missing_reason), (True, 0, ""))
+        self.assertEqual(missing_logs(self.warband.id), [])  # dead, not back
+
     def test_skipped_closed_and_cancelled_battles_count_nothing(self):
         skipped = self.postbattle()
         self.ok(self.post_as(self.player, self.url(skipped, "skip-postbattle")))
