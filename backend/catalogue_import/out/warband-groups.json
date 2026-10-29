@@ -1,0 +1,495 @@
+[
+  {
+    "slug": "humans",
+    "name": "Humans",
+    "kind": "race",
+    "basis": "race field and named types",
+    "evidence": [
+      "Big Game Hunter",
+      "Imperial Tactician",
+      "Heinrich 'Altdorf' Schmidt",
+      "Riding/Draft Horse",
+      "Warhorse",
+      "Rickshaw"
+    ],
+    "members": [
+      "averlanders",
+      "carnival-of-chaos",
+      "cult-of-the-possessed",
+      "kislevites",
+      "marienburgers",
+      "middenheimers",
+      "ostlanders",
+      "reiklanders",
+      "sisters-of-sigmar",
+      "witch-hunters",
+      "amazons-lustria",
+      "amazons-mordheim",
+      "arabian-tomb-raiders",
+      "bretonnian-knights",
+      "gunnery-school-of-nuln",
+      "hochland-bandits",
+      "horned-hunters",
+      "imperial-outriders",
+      "miragleans",
+      "norse-explorers-tc13",
+      "ostermarkers",
+      "the-outlaws-of-stirwood-forest",
+      "pirates",
+      "remasens",
+      "tileans",
+      "trantios",
+      "battle-monks-of-cathay",
+      "bretonnian-chapel-guard",
+      "court-of-profane-pleasures",
+      "cursed-cavalcade",
+      "lustrian-reavers",
+      "marauders-of-chaos",
+      "merchant-caravans",
+      "norse-explorers-btb",
+      "bretonnian-grail-companions",
+      "dreamwalkers-cult-of-morr",
+      "grave-robbers",
+      "mazzalupo",
+      "nipponese-expedition",
+      "order-of-the-mare",
+      "outlaws-of-stirwood-forest-redux",
+      "protectorate-of-sigmar",
+      "sorcerous-society",
+      "vampire-hunters-of-sylvania",
+      "adventurers",
+      "araby-smugglers",
+      "bretonnian-brigands",
+      "bretonnian-buccaneers",
+      "bretonnian-knights-errant",
+      "clockworkers",
+      "disciples-of-maldred",
+      "estalian-corsairs",
+      "ghutani",
+      "house-guard",
+      "khorne-raiders",
+      "knights-of-the-bitter-moors",
+      "the-lost",
+      "low-kings",
+      "muzil",
+      "pirates-of-the-cathayan-sea",
+      "sartosan-pirates",
+      "shallows-beasts",
+      "silent-brotherhood",
+      "slavers",
+      "turjuk",
+      "wasteland-privateers",
+      "watchmen",
+      "woodsmen-de-artois",
+      "albion-barbarians",
+      "altdorf-expeditionary-party",
+      "arabyan-nomads",
+      "arabyan-theives",
+      "circus-extraordinare",
+      "mages",
+      "mordheimers-fanatics",
+      "ostermark-roadwardens",
+      "the-innocents",
+      "tilean-thespian-troupe"
+    ]
+  },
+  {
+    "slug": "elves",
+    "name": "Elves",
+    "kind": "race",
+    "basis": "race field and named types",
+    "evidence": [
+      "Elven Steed"
+    ],
+    "members": [
+      "dark-elves",
+      "shadow-warriors",
+      "druchii",
+      "wood-elves-of-athel-loren",
+      "dark-elf-corsairs",
+      "high-elves",
+      "lothern-sea-patrol",
+      "sea-ghosts",
+      "wood-elves-of-arden",
+      "wood-elf-scouts",
+      "wood-elves-the-asrai-way-farers"
+    ]
+  },
+  {
+    "slug": "dwarfs",
+    "name": "Dwarfs",
+    "kind": "race",
+    "basis": "race field and named types",
+    "evidence": [
+      "Dwarf Axe"
+    ],
+    "members": [
+      "dwarf-treasure-hunters",
+      "dwarf-rangers",
+      "dwarf-slayer-cult",
+      "clan-angrund",
+      "dwarf-guildsmen",
+      "dwarf-slayers",
+      "guild-of-disgraced-engineers",
+      "slayer-pirates",
+      "cursed-dwarves",
+      "dwarf-grudgebearers",
+      "dwarf-troll-slayers"
+    ]
+  },
+  {
+    "slug": "chaos-dwarfs",
+    "name": "Chaos Dwarfs",
+    "kind": "race",
+    "basis": "race field and named types",
+    "evidence": [
+      "Mechanical Suit",
+      "Chaos Dwarf Blunderbuss",
+      "Man-catcher",
+      "Sons of Hashut Obsidian Weapon",
+      "Engine of Chaos"
+    ],
+    "members": [
+      "black-dwarfs",
+      "sons-of-hashut"
+    ]
+  },
+  {
+    "slug": "halflings",
+    "name": "Halflings",
+    "kind": "race",
+    "basis": "race field and named types",
+    "evidence": [],
+    "members": [
+      "mootlanders",
+      "halflings",
+      "militiant-mootlanders"
+    ]
+  },
+  {
+    "slug": "undead",
+    "name": "Undead",
+    "kind": "race",
+    "basis": "race field and named types",
+    "evidence": [],
+    "members": [
+      "undead",
+      "tomb-guardians",
+      "the-restless-dead",
+      "necrarchs-the-soul-stealers",
+      "survivors-of-strigos",
+      "blood-dragons",
+      "call-of-the-night-haint",
+      "channel-rats",
+      "the-fallen",
+      "ghost-pirates",
+      "necrarchs",
+      "strigoi",
+      "drowned-dead",
+      "lahmian",
+      "necromancer",
+      "nehekhara-tomb-guards"
+    ]
+  },
+  {
+    "slug": "skaven",
+    "name": "Skaven",
+    "kind": "race",
+    "basis": "race field and named types",
+    "evidence": [
+      "Clan Skryre Rat Ogre",
+      "Veskit, high executioner of clan eshin",
+      "Warplock pistol",
+      "Fighting Claws",
+      "Weeping Blades",
+      "Vial of Pestilens"
+    ],
+    "members": [
+      "skaven",
+      "skaven-of-clan-pestilens-tc29",
+      "skaven-of-clan-moulder",
+      "metal-mongers",
+      "skaven-of-clan-mors",
+      "skaven-of-clan-pestilens-lus",
+      "skaven-of-clan-pestilens-mou",
+      "skaven-of-clan-pristekk",
+      "skaven-of-clan-skryre-kaz",
+      "skaven-of-clan-skryre-rel",
+      "underworld-alliance",
+      "assassin-squad-knives-from-the-dark",
+      "skaven-of-clan-skryre-ath"
+    ]
+  },
+  {
+    "slug": "goblins",
+    "name": "Goblins",
+    "kind": "race",
+    "basis": "race field and named types",
+    "evidence": [
+      "Giant Spider",
+      "Giant Wolf",
+      "Ball and Chain",
+      "Squig Prodder"
+    ],
+    "members": [
+      "orc-mob",
+      "forest-goblins-nc",
+      "night-goblins-mic",
+      "night-goblins-web",
+      "crooked-moon",
+      "forest-goblins-lus",
+      "night-goblins-kaz",
+      "underworld-alliance",
+      "goblin-raiders",
+      "hobgoblins",
+      "hobgoblin-horde"
+    ]
+  },
+  {
+    "slug": "orcs",
+    "name": "Orcs",
+    "kind": "race",
+    "basis": "race field and named types",
+    "evidence": [
+      "War Boar"
+    ],
+    "members": [
+      "orc-mob",
+      "black-orcs",
+      "orc-pirates-and-savage-orcs",
+      "savage-orcs-kaz",
+      "savage-orcs-ath"
+    ]
+  },
+  {
+    "slug": "orcs-and-goblins",
+    "name": "Orcs & Goblins",
+    "kind": "race",
+    "basis": "race field and named types",
+    "evidence": [
+      "Black Orc Overseer"
+    ],
+    "members": [
+      "orc-mob",
+      "black-orcs",
+      "forest-goblins-nc",
+      "night-goblins-mic",
+      "night-goblins-web",
+      "snotlings",
+      "crooked-moon",
+      "forest-goblins-lus",
+      "night-goblins-kaz",
+      "orc-pirates-and-savage-orcs",
+      "savage-orcs-kaz",
+      "underworld-alliance",
+      "goblin-raiders",
+      "hobgoblins",
+      "hobgoblin-horde",
+      "savage-orcs-ath"
+    ]
+  },
+  {
+    "slug": "ogres",
+    "name": "Ogres",
+    "kind": "race",
+    "basis": "race field and named types",
+    "evidence": [],
+    "members": [
+      "maneaters",
+      "ogre-hunting-party"
+    ]
+  },
+  {
+    "slug": "lizardmen",
+    "name": "Lizardmen",
+    "kind": "race",
+    "basis": "race field and named types",
+    "evidence": [
+      "Chameleon Skink"
+    ],
+    "members": [
+      "lizardmen-tc11",
+      "lizardmen-lus"
+    ]
+  },
+  {
+    "slug": "beastmen",
+    "name": "Beastmen",
+    "kind": "race",
+    "basis": "race field and named types",
+    "evidence": [],
+    "members": [
+      "beastmen-raiders"
+    ]
+  },
+  {
+    "slug": "amazons",
+    "name": "Amazons",
+    "kind": "race",
+    "basis": "race field and named types",
+    "evidence": [
+      "Amulet of the Moon"
+    ],
+    "members": [
+      "amazons-lustria",
+      "amazons-mordheim"
+    ]
+  },
+  {
+    "slug": "tileans",
+    "name": "Tileans",
+    "kind": "race",
+    "basis": "race field and named types",
+    "evidence": [
+      "Pike (Tileans)"
+    ],
+    "members": [
+      "miragleans",
+      "remasens",
+      "tileans",
+      "trantios"
+    ]
+  },
+  {
+    "slug": "chaos",
+    "name": "Chaos",
+    "kind": "side",
+    "basis": "race field and named types",
+    "evidence": [
+      "Chaos Fury",
+      "Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne"
+    ],
+    "members": [
+      "beastmen-raiders",
+      "carnival-of-chaos",
+      "cult-of-the-possessed",
+      "norse-explorers-tc13",
+      "black-dwarfs",
+      "marauders-of-chaos",
+      "norse-explorers-btb",
+      "sons-of-hashut",
+      "disciples-of-maldred",
+      "khorne-raiders"
+    ]
+  },
+  {
+    "slug": "sigmarite",
+    "name": "Sigmarite",
+    "kind": "side",
+    "basis": "race field and named types",
+    "evidence": [],
+    "members": [
+      "sisters-of-sigmar",
+      "witch-hunters"
+    ]
+  },
+  {
+    "slug": "mercenaries",
+    "name": "Mercenaries",
+    "kind": "side",
+    "basis": "most of 6 mordheimer hiring lists",
+    "evidence": [
+      "Dwarf Troll Slayer",
+      "Elf Ranger",
+      "Freelancer",
+      "Dwarf Treasure Hunter",
+      "Elf Mage",
+      "Runesmith Journeyman"
+    ],
+    "members": [
+      "averlanders",
+      "kislevites",
+      "marienburgers",
+      "middenheimers",
+      "reiklanders",
+      "hochland-bandits",
+      "ostermarkers",
+      "pirates",
+      "merchant-caravans",
+      "dreamwalkers-cult-of-morr",
+      "mazzalupo",
+      "nipponese-expedition"
+    ]
+  },
+  {
+    "slug": "good",
+    "name": "Good",
+    "kind": "side",
+    "basis": "most of 8 mordheimer hiring lists",
+    "evidence": [
+      "Arabian Merchant",
+      "Roadwarden",
+      "Snake Charmer",
+      "Tomb Robber",
+      "Halfling Knight",
+      "Swashbuckler",
+      "Wood Elf Hunter",
+      "William Schäke­stange, Master Bard"
+    ],
+    "members": [
+      "averlanders",
+      "dwarf-treasure-hunters",
+      "kislevites",
+      "marienburgers",
+      "middenheimers",
+      "reiklanders",
+      "sisters-of-sigmar",
+      "witch-hunters",
+      "arabian-tomb-raiders",
+      "bretonnian-knights",
+      "dwarf-rangers",
+      "gunnery-school-of-nuln",
+      "hochland-bandits",
+      "horned-hunters",
+      "lizardmen-tc11",
+      "miragleans",
+      "mootlanders",
+      "ostermarkers",
+      "the-outlaws-of-stirwood-forest",
+      "pirates",
+      "pit-fighters",
+      "remasens",
+      "shadow-warriors",
+      "tileans",
+      "trantios",
+      "bretonnian-chapel-guard",
+      "merchant-caravans",
+      "dreamwalkers-cult-of-morr",
+      "dwarf-slayer-cult",
+      "mazzalupo",
+      "nipponese-expedition"
+    ]
+  },
+  {
+    "slug": "evil",
+    "name": "Evil",
+    "kind": "side",
+    "basis": "most of 4 mordheimer hiring lists",
+    "evidence": [
+      "Dark Elf Assassin",
+      "Slaver",
+      "Dark Emissary",
+      "Sigmund Spindle, the Harvester of Flesh"
+    ],
+    "members": [
+      "carnival-of-chaos",
+      "cult-of-the-possessed",
+      "skaven",
+      "undead",
+      "dark-elves",
+      "forest-goblins-nc",
+      "norse-explorers-tc13",
+      "skaven-of-clan-pestilens-tc29",
+      "tomb-guardians",
+      "black-dwarfs",
+      "marauders-of-chaos",
+      "night-goblins-mic",
+      "night-goblins-web",
+      "norse-explorers-btb",
+      "the-restless-dead",
+      "sons-of-hashut",
+      "druchii",
+      "grave-robbers"
+    ]
+  }
+]

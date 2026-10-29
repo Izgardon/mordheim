@@ -1,0 +1,352 @@
+[
+  {
+    "slug": "mordheim",
+    "name": "Mordheim",
+    "grade": "1a",
+    "sort_order": 1,
+    "always_on": true,
+    "grade_basis": "Mordheim split by grade",
+    "counts": {
+      "warbands": 13,
+      "items": 95,
+      "skills": 60,
+      "hired_swords": 10,
+      "dramatis_personae": 7
+    },
+    "grades_seen": {
+      "1a": 185
+    }
+  },
+  {
+    "slug": "mordheim-1b",
+    "name": "Mordheim 1b",
+    "grade": "1b",
+    "sort_order": 2,
+    "always_on": false,
+    "grade_basis": "Mordheim split by grade",
+    "counts": {
+      "warbands": 10,
+      "items": 71,
+      "skills": 63,
+      "hired_swords": 14,
+      "dramatis_personae": 5
+    },
+    "grades_seen": {
+      "1b": 163
+    }
+  },
+  {
+    "slug": "mordheim-1c",
+    "name": "Mordheim 1c",
+    "grade": "1c",
+    "sort_order": 3,
+    "always_on": false,
+    "grade_basis": "Mordheim split by grade",
+    "counts": {
+      "warbands": 7,
+      "items": 40,
+      "skills": 47,
+      "hired_swords": 0,
+      "dramatis_personae": 3
+    },
+    "grades_seen": {
+      "1c": 97
+    }
+  },
+  {
+    "slug": "mordheim-2a",
+    "name": "Mordheim 2a",
+    "grade": "2a",
+    "sort_order": 4,
+    "always_on": false,
+    "grade_basis": "Mordheim split by grade",
+    "counts": {
+      "warbands": 15,
+      "items": 0,
+      "skills": 68,
+      "hired_swords": 20,
+      "dramatis_personae": 7
+    },
+    "grades_seen": {
+      "2a": 104,
+      "2b": 6
+    }
+  },
+  {
+    "slug": "empire-in-flames",
+    "name": "Empire in Flames",
+    "grade": "1a",
+    "sort_order": 5,
+    "always_on": false,
+    "grade_basis": "majority of 14 graded entries",
+    "counts": {
+      "warbands": 2,
+      "items": 3,
+      "skills": 6,
+      "hired_swords": 3,
+      "dramatis_personae": 0
+    },
+    "grades_seen": {
+      "1a": 13,
+      "1b": 1
+    }
+  },
+  {
+    "slug": "lustria",
+    "name": "Lustria",
+    "grade": "1b",
+    "sort_order": 6,
+    "always_on": false,
+    "grade_basis": "majority of 23 graded entries",
+    "counts": {
+      "warbands": 12,
+      "items": 2,
+      "skills": 0,
+      "hired_swords": 6,
+      "dramatis_personae": 3
+    },
+    "grades_seen": {
+      "1b": 19,
+      "2b": 4
+    }
+  },
+  {
+    "slug": "khemri",
+    "name": "Khemri",
+    "grade": "1b",
+    "sort_order": 7,
+    "always_on": false,
+    "grade_basis": "majority of 28 graded entries",
+    "counts": {
+      "warbands": 10,
+      "items": 12,
+      "skills": 1,
+      "hired_swords": 4,
+      "dramatis_personae": 1
+    },
+    "grades_seen": {
+      "1b": 20,
+      "3": 8
+    }
+  },
+  {
+    "slug": "nemesis-crown",
+    "name": "The Nemesis Crown",
+    "grade": "1b",
+    "sort_order": 8,
+    "always_on": false,
+    "grade_basis": "majority of 41 graded entries",
+    "counts": {
+      "warbands": 7,
+      "items": 13,
+      "skills": 14,
+      "hired_swords": 6,
+      "dramatis_personae": 1
+    },
+    "grades_seen": {
+      "1b": 41
+    }
+  },
+  {
+    "slug": "border-town-burning",
+    "name": "Border Town Burning",
+    "grade": "1c",
+    "sort_order": 9,
+    "always_on": false,
+    "grade_basis": "majority of 31 graded entries",
+    "counts": {
+      "warbands": 7,
+      "items": 11,
+      "skills": 0,
+      "hired_swords": 10,
+      "dramatis_personae": 3
+    },
+    "grades_seen": {
+      "1b": 1,
+      "1c": 30
+    }
+  },
+  {
+    "slug": "sylvania",
+    "name": "Sylvania",
+    "grade": "2a",
+    "sort_order": 10,
+    "always_on": false,
+    "grade_basis": "majority of 5 graded entries",
+    "counts": {
+      "warbands": 5,
+      "items": 0,
+      "skills": 0,
+      "hired_swords": 0,
+      "dramatis_personae": 0
+    },
+    "grades_seen": {
+      "2a": 5
+    }
+  },
+  {
+    "slug": "mutiny-in-marienburg",
+    "name": "Mutiny in Marienburg",
+    "grade": "2b",
+    "sort_order": 11,
+    "always_on": false,
+    "grade_basis": "majority of 48 graded entries",
+    "counts": {
+      "warbands": 13,
+      "items": 62,
+      "skills": 0,
+      "hired_swords": 0,
+      "dramatis_personae": 0
+    },
+    "grades_seen": {
+      "1a": 3,
+      "1b": 7,
+      "2a": 6,
+      "2b": 32
+    }
+  },
+  {
+    "slug": "sartosa",
+    "name": "Sartosa",
+    "grade": "2b",
+    "sort_order": 12,
+    "always_on": false,
+    "grade_basis": "majority of 11 graded entries",
+    "counts": {
+      "warbands": 11,
+      "items": 0,
+      "skills": 0,
+      "hired_swords": 0,
+      "dramatis_personae": 0
+    },
+    "grades_seen": {
+      "2b": 11
+    }
+  },
+  {
+    "slug": "mousillon",
+    "name": "Mousillon",
+    "grade": "2b",
+    "sort_order": 13,
+    "always_on": false,
+    "grade_basis": "majority of 10 graded entries",
+    "counts": {
+      "warbands": 10,
+      "items": 0,
+      "skills": 0,
+      "hired_swords": 0,
+      "dramatis_personae": 0
+    },
+    "grades_seen": {
+      "2b": 10
+    }
+  },
+  {
+    "slug": "karak-azgal",
+    "name": "Karak Azgal",
+    "grade": "2b",
+    "sort_order": 14,
+    "always_on": false,
+    "grade_basis": "majority of 8 graded entries",
+    "counts": {
+      "warbands": 8,
+      "items": 0,
+      "skills": 0,
+      "hired_swords": 0,
+      "dramatis_personae": 0
+    },
+    "grades_seen": {
+      "2b": 8
+    }
+  },
+  {
+    "slug": "relics-of-the-crusades",
+    "name": "Relics of the Crusades",
+    "grade": "2b",
+    "sort_order": 15,
+    "always_on": false,
+    "grade_basis": "majority of 6 graded entries",
+    "counts": {
+      "warbands": 6,
+      "items": 0,
+      "skills": 0,
+      "hired_swords": 0,
+      "dramatis_personae": 0
+    },
+    "grades_seen": {
+      "2b": 6
+    }
+  },
+  {
+    "slug": "sealed-city",
+    "name": "The Sealed City",
+    "grade": "2b",
+    "sort_order": 16,
+    "always_on": false,
+    "grade_basis": "majority of 5 graded entries",
+    "counts": {
+      "warbands": 5,
+      "items": 0,
+      "skills": 0,
+      "hired_swords": 0,
+      "dramatis_personae": 0
+    },
+    "grades_seen": {
+      "2b": 5
+    }
+  },
+  {
+    "slug": "karak-eight-peaks",
+    "name": "Karak Eight Peaks",
+    "grade": "2b",
+    "sort_order": 17,
+    "always_on": false,
+    "grade_basis": "majority of 3 graded entries",
+    "counts": {
+      "warbands": 3,
+      "items": 0,
+      "skills": 0,
+      "hired_swords": 0,
+      "dramatis_personae": 0
+    },
+    "grades_seen": {
+      "2b": 3
+    }
+  },
+  {
+    "slug": "athel-loren",
+    "name": "Athel Loren",
+    "grade": "3",
+    "sort_order": 18,
+    "always_on": false,
+    "grade_basis": "majority of 4 graded entries",
+    "counts": {
+      "warbands": 4,
+      "items": 0,
+      "skills": 0,
+      "hired_swords": 0,
+      "dramatis_personae": 0
+    },
+    "grades_seen": {
+      "3": 4
+    }
+  },
+  {
+    "slug": "grade-3",
+    "name": "Grade 3",
+    "grade": "3",
+    "sort_order": 19,
+    "always_on": false,
+    "grade_basis": "Mordheim split by grade",
+    "counts": {
+      "warbands": 14,
+      "items": 0,
+      "skills": 0,
+      "hired_swords": 0,
+      "dramatis_personae": 0
+    },
+    "grades_seen": {
+      "3": 14
+    }
+  }
+]

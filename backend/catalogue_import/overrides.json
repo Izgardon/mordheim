@@ -1,0 +1,10 @@
+{
+  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out). group_members: add/remove type slugs per group slug. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway.",
+  "warband_aliases": {},
+  "group_members": {
+    "add": {},
+    "remove": {}
+  },
+  "setting_grades": {},
+  "keep_hidden_items": []
+}
