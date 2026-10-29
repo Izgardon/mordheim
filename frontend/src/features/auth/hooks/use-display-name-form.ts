@@ -16,7 +16,7 @@ import type { AuthUser } from "../types/auth-types";
 const SHOWN_FIELDS = ["name"] as const;
 
 /**
- * Saving a display name (AUTH-NEW-02, AUTH-NEW-06) through `PATCH auth/me/`: the signed-in user
+ * Saving a display name (AUTH-NEW-02) through `PATCH auth/me/`: the signed-in user
  * takes the answer, and every campaign's cached lists read again, since the server renames the
  * user's chat messages and bulletin notes too. The server's refusal shows under the field.
  */
