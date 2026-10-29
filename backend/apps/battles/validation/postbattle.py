@@ -2,10 +2,13 @@
 
 `normalize_postbattle` cleans what a client sends; the draft save and finalise then check it against the
 participant's units and the campaign (services/postbattle/validate.py). Injury rolls get their result and effect
-from the server's tables (decision 7); the exploration amount comes from the server's chart (decision 9).
+from the server's tables (decision 7); the exploration amount comes from the server's chart (decision 9). A hero's or
+hired sword's result may carry the missing games its injury sets at finalise (`missing_games`, the player's opt-in).
 """
 
 from typing import Any
+
+from apps.warbands.units.services.missing import MAX_MISSING_GAMES
 
 from ..services.injuries import describe_roll
 from .coerce import coerce_bool, coerce_int, optional_cost
@@ -162,6 +165,25 @@ def _text(entry: dict, field: str, default: str, limit: int) -> str:
     return value.strip()[:limit]
 
 
+MISSING_GAMES_UNIT_TYPES = {"hero", "hireling"}  # a henchmen group's are set in edit mode
+
+
+def _missing_games(unit_type: str, entry: dict) -> dict[str, Any]:
+    """The missing games the unit's injury sets at finalise, `{games, reason}` (games capped at 99), when the player
+    ticked them; nothing for 0 games, none sent, or a henchman."""
+    value = entry.get("missing_games")
+    if value is None or unit_type not in MISSING_GAMES_UNIT_TYPES:
+        return {}
+    if not isinstance(value, dict):
+        raise ValueError("postbattle missing_games must be an object")
+    field_name = "postbattle missing_games games"
+    games = coerce_int(value.get("games", 0), field_name=field_name, minimum=0, maximum=MAX_MISSING_GAMES)
+    reason = value.get("reason", "")
+    if not isinstance(reason, str):
+        raise ValueError("postbattle missing_games reason must be a string")
+    return {"missing_games": {"games": games, "reason": reason.strip()[:120]}} if games else {}
+
+
 def _unit_result(unit_type: str, entry: Any) -> dict[str, Any]:
     if not isinstance(entry, dict):
         raise ValueError("Each postbattle unit_result must be an object")
@@ -187,6 +209,7 @@ def _unit_result(unit_type: str, entry: Any) -> dict[str, Any]:
         "keep_stats": coerce_bool(entry.get("keep_stats", False), field_name="postbattle keep_stats"),
         "special_ids": special_ids,
         "serious_injury_rolls": serious_injury_rolls,
+        **_missing_games(unit_type, entry),
     }
 
 

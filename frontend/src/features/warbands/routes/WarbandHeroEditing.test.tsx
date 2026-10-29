@@ -421,6 +421,62 @@ describe("Warband route: hero editing", () => {
     expect(api.getWarbandSummary).not.toHaveBeenCalled();
   });
 
+  it("sets a saved hero's missing games and why on Save; a queued recruit has no such field", async () => {
+    const user = setupUser();
+    loader.heroes = [leader];
+    renderWithQueryClient(<Warband />);
+    await startEditing(user);
+
+    const games = getFieldNear("Missing games");
+    await user.clear(games);
+    await user.type(games, "2");
+    await user.type(
+      screen.getByRole("textbox", { name: "Why the unit misses games" }),
+      "Deep wound"
+    );
+    await fillNewHero(user);
+    await user.click(screen.getByRole("button", { name: "Create hero" }));
+    await screen.findByDisplayValue("Gunther");
+
+    expect(screen.getAllByText("Missing games")).toHaveLength(1);
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(api.batchWarbandHeroes).toHaveBeenCalledTimes(1));
+    expect(batchUpdate(api.batchWarbandHeroes, 11)).toEqual(
+      expect.objectContaining({ missing_games: 2, missing_reason: "Deep wound" })
+    );
+    expect(batchCreates(api.batchWarbandHeroes)[0]).not.toHaveProperty("missing_games");
+  });
+
+  it("clears a hero's missing games with Clear, which brings him back on Save", async () => {
+    const user = setupUser();
+    loader.heroes = [{ ...leader, missing_games: 2, missing_reason: "Deep wound" }];
+    renderWithQueryClient(<Warband />);
+    await startEditing(user);
+
+    await user.click(screen.getByRole("button", { name: "Clear" }));
+    expect(getFieldNear("Missing games")).toHaveValue(0);
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(api.batchWarbandHeroes).toHaveBeenCalledTimes(1));
+    expect(batchUpdate(api.batchWarbandHeroes, 11)).toEqual(
+      expect.objectContaining({ missing_games: 0, missing_reason: "" })
+    );
+  });
+
+  it("marks a missing hero's card with how many games he misses, and why in its tooltip", async () => {
+    const user = setupUser();
+    loader.heroes = [{ ...leader, missing_games: 2, missing_reason: "Deep wound" }];
+    renderWithQueryClient(<Warband />);
+
+    const badge = screen.getByText("Missing · 2 games");
+    await user.hover(badge);
+
+    expect(await screen.findByRole("tooltip")).toHaveTextContent(
+      "Misses the warband's next 2 games: Deep wound."
+    );
+  });
+
   it("asks before Cancel discards unsaved changes, and keeps them on Keep editing (decision 2)", async () => {
     const user = setupUser();
     loader.heroes = [leader];

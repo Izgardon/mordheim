@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { recordUnitKill } from "@/features/battles/api/battles-api";
 import { buildBattleUnitOptions } from "@/features/battles/components/active/active-utils";
+import { withMissingGames } from "@/features/battles/components/postbattle/missing-games";
 import { seriousInjuryRoll } from "@/features/battles/components/postbattle/postbattle-rules";
 import {
   setMountSurvival,
@@ -15,15 +16,19 @@ import type { InjuryRollTarget } from "@/features/battles/components/postbattle/
 import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
 import { useEventUndo } from "@/features/battles/hooks/useEventUndo";
 import type { PostbattleDraft } from "@/features/battles/hooks/usePostbattleDraft";
-import type { BattlePostbattleRules, BattleState } from "@/features/battles/types/battle-types";
+import type {
+  BattlePostbattleMissingGames,
+  BattlePostbattleRules,
+  BattleState,
+} from "@/features/battles/types/battle-types";
 import { parseDiceValues } from "@/features/battles/utils/dice-results";
 
 type KillInput = { victimUnitKey?: string; victimName?: string; notes?: string; earnedXp: boolean };
 
 /**
- * What a postbattle row changes: XP, the Dead tick, serious-injury rolls and their Apply tick,
- * kept stat changes, kills, the hired swords' upkeep and the mounts' rolls (step 5). Draft edits
- * save through `persistDraft`.
+ * What a postbattle row changes: XP, the Dead tick, serious-injury rolls, their Apply tick and the
+ * missing games they offer, kept stat changes, kills, the hired swords' upkeep and the mounts'
+ * rolls (step 5). Draft edits save through `persistDraft`.
  */
 export function usePostbattleUnitActions({
   campaignId,
@@ -75,13 +80,13 @@ export function usePostbattleUnitActions({
       const roll = seriousInjuryRoll(rollTarget.injuryTable, values, rules);
       setIsInjuryRolling(false);
       setRollTarget(null);
-      await persistDraft(
-        updateUnitResult(draft, rollTarget.unitKey, (current) => ({
-          ...current,
-          dead: roll.dead_suggestion ? true : current.dead,
-          serious_injury_rolls: [...current.serious_injury_rolls, roll],
-        }))
-      );
+      // A new roll takes back the last one's missing games: the player ticks the new offer, if any.
+      const rolled = updateUnitResult(draft, rollTarget.unitKey, (current) => ({
+        ...current,
+        dead: roll.dead_suggestion ? true : current.dead,
+        serious_injury_rolls: [...current.serious_injury_rolls, roll],
+      }));
+      await persistDraft(withMissingGames(rolled, rollTarget.unitKey, null));
     },
     [draft, persistDraft, rollTarget, rules, setDraftError]
   );
@@ -99,6 +104,15 @@ export function usePostbattleUnitActions({
           ),
         }))
       );
+    },
+    [draft, persistDraft]
+  );
+
+  /** The missing games the last roll offers, set at finalise when ticked (null takes them off). */
+  const setMissingGames = useCallback(
+    (unitKey: string, missing: BattlePostbattleMissingGames | null) => {
+      if (!draft) return;
+      void persistDraft(withMissingGames(draft, unitKey, missing));
     },
     [draft, persistDraft]
   );
@@ -198,6 +212,7 @@ export function usePostbattleUnitActions({
     toggleDead,
     rollSeriousInjury,
     toggleInjuryApply,
+    setMissingGames,
     toggleKeepStats,
     commitUnitXp,
     commitGroupXp,

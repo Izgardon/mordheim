@@ -62,8 +62,23 @@ export function buildConfigPayload(stored: StoredUnitInformation, form: Prebattl
 }
 
 /**
- * The form as the server last saved it. With no saved selection every unit starts selected; the
- * saved hash is the server's, so the first Ready Up saves that selection.
+ * The keys of the units missing games (a group's members, and `group:<id>`), whose pets fighting
+ * as their own models stay home with them.
+ */
+function missingKeys(roster: ParticipantRoster) {
+  const missing = (unit: { missingGames?: number }) => (unit.missingGames ?? 0) > 0;
+  return new Set([
+    ...[...roster.heroes, ...roster.hirelings].filter(missing).map((unit) => unit.key),
+    ...roster.henchmenGroups
+      .filter(missing)
+      .flatMap((group) => [`group:${group.id}`, ...group.members.map((member) => member.key)]),
+  ]);
+}
+
+/**
+ * The form as the server last saved it. With no saved selection every unit starts selected but
+ * those missing games (and their pets), which the player may still pick; the saved hash is the
+ * server's, so the first Ready Up saves that selection.
  */
 export function initialPrebattleConfig(participant: BattleParticipant, roster: ParticipantRoster) {
   const customUnits = normalizeCustomUnits(participant.custom_units_json);
@@ -86,9 +101,13 @@ export function initialPrebattleConfig(participant: BattleParticipant, roster: P
       battleNotes: participant.battle_notes ?? "",
     })
   );
+  const missing = missingKeys(roster);
+  const fighting = allUnits
+    .filter((unit) => !missing.has(unit.key) && !missing.has(unit.ownerKey ?? ""))
+    .map((unit) => unit.key);
   return {
     customUnits,
-    selectedKeys: savedKeys.length ? savedKeys : availableKeys,
+    selectedKeys: savedKeys.length ? savedKeys : fighting,
     overrides,
     notes,
     savedHash,

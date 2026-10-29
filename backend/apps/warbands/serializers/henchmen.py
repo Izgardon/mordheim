@@ -11,6 +11,7 @@ from apps.warbands.units.companions import group_mount_warnings, mount_kinds, mo
 from apps.warbands.units.kinds import HENCHMEN_GROUP
 from apps.warbands.units.serializers import (
     COMPANION_FIELDS,
+    MISSING_FIELDS,
     STAT_FIELDS,
     UnitDetailSerializer,
     UnitSummarySerializer,
@@ -146,6 +147,7 @@ class HenchmenGroupSummarySerializer(HenchmenMembersMixin, UnitSummarySerializer
             "dead",
             "source_beast_id",
             "beast_kind",
+            *MISSING_FIELDS,
             *STAT_FIELDS,
             *COMPANION_FIELDS,
             "mounts",
@@ -182,6 +184,7 @@ class HenchmenGroupDetailSerializer(HenchmenMembersMixin, UnitDetailSerializer):
             "dead",
             "source_beast_id",
             "beast_kind",
+            *MISSING_FIELDS,
             *STAT_FIELDS,
             *COMPANION_FIELDS,
             "mounts",
@@ -216,4 +219,4 @@ class HenchmenGroupUpdateSerializer(UnitWriteSerializer):
 
     class Meta:
         model = HenchmenGroup
-        fields = WRITE_FIELDS
+        fields = (*WRITE_FIELDS, *MISSING_FIELDS)

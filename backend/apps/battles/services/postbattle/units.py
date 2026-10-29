@@ -2,10 +2,11 @@
 (PERF-36).
 
 Heroes and hired swords gain their kills (the live kill events, decision 5), XP and level-ups (`apply_xp_gain`),
-kept stat changes and injury effects; a unit that dies loses what he carries (pass 2 decision 7). Henchmen gain
-their kills and may die; their group gains the XP and the kept stat changes (all members must agree) and dies with
-its last member. The crown then goes to the right living hero (`choose_leader`). A unit dismissed since the battle
-started is left out with a warning (BUG-73).
+kept stat changes and injury effects; a unit that dies loses what he carries (pass 2 decision 7) and misses games
+no more, as one killed in edit mode. Henchmen gain their kills and may die; their group gains the XP and the kept
+stat changes (all members must agree) and dies with its last member, missing games no more. The crown then goes
+to the right living hero (`choose_leader`). A unit dismissed since the battle started is left out with a warning
+(BUG-73).
 """
 
 from collections import defaultdict
@@ -16,6 +17,7 @@ from django.db.models import Model
 from django.utils import timezone
 
 from apps.warbands.models import HenchmenGroup, Hero, HeroSpecial, Hireling
+from apps.warbands.units.services.missing import settle_missing
 from apps.warbands.units.services.xp import XP_FIELDS, apply_xp_gain
 from apps.warbands.utils.leaders import choose_leader
 
@@ -37,6 +39,16 @@ class UnitOutcome:
     stat_logs: list[dict] = field(default_factory=list)
     items_lost: list[dict | None] = field(default_factory=list)  # what each unit dying here takes with him
     mounts_lost: list[dict] = field(default_factory=list)  # each mount that died after the battle (mounts.py)
+    missing_logs: list[tuple[str, str, dict]] = field(default_factory=list)  # missing games back, then set (missing.py)
+
+
+def _missing_no_more(unit: Any) -> list[str]:
+    """A unit that dies here is missing games no more, as one killed in edit mode (units/services/missing.py); the
+    fields that changed."""
+    if not unit.dead or not (unit.missing_games or unit.missing_reason):
+        return []
+    settle_missing(unit)
+    return ["missing_games", "missing_reason"]
 
 
 @dataclass
@@ -137,6 +149,7 @@ class UnitResults:
             unit.dead = True
             fields.append("dead")
             self.outcome.items_lost.append(lost_entry(result.name, list(getattr(unit, "carried", None) or [])))
+            fields += _missing_no_more(unit)
         self.changes.mark(unit, fields)
 
     def _hero(self, result: _Result) -> None:
@@ -198,6 +211,7 @@ class UnitResults:
             if all_dead != group.dead:
                 group.dead = all_dead
                 fields.append("dead")
+                fields += _missing_no_more(group)
             self.changes.mark(group, fields)
 
     def _pass_the_crown(self) -> None:

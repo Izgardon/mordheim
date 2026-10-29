@@ -4,6 +4,8 @@ so the others may still be fighting (decision 4)."""
 from django.db import transaction
 from rest_framework.response import Response
 
+from apps.realtime.services import send_warband_changed, sender_socket_id
+
 from ..models import Battle, BattleParticipant
 from ..serializers import snapshot
 from ..services.broadcast import ALL
@@ -81,6 +83,8 @@ class CampaignBattleFinalizePostbattleView(BattleWriteView):
         changed = ALL if confirmed.battle.status == Battle.STATUS_ENDED else [scope.player.id]
         payload = snapshot(confirmed.battle, confirmed.participants)
         publish_snapshot(request, payload, confirmed.events, confirmed.version, changed, "")
+        # his warband changed (results, gold, missing games counted down): other members' open pages of it follow
+        send_warband_changed(scope.battle.campaign_id, scope.player.warband_id, sender_socket_id(request))
         return answer(payload, confirmed.events, warnings=warnings)
 
 

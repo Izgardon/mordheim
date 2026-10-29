@@ -72,8 +72,16 @@ export type BattlePostbattleSeriousInjuryRoll = {
     stat?: string;
     change?: number;
     special?: string;
+    /**
+     * A result that keeps the unit out of games (Deep Wound, Captured...): how many, and the dice
+     * the book rolls for them. Postbattle offers it as the unit's missing games.
+     */
+    misses?: { games: number; dice?: string };
   };
 };
+
+/** The missing games a hero's or hired sword's injury sets at finalise: the player's opt-in. */
+export type BattlePostbattleMissingGames = { games: number; reason: string };
 
 export type BattlePostbattleUnitResult = {
   unit_name: string;
@@ -88,6 +96,8 @@ export type BattlePostbattleUnitResult = {
   serious_injury_rolls: BattlePostbattleSeriousInjuryRoll[];
   /** Battle stat changes become permanent only when ticked (SEC-10, decision 6). */
   keep_stats?: boolean;
+  /** Ticked from the last roll's `misses`: set at finalise (heroes and hired swords only). */
+  missing_games?: BattlePostbattleMissingGames;
 };
 
 export type BattlePostbattleExploration = {
@@ -345,7 +355,8 @@ export type BattlePostbattleRules = {
   exploration_dice: { max: number; max_chosen: number };
   /** Heroes' (and hero-table hirelings') serious-injury table; the rest roll d6. */
   hero_death_roll: CampaignHeroDeathRoll;
-  injury_tables: Record<"d6" | "d66" | "d100", BattleInjuryTableRow[]>;
+  /** Only the tables its units roll on: the d6 and the campaign's hero table. */
+  injury_tables: Partial<Record<"d6" | "d66" | "d100", BattleInjuryTableRow[]>>;
 };
 
 /** The server's suggestions for the reader's own postbattle (IMP-52). */
@@ -485,12 +496,24 @@ export type BattleRosterCompanionFields = {
   effectiveStats?: { movement: number | null; armour_save: number | null } | null;
 };
 
+/**
+ * How many more of its warband's battles a roster unit misses, and why (0 and "" while it
+ * fights): prebattle leaves it out at first. A henchman carries his group's.
+ */
+export type BattleRosterMissingFields = {
+  missingGames?: number;
+  missingReason?: string;
+};
+
 export type BattleRosterUnit = BattleRosterCompanionFields & {
   key: string;
   id: number;
   kind: "hero" | "hireling" | "henchman";
   displayName: string;
   unitType: string;
+  /** How many more games it misses, and why (`BattleRosterMissingFields`). */
+  missingGames?: number;
+  missingReason?: string;
   stats: BattleUnitStats;
   items: BattleRosterItem[];
   singleUseItems: BattleRosterSingleUseItem[];
@@ -507,7 +530,7 @@ export type BattleRosterUnit = BattleRosterCompanionFields & {
   paymentNote?: string;
 };
 
-export type BattleRosterGroup = {
+export type BattleRosterGroup = BattleRosterMissingFields & {
   id: number;
   name: string;
   unitType: string;

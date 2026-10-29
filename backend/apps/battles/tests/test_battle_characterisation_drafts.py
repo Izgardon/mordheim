@@ -70,7 +70,10 @@ class PostbattleDraftTests(BattleTestCase):
                     "result_code": "45",
                     "result_label": "Sold to the Pits",
                     "dead_suggestion": False,
-                    "effect": {"kind": "manual"},
+                    "effect": {
+                        "kind": "manual",
+                        "misses": {"games": 1},
+                    },  # offered as missing games, never set unticked
                     "applied": False,
                     "apply_by_hand": True,
                     "rerolls": [[1, 1]],

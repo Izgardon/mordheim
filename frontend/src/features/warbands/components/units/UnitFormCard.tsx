@@ -6,6 +6,7 @@ import { Label } from "@components/label";
 import UnitStatsGrid from "../shared/forms/UnitStatsGrid";
 import UnitLoadout from "../shared/forms/UnitLoadout";
 import DismissUnitDescription from "./DismissUnitDescription";
+import MissingGamesField from "./forms/MissingGamesField";
 import { statFieldMap, statFields } from "../../utils/warband-utils";
 
 import type { UnitKindKey } from "../../types/units";
@@ -132,6 +133,13 @@ export default function UnitFormCard<K extends UnitKindKey>({
                   )
                 : undefined
             }
+          />
+
+          <MissingGamesField
+            form={form}
+            index={index}
+            inputClassName={inputClassName}
+            onUpdate={onUpdate}
           />
 
           <div className="space-y-2 rounded border border-border/60 bg-background/60 p-3">

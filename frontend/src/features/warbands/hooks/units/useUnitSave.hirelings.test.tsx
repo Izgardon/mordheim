@@ -319,6 +319,8 @@ describe("useUnitSave: hired swords characterisation", () => {
       initiative: 3,
       attacks: 1,
       leadership: 8,
+      missing_games: 0,
+      missing_reason: "",
       items: [
         { id: 105, cost: 3 },
         { id: 103, cost: 20 },

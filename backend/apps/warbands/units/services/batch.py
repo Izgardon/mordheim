@@ -38,6 +38,7 @@ class BatchPlan:
     errors: FieldErrors = field(default_factory=dict)
     versions: dict[int, tuple[int, datetime]] = field(default_factory=dict)  # unit id -> (update index, updated_at)
     lines: ItemLines = field(default_factory=ItemLines)
+    missing_changed: bool = False  # set by apply_batch: an update changed a unit's missing games
 
 
 UNIT_CHANGED = "This unit was changed in another tab; reload it and try again."
@@ -140,7 +141,7 @@ def apply_batch(kind: "UnitKindSpec", warband: Warband, plan: BatchPlan) -> list
         for unit in plan.dismissals:
             dismiss(kind, warband, unit)
         for writer, sent in plan.updates:
-            save_update(kind, warband, writer, sent=sent)
+            plan.missing_changed = save_update(kind, warband, writer, sent=sent) or plan.missing_changed
         for index, (writer, sent) in enumerate(plan.creates):
             try:
                 created.append(recruit(kind, warband, writer, sent=sent))

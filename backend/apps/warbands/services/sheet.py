@@ -29,6 +29,7 @@ def _summary_units(rosters: dict[str, list[Any]]) -> WarbandUnits:
                 "unit_type": h.unit_type,
                 "xp": h.xp,
                 "large": h.large,
+                "missing_games": h.missing_games,
                 "mount_bonuses": mount_bonuses(h.hero_items.all()),
             }
             for h in rosters[HERO.key]
@@ -41,6 +42,7 @@ def _summary_units(rosters: dict[str, list[Any]]) -> WarbandUnits:
                 "unit_type": g.unit_type,
                 "xp": g.xp,
                 "large": g.large,
+                "missing_games": g.missing_games,
                 "henchmen_count": len(g.henchmen.all()),  # the prefetch holds living members only
                 "mount_bonuses": mount_bonuses(g.henchmen_group_items.all()),
             }
@@ -55,6 +57,7 @@ def _summary_units(rosters: dict[str, list[Any]]) -> WarbandUnits:
                 "kind": s.kind,
                 "rating": s.rating,
                 "blood_pacted": s.blood_pacted,
+                "missing_games": s.missing_games,
                 "xp": s.xp,
                 "mount_bonuses": mount_bonuses(s.hireling_items.all()),
             }

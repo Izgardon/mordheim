@@ -5,6 +5,7 @@ import {
   buildItemsUsed,
   buildLevelUps,
 } from "@/features/battles/components/postbattle/finalise-changes";
+import { buildMissingGames } from "@/features/battles/components/postbattle/missing-games";
 import type { PostbattleRenderableGroup } from "@/features/battles/components/postbattle/postbattle-utils";
 import { paysUpkeep } from "@/features/battles/components/postbattle/upkeep-rules";
 import type { StatChangeRow } from "@/features/battles/components/postbattle/stat-changes";
@@ -137,6 +138,7 @@ export function buildFinalizeSummary({
     itemsLost: buildItemsLost(rows, roster),
     mountsLost: buildMountsLost(draft, suggestion, rows),
     injuries: buildInjuries(rows),
+    missingGames: buildMissingGames(rows, roster, stays),
     xpAwards: xpRows.map((row) => ({
       unitKey: row.unitKey,
       unitName: row.unitName,

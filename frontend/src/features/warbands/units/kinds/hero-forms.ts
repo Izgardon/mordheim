@@ -1,4 +1,5 @@
 import { parseAvailableSkills } from "../../utils/warband-utils";
+import { mapMissingToForm } from "../missing-games";
 import {
   armourSaveToForm,
   mapLevelUpToForm,
@@ -21,6 +22,7 @@ export const mapHeroToForm = (hero: WarbandHero): HeroFormEntry => ({
   stats: mapStatsToForm(hero),
   xp: hero.xp?.toString() ?? "0",
   ...mapLevelUpToForm(hero),
+  ...mapMissingToForm(hero),
   price: hero.price?.toString() ?? "0",
   armour_save: armourSaveToForm(hero.armour_save),
   deeds: hero.deeds ?? "",

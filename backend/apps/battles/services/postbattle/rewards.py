@@ -47,13 +47,16 @@ def apply_exploration(context: FinaliseContext, exploration: dict) -> Exploratio
 
 
 def upkeep_entry(context: FinaliseContext, upkeep: dict) -> ledger.Entry | None:
-    """The Upkeep row: each hired sword still on the roster after this battle, at the cost the draft gives him."""
+    """The Upkeep row: each hired sword still on the roster after this battle, at the cost the draft gives him; one
+    missing games owes none for the battle he missed."""
     if not upkeep.get("pay_upkeep", True):
         return None
     total, lines = 0, []
     for unit_key, entry in upkeep.get("entries", {}).items():
         hireling = context.hirelings.get(parse_unit_key(unit_key)["unit_id"])
         if hireling is None or hireling.dead or hireling.dismissed_at is not None:  # left the roster
+            continue
+        if hireling.missing_games:  # read before finalise counts this battle off
             continue
         if entry.get("cost") is None:
             continue

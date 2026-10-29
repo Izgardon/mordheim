@@ -135,6 +135,16 @@ export type HeroSkills = {
 
 export type HeroCaster = "No" | "Wizard" | "Priest";
 
+/**
+ * How many more of the warband's battles a unit misses, and why (0 and "" while it fights). Edit
+ * mode sets them; each battle the warband finalises counts one off, and at 0 the unit is back.
+ * Heroes, hired swords and henchmen groups carry them.
+ */
+export type MissingGamesFields = {
+  missing_games?: number;
+  missing_reason?: string;
+};
+
 export type WarbandHero = UnitCompanionFields & {
   id: number;
   warband_id: number;
@@ -155,6 +165,9 @@ export type WarbandHero = UnitCompanionFields & {
   caster: HeroCaster | null;
   half_rate: boolean | null;
   dead: boolean | null;
+  /** How many more battles it misses, and why (`MissingGamesFields`). */
+  missing_games?: number;
+  missing_reason?: string;
   movement: number | null;
   weapon_skill: number | null;
   ballistic_skill: number | null;
@@ -229,6 +242,9 @@ export type WarbandHireling = UnitCompanionFields & {
   no_level_ups?: boolean | null;
   blood_pacted?: boolean | null;
   dead: boolean | null;
+  /** How many more battles it misses, and why (`MissingGamesFields`). */
+  missing_games?: number;
+  missing_reason?: string;
   movement: number | null;
   weapon_skill: number | null;
   ballistic_skill: number | null;
@@ -349,6 +365,9 @@ export type HeroFormEntry = {
   level_up?: string;
   /** The count the server last sent: an unchanged count is left out of the update. */
   savedLevelUp?: number;
+  /** A saved unit's missing games and why, as typed (a queued recruit has none). */
+  missing_games?: string;
+  missing_reason?: string;
   price: string;
   armour_save: string;
   deeds: string;
@@ -455,6 +474,9 @@ export type HenchmenGroup = UnitCompanionFields &
     half_rate: boolean | null;
     no_level_ups?: boolean | null;
     dead: boolean | null;
+    /** How many more battles the group misses, and why (`MissingGamesFields`). */
+    missing_games?: number;
+    missing_reason?: string;
     movement: number | null;
     weapon_skill: number | null;
     ballistic_skill: number | null;
@@ -542,6 +564,9 @@ export type HenchmenGroupFormEntry = {
   level_up?: string;
   /** The count the server last sent: an unchanged count is left out of the update. */
   savedLevelUp?: number;
+  /** A saved unit's missing games and why, as typed (a queued recruit has none). */
+  missing_games?: string;
+  missing_reason?: string;
   max_size: string;
   /** The server's cost of one more member (read only; decision 7)... */
   hire_cost?: number;

@@ -18,6 +18,7 @@ import {
   buildLevelUpPayload,
   buildStatPayload,
 } from "../unit-form-helpers";
+import { buildMissingPayload } from "../missing-games";
 import { heroEditor } from "./hero-editor";
 import { buildLoadoutPayload, mapHeroToForm, validateHeroForm } from "./hero-forms";
 
@@ -103,6 +104,7 @@ export const heroKind: UnitKindConfig<"hero"> = {
     available_skills: buildAvailableSkillsPayload(hero.available_skills),
     ...buildStatPayload(hero),
     ...buildLevelUpPayload(hero, isSessionCreated),
+    ...buildMissingPayload(hero, isSessionCreated),
     ...buildLoadoutPayload(hero),
   }),
   levelUp: {

@@ -169,6 +169,8 @@ const veteranPatchBody = {
   initiative: 4,
   attacks: 1,
   leadership: 8,
+  missing_games: 0,
+  missing_reason: "",
   items: [
     { id: 101, cost: 10 },
     { id: 102, cost: 2 },

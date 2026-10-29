@@ -102,6 +102,8 @@ describe("log formatters, by feature", () => {
         "personnel:stats_kept",
         "personnel:new_hireling",
         "personnel:remove_hireling",
+        "personnel:unit_missing",
+        "personnel:unit_returns",
         "battle:complete",
         "battle:exploration",
         "battle:finds",
@@ -161,6 +163,20 @@ describe("log formatters, by feature", () => {
     expect(textOf(log("personnel", "new_hireling", { name: "Grukk", type: "Ogre" }))).toBe(
       "Hired Grukk the Ogre"
     );
+  });
+
+  it("say who misses games and why, and who returns", () => {
+    const wounded = { name: "Pieter Kalb", games: 2, reason: "Deep wound" };
+    expect(textOf(log("personnel", "unit_missing", wounded))).toBe(
+      "Pieter Kalb misses 2 games: Deep wound"
+    );
+    expect(textOf(log("personnel", "unit_missing", { name: "Swords", games: 1, reason: "" }))).toBe(
+      "Swords misses 1 game"
+    );
+    expect(textOf(log("personnel", "unit_returns", { name: "Pieter Kalb" }))).toBe(
+      "Pieter Kalb returns"
+    );
+    expect(textOf(log("personnel", "unit_returns", {}))).toBe("Unknown unit returns");
   });
 
   it("read the server's entries for item sales, moves and discards", () => {

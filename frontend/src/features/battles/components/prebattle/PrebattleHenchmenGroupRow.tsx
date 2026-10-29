@@ -5,6 +5,7 @@ import CreatureMark from "@/features/warbands/components/units/beasts/CreatureMa
 import { PetChips, RiderMark } from "@/features/battles/components/shared/BattleCompanionParts";
 import { groupMountedStats } from "@/features/battles/utils/battle-companions";
 import PrebattleGroupMountNote from "./PrebattleGroupMountNote";
+import PrebattleMissingNote from "./PrebattleMissingNote";
 
 import type {
   HenchmenGroupRoster,
@@ -97,6 +98,7 @@ export default function PrebattleHenchmenGroupRow({
           <p className="text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
             {group.unitType} {selectedCount}/{group.members.length}
           </p>
+          <PrebattleMissingNote unit={group} selected={selectedCount > 0} />
           <PetChips pets={group.members[0].pets} />
         </div>
       </div>

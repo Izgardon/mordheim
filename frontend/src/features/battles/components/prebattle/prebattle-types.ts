@@ -1,6 +1,7 @@
 import type {
   BattleRosterCompanion,
   BattleRosterCompanionFields,
+  BattleRosterMissingFields,
 } from "@/features/battles/types/battle-types";
 import type { BattleWarning } from "@/features/battles/utils/battle-warnings";
 
@@ -50,6 +51,9 @@ export type PrebattleUnit = BattleRosterCompanionFields & {
   ownerKey?: string;
   displayName: string;
   unitType: string;
+  /** How many more games it misses, and why (`BattleRosterMissingFields`). */
+  missingGames?: number;
+  missingReason?: string;
   stats: UnitStats;
   upkeepPrice?: number | null;
   upkeepCostExpression?: string | null;
@@ -67,7 +71,7 @@ export type PrebattleUnit = BattleRosterCompanionFields & {
   paymentNote?: string;
 };
 
-export type HenchmenGroupRoster = {
+export type HenchmenGroupRoster = BattleRosterMissingFields & {
   id: number;
   name: string;
   unitType: string;

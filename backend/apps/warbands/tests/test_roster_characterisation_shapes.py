@@ -97,6 +97,7 @@ SKILL_DETAIL = {"id": "int", "name": "str", "type": "str"}
 SPECIAL_DETAIL = {"id": "int", "name": "str", "type": "str", "description": "str"}
 SPELL_DETAIL = {"id": "int", "name": "str", "type": "str", "dc": "str", "description": "str"}
 MEMBER = {"id": "int", "name": "str", "kills": "int", "dead": "bool"}
+MISSING = {"missing_games": "int", "missing_reason": "str"}  # missing games: how many and why (edit mode)
 COMPANIONS: dict[str, Any] = {
     "effective_stats": None,
     "mount": None,
@@ -111,6 +112,7 @@ HERO_SUMMARY = {
     "half_rate": "bool",
     "trading_action": "bool",
     "available_skills": {},
+    **MISSING,
     **STATS,
     **COMPANIONS,
     "items": [ITEM_SUMMARY],
@@ -140,6 +142,7 @@ HENCHMEN_SUMMARY = {
     "dead": "bool",
     "source_beast_id": None,  # recruited from a creature: its beast and kind
     "beast_kind": None,
+    **MISSING,
     **STATS,
     **COMPANIONS,
     "mounts": [],  # each kind of mount the members ride (the step 5 follow-up)
@@ -175,6 +178,7 @@ HIRELING_SUMMARY = {
     "stays": "str",
     "payment_note": "str",
     "dead": "bool",
+    **MISSING,
     **STATS,
     **COMPANIONS,
     "items": [ITEM_SUMMARY],

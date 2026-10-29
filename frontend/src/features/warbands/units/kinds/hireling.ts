@@ -29,6 +29,7 @@ import {
   normalizeCaster,
   toValidationError,
 } from "../unit-form-helpers";
+import { buildMissingPayload, mapMissingToForm } from "../missing-games";
 import { FOLLOW_UP_ROLL_TABLE } from "./hero";
 import { hirelingEditor } from "./hireling-editor";
 import { buildLoadoutPayload } from "./hero-forms";
@@ -48,6 +49,7 @@ export const mapHirelingToForm = (hireling: WarbandHireling): HirelingFormEntry 
   stats: mapStatsToForm(hireling),
   xp: hireling.xp?.toString() ?? "0",
   ...mapLevelUpToForm(hireling),
+  ...mapMissingToForm(hireling),
   price: hireling.price?.toString() ?? "0",
   upkeep_price: hireling.upkeep_price?.toString() ?? "0",
   rating: hireling.rating?.toString() ?? "0",
@@ -173,6 +175,7 @@ export const hirelingKind: UnitKindConfig<"hireling"> = {
     available_skills: buildAvailableSkillsPayload(entry.available_skills),
     ...buildStatPayload(entry),
     ...buildLevelUpPayload(entry, isSessionCreated),
+    ...buildMissingPayload(entry, isSessionCreated),
     ...buildLoadoutPayload(entry),
   }),
   levelUp: {

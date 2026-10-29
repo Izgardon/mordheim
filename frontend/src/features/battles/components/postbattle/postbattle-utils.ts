@@ -1,5 +1,6 @@
 import type {
   BattlePostbattleFindItem,
+  BattlePostbattleMissingGames,
   BattleParticipant,
   BattlePostbattleSeriousInjuryRoll,
   BattlePostbattleSuggestion,
@@ -49,6 +50,8 @@ export type PostbattleRenderableRow = {
   dead: boolean;
   specialIds: number[];
   seriousInjuryRolls: BattlePostbattleSeriousInjuryRoll[];
+  /** The missing games its injury sets at finalise, when ticked (heroes and hired swords). */
+  missingGames?: BattlePostbattleMissingGames;
 };
 
 export type PostbattleRenderableGroup = {
@@ -486,6 +489,7 @@ export function buildRenderableGroups(draft: BattlePostbattleState, roster?: Par
       dead: result.dead,
       specialIds: result.special_ids,
       seriousInjuryRolls: result.serious_injury_rolls,
+      missingGames: result.missing_games,
     };
     if (result.unit_kind === "hero") {
       heroes.push(row);

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import PostbattleInjuryResult from "@/features/battles/components/postbattle/PostbattleInjuryResult";
 import PostbattleKillList from "@/features/battles/components/postbattle/PostbattleKillList";
+import PostbattleMissingGamesOffer from "@/features/battles/components/postbattle/PostbattleMissingGamesOffer";
 import type { PostbattleRenderableRow } from "@/features/battles/components/postbattle/postbattle-utils";
 import type { PostbattleRowTools } from "@/features/battles/components/postbattle/postbattle-row-tools";
 import { liveKillEvents } from "@/features/battles/utils/battle-events";
@@ -31,7 +32,7 @@ export function PostbattleRowKills({
 
 /**
  * A unit's serious-injury rolls (BUG-47, decision 7): only the last counts; its server effect is
- * applied at finalise when ticked, or flagged to apply by hand.
+ * applied at finalise when ticked, or flagged to apply by hand, and the missing games it offers.
  */
 export function PostbattleRowInjuries({
   row,
@@ -67,6 +68,12 @@ export function PostbattleRowInjuries({
         roll={row.seriousInjuryRolls[lastIndex]}
         disabled={tools.isFinalized}
         onToggleApply={(apply) => tools.actions.toggleInjuryApply(row, apply)}
+      />
+      <PostbattleMissingGamesOffer
+        key={lastIndex}
+        row={row}
+        disabled={tools.isFinalized}
+        onChange={(missing) => tools.actions.setMissingGames(row.unitKey, missing)}
       />
     </div>
   );

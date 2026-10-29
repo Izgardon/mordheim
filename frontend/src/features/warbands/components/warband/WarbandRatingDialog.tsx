@@ -7,6 +7,7 @@ import {
 } from "@components/dialog";
 
 import ratingIcon from "@/assets/icons/Menu.webp";
+import { fights, isMissing } from "../../units/missing-games";
 import { mountsRating as countMounts, toNumber } from "../../utils/warband-utils";
 import type { HenchmenGroup, WarbandHero, WarbandHireling } from "../../types/warband-types";
 
@@ -21,15 +22,23 @@ type WarbandRatingDialogProps = {
   mountsRating?: number;
 };
 
+/** The rating's breakdown; units missing games are left out (as the server's rating) and named. */
 export default function WarbandRatingDialog({
   open,
   onOpenChange,
-  heroes,
-  hirelings,
-  henchmenGroups,
+  heroes: allHeroes,
+  hirelings: allHirelings,
+  henchmenGroups: allHenchmenGroups,
   rating,
   mountsRating,
 }: WarbandRatingDialogProps) {
+  const heroes = allHeroes.filter(fights);
+  const hirelings = allHirelings.filter(fights);
+  const henchmenGroups = allHenchmenGroups.filter(fights);
+  const missingNames = [...allHeroes, ...allHirelings, ...allHenchmenGroups]
+    .filter(isMissing)
+    .map((unit) => unit.name || unit.unit_type || "Unnamed unit");
+
   const heroCount = heroes.length;
   const heroLargeCount = heroes.filter((h) => h.large).length;
   const heroTotalXp = heroes.reduce((sum, h) => sum + toNumber(h.xp), 0);
@@ -133,6 +142,12 @@ export default function WarbandRatingDialog({
                 <span className="font-semibold text-foreground">{mountRating}</span>
               </div>
             )}
+            {missingNames.length > 0 && (
+              <p className="text-muted-foreground">
+                Missing games (left out):{" "}
+                <span className="text-foreground">{missingNames.join(", ")}</span>
+              </p>
+            )}
           </div>
 
           <div className="border-t border-[#3b2f25] pt-2">
@@ -145,7 +160,7 @@ export default function WarbandRatingDialog({
           <p className="text-xs italic text-muted-foreground">
             Heroes: 5 per hero (20 if Large) + XP. Henchmen: group size &times; (5 per henchman (20
             if Large) + XP). Hired Swords: base rating + XP. Mounts: each rider's mount bonus (a
-            group: one per member).
+            group: one per member). Units missing games are left out.
           </p>
         </div>
       </DialogContent>

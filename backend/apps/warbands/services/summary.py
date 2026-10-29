@@ -37,6 +37,11 @@ def _as_number(value: Any) -> float | int:
         return 0
 
 
+def rated(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """The rows the rating counts: units that aren't missing games."""
+    return [row for row in rows if not row.get("missing_games")]
+
+
 @dataclass
 class WarbandUnits:
     heroes: list[dict[str, Any]] = field(default_factory=list)
@@ -46,20 +51,21 @@ class WarbandUnits:
     @property
     def mounts_rating(self) -> int:
         """What the mounts add to the rating: each rider's first mount's bonus (a group rides one per living member,
-        each counted at its own bonus, so a group on mixed mounts adds each one's)."""
-        riders = [(row, 1) for row in [*self.heroes, *self.hirelings]]
-        riders += [(row, row["henchmen_count"] or 0) for row in self.henchmen_groups]
+        each counted at its own bonus, so a group on mixed mounts adds each one's). Missing riders don't count."""
+        riders = [(row, 1) for row in rated([*self.heroes, *self.hirelings])]
+        riders += [(row, row["henchmen_count"] or 0) for row in rated(self.henchmen_groups)]
         return sum(mount_rating_bonus(row.get("mount_bonuses"), count) for row, count in riders)
 
     @property
     def rating(self) -> float | int:
-        """5 a model (20 a large one) and its XP, a hired sword's rating and XP, and the mounts' bonuses."""
-        hero_rating = sum(((20 if row["large"] else 5) + _as_number(row["xp"])) for row in self.heroes)
+        """5 a model (20 a large one) and its XP, a hired sword's rating and XP, and the mounts' bonuses; units missing
+        games are left out (they still count towards warband size and the caps)."""
+        hero_rating = sum(((20 if row["large"] else 5) + _as_number(row["xp"])) for row in rated(self.heroes))
         henchmen_rating = sum(
             (row["henchmen_count"] or 0) * ((20 if row["large"] else 5) + _as_number(row["xp"]))
-            for row in self.henchmen_groups
+            for row in rated(self.henchmen_groups)
         )
-        hired_rating = sum((_as_number(row["rating"]) + _as_number(row["xp"])) for row in self.hirelings)
+        hired_rating = sum((_as_number(row["rating"]) + _as_number(row["xp"])) for row in rated(self.hirelings))
         return hero_rating + henchmen_rating + hired_rating + self.mounts_rating
 
     @property
@@ -91,7 +97,7 @@ def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
         on_roster(Hero.objects.filter(warband_id__in=ids))
         .annotate(mount_bonuses=mount_bonuses_array(HeroItem, "hero"))
         .order_by("id")
-        .values("id", "warband_id", "name", "unit_type", "xp", "large", "mount_bonuses")
+        .values("id", "warband_id", "name", "unit_type", "xp", "large", "missing_games", "mount_bonuses")
     )
     for hero_row in heroes:
         units[hero_row["warband_id"]].heroes.append(dict(hero_row))
@@ -101,7 +107,9 @@ def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
         .annotate(henchmen_count=Count("henchmen", filter=LIVING_MEMBERS))
         .annotate(mount_bonuses=mount_bonuses_array(HenchmenGroupItem, "henchmen_group"))
         .order_by("id")
-        .values("id", "warband_id", "name", "unit_type", "xp", "large", "henchmen_count", "mount_bonuses")
+        .values(
+            "id", "warband_id", "name", "unit_type", "xp", "large", "henchmen_count", "missing_games", "mount_bonuses"
+        )
     )
     for group_row in groups:
         units[group_row["warband_id"]].henchmen_groups.append(dict(group_row))
@@ -110,7 +118,18 @@ def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
         on_roster(Hireling.objects.filter(warband_id__in=ids))
         .annotate(mount_bonuses=mount_bonuses_array(HirelingItem, "hireling"))
         .order_by("id")
-        .values("id", "warband_id", "name", "unit_type", "kind", "rating", "xp", "blood_pacted", "mount_bonuses")
+        .values(
+            "id",
+            "warband_id",
+            "name",
+            "unit_type",
+            "kind",
+            "rating",
+            "xp",
+            "blood_pacted",
+            "missing_games",
+            "mount_bonuses",
+        )
     )
     for sword_row in hirelings:
         units[sword_row["warband_id"]].hirelings.append(dict(sword_row))
