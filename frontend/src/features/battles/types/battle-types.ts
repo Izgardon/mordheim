@@ -485,12 +485,24 @@ export type BattleRosterCompanionFields = {
   effectiveStats?: { movement: number | null; armour_save: number | null } | null;
 };
 
+/**
+ * How many more of its warband's battles a roster unit misses, and why (0 and "" while it
+ * fights): prebattle leaves it out at first. A henchman carries his group's.
+ */
+export type BattleRosterMissingFields = {
+  missingGames?: number;
+  missingReason?: string;
+};
+
 export type BattleRosterUnit = BattleRosterCompanionFields & {
   key: string;
   id: number;
   kind: "hero" | "hireling" | "henchman";
   displayName: string;
   unitType: string;
+  /** How many more games it misses, and why (`BattleRosterMissingFields`). */
+  missingGames?: number;
+  missingReason?: string;
   stats: BattleUnitStats;
   items: BattleRosterItem[];
   singleUseItems: BattleRosterSingleUseItem[];
@@ -507,7 +519,7 @@ export type BattleRosterUnit = BattleRosterCompanionFields & {
   paymentNote?: string;
 };
 
-export type BattleRosterGroup = {
+export type BattleRosterGroup = BattleRosterMissingFields & {
   id: number;
   name: string;
   unitType: string;

@@ -24,6 +24,28 @@ describe("prebattle-config", () => {
     expect(JSON.parse(initial.savedHash).selected_unit_keys_json).toEqual([]);
   });
 
+  it("leaves units missing games out of the first selection, with a missing group's pets", () => {
+    const missing = {
+      ...roster,
+      heroes: [wolf, { ...roster.heroes[1], missingGames: 2, missingReason: "Deep wound" }],
+      henchmenGroups: roster.henchmenGroups.map((group) => ({
+        ...group,
+        missingGames: 1,
+        members: group.members.map((member) => ({ ...member, missingGames: 1 })),
+      })),
+      petModels: [{ ...wolf, key: "pet:henchmen_group:7", kind: "pet", ownerKey: "group:11" }],
+    } as typeof roster;
+
+    const initial = initialPrebattleConfig(myParticipant({ selected_unit_keys_json: [] }), missing);
+    const saved = initialPrebattleConfig(
+      myParticipant({ selected_unit_keys_json: ["hero:3"] }),
+      missing
+    );
+
+    expect(initial.selectedKeys).toEqual(["hero:1", "hireling:4"]);
+    expect(saved.selectedKeys).toEqual(["hero:3"]); // brought anyway: a saved pick stands
+  });
+
   it("keeps the saved selection, without units that are no longer on the roster", () => {
     const initial = initialPrebattleConfig(
       myParticipant({ selected_unit_keys_json: ["hero:3", "hero:99"] }),

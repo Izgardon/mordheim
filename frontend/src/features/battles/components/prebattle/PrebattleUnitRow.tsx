@@ -4,6 +4,7 @@ import BattleUnitStatsAndItems from "@/features/battles/components/shared/Battle
 import { getBattleCardThemeStyle } from "@/features/battles/components/shared/battle-card-theme";
 import { PetChips, RiderMark } from "@/features/battles/components/shared/BattleCompanionParts";
 import { mountedStats } from "@/features/battles/utils/battle-companions";
+import PrebattleMissingNote from "./PrebattleMissingNote";
 
 import type { PrebattleUnit, StatKey, UnitOverride, UnitSingleUseItem } from "./prebattle-types";
 
@@ -55,6 +56,7 @@ export default function PrebattleUnitRow({
             <p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">
               {unit.unitType}
             </p>
+            <PrebattleMissingNote unit={unit} selected={selected} />
             <PetChips pets={unit.pets} />
             {unit.kind === "custom" ? (
               <p className="mt-1 text-xs text-muted-foreground">Rating: {unit.rating ?? 0}</p>
