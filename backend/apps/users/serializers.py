@@ -98,7 +98,7 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
 
 class CurrentPasswordSerializer(serializers.Serializer):
     """The signed-in user's (context `user`) current password, confirming an account change: a password change now,
-    and deleting the account in PR C."""
+    and deleting the account."""
 
     current_password = serializers.CharField(write_only=True)
 

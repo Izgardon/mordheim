@@ -7,6 +7,7 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { PASSWORD_HINT } from "@/features/auth/components/PasswordInput";
 import { AuthProvider } from "@/features/auth/stores/auth-store";
 import { ApiError, SERVER_UNAVAILABLE_MESSAGE } from "@/lib/api-client";
 import { getErrorMessage, SERVER_ERROR_MESSAGE } from "@/lib/get-error-message";
@@ -91,13 +92,14 @@ describe("refusals on the sign-in card (AUTH-TEST-26)", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent(SERVER_UNAVAILABLE_MESSAGE);
   });
 
-  it("shows both password rules a sign-up breaks (AUTH-TEST-26, AUTH-UX-01)", async () => {
+  it("shows both password rules a sign-up breaks, under the password (AUTH-TEST-26, AUTH-UX-01, BUG-171)", async () => {
     fakeFetch.on("POST /auth/register/", json(400, { password: [TOO_SHORT, TOO_COMMON] }));
 
     await signUp();
 
-    expect(await screen.findByRole("alert")).toHaveTextContent(
-      `Password: ${TOO_SHORT} ${TOO_COMMON}`
+    expect(await screen.findByRole("alert")).toHaveTextContent(`${TOO_SHORT} ${TOO_COMMON}`);
+    expect(screen.getByLabelText("Password")).toHaveAccessibleDescription(
+      `${PASSWORD_HINT} ${TOO_SHORT} ${TOO_COMMON}` // the rules hint, then the refusal
     );
   });
 
@@ -117,7 +119,7 @@ describe("refusals on the sign-in card (AUTH-TEST-26)", () => {
     expect(screen.queryByText("Request failed (500)")).toBeNull();
   });
 
-  it("shows the server's refusal of a display name of spaces, which the browser lets through (decision 2)", async () => {
+  it("shows the server's refusal of a display name of spaces, which the browser lets through, under the field it names (decision 2, BUG-171)", async () => {
     const user = setupUser();
     fakeFetch.on("POST /auth/register/", json(400, { name: ["This field may not be blank."] }));
     renderCard();
@@ -128,13 +130,17 @@ describe("refusals on the sign-in card (AUTH-TEST-26)", () => {
     await user.type(screen.getByLabelText("Password"), "wyrdstone");
     await user.click(submitButton());
 
-    expect(await screen.findByRole("alert")).toHaveTextContent(
-      "Name: This field may not be blank."
+    // Was "Name: This field may not be blank." under the form, under a field labelled "Display
+    // name" (BUG-171)
+    expect(await screen.findByRole("alert")).toHaveTextContent(/^This field may not be blank\.$/);
+    expect(screen.getByLabelText("Display name")).toHaveAccessibleDescription(
+      "This field may not be blank."
     );
+    expect(screen.queryByText(/Name:/)).toBeNull();
     expect(fakeFetch.requests()[0].body).toMatchObject({ name: "   " });
   });
 
-  it("shows the server's new password rule, a password too like the email (AUTH-CQ-04)", async () => {
+  it("shows the server's new password rule, a password too like the email, under the password (AUTH-CQ-04, BUG-171)", async () => {
     fakeFetch.on(
       "POST /auth/register/",
       json(400, { password: ["The password is too similar to the email address."] })
@@ -143,7 +149,10 @@ describe("refusals on the sign-in card (AUTH-TEST-26)", () => {
     await signUp();
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
-      "Password: The password is too similar to the email address."
+      /^The password is too similar to the email address\.$/
+    );
+    expect(screen.getByLabelText("Password")).toHaveAccessibleDescription(
+      `${PASSWORD_HINT} The password is too similar to the email address.`
     );
   });
 
@@ -161,12 +170,13 @@ describe("refusals on the sign-in card (AUTH-TEST-26)", () => {
     );
   });
 
-  it("says a taken email is taken (SEC-11, accepted)", async () => {
+  it("says a taken email is taken, under the email (SEC-11, accepted; BUG-171)", async () => {
     fakeFetch.on("POST /auth/register/", json(400, { email: ["User already exists"] }));
 
     await signUp();
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("Email: User already exists");
+    expect(await screen.findByRole("alert")).toHaveTextContent(/^User already exists$/);
+    expect(screen.getByLabelText("Email")).toHaveAccessibleDescription("User already exists");
   });
 
   it("shows login's 'Invalid credentials' and stores no session", async () => {

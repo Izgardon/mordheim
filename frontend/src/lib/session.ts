@@ -184,15 +184,34 @@ export const session = {
     notify();
   },
 
+  /**
+   * Whether `token` is this session's: the current access token, or an earlier one of the same
+   * account that a refresh has replaced since. A sign-out or another account makes it stale.
+   */
+  isFor(token: string) {
+    if (!current.token) {
+      return false;
+    }
+    const account = getTokenUserId(token);
+    return (
+      token === current.token || (account !== null && account === getTokenUserId(current.token))
+    );
+  },
+
   loadingProfile() {
     update({ status: "booting" });
   },
 
-  profileLoaded(user: AuthUser) {
-    if (getToken()) {
-      setStoredUser(user);
+  /**
+   * The profile loaded for `token`. Ignored once `token` isn't this session's: a load that ends
+   * after a sign-out, or after another tab switched account, must not bring its user back (BUG-170).
+   */
+  profileLoaded(token: string, user: AuthUser) {
+    if (!session.isFor(token)) {
+      return;
     }
-    update({ user, status: current.token ? "authenticated" : "anonymous" });
+    setStoredUser(user);
+    update({ user, status: "authenticated" });
   },
 
   /** The server is unreachable: an outage isn't a logout, so the tokens stay for a retry. */
@@ -200,8 +219,14 @@ export const session = {
     update({ user: null, status: "offline" });
   },
 
-  /** A newer copy of the signed-in user (a fresh /auth/me answer): cached, and shown if changed. */
+  /**
+   * A newer copy of the signed-in user (a fresh /auth/me answer, a rename): cached, and shown if
+   * changed. Ignored when it isn't the signed-in user, e.g. an answer that lands after a sign-out.
+   */
   updateUser(user: AuthUser) {
+    if (current.user?.id !== user.id) {
+      return;
+    }
     setStoredUser(user);
     if (JSON.stringify(user) !== JSON.stringify(current.user)) {
       update({ user });

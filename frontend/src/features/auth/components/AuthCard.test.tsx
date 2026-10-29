@@ -8,6 +8,7 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { PASSWORD_HINT } from "@/features/auth/components/PasswordInput";
 import { AuthProvider } from "@/features/auth/stores/auth-store";
 import { ApiError } from "@/lib/api-client";
 import { deferred, loginAnswer, RAIDER, registerAnswer, storeSession } from "@/test/auth-fixtures";
@@ -115,8 +116,8 @@ describe("creating an account", () => {
     expect(screen.getByLabelText("Email")).toHaveAttribute("type", "email");
     expect(screen.getByLabelText("Password")).toBeRequired();
     expect(screen.getByLabelText("Password")).toHaveAttribute("autocomplete", "new-password");
-    // No password-rules hint (AUTH-TWEAK-07).
-    expect(screen.queryByText(/at least 8 characters/i)).toBeNull();
+    // The rules under the new password (AUTH-TWEAK-07; there was no hint before PR C).
+    expect(screen.getByText(PASSWORD_HINT)).toBeInTheDocument();
 
     await user.type(screen.getByLabelText("Display name"), "Raider");
     await user.type(screen.getByLabelText("Email"), RAIDER.email);
@@ -163,6 +164,20 @@ describe("creating an account", () => {
     await user.click(screen.getByRole("button", { name: "Forgot password?" }));
     expect(signInSwitch()).toHaveAttribute("aria-pressed", "false");
     expect(createSwitch()).toHaveAttribute("aria-pressed", "false");
+  });
+});
+
+describe("the password rules hint (AUTH-TWEAK-07, decision 6)", () => {
+  it("is under sign-up's password, which a new password is, and not under sign-in's", async () => {
+    const user = setupUser();
+    renderCard();
+    expect(screen.getByLabelText("Password")).not.toHaveAccessibleDescription();
+    expect(screen.queryByText(PASSWORD_HINT)).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "Create Account" }));
+
+    expect(screen.getByLabelText("Password")).toHaveAccessibleDescription(PASSWORD_HINT);
+    expect(screen.getByText(PASSWORD_HINT)).toBeInTheDocument();
   });
 });
 

@@ -10,7 +10,7 @@ Step 1 of the pass loop in [PLAN.md](../PLAN.md). Full detail (repro, fix) is in
 
 **Data is disposable** (`CLAUDE.md`): no backfills; the one new migration must run on an empty database.
 
-**Your part:** every decision is answered (see [Decisions](#decisions-answered-by-william-2026-10-18)). The [Calls I made](#calls-i-made) were confirmed on 2026-10-19. What the agents decided along the way is under [Progress](#progress), for you to change. PR C waits for the bestiary rewrite.
+**Your part:** every decision is answered (see [Decisions](#decisions-answered-by-william-2026-10-18)). The [Calls I made](#calls-i-made) were confirmed on 2026-10-19. What the agents decided along the way is under [Progress](#progress), for you to change. PR C is built on `pass6/pr-c` (2026-10-28), waiting for its two-player browser check.
 
 ## What it is today
 
@@ -91,7 +91,7 @@ Frontend
 
 ### PR C: your decisions and Planned changes
 
-Every row below is Agreed. AUTH-TWEAK-01 to -04 land in PR A (they fix SEC-05, SEC-13 and BUG-140). The rest build on PR B's session module and forms, in this order: the name prompt (AUTH-NEW-06), the account page (AUTH-NEW-01 to -04), the auth pages (AUTH-TWEAK-05 to -07), then deleting an account (AUTH-NEW-05, after pass 4's PR C). Only new table: `users.UserAccount` (PR A).
+Every row below is Agreed. AUTH-TWEAK-01 to -04 land in PR A (they fix SEC-05, SEC-13 and BUG-140). The rest build on PR B's session module and forms, in this order: the account page (AUTH-NEW-01 to -04), the auth pages (AUTH-TWEAK-05 to -07), then deleting an account (AUTH-NEW-05, after pass 4's PR C). Only new table: `users.UserAccount` (PR A).
 
 ### Query and request targets
 
@@ -171,19 +171,19 @@ Types: **New**, **Tweak**, **Remove**. IDs: `AUTH-NEW-NN`, `AUTH-TWEAK-NN`. Stat
 
 | ID | Type | Change | Notes / acceptance | Status |
 | --- | --- | --- | --- | --- |
-| AUTH-NEW-01 | New | Account settings page | Decision 1. `/account`, linked from the Campaigns header and campaign Settings → Personal; sections for display name, password, sessions and deletion. | Agreed (PR C, after the bestiary rewrite) |
-| AUTH-NEW-02 | New | Change your display name | Decision 1. Saved through `PATCH auth/me/`; shows everywhere at once, chat and bulletin included. | Agreed (PR C, after the bestiary rewrite; the server half is done in PR A) |
-| AUTH-NEW-03 | New | Change your password | Decisions 1 and 4. Current and new password, with the toggle and the hint; other devices are signed out; this one stays signed in. | Agreed (PR C, after the bestiary rewrite; the server half is done in PR A) |
-| AUTH-NEW-04 | New | Sign out everywhere else | Decision 4. One button; every other device's next request lands on sign-in with "Your session ended". | Agreed (PR C, after the bestiary rewrite; the server half and the landing reason are done in PR A) |
-| AUTH-NEW-05 | New | Delete your account | Decision 1. Password confirm and a preview; owned campaigns with members are handed over first; you show as "Former player"; your warbands stay as retired records; it can't be undone. | Agreed (PR C, after the bestiary rewrite) |
-| AUTH-NEW-06 | New | Asked once for a display name | Decision 2. A user with no name gets a one-field dialog on the next signed-in screen; until it's saved, others see "Player N". | Not built (decision 2, 2026-10-19: data is disposable) |
+| AUTH-NEW-01 | New | Account settings page | Decision 1. `/account`, linked from the Campaigns header and campaign Settings → Personal; sections for display name, password, sessions and deletion. | Done (PR C) |
+| AUTH-NEW-02 | New | Change your display name | Decision 1. Saved through `PATCH auth/me/`; shows everywhere at once, chat and bulletin included. | Done (PR C; every campaign's cached lists read again after a rename) |
+| AUTH-NEW-03 | New | Change your password | Decisions 1 and 4. Current and new password, with the toggle and the hint; other devices are signed out; this one stays signed in. | Done (PR C) |
+| AUTH-NEW-04 | New | Sign out everywhere else | Decision 4. One button; every other device's next request lands on sign-in with "Your session ended". | Done (PR C) |
+| AUTH-NEW-05 | New | Delete your account | Decision 1. Password confirm and a preview; owned campaigns with members are handed over first; you show as "Former player"; your warbands stay as retired records; it can't be undone. | Done (PR C: `GET` / `POST auth/me/deletion/`) |
+| AUTH-NEW-06 | New | Asked once for a display name | Decision 2. A user with no name gets a one-field dialog on the next signed-in screen; until it's saved, others see "Player N". | Dropped (2026-10-29): built in PR C, then removed as unreachable, as decision 2 said. Sign-up and a rename both refuse a blank name and the seeders name their users, so only `createsuperuser` makes a user without one, who shows as "Player N" |
 | AUTH-TWEAK-01 | Tweak | Display name required at sign-up | Decision 2. "Display name" replaces "Alias"; 1-40 characters; the server refuses a blank one. | Done |
 | AUTH-TWEAK-02 | Tweak | No email shown as a name | Decision 2, SEC-13. Players, members, chat, bulletin, encampments, battle labels, trade names and the ledger show the name, or "Player N"; never an email. | Done (the members list keeps its email column for owners and admins, pass 4's call) |
 | AUTH-TWEAK-03 | Tweak | Sessions renew while in use | Decision 4. Each refresh returns a new 30-day refresh token; only 30 idle days sign you out. | Done |
 | AUTH-TWEAK-04 | Tweak | Everyone signed out once when this ships | Decision 4. Old tokens are refused; the landing page says "Your session ended. Please sign in again." | Done |
-| AUTH-TWEAK-05 | Tweak | Landing video: landing only, late, no-cookie | Decision 5. `youtube-nocookie.com` after load, on desktop Landing only; reset never loads it. | Agreed (PR C, after the bestiary rewrite) |
-| AUTH-TWEAK-06 | Tweak | One forgot-password flow | Decision 6. The sign-in card's flow stays; `/forgot-password` and `ForgotPassword.tsx` are deleted (the URL shows NotFound). | Agreed (PR C, after the bestiary rewrite) |
-| AUTH-TWEAK-07 | Tweak | Show-password toggle and rules hint | Decision 6. One `PasswordInput` with show and hide on sign-in, sign-up, reset and change password; the hint under every new password. | Agreed (PR C, after the bestiary rewrite; PR B's shared `PasswordInput` already has the toggle on sign-in and sign-up) |
+| AUTH-TWEAK-05 | Tweak | Landing video: landing only, late, no-cookie | Decision 5. `youtube-nocookie.com` after load, on desktop Landing only; reset never loads it. | Done (PR C) |
+| AUTH-TWEAK-06 | Tweak | One forgot-password flow | Decision 6. The sign-in card's flow stays; `/forgot-password` and `ForgotPassword.tsx` are deleted (the URL shows NotFound). | Done (PR C) |
+| AUTH-TWEAK-07 | Tweak | Show-password toggle and rules hint | Decision 6. One `PasswordInput` with show and hide on sign-in, sign-up, reset and change password; the hint under every new password. | Done (PR C; the account page's current password has the toggle too) |
 
 ## Progress
 
@@ -192,7 +192,7 @@ Types: **New**, **Tweak**, **Remove**. IDs: `AUTH-NEW-NN`, `AUTH-TWEAK-NN`. Stat
 | Characterisation tests | **Done.** Backend 958 → 1,056 with real JWTs (6 expected failures: BUG-84's two over-long fields and its sign-up race, BUG-140, and BUG-83's two uids); frontend 1,246 → 1,321 through the fake API server, plus a fake `fetch` behind the real api-client. Found BUG-153 to BUG-158. |
 | PR A (fixes) | **Done.** Backend 1,056 → 1,096, every expected failure flipped: a per-user session key (`sk`) in every token, checked on each request and refresh, with rotating refresh tokens; a reset, `POST auth/password/` and `POST auth/sign-out-others/` end every other session (401 `session_ended`); `PATCH auth/me/` renames and restamps the user's chat and bulletin names; a display name of 1 to 40 characters is required at sign-up; login answers `{access, refresh, user}` and records `last_login`; identity-keyed throttles (loose per address, tight per email, 10,000 counters); with `DJANGO_DEBUG` off, a key under 50 characters stops startup, `RATE_LIMIT_NUM_PROXIES` defaults to 1 with a warning, and a set `RESEND_API_KEY` needs real `FRONTEND_URL` and `DEFAULT_FROM_EMAIL` values; reset answers 503 `email_unavailable` while email is off, and its link uses the fragment; health and keep-awake run no authentication or query; `LOGGING` to stdout; JSON-only renderers in production. Frontend 1,321 → 1,356: sign-in and sign-up read no `/auth/me` (3 and 2 before); the user is cached beside the tokens, so a reload paints at once; a 401 after a refresh signs out; sign-in returns to the page you were on, and an ended session says so; unknown URLs show NotFound; the auth forms use `getErrorMessage`, with `role="alert"` and `aria-pressed`; the landing box scrolls; the reset page reads the fragment and ends on "Password updated"; the feedback card stops at 2,000 characters; the rotated refresh token is stored. |
 | PR B (refactor) | **Done.** Backend 1,096 → 1,102 with no query count changed: `apps/users/services/accounts.py` (no view method over 14 lines), the reset finds its user by username (IMP-95 c), throttle scopes come from one table (`SCOPES`), one `email_configured()` and one `_queue_email`, the unused sessions, messages and CSRF machinery is gone and CI runs `check --deploy`, the Dockerfile pins uv 0.13.1 with `--frozen`, and `test_rate_limiting.py` is split. Frontend 1,356 → 1,371: `lib/session.ts` owns the tokens, the cached user and the session's status (`auth-store.tsx` 249 → 121 lines); `AuthCard` 322 → 79 as `LoginForm`, `RegisterForm`, `ForgotForm` and `AuthModeSwitch` on a shared `AuthField` and `PasswordInput`. |
-| PR C (decisions and features) | **Pending, after the bestiary rewrite:** the account page (AUTH-NEW-01 to -05) and the auth pages (AUTH-TWEAK-05 to -07). Ready for it: the server half of rename, password change and sign-out-others; `session.updateUser`; `CurrentPasswordSerializer` for the delete's password confirm; the throttle the delete can join; the fix point for BUG-170. |
+| PR C (decisions and features) | **Done** (`pass6/pr-c`, 2026-10-28; its two-player browser check is next). Backend 1,531 → 1,548: `GET auth/me/deletion/` previews deleting your account, campaign by campaign (`hand_over_first` for one you own with other members, `archived` for one you're alone in, `left` for the rest, with the warband kept) plus the open battles and trades that close, in 4 queries however many campaigns (5 with the token); `POST` with the current password deletes it in one transaction under the owned campaigns' row locks, through pass 4's archive and removal clean-up, and keeps the user row as "Former player" (username `deleted-<id>`, no email, an unusable password, inactive, a new session key; chat and bulletin names restamped; their notifications deleted); it joins the account throttle. Startup also refuses a `DEFAULT_FROM_EMAIL` on `resend.dev` once `RESEND_API_KEY` is set. Frontend 1,806 → 1,826: `/account` (linked from the campaigns list beside Log out and from Settings → Personal) changes the display name, changes the password, signs out everywhere else and deletes the account after a preview and the password (AUTH-NEW-01 to -05); the landing video plays on Landing only, from the no-cookie embed, after the page has loaded (AUTH-TWEAK-05); `/forgot-password` is gone (AUTH-TWEAK-06); one `PasswordInput` with show and hide everywhere and the rules hint under every new password (AUTH-TWEAK-07). Fixed BUG-170 and BUG-171. |
 | Combined browser check (`release/p5-p6`) | **Passed**, with no email sent (the reset request was stubbed in the page). It found and fixed BUG-163: the landing box still didn't scroll on a short desktop window. |
 
 William changed one call during PR A: with `RATE_LIMIT_NUM_PROXIES` unset in production, the throttles assume Render's one proxy and gunicorn warns once per start, instead of refusing to start.
@@ -215,6 +215,21 @@ Decided during PR A and B (change any of them):
 - A reset done on a signed-in device signs that device out the way Log out does, with no "session ended" notice.
 - Settings drop `AuthenticationMiddleware` along with sessions (DRF authenticates every request from its token) and silence W003; only the test runner uses a session engine.
 
+Decided during PR C (change any of them):
+- **AUTH-NEW-06 is dropped** (William, 2026-10-29): PR C built the name prompt because its task listed it, though decision 2 (2026-10-19) said not to. Nothing reaches it: sign-up and a rename refuse a blank name, the seeders name their users, and prod was wiped after names became required. Its shared pieces stay for sign-up and the account page (`DisplayNameField`, `useDisplayNameForm`, `AuthField`'s hint and error).
+- A rename makes every campaign's cached queries read again (`["campaign"]`), so a campaign page opened after it shows the new name, not a cached old one.
+- Deleting: an owned campaign with other members blocks it even when archived. An archived campaign can't be handed over, so the preview says to restore it and hand it over, or delete it for good.
+- A campaign the user is alone in is archived and keeps its owner's membership, now "Former player", so nobody can restore it; one already archived stays as it was.
+- Memberships in other people's archived campaigns are taken out too: the deletion is the one write an archived campaign takes, and it changes nothing there but the membership.
+- The battles a deletion closes use the leave mode (`member_left`): to the other players it reads as if the player left. The user is anonymised before the clean-up, so everything written during it names "Former player".
+- The preview counts the open battles and trades rather than listing them one by one as Leave does, so it stays at 4 queries however many campaigns the user is in.
+- A wrong password counts against the account throttle (5 a minute per user), shared with the password change and sign-out-others; the preview doesn't count.
+- After a deletion this device signs out the way Log out does, with the toast "Your account is deleted." rather than "Your session ended"; other devices meet "Your session ended" at their next request.
+- The password change and sign-out-others keep this browser's other tabs signed in (they share the stored tokens); "Sign out everywhere else" has no confirm, since nothing is lost.
+- Sign-up and the account page show each refusal under its field (BUG-171); the reset page keeps its one line under the form.
+- The reset page keeps the dark half where the video was, so its layout doesn't move. The landing video waits for the window's load event, or for the next task when the page has already loaded (moving to `/` inside the app), never the first render.
+- `frame-src` names `https://www.youtube-nocookie.com` beside `https:`, so `https:` can go when the CSP is enforced.
+
 ## Production checks
 
 Environment variables only (names, never values). Data is disposable, so there is no SQL to run.
@@ -222,3 +237,4 @@ Environment variables only (names, never values). Data is disposable, so there i
 - **`RATE_LIMIT_NUM_PROXIES`: optional** (William's change during PR A). Unset, production assumes 1 proxy and gunicorn logs a warning once per start; a value that isn't a whole number of 0 or more stops startup. To confirm 1 is right, count the addresses in a normal request's `xff="..."` in Render's log (the client's address should be the last), or send `curl -H "X-Forwarded-For: 1.2.3.4" https://mordheim-1.onrender.com/api/health/` and check that the logged `xff` ends with your real IP. Set it to `1` to silence the warning.
 - **No email variables:** they stay unset until [email is turned on](#parked-for-later), so reset answers the 503. Once `RESEND_API_KEY` is set, startup also needs an https `FRONTEND_URL` and a real `DEFAULT_FROM_EMAIL`.
 - **Deploy the backend and frontend together.** The frontend stores the rotated refresh token, sends `name` at sign-up, handles `session_ended` and reads the reset link's fragment. Everyone signs in once (AUTH-TWEAK-04).
+- **PR C:** no new variable and no migration. Deploy the backend with the frontend, since the account page calls the new `auth/me/deletion/`. When email is turned on, `DEFAULT_FROM_EMAIL` must be on the verified domain: startup now refuses Resend's shared `resend.dev` sender as well as example.com.

@@ -163,7 +163,7 @@ describe("signing in or up from the landing page", () => {
   });
 });
 
-describe("a user with no name (signed up before names were required)", () => {
+describe("a user with no name (made by createsuperuser or a seeder)", () => {
   it("is welcomed without a name, never by their email (SEC-13, AUTH-TWEAK-02)", async () => {
     storeSession({ ...NAMELESS, name: "  " });
     fakeApi.on("GET /auth/me/", { ...NAMELESS, name: "  " });

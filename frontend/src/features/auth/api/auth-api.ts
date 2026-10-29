@@ -3,10 +3,12 @@ import { apiRequest } from "../../../lib/api-client";
 
 // types
 import type {
+  AccountDeletionPreview,
   AuthResponse,
   FeedbackReportPayload,
   AuthUser,
   LoginCredentials,
+  PasswordChangePayload,
   PasswordResetConfirmPayload,
   PasswordResetRequestPayload,
   RegisterPayload,
@@ -32,6 +34,31 @@ export function fetchMe(token: string) {
   return apiRequest<AuthUser>("/auth/me/", {
     token,
   });
+}
+
+/** Changes the display name; the server trims it and answers the user (AUTH-NEW-02). */
+export function renameAccount(name: string) {
+  return apiRequest<AuthUser>("/auth/me/", { method: "PATCH", body: { name } });
+}
+
+/** Changes the password: every other device is signed out; this one gets a fresh pair (AUTH-NEW-03). */
+export function changePassword(payload: PasswordChangePayload) {
+  return apiRequest<AuthResponse>("/auth/password/", { method: "POST", body: payload });
+}
+
+/** Signs out every other device; this one gets a fresh pair (AUTH-NEW-04). */
+export function signOutOtherSessions() {
+  return apiRequest<AuthResponse>("/auth/sign-out-others/", { method: "POST" });
+}
+
+/** What deleting the account would do, campaign by campaign (AUTH-NEW-05). */
+export function fetchDeletionPreview() {
+  return apiRequest<AccountDeletionPreview>("/auth/me/deletion/");
+}
+
+/** Deletes the account for good; 400 `hand_over_first` while an owned campaign has members. */
+export function deleteAccount(payload: { current_password: string }) {
+  return apiRequest<void>("/auth/me/deletion/", { method: "POST", body: payload });
 }
 
 export function requestPasswordReset(payload: PasswordResetRequestPayload) {

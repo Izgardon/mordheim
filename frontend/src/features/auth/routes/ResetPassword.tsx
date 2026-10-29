@@ -8,9 +8,9 @@ import { CardBackground } from "@components/card-background";
 
 import { getErrorMessage } from "@/lib/get-error-message";
 
-import { AuthField, AuthFormError } from "../components/AuthField";
+import { AuthFormError } from "../components/AuthField";
 import AuthShell from "../components/AuthShell";
-import { PasswordInput } from "../components/PasswordInput";
+import { PasswordField } from "../components/PasswordInput";
 import { confirmPasswordReset } from "../api/auth-api";
 import { useAuth } from "../hooks/use-auth";
 
@@ -75,26 +75,21 @@ export default function ResetPassword() {
   const form = (
     <form className="space-y-5" onSubmit={handleSubmit}>
       <AuthFormError message={isLinkValid ? "" : INCOMPLETE_LINK_MESSAGE} />
-      <AuthField label="New password">
-        <PasswordInput
-          revealable={false}
-          value={newPassword}
-          onChange={(event) => setNewPassword(event.target.value)}
-          placeholder="Keep it secret"
-          autoComplete="new-password"
-          required
-        />
-      </AuthField>
-      <AuthField label="Confirm password">
-        <PasswordInput
-          revealable={false}
-          value={confirmPassword}
-          onChange={(event) => setConfirmPassword(event.target.value)}
-          placeholder="Repeat it"
-          autoComplete="new-password"
-          required
-        />
-      </AuthField>
+      {/* The toggle on both, the rules under the new one (AUTH-TWEAK-07); the confirm field stays. */}
+      <PasswordField
+        label="New password"
+        value={newPassword}
+        onChange={setNewPassword}
+        autoComplete="new-password"
+        showRules
+      />
+      <PasswordField
+        label="Confirm password"
+        value={confirmPassword}
+        onChange={setConfirmPassword}
+        autoComplete="new-password"
+        placeholder="Repeat it"
+      />
       <AuthFormError message={error} />
       <div className="flex flex-col items-center gap-3">
         <Button size="sm" type="submit" disabled={isSubmitting || !isLinkValid}>

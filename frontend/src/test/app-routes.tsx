@@ -22,6 +22,7 @@ import { TestDiceProvider } from "./dice";
 // The routes load these on demand; importing them here first lets each lazy() resolve at once.
 import "@/app/routes/NotFound";
 import "@/app/routes/ProtectedLayout";
+import "@/features/auth/routes/Account";
 import "@/features/auth/routes/Landing";
 import "@/features/auth/routes/ResetPassword";
 import "@/features/campaigns/routes/Campaigns";

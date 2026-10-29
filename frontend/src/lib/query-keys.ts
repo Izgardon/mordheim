@@ -22,7 +22,13 @@ export const queryKeys = {
   restrictions: (type: string) => ["restrictions", type] as const,
   /** Your campaigns, as the campaigns page lists them. */
   campaigns: () => ["campaigns"] as const,
+  account: {
+    /** What deleting your account would do (read each time the delete dialog opens). */
+    deletionPreview: () => ["account", "deletion"] as const,
+  },
   campaign: {
+    /** Everything of every campaign: what shows a player's name, read again after a rename. */
+    every: () => ["campaign"] as const,
     all: (campaignId: number) => ["campaign", campaignId] as const,
     detail: (campaignId: number) => ["campaign", campaignId, "detail"] as const,
     /** Every permission code with its label and description (the grant menu's options). */

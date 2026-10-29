@@ -1,4 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 
 // components
 import { Button } from "@components/button";
@@ -51,7 +52,11 @@ export default function Campaigns() {
       }}
     >
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 sm:gap-10">
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          {/* The account page: display name, password, sessions and deletion (AUTH-NEW-01). */}
+          <Button asChild variant="ghost">
+            <Link to="/account">Account</Link>
+          </Button>
           <Button
             variant="ghost"
             className="text-destructive hover:text-destructive"

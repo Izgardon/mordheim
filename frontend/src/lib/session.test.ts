@@ -215,7 +215,49 @@ describe("the profile", () => {
 
     session.loadingProfile();
     expect(session.get().status).toBe("booting");
-    session.profileLoaded(RAIDER);
+    session.profileLoaded(session.get().token!, RAIDER);
+    expect(session.get()).toMatchObject({ status: "authenticated", user: RAIDER });
+    expect(getStoredUser()).toEqual(RAIDER);
+  });
+
+  it("ignores a profile that loads after a sign-out (BUG-170)", () => {
+    storeSession(RAIDER, { cachedUser: false });
+    const { token } = session.boot();
+    session.loadingProfile();
+    session.signOut();
+    watch();
+
+    session.profileLoaded(token!, RAIDER);
+
+    expect(session.get()).toEqual({
+      status: "anonymous",
+      token: null,
+      user: null,
+      ended: "signed-out",
+    });
+    expect(localStorage.length).toBe(0);
+    expect(notifications).toBe(0);
+  });
+
+  it("ignores a profile that loads after another tab switched account (BUG-170)", () => {
+    storeSession(RAIDER, { cachedUser: false });
+    const { token } = session.boot();
+    const rival = accessToken(RIVAL.id, "other-tab");
+    session.setTokens({ access: rival, refresh: "refresh-3", user: RIVAL });
+
+    session.profileLoaded(token!, RAIDER);
+
+    expect(session.get()).toMatchObject({ status: "authenticated", token: rival, user: RIVAL });
+    expect(getStoredUser()).toEqual(RIVAL);
+  });
+
+  it("takes a profile loaded for this account's earlier token, refreshed since", () => {
+    storeSession(RAIDER, { cachedUser: false });
+    const { token } = session.boot();
+    session.setTokens({ access: accessToken(RAIDER.id, "refreshed") });
+
+    session.profileLoaded(token!, RAIDER);
+
     expect(session.get()).toMatchObject({ status: "authenticated", user: RAIDER });
     expect(getStoredUser()).toEqual(RAIDER);
   });
@@ -232,6 +274,17 @@ describe("the profile", () => {
     expect(session.get().user?.name).toBe("Raider Prime");
     expect(getStoredUser()?.name).toBe("Raider Prime");
     expect(notifications).toBe(1);
+  });
+
+  it("updateUser ignores a user who isn't the signed-in one, e.g. an answer after a sign-out (BUG-170)", () => {
+    storeSession(RAIDER);
+    session.boot();
+    session.signOut();
+
+    session.updateUser({ ...RAIDER, name: "Raider Prime" });
+
+    expect(session.get().user).toBeNull();
+    expect(getStoredUser()).toBeNull();
   });
 
   it("notifies a subscriber nothing for a status it already has", () => {

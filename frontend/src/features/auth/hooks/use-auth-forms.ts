@@ -8,6 +8,7 @@ import { requestPasswordReset } from "../api/auth-api";
 import { useAuth } from "./use-auth";
 
 // utils
+import { useFieldErrors } from "@/lib/field-errors";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 /** Where a form puts its refusal or notice: the sign-in card's one line under the form. */
@@ -39,22 +40,30 @@ export function useLoginForm(showError: ShowMessage) {
   return { values, setField, submit, isSubmitting };
 }
 
-/** Sign-up: a display name (decision 2), the email and a password. */
+const REGISTER_FIELDS = ["name", "email", "password"] as const;
+
+/**
+ * Sign-up: a display name (decision 2), the email and a password. A refusal of one of them shows
+ * under its field, in the server's words, so a blank name reads "This field may not be blank."
+ * under "Display name" rather than "Name: ..." under the form (BUG-171).
+ */
 export function useRegisterForm(showError: ShowMessage) {
   const { signUp, isSubmitting } = useAuth();
   const { values, setField } = useFormValues({ name: "", email: "", password: "" });
+  const fieldErrors = useFieldErrors(REGISTER_FIELDS);
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     showError("");
+    fieldErrors.clear();
     try {
       await signUp({ name: values.name, email: values.email, password: values.password });
     } catch (error) {
-      showError(getErrorMessage(error, "Unable to sign in"));
+      showError(fieldErrors.take(error, "Unable to sign in"));
     }
   };
 
-  return { values, setField, submit, isSubmitting };
+  return { values, setField, submit, isSubmitting, errors: fieldErrors.errors };
 }
 
 /** The inline forgot-password form: its own address, and the server's answer as a notice. */

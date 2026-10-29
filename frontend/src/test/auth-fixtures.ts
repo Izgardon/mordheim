@@ -15,7 +15,7 @@ export function accessToken(userId: number, nonce = "a") {
 
 export const RAIDER: AuthUser = { id: 1, email: "raider@example.com", name: "Raider" };
 
-/** Signed up without an alias, which today's sign-up allows (decision 2 makes it required). */
+/** A user without a display name: made by createsuperuser or a seeder, since sign-up requires one. */
 export const NAMELESS: AuthUser = { id: 2, email: "nameless@example.com", name: "" };
 
 /** A token pair for `user`, as login or a refresh would issue it. */

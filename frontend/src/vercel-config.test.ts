@@ -44,5 +44,8 @@ describe("vercel.json", () => {
     expect(directive("img-src")).toContain("data:");
     expect(directive("style-src")).toContain("https://fonts.googleapis.com");
     expect(directive("font-src")).toContain("https://fonts.gstatic.com");
+    // The landing video and warband links embed YouTube's no-cookie player (decision 5). Named, so
+    // `https:` can go once the CSP is enforced.
+    expect(directive("frame-src")).toContain("https://www.youtube-nocookie.com");
   });
 });

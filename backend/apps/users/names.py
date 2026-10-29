@@ -7,6 +7,8 @@ see emails, in the members list's own `email` field.
 
 from typing import Any
 
+FORMER_PLAYER = "Former player"  # the name of a deleted account, on everything of theirs that stays (decision 1)
+
 
 def display_name(user: Any) -> str:
     """The user's first name, else "Player {id}"; never his email or username."""
