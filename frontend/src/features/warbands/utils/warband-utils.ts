@@ -1,4 +1,5 @@
 import { unitMountBonus } from "./companions";
+import { fights } from "../units/missing-games";
 
 import type { HenchmenGroup, WarbandHero, WarbandHireling } from "../types/warband-types";
 
@@ -146,12 +147,16 @@ export const mountsRating = (
 ) =>
   [...heroes, ...hirelings, ...henchmenGroups].reduce((sum, unit) => sum + unitMountBonus(unit), 0);
 
+/** Units missing games are left out of the rating, as the server's summary leaves them out. */
 export const calculateWarbandRating = (
-  heroes: WarbandHero[],
-  hirelings: WarbandHireling[],
-  henchmenGroups: HenchmenGroup[],
+  allHeroes: WarbandHero[],
+  allHirelings: WarbandHireling[],
+  allHenchmenGroups: HenchmenGroup[],
   fallbackRating?: number
 ): number => {
+  const heroes = allHeroes.filter(fights);
+  const hirelings = allHirelings.filter(fights);
+  const henchmenGroups = allHenchmenGroups.filter(fights);
   const heroRating = heroes.reduce((total, hero) => {
     const base = hero.large ? 20 : 5;
     const xp = toNumber(hero.xp);
@@ -172,7 +177,7 @@ export const calculateWarbandRating = (
     return total + count * (base + xp);
   }, 0);
 
-  if (heroes.length || hirelings.length || henchmenGroups.length) {
+  if (allHeroes.length || allHirelings.length || allHenchmenGroups.length) {
     return (
       heroRating + hirelingRating + henchmenRating + mountsRating(heroes, hirelings, henchmenGroups)
     );
