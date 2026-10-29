@@ -8,6 +8,7 @@ from django.test.utils import CaptureQueriesContext
 
 from apps.battles.services.exploration import table_amount
 from apps.battles.services.injuries import describe_roll
+from apps.battles.services.postbattle.suggested import postbattle_rules
 from apps.warbands.models import HenchmenGroup, Hero, Hireling
 
 from .battle_support import BattleTestCase, build_fixture_warband, catalogue_item
@@ -70,11 +71,11 @@ class PostbattleGuideTests(BattleTestCase):
                 row for row in rules["exploration_table"] if row["max_total"] is None or total <= row["max_total"]
             )
             self.assertEqual(row["amount"], table_amount([total]), total)
-        rolls = {
-            "d6": [[value] for value in range(1, 7)],
-            "d66": [[tens, units] for tens in range(1, 7) for units in range(1, 7)],
-            "d100": [[value] for value in range(1, 101)],
-        }
+        # only the tables its units roll on, the henchman's D6 and the campaign's hero table, so they fit the end of
+        # the fight's broadcast (services/broadcast.py)
+        self.assertEqual(sorted(rules["injury_tables"]), ["d100", "d6"])
+        self.assertEqual(sorted(postbattle_rules("d66")["injury_tables"]), ["d6", "d66"])
+        rolls = {"d6": [[value] for value in range(1, 7)], "d100": [[value] for value in range(1, 101)]}
         for roll_type, cases in rolls.items():
             for roll in cases:
                 with self.subTest(roll_type=roll_type, roll=roll):

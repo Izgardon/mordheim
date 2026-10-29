@@ -17,7 +17,9 @@
   (services/postbattle/mounts.py).
 
 `rules` are the exploration chart and dice limits, and the serious injury tables with the campaign's hero death roll
-(henchmen, and hirelings on the henchman table, roll a d6; the battle roster shows each hireling's `injuryTable`).
+(henchmen, and hirelings on the henchman table, roll a d6; the battle roster shows each hireling's `injuryTable`):
+only the d6 and the campaign's hero table, the ones its units roll on, so the rules fit the end of the fight's
+broadcast (services/broadcast.py).
 """
 
 from collections.abc import Iterable
@@ -157,11 +159,12 @@ def suggested_postbattle(battle: Battle, participant: BattleParticipant, kill_pa
 
 
 def postbattle_rules(hero_death_roll: str) -> dict:
+    tables = injury_tables()
     return {
         "exploration_table": exploration_table(),
         "exploration_dice": {"max": MAX_EXPLORATION_DICE, "max_chosen": MAX_CHOSEN_DICE},
         "hero_death_roll": hero_death_roll,
-        "injury_tables": injury_tables(),
+        "injury_tables": {roll: tables[roll] for roll in ("d6", hero_death_roll) if roll in tables},
     }
 
 
