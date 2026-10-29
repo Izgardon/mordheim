@@ -33,7 +33,7 @@ def write_battle_logs(
     # one injury log per unit: the final roll, re-rolls, what was applied; kept stat changes before and after
     entries += [("personnel", "serious_injury", injury_log) for injury_log in units.injury_logs if injury_log]
     entries += [("personnel", "stats_kept", stat_log) for stat_log in units.stat_logs]
-    entries += units.missing_logs  # missing games: units back ("returns")
+    entries += units.missing_logs  # missing games: units back ("returns"), then injuries' new counts ("misses")
     if any(units.items_lost):
         entries.append(("battle", "items_lost", {"units": [entry for entry in units.items_lost if entry]}))
     if units.mounts_lost:  # mounts that died after the battle: rider, mount, the roll (bestiary rewrite step 5)

@@ -13,9 +13,11 @@ from unittest import mock
 
 from django.test import override_settings
 
-from apps.warbands.models import Henchman, HenchmenGroup, Hero, WarbandLog, WarbandTrade
+from apps.battles.services.injuries import describe_roll, injury_tables
+from apps.battles.validation.postbattle import normalize_postbattle
+from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling, WarbandLog, WarbandTrade
 
-from .battle_support import BattleTestCase, draft, unit_result
+from .battle_support import BattleTestCase, draft, injury_roll, unit_result
 
 SOCKET = "123.456"
 
@@ -113,3 +115,92 @@ class MissingGamesCountdownTests(BattleTestCase):
         channel = f"private-campaign-{self.campaign.id}-events"
         self.assertEqual([(call.args[0], call.args[2], call.kwargs) for call in changed],
                          [(channel, {"warband_id": self.warband.id}, {"socket_id": SOCKET})])  # fmt: skip
+
+
+class MissingGamesFromInjuriesTests(BattleTestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        self.campaign_settings.hero_death_roll = "d100"
+        self.campaign_settings.save()
+        self.hero = self.warband.heroes.create(name="Aldric", unit_type="Captain", is_leader=True)
+        self.persona = self.warband.hirelings.create(name="Bertha", unit_type="Bertha", kind="dramatis_persona",
+                                                     injury_table="hero")  # fmt: skip
+        self.mine, self.persona_key = f"hero:{self.hero.id}", f"hireling:{self.persona.id}"
+        self.rat = f"hero:{self.rival.heroes.create(name='Rat', unit_type='Assassin').id}"
+
+    def postbattle(self) -> int:
+        return self.to_postbattle({self.player: [self.mine, self.persona_key], self.viewer: [self.rat]})
+
+    def result(self, key: str, missing: Any = None, **fields: Any) -> dict[str, Any]:
+        entry = unit_result(key, rolls=[injury_roll([47], "d100", "Deep Wound")], **fields)
+        if missing is not None:
+            entry["missing_games"] = missing
+        return entry
+
+    def test_the_injury_tables_say_which_results_miss_games(self):
+        self.assertEqual(
+            describe_roll("d100", [47])["effect"], {"kind": "manual", "misses": {"games": 2, "dice": "D3"}}
+        )
+        self.assertEqual(describe_roll("d66", [6, 1])["effect"], {"kind": "manual", "misses": {"games": 1}})  # Captured
+        self.assertEqual(describe_roll("d66", [3, 1])["effect"], {"kind": "special", "special": "Old Battle Wound"})
+        for table in ("d66", "d100"):
+            missing = {row["label"] for row in injury_tables()[table] if "misses" in row["effect"]}
+            expected = {"Smashed Leg", "Arm Wound", "Captured", "Sold to the Pits"} | ({"Deep Wound"} if table == "d100" else set())  # fmt: skip
+            self.assertEqual(missing, expected)
+
+    def test_a_confirmed_injury_sets_missing_games_for_the_games_after_this_one(self):
+        self.hero.missing_games = 1  # brought anyway: this battle counts his last game, then the wound sets 3
+        self.hero.save()
+        battle_id = self.postbattle()
+        results = {
+            self.mine: self.result(self.mine, {"games": 3, "reason": "Deep Wound"}, name="Aldric"),
+            self.persona_key: self.result(self.persona_key, {"games": 1, "reason": " Captured "}, name="Bertha"),
+        }
+
+        self.ok(self.finalize(self.player, battle_id, draft(results)))
+
+        hero, persona = Hero.objects.get(id=self.hero.id), Hireling.objects.get(id=self.persona.id)
+        self.assertEqual((hero.missing_games, hero.missing_reason), (3, "Deep Wound"))
+        self.assertEqual((persona.missing_games, persona.missing_reason), (1, "Captured"))
+        self.assertEqual(missing_logs(self.warband.id), [
+            ("unit_returns", {"name": "Aldric"}),
+            ("unit_missing", {"name": "Aldric", "games": 3, "reason": "Deep Wound"}),
+            ("unit_missing", {"name": "Bertha", "games": 1, "reason": "Captured"}),
+        ])  # fmt: skip
+
+    def test_an_injury_left_unconfirmed_or_on_a_dead_unit_sets_nothing(self):
+        battle_id = self.postbattle()
+        results = {
+            self.mine: self.result(self.mine, {"games": 0, "reason": "Deep Wound"}),  # 0 games: not set
+            self.persona_key: self.result(self.persona_key, {"games": 2, "reason": "Captured"}, dead=True),
+        }
+
+        self.ok(self.finalize(self.player, battle_id, draft(results)))
+
+        self.assertEqual(Hero.objects.get(id=self.hero.id).missing_games, 0)
+        self.assertEqual(Hireling.objects.get(id=self.persona.id).missing_games, 0)
+        self.assertEqual(missing_logs(self.warband.id), [])
+
+    def test_a_malformed_missing_games_entry_is_refused_and_a_count_is_capped_at_99(self):
+        battle_id = self.postbattle()
+        bad = {self.mine: self.result(self.mine, "two"), self.persona_key: self.result(self.persona_key)}
+        refused = self.post_as(self.player, self.url(battle_id, "postbattle"), {"postbattle_json": draft(bad)})
+
+        many = {self.mine: self.result(self.mine, {"games": 500}), self.persona_key: self.result(self.persona_key)}
+        self.ok(self.finalize(self.player, battle_id, draft(many)))
+
+        self.assertEqual(refused.status_code, 400)
+        self.assertIn("missing_games", str(refused.data))
+        self.assertEqual(Hero.objects.get(id=self.hero.id).missing_games, 99)
+
+    def test_only_heroes_and_hired_swords_carry_missing_games_in_the_draft(self):
+        group = HenchmenGroup.objects.create(warband=self.warband, name="Swords")
+        member = f"henchman:{Henchman.objects.create(group=group, name='Hans').id}"
+        missing = {"games": 2, "reason": "Lost"}
+
+        saved = normalize_postbattle(draft({self.mine: self.result(self.mine, missing), member: self.result(member, missing)}))  # fmt: skip
+
+        self.assertEqual(saved["unit_results"][self.mine]["missing_games"], {"games": 2, "reason": "Lost"})
+        self.assertNotIn("missing_games", saved["unit_results"][member])
+        unset = normalize_postbattle(draft({self.mine: self.result(self.mine)}))["unit_results"][self.mine]
+        self.assertNotIn("missing_games", unset)

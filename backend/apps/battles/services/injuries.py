@@ -5,6 +5,10 @@ and its effect. Simple results (dead, a characteristic -1, a named special such 
 finalise when ticked; complex ones (Robbed, Captured, Sold to the Pits, Multiple Injuries and the like) are flagged
 to apply by hand. Only a unit's last roll counts (earlier ones were re-rolled); finalise writes one log per unit with
 that roll, the re-rolls and what was applied. The labels are the ones the postbattle page has always shown.
+
+A result that keeps the unit out of games carries a hint, `misses` (the games, and the dice when the book rolls for
+them: Deep Wound's D3): postbattle offers it as the unit's missing games, set at finalise only when the player ticks
+it (services/postbattle/missing.py). Smashed Leg and Arm Wound miss the next game on most of their second rolls.
 """
 
 from dataclasses import dataclass, field
@@ -28,19 +32,29 @@ def _special(name: str) -> dict[str, Any]:
     return {"kind": "special", "special": name}
 
 
+def _misses(games: int, dice: str | None = None) -> dict[str, Any]:
+    """Applied by hand, and the unit misses `games` games (the book rolls `dice` for them)."""
+    return {**MANUAL, "misses": {"games": games, **({"dice": dice} if dice else {})}}
+
+
+def _copy(effect: dict[str, Any]) -> dict[str, Any]:
+    """A copy of the effect the caller may change, its hint too."""
+    return {key: dict(value) if isinstance(value, dict) else value for key, value in effect.items()}
+
+
 _D66_RANGES: list[tuple[int, int, str, dict[str, Any]]] = [
     (11, 15, "Dead", DEAD),
     (16, 21, "Full Recovery", NONE),
     (22, 26, "Horrible Scars", _special("Horrible Scars")),
     (31, 31, "Old Battle Wound", _special("Old Battle Wound")),
     (32, 32, "Nervous Condition", _stat("initiative")),
-    (33, 33, "Smashed Leg", MANUAL),
-    (34, 34, "Arm Wound", MANUAL),
+    (33, 33, "Smashed Leg", _misses(1)),
+    (34, 34, "Arm Wound", _misses(1)),
     (35, 35, "Severe Head Wound", _special("Severe Head Wound")),
     (36, 36, "Robbed", MANUAL),
-    (41, 55, "Sold to the Pits", MANUAL),
+    (41, 55, "Sold to the Pits", _misses(1)),
     (56, 56, "Bitter Enmity", MANUAL),
-    (61, 61, "Captured", MANUAL),
+    (61, 61, "Captured", _misses(1)),
     (62, 62, "Hardened", _special("Hardened")),
     (63, 63, "Mad", MANUAL),
     (64, 64, "Stupidity", _special("Stupidity")),
@@ -50,24 +64,24 @@ _D66_RANGES: list[tuple[int, int, str, dict[str, Any]]] = [
 _D100_RANGES: list[tuple[int, int, str, dict[str, Any]]] = [
     (1, 14, "Dead", DEAD),
     (15, 20, "Multiple Injuries", MANUAL),
-    (21, 23, "Smashed Leg", MANUAL),
-    (24, 24, "Arm Wound", MANUAL),
+    (21, 23, "Smashed Leg", _misses(1)),
+    (24, 24, "Arm Wound", _misses(1)),
     (25, 26, "Madness", MANUAL),
-    (27, 28, "Smashed Leg", MANUAL),
+    (27, 28, "Smashed Leg", _misses(1)),
     (29, 31, "Chest Wound", _stat("toughness")),
     (32, 34, "Big City Shakes", MANUAL),
     (35, 37, "Blind in One Eye", _stat("ballistic_skill")),
     (38, 39, "Old Battle Wound", _special("Old Battle Wound")),
     (40, 42, "Nervous Condition", _stat("initiative")),
     (43, 45, "Hand Injury", _stat("weapon_skill")),
-    (46, 49, "Deep Wound", MANUAL),
+    (46, 49, "Deep Wound", _misses(2, "D3")),
     (50, 74, "Full Recovery", NONE),
     (75, 77, "Robbed", MANUAL),
     (78, 80, "Bitter Enmity", MANUAL),
-    (81, 85, "Captured", MANUAL),
+    (81, 85, "Captured", _misses(1)),
     (86, 88, "Hardened", _special("Hardened")),
     (89, 91, "Horrible Scars", _special("Horrible Scars")),
-    (92, 94, "Sold to the Pits", MANUAL),
+    (92, 94, "Sold to the Pits", _misses(1)),
     (95, 97, "Survives Against the Odds", MANUAL),
     (98, 99, "Really Survives Against the Odds", MANUAL),
     (100, 100, "Mutation", MANUAL),
@@ -94,7 +108,7 @@ def describe_roll(roll_type: str, rolls: list[int]) -> dict[str, Any]:
         code = str(rolls[0]).zfill(2)
         label, effect = _lookup(_D100_RANGES, rolls[0])
     dead_suggestion = effect["kind"] == "dead"
-    return {"result_code": code, "result_label": label, "dead_suggestion": dead_suggestion, "effect": dict(effect)}
+    return {"result_code": code, "result_label": label, "dead_suggestion": dead_suggestion, "effect": _copy(effect)}
 
 
 @dataclass
@@ -161,7 +175,7 @@ def apply_stat_and_special(unit: Any, outcome: InjuryOutcome, campaign_id: int) 
 
 
 def _rows(ranges: list[tuple[int, int, str, dict[str, Any]]]) -> list[dict[str, Any]]:
-    return [{"low": low, "high": high, "label": label, "effect": dict(effect)} for low, high, label, effect in ranges]
+    return [{"low": low, "high": high, "label": label, "effect": _copy(effect)} for low, high, label, effect in ranges]
 
 
 def injury_tables() -> dict[str, list[dict[str, Any]]]:

@@ -2,8 +2,9 @@
 
 Each battle a warband finalises counts one game for every unit of it that is missing (heroes, hired swords and henchmen
 groups, whether or not they fought); at 0 the unit is back and forgets its reason. A cancelled battle, and a postbattle
-skipped or closed (nothing applied), count nothing. It runs after the unit results, upkeep
-and finds are written (upkeep reads who was missing for this battle), and writes the edit mode's log rows.
+skipped or closed (nothing applied), count nothing. Then the serious injuries the player confirmed set a hero's or
+hired sword's missing games for the games after this one, replacing any count left. Both run after the unit results,
+upkeep and finds are written (upkeep reads who was missing for this battle), and write the edit mode's log rows.
 """
 
 from collections import defaultdict
@@ -14,8 +15,9 @@ from django.utils import timezone
 
 from apps.warbands.models import HenchmenGroup, Hero, Hireling, on_roster
 from apps.warbands.units.kinds import KIND_BY_MODEL
-from apps.warbands.units.services.missing import LogEntry, returns_log
+from apps.warbands.units.services.missing import LogEntry, missing_log, returns_log
 
+from ...validation.unit_keys import parse_unit_key
 from .context import FinaliseContext
 
 MODELS: tuple[Any, ...] = (Hero, HenchmenGroup, Hireling)
@@ -51,6 +53,41 @@ def count_down(warband_id: int) -> list[LogEntry]:
     return logs
 
 
-def apply_missing_games(context: FinaliseContext) -> list[LogEntry]:
-    """This battle's game off every missing unit of the warband (nothing read when it has none); the log rows."""
-    return count_down(context.warband.id) if context.has_missing else []
+def _injured_unit(context: FinaliseContext, unit_key: str) -> Any:
+    """The hero or hired sword of a result, while still on the roster and alive after this battle (else None)."""
+    parsed = parse_unit_key(unit_key)
+    if parsed["unit_type"] == "hero":
+        unit: Any = context.hero(parsed["unit_id"])
+    elif parsed["unit_type"] == "hireling":
+        unit = context.hirelings.get(parsed["unit_id"])
+    else:
+        return None
+    return None if unit is None or unit.dead or unit.dismissed_at is not None else unit
+
+
+def set_from_injuries(context: FinaliseContext, unit_results: dict[str, dict]) -> list[LogEntry]:
+    """The missing games each confirmed injury sets (a result's `missing_games`), on the rows finalise holds: one
+    UPDATE per kind that has one, nothing read. The "misses" rows."""
+    rows: defaultdict[Any, list[Any]] = defaultdict(list)
+    logs = []
+    now = timezone.now()
+    for unit_key, result in unit_results.items():
+        missing = result.get("missing_games")
+        if not missing:
+            continue
+        unit = _injured_unit(context, unit_key)
+        if unit is None:
+            continue
+        unit.missing_games, unit.missing_reason, unit.updated_at = missing["games"], missing["reason"], now
+        rows[type(unit)].append(unit)
+        logs.append(missing_log(_name(type(unit), unit.name, unit.unit_type), missing["games"], missing["reason"]))
+    for model, units in rows.items():
+        model.objects.bulk_update(units, ["missing_games", "missing_reason", "updated_at"])
+    return logs
+
+
+def apply_missing_games(context: FinaliseContext, unit_results: dict[str, dict]) -> list[LogEntry]:
+    """This battle's game off every missing unit of the warband (nothing read when it has none), then the injuries'
+    new counts; the log rows, in that order."""
+    counted = count_down(context.warband.id) if context.has_missing else []
+    return counted + set_from_injuries(context, unit_results)

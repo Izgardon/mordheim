@@ -80,7 +80,8 @@ def _apply(context: FinaliseContext, draft: dict) -> list[Warning]:
     finds = apply_upkeep_and_finds(
         context, draft.get("upkeep", {}), draft.get("finds", {"gold_crowns": 0, "items": []})
     )
-    units.missing_logs = apply_missing_games(context)  # after upkeep, which reads who was missing for this battle
+    # after upkeep, which reads who was missing for this battle; then the injuries' new counts
+    units.missing_logs = apply_missing_games(context, draft["unit_results"])
     consume_single_use_items(context.battle, context.participant, context.item_uses)
     unusual = unusual_value_warnings(draft)
     write_battle_logs(context.battle, context.participant, draft["exploration"], explored, finds, units, unusual)
