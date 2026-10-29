@@ -340,6 +340,8 @@ describe("useUnitSave: henchmen characterisation", () => {
       initiative: 3,
       attacks: 1,
       leadership: 7,
+      missing_games: 0,
+      missing_reason: "",
       items: [
         { id: 104, cost: 3 },
         { id: 104, cost: 3 },

@@ -21,6 +21,7 @@ import {
   missingIdentityFields,
   toValidationError,
 } from "../unit-form-helpers";
+import { buildMissingPayload, mapMissingToForm } from "../missing-games";
 import { henchmenEditor } from "./henchmen-editor";
 import { buildMembersPayload, computeItemsWithNewHenchmen } from "./henchmen-members";
 
@@ -43,6 +44,7 @@ const mapGroupFields = (group: HenchmenGroup): HenchmenGroupFormEntry => ({
   stats: mapStatsToForm(group),
   xp: group.xp?.toString() ?? "0",
   ...mapLevelUpToForm(group),
+  ...mapMissingToForm(group),
   max_size: group.max_size?.toString() ?? "5",
   hire_cost: group.hire_cost,
   price: group.price?.toString() ?? "0",
@@ -130,6 +132,7 @@ export const henchmenKind: UnitKindConfig<"henchmen_group"> = {
     no_level_ups: group.no_level_ups,
     ...buildStatPayload(group),
     ...buildLevelUpPayload(group, isSessionCreated),
+    ...buildMissingPayload(group, isSessionCreated),
     items: computeItemsWithNewHenchmen(group),
     skill_ids: group.skills.map((skill) => skill.id),
     special_ids: group.specials.map((entry) => entry.id),

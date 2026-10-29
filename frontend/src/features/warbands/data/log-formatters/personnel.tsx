@@ -93,10 +93,28 @@ const hirelingMove =
     return name === type ? `${verb} ${name}` : `${verb} ${name} the ${type}`;
   };
 
-/** Injuries, and hired swords joining or leaving (recruits use the templates). */
+type MissingPayload = { name?: string; games?: number; reason?: string };
+
+/** "Pieter Kalb misses 2 games: Deep wound", set in edit mode or by an injury at finalise. */
+const unitMissing: LogFormatter = (log) => {
+  const payload = payloadOf<MissingPayload>(log);
+  const games = Number(payload.games) || 0;
+  const reason = typeof payload.reason === "string" ? payload.reason.trim() : "";
+  return `${payload.name || "Unknown unit"} misses ${games} game${games === 1 ? "" : "s"}${
+    reason ? `: ${reason}` : ""
+  }`;
+};
+
+/** "Pieter Kalb returns": back from missing games (counted down, or cleared in edit mode). */
+const unitReturns: LogFormatter = (log) =>
+  `${payloadOf<MissingPayload>(log).name || "Unknown unit"} returns`;
+
+/** Injuries, missing games, and hired swords joining or leaving (recruits use the templates). */
 export const PERSONNEL_FORMATTERS: Record<string, LogFormatter> = {
   "personnel:serious_injury": seriousInjury,
   "personnel:stats_kept": statsKept,
+  "personnel:unit_missing": unitMissing,
+  "personnel:unit_returns": unitReturns,
   "personnel:new_hireling": hirelingMove("Hired"),
   "personnel:remove_hireling": hirelingMove("Dismissed"),
 };
