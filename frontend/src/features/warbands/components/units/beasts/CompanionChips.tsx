@@ -4,7 +4,7 @@ import { useCompanionProfile, type CompanionProfileTarget } from "./useCompanion
 import { ridden } from "../../../utils/companions";
 
 import type { Item } from "@/features/items/types/item-types";
-import type { UnitCompanionFields } from "../../../types/companion-types";
+import type { UnitCompanionFields, UnitMount } from "../../../types/companion-types";
 import type { UnitKindKey } from "../../../types/units";
 import type { UnitKindConfig } from "../../../units/unit-kind-types";
 
@@ -26,7 +26,8 @@ type CompanionChipsProps<K extends UnitKindKey> = {
 
 /**
  * The unit's mount and pets as chips under its name (the plan's unit-card mock). A chip opens the
- * beast's profile, with Switch off. A group shows how many of its mounts are ridden.
+ * beast's profile, with Switch off. A group shows how many of its mounts are ridden, one chip per
+ * kind while it rides more than one (the server's `mounts`).
  */
 export default function CompanionChips<K extends UnitKindKey>({
   kind,
@@ -38,18 +39,15 @@ export default function CompanionChips<K extends UnitKindKey>({
   const profile = useCompanionProfile(kind, unit, warbandId, canManageItems);
   const { mount, pets = [] } = unit;
   if (!mount && pets.length === 0) return null;
-  // A group rides its mount once per copy switched on (another mount's copies aren't this one).
-  const mounts = unit.henchmen && mount ? ridden(unit.items, mount.item_id) : 1;
+  const kinds = unit.henchmen && unit.mounts?.length ? unit.mounts : mount ? [mount] : [];
+  // A group rides each kind once per copy switched on (another mount's copies aren't this one).
+  const copies = (entry: UnitMount) => (unit.henchmen ? ridden(unit.items, entry.item_id) : 1);
   const chips: { target: CompanionProfileTarget; label: string; key: string }[] = [
-    ...(mount
-      ? [
-          {
-            target: { kind: "mount" as const, companion: mount },
-            key: `mount-${mount.item_row_id}`,
-            label: mounts > 1 ? `${mount.name} x ${mounts}` : mount.name,
-          },
-        ]
-      : []),
+    ...kinds.map((entry) => ({
+      target: { kind: "mount" as const, companion: entry },
+      key: `mount-${entry.item_row_id}`,
+      label: copies(entry) > 1 ? `${entry.name} x ${copies(entry)}` : entry.name,
+    })),
     ...pets.map((pet) => ({
       target: { kind: "pet" as const, companion: pet },
       key: `pet-${pet.item_row_id}`,

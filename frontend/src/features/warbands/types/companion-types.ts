@@ -75,6 +75,13 @@ export type UnitCompanionFields = {
   effective_stats?: EffectiveStats | null;
 };
 
+/**
+ * A henchmen group's mount warnings while it rides, worked out by the server (warn, never block):
+ * every member of a group carries the same gear, so each living member rides one mount, all of one
+ * kind. Older caches may lack them.
+ */
+export type GroupMountFields = { mount_warnings?: ServerWarning[] };
+
 /** A henchmen group recruited from a creature: its beast (null for any other group). */
 export type CreatureGroupFields = {
   source_beast_id?: number | null;

@@ -244,4 +244,55 @@ describe("prebattle", () => {
       "true"
     );
   });
+
+  it("notes a group's mount warnings on the group without blocking it: the member short of a mount goes on foot", async () => {
+    const message =
+      "Every member of a group carries the same gear, so Outriders can't take the field until each of its 2 members has a Warhorse (it has 1).";
+    const onToggle = vi.fn();
+    render(
+      <PrebattleParticipantRoster
+        participant={participant}
+        editable
+        ratingInputValue="120"
+        onRatingInputChange={() => undefined}
+        participantRoster={{
+          heroes: [],
+          hirelings: [],
+          henchmenGroups: [
+            {
+              id: 26,
+              name: "Outriders",
+              unitType: "Outriders",
+              mountWarnings: [{ code: "group_mounts", message, mounts: 1, members: 2 }],
+              members: [outrider(2, true), outrider(3, false)],
+            },
+          ],
+        }}
+        rosterLoading={false}
+        participantSelectedKeys={["henchman:2", "henchman:3"]}
+        participantOverrides={{}}
+        participantNotes={{}}
+        participantCustomUnits={[]}
+        selectedUnitKeys={["henchman:2", "henchman:3"]}
+        editingUnitKey={null}
+        onToggleUnitSelection={onToggle}
+        onToggleEditingUnit={() => undefined}
+        onUpdateOverrideStat={() => undefined}
+        onUpdateUnitNotes={() => undefined}
+        onClearUnitOverride={() => undefined}
+        onRemoveCustomUnit={() => undefined}
+        canUseItems={false}
+        onUseSingleUseItem={() => undefined}
+        getUsedSingleUseItemCount={() => 0}
+        activeItemActionKey={null}
+      />
+    );
+
+    expect(screen.getByRole("note")).toHaveTextContent(message);
+    expect(screen.getAllByRole("img", { name: "Rides Warhorse" })).toHaveLength(1);
+    const [table] = screen.getAllByRole("table");
+    expect(statCell(table, "M")).toHaveTextContent(/^4$/); // a group riding in part: foot stats
+    await userEvent.click(screen.getByRole("checkbox", { name: /Outrider 3/ }));
+    expect(onToggle).toHaveBeenCalledWith("henchman:3");
+  });
 });

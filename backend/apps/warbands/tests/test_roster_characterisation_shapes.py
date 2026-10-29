@@ -143,6 +143,7 @@ HENCHMEN_SUMMARY = {
     **STATS,
     **COMPANIONS,
     "mounts": [],  # each kind of mount the members ride (the step 5 follow-up)
+    "mount_warnings": [],  # a mounted group's mounts against its members and kinds (group mounts)
     "items": [ITEM_SUMMARY],
     "skills": [NAMED],
     "specials": [NAMED],

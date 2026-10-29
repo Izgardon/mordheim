@@ -89,6 +89,12 @@ export const ridden = (
       (itemId === undefined || item.id === itemId)
   ).length;
 
+/** How many kinds of mount a unit's copies switched on are (a group on Warhorses and a Pony: 2). */
+export const riddenKinds = (items: Pick<Item, "id" | "companion" | "beast_kind">[] = []) =>
+  new Set(
+    items.filter((item) => isSwitchedOn(item) && item.beast_kind === "mount").map((item) => item.id)
+  ).size;
+
 type MountedUnit = UnitCompanionFields & {
   items?: Pick<Item, "id" | "companion" | "beast_kind">[];
   henchmen?: unknown[];
@@ -104,6 +110,12 @@ export function unitMountBonus(unit: MountedUnit) {
   if (!unit.henchmen) return bonus;
   return Math.min(ridden(unit.items), unit.henchmen.length) * bonus;
 }
+
+/**
+ * A henchmen group as its mount switch names it (the group mounts as one): its name, else all of
+ * its members ("All members ride them").
+ */
+export const groupLabel = (group: { name: string | null }) => group.name?.trim() || "All members";
 
 /** A henchmen group recruited from a creature (it can go back to its item). */
 export const isCreatureGroup = (group: CreatureGroupFields) =>

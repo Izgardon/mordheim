@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { beastOf } from "../utils/item-listing";
+import { ridden } from "@/features/warbands/utils/companions";
 import {
   defaultRecruitChoice,
   groupsOfBeast,
@@ -17,6 +18,8 @@ type UseAcquireBeastChoiceOptions = {
   unitType: UnitTypeOption | "";
   /** The receiving unit's name, as the picker shows it. */
   unitLabel: string;
+  /** The receiving unit's id ("" before one is picked). */
+  unitId?: string;
   /** How many copies are bought (the box's wording follows it). */
   quantity: number;
   /** The warband's henchmen groups (a creature joins one of the same beast). */
@@ -27,7 +30,14 @@ type UseAcquireBeastChoiceOptions = {
 
 /** The extra choice a beast's purchase offers, as the dialog shows it (null: none). */
 export type AcquireBeastView =
-  | { kind: "companion"; label: string; checked: boolean; onChange: (checked: boolean) => void }
+  | {
+      kind: "companion";
+      label: string;
+      checked: boolean;
+      onChange: (checked: boolean) => void;
+      /** A group already riding this mount: the copies ride with the rest whatever the box says. */
+      disabled?: boolean;
+    }
   | {
       kind: "recruit";
       groups: HenchmenGroup[];
@@ -59,6 +69,13 @@ export function companionLabel(
 }
 
 /**
+ * A group already riding this mount takes the copies bought for it as ridden (the server's rule:
+ * the group mounts as one), so the box says so instead of offering a choice.
+ */
+export const joinsRiddenLabel = (unitLabel: string, quantity: number) =>
+  `${unitLabel} already ride this mount, so ${quantity > 1 ? "they join" : "it joins"} the ridden ones`;
+
+/**
  * Buying a beast (the plan's Acquire mock): a mount or pet bought for a unit is switched on for it
  * straight away unless unticked; a creature bought for the stash is recruited straight away into
  * a group of the same beast (offered first) or a new group, or kept as items.
@@ -67,6 +84,7 @@ export function useAcquireBeastChoice({
   item,
   unitType,
   unitLabel,
+  unitId = "",
   quantity,
   groups,
   deferCommit,
@@ -81,15 +99,22 @@ export function useAcquireBeastChoice({
   const sameBeast = offersRecruit ? groupsOfBeast(groups, beast?.id) : [];
   const choice = picked ?? defaultRecruitChoice(sameBeast);
 
+  const group =
+    unitType === "henchmen" ? groups.find((entry) => String(entry.id) === unitId) : undefined;
+  const joinsRidden =
+    beast?.kind === "mount" && group !== undefined && ridden(group.items, item.id) > 0;
   const view: AcquireBeastView | null = offersCompanion
     ? {
         kind: "companion",
-        label: companionLabel(beast?.kind === "mount" ? "mount" : "pet", unitLabel, {
-          group: unitType === "henchmen",
-          quantity,
-        }),
-        checked: companion,
+        label: joinsRidden
+          ? joinsRiddenLabel(unitLabel, quantity)
+          : companionLabel(beast?.kind === "mount" ? "mount" : "pet", unitLabel, {
+              group: unitType === "henchmen",
+              quantity,
+            }),
+        checked: joinsRidden || companion,
         onChange: setCompanion,
+        disabled: joinsRidden,
       }
     : offersRecruit
       ? {
@@ -108,7 +133,7 @@ export function useAcquireBeastChoice({
     /** An unsold beast (its beast's "Available in the shop" is off): buying it warns. */
     unlisted: beast !== null && item.listed === false,
     /** What the purchase sends for it: `companion` (a line's), `recruit` (POST purchases/ only). */
-    companion: offersCompanion && companion,
+    companion: offersCompanion && (joinsRidden || companion),
     recruit: offersRecruit ? recruitTarget(choice, name) : null,
     reset: () => {
       setCompanion(true);

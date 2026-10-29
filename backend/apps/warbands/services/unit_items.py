@@ -4,8 +4,9 @@ A unit is named by kind and id and must be on the warband's roster (alive, not d
 404 before anything is written (BUG-06). Copies are taken newest first, a mount or pet switched on for the unit
 last (the one he rides stays with him), and checked by the delete count (BUG-36); they are appended without
 touching the others, so no list is ever replaced, and a copy that arrives is never a companion unless the caller
-says so (a purchase "assigned straight away"): moving, selling or trading a copy clears the switch. Either moves
-the unit's `updated_at`, the version a roster Save sends back (a stale one is a 409).
+says so (a purchase "assigned straight away"): moving, selling or trading a copy clears the switch. The exception
+is a henchmen group already riding that mount: the group mounts as one, so the copy rides with the rest. Either
+moves the unit's `updated_at`, the version a roster Save sends back (a stale one is a 409).
 """
 
 from typing import Any, cast
@@ -13,6 +14,7 @@ from typing import Any, cast
 from django.utils import timezone
 from rest_framework.exceptions import NotFound
 
+from apps.bestiary.models import MOUNT
 from apps.items.models import Item
 from apps.warbands.models import RosterUnit, Warband
 from apps.warbands.prefetches import item_detail_prefetches
@@ -53,10 +55,12 @@ def take_unit_copies(unit_type: str, unit: RosterUnit, item_id: int, quantity: i
 def add_unit_copies(
     unit_type: str, unit: RosterUnit, item: Item, costs: list[int | None], *, companion: bool = False
 ) -> None:
-    """Append one copy per cost (None: unknown) to the unit, in one INSERT; `companion`: each switched on."""
+    """Append one copy per cost (None: unknown) to the unit, in one INSERT; `companion`: each switched on, as is a
+    copy of a mount a henchmen group already rides (`rides_already`)."""
     if not costs:
         return
     kind = KINDS[cast(UnitKindKey, unit_type)]
+    companion = companion or rides_already(unit_type, unit, item)
     rows = []
     for cost in costs:
         kwargs: dict[str, Any] = {kind.parent_field: unit, "item": item, "companion": companion}
@@ -65,6 +69,17 @@ def add_unit_copies(
         rows.append(kind.items.model(**kwargs))
     kind.items.model._default_manager.bulk_create(rows)
     touch_unit(unit_type, unit)
+
+
+def rides_already(unit_type: str, unit: RosterUnit, item: Item) -> bool:
+    """A henchmen group rides this mount already (a copy of it is switched on): every member carries the same gear,
+    so a copy that arrives rides too. One query, only for a group and an Animal item; pets stay one copy each."""
+    kind = KINDS[cast(UnitKindKey, unit_type)]
+    if not kind.has_members or not getattr(item, "bestiary_entry_id", None):
+        return False
+    links: Any = kind.items.model._default_manager
+    ridden = links.filter(**{kind.parent_field: unit, "item_id": item.pk, "companion": True})
+    return bool(ridden.filter(item__bestiary_entry__kind=MOUNT).exists())
 
 
 def touch_unit(unit_type: str, unit: RosterUnit) -> None:

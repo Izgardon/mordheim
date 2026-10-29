@@ -35,6 +35,7 @@ export const mapHenchmenGroupToForm = (group: HenchmenGroup): HenchmenGroupFormE
 
 const mapGroupFields = (group: HenchmenGroup): HenchmenGroupFormEntry => ({
   id: group.id,
+  source_beast_id: group.source_beast_id ?? null,
   name: group.name ?? "",
   unit_type: group.unit_type ?? "",
   race_id: group.race_id ?? null,
@@ -57,10 +58,16 @@ const mapGroupFields = (group: HenchmenGroup): HenchmenGroupFormEntry => ({
   henchmen: group.henchmen ?? [],
 });
 
-/** Like heroes, plus every henchman needs a name. */
+/**
+ * Like heroes, plus every henchman needs a name. A group recruited from a creature has no race
+ * and unnamed members by design (the recruit makes it so), so it is asked for neither.
+ */
 export const validateHenchmenGroupForm = (group: HenchmenGroupFormEntry) => {
-  const missing = missingIdentityFields(group);
-  if (group.henchmen.some((h) => !h.name?.trim())) {
+  const creature = group.source_beast_id != null;
+  const missing = missingIdentityFields(group).filter(
+    (field) => !(creature && field === "race_id")
+  );
+  if (!creature && group.henchmen.some((h) => !h.name?.trim())) {
     missing.push("henchmen_names");
   }
   return toValidationError(missing);

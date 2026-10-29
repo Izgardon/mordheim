@@ -207,6 +207,7 @@ describe("mapHenchmenGroupToForm", () => {
 
     expect(mapHenchmenGroupToForm(group)).toEqual({
       id: 21,
+      source_beast_id: null, // a group recruited from a creature: its validation asks for less
       name: "Black Knives",
       unit_type: "Thugs",
       race_id: 1,
@@ -276,6 +277,27 @@ describe("form validators", () => {
     expect(
       validateHenchmenGroupForm(mapHenchmenGroupToForm(makeVeteranHenchmenGroup()))
     ).toBeNull();
+  });
+
+  it("asks a group recruited from a creature for no race or member names (it has neither by design)", () => {
+    const kennel = makeVeteranHenchmenGroup({
+      name: "Kennel",
+      unit_type: "Wardogs",
+      race_id: null,
+      race_name: null,
+      source_beast_id: 3,
+      beast_kind: "creature",
+      henchmen: [{ id: 6, name: "", kills: 0, dead: false }],
+    });
+
+    expect(validateHenchmenGroupForm(mapHenchmenGroupToForm(kennel))).toBeNull();
+    expect(validateHenchmenGroupForm(mapHenchmenGroupToForm({ ...kennel, name: "" }))).toEqual({
+      fields: ["name"],
+      message: "Missing: Name",
+    });
+    expect(
+      validateHenchmenGroupForm(mapHenchmenGroupToForm({ ...kennel, source_beast_id: null }))
+    ).toEqual({ fields: ["race_id", "henchmen_names"], message: "Missing: Race, Henchmen names" });
   });
 });
 

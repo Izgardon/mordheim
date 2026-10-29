@@ -4,7 +4,8 @@ Read live from the warbands until the battle starts; `start/` stores each roster
 (`roster_json`), and from then on the battle keeps that snapshot, so a unit killed or dismissed on the sheet
 mid-battle stays in it. Every unit kind is read in one query plus its link tables, whatever the number of units.
 Each unit carries its mount, pets and the Move and save its mount gives it (`effectiveStats`, beside its own
-`stats`), and a group recruited from a creature its beast and kind, so the snapshot keeps them too.
+`stats`), and a group recruited from a creature its beast and kind, so the snapshot keeps them too. A mounted group
+carries its mount warnings (`mountWarnings`, the warband page's), which prebattle shows as a note: never a block.
 """
 
 from collections import defaultdict
@@ -23,7 +24,14 @@ from apps.warbands.models import (
     HirelingItem,
     on_roster,
 )
-from apps.warbands.units.companions import companions, effective_stats, mount_payload, pet_payload, with_beasts
+from apps.warbands.units.companions import (
+    companions,
+    effective_stats,
+    group_mount_warnings,
+    mount_payload,
+    pet_payload,
+    with_beasts,
+)
 
 from ..models import BattleParticipant
 
@@ -181,13 +189,15 @@ def henchmen_group_entry(group: HenchmenGroup) -> dict:
         }
         for rider, member in enumerate(group.henchmen.all())
     ]
+    name = group.name or f"Henchmen Group {group.id}"
     return {
         "id": group.id,
-        "name": group.name or f"Henchmen Group {group.id}",
+        "name": name,
         "unitType": group.unit_type or "Henchmen",
         "sourceBeastId": group.source_beast_id,  # recruited from a creature: its beast and kind
         "beastKind": getattr(group, "beast_kind", None),
         "pets": [_beast(row, "henchmen_group") for row in companions(links).pets],  # the group's own: one model each
+        "mountWarnings": group_mount_warnings(name, links, len(members)),  # every member carries the same gear
         "members": members,
     }
 

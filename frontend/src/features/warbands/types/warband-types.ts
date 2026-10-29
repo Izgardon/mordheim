@@ -4,7 +4,7 @@ import type { Skill } from "../../skills/types/skill-types";
 import type { Spell } from "../../spells/types/spell-types";
 import type { Special } from "../../special/types/special-types";
 import type { BeastKind } from "../../bestiary/bestiary-kinds";
-import type { CreatureGroupFields, UnitCompanionFields } from "./companion-types";
+import type { CreatureGroupFields, GroupMountFields, UnitCompanionFields } from "./companion-types";
 
 type RaceStatProfile = {
   id?: number;
@@ -434,7 +434,8 @@ export type Henchman = {
 };
 
 export type HenchmenGroup = UnitCompanionFields &
-  CreatureGroupFields & {
+  CreatureGroupFields &
+  GroupMountFields & {
     id: number;
     warband_id: number;
     name: string | null;
@@ -528,6 +529,8 @@ export type HenchmenGroupFormEntry = {
   id?: number;
   /** A recruit queued in this edit session (no id yet): keys its queued purchases. */
   draftKey?: string;
+  /** Recruited from a creature: it has no race and unnamed members by design (read only). */
+  source_beast_id?: number | null;
   name: string;
   unit_type: string;
   race_id: number | null;

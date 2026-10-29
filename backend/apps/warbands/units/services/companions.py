@@ -1,9 +1,12 @@
 """Switching a mount or pet on and off for the unit holding it, and the warnings that follow (bestiary rewrite step 4).
 
 `POST warbands/<id>/<kind>/<unit id>/items/<item row id>/companion/ {"on": bool}`. Only an Animal item whose beast
-is a mount or a pet can be switched on (switching off always works, whatever the beast became). The switch moves
-the unit's `updated_at`, like any loadout change. Warnings describe the state after the switch: two mounts on one
-rider, a group's mounts against its living members, more than two mounts in the warband (units/companions.py).
+is a mount or a pet can be switched on (switching off always works, whatever the beast became). A henchmen group
+mounts as one: every member carries the same gear, so the switch on one of a group's mounts acts on every copy of
+that mount the group holds (a pet stays one copy, a model of its own in battle). The switch moves the unit's
+`updated_at`, like any loadout change. Warnings describe the state after the switch: two mounts on one rider, a
+mounted group whose mounts aren't one per living member or of one kind, more than two mounts in the warband
+(units/companions.py).
 """
 
 from collections.abc import Iterable
@@ -20,6 +23,7 @@ from apps.warbands.units.companions import (
     beast_kind,
     companion_warnings,
     unit_companion_warnings,
+    unit_name,
     warband_mount_warnings,
 )
 from apps.warbands.units.errors import RosterError
@@ -40,8 +44,17 @@ def switch_companion(kind: UnitKindSpec, unit: RosterUnit, row_id: int, on: bool
         raise RosterError(NOT_A_COMPANION, "not_a_companion", {"on": [NOT_A_COMPANION]})
     with transaction.atomic():
         lock_warband(unit.warband_id)  # before the item row and the unit, as a PATCH sending items locks them
-        links.filter(pk=row.pk).update(companion=on)
+        _switched_copies(kind, unit, row).update(companion=on)
         touch_unit(kind.key, unit)
+
+
+def _switched_copies(kind: UnitKindSpec, unit: RosterUnit, row: Any) -> Any:
+    """The copies one switch acts on: the row named, or every copy of a henchmen group's mount (the group mounts and
+    dismounts as one)."""
+    links: Any = kind.items.model._default_manager
+    if kind.has_members and beast_kind(row.item) == MOUNT:
+        return links.filter(**{kind.parent_field: unit}, item_id=row.item_id)
+    return links.filter(pk=row.pk)
 
 
 def warband_mounts(warband_id: int) -> int:
@@ -80,4 +93,4 @@ def units_warnings(warband: Warband, units: Iterable[tuple[UnitKindSpec, RosterU
 
 
 def _name(kind: UnitKindSpec, unit: Any) -> str:
-    return str(unit.name or unit.unit_type or kind.unknown_name)
+    return unit_name(unit, kind.unknown_name)

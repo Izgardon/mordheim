@@ -7,7 +7,7 @@ from rest_framework import serializers
 
 from apps.warbands.models import Henchman, HenchmenGroup
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
-from apps.warbands.units.companions import mount_kinds, mount_payload
+from apps.warbands.units.companions import group_mount_warnings, mount_kinds, mount_payload, unit_name
 from apps.warbands.units.kinds import HENCHMEN_GROUP
 from apps.warbands.units.serializers import (
     COMPANION_FIELDS,
@@ -86,12 +86,20 @@ class HenchmenMembersMixin(serializers.Serializer):
     source_beast_id = serializers.IntegerField(read_only=True)  # the creature it was recruited from, or None
     beast_kind = serializers.SerializerMethodField()
     mounts = serializers.SerializerMethodField()
+    mount_warnings = serializers.SerializerMethodField()
 
     def get_mounts(self, group: HenchmenGroup) -> list[dict[str, Any]]:
         """Each kind of mount the members ride, the first switched-on copy of each item in row order (`mount` is the
         first), so the page lists every kind's entries for a group on a Warhorse and a Pony. No query of its own."""
         rows = get_prefetched_or_query(group, "henchmen_group_items", "henchmen_group_items")
         return [mount_payload(row) for row in mount_kinds(rows)]
+
+    def get_mount_warnings(self, group: HenchmenGroup) -> list[dict[str, Any]]:
+        """While the group rides: its mounts against its living members and the kinds it rides, as the switch warns
+        (every member of a group carries the same gear). Shown on the card, so a member recruited after the group
+        mounted shows it too. No query of its own."""
+        rows = get_prefetched_or_query(group, "henchmen_group_items", "henchmen_group_items")
+        return group_mount_warnings(unit_name(group, HENCHMEN_GROUP.unknown_name), rows, _living(group))
 
     def get_beast_kind(self, group: HenchmenGroup) -> str | None:
         """The source beast's kind, read with the group's row (`UnitKindSpec.row_annotations`)."""
@@ -106,9 +114,13 @@ class HenchmenMembersMixin(serializers.Serializer):
     def get_hire_cost(self, group: HenchmenGroup) -> int:
         """What one more member costs (decision 7): what a recruit is charged when the save names no cost."""
         items = get_prefetched_or_query(group, "henchmen_group_items", "henchmen_group_items")
-        members = get_prefetched_or_query(group, "henchmen", "henchmen")
-        living = sum(1 for member in members if not member.dead and member.dismissed_at is None)
-        return henchman_hire_cost(group.price, group.xp, [(row.item_id, row.cost) for row in items], living)
+        return henchman_hire_cost(group.price, group.xp, [(row.item_id, row.cost) for row in items], _living(group))
+
+
+def _living(group: HenchmenGroup) -> int:
+    """The group's living members, from its loaded members (the roster views load only those)."""
+    members = get_prefetched_or_query(group, "henchmen", "henchmen")
+    return sum(1 for member in members if not member.dead and member.dismissed_at is None)
 
 
 class HenchmenGroupSummarySerializer(HenchmenMembersMixin, UnitSummarySerializer):
@@ -137,6 +149,7 @@ class HenchmenGroupSummarySerializer(HenchmenMembersMixin, UnitSummarySerializer
             *STAT_FIELDS,
             *COMPANION_FIELDS,
             "mounts",
+            "mount_warnings",
             "items",
             "skills",
             "specials",
@@ -172,6 +185,7 @@ class HenchmenGroupDetailSerializer(HenchmenMembersMixin, UnitDetailSerializer):
             *STAT_FIELDS,
             *COMPANION_FIELDS,
             "mounts",
+            "mount_warnings",
             "items",
             "skills",
             "specials",

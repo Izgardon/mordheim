@@ -4,8 +4,10 @@ A companion is a state of one of the unit's item rows (`companion`), never a tab
 the item can switch it on, and moving, selling or trading the copy clears it (the copy that arrives is a new row). A
 mount changes what the rider shows, never his stored stats: his Move is the mount's (when the mount has a profile)
 and his armour save one better, or 6+ when he has none; his rating gains the mount's `rating_bonus`. A henchmen group
-rides one mount per living member. Two mounts on one rider, a group whose mounts don't match its members and more
-than two mounts in the warband warn; nothing is refused.
+rides one mount per living member, and mounts as one: every member of a group carries the same gear, so the switch
+on a group's mount acts on every copy of it (units/services/companions.py). Two mounts on one rider, a mounted group
+whose mounts aren't one per living member or are of more than one kind, and more than two mounts in the warband
+warn; nothing is refused.
 
 A companion also brings its beast's skills, specials and spells (step 5), listed with it in the unit's payload and
 never part of the unit's own lists.
@@ -169,21 +171,60 @@ def _count(number: int, noun: str) -> str:
     return f"{number} {noun}" if number == 1 else f"{number} {noun}s"
 
 
+def unit_name(unit: Any, unknown: str) -> str:
+    """A unit as its warnings name it: its name, else its type, else its kind's `unknown` name."""
+    return str(unit.name or unit.unit_type or unknown)
+
+
 def companion_warnings(name: str, rows: Iterable[Any], riders: int | None, warband_mounts: int) -> list[Warning]:
     """Warnings for a unit's companions and the warband's switched-on mounts. Warn, never block."""
     return unit_companion_warnings(name, rows, riders) + warband_mount_warnings(warband_mounts)
 
 
 def unit_companion_warnings(name: str, rows: Iterable[Any], riders: int | None) -> list[Warning]:
-    """Two mounts on a hero or hired sword (`riders` None), or a group's mounts against its living members (`riders`)."""
+    """Two mounts on a hero or hired sword (`riders` None), or a mounted group's warnings (`riders` living members)."""
+    if riders is not None:
+        return group_mount_warnings(name, rows, riders)
     mounts = len(companions(rows).mounts)
+    if mounts <= 1:
+        return []
+    message = f"{name} has {mounts} mounts switched on; a rider rides one."
+    return [{"code": "two_mounts", "message": message, "mounts": mounts}]
+
+
+SAME_GEAR = "Every member of a group carries the same gear"
+
+
+def _a(name: str) -> str:
+    return f"{'an' if name[:1].lower() in 'aeiou' else 'a'} {name}"
+
+
+def _listed(names: list[str]) -> str:
+    return names[0] if len(names) == 1 else f"{', '.join(names[:-1])} and {names[-1]}"
+
+
+def group_mount_warnings(name: str, rows: Iterable[Any], riders: int) -> list[Warning]:
+    """A mounted group's warnings, from its item rows and its `riders` living members (warn, never block). Every member
+    of a group carries the same gear, so a group takes the field when each living member rides one mount, all of one
+    kind: its switched-on mounts against its members (`group_mounts`, fewer or left over) and the kinds it rides
+    (`group_mount_kinds`). A group on foot has none."""
+    mounts = companions(rows).mounts
+    if not mounts:
+        return []
+    count, kinds = len(mounts), [row.item.name for row in mount_kinds(mounts)]
     warnings: list[Warning] = []
-    if riders is None and mounts > 1:
-        message = f"{name} has {mounts} mounts switched on; a rider rides one."
-        warnings.append({"code": "two_mounts", "message": message, "mounts": mounts})
-    if riders is not None and mounts and mounts != riders:
-        message = f"{name} has {_count(mounts, 'mount')} for {_count(riders, 'living member')}: one mount per member."
-        warnings.append({"code": "group_mounts", "message": message, "mounts": mounts, "members": riders})
+    if count != riders:
+        if count < riders:
+            needs = _a(kinds[0]) if len(kinds) == 1 else "a mount"
+            until = f"until each of its {riders} members has {needs} (it has {count})"
+            message = f"{SAME_GEAR}, so {name} can't take the field {until}."
+        else:
+            spare = f"({_count(count, 'mount')} for {_count(riders, 'living member')})"
+            message = f"Every member of a group rides one mount, so {name} has {count - riders} left over {spare}."
+        warnings.append({"code": "group_mounts", "message": message, "mounts": count, "members": riders})
+    if len(kinds) > 1:
+        message = f"{SAME_GEAR}, so {name} can't take the field riding {len(kinds)} kinds of mount ({_listed(kinds)})."
+        warnings.append({"code": "group_mount_kinds", "message": message, "kinds": kinds})
     return warnings
 
 

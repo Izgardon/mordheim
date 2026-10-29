@@ -31,6 +31,7 @@ export default function AcquireBeastOptions({
         <label className="flex items-center gap-2 text-sm text-foreground">
           <Checkbox
             checked={view.checked}
+            disabled={view.disabled}
             onChange={(event) => view.onChange(event.target.checked)}
           />
           {view.label}

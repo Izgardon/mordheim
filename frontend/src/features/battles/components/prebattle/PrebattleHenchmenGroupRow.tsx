@@ -4,6 +4,7 @@ import { getBattleCardThemeStyle } from "@/features/battles/components/shared/ba
 import CreatureMark from "@/features/warbands/components/units/beasts/CreatureMark";
 import { PetChips, RiderMark } from "@/features/battles/components/shared/BattleCompanionParts";
 import { groupMountedStats } from "@/features/battles/utils/battle-companions";
+import PrebattleGroupMountNote from "./PrebattleGroupMountNote";
 
 import type {
   HenchmenGroupRoster,
@@ -33,7 +34,8 @@ type PrebattleHenchmenGroupRowProps = {
 
 /**
  * A henchmen group in prebattle: its members picked one by one, and one stats panel for the
- * picked members (a stat change or a note applies to all of them).
+ * picked members (a stat change or a note applies to all of them). A group short of mounts, or on
+ * more than one kind, carries a note (never a block).
  */
 export default function PrebattleHenchmenGroupRow({
   group,
@@ -98,6 +100,7 @@ export default function PrebattleHenchmenGroupRow({
           <PetChips pets={group.members[0].pets} />
         </div>
       </div>
+      <PrebattleGroupMountNote warnings={group.mountWarnings} />
 
       <div className="mt-2 flex flex-wrap gap-2">
         {group.members.map((member) => (
