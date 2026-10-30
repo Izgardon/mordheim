@@ -23,6 +23,7 @@ const Overview = lazy(() => import("../../features/campaigns/routes/Overview"));
 const Battles = lazy(() => import("../../features/campaigns/routes/Battles"));
 const BattleLayout = lazy(() => import("../../features/battles/routes/BattleLayout"));
 const BattlePrebattle = lazy(() => import("../../features/battles/routes/BattlePrebattle"));
+const BattleActive = lazy(() => import("../../features/battles/routes/BattleActive"));
 
 /** The campaign pages still to rebuild: placeholders until their redesign step. */
 const CAMPAIGN_PAGES: { path: string; title: string; step: string }[] = [
@@ -89,7 +90,7 @@ export const routes: RouteObject[] = [
                   { path: "warbands/:warbandId", element: <Warband /> },
                   // The Aftermath (next step 3).
                   { path: "battles/:battleId/postbattle", element: <Aftermath /> },
-                  // The invitation and the pre-battle (next step 6): the layout sends
+                  // The invitation, the pre-battle and the battle (next step 6): the layout sends
                   // each player to the page for his status; the bare battle URL only redirects.
                   {
                     path: "battles/:battleId",
@@ -97,6 +98,7 @@ export const routes: RouteObject[] = [
                     children: [
                       { index: true, element: null },
                       { path: "prebattle", element: <BattlePrebattle /> },
+                      { path: "active", element: <BattleActive /> },
                       { path: "*", element: null },
                     ],
                   },

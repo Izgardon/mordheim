@@ -16,8 +16,6 @@ import {
 } from "@/features/battles/components/prebattle/prebattle-utils";
 import { STAT_FIELDS } from "@/features/battles/components/prebattle/prebattle-types";
 
-import { UNIT_SECTION_ORDER } from "./unit-sections";
-
 export type ActiveSectionUnits = {
   heroes: PrebattleUnit[];
   henchmen: PrebattleUnit[];
@@ -25,37 +23,6 @@ export type ActiveSectionUnits = {
   temporary: PrebattleUnit[];
   /** Pets fighting as their own models (step 5). */
   pets: PrebattleUnit[];
-};
-
-/**
- * The cards of a section with each owner's pet models right after it (step 5); a pet whose owner
- * isn't listed comes after them all. `ownerOf` names the key a pet's `ownerKey` is matched to.
- */
-export function withPetModels<T>(
-  owners: T[],
-  pets: PrebattleUnit[],
-  ownerKeyOf: (owner: T) => string,
-  ownedHere: (pet: PrebattleUnit) => boolean
-): (T | PrebattleUnit)[] {
-  const listed = new Set(owners.map(ownerKeyOf));
-  const strays = pets.filter((pet) => ownedHere(pet) && !listed.has(pet.ownerKey ?? ""));
-  return [
-    ...owners.flatMap((owner) => [
-      owner,
-      ...pets.filter((pet) => pet.ownerKey === ownerKeyOf(owner)),
-    ]),
-    ...strays,
-  ];
-}
-
-export type ActiveBattleUnitOption = {
-  unitKey: string;
-  displayName: string;
-  label: string;
-  unitType: string;
-  warbandName: string;
-  participantUserId: number;
-  sectionLabel: string;
 };
 
 function createSelectedKeySet(participant: BattleParticipant) {
@@ -79,44 +46,6 @@ export function getParticipantSelectedUnits(
     temporary: customUnits.filter(pickUnit),
     pets: (roster?.petModels ?? []).filter(pickUnit),
   };
-}
-
-export function buildBattleUnitOptions(
-  participants: BattleParticipant[],
-  rosters: Record<number, ParticipantRoster | undefined>
-) {
-  const options: ActiveBattleUnitOption[] = [];
-  const sectionOrder = UNIT_SECTION_ORDER;
-  for (const participant of participants) {
-    const selectedUnits = getParticipantSelectedUnits(participant, rosters[participant.user.id]);
-    const units = [
-      ...selectedUnits.heroes.map((unit) => ({ unit, sectionLabel: "Heroes" })),
-      ...selectedUnits.henchmen.map((unit) => ({ unit, sectionLabel: "Henchmen" })),
-      ...selectedUnits.hirelings.map((unit) => ({ unit, sectionLabel: "Hired Swords" })),
-      ...selectedUnits.pets.map((unit) => ({ unit, sectionLabel: "Pets" })),
-      ...selectedUnits.temporary.map((unit) => ({ unit, sectionLabel: "Temporary Units" })),
-    ];
-
-    for (const { unit, sectionLabel } of units) {
-      options.push({
-        unitKey: unit.key,
-        displayName: unit.displayName,
-        label: `${unit.displayName} (${participant.warband.name})`,
-        unitType: unit.unitType,
-        warbandName: participant.warband.name,
-        participantUserId: participant.user.id,
-        sectionLabel,
-      });
-    }
-  }
-  return options.sort((left, right) => {
-    const leftIndex = sectionOrder.indexOf(left.sectionLabel);
-    const rightIndex = sectionOrder.indexOf(right.sectionLabel);
-    if (leftIndex !== rightIndex) {
-      return leftIndex - rightIndex;
-    }
-    return left.label.localeCompare(right.label);
-  });
 }
 
 export function toUnitInformationMap(raw: unknown): Record<string, BattleUnitInformationEntry> {
@@ -157,6 +86,9 @@ export function toUnitInformationMap(raw: unknown): Record<string, BattleUnitInf
       out_of_action: outOfAction,
       kill_count: killCount,
       ...(value.dismounted ? { dismounted: true } : {}),
+      ...(value.status === "knocked_down" || value.status === "stunned"
+        ? { status: value.status }
+        : {}),
     };
   }
   return normalized;

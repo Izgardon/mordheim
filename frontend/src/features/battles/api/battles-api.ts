@@ -2,6 +2,7 @@ import { apiRequest } from "@/lib/api-client";
 import { realtimeSocketId } from "@/lib/realtime/client";
 
 import type {
+  BattleCreatureStatus,
   BattleCustomUnit,
   BattleCreatePayload,
   BattleParticipantForView,
@@ -13,6 +14,7 @@ import type {
   BattleState,
   BattleStateOf,
   BattleStateView,
+  BattleUnitStats,
   FullViewParticipant,
   PendingReportedResult,
 } from "@/features/battles/types/battle-types";
@@ -162,6 +164,10 @@ export function recordUnitKill(
   payload: {
     killer_unit_key: string;
     victim_unit_key?: string;
+    /** A neutral creature (next step 6): its stable key in the battle's neutral groups. */
+    victim_neutral_key?: string;
+    /** How it was done, as the kill sheet says (next step 6). */
+    how?: KillHow;
     victim_name?: string;
     notes?: string;
     earned_xp: boolean;
@@ -170,6 +176,53 @@ export function recordUnitKill(
   }
 ) {
   return battleWrite(campaignId, battleId, "unit-kill/", payload);
+}
+
+export type RoundAction = "ask" | "agree" | "force" | "withdraw";
+
+export type KillHow = "melee" | "shooting" | "magic";
+
+/**
+ * The next round (next step 6): ask for it, agree to someone's ask, start it anyway, or take your
+ * ask back. Once everyone still fighting agrees the round goes up and models stand up a step.
+ */
+export function changeRound(campaignId: number, battleId: number, action: RoundAction) {
+  return battleWrite(campaignId, battleId, "round/", { action });
+}
+
+/** A group of creatures nobody plays, numbered when there is more than one (next step 6). */
+export function addNeutralGroup(
+  campaignId: number,
+  battleId: number,
+  payload: {
+    name: string;
+    creature_type: string;
+    count: number;
+    wounds: number;
+    stats?: Partial<BattleUnitStats>;
+  }
+) {
+  return battleWrite(campaignId, battleId, "neutral-groups/", payload);
+}
+
+/** One more creature in a neutral group (`add`), or the group taken away (`remove`). */
+export function changeNeutralGroup(
+  campaignId: number,
+  battleId: number,
+  groupKey: string,
+  change: { add: true } | { remove: true }
+) {
+  return battleWrite(campaignId, battleId, `neutral-groups/${groupKey}/`, change);
+}
+
+/** A neutral creature's status or wounds, for everyone in the battle. */
+export function changeNeutralCreature(
+  campaignId: number,
+  battleId: number,
+  creatureKey: string,
+  change: { status?: BattleCreatureStatus; wounds?: number }
+) {
+  return battleWrite(campaignId, battleId, `neutral-creatures/${creatureKey}/`, change);
 }
 
 /** Undoes your own kill or item use until you finalise (BUG-11); the event stays, voided. */
