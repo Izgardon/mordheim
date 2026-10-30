@@ -40,6 +40,8 @@ type UseWarbandTradeSessionReturn = {
   handleTradeSessionClose: () => void;
   /** Opens one of your open trades again (`?trade=`), read afresh. */
   resumeTrade: (requestId: string) => void;
+  /** Hides the open trade without ending it: the banner offers it again. */
+  leaveTrade: () => void;
 };
 
 /**
@@ -240,11 +242,14 @@ export function useWarbandTradeSession({
     [campaignId, queryClient, setTradeParam]
   );
 
+  const leaveTrade = useCallback(() => setTradeParam(null), [setTradeParam]);
+
   return {
     session,
     openTradeId: canLoad ? tradeParam : null,
     tradeRequest: session ? request : null,
     resumeTrade,
+    leaveTrade,
     handleRequestUpdated,
     handleTradeRequestCreated,
     handleTradeSessionClose,

@@ -21,6 +21,7 @@ import AdvanceDialog from "../components/roster/AdvanceDialog";
 import EditUnitForm from "../components/roster/EditUnitForm";
 import RecruitDialog from "../components/roster/RecruitDialog";
 import RosterSections from "../components/roster/RosterSections";
+import WarbandTrade from "../components/trade/WarbandTrade";
 import type { RosterUnit } from "../components/roster/unit-view";
 import { useUnitActions } from "../hooks/units/useUnitActions";
 import { useWarbandSheet } from "../hooks/warband/useWarbandSheet";
@@ -48,6 +49,7 @@ export default function Warband() {
   const [recruiting, setRecruiting] = useState<UnitKindKey | null>(null);
   const [advancing, setAdvancing] = useState<RosterUnit | null>(null);
   const [breakdownOpen, setBreakdownOpen] = useState(false);
+  const [tradeInviteOpen, setTradeInviteOpen] = useState(false);
   const warbandId = warband?.id ?? 0;
   const actions = useUnitActions(warbandId);
   const stash = useQuery({
@@ -93,10 +95,23 @@ export default function Warband() {
         showLocations={Boolean(campaign?.enable_locations)}
         onOpen={setPanel}
         menu={[
+          ...(capabilities.trade
+            ? [{ label: "Trade with a player", onSelect: () => setTradeInviteOpen(true) }]
+            : []),
           ...(warband.warband_link ? [{ label: "Warband sheet", href: warband.warband_link }] : []),
           { label: "Rating breakdown", onSelect: () => setBreakdownOpen(true) },
         ]}
       />
+      {capabilities.trade ? (
+        <WarbandTrade
+          campaignId={campaignId}
+          warbandId={warbandId}
+          heroes={sheet.heroes}
+          gold={warband.gold ?? 0}
+          inviteOpen={tradeInviteOpen}
+          onInviteOpenChange={setTradeInviteOpen}
+        />
+      ) : null}
       <div className="grid gap-x-8 gap-y-4 [grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr))]">
         <WarbandStats
           warband={warband}
