@@ -214,10 +214,11 @@ class WarbandResourceCreateSerializer(serializers.ModelSerializer):
 
 class WarbandResourceUpdateSerializer(serializers.Serializer):
     """PATCH resources/<id>/: `delta` adds to the stored amount (stopping at 0); `amount` sets it (0 or more, for
-    clients from before pass 2). Other keys, the name included, are ignored (BUG-68)."""
+    clients from before pass 2); `name` renames it (next step 2). Other keys are ignored (BUG-68)."""
 
     amount = serializers.IntegerField(min_value=0, max_value=MAX_AMOUNT, required=False)
     delta = serializers.IntegerField(min_value=-MAX_AMOUNT, max_value=MAX_AMOUNT, required=False)
+    name = serializers.CharField(max_length=120, required=False, trim_whitespace=True)
 
     def validate(self, attrs):
         if "amount" in attrs and "delta" in attrs:
