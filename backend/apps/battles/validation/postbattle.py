@@ -3,7 +3,8 @@
 `normalize_postbattle` cleans what a client sends; the draft save and finalise then check it against the
 participant's units and the campaign (services/postbattle/validate.py). Injury rolls get their result and effect
 from the server's tables (decision 7); the exploration amount comes from the server's chart (decision 9). A hero's or
-hired sword's result may carry the missing games its injury sets at finalise (`missing_games`, the player's opt-in).
+hired sword's result may carry the missing games its injury sets at finalise (`missing_games`, the player's opt-in). The
+post-game adds each unit's Aftermath `advances`, an upkeep entry's `paid` tick and the `camp` record (validation/camp.py).
 """
 
 from typing import Any
@@ -11,6 +12,7 @@ from typing import Any
 from apps.warbands.units.services.missing import MAX_MISSING_GAMES
 
 from ..services.injuries import describe_roll
+from .camp import normalize_advances, normalize_camp
 from .coerce import coerce_bool, coerce_int, optional_cost
 from .unit_keys import parse_unit_key
 
@@ -120,6 +122,7 @@ def _upkeep(raw: dict) -> dict[str, Any]:
         entries[parsed_unit["unit_key"]] = {
             "unit_name": unit_name.strip()[:120],
             "cost": optional_cost(entry.get("cost"), field_name="postbattle upkeep cost"),
+            **({"paid": True} if coerce_bool(entry.get("paid", False), field_name="postbattle upkeep paid") else {}),
         }
     return {"pay_upkeep": bool(section.get("pay_upkeep", True)), "entries": entries}
 
@@ -210,6 +213,7 @@ def _unit_result(unit_type: str, entry: Any) -> dict[str, Any]:
         "special_ids": special_ids,
         "serious_injury_rolls": serious_injury_rolls,
         **_missing_games(unit_type, entry),
+        **normalize_advances(entry),
     }
 
 
@@ -258,7 +262,7 @@ def _mount_survival(raw: dict) -> dict[str, dict]:
 
 def normalize_postbattle(raw_value: Any) -> dict[str, Any]:
     """The cleaned draft, or ValueError for the first thing wrong (exploration, finds, upkeep, units, then mounts).
-    `mount_survival` is left out when there is none."""
+    `mount_survival` and `camp` are left out when there is none."""
     if raw_value is None:
         return empty_draft()
     if not isinstance(raw_value, dict):
@@ -271,4 +275,6 @@ def normalize_postbattle(raw_value: Any) -> dict[str, Any]:
     }
     if mounts := _mount_survival(raw_value):
         draft["mount_survival"] = mounts
+    if camp := normalize_camp(raw_value):
+        draft["camp"] = camp
     return draft

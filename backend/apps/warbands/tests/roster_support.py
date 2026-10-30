@@ -302,11 +302,14 @@ class RosterTestCase(APITestCase):
             campaign=self.campaign, created_by_user=self.player, scenario=scenario, status=Battle.STATUS_ENDED
         )
 
-    def play_battle(self, xp_by_unit_key: dict[str, int]) -> None:
-        """Play and finalise a battle of `warband` against `rival` through the API.
+    def play_battle(
+        self, xp_by_unit_key: dict[str, int], extra: dict[str, dict[str, Any]] | None = None
+    ) -> dict[str, Any]:
+        """Play and finalise a battle of `warband` against `rival` through the API; our finalise's answer.
 
         `xp_by_unit_key` maps our unit keys ("hero:<id>", "hireling:<id>", "henchman:<id>") to the
-        XP each earns; every member of a henchmen group must earn the same.
+        XP each earns; every member of a henchmen group must earn the same. `extra` adds fields to our
+        units' results (by unit key).
         """
         rival_key = f"hero:{make_unit(HERO, self.rival).id}"
         sides = ((self.player, {**xp_by_unit_key}), (self.viewer, {rival_key: 0}))
@@ -329,16 +332,22 @@ class RosterTestCase(APITestCase):
         self._battle_post(self.player, f"{battle}finish-mine/", {"result": "won"})  # each finishes (decision 4)
         self._battle_post(self.viewer, f"{battle}finish-mine/", {"result": "lost"})
         self._battle_post(self.viewer, f"{battle}results/", {"winners": [self.warband.id]})
+        answers = []
         for user, xp in sides:
-            results = {key: _postbattle_result(key, earned) for key, earned in xp.items()}
+            results = {
+                key: {**_postbattle_result(key, earned), **(extra or {}).get(key, {})} for key, earned in xp.items()
+            }
             postbattle = {"exploration": {"dice_values": [], "resource_id": None}, "unit_results": results}
-            self._battle_post(user, f"{battle}finalize-postbattle/", {"postbattle_json": postbattle})
+            answers.append(self._battle_post(user, f"{battle}finalize-postbattle/", {"postbattle_json": postbattle}))
         self.client.force_authenticate(user=self.player)
+        return answers[0]
 
-    def _battle_post(self, user: Any, url: str, body: dict[str, Any]) -> None:
+    def _battle_post(self, user: Any, url: str, body: dict[str, Any]) -> dict[str, Any]:
         self.client.force_authenticate(user=user)
         response = self.client.post(url, body, format="json")
         self.assertIn(response.status_code, (200, 201), (url, response.data))
+        answer: dict[str, Any] = response.data
+        return answer
 
 
 def _postbattle_result(unit_key: str, xp: int) -> dict[str, Any]:

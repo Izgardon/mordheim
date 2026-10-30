@@ -30,6 +30,7 @@ from ..lifecycle import all_finished, end_battle
 from ..locks import lock_battle
 from ..unusual import unusual_value_warnings
 from ..warnings import Warning
+from .advances import apply_advances
 from .context import FinaliseContext, load_context
 from .items import consume_single_use_items
 from .logs import write_battle_logs
@@ -75,6 +76,7 @@ def check_draft_against(context: FinaliseContext, draft: dict) -> None:
 def _apply(context: FinaliseContext, draft: dict) -> list[Warning]:
     unit_information = normalize_unit_information(context.participant.unit_information_json)
     units = UnitResults(context, unit_information).apply(draft["unit_results"])
+    units.warnings += apply_advances(context, draft["unit_results"])  # the Aftermath advances, on the new level-ups
     units.mounts_lost = lose_mounts(context, draft, unit_information)  # after the dead took their items
     explored = apply_exploration(context, draft["exploration"])
     finds = apply_upkeep_and_finds(
