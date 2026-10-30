@@ -92,3 +92,10 @@
 .rules-table td {
   background: hsl(var(--background) / 0.45);
 }
+
+/* A search's matches inside the rules (the Rules page, Search everything). */
+.rules-content mark {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hi);
+  outline: 1px solid var(--color-accent-line);
+}

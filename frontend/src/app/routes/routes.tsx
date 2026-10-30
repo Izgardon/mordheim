@@ -25,17 +25,16 @@ const BattleLayout = lazy(() => import("../../features/battles/routes/BattleLayo
 const BattlePrebattle = lazy(() => import("../../features/battles/routes/BattlePrebattle"));
 const BattleActive = lazy(() => import("../../features/battles/routes/BattleActive"));
 const Wargear = lazy(() => import("../../features/items/routes/Wargear"));
+const Skills = lazy(() => import("../../features/skills/routes/Skills"));
+const Spells = lazy(() => import("../../features/spells/routes/Spells"));
+const Bestiary = lazy(() => import("../../features/bestiary/routes/Bestiary"));
+const HirelingCatalogue = lazy(() => import("../../features/hirelings/routes/HirelingCatalogue"));
+const Rules = lazy(() => import("../../features/rules/routes/Rules"));
+const HouseRules = lazy(() => import("../../features/rules/routes/HouseRules"));
 
 /** The campaign pages still to rebuild: placeholders until their redesign step. */
 const CAMPAIGN_PAGES: { path: string; title: string; step: string }[] = [
   { path: "encampments", title: "Encampment", step: "step 7" },
-  { path: "skills", title: "Skills", step: "step 7" },
-  { path: "spells", title: "Spells", step: "step 7" },
-  { path: "bestiary", title: "Bestiary", step: "step 7" },
-  { path: "hired-swords", title: "Hired swords", step: "step 7" },
-  { path: "dramatis-personae", title: "Dramatis personae", step: "step 7" },
-  { path: "rules", title: "Rules", step: "step 7" },
-  { path: "house-rules", title: "House rules", step: "step 7" },
   { path: "settings", title: "Settings", step: "step 7" },
 ];
 
@@ -102,8 +101,21 @@ export const routes: RouteObject[] = [
                       { path: "*", element: null },
                     ],
                   },
-                  // Wargear (next step 7a).
+                  // The reference pages (next step 7a).
                   { path: "items", element: <Wargear /> },
+                  { path: "skills", element: <Skills /> },
+                  { path: "spells", element: <Spells /> },
+                  { path: "bestiary", element: <Bestiary /> },
+                  {
+                    path: "hired-swords",
+                    element: <HirelingCatalogue key="hired-swords" kind="hired-swords" />,
+                  },
+                  {
+                    path: "dramatis-personae",
+                    element: <HirelingCatalogue key="dramatis-personae" kind="dramatis-personae" />,
+                  },
+                  { path: "rules", element: <Rules /> },
+                  { path: "house-rules", element: <HouseRules /> },
                   // Locations is a panel of the warband page now (next step 2).
                   {
                     path: "locations",
