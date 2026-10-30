@@ -31,7 +31,12 @@ type InjuriesTabProps = {
   onChange: (next: BattlePostbattleState) => void;
 };
 
-const good = (row: PostbattleRenderableRow) => !row.dead;
+/** A result reads good unless it kills, keeps him out, takes a stat away or is left to the chart. */
+const good = (row: PostbattleRenderableRow) => {
+  const effect = row.seriousInjuryRolls[row.seriousInjuryRolls.length - 1]?.effect;
+  if (row.dead || effect?.kind === "manual" || effect?.misses) return false;
+  return effect?.kind !== "stat" || (effect.change ?? 0) > 0;
+};
 
 /**
  * Injuries (design E): a card per unit taken out of action, rolling its table (heroes and hero-
