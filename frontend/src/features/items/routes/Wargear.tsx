@@ -297,6 +297,12 @@ export default function Wargear() {
     <ReferencePage
       title="Wargear"
       section="items"
+      archived={{
+        kind: "items",
+        campaignId,
+        canRestore: capabilities.edit_catalogue,
+        noun: "wargear",
+      }}
       actions={addButton}
       filters={
         <>

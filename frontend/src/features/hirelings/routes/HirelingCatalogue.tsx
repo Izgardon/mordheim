@@ -209,6 +209,12 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
     <ReferencePage
       title={SECTION[kind].title}
       section={SECTION[kind].path}
+      archived={{
+        kind,
+        campaignId,
+        canRestore: capabilities.edit_catalogue,
+        noun: kind === "hired-swords" ? "hired swords" : "dramatis personae",
+      }}
       actions={
         capabilities.edit_catalogue ? (
           <Button

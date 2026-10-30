@@ -165,6 +165,12 @@ export default function Bestiary() {
     <ReferencePage
       title="Bestiary"
       section="bestiary"
+      archived={{
+        kind: "bestiary",
+        campaignId,
+        canRestore: capabilities.edit_catalogue,
+        noun: "beasts",
+      }}
       actions={
         capabilities.edit_catalogue ? (
           <Button

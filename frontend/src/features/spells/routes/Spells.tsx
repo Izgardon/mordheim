@@ -94,6 +94,12 @@ export default function Spells() {
     <ReferencePage
       title="Spells"
       section="spells"
+      archived={{
+        kind: "spells",
+        campaignId,
+        canRestore: capabilities.edit_catalogue,
+        noun: "spells",
+      }}
       actions={addButton}
       filters={
         <>

@@ -1,8 +1,12 @@
 import type { ReactNode } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import { Switch } from "@/components/ui/switch";
+import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogueSearchParams";
 import { REFERENCE_LINKS } from "@/layouts/shell/campaign-nav";
 import { useMediaQuery } from "@/lib/use-media-query";
+
+import ArchivedEntries, { type ArchivedOptions } from "./ArchivedEntries";
 
 type ReferencePageProps = {
   title: string;
@@ -14,6 +18,11 @@ type ReferencePageProps = {
   filters?: ReactNode;
   /** One line above the list: "12 skills shown". */
   summary?: ReactNode;
+  /**
+   * The page's catalogue kind: a Show archived switch beside the summary lists its archived
+   * entries under the list (`?archived=1`), each with Restore.
+   */
+  archived?: ArchivedOptions;
   children: ReactNode;
 };
 
@@ -55,10 +64,13 @@ export function SectionPicker({ current, actions }: { current: string; actions?:
 /**
  * The reference pages' one layout (design E, E-Web-Items and E-Mobile-Items): "Reference" and the
  * title with the page's buttons (on a phone the Section picker instead, the shell's top bar naming
- * the page), the filters, a summary line and the list of rows that open in place.
+ * the page), the filters, a summary line with Show archived, the list of rows that open in place,
+ * and the archived entries while they are shown.
  */
 export default function ReferencePage(props: ReferencePageProps) {
   const isMobile = useMediaQuery("(max-width: 960px)");
+  const url = useCatalogueSearchParams();
+  const showArchived = Boolean(props.archived) && url.get("archived") === "1";
   return (
     <div className="flex flex-col gap-6 pb-14 max-[960px]:gap-2.5">
       {isMobile ? (
@@ -84,12 +96,24 @@ export default function ReferencePage(props: ReferencePageProps) {
           {props.filters}
         </section>
       ) : null}
-      {props.summary ? (
-        <p role="status" className="m-0 text-[13px] text-text2">
-          {props.summary}
-        </p>
+      {props.summary || props.archived ? (
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p role="status" className="m-0 text-[13px] text-text2">
+            {props.summary}
+          </p>
+          {props.archived ? (
+            <Switch
+              checked={showArchived}
+              onCheckedChange={(on) => url.set({ archived: on ? "1" : null })}
+              className="min-h-9"
+            >
+              Show archived
+            </Switch>
+          ) : null}
+        </div>
       ) : null}
       {props.children}
+      {props.archived && showArchived ? <ArchivedEntries options={props.archived} /> : null}
     </div>
   );
 }

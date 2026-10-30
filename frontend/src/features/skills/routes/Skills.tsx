@@ -111,6 +111,12 @@ export default function Skills() {
     <ReferencePage
       title="Skills"
       section="skills"
+      archived={{
+        kind: "skills",
+        campaignId,
+        canRestore: capabilities.edit_catalogue,
+        noun: "skills",
+      }}
       actions={addButton}
       filters={
         <>
