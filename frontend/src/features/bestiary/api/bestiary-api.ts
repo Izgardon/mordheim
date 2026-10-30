@@ -46,20 +46,3 @@ export function updateBestiaryEntry(entryId: number, payload: BestiaryEntryWrite
     body: payload,
   });
 }
-
-export function listWarbandBestiaryFavourites(warbandId: number) {
-  return apiRequest<BestiaryEntrySummary[]>(`/warbands/${warbandId}/bestiary-favourites/`);
-}
-
-export function addWarbandBestiaryFavourite(warbandId: number, bestiaryEntryId: number) {
-  return apiRequest<void>(`/warbands/${warbandId}/bestiary-favourites/`, {
-    method: "POST",
-    body: { bestiary_entry_id: bestiaryEntryId },
-  });
-}
-
-export function removeWarbandBestiaryFavourite(warbandId: number, bestiaryEntryId: number) {
-  return apiRequest<void>(`/warbands/${warbandId}/bestiary-favourites/${bestiaryEntryId}/`, {
-    method: "DELETE",
-  });
-}

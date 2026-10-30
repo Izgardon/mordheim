@@ -84,7 +84,7 @@ type Row = { item: Item; availability: ItemAvailability | null; warning: string 
 
 /**
  * Wargear (design E, E-Web-Items and E-Mobile-Items): every item of the campaign, searched by name
- * or rule, "What <your warband> can buy" on by default (step 4's restriction logic: off shows the
+ * or rule, "What <your warband> can buy" on by default (the store's restriction logic: off shows the
  * restricted items with their short warning), the store's category chips, and rows with name,
  * kind, price and Common or Rare N. An open row shows its rules, who can buy it and Get this item,
  * which opens the store's acquire panel and basket for your warband with the item's row open.

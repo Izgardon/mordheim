@@ -171,7 +171,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 }
 
 /**
- * The units a warband brings (next step 6): its heroes, henchmen (each member picked on its own,
+ * The units a warband brings: its heroes, henchmen (each member picked on its own,
  * or the group at once), hired swords, pets that fight and temporary units. Your own while you may
  * still change them; a unit missing games starts unpicked, as today.
  */

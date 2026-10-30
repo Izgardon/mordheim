@@ -3,8 +3,6 @@ import { fights } from "../units/missing-games";
 
 import type { HenchmenGroup, WarbandHero, WarbandHireling } from "../types/warband-types";
 
-export const statFields = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
-
 export const skillFields = [
   { key: "C", label: "C" },
   { key: "Sh", label: "Sh" },
@@ -101,18 +99,6 @@ export const parseAvailableSkills = (raw: unknown): Record<string, boolean> => {
   return skillFields.reduce((acc, field) => ({ ...acc, [field.key]: false }), {});
 };
 
-export const statFieldMap = {
-  M: "movement",
-  WS: "weapon_skill",
-  BS: "ballistic_skill",
-  S: "strength",
-  T: "toughness",
-  W: "wounds",
-  I: "initiative",
-  A: "attacks",
-  Ld: "leadership",
-} as const;
-
 export const toNumber = (value: number | string | null | undefined) => {
   if (typeof value === "number") {
     return Number.isFinite(value) ? value : 0;
@@ -126,15 +112,6 @@ export const toNumber = (value: number | string | null | undefined) => {
     return Number.isFinite(parsed) ? parsed : 0;
   }
   return 0;
-};
-
-export const toNullableNumber = (value: string) => {
-  const cleaned = value.trim();
-  if (!cleaned) {
-    return null;
-  }
-  const parsed = Number(cleaned);
-  return Number.isFinite(parsed) ? parsed : null;
 };
 
 // ── Warband rating ──────────────────────────────────────────────────────
@@ -226,24 +203,6 @@ export const formatTradeDate = (value: string): string => {
   const date = new Date(value);
   if (Number.isNaN(date.valueOf())) return "";
   return date.toLocaleDateString();
-};
-
-// ── Unit price calculation ──────────────────────────────────────────────
-
-/** Base price plus item costs (heroes and hired swords; hired sword upkeep is separate). */
-export const calculateUnitTotalPrice = (
-  hero: Pick<WarbandHero, "price" | "items">
-): {
-  basePrice: number;
-  itemsPrice: number;
-  totalPrice: number;
-} => {
-  const basePrice = Number(hero.price ?? 0) || 0;
-  const itemsPrice = (hero.items ?? []).reduce((sum, item) => {
-    const cost = Number(item.cost ?? 0);
-    return sum + (Number.isFinite(cost) ? cost : 0);
-  }, 0);
-  return { basePrice, itemsPrice, totalPrice: basePrice + itemsPrice };
 };
 
 // ── Item grouping ───────────────────────────────────────────────────────

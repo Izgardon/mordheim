@@ -75,7 +75,7 @@ function ranked<T>(candidates: Candidate<T>[], needle: string) {
 const words = (text?: string | null) => (text ?? "").replace(/\s+/g, " ").trim();
 
 /**
- * Search everything (next step 7a): one search over the reference (items, skills, spells, beasts,
+ * Search everything: one search over the reference (items, skills, spells, beasts,
  * hired swords, dramatis personae), the rulebook's text and the house rules, and this campaign's
  * warbands, units and locations; grouped by kind, empty groups left out.
  */

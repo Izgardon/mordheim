@@ -1,20 +1,7 @@
 import { apiRequest } from "@/lib/api-client";
-import { unitApi } from "../units/unit-api";
 
 import type { HenchmenGroup, WarbandHero, WarbandUnitsSummary } from "../types/warband-types";
 import type { LevelUpRollData } from "../utils/levelup-utils";
-
-const groups = unitApi("henchmen_group");
-
-export const listWarbandHenchmenGroups = groups.list;
-export const listWarbandHenchmenGroupDetails = groups.listDetails;
-export const getWarbandHenchmenGroupDetail = groups.detail;
-export const getWarbandHenchmenGroupKillHistory = groups.killHistory;
-export const createWarbandHenchmenGroup = groups.create;
-export const updateWarbandHenchmenGroup = groups.update;
-export const deleteWarbandHenchmenGroup = groups.remove;
-export const levelUpWarbandHenchmenGroup = groups.levelUp;
-export const batchWarbandHenchmenGroups = groups.batch;
 
 /** Lad's Got Talent (decision 9): the member, the hero's advance, and a hero to make room. */
 export type PromoteHenchmanBody = {

@@ -84,7 +84,7 @@ export type CampaignPlayer = {
   /** The open battle a busy player is in, and its last write (decision 1). */
   battle_busy_battle_id?: number | null;
   battle_busy_last_activity_at?: string | null;
-  /** His own status in that battle (next step 5: finished_battle is his post-game). */
+  /** His own status in that battle(finished_battle is his post-game). */
   battle_busy_participant_status?: string | null;
   warband?: {
     id: number;
@@ -107,14 +107,14 @@ export type CampaignBattleHistoryParticipant = {
   deaths: string[];
   xp_gain: number | null;
   exploration: number[];
-  /** The exploration's shards and the heroes the post-game left dead (next step 5). */
+  /** The exploration's shards and the heroes the post-game left dead. */
   shards?: number | null;
   heroes_lost?: number;
 };
 
 /** A battle's key moment: battles record no turns, so the fight's are "During", deaths "After". */
 export type CampaignBattleMoment = {
-  /** "Round N" (next step 6), "During" or "After". */
+  /** "Round N", "During" or "After". */
   group: string;
   kind: "kill" | "ooa" | "find" | "death";
   text: string;
@@ -165,30 +165,8 @@ export type CampaignPivotalMoment = {
   date: string;
 };
 
-export type CampaignTopKiller = {
-  unit_id: number;
-  unit_kind: "hero" | "hireling" | "henchman";
-  unit_name: string;
-  unit_type?: string | null;
-  warband_id: number;
-  warband_name: string;
-  kills: number;
-};
-
 /** Who removed a post: an owner or admin, or its author (decision 8). */
 export type PostRemovedBy = "admin" | "author";
-
-export type CampaignBulletinEntry = {
-  id: number;
-  campaign_id: number;
-  user_id: number | null;
-  username: string;
-  /** Empty once removed. */
-  body: string;
-  created_at: string;
-  removed_at?: string | null;
-  removed_by?: PostRemovedBy | null;
-};
 
 export type CampaignEncampment = {
   id: number;

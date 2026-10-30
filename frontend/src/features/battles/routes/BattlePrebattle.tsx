@@ -10,7 +10,7 @@ import type { CampaignLayoutContext } from "@/features/campaigns/routes/Campaign
 import { useMediaQuery } from "@/lib/use-media-query";
 
 /**
- * `battles/:battleId/prebattle` (next step 6): the invitation while the battle is gathering its
+ * `battles/:battleId/prebattle`: the invitation while the battle is gathering its
  * players, then the pre-battle. On a phone the battle bar's Menu carries notes, leaving and the
  * creator's Cancel.
  */

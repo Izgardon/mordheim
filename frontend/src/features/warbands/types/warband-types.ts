@@ -31,7 +31,7 @@ export type Warband = {
   wins?: number | null;
   losses?: number | null;
   rating?: number;
-  /** The mounts' part of `rating` (step 5), from the summary. */
+  /** The mounts' part of `rating`, from the summary. */
   mounts_rating?: number;
   gold?: number;
   max_units?: number | null;
@@ -70,7 +70,7 @@ export type WarbandRosterCounts = {
 export type WarbandUnitsSummary = WarbandRosterCounts & {
   resources?: WarbandResource[];
   rating?: number;
-  /** The mounts' part of `rating` (step 5), from the summary. */
+  /** The mounts' part of `rating`, from the summary. */
   mounts_rating?: number;
   gold?: number;
   heroes?: WarbandHero[];
@@ -108,19 +108,6 @@ export type LevelUpHistoryEntry = {
   code: string;
   label: string;
   timestamp: string;
-};
-
-export type HeroStats = {
-  M?: string;
-  WS?: string;
-  BS?: string;
-  S?: string;
-  T?: string;
-  W?: string;
-  I?: string;
-  A?: string;
-  Ld?: string;
-  [key: string]: string | undefined;
 };
 
 export type HeroSkills = {

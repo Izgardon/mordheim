@@ -130,14 +130,6 @@ export function refreshSheetSummary(queryClient: QueryClient, warbandId: number)
   }
 }
 
-/** A cached sheet of the warband, from whichever campaign holds it (undefined if none). */
-export function readCachedSheet(queryClient: QueryClient, warbandId: number) {
-  return queryClient
-    .getQueriesData<WarbandSheet>({ predicate: isWarbandQuery(warbandId, "sheet") })
-    .map(([, sheet]) => sheet)
-    .find((sheet) => sheet !== undefined);
-}
-
 /**
  * The ledger and the log after a write the server recorded rows for (purchases, sales, moves,
  * recruits, level-ups...): marked stale, so a tab shown later reads them again. Nothing is read
@@ -202,17 +194,6 @@ export function setHeroTradingAction(
           : sheet.summary,
       }
   );
-}
-
-/** Marks the warband's cached reads under each path stale; the ones on screen are read again. */
-export function invalidateWarbandReads(
-  queryClient: QueryClient,
-  warbandId: number,
-  ...paths: string[]
-) {
-  for (const path of paths) {
-    void queryClient.invalidateQueries({ predicate: isWarbandQuery(warbandId, path) });
-  }
 }
 
 /** `updateWarbandCache(warbandId, update?)` for components and hooks. */

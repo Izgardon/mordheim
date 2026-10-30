@@ -25,7 +25,7 @@ export const REFERENCE_LINKS: NavLink[] = [
 ];
 
 export const OVERVIEW_LINK: NavLink = { label: "Overview", path: "", icon: LayoutGrid };
-/** Search everything (next step 7a): the rail's first Reference row, the Reference sheet's first. */
+/** Search everything: the rail's first Reference row, the Reference sheet's first. */
 export const SEARCH_LINK: NavLink = { label: "Search everything", path: "search", icon: Search };
 export const BATTLES_ICON = Swords;
 

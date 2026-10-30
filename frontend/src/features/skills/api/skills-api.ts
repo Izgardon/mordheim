@@ -14,10 +14,6 @@ type ListSkillsOptions = {
   signal?: AbortSignal;
 };
 
-export function getSkill(skillId: number) {
-  return apiRequest<Skill>(`/skills/${skillId}/`);
-}
-
 export function listSkills(options: ListSkillsOptions = {}) {
   const params = new URLSearchParams();
   if (options.type) {

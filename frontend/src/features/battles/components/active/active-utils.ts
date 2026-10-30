@@ -7,7 +7,6 @@ import type {
   ParticipantRoster,
   PrebattleUnit,
   UnitOverride,
-  UnitStats,
 } from "@/features/battles/components/prebattle/prebattle-types";
 import {
   normalizeCustomUnits,
@@ -21,7 +20,7 @@ export type ActiveSectionUnits = {
   henchmen: PrebattleUnit[];
   hirelings: PrebattleUnit[];
   temporary: PrebattleUnit[];
-  /** Pets fighting as their own models (step 5). */
+  /** Pets fighting as their own models. */
   pets: PrebattleUnit[];
 };
 
@@ -120,16 +119,6 @@ export function unitInformationToOverride(
   }
   return {
     stats,
-  };
-}
-
-export function getEffectiveUnitStats(
-  unit: PrebattleUnit,
-  unitInformation: BattleUnitInformationEntry | undefined
-): UnitStats {
-  return {
-    ...unit.stats,
-    ...(unitInformation?.stats_override ?? {}),
   };
 }
 

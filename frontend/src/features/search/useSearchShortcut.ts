@@ -15,7 +15,7 @@ const isTyping = (target: EventTarget | null) => {
 };
 
 /**
- * Search everything's keyboard shortcut on the web (next step 7a): `/` (when not typing in a
+ * Search everything's keyboard shortcut on the web: `/` (when not typing in a
  * field) or Ctrl+K / Cmd+K opens `/campaigns/:id/search` from anywhere in the campaign and puts
  * the cursor in its field.
  */

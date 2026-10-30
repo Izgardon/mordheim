@@ -81,7 +81,7 @@ export function useBattleSession(campaignId: number, route: BattleRoute) {
     if (!currentBattleSession) {
       return;
     }
-    // The bare battle URL sends him to the page for his status (next step 6).
+    // The bare battle URL sends him to the page for his status.
     const { campaignId: sessionCampaign, battleId: sessionBattle } = currentBattleSession;
     navigate(`/campaigns/${sessionCampaign}/battles/${sessionBattle}`);
   }, [currentBattleSession, navigate]);

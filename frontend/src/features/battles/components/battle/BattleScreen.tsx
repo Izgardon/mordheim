@@ -62,7 +62,7 @@ const TYPE_SUFFIX: Record<string, string> = {
 };
 
 /**
- * The battle screen (design E's E-Mobile-Battle, next step 6). On a phone it fills the screen: the
+ * The battle screen (design E's E-Mobile-Battle). On a phone it fills the screen: the
  * top bar (back, the battle and "Round N · live", Next round), the strip of warbands and neutral
  * groups, the feed in its own box, the selected side's units and the bottom bar (Rules, Melee,
  * Ranged, Dice, Menu). On the web the same pieces sit wider: the tools in the header, the strip

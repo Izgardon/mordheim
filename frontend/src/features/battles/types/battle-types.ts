@@ -54,7 +54,7 @@ export type BattleUnitStatus = "knocked_down" | "stunned";
 /** A neutral creature's state: the four the status button cycles through. */
 export type BattleCreatureStatus = "standing" | "knocked_down" | "stunned" | "out_of_action";
 
-/** One creature nobody plays (next step 6); `key` is stable, so a kill can name it. */
+/** One creature nobody plays; `key` is stable, so a kill can name it. */
 export type BattleNeutralCreature = {
   key: string;
   name: string;
@@ -81,9 +81,9 @@ export type BattleUnitInformationEntry = {
   current_wounds?: number | null;
   out_of_action: boolean;
   kill_count: number;
-  /** Knocked down or stunned (next step 6); left out while the unit stands. */
+  /** Knocked down or stunned; left out while the unit stands. */
   status?: BattleUnitStatus;
-  /** A rider off his mount for the rest of the battle (step 5); left out otherwise. */
+  /** A rider off his mount for the rest of the battle; left out otherwise. */
   dismounted?: boolean;
 };
 
@@ -179,11 +179,11 @@ export type BattlePostbattleState = {
   upkeep: BattlePostbattleUpkeep;
   unit_results: Record<string, BattlePostbattleUnitResult>;
   /**
-   * Each at-risk rider's D6 for his mount and whether it died (step 5): the player's roll and
+   * Each at-risk rider's D6 for his mount and whether it died: the player's roll and
    * result, never automatic; a dead mount leaves him at finalise. Left out when there is none.
    */
   mount_survival?: Record<string, BattlePostbattleMountSurvival>;
-  /** The camp's record (next step 3): the veterans' XP pool, what was sold and recruited. */
+  /** The camp's record: the veterans' XP pool, what was sold and recruited. */
   camp?: BattlePostgameCamp;
 };
 
@@ -196,7 +196,7 @@ export type BattlePostgameCamp = {
 
 export type BattlePostbattleMountSurvival = { roll: number | null; dead: boolean };
 
-/** A rider taken out of action on his mount: what its D6 must beat (step 5). */
+/** A rider taken out of action on his mount: what its D6 must beat. */
 export type BattleMountAtRisk = {
   unit_name: string;
   mount: string;
@@ -267,7 +267,7 @@ export type BattleSummary = {
   /** Every player has finished his fight; the results wait for the last one (decision 4). */
   results_pending?: boolean;
   results_confirmer_user_id?: number | null;
-  /** The fight's round, from 1 (next step 6). */
+  /** The fight's round, from 1. */
   round?: number;
   /** The open ask for the next round: who asked and who has agreed. */
   round_request?: BattleRoundRequest | null;
@@ -359,10 +359,10 @@ export type UnitKillPayload = {
     warband_id?: number | null;
     name?: string | null;
     type_name?: string | null;
-    /** A neutral creature's key (next step 6). */
+    /** A neutral creature's key. */
     neutral_key?: string;
   };
-  /** The round it happened in, for a kill in the fight (next step 6). */
+  /** The round it happened in, for a kill in the fight. */
   round?: number;
   /** The kill took its victim out of action; undoing it puts him back. */
   victim_ooa?: boolean;
@@ -641,37 +641,6 @@ export type ReportBattleResultPayload = {
   participant_user_ids: number[];
   winner_warband_ids: number[];
 };
-
-/** An ended battle's record, as a battle manager edits it (BATL-NEW-04, `record/`). */
-export type BattleRecord = {
-  battle_id: number;
-  flow_type: BattleFlowType;
-  scenario: string;
-  scenario_link: string | null;
-  /** "YYYY-MM-DD" */
-  date: string;
-  participants: {
-    warband_id: number;
-    warband_name: string;
-    user_id: number;
-    user_label: string;
-    declared_rating: number | null;
-    /** Taken off the record (kept, marked removed). */
-    removed: boolean;
-  }[];
-  winner_warband_ids: number[];
-  loser_warband_ids: number[];
-};
-
-/** What `PATCH record/` accepts; a participant left without a rating keeps his. */
-export type BattleRecordPatch = Partial<{
-  scenario: string;
-  scenario_link: string | null;
-  date: string;
-  participants: { warband_id: number; declared_rating?: number | null }[];
-  winners: number[];
-  losers: number[];
-}>;
 
 /** A reported result still waiting for answers, as `pending-results/` lists it (BUG-46). */
 export type PendingReportedResult = {

@@ -105,7 +105,7 @@ export function battleLine(battle: CampaignBattleHistoryEntry) {
 
 /**
  * A battle's moments grouped as its row shows them, in the server's order: "Round 1", "Round 2"
- * and on for kills that carry their round (next step 6), "During" for the rest, then "After".
+ * and on for kills that carry their round, "During" for the rest, then "After".
  */
 export function momentGroups(moments: CampaignBattleMoment[] = []) {
   const labels = [...new Set(moments.map((moment) => moment.group))];

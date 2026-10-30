@@ -35,7 +35,7 @@ export default function Aftermath() {
   }
   const stillOpen = ["inviting", "prebattle", "active"].includes(battleState.battle.status);
   if (participant.status !== "finished_battle" && stillOpen) {
-    // Not finished fighting yet: the battle's own route sends him to his page (next step 6).
+    // Not finished fighting yet: the battle's own route sends him to his page.
     return <Navigate to={`/campaigns/${campaignId}/battles/${battleState.battle.id}`} replace />;
   }
   if (participant.status !== "finished_battle") {

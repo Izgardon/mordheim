@@ -1,14 +1,6 @@
 import type { BattleCustomUnit } from "@/features/battles/types/battle-types";
 
-import type {
-  ParticipantRoster,
-  PrebattleUnit,
-  UnitDetailEntry,
-  UnitItemEntry,
-  UnitSingleUseItem,
-  UnitSpellDetailEntry,
-  UnitStats,
-} from "./prebattle-types";
+import type { ParticipantRoster, PrebattleUnit, UnitStats } from "./prebattle-types";
 
 export function toNumericStat(value: unknown): number {
   if (typeof value === "number" && Number.isFinite(value)) {
@@ -67,96 +59,6 @@ export function flattenRosterUnits(roster: ParticipantRoster | undefined): Preba
   }
   const henchmenMembers = roster.henchmenGroups.flatMap((group) => group.members);
   return [...roster.heroes, ...roster.hirelings, ...henchmenMembers, ...(roster.petModels ?? [])];
-}
-
-export function extractUnitItems(rawItems: unknown): UnitItemEntry[] {
-  if (!Array.isArray(rawItems)) {
-    return [];
-  }
-
-  const counts = new Map<string, UnitItemEntry>();
-  for (const rawItem of rawItems) {
-    if (!rawItem || typeof rawItem !== "object") {
-      continue;
-    }
-    const itemId = Number((rawItem as { id?: unknown }).id);
-    const itemName = String((rawItem as { name?: unknown }).name ?? "").trim();
-    const singleUse = Boolean((rawItem as { single_use?: unknown }).single_use);
-    if (!Number.isFinite(itemId) || itemId <= 0 || !itemName) {
-      continue;
-    }
-    const key = `${itemId}:${itemName}`;
-    const existing = counts.get(key);
-    if (existing) {
-      existing.count += 1;
-      existing.singleUse = existing.singleUse || singleUse;
-      continue;
-    }
-    counts.set(key, {
-      id: itemId,
-      name: itemName,
-      count: 1,
-      singleUse,
-    });
-  }
-
-  return Array.from(counts.values()).sort((left, right) => left.name.localeCompare(right.name));
-}
-
-export function extractSingleUseItems(rawItems: unknown): UnitSingleUseItem[] {
-  const items = extractUnitItems(rawItems);
-  return items
-    .filter((item) => item.singleUse)
-    .map((item) => ({
-      id: item.id,
-      name: item.name,
-      quantity: item.count,
-    }));
-}
-
-export function extractDetailEntries(rawEntries: unknown): UnitDetailEntry[] {
-  if (!Array.isArray(rawEntries)) {
-    return [];
-  }
-  const entries: UnitDetailEntry[] = [];
-  for (const rawEntry of rawEntries) {
-    if (!rawEntry || typeof rawEntry !== "object") {
-      continue;
-    }
-    const id = Number((rawEntry as { id?: unknown }).id);
-    const name = String((rawEntry as { name?: unknown }).name ?? "").trim();
-    if (!Number.isFinite(id) || id <= 0 || !name) {
-      continue;
-    }
-    entries.push({ id, name });
-  }
-  return entries;
-}
-
-export function extractSpellEntries(rawEntries: unknown): UnitSpellDetailEntry[] {
-  if (!Array.isArray(rawEntries)) {
-    return [];
-  }
-  const entries: UnitSpellDetailEntry[] = [];
-  for (const rawEntry of rawEntries) {
-    if (!rawEntry || typeof rawEntry !== "object") {
-      continue;
-    }
-    const id = Number((rawEntry as { id?: unknown }).id);
-    const name = String((rawEntry as { name?: unknown }).name ?? "").trim();
-    if (!Number.isFinite(id) || id <= 0 || !name) {
-      continue;
-    }
-    entries.push({
-      id,
-      name,
-      dc:
-        (rawEntry as { dc?: unknown }).dc === undefined
-          ? null
-          : ((rawEntry as { dc?: string | number | null }).dc ?? null),
-    });
-  }
-  return entries;
 }
 
 export function normalizeCustomUnits(raw: unknown): PrebattleUnit[] {

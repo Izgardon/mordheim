@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
-import { beastKindLabel, type BeastKind } from "../bestiary-kinds";
+import { type BeastKind } from "../bestiary-kinds";
 
 /** The plan's marks: a horseshoe for a mount, a feather for a pet, a paw for a creature. */
 const MARKS: Record<BeastKind, ReactNode> = {
@@ -53,15 +53,5 @@ export function BeastKindIcon({ kind, className }: { kind: BeastKind; className?
     >
       {MARKS[kind]}
     </svg>
-  );
-}
-
-/** The kind as a small label with its mark: "Mount", "Pet", "Creature". */
-export function BeastKindLabel({ kind, className }: { kind: BeastKind; className?: string }) {
-  return (
-    <span className={cn("inline-flex items-center gap-1", BEAST_KIND_TEXT[kind], className)}>
-      <BeastKindIcon kind={kind} />
-      {beastKindLabel(kind)}
-    </span>
   );
 }

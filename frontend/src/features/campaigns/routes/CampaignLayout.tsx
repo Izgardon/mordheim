@@ -29,7 +29,7 @@ import type { CampaignSummary } from "../types/campaign-types";
  * What the layout shares with every campaign page. It owns the campaign query (pages read the
  * campaign from here, and `useUpdateCampaign` writes answers back into it). A battle page puts its
  * actions in the phone's battle Menu with `setBattleMenuActions`, and opens the shell's dice, chat
- * and notifications with `openTool` (the battle screen's own menu, next step 6).
+ * and notifications with `openTool` (the battle screen's own menu).
  */
 export type CampaignLayoutContext = {
   campaign: CampaignSummary | null;
@@ -49,7 +49,7 @@ export default function CampaignLayout() {
   const campaign = campaignQuery.data ?? null;
   const segments = pathname.split("/").filter(Boolean);
   const isBattleRoute = segments[2] === "battles";
-  // The Aftermath (next step 3) and the battle screen (next step 6) bring their own header and
+  // The Aftermath and the battle screen bring their own header and
   // footer on a phone.
   const ownChrome = isBattleRoute && (segments[4] === "postbattle" || segments[4] === "active");
   const { canRejoinBattle, rejoinBattle } = useBattleSession(campaignId, {

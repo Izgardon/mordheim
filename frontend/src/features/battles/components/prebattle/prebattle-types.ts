@@ -47,7 +47,7 @@ export type PrebattleUnit = BattleRosterCompanionFields & {
   key: string;
   id: number | string;
   kind: "hero" | "hireling" | "henchman" | "custom" | "bestiary" | "pet";
-  /** A pet fighting as its own model (step 5): its owner's unit key, or `group:<id>`. */
+  /** A pet fighting as its own model: its owner's unit key, or `group:<id>`. */
   ownerKey?: string;
   displayName: string;
   unitType: string;

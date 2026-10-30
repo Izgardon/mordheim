@@ -36,5 +36,3 @@ export function useReferenceParams(ready: boolean) {
     set: url.set,
   };
 }
-
-export type ReferenceParams = ReturnType<typeof useReferenceParams>;

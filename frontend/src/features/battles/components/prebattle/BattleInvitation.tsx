@@ -8,7 +8,7 @@ import { participantProgress } from "@/features/battles/utils/participant-progre
 const TONE = { waiting: "accent", done: "good", left: "danger" } as const;
 
 /**
- * The invitation (next step 6): who invited you, the scenario and everyone asked, then Accept or
+ * The invitation: who invited you, the scenario and everyone asked, then Accept or
  * Decline. Once you accept it waits for the others; the creator can cancel the battle meanwhile.
  */
 export default function BattleInvitation({ page }: { page: PrebattlePage }) {

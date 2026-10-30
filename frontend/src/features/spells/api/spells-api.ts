@@ -52,10 +52,6 @@ export function createSpell(payload: SpellCreatePayload) {
 /** A book spell's edit names the campaign whose version it makes or changes. */
 export type SpellUpdatePayload = Partial<SpellCreatePayload>;
 
-export function getSpell(spellId: number) {
-  return apiRequest<Spell>(`/spells/${spellId}/`);
-}
-
 export function updateSpell(spellId: number, payload: SpellUpdatePayload) {
   return apiRequest<Spell>(`/spells/${spellId}/`, {
     method: "PATCH",

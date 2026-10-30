@@ -1,28 +1,12 @@
-/**
- * A campaign for the campaign screens' tests, in the API's shapes: campaign 1, "Shards of the
- * Comet", owned by Aldric (user 7, Iron Vultures), with Brunhilde (8, admin, Grey Wardens), Mira
- * (9, player, Night Razors) and a member who registered without a name (12, no warband yet).
- * The server names that member "Player 12" wherever a name goes, never by email (SEC-13).
- */
-import type { PendingReportedResult } from "@/features/battles/types/battle-types";
 import type { CampaignCapability } from "@/features/campaigns/capabilities";
 import type {
-  CampaignBattleHistoryEntry,
   CampaignEncampment,
-  CampaignMember,
-  CampaignMessage,
   CampaignPermission,
-  CampaignPivotalMoment,
-  CampaignPlayer,
   CampaignRole,
   CampaignSummary,
 } from "@/features/campaigns/types/campaign-types";
-import { fakeApi } from "./fake-api";
 
 export const CAMPAIGN_ID = 1;
-
-/** `"/campaigns/1/<suffix>"`, as the api modules build their paths. */
-export const campaignApi = (suffix = "") => `/campaigns/${CAMPAIGN_ID}/${suffix}`;
 
 type Person = {
   id: number;
@@ -179,106 +163,6 @@ export function campaignFor(role: CampaignRole, overrides: Partial<CampaignSumma
   return campaignSummary({ role, permissions, ...overrides });
 }
 
-/** `GET players/`: one row per member, named as the server labels them. */
-export const campaignPlayers = (): CampaignPlayer[] =>
-  PEOPLE.map((person) => ({
-    id: person.id,
-    name: person.name,
-    battle_busy: false,
-    battle_busy_status: null,
-    warband: person.warband ? { ...person.warband, wins: 2, losses: 1, rating: 120 } : null,
-  }));
-
-/** `GET members/`: owner and admin listed with every code; Mira holds `edit_catalogue`. */
-export const campaignMembers = (): CampaignMember[] =>
-  PEOPLE.map((person) => ({
-    id: person.id,
-    name: person.name,
-    email: person.email,
-    role: person.role,
-    permissions: person.role === "player" ? (person === PLAYER ? ["edit_catalogue"] : []) : [],
-    warband_id: person.warband?.id ?? null,
-    warband_name: person.warband?.name ?? null,
-  }));
-
-export const battleHistoryEntry = (): CampaignBattleHistoryEntry => ({
-  id: 40,
-  scenario: "Skirmish at the Market Square",
-  winners: [OWNER.warband!.name],
-  date: "2026-10-12",
-  participants: [
-    {
-      warband_id: OWNER.warband!.id,
-      warband_name: OWNER.warband!.name,
-      kills: 3,
-      ooas: 1,
-      deaths: [],
-      xp_gain: 4,
-      exploration: [3, 5],
-    },
-    {
-      warband_id: PLAYER.warband!.id,
-      warband_name: PLAYER.warband!.name,
-      kills: 1,
-      ooas: 2,
-      deaths: ["Black Fang"],
-      xp_gain: 2,
-      exploration: [2],
-    },
-  ],
-});
-
-export const pivotalMoment = (): CampaignPivotalMoment => ({
-  id: 3,
-  kind: "hero_death",
-  headline: "Black Fang falls in the market",
-  detail: "Cut down by Captain Wolf.",
-  unit_key: "hero:2",
-  unit_name: "Black Fang",
-  warband_id: PLAYER.warband!.id,
-  warband_name: PLAYER.warband!.name,
-  battle_id: 40,
-  battle_scenario: "Skirmish at the Market Square",
-  source_event_id: 12,
-  battle_ended_at: "2026-10-12T22:00:00Z",
-  date: "2026-10-12",
-});
-
-/** A reported result waiting for your answer, as `pending-results/` lists it. */
-export const pendingResultRow = (
-  overrides: Partial<PendingReportedResult> = {}
-): PendingReportedResult => ({
-  battle_id: 41,
-  campaign_id: CAMPAIGN_ID,
-  status: "reported_result_pending",
-  scenario: "Ambush at the Bridge",
-  battle_date: "2026-10-17",
-  winner_warband_ids: [PLAYER.warband!.id],
-  winner_warband_names: [PLAYER.warband!.name],
-  created_by_user_id: PLAYER.id,
-  created_by_user_label: PLAYER.name,
-  created_at: "2026-10-17T20:00:00Z",
-  participants: [
-    {
-      user_id: OWNER.id,
-      user_label: OWNER.name,
-      warband_id: OWNER.warband!.id,
-      warband_name: OWNER.warband!.name,
-      status: "reported_result_pending",
-    },
-    {
-      user_id: PLAYER.id,
-      user_label: PLAYER.name,
-      warband_id: PLAYER.warband!.id,
-      warband_name: PLAYER.warband!.name,
-      status: "reported_result_approved",
-    },
-  ],
-  awaiting_my_answer: true,
-  can_withdraw: false,
-  ...overrides,
-});
-
 export const encampment = (overrides: Partial<CampaignEncampment> = {}): CampaignEncampment => ({
   id: 4,
   campaign_id: CAMPAIGN_ID,
@@ -290,96 +174,3 @@ export const encampment = (overrides: Partial<CampaignEncampment> = {}): Campaig
   capabilities: { edit: true },
   ...overrides,
 });
-
-/** A chat message as `messages/` returns it and `chat.message` carries it. */
-export const chatMessage = (
-  id: number,
-  author: Person,
-  body: string,
-  overrides: Partial<CampaignMessage> = {}
-): CampaignMessage => ({
-  id,
-  campaign_id: CAMPAIGN_ID,
-  user_id: author.id,
-  username: author.name,
-  body,
-  created_at: "2026-10-18T20:00:00Z",
-  ...overrides,
-});
-
-export const CHAT_CHANNEL = `private-campaign-${CAMPAIGN_ID}-chat`;
-
-/** `GET rules/common/`: the server's common house rules (the two with item effects first). */
-export const COMMON_RULES = [
-  {
-    id: "half-price-armour",
-    title: "Half Price Armour",
-    description:
-      "All items listed under Armour are half price with the exception of Shields and Bucklers.",
-    effect_key: "half_price_armour",
-  },
-  {
-    id: "improved-shields",
-    title: "Improved Shields",
-    description: "Both Shields and Bucklers offer an improved +1 Sv in combat.",
-    effect_key: "improved_shields",
-  },
-  {
-    id: "trinket-item-cap",
-    title: "Trinket Item Cap",
-    description:
-      "Maximum 1 each of Lucky Charm, Rabbit's Foot, Holy/Unholy Relic, and Bear Claw Necklaces in a Warband.",
-    effect_key: null,
-  },
-];
-
-/** Your warband's sheet as the layout's store reads it (only the warband and its summary). */
-const sheetOf = (person: Person) => ({
-  warband: {
-    id: person.warband!.id,
-    campaign_id: CAMPAIGN_ID,
-    user_id: person.id,
-    name: person.warband!.name,
-    faction: person.warband!.faction,
-  },
-  summary: { gold: 120, rating: 120, resources: [] },
-  capabilities: {},
-  heroes: [],
-  henchmen_groups: [],
-  hirelings: [],
-});
-
-/**
- * Answers what the campaign shell reads: the campaign, your open battles, your warband and its
- * sheet, and the bell's notifications (RealtimeProvider). `viewer` owns the warband.
- */
-export function routeCampaignShell({
-  campaign = campaignSummary(),
-  viewer = OWNER,
-}: { campaign?: CampaignSummary; viewer?: Person } = {}) {
-  fakeApi.on(`GET ${campaignApi()}`, campaign);
-  fakeApi.on(`GET ${campaignApi("battles/?open=1")}`, []);
-  fakeApi.on(
-    `GET /warbands/?campaign_id=${CAMPAIGN_ID}`,
-    viewer.warband ? [sheetOf(viewer).warband] : []
-  );
-  if (viewer.warband) {
-    fakeApi.on(`GET /warbands/${viewer.warband.id}/sheet/`, sheetOf(viewer));
-  }
-  fakeApi.on("GET /notifications/", []);
-}
-
-/** Answers the overview's lists: players, completed trades, battle history, moments, results. */
-export function routeOverviewLists() {
-  fakeApi.on(`GET ${campaignApi("players/")}`, campaignPlayers());
-  fakeApi.on(`GET ${campaignApi("trade-requests/?status=completed")}`, []);
-  fakeApi.on(`GET ${campaignApi("battle-history/")}`, [battleHistoryEntry()]);
-  fakeApi.on(`GET ${campaignApi("pivotal-moments/")}`, [pivotalMoment()]);
-  fakeApi.on(`GET ${campaignApi("battles/pending-results/")}`, []);
-}
-
-/** The PATCH answer: the campaign with the change, without the caller's permissions or flags. */
-export function patchedCampaign(campaign: CampaignSummary, body: unknown): CampaignSummary {
-  const { permissions: _permissions, capabilities: _capabilities, ...rest } = campaign;
-  return { ...rest, ...(body as Partial<CampaignSummary>) };
-}

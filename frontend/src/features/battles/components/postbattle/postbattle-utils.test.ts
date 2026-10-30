@@ -417,7 +417,7 @@ describe("postbattle-utils", () => {
     ).toBe(true);
   });
 
-  describe("hirelings by kind (the bestiary rewrite's step 2)", () => {
+  describe("hirelings by kind", () => {
     /** Johann a hired sword on the henchman table; Shade a one-battle dramatis persona on the hero table. */
     const kindsRoster: ParticipantRoster = {
       ...roster,

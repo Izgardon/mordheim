@@ -22,7 +22,7 @@ export type CampaignSearchAnswer = {
 export const MIN_SEARCH = 2;
 
 /**
- * `GET campaigns/<id>/search/?q=` (next step 7a): this campaign's warbands and the units on their
+ * `GET campaigns/<id>/search/?q=`: this campaign's warbands and the units on their
  * rosters whose names match, up to 20 of each kind.
  */
 export function searchCampaign(campaignId: number, query: string, signal?: AbortSignal) {

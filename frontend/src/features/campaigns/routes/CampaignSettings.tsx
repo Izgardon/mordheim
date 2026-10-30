@@ -117,7 +117,7 @@ function SectionBody({ id, campaign }: { id: SectionId; campaign: CampaignSummar
 }
 
 /**
- * Campaign settings (design E, built from the step 1 primitives): every section today's settings
+ * Campaign settings (design E, built from its primitives): every section today's settings
  * page had, on one page. On the web a section list sits beside the open section; on a phone the
  * list opens each section on its own, with a way back. The open section lives in `?section=`, so
  * the overview's stuck-battles Review and the archived banner link straight to theirs.

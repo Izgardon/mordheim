@@ -42,9 +42,9 @@ type UseStartBattleFormParams = {
   campaignId: number;
   creatorUserId: number;
   players: CampaignPlayer[];
-  /** The mode the dialog opens in (Start battle or Report a result, next step 5). */
+  /** The mode the dialog opens in (Start battle or Report a result). */
   initialMode?: BattleDialogMode;
-  /** Before a battle is created (not a reported result): readies you up first (next step 5). */
+  /** Before a battle is created (not a reported result): readies you up first. */
   beforeStart?: () => Promise<void>;
   onBattleCreated?: () => void;
 };

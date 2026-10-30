@@ -40,12 +40,6 @@ export const queryKeys = {
     battleHistory: (campaignId: number) => ["campaign", campaignId, "battle-history"] as const,
     chronicle: (campaignId: number, kind: string) =>
       ["campaign", campaignId, "chronicle", kind] as const,
-    pivotalMoments: (campaignId: number) => ["campaign", campaignId, "pivotal-moments"] as const,
-    /** The campaign's completed trades (the overview's Trades table). */
-    completedTrades: (campaignId: number) =>
-      ["campaign", campaignId, "trades", "completed"] as const,
-    bulletin: (campaignId: number) => ["campaign", campaignId, "bulletin"] as const,
-    topKillers: (campaignId: number) => ["campaign", campaignId, "top-killers"] as const,
     /** Members with emails, roles and grants (Settings, for owners and admins). */
     members: (campaignId: number) => ["campaign", campaignId, "members"] as const,
     /** Open battles a battle manager can act on (Settings → Active Battles, manage_battles). */
@@ -96,9 +90,6 @@ export const queryKeys = {
     /** One battle's state (battle, participants, events), patched from its socket messages. */
     battleState: (campaignId: number, battleId: number) =>
       ["campaign", campaignId, "battle", battleId, "state"] as const,
-    /** An ended battle's record, as a battle manager edits it (BATL-NEW-04). */
-    battleRecord: (campaignId: number, battleId: number) =>
-      ["campaign", campaignId, "battle", battleId, "record"] as const,
     /** The postbattle rules, the same for every battle of the campaign (broadcasts may omit them). */
     battleRules: (campaignId: number) => ["campaign", campaignId, "battle-rules"] as const,
     /** Every participant's roster for one battle (the start snapshot once it has started). */
@@ -123,9 +114,6 @@ export const queryKeys = {
     /** The warband's log entries, as the Logs tab lists them. */
     warbandLogs: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "logs"] as const,
-    /** Every on-roster unit's stat line, as the overview's roster expands it (PERF-42). */
-    warbandRosterStats: (campaignId: number, warbandId: number) =>
-      ["campaign", campaignId, "warband", warbandId, "roster-stats"] as const,
     /** One trade request between two players of the campaign. */
     trade: (campaignId: number, requestId: string) =>
       ["campaign", campaignId, "trade", requestId] as const,

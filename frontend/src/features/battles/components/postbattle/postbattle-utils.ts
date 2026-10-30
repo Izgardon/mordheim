@@ -189,31 +189,6 @@ export function setLocalExplorationDieSelected(
   };
 }
 
-export function setLocalExplorationDieValue(
-  state: LocalExplorationState,
-  index: number,
-  rawValue: string
-): LocalExplorationState {
-  if (index < 0 || index >= state.diceValues.length) {
-    return state;
-  }
-  const trimmed = rawValue.trim();
-  let nextValue: number | null = null;
-  if (trimmed) {
-    const parsed = Number(trimmed);
-    if (!Number.isFinite(parsed)) {
-      return state;
-    }
-    nextValue = Math.max(1, Math.min(6, Math.trunc(parsed)));
-  }
-  return {
-    ...state,
-    diceValues: state.diceValues.map((value, entryIndex) =>
-      entryIndex === index ? nextValue : value
-    ),
-  };
-}
-
 export function setLocalExplorationResource(
   state: LocalExplorationState,
   resourceId: number | null
@@ -222,21 +197,6 @@ export function setLocalExplorationResource(
     ...state,
     resourceId,
   };
-}
-
-export function setLocalExplorationAmountOverride(
-  state: LocalExplorationState,
-  rawValue: string
-): LocalExplorationState {
-  const trimmed = rawValue.trim();
-  if (trimmed === "") {
-    return { ...state, amountOverride: null };
-  }
-  const parsed = Number(trimmed);
-  if (!Number.isFinite(parsed)) {
-    return state;
-  }
-  return { ...state, amountOverride: Math.max(0, Math.trunc(parsed)) };
 }
 
 export function getSelectedExplorationDiceValues(state: LocalExplorationState) {
@@ -427,9 +387,9 @@ export function buildPostbattleDraft(
       entries: nextUpkeepEntries,
     },
     unit_results: nextUnitResults,
-    // The mounts' rolls saved so far (step 5); left out until one is rolled.
+    // The mounts' rolls saved so far; left out until one is rolled.
     ...(existing?.mount_survival ? { mount_survival: existing.mount_survival } : {}),
-    // The camp's record (next step 3), kept as it was saved.
+    // The camp's record, kept as it was saved.
     ...(existing?.camp ? { camp: existing.camp } : {}),
   };
 }
@@ -442,7 +402,7 @@ export function mountRollResult(roll: number | null, diesOn: number) {
   return { roll, dead: roll !== null && roll <= diesOn };
 }
 
-/** The draft with one rider's mount roll and result set (step 5). */
+/** The draft with one rider's mount roll and result set. */
 export function setMountSurvival(
   draft: BattlePostbattleState,
   unitKey: string,
@@ -524,17 +484,6 @@ export function buildRenderableGroups(draft: BattlePostbattleState, roster?: Par
   }
 
   return groups;
-}
-
-export function updateGroupXp(draft: BattlePostbattleState, groupName: string, xpEarned: number) {
-  const nextUnitResults = { ...draft.unit_results };
-  for (const [unitKey, result] of Object.entries(nextUnitResults)) {
-    if (result.unit_kind !== "henchman" || result.group_name !== groupName) {
-      continue;
-    }
-    nextUnitResults[unitKey] = { ...result, xp_earned: xpEarned };
-  }
-  return { ...draft, unit_results: nextUnitResults };
 }
 
 export function updateUnitResult(
@@ -644,38 +593,4 @@ export function getPostbattleUpkeepTotal(draft: BattlePostbattleState | null) {
     total += Math.max(0, Math.trunc(entry.cost));
   }
   return total;
-}
-
-export function isPostbattleDraftValid(draft: BattlePostbattleState | null) {
-  if (!draft) {
-    return false;
-  }
-  return Object.keys(draft.unit_results).length > 0;
-}
-
-/** A pet that fought as its own model, as postbattle shows it (step 5). */
-export type PostbattlePetRow = {
-  unitKey: string;
-  name: string;
-  owner: string;
-  outOfAction: boolean;
-  kills: number;
-};
-
-/**
- * The selected pets that fought as their own models: each follows its owner after the battle
- * (no XP, no injury roll, no result of its own), so postbattle only shows how it ended.
- */
-export function petResultRows(
-  participant: BattleParticipant,
-  roster: ParticipantRoster | undefined
-): PostbattlePetRow[] {
-  const unitInformation = toUnitInformationMap(participant.unit_information_json);
-  return getParticipantSelectedUnits(participant, roster).pets.map((pet) => ({
-    unitKey: pet.key,
-    name: pet.displayName,
-    owner: pet.unitType,
-    outOfAction: Boolean(unitInformation[pet.key]?.out_of_action),
-    kills: unitInformation[pet.key]?.kill_count ?? 0,
-  }));
 }

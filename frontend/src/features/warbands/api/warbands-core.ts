@@ -1,6 +1,4 @@
 import { apiRequest } from "../../../lib/api-client";
-
-import type { Restriction } from "../../items/types/item-types";
 import type { WarbandSheet } from "../types/warband-sheet";
 import type {
   Warband,
@@ -16,41 +14,8 @@ export async function getWarband(campaignId: number) {
   return data[0] ?? null;
 }
 
-export function getWarbandById(warbandId: number) {
-  return apiRequest<Warband>(`/warbands/${warbandId}/`);
-}
-
 export function getWarbandSummary(warbandId: number) {
   return apiRequest<WarbandUnitsSummary>(`/warbands/${warbandId}/summary/`);
-}
-
-/** The warband page in one request: warband, summary, capabilities and the three unit lists. */
-/** One on-roster unit's stat line, as `roster-stats/` answers it (PERF-42). */
-export type RosterStatsRow = {
-  id: number;
-  name: string | null;
-  unit_type: string | null;
-  movement: number | null;
-  weapon_skill: number | null;
-  ballistic_skill: number | null;
-  strength: number | null;
-  toughness: number | null;
-  wounds: number | null;
-  initiative: number | null;
-  attacks: number | null;
-  leadership: number | null;
-  armour_save: number | null;
-};
-
-export type WarbandRosterStats = {
-  heroes: RosterStatsRow[];
-  henchmen_groups: RosterStatsRow[];
-  hirelings: RosterStatsRow[];
-};
-
-/** Every alive, undismissed unit's stat line, by kind, oldest first: one request for any member. */
-export function getWarbandRosterStats(warbandId: number) {
-  return apiRequest<WarbandRosterStats>(`/warbands/${warbandId}/roster-stats/`);
 }
 
 export function getWarbandSheet(warbandId: number) {
@@ -77,16 +42,5 @@ export function updateWarband(warbandId: number, payload: Partial<WarbandUpdateP
 export function deleteWarband(warbandId: number) {
   return apiRequest<void>(`/warbands/${warbandId}/`, {
     method: "DELETE",
-  });
-}
-
-export function getWarbandRestrictions(warbandId: number) {
-  return apiRequest<Restriction[]>(`/warbands/${warbandId}/restrictions/`);
-}
-
-export function updateWarbandRestrictions(warbandId: number, restrictionIds: number[]) {
-  return apiRequest<Restriction[]>(`/warbands/${warbandId}/restrictions/`, {
-    method: "PUT",
-    body: { restriction_ids: restrictionIds },
   });
 }

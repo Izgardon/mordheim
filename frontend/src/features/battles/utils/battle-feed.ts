@@ -37,7 +37,7 @@ function rosterUnits(roster: ParticipantRoster | undefined): PrebattleUnit[] {
 }
 
 /**
- * The battle's timeline in plain words (next step 6), oldest first, each line under the round it
+ * The battle's timeline in plain words, oldest first, each line under the round it
  * happened in: the start, kills ("Ulrich took a Darksoul out of action · melee"), models out of
  * action and back, items used, the rounds asked for and started, neutral creatures, and players
  * finishing. Everything else (invites, readies) stays out of it.

@@ -58,7 +58,7 @@ export type NeutralGroupInput = {
 };
 
 /**
- * Everything the battle screen (design E, next step 6) shows and does, from the battle the layout
+ * Everything the battle screen shows and does, from the battle the layout
  * shares: your units by section, the strip's sides, the feed, and the writes. Status cycles go
  * through config/ (knocked down, stunned) and unit-ooa/ (out of action, so kills, moments and the
  * post-game keep working); kills, rounds and neutral groups through their own endpoints. Every

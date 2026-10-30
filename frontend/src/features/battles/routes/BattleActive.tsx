@@ -5,7 +5,7 @@ import { allRostersSettled } from "@/features/battles/utils/battle-rosters";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 /**
- * `battles/:battleId/active` (next step 6): the battle screen, once every warband's roster is in.
+ * `battles/:battleId/active`: the battle screen, once every warband's roster is in.
  * `BattleLayout` sends a player who has finished his fight on to his Aftermath.
  */
 export default function BattleActive() {

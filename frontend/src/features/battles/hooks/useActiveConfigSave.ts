@@ -165,7 +165,7 @@ export function useActiveConfigSave({
     [ownParticipant, rosters, saveConfig]
   );
 
-  /** Knocked down or stunned, or standing again (null), for everyone to see (next step 6). */
+  /** Knocked down or stunned, or standing again (null), for everyone to see. */
   const saveUnitStatus = useCallback(
     async (unitKey: string, status: BattleUnitStatus | null) => {
       await saveConfig(

@@ -14,7 +14,7 @@ import type {
  *   postbattle → /postbattle
  *   ended, canceled → the campaign overview
  *
- * `battles/:battleId` itself (no page, next step 6) always goes to the page for the battle's status:
+ * `battles/:battleId` itself (no page) always goes to the page for the battle's status:
  * an invitation or a reported result to /prebattle.
  */
 

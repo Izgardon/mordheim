@@ -15,7 +15,7 @@ export type UnitInformationPatchEntry = {
   current_wounds?: number | null;
   notes?: string;
   stats_override?: Partial<BattleUnitStats>;
-  /** Knocked down or stunned; null stands the unit up (next step 6). */
+  /** Knocked down or stunned; null stands the unit up. */
   status?: BattleUnitStatus | null;
 };
 

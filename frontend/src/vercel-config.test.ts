@@ -37,7 +37,8 @@ describe("vercel.json", () => {
   });
 
   it("lets the CSP through for the app's real origins", () => {
-    expect(directive("script-src")).toContain("'wasm-unsafe-eval'"); // dice-box physics (Ammo)
+    // Scripts from the app only: the 3D dice (and their WebAssembly) are gone.
+    expect(directive("script-src")).not.toContain("'wasm-unsafe-eval'");
     expect(directive("connect-src")).toContain("https://mordheim-1.onrender.com");
     expect(directive("connect-src")).toContain("wss://*.pusher.com");
     expect(directive("worker-src")).toContain("blob:");

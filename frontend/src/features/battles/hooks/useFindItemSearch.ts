@@ -86,5 +86,3 @@ export function useFindItemSearch({
     commitGold,
   };
 }
-
-export type FindItemSearch = ReturnType<typeof useFindItemSearch>;

@@ -87,5 +87,3 @@ export function useShopPrices({ campaignId, enabled }: { campaignId: number; ena
       ),
   };
 }
-
-export type ShopPrices = ReturnType<typeof useShopPrices>;

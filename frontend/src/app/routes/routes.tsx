@@ -78,14 +78,14 @@ export const routes: RouteObject[] = [
                 // A page that throws is replaced in place; the campaign shell stays usable.
                 errorElement: <RouteError variant="inline" />,
                 children: [
-                  // The overview and the Battles page (next step 5).
+                  // The overview and the Battles page.
                   { index: true, element: <Overview /> },
                   { path: "battles", element: <Battles /> },
                   { path: "warband", element: <Warband /> },
                   { path: "warbands/:warbandId", element: <Warband /> },
-                  // The Aftermath (next step 3).
+                  // The Aftermath.
                   { path: "battles/:battleId/postbattle", element: <Aftermath /> },
-                  // The invitation, the pre-battle and the battle (next step 6): the layout sends
+                  // The invitation, the pre-battle and the battle: the layout sends
                   // each player to the page for his status; the bare battle URL only redirects.
                   {
                     path: "battles/:battleId",
@@ -97,7 +97,7 @@ export const routes: RouteObject[] = [
                       { path: "*", element: null },
                     ],
                   },
-                  // The reference pages and Search everything (next step 7a).
+                  // The reference pages and Search everything.
                   { path: "items", element: <Wargear /> },
                   { path: "skills", element: <Skills /> },
                   { path: "spells", element: <Spells /> },
@@ -113,7 +113,7 @@ export const routes: RouteObject[] = [
                   { path: "rules", element: <Rules /> },
                   { path: "house-rules", element: <HouseRules /> },
                   { path: "search", element: <SearchEverything /> },
-                  // Locations is a panel of the warband page now (next step 2).
+                  // Locations is a panel of the warband page now.
                   {
                     path: "locations",
                     element: <Navigate to="../warband?panel=locations" replace />,

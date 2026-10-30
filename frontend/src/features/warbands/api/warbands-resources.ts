@@ -9,10 +9,6 @@ export type WarbandResourceSale = {
   summary: WarbandUnitsSummary;
 };
 
-export function listWarbandResources(warbandId: number) {
-  return apiRequest<WarbandResource[]>(`/warbands/${warbandId}/resources/`);
-}
-
 export function createWarbandResource(warbandId: number, payload: { name: string }) {
   return apiRequest<WarbandResource>(`/warbands/${warbandId}/resources/`, {
     method: "POST",

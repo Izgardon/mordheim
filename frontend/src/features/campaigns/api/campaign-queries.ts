@@ -4,19 +4,14 @@ import { useQuery, type QueryClient, type QueryKey } from "@tanstack/react-query
 import {
   listCampaignActiveBattles,
   listCampaignBattleHistory,
-  listCampaignBulletinEntries,
   listCampaignChronicle,
   listCampaignEncampments,
   listCampaignLocations,
   listCampaignMembers,
-  listCampaignPivotalMoments,
   listCampaignPlayerNames,
   listCampaignPlayers,
-  listCampaignTopKillers,
-  listCampaignTradeRequests,
 } from "./campaigns-api";
 import { listRestrictions } from "@/features/items/api/items-api";
-import { getWarbandRosterStats } from "@/features/warbands/api/warbands-core";
 
 // other
 import { isCampaignId } from "../hooks/useCampaignQuery";
@@ -67,44 +62,12 @@ export function useCampaignBattleHistory(campaignId: number) {
   });
 }
 
-/** The chronicle, one list per filter (next step 5): kills, deaths, level-ups, purchases, trades. */
+/** The chronicle, one list per filter: kills, deaths, level-ups, purchases, trades. */
 export function useCampaignChronicle(campaignId: number, kind: CampaignChronicleKind | "all") {
   return useQuery({
     queryKey: queryKeys.campaign.chronicle(campaignId, kind),
     queryFn: () => listCampaignChronicle(campaignId, kind),
     ...listOptions(campaignId),
-  });
-}
-
-export function useCampaignPivotalMoments(campaignId: number) {
-  return useQuery({
-    queryKey: queryKeys.campaign.pivotalMoments(campaignId),
-    queryFn: () => listCampaignPivotalMoments(campaignId),
-    ...listOptions(campaignId),
-  });
-}
-
-export function useCompletedTrades(campaignId: number) {
-  return useQuery({
-    queryKey: queryKeys.campaign.completedTrades(campaignId),
-    queryFn: () => listCampaignTradeRequests(campaignId, "completed"),
-    ...listOptions(campaignId),
-  });
-}
-
-export function useCampaignTopKillers(campaignId: number, { enabled = true }: Toggle = {}) {
-  return useQuery({
-    queryKey: queryKeys.campaign.topKillers(campaignId),
-    queryFn: async () => (await listCampaignTopKillers(campaignId)).top_killers,
-    ...listOptions(campaignId, enabled),
-  });
-}
-
-export function useCampaignBulletin(campaignId: number, { enabled = true }: Toggle = {}) {
-  return useQuery({
-    queryKey: queryKeys.campaign.bulletin(campaignId),
-    queryFn: () => listCampaignBulletinEntries(campaignId),
-    ...listOptions(campaignId, enabled),
   });
 }
 
@@ -158,13 +121,6 @@ export function useSettingRestrictions() {
   });
   return data ?? NO_RESTRICTIONS;
 }
-
-/** One warband's on-roster stat lines, as a roster row expands it (one request, PERF-42). */
-export const rosterStatsQuery = (campaignId: number, warbandId: number) => ({
-  queryKey: queryKeys.campaign.warbandRosterStats(campaignId, warbandId),
-  queryFn: () => getWarbandRosterStats(warbandId),
-  staleTime: CAMPAIGN_LIST_STALE_TIME_MS,
-});
 
 /**
  * Applies `update` to a cached list, if it is cached: how a write puts its answer in the list it

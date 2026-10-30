@@ -12,7 +12,7 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { queryKeys } from "@/lib/query-keys";
 
 /**
- * Starting a battle readies you up (next step 5): your open post-game, if you have one, is
+ * Starting a battle readies you up: your open post-game, if you have one, is
  * finalised with the draft you saved (as Ready at camp would), then the battle is created. Never
  * a block: if the post-game can't be finalised it stays open, the battle starts anyway and a
  * warning says so.

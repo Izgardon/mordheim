@@ -18,7 +18,7 @@ type PrebattleBodyProps = {
 };
 
 /**
- * The pre-battle (next step 6), built plainly on today's hooks: the units you bring with their
+ * The pre-battle, built plainly on today's hooks: the units you bring with their
  * battle stat changes and temporary units, your rating, everyone's state, then Ready (and Start
  * and Cancel for the creator). Leaving the page takes your Ready back, as today.
  */

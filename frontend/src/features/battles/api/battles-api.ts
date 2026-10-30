@@ -7,8 +7,6 @@ import type {
   BattleCreatePayload,
   BattleParticipantForView,
   BattlePostbattleState,
-  BattleRecord,
-  BattleRecordPatch,
   ReportBattleResultPayload,
   BattleRosterMap,
   BattleState,
@@ -149,7 +147,7 @@ export function setUnitOutOfAction(
   return battleWrite(campaignId, battleId, "unit-ooa/", payload);
 }
 
-/** A rider off his mount for the rest of the battle, or back on it (step 5). */
+/** A rider off his mount for the rest of the battle, or back on it. */
 export function setUnitDismounted(
   campaignId: number,
   battleId: number,
@@ -164,9 +162,9 @@ export function recordUnitKill(
   payload: {
     killer_unit_key: string;
     victim_unit_key?: string;
-    /** A neutral creature (next step 6): its stable key in the battle's neutral groups. */
+    /** A neutral creature: its stable key in the battle's neutral groups. */
     victim_neutral_key?: string;
-    /** How it was done, as the kill sheet says (next step 6). */
+    /** How it was done, as the kill sheet says. */
     how?: KillHow;
     victim_name?: string;
     notes?: string;
@@ -183,14 +181,14 @@ export type RoundAction = "ask" | "agree" | "force" | "withdraw";
 export type KillHow = "melee" | "shooting" | "magic";
 
 /**
- * The next round (next step 6): ask for it, agree to someone's ask, start it anyway, or take your
+ * The next round: ask for it, agree to someone's ask, start it anyway, or take your
  * ask back. Once everyone still fighting agrees the round goes up and models stand up a step.
  */
 export function changeRound(campaignId: number, battleId: number, action: RoundAction) {
   return battleWrite(campaignId, battleId, "round/", { action });
 }
 
-/** A group of creatures nobody plays, numbered when there is more than one (next step 6). */
+/** A group of creatures nobody plays, numbered when there is more than one. */
 export function addNeutralGroup(
   campaignId: number,
   battleId: number,
@@ -252,19 +250,6 @@ export function confirmBattleResults(
   results: { winners: number[]; losers: number[] }
 ) {
   return battleWrite(campaignId, battleId, "results/", results);
-}
-
-/** An ended battle's record (BATL-NEW-04): battle managers only. */
-export function getBattleRecord(campaignId: number, battleId: number) {
-  return apiRequest<BattleRecord>(battlePath(campaignId, battleId, "record/"));
-}
-
-/** Edits an ended battle's record; nothing else is recalculated (BATL-NEW-04). */
-export function updateBattleRecord(campaignId: number, battleId: number, patch: BattleRecordPatch) {
-  return apiRequest<BattleWriteAnswer & { record: BattleRecord }>(
-    battlePath(campaignId, battleId, "record/"),
-    { method: "PATCH", headers: battleWriteHeaders(), body: patch }
-  );
 }
 
 /** Nudges a player who is holding up the battle (BATL-NEW-08): 429 `retry_after` within 10 min. */

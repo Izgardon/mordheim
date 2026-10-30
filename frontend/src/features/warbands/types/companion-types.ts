@@ -29,7 +29,7 @@ export type CompanionAbility = {
 };
 
 /**
- * What a switched-on companion brings to its unit (step 5): its beast's skills, specials and
+ * What a switched-on companion brings to its unit: its beast's skills, specials and
  * spells, shown with the unit's own and never part of them (older caches may lack them).
  */
 export type CompanionAbilities = {
