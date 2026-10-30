@@ -23,11 +23,13 @@ from django.db.models.functions import Cast, Coalesce, Concat, Lower, NullIf, Tr
 from django.utils import timezone
 
 from apps.battles.models import Battle, BattleParticipant
+from apps.battles.services.kills import live_kills_in
 from apps.battles.services.setup import busy_participations
 from apps.users.names import display_name
 from apps.warbands.models import Henchman, Hero, Hireling, Warband
 from apps.warbands.services.summary import load_warband_units
 
+from .battle_moments import battle_moments
 from .models import Campaign, CampaignMembership, CampaignMembershipPermission, CampaignMessage, PivotalMoment
 
 
@@ -73,11 +75,13 @@ def format_short_date(value: datetime | None) -> str:
 
 
 def _busy_battle_fields(busy: tuple | None) -> dict:
-    battle_id, battle_status, last_activity_at = busy or (None, None, None)
+    battle_id, battle_status, last_activity_at, participant_status = busy or (None, None, None, None)
     return {
         "battle_busy_status": battle_status,
         "battle_busy_battle_id": battle_id,
         "battle_busy_last_activity_at": last_activity_at,
+        # his own place in it (next step 5: the readiness bar tells In battle from Post-game)
+        "battle_busy_participant_status": participant_status,
     }
 
 
@@ -106,11 +110,11 @@ def _warbands_by_user(campaign_id: int) -> dict[int, dict[str, Any]]:
 
 
 def _busy_by_user(campaign_id: int, user_ids: list[int]) -> dict[int, tuple]:
-    """Each member's most recent unfinished battle: id, status, last activity (BUG-10)."""
+    """Each member's most recent unfinished battle: id, status, last activity (BUG-10) and his own status in it."""
     busy_entries = (
         busy_participations(campaign_id, user_ids)  # the busy rule battles warn with (decision 1)
         .order_by("-battle__created_at")
-        .values_list("user_id", "battle_id", "battle__status", "battle__last_activity_at")
+        .values_list("user_id", "battle_id", "battle__status", "battle__last_activity_at", "status")
     )
     busy_by_user: dict[int, tuple] = {}
     for user_id, *battle in busy_entries:
@@ -195,21 +199,36 @@ def _history_participant(participant: BattleParticipant) -> dict[str, Any]:
     unit_results = postbattle_json.get("unit_results", {})
     row: dict[str, Any] = {"warband_id": participant.warband_id, "warband_name": participant.warband.name}
     if not isinstance(unit_results, dict) or not unit_results:
-        return {**row, "kills": None, "ooas": None, "deaths": [], "xp_gain": None, "exploration": []}
+        blank: dict[str, Any] = {"kills": None, "ooas": None, "deaths": [], "xp_gain": None, "exploration": []}
+        return {**row, **blank, "shards": None, "heroes_lost": 0}
     results = [result for result in unit_results.values() if isinstance(result, dict)]
     deaths = [str(result.get("unit_name", "")).strip() for result in results if bool(result.get("dead", False))]
+    exploration = postbattle_json.get("exploration", {})
     return {
         **row,
         "kills": sum(_count(result.get("kill_count", 0)) for result in results),
         "ooas": sum(1 for result in results if bool(result.get("out_of_action", False))),
         "deaths": [name for name in deaths if name],
         "xp_gain": sum(_count(result.get("xp_earned", 0)) for result in results),
-        "exploration": _dice_values(postbattle_json.get("exploration", {})),
+        "exploration": _dice_values(exploration),
+        # the overview's stats line (next step 5): the shards it found, the heroes it lost
+        "shards": _count(exploration.get("amount", 0)) if isinstance(exploration, dict) else 0,
+        "heroes_lost": sum(1 for result in results if result.get("dead") and result.get("unit_kind") == "hero"),
     }
 
 
+def _kills_by_battle(campaign_id: int) -> dict[int, list[Any]]:
+    """The live kill events of the campaign's ended battles, in order, by battle (one query)."""
+    events = live_kills_in(campaign_id).order_by("id").values_list("battle_id", "payload_json")
+    kills: dict[int, list[Any]] = {}
+    for battle_id, payload in events:
+        kills.setdefault(battle_id, []).append(payload)
+    return kills
+
+
 def battle_history_payload(campaign_id: int) -> list[dict[str, Any]]:
-    """The campaign's ended battles, newest first, each with its winners and every participant's totals."""
+    """The campaign's ended battles, newest first, each with its winners, every participant's totals and its key
+    moments (`battle_moments.py`)."""
     participants = (
         BattleParticipant.objects.select_related("warband")
         .filter(removed_from_record=False)  # without those a battle manager took off the record (BATL-NEW-04)
@@ -221,6 +240,7 @@ def battle_history_payload(campaign_id: int) -> list[dict[str, Any]]:
         .prefetch_related(Prefetch("participants", queryset=participants))
         .order_by("-ended_at", "-created_at", "-id")
     )
+    kills = _kills_by_battle(campaign_id)
     payload = []
     for battle in battles:
         rows = list(battle.participants.all())
@@ -232,6 +252,7 @@ def battle_history_payload(campaign_id: int) -> list[dict[str, Any]]:
                 "winners": [row.warband.name for row in rows if row.warband_id in winner_ids],
                 "date": format_short_date(battle.ended_at or battle.created_at),
                 "participants": [_history_participant(row) for row in rows],
+                "moments": battle_moments(rows, kills.get(battle.id, [])),
             }
         )
     return payload

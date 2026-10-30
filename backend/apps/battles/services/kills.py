@@ -12,7 +12,7 @@ from collections.abc import Iterable
 
 from django.db.models import QuerySet
 
-from ..models import BattleEvent
+from ..models import Battle, BattleEvent
 
 UNDOABLE_TYPES = {
     BattleEvent.TYPE_UNIT_KILL_RECORDED: BattleEvent.TYPE_UNIT_KILL_VOIDED,
@@ -51,3 +51,13 @@ def count_kills(payloads: Iterable[object], warband_id: int | None = None) -> Co
 def killer_unit_key(event: BattleEvent) -> str | None:
     unit_key = _killer(event.payload_json).get("unit_key")
     return unit_key if isinstance(unit_key, str) else None
+
+
+def live_kills_in(campaign_id: int) -> QuerySet[BattleEvent]:
+    """The live kill events of a campaign's ended battles (the overview's moments and chronicle, next step 5)."""
+    return BattleEvent.objects.filter(
+        battle__campaign_id=campaign_id,
+        battle__status=Battle.STATUS_ENDED,
+        type=BattleEvent.TYPE_UNIT_KILL_RECORDED,
+        voided_at__isnull=True,
+    )

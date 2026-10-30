@@ -1,5 +1,5 @@
-"""The campaign overview's reads (players, battle history, pivotal moments, top killers) and Settings > Active
-Battles (the open battles, and cancelling one) for battle managers."""
+"""The campaign overview's reads (players, battle history, the chronicle, pivotal moments, top killers) and
+Settings > Active Battles (the open battles, and cancelling one) for battle managers."""
 
 from rest_framework import permissions
 from rest_framework.response import Response
@@ -10,6 +10,7 @@ from apps.battles.views.responses import broadcast_response, response_with_snaps
 from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 from apps.users.names import display_name
 
+from ..chronicle import chronicle
 from ..constants import OWNER
 from ..selectors import (
     battle_history_payload,
@@ -44,6 +45,13 @@ class CampaignPlayersView(APIView):
 class CampaignBattleHistoryView(CampaignScopedView):
     def get(self, request, campaign_id):
         return Response(battle_history_payload(campaign_id))
+
+
+class CampaignChronicleView(CampaignScopedView):
+    """GET [?kind=kill|death|level|buy|trade]: the campaign's chronicle, newest first (the overview, next step 5)."""
+
+    def get(self, request, campaign_id):
+        return Response(chronicle(campaign_id, request.query_params.get("kind")))
 
 
 class CampaignPivotalMomentsView(CampaignScopedView):

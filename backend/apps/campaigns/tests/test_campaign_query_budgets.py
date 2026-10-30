@@ -35,7 +35,8 @@ BUDGETS: dict[str, tuple[str, str, int]] = {
     "players": ("player", "players/", 6),  # the member check reads the list it returns (PERF-41)
     "players (basic)": ("player", "players/?fields=basic", 1),  # names only, for pickers (PERF-41, target <= 2)
     "completed trades": ("player", "trade-requests/?status=completed", 2),
-    "battle history": ("player", "battle-history/", 3),
+    "battle history": ("player", "battle-history/", 4),  # + the live kills behind each battle's moments (next step 5)
+    "chronicle": ("player", "chronicle/", 5),  # kills, warband names, deaths, the log (next step 5)
     "pivotal moments": ("player", "pivotal-moments/", 2),
     "top killers": ("player", "top-killers/", 2),
     "members": ("admin", "members/", 4),
@@ -50,7 +51,7 @@ BUDGETS: dict[str, tuple[str, str, int]] = {
 }
 # The overview's four list requests on every mount (players, completed trades, history, pivotal moments)
 OVERVIEW = ("players", "completed trades", "battle history", "pivotal moments")
-OVERVIEW_BUDGET = 13  # target 0 on a revisit within the stale time (CAMP-TEST-04)
+OVERVIEW_BUDGET = 14  # target 0 on a revisit within the stale time (CAMP-TEST-04)
 JOIN_BUDGET = 9  # 7 queries + its transaction (BUG-49: checks and insert under the campaign row's lock)
 
 
