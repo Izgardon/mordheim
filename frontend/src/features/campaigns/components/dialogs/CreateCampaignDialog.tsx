@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 
 // components
 import { Button } from "@components/button";
+import { ChipLabel } from "@components/chip";
 import {
   Dialog,
   DialogDescription,
@@ -170,25 +171,23 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
               Pick the setting restrictions that apply campaign-wide to item availability.
             </p>
             {selectedSettings.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {selectedSettings.map((restriction) => (
-                  <div
-                    key={restriction.id}
-                    className="inline-flex items-center gap-1 rounded-full border border-primary/60 bg-primary/20 px-2.5 py-0.5 text-sm"
-                  >
-                    <span>{restriction.restriction}</span>
+                  <ChipLabel key={restriction.id} className="gap-1 pr-1 text-[13px] text-ink">
+                    {restriction.restriction}
                     <button
                       type="button"
+                      aria-label={`Remove ${restriction.restriction}`}
                       onClick={() => handleRemoveSetting(restriction.id)}
-                      className="text-muted-foreground hover:text-foreground"
+                      className="flex h-6 w-6 items-center justify-center text-muted-foreground hover:text-ink"
                     >
                       <X className="h-3 w-3" />
                     </button>
-                  </div>
+                  </ChipLabel>
                 ))}
               </div>
             ) : null}
-            <div className="rounded-lg border border-border/40 bg-background/40 p-3">
+            <div className="border border-border bg-page p-3">
               <RestrictionPicker
                 restrictions={availableSettings}
                 selected={selectedSettingIds}
