@@ -49,7 +49,10 @@ export default function UnfinishedBattleBanner({
   return (
     <p
       role="status"
-      className={cn("battle-inline-panel rounded-lg px-3 py-2 text-sm text-amber-300", className)}
+      className={cn(
+        "border border-accent-line bg-accent-soft px-3 py-2 text-sm text-accent-hi",
+        className
+      )}
     >
       You have an unfinished battle: {details}.{" "}
       <Link

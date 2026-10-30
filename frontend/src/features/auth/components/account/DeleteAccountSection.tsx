@@ -57,7 +57,7 @@ function DeleteAccountDialog({ deletion }: { deletion: AccountDeletionState }) {
           {preview.isPending ? (
             <p>Checking your campaigns...</p>
           ) : preview.isError ? (
-            <p className="text-red-600">
+            <p className="text-danger">
               {getErrorMessage(preview.error, "Couldn't check your campaigns.")}
             </p>
           ) : (

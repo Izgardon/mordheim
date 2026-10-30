@@ -202,11 +202,11 @@ export function TradeRequestCard({
         {notification.fromWarband.name} wants to trade with {notification.toWarband.name}
       </p>
       {expiresLabel ? (
-        <p className={cn("text-xs", isExpired ? "text-[#b45353]" : "text-muted-foreground")}>
+        <p className={cn("text-xs", isExpired ? "text-danger" : "text-muted-foreground")}>
           {isExpired ? `Expired ${expiresLabel}.` : `Expires ${expiresLabel}.`}
         </p>
       ) : isExpired ? (
-        <p className="text-xs text-[#b45353]">Request expired.</p>
+        <p className="text-xs text-danger">Request expired.</p>
       ) : null}
     </NotificationCard>
   );

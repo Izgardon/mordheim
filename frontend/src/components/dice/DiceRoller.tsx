@@ -180,7 +180,7 @@ export default function DiceRoller({
           {showResultBox ? (
             <div
               className={cn(
-                "h-8 min-w-[60px] flex items-center rounded-2xl border border-border/60 bg-background/70 px-3 shadow-[0_12px_24px_rgba(5,20,24,0.25)]",
+                "h-8 min-w-[60px] flex items-center border border-border bg-page px-3",
                 resultBoxClassName
               )}
             >

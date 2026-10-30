@@ -78,7 +78,7 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
               required
             />
           </div>
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
+          {error ? <p className="text-sm text-danger">{error}</p> : null}
           <DialogFooter>
             <Button
               type="button"

@@ -41,9 +41,9 @@ const rarityRoll: LogFormatter = (log) => {
   const success = payload.success;
   const resultIcon =
     success === undefined ? null : success ? (
-      <Check className="h-4 w-4 text-emerald-400" />
+      <Check className="h-4 w-4 text-good" />
     ) : (
-      <X className="h-4 w-4 text-red-400" />
+      <X className="h-4 w-4 text-danger" />
     );
 
   return (

@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Minus, Plus } from "lucide-react";
 
-import basicBar from "@/assets/containers/basic_bar.webp";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 // components
@@ -18,7 +17,6 @@ type NumberInputProps = Omit<React.ComponentPropsWithoutRef<"input">, "type"> & 
   inputSize?: "sm" | "default" | "lg";
   /** When true the mobile layout uses w-auto instead of w-full so the input only takes the space it needs. */
   compact?: boolean;
-  mobileButtonVariant?: "image" | "solid";
 };
 
 const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
@@ -33,7 +31,6 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       allowEmpty = false,
       inputSize = "default",
       compact = false,
-      mobileButtonVariant = "solid",
       value,
       onChange,
       onFocus,
@@ -116,34 +113,23 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       onBlur?.(event);
     };
 
-    const mobileButtonStyle: React.CSSProperties | undefined =
-      mobileButtonVariant === "image"
-        ? {
-            backgroundImage: `url(${basicBar})`,
-            backgroundSize: "100% 100%",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center",
-          }
-        : undefined;
     const mobileHeightClass = inputSize === "sm" ? "h-8" : inputSize === "lg" ? "h-10" : "h-9";
     const mobileButtonWidthClass = inputSize === "sm" ? "w-8" : inputSize === "lg" ? "w-10" : "w-9";
     const mobileIconClass =
       inputSize === "sm"
-        ? "h-3.5 w-3.5 theme-accent"
+        ? "h-3.5 w-3.5 text-accent-text"
         : inputSize === "lg"
-          ? "h-5 w-5 theme-accent"
-          : "size-4 theme-accent";
+          ? "h-5 w-5 text-accent-text"
+          : "size-4 text-accent-text";
     const mobileButtonBaseClass =
-      mobileButtonVariant === "image"
-        ? "icon-button flex h-full shrink-0 items-center justify-center rounded-none border border-transparent bg-transparent shadow-none transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60"
-        : "flex h-full shrink-0 items-center justify-center rounded-none border border-strong bg-page text-ink shadow-none transition-colors hover:bg-raised disabled:cursor-not-allowed disabled:opacity-60";
+      "flex h-full shrink-0 items-center justify-center rounded-none border border-strong bg-page text-ink shadow-none transition-colors hover:bg-raised disabled:cursor-not-allowed disabled:opacity-60";
     const desktopButtonWidthClass = inputSize === "sm" ? "w-7" : inputSize === "lg" ? "w-9" : "w-8";
     const desktopIconClass =
       inputSize === "sm"
-        ? "h-3.5 w-3.5 theme-accent"
+        ? "h-3.5 w-3.5 text-accent-text"
         : inputSize === "lg"
-          ? "h-5 w-5 theme-accent"
-          : "h-4 w-4 theme-accent";
+          ? "h-5 w-5 text-accent-text"
+          : "h-4 w-4 text-accent-text";
 
     if (isMobile) {
       return (
@@ -163,7 +149,6 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             disabled={isDisabled}
             tabIndex={stepButtonsTabIndex}
             className={cn(mobileButtonBaseClass, mobileButtonWidthClass, buttonClassName)}
-            style={mobileButtonStyle}
           >
             <Minus aria-hidden="true" className={mobileIconClass} />
           </button>
@@ -194,7 +179,6 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             disabled={isDisabled}
             tabIndex={stepButtonsTabIndex}
             className={cn(mobileButtonBaseClass, mobileButtonWidthClass, buttonClassName)}
-            style={mobileButtonStyle}
           >
             <Plus aria-hidden="true" className={mobileIconClass} />
           </button>
@@ -222,7 +206,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
         />
         <div
           className={cn(
-            "-ml-[2px] flex flex-col overflow-hidden rounded-r-sm border border-border bg-black",
+            "-ml-[2px] flex flex-col overflow-hidden border border-strong bg-page",
             desktopButtonWidthClass
           )}
         >

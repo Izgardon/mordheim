@@ -19,7 +19,7 @@ import { getErrorMessage } from "@/lib/get-error-message";
 const MAX_REPORT_LENGTH = 2000;
 
 const textareaClassName =
-  "min-h-[120px] w-full rounded-2xl border border-border/60 bg-background/70 px-3 py-2 text-sm text-foreground shadow-[0_12px_22px_rgba(5,20,24,0.25)] focus-visible:outline-none focus-visible:shadow-[0_12px_22px_rgba(5,20,24,0.25),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]";
+  "min-h-[120px] w-full border border-strong bg-page px-3 py-2 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring";
 
 type FeedbackReportCardProps = {
   campaignId?: number;
@@ -90,7 +90,7 @@ export default function FeedbackReportCard({
 
   return (
     <section aria-label="Feedback and bug report">
-      <Card className="space-y-4 bg-[rgba(12,9,6,0.92)] p-3 sm:p-6">
+      <Card className="space-y-4 p-3 sm:p-6">
         <div className="space-y-2">
           <h3 className="text-lg font-semibold text-foreground">Feedback/Bug Report</h3>
           <p className="text-sm text-muted-foreground">
@@ -147,7 +147,7 @@ export default function FeedbackReportCard({
               <p id="feedback-report-count" className="text-right text-xs text-muted-foreground">
                 {message.length}/{MAX_REPORT_LENGTH} characters
               </p>
-              {error ? <p className="text-sm text-red-600">{error}</p> : null}
+              {error ? <p className="text-sm text-danger">{error}</p> : null}
             </div>
             <DialogFooter>
               <Button
@@ -164,7 +164,7 @@ export default function FeedbackReportCard({
           </DialogContent>
         </Dialog>
         {isSent ? (
-          <p role="status" className="text-sm text-emerald-400">
+          <p role="status" className="text-sm text-good">
             Thanks, report sent
           </p>
         ) : null}

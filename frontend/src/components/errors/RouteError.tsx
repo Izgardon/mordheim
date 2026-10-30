@@ -48,7 +48,5 @@ export default function RouteError({ variant = "page" }: RouteErrorProps) {
   if (variant === "inline") {
     return state;
   }
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">{state}</div>
-  );
+  return <div className="fixed inset-0 z-50 flex items-center justify-center bg-page">{state}</div>;
 }

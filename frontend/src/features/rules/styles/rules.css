@@ -1,5 +1,5 @@
 .rules-content {
-  color: var(--color-text);
+  color: var(--color-ink);
   font-size: var(--text-base);
   line-height: 1.7;
   overflow-x: auto;
@@ -45,21 +45,21 @@
   height: auto;
   border-radius: 1rem;
   border: 1px solid var(--color-border);
-  box-shadow: 0 18px 40px rgba(5, 20, 24, 0.35);
+  box-shadow: none;
 }
 
 .rules-callout {
   border: 1px solid var(--color-accent-soft);
   background: hsl(var(--card) / 0.6);
   padding: 1rem;
-  box-shadow: 0 12px 30px rgba(5, 20, 24, 0.2);
+  box-shadow: none;
 }
 
 .rules-callout__title {
   font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: 0.3em;
-  color: var(--color-text-muted);
+  color: var(--color-muted);
   margin-bottom: 0.5rem;
 }
 
@@ -83,7 +83,7 @@
 
 .rules-table th {
   background: hsl(var(--secondary) / 0.85);
-  color: var(--color-text);
+  color: var(--color-ink);
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-size: var(--text-2xs);

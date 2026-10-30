@@ -103,10 +103,7 @@ export default function ResetPassword() {
 
   return (
     <AuthShell>
-      <Card
-        as={Card}
-        className="auth-card flex h-full w-full flex-col border border-emerald-500/40 shadow-[0_30px_70px_rgba(5,20,24,0.6),0_0_25px_rgba(0,255,153,0.45),inset_0_0_35px_rgba(0,255,153,0.25)] backdrop-blur-sm"
-      >
+      <Card className="auth-card flex h-full w-full flex-col border border-border bg-panel">
         <CardHeader className="space-y-3">
           <CardTitle className="text-lg">
             {isDone ? "Password updated" : "Set a new password"}

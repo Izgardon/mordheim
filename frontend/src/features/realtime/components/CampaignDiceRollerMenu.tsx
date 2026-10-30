@@ -165,7 +165,7 @@ export default function CampaignDiceRollerMenu({
             />
           </div>
 
-          <div className="surface-panel-strong space-y-1 rounded-xl p-3 text-sm">
+          <div className="border border-border bg-panel space-y-1 rounded-xl p-3 text-sm">
             <p className="text-[0.6rem] uppercase tracking-[0.25em] text-muted-foreground">
               Result
             </p>
@@ -181,7 +181,7 @@ export default function CampaignDiceRollerMenu({
               Create a warband first to roll and write to logs.
             </p>
           ) : null}
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
+          {error ? <p className="text-sm text-danger">{error}</p> : null}
 
           <div className="flex justify-end">
             <Button onClick={handleRoll} disabled={!canRoll}>

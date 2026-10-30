@@ -59,7 +59,7 @@ export default function CampaignChatMenu({ campaignId, open, onOpenChange, trigg
             </p>
           ) : null}
           {loadError && messages.length > 0 ? (
-            <p role="alert" className="py-1 text-center text-xs text-red-400">
+            <p role="alert" className="py-1 text-center text-xs text-danger">
               {loadError}{" "}
               <button type="button" className="underline" onClick={chat.retryLoad}>
                 Retry
@@ -95,7 +95,7 @@ export default function CampaignChatMenu({ campaignId, open, onOpenChange, trigg
             <input
               id="campaign-chat-message"
               type="text"
-              className="field-surface flex-1 rounded-xl px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary/60"
+              className="border border-strong bg-page text-ink flex-1 rounded-xl px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary/60"
               placeholder="Send a message..."
               value={chat.draft}
               onChange={(e) => chat.updateDraft(e.target.value)}
@@ -118,7 +118,7 @@ export default function CampaignChatMenu({ campaignId, open, onOpenChange, trigg
             </button>
           </div>
           {chat.sendError ? (
-            <p role="alert" className="text-xs text-red-400">
+            <p role="alert" className="text-xs text-danger">
               {chat.sendError}
             </p>
           ) : null}

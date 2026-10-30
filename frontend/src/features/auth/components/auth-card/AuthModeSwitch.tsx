@@ -22,13 +22,7 @@ export function AuthModeSwitch({ mode, isMobile, onSelect }: AuthModeSwitchProps
     : "min-w-[110px] rounded-full px-4 text-xs leading-none py-1";
 
   return (
-    <div
-      className={
-        isMobile
-          ? "flex w-full gap-2"
-          : "mx-auto flex w-fit rounded-full p-1 shadow-[0_10px_20px_rgba(5,20,24,0.35)]"
-      }
-    >
+    <div className={isMobile ? "flex w-full gap-2" : "mx-auto flex w-fit border border-border p-1"}>
       {MODES.map((option) => (
         <Button
           key={option.mode}

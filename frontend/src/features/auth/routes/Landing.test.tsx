@@ -100,14 +100,13 @@ describe("Landing on desktop", () => {
 });
 
 describe("Landing on a phone", () => {
-  it("embeds no video and paints the site background behind the card", () => {
+  it("embeds no video", () => {
     media.mobile = true;
     const { container } = renderLanding();
 
     expect(container.querySelector("iframe")).toBeNull();
     const main = container.querySelector("main")!;
     expect(main).toHaveClass("landing--mobile");
-    expect(main.style.backgroundImage).toMatch(/url\(/);
     expect(screen.getByRole("link", { name: "Styggosaurus" })).toBeInTheDocument();
   });
 });

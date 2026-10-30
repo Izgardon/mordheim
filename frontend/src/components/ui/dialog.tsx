@@ -142,7 +142,7 @@ const DialogContent = React.forwardRef<
           ref={ref}
           className={cn(
             "fixed inset-x-0 bottom-0 z-[60] w-full max-h-[85dvh] overflow-hidden overflow-x-hidden overscroll-x-none border-t border-accent-line bg-panel shadow-[0_-16px_40px_var(--color-shadow)] duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-            "min-[960px]:left-[50%] min-[960px]:top-[50%] min-[960px]:bottom-auto min-[960px]:w-[calc(100%-2rem)] min-[960px]:max-h-[90vh] min-[960px]:-translate-x-1/2 min-[960px]:-translate-y-1/2 min-[960px]:border min-[960px]:border-accent-line min-[960px]:bg-panel min-[960px]:shadow-[var(--shadow-modal)] min-[960px]:data-[state=closed]:zoom-out-95 min-[960px]:data-[state=open]:zoom-in-95 min-[960px]:data-[state=closed]:slide-out-to-left-1/2 min-[960px]:data-[state=closed]:slide-out-to-top-[48%] min-[960px]:data-[state=open]:slide-in-from-left-1/2 min-[960px]:data-[state=open]:slide-in-from-top-[48%]",
+            "min-[960px]:left-[50%] min-[960px]:top-[50%] min-[960px]:bottom-auto min-[960px]:w-[calc(100%-2rem)] min-[960px]:max-h-[90vh] min-[960px]:-translate-x-1/2 min-[960px]:-translate-y-1/2 min-[960px]:border min-[960px]:border-accent-line min-[960px]:bg-panel min-[960px]:shadow-[0_24px_60px_var(--color-shadow)] min-[960px]:data-[state=closed]:zoom-out-95 min-[960px]:data-[state=open]:zoom-in-95 min-[960px]:data-[state=closed]:slide-out-to-left-1/2 min-[960px]:data-[state=closed]:slide-out-to-top-[48%] min-[960px]:data-[state=open]:slide-in-from-left-1/2 min-[960px]:data-[state=open]:slide-in-from-top-[48%]",
             className,
             "max-[959px]:!max-w-full"
           )}
@@ -174,7 +174,7 @@ const DialogContent = React.forwardRef<
                 trigger={
                   <button
                     type="button"
-                    className="icon-button relative flex h-8 w-8 items-center justify-center border border-border bg-transparent text-muted-foreground transition hover:text-foreground"
+                    className="relative flex h-8 w-8 items-center justify-center border border-border bg-transparent text-muted-foreground transition hover:text-foreground"
                     aria-label="Help"
                   >
                     <CircleHelp className="h-4 w-4" />

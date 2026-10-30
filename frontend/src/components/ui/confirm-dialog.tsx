@@ -62,7 +62,7 @@ export function ConfirmDialog({
         </DialogDescription>
         {children}
         {error ? (
-          <p role="alert" className="text-sm text-red-600">
+          <p role="alert" className="text-sm text-danger">
             {error}
           </p>
         ) : null}

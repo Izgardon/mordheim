@@ -48,7 +48,7 @@ export default function AuthCard() {
 
   if (isMobile) {
     return (
-      <Card className="auth-card w-full rounded-b-[32px] border-x border-b border-[#241c16] bg-[#070504]/[0.985] shadow-[0_16px_38px_rgba(0,0,0,0.72)] backdrop-blur">
+      <Card className="auth-card w-full border-x border-b border-border bg-panel">
         {header}
         {content}
         <div className="px-4 pb-4">
@@ -59,18 +59,11 @@ export default function AuthCard() {
   }
 
   return (
-    <Card
-      as={Card}
-      className="auth-card flex h-full w-full flex-col border border-emerald-500/32 bg-[linear-gradient(180deg,rgba(9,7,6,0.985),rgba(4,3,2,0.995))] shadow-[0_34px_78px_rgba(0,0,0,0.78),0_0_24px_rgba(0,255,153,0.24),0_0_56px_rgba(0,255,153,0.08),inset_0_0_28px_rgba(0,255,153,0.1)] backdrop-blur-sm"
-    >
+    <Card className="auth-card flex h-full w-full flex-col border border-border bg-panel">
       {header}
       {content}
       <CardFooter className="mt-auto flex-col items-center gap-3">
-        <img
-          src={titleImage}
-          alt="Mordheim: City of the Damned"
-          className="w-full max-w-[340px] drop-shadow-[0_6px_12px_rgba(0,0,0,0.6)]"
-        />
+        <img src={titleImage} alt="Mordheim: City of the Damned" className="w-full max-w-[340px]" />
         <FootageCredit />
       </CardFooter>
     </Card>

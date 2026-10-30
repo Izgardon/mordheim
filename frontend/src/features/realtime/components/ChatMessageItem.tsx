@@ -51,7 +51,7 @@ export default function ChatMessageItem({
         {canRemove && !isRemoved ? (
           <button
             type="button"
-            className="rounded p-0.5 text-muted-foreground/70 hover:text-red-300"
+            className="rounded p-0.5 text-muted-foreground/70 hover:text-danger"
             aria-label={`Remove message from ${message.username}`}
             onClick={() => setIsConfirmOpen(true)}
           >
@@ -63,10 +63,10 @@ export default function ChatMessageItem({
         className={cn(
           "max-w-[75%] break-words rounded-2xl px-3 py-2 text-sm",
           isRemoved
-            ? "italic text-muted-foreground/70 surface-inline"
+            ? "italic text-muted-foreground/70 border border-line bg-raised"
             : isOwn
               ? "bg-primary/20 text-primary-foreground"
-              : "surface-inline text-foreground"
+              : "border border-line bg-raised text-foreground"
         )}
       >
         {isRemoved ? removedLabel(message.removed_by) : message.body}
@@ -79,7 +79,7 @@ export default function ChatMessageItem({
           <div className="space-y-2">
             <p>{`Remove ${message.username}'s message for everyone?`}</p>
             <p className="text-xs">It stays in the chat, reading &quot;removed by admin&quot;.</p>
-            {error ? <p className="text-sm text-red-600">{error}</p> : null}
+            {error ? <p className="text-sm text-danger">{error}</p> : null}
           </div>
         }
         confirmText={isRemoving ? "Removing..." : "Remove"}

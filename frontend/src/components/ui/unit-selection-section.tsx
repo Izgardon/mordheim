@@ -115,7 +115,7 @@ export function UnitSelectionSection({
         </div>
       </div>
       {extra ? <div>{extra}</div> : null}
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      {error ? <p className="text-sm text-danger">{error}</p> : null}
       {actions ? <div className="flex justify-end gap-3">{actions}</div> : null}
     </div>
   );
