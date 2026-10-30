@@ -132,7 +132,7 @@ export default function ItemPropertyField({
           {picker.selected.map((property) => (
             <div
               key={property.id}
-              className="group relative inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-sm"
+              className="group relative inline-flex items-center gap-1 rounded-full border border-border bg-raised px-3 py-1 text-sm"
               title={property.description}
             >
               <span>{property.name}</span>

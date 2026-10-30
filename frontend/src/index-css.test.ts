@@ -17,4 +17,19 @@ describe("global stylesheet", () => {
     expect(touch).toMatch(/\.touch-target-row \{\s*align-items: center;/);
     expect(touch).toMatch(/\.touch-target-y::after \{[^}]*height: max\(100%, 2\.75rem\);/);
   });
+
+  it("defines every design token for dark on :root and again for light", () => {
+    const block = (selector: string) =>
+      stylesheet.match(new RegExp(`\\n  ${selector} \\{([\\s\\S]*?)\\n  \\}`))?.[1] ?? "";
+    const names = (css: string) =>
+      [...css.matchAll(/^\s*(--[\w-]+):/gm)].map((match) => match[1]).sort();
+    const dark = block(":root");
+    const light = block(':root\\[data-theme="light"\\]');
+
+    expect(names(dark)).toContain("--color-accent-hi");
+    expect(names(dark)).toContain("--background");
+    expect(names(light)).toEqual(names(dark));
+    expect(dark).toMatch(/color-scheme: dark;/);
+    expect(light).toMatch(/color-scheme: light;/);
+  });
 });

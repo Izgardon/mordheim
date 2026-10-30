@@ -2,7 +2,6 @@ import { Fragment, useCallback, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
-import siteBackground from "@/assets/background/site_background.webp";
 import { cn } from "@/lib/utils";
 import { refreshMobileQueries, reloadMobileLayout } from "../mobile/mobile-refresh";
 import { usePullToRefresh } from "../mobile/use-pull-to-refresh";
@@ -20,34 +19,6 @@ type AppShellProps = {
   topBarOffset?: string;
   bottomNav?: ReactNode;
   contentClassName?: string;
-};
-
-const backgroundBase = {
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-  backgroundRepeat: "no-repeat",
-  backgroundAttachment: "scroll",
-} satisfies CSSProperties;
-
-const mobileBackground: CSSProperties = {
-  ...backgroundBase,
-  backgroundImage: `radial-gradient(420px 320px at 0% 0%, rgba(57, 255, 77, 0.18), transparent 60%),
-    radial-gradient(520px 380px at 100% 0%, rgba(57, 255, 77, 0.14), transparent 62%),
-    radial-gradient(520px 380px at 0% 100%, rgba(57, 255, 77, 0.12), transparent 62%),
-    radial-gradient(520px 380px at 100% 100%, rgba(57, 255, 77, 0.16), transparent 62%),
-    url(${siteBackground})`,
-};
-
-const desktopBackground: CSSProperties = {
-  ...backgroundBase,
-  backgroundImage: `radial-gradient(560px 400px at 4% 8%, rgba(92, 255, 118, 0.18), transparent 62%),
-    radial-gradient(640px 460px at 96% 10%, rgba(76, 255, 132, 0.14), transparent 64%),
-    radial-gradient(620px 440px at 10% 82%, rgba(70, 255, 124, 0.11), transparent 66%),
-    radial-gradient(700px 500px at 92% 84%, rgba(72, 255, 128, 0.13), transparent 68%),
-    radial-gradient(480px 320px at 50% 38%, rgba(124, 255, 156, 0.06), transparent 70%),
-    radial-gradient(360px 220px at 34% 58%, rgba(92, 255, 118, 0.05), transparent 72%),
-    linear-gradient(rgba(28, 24, 18, 0.08), rgba(16, 13, 10, 0.16)),
-    url(${siteBackground})`,
 };
 
 /**
@@ -99,10 +70,7 @@ export default function AppShell({
 
   return (
     <main
-      className={
-        isMobile ? "fixed inset-0 flex flex-col overflow-hidden bg-transparent" : "desktop-shell"
-      }
-      style={isMobile ? mobileBackground : desktopBackground}
+      className={isMobile ? "fixed inset-0 flex flex-col overflow-hidden bg-page" : "desktop-shell"}
     >
       {isMobile ? null : <aside className="desktop-shell__rail">{navbar}</aside>}
       {isMobile ? (
@@ -134,7 +102,7 @@ export default function AppShell({
               role="status"
               aria-live="polite"
             >
-              <div className="rounded-full border border-[#6d573e] bg-[#17110b]/95 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-[#e4d5bb] shadow-[0_10px_24px_rgba(0,0,0,0.28)]">
+              <div className="border border-accent-line bg-panel px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-accent-hi">
                 {pull.refreshLabel}
               </div>
             </div>
