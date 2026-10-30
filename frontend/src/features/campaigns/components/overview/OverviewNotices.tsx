@@ -19,7 +19,7 @@ function StuckBattles({ campaignId, enabled }: { campaignId: number; enabled: bo
       <Hourglass className="h-4 w-4 shrink-0" aria-hidden="true" />
       {stuck} {stuck === 1 ? "battle has" : "battles have"} been idle for over a day.
       <Link
-        to={`/campaigns/${campaignId}/settings?tab=campaign&section=active-battles`}
+        to={`/campaigns/${campaignId}/settings?section=battles`}
         className="font-semibold text-ink underline underline-offset-2"
       >
         Review

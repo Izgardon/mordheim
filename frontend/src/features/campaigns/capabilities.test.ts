@@ -4,7 +4,6 @@ import {
   CAMPAIGN_CAPABILITIES,
   campaignCapabilities,
   canRemoveMember,
-  hasCampaignSettings,
   isArchived,
   readCapabilities,
 } from "./capabilities";
@@ -68,23 +67,6 @@ describe("canRemoveMember", () => {
   it("lets nobody remove anyone without remove_members", () => {
     expect(canRemoveMember(viewer("player"), { role: "player" })).toBe(false);
     expect(canRemoveMember(viewer("owner"), { role: "player" })).toBe(false);
-  });
-});
-
-describe("hasCampaignSettings", () => {
-  it("opens the Campaign tab for any flag one of its cards needs", () => {
-    const none = campaignCapabilities(null);
-
-    expect(hasCampaignSettings(none)).toBe(false);
-    expect(hasCampaignSettings({ ...none, view_members: true })).toBe(true);
-    expect(hasCampaignSettings({ ...none, manage_battles: true })).toBe(true);
-    expect(hasCampaignSettings({ ...none, edit_settings: true })).toBe(true);
-    expect(hasCampaignSettings({ ...none, delete: true })).toBe(true);
-    expect(hasCampaignSettings({ ...none, archive: true })).toBe(true);
-    expect(hasCampaignSettings({ ...none, restore: true })).toBe(true);
-    expect(hasCampaignSettings({ ...none, edit_catalogue: true, delete_catalogue: true })).toBe(
-      false
-    );
   });
 });
 

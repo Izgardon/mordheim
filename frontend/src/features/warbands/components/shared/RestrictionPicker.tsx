@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 
+import { Chip } from "@/components/ui/chip";
 import { Input } from "@components/input";
 
 import type { Restriction } from "../../../items/types/item-types";
@@ -62,25 +63,16 @@ export default function RestrictionPicker({
         ) : (
           Array.from(grouped.entries()).map(([type, items]) => (
             <div key={type}>
-              <h4 className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <h4 className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
                 {type}
               </h4>
               <div className="flex flex-wrap gap-1.5">
                 {items.map((r) => {
                   const isSelected = selected.has(r.id);
                   return (
-                    <button
-                      key={r.id}
-                      type="button"
-                      onClick={() => onToggle(r)}
-                      className={`rounded-full border px-2.5 py-0.5 text-sm transition-colors ${
-                        isSelected
-                          ? "border-primary/60 bg-primary/20 text-foreground"
-                          : "border-border/40 bg-background/40 text-muted-foreground hover:border-border hover:text-foreground"
-                      }`}
-                    >
+                    <Chip key={r.id} pressed={isSelected} onClick={() => onToggle(r)}>
                       {r.restriction}
-                    </button>
+                    </Chip>
                   );
                 })}
               </div>

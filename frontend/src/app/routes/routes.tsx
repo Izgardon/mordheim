@@ -7,7 +7,6 @@ import { Navigate, Outlet, type RouteObject } from "react-router-dom";
 import ScrollToTop from "../../components/ScrollToTop";
 import RouteError from "../../components/errors/RouteError";
 import { LoadingScreen } from "../../components/ui/loading-screen";
-import RebuildingPage from "./RebuildingPage";
 
 // Route modules load on demand, so the entry chunk carries only the shell (PERF-17).
 const ProtectedLayout = lazy(() => import("./ProtectedLayout"));
@@ -32,12 +31,7 @@ const HirelingCatalogue = lazy(() => import("../../features/hirelings/routes/Hir
 const Rules = lazy(() => import("../../features/rules/routes/Rules"));
 const HouseRules = lazy(() => import("../../features/rules/routes/HouseRules"));
 const SearchEverything = lazy(() => import("../../features/search/routes/SearchEverything"));
-
-/** The campaign pages still to rebuild: placeholders until their redesign step. */
-const CAMPAIGN_PAGES: { path: string; title: string; step: string }[] = [
-  { path: "encampments", title: "Encampment", step: "step 7" },
-  { path: "settings", title: "Settings", step: "step 7" },
-];
+const CampaignSettings = lazy(() => import("../../features/campaigns/routes/CampaignSettings"));
 
 function RootLayout() {
   return (
@@ -123,10 +117,7 @@ export const routes: RouteObject[] = [
                     path: "locations",
                     element: <Navigate to="../warband?panel=locations" replace />,
                   },
-                  ...CAMPAIGN_PAGES.map(({ path, title, step }) => ({
-                    path,
-                    element: <RebuildingPage title={title} step={step} />,
-                  })),
+                  { path: "settings", element: <CampaignSettings /> },
                 ],
               },
             ],

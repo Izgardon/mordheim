@@ -51,6 +51,8 @@ export const queryKeys = {
     /** Open battles a battle manager can act on (Settings → Active Battles, manage_battles). */
     activeBattles: (campaignId: number) => ["campaign", campaignId, "battles", "active"] as const,
     encampments: (campaignId: number) => ["campaign", campaignId, "encampments"] as const,
+    /** The campaign's locations (the warband page's panel, settings, Search everything). */
+    locations: (campaignId: number) => ["campaign", campaignId, "locations"] as const,
     houseRules: (campaignId: number) => ["campaign", campaignId, "rules"] as const,
     /** The server's list of common house rules (`rules/common/`), the same for every campaign. */
     commonRules: (campaignId: number) => ["campaign", campaignId, "common-rules"] as const,

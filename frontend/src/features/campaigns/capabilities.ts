@@ -81,18 +81,6 @@ export function canRemoveMember(
   return member.role === "player" || campaign.role === "owner";
 }
 
-/** The Settings → Campaign tab appears for anyone holding a capability for one of its cards. */
-export function hasCampaignSettings(capabilities: CampaignCapabilities) {
-  return (
-    capabilities.view_members ||
-    capabilities.manage_battles ||
-    capabilities.edit_settings ||
-    capabilities.archive ||
-    capabilities.restore ||
-    capabilities.delete
-  );
-}
-
 /**
  * An archived campaign is read-only for everyone (decision 5): writes no capability names (a new
  * battle, a chat message, a bulletin note, an encampment) hide while it is.

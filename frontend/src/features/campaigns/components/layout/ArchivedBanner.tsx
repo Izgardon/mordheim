@@ -25,7 +25,7 @@ export default function ArchivedBanner({ campaign }: { campaign: CampaignSummary
       </span>
       {campaignCapabilities(campaign).restore ? (
         <Link
-          to={`/campaigns/${campaign.id}/settings?tab=campaign`}
+          to={`/campaigns/${campaign.id}/settings?section=archive`}
           className="font-semibold text-accent-hi underline underline-offset-2"
         >
           Restore it in Settings

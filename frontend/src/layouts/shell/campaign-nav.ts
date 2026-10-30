@@ -30,8 +30,8 @@ export const SEARCH_LINK: NavLink = { label: "Search everything", path: "search"
 export const BATTLES_ICON = Swords;
 
 /**
- * "My warband": the warband, its encampment and (until the warband page's Locations drawer in
- * step 2) the locations page, each when the campaign has it switched on.
+ * "My warband": the warband, the Encampment page and the warband page's Locations panel, the last
+ * two when the campaign has them switched on.
  */
 export function warbandLinks(campaign: CampaignNavFlags): NavLink[] {
   return [
@@ -77,7 +77,7 @@ export type MobileNavId = "campaign" | "warband" | "battle" | "reference" | "me"
 export function mobileNavActiveId(pathname: string): MobileNavId {
   const current = section(pathname);
   if (isAftermathPath(pathname)) return "warband";
-  if (isBattlesPage(pathname)) return "campaign";
+  // A battle and the Battles page (where Battle leads with none to rejoin).
   if (current === "battles") return "battle";
   if (current === "settings") return "me";
   if (["warband", "warbands", "encampments", "locations"].includes(current)) return "warband";

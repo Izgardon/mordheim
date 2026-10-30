@@ -40,7 +40,7 @@ export function DeletionPreview({ preview }: { preview: AccountDeletionPreview }
                   ? `${campaign.name} is archived: restore it, then hand it over, or delete it for good. `
                   : `${campaign.name}: make an admin its owner. `}
                 <Link
-                  to={`/campaigns/${campaign.id}/settings?tab=campaign`}
+                  to={`/campaigns/${campaign.id}/settings?section=${campaign.archived ? "archive" : "players"}`}
                   className="underline hover:text-foreground"
                 >
                   {`Open ${campaign.name}'s settings`}

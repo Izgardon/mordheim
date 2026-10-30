@@ -90,10 +90,12 @@ export default function FeedbackReportCard({
 
   return (
     <section aria-label="Feedback and bug report">
-      <Card className="space-y-4 p-3 sm:p-6">
-        <div className="space-y-2">
-          <h3 className="text-lg font-semibold text-foreground">Feedback/Bug Report</h3>
-          <p className="text-sm text-muted-foreground">
+      <Card className="flex flex-col items-start gap-4 p-5 max-[960px]:p-4">
+        <div className="flex flex-col gap-1">
+          <h3 className="m-0 font-display text-xl font-semibold leading-tight text-head">
+            Feedback/Bug Report
+          </h3>
+          <p className="m-0 text-sm text-text2">
             {campaignId
               ? "Send a report with your account and current campaign context so issues are easier to trace."
               : "Send a report with your account so issues are easier to trace."}
@@ -107,10 +109,10 @@ export default function FeedbackReportCard({
             <DialogHeader>
               <DialogTitle className="text-xl">Feedback/Bug Report</DialogTitle>
             </DialogHeader>
-            <div className="space-y-3">
-              <div className="space-y-2">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-1.5">
                 <label
-                  className="text-sm font-medium text-foreground"
+                  className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint"
                   htmlFor="feedback-report-type"
                 >
                   Type
@@ -119,7 +121,7 @@ export default function FeedbackReportCard({
                   value={reportType}
                   onValueChange={(value) => setReportType(value as "Bug" | "Feedback")}
                 >
-                  <SelectTrigger id="feedback-report-type" className="bg-background/70">
+                  <SelectTrigger id="feedback-report-type">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -130,7 +132,7 @@ export default function FeedbackReportCard({
               </div>
               <label
                 htmlFor="feedback-report-message"
-                className="text-sm font-medium text-foreground"
+                className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint"
               >
                 Report
               </label>

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
 import { SidePanel } from "@/components/ui/side-panel";
-import { listCampaignLocations } from "@/features/campaigns/api/campaigns-api";
+import { useCampaignLocations } from "@/features/campaigns/api/campaign-queries";
 import type { CampaignLocation } from "@/features/campaigns/types/campaign-types";
 import { cn } from "@/lib/utils";
 
@@ -42,11 +41,7 @@ const hasD6 = (location: CampaignLocation) => d6Results(location).some((entry) =
  */
 export default function LocationsPanel(props: LocationsPanelProps) {
   const { campaignId } = props;
-  const locations = useQuery({
-    queryKey: ["campaign", campaignId, "locations"],
-    queryFn: () => listCampaignLocations(campaignId),
-    enabled: props.open,
-  });
+  const locations = useCampaignLocations(campaignId, { enabled: props.open });
   const [search, setSearch] = useState("");
   const [area, setArea] = useState<string | null>(null);
   const [sending, setSending] = useState<number | null>(null);

@@ -7,6 +7,7 @@ import {
   listCampaignBulletinEntries,
   listCampaignChronicle,
   listCampaignEncampments,
+  listCampaignLocations,
   listCampaignMembers,
   listCampaignPivotalMoments,
   listCampaignPlayerNames,
@@ -133,6 +134,15 @@ export function useCampaignEncampments(campaignId: number, { enabled = true }: T
   return useQuery({
     queryKey: queryKeys.campaign.encampments(campaignId),
     queryFn: () => listCampaignEncampments(campaignId),
+    ...listOptions(campaignId, enabled),
+  });
+}
+
+/** The locations, read only while they are switched on (the panel, settings, Search everything). */
+export function useCampaignLocations(campaignId: number, { enabled = true }: Toggle = {}) {
+  return useQuery({
+    queryKey: queryKeys.campaign.locations(campaignId),
+    queryFn: () => listCampaignLocations(campaignId),
     ...listOptions(campaignId, enabled),
   });
 }

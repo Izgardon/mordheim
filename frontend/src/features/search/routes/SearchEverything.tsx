@@ -3,7 +3,7 @@ import { Link, useOutletContext, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 
-import { listCampaignLocations } from "@/features/campaigns/api/campaigns-api";
+import { useCampaignLocations } from "@/features/campaigns/api/campaign-queries";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogueSearchParams";
 import { SectionPicker } from "@/features/reference/ReferencePage";
@@ -113,11 +113,7 @@ export default function SearchEverything() {
   const personae = useCatalogue("dramatis-personae", campaignId);
   const houseRules = useHouseRules(campaignId);
   const withLocations = Boolean(campaign?.enable_locations);
-  const locations = useQuery({
-    queryKey: ["campaign", campaignId, "locations"],
-    queryFn: () => listCampaignLocations(campaignId),
-    enabled: withLocations,
-  });
+  const locations = useCampaignLocations(campaignId, { enabled: withLocations });
   const mine = useQuery(myWarbandQuery(campaignId));
   const server = useCampaignSearch(campaignId, settled);
   const rules = useMemo(() => ruleEntries(), []);

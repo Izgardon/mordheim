@@ -185,6 +185,13 @@ export function updateCampaignLocation(
   });
 }
 
+/** Soft-deletes a location (manage_locations); it leaves the list for everyone. */
+export function deleteCampaignLocation(campaignId: number, locationId: number) {
+  return apiRequest<void>(`/campaigns/${campaignId}/locations/${locationId}/`, {
+    method: "DELETE",
+  });
+}
+
 export function listCampaignMembers(campaignId: number) {
   return apiRequest<CampaignMember[]>(`/campaigns/${campaignId}/members/`, {});
 }

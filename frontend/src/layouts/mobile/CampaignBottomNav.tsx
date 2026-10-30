@@ -19,7 +19,7 @@ import { SheetLinkRow, SheetRows } from "./SheetRows";
 type CampaignBottomNavProps = {
   campaign: CampaignSummary;
   userName: string;
-  /** A battle you can go back to: Battle goes there instead of the overview. */
+  /** A battle you can go back to: Battle goes there instead of the Battles page. */
   onRejoinBattle?: () => void;
 };
 
@@ -56,7 +56,12 @@ export default function CampaignBottomNav({
         {onRejoinBattle ? (
           <BottomBarButton label="Battle" icon={Swords} onClick={onRejoinBattle} />
         ) : (
-          <BottomBarLink to={base} label="Battle" icon={Swords} current={active === "battle"} />
+          <BottomBarLink
+            to={`${base}/battles`}
+            label="Battle"
+            icon={Swords}
+            current={active === "battle"}
+          />
         )}
         <BottomBarButton
           label="Reference"

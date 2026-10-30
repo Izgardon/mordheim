@@ -56,6 +56,8 @@ export type CampaignCreatePayload = {
 
 export type CampaignUpdatePayload = {
   in_progress?: boolean;
+  /** A rename (the owner): trimmed, never blank. */
+  name?: string;
   max_heroes?: number;
   max_hired_swords?: number;
   starting_gold?: number;
