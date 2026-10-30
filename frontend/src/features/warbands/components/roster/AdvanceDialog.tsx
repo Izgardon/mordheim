@@ -11,6 +11,7 @@ import {
   DialogKicker,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { rollDie } from "@/lib/dice";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 import { useWarbandCacheUpdate, type WarbandUpdate } from "../../api/warband-cache";
@@ -26,25 +27,29 @@ import {
   resolveHero1d6Stat,
   resolveHero2d6Stat,
 } from "../../utils/levelup-utils";
+import type { WarbandHero } from "../../types/warband-types";
+import LadsGotTalent from "./LadsGotTalent";
 import { LIST_KEY, unitName, type RosterUnit } from "./unit-view";
 
-const d6 = () => {
-  const value = new Uint32Array(1);
-  crypto.getRandomValues(value);
-  return (value[0] % 6) + 1;
-};
+const d6 = () => rollDie(6);
+const LGT = "LGT";
 
 /**
  * An advance (the existing level-up, restyled): roll 2D6 (and the 1D6 that follows) on the
- * advance table, or pick the advance by hand, then the server applies it.
+ * advance table, or pick the advance by hand, then the server applies it. A henchmen roll of
+ * 10–12 (or picking it) is the lad's got talent: one of them joins the heroes.
  */
 export default function AdvanceDialog({
   entry,
   warbandId,
+  heroes,
+  maxHeroes,
   onClose,
 }: {
   entry: RosterUnit | null;
   warbandId: number;
+  heroes: WarbandHero[];
+  maxHeroes: number | null;
   onClose: () => void;
 }) {
   const updateCache = useWarbandCacheUpdate();
@@ -54,7 +59,8 @@ export default function AdvanceDialog({
   const [saving, setSaving] = useState(false);
   const isGroup = entry?.kind === "henchmen_group";
   const stats = isGroup ? HENCHMEN_SELECTABLE_STATS : HERO_SELECTABLE_STATS;
-  const options = [...stats, ...(isGroup ? [] : OTHER_OPTIONS.map((option) => option.id))];
+  const options = [...stats, ...(isGroup ? [LGT] : OTHER_OPTIONS.map((option) => option.id))];
+  const talent = isGroup && picked === LGT;
 
   const reset = () => {
     setRoll2(null);
@@ -67,11 +73,7 @@ export default function AdvanceDialog({
     setRoll1(null);
     if (isGroup) {
       const result = resolveHenchmen2d6Stat(total);
-      setPicked(result.stat);
-      if (result.ladsGotTalent)
-        toast.message(
-          "The lad's got talent: he joins the heroes. Set him up from the group's Edit."
-        );
+      setPicked(result.ladsGotTalent ? LGT : result.stat);
     } else {
       setPicked(resolveHero2d6Stat(total));
     }
@@ -145,18 +147,32 @@ export default function AdvanceDialog({
           <div role="group" aria-label="Advance" className="flex flex-wrap gap-1.5">
             {options.map((option) => (
               <Chip key={option} pressed={picked === option} onClick={() => setPicked(option)}>
-                {resolveAdvanceLabel(option)}
+                {option === LGT ? "The lad's got talent" : resolveAdvanceLabel(option)}
               </Chip>
             ))}
           </div>
+          {talent && entry?.kind === "henchmen_group" ? (
+            <LadsGotTalent
+              group={entry.unit}
+              warbandId={warbandId}
+              heroes={heroes}
+              maxHeroes={maxHeroes}
+              onDone={() => {
+                reset();
+                onClose();
+              }}
+            />
+          ) : null}
         </div>
         <DialogFooter>
           <Button variant="ghost" onClick={onClose}>
             Cancel
           </Button>
-          <Button disabled={!picked || saving} onClick={() => void confirm()}>
-            {picked ? `Take ${resolveAdvanceLabel(picked)}` : "Pick an advance"}
-          </Button>
+          {talent ? null : (
+            <Button disabled={!picked || saving} onClick={() => void confirm()}>
+              {picked ? `Take ${resolveAdvanceLabel(picked)}` : "Pick an advance"}
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

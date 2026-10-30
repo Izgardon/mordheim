@@ -226,7 +226,13 @@ export default function Warband() {
         onOpenChange={(open) => setPanel(open ? "locations" : null)}
       />
       <RecruitDialog kind={recruiting} warbandId={warbandId} onClose={() => setRecruiting(null)} />
-      <AdvanceDialog entry={advancing} warbandId={warbandId} onClose={() => setAdvancing(null)} />
+      <AdvanceDialog
+        entry={advancing}
+        warbandId={warbandId}
+        heroes={sheet.heroes}
+        maxHeroes={campaign?.max_heroes ?? null}
+        onClose={() => setAdvancing(null)}
+      />
     </div>
   );
 }

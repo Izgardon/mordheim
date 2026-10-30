@@ -8,6 +8,8 @@ import { Switch } from "@/components/ui/switch";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
+import { isPendingByName, isPendingByType } from "../heroes/utils/pending-entries";
+import PendingPick, { type PendingList } from "./PendingPick";
 import RulesPanel, { type BoxDetail } from "./RulesPanel";
 import { boxRows, itemBoxKind, xpInfo, type RosterUnit } from "./unit-view";
 
@@ -22,9 +24,19 @@ type UnitDetailsProps = {
   onMoveItem: (itemId: number, to: ItemPlace) => void;
   onSellItem: (itemId: number, price: number) => void;
   onAdvance?: () => void;
+  campaignId: number;
+  /** Puts the picked entry in place of a pending "New skill" (spell, special). */
+  onResolvePending: (list: PendingList, placeholderId: number, entryId: number) => void;
 };
 
-type Row = { key: string; label: string; boxes: (BoxDetail & { boxKind: BoxTileKind })[] };
+type Box = BoxDetail & { boxKind: BoxTileKind; id?: number; pending?: boolean };
+type Row = { key: string; label: string; boxes: Box[] };
+
+const NOUN: Record<string, "skill" | "spell" | "special"> = {
+  skills: "skill",
+  spells: "spell",
+  specials: "special",
+};
 
 const itemKindLine = (item: NonNullable<BoxDetail["item"]>) =>
   [item.type, item.strength && `S ${item.strength}`, item.range, item.save && `Save ${item.save}`]
@@ -63,12 +75,18 @@ export default function UnitDetails(props: UnitDetailsProps) {
     ).map(([key, label, list]) => ({
       key,
       label,
-      boxes: list.map((entry) => ({
-        name: entry.name,
-        kind: entry.type ?? label,
-        text: entry.description,
-        boxKind: (key === "injuries" ? "injury" : "quiet") as BoxTileKind,
-      })),
+      boxes: list.map((entry) => {
+        const pending =
+          key in NOUN && (isPendingByType(entry) || isPendingByName(NOUN[key], entry.name));
+        return {
+          id: entry.id,
+          pending,
+          name: entry.name,
+          kind: pending ? "Pick one" : (entry.type ?? label),
+          text: entry.description,
+          boxKind: (key === "injuries" ? "injury" : pending ? "item" : "quiet") as BoxTileKind,
+        };
+      }),
     })),
   ].filter((row) => row.boxes.length > 0 || row.key === "items" || row.key === "skills");
 
@@ -132,7 +150,18 @@ export default function UnitDetails(props: UnitDetailsProps) {
                 />
               ))}
             </div>
-            {selected ? (
+            {selected?.pending && selected.id !== undefined && canEdit ? (
+              <PendingPick
+                campaignId={props.campaignId}
+                list={row.key as PendingList}
+                access={"available_skills" in unit ? unit.available_skills : undefined}
+                onClose={() => setOpen(null)}
+                onPick={(entryId) => {
+                  setOpen(null);
+                  props.onResolvePending(row.key as PendingList, selected.id!, entryId);
+                }}
+              />
+            ) : selected ? (
               <RulesPanel
                 detail={selected}
                 onClose={() => setOpen(null)}
