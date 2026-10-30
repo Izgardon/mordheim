@@ -12,9 +12,10 @@ TARGET_TYPES = ("stash", "hero", "hireling", "henchmen_group")
 
 
 class RarityRollSerializer(serializers.Serializer):
-    """The roll that found a rare item: who searched, what they rolled (with any modifier) and whether it worked."""
+    """The roll that found a rare item: who searched (or no hero), what they rolled (with any modifier, the search
+    bonus) and whether it worked."""
 
-    hero_id = serializers.IntegerField()
+    hero_id = serializers.IntegerField(required=False, allow_null=True, default=None)  # null: no hero searched
     roll = serializers.IntegerField(min_value=0, max_value=1000)
     modifier = serializers.IntegerField(required=False, default=0, min_value=-100, max_value=100)
     rarity = serializers.CharField(required=False, allow_blank=True, max_length=40)

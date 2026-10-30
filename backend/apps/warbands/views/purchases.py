@@ -93,7 +93,7 @@ class WarbandPurchaseView(WarbandScopedView):
 
 class WarbandRarityRollView(WarbandScopedView):
     """POST rarity-rolls/: save a rarity roll that ended without a purchase (decision 9). The searching hero spends
-    his trading action, or is warned that he already had."""
+    his trading action, or is warned that he already had; a search with no hero is only logged."""
 
     def post(self, request: Request, warband_id: int) -> Response:
         body = RarityRollRequestSerializer(data=request.data)
@@ -105,5 +105,6 @@ class WarbandRarityRollView(WarbandScopedView):
                 warnings = record_roll(self.warband, item, body.validated_data)
         except RollRefused as refusal:
             raise RosterError(str(refusal), "invalid", {"hero_id": [str(refusal)]}) from None
-        answer = {"hero_id": body.validated_data["hero_id"], "trading_action": False, "warnings": warnings}
+        hero_id = body.validated_data["hero_id"]  # null: a search with no hero, which spends nothing
+        answer = {"hero_id": hero_id, "trading_action": False if hero_id is not None else None, "warnings": warnings}
         return Response(answer, status=status.HTTP_201_CREATED)

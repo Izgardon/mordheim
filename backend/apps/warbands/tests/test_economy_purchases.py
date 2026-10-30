@@ -182,6 +182,16 @@ class RarityRollPurchaseTests(PurchaseTestCase):
         )
         self.assertEqual(WarbandItem.objects.get(warband=self.warband).quantity, 1)
 
+    def test_a_roll_with_no_hero_goes_with_the_purchase_and_spends_nobody(self):
+        ana = make_unit(HERO, self.warband, name="Ana")
+
+        self.buy(item_id=self.sword.id, price=0, target_type="stash", rarity_roll={"roll": 10, "success": True})
+
+        ana.refresh_from_db()
+        self.assertTrue(ana.trading_action)
+        roll = {"hero": "No hero", "item": "Sword", "rarity": "", "roll": 10, "modifier": 0, "success": True}
+        self.assertEqual(log_rows(self.warband)[0], ("trading_action", "rarity roll", roll, None))
+
     def test_a_searcher_who_is_not_on_the_roster_is_refused(self):
         dead = make_unit(HERO, self.warband, dead=True)
 
@@ -211,6 +221,20 @@ class RarityRollWithoutPurchaseTests(PurchaseTestCase):
         self.assertEqual(log_rows(self.warband), [("trading_action", "rarity roll", roll, None)])
         self.assertEqual((trade_rows(self.warband), WarbandItem.objects.exists()), ([], False))
 
+    def test_a_search_with_no_hero_is_logged_and_spends_nothing(self):
+        ana = make_unit(HERO, self.warband, name="Ana")
+
+        body = self._post(item_id=self.sword.id, hero_id=None, roll=5, modifier=2, rarity="Rare 8", success=False)
+
+        ana.refresh_from_db()
+        self.assertEqual((body["hero_id"], body["trading_action"], ana.trading_action), (None, None, True))
+        self.assertEqual(
+            body["warnings"],
+            [{"code": "rarity_roll_failed", "message": "The rarity roll for Sword failed.", "hero_id": None}],
+        )
+        roll = {"hero": "No hero", "item": "Sword", "rarity": "Rare 8", "roll": 5, "modifier": 2, "success": False}
+        self.assertEqual(log_rows(self.warband), [("trading_action", "rarity roll", roll, None)])
+
     def test_a_second_search_in_a_round_warns(self):
         ana = make_unit(HERO, self.warband, name="Ana", trading_action=False)
 
@@ -225,7 +249,6 @@ class RarityRollWithoutPurchaseTests(PurchaseTestCase):
             with self.subTest(hero=hero.id):
                 body = self._post(status=status, item_id=self.sword.id, hero_id=hero.id, roll=4, success=True)
                 self.assertEqual(body["fields"], {"hero_id": ["Not a hero on this warband's roster."]})
-        self._post(status=400, item_id=self.sword.id, roll=4, success=True)  # no hero
         self.client.force_authenticate(user=self.viewer)
         self._post(status=403, item_id=self.sword.id, hero_id=dead.id, roll=4, success=True)
         self.assertEqual(log_rows(self.warband), [])
