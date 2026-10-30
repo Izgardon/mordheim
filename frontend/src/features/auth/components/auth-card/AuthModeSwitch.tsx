@@ -33,7 +33,7 @@ export function AuthModeSwitch({ mode, isMobile, onSelect }: AuthModeSwitchProps
         <Button
           key={option.mode}
           type="button"
-          variant={mode === option.mode ? "default" : "secondary"}
+          variant={mode === option.mode ? "primary" : "secondary"}
           size="sm"
           className={buttonClassName}
           onClick={() => onSelect(option.mode)}

@@ -89,7 +89,7 @@ export default function CampaignLayout() {
         <Button
           type="button"
           onClick={() => navigate(-1)}
-          variant="icon"
+          variant="ghost"
           size="icon"
           className="h-9 w-9"
           aria-label="Back"

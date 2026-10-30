@@ -20,8 +20,6 @@ import type {
   CampaignJoinPayload,
   CampaignSummary,
 } from "../types/campaign-types";
-import siteBackground from "@/assets/background/campaign_background.webp";
-import "../styles/campaigns.css";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 const NO_CAMPAIGNS: CampaignSummary[] = [];
@@ -42,30 +40,18 @@ export default function Campaigns() {
   };
 
   return (
-    <main
-      className="campaigns h-screen overflow-x-hidden overflow-y-auto px-4 py-8 sm:px-6 sm:py-12"
-      style={{
-        backgroundImage: `linear-gradient(rgba(6, 5, 4, 0.25), rgba(6, 5, 4, 0.25)), url(${siteBackground})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
+    <main className="h-screen overflow-x-hidden overflow-y-auto bg-page px-4 py-8 sm:px-6 sm:py-12">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 sm:gap-10">
         <div className="flex justify-end gap-2">
           {/* The account page: display name, password, sessions and deletion (AUTH-NEW-01). */}
           <Button asChild variant="ghost">
             <Link to="/account">Account</Link>
           </Button>
-          <Button
-            variant="ghost"
-            className="text-destructive hover:text-destructive"
-            onClick={signOut}
-          >
+          <Button variant="ghost" className="text-danger hover:text-danger" onClick={signOut}>
             Log out
           </Button>
         </div>
-        <div className="campaign-list-shell campaign-list-shell--flat p-4 sm:p-6">
+        <div className="border border-border bg-surface p-4 sm:p-6">
           <CampaignsHeader user={user} onCreate={handleCreate} onJoin={handleJoin} />
         </div>
         <CampaignListSection campaigns={campaigns} isLoading={list.isPending} error={error} />

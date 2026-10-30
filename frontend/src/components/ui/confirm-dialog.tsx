@@ -38,7 +38,7 @@ export function ConfirmDialog({
   title,
   confirmText = "Confirm",
   cancelText = "Cancel",
-  confirmVariant = "destructive",
+  confirmVariant = "danger",
   cancelVariant = "secondary",
   confirmDisabled = false,
   isConfirming = false,

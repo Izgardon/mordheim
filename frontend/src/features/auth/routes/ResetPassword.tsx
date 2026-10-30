@@ -4,7 +4,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { Button } from "@components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
-import { CardBackground } from "@components/card-background";
 
 import { getErrorMessage } from "@/lib/get-error-message";
 
@@ -104,7 +103,7 @@ export default function ResetPassword() {
 
   return (
     <AuthShell>
-      <CardBackground
+      <Card
         as={Card}
         className="auth-card flex h-full w-full flex-col border border-emerald-500/40 shadow-[0_30px_70px_rgba(5,20,24,0.6),0_0_25px_rgba(0,255,153,0.45),inset_0_0_35px_rgba(0,255,153,0.25)] backdrop-blur-sm"
       >
@@ -133,7 +132,7 @@ export default function ResetPassword() {
             form
           )}
         </CardContent>
-      </CardBackground>
+      </Card>
     </AuthShell>
   );
 }

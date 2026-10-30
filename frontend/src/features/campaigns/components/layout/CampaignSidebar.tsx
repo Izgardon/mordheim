@@ -37,7 +37,7 @@ function SidebarLink({ to, label, icon: Icon, end = false, showsActive = true }:
   return (
     <Button
       asChild
-      variant="nav"
+      variant="ghost"
       size="default"
       data-active={isActive}
       className="h-11 w-full justify-start gap-3 px-3"

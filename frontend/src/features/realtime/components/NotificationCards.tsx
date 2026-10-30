@@ -7,6 +7,7 @@ import type {
   BattleResultRequestNotification,
 } from "@/features/battles/types/battle-types";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
+import { IconButton } from "@/components/ui/icon-button";
 import { cn } from "@/lib/utils";
 import UnfinishedBattleBanner from "@/features/battles/components/shared/UnfinishedBattleBanner";
 
@@ -37,40 +38,36 @@ function NotificationCard({
   error,
 }: NotificationCardProps) {
   return (
-    <div className="surface-panel-strong rounded-xl p-3" aria-busy={isPending || undefined}>
+    <div className="border border-border bg-surface p-3" aria-busy={isPending || undefined}>
       <div className="flex flex-col gap-1">
         <p className="text-sm font-semibold text-foreground">{title}</p>
         {children}
       </div>
       {error ? (
-        <p role="alert" className="mt-2 text-xs text-red-400">
+        <p role="alert" className="mt-2 text-xs text-danger">
           {error}
         </p>
       ) : null}
       <div className="mt-3 flex items-center justify-end gap-2">
-        <button
-          type="button"
-          className="btn-icon icon-button flex h-8 w-8 items-center justify-center"
+        <IconButton
           onClick={decline.onClick}
           disabled={decline.disabled || isPending}
           aria-label={decline.label}
           title={decline.label}
         >
-          <X className="h-4 w-4" aria-hidden="true" />
-        </button>
-        <button
-          type="button"
-          className="btn-icon icon-button flex h-8 w-8 items-center justify-center"
+          <X aria-hidden="true" />
+        </IconButton>
+        <IconButton
           onClick={accept.onClick}
           disabled={accept.disabled || isPending}
           aria-label={accept.label}
         >
           {isPending ? (
-            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            <Loader2 className="animate-spin" aria-hidden="true" />
           ) : (
-            <Check className="h-4 w-4" aria-hidden="true" />
+            <Check aria-hidden="true" />
           )}
-        </button>
+        </IconButton>
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ export function LoadingScreen({ message = "Loading..." }: LoadingScreenProps) {
     <div
       className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4"
       style={{
-        backgroundImage: "linear-gradient(#000, #000)",
+        backgroundImage: "linear-gradient(var(--color-page), var(--color-page))",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}

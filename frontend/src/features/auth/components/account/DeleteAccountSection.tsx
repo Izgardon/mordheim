@@ -29,7 +29,7 @@ export function DeleteAccountSection() {
       title="Delete account"
       description="Your warbands stay in their campaigns as retired records, shown as Former player. This can't be undone."
     >
-      <Button variant="destructive" size="sm" onClick={deletion.openDialog}>
+      <Button variant="danger" size="sm" onClick={deletion.openDialog}>
         Delete account
       </Button>
       <DeleteAccountDialog deletion={deletion} />
@@ -81,7 +81,7 @@ function DeleteAccountDialog({ deletion }: { deletion: AccountDeletionState }) {
             Cancel
           </Button>
           <Button
-            variant="destructive"
+            variant="danger"
             disabled={blocked || !deletion.password || deletion.isDeleting}
             onClick={() => void deletion.confirm()}
           >

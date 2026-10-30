@@ -57,7 +57,7 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline">Join</Button>
+        <Button variant="secondary">Join</Button>
       </DialogTrigger>
       <DialogContent className="max-w-[750px]">
         <DialogHeader>

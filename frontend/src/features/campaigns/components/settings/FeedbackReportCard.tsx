@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { Button } from "@components/button";
-import { CardBackground } from "@components/card-background";
+import { Card } from "@components/card";
 import {
   Dialog,
   DialogContent,
@@ -90,7 +90,7 @@ export default function FeedbackReportCard({
 
   return (
     <section aria-label="Feedback and bug report">
-      <CardBackground className="space-y-4 bg-[rgba(12,9,6,0.92)] p-3 sm:p-6">
+      <Card className="space-y-4 bg-[rgba(12,9,6,0.92)] p-3 sm:p-6">
         <div className="space-y-2">
           <h3 className="text-lg font-semibold text-foreground">Feedback/Bug Report</h3>
           <p className="text-sm text-muted-foreground">
@@ -168,7 +168,7 @@ export default function FeedbackReportCard({
             Thanks, report sent
           </p>
         ) : null}
-      </CardBackground>
+      </Card>
     </section>
   );
 }

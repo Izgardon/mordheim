@@ -16,10 +16,7 @@ export function CardSkeleton({ count = 4, className, columns = 2 }: CardSkeleton
   return (
     <div className={cn("grid gap-6", gridClass, className)}>
       {Array.from({ length: count }).map((_, index) => (
-        <div
-          key={index}
-          className="rounded-2xl border border-border/60 bg-card/70 p-6 shadow-[0_12px_24px_rgba(5,20,24,0.3)]"
-        >
+        <div key={index} className="border border-border bg-surface p-6">
           <div className="space-y-4">
             <div
               className="h-5 animate-pulse rounded bg-muted-foreground/20"
@@ -60,10 +57,7 @@ export function ListSkeleton({ count = 4, className }: ListSkeletonProps) {
   return (
     <div className={cn("space-y-3", className)}>
       {Array.from({ length: count }).map((_, index) => (
-        <div
-          key={index}
-          className="rounded-2xl border border-border/60 bg-card/70 p-4 shadow-[0_12px_24px_rgba(5,20,24,0.3)]"
-        >
+        <div key={index} className="border border-border bg-surface p-4">
           <div className="space-y-3">
             <div
               className="h-4 animate-pulse rounded bg-muted-foreground/20"
@@ -102,12 +96,7 @@ type RosterSkeletonProps = {
 
 export function RosterSkeleton({ rows = 5, className }: RosterSkeletonProps) {
   return (
-    <div
-      className={cn(
-        "overflow-hidden rounded-2xl border border-border/60 bg-card/60 shadow-[0_18px_32px_rgba(5,20,24,0.35)]",
-        className
-      )}
-    >
+    <div className={cn("overflow-hidden border border-border bg-surface", className)}>
       <table className="w-full table-fixed text-left text-sm text-foreground">
         <colgroup>
           <col className="w-[35%]" />

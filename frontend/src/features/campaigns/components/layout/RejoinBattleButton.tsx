@@ -28,7 +28,7 @@ export default function RejoinBattleButton({
   return (
     <Button
       type="button"
-      variant="toolbar"
+      variant="secondary"
       size="sm"
       onClick={onClick}
       disabled={disabled}

@@ -34,10 +34,10 @@ function ArchivedCampaigns({ campaigns }: { campaigns: CampaignSummary[] }) {
     return null;
   }
   return (
-    <div className="space-y-4 border-t border-[#6b4724]/50 pt-4">
+    <div className="space-y-4 border-t border-line pt-4">
       <button
         type="button"
-        className="flex items-center gap-2 text-sm font-semibold text-[#d8c3a0] hover:text-[#f0dfbc]"
+        className="flex items-center gap-2 text-sm font-semibold text-text2 hover:text-head"
         aria-expanded={isOpen}
         onClick={() => setIsOpen((open) => !open)}
       >
@@ -61,10 +61,10 @@ export default function CampaignListSection({
   const archived = campaigns.filter((campaign) => campaign.archived_at);
   return (
     <section className="flex-1">
-      <div className="campaign-list-shell space-y-4 rounded-3xl p-4 sm:p-6">
+      <div className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="theme-heading-soft text-xl font-bold text-[#f0dfbc]">My Campaigns</h2>
-          <span className="text-xs text-[#b9a58a] sm:text-sm">
+          <h2 className="font-display text-2xl font-semibold text-head">My campaigns</h2>
+          <span className="text-sm text-muted-foreground">
             {live.length} {live.length === 1 ? "campaign" : "campaigns"}
           </span>
         </div>
@@ -72,10 +72,10 @@ export default function CampaignListSection({
         {isLoading ? (
           <CardSkeleton count={4} columns={2} />
         ) : error ? (
-          <p className="text-sm text-red-600">{error}</p>
+          <p className="text-sm text-danger">{error}</p>
         ) : live.length === 0 && archived.length === 0 ? (
-          <Card className="campaign-ornate-card p-6">
-            <p className="text-sm text-[#c8b59a]">
+          <Card className="p-6">
+            <p className="text-sm text-text2">
               No campaigns yet. Raise a banner or join with a code.
             </p>
           </Card>

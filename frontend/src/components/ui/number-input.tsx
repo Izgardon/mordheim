@@ -136,7 +136,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
     const mobileButtonBaseClass =
       mobileButtonVariant === "image"
         ? "icon-button flex h-full shrink-0 items-center justify-center rounded-none border border-transparent bg-transparent shadow-none transition-[filter] hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-60"
-        : "flex h-full shrink-0 items-center justify-center rounded-none border border-border bg-black text-foreground shadow-none transition-colors hover:bg-[#120e0a] disabled:cursor-not-allowed disabled:opacity-60";
+        : "flex h-full shrink-0 items-center justify-center rounded-none border border-strong bg-page text-ink shadow-none transition-colors hover:bg-raised disabled:cursor-not-allowed disabled:opacity-60";
     const desktopButtonWidthClass = inputSize === "sm" ? "w-7" : inputSize === "lg" ? "w-9" : "w-8";
     const desktopIconClass =
       inputSize === "sm"
@@ -233,7 +233,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             disabled={isDisabled}
             tabIndex={stepButtonsTabIndex}
             className={cn(
-              "relative flex flex-1 items-center justify-center border-b border-border bg-black text-foreground shadow-none transition-colors hover:bg-[#120e0a] disabled:cursor-not-allowed disabled:opacity-60",
+              "relative flex flex-1 items-center justify-center border-b border-strong bg-page text-ink shadow-none transition-colors hover:bg-raised disabled:cursor-not-allowed disabled:opacity-60",
               buttonClassName
             )}
           >
@@ -246,7 +246,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             disabled={isDisabled}
             tabIndex={stepButtonsTabIndex}
             className={cn(
-              "relative flex flex-1 items-center justify-center bg-black text-foreground shadow-none transition-colors hover:bg-[#120e0a] disabled:cursor-not-allowed disabled:opacity-60",
+              "relative flex flex-1 items-center justify-center bg-page text-ink shadow-none transition-colors hover:bg-raised disabled:cursor-not-allowed disabled:opacity-60",
               buttonClassName
             )}
           >

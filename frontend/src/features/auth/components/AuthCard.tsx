@@ -2,7 +2,6 @@ import "../styles/auth.css";
 
 // components
 import { Card, CardContent, CardFooter } from "@components/card";
-import { CardBackground } from "@components/card-background";
 import { AuthCardHeader } from "./auth-card/AuthCardHeader";
 import { FootageCredit } from "./auth-card/FootageCredit";
 import { ForgotForm } from "./auth-card/ForgotForm";
@@ -60,7 +59,7 @@ export default function AuthCard() {
   }
 
   return (
-    <CardBackground
+    <Card
       as={Card}
       className="auth-card flex h-full w-full flex-col border border-emerald-500/32 bg-[linear-gradient(180deg,rgba(9,7,6,0.985),rgba(4,3,2,0.995))] shadow-[0_34px_78px_rgba(0,0,0,0.78),0_0_24px_rgba(0,255,153,0.24),0_0_56px_rgba(0,255,153,0.08),inset_0_0_28px_rgba(0,255,153,0.1)] backdrop-blur-sm"
     >
@@ -74,6 +73,6 @@ export default function AuthCard() {
         />
         <FootageCredit />
       </CardFooter>
-    </CardBackground>
+    </Card>
   );
 }
