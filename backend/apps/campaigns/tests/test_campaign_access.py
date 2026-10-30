@@ -46,6 +46,7 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("GET", "players/", None, OK_ALL),
     ("GET", "battle-history/", None, OK_ALL),
     ("GET", "chronicle/", None, OK_ALL),
+    ("GET", "search/?q=ab", None, OK_ALL),
     ("GET", "pivotal-moments/", None, OK_ALL),
     ("GET", "top-killers/", None, OK_ALL),
     ("GET", "active-battles/", None, (403, 200, 200, 200)),

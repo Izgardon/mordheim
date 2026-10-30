@@ -39,6 +39,7 @@ from .overview import (
     CampaignChronicleView,
     CampaignPivotalMomentsView,
     CampaignPlayersView,
+    CampaignSearchView,
     CampaignTopKillersView,
 )
 
@@ -75,6 +76,7 @@ __all__ = [
     "CampaignPivotalMomentsView",
     "CampaignPlayersView",
     "CampaignRestoreView",
+    "CampaignSearchView",
     "CampaignTopKillersView",
     "JoinCampaignView",
 ]

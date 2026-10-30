@@ -11,6 +11,7 @@ from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 from apps.users.names import display_name
 
 from ..chronicle import chronicle
+from ..search import campaign_search
 from ..constants import OWNER
 from ..selectors import (
     battle_history_payload,
@@ -52,6 +53,13 @@ class CampaignChronicleView(CampaignScopedView):
 
     def get(self, request, campaign_id):
         return Response(chronicle(campaign_id, request.query_params.get("kind")))
+
+
+class CampaignSearchView(CampaignScopedView):
+    """GET ?q=: the warbands and units whose names match (Search everything, next step 7a), in four queries."""
+
+    def get(self, request, campaign_id):
+        return Response(campaign_search(campaign_id, request.query_params.get("q")))
 
 
 class CampaignPivotalMomentsView(CampaignScopedView):
