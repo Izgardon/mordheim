@@ -15,12 +15,9 @@ import type {
 } from "@/features/battles/types/battle-types";
 import type { CurrentBattleSession } from "@/features/battles/utils/battle-session";
 
-const DEFAULT_DICE_COLOR = "#2e8555";
-
 type AppStoreValue = {
   user: AuthUser | null;
   warband: Warband | null;
-  diceColor: string;
   warbandLoading: boolean;
   warbandError: string;
   tradeRequestNotifications: TradeNotification[];
@@ -88,8 +85,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       setCurrentBattleSessionState(null);
     }
   }
-
-  const diceColor = useMemo(() => warband?.dice_color ?? DEFAULT_DICE_COLOR, [warband?.dice_color]);
 
   const addTradeRequestNotification = useCallback((notification: TradeNotification) => {
     setTradeRequestNotifications((prev) => {
@@ -176,7 +171,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
     () => ({
       user,
       warband,
-      diceColor,
       warbandLoading,
       warbandError,
       tradeRequestNotifications,
@@ -205,7 +199,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
     [
       user,
       warband,
-      diceColor,
       warbandLoading,
       warbandError,
       tradeRequestNotifications,

@@ -1,13 +1,8 @@
 import { useMemo, useState, type ReactNode } from "react";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Slot } from "@radix-ui/react-slot";
+
+import { SidePanel } from "@/components/ui/side-panel";
 import { getErrorMessage } from "@/lib/get-error-message";
 import {
   BattleInviteCard,
@@ -126,27 +121,27 @@ export default function NotificationsMenu({
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      {trigger ? <DialogTrigger asChild>{trigger(unreadCount)}</DialogTrigger> : null}
-      <DialogContent className="sm:max-w-[32rem]">
-        <DialogHeader className="items-start text-left">
-          <div className="flex w-full items-center justify-between gap-3">
-            <DialogTitle>Notifications</DialogTitle>
-            {onClear ? (
-              <button
-                type="button"
-                onClick={handleClear}
-                disabled={unreadCount === 0}
-                className="text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-muted-foreground transition hover:text-foreground disabled:opacity-50"
-              >
-                Clear
-              </button>
-            ) : null}
-          </div>
-          <DialogDescription className="sr-only">
-            Battle invites, battle results waiting for your answer, and trade requests.
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      {trigger ? <Slot onClick={() => handleOpenChange(true)}>{trigger(unreadCount)}</Slot> : null}
+      <SidePanel
+        open={open}
+        onOpenChange={handleOpenChange}
+        kicker="Campaign"
+        title="Notifications"
+        description="Battle invites, battle results waiting for your answer, and trade requests."
+        actions={
+          onClear ? (
+            <button
+              type="button"
+              onClick={handleClear}
+              disabled={unreadCount === 0}
+              className="text-xs font-bold text-muted-foreground transition hover:text-foreground disabled:opacity-50"
+            >
+              Clear
+            </button>
+          ) : null
+        }
+      >
         {unreadCount === 0 ? (
           <p className="text-sm text-muted-foreground">You are all caught up.</p>
         ) : (
@@ -202,7 +197,7 @@ export default function NotificationsMenu({
             ))}
           </div>
         )}
-      </DialogContent>
-    </Dialog>
+      </SidePanel>
+    </>
   );
 }

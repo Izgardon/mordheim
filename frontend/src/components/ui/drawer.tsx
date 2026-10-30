@@ -12,6 +12,8 @@ type DrawerProps = {
   /** The small accent line above the title ("Store", "Battle 5"). */
   kicker?: React.ReactNode;
   title: React.ReactNode;
+  /** Read to screen readers with the title (sr-only). */
+  description?: string;
   /** Beside the close button: a gold total, a count. */
   actions?: React.ReactNode;
   footer?: React.ReactNode;
@@ -25,6 +27,7 @@ export function Drawer({
   onOpenChange,
   kicker,
   title,
+  description,
   actions,
   footer,
   children,
@@ -35,7 +38,7 @@ export function Drawer({
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-scrim data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <DialogPrimitive.Content
-          aria-describedby={undefined}
+          {...(description ? {} : { "aria-describedby": undefined })}
           onInteractOutside={keepOpenForPortals}
           className={cn(
             "fixed inset-y-0 right-0 z-[60] flex w-[600px] max-w-full flex-col border-l border-accent-line bg-panel text-ink shadow-[-18px_0_40px_var(--color-shadow)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right",
@@ -48,6 +51,11 @@ export function Drawer({
               <DialogPrimitive.Title className="font-display text-[26px] font-semibold leading-tight text-head">
                 {title}
               </DialogPrimitive.Title>
+              {description ? (
+                <DialogPrimitive.Description className="sr-only">
+                  {description}
+                </DialogPrimitive.Description>
+              ) : null}
             </div>
             <div className="flex shrink-0 items-center gap-3.5">
               {actions}

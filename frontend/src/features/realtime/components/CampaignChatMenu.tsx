@@ -1,14 +1,9 @@
 import type { ReactNode } from "react";
 
 import { Send } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Slot } from "@radix-ui/react-slot";
+
+import { SidePanel } from "@/components/ui/side-panel";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { useAppStore } from "@/stores/app-store";
@@ -39,14 +34,15 @@ export default function CampaignChatMenu({ campaignId, open, onOpenChange, trigg
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      {trigger ? <DialogTrigger asChild>{trigger(unread)}</DialogTrigger> : null}
-      <DialogContent className="sm:max-w-[28rem]">
-        <DialogHeader>
-          <DialogTitle>Campaign Chat</DialogTitle>
-          <DialogDescription>Messages to everyone in this campaign.</DialogDescription>
-        </DialogHeader>
-
+    <>
+      {trigger ? <Slot onClick={() => handleOpenChange(true)}>{trigger(unread)}</Slot> : null}
+      <SidePanel
+        open={open}
+        onOpenChange={handleOpenChange}
+        kicker="Campaign"
+        title="Chat"
+        description="Messages to everyone in this campaign."
+      >
         {/* Messages list */}
         <div
           ref={chat.listRef}
@@ -123,7 +119,7 @@ export default function CampaignChatMenu({ campaignId, open, onOpenChange, trigg
             </p>
           ) : null}
         </div>
-      </DialogContent>
-    </Dialog>
+      </SidePanel>
+    </>
   );
 }

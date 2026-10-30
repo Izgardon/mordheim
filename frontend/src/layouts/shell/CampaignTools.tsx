@@ -2,7 +2,7 @@ import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 import { Bell, Dices, MessageSquare } from "lucide-react";
 
 import CampaignChatMenu from "@/features/realtime/components/CampaignChatMenu";
-import CampaignDiceRollerMenu from "@/features/realtime/components/CampaignDiceRollerMenu";
+import DicePanel from "@/features/realtime/components/DicePanel";
 import NotificationsMenu from "@/features/realtime/components/NotificationsMenu";
 import { useNotifications } from "@/features/realtime/hooks/useNotifications";
 import { cn } from "@/lib/utils";
@@ -65,7 +65,8 @@ export default function CampaignTools({
 
   return (
     <>
-      <CampaignDiceRollerMenu
+      <DicePanel
+        campaignId={campaignId}
         open={open === "dice"}
         onOpenChange={change("dice")}
         trigger={button("Dice roller", <Dices aria-hidden="true" />)}

@@ -15,6 +15,8 @@ type BottomSheetProps = {
   /** The small accent line above the title ("Battle 5", "Quick reference"). */
   kicker?: React.ReactNode;
   title: React.ReactNode;
+  /** Read to screen readers with the title (sr-only). */
+  description?: string;
   /** Stays below the scrolling body: the sheet's confirm or cancel. */
   footer?: React.ReactNode;
   children: React.ReactNode;
@@ -53,6 +55,7 @@ export function BottomSheet({
   onOpenChange,
   kicker,
   title,
+  description,
   footer,
   children,
   className,
@@ -66,7 +69,7 @@ export function BottomSheet({
             no clicks: iOS's delayed ghost clicks can't land on it and close the next sheet. */}
         <DialogPrimitive.Overlay className="pointer-events-none fixed inset-0 z-50 bg-scrim data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <DialogPrimitive.Content
-          aria-describedby={undefined}
+          {...(description ? {} : { "aria-describedby": undefined })}
           onInteractOutside={keepOpenForPortals}
           onOpenAutoFocus={(event) => event.preventDefault()}
           style={offset ? { transform: `translateY(${offset}px)` } : undefined}
@@ -89,6 +92,11 @@ export function BottomSheet({
               <DialogPrimitive.Title className="font-display text-[21px] font-semibold leading-tight text-head">
                 {title}
               </DialogPrimitive.Title>
+              {description ? (
+                <DialogPrimitive.Description className="sr-only">
+                  {description}
+                </DialogPrimitive.Description>
+              ) : null}
             </div>
             <DialogPrimitive.Close asChild>
               <IconButton aria-label="Close">

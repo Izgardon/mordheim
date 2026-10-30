@@ -3,7 +3,6 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 
 // components
-import { DiceProvider } from "../components/dice/DiceProvider";
 import { AppToaster } from "../components/ui/toaster";
 
 // stores
@@ -42,9 +41,7 @@ export default function AppProvider({ children }: PropsWithChildren) {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <AppStoreProvider>
-          <DiceProvider>{children}</DiceProvider>
-        </AppStoreProvider>
+        <AppStoreProvider>{children}</AppStoreProvider>
       </AuthProvider>
       <AppToaster />
       {ReactQueryDevtools ? (
