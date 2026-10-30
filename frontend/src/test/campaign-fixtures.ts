@@ -67,7 +67,7 @@ export const PERMISSION_CATALOGUE: CampaignPermission[] = [
     "Manage encampments",
     "Edit, reassign and remove every encampment, not just their own.",
   ],
-  ["manage_locations", "Manage locations", "Add and edit the campaign's locations."],
+  ["manage_locations", "Manage locations", "Add, edit and remove the campaign's locations."],
   [
     "manage_battles",
     "Manage battles",

@@ -45,7 +45,7 @@ PERMISSIONS: tuple[PermissionCode, ...] = (
     PermissionCode(
         "manage_encampments", "Manage encampments", "Edit, reassign and remove every encampment, not just their own."
     ),
-    PermissionCode("manage_locations", "Manage locations", "Add and edit the campaign's locations."),
+    PermissionCode("manage_locations", "Manage locations", "Add, edit and remove the campaign's locations."),
     PermissionCode(
         "manage_battles",
         "Manage battles",
