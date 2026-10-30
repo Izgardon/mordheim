@@ -20,11 +20,14 @@ export function createWarbandResource(warbandId: number, payload: { name: string
   });
 }
 
-/** `{ delta }` adds to the stored amount in the database (never below 0); `{ amount }` sets it. */
+/**
+ * `{ delta }` adds to the stored amount in the database (never below 0); `{ amount }` sets it;
+ * `{ name }` renames it.
+ */
 export function updateWarbandResource(
   warbandId: number,
   resourceId: number,
-  payload: { delta: number } | { amount: number }
+  payload: { delta: number } | { amount: number } | { name: string }
 ) {
   return apiRequest<WarbandResource>(`/warbands/${warbandId}/resources/${resourceId}/`, {
     method: "PATCH",

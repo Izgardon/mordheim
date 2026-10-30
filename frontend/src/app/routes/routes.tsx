@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 
 // routing
-import { Outlet, type RouteObject } from "react-router-dom";
+import { Navigate, Outlet, type RouteObject } from "react-router-dom";
 
 // components
 import ScrollToTop from "../../components/ScrollToTop";
@@ -17,13 +17,11 @@ const ResetPassword = lazy(() => import("../../features/auth/routes/ResetPasswor
 const Account = lazy(() => import("../../features/auth/routes/Account"));
 const CampaignLayout = lazy(() => import("../../features/campaigns/routes/CampaignLayout"));
 const Campaigns = lazy(() => import("../../features/campaigns/routes/Campaigns"));
+const Warband = lazy(() => import("../../features/warbands/routes/Warband"));
 
 /** The campaign pages still to rebuild: placeholders until their redesign step. */
 const CAMPAIGN_PAGES: { path?: string; title: string; step: string }[] = [
   { title: "Overview", step: "step 5" },
-  { path: "warband", title: "Warband", step: "step 2" },
-  { path: "warbands/:warbandId", title: "Warband", step: "step 2" },
-  { path: "locations", title: "Locations", step: "step 2" },
   { path: "encampments", title: "Encampment", step: "step 7" },
   { path: "items", title: "Wargear", step: "step 7" },
   { path: "skills", title: "Skills", step: "step 7" },
@@ -80,11 +78,20 @@ export const routes: RouteObject[] = [
               {
                 // A page that throws is replaced in place; the campaign shell stays usable.
                 errorElement: <RouteError variant="inline" />,
-                children: CAMPAIGN_PAGES.map(({ path, title, step }) =>
-                  path
-                    ? { path, element: <RebuildingPage title={title} step={step} /> }
-                    : { index: true, element: <RebuildingPage title={title} step={step} /> }
-                ),
+                children: [
+                  { path: "warband", element: <Warband /> },
+                  { path: "warbands/:warbandId", element: <Warband /> },
+                  // Locations is a panel of the warband page now (next step 2).
+                  {
+                    path: "locations",
+                    element: <Navigate to="../warband?panel=locations" replace />,
+                  },
+                  ...CAMPAIGN_PAGES.map(({ path, title, step }) =>
+                    path
+                      ? { path, element: <RebuildingPage title={title} step={step} /> }
+                      : { index: true, element: <RebuildingPage title={title} step={step} /> }
+                  ),
+                ],
               },
             ],
           },

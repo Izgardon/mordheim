@@ -81,6 +81,15 @@ export function useResourceChange(warbandId: number) {
 }
 
 /** A sale in one request: the resource, the new gold and the "Sell" ledger row come back. */
+export function useResourceRename(warbandId: number) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ resourceId, name }: { resourceId: number; name: string }) =>
+      updateWarbandResource(warbandId, resourceId, { name }),
+    onSuccess: (saved) => patchSheetResources(queryClient, warbandId, replaceResource(saved)),
+  });
+}
+
 export function useResourceSale(warbandId: number) {
   const queryClient = useQueryClient();
   return useMutation({

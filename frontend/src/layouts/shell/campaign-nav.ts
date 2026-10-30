@@ -38,7 +38,9 @@ export function warbandLinks(campaign: CampaignNavFlags): NavLink[] {
     ...(campaign.enable_encampments
       ? [{ label: "Encampment", path: "encampments", icon: Tent }]
       : []),
-    ...(campaign.enable_locations ? [{ label: "Locations", path: "locations", icon: Map }] : []),
+    ...(campaign.enable_locations
+      ? [{ label: "Locations", path: "warband?panel=locations", icon: Map }]
+      : []),
   ];
 }
 
