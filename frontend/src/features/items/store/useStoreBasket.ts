@@ -108,6 +108,8 @@ export function useStoreBasket(warbandId: number) {
             target: line.recipient.target,
             item: line.item,
             availabilityId: line.availabilityId,
+            // A mount bought for a unit lands ridden (next step 6); in the stash it is carried.
+            companion: line.recipient.target.kind !== "stash" && line.item.beast_kind === "mount",
             meta: {
               isBuying: !line.free,
               quantity,
