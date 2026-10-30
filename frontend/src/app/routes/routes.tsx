@@ -24,11 +24,11 @@ const Battles = lazy(() => import("../../features/campaigns/routes/Battles"));
 const BattleLayout = lazy(() => import("../../features/battles/routes/BattleLayout"));
 const BattlePrebattle = lazy(() => import("../../features/battles/routes/BattlePrebattle"));
 const BattleActive = lazy(() => import("../../features/battles/routes/BattleActive"));
+const Wargear = lazy(() => import("../../features/items/routes/Wargear"));
 
 /** The campaign pages still to rebuild: placeholders until their redesign step. */
 const CAMPAIGN_PAGES: { path: string; title: string; step: string }[] = [
   { path: "encampments", title: "Encampment", step: "step 7" },
-  { path: "items", title: "Wargear", step: "step 7" },
   { path: "skills", title: "Skills", step: "step 7" },
   { path: "spells", title: "Spells", step: "step 7" },
   { path: "bestiary", title: "Bestiary", step: "step 7" },
@@ -102,6 +102,8 @@ export const routes: RouteObject[] = [
                       { path: "*", element: null },
                     ],
                   },
+                  // Wargear (next step 7a).
+                  { path: "items", element: <Wargear /> },
                   // Locations is a panel of the warband page now (next step 2).
                   {
                     path: "locations",

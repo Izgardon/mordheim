@@ -39,7 +39,7 @@ const words = (text: string) => text.toLowerCase().replace(/[()]/g, " ");
  * one is in its faction's name ("Skaven" for "Skaven (Clan Eshin)"; "Non-Skaven" for anyone else),
  * a Setting one is switched on in the campaign. Anything else (artifacts) is left to the player.
  */
-function allows(restriction: Restriction, buyer: Buyer) {
+export function allows(restriction: Restriction, buyer: Buyer) {
   const name = restriction.restriction.trim();
   const faction = words(buyer.faction).trim();
   if (restriction.type === "Setting") {

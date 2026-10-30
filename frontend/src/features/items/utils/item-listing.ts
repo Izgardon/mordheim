@@ -14,11 +14,6 @@ export const isSold = (item: Pick<Item, "listed">) => item.listed !== false;
 export const beastOf = (item: Pick<Item, "type" | "bestiary_entry">) =>
   item.type === ANIMAL ? (item.bestiary_entry ?? null) : null;
 
-/**
- * Where an Animal item is edited: its beast's bestiary entry, with its form open (the location
- * state the Bestiary reads once).
- */
-export const beastEditLink = (campaignId: number, beastId: number) => ({
-  to: `/campaigns/${campaignId}/bestiary?entry=${beastId}`,
-  state: { editEntry: beastId },
-});
+/** Where an Animal item is edited: its beast's row in the Bestiary, open (its Edit is there). */
+export const beastEditLink = (campaignId: number, beastId: number) =>
+  `/campaigns/${campaignId}/bestiary?open=${beastId}`;
