@@ -1,9 +1,9 @@
 """A battle's key moments, for the overview's and the Battles page's expandable rows (next step 5).
 
-Battles record no turns, so every moment of the fight is grouped "During" and the deaths found in the post-game
-"After". During: each live kill (undone kills don't count, decision 5), each unit taken out of action that no
-recorded kill accounts for, and what each warband found (exploration shards, gold and items). Routs aren't
-recorded, so there are none.
+A kill tapped in a round (next step 6 stamps the round on it) is grouped "Round N"; older kills, and the moments that
+carry no round, are grouped "During", and the deaths found in the post-game "After". During: each live kill (undone
+kills don't count, decision 5), each unit taken out of action that no recorded kill accounts for, and what each
+warband found (exploration shards, gold and items). Routs aren't recorded, so there are none.
 """
 
 from collections.abc import Iterable, Mapping
@@ -73,14 +73,26 @@ def _finds(warband: str, postbattle_json: dict) -> list[str]:
     return texts
 
 
+def kill_group(payload: Any) -> str:
+    """ "Round N" for a kill that carries its round, "During" for an older one."""
+    round_number = payload.get("round") if isinstance(payload, dict) else None
+    return f"Round {round_number}" if isinstance(round_number, int) and round_number > 0 else DURING
+
+
 def battle_moments(participants: Iterable[Any], kill_payloads: Iterable[Any]) -> list[dict[str, str]]:
-    """The battle's moments in order, each `{group, kind, text}`: kills, out of action and finds During, deaths
-    After. `participants` carry `postbattle_json` and `warband.name`."""
+    """The battle's moments in order, each `{group, kind, text}`: kills by round, then the kills with no round,
+    out of action and finds During, then deaths After. `participants` carry `postbattle_json` and `warband.name`."""
+    rounds: dict[int, list[dict[str, str]]] = {}
     during: list[dict[str, str]] = []
     after: list[dict[str, str]] = []
     victims: set[str] = set()
     for payload in kill_payloads:
-        during.append({"group": DURING, "kind": "kill", "text": kill_text(payload)})
+        group = kill_group(payload)
+        moment = {"group": group, "kind": "kill", "text": kill_text(payload)}
+        if group == DURING:
+            during.append(moment)
+        else:
+            rounds.setdefault(int(payload["round"]), []).append(moment)
         if key := victim_key(payload):
             victims.add(key)
     for participant in participants:
@@ -95,4 +107,5 @@ def battle_moments(participants: Iterable[Any], kill_payloads: Iterable[Any]) ->
             {"group": DURING, "kind": "find", "text": text}
             for text in _finds(participant.warband.name, postbattle_json)
         ]
-    return during + after
+    by_round = [moment for number in sorted(rounds) for moment in rounds[number]]
+    return by_round + during + after

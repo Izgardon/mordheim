@@ -219,6 +219,8 @@ class BattleKillAndOoaTests(BattleTestCase):
                 "victim": self.unit(self.r, self.rival.id, name="Rat", type_name="Assassin", is_large=True),
                 "earned_xp": False,
                 "source": "battle",  # or "postbattle", added in the killer's postbattle (decision 5)
+                "round": 1,  # the round it happened in (next step 6)
+                "victim_ooa": True,  # the kill took the victim out of action (next step 6)
                 "notes": "clean",
             },
         )
@@ -237,6 +239,7 @@ class BattleKillAndOoaTests(BattleTestCase):
                 "victim": {"unit_key": None, "unit_type": None, "unit_id": None, "warband_id": None, "name": "Ogre"},
                 "earned_xp": True,
                 "source": "battle",
+                "round": 1,
             },
         )
         self.assertEqual(
@@ -251,7 +254,7 @@ class BattleKillAndOoaTests(BattleTestCase):
             ({"killer_unit_key": "dragon:1", "victim_name": "x"}, "unit_key type is invalid"),
             ({"killer_unit_key": "hero:x", "victim_name": "x"}, "unit_key id must be an integer"),
             ({"killer_unit_key": "hero:0", "victim_name": "x"}, "unit_key id must be an integer"),
-            ({"killer_unit_key": self.a}, "Either victim_unit_key or victim_name is required"),
+            ({"killer_unit_key": self.a}, "Either victim_unit_key, victim_neutral_key or victim_name is required"),
             ({"killer_unit_key": self.a, "victim_name": 5}, "victim_name must be a string"),
             ({"killer_unit_key": self.a, "victim_name": "x" * 121}, "victim_name must be at most 120 characters"),
             ({"killer_unit_key": self.a, "victim_name": "x", "notes": "x" * 501}, "notes must be at most 500 characters"),
@@ -293,6 +296,7 @@ class BattleKillAndOoaTests(BattleTestCase):
                     "warband_id": self.warband.id,
                 },
                 "out_of_action": True,
+                "round": 1,
             },
         )
         self.assertEqual(

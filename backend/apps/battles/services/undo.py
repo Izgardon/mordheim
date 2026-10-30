@@ -9,6 +9,7 @@ from django.utils import timezone
 
 from ..models import Battle, BattleEvent, BattleParticipant
 from ..validation.config import normalize_unit_information
+from .combat import put_back_victim
 from .events import append_event
 from .kills import UNDOABLE_TYPES, killer_unit_key
 from .unit_information import is_empty
@@ -27,13 +28,20 @@ def _take_back_kill(participant: BattleParticipant, unit_key: str | None) -> Non
     participant.save(update_fields=["unit_information_json", "updated_at"])
 
 
-def void_event(battle: Battle, participant: BattleParticipant, event: BattleEvent, *, actor_user) -> dict:
+def void_event(
+    battle: Battle, participant: BattleParticipant, event: BattleEvent, *, actor_user
+) -> tuple[dict, list[int]]:
+    """Void the event; a kill's killer loses it, and its victim, if the kill took him out of action, is put back
+    (services/combat.py). The undo event, and the other participants it changed."""
     event.voided_at = timezone.now()
     event.save(update_fields=["voided_at"])
     unit_key = killer_unit_key(event) if event.type == BattleEvent.TYPE_UNIT_KILL_RECORDED else None
+    others: list[int] = []
     if event.type == BattleEvent.TYPE_UNIT_KILL_RECORDED:
         _take_back_kill(participant, unit_key)
+        others = put_back_victim(battle, event.payload_json or {})
     else:
         unit_key = (event.payload_json or {}).get("unit_key")
     payload = {"voided_event_id": event.id, "unit_key": unit_key}
-    return append_event(battle, UNDOABLE_TYPES[event.type], actor_user=actor_user, payload=payload)
+    undo = append_event(battle, UNDOABLE_TYPES[event.type], actor_user=actor_user, payload=payload)
+    return undo, [row for row in others if row != participant.id]

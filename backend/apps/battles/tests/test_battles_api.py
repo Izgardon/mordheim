@@ -1917,7 +1917,7 @@ class BattleApiTests(APITestCase):
         kill = {"killer_unit_key": f"hero:{owner_hero.id}", "victim_unit_key": f"hero:{player_hero.id}"}
         self._live(self.owner, battle_id, "unit-kill", kill)
         self._live(self.owner, battle_id, "unit-kill", kill)
-        self._live(self.player, battle_id, "unit-ooa", {"unit_key": f"hero:{player_hero.id}", "out_of_action": True})
+        # the kills took the victim out of action already (next step 6)
 
         self.client.force_authenticate(user=self.owner)
         response = self.client.post(
@@ -3810,7 +3810,7 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
             response.data["detail"],
-            "Either victim_unit_key or victim_name is required",
+            "Either victim_unit_key, victim_neutral_key or victim_name is required",
         )
 
     def test_active_config_stat_updates_preserve_live_unit_state(self):

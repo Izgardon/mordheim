@@ -50,6 +50,8 @@ class PetModelTests(BattleTestCase):
         out = self.post_as(self.player, self.url(battle_id, "unit-ooa"), {"unit_key": self.pet, "out_of_action": True})
         self.ok(self.post_as(self.player, self.url(battle_id, "unit-ooa"), {"unit_key": self.pet, "out_of_action": False}), 201)  # fmt: skip
         killed = self.ok(self.kill(self.player, battle_id, self.pet, self.r), 201).data["events"][0]["payload_json"]
+        back = {"unit_key": self.r, "out_of_action": False}  # the kill took the raven out of action (next step 6)
+        self.ok(self.post_as(self.viewer, self.url(battle_id, "unit-ooa"), back), 201)
         victim = self.ok(self.kill(self.viewer, battle_id, self.r, self.pet), 201).data["events"][0]["payload_json"]
 
         self.ok(out, 201)

@@ -41,6 +41,9 @@ def serialize_battle(battle: Battle) -> dict:
         "overdue": is_overdue(battle),
         "results_pending": battle.results_pending,
         "results_confirmer_user_id": battle.results_confirmer_id,
+        "round": battle.round,
+        "round_request": battle.round_request or None,
+        "neutral_groups": battle.neutral_groups_json or [],
     }
 
 

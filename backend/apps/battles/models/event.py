@@ -31,6 +31,13 @@ class BattleEvent(models.Model):
     TYPE_BATTLE_CANCELED = "battle_canceled"
     TYPE_BATTLE_RECORD_EDITED = "battle_record_edited"
     TYPE_PARTICIPANT_NUDGED = "participant_nudged"
+    TYPE_ROUND_REQUESTED = "round_requested"
+    TYPE_ROUND_AGREED = "round_agreed"
+    TYPE_ROUND_REQUEST_WITHDRAWN = "round_request_withdrawn"
+    TYPE_ROUND_STARTED = "round_started"
+    TYPE_NEUTRAL_GROUP_ADDED = "neutral_group_added"
+    TYPE_NEUTRAL_CREATURE_ADDED = "neutral_creature_added"
+    TYPE_NEUTRAL_OOA_SET = "neutral_ooa_set"
 
     TYPE_CHOICES = (
         (TYPE_BATTLE_CREATED, "Battle created"),
@@ -59,6 +66,13 @@ class BattleEvent(models.Model):
         (TYPE_BATTLE_CANCELED, "Battle canceled"),
         (TYPE_BATTLE_RECORD_EDITED, "Battle record edited"),
         (TYPE_PARTICIPANT_NUDGED, "Participant nudged"),
+        (TYPE_ROUND_REQUESTED, "Next round requested"),
+        (TYPE_ROUND_AGREED, "Next round agreed"),
+        (TYPE_ROUND_REQUEST_WITHDRAWN, "Next round request withdrawn"),
+        (TYPE_ROUND_STARTED, "Round started"),
+        (TYPE_NEUTRAL_GROUP_ADDED, "Neutral group added"),
+        (TYPE_NEUTRAL_CREATURE_ADDED, "Neutral creature added"),
+        (TYPE_NEUTRAL_OOA_SET, "Neutral creature out of action set"),
     )
 
     battle = models.ForeignKey(

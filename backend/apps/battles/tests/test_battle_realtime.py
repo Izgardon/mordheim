@@ -38,7 +38,7 @@ class BattleBroadcastTests(BattleTestCase):
         self.assertEqual(event, "battle_started")
         self.assertEqual([entry["user"]["id"] for entry in fields["participants"]], [self.player.id, self.viewer.id])
 
-    def test_a_kill_carries_the_killers_snapshot_and_skips_the_senders_socket(self):
+    def test_a_kill_carries_the_killers_and_victims_snapshots_and_skips_the_senders_socket(self):
         battle_id = self.to_active({self.player: [self.a], self.viewer: [self.r]})
         before = self.battle(battle_id).state_version
         body = {"killer_unit_key": self.a, "victim_unit_key": self.r}
@@ -49,8 +49,9 @@ class BattleBroadcastTests(BattleTestCase):
         self.assertEqual((call.args[1], call.kwargs["socket_id"]), ("unit_kill_recorded", "123.456"))
         self.assertEqual(call.kwargs["state_version"], before + 1)
         self.assertEqual(call.kwargs["battle"]["state_version"], before + 1)
-        (participant,) = call.kwargs["participants"]
+        participant, victim = call.kwargs["participants"]  # the kill took the victim out of action (next step 6)
         self.assertEqual((participant["user"]["id"], participant["unit_information_json"][self.a]["kill_count"]), (self.player.id, 1))  # fmt: skip
+        self.assertEqual((victim["user"]["id"], victim["unit_information_json"][self.r]["out_of_action"]), (self.viewer.id, True))  # fmt: skip
         self.assertNotIn("snapshot_omitted", call.kwargs)
 
         self.ok(self.post_with_socket(self.player, self.url(battle_id, "unit-kill"), body, "not-a-socket"), 201)

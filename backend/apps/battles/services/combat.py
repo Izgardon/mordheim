@@ -13,9 +13,10 @@ from .errors import Refused, battle_status_changed
 from .events import append_event
 from .item_use import item_use_payload
 from .locks import locked
+from .neutrals import find_creature, neutral_groups, put_back, take_out
 from .roster_units import roster_pet
 from .selection import custom_unit_entry, selected_unit_keys
-from .unit_information import unit_entry
+from .unit_information import is_empty, unit_entry
 
 CASTERS = {"Wizard", "Priest"}
 
@@ -82,16 +83,23 @@ def set_out_of_action(battle: Battle, participant: BattleParticipant, unit: dict
     info = unit_entry(unit_information, unit["unit_key"])
     if info["out_of_action"] == out_of_action:
         return []
-    info["out_of_action"] = out_of_action
-    says = info["stats_override"] or info.get("notes", "") or info["out_of_action"] or info["kill_count"]
-    if not (says or info.get("dismounted")):
-        unit_information.pop(unit["unit_key"], None)  # (current wounds aren't kept here, as before)
+    _mark_out_of_action(unit_information, unit["unit_key"], out_of_action)
     participant.unit_information_json = unit_information
     participant.save(update_fields=["unit_information_json", "updated_at"])
     event_type = BattleEvent.TYPE_UNIT_OOA_SET if out_of_action else BattleEvent.TYPE_UNIT_OOA_UNSET
     unit_payload = {key: unit[key] for key in ("unit_key", "unit_type", "unit_id")}
     payload = {"unit": {**unit_payload, "warband_id": participant.warband_id}, "out_of_action": out_of_action}
-    return [append_event(battle, event_type, actor_user=actor, payload=payload)]
+    return [append_event(battle, event_type, actor_user=actor, payload={**payload, "round": battle.round})]
+
+
+def _mark_out_of_action(unit_information: dict, unit_key: str, out_of_action: bool) -> None:
+    """Out of action (or back in it) in a normalised map, in place: the knocked down or stunned status goes either
+    way (next step 6), and an entry left saying nothing is dropped."""
+    info = unit_entry(unit_information, unit_key)
+    info["out_of_action"] = out_of_action
+    info.pop("status", None)
+    if is_empty(info):
+        unit_information.pop(unit_key, None)
 
 
 def _victim_participant(participants: list[BattleParticipant], victim: dict) -> BattleParticipant:
@@ -101,9 +109,36 @@ def _victim_participant(participants: list[BattleParticipant], victim: dict) -> 
     raise Refused("victim_unit_key is not selected in this battle")
 
 
-def record_kill(battle: Battle, participant: BattleParticipant, kill: dict, actor) -> list[dict]:
-    """Record the killer's kill (`kill`: killer, victim or victim_name, earned_xp, source, notes); the killer's live
-    kill_count goes up by one."""
+NO_VICTIM_UNIT = {"unit_key": None, "unit_type": None, "unit_id": None, "warband_id": None}
+
+
+def _take_out_victim(victim_participant: BattleParticipant, victim_key: str, killer: BattleParticipant) -> bool:
+    """A kill in the fight puts its victim out of action (next step 6): whether it did (he wasn't already). The
+    killer's own row is changed through `killer` when the victim is his."""
+    row = killer if victim_participant.id == killer.id else victim_participant
+    unit_information = normalize_unit_information(row.unit_information_json)
+    if unit_entry(unit_information, victim_key)["out_of_action"]:
+        return False
+    _mark_out_of_action(unit_information, victim_key, True)
+    row.unit_information_json = unit_information
+    row.save(update_fields=["unit_information_json", "updated_at"])
+    return True
+
+
+def _neutral_victim(battle: Battle, creature_key: str, source: str) -> tuple[dict, bool]:
+    """A neutral creature as a kill's victim: its payload, and whether the kill took it out of action."""
+    if source == "battle":
+        group, creature, taken_out = take_out(battle, creature_key)
+    else:
+        (group, creature), taken_out = find_creature(neutral_groups(battle), creature_key), False
+    victim = {**NO_VICTIM_UNIT, "name": creature.get("name"), "type_name": group.get("creature_type")}
+    return {**victim, "neutral_key": creature_key}, taken_out
+
+
+def record_kill(battle: Battle, participant: BattleParticipant, kill: dict, actor) -> tuple[list[dict], list[int]]:
+    """Record the killer's kill (`kill`: killer, victim, victim_neutral_key or victim_name, earned_xp, source,
+    notes): the killer's live kill_count goes up by one, and in the fight the victim goes out of action
+    (`victim_ooa` says the kill did it, so undoing it puts him back). The events, and the participants changed."""
     killer, victim, source = kill["killer"], kill["victim"], kill["source"]
     if killer["unit_key"] not in selected_unit_keys(participant):
         raise Refused("killer_unit_key is not selected for this participant")
@@ -113,19 +148,56 @@ def record_kill(battle: Battle, participant: BattleParticipant, kill: dict, acto
         raise Refused("Cannot record kills for a unit that is out of action")
     participants = list(locked(BattleParticipant.objects.filter(battle_id=battle.id).order_by("id")))
     victim_participant = _victim_participant(participants, victim) if victim is not None else None
+    if victim is None and kill.get("victim_neutral_key"):
+        find_creature(neutral_groups(battle), kill["victim_neutral_key"])  # refused before anything is written
     killer_info["kill_count"] = max(0, int(killer_info.get("kill_count", 0))) + 1
     participant.unit_information_json = unit_information
     participant.save(update_fields=["unit_information_json", "updated_at"])
     killer_payload = unit_event_payload(participant, killer)
+    changed, taken_out = [participant.id], False
     if victim_participant is not None:
         victim_payload = unit_event_payload(victim_participant, victim)
+        if source == "battle":
+            taken_out = _take_out_victim(victim_participant, victim["unit_key"], participant)
+            changed = list(dict.fromkeys([participant.id, victim_participant.id]))
+    elif kill.get("victim_neutral_key"):
+        victim_payload, taken_out = _neutral_victim(battle, kill["victim_neutral_key"], source)
     else:
-        victim_payload = {"unit_key": None, "unit_type": None, "unit_id": None, "warband_id": None}
-        victim_payload["name"] = kill["victim_name"]
+        victim_payload = {**NO_VICTIM_UNIT, "name": kill["victim_name"]}
     payload = {"killer": killer_payload, "victim": victim_payload, "earned_xp": kill["earned_xp"], "source": source}
+    if source == "battle":
+        payload["round"] = battle.round
+    if taken_out:
+        payload["victim_ooa"] = True
+    if kill.get("how"):
+        payload["how"] = kill["how"]
     if kill["notes"]:
         payload["notes"] = kill["notes"]
-    return [append_event(battle, BattleEvent.TYPE_UNIT_KILL_RECORDED, actor_user=actor, payload=payload)]
+    return [append_event(battle, BattleEvent.TYPE_UNIT_KILL_RECORDED, actor_user=actor, payload=payload)], changed
+
+
+def put_back_victim(battle: Battle, payload: dict) -> list[int]:
+    """Undoing a kill that took its victim out of action puts him back in it, if he is still out and the battle is
+    still being fought: the participants changed."""
+    victim = payload.get("victim") if isinstance(payload, dict) else None
+    if not (isinstance(victim, dict) and payload.get("victim_ooa")) or battle.status != Battle.STATUS_ACTIVE:
+        return []
+    if isinstance(victim.get("neutral_key"), str):
+        put_back(battle, victim["neutral_key"])
+        return []
+    warband_id, unit_key = victim.get("warband_id"), victim.get("unit_key")
+    if not isinstance(warband_id, int) or not isinstance(unit_key, str):
+        return []
+    row = locked(BattleParticipant.objects.filter(battle_id=battle.id, warband_id=warband_id)).first()
+    if row is None:
+        return []
+    unit_information = normalize_unit_information(row.unit_information_json)
+    if not unit_information.get(unit_key, {}).get("out_of_action"):
+        return []
+    _mark_out_of_action(unit_information, unit_key, False)
+    row.unit_information_json = unit_information
+    row.save(update_fields=["unit_information_json", "updated_at"])
+    return [row.id]
 
 
 def item_use_refusal(battle: Battle, participant: BattleParticipant) -> None:

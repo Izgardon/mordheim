@@ -35,6 +35,9 @@ BATTLE_KEYS = [
     "overdue",
     "results_pending",
     "results_confirmer_user_id",
+    "round",
+    "round_request",
+    "neutral_groups",
 ]
 PARTICIPANT_KEYS = [
     "id",
