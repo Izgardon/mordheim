@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { opponentsOf, resultText } from "@/features/battles/components/aftermath/AftermathAside";
 import { useOpenCampaignBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
@@ -7,13 +8,26 @@ import { usePostgameBattle, type PostgameBattle } from "@/features/battles/hooks
 import { usePostgameDraft } from "@/features/battles/hooks/usePostgameDraft";
 import type { BattleParticipant, BattleState } from "@/features/battles/types/battle-types";
 
-import type { HenchmenGroup, WarbandHireling } from "../../types/warband-types";
+import { warbandTreasuryQuery } from "../../api/economy-queries";
+import type { HenchmenGroup, WarbandHireling, WarbandTrade } from "../../types/warband-types";
 import CampAside from "./CampAside";
 import type { CampRow, OpenCamp, PostgameSlotProps } from "./camp-types";
 import PostgameBar from "./PostgameBar";
 import ReadyCard from "./ReadyCard";
 
 const SHOWN = new Set(["finished_battle", "confirmed_postbattle"]);
+
+/** A purchase in the ledger: a Buy row, or a batch's group with Buy rows under it. */
+const isBuy = (row: WarbandTrade) =>
+  row.action === "Buy" || row.children.some((child) => child.action === "Buy");
+
+/** Whether the ledger's newest rows hold a purchase made since `since` (you finished your fight). */
+function boughtSince(rows: WarbandTrade[], since: string | null | undefined) {
+  const from = since ? Date.parse(since) : NaN;
+  return (
+    !Number.isNaN(from) && rows.some((row) => isBuy(row) && Date.parse(row.created_at) >= from)
+  );
+}
 
 /** Camp and the ready card sit in the web's sidebar beside the roster; on a phone at the top. */
 const inAside = (props: PostgameSlotProps, node: ReactNode) =>
@@ -43,6 +57,7 @@ function OpenDraft({
     participant: me,
   });
   const [params, setParams] = useSearchParams();
+  const ledger = useInfiniteQuery(warbandTreasuryQuery(campaignId, props.warbandId));
   const draft = postgame.drafting.draft;
   if (!draft) return null;
   const setCamp = (row: CampRow | "ready" | null) => {
@@ -65,6 +80,7 @@ function OpenDraft({
     gold: sheet?.summary.gold ?? sheet?.warband.gold ?? 0,
     groups: (sheet?.henchmen_groups ?? []) as HenchmenGroup[],
     hirelings: (sheet?.hirelings ?? []) as WarbandHireling[],
+    bought: boughtSince(ledger.data?.pages[0]?.results ?? [], me.finished_at),
     focus: params.get("camp"),
     setCamp,
   };

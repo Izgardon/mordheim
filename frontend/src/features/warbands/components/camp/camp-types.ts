@@ -39,6 +39,8 @@ export type OpenCamp = PostgameSlotProps & {
   gold: number;
   groups: HenchmenGroup[];
   hirelings: WarbandHireling[];
+  /** Something was bought since the battle (a Buy row in the ledger after you finished): Buy ticks. */
+  bought: boolean;
   /** `?camp=`: the row picked from the bar, or "ready" while the confirm is open. */
   focus: string | null;
   setCamp: (row: CampRow | "ready" | null) => void;

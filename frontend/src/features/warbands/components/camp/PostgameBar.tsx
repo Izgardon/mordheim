@@ -16,7 +16,7 @@ export function campDone(camp: OpenCamp): Record<CampRow, boolean> {
     recruit: Boolean(record.recruited?.length),
     hire: false,
     upkeep: upkeepLines(camp).every((line) => line.status !== "due"),
-    buy: false,
+    buy: camp.bought,
   };
 }
 
