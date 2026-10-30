@@ -19,11 +19,11 @@ const CampaignLayout = lazy(() => import("../../features/campaigns/routes/Campai
 const Campaigns = lazy(() => import("../../features/campaigns/routes/Campaigns"));
 const Warband = lazy(() => import("../../features/warbands/routes/Warband"));
 const Aftermath = lazy(() => import("../../features/battles/routes/Aftermath"));
+const Overview = lazy(() => import("../../features/campaigns/routes/Overview"));
+const Battles = lazy(() => import("../../features/campaigns/routes/Battles"));
 
 /** The campaign pages still to rebuild: placeholders until their redesign step. */
-const CAMPAIGN_PAGES: { path?: string; title: string; step: string }[] = [
-  { title: "Overview", step: "step 5" },
-  { path: "battles", title: "Battles", step: "step 5" },
+const CAMPAIGN_PAGES: { path: string; title: string; step: string }[] = [
   { path: "encampments", title: "Encampment", step: "step 7" },
   { path: "items", title: "Wargear", step: "step 7" },
   { path: "skills", title: "Skills", step: "step 7" },
@@ -81,6 +81,9 @@ export const routes: RouteObject[] = [
                 // A page that throws is replaced in place; the campaign shell stays usable.
                 errorElement: <RouteError variant="inline" />,
                 children: [
+                  // The overview and the Battles page (next step 5).
+                  { index: true, element: <Overview /> },
+                  { path: "battles", element: <Battles /> },
                   { path: "warband", element: <Warband /> },
                   { path: "warbands/:warbandId", element: <Warband /> },
                   // The Aftermath (next step 3); the rest of a battle waits for step 6.
@@ -90,11 +93,10 @@ export const routes: RouteObject[] = [
                     path: "locations",
                     element: <Navigate to="../warband?panel=locations" replace />,
                   },
-                  ...CAMPAIGN_PAGES.map(({ path, title, step }) =>
-                    path
-                      ? { path, element: <RebuildingPage title={title} step={step} /> }
-                      : { index: true, element: <RebuildingPage title={title} step={step} /> }
-                  ),
+                  ...CAMPAIGN_PAGES.map(({ path, title, step }) => ({
+                    path,
+                    element: <RebuildingPage title={title} step={step} />,
+                  })),
                 ],
               },
             ],

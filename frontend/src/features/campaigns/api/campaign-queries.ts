@@ -5,6 +5,7 @@ import {
   listCampaignActiveBattles,
   listCampaignBattleHistory,
   listCampaignBulletinEntries,
+  listCampaignChronicle,
   listCampaignEncampments,
   listCampaignMembers,
   listCampaignPivotalMoments,
@@ -22,6 +23,7 @@ import { queryKeys } from "@/lib/query-keys";
 
 // types
 import type { Restriction } from "@/features/items/types/item-types";
+import type { CampaignChronicleKind } from "../types/campaign-types";
 
 /**
  * The campaign's shared lists as TanStack queries, under `["campaign", id, ...]` (IMP-66), so a
@@ -60,6 +62,15 @@ export function useCampaignBattleHistory(campaignId: number) {
   return useQuery({
     queryKey: queryKeys.campaign.battleHistory(campaignId),
     queryFn: () => listCampaignBattleHistory(campaignId),
+    ...listOptions(campaignId),
+  });
+}
+
+/** The chronicle, one list per filter (next step 5): kills, deaths, level-ups, purchases, trades. */
+export function useCampaignChronicle(campaignId: number, kind: CampaignChronicleKind | "all") {
+  return useQuery({
+    queryKey: queryKeys.campaign.chronicle(campaignId, kind),
+    queryFn: () => listCampaignChronicle(campaignId, kind),
     ...listOptions(campaignId),
   });
 }

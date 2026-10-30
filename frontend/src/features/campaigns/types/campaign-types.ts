@@ -82,6 +82,8 @@ export type CampaignPlayer = {
   /** The open battle a busy player is in, and its last write (decision 1). */
   battle_busy_battle_id?: number | null;
   battle_busy_last_activity_at?: string | null;
+  /** His own status in that battle (next step 5: finished_battle is his post-game). */
+  battle_busy_participant_status?: string | null;
   warband?: {
     id: number;
     name: string;
@@ -103,6 +105,16 @@ export type CampaignBattleHistoryParticipant = {
   deaths: string[];
   xp_gain: number | null;
   exploration: number[];
+  /** The exploration's shards and the heroes the post-game left dead (next step 5). */
+  shards?: number | null;
+  heroes_lost?: number;
+};
+
+/** A battle's key moment: battles record no turns, so the fight's are "During", deaths "After". */
+export type CampaignBattleMoment = {
+  group: "During" | "After";
+  kind: "kill" | "ooa" | "find" | "death";
+  text: string;
 };
 
 export type CampaignBattleHistoryEntry = {
@@ -111,6 +123,17 @@ export type CampaignBattleHistoryEntry = {
   winners: string[];
   date: string;
   participants: CampaignBattleHistoryParticipant[];
+  moments?: CampaignBattleMoment[];
+};
+
+export type CampaignChronicleKind = "kill" | "death" | "level" | "buy" | "trade";
+
+/** One chronicle entry (GET chronicle/): what happened, where, and when. */
+export type CampaignChronicleEntry = {
+  kind: CampaignChronicleKind;
+  text: string;
+  meta: string;
+  at: string;
 };
 
 export type CampaignActiveBattle = {

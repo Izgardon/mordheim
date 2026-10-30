@@ -261,10 +261,11 @@ export function saveBattlePostbattleDraft(
   return battleWrite(campaignId, battleId, "postbattle/", payload);
 }
 
+/** Ready: applies the draft sent, or (no payload: starting a battle readies you up) the saved one. */
 export function finalizeBattlePostbattle(
   campaignId: number,
   battleId: number,
-  payload: { postbattle_json: BattlePostbattleState }
+  payload?: { postbattle_json: BattlePostbattleState }
 ) {
   return battleWrite(campaignId, battleId, "finalize-postbattle/", payload);
 }

@@ -42,6 +42,10 @@ type UseStartBattleFormParams = {
   campaignId: number;
   creatorUserId: number;
   players: CampaignPlayer[];
+  /** The mode the dialog opens in (Start battle or Report a result, next step 5). */
+  initialMode?: BattleDialogMode;
+  /** Before a battle is created (not a reported result): readies you up first (next step 5). */
+  beforeStart?: () => Promise<void>;
   onBattleCreated?: () => void;
 };
 
@@ -56,6 +60,8 @@ export function useStartBattleForm({
   campaignId,
   creatorUserId,
   players,
+  initialMode = "start_battle",
+  beforeStart,
   onBattleCreated,
 }: UseStartBattleFormParams) {
   const [mode, setMode] = useState<BattleDialogMode>("start_battle");
@@ -100,7 +106,7 @@ export function useStartBattleForm({
     if (!open) {
       return;
     }
-    setMode("start_battle");
+    setMode(initialMode);
     setSelectedUserIds([]);
     setSelectedWinnerWarbandIds([]);
     setNoWinner(false);
@@ -108,7 +114,7 @@ export function useStartBattleForm({
     setScenario("");
     setScenarioLink("");
     setBattleDate(getTodayInputValue());
-  }, [open]);
+  }, [open, initialMode]);
 
   useEffect(() => {
     setSelectedUserIds((prev) => prev.filter((userId) => Boolean(eligiblePlayerById[userId])));
@@ -180,6 +186,7 @@ export function useStartBattleForm({
     setIsSubmitting(true);
     setError("");
     try {
+      if (mode === "start_battle") await beforeStart?.();
       const answer = await send();
       toastBattleWarnings(answer.warnings);
       onOpenChange(false);

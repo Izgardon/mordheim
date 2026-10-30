@@ -38,6 +38,8 @@ export const queryKeys = {
     /** Members' ids and names only (`players/?fields=basic`), for name pickers (PERF-41). */
     playerNames: (campaignId: number) => ["campaign", campaignId, "players", "basic"] as const,
     battleHistory: (campaignId: number) => ["campaign", campaignId, "battle-history"] as const,
+    chronicle: (campaignId: number, kind: string) =>
+      ["campaign", campaignId, "chronicle", kind] as const,
     pivotalMoments: (campaignId: number) => ["campaign", campaignId, "pivotal-moments"] as const,
     /** The campaign's completed trades (the overview's Trades table). */
     completedTrades: (campaignId: number) =>
