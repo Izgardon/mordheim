@@ -27,11 +27,13 @@ import type { CampaignSummary } from "../types/campaign-types";
 /**
  * What the layout shares with every campaign page. It owns the campaign query (pages read the
  * campaign from here, and `useUpdateCampaign` writes answers back into it). A battle page puts its
- * actions in the phone's battle Menu with `setBattleMenuActions`.
+ * actions in the phone's battle Menu with `setBattleMenuActions`, and opens the shell's dice, chat
+ * and notifications with `openTool` (the battle screen's own menu, next step 6).
  */
 export type CampaignLayoutContext = {
   campaign: CampaignSummary | null;
   setBattleMenuActions: (actions: BattleMenuAction[]) => void;
+  openTool: (tool: CampaignTool) => void;
 };
 
 /** The campaign shell (design E): the nav rail on the web; top bar and bottom nav on a phone. */
@@ -46,8 +48,9 @@ export default function CampaignLayout() {
   const campaign = campaignQuery.data ?? null;
   const segments = pathname.split("/").filter(Boolean);
   const isBattleRoute = segments[2] === "battles";
-  // The Aftermath brings its own header and footer on a phone (next step 3).
-  const isAftermath = isBattleRoute && segments[4] === "postbattle";
+  // The Aftermath (next step 3) and the battle screen (next step 6) bring their own header and
+  // footer on a phone.
+  const ownChrome = isBattleRoute && (segments[4] === "postbattle" || segments[4] === "active");
   const { canRejoinBattle, rejoinBattle } = useBattleSession(campaignId, {
     isBattleRoute,
     battleId: Number(segments[3] ?? ""),
@@ -62,7 +65,7 @@ export default function CampaignLayout() {
   // Stable unless a value changes, so the layout re-rendering (store writes, notifications)
   // doesn't re-render the page through its outlet context (PERF-19).
   const outletContext = useMemo<CampaignLayoutContext>(
-    () => ({ campaign, setBattleMenuActions }),
+    () => ({ campaign, setBattleMenuActions, openTool: setOpenTool }),
     [campaign]
   );
 
@@ -97,11 +100,17 @@ export default function CampaignLayout() {
       look={toolsLook}
     />
   );
-  const mobileChrome = isAftermath
+  const mobileChrome = ownChrome
     ? { bottomNav: tools }
     : isBattleRoute
       ? {
-          topBar: <BattleTopBar kicker={campaign.name} title="Battle" onBack={backToCampaign} />,
+          topBar: (
+            <BattleTopBar
+              kicker={campaign.name}
+              title={segments[4] === "prebattle" ? "Before the battle" : "Battle"}
+              onBack={backToCampaign}
+            />
+          ),
           bottomNav: (
             <>
               {tools}

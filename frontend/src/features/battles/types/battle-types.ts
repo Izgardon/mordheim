@@ -48,12 +48,41 @@ export type BattleCustomUnit = {
   stats: BattleUnitStats;
 };
 
+/** A unit's state in the fight besides out of action (which has its own event). */
+export type BattleUnitStatus = "knocked_down" | "stunned";
+
+/** A neutral creature's state: the four the status button cycles through. */
+export type BattleCreatureStatus = "standing" | "knocked_down" | "stunned" | "out_of_action";
+
+/** One creature nobody plays (next step 6); `key` is stable, so a kill can name it. */
+export type BattleNeutralCreature = {
+  key: string;
+  name: string;
+  status: BattleCreatureStatus;
+  wounds: number;
+};
+
+/** A group of creatures nobody plays: its name, its bestiary type and profile, its creatures. */
+export type BattleNeutralGroup = {
+  key: string;
+  name: string;
+  creature_type: string;
+  max_wounds?: number;
+  stats?: Partial<BattleUnitStats>;
+  creatures: BattleNeutralCreature[];
+};
+
+/** Someone asked for the next round: the round, who asked, and who has agreed (user ids). */
+export type BattleRoundRequest = { round: number; asked_by: number; agreed: number[] };
+
 export type BattleUnitInformationEntry = {
   stats_override: Partial<BattleUnitStats>;
   notes?: string;
   current_wounds?: number | null;
   out_of_action: boolean;
   kill_count: number;
+  /** Knocked down or stunned (next step 6); left out while the unit stands. */
+  status?: BattleUnitStatus;
   /** A rider off his mount for the rest of the battle (step 5); left out otherwise. */
   dismounted?: boolean;
 };
@@ -203,7 +232,14 @@ export type BattleEventType =
   | "item_used_voided"
   | "battle_results_confirmed"
   | "battle_record_edited"
-  | "participant_nudged";
+  | "participant_nudged"
+  | "round_requested"
+  | "round_agreed"
+  | "round_request_withdrawn"
+  | "round_started"
+  | "neutral_group_added"
+  | "neutral_creature_added"
+  | "neutral_ooa_set";
 
 export type BattleSummary = {
   id: number;
@@ -231,6 +267,12 @@ export type BattleSummary = {
   /** Every player has finished his fight; the results wait for the last one (decision 4). */
   results_pending?: boolean;
   results_confirmer_user_id?: number | null;
+  /** The fight's round, from 1 (next step 6). */
+  round?: number;
+  /** The open ask for the next round: who asked and who has agreed. */
+  round_request?: BattleRoundRequest | null;
+  /** Creatures nobody plays, in every snapshot (never rostered). */
+  neutral_groups?: BattleNeutralGroup[];
 };
 
 /** The fields every participant view has; `?view=active` sends only these (IMP-54). */
@@ -312,7 +354,18 @@ export type BattleParticipant = BattleParticipantCore &
 export type UnitKillPayload = {
   killer?: { unit_key?: string; warband_id?: number; name?: string };
   /** A unit of another warband (its key and warband), or only the name typed for one. */
-  victim?: { unit_key?: string | null; warband_id?: number | null; name?: string | null };
+  victim?: {
+    unit_key?: string | null;
+    warband_id?: number | null;
+    name?: string | null;
+    type_name?: string | null;
+    /** A neutral creature's key (next step 6). */
+    neutral_key?: string;
+  };
+  /** The round it happened in, for a kill in the fight (next step 6). */
+  round?: number;
+  /** The kill took its victim out of action; undoing it puts him back. */
+  victim_ooa?: boolean;
   earned_xp?: boolean;
   source?: "battle" | "postbattle";
   [field: string]: unknown;

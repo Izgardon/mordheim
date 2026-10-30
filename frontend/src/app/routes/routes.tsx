@@ -21,6 +21,8 @@ const Warband = lazy(() => import("../../features/warbands/routes/Warband"));
 const Aftermath = lazy(() => import("../../features/battles/routes/Aftermath"));
 const Overview = lazy(() => import("../../features/campaigns/routes/Overview"));
 const Battles = lazy(() => import("../../features/campaigns/routes/Battles"));
+const BattleLayout = lazy(() => import("../../features/battles/routes/BattleLayout"));
+const BattlePrebattle = lazy(() => import("../../features/battles/routes/BattlePrebattle"));
 
 /** The campaign pages still to rebuild: placeholders until their redesign step. */
 const CAMPAIGN_PAGES: { path: string; title: string; step: string }[] = [
@@ -34,7 +36,6 @@ const CAMPAIGN_PAGES: { path: string; title: string; step: string }[] = [
   { path: "rules", title: "Rules", step: "step 7" },
   { path: "house-rules", title: "House rules", step: "step 7" },
   { path: "settings", title: "Settings", step: "step 7" },
-  { path: "battles/:battleId/*", title: "Battle", step: "step 6" },
 ];
 
 function RootLayout() {
@@ -86,8 +87,19 @@ export const routes: RouteObject[] = [
                   { path: "battles", element: <Battles /> },
                   { path: "warband", element: <Warband /> },
                   { path: "warbands/:warbandId", element: <Warband /> },
-                  // The Aftermath (next step 3); the rest of a battle waits for step 6.
+                  // The Aftermath (next step 3).
                   { path: "battles/:battleId/postbattle", element: <Aftermath /> },
+                  // The invitation and the pre-battle (next step 6): the layout sends
+                  // each player to the page for his status; the bare battle URL only redirects.
+                  {
+                    path: "battles/:battleId",
+                    element: <BattleLayout />,
+                    children: [
+                      { index: true, element: null },
+                      { path: "prebattle", element: <BattlePrebattle /> },
+                      { path: "*", element: null },
+                    ],
+                  },
                   // Locations is a panel of the warband page now (next step 2).
                   {
                     path: "locations",

@@ -8,11 +8,14 @@ import type {
  * Which battle page shows what (IMP-51): one place decides between loading, an error, a redirect
  * to the page the battle is on now, and the page itself. `BattleLayout` runs it for every page.
  *
- *   inviting   → stays on the page it was opened on (prebattle shows the invite gate)
+ *   inviting   → stays on the page it was opened on (prebattle shows the invitation)
  *   prebattle  → /prebattle
  *   active     → /active, or /postbattle once you have finished your own fight (decision 4)
  *   postbattle → /postbattle
  *   ended, canceled → the campaign overview
+ *
+ * `battles/:battleId` itself (no page, next step 6) always goes to the page for the battle's status:
+ * an invitation or a reported result to /prebattle.
  */
 
 export type BattlePhase = "prebattle" | "active" | "postbattle";
@@ -74,7 +77,8 @@ export function deriveBattleView({
   battle,
   participantStatus,
 }: {
-  page: BattlePhase;
+  /** The page the URL names; null for `battles/:battleId` alone, which only redirects. */
+  page: BattlePhase | null;
   isLoading: boolean;
   error: string;
   battle: BattleSummary | null | undefined;
@@ -82,12 +86,12 @@ export function deriveBattleView({
   participantStatus?: BattleParticipantStatus;
 }): BattleView {
   if (isLoading) {
-    return { kind: "loading", message: PAGE_COPY[page].loading };
+    return { kind: "loading", message: PAGE_COPY[page ?? "active"].loading };
   }
   if (error || !battle) {
-    return { kind: "error", message: error || PAGE_COPY[page].error };
+    return { kind: "error", message: error || PAGE_COPY[page ?? "active"].error };
   }
-  const target = pageForStatus(battle.status, participantStatus);
+  const target = pageForStatus(battle.status, participantStatus) ?? (page ? null : "prebattle");
   if (target && target !== page) {
     return { kind: "redirect", to: target };
   }

@@ -33,6 +33,11 @@ export default function Aftermath() {
   if (participant.status === "confirmed_postbattle" || battleState.battle.status === "ended") {
     return <Navigate to={warbandPath} replace />;
   }
+  const stillOpen = ["inviting", "prebattle", "active"].includes(battleState.battle.status);
+  if (participant.status !== "finished_battle" && stillOpen) {
+    // Not finished fighting yet: the battle's own route sends him to his page (next step 6).
+    return <Navigate to={`/campaigns/${campaignId}/battles/${battleState.battle.id}`} replace />;
+  }
   if (participant.status !== "finished_battle") {
     return (
       <p className="text-sm text-text2">
