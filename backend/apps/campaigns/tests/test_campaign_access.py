@@ -41,6 +41,7 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("GET", "", None, OK_ALL),
     ("PATCH", "", {"in_progress": True}, (403, 403, 200, 200)),
     ("PATCH", "", {"max_heroes": 5}, (403, 403, 403, 200)),
+    ("PATCH", "", {"name": "Ashes"}, (403, 403, 403, 200)),
     ("DELETE", "", {"name": "Shards"}, (403, 403, 403, 403)),  # archived first (decision 5)
     ("POST", "join-code/", {}, (403, 403, 200, 200)),
     ("GET", "players/", None, OK_ALL),
@@ -61,6 +62,7 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("GET", "locations/", None, OK_ALL),
     ("POST", "locations/", {"name": "Ruin"}, (403, 201, 201, 201)),
     ("PATCH", "locations/{place}/", {"name": "Ruin 2"}, (403, 200, 200, 200)),
+    ("DELETE", "locations/{place}/", None, (403, 204, 204, 204)),
     ("GET", "members/", None, (403, 403, 200, 200)),
     ("PUT", "members/{rival}/permissions/", {"permissions": ["edit_catalogue"]}, (403, 403, 200, 200)),
     ("PATCH", "members/{rival}/role/", {"role": "player"}, (403, 403, 403, 200)),

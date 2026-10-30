@@ -107,6 +107,7 @@ class CampaignCreateSerializer(serializers.Serializer):
 
 class CampaignUpdateSerializer(serializers.Serializer):
     in_progress = serializers.BooleanField(required=False)
+    name = serializers.CharField(required=False, max_length=120)  # a rename: trimmed, never blank
     max_heroes = serializers.IntegerField(required=False, min_value=0, max_value=SMALLINT_MAX)
     max_hired_swords = serializers.IntegerField(required=False, min_value=0, max_value=SMALLINT_MAX)
     starting_gold = serializers.IntegerField(required=False, min_value=0, max_value=MAX_TRADE_PRICE)

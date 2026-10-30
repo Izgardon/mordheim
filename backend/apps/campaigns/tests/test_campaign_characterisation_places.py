@@ -2,7 +2,7 @@
 
 Both pages sit behind a settings flag (404 while it's off). Encampments (decision 9, CAMP-TWEAK-08): any member adds
 one, owned by himself unless he picks another member; its owner or `manage_encampments` edits, reassigns and removes it
-(a soft delete). Locations are parked: writes need `manage_locations` and there is no delete.
+(a soft delete). Locations: writes need `manage_locations`, and removing one is a soft delete (next step 7b).
 """
 
 from typing import Any
@@ -127,19 +127,24 @@ class LocationTests(CampaignTestCase):
     def add(self, user: Any, **body: Any) -> Any:
         return self.post_as(user, self.url("locations/"), {"name": "River Quarter", **body})
 
-    def test_writes_need_manage_locations_and_there_is_no_delete(self):
+    def test_writes_need_manage_locations_and_a_removal_is_soft(self):
         self.assertEqual(self.add(self.player).status_code, 403)
         location = self.add(self.admin).data
         url = self.url(f"locations/{location['id']}/")
         self.assertEqual(self.patch_as(self.player, url, {"d6_1": "Ambush"}).status_code, 403)
+        self.assertEqual(self.delete_as(self.player, url).status_code, 403)
         self.assertEqual(self.get_as(self.player, self.url("locations/")).status_code, 200)
 
         self.grant(self.player, "manage_locations")
 
         self.assertEqual(self.patch_as(self.player, url, {"d6_1": "Ambush"}).data["d6_1"], "Ambush")
-        # CAMP-UX-03's location half is parked: no delete for anyone
-        self.assertEqual(self.delete_as(self.owner, url).status_code, 405)
-        self.assertTrue(CampaignLocation.objects.filter(id=location["id"]).exists())
+        # next step 7b: settings' Locations section removes one; it leaves the list but the row stays
+        self.assertEqual(self.delete_as(self.player, url).status_code, 204)
+        self.assertEqual(self.get_as(self.player, self.url("locations/")).data, [])
+        self.assertEqual(self.patch_as(self.owner, url, {"name": "Back"}).status_code, 404)
+        self.assertEqual(self.delete_as(self.owner, url).status_code, 404)
+        removed = CampaignLocation.objects.get(id=location["id"])
+        self.assertEqual(removed.removed_by_id, self.player.id)
 
     def test_a_location_has_an_optional_area_trimmed_and_editable(self):
         plain = self.add(self.owner).data

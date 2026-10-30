@@ -24,7 +24,7 @@ SETTINGS_FIELDS = (
 
 
 START_FIELDS = frozenset({"in_progress"})
-UPDATE_FIELDS = frozenset({*START_FIELDS, *SETTINGS_FIELDS, "item_setting_ids", starting_gold.ADJUST_FLAG})
+UPDATE_FIELDS = frozenset({*START_FIELDS, *SETTINGS_FIELDS, "name", "item_setting_ids", starting_gold.ADJUST_FLAG})
 
 
 def rule_for(data: Any) -> str:
@@ -45,6 +45,9 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> None:
         if "in_progress" in validated:
             campaign.in_progress = validated["in_progress"]
             campaign.save(update_fields=["in_progress"])
+        if "name" in validated:  # a rename (the owner, next step 7b)
+            campaign.name = validated["name"]
+            campaign.save(update_fields=["name"])
         if not settings_updates and item_setting_ids is None:
             return
         settings, _ = CampaignSettings.objects.get_or_create(campaign=campaign)

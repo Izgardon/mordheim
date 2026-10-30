@@ -92,16 +92,27 @@ class CampaignSettingsTests(CampaignTestCase):
                 self.assertEqual(response.status_code, expected)
         self.assertFalse(CampaignSettings.objects.get(campaign=self.campaign).enable_encampments)
 
-    def test_name_join_code_and_seats_are_not_editable(self):
-        # The PATCH ignores fields it doesn't know: no rename, no new join code (CAMP-NEW-01), no seat change
-        before = (self.campaign.name, self.campaign.join_code)
-        for body in ({"name": "Renamed"}, {"join_code": "NEWONE"}, {"max_players": 12}, {}):
+    def test_join_code_and_seats_are_not_editable(self):
+        # The PATCH ignores fields it doesn't know: no new join code (CAMP-NEW-01), no seat change
+        join_code = self.campaign.join_code
+        for body in ({"join_code": "NEWONE"}, {"max_players": 12}, {}):
             with self.subTest(body=body):
                 response = self.patch_as(self.owner, self.url(), body)
                 self.assertEqual((response.status_code, response.data), (400, {"detail": "No updates provided."}))
         self.campaign.refresh_from_db()
-        self.assertEqual((self.campaign.name, self.campaign.join_code), before)
+        self.assertEqual(self.campaign.join_code, join_code)
         self.assertEqual(CampaignSettings.objects.get(campaign=self.campaign).max_players, 8)
+
+    def test_the_owner_renames_the_campaign(self):
+        # next step 7b: settings' Campaign section renames it; trimmed, never blank, the owner only
+        self.assertEqual(self.patch_as(self.admin, self.url(), {"name": "Renamed"}).status_code, 403)
+        self.assertEqual(self.patch_as(self.owner, self.url(), {"name": "   "}).status_code, 400)
+
+        response = self.patch_as(self.owner, self.url(), {"name": "  Ashes of Mordheim "})
+
+        self.assertEqual((response.status_code, response.data["name"]), (200, "Ashes of Mordheim"))
+        self.campaign.refresh_from_db()
+        self.assertEqual(self.campaign.name, "Ashes of Mordheim")
 
     def test_settings_are_validated_and_normalised(self):
         invalid: list[dict[str, Any]] = [

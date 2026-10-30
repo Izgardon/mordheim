@@ -301,6 +301,11 @@ class CampaignLocation(models.Model):
     d6_4 = models.TextField(blank=True, default="")
     d6_5 = models.TextField(blank=True, default="")
     d6_6 = models.TextField(blank=True, default="")
+    # soft delete by a manage_locations holder: no longer listed (next step 7b)
+    removed_at = models.DateTimeField(null=True, blank=True)
+    removed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="+", on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     class Meta:
         db_table = "campaign_location"

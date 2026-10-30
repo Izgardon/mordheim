@@ -5,7 +5,7 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from ..effects import common_rules
-from ..models import CampaignBulletinEntry, CampaignHouseRule, CampaignLocation
+from ..models import CampaignBulletinEntry, CampaignHouseRule
 from ..serializers.content import (
     CampaignBulletinEntryCreateSerializer,
     CampaignBulletinEntrySerializer,
@@ -118,18 +118,25 @@ class CampaignLocationsView(CampaignScopedView):
 
 
 class CampaignLocationDetailView(CampaignScopedView):
-    """PATCH: edit a location (manage_locations, with the page switched on)."""
+    """PATCH: edit a location. DELETE: remove it (a soft delete). Both manage_locations, with the page switched on."""
 
     feature_flag = "enable_locations"
-    rules = {"PATCH": "manage_locations"}
+    rules = {"PATCH": "manage_locations", "DELETE": "manage_locations"}
 
     def patch(self, request, campaign_id, location_id):
-        entry = CampaignLocation.objects.filter(id=location_id, campaign_id=campaign_id).first()
+        entry = locations.locations(campaign_id).filter(id=location_id).first()
         if not entry:
             return not_found()
         serializer = CampaignLocationWriteSerializer(entry, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         return Response(CampaignLocationSerializer(locations.update(entry, serializer.validated_data)).data)
+
+    def delete(self, request, campaign_id, location_id):
+        entry = locations.locations(campaign_id).filter(id=location_id).first()
+        if not entry:
+            return not_found()
+        locations.remove(entry, request.user)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CampaignHouseRulesView(CampaignScopedView):
