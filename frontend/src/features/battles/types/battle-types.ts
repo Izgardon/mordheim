@@ -98,7 +98,16 @@ export type BattlePostbattleUnitResult = {
   keep_stats?: boolean;
   /** Ticked from the last roll's `misses`: set at finalise (heroes and hired swords only). */
   missing_games?: BattlePostbattleMissingGames;
+  /** The advances rolled in the Aftermath, taken at finalise (a group's ride on each member). */
+  advances?: BattlePostbattleAdvance[];
 };
+
+/**
+ * An advance rolled in the Aftermath: the advance id (a stat, Skill, Spell, Special, or LGT for
+ * the lad's got talent, resolved from the card), the threshold it was for and the dice (2D6, then
+ * the D6 that followed).
+ */
+export type BattlePostbattleAdvance = { id: string; label: string; at: number; rolls: number[] };
 
 export type BattlePostbattleExploration = {
   dice_values: number[];
@@ -114,6 +123,8 @@ export type BattlePostbattleUpkeepEntry = {
   cost: number | null;
   /** The suggestion's upkeep formula ("1 piece of wyrdstone"): a reminder, never saved. */
   cost_expression?: string;
+  /** Paid at camp (a tick: upkeep is charged at Ready either way, unless he was let go). */
+  paid?: boolean;
 };
 
 export type BattlePostbattleUpkeep = {
@@ -143,6 +154,15 @@ export type BattlePostbattleState = {
    * result, never automatic; a dead mount leaves him at finalise. Left out when there is none.
    */
   mount_survival?: Record<string, BattlePostbattleMountSurvival>;
+  /** The camp's record (next step 3): the veterans' XP pool, what was sold and recruited. */
+  camp?: BattlePostgameCamp;
+};
+
+export type BattlePostgameCamp = {
+  /** The 2D6 rolled for the veterans' XP pool and the XP shared out of it so far. */
+  veterans?: { dice: number[]; spent: number };
+  sold?: { name: string; quantity: number; gold: number }[];
+  recruited?: { group: string; count: number; xp: number }[];
 };
 
 export type BattlePostbattleMountSurvival = { roll: number | null; dead: boolean };

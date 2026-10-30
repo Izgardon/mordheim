@@ -18,6 +18,7 @@ const Account = lazy(() => import("../../features/auth/routes/Account"));
 const CampaignLayout = lazy(() => import("../../features/campaigns/routes/CampaignLayout"));
 const Campaigns = lazy(() => import("../../features/campaigns/routes/Campaigns"));
 const Warband = lazy(() => import("../../features/warbands/routes/Warband"));
+const Aftermath = lazy(() => import("../../features/battles/routes/Aftermath"));
 
 /** The campaign pages still to rebuild: placeholders until their redesign step. */
 const CAMPAIGN_PAGES: { path?: string; title: string; step: string }[] = [
@@ -81,6 +82,8 @@ export const routes: RouteObject[] = [
                 children: [
                   { path: "warband", element: <Warband /> },
                   { path: "warbands/:warbandId", element: <Warband /> },
+                  // The Aftermath (next step 3); the rest of a battle waits for step 6.
+                  { path: "battles/:battleId/postbattle", element: <Aftermath /> },
                   // Locations is a panel of the warband page now (next step 2).
                   {
                     path: "locations",

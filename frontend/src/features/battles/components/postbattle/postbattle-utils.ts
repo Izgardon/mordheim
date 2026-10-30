@@ -429,6 +429,8 @@ export function buildPostbattleDraft(
     unit_results: nextUnitResults,
     // The mounts' rolls saved so far (step 5); left out until one is rolled.
     ...(existing?.mount_survival ? { mount_survival: existing.mount_survival } : {}),
+    // The camp's record (next step 3), kept as it was saved.
+    ...(existing?.camp ? { camp: existing.camp } : {}),
   };
 }
 

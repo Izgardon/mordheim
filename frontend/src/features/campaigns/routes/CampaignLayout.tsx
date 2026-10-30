@@ -46,6 +46,8 @@ export default function CampaignLayout() {
   const campaign = campaignQuery.data ?? null;
   const segments = pathname.split("/").filter(Boolean);
   const isBattleRoute = segments[2] === "battles";
+  // The Aftermath brings its own header and footer on a phone (next step 3).
+  const isAftermath = isBattleRoute && segments[4] === "postbattle";
   const { canRejoinBattle, rejoinBattle } = useBattleSession(campaignId, {
     isBattleRoute,
     battleId: Number(segments[3] ?? ""),
@@ -95,36 +97,38 @@ export default function CampaignLayout() {
       look={toolsLook}
     />
   );
-  const mobileChrome = isBattleRoute
-    ? {
-        topBar: <BattleTopBar kicker={campaign.name} title="Battle" onBack={backToCampaign} />,
-        bottomNav: (
-          <>
-            {tools}
-            <BattleToolsBar
-              actions={battleMenuActions}
-              onOpenTool={setOpenTool}
-              onExit={backToCampaign}
+  const mobileChrome = isAftermath
+    ? { bottomNav: tools }
+    : isBattleRoute
+      ? {
+          topBar: <BattleTopBar kicker={campaign.name} title="Battle" onBack={backToCampaign} />,
+          bottomNav: (
+            <>
+              {tools}
+              <BattleToolsBar
+                actions={battleMenuActions}
+                onOpenTool={setOpenTool}
+                onExit={backToCampaign}
+              />
+            </>
+          ),
+        }
+      : {
+          topBar: (
+            <MobileTopBar
+              kicker={campaign.name}
+              title={campaignSectionTitle(pathname)}
+              tools={tools}
             />
-          </>
-        ),
-      }
-    : {
-        topBar: (
-          <MobileTopBar
-            kicker={campaign.name}
-            title={campaignSectionTitle(pathname)}
-            tools={tools}
-          />
-        ),
-        bottomNav: (
-          <CampaignBottomNav
-            campaign={campaign}
-            userName={userName}
-            onRejoinBattle={onRejoinBattle}
-          />
-        ),
-      };
+          ),
+          bottomNav: (
+            <CampaignBottomNav
+              campaign={campaign}
+              userName={userName}
+              onRejoinBattle={onRejoinBattle}
+            />
+          ),
+        };
 
   // One shell for both breakpoints, so a viewport change never remounts the page (BUG-23).
   return (
