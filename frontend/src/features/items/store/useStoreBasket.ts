@@ -7,6 +7,7 @@ import type {
   WarbandHero,
   WarbandHireling,
 } from "@/features/warbands/types/warband-types";
+import { isCreatureGroup } from "@/features/warbands/utils/companions";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 import { purchase } from "../api/purchase";
@@ -37,8 +38,9 @@ export const recipientKey = (kind: "hero" | "henchmen_group" | "hireling", id: n
   `${kind === "hero" ? "heroes" : kind === "henchmen_group" ? "henchmen" : "hirelings"}:${id}`;
 
 /**
- * Everyone who can receive an item: the stash, the heroes, the henchmen groups (×members) and the
- * hired swords; the unit the store was opened for comes first.
+ * Everyone who can receive an item: the stash, the heroes, the henchmen groups (×members, not a
+ * group of creatures, which carries nothing) and the hired swords; the unit the store was opened
+ * for comes first.
  */
 export function recipientsFor(
   units: { heroes: WarbandHero[]; henchmenGroups: HenchmenGroup[]; hirelings: WarbandHireling[] },
@@ -52,12 +54,14 @@ export function recipientsFor(
       target: { kind: "heroes" as const, unit },
       count: 1,
     })),
-    ...units.henchmenGroups.map((unit) => ({
-      key: `henchmen:${unit.id}`,
-      label: nameOf(unit, "Henchmen"),
-      target: { kind: "henchmen" as const, unit },
-      count: Math.max(1, unit.henchmen?.length ?? 1),
-    })),
+    ...units.henchmenGroups
+      .filter((unit) => !isCreatureGroup(unit))
+      .map((unit) => ({
+        key: `henchmen:${unit.id}`,
+        label: nameOf(unit, "Henchmen"),
+        target: { kind: "henchmen" as const, unit },
+        count: Math.max(1, unit.henchmen?.length ?? 1),
+      })),
     ...units.hirelings.map((unit) => ({
       key: `hirelings:${unit.id}`,
       label: nameOf(unit, "Hired sword"),

@@ -229,6 +229,7 @@ export default function CampRows({
       <Row
         {...row("buy")}
         title="Buy items"
+        done={done.buy}
         sub={`${camp.gold - upkeepCharged(camp)} gc to spend`}
         action="Store"
         onAction={camp.onStore}
