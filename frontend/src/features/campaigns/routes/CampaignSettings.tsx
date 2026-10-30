@@ -152,7 +152,7 @@ export default function CampaignSettings() {
   if (isMobile) {
     if (!current) {
       return (
-        <div className="flex flex-col gap-4 pb-6">
+        <div className="flex flex-col gap-4 pb-6 pt-3">
           <div className="border border-border bg-surface p-4">{joinCode}</div>
           <nav aria-label="Settings sections" className="border border-border bg-surface">
             <ul className="m-0 list-none p-0">
@@ -190,7 +190,8 @@ export default function CampaignSettings() {
           <ChevronLeft className="h-4 w-4" aria-hidden="true" />
           All settings
         </button>
-        <h1 className="m-0 font-display text-2xl font-semibold text-head">{section?.label}</h1>
+        {/* The cards name what they hold; the heading is for screen readers. */}
+        <h1 className="sr-only">{section?.label}</h1>
         <SectionBody id={current} campaign={campaign} />
       </div>
     );

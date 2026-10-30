@@ -8,7 +8,7 @@ import type { CampaignCapabilities } from "../../capabilities";
 import { isArchived } from "../../capabilities";
 import { useCampaignLifecycle } from "../../hooks/settings/useCampaignLifecycle";
 import type { CampaignSummary } from "../../types/campaign-types";
-import { Field, SettingsCard } from "./settings-ui";
+import { SettingsCard } from "./settings-ui";
 
 /** What archiving does, said before the owner confirms (lossy actions say so). */
 const ARCHIVE_EFFECTS = [
@@ -57,7 +57,10 @@ function DeleteForGood({
             and ledgers, house rules and their items, custom wargear, skills, spells and bestiary
             entries, the chat, and its notifications.
           </p>
-          <Field label={`Type ${campaignName} to confirm`} htmlFor="delete-campaign-typed">
+          <label htmlFor="delete-campaign-typed" className="flex flex-col gap-1.5 text-sm text-ink">
+            <span>
+              Type <span className="font-bold">{campaignName}</span> to confirm
+            </span>
             <Input
               id="delete-campaign-typed"
               value={typed}
@@ -65,7 +68,7 @@ function DeleteForGood({
               disabled={deleting}
               onChange={(event) => setTyped(event.target.value)}
             />
-          </Field>
+          </label>
         </div>
       }
       error={lifecycle.error}

@@ -58,7 +58,7 @@ function RestoreButton({
 }
 
 /**
- * A reference page's archived entries (CAT-TWEAK-04, CAT-NEW-05), under its list while Show archived
+ * A reference page's archived entries (CAT-TWEAK-04, CAT-NEW-05), above its list while Show archived
  * is on: the campaign's own entries archived because something still held them, and book entries
  * removed for the campaign, greyed, each with Restore for those who edit the catalogue.
  */

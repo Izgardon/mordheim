@@ -99,6 +99,7 @@ function CampaignFeatures({ campaign }: { campaign: CampaignSummary }) {
         <SettingRow key={feature.key} label={feature.label} hint={feature.hint}>
           <Switch
             checked={feature.on}
+            aria-label={feature.label}
             disabled={saving}
             onCheckedChange={(next) => void save({ [feature.key]: next })}
           >
@@ -148,6 +149,41 @@ function ItemSettings({ campaign }: { campaign: CampaignSummary }) {
       label="Settings in play"
       hint="Their items show for every warband in the store and on Wargear; anything else stays findable with Show all, with a warning."
       error={error}
+      below={
+        <>
+          <div className="flex flex-wrap gap-1.5">
+            {selected.length ? (
+              selected.map((restriction) => (
+                <ChipLabel key={restriction.id} className="min-h-[34px] gap-1 text-[13px] text-ink">
+                  {restriction.restriction}
+                  {editing ? (
+                    <button
+                      type="button"
+                      aria-label={`Remove ${restriction.restriction}`}
+                      className="flex h-7 w-7 items-center justify-center text-muted-foreground hover:text-ink"
+                      onClick={() => toggle(restriction)}
+                    >
+                      <X className="h-3.5 w-3.5" aria-hidden="true" />
+                    </button>
+                  ) : null}
+                </ChipLabel>
+              ))
+            ) : (
+              <span className="text-sm text-muted-foreground">None: the core rules only.</span>
+            )}
+          </div>
+          {editing ? (
+            <div className="w-full border border-border bg-page p-3">
+              <RestrictionPicker
+                restrictions={available}
+                selected={selectedIds}
+                onToggle={toggle}
+                showFilter={false}
+              />
+            </div>
+          ) : null}
+        </>
+      }
     >
       {editing ? (
         <>
@@ -163,37 +199,6 @@ function ItemSettings({ campaign }: { campaign: CampaignSummary }) {
           Edit
         </Button>
       )}
-      <div className="flex w-full flex-wrap gap-1.5">
-        {selected.length ? (
-          selected.map((restriction) => (
-            <ChipLabel key={restriction.id} className="min-h-[34px] gap-1 text-[13px] text-ink">
-              {restriction.restriction}
-              {editing ? (
-                <button
-                  type="button"
-                  aria-label={`Remove ${restriction.restriction}`}
-                  className="flex h-7 w-7 items-center justify-center text-muted-foreground hover:text-ink"
-                  onClick={() => toggle(restriction)}
-                >
-                  <X className="h-3.5 w-3.5" aria-hidden="true" />
-                </button>
-              ) : null}
-            </ChipLabel>
-          ))
-        ) : (
-          <span className="text-sm text-muted-foreground">None: the core rules only.</span>
-        )}
-      </div>
-      {editing ? (
-        <div className="w-full border border-border bg-page p-3">
-          <RestrictionPicker
-            restrictions={available}
-            selected={selectedIds}
-            onToggle={toggle}
-            showFilter={false}
-          />
-        </div>
-      ) : null}
     </SettingRow>
   );
 }

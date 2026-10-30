@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useWarbandRulesForm } from "../../hooks/settings/useWarbandRulesForm";
 import type { CampaignHeroDeathRoll, CampaignSummary } from "../../types/campaign-types";
 import { useCampaignSave } from "./CampaignSection";
-import { Field, FormError, SettingRow, SettingsCard } from "./settings-ui";
+import { Field, FormError, SettingRow, SettingsCard, TEXTAREA } from "./settings-ui";
 
 /** A warband's sheet, summary or treasury in this campaign: what a gold adjustment changes. */
 const isWarbandGoldQuery = (campaignId: number) => (query: Query) => {
@@ -131,13 +131,14 @@ function ThresholdField(props: {
 }) {
   return (
     <Field label={props.label} htmlFor={props.id} hint={props.hint}>
-      <div className="flex gap-2">
-        <Input
+      <div className="flex items-start gap-2">
+        <textarea
           id={props.id}
+          rows={2}
           value={props.value}
           placeholder={props.placeholder}
           onChange={(event) => props.onChange(event.target.value)}
-          className="font-mono"
+          className={`${TEXTAREA} min-h-[64px] font-mono`}
         />
         <Button variant="ghost" onClick={props.onReset}>
           Reset
@@ -171,6 +172,7 @@ export default function CampaignRules({ campaign }: { campaign: CampaignSummary 
           <Input
             type="number"
             min={0}
+            aria-label="Most heroes"
             value={limits.maxHeroes}
             onChange={(event) => limits.setMaxHeroes(event.target.value)}
             className="w-[80px] font-mono"
@@ -181,6 +183,7 @@ export default function CampaignRules({ campaign }: { campaign: CampaignSummary 
           <Input
             type="number"
             min={0}
+            aria-label="Most hired swords"
             value={limits.maxHiredSwords}
             onChange={(event) => limits.setMaxHiredSwords(event.target.value)}
             className="w-[80px] font-mono"
@@ -222,36 +225,38 @@ export default function CampaignRules({ campaign }: { campaign: CampaignSummary 
         label="Level-ups"
         hint={`The XP at which a unit gains an advance: heroes have ${levelUps.heroCount}, henchmen ${levelUps.henchmenCount}.`}
         error={levelUps.errors.save}
-      >
-        <div className="grid w-full gap-3 min-[961px]:grid-cols-2">
-          <ThresholdField
-            id="settings-hero-thresholds"
-            label="Heroes"
-            value={levelUps.heroText}
-            placeholder="2, 4, 6, 8, 11, 14…"
-            hint="Hired swords level on this table too."
-            error={levelUps.errors.hero}
-            onChange={levelUps.setHeroText}
-            onReset={levelUps.resetHero}
-          />
-          <ThresholdField
-            id="settings-henchmen-thresholds"
-            label="Henchmen"
-            value={levelUps.henchmenText}
-            placeholder="2, 5, 9, 14"
-            error={levelUps.errors.henchmen}
-            onChange={levelUps.setHenchmenText}
-            onReset={levelUps.resetHenchmen}
-          />
-        </div>
-        <Button
-          variant="secondary"
-          disabled={levelUps.isSaving}
-          onClick={() => void levelUps.save()}
-        >
-          {levelUps.isSaving ? "Saving…" : "Save level-ups"}
-        </Button>
-      </SettingRow>
+        below={
+          <div className="grid gap-3 min-[961px]:grid-cols-2">
+            <ThresholdField
+              id="settings-hero-thresholds"
+              label="Heroes"
+              value={levelUps.heroText}
+              placeholder="2, 4, 6, 8, 11, 14…"
+              hint="Hired swords level on this table too."
+              error={levelUps.errors.hero}
+              onChange={levelUps.setHeroText}
+              onReset={levelUps.resetHero}
+            />
+            <ThresholdField
+              id="settings-henchmen-thresholds"
+              label="Henchmen"
+              value={levelUps.henchmenText}
+              placeholder="2, 5, 9, 14"
+              error={levelUps.errors.henchmen}
+              onChange={levelUps.setHenchmenText}
+              onReset={levelUps.resetHenchmen}
+            />
+            <Button
+              variant="secondary"
+              className="self-start"
+              disabled={levelUps.isSaving}
+              onClick={() => void levelUps.save()}
+            >
+              {levelUps.isSaving ? "Saving…" : "Save level-ups"}
+            </Button>
+          </div>
+        }
+      />
     </SettingsCard>
   );
 }

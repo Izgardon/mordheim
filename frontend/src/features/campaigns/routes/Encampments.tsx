@@ -101,18 +101,14 @@ function EncampmentsPage({ campaign }: { campaign: CampaignSummary }) {
   // Yours first, then the rest by name (the server's order).
   const listed = [...yours, ...page.encampments.filter((entry) => !yours.includes(entry))];
   const addButton = page.canAdd ? (
-    <Button className={isMobile ? "min-h-11" : undefined} onClick={page.openCreateForm}>
+    <Button className={isMobile ? "min-h-12 w-full" : undefined} onClick={page.openCreateForm}>
       Add encampment
     </Button>
   ) : null;
 
   return (
-    <div className={cn("flex flex-col", isMobile ? "gap-3 pb-6" : "gap-6 pb-14")}>
-      {isMobile ? (
-        addButton ? (
-          <div className="flex justify-end">{addButton}</div>
-        ) : null
-      ) : (
+    <div className={cn("flex flex-col", isMobile ? "gap-3 pb-6 pt-3" : "gap-6 pb-14")}>
+      {isMobile ? null : (
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div className="flex flex-col gap-1.5">
             <span className="text-xs font-semibold uppercase tracking-[0.08em] text-faint">
@@ -129,6 +125,7 @@ function EncampmentsPage({ campaign }: { campaign: CampaignSummary }) {
         Camps the players hold in the city: who owns each and what it is. They have no effect on the
         game.
       </p>
+      {isMobile ? addButton : null}
       {!page.isEnabled ? (
         <p className="m-0 border border-border bg-surface px-4 py-5 text-sm text-text2">
           Encampments are switched off for this campaign.

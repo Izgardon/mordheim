@@ -20,7 +20,7 @@ type ReferencePageProps = {
   summary?: ReactNode;
   /**
    * The page's catalogue kind: a Show archived switch beside the summary lists its archived
-   * entries under the list (`?archived=1`), each with Restore.
+   * entries above the list (`?archived=1`), each with Restore.
    */
   archived?: ArchivedOptions;
   children: ReactNode;
@@ -64,8 +64,8 @@ export function SectionPicker({ current, actions }: { current: string; actions?:
 /**
  * The reference pages' one layout (design E, E-Web-Items and E-Mobile-Items): "Reference" and the
  * title with the page's buttons (on a phone the Section picker instead, the shell's top bar naming
- * the page), the filters, a summary line with Show archived, the list of rows that open in place,
- * and the archived entries while they are shown.
+ * the page), the filters, a summary line with Show archived (the archived entries, while shown), and
+ * the list of rows that open in place.
  */
 export default function ReferencePage(props: ReferencePageProps) {
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -112,8 +112,8 @@ export default function ReferencePage(props: ReferencePageProps) {
           ) : null}
         </div>
       ) : null}
-      {props.children}
       {props.archived && showArchived ? <ArchivedEntries options={props.archived} /> : null}
+      {props.children}
     </div>
   );
 }

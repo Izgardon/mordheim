@@ -60,13 +60,15 @@ type SettingRowProps = {
   label: string;
   hint?: ReactNode;
   /** The control: a switch, a field and its Save. */
-  children: ReactNode;
+  children?: ReactNode;
+  /** Under the row at full width: a list it edits, a picker. */
+  below?: ReactNode;
   /** The row's error, under it. */
   error?: string;
 };
 
 /** A labelled setting: the label and its hint on the left, the control on the right (stacked on a phone). */
-export function SettingRow({ label, hint, children, error }: SettingRowProps) {
+export function SettingRow({ label, hint, children, below, error }: SettingRowProps) {
   return (
     <div className="flex flex-col gap-2 border-t border-line pt-4 first:border-t-0 first:pt-0">
       <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2.5">
@@ -74,8 +76,11 @@ export function SettingRow({ label, hint, children, error }: SettingRowProps) {
           <span className="text-[15px] font-bold text-head">{label}</span>
           {hint ? <span className="text-[13px] text-text2">{hint}</span> : null}
         </div>
-        <div className="flex flex-wrap items-center gap-2 max-[960px]:w-full">{children}</div>
+        {children ? (
+          <div className="flex flex-wrap items-center gap-2 max-[960px]:w-full">{children}</div>
+        ) : null}
       </div>
+      {below}
       <FormError message={error} />
     </div>
   );
