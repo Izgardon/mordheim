@@ -16,9 +16,9 @@ export default function ArchivedBanner({ campaign }: { campaign: CampaignSummary
   return (
     <div
       role="status"
-      className="mx-2 mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-2xl border border-amber-500/40 bg-amber-950/40 px-4 py-3 text-sm text-amber-100 sm:mx-0"
+      className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 border border-accent-line bg-accent-soft px-4 py-3 text-sm text-ink sm:mx-0"
     >
-      <Archive className="h-4 w-4 shrink-0 text-amber-300" aria-hidden="true" />
+      <Archive className="h-4 w-4 shrink-0 text-accent-text" aria-hidden="true" />
       <span className="min-w-0 grow basis-56">
         This campaign is archived: read-only for everyone. Nothing in it can change until its owner
         restores it.
@@ -26,7 +26,7 @@ export default function ArchivedBanner({ campaign }: { campaign: CampaignSummary
       {campaignCapabilities(campaign).restore ? (
         <Link
           to={`/campaigns/${campaign.id}/settings?tab=campaign`}
-          className="font-semibold text-amber-200 underline underline-offset-2 hover:text-amber-50"
+          className="font-semibold text-accent-hi underline underline-offset-2"
         >
           Restore it in Settings
         </Link>

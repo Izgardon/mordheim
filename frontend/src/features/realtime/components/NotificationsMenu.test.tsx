@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { useState, type ComponentProps } from "react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
 
@@ -8,7 +9,26 @@ import { queryKeys } from "@/lib/query-keys";
 
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 import { ApiError } from "@/lib/api-client";
-import NotificationsMenu from "./NotificationsMenu";
+import NotificationsMenuDialog from "./NotificationsMenu";
+
+/** The menu as the shell uses it: it owns the open state and a trigger showing the count. */
+function NotificationsMenu(
+  props: Omit<ComponentProps<typeof NotificationsMenuDialog>, "open" | "onOpenChange" | "trigger">
+) {
+  const [open, setOpen] = useState(false);
+  return (
+    <NotificationsMenuDialog
+      {...props}
+      open={open}
+      onOpenChange={setOpen}
+      trigger={(count) => (
+        <button type="button" aria-label="Notifications">
+          {count || null}
+        </button>
+      )}
+    />
+  );
+}
 
 const trade: TradeNotification = {
   id: "trade-9",

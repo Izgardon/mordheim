@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useState } from "react";
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
@@ -9,39 +9,34 @@ import { usePullToRefresh } from "../mobile/use-pull-to-refresh";
 type AppShellProps = {
   variant: "mobile" | "desktop";
   children: ReactNode;
-  /** Desktop: the side rail. */
-  navbar?: ReactNode;
-  /** Desktop: the top bar. */
-  desktopTopBar?: ReactNode;
+  /** Desktop: the nav rail. */
+  rail?: ReactNode;
+  /** Mobile: the bar above the page. */
+  topBar?: ReactNode;
+  /** Mobile: the bar below the page (the bottom nav, or the battle tools). */
+  bottomNav?: ReactNode;
   /** Mobile: pull-to-refresh refreshes this campaign's data (all data when omitted). */
   campaignId?: number;
-  mobileTopBar?: ReactNode;
-  topBarOffset?: string;
-  bottomNav?: ReactNode;
-  contentClassName?: string;
 };
 
 /**
- * The campaign shell for both breakpoints. Only the chrome changes with `variant`: the page sits
- * at the same position in the tree either way, so crossing 960 px (tablet rotation, window
- * resize) restyles the frame instead of unmounting the page and its unsaved state (BUG-23).
- * Every slot keeps its index, with `null` standing in for chrome the variant doesn't have.
+ * The campaign shell for both breakpoints (design E): the rail beside the page on the web; the top
+ * bar, the page and the bottom nav stacked on a phone. Only the chrome changes with `variant`: the
+ * page sits at the same position in the tree either way, so crossing 960 px restyles the frame
+ * instead of unmounting the page and its unsaved state (BUG-23).
  */
 export default function AppShell({
   variant,
   children,
-  navbar,
-  desktopTopBar,
-  campaignId,
-  mobileTopBar,
-  topBarOffset,
+  rail,
+  topBar,
   bottomNav,
-  contentClassName,
+  campaignId,
 }: AppShellProps) {
   const isMobile = variant === "mobile";
   const queryClient = useQueryClient();
   // Bumped after a pull-to-refresh to remount the page, so screens whose data is not in the
-  // query cache yet (overview tabs, the warband sheet, battle state) reload it.
+  // query cache yet reload it.
   const [contentGeneration, setContentGeneration] = useState(0);
 
   const refreshContent = useCallback(async () => {
@@ -58,28 +53,12 @@ export default function AppShell({
 
   const pull = usePullToRefresh({ enabled: isMobile, onRefresh: refreshContent });
 
-  const hasMobileTopBar = Boolean(mobileTopBar);
-  const mobileScrollStyle: CSSProperties = {
-    paddingBottom: bottomNav
-      ? "calc(env(safe-area-inset-bottom, 0px) + 6.5rem)"
-      : "env(safe-area-inset-bottom, 0px)",
-    ...(hasMobileTopBar
-      ? {}
-      : { paddingTop: topBarOffset ?? "calc(env(safe-area-inset-top, 0px) + 4.75rem)" }),
-  };
-
   return (
     <main
       className={isMobile ? "fixed inset-0 flex flex-col overflow-hidden bg-page" : "desktop-shell"}
     >
-      {isMobile ? null : <aside className="desktop-shell__rail">{navbar}</aside>}
-      {isMobile ? (
-        hasMobileTopBar ? (
-          <div className="shrink-0">{mobileTopBar}</div>
-        ) : null
-      ) : (
-        <div className="desktop-shell__topbar">{desktopTopBar}</div>
-      )}
+      {isMobile ? null : <aside className="desktop-shell__rail">{rail}</aside>}
+      {isMobile && topBar ? <div className="shrink-0">{topBar}</div> : null}
       <div className={isMobile ? "flex min-h-0 flex-1 flex-col" : "desktop-shell__main"}>
         <div
           ref={pull.scrollRef}
@@ -87,14 +66,9 @@ export default function AppShell({
           data-testid="shell-scroll"
           className={
             isMobile
-              ? cn(
-                  "scrollbar-hidden flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-y-contain px-0 pb-4",
-                  hasMobileTopBar ? "pt-0" : "pt-3",
-                  contentClassName
-                )
+              ? "scrollbar-hidden min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain pb-4"
               : "desktop-shell__content"
           }
-          style={isMobile ? mobileScrollStyle : undefined}
         >
           {isMobile && pull.showRefreshPrompt ? (
             <div
@@ -110,7 +84,7 @@ export default function AppShell({
           <div
             className={
               isMobile
-                ? cn("px-1.5", pull.isPulling ? "" : "transition-transform duration-200 ease-out")
+                ? cn("px-3", pull.isPulling ? "" : "transition-transform duration-200 ease-out")
                 : "desktop-shell__content-inner"
             }
             style={
@@ -123,7 +97,9 @@ export default function AppShell({
           </div>
         </div>
       </div>
-      {isMobile ? bottomNav : null}
+      {isMobile && bottomNav ? (
+        <div className="shrink-0 pb-[env(safe-area-inset-bottom,0px)]">{bottomNav}</div>
+      ) : null}
     </main>
   );
 }

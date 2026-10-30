@@ -1,6 +1,6 @@
-import { useState } from "react";
+import type { ReactNode } from "react";
 
-import { MessageSquare, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
-import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import { useChatWindow } from "../hooks/useChatWindow";
 
@@ -20,42 +19,28 @@ import ChatMessageItem from "./ChatMessageItem";
 
 type Props = {
   campaignId: number;
-  className?: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  /** The button that opens it, given the unread count (the shell owns the open state). */
+  trigger?: (unread: number) => ReactNode;
 };
 
-export default function CampaignChatMenu({ campaignId, className }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function CampaignChatMenu({ campaignId, open, onOpenChange, trigger }: Props) {
   const { user: currentUser } = useAppStore();
-  const chat = useChatWindow(campaignId, isOpen);
+  const chat = useChatWindow(campaignId, open);
   // Owners and admins remove posts (decision 8); read from the campaign the layout loaded.
   const canRemove = useCampaignCapabilities(campaignId, { read: false }).remove_posts;
   const { messages, isLoading, loadError, unread } = chat;
-  const handleOpenChange = (open: boolean) => {
-    if (open) {
+  const handleOpenChange = (next: boolean) => {
+    if (next) {
       chat.resetHistory();
     }
-    setIsOpen(open);
+    onOpenChange(next);
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <button
-          type="button"
-          className={cn(
-            "icon-button relative flex h-9 w-9 items-center justify-center border-none bg-transparent p-0",
-            className
-          )}
-          aria-label="Campaign chat"
-        >
-          <MessageSquare className="theme-heading-soft h-5 w-5" aria-hidden="true" />
-          {unread > 0 ? (
-            <span className="absolute -right-1 -top-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-1 text-[0.55rem] font-semibold text-primary-foreground">
-              {unread > 9 ? "9+" : unread}
-            </span>
-          ) : null}
-        </button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      {trigger ? <DialogTrigger asChild>{trigger(unread)}</DialogTrigger> : null}
       <DialogContent className="sm:max-w-[28rem]">
         <DialogHeader>
           <DialogTitle>Campaign Chat</DialogTitle>

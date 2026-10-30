@@ -1,108 +1,58 @@
-import { Suspense, useMemo } from "react";
-import type { ReactNode } from "react";
-
-// routing
+import { Suspense, useMemo, useState } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 
-// components
-import ArchivedBanner from "../components/layout/ArchivedBanner";
-import CampaignLoadError from "../components/layout/CampaignLoadError";
-import CampaignSidebar from "../components/layout/CampaignSidebar";
-import CampaignTopBarActions from "../components/layout/CampaignTopBarActions";
-import RejoinBattleButton from "../components/layout/RejoinBattleButton";
-import {
-  campaignSectionTitle,
-  getCampaignNavItems,
-  getMobileCampaignPath,
-  getMobileNavActiveId,
-} from "../components/layout/campaign-nav";
-import { MobileTopBar } from "@/layouts/mobile";
-import AppShell from "@/layouts/shell/AppShell";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { RouteSkeleton } from "@/components/ui/route-skeleton";
-import { Button } from "@/components/ui/button";
-import WarbandMobileNav from "@/features/warbands/components/warband/WarbandMobileNav";
-import { useMediaQuery } from "@/lib/use-media-query";
+import { useAuth } from "@/features/auth/hooks/use-auth";
+import { useMyWarbandStore } from "@/features/warbands/hooks/warband/useMyWarbandStore";
+import BattleToolsBar, { type BattleMenuAction } from "@/layouts/battle/BattleToolsBar";
+import BattleTopBar from "@/layouts/battle/BattleTopBar";
+import CampaignBottomNav from "@/layouts/mobile/CampaignBottomNav";
+import MobileTopBar from "@/layouts/mobile/MobileTopBar";
+import AppShell from "@/layouts/shell/AppShell";
+import CampaignTools, { type CampaignTool } from "@/layouts/shell/CampaignTools";
+import NavRail from "@/layouts/shell/NavRail";
+import { campaignSectionTitle } from "@/layouts/shell/campaign-nav";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { ChevronLeft } from "lucide-react";
+import { useMediaQuery } from "@/lib/use-media-query";
 
-// hooks
-import { isCampaignId, useCampaignQuery } from "../hooks/useCampaignQuery";
+import ArchivedBanner from "../components/layout/ArchivedBanner";
+import CampaignLoadError from "../components/layout/CampaignLoadError";
 import { useArchivedRefusals } from "../hooks/useArchivedRefusals";
 import { useBattleSession } from "../hooks/useBattleSession";
-import { useMobileTopBarOverride } from "../hooks/useMobileTopBarOverride";
-import { useMyWarbandStore } from "@/features/warbands/hooks/warband/useMyWarbandStore";
+import { isCampaignId, useCampaignQuery } from "../hooks/useCampaignQuery";
 
-// types
 import type { CampaignSummary } from "../types/campaign-types";
 
 /**
  * What the layout shares with every campaign page. It owns the campaign query (pages read the
- * campaign from here, and `useUpdateCampaign` writes answers back into it) and the open battles
- * query (Rejoin Battle).
+ * campaign from here, and `useUpdateCampaign` writes answers back into it). A battle page puts its
+ * actions in the phone's battle Menu with `setBattleMenuActions`.
  */
 export type CampaignLayoutContext = {
   campaign: CampaignSummary | null;
-  setMobileTopBar?: (config: Partial<MobileTopBarConfig>) => void;
-  showRejoinBattleButton?: boolean;
+  setBattleMenuActions: (actions: BattleMenuAction[]) => void;
 };
 
-export type MobileTopBarConfig = {
-  title: string;
-  leftSlot?: ReactNode;
-  titleInlineAfter?: ReactNode;
-  centerSlot?: ReactNode;
-  rightSlot?: ReactNode;
-  meta?: ReactNode;
-  className?: string;
-};
-
+/** The campaign shell (design E): the nav rail on the web; top bar and bottom nav on a phone. */
 export default function CampaignLayout() {
   const { id } = useParams();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const navigate = useNavigate();
-  const location = useLocation();
+  const { pathname } = useLocation();
+  const { user } = useAuth();
   const campaignId = Number(id);
   const campaignQuery = useCampaignQuery(campaignId);
   const campaign = campaignQuery.data ?? null;
-  const pathSegments = location.pathname.split("/").filter(Boolean);
-  const isBattleRoute = location.pathname.includes("/battles/");
-  const isOverviewRoute =
-    pathSegments[0] === "campaigns" && pathSegments[1] === id && pathSegments.length === 2;
-  const { canRejoinBattle: showRejoinBattleButton, rejoinBattle } = useBattleSession(campaignId, {
+  const segments = pathname.split("/").filter(Boolean);
+  const isBattleRoute = segments[2] === "battles";
+  const { canRejoinBattle, rejoinBattle } = useBattleSession(campaignId, {
     isBattleRoute,
-    battleId: Number(pathSegments[3] ?? ""),
-    stage: pathSegments[4] ?? "",
+    battleId: Number(segments[3] ?? ""),
+    stage: segments[4] ?? "",
   });
-  // The overview shows its own Rejoin Battle in the battle panel.
-  const showTopBarRejoin = showRejoinBattleButton && !isOverviewRoute;
-  const mobileTitle = campaignSectionTitle(location.pathname);
-
-  const topBarActions = useMemo(
-    () => <CampaignTopBarActions campaignId={campaignId} />,
-    [campaignId]
-  );
-  const defaultTopBar = useMemo<MobileTopBarConfig>(
-    () => ({
-      title: mobileTitle,
-      leftSlot: (
-        <Button
-          type="button"
-          onClick={() => navigate(-1)}
-          variant="ghost"
-          size="icon"
-          className="h-9 w-9"
-          aria-label="Back"
-        >
-          <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-        </Button>
-      ),
-      centerSlot: showTopBarRejoin ? <RejoinBattleButton compact onClick={rejoinBattle} /> : null,
-      rightSlot: <div className="flex items-center gap-2">{topBarActions}</div>,
-    }),
-    [mobileTitle, navigate, rejoinBattle, showTopBarRejoin, topBarActions]
-  );
-  const { topBar: mobileTopBar, setMobileTopBar } = useMobileTopBarOverride(defaultTopBar);
+  const [openTool, setOpenTool] = useState<CampaignTool | null>(null);
+  const [battleMenuActions, setBattleMenuActions] = useState<BattleMenuAction[]>([]);
 
   useMyWarbandStore(campaign?.id ?? null);
   useArchivedRefusals(campaignId);
@@ -110,8 +60,8 @@ export default function CampaignLayout() {
   // Stable unless a value changes, so the layout re-rendering (store writes, notifications)
   // doesn't re-render the page through its outlet context (PERF-19).
   const outletContext = useMemo<CampaignLayoutContext>(
-    () => ({ campaign, setMobileTopBar, showRejoinBattleButton }),
-    [campaign, setMobileTopBar, showRejoinBattleButton]
+    () => ({ campaign, setBattleMenuActions }),
+    [campaign]
   );
 
   const campaignError = !isCampaignId(campaignId)
@@ -133,23 +83,45 @@ export default function CampaignLayout() {
     );
   }
 
-  const mobileShell = isBattleRoute
-    ? { topBarOffset: "0px", contentClassName: "pt-0 pb-0" }
-    : {
-        mobileTopBar: <MobileTopBar {...mobileTopBar} position="sticky" />,
-        topBarOffset: mobileTopBar.meta
-          ? "calc(env(safe-area-inset-top, 0px) + 7rem)"
-          : "calc(env(safe-area-inset-top, 0px) + 4.25rem)",
+  const userName = user?.name?.trim() || "You";
+  const onRejoinBattle = canRejoinBattle ? rejoinBattle : undefined;
+  const backToCampaign = () => navigate(`/campaigns/${campaign.id}`);
+  const toolsLook = !isMobile ? "rail" : isBattleRoute ? "none" : "bar";
+  const tools = (
+    <CampaignTools
+      campaignId={campaign.id}
+      open={openTool}
+      onOpenChange={setOpenTool}
+      look={toolsLook}
+    />
+  );
+  const mobileChrome = isBattleRoute
+    ? {
+        topBar: <BattleTopBar kicker={campaign.name} title="Battle" onBack={backToCampaign} />,
         bottomNav: (
-          <WarbandMobileNav
-            activeId={getMobileNavActiveId(location.pathname)}
-            onSelect={(navId) => {
-              if (navId === "overview") navigate(`/campaigns/${id}`);
-              else if (navId === "loadout") navigate(`/campaigns/${id}/items`);
-              else if (navId === "warband") navigate(`/campaigns/${id}/warband`);
-              else if (navId === "campaign") navigate(getMobileCampaignPath(campaign, id ?? ""));
-              else if (navId === "settings") navigate(`/campaigns/${id}/settings`);
-            }}
+          <>
+            {tools}
+            <BattleToolsBar
+              actions={battleMenuActions}
+              onOpenTool={setOpenTool}
+              onExit={backToCampaign}
+            />
+          </>
+        ),
+      }
+    : {
+        topBar: (
+          <MobileTopBar
+            kicker={campaign.name}
+            title={campaignSectionTitle(pathname)}
+            tools={tools}
+          />
+        ),
+        bottomNav: (
+          <CampaignBottomNav
+            campaign={campaign}
+            userName={userName}
+            onRejoinBattle={onRejoinBattle}
           />
         ),
       };
@@ -159,33 +131,20 @@ export default function CampaignLayout() {
     <AppShell
       variant={isMobile ? "mobile" : "desktop"}
       campaignId={campaignId}
-      {...(isMobile ? mobileShell : {})}
-      navbar={
-        <CampaignSidebar
+      rail={
+        <NavRail
           campaign={campaign}
-          campaignId={id ?? ""}
-          navItems={getCampaignNavItems(campaign)}
-          className="h-full w-full"
+          userName={userName}
+          tools={tools}
+          onRejoinBattle={onRejoinBattle}
         />
       }
-      desktopTopBar={
-        <div className="shell-topbar grid h-full grid-cols-[1fr_auto_1fr] items-center gap-4 px-6">
-          <div />
-          <div className="justify-self-center">
-            {showTopBarRejoin ? <RejoinBattleButton onClick={rejoinBattle} /> : null}
-          </div>
-          <div className="flex items-center justify-self-end gap-2 [&_.theme-heading-soft]:text-[#cfbba9]">
-            {topBarActions}
-          </div>
-        </div>
-      }
+      {...(isMobile ? mobileChrome : {})}
     >
-      <section className="min-h-0 flex-1">
-        <ArchivedBanner campaign={campaign} />
-        <Suspense fallback={<RouteSkeleton />}>
-          <Outlet context={outletContext} />
-        </Suspense>
-      </section>
+      <ArchivedBanner campaign={campaign} />
+      <Suspense fallback={<RouteSkeleton />}>
+        <Outlet context={outletContext} />
+      </Suspense>
     </AppShell>
   );
 }

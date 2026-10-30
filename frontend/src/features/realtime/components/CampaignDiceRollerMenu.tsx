@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import DiceRoller from "@/components/dice/DiceRoller";
@@ -23,14 +23,13 @@ import {
 } from "@/components/ui/select";
 import { createWarbandLog } from "@/features/warbands/api/warbands-api";
 import { markLedgerStale } from "@/features/warbands/api/warband-cache";
-import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
-import { Dices } from "lucide-react";
 
 type CampaignDiceRollerMenuProps = {
-  className?: string;
-  iconClassName?: string;
-  label?: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  /** The button that opens it, if this placement has one (the shell owns the open state). */
+  trigger?: ReactNode;
 };
 
 const MIN_DICE_COUNT = 1;
@@ -40,13 +39,12 @@ const DICE_SIDES = [3, 4, 6, 8, 10, 12, 20, 100] as const;
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
 export default function CampaignDiceRollerMenu({
-  className,
-  iconClassName,
-  label,
+  open,
+  onOpenChange,
+  trigger,
 }: CampaignDiceRollerMenuProps) {
   const { warband, diceColor } = useAppStore();
   const queryClient = useQueryClient();
-  const [isOpen, setIsOpen] = useState(false);
   const [diceCount, setDiceCount] = useState(2);
   const [diceSides, setDiceSides] = useState<(typeof DICE_SIDES)[number]>(6);
   const [reason, setReason] = useState("");
@@ -84,7 +82,7 @@ export default function CampaignDiceRollerMenu({
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
-    setIsOpen(nextOpen);
+    onOpenChange(nextOpen);
     if (!nextOpen) {
       setRollSignal(0);
       setIsRolling(false);
@@ -121,20 +119,8 @@ export default function CampaignDiceRollerMenu({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <button
-          type="button"
-          className={cn(
-            "icon-button relative flex h-9 w-9 items-center justify-center border-none bg-transparent p-0",
-            className
-          )}
-          aria-label={label ?? "Dice roller"}
-          title="Dice Roller"
-        >
-          <Dices className={cn("theme-heading-soft h-5 w-5", iconClassName)} aria-hidden="true" />
-        </button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      {trigger ? <DialogTrigger asChild>{trigger}</DialogTrigger> : null}
       <DialogContent className="sm:max-w-[32rem]">
         <DialogHeader className="items-start text-left">
           <DialogTitle>Dice Roller</DialogTitle>

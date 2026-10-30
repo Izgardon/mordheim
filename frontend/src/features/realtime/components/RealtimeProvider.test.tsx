@@ -6,7 +6,24 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { disconnectRealtime, onConnectionRestored, subscribe } from "@/lib/realtime/client";
 import { AppStoreProvider } from "@/stores/app-store";
 import { renderWithQueryClient } from "@/test/query-test-utils";
-import CampaignChatMenu from "./CampaignChatMenu";
+import CampaignChatDialog from "./CampaignChatMenu";
+
+/** The chat as the shell uses it: it owns the open state and a trigger showing the unread count. */
+function CampaignChatMenu({ campaignId }: { campaignId: number }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <CampaignChatDialog
+      campaignId={campaignId}
+      open={open}
+      onOpenChange={setOpen}
+      trigger={(unread) => (
+        <button type="button" aria-label="Campaign chat">
+          {unread || null}
+        </button>
+      )}
+    />
+  );
+}
 import { RealtimeProvider } from "./RealtimeProvider";
 
 const { auth } = vi.hoisted(() => ({ auth: { user: { id: 1, email: "raider@example.com" } } }));

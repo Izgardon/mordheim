@@ -1,71 +1,26 @@
 import type { ReactNode } from "react";
 
-import { cn } from "@/lib/utils";
-
 type MobileTopBarProps = {
+  /** The small line above the title: the campaign's name. */
+  kicker: string;
   title: string;
-  leftSlot?: ReactNode;
-  titleInlineAfter?: ReactNode;
-  centerSlot?: ReactNode;
-  rightSlot?: ReactNode;
-  meta?: ReactNode;
-  position?: "fixed" | "sticky";
-  className?: string;
-  titleClassName?: string;
+  /** The dice, chat and notifications buttons (`CampaignTools`). */
+  tools: ReactNode;
 };
 
-export default function MobileTopBar({
-  title,
-  leftSlot,
-  titleInlineAfter,
-  centerSlot,
-  rightSlot,
-  meta,
-  position = "fixed",
-  className,
-  titleClassName,
-}: MobileTopBarProps) {
-  const positionClassName = position === "sticky" ? "sticky" : "fixed";
+/** The phone's top bar (design E): kicker and title on the left, the three tools on the right. */
+export default function MobileTopBar({ kicker, title, tools }: MobileTopBarProps) {
   return (
-    <div className={cn(positionClassName, "inset-x-0 top-0 z-50", className)}>
-      <div className="border-b border-[#2f2419] bg-black/95 shadow-[0_14px_32px_rgba(0,0,0,0.45)] backdrop-blur-md">
-        <div className="grid min-h-[3.25rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 px-4 pb-2 pt-[calc(env(safe-area-inset-top,0px)+0.75rem)]">
-          <div className="flex min-w-0 items-center gap-3 justify-self-start">
-            {leftSlot ? (
-              <div className="flex items-center text-[color:var(--color-icon-soft)] [&_.btn-icon]:border-[#4c3a2a] [&_.btn-icon]:bg-[#0f0c09] [&_.btn-icon]:text-[color:var(--color-icon-soft)] [&_.icon-button]:text-[color:var(--color-icon-soft)] [&_.theme-heading-soft]:text-[color:var(--color-icon-soft)] [&_.theme-icon-soft]:text-[color:var(--color-icon-soft)] [&_.theme-icon-strong]:text-[color:var(--color-icon-strong)] [&_svg]:text-[color:var(--color-icon-soft)]">
-                {leftSlot}
-              </div>
-            ) : null}
-            <div className="flex min-w-0 flex-col">
-              <div className="flex min-w-0 items-center gap-2">
-                <span
-                  className={cn(
-                    "truncate font-display text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-[color:var(--color-icon-strong)]",
-                    titleClassName,
-                    titleInlineAfter ? "shrink-0" : undefined
-                  )}
-                >
-                  {title}
-                </span>
-                {titleInlineAfter ? (
-                  <div className="flex min-w-0 items-center">{titleInlineAfter}</div>
-                ) : null}
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center justify-center">{centerSlot}</div>
-          {rightSlot ? (
-            <div className="flex items-center gap-2 justify-self-end text-[color:var(--color-icon-soft)] [&_.btn-icon]:border-[#4c3a2a] [&_.btn-icon]:bg-[#0f0c09] [&_.btn-icon]:text-[color:var(--color-icon-soft)] [&_.icon-button]:text-[color:var(--color-icon-soft)] [&_.theme-heading-soft]:text-[color:var(--color-icon-soft)] [&_.theme-icon-soft]:text-[color:var(--color-icon-soft)] [&_.theme-icon-strong]:text-[color:var(--color-icon-strong)] [&_svg]:text-[color:var(--color-icon-soft)]">
-              {rightSlot}
-            </div>
-          ) : null}
-        </div>
-        {meta ? (
-          <div className="flex items-center gap-4 px-4 pb-3 text-xs font-semibold text-[color:var(--color-icon-soft)]">
-            {meta}
-          </div>
-        ) : null}
+    <header className="flex items-center justify-between gap-2 border-b border-line bg-rail pb-2.5 pl-4 pr-3 pt-[calc(env(safe-area-inset-top,0px)+0.625rem)]">
+      <div className="flex min-w-0 flex-col gap-px">
+        <span className="truncate text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
+          {kicker}
+        </span>
+        <h1 className="truncate font-display text-xl font-semibold text-head">{title}</h1>
       </div>
-    </div>
+      <div role="group" aria-label="Table tools" className="flex shrink-0 gap-1">
+        {tools}
+      </div>
+    </header>
   );
 }
