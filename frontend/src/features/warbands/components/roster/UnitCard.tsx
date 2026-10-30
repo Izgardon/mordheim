@@ -14,6 +14,7 @@ import {
   isGroup,
   liveMembers,
   statValues,
+  unitDomId,
   unitName,
   xpInfo,
   type RosterUnit,
@@ -142,8 +143,12 @@ export default function UnitCard(props: UnitCardProps) {
     return (
       <Card
         as="article"
+        id={unitDomId(entry)}
         expanded={open}
-        className={cn("flex min-w-0 flex-col gap-3 p-3.5 pl-[18px]", open && "col-span-full")}
+        className={cn(
+          "flex min-w-0 scroll-mt-24 flex-col gap-3 p-3.5 pl-[18px]",
+          open && "col-span-full"
+        )}
       >
         <div className="flex items-start gap-2.5">
           <div className="min-w-0 flex-1">{title}</div>
@@ -160,7 +165,12 @@ export default function UnitCard(props: UnitCardProps) {
   }
 
   return (
-    <Card as="article" expanded={open} className="flex min-w-0 flex-col gap-3 p-3 pl-[18px]">
+    <Card
+      as="article"
+      id={unitDomId(entry)}
+      expanded={open}
+      className="flex min-w-0 scroll-mt-24 flex-col gap-3 p-3 pl-[18px]"
+    >
       <div className="grid gap-x-6 gap-y-2.5 min-[720px]:grid-cols-[minmax(0,1fr)_minmax(0,380px)]">
         <div className="flex min-w-0 flex-col gap-2">
           {title}

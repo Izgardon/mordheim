@@ -31,6 +31,7 @@ const Bestiary = lazy(() => import("../../features/bestiary/routes/Bestiary"));
 const HirelingCatalogue = lazy(() => import("../../features/hirelings/routes/HirelingCatalogue"));
 const Rules = lazy(() => import("../../features/rules/routes/Rules"));
 const HouseRules = lazy(() => import("../../features/rules/routes/HouseRules"));
+const SearchEverything = lazy(() => import("../../features/search/routes/SearchEverything"));
 
 /** The campaign pages still to rebuild: placeholders until their redesign step. */
 const CAMPAIGN_PAGES: { path: string; title: string; step: string }[] = [
@@ -101,7 +102,7 @@ export const routes: RouteObject[] = [
                       { path: "*", element: null },
                     ],
                   },
-                  // The reference pages (next step 7a).
+                  // The reference pages and Search everything (next step 7a).
                   { path: "items", element: <Wargear /> },
                   { path: "skills", element: <Skills /> },
                   { path: "spells", element: <Spells /> },
@@ -116,6 +117,7 @@ export const routes: RouteObject[] = [
                   },
                   { path: "rules", element: <Rules /> },
                   { path: "house-rules", element: <HouseRules /> },
+                  { path: "search", element: <SearchEverything /> },
                   // Locations is a panel of the warband page now (next step 2).
                   {
                     path: "locations",

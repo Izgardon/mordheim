@@ -206,6 +206,7 @@ export default function Warband() {
         store={store}
         openStore={openStore}
         actions={actions}
+        placeSearch={searchParams.get("place") ?? undefined}
       />
       <RecruitDialog kind={recruiting} warbandId={warbandId} onClose={() => setRecruiting(null)} />
       <AdvanceDialog

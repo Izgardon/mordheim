@@ -4,6 +4,7 @@ import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { RouteSkeleton } from "@/components/ui/route-skeleton";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { useSearchShortcut } from "@/features/search/useSearchShortcut";
 import { useMyWarbandStore } from "@/features/warbands/hooks/warband/useMyWarbandStore";
 import BattleToolsBar, { type BattleMenuAction } from "@/layouts/battle/BattleToolsBar";
 import BattleTopBar from "@/layouts/battle/BattleTopBar";
@@ -58,6 +59,7 @@ export default function CampaignLayout() {
   });
   const [openTool, setOpenTool] = useState<CampaignTool | null>(null);
   const [battleMenuActions, setBattleMenuActions] = useState<BattleMenuAction[]>([]);
+  useSearchShortcut(campaignId, !isMobile && isCampaignId(campaignId));
 
   useMyWarbandStore(campaign?.id ?? null);
   useArchivedRefusals(campaignId);

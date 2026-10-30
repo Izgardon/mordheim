@@ -1,4 +1,5 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Plus } from "lucide-react";
 
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
@@ -82,7 +83,17 @@ function swapPending(entry: RosterUnit, list: PendingList, placeholderId: number
 export default function RosterSections(props: RosterSectionsProps) {
   const { warbandId, campaign, canEdit } = props;
   const actions = useUnitActions(warbandId);
-  const [openKey, setOpenKey] = useState<string | null>(null);
+  // A link to a unit (Search everything, `?unit=hero-12`) opens its card and scrolls to it.
+  const [searchParams] = useSearchParams();
+  const linked = searchParams.get("unit");
+  const [openKey, setOpenKey] = useState<string | null>(linked);
+  useEffect(() => {
+    if (!linked) return;
+    setOpenKey(linked);
+    requestAnimationFrame(() =>
+      document.getElementById(`unit-${linked}`)?.scrollIntoView({ block: "start" })
+    );
+  }, [linked]);
   const [editKey, setEditKey] = useState<string | null>(null);
 
   const heroes: RosterUnit[] = props.heroes.map((unit) => ({ kind: "hero", unit }));

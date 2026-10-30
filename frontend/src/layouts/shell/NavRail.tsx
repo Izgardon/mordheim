@@ -13,7 +13,7 @@ import {
   isAftermathPath,
   OVERVIEW_LINK,
   REFERENCE_LINKS,
-  SEARCH_ICON,
+  SEARCH_LINK,
   warbandLinks,
   type NavLink,
 } from "./campaign-nav";
@@ -138,10 +138,12 @@ export default function NavRail({ campaign, userName, tools, onRejoinBattle }: N
       </RailSection>
 
       <RailSection title="Reference">
-        <span aria-disabled="true" className={cn(ROW, "cursor-not-allowed text-faint")}>
-          <SEARCH_ICON className="h-4 w-4 shrink-0" aria-hidden="true" />
-          Search everything
-        </span>
+        <RailLink
+          to={to(SEARCH_LINK)}
+          label={SEARCH_LINK.label}
+          icon={SEARCH_LINK.icon}
+          current={isCurrent(SEARCH_LINK.path)}
+        />
         {REFERENCE_LINKS.map((link) => (
           <RailLink
             key={link.path}

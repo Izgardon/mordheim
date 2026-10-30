@@ -26,6 +26,9 @@ export const LIST_KEY: Record<UnitKindKey, UnitListKey> = {
 
 export const unitKey = ({ kind, unit }: RosterUnit) => `${kind}-${unit.id}`;
 
+/** A card's DOM id, which a `?unit=` link scrolls to. */
+export const unitDomId = (entry: RosterUnit) => `unit-${unitKey(entry)}`;
+
 export const unitName = (unit: { name: string | null; unit_type: string | null }) =>
   unit.name?.trim() || unit.unit_type?.trim() || "Unnamed";
 

@@ -7,7 +7,12 @@ import { Switch } from "@/components/ui/switch";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { useTheme } from "@/lib/theme";
 
-import { REFERENCE_LINKS, mobileNavActiveId, warbandLinks } from "../shell/campaign-nav";
+import {
+  REFERENCE_LINKS,
+  SEARCH_LINK,
+  mobileNavActiveId,
+  warbandLinks,
+} from "../shell/campaign-nav";
 import { BottomBar, BottomBarButton, BottomBarLink } from "./BottomBar";
 import { SheetLinkRow, SheetRows } from "./SheetRows";
 
@@ -76,6 +81,11 @@ export default function CampaignBottomNav({
         title="Reference"
       >
         <SheetRows>
+          <SheetLinkRow
+            to={`${base}/${SEARCH_LINK.path}`}
+            label={SEARCH_LINK.label}
+            onNavigate={close}
+          />
           {REFERENCE_LINKS.map((link) => (
             <SheetLinkRow
               key={link.path}

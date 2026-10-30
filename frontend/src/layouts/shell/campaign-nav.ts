@@ -25,7 +25,8 @@ export const REFERENCE_LINKS: NavLink[] = [
 ];
 
 export const OVERVIEW_LINK: NavLink = { label: "Overview", path: "", icon: LayoutGrid };
-export const SEARCH_ICON = Search;
+/** Search everything (next step 7a): the rail's first Reference row, the Reference sheet's first. */
+export const SEARCH_LINK: NavLink = { label: "Search everything", path: "search", icon: Search };
 export const BATTLES_ICON = Swords;
 
 /**
@@ -51,6 +52,7 @@ const SECTION_TITLES: Record<string, string> = {
   locations: "Locations",
   settings: "Settings",
   battles: "Battle",
+  search: "Search everything",
   ...Object.fromEntries(REFERENCE_LINKS.map((link) => [link.path, link.label])),
 };
 
@@ -79,6 +81,7 @@ export function mobileNavActiveId(pathname: string): MobileNavId {
   if (current === "battles") return "battle";
   if (current === "settings") return "me";
   if (["warband", "warbands", "encampments", "locations"].includes(current)) return "warband";
+  if (current === SEARCH_LINK.path) return "reference";
   if (REFERENCE_LINKS.some((link) => link.path === current)) return "reference";
   return "campaign";
 }

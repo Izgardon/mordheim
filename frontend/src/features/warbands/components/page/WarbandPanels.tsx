@@ -37,6 +37,8 @@ type WarbandPanelsProps = {
   store: StoreOpening;
   openStore: (opening: StoreOpening) => void;
   actions: ReturnType<typeof useUnitActions>;
+  /** Locations opened searched for a place (`?place=`, from Search everything). */
+  placeSearch?: string;
 };
 
 /** The warband page's panels (design E): a unit's loadout, the stash, the store and locations. */
@@ -92,6 +94,7 @@ export default function WarbandPanels(props: WarbandPanelsProps) {
         canEdit={props.canEdit}
         open={props.panel === "locations"}
         onOpenChange={(open) => props.setPanel(open ? "locations" : null)}
+        initialSearch={props.placeSearch}
       />
     </>
   );
