@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -77,21 +77,70 @@ export function recipientsFor(
 export const lineTotal = (line: Pick<BasketLine, "free" | "price" | "recipient">) =>
   line.free ? 0 : line.price * line.recipient.count;
 
+/** A warband's basket: its lines and the id the next line takes. */
+type BasketState = { lines: BasketLine[]; nextId: number };
+
+const EMPTY_BASKET: BasketState = { lines: [], nextId: 1 };
+const baskets = new Map<number, BasketState>();
+const listeners = new Set<() => void>();
+const storageKey = (warbandId: number) => `mordheim:basket:${warbandId}`;
+
+/**
+ * A warband's basket, read once from this tab's session storage: one basket per warband, shared by
+ * the warband page's store and Wargear's Get this item, kept until it is bought or the tab closes.
+ */
+function readBasket(warbandId: number): BasketState {
+  const known = baskets.get(warbandId);
+  if (known) return known;
+  let state = EMPTY_BASKET;
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(storageKey(warbandId)) ?? "null");
+    if (Array.isArray(saved?.lines)) {
+      state = { lines: saved.lines, nextId: Number(saved.nextId) || saved.lines.length + 1 };
+    }
+  } catch {
+    // No storage (a private window, blocked site data): the basket lives in memory only.
+  }
+  baskets.set(warbandId, state);
+  return state;
+}
+
+function writeBasket(warbandId: number, update: (state: BasketState) => BasketState) {
+  const next = update(readBasket(warbandId));
+  baskets.set(warbandId, next);
+  try {
+    if (next.lines.length) sessionStorage.setItem(storageKey(warbandId), JSON.stringify(next));
+    else sessionStorage.removeItem(storageKey(warbandId));
+  } catch {
+    // Kept in memory for this visit.
+  }
+  listeners.forEach((listener) => listener());
+}
+
+const subscribe = (listener: () => void) => {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+};
+
 /**
  * The store's basket: lines added from the rows, their prices edited or removed, and Buy all,
  * which sends one purchase per line (today's POST purchases/) in order, stops at the first one
- * the server refuses and keeps the lines not bought.
+ * the server refuses and keeps the lines not bought. Every store panel of a warband shares it.
  */
 export function useStoreBasket(warbandId: number) {
   const queryClient = useQueryClient();
-  const [lines, setLines] = useState<BasketLine[]>([]);
+  const { lines } = useSyncExternalStore(subscribe, () => readBasket(warbandId));
   const [buying, setBuying] = useState(false);
-  const [nextId, setNextId] = useState(1);
+  const setLines = (update: (current: BasketLine[]) => BasketLine[]) =>
+    writeBasket(warbandId, (state) => ({ ...state, lines: update(state.lines) }));
 
-  const add = (line: Omit<BasketLine, "id">) => {
-    setLines((current) => [...current, { ...line, id: nextId }]);
-    setNextId((id) => id + 1);
-  };
+  const add = (line: Omit<BasketLine, "id">) =>
+    writeBasket(warbandId, (state) => ({
+      lines: [...state.lines, { ...line, id: state.nextId }],
+      nextId: state.nextId + 1,
+    }));
   const remove = (id: number) => setLines((current) => current.filter((line) => line.id !== id));
   const setPrice = (id: number, price: number) =>
     setLines((current) => current.map((line) => (line.id === id ? { ...line, price } : line)));

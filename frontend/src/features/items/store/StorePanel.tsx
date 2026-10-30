@@ -38,7 +38,7 @@ type StorePanelProps = {
  * The store (design E): a drawer on the web, a sheet on a phone. The list of what the campaign
  * sells, each row's acquire form putting items in the basket, and the basket with Buy all. Opened
  * from a unit, the header says "Buying for <name>" and that unit's button comes first. The basket
- * is kept while the panel is closed, until it is bought.
+ * is the warband's one (Wargear's Get this item shares it), kept for the session until bought.
  */
 export default function StorePanel(props: StorePanelProps) {
   const isMobile = useMediaQuery("(max-width: 960px)");
