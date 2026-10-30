@@ -18,25 +18,23 @@ const Account = lazy(() => import("../../features/auth/routes/Account"));
 const CampaignLayout = lazy(() => import("../../features/campaigns/routes/CampaignLayout"));
 const Campaigns = lazy(() => import("../../features/campaigns/routes/Campaigns"));
 
-const LATER = "a later step";
-
-/** The campaign pages: placeholders until their redesign step rebuilds them. */
+/** The campaign pages still to rebuild: placeholders until their redesign step. */
 const CAMPAIGN_PAGES: { path?: string; title: string; step: string }[] = [
-  { title: "Overview", step: LATER },
+  { title: "Overview", step: "step 5" },
   { path: "warband", title: "Warband", step: "step 2" },
   { path: "warbands/:warbandId", title: "Warband", step: "step 2" },
-  { path: "encampments", title: "Encampment", step: LATER },
   { path: "locations", title: "Locations", step: "step 2" },
-  { path: "items", title: "Wargear", step: LATER },
-  { path: "skills", title: "Skills", step: LATER },
-  { path: "spells", title: "Spells", step: LATER },
-  { path: "bestiary", title: "Bestiary", step: LATER },
-  { path: "hired-swords", title: "Hired swords", step: LATER },
-  { path: "dramatis-personae", title: "Dramatis personae", step: LATER },
-  { path: "rules", title: "Rules", step: LATER },
-  { path: "house-rules", title: "House rules", step: LATER },
-  { path: "settings", title: "Settings", step: LATER },
-  { path: "battles/:battleId/*", title: "Battle", step: LATER },
+  { path: "encampments", title: "Encampment", step: "step 7" },
+  { path: "items", title: "Wargear", step: "step 7" },
+  { path: "skills", title: "Skills", step: "step 7" },
+  { path: "spells", title: "Spells", step: "step 7" },
+  { path: "bestiary", title: "Bestiary", step: "step 7" },
+  { path: "hired-swords", title: "Hired swords", step: "step 7" },
+  { path: "dramatis-personae", title: "Dramatis personae", step: "step 7" },
+  { path: "rules", title: "Rules", step: "step 7" },
+  { path: "house-rules", title: "House rules", step: "step 7" },
+  { path: "settings", title: "Settings", step: "step 7" },
+  { path: "battles/:battleId/*", title: "Battle", step: "step 6" },
 ];
 
 function RootLayout() {
