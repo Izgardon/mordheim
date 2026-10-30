@@ -54,10 +54,18 @@ const SECTION_TITLES: Record<string, string> = {
   ...Object.fromEntries(REFERENCE_LINKS.map((link) => [link.path, link.label])),
 };
 
-const section = (pathname: string) => pathname.split("/").filter(Boolean)[2] ?? "";
+const parts = (pathname: string) => pathname.split("/").filter(Boolean);
+const section = (pathname: string) => parts(pathname)[2] ?? "";
+/** The Battles page itself (`/campaigns/:id/battles`), not one battle. */
+const isBattlesPage = (pathname: string) =>
+  section(pathname) === "battles" && parts(pathname).length === 3;
+
+/** A battle's Aftermath (`battles/:id/postbattle`): part of your warband's post-game. */
+export const isAftermathPath = (pathname: string) => /\/battles\/\d+\/postbattle/.test(pathname);
 
 /** The phone's top-bar title for a campaign path (`/campaigns/:id/<section>/...`). */
 export function campaignSectionTitle(pathname: string) {
+  if (isBattlesPage(pathname)) return "Battles";
   return SECTION_TITLES[section(pathname)] ?? "Overview";
 }
 
@@ -66,6 +74,8 @@ export type MobileNavId = "campaign" | "warband" | "battle" | "reference" | "me"
 /** Which bottom-nav item a campaign path belongs to. */
 export function mobileNavActiveId(pathname: string): MobileNavId {
   const current = section(pathname);
+  if (isAftermathPath(pathname)) return "warband";
+  if (isBattlesPage(pathname)) return "campaign";
   if (current === "battles") return "battle";
   if (current === "settings") return "me";
   if (["warband", "warbands", "encampments", "locations"].includes(current)) return "warband";

@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 
 import {
   BATTLES_ICON,
+  isAftermathPath,
   OVERVIEW_LINK,
   REFERENCE_LINKS,
   SEARCH_ICON,
@@ -62,7 +63,7 @@ type NavRailProps = {
   userName: string;
   /** The dice, chat and notifications buttons (`CampaignTools`). */
   tools: ReactNode;
-  /** A battle you can go back to: Battles goes there instead of the overview. */
+  /** A battle you can go back to: Rejoin beside Battles goes there. */
   onRejoinBattle?: () => void;
 };
 
@@ -76,7 +77,9 @@ export default function NavRail({ campaign, userName, tools, onRejoinBattle }: N
     path
       ? pathname === `${base}/${path}` || pathname.startsWith(`${base}/${path}/`)
       : pathname === base;
-  const onBattle = pathname.startsWith(`${base}/battles/`);
+  // The Aftermath belongs to your warband (its post-game), not to the battle.
+  const onAftermath = isAftermathPath(pathname);
+  const onBattles = !onAftermath && isCurrent("battles");
 
   return (
     <nav aria-label="Campaign" className="flex min-h-full flex-col gap-[22px] px-3.5 py-[22px]">
@@ -103,17 +106,23 @@ export default function NavRail({ campaign, userName, tools, onRejoinBattle }: N
           icon={OVERVIEW_LINK.icon}
           current={isCurrent("")}
         />
-        {onRejoinBattle ? (
-          <button type="button" onClick={onRejoinBattle} className={cn(ROW, IDLE, "text-left")}>
-            <BATTLES_ICON className="h-4 w-4 shrink-0" aria-hidden="true" />
-            Battles
-            <span className="ml-auto text-[11px] font-bold uppercase tracking-[0.12em] text-accent-text">
+        <div className="relative flex flex-col">
+          <RailLink
+            to={`${base}/battles`}
+            label="Battles"
+            icon={BATTLES_ICON}
+            current={onBattles}
+          />
+          {onRejoinBattle ? (
+            <button
+              type="button"
+              onClick={onRejoinBattle}
+              className="absolute inset-y-0 right-0 px-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-accent-text hover:text-accent-hi"
+            >
               Rejoin
-            </span>
-          </button>
-        ) : (
-          <RailLink to={base} label="Battles" icon={BATTLES_ICON} current={onBattle} />
-        )}
+            </button>
+          ) : null}
+        </div>
       </RailSection>
 
       <RailSection title="My warband">
@@ -123,7 +132,7 @@ export default function NavRail({ campaign, userName, tools, onRejoinBattle }: N
             to={to(link)}
             label={link.label}
             icon={link.icon}
-            current={isCurrent(link.path)}
+            current={isCurrent(link.path) || (onAftermath && link.path === "warband")}
           />
         ))}
       </RailSection>

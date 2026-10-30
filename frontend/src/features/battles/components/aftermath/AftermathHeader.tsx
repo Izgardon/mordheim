@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Check, ChevronLeft } from "lucide-react";
 
@@ -29,6 +30,8 @@ type AftermathHeaderProps = {
   onTab: (tab: AftermathTab) => void;
   warbandPath: string;
   isMobile: boolean;
+  /** The ⋯ menu (Skip and Close post-battle), beside the saved state. */
+  menu?: ReactNode;
 };
 
 function SaveState({ saving, error }: { saving: boolean; error: string }) {
@@ -102,6 +105,7 @@ export default function AftermathHeader(props: AftermathHeaderProps) {
             <span className="truncate text-xs text-muted-foreground">{props.subtitle}</span>
           </div>
           <SaveState saving={props.saving} error={props.error} />
+          {props.menu}
         </header>
         {tabs}
       </div>
@@ -118,7 +122,10 @@ export default function AftermathHeader(props: AftermathHeaderProps) {
           <h1 className="m-0 font-display text-[32px] font-semibold text-head">{props.title}</h1>
           <span className="text-[13px] text-text2">{props.subtitle}</span>
         </div>
-        <SaveState saving={props.saving} error={props.error} />
+        <div className="flex items-center gap-3">
+          <SaveState saving={props.saving} error={props.error} />
+          {props.menu}
+        </div>
       </div>
       <nav aria-label="Post-game steps" className="flex flex-wrap items-end gap-x-6">
         {tabs}

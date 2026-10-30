@@ -12,11 +12,15 @@ import { cn } from "@/lib/utils";
 
 import AftermathAside, { opponentsOf, resultText } from "./AftermathAside";
 import AftermathHeader, { AFTERMATH_TABS, type AftermathTab } from "./AftermathHeader";
+import AftermathMenu from "./AftermathMenu";
+import { buildStatChangeRows, withKeptStats } from "./aftermath-stats";
 import { buildXpRows } from "./aftermath-xp";
 import ExperienceTab from "./ExperienceTab";
 import ExploreTab from "./ExploreTab";
+import FindsCard from "./FindsCard";
 import InjuriesTab from "./InjuriesTab";
 import ResultsBanner from "./ResultsBanner";
+import StatChangesCard from "./StatChangesCard";
 
 type AftermathBodyProps = {
   campaign: CampaignSummary | null;
@@ -81,20 +85,29 @@ export default function AftermathBody({
         onChange={save}
       />
     ) : tab === "xp" ? (
-      <ExperienceTab
-        draft={draft}
-        rows={buildXpRows(draft, postgame.sheet, campaign, battleState.suggested_postbattle)}
-        isMobile={isMobile}
-        onChange={save}
-      />
+      <>
+        <StatChangesCard
+          rows={buildStatChangeRows(draft, battle.roster, me.unit_information_json)}
+          onKeep={(row, keep) => save(withKeptStats(draft, row, keep))}
+        />
+        <ExperienceTab
+          draft={draft}
+          rows={buildXpRows(draft, postgame.sheet, campaign, battleState.suggested_postbattle)}
+          isMobile={isMobile}
+          onChange={save}
+        />
+      </>
     ) : (
-      <ExploreTab
-        explore={explore}
-        resources={postgame.resources}
-        why={exploreWhy(battleState, me, heroesOnFeet)}
-        isMobile={isMobile}
-        onReadAndRoll={campaign?.enable_locations ? setReadPlace : undefined}
-      />
+      <>
+        <ExploreTab
+          explore={explore}
+          resources={postgame.resources}
+          why={exploreWhy(battleState, me, heroesOnFeet)}
+          isMobile={isMobile}
+          onReadAndRoll={campaign?.enable_locations ? setReadPlace : undefined}
+        />
+        <FindsCard campaignId={campaignId} drafting={drafting} isMobile={isMobile} />
+      </>
     );
   const back = () => (index > 0 ? setTab(AFTERMATH_TABS[index - 1].id) : undefined);
   const next = AFTERMATH_TABS[index + 1];
@@ -140,6 +153,7 @@ export default function AftermathBody({
         onTab={setTab}
         warbandPath={warbandPath}
         isMobile={isMobile}
+        menu={<AftermathMenu battle={battle} battleState={battleState} />}
       />
       <div className="flex flex-wrap items-start gap-8">
         <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-3.5">

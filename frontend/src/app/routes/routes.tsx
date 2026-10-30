@@ -23,6 +23,7 @@ const Aftermath = lazy(() => import("../../features/battles/routes/Aftermath"));
 /** The campaign pages still to rebuild: placeholders until their redesign step. */
 const CAMPAIGN_PAGES: { path?: string; title: string; step: string }[] = [
   { title: "Overview", step: "step 5" },
+  { path: "battles", title: "Battles", step: "step 5" },
   { path: "encampments", title: "Encampment", step: "step 7" },
   { path: "items", title: "Wargear", step: "step 7" },
   { path: "skills", title: "Skills", step: "step 7" },

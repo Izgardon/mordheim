@@ -1,13 +1,10 @@
 import type { ReactNode } from "react";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { Archive, Ellipsis, Map, ShoppingBag } from "lucide-react";
+import { Archive, Map, ShoppingBag } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { IconButton } from "@/components/ui/icon-button";
+import { MoreMenu, type MoreMenuEntry } from "@/components/ui/more-menu";
 
 export type WarbandPanel = "store" | "stash" | "locations" | "loadout";
-
-type MenuEntry = { label: string; onSelect?: () => void; href?: string };
 
 type WarbandHeaderProps = {
   kicker: string;
@@ -15,7 +12,7 @@ type WarbandHeaderProps = {
   stashCount: number;
   showLocations: boolean;
   onOpen: (panel: WarbandPanel) => void;
-  menu: MenuEntry[];
+  menu: MoreMenuEntry[];
 };
 
 const PANEL_BUTTONS: { panel: WarbandPanel; label: string; icon: ReactNode }[] = [
@@ -54,44 +51,8 @@ export default function WarbandHeader(props: WarbandHeaderProps) {
             </Button>
           )
         )}
-        {props.menu.length ? (
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger asChild>
-              <IconButton aria-label="More warband actions" className="border-strong">
-                <Ellipsis aria-hidden="true" />
-              </IconButton>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Portal>
-              <DropdownMenu.Content
-                align="end"
-                sideOffset={4}
-                className="z-[70] min-w-[220px] border border-border bg-panel p-1 shadow-[0_16px_40px_var(--color-shadow)]"
-              >
-                {props.menu.map((entry) =>
-                  entry.href ? (
-                    <DropdownMenu.Item key={entry.label} asChild>
-                      <a href={entry.href} target="_blank" rel="noreferrer" className={MENU_ITEM}>
-                        {entry.label}
-                      </a>
-                    </DropdownMenu.Item>
-                  ) : (
-                    <DropdownMenu.Item
-                      key={entry.label}
-                      onSelect={entry.onSelect}
-                      className={MENU_ITEM}
-                    >
-                      {entry.label}
-                    </DropdownMenu.Item>
-                  )
-                )}
-              </DropdownMenu.Content>
-            </DropdownMenu.Portal>
-          </DropdownMenu.Root>
-        ) : null}
+        <MoreMenu label="More warband actions" entries={props.menu} />
       </div>
     </header>
   );
 }
-
-const MENU_ITEM =
-  "flex min-h-10 cursor-pointer items-center px-3 text-sm text-ink outline-none data-[highlighted]:bg-raised data-[highlighted]:text-head";
