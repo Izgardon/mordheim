@@ -32,6 +32,7 @@ const Rules = lazy(() => import("../../features/rules/routes/Rules"));
 const HouseRules = lazy(() => import("../../features/rules/routes/HouseRules"));
 const SearchEverything = lazy(() => import("../../features/search/routes/SearchEverything"));
 const CampaignSettings = lazy(() => import("../../features/campaigns/routes/CampaignSettings"));
+const Encampments = lazy(() => import("../../features/campaigns/routes/Encampments"));
 
 function RootLayout() {
   return (
@@ -117,6 +118,7 @@ export const routes: RouteObject[] = [
                     path: "locations",
                     element: <Navigate to="../warband?panel=locations" replace />,
                   },
+                  { path: "encampments", element: <Encampments /> },
                   { path: "settings", element: <CampaignSettings /> },
                 ],
               },
