@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useOutletContext, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
-import { SidePanel } from "@/components/ui/side-panel";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import type { StoreOpening } from "@/features/items/store/StorePanel";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { useMediaQuery } from "@/lib/use-media-query";
 
@@ -14,11 +14,9 @@ import TreasuryTab from "../components/page/TreasuryTab";
 import WarbandHeader, { type WarbandPanel } from "../components/page/WarbandHeader";
 import WarbandResources from "../components/page/WarbandResources";
 import WarbandStats from "../components/page/WarbandStats";
+import WarbandPanels, { storeFor } from "../components/page/WarbandPanels";
 import WarbandTabs from "../components/page/WarbandTabs";
 import PostgameSlot from "../components/camp/PostgameSlot";
-import LoadoutPanel from "../components/panels/LoadoutPanel";
-import LocationsPanel from "../components/panels/LocationsPanel";
-import StashPanel from "../components/panels/StashPanel";
 import AdvanceDialog from "../components/roster/AdvanceDialog";
 import EditUnitForm from "../components/roster/EditUnitForm";
 import RecruitDialog from "../components/roster/RecruitDialog";
@@ -49,6 +47,7 @@ export default function Warband() {
   const [advancing, setAdvancing] = useState<RosterUnit | null>(null);
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [tradeInviteOpen, setTradeInviteOpen] = useState(false);
+  const [store, setStore] = useState<StoreOpening>({});
   const warbandId = warband?.id ?? 0;
   const actions = useUnitActions(warbandId);
   const stash = useQuery({
@@ -62,6 +61,10 @@ export default function Warband() {
     if (next) params.set("panel", next);
     else params.delete("panel");
     setSearchParams(params, { replace: true });
+  };
+  const openStore = (opening: StoreOpening) => {
+    setStore(opening);
+    setPanel("store");
   };
 
   if (sheet.isLoading)
@@ -82,8 +85,6 @@ export default function Warband() {
     ...sheet.henchmenGroups.map((unit) => ({ kind: "henchmen_group" as const, unit })),
     ...sheet.hirelings.map((unit) => ({ kind: "hireling" as const, unit })),
   ];
-  const sellFromStash = (item: { id: number; suggested_sale_price?: number | null }) =>
-    actions.sellItem(null, item.id, item.suggested_sale_price ?? 0);
   const postgame = {
     campaignId,
     campaign,
@@ -92,7 +93,7 @@ export default function Warband() {
     enabled: mine && canEdit,
     isMobile,
     onHire: () => setRecruiting("hireling"),
-    onStore: () => setPanel("store"),
+    onStore: () => openStore({}),
   } as const;
 
   return (
@@ -103,7 +104,7 @@ export default function Warband() {
         name={warband.name}
         stashCount={stashCount}
         showLocations={Boolean(campaign?.enable_locations)}
-        onOpen={setPanel}
+        onOpen={(next) => (next === "store" ? openStore({}) : setPanel(next))}
         menu={[
           ...(capabilities.trade
             ? [{ label: "Trade with a player", onSelect: () => setTradeInviteOpen(true) }]
@@ -152,6 +153,15 @@ export default function Warband() {
                   onLoadout={setLoadoutFor}
                   onRecruit={setRecruiting}
                   onAdvance={setAdvancing}
+                  onBuyAgain={(entry, item) =>
+                    openStore(
+                      storeFor(entry, {
+                        itemId: item.id,
+                        name: item.name,
+                        price: item.current_price ?? null,
+                      })
+                    )
+                  }
                   renderEdit={(entry, close) => (
                     <EditUnitForm
                       entry={entry}
@@ -180,50 +190,22 @@ export default function Warband() {
         {isMobile ? null : <PostgameSlot slot="aside" {...postgame} />}
       </div>
 
-      <LoadoutPanel
+      <WarbandPanels
         campaignId={campaignId}
-        warbandId={warbandId}
-        entry={
-          loadoutFor
-            ? (units.find((u) => u.kind === loadoutFor.kind && u.unit.id === loadoutFor.unit.id) ??
-              null)
-            : null
-        }
-        onOpenChange={(open) => (open ? null : setLoadoutFor(null))}
-        canEdit={capabilities.manage_items}
-        units={units}
-        onMove={actions.moveItem}
-        onSellFromStash={sellFromStash}
-        onOpenStore={() => {
-          setLoadoutFor(null);
-          setPanel("store");
-        }}
-      />
-      <StashPanel
-        campaignId={campaignId}
-        warbandId={warbandId}
-        open={panel === "stash"}
-        onOpenChange={(open) => setPanel(open ? "stash" : null)}
-        canEdit={capabilities.manage_items}
-        units={units}
-        onMove={(itemId, to) => actions.moveItem(null, itemId, to)}
-        onSell={sellFromStash}
-      />
-      <SidePanel
-        open={panel === "store"}
-        onOpenChange={(open) => setPanel(open ? "store" : null)}
-        kicker="Warband"
-        title="Store"
-      >
-        <p className="text-sm text-text2">Rebuilding in step 4.</p>
-      </SidePanel>
-      <LocationsPanel
-        campaignId={campaignId}
-        warbandId={warbandId}
+        warband={warband}
         heroes={sheet.heroes}
+        henchmenGroups={sheet.henchmenGroups}
+        hirelings={sheet.hirelings}
+        units={units}
         canEdit={canEdit}
-        open={panel === "locations"}
-        onOpenChange={(open) => setPanel(open ? "locations" : null)}
+        canManageItems={capabilities.manage_items}
+        panel={panel}
+        setPanel={setPanel}
+        loadoutFor={loadoutFor}
+        setLoadoutFor={setLoadoutFor}
+        store={store}
+        openStore={openStore}
+        actions={actions}
       />
       <RecruitDialog kind={recruiting} warbandId={warbandId} onClose={() => setRecruiting(null)} />
       <AdvanceDialog

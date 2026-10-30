@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { Plus } from "lucide-react";
 
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
+import type { Item } from "@/features/items/types/item-types";
 
 import { useUnitActions } from "../../hooks/units/useUnitActions";
 import type { HenchmenGroup, WarbandHero, WarbandHireling } from "../../types/warband-types";
@@ -23,6 +24,8 @@ type RosterSectionsProps = {
   renderEdit: (entry: RosterUnit, close: () => void) => ReactNode;
   /** Opens the level-up for a unit with an advance waiting. */
   onAdvance: (entry: RosterUnit) => void;
+  /** Buy again on a carried item: the store for that unit with the item open. */
+  onBuyAgain: (entry: RosterUnit, item: Item) => void;
 };
 
 function Section({
@@ -122,6 +125,7 @@ export default function RosterSections(props: RosterSectionsProps) {
             onTradingAction={(on) => actions.patchUnit(entry, { trading_action: on })}
             onMoveItem={(itemId, to) => actions.moveItem(entry, itemId, to)}
             onSellItem={(itemId, price) => actions.sellItem(entry, itemId, price)}
+            onBuyAgain={(item) => props.onBuyAgain(entry, item)}
             onAdvance={() => props.onAdvance(entry)}
             campaignId={campaign?.id ?? 0}
             onResolvePending={(list, placeholderId, entryId) =>

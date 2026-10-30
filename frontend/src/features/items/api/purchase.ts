@@ -36,9 +36,9 @@ export type PurchaseWarning = {
   item_id?: number;
 };
 
-/** A rarity roll saved with the purchase: the searching hero spends his trading action. */
+/** A rarity roll: the searching hero (null: no hero) spends his trading action; the bonus is the modifier. */
 export type RarityRollLine = {
-  hero_id: number;
+  hero_id: number | null;
   roll: number;
   modifier: number;
   rarity: string;
@@ -189,20 +189,20 @@ export async function purchase(request: PurchaseRequest, queryClient: QueryClien
 }
 
 /**
- * A search that ended without a purchase (decision 9): the server spends the hero's trading
- * action and logs the roll. Its warnings (a spent searcher, a failed roll) show as toasts.
+ * A store search (decision 9): the server spends the searching hero's trading action (nobody's
+ * with no hero) and logs the roll. A spent searcher shows as a toast; the store shows the result.
  */
 export async function saveRarityRoll(
   queryClient: QueryClient,
   warbandId: number,
   roll: RarityRollLine & { item_id: number }
 ) {
-  const answer = await apiRequest<{ hero_id: number; warnings: PurchaseWarning[] }>(
+  const answer = await apiRequest<{ hero_id: number | null; warnings: PurchaseWarning[] }>(
     `/warbands/${warbandId}/rarity-rolls/`,
     { method: "POST", body: roll }
   );
-  setHeroTradingAction(queryClient, warbandId, answer.hero_id, false);
+  if (answer.hero_id !== null) setHeroTradingAction(queryClient, warbandId, answer.hero_id, false);
   markLedgerStale(queryClient, warbandId);
-  toastPurchaseWarnings(answer.warnings);
+  toastPurchaseWarnings(answer.warnings.filter((warning) => warning.code !== "rarity_roll_failed"));
   return answer;
 }

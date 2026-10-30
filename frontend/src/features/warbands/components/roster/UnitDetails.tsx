@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { Switch } from "@/components/ui/switch";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
+import type { Item } from "@/features/items/types/item-types";
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
 import { isPendingByName, isPendingByType } from "../heroes/utils/pending-entries";
@@ -23,6 +24,7 @@ type UnitDetailsProps = {
   onTradingAction: (on: boolean) => void;
   onMoveItem: (itemId: number, to: ItemPlace) => void;
   onSellItem: (itemId: number, price: number) => void;
+  onBuyAgain: (item: Item) => void;
   onAdvance?: () => void;
   campaignId: number;
   /** Puts the picked entry in place of a pending "New skill" (spell, special). */
@@ -178,6 +180,7 @@ export default function UnitDetails(props: UnitDetailsProps) {
                           setOpen(null);
                           props.onSellItem(selected.item!.id, price);
                         },
+                        onBuyAgain: () => props.onBuyAgain(selected.item!),
                       }
                     : undefined
                 }

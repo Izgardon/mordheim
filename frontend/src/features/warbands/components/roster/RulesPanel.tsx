@@ -28,10 +28,12 @@ type RulesPanelProps = {
     targets: RosterUnit[];
     onMove: (to: ItemPlace) => void;
     onSell: (price: number) => void;
+    /** Opens the store for the unit with this item, at the campaign's current price. */
+    onBuyAgain: () => void;
   };
 };
 
-/** A box's rules under its row, and for an item the existing actions: move, stash, sell. */
+/** A box's rules under its row, and for an item the existing actions: move, stash, sell, buy again. */
 export default function RulesPanel({ detail, onClose, itemActions }: RulesPanelProps) {
   const [selling, setSelling] = useState(false);
   const suggested = detail.item?.suggested_sale_price ?? detail.item?.cost ?? 0;
@@ -86,6 +88,9 @@ export default function RulesPanel({ detail, onClose, itemActions }: RulesPanelP
             onClick={() => itemActions.onMove({ type: "stash" })}
           >
             To stash
+          </Button>
+          <Button size="sm" variant="secondary" onClick={itemActions.onBuyAgain}>
+            Buy again
           </Button>
           {selling ? (
             <span className="flex items-center gap-1.5">
