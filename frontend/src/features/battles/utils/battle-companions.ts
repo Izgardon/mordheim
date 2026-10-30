@@ -1,5 +1,3 @@
-import type { EffectiveStats } from "@/features/warbands/types/companion-types";
-import { uniqueBeasts, type CompanionSource } from "@/features/warbands/utils/companions";
 import type { BattleRosterCompanion } from "@/features/battles/types/battle-types";
 import {
   DEFAULT_STATS,
@@ -48,33 +46,6 @@ export function rosterPetModels(
   );
 }
 
-/**
- * A roster unit's mount, then its pets, as the sources of the entries they bring (step 5). A pet
- * with a profile fights as its own model and lists its entries there, not on its owner.
- */
-export const battleCompanionSources = (
-  unit: Pick<PrebattleUnit, "mount" | "pets">
-): CompanionSource[] =>
-  uniqueBeasts([
-    ...(unit.mount ? [{ ...unit.mount, kind: "mount" as const }] : []),
-    ...(unit.pets ?? [])
-      .filter((pet) => !pet.hasProfile)
-      .map((pet) => ({ ...pet, kind: "pet" as const })),
-  ]);
-
-/**
- * A henchmen group's companions as its tabs list them: each member's mount while he rides (not one
- * dismounted) and the group's pets, each beast once.
- */
-export const groupCompanionSources = (
-  members: PrebattleUnit[],
-  infoByKey: Record<string, { dismounted?: boolean } | undefined>
-): CompanionSource[] =>
-  uniqueBeasts(
-    members.flatMap((member) => battleCompanionSources(onFoot(member, infoByKey[member.key])))
-  );
-
-type Mounted = Pick<PrebattleUnit, "effectiveStats">;
 type Dismountable = { dismounted?: boolean } | undefined;
 
 /**
@@ -85,22 +56,6 @@ export const onFoot = <T extends Pick<PrebattleUnit, "effectiveStats" | "mount">
   unit: T,
   info?: Dismountable
 ): T => (info?.dismounted ? { ...unit, effectiveStats: null, mount: null } : unit);
-
-/**
- * A rider's mounted M and save as his roster entry carries them (display only), less any a battle
- * stat change sets: that change wins. Null on foot.
- */
-export function mountedStats(
-  unit: Mounted,
-  overrides: Partial<UnitStats> = {}
-): EffectiveStats | null {
-  const mounted = unit.effectiveStats;
-  if (!mounted) return null;
-  return {
-    movement: overrides.movement !== undefined ? null : mounted.movement,
-    armour_save: overrides.armour_save !== undefined ? null : mounted.armour_save,
-  };
-}
 
 /**
  * A unit's stats as the battle helpers use them: its own, the mount's M and save while it rides
@@ -118,21 +73,4 @@ export function helperStats(
     )
   );
   return { ...unit.stats, ...riding, ...overrides };
-}
-
-const sameMounted = (left: EffectiveStats | null | undefined, right: EffectiveStats) =>
-  left?.movement === right.movement && left?.armour_save === right.armour_save;
-
-/**
- * A group's one stats line shows its mounted M and save only when every member shown rides with
- * the same ones; a group riding in part, or on mounts of different Move, shows foot stats, and
- * each rider's mark says who rides what.
- */
-export function groupMountedStats(
-  members: Mounted[],
-  overrides: Partial<UnitStats> = {}
-): EffectiveStats | null {
-  const first = members[0]?.effectiveStats;
-  if (!first || members.some((member) => !sameMounted(member.effectiveStats, first))) return null;
-  return mountedStats(members[0], overrides);
 }

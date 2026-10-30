@@ -1,4 +1,4 @@
-import type { BattleCustomUnit, BattleParticipant } from "@/features/battles/types/battle-types";
+import type { BattleCustomUnit } from "@/features/battles/types/battle-types";
 
 import type {
   ParticipantRoster,
@@ -226,29 +226,4 @@ export function serializeCustomUnits(customUnits: PrebattleUnit[]): BattleCustom
         armour_save: unit.stats.armour_save,
       },
     }));
-}
-
-export function participantStatusLabel(status: BattleParticipant["status"]) {
-  switch (status) {
-    case "ready":
-      return "Ready";
-    case "accepted":
-      return "Accepted";
-    case "joined_prebattle":
-      return "In Prebattle";
-    case "canceled_prebattle":
-      return "Canceled";
-    case "declined":
-      return "Declined";
-    case "invited":
-      return "Invited";
-    case "in_battle":
-      return "In Battle";
-    case "finished_battle":
-      return "Finished";
-    case "confirmed_postbattle":
-      return "Confirmed";
-    default:
-      return status;
-  }
 }
