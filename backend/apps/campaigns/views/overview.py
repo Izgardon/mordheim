@@ -11,8 +11,8 @@ from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 from apps.users.names import display_name
 
 from ..chronicle import chronicle
-from ..search import campaign_search
 from ..constants import OWNER
+from ..search import campaign_search
 from ..selectors import (
     battle_history_payload,
     campaign_memberships,

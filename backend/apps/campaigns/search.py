@@ -29,9 +29,7 @@ def _units(kind: str, rows: Any) -> list[dict[str, Any]]:
             "warband_id": row["warband_id"],
             "warband_name": row["warband__name"],
         }
-        for row in rows.order_by("name", "id").values("id", "name", "unit_type", "warband_id", "warband__name")[
-            :LIMIT
-        ]
+        for row in rows.order_by("name", "id").values("id", "name", "unit_type", "warband_id", "warband__name")[:LIMIT]
     ]
 
 
@@ -56,6 +54,6 @@ def campaign_search(campaign_id: int, query: str | None) -> dict[str, list[dict[
         .distinct()
     )
     return {
-        "warbands": list(warbands),
+        "warbands": [dict(row) for row in warbands],
         "units": [*_units("hero", heroes), *_units("henchmen_group", groups), *_units("hireling", hirelings)],
     }

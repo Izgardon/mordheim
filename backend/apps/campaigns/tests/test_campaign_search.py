@@ -5,7 +5,7 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 from django.utils import timezone
 
-from apps.warbands.models import HenchmenGroup, Henchman, Hero, Hireling, Warband
+from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling, Warband
 
 from .campaign_support import CampaignTestCase
 
