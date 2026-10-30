@@ -7,6 +7,7 @@ import { Outlet, type RouteObject } from "react-router-dom";
 import ScrollToTop from "../../components/ScrollToTop";
 import RouteError from "../../components/errors/RouteError";
 import { LoadingScreen } from "../../components/ui/loading-screen";
+import RebuildingPage from "./RebuildingPage";
 
 // Route modules load on demand, so the entry chunk carries only the shell (PERF-17).
 const ProtectedLayout = lazy(() => import("./ProtectedLayout"));
@@ -15,25 +16,28 @@ const Landing = lazy(() => import("../../features/auth/routes/Landing"));
 const ResetPassword = lazy(() => import("../../features/auth/routes/ResetPassword"));
 const Account = lazy(() => import("../../features/auth/routes/Account"));
 const CampaignLayout = lazy(() => import("../../features/campaigns/routes/CampaignLayout"));
-const Encampments = lazy(() => import("../../features/campaigns/routes/Encampments"));
-const CampaignOverview = lazy(() => import("../../features/campaigns/routes/CampaignOverview"));
-const Locations = lazy(() => import("../../features/campaigns/routes/Locations"));
-const HouseRules = lazy(() => import("../../features/rules/routes/HouseRules"));
-const Rules = lazy(() => import("../../features/rules/routes/Rules"));
-const CampaignSettings = lazy(() => import("../../features/campaigns/routes/CampaignSettings"));
 const Campaigns = lazy(() => import("../../features/campaigns/routes/Campaigns"));
-const PlaceholderPage = lazy(() => import("../../features/campaigns/routes/PlaceholderPage"));
-const Items = lazy(() => import("../../features/items/routes/Items"));
-const Skills = lazy(() => import("../../features/skills/routes/Skills"));
-const Spells = lazy(() => import("../../features/spells/routes/Spells"));
-const Warband = lazy(() => import("../../features/warbands/routes/Warband"));
-const BattleLayout = lazy(() => import("../../features/battles/routes/BattleLayout"));
-const BattlePrebattle = lazy(() => import("../../features/battles/routes/BattlePrebattle"));
-const BattleActive = lazy(() => import("../../features/battles/routes/BattleActive"));
-const BattlePostbattle = lazy(() => import("../../features/battles/routes/BattlePostbattle"));
-const Bestiary = lazy(() => import("../../features/bestiary/routes/Bestiary"));
-const HiredSwords = lazy(() => import("../../features/hirelings/routes/HiredSwords"));
-const DramatisPersonae = lazy(() => import("../../features/hirelings/routes/DramatisPersonae"));
+
+const LATER = "a later step";
+
+/** The campaign pages: placeholders until their redesign step rebuilds them. */
+const CAMPAIGN_PAGES: { path?: string; title: string; step: string }[] = [
+  { title: "Overview", step: LATER },
+  { path: "warband", title: "Warband", step: "step 2" },
+  { path: "warbands/:warbandId", title: "Warband", step: "step 2" },
+  { path: "encampments", title: "Encampment", step: LATER },
+  { path: "locations", title: "Locations", step: "step 2" },
+  { path: "items", title: "Wargear", step: LATER },
+  { path: "skills", title: "Skills", step: LATER },
+  { path: "spells", title: "Spells", step: LATER },
+  { path: "bestiary", title: "Bestiary", step: LATER },
+  { path: "hired-swords", title: "Hired swords", step: LATER },
+  { path: "dramatis-personae", title: "Dramatis personae", step: LATER },
+  { path: "rules", title: "Rules", step: LATER },
+  { path: "house-rules", title: "House rules", step: LATER },
+  { path: "settings", title: "Settings", step: LATER },
+  { path: "battles/:battleId/*", title: "Battle", step: LATER },
+];
 
 function RootLayout() {
   return (
@@ -78,32 +82,11 @@ export const routes: RouteObject[] = [
               {
                 // A page that throws is replaced in place; the campaign shell stays usable.
                 errorElement: <RouteError variant="inline" />,
-                children: [
-                  { index: true, element: <CampaignOverview /> },
-                  { path: "warband", element: <Warband /> },
-                  { path: "warbands/:warbandId", element: <Warband /> },
-                  { path: "warbands", element: <PlaceholderPage title="Warbands" /> },
-                  { path: "skills", element: <Skills /> },
-                  { path: "spells", element: <Spells /> },
-                  { path: "items", element: <Items /> },
-                  { path: "bestiary", element: <Bestiary /> },
-                  { path: "hired-swords", element: <HiredSwords /> },
-                  { path: "dramatis-personae", element: <DramatisPersonae /> },
-                  { path: "locations", element: <Locations /> },
-                  { path: "encampments", element: <Encampments /> },
-                  { path: "rules", element: <Rules /> },
-                  { path: "house-rules", element: <HouseRules /> },
-                  { path: "settings", element: <CampaignSettings /> },
-                  {
-                    path: "battles/:battleId",
-                    element: <BattleLayout />,
-                    children: [
-                      { path: "prebattle", element: <BattlePrebattle /> },
-                      { path: "active", element: <BattleActive /> },
-                      { path: "postbattle", element: <BattlePostbattle /> },
-                    ],
-                  },
-                ],
+                children: CAMPAIGN_PAGES.map(({ path, title, step }) =>
+                  path
+                    ? { path, element: <RebuildingPage title={title} step={step} /> }
+                    : { index: true, element: <RebuildingPage title={title} step={step} /> }
+                ),
               },
             ],
           },
