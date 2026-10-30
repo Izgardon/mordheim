@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { SidePanel } from "@/components/ui/side-panel";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
-import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 import { warbandStashQuery } from "../api/economy-queries";
 import CreateWarband from "../components/page/CreateWarband";
@@ -14,6 +14,8 @@ import TreasuryTab from "../components/page/TreasuryTab";
 import WarbandHeader, { type WarbandPanel } from "../components/page/WarbandHeader";
 import WarbandResources from "../components/page/WarbandResources";
 import WarbandStats from "../components/page/WarbandStats";
+import WarbandTabs from "../components/page/WarbandTabs";
+import PostgameSlot from "../components/camp/PostgameSlot";
 import LoadoutPanel from "../components/panels/LoadoutPanel";
 import LocationsPanel from "../components/panels/LocationsPanel";
 import StashPanel from "../components/panels/StashPanel";
@@ -26,9 +28,6 @@ import type { RosterUnit } from "../components/roster/unit-view";
 import { useUnitActions } from "../hooks/units/useUnitActions";
 import { useWarbandSheet } from "../hooks/warband/useWarbandSheet";
 import type { UnitKindKey } from "../types/units";
-
-const TABS = ["Roster", "Treasury", "Backstory", "Log"] as const;
-type Tab = (typeof TABS)[number];
 
 /** The warband page (design E): your own warband, or someone else's to look at. */
 export default function Warband() {
@@ -43,7 +42,7 @@ export default function Warband() {
     warbandId: warbandParam ? Number(warbandParam) : null,
   });
   const { warband, capabilities } = sheet;
-  const [tab, setTab] = useState<Tab>("Roster");
+  const isMobile = useMediaQuery("(max-width: 960px)");
   const panel = searchParams.get("panel") as WarbandPanel | null;
   const [loadoutFor, setLoadoutFor] = useState<RosterUnit | null>(null);
   const [recruiting, setRecruiting] = useState<UnitKindKey | null>(null);
@@ -85,9 +84,20 @@ export default function Warband() {
   ];
   const sellFromStash = (item: { id: number; suggested_sale_price?: number | null }) =>
     actions.sellItem(null, item.id, item.suggested_sale_price ?? 0);
+  const postgame = {
+    campaignId,
+    campaign,
+    warbandId,
+    userId: user?.id,
+    enabled: mine && canEdit,
+    isMobile,
+    onHire: () => setRecruiting("hireling"),
+    onStore: () => setPanel("store"),
+  } as const;
 
   return (
     <div className="flex flex-col gap-6">
+      <PostgameSlot slot={isMobile ? "aside" : "bar"} {...postgame} />
       <WarbandHeader
         kicker={[warband.faction, mine ? user?.name : null].filter(Boolean).join(" · ")}
         name={warband.name}
@@ -127,58 +137,48 @@ export default function Warband() {
           canEdit={canEdit}
         />
       </div>
-      <div role="tablist" aria-label="Warband" className="flex gap-7 border-b border-line">
-        {TABS.map((name) => (
-          <button
-            key={name}
-            type="button"
-            role="tab"
-            aria-selected={tab === name}
-            onClick={() => setTab(name)}
-            className={cn(
-              "-mb-px border-b-2 py-2.5 text-sm font-semibold",
-              tab === name
-                ? "border-primary text-head"
-                : "border-transparent text-faint hover:text-text2"
-            )}
-          >
-            {name}
-          </button>
-        ))}
+      <div className="flex flex-wrap items-start gap-8">
+        <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-6">
+          <WarbandTabs
+            render={(tab) =>
+              tab === "Roster" ? (
+                <RosterSections
+                  warbandId={warbandId}
+                  campaign={campaign}
+                  heroes={sheet.heroes}
+                  henchmenGroups={sheet.henchmenGroups}
+                  hirelings={sheet.hirelings}
+                  canEdit={canEdit}
+                  onLoadout={setLoadoutFor}
+                  onRecruit={setRecruiting}
+                  onAdvance={setAdvancing}
+                  renderEdit={(entry, close) => (
+                    <EditUnitForm
+                      entry={entry}
+                      campaignId={campaignId}
+                      warbandId={warbandId}
+                      canCreateRace={capabilities.edit_catalogue}
+                      onAddItem={() => setLoadoutFor(entry)}
+                      onClose={close}
+                    />
+                  )}
+                />
+              ) : tab === "Treasury" ? (
+                <TreasuryTab campaignId={campaignId} warbandId={warbandId} canEdit={canEdit} />
+              ) : tab === "Backstory" ? (
+                <BackstoryTab
+                  warband={warband}
+                  canEdit={capabilities.edit_backstory}
+                  onWarbandUpdated={sheet.mergeWarband}
+                />
+              ) : (
+                <LogTab campaignId={campaignId} warbandId={warbandId} />
+              )
+            }
+          />
+        </div>
+        {isMobile ? null : <PostgameSlot slot="aside" {...postgame} />}
       </div>
-      {tab === "Roster" ? (
-        <RosterSections
-          warbandId={warbandId}
-          campaign={campaign}
-          heroes={sheet.heroes}
-          henchmenGroups={sheet.henchmenGroups}
-          hirelings={sheet.hirelings}
-          canEdit={canEdit}
-          onLoadout={setLoadoutFor}
-          onRecruit={setRecruiting}
-          onAdvance={setAdvancing}
-          renderEdit={(entry, close) => (
-            <EditUnitForm
-              entry={entry}
-              campaignId={campaignId}
-              warbandId={warbandId}
-              canCreateRace={capabilities.edit_catalogue}
-              onAddItem={() => setLoadoutFor(entry)}
-              onClose={close}
-            />
-          )}
-        />
-      ) : tab === "Treasury" ? (
-        <TreasuryTab campaignId={campaignId} warbandId={warbandId} canEdit={canEdit} />
-      ) : tab === "Backstory" ? (
-        <BackstoryTab
-          warband={warband}
-          canEdit={capabilities.edit_backstory}
-          onWarbandUpdated={sheet.mergeWarband}
-        />
-      ) : (
-        <LogTab campaignId={campaignId} warbandId={warbandId} />
-      )}
 
       <LoadoutPanel
         campaignId={campaignId}
