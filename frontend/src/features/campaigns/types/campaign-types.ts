@@ -112,7 +112,8 @@ export type CampaignBattleHistoryParticipant = {
 
 /** A battle's key moment: battles record no turns, so the fight's are "During", deaths "After". */
 export type CampaignBattleMoment = {
-  group: "During" | "After";
+  /** "Round N" (next step 6), "During" or "After". */
+  group: string;
   kind: "kill" | "ooa" | "find" | "death";
   text: string;
 };

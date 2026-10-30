@@ -103,9 +103,13 @@ export function battleLine(battle: CampaignBattleHistoryEntry) {
   };
 }
 
-/** A battle's moments grouped as its row shows them: "During", then "After". */
+/**
+ * A battle's moments grouped as its row shows them, in the server's order: "Round 1", "Round 2"
+ * and on for kills that carry their round (next step 6), "During" for the rest, then "After".
+ */
 export function momentGroups(moments: CampaignBattleMoment[] = []) {
-  return (["During", "After"] as const)
+  const labels = [...new Set(moments.map((moment) => moment.group))];
+  return labels
     .map((label) => ({ label, moments: moments.filter((moment) => moment.group === label) }))
     .filter((group) => group.moments.length > 0);
 }
