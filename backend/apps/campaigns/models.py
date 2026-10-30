@@ -293,6 +293,7 @@ class CampaignEncampment(models.Model):
 class CampaignLocation(models.Model):
     campaign = models.ForeignKey(Campaign, related_name="campaign_locations", on_delete=models.CASCADE)
     name = models.CharField(max_length=160)
+    area = models.CharField(max_length=80, blank=True, default="")  # free text: the panel filters by those in use
     content = models.TextField(blank=True, default="")
     d6_1 = models.TextField(blank=True, default="")
     d6_2 = models.TextField(blank=True, default="")

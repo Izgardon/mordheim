@@ -1,4 +1,5 @@
-"""Locations: a name, rich-text content (sanitised by the write serializer) and six d6 results.
+"""Locations: a name, an optional area (free text), rich-text content (sanitised by the write serializer) and six d6
+results.
 
 Adding and editing need the Locations page switched on and `manage_locations` (owners and admins hold it).
 """

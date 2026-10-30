@@ -141,6 +141,16 @@ class LocationTests(CampaignTestCase):
         self.assertEqual(self.delete_as(self.owner, url).status_code, 405)
         self.assertTrue(CampaignLocation.objects.filter(id=location["id"]).exists())
 
+    def test_a_location_has_an_optional_area_trimmed_and_editable(self):
+        plain = self.add(self.owner).data
+        docks = self.add(self.owner, name="Wharf", area="  The Docks ").data
+        url = self.url(f"locations/{plain['id']}/")
+
+        self.assertEqual((plain["area"], docks["area"]), ("", "The Docks"))
+        self.assertEqual(self.patch_as(self.owner, url, {"area": "Merchant Quarter"}).data["area"], "Merchant Quarter")
+        listed = {row["name"]: row["area"] for row in self.get_as(self.player, self.url("locations/")).data}
+        self.assertEqual(listed, {"River Quarter": "Merchant Quarter", "Wharf": "The Docks"})
+
     def test_content_is_sanitised_and_rolls_are_kept_as_typed(self):
         response = self.add(
             self.owner, content="<p>Main text</p><script>alert(1)</script>", d6_6="<strong>Secret route</strong>"
