@@ -162,6 +162,8 @@ export default function Warband() {
               entry={entry}
               campaignId={campaignId}
               warbandId={warbandId}
+              canCreateRace={capabilities.edit_catalogue}
+              onAddItem={() => setLoadoutFor(entry)}
               onClose={close}
             />
           )}
