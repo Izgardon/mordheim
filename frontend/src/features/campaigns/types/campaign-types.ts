@@ -187,6 +187,8 @@ export type CampaignLocation = {
   id: number;
   campaign_id: number;
   name: string;
+  /** Free text ("The Docks"); "" when none. The panel filters by the areas in use. */
+  area: string;
   content: string;
   d6_1: string;
   d6_2: string;
@@ -198,6 +200,7 @@ export type CampaignLocation = {
 
 export type CampaignLocationPayload = {
   name: string;
+  area?: string;
   content?: string;
   d6_1?: string;
   d6_2?: string;

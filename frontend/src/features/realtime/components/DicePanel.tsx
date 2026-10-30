@@ -12,6 +12,7 @@ import { warbandLogsQuery } from "@/features/warbands/api/economy-queries";
 import { markLedgerStale } from "@/features/warbands/api/warband-cache";
 import { createWarbandLog } from "@/features/warbands/api/warbands-api";
 import { useAppStore } from "@/stores/app-store";
+import { rollDie as rollDieOf } from "@/lib/dice";
 
 const DICE = ["D3", "D6", "D8", "D10", "D12", "D20", "D66", "D100"] as const;
 type Die = (typeof DICE)[number];
@@ -23,11 +24,7 @@ const PRESETS: { label: string; count: number; die: Die }[] = [
   { label: "3D6", count: 3, die: "D6" },
 ];
 
-const random = (sides: number) => {
-  const value = new Uint32Array(1);
-  crypto.getRandomValues(value);
-  return (value[0] % sides) + 1;
-};
+const random = rollDieOf;
 /** One die: D66 is two D6 read as tens and units. */
 const rollDie = (die: Die) =>
   die === "D66" ? random(6) * 10 + random(6) : random(Number(die.slice(1)));
