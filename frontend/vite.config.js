@@ -23,7 +23,7 @@ export default defineConfig({
     strictPort: true,
     watch: {
       usePolling: true,
-      interval: 100,
+      interval: 1000,
     },
     proxy: {
       "/api": {
