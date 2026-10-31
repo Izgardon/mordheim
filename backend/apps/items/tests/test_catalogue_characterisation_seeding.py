@@ -21,6 +21,7 @@ from rest_framework.test import APIClient
 
 from apps.bestiary.models import BestiaryEntry
 from apps.campaigns.models import Campaign, CampaignHouseRule, CampaignType
+from apps.hirelings.fees import make_fee
 from apps.hirelings.models import DramatisPersona, HiredSword, HiredSwordItem, HiredSwordSkill
 from apps.items.models import Item, ItemAvailability, ItemRule
 from apps.items.services import sync_half_price_armour_for_campaign
@@ -198,16 +199,27 @@ class SeedAllTests(TestCase):
         mapped |= {"Chaos Centaur": "Centigors", "Ninja Gnoblar": "Goblin"}
         self.assertEqual({name: races[name] for name in mapped}, mapped)
 
-    def test_the_ogre_keeps_both_swords_and_the_formulas_are_kept_beside_the_costs(self):
+    def test_the_ogre_keeps_both_swords_and_the_fees_are_structured(self):
         # the bestiary rewrite: the browser's hire copy dropped quantities and formulas; the catalogue keeps them
         ogre = HiredSword.objects.get(name="Ogre Bodyguard")
         ninja = HiredSword.objects.get(name="Ninja")
         rat_ogre = HiredSword.objects.get(name="Clan Skryre Rat Ogre")
 
         self.assertIn(("Sword", 2), set(ogre.item_links.values_list("item__name", "quantity")))
-        # the items rebuild: the fees are mordheimer's, a text one kept beside the gold it charges
-        self.assertEqual((ninja.hire_cost, ninja.hire_cost_expression), (70, "70 + 3D6"))
-        self.assertEqual((rat_ogre.upkeep_cost, rat_ogre.upkeep_cost_expression), (None, "1 wyrdstone"))
+        # the fees and skill lists step: the fees are mordheimer's, read as kind, gold, dice and resources
+        self.assertEqual(ninja.hire_fee, make_fee(gold=70, dice=3))
+        self.assertEqual(ninja.upkeep_fee, make_fee("none"))
+        self.assertEqual(rat_ogre.upkeep_fee, make_fee(resources=[("Wyrdstone", 1)]))
+        priest = HiredSword.objects.get(name="Priest of Morr")
+        self.assertEqual((priest.hire_fee["kind"], priest.upkeep_fee["kind"]), ("replaces_hero", "none"))
+        belandysh = DramatisPersona.objects.get(name__startswith="Belandysh")
+        self.assertEqual(belandysh.hire_fee, make_fee(gold=90, resources=[("Campaign points", 5)]))
+        bertha = DramatisPersona.objects.get(name__startswith="Bertha")
+        self.assertEqual(bertha.hire_fee["kind"], "special")
+        sigmund = DramatisPersona.objects.get(name__startswith="Sigmund")
+        self.assertEqual((sigmund.hire_fee["gold"], sigmund.upkeep_fee), (70, make_fee(gold=35)))
+        self.assertIn("one body part", sigmund.hire_fee["note"])
+        self.assertEqual(HiredSword.objects.get(name="Halfling Thief").upkeep_fee, make_fee(gold=15, note="15 gc*"))
         self.assertEqual((ogre.race.name if ogre.race else None, ogre.race_label), ("Ogre", "Ogre"))
 
     def test_who_may_hire_and_learn_comes_from_the_import(self):

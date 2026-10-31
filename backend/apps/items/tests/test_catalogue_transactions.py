@@ -20,6 +20,7 @@ from apps.campaigns.services.codes import seed_roles_and_codes
 from apps.campaigns.tests.campaign_support import make_user
 from apps.core.catalogue import versions
 from apps.core.testing import Rendezvous, run_concurrently
+from apps.hirelings.fees import make_fee
 from apps.hirelings.models import HiredSword
 from apps.items.models import Item, ItemAvailability
 
@@ -104,12 +105,12 @@ class CatalogueTransactionTests(TransactionTestCase):
 
     def test_a_hired_sword_edit_with_a_negative_cost_is_a_400(self):
         # BUG-53 (was pinned: a 500; flipped in PR A)
-        archer = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign, hire_cost=40)
+        archer = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign, hire_fee=make_fee(gold=40))
 
-        response = self.client.patch(HIRED_SWORDS.detail_url(archer.id), {"hire_cost": -5}, format="json")
+        response = self.client.patch(HIRED_SWORDS.detail_url(archer.id), {"hire_fee": {"gold": -5}}, format="json")
 
-        self.assertEqual((response.status_code, list(response.json())), (400, ["hire_cost"]))
-        self.assertEqual(HiredSword.objects.get(id=archer.id).hire_cost, 40)
+        self.assertEqual((response.status_code, list(response.json())), (400, ["hire_fee"]))
+        self.assertEqual(HiredSword.objects.get(id=archer.id).hire_fee["gold"], 40)
 
     def test_a_hired_sword_write_failing_after_validation_keeps_nothing(self):
         # BUG-53: the hired sword and its links are one transaction

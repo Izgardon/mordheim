@@ -199,7 +199,8 @@ class QueryBudgetTests(TestCase):
             ("one update", {"update": [{"id": heroes[0], "xp": 5}]}, 15),
             ("two updates", {"update": [{"id": heroes[0], "xp": 6}, {"id": heroes[1], "xp": 6}]}, 16),
             # the recruit's gold: its row and the stored balance (decision 4)
-            ("one create", {"create": [{"name": "New", "unit_type": "Champion", "price": 5}]}, 23),
+            # the hero cap counts the hirelings in a hero's place too (the fees and skill lists step)
+            ("one create", {"create": [{"name": "New", "unit_type": "Champion", "price": 5}]}, 24),
             ("one dismissal", {"dismiss": [heroes[-1]]}, 21),
             # pass 2: a purchase adds the roster ids, its item, the charge, the copies and new updated_at, the log
             ("one purchase", {"purchases": [{"unit_id": heroes[0], "item_id": sword, "price": 5}]}, 22),

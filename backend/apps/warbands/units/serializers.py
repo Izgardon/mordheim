@@ -12,6 +12,7 @@ from typing import Any, ClassVar
 from rest_framework import serializers
 
 from apps.core.catalogue.scope import CatalogueEntryField
+from apps.hirelings.fees import MAX_FEE, MAX_RESOURCE_LINES, FeeField
 from apps.items.models import Item
 from apps.races.models import Race
 from apps.warbands.models import MAX_PENDING_PICKS, RosterUnit
@@ -311,16 +312,40 @@ class CompanionSwitchSerializer(serializers.Serializer):
     on = serializers.BooleanField()
 
 
+class PaymentLineSerializer(serializers.Serializer):
+    """A resource line a hire pays: the resource, how many, and the warband's counter that pays it (null: don't)."""
+
+    resource = serializers.CharField(max_length=60)
+    amount = serializers.IntegerField(min_value=0, max_value=MAX_FEE)
+    resource_id = serializers.IntegerField(allow_null=True)
+
+
 class HireSerializer(serializers.Serializer):
-    """POST .../hirelings/hire/: the catalogue entry to hire (`source` names its list), and an optional name (the
-    entry's by default). The fields are built in get_fields() because `source` is also a Field attribute."""
+    """POST .../hirelings/hire/: the catalogue entry to hire (`source` names its list, `id` the entry) or a hand-typed
+    one (`custom`: `name`, `unit_type`, `upkeep_fee`), an optional name, and what it pays (the fees and skill lists
+    step): `price` in gold (else the fee's gold and the `dice_roll`), `resources` (else the fee's lines, each from
+    the counter of its name) and `dismiss_hero_id` to let a hero go for one who takes a hero's place. The fields are
+    built in get_fields() because `source` is also a Field attribute."""
 
     def get_fields(self) -> dict[str, serializers.Field]:
         return {
-            "source": serializers.ChoiceField(choices=("hired_sword", "dramatis_persona")),
-            "id": serializers.IntegerField(min_value=1),
+            "source": serializers.ChoiceField(choices=("hired_sword", "dramatis_persona", "custom")),
+            "id": serializers.IntegerField(min_value=1, required=False),
             "name": serializers.CharField(max_length=120, allow_blank=True, required=False),
+            "unit_type": serializers.CharField(max_length=80, allow_blank=True, required=False),
+            "price": serializers.IntegerField(min_value=0, max_value=MAX_FEE, allow_null=True, required=False),
+            "dice_roll": serializers.IntegerField(min_value=0, max_value=1000, allow_null=True, required=False),
+            "resources": PaymentLineSerializer(many=True, required=False),
+            "dismiss_hero_id": serializers.IntegerField(allow_null=True, required=False),
+            "upkeep_fee": FeeField(required=False),
         }
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        if attrs["source"] != "custom" and "id" not in attrs:
+            raise serializers.ValidationError({"id": ["Name the entry to hire."]})
+        if len(attrs.get("resources") or []) > MAX_RESOURCE_LINES:
+            raise serializers.ValidationError({"resources": [f"At most {MAX_RESOURCE_LINES} resources."]})
+        return attrs
 
 
 class GapActionSerializer(serializers.Serializer):

@@ -8,6 +8,7 @@ in `test_catalogue_transactions.py`; what they tell the other members (BUG-80), 
 
 from apps.bestiary.models import BestiaryEntry, WarbandBestiaryFavourite
 from apps.core.testing import book_warband_type
+from apps.hirelings.fees import make_fee
 from apps.hirelings.models import HiredSword
 from apps.items.models import Item, ItemAvailability, ItemRule
 from apps.races.models import Race
@@ -293,28 +294,31 @@ class BestiaryWriteTests(CatalogueTestCase):
         body = response.data
         self.assertEqual((body["grade"], body["race_id"], body["race_name"], body["race_label"]), ("1b", self.human.id, "Human", "Human"))  # fmt: skip
         self.assertEqual((body["available_skill_types"], body["campaign_id"]), (["Combat"], self.campaign.id))
-        self.assertEqual((body["hire_cost"], body["upkeep_cost"], body["rating"]), (30, 15, 12))
+        self.assertEqual((body["hire_fee"]["gold"], body["upkeep_fee"]["gold"], body["rating"]), (30, 15, 12))
         self.assertEqual((edited.data["grade"], edited.data["race_id"], edited.data["race_label"]), ("2a", None, "Elf"))
 
     def test_a_hired_sword_edit_with_a_bad_field_saves_nothing(self):
         # BUG-53 (was pinned: the costs were saved, then the bad name was a 400; flipped in PR A)
         archer = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign)
 
-        response = self.patch_as(self.owner, HIRED_SWORDS.detail_url(archer.id), {"hire_cost": 99, "name": ""})
+        response = self.patch_as(self.owner, HIRED_SWORDS.detail_url(archer.id), {"hire_fee": {"gold": 99}, "name": ""})
 
         self.assertEqual((response.status_code, list(response.data)), (400, ["name"]))
-        self.assertEqual(HiredSword.objects.get(id=archer.id).hire_cost, 40)
+        self.assertEqual(HiredSword.objects.get(id=archer.id).hire_fee["gold"], 40)
 
     def test_a_hired_sword_edit_with_a_cost_that_is_not_a_whole_number_of_0_or_more_is_a_400(self):
         # BUG-53 (was pinned: "abc" was a 500; flipped in PR A: the PATCH validates its costs)
         archer = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign)
-        cases = [("hire_cost", "abc"), ("upkeep_cost", -1), ("rating", 1.5), ("hire_cost_expression", "x" * 121)]
+        cases = [("hire_fee", {"gold": "abc"}), ("upkeep_fee", {"gold": -1}), ("rating", 1.5), ("hire_fee", {"note": "x" * 501})]  # fmt: skip
+        cases += [("upkeep_fee", "70 gc"), ("hire_fee", {"kind": "free"}), ("upkeep_fee", {"dice_multiplier": 2})]
         for field, value in cases:
             with self.subTest(field=field, value=value):
                 response = self.patch_as(self.owner, HIRED_SWORDS.detail_url(archer.id), {field: value})
                 self.assertEqual((response.status_code, list(response.data)), (400, [field]))
-        cleared = self.patch_as(self.owner, HIRED_SWORDS.detail_url(archer.id), {"hire_cost": None, "upkeep_cost": 0})
-        self.assertEqual((cleared.data["hire_cost"], cleared.data["upkeep_cost"]), (None, 0))
+        cleared = self.patch_as(
+            self.owner, HIRED_SWORDS.detail_url(archer.id), {"hire_fee": {}, "upkeep_fee": {"gold": 0}}
+        )
+        self.assertEqual((cleared.data["hire_fee"], cleared.data["upkeep_fee"]["gold"]), (make_fee(), 0))
 
     def test_deleting_a_hired_sword_deletes_it_with_its_links(self):
         archer = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign)

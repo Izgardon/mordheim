@@ -1,5 +1,7 @@
 from django.db import models
 
+from apps.hirelings.fees import no_fee
+
 from .shared import PendingPicks, RosterUnit, stat_constraints
 from .warband import Warband
 
@@ -22,9 +24,10 @@ class Hireling(RosterUnit, PendingPicks):
         blank=True,
     )
     kind = models.CharField(max_length=20, choices=HIRELING_KINDS, default="hired_sword")
-    hire_cost_expression = models.CharField(max_length=300, default="", blank=True)  # as its catalogue entry's
-    upkeep_price = models.PositiveIntegerField(default=0)
-    upkeep_cost_expression = models.CharField(max_length=300, default="", blank=True)
+    # the fees it was hired for and is kept for (structured fees: apps/hirelings/fees.py), as its catalogue entry's
+    # or typed by hand; `price` is the gold its hire cost
+    hire_fee = models.JSONField(default=no_fee)
+    upkeep_fee = models.JSONField(default=no_fee)
     kills = models.PositiveIntegerField(default=0)
     caster = models.CharField(
         max_length=20,

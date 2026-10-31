@@ -3,13 +3,14 @@ seed_dramatis_personae read the same shape.
 
 Each row is an object: `name`, `description` (fluff), the nine characteristics, `armour_save` ("4+" or null),
 `large`, `caster`, `skills`, `specials`, `spells` and `equipment` (`{"item", "quantity", "item_type"?}` or an item's
-name), and the hire terms in one object (`hired_sword`, or `dramatis_persona`): `hire_cost`, `hire_cost_expression`,
-`upkeep_cost`, `upkeep_cost_expression`, `rating`, `grade`, `race`, `unique_to`, `available_skill_types` and
-`available_special_skills`; a dramatis persona's adds `stays` ("always" or "one_battle") and `payment_note`.
+name), and the hire terms in one object (`hired_sword`, or `dramatis_persona`): `hire_fee` and `upkeep_fee` (structured
+fees, fees.py; or `hire_cost` and `upkeep_cost` in gold with a `*_cost_expression` kept as the note), `rating`,
+`grade`, `race`, `unique_to`, `available_skill_types` and `available_special_skills`; a dramatis persona's adds
+`stays` ("always" or "one_battle") and `payment_note`.
 
 Who may hire a row, its fees and the book's sentence come from the catalogue import (`out/who-can.json`, mordheimer's
-by name) where it lists the row: its warband types and groups, its fee and upkeep (a text one in the `*_expression`
-column) and its hiring sentence as `hire_note`; otherwise the row's own fees and its `unique_to` as the note.
+by name) where it lists the row: its warband types and groups, its fee and upkeep (structured fees) and its hiring
+sentence as `hire_note`; otherwise the row's own fees and its `unique_to` as the note.
 
 Rows are upserted in the book by name (BUG-17). Links resolve against the book (`core/book_lookups.py`); a row's own
 specials, spells and special skills the book lacks are created in it under "Hired Sword - <name>" ("Dramatis
@@ -41,10 +42,11 @@ from apps.core.seeding import (
 )
 from apps.races.models import Race
 
+from .fees import Fee, clean_fee, make_fee
 from .models import STAYS, DramatisPersona, HiredSword, HirelingProfile
 from .writes import write_links
 
-FEES = ("hire_cost", "upkeep_cost")
+FEES = ("hire", "upkeep")
 
 
 def _no_extras(terms: dict[str, Any], label: str) -> dict[str, Any]:
@@ -129,22 +131,29 @@ class _Run:
         """Who may hire, the fees and the hiring sentence: the import's where it lists the row, else the row's own."""
         imported = self.who_can.of(name)
         if imported is None:
-            fees = {field: (parse_int(terms[field]) if terms.get(field) is not None else None) for field in FEES}
-            return {
-                **fees,
-                "hire_cost_expression": clean(terms.get("hire_cost_expression")),
-                "upkeep_cost_expression": clean(terms.get("upkeep_cost_expression")),
-                "for_everyone": True,
-                "hire_note": clean(terms.get("unique_to")),
-            }
+            fees = {f"{fee}_fee": self.own_fee(terms, fee, name) for fee in FEES}
+            return {**fees, "for_everyone": True, "hire_note": clean(terms.get("unique_to"))}
         return {
-            "hire_cost": imported["hire_cost"],
-            "hire_cost_expression": imported["hire_cost_special"],
-            "upkeep_cost": imported["upkeep_cost"],
-            "upkeep_cost_expression": imported["upkeep_cost_special"],
+            "hire_fee": self.checked(imported["hire_fee"], name),
+            "upkeep_fee": self.checked(imported["upkeep_fee"], name),
             "for_everyone": imported["for_everyone"],
             "hire_note": imported["note"] or clean(terms.get("unique_to")),
         }
+
+    def own_fee(self, terms: dict[str, Any], fee: str, name: str) -> Fee:
+        """A row's own fee: its structured `<fee>_fee`, else its gold `<fee>_cost` with the `<fee>_cost_expression` as
+        the note."""
+        if terms.get(f"{fee}_fee") is not None:
+            return self.checked(terms[f"{fee}_fee"], name)
+        gold = terms.get(f"{fee}_cost")
+        note = clean(terms.get(f"{fee}_cost_expression"))
+        return make_fee(gold=parse_int(gold) if gold is not None else None, note=note)
+
+    def checked(self, fee: Any, name: str) -> Fee:
+        try:
+            return clean_fee(fee)
+        except ValueError as error:
+            raise CommandError(f"{self.spec.noun} '{name}': {error}") from error
 
     def link(self, row: HirelingProfile, data: dict[str, Any]) -> None:
         """The row's links become the data's: each kind in one INSERT, through the catalogue's link builder."""

@@ -1,11 +1,14 @@
 """The post-game parts of the draft the Aftermath page and camp add (next step 3): each unit's advances rolled in the
-Aftermath, and the camp's own record (the veterans' XP pool, what was sold and recruited).
+Aftermath, the camp's own record (the veterans' XP pool, what was sold and recruited) and the resources each upkeep
+pays (the fees and skill lists step).
 
 Advances are applied at finalise, after the battle's XP (services/postbattle/advances.py); the camp record is the
 player's checklist and is only kept with the draft.
 """
 
 from typing import Any
+
+from apps.hirelings.fees import MAX_FEE, MAX_RESOURCE_LINES
 
 from .coerce import coerce_int
 
@@ -109,3 +112,27 @@ def normalize_camp(raw: dict) -> dict[str, Any]:
         if rows := _entries(section, key, clean):
             camp[key] = rows
     return camp
+
+
+def normalize_upkeep_resources(value: Any) -> list[dict[str, Any]]:
+    """An upkeep entry's resource lines (the fees and skill lists step): `resource`, `amount` and the warband's
+    counter that pays it, `resource_id` (null: don't pay it; left out: the counter of its name pays it at Ready)."""
+    lines = _listed(value, "postbattle upkeep resources must be a list")
+    if len(lines) > MAX_RESOURCE_LINES:
+        raise ValueError(f"postbattle upkeep resources must have at most {MAX_RESOURCE_LINES} lines")
+    cleaned = []
+    for line in lines:
+        if not isinstance(line, dict):
+            raise ValueError("Each postbattle upkeep resource must be an object")
+        resource = _label(line.get("resource"), "postbattle upkeep resource", 60)
+        if not resource:
+            raise ValueError("postbattle upkeep resource must name its resource")
+        amount = coerce_int(line.get("amount", 0), field_name="postbattle upkeep amount", minimum=0, maximum=MAX_FEE)
+        entry: dict[str, Any] = {"resource": resource, "amount": amount}
+        if "resource_id" in line:
+            picked = line["resource_id"]
+            entry["resource_id"] = (
+                None if picked is None else coerce_int(picked, field_name="upkeep resource_id", minimum=1)
+            )
+        cleaned.append(entry)
+    return cleaned

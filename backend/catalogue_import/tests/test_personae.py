@@ -29,7 +29,8 @@ class PersonaRowTests(SimpleTestCase):
         self.assertTrue(row["description"].endswith("Also carries: Ithilmar."))  # what the book lacks stays as text
         self.assertEqual(row["specials"][0]["name"], "Wanderer")
         terms = row["dramatis_persona"]
-        self.assertEqual((terms["hire_cost"], terms["upkeep_cost"], terms["race"], terms["stays"]), (150, None, "Elf", "one_battle"))  # fmt: skip
+        self.assertEqual((terms["hire_fee"]["kind"], terms["hire_fee"]["gold"], terms["race"], terms["stays"]), ("gold", 150, "Elf", "one_battle"))  # fmt: skip
+        self.assertEqual(terms["upkeep_fee"]["kind"], "none")  # "n/a": no upkeep
         self.assertEqual(terms["unique_to"], "Any warband except Skaven may hire Aenur.")
 
     def test_a_pair_takes_its_first_fighters_profile_and_a_caster_his_spells(self) -> None:

@@ -15,6 +15,7 @@ from django.test import override_settings
 
 from apps.battles.services.injuries import describe_roll, injury_tables
 from apps.battles.validation.postbattle import normalize_postbattle
+from apps.hirelings.fees import make_fee
 from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling, WarbandLog, WarbandTrade
 
 from .battle_support import BattleTestCase, draft, injury_roll, unit_result
@@ -36,7 +37,9 @@ class MissingGamesCountdownTests(BattleTestCase):
         self.group = HenchmenGroup.objects.create(warband=self.warband, name="Swords", missing_games=1,
                                                   missing_reason="Lost")  # fmt: skip
         Henchman.objects.create(group=self.group, name="Hans")
-        self.grukk = self.warband.hirelings.create(name="Grukk", unit_type="Ogre", upkeep_price=30, missing_games=3)
+        self.grukk = self.warband.hirelings.create(
+            name="Grukk", unit_type="Ogre", upkeep_fee=make_fee(gold=30), missing_games=3
+        )
         self.rat_hero = self.rival.heroes.create(name="Rat", unit_type="Assassin", missing_games=2)
         self.mine, self.rat = f"hero:{self.fighter.id}", f"hero:{self.rat_hero.id}"
 
@@ -102,9 +105,9 @@ class MissingGamesCountdownTests(BattleTestCase):
         self.assertEqual(roster["hirelings"][0]["missingGames"], 3)
 
     def test_upkeep_skips_a_missing_hired_sword(self):
-        here = self.warband.hirelings.create(name="Bertha", unit_type="Ogre", upkeep_price=20)
+        here = self.warband.hirelings.create(name="Bertha", unit_type="Ogre", upkeep_fee=make_fee(gold=20))
         battle_id = self.postbattle()
-        entries = {f"hireling:{unit.id}": {"unit_name": unit.name, "cost": unit.upkeep_price} for unit in (here, self.grukk)}  # fmt: skip
+        entries = {f"hireling:{unit.id}": {"unit_name": unit.name, "cost": unit.upkeep_fee["gold"]} for unit in (here, self.grukk)}  # fmt: skip
 
         suggested = self.ok(self.get_as(self.player, self.url(battle_id, "state") + "?view=postbattle")).data
         self.ok(self.finalize(self.player, battle_id, draft({self.mine: unit_result(self.mine)}, upkeep={"pay_upkeep": True, "entries": entries})))  # fmt: skip

@@ -61,6 +61,7 @@ def _summary_units(rosters: dict[str, list[Any]]) -> WarbandUnits:
                 "missing_games": s.missing_games,
                 "xp": s.xp,
                 "mount_bonuses": mount_bonuses(s.hireling_items.all()),
+                "fee_kind": (s.hire_fee or {}).get("kind"),  # one in a hero's place counts as a hero
             }
             for s in rosters[HIRELING.key]
         ],

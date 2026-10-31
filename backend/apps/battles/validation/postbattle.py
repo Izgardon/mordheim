@@ -4,7 +4,8 @@
 participant's units and the campaign (services/postbattle/validate.py). Injury rolls get their result and effect
 from the server's tables (decision 7); the exploration amount comes from the server's chart (decision 9). A hero's or
 hired sword's result may carry the missing games its injury sets at finalise (`missing_games`, the player's opt-in). The
-post-game adds each unit's Aftermath `advances`, an upkeep entry's `paid` tick and the `camp` record (validation/camp.py).
+post-game adds each unit's Aftermath `advances`, an upkeep entry's `paid` tick and `resources` and the `camp` record
+(validation/camp.py).
 """
 
 from typing import Any
@@ -12,7 +13,7 @@ from typing import Any
 from apps.warbands.units.services.missing import MAX_MISSING_GAMES
 
 from ..services.injuries import describe_roll
-from .camp import normalize_advances, normalize_camp
+from .camp import normalize_advances, normalize_camp, normalize_upkeep_resources
 from .coerce import coerce_bool, coerce_int, optional_cost
 from .unit_keys import parse_unit_key
 
@@ -119,9 +120,13 @@ def _upkeep(raw: dict) -> dict[str, Any]:
         unit_name = entry.get("unit_name", "")
         if not isinstance(unit_name, str):
             raise ValueError("postbattle upkeep unit_name must be a string")
+        resources = normalize_upkeep_resources(entry.get("resources"))
         entries[parsed_unit["unit_key"]] = {
             "unit_name": unit_name.strip()[:120],
             "cost": optional_cost(entry.get("cost"), field_name="postbattle upkeep cost"),
+            **(
+                {"resources": resources} if resources else {}
+            ),  # stored only when it has some: old drafts stay as they were
             **({"paid": True} if coerce_bool(entry.get("paid", False), field_name="postbattle upkeep paid") else {}),
         }
     return {"pay_upkeep": bool(section.get("pay_upkeep", True)), "entries": entries}

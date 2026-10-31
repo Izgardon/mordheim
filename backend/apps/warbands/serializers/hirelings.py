@@ -1,9 +1,11 @@
 """Hireling payloads (hired swords and dramatis personae): the fields each one lists (the shared parts are in
 apps/warbands/units/serializers.py).
 
+The hire fee and upkeep are structured fees (apps/hirelings/fees.py), each resource line with the names that pay it.
 `armour_save` is listed twice (once more through STAT_FIELDS), as before; it keeps its first position.
 """
 
+from apps.hirelings.fees import FeeField
 from apps.warbands.models import Hireling
 from apps.warbands.units.kinds import HIRELING
 from apps.warbands.units.serializers import (
@@ -22,9 +24,8 @@ WRITE_FIELDS = (
     "kind",
     "race",
     "price",
-    "hire_cost_expression",
-    "upkeep_price",
-    "upkeep_cost_expression",
+    "hire_fee",
+    "upkeep_fee",
     "rating",
     "xp",
     "kills",
@@ -51,6 +52,8 @@ WRITE_FIELDS = (
 
 class HirelingSummarySerializer(UnitSummarySerializer):
     kind = HIRELING
+    hire_fee = FeeField(read_only=True)
+    upkeep_fee = FeeField(read_only=True)
 
     class Meta:
         model = Hireling
@@ -63,9 +66,8 @@ class HirelingSummarySerializer(UnitSummarySerializer):
             "race_id",
             "race_name",
             "price",
-            "hire_cost_expression",
-            "upkeep_price",
-            "upkeep_cost_expression",
+            "hire_fee",
+            "upkeep_fee",
             "rating",
             "xp",
             "level_up",
@@ -93,6 +95,8 @@ class HirelingSummarySerializer(UnitSummarySerializer):
 
 class HirelingDetailSerializer(UnitDetailSerializer):
     kind = HIRELING
+    hire_fee = FeeField(read_only=True)
+    upkeep_fee = FeeField(read_only=True)
 
     class Meta:
         model = Hireling
@@ -106,9 +110,8 @@ class HirelingDetailSerializer(UnitDetailSerializer):
             "race_name",
             "race",
             "price",
-            "hire_cost_expression",
-            "upkeep_price",
-            "upkeep_cost_expression",
+            "hire_fee",
+            "upkeep_fee",
             "rating",
             "xp",
             "kills",
@@ -139,6 +142,8 @@ class HirelingDetailSerializer(UnitDetailSerializer):
 
 class HirelingCreateSerializer(UnitWriteSerializer):
     kind = HIRELING
+    hire_fee = FeeField(required=False)
+    upkeep_fee = FeeField(required=False)
 
     class Meta:
         model = Hireling
@@ -147,6 +152,8 @@ class HirelingCreateSerializer(UnitWriteSerializer):
 
 class HirelingUpdateSerializer(UnitWriteSerializer):
     kind = HIRELING
+    hire_fee = FeeField(required=False)
+    upkeep_fee = FeeField(required=False)
 
     class Meta:
         model = Hireling

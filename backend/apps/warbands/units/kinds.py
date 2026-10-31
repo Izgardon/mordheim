@@ -46,6 +46,7 @@ from .hooks import HenchmenHooks, LeaderHooks, UnitHooks
 
 UnitKindKey = Literal["hero", "henchmen_group", "hireling"]  # also the item-transfer source/target types
 
+IN_A_HEROS_PLACE = {"hire_fee__kind": "replaces_hero"}  # a hireling who takes a hero's place (apps/hirelings/fees.py)
 # Level-up advance code -> stat field.
 STAT_FIELD_BY_ADVANCE: Mapping[str, str] = {
     "M": "movement",
@@ -101,6 +102,7 @@ class CapSpec:
     code: str  # the 400's stable error code, e.g. "hero_cap_reached"
     counted: Callable[[QuerySet[Any]], QuerySet[Any]]  # the warband's units that count towards the cap
     exempt: Callable[[Mapping[str, Any]], bool] = _nobody_exempt  # a new unit that doesn't count
+    others: Callable[[Warband], int] | None = None  # units of another kind in this kind's places
 
 
 @dataclass(frozen=True)
@@ -175,13 +177,21 @@ class UnitKindSpec:
 
 def _counted_hirelings(units: QuerySet[Any]) -> QuerySet[Any]:
     """The hired swords the cap counts: not blood-pacted, not dead or dismissed. A dramatis persona is outside it (one
-    of each, which the hire warns about)."""
-    return on_roster(units).filter(blood_pacted=False, kind="hired_sword")
+    of each, which the hire warns about), and so is one in a hero's place (the heroes' cap counts him)."""
+    return on_roster(units).filter(blood_pacted=False, kind="hired_sword").exclude(**IN_A_HEROS_PLACE)
 
 
 def _outside_the_cap(data: Mapping[str, Any]) -> bool:
-    """A new blood-pacted hired sword, or a dramatis persona, doesn't count towards the hired-sword cap."""
-    return bool(data.get("blood_pacted", False)) or data.get("kind") == "dramatis_persona"
+    """A new blood-pacted hired sword, a dramatis persona or one in a hero's place doesn't count towards the
+    hired-sword cap."""
+    in_a_heros_place = (data.get("hire_fee") or {}).get("kind") == "replaces_hero"
+    return bool(data.get("blood_pacted", False)) or data.get("kind") == "dramatis_persona" or in_a_heros_place
+
+
+def in_heros_places(warband: Warband) -> int:
+    """The hirelings on the roster in a hero's place (a fee that replaces a hero: the Priest of Morr), whom the
+    heroes' cap counts."""
+    return int(on_roster(Hireling.objects.filter(warband=warband, **IN_A_HEROS_PLACE)).count())
 
 
 HERO = UnitKindSpec(
@@ -205,7 +215,8 @@ HERO = UnitKindSpec(
     caster_traits=True,
     can_lead=True,
     recruit=RecruitSpec(LedgerAction.RECRUIT, "new_hero", "remove_hero", client_may_seed_level_up=True),
-    cap=CapSpec("max_heroes", 6, "heroes", "hero_cap_reached", counted=on_roster),  # living ones only (BUG-29)
+    # living ones only (BUG-29), and the hirelings in a hero's place (the fees and skill lists step)
+    cap=CapSpec("max_heroes", 6, "heroes", "hero_cap_reached", counted=on_roster, others=in_heros_places),
     unknown_name="Unknown Hero",
     unknown_type="Unknown Type",
     hooks=LeaderHooks(),

@@ -2,7 +2,7 @@
 
 The body names a catalogue entry (`source`: hired_sword or dramatis_persona, `id`) and optionally a name. The server
 copies the campaign's current entry onto the warband, minus its description: stats, save, large, caster, race,
-rating, skill types, both costs with their formulas, skills, specials and spells (as the campaign's current entries),
+rating, skill types, both fees (structured: apps/hirelings/fees.py), skills, specials and spells (as the campaign's current entries),
 and the kit as one item row per copy with no cost. It records the HIRE ledger row when the fee is a number, applies
 the hired-sword cap to hired swords only, and answers the hireling detail with `warnings`. A dramatis persona also
 takes the Hero injury table, no level-ups, how long it stays and what it is paid in; it sits outside the cap, and
@@ -17,6 +17,7 @@ from django.test.utils import CaptureQueriesContext
 
 from apps.campaigns.models import Campaign
 from apps.core.models import CatalogueRemoval
+from apps.hirelings.fees import fee_payload, make_fee
 from apps.hirelings.models import MAX_KIT_QUANTITY, DramatisPersona, HiredSword
 from apps.items.models import Item
 from apps.skills.models import Skill
@@ -26,7 +27,7 @@ from .roster_support import HIRELING, RosterTestCase, log_rows, make_unit, trade
 
 STATS = {"movement": 6, "weapon_skill": 3, "ballistic_skill": 2, "strength": 4, "toughness": 4, "wounds": 3}
 STATS |= {"initiative": 3, "attacks": 2, "leadership": 7}
-PROFILE = {"armour_save": 5, "large": True, "hire_cost": 80, "hire_cost_expression": "80+D6", "upkeep_cost": 30}
+PROFILE = {"armour_save": 5, "large": True, "hire_fee": make_fee(gold=80), "upkeep_fee": make_fee(gold=30)}
 PROFILE |= {"rating": 25, "available_skill_types": ["Combat", "Strength"], "description": "Big and hungry."}
 
 
@@ -52,8 +53,8 @@ class HireCopyTests(HireTestCase):
         body = response.data
         copied = {key: body[key] for key in ("name", "unit_type", "kind", "injury_table", "stays", "no_level_ups")}
         self.assertEqual(copied, {"name": "Ogre Bodyguard", "unit_type": "Ogre Bodyguard", "kind": "hired_sword", "injury_table": "henchman", "stays": "always", "no_level_ups": False})  # fmt: skip
-        costs = (body["price"], body["hire_cost_expression"], body["upkeep_price"], body["upkeep_cost_expression"])
-        self.assertEqual(costs, (80, "80+D6", 30, ""))
+        costs = (body["price"], body["hire_fee"], body["upkeep_fee"])
+        self.assertEqual(costs, (80, fee_payload(make_fee(gold=80)), fee_payload(make_fee(gold=30))))
         self.assertEqual({key: body[key] for key in STATS}, STATS)
         self.assertEqual((body["armour_save"], body["large"], body["rating"], body["race_id"]), (5, True, 25, self.race.id))  # fmt: skip
         self.assertEqual(body["available_skills"], ["Combat", "Strength"])
@@ -75,19 +76,21 @@ class HireCopyTests(HireTestCase):
 
         self.assertEqual([row[:3] for row in trade_rows(self.warband)], [("Hire", "Ogre Bodyguard", -80)])
 
-    def test_a_fee_that_isnt_a_number_hires_for_nothing_and_keeps_its_formula(self):
-        HiredSword.objects.filter(id=self.ogre.id).update(hire_cost=None, hire_cost_expression="2 Treasure", upkeep_cost=None, upkeep_cost_expression="1 piece of wyrdstone")  # fmt: skip
+    def test_a_fee_in_resources_alone_hires_for_no_gold_and_keeps_its_fees(self):
+        treasure, wyrdstone = make_fee(resources=[("Treasure", 2)]), make_fee(resources=[("Wyrdstone", 1)])
+        HiredSword.objects.filter(id=self.ogre.id).update(hire_fee=treasure, upkeep_fee=wyrdstone)
 
         body = self.hire().data
 
-        self.assertEqual((body["price"], body["hire_cost_expression"]), (0, "2 Treasure"))
-        self.assertEqual((body["upkeep_price"], body["upkeep_cost_expression"]), (0, "1 piece of wyrdstone"))
-        self.assertEqual(trade_rows(self.warband), [])
+        self.assertEqual((body["price"], body["hire_fee"], body["upkeep_fee"]), (0, fee_payload(treasure), fee_payload(wyrdstone)))  # fmt: skip
+        self.assertEqual(
+            [row[:3] for row in trade_rows(self.warband)], [("Hire", "Ogre Bodyguard", 0)]
+        )  # noted, unpaid
 
     def test_the_campaigns_version_is_hired_with_the_campaigns_entries(self):
         skill = Skill.objects.create(name="Skill 0", type="Combat", campaign=self.campaign, replaces=self.skills[0])
         blade = Item.objects.create(name="Sword", type="Melee", campaign=self.campaign, replaces=self.sword)
-        version = HiredSword.objects.create(name="Ogre Bodyguard", campaign=self.campaign, replaces=self.ogre, hire_cost=95, **STATS)  # fmt: skip
+        version = HiredSword.objects.create(name="Ogre Bodyguard", campaign=self.campaign, replaces=self.ogre, hire_fee=make_fee(gold=95), **STATS)  # fmt: skip
         version.skill_links.create(skill=self.skills[0])  # a link to a book skill the campaign has a version of
         version.item_links.create(item=self.sword)
 
@@ -98,7 +101,7 @@ class HireCopyTests(HireTestCase):
         self.assertEqual([item["id"] for item in body["items"]], [blade.id])
 
     def test_a_dramatis_persona_copies_with_no_xp_the_hero_table_its_stay_and_payment(self):
-        bertha = DramatisPersona.objects.create(name="Bertha", stays="one_battle", payment_note="a favour", hire_cost=25, **STATS)  # fmt: skip
+        bertha = DramatisPersona.objects.create(name="Bertha", stays="one_battle", payment_note="a favour", hire_fee=make_fee(gold=25), **STATS)  # fmt: skip
 
         body = self.hire("dramatis_persona", bertha.id, name="Sister Bertha").data
 
@@ -179,7 +182,7 @@ class HireEdgeCaseTests(HireTestCase):
 
     def test_a_version_reverted_since_hires_the_book_entry(self):
         # a hire page read before the Revert still names the version; open battles' finds work the same way
-        version = HiredSword.objects.create(name="Ogre Bodyguard", campaign=self.campaign, replaces=self.ogre, hire_cost=95, **STATS)  # fmt: skip
+        version = HiredSword.objects.create(name="Ogre Bodyguard", campaign=self.campaign, replaces=self.ogre, hire_fee=make_fee(gold=95), **STATS)  # fmt: skip
         self.client.force_authenticate(user=self.campaign_owner)
         reverted = self.client.post(f"/api/hired-swords/{version.id}/revert/")
         self.client.force_authenticate(user=self.player)

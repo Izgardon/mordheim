@@ -11,6 +11,7 @@ from typing import Any
 from django.utils import timezone
 
 from apps.core.catalogue.payloads import BADGES
+from apps.hirelings.fees import make_fee
 from apps.items.services import HALF_PRICE_ARMOUR_EFFECT_KEY
 
 from .catalogue_support import HIRED_SWORDS, ITEMS, KINDS, RACES, SKILLS, CatalogueTestCase, make_entry
@@ -60,13 +61,13 @@ class BadgeTests(CatalogueTestCase):
         self.assertEqual(version["book"], listed["book"])
 
     def test_a_hired_swords_version_names_the_book_hired_sword_and_its_book_values(self):
-        body = {"campaign_id": self.campaign.id, "hire_cost": 95, "name": "Ogre Mercenary"}
+        body = {"campaign_id": self.campaign.id, "hire_fee": {"gold": 95}, "name": "Ogre Mercenary"}
         version = self.patch_as(self.player, HIRED_SWORDS.detail_url(self.ogre.id), body).data
 
         listed = badges(self.row(HIRED_SWORDS, version["id"]))
 
         self.assertEqual((version["replaces"], listed["replaces"]), (self.ogre.id, self.ogre.id))
-        self.assertEqual(listed["book"], {"id": self.ogre.id, "name": "Ogre Bodyguard", "changes": {"name": "Ogre Bodyguard", "hire_cost": 80}})  # fmt: skip
+        self.assertEqual(listed["book"], {"id": self.ogre.id, "name": "Ogre Bodyguard", "changes": {"name": "Ogre Bodyguard", "hire_fee": make_fee(gold=80)}})  # fmt: skip
 
     def test_archived_and_removed_entries_say_since_when_in_the_archived_list(self):
         archived = make_entry(SKILLS, "Ambush", campaign=self.campaign, archived_at=timezone.now())

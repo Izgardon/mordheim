@@ -9,6 +9,7 @@ hired-sword summary, no `race`/`deeds` in any summary).
 from decimal import Decimal
 from typing import Any
 
+from apps.hirelings.fees import make_fee
 from apps.warbands.models import Henchman
 
 from .roster_support import HENCHMEN, HERO, HIRELING, KINDS, Kind, RosterTestCase, make_unit, unit_url
@@ -105,6 +106,15 @@ SPELL_DETAIL = {"id": "int", "name": "str", "type": "str", "dc": "str", "descrip
 MEMBER = {"id": "int", "name": "str", "kills": "int", "dead": "bool", "gaps": []}  # gaps: the loadout rows he lacks
 MISSING = {"missing_games": "int", "missing_reason": "str"}  # missing games: how many and why (edit mode)
 PICKS = {"pending_skills": "int", "pending_spells": "int", "pending_specials": "int"}  # picks to make later
+HIRE_FEE: dict[str, Any] = {
+    "kind": "str",
+    "gold": "int",
+    "dice": None,
+    "dice_multiplier": None,
+    "resources": [],
+    "note": "str",
+}
+UPKEEP_FEE = {**HIRE_FEE, "resources": [{"resource": "str", "amount": "int", "names": ["str"]}]}  # with what pays it
 COMPANIONS: dict[str, Any] = {
     "effective_stats": None,
     "mount": None,
@@ -175,9 +185,8 @@ HIRELING_SUMMARY = {
     **IDENTITY,
     **PICKS,
     "kind": "str",  # the bestiary rewrite: a hired sword or a dramatis persona
-    "hire_cost_expression": "str",
-    "upkeep_price": "int",
-    "upkeep_cost_expression": "str",
+    "hire_fee": HIRE_FEE,  # the fees and skill lists step: structured fees
+    "upkeep_fee": UPKEEP_FEE,
     "rating": "int",
     "large": "bool",
     "caster": "str",
@@ -216,7 +225,11 @@ SHAPES = {
 KIND_FIELDS: dict[str, dict[str, Any]] = {
     HERO.key: {"kills": 2, "is_leader": True},
     HENCHMEN.key: {},
-    HIRELING.key: {"kills": 1, "upkeep_price": 15, "hire_cost_expression": "30", "upkeep_cost_expression": "15"},
+    HIRELING.key: {
+        "kills": 1,
+        "hire_fee": make_fee(gold=30),
+        "upkeep_fee": make_fee(gold=15, resources=[("Wyrdstone", 1)]),
+    },  # fmt: skip
 }
 
 
@@ -297,6 +310,8 @@ class RosterShapeCharacterisationTests(RosterTestCase):
                     payload["spell_ids"] = [self.spells[0].id]
                 if kind is HENCHMEN:
                     payload["henchmen"] = [{"name": "Alpha"}]
+                if kind is HIRELING:  # its fees as typed by hand
+                    payload |= {key: KIND_FIELDS[kind.key][key] for key in ("hire_fee", "upkeep_fee")}
                 response = self.client.post(unit_url(kind, self.warband.id), payload, format="json")
                 self.assertEqual(response.status_code, 201)
                 self.assertEqual(shape(response.json()), SHAPES[kind.key][1])

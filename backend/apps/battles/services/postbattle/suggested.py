@@ -8,9 +8,9 @@
   add up to its `xp_earned`, and the `level_ups` that XP would earn (services/postbattle/level_ups.py);
 - exploration dice: one per selected hero still in action, one more for a winner (the player's own declaration
   while the others still fight, decision 4), at most 10;
-- upkeep: every hireling on the battle's roster but one who stays for one battle or misses games, at his upkeep
-  price, with his upkeep formula when he has one (one that isn't gold, "1 piece of wyrdstone", is a reminder: its
-  price is 0);
+- upkeep: every hireling on the battle's roster but one who stays for one battle, misses games or has no upkeep (a fee
+  of kind none), at his upkeep fee: its gold as `cost` (none for a fee in his rules), its resource lines and its note
+  when it has them (the fees and skill lists step);
 - dismiss (only when there is one): each selected hireling who stays for one battle, suggested to leave (never
   forced);
 - mount survival (only when there is one): a D6 for each selected rider taken out of action on his mount
@@ -96,18 +96,30 @@ def _hireling_results(swords: list[dict], kills: dict[str, int]) -> dict[str, di
     return results
 
 
+def _upkeep_gold(fee: dict) -> int | None:
+    """An upkeep's gold: none for a fee in his rules (special), 0 when the fee names none."""
+    if fee.get("kind", "gold") != "gold":
+        return None
+    gold = fee.get("gold")
+    return max(0, int(gold)) if isinstance(gold, int) and not isinstance(gold, bool) else 0
+
+
 def _upkeep(hirelings: list[dict]) -> dict[str, dict]:
-    """Each hireling's upkeep, but for one who stays for one battle (he leaves after it, so nothing keeps him on) or one
-    missing games (he missed this battle)."""
+    """Each hireling's upkeep, but for one who stays for one battle (he leaves after it, so nothing keeps him on), one
+    missing games (he missed this battle) or one with no upkeep."""
     entries = {}
     for sword in hirelings:
         if sword.get("stays") == "one_battle" or sword.get("missingGames"):
             continue
-        price = sword.get("upkeepPrice")
-        cost = max(0, int(price)) if isinstance(price, int | float) and not isinstance(price, bool) else None
-        entry = {"unit_name": sword.get("displayName"), "cost": cost}
-        if sword.get("upkeepCostExpression"):  # left out when empty: the broadcast fits Pusher's 10 KB (item 8)
-            entry["cost_expression"] = sword["upkeepCostExpression"]
+        fee = sword.get("upkeepFee") or {}
+        if fee.get("kind") == "none":
+            continue
+        entry = {"unit_name": sword.get("displayName"), "cost": _upkeep_gold(fee)}
+        lines = [{"resource": line["resource"], "amount": line["amount"]} for line in fee.get("resources") or []]
+        if lines:  # left out when empty: the broadcast fits Pusher's 10 KB (item 8)
+            entry["resources"] = lines
+        if fee.get("note"):
+            entry["note"] = fee["note"]
         entries[sword["key"]] = entry
     return entries
 
@@ -147,7 +159,7 @@ def suggested_postbattle(battle: Battle, participant: BattleParticipant, live: I
         "upkeep": {"entries": _upkeep(roster.get("hirelings", []))},
     }
     leaving = _dismiss(swords)
-    if leaving:  # only when someone leaves, as an empty upkeep formula is left out: the broadcast's 10 KB (item 8)
+    if leaving:  # only when someone leaves, as an upkeep's empty resources are left out: the broadcast's 10 KB (item 8)
         suggested["dismiss"] = {"entries": leaving}
     if at_risk := mount_survival(participant, selected, information):  # only when a mount may die (step 5)
         suggested["mount_survival"] = {"entries": at_risk}
