@@ -37,9 +37,14 @@ export default function Battles() {
         campaignId={campaignId}
         managesBattles={campaignCapabilities(campaign).manage_battles}
       />
-      <span className="text-[13px] text-faint">
-        {battles.length} {battles.length === 1 ? "battle" : "battles"} fought
-      </span>
+      <div className="flex items-baseline justify-between gap-3 border-b border-line pb-2.5">
+        <h2 className="m-0 font-sans text-[11px] font-bold uppercase tracking-[0.14em] text-faint">
+          Every battle
+        </h2>
+        <span className="font-mono text-xs text-faint">
+          {battles.length} {battles.length === 1 ? "battle" : "battles"} fought
+        </span>
+      </div>
       {history.isPending ? (
         <p className="m-0 text-sm text-muted-foreground">Reading the battles…</p>
       ) : history.error ? (

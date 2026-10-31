@@ -199,7 +199,7 @@ export default function CampaignSettings() {
 
   return (
     <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-6 pb-14">
-      <header className="flex flex-wrap items-end justify-between gap-5">
+      <header className="flex flex-wrap items-end justify-between gap-5 border-b border-line pb-6">
         <div className="flex flex-col gap-1.5">
           <span className="text-xs font-semibold uppercase tracking-[0.08em] text-faint">
             {kicker}

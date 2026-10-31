@@ -16,6 +16,7 @@ import WarbandResources from "../components/page/WarbandResources";
 import WarbandStats from "../components/page/WarbandStats";
 import WarbandPanels, { storeFor } from "../components/page/WarbandPanels";
 import WarbandTabs from "../components/page/WarbandTabs";
+import { WARBAND_INFO } from "../components/page/warband-layout";
 import PostgameSlot from "../components/camp/PostgameSlot";
 import AdvanceDialog from "../components/roster/AdvanceDialog";
 import EditUnitForm from "../components/roster/EditUnitForm";
@@ -123,7 +124,7 @@ export default function Warband() {
           onInviteOpenChange={setTradeInviteOpen}
         />
       ) : null}
-      <div className="grid gap-x-8 gap-y-4 [grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr))]">
+      <div className={WARBAND_INFO}>
         <WarbandStats
           warband={warband}
           heroes={sheet.heroes}
