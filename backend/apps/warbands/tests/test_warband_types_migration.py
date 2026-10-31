@@ -23,7 +23,7 @@ class FactionMappingMigrationTests(TransactionTestCase):
         executor.migrate(executor.loader.graph.leaf_nodes())  # leave the database as every other test expects it
         super().tearDown()
 
-    def test_factions_map_to_book_types_by_name_and_the_rest_become_custom_types(self) -> None:
+    def test_factions_map_to_book_types_by_name_the_rest_become_custom_types_and_campaigns_get_up_to_1c(self) -> None:
         old = self.migrate(BEFORE)
         user_model = old.get_model("auth", "User")
         Campaign = old.get_model("campaigns", "Campaign")
@@ -46,4 +46,8 @@ class FactionMappingMigrationTests(TransactionTestCase):
         )
         self.assertEqual(types["far"].campaign_id, other.id)  # one custom type per campaign
         self.assertNotEqual(types["far"].pk, types["own"].pk)
-        self.assertEqual(new.get_model("campaigns", "CampaignType").objects.count(), 19)
+        settings = new.get_model("campaigns", "CampaignType").objects
+        self.assertEqual(settings.count(), 19)
+        ticked = new.get_model("campaigns", "CampaignCampaignType").objects.filter(campaign_id=campaign.id)
+        expected = set(settings.filter(grade__in=("1a", "1b", "1c")).values_list("id", flat=True))
+        self.assertEqual(set(ticked.values_list("campaign_type_id", flat=True)), expected)  # Up to 1c

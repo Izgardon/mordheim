@@ -5,7 +5,8 @@ settings and the book's warband types are loaded from the catalogue import's fil
 `seed_settings` and `seed_warband_types` write, keyed by slug, so seeding afterwards updates the same rows), and
 each warband's faction is matched to a book type by name, case and spacing aside (a name the book uses twice takes
 the type in the lowest setting). A faction that matches none becomes a custom type in its campaign, one per name.
-Without the files every faction becomes a custom type. An empty database does nothing here.
+Without the files every faction becomes a custom type. Each campaign is given the settings a new one starts with (the
+Up to 1c preset, apps/campaigns/in_play.py), so it keeps what it had in play. An empty database does nothing here.
 """
 
 import json
@@ -18,6 +19,7 @@ from django.db import migrations, models
 from django.utils.text import slugify
 
 IMPORT_OUT = Path(settings.BASE_DIR) / "catalogue_import" / "out"
+UP_TO_1C = ("1a", "1b", "1c")  # a new campaign's preset (in_play.DEFAULT_PRESET), frozen here
 
 
 def _key(name):
@@ -73,11 +75,25 @@ def _custom(apps, campaign_id, name, made):
     return made[key]
 
 
+def _tick_default_settings(apps):
+    """Every campaign that ticks no setting gets the Up to 1c preset, as a new campaign does."""
+    Campaign = apps.get_model("campaigns", "Campaign")
+    CampaignType = apps.get_model("campaigns", "CampaignType")
+    Link = apps.get_model("campaigns", "CampaignCampaignType")
+    preset = list(CampaignType.objects.filter(grade__in=UP_TO_1C).values_list("id", flat=True))
+    bare = Campaign.objects.filter(campaign_type_links__isnull=True).values_list("id", flat=True)
+    Link.objects.bulk_create(
+        [Link(campaign_id=campaign_id, campaign_type_id=setting_id) for campaign_id in bare for setting_id in preset]
+    )
+
+
 def map_factions(apps, schema_editor):
+    Campaign = apps.get_model("campaigns", "Campaign")
     Warband = apps.get_model("warbands", "Warband")
-    if not Warband.objects.exists():
+    if not Campaign.objects.exists():
         return
     book = _load_book(apps)
+    _tick_default_settings(apps)
     made: dict = {}
     for warband in Warband.objects.order_by("id"):
         faction = (warband.faction or "").strip() or "Unknown"
