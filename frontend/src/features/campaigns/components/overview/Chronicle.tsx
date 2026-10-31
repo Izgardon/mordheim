@@ -1,11 +1,13 @@
 import { useState } from "react";
 
 import { Chip } from "@/components/ui/chip";
+import { SkeletonPage } from "@/components/ui/skeleton";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { cn } from "@/lib/utils";
 
 import { useCampaignChronicle } from "../../api/campaign-queries";
 import type { CampaignChronicleKind } from "../../types/campaign-types";
+import { ChronicleBones } from "./OverviewSkeleton";
 
 const FILTERS: { id: CampaignChronicleKind | "all"; label: string }[] = [
   { id: "all", label: "All" },
@@ -70,7 +72,9 @@ export default function Chronicle({
         ))}
       </div>
       {entries.isPending ? (
-        <p className="m-0 text-sm text-muted-foreground">Reading the chronicle…</p>
+        <SkeletonPage label="Loading the chronicle">
+          <ChronicleBones isMobile={isMobile} />
+        </SkeletonPage>
       ) : entries.error ? (
         <p className="m-0 text-sm text-danger">{getErrorMessage(entries.error)}</p>
       ) : rows.length === 0 ? (

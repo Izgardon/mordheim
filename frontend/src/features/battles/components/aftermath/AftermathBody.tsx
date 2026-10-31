@@ -14,6 +14,7 @@ import AftermathAside, { opponentsOf, resultText } from "./AftermathAside";
 import { AFTERMATH_BODY, AFTERMATH_MAIN } from "./aftermath-layout";
 import AftermathHeader, { AFTERMATH_TABS, type AftermathTab } from "./AftermathHeader";
 import AftermathMenu from "./AftermathMenu";
+import AftermathSkeleton from "./AftermathSkeleton";
 import { buildStatChangeRows, withKeptStats } from "./aftermath-stats";
 import { buildXpRows } from "./aftermath-xp";
 import ExperienceTab from "./ExperienceTab";
@@ -59,7 +60,7 @@ export default function AftermathBody({
   const { draft, persistDraft } = drafting;
   const warbandPath = `/campaigns/${campaignId}/warband`;
   if (!draft || !explore.exploration) {
-    return <p className="text-sm text-muted-foreground">Reading your aftermath…</p>;
+    return <AftermathSkeleton />;
   }
   const save = (next: typeof draft) => void persistDraft(next);
   const index = AFTERMATH_TABS.findIndex((entry) => entry.id === tab);

@@ -6,6 +6,7 @@ import type { CampaignLayoutContext } from "@/features/campaigns/routes/Campaign
 import ReferencePage from "@/features/reference/ReferencePage";
 import { FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
 import { ReferenceList, ReferenceRow } from "@/features/reference/ReferenceList";
+import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
 import RulesPanel from "@/features/warbands/components/roster/RulesPanel";
 import { ruleLabel } from "@/features/catalogue/utils/entry-status";
@@ -94,9 +95,7 @@ export default function HouseRules() {
             : "No house rules yet: this campaign plays by the book."
         }
       >
-        {page.isLoading ? (
-          <li className="px-4 py-6 text-sm text-muted-foreground">Reading the house rules…</li>
-        ) : null}
+        {page.isLoading ? <ReferenceRowBones /> : null}
         {rows.map((rule) => {
           const key = String(rule.id);
           return (

@@ -1,4 +1,4 @@
-import { LoadingScreen } from "@/components/ui/loading-screen";
+import BattleSkeleton from "@/features/battles/components/battle/BattleSkeleton";
 import BattleScreen from "@/features/battles/components/battle/BattleScreen";
 import { useBattleScreen } from "@/features/battles/hooks/useBattleScreen";
 import { allRostersSettled } from "@/features/battles/utils/battle-rosters";
@@ -13,7 +13,7 @@ export default function BattleActive() {
   const screen = useBattleScreen();
   const { battleState, rosters, rosterLoading, rosterErrors } = screen.battle;
   if (!allRostersSettled(battleState.participants, rosters, rosterLoading, rosterErrors)) {
-    return <LoadingScreen message="Loading battle..." />;
+    return <BattleSkeleton phase="active" />;
   }
   return <BattleScreen screen={screen} isMobile={isMobile} />;
 }

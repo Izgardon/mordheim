@@ -16,6 +16,7 @@ import type { CampaignMember, CampaignSummary } from "../../types/campaign-types
 import PermissionGrantMenu from "./PermissionGrantMenu";
 import RemovalPreview, { memberVoice } from "./RemovalPreview";
 import { FormError, SettingsCard, Tag } from "./settings-ui";
+import { SettingsRowsLoading } from "./SettingsSkeleton";
 
 const ROLE_LABEL: Record<CampaignMember["role"], string> = {
   owner: "Owner",
@@ -171,7 +172,7 @@ export default function PlayersSection({ campaign }: { campaign: CampaignSummary
     >
       <FormError message={members.error} />
       {members.isLoading ? (
-        <p className="m-0 text-sm text-muted-foreground">Reading the roll of members…</p>
+        <SettingsRowsLoading label="Loading the members" rows={4} />
       ) : (
         <ul className="-mx-5 my-0 list-none border-y border-line p-0 max-[960px]:-mx-4">
           {members.members.map((member) => (

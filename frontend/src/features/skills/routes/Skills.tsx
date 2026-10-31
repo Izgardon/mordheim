@@ -6,6 +6,7 @@ import { outOfPlay, useSettingsById } from "@/features/campaigns/api/settings-qu
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import ReferencePage from "@/features/reference/ReferencePage";
+import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import {
   FilterField,
   FilterRow,
@@ -168,9 +169,7 @@ export default function Skills() {
         isEmpty={!skills.isLoading && rows.length === 0}
         empty="No skills match. Try another word or list."
       >
-        {skills.isLoading ? (
-          <li className="px-4 py-6 text-sm text-muted-foreground">Reading the skill lists…</li>
-        ) : null}
+        {skills.isLoading ? <ReferenceRowBones /> : null}
         {shown.rows.map((skill) => {
           const key = String(skill.id);
           const warning = outOfPlay(skill, settings);

@@ -17,6 +17,7 @@ import { exportCampaign } from "../components/overview/export-campaign";
 import { buildStandings, buildStats } from "../components/overview/overview-data";
 import OverviewHeader from "../components/overview/OverviewHeader";
 import OverviewNotices from "../components/overview/OverviewNotices";
+import OverviewSkeleton from "../components/overview/OverviewSkeleton";
 import {
   OVERVIEW_ASIDE,
   OVERVIEW_BODY,
@@ -74,12 +75,15 @@ export default function Overview() {
   const queryClient = useQueryClient();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const refreshOpenBattles = useRefreshOpenBattles(campaignId);
-  const players = useCampaignPlayers(campaignId).data ?? [];
-  const history = useCampaignBattleHistory(campaignId).data ?? [];
+  const playersQuery = useCampaignPlayers(campaignId);
+  const historyQuery = useCampaignBattleHistory(campaignId);
+  const players = playersQuery.data ?? [];
+  const history = historyQuery.data ?? [];
   const [dialog, setDialog] = useState<BattleDialogMode | null>(null);
   const [tab, setTab] = useState<Tab>("standings");
   if (!campaign)
     return <p className="text-sm text-muted-foreground">No record of this campaign.</p>;
+  if (playersQuery.isLoading || historyQuery.isLoading) return <OverviewSkeleton />;
 
   const standings = buildStandings(players, history);
   const battlesHref = `/campaigns/${campaignId}/battles`;

@@ -1,6 +1,7 @@
 import { Link, Navigate, useOutletContext, useParams } from "react-router-dom";
 
 import AftermathBody from "@/features/battles/components/aftermath/AftermathBody";
+import AftermathSkeleton from "@/features/battles/components/aftermath/AftermathSkeleton";
 import { usePostgameBattle } from "@/features/battles/hooks/usePostgameBattle";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
@@ -25,7 +26,7 @@ export default function Aftermath() {
   const { battleState, participant } = battle;
   const warbandPath = `/campaigns/${campaignId}/warband`;
 
-  if (battle.isLoading) return <p className="text-sm text-muted-foreground">Reading the battle…</p>;
+  if (battle.isLoading) return <AftermathSkeleton />;
   if (battle.error || !battleState) {
     return <p className="text-sm text-danger">{battle.error || "No record of that battle."}</p>;
   }
@@ -49,7 +50,7 @@ export default function Aftermath() {
     );
   }
   if (battle.rosterError) return <p className="text-sm text-danger">{battle.rosterError}</p>;
-  if (!battle.roster) return <p className="text-sm text-muted-foreground">Reading your roster…</p>;
+  if (!battle.roster) return <AftermathSkeleton />;
 
   return (
     <AftermathBody

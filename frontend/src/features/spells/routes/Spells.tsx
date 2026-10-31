@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import ReferencePage from "@/features/reference/ReferencePage";
+import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
 import {
   ReferenceList,
@@ -140,9 +141,7 @@ export default function Spells() {
         isEmpty={!spells.isLoading && rows.length === 0}
         empty="No spells match. Try another word or lore."
       >
-        {spells.isLoading ? (
-          <li className="px-4 py-6 text-sm text-muted-foreground">Opening the grimoires…</li>
-        ) : null}
+        {spells.isLoading ? <ReferenceRowBones /> : null}
         {shown.rows.map((spell) => {
           const key = String(spell.id);
           const difficulty = difficultyLabel(spell);

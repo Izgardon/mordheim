@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import ReferencePage from "@/features/reference/ReferencePage";
+import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import {
   DetailSection,
   Flavour,
@@ -221,9 +222,7 @@ export default function Bestiary() {
         isEmpty={!beasts.isLoading && rows.length === 0}
         empty="No beasts match. Try another word or kind."
       >
-        {beasts.isLoading ? (
-          <li className="px-4 py-6 text-sm text-muted-foreground">Rounding up the beasts…</li>
-        ) : null}
+        {beasts.isLoading ? <ReferenceRowBones /> : null}
         {shown.rows.map((entry) => {
           const key = String(entry.id);
           const profile = entry.has_profile ? profileLine(entry) : "No profile";

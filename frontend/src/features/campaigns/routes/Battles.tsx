@@ -1,10 +1,12 @@
 import { useOutletContext, useParams } from "react-router-dom";
 
+import { SkeletonPage } from "@/components/ui/skeleton";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import { useCampaignBattleHistory } from "../api/campaign-queries";
 import BattleRows from "../components/overview/BattleRows";
+import { BattleRowsBones } from "../components/overview/BattlesSkeleton";
 import OverviewNotices from "../components/overview/OverviewNotices";
 import { campaignCapabilities } from "../capabilities";
 import type { CampaignLayoutContext } from "./CampaignLayout";
@@ -46,7 +48,9 @@ export default function Battles() {
         </span>
       </div>
       {history.isPending ? (
-        <p className="m-0 text-sm text-muted-foreground">Reading the battles…</p>
+        <SkeletonPage label="Loading the battles">
+          <BattleRowsBones isMobile={isMobile} />
+        </SkeletonPage>
       ) : history.error ? (
         <p className="m-0 text-sm text-danger">{getErrorMessage(history.error)}</p>
       ) : (

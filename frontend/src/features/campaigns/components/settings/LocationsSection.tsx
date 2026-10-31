@@ -17,6 +17,7 @@ import {
 import { updateCachedList, useCampaignLocations } from "../../api/campaign-queries";
 import type { CampaignLocation, CampaignLocationPayload } from "../../types/campaign-types";
 import { Field, FormError, SettingsCard, Tag, TEXTAREA } from "./settings-ui";
+import { SettingsRowsLoading } from "./SettingsSkeleton";
 
 const ROLLS = ["d6_1", "d6_2", "d6_3", "d6_4", "d6_5", "d6_6"] as const;
 const EMPTY: Required<CampaignLocationPayload> = {
@@ -228,7 +229,7 @@ export default function LocationsSection({ campaignId }: { campaignId: number })
       action={<Button onClick={() => edit(null)}>Add location</Button>}
     >
       {locations.isPending ? (
-        <p className="m-0 text-sm text-muted-foreground">Finding the locations…</p>
+        <SettingsRowsLoading label="Loading the locations" />
       ) : locations.error ? (
         <FormError message={getErrorMessage(locations.error, "Couldn't load the locations.")} />
       ) : all.length === 0 ? (

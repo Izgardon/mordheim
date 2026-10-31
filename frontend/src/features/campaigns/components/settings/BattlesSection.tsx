@@ -11,6 +11,7 @@ import { useActiveBattlesSection } from "../../hooks/settings/useActiveBattlesSe
 import { useActiveBattleTools, type ActiveBattleTools } from "../../hooks/useActiveBattleTools";
 import type { CampaignActiveBattle } from "../../types/campaign-types";
 import { FormError, SettingsCard, Tag } from "./settings-ui";
+import { SettingsRowsLoading } from "./SettingsSkeleton";
 
 const STATUS: Record<string, string> = {
   inviting: "Invitations out",
@@ -257,7 +258,7 @@ export default function BattlesSection({ campaignId }: { campaignId: number }) {
     >
       <FormError message={section.error} />
       {section.isLoading ? (
-        <p className="m-0 text-sm text-muted-foreground">Gathering the open battles…</p>
+        <SettingsRowsLoading label="Loading the open battles" rows={2} />
       ) : battles.length === 0 ? (
         <p className="m-0 text-sm text-text2">No open battles or result requests.</p>
       ) : (

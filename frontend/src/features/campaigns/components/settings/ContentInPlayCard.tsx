@@ -8,6 +8,7 @@ import ContentInPlay from "./ContentInPlay";
 import { useCampaignSave } from "./CampaignSection";
 import { presetOf } from "./content-in-play";
 import { FormError, SettingsCard } from "./settings-ui";
+import { SettingsRowsLoading } from "./SettingsSkeleton";
 
 const sorted = (ids: number[]) => [...ids].sort((a, b) => a - b).join();
 
@@ -41,7 +42,7 @@ export default function ContentInPlayCard({ campaign }: { campaign: CampaignSumm
       }
     >
       {isLoading || !data ? (
-        <p className="m-0 text-sm text-muted-foreground">Reading the settings…</p>
+        <SettingsRowsLoading label="Loading the settings in play" rows={2} />
       ) : (
         <ContentInPlay
           settings={settings}

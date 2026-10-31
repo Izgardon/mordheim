@@ -8,6 +8,7 @@ import { allows, type Buyer } from "@/features/items/store/store-items";
 import { useBuyer } from "@/features/items/store/useBuyer";
 import { outOfPlay, useSettingsById } from "@/features/campaigns/api/settings-queries";
 import ReferencePage from "@/features/reference/ReferencePage";
+import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import {
   DetailSection,
   FactLine,
@@ -259,9 +260,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
             : `${config.labels.emptyTitle}. ${config.labels.emptyBody}`
         }
       >
-        {entries.isLoading ? (
-          <li className="px-4 py-6 text-sm text-muted-foreground">Asking around the taverns…</li>
-        ) : null}
+        {entries.isLoading ? <ReferenceRowBones /> : null}
         {shown.rows.map((entry) => {
           const key = String(entry.id);
           const fee = formatHirelingCost(entry.hire_cost, entry.hire_cost_expression);

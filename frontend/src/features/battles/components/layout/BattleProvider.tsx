@@ -1,8 +1,8 @@
 import { useEffect, useMemo, type ReactNode } from "react";
 import { Navigate, useOutletContext, useParams } from "react-router-dom";
 
-import { LoadingScreen } from "@/components/ui/loading-screen";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import BattleSkeleton from "@/features/battles/components/battle/BattleSkeleton";
 import { useBattleCapabilities } from "@/features/battles/hooks/useBattleCapabilities";
 import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
 import { useCampaignBattleRules } from "@/features/battles/hooks/useCampaignBattleRules";
@@ -122,7 +122,7 @@ export default function BattleProvider({
   }, [battleStateRef, closesToOverview, user?.id]);
 
   if (view.kind === "loading") {
-    return <LoadingScreen message={view.message} />;
+    return <BattleSkeleton phase={phase} />;
   }
   if (view.kind === "error") {
     return <p className="px-4 py-6 text-sm text-danger">{view.message}</p>;
