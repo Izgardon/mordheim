@@ -32,7 +32,12 @@ export default function CreateWarband({
   const [saving, setSaving] = useState(false);
 
   return (
-    <div className={cn("flex flex-col", isMobile ? "gap-4 pb-6 pt-3" : "gap-6 pb-14")}>
+    <div
+      className={cn(
+        "flex flex-col",
+        isMobile ? "gap-4 pb-6 pt-3" : "mx-auto w-full max-w-[640px] gap-6 pb-14"
+      )}
+    >
       <header className="flex flex-col gap-1.5">
         {/* The phone's top bar already says where this is. */}
         {isMobile ? null : (
@@ -48,7 +53,7 @@ export default function CreateWarband({
           and henchmen on the warband page once it stands.
         </p>
       </header>
-      <Card className="max-w-[560px] p-5 max-[960px]:p-4">
+      <Card className="p-5 max-[960px]:p-4">
         <form
           className="flex flex-col gap-4"
           onSubmit={async (event) => {

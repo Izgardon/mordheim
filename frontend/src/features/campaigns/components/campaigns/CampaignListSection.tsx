@@ -20,7 +20,7 @@ type CampaignListSectionProps = {
 
 function CampaignGrid({ campaigns }: { campaigns: CampaignSummary[] }) {
   return (
-    <div className="grid gap-4 min-[961px]:grid-cols-2">
+    <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(min(100%,380px),1fr))]">
       {campaigns.map((campaign) => (
         <CampaignCard key={campaign.id} {...campaign} />
       ))}

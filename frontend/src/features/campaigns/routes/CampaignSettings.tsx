@@ -198,7 +198,7 @@ export default function CampaignSettings() {
   }
 
   return (
-    <div className="flex flex-col gap-6 pb-14">
+    <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-6 pb-14">
       <header className="flex flex-wrap items-end justify-between gap-5">
         <div className="flex flex-col gap-1.5">
           <span className="text-xs font-semibold uppercase tracking-[0.08em] text-faint">
@@ -235,7 +235,7 @@ export default function CampaignSettings() {
             })}
           </ul>
         </nav>
-        <div className="flex min-w-0 max-w-[820px] flex-1 flex-col gap-5">
+        <div className="flex min-w-0 flex-1 flex-col gap-5">
           {current ? <SectionBody id={current} campaign={campaign} /> : null}
         </div>
       </div>

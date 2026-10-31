@@ -14,12 +14,21 @@ const PAGES = [
   { to: "/account", label: "Account", icon: UserRound },
 ] as const;
 
+/** The page column's width on the web, centred: the campaigns list wide, Account a reading width. */
+const WIDTH = { wide: "max-w-[1440px]", narrow: "max-w-[880px]" } as const;
+
 /**
  * The frame of the signed-in pages outside a campaign, the campaigns list and Account (design E):
  * a bar with the wordmark, the two pages, the light/dark switch and Log out, then the page. The
  * page scrolls inside it (the body never does). A phone gets the same bar with icons.
  */
-export default function SitePage({ children }: { children: ReactNode }) {
+export default function SitePage({
+  children,
+  width = "wide",
+}: {
+  children: ReactNode;
+  width?: keyof typeof WIDTH;
+}) {
   const { signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { pathname } = useLocation();
@@ -95,7 +104,7 @@ export default function SitePage({ children }: { children: ReactNode }) {
         <div
           className={cn(
             "mx-auto flex w-full flex-col",
-            isMobile ? "gap-5 px-4 pb-10 pt-5" : "max-w-[1120px] gap-8 px-10 pb-16 pt-9"
+            isMobile ? "gap-5 px-4 pb-10 pt-5" : cn(WIDTH[width], "gap-8 px-10 pb-16 pt-9")
           )}
         >
           {children}

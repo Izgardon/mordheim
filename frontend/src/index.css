@@ -123,12 +123,28 @@ h6 {
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  /* The page column and its top bands measure against the space beside the rail (cqw). */
+  container-type: inline-size;
 }
 
+/* The page column (design E, polish): centred in the space beside the rail, at most 1520 px of
+   content. Form pages (Settings, Raise a warband) centre a narrower column inside it. */
 .desktop-shell__content-inner {
-  width: min(100%, 1280px);
+  --page-pad-top: 30px;
+  width: 100%;
+  max-width: 1600px;
   min-height: 100%;
-  padding: 30px 40px 56px;
+  margin-inline: auto;
+  padding: var(--page-pad-top) 40px 56px;
+}
+
+/* A band across the top of a page (the readiness bar, the post-game bar, the Aftermath's header):
+   its ground reaches both edges of the space beside the rail, while its contents keep to the
+   page's column. It must sit directly in the page's full-width column. */
+.page-band {
+  margin-top: calc(-1 * var(--page-pad-top, 30px));
+  margin-inline: calc((100% - 100cqw) / 2);
+  padding-inline: calc((100cqw - 100%) / 2);
 }
 
 /* The landing's background video (design E): it covers the web's picture half, behind the
