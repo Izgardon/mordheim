@@ -21,7 +21,7 @@ vi.mock("@/lib/realtime/client", async () => (await import("@/test/fake-realtime
 vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => false }));
 
 const landing = () => screen.findByRole("heading", { name: "Mordheim Chronicler" });
-const campaignsPage = () => screen.findByRole("heading", { name: "Welcome back, Raider" });
+const campaignsPage = () => screen.findByText("Welcome back, Raider");
 
 const submitButton = () =>
   screen.getAllByRole("button").find((button) => button.getAttribute("type") === "submit")!;

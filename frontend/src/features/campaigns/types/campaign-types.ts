@@ -36,6 +36,8 @@ export type CampaignSummary = {
   archived_at?: string | null;
   /** Chat messages from others after your read mark (the detail only, CAMP-TWEAK-09). */
   chat_unread?: number;
+  /** Your own warband in it, or null without one (the campaigns list only). */
+  my_warband?: { id: number; name: string; faction: string } | null;
   created_at: string;
   updated_at: string;
 };

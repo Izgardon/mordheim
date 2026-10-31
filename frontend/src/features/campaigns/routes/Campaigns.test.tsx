@@ -56,8 +56,8 @@ describe("Campaigns list and the join code", () => {
     renderCampaigns();
 
     expect(await screen.findByText("2 campaigns")).toBeInTheDocument();
-    expect(card(owned.name)).toHaveTextContent("Join code: WYR123");
-    expect(card(joined.name)).toHaveTextContent("Join code: PIT777");
+    expect(card(owned.name)).toHaveTextContent("WYR123");
+    expect(card(joined.name)).toHaveTextContent("PIT777");
 
     await user.click(within(card(joined.name)).getByRole("button", { name: "Copy" }));
 
@@ -101,7 +101,7 @@ describe("Campaigns list and the join code", () => {
     renderCampaigns();
     await screen.findByText("1 campaign");
 
-    await user.click(screen.getByRole("button", { name: "Join" }));
+    await user.click(screen.getByRole("button", { name: "Join a campaign" }));
     const dialog = screen.getByRole("dialog", { name: "Join a campaign" });
     await user.type(within(dialog).getByLabelText("Rally code"), "pit777");
     await user.click(within(dialog).getByRole("button", { name: "Join" }));
@@ -124,13 +124,13 @@ describe("Campaigns list and the join code", () => {
     renderCampaigns();
     await screen.findByText("2 campaigns");
 
-    await user.click(screen.getByRole("button", { name: "Join" }));
+    await user.click(screen.getByRole("button", { name: "Join a campaign" }));
     expect(screen.getByRole("dialog", { name: "Join a campaign" })).toHaveAccessibleDescription(
       "Enter the six-character rally code a member of the campaign shared with you."
     );
     await user.keyboard("{Escape}");
 
-    await user.click(screen.getByRole("button", { name: "Create" }));
+    await user.click(screen.getByRole("button", { name: "Create a campaign" }));
     expect(
       screen.getByRole("dialog", { name: "Start a new campaign" })
     ).toHaveAccessibleDescription(
@@ -153,7 +153,7 @@ describe("Campaigns list and the join code", () => {
     renderCampaigns();
     await screen.findByText("2 campaigns");
 
-    await user.click(screen.getByRole("button", { name: "Join" }));
+    await user.click(screen.getByRole("button", { name: "Join a campaign" }));
     const dialog = screen.getByRole("dialog", { name: "Join a campaign" });
     await user.type(within(dialog).getByLabelText("Rally code"), "wyr123");
     await user.click(within(dialog).getByRole("button", { name: "Join" }));

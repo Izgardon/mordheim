@@ -71,7 +71,7 @@ describe("a cold start signed in", () => {
     fakeApi.on("GET /auth/me/", () => me.promise);
     renderApp("/campaigns");
 
-    await screen.findByRole("heading", { name: "Welcome back, Raider" });
+    await screen.findByText("Welcome back, Raider");
     expect(await settledCalls(3)).toEqual([
       "GET /auth/me/",
       "GET /campaigns/",
@@ -96,7 +96,7 @@ describe("a cold start signed in", () => {
 
     await act(async () => me.resolve(RAIDER));
 
-    await screen.findByRole("heading", { name: "Welcome back, Raider" });
+    await screen.findByText("Welcome back, Raider");
     expect(await settledCalls(3)).toEqual([
       "GET /auth/me/",
       "GET /campaigns/",
@@ -110,7 +110,7 @@ describe("a cold start signed in", () => {
     fakeApi.on("GET /auth/me/", RAIDER);
     const app = renderApp("/");
 
-    await screen.findByRole("heading", { name: "Welcome back, Raider" });
+    await screen.findByText("Welcome back, Raider");
     expect(app.location().pathname).toBe("/campaigns");
     expect(await settledCalls(3)).toEqual([
       "GET /auth/me/",
@@ -132,7 +132,7 @@ describe("signing in or up from the landing page", () => {
     await user.type(screen.getByLabelText("Password"), "wyrdstone");
     await user.click(submitButton());
 
-    await screen.findByRole("heading", { name: "Welcome back, Raider" });
+    await screen.findByText("Welcome back, Raider");
     expect(await settledCalls(3)).toEqual([
       "GET /campaigns/",
       "GET /notifications/",
@@ -154,7 +154,7 @@ describe("signing in or up from the landing page", () => {
     await user.type(screen.getByLabelText("Password"), "wyrdstone");
     await user.click(submitButton());
 
-    await screen.findByRole("heading", { name: "Welcome back, Raider" });
+    await screen.findByText("Welcome back, Raider");
     expect(await settledCalls(3)).toEqual([
       "GET /campaigns/",
       "GET /notifications/",
@@ -169,7 +169,7 @@ describe("a user with no name (made by createsuperuser or a seeder)", () => {
     fakeApi.on("GET /auth/me/", { ...NAMELESS, name: "  " });
     renderApp("/campaigns");
 
-    expect(await screen.findByRole("heading", { name: "Welcome back" })).toBeInTheDocument();
+    expect(await screen.findByText("Welcome back")).toBeInTheDocument();
     expect(screen.queryByText(/nameless@example\.com/)).toBeNull();
   });
 });

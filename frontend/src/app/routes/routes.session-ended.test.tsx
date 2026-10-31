@@ -76,7 +76,7 @@ describe("a session the server has ended (session_ended)", () => {
     fakeFetch.on("GET /campaigns/", json(200, []));
     fakeFetch.on("GET /notifications/", json(200, []));
     const app = renderApp("/campaigns");
-    await screen.findByRole("heading", { name: "Welcome back, Raider" });
+    await screen.findByText("Welcome back, Raider");
 
     // Another device signs out everywhere else: this one's next request meets session_ended.
     fakeFetch.on("GET /campaigns/", sessionEnded());

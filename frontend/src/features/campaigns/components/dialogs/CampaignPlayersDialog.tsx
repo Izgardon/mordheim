@@ -2,14 +2,7 @@ import { useEffect, useState } from "react";
 
 // components
 import { Button } from "@components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@components/dialog";
+import { ModalSheet } from "@components/modal-sheet";
 
 // api
 import { listCampaignPlayers } from "../../api/campaigns-api";
@@ -20,12 +13,16 @@ import { getErrorMessage } from "@/lib/get-error-message";
 
 type CampaignPlayersDialogProps = {
   campaignId: number;
+  /** The kicker over the roster's title. */
+  campaignName?: string;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 };
 
+/** Roster: everyone in the campaign and his warband (design E), read when it opens. */
 export default function CampaignPlayersDialog({
   campaignId,
+  campaignName,
   open: controlledOpen,
   onOpenChange,
 }: CampaignPlayersDialogProps) {
@@ -59,36 +56,44 @@ export default function CampaignPlayersDialog({
   }, [open, campaignId]);
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button variant="secondary" size="sm">
-          Roster
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-[750px]">
-        <DialogHeader>
-          <DialogTitle className="font-bold">Roster</DialogTitle>
-          <DialogDescription>Everyone playing in this campaign.</DialogDescription>
-        </DialogHeader>
+    <>
+      <Button variant="secondary" size="sm" onClick={() => handleOpenChange(true)}>
+        Roster
+      </Button>
+      <ModalSheet
+        open={open}
+        onOpenChange={handleOpenChange}
+        kicker={campaignName}
+        title="Roster"
+        description="Everyone playing in this campaign."
+        className="max-w-[520px]"
+      >
         {isLoading ? (
-          <p className="text-sm text-muted-foreground">Gathering names...</p>
+          <p className="m-0 text-sm text-muted-foreground">Gathering names...</p>
         ) : error ? (
-          <p className="text-sm text-danger">{error}</p>
+          <p role="alert" className="m-0 text-sm text-danger">
+            {error}
+          </p>
         ) : players.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No names logged yet.</p>
+          <p className="m-0 text-sm text-muted-foreground">No names logged yet.</p>
         ) : (
-          <ul className="space-y-2">
+          <ul className="m-0 flex list-none flex-col p-0">
             {players.map((player) => (
               <li
                 key={player.id}
-                className="border border-border bg-surface px-3 py-2 text-sm text-ink"
+                className="flex flex-col gap-0.5 border-t border-line py-2.5 first:border-t-0 first:pt-0"
               >
-                {player.name}
+                <span className="text-[15px] font-bold text-head">{player.name}</span>
+                <span className="text-[13px] text-text2">
+                  {player.warband
+                    ? [player.warband.name, player.warband.faction].filter(Boolean).join(" · ")
+                    : "No warband yet"}
+                </span>
               </li>
             ))}
           </ul>
         )}
-      </DialogContent>
-    </Dialog>
+      </ModalSheet>
+    </>
   );
 }

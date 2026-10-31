@@ -12,23 +12,26 @@ type CampaignsHeaderProps = {
   onJoin: (payload: CampaignJoinPayload) => Promise<void>;
 };
 
+/** The campaigns page's header (design E): who you are, the title, Join and Create. */
 export default function CampaignsHeader({ user, onCreate, onJoin }: CampaignsHeaderProps) {
   // The display name only, never the email (SEC-13); a user without one is just welcomed back.
   const displayName = user?.name?.trim();
   return (
-    <header className="flex flex-col gap-6">
-      <div className="min-w-0 space-y-4">
-        <h1 className="break-words text-base font-semibold text-foreground sm:text-lg md:text-xl">
+    <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+      <div className="flex min-w-0 flex-col gap-1.5">
+        <span className="break-words text-xs font-semibold uppercase tracking-[0.08em] text-faint">
           {displayName ? `Welcome back, ${displayName}` : "Welcome back"}
+        </span>
+        <h1 className="m-0 font-display text-[40px] font-semibold leading-tight text-head max-[960px]:text-[30px]">
+          Campaigns
         </h1>
-        <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-          Track every expedition into the City of the Damned and keep a ledger of who returned.
+        <p className="m-0 text-sm text-text2">
+          Every expedition into the City of the Damned, and who came back from it.
         </p>
-        <p className="text-xs italic text-muted-foreground sm:text-sm">"Every shard has a cost."</p>
-        <div className="flex flex-wrap gap-2 sm:gap-3">
-          <JoinCampaignDialog onJoin={onJoin} />
-          <CreateCampaignDialog onCreate={onCreate} />
-        </div>
+      </div>
+      <div className="flex gap-2 max-[960px]:grid max-[960px]:w-full max-[960px]:grid-cols-2">
+        <JoinCampaignDialog onJoin={onJoin} className="max-[960px]:min-h-12" />
+        <CreateCampaignDialog onCreate={onCreate} className="max-[960px]:min-h-12" />
       </div>
     </header>
   );

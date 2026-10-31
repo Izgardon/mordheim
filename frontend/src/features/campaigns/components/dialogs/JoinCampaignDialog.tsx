@@ -3,50 +3,42 @@ import { useState } from "react";
 
 // components
 import { Button } from "@components/button";
-import {
-  Dialog,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogContent,
-} from "@components/dialog";
 import { Input } from "@components/input";
-import { Label } from "@components/label";
+import { ModalSheet } from "@components/modal-sheet";
+import { Field, FormError } from "../settings/settings-ui";
 // types
 import type { CampaignJoinPayload } from "../../types/campaign-types";
 import { getErrorMessage } from "@/lib/get-error-message";
 
-const initialState: CampaignJoinPayload = {
-  join_code: "",
-};
-
 type JoinCampaignDialogProps = {
   onJoin: (payload: CampaignJoinPayload) => Promise<void>;
+  /** The trigger's classes (full width on a phone). */
+  className?: string;
 };
 
-export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) {
+/** Join a campaign with its code (design E): a modal on the web, a sheet on a phone. */
+export default function JoinCampaignDialog({ onJoin, className }: JoinCampaignDialogProps) {
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState<CampaignJoinPayload>(initialState);
+  const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
     if (!nextOpen) {
-      setForm(initialState);
+      setCode("");
       setError("");
     }
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const submit = async (event?: FormEvent<HTMLFormElement>) => {
+    event?.preventDefault();
     setError("");
     setIsSubmitting(true);
 
     try {
-      await onJoin({ join_code: form.join_code.trim().toUpperCase() });
+      await onJoin({ join_code: code.trim().toUpperCase() });
       setOpen(false);
+      setCode("");
     } catch (errorResponse) {
       setError(getErrorMessage(errorResponse, "Unable to join campaign"));
     } finally {
@@ -55,45 +47,59 @@ export default function JoinCampaignDialog({ onJoin }: JoinCampaignDialogProps) 
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button variant="secondary">Join</Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-[750px]">
-        <DialogHeader>
-          <DialogTitle className="text-base font-semibold">Join a campaign</DialogTitle>
-          <DialogDescription className="block text-sm text-muted-foreground">
-            Enter the six-character rally code a member of the campaign shared with you.
-          </DialogDescription>
-        </DialogHeader>
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <div className="space-y-2">
-            <Label htmlFor="join-code">Rally code</Label>
-            <Input
-              id="join-code"
-              value={form.join_code}
-              onChange={(event) => setForm({ join_code: event.target.value })}
-              placeholder="WYR123"
-              maxLength={6}
-              required
-            />
-          </div>
-          {error ? <p className="text-sm text-danger">{error}</p> : null}
-          <DialogFooter>
+    <>
+      <Button variant="secondary" className={className} onClick={() => handleOpenChange(true)}>
+        Join a campaign
+      </Button>
+      <ModalSheet
+        open={open}
+        onOpenChange={handleOpenChange}
+        kicker="Campaigns"
+        title="Join a campaign"
+        description="Enter the six-character rally code a member of the campaign shared with you."
+        className="max-w-[480px]"
+        footer={
+          <div className="grid w-full grid-cols-[1fr_2fr] gap-2">
             <Button
-              type="button"
               variant="secondary"
+              className="min-h-12"
               onClick={() => handleOpenChange(false)}
               disabled={isSubmitting}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              className="min-h-12"
+              disabled={isSubmitting || !code.trim()}
+              onClick={() => void submit()}
+            >
               {isSubmitting ? "Joining..." : "Join"}
             </Button>
-          </DialogFooter>
+          </div>
+        }
+      >
+        <form className="flex flex-col gap-4" onSubmit={(event) => void submit(event)}>
+          <Field
+            label="Rally code"
+            htmlFor="join-code"
+            hint="Six letters and numbers, from anyone already in the campaign."
+          >
+            <Input
+              id="join-code"
+              value={code}
+              onChange={(event) => setCode(event.target.value)}
+              placeholder="WYR123"
+              maxLength={6}
+              autoComplete="off"
+              autoCapitalize="characters"
+              spellCheck={false}
+              required
+              className="h-12 font-mono text-lg font-bold uppercase tracking-[0.2em] placeholder:tracking-[0.2em] md:h-12"
+            />
+          </Field>
+          <FormError message={error} />
         </form>
-      </DialogContent>
-    </Dialog>
+      </ModalSheet>
+    </>
   );
 }
