@@ -22,9 +22,12 @@ WarbandTypes = tuple[WarbandType | None, list[WarbandType]]  # a warband's type 
 
 
 def with_group_names(rows: QuerySet[WarbandType]) -> QuerySet[WarbandType]:
-    """`rows` with their setting and `group_names` (their groups' names, in order) read in the same query."""
-    names = WarbandGroup.objects.filter(members=OuterRef("pk")).order_by("sort_order", "name").values("name")
-    return rows.select_related("campaign_type").annotate(group_names=ArraySubquery(names))
+    """`rows` with their setting, `group_names` (their groups' names, in order) and `group_ids` (what a who-can
+    list reads) in the same query."""
+    groups = WarbandGroup.objects.filter(members=OuterRef("pk")).order_by("sort_order", "name")
+    return rows.select_related("campaign_type").annotate(
+        group_names=ArraySubquery(groups.values("name")), group_ids=ArraySubquery(groups.values("id"))
+    )
 
 
 def campaign_types(campaign_id: int) -> QuerySet[WarbandType]:

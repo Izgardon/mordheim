@@ -18,9 +18,12 @@ from .warbands import (
     WarbandRosterStatsView,
     WarbandSummaryView,
 )
+from .who_can import WarbandGroupListView, WarbandWhoCanView
 
 __all__ = [
     "CampaignWarbandTypesView",
+    "WarbandGroupListView",
+    "WarbandWhoCanView",
     "WarbandBeastRecruitView",
     "WarbandDetailView",
     "HeroSpecialDetailView",

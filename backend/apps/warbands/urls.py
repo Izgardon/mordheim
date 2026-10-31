@@ -8,6 +8,7 @@ from .views import (
     HeroSpellDetailView,
     WarbandBeastRecruitView,
     WarbandDetailView,
+    WarbandGroupListView,
     WarbandItemDetailView,
     WarbandItemListView,
     WarbandItemSaleView,
@@ -24,10 +25,12 @@ from .views import (
     WarbandSummaryView,
     WarbandTradeDetailView,
     WarbandTradeListCreateView,
+    WarbandWhoCanView,
 )
 
 urlpatterns = [
     path("campaigns/<int:campaign_id>/warband-types/", CampaignWarbandTypesView.as_view(), name="warband-types"),
+    path("warband-groups/", WarbandGroupListView.as_view(), name="warband-groups"),
     path("warbands/", WarbandListCreateView.as_view(), name="warbands"),
     path("warbands/<int:warband_id>/", WarbandDetailView.as_view(), name="warbands-detail"),
     path("warbands/<int:warband_id>/roster-stats/", WarbandRosterStatsView.as_view(), name="warbands-roster-stats"),
@@ -66,6 +69,7 @@ urlpatterns = [
         WarbandPurchaseView.as_view(),
         name="warbands-purchases",
     ),
+    path("warbands/<int:warband_id>/who-can/", WarbandWhoCanView.as_view(), name="warbands-who-can"),
     path(
         "warbands/<int:warband_id>/rarity-rolls/",
         WarbandRarityRollView.as_view(),
