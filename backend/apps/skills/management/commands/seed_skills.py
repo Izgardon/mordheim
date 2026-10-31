@@ -1,4 +1,6 @@
-"""Seed the book's skills from JSON (`apps/skills/data/skills.json`, or --json).
+"""Seed the book's skills from JSON (the catalogue import's `out/skills.json`, or --json): our skills table
+(`apps/skills/data/skills.json`) with William's decisions applied (catalogue_import/skill_lists.py). Who may learn each,
+whether it is a Large unit's skill and its learning note come from the import's `who-can.json`.
 
 Campaign rows are never read or written (BUG-17); the run is all or nothing; there is no --truncate (BUG-16: it
 deleted campaign skills and every copy of them). The Google Sheets and CSV sources are gone (IMP-81): the JSON is
@@ -11,10 +13,18 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from apps.core.catalogue.cache import bump
-from apps.core.seeding import SettingAssignments, WhoCanLists, clean, entry_value, read_json_list, upsert_global
+from apps.core.seeding import (
+    IMPORT_OUT,
+    SettingAssignments,
+    WhoCanLists,
+    clean,
+    entry_value,
+    read_json_list,
+    upsert_global,
+)
 from apps.skills.models import Skill, SkillWarband
 
-DEFAULT_JSON_PATH = Path("apps/skills/data/skills.json")
+DEFAULT_JSON_PATH = IMPORT_OUT / "skills.json"
 
 HEADER_ALIASES = {
     "name": ["name", "skill", "skill name", "skill_name"],
@@ -52,7 +62,7 @@ class Command(BaseCommand):
         if not path.exists():
             if json_path:
                 raise CommandError(f"JSON file not found at {path}")
-            raise CommandError("JSON file not found. Provide --json or place data at apps/skills/data/skills.json.")
+            raise CommandError(f"JSON file not found. Provide --json or build the catalogue import ({path}).")
 
         created = updated = skipped = 0
         settings = SettingAssignments("skills")  # each skill's setting, from the catalogue import
@@ -68,8 +78,12 @@ class Command(BaseCommand):
             description = clean(entry_value(entry, HEADER_ALIASES["description"]))
             own_type = clean(entry_value(entry, HEADER_ALIASES["type"]))  # the file's own type
             learners = who_can.of(name, own_type)
-            everyone = learners["for_everyone"] if learners else True
-            defaults = {"description": description, "campaign_type_id": settings.of(name, own_type), "for_everyone": everyone}  # fmt: skip
+            learning = {
+                "for_everyone": learners["for_everyone"] if learners else True,
+                "large_only": bool(learners and learners.get("large_only")),
+                "learn_note": clean(learners.get("note")) if learners else "",
+            }
+            defaults = {"description": description, "campaign_type_id": settings.of(name, own_type), **learning}
             skill, was_created = upsert_global(Skill, {"name": name, "type": skill_type}, defaults)
             lines += [SkillWarband(skill=skill, **line) for line in (learners["lines"] if learners else [])]
             if was_created:

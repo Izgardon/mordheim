@@ -68,7 +68,7 @@ class SeedAllTests(TestCase):
                 "Race": 27,
                 "Item": 321,  # the import's 290 (its 14 animals are beasts') + one Animal item per beast
                 "ItemRule": 51,  # the import's shared rules
-                "Skill": 254,
+                "Skill": 251,
                 "Spell": 188,  # 182 + the Dark Mage's six (BUG-54)
                 "Special": 281,  # 185 + the dramatis personae's own rules (next step 12)
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
@@ -118,7 +118,7 @@ class SeedAllTests(TestCase):
         # the 2026-10-28 data audit: skills.json held a second Pirates list (sourced "TBMF") under the same type, and
         # seed_skills upserts on name and type, so its Sea Legs, Cutlass Master and Swashbuckler overwrote Town Cryer
         # 9's (a fresh seed said "Updated: 3") and the Pirates' Sea Legs was the other list's rope-and-rigging rule
-        self.assertIn("Skills import complete. Created: 230, Updated: 0", self.output)
+        self.assertIn("Skills import complete. Created: 227, Updated: 0", self.output)
         sea_legs = {skill.type: skill.description for skill in Skill.objects.filter(name="Sea Legs")}
         self.assertEqual(set(sea_legs), {"Pirates", "Pirates (TBMF)"})
         self.assertIn("If he Falls during a battle", sea_legs["Pirates"])
@@ -219,6 +219,32 @@ class SeedAllTests(TestCase):
         tail = Skill.objects.get(name="Tail Fighting", type="Skaven")
         self.assertFalse(tail.for_everyone)
         self.assertTrue(tail.warband_links.exists())
+
+    def test_williams_skill_list_decisions_are_seeded(self):
+        # the fees and skill lists step: the import's out/skills.json with his decisions, and who-can's extras
+        def learners(name: str) -> set[str]:
+            skill = Skill.objects.get(name=name, campaign__isnull=True)
+            return set(skill.warband_links.values_list("warband_type__slug", flat=True))
+
+        large = Skill.objects.filter(type="Large Special")
+        self.assertEqual(large.count(), 5)
+        self.assertTrue(all(skill.large_only and skill.for_everyone for skill in large))
+        self.assertFalse(Skill.objects.filter(large_only=True).exclude(type="Large Special").exists())
+        mist = Skill.objects.get(name="Mist Form")
+        self.assertEqual(
+            (mist.learn_note, mist.for_everyone, learners("Mist Form")), ("Vampire only", False, {"undead"})
+        )
+        self.assertEqual(learners("Respirator"), {"metal-mongers"})
+        self.assertEqual(learners("Captain Blood"), {"pirates"})
+        self.assertTrue(Skill.objects.get(name="Falconer").for_everyone)
+        inventor = Skill.objects.get(name="Master Inventor")
+        self.assertEqual(learners("Master Inventor"), {"guild-of-disgraced-engineers"})
+        self.assertEqual(inventor.campaign_type.slug if inventor.campaign_type else None, "mutiny-in-marienburg")
+        self.assertIn("D3+1 inventions", inventor.description)
+        self.assertNotIn("Master Inventor", Skill.objects.get(name="Quick Thinker").description)
+        gone = ("Prize-fighter", "Knowledge of Myths and Legends", "Skills list prohibitions", "New Skill")
+        self.assertFalse(Skill.objects.filter(name__in=gone).exists())
+        self.assertFalse(Skill.objects.filter(name__startswith="Animal Charmer").exists())
 
     def test_the_dark_mage_knows_his_six_spells(self):
         # BUG-54, CAT-TEST-13: the "1 - " to "6 - " prefixes kept his spells from matching; they are his own spells,
