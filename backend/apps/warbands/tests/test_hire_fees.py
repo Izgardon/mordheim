@@ -190,6 +190,17 @@ class CustomHireTests(HireTestCase):
         self.assertEqual(data["upkeep_fee"], fee_payload(upkeep))
         self.assertEqual(trade_rows(self.warband), [("Hire", "Hans the Duellist", -35, "Not paid: 1 Wyrdstone.")])
 
+    def test_a_line_sent_without_its_counter_is_paid_by_the_counter_of_its_name(self):
+        # what the browser check found: a hand-typed hire's line has no names of its own, so the server matches it
+        shards = WarbandResource.objects.create(warband=self.warband, name="Wyrdstone shards", amount=2)
+        body = {"source": "custom", "name": "Hans", "price": 0, "resources": [{"resource": "Wyrdstone", "amount": 1}]}
+
+        response = self.client.post(unit_url(HIRELING, self.warband.id, suffix="hire/"), body, format="json")
+
+        shards.refresh_from_db()
+        self.assertEqual((response.status_code, shards.amount), (201, 1))
+        self.assertEqual(trade_rows(self.warband)[0][3], "Paid 1 Wyrdstone from Wyrdstone shards.")
+
     def test_a_catalogue_hire_names_its_entry(self):
         response = self.client.post(unit_url(HIRELING, self.warband.id, suffix="hire/"), {"source": "hired_sword"}, format="json")  # fmt: skip
 

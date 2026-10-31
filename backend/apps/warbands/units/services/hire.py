@@ -134,7 +134,9 @@ def hire_payload(source: str, entry: Any, name: str | None, gold: int) -> dict[s
 
 def custom_payload(body: Mapping[str, Any], terms: HireTerms) -> dict[str, Any]:
     """A hand-typed hire's create body: its name and type, the gold paid, the fee it was hired for and its upkeep."""
-    unit_type = (body.get("unit_type") or "").strip()[:80]
+    unit_type = (body.get("unit_type") or "").strip()[
+        :80
+    ] or "Hired sword"  # a type is needed: the name then reads well
     lines = [(line.resource, line.amount) for line in terms.lines]
     return {
         "name": (body.get("name") or "").strip()[:120] or unit_type or HIRELING.unknown_name,

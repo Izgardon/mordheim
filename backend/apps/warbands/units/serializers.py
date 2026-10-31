@@ -313,11 +313,12 @@ class CompanionSwitchSerializer(serializers.Serializer):
 
 
 class PaymentLineSerializer(serializers.Serializer):
-    """A resource line a hire pays: the resource, how many, and the warband's counter that pays it (null: don't)."""
+    """A resource line a hire pays: the resource, how many, and the warband's counter that pays it (null: don't; left
+    out: the counter of its name, "Wyrdstone shards" paying Wyrdstone)."""
 
     resource = serializers.CharField(max_length=60)
     amount = serializers.IntegerField(min_value=0, max_value=MAX_FEE)
-    resource_id = serializers.IntegerField(allow_null=True)
+    resource_id = serializers.IntegerField(allow_null=True, required=False)
 
 
 class HireSerializer(serializers.Serializer):
