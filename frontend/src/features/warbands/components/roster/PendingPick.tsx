@@ -5,6 +5,8 @@ import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
 import { outOfPlay, useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { useWhoCan } from "@/features/items/api/who-can-queries";
+import { largeWarning, learningNotes } from "@/features/skills/skill-learning";
+import type { Skill } from "@/features/skills/types/skill-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +37,7 @@ export default function PendingPick({
   warbandId,
   list,
   access,
+  large,
   onPick,
   onClose,
 }: {
@@ -43,6 +46,8 @@ export default function PendingPick({
   list: PendingList;
   /** The unit's `available_skills`, for skills. */
   access?: unknown;
+  /** Whether the unit is Large: a Large unit's skill warns for any other. */
+  large?: boolean | null;
   onPick: (entryId: number) => void;
   onClose: () => void;
 }) {
@@ -63,7 +68,15 @@ export default function PendingPick({
     .map((entry) => ({
       entry,
       special: specials.has(entry.id),
-      warning: outOfPlay(entry as InPlay, settings),
+      warning: outOfPlay(entry as InPlay, settings) || largeWarning(entry as Skill, large),
+      // "Large units only" is the warning itself for a unit that isn't Large
+      notes:
+        list === "skills"
+          ? learningNotes({
+              ...(entry as Skill),
+              large_only: Boolean(large && (entry as Skill).large_only),
+            })
+          : [],
     }))
     // the warband's special skills first, then what is in play
     .sort(
@@ -97,7 +110,7 @@ export default function PendingPick({
         {shown.length === 0 ? (
           <li className="py-2 text-[13px] text-text2">Nothing matches.</li>
         ) : null}
-        {shown.map(({ entry, special, warning }) => (
+        {shown.map(({ entry, special, warning, notes }) => (
           <li key={entry.id} className="border-b border-line">
             <button
               type="button"
@@ -118,6 +131,9 @@ export default function PendingPick({
                   {(entry as { type?: string }).type}
                 </span>
               </span>
+              {notes.length ? (
+                <span className="text-xs text-muted-foreground">{notes.join(" · ")}</span>
+              ) : null}
               {warning ? (
                 <span className="text-xs font-semibold text-danger">{warning}</span>
               ) : null}

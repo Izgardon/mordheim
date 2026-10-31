@@ -180,6 +180,7 @@ export default function UnitDetails(props: UnitDetailsProps) {
                 warbandId={props.warbandId}
                 list={row.key as PendingList}
                 access={"available_skills" in unit ? unit.available_skills : undefined}
+                large={unit.large}
                 onClose={() => setOpen(null)}
                 onPick={(entryId) => {
                   setOpen(null);

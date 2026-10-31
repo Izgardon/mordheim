@@ -2,6 +2,7 @@ import { ChipLabel } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
 import { STAT_KEYS } from "@/components/ui/stat-strip";
 import { Switch } from "@/components/ui/switch";
+import { largeWarning } from "@/features/skills/skill-learning";
 import { useCatalogue } from "@/lib/catalogue-queries";
 
 import type { HeroCaster } from "../../../types/warband-types";
@@ -128,6 +129,11 @@ export default function EditUnitFields({
         options={skills}
         onChange={(next) => setLists((c) => ({ ...c, skills: next }))}
         {...picks("pending_skills")}
+        describe={(entry) => {
+          const skill = skills.find((option) => option.id === entry.id);
+          const warning = skill ? largeWarning(skill, Boolean(draft.large)) : "";
+          return { warning, note: skill?.learn_note ?? "" };
+        }}
       />
       {kind !== "henchmen_group" ? (
         <EditListPicker
