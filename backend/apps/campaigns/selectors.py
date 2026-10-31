@@ -37,7 +37,7 @@ def campaigns_for_user(user: Any) -> QuerySet[Campaign]:
     """The user's campaigns with their settings, his `role` and their `player_count` (CampaignSerializer)."""
     return (
         Campaign.objects.select_related("settings")
-        .prefetch_related("settings__item_settings")
+        .prefetch_related("campaign_type_links")  # its settings in play
         .annotate(membership_for_user=FilteredRelation("memberships", condition=Q(memberships__user=user)))
         .filter(membership_for_user__isnull=False)
         .annotate(player_count=Count("memberships", distinct=True), role=F("membership_for_user__role__slug"))

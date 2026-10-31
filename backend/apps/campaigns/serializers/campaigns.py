@@ -1,22 +1,21 @@
 """The campaign as members read it, and the bodies of create, PATCH and join."""
 
-from django.core.exceptions import ObjectDoesNotExist
+from typing import Any
+
 from rest_framework import serializers
 
-from apps.restrictions.models import Restriction
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.utils.henchmen_level import normalize_henchmen_level_thresholds
 from apps.warbands.utils.hero_level import normalize_hero_level_thresholds
 
-from ..models import Campaign
+from ..models import GRADES, Campaign, CampaignType
 
 SMALLINT_MAX = 32767  # the settings' PositiveSmallIntegerField columns (BUG-76)
 
 
-class CampaignRestrictionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Restriction
-        fields = ("id", "type", "restriction")
+def setting_ids_field() -> Any:
+    """The settings in play, by id: an unknown id is a 400 (the always-on ones are added whatever is sent)."""
+    return serializers.PrimaryKeyRelatedField(queryset=CampaignType.objects.all(), many=True, required=False)
 
 
 class CampaignSerializer(serializers.ModelSerializer):
@@ -45,14 +44,10 @@ class CampaignSerializer(serializers.ModelSerializer):
     )
     enable_encampments = serializers.BooleanField(source="settings.enable_encampments", read_only=True)
     enable_locations = serializers.BooleanField(source="settings.enable_locations", read_only=True)
-    item_settings = serializers.SerializerMethodField()
+    setting_ids = serializers.SerializerMethodField()  # the settings in play (grading phase 1)
 
-    def get_item_settings(self, obj):
-        try:
-            settings = obj.settings
-        except ObjectDoesNotExist:
-            return []
-        return CampaignRestrictionSerializer(settings.item_settings.all(), many=True).data
+    def get_setting_ids(self, obj) -> list[int]:
+        return sorted(link.campaign_type_id for link in obj.campaign_type_links.all())
 
     class Meta:
         model = Campaign
@@ -71,7 +66,7 @@ class CampaignSerializer(serializers.ModelSerializer):
             "hired_sword_level_thresholds",
             "enable_encampments",
             "enable_locations",
-            "item_settings",
+            "setting_ids",
             "in_progress",
             "archived_at",
             "player_count",
@@ -109,13 +104,16 @@ class CampaignListSerializer(CampaignSerializer):
 
 class CampaignCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=120)
-    campaign_type = serializers.ChoiceField(choices=["standard", "marienburg"], required=False, default="standard")
+    # the settings in play: these, else the preset's (every setting at or below its grade; Up to 1c by default)
+    setting_ids = setting_ids_field()
+    preset = serializers.ChoiceField(choices=GRADES, required=False)
+    enable_encampments = serializers.BooleanField(default=False)
+    enable_locations = serializers.BooleanField(default=False)
     max_players = serializers.IntegerField(default=8)
     max_heroes = serializers.IntegerField(default=6, min_value=0, max_value=SMALLINT_MAX)
     max_hired_swords = serializers.IntegerField(default=3, min_value=0, max_value=SMALLINT_MAX)
     max_games = serializers.IntegerField(default=10, min_value=0, max_value=SMALLINT_MAX)
     starting_gold = serializers.IntegerField(default=500, min_value=0, max_value=MAX_TRADE_PRICE)
-    item_setting_ids = serializers.ListField(child=serializers.IntegerField(), required=False, default=list)
 
     def validate_max_players(self, value):
         if value < 2 or value > 16:
@@ -147,7 +145,7 @@ class CampaignUpdateSerializer(serializers.Serializer):
         required=False,
         allow_empty=False,
     )
-    item_setting_ids = serializers.ListField(child=serializers.IntegerField(), required=False)
+    setting_ids = setting_ids_field()  # the settings in play, replacing them
     adjust_existing_warbands = serializers.BooleanField(required=False)  # with a new starting_gold (BUG-78)
 
     def validate_hero_level_thresholds(self, value):

@@ -26,11 +26,7 @@ class WarbandListCreateView(APIView):
 
     def get(self, request):
         campaign_id = parse_campaign_id(request.query_params.get("campaign_id"))  # garbage is a 400 (BUG-152)
-        warbands = (
-            Warband.objects.filter(user=request.user)
-            .select_related("campaign", "campaign__settings")
-            .prefetch_related("campaign__settings__item_settings")
-        )
+        warbands = Warband.objects.filter(user=request.user).select_related("campaign", "campaign__settings")
 
         if campaign_id is not None:
             warbands = warbands.filter(campaign_id=campaign_id)

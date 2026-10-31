@@ -4,9 +4,10 @@ from typing import Any
 
 from django.db import transaction
 
-from apps.warbands.restrictions import get_valid_campaign_item_settings
+from apps.core.catalogue.cache import bump
 
 from ..errors import Refused
+from ..in_play import set_settings
 from ..models import Campaign, CampaignSettings
 from . import starting_gold
 
@@ -24,7 +25,9 @@ SETTINGS_FIELDS = (
 
 
 START_FIELDS = frozenset({"in_progress"})
-UPDATE_FIELDS = frozenset({*START_FIELDS, *SETTINGS_FIELDS, "name", "item_setting_ids", starting_gold.ADJUST_FLAG})
+UPDATE_FIELDS = frozenset({*START_FIELDS, *SETTINGS_FIELDS, "name", "setting_ids", starting_gold.ADJUST_FLAG})
+# every list whose rows say whether they are in play: a change of the settings in play retires them all
+IN_PLAY_LISTS = ("items", "skills", "spells", "specials", "races", "bestiary", "hired_swords", "dramatis_personae")
 
 
 def rule_for(data: Any) -> str:
@@ -40,7 +43,7 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> None:
         raise Refused("No updates provided.")
     old_gold = starting_gold.changed_from(campaign, validated)
     settings_updates = {field: validated[field] for field in SETTINGS_FIELDS if field in validated}
-    item_setting_ids = validated.get("item_setting_ids")
+    picked = validated.get("setting_ids")
     with transaction.atomic():
         if "in_progress" in validated:
             campaign.in_progress = validated["in_progress"]
@@ -48,14 +51,14 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> None:
         if "name" in validated:  # a rename (the owner, next step 7b)
             campaign.name = validated["name"]
             campaign.save(update_fields=["name"])
-        if not settings_updates and item_setting_ids is None:
+        if picked is not None:  # the settings in play (grading phase 1): every catalogue list's in_play changes
+            set_settings(campaign, [row.pk for row in picked])
+            bump(campaign.id, *IN_PLAY_LISTS)
+        if not settings_updates:
             return
         settings, _ = CampaignSettings.objects.get_or_create(campaign=campaign)
         for field, value in settings_updates.items():
             setattr(settings, field, value)
-        if settings_updates:
-            settings.save(update_fields=list(settings_updates))
-        if item_setting_ids is not None:
-            settings.item_settings.set(get_valid_campaign_item_settings(item_setting_ids))
+        settings.save(update_fields=list(settings_updates))
         if old_gold is not None and validated.get(starting_gold.ADJUST_FLAG):
             starting_gold.adjust_warbands(campaign, old_gold, settings_updates["starting_gold"])

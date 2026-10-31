@@ -8,7 +8,6 @@ fail part way need committed transactions, so they live in `test_campaign_transa
 from typing import Any
 
 from apps.campaigns.models import Campaign, CampaignSettings
-from apps.restrictions.models import Restriction
 from apps.warbands.models import Hero
 
 from .campaign_support import CampaignTestCase
@@ -130,8 +129,6 @@ class CampaignSettingsTests(CampaignTestCase):
             with self.subTest(body=body):
                 self.assertEqual(self.patch_as(self.owner, self.url(), body).status_code, 400)
 
-        setting = Restriction.objects.create(type="Setting", restriction="Cathay Setting")
-        warband_only = Restriction.objects.create(type="Warband", restriction="Reiklanders")
         response = self.patch_as(
             self.owner,
             self.url(),
@@ -140,7 +137,6 @@ class CampaignSettingsTests(CampaignTestCase):
                 "max_hired_swords": 32767,  # the smallint column's ceiling
                 "hero_level_thresholds": [9, 2, 2, 5],
                 "hero_death_roll": "d100",
-                "item_setting_ids": [setting.id, warband_only.id, 999999],
             },
         )
 
@@ -148,7 +144,6 @@ class CampaignSettingsTests(CampaignTestCase):
         data = response.data
         self.assertEqual((data["max_heroes"], data["max_hired_swords"], data["hero_death_roll"]), (0, 32767, "d100"))
         self.assertEqual(data["hero_level_thresholds"], [2, 5, 9])
-        self.assertEqual([row["restriction"] for row in data["item_settings"]], ["Cathay Setting"])
 
     def test_create_validates_every_number_against_its_column(self):
         # BUG-76, CAMP-TEST-22: only max_players was checked; the others reached the columns unchecked

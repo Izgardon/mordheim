@@ -2,9 +2,7 @@ from typing import Any
 
 from rest_framework import serializers
 
-from apps.restrictions.serializers import RestrictionSerializer
 from apps.warbands.models import Warband, WarbandResource
-from apps.warbands.restrictions import get_effective_restrictions_for_warband
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.services.prices import sale_price
 from apps.warbands.services.resources import MAX_AMOUNT
@@ -20,13 +18,11 @@ HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
 
 
 class WarbandSerializer(serializers.ModelSerializer):
-    """A warband: what it is (`warband_type` and `counts_as`, with their groups: one query, `services/types.py`), its
-    record and settings, and `restrictions`: the setting restrictions its campaign's settings meet, for the store (a
-    stop-gap until the items rebuild)."""
+    """A warband: what it is (`warband_type` and `counts_as`, with their settings and groups: one query,
+    `services/types.py`), and its record and settings."""
 
     warband_type = serializers.SerializerMethodField()
     counts_as = serializers.SerializerMethodField()
-    restrictions = serializers.SerializerMethodField()
 
     def get_warband_type(self, obj: Warband) -> dict[str, Any] | None:
         own = types_of(obj)[0]
@@ -34,9 +30,6 @@ class WarbandSerializer(serializers.ModelSerializer):
 
     def get_counts_as(self, obj: Warband) -> list[dict[str, Any]]:
         return list(WarbandTypeBriefSerializer(types_of(obj)[1], many=True).data)
-
-    def get_restrictions(self, obj):
-        return RestrictionSerializer(get_effective_restrictions_for_warband(obj), many=True).data
 
     class Meta:
         model = Warband
@@ -54,7 +47,6 @@ class WarbandSerializer(serializers.ModelSerializer):
             "max_units",
             "dice_color",
             "show_loadout_on_mobile",
-            "restrictions",
             "created_at",
             "updated_at",
         )

@@ -111,11 +111,6 @@ class CampaignSettings(models.Model):
         choices=HERO_DEATH_ROLL_CHOICES,
         default="d66",
     )
-    item_settings = models.ManyToManyField(
-        "restrictions.Restriction",
-        related_name="campaign_settings",
-        blank=True,
-    )
 
     class Meta:
         db_table = "campaign_settings"

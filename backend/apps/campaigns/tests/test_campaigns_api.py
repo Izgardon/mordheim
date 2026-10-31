@@ -56,14 +56,14 @@ class CampaignApiTests(APITestCase):
             first_name=name,
         )
 
-    def _create_campaign(self, user, name="Shards of the Comet", max_players=6, campaign_type=None):
+    def _create_campaign(self, user, name="Shards of the Comet", max_players=6, pages=False):
         self.client.force_authenticate(user=user)
         payload = {
             "name": name,
             "max_players": max_players,
         }
-        if campaign_type:
-            payload["campaign_type"] = campaign_type
+        if pages:  # the Encampment page and Locations switched on
+            payload.update(enable_encampments=True, enable_locations=True)
         response = self.client.post(
             "/api/campaigns/",
             payload,
@@ -166,7 +166,7 @@ class CampaignApiTests(APITestCase):
         self.assertFalse(settings.enable_encampments)
         self.assertFalse(settings.enable_locations)
 
-    def test_create_marienburg_campaign_enables_encampments_and_locations(self):
+    def test_create_campaign_can_switch_on_encampments_and_locations(self):
         owner = self._create_user("owner@example.com", "Owner")
 
         self.client.force_authenticate(user=owner)
@@ -174,7 +174,8 @@ class CampaignApiTests(APITestCase):
             "/api/campaigns/",
             {
                 "name": "Marienburg on the March",
-                "campaign_type": "marienburg",
+                "enable_encampments": True,
+                "enable_locations": True,
                 "max_players": 6,
             },
             format="json",
@@ -206,52 +207,6 @@ class CampaignApiTests(APITestCase):
         settings = CampaignSettings.objects.get(campaign_id=campaign["id"])
         self.assertTrue(settings.enable_encampments)
         self.assertTrue(settings.enable_locations)
-
-    def test_create_campaign_persists_item_settings(self):
-        owner = self._create_user("owner@example.com", "Owner")
-        cathay = self._create_setting("Cathay Setting")
-        khemri = self._create_setting("Khemri Setting")
-
-        self.client.force_authenticate(user=owner)
-        response = self.client.post(
-            "/api/campaigns/",
-            {
-                "name": "Ashes",
-                "max_players": 6,
-                "item_setting_ids": [cathay.id, khemri.id],
-            },
-            format="json",
-        )
-
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(
-            [entry["restriction"] for entry in response.data["item_settings"]],
-            ["Cathay Setting", "Khemri Setting"],
-        )
-        settings = CampaignSettings.objects.get(campaign_id=response.data["id"])
-        self.assertEqual(
-            list(settings.item_settings.order_by("restriction").values_list("restriction", flat=True)),
-            ["Cathay Setting", "Khemri Setting"],
-        )
-
-    def test_patch_campaign_updates_item_settings(self):
-        owner = self._create_user("owner@example.com", "Owner")
-        campaign = self._create_campaign(owner)
-        cathay = self._create_setting("Cathay Setting")
-        nehekharan = self._create_setting("Nehekharan Setting")
-
-        self.client.force_authenticate(user=owner)
-        response = self.client.patch(
-            f"/api/campaigns/{campaign['id']}/",
-            {"item_setting_ids": [nehekharan.id, cathay.id]},
-            format="json",
-        )
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            [entry["restriction"] for entry in response.data["item_settings"]],
-            ["Cathay Setting", "Nehekharan Setting"],
-        )
 
     def test_create_half_price_armour_rule_creates_discounted_campaign_clones(self):
         owner = self._create_user("owner@example.com", "Owner")
@@ -591,71 +546,6 @@ class CampaignApiTests(APITestCase):
         self.client.force_authenticate(user=outsider)
         response = self.client.get(f"/api/campaigns/{campaign['id']}/players/")
         self.assertEqual(response.status_code, 404)
-
-    def test_warband_api_returns_effective_restrictions_from_campaign_item_settings(self):
-        owner = self._create_user("owner@example.com", "Owner")
-        campaign = self._create_campaign(owner)
-        setting = self._create_setting("Cathay Setting")
-        warband_restriction = self._create_warband_restriction("Reiklanders")
-
-        self.client.force_authenticate(user=owner)
-        patch_response = self.client.patch(
-            f"/api/campaigns/{campaign['id']}/",
-            {"item_setting_ids": [setting.id]},
-            format="json",
-        )
-        self.assertEqual(patch_response.status_code, 200)
-
-        create_response = self.client.post(
-            "/api/warbands/",
-            {
-                "campaign_id": campaign["id"],
-                "name": "Iron Vultures",
-                "warband_type_id": book_warband_type().id,
-                "max_units": 15,
-                "restriction_ids": [setting.id, warband_restriction.id],
-            },
-            format="json",
-        )
-        self.assertEqual(create_response.status_code, 201)
-        self.assertEqual(
-            [entry["restriction"] for entry in create_response.data["restrictions"]],
-            ["Cathay Setting"],
-        )
-
-    def test_warband_detail_returns_effective_restrictions(self):
-        # The campaign warbands route had no caller and is gone (IMP-68); the warband detail answers the same rows
-        owner = self._create_user("owner@example.com", "Owner")
-        campaign = self._create_campaign(owner)
-        setting = self._create_setting("Cathay Setting")
-        warband_restriction = self._create_warband_restriction("Reiklanders")
-
-        self.client.force_authenticate(user=owner)
-        self.client.patch(
-            f"/api/campaigns/{campaign['id']}/",
-            {"item_setting_ids": [setting.id]},
-            format="json",
-        )
-        create_response = self.client.post(
-            "/api/warbands/",
-            {
-                "campaign_id": campaign["id"],
-                "name": "Iron Vultures",
-                "warband_type_id": book_warband_type().id,
-                "max_units": 15,
-                "restriction_ids": [warband_restriction.id],
-            },
-            format="json",
-        )
-        self.assertEqual(create_response.status_code, 201)
-
-        self.assertEqual(self.client.get(f"/api/campaigns/{campaign['id']}/warbands/").status_code, 404)
-        response = self.client.get(f"/api/warbands/{create_response.data['id']}/")
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            [entry["restriction"] for entry in response.data["restrictions"]],
-            ["Cathay Setting"],
-        )
 
     def test_posting_a_restriction_is_not_allowed(self):
         # SEC-06: restrictions are the seeders' rows; the POST (which refused only settings) is gone
@@ -1216,7 +1106,7 @@ class CampaignApiTests(APITestCase):
 
     def test_encampment_create_list_and_patch_flow(self):
         owner = self._create_user("owner@example.com", "Owner")
-        campaign = self._create_campaign(owner, campaign_type="marienburg")
+        campaign = self._create_campaign(owner, pages=True)
         player = self._create_user("player@example.com", "Player")
 
         self.client.force_authenticate(user=player)
@@ -1260,7 +1150,7 @@ class CampaignApiTests(APITestCase):
         self.assertEqual(encampment.owner_id, owner.id)
         self.assertEqual(encampment.description, "Updated camp notes.")
 
-        other_campaign = self._create_campaign(owner, name="Other Marienburg", campaign_type="marienburg")
+        other_campaign = self._create_campaign(owner, name="Other Marienburg", pages=True)
         other_encampment = CampaignEncampment.objects.create(
             campaign_id=other_campaign["id"],
             name="Foreign Camp",
@@ -1287,7 +1177,7 @@ class CampaignApiTests(APITestCase):
         )
         self.assertEqual(disabled_create_response.status_code, 404)
 
-        campaign = self._create_campaign(owner, name="Enabled Encampments", campaign_type="marienburg")
+        campaign = self._create_campaign(owner, name="Enabled Encampments", pages=True)
         player = self._create_user("player@example.com", "Player")
         self.client.force_authenticate(user=player)
         join_response = self.client.post(
@@ -1316,7 +1206,7 @@ class CampaignApiTests(APITestCase):
 
     def test_location_create_list_and_patch_flow(self):
         owner = self._create_user("owner@example.com", "Owner")
-        campaign = self._create_campaign(owner, campaign_type="marienburg")
+        campaign = self._create_campaign(owner, pages=True)
 
         self.client.force_authenticate(user=owner)
         create_response = self.client.post(
@@ -1352,7 +1242,7 @@ class CampaignApiTests(APITestCase):
         self.assertEqual(location.d6_2, "Canal ambush")
         self.assertEqual(location.content, "<p>Updated text.</p>")
 
-        other_campaign = self._create_campaign(owner, name="Other Locations", campaign_type="marienburg")
+        other_campaign = self._create_campaign(owner, name="Other Locations", pages=True)
         other_location = CampaignLocation.objects.create(campaign_id=other_campaign["id"], name="Elsewhere")
         wrong_patch_response = self.client.patch(
             f"/api/campaigns/{campaign['id']}/locations/{other_location.id}/",
@@ -1375,7 +1265,7 @@ class CampaignApiTests(APITestCase):
         )
         self.assertEqual(disabled_create_response.status_code, 404)
 
-        campaign = self._create_campaign(owner, name="Enabled Locations", campaign_type="marienburg")
+        campaign = self._create_campaign(owner, name="Enabled Locations", pages=True)
         player = self._create_user("player@example.com", "Player")
         self.client.force_authenticate(user=player)
         join_response = self.client.post(

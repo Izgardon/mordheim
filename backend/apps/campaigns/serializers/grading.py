@@ -14,10 +14,10 @@ class SettingBriefSerializer(serializers.ModelSerializer):
 
 class SettingSerializer(serializers.ModelSerializer):
     """A setting on the settings list: its grade (and the grade's name), its chip order, whether it is always on, and
-    how many of the book's warband types it holds (`warband_types`, annotated)."""
+    how many of the book's warband types it holds (`warband_types`, from the `type_count` annotation)."""
 
     grade_label = serializers.SerializerMethodField()
-    warband_types = serializers.IntegerField(read_only=True, default=0)
+    warband_types = serializers.IntegerField(source="type_count", read_only=True, default=0)
 
     def get_grade_label(self, setting: CampaignType) -> str:
         return GRADE_LABELS.get(setting.grade, "")
