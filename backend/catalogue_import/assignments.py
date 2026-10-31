@@ -67,11 +67,15 @@ def label(row: dict[str, Any]) -> str:
     return f"{row['name']} ({row['type']})" if row.get("type") else str(row["name"])
 
 
+def best_entry(ours_type: str, found: list[dict[str, Any]]) -> dict[str, Any]:
+    """The best-fitting entry among `found` (all of one name) for our row of `ours_type`: the one naming our list's
+    warband, else the one of our subtype, else the lowest setting's."""
+    return min(found, key=lambda entry: (-_score(ours_type, entry), _order(_home(entry)[0])))
+
+
 def _pick(kind: str, row: dict[str, Any], found: list[dict[str, Any]], log: AssignmentLog) -> str:
     """The setting of the best-fitting entry among `found` (all of one name)."""
-    ours_type = str(row.get("type") or "")
-    ranked = sorted(found, key=lambda entry: (-_score(ours_type, entry), _order(_home(entry)[0])))
-    taken = ranked[0]
+    taken = best_entry(str(row.get("type") or ""), found)
     settings = _home(taken)
     homes = {_home(entry)[0] for entry in found}
     if len(homes) > 1:

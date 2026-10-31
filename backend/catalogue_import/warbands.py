@@ -114,6 +114,11 @@ class Resolver:
             return known or matches, ""
         return None
 
+    def find(self, name: str) -> list[str]:
+        """Type slugs for a name, without recording it ([] when it matches nothing)."""
+        found = self._lookup(name)
+        return found[0] if found else []
+
     def resolve(self, name: str, where: str) -> list[str]:
         """Type slugs for a name ([] when it matches nothing; the report lists it)."""
         found = self._lookup(name)

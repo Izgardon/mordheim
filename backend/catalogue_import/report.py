@@ -26,6 +26,8 @@ class ReportData:
     names: dict[str, str]
     assignments: dict[str, list[dict[str, Any]]]
     assignment_log: Any
+    who_can: dict[str, list[dict[str, Any]]]
+    hiring_log: Any
 
 
 def _cell(value: object) -> str:
@@ -59,6 +61,7 @@ def _top(data: ReportData) -> list[str]:
         f"4. **mordheimer's contradictions:** {len(data.conflicts)} places where an item's lists and its own notes disagree, each with the default taken.",
         f'5. **Warband names:** {len(unmatched)} names in mordheimer\'s data match no warband type, or more than one. "Chaos Dwarfs" is mapped to Black Dwarfs and Wolfcloak\'s "Mercenaries" is left out; please check.',
         f"6. **Settings for our skills and hired swords:** {len(data.assignment_log.ambiguous)} names mordheimer gives more than one setting; check the one taken for each.",
+        f"7. **Who can hire and learn:** {len(data.hiring_log.unplaced)} hired swords, dramatis personae and skills name a warband no type matches; {len(data.hiring_log.special_costs)} fees aren't plain numbers.",
         "",
         "Answers go into `overrides.json`; the next build applies them.",
         "",
@@ -195,6 +198,51 @@ def _assignments(data: ReportData) -> list[str]:
     return [*lines, ""] if log.multi_setting else lines
 
 
+def _hiring(data: ReportData) -> list[str]:
+    log = data.hiring_log
+    rows = []
+    for kind, entries in data.who_can.items():
+        everyone = sum(1 for entry in entries if entry["for_everyone"] and not entry["warbands"])
+        excepted = sum(1 for entry in entries if entry["for_everyone"] and entry["warbands"])
+        listed = len(entries) - everyone - excepted
+        rows.append([kind.replace("_", " "), len(entries), everyone, excepted, listed])
+    lines = [
+        "## Who can hire and learn",
+        "",
+        "`out/who-can.json`: mordheimer's `permittedWarbands` for its hired swords and dramatis personae (by name) and"
+        " for our skills (from the entry each takes its setting from), as warband types or groups. A skill mordheimer"
+        " lacks is for everyone on a general list, else for the warband its list is named after.",
+        "",
+        *_table(["Kind", "Entries", "Everyone", "Everyone except", "Named warbands"], rows),
+        "",
+    ]
+    if log.unplaced:
+        table = [[kind, name, ", ".join(names)] for kind, name, names in log.unplaced]
+        lines += [
+            "Names no warband type matches, left out of the list (a skill whose list names no warband is for everyone):",
+            "",
+            *_table(["Kind", "Entry", "Left out"], table),
+            "",
+        ]
+    if log.nobody:
+        lines.append(
+            "Lists that name no type at all, so no one may hire: " + ", ".join(n for _k, n in log.nobody) + "."
+        )
+        lines.append("")
+    if log.by_list_name:
+        named = "; ".join(f"{label} -> {list_name}" for label, list_name in log.by_list_name)
+        lines += [f"Skills mordheimer lacks, read from their list's name: {named}.", ""]
+    if log.special_costs:
+        table = [[kind, name, hire or "-", upkeep or "-"] for kind, name, hire, upkeep in log.special_costs]
+        lines += [
+            "Fees that aren't plain numbers, kept as text (a leading number is still charged in gold):",
+            "",
+            *_table(["Kind", "Entry", "Hire", "Upkeep"], table),
+            "",
+        ]
+    return lines
+
+
 def _mim(data: ReportData) -> list[str]:
     names = ", ".join(item["name"] for item in data.mim_items)
     lines = [
@@ -251,6 +299,7 @@ def render_report(data: ReportData) -> str:
         _settings,
         _grade_conflicts,
         _assignments,
+        _hiring,
         _mim,
         _dropped,
     ):
