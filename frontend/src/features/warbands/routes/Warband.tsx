@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useOutletContext, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 import { useAuth } from "@/features/auth/hooks/use-auth";
@@ -31,6 +31,7 @@ import type { UnitKindKey } from "../types/units";
 export default function Warband() {
   const { id, warbandId: warbandParam } = useParams();
   const campaignId = Number(id);
+  const navigate = useNavigate();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -151,7 +152,12 @@ export default function Warband() {
                   hirelings={sheet.hirelings}
                   canEdit={canEdit}
                   onLoadout={setLoadoutFor}
-                  onRecruit={setRecruiting}
+                  onRecruit={(kind) =>
+                    // hired swords come from the hire picker (the catalogue), which has the custom hire too
+                    kind === "hireling"
+                      ? navigate(`/campaigns/${campaignId}/hired-swords?warband=${warbandId}`)
+                      : setRecruiting(kind)
+                  }
                   onAdvance={setAdvancing}
                   onBuyAgain={(entry, item) =>
                     openStore(

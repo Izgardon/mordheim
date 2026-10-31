@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useOutletContext, useParams } from "react-router-dom";
+import { useOutletContext, useParams, useSearchParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
@@ -8,13 +8,9 @@ import { outOfPlay, useSettingsById } from "@/features/campaigns/api/settings-qu
 import { useWhoCan } from "@/features/items/api/who-can-queries";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { BuyableToggle, FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
-import {
-  ReferenceList,
-  ReferenceRow,
-  ShowMore,
-  useShownRows,
-} from "@/features/reference/ReferenceList";
+import { ReferenceList, ShowMore, useShownRows } from "@/features/reference/ReferenceList";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
+import RecruitDialog from "@/features/warbands/components/roster/RecruitDialog";
 import { useWarbandSheet } from "@/features/warbands/hooks/warband/useWarbandSheet";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
@@ -23,9 +19,9 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import HireDialog from "../components/HireDialog";
 import HirelingDetail from "../components/HirelingDetail";
 import HirelingProfileFormDialog from "../components/HirelingProfileFormDialog";
+import HirelingRow, { HIRELING_COLUMNS } from "../components/HirelingRow";
 import {
   HIRELING_CATALOGUES,
-  formatHirelingCost,
   hirelingRace,
   type HirelingCatalogueKind,
 } from "../hireling-catalogue-kinds";
@@ -40,7 +36,8 @@ const SECTION: Record<HirelingCatalogueKind, { path: string; title: string }> = 
  * Hired swords and Dramatis personae (design E's reference layout, one page for both): every
  * entry, searched by name, race or text, rows with race, hire fee, upkeep and rating; a row opens
  * to the profile, the terms, who can hire him and his rules, with Hire from here (today's hire
- * for your warband). With a warband, "Who it can hire" is on: those it can usually hire first
+ * for your warband). It is also the roster's hire picker: Hire opens it for that warband
+ * (`?warband=`), with "Hire someone not in the list" for a custom hire. With a warband, "Who it can hire" is on: those it can usually hire first
  * (the server's who-can/), the rest behind Show all with the reason. Entries are added and edited
  * as today.
  */
@@ -51,12 +48,15 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const entries = useCatalogue(kind, campaignId);
-  const sheet = useWarbandSheet({ campaignId, hasCampaignId: Boolean(id), warbandId: null });
+  // The roster's Hire opens this page for its warband (?warband=): the hire picker
+  const forWarband = Number(useSearchParams()[0].get("warband")) || null;
+  const sheet = useWarbandSheet({ campaignId, hasCampaignId: Boolean(id), warbandId: forWarband });
   const { warband } = sheet;
   const params = useReferenceParams(!entries.isLoading);
   const capabilities = campaignCapabilities(campaign);
   const [editing, setEditing] = useState<{ id: number | null } | null>(null);
   const [hiring, setHiring] = useState<HirelingProfile | null>(null);
+  const [hiringOther, setHiringOther] = useState(false);
   const settings = useSettingsById();
   const whoCan = useWhoCan(campaignId, warband?.id);
   const access = kind === "hired-swords" ? whoCan.hiredSwords : whoCan.dramatisPersonae;
@@ -101,15 +101,26 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
         noun: kind === "hired-swords" ? "hired swords" : "dramatis personae",
       }}
       actions={
-        capabilities.edit_catalogue ? (
-          <Button
-            variant="secondary"
-            className={isMobile ? "min-h-10" : undefined}
-            onClick={() => setEditing({ id: null })}
-          >
-            {isMobile ? "Add" : config.labels.add}
-          </Button>
-        ) : null
+        <>
+          {canHire ? (
+            <Button
+              variant="ghost"
+              className={isMobile ? "min-h-10" : undefined}
+              onClick={() => setHiringOther(true)}
+            >
+              Hire someone not in the list
+            </Button>
+          ) : null}
+          {capabilities.edit_catalogue ? (
+            <Button
+              variant="secondary"
+              className={isMobile ? "min-h-10" : undefined}
+              onClick={() => setEditing({ id: null })}
+            >
+              {isMobile ? "Add" : config.labels.add}
+            </Button>
+          ) : null}
+        </>
       }
       filters={
         <FilterRow isMobile={isMobile}>
@@ -136,16 +147,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
       {entries.error ? <p className="m-0 text-sm text-danger">{entries.error}</p> : null}
       <ReferenceList
         nameLabel={config.labels.singular}
-        columns={
-          isMobile
-            ? undefined
-            : [
-                { label: "Race", className: "w-[160px] shrink-0" },
-                { label: "Hire fee", className: "w-[120px] shrink-0" },
-                { label: "Upkeep", className: "w-[120px] shrink-0" },
-                { label: "Rating", className: "w-[64px] shrink-0" },
-              ]
-        }
+        columns={isMobile ? undefined : HIRELING_COLUMNS}
         isEmpty={!entries.isLoading && rows.length === 0}
         empty={
           sorted.length
@@ -158,47 +160,14 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
         ) : null}
         {shown.rows.map((entry) => {
           const key = String(entry.id);
-          const fee = formatHirelingCost(entry.hire_cost, entry.hire_cost_expression);
-          const upkeep = formatHirelingCost(entry.upkeep_cost, entry.upkeep_cost_expression);
-          const warning = warningOf(entry);
           return (
-            <ReferenceRow
+            <HirelingRow
               key={key}
-              id={key}
+              entry={entry}
+              warning={warningOf(entry)}
+              isMobile={isMobile}
               open={params.isOpen(key)}
               onToggle={() => params.toggle(key)}
-              name={entry.name}
-              warn={warning}
-              dim={Boolean(warning)}
-              sub={
-                isMobile
-                  ? [hirelingRace(entry), entry.rating !== null ? `Rating +${entry.rating}` : ""]
-                      .filter(Boolean)
-                      .join(" · ")
-                  : undefined
-              }
-              aside={
-                <>
-                  <span className="font-mono text-[13px] font-bold text-ink">{fee}</span>
-                  <span className="text-xs text-muted-foreground">upkeep {upkeep}</span>
-                </>
-              }
-              cells={
-                isMobile
-                  ? undefined
-                  : [
-                      hirelingRace(entry) || "–",
-                      <span key="fee" className="font-mono font-bold text-ink">
-                        {fee}
-                      </span>,
-                      <span key="upkeep" className="font-mono">
-                        {upkeep}
-                      </span>,
-                      <span key="rating" className="font-mono">
-                        {entry.rating !== null ? `+${entry.rating}` : "–"}
-                      </span>,
-                    ]
-              }
             >
               <HirelingDetail
                 config={config}
@@ -211,7 +180,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
                   capabilities.edit_catalogue ? () => setEditing({ id: entry.id }) : undefined
                 }
               />
-            </ReferenceRow>
+            </HirelingRow>
           );
         })}
       </ReferenceList>
@@ -235,6 +204,13 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
         }}
         onEditMatch={(match) => setEditing({ id: match.id })}
       />
+      {warband && hiringOther ? (
+        <RecruitDialog
+          kind="hireling"
+          warbandId={warband.id}
+          onClose={() => setHiringOther(false)}
+        />
+      ) : null}
       {warband ? (
         <HireDialog
           config={config}

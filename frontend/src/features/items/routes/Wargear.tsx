@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import { outOfPlay, useSettingsById } from "@/features/campaigns/api/settings-queries";
+import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import ReferencePage from "@/features/reference/ReferencePage";
@@ -12,57 +12,19 @@ import {
   ReferenceChips,
   ReferenceSearch,
 } from "@/features/reference/ReferenceFilters";
-import {
-  PriceRarity,
-  ReferenceList,
-  ReferenceRow,
-  ShowMore,
-  useShownRows,
-} from "@/features/reference/ReferenceList";
+import { ReferenceList, ShowMore, useShownRows } from "@/features/reference/ReferenceList";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
 import { useWarbandSheet } from "@/features/warbands/hooks/warband/useWarbandSheet";
 import { useCatalogue } from "@/lib/catalogue-queries";
-import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import { useWhoCan } from "../api/who-can-queries";
 import ItemFormDialog from "../components/ItemFormDialog";
 import StorePanel, { type StoreOpening } from "../store/StorePanel";
-import {
-  STORE_CATEGORIES,
-  itemName,
-  kindOf,
-  searchWords,
-  storeCategory,
-  type StoreCategory,
-} from "../store/store-items";
-import type { Item, ItemAvailability, ItemOffer } from "../types/item-types";
-import { isCommon, priceLabel, rarityLabel } from "../utils/item-prices";
+import type { StoreCategory } from "../store/store-items";
 import WargearDetail from "./WargearDetail";
-
-const COLUMNS = [
-  { label: "Type", className: "w-[150px] shrink-0" },
-  { label: "Price", className: "w-[124px] shrink-0" },
-  { label: "Rarity", className: "w-[96px] shrink-0" },
-  { label: "Rules", className: "w-[240px] shrink-0 max-[1180px]:hidden" },
-];
-const ALL_SETTINGS = "all";
-
-/** "S as user +1", "30\" · S 4", "Save 6+": an item's figures in one line. */
-function statOf(item: Item) {
-  const parts: string[] = [];
-  if (item.range && !/close/i.test(item.range)) parts.push(item.range);
-  if (item.strength) parts.push(`S ${item.strength.replace(/^As user/i, "as user")}`);
-  if (item.save) parts.push(`Save ${item.save}`);
-  return parts.join(" · ");
-}
-
-type Row = {
-  item: Item;
-  availability: ItemAvailability | null;
-  offer?: ItemOffer;
-  warning: string;
-};
+import WargearRow, { WARGEAR_COLUMNS } from "./WargearRow";
+import { ALL_SETTINGS, useWargearRows } from "./wargear-rows";
 
 /**
  * Wargear (design E, the items rebuild): every item of the campaign, searched by name, rule or
@@ -89,67 +51,19 @@ export default function Wargear() {
   const [getting, setGetting] = useState<StoreOpening["again"]>(null);
   const capabilities = campaignCapabilities(campaign);
   const canBuy = Boolean(warband) && sheet.capabilities.manage_items;
-
-  const all = useMemo<Row[]>(
-    () =>
-      [...items.data]
-        .sort((a, b) => itemName(a).localeCompare(itemName(b)))
-        .map((item) => {
-          const offer = warband ? whoCan.items.get(item.id) : undefined;
-          const rows = item.availabilities ?? [];
-          const availability =
-            rows.find((row) => row.id === offer?.availability_id) ?? rows[0] ?? null;
-          const warning = warband
-            ? offer && !offer.can_buy
-              ? offer.reason
-              : ""
-            : outOfPlay(item, settings);
-          return { item, availability, offer, warning };
-        }),
-    [items.data, settings, warband, whoCan.items]
-  );
-  const settingKey = (item: Item) => (item.setting_id == null ? "own" : String(item.setting_id));
-  const searched = all.filter(
-    ({ item, warning }) =>
-      (!warband || !onlyMine || !warning) &&
-      (setting === ALL_SETTINGS || settingKey(item) === setting) &&
-      matchesSearchQuery(params.query, ...searchWords(item))
-  );
-  const rows = all.filter(
-    (row) =>
-      String(row.item.id) === params.openId ||
-      (searched.includes(row) && (category === "all" || storeCategory(row.item) === category))
-  );
+  const { rows, counts, settingOptions, summary } = useWargearRows({
+    items: items.data,
+    settings,
+    offers: warband ? whoCan.items : null,
+    warbandName: warband?.name ?? null,
+    onlyMine,
+    query: params.query,
+    category,
+    setting,
+    openId: params.openId,
+  });
   const openIndex = rows.findIndex((row) => String(row.item.id) === params.openId);
   const shown = useShownRows(rows, openIndex);
-  const counts = STORE_CATEGORIES.map((entry) => ({
-    ...entry,
-    count:
-      entry.id === "all"
-        ? searched.length
-        : searched.filter((row) => storeCategory(row.item) === entry.id).length,
-  }));
-  const settingOptions = [
-    { id: ALL_SETTINGS, label: "All settings" },
-    ...[...new Set(items.data.map(settingKey))]
-      .map((key) => ({
-        id: key,
-        label: key === "own" ? "This campaign" : (settings.get(Number(key))?.name ?? "Unknown"),
-        order: key === "own" ? 999 : (settings.get(Number(key))?.sort_order ?? 998),
-      }))
-      .sort((a, b) => a.order - b.order)
-      .map(({ id: key, label }) => ({ id: key, label })),
-  ];
-  const restricted = rows.filter((row) => row.warning).length;
-  const summary = `${rows.length} ${rows.length === 1 ? "item" : "items"} shown${
-    !warband
-      ? ""
-      : onlyMine
-        ? `, what ${warband.name} can buy`
-        : restricted
-          ? `, ${restricted} not usually`
-          : ""
-  }`;
 
   const addButton = capabilities.edit_catalogue ? (
     <ItemFormDialog
@@ -217,7 +131,7 @@ export default function Wargear() {
       {items.error ? <p className="m-0 text-sm text-danger">{items.error}</p> : null}
       <ReferenceList
         nameLabel="Item"
-        columns={isMobile ? undefined : COLUMNS}
+        columns={isMobile ? undefined : WARGEAR_COLUMNS}
         isEmpty={!loading && rows.length === 0}
         empty={
           warband && onlyMine
@@ -229,52 +143,15 @@ export default function Wargear() {
           <li className="px-4 py-6 text-sm text-muted-foreground">Opening the armoury…</li>
         ) : null}
         {(loading ? [] : shown.rows).map((row) => {
-          const { item, availability, warning } = row;
+          const { item, warning } = row;
           const key = String(item.id);
-          const price = priceLabel(availability);
-          const rarity = availability ? rarityLabel(availability.rarity) : "-";
-          const rare = Boolean(availability && !isCommon(availability.rarity));
-          const stat = statOf(item);
           return (
-            <ReferenceRow
+            <WargearRow
               key={key}
-              id={key}
+              row={row}
+              isMobile={isMobile}
               open={params.isOpen(key)}
               onToggle={() => params.toggle(key)}
-              name={itemName(item)}
-              sub={isMobile ? [kindOf(item), stat].filter(Boolean).join(" · ") : undefined}
-              warn={warning}
-              dim={Boolean(warning)}
-              aside={<PriceRarity price={price} rarity={rarity} rare={rare} />}
-              cells={
-                isMobile
-                  ? undefined
-                  : [
-                      <>
-                        <span>{kindOf(item)}</span>
-                        <span className="font-mono text-[11px] text-muted-foreground">{stat}</span>
-                      </>,
-                      <span key="price" className="font-mono font-bold text-ink">
-                        {price}
-                      </span>,
-                      <span key="rarity" className={rare ? "font-semibold text-accent-text" : ""}>
-                        {rarity}
-                      </span>,
-                      <span key="rules" className="flex flex-row flex-wrap gap-1">
-                        {(item.rules ?? [])
-                          .filter((rule) => rule.name)
-                          .slice(0, 4)
-                          .map((rule) => (
-                            <span
-                              key={rule.id}
-                              className="border border-border px-[7px] py-0.5 text-xs font-semibold"
-                            >
-                              {rule.name}
-                            </span>
-                          ))}
-                      </span>,
-                    ]
-              }
             >
               <WargearDetail
                 item={item}
@@ -290,7 +167,7 @@ export default function Wargear() {
                 onSaved={(saved) => params.set({ open: String(saved.id) })}
                 onDeleted={() => params.close()}
               />
-            </ReferenceRow>
+            </WargearRow>
           );
         })}
       </ReferenceList>
