@@ -1390,433 +1390,361 @@
   "hired_swords": [
     {
       "name": "Arabian Merchant",
-      "type": "Hired Sword",
       "setting": "mordheim",
       "how": "mordheimer"
     },
     {
       "name": "Beast Hunter",
-      "type": "Hired Sword",
       "setting": "empire-in-flames",
       "how": "mordheimer"
     },
     {
       "name": "Dwarf Troll Slayer",
-      "type": "Hired Sword",
       "setting": "mordheim",
       "how": "mordheimer"
     },
     {
       "name": "Elf Ranger",
-      "type": "Hired Sword",
       "setting": "mordheim",
       "how": "mordheimer"
     },
     {
       "name": "Freelancer",
-      "type": "Hired Sword",
       "setting": "mordheim",
       "how": "mordheimer"
     },
     {
       "name": "Halfling Scout",
-      "type": "Hired Sword",
       "setting": "mordheim",
       "how": "mordheimer"
     },
     {
       "name": "Highwayman",
-      "type": "Hired Sword",
       "setting": "empire-in-flames",
       "how": "mordheimer"
     },
     {
       "name": "Imperial Assassin",
-      "type": "Hired Sword",
       "setting": "mordheim",
       "how": "mordheimer"
     },
     {
       "name": "Ogre Bodyguard",
-      "type": "Hired Sword",
       "setting": "mordheim",
       "how": "mordheimer"
     },
     {
       "name": "Pit Fighter",
-      "type": "Hired Sword",
       "setting": "mordheim",
       "how": "mordheimer"
     },
     {
       "name": "Roadwarden",
-      "type": "Hired Sword",
       "setting": "empire-in-flames",
       "how": "mordheimer"
     },
     {
       "name": "Tilean Marksman",
-      "type": "Hired Sword",
       "setting": "mordheim",
       "how": "mordheimer"
     },
     {
       "name": "Warlock",
-      "type": "Hired Sword",
       "setting": "mordheim",
       "how": "mordheimer"
     },
     {
       "name": "Bard",
-      "type": "Hired Sword",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
       "name": "Big Game Hunter",
-      "type": "Hired Sword",
       "setting": "lustria",
       "how": "mordheimer"
     },
     {
       "name": "Black Orc Overseer",
-      "type": "Hired Sword",
       "setting": "nemesis-crown",
       "how": "mordheimer"
     },
     {
       "name": "Bounty Hunter",
-      "type": "Hired Sword",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
       "name": "Chameleon Skink",
-      "type": "Hired Sword",
       "setting": "lustria",
       "how": "mordheimer"
     },
     {
       "name": "Clan Skryre Rat Ogre",
-      "type": "Hired Sword",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
       "name": "Dark Elf Assassin",
-      "type": "Hired Sword",
       "setting": "lustria",
       "how": "mordheimer"
     },
     {
       "name": "Duellist",
-      "type": "Hired Sword",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
       "name": "Dwarf Pathfinder",
-      "type": "Hired Sword",
       "setting": "nemesis-crown",
       "how": "mordheimer"
     },
     {
       "name": "Dwarf Treasure Hunter",
-      "type": "Hired Sword",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
       "name": "Elf Mage",
-      "type": "Hired Sword",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
       "name": "Gaoler",
-      "type": "Hired Sword",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
       "name": "Halfling Thief",
-      "type": "Hired Sword",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
       "name": "Human Scout",
-      "type": "Hired Sword",
       "setting": "nemesis-crown",
       "how": "mordheimer"
     },
     {
       "name": "Kislev Ranger",
-      "type": "Hired Sword",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
       "name": "Mule Skinner",
-      "type": "Hired Sword",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
       "name": "Nomad Scout",
-      "type": "Hired Sword",
       "setting": "khemri",
       "how": "mordheimer"
     },
     {
       "name": "Norse Shaman",
-      "type": "Hired Sword",
       "setting": "lustria",
       "how": "mordheimer"
     },
     {
       "name": "Old Prospector",
-      "type": "Hired Sword",
       "setting": "nemesis-crown",
       "how": "mordheimer"
     },
     {
       "name": "Pathfinder",
-      "type": "Hired Sword",
       "setting": "lustria",
       "how": "mordheimer"
     },
     {
       "name": "Priest of Morr",
-      "type": "Hired Sword",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
       "name": "Runesmith Journeyman",
-      "type": "Hired Sword",
       "setting": "nemesis-crown",
       "how": "mordheimer"
     },
     {
       "name": "Shadow Warrior",
-      "type": "Hired Sword",
       "setting": "lustria",
       "how": "mordheimer"
     },
     {
       "name": "Snake Charmer",
-      "type": "Hired Sword",
       "setting": "khemri",
       "how": "mordheimer"
     },
     {
       "name": "Thief",
-      "type": "Hired Sword",
       "setting": "khemri",
       "how": "mordheimer"
     },
     {
       "name": "Tomb Robber",
-      "type": "Hired Sword",
       "setting": "khemri",
       "how": "mordheimer"
     },
     {
       "name": "Warrior Priest of Sigmar",
-      "type": "Hired Sword",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
       "name": "Witch",
-      "type": "Hired Sword",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
       "name": "Witch Hunter",
-      "type": "Hired Sword",
       "setting": "nemesis-crown",
       "how": "mordheimer"
     },
     {
       "name": "Wolf Priest of Ulric",
-      "type": "Hired Sword",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
       "name": "Bone Goliath",
-      "type": "Hired Sword",
       "setting": "border-town-burning",
       "how": "mordheimer"
     },
     {
       "name": "Cathayan Merchant",
-      "type": "Hired Sword",
       "setting": "border-town-burning",
       "how": "mordheimer"
     },
     {
       "name": "Chaos Centaur",
-      "type": "Hired Sword",
       "setting": "border-town-burning",
       "how": "mordheimer"
     },
     {
       "name": "Coachman",
-      "type": "Hired Sword",
       "setting": "border-town-burning",
       "how": "mordheimer"
     },
     {
       "name": "Grave Robber",
-      "type": "Hired Sword",
       "setting": "border-town-burning",
       "how": "mordheimer"
     },
     {
       "name": "Hobgoblin Scout",
-      "type": "Hired Sword",
       "setting": "border-town-burning",
       "how": "mordheimer"
     },
     {
       "name": "Ninja",
-      "type": "Hired Sword",
       "setting": "border-town-burning",
       "how": "mordheimer"
     },
     {
       "name": "Pyromaniac",
-      "type": "Hired Sword",
       "setting": "border-town-burning",
       "how": "mordheimer"
     },
     {
       "name": "Swordsmith",
-      "type": "Hired Sword",
       "setting": "border-town-burning",
       "how": "mordheimer"
     },
     {
       "name": "Beggar",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "Chaos Fury",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "Cursed Hillman",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "Dark Mage",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "Dwarf Slayer Pirate",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "Emissary of Chaos",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "Estalian Diestro",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "The Fallen Sister",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "Goblin Lantern Bearer",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "Gravesman",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "Halfling Knight",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "Imperial Tactician",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "Knight of the White Wolf",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "Ninja Gnoblar",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "Ogre Slave Master",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "Slaver",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "Swashbuckler",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "Ungor Trapper",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "Weaponsmith",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
       "name": "Wood Elf Hunter",
-      "type": "Hired Sword",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     }

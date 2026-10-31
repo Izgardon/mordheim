@@ -99,7 +99,9 @@ def assign(
         name = str(row.get("name") or "").strip()
         if not name:
             continue
-        assigned: dict[str, Any] = {"name": name, **({"type": row["type"]} if "type" in row else {})}
+        # a skill is one of a name and type (our skills table's key); a hired sword or persona is one of a name
+        typed = kind == "skills" and "type" in row
+        assigned: dict[str, Any] = {"name": name, **({"type": row["type"]} if typed else {})}
         found = by_name.get(norm_name(name), [])
         if label(assigned) in (chosen or {}):
             setting, how = (chosen or {})[label(assigned)], "overrides.json"

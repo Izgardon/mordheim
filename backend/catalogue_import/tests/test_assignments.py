@@ -80,3 +80,9 @@ class AssignmentTests(SimpleTestCase):
             {"Norse Shaman": "border-town-burning"},
         )
         self.assertEqual((chosen[0]["setting"], chosen[0]["how"]), ("border-town-burning", "overrides.json"))
+
+    def test_only_a_skill_is_named_with_its_type(self) -> None:
+        hired = assign(
+            "hired swords", [{"name": "Beggar", "type": "Hired Sword"}], [theirs("Beggar", "2a")], AssignmentLog()
+        )
+        self.assertEqual(hired, [{"name": "Beggar", "setting": "mordheim-2a", "how": "mordheimer"}])
