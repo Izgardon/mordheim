@@ -11,7 +11,7 @@ export type Theme = "dark" | "light";
 export const THEME_STORAGE_KEY = "mordheim_theme";
 export const DEFAULT_THEME: Theme = "dark";
 /** The browser bar's colour for each theme: design E's --color-page (index.html, theme-init.js). */
-export const THEME_BAR_COLORS: Record<Theme, string> = { dark: "#1a1510", light: "#f3ece0" };
+export const THEME_BAR_COLORS: Record<Theme, string> = { dark: "#0f0c09", light: "#e8dfd0" };
 
 const listeners = new Set<() => void>();
 

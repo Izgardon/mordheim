@@ -285,19 +285,23 @@ table thead th {
  * should come from these: the --color-* tokens directly, Tailwind's names for them (rail, raised,
  * text2, accent-line...), or the shadcn variables below, which are the same tokens as HSL
  * triplets so `bg-card/70`-style opacity keeps working.
+ *
+ * The grounds step up in both themes: the page recedes most (darkest), the chrome (rail, bar)
+ * sits a step above it, and the cards (panel, surface, raised) above that. Every text token
+ * passes WCAG AA (4.5:1) on every ground.
  */
 @layer base {
   :root {
     color-scheme: dark;
-    --color-page: #1a1510;
-    --color-rail: #120e0a;
-    --color-bar: #15110c;
+    --color-page: #0f0c09;
+    --color-rail: #18130e;
+    --color-bar: #1b1610;
     --color-panel: #201911;
     --color-surface: #221b14;
     --color-raised: #2a2118;
-    --color-line: #33291f;
-    --color-border: #3a2f23;
-    --color-strong: #554533;
+    --color-line: #382d22;
+    --color-border: #3e3226;
+    --color-strong: #594836;
     --color-ink: #f2e7d2;
     --color-head: #f8eedb;
     --color-text2: #ddcdb2;
@@ -318,7 +322,7 @@ table thead th {
     --color-scrim: rgba(8, 5, 3, 0.72);
     --color-shadow: rgba(0, 0, 0, 0.5);
 
-    --background: 30 23.8% 8.2%; /* page */
+    --background: 30 25% 4.7%; /* page */
     --foreground: 39.4 55.2% 88.6%; /* ink */
     --card: 30 25.9% 10.6%; /* surface */
     --card-foreground: 39.4 55.2% 88.6%;
@@ -334,8 +338,8 @@ table thead th {
     --accent-foreground: 39.3 67.4% 91.6%; /* head */
     --destructive: 12 79.4% 75.3%; /* danger */
     --destructive-foreground: 12 51.7% 11.4%; /* danger-bg */
-    --border: 31.3 24.7% 18.2%; /* border */
-    --input: 31.8 25% 26.7%; /* strong */
+    --border: 30 24% 19.6%; /* border */
+    --input: 30.9 24.5% 28%; /* strong */
     --ring: 28.3 72.2% 62%; /* accent */
     --chart-1: 28.3 72.2% 62%;
     --chart-2: 28.4 79.2% 71.8%;
@@ -346,20 +350,20 @@ table thead th {
 
   :root[data-theme="light"] {
     color-scheme: light;
-    --color-page: #f3ece0;
-    --color-rail: #ebe2d2;
-    --color-bar: #efe6d7;
+    --color-page: #e8dfd0;
+    --color-rail: #f2ece2;
+    --color-bar: #f4eee5;
     --color-panel: #fbf8f2;
     --color-surface: #fbf8f2;
-    --color-raised: #f1e9dc;
-    --color-line: #e3d7c4;
-    --color-border: #d9cbb6;
-    --color-strong: #bfae95;
+    --color-raised: #ece4d6;
+    --color-line: #d4c5ae;
+    --color-border: #cbb9a0;
+    --color-strong: #a99679;
     --color-ink: #2b211a;
     --color-head: #1f1712;
     --color-text2: #4a3c2f;
-    --color-muted: #6f5d4b;
-    --color-faint: #75624f;
+    --color-muted: #665544;
+    --color-faint: #6b5947;
     --color-accent: #b4532a;
     --color-on-accent: #ffffff;
     --color-accent-text: #9e4520;
@@ -375,7 +379,7 @@ table thead th {
     --color-scrim: rgba(43, 33, 26, 0.45);
     --color-shadow: rgba(43, 33, 26, 0.18);
 
-    --background: 37.9 44.2% 91.6%;
+    --background: 37.5 34.3% 86.3%;
     --foreground: 24.7 24.6% 13.5%;
     --card: 40 52.9% 96.7%;
     --card-foreground: 24.7 24.6% 13.5%;
@@ -383,20 +387,20 @@ table thead th {
     --popover-foreground: 24.7 24.6% 13.5%;
     --primary: 17.8 62.2% 43.5%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 37.1 42.9% 90.4%;
+    --secondary: 38.2 36.7% 88.2%;
     --secondary-foreground: 24.7 24.6% 13.5%;
-    --muted: 37.1 42.9% 90.4%;
-    --muted-foreground: 30 19.4% 36.5%;
+    --muted: 38.2 36.7% 88.2%;
+    --muted-foreground: 30 20% 33.3%;
     --accent: 17.6 66.3% 37.3%;
     --accent-foreground: 23.1 26.5% 9.6%;
     --destructive: 9 69.4% 35.9%;
     --destructive-foreground: 15 66.7% 91.8%;
-    --border: 36 31.5% 78.2%;
-    --input: 35.7 24.7% 66.7%;
+    --border: 34.9 29.3% 71.2%;
+    --input: 36.3 21.8% 56.9%;
     --ring: 17.8 62.2% 43.5%;
     --chart-1: 17.8 62.2% 43.5%;
     --chart-2: 17.6 66.3% 37.3%;
-    --chart-3: 30 19.4% 36.5%;
+    --chart-3: 30 20% 33.3%;
     --chart-4: 24.7 24.6% 13.5%;
     --chart-5: 9 69.4% 35.9%;
   }
