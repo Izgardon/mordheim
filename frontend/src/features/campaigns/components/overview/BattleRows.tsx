@@ -1,25 +1,46 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
 import type { CampaignBattleHistoryEntry, CampaignBattleMoment } from "../../types/campaign-types";
-import { MOMENT_LABEL, battleLine, momentGroups } from "./overview-data";
+import { battleLine, momentGroups, momentParts } from "./overview-data";
 
-const TAG: Record<CampaignBattleMoment["kind"], string> = {
-  kill: "border-accent-line text-accent-hi",
-  ooa: "border-danger-line text-danger",
-  find: "border-accent-line text-accent-hi",
-  death: "border-danger-line text-danger",
-};
-const TEXT: Record<CampaignBattleMoment["kind"], string> = {
-  kill: "text-accent-hi",
-  ooa: "text-danger",
-  find: "text-accent-hi",
-  death: "text-danger",
-};
+/** Moments that cost a warband dear read in danger, the rest in accent. */
+const DANGER = new Set(["wiped_out", "bloody_martyr", "pyrrhic_victory"]);
 
-function Moments({ battle, isMobile }: { battle: CampaignBattleHistoryEntry; isMobile: boolean }) {
+function MomentDetail({
+  moment,
+  campaignId,
+}: {
+  moment: CampaignBattleMoment;
+  campaignId: number;
+}) {
+  const parts = momentParts(moment);
+  if (!parts || !moment.unit) return <>{moment.detail}</>;
+  // The unit on its warband page, its card opened (the `?unit=` link Search everything uses).
+  const to = `/campaigns/${campaignId}/warbands/${moment.warband_id}?unit=${moment.unit.kind}-${moment.unit.id}`;
+  return (
+    <>
+      {parts.before}
+      <Link to={to} className="font-semibold text-accent-text hover:underline">
+        {parts.name}
+      </Link>
+      {parts.after}
+    </>
+  );
+}
+
+function Moments({
+  battle,
+  campaignId,
+  isMobile,
+}: {
+  battle: CampaignBattleHistoryEntry;
+  campaignId: number;
+  isMobile: boolean;
+}) {
   const groups = momentGroups(battle.moments);
   if (!groups.length) {
     return (
@@ -29,7 +50,7 @@ function Moments({ battle, isMobile }: { battle: CampaignBattleHistoryEntry; isM
           isMobile ? "px-3" : "pl-[178px]"
         )}
       >
-        No moments recorded: a reported result, or a fight with no kills.
+        No pivotal moments in this battle.
       </p>
     );
   }
@@ -50,25 +71,40 @@ function Moments({ battle, isMobile }: { battle: CampaignBattleHistoryEntry; isM
         >
           <span className="pt-0.5 font-mono text-[11px] text-faint">{group.label}</span>
           <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
-            {group.moments.map((moment, index) =>
-              isMobile ? (
-                <li key={index} className="text-[13px] text-ink">
-                  <span className={cn("text-[11px] font-bold", TEXT[moment.kind])}>
-                    {MOMENT_LABEL[moment.kind]}
+            {group.moments.map((moment) => {
+              const danger = DANGER.has(moment.kind);
+              return isMobile ? (
+                <li key={moment.id} className="text-[13px] text-ink">
+                  <span
+                    className={cn(
+                      "text-[11px] font-bold",
+                      danger ? "text-danger" : "text-accent-hi"
+                    )}
+                  >
+                    {moment.headline}
                   </span>{" "}
-                  · {moment.text}
+                  · <MomentDetail moment={moment} campaignId={campaignId} />{" "}
+                  <span className="text-muted-foreground">· {moment.warband_name}</span>
                 </li>
               ) : (
-                <li key={index} className="flex items-baseline gap-2.5">
+                <li key={moment.id} className="flex items-baseline gap-2.5">
                   <span
-                    className={cn("shrink-0 border px-1.5 text-[11px] font-bold", TAG[moment.kind])}
+                    className={cn(
+                      "shrink-0 border px-1.5 text-[11px] font-bold",
+                      danger
+                        ? "border-danger-line text-danger"
+                        : "border-accent-line text-accent-hi"
+                    )}
                   >
-                    {MOMENT_LABEL[moment.kind]}
+                    {moment.headline}
                   </span>
-                  <span className="text-[13px] text-ink">{moment.text}</span>
+                  <span className="text-[13px] text-ink">
+                    <MomentDetail moment={moment} campaignId={campaignId} />
+                    <span className="text-muted-foreground"> · {moment.warband_name}</span>
+                  </span>
                 </li>
-              )
-            )}
+              );
+            })}
           </ul>
         </li>
       ))}
@@ -78,14 +114,17 @@ function Moments({ battle, isMobile }: { battle: CampaignBattleHistoryEntry; isM
 
 /**
  * Battles (design E): one row per ended battle (date and scenario, who beat whom, how many
- * moments) that opens to its key moments, grouped During and After. The overview shows the
- * newest few, the Battles page every one.
+ * moments) that opens to its pivotal moments: the fight's by round, then the results, each with
+ * its warband and a link to its unit. The overview shows the newest few, the Battles page every
+ * one.
  */
 export default function BattleRows({
   battles,
+  campaignId,
   isMobile,
 }: {
   battles: CampaignBattleHistoryEntry[];
+  campaignId: number;
   isMobile: boolean;
 }) {
   // The newest battle starts open (undefined), until a row is toggled.
@@ -155,7 +194,7 @@ export default function BattleRows({
                 aria-hidden="true"
               />
             </button>
-            {open ? <Moments battle={battle} isMobile={isMobile} /> : null}
+            {open ? <Moments battle={battle} campaignId={campaignId} isMobile={isMobile} /> : null}
           </li>
         );
       })}

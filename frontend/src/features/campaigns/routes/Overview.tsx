@@ -83,7 +83,9 @@ export default function Overview() {
       isMobile={isMobile}
     />
   );
-  const recent = <BattleRows battles={history.slice(0, RECENT)} isMobile={isMobile} />;
+  const recent = (
+    <BattleRows battles={history.slice(0, RECENT)} campaignId={campaignId} isMobile={isMobile} />
+  );
   const allLink =
     history.length > RECENT ? (
       <Link to={battlesHref} className="text-[13px] font-semibold text-accent-text">

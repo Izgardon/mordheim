@@ -114,12 +114,24 @@ export type CampaignBattleHistoryParticipant = {
   heroes_lost?: number;
 };
 
-/** A battle's key moment: battles record no turns, so the fight's are "During", deaths "After". */
+/**
+ * A battle's pivotal moment (next step 9), in fight order: the fight's by round, then the
+ * results. A kill moment carries its kill's round; `unit` is the warband page's card it is about.
+ */
 export type CampaignBattleMoment = {
-  /** "Round N", "During" or "After". */
-  group: string;
-  kind: "kill" | "ooa" | "find" | "death";
-  text: string;
+  id: number;
+  /** "first_blood", "hero_slayer", "wiped_out"… */
+  kind: string;
+  /** "First Blood". */
+  headline: string;
+  /** "Kurt drew first blood against Magister Halvard." */
+  detail: string;
+  round: number | null;
+  /** "Round 2", "During" (a kill logged after the fight) or "Result". */
+  tag: string;
+  warband_id: number;
+  warband_name: string;
+  unit: { kind: "hero" | "henchmen_group" | "hireling"; id: number; name: string } | null;
 };
 
 export type CampaignBattleHistoryEntry = {
@@ -149,22 +161,6 @@ export type CampaignActiveBattle = {
   /** Seconds since the battle's last write, and whether that is past the server's 24 h. */
   idle_seconds?: number | null;
   stuck?: boolean;
-};
-
-export type CampaignPivotalMoment = {
-  id: number;
-  kind: string;
-  headline: string;
-  detail: string;
-  unit_key: string | null;
-  unit_name: string | null;
-  warband_id: number;
-  warband_name: string;
-  battle_id: number;
-  battle_scenario: string;
-  source_event_id: number | null;
-  battle_ended_at: string;
-  date: string;
 };
 
 /** Who removed a post: an owner or admin, or its author (decision 8). */
