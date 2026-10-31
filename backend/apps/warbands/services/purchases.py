@@ -4,7 +4,9 @@ A purchase appends its copies to the unit (`kind.items`) or the stash, never rep
 ledger row and its loadout log entry; and saves the rarity roll that found the item, spending the searching
 hero's trading action. Nothing is refused for game reasons (decisions 2 and 9): gold may go below 0 and a hero
 who already used his trading action may search again; each comes back as a warning (the client showed it before
-it confirmed). With no price sent, a copy costs the item's current campaign price (decision 11, "Buy again").
+it confirmed). A copy costs the price sent, else the price row sent (`availability_id`) with the dice roll sent where
+the row has dice ("25 + 2D6", the items rebuild), else the item's current campaign price (decision 11, "Buy again").
+Who may usually buy a row is never checked here: the pages warn (`who-can/`).
 
 Beasts (the bestiary rewrite step 4): a mount or pet bought for a unit may land switched on as his (`companion`), with
 the companion warnings; a creature may be recruited straight away (`recruit`, POST purchases/ only) into a new group
@@ -21,7 +23,7 @@ from typing import Any, cast
 from django.db import transaction
 
 from apps.bestiary.models import BestiaryEntry
-from apps.items.models import ANIMAL, Item
+from apps.items.models import ANIMAL, Item, ItemAvailability
 from apps.warbands.models import HenchmenGroup, LedgerAction, RosterUnit, Warband, WarbandTrade
 from apps.warbands.units.companions import COMPANION_KINDS, beast_kind
 from apps.warbands.units.errors import RosterError
@@ -96,14 +98,28 @@ def check_companion(item: Item, data: Mapping[str, Any], key: str = "") -> None:
         raise RosterError(NOT_A_COMPANION, "not_a_companion", {field: [NOT_A_COMPANION]})
 
 
+def row_price(row: ItemAvailability, roll: int | None, key: str = "") -> int | None:
+    """What a price row comes to: its cost, plus the dice roll sent where it has dice ("25 + 2D6": 25 and a 2 to 12),
+    each pip worth its multiplier ("200 + D6x25"); None when the row has no fixed cost."""
+    if not row.dice:
+        return row.cost
+    if roll is None:
+        raise refused(key, "dice_roll", f"This price has {row.dice}D6: roll them and send the total.")
+    if not row.dice <= roll <= 6 * row.dice:
+        raise refused(key, "dice_roll", f"A roll of {row.dice}D6 is {row.dice} to {6 * row.dice}.")
+    return (row.cost or 0) + roll * (row.dice_multiplier or 1)
+
+
 def price_line(warband: Warband, item: Item, data: Mapping[str, Any], key: str = "") -> int | None:
-    """One copy's cost: the price sent, else the availability sent, else the current campaign price."""
+    """One copy's cost: the price sent, else the price row sent (with its dice roll), else the current campaign
+    price."""
     if data.get("price") is not None:
         price: int | None = int(data["price"])
     elif data.get("availability_id") is not None:
-        price = CampaignPrices(warband.campaign_id).availability_price(item, data["availability_id"])
-        if price is None:
+        row = CampaignPrices(warband.campaign_id).availability(item, data["availability_id"])
+        if row is None:
             raise refused(key, "availability_id", "Not one of this item's availabilities.")
+        price = row_price(row, data.get("dice_roll"), key)
     else:
         price = CampaignPrices(warband.campaign_id).current(item)
     if data["is_buying"] and price is None:

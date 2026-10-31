@@ -137,6 +137,43 @@ class PurchaseTests(PurchaseTestCase):
         return self.foreign_race.campaign
 
 
+class PriceRowPurchaseTests(PurchaseTestCase):
+    """The items rebuild: a purchase takes the chosen price row and, where it has dice, the total rolled."""
+
+    def test_a_row_with_dice_costs_its_cost_plus_the_roll_each_pip_at_its_multiplier(self):
+        wardogs = Item.objects.create(name="Wardogs", type="Misc")
+        dogs = ItemAvailability.objects.create(item=wardogs, cost=25, dice=2, rarity=10)
+        boat = ItemAvailability.objects.create(item=wardogs, label="Kennel", cost=200, dice=1, dice_multiplier=25)
+
+        self.buy(item_id=wardogs.id, availability_id=dogs.id, dice_roll=7, target_type="stash")
+        self.buy(item_id=wardogs.id, availability_id=boat.id, dice_roll=3, target_type="stash")
+        self.buy(item_id=wardogs.id, availability_id=dogs.id, dice_roll=7, price=20, target_type="stash")  # sent: paid
+
+        self.assertEqual([price for *_, price, _ in trade_rows(self.warband)], [-32, -275, -20])
+
+    def test_a_row_with_dice_needs_a_roll_it_could_make(self):
+        wardogs = Item.objects.create(name="Wardogs", type="Misc")
+        dogs = ItemAvailability.objects.create(item=wardogs, cost=25, dice=2)
+
+        missing = self.buy(400, item_id=wardogs.id, availability_id=dogs.id, target_type="stash")
+        too_high = self.buy(400, item_id=wardogs.id, availability_id=dogs.id, dice_roll=13, target_type="stash")
+
+        self.assertEqual(missing["fields"], {"dice_roll": ["This price has 2D6: roll them and send the total."]})
+        self.assertEqual(too_high["fields"], {"dice_roll": ["A roll of 2D6 is 2 to 12."]})
+        self.assertEqual(trade_rows(self.warband), [])
+
+    def test_a_plain_row_costs_its_cost_and_a_row_without_one_needs_a_price(self):
+        charm = Item.objects.create(name="Lucky Charm", type="Misc")
+        plain = ItemAvailability.objects.create(item=charm, cost=10)
+        unpriced = ItemAvailability.objects.create(item=charm, cost=None, cost_note="4 x Price")
+
+        self.buy(item_id=charm.id, availability_id=plain.id, dice_roll=5, target_type="stash")  # no dice: ignored
+        refused = self.buy(400, item_id=charm.id, availability_id=unpriced.id, target_type="stash")
+
+        self.assertEqual(trade_rows(self.warband), [("Buy", "Lucky Charm", -10, None)])
+        self.assertIn("price", refused["fields"])
+
+
 class RarityRollPurchaseTests(PurchaseTestCase):
     """Decision 9: the roll is saved with the purchase and spends the searcher's trading action; warn, never refuse."""
 
