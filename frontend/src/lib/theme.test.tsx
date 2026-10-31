@@ -3,7 +3,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import indexHtml from "../../index.html?raw";
 import themeInitScript from "../../public/theme-init.js?raw";
-import { THEME_STORAGE_KEY, currentTheme, readStoredTheme, setTheme, useTheme } from "./theme";
+import {
+  THEME_BAR_COLORS,
+  THEME_STORAGE_KEY,
+  currentTheme,
+  readStoredTheme,
+  setTheme,
+  useTheme,
+} from "./theme";
 
 const runThemeInit = () => new Function(themeInitScript)();
 
@@ -44,11 +51,19 @@ describe("theme", () => {
     expect(result.current.theme).toBe("dark");
   });
 
-  it("keeps the choice for this device", () => {
+  it("keeps the choice for this device, and colours the browser bar to match", () => {
+    const bar = document.createElement("meta");
+    bar.name = "theme-color";
+    document.head.append(bar);
+
     setTheme("light");
 
     expect(window.localStorage.getItem(THEME_STORAGE_KEY)).toBe("light");
     expect(readStoredTheme()).toBe("light");
+    expect(bar).toHaveAttribute("content", THEME_BAR_COLORS.light);
+    setTheme("dark");
+    expect(bar).toHaveAttribute("content", THEME_BAR_COLORS.dark);
+    bar.remove();
   });
 
   it("still switches when storage is blocked, and reads blocked storage as dark", () => {
@@ -70,12 +85,17 @@ describe("theme-init.js (before the first paint)", () => {
     vi.restoreAllMocks();
   });
 
-  it("puts the stored light choice on <html>, under the key the app writes", () => {
+  it("puts the stored light choice on <html> and the browser bar, under the key the app writes", () => {
     window.localStorage.setItem(THEME_STORAGE_KEY, "light");
+    const bar = document.createElement("meta");
+    bar.name = "theme-color";
+    document.head.append(bar);
 
     runThemeInit();
 
     expect(document.documentElement).toHaveAttribute("data-theme", "light");
+    expect(bar).toHaveAttribute("content", THEME_BAR_COLORS.light);
+    bar.remove();
   });
 
   it("falls back to dark for nothing stored, a stray value or blocked storage", () => {
@@ -97,5 +117,9 @@ describe("theme-init.js (before the first paint)", () => {
 
     expect(head).toContain(initTag);
     expect(indexHtml.indexOf(initTag)).toBeLessThan(indexHtml.indexOf('type="module"'));
+    // The bar and the page start dark, the default, until the script says otherwise.
+    expect(head).toContain(`<meta name="theme-color" content="${THEME_BAR_COLORS.dark}" />`);
+    expect(head).toContain(`background: ${THEME_BAR_COLORS.dark};`);
+    expect(head).toContain(`background: ${THEME_BAR_COLORS.light};`);
   });
 });

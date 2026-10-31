@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Design E: an ember shard on the dark ground (favicon.ico and apple-touch-icon.png are this drawing). -->
+  <rect width="32" height="32" fill="#1a1510" />
+  <rect x="0.5" y="0.5" width="31" height="31" fill="none" stroke="#554533" />
+  <polygon points="10,8 18,2 15,14" fill="#f5bf8c" />
+  <polygon points="18,2 26,12 15,14" fill="#f0b47e" />
+  <polygon points="26,12 22,24 15,14" fill="#e49a58" />
+  <polygon points="22,24 13,30 15,14" fill="#8c5e36" />
+  <polygon points="13,30 6,20 15,14" fill="#554533" />
+  <polygon points="6,20 10,8 15,14" fill="#e49a58" />
+</svg>

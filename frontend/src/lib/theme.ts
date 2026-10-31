@@ -2,13 +2,16 @@ import { useCallback, useSyncExternalStore } from "react";
 
 /**
  * Light or dark, per device. `public/theme-init.js` puts the stored choice on <html> as
- * `data-theme` before the first paint (it duplicates the key and the default below: keep them in
- * step); after that this module owns the attribute and the stored value.
+ * `data-theme` before the first paint (it duplicates the key, the default and the bar colours
+ * below: keep them in step); after that this module owns the attribute, the browser bar's
+ * `theme-color` and the stored value.
  */
 export type Theme = "dark" | "light";
 
 export const THEME_STORAGE_KEY = "mordheim_theme";
 export const DEFAULT_THEME: Theme = "dark";
+/** The browser bar's colour for each theme: design E's --color-page (index.html, theme-init.js). */
+export const THEME_BAR_COLORS: Record<Theme, string> = { dark: "#1a1510", light: "#f3ece0" };
 
 const listeners = new Set<() => void>();
 
@@ -29,6 +32,9 @@ export function currentTheme(): Theme {
 /** Shows `theme` and keeps it for this device; storage failing only loses the memory of it. */
 export function setTheme(theme: Theme) {
   document.documentElement.dataset.theme = theme;
+  document
+    .querySelector('meta[name="theme-color"]')
+    ?.setAttribute("content", THEME_BAR_COLORS[theme]);
   try {
     window.localStorage.setItem(THEME_STORAGE_KEY, theme);
   } catch {

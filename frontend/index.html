@@ -3,8 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/jpeg" href="/assets/site-icon.ico" />
+    <meta name="color-scheme" content="dark light" />
+    <!-- The browser bar takes the page colour; theme-init.js and lib/theme.ts switch it with the theme. -->
+    <meta name="theme-color" content="#1a1510" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>Mordheim Chronicler</title>
+    <!-- The page colour before the stylesheet arrives (design E's --color-page, dark and light). -->
+    <style>
+      html {
+        background: #1a1510;
+        color-scheme: dark;
+      }
+      html[data-theme="light"] {
+        background: #f3ece0;
+        color-scheme: light;
+      }
+    </style>
     <script src="/theme-init.js"></script>
   </head>
   <body>
