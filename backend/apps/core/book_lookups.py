@@ -114,7 +114,7 @@ class BookLookups:
 
     def __init__(self, own_type: str = "Hired Sword") -> None:
         self.own_type = own_type
-        book = {"campaign__isnull": True, "campaign_type__isnull": True}
+        book = {"campaign__isnull": True}  # the book: every setting's rows
         self.skills = {lookup_key(row.name): row for row in Skill.objects.filter(**book)}
         self.specials = {lookup_key(row.name): row for row in Special.objects.filter(**book)}
         self.spells = {lookup_key(row.name): row for row in Spell.objects.filter(**book)}

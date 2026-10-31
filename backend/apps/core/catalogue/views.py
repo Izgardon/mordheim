@@ -22,6 +22,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer
 
+from apps.campaigns.in_play import in_play_rows
 from apps.campaigns.permissions import parse_campaign_id
 from apps.campaigns.views.base import CampaignScopedView
 from apps.realtime.services import sender_socket_id
@@ -110,6 +111,8 @@ class CatalogueCollectionView(CatalogueScopedView):
             if value:
                 rows = rows.filter(keeps(value.strip()))
         listed = kind.hooks.listed(kind, rows, self.campaign_id, request.query_params)
+        if self.campaign_id is not None and kind.versioned:  # whether each row is in play (grading phase 1)
+            listed = in_play_rows(kind.model, listed, self.campaign_id)
         serializer = kind.hooks.row_serializer(kind, request.query_params)
         return serializer(kind.hooks.read(listed, request.query_params), many=True).data
 

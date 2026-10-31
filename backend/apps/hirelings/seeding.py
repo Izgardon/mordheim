@@ -24,7 +24,15 @@ from django.db import transaction
 
 from apps.core.book_lookups import BookLookups
 from apps.core.catalogue.cache import bump
-from apps.core.seeding import clean, parse_armour_save, parse_int, read_json_list, read_stats, upsert_global
+from apps.core.seeding import (
+    SettingAssignments,
+    clean,
+    parse_armour_save,
+    parse_int,
+    read_json_list,
+    read_stats,
+    upsert_global,
+)
 from apps.races.models import Race
 from apps.restrictions.book import BookRestrictions
 from apps.restrictions.serializers import unique_restriction_notes
@@ -53,16 +61,18 @@ class SeedSpec:
     path: Path  # the committed data
     terms: str  # the object holding a row's hire terms
     own_type: str  # what a row's own specials, spells and special skills are typed "<own_type> - <name>"
+    settings_kind: str  # its rows' settings in the import's setting-assignments.json
     extras: Callable[[dict[str, Any], str], dict[str, Any]] = _no_extras  # the kind's own hire terms
 
 
-HIRED_SWORDS = SeedSpec(HiredSword, "Hired sword", Path("apps/hirelings/data/hired-swords.json"), "hired_sword", "Hired Sword")  # fmt: skip
+HIRED_SWORDS = SeedSpec(HiredSword, "Hired sword", Path("apps/hirelings/data/hired-swords.json"), "hired_sword", "Hired Sword", "hired_swords")  # fmt: skip
 DRAMATIS_PERSONAE = SeedSpec(
     DramatisPersona,
     "Dramatis persona",
     Path("apps/hirelings/data/dramatis-personae.json"),
     "dramatis_persona",
     "Dramatis Persona",
+    "dramatis_personae",
     _persona_terms,
 )
 
@@ -74,8 +84,9 @@ class _Run:
         self.spec = spec
         self.lookups = BookLookups(spec.own_type)
         self.restrictions = BookRestrictions()
-        book_races = Race.objects.filter(campaign__isnull=True, campaign_type__isnull=True)
+        book_races = Race.objects.filter(campaign__isnull=True)
         self.races = {race.name.strip().lower(): race for race in book_races}
+        self.settings = SettingAssignments(spec.settings_kind)  # each row's setting, from the catalogue import
         self.counts: Counter[str] = Counter()
 
     def seed(self, data: dict[str, Any]) -> None:
@@ -107,6 +118,7 @@ class _Run:
             "race": self.races.get(race_label.lower()),
             "race_label": race_label,
             "available_skill_types": skill_types,
+            "campaign_type_id": self.settings.of(name),
             **self.spec.extras(terms, label),
         }
 

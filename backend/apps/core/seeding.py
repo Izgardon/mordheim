@@ -1,8 +1,8 @@
 """What the catalogue seeders share (BUG-54, IMP-81): reading the JSON, cleaning its values, upserting the book's
 rows and writing an item's prices.
 
-Every seeder reads and writes the book only (BUG-17): `upsert_global` matches and creates rows with no campaign and
-no add-on, and the restrictions an item's "unique to" text names come from `restrictions.book.BookRestrictions`.
+Every seeder reads and writes the book only (BUG-17): `upsert_global` matches and creates rows with no campaign
+(whatever their setting), and the restrictions an item's "unique to" text names come from `restrictions.book.BookRestrictions`.
 """
 
 import json
@@ -17,6 +17,7 @@ from django.core.management.color import no_style
 from django.db import connection
 from django.db.models import Model
 
+from apps.campaigns.models import CampaignType
 from apps.items.models import Item, ItemAvailability, ItemAvailabilityRestriction
 from apps.restrictions.book import BookRestrictions
 
@@ -91,11 +92,9 @@ def read_json_list(path: Path, what: str = "objects") -> list[Any]:
 def upsert_global[RowT: Model](
     model: type[RowT], lookup: Mapping[str, Any], defaults: Mapping[str, Any]
 ) -> tuple[RowT, bool]:
-    """The book's row matching `lookup` (no campaign, no add-on) with `defaults` written, and whether it is new."""
-    book: dict[str, Any] = {"campaign": None}
-    if any(field.name == "campaign_type" for field in model._meta.get_fields()):
-        book["campaign_type"] = None
-    row, created = model._default_manager.update_or_create(**lookup, **book, defaults=dict(defaults))
+    """The book's row matching `lookup` (no campaign: the book holds every setting's rows, each in its setting) with
+    `defaults` written, and whether it is new."""
+    row, created = model._default_manager.update_or_create(**lookup, campaign=None, defaults=dict(defaults))
     return row, created
 
 
@@ -147,3 +146,24 @@ def read_stats(values: Mapping[str, Any], label: str) -> dict[str, int]:
     if problems:
         raise CommandError(f"{label}: {', '.join(problems)}.")
     return stats
+
+
+class SettingAssignments:
+    """The settings the catalogue import gives our seeded skills, hired swords and dramatis personae
+    (`out/setting-assignments.json`, grading phase 1), as setting ids: `of(name, type)`. A row the file doesn't list
+    is Mordheim's; while the settings aren't seeded every row's setting is null (which counts as Mordheim's too)."""
+
+    def __init__(self, kind: str) -> None:
+        settings = dict(CampaignType.objects.values_list("slug", "id"))
+        try:
+            data = json.loads((IMPORT_OUT / "setting-assignments.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            raise CommandError(f"Unable to read the setting assignments: {exc}") from exc
+        self.default = settings.get("mordheim")
+        self.ids = {
+            (clean(row.get("name")).lower(), clean(row.get("type")).lower()): settings.get(row.get("setting"))
+            for row in data.get(kind, [])
+        }
+
+    def of(self, name: str, row_type: str = "") -> int | None:
+        return self.ids.get((name.strip().lower(), row_type.strip().lower()), self.default)

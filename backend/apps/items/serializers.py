@@ -99,7 +99,7 @@ class ItemBestiaryEntrySummarySerializer(serializers.Serializer):
 
 class ItemSerializer(serializers.ModelSerializer):
     campaign_id = serializers.IntegerField(read_only=True)
-    campaign_type_id = serializers.IntegerField(read_only=True)  # CAT-NEW-04: always null today
+    setting_id = serializers.IntegerField(source="campaign_type_id", read_only=True)  # null: Mordheim (in_play.py)
     properties = serializers.SerializerMethodField()
     availabilities = ItemAvailabilitySerializer(many=True, read_only=True)
     bestiary_entry = ItemBestiaryEntrySummarySerializer(read_only=True)
@@ -109,7 +109,7 @@ class ItemSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "campaign_id",
-            "campaign_type_id",
+            "setting_id",
             "name",
             "type",
             "subtype",

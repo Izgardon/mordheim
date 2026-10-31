@@ -17,7 +17,7 @@ campaign stores no grade, so there is nothing to reset. A new campaign starts on
 from collections.abc import Iterable
 from typing import Any
 
-from django.db.models import BooleanField, Exists, ExpressionWrapper, OuterRef, Q, QuerySet
+from django.db.models import BooleanField, Exists, ExpressionWrapper, OuterRef, Q, QuerySet, Value
 
 from .models import GRADE_LABELS, GRADES, Campaign, CampaignCampaignType, CampaignType
 
@@ -65,6 +65,14 @@ def with_in_play[RowsT: QuerySet[Any]](rows: RowsT, campaign_id: int, setting: s
 def has_setting(model: type[Any]) -> bool:
     """The model's rows belong to a setting (the bestiary's don't yet: Mordheim's)."""
     return any(field.name == "campaign_type" for field in model._meta.get_fields())
+
+
+def in_play_rows[RowsT: QuerySet[Any]](model: type[Any], rows: RowsT, campaign_id: int) -> RowsT:
+    """A catalogue list's rows with `in_play`: by the rule where they have a setting, else always (Mordheim's)."""
+    if has_setting(model):
+        return with_in_play(rows, campaign_id)
+    annotated: RowsT = rows.annotate(in_play=Value(True, output_field=BooleanField()))
+    return annotated
 
 
 def set_settings(campaign: Campaign, ids: Iterable[int]) -> None:

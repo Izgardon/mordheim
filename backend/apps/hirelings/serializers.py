@@ -56,7 +56,7 @@ COST_FIELDS = (
     "grade",
 )
 PROFILE = ("name", "description", *STAT_FIELDS, "armour_save", "large", "caster")
-ROW_FIELDS = ("id", "campaign_id", "campaign_type_id", *PROFILE, "race_id", "race_name", "race_label", *COST_FIELDS)
+ROW_FIELDS = ("id", "campaign_id", "setting_id", *PROFILE, "race_id", "race_name", "race_label", *COST_FIELDS)
 PERSONA_FIELDS = ("stays", "payment_note")
 KIT_FIELDS = ("skills", "specials", "spells", "equipment")
 WRITE_FIELDS = (
@@ -92,7 +92,7 @@ class HirelingProfileSerializer(serializers.ModelSerializer):
     """A list row: the entry, its race (the catalogue's, and the source's label) and its restrictions."""
 
     campaign_id = serializers.IntegerField(read_only=True)
-    campaign_type_id = serializers.IntegerField(read_only=True)  # CAT-NEW-04: always null today
+    setting_id = serializers.IntegerField(source="campaign_type_id", read_only=True)  # null: Mordheim (in_play.py)
     race_id = serializers.IntegerField(read_only=True, allow_null=True)
     race_name = serializers.SerializerMethodField()
     restrictions = RestrictionLinkSerializer(source="restriction_links", many=True, read_only=True)

@@ -5,11 +5,11 @@ from .models import Spell
 
 class SpellSerializer(serializers.ModelSerializer):
     campaign_id = serializers.IntegerField(read_only=True)
-    campaign_type_id = serializers.IntegerField(read_only=True)  # CAT-NEW-04: always null today
+    setting_id = serializers.IntegerField(source="campaign_type_id", read_only=True)  # null: Mordheim (in_play.py)
 
     class Meta:
         model = Spell
-        fields = ("id", "campaign_id", "campaign_type_id", "name", "type", "description", "dc", "roll")
+        fields = ("id", "campaign_id", "setting_id", "name", "type", "description", "dc", "roll")
 
 
 class SpellCreateSerializer(serializers.ModelSerializer):

@@ -82,9 +82,15 @@ class SeedAllTests(TestCase):
             if hasattr(model, "campaign"):
                 with self.subTest(model=model.__name__):
                     self.assertFalse(model.objects.filter(campaign__isnull=False).exists())
-            if hasattr(model, "campaign_type"):  # CAT-NEW-04: the seeders leave the add-on column null
+            if hasattr(model, "campaign_type"):  # grading phase 1: skills and hired swords get the import's settings
                 with self.subTest(model=model.__name__, column="campaign_type"):
-                    self.assertFalse(model._default_manager.filter(**{"campaign_type__isnull": False}).exists())
+                    ungraded = model._default_manager.filter(**{"campaign_type__isnull": True})
+                    if model is HiredSword:
+                        self.assertFalse(ungraded.exists())
+                    elif model is Skill:  # but the ones a hired sword's seeding makes ("Hired Sword - …")
+                        self.assertFalse(ungraded.exclude(**{"type__startswith": "Hired Sword - "}).exists())
+                    else:  # the rest count as Mordheim's until they get theirs
+                        self.assertFalse(model._default_manager.filter(**{"campaign_type__isnull": False}).exists())
         # grading phase 1: the settings, and the warband types and groups, from the catalogue import
         self.assertEqual(CampaignType.objects.count(), 19)
         self.assertEqual(WarbandType.objects.filter(campaign__isnull=True).count(), 163)

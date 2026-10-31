@@ -15,7 +15,8 @@ from apps.items.services import HALF_PRICE_ARMOUR_EFFECT_KEY
 
 from .catalogue_support import HIRED_SWORDS, ITEMS, KINDS, RACES, SKILLS, CatalogueTestCase, make_entry
 
-EMPTY = {"replaces": None, "archived_at": None, "updated_by": None, "updated_at": None, "book": None}
+# a custom entry: in play in its own campaign (grading phase 1)
+EMPTY = {"replaces": None, "archived_at": None, "updated_by": None, "updated_at": None, "book": None, "in_play": True}
 
 
 def badges(row: dict[str, Any]) -> dict[str, Any]:

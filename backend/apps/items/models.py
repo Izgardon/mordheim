@@ -18,8 +18,10 @@ class Item(CatalogueEntry):
         blank=True,
         on_delete=models.CASCADE,
     )
-    campaign_type = models.ForeignKey(  # an add-on's entry (CAT-NEW-04: schema only, always null today)
-        "campaigns.CampaignType", related_name="items", null=True, blank=True, on_delete=models.RESTRICT
+    campaign_type = (
+        models.ForeignKey(  # its setting, which holds its grade (grading phase 1); null counts as Mordheim's
+            "campaigns.CampaignType", related_name="items", null=True, blank=True, on_delete=models.RESTRICT
+        )
     )
     name = models.CharField(max_length=255)
     type = models.CharField(max_length=80, db_index=True)
@@ -48,7 +50,7 @@ class Item(CatalogueEntry):
         ordering = ["type", "name"]
         constraints = [
             *version_constraints("item"),  # one version per book item in a campaign, a house rule's clone included
-            # one item per name and type in the book, an add-on and a campaign (BUG-17, IMP-83). The effect key keeps
+            # one item per name and type in each setting of the book and in a campaign (BUG-17, IMP-83). The effect key keeps
             # a house rule's clone apart from a custom item of the book armour's name, which a campaign may already
             # hold when the rule is switched on (a condition would do the same, but Django 5.0 writes a partial
             # NULLS NOT DISTINCT index's SQL in the wrong order)

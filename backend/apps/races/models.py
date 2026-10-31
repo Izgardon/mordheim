@@ -12,8 +12,10 @@ class Race(StatBlock, CatalogueEntry):
         blank=True,
         on_delete=models.CASCADE,
     )
-    campaign_type = models.ForeignKey(  # an add-on's entry (CAT-NEW-04: schema only, always null today)
-        "campaigns.CampaignType", related_name="races", null=True, blank=True, on_delete=models.RESTRICT
+    campaign_type = (
+        models.ForeignKey(  # its setting, which holds its grade (grading phase 1); null counts as Mordheim's
+            "campaigns.CampaignType", related_name="races", null=True, blank=True, on_delete=models.RESTRICT
+        )
     )
     name = models.CharField(max_length=160)
 
@@ -23,7 +25,7 @@ class Race(StatBlock, CatalogueEntry):
         constraints = [
             *stat_constraints("race"),
             *version_constraints("race"),
-            # one race per name in the book, an add-on and a campaign (BUG-17, IMP-83)
+            # one race per name in each setting of the book and in a campaign (BUG-17, IMP-83)
             models.UniqueConstraint(
                 fields=["campaign", "campaign_type", "name"], name="race_unique_name", nulls_distinct=False
             ),

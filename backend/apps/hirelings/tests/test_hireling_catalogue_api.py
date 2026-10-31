@@ -30,7 +30,7 @@ STATS = [
 ROW = [
     "id",
     "campaign_id",
-    "campaign_type_id",
+    "setting_id",
     "name",
     "description",
     *STATS,

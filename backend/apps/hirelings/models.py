@@ -60,7 +60,7 @@ class HirelingProfile(StatBlock, CatalogueEntry):
 
 
 def profile_constraints(prefix: str) -> list[models.BaseConstraint]:
-    """The stat ranges, one version per book entry in a campaign, and one entry per name in the book, an add-on and a
+    """The stat ranges, one version per book entry in a campaign, and one entry per name in each setting of the book and a
     campaign (NULLs not distinct, as the seeders upsert: BUG-17)."""
     return [
         *stat_constraints(prefix),
@@ -75,8 +75,10 @@ class HiredSword(HirelingProfile):
     campaign = models.ForeignKey(  # null: the book
         "campaigns.Campaign", related_name="hired_swords", null=True, blank=True, on_delete=models.CASCADE
     )
-    campaign_type = models.ForeignKey(  # an add-on's entry (CAT-NEW-04: schema only, always null today)
-        "campaigns.CampaignType", related_name="hired_swords", null=True, blank=True, on_delete=models.RESTRICT
+    campaign_type = (
+        models.ForeignKey(  # its setting, which holds its grade (grading phase 1); null counts as Mordheim's
+            "campaigns.CampaignType", related_name="hired_swords", null=True, blank=True, on_delete=models.RESTRICT
+        )
     )
     race = models.ForeignKey(  # RESTRICT, as units hold theirs (BUG-130)
         "races.Race", related_name="hired_swords", null=True, blank=True, on_delete=models.RESTRICT
@@ -98,8 +100,10 @@ class DramatisPersona(HirelingProfile):
     campaign = models.ForeignKey(  # null: the book
         "campaigns.Campaign", related_name="dramatis_personae", null=True, blank=True, on_delete=models.CASCADE
     )
-    campaign_type = models.ForeignKey(  # an add-on's entry (CAT-NEW-04: schema only, always null today)
-        "campaigns.CampaignType", related_name="dramatis_personae", null=True, blank=True, on_delete=models.RESTRICT
+    campaign_type = (
+        models.ForeignKey(  # its setting, which holds its grade (grading phase 1); null counts as Mordheim's
+            "campaigns.CampaignType", related_name="dramatis_personae", null=True, blank=True, on_delete=models.RESTRICT
+        )
     )
     race = models.ForeignKey(  # RESTRICT, as units hold theirs (BUG-130)
         "races.Race", related_name="dramatis_personae", null=True, blank=True, on_delete=models.RESTRICT

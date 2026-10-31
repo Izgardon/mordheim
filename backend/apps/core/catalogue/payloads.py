@@ -6,8 +6,9 @@ entry in a campaign's `?archived=1` list, removed from the campaign.
 `updated_by` (a display name) and `updated_at`: who last wrote the entry through the catalogue, and when. `book`:
 for a version, what the book says, for the tooltip ("Book: 5 gc"): the book entry's id and name, the fields the
 version changed with the book's values, and an item's book price. Items also carry `generated_effect_key` (a house
-rule's clone: "Set by Half price armour"). Every value comes from the row's own query (joins and one annotation),
-so lists stay constant in rows.
+rule's clone: "Set by Half price armour"). `in_play`: in a campaign's list, whether the entry is in play there
+(grading phase 1: its setting is ticked, or it has none); a list greys out the rest with a warning. Every value comes
+from the row's own query (joins and annotations), so lists stay constant in rows.
 """
 
 from typing import Any, ClassVar
@@ -16,7 +17,7 @@ from rest_framework import serializers
 
 from apps.users.names import display_name
 
-BADGES = ("replaces", "archived_at", "updated_by", "updated_at", "book")
+BADGES = ("replaces", "archived_at", "updated_by", "updated_at", "book", "in_play")
 STAT_FIELDS = (
     "movement",
     "weapon_skill",
@@ -47,6 +48,12 @@ class EntryBadges(serializers.Serializer):
     updated_by = serializers.SerializerMethodField()
     updated_at = serializers.SerializerMethodField()
     book = serializers.SerializerMethodField()
+    in_play = serializers.SerializerMethodField()
+
+    def get_in_play(self, entry: Any) -> bool | None:
+        """In play in the list's campaign (apps/campaigns/in_play.py); None in the book's list and a detail."""
+        in_play: bool | None = getattr(entry, "in_play", None)
+        return in_play
 
     def get_replaces(self, entry: Any) -> int | None:
         replaced: int | None = entry.replaces_id

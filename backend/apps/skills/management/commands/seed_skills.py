@@ -11,7 +11,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from apps.core.catalogue.cache import bump
-from apps.core.seeding import clean, entry_value, read_json_list, upsert_global
+from apps.core.seeding import SettingAssignments, clean, entry_value, read_json_list, upsert_global
 from apps.skills.models import Skill
 
 DEFAULT_JSON_PATH = Path("apps/skills/data/skills.json")
@@ -55,6 +55,7 @@ class Command(BaseCommand):
             raise CommandError("JSON file not found. Provide --json or place data at apps/skills/data/skills.json.")
 
         created = updated = skipped = 0
+        settings = SettingAssignments("skills")  # each skill's setting, from the catalogue import
         for entry in read_json_list(path, "skill objects"):
             name = clean(entry_value(entry, HEADER_ALIASES["name"]))
             skill_type = _skill_type(entry_value(entry, HEADER_ALIASES["type"]))
@@ -62,7 +63,9 @@ class Command(BaseCommand):
                 skipped += 1
                 continue
             description = clean(entry_value(entry, HEADER_ALIASES["description"]))
-            _, was_created = upsert_global(Skill, {"name": name, "type": skill_type}, {"description": description})
+            setting = settings.of(name, clean(entry_value(entry, HEADER_ALIASES["type"])))  # the file's own type
+            defaults = {"description": description, "campaign_type_id": setting}
+            _, was_created = upsert_global(Skill, {"name": name, "type": skill_type}, defaults)
             if was_created:
                 created += 1
             else:

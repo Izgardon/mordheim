@@ -1,6 +1,6 @@
 """The base uniqueness constraints of the catalogue tables (BUG-17, IMP-83) and what a write that meets one answers.
 
-Each table holds one row per name (and type) in the book, in an add-on (`campaign_type`) and in a campaign; NULLs
+Each table holds one row per name (and type) in each setting of the book (`campaign_type`) and in a campaign; NULLs
 are not distinct, so the book is covered too. A campaign version keeps the name of the book entry it replaces: the
 campaign is part of the key. A house-rule clone is left out of the item constraint. The name rule a create meets
 first is wider (names.py); two writes of one exact name at once get past it and meet the constraint instead, which
