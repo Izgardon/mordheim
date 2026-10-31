@@ -58,7 +58,10 @@ export default function ReferenceSkeleton() {
         <SkeletonHeader buttons={1} title="w-56" />
       )}
       <div className="flex flex-col gap-4 border-b border-line pb-5 max-[960px]:gap-2.5 max-[960px]:border-0 max-[960px]:pb-0">
-        <Bone className="h-11 w-full max-w-[520px]" />
+        <div className="flex flex-col gap-1.5">
+          {isMobile ? null : <Bone className="h-2.5 w-14" />}
+          <Bone className="h-11 w-full" />
+        </div>
         <div className="flex gap-1.5 overflow-hidden">
           {isMobile ? null : <Bone className="mr-2 h-2.5 w-10 self-center" />}
           {[0, 1, 2, 3, 4, 5].map((index) => (
@@ -66,7 +69,12 @@ export default function ReferenceSkeleton() {
           ))}
         </div>
       </div>
-      {isMobile ? null : <Bone className="h-3 w-36" />}
+      {isMobile ? null : (
+        <div className="flex items-center justify-between gap-3">
+          <Bone className="h-3 w-36" />
+          <Bone className="h-9 w-40" />
+        </div>
+      )}
       <div className="border border-border bg-surface">
         {isMobile ? null : (
           <div className="flex h-10 items-center gap-3 border-b border-border bg-rail px-4 pl-10">
