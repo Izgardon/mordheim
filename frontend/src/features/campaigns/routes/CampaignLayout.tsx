@@ -61,7 +61,9 @@ export default function CampaignLayout() {
   const [battleMenuActions, setBattleMenuActions] = useState<BattleMenuAction[]>([]);
   useSearchShortcut(campaignId, !isMobile && isCampaignId(campaignId));
 
-  useMyWarbandStore(campaign?.id ?? null);
+  // Read alongside the campaign rather than after it: the campaign, your warband and its sheet
+  // were three round trips in a row on every campaign page.
+  useMyWarbandStore(isCampaignId(campaignId) ? campaignId : null);
   useArchivedRefusals(campaignId);
 
   // Stable unless a value changes, so the layout re-rendering (store writes, notifications)
