@@ -6,6 +6,15 @@ type CardSkeletonProps = {
   columns?: 1 | 2 | 3;
 };
 
+// Fixed bar widths, so the placeholders don't jump between renders.
+const WIDTHS = [
+  ["62%", "88%", "54%"],
+  ["48%", "76%", "40%"],
+  ["70%", "92%", "61%"],
+  ["55%", "81%", "47%"],
+];
+
+/** Cards still loading (design E): square bars in the line colour, pulsing. */
 export function CardSkeleton({ count = 4, className, columns = 2 }: CardSkeletonProps) {
   const gridClass = {
     1: "grid-cols-1",
@@ -14,36 +23,25 @@ export function CardSkeleton({ count = 4, className, columns = 2 }: CardSkeleton
   }[columns];
 
   return (
-    <div className={cn("grid gap-6", gridClass, className)}>
-      {Array.from({ length: count }).map((_, index) => (
-        <div key={index} className="border border-border bg-surface p-6">
-          <div className="space-y-4">
-            <div
-              className="h-5 animate-pulse rounded bg-muted-foreground/20"
-              style={{
-                width: `${50 + Math.random() * 30}%`,
-                animationDelay: `${index * 100}ms`,
-              }}
-            />
-            <div className="space-y-2">
+    <div className={cn("grid gap-4", gridClass, className)}>
+      {Array.from({ length: count }).map((_, index) => {
+        const [title, line, short] = WIDTHS[index % WIDTHS.length];
+        return (
+          <div key={index} className="flex flex-col gap-4 border border-border bg-surface p-5">
+            {[
+              { width: title, height: "h-5" },
+              { width: line, height: "h-3" },
+              { width: short, height: "h-3" },
+            ].map((bar, row) => (
               <div
-                className="h-3 animate-pulse rounded bg-muted-foreground/15"
-                style={{
-                  width: `${70 + Math.random() * 25}%`,
-                  animationDelay: `${index * 100 + 50}ms`,
-                }}
+                key={row}
+                className={cn("animate-pulse bg-line", bar.height)}
+                style={{ width: bar.width, animationDelay: `${index * 100 + row * 50}ms` }}
               />
-              <div
-                className="h-3 animate-pulse rounded bg-muted-foreground/15"
-                style={{
-                  width: `${40 + Math.random() * 30}%`,
-                  animationDelay: `${index * 100 + 100}ms`,
-                }}
-              />
-            </div>
+            ))}
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

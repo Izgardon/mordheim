@@ -3,7 +3,7 @@ import { toast } from "sonner";
 // components
 import { Button } from "@components/button";
 import { AuthFormError, DisplayNameField } from "../AuthField";
-import { AccountSection } from "./AccountSection";
+import { ACCOUNT_FORM, AccountSection } from "./AccountSection";
 
 // hooks
 import { useDisplayNameForm } from "../../hooks/use-display-name-form";
@@ -21,15 +21,10 @@ export function DisplayNameSection({ user }: { user: AuthUser }) {
       title="Display name"
       description="The name other players see in your campaigns, chat and battles."
     >
-      <form className="space-y-3" onSubmit={form.save}>
-        <DisplayNameField
-          value={form.name}
-          onChange={form.setName}
-          error={form.nameError}
-          className="mx-0"
-        />
+      <form className={ACCOUNT_FORM} onSubmit={form.save}>
+        <DisplayNameField value={form.name} onChange={form.setName} error={form.nameError} />
         <AuthFormError message={form.error} />
-        <Button type="submit" size="sm" disabled={form.isSaving || isUnchanged}>
+        <Button type="submit" disabled={form.isSaving || isUnchanged}>
           {form.isSaving ? "Saving..." : "Save name"}
         </Button>
       </form>

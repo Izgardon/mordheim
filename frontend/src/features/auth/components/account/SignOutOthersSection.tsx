@@ -16,12 +16,7 @@ export function SignOutOthersSection() {
       description="Signs you out on every other browser and device. This one stays signed in."
     >
       <AuthFormError message={error} />
-      <Button
-        variant="secondary"
-        size="sm"
-        disabled={isSigningOut}
-        onClick={() => void signOutOthers()}
-      >
+      <Button variant="secondary" disabled={isSigningOut} onClick={() => void signOutOthers()}>
         {isSigningOut ? "Signing out..." : "Sign out everywhere else"}
       </Button>
     </AccountSection>

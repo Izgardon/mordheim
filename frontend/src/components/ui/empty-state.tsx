@@ -10,6 +10,8 @@ type EmptyStateProps = {
 /** Loaded successfully, with nothing to show. Use ErrorState when the load failed. */
 export function EmptyState({ children, className }: EmptyStateProps) {
   return (
-    <p className={cn("py-8 text-center text-xs text-muted-foreground", className)}>{children}</p>
+    <p className={cn("m-0 py-8 text-center text-sm text-muted-foreground", className)}>
+      {children}
+    </p>
   );
 }

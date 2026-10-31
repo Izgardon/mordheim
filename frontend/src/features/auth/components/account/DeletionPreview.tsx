@@ -27,10 +27,10 @@ export function DeletionPreview({ preview }: { preview: AccountDeletionPreview }
   const others = preview.campaigns.filter((campaign) => campaign.outcome !== "hand_over_first");
 
   return (
-    <div className="space-y-3">
+    <div className="flex flex-col gap-3">
       {blocking.length > 0 ? (
         <div className="space-y-1">
-          <p className="text-foreground">
+          <p className="m-0 font-semibold text-ink">
             You own campaigns with other members. Hand each one to an admin first:
           </p>
           <ul className="list-disc space-y-1 pl-5" aria-label="Hand over first">
@@ -41,7 +41,7 @@ export function DeletionPreview({ preview }: { preview: AccountDeletionPreview }
                   : `${campaign.name}: make an admin its owner. `}
                 <Link
                   to={`/campaigns/${campaign.id}/settings?section=${campaign.archived ? "archive" : "players"}`}
-                  className="underline hover:text-foreground"
+                  className="font-semibold text-accent-text underline underline-offset-2 hover:text-accent-hi"
                 >
                   {`Open ${campaign.name}'s settings`}
                 </Link>
@@ -58,10 +58,12 @@ export function DeletionPreview({ preview }: { preview: AccountDeletionPreview }
         </ul>
       ) : null}
       {preview.battles > 0 ? (
-        <p>{`${plural(preview.battles, "open battle")} you're in: cancelled, or going on without you.`}</p>
+        <p className="m-0">{`${plural(preview.battles, "open battle")} you're in: cancelled, or going on without you.`}</p>
       ) : null}
-      {preview.trades > 0 ? <p>{`${plural(preview.trades, "open trade")}: closed.`}</p> : null}
-      <p>
+      {preview.trades > 0 ? (
+        <p className="m-0">{`${plural(preview.trades, "open trade")}: closed.`}</p>
+      ) : null}
+      <p className="m-0">
         Everything else of yours stays, shown as Former player: your warbands, battles, ledger, chat
         messages and bulletin notes. Your notifications are deleted, and your email can sign up
         again.

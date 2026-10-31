@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate, useRouteError } from "react-router-dom";
 
+import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { isChunkLoadError, reloadApp } from "@/lib/reload-app";
@@ -35,11 +36,12 @@ export default function RouteError({ variant = "page" }: RouteErrorProps) {
       }
       retryLabel={isStaleBundle ? "Reload" : "Retry"}
       onRetry={isStaleBundle ? reloadApp : retry}
+      look={variant === "page" ? "card" : "inline"}
       actions={
         variant === "page" ? (
-          <Link to="/campaigns" className="text-xs text-muted-foreground underline">
-            Back to campaigns
-          </Link>
+          <Button asChild variant="secondary">
+            <Link to="/campaigns">Back to campaigns</Link>
+          </Button>
         ) : null
       }
     />
@@ -48,5 +50,7 @@ export default function RouteError({ variant = "page" }: RouteErrorProps) {
   if (variant === "inline") {
     return state;
   }
-  return <div className="fixed inset-0 z-50 flex items-center justify-center bg-page">{state}</div>;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-page px-4">{state}</div>
+  );
 }

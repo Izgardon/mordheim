@@ -29,8 +29,9 @@ export class AppErrorBoundary extends Component<AppErrorBoundaryProps, AppErrorB
       return this.props.children;
     }
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-page">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-page px-4">
         <ErrorState
+          look="card"
           title="Something went wrong"
           message="The app hit an unexpected error."
           retryLabel="Reload"
