@@ -9,6 +9,7 @@ entry hides it from the campaign's list until it is restored.
 
 from typing import Any
 
+from apps.hirelings.fees import make_fee
 from apps.hirelings.models import DramatisPersona, HiredSword, HiredSwordSkill
 from apps.items.tests.catalogue_support import (
     DRAMATIS_PERSONAE,
@@ -24,7 +25,11 @@ class HirelingVersionTests(CatalogueTestCase):
     def setUp(self) -> None:
         super().setUp()
         HiredSword.objects.filter(id=self.ogre.id).update(
-            grade="1a", race=self.human, race_label="Ogre", upkeep_cost=15, hire_cost_expression="80+D6"
+            grade="1a",
+            race=self.human,
+            race_label="Ogre",
+            upkeep_fee=make_fee(gold=15),
+            hire_fee=make_fee(gold=80, dice=1),
         )
         self.ogre.warband_links.create(warband_type=self.mercenaries, excluded=True)
         self.ogre.skill_links.create(skill=self.infiltration[0])
@@ -41,22 +46,30 @@ class HirelingVersionTests(CatalogueTestCase):
         return [row["id"] for row in self.get_as(self.player, kind.list_url(self.campaign)).json()]
 
     def test_a_hired_swords_version_keeps_its_profile_kit_and_who_may_hire(self):
-        body = self.edit(HIRED_SWORDS, self.ogre.id, {"hire_cost": 95})
+        body = self.edit(HIRED_SWORDS, self.ogre.id, {"hire_fee": {"gold": 95, "dice": 1}})
 
         version = HiredSword.objects.get(id=body["id"])
-        profile = (version.grade, version.race_id, version.race_label, version.hire_cost, version.upkeep_cost)
+        profile = (
+            version.grade,
+            version.race_id,
+            version.race_label,
+            version.hire_fee["gold"],
+            version.upkeep_fee["gold"],
+        )
         self.assertEqual(profile, ("1a", self.human.id, "Ogre", 95, 15))
-        self.assertEqual((version.replaces_id, version.hire_cost_expression), (self.ogre.id, "80+D6"))
+        self.assertEqual((version.replaces_id, version.hire_fee["dice"]), (self.ogre.id, 1))
         self.assertEqual(list(version.warband_links.values_list("warband_type_id", "excluded")), [(self.mercenaries.id, True)])  # fmt: skip
         skills = set(version.skill_links.values_list("skill_id", flat=True))
         self.assertEqual(skills, {self.sneak.id, self.infiltration[1].id})  # the campaign's version of a linked skill
         self.assertEqual(list(version.item_links.values_list("item_id", "quantity")), [(self.book_sword.id, 2)])
         self.assertEqual([link.skill_id for link in self.ogre.skill_links.all()], [s.id for s in self.infiltration[:2]])  # fmt: skip
         self.assertEqual((version.id in self.ids(HIRED_SWORDS), self.ogre.id in self.ids(HIRED_SWORDS)), (True, False))  # fmt: skip
-        self.assertEqual((body["replaces"], body["book"]["changes"]), (self.ogre.id, {"hire_cost": 80}))
+        self.assertEqual(
+            (body["replaces"], body["book"]["changes"]), (self.ogre.id, {"hire_fee": make_fee(gold=80, dice=1)})
+        )
 
     def test_reverting_a_version_takes_it_and_its_links(self):
-        version = self.edit(HIRED_SWORDS, self.ogre.id, {"hire_cost": 95})["id"]
+        version = self.edit(HIRED_SWORDS, self.ogre.id, {"hire_fee": {"gold": 95, "dice": 1}})["id"]
 
         reverted = self.post_as(self.player, f"{HIRED_SWORDS.detail_url(version)}revert/")
 

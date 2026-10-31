@@ -20,7 +20,7 @@ class AftermathAdvanceTests(RosterTestCase):
 
         hero.refresh_from_db()
         self.assertEqual((hero.strength, hero.level_up), (4, 0))
-        self.assertEqual(list(hero.skills.values_list("name", flat=True)), ["New Skill"])  # picked from the card
+        self.assertEqual((hero.pending_skills, hero.skills.count()), (1, 0))  # picked later, from the card
         self.assertNotIn("advance_skipped", [warning["code"] for warning in answer.get("warnings", [])])
 
     def test_a_group_takes_its_advance_once_and_leaves_the_lads_got_talent_for_its_card(self):

@@ -3,6 +3,7 @@
 from typing import Any
 
 from apps.campaigns.models import CampaignSettings
+from apps.hirelings.fees import fee_payload, make_fee
 from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling
 
 from .roster_support import (
@@ -270,14 +271,15 @@ class HirelingCreateCharacterisationTests(RosterTestCase):
         self.assertEqual((second.status_code, second.json()), (400, expected))
 
     def test_hire_and_upkeep_fields_are_stored_as_sent(self):
-        fields = {"hire_cost_expression": "30+2d6", "upkeep_price": 15, "upkeep_cost_expression": "15", "rating": 22}
+        hire_fee, upkeep_fee = make_fee(gold=30, dice=2), make_fee(gold=15, resources=[("Wyrdstone", 1)])
+        fields = {"hire_fee": hire_fee, "upkeep_fee": upkeep_fee, "rating": 22}
         response = self.client.post(
             unit_url(HIRELING, self.warband.id), create_payload(HIRELING, **fields), format="json"
         )
         body = response.json()
-        self.assertEqual({key: body[key] for key in fields}, fields)
+        self.assertEqual({key: body[key] for key in fields}, {**fields, "hire_fee": fee_payload(hire_fee), "upkeep_fee": fee_payload(upkeep_fee)})  # fmt: skip
         sword = Hireling.objects.get(id=body["id"])
-        self.assertEqual((sword.upkeep_price, sword.rating), (15, 22))
+        self.assertEqual((sword.upkeep_fee, sword.rating), (upkeep_fee, 22))
 
 
 class HenchmenCreateCharacterisationTests(RosterTestCase):

@@ -160,8 +160,7 @@ def hireling_entry(hireling: Hireling) -> dict:
         **_missing(hireling),
         "stats": _stats(hireling),
         **_companions(hireling, links, owner="hireling"),
-        "upkeepPrice": hireling.upkeep_price,
-        "upkeepCostExpression": hireling.upkeep_cost_expression,
+        "upkeepFee": hireling.upkeep_fee,  # a structured fee (apps/hirelings/fees.py): gold, resources, kind
         "noLevelUps": bool(hireling.no_level_ups),
         "hirelingKind": hireling.kind,  # hired_sword | dramatis_persona
         "injuryTable": hireling.injury_table,  # henchman: a d6; hero: the campaign's hero death roll

@@ -7,12 +7,16 @@ import type { Item } from "@/features/items/types/item-types";
 import { cn } from "@/lib/utils";
 
 import { useUnitActions } from "../../hooks/units/useUnitActions";
-import type { HenchmenGroup, WarbandHero, WarbandHireling } from "../../types/warband-types";
+import type {
+  HenchmenGroup,
+  WarbandHero,
+  WarbandHireling,
+  WarbandRosterCounts,
+} from "../../types/warband-types";
 import { ROSTER_DIVIDED, ROSTER_HEROES, ROSTER_SECTIONS } from "../page/warband-layout";
 import UnitCard from "./UnitCard";
 import UnitDetails from "./UnitDetails";
-import type { PendingList } from "./PendingPick";
-import { unitKey, type RosterUnit } from "./unit-view";
+import { pickPayload, unitKey, type RosterUnit } from "./unit-view";
 
 type RosterSectionsProps = {
   warbandId: number;
@@ -20,6 +24,8 @@ type RosterSectionsProps = {
   heroes: WarbandHero[];
   henchmenGroups: HenchmenGroup[];
   hirelings: WarbandHireling[];
+  /** The server's cap counts: one in a hero's place is a hero, a dramatis persona no hired sword. */
+  counts?: Pick<WarbandRosterCounts, "hero_count" | "hireling_count">;
   canEdit: boolean;
   onLoadout: (entry: RosterUnit) => void;
   onRecruit: (kind: RosterUnit["kind"]) => void;
@@ -68,20 +74,6 @@ function Section({
       {children}
     </section>
   );
-}
-
-const ID_FIELD = { skills: "skill_ids", spells: "spell_ids", specials: "special_ids" } as const;
-
-/** The unit's ids for `list` with the first `placeholderId` swapped for `entryId`. */
-function swapPending(entry: RosterUnit, list: PendingList, placeholderId: number, entryId: number) {
-  const unit = entry.unit as Partial<Record<PendingList, { id: number }[]>>;
-  let swapped = false;
-  const ids = (unit[list] ?? []).map(({ id }) => {
-    if (swapped || id !== placeholderId) return id;
-    swapped = true;
-    return entryId;
-  });
-  return { [ID_FIELD[list]]: ids };
 }
 
 /** The roster tab: heroes as cards in a grid, henchmen and hired swords as rows (design E). */
@@ -145,9 +137,7 @@ export default function RosterSections(props: RosterSectionsProps) {
             onAdvance={() => props.onAdvance(entry)}
             campaignId={campaign?.id ?? 0}
             warbandId={warbandId}
-            onResolvePending={(list, placeholderId, entryId) =>
-              actions.patchUnit(entry, swapPending(entry, list, placeholderId, entryId))
-            }
+            onPick={(list, entryId) => actions.patchUnit(entry, pickPayload(entry, list, entryId))}
           />
         ) : null}
       </UnitCard>
@@ -162,7 +152,7 @@ export default function RosterSections(props: RosterSectionsProps) {
     <div className={ROSTER_SECTIONS}>
       <Section
         title="Heroes"
-        meta={`${heroes.length}${maxHeroes ? ` of ${maxHeroes}` : ""}`}
+        meta={`${props.counts?.hero_count ?? heroes.length}${maxHeroes ? ` of ${maxHeroes}` : ""}`}
         add={canEdit ? "Add hero" : undefined}
         onAdd={() => props.onRecruit("hero")}
       >
@@ -179,7 +169,7 @@ export default function RosterSections(props: RosterSectionsProps) {
       </Section>
       <Section
         title="Hired swords"
-        meta={`${hired.length}${maxHired ? ` of ${maxHired}` : ""}`}
+        meta={`${props.counts?.hireling_count ?? hired.length}${maxHired ? ` of ${maxHired}` : ""}`}
         add={canEdit ? "Hire" : undefined}
         divided
         onAdd={() => props.onRecruit("hireling")}

@@ -9,6 +9,7 @@ The leaving suggestion is never forced: finalise keeps the unit, and the page ma
 
 from typing import Any
 
+from apps.hirelings.fees import make_fee
 from apps.warbands.models import Hireling
 
 from .battle_support import BattleTestCase, draft, unit_result
@@ -22,7 +23,7 @@ class HirelingPostbattleTests(BattleTestCase):
     def setUp(self) -> None:
         super().setUp()
         hire = self.warband.hirelings.create
-        self.grukk = hire(name="Grukk", unit_type="Ogre Bodyguard", upkeep_price=30)
+        self.grukk = hire(name="Grukk", unit_type="Ogre Bodyguard", upkeep_fee=make_fee(gold=30))
         self.persona = hire(
             name="Bertha",
             unit_type="Bertha",
@@ -34,7 +35,9 @@ class HirelingPostbattleTests(BattleTestCase):
             initiative=4,
             toughness=3,
         )
-        self.prospector = hire(name="Pete", unit_type="Old Prospector", upkeep_cost_expression="1 Treasure")
+        self.prospector = hire(
+            name="Pete", unit_type="Old Prospector", upkeep_fee=make_fee(resources=[("Treasure", 1)])
+        )
         self.keys = [f"hireling:{unit.id}" for unit in (self.grukk, self.persona, self.prospector)]
         self.rat = f"hero:{self.rival.heroes.create(name='Rat', unit_type='Assassin').id}"
 
@@ -91,8 +94,9 @@ class HirelingPostbattleTests(BattleTestCase):
         self.assertEqual(suggested["dismiss"], {"entries": {persona: {"unit_name": "Bertha", "reason": "stays_one_battle"}}})  # fmt: skip
         upkeep = suggested["upkeep"]["entries"]
         self.assertNotIn(persona, upkeep)  # he leaves after this battle: nothing to keep him on for
-        self.assertEqual(upkeep[sword], {"unit_name": "Grukk", "cost": 30})  # no formula: none sent
-        self.assertEqual(upkeep[prospector], {"unit_name": "Pete", "cost": 0, "cost_expression": "1 Treasure"})
+        self.assertEqual(upkeep[sword], {"unit_name": "Grukk", "cost": 30})  # no resources or note: none sent
+        treasure = [{"resource": "Treasure", "amount": 1}]
+        self.assertEqual(upkeep[prospector], {"unit_name": "Pete", "cost": 0, "resources": treasure})
 
     def test_leaving_is_only_a_suggestion(self):
         battle_id = self.postbattle()

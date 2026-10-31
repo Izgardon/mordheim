@@ -28,9 +28,11 @@ def cap_limit(kind: "UnitKindSpec", warband: Warband) -> int | None:
 
 
 def cap_count(kind: "UnitKindSpec", warband: Warband) -> int:
-    """How many of the warband's units count towards the kind's cap (living, not dismissed, per CapSpec)."""
+    """How many of the warband's units count towards the kind's cap (living, not dismissed, per CapSpec), with the
+    units of another kind in its places (a hireling in a hero's place)."""
     assert kind.cap is not None
-    return int(kind.cap.counted(kind.objects.filter(warband=warband)).count())
+    others = kind.cap.others(warband) if kind.cap.others else 0
+    return int(kind.cap.counted(kind.objects.filter(warband=warband)).count()) + others
 
 
 def check_cap(kind: "UnitKindSpec", warband: Warband, data: Mapping[str, Any], *, locked: bool = False) -> None:
@@ -62,10 +64,12 @@ def apply_create(kind: "UnitKindSpec", data: MutableMapping[str, Any]) -> Roster
     return unit
 
 
-def recruit(kind: "UnitKindSpec", warband: Warband, writer: "BaseSerializer[Any]", *, sent: Any) -> RosterUnit:
+def recruit(
+    kind: "UnitKindSpec", warband: Warband, writer: "BaseSerializer[Any]", *, sent: Any, locked: bool = False
+) -> RosterUnit:
     """Inside the caller's transaction: check the cap, create the unit from a validated create serializer
-    and write its recruit ledger."""
-    check_cap(kind, warband, writer.validated_data)
+    and write its recruit ledger. `locked`: the caller already holds the warband's row."""
+    check_cap(kind, warband, writer.validated_data, locked=locked)
     unit: RosterUnit = writer.save(warband=warband)
     kind.hooks.record_recruit(kind, warband, unit, sent)
     return unit

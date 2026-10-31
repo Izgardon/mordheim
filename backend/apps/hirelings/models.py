@@ -17,6 +17,7 @@ sword still lists instead of deleting it.
 from django.db import models
 
 from apps.core.models import CatalogueEntry, version_constraints
+from apps.hirelings.fees import no_fee
 from apps.warbands.models.hirelings import STAYS
 from apps.warbands.models.shared import StatBlock, stat_constraints
 from apps.warbands.models.types import WarbandAccess, access_constraints
@@ -39,8 +40,8 @@ class HirelingProfile(StatBlock, CatalogueEntry):
     """What a hired sword and a dramatis persona both carry.
 
     `description` is fluff: shown in the catalogue, never copied on hire. `race_label` keeps the source's race text
-    (e.g. "Chameleon Skink") whether or not `race` found a match. A fee or upkeep that isn't a plain number keeps its
-    text in the `*_expression` column, the "special" one ("70 + 3D6" with 70 in gold, "1 wyrdstone" with none).
+    (e.g. "Chameleon Skink") whether or not `race` found a match. The hire fee and the upkeep are structured fees
+    (fees.py: a kind, gold, dice, resources and a note: "70 + 3D6", "1 Wyrdstone", "Takes a hero's place").
     `grade` is text until the grading plan swaps it for a foreign key. Who may hire: `for_everyone` (minus the
     excluded lines) or the lines it names (`warband_links`), `hire_note` the book's sentence.
     """
@@ -51,10 +52,8 @@ class HirelingProfile(StatBlock, CatalogueEntry):
     large = models.BooleanField(default=False)
     caster = models.CharField(max_length=20, default="No", choices=CASTERS)
     race_label = models.CharField(max_length=60, blank=True, default="")
-    hire_cost = models.PositiveIntegerField(null=True, blank=True)
-    hire_cost_expression = models.CharField(max_length=300, blank=True, default="")  # a fee in words can run long
-    upkeep_cost = models.PositiveIntegerField(null=True, blank=True)
-    upkeep_cost_expression = models.CharField(max_length=300, blank=True, default="")
+    hire_fee = models.JSONField(default=no_fee)
+    upkeep_fee = models.JSONField(default=no_fee)
     rating = models.PositiveIntegerField(null=True, blank=True)
     available_skill_types = models.JSONField(default=list, blank=True)
     grade = models.CharField(max_length=20, blank=True, default="")
@@ -100,8 +99,8 @@ class HiredSword(HirelingProfile):
 
 
 class DramatisPersona(HirelingProfile):
-    """A unique character found after a battle: `stays` for good or for one battle, paid in what `payment_note`
-    says ("25 gc or 1 shard", a summoning, a favour)."""
+    """A unique character found after a battle: `stays` for good or for one battle; `payment_note` says what else he
+    is paid in beside his fees (a summoning, a favour)."""
 
     campaign = models.ForeignKey(  # null: the book
         "campaigns.Campaign", related_name="dramatis_personae", null=True, blank=True, on_delete=models.CASCADE

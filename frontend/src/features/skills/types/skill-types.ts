@@ -6,12 +6,18 @@ export type Skill = CatalogueBadgeFields & {
   name: string;
   type: string;
   description: string;
+  /** A Large unit's skill: picking it for another unit warns, never blocks. */
+  large_only?: boolean;
+  /** Shown when learning it, never checked ("Vampire only"). */
+  learn_note?: string;
 };
 
 export type SkillCreatePayload = {
   name: string;
   type: string;
   description: string;
+  large_only?: boolean;
+  learn_note?: string;
   campaign_id: number;
 };
 
@@ -21,4 +27,6 @@ export type SkillUpdatePayload = {
   name?: string;
   type?: string;
   description?: string;
+  large_only?: boolean;
+  learn_note?: string;
 };

@@ -135,6 +135,20 @@ class CatalogueMergeTests(CatalogueTestCase):
         self.assertEqual(listed[:2], [("Infiltration", "Combat"), ("Sneaking", "Skaven")])
         self.assertCountEqual(listed[2:], [("Infiltration", kind) for kind in INFILTRATION_TYPES if kind != "Skaven"] + [("Sprint", "Speed")])  # fmt: skip
 
+    def test_a_skill_says_whether_it_is_a_large_units_and_its_learning_note(self):
+        # the fees and skill lists step: shown when picking (the pages grey a Large unit's skill for any other unit)
+        make_entry(SKILLS, "Brick Wall", type="Large Special", large_only=True)
+        make_entry(SKILLS, "Mist Form", type="Undead Vampires", learn_note="Vampire only")
+
+        rows = {row["name"]: row for row in self.get_as(self.player, SKILLS.list_url(self.campaign)).json()}
+
+        self.assertEqual((rows["Brick Wall"]["large_only"], rows["Brick Wall"]["learn_note"]), (True, ""))
+        self.assertEqual((rows["Mist Form"]["large_only"], rows["Mist Form"]["learn_note"]), (False, "Vampire only"))
+        self.assertEqual((rows["Sprint"]["large_only"], rows["Sprint"]["learn_note"]), (False, ""))
+        body = {**SKILLS.payload, "name": "Stomp", "campaign_id": self.campaign.id, "large_only": True}
+        made = self.post_as(self.owner, SKILLS.list_url(), body)
+        self.assertEqual((made.status_code, made.json()["large_only"]), (201, True))
+
     def test_every_kind_replaces_a_book_entry_only_by_a_version(self) -> None:
         # BUG-18 (was pinned: every kind hid book entries by name; flipped in PR C)
         cases: list[tuple[CatalogueKind, Any, dict[str, Any]]] = [
@@ -181,10 +195,6 @@ class CatalogueMergeTests(CatalogueTestCase):
 
         self.assertEqual([(row["name"], row["campaign_id"]) for row in rows][0], ("Axe", None))
         self.assertEqual(rows[0]["availabilities"][0]["cost"], 5)
-
-    def test_pending_placeholders_are_left_out_of_the_lists(self):
-        self.assertNotIn("New Skill", self.listed(self.player, SKILLS))
-        self.assertNotIn("New Skill", [row["name"] for row in self.get_as(self.player, SKILLS.list_url()).json()])
 
     def test_items_list_with_their_rules_prices_and_who_can_buy(self):
         sword = next(row for row in self.get_as(self.player, ITEMS.list_url(self.campaign)).json() if row["name"] == "Sword")  # fmt: skip

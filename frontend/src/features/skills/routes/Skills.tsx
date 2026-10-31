@@ -26,6 +26,7 @@ import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import SkillFormDialog from "../components/SkillFormDialog";
+import { learningNotes } from "../skill-learning";
 import type { Skill } from "../types/skill-types";
 
 /** The five common lists, in the book's order; every other list is "Other lists". */
@@ -187,7 +188,11 @@ export default function Skills() {
             >
               <div className={isMobile ? "flex flex-col gap-2" : "flex flex-col gap-2 px-4 pb-4"}>
                 <RulesPanel
-                  detail={{ name: skill.name, kind: listName(skill.type), text: skill.description }}
+                  detail={{
+                    name: skill.name,
+                    kind: [listName(skill.type), ...learningNotes(skill)].join(" · "),
+                    text: skill.description,
+                  }}
                   onClose={params.close}
                 />
                 {capabilities.edit_catalogue ? (

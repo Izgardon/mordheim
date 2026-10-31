@@ -17,6 +17,9 @@ type SkillFormValues = {
   type: string;
   description: string;
   typeCommitted: boolean;
+  /** A Large unit's skill, and the note shown when learning it. */
+  large_only: boolean;
+  learn_note: string;
 };
 
 const valuesOf = (skill: Skill | null): SkillFormValues => ({
@@ -24,6 +27,8 @@ const valuesOf = (skill: Skill | null): SkillFormValues => ({
   type: skill?.type ?? "",
   description: skill?.description ?? "",
   typeCommitted: Boolean(skill),
+  large_only: Boolean(skill?.large_only),
+  learn_note: skill?.learn_note ?? "",
 });
 
 type UseSkillFormOptions = {
@@ -103,6 +108,8 @@ export function useSkillForm({
       name: values.name.trim(),
       type: values.type.trim(),
       description: values.description.trim(),
+      large_only: values.large_only,
+      learn_note: values.learn_note.trim(),
     };
     try {
       // A book skill's first edit makes the campaign's version of it (CAT-TWEAK-01).
@@ -140,6 +147,8 @@ export function useSkillForm({
     values,
     setName: (name: string) => setValues((prev) => ({ ...prev, name })),
     setDescription: (description: string) => setValues((prev) => ({ ...prev, description })),
+    setLearning: (change: Partial<Pick<SkillFormValues, "large_only" | "learn_note">>) =>
+      setValues((prev) => ({ ...prev, ...change })),
     typeField,
     fieldErrors: fieldErrors.errors,
     nameTaken,

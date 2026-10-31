@@ -10,6 +10,7 @@ from apps.campaigns.models import (
     CampaignRole,
     PivotalMoment,
 )
+from apps.hirelings.fees import make_fee
 from apps.items.models import Item
 from apps.special.models import Special
 from apps.warbands.models import (
@@ -732,7 +733,7 @@ class BattleApiTests(APITestCase):
             warband=self.owner_warband,
             name="Johann",
             unit_type="Pit Fighter",
-            upkeep_price=15,
+            upkeep_fee=make_fee(gold=15),
         )
         player_hero = Hero.objects.create(
             warband=self.player_warband,
@@ -1332,7 +1333,7 @@ class BattleApiTests(APITestCase):
             warband=self.owner_warband,
             name="Johann",
             unit_type="Pit Fighter",
-            upkeep_price=15,
+            upkeep_fee=make_fee(gold=15),
         )
         player_hero = Hero.objects.create(
             warband=self.player_warband,
@@ -1466,7 +1467,7 @@ class BattleApiTests(APITestCase):
             warband=self.owner_warband,
             name="Johann",
             unit_type="Pit Fighter",
-            upkeep_price=15,
+            upkeep_fee=make_fee(gold=15),
         )
         player_hero = Hero.objects.create(
             warband=self.player_warband,
@@ -2991,7 +2992,7 @@ class BattleApiTests(APITestCase):
             initiative=2,
             attacks=3,
             leadership=7,
-            upkeep_price=30,
+            upkeep_fee=make_fee(gold=30),
         )
         owner_group = HenchmenGroup.objects.create(
             warband=self.owner_warband,
@@ -3033,7 +3034,7 @@ class BattleApiTests(APITestCase):
         self.assertNotIn("xp", hero_entry)
 
         hireling_entry = owner_roster["hirelings"][0]
-        self.assertEqual(hireling_entry["upkeepPrice"], 30)
+        self.assertEqual(hireling_entry["upkeepFee"]["gold"], 30)
         self.assertEqual(hireling_entry["items"][0]["name"], "Healing Herbs")
 
         henchmen_group_entry = owner_roster["henchmenGroups"][0]

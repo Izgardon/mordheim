@@ -1,0 +1,76 @@
+/**
+ * Hire fees and upkeep (the fees and skill lists step), as the server stores them on a hired
+ * sword, a dramatis persona and a warband's hireling: a kind, gold, dice, resources and a note.
+ * The server owns what a resource line matches (`names`); the pages only show it.
+ */
+export type FeeKind = "gold" | "replaces_hero" | "special" | "none";
+
+export type FeeResource = {
+  resource: string;
+  amount: number;
+  /** Every name of a warband counter that pays it ("Wyrdstone shards" pays Wyrdstone). */
+  names?: string[];
+};
+
+export type Fee = {
+  kind: FeeKind;
+  /** Null: no gold in the fee. */
+  gold: number | null;
+  /** D6 rolled and added when hiring ("70 + 3D6"), times the multiplier when there is one. */
+  dice: number | null;
+  dice_multiplier: number | null;
+  resources: FeeResource[];
+  /** The rest: a footnote ("15 gc*"), another way to pay. */
+  note: string;
+};
+
+export const FEE_KINDS: { value: FeeKind; label: string }[] = [
+  { value: "gold", label: "A fee" },
+  { value: "replaces_hero", label: "Takes a hero's place" },
+  { value: "special", label: "See his rules" },
+  { value: "none", label: "None" },
+];
+
+export const blankFee = (): Fee => ({
+  kind: "gold",
+  gold: null,
+  dice: null,
+  dice_multiplier: null,
+  resources: [],
+  note: "",
+});
+
+/** An older payload without a fee reads as a blank one. */
+export const feeOf = (fee: Fee | null | undefined): Fee => ({ ...blankFee(), ...(fee ?? {}) });
+
+/** "70 gc + 3D6", "90 gc + 5 Campaign points", "1 Wyrdstone", "Takes a hero's place", "-". */
+export function formatFee(raw: Fee | null | undefined) {
+  const fee = feeOf(raw);
+  if (fee.kind === "none") return "None";
+  if (fee.kind === "replaces_hero") return "Takes a hero's place";
+  if (fee.kind === "special") return "See his rules";
+  const parts = [
+    fee.gold !== null ? `${fee.gold} gc` : "",
+    fee.dice ? `${fee.dice}D6${fee.dice_multiplier ? `×${fee.dice_multiplier}` : ""}` : "",
+    ...fee.resources.map((line) => `${line.amount} ${line.resource}`),
+  ].filter(Boolean);
+  return parts.join(" + ") || "-";
+}
+
+const key = (name: string) => name.trim().toLowerCase().replace(/\s+/g, " ");
+
+/** The warband's counter that pays a fee's resource line (by the server's `names`), if any. */
+export function matchCounter<T extends { name: string }>(
+  line: Pick<FeeResource, "resource" | "names">,
+  counters: T[]
+) {
+  const names = line.names?.length ? line.names : [key(line.resource)];
+  return counters.find((counter) => names.includes(key(counter.name))) ?? null;
+}
+
+/** The gold a fee asks before anyone edits it: its gold plus the dice roll times the multiplier. */
+export function feeGold(raw: Fee | null | undefined, roll: number | null = null) {
+  const fee = feeOf(raw);
+  if (fee.kind !== "gold") return 0;
+  return (fee.gold ?? 0) + (roll !== null && fee.dice ? roll * (fee.dice_multiplier ?? 1) : 0);
+}

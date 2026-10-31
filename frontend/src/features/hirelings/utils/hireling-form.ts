@@ -12,6 +12,7 @@ import {
   type WhoCanDraft,
 } from "@/features/catalogue/utils/who-can-draft";
 
+import { feeDraftOf, feeFromDraft, type FeeDraft } from "../components/fees/fee-draft";
 import type { HirelingCatalogueConfig } from "../hireling-catalogue-kinds";
 import type {
   HirelingProfileDetail,
@@ -26,10 +27,8 @@ export const HIRELING_SKILL_TYPES = [...Object.values(skillAbbrevToType), "Caval
 export type HirelingProfileValues = BestiaryCoreValues & {
   race_id: number | null;
   race_label: string;
-  hire_cost: string;
-  hire_cost_expression: string;
-  upkeep_cost: string;
-  upkeep_cost_expression: string;
+  hire_fee: FeeDraft;
+  upkeep_fee: FeeDraft;
   rating: string;
   available_skill_types: string[];
   stays: HirelingStays;
@@ -49,10 +48,8 @@ export function hirelingValuesOf(entry: HirelingProfileDetail | null): HirelingP
       ...blankBestiaryCore(),
       race_id: null,
       race_label: "",
-      hire_cost: "",
-      hire_cost_expression: "",
-      upkeep_cost: "",
-      upkeep_cost_expression: "",
+      hire_fee: feeDraftOf(null),
+      upkeep_fee: feeDraftOf(null),
       rating: "",
       available_skill_types: [],
       stays: "always",
@@ -80,10 +77,8 @@ export function hirelingValuesOf(entry: HirelingProfileDetail | null): HirelingP
     caster: entry.caster || "No",
     race_id: entry.race_id ?? null,
     race_label: entry.race_label ?? "",
-    hire_cost: text(entry.hire_cost),
-    hire_cost_expression: entry.hire_cost_expression ?? "",
-    upkeep_cost: text(entry.upkeep_cost),
-    upkeep_cost_expression: entry.upkeep_cost_expression ?? "",
+    hire_fee: feeDraftOf(entry.hire_fee),
+    upkeep_fee: feeDraftOf(entry.upkeep_fee),
     rating: text(entry.rating),
     available_skill_types: entry.available_skill_types ?? [],
     stays: entry.stays ?? "always",
@@ -93,7 +88,7 @@ export function hirelingValuesOf(entry: HirelingProfileDetail | null): HirelingP
   };
 }
 
-/** A blank cost is null (no fee in gold); anything else is a number. */
+/** A blank number is null; anything else is a number. */
 const cost = (value: string) => (value.trim() === "" ? null : Number(value));
 
 /** "4", "4+" or "-1" as a whole number (0+ included); blank or unreadable is no save. */
@@ -115,10 +110,8 @@ export function hirelingPayload(
     armour_save: armourSave(values.armour_save),
     race_id: values.race_id,
     race_label: values.race_label.trim(),
-    hire_cost: cost(values.hire_cost),
-    hire_cost_expression: values.hire_cost_expression.trim(),
-    upkeep_cost: cost(values.upkeep_cost),
-    upkeep_cost_expression: values.upkeep_cost_expression.trim(),
+    hire_fee: feeFromDraft(values.hire_fee),
+    upkeep_fee: feeFromDraft(values.upkeep_fee),
     rating: cost(values.rating),
     available_skill_types: values.available_skill_types,
     for_everyone: values.who.forEveryone,

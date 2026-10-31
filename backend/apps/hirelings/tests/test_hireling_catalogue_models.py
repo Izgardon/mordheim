@@ -37,8 +37,8 @@ class HirelingCatalogueModelTests(TestCase):
         cls.skill = Skill.objects.create(name="Sprint", type="Speed")
 
     def test_both_tables_carry_the_catalogue_columns_the_profile_and_the_same_links(self):
-        profile = {"name", "description", "armour_save", "large", "caster", "race", "race_label", "hire_cost"}
-        profile |= {"hire_cost_expression", "upkeep_cost", "upkeep_cost_expression", "rating", "grade"}
+        profile = {"name", "description", "armour_save", "large", "caster", "race", "race_label", "hire_fee"}
+        profile |= {"upkeep_fee", "rating", "grade"}
         profile |= {"available_skill_types", *STATS}
         for model in HIRELING_CATALOGUES:
             with self.subTest(model=model.__name__):

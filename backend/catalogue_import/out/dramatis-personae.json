@@ -47,8 +47,22 @@
       }
     ],
     "dramatis_persona": {
-      "hire_cost": 70,
-      "upkeep_cost": 30,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 70,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 30,
       "grade": "1b",
       "race": "Human",
@@ -107,8 +121,22 @@
       }
     ],
     "dramatis_persona": {
-      "hire_cost": 150,
-      "upkeep_cost": null,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 150,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 100,
       "grade": "core",
       "race": "Elf",
@@ -162,8 +190,22 @@
     "spells": [],
     "equipment": [],
     "dramatis_persona": {
-      "hire_cost": 30,
-      "upkeep_cost": 30,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 35,
       "grade": "2a",
       "race": "Daemon",
@@ -225,8 +267,32 @@
       }
     ],
     "dramatis_persona": {
-      "hire_cost": null,
-      "upkeep_cost": null,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 90,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [
+          {
+            "resource": "Campaign points",
+            "amount": 5
+          }
+        ],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [
+          {
+            "resource": "Campaign points",
+            "amount": 1
+          }
+        ],
+        "note": ""
+      },
       "rating": 130,
       "grade": "1c",
       "race": "Chaos Champion",
@@ -289,8 +355,22 @@
       }
     ],
     "dramatis_persona": {
-      "hire_cost": null,
-      "upkeep_cost": null,
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 105,
       "grade": "core",
       "race": "Human",
@@ -374,8 +454,22 @@
       }
     ],
     "dramatis_persona": {
-      "hire_cost": 150,
-      "upkeep_cost": null,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 150,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 75,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "75 gc*"
+      },
       "rating": 90,
       "grade": "1a",
       "race": "Vampire",
@@ -428,8 +522,22 @@
     "spells": [],
     "equipment": [],
     "dramatis_persona": {
-      "hire_cost": 65,
-      "upkeep_cost": 15,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 65,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 85,
       "grade": "1b",
       "race": "Human",
@@ -475,8 +583,22 @@
     "spells": [],
     "equipment": [],
     "dramatis_persona": {
-      "hire_cost": null,
-      "upkeep_cost": null,
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": null,
       "grade": "1b",
       "race": "Human",
@@ -549,8 +671,22 @@
       }
     ],
     "dramatis_persona": {
-      "hire_cost": 85,
-      "upkeep_cost": null,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 85,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 70,
       "grade": "1b",
       "race": "Druchii",
@@ -597,8 +733,22 @@
     "spells": [],
     "equipment": [],
     "dramatis_persona": {
-      "hire_cost": 70,
-      "upkeep_cost": 30,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 70,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 70,
       "grade": "1b",
       "race": "Human",
@@ -657,8 +807,32 @@
     "spells": [],
     "equipment": [],
     "dramatis_persona": {
-      "hire_cost": null,
-      "upkeep_cost": null,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 75,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [
+          {
+            "resource": "Campaign points",
+            "amount": 3
+          }
+        ],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [
+          {
+            "resource": "Campaign points",
+            "amount": 2
+          }
+        ],
+        "note": ""
+      },
       "rating": 110,
       "grade": "1c",
       "race": "Human",
@@ -727,8 +901,27 @@
       }
     ],
     "dramatis_persona": {
-      "hire_cost": 75,
-      "upkeep_cost": null,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 75,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [
+          {
+            "resource": "Treasure",
+            "amount": 1
+          }
+        ],
+        "note": ""
+      },
       "rating": 75,
       "grade": "1b",
       "race": "Human",
@@ -797,8 +990,22 @@
       }
     ],
     "dramatis_persona": {
-      "hire_cost": 120,
-      "upkeep_cost": null,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 120,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 40,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "40 gc*"
+      },
       "rating": 90,
       "grade": "1c",
       "race": "Human",
@@ -854,8 +1061,22 @@
       }
     ],
     "dramatis_persona": {
-      "hire_cost": 70,
-      "upkeep_cost": 30,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 70,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 60,
       "grade": "core",
       "race": "Human",
@@ -909,8 +1130,22 @@
     "spells": [],
     "equipment": [],
     "dramatis_persona": {
-      "hire_cost": 80,
-      "upkeep_cost": 30,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 80,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 45,
       "grade": "1b",
       "race": "Djinn",
@@ -972,8 +1207,22 @@
       }
     ],
     "dramatis_persona": {
-      "hire_cost": 60,
-      "upkeep_cost": 25,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 60,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 35,
       "grade": "1c",
       "race": "Human",
@@ -1070,8 +1319,22 @@
       }
     ],
     "dramatis_persona": {
-      "hire_cost": 60,
-      "upkeep_cost": 25,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 60,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 35,
       "grade": "1c",
       "race": "Human",
@@ -1143,8 +1406,22 @@
       }
     ],
     "dramatis_persona": {
-      "hire_cost": 80,
-      "upkeep_cost": 25,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 80,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 60,
       "grade": "1c",
       "race": "Hobgoblin",
@@ -1190,8 +1467,22 @@
     "spells": [],
     "equipment": [],
     "dramatis_persona": {
-      "hire_cost": 80,
-      "upkeep_cost": 30,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 80,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 25,
       "grade": "1b",
       "race": "Human",
@@ -1236,8 +1527,32 @@
     "spells": [],
     "equipment": [],
     "dramatis_persona": {
-      "hire_cost": null,
-      "upkeep_cost": null,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [
+          {
+            "resource": "Wyrdstone",
+            "amount": 1
+          }
+        ],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [
+          {
+            "resource": "Wyrdstone",
+            "amount": 1
+          }
+        ],
+        "note": ""
+      },
       "rating": 85,
       "grade": "1a",
       "race": "Human",
@@ -1300,8 +1615,22 @@
       }
     ],
     "dramatis_persona": {
-      "hire_cost": null,
-      "upkeep_cost": null,
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 70,
       "grade": "1b",
       "race": "Amazon",
@@ -1354,8 +1683,22 @@
     "spells": [],
     "equipment": [],
     "dramatis_persona": {
-      "hire_cost": null,
-      "upkeep_cost": 35,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 70,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "Sigmund Sprandle may also be hired in the payment of one body part. If you wish to do this then a chosen Hero suffers one Severe Arm Wound and may only use one single handed weapon from now on."
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 35,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 65,
       "grade": "2a",
       "race": "Undead",
@@ -1404,8 +1747,22 @@
       }
     ],
     "dramatis_persona": {
-      "hire_cost": 75,
-      "upkeep_cost": 30,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 75,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 55,
       "grade": "2a",
       "race": "Human",
@@ -1458,8 +1815,22 @@
     "spells": [],
     "equipment": [],
     "dramatis_persona": {
-      "hire_cost": 40,
-      "upkeep_cost": null,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 40,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 30,
       "grade": "2a",
       "race": "Human",
@@ -1531,8 +1902,22 @@
     "spells": [],
     "equipment": [],
     "dramatis_persona": {
-      "hire_cost": 100,
-      "upkeep_cost": null,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 100,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 80,
       "grade": "2a",
       "race": "Undead",
@@ -1578,8 +1963,22 @@
     "spells": [],
     "equipment": [],
     "dramatis_persona": {
-      "hire_cost": null,
-      "upkeep_cost": null,
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": null,
       "grade": "1b",
       "race": "Human",
@@ -1637,8 +2036,22 @@
       }
     ],
     "dramatis_persona": {
-      "hire_cost": 30,
-      "upkeep_cost": null,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 60,
       "grade": "1a",
       "race": "Human",
@@ -1693,8 +2106,22 @@
       }
     ],
     "dramatis_persona": {
-      "hire_cost": 80,
-      "upkeep_cost": 35,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 80,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 35,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 70,
       "grade": "core",
       "race": "Skaven",
@@ -1739,8 +2166,22 @@
     "spells": [],
     "equipment": [],
     "dramatis_persona": {
-      "hire_cost": 70,
-      "upkeep_cost": 30,
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 70,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": null,
       "grade": "2a",
       "race": "Human",
@@ -1782,8 +2223,22 @@
     "spells": [],
     "equipment": [],
     "dramatis_persona": {
-      "hire_cost": null,
-      "upkeep_cost": null,
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
       "rating": 40,
       "grade": "2a",
       "race": "Human",

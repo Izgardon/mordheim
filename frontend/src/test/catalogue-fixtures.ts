@@ -3,6 +3,7 @@
  * (`campaign_id: null`) and the campaign's own rows, already merged by the server (a campaign
  * row hides every book row of its name, BUG-18). Pages read these through `useCatalogue`.
  */
+import { blankFee } from "@/features/hirelings/fees";
 import type { BestiaryEntrySummary } from "@/features/bestiary/types/bestiary-types";
 import type { HirelingProfile } from "@/features/hirelings/types/hireling-catalogue-types";
 import type { Item, ItemAvailability } from "@/features/items/types/item-types";
@@ -160,10 +161,8 @@ export const hiredSword = (overrides: Partial<HirelingProfile> = {}): HirelingPr
   race_id: 4,
   race_name: "Ogre",
   race_label: "Ogre",
-  hire_cost: 80,
-  hire_cost_expression: "",
-  upkeep_cost: 30,
-  upkeep_cost_expression: "",
+  hire_fee: { ...blankFee(), gold: 80 },
+  upkeep_fee: { ...blankFee(), gold: 30 },
   rating: 25,
   available_skill_types: ["Combat", "Strength"],
   grade: "1a",
@@ -188,8 +187,8 @@ export const pitFighter = hiredSword({
   race_id: 1,
   race_name: "Human",
   race_label: "Human",
-  hire_cost: 35,
-  upkeep_cost: 15,
+  hire_fee: { ...blankFee(), gold: 35 },
+  upkeep_fee: { ...blankFee(), gold: 15 },
   rating: 12,
   available_skill_types: ["Combat"],
   grade: "",

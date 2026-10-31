@@ -11,11 +11,8 @@ import {
 } from "@/features/reference/ReferenceDetail";
 import { ProfileStrip } from "@/features/reference/profile";
 
-import {
-  formatHirelingCost,
-  hirelingRace,
-  type HirelingCatalogueConfig,
-} from "../hireling-catalogue-kinds";
+import { formatFee } from "../fees";
+import { hirelingRace, type HirelingCatalogueConfig } from "../hireling-catalogue-kinds";
 import { useHirelingProfileDetail } from "../hooks/useHirelingProfileDetail";
 import type { HirelingProfile } from "../types/hireling-catalogue-types";
 import { personaTermsLine } from "../utils/hireling-display";
@@ -104,14 +101,11 @@ export default function HirelingDetail(props: HirelingDetailProps) {
       {entry.description?.trim() ? <Flavour>{entry.description}</Flavour> : null}
       <FactLine
         facts={[
-          {
-            label: "Hire fee",
-            value: formatHirelingCost(entry.hire_cost, entry.hire_cost_expression),
-          },
-          {
-            label: "Upkeep",
-            value: formatHirelingCost(entry.upkeep_cost, entry.upkeep_cost_expression),
-          },
+          { label: "Hire fee", value: formatFee(entry.hire_fee) },
+          { label: "Upkeep", value: formatFee(entry.upkeep_fee) },
+          ...[entry.hire_fee?.note, entry.upkeep_fee?.note]
+            .filter((note): note is string => Boolean(note))
+            .map((note) => ({ label: "Note", value: note })),
           ...(entry.rating !== null ? [{ label: "Rating", value: `+${entry.rating}` }] : []),
           ...(terms ? [{ label: "Terms", value: terms }] : []),
         ]}

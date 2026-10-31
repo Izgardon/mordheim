@@ -1,5 +1,5 @@
 {
-  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too. extra_warband_types: warbands neither Broheim nor mordheimer lists. group_members: add/remove type slugs per group slug. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_warbands: item name -> the only type slugs that may buy it, and why. item_notes: item name -> a soft note added to each of its price rows. whole_names: names matched as a whole on the same-name list, not split at the slash. setting_assignments: kind (skills, hired_swords, dramatis_personae) -> our row's name as the report shows it (\"Sniper (Hochland Bandits)\") -> setting slug.",
+  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too. extra_warband_types: warbands neither Broheim nor mordheimer lists. group_members: add/remove type slugs per group slug. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_warbands: item name -> the only type slugs that may buy it, and why. item_notes: item name -> a soft note added to each of its price rows. whole_names: names matched as a whole on the same-name list, not split at the slash. setting_assignments: kind (skills, hired_swords, dramatis_personae) -> our row's name as the report shows it (\"Sniper (Hochland Bandits)\") -> setting slug. skill_lists: a skill list's name -> who learns the skills of it mordheimer lacks (for_everyone, or warbands as {type} or {group} slugs), large_only (a Large unit's skill) and a note shown when learning. drop_skills: our skill rows left out (label -> why). extra_skills: skill rows our table lacks. skill_descriptions: a skill row's description put right (label -> text).",
   "warband_aliases": {
     "Stromfels Reavers": ["shallows-beasts"]
   },
@@ -30,5 +30,32 @@
     "Stromfels Heart": "Priest of Stromfels only"
   },
   "whole_names": ["Harpoon Gun/Crossbow"],
-  "setting_assignments": {}
+  "skill_lists": {
+    "Animal": { "for_everyone": true },
+    "Large Special": { "for_everyone": true, "large_only": true },
+    "Skaven Metal Mongers": { "warbands": [{ "type": "metal-mongers" }] },
+    "Undead Vampires": { "warbands": [{ "type": "undead" }], "note": "Vampire only" },
+    "Pirates (TBMF)": { "warbands": [{ "type": "pirates" }] },
+    "Dwarf Exiled Engineers": { "warbands": [{ "type": "guild-of-disgraced-engineers" }] }
+  },
+  "drop_skills": {
+    "Knowledge of Myths and Legends (Strigany)": "left out of the catalogue for now (William)",
+    "Prize-fighter (Strigany)": "left out of the catalogue for now (William)",
+    "Animal Charmer (eg. Dog Charmer) (Strigany)": "left out of the catalogue for now (William)",
+    "Skills list prohibitions (Saurus)": "a rules note, not a skill (William): Saurus can't take Academic skills or use missile weapons"
+  },
+  "extra_skills": [
+    {
+      "name": "Master Inventor",
+      "type": "Dwarf Exiled Engineers",
+      "description": "The Engineer may now attempt D3+1 inventions in the post-game phase rather than 1. Expelled Engineer Only. (MiM)",
+      "source": "the Guild of Disgraced Engineers PDF (Broheim, Mutiny in Marienburg), Dwarf Engineer Skill List"
+    }
+  ],
+  "skill_descriptions": {
+    "Quick Thinker (Dwarf Exiled Engineers)": "The dwarf may add +1 to any roll on the experimental weapons chart. (MiM)"
+  },
+  "setting_assignments": {
+    "skills": { "Master Inventor (Dwarf Exiled Engineers)": "mutiny-in-marienburg" }
+  }
 }

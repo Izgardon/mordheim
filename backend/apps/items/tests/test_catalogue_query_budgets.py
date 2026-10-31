@@ -18,6 +18,7 @@ from rest_framework.serializers import BaseSerializer
 from apps.bestiary.models import BestiaryEntryItem, BestiaryEntrySkill, BestiaryEntrySpecial
 from apps.core.models import CatalogueRemoval
 from apps.core.testing import book_warband_type
+from apps.hirelings.fees import make_fee
 from apps.items.models import Item, ItemAvailabilityWarband, ItemRule, ItemRuleLink
 from apps.skills.models import Skill
 from apps.special.models import Special
@@ -182,7 +183,7 @@ class BestiaryDetailBudgetTests(CatalogueTestCase):
         super().setUp()
         self.client.force_authenticate(user=self.owner)
         self.entry = make_entry(BESTIARY, "Bounty Hound")
-        self.hired_sword = make_entry(HIRED_SWORDS, "Bounty Hunter", hire_cost=40)
+        self.hired_sword = make_entry(HIRED_SWORDS, "Bounty Hunter", hire_fee=make_fee(gold=40))
         self.only = book_warband_type("Mordheim")
         for skill in self.infiltration[:2]:
             BestiaryEntrySkill.objects.create(bestiary_entry=self.entry, skill=skill)

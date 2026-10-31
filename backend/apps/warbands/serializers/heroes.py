@@ -7,6 +7,7 @@ from apps.warbands.units.kinds import HERO
 from apps.warbands.units.serializers import (
     COMPANION_FIELDS,
     MISSING_FIELDS,
+    PICK_FIELDS,
     STAT_FIELDS,
     UnitDetailSerializer,
     UnitSummarySerializer,
@@ -49,6 +50,7 @@ class HeroSummarySerializer(UnitSummarySerializer):
             "price",
             "xp",
             "level_up",
+            *PICK_FIELDS,
             "is_leader",
             "large",
             "caster",
@@ -82,6 +84,7 @@ class HeroDetailSerializer(UnitDetailSerializer):
             "xp",
             "kills",
             "level_up",
+            *PICK_FIELDS,
             "deeds",
             "is_leader",
             "large",
@@ -122,6 +125,7 @@ class HeroUpdateSerializer(UnitWriteSerializer):
         fields = (
             *WRITE_FIELDS,
             *MISSING_FIELDS,
+            *PICK_FIELDS,
             "item_reason",
             "item_action",
             "item_price",

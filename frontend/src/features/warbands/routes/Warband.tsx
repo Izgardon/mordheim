@@ -94,7 +94,8 @@ export default function Warband() {
     userId: user?.id,
     enabled: mine && canEdit,
     isMobile,
-    onHire: () => setRecruiting("hireling"),
+    // the hire picker (the catalogue, with the custom hire), as the roster's Hire
+    onHire: () => navigate(`/campaigns/${campaignId}/hired-swords?warband=${warbandId}`),
     onStore: () => openStore({}),
   } as const;
 
@@ -151,6 +152,10 @@ export default function Warband() {
                   heroes={sheet.heroes}
                   henchmenGroups={sheet.henchmenGroups}
                   hirelings={sheet.hirelings}
+                  counts={{
+                    hero_count: warband?.hero_count,
+                    hireling_count: warband?.hireling_count,
+                  }}
                   canEdit={canEdit}
                   onLoadout={setLoadoutFor}
                   onRecruit={(kind) =>

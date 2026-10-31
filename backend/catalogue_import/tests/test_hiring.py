@@ -2,25 +2,10 @@ from types import SimpleNamespace
 
 from django.test import SimpleTestCase
 
-from catalogue_import.hiring import HiringLog, build_who_can, cost_terms, who
+from catalogue_import.fees import fee
+from catalogue_import.hiring import HiringLog, build_who_can, who
+from catalogue_import.skill_lists import SkillLists
 from catalogue_import.tests.world import world
-
-
-class CostTermsTests(SimpleTestCase):
-    def test_a_plain_number_is_gold_with_no_special_text(self) -> None:
-        self.assertEqual(cost_terms("25"), (25, ""))
-        self.assertEqual(cost_terms(40), (40, ""))
-        self.assertEqual(cost_terms("30 gc"), (30, ""))
-
-    def test_a_number_with_more_is_gold_plus_the_whole_text(self) -> None:
-        self.assertEqual(cost_terms("70 +3D6"), (70, "70 + 3D6"))
-        self.assertEqual(cost_terms("15 gc*"), (15, "15 gc*"))
-
-    def test_anything_else_is_only_text(self) -> None:
-        self.assertEqual(cost_terms("2 treasures"), (None, "2 treasures"))
-        self.assertEqual(cost_terms("1 wyrdstone"), (None, "1 wyrdstone"))
-        self.assertEqual(cost_terms("Hero"), (None, "Hero"))
-        self.assertEqual(cost_terms(None), (None, ""))
 
 
 class WhoTests(SimpleTestCase):
@@ -37,11 +22,12 @@ class WhoTests(SimpleTestCase):
 
 
 class WhoCanTests(SimpleTestCase):
-    def build(self, **sources: list) -> tuple[dict, HiringLog]:
-        _types, resolver, groups, _ctx = world()
+    def build(self, overrides: dict | None = None, **sources: list) -> tuple[dict, HiringLog]:
+        types, resolver, groups, _ctx = world()
         base: dict[str, list] = {"skills": [], "hired_swords": [], "personae": [], "our_skills": []}
         log = HiringLog()
-        return build_who_can(SimpleNamespace(**{**base, **sources}), resolver, groups, log), log
+        lists = SkillLists(overrides or {}, types, groups)
+        return build_who_can(SimpleNamespace(**{**base, **sources}), resolver, groups, log, lists), log
 
     def test_hired_swords_carry_their_list_note_and_fees(self) -> None:
         sword = {
@@ -60,14 +46,12 @@ class WhoCanTests(SimpleTestCase):
                     "for_everyone": False,
                     "warbands": [{"type": "skaven", "excluded": False}],
                     "note": "Skaven warbands only.",
-                    "hire_cost": None,
-                    "hire_cost_special": "2 treasures",
-                    "upkeep_cost": 10,
-                    "upkeep_cost_special": "",
+                    "hire_fee": fee("gold", resources=[{"resource": "Treasure", "amount": 2}]),
+                    "upkeep_fee": fee("gold", 10),
                 }
             ],
         )
-        self.assertEqual(log.special_costs, [("hired swords", "Ratcatcher", "2 treasures", "")])
+        self.assertEqual([(kind, name, hire) for kind, name, hire, *_read in log.fees], [("hired swords", "Ratcatcher", "2 treasures")])  # fmt: skip
 
     def test_a_skill_takes_its_entry_else_a_general_list_else_its_lists_name(self) -> None:
         theirs = [

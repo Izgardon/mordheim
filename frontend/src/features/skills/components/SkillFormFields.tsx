@@ -1,8 +1,11 @@
 import { CatalogueTypeField } from "@/features/catalogue/components/CatalogueTypeField";
+import { Input } from "@/components/ui/input";
 import {
   CatalogueDescriptionField,
+  CatalogueField,
   CatalogueNameField,
   INLINE_GRID_CLASS,
+  fieldId,
   type FormLayout,
 } from "@/features/catalogue/components/form-layout";
 
@@ -22,7 +25,10 @@ type SkillFormFieldsProps = {
   idSuffix?: string;
 };
 
-/** A skill's name, list and description, inline on the Skills page or in a dialog. */
+/**
+ * A skill's name, list and description, inline on the Skills page or in a dialog, and who learns it:
+ * a Large unit's skill (the pages warn for any other unit) and a note shown when learning it.
+ */
 export default function SkillFormFields({ layout, form, idSuffix = "" }: SkillFormFieldsProps) {
   const isDialog = layout === "dialog";
   const fields = (
@@ -51,6 +57,28 @@ export default function SkillFormFields({ layout, form, idSuffix = "" }: SkillFo
         placeholder="Describe the skill."
         className={isDialog ? undefined : "sm:col-span-2"}
       />
+      <CatalogueField
+        layout={layout}
+        label="Note when learning"
+        htmlFor={fieldId(layout, `skill-learn-note${idSuffix}`)}
+      >
+        <Input
+          id={fieldId(layout, `skill-learn-note${idSuffix}`)}
+          value={form.values.learn_note}
+          maxLength={200}
+          placeholder="e.g. Vampire only"
+          onChange={(event) => form.setLearning({ learn_note: event.target.value })}
+        />
+      </CatalogueField>
+      <label className="flex items-center gap-2 self-end text-sm text-ink">
+        <input
+          type="checkbox"
+          checked={form.values.large_only}
+          onChange={(event) => form.setLearning({ large_only: event.target.checked })}
+          className="h-4 w-4 accent-[var(--color-accent)]"
+        />
+        Large units only
+      </label>
     </>
   );
   return isDialog ? fields : <div className={INLINE_GRID_CLASS}>{fields}</div>;

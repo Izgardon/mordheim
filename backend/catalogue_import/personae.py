@@ -5,14 +5,15 @@ its name, its fluff as the description, its profile, its special rules as specia
 names (linked by name; a name the book lacks is left out with a warning), and its hire terms. A pair or a persona
 with several guises (Ulli & Marquand, Luthor Wolfenbaum) takes the entry's own profile, else its first fighter's, and
 lists the fighters in its description. Who may hire it, its fees and its hiring sentence come from ``who-can.json`` by
-the same name, a fee that isn't plain gold kept as text; the fees here are only the plain numbers. One who stays a
-single battle (a "Wanderer") says so; its spell lists ("knows all six Prayers of Sigmar") are kept as a special.
+the same name; its fees here are read the same way (fees.py), for a seed run without the import's lists. One
+who stays a single battle (a "Wanderer") says so; its spell lists ("knows all six Prayers of Sigmar") are kept as a special.
 """
 
 import re
 from typing import Any
 
 from catalogue_import.common import unique
+from catalogue_import.fees import read_fee
 from catalogue_import.text import clean_inline
 
 STATS = {
@@ -35,10 +36,6 @@ def number(value: object) -> int:
     """A characteristic: the leading number of "3(4)" or "3", 0 for anything else."""
     match = LEADING_NUMBER.match(str(value)) if value is not None else None
     return int(match.group(1)) if match else 0
-
-
-def plain_fee(value: object) -> int | None:
-    return value if isinstance(value, int) else None
 
 
 def _name(text: str) -> str:
@@ -165,8 +162,8 @@ def persona_row(entry: dict[str, Any], catalogue: Catalogue) -> dict[str, Any]:
         "spells": [],
         "equipment": [{"item": item, "quantity": 1} for item in kit],
         "dramatis_persona": {
-            "hire_cost": plain_fee(entry.get("cost")),
-            "upkeep_cost": plain_fee(entry.get("upkeep")),
+            "hire_fee": read_fee(entry.get("cost"), upkeep=False).fee,
+            "upkeep_fee": read_fee(entry.get("upkeep"), upkeep=True).fee,
             "rating": entry.get("rating") if isinstance(entry.get("rating"), int) else None,
             "grade": clean_inline(str(entry.get("grade") or "")),
             "race": clean_inline(str(entry.get("race") or "")).title(),

@@ -12,6 +12,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from django.db.models import Count, F, IntegerField, OuterRef, Q, Subquery, Value
+from django.db.models.fields.json import KT
 from django.db.models.functions import Coalesce
 
 from apps.bestiary.models import MOUNT
@@ -73,14 +74,16 @@ class WarbandUnits:
 
     @property
     def hero_count(self) -> int:
-        """Heroes towards the hero cap: every hero on the roster."""
-        return len(self.heroes)
+        """Heroes towards the hero cap: every hero on the roster, and each hireling in a hero's place (the Priest of
+        Morr: the fees and skill lists step)."""
+        return len(self.heroes) + sum(1 for row in self.hirelings if row["fee_kind"] == "replaces_hero")
 
     @property
     def hireling_count(self) -> int:
         """Hired swords towards the hired-sword cap: blood-pacted ones don't count (decision 12), nor do dramatis
-        personae, which sit outside it (their rating counts like a hired sword's)."""
-        return sum(1 for row in self.hirelings if not row["blood_pacted"] and row["kind"] == "hired_sword")
+        personae, which sit outside it (their rating counts like a hired sword's), nor one in a hero's place."""
+        counted = (row for row in self.hirelings if not row["blood_pacted"] and row["kind"] == "hired_sword")
+        return sum(1 for row in counted if row["fee_kind"] != "replaces_hero")
 
     @property
     def unit_count(self) -> int:
@@ -128,7 +131,7 @@ def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
 
     hirelings = (
         on_roster(Hireling.objects.filter(warband_id__in=ids))
-        .annotate(mount_bonuses=mount_bonuses_array(HirelingItem, "hireling"))
+        .annotate(mount_bonuses=mount_bonuses_array(HirelingItem, "hireling"), fee_kind=KT("hire_fee__kind"))
         .order_by("id")
         .values(
             "id",
@@ -141,6 +144,7 @@ def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
             "blood_pacted",
             "missing_games",
             "mount_bonuses",
+            "fee_kind",
         )
     )
     for sword_row in hirelings:

@@ -1,6 +1,8 @@
 from django.db import models
 
-from .shared import RosterUnit, stat_constraints
+from apps.hirelings.fees import no_fee
+
+from .shared import PendingPicks, RosterUnit, stat_constraints
 from .warband import Warband
 
 HIRELING_KINDS = (("hired_sword", "Hired sword"), ("dramatis_persona", "Dramatis persona"))
@@ -8,7 +10,7 @@ INJURY_TABLES = (("henchman", "Henchman"), ("hero", "Hero"))  # a d6, or the cam
 STAYS = (("always", "Always"), ("one_battle", "One battle"))
 
 
-class Hireling(RosterUnit):
+class Hireling(RosterUnit, PendingPicks):
     """A hired sword or a dramatis persona in a warband: a copy of what it was hired as (or typed by hand) that keeps
     no link to the catalogue. `injury_table` is the hired sword's henchman d6 or the dramatis persona's hero table,
     and a house rule may change it; `stays` and `payment_note` come from a dramatis persona."""
@@ -22,9 +24,10 @@ class Hireling(RosterUnit):
         blank=True,
     )
     kind = models.CharField(max_length=20, choices=HIRELING_KINDS, default="hired_sword")
-    hire_cost_expression = models.CharField(max_length=300, default="", blank=True)  # as its catalogue entry's
-    upkeep_price = models.PositiveIntegerField(default=0)
-    upkeep_cost_expression = models.CharField(max_length=300, default="", blank=True)
+    # the fees it was hired for and is kept for (structured fees: apps/hirelings/fees.py), as its catalogue entry's
+    # or typed by hand; `price` is the gold its hire cost
+    hire_fee = models.JSONField(default=no_fee)
+    upkeep_fee = models.JSONField(default=no_fee)
     kills = models.PositiveIntegerField(default=0)
     caster = models.CharField(
         max_length=20,

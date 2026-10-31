@@ -3,10 +3,12 @@
 Upkeep (negative) and the battle reward (positive) are written together through the ledger
 (`ledger.record_entries`: one INSERT, one balance UPDATE on the warband row finalise already holds); finds join the
 stash at their own cost (services/stash.py; BUG-117: nothing is re-priced).
+An upkeep's resources (the fees and skill lists step) are paid from the warband's counters, the one each line names or
+else the one of its name, never below 0 (apps/warbands/units/services/fee_payments.py), and noted on the Upkeep row.
 """
 
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from django.db.models import F, Min
 
@@ -15,6 +17,7 @@ from apps.items.models import Item
 from apps.warbands.models import LedgerAction, WarbandResource
 from apps.warbands.services import ledger
 from apps.warbands.services.stash import add_costs
+from apps.warbands.units.services.fee_payments import Payment, ResourceLine, locked_counters, pay, sent_lines
 
 from ...validation.coerce import coerce_int
 from ...validation.unit_keys import parse_unit_key
@@ -32,6 +35,7 @@ class Exploration:
 class Finds:
     gold_crowns: int = 0
     items: list[dict] = field(default_factory=list)  # each found item as logged: id, name, type and cost
+    warnings: list[dict] = field(default_factory=list)  # an upkeep resource paid short, or by no counter
 
 
 def apply_exploration(context: FinaliseContext, exploration: dict) -> Exploration:
@@ -46,26 +50,52 @@ def apply_exploration(context: FinaliseContext, exploration: dict) -> Exploratio
     return Exploration(amount, context.resource_name)
 
 
-def upkeep_entry(context: FinaliseContext, upkeep: dict) -> ledger.Entry | None:
-    """The Upkeep row: each hired sword still on the roster after this battle, at the cost the draft gives him; one
+@dataclass
+class Upkeep:
+    """What the draft's upkeep charges: the Upkeep row (None when it charges nothing) and what paying its resources
+    warned about."""
+
+    entry: ledger.Entry | None
+    warnings: list[dict]
+
+
+def _owed(context: FinaliseContext, upkeep: dict) -> list[tuple[str, int, list[ResourceLine]]]:
+    """Each hired sword still on the roster after this battle, with the gold and resources the draft gives him; one
     missing games owes none for the battle he missed."""
-    if not upkeep.get("pay_upkeep", True):
-        return None
-    total, lines = 0, []
+    owed = []
     for unit_key, entry in upkeep.get("entries", {}).items():
         hireling = context.hirelings.get(parse_unit_key(unit_key)["unit_id"])
         if hireling is None or hireling.dead or hireling.dismissed_at is not None:  # left the roster
             continue
         if hireling.missing_games:  # read before finalise counts this battle off
             continue
-        if entry.get("cost") is None:
-            continue
-        cost = coerce_int(entry.get("cost"), field_name="postbattle upkeep cost", minimum=0, maximum=999999)
-        total += cost
-        lines.append(f"{(entry.get('unit_name') or hireling.name or unit_key)[:120]}: {cost} gc")
-    if total <= 0:
-        return None
-    return ledger.Entry(context.warband, LedgerAction.UPKEEP, -total, "Post-battle upkeep", notes="\n".join(lines))
+        name = (entry.get("unit_name") or hireling.name or unit_key)[:120]
+        cost = entry.get("cost")
+        gold = 0 if cost is None else coerce_int(cost, field_name="postbattle upkeep cost", minimum=0, maximum=999999)
+        lines = [replace(line, who=name) for line in sent_lines(entry.get("resources") or [])]
+        if cost is not None or lines:
+            owed.append((name, gold, lines))
+    return owed
+
+
+def upkeep_charge(context: FinaliseContext, upkeep: dict) -> Upkeep:
+    """The Upkeep row: each hired sword's gold, and his resources paid from the warband's counters (locked and written
+    once, only when some are owed), each noted on its line."""
+    if not upkeep.get("pay_upkeep", True):
+        return Upkeep(None, [])
+    owed = _owed(context, upkeep)
+    lines = [line for _name, _gold, resource_lines in owed for line in resource_lines]
+    payment = pay(lines, locked_counters(context.warband.id)) if lines else Payment()
+    notes, start = [], 0
+    for name, gold, resource_lines in owed:
+        paid = Payment(payment.paid[start : start + len(resource_lines)]).note
+        start += len(resource_lines)
+        notes.append(f"{name}: {gold} gc" + (f"; {paid}" if paid else ""))
+    total = sum(gold for _name, gold, _lines in owed)
+    if total <= 0 and not lines:
+        return Upkeep(None, payment.warnings)
+    entry = ledger.Entry(context.warband, LedgerAction.UPKEEP, -total, "Post-battle upkeep", notes="\n".join(notes))
+    return Upkeep(entry, payment.warnings)
 
 
 def _found_items(context: FinaliseContext, item_ids: list[int]) -> tuple[list[dict], dict[int, list[int | None]]]:
@@ -96,11 +126,12 @@ def apply_upkeep_and_finds(context: FinaliseContext, upkeep: dict, finds: dict) 
         for entry in finds.get("items", [])
     ]
     logged, costs = _found_items(context, item_ids) if item_ids else ([], {})
-    entries = [upkeep_entry(context, upkeep)]
+    charged = upkeep_charge(context, upkeep)  # its resources first: finalise already holds the warband's row
+    entries = [charged.entry]
     if gold > 0:
         notes = f"Postbattle finds from {context.battle.scenario}"[:2000]
         entries.append(ledger.Entry(context.warband, LedgerAction.REWARD, gold, "Battle reward", notes=notes))
     ledger.record_entries([entry for entry in entries if entry is not None])
     for item_id, item_costs in costs.items():
         add_costs(context.warband.id, item_id, item_costs)
-    return Finds(gold_crowns=gold, items=logged)
+    return Finds(gold_crowns=gold, items=logged, warnings=charged.warnings)

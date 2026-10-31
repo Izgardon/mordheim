@@ -3,7 +3,8 @@
 
 A list row is the entry with its race and who may hire it; a detail adds the skills, specials, spells and equipment
 (each item with its quantity). Both kinds have the same payload, and a dramatis persona adds `stays` and
-`payment_note`. A write is checked whole before anything is written (BUG-53): every linked id is the book's or the
+`payment_note`. The hire fee and upkeep are structured fees (fees.py), each resource line with the names that pay it. A
+write is checked whole before anything is written (BUG-53): every linked id is the book's or the
 campaign's (`context["campaign_id"]`, SEC-07) and lands on the campaign's current entry for it (CAT-TWEAK-03).
 """
 
@@ -33,6 +34,7 @@ from apps.warbands.access_lines import (
 )
 from apps.warbands.utils.armour_save import BEST_ARMOUR_SAVE, WORST_ARMOUR_SAVE
 
+from .fees import FeeField
 from .models import MAX_KIT_QUANTITY, DramatisPersona, HiredSword
 
 STAT_FIELDS = (
@@ -47,10 +49,8 @@ STAT_FIELDS = (
     "leadership",
 )
 COST_FIELDS = (
-    "hire_cost",
-    "hire_cost_expression",
-    "upkeep_cost",
-    "upkeep_cost_expression",
+    "hire_fee",
+    "upkeep_fee",
     "rating",
     "available_skill_types",
     "grade",
@@ -87,6 +87,8 @@ class HirelingProfileSerializer(serializers.ModelSerializer):
     setting_id = serializers.IntegerField(source="campaign_type_id", read_only=True)  # null: Mordheim (in_play.py)
     race_id = serializers.IntegerField(read_only=True, allow_null=True)
     race_name = serializers.SerializerMethodField()
+    hire_fee = FeeField(read_only=True)  # each resource line with what pays it (fees.py)
+    upkeep_fee = FeeField(read_only=True)
     warbands = AccessLineSerializer(source="warband_links", many=True, read_only=True)
 
     def get_race_name(self, profile: Any) -> str | None:
@@ -139,10 +141,6 @@ def _cost() -> serializers.IntegerField:
     return serializers.IntegerField(min_value=0, max_value=MAX_COST, allow_null=True, required=False)
 
 
-def _formula() -> serializers.CharField:
-    return serializers.CharField(max_length=120, allow_blank=True, allow_null=True, required=False)
-
-
 class HirelingProfileWriteSerializer(serializers.ModelSerializer):
     """A create or an edit of a campaign's hired sword or dramatis persona. A list it sends (skills, specials, spells,
     equipment, who may hire) replaces that list; a list it leaves out stays. The armour save and the kit's quantities
@@ -152,10 +150,8 @@ class HirelingProfileWriteSerializer(serializers.ModelSerializer):
         min_value=BEST_ARMOUR_SAVE, max_value=WORST_ARMOUR_SAVE, allow_null=True, required=False
     )
     race_id = CatalogueEntryField(source="race", queryset=Race.objects.all(), allow_null=True, required=False)
-    hire_cost = _cost()
-    hire_cost_expression = _formula()
-    upkeep_cost = _cost()
-    upkeep_cost_expression = _formula()
+    hire_fee = FeeField(required=False)
+    upkeep_fee = FeeField(required=False)
     rating = _cost()
     available_skill_types = serializers.ListField(child=serializers.CharField(max_length=80), required=False)
     skill_ids = CatalogueIdsField(rows=Skill.objects.all(), required=False)
@@ -163,12 +159,6 @@ class HirelingProfileWriteSerializer(serializers.ModelSerializer):
     spell_ids = CatalogueIdsField(rows=Spell.objects.all(), required=False)
     item_entries = EquipmentInputSerializer(many=True, required=False)
     warbands = AccessLineInputSerializer(many=True, required=False)
-
-    def validate_hire_cost_expression(self, value: str | None) -> str:
-        return value or ""
-
-    def validate_upkeep_cost_expression(self, value: str | None) -> str:
-        return value or ""
 
     def validate_item_entries(self, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Each item once (an item listed twice: its first quantity), as the campaign's current item for it, and at

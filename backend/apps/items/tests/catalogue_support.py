@@ -20,6 +20,7 @@ from apps.bestiary.models import BestiaryEntry
 from apps.campaigns.models import Campaign, CampaignMembershipPermission
 from apps.campaigns.tests.campaign_support import CampaignTestCase
 from apps.core.testing import book_warband_type
+from apps.hirelings.fees import make_fee
 from apps.hirelings.models import DramatisPersona, HiredSword
 from apps.items.models import Item, ItemAvailability, ItemAvailabilityWarband, ItemRule, ItemRuleLink
 from apps.races.models import Race
@@ -121,13 +122,13 @@ HIRED_SWORDS = CatalogueKind(
     "hired_swords",
     "hired-swords",
     HiredSword,
-    payload={"hire_cost": 30, "upkeep_cost": 15, "rating": 12, **STATS},
+    payload={"hire_fee": {"gold": 30}, "upkeep_fee": {"gold": 15}, "rating": 12, **STATS},
 )
 DRAMATIS_PERSONAE = CatalogueKind(
     "dramatis_personae",
     "dramatis-personae",
     DramatisPersona,
-    payload={"hire_cost": 25, "stays": "one_battle", "payment_note": "25 gc or 1 shard", **STATS},
+    payload={"hire_fee": {"gold": 25}, "stays": "one_battle", "payment_note": "25 gc or 1 shard", **STATS},
 )
 KINDS = (ITEMS, SKILLS, SPELLS, SPECIALS, RACES, BESTIARY, HIRED_SWORDS, DRAMATIS_PERSONAE)
 
@@ -147,8 +148,8 @@ def make_entry(kind: CatalogueKind, name: str, /, campaign: Campaign | None = No
         SPECIALS.key: {"type": "Ability"},
         RACES.key: dict(STATS),
         BESTIARY.key: {"kind": "creature", **STATS},
-        HIRED_SWORDS.key: {"hire_cost": 40, **STATS},
-        DRAMATIS_PERSONAE.key: {"hire_cost": 25, **STATS},
+        HIRED_SWORDS.key: {"hire_fee": make_fee(gold=40), **STATS},
+        DRAMATIS_PERSONAE.key: {"hire_fee": make_fee(gold=25), **STATS},
     }
     return kind.model._default_manager.create(name=name, campaign=campaign, **{**defaults[kind.key], **fields})
 
@@ -209,7 +210,6 @@ class CatalogueTestCase(CampaignTestCase):
         cls.heavy_armour = make_entry(ITEMS, "Heavy Armour", type="Armour", subtype="Armour", save_value="5+", cost=50)
         cls.infiltration = [Skill.objects.create(name="Infiltration", type=kind) for kind in INFILTRATION_TYPES]
         Skill.objects.create(name="Sprint", type="Speed")
-        Skill.objects.create(name="New Skill", type="Pending")  # the placeholder a level-up picks later
         cls.lifestealer = [
             Spell.objects.create(name="Lifestealer", type=lore) for lore in ("Necromancy", "Necromancy (Restless Dead)")
         ]
@@ -218,7 +218,7 @@ class CatalogueTestCase(CampaignTestCase):
         Special.objects.create(name="Priest", type="Caster")
         cls.human = make_entry(RACES, "Human")
         cls.warhound = make_entry(BESTIARY, "Warhound")
-        cls.ogre = make_entry(HIRED_SWORDS, "Ogre Bodyguard", hire_cost=80)
+        cls.ogre = make_entry(HIRED_SWORDS, "Ogre Bodyguard", hire_fee=make_fee(gold=80))
         cls.aenur = make_entry(DRAMATIS_PERSONAE, "Aenur")
 
     # Requests

@@ -22,6 +22,10 @@ class Skill(CatalogueEntry):
     description = models.TextField(max_length=4000, blank=True, default="")
     # who may learn it (the items rebuild): the general lists are for everyone, a special skill names its warbands
     for_everyone = models.BooleanField(default=True)
+    # the fees and skill lists step: a Large unit's skill (the pages warn for any other unit, never block), and a
+    # note shown when learning it ("Vampire only"), never checked
+    large_only = models.BooleanField(default=False)
+    learn_note = models.CharField(max_length=200, blank=True, default="")
 
     class Meta:
         db_table = "skill"

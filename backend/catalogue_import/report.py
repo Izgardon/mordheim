@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from catalogue_import.common import GRADE_RANK, normalise_grade
+from catalogue_import.fees import describe
 
 
 @dataclass
@@ -28,6 +29,7 @@ class ReportData:
     assignment_log: Any
     who_can: dict[str, list[dict[str, Any]]]
     hiring_log: Any
+    skill_lists: Any
 
 
 def _cell(value: object) -> str:
@@ -61,7 +63,7 @@ def _top(data: ReportData) -> list[str]:
         f"4. **mordheimer's contradictions:** {len(data.conflicts)} places where an item's lists and its own notes disagree, each with the default taken.",
         f'5. **Warband names:** {len(unmatched)} names in mordheimer\'s data match no warband type, or more than one. "Chaos Dwarfs" is mapped to Black Dwarfs and Wolfcloak\'s "Mercenaries" is left out; please check.',
         f"6. **Settings for our skills and hired swords:** {len(data.assignment_log.ambiguous)} names mordheimer gives more than one setting; check the one taken for each.",
-        f"7. **Who can hire and learn:** {len(data.hiring_log.unplaced)} hired swords, dramatis personae and skills name a warband no type matches; {len(data.hiring_log.special_costs)} fees aren't plain numbers.",
+        f"7. **Who can hire and learn:** {len(data.hiring_log.unplaced)} hired swords, dramatis personae and skills name a warband no type matches; {len(data.hiring_log.fees)} fees aren't plain numbers, {sum(1 for row in data.hiring_log.fees if row[3].unread or row[5].unread)} of them unread.",
         "",
         "Answers go into `overrides.json`; the next build applies them.",
         "",
@@ -198,6 +200,29 @@ def _assignments(data: ReportData) -> list[str]:
     return [*lines, ""] if log.multi_setting else lines
 
 
+def _fees(fees: list[Any]) -> list[str]:
+    table = [[kind, name, _source(hire), describe(read_hire), _source(upkeep), describe(read_upkeep)] for kind, name, hire, read_hire, upkeep, read_upkeep in fees]  # fmt: skip
+    unread = [f"{name} ({'hire' if read_hire.unread else 'upkeep'})" for _kind, name, _h, read_hire, _u, read_upkeep in fees if read_hire.unread or read_upkeep.unread]  # fmt: skip
+    lines = [
+        "Fees that aren't plain numbers, as structured fees (kind, gold, D6, resources and a note for the rest). A hire"
+        " fee of n/a is in his rules (special: hired at 0 gc with a warning), an upkeep of n/a is none (no camp row),"
+        " Hero takes a hero's place and a blank is a fee with no gold, filled in when hiring or at camp:",
+        "",
+        *_table(["Kind", "Entry", "Hire", "Read as", "Upkeep", "Read as"], table),
+        "",
+    ]
+    if unread:
+        lines += [f"Fees it couldn't read, kept whole as a special fee's note: {', '.join(unread)}.", ""]
+    else:
+        lines += ["Every fee was read.", ""]
+    return lines
+
+
+def _source(value: object) -> str:
+    text = " ".join(str(value).split()) if value is not None else ""
+    return text or "-"
+
+
 def _hiring(data: ReportData) -> list[str]:
     log = data.hiring_log
     rows = []
@@ -232,15 +257,35 @@ def _hiring(data: ReportData) -> list[str]:
     if log.by_list_name:
         named = "; ".join(f"{label} -> {list_name}" for label, list_name in log.by_list_name)
         lines += [f"Skills mordheimer lacks, read from their list's name: {named}.", ""]
-    if log.special_costs:
-        table = [[kind, name, hire or "-", upkeep or "-"] for kind, name, hire, upkeep in log.special_costs]
-        lines += [
-            "Fees that aren't plain numbers, kept as text (a leading number is still charged in gold):",
-            "",
-            *_table(["Kind", "Entry", "Hire", "Upkeep"], table),
-            "",
-        ]
+    if log.fees:
+        lines += _fees(log.fees)
     return lines
+
+
+def _learners(data: ReportData, decision: dict[str, Any]) -> str:
+    groups = {group["slug"]: group["name"] for group in data.groups}
+    names = [data.names.get(line["type"], line["type"]) if "type" in line else f"{groups.get(line['group'], line['group'])} (group)" for line in decision.get("warbands", [])]  # fmt: skip
+    learners = ", ".join(names) or "everyone"
+    return learners + (", Large units only" if decision.get("large_only") else "")
+
+
+def _skill_lists(data: ReportData) -> list[str]:
+    log = data.skill_lists
+    rows = [[name, _learners(data, decision), decision.get("note", ""), ", ".join(log.placed.get(name, []))] for name, decision in log.decisions.items()]  # fmt: skip
+    lines = [
+        "## Skill lists (William's decisions)",
+        "",
+        "`overrides.json` (`skill_lists`, `drop_skills`, `extra_skills`, `skill_descriptions`) applied to our skills;"
+        " `out/skills.json` is the result, the rows `seed_skills` reads. A list's decision places its skills mordheimer"
+        " lacks; its note is shown when learning, and a Large unit's skill warns for any other unit, never blocks.",
+        "",
+        *_table(["List", "Learned by", "Note", "Skills it places"], rows),
+        "",
+    ]
+    lines += [f"Left out: {name}, {why}" for name, why in log.dropped]
+    lines += [f"Added: {name}, from {source}." for name, source in log.added]
+    lines += [f"Description put right: {name}." for name in log.reworded]
+    return [*lines, ""]
 
 
 def _mim(data: ReportData) -> list[str]:
@@ -300,6 +345,7 @@ def render_report(data: ReportData) -> str:
         _grade_conflicts,
         _assignments,
         _hiring,
+        _skill_lists,
         _mim,
         _dropped,
     ):

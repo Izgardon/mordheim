@@ -8,6 +8,7 @@ A hired sword's kit mount is switched on as its mount when it is hired.
 
 from typing import Any
 
+from apps.hirelings.fees import make_fee
 from apps.hirelings.models import HiredSword
 from apps.warbands.models import HenchmenGroup, HeroItem, HirelingItem, LedgerAction, WarbandItem
 from apps.warbands.services import ledger
@@ -123,7 +124,7 @@ class UnlistedBeastTests(BeastPurchaseTestCase):
 class HiredMountTests(RosterTestCase):
     def test_a_hired_swords_kit_mount_is_switched_on_as_its_mount(self):
         horse = warhorse()
-        freelancer = HiredSword.objects.create(name="Freelancer", hire_cost=80, movement=4, armour_save=4)
+        freelancer = HiredSword.objects.create(name="Freelancer", hire_fee=make_fee(gold=80), movement=4, armour_save=4)
         freelancer.item_links.create(item=horse)
         freelancer.item_links.create(item=self.sword)
 

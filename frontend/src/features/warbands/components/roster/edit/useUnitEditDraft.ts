@@ -65,6 +65,13 @@ function initialDraft(entry: RosterUnit): Draft {
       ? { is_leader: Boolean(unit.is_leader), trading_action: Boolean(unit.trading_action) }
       : {}),
     ...("caster" in unit ? { caster: unit.caster ?? "No" } : {}),
+    ...("pending_skills" in unit
+      ? {
+          pending_skills: unit.pending_skills ?? 0,
+          pending_spells: unit.pending_spells ?? 0,
+          pending_specials: unit.pending_specials ?? 0,
+        }
+      : {}),
     ...("available_skills" in unit
       ? { available_skills: parseAvailableSkills(unit.available_skills) }
       : {}),

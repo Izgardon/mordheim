@@ -110,7 +110,6 @@ class CatalogueKindSpec:
     named: bool = False  # a create's name may not be taken in the campaign or the book (names.py)
     versioned: bool = False  # book entries get campaign versions, archive and removal (versions.py, archive.py)
     filters: Mapping[str, Filter] = field(default_factory=dict)  # list query parameter -> filter, before the merge
-    excluded_types: tuple[str, ...] = ()  # types no list shows (the level-up placeholders)
     name_field: str = "name"  # what the name rule compares (names.py)
     order: tuple[str, ...] = ("name", "id")  # each part of a list (the campaign's rows, then the book's)
     reread: bool = False  # a write's answer is read again with the detail's prefetch (its links)
@@ -209,7 +208,6 @@ NAME_AND_TYPE: Mapping[str, Filter] = {
     "type": lambda value: Q(type__iexact=value),
     "search": lambda value: Q(name__icontains=value),
 }
-PLACEHOLDERS = ("Pending",)  # the "New Skill" a level-up adds, resolved later (units/services/level_up.py)
 
 ITEMS = CatalogueKindSpec(
     key="items",
@@ -243,7 +241,6 @@ SKILLS = CatalogueKindSpec(
     named=True,
     versioned=True,
     filters=NAME_AND_TYPE,
-    excluded_types=PLACEHOLDERS,
     children=("warband_links",),  # who may learn it
     holders=_copies("skills", _linked_by(BestiaryEntrySkill, "skill"), *_listed_by_hirelings("skill_links", "skill")),
     hooks=SkillHooks(),
@@ -259,7 +256,6 @@ SPELLS = CatalogueKindSpec(
     named=True,
     versioned=True,
     filters=NAME_AND_TYPE,
-    excluded_types=PLACEHOLDERS,
     holders=_copies("spells", _linked_by(BestiaryEntrySpell, "spell"), *_listed_by_hirelings("spell_links", "spell")),
 )
 SPECIALS = CatalogueKindSpec(
@@ -273,7 +269,6 @@ SPECIALS = CatalogueKindSpec(
     named=True,
     versioned=True,
     filters=NAME_AND_TYPE,
-    excluded_types=PLACEHOLDERS,
     holders=_copies(
         "specials", _linked_by(BestiaryEntrySpecial, "special"), *_listed_by_hirelings("special_links", "special")
     ),

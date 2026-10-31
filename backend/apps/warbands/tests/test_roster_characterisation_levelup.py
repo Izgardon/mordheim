@@ -4,8 +4,6 @@ from datetime import datetime
 from typing import Any
 from unittest import mock
 
-from apps.skills.models import Skill
-from apps.special.models import Special
 from apps.warbands.models import Henchman
 from apps.warbands.units.serializers import UnitLevelUpSerializer
 
@@ -131,20 +129,24 @@ class RosterLevelUpCharacterisationTests(RosterTestCase):
                     unit.refresh_from_db()
                     self.assertEqual((unit.level_up, unit.level_up_history), (1, []))
 
-    def test_skill_spell_and_special_advances_add_pending_placeholders(self):
+    def test_skill_spell_and_special_advances_leave_picks_to_make_later(self):
+        # the fees and skill lists step: a pick to make later is a count on the unit, not a placeholder entry
         for kind in (HERO, HIRELING):
             with self.subTest(kind=kind.key):
-                unit = make_unit(kind, self.warband, level_up=3)
-                for code in ("Skill", "Spell", "Special"):
+                unit = make_unit(kind, self.warband, level_up=4)
+                for code in ("Skill", "Spell", "Special", "Skill"):
                     self.assertEqual(self._level_up(kind, unit, advance(code)).status_code, 200)
                 unit.refresh_from_db()
 
-                new_special = Special.objects.get(name="New Special", type="Pending")  # created on first use
-                self.assertEqual(related_ids(unit, kind.skills, "skill"), [self.new_skill.id])
-                self.assertEqual(related_ids(unit, kind.spells, "spell"), [self.new_spell.id])
-                self.assertEqual(related_ids(unit, kind.specials, "special"), [new_special.id])
-                self.assertEqual([e["label"] for e in unit.level_up_history], ["Skill", "Spell", "Special"])
+                picks = (unit.pending_skills, unit.pending_spells, unit.pending_specials)
+                self.assertEqual(picks, (2, 1, 1))
+                self.assertEqual(related_ids(unit, kind.skills, "skill"), [])
+                self.assertEqual(related_ids(unit, kind.spells, "spell"), [])
+                self.assertEqual(related_ids(unit, kind.specials, "special"), [])
+                self.assertEqual([e["label"] for e in unit.level_up_history], ["Skill", "Spell", "Special", "Skill"])
                 self.assertEqual(unit.level_up, 0)
+                answer = self.client.get(unit_url(kind, self.warband.id, unit.id)).json()
+                self.assertEqual([answer[f"pending_{name}"] for name in ("skills", "spells", "specials")], [2, 1, 1])
 
     def test_placeholder_advances_are_invalid_for_henchmen(self):
         group = make_unit(HENCHMEN, self.warband, level_up=3)
@@ -153,28 +155,33 @@ class RosterLevelUpCharacterisationTests(RosterTestCase):
                 response = self._level_up(HENCHMEN, group, advance(code))
                 self.assertEqual((response.status_code, response.json()), (400, {"detail": "Invalid advance"}))
 
-    def test_a_missing_placeholder_is_created_as_a_global_entry(self):
-        # BUG-62: a missing "New Skill" or "New Spell" used to spend the level-up and add nothing
-        Skill.objects.filter(name="New Skill").delete()
+    def test_a_pick_made_later_is_the_entry_and_one_pick_fewer_in_one_save(self):
+        # the pick from the card: the unit's PATCH adds the chosen skill and lowers the count, logged as an addition
         for kind in (HERO, HIRELING):
             with self.subTest(kind=kind.key):
+                self.warband.logs.all().delete()
                 unit = make_unit(kind, self.warband, level_up=1)
-                self.assertEqual(self._level_up(kind, unit, advance("Skill")).status_code, 200)
-                unit.refresh_from_db()
-                placeholder = Skill.objects.get(name="New Skill", type="Pending")
-                self.assertEqual((related_ids(unit, kind.skills, "skill"), unit.level_up), ([placeholder.id], 0))
-                self.assertIsNone(placeholder.campaign_id)
+                self._level_up(kind, unit, advance("Skill"))
+                body = {"update": [{"id": unit.id, "skill_ids": [self.skills[0].id], "pending_skills": 0}]}
 
-    def test_placeholders_never_come_from_another_campaign(self):
-        # The Special placeholder used to fall back to any campaign's "New Special" (SEC-07)
-        foreign = Special.objects.create(name="New Special", type="Pending", campaign=self.foreign_race.campaign)
-        for kind in (HERO, HIRELING):
-            with self.subTest(kind=kind.key):
-                unit = make_unit(kind, self.warband, level_up=1)
-                self.assertEqual(self._level_up(kind, unit, advance("Special")).status_code, 200)
-                [special_id] = related_ids(unit, kind.specials, "special")
-                self.assertNotEqual(special_id, foreign.id)
-                self.assertIsNone(Special.objects.get(id=special_id).campaign_id)
+                response = self.client.post(unit_url(kind, self.warband.id, suffix="batch/"), body, format="json")
+
+                self.assertEqual(response.status_code, 200, response.data)
+                unit.refresh_from_db()
+                self.assertEqual(
+                    (related_ids(unit, kind.skills, "skill"), unit.pending_skills), ([self.skills[0].id], 0)
+                )
+                self.assertIn(f"{kind.key}_skill", [row[1] for row in log_rows(self.warband)])
+
+    def test_the_picks_left_are_bounded(self):
+        unit = make_unit(HERO, self.warband)
+        for count in (-1, 21):
+            with self.subTest(count=count):
+                body = {"update": [{"id": unit.id, "pending_skills": count}]}
+                response = self.client.post(unit_url(HERO, self.warband.id, suffix="batch/"), body, format="json")
+                self.assertEqual(response.status_code, 400)
+        unit.refresh_from_db()
+        self.assertEqual(unit.pending_skills, 0)
 
     def test_dead_units_can_still_level_up(self):
         # Unlike GET and PATCH, the level-up lookup doesn't filter out dead units.

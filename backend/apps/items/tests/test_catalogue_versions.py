@@ -133,13 +133,13 @@ class FirstEditTests(VersionTestCase):
         self.assertEqual(Skill.objects.filter(name="Infiltration", campaign__isnull=True).count(), 6)
 
     def test_a_hired_swords_version_is_a_copied_row_in_the_campaign(self):
-        response = self.edit(HIRED_SWORDS, self.ogre.id, {"hire_cost": 95})
+        response = self.edit(HIRED_SWORDS, self.ogre.id, {"hire_fee": {"gold": 95}})
 
         self.assertEqual(response.status_code, 200, response.data)
         version = HiredSword.objects.get(campaign=self.campaign, replaces=self.ogre)
-        self.assertEqual((response.data["id"], response.data["hire_cost"], response.data["replaces"]), (version.id, 95, self.ogre.id))  # fmt: skip
+        self.assertEqual((response.data["id"], response.data["hire_fee"]["gold"], response.data["replaces"]), (version.id, 95, self.ogre.id))  # fmt: skip
         self.ogre.refresh_from_db()
-        self.assertEqual(self.ogre.hire_cost, 80)
+        self.assertEqual(self.ogre.hire_fee["gold"], 80)
 
 
 class RevertTests(VersionTestCase):
@@ -183,12 +183,12 @@ class RevertTests(VersionTestCase):
         self.assertEqual((not_one.status_code, not_one.json()["code"]), (409, "not_a_version"))
 
     def test_a_hired_swords_revert_deletes_its_version(self):
-        version = self.edit(HIRED_SWORDS, self.ogre.id, {"hire_cost": 95}).data["id"]
+        version = self.edit(HIRED_SWORDS, self.ogre.id, {"hire_fee": {"gold": 95}}).data["id"]
 
         response = self.revert(HIRED_SWORDS, version)
 
         self.assertEqual(
-            (response.status_code, response.data["id"], response.data["hire_cost"]), (200, self.ogre.id, 80)
+            (response.status_code, response.data["id"], response.data["hire_fee"]["gold"]), (200, self.ogre.id, 80)
         )
         self.assertFalse(HiredSword.objects.filter(campaign=self.campaign).exists())
 

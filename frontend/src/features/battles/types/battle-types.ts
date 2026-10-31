@@ -1,5 +1,6 @@
 import type { BattleWarning } from "@/features/battles/utils/battle-warnings";
 import type { CampaignHeroDeathRoll } from "@/features/campaigns/types/campaign-types";
+import type { Fee } from "@/features/hirelings/fees";
 
 export type BattleFlowType = "normal" | "reported_result";
 export type BattleStateView = "full" | "prebattle" | "active" | "postbattle";
@@ -148,11 +149,17 @@ export type BattlePostbattleExploration = {
   previous_rolls?: number[][];
 };
 
+/** An upkeep resource line: paid from the counter named (null: not paid), else from the one of its name. */
+export type UpkeepResourceLine = { resource: string; amount: number; resource_id?: number | null };
+
 export type BattlePostbattleUpkeepEntry = {
   unit_name: string;
+  /** The gold paid (null: none, a fee in his rules). */
   cost: number | null;
-  /** The suggestion's upkeep formula ("1 piece of wyrdstone"): a reminder, never saved. */
-  cost_expression?: string;
+  /** The resources paid (the fees step), from the warband's counters at Ready. */
+  resources?: UpkeepResourceLine[];
+  /** The suggestion's note ("15 gc*"): a reminder, never saved. */
+  note?: string;
   /** Paid at camp (a tick: upkeep is charged at Ready either way, unless he was let go). */
   paid?: boolean;
 };
@@ -446,7 +453,10 @@ export type BattlePostbattleSuggestion = {
   exploration: { dice_count: number };
   /** Every hireling but one who stays for one battle; a formula is a reminder beside the cost. */
   upkeep: {
-    entries: Record<string, { unit_name: string; cost: number | null; cost_expression?: string }>;
+    entries: Record<
+      string,
+      { unit_name: string; cost: number | null; resources?: UpkeepResourceLine[]; note?: string }
+    >;
   };
   /**
    * Who is suggested to leave now (only when someone is): each selected hireling who stays for
@@ -597,8 +607,8 @@ export type BattleRosterUnit = BattleRosterCompanionFields & {
   skills: BattleRosterDetailEntry[];
   spells: BattleRosterSpellEntry[];
   specials: BattleRosterDetailEntry[];
-  upkeepPrice?: number | null;
-  upkeepCostExpression?: string | null;
+  /** His upkeep (structured fee). */
+  upkeepFee?: Fee;
   noLevelUps?: boolean;
   /** Hirelings: what it is, the injury table it rolls on, how long it stays, what it is paid in. */
   hirelingKind?: "hired_sword" | "dramatis_persona";

@@ -13,6 +13,7 @@ from unittest import mock
 from django.test import override_settings
 
 from apps.battles.models import Battle, BattleEvent, BattleParticipant
+from apps.hirelings.fees import make_fee
 from apps.items.models import Item, ItemAvailability
 from apps.realtime import services as realtime
 from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling, Warband
@@ -90,7 +91,8 @@ def build_fixture_warband(warband: Warband, item: Item) -> FixtureWarband:
         Hero.objects.create(warband=warband, name=f"Hero {n}", unit_type="Champion", is_leader=n == 0) for n in range(5)
     ]
     swords = [
-        Hireling.objects.create(warband=warband, name=f"Sword {n}", unit_type="Ogre", upkeep_price=15) for n in range(2)
+        Hireling.objects.create(warband=warband, name=f"Sword {n}", unit_type="Ogre", upkeep_fee=make_fee(gold=15))
+        for n in range(2)
     ]
     groups = [HenchmenGroup.objects.create(warband=warband, name=f"Group {n}", unit_type="Warrior") for n in range(3)]
     henchmen = []

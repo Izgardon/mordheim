@@ -209,7 +209,5 @@
   {"name": "Foresight", "type": "Tchar Rituals", "dc": "10", "roll": 3, "description": "Pre-battle spell forcing one random enemy Hero to miss the next game. Casters are immune."},
   {"name": "Wrath of the Great Eagle", "type": "Tchar Rituals", "dc": "9", "roll": 4, "description": "Targets enemy within 12\"; deals Strength damage based on Experience difference (max 10)."},
   {"name": "Tchar's Reward", "type": "Tchar Rituals", "dc": "8", "roll": 5, "description": "Grants +1 to one stat per 10 Experience points; lasts until end of next shooting phase."},
-  {"name": "Slave to Chaos", "type": "Tchar Rituals", "dc": "9", "roll": 6, "description": "12\" range; S2 hit with no armour save; killed models become Horrors of Tzeentch until game end."},
-
-  {"name": "New Spell", "type": "Pending", "dc": "", "roll": null, "description": ""}
+  {"name": "Slave to Chaos", "type": "Tchar Rituals", "dc": "9", "roll": 6, "description": "12\" range; S2 hit with no armour save; killed models become Horrors of Tzeentch until game end."}
 ]

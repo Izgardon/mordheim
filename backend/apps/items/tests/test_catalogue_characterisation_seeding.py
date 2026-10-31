@@ -21,6 +21,7 @@ from rest_framework.test import APIClient
 
 from apps.bestiary.models import BestiaryEntry
 from apps.campaigns.models import Campaign, CampaignHouseRule, CampaignType
+from apps.hirelings.fees import make_fee
 from apps.hirelings.models import DramatisPersona, HiredSword, HiredSwordItem, HiredSwordSkill
 from apps.items.models import Item, ItemAvailability, ItemRule
 from apps.items.services import sync_half_price_armour_for_campaign
@@ -68,9 +69,9 @@ class SeedAllTests(TestCase):
                 "Race": 27,
                 "Item": 321,  # the import's 290 (its 14 animals are beasts') + one Animal item per beast
                 "ItemRule": 51,  # the import's shared rules
-                "Skill": 255,
-                "Spell": 189,  # 183 + the Dark Mage's six (BUG-54)
-                "Special": 282,  # 186 + the dramatis personae's own rules (next step 12)
+                "Skill": 251,
+                "Spell": 188,  # 182 + the Dark Mage's six (BUG-54)
+                "Special": 281,  # 185 + the dramatis personae's own rules (next step 12)
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
@@ -118,7 +119,7 @@ class SeedAllTests(TestCase):
         # the 2026-10-28 data audit: skills.json held a second Pirates list (sourced "TBMF") under the same type, and
         # seed_skills upserts on name and type, so its Sea Legs, Cutlass Master and Swashbuckler overwrote Town Cryer
         # 9's (a fresh seed said "Updated: 3") and the Pirates' Sea Legs was the other list's rope-and-rigging rule
-        self.assertIn("Skills import complete. Created: 231, Updated: 0", self.output)
+        self.assertIn("Skills import complete. Created: 227, Updated: 0", self.output)
         sea_legs = {skill.type: skill.description for skill in Skill.objects.filter(name="Sea Legs")}
         self.assertEqual(set(sea_legs), {"Pirates", "Pirates (TBMF)"})
         self.assertIn("If he Falls during a battle", sea_legs["Pirates"])
@@ -198,16 +199,27 @@ class SeedAllTests(TestCase):
         mapped |= {"Chaos Centaur": "Centigors", "Ninja Gnoblar": "Goblin"}
         self.assertEqual({name: races[name] for name in mapped}, mapped)
 
-    def test_the_ogre_keeps_both_swords_and_the_formulas_are_kept_beside_the_costs(self):
+    def test_the_ogre_keeps_both_swords_and_the_fees_are_structured(self):
         # the bestiary rewrite: the browser's hire copy dropped quantities and formulas; the catalogue keeps them
         ogre = HiredSword.objects.get(name="Ogre Bodyguard")
         ninja = HiredSword.objects.get(name="Ninja")
         rat_ogre = HiredSword.objects.get(name="Clan Skryre Rat Ogre")
 
         self.assertIn(("Sword", 2), set(ogre.item_links.values_list("item__name", "quantity")))
-        # the items rebuild: the fees are mordheimer's, a text one kept beside the gold it charges
-        self.assertEqual((ninja.hire_cost, ninja.hire_cost_expression), (70, "70 + 3D6"))
-        self.assertEqual((rat_ogre.upkeep_cost, rat_ogre.upkeep_cost_expression), (None, "1 wyrdstone"))
+        # the fees and skill lists step: the fees are mordheimer's, read as kind, gold, dice and resources
+        self.assertEqual(ninja.hire_fee, make_fee(gold=70, dice=3))
+        self.assertEqual(ninja.upkeep_fee, make_fee("none"))
+        self.assertEqual(rat_ogre.upkeep_fee, make_fee(resources=[("Wyrdstone", 1)]))
+        priest = HiredSword.objects.get(name="Priest of Morr")
+        self.assertEqual((priest.hire_fee["kind"], priest.upkeep_fee["kind"]), ("replaces_hero", "none"))
+        belandysh = DramatisPersona.objects.get(name__startswith="Belandysh")
+        self.assertEqual(belandysh.hire_fee, make_fee(gold=90, resources=[("Campaign points", 5)]))
+        bertha = DramatisPersona.objects.get(name__startswith="Bertha")
+        self.assertEqual(bertha.hire_fee["kind"], "special")
+        sigmund = DramatisPersona.objects.get(name__startswith="Sigmund")
+        self.assertEqual((sigmund.hire_fee["gold"], sigmund.upkeep_fee), (70, make_fee(gold=35)))
+        self.assertIn("one body part", sigmund.hire_fee["note"])
+        self.assertEqual(HiredSword.objects.get(name="Halfling Thief").upkeep_fee, make_fee(gold=15, note="15 gc*"))
         self.assertEqual((ogre.race.name if ogre.race else None, ogre.race_label), ("Ogre", "Ogre"))
 
     def test_who_may_hire_and_learn_comes_from_the_import(self):
@@ -219,6 +231,32 @@ class SeedAllTests(TestCase):
         tail = Skill.objects.get(name="Tail Fighting", type="Skaven")
         self.assertFalse(tail.for_everyone)
         self.assertTrue(tail.warband_links.exists())
+
+    def test_williams_skill_list_decisions_are_seeded(self):
+        # the fees and skill lists step: the import's out/skills.json with his decisions, and who-can's extras
+        def learners(name: str) -> set[str]:
+            skill = Skill.objects.get(name=name, campaign__isnull=True)
+            return set(skill.warband_links.values_list("warband_type__slug", flat=True))
+
+        large = Skill.objects.filter(type="Large Special")
+        self.assertEqual(large.count(), 5)
+        self.assertTrue(all(skill.large_only and skill.for_everyone for skill in large))
+        self.assertFalse(Skill.objects.filter(large_only=True).exclude(type="Large Special").exists())
+        mist = Skill.objects.get(name="Mist Form")
+        self.assertEqual(
+            (mist.learn_note, mist.for_everyone, learners("Mist Form")), ("Vampire only", False, {"undead"})
+        )
+        self.assertEqual(learners("Respirator"), {"metal-mongers"})
+        self.assertEqual(learners("Captain Blood"), {"pirates"})
+        self.assertTrue(Skill.objects.get(name="Falconer").for_everyone)
+        inventor = Skill.objects.get(name="Master Inventor")
+        self.assertEqual(learners("Master Inventor"), {"guild-of-disgraced-engineers"})
+        self.assertEqual(inventor.campaign_type.slug if inventor.campaign_type else None, "mutiny-in-marienburg")
+        self.assertIn("D3+1 inventions", inventor.description)
+        self.assertNotIn("Master Inventor", Skill.objects.get(name="Quick Thinker").description)
+        gone = ("Prize-fighter", "Knowledge of Myths and Legends", "Skills list prohibitions", "New Skill")
+        self.assertFalse(Skill.objects.filter(name__in=gone).exists())
+        self.assertFalse(Skill.objects.filter(name__startswith="Animal Charmer").exists())
 
     def test_the_dark_mage_knows_his_six_spells(self):
         # BUG-54, CAT-TEST-13: the "1 - " to "6 - " prefixes kept his spells from matching; they are his own spells,

@@ -124,3 +124,29 @@ export function boxRows(entry: RosterUnit) {
     spells,
   };
 }
+
+/** A list a pick made later goes into: an advance's "Skill to choose" (spell, special). */
+export type PendingList = "skills" | "spells" | "specials";
+
+const PENDING_FIELD = {
+  skills: "pending_skills",
+  spells: "pending_spells",
+  specials: "pending_specials",
+} as const;
+const ID_FIELD = { skills: "skill_ids", spells: "spell_ids", specials: "special_ids" } as const;
+
+/** How many picks an advance left to make later on the unit's `list` (heroes and hired swords). */
+export function pendingPicks({ unit }: RosterUnit, list: PendingList) {
+  return (
+    (unit as Partial<Record<(typeof PENDING_FIELD)[PendingList], number>>)[PENDING_FIELD[list]] ?? 0
+  );
+}
+
+/** The save that makes one pick: the chosen entry joins the list, and one pick fewer is left. */
+export function pickPayload(entry: RosterUnit, list: PendingList, entryId: number) {
+  const unit = entry.unit as Partial<Record<PendingList, { id: number }[]>>;
+  return {
+    [ID_FIELD[list]]: [...(unit[list] ?? []).map(({ id }) => id), entryId],
+    [PENDING_FIELD[list]]: Math.max(0, pendingPicks(entry, list) - 1),
+  };
+}

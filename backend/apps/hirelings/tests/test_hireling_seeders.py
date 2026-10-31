@@ -10,6 +10,7 @@ The committed data's full run is in apps/items/tests/test_catalogue_characterisa
 from django.core.management.base import CommandError
 from django.test import TestCase
 
+from apps.hirelings.fees import make_fee
 from apps.hirelings.models import DramatisPersona, HiredSword
 from apps.items.models import Item
 from apps.items.tests.catalogue_support import STATS
@@ -60,15 +61,16 @@ class HirelingSeederTests(TestCase):
         cls.axe = Item.objects.create(name="Axe", type="Weapon")
         cls.sprint = Skill.objects.create(name="Sprint", type="Speed")
 
-    def test_a_hired_sword_is_seeded_with_its_links_kit_formulas_race_and_note(self):
+    def test_a_hired_sword_is_seeded_with_its_links_kit_fees_race_and_note(self):
         with data_file([OGRE]) as path:
             output = run("seed_hired_swords", json_paths=[path])
 
         ogre = HiredSword.objects.get(name="Ogre Bodyguard", campaign__isnull=True)
         self.assertIn("Hired sword import complete. Created: 1, updated: 0.", output)
         self.assertEqual((ogre.armour_save, ogre.large, ogre.description), (5, True, "Big."))
-        self.assertEqual((ogre.hire_cost, ogre.hire_cost_expression, ogre.rating, ogre.grade), (80, "80+D6", 25, "1a"))
-        self.assertEqual((ogre.upkeep_cost, ogre.upkeep_cost_expression), (None, "1 piece of wyrdstone"))
+        # a row's own gold and formula (no import list for him): the formula is the note
+        self.assertEqual((ogre.hire_fee, ogre.rating, ogre.grade), (make_fee(gold=80, note="80+D6"), 25, "1a"))
+        self.assertEqual(ogre.upkeep_fee, make_fee(note="1 piece of wyrdstone"))
         self.assertEqual((ogre.race_id, ogre.race_label), (self.ogre_race.id, "Ogre"))
         self.assertEqual(ogre.available_skill_types, ["Combat", "Hired Sword - Ogre Bodyguard"])
         self.assertEqual(Skill.objects.get(name="Bully").type, "Hired Sword - Ogre Bodyguard")
@@ -88,7 +90,7 @@ class HirelingSeederTests(TestCase):
 
         ogre = HiredSword.objects.get(name="Ogre Bodyguard", campaign__isnull=True)
         lines = list(ogre.warband_links.select_related("warband_type"))
-        self.assertEqual((ogre.hire_cost, ogre.hire_cost_expression, ogre.upkeep_cost, ogre.upkeep_cost_expression), (80, "", 30, ""))  # fmt: skip
+        self.assertEqual((ogre.hire_fee, ogre.upkeep_fee), (make_fee(gold=80), make_fee(gold=30)))
         self.assertFalse(ogre.for_everyone)
         self.assertIn("Reiklanders", {line.warband_type.name for line in lines if line.warband_type})
         self.assertFalse(any(line.excluded for line in lines))
@@ -105,7 +107,7 @@ class HirelingSeederTests(TestCase):
 
         again = HiredSword.objects.get()
         self.assertIn("Created: 0, updated: 1.", output)
-        self.assertEqual((again.id, again.hire_cost), (first.id, 90))
+        self.assertEqual((again.id, again.hire_fee["gold"]), (first.id, 90))
         self.assertEqual(list(again.item_links.values_list("item_id", "quantity")), [(self.axe.id, 1)])
 
     def test_a_dramatis_persona_keeps_how_long_it_stays_what_it_is_paid_and_an_unmatched_race_as_text(self):
@@ -114,7 +116,9 @@ class HirelingSeederTests(TestCase):
 
         aenur = DramatisPersona.objects.get(name="Aenur")
         self.assertIn("Dramatis persona import complete. Created: 1, updated: 0.", output)
-        self.assertEqual((aenur.stays, aenur.payment_note, aenur.hire_cost), ("one_battle", "25 gc or 1 shard", 25))
+        self.assertEqual(
+            (aenur.stays, aenur.payment_note, aenur.hire_fee["gold"]), ("one_battle", "25 gc or 1 shard", 25)
+        )
         self.assertEqual((aenur.race_id, aenur.race_label), (None, "Elf"))
         self.assertFalse(HiredSword.objects.exists())
 
@@ -137,11 +141,11 @@ class HirelingSeederTests(TestCase):
 
         self.assertIn("Created: 30, updated: 0.", output)
         aenur = DramatisPersona.objects.get(name="Aenur, the sword of twilight")
-        self.assertEqual((aenur.hire_cost, aenur.stays, aenur.weapon_skill), (150, "one_battle", 8))
+        self.assertEqual((aenur.hire_fee["gold"], aenur.stays, aenur.weapon_skill), (150, "one_battle", 8))
         self.assertFalse(aenur.for_everyone)
         self.assertIn("Reiklanders", {line.warband_type.name for line in aenur.warband_links.select_related("warband_type") if line.warband_type})  # fmt: skip
         self.assertEqual(aenur.hire_note, "Any warband except Skaven, Undead and the Possessed may hire Aenur.")
         nicodemus = DramatisPersona.objects.get(name="Nicodemus, the cursed pilgrim")
-        fees = (nicodemus.hire_cost, nicodemus.hire_cost_expression, nicodemus.upkeep_cost_expression)
-        self.assertEqual(fees, (None, "1 wyrdstone", "1 wyrdstone"))  # a fee that isn't gold is kept as text
+        wyrdstone = make_fee(resources=[("Wyrdstone", 1)])
+        self.assertEqual((nicodemus.hire_fee, nicodemus.upkeep_fee), (wyrdstone, wyrdstone))  # paid in wyrdstone
         self.assertEqual(nicodemus.caster, "Wizard")

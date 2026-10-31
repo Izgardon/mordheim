@@ -19,7 +19,6 @@ from apps.races.models import Race
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
-from apps.warbands.units.services.level_up import pending_placeholder
 
 from .catalogue_support import ITEMS, CatalogueTestCase, make_entry
 
@@ -59,14 +58,3 @@ class HouseRuleCloneTests(CatalogueTestCase):
         )
         self.assertEqual(self.delete_as(self.owner, self.url(f"rules/{rule.data['id']}/")).status_code, 204)
         self.assertEqual(list(rows.values_list("id", flat=True)), [custom.id])
-
-
-class PlaceholderTests(CatalogueTestCase):
-    def test_a_level_up_placeholder_is_the_one_book_row_whatever_a_campaign_holds(self):
-        Skill.objects.create(name="New Skill", type="Pending", campaign=self.campaign)
-        book = Skill.objects.get(name="New Skill", type="Pending", campaign__isnull=True)
-
-        self.assertEqual(pending_placeholder(Skill, "New Skill"), book)
-        created = pending_placeholder(Spell, "New Spell")
-        self.assertEqual(pending_placeholder(Spell, "New Spell"), created)
-        self.assertEqual(Spell.objects.filter(name="New Spell", campaign__isnull=True).count(), 1)

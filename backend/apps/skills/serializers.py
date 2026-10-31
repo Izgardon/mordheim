@@ -11,7 +11,7 @@ class SkillSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Skill
-        fields = ("id", "campaign_id", "setting_id", "name", "type", "description")
+        fields = ("id", "campaign_id", "setting_id", "name", "type", "description", "large_only", "learn_note")
 
 
 class SkillLearnersSerializer(SkillSerializer):
@@ -26,9 +26,10 @@ class SkillLearnersSerializer(SkillSerializer):
 
 
 class SkillCreateSerializer(serializers.ModelSerializer):
-    """A custom skill's create or edit; the campaign is never an input (the view saves the create in its campaign)."""
+    """A custom skill's create or edit; the campaign is never an input (the view saves the create in its campaign). It
+    may be a Large unit's skill and carry a note shown when learning it."""
 
     class Meta:
         model = Skill
-        fields = ("name", "type", "description")
+        fields = ("name", "type", "description", "large_only", "learn_note")
         extra_kwargs = {"description": {"allow_blank": False}}
