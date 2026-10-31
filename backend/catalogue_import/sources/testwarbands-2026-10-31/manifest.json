@@ -1,0 +1,574 @@
+{
+  "fetched": "2026-10-31",
+  "site": "https://mordheimer.net",
+  "datasets": {
+    "warbands.json": {
+      "count": 51,
+      "shape": "object keyed by page slug",
+      "from": "51 warband page chunks"
+    },
+    "hired-swords.json": {
+      "count": 72,
+      "shape": "object",
+      "from": "https://mordheimer.net/assets/js/2b8434ce.fe0d15eb.js (identical in every testwarbands chunk)"
+    },
+    "dramatis-personae.json": {
+      "count": 30,
+      "shape": "object",
+      "from": "https://mordheimer.net/assets/js/2b8434ce.fe0d15eb.js (identical in every testwarbands chunk)"
+    },
+    "magic.json": {
+      "count": 30,
+      "shape": "object",
+      "from": "https://mordheimer.net/assets/js/2b8434ce.fe0d15eb.js (identical in every testwarbands chunk)",
+      "note": "single key \"spellLists\"; count is spell lists inside it"
+    },
+    "skills.json": {
+      "count": 259,
+      "shape": "array",
+      "from": "https://mordheimer.net/assets/js/2b8434ce.fe0d15eb.js (identical in every testwarbands chunk)"
+    },
+    "items.json": {
+      "count": 247,
+      "shape": "array",
+      "from": "https://mordheimer.net/assets/js/2b8434ce.fe0d15eb.js (identical in every testwarbands chunk)"
+    },
+    "race-max-stats.json": {
+      "count": 27,
+      "shape": "array",
+      "from": "https://mordheimer.net/assets/js/2b8434ce.fe0d15eb.js (identical in every testwarbands chunk)"
+    },
+    "warband-index.json": {
+      "count": 75,
+      "shape": "array",
+      "from": "https://mordheimer.net/assets/js/2b8434ce.fe0d15eb.js (identical in every testwarbands chunk)"
+    },
+    "serious-injuries.json": {
+      "count": 56,
+      "shape": "array",
+      "from": "https://mordheimer.net/assets/js/2b8434ce.fe0d15eb.js (identical in every testwarbands chunk)"
+    },
+    "errata.json": {
+      "count": 135,
+      "shape": "array",
+      "from": "https://mordheimer.net/assets/js/2b8434ce.fe0d15eb.js (identical in every testwarbands chunk)"
+    },
+    "faq.json": {
+      "count": 150,
+      "shape": "array",
+      "from": "https://mordheimer.net/assets/js/2b8434ce.fe0d15eb.js (identical in every testwarbands chunk)"
+    }
+  },
+  "warbandPages": [
+    {
+      "slug": "averlander",
+      "gradeFolder": "grade-1a-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1a-warbands/averlander",
+      "chunk": "https://mordheimer.net/assets/js/2b8434ce.fe0d15eb.js",
+      "id": "averlander-mercenaries",
+      "name": "Averlander Mercenaries",
+      "grade": "1a",
+      "fighters": 7
+    },
+    {
+      "slug": "beastmen-raiders",
+      "gradeFolder": "grade-1a-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1a-warbands/beastmen-raiders",
+      "chunk": "https://mordheimer.net/assets/js/09abf2f0.527e8582.js",
+      "id": "beastmen-raiders",
+      "name": "Beastmen Raiders",
+      "grade": "1a",
+      "fighters": 8
+    },
+    {
+      "slug": "carnival-of-chaos",
+      "gradeFolder": "grade-1a-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1a-warbands/carnival-of-chaos",
+      "chunk": "https://mordheimer.net/assets/js/7d983ed2.9927b70a.js",
+      "id": "carnival-of-chaos",
+      "name": "Carnival of Chaos",
+      "grade": "1a",
+      "fighters": 7
+    },
+    {
+      "slug": "cult-of-the-posessed",
+      "gradeFolder": "grade-1a-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1a-warbands/cult-of-the-posessed",
+      "chunk": "https://mordheimer.net/assets/js/5689d5c7.af690bc4.js",
+      "id": "cult-of-the-possessed",
+      "name": "Cult of the Possessed",
+      "grade": "1a",
+      "fighters": 6
+    },
+    {
+      "slug": "dwarf-treasure-hunters",
+      "gradeFolder": "grade-1a-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1a-warbands/dwarf-treasure-hunters",
+      "chunk": "https://mordheimer.net/assets/js/dc76b122.0b89f0cb.js",
+      "id": "dwarf-treasure-hunters",
+      "name": "Dwarf Treasure Hunters",
+      "grade": "1a",
+      "fighters": 6
+    },
+    {
+      "slug": "kislevites",
+      "gradeFolder": "grade-1a-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1a-warbands/kislevites",
+      "chunk": "https://mordheimer.net/assets/js/bb65ff24.172ed153.js",
+      "id": "kislevites",
+      "name": "Kislevites",
+      "grade": "1a",
+      "fighters": 8
+    },
+    {
+      "slug": "mercenaries",
+      "gradeFolder": "grade-1a-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1a-warbands/mercenaries",
+      "chunk": "https://mordheimer.net/assets/js/6555fe42.236e6301.js",
+      "id": "mercenaries",
+      "name": "Mercenaries",
+      "grade": "core",
+      "fighters": 6
+    },
+    {
+      "slug": "orc-mob",
+      "gradeFolder": "grade-1a-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1a-warbands/orc-mob",
+      "chunk": "https://mordheimer.net/assets/js/5a171613.17c3a916.js",
+      "id": "orc-mob",
+      "name": "Orc Mob",
+      "grade": "1a",
+      "fighters": 7
+    },
+    {
+      "slug": "ostlander",
+      "gradeFolder": "grade-1a-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1a-warbands/ostlander",
+      "chunk": "https://mordheimer.net/assets/js/064ca84e.bffe0f1a.js",
+      "id": "ostlanders",
+      "name": "Ostlander Mercenaries",
+      "grade": "1a",
+      "fighters": 7
+    },
+    {
+      "slug": "sisters-of-sigmar",
+      "gradeFolder": "grade-1a-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1a-warbands/sisters-of-sigmar",
+      "chunk": "https://mordheimer.net/assets/js/4552e906.a8fd0f68.js",
+      "id": "sisters-of-sigmar",
+      "name": "Sisters of Sigmar",
+      "grade": "1a",
+      "fighters": 5
+    },
+    {
+      "slug": "skaven-eshin",
+      "gradeFolder": "grade-1a-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1a-warbands/skaven-eshin",
+      "chunk": "https://mordheimer.net/assets/js/979a3acf.5b1b552a.js",
+      "id": "skaven-of-clan-eshin",
+      "name": "Skaven",
+      "grade": "1a",
+      "fighters": 7
+    },
+    {
+      "slug": "undead",
+      "gradeFolder": "grade-1a-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1a-warbands/undead",
+      "chunk": "https://mordheimer.net/assets/js/f5e5a33a.8df14470.js",
+      "id": "undead",
+      "name": "Undead",
+      "grade": "1a",
+      "fighters": 6
+    },
+    {
+      "slug": "witch-hunters",
+      "gradeFolder": "grade-1a-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1a-warbands/witch-hunters",
+      "chunk": "https://mordheimer.net/assets/js/3bbe3d9e.a2efe102.js",
+      "id": "witch-hunters",
+      "name": "Witch Hunters",
+      "grade": "1a",
+      "fighters": 6
+    },
+    {
+      "slug": "amazons",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/amazons",
+      "chunk": "https://mordheimer.net/assets/js/7dba1e2f.4bfe5634.js",
+      "id": "amazons-mordheim",
+      "name": "Amazons (Mordheim)",
+      "grade": "1b",
+      "fighters": 5
+    },
+    {
+      "slug": "amazons-lustria",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/amazons-lustria",
+      "chunk": "https://mordheimer.net/assets/js/9e800914.215a2a7b.js",
+      "id": "amazons-lustria",
+      "name": "Amazons (Lustria)",
+      "grade": "1b",
+      "fighters": 5
+    },
+    {
+      "slug": "arabian-tomb-raiders",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/arabian-tomb-raiders",
+      "chunk": "https://mordheimer.net/assets/js/e8367c3c.1ffb24a7.js",
+      "id": "arabian-tomb-raiders",
+      "name": "Arabian Tomb Raiders",
+      "grade": "1b",
+      "fighters": 6
+    },
+    {
+      "slug": "black-orcs",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/black-orcs",
+      "chunk": "https://mordheimer.net/assets/js/eefc9d37.beb8d488.js",
+      "id": "black-orcs",
+      "name": "Black Orcs",
+      "grade": "1b",
+      "fighters": 7
+    },
+    {
+      "slug": "bretonnian",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/bretonnian",
+      "chunk": "https://mordheimer.net/assets/js/c3c2cd9c.fffd739d.js",
+      "id": "bretonnians",
+      "name": "Bretonnians",
+      "grade": "1b",
+      "fighters": 5
+    },
+    {
+      "slug": "dark-elves",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/dark-elves",
+      "chunk": "https://mordheimer.net/assets/js/847b0492.ae4a9a56.js",
+      "id": "dark-elves",
+      "name": "Dark Elves",
+      "grade": "1b",
+      "fighters": 7
+    },
+    {
+      "slug": "dwarf-rangers",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/dwarf-rangers",
+      "chunk": "https://mordheimer.net/assets/js/45f783a9.395d785e.js",
+      "id": "dwarf-rangers",
+      "name": "Dwarf Rangers",
+      "grade": "1b",
+      "fighters": 7
+    },
+    {
+      "slug": "forest-goblins",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/forest-goblins",
+      "chunk": "https://mordheimer.net/assets/js/7518f438.cefd9a4b.js",
+      "id": "forest-goblins",
+      "name": "Forest Goblins",
+      "grade": "1b",
+      "fighters": 7
+    },
+    {
+      "slug": "gunnery-school-of-nuln",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/gunnery-school-of-nuln",
+      "chunk": "https://mordheimer.net/assets/js/bb5b7c1a.8927a729.js",
+      "id": "gunnery-school-of-nuln",
+      "name": "Gunnery School of Nuln",
+      "grade": "1b",
+      "fighters": 7
+    },
+    {
+      "slug": "hochland-bandits",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/hochland-bandits",
+      "chunk": "https://mordheimer.net/assets/js/e678661d.fa72e6f1.js",
+      "id": "hochland-bandits",
+      "name": "Hochland Bandits",
+      "grade": "1b",
+      "fighters": 9
+    },
+    {
+      "slug": "horned-hunters",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/horned-hunters",
+      "chunk": "https://mordheimer.net/assets/js/6eefc390.1cf0f917.js",
+      "id": "horned-hunters",
+      "name": "Horned Hunters",
+      "grade": "1b",
+      "fighters": 6
+    },
+    {
+      "slug": "imperial-outriders",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/imperial-outriders",
+      "chunk": "https://mordheimer.net/assets/js/8f88f392.0e68bbcd.js",
+      "id": "imperial-outriders",
+      "name": "Imperial Outriders",
+      "grade": "1b",
+      "fighters": 6
+    },
+    {
+      "slug": "lizardmen",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/lizardmen",
+      "chunk": "https://mordheimer.net/assets/js/70729d66.8341edd2.js",
+      "id": "lizardmen",
+      "name": "Lizardmen",
+      "grade": "1b",
+      "fighters": 6
+    },
+    {
+      "slug": "mootlanders",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/mootlanders",
+      "chunk": "https://mordheimer.net/assets/js/d67c270a.4c5ea7b5.js",
+      "id": "mootlanders",
+      "name": "Mootlanders",
+      "grade": "1b",
+      "fighters": 5
+    },
+    {
+      "slug": "norse",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/norse",
+      "chunk": "https://mordheimer.net/assets/js/535d555c.48e78624.js",
+      "id": "norse-explorers",
+      "name": "Norse Explorers",
+      "grade": "1b",
+      "fighters": 7
+    },
+    {
+      "slug": "outlaws-of-stirwood-forest",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/outlaws-of-stirwood-forest",
+      "chunk": "https://mordheimer.net/assets/js/9859d31a.2c926988.js",
+      "id": "outlaws-of-stirwood-forest",
+      "name": "Outlaws of Stirwood Forest",
+      "grade": "1b",
+      "fighters": 6
+    },
+    {
+      "slug": "pirates",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/pirates",
+      "chunk": "https://mordheimer.net/assets/js/9bcd01ee.8218e6e6.js",
+      "id": "pirates",
+      "name": "Pirates",
+      "grade": "1b",
+      "fighters": 7
+    },
+    {
+      "slug": "pit-fighters",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/pit-fighters",
+      "chunk": "https://mordheimer.net/assets/js/4569d0dc.c00d054b.js",
+      "id": "pit-fighters",
+      "name": "Pit Fighters",
+      "grade": "1b",
+      "fighters": 6
+    },
+    {
+      "slug": "pit-fighters-old",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/pit-fighters-old",
+      "chunk": "https://mordheimer.net/assets/js/8f2d814b.3f63fc79.js",
+      "id": "pit-fighters-old",
+      "name": "Pit Fighters (old)",
+      "grade": "1b",
+      "fighters": 7
+    },
+    {
+      "slug": "shadow-warriors",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/shadow-warriors",
+      "chunk": "https://mordheimer.net/assets/js/d0caec22.688bb985.js",
+      "id": "shadow-warriors",
+      "name": "Shadow Warriors",
+      "grade": "1b",
+      "fighters": 5
+    },
+    {
+      "slug": "skaven-pestilens",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/skaven-pestilens",
+      "chunk": "https://mordheimer.net/assets/js/e1eeca6d.48db6c27.js",
+      "id": "skaven-of-clan-pestilens",
+      "name": "Skaven of Clan Pestilens",
+      "grade": "1b",
+      "fighters": 7
+    },
+    {
+      "slug": "tileans",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/tileans",
+      "chunk": "https://mordheimer.net/assets/js/1fd92fde.eaeb49ba.js",
+      "id": "tileans",
+      "name": "Tileans",
+      "grade": "1b",
+      "fighters": 6
+    },
+    {
+      "slug": "tileans-original",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/tileans-original",
+      "chunk": "https://mordheimer.net/assets/js/2a7a09aa.ca6cb074.js",
+      "id": "tileans-old",
+      "name": "Tileans (old)",
+      "grade": "1b",
+      "fighters": 6
+    },
+    {
+      "slug": "tomb-guardians",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/tomb-guardians",
+      "chunk": "https://mordheimer.net/assets/js/1b0d89b5.78aa06da.js",
+      "id": "tomb-guardians",
+      "name": "Tomb Guardians",
+      "grade": "1b",
+      "fighters": 6
+    },
+    {
+      "slug": "tomb-guardians-old",
+      "gradeFolder": "grade-1b-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/tomb-guardians-old",
+      "chunk": "https://mordheimer.net/assets/js/418c8acb.5ffebf21.js",
+      "id": "nehekhara-tomb-guards",
+      "name": "Nehekhara Tomb Guards",
+      "grade": "1b",
+      "fighters": 7
+    },
+    {
+      "slug": "battle-monks-of-cathay",
+      "gradeFolder": "grade-1c-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1c-warbands/battle-monks-of-cathay",
+      "chunk": "https://mordheimer.net/assets/js/b9fbeafc.4876aeb9.js",
+      "id": "battle-monks-of-cathay",
+      "name": "Battle Monks of Cathay",
+      "grade": "1c",
+      "fighters": 6
+    },
+    {
+      "slug": "black-dwarfs",
+      "gradeFolder": "grade-1c-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1c-warbands/black-dwarfs",
+      "chunk": "https://mordheimer.net/assets/js/a92d715a.9e0b284c.js",
+      "id": "black-dwarfs",
+      "name": "Black Dwarfs",
+      "grade": "1c",
+      "fighters": 5
+    },
+    {
+      "slug": "bretonnian-chapel-guard",
+      "gradeFolder": "grade-1c-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1c-warbands/bretonnian-chapel-guard",
+      "chunk": "https://mordheimer.net/assets/js/cc131cbe.49d9b4b4.js",
+      "id": "bretonnian-chapel-guard",
+      "name": "Bretonnian Chapel Guard",
+      "grade": "1c",
+      "fighters": 6
+    },
+    {
+      "slug": "court-of-the-profane-pleasures",
+      "gradeFolder": "grade-1c-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1c-warbands/court-of-the-profane-pleasures",
+      "chunk": "https://mordheimer.net/assets/js/8369010d.7f6201ea.js",
+      "id": "court-of-the-profane-pleasures",
+      "name": "Court of the Profane Pleasures",
+      "grade": "1c",
+      "fighters": 9
+    },
+    {
+      "slug": "cursed-cavalcade",
+      "gradeFolder": "grade-1c-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1c-warbands/cursed-cavalcade",
+      "chunk": "https://mordheimer.net/assets/js/5f035307.4245a2b2.js",
+      "id": "the-cursed-cavalcade",
+      "name": "The Cursed Cavalcade",
+      "grade": "1c",
+      "fighters": 9
+    },
+    {
+      "slug": "lustrian-reavers",
+      "gradeFolder": "grade-1c-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1c-warbands/lustrian-reavers",
+      "chunk": "https://mordheimer.net/assets/js/34705368.9c3651f7.js",
+      "id": "lustrian-reavers",
+      "name": "Lustrian Reavers",
+      "grade": "1c",
+      "fighters": 9
+    },
+    {
+      "slug": "maneaters",
+      "gradeFolder": "grade-1c-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1c-warbands/maneaters",
+      "chunk": "https://mordheimer.net/assets/js/ef904a0c.aa942934.js",
+      "id": "maneaters",
+      "name": "Maneaters",
+      "grade": "1c",
+      "fighters": 6
+    },
+    {
+      "slug": "marauders-of-chaos",
+      "gradeFolder": "grade-1c-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1c-warbands/marauders-of-chaos",
+      "chunk": "https://mordheimer.net/assets/js/51017cbd.dd1616c0.js",
+      "id": "marauders-of-chaos",
+      "name": "Marauders of Chaos",
+      "grade": "1c",
+      "fighters": 7
+    },
+    {
+      "slug": "merchant-caravans",
+      "gradeFolder": "grade-1c-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1c-warbands/merchant-caravans",
+      "chunk": "https://mordheimer.net/assets/js/2a85462d.c6d4fae2.js",
+      "id": "merchant-caravans",
+      "name": "Merchant Caravans",
+      "grade": "1c",
+      "fighters": 7
+    },
+    {
+      "slug": "night-goblins",
+      "gradeFolder": "grade-1c-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1c-warbands/night-goblins",
+      "chunk": "https://mordheimer.net/assets/js/5ccecfa5.5d3893e3.js",
+      "id": "night-goblins",
+      "name": "Night Goblins",
+      "grade": "1c",
+      "fighters": 8
+    },
+    {
+      "slug": "night-goblins-web",
+      "gradeFolder": "grade-1c-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1c-warbands/night-goblins-web",
+      "chunk": "https://mordheimer.net/assets/js/b6114a70.ba128f84.js",
+      "id": "night-goblins-web",
+      "name": "Night Goblins (web)",
+      "grade": "1c",
+      "fighters": 10
+    },
+    {
+      "slug": "the-restless-dead",
+      "gradeFolder": "grade-1c-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1c-warbands/the-restless-dead",
+      "chunk": "https://mordheimer.net/assets/js/d35152cc.2a23eacf.js",
+      "id": "the-restless-dead",
+      "name": "The Restless Dead",
+      "grade": "1c",
+      "fighters": 7
+    },
+    {
+      "slug": "the-sons-of-hashut",
+      "gradeFolder": "grade-1c-warbands",
+      "page": "https://mordheimer.net/docs/testwarbands/grade-1c-warbands/the-sons-of-hashut",
+      "chunk": "https://mordheimer.net/assets/js/af81e198.8545ee86.js",
+      "id": "the-sons-of-hashut",
+      "name": "The Sons of Hashut",
+      "grade": "1c",
+      "fighters": 6
+    }
+  ]
+}
