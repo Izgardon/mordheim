@@ -6,12 +6,14 @@ from .views import (
     UnitBatchView,
     UnitDetailListView,
     UnitDetailView,
+    UnitGapView,
     UnitHireView,
     UnitItemCompanionView,
     UnitKillHistoryView,
     UnitLevelUpView,
     UnitListCreateView,
     UnitPromoteView,
+    UnitTakeKitView,
 )
 
 
@@ -19,8 +21,9 @@ def unit_urlpatterns(kind: UnitKindSpec) -> list[URLPattern]:
     """The kind's roster endpoints, with the paths, URL kwargs and URL names they have always had.
 
     Every kind also gets `batch/` (the recruit queue's Save) and `items/<row>/companion/` (a mount or pet switched
-    on or off for the unit); kinds with members (henchmen groups) also get `promote/` (Lad's Got Talent) and
-    `back-to-item/` (a creature's members back to its item), and hirelings `hire/` (a hired sword or dramatis persona
+    on or off for the unit); kinds with members (henchmen groups) also get `promote/` (Lad's Got Talent),
+    `back-to-item/` (a creature's members back to its item), `gaps/<gap>/` (a member's gap filled or left) and
+    `members/<member>/take-kit/` (his kit to the stash: henchmen loadouts), and hirelings `hire/` (a hired sword or dramatis persona
     from the catalogue).
     """
     segment, unit = kind.url_segment, f"<int:{kind.url_kwarg}>"
@@ -45,6 +48,16 @@ def unit_urlpatterns(kind: UnitKindSpec) -> list[URLPattern]:
     if kind.has_members:
         patterns.append(
             path(f"{base}{unit}/promote/", UnitPromoteView.for_kind(kind), name=f"warbands-{segment}-promote")
+        )
+        patterns.append(
+            path(f"{base}{unit}/gaps/<int:gap_id>/", UnitGapView.for_kind(kind), name=f"warbands-{segment}-gap")
+        )
+        patterns.append(
+            path(
+                f"{base}{unit}/members/<int:henchman_id>/take-kit/",
+                UnitTakeKitView.for_kind(kind),
+                name=f"warbands-{segment}-take-kit",
+            )
         )
         patterns.append(
             path(

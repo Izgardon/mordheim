@@ -3,10 +3,10 @@
 `POST warbands/<id>/henchmen-groups/<id>/back-to-item/ {"member_ids": [...]} | {"count": n}` turns living members of a
 group recruited from a creature back into copies of the beast's Animal item, in the stash at the group's price (what
 recruiting set it from). The members leave the group as records (dismissed, their kills kept); `count` takes the
-newest first. The group goes with its last member, dismissed as any group is, and whatever it still carried goes to
-the stash with its costs rather than being lost. No gold moves and no ledger row is written. The group's row is locked
+newest first. Their shares of the group's loadout go to the stash at what each row cost (a creature carries nothing
+back into an item), and the group goes with its last member, dismissed as any group is. No gold moves and no ledger row is written. The group's row is locked
 first, so a recruit joining it and another back to item wait. A fixed number of queries whatever the number of members
-(a last member's leftover gear adds a stash write and a log row per item it carried; creature groups rarely carry any).
+(the leaving members' gear adds a stash write and a log row per copy; creature groups rarely carry any).
 """
 
 from dataclasses import dataclass, field
@@ -16,14 +16,15 @@ from django.db import transaction
 from django.utils import timezone
 
 from apps.items.models import Item
-from apps.warbands.models import Henchman, HenchmenGroup, HenchmenGroupItem, Warband, on_roster
+from apps.warbands.models import Henchman, HenchmenGroup, Warband, on_roster
 from apps.warbands.services import economy_log
-from apps.warbands.services.stash import add_costs, add_to_stash
+from apps.warbands.services.stash import add_to_stash
 from apps.warbands.units.errors import RosterError
 from apps.warbands.units.kinds import HENCHMEN_GROUP
 
 from .beasts import lock_group
 from .dismiss import dismiss
+from .members import share_to_stash
 
 NOT_FROM_A_BEAST = "Only a group recruited from a creature goes back to an item."
 NO_ITEM = "This group's beast has no item to go back to; edit the beast in the bestiary to give it one."
@@ -61,22 +62,6 @@ def _leaving(living: list[int], data: dict[str, Any]) -> list[int]:
     return sorted(living, reverse=True)[: data["count"]]
 
 
-def _empty(warband: Warband, group: HenchmenGroup) -> list[int]:
-    """The group lost its last member: its carried items go to the stash with their costs, then it is dismissed."""
-    rows = HenchmenGroupItem.objects.filter(henchmen_group=group).order_by("id")
-    carried = list(rows.values_list("id", "item_id", "item__name", "cost"))
-    costs: dict[tuple[int, str], list[int | None]] = {}
-    for _row_id, item_id, name, cost in carried:
-        costs.setdefault((item_id, name), []).append(cost)
-    HenchmenGroupItem.objects.filter(id__in=[row[0] for row in carried]).delete()
-    source = (HENCHMEN_GROUP.key, economy_log.unit_name(HENCHMEN_GROUP.key, group))
-    for (item_id, name), item_costs in costs.items():
-        add_costs(warband.id, item_id, item_costs)
-        economy_log.log_move(warband, name, len(item_costs), source, ("stash", None))
-    dismiss(HENCHMEN_GROUP, warband, group)
-    return [item_id for item_id, _name in costs]
-
-
 def back_to_item(warband: Warband, group: HenchmenGroup, data: dict[str, Any]) -> BackToItem:
     """Inside one transaction: the members leave (a guarded update: two requests can't both turn one member back), the
     copies land in the stash, and the move is logged."""
@@ -92,8 +77,10 @@ def back_to_item(warband: Warband, group: HenchmenGroup, data: dict[str, Any]) -
         add_to_stash(warband.id, item.id, len(leaving), group.price)
         source = (HENCHMEN_GROUP.key, economy_log.unit_name(HENCHMEN_GROUP.key, group))
         economy_log.log_move(warband, item.name, len(leaving), source, ("stash", None))
+        gear = share_to_stash(warband, group, [Henchman(pk=pk, group_id=group.pk) for pk in leaving])
+        item_ids = [item.id, *dict.fromkeys(item_id for item_id in gear if item_id != item.id)]
         if len(leaving) == len(living):
-            gear = _empty(warband, group)
-            return BackToItem(None, [item.id, *(item_id for item_id in gear if item_id != item.id)])
+            dismiss(HENCHMEN_GROUP, warband, group)
+            return BackToItem(None, item_ids)
         HenchmenGroup.objects.filter(pk=group.pk).update(updated_at=timezone.now())
-    return BackToItem(group, [item.id])
+    return BackToItem(group, item_ids)

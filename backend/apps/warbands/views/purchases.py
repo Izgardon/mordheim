@@ -8,7 +8,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from apps.items.models import Item
-from apps.warbands.models import Henchman, on_roster
 from apps.warbands.serializers import WarbandItemSummarySerializer, WarbandSummarySerializer, WarbandTradeSerializer
 from apps.warbands.serializers.purchases import PurchaseSerializer, RarityRollRequestSerializer
 from apps.warbands.services.purchases import Purchase, purchase
@@ -17,13 +16,7 @@ from apps.warbands.services.stash import stash_entry
 from apps.warbands.services.summary import load_warband_units
 from apps.warbands.services.unit_items import unit_item_rows
 from apps.warbands.units.catalogue_scope import current_entry, shop_items
-from apps.warbands.units.companions import (
-    companion_fields,
-    group_mount_warnings,
-    mount_kinds,
-    mount_payload,
-    unit_name,
-)
+from apps.warbands.units.companions import companion_fields
 from apps.warbands.units.errors import RosterError, validation_error
 from apps.warbands.units.kinds import HENCHMEN_GROUP
 from apps.warbands.units.serializers import detail_item_entries
@@ -51,29 +44,20 @@ def purchase_answer(warband: Any, item: Item, bought: Purchase) -> dict[str, Any
     stash = stash_entry(warband.id, item) if unit is None and line.group is None else None
     group = unit_detail(HENCHMEN_GROUP.key, line.group.pk) if line.group is not None else None
     units = load_warband_units([warband.id])[warband.id]
-    # A group's every kind of mount and its mount warnings, as its payloads list them: the page reads its mount entries
-    # from `mounts` and shows `mount_warnings` on the group's card.
-    group_mounts = _group_mounts(unit, rows) if line.target_type == HENCHMEN_GROUP.key else {}
+    # A group's whole payload: its loadout line changes its mounts, warnings, loadout totals and hire cost
+    loadout = unit_detail(HENCHMEN_GROUP.key, unit.pk) if line.target_type == HENCHMEN_GROUP.key and unit else None
     return {
         "target_type": line.target_type,
         "target_id": unit.pk if unit is not None else None,
         "updated_at": serializers.DateTimeField().to_representation(unit.updated_at) if unit is not None else None,
         "items": detail_item_entries(rows) if unit is not None else None,
         **companion_fields(unit, rows),
-        **group_mounts,
+        "unit": loadout,
         "group": group,
         "stash_item": WarbandItemSummarySerializer(stash).data if stash else None,
         "trade": WarbandTradeSerializer(bought.trade).data if bought.trade else None,
         "summary": WarbandSummarySerializer(warband, context={"warband_units": units}).data,
         "warnings": bought.warnings + (size_warnings(warband, group, units) if group else []),
-    }
-
-
-def _group_mounts(group: Any, rows: list[Any]) -> dict[str, Any]:
-    living = on_roster(Henchman.objects.filter(group_id=group.pk)).count()
-    return {
-        "mounts": [mount_payload(row) for row in mount_kinds(rows)],
-        "mount_warnings": group_mount_warnings(unit_name(group, HENCHMEN_GROUP.unknown_name), rows, living),
     }
 
 

@@ -2,13 +2,13 @@
 
 The suggestion: each selected rider of the participant's battle roster (a hero, a hired sword, or a henchmen group's
 member riding one of its mounts) who went out of action on his mount (not dismounted: services/dismount.py) rolls a
-D6 for it. It dies on a 1 or 2, or only on a 1 when he has Barding (a group's copies go to its first riders, one each)
+D6 for it. It dies on a 1 or 2, or only on a 1 when he has Barding (a henchman his own, from the group's loadout)
 or, for a horse-type mount (`is_equine`), a Farrier (a hired sword's special rule) is on the warband's battle roster.
 Barding keeps its own rule: it saves whatever wears it, as the shop sells it for a warhorse only. The roll and its result are the
 player's (`postbattle_json.mount_survival`), never automatic: at finalise a dead mount's copy leaves its rider, his
-ridden copy first, with a `mounts_lost` log row for each copy removed; a mount that survives stays. Only a mount the
-server put at risk can die, and a rider who died here keeps his with his items (a henchman's share takes his ridden
-copy first: services/items_lost.py).
+ridden copy first, or for a henchman a gap on the group's mount row ("Skritt has no Horse": henchmen loadouts), with
+a `mounts_lost` log row for each; a mount that survives stays. Only a mount the server put at risk can die, and a
+rider who died here keeps his with his items.
 """
 
 from collections import defaultdict
@@ -20,7 +20,7 @@ from django.db.models import Model
 
 from apps.core.catalogue.current import resolve
 from apps.items.models import Item
-from apps.warbands.models import HenchmenGroupItem, HeroItem, HirelingItem
+from apps.warbands.models import HenchmanItemGap, HenchmenGroupItem, HeroItem, HirelingItem
 
 from ...models import BattleParticipant
 from ...validation.unit_keys import parse_unit_key
@@ -54,15 +54,11 @@ def _barding(unit: dict[str, Any]) -> int:
 
 
 def _riders(roster: dict[str, Any]) -> Iterator[tuple[dict[str, Any], bool]]:
-    """Each unit of the roster and whether it has Barding for its mount: a hero or hired sword who carries one, a
-    group's members one copy each, in the order they ride its mounts."""
-    for unit in [*roster.get("heroes", []), *roster.get("hirelings", [])]:
+    """Each unit of the roster and whether it has Barding for its mount: a hero, hired sword or henchman who carries
+    one (a henchman lists his own share of the group's loadout)."""
+    members = (member for group in roster.get("henchmenGroups", []) for member in group.get("members", []))
+    for unit in [*roster.get("heroes", []), *roster.get("hirelings", []), *members]:
         yield unit, _barding(unit) > 0
-    for group in roster.get("henchmenGroups", []):
-        members = group.get("members", [])
-        copies = _barding(members[0]) if members else 0
-        for rider, member in enumerate(members):
-            yield member, rider < copies
 
 
 def _has_farrier(roster: dict[str, Any]) -> bool:
@@ -96,11 +92,12 @@ class _Loss:
     owner_id: int  # the hero, hired sword or group whose copies carry the mount
     item_id: int
     log: dict[str, Any]
+    rider_id: int  # a henchman: who gets the gap on his group's mount row
 
 
 def _owner(context: FinaliseContext, members: dict, unit_type: str, unit_id: int) -> int | None:
-    """Whose copies carry the rider's mount: his own, or his group's for a henchman; None for a rider gone since,
-    or one who died here, whose items go with him (a henchman's share takes his ridden copy first)."""
+    """Whose copies carry the rider's mount: his own, or his group's loadout for a henchman; None for a rider gone
+    since, or one who died here, whose items go with him."""
     if unit_type == "henchman":
         member = members.get(unit_id)
         return None if member is None or member.dead else member.group_id
@@ -121,7 +118,7 @@ def _losses(context: FinaliseContext, chosen: dict[str, dict]) -> list[_Loss]:
         if owner_id is None:
             continue
         log = {"unit_name": (unit or {}).get("displayName"), "mount": mount.get("name"), "roll": entry["roll"]}
-        losses.append(_Loss(parsed["unit_type"], owner_id, mount["itemId"], log))
+        losses.append(_Loss(parsed["unit_type"], owner_id, mount["itemId"], log, parsed["unit_id"]))
     return losses
 
 
@@ -129,7 +126,7 @@ def _rows_to_delete(
     context: FinaliseContext, unit_type: str, losses: list[_Loss], current: dict
 ) -> list[tuple[_Loss, int]]:
     """One copy per loss that still has one, the owner's ridden copies first, read and locked in one query for the
-    kind."""
+    kind; for a henchman, his group's mount row (every member's loss names the same one)."""
     model, owner_column = ROWS[unit_type]
     wanted = {loss.item_id for loss in losses} | {item.id for item in current.values()}
     rows = model._default_manager.filter(**{f"{owner_column}__in": {loss.owner_id for loss in losses}})
@@ -145,8 +142,25 @@ def _rows_to_delete(
         candidates = [loss.item_id, *([item.id] if item is not None else [])]
         copies = next((spare[(loss.owner_id, pk)] for pk in candidates if spare.get((loss.owner_id, pk))), None)
         if copies:
-            chosen.append((loss, copies.pop(0)))
+            chosen.append((loss, copies[0] if unit_type == "henchman" else copies.pop(0)))
     return chosen
+
+
+def _gap_riders(found: list[tuple[_Loss, int]]) -> list[tuple[_Loss, int]]:
+    """A henchman whose horse died gets a gap on his group's mount row ("Skritt has no Horse"), his group keeping the
+    row for the rest; the losses that made a new gap (one he already had loses nothing)."""
+    held = set(
+        HenchmanItemGap.objects.filter(
+            henchman_id__in=[loss.rider_id for loss, _ in found], group_item_id__in=[row_id for _, row_id in found]
+        ).values_list("henchman_id", "group_item_id")
+    )
+    new = [(loss, row_id) for loss, row_id in found if (loss.rider_id, row_id) not in held]
+    gaps = [
+        HenchmanItemGap(henchman_id=loss.rider_id, group_item_id=row_id, reason=HenchmanItemGap.LOST)
+        for loss, row_id in new
+    ]
+    HenchmanItemGap.objects.bulk_create(gaps)
+    return new
 
 
 def lose_mounts(context: FinaliseContext, draft: dict, unit_information: dict[str, dict]) -> list[dict[str, Any]]:
@@ -169,6 +183,9 @@ def lose_mounts(context: FinaliseContext, draft: dict, unit_information: dict[st
     removed: list[tuple[_Loss, int]] = []
     for unit_type, kind_losses in by_kind.items():
         found = _rows_to_delete(context, unit_type, kind_losses, current)
-        ROWS[unit_type][0]._default_manager.filter(id__in=[row_id for _, row_id in found]).delete()
+        if unit_type == "henchman":
+            found = _gap_riders(found)
+        else:
+            ROWS[unit_type][0]._default_manager.filter(id__in=[row_id for _, row_id in found]).delete()
         removed += found
     return [loss.log for loss in losses if any(loss is gone for gone, _ in removed)]

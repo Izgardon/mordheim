@@ -3,15 +3,18 @@
 Rating and the unit name lists read the same three unit tables, so each table is
 queried once for any number of warbands (the campaign roster rates every warband).
 A unit's switched-on mounts come with its row (`mount_bonuses`): each rider adds his
-first mount's rating bonus (units/companions.py).
+first mount's rating bonus (units/companions.py); a group adds its ridden mount's bonus for each member who
+carries it (`mount_rating`: members times the loadout, less the gaps).
 """
 
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from typing import Any
 
-from django.db.models import Count, Q
+from django.db.models import Count, F, IntegerField, OuterRef, Q, Subquery, Value
+from django.db.models.functions import Coalesce
 
+from apps.bestiary.models import MOUNT
 from apps.warbands.models import (
     HenchmenGroup,
     HenchmenGroupItem,
@@ -22,6 +25,7 @@ from apps.warbands.models import (
     Warband,
     on_roster,
 )
+from apps.warbands.services.loadouts import carriers
 from apps.warbands.units.companions import mount_bonuses_array, mount_rating_bonus
 
 # A group's members on the roster (on_roster, through the group).
@@ -50,11 +54,10 @@ class WarbandUnits:
 
     @property
     def mounts_rating(self) -> int:
-        """What the mounts add to the rating: each rider's first mount's bonus (a group rides one per living member,
-        each counted at its own bonus, so a group on mixed mounts adds each one's). Missing riders don't count."""
-        riders = [(row, 1) for row in rated([*self.heroes, *self.hirelings])]
-        riders += [(row, row["henchmen_count"] or 0) for row in rated(self.henchmen_groups)]
-        return sum(mount_rating_bonus(row.get("mount_bonuses"), count) for row, count in riders)
+        """What the mounts add to the rating: each rider's first mount's bonus, and a group's ridden mount's for each
+        member who carries it. Missing riders don't count."""
+        riders = sum(mount_rating_bonus(row.get("mount_bonuses"), 1) for row in rated([*self.heroes, *self.hirelings]))
+        return riders + sum(int(row.get("mount_rating") or 0) for row in rated(self.henchmen_groups))
 
     @property
     def rating(self) -> float | int:
@@ -86,6 +89,15 @@ class WarbandUnits:
         return self.hero_count + henchmen + sum(1 for row in self.hirelings if row["blood_pacted"])
 
 
+def group_mount_rating() -> Subquery:
+    """A group's first ridden mount's rating bonus times the members who carry it, read with the group's row."""
+    rows = HenchmenGroupItem.objects.filter(
+        henchmen_group=OuterRef("pk"), companion=True, item__bestiary_entry__kind=MOUNT
+    ).order_by("id")
+    bonus = Coalesce(F("item__bestiary_entry__rating_bonus"), Value(0)) * carriers()
+    return Subquery(rows.annotate(rating=bonus).values("rating")[:1], output_field=IntegerField())
+
+
 def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
     """Each warband's roster units (alive, not dismissed) in id order: three queries for any number of warbands."""
     ids = list(warband_ids)
@@ -105,10 +117,10 @@ def load_warband_units(warband_ids: Iterable[int]) -> dict[int, WarbandUnits]:
     groups = (
         on_roster(HenchmenGroup.objects.filter(warband_id__in=ids))
         .annotate(henchmen_count=Count("henchmen", filter=LIVING_MEMBERS))
-        .annotate(mount_bonuses=mount_bonuses_array(HenchmenGroupItem, "henchmen_group"))
+        .annotate(mount_rating=group_mount_rating())
         .order_by("id")
         .values(
-            "id", "warband_id", "name", "unit_type", "xp", "large", "henchmen_count", "missing_games", "mount_bonuses"
+            "id", "warband_id", "name", "unit_type", "xp", "large", "henchmen_count", "missing_games", "mount_rating"
         )
     )
     for group_row in groups:

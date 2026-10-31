@@ -316,3 +316,15 @@ class HireSerializer(serializers.Serializer):
             "id": serializers.IntegerField(min_value=1),
             "name": serializers.CharField(max_length=120, allow_blank=True, required=False),
         }
+
+
+class GapActionSerializer(serializers.Serializer):
+    """POST .../henchmen-groups/<id>/gaps/<gap id>/ (henchmen loadouts): fill a member's gap by buying one copy (`price`
+    sent, else `availability_id` and its `dice_roll`, else the current campaign price, else what the row cost), by
+    taking one from the stash (`cost`: of that cost, else the newest), or leave it ("leave": he goes without)."""
+
+    action = serializers.ChoiceField(choices=("buy", "stash", "leave"))
+    price = serializers.IntegerField(required=False, allow_null=True, min_value=0, max_value=MAX_TRADE_PRICE)
+    availability_id = serializers.IntegerField(required=False, allow_null=True)
+    dice_roll = serializers.IntegerField(required=False, allow_null=True, min_value=0, max_value=1000)
+    cost = serializers.IntegerField(required=False, allow_null=True, min_value=0)

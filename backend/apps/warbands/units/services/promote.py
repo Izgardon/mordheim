@@ -1,8 +1,8 @@
 """Lad's Got Talent: promoting a henchman to a hero in one transaction (decision 9, BUG-28, ROST-TWEAK-04).
 
 It does what the client's four-request chain did, with the same field choices, but all or nothing: the new
-hero copies the group's profile, XP, skills and specials and takes one copy of each of its items (the
-henchman's share); he starts with two level-ups and spends one on the re-rolled advance. The henchman is
+hero copies the group's profile, XP, skills and specials and takes one copy of each loadout row he carries
+(his share, less his gaps; the group's rows stay: services/loadouts.py); he starts with two level-ups and spends one on the re-rolled advance. The henchman is
 dismissed from the group (the group too if nobody living is left), the group's level-up is spent (the chain
 left it unspent) and every step is logged. At the hero cap the caller may name a hero to dismiss to make
 room; without one the promotion is refused with `hero_cap_reached`.
@@ -16,6 +16,7 @@ from django.utils import timezone
 
 from apps.logs.utils import log_warband_event
 from apps.warbands.models import Henchman, HenchmenGroup, HenchmenGroupItem, Hero, Warband, on_roster
+from apps.warbands.services.loadouts import carried_rows
 from apps.warbands.units.errors import RosterError
 from apps.warbands.units.kinds import HENCHMEN_GROUP, HERO, STAT_FIELD_BY_ADVANCE
 from apps.warbands.utils.leaders import lock_warband
@@ -68,15 +69,6 @@ def _hero_fields(warband: Warband, group: HenchmenGroup, name: str, items: list[
     }
 
 
-def _his_share_of_items(group: HenchmenGroup) -> list[HenchmenGroupItem]:
-    """One row of each item the group carries (a switched-on mount or pet first, then the first by id): what the
-    promoted henchman takes with him, still riding what he rode."""
-    share: dict[int, HenchmenGroupItem] = {}
-    for row in group.henchmen_group_items.order_by("-companion", "id"):  # the one he rides, if he rides
-        share.setdefault(row.item_id, row)
-    return list(share.values())
-
-
 def _spend_group_level_up(group: HenchmenGroup) -> None:
     """The group's level-up is the roll that came up Lad's Got Talent: spend it (BUG-28), or refuse."""
     record = advance_record(LADS_GOT_TALENT, STAT_LABELS)
@@ -107,7 +99,7 @@ def promote_henchman(warband: Warband, group: HenchmenGroup, request: dict[str, 
         _spend_group_level_up(group)
         _make_room(warband, request.get("dismiss_hero_id"))
         name = _promoted_name(henchman, living)
-        items = _his_share_of_items(group)
+        items = carried_rows(henchman)  # his share: a copy of each row, still riding what he rode
         fields = _hero_fields(warband, group, name, items)
         check_cap(HERO, warband, fields, locked=True)
         hero = cast(Hero, apply_create(HERO, fields))
@@ -117,7 +109,6 @@ def promote_henchman(warband: Warband, group: HenchmenGroup, request: dict[str, 
             apply_advance(HERO, warband, hero, advance, savepoint=False)
         except LevelUpRejected as rejected:
             raise _field_error("advance", rejected.detail) from None
-        HenchmenGroupItem.objects.filter(id__in=[row.id for row in items]).delete()
         Henchman.objects.filter(id=henchman.id).update(dismissed_at=timezone.now())
         group_name = group.name or group.unit_type or "Henchmen Group"
         log_payload = {"group": group_name, "advance": LADS_GOT_TALENT, "lads_got_talent": True}

@@ -1,5 +1,6 @@
 from .henchmen import (
     Henchman,
+    HenchmanItemGap,
     HenchmenGroup,
     HenchmenGroupItem,
     HenchmenGroupSkill,
@@ -36,6 +37,7 @@ __all__ = [
     "HeroSkill",
     "HeroSpell",
     "Henchman",
+    "HenchmanItemGap",
     "HenchmenGroup",
     "HenchmenGroupItem",
     "HenchmenGroupSpecial",

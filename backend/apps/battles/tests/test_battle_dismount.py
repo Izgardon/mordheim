@@ -10,7 +10,7 @@ state he was taken out of action in is the one postbattle reads.
 from typing import Any
 
 from apps.battles.models import BattleKill
-from apps.warbands.models import HenchmenGroupItem, Hero, HeroItem
+from apps.warbands.models import HenchmanItemGap, HenchmenGroupItem, Hero, HeroItem
 from apps.warbands.tests.beast_support import warhorse
 from apps.warbands.tests.roster_support import HENCHMEN, make_unit
 
@@ -25,7 +25,8 @@ class DismountTests(BattleTestCase):
         HeroItem.objects.create(hero=self.aldric, item=self.horse, companion=True)
         self.walker = Hero.objects.create(warband=self.warband, name="Walker", unit_type="Youngblood")
         self.riders = make_unit(HENCHMEN, self.warband, name="Outriders", members=("A", "B"))
-        HenchmenGroupItem.objects.create(henchmen_group=self.riders, item=self.horse, companion=True)
+        row = HenchmenGroupItem.objects.create(henchmen_group=self.riders, item=self.horse, companion=True)
+        HenchmanItemGap.objects.create(henchman=self.riders.henchmen.order_by("id").last(), group_item=row)  # no horse
         self.rat = Hero.objects.create(warband=self.rival, name="Rat", unit_type="Assassin")
         self.a, self.w, self.r = f"hero:{self.aldric.id}", f"hero:{self.walker.id}", f"hero:{self.rat.id}"
         first, second = self.riders.henchmen.order_by("id")

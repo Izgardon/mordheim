@@ -68,10 +68,11 @@ class RosterBatchItemTests(RosterTestCase):
         self.assertEqual([len(unit["items"]) for unit in answer["units"]], [2, 2])
 
     def test_a_stash_take_moves_the_copies_with_their_cost_in_the_same_save(self):
-        # BUG-108: the copy for a new henchman left the stash by a DELETE after the batch
+        # BUG-108: the copy for a new henchman left the stash by a DELETE after the batch; a group takes one per member
         WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=3, cost=7)
+        members = [{"name": "Alpha"}, {"name": "Beta"}]
         body = {
-            "create": [create_payload(HENCHMEN, name="Zealots", price=0)],
+            "create": [create_payload(HENCHMEN, name="Zealots", price=0, henchmen=members)],
             "stash_takes": [{"create_index": 0, "item_id": self.sword.id, "quantity": 2}],
         }
 
@@ -79,7 +80,7 @@ class RosterBatchItemTests(RosterTestCase):
 
         group = HenchmenGroup.objects.get(warband=self.warband, name="Zealots")
         carried = list(group.henchmen_group_items.order_by("id").values_list("item__name", "cost"))
-        self.assertEqual(carried, [("Sword", 7), ("Sword", 7)])
+        self.assertEqual(carried, [("Sword", 7)])  # one loadout row: a sword each
         self.assertEqual(WarbandItem.objects.get(warband=self.warband).quantity, 1)
         moved = {"item": "Sword", "quantity": 2, "source_type": "stash", "source_name": None}
         moved |= {"target_type": "henchmen_group", "target_name": "Zealots"}

@@ -216,11 +216,10 @@ class FixturePostbattleTests(BattleTestCase):
 
     def test_dead_units_lose_their_items(self):
         # Pass 2 decision 7, BATL-TWEAK-08: a dead hero's or hired sword's items stay on his record, out of reach;
-        # each dead henchman takes one copy of each of his group's items; the battle log lists what was lost
-        group = self.groups[0]  # 3 henchmen: 2 more ropes and a lucky charm
+        # a dead henchman deletes nothing: his group's loadout follows the living (henchmen loadouts); the battle log
+        # lists what was lost, a henchman's share being each row he carried
+        group = self.groups[0]  # 3 henchmen: a rope and a lucky charm each
         group.henchmen_group_items.create(item=self.charm, cost=10)
-        for _ in range(2):
-            group.henchmen_group_items.create(item=self.rope, cost=5)
         battle_id = self.start()
         self.finish(battle_id, [self.warband])
         dead = [self.heroes[1], self.swords[0], self.henchmen[0], self.henchmen[1], self.henchmen[6]]
@@ -230,12 +229,12 @@ class FixturePostbattleTests(BattleTestCase):
 
         self.assertEqual(HeroItem.objects.filter(hero=self.heroes[1]).count(), 1)
         self.assertEqual(HirelingItem.objects.filter(hireling=self.swords[0]).count(), 1)
-        self.assertEqual(list(group.henchmen_group_items.values_list("item__name", flat=True)), ["Rope"])
-        self.assertFalse(HenchmenGroupItem.objects.filter(henchmen_group=self.groups[2]).exists())
+        self.assertEqual(list(group.henchmen_group_items.order_by("id").values_list("item__name", flat=True)), ["Rope", "Lucky Charm"])  # fmt: skip
+        self.assertTrue(HenchmenGroupItem.objects.filter(henchmen_group=self.groups[2]).exists())
         lost = WarbandLog.objects.get(warband=self.warband, entry_type="items_lost").payload["units"]
         self.assertEqual(
             [(entry["unit_name"], entry["items"]) for entry in lost],
-            [(self.key(self.heroes[1]), ["Rope"]), (self.key(self.swords[0]), ["Rope"]), (self.key(self.henchmen[0]), ["Rope", "Lucky Charm"]), (self.key(self.henchmen[1]), ["Rope"]), (self.key(self.henchmen[6]), ["Rope"])],
+            [(self.key(self.heroes[1]), ["Rope"]), (self.key(self.swords[0]), ["Rope"]), (self.key(self.henchmen[0]), ["Rope", "Lucky Charm"]), (self.key(self.henchmen[1]), ["Rope", "Lucky Charm"]), (self.key(self.henchmen[6]), ["Rope"])],
         )  # fmt: skip
 
     def test_a_whole_group_dying_marks_the_group_dead(self):

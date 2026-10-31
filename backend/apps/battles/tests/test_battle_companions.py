@@ -9,10 +9,9 @@ from typing import Any
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
-from apps.battles.services.items_lost import henchman_takes_his_share
 from apps.skills.models import Skill
 from apps.spells.models import Spell
-from apps.warbands.models import HenchmenGroup, HenchmenGroupItem, Hero, HeroItem
+from apps.warbands.models import HenchmanItemGap, HenchmenGroup, HenchmenGroupItem, Hero, HeroItem
 from apps.warbands.tests.beast_support import beast, raven, teach, wardogs, warhorse
 from apps.warbands.tests.roster_support import HENCHMEN, make_unit
 
@@ -51,18 +50,17 @@ class BattleRosterCompanionTests(BattleTestCase):
 
     def test_a_groups_members_ride_its_mount_and_a_creature_group_names_its_beast(self):
         riders = make_unit(HENCHMEN, self.warband, name="Outriders", members=("A", "B"), movement=4)
-        HenchmenGroupItem.objects.create(henchmen_group=riders, item=self.horse, companion=True)
+        row = HenchmenGroupItem.objects.create(henchmen_group=riders, item=self.horse, companion=True)
+        HenchmanItemGap.objects.create(henchman=riders.henchmen.order_by("id").last(), group_item=row)  # his died
         kennel = make_unit(HENCHMEN, self.warband, name="Kennel", source_beast=beast(self.dogs))
         battle_id = self.to_prebattle()
 
         groups = {group["name"]: group for group in self.roster(battle_id)["henchmenGroups"]}
 
-        outriders = groups["Outriders"]["members"]  # one horse for two: the second goes on foot
+        outriders = groups["Outriders"]["members"]  # a horse each: the second lacks his and goes on foot
         self.assertEqual([(member["mount"] or {}).get("name") for member in outriders], ["Warhorse", None])
         self.assertEqual([(member["effectiveStats"] or {}).get("movement") for member in outriders], [8, None])
-        message = "Every member of a group carries the same gear, so Outriders can't take the field until each of its 2 members has a Warhorse (it has 1)."  # fmt: skip
-        warning = {"code": "group_mounts", "message": message, "mounts": 1, "members": 2}
-        self.assertEqual((groups["Outriders"]["mountWarnings"], groups["Kennel"]["mountWarnings"]), ([warning], []))
+        self.assertEqual((groups["Outriders"]["mountWarnings"], groups["Kennel"]["mountWarnings"]), ([], []))
         self.assertEqual((groups["Outriders"]["sourceBeastId"], groups["Outriders"]["beastKind"]), (None, None))
         source = HenchmenGroup.objects.get(pk=kennel.pk).source_beast_id
         self.assertEqual((groups["Kennel"]["sourceBeastId"], groups["Kennel"]["beastKind"]), (source, "creature"))
@@ -102,17 +100,3 @@ class BattleRosterCompanionTests(BattleTestCase):
             self.roster(battle_id)
 
         self.assertEqual(len(many), len(few))
-
-
-class HenchmanLossTests(BattleTestCase):
-    def test_a_henchman_who_dies_takes_a_ridden_copy_first(self):
-        horse = warhorse()
-        group = make_unit(HENCHMEN, self.warband, members=("A", "B"))
-        spare = HenchmenGroupItem.objects.create(henchmen_group=group, item=horse)
-        for _ in range(2):
-            HenchmenGroupItem.objects.create(henchmen_group=group, item=horse, companion=True)
-
-        henchman_takes_his_share(group)
-
-        rows = HenchmenGroupItem.objects.filter(henchmen_group=group).order_by("id")
-        self.assertEqual([(row.id == spare.id, row.companion) for row in rows], [(True, False), (False, True)])

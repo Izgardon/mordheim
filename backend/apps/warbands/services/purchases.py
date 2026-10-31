@@ -32,10 +32,11 @@ from apps.warbands.units.services.beasts import Target, creature, recruit_copies
 from apps.warbands.units.services.companions import NOT_A_COMPANION, units_warnings
 
 from . import economy_log, ledger
+from .loadouts import living_ids
 from .prices import CampaignPrices
 from .rarity_rolls import RollRefused, record_roll
 from .stash import add_to_stash
-from .unit_items import add_unit_copies, resolve_unit
+from .unit_items import add_unit_copies, holds_loadout, resolve_unit
 
 Warning = dict[str, Any]  # {"code", "message", ...}, the shape trades answer
 GOLD_NEGATIVE = "gold_negative"
@@ -127,6 +128,12 @@ def price_line(warband: Warband, item: Item, data: Mapping[str, Any], key: str =
     if data["is_buying"] and (price or 0) * data["quantity"] > ledger.MAX_TRADE_PRICE:
         raise refused(key, "price", f"A purchase costs at most {ledger.MAX_TRADE_PRICE} gc.")
     return price
+
+
+def for_every_member(unit: RosterUnit, data: Mapping[str, Any]) -> dict[str, Any]:
+    """A purchase for a henchmen group buys one loadout row: a copy for each living member ("a sword each"), whatever
+    quantity was sent."""
+    return {**data, "quantity": len(living_ids(unit.pk))}
 
 
 def _log(warband: Warband, line: Line) -> None:
@@ -225,6 +232,8 @@ def purchase(warband: Warband, item: Item, data: Mapping[str, Any]) -> Purchase:
     """POST purchases/: buy or give `quantity` copies of `item` to the target of a validated body."""
     target_type = data["target_type"]
     unit = None if target_type == STASH else resolve_unit(warband, target_type, data.get("target_id"), "Target")
+    if unit is not None and holds_loadout(target_type) and data.get("recruit") is None:
+        data = for_every_member(unit, data)
     check_companion(item, data)
     recruiting = None
     if data.get("recruit") is not None:

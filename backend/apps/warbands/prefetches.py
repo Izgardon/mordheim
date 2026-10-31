@@ -13,7 +13,7 @@ from django.db.models import Model, OuterRef, Prefetch
 from django.db.models.functions import JSONObject
 
 from apps.items.models import ItemAvailability, ItemAvailabilityWarband, ItemRuleLink
-from apps.warbands.models import Henchman, on_roster
+from apps.warbands.models import Henchman, HenchmanItemGap, on_roster
 from apps.warbands.services.prices import house_rule_prices
 from apps.warbands.units.catalogue import SkillDetailSerializer, SpecialDetailSerializer, SpellDetailSerializer
 from apps.warbands.units.companions import with_beasts
@@ -76,6 +76,19 @@ def availabilities_prefetch(prefix: str = "") -> Prefetch:
     )
 
 
+def gap_entries() -> ArraySubquery:
+    """A member's gaps (the loadout rows he lacks) read with his row, oldest first: services/loadouts.py."""
+    gaps = HenchmanItemGap.objects.filter(henchman_id=OuterRef("pk")).order_by("id")
+    entry = JSONObject(id="id", row_id="group_item_id", item_id="group_item__item_id", reason="reason", left="left")
+    return ArraySubquery(gaps.values(entry=entry))
+
+
+def members_with_gaps(members: Any) -> Any:
+    """Members read with their gaps (`gap_entries`), in id order."""
+    return members.annotate(gap_entries=gap_entries()).order_by("id")
+
+
 def alive_henchmen_prefetch() -> Prefetch:
-    """A group's living members, in id order: what every roster payload lists (dead and dismissed ones are records)."""
-    return Prefetch("henchmen", queryset=on_roster(Henchman.objects.all()).order_by("id"))
+    """A group's living members with their gaps, in id order: what every roster payload lists (dead and dismissed
+    ones are records)."""
+    return Prefetch("henchmen", queryset=members_with_gaps(on_roster(Henchman.objects.all())))

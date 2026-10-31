@@ -1,15 +1,19 @@
 """One set of views for heroes, henchmen groups and hired swords; each is bound per kind in urls.py."""
 
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from typing import Any
 
+from django.db import transaction
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from apps.warbands.models import not_dismissed
-from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandSummarySerializer
+from apps.items.models import Item
+from apps.warbands.models import Henchman, HenchmanItemGap, not_dismissed, on_roster
+from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandItemSummarySerializer, WarbandSummarySerializer
 from apps.warbands.serializers.beasts import BackToItemSerializer
+from apps.warbands.services.stash import stash_entry
+from apps.warbands.utils.leaders import lock_warband
 from apps.warbands.views.base import WarbandScopedView
 from apps.warbands.views.beasts import back_to_item_answer
 
@@ -17,6 +21,7 @@ from .errors import validation_error
 from .kinds import HERO, UnitKindSpec
 from .serializers import (
     CompanionSwitchSerializer,
+    GapActionSerializer,
     HenchmanPromoteSerializer,
     HireSerializer,
     UnitBatchSerializer,
@@ -31,6 +36,7 @@ from .services.dismiss import dismiss_unit
 from .services.hire import catalogue_entry, hire, hire_payload
 from .services.kill_history import kill_history
 from .services.level_up import LevelUpRejected, apply_advance
+from .services.members import fill_gap, on_roster_gap, take_kit
 from .services.promote import promote_henchman
 from .services.update import update_unit
 
@@ -226,3 +232,50 @@ class UnitBackToItemView(UnitView):
         outcome = back_to_item(self.warband, group, body.validated_data)
         self.announce_change()
         return Response(back_to_item_answer(self.warband, outcome))
+
+
+def _loadout_answer(view: UnitView, group_id: int, item_ids: Iterable[int]) -> dict[str, Any]:
+    """A loadout change's answer: the group, the summary, and each touched item's stash entry (or its id, gone)."""
+    items = Item.objects.select_related("bestiary_entry").in_bulk(list(dict.fromkeys(item_ids)))
+    stash = {item_id: stash_entry(view.warband.id, item) for item_id, item in items.items()}
+    loaded = view.kind.detail_queryset().get(id=group_id)
+    return {
+        "unit": view.serializers.detail(loaded).data,
+        "summary": WarbandSummarySerializer(view.warband).data,
+        "stash_items": [WarbandItemSummarySerializer(entry).data for entry in stash.values() if entry is not None],
+        "removed_stash_item_ids": [item_id for item_id, entry in stash.items() if entry is None],
+    }
+
+
+# Henchmen loadouts: a member's gap filled (bought, from the stash) or left. No docstring: DRF serves it on OPTIONS.
+class UnitGapView(UnitView):
+    def post(self, request: Request, warband_id: int, **kwargs: Any) -> Response:
+        group = self.kind.visible(self.kind.objects.filter(id=self.unit_id(kwargs), warband=self.warband)).first()
+        gaps = HenchmanItemGap.objects.select_related("group_item__item", "henchman")
+        gap = on_roster_gap(gaps, group, int(kwargs["gap_id"])) if group is not None else None
+        if group is None or gap is None:
+            return Response(NOT_FOUND, status=404)
+        body = GapActionSerializer(data=request.data)
+        if not body.is_valid():
+            raise validation_error(body.errors)
+        with transaction.atomic():
+            lock_warband(self.warband.id)
+            fill_gap(self.warband, group, gap, body.validated_data)
+        self.announce_change()
+        stash_touched = [gap.group_item.item_id] if body.validated_data["action"] == "stash" else []
+        return Response(_loadout_answer(self, group.pk, stash_touched))
+
+
+# Henchmen loadouts: "Take Skritt's kit" to the stash. No docstring: DRF serves it on OPTIONS.
+class UnitTakeKitView(UnitView):
+    def post(self, request: Request, warband_id: int, **kwargs: Any) -> Response:
+        group = self.kind.visible(self.kind.objects.filter(id=self.unit_id(kwargs), warband=self.warband)).first()
+        members = on_roster(Henchman.objects.filter(group=group, id=int(kwargs["henchman_id"])))
+        member = members.first() if group is not None else None
+        if group is None or member is None:
+            return Response(NOT_FOUND, status=404)
+        with transaction.atomic():
+            lock_warband(self.warband.id)
+            moved = take_kit(self.warband, group, member)
+        self.announce_change()
+        return Response(_loadout_answer(self, group.pk, moved))

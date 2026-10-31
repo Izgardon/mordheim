@@ -17,7 +17,9 @@ from .roster_support import HENCHMEN, HERO, RosterTestCase, cap_error, log_rows,
 
 STATS = {"movement": 4, "weapon_skill": 3, "ballistic_skill": 3, "strength": 3, "toughness": 3}
 STATS |= {"wounds": 1, "initiative": 3, "attacks": 1, "leadership": 7}
-PROMOTE_QUERY_BUDGET = 40  # whatever the roster size (test below); the response re-reads hero, group and summary
+PROMOTE_QUERY_BUDGET = (
+    42  # whatever the roster size (test below); the response re-reads hero, group (its loadout kept) and summary
+)
 
 
 class PromoteTests(RosterTestCase):
@@ -44,7 +46,7 @@ class PromoteTests(RosterTestCase):
         )
         self.alpha, self.beta = self.group.henchmen.order_by("id")
         Henchman.objects.filter(id=self.alpha.id).update(kills=2)
-        for item, cost in ((self.sword, 10), (self.sword, 10), (self.axe, None), (self.axe, None)):
+        for item, cost in ((self.sword, 10), (self.axe, None)):  # the loadout: a sword and an axe each
             self.group.henchmen_group_items.create(item=item, cost=cost)
         self.group.henchmen_group_skills.create(skill=self.skills[0])
         self.group.henchmen_group_specials.create(special=self.specials[0])
@@ -142,7 +144,7 @@ class PromoteTests(RosterTestCase):
         self.assertEqual((refused.status_code, refused.json()), (400, cap_error("Warband already has 1 heroes")))
         self.assertEqual(Hero.objects.filter(warband=self.warband).count(), 1)
         self.group.refresh_from_db()
-        self.assertEqual((self.group.level_up, self.group.henchmen_group_items.count()), (1, 4))
+        self.assertEqual((self.group.level_up, self.group.henchmen_group_items.count()), (1, 2))
         self.assertIsNone(Henchman.objects.get(id=self.alpha.id).dismissed_at)
         self.assertEqual(log_rows(self.warband), [])
 
