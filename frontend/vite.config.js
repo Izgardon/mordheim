@@ -1,3 +1,4 @@
+import { Agent } from "node:http";
 import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
@@ -28,6 +29,10 @@ export default defineConfig({
       "/api": {
         target: "http://backend:8000",
         changeOrigin: true,
+        // Reuse connections to the backend. A new connection looks `backend` up in DNS, which
+        // waits in Node's 4-thread I/O pool behind the polling watcher's stats; on a Windows bind
+        // mount that queue cost every API call 0.8-1.8 s.
+        agent: new Agent({ keepAlive: true }),
       },
     },
   },
