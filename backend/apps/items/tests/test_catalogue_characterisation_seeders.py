@@ -74,7 +74,7 @@ class SeederTestCase(TestCase):
         cls.campaign = Campaign.objects.create(name="Shards", join_code="SHARDS")
         CampaignSettings.objects.create(campaign=cls.campaign)
         cls.user = get_user_model().objects.create_user(username="pia@example.com", email="pia@example.com")
-        cls.warband = Warband.objects.create(campaign=cls.campaign, user=cls.user, name="Monks", faction="Sisters")
+        cls.warband = Warband.objects.create(campaign=cls.campaign, user=cls.user, name="Monks")
 
     def junk_restriction(self, restriction_type: str, text: str) -> Restriction:
         """A global restriction like the ones POST /restrictions/ let any signed-in user add before PR A removed it

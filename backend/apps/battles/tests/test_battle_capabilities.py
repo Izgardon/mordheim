@@ -56,7 +56,7 @@ class BattleCapabilityTests(BattleTestCase):
 
     def test_a_player_who_left_neither_starts_nor_is_offered_it(self):
         # Decision 4: the start is any participant's who is still in the battle
-        Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows", faction="X")
+        Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows")
         battle_id = self.to_prebattle([self.viewer, self.manager])
         self.ok(self.post_as(self.manager, self.url(battle_id, "cancel")))
         for user in (self.player, self.viewer):
@@ -83,7 +83,7 @@ class BattleCapabilityTests(BattleTestCase):
         self.assertEqual(self.capabilities(self.viewer, battle_id), {**NONE, "edit_record": True})
 
     def test_owners_and_admins_manage_battles_without_a_grant(self):
-        Warband.objects.create(campaign=self.campaign, user=self.admin, name="Crows", faction="Any")
+        Warband.objects.create(campaign=self.campaign, user=self.admin, name="Crows")
         battle_id = self.to_postbattle({self.player: [], self.admin: []})
         self.assertEqual(self.capabilities(self.admin, battle_id), {**OPEN, "close_postbattle": True, "confirm_results": True})  # fmt: skip
         self.ok(self.post_as(self.admin, self.url(battle_id, "close-postbattle")))

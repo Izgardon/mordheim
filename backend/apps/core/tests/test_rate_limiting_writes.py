@@ -149,13 +149,11 @@ class WriteRateLimitingApiTests(RateLimitTestCase):
             campaign=smoke_campaign,
             user=smoke_owner,
             name="Smoke Ravens",
-            faction="Mercenaries",
         )
         Warband.objects.create(
             campaign=smoke_campaign,
             user=smoke_player,
             name="Smoke Claws",
-            faction="Skaven",
         )
 
         battles = f"/api/campaigns/{smoke_campaign.id}/battles/"

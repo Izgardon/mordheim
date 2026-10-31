@@ -87,7 +87,7 @@ class CustomArchiveTests(ArchiveTestCase):
 class BookRemovalTests(ArchiveTestCase):
     def test_a_book_entry_is_removed_for_this_campaign_alone_and_restored(self):
         WarbandItem.objects.create(warband=self.warband, item=self.book_axe, quantity=2, cost=5)
-        far = Warband.objects.create(campaign=self.elsewhere, user=self.outsider, name="Far", faction="Skaven")
+        far = Warband.objects.create(campaign=self.elsewhere, user=self.outsider, name="Far")
         WarbandItem.objects.create(warband=far, item=self.book_axe, quantity=1, cost=5)
 
         removed = self.book_delete(ITEMS, self.book_axe.id)
@@ -123,7 +123,7 @@ class BookRemovalTests(ArchiveTestCase):
 
 class UsageTests(ArchiveTestCase):
     def test_usage_counts_the_campaigns_copies_in_the_delete_answers_shape(self):
-        far = Warband.objects.create(campaign=self.elsewhere, user=self.outsider, name="Far", faction="Skaven")
+        far = Warband.objects.create(campaign=self.elsewhere, user=self.outsider, name="Far")
         self.hero.hero_items.create(item=self.book_sword, cost=10)
         WarbandItem.objects.create(warband=far, item=self.book_sword, quantity=1, cost=10)  # another campaign's
         charm = make_entry(ITEMS, "Charm", campaign=self.campaign)

@@ -181,7 +181,7 @@ class BattleCreateTests(BattleTestCase):
 
 class BattleJoinTests(BattleTestCase):
     def test_the_last_acceptance_opens_prebattle_for_everyone(self):
-        manager_warband = Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows", faction="X")
+        manager_warband = Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows")
         battle_id = self.create_battle([self.viewer, self.manager])
 
         self.ok(self.post_as(self.viewer, self.url(battle_id, "join")))

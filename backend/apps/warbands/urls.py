@@ -3,6 +3,7 @@ from django.urls import path
 from .units.kinds import HENCHMEN_GROUP, HERO, HIRELING
 from .units.urls import unit_urlpatterns
 from .views import (
+    CampaignWarbandTypesView,
     HeroSpecialDetailView,
     HeroSpellDetailView,
     WarbandBeastRecruitView,
@@ -18,7 +19,6 @@ from .views import (
     WarbandResourceDetailView,
     WarbandResourceListCreateView,
     WarbandResourceSaleView,
-    WarbandRestrictionsView,
     WarbandRosterStatsView,
     WarbandSheetView,
     WarbandSummaryView,
@@ -27,6 +27,7 @@ from .views import (
 )
 
 urlpatterns = [
+    path("campaigns/<int:campaign_id>/warband-types/", CampaignWarbandTypesView.as_view(), name="warband-types"),
     path("warbands/", WarbandListCreateView.as_view(), name="warbands"),
     path("warbands/<int:warband_id>/", WarbandDetailView.as_view(), name="warbands-detail"),
     path("warbands/<int:warband_id>/roster-stats/", WarbandRosterStatsView.as_view(), name="warbands-roster-stats"),
@@ -88,11 +89,6 @@ urlpatterns = [
     ),
     *unit_urlpatterns(HENCHMEN_GROUP),
     *unit_urlpatterns(HIRELING),
-    path(
-        "warbands/<int:warband_id>/restrictions/",
-        WarbandRestrictionsView.as_view(),
-        name="warbands-restrictions",
-    ),
     path(
         "warbands/<int:warband_id>/logs/",
         WarbandLogListView.as_view(),

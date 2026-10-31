@@ -38,8 +38,17 @@ from apps.warbands.models import (
     LedgerAction,
     Warband,
     WarbandItem,
+    WarbandType,
 )
 from apps.warbands.services import ledger
+
+
+def book_warband_type(name: str = "Mercenaries") -> WarbandType:
+    """A book warband type of that name (made once): tests raise warbands as one without seeding the import."""
+    found, _ = WarbandType.objects.get_or_create(
+        campaign=None, name=name, defaults={"slug": name.lower().replace(" ", "-")}
+    )
+    return found
 
 
 @dataclass
@@ -65,7 +74,9 @@ def _authed_client(user: Any) -> APIClient:
 
 def _create_warband(client: APIClient, campaign_id: int, name: str) -> Warband:
     response = client.post(
-        "/api/warbands/", {"name": name, "faction": "Mercenaries", "campaign_id": campaign_id}, format="json"
+        "/api/warbands/",
+        {"name": name, "warband_type_id": book_warband_type().id, "campaign_id": campaign_id},
+        format="json",
     )
     assert response.status_code == 201, response.data
     return Warband.objects.get(id=response.data["id"])

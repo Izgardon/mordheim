@@ -38,7 +38,6 @@ class WarbandsApiTests(APITestCase):
             campaign=self.campaign,
             user=self.owner,
             name="Iron Vultures",
-            faction="Mercenaries",
         )
 
         self.item = Item.objects.create(name="Sword", type="Weapon", description="")

@@ -46,12 +46,12 @@ def campaigns_for_user(user: Any) -> QuerySet[Campaign]:
 
 def campaign_list_for_user(user: Any) -> QuerySet[Campaign]:
     """The campaigns list: `campaigns_for_user` with the user's own warband in each (`my_warband_id`, `_name` and
-    `_faction`, None without one), read in the same query."""
+    `_type`, its type's name; None without one), read in the same query."""
     mine = Warband.objects.filter(campaign_id=OuterRef("pk"), user=user)
     return campaigns_for_user(user).annotate(
         my_warband_id=Subquery(mine.values("id")[:1]),
         my_warband_name=Subquery(mine.values("name")[:1]),
-        my_warband_faction=Subquery(mine.values("faction")[:1]),
+        my_warband_type=Subquery(mine.values("warband_type__name")[:1]),
     )
 
 
@@ -104,14 +104,16 @@ def campaign_memberships(campaign_id: int) -> list[CampaignMembership]:
 
 def _warbands_by_user(campaign_id: int) -> dict[int, dict[str, Any]]:
     warbands = list(
-        Warband.objects.filter(campaign_id=campaign_id).only("id", "name", "faction", "user_id", "wins", "losses")
+        Warband.objects.filter(campaign_id=campaign_id)
+        .select_related("warband_type")
+        .only("id", "name", "warband_type__name", "user_id", "wins", "losses")
     )
     units_by_warband = load_warband_units(warband.id for warband in warbands)
     return {
         warband.user_id: {
             "id": warband.id,
             "name": warband.name,
-            "faction": warband.faction,
+            "type_name": warband.warband_type.name if warband.warband_type else "",
             "wins": warband.wins,
             "losses": warband.losses,
             "rating": units_by_warband[warband.id].rating,

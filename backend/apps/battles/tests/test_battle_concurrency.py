@@ -59,7 +59,7 @@ class BattleConcurrencyTests(TransactionTestCase):
         warbands = []
         for user, name in zip(users, ("Monks", "Rats"), strict=True):
             CampaignMembership.objects.create(campaign=self.campaign, user=user, role=role)
-            warbands.append(Warband.objects.create(campaign=self.campaign, user=user, name=name, faction="Any"))
+            warbands.append(Warband.objects.create(campaign=self.campaign, user=user, name=name))
         self.warband, self.rival = warbands
         self.abbess = Hero.objects.create(warband=self.warband, name="Abbess", unit_type="Matriarch", is_leader=True)
         self.novice = Hero.objects.create(warband=self.warband, name="Novice", unit_type="Novice")

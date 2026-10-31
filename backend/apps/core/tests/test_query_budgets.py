@@ -44,9 +44,12 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     "permissions_me": ("/api/campaigns/{campaign}/permissions/me/", 1),
     "notifications": ("/api/notifications/", 1),
     # Warband sheet
-    "warband_detail": ("/api/warbands/{warband}/", 3),
+    "warband_detail": ("/api/warbands/{warband}/", 4),  # + its type and counts-as with their groups (grading phase 1)
     "warband_summary": ("/api/warbands/{warband}/summary/", 6),  # gold is a stored column (decision 4)
-    "warband_sheet": ("/api/warbands/{warband}/sheet/", 15),  # constant in units (test below); one request for 5
+    "warband_sheet": (
+        "/api/warbands/{warband}/sheet/",
+        16,
+    ),  # constant in units (test below); one request for 5; + types
     "warband_heroes": ("/api/warbands/{warband}/heroes/", 4),  # constant in units
     "warband_henchmen": ("/api/warbands/{warband}/henchmen-groups/", 5),  # constant in units
     "warband_hirelings": ("/api/warbands/{warband}/hirelings/", 4),  # constant in units

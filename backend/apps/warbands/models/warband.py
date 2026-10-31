@@ -16,7 +16,14 @@ class Warband(models.Model):
     campaign = models.ForeignKey("campaigns.Campaign", related_name="warbands", on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="warbands", on_delete=models.CASCADE)
     name = models.CharField(max_length=120)
-    faction = models.CharField(max_length=80)
+    # what it is (grading phase 1): required when a warband is raised, and the types it also counts as, for custom
+    # warbands and house rules; the free-text faction it replaced was mapped onto types by name
+    warband_type = models.ForeignKey(
+        "WarbandType", related_name="warbands", null=True, blank=True, on_delete=models.RESTRICT
+    )
+    counts_as: models.ManyToManyField = models.ManyToManyField(
+        "WarbandType", related_name="counted_by", blank=True, db_table="warband_counts_as"
+    )
     dice_color = models.CharField(
         max_length=9,
         default=DEFAULT_DICE_COLOR,
@@ -36,11 +43,6 @@ class Warband(models.Model):
     items: models.ManyToManyField = models.ManyToManyField(
         "items.Item",
         through="WarbandItem",
-        related_name="warbands",
-        blank=True,
-    )
-    restrictions = models.ManyToManyField(
-        "restrictions.Restriction",
         related_name="warbands",
         blank=True,
     )

@@ -26,7 +26,7 @@ class CampaignBattleListTests(APITestCase):
         for user in (self.owner, self.player):
             CampaignMembership.objects.create(campaign=self.campaign, user=user, role=role)
             self.warbands[user.id] = Warband.objects.create(
-                campaign=self.campaign, user=user, name=f"{user.first_name} band", faction="Mercenaries"
+                campaign=self.campaign, user=user, name=f"{user.first_name} band"
             )
         self.url = f"/api/campaigns/{self.campaign.id}/battles/"
         self.client.force_authenticate(user=self.owner)

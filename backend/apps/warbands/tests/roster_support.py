@@ -266,8 +266,8 @@ class RosterTestCase(APITestCase):
                 CampaignMembershipPermission.objects.create(membership=membership, permission=manage)
         CampaignMembership.objects.create(campaign=other_campaign, user=cls.outsider, role=roles["owner"])
 
-        cls.warband = Warband.objects.create(campaign=cls.campaign, user=cls.player, name="Monks", faction="Sisters")
-        cls.rival = Warband.objects.create(campaign=cls.campaign, user=cls.viewer, name="Rats", faction="Skaven")
+        cls.warband = Warband.objects.create(campaign=cls.campaign, user=cls.player, name="Monks")
+        cls.rival = Warband.objects.create(campaign=cls.campaign, user=cls.viewer, name="Rats")
 
         maxima = {"movement": 4, "weapon_skill": 6, "ballistic_skill": 6, "strength": 4, "toughness": 4}
         maxima |= {"wounds": 3, "initiative": 6, "attacks": 4, "leadership": 9}

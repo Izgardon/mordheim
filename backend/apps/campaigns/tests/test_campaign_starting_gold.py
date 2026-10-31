@@ -9,6 +9,7 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
 from apps.campaigns.models import CampaignSettings
+from apps.core.testing import book_warband_type
 from apps.warbands.models import LedgerAction, Warband
 from apps.warbands.services import ledger
 from apps.warbands.tests.roster_support import clear_ledger, trade_rows
@@ -69,7 +70,9 @@ class StartingGoldTests(CampaignTestCase):
     def test_not_adjusting_leaves_existing_warbands_and_new_ones_get_the_new_amount(self):
         response = self.set_starting_gold(450, adjust_existing_warbands=False)
         created = self.post_as(
-            self.admin, "/api/warbands/", {"name": "Ravens", "faction": "Mercenaries", "campaign_id": self.campaign.id}
+            self.admin,
+            "/api/warbands/",
+            {"name": "Ravens", "warband_type_id": book_warband_type().id, "campaign_id": self.campaign.id},
         )
 
         self.assertEqual((response.status_code, self.stored_starting_gold()), (200, 450))
@@ -101,7 +104,9 @@ class StartingGoldTests(CampaignTestCase):
 
         two = adjust_queries(600)
         self.post_as(
-            self.admin, "/api/warbands/", {"name": "Ravens", "faction": "Merc", "campaign_id": self.campaign.id}
+            self.admin,
+            "/api/warbands/",
+            {"name": "Ravens", "warband_type_id": book_warband_type().id, "campaign_id": self.campaign.id},
         )
         three = adjust_queries(700)
 

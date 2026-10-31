@@ -18,7 +18,7 @@ from .battle_support import BattleTestCase, status_changed
 class PendingResultsTests(BattleTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.crows = Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows", faction="X")
+        self.crows = Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows")
 
     def report(self, by: Any = None, **overrides: Any) -> int:
         by = by or self.player

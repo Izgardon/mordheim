@@ -20,7 +20,7 @@ class CampaignPlayerSerializer(serializers.Serializer):
         return {
             "id": warband.get("id"),
             "name": warband.get("name"),
-            "faction": warband.get("faction"),
+            "type_name": warband.get("type_name"),
             "wins": warband.get("wins"),
             "losses": warband.get("losses"),
             "rating": warband.get("rating"),

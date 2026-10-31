@@ -41,7 +41,7 @@ class BattleExpiryTests(BattleTestCase):
         self.assertIn((self.player.id, "battle_invite_declined"), self.notified())
 
     def test_with_two_left_who_accepted_prebattle_opens(self):
-        Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows", faction="X")
+        Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows")
         battle_id = self.create_battle([self.viewer, self.manager])
         self.ok(self.post_as(self.viewer, self.url(battle_id, "join")))
         self.overdue(battle_id)

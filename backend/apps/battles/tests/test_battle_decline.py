@@ -15,7 +15,7 @@ from .battle_support import BattleTestCase
 class BattleDeclineTests(BattleTestCase):
     def setUp(self) -> None:
         super().setUp()
-        Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows", faction="X")
+        Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows")
 
     def decline(self, user, battle_id: int):
         return self.post_as(user, self.url(battle_id, "decline"))

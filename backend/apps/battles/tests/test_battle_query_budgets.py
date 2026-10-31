@@ -46,7 +46,7 @@ class BattleQueryBudgetTests(BattleTestCase):
         small_count, _ = self.count(self.player, "get", self.url(small, "state"))
         self.ok(self.post_as(self.player, self.url(small, "cancel-battle")))
 
-        Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows", faction="X")
+        Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows")
         big = self.to_active({self.player: self.fixture.keys, self.viewer: [self.r], self.manager: []})
         battle = self.battle(big)
         BattleEvent.objects.bulk_create(

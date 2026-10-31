@@ -7,6 +7,8 @@ its owner. Pass 4 moved players, members, chat, bulletin, encampments, battles a
 
 from typing import Any
 
+from apps.core.testing import book_warband_type
+
 from .auth_support import AuthTestCase, make_user
 
 
@@ -18,7 +20,7 @@ class NamesTests(AuthTestCase):
 
     def campaign_and_warband(self) -> tuple[int, int]:
         campaign = self.rex_client.post("/api/campaigns/", {"name": "Shards"}, format="json")
-        body = {"name": "Rats", "faction": "Mercenaries", "campaign_id": campaign.json()["id"]}
+        body = {"name": "Rats", "warband_type_id": book_warband_type().id, "campaign_id": campaign.json()["id"]}
         warband = self.rex_client.post("/api/warbands/", body, format="json")
         assert warband.status_code == 201, warband.data
         return campaign.json()["id"], warband.json()["id"]

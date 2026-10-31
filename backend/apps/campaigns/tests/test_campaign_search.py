@@ -21,7 +21,7 @@ class CampaignSearchTests(CampaignTestCase):
         Henchman.objects.create(group=group, name="Skritch")
         Henchman.objects.create(group=group, name="Gretchik", dismissed_at=timezone.now())
         Hireling.objects.create(warband=cls.warband, name="", unit_type="Ogre Bodyguard")
-        other = Warband.objects.create(campaign=cls.elsewhere, user=cls.outsider, name="Grete's own", faction="Witches")
+        other = Warband.objects.create(campaign=cls.elsewhere, user=cls.outsider, name="Grete's own")
         Hero.objects.create(warband=other, name="Grete Elsewhere", unit_type="Witch")
 
     def search(self, query: str):
@@ -29,7 +29,7 @@ class CampaignSearchTests(CampaignTestCase):
         self.assertEqual(response.status_code, 200, response.data)
         return response.data
 
-    def test_finds_warbands_by_name_or_faction_and_units_on_a_roster_by_name_or_type(self):
+    def test_finds_warbands_by_name_or_type_and_units_on_a_roster_by_name_or_type(self):
         found = self.search("grete")
         self.assertEqual(found["warbands"], [])
         self.assertEqual(

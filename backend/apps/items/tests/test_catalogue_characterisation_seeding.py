@@ -29,6 +29,7 @@ from apps.restrictions.models import Restriction
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
+from apps.warbands.models import WarbandGroup, WarbandType
 
 BOOK_MODELS = (Race, Restriction, Item, ItemProperty, Skill, Spell, Special, BestiaryEntry, HiredSword, DramatisPersona)
 
@@ -84,7 +85,10 @@ class SeedAllTests(TestCase):
             if hasattr(model, "campaign_type"):  # CAT-NEW-04: the seeders leave the add-on column null
                 with self.subTest(model=model.__name__, column="campaign_type"):
                     self.assertFalse(model._default_manager.filter(**{"campaign_type__isnull": False}).exists())
-        self.assertFalse(CampaignType.objects.exists())
+        # grading phase 1: the settings, and the warband types and groups, from the catalogue import
+        self.assertEqual(CampaignType.objects.count(), 19)
+        self.assertEqual(WarbandType.objects.filter(campaign__isnull=True).count(), 163)
+        self.assertEqual(WarbandGroup.objects.count(), 20)
 
     def test_a_second_run_changes_no_book_row_but_rewrites_every_availability(self):
         items = set(Item.objects.values_list("id", "name", "type"))

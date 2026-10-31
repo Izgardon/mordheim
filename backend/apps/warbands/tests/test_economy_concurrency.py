@@ -29,7 +29,7 @@ class StashConcurrencyTests(TransactionTestCase):
         campaign = Campaign.objects.create(name="Shards", join_code="RACE02")
         self.player = get_user_model().objects.create_user(username="p@example.com", email="p@example.com")
         CampaignMembership.objects.create(campaign=campaign, user=self.player, role=role)
-        self.warband = Warband.objects.create(campaign=campaign, user=self.player, name="Monks", faction="Any")
+        self.warband = Warband.objects.create(campaign=campaign, user=self.player, name="Monks")
         self.sword = Item.objects.create(name="Sword", type="Melee")
 
     def _post(self, path: str, body: dict[str, Any]) -> Any:

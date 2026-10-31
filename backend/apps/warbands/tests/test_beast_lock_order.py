@@ -151,7 +151,7 @@ class LockOrderConcurrencyTests(TransactionTestCase):
         campaign = Campaign.objects.create(name="Shards", join_code="RACE04")
         self.player = get_user_model().objects.create_user(username="p@example.com", email="p@example.com")
         CampaignMembership.objects.create(campaign=campaign, user=self.player, role=role)
-        self.warband = Warband.objects.create(campaign=campaign, user=self.player, name="Kennelmen", faction="Any")
+        self.warband = Warband.objects.create(campaign=campaign, user=self.player, name="Kennelmen")
         self.dogs = wardogs()
         self.kennel = make_unit(HENCHMEN, self.warband, members=("Rex",), price=25, source_beast=beast(self.dogs))
 

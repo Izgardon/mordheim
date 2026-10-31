@@ -119,7 +119,7 @@ class CampaignQueryBudgetTests(CampaignTestCase):
         for index in range(6):
             user = make_user(f"extra{index}@example.com", f"Extra {index}")
             CampaignMembership.objects.create(campaign=self.campaign, user=user, role=player_role)
-            Warband.objects.create(campaign=self.campaign, user=user, name=f"Band {index}", faction="Mercenaries")
+            Warband.objects.create(campaign=self.campaign, user=user, name=f"Band {index}")
             CampaignMessage.objects.create(campaign=self.campaign, user=user, username=user.first_name, body="Hi")
             CampaignBulletinEntry.objects.create(campaign=self.campaign, user=user, username=user.first_name, body="X")
             CampaignEncampment.objects.create(campaign=self.campaign, name=f"Camp {index}", owner=user)

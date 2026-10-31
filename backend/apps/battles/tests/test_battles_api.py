@@ -71,19 +71,16 @@ class BattleApiTests(APITestCase):
             campaign=self.campaign,
             user=self.owner,
             name="Iron Vultures",
-            faction="Mercenaries",
         )
         self.player_warband = Warband.objects.create(
             campaign=self.campaign,
             user=self.player,
             name="Night Razors",
-            faction="Skaven",
         )
         self.third_warband = Warband.objects.create(
             campaign=self.campaign,
             user=self.third,
             name="Ash Hounds",
-            faction="Witch Hunters",
         )
 
     def _create_user(self, email, name=""):

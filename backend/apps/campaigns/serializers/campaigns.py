@@ -99,7 +99,7 @@ class CampaignListSerializer(CampaignSerializer):
         warband_id = getattr(obj, "my_warband_id", None)
         if warband_id is None:
             return None
-        return {"id": warband_id, "name": obj.my_warband_name, "faction": obj.my_warband_faction}
+        return {"id": warband_id, "name": obj.my_warband_name, "type_name": obj.my_warband_type or ""}
 
     class Meta:
         model = Campaign

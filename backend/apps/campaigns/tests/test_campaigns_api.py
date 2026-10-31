@@ -17,6 +17,7 @@ from apps.campaigns.models import (
     CampaignSettings,
     PivotalMoment,
 )
+from apps.core.testing import book_warband_type
 from apps.items.models import (
     Item,
     ItemAvailability,
@@ -344,7 +345,6 @@ class CampaignApiTests(APITestCase):
             campaign_id=campaign["id"],
             user=owner,
             name="Iron Vultures",
-            faction="Mercenaries",
         )
         hero = Hero.objects.create(warband=warband, name="Captain", unit_type="Leader")
         hireling = Hireling.objects.create(warband=warband, name="Scout", unit_type="Ranger")
@@ -379,7 +379,6 @@ class CampaignApiTests(APITestCase):
             campaign_id=campaign["id"],
             user=owner,
             name="Steel Faith",
-            faction="Dwarfs",
         )
         hero = Hero.objects.create(warband=warband, name="Noble", unit_type="Hero")
         WarbandItem.objects.create(warband=warband, item=armour, quantity=1, cost=150)
@@ -417,7 +416,6 @@ class CampaignApiTests(APITestCase):
             campaign_id=campaign["id"],
             user=owner,
             name="Golden Blades",
-            faction="Cathay",
         )
         WarbandItem.objects.create(warband=warband, item=armour, quantity=1, cost=120)
 
@@ -477,7 +475,6 @@ class CampaignApiTests(APITestCase):
             campaign_id=campaign["id"],
             user=owner,
             name="Wardens",
-            faction="Mercenaries",
         )
         hero = Hero.objects.create(warband=warband, name="Captain", unit_type="Leader")
         WarbandItem.objects.create(warband=warband, item=shield, quantity=2, cost=5)
@@ -505,7 +502,6 @@ class CampaignApiTests(APITestCase):
             campaign_id=campaign["id"],
             user=owner,
             name="Lances",
-            faction="Bretonnians",
         )
         WarbandItem.objects.create(warband=warband, item=shield, quantity=1, cost=10)
 
@@ -550,13 +546,16 @@ class CampaignApiTests(APITestCase):
         ruins = self._create_campaign(owner, name="Ruins")
         self.client.force_authenticate(user=player)
         self.client.post("/api/campaigns/join/", {"join_code": ashes["join_code"]}, format="json")
-        mine = Warband.objects.create(campaign_id=ashes["id"], user=owner, name="Iron Vultures", faction="Middenheim")
-        Warband.objects.create(campaign_id=ashes["id"], user=player, name="Gutter Rats", faction="Skaven")
+        middenheimers = book_warband_type("Middenheimers")
+        mine = Warband.objects.create(
+            campaign_id=ashes["id"], user=owner, name="Iron Vultures", warband_type=middenheimers
+        )
+        Warband.objects.create(campaign_id=ashes["id"], user=player, name="Gutter Rats")
 
         self.client.force_authenticate(user=owner)
         listed = {row["name"]: row["my_warband"] for row in self.client.get("/api/campaigns/").data}
 
-        self.assertEqual(listed["Ashes"], {"id": mine.id, "name": "Iron Vultures", "faction": "Middenheim"})
+        self.assertEqual(listed["Ashes"], {"id": mine.id, "name": "Iron Vultures", "type_name": "Middenheimers"})
         self.assertIsNone(listed["Ruins"])
         self.assertNotIn("my_warband", self.client.get(f"/api/campaigns/{ruins['id']}/").data)
 
@@ -612,7 +611,7 @@ class CampaignApiTests(APITestCase):
             {
                 "campaign_id": campaign["id"],
                 "name": "Iron Vultures",
-                "faction": "Mercenaries",
+                "warband_type_id": book_warband_type().id,
                 "max_units": 15,
                 "restriction_ids": [setting.id, warband_restriction.id],
             },
@@ -621,59 +620,6 @@ class CampaignApiTests(APITestCase):
         self.assertEqual(create_response.status_code, 201)
         self.assertEqual(
             [entry["restriction"] for entry in create_response.data["restrictions"]],
-            ["Cathay Setting"],
-        )
-
-        warband = Warband.objects.get(id=create_response.data["id"])
-        self.assertEqual(
-            list(warband.restrictions.values_list("restriction", flat=True)),
-            [],
-        )
-
-    def test_updating_warband_restrictions_preserves_campaign_item_settings(self):
-        owner = self._create_user("owner@example.com", "Owner")
-        campaign = self._create_campaign(owner)
-        setting = self._create_setting("Cathay Setting")
-        warband_restriction = self._create_warband_restriction("Reiklanders")
-
-        self.client.force_authenticate(user=owner)
-        self.client.patch(
-            f"/api/campaigns/{campaign['id']}/",
-            {"item_setting_ids": [setting.id]},
-            format="json",
-        )
-        create_response = self.client.post(
-            "/api/warbands/",
-            {
-                "campaign_id": campaign["id"],
-                "name": "Iron Vultures",
-                "faction": "Mercenaries",
-                "max_units": 15,
-                "restriction_ids": [warband_restriction.id],
-            },
-            format="json",
-        )
-        warband_id = create_response.data["id"]
-
-        update_response = self.client.put(
-            f"/api/warbands/{warband_id}/restrictions/",
-            {"restriction_ids": []},
-            format="json",
-        )
-        self.assertEqual(update_response.status_code, 200)
-        self.assertEqual(
-            [entry["restriction"] for entry in update_response.data],
-            ["Cathay Setting"],
-        )
-
-        update_response = self.client.put(
-            f"/api/warbands/{warband_id}/restrictions/",
-            {"restriction_ids": [setting.id, warband_restriction.id]},
-            format="json",
-        )
-        self.assertEqual(update_response.status_code, 200)
-        self.assertEqual(
-            [entry["restriction"] for entry in update_response.data],
             ["Cathay Setting"],
         )
 
@@ -695,7 +641,7 @@ class CampaignApiTests(APITestCase):
             {
                 "campaign_id": campaign["id"],
                 "name": "Iron Vultures",
-                "faction": "Mercenaries",
+                "warband_type_id": book_warband_type().id,
                 "max_units": 15,
                 "restriction_ids": [warband_restriction.id],
             },
@@ -762,13 +708,11 @@ class CampaignApiTests(APITestCase):
             campaign_id=campaign["id"],
             user=owner,
             name="Iron Vultures",
-            faction="Mercenaries",
         )
         Warband.objects.create(
             campaign_id=campaign["id"],
             user=player,
             name="Night Razors",
-            faction="Skaven",
         )
 
         battle = Battle.objects.create(
@@ -818,13 +762,11 @@ class CampaignApiTests(APITestCase):
             campaign_id=campaign["id"],
             user=owner,
             name="Iron Vultures",
-            faction="Mercenaries",
         )
         player_warband = Warband.objects.create(
             campaign_id=campaign["id"],
             user=player,
             name="Night Razors",
-            faction="Skaven",
         )
 
         normal_battle = Battle.objects.create(
@@ -969,13 +911,11 @@ class CampaignApiTests(APITestCase):
             campaign_id=campaign["id"],
             user=owner,
             name="Iron Vultures",
-            faction="Mercenaries",
         )
         player_warband = Warband.objects.create(
             campaign_id=campaign["id"],
             user=player,
             name="Night Razors",
-            faction="Skaven",
         )
 
         battle_without_rows = Battle.objects.create(
@@ -1096,19 +1036,16 @@ class CampaignApiTests(APITestCase):
             campaign_id=campaign["id"],
             user=owner,
             name="Iron Vultures",
-            faction="Mercenaries",
         )
         player_warband = Warband.objects.create(
             campaign_id=campaign["id"],
             user=player,
             name="Night Razors",
-            faction="Skaven",
         )
         other_warband = Warband.objects.create(
             campaign_id=other_campaign["id"],
             user=other_owner,
             name="Outsiders",
-            faction="Undead",
         )
 
         top_hero = Hero.objects.create(warband=owner_warband, name="Captain Wolf", unit_type="Captain", kills=9)
@@ -1154,7 +1091,6 @@ class CampaignApiTests(APITestCase):
             campaign_id=campaign["id"],
             user=owner,
             name="Iron Vultures",
-            faction="Mercenaries",
         )
         Hero.objects.create(warband=warband, name="Captain Wolf", unit_type="Captain", kills=0)
         group = HenchmenGroup.objects.create(warband=warband, name="Black Knives", unit_type="Thugs")

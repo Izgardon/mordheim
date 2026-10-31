@@ -22,6 +22,7 @@ from apps.campaigns.models import (
     CampaignPermission,
     CampaignSettings,
 )
+from apps.core.testing import book_warband_type
 from apps.notifications.models import Notification
 from apps.warbands.models import Warband
 
@@ -85,7 +86,7 @@ class CampaignTestCase(APITestCase):
     @classmethod
     def _create_warband(cls, client: APIClient, user: Any, name: str) -> Warband:
         client.force_authenticate(user=user)
-        body = {"name": name, "faction": "Mercenaries", "campaign_id": cls.campaign.id}
+        body = {"name": name, "warband_type_id": book_warband_type().id, "campaign_id": cls.campaign.id}
         response = client.post("/api/warbands/", body, format="json")
         assert response.status_code == 201, response.data
         return Warband.objects.get(id=response.data["id"])

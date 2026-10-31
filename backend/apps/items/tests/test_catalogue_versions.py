@@ -30,7 +30,7 @@ class VersionTestCase(CatalogueTestCase):
         self.group = make_unit(HENCHMEN, self.rival_warband, name="Rats")
         self.sword_unit = make_unit(HIRELING, self.rival_warband, name="Ogre")
         self.beast = make_entry(BESTIARY, "War Boar", campaign=self.campaign)
-        self.far = Warband.objects.create(campaign=self.elsewhere, user=self.outsider, name="Far", faction="Skaven")
+        self.far = Warband.objects.create(campaign=self.elsewhere, user=self.outsider, name="Far")
 
     def edit(self, kind: Any, entry_id: int, body: dict[str, Any], user: Any = None) -> Any:
         return self.patch_as(user or self.player, kind.detail_url(entry_id), {"campaign_id": self.campaign.id, **body})
