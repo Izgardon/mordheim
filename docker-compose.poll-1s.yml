@@ -1,0 +1,14 @@
+# Opt-in, for the stack run from a Windows folder: Vite checks the frontend for changes once a second
+# instead of every 100 ms. On a Windows bind mount each check of a file takes milliseconds, and checking
+# every file 10 times a second keeps Vite's file and DNS work queued behind the checks: index.html took
+# 3.4-7.6 s and every API call 0.8-1.8 s. Once a second, a reload of the campaign overview went from
+# 3.7 s to 0.4 s, and an edit still reached the page in about 0.3 s. The checks share one file server
+# with every other stack run from Windows, so with several running index.html can still take up to
+# 0.7 s; try "2000" then. Not needed in the WSL file system, where polling can be switched off
+# (CHOKIDAR_USEPOLLING: "false").
+#
+#   docker compose -f docker-compose.yml -f docker-compose.poll-1s.yml up -d
+services:
+  frontend:
+    environment:
+      CHOKIDAR_INTERVAL: "1000"

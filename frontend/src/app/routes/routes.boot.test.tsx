@@ -120,6 +120,22 @@ describe("a cold start signed in", () => {
   });
 });
 
+describe("a cold start on a campaign page", () => {
+  it("reads your warband and its sheet while the campaign is still loading, not after it", async () => {
+    storeSession();
+    fakeApi.on("GET /auth/me/", RAIDER);
+    // The campaign never answers here: the warband reads must not wait for it.
+    fakeApi.on("GET /warbands/?campaign_id=1", [{ id: 9, campaign_id: 1, user_id: 1 }]);
+    renderApp("/campaigns/1");
+
+    await waitFor(() => expect(fakeApi.calls()).toContain("GET /warbands/9/sheet/"), {
+      timeout: 5000,
+    });
+    expect(fakeApi.calls()).toContain("GET /campaigns/1/");
+    expect(fakeApi.countOf("GET /warbands/?campaign_id=1")).toBe(1);
+  });
+});
+
 describe("signing in or up from the landing page", () => {
   it("signs in with one login and no /auth/me, then one notifications read, one list read and one channel (PERF-50, AUTH-TEST-22)", async () => {
     fakeApi.on("POST /auth/login/", loginAnswer(RAIDER));
