@@ -204,6 +204,23 @@ class WhoCanHireAndLearnTests(WhoCanTestCase):
 
         self.assertEqual(sorted(self.who_can()["special_skill_ids"]), sorted([tail.id, leap.id]))
 
+    def test_a_special_skill_several_lists_share_is_offered_once_from_the_list_named_like_its_type(self) -> None:
+        def infiltration(list_name: str) -> Skill:
+            skill = Skill.objects.create(name="Infiltration", type=list_name, for_everyone=False)
+            skill.warband_links.create(warband_type=self.pestilens)
+            return skill
+
+        infiltration("Dark Elf")
+        ours = infiltration("Skaven of Clan Pestilens")
+        infiltration("Skink")
+        by_group = Skill.objects.create(name="Black Hunger", type="Skaven", for_everyone=False)
+        by_group.warband_links.create(warband_group=self.skaven)
+        by_type = Skill.objects.create(name="Black Hunger", type="Moulder", for_everyone=False)
+        by_type.warband_links.create(warband_type=self.pestilens)
+
+        # a line naming its type beats a group line, whatever the list's name
+        self.assertEqual(sorted(self.who_can()["special_skill_ids"]), sorted([ours.id, by_type.id]))
+
 
 class WhoCanReadTests(WhoCanTestCase):
     def test_any_member_reads_it_in_a_fixed_number_of_queries(self) -> None:

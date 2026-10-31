@@ -2,7 +2,9 @@
 show it and decide nothing. The rules are `who_can.py`'s; this reads the campaign's current entries of each kind (its
 own and the book's it hasn't replaced or removed, as its catalogue lists show them) in a fixed number of queries:
 the items with their settings, then their price rows, then the rows' who-can lines; each hireling kind with its
-setting, then its lines; the special skills (a skill not for everyone), then their lines.
+setting, then its lines; the special skills (a skill not for everyone), then their lines. A special skill several
+lists share by name (Infiltration: Skaven, Dark Elf, Skink...) is offered once, from the list named most like the
+warband's type.
 """
 
 from typing import Any
@@ -42,11 +44,28 @@ def _hirelings(kind: Any, campaign_id: int, buyer: Buyer) -> list[dict[str, Any]
     return [access(entry, buyer, entry.in_play, _setting(entry)) for entry in entries]
 
 
+def _list_fit(skill: Any, buyer: Buyer) -> int:
+    """0 when the skill's list is named as the buyer's type ("Skaven"), 1 when one name holds the other ("Skaven
+    Metal Mongers"), else 2."""
+    ours, theirs = str(skill.type or "").strip().lower(), buyer.name.strip().lower()
+    if ours == theirs:
+        return 0
+    return 1 if ours and (ours in theirs or theirs in ours) else 2
+
+
 def _special_skills(campaign_id: int, buyer: Buyer) -> list[int]:
     from apps.core.catalogue.kinds import SKILLS
 
     skills = _current(SKILLS, campaign_id).filter(for_everyone=False).prefetch_related("warband_links")
-    return [skill.pk for skill in skills if step(False, skill.warband_links.all(), buyer) in (1, 2)]
+    best: dict[str, tuple[int, int, int]] = {}
+    for skill in skills:
+        at = step(False, skill.warband_links.all(), buyer)
+        if at not in (1, 2):
+            continue
+        key = (at, _list_fit(skill, buyer), skill.pk)
+        name = str(skill.name).strip().lower()
+        best[name] = min(best.get(name, key), key)
+    return sorted(key[2] for key in best.values())
 
 
 def who_can(warband: Warband) -> dict[str, Any]:
