@@ -26,8 +26,6 @@ SETTINGS_FIELDS = (
 
 START_FIELDS = frozenset({"in_progress"})
 UPDATE_FIELDS = frozenset({*START_FIELDS, *SETTINGS_FIELDS, "name", "setting_ids", starting_gold.ADJUST_FLAG})
-# every list whose rows say whether they are in play: a change of the settings in play retires them all
-IN_PLAY_LISTS = ("items", "skills", "spells", "specials", "races", "bestiary", "hired_swords", "dramatis_personae")
 
 
 def rule_for(data: Any) -> str:
@@ -53,7 +51,7 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> None:
             campaign.save(update_fields=["name"])
         if picked is not None:  # the settings in play (grading phase 1): every catalogue list's in_play changes
             set_settings(campaign, [row.pk for row in picked])
-            bump(campaign.id, *IN_PLAY_LISTS)
+            bump(campaign.id)  # no catalogue.changed: the pages read the lists again on campaign.updated
         if not settings_updates:
             return
         settings, _ = CampaignSettings.objects.get_or_create(campaign=campaign)
