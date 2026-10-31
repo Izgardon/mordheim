@@ -1973,7 +1973,7 @@ class BattleApiTests(APITestCase):
 
         self.assertSetEqual(
             set(PivotalMoment.objects.filter(battle_id=battle_id).values_list("kind", flat=True)),
-            {"carried_the_fight", "untouched_triumph", "wiped_out"},
+            {"first_blood", "carried_the_fight", "untouched_triumph", "wiped_out"},  # the moments of next step 9
         )
 
         response = self.client.post(
@@ -1981,7 +1981,7 @@ class BattleApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(PivotalMoment.objects.filter(battle_id=battle_id).count(), 3)
+        self.assertEqual(PivotalMoment.objects.filter(battle_id=battle_id).count(), 4)
 
     def test_pivotal_moments_include_giant_slayer_when_large_target_is_killed(self):
         data = self._create_battle()

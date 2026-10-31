@@ -36,8 +36,7 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
         "/api/campaigns/{campaign}/players/",
         6,
     ),  # constant in warbands (apps/warbands/tests/test_summary_service.py); the member check is the list (PERF-41)
-    "battle_history": ("/api/campaigns/{campaign}/battle-history/", 4),  # + the kills behind the moments (next 5)
-    "pivotal_moments": ("/api/campaigns/{campaign}/pivotal-moments/", 2),
+    "battle_history": ("/api/campaigns/{campaign}/battle-history/", 4),  # + its moments and kill counts (next 9)
     "top_killers": ("/api/campaigns/{campaign}/top-killers/", 2),
     "open_battles": ("/api/campaigns/{campaign}/battles/?open=1", 2),
     "battle_list": ("/api/campaigns/{campaign}/battles/", 3),

@@ -26,7 +26,7 @@ def _entry(kill: BattleKill, group: bool) -> dict[str, Any]:
         "round": kill.round,
         "phase": kill.phase,
         "how": kill.how,
-        "by": kill.killer_called(start=True) if group else None,  # which model, for a group
+        "by": kill.killer_called() if group else None,  # which model, for a group ("Kurt", "a Youngblood")
     }
 
 

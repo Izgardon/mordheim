@@ -5,6 +5,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from apps.battles.models import Battle, BattleEvent, BattleKill, BattleParticipant
+from apps.campaigns.pivotal_moments import regenerate_pivotal_moments
 from apps.warbands.models import WarbandLog
 
 from .campaign_support import CampaignTestCase
@@ -34,6 +35,7 @@ def kill(battle: Battle, killer: dict, victim: dict, *, voided: bool = False) ->
         campaign_id=battle.campaign_id,
         event=event,
         phase="fight",
+        round=1,
         voided_at=voided_at,
         killer_warband_id=killer["warband_id"],
         killer_kind="hero",
@@ -81,22 +83,20 @@ class ChronicleTestCase(CampaignTestCase):
         return response.json()
 
 
-class BattleMomentTests(ChronicleTestCase):
-    def test_a_battles_moments_are_its_live_kills_the_rest_out_of_action_finds_and_deaths_after(self):
+class BattleHistoryTests(ChronicleTestCase):
+    def test_a_battles_row_carries_its_pivotal_moments_and_each_warbands_totals(self):
+        regenerate_pivotal_moments(self.battle)  # from its live kills (next step 9; tests/test_pivotal_moments.py)
+
         entry = self.get("battle-history/")[0]
 
         self.assertEqual(
-            [(moment["group"], moment["kind"], moment["text"]) for moment in entry["moments"]],
-            [
-                ("During", "kill", "Seer took Abbess out of action"),
-                ("During", "ooa", "Novice went out of action"),
-                ("During", "find", "Rats found 3 shards"),
-                ("During", "find", "Rats found Rope"),
-                ("After", "death", "Abbess is dead"),
-            ],
+            [(moment["tag"], moment["headline"], moment["detail"]) for moment in entry["moments"]],
+            [("Round 1", "First Blood", "Seer drew first blood against Abbess.")],
         )
-        totals = {row["warband_name"]: (row["shards"], row["heroes_lost"]) for row in entry["participants"]}
-        self.assertEqual(totals, {"Monks": (0, 1), "Rats": (3, 0)})
+        totals = {
+            row["warband_name"]: (row["kills"], row["shards"], row["heroes_lost"]) for row in entry["participants"]
+        }
+        self.assertEqual(totals, {"Monks": (0, 0, 1), "Rats": (1, 3, 0)})  # the undone kill counts nowhere
 
 
 class ChronicleTests(ChronicleTestCase):

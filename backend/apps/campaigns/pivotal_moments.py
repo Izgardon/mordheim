@@ -1,288 +1,349 @@
-"""Pivotal moments: the headlines a normal battle leaves in the campaign's history when it ends.
+"""Pivotal moments (next step 9): the headlines a normal battle's fight leaves, shown in the overview's and the
+Battles page's battle rows (ordinary kills stay in the chronicle).
 
-Kill moments come from the battle's live kill events (undone kills don't count, decision 5); warband moments from
-each participant's postbattle results, counted as finalise counts them (decision 5, BUG-11). A battle's moments are
-written once, in the order they are found.
+Battle only, never the post-game: built from the battle's live kills (battle_kill) and its out-of-action data (each
+participant's selected units, and which were out of action when the fight ended), with the declared ratings. A kill
+moment carries its kill's round and points at it (`source_kill`); result moments come last, with no round. A battle's
+moments are written when it ends, in fight order (by round, then kill order; kills logged after the fight after
+those), and `regenerate_pivotal_moments` writes them again (its management command, for dev data or after a rules
+change: the same battle always gives the same moments).
+
+Kill moments:
+- First Blood: the fight's first kill;
+- Hero Slayer: a henchman takes out a hero;
+- I don't believe in fairies: a Wizard or Priest taken out;
+- Giant Slayer: a large victim;
+- There can be only one: a leader takes out a leader (once per warband);
+- Monster Hunter: a third-party creature slain (once per unit, at its first);
+- Sharpshooter and Spellslinger: a unit's second shooting or magic kill;
+- Bloody Martyr: a unit with 2+ kills taken out of action, at the kill that took him out (a result moment when no
+  recorded kill did).
+
+Result moments, warband by warband: Carried the Fight (a unit with 2+ kills and at least half of its warband's),
+Bloody Martyr, Last One Standing (a winner whose other selected units all ended out of action), Untouched Triumph,
+Pyrrhic Victory, Wiped Out, and Underdog (a winner whose declared rating was at least 10% under an opponent's).
 """
 
+from collections import Counter
+from collections.abc import Iterable
 from dataclasses import dataclass
+from typing import Any
 
-from apps.battles.models import Battle, BattleEvent, BattleParticipant
-from apps.battles.services.kills import count_by_unit, live_kills
+from django.db import transaction
+
+from apps.battles.models import Battle, BattleKill, BattleParticipant
+from apps.battles.models.kill import CREATURE, FIGHT, HENCHMAN, HERO, KILLER_KINDS
+from apps.battles.services.kills import live_kills
 
 from .models import PivotalMoment
 
-EVENT_DRIVEN_MOMENT_KINDS = {
+HEADLINES = {
+    "first_blood": "First Blood",
     "hero_slayer": "Hero Slayer",
     "no_fairies": "I don't believe in fairies",
     "giant_slayer": "Giant Slayer",
     "there_can_be_only_one": "There can be only one",
-}
-
-WARBAND_MOMENT_KINDS = {
-    "carried_the_fight": "Carried the Fight",
+    "monster_hunter": "Monster Hunter",
+    "sharpshooter": "Sharpshooter",
+    "spellslinger": "Spellslinger",
     "bloody_martyr": "Bloody Martyr",
+    "carried_the_fight": "Carried the Fight",
+    "last_one_standing": "Last One Standing",
     "untouched_triumph": "Untouched Triumph",
     "pyrrhic_victory": "Pyrrhic Victory",
     "wiped_out": "Wiped Out",
-    "black_day": "Black Day",
+    "underdog": "Underdog",
 }
-HEADLINES = {**EVENT_DRIVEN_MOMENT_KINDS, **WARBAND_MOMENT_KINDS}
-UNRECORDED_UNIT_PREFIXES = ("custom:", "bestiary:")  # units outside the warband's roster
-
-
-def _normalize_unit_results(participant: BattleParticipant) -> dict[str, dict]:
-    postbattle_json = participant.postbattle_json if isinstance(participant.postbattle_json, dict) else {}
-    raw_unit_results = postbattle_json.get("unit_results", {})
-    if not isinstance(raw_unit_results, dict):
-        return {}
-    return {
-        unit_key: result
-        for unit_key, result in raw_unit_results.items()
-        if isinstance(unit_key, str) and isinstance(result, dict)
-    }
-
-
-def _build_unit_names_by_key(participants: list[BattleParticipant]) -> dict[str, str]:
-    names_by_key: dict[str, str] = {}
-    for participant in participants:
-        for unit_key, result in _normalize_unit_results(participant).items():
-            unit_name = str(result.get("unit_name", "")).strip()
-            if unit_name:
-                names_by_key.setdefault(unit_key, unit_name)
-    return names_by_key
-
-
-def _selected_ooa_count(participant: BattleParticipant) -> tuple[int, int]:
-    selected_unit_keys = (
-        participant.selected_unit_keys_json if isinstance(participant.selected_unit_keys_json, list) else []
-    )
-    selected_keys = [key for key in selected_unit_keys if isinstance(key, str) and key.strip()]
-    unit_information = participant.unit_information_json if isinstance(participant.unit_information_json, dict) else {}
-
-    ooa_count = 0
-    for unit_key in selected_keys:
-        unit_info = unit_information.get(unit_key, {})
-        if isinstance(unit_info, dict) and bool(unit_info.get("out_of_action", False)):
-            ooa_count += 1
-    return len(selected_keys), ooa_count
-
-
-def _append_moment(
-    rows: list[PivotalMoment],
-    battle: Battle,
-    warband_id: int,
-    kind: str,
-    detail: str,
-    *,
-    unit_key: str | None = None,
-    unit_name: str | None = None,
-    source_event_id: int | None = None,
-) -> None:
-    if battle.flow_type != Battle.FLOW_TYPE_NORMAL:
-        return
-    rows.append(
-        PivotalMoment(
-            campaign_id=battle.campaign_id,
-            battle_id=battle.id,
-            warband_id=warband_id,
-            source_event_id=source_event_id,
-            kind=kind,
-            headline=HEADLINES[kind],
-            detail=detail,
-            unit_key=unit_key,
-            unit_name=unit_name,
-            battle_ended_at=battle.ended_at or battle.created_at,
-        )
-    )
-
-
-# Kill moments
+UNDERDOG_MARGIN = (11, 10)  # the opponent's declared rating is at least 10% over the winner's
 
 
 @dataclass(frozen=True)
-class _Kill:
-    """One live kill event, read: the killer's warband (a participant) and both units."""
+class Unit:
+    """The unit a moment is about: its name and, for one of a warband's own, its keys."""
 
-    event_id: int
-    warband_id: int
-    killer: dict
-    victim: dict
-    killer_key: str | None
-    killer_name: str
-    victim_name: str
+    name: str
+    kind: str | None = None
+    hero: int | None = None
+    henchman: int | None = None
+    group: int | None = None
+    hireling: int | None = None
 
-    @property
-    def killer_type(self) -> str:
-        return str(self.killer.get("unit_type", "")).strip().lower()
-
-    @property
-    def victim_type(self) -> str:
-        return str(self.victim.get("unit_type", "")).strip().lower()
+    def columns(self) -> dict[str, Any]:
+        keys = {"hero_id": self.hero, "henchman_id": self.henchman, "group_id": self.group}
+        return {"unit_kind": self.kind, **keys, "hireling_id": self.hireling, "unit_name": self.name[:120]}
 
 
-def _read_kill(
-    event: BattleEvent, participants_by_warband_id: dict[int, BattleParticipant], names_by_key: dict[str, str]
-) -> _Kill | None:
-    """The kill, or None when its payload is malformed or its killer's warband isn't in the battle."""
-    payload = event.payload_json if isinstance(event.payload_json, dict) else {}
-    killer = payload.get("killer", {})
-    victim = payload.get("victim", {})
-    if not isinstance(killer, dict) or not isinstance(victim, dict):
-        return None
-    raw_killer_warband_id = killer.get("warband_id")
-    if not isinstance(raw_killer_warband_id, int | float | str):
-        return None
-    try:
-        participant = participants_by_warband_id.get(int(raw_killer_warband_id))
-    except ValueError:
-        return None
-    if not participant:
-        return None
-    killer_key = str(killer.get("unit_key", "")).strip() or None
-    victim_key = str(victim.get("unit_key", "")).strip() or None
-    return _Kill(
-        event_id=event.id,
-        warband_id=participant.warband_id,
-        killer=killer,
-        victim=victim,
-        killer_key=killer_key,
-        killer_name=str(killer.get("name", "")).strip() or names_by_key.get(killer_key or "", "Unknown unit"),
-        victim_name=str(victim.get("name", "")).strip() or names_by_key.get(victim_key or "", "Unknown unit"),
+def killer(kill: BattleKill) -> Unit:
+    return Unit(
+        kill.killer_called(start=True),
+        kill.killer_kind,
+        kill.killer_hero_id,
+        kill.killer_henchman_id,
+        kill.killer_group_id,
+        kill.killer_hireling_id,
     )
 
 
-def _kill_moments(kill: _Kill) -> list[tuple[str, str]]:
-    """The (kind, detail) of each moment the kill makes, in order (a leader slaying a leader: see the caller)."""
-    moments = []
-    if kill.killer_type == "henchman" and kill.victim_type == "hero":
-        moments.append(("hero_slayer", f"{kill.killer_name} took {kill.victim_name} out of action."))
-    caster_type = str(kill.victim.get("caster_type", "")).strip()
-    if kill.victim.get("is_caster") is True and caster_type in {"Wizard", "Priest"}:
-        moments.append(("no_fairies", f"{kill.killer_name} brought down caster {kill.victim_name}."))
-    if kill.killer_type in {"hero", "henchman", "hireling"} and kill.victim.get("is_large") is True:
-        moments.append(("giant_slayer", f"{kill.killer_name} slew large target {kill.victim_name}."))
-    if kill.killer.get("is_leader") is True and kill.victim.get("is_leader") is True:
-        moments.append(("there_can_be_only_one", f"{kill.killer_name} slew the enemy leader {kill.victim_name}."))
-    return moments
+def unit_id(kill: BattleKill) -> str:
+    """Who scored the kill, to tally a unit's kills: his unit key, or the kill's own when his row is gone."""
+    return kill.killer_unit_key or f"kill:{kill.id}"
 
 
-def _generate_event_driven_moments(
-    battle: Battle,
-    participants_by_warband_id: dict[int, BattleParticipant],
-    names_by_key: dict[str, str],
-    rows: list[PivotalMoment],
-    kill_events: list[BattleEvent],
-) -> None:
-    for event in kill_events:
-        kill = _read_kill(event, participants_by_warband_id, names_by_key)
-        if kill is None:
-            continue
-        for kind, detail in _kill_moments(kill):
-            if kind == "there_can_be_only_one" and any(
-                row.kind == kind and row.warband_id == kill.warband_id for row in rows
-            ):
-                continue  # once per warband
-            _append_moment(
-                rows,
-                battle,
-                kill.warband_id,
-                kind,
-                detail,
-                unit_key=kill.killer_key,
-                unit_name=kill.killer_name,
-                source_event_id=kill.event_id,
+def fight_order(kill: BattleKill) -> tuple[bool, bool, int, int]:
+    """In the fight by round, then the order they were logged; kills logged after the fight last."""
+    return (kill.phase != FIGHT, kill.round is None, kill.round or 0, kill.id)
+
+
+def _plural(count: int, noun: str) -> str:
+    return f"{count} {noun}{'' if count == 1 else 's'}"
+
+
+@dataclass
+class Fighter:
+    """A participant's side of the fight: his selected units and which ended out of action."""
+
+    participant: BattleParticipant
+    selected: list[str]
+    out: set[str]
+
+    @classmethod
+    def of(cls, participant: BattleParticipant) -> "Fighter":
+        raw = participant.selected_unit_keys_json if isinstance(participant.selected_unit_keys_json, list) else []
+        selected = list(dict.fromkeys(key.strip() for key in raw if isinstance(key, str) and key.strip()))
+        info = participant.unit_information_json if isinstance(participant.unit_information_json, dict) else {}
+        out = {key for key in selected if isinstance(info.get(key), dict) and info[key].get("out_of_action")}
+        return cls(participant, selected, out)
+
+    @property
+    def name(self) -> str:
+        return self.participant.warband.name
+
+    def unit(self, unit_key: str) -> Unit:
+        """One of his selected units by its key, named from his battle roster (or his temporary units)."""
+        roster = self.participant.roster_json if isinstance(self.participant.roster_json, dict) else {}
+        kind, _, raw_id = unit_key.partition(":")
+        row_id = int(raw_id) if raw_id.isdigit() else None
+        for group in roster.get("henchmenGroups", []):
+            for member in group.get("members", []):
+                if member.get("key") == unit_key:
+                    return Unit(member.get("displayName") or "A henchman", HENCHMAN, henchman=row_id, group=group["id"])
+        for entry in [*roster.get("heroes", []), *roster.get("hirelings", [])]:
+            if entry.get("key") == unit_key and kind in KILLER_KINDS:
+                return Unit(entry.get("displayName") or kind.title(), kind, **{kind: row_id})
+        for owner in [*roster.get("heroes", []), *roster.get("hirelings", []), *roster.get("henchmenGroups", [])]:
+            for pet in owner.get("pets", []):
+                if pet.get("key") == unit_key:
+                    return Unit(pet.get("name") or "A pet")
+        custom = self.participant.custom_units_json if isinstance(self.participant.custom_units_json, list) else []
+        named = next((entry for entry in custom if isinstance(entry, dict) and entry.get("key") == unit_key), {})
+        return Unit(str(named.get("name") or "A unit"))
+
+
+class Moments:
+    """The battle's moments as they are found, in order."""
+
+    def __init__(self, battle: Battle, fighters: list[Fighter]) -> None:
+        self.battle = battle
+        self.warbands = {fighter.participant.warband_id for fighter in fighters}
+        self.rows: list[PivotalMoment] = []
+
+    def add(self, warband_id: int, kind: str, detail: str, *, unit: Unit | None = None, kill: BattleKill | None = None):
+        if warband_id not in self.warbands:  # a warband that left before the fight
+            return
+        self.rows.append(
+            PivotalMoment(
+                campaign_id=self.battle.campaign_id,
+                battle_id=self.battle.id,
+                warband_id=warband_id,
+                source_kill=kill,
+                round=kill.round if kill else None,
+                kind=kind,
+                headline=HEADLINES[kind],
+                detail=detail,
+                battle_ended_at=self.battle.ended_at or self.battle.created_at,
+                **(unit.columns() if unit else {}),
             )
+        )
 
 
-# Warband moments
+def _taken_out_by(kills: list[BattleKill], martyrs: dict[str, int]) -> dict[int, list[str]]:
+    """For each martyr (unit key: his warband) a recorded kill took out, that kill's id (the last that did)."""
+    found: dict[str, int] = {}
+    for kill in kills:
+        key = kill.victim_unit_key
+        if kill.victim_kind in KILLER_KINDS and key in martyrs and kill.victim_warband_id == martyrs[key]:
+            found[key] = kill.id
+    by_kill: dict[int, list[str]] = {}
+    for key, kill_id in found.items():
+        by_kill.setdefault(kill_id, []).append(key)
+    return by_kill
 
 
-def _unit_moments(
-    battle: Battle, participant: BattleParticipant, unit_results: dict[str, dict], kills: dict, rows: list
-) -> None:
-    """Carried the Fight and Bloody Martyr, for each roster unit of the participant."""
-    total_kills = sum(kills.get(unit_key, 0) for unit_key in unit_results)
-    for unit_key, result in unit_results.items():
-        if unit_key.startswith(UNRECORDED_UNIT_PREFIXES):
-            continue
-        unit_name = str(result.get("unit_name", "")).strip() or unit_key
-        kill_count = kills.get(unit_key, 0)
-        moments = []
-        if kill_count >= 2 and total_kills > 0 and kill_count * 2 >= total_kills:
-            moments.append(("carried_the_fight", f"{unit_name} scored {kill_count} of {total_kills} recorded kills."))
-        if kill_count >= 2 and bool(result.get("dead", False)):
-            moments.append(("bloody_martyr", f"{unit_name} claimed {kill_count} kills before dying."))
-        for kind, detail in moments:
-            _append_moment(rows, battle, participant.warband_id, kind, detail, unit_key=unit_key, unit_name=unit_name)
+def _kill_moments(moments: Moments, kills: list[BattleKill], martyrs: dict[str, tuple[Unit, int, int]]) -> set[str]:
+    """Each kill's moments, in fight order; the martyrs placed at the kill that took them out (returned)."""
+    totals = {how: Counter(unit_id(kill) for kill in kills if kill.how == how) for how in ("shooting", "magic")}
+    creatures = Counter(unit_id(kill) for kill in kills if kill.victim_kind == CREATURE)
+    taken_out = _taken_out_by(kills, {key: warband for key, (_unit, warband, _count) in martyrs.items()})
+    first = next((kill for kill in kills if kill.phase == FIGHT), None)
+    leaders: set[int] = set()
+    scored: dict[str, Counter[str]] = {"shooting": Counter(), "magic": Counter()}
+    hunters: set[str] = set()
+    for kill in kills:
+        name, victim, unit, warband, who = (
+            kill.killer_called(start=True),
+            kill.victim_called(),
+            killer(kill),
+            kill.killer_warband_id,
+            unit_id(kill),
+        )
+
+        def add(kind: str, detail: str) -> None:
+            moments.add(warband, kind, detail, unit=unit, kill=kill)  # noqa: B023 (used at once)
+
+        if kill is first:
+            add("first_blood", f"{name} drew first blood against {victim}.")
+        if kill.killer_kind == HENCHMAN and kill.victim_kind == HERO:
+            add("hero_slayer", f"{name} took {victim} out of action.")
+        if kill.victim_caster:
+            add("no_fairies", f"{name} brought down caster {victim}.")
+        if kill.victim_large:
+            add("giant_slayer", f"{name} slew large target {victim}.")
+        if kill.killer_leader and kill.victim_leader and warband not in leaders:
+            leaders.add(warband)
+            add("there_can_be_only_one", f"{name} slew the enemy leader {victim}.")
+        if kill.victim_kind == CREATURE and who not in hunters:
+            hunters.add(who)
+            count = creatures[who]
+            more = f", the first of {count} creatures" if count > 1 else ""
+            add("monster_hunter", f"{name} slew {victim}{more}.")
+        for how, kind, phrase in (("shooting", "sharpshooter", "shooting"), ("magic", "spellslinger", "magic")):
+            if kill.how == how:
+                scored[how][who] += 1
+                if scored[how][who] == 2:
+                    add(kind, f"{name} scored {_plural(totals[how][who], f'{phrase} kill')}.")
+        for key in taken_out.get(kill.id, []):
+            martyr, martyr_warband, count = martyrs[key]
+            moments.add(martyr_warband, "bloody_martyr", _martyr(martyr, count), unit=martyr, kill=kill)
+    return {key for keys in taken_out.values() for key in keys}
 
 
-def _outcome_moment(participant: BattleParticipant, won: bool) -> tuple[str, str] | None:
+def _martyr(unit: Unit, count: int) -> str:
+    return f"{unit.name} claimed {count} kills before being taken out of action."
+
+
+def _outcome(fighter: Fighter, won: bool) -> tuple[str, str] | None:
     """Untouched Triumph or Pyrrhic Victory for a winner, Wiped Out for anyone else, from his out-of-action count."""
-    selected_count, ooa_count = _selected_ooa_count(participant)
-    name = participant.warband.name
-    if selected_count == 0:
+    selected, out, name = len(fighter.selected), len(fighter.out), fighter.name
+    if selected == 0:
         return None
-    if won and ooa_count == 0:
+    if won and out == 0:
         return "untouched_triumph", f"{name} won without a single selected unit going out of action."
-    if won and ooa_count > selected_count / 2:
-        detail = f"{name} won despite {ooa_count} of {selected_count} selected units going out of action."
-        return "pyrrhic_victory", detail
-    if not won and ooa_count * 4 >= selected_count * 3:
-        return "wiped_out", f"{name} lost {ooa_count} of {selected_count} selected units."
+    if won and out > selected / 2:
+        return "pyrrhic_victory", f"{name} won despite {out} of {selected} selected units going out of action."
+    if not won and out * 4 >= selected * 3:
+        return "wiped_out", f"{name} lost {out} of {selected} selected units."
     return None
 
 
-def _permanent_deaths(unit_results: dict[str, dict]) -> int:
-    return sum(
-        1
-        for unit_key, result in unit_results.items()
-        if bool(result.get("dead", False)) and not unit_key.startswith(UNRECORDED_UNIT_PREFIXES)
-    )
+def _underdog(fighter: Fighter, losers: list[Fighter]) -> str | None:
+    rating = fighter.participant.declared_rating
+    rated = [entry for entry in losers if entry.participant.declared_rating is not None]
+    if not rating or not rated:
+        return None
+    strongest = max(rated, key=lambda entry: entry.participant.declared_rating or 0)
+    theirs = strongest.participant.declared_rating or 0
+    if theirs * UNDERDOG_MARGIN[1] < rating * UNDERDOG_MARGIN[0]:
+        return None
+    return f"{fighter.name} (rating {rating}) beat {strongest.name} (rating {theirs})."
 
 
-def _generate_warband_moments(
+def _result_moments(
+    moments: Moments,
     battle: Battle,
-    participants: list[BattleParticipant],
-    rows: list[PivotalMoment],
-    kill_events: list[BattleEvent],
+    fighters: list[Fighter],
+    kills: list[BattleKill],
+    martyrs: dict[str, tuple[Unit, int, int]],
 ) -> None:
-    winner_ids = set(battle.winner_warband_ids_json or [])
-    kills = count_by_unit(event.kill for event in kill_events)  # as finalise counts them (decision 5, BUG-11)
-    for participant in participants:
-        unit_results = _normalize_unit_results(participant)
-        _unit_moments(battle, participant, unit_results, kills, rows)
-        outcome = _outcome_moment(participant, participant.warband_id in winner_ids)
-        if outcome:
-            _append_moment(rows, battle, participant.warband_id, *outcome)
-        permanent_deaths = _permanent_deaths(unit_results)
-        if permanent_deaths >= 3:
-            detail = f"{participant.warband.name} suffered {permanent_deaths} permanent deaths."
-            _append_moment(rows, battle, participant.warband_id, "black_day", detail)
+    winners = set(battle.winner_warband_ids_json or [])
+    losers = [fighter for fighter in fighters if fighter.participant.warband_id not in winners]
+    for fighter in fighters:
+        warband = fighter.participant.warband_id
+        theirs = [kill for kill in kills if kill.killer_warband_id == warband]
+        counts = Counter(unit_id(kill) for kill in theirs)
+        units = {unit_id(kill): killer(kill) for kill in theirs}
+        for key, count in counts.items():
+            if count >= 2 and count * 2 >= len(theirs):
+                detail = f"{units[key].name} scored {count} of {len(theirs)} recorded kills."
+                moments.add(warband, "carried_the_fight", detail, unit=units[key])
+        for martyr, martyr_warband, count in martyrs.values():
+            if martyr_warband == warband:
+                moments.add(warband, "bloody_martyr", _martyr(martyr, count), unit=martyr)
+        won = warband in winners
+        standing = [key for key in fighter.selected if key not in fighter.out]
+        if won and len(fighter.selected) >= 2 and len(standing) == 1:
+            survivor = fighter.unit(standing[0])
+            detail = f"{survivor.name} was the last of {fighter.name} standing."
+            moments.add(warband, "last_one_standing", detail, unit=survivor)
+        if outcome := _outcome(fighter, won):
+            moments.add(warband, *outcome)
+        if won and (underdog := _underdog(fighter, losers)):
+            moments.add(warband, "underdog", underdog)
 
 
-def generate_pivotal_moments_for_battle(battle: Battle) -> None:
-    if battle.flow_type != Battle.FLOW_TYPE_NORMAL or battle.status != Battle.STATUS_ENDED:
-        return
-    if PivotalMoment.objects.filter(battle_id=battle.id).exists():
-        return
+def _martyrs(fighters: list[Fighter], kills: list[BattleKill]) -> dict[str, tuple[Unit, int, int]]:
+    """Units with 2+ kills that ended out of action: unit key → (the unit, his warband, his kills)."""
+    out = {(fighter.participant.warband_id, key) for fighter in fighters for key in fighter.out}
+    counts = Counter((kill.killer_warband_id, kill.killer_unit_key) for kill in kills if kill.killer_unit_key)
+    first: dict[tuple[int, str | None], BattleKill] = {}
+    for kill in kills:
+        first.setdefault((kill.killer_warband_id, kill.killer_unit_key), kill)
+    return {
+        key: (killer(first[(warband, key)]), warband, count)
+        for (warband, key), count in counts.items()
+        if key and count >= 2 and (warband, key) in out
+    }
 
-    participants = list(
+
+def build_moments(
+    battle: Battle, participants: Iterable[BattleParticipant], kills: Iterable[BattleKill]
+) -> list[PivotalMoment]:
+    """The battle's moments, in order (participants read with their warbands; the live kills)."""
+    fighters = [Fighter.of(participant) for participant in participants]
+    ordered = sorted(kills, key=fight_order)
+    moments = Moments(battle, fighters)
+    martyrs = _martyrs(fighters, ordered)
+    placed = _kill_moments(moments, ordered, martyrs)
+    unplaced = {key: martyr for key, martyr in martyrs.items() if key not in placed}
+    _result_moments(moments, battle, fighters, ordered, unplaced)
+    return moments.rows
+
+
+def _moments_for(battle: Battle) -> list[PivotalMoment]:
+    participants = (
         BattleParticipant.objects.select_related("warband")
         .filter(battle_id=battle.id)
         .exclude(status__in=BattleParticipant.LEFT_STATUSES)
         .order_by("id")
     )
-    if not participants:
+    return build_moments(battle, participants, live_kills(battle.id))
+
+
+def _counts(battle: Battle) -> bool:
+    return battle.flow_type == Battle.FLOW_TYPE_NORMAL and battle.status == Battle.STATUS_ENDED
+
+
+def generate_pivotal_moments_for_battle(battle: Battle) -> None:
+    """When the battle ends: its moments, once."""
+    if not _counts(battle) or PivotalMoment.objects.filter(battle_id=battle.id).exists():
         return
+    PivotalMoment.objects.bulk_create(_moments_for(battle))
 
-    rows: list[PivotalMoment] = []
-    participants_by_warband_id = {participant.warband_id: participant for participant in participants}
-    names_by_key = _build_unit_names_by_key(participants)
 
-    kill_events = [kill.event for kill in live_kills(battle.id).select_related("event").order_by("id")]
-    _generate_event_driven_moments(battle, participants_by_warband_id, names_by_key, rows, kill_events)
-    _generate_warband_moments(battle, participants, rows, kill_events)
-
-    if rows:
+def regenerate_pivotal_moments(battle: Battle) -> int:
+    """The battle's moments written again from what it holds now (an ended normal battle; none otherwise): how
+    many."""
+    with transaction.atomic():
+        PivotalMoment.objects.filter(battle_id=battle.id).delete()
+        rows = _moments_for(battle) if _counts(battle) else []
         PivotalMoment.objects.bulk_create(rows)
+    return len(rows)

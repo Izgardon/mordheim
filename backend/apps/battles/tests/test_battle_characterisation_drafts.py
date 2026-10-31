@@ -242,6 +242,7 @@ class PostbattleKillTests(BattleTestCase):
             list(moments.values_list("warband_id", "kind", "detail")),
             [
                 (self.warband.id, "carried_the_fight", "Abbess scored 2 of 2 recorded kills."),
+                (self.warband.id, "first_blood", "Abbess drew first blood against Rat."),  # next step 9
                 (self.warband.id, "untouched_triumph", "Monks won without a single selected unit going out of action."),
                 (self.rival.id, "wiped_out", "Rats lost 1 of 1 selected units."),  # the kill took the Rat out (step 6)
             ],

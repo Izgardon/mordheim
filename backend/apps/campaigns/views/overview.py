@@ -1,4 +1,4 @@
-"""The campaign overview's reads (players, battle history, the chronicle, pivotal moments, top killers) and
+"""The campaign overview's reads (players, battle history with its pivotal moments, the chronicle, top killers) and
 Settings > Active Battles (the open battles, and cancelling one) for battle managers."""
 
 from rest_framework import permissions
@@ -16,12 +16,10 @@ from ..search import campaign_search
 from ..selectors import (
     battle_history_payload,
     campaign_memberships,
-    format_short_date,
-    pivotal_moments,
     players_payload,
     top_killers_payload,
 )
-from ..serializers.history import CampaignTopKillerSerializer, PivotalMomentSerializer
+from ..serializers.history import CampaignTopKillerSerializer
 from ..serializers.members import CampaignPlayerSerializer
 from ..services import active_battles
 from .base import CampaignScopedView
@@ -60,14 +58,6 @@ class CampaignSearchView(CampaignScopedView):
 
     def get(self, request, campaign_id):
         return Response(campaign_search(campaign_id, request.query_params.get("q")))
-
-
-class CampaignPivotalMomentsView(CampaignScopedView):
-    def get(self, request, campaign_id):
-        moments = pivotal_moments(campaign_id)
-        rows = PivotalMomentSerializer(moments, many=True).data
-        dates = (format_short_date(moment.battle_ended_at) for moment in moments)
-        return Response([{**row, "date": date} for row, date in zip(rows, dates, strict=True)])
 
 
 class CampaignTopKillersView(CampaignScopedView):

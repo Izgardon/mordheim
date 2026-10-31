@@ -1,4 +1,5 @@
 import uuid
+from typing import Any
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -315,21 +316,36 @@ class CampaignLocation(models.Model):
         return f"{self.campaign_id}:{self.name}"
 
 
+def _moment_unit(model: str) -> "models.ForeignKey[Any, Any]":
+    return models.ForeignKey(model, related_name="pivotal_moments", on_delete=models.SET_NULL, null=True, blank=True)
+
+
+MOMENT_UNIT_KINDS = ("hero", "henchman", "hireling")
+
+
 class PivotalMoment(models.Model):
+    """A headline the battle's fight left (apps/campaigns/pivotal_moments.py, next step 9). A kill moment carries
+    its kill's round and points at it (`source_kill`); a result moment has neither. The unit it is about, when it
+    is one of a warband's own (a hero, a henchman with his group, a hired sword), is kept as keys like battle_kill's
+    killer, SET_NULL, with its name as it was."""
+
     campaign = models.ForeignKey(Campaign, related_name="pivotal_moments", on_delete=models.CASCADE)
     battle = models.ForeignKey("battles.Battle", related_name="pivotal_moments", on_delete=models.CASCADE)
     warband = models.ForeignKey("warbands.Warband", related_name="pivotal_moments", on_delete=models.CASCADE)
-    source_event = models.ForeignKey(
-        "battles.BattleEvent",
-        related_name="pivotal_moments",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+    source_kill = models.ForeignKey(
+        "battles.BattleKill", related_name="pivotal_moments", on_delete=models.SET_NULL, null=True, blank=True
     )
+    round = models.PositiveSmallIntegerField(null=True, blank=True)
     kind = models.CharField(max_length=64)
     headline = models.CharField(max_length=120)
     detail = models.TextField(blank=True)
-    unit_key = models.CharField(max_length=64, null=True, blank=True)
+    unit_kind = models.CharField(
+        max_length=10, choices=[(kind, kind) for kind in MOMENT_UNIT_KINDS], null=True, blank=True
+    )
+    hero = _moment_unit("warbands.Hero")
+    henchman = _moment_unit("warbands.Henchman")
+    group = _moment_unit("warbands.HenchmenGroup")
+    hireling = _moment_unit("warbands.Hireling")
     unit_name = models.CharField(max_length=120, null=True, blank=True)
     battle_ended_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -342,6 +358,16 @@ class PivotalMoment(models.Model):
             models.Index(fields=["campaign", "battle_ended_at"]),
             models.Index(fields=["battle", "warband"]),
             models.Index(fields=["kind"]),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(unit_kind__isnull=True, hero__isnull=True, henchman__isnull=True, group__isnull=True)
+                & models.Q(hireling__isnull=True)
+                | models.Q(unit_kind="hero", henchman__isnull=True, group__isnull=True, hireling__isnull=True)
+                | models.Q(unit_kind="henchman", hero__isnull=True, hireling__isnull=True)
+                | models.Q(unit_kind="hireling", hero__isnull=True, henchman__isnull=True, group__isnull=True),
+                name="pivotal_moment_unit_keys",
+            ),
         ]
 
     def __str__(self):

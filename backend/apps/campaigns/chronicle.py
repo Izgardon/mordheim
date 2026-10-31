@@ -20,8 +20,6 @@ from apps.battles.models import Battle, BattleKill, BattleParticipant
 from apps.battles.services.kills import live_kills_in
 from apps.warbands.models import WarbandLog
 
-from .battle_moments import death_text, unit_results
-
 KINDS = ("kill", "death", "level", "buy", "trade")
 LIMIT = 40
 PURCHASES = ("hero_item", "henchmen_item", "hireling_item", "stash_item")
@@ -38,6 +36,22 @@ def _entry(kind: str, text: str, meta: str, at: datetime | None) -> dict[str, An
 
 def kill_text(kill: BattleKill) -> str:
     return f"{kill.killer_called(start=True)} took {kill.victim_called()} out of action"
+
+
+def unit_results(postbattle_json: Any) -> dict[str, dict]:
+    """A participant's stored unit results by unit key ({} when there are none)."""
+    raw = postbattle_json.get("unit_results", {}) if isinstance(postbattle_json, dict) else {}
+    if not isinstance(raw, dict):
+        return {}
+    return {key: result for key, result in raw.items() if isinstance(key, str) and isinstance(result, dict)}
+
+
+def death_text(name: str, result: dict[str, Any]) -> str:
+    """ "Ulla Vorn is dead (Dead)" reads badly: the injury's label only when it says more than "dead"."""
+    rolls = result.get("serious_injury_rolls")
+    last = rolls[-1] if isinstance(rolls, list) and rolls and isinstance(rolls[-1], dict) else {}
+    label = str(last.get("result_label") or "").strip()
+    return f"{name} is dead ({label})" if label and label.lower() != "dead" else f"{name} is dead"
 
 
 def _kills(campaign_id: int) -> list[dict[str, Any]]:

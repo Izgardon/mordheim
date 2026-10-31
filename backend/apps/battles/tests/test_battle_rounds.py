@@ -5,10 +5,9 @@ everyone still fighting has agreed, and the new round stands every knocked down 
 one down, on the server. A unit's status rides its unit information (`status`, through config/), so the other
 players see it. `neutral-groups/` adds creatures nobody plays, which `neutral-creatures/<key>/` changes and a kill can
 name as its victim (`victim_neutral_key`). A kill in the fight puts its victim out of action, and undoing it puts him
-back. Kills and out-of-action events carry their round, which the battle's moments group by.
+back. Kills and out-of-action events carry their round, which the pivotal moments carry (next step 9).
 """
 
-from apps.campaigns.battle_moments import battle_moments
 from apps.warbands.models import Hero
 
 from .battle_support import BattleTestCase
@@ -118,22 +117,3 @@ class NeutralGroupTests(FightCase):
         self.assertEqual(self.battle(self.battle_id).neutral_groups_json[0]["creatures"][1]["status"], "standing")
         missing = self.kill(self.player, self.battle_id, self.a, victim_neutral_key="n9-9")
         self.assertEqual(missing.status_code, 404)
-
-
-class MomentsByRoundTests(BattleTestCase):
-    def test_kills_with_a_round_group_by_it_and_older_ones_stay_during(self):
-        def kill(killer: str, victim: str, round_number: int | None = None) -> dict:
-            payload = {"killer": {"name": killer}, "victim": {"name": victim}}
-            return {**payload, "round": round_number} if round_number else payload
-
-        kills = [kill("Ulrich", "a Darksoul", 2), kill("Aldric", "a Brethren", 1), kill("Old", "Rat")]
-        moments = battle_moments([], kills)
-
-        self.assertEqual(
-            [(moment["group"], moment["text"]) for moment in moments],
-            [
-                ("Round 1", "Aldric took a Brethren out of action"),
-                ("Round 2", "Ulrich took a Darksoul out of action"),
-                ("During", "Old took Rat out of action"),
-            ],
-        )

@@ -2,10 +2,9 @@ from datetime import UTC, datetime
 
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
-from django.core.exceptions import ValidationError
 from rest_framework.test import APIClient, APITestCase
 
-from apps.battles.models import Battle, BattleParticipant
+from apps.battles.models import Battle, BattleEvent, BattleKill, BattleParticipant
 from apps.campaigns.models import (
     CampaignBulletinEntry,
     CampaignEncampment,
@@ -15,7 +14,6 @@ from apps.campaigns.models import (
     CampaignPermission,
     CampaignRole,
     CampaignSettings,
-    PivotalMoment,
 )
 from apps.items.models import (
     Item,
@@ -836,6 +834,18 @@ class CampaignApiTests(APITestCase):
             ended_at=datetime(2026, 3, 24, 18, 30, tzinfo=UTC),
             winner_warband_ids_json=[owner_warband.id],
         )
+        for voided in (None, None, None, datetime(2026, 3, 24, 18, 0, tzinfo=UTC)):  # its kills (next step 9)
+            event = BattleEvent.objects.create(battle=normal_battle, type=BattleEvent.TYPE_UNIT_KILL_RECORDED)
+            BattleKill.objects.create(
+                battle=normal_battle,
+                campaign_id=campaign["id"],
+                event=event,
+                phase="fight",
+                voided_at=voided,  # an undone kill counts nowhere
+                killer_warband=owner_warband,
+                killer_kind="hero",
+                victim_kind="someone_else",
+            )
         BattleParticipant.objects.create(
             battle=normal_battle,
             user=owner,
@@ -950,130 +960,6 @@ class CampaignApiTests(APITestCase):
         self.assertEqual(blank_owner_entry["deaths"], [])
         self.assertIsNone(blank_owner_entry["xp_gain"])
         self.assertEqual(blank_owner_entry["exploration"], [])
-
-    def test_pivotal_moments_endpoint_returns_only_persisted_rows(self):
-        owner = self._create_user("owner@example.com", "Owner")
-        campaign = self._create_campaign(owner, max_players=3)
-        join_code = campaign["join_code"]
-
-        player = self._create_user("player@example.com", "Player")
-        self.client.force_authenticate(user=player)
-        join_response = self.client.post(
-            "/api/campaigns/join/",
-            {"join_code": join_code},
-            format="json",
-        )
-        self.assertEqual(join_response.status_code, 201)
-
-        owner_warband = Warband.objects.create(
-            campaign_id=campaign["id"],
-            user=owner,
-            name="Iron Vultures",
-            faction="Mercenaries",
-        )
-        player_warband = Warband.objects.create(
-            campaign_id=campaign["id"],
-            user=player,
-            name="Night Razors",
-            faction="Skaven",
-        )
-
-        battle_without_rows = Battle.objects.create(
-            campaign_id=campaign["id"],
-            created_by_user=owner,
-            scenario="Old Clash",
-            flow_type=Battle.FLOW_TYPE_NORMAL,
-            status=Battle.STATUS_ENDED,
-            ended_at=datetime(2026, 3, 20, 12, 0, tzinfo=UTC),
-            winner_warband_ids_json=[owner_warband.id],
-        )
-        BattleParticipant.objects.create(
-            battle=battle_without_rows,
-            user=owner,
-            warband=owner_warband,
-            status=BattleParticipant.STATUS_CONFIRMED_POSTBATTLE,
-            postbattle_json={},
-        )
-
-        battle_with_row = Battle.objects.create(
-            campaign_id=campaign["id"],
-            created_by_user=owner,
-            scenario="Street Fight",
-            flow_type=Battle.FLOW_TYPE_NORMAL,
-            status=Battle.STATUS_ENDED,
-            ended_at=datetime(2026, 3, 24, 18, 30, tzinfo=UTC),
-            winner_warband_ids_json=[owner_warband.id],
-        )
-        BattleParticipant.objects.create(
-            battle=battle_with_row,
-            user=owner,
-            warband=owner_warband,
-            status=BattleParticipant.STATUS_CONFIRMED_POSTBATTLE,
-            postbattle_json={},
-        )
-        BattleParticipant.objects.create(
-            battle=battle_with_row,
-            user=player,
-            warband=player_warband,
-            status=BattleParticipant.STATUS_CONFIRMED_POSTBATTLE,
-            postbattle_json={},
-        )
-        reported_battle_with_row = Battle.objects.create(
-            campaign_id=campaign["id"],
-            created_by_user=owner,
-            scenario="Reported Result",
-            flow_type=Battle.FLOW_TYPE_REPORTED_RESULT,
-            status=Battle.STATUS_ENDED,
-            ended_at=datetime(2026, 3, 25, 18, 30, tzinfo=UTC),
-            winner_warband_ids_json=[player_warband.id],
-        )
-        BattleParticipant.objects.create(
-            battle=reported_battle_with_row,
-            user=owner,
-            warband=owner_warband,
-            status=BattleParticipant.STATUS_REPORTED_RESULT_APPROVED,
-            postbattle_json={},
-        )
-        BattleParticipant.objects.create(
-            battle=reported_battle_with_row,
-            user=player,
-            warband=player_warband,
-            status=BattleParticipant.STATUS_REPORTED_RESULT_APPROVED,
-            postbattle_json={},
-        )
-        assert battle_with_row.ended_at is not None
-        assert reported_battle_with_row.ended_at is not None
-        moment = PivotalMoment.objects.create(
-            campaign_id=campaign["id"],
-            battle=battle_with_row,
-            warband=owner_warband,
-            kind="giant_slayer",
-            headline="Giant Slayer",
-            detail="Captain Wolf slew large target Ogre Mage.",
-            unit_key="hero:1",
-            unit_name="Captain Wolf",
-            battle_ended_at=battle_with_row.ended_at,
-        )
-        with self.assertRaises(ValidationError):
-            PivotalMoment.objects.create(
-                campaign_id=campaign["id"],
-                battle=reported_battle_with_row,
-                warband=player_warband,
-                kind="untouched_triumph",
-                headline="Untouched Triumph",
-                detail="Night Razors won without a single selected unit going out of action.",
-                battle_ended_at=reported_battle_with_row.ended_at,
-            )
-
-        self.client.force_authenticate(user=owner)
-        response = self.client.get(f"/api/campaigns/{campaign['id']}/pivotal-moments/")
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["id"], moment.id)
-        self.assertEqual(response.data[0]["headline"], "Giant Slayer")
-        self.assertEqual(response.data[0]["warband_name"], owner_warband.name)
-        self.assertEqual(response.data[0]["battle_scenario"], battle_with_row.scenario)
-        self.assertEqual(response.data[0]["date"], "24/03/26")
 
     def test_top_killers_returns_cross_unit_leaders_sorted_and_limited(self):
         owner = self._create_user("owner@example.com", "Owner")
