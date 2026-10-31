@@ -1,7 +1,7 @@
 """The catalogue kinds registry (design 0.29 for the catalogue, IMP-79): each kind as data.
 
 Items, skills, spells, specials, races, bestiary entries, hired swords and dramatis personae, plus the read-only
-restrictions and the add-only item properties. A spec names the kind's model and serializers, how its list is
+restrictions and the add-only shared item rules. A spec names the kind's model and serializers, how its list is
 filtered, the child rows an entry carries (what a version copies), the tables whose rows hold an entry (`holders`:
 what a delete can't take with it, what `usage/` counts, and what a version's first edit moves onto it and Revert
 moves back), the rows that follow an entry without holding it (`followers`: a warband's bestiary favourites) and the
@@ -28,9 +28,9 @@ from apps.bestiary.selectors import by_kind
 from apps.bestiary.serializers import BestiaryEntryWriteSerializer
 from apps.hirelings.models import DramatisPersona, HiredSword
 from apps.hirelings.serializers import DramatisPersonaWriteSerializer, HiredSwordWriteSerializer
-from apps.items.models import Item, ItemProperty
+from apps.items.models import Item, ItemRule
 from apps.items.selectors import by_listing
-from apps.items.serializers import ItemPropertySerializer, ItemWriteSerializer
+from apps.items.serializers import ItemRuleSerializer, ItemWriteSerializer
 from apps.races.models import Race
 from apps.races.serializers import RaceCreateSerializer
 from apps.restrictions.models import Restriction
@@ -45,7 +45,7 @@ from apps.warbands.models import HenchmenGroup, WarbandItem
 from apps.warbands.units.kinds import KINDS as UNIT_KINDS
 from apps.warbands.units.kinds import UnitKindKey
 
-from .hooks import BestiaryHooks, CatalogueHooks, HirelingProfileHooks, ItemHooks, ItemPropertyHooks, RaceHooks
+from .hooks import BestiaryHooks, CatalogueHooks, HirelingProfileHooks, ItemHooks, ItemRuleHooks, RaceHooks
 from .rows import (
     BestiaryEntryDetailRowSerializer,
     BestiaryEntryRowSerializer,
@@ -225,7 +225,7 @@ ITEMS = CatalogueKindSpec(
     versioned=True,
     filters={**NAME_AND_TYPE, "listed": by_listing},  # the shop's list: ?listed=1
     reread=True,
-    children=("availabilities", "availabilities__restriction_links", "property_links"),
+    children=("rule_links", "availabilities", "availabilities__warband_links"),
     holders=_copies(
         "items",
         STASH,
@@ -373,20 +373,17 @@ RESTRICTIONS = CatalogueKindSpec(  # read-only: the seeders write the book's row
     name_field="restriction",
     order=("type", "restriction"),
 )
-ITEM_PROPERTIES = CatalogueKindSpec(  # added, never edited or deleted
-    key="item_properties",
-    noun="item property",
-    model=ItemProperty,
-    url_kwarg="property_id",
-    row_serializer=ItemPropertySerializer,
-    entry_serializer=ItemPropertySerializer,
-    write_serializer=ItemPropertySerializer,
-    filters={
-        "type": lambda value: Q(type__iexact=value) | Q(type__isnull=True) | Q(type__exact=""),  # untyped ones too
-        "search": NAME_AND_TYPE["search"],
-    },
-    order=("name",),
-    hooks=ItemPropertyHooks(),
+ITEM_RULES = CatalogueKindSpec(  # the shared rules: added, never edited or deleted
+    key="item_rules",
+    noun="item rule",
+    model=ItemRule,
+    url_kwarg="rule_id",
+    row_serializer=ItemRuleSerializer,
+    entry_serializer=ItemRuleSerializer,
+    write_serializer=ItemRuleSerializer,
+    filters={"search": NAME_AND_TYPE["search"]},
+    order=("name", "id"),
+    hooks=ItemRuleHooks(),
 )
 
 CATALOGUE_KINDS: Mapping[str, CatalogueKindSpec] = {
@@ -395,5 +392,5 @@ CATALOGUE_KINDS: Mapping[str, CatalogueKindSpec] = {
 LIST_KINDS: Mapping[str, CatalogueKindSpec] = {
     **CATALOGUE_KINDS,
     "restrictions": RESTRICTIONS,
-    "item_properties": ITEM_PROPERTIES,
+    "item_rules": ITEM_RULES,
 }

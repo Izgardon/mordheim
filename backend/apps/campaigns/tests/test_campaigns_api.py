@@ -19,9 +19,9 @@ from apps.core.testing import book_warband_type
 from apps.items.models import (
     Item,
     ItemAvailability,
-    ItemAvailabilityRestriction,
-    ItemProperty,
-    ItemPropertyLink,
+    ItemAvailabilityWarband,
+    ItemRule,
+    ItemRuleLink,
 )
 from apps.restrictions.models import Restriction
 from apps.warbands.models import (
@@ -88,37 +88,32 @@ class CampaignApiTests(APITestCase):
         name,
         *,
         subtype="Armour",
-        grade="1a",
         cost=50,
         rarity=8,
-        description="",
+        flavour="",
         save_value="5+",
-        variable_cost=None,
-        restriction_links=None,
-        properties=None,
+        note="",
+        warband_types=None,
+        rules=None,
     ):
         item = Item.objects.create(
             name=name,
             type="Armour",
             subtype=subtype,
-            grade=grade,
-            description=description,
+            flavour=flavour,
             save_value=save_value,
         )
         availability = ItemAvailability.objects.create(
             item=item,
             cost=cost,
-            rarity=rarity,
-            variable_cost=variable_cost,
+            rarity=rarity if rarity > 2 else None,
+            note=note,
+            for_everyone=not warband_types,
         )
-        for restriction, note in restriction_links or []:
-            ItemAvailabilityRestriction.objects.create(
-                item_availability=availability,
-                restriction=restriction,
-                additional_note=note,
-            )
-        for prop in properties or []:
-            ItemPropertyLink.objects.create(item=item, property=prop)
+        for warband_type in warband_types or []:
+            ItemAvailabilityWarband.objects.create(availability=availability, warband_type=warband_type)
+        for rule in rules or []:
+            ItemRuleLink.objects.create(item=item, rule=rule)
         return item
 
     def _create_half_price_armour_rule(self, owner, campaign_id, title="Half Price Armour"):
@@ -209,23 +204,23 @@ class CampaignApiTests(APITestCase):
     def test_create_half_price_armour_rule_creates_discounted_campaign_clones(self):
         owner = self._create_user("owner@example.com", "Owner")
         campaign = self._create_campaign(owner)
-        restriction = self._create_setting("Nobles")
-        property_entry = ItemProperty.objects.create(name="Bulky", type="Armour", description="Very heavy.")
+        nobles = book_warband_type("Nobles")
+        bulky = ItemRule.objects.create(name="Bulky", text="Very heavy.")
         heavy_armour = self._create_base_item(
             "Heavy Armour",
             cost=51,
             rarity=9,
-            description="Heavy suit",
+            flavour="Heavy suit",
             save_value="5+",
-            restriction_links=[(restriction, "Only nobles")],
-            properties=[property_entry],
+            note="Only nobles",
+            warband_types=[nobles],
+            rules=[bulky],
         )
         chaos_armour = self._create_base_item(
             "Chaos Armour",
-            grade="1c",
             cost=185,
             rarity=11,
-            description="Warp-forged plate",
+            flavour="Warp-forged plate",
             save_value="4+",
         )
         self._create_base_item("Shield", subtype="Shield", cost=5, rarity=2, save_value="")
@@ -246,8 +241,7 @@ class CampaignApiTests(APITestCase):
         self.assertEqual(heavy_clone.name, heavy_armour.name)
         self.assertEqual(heavy_clone.type, heavy_armour.type)
         self.assertEqual(heavy_clone.subtype, heavy_armour.subtype)
-        self.assertEqual(heavy_clone.grade, heavy_armour.grade)
-        self.assertEqual(heavy_clone.description, heavy_armour.description)
+        self.assertEqual(heavy_clone.flavour, heavy_armour.flavour)
         self.assertEqual(heavy_clone.save_value, heavy_armour.save_value)
         self.assertEqual(heavy_clone.replaces_id, heavy_armour.id)
 
@@ -255,16 +249,15 @@ class CampaignApiTests(APITestCase):
         self.assertEqual(heavy_clone_availability.cost, 26)
         self.assertEqual(heavy_clone_availability.rarity, 9)
         self.assertEqual(
-            list(
-                heavy_clone_availability.restriction_links.order_by("id").values_list(
-                    "restriction__restriction",
-                    "additional_note",
-                )
-            ),
-            [("Nobles", "Only nobles")],
+            (heavy_clone_availability.note, heavy_clone_availability.for_everyone),
+            ("Only nobles", False),
         )
         self.assertEqual(
-            list(heavy_clone.property_links.values_list("property__name", flat=True)),
+            list(heavy_clone_availability.warband_links.values_list("warband_type__name", flat=True)),
+            ["Nobles"],
+        )
+        self.assertEqual(
+            list(heavy_clone.rule_links.values_list("rule__name", flat=True)),
             ["Bulky"],
         )
 
@@ -450,7 +443,7 @@ class CampaignApiTests(APITestCase):
     def test_delete_improved_shields_rule_restores_owned_items_and_removes_shield_clones(self):
         owner = self._create_user("owner@example.com", "Owner")
         campaign = self._create_campaign(owner)
-        shield = self._create_base_item("Kite Shield", subtype="Shield", grade="1c", cost=10, rarity=2, save_value="5+")
+        shield = self._create_base_item("Kite Shield", subtype="Shield", cost=10, rarity=2, save_value="5+")
         warband = Warband.objects.create(
             campaign_id=campaign["id"],
             user=owner,

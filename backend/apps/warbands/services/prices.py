@@ -65,8 +65,8 @@ def annotated_current(row: Any, own: int | None) -> int | None:
 
 
 def own_price(item: Item) -> int | None:
-    """The lowest cost among the item's availabilities (prefetched or read), None without any."""
-    costs = [availability.cost for availability in item.availabilities.all()]
+    """The lowest cost among the item's price rows (prefetched or read), None without one that has a cost."""
+    costs = [availability.cost for availability in item.availabilities.all() if availability.cost is not None]
     return min(costs) if costs else None
 
 

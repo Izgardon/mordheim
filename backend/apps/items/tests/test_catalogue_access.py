@@ -19,7 +19,7 @@ from apps.campaigns.access import CAMPAIGN_RULES
 from apps.campaigns.models import Campaign
 from apps.core.catalogue.kinds import CATALOGUE_KINDS, LIST_KINDS
 from apps.core.catalogue.views import CatalogueScopedView
-from apps.items.models import ItemProperty
+from apps.items.models import ItemRule
 from apps.warbands.access import WARBAND_RULES
 from apps.warbands.views.base import WarbandScopedView
 
@@ -27,14 +27,17 @@ from .catalogue_support import DELETE, KINDS, RACES, CatalogueKind, CatalogueTes
 
 ACTORS = ("player", "rival", "admin", "owner", "outsider")
 Row = tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int, int]]
-EDITED: dict[str, dict[str, Any]] = {"races": {"movement": 5}}  # every other kind: a new description
+EDITED: dict[str, dict[str, Any]] = {
+    "races": {"movement": 5},
+    "items": {"flavour": "Edited"},
+}  # the rest: a new description
 CATALOGUE_APPS = ("items", "skills", "spells", "special", "races", "restrictions", "bestiary", "hirelings")
 FAVOURITES = {"warband-bestiary-favourites", "warband-bestiary-favourite-delete"}  # warband routes
 
 
 class CatalogueAccessFixture(CatalogueTestCase):
     """The shared catalogue, one campaign entry of each kind, the campaign's version of a spare book entry of each
-    kind, a campaign property, and `rival` granted deleting."""
+    kind, a campaign shared item rule, and `rival` granted deleting."""
 
     house: dict[str, int]
     version: dict[str, int]
@@ -43,7 +46,7 @@ class CatalogueAccessFixture(CatalogueTestCase):
     def setUpTestData(cls) -> None:
         super().setUpTestData()
         cls.house = {kind.key: make_entry(kind, f"House {kind.key}", campaign=cls.campaign).id for kind in KINDS}
-        cls.house["property"] = ItemProperty.objects.create(name="Spiked", type="Weapon", campaign=cls.campaign).id
+        cls.house["property"] = ItemRule.objects.create(name="Spiked", campaign=cls.campaign).id
         cls.version = {}
         for kind in KINDS:
             spare = make_entry(kind, f"Spare {kind.key}")
@@ -103,11 +106,11 @@ class CatalogueAccessFixture(CatalogueTestCase):
             ("GET", f"/api/restrictions/?campaign_id={campaign}", None, (200, 200, 200, 200, 404)),
             ("GET", "/api/restrictions/", None, (200,) * 5),
             ("POST", "/api/restrictions/", {"restriction": "Junk"}, (405,) * 5),  # SEC-06
-            ("GET", f"/api/item-properties/?campaign_id={campaign}", None, (200, 200, 200, 200, 404)),
-            ("POST", "/api/item-properties/", {"campaign_id": campaign, "name": "Cleave"}, (201, 201, 201, 201, 404)),
-            ("GET", f"/api/item-properties/{prop}/", None, (200, 200, 200, 200, 404)),
-            ("GET", f"/api/item-properties/{self.parry.id}/", None, (200,) * 5),
-            ("PATCH", f"/api/item-properties/{prop}/", {"name": "Barbed"}, (405,) * 5),
+            ("GET", f"/api/item-rules/?campaign_id={campaign}", None, (200, 200, 200, 200, 404)),
+            ("POST", "/api/item-rules/", {"campaign_id": campaign, "name": "Cleave"}, (201, 201, 201, 201, 404)),
+            ("GET", f"/api/item-rules/{prop}/", None, (200, 200, 200, 200, 404)),
+            ("GET", f"/api/item-rules/{self.parry.id}/", None, (200,) * 5),
+            ("PATCH", f"/api/item-rules/{prop}/", {"name": "Barbed"}, (405,) * 5),
             ("GET", favourites, None, (200, 200, 200, 200, 404)),  # Pia's warband
             ("POST", favourites, {"bestiary_entry_id": self.warhound.id}, (201, 403, 201, 201, 404)),
             ("DELETE", f"{favourites}{self.warhound.id}/", None, (204, 403, 204, 204, 404)),

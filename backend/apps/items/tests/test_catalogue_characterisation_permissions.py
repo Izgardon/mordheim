@@ -229,15 +229,15 @@ class CatalogueEditPermissionTests(CataloguePermissionTestCase):
                     self.post_as(self.player, f"{kind.detail_url(entry.id)}restore/"),
                 ]
                 self.assertEqual([response.status_code for response in writes], [403, 403, 403])
-        body = {"campaign_id": self.campaign.id, "name": "Cleave", "type": "Weapon"}
-        self.assertEqual(self.post_as(self.player, "/api/item-properties/", body).status_code, 403)
+        body = {"campaign_id": self.campaign.id, "name": "Cleave"}
+        self.assertEqual(self.post_as(self.player, "/api/item-rules/", body).status_code, 403)
         self.assertEqual(self.create_as(self.rival, SKILLS, "Rex still adds").status_code, 201)
 
 
-class ItemPropertyPermissionTests(CataloguePermissionTestCase):
-    def test_adding_a_property_needs_edit_catalogue_and_a_campaign(self):
-        url = "/api/item-properties/"
-        body = {"campaign_id": self.campaign.id, "name": "Cleave", "type": "Weapon"}
+class ItemRulePermissionTests(CataloguePermissionTestCase):
+    def test_adding_a_shared_rule_needs_edit_catalogue_and_a_campaign(self):
+        url = "/api/item-rules/"
+        body = {"campaign_id": self.campaign.id, "name": "Cleave"}
 
         self.assertEqual(self.post_as(self.player, url, body).status_code, 201)
         self.assertEqual(self.post_as(self.outsider, url, body).status_code, 404)
@@ -246,8 +246,8 @@ class ItemPropertyPermissionTests(CataloguePermissionTestCase):
         self.revoke(self.player, EDIT)
         self.assertEqual(self.post_as(self.player, url, body).status_code, 403)
 
-    def test_properties_cannot_be_edited_or_deleted(self):
-        url = f"/api/item-properties/{self.parry.id}/"
+    def test_shared_rules_cannot_be_edited_or_deleted(self):
+        url = f"/api/item-rules/{self.parry.id}/"
 
         self.assertEqual(self.patch_as(self.owner, url, {"name": "Riposte"}).status_code, 405)
         self.assertEqual(self.delete_as(self.owner, url).status_code, 405)

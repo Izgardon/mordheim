@@ -16,7 +16,7 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
 from apps.battles.services.injuries import InjuryOutcome, apply_stat_and_special
-from apps.campaigns.models import CampaignSettings
+from apps.campaigns.models import CampaignSettings, CampaignType
 from apps.core.catalogue.cache import book_version
 from apps.items.services import HALF_PRICE_ARMOUR_EFFECT_KEY
 from apps.restrictions.models import Restriction
@@ -32,10 +32,10 @@ from .catalogue_support import (
     CatalogueTestCase,
     catalogue_cache_on,
 )
-from .test_catalogue_characterisation_seeders import data_file, run
+from .test_catalogue_characterisation_seeders import data_file, import_folder, import_row, run
 
 HEADERS = ("Content-Type", "ETag", "Cache-Control", "Vary", "Allow")
-LISTS = (*(kind.path for kind in KINDS), "restrictions", "item-properties")
+LISTS = (*(kind.path for kind in KINDS), "restrictions", "item-rules")
 
 
 @catalogue_cache_on()
@@ -105,11 +105,11 @@ class CacheInvalidationTests(CatalogueListCacheTestCase):
                 self.delete_as(self.owner, kind.detail_url(created.data["id"]))
                 self.assertNotIn(f"Renamed {kind.key}", self.names(kind))
 
-    def test_adding_an_item_property_retires_the_property_list(self):
-        url = f"/api/item-properties/?campaign_id={self.campaign.id}"
+    def test_adding_a_shared_item_rule_retires_the_rule_list(self):
+        url = f"/api/item-rules/?campaign_id={self.campaign.id}"
         self.read(url)
 
-        self.post_as(self.owner, "/api/item-properties/", {"campaign_id": self.campaign.id, "name": "Cleave"})
+        self.post_as(self.owner, "/api/item-rules/", {"campaign_id": self.campaign.id, "name": "Cleave"})
 
         self.assertIn("Cleave", [row["name"] for row in self.read(url)[0].json()])
 
@@ -154,19 +154,16 @@ class CacheInvalidationTests(CatalogueListCacheTestCase):
         rows: dict[str, list[dict[str, Any]]] = {
             "seed_races": [{"name": "Gnome", **STATS}],
             "seed_restrictions": [{"restriction": "Gnomes", "type": "Warband"}],
-            "seed_items": [{"name": "Gnome hammer", "type": "Weapon", "cost": 5}],
             "seed_skills": [{"name": "Tinker", "type": "Gnome", "description": "Fixes things."}],
             "seed_bestiary": [{"name": "Gnome", "kind": "creature", **STATS}],
         }
-        with data_file([]) as no_properties:
-            for command, data in rows.items():
-                with self.subTest(command=command), data_file(data) as path:
-                    options: dict[str, Any] = (
-                        {"json_paths": [path]} if command == "seed_bestiary" else {"json_path": path}
-                    )
-                    if command == "seed_items":
-                        options["properties_path"] = no_properties
-                    self.assertTrue(moved(command, **options))
+        for command, data in rows.items():
+            with self.subTest(command=command), data_file(data) as path:
+                options: dict[str, Any] = {"json_paths": [path]} if command == "seed_bestiary" else {"json_path": path}
+                self.assertTrue(moved(command, **options))
+        CampaignType.objects.get_or_create(slug="mordheim", defaults={"name": "Mordheim", "always_on": True})
+        with import_folder([import_row("Gnome hammer", 5)]) as folder:
+            self.assertTrue(moved("seed_items", out=folder))
         self.assertTrue(moved("seed_spells_and_special"))  # the committed spells and specials
 
     def test_an_injurys_new_campaign_special_retires_the_specials_list(self):

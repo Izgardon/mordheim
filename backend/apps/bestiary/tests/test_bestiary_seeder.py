@@ -3,8 +3,9 @@
 
 Each row names its kind, whether it has a profile (off: the stats are kept at 0 and the save empty), what it adds to a
 rider's rating and whether the shop sells it; every beast gets its Animal item, listed when it is sold, with the
-grade and prices of its `shop_item`. A row without a known kind, or with a rating bonus that isn't a whole number from
-0, stops the run with nothing kept. The whole catalogue's run is in test_catalogue_characterisation_seeding.py.
+prices of its `shop_item` (or, once the settings and warband types are seeded, the catalogue import's entry of its
+name). A row without a known kind, or with a rating bonus that isn't a whole number from 0, stops the run with nothing
+kept. The whole catalogue's run is in test_catalogue_characterisation_seeding.py.
 """
 
 from collections import Counter
@@ -19,7 +20,6 @@ from apps.items.tests.catalogue_support import STATS
 from apps.items.tests.test_catalogue_characterisation_seeders import data_file, run
 
 SHOP = {"grade": "1a", "availabilities": [{"cost": 80, "rarity": 11, "unique_to": "Humans only"}]}
-GRADES = {"1a", "1b", "1c", "2a", "2b", "3"}
 
 
 def seed(rows: list[dict[str, Any]]) -> str:
@@ -74,10 +74,13 @@ class BestiarySeederBeastTests(TestCase):
         )
         items = {name: beast.animal_item for name, beast in beasts.items()}
         self.assertEqual(
-            {name: (item.campaign_id, item.subtype, item.grade, item.listed) for name, item in items.items()},
-            {"Warhorse": (None, "Mount", "1a", True), "Wyvern": (None, "Creature", "2b", False)},
+            {name: (item.campaign_id, item.subtype, item.listed) for name, item in items.items()},
+            {"Warhorse": (None, "Mount", True), "Wyvern": (None, "Creature", False)},
         )
-        self.assertEqual(list(items["Warhorse"].availabilities.values_list("cost", "rarity")), [(80, 11)])
+        self.assertEqual(
+            list(items["Warhorse"].availabilities.values_list("cost", "rarity", "for_everyone", "note")),
+            [(80, 11, True, "Humans only")],  # the settings aren't seeded: the shop data, its "unique to" as the note
+        )
         self.assertEqual(list(items["Wyvern"].availabilities.all()), [])
 
     def test_a_beast_without_a_profile_is_stored_at_zero(self):
@@ -99,6 +102,8 @@ class CommittedBestiaryTests(TestCase):
 
     @classmethod
     def setUpTestData(cls) -> None:
+        run("seed_settings")
+        run("seed_warband_types")
         run("seed_bestiary")
 
     def beasts(self) -> dict[str, BestiaryEntry]:
@@ -119,7 +124,7 @@ class CommittedBestiaryTests(TestCase):
         self.assertEqual(unsold, ["Giant Rat", "Wild Dog", "Wyvern"])
         self.assertEqual(Item.objects.filter(type="Animal", listed=True).count(), 28)
         rat = self.beasts()["Giant Rat"].animal_item
-        self.assertEqual(list(rat.availabilities.values_list("cost", "rarity", "variable_cost")), [(0, 9, "15 warptokens")])  # fmt: skip
+        self.assertEqual(list(rat.availabilities.values_list("cost", "rarity", "cost_note")), [(0, 9, "15 warptokens")])  # fmt: skip
 
     def test_the_pets_and_the_wild_boar_have_no_profile(self):
         without = sorted(name for name, beast in self.beasts().items() if not beast.has_profile)
@@ -143,11 +148,15 @@ class CommittedBestiaryTests(TestCase):
 
         self.assertEqual(bonuses, {"Riding/Draft Horse": 3, "Warhorse": 5, "Rhinox": 20, "Temple Dog": 20})
 
-    def test_every_grade_is_one_of_ours_and_marienburgs_higher_ones_are_2b(self):
-        grades = {name: beast.animal_item.grade for name, beast in self.beasts().items()}
+    def test_every_item_has_its_setting_the_imports_animals_theirs_and_marienburgs_beasts_marienburg(self):
+        settings = {name: beast.animal_item.campaign_type.slug for name, beast in self.beasts().items() if beast.animal_item.campaign_type}  # fmt: skip
 
-        self.assertLessEqual(set(grades.values()), GRADES)
-        self.assertEqual({grades[name] for name in ("Dragon Turtle", "Geckamand", "Lizard-Hawk", "Tiger", "Wyvern")}, {"2b"})  # fmt: skip
+        self.assertEqual(len(settings), 31)
+        self.assertEqual({settings[name] for name in ("Dragon Turtle", "Geckamand", "Lizard-Hawk", "Tiger", "Wyvern")}, {"mutiny-in-marienburg"})  # fmt: skip
+        self.assertEqual((settings["Warhorse"], settings["Chaos Steed"]), ("mordheim", "mordheim-1b"))
+        steed = self.beasts()["Chaos Steed"].animal_item
+        self.assertTrue(steed.rule_links.exists())
+        self.assertEqual(steed.subtype, "Mount")
 
     def test_a_second_run_updates_the_same_rows(self):
         before = sorted(Item.objects.filter(type="Animal").values_list("id", "bestiary_entry_id"))

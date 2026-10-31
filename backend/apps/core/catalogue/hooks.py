@@ -6,7 +6,7 @@ in the campaign, an edit that saves it, a delete of the entry. Items refuse dele
 clone and any write of a beast's Animal item, and write through `items/writes.py`; bestiary entries write through
 `bestiary/writes.py` (their Animal item too) and read their rows and details through `bestiary/selectors.py`, hired
 swords and dramatis personae through `hirelings/writes.py` and `hirelings/selectors.py`; a race edit naming another
-campaign is refused (BUG-147); item properties list the book's and the campaign's side by side.
+campaign is refused (BUG-147); shared item rules list the book's and the campaign's side by side.
 """
 
 from typing import TYPE_CHECKING, Any
@@ -186,11 +186,11 @@ class RaceHooks(CatalogueHooks):
             raise NotFound("Not found")
 
 
-class ItemPropertyHooks(CatalogueHooks):
+class ItemRuleHooks(CatalogueHooks):
     def listed(
         self, kind: "CatalogueKindSpec", rows: QuerySet[Any], campaign_id: int | None, params: QueryDict
     ) -> QuerySet[Any]:
-        """The book's properties and the campaign's side by side: a property overrides nothing."""
+        """The book's shared rules and the campaign's side by side: a campaign's rule overrides nothing."""
         scope = (
             Q(campaign__isnull=True) if campaign_id is None else Q(campaign_id=campaign_id) | Q(campaign__isnull=True)
         )

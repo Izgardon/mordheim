@@ -18,9 +18,8 @@ from django.test.utils import CaptureQueriesContext
 from rest_framework.test import APIClient
 
 from apps.battles.models import Battle, BattleEvent, BattleParticipant
-from apps.items.models import Item, ItemAvailability, ItemAvailabilityRestriction
+from apps.items.models import Item, ItemAvailability, ItemAvailabilityWarband, ItemRule, ItemRuleLink
 from apps.races.models import Race
-from apps.restrictions.models import Restriction
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
@@ -84,8 +83,19 @@ def _create_warband(client: APIClient, campaign_id: int, name: str) -> Warband:
 
 def _catalogue_item(name: str, cost: int) -> Item:
     item = Item.objects.create(name=name, type="Melee")
-    ItemAvailability.objects.create(item=item, cost=cost, rarity=2)
+    ItemAvailability.objects.create(item=item, cost=cost)
     return item
+
+
+def _limit_to(items: list[Item], label: str) -> None:
+    """Each item's price row for one warband type only, and a shared rule on each: the shape that used to cause N+1s
+    (a row's who-can lines and an item's rules are read with the item)."""
+    only = book_warband_type(f"{label} type")
+    rule, _ = ItemRule.objects.get_or_create(campaign=None, slug=f"{label.lower()}-rule", defaults={"name": "Parry"})
+    ItemAvailabilityWarband.objects.bulk_create(
+        [ItemAvailabilityWarband(availability=item.availabilities.get(), warband_type=only) for item in items]
+    )
+    ItemRuleLink.objects.bulk_create([ItemRuleLink(item=item, rule=rule) for item in items])
 
 
 def build_reference_campaign(unit_count: int = 3) -> ReferenceCampaign:
@@ -169,15 +179,11 @@ def build_reference_campaign(unit_count: int = 3) -> ReferenceCampaign:
 
 def add_units_with_items(warband: Warband, count: int, label: str) -> None:
     """Grow a warband by `count` heroes, henchmen groups and hired swords, each carrying two
-    items whose availabilities have restriction links (the shape that used to cause N+1s)."""
+    items whose price rows name a warband type and that carry a shared rule (the shape that used to cause N+1s)."""
     race = Race.objects.first()
-    restriction, _ = Restriction.objects.get_or_create(type="Warband", restriction=f"{label} only")
     for index in range(count):
         items = [_catalogue_item(f"{label} item {index}.{n}", 5 + n) for n in range(2)]
-        for item in items:
-            ItemAvailabilityRestriction.objects.create(
-                item_availability=item.availabilities.get(), restriction=restriction
-            )
+        _limit_to(items, label)
         hero = Hero.objects.create(warband=warband, race=race, name=f"{label} hero {index}", unit_type="Youngblood")
         HeroItem.objects.bulk_create([HeroItem(hero=hero, item=item) for item in items])
         group = HenchmenGroup.objects.create(warband=warband, race=race, name=f"{label} group {index}")
@@ -187,11 +193,9 @@ def add_units_with_items(warband: Warband, count: int, label: str) -> None:
 
 
 def add_items_to_units(hero: Hero, group: HenchmenGroup, sword: Hireling, count: int, label: str) -> None:
-    """Give one unit of each kind `count` more items, each with a restriction-linked availability."""
-    restriction, _ = Restriction.objects.get_or_create(type="Warband", restriction=f"{label} only")
+    """Give one unit of each kind `count` more items, each with a price row for one warband type and a shared rule."""
     items = [_catalogue_item(f"{label} item {index}", 5 + index) for index in range(count)]
-    for item in items:
-        ItemAvailabilityRestriction.objects.create(item_availability=item.availabilities.get(), restriction=restriction)
+    _limit_to(items, label)
     HeroItem.objects.bulk_create([HeroItem(hero=hero, item=item) for item in items])
     HenchmenGroupItem.objects.bulk_create([HenchmenGroupItem(henchmen_group=group, item=item) for item in items])
     HirelingItem.objects.bulk_create([HirelingItem(hireling=sword, item=item) for item in items])

@@ -67,3 +67,28 @@ class WarbandGroup(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+
+class WarbandAccess(models.Model):
+    """One line of a who-can list (the items rebuild): a warband type or a warband group, may (`excluded` off) or may
+    not. A price row says who may buy it with these lines, a hired sword or dramatis persona who may hire him, a
+    special skill who may learn it; each owner also says whether it is for everyone (minus the excluded). Read by
+    `warbands/services/who_can.py`."""
+
+    warband_type = models.ForeignKey(WarbandType, related_name="+", null=True, blank=True, on_delete=models.CASCADE)
+    warband_group = models.ForeignKey(WarbandGroup, related_name="+", null=True, blank=True, on_delete=models.CASCADE)
+    excluded = models.BooleanField(default=False)
+
+    class Meta:
+        abstract = True
+
+
+def access_constraints(prefix: str) -> list[models.BaseConstraint]:
+    """A who-can line names a type or a group, never both."""
+    return [
+        models.CheckConstraint(
+            check=models.Q(warband_type__isnull=False, warband_group__isnull=True)
+            | models.Q(warband_type__isnull=True, warband_group__isnull=False),
+            name=f"{prefix}_type_or_group",
+        )
+    ]

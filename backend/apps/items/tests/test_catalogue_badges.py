@@ -48,14 +48,14 @@ class BadgeTests(CatalogueTestCase):
         self.assertEqual(badges(self.row(SKILLS, created.data["id"]))["updated_by"], "Rex")
 
     def test_a_version_shows_its_book_entry_and_what_it_changed(self):
-        body = {"campaign_id": self.campaign.id, "description": "A keen edge.", "availabilities": [{"cost": 15}]}
+        body = {"campaign_id": self.campaign.id, "flavour": "A keen edge.", "availabilities": [{"cost": 15}]}
         version = self.patch_as(self.rival, ITEMS.detail_url(self.book_sword.id), body).data
 
         listed = badges(self.row(ITEMS, version["id"]))
 
         self.assertEqual((listed["replaces"], listed["updated_by"]), (self.book_sword.id, "Rex"))
         # the edit filled the weapon's empty strength and range with their defaults (BUG-151), so they changed too
-        changes = {"description": "", "strength": None, "range": None}
+        changes = {"flavour": "", "strength": None, "range": None}
         self.assertEqual(listed["book"], {"id": self.book_sword.id, "name": "Sword", "changes": changes, "price": 10})
         self.assertEqual(version["book"], listed["book"])
 

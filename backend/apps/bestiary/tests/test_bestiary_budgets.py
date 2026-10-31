@@ -12,9 +12,9 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
 from apps.bestiary.models import BestiaryEntryItem, WarbandBestiaryFavourite
-from apps.items.models import ItemAvailabilityRestriction
+from apps.core.testing import book_warband_type
+from apps.items.models import ItemAvailabilityWarband
 from apps.items.tests.catalogue_support import BESTIARY, ITEMS, CatalogueTestCase, make_beast, make_entry
-from apps.restrictions.models import Restriction
 from apps.skills.models import Skill
 from apps.warbands.models import WarbandItem
 from apps.warbands.tests.roster_support import HERO, make_unit
@@ -24,7 +24,7 @@ class BestiaryBudgetTestCase(CatalogueTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.client.force_authenticate(user=self.owner)
-        self.restriction = Restriction.objects.create(restriction="Humans only")
+        self.only = book_warband_type("Reiklanders")
 
     def count(self, call: Any, status: int = 200) -> int:
         with CaptureQueriesContext(connection) as captured:
@@ -37,7 +37,7 @@ class BestiaryBudgetTestCase(CatalogueTestCase):
         made = []
         for index in range(count):
             beast = make_beast(f"{label} {index}", campaign=campaign, kind="mount", available_in_shop=True, cost=40)
-            ItemAvailabilityRestriction.objects.create(item_availability=beast.animal_item.availabilities.get(), restriction=self.restriction)  # fmt: skip
+            ItemAvailabilityWarband.objects.create(availability=beast.animal_item.availabilities.get(), warband_type=self.only)  # fmt: skip
             made.append(beast)
         return made
 
@@ -89,11 +89,11 @@ class BestiaryWriteBudgetTests(BestiaryBudgetTestCase):
     def body(self, name: str, links: int) -> dict[str, Any]:
         skills = [Skill.objects.create(name=f"{name} trick {n}", type="Animal").id for n in range(links)]
         gear = [make_entry(ITEMS, f"{name} gear {n}").id for n in range(links)]
-        restricted = [{"restriction_id": self.restriction.id, "additional_note": f"note {n}"} for n in range(links)]
-        prices = [{"cost": 10 * (n + 1), "restrictions": restricted} for n in range(links)]
+        only = [{"warband_type_id": self.only.id}]
+        prices = [{"cost": 10 * (n + 1), "note": f"note {n}", "for_everyone": False, "warbands": only} for n in range(links)]  # fmt: skip
         return BESTIARY.body(
             name, self.campaign, kind="mount", available_in_shop=True, skill_ids=skills, item_entries=gear,
-            item={"grade": "1a", "availabilities": prices},
+            item={"availabilities": prices},
         )  # fmt: skip
 
     def test_a_create_costs_24_queries_however_many_links_and_prices_it_sends(self):

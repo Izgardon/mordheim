@@ -866,7 +866,7 @@ class BattleApiTests(APITestCase):
         lucky_charm = Item.objects.create(
             name="Lucky Charm",
             type="Miscellaneous",
-            description="A reliable trinket.",
+            flavour="A reliable trinket.",
         )
         lucky_charm.availabilities.create(cost=15, rarity=8)
 
@@ -982,7 +982,7 @@ class BattleApiTests(APITestCase):
         lucky_charm = Item.objects.create(
             name="Lucky Charm",
             type="Miscellaneous",
-            description="A reliable trinket.",
+            flavour="A reliable trinket.",
         )
         lucky_charm.availabilities.create(cost=15, rarity=8)
 
@@ -1129,7 +1129,7 @@ class BattleApiTests(APITestCase):
         variable_find = Item.objects.create(
             name="Map Fragment",
             type="Miscellaneous",
-            description="Not priced the same for everyone.",
+            flavour="Not priced the same for everyone.",
         )
         variable_find.availabilities.create(cost=10, rarity=8)
         variable_find.availabilities.create(cost=25, rarity=10)
@@ -1233,7 +1233,7 @@ class BattleApiTests(APITestCase):
         costless_find = Item.objects.create(
             name="Strange Token",
             type="Miscellaneous",
-            description="Missing all availability costs.",
+            flavour="Missing all availability costs.",
         )
 
         self.client.force_authenticate(user=self.owner)

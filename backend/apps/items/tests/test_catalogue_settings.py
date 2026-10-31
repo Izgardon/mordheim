@@ -10,7 +10,7 @@ from apps.bestiary.models import BestiaryEntry
 from apps.campaigns.in_play import set_settings
 from apps.campaigns.models import CampaignCampaignType, CampaignType
 from apps.hirelings.models import DramatisPersona, HiredSword
-from apps.items.models import Item, ItemProperty
+from apps.items.models import Item, ItemRule
 from apps.races.models import Race
 from apps.restrictions.models import Restriction
 from apps.skills.models import Skill
@@ -29,7 +29,7 @@ class CatalogueSettingSchemaTests(CatalogueTestCase):
                 field = model._meta.get_field("campaign_type")
                 self.assertTrue(field.null)
                 self.assertIs(field.related_model, CampaignType)
-        for untyped in (BestiaryEntry, ItemProperty):
+        for untyped in (BestiaryEntry, ItemRule):
             with self.subTest(model=untyped.__name__):
                 self.assertNotIn("campaign_type", [field.name for field in untyped._meta.get_fields()])
 

@@ -1,8 +1,8 @@
 """One Animal item per beast (the bestiary rewrite step 3).
 
 Every bestiary write keeps its beast's item in step: in the beast's campaign, named after it, its subtype the kind's
-label (Mount, Pet, Creature), its description the beast's, listed in the shop exactly when the beast is sold, with
-the grade and prices the write sends under `item`. A beast that isn't sold keeps its item and its prices, so kits,
+label (Mount, Pet, Creature), its flavour the beast's description when made, listed in the shop exactly when the beast
+is sold, with the price rows the write sends under `item`. A beast that isn't sold keeps its item and its prices, so kits,
 trades and owned copies always resolve. The items routes read Animal items but never write them: the bestiary does.
 """
 
@@ -11,18 +11,14 @@ from typing import Any
 from django.db import IntegrityError, transaction
 
 from apps.bestiary.models import BestiaryEntry
+from apps.core.testing import book_warband_type
 from apps.items.models import Item
 from apps.items.tests.catalogue_support import BESTIARY, ITEMS, CatalogueTestCase, make_beast, make_entry
 
 
-def prices(item: Item) -> list[tuple[int, int, str | None, list[tuple[int, str]]]]:
+def prices(item: Item) -> list[tuple[int | None, int | None, int | None, list[tuple[int | None, bool]]]]:
     return [
-        (
-            row.cost,
-            row.rarity,
-            row.variable_cost,
-            list(row.restriction_links.values_list("restriction_id", "additional_note")),
-        )  # fmt: skip
+        (row.cost, row.rarity, row.dice, list(row.warband_links.values_list("warband_type_id", "excluded")))
         for row in item.availabilities.order_by("cost")
     ]
 
@@ -31,42 +27,48 @@ class AnimalItemWriteTests(CatalogueTestCase):
     def sold(self, **item: Any) -> dict[str, Any]:
         return {"kind": "mount", "description": "Fast.", "available_in_shop": True, "item": item}
 
-    def test_a_create_makes_the_beasts_item_with_its_grade_and_prices(self):
-        restricted = [{"restriction_id": self.mercenaries.id, "additional_note": "only"}]
-        price = {"cost": 80, "rarity": 11, "variable_cost": "+D6", "restrictions": restricted}
+    def test_a_create_makes_the_beasts_item_with_its_prices_and_who_may_buy(self):
+        humans = book_warband_type("Reiklanders")
+        price = {
+            "cost": 80,
+            "rarity": 11,
+            "dice": 1,
+            "for_everyone": False,
+            "warbands": [{"warband_type_id": humans.id}],
+        }
 
-        created = self.create_as(self.owner, BESTIARY, "Destrier", **self.sold(grade="1b", availabilities=[price]))
+        created = self.create_as(self.owner, BESTIARY, "Destrier", **self.sold(availabilities=[price]))
 
         self.assertEqual(created.status_code, 201, created.data)
         item = Item.objects.get(bestiary_entry_id=created.data["id"])
         self.assertEqual(
-            (item.campaign_id, item.name, item.type, item.subtype, item.grade, item.description, item.listed),
-            (self.campaign.id, "Destrier", "Animal", "Mount", "1b", "Fast.", True),
+            (item.campaign_id, item.name, item.type, item.subtype, item.flavour, item.listed),
+            (self.campaign.id, "Destrier", "Animal", "Mount", "Fast.", True),
         )
-        self.assertEqual(prices(item), [(80, 11, "+D6", [(self.mercenaries.id, "only")])])
+        self.assertEqual(prices(item), [(80, 11, 1, [(humans.id, False)])])
         answer = created.data["item"]
-        self.assertEqual((answer["id"], answer["grade"], len(answer["availabilities"])), (item.id, "1b", 1))
-        self.assertEqual(answer["availabilities"][0]["restrictions"][0]["additional_note"], "only")
+        self.assertEqual((answer["id"], answer["setting_id"], len(answer["availabilities"])), (item.id, None, 1))
+        self.assertEqual(answer["availabilities"][0]["warbands"][0]["name"], "Reiklanders")
 
     def test_a_beast_not_sold_still_has_its_item_unlisted(self):
         created = self.create_as(self.owner, BESTIARY, "Wyvern", kind="creature")
 
         item = Item.objects.get(bestiary_entry_id=created.data["id"])
         self.assertEqual((item.listed, item.subtype, prices(item)), (False, "Creature", []))
-        self.assertEqual(created.data["item"], {"id": item.id, "grade": "", "availabilities": []})
+        self.assertEqual(created.data["item"], {"id": item.id, "setting_id": None, "availabilities": []})
 
     def test_an_edit_keeps_the_item_in_step_and_unticking_keeps_the_prices(self):
         created = self.create_as(self.owner, BESTIARY, "Destrier", **self.sold(availabilities=[{"cost": 80}]))
         url = BESTIARY.detail_url(created.data["id"])
 
         unticked = self.patch_as(self.owner, url, {"name": "Charger", "kind": "creature", "description": "Big.", "available_in_shop": False})  # fmt: skip
-        priced = self.patch_as(self.owner, url, {"item": {"grade": "2a", "availabilities": [{"cost": 95}]}})
+        priced = self.patch_as(self.owner, url, {"item": {"availabilities": [{"cost": 95}]}})
         ticked = self.patch_as(self.owner, url, {"available_in_shop": True})
 
         self.assertEqual([r.status_code for r in (unticked, priced, ticked)], [200, 200, 200])
         item = Item.objects.get(bestiary_entry_id=created.data["id"])
-        self.assertEqual((item.name, item.subtype, item.description, item.grade, item.listed), ("Charger", "Creature", "Big.", "2a", True))  # fmt: skip
-        self.assertEqual(prices(item), [(95, 2, None, [])])
+        self.assertEqual((item.name, item.subtype, item.flavour, item.listed), ("Charger", "Creature", "Fast.", True))
+        self.assertEqual(prices(item), [(95, None, None, [])])
         self.assertEqual([a["cost"] for a in unticked.data["item"]["availabilities"]], [80])  # kept while unticked
         self.assertEqual(Item.objects.filter(type="Animal", campaign=self.campaign).count(), 1)
 
@@ -74,10 +76,10 @@ class AnimalItemWriteTests(CatalogueTestCase):
         created = self.create_as(self.owner, BESTIARY, "Mule", kind="mount", item={"availabilities": [{"cost": 30}]})
 
         item = Item.objects.get(bestiary_entry_id=created.data["id"])
-        self.assertEqual((item.listed, prices(item)), (False, [(30, 2, None, [])]))
+        self.assertEqual((item.listed, prices(item)), (False, [(30, None, None, [])]))
 
-    def test_an_unknown_restriction_in_the_prices_writes_nothing(self):
-        price = {"cost": 80, "restrictions": [{"restriction_id": 999999}]}
+    def test_an_unknown_warband_type_in_the_prices_writes_nothing(self):
+        price = {"cost": 80, "warbands": [{"warband_type_id": 999999}]}
         theirs = self.create_as(self.owner, BESTIARY, "Destrier", **self.sold(availabilities=[price]))
 
         self.assertEqual((theirs.status_code, list(theirs.data)), (400, ["item"]))

@@ -1,9 +1,9 @@
 """How unit payloads are read: a fixed number of queries however many units and items a warband has.
 
 A unit's skills, specials and spells come with the unit's own row, each list as an ordered JSON array
-(`loadout_entries`); its items are prefetched, and for the detail payload their properties and
-availabilities too (cost, rarity, restriction links). Join rows are always in id order, which is the
-order the player set (ROST-PERF-11).
+(`loadout_entries`); its items are prefetched, and for the detail payload their rules and price rows
+too (with who may buy each). Join rows are always in id order, which is the order the player set
+(ROST-PERF-11).
 """
 
 from typing import Any
@@ -12,7 +12,7 @@ from django.contrib.postgres.expressions import ArraySubquery
 from django.db.models import Model, OuterRef, Prefetch
 from django.db.models.functions import JSONObject
 
-from apps.items.models import ItemAvailability, ItemAvailabilityRestriction, ItemPropertyLink
+from apps.items.models import ItemAvailability, ItemAvailabilityWarband, ItemRuleLink
 from apps.warbands.models import Henchman, on_roster
 from apps.warbands.services.prices import house_rule_prices
 from apps.warbands.units.catalogue import SkillDetailSerializer, SpecialDetailSerializer, SpellDetailSerializer
@@ -54,25 +54,25 @@ def entries_array(join_model: type[Model], parent_field: str, target: str) -> An
 
 
 def item_detail_prefetches(prefix: str = "") -> tuple[Prefetch, ...]:
-    """An item's properties and availabilities (with their restrictions), for the detail payload.
+    """An item's rules (with their shared rules) and price rows (with who may buy each), for the detail payload.
 
     `prefix` reaches the items from a unit, e.g. "hero_items__item__"; without it, prefetch onto items.
     """
     return (
         Prefetch(
-            f"{prefix}property_links",
-            queryset=ItemPropertyLink.objects.select_related("property").order_by("id"),
+            f"{prefix}rule_links", queryset=ItemRuleLink.objects.select_related("rule").order_by("position", "id")
         ),
         availabilities_prefetch(prefix),
     )
 
 
 def availabilities_prefetch(prefix: str = "") -> Prefetch:
-    """An item's availabilities with their restrictions (two queries), e.g. a beast's item's ("animal_item__")."""
-    restrictions = ItemAvailabilityRestriction.objects.select_related("restriction").order_by("id")
+    """An item's price rows with their who-can lines and those lines' types and groups (two queries), e.g. a beast's
+    item's ("animal_item__")."""
+    lines = ItemAvailabilityWarband.objects.select_related("warband_type", "warband_group").order_by("id")
     return Prefetch(
         f"{prefix}availabilities",
-        queryset=ItemAvailability.objects.prefetch_related(Prefetch("restriction_links", queryset=restrictions)),
+        queryset=ItemAvailability.objects.order_by("id").prefetch_related(Prefetch("warband_links", queryset=lines)),
     )
 
 

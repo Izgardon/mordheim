@@ -1,6 +1,6 @@
 """What catalogue writes store and accept (pass 5; BUG-53, BUG-145, BUG-146, BUG-147, SEC-06, SEC-07).
 
-Item writes take availabilities as nested input and property ids; bestiary and hired-sword writes take skill,
+Item writes take price rows (with who may buy each) and rules as nested input; bestiary and hired-sword writes take skill,
 special, spell, item and restriction ids. Since PR A every id must be the book's or the writer's campaign's (SEC-07's
 catalogue half, CAT-TEST-16): another campaign's id is refused like an unknown one. Writes that fail part-way are
 in `test_catalogue_transactions.py`; what they tell the other members (BUG-80), in `test_catalogue_events.py`.
@@ -9,73 +9,91 @@ in `test_catalogue_transactions.py`; what they tell the other members (BUG-80), 
 from django.db import IntegrityError, transaction
 
 from apps.bestiary.models import BestiaryEntry, WarbandBestiaryFavourite
+from apps.core.testing import book_warband_type
 from apps.hirelings.models import HiredSword
-from apps.items.models import Item, ItemAvailability, ItemProperty
+from apps.items.models import Item, ItemAvailability, ItemRule
 from apps.races.models import Race
 from apps.restrictions.models import Restriction
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
+from apps.warbands.models import WarbandGroup, WarbandType
 
 from .catalogue_support import BESTIARY, HIRED_SWORDS, ITEMS, RACES, CatalogueTestCase, make_entry
 
 
 class ItemWriteTests(CatalogueTestCase):
-    def test_an_item_is_created_with_its_availabilities_restrictions_and_properties(self):
+    def test_an_item_is_created_with_its_rules_price_rows_and_who_may_buy_each(self):
+        skaven = book_warband_type("Skaven")
+        humans = WarbandGroup.objects.create(slug="humans", name="Humans", kind="race")
         availabilities = [
             {
+                "label": "Brace",
                 "cost": 30,
                 "rarity": 9,
-                "restrictions": [{"restriction_id": self.mercenaries.id, "additional_note": "Heroes"}],
+                "for_everyone": False,
+                "note": "Heroes only",
+                "warbands": [{"warband_type_id": skaven.id}, {"warband_group_id": humans.id}],
             },  # fmt: skip
-            {"variable_cost": "+2D6"},
+            {"dice": 2, "warbands": [{"warband_type_id": skaven.id, "excluded": True}]},
         ]
+        table = [{"columns": ["D6", "Result"], "rows": [["1-3", "Nothing"], ["4-6", "A crown"]]}]
+        rules = [{"rule_id": self.parry.id}, {"name": "Lucky find", "text": "Roll a D6.", "table": table}]
 
-        response = self.create_as(self.player, ITEMS, "Halberd", availabilities=availabilities, property_ids=[self.parry.id])  # fmt: skip
+        response = self.create_as(self.player, ITEMS, "Halberd", availabilities=availabilities, rules=rules)
 
         self.assertEqual(response.status_code, 201, response.data)
         body = response.data
         self.assertEqual((body["strength"], body["range"], body["save"]), ("As user", "Close combat", None))
-        self.assertEqual([prop["name"] for prop in body["properties"]], ["Parry"])
-        # a missing cost is 0 and a missing rarity is 2; availabilities are listed cheapest first
         self.assertEqual(
-            [(row["cost"], row["rarity"], row["variable_cost"]) for row in body["availabilities"]],
-            [(0, 2, "+2D6"), (30, 9, None)],
+            [(rule["name"], rule["shared"], rule["table"]) for rule in body["rules"]],
+            [("Parry", True, []), ("Lucky find", False, table)],
         )
+        # a missing cost is 0 and a missing rarity is Common; rows keep the order they were sent in, for everyone unless
+        # they say otherwise
         self.assertEqual(
-            body["availabilities"][1]["restrictions"],
             [
-                {
-                    "restriction": {"id": self.mercenaries.id, "type": "Warband", "restriction": "Mercenaries"},
-                    "additional_note": "Heroes",
-                }
+                (row["label"], row["cost"], row["dice"], row["rarity"], row["for_everyone"], row["note"])
+                for row in body["availabilities"]
             ],  # fmt: skip
+            [("Brace", 30, None, 9, False, "Heroes only"), ("", 0, 2, None, True, "")],
+        )
+        self.assertEqual(
+            [[(line["name"], line["excluded"]) for line in row["warbands"]] for row in body["availabilities"]],
+            [[("Skaven", False), ("Humans", False)], [("Skaven", True)]],
         )
 
-    def test_unknown_property_and_restriction_ids_are_refused(self):
+    def test_unknown_rule_and_warband_ids_are_refused(self):
         # SEC-07 (they used to be dropped silently): an unknown id and another campaign's read the same, a 400
-        availabilities = [{"cost": 5, "rarity": 2, "restrictions": [{"restriction_id": 999999}]}]
+        availabilities = [{"cost": 5, "warbands": [{"warband_group_id": 999999}]}]
 
-        response = self.create_as(self.owner, ITEMS, "Club", availabilities=availabilities, property_ids=[999999])
+        response = self.create_as(self.owner, ITEMS, "Club", availabilities=availabilities, rules=[{"rule_id": 999999}])
 
         unknown = ['Invalid pk "999999" - object does not exist.']
-        self.assertEqual((response.status_code, response.json()), (400, {"property_ids": unknown, "availabilities": unknown}))  # fmt: skip
+        self.assertEqual((response.status_code, response.json()), (400, {"rules": unknown, "availabilities": unknown}))
         self.assertFalse(Item.objects.filter(name="Club").exists())
 
-    def test_an_edit_replaces_the_availabilities_and_properties_it_sends_and_keeps_the_rest(self):
+    def test_a_who_can_line_names_a_type_or_a_group(self):
+        both = [{"cost": 5, "warbands": [{"warband_type_id": book_warband_type().id, "warband_group_id": 1}]}]
+        response = self.create_as(self.owner, ITEMS, "Club", availabilities=both, rules=[{"text": "No name"}])
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(sorted(response.json()), ["availabilities", "rules"])
+
+    def test_an_edit_replaces_the_price_rows_and_rules_it_sends_and_keeps_the_rest(self):
         item = make_entry(ITEMS, "Flail", campaign=self.campaign, cost=15)
         original = item.availabilities.get().id
         url = ITEMS.detail_url(item.id)
 
         renamed = self.patch_as(self.owner, url, {"name": "Morning Star"})
-        repriced = self.patch_as(self.owner, url, {"availabilities": [{"cost": 20, "rarity": 3}], "property_ids": [self.parry.id]})  # fmt: skip
+        repriced = self.patch_as(self.owner, url, {"availabilities": [{"cost": 20, "rarity": 3}], "rules": [{"rule_id": self.parry.id}]})  # fmt: skip
 
         self.assertEqual(renamed.data["availabilities"][0]["id"], original)
         [availability] = repriced.data["availabilities"]
         # the old row is deleted and a new one written (ids churn, CAT-BUG-08)
         self.assertNotEqual(availability["id"], original)
         self.assertEqual((availability["cost"], availability["rarity"]), (20, 3))
-        self.assertEqual([prop["name"] for prop in repriced.data["properties"]], ["Parry"])
+        self.assertEqual([rule["name"] for rule in repriced.data["rules"]], ["Parry"])
         self.assertFalse(ItemAvailability.objects.filter(id=original).exists())
 
     def test_an_items_save_is_written_and_read_as_save_after_its_range(self):
@@ -113,21 +131,22 @@ class ItemWriteTests(CatalogueTestCase):
 class CampaignScopeOfWriteIdsTests(CatalogueTestCase):
     """SEC-07's catalogue half (CAT-TEST-16): ids from another campaign are linked, and their text then reads back."""
 
-    def test_an_item_cannot_link_another_campaigns_property_or_restriction(self):
+    def test_an_item_cannot_link_another_campaigns_shared_rule_or_warband_type(self):
         # SEC-07 (was pinned: both were linked and their text read back; flipped in PR A: scoped ids, a 400 that
         # reads like an unknown id, and nothing written); the book's and this campaign's are linked
-        their_property = ItemProperty.objects.create(name="Secret rule", type="Weapon", campaign=self.elsewhere)
-        their_restriction = Restriction.objects.create(restriction="Their warband", campaign=self.elsewhere)
-        our_property = ItemProperty.objects.create(name="House rule", type="Weapon", campaign=self.campaign)
-        availabilities = [{"cost": 5, "rarity": 2, "restrictions": [{"restriction_id": their_restriction.id}]}]
+        their_rule = ItemRule.objects.create(name="Secret rule", campaign=self.elsewhere)
+        their_type = WarbandType.objects.create(name="Their warband", slug="theirs", campaign=self.elsewhere)
+        our_rule = ItemRule.objects.create(name="House rule", campaign=self.campaign)
+        availabilities = [{"cost": 5, "for_everyone": False, "warbands": [{"warband_type_id": their_type.id}]}]
+        rules = [{"rule_id": their_rule.id}]
 
-        refused = self.create_as(self.player, ITEMS, "Spy glass", availabilities=availabilities, property_ids=[their_property.id])  # fmt: skip
-        linked = self.create_as(self.player, ITEMS, "Telescope", property_ids=[our_property.id, self.parry.id])
+        refused = self.create_as(self.player, ITEMS, "Spy glass", availabilities=availabilities, rules=rules)
+        linked = self.create_as(self.player, ITEMS, "Telescope", rules=[{"rule_id": our_rule.id}, {"rule_id": self.parry.id}])  # fmt: skip
 
-        self.assertEqual((refused.status_code, sorted(refused.data)), (400, ["availabilities", "property_ids"]))
-        self.assertEqual(refused.data["property_ids"], [f'Invalid pk "{their_property.id}" - object does not exist.'])
+        self.assertEqual((refused.status_code, sorted(refused.data)), (400, ["availabilities", "rules"]))
+        self.assertEqual(refused.data["rules"], [f'Invalid pk "{their_rule.id}" - object does not exist.'])
         self.assertFalse(Item.objects.filter(name="Spy glass").exists())
-        self.assertEqual([prop["name"] for prop in linked.data["properties"]], ["House rule", "Parry"])
+        self.assertEqual([rule["name"] for rule in linked.data["rules"]], ["House rule", "Parry"])
 
     def test_a_bestiary_entry_cannot_link_another_campaigns_skills_specials_spells_or_items(self):
         # SEC-07, CAT-TEST-16 (was pinned: all four were linked and their text read back; flipped in PR A: a 400 that
@@ -225,19 +244,19 @@ class RestrictionCreateTests(CatalogueTestCase):
         )
 
 
-class ItemPropertyCreateTests(CatalogueTestCase):
-    def test_a_players_new_property_is_saved_in_the_campaign(self):
+class ItemRuleCreateTests(CatalogueTestCase):
+    def test_a_players_new_shared_rule_is_saved_in_the_campaign(self):
         # BUG-145 (was pinned: saved as a book property every campaign listed; flipped in PR A)
-        body = {"campaign_id": self.campaign.id, "name": "Cleave", "type": "Weapon", "description": "Hits twice."}
+        body = {"campaign_id": self.campaign.id, "name": "Cleave", "summary": "Hits twice.", "text": "Hits twice."}
 
-        response = self.post_as(self.player, "/api/item-properties/", body)
+        response = self.post_as(self.player, "/api/item-rules/", body)
 
         self.assertEqual((response.status_code, response.data["campaign_id"]), (201, self.campaign.id))
-        shards = self.get_as(self.rival, f"/api/item-properties/?campaign_id={self.campaign.id}").json()
-        elsewhere = self.get_as(self.outsider, f"/api/item-properties/?campaign_id={self.elsewhere.id}").json()
+        shards = self.get_as(self.rival, f"/api/item-rules/?campaign_id={self.campaign.id}").json()
+        elsewhere = self.get_as(self.outsider, f"/api/item-rules/?campaign_id={self.elsewhere.id}").json()
         self.assertIn("Cleave", [row["name"] for row in shards])
         self.assertNotIn("Cleave", [row["name"] for row in elsewhere])
-        self.assertNotIn("Cleave", [row["name"] for row in self.get_as(self.outsider, "/api/item-properties/").json()])
+        self.assertNotIn("Cleave", [row["name"] for row in self.get_as(self.outsider, "/api/item-rules/").json()])
 
 
 class RaceWriteTests(CatalogueTestCase):

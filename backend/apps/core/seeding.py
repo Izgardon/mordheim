@@ -1,13 +1,13 @@
-"""What the catalogue seeders share (BUG-54, IMP-81): reading the JSON, cleaning its values, upserting the book's
-rows and writing an item's prices.
+"""What the catalogue seeders share (BUG-54, IMP-81): reading the JSON, cleaning its values and upserting the book's
+rows.
 
 Every seeder reads and writes the book only (BUG-17): `upsert_global` matches and creates rows with no campaign
-(whatever their setting), and the restrictions an item's "unique to" text names come from `restrictions.book.BookRestrictions`.
+(whatever their setting).
 """
 
 import json
 import re
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Any
 
@@ -18,11 +18,10 @@ from django.db import connection
 from django.db.models import Model
 
 from apps.campaigns.models import CampaignType
-from apps.items.models import Item, ItemAvailability, ItemAvailabilityRestriction
-from apps.restrictions.book import BookRestrictions
 
-# The catalogue import's generated files (backend/catalogue_import/out/), which the grading seeders read in place:
-# settings, warband types and groups, and the settings of the skills and hired swords we seed (grading phase 1)
+# The catalogue import's generated files (backend/catalogue_import/out/), which the seeders read in place: settings,
+# warband types and groups, items and their shared rules, and the settings and who-can lists of the skills, hired
+# swords and dramatis personae we seed
 IMPORT_OUT = Path(settings.BASE_DIR) / "catalogue_import" / "out"
 
 STAT_FIELDS = (
@@ -58,11 +57,6 @@ def parse_armour_save(value: Any) -> int | None:
         return None
     match = re.search(r"\d+", str(value))
     return int(match.group(0)) if match else None
-
-
-def parse_rarity(value: Any) -> int:
-    """A rarity between 2 and 20, as ItemAvailability allows; 2 (common) when the value has none."""
-    return max(2, min(20, parse_int(value, default=2)))
 
 
 def entry_value(entry: Any, aliases: Iterable[str]) -> Any:
@@ -103,31 +97,6 @@ def reset_sequence(model: type[Model]) -> None:
     with connection.cursor() as cursor:
         for sql in connection.ops.sequence_reset_sql(no_style(), [model]):
             cursor.execute(sql)
-
-
-def sync_availabilities(item: Item, rows: Sequence[Mapping[str, Any]], restrictions: BookRestrictions) -> None:
-    """Replace the item's prices: one ItemAvailability per row (cost, rarity, variable cost), each linked to the
-    restrictions its "unique to" text names. One INSERT for the prices, one for their restrictions."""
-    item.availabilities.all().delete()
-    created = ItemAvailability.objects.bulk_create(
-        [
-            ItemAvailability(
-                item=item,
-                cost=parse_int(row.get("cost"), 0),
-                rarity=parse_rarity(row.get("rarity")),
-                variable_cost=clean(row.get("variable_cost")) or None,
-            )
-            for row in rows
-        ]
-    )
-    ItemAvailabilityRestriction.objects.bulk_create(
-        [
-            ItemAvailabilityRestriction(item_availability=availability, restriction=restriction, additional_note=note)
-            for availability, row in zip(created, rows, strict=True)
-            if clean(row.get("unique_to"))
-            for restriction, note in restrictions.resolve(clean(row.get("unique_to")))
-        ]
-    )
 
 
 def read_stats(values: Mapping[str, Any], label: str) -> dict[str, int]:

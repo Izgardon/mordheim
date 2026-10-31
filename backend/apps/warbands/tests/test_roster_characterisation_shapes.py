@@ -65,6 +65,7 @@ ITEM_DETAIL = {
     "id": "int",
     "campaign_id": None,
     "name": "str",
+    "variant": "str",
     "type": "str",
     "subtype": "str",
     "single_use": "bool",
@@ -75,16 +76,21 @@ ITEM_DETAIL = {
     "row_id": "int",  # the bestiary rewrite step 4: this copy, its companion switch, the beast's kind
     "companion": "bool",
     "beast_kind": None,
-    "properties": [{"id": "int", "name": "str"}],
+    "rules": [
+        {"id": "int", "rule_id": "int", "shared": "bool", "name": "str", "summary": "str", "text": "str", "table": []}
+    ],
     "availabilities": [
         {
             "id": "int",
+            "label": "str",
             "cost": "int",
-            "rarity": "int",
-            "restrictions": [
-                {"restriction": {"id": "int", "type": "str", "restriction": "str"}, "additional_note": "str"}
-            ],
-            "variable_cost": None,
+            "dice": None,
+            "dice_multiplier": None,
+            "cost_note": "str",
+            "rarity": None,
+            "for_everyone": "bool",
+            "warbands": [{"warband_type_id": "int", "warband_group_id": None, "name": "str", "excluded": "bool"}],
+            "note": "str",
         }
     ],
     "cost": "int",

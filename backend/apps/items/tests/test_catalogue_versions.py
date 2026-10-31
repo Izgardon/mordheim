@@ -73,7 +73,7 @@ class FirstEditTests(VersionTestCase):
         version = Item.objects.get(campaign=self.campaign, replaces=self.book_sword)
         self.assertEqual(response.data["id"], version.id)
         self.assertEqual([row["cost"] for row in response.data["availabilities"]], [15])
-        self.assertEqual([row["name"] for row in response.data["properties"]], ["Parry"])  # copied from the book
+        self.assertEqual([row["name"] for row in response.data["rules"]], ["Parry"])  # copied from the book
         self.assertEqual(
             self.sword_copies(),
             sorted(
@@ -95,20 +95,21 @@ class FirstEditTests(VersionTestCase):
 
         version = Item.objects.get(id=response.data["id"])
         [availability] = version.availabilities.all()
-        self.assertEqual((availability.cost, availability.rarity), (10, 2))
-        self.assertEqual(list(availability.restriction_links.values_list("restriction_id", flat=True)), [self.mercenaries.id])  # fmt: skip
-        self.assertEqual(list(version.property_links.values_list("property_id", flat=True)), [self.parry.id])
+        self.assertEqual((availability.cost, availability.rarity), (10, None))
+        mercenaries = self.book_sword.availabilities.get().warband_links.get().warband_type_id
+        self.assertEqual(list(availability.warband_links.values_list("warband_type_id", flat=True)), [mercenaries])
+        self.assertEqual(list(version.rule_links.values_list("rule_id", flat=True)), [self.parry.id])
         self.assertEqual((version.campaign_id, version.campaign_type_id, version.archived_at), (self.campaign.id, None, None))  # fmt: skip
-        self.assertEqual(self.book_sword.availabilities.get().restriction_links.count(), 1)  # the book keeps its own
+        self.assertEqual(self.book_sword.availabilities.get().warband_links.count(), 1)  # the book keeps its own
 
     def test_later_edits_change_the_version_in_place_whichever_id_they_name(self):
-        first = self.edit(ITEMS, self.book_sword.id, {"description": "Sharp"})
-        by_book_id = self.edit(ITEMS, self.book_sword.id, {"description": "Sharper"})  # a list read before the edit
-        by_version_id = self.patch_as(self.rival, ITEMS.detail_url(first.data["id"]), {"description": "Sharpest"})
+        first = self.edit(ITEMS, self.book_sword.id, {"flavour": "Sharp"})
+        by_book_id = self.edit(ITEMS, self.book_sword.id, {"flavour": "Sharper"})  # a list read before the edit
+        by_version_id = self.patch_as(self.rival, ITEMS.detail_url(first.data["id"]), {"flavour": "Sharpest"})
 
         self.assertEqual({first.data["id"], by_book_id.data["id"], by_version_id.data["id"]}, {first.data["id"]})
         self.assertEqual(Item.objects.filter(replaces=self.book_sword).count(), 1)
-        self.assertEqual(Item.objects.get(id=first.data["id"]).description, "Sharpest")
+        self.assertEqual(Item.objects.get(id=first.data["id"]).flavour, "Sharpest")
 
     def test_every_kind_moves_its_copies_onto_the_version(self):
         skill = self.infiltration[0]

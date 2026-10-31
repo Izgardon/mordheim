@@ -4,7 +4,7 @@ The input is already validated (`BestiaryEntryWriteSerializer`): fields and ever
 catalogue write's transaction (`apps/core/catalogue/writes.py`), so a failure leaves no entry without its links, and
 each kind of link goes in one INSERT. A list a write sends replaces that list; a list it leaves out stays. A beast
 without a profile keeps its stats at 0 and its save empty, whatever the write sends. Every write keeps the beast's
-Animal item in step with it (`animal_items.py`), with the grade and prices the write's `item` sends.
+Animal item in step with it (`animal_items.py`), with the prices the write's `item` sends.
 """
 
 from collections.abc import Mapping

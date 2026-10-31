@@ -24,11 +24,11 @@ from .payloads import STAT_FIELDS, with_badges
 
 ITEM_FIELDS = (
     "name",
+    "variant",
     "type",
     "subtype",
-    "grade",
     "single_use",
-    "description",
+    "flavour",
     "strength",
     "range",
     "save_value",

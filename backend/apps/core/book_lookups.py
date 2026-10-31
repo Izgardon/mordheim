@@ -49,7 +49,7 @@ EQUIPMENT_NAME_ALIASES = {
     "scimitar": "sword",
     "longbow": "long bow",
     "shortbow": "short bow",
-    "healing herbs": "healing herb",
+    "healing herb": "healing herbs",  # the catalogue import's name
     "gromril hammer": "gromril weapon",
     "hammer of sigmar": "sigmarite warhammer",
     "holy water": "blessed water",
@@ -120,7 +120,7 @@ class BookLookups:
         self.spells = {lookup_key(row.name): row for row in Spell.objects.filter(**book)}
         self.items: dict[tuple[str, str], Item] = {}
         self.item_names: dict[str, Item] = {}
-        for item in Item.objects.filter(**book):
+        for item in Item.objects.filter(**book, archived_at__isnull=True):  # not the items the import dropped
             self.remember_item(item)
         self.warnings: list[str] = []
 

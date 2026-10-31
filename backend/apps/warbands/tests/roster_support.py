@@ -23,13 +23,12 @@ from apps.campaigns.models import (
     CampaignRole,
     CampaignSettings,
 )
-from apps.items.models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemProperty, ItemPropertyLink
+from apps.items.models import Item, ItemAvailability, ItemAvailabilityWarband, ItemRule, ItemRuleLink
 from apps.races.models import Race
-from apps.restrictions.models import Restriction
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
-from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling, Warband, WarbandLog, WarbandTrade
+from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling, Warband, WarbandLog, WarbandTrade, WarbandType
 from apps.warbands.utils.henchmen_level import HENCHMEN_LEVEL_THRESHOLDS
 from apps.warbands.utils.hero_level import HERO_LEVEL_THRESHOLDS
 
@@ -215,12 +214,12 @@ def _user(email: str) -> Any:
     return get_user_model().objects.create_user(username=email, email=email, password=None, first_name=email[:5])
 
 
-def _catalogue_item(name: str, costs: list[int], restriction: Restriction, prop: ItemProperty) -> Item:
+def _catalogue_item(name: str, costs: list[int], only: WarbandType, rule: ItemRule) -> Item:
     item = Item.objects.create(name=name, type="Melee", strength="As user", range="Close", save_value="-")
     for cost in costs:
-        availability = ItemAvailability.objects.create(item=item, cost=cost, rarity=2)
-        ItemAvailabilityRestriction.objects.create(item_availability=availability, restriction=restriction)
-    ItemPropertyLink.objects.create(item=item, property=prop)
+        availability = ItemAvailability.objects.create(item=item, cost=cost)
+        ItemAvailabilityWarband.objects.create(availability=availability, warband_type=only)
+    ItemRuleLink.objects.create(item=item, rule=rule)
     return item
 
 
@@ -297,10 +296,10 @@ class RosterTestCase(APITestCase):
         cls.other_race = Race.objects.create(name="Dwarf", **maxima)
         cls.foreign_race = Race.objects.create(name="Lizard", campaign=other_campaign, **maxima)
 
-        restriction = Restriction.objects.create(type="Warband", restriction="Sisters only")
-        prop = ItemProperty.objects.create(name="Parry", type="Melee")
-        cls.sword = _catalogue_item("Sword", [10], restriction, prop)  # one availability: cost defaults to 10
-        cls.axe = _catalogue_item("Axe", [5, 15], restriction, prop)  # two availabilities: no default cost
+        sisters = WarbandType.objects.create(name="Sisters of Sigmar", slug="sisters-of-sigmar")
+        parry = ItemRule.objects.create(name="Parry", slug="parry")
+        cls.sword = _catalogue_item("Sword", [10], sisters, parry)  # one price row: cost defaults to 10
+        cls.axe = _catalogue_item("Axe", [5, 15], sisters, parry)  # two price rows: no default cost
 
         cls.skills = [Skill.objects.create(name=f"Skill {n}", type="Combat") for n in range(2)]
         cls.specials = [Special.objects.create(name=f"Special {n}", type="Ability") for n in range(2)]

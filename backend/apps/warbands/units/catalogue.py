@@ -5,22 +5,13 @@ from typing import Any
 from rest_framework import serializers
 from rest_framework.fields import Field
 
-from apps.items.models import Item, ItemPropertyLink
-from apps.items.serializers import ItemAvailabilitySerializer, with_save
+from apps.items.models import Item
+from apps.items.serializers import ItemAvailabilitySerializer, ItemRuleLinkSerializer, with_save
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
 
 from .companions import beast_kind
-
-
-class ItemPropertySummarySerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(source="property.id")
-    name = serializers.CharField(source="property.name")
-
-    class Meta:
-        model = ItemPropertyLink
-        fields = ("id", "name")
 
 
 class ItemSummarySerializer(serializers.Serializer):
@@ -42,17 +33,11 @@ class ItemSummarySerializer(serializers.Serializer):
 
 
 class ItemDetailSerializer(serializers.ModelSerializer):
-    properties = serializers.SerializerMethodField()
+    rules = ItemRuleLinkSerializer(source="rule_links", many=True, read_only=True)
     availabilities = ItemAvailabilitySerializer(many=True, read_only=True)
 
     def get_fields(self) -> dict[str, Field]:
         return with_save(super().get_fields())  # "save" after "range" (IMP-85)
-
-    def get_properties(self, obj):
-        links = getattr(obj, "property_links", None)
-        if links is None:
-            return []
-        return ItemPropertySummarySerializer(links.all(), many=True).data
 
     class Meta:
         model = Item
@@ -60,13 +45,14 @@ class ItemDetailSerializer(serializers.ModelSerializer):
             "id",
             "campaign_id",
             "name",
+            "variant",
             "type",
             "subtype",
             "single_use",
             "strength",
             "range",
             "statblock",
-            "properties",
+            "rules",
             "availabilities",
         )
 
