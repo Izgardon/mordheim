@@ -100,7 +100,7 @@ export default function Warband() {
     <div className="flex flex-col gap-6">
       <PostgameSlot slot={isMobile ? "aside" : "bar"} {...postgame} />
       <WarbandHeader
-        kicker={[warband.faction, mine ? user?.name : null].filter(Boolean).join(" · ")}
+        kicker={[warband.warband_type?.name, mine ? user?.name : null].filter(Boolean).join(" · ")}
         name={warband.name}
         stashCount={stashCount}
         showLocations={Boolean(campaign?.enable_locations)}

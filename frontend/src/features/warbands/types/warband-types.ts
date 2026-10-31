@@ -1,5 +1,5 @@
 // types
-import type { Item, Restriction, SalePriceBasis } from "../../items/types/item-types";
+import type { Item, SalePriceBasis } from "../../items/types/item-types";
 import type { Skill } from "../../skills/types/skill-types";
 import type { Spell } from "../../spells/types/spell-types";
 import type { Special } from "../../special/types/special-types";
@@ -20,10 +20,40 @@ type RaceStatProfile = {
   leadership: number;
 };
 
+/** A setting as a warband type or a catalogue row names it: its grade is the setting's. */
+export type SettingBrief = { id: number; slug: string; name: string; grade: string };
+
+/**
+ * A warband type (grading phase 1): the book's (`campaign_id` null, in one setting) or a campaign's
+ * own (no setting, always in play there). `groups`: the races and sides it belongs to.
+ */
+export type WarbandTypeBrief = {
+  id: number;
+  name: string;
+  slug: string;
+  campaign_id: number | null;
+  setting: SettingBrief | null;
+  source: string;
+  link_url: string;
+  groups: string[];
+};
+
+/** A row of the warband type picker: the brief, its race and grades, and whether it is in play. */
+export type WarbandTypeRow = WarbandTypeBrief & {
+  race: string;
+  source_code: string;
+  broheim_grade: string;
+  mordheimer_grade: string;
+  in_play: boolean | null;
+};
+
 export type Warband = {
   id: number;
   name: string;
-  faction: string;
+  /** What it is; null only for a warband made outside the API. */
+  warband_type: WarbandTypeBrief | null;
+  /** The types it also counts as (custom warbands, house rules). */
+  counts_as: WarbandTypeBrief[];
   campaign_id: number;
   user_id: number;
   backstory?: string | null;
@@ -45,7 +75,6 @@ export type Warband = {
   heroes?: WarbandHero[];
   hirelings?: WarbandHireling[];
   henchmen_groups?: HenchmenGroup[];
-  restrictions?: Restriction[];
   dice_color?: string | null;
   show_loadout_on_mobile?: boolean;
   created_at: string;
@@ -87,14 +116,17 @@ export type WarbandResource = {
 
 export type WarbandCreatePayload = {
   name: string;
-  faction: string;
-  restriction_ids?: number[];
+  warband_type_id: number;
+  counts_as_ids?: number[];
+  warband_link?: string | null;
   max_units?: number;
 };
 
 export type WarbandUpdatePayload = {
   name: string;
-  faction: string;
+  warband_type_id: number;
+  /** Replaces what it counts as. */
+  counts_as_ids: number[];
   dice_color?: string | null;
   backstory?: string | null;
   wins?: number | null;

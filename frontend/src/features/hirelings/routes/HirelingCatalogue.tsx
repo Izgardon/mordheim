@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { allows, type Buyer } from "@/features/items/store/store-items";
+import { useBuyer } from "@/features/items/store/useBuyer";
+import { outOfPlay, useSettingsById } from "@/features/campaigns/api/settings-queries";
 import ReferencePage from "@/features/reference/ReferencePage";
 import {
   DetailSection,
@@ -184,10 +186,8 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
   const capabilities = campaignCapabilities(campaign);
   const [editing, setEditing] = useState<{ id: number | null } | null>(null);
   const [hiring, setHiring] = useState<HirelingProfile | null>(null);
-  const buyer = useMemo<Buyer | null>(
-    () => (warband ? { faction: warband.faction, restrictions: warband.restrictions } : null),
-    [warband]
-  );
+  const buyer = useBuyer(warband, campaign?.setting_ids);
+  const settings = useSettingsById();
   const canHire = Boolean(warband) && sheet.capabilities.edit;
 
   const sorted = useMemo(
@@ -266,6 +266,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
           const key = String(entry.id);
           const fee = formatHirelingCost(entry.hire_cost, entry.hire_cost_expression);
           const upkeep = formatHirelingCost(entry.upkeep_cost, entry.upkeep_cost_expression);
+          const warning = outOfPlay(entry, settings);
           return (
             <ReferenceRow
               key={key}
@@ -273,6 +274,8 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
               open={params.isOpen(key)}
               onToggle={() => params.toggle(key)}
               name={entry.name}
+              warn={warning}
+              dim={Boolean(warning)}
               sub={
                 isMobile
                   ? [hirelingRace(entry), entry.rating !== null ? `Rating +${entry.rating}` : ""]

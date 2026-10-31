@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
+import { outOfPlay, useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import ReferencePage from "@/features/reference/ReferencePage";
@@ -52,6 +53,7 @@ export default function Skills() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const skills = useCatalogue("skills", campaignId);
+  const settings = useSettingsById();
   const params = useReferenceParams(!skills.isLoading);
   const capabilities = campaignCapabilities(campaign);
   const list = params.get("list", "all");
@@ -171,6 +173,7 @@ export default function Skills() {
         ) : null}
         {shown.rows.map((skill) => {
           const key = String(skill.id);
+          const warning = outOfPlay(skill, settings);
           return (
             <ReferenceRow
               key={key}
@@ -178,6 +181,8 @@ export default function Skills() {
               open={params.isOpen(key)}
               onToggle={() => params.toggle(key)}
               name={skill.name}
+              warn={warning}
+              dim={Boolean(warning)}
               sub={isMobile ? listName(skill.type) : undefined}
               cells={isMobile ? undefined : [listName(skill.type)]}
             >

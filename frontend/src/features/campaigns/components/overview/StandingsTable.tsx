@@ -54,7 +54,7 @@ export default function StandingsTable({
                     {row.warband}
                   </span>
                   <span className="truncate text-xs text-muted-foreground">
-                    {row.player} · {row.faction} · {row.record}
+                    {row.player} · {row.warbandType} · {row.record}
                   </span>
                 </span>
                 <span className="font-mono text-sm font-bold text-ink">{row.rating}</span>
@@ -117,7 +117,7 @@ export default function StandingsTable({
                   ) : null}
                 </td>
                 <td className={cn(TD, "text-text2")}>{row.player}</td>
-                <td className={cn(TD, "text-text2")}>{row.faction}</td>
+                <td className={cn(TD, "text-text2")}>{row.warbandType}</td>
                 <td className={cn(TD, "text-right font-mono font-bold text-ink")}>{row.rating}</td>
                 <td className={cn(TD, "pr-4 text-right font-mono text-text2")}>{row.record}</td>
               </tr>

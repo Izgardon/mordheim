@@ -24,7 +24,8 @@ const warband = {
   campaign_id: 7,
   user_id: 1,
   name: "The Black Wolves",
-  faction: "Mercenaries",
+  warband_type: null,
+  counts_as: [],
   created_at: "",
   updated_at: "",
 };

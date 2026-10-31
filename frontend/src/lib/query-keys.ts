@@ -18,8 +18,8 @@ export type CatalogueKind =
   | "dramatis-personae";
 
 export const queryKeys = {
-  /** Item restrictions of one type (catalogue data, not campaign-scoped). */
-  restrictions: (type: string) => ["restrictions", type] as const,
+  /** Every setting and the grade presets (book data, not campaign-scoped). */
+  settings: () => ["settings"] as const,
   /** Your campaigns, as the campaigns page lists them. */
   campaigns: () => ["campaigns"] as const,
   account: {
@@ -48,6 +48,8 @@ export const queryKeys = {
     /** The campaign's locations (the warband page's panel, settings, Search everything). */
     locations: (campaignId: number) => ["campaign", campaignId, "locations"] as const,
     houseRules: (campaignId: number) => ["campaign", campaignId, "rules"] as const,
+    /** The warband types it may pick: the book's and its own, each in play or not. */
+    warbandTypes: (campaignId: number) => ["campaign", campaignId, "warband-types"] as const,
     /** The server's list of common house rules (`rules/common/`), the same for every campaign. */
     commonRules: (campaignId: number) => ["campaign", campaignId, "common-rules"] as const,
     /** The campaign chat's history, newest page first (an infinite query). */

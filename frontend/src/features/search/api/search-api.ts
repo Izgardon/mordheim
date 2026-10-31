@@ -2,7 +2,12 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import { apiRequest } from "@/lib/api-client";
 
-export type CampaignSearchWarband = { id: number; name: string; faction: string; user_id: number };
+export type CampaignSearchWarband = {
+  id: number;
+  name: string;
+  type_name: string;
+  user_id: number;
+};
 
 export type CampaignSearchUnit = {
   kind: "hero" | "henchmen_group" | "hireling";

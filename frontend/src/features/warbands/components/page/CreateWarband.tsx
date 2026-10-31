@@ -10,9 +10,14 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 
 import { createWarband } from "../../api/warbands-api";
-import type { Warband } from "../../types/warband-types";
+import type { Warband, WarbandTypeBrief } from "../../types/warband-types";
+import WarbandTypePicker from "../type-picker/WarbandTypePicker";
+import { linkAfterPick } from "../type-picker/warband-type-picker";
 
-/** No warband in this campaign yet (design E): name one and say what it is, then raise it. */
+/**
+ * No warband in this campaign yet (design E): name one, pick its warband type (which fills the
+ * warband link, the player's to replace), then raise it.
+ */
 export default function CreateWarband({
   campaignId,
   onCreated,
@@ -22,7 +27,8 @@ export default function CreateWarband({
 }) {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [name, setName] = useState("");
-  const [faction, setFaction] = useState("");
+  const [warbandType, setWarbandType] = useState<WarbandTypeBrief | null>(null);
+  const [link, setLink] = useState("");
   const [saving, setSaving] = useState(false);
 
   return (
@@ -49,8 +55,13 @@ export default function CreateWarband({
             event.preventDefault();
             setSaving(true);
             try {
+              if (!warbandType) return;
               await onCreated(
-                await createWarband(campaignId, { name: name.trim(), faction: faction.trim() })
+                await createWarband(campaignId, {
+                  name: name.trim(),
+                  warband_type_id: warbandType.id,
+                  warband_link: link.trim() || null,
+                })
               );
             } catch (error) {
               toast.error("Couldn't raise the warband.", { description: getErrorMessage(error) });
@@ -72,23 +83,42 @@ export default function CreateWarband({
           </Field>
           <Field
             label="Warband type"
-            htmlFor="new-warband-faction"
-            hint="As its warband list names it: Reiklanders, Skaven of Clan Eshin, Sisters of Sigmar."
+            htmlFor="new-warband-type"
+            hint="Types outside this campaign's settings are greyed out; you can still pick one."
+          >
+            <WarbandTypePicker
+              id="new-warband-type"
+              campaignId={campaignId}
+              value={warbandType}
+              onPick={(picked) => {
+                setLink((current) => linkAfterPick(current, warbandType, picked));
+                setWarbandType(picked);
+              }}
+            />
+          </Field>
+          <Field
+            label="Warband link"
+            htmlFor="new-warband-link"
+            hint={
+              warbandType?.link_url && link === warbandType.link_url
+                ? `Filled from ${warbandType.name}. Replace it with your own if you like.`
+                : "Its warband list or your own sheet (optional)."
+            }
           >
             <Input
-              id="new-warband-faction"
-              value={faction}
-              onChange={(event) => setFaction(event.target.value)}
-              placeholder="Reikland mercenaries"
-              maxLength={80}
-              required
+              id="new-warband-link"
+              type="url"
+              value={link}
+              onChange={(event) => setLink(event.target.value)}
+              placeholder="https://"
+              maxLength={500}
               className="h-11 text-base md:h-11"
             />
           </Field>
           <Button
             type="submit"
             className={cn("min-h-12", isMobile ? "w-full" : "self-start")}
-            disabled={saving || !name.trim() || !faction.trim()}
+            disabled={saving || !name.trim() || !warbandType}
           >
             {saving ? "Raising..." : "Raise the warband"}
           </Button>

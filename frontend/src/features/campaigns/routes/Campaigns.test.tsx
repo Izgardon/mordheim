@@ -134,7 +134,7 @@ describe("Campaigns list and the join code", () => {
     expect(
       screen.getByRole("dialog", { name: "Start a new campaign" })
     ).toHaveAccessibleDescription(
-      "Name it, pick its rules and limits, then share its join code with your players."
+      "Name it, pick its pages and what is in play, then share its join code with your players."
     );
     await user.keyboard("{Escape}");
 

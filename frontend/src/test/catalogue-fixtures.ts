@@ -127,7 +127,7 @@ export const warhorse = bestiaryEntry({
 export const hiredSword = (overrides: Partial<HirelingProfile> = {}): HirelingProfile => ({
   id: 17,
   campaign_id: null,
-  campaign_type_id: null,
+  setting_id: null,
   name: "Ogre Bodyguard",
   description: "Big and loyal while paid.",
   movement: 6,

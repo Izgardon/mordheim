@@ -84,7 +84,7 @@ export default function CampaignCard(campaign: CampaignSummary) {
           {my_warband ? (
             <>
               <span className="font-semibold text-ink">{my_warband.name}</span>
-              {my_warband.faction ? ` · ${my_warband.faction}` : null}
+              {my_warband.type_name ? ` · ${my_warband.type_name}` : null}
             </>
           ) : (
             <span className="text-faint">No warband raised yet</span>

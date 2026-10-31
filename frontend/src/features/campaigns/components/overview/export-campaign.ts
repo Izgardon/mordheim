@@ -19,11 +19,11 @@ export function exportCampaign(
   const data = {
     campaign: campaign.name,
     exported_at: new Date().toISOString(),
-    standings: standings.map(({ rank, warband, player, faction, rating, record }) => ({
+    standings: standings.map(({ rank, warband, player, warbandType, rating, record }) => ({
       rank,
       warband,
       player,
-      faction,
+      warband_type: warbandType,
       rating,
       won_drawn_lost: record,
     })),

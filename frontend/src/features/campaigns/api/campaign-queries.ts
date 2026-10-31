@@ -11,14 +11,12 @@ import {
   listCampaignPlayerNames,
   listCampaignPlayers,
 } from "./campaigns-api";
-import { listRestrictions } from "@/features/items/api/items-api";
 
 // other
 import { isCampaignId } from "../hooks/useCampaignQuery";
 import { queryKeys } from "@/lib/query-keys";
 
 // types
-import type { Restriction } from "@/features/items/types/item-types";
 import type { CampaignChronicleKind } from "../types/campaign-types";
 
 /**
@@ -27,8 +25,6 @@ import type { CampaignChronicleKind } from "../types/campaign-types";
  * them, and a write updates the one list it changed (`setQueryData`, `updateCachedList`).
  */
 export const CAMPAIGN_LIST_STALE_TIME_MS = 30_000;
-/** Restrictions change only with the catalogue. */
-const RESTRICTIONS_STALE_TIME_MS = 5 * 60_000;
 
 type Toggle = { enabled?: boolean };
 
@@ -108,18 +104,6 @@ export function useCampaignLocations(campaignId: number, { enabled = true }: Tog
     queryFn: () => listCampaignLocations(campaignId),
     ...listOptions(campaignId, enabled),
   });
-}
-
-const NO_RESTRICTIONS: Restriction[] = [];
-
-/** The setting restrictions a campaign can apply to item availability (catalogue data). */
-export function useSettingRestrictions() {
-  const { data } = useQuery({
-    queryKey: queryKeys.restrictions("Setting"),
-    queryFn: () => listRestrictions({ type: "Setting" }),
-    staleTime: RESTRICTIONS_STALE_TIME_MS,
-  });
-  return data ?? NO_RESTRICTIONS;
 }
 
 /**

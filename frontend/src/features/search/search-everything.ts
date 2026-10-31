@@ -213,7 +213,7 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
       hits: (sources.campaign?.warbands ?? []).map((warband) => ({
         key: `warband-${warband.id}`,
         title: warband.name,
-        meta: warband.faction,
+        meta: warband.type_name,
         to: warbandPath(warband.id),
       })),
     },

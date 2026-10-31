@@ -33,7 +33,8 @@ export type Standing = {
   player: string;
   warbandId: number;
   warband: string;
-  faction: string;
+  /** Its warband type's name. */
+  warbandType: string;
   rating: number;
   record: string;
 };
@@ -62,7 +63,7 @@ export function buildStandings(
         player: player.name,
         warbandId: warband.id,
         warband: warband.name,
-        faction: warband.faction,
+        warbandType: warband.type_name,
         rating: warband.rating ?? 0,
         record: `${warband.wins ?? 0}–${draws.get(warband.id) ?? 0}–${warband.losses ?? 0}`,
       };

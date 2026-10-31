@@ -69,6 +69,17 @@ export function writeCampaignAnswer(
     permissions: answer.permissions ?? previous?.permissions,
     capabilities: answer.capabilities ?? previous?.capabilities,
   });
+  // the settings in play changed (grading phase 1): what every list and picker greys out moved
+  if (
+    previous &&
+    answer.setting_ids &&
+    String(previous.setting_ids) !== String(answer.setting_ids)
+  ) {
+    void queryClient.invalidateQueries({
+      queryKey: [...queryKeys.campaign.all(campaignId), "catalogue"],
+    });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.campaign.warbandTypes(campaignId) });
+  }
   const gatesChanged = CAPABILITY_SETTINGS.some(
     (setting) => Boolean(previous?.[setting]) !== Boolean(answer[setting])
   );

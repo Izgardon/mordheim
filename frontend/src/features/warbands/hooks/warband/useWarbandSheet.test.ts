@@ -41,7 +41,8 @@ vi.mock("@/features/warbands/api/warbands-api", () => apiMocks);
 const baseWarband: Warband = {
   id: 9,
   name: "The Black Crows",
-  faction: "Mercenaries",
+  warband_type: null,
+  counts_as: [],
   campaign_id: 1,
   user_id: 4,
   created_at: "2026-04-03T10:00:00Z",

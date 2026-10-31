@@ -1,26 +1,26 @@
 import type { FormEvent } from "react";
-import { useEffect, useMemo, useState } from "react";
-
-import { X } from "lucide-react";
+import { useState } from "react";
 
 // components
 import { Button } from "@components/button";
-import { Chip, ChipLabel } from "@components/chip";
+import { Chip } from "@components/chip";
 import { Input } from "@components/input";
 import { ModalSheet } from "@components/modal-sheet";
 import { NumberInput } from "@components/number-input";
-import RestrictionPicker from "@/features/warbands/components/shared/RestrictionPicker";
+import { useSettingsList } from "../../api/settings-queries";
+import ContentInPlay from "../settings/ContentInPlay";
+import { DEFAULT_PRESET } from "../settings/content-in-play";
 import { Field, FormError } from "../settings/settings-ui";
 // types
-import type { CampaignCreatePayload, CampaignCreateType } from "../../types/campaign-types";
-import type { Restriction } from "@/features/items/types/item-types";
-import { listRestrictions } from "@/features/items/api/items-api";
+import type { CampaignCreatePayload } from "../../types/campaign-types";
 import { getErrorMessage } from "@/lib/get-error-message";
 
-const TYPE_OPTIONS: { value: CampaignCreateType; label: string; hint: string }[] = [
-  { value: "standard", label: "Standard", hint: "The rulebook campaign." },
-  { value: "marienburg", label: "Marienburg", hint: "Adds locations and encampments." },
-];
+const PAGES = [
+  { key: "enable_encampments", label: "Encampments", hint: "Camps the players own." },
+  { key: "enable_locations", label: "Locations", hint: "Places heroes visit and roll on." },
+] as const;
+type Pages = Record<(typeof PAGES)[number]["key"], boolean>;
+const NO_PAGES: Pages = { enable_encampments: false, enable_locations: false };
 
 const DEFAULT_SEATS = 6;
 
@@ -31,48 +31,29 @@ type CreateCampaignDialogProps = {
 };
 
 /**
- * Start a campaign (design E): its name, type, seats and the setting restrictions on item
- * availability; a modal on the web, a sheet on a phone.
+ * Start a campaign (design E): its name, seats, its pages and the content in play (a grade preset,
+ * Up to 1c to begin with, the settings adjustable); a modal on the web, a sheet on a phone.
  */
 export default function CreateCampaignDialog({ onCreate, className }: CreateCampaignDialogProps) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [seats, setSeats] = useState(DEFAULT_SEATS);
-  const [campaignType, setCampaignType] = useState<CampaignCreateType>("standard");
+  const [pages, setPages] = useState<Pages>(NO_PAGES);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [availableSettings, setAvailableSettings] = useState<Restriction[]>([]);
-  const [selectedSettings, setSelectedSettings] = useState<Restriction[]>([]);
-  const selectedSettingIds = useMemo(
-    () => new Set(selectedSettings.map((restriction) => restriction.id)),
-    [selectedSettings]
-  );
-
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-
-    listRestrictions({ type: "Setting" })
-      .then(setAvailableSettings)
-      .catch(() => setAvailableSettings([]));
-  }, [open]);
-
-  const toggleSetting = (restriction: Restriction) => {
-    setSelectedSettings((prev) =>
-      prev.some((entry) => entry.id === restriction.id)
-        ? prev.filter((entry) => entry.id !== restriction.id)
-        : [...prev, restriction]
-    );
-  };
+  const content = useSettingsList({ enabled: open }); // read as the dialog opens
+  // the ticked settings once the player touches them; until then the default preset's
+  const [picked, setPicked] = useState<number[] | null>(null);
+  const preset = content.data?.presets.find((entry) => entry.grade === DEFAULT_PRESET);
+  const settingIds = picked ?? preset?.setting_ids ?? [];
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
     if (!nextOpen) {
       setName("");
       setSeats(DEFAULT_SEATS);
-      setCampaignType("standard");
-      setSelectedSettings([]);
+      setPages(NO_PAGES);
+      setPicked(null);
       setError("");
     }
   };
@@ -85,9 +66,9 @@ export default function CreateCampaignDialog({ onCreate, className }: CreateCamp
     try {
       await onCreate({
         name: name.trim(),
-        campaign_type: campaignType,
         max_players: seats,
-        item_setting_ids: selectedSettings.map((restriction) => restriction.id),
+        ...pages,
+        ...(picked ? { setting_ids: picked } : { preset: DEFAULT_PRESET }),
       });
       handleOpenChange(false);
     } catch (errorResponse) {
@@ -107,7 +88,7 @@ export default function CreateCampaignDialog({ onCreate, className }: CreateCamp
         onOpenChange={handleOpenChange}
         kicker="Campaigns"
         title="Start a new campaign"
-        description="Name it, pick its rules and limits, then share its join code with your players."
+        description="Name it, pick its pages and what is in play, then share its join code with your players."
         className="max-w-[640px]"
         footer={
           <div className="grid w-full grid-cols-[1fr_2fr] gap-2">
@@ -142,26 +123,31 @@ export default function CreateCampaignDialog({ onCreate, className }: CreateCamp
             />
           </Field>
           <div className="flex flex-col gap-1.5">
-            <span id="campaign-type-label" className={CAPTION_CLASS}>
-              Campaign type
+            <span id="campaign-pages-label" className={CAPTION_CLASS}>
+              Pages
             </span>
             <div
               role="group"
-              aria-labelledby="campaign-type-label"
+              aria-labelledby="campaign-pages-label"
               className="grid grid-cols-2 gap-2"
             >
-              {TYPE_OPTIONS.map((option) => (
+              {PAGES.map((page) => (
                 <Chip
-                  key={option.value}
-                  pressed={campaignType === option.value}
-                  onClick={() => setCampaignType(option.value)}
+                  key={page.key}
+                  pressed={pages[page.key]}
+                  onClick={() =>
+                    setPages((current) => ({ ...current, [page.key]: !current[page.key] }))
+                  }
                   className="flex min-h-[60px] flex-col items-start justify-center gap-0.5 px-3 py-2 text-left"
                 >
-                  <span className="text-sm font-bold">{option.label}</span>
-                  <span className="text-xs font-medium text-text2">{option.hint}</span>
+                  <span className="text-sm font-bold">{page.label}</span>
+                  <span className="text-xs font-medium text-text2">{page.hint}</span>
                 </Chip>
               ))}
             </div>
+            <span className="text-xs text-muted-foreground">
+              Either can be switched on later in Settings.
+            </span>
           </div>
           <Field label="Seats" htmlFor="campaign-size" hint="Players who can join, 2 to 16.">
             <NumberInput
@@ -175,34 +161,20 @@ export default function CreateCampaignDialog({ onCreate, className }: CreateCamp
             />
           </Field>
           <div className="flex flex-col gap-2">
-            <span className={CAPTION_CLASS}>Item settings</span>
-            <p className="m-0 text-[13px] text-text2">
-              The setting restrictions that apply to item availability across the campaign.
-            </p>
-            {selectedSettings.length > 0 ? (
-              <div className="flex flex-wrap gap-1.5">
-                {selectedSettings.map((restriction) => (
-                  <ChipLabel key={restriction.id} tone="accent" className="gap-1 pr-1 text-[13px]">
-                    {restriction.restriction}
-                    <button
-                      type="button"
-                      aria-label={`Remove ${restriction.restriction}`}
-                      onClick={() => toggleSetting(restriction)}
-                      className="flex h-6 w-6 items-center justify-center hover:text-head"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </ChipLabel>
-                ))}
-              </div>
-            ) : null}
-            <div className="border border-line bg-page p-3">
-              <RestrictionPicker
-                restrictions={availableSettings}
-                selected={selectedSettingIds}
-                onToggle={toggleSetting}
+            <span className={CAPTION_CLASS}>Content in play</span>
+            {content.data ? (
+              <ContentInPlay
+                compact
+                settings={content.data.settings}
+                presets={content.data.presets}
+                value={settingIds}
+                onChange={setPicked}
               />
-            </div>
+            ) : (
+              <p className="m-0 text-[13px] text-text2">
+                Up to 1c to begin with: every setting at or below it. You can change it in Settings.
+              </p>
+            )}
           </div>
           <FormError message={error} />
         </form>

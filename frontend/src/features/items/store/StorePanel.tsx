@@ -12,6 +12,9 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import StoreBasket from "./StoreBasket";
 import StoreList from "./StoreList";
 import { recipientsFor, useStoreBasket } from "./useStoreBasket";
+import { buyerOf } from "./store-items";
+import { useBuyer } from "./useBuyer";
+import { useCampaignQuery } from "@/features/campaigns/hooks/useCampaignQuery";
 
 /** Where the store was opened from: a unit (its loadout, Buy again), maybe with an item to get. */
 export type StoreOpening = {
@@ -25,7 +28,7 @@ type StorePanelProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   campaignId: number;
-  warband: Pick<Warband, "id" | "name" | "faction" | "gold" | "restrictions">;
+  warband: Pick<Warband, "id" | "name" | "warband_type" | "counts_as" | "gold">;
   heroes: WarbandHero[];
   henchmenGroups: HenchmenGroup[];
   hirelings: WarbandHireling[];
@@ -55,10 +58,8 @@ export default function StorePanel(props: StorePanelProps) {
     name: hero.name?.trim() || hero.unit_type?.trim() || "Hero",
     spent: hero.trading_action === false,
   }));
-  const buyer = useMemo(
-    () => ({ faction: warband.faction, restrictions: warband.restrictions }),
-    [warband.faction, warband.restrictions]
-  );
+  const { data: campaign } = useCampaignQuery(props.campaignId, { read: false });
+  const buyer = useBuyer(warband, campaign?.setting_ids) ?? buyerOf(warband, []);
   const gold = warband.gold ?? 0;
   const left = gold - basket.total;
   const buyAll = async () => {

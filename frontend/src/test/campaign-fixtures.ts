@@ -13,7 +13,7 @@ type Person = {
   name: string;
   email: string;
   role: CampaignRole;
-  warband: { id: number; name: string; faction: string } | null;
+  warband: { id: number; name: string; type_name: string } | null;
 };
 
 export const OWNER: Person = {
@@ -21,21 +21,21 @@ export const OWNER: Person = {
   name: "Aldric",
   email: "aldric@example.com",
   role: "owner",
-  warband: { id: 101, name: "Iron Vultures", faction: "Reiklanders" },
+  warband: { id: 101, name: "Iron Vultures", type_name: "Reiklanders" },
 };
 export const ADMIN: Person = {
   id: 8,
   name: "Brunhilde",
   email: "brunhilde@example.com",
   role: "admin",
-  warband: { id: 103, name: "Grey Wardens", faction: "Sisters of Sigmar" },
+  warband: { id: 103, name: "Grey Wardens", type_name: "Sisters of Sigmar" },
 };
 export const PLAYER: Person = {
   id: 9,
   name: "Mira",
   email: "mira@example.com",
   role: "player",
-  warband: { id: 102, name: "Night Razors", faction: "Skaven" },
+  warband: { id: 102, name: "Night Razors", type_name: "Skaven" },
 };
 /** Registered without a name: the server's `display_name` is "Player {id}" (SEC-13). */
 export const NAMELESS: Person = {
@@ -142,7 +142,7 @@ export function campaignSummary(overrides: Partial<CampaignSummary> = {}): Campa
     hired_sword_level_thresholds: [2, 4, 6, 8, 11, 14],
     enable_encampments: false,
     enable_locations: false,
-    item_settings: [],
+    setting_ids: [1],
     player_count: PEOPLE.length,
     role: "owner",
     permissions: ALL_PERMISSION_CODES,

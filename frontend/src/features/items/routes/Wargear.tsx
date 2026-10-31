@@ -35,6 +35,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 import ItemFormDialog from "../components/ItemFormDialog";
 import StorePanel, { type StoreOpening } from "../store/StorePanel";
+import { useBuyer } from "../store/useBuyer";
 import {
   STORE_CATEGORIES,
   allows,
@@ -44,7 +45,6 @@ import {
   priceLabel,
   rarityLabel,
   storeCategory,
-  type Buyer,
   type StoreCategory,
 } from "../store/store-items";
 import type { Item, ItemAvailability, ItemProperty } from "../types/item-types";
@@ -108,10 +108,7 @@ export default function Wargear() {
   const capabilities = campaignCapabilities(campaign);
   const canBuy = Boolean(warband) && sheet.capabilities.manage_items;
 
-  const buyer = useMemo<Buyer | null>(
-    () => (warband ? { faction: warband.faction, restrictions: warband.restrictions } : null),
-    [warband]
-  );
+  const buyer = useBuyer(warband, campaign?.setting_ids);
   const propertyText = useMemo(
     () => new Map<number, ItemProperty>(properties.data.map((property) => [property.id, property])),
     [properties.data]

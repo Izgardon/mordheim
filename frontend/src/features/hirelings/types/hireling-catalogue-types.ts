@@ -15,7 +15,6 @@ export type HirelingStays = "always" | "one_battle";
 export type HirelingProfile = CatalogueBadgeFields & {
   id: number;
   campaign_id: number | null;
-  campaign_type_id?: number | null;
   name: string;
   description: string;
   movement: number;

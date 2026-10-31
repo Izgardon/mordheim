@@ -86,7 +86,7 @@ export default function CampaignPlayersDialog({
                 <span className="text-[15px] font-bold text-head">{player.name}</span>
                 <span className="text-[13px] text-text2">
                   {player.warband
-                    ? [player.warband.name, player.warband.faction].filter(Boolean).join(" · ")
+                    ? [player.warband.name, player.warband.type_name].filter(Boolean).join(" · ")
                     : "No warband yet"}
                 </span>
               </li>

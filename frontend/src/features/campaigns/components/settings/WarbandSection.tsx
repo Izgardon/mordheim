@@ -16,6 +16,7 @@ import { leaveMode, useLeaveCampaign } from "../../hooks/settings/useLeaveCampai
 import type { CampaignSummary } from "../../types/campaign-types";
 import RemovalPreview, { ownVoice } from "./RemovalPreview";
 import { Field, FormError, SettingsCard } from "./settings-ui";
+import WarbandTypeCard from "./WarbandTypeCard";
 
 type WarbandProps = {
   warband: Warband;
@@ -63,7 +64,7 @@ function WarbandDetails({ warband, canEdit, onSaved }: WarbandProps) {
   return (
     <SettingsCard
       title={warband.name}
-      description={`${warband.faction}. Its name and the most units it keeps (going past it warns, never blocks).`}
+      description="Its name and the most units it keeps (going past it warns, never blocks)."
       action={
         canEdit && !editing ? (
           <Button variant="secondary" onClick={() => setEditing(true)}>
@@ -343,8 +344,8 @@ function LeaveCampaign({ campaign }: { campaign: CampaignSummary }) {
 }
 
 /**
- * Settings → Your warband (every member): its name and size, the warband sheet link, Delete
- * warband, and Leave campaign. An archived campaign reads only, and keeps Leave.
+ * Settings → Your warband (every member): its name and size, its warband type and what it counts
+ * as, the warband sheet link, Delete warband, and Leave campaign. An archived campaign reads only, and keeps Leave.
  */
 export default function WarbandSection({ campaign }: { campaign: CampaignSummary }) {
   const navigate = useNavigate();
@@ -361,6 +362,7 @@ export default function WarbandSection({ campaign }: { campaign: CampaignSummary
       ) : mine ? (
         <>
           <WarbandDetails warband={mine} canEdit={!archived} onSaved={onSaved} />
+          <WarbandTypeCard warband={mine} canEdit={!archived} onSaved={onSaved} />
           <WarbandSheetLink warband={mine} canEdit={!archived} onSaved={onSaved} />
           {archived ? null : (
             <DeleteWarband

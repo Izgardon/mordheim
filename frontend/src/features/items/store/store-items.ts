@@ -1,3 +1,5 @@
+import type { Warband, WarbandTypeBrief } from "@/features/warbands/types/warband-types";
+
 import type { Item, ItemAvailability, Restriction } from "../types/item-types";
 
 /** The store's category chips (design E), in order; "all" shows everything. */
@@ -29,28 +31,65 @@ export const kindOf = (item: Pick<Item, "type" | "subtype">) => item.subtype || 
 export const isCommon = (rarity: number) => rarity <= 2;
 export const rarityLabel = (rarity: number) => (isCommon(rarity) ? "Common" : `Rare ${rarity}`);
 
-/** The warband as the "What I can buy" filter reads it: its faction and its campaign's settings. */
-export type Buyer = { faction: string; restrictions?: Restriction[] | null };
+/**
+ * The warband as "What I can buy" reads it (grading phase 1, a stop-gap until the items rebuild
+ * puts who can buy on the server): the names of its warband type and the types it counts as, their
+ * groups (races and sides), and the settings in play in its campaign.
+ */
+export type Buyer = { types: string[]; groups: string[]; settings: string[] };
 
-const words = (text: string) => text.toLowerCase().replace(/[()]/g, " ");
+const words = (text: string) =>
+  ` ${text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()} `;
+
+/** The buyer a warband is: its types' and groups' names, and its campaign's settings in play. */
+export function buyerOf(
+  warband: Pick<Warband, "warband_type" | "counts_as">,
+  settings: string[]
+): Buyer {
+  const types = [warband.warband_type, ...(warband.counts_as ?? [])].filter(
+    (type): type is WarbandTypeBrief => type !== null
+  );
+  return {
+    types: types.map((type) => type.name),
+    groups: [...new Set(types.flatMap((type) => type.groups))],
+    settings,
+  };
+}
+
+/** The setting a "Khemri Setting" restriction names (Nehekhara is Khemri's). */
+const SETTING_NAMES: Record<string, string> = { " nehekharan ": " khemri " };
+const settingOf = (text: string) => {
+  const named = words(text.replace(/\bsetting\b/i, ""));
+  return SETTING_NAMES[named] ?? named;
+};
+
+/** The restriction names the warband: one of its groups, one of its types, or words in a type's name. */
+function names(buyer: Buyer, text: string) {
+  const wanted = words(text);
+  return (
+    buyer.groups.some((group) => words(group) === wanted) ||
+    buyer.types.some((type) => words(type).includes(wanted))
+  );
+}
 
 /**
- * Whether a restriction lets this warband buy: a Warband one names its faction, a Warband Group
- * one is in its faction's name ("Skaven" for "Skaven (Clan Eshin)"; "Non-Skaven" for anyone else),
- * a Setting one is switched on in the campaign. Anything else (artifacts) is left to the player.
+ * Whether a restriction lets this warband buy: a Warband or Warband Group one names its type or
+ * one of its groups ("Skaven" for Skaven of Clan Pestilens; "Non-Skaven" for anyone else), a
+ * Setting one is in play in the campaign. Anything else (artifacts) is left to the player.
  */
 export function allows(restriction: Restriction, buyer: Buyer) {
   const name = restriction.restriction.trim();
-  const faction = words(buyer.faction).trim();
   if (restriction.type === "Setting") {
-    return (buyer.restrictions ?? []).some((entry) => entry.id === restriction.id);
+    return buyer.settings.some((setting) => words(setting) === settingOf(name));
   }
   if (restriction.type === "Warband Group" && /^non-/i.test(name)) {
-    return !faction.includes(words(name.slice(4)).trim());
+    return !names(buyer, name.slice(4));
   }
   if (restriction.type === "Warband" || restriction.type === "Warband Group") {
-    const wanted = words(name).trim();
-    return Boolean(faction) && (faction.includes(wanted) || wanted.includes(faction));
+    return names(buyer, name);
   }
   return true;
 }

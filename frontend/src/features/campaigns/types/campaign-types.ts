@@ -1,10 +1,8 @@
-import type { Restriction } from "../../items/types/item-types";
 import type { BattleParticipant, BattleSummary } from "@/features/battles/types/battle-types";
 import type { CampaignCapability } from "../capabilities";
 
 export type CampaignRole = "owner" | "admin" | "player";
 export type CampaignHeroDeathRoll = "d66" | "d100";
-export type CampaignCreateType = "standard" | "marienburg";
 
 export type CampaignSummary = {
   id: number;
@@ -21,7 +19,8 @@ export type CampaignSummary = {
   hired_sword_level_thresholds?: number[];
   enable_encampments?: boolean;
   enable_locations?: boolean;
-  item_settings?: Restriction[];
+  /** The settings in play (grading phase 1): the ones ticked, the always-on Mordheim among them. */
+  setting_ids?: number[];
   player_count: number;
   role: CampaignRole;
   /** The caller's permission codes; only the campaign detail endpoint includes them. */
@@ -37,14 +36,16 @@ export type CampaignSummary = {
   /** Chat messages from others after your read mark (the detail only, CAMP-TWEAK-09). */
   chat_unread?: number;
   /** Your own warband in it, or null without one (the campaigns list only). */
-  my_warband?: { id: number; name: string; faction: string } | null;
+  my_warband?: { id: number; name: string; type_name: string } | null;
   created_at: string;
   updated_at: string;
 };
 
 export type CampaignCreatePayload = {
   name: string;
-  campaign_type?: CampaignCreateType;
+  /** The settings in play; without them, the preset's (Up to 1c when neither is sent). */
+  setting_ids?: number[];
+  preset?: string;
   max_players?: number;
   max_heroes?: number;
   max_hired_swords?: number;
@@ -53,7 +54,6 @@ export type CampaignCreatePayload = {
   hero_death_roll?: CampaignHeroDeathRoll;
   enable_encampments?: boolean;
   enable_locations?: boolean;
-  item_setting_ids?: number[];
 };
 
 export type CampaignUpdatePayload = {
@@ -71,7 +71,8 @@ export type CampaignUpdatePayload = {
   hero_level_thresholds?: number[];
   henchmen_level_thresholds?: number[];
   hired_sword_level_thresholds?: number[];
-  item_setting_ids?: number[];
+  /** Replaces the settings in play (Mordheim stays). */
+  setting_ids?: number[];
 };
 
 export type CampaignJoinPayload = {
@@ -91,7 +92,8 @@ export type CampaignPlayer = {
   warband?: {
     id: number;
     name: string;
-    faction: string;
+    /** Its warband type's name. */
+    type_name: string;
     wins: number | null;
     losses: number | null;
     rating?: number | null;
@@ -278,3 +280,29 @@ export type RosterUnit = {
   leadership: number | null;
   armour_save: number | null;
 };
+
+/** A setting (grading phase 1): the world or supplement content belongs to, holding its grade. */
+export type Setting = {
+  id: number;
+  slug: string;
+  name: string;
+  /** 1a, 1b, 1c, 2a, 2b or 3. */
+  grade: string;
+  /** The grade's name: Official, Unofficial, Experimental, Reliable, Supplemental, Draft. */
+  grade_label: string;
+  sort_order: number;
+  /** In play in every campaign: Mordheim. */
+  always_on: boolean;
+  /** How many of the book's warband types it holds. */
+  warband_types: number;
+};
+
+/** "Up to 1c": every setting at or below the grade, which the owner then adjusts. */
+export type SettingPreset = {
+  grade: string;
+  label: string;
+  description: string;
+  setting_ids: number[];
+};
+
+export type SettingsList = { settings: Setting[]; presets: SettingPreset[] };
