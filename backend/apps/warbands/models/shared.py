@@ -99,3 +99,19 @@ class RosterUnit(StatBlock):
 
     class Meta:
         abstract = True
+
+
+MAX_PENDING_PICKS = 20  # of one list, as the Edit form may set them
+
+
+class PendingPicks(models.Model):
+    """Skills, spells and specials an advance gave that the player picks later, from the unit's card ("1 skill to
+    choose"): heroes and hired swords (the kind's `pick_advances`). A Skill, Spell or Special advance adds one
+    (units/services/level_up.py); picking one, or the Edit form, sets the count with the unit's PATCH."""
+
+    pending_skills = models.PositiveSmallIntegerField(default=0)
+    pending_spells = models.PositiveSmallIntegerField(default=0)
+    pending_specials = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        abstract = True

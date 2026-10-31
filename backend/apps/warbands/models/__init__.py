@@ -14,7 +14,7 @@ from .hirelings import (
     HirelingSpecial,
     HirelingSpell,
 )
-from .shared import RosterUnit, not_dismissed, on_roster
+from .shared import MAX_PENDING_PICKS, PendingPicks, RosterUnit, not_dismissed, on_roster
 from .types import WarbandAccess, WarbandGroup, WarbandType
 from .warband import LedgerAction, Warband, WarbandItem, WarbandLog, WarbandResource, WarbandTrade
 
@@ -23,6 +23,8 @@ __all__ = [
     "WarbandGroup",
     "WarbandType",
     "LedgerAction",
+    "MAX_PENDING_PICKS",
+    "PendingPicks",
     "RosterUnit",
     "not_dismissed",
     "on_roster",

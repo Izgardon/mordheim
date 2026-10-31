@@ -120,7 +120,7 @@ class UnitKindSpec:
     count_level_ups: Callable[[Any, Any, Any], int]  # (previous xp, new xp, thresholds) -> thresholds crossed
     has_no_level_ups: bool  # the unit's `no_level_ups` flag stops XP level-ups and spending them
     stat_advances: Mapping[str, str]  # level-up advance code -> stat field
-    placeholder_advances: bool  # Skill / Spell / Special advances add a "New ..." entry to resolve later
+    pick_advances: bool  # Skill / Spell / Special advances leave a pick to make later (the unit's PendingPicks)
     advance_log_type: str
     caster_traits: bool  # `caster` keeps the Wizard / Priest specials in step (Large applies to every kind)
     can_lead: bool  # heroes: one living leader per warband
@@ -200,7 +200,7 @@ HERO = UnitKindSpec(
     count_level_ups=count_new_level_ups,
     has_no_level_ups=False,
     stat_advances=STAT_FIELD_BY_ADVANCE,
-    placeholder_advances=True,
+    pick_advances=True,
     advance_log_type="hero",
     caster_traits=True,
     can_lead=True,
@@ -227,7 +227,7 @@ HENCHMEN_GROUP = UnitKindSpec(
     count_level_ups=count_new_henchmen_level_ups,
     has_no_level_ups=True,
     stat_advances={code: STAT_FIELD_BY_ADVANCE[code] for code in HENCHMEN_ADVANCES},
-    placeholder_advances=False,
+    pick_advances=False,
     advance_log_type="henchmen",
     caster_traits=False,
     can_lead=False,
@@ -255,7 +255,7 @@ HIRELING = UnitKindSpec(
     count_level_ups=count_new_level_ups,
     has_no_level_ups=True,
     stat_advances=STAT_FIELD_BY_ADVANCE,
-    placeholder_advances=True,
+    pick_advances=True,
     advance_log_type="hireling",
     caster_traits=True,
     can_lead=False,

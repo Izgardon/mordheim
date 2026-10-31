@@ -1,6 +1,6 @@
 from django.db import models
 
-from .shared import RosterUnit, stat_constraints
+from .shared import PendingPicks, RosterUnit, stat_constraints
 from .warband import Warband
 
 HIRELING_KINDS = (("hired_sword", "Hired sword"), ("dramatis_persona", "Dramatis persona"))
@@ -8,7 +8,7 @@ INJURY_TABLES = (("henchman", "Henchman"), ("hero", "Hero"))  # a d6, or the cam
 STAYS = (("always", "Always"), ("one_battle", "One battle"))
 
 
-class Hireling(RosterUnit):
+class Hireling(RosterUnit, PendingPicks):
     """A hired sword or a dramatis persona in a warband: a copy of what it was hired as (or typed by hand) that keeps
     no link to the catalogue. `injury_table` is the hired sword's henchman d6 or the dramatis persona's hero table,
     and a house rule may change it; `stays` and `payment_note` come from a dramatis persona."""

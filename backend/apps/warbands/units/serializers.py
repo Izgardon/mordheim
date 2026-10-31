@@ -14,7 +14,7 @@ from rest_framework import serializers
 from apps.core.catalogue.scope import CatalogueEntryField
 from apps.items.models import Item
 from apps.races.models import Race
-from apps.warbands.models import RosterUnit
+from apps.warbands.models import MAX_PENDING_PICKS, RosterUnit
 from apps.warbands.prefetches import entries_attr
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.services.prices import annotated_current, own_price, sale_price
@@ -54,6 +54,7 @@ STAT_FIELDS = (
 )
 COMPANION_FIELDS = ("effective_stats", "mount", "pets")  # every read payload, after the stats
 MISSING_FIELDS = ("missing_games", "missing_reason")  # every read payload; only the update serializers write them
+PICK_FIELDS = ("pending_skills", "pending_spells", "pending_specials")  # heroes and hired swords: picks to make later
 
 
 def get_prefetched_or_query(obj: Any, prefetch_key: str, queryset_attr: str) -> list[Any]:
@@ -215,6 +216,10 @@ class UnitWriteSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializ
     # Missing games (edit mode): only a unit already on the roster misses games, so only updates list them
     missing_games = serializers.IntegerField(min_value=0, max_value=MAX_MISSING_GAMES, required=False)
     missing_reason = serializers.CharField(max_length=120, allow_blank=True, required=False)
+    # Picks to make later (heroes and hired swords): a pick from the card, or the Edit form, sets the count
+    pending_skills = serializers.IntegerField(min_value=0, max_value=MAX_PENDING_PICKS, required=False)
+    pending_spells = serializers.IntegerField(min_value=0, max_value=MAX_PENDING_PICKS, required=False)
+    pending_specials = serializers.IntegerField(min_value=0, max_value=MAX_PENDING_PICKS, required=False)
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         """After the ids point at the campaign's current entries: an item entry switched on as a companion must be a

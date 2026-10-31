@@ -104,8 +104,6 @@ class CatalogueCollectionView(CatalogueScopedView):
     def list_data(self, request: Request) -> Any:
         kind = self.kind
         rows = kind.hooks.rows(kind)
-        if kind.excluded_types:
-            rows = rows.exclude(type__in=kind.excluded_types)
         for param, keeps in kind.filters.items():
             value = request.query_params.get(param)
             if value:

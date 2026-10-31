@@ -209,7 +209,6 @@ class CatalogueTestCase(CampaignTestCase):
         cls.heavy_armour = make_entry(ITEMS, "Heavy Armour", type="Armour", subtype="Armour", save_value="5+", cost=50)
         cls.infiltration = [Skill.objects.create(name="Infiltration", type=kind) for kind in INFILTRATION_TYPES]
         Skill.objects.create(name="Sprint", type="Speed")
-        Skill.objects.create(name="New Skill", type="Pending")  # the placeholder a level-up picks later
         cls.lifestealer = [
             Spell.objects.create(name="Lifestealer", type=lore) for lore in ("Necromancy", "Necromancy (Restless Dead)")
         ]

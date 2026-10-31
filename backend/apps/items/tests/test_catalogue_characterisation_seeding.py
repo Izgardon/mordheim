@@ -68,9 +68,9 @@ class SeedAllTests(TestCase):
                 "Race": 27,
                 "Item": 321,  # the import's 290 (its 14 animals are beasts') + one Animal item per beast
                 "ItemRule": 51,  # the import's shared rules
-                "Skill": 255,
-                "Spell": 189,  # 183 + the Dark Mage's six (BUG-54)
-                "Special": 282,  # 186 + the dramatis personae's own rules (next step 12)
+                "Skill": 254,
+                "Spell": 188,  # 182 + the Dark Mage's six (BUG-54)
+                "Special": 281,  # 185 + the dramatis personae's own rules (next step 12)
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
@@ -118,7 +118,7 @@ class SeedAllTests(TestCase):
         # the 2026-10-28 data audit: skills.json held a second Pirates list (sourced "TBMF") under the same type, and
         # seed_skills upserts on name and type, so its Sea Legs, Cutlass Master and Swashbuckler overwrote Town Cryer
         # 9's (a fresh seed said "Updated: 3") and the Pirates' Sea Legs was the other list's rope-and-rigging rule
-        self.assertIn("Skills import complete. Created: 231, Updated: 0", self.output)
+        self.assertIn("Skills import complete. Created: 230, Updated: 0", self.output)
         sea_legs = {skill.type: skill.description for skill in Skill.objects.filter(name="Sea Legs")}
         self.assertEqual(set(sea_legs), {"Pirates", "Pirates (TBMF)"})
         self.assertIn("If he Falls during a battle", sea_legs["Pirates"])

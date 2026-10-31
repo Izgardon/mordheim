@@ -1379,12 +1379,6 @@
       "type": "Speed",
       "setting": "mordheim",
       "how": "mordheimer"
-    },
-    {
-      "name": "New Skill",
-      "type": "Pending",
-      "setting": "mordheim",
-      "how": "no match"
     }
   ],
   "hired_swords": [

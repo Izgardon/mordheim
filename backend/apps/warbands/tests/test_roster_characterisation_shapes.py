@@ -104,6 +104,7 @@ SPECIAL_DETAIL = {"id": "int", "name": "str", "type": "str", "description": "str
 SPELL_DETAIL = {"id": "int", "name": "str", "type": "str", "dc": "str", "description": "str"}
 MEMBER = {"id": "int", "name": "str", "kills": "int", "dead": "bool", "gaps": []}  # gaps: the loadout rows he lacks
 MISSING = {"missing_games": "int", "missing_reason": "str"}  # missing games: how many and why (edit mode)
+PICKS = {"pending_skills": "int", "pending_spells": "int", "pending_specials": "int"}  # picks to make later
 COMPANIONS: dict[str, Any] = {
     "effective_stats": None,
     "mount": None,
@@ -112,6 +113,7 @@ COMPANIONS: dict[str, Any] = {
 
 HERO_SUMMARY = {
     **IDENTITY,
+    **PICKS,
     "is_leader": "bool",
     "large": "bool",
     "caster": "str",
@@ -171,6 +173,7 @@ HENCHMEN_DETAIL = {
 }
 HIRELING_SUMMARY = {
     **IDENTITY,
+    **PICKS,
     "kind": "str",  # the bestiary rewrite: a hired sword or a dramatis persona
     "hire_cost_expression": "str",
     "upkeep_price": "int",

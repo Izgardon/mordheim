@@ -253,8 +253,6 @@ class RosterTestCase(APITestCase):
     large: Special
     wizard: Special
     priest: Special
-    new_skill: Skill
-    new_spell: Spell
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -307,8 +305,6 @@ class RosterTestCase(APITestCase):
         cls.large = Special.objects.create(name="Large", type="Trait")
         cls.wizard = Special.objects.create(name="Wizard", type="Trait")
         cls.priest = Special.objects.create(name="Priest", type="Trait")
-        cls.new_skill = Skill.objects.create(name="New Skill", type="Pending")
-        cls.new_spell = Spell.objects.create(name="New Spell", type="Pending")
 
     def setUp(self) -> None:
         self.client.force_authenticate(user=self.player)

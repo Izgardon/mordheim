@@ -1,10 +1,10 @@
 from django.db import models
 
-from .shared import RosterUnit, stat_constraints
+from .shared import PendingPicks, RosterUnit, stat_constraints
 from .warband import Warband
 
 
-class Hero(RosterUnit):
+class Hero(RosterUnit, PendingPicks):
     warband = models.ForeignKey(Warband, related_name="heroes", on_delete=models.CASCADE)
     race = models.ForeignKey(
         "races.Race",

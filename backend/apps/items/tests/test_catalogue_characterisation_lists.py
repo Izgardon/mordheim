@@ -182,10 +182,6 @@ class CatalogueMergeTests(CatalogueTestCase):
         self.assertEqual([(row["name"], row["campaign_id"]) for row in rows][0], ("Axe", None))
         self.assertEqual(rows[0]["availabilities"][0]["cost"], 5)
 
-    def test_pending_placeholders_are_left_out_of_the_lists(self):
-        self.assertNotIn("New Skill", self.listed(self.player, SKILLS))
-        self.assertNotIn("New Skill", [row["name"] for row in self.get_as(self.player, SKILLS.list_url()).json()])
-
     def test_items_list_with_their_rules_prices_and_who_can_buy(self):
         sword = next(row for row in self.get_as(self.player, ITEMS.list_url(self.campaign)).json() if row["name"] == "Sword")  # fmt: skip
 

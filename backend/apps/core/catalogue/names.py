@@ -28,8 +28,6 @@ def matches(
     rows = kind.model._default_manager.annotate(folded=Lower(Trim("name"))).filter(
         Q(campaign__isnull=True) | Q(campaign_id=campaign_id), folded=name.strip().lower()
     )
-    if kind.excluded_types:
-        rows = rows.exclude(type__in=kind.excluded_types)
     removed = CatalogueRemoval.objects.filter(campaign_id=campaign_id, kind=kind.key, entry_id=OuterRef("pk"))
     allowed = list(allowed)  # and the campaign's version of an allowed book entry
     rows = rows.exclude(pk__in=allowed).exclude(replaces_id__in=allowed).annotate(removed=Exists(removed))
