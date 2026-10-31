@@ -1,8 +1,6 @@
 import { Suspense, useMemo, useState } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { LoadingScreen } from "@/components/ui/loading-screen";
-import { RouteSkeleton } from "@/components/ui/route-skeleton";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useSearchShortcut } from "@/features/search/useSearchShortcut";
 import { useMyWarbandStore } from "@/features/warbands/hooks/warband/useMyWarbandStore";
@@ -11,8 +9,10 @@ import BattleTopBar from "@/layouts/battle/BattleTopBar";
 import CampaignBottomNav from "@/layouts/mobile/CampaignBottomNav";
 import MobileTopBar from "@/layouts/mobile/MobileTopBar";
 import AppShell from "@/layouts/shell/AppShell";
+import CampaignPageSkeleton from "@/layouts/shell/CampaignPageSkeleton";
 import CampaignTools, { type CampaignTool } from "@/layouts/shell/CampaignTools";
 import NavRail from "@/layouts/shell/NavRail";
+import ShellSkeleton from "@/layouts/shell/ShellSkeleton";
 import { campaignSectionTitle } from "@/layouts/shell/campaign-nav";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -77,8 +77,13 @@ export default function CampaignLayout() {
       ? getErrorMessage(campaignQuery.error, "Unable to load campaign")
       : "";
 
+  // The shell and the page as skeletons: the full-screen loader is for the app's boot only.
   if (!campaignError && campaignQuery.isPending) {
-    return <LoadingScreen message="Preparing the campaign..." />;
+    return (
+      <ShellSkeleton>
+        <CampaignPageSkeleton pathname={pathname} />
+      </ShellSkeleton>
+    );
   }
 
   if (!campaign) {
@@ -157,7 +162,7 @@ export default function CampaignLayout() {
       {...(isMobile ? mobileChrome : {})}
     >
       <ArchivedBanner campaign={campaign} />
-      <Suspense fallback={<RouteSkeleton />}>
+      <Suspense fallback={<CampaignPageSkeleton pathname={pathname} />}>
         <Outlet context={outletContext} />
       </Suspense>
     </AppShell>
