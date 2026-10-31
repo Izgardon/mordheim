@@ -44,8 +44,10 @@ export default function Campaigns() {
       <CampaignsHeader user={user} onCreate={handleCreate} onJoin={handleJoin} />
       <CampaignListSection campaigns={campaigns} isLoading={list.isPending} error={error} />
       {/* The same card as Settings, without a campaign's fields (CAMP-NEW-08). */}
-      <div className="max-w-[560px]">
-        <FeedbackReportCard />
+      <div className="border-t border-line pt-8">
+        <div className="max-w-[560px]">
+          <FeedbackReportCard />
+        </div>
       </div>
     </SitePage>
   );

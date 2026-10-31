@@ -17,7 +17,7 @@ export default function Account() {
   const { user } = useAuth();
 
   return (
-    <SitePage>
+    <SitePage width="narrow">
       <header className="flex flex-col gap-1.5">
         <span className="text-xs font-semibold uppercase tracking-[0.08em] text-faint">
           Your account
@@ -29,7 +29,7 @@ export default function Account() {
           <p className="m-0 break-words text-sm text-text2">{`Signed in as ${user.email}`}</p>
         ) : null}
       </header>
-      <div className="grid max-w-[760px] gap-4">
+      <div className="grid gap-4">
         {user ? <DisplayNameSection key={user.id} user={user} /> : null}
         <PasswordSection />
         <SignOutOthersSection />

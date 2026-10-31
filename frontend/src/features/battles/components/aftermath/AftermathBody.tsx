@@ -11,8 +11,10 @@ import LocationsPanel from "@/features/warbands/components/panels/LocationsPanel
 import { cn } from "@/lib/utils";
 
 import AftermathAside, { opponentsOf, resultText } from "./AftermathAside";
+import { AFTERMATH_BODY, AFTERMATH_MAIN } from "./aftermath-layout";
 import AftermathHeader, { AFTERMATH_TABS, type AftermathTab } from "./AftermathHeader";
 import AftermathMenu from "./AftermathMenu";
+import AftermathSkeleton from "./AftermathSkeleton";
 import { buildStatChangeRows, withKeptStats } from "./aftermath-stats";
 import { buildXpRows } from "./aftermath-xp";
 import ExperienceTab from "./ExperienceTab";
@@ -58,7 +60,7 @@ export default function AftermathBody({
   const { draft, persistDraft } = drafting;
   const warbandPath = `/campaigns/${campaignId}/warband`;
   if (!draft || !explore.exploration) {
-    return <p className="text-sm text-muted-foreground">Reading your aftermath…</p>;
+    return <AftermathSkeleton />;
   }
   const save = (next: typeof draft) => void persistDraft(next);
   const index = AFTERMATH_TABS.findIndex((entry) => entry.id === tab);
@@ -112,7 +114,9 @@ export default function AftermathBody({
   const back = () => (index > 0 ? setTab(AFTERMATH_TABS[index - 1].id) : undefined);
   const next = AFTERMATH_TABS[index + 1];
   const nav = (
-    <div className={cn("flex items-center gap-2", isMobile ? "" : "pt-2.5")}>
+    <div
+      className={cn("flex items-center gap-2", isMobile ? "" : "mt-2.5 border-t border-line pt-5")}
+    >
       {index > 0 ? (
         <Button variant="secondary" className="min-h-12" onClick={back}>
           Back
@@ -155,8 +159,8 @@ export default function AftermathBody({
         isMobile={isMobile}
         menu={<AftermathMenu battle={battle} battleState={battleState} />}
       />
-      <div className="flex flex-wrap items-start gap-8">
-        <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-3.5">
+      <div className={AFTERMATH_BODY}>
+        <div className={AFTERMATH_MAIN}>
           <ResultsBanner state={battleState} results={postgame.results} />
           {drafting.draftError ? (
             <p className="m-0 text-sm text-danger">{drafting.draftError}</p>

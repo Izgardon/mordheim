@@ -9,6 +9,7 @@ import { useWhoCan } from "@/features/items/api/who-can-queries";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { BuyableToggle, FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
 import { ReferenceList, ShowMore, useShownRows } from "@/features/reference/ReferenceList";
+import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
 import RecruitDialog from "@/features/warbands/components/roster/RecruitDialog";
 import { useWarbandSheet } from "@/features/warbands/hooks/warband/useWarbandSheet";
@@ -155,9 +156,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
             : `${config.labels.emptyTitle}. ${config.labels.emptyBody}`
         }
       >
-        {entries.isLoading ? (
-          <li className="px-4 py-6 text-sm text-muted-foreground">Asking around the taverns…</li>
-        ) : null}
+        {entries.isLoading ? <ReferenceRowBones /> : null}
         {shown.rows.map((entry) => {
           const key = String(entry.id);
           return (

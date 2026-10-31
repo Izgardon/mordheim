@@ -17,6 +17,13 @@ import { exportCampaign } from "../components/overview/export-campaign";
 import { buildStandings, buildStats } from "../components/overview/overview-data";
 import OverviewHeader from "../components/overview/OverviewHeader";
 import OverviewNotices from "../components/overview/OverviewNotices";
+import OverviewSkeleton from "../components/overview/OverviewSkeleton";
+import {
+  OVERVIEW_ASIDE,
+  OVERVIEW_BODY,
+  OVERVIEW_DIVIDED,
+  OVERVIEW_MAIN,
+} from "../components/overview/overview-layout";
 import ReadinessBar from "../components/overview/ReadinessBar";
 import StandingsTable from "../components/overview/StandingsTable";
 import StartBattleDialog from "../components/overview/StartBattleDialog";
@@ -35,14 +42,16 @@ const RECENT = 5;
 function Section({
   title,
   aside,
+  className,
   children,
 }: {
   title: string;
   aside?: ReactNode;
+  className?: string;
   children: ReactNode;
 }) {
   return (
-    <section aria-label={title} className="flex flex-col gap-3">
+    <section aria-label={title} className={cn("flex flex-col gap-3", className)}>
       <div className="flex items-baseline justify-between">
         <h2 className="m-0 font-display text-[22px] font-semibold text-head">{title}</h2>
         {aside}
@@ -66,12 +75,15 @@ export default function Overview() {
   const queryClient = useQueryClient();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const refreshOpenBattles = useRefreshOpenBattles(campaignId);
-  const players = useCampaignPlayers(campaignId).data ?? [];
-  const history = useCampaignBattleHistory(campaignId).data ?? [];
+  const playersQuery = useCampaignPlayers(campaignId);
+  const historyQuery = useCampaignBattleHistory(campaignId);
+  const players = playersQuery.data ?? [];
+  const history = historyQuery.data ?? [];
   const [dialog, setDialog] = useState<BattleDialogMode | null>(null);
   const [tab, setTab] = useState<Tab>("standings");
   if (!campaign)
     return <p className="text-sm text-muted-foreground">No record of this campaign.</p>;
+  if (playersQuery.isLoading || historyQuery.isLoading) return <OverviewSkeleton />;
 
   const standings = buildStandings(players, history);
   const battlesHref = `/campaigns/${campaignId}/battles`;
@@ -188,19 +200,19 @@ export default function Overview() {
           ) : null}
         </>
       ) : (
-        <div className="flex flex-wrap items-start gap-8">
-          <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-8">
+        <div className={OVERVIEW_BODY}>
+          <div className={OVERVIEW_MAIN}>
             <Section
               title="Standings"
               aside={<span className="text-[13px] text-faint">By warband rating</span>}
             >
               {standingsTable}
             </Section>
-            <Section title="Battles" aside={allLink}>
+            <Section title="Battles" aside={allLink} className={OVERVIEW_DIVIDED}>
               {recent}
             </Section>
           </div>
-          <aside className="flex min-w-0 flex-[1_1_320px] flex-col gap-7">
+          <aside className={OVERVIEW_ASIDE}>
             <Chronicle campaignId={campaignId} isMobile={false} />
           </aside>
         </div>

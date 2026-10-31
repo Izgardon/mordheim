@@ -5,6 +5,8 @@ import type {
 } from "@/features/battles/types/battle-types";
 import { cn } from "@/lib/utils";
 
+import { AFTERMATH_ASIDE } from "./aftermath-layout";
+
 const LEFT = new Set(["declined", "canceled_prebattle", "reported_result_declined"]);
 
 /** How a player stands in the battle, for "Everyone else". */
@@ -63,7 +65,7 @@ export default function AftermathAside({
   );
 
   return (
-    <aside className="flex min-w-0 flex-[1_1_280px] flex-col gap-4">
+    <aside className={AFTERMATH_ASIDE}>
       <section
         aria-labelledby="aftermath-facts"
         className="flex flex-col gap-2.5 border border-border bg-surface px-[18px] py-4"

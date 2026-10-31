@@ -75,7 +75,7 @@ export default function ReadinessBar({
   return (
     <section
       aria-label="Who is ready"
-      className="-mx-10 -mt-[30px] flex flex-wrap items-center gap-x-8 gap-y-3 border-b border-line bg-bar px-10 py-3.5"
+      className="page-band flex flex-wrap items-center gap-x-8 gap-y-3 border-b border-line bg-bar py-3.5"
     >
       <div className="flex min-w-[190px] flex-col gap-px">
         <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-accent-text">

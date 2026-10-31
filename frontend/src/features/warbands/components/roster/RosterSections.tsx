@@ -4,9 +4,11 @@ import { Plus } from "lucide-react";
 
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import type { Item } from "@/features/items/types/item-types";
+import { cn } from "@/lib/utils";
 
 import { useUnitActions } from "../../hooks/units/useUnitActions";
 import type { HenchmenGroup, WarbandHero, WarbandHireling } from "../../types/warband-types";
+import { ROSTER_DIVIDED, ROSTER_HEROES, ROSTER_SECTIONS } from "../page/warband-layout";
 import UnitCard from "./UnitCard";
 import UnitDetails from "./UnitDetails";
 import type { PendingList } from "./PendingPick";
@@ -34,16 +36,19 @@ function Section({
   meta,
   add,
   onAdd,
+  divided = false,
   children,
 }: {
   title: string;
   meta: string;
   add?: string;
   onAdd: () => void;
+  /** Under a hairline: every section after the first. */
+  divided?: boolean;
   children: ReactNode;
 }) {
   return (
-    <section aria-label={title} className="flex flex-col gap-3">
+    <section aria-label={title} className={cn("flex flex-col gap-3", divided && ROSTER_DIVIDED)}>
       <div className="flex items-baseline justify-between gap-3">
         <div className="flex items-baseline gap-2.5">
           <h2 className="font-display text-[22px] font-semibold text-head">{title}</h2>
@@ -154,21 +159,20 @@ export default function RosterSections(props: RosterSectionsProps) {
   const models = props.henchmenGroups.reduce((sum, group) => sum + group.henchmen.length, 0);
 
   return (
-    <div className="flex flex-col gap-[30px]">
+    <div className={ROSTER_SECTIONS}>
       <Section
         title="Heroes"
         meta={`${heroes.length}${maxHeroes ? ` of ${maxHeroes}` : ""}`}
         add={canEdit ? "Add hero" : undefined}
         onAdd={() => props.onRecruit("hero")}
       >
-        <div className="grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(min(100%,380px),1fr))]">
-          {heroes.map((entry) => card(entry, "hero"))}
-        </div>
+        <div className={ROSTER_HEROES}>{heroes.map((entry) => card(entry, "hero"))}</div>
       </Section>
       <Section
         title="Henchmen"
         meta={`${groups.length} ${groups.length === 1 ? "group" : "groups"} · ${models} models`}
         add={canEdit ? "Add group" : undefined}
+        divided
         onAdd={() => props.onRecruit("henchmen_group")}
       >
         <div className="flex flex-col gap-2.5">{groups.map((entry) => card(entry, "row"))}</div>
@@ -177,6 +181,7 @@ export default function RosterSections(props: RosterSectionsProps) {
         title="Hired swords"
         meta={`${hired.length}${maxHired ? ` of ${maxHired}` : ""}`}
         add={canEdit ? "Hire" : undefined}
+        divided
         onAdd={() => props.onRecruit("hireling")}
       >
         <div className="flex flex-col gap-2.5">{hired.map((entry) => card(entry, "row"))}</div>

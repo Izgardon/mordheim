@@ -17,6 +17,7 @@ import type { CampaignSummary } from "../../types/campaign-types";
 import RemovalPreview, { ownVoice } from "./RemovalPreview";
 import { Field, FormError, SettingsCard } from "./settings-ui";
 import WarbandTypeCard from "./WarbandTypeCard";
+import { SettingsRowsLoading } from "./SettingsSkeleton";
 
 type WarbandProps = {
   warband: Warband;
@@ -358,7 +359,7 @@ export default function WarbandSection({ campaign }: { campaign: CampaignSummary
   return (
     <>
       {warbandLoading && !mine ? (
-        <p className="m-0 text-sm text-muted-foreground">Mustering your warband…</p>
+        <SettingsRowsLoading label="Loading your warband" rows={2} />
       ) : mine ? (
         <>
           <WarbandDetails warband={mine} canEdit={!archived} onSaved={onSaved} />

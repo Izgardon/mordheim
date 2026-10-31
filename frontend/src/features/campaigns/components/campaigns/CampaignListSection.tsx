@@ -3,7 +3,6 @@ import { ChevronDown } from "lucide-react";
 
 // components
 import { Card } from "@components/card";
-import { CardSkeleton } from "@components/card-skeleton";
 import { cn } from "@/lib/utils";
 
 // types
@@ -11,6 +10,7 @@ import type { CampaignSummary } from "../../types/campaign-types";
 
 // other
 import CampaignCard from "./CampaignCard";
+import { CAMPAIGN_GRID, CampaignCardsSkeleton } from "./CampaignsSkeleton";
 
 type CampaignListSectionProps = {
   campaigns: CampaignSummary[];
@@ -20,7 +20,7 @@ type CampaignListSectionProps = {
 
 function CampaignGrid({ campaigns }: { campaigns: CampaignSummary[] }) {
   return (
-    <div className="grid gap-4 min-[961px]:grid-cols-2">
+    <div className={CAMPAIGN_GRID}>
       {campaigns.map((campaign) => (
         <CampaignCard key={campaign.id} {...campaign} />
       ))}
@@ -76,7 +76,7 @@ export default function CampaignListSection({
       </div>
 
       {isLoading ? (
-        <CardSkeleton count={2} columns={2} />
+        <CampaignCardsSkeleton />
       ) : error ? (
         <p role="alert" className="m-0 text-sm text-danger">
           {error}

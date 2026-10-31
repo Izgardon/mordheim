@@ -15,7 +15,9 @@ import WarbandHeader, { type WarbandPanel } from "../components/page/WarbandHead
 import WarbandResources from "../components/page/WarbandResources";
 import WarbandStats from "../components/page/WarbandStats";
 import WarbandPanels, { storeFor } from "../components/page/WarbandPanels";
+import WarbandSkeleton from "../components/page/WarbandSkeleton";
 import WarbandTabs from "../components/page/WarbandTabs";
+import { WARBAND_INFO } from "../components/page/warband-layout";
 import PostgameSlot from "../components/camp/PostgameSlot";
 import AdvanceDialog from "../components/roster/AdvanceDialog";
 import EditUnitForm from "../components/roster/EditUnitForm";
@@ -68,8 +70,7 @@ export default function Warband() {
     setPanel("store");
   };
 
-  if (sheet.isLoading)
-    return <p className="text-sm text-muted-foreground">Mustering the warband…</p>;
+  if (sheet.isLoading) return <WarbandSkeleton />;
   if (sheet.error) return <p className="text-sm text-danger">{sheet.error}</p>;
   if (!warband) {
     return warbandParam ? (
@@ -124,7 +125,7 @@ export default function Warband() {
           onInviteOpenChange={setTradeInviteOpen}
         />
       ) : null}
-      <div className="grid gap-x-8 gap-y-4 [grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr))]">
+      <div className={WARBAND_INFO}>
         <WarbandStats
           warband={warband}
           heroes={sheet.heroes}

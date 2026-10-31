@@ -113,7 +113,7 @@ export default function AftermathHeader(props: AftermathHeaderProps) {
   }
 
   return (
-    <header className="-mx-10 -mt-[30px] flex flex-col gap-3.5 border-b border-line bg-bar px-10 pt-[18px]">
+    <header className="page-band flex flex-col gap-3.5 border-b border-line bg-bar pt-[18px]">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex flex-col gap-0.5">
           <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-accent-text">
