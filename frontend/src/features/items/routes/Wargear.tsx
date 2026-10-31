@@ -13,6 +13,7 @@ import {
   ReferenceSearch,
 } from "@/features/reference/ReferenceFilters";
 import { ReferenceList, ShowMore, useShownRows } from "@/features/reference/ReferenceList";
+import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
 import { useWarbandSheet } from "@/features/warbands/hooks/warband/useWarbandSheet";
 import { useCatalogue } from "@/lib/catalogue-queries";
@@ -139,9 +140,7 @@ export default function Wargear() {
             : "No items match. Try another word."
         }
       >
-        {loading ? (
-          <li className="px-4 py-6 text-sm text-muted-foreground">Opening the armoury…</li>
-        ) : null}
+        {loading ? <ReferenceRowBones /> : null}
         {(loading ? [] : shown.rows).map((row) => {
           const { item, warning } = row;
           const key = String(item.id);
