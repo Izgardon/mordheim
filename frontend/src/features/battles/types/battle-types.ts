@@ -80,6 +80,7 @@ export type BattleUnitInformationEntry = {
   notes?: string;
   current_wounds?: number | null;
   out_of_action: boolean;
+  /** The unit's live kills, which the server counts from its kill table (never stored or sent). */
   kill_count: number;
   /** Knocked down or stunned; left out while the unit stands. */
   status?: BattleUnitStatus;

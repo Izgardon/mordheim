@@ -41,7 +41,14 @@ import {
   EditStatsSheet,
   type EditableUnit,
 } from "./UnitSheets";
-import { allViews, battleSections, nextStatus, sideId, type BattleUnitView } from "./battle-units";
+import {
+  allViews,
+  battleSections,
+  canScore,
+  nextStatus,
+  sideId,
+  type BattleUnitView,
+} from "./battle-units";
 
 type Panel =
   | "menu"
@@ -271,7 +278,7 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
       typeLine={[view.unit.unitType, TYPE_SUFFIX[view.unit.kind]].filter(Boolean).join(" · ")}
       canAct={canAct}
       saving={Boolean(config.savingUnitKeys[view.unit.key])}
-      onKill={() => killerFor(view.unit.displayName, [view])}
+      onKill={canScore(view.unit) ? () => killerFor(view.unit.displayName, [view]) : undefined}
       onCycle={() => void screen.setStatus(view, nextStatus(view.status))}
       onWounds={(delta) => void config.adjustUnitWounds(view.unit, delta)}
       onDismount={(dismounted) => void screen.setDismounted(view.unit.key, dismounted)}

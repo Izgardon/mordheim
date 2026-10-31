@@ -139,6 +139,7 @@ export default function RosterSections(props: RosterSectionsProps) {
             onBuyAgain={(item) => props.onBuyAgain(entry, item)}
             onAdvance={() => props.onAdvance(entry)}
             campaignId={campaign?.id ?? 0}
+            warbandId={warbandId}
             onResolvePending={(list, placeholderId, entryId) =>
               actions.patchUnit(entry, swapPending(entry, list, placeholderId, entryId))
             }

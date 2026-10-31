@@ -587,16 +587,29 @@ export type WarbandLogCreatePayload = {
   payload: Record<string, unknown>;
 };
 
-export type NamedKillHistoryEntry = {
-  victim_name: string;
-  victim_warband_name: string;
-  scenario_name: string;
+/** One kill a unit scored (`kill-history/`, from the server's kill table): newest first. */
+export type UnitKill = {
+  id: number;
+  /** His name, else "A Youngblood", else "Someone". */
+  victim: string;
+  victim_kind: "hero" | "henchman" | "hireling" | "temporary" | "creature" | "someone_else";
+  victim_warband: string | null;
+  battle_id: number;
+  scenario: string;
+  /** When the battle ended (ISO). */
+  date: string;
+  /** Null for a kill logged after the fight. */
+  round: number | null;
+  phase: "fight" | "after";
+  how: "melee" | "shooting" | "magic" | "other" | null;
+  /** Which model scored it, for a henchmen group; null otherwise. */
+  by: string | null;
 };
 
-export type NamedKillHistory = {
+/** A unit's kills: its kill counter and the kills of its campaign's ended battles. */
+export type UnitKillHistory = {
   total_kills: number;
-  named_kills_count: number;
-  named_kills: NamedKillHistoryEntry[];
+  kills: UnitKill[];
 };
 
 /** How many stash copies of an item have one cost (BUG-117); null: copies of unknown cost. */

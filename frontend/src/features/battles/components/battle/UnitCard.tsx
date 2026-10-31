@@ -192,7 +192,8 @@ type UnitCardProps = {
   typeLine: string;
   canAct: boolean;
   saving: boolean;
-  onKill: () => void;
+  /** Left out for a temporary unit or a pet: a killer is always one of the warband's own. */
+  onKill?: () => void;
   onCycle: () => void;
   onWounds: (delta: number) => void;
   onDismount: (dismounted: boolean) => void;
@@ -200,9 +201,9 @@ type UnitCardProps = {
 };
 
 /**
- * One of your units in the fight (design E): name and type, the kill button, the profile (hidden
- * while out of action), the mount line with its Dismounted switch, the status button that cycles
- * beside the wounds, and Gear and Skills or Spells.
+ * One of your units in the fight (design E): name and type, the kill button (heroes and hired
+ * swords only), the profile (hidden while out of action), the mount line with its Dismounted
+ * switch, the status button that cycles beside the wounds, and Gear and Skills or Spells.
  */
 export default function UnitCard({
   view,
@@ -232,12 +233,14 @@ export default function UnitCard({
           </h3>
           <span className="text-xs text-muted-foreground">{typeLine}</span>
         </div>
-        <KillButton
-          name={unit.displayName}
-          kills={view.kills}
-          disabled={!canAct || out}
-          onClick={onKill}
-        />
+        {onKill ? (
+          <KillButton
+            name={unit.displayName}
+            kills={view.kills}
+            disabled={!canAct || out}
+            onClick={onKill}
+          />
+        ) : null}
       </div>
       {out ? null : <StatStrip values={statValues(view.stats)} highlighted={view.highlighted} />}
       {view.mount ? (
