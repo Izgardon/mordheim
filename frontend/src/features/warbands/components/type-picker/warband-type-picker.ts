@@ -6,7 +6,8 @@ export const outOfPlayWarning = (settingName: string) => `${settingName} isn't i
 /** The line under a type's name: its setting and source ("Mordheim · Town Cryer 10"), or "Custom". */
 export function typeMeta(type: WarbandTypeBrief) {
   if (!type.setting) return type.campaign_id ? "Custom · this campaign" : type.source;
-  return [type.setting.name, type.source].filter(Boolean).join(" · ");
+  const source = type.source === type.setting.name ? "" : type.source; // "Lustria", not "Lustria · Lustria"
+  return [type.setting.name, source].filter(Boolean).join(" · ");
 }
 
 /** The warning a type outside the campaign's settings carries ("" when it is in play). */

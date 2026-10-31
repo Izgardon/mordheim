@@ -63,6 +63,7 @@ describe("typeMeta and typeWarning", () => {
   it("names the setting and source, a custom type as the campaign's own, and warns out of play", () => {
     expect(typeMeta(pestilens)).toBe("Mousillon · Mousillon supplement");
     expect(typeMeta(own)).toBe("Custom · this campaign");
+    expect(typeMeta({ ...pestilens, source: "Mousillon" })).toBe("Mousillon");
     expect(typeWarning(pestilens)).toBe("Mousillon isn't in this campaign");
     expect(typeWarning(skaven)).toBe("");
   });
