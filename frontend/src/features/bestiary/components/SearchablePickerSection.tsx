@@ -78,7 +78,7 @@ export default function SearchablePickerSection<T extends Identifiable>({
               <button
                 type="button"
                 onClick={() => onRemove(s.id)}
-                className="text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-head"
                 aria-label={`Remove ${s.name}`}
               >
                 <X className="h-3 w-3" />

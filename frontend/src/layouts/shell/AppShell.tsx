@@ -76,7 +76,7 @@ export default function AppShell({
               role="status"
               aria-live="polite"
             >
-              <div className="border border-accent-line bg-panel px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-accent-hi">
+              <div className="border border-accent-line bg-panel px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-accent-hi">
                 {pull.refreshLabel}
               </div>
             </div>

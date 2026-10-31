@@ -46,12 +46,12 @@ export default function ChatMessageItem({
 
   return (
     <div className={cn("flex flex-col gap-0.5", isOwn ? "items-end" : "items-start")}>
-      <span className="flex items-center gap-1 px-1 text-[0.65rem] text-muted-foreground">
+      <span className="flex items-center gap-1 text-[11px] font-bold text-faint">
         {message.username}
         {canRemove && !isRemoved ? (
           <button
             type="button"
-            className="rounded p-0.5 text-muted-foreground/70 hover:text-danger"
+            className="flex h-6 w-6 items-center justify-center text-faint hover:text-danger"
             aria-label={`Remove message from ${message.username}`}
             onClick={() => setIsConfirmOpen(true)}
           >
@@ -61,12 +61,12 @@ export default function ChatMessageItem({
       </span>
       <div
         className={cn(
-          "max-w-[75%] break-words rounded-2xl px-3 py-2 text-sm",
+          "max-w-[80%] break-words border px-3 py-2 text-sm",
           isRemoved
-            ? "italic text-muted-foreground/70 border border-line bg-raised"
+            ? "border-line bg-transparent italic text-faint"
             : isOwn
-              ? "bg-primary/20 text-primary-foreground"
-              : "border border-line bg-raised text-foreground"
+              ? "border-accent-line bg-accent-soft text-ink"
+              : "border-line bg-raised text-ink"
         )}
       >
         {isRemoved ? removedLabel(message.removed_by) : message.body}

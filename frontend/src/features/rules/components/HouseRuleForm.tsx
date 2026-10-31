@@ -48,7 +48,9 @@ export default function HouseRuleForm({
       </div>
       <div className="space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-foreground">Title</label>
+          <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
+            Title
+          </label>
           <Input
             value={form.title}
             onChange={(event) => onFieldChange("title", event.target.value)}
@@ -56,7 +58,9 @@ export default function HouseRuleForm({
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-foreground">Description</label>
+          <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
+            Description
+          </label>
           <textarea
             className="min-h-[140px] w-full border border-strong bg-page px-3 py-2 text-sm text-ink placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
             value={form.description}

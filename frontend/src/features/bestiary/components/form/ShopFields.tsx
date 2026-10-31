@@ -34,7 +34,7 @@ function PriceRow({
           <button
             type="button"
             onClick={() => shop.remove(row.key)}
-            className="text-muted-foreground hover:text-foreground"
+            className="text-muted-foreground hover:text-head"
             aria-label={`Remove price ${index + 1}`}
           >
             <X className="h-4 w-4" aria-hidden="true" />

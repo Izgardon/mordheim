@@ -50,7 +50,9 @@ export function CatalogueField({
   if (layout === "inline") {
     return (
       <div className={className} {...rest}>
-        <label className="mb-1 block text-xs text-muted-foreground">{label}</label>
+        <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
+          {label}
+        </label>
         {children}
       </div>
     );

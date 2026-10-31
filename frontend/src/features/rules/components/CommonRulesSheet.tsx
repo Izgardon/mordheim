@@ -159,14 +159,14 @@ export default function CommonRulesSheet({
                   />
                   <div className="min-w-0 space-y-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-sm font-semibold text-foreground">{rule.title}</p>
+                      <p className="text-sm font-semibold text-ink">{rule.title}</p>
                       {isAlreadyApplied ? (
-                        <span className="border border-border px-2 py-0.5 text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground">
+                        <span className="border border-border px-[7px] py-px text-[11px] font-bold text-muted-foreground">
                           Applied
                         </span>
                       ) : null}
                       {rule.effect_key ? (
-                        <span className="border border-accent-line bg-accent-soft px-2 py-0.5 text-[0.65rem] uppercase tracking-[0.18em] text-accent-hi">
+                        <span className="border border-accent-line bg-accent-soft px-[7px] py-px text-[11px] font-bold text-accent-hi">
                           Has game effects
                         </span>
                       ) : null}
@@ -186,7 +186,7 @@ export default function CommonRulesSheet({
               href="https://www.mordheimer.net/docs/optional-rules/house-rules/hull"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:text-foreground"
+              className="underline hover:text-head"
             >
               mordheimer.net
             </a>

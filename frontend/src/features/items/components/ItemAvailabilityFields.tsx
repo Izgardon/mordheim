@@ -37,7 +37,7 @@ export default function ItemAvailabilityFields({
     <button
       type="button"
       onClick={() => form.removeAvailability(index)}
-      className="text-muted-foreground hover:text-foreground"
+      className="text-muted-foreground hover:text-head"
       aria-label={isDialog ? undefined : "Remove availability"}
     >
       <X className="h-4 w-4" />

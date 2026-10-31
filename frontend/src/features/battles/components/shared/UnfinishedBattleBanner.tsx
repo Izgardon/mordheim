@@ -58,7 +58,7 @@ export default function UnfinishedBattleBanner({
       <Link
         to={`/campaigns/${battle.campaign_id}/battles/${battle.id}/${unfinished.viewer.page}`}
         onClick={onGo}
-        className="font-semibold text-foreground underline underline-offset-2"
+        className="font-semibold text-ink underline underline-offset-2"
       >
         Go to it
       </Link>

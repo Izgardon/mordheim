@@ -139,7 +139,7 @@ export default function ItemPropertyField({
               <button
                 type="button"
                 onClick={() => picker.drop(property.id)}
-                className="text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-head"
               >
                 <X className="h-3 w-3" />
               </button>

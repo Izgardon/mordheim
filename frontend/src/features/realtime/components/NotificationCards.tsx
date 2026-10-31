@@ -40,7 +40,7 @@ function NotificationCard({
   return (
     <div className="border border-border bg-surface p-3" aria-busy={isPending || undefined}>
       <div className="flex flex-col gap-1">
-        <p className="text-sm font-semibold text-foreground">{title}</p>
+        <p className="text-sm font-semibold text-ink">{title}</p>
         {children}
       </div>
       {error ? (

@@ -7,8 +7,9 @@ import { cn } from "@/lib/utils";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { cva, type VariantProps } from "class-variance-authority";
 
+// Design E: the small uppercase caption over a field.
 const labelVariants = cva(
-  "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+  "text-[11px] font-bold uppercase leading-none tracking-[0.12em] text-faint peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 );
 const Label = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,

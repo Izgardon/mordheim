@@ -83,7 +83,7 @@ export default function CampaignChatMenu({ campaignId, open, onOpenChange, trigg
         </div>
 
         {/* Input bar */}
-        <div className="space-y-2 border-t border-border/40 pt-3">
+        <div className="flex flex-col gap-2 border-t border-line pt-3">
           <div className="flex items-center gap-2">
             <label htmlFor="campaign-chat-message" className="sr-only">
               Message the campaign
@@ -91,7 +91,7 @@ export default function CampaignChatMenu({ campaignId, open, onOpenChange, trigg
             <input
               id="campaign-chat-message"
               type="text"
-              className="border border-strong bg-page text-ink flex-1 rounded-xl px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary/60"
+              className="h-11 min-w-0 flex-1 border border-strong bg-page px-3 text-base text-ink outline-none placeholder:text-faint focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring md:text-sm"
               placeholder="Send a message..."
               value={chat.draft}
               onChange={(e) => chat.updateDraft(e.target.value)}
@@ -107,7 +107,7 @@ export default function CampaignChatMenu({ campaignId, open, onOpenChange, trigg
               type="button"
               onClick={() => void chat.handleSend()}
               disabled={!chat.draft.trim() || chat.isSending}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground disabled:opacity-40"
+              className="flex h-11 w-11 shrink-0 items-center justify-center border border-primary bg-primary text-on-accent transition-colors hover:border-accent-hi hover:bg-accent-hi disabled:opacity-40"
               aria-label="Send message"
             >
               <Send className="h-4 w-4" />

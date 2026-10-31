@@ -135,7 +135,7 @@ export default function NotificationsMenu({
               type="button"
               onClick={handleClear}
               disabled={unreadCount === 0}
-              className="text-xs font-bold text-muted-foreground transition hover:text-foreground disabled:opacity-50"
+              className="text-xs font-bold text-muted-foreground transition hover:text-head disabled:opacity-50"
             >
               Clear
             </button>

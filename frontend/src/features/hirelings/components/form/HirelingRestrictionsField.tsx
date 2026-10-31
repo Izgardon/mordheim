@@ -58,7 +58,7 @@ export default function HirelingRestrictionsField({
               <button
                 type="button"
                 onClick={() => restrictions.remove(row.key)}
-                className="text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-head"
                 aria-label={`Remove ${row.restriction.restriction}`}
               >
                 <X className="h-3.5 w-3.5" aria-hidden="true" />

@@ -30,10 +30,10 @@ export default function BeastKindField({
               aria-checked={checked}
               onClick={() => onChange(kind)}
               className={cn(
-                "inline-flex flex-1 items-center justify-center gap-1.5 border-r border-input px-3 py-2 text-sm last:border-r-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                "inline-flex flex-1 items-center justify-center gap-1.5 border-r border-strong px-3 py-2 text-sm last:border-r-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
                 checked
                   ? cn("bg-accent-soft font-semibold", BEAST_KIND_TEXT[kind])
-                  : "text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground hover:text-head"
               )}
             >
               <BeastKindIcon kind={kind} />

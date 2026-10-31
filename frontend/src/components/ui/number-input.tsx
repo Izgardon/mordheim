@@ -122,7 +122,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
           ? "h-5 w-5 text-accent-text"
           : "size-4 text-accent-text";
     const mobileButtonBaseClass =
-      "flex h-full shrink-0 items-center justify-center rounded-none border border-strong bg-page text-ink shadow-none transition-colors hover:bg-raised disabled:cursor-not-allowed disabled:opacity-60";
+      "flex h-full shrink-0 items-center justify-center border border-strong bg-page text-ink shadow-none transition-colors hover:bg-raised disabled:cursor-not-allowed disabled:opacity-60";
     const desktopButtonWidthClass = inputSize === "sm" ? "w-7" : inputSize === "lg" ? "w-9" : "w-8";
     const desktopIconClass =
       inputSize === "sm"
@@ -135,7 +135,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       return (
         <div
           className={cn(
-            "flex items-stretch overflow-hidden rounded-[6px]",
+            "flex items-stretch overflow-hidden",
             compact ? "w-fit shrink-0" : "w-full max-w-[50vw]",
             mobileHeightClass,
             containerClassName
@@ -164,7 +164,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             onFocus={handleFocus}
             onBlur={handleBlur}
             className={cn(
-              "h-full min-h-0 rounded-none bg-transparent !px-0 !text-center tabular-nums shadow-none appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+              "h-full min-h-0 bg-transparent !px-0 !text-center tabular-nums shadow-none appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
               compact ? "w-10" : "flex-1",
               className
             )}

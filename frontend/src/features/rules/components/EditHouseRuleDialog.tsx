@@ -133,7 +133,9 @@ export default function EditHouseRuleDialog({
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-foreground">Title</label>
+            <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
+              Title
+            </label>
             <Input
               value={form.title}
               onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
@@ -141,7 +143,9 @@ export default function EditHouseRuleDialog({
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-foreground">Description</label>
+            <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
+              Description
+            </label>
             <textarea
               className="min-h-[140px] w-full border border-strong bg-page px-3 py-2 text-sm text-ink placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
               value={form.description}
@@ -172,8 +176,8 @@ export default function EditHouseRuleDialog({
         onOpenChange={setIsDeleteOpen}
         description={
           <span>
-            Delete <span className="font-semibold text-foreground">{rule.title}</span>? This action
-            cannot be undone.
+            Delete <span className="font-semibold text-ink">{rule.title}</span>? This action cannot
+            be undone.
           </span>
         }
         confirmText={isSaving ? "Deleting..." : "Delete rule"}

@@ -156,7 +156,7 @@ const DialogContent = React.forwardRef<
         >
           <div
             className={cn(
-              "pointer-events-auto relative flex max-h-[85dvh] flex-col overflow-x-hidden px-4 pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] pt-4 text-[15px] text-foreground min-[960px]:max-h-[90vh] min-[960px]:px-8 min-[960px]:py-8",
+              "pointer-events-auto relative flex max-h-[85dvh] flex-col overflow-x-hidden px-4 pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] pt-4 text-[15px] text-ink min-[960px]:max-h-[90vh] min-[960px]:px-8 min-[960px]:py-8",
               innerClassName
             )}
             style={mobileMaxHeightStyle}
@@ -174,7 +174,7 @@ const DialogContent = React.forwardRef<
                 trigger={
                   <button
                     type="button"
-                    className="relative flex h-8 w-8 items-center justify-center border border-border bg-transparent text-muted-foreground transition hover:text-foreground"
+                    className="relative flex h-8 w-8 items-center justify-center border border-border bg-transparent text-faint transition hover:text-head"
                     aria-label="Help"
                   >
                     <CircleHelp className="h-4 w-4" />
