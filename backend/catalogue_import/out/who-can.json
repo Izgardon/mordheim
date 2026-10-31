@@ -5,14 +5,14 @@
       "type": "Animal",
       "for_everyone": true,
       "warbands": [],
-      "how": "no match"
+      "how": "overrides.json"
     },
     {
       "name": "Ride [Animal]",
       "type": "Animal",
       "for_everyone": true,
       "warbands": [],
-      "how": "no match"
+      "how": "overrides.json"
     },
     {
       "name": "Cavalry Commander",
@@ -75,42 +75,47 @@
       "type": "Large Special",
       "for_everyone": true,
       "warbands": [],
-      "how": "no match"
+      "how": "overrides.json",
+      "large_only": true
     },
     {
       "name": "Juggernaut",
       "type": "Large Special",
       "for_everyone": true,
       "warbands": [],
-      "how": "no match"
+      "how": "overrides.json",
+      "large_only": true
     },
     {
       "name": "Brick Wall",
       "type": "Large Special",
       "for_everyone": true,
       "warbands": [],
-      "how": "no match"
+      "how": "overrides.json",
+      "large_only": true
     },
     {
       "name": "Frog Splash",
       "type": "Large Special",
       "for_everyone": true,
       "warbands": [],
-      "how": "no match"
+      "how": "overrides.json",
+      "large_only": true
     },
     {
       "name": "Titanic Grip",
       "type": "Large Special",
       "for_everyone": true,
       "warbands": [],
-      "how": "no match"
+      "how": "overrides.json",
+      "large_only": true
     },
     {
       "name": "Falconer",
       "type": "Animal",
       "for_everyone": true,
       "warbands": [],
-      "how": "no match"
+      "how": "overrides.json"
     },
     {
       "name": "Heron Strike",
@@ -607,23 +612,38 @@
     {
       "name": "Tunneler",
       "type": "Dwarf Exiled Engineers",
-      "for_everyone": true,
-      "warbands": [],
-      "how": "no match"
+      "for_everyone": false,
+      "warbands": [
+        {
+          "type": "guild-of-disgraced-engineers",
+          "excluded": false
+        }
+      ],
+      "how": "overrides.json"
     },
     {
       "name": "Tinkerer",
       "type": "Dwarf Exiled Engineers",
-      "for_everyone": true,
-      "warbands": [],
-      "how": "no match"
+      "for_everyone": false,
+      "warbands": [
+        {
+          "type": "guild-of-disgraced-engineers",
+          "excluded": false
+        }
+      ],
+      "how": "overrides.json"
     },
     {
       "name": "Quick Thinker",
       "type": "Dwarf Exiled Engineers",
-      "for_everyone": true,
-      "warbands": [],
-      "how": "no match"
+      "for_everyone": false,
+      "warbands": [
+        {
+          "type": "guild-of-disgraced-engineers",
+          "excluded": false
+        }
+      ],
+      "how": "overrides.json"
     },
     {
       "name": "Animosity",
@@ -880,13 +900,6 @@
         }
       ],
       "how": "mordheimer"
-    },
-    {
-      "name": "Skills list prohibitions",
-      "type": "Saurus",
-      "for_everyone": true,
-      "warbands": [],
-      "how": "no match"
     },
     {
       "name": "Bellowing Battle Roar",
@@ -1495,9 +1508,14 @@
     {
       "name": "Captain Blood",
       "type": "Pirates (TBMF)",
-      "for_everyone": true,
-      "warbands": [],
-      "how": "no match"
+      "for_everyone": false,
+      "warbands": [
+        {
+          "type": "pirates",
+          "excluded": false
+        }
+      ],
+      "how": "overrides.json"
     },
     {
       "name": "Sea Legs",
@@ -1526,9 +1544,14 @@
     {
       "name": "Treasure Hunter",
       "type": "Pirates (TBMF)",
-      "for_everyone": true,
-      "warbands": [],
-      "how": "no match"
+      "for_everyone": false,
+      "warbands": [
+        {
+          "type": "pirates",
+          "excluded": false
+        }
+      ],
+      "how": "overrides.json"
     },
     {
       "name": "Swashbuckler",
@@ -2225,30 +2248,50 @@
     {
       "name": "Unblinking Eye",
       "type": "Skaven Metal Mongers",
-      "for_everyone": true,
-      "warbands": [],
-      "how": "no match"
+      "for_everyone": false,
+      "warbands": [
+        {
+          "type": "metal-mongers",
+          "excluded": false
+        }
+      ],
+      "how": "overrides.json"
     },
     {
       "name": "Metallic Body",
       "type": "Skaven Metal Mongers",
-      "for_everyone": true,
-      "warbands": [],
-      "how": "no match"
+      "for_everyone": false,
+      "warbands": [
+        {
+          "type": "metal-mongers",
+          "excluded": false
+        }
+      ],
+      "how": "overrides.json"
     },
     {
       "name": "Respirator",
       "type": "Skaven Metal Mongers",
-      "for_everyone": true,
-      "warbands": [],
-      "how": "no match"
+      "for_everyone": false,
+      "warbands": [
+        {
+          "type": "metal-mongers",
+          "excluded": false
+        }
+      ],
+      "how": "overrides.json"
     },
     {
       "name": "Tinker-Rat",
       "type": "Skaven Metal Mongers",
-      "for_everyone": true,
-      "warbands": [],
-      "how": "no match"
+      "for_everyone": false,
+      "warbands": [
+        {
+          "type": "metal-mongers",
+          "excluded": false
+        }
+      ],
+      "how": "overrides.json"
     },
     {
       "name": "Black Hunger",
@@ -2319,13 +2362,6 @@
       "how": "mordheimer"
     },
     {
-      "name": "Knowledge of Myths and Legends",
-      "type": "Strigany",
-      "for_everyone": true,
-      "warbands": [],
-      "how": "no match"
-    },
-    {
       "name": "Bull Rush",
       "type": "Strigany",
       "for_everyone": false,
@@ -2348,20 +2384,6 @@
         }
       ],
       "how": "mordheimer"
-    },
-    {
-      "name": "Prize-fighter",
-      "type": "Strigany",
-      "for_everyone": true,
-      "warbands": [],
-      "how": "no match"
-    },
-    {
-      "name": "Animal Charmer (eg. Dog Charmer)",
-      "type": "Strigany",
-      "for_everyone": true,
-      "warbands": [],
-      "how": "no match"
     },
     {
       "name": "Infiltration",
@@ -2442,37 +2464,67 @@
     {
       "name": "Transfixing Glare",
       "type": "Undead Vampires",
-      "for_everyone": true,
-      "warbands": [],
-      "how": "no match"
+      "for_everyone": false,
+      "warbands": [
+        {
+          "type": "undead",
+          "excluded": false
+        }
+      ],
+      "how": "overrides.json",
+      "note": "Vampire only"
     },
     {
       "name": "Mist Form",
       "type": "Undead Vampires",
-      "for_everyone": true,
-      "warbands": [],
-      "how": "no match"
+      "for_everyone": false,
+      "warbands": [
+        {
+          "type": "undead",
+          "excluded": false
+        }
+      ],
+      "how": "overrides.json",
+      "note": "Vampire only"
     },
     {
       "name": "Ratswarm Form",
       "type": "Undead Vampires",
-      "for_everyone": true,
-      "warbands": [],
-      "how": "no match"
+      "for_everyone": false,
+      "warbands": [
+        {
+          "type": "undead",
+          "excluded": false
+        }
+      ],
+      "how": "overrides.json",
+      "note": "Vampire only"
     },
     {
       "name": "Bat Form",
       "type": "Undead Vampires",
-      "for_everyone": true,
-      "warbands": [],
-      "how": "no match"
+      "for_everyone": false,
+      "warbands": [
+        {
+          "type": "undead",
+          "excluded": false
+        }
+      ],
+      "how": "overrides.json",
+      "note": "Vampire only"
     },
     {
       "name": "Giant Wolf Form",
       "type": "Undead Vampires",
-      "for_everyone": true,
-      "warbands": [],
-      "how": "no match"
+      "for_everyone": false,
+      "warbands": [
+        {
+          "type": "undead",
+          "excluded": false
+        }
+      ],
+      "how": "overrides.json",
+      "note": "Vampire only"
     },
     {
       "name": "Strike to Injure",
@@ -2788,6 +2840,18 @@
       "for_everyone": true,
       "warbands": [],
       "how": "mordheimer"
+    },
+    {
+      "name": "Master Inventor",
+      "type": "Dwarf Exiled Engineers",
+      "for_everyone": false,
+      "warbands": [
+        {
+          "type": "guild-of-disgraced-engineers",
+          "excluded": false
+        }
+      ],
+      "how": "overrides.json"
     }
   ],
   "hired_swords": [

@@ -3,6 +3,7 @@ from types import SimpleNamespace
 from django.test import SimpleTestCase
 
 from catalogue_import.hiring import HiringLog, build_who_can, cost_terms, who
+from catalogue_import.skill_lists import SkillLists
 from catalogue_import.tests.world import world
 
 
@@ -37,11 +38,12 @@ class WhoTests(SimpleTestCase):
 
 
 class WhoCanTests(SimpleTestCase):
-    def build(self, **sources: list) -> tuple[dict, HiringLog]:
-        _types, resolver, groups, _ctx = world()
+    def build(self, overrides: dict | None = None, **sources: list) -> tuple[dict, HiringLog]:
+        types, resolver, groups, _ctx = world()
         base: dict[str, list] = {"skills": [], "hired_swords": [], "personae": [], "our_skills": []}
         log = HiringLog()
-        return build_who_can(SimpleNamespace(**{**base, **sources}), resolver, groups, log), log
+        lists = SkillLists(overrides or {}, types, groups)
+        return build_who_can(SimpleNamespace(**{**base, **sources}), resolver, groups, log, lists), log
 
     def test_hired_swords_carry_their_list_note_and_fees(self) -> None:
         sword = {

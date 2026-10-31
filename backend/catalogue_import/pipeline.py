@@ -17,6 +17,7 @@ from catalogue_import.mim import MimLog, MimReader, mim_item
 from catalogue_import.personae import Catalogue, build_personae
 from catalogue_import.report import ReportData, render_report
 from catalogue_import.rules import build_shared_rules, index_rules
+from catalogue_import.skill_lists import SkillLists
 from catalogue_import.sources import ITEM_DATA, PACKAGE, Sources, load_sources
 from catalogue_import.statements import PhraseReader
 from catalogue_import.warbands import Resolver, build_warband_types, extra_rows
@@ -136,6 +137,8 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     evidence = collect_evidence(types, sources)
     settings = build_settings(evidence, overrides.get("setting_grades", {}))
     groups, group_questions = build_groups(types, sources, resolver)
+    skill_lists = SkillLists(overrides, types, groups)
+    sources.our_skills = skill_lists.apply(sources.our_skills)  # William's drops, additions and rewordings first
     shared = build_shared_rules(sources.items)
     index = index_rules(shared)
     names = display_names(types)
@@ -156,7 +159,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     assignment_log = AssignmentLog()
     assignments = build_assignments(sources, assignment_log)
     hiring_log = HiringLog()
-    who_can = build_who_can(sources, resolver, groups, hiring_log)
+    who_can = build_who_can(sources, resolver, groups, hiring_log, skill_lists)
     counts = {
         "settings": len(settings),
         "warband types": len(types),
@@ -186,6 +189,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         assignment_log,
         who_can,
         hiring_log,
+        skill_lists.log,
     )
     return {
         "settings.json": dump_json(settings),
@@ -195,6 +199,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         "items.json": dump_json(everything),
         "setting-assignments.json": dump_json(assignments),
         "who-can.json": dump_json(who_can),
+        "skills.json": dump_json(sources.our_skills),
         "dramatis-personae.json": dump_json(sources.our_personae),
         "import-report.md": render_report(report),
     }

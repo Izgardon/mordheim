@@ -409,12 +409,6 @@
       "how": "mordheimer"
     },
     {
-      "name": "Skills list prohibitions",
-      "type": "Saurus",
-      "setting": "mordheim",
-      "how": "no match"
-    },
-    {
       "name": "Bellowing Battle Roar",
       "type": "Saurus",
       "setting": "mordheim-1b",
@@ -1027,12 +1021,6 @@
       "how": "mordheimer"
     },
     {
-      "name": "Knowledge of Myths and Legends",
-      "type": "Strigany",
-      "setting": "mordheim",
-      "how": "no match"
-    },
-    {
       "name": "Bull Rush",
       "type": "Strigany",
       "setting": "mordheim",
@@ -1043,18 +1031,6 @@
       "type": "Strigany",
       "setting": "mordheim-2a",
       "how": "mordheimer"
-    },
-    {
-      "name": "Prize-fighter",
-      "type": "Strigany",
-      "setting": "mordheim",
-      "how": "no match"
-    },
-    {
-      "name": "Animal Charmer (eg. Dog Charmer)",
-      "type": "Strigany",
-      "setting": "mordheim",
-      "how": "no match"
     },
     {
       "name": "Infiltration",
@@ -1379,6 +1355,12 @@
       "type": "Speed",
       "setting": "mordheim",
       "how": "mordheimer"
+    },
+    {
+      "name": "Master Inventor",
+      "type": "Dwarf Exiled Engineers",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
     }
   ],
   "hired_swords": [

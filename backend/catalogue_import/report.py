@@ -28,6 +28,7 @@ class ReportData:
     assignment_log: Any
     who_can: dict[str, list[dict[str, Any]]]
     hiring_log: Any
+    skill_lists: Any
 
 
 def _cell(value: object) -> str:
@@ -243,6 +244,32 @@ def _hiring(data: ReportData) -> list[str]:
     return lines
 
 
+def _learners(data: ReportData, decision: dict[str, Any]) -> str:
+    groups = {group["slug"]: group["name"] for group in data.groups}
+    names = [data.names.get(line["type"], line["type"]) if "type" in line else f"{groups.get(line['group'], line['group'])} (group)" for line in decision.get("warbands", [])]  # fmt: skip
+    learners = ", ".join(names) or "everyone"
+    return learners + (", Large units only" if decision.get("large_only") else "")
+
+
+def _skill_lists(data: ReportData) -> list[str]:
+    log = data.skill_lists
+    rows = [[name, _learners(data, decision), decision.get("note", ""), ", ".join(log.placed.get(name, []))] for name, decision in log.decisions.items()]  # fmt: skip
+    lines = [
+        "## Skill lists (William's decisions)",
+        "",
+        "`overrides.json` (`skill_lists`, `drop_skills`, `extra_skills`, `skill_descriptions`) applied to our skills;"
+        " `out/skills.json` is the result, the rows `seed_skills` reads. A list's decision places its skills mordheimer"
+        " lacks; its note is shown when learning, and a Large unit's skill warns for any other unit, never blocks.",
+        "",
+        *_table(["List", "Learned by", "Note", "Skills it places"], rows),
+        "",
+    ]
+    lines += [f"Left out: {name}, {why}" for name, why in log.dropped]
+    lines += [f"Added: {name}, from {source}." for name, source in log.added]
+    lines += [f"Description put right: {name}." for name in log.reworded]
+    return [*lines, ""]
+
+
 def _mim(data: ReportData) -> list[str]:
     names = ", ".join(item["name"] for item in data.mim_items)
     lines = [
@@ -300,6 +327,7 @@ def render_report(data: ReportData) -> str:
         _grade_conflicts,
         _assignments,
         _hiring,
+        _skill_lists,
         _mim,
         _dropped,
     ):
