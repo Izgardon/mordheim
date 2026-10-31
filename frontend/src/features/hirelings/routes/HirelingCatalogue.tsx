@@ -11,12 +11,12 @@ import { BuyableToggle, FilterRow, ReferenceSearch } from "@/features/reference/
 import { ReferenceList, ShowMore, useShownRows } from "@/features/reference/ReferenceList";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
-import RecruitDialog from "@/features/warbands/components/roster/RecruitDialog";
 import { useWarbandSheet } from "@/features/warbands/hooks/warband/useWarbandSheet";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { useMediaQuery } from "@/lib/use-media-query";
 
+import CustomHireDialog from "../components/CustomHireDialog";
 import HireDialog from "../components/HireDialog";
 import HirelingDetail from "../components/HirelingDetail";
 import HirelingProfileFormDialog from "../components/HirelingProfileFormDialog";
@@ -203,10 +203,11 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
         }}
         onEditMatch={(match) => setEditing({ id: match.id })}
       />
-      {warband && hiringOther ? (
-        <RecruitDialog
-          kind="hireling"
-          warbandId={warband.id}
+      {warband ? (
+        <CustomHireDialog
+          campaignId={campaignId}
+          warband={warband}
+          open={hiringOther}
           onClose={() => setHiringOther(false)}
         />
       ) : null}
@@ -215,6 +216,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
           config={config}
           campaignId={campaignId}
           warband={warband}
+          heroes={sheet.heroes}
           entry={hiring}
           onClose={() => setHiring(null)}
         />

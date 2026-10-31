@@ -6,7 +6,7 @@ import type {
 } from "@/features/battles/types/battle-types";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
-import type { HenchmenGroup, WarbandHireling } from "../../types/warband-types";
+import type { HenchmenGroup, WarbandHireling, WarbandResource } from "../../types/warband-types";
 
 /** Camp's rows (design E), top to bottom; Ready sits under them. */
 export type CampRow = "sell" | "recruit" | "hire" | "upkeep" | "buy";
@@ -39,6 +39,8 @@ export type OpenCamp = PostgameSlotProps & {
   gold: number;
   groups: HenchmenGroup[];
   hirelings: WarbandHireling[];
+  /** The warband's resources: what pays an upkeep's resource lines. */
+  resources: WarbandResource[];
   /** Something was bought since the battle (a Buy row in the ledger after you finished): Buy ticks. */
   bought: boolean;
   /** `?camp=`: the row picked from the bar, or "ready" while the confirm is open. */

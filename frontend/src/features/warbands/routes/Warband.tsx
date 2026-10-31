@@ -94,7 +94,8 @@ export default function Warband() {
     userId: user?.id,
     enabled: mine && canEdit,
     isMobile,
-    onHire: () => setRecruiting("hireling"),
+    // the hire picker (the catalogue, with the custom hire), as the roster's Hire
+    onHire: () => navigate(`/campaigns/${campaignId}/hired-swords?warband=${warbandId}`),
     onStore: () => openStore({}),
   } as const;
 

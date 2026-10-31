@@ -84,13 +84,6 @@ export const HIRELING_CATALOGUES: Record<HirelingCatalogueKind, HirelingCatalogu
   "dramatis-personae": DRAMATIS_PERSONAE,
 };
 
-/** "80 gc", the formula when the fee has one ("2D6x10", "1 piece of wyrdstone"), or "-". */
-export function formatHirelingCost(cost: number | null | undefined, expression?: string | null) {
-  if (expression) return expression;
-  if (cost !== null && cost !== undefined) return `${cost} gc`;
-  return "-";
-}
-
 /** The race shown for an entry: the catalogue's, or the source's text when none matched. */
 export const hirelingRace = (entry: { race_name?: string | null; race_label?: string | null }) =>
   entry.race_name || entry.race_label || "";

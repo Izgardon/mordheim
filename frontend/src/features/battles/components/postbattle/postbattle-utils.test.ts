@@ -1,3 +1,4 @@
+import { blankFee } from "@/features/hirelings/fees";
 import { describe, expect, it } from "vitest";
 
 import type {
@@ -82,8 +83,7 @@ const roster: ParticipantRoster = {
       kind: "hireling",
       displayName: "Johann",
       unitType: "Pit Fighter",
-      upkeepPrice: 15,
-      upkeepCostExpression: "",
+      upkeepFee: { ...blankFee(), gold: 15 },
       stats: {
         movement: 4,
         weapon_skill: 4,
@@ -103,8 +103,7 @@ const roster: ParticipantRoster = {
       kind: "hireling",
       displayName: "Shade",
       unitType: "Mystic",
-      upkeepPrice: null,
-      upkeepCostExpression: "1 shard",
+      upkeepFee: { ...blankFee(), resources: [{ resource: "Wyrdstone", amount: 1 }] },
       stats: {
         movement: 4,
         weapon_skill: 3,
@@ -450,7 +449,7 @@ describe("postbattle-utils", () => {
       exploration: { dice_count: 0 },
       upkeep: {
         entries: {
-          "hireling:21": { unit_name: "Johann", cost: 0, cost_expression: "1 piece of wyrdstone" },
+          "hireling:21": { unit_name: "Johann", cost: 0, note: "1 piece of wyrdstone" },
         },
       },
       dismiss: { entries: { "hireling:22": { unit_name: "Shade", reason: "stays_one_battle" } } },
@@ -479,14 +478,14 @@ describe("postbattle-utils", () => {
       expect(row("hireling:22").xpEarned).toBe(0);
     });
 
-    it("drafts no upkeep for a hireling who stays for one battle, and keeps the suggestion's formula", () => {
+    it("drafts no upkeep for a hireling who stays for one battle, and keeps the suggestion's note", () => {
       const draft = buildPostbattleDraft(kindsParticipant, kindsRoster, [], kindsSuggestion);
 
       expect(Object.keys(draft.upkeep.entries)).toEqual(["hireling:21"]);
       expect(draft.upkeep.entries["hireling:21"]).toEqual({
         unit_name: "Johann",
         cost: 0,
-        cost_expression: "1 piece of wyrdstone",
+        note: "1 piece of wyrdstone",
       });
     });
 

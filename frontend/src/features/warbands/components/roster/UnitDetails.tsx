@@ -5,6 +5,7 @@ import { BoxTile, type BoxTileKind } from "@/components/ui/box-tile";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
+import { formatFee } from "@/features/hirelings/fees";
 import type { Item } from "@/features/items/types/item-types";
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
@@ -226,7 +227,7 @@ export default function UnitDetails(props: UnitDetailsProps) {
       {kind === "hireling" ? (
         <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1.5 border-t border-line pt-3 text-[13px]">
           <dt className="text-faint">Upkeep</dt>
-          <dd className="m-0 text-ink">{entry.unit.upkeep_price ?? 0} gc</dd>
+          <dd className="m-0 text-ink">{formatFee(entry.unit.upkeep_fee)}</dd>
         </dl>
       ) : null}
       {kind === "hero" ? (

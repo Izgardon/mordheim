@@ -6,15 +6,41 @@ import type { OpenCamp } from "./camp-types";
 
 const idOf = (unitKey: string) => Number(unitKey.split(":")[1]);
 
-/** Each hired sword's upkeep at camp: due, paid (a tick), or gone (let go, or dismissed since). */
+/**
+ * Each hired sword's upkeep at camp: due, paid (a tick), or gone (let go, or dismissed since), with
+ * the gold and the resource lines the draft holds and his upkeep fee (what pays each resource).
+ */
 export function upkeepLines(camp: OpenCamp) {
   return Object.entries(camp.draft.upkeep.entries)
     .filter(([key]) => !camp.draft.unit_results[key]?.dead)
     .map(([key, entry]) => {
       const sword = camp.hirelings.find((unit) => unit.id === idOf(key));
       const status = !sword ? "gone" : entry.paid ? "paid" : "due";
-      return { key, id: idOf(key), name: entry.unit_name, cost: entry.cost ?? 0, status };
+      const cost = entry.cost ?? 0;
+      return {
+        key,
+        id: idOf(key),
+        name: entry.unit_name,
+        cost,
+        entry,
+        fee: sword?.upkeep_fee,
+        status,
+      };
     });
+}
+
+export type UpkeepLine = ReturnType<typeof upkeepLines>[number];
+
+/** "20 gc and 1 Wyrdstone": what the lines still due ask. */
+export function dueText(lines: UpkeepLine[]) {
+  const due = lines.filter((line) => line.status === "due");
+  const gold = due.reduce((sum, line) => sum + line.cost, 0);
+  const kinds = due.flatMap((line) =>
+    (line.entry.resources ?? [])
+      .filter((resource) => resource.resource_id !== null && resource.amount > 0)
+      .map((resource) => `${resource.amount} ${resource.resource}`)
+  );
+  return [gold || !kinds.length ? `${gold} gc` : "", ...kinds].filter(Boolean).join(" and ");
 }
 
 /** What Ready charges in upkeep: every hired sword still on the roster, ticked or not. */
@@ -72,11 +98,17 @@ export function readySummary(camp: OpenCamp) {
   const finds = draft.finds.gold_crowns;
   const after = camp.gold - upkeepCharged(camp) + finds;
   const { amount, resource } = camp.postgame.explore;
+  const inKind = upkeepLines(camp)
+    .filter((line) => line.status !== "gone")
+    .flatMap((line) => line.entry.resources ?? [])
+    .filter((line) => line.resource_id !== null && line.amount > 0)
+    .map((line) => `${line.amount} ${line.resource}`);
   return [
     { k: "Deaths", v: deaths.join(", ") || "None" },
     { k: "Advances", v: advances.join(" · ") || "None" },
     { k: "Injuries", v: injuries.join(" · ") || "None" },
     { k: "Gold", v: `${camp.gold} → ${after} gc` },
+    ...(inKind.length ? [{ k: "Upkeep", v: inKind.join(", ") }] : []),
     {
       k: "Shards",
       v: resource ? `+${amount} ${resource.name}, now ${resource.amount + amount}` : `+${amount}`,

@@ -2,6 +2,7 @@
  * A two-player battle for the battle screens' tests, in the API's shapes: the signed-in user (7,
  * the creator, "Iron Vultures") against user 9 ("Night Razors"), battle 5 in campaign 1.
  */
+import { blankFee } from "@/features/hirelings/fees";
 import type {
   BattleEvent,
   BattleParticipant,
@@ -79,8 +80,7 @@ export const battleRosters = (): BattleRosterMap => ({
         displayName: "Ogre Bodyguard",
         unitType: "Ogre",
         stats: stats({ wounds: 3 }),
-        upkeepPrice: 15,
-        upkeepCostExpression: "15 gc",
+        upkeepFee: { ...blankFee(), gold: 15 },
       }),
     ],
     henchmenGroups: [

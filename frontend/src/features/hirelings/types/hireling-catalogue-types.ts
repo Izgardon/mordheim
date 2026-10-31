@@ -4,6 +4,8 @@ import type { Skill } from "@/features/skills/types/skill-types";
 import type { Special } from "@/features/special/types/special-types";
 import type { Spell } from "@/features/spells/types/spell-types";
 
+import type { Fee } from "../fees";
+
 /** How long a dramatis persona stays with the warband that hires him. */
 export type HirelingStays = "always" | "one_battle";
 
@@ -32,11 +34,9 @@ export type HirelingProfile = CatalogueBadgeFields & {
   race_id: number | null;
   race_name: string | null;
   race_label: string;
-  /** Null with a formula ("2 Treasure"): the fee isn't gold. */
-  hire_cost: number | null;
-  hire_cost_expression: string;
-  upkeep_cost: number | null;
-  upkeep_cost_expression: string;
+  /** What hiring him costs and what keeping him costs after each battle (structured fees). */
+  hire_fee: Fee;
+  upkeep_fee: Fee;
   rating: number | null;
   available_skill_types: string[];
   grade?: string;
@@ -83,10 +83,8 @@ export type HirelingProfileWrite = {
   caster: string;
   race_id: number | null;
   race_label: string;
-  hire_cost: number | null;
-  hire_cost_expression: string;
-  upkeep_cost: number | null;
-  upkeep_cost_expression: string;
+  hire_fee: Fee;
+  upkeep_fee: Fee;
   rating: number | null;
   available_skill_types: string[];
   skill_ids: number[];

@@ -80,6 +80,7 @@ function OpenDraft({
     gold: sheet?.summary.gold ?? sheet?.warband.gold ?? 0,
     groups: (sheet?.henchmen_groups ?? []) as HenchmenGroup[],
     hirelings: (sheet?.hirelings ?? []) as WarbandHireling[],
+    resources: sheet?.summary.resources ?? [],
     bought: boughtSince(ledger.data?.pages[0]?.results ?? [], me.finished_at),
     focus: params.get("camp"),
     setCamp,

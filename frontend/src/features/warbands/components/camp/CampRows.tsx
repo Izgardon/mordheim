@@ -1,17 +1,14 @@
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Check, Dices } from "lucide-react";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { rollDice } from "@/lib/dice";
-import { getErrorMessage } from "@/lib/get-error-message";
 import { cn } from "@/lib/utils";
 
-import { useWarbandCacheUpdate } from "../../api/warband-cache";
-import { unitApi } from "../../units/unit-api";
-import { upkeepCharged, upkeepLines } from "./camp-state";
+import { dueText, upkeepCharged, upkeepLines } from "./camp-state";
 import type { CampRow, OpenCamp } from "./camp-types";
 import { campDone } from "./PostgameBar";
+import UpkeepRows from "./UpkeepRows";
 
 type RowProps = {
   id: CampRow;
@@ -81,14 +78,11 @@ export default function CampRows({
   onSell: () => void;
   onRecruit: () => void;
 }) {
-  const updateCache = useWarbandCacheUpdate();
-  const [lettingGo, setLettingGo] = useState<number | null>(null);
   const record = camp.draft.camp ?? {};
   const done = campDone(camp);
   const vet = record.veterans;
   const pool = vet ? vet.dice[0] + vet.dice[1] - vet.spent : 0;
   const lines = upkeepLines(camp);
-  const due = lines.filter((line) => line.status === "due").reduce((s, l) => s + l.cost, 0);
   const lastSale = record.sold?.[record.sold.length - 1];
   const maxHired = camp.campaign?.max_hired_swords;
   const withCamp = (next: typeof record) => camp.save({ ...camp.draft, camp: next });
@@ -96,19 +90,6 @@ export default function CampRows({
     const entries = { ...camp.draft.upkeep.entries };
     for (const key of keys) entries[key] = { ...entries[key], paid: true };
     void camp.save({ ...camp.draft, upkeep: { ...camp.draft.upkeep, entries } });
-  };
-  const letGo = async (id: number) => {
-    try {
-      const result = await unitApi("hireling").batch(camp.warbandId, { dismiss: [id] });
-      updateCache(camp.warbandId, {
-        hirelings: result.units,
-        summary: result.summary,
-        removedHirelingIds: [id],
-      });
-      setLettingGo(null);
-    } catch (error) {
-      toast.error("Couldn't let him go.", { description: getErrorMessage(error) });
-    }
   };
   const row = (id: CampRow) => ({ id, focused: camp.focus === id, isMobile: camp.isMobile });
 
@@ -153,78 +134,17 @@ export default function CampRows({
         sub={
           !lines.length
             ? "No hired swords to pay"
-            : due
-              ? `${due} gc due, charged at Ready`
+            : lines.some((line) => line.status === "due")
+              ? `${dueText(lines)} due, charged at Ready`
               : "Settled"
         }
-        action={due ? "Pay all" : undefined}
+        action={lines.some((line) => line.status === "due") ? "Pay all" : undefined}
         done={done.upkeep}
         onAction={() =>
           setPaid(lines.filter((line) => line.status === "due").map((line) => line.key))
         }
       >
-        {lines.map((line) => (
-          <div
-            key={line.key}
-            className={cn(
-              "flex items-center justify-between gap-2 border-t border-dashed border-line",
-              camp.isMobile ? "min-h-12 py-0.5 pl-6 pr-1.5" : "py-[7px] pl-[22px] pr-1"
-            )}
-          >
-            <div className="flex flex-col">
-              <span className="text-[13px] font-semibold text-ink">{line.name}</span>
-              <span className="text-xs text-muted-foreground">{line.cost} gc</span>
-            </div>
-            {line.status !== "due" ? (
-              <span
-                className={cn(
-                  "text-xs font-bold",
-                  line.status === "paid" ? "text-good" : "text-danger"
-                )}
-              >
-                {line.status === "paid" ? "Paid" : "Let go"}
-              </span>
-            ) : lettingGo === line.id ? (
-              <div className="flex gap-1">
-                <Button
-                  size="sm"
-                  variant="danger"
-                  className="h-8 text-xs"
-                  onClick={() => void letGo(line.id)}
-                >
-                  Let go: carried items are lost
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-8 text-xs"
-                  onClick={() => setLettingGo(null)}
-                >
-                  Keep
-                </Button>
-              </div>
-            ) : (
-              <div className="flex gap-1">
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  className={camp.isMobile ? "h-10 text-xs" : "h-8 text-xs"}
-                  onClick={() => setPaid([line.key])}
-                >
-                  Pay
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className={camp.isMobile ? "h-10 text-xs" : "h-8 text-xs"}
-                  onClick={() => setLettingGo(line.id)}
-                >
-                  Let go
-                </Button>
-              </div>
-            )}
-          </div>
-        ))}
+        <UpkeepRows camp={camp} lines={lines} />
       </Row>
       <Row
         {...row("buy")}

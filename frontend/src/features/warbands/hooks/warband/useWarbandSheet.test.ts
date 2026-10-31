@@ -1,3 +1,4 @@
+import { blankFee } from "@/features/hirelings/fees";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -96,9 +97,8 @@ const richHireling = {
   unit_type: "Hired Sword",
   race_id: null,
   price: 80,
-  hire_cost_expression: null,
-  upkeep_price: 15,
-  upkeep_cost_expression: null,
+  hire_fee: { ...blankFee(), gold: 80 },
+  upkeep_fee: { ...blankFee(), gold: 15 },
   rating: 20,
   xp: 8,
   level_up: 2,

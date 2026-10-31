@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 
 import { ReferenceRow } from "@/features/reference/ReferenceList";
 
-import { formatHirelingCost, hirelingRace } from "../hireling-catalogue-kinds";
+import { formatFee } from "../fees";
+import { hirelingRace } from "../hireling-catalogue-kinds";
 import type { HirelingProfile } from "../types/hireling-catalogue-types";
 
 export const HIRELING_COLUMNS = [
@@ -30,8 +31,8 @@ export default function HirelingRow({
   /** The open row's detail. */
   children: ReactNode;
 }) {
-  const fee = formatHirelingCost(entry.hire_cost, entry.hire_cost_expression);
-  const upkeep = formatHirelingCost(entry.upkeep_cost, entry.upkeep_cost_expression);
+  const fee = formatFee(entry.hire_fee);
+  const upkeep = formatFee(entry.upkeep_fee);
   return (
     <ReferenceRow
       id={String(entry.id)}

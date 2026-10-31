@@ -4,6 +4,7 @@ import type {
   BattleRosterMissingFields,
 } from "@/features/battles/types/battle-types";
 import type { BattleWarning } from "@/features/battles/utils/battle-warnings";
+import type { Fee } from "@/features/hirelings/fees";
 
 export type NumericStatKey =
   | "movement"
@@ -59,8 +60,8 @@ export type PrebattleUnit = BattleRosterCompanionFields & {
   /** A henchman: the loadout rows he lacks, which he starts without. */
   gaps?: { rowId: number; itemId: number; name: string; reason: string }[];
   stats: UnitStats;
-  upkeepPrice?: number | null;
-  upkeepCostExpression?: string | null;
+  /** His upkeep (structured fee). */
+  upkeepFee?: Fee;
   singleUseItems?: UnitSingleUseItem[];
   items?: UnitItemEntry[];
   skills?: UnitDetailEntry[];

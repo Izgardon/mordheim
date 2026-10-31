@@ -3,6 +3,7 @@ import type { Item, SalePriceBasis } from "../../items/types/item-types";
 import type { Skill } from "../../skills/types/skill-types";
 import type { Spell } from "../../spells/types/spell-types";
 import type { Special } from "../../special/types/special-types";
+import type { Fee } from "../../hirelings/fees";
 import type { BeastKind } from "../../bestiary/bestiary-kinds";
 import type { CreatureGroupFields, GroupMountFields, UnitCompanionFields } from "./companion-types";
 
@@ -257,9 +258,9 @@ export type WarbandHireling = UnitCompanionFields &
     race_id: number | null;
     race_name?: string | null;
     price: number | null;
-    hire_cost_expression?: string | null;
-    upkeep_price?: number | null;
-    upkeep_cost_expression?: string | null;
+    /** The fee he was hired for and the upkeep he is kept for (structured fees). */
+    hire_fee?: Fee;
+    upkeep_fee?: Fee;
     rating?: number | null;
     xp: number | null;
     kills?: number | null;
@@ -345,9 +346,8 @@ export type WarbandHirelingPayload = {
   unit_type: string | null;
   race: number | null;
   price: number | null;
-  hire_cost_expression?: string;
-  upkeep_price?: number | null;
-  upkeep_cost_expression?: string;
+  hire_fee?: Fee;
+  upkeep_fee?: Fee;
   rating?: number | null;
   xp: number | null;
   level_up?: number | null;
@@ -416,7 +416,6 @@ export type HeroFormEntry = {
 
 export type HirelingFormEntry = HeroFormEntry &
   HirelingTerms & {
-    upkeep_price: string;
     rating: string;
     blood_pacted: boolean;
     no_level_ups: boolean;
@@ -441,7 +440,6 @@ export type NewHirelingForm = HirelingTerms & {
   race_name: string;
   stats: Record<string, string>;
   price: string;
-  upkeep_price: string;
   rating: string;
   xp: string;
   armour_save: string;
