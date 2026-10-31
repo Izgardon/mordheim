@@ -2,7 +2,7 @@
 
 Five kinds, each from the record it already has, in a fixed number of queries whatever the campaign's size:
 
-- `kill`: the live kill events of ended battles (undone kills don't count, decision 5);
+- `kill`: the live kills of ended battles (battle_kill: undone kills don't count, decision 5);
 - `death`: the units the post-games of ended battles left dead;
 - `level`: heroes' level-ups and the lad's got talent (the warband log's "advance" entries; henchmen's and hired
   swords' other advances are left out);
@@ -16,11 +16,11 @@ from typing import Any
 from django.db.models import Q
 from django.utils import timezone
 
-from apps.battles.models import Battle, BattleParticipant
+from apps.battles.models import Battle, BattleKill, BattleParticipant
 from apps.battles.services.kills import live_kills_in
-from apps.warbands.models import Warband, WarbandLog
+from apps.warbands.models import WarbandLog
 
-from .battle_moments import death_text, kill_text, unit_results
+from .battle_moments import death_text, unit_results
 
 KINDS = ("kill", "death", "level", "buy", "trade")
 LIMIT = 40
@@ -36,15 +36,16 @@ def _entry(kind: str, text: str, meta: str, at: datetime | None) -> dict[str, An
     return {"kind": kind, "text": text, "meta": meta, "at": at or timezone.now()}
 
 
+def kill_text(kill: BattleKill) -> str:
+    return f"{kill.killer_called(start=True)} took {kill.victim_called()} out of action"
+
+
 def _kills(campaign_id: int) -> list[dict[str, Any]]:
-    events = live_kills_in(campaign_id).select_related("battle").order_by("-id")[:LIMIT]
-    names: dict[Any, str] = dict(Warband.objects.filter(campaign_id=campaign_id).values_list("id", "name"))
+    kills = live_kills_in(campaign_id).select_related("battle", "killer_warband").order_by("-created_at", "-id")[:LIMIT]
     rows = []
-    for event in events:
-        killer = event.payload_json.get("killer") if isinstance(event.payload_json, dict) else None
-        warband = names.get(killer.get("warband_id")) if isinstance(killer, dict) else None
-        meta = " · ".join(part for part in (warband, event.battle.scenario) if part)
-        rows.append(_entry("kill", kill_text(event.payload_json), meta, event.created_at))
+    for kill in kills:
+        meta = " · ".join(part for part in (kill.killer_warband.name, kill.battle.scenario) if part)
+        rows.append(_entry("kill", kill_text(kill), meta, kill.created_at))
     return rows
 
 

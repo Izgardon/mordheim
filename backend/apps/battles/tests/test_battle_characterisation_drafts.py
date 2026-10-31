@@ -252,10 +252,10 @@ class PostbattleKillTests(BattleTestCase):
         url = f"/api/warbands/{self.warband.id}/heroes/{self.hero.id}/kill-history/"
         self.ok(self.post_as(self.player, self.url(self.battle_id, "cancel-battle")))
 
-        self.assertEqual(self.ok(self.get_as(self.player, url)).data, {"total_kills": 0, "named_kills_count": 0, "named_kills": []})  # fmt: skip
+        self.assertEqual(self.ok(self.get_as(self.player, url)).data, {"total_kills": 0, "kills": []})
 
         Battle.objects.filter(id=self.battle_id).update(status=Battle.STATUS_ENDED)
+        [kill] = self.ok(self.get_as(self.player, url)).data["kills"]
         self.assertEqual(
-            self.ok(self.get_as(self.player, url)).data["named_kills"],
-            [{"victim_name": "Rat", "victim_warband_name": "Rats", "scenario_name": "Bridge"}],
+            (kill["victim"], kill["victim_warband"], kill["scenario"], kill["round"]), ("Rat", "Rats", "Bridge", 1)
         )

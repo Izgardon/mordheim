@@ -23,16 +23,15 @@ broadcast (services/broadcast.py).
 """
 
 from collections.abc import Iterable
-from typing import Any
 
 from apps.campaigns.models import CampaignSettings
 
-from ...models import Battle, BattleParticipant
+from ...models import Battle, BattleKill, BattleParticipant
 from ...validation.config import normalize_unit_information
 from ...validation.postbattle import MAX_EXPLORATION_DICE
 from ..exploration import exploration_table
 from ..injuries import injury_tables
-from ..kills import count_kills, live_kill_events
+from ..kills import count_by_unit, live_kills
 from ..selection import selected_unit_keys
 from ..unusual import MAX_EXPLORATION_DICE as MAX_CHOSEN_DICE
 from .kill_list import unit_kills
@@ -40,11 +39,8 @@ from .level_ups import add_level_ups, unit_rows
 from .mounts import mount_survival
 
 
-def _xp_kills(kill_payloads: Iterable[Any], warband_id: int) -> dict[str, int]:
-    earning = [
-        payload for payload in kill_payloads if not (isinstance(payload, dict) and payload.get("earned_xp") is False)
-    ]
-    return dict(count_kills(earning, warband_id))
+def _xp_kills(kills: Iterable[BattleKill], warband_id: int) -> dict[str, int]:
+    return dict(count_by_unit(kills, warband_id, xp_only=True))
 
 
 def _suggestion(*reasons: tuple[str, int] | None) -> dict:
@@ -133,11 +129,11 @@ def won(battle: Battle, participant: BattleParticipant) -> bool:
     return participant.warband_id in (battle.winner_warband_ids_json or [])
 
 
-def suggested_postbattle(battle: Battle, participant: BattleParticipant, kill_payloads: Iterable[Any]) -> dict:
+def suggested_postbattle(battle: Battle, participant: BattleParticipant, live: Iterable[BattleKill]) -> dict:
     """The player's suggested XP per unit, exploration dice, upkeep and who leaves, from his battle roster."""
     roster = participant.roster_json or {}
     selected = selected_unit_keys(participant)
-    kills = _xp_kills(kill_payloads, participant.warband_id)
+    kills = _xp_kills(live, participant.warband_id)
     heroes = [hero for hero in roster.get("heroes", []) if hero.get("key") in selected]
     swords = [sword for sword in roster.get("hirelings", []) if sword.get("key") in selected]
     winner = won(battle, participant)
@@ -176,13 +172,13 @@ def suggestions_for(
     battle: Battle,
     participants: list[BattleParticipant],
     settings: CampaignSettings | None,
-    kill_payloads: list[Any] | None = None,
+    live: list[BattleKill] | None = None,
 ) -> dict[int, dict]:
     """Each player's `suggested_postbattle` by user id (players read with their battle rosters), with the level-ups
-    each unit's XP would earn: the live kill events (unless given) and at most one read per unit kind for all."""
-    if kill_payloads is None:
-        kill_payloads = list(live_kill_events(battle.id).values_list("payload_json", flat=True))
-    suggestions = {entry.user_id: suggested_postbattle(battle, entry, kill_payloads) for entry in participants}
+    each unit's XP would earn: the live kills (unless given) and at most one read per unit kind for all."""
+    if live is None:
+        live = list(live_kills(battle.id))
+    suggestions = {entry.user_id: suggested_postbattle(battle, entry, live) for entry in participants}
     keys = {key for suggestion in suggestions.values() for key in suggestion["unit_results"]}
     rows = unit_rows([entry.roster_json or {} for entry in participants], keys)
     for suggestion in suggestions.values():
@@ -192,13 +188,12 @@ def suggestions_for(
 
 def postbattle_guide(battle: Battle, participant: BattleParticipant) -> dict:
     """`suggested_postbattle`, `rules` and `unit_kills` (his units' kills by victim, BATL-NEW-06) for the postbattle
-    page's state: the player's battle roster, the live kill events and his units' XP (up to three reads); the
+    page's state: the player's battle roster, the live kills (with their events, for the notes) and his units' XP (up to three reads); the
     campaign's settings come with the battle, the participants with the snapshot."""
     settings = getattr(battle.campaign, "settings", None)
-    kills = list(live_kill_events(battle.id).only("id", "payload_json").order_by("id"))
-    payloads = [event.payload_json for event in kills]
+    kills = list(live_kills(battle.id).select_related("event").order_by("id"))
     return {
-        "suggested_postbattle": suggestions_for(battle, [participant], settings, payloads)[participant.user_id],
+        "suggested_postbattle": suggestions_for(battle, [participant], settings, kills)[participant.user_id],
         "rules": rules_for(settings),
         "unit_kills": unit_kills(participant.warband_id, kills, battle.participants.all()),
     }

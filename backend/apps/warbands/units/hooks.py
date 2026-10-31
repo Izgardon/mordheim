@@ -64,9 +64,10 @@ class UnitHooks:
     def after_dismiss(self, warband: Warband) -> None:
         pass
 
-    def kill_tally(self, kind: "UnitKindSpec", unit: Any) -> tuple[str, list[int], int]:
-        """(killer type in kill events, killer ids, total kills) for the unit's kill history."""
-        return kind.key, [unit.id], unit.kills or 0
+    def kill_tally(self, kind: "UnitKindSpec", unit: Any) -> tuple[dict[str, Any], int]:
+        """(the battle_kill filter for its kills, total kills) for the unit's kill history: `killer_hero` or
+        `killer_hireling`."""
+        return {f"killer_{kind.key}": unit}, unit.kills or 0
 
 
 class LeaderHooks(UnitHooks):
@@ -289,7 +290,7 @@ class HenchmenHooks(UnitHooks):
             )
         ledger.record_entries(charges)
 
-    def kill_tally(self, kind: "UnitKindSpec", unit: Any) -> tuple[str, list[int], int]:
-        """Kills are credited to members, dead and dismissed ones included."""
+    def kill_tally(self, kind: "UnitKindSpec", unit: Any) -> tuple[dict[str, Any], int]:
+        """Kills are credited to members, dead and dismissed ones included: the group's kills, and their total."""
         members: Mapping[int, int] = dict(Henchman.objects.filter(group=unit).values_list("id", "kills"))
-        return "henchman", list(members), sum(int(kills or 0) for kills in members.values())
+        return {"killer_group": unit}, sum(int(kills or 0) for kills in members.values())

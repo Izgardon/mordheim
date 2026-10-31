@@ -14,7 +14,7 @@ from typing import Any
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient, APITestCase
 
-from apps.battles.models import Battle, BattleEvent
+from apps.battles.models import Battle, BattleEvent, BattleKill
 from apps.campaigns.models import (
     Campaign,
     CampaignMembership,
@@ -181,11 +181,33 @@ def log_rows(warband: Warband) -> list[tuple[str, str, dict[str, Any], str | Non
     return [(row.feature, row.entry_type, row.payload, row.parent.entry_type if row.parent else None) for row in rows]
 
 
-def record_kill(battle: Battle, killer_type: str, killer_id: int, victim: dict[str, Any]) -> BattleEvent:
-    return BattleEvent.objects.create(
+def record_kill(
+    battle: Battle,
+    killer: Hero | Hireling | Henchman,
+    victim: str = "Rat",
+    warband: Warband | None = None,
+    **columns: Any,
+) -> BattleKill:
+    """A live kill (battle_kill, next step 9) by a hero, hired sword or henchman, with its event: a victim of
+    `warband` (a hero), or someone named by hand without one."""
+    event = BattleEvent.objects.create(battle=battle, type=BattleEvent.TYPE_UNIT_KILL_RECORDED, payload_json={})
+    if isinstance(killer, Henchman):
+        kind, keys, own = "henchman", {"killer_henchman": killer, "killer_group": killer.group}, killer.group.warband
+    else:
+        kind = "hero" if isinstance(killer, Hero) else "hireling"
+        keys, own = {f"killer_{kind}": killer}, killer.warband
+    fields = {"phase": "fight", "round": 1, "killer_name": killer.name, **columns}
+    return BattleKill.objects.create(
         battle=battle,
-        type=BattleEvent.TYPE_UNIT_KILL_RECORDED,
-        payload_json={"killer": {"unit_type": killer_type, "unit_id": killer_id}, "victim": victim},
+        campaign_id=battle.campaign_id,
+        event=event,
+        killer_warband=own,
+        killer_kind=kind,
+        victim_kind="hero" if warband else "someone_else",
+        victim_warband=warband,
+        victim_name=victim,
+        **keys,
+        **fields,
     )
 
 

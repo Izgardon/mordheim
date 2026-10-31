@@ -8,7 +8,7 @@ written once, in the order they are found.
 from dataclasses import dataclass
 
 from apps.battles.models import Battle, BattleEvent, BattleParticipant
-from apps.battles.services.kills import count_kills, live_kill_events
+from apps.battles.services.kills import count_by_unit, live_kills
 
 from .models import PivotalMoment
 
@@ -248,7 +248,7 @@ def _generate_warband_moments(
     kill_events: list[BattleEvent],
 ) -> None:
     winner_ids = set(battle.winner_warband_ids_json or [])
-    kills = count_kills(event.payload_json for event in kill_events)  # as finalise counts them (decision 5, BUG-11)
+    kills = count_by_unit(event.kill for event in kill_events)  # as finalise counts them (decision 5, BUG-11)
     for participant in participants:
         unit_results = _normalize_unit_results(participant)
         _unit_moments(battle, participant, unit_results, kills, rows)
@@ -280,7 +280,7 @@ def generate_pivotal_moments_for_battle(battle: Battle) -> None:
     participants_by_warband_id = {participant.warband_id: participant for participant in participants}
     names_by_key = _build_unit_names_by_key(participants)
 
-    kill_events = list(live_kill_events(battle.id).order_by("id"))  # undone kills don't count (decision 5)
+    kill_events = [kill.event for kill in live_kills(battle.id).select_related("event").order_by("id")]
     _generate_event_driven_moments(battle, participants_by_warband_id, names_by_key, rows, kill_events)
     _generate_warband_moments(battle, participants, rows, kill_events)
 

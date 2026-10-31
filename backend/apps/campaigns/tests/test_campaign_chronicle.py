@@ -4,7 +4,7 @@ own place in his unfinished battle (the readiness bar)."""
 from datetime import UTC, datetime
 from typing import Any
 
-from apps.battles.models import Battle, BattleEvent, BattleParticipant
+from apps.battles.models import Battle, BattleEvent, BattleKill, BattleParticipant
 from apps.warbands.models import WarbandLog
 
 from .campaign_support import CampaignTestCase
@@ -22,12 +22,26 @@ PIA_RESULTS = {
 REX_RESULTS = {"hero:3": {"unit_name": "Seer", "unit_kind": "hero", "out_of_action": False, "dead": False}}
 
 
-def kill(battle: Battle, killer: dict, victim: dict, *, voided: bool = False) -> BattleEvent:
-    return BattleEvent.objects.create(
+def kill(battle: Battle, killer: dict, victim: dict, *, voided: bool = False) -> BattleKill:
+    """A kill as battle_kill keeps it (next step 9), with its event: a hero (whose row is gone) as the killer."""
+    voided_at = datetime(2026, 3, 24, tzinfo=UTC) if voided else None
+    payload = {"killer": killer, "victim": victim, "earned_xp": True, "source": "battle"}
+    event = BattleEvent.objects.create(
+        battle=battle, type=BattleEvent.TYPE_UNIT_KILL_RECORDED, payload_json=payload, voided_at=voided_at
+    )
+    return BattleKill.objects.create(
         battle=battle,
-        type=BattleEvent.TYPE_UNIT_KILL_RECORDED,
-        payload_json={"killer": killer, "victim": victim, "earned_xp": True, "source": "battle"},
-        voided_at=datetime(2026, 3, 24, tzinfo=UTC) if voided else None,
+        campaign_id=battle.campaign_id,
+        event=event,
+        phase="fight",
+        voided_at=voided_at,
+        killer_warband_id=killer["warband_id"],
+        killer_kind="hero",
+        killer_name=killer.get("name") or "",
+        victim_kind="hero" if victim.get("warband_id") else "someone_else",
+        victim_warband_id=victim.get("warband_id"),
+        victim_name=victim.get("name") or "",
+        victim_type=victim.get("type_name") or "",
     )
 
 

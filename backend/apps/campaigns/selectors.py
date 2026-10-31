@@ -230,7 +230,7 @@ def _history_participant(participant: BattleParticipant) -> dict[str, Any]:
 
 def _kills_by_battle(campaign_id: int) -> dict[int, list[Any]]:
     """The live kill events of the campaign's ended battles, in order, by battle (one query)."""
-    events = live_kills_in(campaign_id).order_by("id").values_list("battle_id", "payload_json")
+    events = live_kills_in(campaign_id).order_by("id").values_list("battle_id", "event__payload_json")
     kills: dict[int, list[Any]] = {}
     for battle_id, payload in events:
         kills.setdefault(battle_id, []).append(payload)
