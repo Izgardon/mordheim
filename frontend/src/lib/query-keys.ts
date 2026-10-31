@@ -108,6 +108,9 @@ export const queryKeys = {
     /** A summary read that refreshes the sheet's summary after a write (never observed). */
     warbandSummary: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "summary"] as const,
+    /** One unit's kills (its open card's Kills list), by its card key ("hero-12"). */
+    unitKills: (campaignId: number, warbandId: number, unitKey: string) =>
+      ["campaign", campaignId, "warband", warbandId, "kills", unitKey] as const,
     warbandStash: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "stash"] as const,
     /** The warband's ledger, as the Treasury tab lists it. */

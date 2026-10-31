@@ -11,7 +11,7 @@ import type { CampaignLayoutContext } from "./CampaignLayout";
 
 /**
  * The Battles page (the rail's Battles, design E's rows): every ended battle, newest first, each
- * opening to its key moments; your unfinished battle and results to answer above them.
+ * opening to its pivotal moments; your unfinished battle and results to answer above them.
  */
 export default function Battles() {
   const { id } = useParams();
@@ -45,7 +45,7 @@ export default function Battles() {
       ) : history.error ? (
         <p className="m-0 text-sm text-danger">{getErrorMessage(history.error)}</p>
       ) : (
-        <BattleRows battles={battles} isMobile={isMobile} />
+        <BattleRows battles={battles} campaignId={campaignId} isMobile={isMobile} />
       )}
     </div>
   );

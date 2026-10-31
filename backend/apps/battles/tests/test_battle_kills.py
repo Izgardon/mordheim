@@ -1,10 +1,11 @@
 """Undoing kills and item uses, and adding kills in postbattle (decision 5, BUG-11, BATL-TWEAK-03, BATL-NEW-06).
 
 A player voids his own kill or item use until he finalises; the event stays in the timeline, marked voided, with a
-`*_voided` event after it. Finalise, the live kill_count, pivotal moments and kill history count only live kills.
+`*_voided` event after it, and its battle_kill row is voided too (next step 9). Finalise, the live kill_count, pivotal
+moments and kill history count only live kills.
 """
 
-from apps.battles.models import BattleEvent
+from apps.battles.models import BattleEvent, BattleKill
 from apps.warbands.models import Hero, HeroItem
 
 from .battle_support import BattleTestCase, catalogue_item, draft, status_changed, unit_result
@@ -24,8 +25,10 @@ class BattleUndoTests(BattleTestCase):
         return self.post_as(user, f"{self.url(self.battle_id, 'events')}{event_id}/void/")
 
     def kill_count(self) -> int:
-        info = self.participant(self.battle_id, self.player).unit_information_json
-        return int(info.get(self.a, {}).get("kill_count", 0))
+        """The killer's live kill_count as the snapshot shows it (battle_kill, never stored)."""
+        state = self.ok(self.get_as(self.player, self.url(self.battle_id, "state"))).data
+        mine = next(entry for entry in state["participants"] if entry["user"]["id"] == self.player.id)
+        return int(mine["unit_information_json"].get(self.a, {}).get("kill_count", 0))
 
     def test_an_undone_kill_counts_nowhere(self):
         first = self.ok(self.kill(self.player, self.battle_id, self.a, self.r), 201).data["events"][0]["id"]
@@ -39,6 +42,8 @@ class BattleUndoTests(BattleTestCase):
             [("unit_kill_voided", {"voided_event_id": first, "unit_key": self.a})],
         )
         self.assertIsNotNone(BattleEvent.objects.get(id=first).voided_at)
+        voided = BattleKill.objects.get(event_id=first)
+        self.assertEqual(voided.voided_at, BattleEvent.objects.get(id=first).voided_at)  # kept, counted nowhere
         self.assertEqual(self.kill_count(), 1)
         state = self.ok(self.get_as(self.viewer, self.url(self.battle_id, "state"))).data
         voided = next(event for event in state["events"] if event["id"] == first)
@@ -153,4 +158,4 @@ class NamedKillTests(BattleTestCase):
         self.abbess.refresh_from_db()
         self.assertEqual(self.abbess.kills, 3)
         history = self.ok(self.get_as(self.player, f"/api/warbands/{self.warband.id}/heroes/{self.abbess.id}/kill-history/")).data  # fmt: skip
-        self.assertEqual(sorted(kill["victim_name"] for kill in history["named_kills"]), ["Rat", "Youngblood"])
+        self.assertEqual(sorted(kill["victim"] for kill in history["kills"]), ["A Youngblood", "Ogre", "Rat"])

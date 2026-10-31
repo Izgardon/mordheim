@@ -6,7 +6,7 @@ armour saves when they are entered (BUG-123, fixed). Item use is in test_battle_
 
 from typing import Any
 
-from apps.battles.models import Battle, BattleParticipant
+from apps.battles.models import Battle, BattleKill, BattleParticipant
 from apps.warbands.models import Henchman, HenchmenGroup, Hero
 from apps.warbands.utils.armour_save import ARMOUR_SAVE_ERROR
 
@@ -15,7 +15,7 @@ from .battle_support import BattleTestCase, draft, status_changed, unit_result
 
 def info(**fields: Any) -> dict[str, Any]:
     """One stored unit_information entry: the defaults the server fills in, with `fields` changed."""
-    return {"stats_override": {}, "notes": "", "current_wounds": None, "out_of_action": False, "kill_count": 0} | fields
+    return {"stats_override": {}, "notes": "", "current_wounds": None, "out_of_action": False} | fields
 
 
 class BattleConfigTests(BattleTestCase):
@@ -34,8 +34,15 @@ class BattleConfigTests(BattleTestCase):
         stored: dict[str, Any] = self.participant(self.battle_id, self.player).unit_information_json
         return stored
 
+    def shown_kills(self) -> dict[str, int]:
+        """Each unit's live kill_count as the snapshot shows it (from battle_kill, never stored; next step 9)."""
+        state = self.ok(self.get_as(self.player, self.url(self.battle_id, "state"))).data
+        mine = next(entry for entry in state["participants"] if entry["user"]["id"] == self.player.id)
+        return {key: entry["kill_count"] for key, entry in mine["unit_information_json"].items()}
+
     def test_a_whole_map_from_an_older_client_keeps_kills_and_out_of_action(self):
-        # BUG-44, BATL-TEST-11: a stale whole map replaces the editable fields but not the kill or the OOA
+        # BUG-44, BATL-TEST-11: a stale whole map replaces the editable fields but not the kill or the OOA (kills are
+        # battle_kill rows, next step 9: never stored here, and a kill_count sent is ignored)
         self.ok(self.kill(self.player, self.battle_id, self.a, self.r), 201)
         self.ok(
             self.post_as(
@@ -43,17 +50,18 @@ class BattleConfigTests(BattleTestCase):
             ),
             201,
         )
-        self.assertEqual(self.stored_info(), {self.a: info(kill_count=1), self.n: info(out_of_action=True)})
+        self.assertEqual(self.stored_info(), {self.n: info(out_of_action=True)})
 
         stale = {self.a: {"current_wounds": 1, "kill_count": 0}}  # a wound save built before the kill and the OOA
         self.ok(self.config({"unit_information_json": stale}))
 
-        expected = {self.a: info(current_wounds=1, kill_count=1), self.n: info(out_of_action=True)}
+        expected = {self.a: info(current_wounds=1), self.n: info(out_of_action=True)}
         self.assertEqual(self.stored_info(), expected)
+        self.assertEqual(self.shown_kills(), {self.a: 1, self.n: 0})
         self.assertEqual(self.event_types(self.battle_id)[-2:], ["unit_kill_recorded", "unit_ooa_set"])
 
     def test_config_ignores_kill_counts(self):
-        # BUG-11 (input half, with BUG-44): kill_count comes from the kill events, never from config
+        # BUG-11 (input half, with BUG-44): kill_count comes from the kills (battle_kill), never from config
         self.ok(self.config({"unit_information_json": {self.a: {"kill_count": 50000}, self.n: {"kill_count": "x"}}}))
         self.ok(self.config({"unit_information_patch": {self.a: {"kill_count": 7, "out_of_action": True}}}))
         self.assertEqual(self.stored_info(), {})
@@ -70,7 +78,7 @@ class BattleConfigTests(BattleTestCase):
         self.ok(self.config({"unit_information_patch": {self.a: {"notes": "brave"}, self.n: {"current_wounds": 2}}}))
         self.ok(self.config({"unit_information_patch": {self.a: {"stats_override": {"strength": 4}}}}))
 
-        expected_a = info(notes="brave", stats_override={"strength": 4}, kill_count=1)
+        expected_a = info(notes="brave", stats_override={"strength": 4})
         self.assertEqual(self.stored_info(), {self.a: expected_a, self.n: info(current_wounds=2)})
 
         self.ok(self.config({"unit_information_patch": {self.n: {"current_wounds": None}}}))  # emptied: dropped
@@ -224,13 +232,20 @@ class BattleKillAndOoaTests(BattleTestCase):
                 "notes": "clean",
             },
         )
-        stored = self.participant(self.battle_id, self.player).unit_information_json
-        self.assertEqual(stored[self.a]["kill_count"], 1)
+        kill = BattleKill.objects.get(event_id=data["events"][0]["id"])  # its row (next step 9)
+        self.assertEqual(
+            (kill.killer_kind, kill.killer_hero_id, kill.killer_leader, kill.victim_kind, kill.victim_hero_id),
+            ("hero", self.abbess.id, True, "hero", self.rat.id),
+        )
+        self.assertEqual((kill.round, kill.phase, kill.earns_xp, kill.took_out_victim), (1, "fight", False, True))
+        self.assertEqual((kill.victim_warband_id, kill.victim_large, kill.victim_caster), (self.rival.id, True, ""))
+        participant = next(entry for entry in data["participants"] if entry["user"]["id"] == self.player.id)
+        self.assertEqual(participant["unit_information_json"][self.a]["kill_count"], 1)  # the snapshot counts it
         self.assertEqual(self.sent()[-1], "unit_kill_recorded")
 
     def test_henchmen_custom_units_and_named_victims(self):
         by_henchman = self.ok(self.kill(self.player, self.battle_id, self.s, victim_name=" Ogre "), 201).data
-        by_dog = self.ok(self.kill(self.player, self.battle_id, "custom:dog", self.r), 201).data
+        by_dog = self.kill(self.player, self.battle_id, "custom:dog", self.r)
 
         self.assertEqual(
             by_henchman["events"][0]["payload_json"],
@@ -242,10 +257,12 @@ class BattleKillAndOoaTests(BattleTestCase):
                 "round": 1,
             },
         )
-        self.assertEqual(
-            by_dog["events"][0]["payload_json"]["killer"],
-            self.unit("custom:dog", self.warband.id, name="War Dog", type_name="Dog"),
-        )
+        # a temporary unit never scores a kill (next step 9: the killer is always one of the warband's own)
+        detail = "Only your warband's own heroes, henchmen and hired swords score kills"
+        self.assertEqual((by_dog.status_code, by_dog.data), (400, {"detail": detail, "code": "not_a_killer"}))
+        kill = BattleKill.objects.get(event_id=by_henchman["events"][0]["id"])
+        self.assertEqual((kill.killer_henchman_id, kill.killer_group_id), (self.sister.id, self.sister.group_id))
+        self.assertEqual((kill.victim_kind, kill.victim_name, kill.victim_warband_id), ("someone_else", "Ogre", None))
 
     def test_kill_validation(self):
         cases: list[tuple[dict[str, Any], str]] = [

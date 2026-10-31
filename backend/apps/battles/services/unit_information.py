@@ -1,11 +1,12 @@
 """A battle participant's live unit information, and what a config save may change in it (BUG-44).
 
 `BattleParticipant.unit_information_json` maps unit keys to `{stats_override, notes, current_wounds,
-out_of_action, kill_count}`, plus `dismounted: true` for a rider who got off his mount (left out otherwise, the
-bestiary rewrite step 5) and `status`, "knocked_down" or "stunned" (left out while he stands, next step 6). A config
-save changes only the editable fields (the first three and `status`), merged into what is stored under the
-participant's lock; `out_of_action`, `kill_count` and `dismounted` change only through their own endpoints, so a
-save built before a kill or an out-of-action tap can't undo it, even from an older client sending the whole map.
+out_of_action}`, plus `dismounted: true` for a rider who got off his mount (left out otherwise, the bestiary rewrite
+step 5) and `status`, "knocked_down" or "stunned" (left out while he stands, next step 6). A config save changes only
+the editable fields (the first three and `status`), merged into what is stored under the participant's lock;
+`out_of_action` and `dismounted` change only through their own endpoints, so a save built before an out-of-action tap
+can't undo it, even from an older client sending the whole map. Kills aren't stored here: the snapshot adds each
+unit's live `kill_count` from battle_kill (services/kills.py, next step 9), and anything else sent is ignored.
 Taking a unit out of action (or back) clears its status, and each new round stands it up a step (services/rounds.py).
 """
 
@@ -114,15 +115,13 @@ def clean_editable_fields(info: dict[str, Any], *, only_present: bool = False) -
 
 
 def is_empty(entry: dict[str, Any]) -> bool:
-    """An entry that says nothing: no override, notes, wounds or status, not out of action or dismounted, and no
-    kills."""
+    """An entry that says nothing: no override, notes, wounds or status, and not out of action or dismounted."""
     return not (
         entry.get("stats_override")
         or entry.get("notes")
         or entry.get("current_wounds") is not None
         or entry.get("status")
         or entry.get("out_of_action")
-        or entry.get("kill_count")
         or entry.get("dismounted")
     )
 
@@ -140,7 +139,7 @@ def stand_up(entry: dict[str, Any]) -> bool:
 
 
 def _new_entry() -> dict[str, Any]:
-    return {"stats_override": {}, "notes": "", "current_wounds": None, "out_of_action": False, "kill_count": 0}
+    return {"stats_override": {}, "notes": "", "current_wounds": None, "out_of_action": False}
 
 
 def _entries(raw: Any, field_name: str) -> list[tuple[str, dict[str, Any]]]:
@@ -177,7 +176,7 @@ def apply_patch(stored: dict[str, dict[str, Any]], patch: Any) -> dict[str, dict
 
 def apply_whole_map(stored: dict[str, dict[str, Any]], whole: Any) -> dict[str, dict[str, Any]]:
     """An older client's whole `unit_information_json`: it replaces every unit's editable fields (a unit it leaves
-    out loses them), while each unit's stored `out_of_action` and `kill_count` stay as they are."""
+    out loses them), while each unit's stored `out_of_action` stays as it is."""
     merged = {key: {**entry, **clean_editable_fields({})} for key, entry in stored.items()}
     for unit_key, info in _entries(whole, "unit_information_json"):
         entry = merged.setdefault(unit_key, _new_entry())
@@ -186,21 +185,16 @@ def apply_whole_map(stored: dict[str, dict[str, Any]], whole: Any) -> dict[str, 
 
 
 def unit_entry(unit_information: dict[str, dict[str, Any]], unit_key: str) -> dict[str, Any]:
-    """The unit's entry in a normalised map, added (with what was stored for it) when it isn't there yet; a kill
-    or out-of-action tap changes it in place."""
+    """The unit's entry in a normalised map, added (with what was stored for it) when it isn't there yet; an
+    out-of-action tap changes it in place."""
     existing = unit_information.get(unit_key, {})
     if not isinstance(existing, dict):
         existing = {}
-    try:
-        existing_kill_count = int(existing.get("kill_count", 0) or 0)
-    except (TypeError, ValueError):
-        existing_kill_count = 0
     entry = {
         "stats_override": existing.get("stats_override", {}),
         "notes": existing.get("notes", ""),
         "current_wounds": existing.get("current_wounds", None),
         "out_of_action": bool(existing.get("out_of_action", False)),
-        "kill_count": max(0, existing_kill_count),
     }
     if existing.get("dismounted"):
         entry["dismounted"] = True

@@ -10,7 +10,7 @@ import {
 } from "../../utils/level-thresholds";
 import { isCreatureGroup } from "../../utils/companions";
 import type { Unit, UnitKindKey, UnitListKey } from "../../types/units";
-import type { HenchmenGroup } from "../../types/warband-types";
+import type { HenchmenGroup, UnitKill } from "../../types/warband-types";
 
 /** A unit on the roster with its kind, so one card serves heroes, groups and hired swords. */
 export type RosterUnit =
@@ -91,6 +91,25 @@ export const itemBoxKind = (item: Item): BoxTileKind =>
   item.beast_kind === "mount" ? "mount" : "item";
 
 const isInjury = (special: { type?: string | null }) => /injur/i.test(special.type ?? "");
+
+/**
+ * One line of a unit's Kills list: "Magister Halvard · Street Fight · round 2 · melee", with the
+ * model who scored it for a henchmen group ("· by Kurt"). A kill logged after the fight has no
+ * round; a battle with no scenario shows its date.
+ */
+export function killLine(kill: UnitKill) {
+  const when = kill.scenario.trim()
+    ? kill.scenario
+    : new Date(kill.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+  const round = kill.round
+    ? `round ${kill.round}`
+    : kill.phase === "after"
+      ? "after the fight"
+      : "";
+  return [kill.victim, when, round, kill.how ?? "", kill.by ? `by ${kill.by}` : ""]
+    .filter(Boolean)
+    .join(" · ");
+}
 
 /** The open card's rows of boxes: items, skills, specials, spells and injuries. */
 export function boxRows(entry: RosterUnit) {

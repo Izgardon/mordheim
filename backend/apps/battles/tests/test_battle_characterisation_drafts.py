@@ -242,6 +242,7 @@ class PostbattleKillTests(BattleTestCase):
             list(moments.values_list("warband_id", "kind", "detail")),
             [
                 (self.warband.id, "carried_the_fight", "Abbess scored 2 of 2 recorded kills."),
+                (self.warband.id, "first_blood", "Abbess drew first blood against Rat."),  # next step 9
                 (self.warband.id, "untouched_triumph", "Monks won without a single selected unit going out of action."),
                 (self.rival.id, "wiped_out", "Rats lost 1 of 1 selected units."),  # the kill took the Rat out (step 6)
             ],
@@ -252,10 +253,10 @@ class PostbattleKillTests(BattleTestCase):
         url = f"/api/warbands/{self.warband.id}/heroes/{self.hero.id}/kill-history/"
         self.ok(self.post_as(self.player, self.url(self.battle_id, "cancel-battle")))
 
-        self.assertEqual(self.ok(self.get_as(self.player, url)).data, {"total_kills": 0, "named_kills_count": 0, "named_kills": []})  # fmt: skip
+        self.assertEqual(self.ok(self.get_as(self.player, url)).data, {"total_kills": 0, "kills": []})
 
         Battle.objects.filter(id=self.battle_id).update(status=Battle.STATUS_ENDED)
+        [kill] = self.ok(self.get_as(self.player, url)).data["kills"]
         self.assertEqual(
-            self.ok(self.get_as(self.player, url)).data["named_kills"],
-            [{"victim_name": "Rat", "victim_warband_name": "Rats", "scenario_name": "Bridge"}],
+            (kill["victim"], kill["victim_warband"], kill["scenario"], kill["round"]), ("Rat", "Rats", "Bridge", 1)
         )

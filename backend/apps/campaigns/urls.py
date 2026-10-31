@@ -30,7 +30,6 @@ from .views import (
     CampaignMyPermissionsView,
     CampaignOwnershipView,
     CampaignPermissionsView,
-    CampaignPivotalMomentsView,
     CampaignPlayersView,
     CampaignRestoreView,
     CampaignSearchView,
@@ -75,11 +74,6 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/active-battles/<int:battle_id>/cancel/",
         CampaignActiveBattleCancelView.as_view(),
         name="campaigns-active-battles-cancel",
-    ),
-    path(
-        "campaigns/<int:campaign_id>/pivotal-moments/",
-        CampaignPivotalMomentsView.as_view(),
-        name="campaigns-pivotal-moments",
     ),
     path(
         "campaigns/<int:campaign_id>/top-killers/",

@@ -116,6 +116,13 @@ export function unitView(
   };
 }
 
+/**
+ * Whether a unit can log a kill: always one of the warband's own heroes, henchmen or hired
+ * swords, never a temporary unit, a pet or a neutral creature (next step 9).
+ */
+export const canScore = (unit: PrebattleUnit) =>
+  unit.kind === "hero" || unit.kind === "henchman" || unit.kind === "hireling";
+
 /** A henchmen group as the battle shows it: the group and its members in this battle. */
 export type BattleGroupView = { group: HenchmenGroupRoster; members: BattleUnitView[] };
 

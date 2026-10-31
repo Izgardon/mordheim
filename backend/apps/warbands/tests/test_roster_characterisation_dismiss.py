@@ -2,7 +2,8 @@
 
 from typing import Any
 
-from apps.battles.models import BattleEvent
+from django.utils import timezone
+
 from apps.warbands.models import Henchman, Hero, WarbandItem
 
 from .roster_support import (
@@ -18,8 +19,6 @@ from .roster_support import (
     trade_rows,
     unit_url,
 )
-
-KILLER_TYPE = {HERO.key: "hero", HENCHMEN.key: "henchman", HIRELING.key: "hireling"}
 
 
 class RosterDismissCharacterisationTests(RosterTestCase):
@@ -119,51 +118,41 @@ class RosterKillHistoryCharacterisationTests(RosterTestCase):
     def _history(self, kind: Kind, unit_id: int) -> Any:
         return self.client.get(unit_url(kind, self.warband.id, unit_id, "kill-history/"))
 
-    def test_named_kills_newest_first_and_total_from_the_stored_count(self):
+    def test_kills_newest_first_and_total_from_the_stored_count(self):
         for kind in KINDS:
             with self.subTest(kind=kind.key):
-                BattleEvent.objects.all().delete()  # unit ids repeat across kinds; keep each kind's events apart
                 if kind is HENCHMEN:
                     unit = make_unit(kind, self.warband, members=())
                     alive = Henchman.objects.create(group=unit, name="Alive", kills=1)
                     fallen = Henchman.objects.create(group=unit, name="Fallen", kills=3, dead=True)
-                    killer_ids = [alive.id, fallen.id]  # dead members' kills still count
+                    killers = [alive, fallen]  # dead members' kills still count
                 else:
                     unit = make_unit(kind, self.warband, kills=4)
-                    killer_ids = [unit.id, unit.id]
-                killer = KILLER_TYPE[kind.key]
+                    killers = [unit, unit]
                 bridge, tower = self.make_battle("Bridge"), self.make_battle("Tower")
-                record_kill(bridge, killer, killer_ids[0], {"name": "Rat One", "warband_id": self.rival.id})
-                record_kill(tower, killer, killer_ids[1], {"name": "Rat Two", "warband_id": str(self.rival.id)})
-                # skipped: no victim name, unknown or invalid victim warband, another unit, another type
-                record_kill(tower, killer, killer_ids[0], {"name": " ", "warband_id": self.rival.id})
-                record_kill(tower, killer, killer_ids[0], {"name": "Ghost", "warband_id": 999999})
-                record_kill(tower, killer, killer_ids[0], {"name": "Odd", "warband_id": "abc"})
-                record_kill(tower, killer, 999999, {"name": "Elsewhere", "warband_id": self.rival.id})
-                other_type = "hero" if kind is not HERO else "hireling"
-                record_kill(tower, other_type, killer_ids[0], {"name": "Mixup", "warband_id": self.rival.id})
+                record_kill(bridge, killers[0], "Rat One", self.rival)
+                record_kill(tower, killers[1], "Rat Two", self.rival, round=2, how="melee")
+                # left out: an undone kill, and another unit's
+                record_kill(tower, killers[0], "Undone", self.rival, voided_at=timezone.now())
+                record_kill(tower, make_unit(HERO, self.warband), "Elsewhere", self.rival)
 
                 response = self._history(kind, unit.id)
 
                 self.assertEqual(response.status_code, 200)
+                body = response.json()
+                by = ("Fallen", "Alive") if kind is HENCHMEN else (None, None)  # which model, for a group
+                self.assertEqual(body["total_kills"], 4)
                 self.assertEqual(
-                    response.json(),
-                    {
-                        "total_kills": 4,
-                        "named_kills_count": 2,
-                        "named_kills": [
-                            {"victim_name": "Rat Two", "victim_warband_name": "Rats", "scenario_name": "Tower"},
-                            {"victim_name": "Rat One", "victim_warband_name": "Rats", "scenario_name": "Bridge"},
-                        ],
-                    },
-                )
+                    [(kill["victim"], kill["victim_warband"], kill["scenario"], kill["round"], kill["how"], kill["by"]) for kill in body["kills"]],
+                    [("Rat Two", "Rats", "Tower", 2, "melee", by[0]), ("Rat One", "Rats", "Bridge", 1, None, by[1])],
+                )  # fmt: skip
 
     def test_units_without_kills(self):
         for kind in KINDS:
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband, members=()) if kind is HENCHMEN else make_unit(kind, self.warband)
                 response = self._history(kind, unit.id)
-                self.assertEqual(response.json(), {"total_kills": 0, "named_kills_count": 0, "named_kills": []})
+                self.assertEqual(response.json(), {"total_kills": 0, "kills": []})
 
     def test_unknown_or_foreign_units_are_404(self):
         for kind in KINDS:

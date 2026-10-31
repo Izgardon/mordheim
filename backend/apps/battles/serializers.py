@@ -10,6 +10,7 @@ from apps.realtime.services import get_battle_channel_name
 from apps.users.names import display_name
 
 from .models import Battle, BattleEvent, BattleParticipant
+from .services.kills import unit_information_with_kills, with_live_kills
 from .services.timing import is_overdue
 
 PARTICIPANT_VIEWS = ("full", "prebattle", "active", "postbattle")
@@ -78,7 +79,7 @@ def serialize_participant(participant: BattleParticipant, participant_view: str 
         "last_seen_at": _iso(participant.last_seen_at),
         "last_activity_at": _iso(last_activity(participant)),
         "selected_unit_keys_json": participant.selected_unit_keys_json or [],
-        "unit_information_json": participant.unit_information_json or {},
+        "unit_information_json": unit_information_with_kills(participant),  # each unit's live kill_count
         "custom_units_json": participant.custom_units_json or [],
         "battle_notes": participant.battle_notes or "",
         "declared_result": participant.declared_result or None,
@@ -109,8 +110,10 @@ def serialize_event(event: BattleEvent) -> dict:
 
 
 def snapshot_participants():
-    """Every participant as a snapshot shows them: with the user and warband it reads, without the roster."""
-    return BattleParticipant.objects.select_related("user", "warband").defer("roster_json").order_by("id")
+    """Every participant as a snapshot shows them: with the user and warband it reads and his units' live kills
+    (battle_kill), without the roster."""
+    participants = BattleParticipant.objects.select_related("user", "warband").defer("roster_json")
+    return with_live_kills(participants).order_by("id")
 
 
 def participants_prefetch() -> Prefetch:

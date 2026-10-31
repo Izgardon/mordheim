@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from ..models import Battle, BattleEvent, BattleParticipant
+from ..models.kill import HOWS
 from ..services.broadcast import ALL
 from ..services.combat import record_item_use, record_kill, set_out_of_action
 from ..services.dismount import set_dismounted
@@ -26,7 +27,7 @@ from .rules import only, only_player
 INGAME_EVENT_TYPES = {BattleEvent.TYPE_ITEM_USED}  # kills go through unit-kill/ (the legacy types are gone)
 NOT_ACTIVE = "Battle is not active"
 NOT_IN_BATTLE = "You are not currently in battle"
-KILL_HOWS = ("melee", "shooting", "magic")  # how the kill sheet says it was done (next step 6), optional
+KILL_HOWS = HOWS  # how the kill sheet says it was done (melee, shooting, magic or other), optional
 
 
 class CampaignBattleEventCreateView(BattleWriteView):

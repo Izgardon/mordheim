@@ -105,19 +105,27 @@ export function battleLine(battle: CampaignBattleHistoryEntry) {
 }
 
 /**
- * A battle's moments grouped as its row shows them, in the server's order: "Round 1", "Round 2"
- * and on for kills that carry their round, "During" for the rest, then "After".
+ * A battle's pivotal moments grouped as its row shows them, in the server's fight order by their
+ * tag: "Round 1", "Round 2" and on, "During" for a kill logged after the fight, then "Result".
  */
 export function momentGroups(moments: CampaignBattleMoment[] = []) {
-  const labels = [...new Set(moments.map((moment) => moment.group))];
+  const labels = [...new Set(moments.map((moment) => moment.tag))];
   return labels
-    .map((label) => ({ label, moments: moments.filter((moment) => moment.group === label) }))
+    .map((label) => ({ label, moments: moments.filter((moment) => moment.tag === label) }))
     .filter((group) => group.moments.length > 0);
 }
 
-export const MOMENT_LABEL: Record<CampaignBattleMoment["kind"], string> = {
-  kill: "Kill",
-  ooa: "Out of action",
-  find: "Found",
-  death: "Death",
-};
+/**
+ * A moment's detail split around its unit's name, so the row can link the name to the unit's
+ * card; null when it has no unit or its name isn't in the detail.
+ */
+export function momentParts(moment: CampaignBattleMoment) {
+  const name = moment.unit?.name ?? "";
+  const at = name ? moment.detail.indexOf(name) : -1;
+  if (at < 0) return null;
+  return {
+    before: moment.detail.slice(0, at),
+    name,
+    after: moment.detail.slice(at + name.length),
+  };
+}

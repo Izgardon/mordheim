@@ -28,6 +28,7 @@ const HOWS: { id: KillHow; label: string }[] = [
   { id: "melee", label: "Melee" },
   { id: "shooting", label: "Shooting" },
   { id: "magic", label: "Magic" },
+  { id: "other", label: "Other" },
 ];
 
 const pill = (on: boolean) =>
@@ -216,7 +217,7 @@ export default function KillSheet({
           />
         </label>
       </div>
-      <div role="group" aria-label="How" className="grid grid-cols-3 gap-1.5">
+      <div role="group" aria-label="How" className="grid grid-cols-4 gap-1.5">
         {HOWS.map((entry) => (
           <button
             key={entry.id}

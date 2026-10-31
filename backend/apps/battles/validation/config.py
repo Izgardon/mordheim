@@ -38,7 +38,8 @@ def normalize_battle_notes(raw_value: Any) -> str:
 
 
 def normalize_unit_information(raw_value: Any) -> dict[str, dict]:
-    """A stored unit information map with every entry's fields filled in (services/unit_information.py)."""
+    """A stored unit information map with every entry's fields filled in (services/unit_information.py); a stored
+    `kill_count` from before battle_kill (next step 9) is dropped."""
     if raw_value is None:
         return {}
     if not isinstance(raw_value, dict):
@@ -52,14 +53,9 @@ def normalize_unit_information(raw_value: Any) -> dict[str, dict]:
         normalized_unit_key = unit_key.strip()
         if not normalized_unit_key:
             continue
-        try:
-            kill_count = int(info.get("kill_count", 0))
-        except (TypeError, ValueError):
-            raise ValueError("unit information kill_count must be an integer") from None
         normalized[normalized_unit_key] = {
             **clean_editable_fields(info),
             "out_of_action": bool(info.get("out_of_action", False)),
-            "kill_count": max(0, min(9999, kill_count)),
         }
         if info.get("dismounted"):  # left out when false (services/dismount.py)
             normalized[normalized_unit_key]["dismounted"] = True

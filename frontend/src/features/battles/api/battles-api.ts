@@ -178,7 +178,7 @@ export function recordUnitKill(
 
 export type RoundAction = "ask" | "agree" | "force" | "withdraw";
 
-export type KillHow = "melee" | "shooting" | "magic";
+export type KillHow = "melee" | "shooting" | "magic" | "other";
 
 /**
  * The next round: ask for it, agree to someone's ask, start it anyway, or take your

@@ -29,6 +29,12 @@ from apps.warbands.models import (
 )
 
 
+def kill_lines(history: dict) -> list[tuple]:
+    """A kill history's kills (next step 9): victim, his warband, scenario, round, how and which model scored it."""
+    keys = ("victim", "victim_warband", "scenario", "round", "how", "by")
+    return [tuple(kill[key] for key in keys) for kill in history["kills"]]
+
+
 class BattleApiTests(APITestCase):
     client: APIClient
 
@@ -132,6 +138,12 @@ class BattleApiTests(APITestCase):
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/{action}/", body, format="json"
         )
         self.assertEqual(response.status_code, 201, response.data)
+
+    def _kill_pair(self) -> tuple[str, str]:
+        """A hero of the owner's warband and one of the player's, as unit keys: a killer and his victim."""
+        wolf = Hero.objects.create(warband=self.owner_warband, name="Wolf", unit_type="Captain")
+        claw = Hero.objects.create(warband=self.player_warband, name="Claw", unit_type="Assassin")
+        return f"hero:{wolf.id}", f"hero:{claw.id}"
 
     def _ready_both_and_start(self, battle_id):
         self.client.force_authenticate(user=self.owner)
@@ -1688,16 +1700,9 @@ class BattleApiTests(APITestCase):
         response = self.client.get(f"/api/warbands/{self.owner_warband.id}/heroes/{owner_hero.id}/kill-history/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["total_kills"], 2)
-        self.assertEqual(response.data["named_kills_count"], 1)
         self.assertEqual(
-            response.data["named_kills"],
-            [
-                {
-                    "victim_name": player_hero.name,
-                    "victim_warband_name": self.player_warband.name,
-                    "scenario_name": "Scavenger Hunt",
-                }
-            ],
+            kill_lines(response.data),
+            [(player_hero.name, self.player_warband.name, "Scavenger Hunt", 1, None, None)],
         )
 
     def test_warband_hireling_kill_history_returns_named_kills_and_counts(self):
@@ -1755,16 +1760,9 @@ class BattleApiTests(APITestCase):
         response = self.client.get(f"/api/warbands/{self.owner_warband.id}/hirelings/{owner_hireling.id}/kill-history/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["total_kills"], 3)
-        self.assertEqual(response.data["named_kills_count"], 1)
         self.assertEqual(
-            response.data["named_kills"],
-            [
-                {
-                    "victim_name": player_hero.name,
-                    "victim_warband_name": self.player_warband.name,
-                    "scenario_name": "Scavenger Hunt",
-                }
-            ],
+            kill_lines(response.data),
+            [(player_hero.name, self.player_warband.name, "Scavenger Hunt", 1, None, None)],
         )
 
     def test_warband_henchmen_group_kill_history_aggregates_member_events(self):
@@ -1847,20 +1845,11 @@ class BattleApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["total_kills"], 3)
-        self.assertEqual(response.data["named_kills_count"], 2)
-        self.assertEqual(
-            response.data["named_kills"],
+        self.assertEqual(  # newest first, each naming the model who scored it (next step 9)
+            kill_lines(response.data),
             [
-                {
-                    "victim_name": player_hero_two.name,
-                    "victim_warband_name": self.player_warband.name,
-                    "scenario_name": "Scavenger Hunt",
-                },
-                {
-                    "victim_name": player_hero_one.name,
-                    "victim_warband_name": self.player_warband.name,
-                    "scenario_name": "Scavenger Hunt",
-                },
+                (player_hero_two.name, self.player_warband.name, "Scavenger Hunt", 1, None, "Hook"),
+                (player_hero_one.name, self.player_warband.name, "Scavenger Hunt", 1, None, "Nails"),
             ],
         )
 
@@ -1981,7 +1970,7 @@ class BattleApiTests(APITestCase):
 
         self.assertSetEqual(
             set(PivotalMoment.objects.filter(battle_id=battle_id).values_list("kind", flat=True)),
-            {"carried_the_fight", "untouched_triumph", "wiped_out"},
+            {"first_blood", "carried_the_fight", "untouched_triumph", "wiped_out"},  # the moments of next step 9
         )
 
         response = self.client.post(
@@ -1989,7 +1978,7 @@ class BattleApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(PivotalMoment.objects.filter(battle_id=battle_id).count(), 3)
+        self.assertEqual(PivotalMoment.objects.filter(battle_id=battle_id).count(), 4)
 
     def test_pivotal_moments_include_giant_slayer_when_large_target_is_killed(self):
         data = self._create_battle()
@@ -3669,12 +3658,13 @@ class BattleApiTests(APITestCase):
         data = self._create_battle()
         battle_id = data["battle"]["id"]
         self._ready_both_and_start(battle_id)
+        wolf, claw = self._kill_pair()  # kills need real units (next step 9)
 
         self.client.force_authenticate(user=self.owner)
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
-                "selected_unit_keys_json": ["hero:11"],
+                "selected_unit_keys_json": [wolf],
                 "custom_units_json": [],
             },
             format="json",
@@ -3685,7 +3675,7 @@ class BattleApiTests(APITestCase):
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
-                "selected_unit_keys_json": ["hero:22"],
+                "selected_unit_keys_json": [claw],
                 "custom_units_json": [],
             },
             format="json",
@@ -3695,7 +3685,7 @@ class BattleApiTests(APITestCase):
         self.client.force_authenticate(user=self.owner)
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/unit-ooa/",
-            {"unit_key": "hero:11", "out_of_action": True},
+            {"unit_key": wolf, "out_of_action": True},
             format="json",
         )
         self.assertEqual(response.status_code, 201)
@@ -3703,13 +3693,13 @@ class BattleApiTests(APITestCase):
         owner_participant = next(
             entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
         )
-        self.assertTrue(owner_participant["unit_information_json"]["hero:11"]["out_of_action"])
+        self.assertTrue(owner_participant["unit_information_json"][wolf]["out_of_action"])
 
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/unit-kill/",
             {
-                "killer_unit_key": "hero:11",
-                "victim_unit_key": "hero:22",
+                "killer_unit_key": wolf,
+                "victim_unit_key": claw,
                 "earned_xp": True,
             },
             format="json",
@@ -3719,7 +3709,7 @@ class BattleApiTests(APITestCase):
 
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/unit-ooa/",
-            {"unit_key": "hero:11", "out_of_action": False},
+            {"unit_key": wolf, "out_of_action": False},
             format="json",
         )
         self.assertEqual(response.status_code, 201)
@@ -3728,8 +3718,8 @@ class BattleApiTests(APITestCase):
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/unit-kill/",
             {
-                "killer_unit_key": "hero:11",
-                "victim_unit_key": "hero:22",
+                "killer_unit_key": wolf,
+                "victim_unit_key": claw,
                 "earned_xp": True,
             },
             format="json",
@@ -3739,18 +3729,19 @@ class BattleApiTests(APITestCase):
         owner_participant = next(
             entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
         )
-        self.assertEqual(owner_participant["unit_information_json"]["hero:11"]["kill_count"], 1)
+        self.assertEqual(owner_participant["unit_information_json"][wolf]["kill_count"], 1)
 
     def test_unit_kill_allows_custom_victim_name(self):
         data = self._create_battle()
         battle_id = data["battle"]["id"]
         self._ready_both_and_start(battle_id)
+        wolf, claw = self._kill_pair()  # kills need real units (next step 9)
 
         self.client.force_authenticate(user=self.owner)
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
-                "selected_unit_keys_json": ["hero:11"],
+                "selected_unit_keys_json": [wolf],
                 "custom_units_json": [],
             },
             format="json",
@@ -3760,7 +3751,7 @@ class BattleApiTests(APITestCase):
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/unit-kill/",
             {
-                "killer_unit_key": "hero:11",
+                "killer_unit_key": wolf,
                 "victim_name": "Ghoul",
                 "notes": "Knocked from a rooftop.",
                 "earned_xp": True,
@@ -3778,18 +3769,19 @@ class BattleApiTests(APITestCase):
         owner_participant = next(
             entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
         )
-        self.assertEqual(owner_participant["unit_information_json"]["hero:11"]["kill_count"], 1)
+        self.assertEqual(owner_participant["unit_information_json"][wolf]["kill_count"], 1)
 
     def test_unit_kill_requires_victim_unit_key_or_name(self):
         data = self._create_battle()
         battle_id = data["battle"]["id"]
         self._ready_both_and_start(battle_id)
+        wolf, claw = self._kill_pair()  # kills need real units (next step 9)
 
         self.client.force_authenticate(user=self.owner)
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
-                "selected_unit_keys_json": ["hero:11"],
+                "selected_unit_keys_json": [wolf],
                 "custom_units_json": [],
             },
             format="json",
@@ -3799,7 +3791,7 @@ class BattleApiTests(APITestCase):
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/unit-kill/",
             {
-                "killer_unit_key": "hero:11",
+                "killer_unit_key": wolf,
                 "earned_xp": True,
             },
             format="json",
@@ -3814,12 +3806,13 @@ class BattleApiTests(APITestCase):
         data = self._create_battle()
         battle_id = data["battle"]["id"]
         self._ready_both_and_start(battle_id)
+        wolf, claw = self._kill_pair()  # kills need real units (next step 9)
 
         self.client.force_authenticate(user=self.owner)
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
-                "selected_unit_keys_json": ["hero:11"],
+                "selected_unit_keys_json": [wolf],
                 "custom_units_json": [],
             },
             format="json",
@@ -3829,7 +3822,7 @@ class BattleApiTests(APITestCase):
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/unit-kill/",
             {
-                "killer_unit_key": "hero:11",
+                "killer_unit_key": wolf,
                 "victim_name": "Ghoul",
                 "earned_xp": True,
             },
@@ -3839,7 +3832,7 @@ class BattleApiTests(APITestCase):
 
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/unit-ooa/",
-            {"unit_key": "hero:11", "out_of_action": True},
+            {"unit_key": wolf, "out_of_action": True},
             format="json",
         )
         self.assertEqual(response.status_code, 201)
@@ -3847,9 +3840,9 @@ class BattleApiTests(APITestCase):
         response = self.client.post(
             f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/config/",
             {
-                "selected_unit_keys_json": ["hero:11"],
+                "selected_unit_keys_json": [wolf],
                 "unit_information_json": {
-                    "hero:11": {
+                    wolf: {
                         "stats_override": {
                             "wounds": 2,
                             "strength": 4,
@@ -3867,10 +3860,10 @@ class BattleApiTests(APITestCase):
         owner_participant = next(
             entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
         )
-        self.assertTrue(owner_participant["unit_information_json"]["hero:11"]["out_of_action"])
-        self.assertEqual(owner_participant["unit_information_json"]["hero:11"]["kill_count"], 1)
-        self.assertEqual(owner_participant["unit_information_json"]["hero:11"]["stats_override"]["wounds"], 2)
-        self.assertEqual(owner_participant["unit_information_json"]["hero:11"]["stats_override"]["strength"], 4)
+        self.assertTrue(owner_participant["unit_information_json"][wolf]["out_of_action"])
+        self.assertEqual(owner_participant["unit_information_json"][wolf]["kill_count"], 1)
+        self.assertEqual(owner_participant["unit_information_json"][wolf]["stats_override"]["wounds"], 2)
+        self.assertEqual(owner_participant["unit_information_json"][wolf]["stats_override"]["strength"], 4)
 
     def test_selected_unit_keys_persist_into_active_state(self):
         data = self._create_battle()

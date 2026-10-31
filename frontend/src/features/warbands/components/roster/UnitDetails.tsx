@@ -12,6 +12,7 @@ import type { ItemPlace } from "../../hooks/units/useUnitActions";
 import { isPendingByName, isPendingByType } from "../heroes/utils/pending-entries";
 import PendingPick, { type PendingList } from "./PendingPick";
 import RulesPanel, { type BoxDetail } from "./RulesPanel";
+import UnitKills from "./UnitKills";
 import { boxRows, itemBoxKind, xpInfo, type RosterUnit } from "./unit-view";
 
 type UnitDetailsProps = {
@@ -27,6 +28,7 @@ type UnitDetailsProps = {
   onBuyAgain: (item: Item) => void;
   onAdvance?: () => void;
   campaignId: number;
+  warbandId: number;
   /** Puts the picked entry in place of a pending "New skill" (spell, special). */
   onResolvePending: (list: PendingList, placeholderId: number, entryId: number) => void;
 };
@@ -190,20 +192,13 @@ export default function UnitDetails(props: UnitDetailsProps) {
         );
       })}
 
-      <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1.5 border-t border-line pt-3 text-[13px]">
-        {"kills" in unit ? (
-          <>
-            <dt className="text-faint">Kills</dt>
-            <dd className="m-0 text-ink">{unit.kills ?? 0}</dd>
-          </>
-        ) : null}
-        {kind === "hireling" ? (
-          <>
-            <dt className="text-faint">Upkeep</dt>
-            <dd className="m-0 text-ink">{entry.unit.upkeep_price ?? 0} gc</dd>
-          </>
-        ) : null}
-      </dl>
+      <UnitKills campaignId={props.campaignId} warbandId={props.warbandId} entry={entry} />
+      {kind === "hireling" ? (
+        <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1.5 border-t border-line pt-3 text-[13px]">
+          <dt className="text-faint">Upkeep</dt>
+          <dd className="m-0 text-ink">{entry.unit.upkeep_price ?? 0} gc</dd>
+        </dl>
+      ) : null}
       {kind === "hero" ? (
         <div className="flex flex-wrap items-center gap-2">
           <Switch

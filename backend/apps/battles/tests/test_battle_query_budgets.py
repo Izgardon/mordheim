@@ -96,8 +96,8 @@ class BattleQueryBudgetTests(BattleTestCase):
                 "unit_kill",
                 "unit-kill",
                 {"killer_unit_key": h, "victim_unit_key": self.r},
-                13,
-            ),  # + the victim out of action
+                14,
+            ),  # + the victim out of action, + its battle_kill row (next step 9)
             (
                 "item_used",
                 "events",

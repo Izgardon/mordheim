@@ -19,7 +19,7 @@ from django.contrib.auth import get_user_model
 from django.test import TransactionTestCase, override_settings
 from rest_framework.test import APIClient
 
-from apps.battles.models import Battle, BattleEvent, BattleParticipant
+from apps.battles.models import Battle, BattleEvent, BattleKill, BattleParticipant
 from apps.battles.services import combat as combat_services
 from apps.battles.services import lifecycle as lifecycle_services
 from apps.battles.services.postbattle import finalise as finalise_services
@@ -157,17 +157,16 @@ class BattleConcurrencyTests(TransactionTestCase):
 
     def test_a_config_save_racing_a_kill_keeps_the_kill(self):
         # BUG-44: the kill commits while the config save, built before it, waits for the battle lock; the save then
-        # merges its wound into what is stored and keeps the kill (it wrote back the stale kill_count 0 before).
+        # merges its wound into what is stored and keeps the kill (it wrote back the stale kill_count 0 before; kills
+        # are battle_kill rows now, next step 9, and a kill_count sent is ignored).
         battle = self.battle(Battle.STATUS_ACTIVE, BattleParticipant.STATUS_IN_BATTLE)
         rendezvous = Rendezvous()
-        real_payload = combat_services.unit_event_payload
+        real_payload = combat_services.read_unit
         real_load = CampaignBattleConfigView.load_scope
         stale = {"unit_information_json": {self.a: {"current_wounds": 1, "kill_count": 0}}}
 
         with (
-            mock.patch.object(
-                combat_services, "unit_event_payload", side_effect=first_call_waits(rendezvous, real_payload)
-            ),
+            mock.patch.object(combat_services, "read_unit", side_effect=first_call_waits(rendezvous, real_payload)),
             mock.patch.object(
                 CampaignBattleConfigView, "load_scope", autospec=True, side_effect=rendezvous.before(real_load)
             ),
@@ -184,7 +183,8 @@ class BattleConcurrencyTests(TransactionTestCase):
 
         self.assertEqual(statuses, [201, 200])
         info = BattleParticipant.objects.get(battle=battle, user=self.player).unit_information_json[self.a]
-        self.assertEqual((info["kill_count"], info["current_wounds"]), (1, 1))
+        self.assertEqual((BattleKill.objects.filter(battle=battle).count(), info["current_wounds"]), (1, 1))
+        self.assertNotIn("kill_count", info)
 
     def test_clearing_a_result_request_while_approving_it_leaves_a_consistent_battle(self):
         # BUG-121: Clear read the pending result unlocked, the same player's Approve committed in between (wins and

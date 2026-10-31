@@ -3,15 +3,15 @@
 The rows are locked in the battle lock order (services/locks.py): the warband, then its heroes, the hired swords the
 draft names, the henchmen of the groups it names and those groups; the battle row is not held. Each unit comes with
 the names of what it carries (for a unit that dies here), the warband with the draft's exploration resource and
-whether any unit of it misses games, and the battle's live kill events and the player's own item uses come in one
-read.
+whether any unit of it misses games and its live kills in the battle (battle_kill, next step 9), and the player's
+own item uses come in one read.
 """
 
 from dataclasses import dataclass, field
 from typing import Any
 
 from django.contrib.postgres.expressions import ArraySubquery
-from django.db.models import Exists, OuterRef, Q, Subquery
+from django.db.models import Exists, OuterRef, Subquery
 
 from apps.campaigns.models import CampaignSettings
 from apps.warbands.models import (
@@ -28,7 +28,7 @@ from apps.warbands.models import (
 
 from ...models import Battle, BattleEvent, BattleParticipant
 from ...validation.unit_keys import parse_unit_key
-from ..kills import count_kills
+from ..kills import count_killers, live_killers
 from ..locks import locked
 from .validate import upkeep_hireling_ids
 
@@ -67,14 +67,15 @@ def _ids(draft: dict, unit_type: str) -> list[int]:
 MISSING_UNITS: dict[str, Any] = {"missing_heroes": Hero, "missing_groups": HenchmenGroup, "missing_hirelings": Hireling}
 
 
-def _locked_warband(warband_id: int, resource_id: int | None) -> Warband:
-    """The warband, locked, with the draft's exploration resource (`resource_found`, `resource_name`) and whether any of
-    its units misses games (one per kind), so a finalise without them reads none."""
+def _locked_warband(battle_id: int, warband_id: int, resource_id: int | None) -> Warband:
+    """The warband, locked, with the draft's exploration resource (`resource_found`, `resource_name`), whether any of
+    its units misses games (one per kind), so a finalise without them reads none, and its live kills in the battle
+    (`killers`, battle_kill)."""
     missing = {
         name: Exists(on_roster(model.objects.filter(warband_id=OuterRef("pk"), missing_games__gt=0)))
         for name, model in MISSING_UNITS.items()
     }
-    warbands = locked(Warband.objects.annotate(**missing))
+    warbands = locked(Warband.objects.annotate(**missing, killers=live_killers(battle_id, OuterRef("pk"))))
     if resource_id is not None:
         resources = WarbandResource.objects.filter(id=resource_id, warband_id=OuterRef("pk"))
         warbands = warbands.annotate(
@@ -104,7 +105,7 @@ def _locked_units(warband_id: int, draft: dict) -> tuple[list[Hero], dict[int, H
 
 def load_context(battle: Battle, participant: BattleParticipant, draft: dict) -> FinaliseContext:
     """Lock and read what finalising this draft touches (the participant is locked already)."""
-    warband = _locked_warband(participant.warband_id, draft["exploration"].get("resource_id"))
+    warband = _locked_warband(battle.id, participant.warband_id, draft["exploration"].get("resource_id"))
     heroes, hirelings, henchmen = _locked_units(participant.warband_id, draft)
     named = set(_ids(draft, "henchman"))
     group_ids = {
@@ -116,12 +117,9 @@ def load_context(battle: Battle, participant: BattleParticipant, draft: dict) ->
         HenchmenGroup.objects.filter(id__in=group_ids, warband_id=participant.warband_id, dismissed_at__isnull=True)
     )
     locked_groups = {group.id: group for group in groups}
-    events = BattleEvent.objects.filter(battle_id=battle.id, voided_at__isnull=True).filter(
-        Q(type=BattleEvent.TYPE_UNIT_KILL_RECORDED)
-        | Q(type=BattleEvent.TYPE_ITEM_USED, actor_user_id=participant.user_id)
+    item_uses = BattleEvent.objects.filter(
+        battle_id=battle.id, voided_at__isnull=True, type=BattleEvent.TYPE_ITEM_USED, actor_user_id=participant.user_id
     )
-    rows = list(events.values_list("type", "payload_json"))
-    kills = [payload for kind, payload in rows if kind == BattleEvent.TYPE_UNIT_KILL_RECORDED]
     return FinaliseContext(
         battle=battle,
         participant=participant,
@@ -134,6 +132,6 @@ def load_context(battle: Battle, participant: BattleParticipant, draft: dict) ->
         hirelings=hirelings,
         henchmen=henchmen,
         groups=locked_groups,
-        kills=dict(count_kills(kills, participant.warband_id)),
-        item_uses=[payload for kind, payload in rows if kind == BattleEvent.TYPE_ITEM_USED],
+        kills=dict(count_killers(getattr(warband, "killers", None))),
+        item_uses=list(item_uses.values_list("payload_json", flat=True)),
     )
