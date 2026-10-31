@@ -12,14 +12,13 @@ from apps.campaigns.models import CampaignCampaignType, CampaignType
 from apps.hirelings.models import DramatisPersona, HiredSword
 from apps.items.models import Item, ItemRule
 from apps.races.models import Race
-from apps.restrictions.models import Restriction
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
 
 from .catalogue_support import BESTIARY, HIRED_SWORDS, ITEMS, KINDS, SKILLS, CatalogueTestCase, make_entry
 
-TYPED = (Item, Skill, Spell, Special, Race, Restriction, HiredSword, DramatisPersona)
+TYPED = (Item, Skill, Spell, Special, Race, HiredSword, DramatisPersona)
 
 
 class CatalogueSettingSchemaTests(CatalogueTestCase):
@@ -117,5 +116,5 @@ class InPlayListTests(CatalogueTestCase):
         for index in range(3):
             make_entry(SKILLS, f"Lore {index}", campaign_type=self.lustria)
         self.client.force_authenticate(user=self.player)
-        with self.assertNumQueries(2):  # the caller's access, then the rows with in_play
+        with self.assertNumQueries(3):  # the caller's access, the rows with in_play, who may learn them
             self.client.get(SKILLS.list_url(self.campaign))

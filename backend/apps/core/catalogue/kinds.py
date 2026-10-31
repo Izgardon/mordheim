@@ -1,7 +1,7 @@
 """The catalogue kinds registry (design 0.29 for the catalogue, IMP-79): each kind as data.
 
-Items, skills, spells, specials, races, bestiary entries, hired swords and dramatis personae, plus the read-only
-restrictions and the add-only shared item rules. A spec names the kind's model and serializers, how its list is
+Items, skills, spells, specials, races, bestiary entries, hired swords and dramatis personae, plus the add-only shared
+item rules. A spec names the kind's model and serializers, how its list is
 filtered, the child rows an entry carries (what a version copies), the tables whose rows hold an entry (`holders`:
 what a delete can't take with it, what `usage/` counts, and what a version's first edit moves onto it and Revert
 moves back), the rows that follow an entry without holding it (`followers`: a warband's bestiary favourites) and the
@@ -33,8 +33,6 @@ from apps.items.selectors import by_listing
 from apps.items.serializers import ItemRuleSerializer, ItemWriteSerializer
 from apps.races.models import Race
 from apps.races.serializers import RaceCreateSerializer
-from apps.restrictions.models import Restriction
-from apps.restrictions.serializers import RestrictionSerializer
 from apps.skills.models import Skill
 from apps.skills.serializers import SkillCreateSerializer
 from apps.special.models import Special
@@ -45,7 +43,7 @@ from apps.warbands.models import HenchmenGroup, WarbandItem
 from apps.warbands.units.kinds import KINDS as UNIT_KINDS
 from apps.warbands.units.kinds import UnitKindKey
 
-from .hooks import BestiaryHooks, CatalogueHooks, HirelingProfileHooks, ItemHooks, ItemRuleHooks, RaceHooks
+from .hooks import BestiaryHooks, CatalogueHooks, HirelingProfileHooks, ItemHooks, ItemRuleHooks, RaceHooks, SkillHooks
 from .rows import (
     BestiaryEntryDetailRowSerializer,
     BestiaryEntryRowSerializer,
@@ -113,7 +111,7 @@ class CatalogueKindSpec:
     versioned: bool = False  # book entries get campaign versions, archive and removal (versions.py, archive.py)
     filters: Mapping[str, Filter] = field(default_factory=dict)  # list query parameter -> filter, before the merge
     excluded_types: tuple[str, ...] = ()  # types no list shows (the level-up placeholders)
-    name_field: str = "name"  # what the name rule compares (names.py; the restrictions' list merge)
+    name_field: str = "name"  # what the name rule compares (names.py)
     order: tuple[str, ...] = ("name", "id")  # each part of a list (the campaign's rows, then the book's)
     reread: bool = False  # a write's answer is read again with the detail's prefetch (its links)
     lists: tuple[str, ...] = ()  # the lists a write changes (`catalogue.changed` kinds); default: `(key,)`
@@ -246,7 +244,9 @@ SKILLS = CatalogueKindSpec(
     versioned=True,
     filters=NAME_AND_TYPE,
     excluded_types=PLACEHOLDERS,
+    children=("warband_links",),  # who may learn it
     holders=_copies("skills", _linked_by(BestiaryEntrySkill, "skill"), *_listed_by_hirelings("skill_links", "skill")),
+    hooks=SkillHooks(),
 )
 SPELLS = CatalogueKindSpec(
     key="spells",
@@ -331,7 +331,7 @@ BESTIARY = CatalogueKindSpec(
     twin=Twin(ITEMS, "bestiary_entry"),
     hooks=BestiaryHooks(),
 )
-HIRELING_LINKS = ("skill_links", "special_links", "spell_links", "item_links", "restriction_links")
+HIRELING_LINKS = ("skill_links", "special_links", "spell_links", "item_links", "warband_links")
 HIRED_SWORDS = CatalogueKindSpec(
     key="hired_swords",
     noun="hired sword",
@@ -362,17 +362,6 @@ DRAMATIS_PERSONAE = CatalogueKindSpec(
     children=HIRELING_LINKS,
     hooks=HirelingProfileHooks(DramatisPersona),
 )
-RESTRICTIONS = CatalogueKindSpec(  # read-only: the seeders write the book's rows (SEC-06)
-    key="restrictions",
-    noun="restriction",
-    model=Restriction,
-    url_kwarg="",
-    row_serializer=RestrictionSerializer,
-    entry_serializer=RestrictionSerializer,
-    filters={"search": lambda value: Q(restriction__icontains=value), "type": NAME_AND_TYPE["type"]},
-    name_field="restriction",
-    order=("type", "restriction"),
-)
 ITEM_RULES = CatalogueKindSpec(  # the shared rules: added, never edited or deleted
     key="item_rules",
     noun="item rule",
@@ -391,6 +380,5 @@ CATALOGUE_KINDS: Mapping[str, CatalogueKindSpec] = {
 }
 LIST_KINDS: Mapping[str, CatalogueKindSpec] = {
     **CATALOGUE_KINDS,
-    "restrictions": RESTRICTIONS,
     "item_rules": ITEM_RULES,
 }

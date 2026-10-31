@@ -43,14 +43,13 @@ LIST_BUDGETS: dict[str, tuple[str, int, int]] = {
     # PERF-49 (were 9 and 14: exists(), then each half with its own prefetch chain): membership, the merged rows (an
     # animal's entry joined), their rule links, price rows and the rows' who-can lines; + an animal's specials
     "items": ("/api/items/?campaign_id={campaign}", 5, 5),
-    "skills": ("/api/skills/?campaign_id={campaign}", 2, 2),  # membership, the merged rows (were 4)
+    "skills": ("/api/skills/?campaign_id={campaign}", 3, 3),  # membership, the merged rows (were 4), who may learn
     "spells": ("/api/spells/?campaign_id={campaign}", 2, 2),
     "specials": ("/api/special/?campaign_id={campaign}", 2, 2),
     "races": ("/api/races/?campaign_id={campaign}", 2, 2),
     "bestiary": ("/api/bestiary/?campaign_id={campaign}", 2, 2),  # + its items' prices once a beast has its item (4)
-    "hired_swords": ("/api/hired-swords/?campaign_id={campaign}", 3, 3),  # + their restrictions (were 5 and 6)
+    "hired_swords": ("/api/hired-swords/?campaign_id={campaign}", 3, 3),  # + who may hire them (were 5 and 6)
     "dramatis_personae": ("/api/dramatis-personae/?campaign_id={campaign}", 3, 3),
-    "restrictions": ("/api/restrictions/?campaign_id={campaign}", 2, 2),
     "item_rules": ("/api/item-rules/?campaign_id={campaign}", 2, 2),  # one filtered list
     "items_book": ("/api/items/", 5, 5),  # no campaign: the book's version (PERF-13), its rows and their chain (was 6)
 }
@@ -169,8 +168,8 @@ class CatalogueQueryBudgetTests(CatalogueTestCase):
             with self.subTest(kind=kind.key):
                 book = make_entry(kind, f"Book {kind.key}")
                 house = make_entry(kind, f"House {kind.key}", campaign=self.campaign)
-                # an item's rule links, price rows and their who-can lines (no animal here)
-                prefetches = 3 if kind is ITEMS else 0
+                # an item's rule links, price rows and their who-can lines (no animal here); a skill's who-can lines
+                prefetches = {ITEMS: 3, SKILLS: 1}.get(kind, 0)
                 self.assertLessEqual(self.count("get", kind.detail_url(book.id)), 1 + prefetches)
                 self.assertLessEqual(self.count("get", kind.detail_url(house.id)), 2 + prefetches)
 
@@ -296,11 +295,12 @@ class CatalogueWriteBudgetTests(CatalogueTestCase):
         self.assertEqual(self.count(HIRED_SWORDS.list_url(), sword), 21)
         self.assertEqual(self.count(HIRED_SWORDS.list_url(), small), 21)
 
-    def test_a_skill_create_costs_6_queries(self):
-        # membership, the name check (CAT-TWEAK-02, PR C), the savepoint pair, the INSERT and the campaign's catalogue
-        # version (PERF-13). It was 5 before the name check, 5 with the campaign read by the serializer's campaign field
-        # instead of the version (IMP-79 dropped it), 3 before the duplicate guard's savepoint (BUG-17)
-        self.assertEqual(self.count(SKILLS.list_url(), SKILLS.body("Feint", self.campaign)), 6)
+    def test_a_skill_create_costs_7_queries(self):
+        # membership, the name check (CAT-TWEAK-02, PR C), the savepoint pair, the INSERT, the campaign's catalogue
+        # version (PERF-13) and the answer's who may learn it (the items rebuild). It was 5 before the name check, 5
+        # with the campaign read by the serializer's campaign field instead of the version (IMP-79 dropped it), 3
+        # before the duplicate guard's savepoint (BUG-17)
+        self.assertEqual(self.count(SKILLS.list_url(), SKILLS.body("Feint", self.campaign)), 7)
 
 
 class VersionWriteBudgetTests(CatalogueTestCase):

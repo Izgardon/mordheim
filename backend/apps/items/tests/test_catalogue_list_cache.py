@@ -19,7 +19,7 @@ from apps.battles.services.injuries import InjuryOutcome, apply_stat_and_special
 from apps.campaigns.models import CampaignSettings, CampaignType
 from apps.core.catalogue.cache import book_version
 from apps.items.services import HALF_PRICE_ARMOUR_EFFECT_KEY
-from apps.restrictions.models import Restriction
+from apps.races.models import Race
 from apps.warbands.tests.roster_support import HERO, make_unit
 
 from .catalogue_support import (
@@ -35,7 +35,7 @@ from .catalogue_support import (
 from .test_catalogue_characterisation_seeders import data_file, import_folder, import_row, run
 
 HEADERS = ("Content-Type", "ETag", "Cache-Control", "Vary", "Allow")
-LISTS = (*(kind.path for kind in KINDS), "restrictions", "item-rules")
+LISTS = (*(kind.path for kind in KINDS), "item-rules")
 
 
 @catalogue_cache_on()
@@ -128,15 +128,15 @@ class CacheInvalidationTests(CatalogueListCacheTestCase):
         self.assertEqual(armour(), [(None, 50)])
 
     def test_a_seed_retires_the_book_list_and_every_campaigns_list(self):
-        book, campaign = "/api/restrictions/", f"/api/restrictions/?campaign_id={self.campaign.id}"
+        book, campaign = "/api/races/", f"/api/races/?campaign_id={self.campaign.id}"
         before = (len(self.read(book)[0].json()), len(self.read(campaign)[0].json()))
 
-        call_command("seed_restrictions", stdout=io.StringIO())
+        call_command("seed_races", stdout=io.StringIO())
 
         after = (len(self.read(book)[0].json()), len(self.read(campaign)[0].json()))
         self.assertEqual(before, (1, 1))
-        self.assertEqual(after[0], Restriction.objects.filter(campaign__isnull=True).count())
-        self.assertGreater(after[0], 50)
+        self.assertEqual(after[0], Race.objects.filter(campaign__isnull=True).count())
+        self.assertGreater(after[0], 20)
         self.assertEqual(after[1], after[0])
 
     def test_every_seeder_moves_the_books_version_and_every_campaigns(self):
@@ -153,7 +153,6 @@ class CacheInvalidationTests(CatalogueListCacheTestCase):
 
         rows: dict[str, list[dict[str, Any]]] = {
             "seed_races": [{"name": "Gnome", **STATS}],
-            "seed_restrictions": [{"restriction": "Gnomes", "type": "Warband"}],
             "seed_skills": [{"name": "Tinker", "type": "Gnome", "description": "Fixes things."}],
             "seed_bestiary": [{"name": "Gnome", "kind": "creature", **STATS}],
         }

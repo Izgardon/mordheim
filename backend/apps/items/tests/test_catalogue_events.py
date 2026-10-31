@@ -90,7 +90,7 @@ class CatalogueEventTests(CatalogueTestCase):
         refused = self.send("post", ITEMS.list_url(), ITEMS.body("Axe", self.campaign), user=self.player)  # taken
         denied = self.send("delete", ITEMS.detail_url(make_entry(ITEMS, "Club", campaign=self.campaign).id), user=self.player)  # fmt: skip
         with self.captureOnCommitCallbacks(execute=True):
-            call_command("seed_restrictions", stdout=StringIO())
+            call_command("seed_races", stdout=StringIO())
 
         self.assertEqual(rule_kinds, ["items"])
         self.assertEqual((refused.status_code, denied.status_code), (400, 403))

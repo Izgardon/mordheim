@@ -11,8 +11,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from apps.core.catalogue.cache import bump
-from apps.core.seeding import SettingAssignments, clean, entry_value, read_json_list, upsert_global
-from apps.skills.models import Skill
+from apps.core.seeding import SettingAssignments, WhoCanLists, clean, entry_value, read_json_list, upsert_global
+from apps.skills.models import Skill, SkillWarband
 
 DEFAULT_JSON_PATH = Path("apps/skills/data/skills.json")
 
@@ -56,6 +56,9 @@ class Command(BaseCommand):
 
         created = updated = skipped = 0
         settings = SettingAssignments("skills")  # each skill's setting, from the catalogue import
+        who_can = WhoCanLists("skills")  # who may learn each (the items rebuild): a special skill names its warbands
+        lines: list[SkillWarband] = []
+        SkillWarband.objects.filter(skill__campaign__isnull=True).delete()  # the book's lines, written again below
         for entry in read_json_list(path, "skill objects"):
             name = clean(entry_value(entry, HEADER_ALIASES["name"]))
             skill_type = _skill_type(entry_value(entry, HEADER_ALIASES["type"]))
@@ -63,14 +66,18 @@ class Command(BaseCommand):
                 skipped += 1
                 continue
             description = clean(entry_value(entry, HEADER_ALIASES["description"]))
-            setting = settings.of(name, clean(entry_value(entry, HEADER_ALIASES["type"])))  # the file's own type
-            defaults = {"description": description, "campaign_type_id": setting}
-            _, was_created = upsert_global(Skill, {"name": name, "type": skill_type}, defaults)
+            own_type = clean(entry_value(entry, HEADER_ALIASES["type"]))  # the file's own type
+            learners = who_can.of(name, own_type)
+            everyone = learners["for_everyone"] if learners else True
+            defaults = {"description": description, "campaign_type_id": settings.of(name, own_type), "for_everyone": everyone}  # fmt: skip
+            skill, was_created = upsert_global(Skill, {"name": name, "type": skill_type}, defaults)
+            lines += [SkillWarband(skill=skill, **line) for line in (learners["lines"] if learners else [])]
             if was_created:
                 created += 1
             else:
                 updated += 1
 
+        SkillWarband.objects.bulk_create(lines)
         self.stdout.write(
             self.style.SUCCESS(f"Skills import complete. Created: {created}, Updated: {updated}, Skipped: {skipped}")
         )

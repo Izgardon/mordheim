@@ -2,7 +2,7 @@
 
 A detail costs a fixed number of queries whatever the equipment: the beast's own item joined to it with its prices
 (two queries), the skills, specials and spells in one query each, the equipment links with their items, then the
-items' properties, availabilities (with their restrictions) and, for an animal's item, its entry's specials. The GETs
+items' rules, price rows (with who may buy each) and, for an animal's item, its entry's specials. The GETs
 and the POST and PATCH answers read through here. A list row adds its item and prices: two queries for any number of
 rows.
 """

@@ -23,7 +23,6 @@ from apps.items.models import (
     ItemRule,
     ItemRuleLink,
 )
-from apps.restrictions.models import Restriction
 from apps.warbands.models import (
     Henchman,
     HenchmenGroup,
@@ -76,12 +75,6 @@ class CampaignApiTests(APITestCase):
             membership=membership,
             permission=CampaignPermission.objects.get(code=permission_code),
         )
-
-    def _create_setting(self, name="Cathay Setting"):
-        return Restriction.objects.create(type="Setting", restriction=name)
-
-    def _create_warband_restriction(self, name="Reiklanders"):
-        return Restriction.objects.create(type="Warband", restriction=name)
 
     def _create_base_item(
         self,
@@ -537,20 +530,6 @@ class CampaignApiTests(APITestCase):
         self.client.force_authenticate(user=outsider)
         response = self.client.get(f"/api/campaigns/{campaign['id']}/players/")
         self.assertEqual(response.status_code, 404)
-
-    def test_posting_a_restriction_is_not_allowed(self):
-        # SEC-06: restrictions are the seeders' rows; the POST (which refused only settings) is gone
-        owner = self._create_user("owner@example.com", "Owner")
-        self.client.force_authenticate(user=owner)
-
-        response = self.client.post(
-            "/api/restrictions/",
-            {"type": "Setting", "restriction": "Tilea Setting"},
-            format="json",
-        )
-
-        self.assertEqual(response.status_code, 405)
-        self.assertEqual(Restriction.objects.filter(restriction="Tilea Setting").count(), 0)
 
     def test_players_returns_members(self):
         owner = self._create_user("owner@example.com", "Owner")

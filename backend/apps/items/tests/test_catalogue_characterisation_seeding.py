@@ -1,6 +1,6 @@
 """The catalogue seeders on the committed data (pass 5; BUG-17, BUG-51, BUG-54, CAT-TEST-12, -13).
 
-`seed_all` runs `seed_races`, `seed_restrictions`, `seed_items`, `seed_skills`, `seed_spells_and_special`,
+`seed_all` runs `seed_settings`, `seed_warband_types`, `seed_races`, `seed_items`, `seed_skills`, `seed_spells_and_special`,
 `seed_bestiary`, `seed_dramatis_personae`, then `seed_hired_swords`, each upserting the book by name (and type) in its
 own transaction, and `seed_catalogue_if_empty` runs it on a wiped production database. It works on an empty database and again later, also once a campaign holds
 an entry of a book entry's name and type (a custom override, a house-rule clone, and every version PR C's
@@ -25,13 +25,12 @@ from apps.hirelings.models import DramatisPersona, HiredSword, HiredSwordItem, H
 from apps.items.models import Item, ItemAvailability, ItemRule
 from apps.items.services import sync_half_price_armour_for_campaign
 from apps.races.models import Race
-from apps.restrictions.models import Restriction
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
 from apps.warbands.models import WarbandGroup, WarbandType
 
-BOOK_MODELS = (Race, Restriction, Item, ItemRule, Skill, Spell, Special, BestiaryEntry, HiredSword, DramatisPersona)
+BOOK_MODELS = (Race, Item, ItemRule, Skill, Spell, Special, BestiaryEntry, HiredSword, DramatisPersona)
 
 
 def seed_all() -> str:
@@ -67,7 +66,6 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 27,
-                "Restriction": 133,
                 "Item": 321,  # the import's 290 (its 14 animals are beasts') + one Animal item per beast
                 "ItemRule": 51,  # the import's shared rules
                 "Skill": 255,
@@ -207,9 +205,20 @@ class SeedAllTests(TestCase):
         rat_ogre = HiredSword.objects.get(name="Clan Skryre Rat Ogre")
 
         self.assertIn(("Sword", 2), set(ogre.item_links.values_list("item__name", "quantity")))
-        self.assertEqual((ninja.hire_cost, ninja.hire_cost_expression), (70, "70+3D6"))
-        self.assertEqual((rat_ogre.upkeep_cost, rat_ogre.upkeep_cost_expression), (None, "1 piece of Wyrdstone"))
+        # the items rebuild: the fees are mordheimer's, a text one kept beside the gold it charges
+        self.assertEqual((ninja.hire_cost, ninja.hire_cost_expression), (70, "70 + 3D6"))
+        self.assertEqual((rat_ogre.upkeep_cost, rat_ogre.upkeep_cost_expression), (None, "1 wyrdstone"))
         self.assertEqual((ogre.race.name if ogre.race else None, ogre.race_label), ("Ogre", "Ogre"))
+
+    def test_who_may_hire_and_learn_comes_from_the_import(self):
+        # the items rebuild: every hired sword names who may hire him (mordheimer's lists), the general skill lists are
+        # for everyone and a special list's skills name their warbands
+        self.assertFalse(HiredSword.objects.filter(for_everyone=True).exists())
+        self.assertFalse(HiredSword.objects.filter(warband_links__isnull=True).exists())
+        self.assertTrue(Skill.objects.get(name="Sprint", type="Speed").for_everyone)
+        tail = Skill.objects.get(name="Tail Fighting", type="Skaven")
+        self.assertFalse(tail.for_everyone)
+        self.assertTrue(tail.warband_links.exists())
 
     def test_the_dark_mage_knows_his_six_spells(self):
         # BUG-54, CAT-TEST-13: the "1 - " to "6 - " prefixes kept his spells from matching; they are his own spells,

@@ -7,6 +7,10 @@ name), and the hire terms in one object (`hired_sword`, or `dramatis_persona`): 
 `upkeep_cost`, `upkeep_cost_expression`, `rating`, `grade`, `race`, `unique_to`, `available_skill_types` and
 `available_special_skills`; a dramatis persona's adds `stays` ("always" or "one_battle") and `payment_note`.
 
+Who may hire a row, its fees and the book's sentence come from the catalogue import (`out/who-can.json`, mordheimer's
+by name) where it lists the row: its warband types and groups, its fee and upkeep (a text one in the `*_expression`
+column) and its hiring sentence as `hire_note`; otherwise the row's own fees and its `unique_to` as the note.
+
 Rows are upserted in the book by name (BUG-17). Links resolve against the book (`core/book_lookups.py`); a row's own
 specials, spells and special skills the book lacks are created in it under "Hired Sword - <name>" ("Dramatis
 Persona - <name>"), and the special skills' type joins the skill types the row may take. `race` is matched to the
@@ -26,6 +30,7 @@ from apps.core.book_lookups import BookLookups
 from apps.core.catalogue.cache import bump
 from apps.core.seeding import (
     SettingAssignments,
+    WhoCanLists,
     clean,
     parse_armour_save,
     parse_int,
@@ -34,13 +39,11 @@ from apps.core.seeding import (
     upsert_global,
 )
 from apps.races.models import Race
-from apps.restrictions.book import BookRestrictions
-from apps.restrictions.serializers import unique_restriction_notes
 
 from .models import STAYS, DramatisPersona, HiredSword, HirelingProfile
 from .writes import write_links
 
-COSTS = ("hire_cost", "upkeep_cost", "rating")
+FEES = ("hire_cost", "upkeep_cost")
 
 
 def _no_extras(terms: dict[str, Any], label: str) -> dict[str, Any]:
@@ -78,12 +81,12 @@ DRAMATIS_PERSONAE = SeedSpec(
 
 
 class _Run:
-    """One seeder run: the book's entries, restrictions and races it links rows to, and what it did."""
+    """One seeder run: the book's entries and races it links rows to, who may hire each, and what it did."""
 
     def __init__(self, spec: SeedSpec) -> None:
         self.spec = spec
         self.lookups = BookLookups(spec.own_type)
-        self.restrictions = BookRestrictions()
+        self.who_can = WhoCanLists(spec.settings_kind)
         book_races = Race.objects.filter(campaign__isnull=True)
         self.races = {race.name.strip().lower(): race for race in book_races}
         self.settings = SettingAssignments(spec.settings_kind)  # each row's setting, from the catalogue import
@@ -106,14 +109,13 @@ class _Run:
             skill_types.append(own_type)
         race_label = clean(terms.get("race"))
         return {
+            **self.hire_terms(terms, name),
             "description": data.get("description", ""),
             "armour_save": parse_armour_save(data.get("armour_save")),
             "large": bool(data.get("large", False)),
             "caster": data.get("caster") or "No",
             **read_stats(data, label),  # fail loudly (BUG-54)
-            **{field: (parse_int(terms[field]) if terms.get(field) is not None else None) for field in COSTS},
-            "hire_cost_expression": clean(terms.get("hire_cost_expression")),
-            "upkeep_cost_expression": clean(terms.get("upkeep_cost_expression")),
+            "rating": parse_int(terms["rating"]) if terms.get("rating") is not None else None,
             "grade": clean(terms.get("grade")),
             "race": self.races.get(race_label.lower()),
             "race_label": race_label,
@@ -122,20 +124,37 @@ class _Run:
             **self.spec.extras(terms, label),
         }
 
+    def hire_terms(self, terms: dict[str, Any], name: str) -> dict[str, Any]:
+        """Who may hire, the fees and the hiring sentence: the import's where it lists the row, else the row's own."""
+        imported = self.who_can.of(name)
+        if imported is None:
+            fees = {field: (parse_int(terms[field]) if terms.get(field) is not None else None) for field in FEES}
+            return {
+                **fees,
+                "hire_cost_expression": clean(terms.get("hire_cost_expression")),
+                "upkeep_cost_expression": clean(terms.get("upkeep_cost_expression")),
+                "for_everyone": True,
+                "hire_note": clean(terms.get("unique_to")),
+            }
+        return {
+            "hire_cost": imported["hire_cost"],
+            "hire_cost_expression": imported["hire_cost_special"],
+            "upkeep_cost": imported["upkeep_cost"],
+            "upkeep_cost_expression": imported["upkeep_cost_special"],
+            "for_everyone": imported["for_everyone"],
+            "hire_note": imported["note"] or clean(terms.get("unique_to")),
+        }
+
     def link(self, row: HirelingProfile, data: dict[str, Any]) -> None:
         """The row's links become the data's: each kind in one INSERT, through the catalogue's link builder."""
         links = self.lookups.links(data, row.name)
-        unique_to = clean((data.get(self.spec.terms) or {}).get("unique_to"))
-        notes = [
-            {"restriction_id": restriction.id, "additional_note": note}
-            for restriction, note in (self.restrictions.resolve(unique_to) if unique_to else [])
-        ]
+        imported = self.who_can.of(row.name)
         resolved = {
             "skill_ids": [skill.id for skill in links.skills],
             "special_ids": [special.id for special in links.specials],
             "spell_ids": [spell.id for spell in links.spells],
             "item_entries": [{"item_id": pk, "quantity": quantity} for pk, quantity in links.quantities.items()],
-            "restriction_ids": unique_restriction_notes(notes),
+            "warbands": imported["lines"] if imported else [],
         }
         write_links(row, resolved, replace=True)
 

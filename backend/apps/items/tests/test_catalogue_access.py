@@ -31,7 +31,7 @@ EDITED: dict[str, dict[str, Any]] = {
     "races": {"movement": 5},
     "items": {"flavour": "Edited"},
 }  # the rest: a new description
-CATALOGUE_APPS = ("items", "skills", "spells", "special", "races", "restrictions", "bestiary", "hirelings")
+CATALOGUE_APPS = ("items", "skills", "spells", "special", "races", "bestiary", "hirelings")
 FAVOURITES = {"warband-bestiary-favourites", "warband-bestiary-favourite-delete"}  # warband routes
 
 
@@ -103,9 +103,6 @@ class CatalogueAccessFixture(CatalogueTestCase):
         return [
             *(row for kind in KINDS for row in self.kind_rows(kind)),
             ("PUT", RACES.detail_url(self.house["races"]), RACES.body("Gnome"), (200, 200, 200, 200, 404)),
-            ("GET", f"/api/restrictions/?campaign_id={campaign}", None, (200, 200, 200, 200, 404)),
-            ("GET", "/api/restrictions/", None, (200,) * 5),
-            ("POST", "/api/restrictions/", {"restriction": "Junk"}, (405,) * 5),  # SEC-06
             ("GET", f"/api/item-rules/?campaign_id={campaign}", None, (200, 200, 200, 200, 404)),
             ("POST", "/api/item-rules/", {"campaign_id": campaign, "name": "Cleave"}, (201, 201, 201, 201, 404)),
             ("GET", f"/api/item-rules/{prop}/", None, (200, 200, 200, 200, 404)),
@@ -162,7 +159,7 @@ def catalogue_patterns() -> list[URLPattern]:
         for entry in get_resolver(f"apps.{app}.urls").url_patterns
         if isinstance(entry, URLPattern)
     ]
-    assert len(patterns) == 45, [pattern.name for pattern in patterns]
+    assert len(patterns) == 44, [pattern.name for pattern in patterns]
     return patterns
 
 

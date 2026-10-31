@@ -1,7 +1,7 @@
 """The hireling catalogue's tables (bestiary rewrite step 2): hired swords and dramatis personae stand alone.
 
 Both carry the catalogue columns (versions, archive, badges), the same stat block and costs, and the same five links:
-skills, specials, spells, items with a quantity, restrictions with a note. A dramatis persona adds `stays` and
+skills, specials, spells, items with a quantity, who may hire. A dramatis persona adds `stays` and
 `payment_note`. One entry per name in the book and in each campaign, one version of a book entry per campaign. A
 link holds its skill, special, spell or item with RESTRICT and goes with its hired sword or dramatis persona.
 """
@@ -13,14 +13,14 @@ from django.db.models import RestrictedError
 from django.test import TestCase
 
 from apps.campaigns.models import Campaign
+from apps.core.testing import book_warband_type
 from apps.hirelings.models import DramatisPersona, HiredSword
 from apps.items.models import Item
 from apps.items.tests.catalogue_support import ITEMS, RACES, SKILLS, CatalogueTestCase, make_entry
-from apps.restrictions.models import Restriction
 from apps.skills.models import Skill
 
 STATS = {"movement": 4, "weapon_skill": 3, "ballistic_skill": 3, "strength": 3, "toughness": 3, "wounds": 1}
-LINKS = {"skill_links", "special_links", "spell_links", "item_links", "restriction_links"}
+LINKS = {"skill_links", "special_links", "spell_links", "item_links", "warband_links"}
 CATALOGUE_COLUMNS = {"campaign", "campaign_type", "replaces", "archived_at", "archived_by", "updated_at", "updated_by"}
 HIRELING_CATALOGUES: tuple[Any, ...] = (HiredSword, DramatisPersona)
 
@@ -78,13 +78,13 @@ class HirelingCatalogueModelTests(TestCase):
             ogre.item_links.create(item=self.sword)
 
     def test_a_linked_entry_cannot_be_deleted_and_the_links_go_with_their_hireling(self):
-        mercenaries = Restriction.objects.create(restriction="Mercenaries")
+        mercenaries = book_warband_type("Mercenaries")
         for model in HIRELING_CATALOGUES:
             with self.subTest(model=model.__name__):
                 row = model.objects.create(name=f"Duellist {model.__name__}", **STATS)
                 row.item_links.create(item=self.sword)
                 row.skill_links.create(skill=self.skill)
-                row.restriction_links.create(restriction=mercenaries, additional_note="only")
+                row.warband_links.create(warband_type=mercenaries)
                 for held in (self.sword, self.skill):
                     with self.assertRaises(RestrictedError), transaction.atomic():
                         held.delete()

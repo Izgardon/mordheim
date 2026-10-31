@@ -113,7 +113,7 @@ class CatalogueTransactionTests(TransactionTestCase):
 
     def test_a_hired_sword_write_failing_after_validation_keeps_nothing(self):
         # BUG-53: the hired sword and its links are one transaction
-        body = HIRED_SWORDS.body("Ghost", restriction_ids=[])
+        body = HIRED_SWORDS.body("Ghost", warbands=[])
         with mock.patch("apps.hirelings.writes.write_links", side_effect=RuntimeError("disk full")):
             response = self.post(HIRED_SWORDS.list_url(), body)
 

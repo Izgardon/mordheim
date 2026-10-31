@@ -8,7 +8,6 @@ the caller isn't in is a 404 (CAT-TEST-01); a campaign id that isn't a whole num
 from typing import Any
 
 from apps.items.models import Item, ItemRule
-from apps.restrictions.models import Restriction
 
 from .catalogue_support import (
     BESTIARY,
@@ -29,7 +28,6 @@ from .catalogue_support import (
 # Every catalogue list that takes ?campaign_id=.
 LIST_URLS = {
     **{kind.key: kind.list_url() for kind in KINDS},
-    "restrictions": "/api/restrictions/",
     "item_rules": "/api/item-rules/",
 }
 
@@ -159,16 +157,6 @@ class CatalogueMergeTests(CatalogueTestCase):
 
                 self.assertNotIn(book.id, listed)
                 self.assertLessEqual({same_name.id, version.id}, set(listed))
-
-    def test_restrictions_hide_book_rows_by_text(self):
-        Restriction.objects.create(type="Warband Group", restriction="Mercenaries", campaign=self.campaign)
-
-        rows = self.get_as(self.player, f"/api/restrictions/?campaign_id={self.campaign.id}").json()
-
-        self.assertEqual(
-            [(row["restriction"], row["type"], row["campaign"]) for row in rows],
-            [("Mercenaries", "Warband Group", self.campaign.id)],
-        )
 
     def test_shared_item_rules_list_campaign_and_book_rows_side_by_side(self):
         ItemRule.objects.create(name="Parry", campaign=self.campaign)

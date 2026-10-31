@@ -1,19 +1,16 @@
 """What catalogue writes store and accept (pass 5; BUG-53, BUG-145, BUG-146, BUG-147, SEC-06, SEC-07).
 
 Item writes take price rows (with who may buy each) and rules as nested input; bestiary and hired-sword writes take skill,
-special, spell, item and restriction ids. Since PR A every id must be the book's or the writer's campaign's (SEC-07's
+special, spell and item ids and who may hire. Since PR A every id must be the book's or the writer's campaign's (SEC-07's
 catalogue half, CAT-TEST-16): another campaign's id is refused like an unknown one. Writes that fail part-way are
 in `test_catalogue_transactions.py`; what they tell the other members (BUG-80), in `test_catalogue_events.py`.
 """
-
-from django.db import IntegrityError, transaction
 
 from apps.bestiary.models import BestiaryEntry, WarbandBestiaryFavourite
 from apps.core.testing import book_warband_type
 from apps.hirelings.models import HiredSword
 from apps.items.models import Item, ItemAvailability, ItemRule
 from apps.races.models import Race
-from apps.restrictions.models import Restriction
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
@@ -174,14 +171,21 @@ class CampaignScopeOfWriteIdsTests(CatalogueTestCase):
         )
         self.assertFalse(BestiaryEntry.objects.filter(name="Spy").exists())
 
-    def test_a_hired_sword_cannot_link_another_campaigns_restriction(self):
-        # SEC-07 (was pinned: linked, and its text read back; flipped in PR A)
-        theirs = Restriction.objects.create(restriction="Their warband", campaign=self.elsewhere)
+    def test_a_hired_sword_cannot_name_another_campaigns_warband_type(self):
+        # SEC-07 (was pinned for restrictions: linked, and its text read back; flipped in PR A)
+        theirs = WarbandType.objects.create(name="Their warband", slug="theirs", campaign=self.elsewhere)
+        ours = WarbandType.objects.create(name="Our warband", slug="ours", campaign=self.campaign)
 
-        response = self.create_as(self.owner, HIRED_SWORDS, "Mole", restriction_ids=[{"restriction_id": theirs.id, "additional_note": "x"}])  # fmt: skip
+        response = self.create_as(self.owner, HIRED_SWORDS, "Mole", warbands=[{"warband_type_id": theirs.id}])
+        hired = self.create_as(self.owner, HIRED_SWORDS, "Vole", for_everyone=False, warbands=[{"warband_type_id": ours.id}, {"warband_type_id": self.mercenaries.id, "excluded": True}])  # fmt: skip
 
-        self.assertEqual(response.json(), {"restriction_ids": [f'Invalid pk "{theirs.id}" - object does not exist.']})
+        self.assertEqual(response.json(), {"warbands": [f'Invalid pk "{theirs.id}" - object does not exist.']})
         self.assertFalse(HiredSword.objects.filter(name="Mole").exists())
+        self.assertEqual(
+            [(line["name"], line["excluded"]) for line in hired.data["warbands"]],
+            [("Our warband", False), ("Mercenaries", True)],
+        )
+        self.assertFalse(hired.data["for_everyone"])
 
     def test_a_warband_cannot_favourite_another_campaigns_bestiary_entry_or_read_it(self):
         # SEC-07 (was pinned: favourited, and its stats read back; flipped in PR A: not found, and a favourite left
@@ -213,35 +217,12 @@ class CampaignScopeOfWriteIdsTests(CatalogueTestCase):
         self.assertEqual(self.get_as(self.rival, url).json(), [])
 
 
-class RestrictionCreateTests(CatalogueTestCase):
-    """SEC-06 (CAT-TEST-05): restrictions are the seeders' rows; nothing adds one through the API."""
+class RestrictionRouteTests(CatalogueTestCase):
+    """SEC-06's route is gone with the restrictions (the items rebuild): who may buy, hire or learn names warband
+    types and groups."""
 
-    def test_nobody_adds_a_global_restriction_through_the_api(self):
-        # SEC-06 (was pinned: any signed-in user added a global row that every campaign listed; flipped in PR A)
-        for user in (self.outsider, self.owner):
-            with self.subTest(user=user.first_name):
-                response = self.post_as(user, "/api/restrictions/", {"type": "Warband", "restriction": "Junk"})
-                self.assertEqual(response.status_code, 405)
-        self.assertFalse(Restriction.objects.filter(restriction="Junk").exists())
-        shards = self.get_as(self.player, f"/api/restrictions/?campaign_id={self.campaign.id}").json()
-        self.assertEqual([row["restriction"] for row in shards], ["Mercenaries"])
-
-    def test_the_book_holds_one_row_per_text_and_type(self):
-        # SEC-06 (was pinned: the same global text could be added again and again; flipped in PR A by
-        # nulls_distinct=False): another type of the same text, or a campaign's row, is still a row of its own
-        Restriction.objects.create(type="Warband Group", restriction="Mercenaries")
-        Restriction.objects.create(type="Warband", restriction="Mercenaries", campaign=self.campaign)
-
-        with self.assertRaises(IntegrityError), transaction.atomic():
-            Restriction.objects.create(type="Warband", restriction="Mercenaries")
-        self.assertEqual(Restriction.objects.filter(restriction="Mercenaries").count(), 3)
-
-    def test_signing_in_is_still_required_to_read_them(self):
-        self.client.force_authenticate(user=None)
-        self.assertEqual(self.client.get("/api/restrictions/").status_code, 401)
-        self.assertEqual(
-            self.client.post("/api/restrictions/", {"restriction": "Junk"}, format="json").status_code, 401
-        )
+    def test_the_restrictions_route_is_gone(self):
+        self.assertEqual(self.get_as(self.player, "/api/restrictions/").status_code, 404)
 
 
 class ItemRuleCreateTests(CatalogueTestCase):

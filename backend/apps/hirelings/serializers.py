@@ -1,7 +1,7 @@
 """Hired sword and dramatis persona payloads and writes; the catalogue's rows and details add the badge fields
 (apps/core/catalogue/rows.py).
 
-A list row is the entry with its race and restrictions; a detail adds the skills, specials, spells and equipment
+A list row is the entry with its race and who may hire it; a detail adds the skills, specials, spells and equipment
 (each item with its quantity). Both kinds have the same payload, and a dramatis persona adds `stays` and
 `payment_note`. A write is checked whole before anything is written (BUG-53): every linked id is the book's or the
 campaign's (`context["campaign_id"]`, SEC-07) and lands on the campaign's current entry for it (CAT-TWEAK-03).
@@ -19,18 +19,18 @@ from apps.core.catalogue.scope import (
 )
 from apps.items.serializers import MAX_COST, ItemSerializer
 from apps.races.models import Race
-from apps.restrictions.models import Restriction
-from apps.restrictions.serializers import (
-    RestrictionNoteSerializer,
-    refuse_unknown_restrictions,
-    unique_restriction_notes,
-)
 from apps.skills.models import Skill
 from apps.skills.serializers import SkillSerializer
 from apps.special.models import Special
 from apps.special.serializers import SpecialSerializer
 from apps.spells.models import Spell
 from apps.spells.serializers import SpellSerializer
+from apps.warbands.access_lines import (
+    AccessLineInputSerializer,
+    AccessLineSerializer,
+    refuse_unknown_lines,
+    unique_lines,
+)
 from apps.warbands.utils.armour_save import BEST_ARMOUR_SAVE, WORST_ARMOUR_SAVE
 
 from .models import MAX_KIT_QUANTITY, DramatisPersona, HiredSword
@@ -54,6 +54,8 @@ COST_FIELDS = (
     "rating",
     "available_skill_types",
     "grade",
+    "for_everyone",
+    "hire_note",
 )
 PROFILE = ("name", "description", *STAT_FIELDS, "armour_save", "large", "caster")
 ROW_FIELDS = ("id", "campaign_id", "setting_id", *PROFILE, "race_id", "race_name", "race_label", *COST_FIELDS)
@@ -68,19 +70,8 @@ WRITE_FIELDS = (
     "special_ids",
     "spell_ids",
     "item_entries",
-    "restriction_ids",
+    "warbands",
 )
-
-
-class _RestrictionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Restriction
-        fields = ("id", "type", "restriction")
-
-
-class RestrictionLinkSerializer(serializers.Serializer):
-    restriction = _RestrictionSerializer(read_only=True)
-    additional_note = serializers.CharField(read_only=True)
 
 
 class EquipmentSerializer(serializers.Serializer):
@@ -89,13 +80,14 @@ class EquipmentSerializer(serializers.Serializer):
 
 
 class HirelingProfileSerializer(serializers.ModelSerializer):
-    """A list row: the entry, its race (the catalogue's, and the source's label) and its restrictions."""
+    """A list row: the entry, its race (the catalogue's, and the source's label) and who may hire it (`for_everyone`,
+    `warbands`)."""
 
     campaign_id = serializers.IntegerField(read_only=True)
     setting_id = serializers.IntegerField(source="campaign_type_id", read_only=True)  # null: Mordheim (in_play.py)
     race_id = serializers.IntegerField(read_only=True, allow_null=True)
     race_name = serializers.SerializerMethodField()
-    restrictions = RestrictionLinkSerializer(source="restriction_links", many=True, read_only=True)
+    warbands = AccessLineSerializer(source="warband_links", many=True, read_only=True)
 
     def get_race_name(self, profile: Any) -> str | None:
         return profile.race.name if profile.race_id else None
@@ -122,25 +114,25 @@ class HirelingDetailSerializer(HirelingProfileSerializer):
 class HiredSwordSerializer(HirelingProfileSerializer):
     class Meta:
         model = HiredSword
-        fields = (*ROW_FIELDS, "restrictions")
+        fields = (*ROW_FIELDS, "warbands")
 
 
 class HiredSwordDetailSerializer(HirelingDetailSerializer):
     class Meta:
         model = HiredSword
-        fields = (*ROW_FIELDS, "restrictions", *KIT_FIELDS)
+        fields = (*ROW_FIELDS, "warbands", *KIT_FIELDS)
 
 
 class DramatisPersonaSerializer(HirelingProfileSerializer):
     class Meta:
         model = DramatisPersona
-        fields = (*ROW_FIELDS, *PERSONA_FIELDS, "restrictions")
+        fields = (*ROW_FIELDS, *PERSONA_FIELDS, "warbands")
 
 
 class DramatisPersonaDetailSerializer(HirelingDetailSerializer):
     class Meta:
         model = DramatisPersona
-        fields = (*ROW_FIELDS, *PERSONA_FIELDS, "restrictions", *KIT_FIELDS)
+        fields = (*ROW_FIELDS, *PERSONA_FIELDS, "warbands", *KIT_FIELDS)
 
 
 def _cost() -> serializers.IntegerField:
@@ -153,7 +145,7 @@ def _formula() -> serializers.CharField:
 
 class HirelingProfileWriteSerializer(serializers.ModelSerializer):
     """A create or an edit of a campaign's hired sword or dramatis persona. A list it sends (skills, specials, spells,
-    equipment, restrictions) replaces that list; a list it leaves out stays. The armour save and the kit's quantities
+    equipment, who may hire) replaces that list; a list it leaves out stays. The armour save and the kit's quantities
     are bounded as a warband's copies are, since hiring copies them onto one."""
 
     armour_save = serializers.IntegerField(
@@ -170,7 +162,7 @@ class HirelingProfileWriteSerializer(serializers.ModelSerializer):
     special_ids = CatalogueIdsField(rows=Special.objects.all(), required=False)
     spell_ids = CatalogueIdsField(rows=Spell.objects.all(), required=False)
     item_entries = EquipmentInputSerializer(many=True, required=False)
-    restriction_ids = RestrictionNoteSerializer(many=True, required=False)
+    warbands = AccessLineInputSerializer(many=True, required=False)
 
     def validate_hire_cost_expression(self, value: str | None) -> str:
         return value or ""
@@ -185,9 +177,9 @@ class HirelingProfileWriteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(f"A kit carries at most {MAX_KIT_QUANTITY} of an item.")
         return current_equipment(rows, self.context["campaign_id"])
 
-    def validate_restriction_ids(self, notes: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        refuse_unknown_restrictions(notes, self.context["campaign_id"])
-        return unique_restriction_notes(notes)
+    def validate_warbands(self, lines: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        refuse_unknown_lines(lines, self.context["campaign_id"])  # the book's or the campaign's types (SEC-07)
+        return unique_lines(lines)
 
 
 class HiredSwordWriteSerializer(HirelingProfileWriteSerializer):

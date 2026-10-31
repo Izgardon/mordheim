@@ -1,7 +1,7 @@
 """Shared fixtures for the catalogue characterisation tests (pass 5).
 
 The `test_catalogue_characterisation_*` modules lock in how the catalogue behaves today (the item, skill, spell,
-special, race, restriction, bestiary, hired-sword and dramatis-persona endpoints, the seeders, and how prices, pickers and trait
+special, race, bestiary, hired-sword and dramatis-persona endpoints, the seeders, and how prices, pickers and trait
 specials find a campaign's entries) before PR A fixes it, PR B moves it onto generic views and PR C adds versions.
 Known bugs are pinned with their BUGS.md ID and the comment "Characterises current behaviour (BUG-NN, pinned; flips
 in PR A)" (or the PR that changes it); a test written as the fixed behaviour is an `expectedFailure`.
@@ -23,10 +23,10 @@ from apps.core.testing import book_warband_type
 from apps.hirelings.models import DramatisPersona, HiredSword
 from apps.items.models import Item, ItemAvailability, ItemAvailabilityWarband, ItemRule, ItemRuleLink
 from apps.races.models import Race
-from apps.restrictions.models import Restriction
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
+from apps.warbands.models import WarbandType
 
 STATS = {
     "movement": 4,
@@ -177,8 +177,8 @@ class CatalogueTestCase(CampaignTestCase):
 
     the Axe (Weapon, 5 gc), the Sword (Weapon, 10 gc) and Heavy Armour (Armour, 50 gc); "Infiltration" in the six
     book skill types; "Lifestealer" in two spell lores; the trait specials Large (Trait), Wizard and Priest (Caster);
-    the race Human; the restriction "Mercenaries" (a hired sword's); the shared rule Parry on the Sword, whose price
-    row is for the warband type Mercenaries; the bestiary's Warhound (a creature); the hired sword Ogre Bodyguard
+    the race Human; the book warband type Mercenaries; the shared rule Parry on the Sword, whose price row is for the
+    Mercenaries; the bestiary's Warhound (a creature); the hired sword Ogre Bodyguard
     (80 gc); and the dramatis persona Aenur (25 gc).
     """
 
@@ -189,7 +189,7 @@ class CatalogueTestCase(CampaignTestCase):
     lifestealer: list[Spell]
     large: Special
     human: Race
-    mercenaries: Restriction
+    mercenaries: WarbandType
     parry: ItemRule
     warhound: BestiaryEntry
     ogre: HiredSword
@@ -198,13 +198,13 @@ class CatalogueTestCase(CampaignTestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         super().setUpTestData()
-        cls.mercenaries = Restriction.objects.create(type="Warband", restriction="Mercenaries")
+        cls.mercenaries = book_warband_type("Mercenaries")
         cls.parry = ItemRule.objects.create(name="Parry", slug="parry", text="Parries a blow.")
         cls.book_axe = make_entry(ITEMS, "Axe", cost=5)
         cls.book_sword = make_entry(ITEMS, "Sword", cost=10)
         ItemRuleLink.objects.create(item=cls.book_sword, rule=cls.parry)
         ItemAvailabilityWarband.objects.create(
-            availability=cls.book_sword.availabilities.get(), warband_type=book_warband_type("Mercenaries")
+            availability=cls.book_sword.availabilities.get(), warband_type=cls.mercenaries
         )
         cls.heavy_armour = make_entry(ITEMS, "Heavy Armour", type="Armour", subtype="Armour", save_value="5+", cost=50)
         cls.infiltration = [Skill.objects.create(name="Infiltration", type=kind) for kind in INFILTRATION_TYPES]
