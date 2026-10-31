@@ -8,7 +8,6 @@
 :root {
   --font-body: "Manrope", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --font-heading: "Fraunces", "Times New Roman", serif;
-  --font-mordheim: "Mordheim", "Fraunces", "Times New Roman", serif;
   --font-mono: "Space Mono", ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
   --text-2xs: clamp(0.6rem, 0.56rem + 0.2vw, 0.7rem);

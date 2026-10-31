@@ -8,6 +8,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogKicker,
   DialogTitle,
 } from "@components/dialog";
 
@@ -124,10 +125,11 @@ export default function CommonRulesSheet({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[720px]">
         <DialogHeader>
-          <DialogTitle className="font-bold">Common Rules</DialogTitle>
+          <DialogKicker>House rules</DialogKicker>
+          <DialogTitle>Common rules</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <DialogDescription className="block text-sm text-muted-foreground">
+          <DialogDescription className="block text-sm text-text2">
             Choose from a small list of commonly used campaign house rules.
           </DialogDescription>
           {commonRulesQuery.isPending ? (

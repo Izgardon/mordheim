@@ -26,23 +26,4 @@ const Card = React.forwardRef<HTMLElement, CardProps>(
 );
 Card.displayName = "Card";
 
-const CardHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("flex flex-col gap-1.5 p-6", className)} {...props} />
-);
-
-const CardTitle = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn("font-display text-xl font-semibold leading-tight text-head", className)}
-    {...props}
-  />
-);
-
-const CardContent = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("p-6 pt-0", className)} {...props} />
-);
-
-const CardFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("flex items-center p-6 pt-0", className)} {...props} />
-);
-
-export { Card, CardHeader, CardFooter, CardTitle, CardContent };
+export { Card };

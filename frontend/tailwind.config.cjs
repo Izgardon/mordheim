@@ -22,12 +22,6 @@ module.exports = {
   				'Arial',
   				'sans-serif'
   			],
-  			mordheim: [
-  				'\"Mordheim\"',
-  				'\"Fraunces\"',
-  				'\"Times New Roman\"',
-  				'serif'
-  			],
   			display: [
   				'\"Fraunces\"',
   				'\"Times New Roman\"',

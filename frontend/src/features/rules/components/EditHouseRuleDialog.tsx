@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogKicker,
   DialogTitle,
   DialogTrigger,
 } from "@components/dialog";
@@ -129,7 +130,8 @@ export default function EditHouseRuleDialog({
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle className="font-bold">EDIT HOUSE RULE</DialogTitle>
+          <DialogKicker>House rules</DialogKicker>
+          <DialogTitle>Edit the house rule</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
@@ -155,7 +157,11 @@ export default function EditHouseRuleDialog({
               placeholder="Describe the ruling and any clarifications."
             />
           </div>
-          {formError ? <p className="text-sm text-danger">{formError}</p> : null}
+          {formError ? (
+            <p role="alert" className="text-sm text-danger">
+              {formError}
+            </p>
+          ) : null}
         </div>
         <DialogFooter className="flex flex-wrap items-center justify-between gap-3">
           <Button
