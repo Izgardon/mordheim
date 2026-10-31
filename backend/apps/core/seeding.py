@@ -11,6 +11,7 @@ from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
+from django.conf import settings
 from django.core.management.base import CommandError
 from django.core.management.color import no_style
 from django.db import connection
@@ -18,6 +19,10 @@ from django.db.models import Model
 
 from apps.items.models import Item, ItemAvailability, ItemAvailabilityRestriction
 from apps.restrictions.book import BookRestrictions
+
+# The catalogue import's generated files (backend/catalogue_import/out/), which the grading seeders read in place:
+# settings, warband types and groups, and the settings of the skills and hired swords we seed (grading phase 1)
+IMPORT_OUT = Path(settings.BASE_DIR) / "catalogue_import" / "out"
 
 STAT_FIELDS = (
     "movement",

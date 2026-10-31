@@ -8,6 +8,16 @@ from apps.warbands.utils.henchmen_level import HENCHMEN_LEVEL_THRESHOLDS
 from apps.warbands.utils.hero_level import HERO_LEVEL_THRESHOLDS
 
 ROLE_SLUGS = ["owner", "admin", "player"]
+# Publication grades, lowest first: a grade's rank is its place here, which every "up to" preset compares
+GRADES = ("1a", "1b", "1c", "2a", "2b", "3")
+GRADE_LABELS = {
+    "1a": "Official",
+    "1b": "Unofficial",
+    "1c": "Experimental",
+    "2a": "Reliable",
+    "2b": "Supplemental",
+    "3": "Draft",
+}
 HERO_DEATH_ROLL_CHOICES = [
     ("d66", "D66"),
     ("d100", "D100"),
@@ -33,7 +43,7 @@ class Campaign(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    # the catalogue add-ons the campaign uses (CAT-NEW-04: schema only, nothing sets or reads them yet)
+    # the settings in play: the ones its owner ticked, and the always-on ones (grading phase 1)
     campaign_types: models.ManyToManyField = models.ManyToManyField(
         "CampaignType", through="CampaignCampaignType", related_name="campaigns", blank=True
     )
@@ -46,16 +56,23 @@ class Campaign(models.Model):
 
 
 class CampaignType(models.Model):
-    """A set of catalogue entries a campaign can add to the book (e.g. Marienburg), tagged by the nullable
-    `campaign_type` of items, skills, spells, specials, races, restrictions and hired-sword profiles (CAT-NEW-04).
-    Schema only for now: no rows, no tagging and no filtering."""
+    """A setting: the world or supplement content belongs to (Mordheim, Khemri, Lustria …), seeded from the
+    catalogue import (`seed_settings`). Only settings carry a grade (grading phase 1): every warband type and
+    catalogue entry belongs to one setting through its `campaign_type`, a null one counting as Mordheim's. Mordheim
+    itself splits by grade into Mordheim (1a, `always_on`), Mordheim 1b, 1c and 2a, and Grade 3. A campaign ticks the
+    settings in play (`Campaign.campaign_types`); picking a grade is a preset that ticks every setting at or below
+    it (`apps/campaigns/in_play.py`)."""
 
     slug = models.SlugField(max_length=40, unique=True)
     name = models.CharField(max_length=80)
+    grade = models.CharField(max_length=2, choices=[(grade, grade) for grade in GRADES], default="1a")
+    sort_order = models.PositiveSmallIntegerField(default=0)  # the order its chip shows in
+    always_on = models.BooleanField(default=False)  # in play in every campaign: Mordheim (1a)
 
     class Meta:
         db_table = "campaign_type"
-        ordering = ["name"]
+        ordering = ["sort_order", "name"]
+        constraints = [models.CheckConstraint(check=models.Q(grade__in=GRADES), name="campaign_type_grade_valid")]
 
     def __str__(self):
         return self.name
