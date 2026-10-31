@@ -44,6 +44,17 @@ def campaigns_for_user(user: Any) -> QuerySet[Campaign]:
     )
 
 
+def campaign_list_for_user(user: Any) -> QuerySet[Campaign]:
+    """The campaigns list: `campaigns_for_user` with the user's own warband in each (`my_warband_id`, `_name` and
+    `_faction`, None without one), read in the same query."""
+    mine = Warband.objects.filter(campaign_id=OuterRef("pk"), user=user)
+    return campaigns_for_user(user).annotate(
+        my_warband_id=Subquery(mine.values("id")[:1]),
+        my_warband_name=Subquery(mine.values("name")[:1]),
+        my_warband_faction=Subquery(mine.values("faction")[:1]),
+    )
+
+
 def campaign_for_user(campaign_id: int, user: Any) -> Campaign | None:
     return campaigns_for_user(user).filter(id=campaign_id).first()
 

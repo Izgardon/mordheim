@@ -89,6 +89,24 @@ class CampaignSerializer(serializers.ModelSerializer):
         )
 
 
+class CampaignListSerializer(CampaignSerializer):
+    """A campaign on the campaigns list: the campaign, and the reader's own warband in it (None without one), from
+    `selectors.campaign_list_for_user`."""
+
+    my_warband = serializers.SerializerMethodField()
+
+    def get_my_warband(self, obj):
+        warband_id = getattr(obj, "my_warband_id", None)
+        if warband_id is None:
+            return None
+        return {"id": warband_id, "name": obj.my_warband_name, "faction": obj.my_warband_faction}
+
+    class Meta:
+        model = Campaign
+        fields: tuple[str, ...] = (*CampaignSerializer.Meta.fields, "my_warband")
+        read_only_fields = CampaignSerializer.Meta.read_only_fields
+
+
 class CampaignCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=120)
     campaign_type = serializers.ChoiceField(choices=["standard", "marienburg"], required=False, default="standard")

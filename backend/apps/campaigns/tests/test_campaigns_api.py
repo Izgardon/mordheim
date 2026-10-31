@@ -543,6 +543,23 @@ class CampaignApiTests(APITestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["id"], campaign["id"])
 
+    def test_list_campaigns_shows_your_own_warband_in_each(self):
+        owner = self._create_user("owner@example.com", "Owner")
+        player = self._create_user("player@example.com", "Player")
+        ashes = self._create_campaign(owner, name="Ashes")
+        ruins = self._create_campaign(owner, name="Ruins")
+        self.client.force_authenticate(user=player)
+        self.client.post("/api/campaigns/join/", {"join_code": ashes["join_code"]}, format="json")
+        mine = Warband.objects.create(campaign_id=ashes["id"], user=owner, name="Iron Vultures", faction="Middenheim")
+        Warband.objects.create(campaign_id=ashes["id"], user=player, name="Gutter Rats", faction="Skaven")
+
+        self.client.force_authenticate(user=owner)
+        listed = {row["name"]: row["my_warband"] for row in self.client.get("/api/campaigns/").data}
+
+        self.assertEqual(listed["Ashes"], {"id": mine.id, "name": "Iron Vultures", "faction": "Middenheim"})
+        self.assertIsNone(listed["Ruins"])
+        self.assertNotIn("my_warband", self.client.get(f"/api/campaigns/{ruins['id']}/").data)
+
     def test_join_campaign_respects_max_players(self):
         owner = self._create_user("owner@example.com", "Owner")
         campaign = self._create_campaign(owner, max_players=2)

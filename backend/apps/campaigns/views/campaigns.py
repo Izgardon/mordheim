@@ -6,9 +6,10 @@ from rest_framework.response import Response
 
 from apps.realtime.services import send_campaign_updated, sender_socket_id
 
-from ..selectors import campaign_detail_for_user, campaign_for_user, campaigns_for_user
+from ..selectors import campaign_detail_for_user, campaign_for_user, campaign_list_for_user
 from ..serializers.campaigns import (
     CampaignCreateSerializer,
+    CampaignListSerializer,
     CampaignSerializer,
     CampaignUpdateSerializer,
     JoinCampaignSerializer,
@@ -21,12 +22,13 @@ from .base import AnswersRefusals, CampaignScopedView
 
 
 class CampaignListCreateView(AnswersRefusals):
-    """GET: the caller's campaigns. POST: a new campaign, with the caller as its owner (BUG-76: all or nothing)."""
+    """GET: the caller's campaigns, each with his own warband in it. POST: a new campaign, with the caller as its owner
+    (BUG-76: all or nothing)."""
 
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        return Response(CampaignSerializer(campaigns_for_user(request.user).order_by("name"), many=True).data)
+        return Response(CampaignListSerializer(campaign_list_for_user(request.user).order_by("name"), many=True).data)
 
     def post(self, request):
         serializer = CampaignCreateSerializer(data=request.data)
