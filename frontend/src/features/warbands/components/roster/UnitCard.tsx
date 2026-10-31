@@ -21,6 +21,8 @@ import {
 } from "./unit-view";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
+import { eachCarries, loadoutLine } from "../../units/loadout";
+
 type UnitCardProps = {
   entry: RosterUnit;
   campaign: CampaignSummary | null;
@@ -185,6 +187,9 @@ export default function UnitCard(props: UnitCardProps) {
                   {member.kills ? (
                     <span className="font-medium text-muted-foreground">{member.kills} kills</span>
                   ) : null}
+                  {member.gaps?.length ? (
+                    <span className="font-medium text-danger">lacks {member.gaps.length}</span>
+                  ) : null}
                 </span>
               ))}
             </div>
@@ -201,7 +206,12 @@ export default function UnitCard(props: UnitCardProps) {
           <StatStrip values={stats.values} highlighted={stats.highlighted} />
         </div>
       </div>
-      {open ? null : (
+      {open ? null : isGroup(entry) && !creature ? (
+        <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+          <span className="text-[13px] text-text2">{eachCarries(entry.unit)}</span>
+          <span className="font-mono text-xs text-muted-foreground">{loadoutLine(entry.unit)}</span>
+        </div>
+      ) : (
         <span className="text-[13px] text-text2">{gearSummary(creature ? [] : unit.items)}</span>
       )}
       {props.children}

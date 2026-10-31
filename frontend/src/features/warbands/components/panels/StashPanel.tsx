@@ -5,7 +5,8 @@ import { SidePanel } from "@/components/ui/side-panel";
 
 import { warbandStashQuery } from "../../api/economy-queries";
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
-import { unitName, type RosterUnit } from "../roster/unit-view";
+import { copiesForGroup } from "../../units/loadout";
+import { isGroup, unitName, type RosterUnit } from "../roster/unit-view";
 import type { WarbandItemSummary } from "../../types/warband-types";
 
 type StashPanelProps = {
@@ -18,9 +19,16 @@ type StashPanelProps = {
   units: RosterUnit[];
   /** When set, Equip goes straight to this unit (the loadout's stash). */
   forUnit?: RosterUnit | null;
-  onMove: (itemId: number, to: ItemPlace) => void;
+  /** `quantity`: a group takes one copy for each member, up to what the stash holds. */
+  onMove: (itemId: number, to: ItemPlace, quantity?: number) => void;
   onSell: (item: WarbandItemSummary) => void;
 };
+
+/** Copies an Equip moves: one, or one for each member of a group (henchmen loadouts). */
+function copiesFor(units: RosterUnit[], to: ItemPlace, inStash: number) {
+  const target = units.find((entry) => entry.kind === to.type && entry.unit.id === to.id);
+  return target && isGroup(target) ? copiesForGroup(target.unit, inStash) : 1;
+}
 
 /** The warband's stash (design E): each item with its count and cost, Equip and Sell. */
 export function StashList({
@@ -57,7 +65,10 @@ export function StashList({
                 <Button
                   size="sm"
                   variant="secondary"
-                  onClick={() => onMove(item.id, { type: forUnit.kind, id: forUnit.unit.id })}
+                  onClick={() => {
+                    const to = { type: forUnit.kind, id: forUnit.unit.id };
+                    onMove(item.id, to, copiesFor([forUnit], to, item.quantity ?? 1));
+                  }}
                 >
                   Equip
                 </Button>
@@ -67,7 +78,8 @@ export function StashList({
                   value=""
                   onChange={(event) => {
                     const [type, id] = event.target.value.split(":");
-                    if (type) onMove(item.id, { type: type as ItemPlace["type"], id: Number(id) });
+                    const to = { type: type as ItemPlace["type"], id: Number(id) };
+                    if (type) onMove(item.id, to, copiesFor(units, to, item.quantity ?? 1));
                   }}
                   className="h-8 border border-strong bg-page px-2 text-xs text-ink"
                 >

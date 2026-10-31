@@ -22,19 +22,19 @@ export const ridden = (
   ).length;
 
 type MountedUnit = UnitCompanionFields & {
-  items?: Pick<Item, "id" | "companion" | "beast_kind">[];
+  items?: Pick<Item, "id" | "companion" | "beast_kind" | "row_id" | "carriers">[];
   henchmen?: unknown[];
 };
 
 /**
  * What the unit's mounts add to the warband rating, as the server counts them: a rider's first
- * mount once; a group one per living member at most, each at its first mount's bonus (the payload
- * names only the group's first mount, so a group riding two kinds counts the first one's).
+ * mount once; a group's ridden row once for each member who carries it (henchmen loadouts).
  */
 export function unitMountBonus(unit: MountedUnit) {
   const bonus = unit.mount?.rating_bonus ?? 0;
   if (!unit.henchmen) return bonus;
-  return Math.min(ridden(unit.items), unit.henchmen.length) * bonus;
+  const row = unit.items?.find((item) => item.row_id === unit.mount?.item_row_id);
+  return (row?.carriers ?? 0) * bonus;
 }
 
 /** A henchmen group recruited from a creature (it can go back to its item). */

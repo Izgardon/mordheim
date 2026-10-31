@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { ChipLabel } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
 import { STAT_KEYS } from "@/components/ui/stat-strip";
@@ -7,6 +6,7 @@ import { useCatalogue } from "@/lib/catalogue-queries";
 
 import type { HeroCaster } from "../../../types/warband-types";
 import { isGroup, type RosterUnit } from "../unit-view";
+import EditGroupModels from "./EditGroupModels";
 import EditListPicker from "./EditListPicker";
 import RaceField from "./RaceField";
 import SkillAccessField from "./SkillAccessField";
@@ -30,7 +30,7 @@ export default function EditUnitFields({
   onAddItem: () => void;
 }) {
   const { kind, unit } = entry;
-  const { draft, set, lists, setLists, members, setMembers } = form;
+  const { draft, set, lists, setLists } = form;
   const skills = useCatalogue("skills", campaignId).data ?? [];
   const specials = useCatalogue("specials", campaignId).data ?? [];
   const spells = useCatalogue("spells", campaignId).data ?? [];
@@ -162,43 +162,7 @@ export default function EditUnitFields({
         </div>
       </div>
       {isGroup(entry) ? (
-        <div className="flex flex-col gap-1.5">
-          <span className={SECTION_LABEL}>Models</span>
-          {members.map((member, index) => (
-            <div key={member.id ?? `new-${index}`} className="flex items-center gap-2">
-              <Input
-                inputSize="sm"
-                aria-label={`Model ${index + 1} name`}
-                value={member.name ?? ""}
-                onChange={(event) =>
-                  setMembers((list) =>
-                    list.map((m, i) => (i === index ? { ...m, name: event.target.value } : m))
-                  )
-                }
-              />
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => setMembers((list) => list.filter((_, i) => i !== index))}
-              >
-                Remove
-              </Button>
-            </div>
-          ))}
-          <Button
-            size="sm"
-            variant="secondary"
-            className="self-start"
-            onClick={() =>
-              setMembers((list) => [
-                ...list,
-                { name: `${draft.unit_type || "Henchman"} ${list.length + 1}` },
-              ])
-            }
-          >
-            Add a model
-          </Button>
-        </div>
+        <EditGroupModels group={entry.unit} form={form} unitType={String(draft.unit_type ?? "")} />
       ) : null}
     </div>
   );

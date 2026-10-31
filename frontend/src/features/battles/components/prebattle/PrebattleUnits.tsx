@@ -123,6 +123,7 @@ function UnitRow({
           <span className="truncate text-xs text-muted-foreground">
             {[unit.unitType, detail].filter(Boolean).join(" · ")}
           </span>
+          {unit.outReason ? <span className="text-xs text-danger">{unit.outReason}</span> : null}
         </span>
         {missing ? <ChipLabel tone="danger">{missing}</ChipLabel> : null}
         {changed.length ? <ChipLabel tone="accent">Stats changed</ChipLabel> : null}

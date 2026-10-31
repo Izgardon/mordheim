@@ -73,7 +73,7 @@ export default function WarbandPanels(props: WarbandPanelsProps) {
         onOpenChange={(open) => props.setPanel(open ? "stash" : null)}
         canEdit={props.canManageItems}
         units={units}
-        onMove={(itemId, to) => actions.moveItem(null, itemId, to)}
+        onMove={(itemId, to, quantity) => actions.moveItem(null, itemId, to, quantity)}
         onSell={sellFromStash}
       />
       <StorePanel

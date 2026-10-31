@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import type { Item } from "@/features/items/types/item-types";
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
-import { unitName, type RosterUnit } from "./unit-view";
+import { isGroup, unitName, type RosterUnit } from "./unit-view";
 
 /** What a box shows when opened: its name, a kind line and its rules text. */
 export type BoxDetail = {
@@ -36,7 +36,9 @@ type RulesPanelProps = {
 /** A box's rules under its row, and for an item the existing actions: move, stash, sell, buy again. */
 export default function RulesPanel({ detail, onClose, itemActions }: RulesPanelProps) {
   const [selling, setSelling] = useState(false);
-  const suggested = detail.item?.suggested_sale_price ?? detail.item?.cost ?? 0;
+  // a group sells a loadout row: a copy for each member who carries it (henchmen loadouts)
+  const copies = itemActions && isGroup(itemActions.owner) ? (detail.item?.carriers ?? 1) : 1;
+  const suggested = (detail.item?.suggested_sale_price ?? detail.item?.cost ?? 0) * copies;
   const [price, setPrice] = useState(String(suggested ?? 0));
   const [target, setTarget] = useState("");
 

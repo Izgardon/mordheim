@@ -7,6 +7,7 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { useWarbandCacheUpdate, type WarbandUpdate } from "../../../api/warband-cache";
 import { unitApi, type UnitBatch } from "../../../units/unit-api";
 import type { UnitKindKey } from "../../../types/units";
+import type { ShareChoice } from "../../../hooks/units/useGroupLoadout";
 import type { Henchman } from "../../../types/warband-types";
 import { buildAvailableSkillsPayload, parseAvailableSkills } from "../../../utils/warband-utils";
 import { LIST_KEY, isGroup, type RosterUnit } from "../unit-view";
@@ -29,6 +30,17 @@ const REMOVED_KEY = {
   henchmen_group: "removedHenchmenGroupIds",
   hireling: "removedHirelingIds",
 } as const;
+
+/** A recruit's loadout row: bought with him (in his cost), taken from the stash, or he joins without it. */
+export type KitChoice = "buy" | "stash" | "without";
+/** A model in the edit form: a new one carries his kit choices, by loadout row id. */
+export type MemberDraft = Partial<Henchman> & { kit?: Record<number, KitChoice> };
+
+const kitLists = (kit: Record<number, KitChoice> = {}) => {
+  const rows = (choice: KitChoice) =>
+    Object.entries(kit).flatMap(([row, picked]) => (picked === choice ? [Number(row)] : []));
+  return { from_stash: rows("stash"), without: rows("without") };
+};
 
 export type Named = { id: number; name: string; type?: string | null };
 export type EditLists = { skills: Named[]; specials: Named[]; spells: Named[] };
@@ -76,9 +88,9 @@ export function useUnitEditDraft(entry: RosterUnit, campaignId: number, warbandI
     specials: (unit.specials ?? []) as Named[],
     spells: ("spells" in unit ? (unit.spells ?? []) : []) as Named[],
   });
-  const [members, setMembers] = useState<Partial<Henchman>[]>(
-    isGroup(entry) ? entry.unit.henchmen : []
-  );
+  const [members, setMembers] = useState<MemberDraft[]>(isGroup(entry) ? entry.unit.henchmen : []);
+  // members the form removed, and where each one's share of the loadout goes (henchmen loadouts)
+  const [dismissed, setDismissed] = useState<Record<number, ShareChoice>>({});
   const [saving, setSaving] = useState(false);
   const set = (key: string, value: unknown) =>
     setDraft((current) => ({ ...current, [key]: value }));
@@ -101,12 +113,19 @@ export function useUnitEditDraft(entry: RosterUnit, campaignId: number, warbandI
       ...(kind === "henchmen_group" ? {} : { spell_ids: lists.spells.map((spell) => spell.id) }),
       ...(isGroup(entry)
         ? {
-            henchmen: members.map(({ id, name, kills, dead }) => ({
-              id,
-              name: name ?? "",
-              kills,
-              dead,
-            })),
+            henchmen: [
+              ...members.map(({ id, name, kills, dead, kit }) => ({
+                id,
+                name: name ?? "",
+                kills,
+                dead,
+                ...(id === undefined ? kitLists(kit) : {}),
+              })),
+              ...Object.entries(dismissed).map(([id, share]) => ({
+                id: Number(id),
+                dismiss: share,
+              })),
+            ],
           }
         : {}),
     };
@@ -149,7 +168,20 @@ export function useUnitEditDraft(entry: RosterUnit, campaignId: number, warbandI
     });
   const dismiss = () => run({ dismiss: [unit.id] });
 
-  return { draft, set, lists, setLists, members, setMembers, saving, save, duplicate, dismiss };
+  return {
+    draft,
+    set,
+    lists,
+    setLists,
+    members,
+    setMembers,
+    dismissed,
+    setDismissed,
+    saving,
+    save,
+    duplicate,
+    dismiss,
+  };
 }
 
 export type UnitEditDraft = ReturnType<typeof useUnitEditDraft>;

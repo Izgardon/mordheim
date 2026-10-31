@@ -54,6 +54,10 @@ export type PrebattleUnit = BattleRosterCompanionFields & {
   /** How many more games it misses, and why (`BattleRosterMissingFields`). */
   missingGames?: number;
   missingReason?: string;
+  /** A henchman whose kit went to the stash: left out at first, and why (henchmen loadouts). */
+  outReason?: string | null;
+  /** A henchman: the loadout rows he lacks, which he starts without. */
+  gaps?: { rowId: number; itemId: number; name: string; reason: string }[];
   stats: UnitStats;
   upkeepPrice?: number | null;
   upkeepCostExpression?: string | null;

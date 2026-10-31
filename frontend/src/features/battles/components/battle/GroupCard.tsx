@@ -75,6 +75,11 @@ export default function GroupCard({
             <span className="text-[11px] text-muted-foreground">
               {member.kills === 1 ? "1 kill" : `${member.kills} kills`}
             </span>
+            {member.unit.gaps?.length ? (
+              <span className="truncate text-[11px] text-danger">
+                No {member.unit.gaps.map((gap) => gap.name).join(", ")}
+              </span>
+            ) : null}
           </button>
         ))}
       </div>

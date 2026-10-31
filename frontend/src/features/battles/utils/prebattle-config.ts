@@ -62,8 +62,9 @@ export function buildConfigPayload(stored: StoredUnitInformation, form: Prebattl
 }
 
 /**
- * The keys of the units missing games (a group's members, and `group:<id>`), whose pets fighting
- * as their own models stay home with them.
+ * The keys of the units left out at first: those missing games (a group's members, and
+ * `group:<id>`, whose pets fighting as their own models stay home with them), and a member whose
+ * kit went to the stash (henchmen loadouts). The player may still bring any of them.
  */
 function missingKeys(roster: ParticipantRoster) {
   const missing = (unit: { missingGames?: number }) => (unit.missingGames ?? 0) > 0;
@@ -72,6 +73,9 @@ function missingKeys(roster: ParticipantRoster) {
     ...roster.henchmenGroups
       .filter(missing)
       .flatMap((group) => [`group:${group.id}`, ...group.members.map((member) => member.key)]),
+    ...roster.henchmenGroups.flatMap((group) =>
+      group.members.filter((member) => member.outReason).map((member) => member.key)
+    ),
   ]);
 }
 

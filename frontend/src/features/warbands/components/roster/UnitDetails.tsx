@@ -13,7 +13,9 @@ import { isPendingByName, isPendingByType } from "../heroes/utils/pending-entrie
 import PendingPick, { type PendingList } from "./PendingPick";
 import RulesPanel, { type BoxDetail } from "./RulesPanel";
 import UnitKills from "./UnitKills";
-import { boxRows, itemBoxKind, xpInfo, type RosterUnit } from "./unit-view";
+import { loadoutLine } from "../../units/loadout";
+import GroupMembers from "./GroupMembers";
+import { boxRows, isCreature, isGroup, itemBoxKind, xpInfo, type RosterUnit } from "./unit-view";
 
 type UnitDetailsProps = {
   entry: RosterUnit;
@@ -59,7 +61,7 @@ export default function UnitDetails(props: UnitDetailsProps) {
   const lines: Row[] = [
     {
       key: "items",
-      label: kind === "henchmen_group" ? "Items · each" : "Items",
+      label: kind === "henchmen_group" ? "Each carries" : "Items",
       boxes: rows.items.map((item) => ({
         name: item.name,
         kind: itemKindLine(item),
@@ -154,6 +156,11 @@ export default function UnitDetails(props: UnitDetailsProps) {
                 />
               ))}
             </div>
+            {row.key === "items" && isGroup(entry) ? (
+              <span className="font-mono text-xs text-muted-foreground">
+                {loadoutLine(entry.unit)}
+              </span>
+            ) : null}
             {selected?.pending && selected.id !== undefined && canEdit ? (
               <PendingPick
                 campaignId={props.campaignId}
@@ -193,6 +200,14 @@ export default function UnitDetails(props: UnitDetailsProps) {
         );
       })}
 
+      {isGroup(entry) && !isCreature(entry) ? (
+        <GroupMembers
+          group={entry.unit}
+          campaignId={props.campaignId}
+          warbandId={props.warbandId}
+          canEdit={canEdit}
+        />
+      ) : null}
       <UnitKills campaignId={props.campaignId} warbandId={props.warbandId} entry={entry} />
       {kind === "hireling" ? (
         <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1.5 border-t border-line pt-3 text-[13px]">

@@ -14,10 +14,7 @@ import { getPersistedItemCost } from "../utils/acquire-item-costs";
 
 import type { Item } from "../types/item-types";
 import type { RecruitTarget } from "@/features/warbands/api/beasts-api";
-import type {
-  GroupMountFields,
-  UnitCompanionFields,
-} from "@/features/warbands/types/companion-types";
+import type { UnitCompanionFields } from "@/features/warbands/types/companion-types";
 import type { AcquireItemMeta, PurchaseTarget } from "../types/acquire-types";
 import type {
   HenchmenGroup,
@@ -50,23 +47,25 @@ type ApiTargetType = "stash" | "hero" | "hireling" | "henchmen_group";
 
 /**
  * `POST warbands/<id>/purchases/`'s answer: what changed, slim (BUG-07). A unit target's
- * `mount`, `pets` and `effective_stats` (and a group's `mounts` and `mount_warnings`) describe it
- * after the purchase; a recruit's `group` is the group the copies joined or formed.
+ * `mount`, `pets` and `effective_stats` describe it after the purchase, and a group comes whole as
+ * `unit` (one loadout line: henchmen loadouts); a recruit's `group` is the group the copies joined
+ * or formed.
  */
-export type PurchaseAnswer = UnitCompanionFields &
-  GroupMountFields & {
-    target_type: ApiTargetType;
-    target_id: number | null;
-    updated_at: string | null;
-    /** The unit's items in detail shape (null for the stash). */
-    items: Item[] | null;
-    stash_item: WarbandItemSummary | null;
-    group?: HenchmenGroup | null;
-    /** The "Buy" ledger row (null for a gift or a free purchase). */
-    trade: WarbandTrade | null;
-    summary: WarbandUnitsSummary;
-    warnings: PurchaseWarning[];
-  };
+export type PurchaseAnswer = UnitCompanionFields & {
+  target_type: ApiTargetType;
+  target_id: number | null;
+  updated_at: string | null;
+  /** The unit's items in detail shape (null for the stash). */
+  items: Item[] | null;
+  stash_item: WarbandItemSummary | null;
+  group?: HenchmenGroup | null;
+  /** A henchmen group target's whole payload (null for any other target). */
+  unit?: HenchmenGroup | null;
+  /** The "Buy" ledger row (null for a gift or a free purchase). */
+  trade: WarbandTrade | null;
+  summary: WarbandUnitsSummary;
+  warnings: PurchaseWarning[];
+};
 
 /** One purchase or gift: the item, who receives it and what the player chose. */
 export type PurchaseRequest = {
@@ -144,16 +143,13 @@ export function applyPurchaseAnswer(
     stashItems: answer.stash_item ? [answer.stash_item] : undefined,
   };
   if (answer.target_type !== "stash" && answer.target_id !== null) {
-    const { mount, pets, effective_stats, mounts, mount_warnings } = answer;
-    const unit = {
+    const { mount, pets, effective_stats } = answer;
+    // A group answers with its whole payload: a loadout line changes its mounts, warnings, loadout and hire cost.
+    const unit = answer.unit ?? {
       id: answer.target_id,
       items: answer.items ?? [],
       updated_at: answer.updated_at,
       ...(answer.mount !== undefined ? { mount, pets, effective_stats } : {}),
-      // A group's every kind of mount: its list of mount entries reads these, not `mount`.
-      ...(mounts !== undefined ? { mounts } : {}),
-      // And what its card warns while it rides (every member carries the same gear).
-      ...(mount_warnings !== undefined ? { mount_warnings } : {}),
     };
     Object.assign(update, { [LIST_KEYS[answer.target_type]]: [unit] });
   }

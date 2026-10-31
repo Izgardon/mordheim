@@ -46,6 +46,26 @@ describe("prebattle-config", () => {
     expect(saved.selectedKeys).toEqual(["hero:3"]); // brought anyway: a saved pick stands
   });
 
+  it("leaves a member whose kit went to the stash out at first; he can still be brought", () => {
+    const stripped = {
+      ...roster,
+      henchmenGroups: roster.henchmenGroups.map((group) => ({
+        ...group,
+        members: group.members.map((member) => ({
+          ...member,
+          outReason: "His kit went to the stash",
+        })),
+      })),
+    } as typeof roster;
+
+    const initial = initialPrebattleConfig(
+      myParticipant({ selected_unit_keys_json: [] }),
+      stripped
+    );
+
+    expect(initial.selectedKeys).toEqual(["hero:1", "hero:3", "hireling:4"]);
+  });
+
   it("keeps the saved selection, without units that are no longer on the roster", () => {
     const initial = initialPrebattleConfig(
       myParticipant({ selected_unit_keys_json: ["hero:3", "hero:99"] }),

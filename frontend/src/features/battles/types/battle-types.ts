@@ -588,6 +588,9 @@ export type BattleRosterUnit = BattleRosterCompanionFields & {
   /** How many more games it misses, and why (`BattleRosterMissingFields`). */
   missingGames?: number;
   missingReason?: string;
+  /** A henchman: the loadout rows he lacks (he starts without each), and why he is left out at first. */
+  gaps?: { rowId: number; itemId: number; name: string; reason: string }[];
+  outReason?: string | null;
   stats: BattleUnitStats;
   items: BattleRosterItem[];
   singleUseItems: BattleRosterSingleUseItem[];

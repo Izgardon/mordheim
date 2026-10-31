@@ -456,10 +456,16 @@ export type NewHenchmenGroupForm = {
   firstHenchmanName: string;
 };
 
-export type HenchmanItemChoice = {
-  itemId: number;
-  action: "buy" | "stash" | "ignore";
-  cost?: number;
+/** Why a member lacks a loadout row: his horse died, he used it, his kit went to the stash, he joined without it. */
+export type GapReason = "short" | "lost" | "used" | "kit_taken";
+
+/** A loadout row a member lacks (henchmen loadouts): `left` when the player chose to leave it so. */
+export type HenchmanGap = {
+  id: number;
+  row_id: number;
+  item_id: number;
+  reason: GapReason;
+  left: boolean;
 };
 
 export type Henchman = {
@@ -468,7 +474,8 @@ export type Henchman = {
   kills: number;
   dead: boolean;
   cost?: number | string;
-  itemChoices?: HenchmanItemChoice[];
+  /** The loadout rows he lacks. */
+  gaps?: HenchmanGap[];
 };
 
 export type HenchmenGroup = UnitCompanionFields &
@@ -481,8 +488,11 @@ export type HenchmenGroup = UnitCompanionFields &
     race_id: number | null;
     race_name?: string | null;
     price: number | null;
-    /** What one more member costs, worked out by the server (decision 7). */
+    /** What one more member costs, worked out by the server (decision 7, with the loadout). */
     hire_cost?: number;
+    /** One member's loadout (each row's cost), and the copies the group holds at their costs. */
+    loadout_each?: number;
+    loadout_total?: number;
     xp: number | null;
     max_size?: number | null;
     level_up?: number | null;
@@ -563,6 +573,11 @@ export type HenchmenGroupPayload = {
     cost?: number | string;
     /** Update only, new henchmen: notes written on their recruit trade row. */
     item_notes?: string;
+    /** Update only, a living member: he leaves, his share of the loadout to the stash or with him. */
+    dismiss?: "stash" | "leaves";
+    /** Update only, new henchmen: loadout rows taken from the stash for him, or that he joins without. */
+    from_stash?: number[];
+    without?: number[];
   }[];
 };
 
