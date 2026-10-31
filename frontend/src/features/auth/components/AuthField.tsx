@@ -5,6 +5,9 @@ import { useId } from "react";
 import { Input } from "@components/input";
 import { cn } from "@/lib/utils";
 
+/** The auth and account fields' input: 16 px text, so a phone doesn't zoom in on focus. */
+export const AUTH_INPUT = "h-12 text-base md:h-12";
+
 type AuthFieldProps = {
   label: string;
   /** Under the field, e.g. the password rules (AUTH-TWEAK-07). */
@@ -20,8 +23,9 @@ type AuthFieldProps = {
 };
 
 /**
- * One field of the auth and account forms: a caption over its input, then its hint and its
- * error. Those come after the label, not inside it, or they would become part of the input's name.
+ * One field of the auth and account forms (design E): a caption over its input, then its hint and
+ * its error. Those come after the label, not inside it, or they would become part of the input's
+ * name.
  */
 export function AuthField({ label, hint, error, className, children }: AuthFieldProps) {
   const id = useId();
@@ -29,20 +33,20 @@ export function AuthField({ label, hint, error, className, children }: AuthField
   const errorId = error ? `${id}-error` : undefined;
   const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
   return (
-    <div className={cn("mx-auto w-full max-w-[320px] space-y-2 text-sm", className)}>
-      <label className="block space-y-2">
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+    <div className={cn("flex w-full flex-col gap-1.5", className)}>
+      <label className="flex flex-col gap-1.5">
+        <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
           {label}
         </span>
         {typeof children === "function" ? children(describedBy) : children}
       </label>
       {hint ? (
-        <p id={hintId} className="text-xs text-muted-foreground">
+        <p id={hintId} className="m-0 text-[13px] leading-snug text-text2">
           {hint}
         </p>
       ) : null}
       {error ? (
-        <p id={errorId} role="alert" className="text-xs text-destructive">
+        <p id={errorId} role="alert" className="m-0 text-[13px] text-danger">
           {error}
         </p>
       ) : null}
@@ -69,7 +73,7 @@ export function EmailField({ value, onChange, error }: EmailFieldProps) {
           required
           aria-describedby={describedBy}
           aria-invalid={error ? true : undefined}
-          className="h-10 max-w-[320px]"
+          className={AUTH_INPUT}
         />
       )}
     </AuthField>
@@ -97,18 +101,25 @@ export function DisplayNameField({ value, onChange, error, className }: DisplayN
           maxLength={40}
           aria-describedby={describedBy}
           aria-invalid={error ? true : undefined}
-          className="h-10 max-w-[320px]"
+          className={AUTH_INPUT}
         />
       )}
     </AuthField>
   );
 }
 
-/** A form's refusal, announced (AUTH-UX-07); nothing when there is none. */
+/** A form's refusal, announced (AUTH-UX-07), in a danger box; nothing when there is none. */
 export function AuthFormError({ message }: { message: string }) {
   return message ? (
-    <p role="alert" className="text-sm text-destructive">
+    <p
+      role="alert"
+      className="m-0 border border-danger-line bg-danger-bg px-3.5 py-3 text-sm text-danger"
+    >
       {message}
     </p>
   ) : null;
 }
+
+/** A quiet text action in the auth column: Forgot password?, Back to sign in. */
+export const AUTH_TEXT_ACTION =
+  "self-start text-[13px] font-bold text-accent-text underline-offset-2 hover:text-accent-hi hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";

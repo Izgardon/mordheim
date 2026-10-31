@@ -148,7 +148,7 @@ describe("signing in or up from the landing page", () => {
     renderApp("/");
     await screen.findByRole("heading", { name: "Mordheim Chronicler" });
 
-    await user.click(screen.getByRole("button", { name: "Create Account" }));
+    await user.click(screen.getByRole("button", { name: "Create account" }));
     await user.type(screen.getByLabelText("Display name"), "Raider");
     await user.type(screen.getByLabelText("Email"), RAIDER.email);
     await user.type(screen.getByLabelText("Password"), "wyrdstone");

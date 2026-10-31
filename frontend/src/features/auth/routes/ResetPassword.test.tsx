@@ -216,13 +216,13 @@ describe("ResetPassword (AUTH-TEST-27)", () => {
     expect(confirmPassword()).toHaveAttribute("type", "password");
   });
 
-  it("loads no video on desktop either, only the dark half beside the card (decision 5, AUTH-TWEAK-05)", async () => {
+  it("loads no video on desktop either, only the caption in the half beside the form (decision 5, AUTH-TWEAK-05)", async () => {
     const { container } = renderReset();
 
     await act(() => new Promise<void>((resolve) => setTimeout(resolve, 10)));
 
     expect(container.querySelector("iframe")).toBeNull();
-    expect(container.querySelector(".landing-video")).toHaveAttribute("aria-hidden", "true");
+    expect(container.querySelector(".auth-aside")).not.toBeNull();
   });
 
   it("loads no video on a phone", () => {

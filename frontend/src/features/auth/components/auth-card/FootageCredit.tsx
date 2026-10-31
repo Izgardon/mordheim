@@ -1,16 +1,16 @@
-/** Credit for the landing page's background video. */
+/** Credit for the landing page's background video, under the caption beside it. */
 export function FootageCredit() {
   return (
-    <p className="text-center text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground/50">
+    <figcaption className="border-t border-line pt-3 text-xs text-faint">
       Background footage by{" "}
       <a
         href="https://www.youtube.com/@Styggosaurus"
         target="_blank"
         rel="noopener noreferrer"
-        className="transition hover:text-muted-foreground"
+        className="font-semibold text-text2 underline-offset-2 hover:text-head hover:underline"
       >
         Styggosaurus
       </a>
-    </p>
+    </figcaption>
   );
 }

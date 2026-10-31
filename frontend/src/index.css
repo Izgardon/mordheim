@@ -132,59 +132,16 @@ h6 {
   padding: 30px 40px 56px;
 }
 
-/* Landing Page Split Layout */
-/* The page never scrolls (body is overflow: hidden), so the landing box does: one visible
-   screen tall, scrolling when the sign-up form is taller (AUTH-UX-07). */
-.landing {
-  display: flex;
-  align-items: stretch;
-  justify-content: space-between;
-  gap: 0;
-  padding: 0;
-  height: 100vh;
-  height: 100dvh;
-  width: 100vw;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-/* Not stretched to the box: a stretched column held the card to one screen, so a long form
-   was cut off instead of scrolling. It follows the card, never shorter than the screen, and
-   clips the card's 5px hidden edges, so a card that fits scrolls nothing (AUTH-UX-07). */
-.landing-auth {
-  display: flex;
-  align-self: flex-start;
-  align-items: stretch;
-  justify-content: flex-start;
-  flex: 0 0 min(480px, 42vw);
-  min-height: 100%;
-  padding: 0;
-  overflow: clip;
-}
-
-.landing-auth .auth-card {
-  margin: -5px 0 -5px -5px;
-  padding-left: 10px;
-  height: auto;
-  min-height: calc(100% + 10px);
-  max-height: none;
-}
-
-/* Sticky, so the video keeps filling its half while the box scrolls the card. */
-.landing-video {
-  position: sticky;
-  top: 0;
-  flex: 1 1 auto;
-  min-width: 0;
-  height: 100%;
+/* The landing's background video (design E): it covers the web's picture half, behind the
+   caption card, and fades in over the rail colour once YouTube has loaded it. */
+.auth-video {
+  position: absolute;
+  inset: 0;
   overflow: hidden;
-  border-radius: 0;
-  background-color: #020a0d;
-  box-shadow: none;
   pointer-events: none;
 }
 
-.landing-video iframe {
+.auth-video iframe {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -195,59 +152,8 @@ h6 {
   transition: opacity 0.4s ease;
 }
 
-.landing-video.is-loaded iframe {
+.auth-video.is-loaded iframe {
   opacity: 1;
-}
-
-.landing-video video {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  border: 0;
-  filter: saturate(0.7) contrast(1.1) brightness(0.72);
-}
-
-.landing--mobile {
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-}
-
-.landing--mobile .landing-auth {
-  display: flex;
-  flex: 0 0 auto;
-  align-self: stretch;
-  width: 100%;
-  min-height: 0;
-  align-items: flex-start;
-  padding-top: env(safe-area-inset-top, 0px);
-  overflow: visible;
-}
-
-.landing--mobile .landing-auth .auth-card {
-  margin: 0;
-  height: auto;
-}
-
-@media (max-width: 960px) {
-  .landing {
-    flex-direction: column;
-    padding: 0;
-    height: 100vh;
-    height: 100dvh;
-  }
-
-  .landing-auth {
-    flex: 0 0 auto;
-    width: 100%;
-    padding: 0;
-  }
-
-  .landing-video {
-    height: 45vh;
-    border-radius: 0;
-  }
 }
 
 /* Table sticky header */

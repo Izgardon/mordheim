@@ -14,7 +14,7 @@ type RegisterFormProps = {
 /** Sign-up; a refusal of one field shows under it, the rest under the form (BUG-171). */
 export function RegisterForm({ form, error }: RegisterFormProps) {
   return (
-    <form className="space-y-5" onSubmit={form.submit}>
+    <form className="flex flex-col gap-5" onSubmit={form.submit}>
       <DisplayNameField
         value={form.values.name}
         onChange={(name) => form.setField("name", name)}
@@ -34,11 +34,9 @@ export function RegisterForm({ form, error }: RegisterFormProps) {
         error={form.errors.password}
       />
       <AuthFormError message={error} />
-      <div className="flex justify-center">
-        <Button size="sm" type="submit" disabled={form.isSubmitting}>
-          {form.isSubmitting ? "Working..." : "Create account"}
-        </Button>
-      </div>
+      <Button type="submit" className="h-12 w-full text-[15px]" disabled={form.isSubmitting}>
+        {form.isSubmitting ? "Working..." : "Create my account"}
+      </Button>
     </form>
   );
 }

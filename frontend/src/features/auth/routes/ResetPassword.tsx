@@ -3,12 +3,11 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { Button } from "@components/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
 
 import { getErrorMessage } from "@/lib/get-error-message";
 
-import { AuthFormError } from "../components/AuthField";
-import AuthShell from "../components/AuthShell";
+import { AUTH_TEXT_ACTION, AuthFormError } from "../components/AuthField";
+import AuthShell, { AuthHeading } from "../components/AuthShell";
 import { PasswordField } from "../components/PasswordInput";
 import { confirmPasswordReset } from "../api/auth-api";
 import { useAuth } from "../hooks/use-auth";
@@ -72,7 +71,7 @@ export default function ResetPassword() {
   };
 
   const form = (
-    <form className="space-y-5" onSubmit={handleSubmit}>
+    <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
       <AuthFormError message={isLinkValid ? "" : INCOMPLETE_LINK_MESSAGE} />
       {/* The toggle on both, the rules under the new one (AUTH-TWEAK-07); the confirm field stays. */}
       <PasswordField
@@ -90,46 +89,42 @@ export default function ResetPassword() {
         placeholder="Repeat it"
       />
       <AuthFormError message={error} />
-      <div className="flex flex-col items-center gap-3">
-        <Button size="sm" type="submit" disabled={isSubmitting || !isLinkValid}>
-          {isSubmitting ? "Updating..." : "Reset password"}
-        </Button>
-        <Link to="/" className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          Back to sign in
-        </Link>
-      </div>
+      <Button
+        type="submit"
+        className="h-12 w-full text-[15px]"
+        disabled={isSubmitting || !isLinkValid}
+      >
+        {isSubmitting ? "Updating..." : "Reset password"}
+      </Button>
+      <Link to="/" className={AUTH_TEXT_ACTION}>
+        Back to sign in
+      </Link>
     </form>
   );
 
   return (
     <AuthShell>
-      <Card className="auth-card flex h-full w-full flex-col border border-border bg-panel">
-        <CardHeader className="space-y-3">
-          <CardTitle className="text-lg">
-            {isDone ? "Password updated" : "Set a new password"}
-          </CardTitle>
-          {isDone ? (
-            <p role="status" className="text-sm text-muted-foreground">
-              Sign in with your new password.
-            </p>
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              Create a new secret for your account. This link is valid for 1 hour.
-            </p>
-          )}
-        </CardHeader>
-        <CardContent className="flex-1">
-          {isDone ? (
-            <div className="flex justify-center">
-              <Button asChild size="sm">
-                <Link to="/">Sign in</Link>
-              </Button>
-            </div>
-          ) : (
-            form
-          )}
-        </CardContent>
-      </Card>
+      <AuthHeading
+        kicker="Mordheim Chronicler"
+        title={isDone ? "Password updated" : "Set a new password"}
+      >
+        {isDone ? (
+          <p role="status" className="m-0 text-[15px] text-text2">
+            Sign in with your new password.
+          </p>
+        ) : (
+          <p className="m-0 text-[15px] text-text2">
+            Choose a new password for your account. This link is valid for 1 hour.
+          </p>
+        )}
+      </AuthHeading>
+      {isDone ? (
+        <Button asChild className="h-12 w-full text-[15px]">
+          <Link to="/">Sign in</Link>
+        </Button>
+      ) : (
+        form
+      )}
     </AuthShell>
   );
 }
