@@ -4,6 +4,7 @@ import { ChevronDown } from "lucide-react";
 import { ModalSheet } from "@/components/ui/modal-sheet";
 import type { PrebattleUnit } from "@/features/battles/components/prebattle/prebattle-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
+import { plainRuleText, ruleName } from "@/features/items/utils/item-rules";
 import { cn } from "@/lib/utils";
 
 import type { GearTab } from "./UnitCard";
@@ -58,9 +59,6 @@ export default function GearSheet({
 }: GearSheetProps) {
   const [openKey, setOpenKey] = useState<string | null>(null);
   const items = useCatalogue("items", campaignId, { enabled: target?.tab === "gear" }).data;
-  const properties = useCatalogue("item-properties", campaignId, {
-    enabled: target?.tab === "gear",
-  }).data;
   const skills = useCatalogue("skills", campaignId, { enabled: target?.tab === "skills" }).data;
   const specials = useCatalogue("specials", campaignId, { enabled: target?.tab === "skills" }).data;
   const spells = useCatalogue("spells", campaignId, { enabled: target?.tab === "spells" }).data;
@@ -74,17 +72,15 @@ export default function GearSheet({
           const item = items.find((entry) => entry.id === owned.id);
           const single = unit.singleUseItems?.find((entry) => entry.id === owned.id);
           const stats = [item?.range, strengthLabel(item?.strength)].filter(Boolean);
-          const rules = (item?.properties ?? []).map((property) => ({
-            name: property.name,
-            text: properties.find((entry) => entry.id === property.id)?.description ?? "",
+          const rules = (item?.rules ?? []).map((rule) => ({
+            name: ruleName(rule),
+            text: plainRuleText(rule),
           }));
           return {
             key: `item:${owned.id}`,
             name: owned.count > 1 ? `${owned.name} ×${owned.count}` : owned.name,
             kind: [item?.type, stats.join(" ")].filter(Boolean).join(" · ") || "Item",
-            rules: item?.description
-              ? [...rules, { name: "About", text: item.description }]
-              : rules,
+            rules: item?.flavour ? [...rules, { name: "About", text: item.flavour }] : rules,
             single:
               owned.singleUse || single
                 ? {

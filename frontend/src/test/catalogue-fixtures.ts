@@ -12,16 +12,16 @@ import { CAMPAIGN_ID } from "./campaign-fixtures";
 
 export const availability = (overrides: Partial<ItemAvailability> = {}): ItemAvailability => ({
   id: 11,
+  label: "",
   cost: 5,
-  rarity: 2,
-  restrictions: [],
-  variable_cost: null,
+  dice: null,
+  dice_multiplier: null,
+  cost_note: "",
+  rarity: null,
+  for_everyone: true,
+  warbands: [],
+  note: "",
   ...overrides,
-});
-
-export const restricted = (id: number, restriction: string) => ({
-  restriction: { id, type: "Warband", restriction },
-  additional_note: "",
 });
 
 export const item = (overrides: Partial<Item> = {}): Item => ({
@@ -30,14 +30,19 @@ export const item = (overrides: Partial<Item> = {}): Item => ({
   name: "Axe",
   type: "Weapon",
   subtype: "Melee",
-  grade: "",
+  variant: "",
+  setting_id: null,
   single_use: false,
-  description: "",
+  flavour: "",
   strength: "As user",
   range: "Close combat",
   save: null,
   statblock: null,
-  properties: [],
+  source: "",
+  link_url: "",
+  tags: [],
+  notes: "",
+  rules: [],
   availabilities: [availability()],
   generated_effect_key: null,
   bestiary_entry: null,
@@ -46,7 +51,17 @@ export const item = (overrides: Partial<Item> = {}): Item => ({
 export const sword = item({
   id: 2,
   name: "Sword",
-  properties: [{ id: 501, name: "Parry", type: "Weapon" }],
+  rules: [
+    {
+      id: 501,
+      rule_id: 51,
+      shared: true,
+      name: "Parry",
+      summary: "Parries a blow",
+      text: "Parries the first blow.",
+      table: [],
+    },
+  ],
   availabilities: [availability({ id: 12, cost: 10 })],
 });
 
@@ -73,7 +88,7 @@ export const spell = (overrides: Partial<Spell> = {}): Spell => ({
 /** A beast's Animal item, sold for `cost` gc at `rarity`. */
 export const beastItem = (id: number, cost: number, rarity: number, availabilityId = id + 100) => ({
   id,
-  grade: "1a",
+  setting_id: null,
   availabilities: [availability({ id: availabilityId, cost, rarity })],
 });
 
@@ -102,7 +117,7 @@ export const bestiaryEntry = (
   gains_xp: false,
   rating_bonus: null,
   available_in_shop: true,
-  item: { id: 260, grade: "1a", availabilities: [availability({ id: 44, cost: 15, rarity: 2 })] },
+  item: { id: 260, setting_id: null, availabilities: [availability({ id: 44, cost: 15 })] },
   replaces: null,
   archived_at: null,
   updated_by: null,
@@ -152,7 +167,9 @@ export const hiredSword = (overrides: Partial<HirelingProfile> = {}): HirelingPr
   rating: 25,
   available_skill_types: ["Combat", "Strength"],
   grade: "1a",
-  restrictions: [],
+  for_everyone: true,
+  warbands: [],
+  hire_note: "",
   replaces: null,
   archived_at: null,
   updated_by: null,

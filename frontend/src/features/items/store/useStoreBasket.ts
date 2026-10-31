@@ -28,6 +28,10 @@ export type BasketLine = {
   price: number;
   free: boolean;
   reason: string;
+  /** The total rolled for a price with dice ("25 + 2D6"), sent with its row. */
+  diceRoll?: number | null;
+  /** The price is the row's (with its roll): the server works it out. Off once it is edited. */
+  rowPrice?: boolean;
 };
 
 const nameOf = (unit: { name?: string | null; unit_type?: string | null }, fallback: string) =>
@@ -143,7 +147,9 @@ export function useStoreBasket(warbandId: number) {
     }));
   const remove = (id: number) => setLines((current) => current.filter((line) => line.id !== id));
   const setPrice = (id: number, price: number) =>
-    setLines((current) => current.map((line) => (line.id === id ? { ...line, price } : line)));
+    setLines((current) =>
+      current.map((line) => (line.id === id ? { ...line, price, rowPrice: false } : line))
+    );
 
   const buyAll = async () => {
     setBuying(true);
@@ -157,6 +163,8 @@ export function useStoreBasket(warbandId: number) {
             target: line.recipient.target,
             item: line.item,
             availabilityId: line.availabilityId,
+            diceRoll: line.diceRoll ?? null,
+            rowPrice: Boolean(line.rowPrice) && !line.free,
             // A mount bought for a unit lands ridden; in the stash it is carried.
             companion: line.recipient.target.kind !== "stash" && line.item.beast_kind === "mount",
             meta: {

@@ -4,34 +4,30 @@ import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
 import { useNameTakenMatches } from "@/features/catalogue/hooks/useNameTakenMatches";
 import { useCatalogueDelete } from "@/features/catalogue/hooks/useCatalogueDelete";
 import { useCatalogueRevert } from "@/features/catalogue/hooks/useCatalogueRevert";
-import { useCatalogueCache } from "@/lib/catalogue-queries";
+import { useCatalogue, useCatalogueCache } from "@/lib/catalogue-queries";
 import { useFieldErrors, type NameMatch } from "@/lib/field-errors";
 
 import { createItem, updateItem } from "../api/items-api";
 import { ITEM_FIELDS } from "../utils/item-form-fields";
 import {
   ITEM_SUBTYPE_OPTIONS,
-  blankAvailability,
   itemFormProblems,
   itemPayload,
-  itemPropertiesOf,
   itemTypeOptions,
   itemValuesOf,
-  type AvailabilityRow,
-  type AvailabilityTextField,
   type ItemFormValues,
+  type ItemTextField,
+  type RuleDraft,
 } from "../utils/item-form-values";
-import { useItemPropertyPicker } from "./useItemPropertyPicker";
+import type { PriceRowDraft } from "../utils/price-rows";
 
 import type { Item } from "../types/item-types";
-
-type ItemTextField = "name" | "subtype" | "description" | "strength" | "range" | "save";
 
 type UseItemFormOptions = {
   campaignId: number;
   /** The item being edited; null when adding one. */
   item: Item | null;
-  /** The form shows (a closed dialog reads no property list). */
+  /** The form shows (a closed dialog reads no shared-rule list). */
   enabled: boolean;
   /** Server field errors clear whenever this changes (the edited item, or the dialog opening). */
   resetKey: unknown;
@@ -46,11 +42,10 @@ type UseItemFormOptions = {
 };
 
 /**
- * An item's Add or Edit form, inline on the Wargear page or in the warband pages' dialog: the
- * values, the availabilities, the properties, the checks before sending (BUG-53's price, under
- * Price and Rarity), the
- * save (the answer goes into the cached list; refusals land on their fields) and the delete
- * (refusals stay in its confirm, BUG-148).
+ * A house item's Add or Edit form (the items rebuild): its text and figures, its rules (shared
+ * ones from the campaign's list, or its own with an optional D6 table), its price rows with who
+ * may buy each, the checks before sending (under the fields the server would name), the save (the
+ * answer goes into the cached list) and the delete (refusals stay in its confirm, BUG-148).
  */
 export function useItemForm({
   campaignId,
@@ -63,17 +58,12 @@ export function useItemForm({
   onEditMatch,
 }: UseItemFormOptions) {
   const catalogueCache = useCatalogueCache();
+  const shared = useCatalogue("item-rules", campaignId, { enabled }).data;
   const [values, setValues] = useState<ItemFormValues>(() => itemValuesOf(item));
-  const [showFluff, setShowFluff] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const fieldErrors = useFieldErrors(ITEM_FIELDS, resetKey);
-  const nameTaken = useNameTakenMatches({
-    kind: "items",
-    campaignId,
-    fieldErrors,
-    onEditMatch,
-  });
+  const nameTaken = useNameTakenMatches({ kind: "items", campaignId, fieldErrors, onEditMatch });
   const deletion = useCatalogueDelete({
     kind: "items",
     campaignId,
@@ -82,18 +72,8 @@ export function useItemForm({
     onDeleted,
   });
   const revert = useCatalogueRevert({ kind: "items", campaignId, entry: item, onReverted });
-  const properties = useItemPropertyPicker({
-    campaignId,
-    type: values.type,
-    enabled,
-    initial: itemPropertiesOf(item),
-  });
-
-  const setRows = (update: (rows: AvailabilityRow[]) => AvailabilityRow[]) =>
-    setValues((prev) => ({ ...prev, availabilities: update(prev.availabilities) }));
 
   const save = async (after?: () => void) => {
-    // The server's limits, checked before sending, under the fields they concern.
     const problems = itemFormProblems(values);
     if (problems.line || Object.keys(problems.fields).length > 0) {
       setFormError(problems.line ?? "");
@@ -106,10 +86,7 @@ export function useItemForm({
     }
     setIsSaving(true);
     setFormError("");
-    const payload = itemPayload(
-      values,
-      properties.selected.map((property) => property.id)
-    );
+    const payload = itemPayload(values);
     try {
       // A book item's first edit makes the campaign's version of it (CAT-TWEAK-01).
       const saved = item
@@ -129,22 +106,21 @@ export function useItemForm({
     }
   };
 
-  const { load: loadProperties } = properties;
   const { clear: clearFieldErrors } = fieldErrors;
-  /** Back to `entry`'s values and chips (a blank form for null), its fluff shown if it has one. */
+  /** Back to `entry`'s values (a blank form for null). */
   const load = useCallback(
     (entry: Item | null) => {
-      setValues(itemValuesOf(entry));
-      loadProperties(itemPropertiesOf(entry));
-      setShowFluff(Boolean(entry?.description));
+      setValues(itemValuesOf(entry, shared));
       setFormError("");
       clearFieldErrors();
     },
-    [clearFieldErrors, loadProperties]
+    [clearFieldErrors, shared]
   );
 
   return {
+    campaignId,
     values,
+    shared,
     typeOptions: itemTypeOptions(item),
     subtypeOptions: ITEM_SUBTYPE_OPTIONS[values.type] ?? [],
     setValue: (field: ItemTextField, value: string) =>
@@ -158,17 +134,11 @@ export function useItemForm({
         singleUse: type === "Miscellaneous" ? prev.singleUse : false,
       })),
     setSingleUse: (singleUse: boolean) => setValues((prev) => ({ ...prev, singleUse })),
-    addAvailability: () => setRows((rows) => [...rows, blankAvailability()]),
-    removeAvailability: (index: number) => setRows((rows) => rows.filter((_, i) => i !== index)),
-    setAvailability: (index: number, field: AvailabilityTextField, value: string) =>
-      setRows((rows) => rows.map((row, i) => (i === index ? { ...row, [field]: value } : row))),
-    showFluff,
-    setShowFluff,
-    properties,
+    setRules: (rules: RuleDraft[]) => setValues((prev) => ({ ...prev, rules })),
+    setPrices: (prices: PriceRowDraft[]) => setValues((prev) => ({ ...prev, prices })),
     fieldErrors: fieldErrors.errors,
+    errorOf: (path: string) => fieldErrors.errors[path],
     nameTaken,
-    rowError: (index: number, field: "cost" | "rarity") =>
-      fieldErrors.errors[`availabilities.${index}.${field}`],
     isSaving: isSaving || deletion.isDeleting,
     formError,
     deleteConfirm: deletion.deleteConfirm,

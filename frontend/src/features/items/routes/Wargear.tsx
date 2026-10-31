@@ -1,18 +1,11 @@
 import { useMemo, useState } from "react";
-import { Link, useOutletContext, useParams } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
+import { outOfPlay, useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import ReferencePage from "@/features/reference/ReferencePage";
-import {
-  DetailSection,
-  FactLine,
-  Flavour,
-  ReferenceDetail,
-  RuleBlock,
-  TagList,
-} from "@/features/reference/ReferenceDetail";
 import {
   BuyableToggle,
   FilterRow,
@@ -26,30 +19,26 @@ import {
   ShowMore,
   useShownRows,
 } from "@/features/reference/ReferenceList";
-import { ProfileStrip } from "@/features/reference/profile";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
 import { useWarbandSheet } from "@/features/warbands/hooks/warband/useWarbandSheet";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { useMediaQuery } from "@/lib/use-media-query";
 
+import { useWhoCan } from "../api/who-can-queries";
 import ItemFormDialog from "../components/ItemFormDialog";
 import StorePanel, { type StoreOpening } from "../store/StorePanel";
-import { useBuyer } from "../store/useBuyer";
 import {
   STORE_CATEGORIES,
-  allows,
-  isCommon,
+  itemName,
   kindOf,
-  offerFor,
-  priceLabel,
-  rarityLabel,
+  searchWords,
   storeCategory,
   type StoreCategory,
 } from "../store/store-items";
-import type { Item, ItemAvailability, ItemProperty } from "../types/item-types";
-import { formatRestrictions } from "../utils/availability-format";
-import { beastEditLink, beastOf, isSold } from "../utils/item-listing";
+import type { Item, ItemAvailability, ItemOffer } from "../types/item-types";
+import { isCommon, priceLabel, rarityLabel } from "../utils/item-prices";
+import WargearDetail from "./WargearDetail";
 
 const COLUMNS = [
   { label: "Type", className: "w-[150px] shrink-0" },
@@ -57,6 +46,7 @@ const COLUMNS = [
   { label: "Rarity", className: "w-[96px] shrink-0" },
   { label: "Rules", className: "w-[240px] shrink-0 max-[1180px]:hidden" },
 ];
+const ALL_SETTINGS = "all";
 
 /** "S as user +1", "30\" · S 4", "Save 6+": an item's figures in one line. */
 function statOf(item: Item) {
@@ -67,28 +57,18 @@ function statOf(item: Item) {
   return parts.join(" · ");
 }
 
-/** The commonest price of an item, for a reader with no warband (no restriction applies). */
-const commonest = (item: Item) =>
-  [...(item.availabilities ?? [])].sort((a, b) => a.rarity - b.rarity || a.cost - b.cost)[0] ??
-  null;
-
-/** Who an availability is for: "For everyone", or its restrictions with their notes. */
-const whoLine = (availability: ItemAvailability) =>
-  availability.restrictions?.length ? `For ${formatRestrictions(availability)}` : "For everyone";
-
-/** A rule chip: "Own rule" for the rule an item carries under its own name (Lucky Charm). */
-const ruleChip = (item: Item, rule: string) =>
-  rule.trim().toLowerCase() === item.name.trim().toLowerCase() ? "Own rule" : rule;
-
-type Row = { item: Item; availability: ItemAvailability | null; warning: string };
+type Row = {
+  item: Item;
+  availability: ItemAvailability | null;
+  offer?: ItemOffer;
+  warning: string;
+};
 
 /**
- * Wargear (design E, E-Web-Items and E-Mobile-Items): every item of the campaign, searched by name
- * or rule, "What <your warband> can buy" on by default (the store's restriction logic: off shows the
- * restricted items with their short warning), the store's category chips, and rows with name,
- * kind, price and Common or Rare N. An open row shows its rules, who can buy it and Get this item,
- * which opens the store's acquire panel and basket for your warband with the item's row open.
- * Custom items are added and edited behind plain buttons, as today.
+ * Wargear (design E, the items rebuild): every item of the campaign, searched by name, rule or
+ * search word, filtered by kind and by setting, "What <your warband> can buy" on by default (the
+ * server's who-can/: each item's price row for the warband and why it can't usually buy one; off
+ * shows the rest greyed with that reason). An open row is the item's card, with Get this item.
  */
 export default function Wargear() {
   const { id } = useParams();
@@ -96,44 +76,44 @@ export default function Wargear() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const items = useCatalogue("items", campaignId);
-  const properties = useCatalogue("item-properties", campaignId);
+  const settings = useSettingsById();
   const sheet = useWarbandSheet({ campaignId, hasCampaignId: Boolean(id), warbandId: null });
   const { warband } = sheet;
-  // The list waits for your warband too, so restricted items never flash in before it is known.
-  const loading = items.isLoading || sheet.isLoading;
+  const whoCan = useWhoCan(campaignId, warband?.id);
+  // The list waits for your warband's offers too, so restricted items never flash in first.
+  const loading = items.isLoading || sheet.isLoading || whoCan.isLoading;
   const params = useReferenceParams(!loading);
   const [onlyMine, setOnlyMine] = useState(true);
   const [category, setCategory] = useState<StoreCategory>("all");
+  const [setting, setSetting] = useState(ALL_SETTINGS);
   const [getting, setGetting] = useState<StoreOpening["again"]>(null);
   const capabilities = campaignCapabilities(campaign);
   const canBuy = Boolean(warband) && sheet.capabilities.manage_items;
 
-  const buyer = useBuyer(warband, campaign?.setting_ids);
-  const propertyText = useMemo(
-    () => new Map<number, ItemProperty>(properties.data.map((property) => [property.id, property])),
-    [properties.data]
-  );
   const all = useMemo<Row[]>(
     () =>
       [...items.data]
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .map((item) =>
-          buyer
-            ? { item, ...offerFor(item, buyer) }
-            : { item, availability: commonest(item), warning: "" }
-        ),
-    [buyer, items.data]
+        .sort((a, b) => itemName(a).localeCompare(itemName(b)))
+        .map((item) => {
+          const offer = warband ? whoCan.items.get(item.id) : undefined;
+          const rows = item.availabilities ?? [];
+          const availability =
+            rows.find((row) => row.id === offer?.availability_id) ?? rows[0] ?? null;
+          const warning = warband
+            ? offer && !offer.can_buy
+              ? offer.reason
+              : ""
+            : outOfPlay(item, settings);
+          return { item, availability, offer, warning };
+        }),
+    [items.data, settings, warband, whoCan.items]
   );
+  const settingKey = (item: Item) => (item.setting_id == null ? "own" : String(item.setting_id));
   const searched = all.filter(
     ({ item, warning }) =>
-      (!buyer || !onlyMine || !warning) &&
-      matchesSearchQuery(
-        params.query,
-        item.name,
-        item.subtype,
-        item.type,
-        ...(item.properties ?? []).map((property) => property.name)
-      )
+      (!warband || !onlyMine || !warning) &&
+      (setting === ALL_SETTINGS || settingKey(item) === setting) &&
+      matchesSearchQuery(params.query, ...searchWords(item))
   );
   const rows = all.filter(
     (row) =>
@@ -149,14 +129,25 @@ export default function Wargear() {
         ? searched.length
         : searched.filter((row) => storeCategory(row.item) === entry.id).length,
   }));
+  const settingOptions = [
+    { id: ALL_SETTINGS, label: "All settings" },
+    ...[...new Set(items.data.map(settingKey))]
+      .map((key) => ({
+        id: key,
+        label: key === "own" ? "This campaign" : (settings.get(Number(key))?.name ?? "Unknown"),
+        order: key === "own" ? 999 : (settings.get(Number(key))?.sort_order ?? 998),
+      }))
+      .sort((a, b) => a.order - b.order)
+      .map(({ id: key, label }) => ({ id: key, label })),
+  ];
   const restricted = rows.filter((row) => row.warning).length;
   const summary = `${rows.length} ${rows.length === 1 ? "item" : "items"} shown${
-    !buyer
+    !warband
       ? ""
       : onlyMine
-        ? `, what ${warband?.name} can buy`
+        ? `, what ${warband.name} can buy`
         : restricted
-          ? `, ${restricted} restricted`
+          ? `, ${restricted} not usually`
           : ""
   }`;
 
@@ -172,123 +163,6 @@ export default function Wargear() {
       }
     />
   ) : null;
-
-  const detail = ({ item, availability, warning }: Row) => {
-    const beast = beastOf(item);
-    const facts = [
-      ...(item.range ? [{ label: "Range", value: item.range }] : []),
-      ...(item.strength ? [{ label: "Strength", value: item.strength }] : []),
-      ...(item.save ? [{ label: "Save", value: item.save }] : []),
-      ...(availability ? [{ label: "Cost", value: priceLabel(availability) }] : []),
-      ...(availability ? [{ label: "Rarity", value: rarityLabel(availability.rarity) }] : []),
-    ];
-    const rules = item.properties ?? [];
-    const profile = beast?.has_profile ? beast : null;
-    const aside = (
-      <>
-        {canBuy && availability && isSold(item) ? (
-          <Button
-            className="min-h-11 w-full"
-            onClick={() => setGetting({ itemId: item.id, name: item.name, price: null })}
-          >
-            Get this item
-          </Button>
-        ) : null}
-        <DetailSection title="Who can buy">
-          {item.availabilities?.length ? (
-            item.availabilities.map((entry) => (
-              <div
-                key={entry.id}
-                className="flex flex-col gap-0.5 border border-border bg-surface px-2.5 py-2"
-              >
-                <div className="flex justify-between gap-2.5">
-                  <span className="font-mono text-[13px] font-bold text-ink">
-                    {priceLabel(entry)}
-                  </span>
-                  <span className="text-[13px] font-semibold text-text2">
-                    {rarityLabel(entry.rarity)}
-                  </span>
-                </div>
-                <span className="text-xs text-text2">{whoLine(entry)}</span>
-              </div>
-            ))
-          ) : (
-            <span className="text-[13px] text-text2">Not sold.</span>
-          )}
-          {buyer ? (
-            <TagList
-              tags={(item.availabilities ?? [])
-                .flatMap((entry) => entry.restrictions ?? [])
-                .filter(
-                  (link, index, links) =>
-                    links.findIndex((other) => other.restriction.id === link.restriction.id) ===
-                    index
-                )
-                .map((link) => ({
-                  label: link.restriction.restriction,
-                  mine: allows(link.restriction, buyer),
-                }))}
-            />
-          ) : null}
-        </DetailSection>
-        {item.grade ? (
-          <DetailSection title="Source">
-            <span className="text-[13px] text-ink">Grade {item.grade}</span>
-          </DetailSection>
-        ) : null}
-        {capabilities.edit_catalogue ? (
-          beast ? (
-            <Link
-              to={beastEditLink(campaignId, beast.id)}
-              className="text-[13px] font-semibold text-accent-text hover:text-accent-hi"
-            >
-              Edit {beast.name} in the Bestiary
-            </Link>
-          ) : (
-            <ItemFormDialog
-              mode="edit"
-              item={item}
-              campaignId={campaignId}
-              canDelete={capabilities.delete_catalogue}
-              onUpdated={(saved) => params.set({ open: String(saved.id) })}
-              onDeleted={() => params.close()}
-              trigger={
-                <Button variant="secondary" className="min-h-10 self-start">
-                  Edit item
-                </Button>
-              }
-            />
-          )
-        ) : null}
-      </>
-    );
-    return (
-      <ReferenceDetail title={item.name} kind={kindOf(item)} isMobile={isMobile} aside={aside}>
-        {warning ? (
-          <div className="self-start border border-dashed border-danger-line px-2.5 py-1.5 text-[13px] text-danger">
-            {warning}
-          </div>
-        ) : null}
-        {item.description?.trim() ? <Flavour>{item.description}</Flavour> : null}
-        {isMobile ? null : <FactLine facts={facts} />}
-        {profile ? <ProfileStrip profile={profile} /> : null}
-        {rules.length || beast?.specials?.length ? (
-          <div className="flex flex-col gap-2.5">
-            {rules.map((rule) => (
-              <RuleBlock key={rule.id} name={rule.name}>
-                {propertyText.get(rule.id)?.description}
-              </RuleBlock>
-            ))}
-            {(beast?.specials ?? []).map((special) => (
-              <RuleBlock key={`special-${special.id}`} name={special.name}>
-                {special.description}
-              </RuleBlock>
-            ))}
-          </div>
-        ) : null}
-      </ReferenceDetail>
-    );
-  };
 
   return (
     <ReferencePage
@@ -329,6 +203,13 @@ export default function Wargear() {
             onChange={setCategory}
             isMobile={isMobile}
           />
+          <ReferenceChips
+            label="Setting"
+            options={settingOptions}
+            value={setting}
+            onChange={setSetting}
+            isMobile={isMobile}
+          />
         </>
       }
       summary={isMobile ? undefined : summary}
@@ -339,8 +220,8 @@ export default function Wargear() {
         columns={isMobile ? undefined : COLUMNS}
         isEmpty={!loading && rows.length === 0}
         empty={
-          buyer && onlyMine
-            ? `No items match. Try another word, or turn off What ${warband?.name} can buy.`
+          warband && onlyMine
+            ? `No items match. Try another word, or turn off What ${warband.name} can buy.`
             : "No items match. Try another word."
         }
       >
@@ -360,7 +241,7 @@ export default function Wargear() {
               id={key}
               open={params.isOpen(key)}
               onToggle={() => params.toggle(key)}
-              name={item.name}
+              name={itemName(item)}
               sub={isMobile ? [kindOf(item), stat].filter(Boolean).join(" · ") : undefined}
               warn={warning}
               dim={Boolean(warning)}
@@ -380,19 +261,35 @@ export default function Wargear() {
                         {rarity}
                       </span>,
                       <span key="rules" className="flex flex-row flex-wrap gap-1">
-                        {(item.properties ?? []).slice(0, 4).map((rule) => (
-                          <span
-                            key={rule.id}
-                            className="border border-border px-[7px] py-0.5 text-xs font-semibold"
-                          >
-                            {ruleChip(item, rule.name)}
-                          </span>
-                        ))}
+                        {(item.rules ?? [])
+                          .filter((rule) => rule.name)
+                          .slice(0, 4)
+                          .map((rule) => (
+                            <span
+                              key={rule.id}
+                              className="border border-border px-[7px] py-0.5 text-xs font-semibold"
+                            >
+                              {rule.name}
+                            </span>
+                          ))}
                       </span>,
                     ]
               }
             >
-              {detail(row)}
+              <WargearDetail
+                item={item}
+                offer={row.offer}
+                warning={warning}
+                setting={item.setting_id != null ? settings.get(item.setting_id) : undefined}
+                campaignId={campaignId}
+                isMobile={isMobile}
+                canBuy={canBuy}
+                canEdit={capabilities.edit_catalogue}
+                canDelete={capabilities.delete_catalogue}
+                onGet={() => setGetting({ itemId: item.id, name: item.name, price: null })}
+                onSaved={(saved) => params.set({ open: String(saved.id) })}
+                onDeleted={() => params.close()}
+              />
             </ReferenceRow>
           );
         })}

@@ -4,26 +4,16 @@ import { useOutletContext, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
-import { allows, type Buyer } from "@/features/items/store/store-items";
-import { useBuyer } from "@/features/items/store/useBuyer";
 import { outOfPlay, useSettingsById } from "@/features/campaigns/api/settings-queries";
+import { useWhoCan } from "@/features/items/api/who-can-queries";
 import ReferencePage from "@/features/reference/ReferencePage";
-import {
-  DetailSection,
-  FactLine,
-  Flavour,
-  ReferenceDetail,
-  RuleBlock,
-  TagList,
-} from "@/features/reference/ReferenceDetail";
-import { FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
+import { BuyableToggle, FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
 import {
   ReferenceList,
   ReferenceRow,
   ShowMore,
   useShownRows,
 } from "@/features/reference/ReferenceList";
-import { ProfileStrip } from "@/features/reference/profile";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
 import { useWarbandSheet } from "@/features/warbands/hooks/warband/useWarbandSheet";
 import { useCatalogue } from "@/lib/catalogue-queries";
@@ -31,147 +21,28 @@ import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import HireDialog from "../components/HireDialog";
+import HirelingDetail from "../components/HirelingDetail";
 import HirelingProfileFormDialog from "../components/HirelingProfileFormDialog";
 import {
   HIRELING_CATALOGUES,
   formatHirelingCost,
   hirelingRace,
-  type HirelingCatalogueConfig,
   type HirelingCatalogueKind,
 } from "../hireling-catalogue-kinds";
-import { useHirelingProfileDetail } from "../hooks/useHirelingProfileDetail";
 import type { HirelingProfile } from "../types/hireling-catalogue-types";
-import { personaTermsLine } from "../utils/hireling-display";
 
 const SECTION: Record<HirelingCatalogueKind, { path: string; title: string }> = {
   "hired-swords": { path: "hired-swords", title: "Hired swords" },
   "dramatis-personae": { path: "dramatis-personae", title: "Dramatis personae" },
 };
 
-/** The open entry: profile, terms, who can hire him, his rules and kit (read on opening). */
-function HirelingDetail({
-  config,
-  campaignId,
-  entry,
-  buyer,
-  isMobile,
-  onHire,
-  onEdit,
-}: {
-  config: HirelingCatalogueConfig;
-  campaignId: number;
-  entry: HirelingProfile;
-  buyer: Buyer | null;
-  isMobile: boolean;
-  onHire?: () => void;
-  onEdit?: () => void;
-}) {
-  const detail = useHirelingProfileDetail(config.kind, campaignId, entry.id);
-  const full = detail.entry;
-  const terms = config.hasPersonaTerms ? personaTermsLine(entry) : "";
-  const rules = full
-    ? [
-        ...full.specials.map((special) => ({ key: `special-${special.id}`, ...special })),
-        ...full.skills.map((skill) => ({ key: `skill-${skill.id}`, ...skill })),
-        ...full.spells.map((spell) => ({
-          key: `spell-${spell.id}`,
-          ...spell,
-          description: spell.description ?? "",
-        })),
-      ]
-    : [];
-  const aside = (
-    <>
-      {onHire ? (
-        <Button className="min-h-11 w-full" onClick={onHire}>
-          Hire from here
-        </Button>
-      ) : null}
-      <DetailSection title="Who can hire">
-        {entry.restrictions.length ? (
-          <TagList
-            tags={entry.restrictions.map((link) => ({
-              label: link.additional_note
-                ? `${link.restriction.restriction} (${link.additional_note})`
-                : link.restriction.restriction,
-              mine: buyer ? allows(link.restriction, buyer) : false,
-            }))}
-          />
-        ) : (
-          <span className="text-[13px] text-ink">Any warband</span>
-        )}
-      </DetailSection>
-      {entry.available_skill_types.length ? (
-        <DetailSection title="Skill lists">
-          <TagList tags={entry.available_skill_types.map((type) => ({ label: type }))} />
-        </DetailSection>
-      ) : null}
-      {full?.equipment.length ? (
-        <DetailSection title="Carries">
-          <TagList
-            tags={full.equipment.map(({ item, quantity }) => ({
-              label: quantity > 1 ? `${item.name} ×${quantity}` : item.name,
-            }))}
-          />
-        </DetailSection>
-      ) : null}
-      {entry.grade ? (
-        <DetailSection title="Source">
-          <span className="text-[13px] text-ink">Grade {entry.grade}</span>
-        </DetailSection>
-      ) : null}
-      {onEdit ? (
-        <Button variant="secondary" className="min-h-10 self-start" onClick={onEdit}>
-          Edit {config.labels.noun}
-        </Button>
-      ) : null}
-    </>
-  );
-  return (
-    <ReferenceDetail
-      title={entry.name}
-      kind={hirelingRace(entry)}
-      isMobile={isMobile}
-      aside={aside}
-    >
-      {entry.description?.trim() ? <Flavour>{entry.description}</Flavour> : null}
-      <FactLine
-        facts={[
-          {
-            label: "Hire fee",
-            value: formatHirelingCost(entry.hire_cost, entry.hire_cost_expression),
-          },
-          {
-            label: "Upkeep",
-            value: formatHirelingCost(entry.upkeep_cost, entry.upkeep_cost_expression),
-          },
-          ...(entry.rating !== null ? [{ label: "Rating", value: `+${entry.rating}` }] : []),
-          ...(terms ? [{ label: "Terms", value: terms }] : []),
-        ]}
-      />
-      <ProfileStrip profile={entry} />
-      {detail.error && !full ? <p className="m-0 text-sm text-danger">{detail.error}</p> : null}
-      {!full && !detail.error ? (
-        <span className="text-[13px] text-muted-foreground">Reading his rules…</span>
-      ) : null}
-      {rules.length ? (
-        <div className="flex flex-col gap-2.5">
-          {rules.map((rule) => (
-            <RuleBlock key={rule.key} name={rule.name}>
-              {rule.description}
-            </RuleBlock>
-          ))}
-        </div>
-      ) : null}
-    </ReferenceDetail>
-  );
-}
-
 /**
  * Hired swords and Dramatis personae (design E's reference layout, one page for both): every
  * entry, searched by name, race or text, rows with race, hire fee, upkeep and rating; a row opens
  * to the profile, the terms, who can hire him and his rules, with Hire from here (today's hire
- * for your warband). Entries are added and edited as today.
+ * for your warband). With a warband, "Who it can hire" is on: those it can usually hire first
+ * (the server's who-can/), the rest behind Show all with the reason. Entries are added and edited
+ * as today.
  */
 export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKind }) {
   const config = HIRELING_CATALOGUES[kind];
@@ -186,18 +57,32 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
   const capabilities = campaignCapabilities(campaign);
   const [editing, setEditing] = useState<{ id: number | null } | null>(null);
   const [hiring, setHiring] = useState<HirelingProfile | null>(null);
-  const buyer = useBuyer(warband, campaign?.setting_ids);
   const settings = useSettingsById();
+  const whoCan = useWhoCan(campaignId, warband?.id);
+  const access = kind === "hired-swords" ? whoCan.hiredSwords : whoCan.dramatisPersonae;
+  const [onlyMine, setOnlyMine] = useState(true);
   const canHire = Boolean(warband) && sheet.capabilities.edit;
+  const warningOf = (entry: HirelingProfile) => {
+    if (!warband) return outOfPlay(entry, settings);
+    const row = access.get(entry.id);
+    return row && !row.can_hire ? row.reason : "";
+  };
 
+  // Those the warband can usually hire first, then the rest; each part by name.
   const sorted = useMemo(
-    () => [...entries.data].sort((a, b) => a.name.localeCompare(b.name)),
-    [entries.data]
+    () =>
+      [...entries.data].sort(
+        (a, b) =>
+          Number(access.get(a.id)?.can_hire === false) -
+            Number(access.get(b.id)?.can_hire === false) || a.name.localeCompare(b.name)
+      ),
+    [access, entries.data]
   );
   const rows = sorted.filter(
     (entry) =>
       String(entry.id) === params.openId ||
-      matchesSearchQuery(params.query, entry.name, hirelingRace(entry), entry.description)
+      ((!warband || !onlyMine || !warningOf(entry)) &&
+        matchesSearchQuery(params.query, entry.name, hirelingRace(entry), entry.description))
   );
   const shown = useShownRows(
     rows,
@@ -235,6 +120,15 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
             label={config.labels.search}
             isMobile={isMobile}
           />
+          {warband ? (
+            <BuyableToggle
+              warbandName={warband.name}
+              verb="hire"
+              checked={onlyMine}
+              onChange={setOnlyMine}
+              isMobile={isMobile}
+            />
+          ) : null}
         </FilterRow>
       }
       summary={isMobile ? undefined : `${rows.length} ${noun(rows.length)} shown`}
@@ -266,7 +160,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
           const key = String(entry.id);
           const fee = formatHirelingCost(entry.hire_cost, entry.hire_cost_expression);
           const upkeep = formatHirelingCost(entry.upkeep_cost, entry.upkeep_cost_expression);
-          const warning = outOfPlay(entry, settings);
+          const warning = warningOf(entry);
           return (
             <ReferenceRow
               key={key}
@@ -310,7 +204,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
                 config={config}
                 campaignId={campaignId}
                 entry={entry}
-                buyer={buyer}
+                access={warband ? access.get(entry.id) : undefined}
                 isMobile={isMobile}
                 onHire={canHire ? () => setHiring(entry) : undefined}
                 onEdit={

@@ -4,7 +4,8 @@ import { type QueryClient, useQuery, useQueryClient } from "@tanstack/react-quer
 // api
 import { listBestiaryEntries } from "@/features/bestiary/api/bestiary-api";
 import { listHirelingProfiles } from "@/features/hirelings/api/hireling-catalogue-api";
-import { listItemProperties, listItems } from "@/features/items/api/items-api";
+import { listItemRules, listItems } from "@/features/items/api/items-api";
+import { invalidateWhoCan } from "@/features/items/api/who-can-queries";
 import { listRaces } from "@/features/races/api/races-api";
 import { listSkills } from "@/features/skills/api/skills-api";
 import { listSpecial } from "@/features/special/api/special-api";
@@ -16,7 +17,7 @@ import { type CatalogueKind, queryKeys } from "./query-keys";
 // types
 import type { BestiaryEntrySummary } from "@/features/bestiary/types/bestiary-types";
 import type { HirelingProfile } from "@/features/hirelings/types/hireling-catalogue-types";
-import type { Item, ItemProperty } from "@/features/items/types/item-types";
+import type { Item, ItemRule } from "@/features/items/types/item-types";
 import type { Race } from "@/features/races/types/race-types";
 import type { Skill } from "@/features/skills/types/skill-types";
 import type { Special } from "@/features/special/types/special-types";
@@ -27,7 +28,7 @@ export const CATALOGUE_STALE_TIME_MS = 5 * 60_000;
 
 type CatalogueEntries = {
   items: Item;
-  "item-properties": ItemProperty;
+  "item-rules": ItemRule;
   skills: Skill;
   spells: Spell;
   specials: Special;
@@ -57,7 +58,7 @@ const archivedOf = (variant?: CatalogueListVariant) =>
 
 const fetchers: { [K in CatalogueKind]: Fetcher<K> } = {
   items: (campaignId, signal, variant) => listItems({ campaignId, signal, ...archivedOf(variant) }),
-  "item-properties": (campaignId, signal) => listItemProperties({ campaignId, signal }),
+  "item-rules": (campaignId, signal) => listItemRules({ campaignId, signal }),
   skills: (campaignId, signal, variant) =>
     listSkills({ campaignId, signal, ...archivedOf(variant) }),
   spells: (campaignId, signal, variant) =>
@@ -85,7 +86,7 @@ export const catalogueListKey = (
 // The wording the pages showed before the move to TanStack Query.
 const errorLabels: Record<CatalogueKind, string> = {
   items: "Unable to load items",
-  "item-properties": "Unable to load item properties",
+  "item-rules": "Unable to load the shared rules",
   skills: "Unable to load skills",
   spells: "Unable to load spells",
   specials: "Unable to load special",
@@ -255,18 +256,35 @@ const WRITTEN_WITH: Partial<Record<CatalogueKind, CatalogueKind[]>> = {
 /** `kind` and the kinds its writes change with it. */
 const writtenKinds = (kind: CatalogueKind) => [kind, ...(WRITTEN_WITH[kind] ?? [])];
 
+/** The lists whose change moves what a warband can usually buy, hire or learn (who-can/). */
+export const WHO_CAN_KINDS = new Set<CatalogueKind>([
+  "items",
+  "bestiary",
+  "hired-swords",
+  "dramatis-personae",
+  "skills",
+]);
+
 /**
  * Cache writes for components that create, edit or delete catalogue entries. Each also marks
- * stale the lists the write changed with its own kind (`WRITTEN_WITH`): the server's event for
- * them goes to the other members only.
+ * stale the lists the write changed with its own kind (`WRITTEN_WITH`), and what the warbands can
+ * buy, hire or learn when the kind moves it: the server's event for them goes to the other
+ * members only.
  */
 export function useCatalogueCache() {
   const queryClient = useQueryClient();
   return useMemo(() => {
-    const alsoChanged = (kind: CatalogueKind, campaignId: number) =>
+    const whoCanMoved = (kind: CatalogueKind, campaignId: number) => {
+      if (isCampaignId(campaignId) && writtenKinds(kind).some((each) => WHO_CAN_KINDS.has(each))) {
+        void invalidateWhoCan(queryClient, campaignId);
+      }
+    };
+    const alsoChanged = (kind: CatalogueKind, campaignId: number) => {
       (WRITTEN_WITH[kind] ?? []).forEach(
         (other) => void invalidateCatalogue(queryClient, other, campaignId)
       );
+      whoCanMoved(kind, campaignId);
+    };
     return {
       upsert: <K extends CatalogueKind>(kind: K, campaignId: number, entry: CatalogueEntry<K>) => {
         upsertCatalogueEntry(queryClient, kind, campaignId, entry);
@@ -286,10 +304,12 @@ export function useCatalogueCache() {
         removeCatalogueEntry(queryClient, kind, campaignId, entryId);
         alsoChanged(kind, campaignId);
       },
-      invalidate: (kind: CatalogueKind, campaignId: number) =>
-        Promise.all(
+      invalidate: (kind: CatalogueKind, campaignId: number) => {
+        whoCanMoved(kind, campaignId);
+        return Promise.all(
           writtenKinds(kind).map((each) => invalidateCatalogue(queryClient, each, campaignId))
-        ),
+        );
+      },
       /**
        * The campaign's warband sheets (and stashes) after copies moved or changed: a beast's
        * first edit or Revert moves the copies of its Animal item.

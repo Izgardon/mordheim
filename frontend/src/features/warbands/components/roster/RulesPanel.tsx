@@ -14,7 +14,7 @@ export type BoxDetail = {
   name: string;
   kind: string;
   text?: string | null;
-  /** Rule names (an item's properties). */
+  /** Rule names (an item's rules). */
   rules?: string[];
   item?: Item;
 };

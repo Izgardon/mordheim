@@ -6,6 +6,7 @@ import { useQuery, useQueryClient, type QueryClient } from "@tanstack/react-quer
 import { getCampaign, listCampaignPermissions, updateCampaign } from "../api/campaigns-api";
 
 // other
+import { invalidateWhoCan } from "@/features/items/api/who-can-queries";
 import { queryKeys } from "@/lib/query-keys";
 
 // types
@@ -79,6 +80,7 @@ export function writeCampaignAnswer(
       queryKey: [...queryKeys.campaign.all(campaignId), "catalogue"],
     });
     void queryClient.invalidateQueries({ queryKey: queryKeys.campaign.warbandTypes(campaignId) });
+    void invalidateWhoCan(queryClient, campaignId); // what each warband can usually buy and hire
   }
   const gatesChanged = CAPABILITY_SETTINGS.some(
     (setting) => Boolean(previous?.[setting]) !== Boolean(answer[setting])

@@ -75,6 +75,10 @@ export type PurchaseRequest = {
   item: Item;
   meta: AcquireItemMeta;
   availabilityId?: number | null;
+  /** The price is the row's: the server charges its cost plus the dice roll (the items rebuild). */
+  rowPrice?: boolean;
+  /** The total rolled for a row with dice. */
+  diceRoll?: number | null;
   /** "Buy again" (decision 11): the server charges the campaign's current price. */
   atCurrentPrice?: boolean;
   rarityRoll?: RarityRollLine | null;
@@ -102,6 +106,8 @@ export function purchaseLine({
   item,
   meta,
   availabilityId,
+  rowPrice,
+  diceRoll,
   atCurrentPrice,
   rarityRoll,
   companion,
@@ -109,10 +115,15 @@ export function purchaseLine({
   // A copy's price: what one costs when buying, the cost it keeps for resale when given.
   const price = meta.isBuying ? meta.unitPrice : getPersistedItemCost(item, meta);
   const reason = meta.reason.trim();
+  // The row's own price: the server adds the roll to its cost; any other price is sent as it is.
+  const priced =
+    rowPrice && meta.isBuying && availabilityId
+      ? { availability_id: availabilityId, ...(diceRoll != null ? { dice_roll: diceRoll } : {}) }
+      : { price, availability_id: availabilityId ?? null };
   return {
     item_id: item.id,
     quantity: meta.quantity,
-    ...(atCurrentPrice ? {} : { price, availability_id: availabilityId ?? null }),
+    ...(atCurrentPrice ? {} : priced),
     is_buying: meta.isBuying,
     ...(reason ? { reason } : {}),
     ...(rarityRoll ? { rarity_roll: rarityRoll } : {}),

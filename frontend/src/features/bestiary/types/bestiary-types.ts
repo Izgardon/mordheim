@@ -1,5 +1,9 @@
 import type { CatalogueBadgeFields } from "@/features/catalogue/types/catalogue-entry";
-import type { Item, ItemAvailability } from "@/features/items/types/item-types";
+import type {
+  AvailabilityPayload,
+  Item,
+  ItemAvailability,
+} from "@/features/items/types/item-types";
 import type { Skill } from "@/features/skills/types/skill-types";
 import type { Special } from "@/features/special/types/special-types";
 import type { Spell } from "@/features/spells/types/spell-types";
@@ -10,12 +14,12 @@ export type BestiaryEntryEquipment = { item: Item; quantity: number };
 
 /**
  * The beast's Animal item (every beast has one): what is bought, moved and traded, with its
- * grade and prices. A beast that isn't sold keeps its prices; `available_in_shop` says whether the
- * shop lists it.
+ * setting and price rows. A beast that isn't sold keeps its prices; `available_in_shop` says
+ * whether the shop lists it.
  */
 export type BestiaryItem = {
   id: number;
-  grade: string;
+  setting_id: number | null;
   availabilities: ItemAvailability[];
 };
 
@@ -61,13 +65,8 @@ export type BestiaryEntry = BestiaryEntrySummary & {
   equipment: BestiaryEntryEquipment[];
 };
 
-/** A price the beast's item is sold at, as a write sends it (a restriction with its note). */
-export type BestiaryAvailabilityWrite = {
-  cost: number;
-  rarity: number;
-  variable_cost: string | null;
-  restrictions: { restriction_id: number; additional_note: string }[];
-};
+/** A price the beast's item is sold at, as a write sends it (a price row, with who may buy it). */
+export type BestiaryAvailabilityWrite = AvailabilityPayload;
 
 /**
  * A create or an edit. A list that is sent replaces that list; one left out stays. The item's

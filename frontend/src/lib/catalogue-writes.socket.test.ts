@@ -19,12 +19,7 @@ import {
   getHirelingProfile,
   updateHirelingProfile,
 } from "@/features/hirelings/api/hireling-catalogue-api";
-import {
-  createItem,
-  createItemProperty,
-  listItems,
-  updateItem,
-} from "@/features/items/api/items-api";
+import { createItem, createItemRule, listItems, updateItem } from "@/features/items/api/items-api";
 import { createRace } from "@/features/races/api/races-api";
 import { createSkill, updateSkill } from "@/features/skills/api/skills-api";
 import { createSpecial } from "@/features/special/api/special-api";
@@ -51,7 +46,7 @@ const WRITES: [string, () => Promise<unknown>][] = [
   ["edit a beast", () => updateBestiaryEntry(5, body)],
   ["create an item", () => createItem(body)],
   ["edit an item", () => updateItem(5, body)],
-  ["create an item property", () => createItemProperty(body)],
+  ["create a shared item rule", () => createItemRule(body)],
   ["create a skill", () => createSkill(body)],
   ["edit a skill", () => updateSkill(5, body)],
   ["create a spell", () => createSpell(body)],

@@ -1,100 +1,66 @@
 import { describe, expect, it } from "vitest";
 
-import type { Item, ItemAvailability } from "../types/item-types";
-import type { WarbandTypeBrief } from "@/features/warbands/types/warband-types";
+import { availability, item } from "@/test/catalogue-fixtures";
 
-import { allows, buyerOf, offerFor, priceLabel, storeCategory, variableDice } from "./store-items";
+import { diceLabel, priceLabel, rarityLabel, rolledPrice, whoLine } from "../utils/item-prices";
+import { itemName, searchWords, storeCategory } from "./store-items";
 
-const restricted = (id: number, type: string, name: string) => ({
-  restriction: { id, type, restriction: name },
-  additional_note: "",
-});
-const availability = (patch: Partial<ItemAvailability>): ItemAvailability => ({
-  id: 1,
-  cost: 35,
-  rarity: 7,
-  restrictions: [],
-  ...patch,
-});
-const item = (availabilities: ItemAvailability[]) =>
-  ({ id: 9, name: "Fighting Claws", type: "Weapon", subtype: "Melee", availabilities }) as Item;
-
-const kind = (name: string, groups: string[]): WarbandTypeBrief => ({
-  id: name.length,
+const line = (name: string, excluded = false, group = false) => ({
+  warband_type_id: group ? null : name.length,
+  warband_group_id: group ? name.length : null,
   name,
-  slug: name.toLowerCase(),
-  campaign_id: null,
-  setting: null,
-  source: "",
-  link_url: "",
-  groups,
-});
-const pestilens = buyerOf(
-  { warband_type: kind("Skaven of Clan Pestilens", ["Skaven", "Evil"]), counts_as: [] },
-  ["Mordheim"]
-);
-const reiklanders = buyerOf(
-  { warband_type: kind("Reiklanders", ["Humans", "Mercenaries", "Good"]), counts_as: [] },
-  ["Mordheim", "Khemri"]
-);
-
-describe("who may buy", () => {
-  it("reads a warband's type, the types it counts as and their groups", () => {
-    const warband = { id: 5, type: "Warband", restriction: "Marauders of Chaos" };
-    expect(allows(warband, reiklanders)).toBe(false);
-    const counting = buyerOf(
-      {
-        warband_type: kind("Reiklanders", ["Humans"]),
-        counts_as: [kind("Marauders of Chaos", ["Chaos"])],
-      },
-      []
-    );
-    expect(allows(warband, counting)).toBe(true);
-    expect(allows({ id: 6, type: "Warband Group", restriction: "Chaos Dwarfs" }, counting)).toBe(
-      false
-    );
-    expect(allows({ id: 7, type: "Warband Group", restriction: "Chaos" }, counting)).toBe(true);
-  });
-
-  it("meets a setting restriction when its setting is in play, Nehekhara being Khemri", () => {
-    const khemri = { id: 8, type: "Setting", restriction: "Khemri Setting" };
-    const nehekhara = { id: 9, type: "Setting", restriction: "Nehekharan Setting" };
-    expect([allows(khemri, reiklanders), allows(nehekhara, reiklanders)]).toEqual([true, true]);
-    expect(allows(khemri, pestilens)).toBe(false);
-    expect(allows({ id: 10, type: "Setting", restriction: "Cathay Setting" }, reiklanders)).toBe(
-      false
-    );
-  });
+  excluded,
 });
 
-describe("the store's offer", () => {
-  it("offers the commonest availability the warband may use, else the first with its warning", () => {
-    const claws = item([
-      availability({ id: 1, rarity: 7, restrictions: [restricted(5, "Warband", "Skaven")] }),
-    ]);
-    expect(offerFor(claws, pestilens)).toMatchObject({ warning: "" });
-    expect(offerFor(claws, reiklanders).warning).toBe("Skaven only");
-
-    const both = item([
-      availability({ id: 1, rarity: 9 }),
-      availability({
-        id: 2,
-        rarity: 2,
-        restrictions: [restricted(6, "Warband Group", "Non-Skaven")],
-      }),
-    ]);
-    expect(offerFor(both, reiklanders).availability?.id).toBe(2);
-    expect(offerFor(both, pestilens).availability?.id).toBe(1);
+describe("price rows", () => {
+  it("label a plain price, dice, a multiplier and a cost note", () => {
+    expect(priceLabel(availability({ cost: 15 }))).toBe("15 gc");
+    expect(priceLabel(availability({ cost: 25, dice: 2 }))).toBe("25 + 2D6 gc");
+    expect(priceLabel(availability({ cost: 200, dice: 1, dice_multiplier: 25 }))).toBe(
+      "200 + D6×25 gc"
+    );
+    expect(priceLabel(availability({ cost: 35, cost_note: "per pair" }))).toBe("35 gc · per pair");
+    expect(priceLabel(availability({ cost: null, cost_note: "4 x Price" }))).toBe("4 x Price");
+    // a long note stays on the card, out of the list's price column
+    const spent = "Gold is spent even on unsuccessful rare roll";
+    expect(priceLabel(availability({ cost: 20, dice: 1, cost_note: spent }))).toBe("20 + D6 gc");
+    expect(priceLabel(null)).toBe("-");
   });
 
-  it("reads a variable price's dice and sorts weapons into melee and missile", () => {
-    expect(variableDice("+D6x10 gc")).toEqual({ count: 1, times: 10 });
-    expect(variableDice("+2D6")).toEqual({ count: 2, times: 1 });
-    expect(variableDice("3xPrice")).toBeNull();
-    expect(priceLabel(availability({ cost: 100, variable_cost: "+(1D6x10)" }))).toBe(
-      "100 + 1D6×10"
+  it("roll into a price at the multiplier, and say Common for no rarity", () => {
+    expect(rolledPrice(availability({ cost: 25, dice: 2 }), 7)).toBe(32);
+    expect(rolledPrice(availability({ cost: 200, dice: 1, dice_multiplier: 25 }), 3)).toBe(275);
+    expect(diceLabel(availability({ dice: 3 }))).toBe("3D6");
+    expect([rarityLabel(null), rarityLabel(9)]).toEqual(["Common", "Rare 9"]);
+  });
+
+  it("say who may buy them", () => {
+    expect(whoLine(availability())).toBe("For everyone");
+    expect(whoLine(availability({ warbands: [line("Dark Elves", true)] }))).toBe(
+      "Everyone except Dark Elves"
     );
-    expect(storeCategory({ type: "Weapon", subtype: "Blackpowder" })).toBe("missile");
-    expect(storeCategory({ type: "Miscellaneous", subtype: "" })).toBe("misc");
+    expect(
+      whoLine(availability({ for_everyone: false, warbands: [line("Skaven"), line("Lizardmen")] }))
+    ).toBe("For Skaven, Lizardmen");
+    expect(
+      whoLine(
+        availability({
+          for_everyone: false,
+          warbands: [line("Humans", false, true), line("Witch Hunters", true)],
+        })
+      )
+    ).toBe("For Humans, not Witch Hunters");
+  });
+});
+
+describe("store items", () => {
+  it("sort into the store's chips, name a variant, and are found by their rules and tags", () => {
+    const blunderbuss = item({ subtype: "Blackpowder" });
+    expect(storeCategory(blunderbuss)).toBe("missile");
+    expect(storeCategory(item({ type: "Animal", subtype: "Mount" }))).toBe("animals");
+    expect(itemName(item({ name: "Lamp", variant: "Mutiny in Marienburg" }))).toBe(
+      "Lamp (Mutiny in Marienburg)"
+    );
+    expect(searchWords(item({ tags: ["scimitar"] }))).toContain("scimitar");
   });
 });

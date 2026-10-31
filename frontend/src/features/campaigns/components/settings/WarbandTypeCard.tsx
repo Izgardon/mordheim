@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import {
 } from "@/features/warbands/components/type-picker/warband-type-picker";
 import type { Warband, WarbandTypeRow } from "@/features/warbands/types/warband-types";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { queryKeys } from "@/lib/query-keys";
 
 import { CAPTION, FormError, SettingsCard } from "./settings-ui";
 
@@ -26,6 +28,7 @@ type WarbandTypeCardProps = {
  * counts as, for custom warbands and house rules. Each change saves at once.
  */
 export default function WarbandTypeCard({ warband, canEdit, onSaved }: WarbandTypeCardProps) {
+  const queryClient = useQueryClient();
   const [adding, setAdding] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -40,6 +43,10 @@ export default function WarbandTypeCard({ warband, canEdit, onSaved }: WarbandTy
         warband_type: updated.warband_type,
         counts_as: updated.counts_as,
         warband_link: updated.warband_link,
+      });
+      // what it can usually buy, hire and learn follows its types (the items rebuild)
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.campaign.warbandWhoCan(warband.campaign_id, warband.id),
       });
       return true;
     } catch (failure) {

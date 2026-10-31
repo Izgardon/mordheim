@@ -85,13 +85,16 @@ export function BuyableToggle({
   checked,
   onChange,
   isMobile,
+  verb = "buy",
 }: {
   warbandName: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
   isMobile: boolean;
+  /** "buy", or "hire" on the hired swords' pages. */
+  verb?: string;
 }) {
-  const label = `What ${warbandName} can buy`;
+  const label = verb === "buy" ? `What ${warbandName} can buy` : `Who ${warbandName} can ${verb}`;
   return (
     <FilterField label={label} isMobile={isMobile} className="shrink-0">
       <Switch

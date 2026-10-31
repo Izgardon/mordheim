@@ -11,6 +11,7 @@ import {
 vi.mock("sonner", () => ({ toast: { warning: vi.fn() } }));
 import { queryKeys } from "@/lib/query-keys";
 import { createTestQueryClient } from "@/test/query-test-utils";
+import { availability } from "@/test/catalogue-fixtures";
 import { makeItem } from "@/test/warband-fixtures";
 
 import type { AcquireItemMeta } from "../types/acquire-types";
@@ -19,7 +20,7 @@ const rope = makeItem({
   id: 120,
   name: "Rope",
   cost: null,
-  availabilities: [{ id: 7, cost: 5, rarity: 2, restrictions: [] }],
+  availabilities: [availability({ id: 7, cost: 5 })],
 });
 
 const buying: AcquireItemMeta = {
@@ -48,6 +49,32 @@ describe("toastPurchaseWarnings", () => {
 });
 
 describe("purchaseLine", () => {
+  it("sends the price row and its roll, not a price, when the price is the row's", () => {
+    const line = purchaseLine({
+      item: rope,
+      meta: buying,
+      availabilityId: 7,
+      rowPrice: true,
+      diceRoll: 8,
+    });
+    expect(line).toEqual({
+      item_id: 120,
+      quantity: 2,
+      availability_id: 7,
+      dice_roll: 8,
+      is_buying: true,
+    });
+  });
+
+  it("sends the price when it was edited, and for a gift", () => {
+    expect(
+      purchaseLine({ item: rope, meta: buying, availabilityId: 7, rowPrice: false, diceRoll: 8 })
+    ).toMatchObject({
+      price: 6,
+      availability_id: 7,
+    });
+  });
+
   it("prices one copy when buying, with the availability chosen", () => {
     expect(purchaseLine({ item: rope, meta: buying, availabilityId: 7 })).toEqual({
       item_id: 120,

@@ -1,21 +1,23 @@
 import { useState } from "react";
 import { Dices, Minus, Plus } from "lucide-react";
 
+import { Chip } from "@/components/ui/chip";
 import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
 import { rollDice } from "@/lib/dice";
 import { cn } from "@/lib/utils";
 
 import type { Item, ItemAvailability } from "../types/item-types";
+import { diceLabel, isCommon, priceLabel, rarityLabel, rolledPrice } from "../utils/item-prices";
 import RareSearch, { type StoreSearch } from "./RareSearch";
-import { isCommon, variableDice } from "./store-items";
 import type { BasketLine, Recipient } from "./useStoreBasket";
 
 type AcquireFormProps = {
   warbandId: number;
   item: Item;
-  availability: ItemAvailability;
-  /** The price to start from (Buy again's current price), else the availability's cost. */
+  /** The rows this warband may buy at, the server's choice first (one row when it can't usually). */
+  rows: ItemAvailability[];
+  /** The price to start from (Buy again's current price), else the row's cost. */
   startPrice?: number | null;
   recipients: Recipient[];
   /** The unit the store was opened for: its button comes first, highlighted. */
@@ -28,41 +30,56 @@ type AcquireFormProps = {
 const LABEL = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
 
 /**
- * Getting one item (design E): the price each, prefilled and editable (a variable price rolls its
- * dice into it); Free, for an item found or given, with why; for a rare item the search (a bonus
- * from −3 to +10, a hero or no hero, or Buy without searching); then one button per recipient
- * with its total, which puts the item in the basket. The store, Buy again and, later, the
- * Wargear page's "Get this item" share it.
+ * Getting one item (design E, the items rebuild): the price row (a choice when the warband may use
+ * several: "Brace"), its note ("Heroes only") shown and never checked; the price each, prefilled
+ * and editable, a price with dice ("25 + 2D6") rolled with the button and sent with its row so the
+ * server adds the roll; Free, for an item found or given; for a rare item the search; then one
+ * button per recipient with its total, which puts the item in the basket.
  */
 export default function AcquireForm(props: AcquireFormProps) {
-  const { availability, item } = props;
-  const [price, setPrice] = useState(String(props.startPrice ?? availability.cost));
+  const { item, rows } = props;
+  const [rowId, setRowId] = useState(rows[0]?.id ?? 0);
+  const row = rows.find((entry) => entry.id === rowId) ?? rows[0];
+  const [price, setPrice] = useState(String(props.startPrice ?? row?.cost ?? 0));
+  const [edited, setEdited] = useState(props.startPrice != null);
   const [rolled, setRolled] = useState<number | null>(null);
   const [free, setFree] = useState(false);
   const [reason, setReason] = useState("");
   const [bonus, setBonus] = useState(0);
   const [search, setSearch] = useState<StoreSearch | null>(null);
   const [skipped, setSkipped] = useState(false);
-  const dice = variableDice(availability.variable_cost);
-  const rare = !isCommon(availability.rarity);
+  if (!row) return null;
+  const rare = !isCommon(row.rarity);
   const each = Math.max(0, Math.trunc(Number(price) || 0));
-  const cleared = !rare || free || skipped || Boolean(search?.found);
+  const needsRoll = Boolean(row.dice) && rolled === null && !edited && !free;
+  const cleared = (!rare || free || skipped || Boolean(search?.found)) && !needsRoll;
 
+  const pickRow = (next: ItemAvailability) => {
+    setRowId(next.id);
+    setPrice(String(next.cost ?? 0));
+    setEdited(false);
+    setRolled(null);
+    setSearch(null);
+    setSkipped(false);
+  };
   const roll = () => {
-    if (!dice) return;
-    const pips = rollDice(dice.count).reduce((sum, value) => sum + value, 0);
+    if (!row.dice) return;
+    const pips = rollDice(row.dice).reduce((sum, value) => sum + value, 0);
     setRolled(pips);
-    setPrice(String(availability.cost + pips * dice.times));
+    setEdited(false);
+    setPrice(String(rolledPrice(row, pips)));
   };
   const pick = (recipient: Recipient) =>
     props.onPick({
       item,
-      availabilityId: availability.id,
-      baseCost: availability.cost,
+      availabilityId: row.id,
+      baseCost: row.cost ?? 0,
       recipient,
       price: free ? 0 : each,
       free,
       reason: free ? reason : "",
+      diceRoll: rolled,
+      rowPrice: !edited && !free && row.cost != null,
     });
   const changeBonus = (next: number) => {
     setBonus(Math.max(-3, Math.min(10, next)));
@@ -71,6 +88,20 @@ export default function AcquireForm(props: AcquireFormProps) {
 
   return (
     <div className="flex flex-col gap-3 border border-accent-line bg-surface p-3.5">
+      {rows.length > 1 ? (
+        <div role="group" aria-label="Price" className="flex flex-wrap gap-1.5">
+          {rows.map((entry) => (
+            <Chip key={entry.id} pressed={entry.id === row.id} onClick={() => pickRow(entry)}>
+              {entry.label || priceLabel(entry)} · {rarityLabel(entry.rarity)}
+            </Chip>
+          ))}
+        </div>
+      ) : null}
+      {row.label || row.note || row.cost_note ? (
+        <p className="m-0 text-xs text-text2">
+          {[row.label, row.cost_note, row.note].filter(Boolean).join(" · ")}
+        </p>
+      ) : null}
       <div className="flex flex-wrap items-end gap-x-3.5 gap-y-2.5">
         <label className={LABEL}>
           {props.isMobile ? "Price each" : "Price each (gc)"}
@@ -80,14 +111,17 @@ export default function AcquireForm(props: AcquireFormProps) {
             className={cn("font-mono", props.isMobile ? "h-11 w-24" : "w-[110px]")}
             value={price}
             disabled={free}
-            onChange={(event) => setPrice(event.target.value)}
+            onChange={(event) => {
+              setPrice(event.target.value);
+              setEdited(true);
+            }}
           />
         </label>
-        {dice ? (
+        {row.dice ? (
           <div className="flex min-h-10 items-center gap-2">
             {props.isMobile ? null : (
               <span className="font-mono text-[13px] text-text2">
-                {availability.cost} + {dice.count}D6{dice.times > 1 ? ` × ${dice.times}` : ""}
+                {row.cost ?? 0} + {diceLabel(row)}
               </span>
             )}
             <button
@@ -111,6 +145,9 @@ export default function AcquireForm(props: AcquireFormProps) {
           Free
         </label>
       </div>
+      {needsRoll ? (
+        <p className="m-0 text-xs text-text2">Roll the dice for its price, or type the price.</p>
+      ) : null}
       {free ? (
         <Input
           aria-label="Why it is free"
@@ -124,7 +161,7 @@ export default function AcquireForm(props: AcquireFormProps) {
         <div className="flex flex-col gap-2 border-t border-line pt-2.5">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <span className="text-xs font-bold text-muted-foreground">
-              Rare {availability.rarity} · search on 2D6
+              Rare {row.rarity} · search on 2D6
             </span>
             <div
               role="group"
@@ -156,7 +193,7 @@ export default function AcquireForm(props: AcquireFormProps) {
           <RareSearch
             warbandId={props.warbandId}
             item={item}
-            rarity={availability.rarity}
+            rarity={row.rarity ?? 2}
             bonus={bonus}
             searchers={props.searchers}
             search={search}

@@ -7,17 +7,16 @@ import { useCatalogue } from "@/lib/catalogue-queries";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { cn } from "@/lib/utils";
 
+import { useWhoCan } from "../api/who-can-queries";
+import { isCommon, priceLabel, rarityLabel } from "../utils/item-prices";
 import { isSold } from "../utils/item-listing";
 import AcquireForm from "./AcquireForm";
 import {
   STORE_CATEGORIES,
-  isCommon,
+  itemName,
   kindOf,
-  offerFor,
-  priceLabel,
-  rarityLabel,
+  searchWords,
   storeCategory,
-  type Buyer,
   type StoreCategory,
 } from "./store-items";
 import type { BasketLine, Recipient } from "./useStoreBasket";
@@ -25,7 +24,6 @@ import type { BasketLine, Recipient } from "./useStoreBasket";
 export type StoreListProps = {
   campaignId: number;
   warbandId: number;
-  buyer: Buyer;
   canBuy: boolean;
   recipients: Recipient[];
   firstKey: string | null;
@@ -37,31 +35,35 @@ export type StoreListProps = {
 };
 
 /**
- * The store's list (design E): search, "What I can buy" (on: items restricted to other warbands
- * are hidden; off: they show with a short warning and can still be bought), category chips, and a
- * row per item (name, kind, price, Common or Rare N) whose Get opens its acquire form.
+ * The store's list (design E, the items rebuild): search, "What I can buy" (on: what the warband
+ * can't usually buy is hidden; off: it shows with the server's reason, "Not usually available to
+ * Skaven.", and can still be bought), category chips, and a row per item (name, kind, the price
+ * row the server picked for the warband, Common or Rare N) whose Get opens its acquire form.
  */
 export default function StoreList(props: StoreListProps) {
   const catalogue = useCatalogue("items", props.campaignId);
+  const whoCan = useWhoCan(props.campaignId, props.warbandId);
   const [query, setQuery] = useState(props.again?.name ?? "");
   const [onlyMine, setOnlyMine] = useState(true);
   const [category, setCategory] = useState<StoreCategory>("all");
   const [openId, setOpenId] = useState<number | null>(props.again?.itemId ?? null);
-  const { buyer } = props;
   const offers = useMemo(
     () =>
-      catalogue.data
-        .filter(isSold)
-        .map((item) => ({ item, ...offerFor(item, buyer) }))
-        .filter((offer) => offer.availability !== null),
-    [buyer, catalogue.data]
+      catalogue.data.filter(isSold).flatMap((item) => {
+        const offer = whoCan.items.get(item.id);
+        const byId = new Map((item.availabilities ?? []).map((row) => [row.id, row]));
+        const rows = (offer?.options ?? []).flatMap((id) => byId.get(id) ?? []);
+        if (!offer || !rows.length) return [];
+        return [{ item, availability: rows[0], rows, warning: offer.can_buy ? "" : offer.reason }];
+      }),
+    [catalogue.data, whoCan.items]
   );
   const rows = offers.filter(
     ({ item, warning }) =>
       item.id === openId ||
       ((!onlyMine || !warning) &&
         (category === "all" || storeCategory(item) === category) &&
-        matchesSearchQuery(query, item.name))
+        matchesSearchQuery(query, ...searchWords(item)))
   );
 
   return (
@@ -101,7 +103,7 @@ export default function StoreList(props: StoreListProps) {
           </Chip>
         ))}
       </div>
-      {catalogue.isLoading ? (
+      {catalogue.isLoading || whoCan.isLoading ? (
         <p className="m-0 text-sm text-muted-foreground">Opening the store…</p>
       ) : catalogue.error ? (
         <p className="m-0 text-sm text-danger">{catalogue.error}</p>
@@ -109,14 +111,13 @@ export default function StoreList(props: StoreListProps) {
         <p className="m-0 text-sm text-text2">Nothing in the store by that name.</p>
       ) : null}
       <ul className="m-0 flex list-none flex-col border-t border-line p-0">
-        {rows.map(({ item, availability, warning }) => {
-          if (!availability) return null;
+        {rows.map(({ item, availability, rows: options, warning }) => {
           const open = openId === item.id;
           return (
             <li key={item.id} className="flex flex-col gap-2.5 border-b border-line py-2.5">
               <div className="flex items-center gap-3">
                 <div className="flex min-w-0 flex-1 flex-col gap-px">
-                  <span className="font-bold text-ink">{item.name}</span>
+                  <span className="font-bold text-ink">{itemName(item)}</span>
                   <span className="text-xs text-muted-foreground">
                     {props.isMobile ? `${priceLabel(availability)} · ` : `${kindOf(item)}`}
                     {props.isMobile ? (
@@ -165,7 +166,7 @@ export default function StoreList(props: StoreListProps) {
                 <AcquireForm
                   warbandId={props.warbandId}
                   item={item}
-                  availability={availability}
+                  rows={options}
                   startPrice={props.again?.itemId === item.id ? props.again.price : null}
                   recipients={props.recipients}
                   firstKey={props.firstKey}

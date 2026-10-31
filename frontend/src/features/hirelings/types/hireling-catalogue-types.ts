@@ -1,5 +1,5 @@
 import type { CatalogueBadgeFields } from "@/features/catalogue/types/catalogue-entry";
-import type { Item, RestrictionLink } from "@/features/items/types/item-types";
+import type { AccessLine, AccessLineInput, Item } from "@/features/items/types/item-types";
 import type { Skill } from "@/features/skills/types/skill-types";
 import type { Special } from "@/features/special/types/special-types";
 import type { Spell } from "@/features/spells/types/spell-types";
@@ -44,7 +44,11 @@ export type HirelingProfile = CatalogueBadgeFields & {
   stays?: HirelingStays;
   /** Dramatis personae only: what he is paid in ("25 gc or 1 shard", a favour). */
   payment_note?: string;
-  restrictions: RestrictionLink[];
+  /** Who may hire him (the items rebuild): everyone (minus the excluded) or the warbands named. */
+  for_everyone: boolean;
+  warbands: AccessLine[];
+  /** The book's sentence about who hires him, shown and never checked. */
+  hire_note: string;
 };
 
 export type HirelingEquipment = { item: Item; quantity: number };
@@ -89,7 +93,9 @@ export type HirelingProfileWrite = {
   special_ids: number[];
   spell_ids: number[];
   item_entries: { item_id: number; quantity: number }[];
-  restriction_ids: { restriction_id: number; additional_note: string }[];
+  for_everyone: boolean;
+  warbands: AccessLineInput[];
+  hire_note: string;
   stays?: HirelingStays;
   payment_note?: string;
 };

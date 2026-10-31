@@ -91,7 +91,11 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
         sources.items.map((item) => ({
           entry: item,
           name: item.name,
-          text: [item.description, ...(item.properties ?? []).map((rule) => rule.name)].join(" "),
+          text: [
+            item.flavour,
+            ...(item.rules ?? []).map((rule) => rule.name),
+            ...(item.tags ?? []),
+          ].join(" "),
         })),
         needle
       ).map(({ entry, snippet }) => ({

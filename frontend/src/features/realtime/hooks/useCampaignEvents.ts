@@ -1,7 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query";
 
 import { writeCampaignAnswer } from "@/features/campaigns/hooks/useCampaignQuery";
-import { invalidateHeldCopies } from "@/lib/catalogue-queries";
+import { invalidateWhoCan } from "@/features/items/api/who-can-queries";
+import { WHO_CAN_KINDS, invalidateHeldCopies } from "@/lib/catalogue-queries";
 import { queryKeys, type CatalogueKind } from "@/lib/query-keys";
 import {
   useCampaignCatalogueChanges,
@@ -14,7 +15,7 @@ import type { CampaignSummary } from "@/features/campaigns/types/campaign-types"
 /** The server's catalogue kinds (`catalogue.changed {kind}`) as the cached lists name them. */
 const CATALOGUE_KINDS: Record<string, CatalogueKind> = {
   items: "items",
-  item_properties: "item-properties",
+  item_rules: "item-rules",
   skills: "skills",
   spells: "spells",
   specials: "specials",
@@ -58,6 +59,7 @@ export function useCampaignEvents(campaignId: number | null) {
         queryKey: queryKeys.campaign.catalogueEntries(campaignId, catalogueKind),
       });
       void invalidateHeldCopies(queryClient, catalogueKind, campaignId);
+      if (WHO_CAN_KINDS.has(catalogueKind)) void invalidateWhoCan(queryClient, campaignId);
     }
   });
   useCampaignWarbandChanges(campaignId, ({ warband_id }) => {

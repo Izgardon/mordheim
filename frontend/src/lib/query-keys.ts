@@ -8,7 +8,7 @@
 
 export type CatalogueKind =
   | "items"
-  | "item-properties"
+  | "item-rules"
   | "skills"
   | "spells"
   | "specials"
@@ -20,6 +20,8 @@ export type CatalogueKind =
 export const queryKeys = {
   /** Every setting and the grade presets (book data, not campaign-scoped). */
   settings: () => ["settings"] as const,
+  /** The races and sides a who-can list may name (book data). */
+  warbandGroups: () => ["warband-groups"] as const,
   /** Your campaigns, as the campaigns page lists them. */
   campaigns: () => ["campaigns"] as const,
   account: {
@@ -74,8 +76,6 @@ export const queryKeys = {
       ["campaign", campaignId, "catalogue-entry", kind] as const,
     catalogueEntry: (campaignId: number, kind: CatalogueKind, entryId: number) =>
       ["campaign", campaignId, "catalogue-entry", kind, entryId] as const,
-    /** The restrictions the campaign's catalogue entries can name (book and campaign rows). */
-    restrictions: (campaignId: number) => ["campaign", campaignId, "restrictions"] as const,
     /**
      * What holds one entry (read as its delete confirm opens). Outside the catalogue key, so a
      * write to the kind's lists doesn't read it again.
@@ -105,6 +105,9 @@ export const queryKeys = {
     /** The warband page in one entry: warband, summary, capabilities and the unit lists. */
     warbandSheet: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "sheet"] as const,
+    /** What the warband can usually buy, hire and learn (the server decides: who-can/). */
+    warbandWhoCan: (campaignId: number, warbandId: number) =>
+      ["campaign", campaignId, "warband", warbandId, "who-can"] as const,
     /** A summary read that refreshes the sheet's summary after a write (never observed). */
     warbandSummary: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "summary"] as const,

@@ -63,8 +63,8 @@ export default function UnitDetails(props: UnitDetailsProps) {
       boxes: rows.items.map((item) => ({
         name: item.name,
         kind: itemKindLine(item),
-        text: item.description,
-        rules: item.properties?.map((property) => property.name),
+        text: item.flavour ?? "",
+        rules: item.rules?.map((rule) => rule.name).filter(Boolean),
         item,
         boxKind: itemBoxKind(item),
       })),
@@ -157,6 +157,7 @@ export default function UnitDetails(props: UnitDetailsProps) {
             {selected?.pending && selected.id !== undefined && canEdit ? (
               <PendingPick
                 campaignId={props.campaignId}
+                warbandId={props.warbandId}
                 list={row.key as PendingList}
                 access={"available_skills" in unit ? unit.available_skills : undefined}
                 onClose={() => setOpen(null)}

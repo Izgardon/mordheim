@@ -64,7 +64,7 @@ export const makeItem = (overrides: Partial<Item> = {}): Item => ({
   id: 1,
   name: "Sword",
   type: "Melee",
-  description: "",
+  flavour: "",
   availabilities: [],
   cost: 10,
   ...overrides,
