@@ -1749,5 +1749,156 @@
       "how": "mordheimer"
     }
   ],
-  "dramatis_personae": []
+  "dramatis_personae": [
+    {
+      "name": "Abdul Alhazred, the Mad Sorcerer",
+      "setting": "khemri",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Aenur, the sword of twilight",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Belandysh, Condemned Champion Of Chen",
+      "setting": "border-town-burning",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Bertha Bestraufrung, high matriarch of the sisterhood",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Countess Marianna Chevaux, Vampire Assassin",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Crow Master, The",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Dark Emissary",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Dijin Katal, The Renegade Assassin",
+      "setting": "lustria",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Drenok Johansen, Wielder Of The Great Axe",
+      "setting": "lustria",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Grand Master Ippan Shu",
+      "setting": "border-town-burning",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Heinrich 'Altdorf' Schmidt",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Innominatus, the Tilean Gladiator",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Johann the knife",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Khar-mel The Djinn",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Luthor the Looter",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Luthor Wolfenbaum",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Maglah Khan's Horde",
+      "setting": "border-town-burning",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Maximilian The Mad",
+      "setting": "nemesis-crown",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Nicodemus, the cursed pilgrim",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Penthesilea, Mark Of The Serpent",
+      "setting": "lustria",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Sigmund Spindle, the Harvester of Flesh",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "The Dark Jester in Mordheim",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "The Foole",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "The Headless Horseman",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Truthsayer",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Ulli & Marquand",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Veskit, high executioner of clan eshin",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "William Schäke­stange, Master Bard",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "“Busty” Gwen",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    }
+  ]
 }

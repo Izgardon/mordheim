@@ -52,9 +52,9 @@ class HirelingProfile(StatBlock, CatalogueEntry):
     caster = models.CharField(max_length=20, default="No", choices=CASTERS)
     race_label = models.CharField(max_length=60, blank=True, default="")
     hire_cost = models.PositiveIntegerField(null=True, blank=True)
-    hire_cost_expression = models.CharField(max_length=120, blank=True, default="")
+    hire_cost_expression = models.CharField(max_length=300, blank=True, default="")  # a fee in words can run long
     upkeep_cost = models.PositiveIntegerField(null=True, blank=True)
-    upkeep_cost_expression = models.CharField(max_length=120, blank=True, default="")
+    upkeep_cost_expression = models.CharField(max_length=300, blank=True, default="")
     rating = models.PositiveIntegerField(null=True, blank=True)
     available_skill_types = models.JSONField(default=list, blank=True)
     grade = models.CharField(max_length=20, blank=True, default="")

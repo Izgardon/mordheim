@@ -70,10 +70,10 @@ class SeedAllTests(TestCase):
                 "ItemRule": 51,  # the import's shared rules
                 "Skill": 255,
                 "Spell": 189,  # 183 + the Dark Mage's six (BUG-54)
-                "Special": 186,
+                "Special": 282,  # 186 + the dramatis personae's own rules (next step 12)
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
-                "DramatisPersona": 0,  # until they are scraped
+                "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
             },
         )
         for model in BOOK_MODELS:
@@ -83,7 +83,7 @@ class SeedAllTests(TestCase):
             if hasattr(model, "campaign_type"):  # grading phase 1: skills and hired swords get the import's settings
                 with self.subTest(model=model.__name__, column="campaign_type"):
                     ungraded = model._default_manager.filter(**{"campaign_type__isnull": True})
-                    if model in (HiredSword, Item):  # the items rebuild: every book item has its setting
+                    if model in (HiredSword, DramatisPersona, Item):  # every book item and hireling has its setting
                         self.assertFalse(ungraded.exists())
                     elif model is Skill:  # but the ones a hired sword's seeding makes ("Hired Sword - …")
                         self.assertFalse(ungraded.exclude(**{"type__startswith": "Hired Sword - "}).exists())

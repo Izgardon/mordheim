@@ -128,8 +128,20 @@ class HirelingSeederTests(TestCase):
                     run(command, json_paths=[path])
         self.assertEqual((HiredSword.objects.count(), DramatisPersona.objects.count()), (0, 0))
 
-    def test_the_committed_dramatis_personae_file_is_empty_until_they_are_scraped(self):
+    def test_the_imports_thirty_dramatis_personae_are_seeded_with_who_may_hire_them_and_their_special_fees(self):
+        # next step 12: mordheimer's dramatis personae through the catalogue import (out/dramatis-personae.json)
+        run("seed_settings")
+        run("seed_warband_types")
+
         output = run("seed_dramatis_personae")
 
-        self.assertIn("Created: 0, updated: 0.", output)
-        self.assertFalse(DramatisPersona.objects.exists())
+        self.assertIn("Created: 30, updated: 0.", output)
+        aenur = DramatisPersona.objects.get(name="Aenur, the sword of twilight")
+        self.assertEqual((aenur.hire_cost, aenur.stays, aenur.weapon_skill), (150, "one_battle", 8))
+        self.assertFalse(aenur.for_everyone)
+        self.assertIn("Reiklanders", {line.warband_type.name for line in aenur.warband_links.select_related("warband_type") if line.warband_type})  # fmt: skip
+        self.assertEqual(aenur.hire_note, "Any warband except Skaven, Undead and the Possessed may hire Aenur.")
+        nicodemus = DramatisPersona.objects.get(name="Nicodemus, the cursed pilgrim")
+        fees = (nicodemus.hire_cost, nicodemus.hire_cost_expression, nicodemus.upkeep_cost_expression)
+        self.assertEqual(fees, (None, "1 wyrdstone", "1 wyrdstone"))  # a fee that isn't gold is kept as text
+        self.assertEqual(nicodemus.caster, "Wizard")

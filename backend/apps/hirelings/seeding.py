@@ -29,6 +29,7 @@ from django.db import transaction
 from apps.core.book_lookups import BookLookups
 from apps.core.catalogue.cache import bump
 from apps.core.seeding import (
+    IMPORT_OUT,
     SettingAssignments,
     WhoCanLists,
     clean,
@@ -72,7 +73,7 @@ HIRED_SWORDS = SeedSpec(HiredSword, "Hired sword", Path("apps/hirelings/data/hir
 DRAMATIS_PERSONAE = SeedSpec(
     DramatisPersona,
     "Dramatis persona",
-    Path("apps/hirelings/data/dramatis-personae.json"),
+    IMPORT_OUT / "dramatis-personae.json",  # mordheimer's, made seed rows by the catalogue import (personae.py)
     "dramatis_persona",
     "Dramatis Persona",
     "dramatis_personae",

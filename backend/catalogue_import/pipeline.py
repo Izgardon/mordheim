@@ -14,6 +14,7 @@ from catalogue_import.groups import build_groups
 from catalogue_import.hiring import HiringLog, build_who_can
 from catalogue_import.items import ItemLog, mordheimer_items
 from catalogue_import.mim import MimLog, MimReader, mim_item
+from catalogue_import.personae import Catalogue, build_personae
 from catalogue_import.report import ReportData, render_report
 from catalogue_import.rules import build_shared_rules, index_rules
 from catalogue_import.sources import ITEM_DATA, PACKAGE, Sources, load_sources
@@ -149,6 +150,8 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     everything = items + mim
     add_notes(everything, overrides.get("item_notes", {}))
     same_names = assign_slugs(everything, overrides.get("whole_names", []))
+    names_we_have = Catalogue([item["name"] for item in everything], [row["name"] for row in sources.our_skills])
+    sources.our_personae = build_personae(sources.personae, names_we_have)
     _resolve_everything(sources, resolver)
     assignment_log = AssignmentLog()
     assignments = build_assignments(sources, assignment_log)
@@ -192,5 +195,6 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         "items.json": dump_json(everything),
         "setting-assignments.json": dump_json(assignments),
         "who-can.json": dump_json(who_can),
+        "dramatis-personae.json": dump_json(sources.our_personae),
         "import-report.md": render_report(report),
     }

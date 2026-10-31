@@ -22,9 +22,9 @@ class Hireling(RosterUnit):
         blank=True,
     )
     kind = models.CharField(max_length=20, choices=HIRELING_KINDS, default="hired_sword")
-    hire_cost_expression = models.CharField(max_length=120, default="", blank=True)
+    hire_cost_expression = models.CharField(max_length=300, default="", blank=True)  # as its catalogue entry's
     upkeep_price = models.PositiveIntegerField(default=0)
-    upkeep_cost_expression = models.CharField(max_length=120, default="", blank=True)
+    upkeep_cost_expression = models.CharField(max_length=300, default="", blank=True)
     kills = models.PositiveIntegerField(default=0)
     caster = models.CharField(
         max_length=20,
