@@ -164,58 +164,69 @@ export type MissingGamesFields = {
   missing_reason?: string;
 };
 
-export type WarbandHero = UnitCompanionFields & {
-  id: number;
-  warband_id: number;
-  name: string | null;
-  unit_type: string | null;
-  race_id: number | null;
-  race_name?: string | null;
-  price: number | null;
-  xp: number | null;
-  kills?: number | null;
-  level_up?: number | null;
-  level_up_history?: LevelUpHistoryEntry[];
-  deeds?: string | null;
-  is_leader?: boolean | null;
-  trading_action?: boolean | null;
-  armour_save: number | null;
-  large: boolean | null;
-  caster: HeroCaster | null;
-  half_rate: boolean | null;
-  dead: boolean | null;
-  /** How many more battles it misses, and why (`MissingGamesFields`). */
-  missing_games?: number;
-  missing_reason?: string;
-  movement: number | null;
-  weapon_skill: number | null;
-  ballistic_skill: number | null;
-  strength: number | null;
-  toughness: number | null;
-  wounds: number | null;
-  initiative: number | null;
-  attacks: number | null;
-  leadership: number | null;
-  created_at: string;
-  updated_at: string;
-  available_skills?: HeroSkills | string[] | null;
-  race?: {
-    name: string;
-    movement: number;
-    weapon_skill: number;
-    ballistic_skill: number;
-    strength: number;
-    toughness: number;
-    wounds: number;
-    initiative: number;
-    attacks: number;
-    leadership: number;
-  };
-  items: Item[];
-  skills: Skill[];
-  specials?: Special[];
-  spells?: Spell[];
+/**
+ * Skills, spells and specials an advance gave that are picked later from the card ("1 skill to
+ * choose"): heroes and hired swords. A pick (or the Edit form) sets the count with the unit's save.
+ */
+export type PendingPickFields = {
+  pending_skills?: number;
+  pending_spells?: number;
+  pending_specials?: number;
 };
+
+export type WarbandHero = UnitCompanionFields &
+  PendingPickFields & {
+    id: number;
+    warband_id: number;
+    name: string | null;
+    unit_type: string | null;
+    race_id: number | null;
+    race_name?: string | null;
+    price: number | null;
+    xp: number | null;
+    kills?: number | null;
+    level_up?: number | null;
+    level_up_history?: LevelUpHistoryEntry[];
+    deeds?: string | null;
+    is_leader?: boolean | null;
+    trading_action?: boolean | null;
+    armour_save: number | null;
+    large: boolean | null;
+    caster: HeroCaster | null;
+    half_rate: boolean | null;
+    dead: boolean | null;
+    /** How many more battles it misses, and why (`MissingGamesFields`). */
+    missing_games?: number;
+    missing_reason?: string;
+    movement: number | null;
+    weapon_skill: number | null;
+    ballistic_skill: number | null;
+    strength: number | null;
+    toughness: number | null;
+    wounds: number | null;
+    initiative: number | null;
+    attacks: number | null;
+    leadership: number | null;
+    created_at: string;
+    updated_at: string;
+    available_skills?: HeroSkills | string[] | null;
+    race?: {
+      name: string;
+      movement: number;
+      weapon_skill: number;
+      ballistic_skill: number;
+      strength: number;
+      toughness: number;
+      wounds: number;
+      initiative: number;
+      attacks: number;
+      leadership: number;
+    };
+    items: Item[];
+    skills: Skill[];
+    specials?: Special[];
+    spells?: Spell[];
+  };
 
 /** What a hireling is: a hired sword, or a dramatis persona ("hireling" is the code's word only). */
 export type HirelingKind = "hired_sword" | "dramatis_persona";
@@ -232,67 +243,68 @@ export type HirelingTerms = {
   payment_note: string;
 };
 
-export type WarbandHireling = UnitCompanionFields & {
-  id: number;
-  warband_id: number;
-  name: string | null;
-  unit_type: string | null;
-  /** Older payloads leave these out: a hired sword on the henchman table who stays. */
-  kind?: HirelingKind;
-  injury_table?: HirelingInjuryTable;
-  stays?: HirelingStays;
-  payment_note?: string;
-  race_id: number | null;
-  race_name?: string | null;
-  price: number | null;
-  hire_cost_expression?: string | null;
-  upkeep_price?: number | null;
-  upkeep_cost_expression?: string | null;
-  rating?: number | null;
-  xp: number | null;
-  kills?: number | null;
-  level_up?: number | null;
-  level_up_history?: LevelUpHistoryEntry[];
-  deeds?: string | null;
-  armour_save: number | null;
-  large: boolean | null;
-  caster: HeroCaster | null;
-  half_rate: boolean | null;
-  no_level_ups?: boolean | null;
-  blood_pacted?: boolean | null;
-  dead: boolean | null;
-  /** How many more battles it misses, and why (`MissingGamesFields`). */
-  missing_games?: number;
-  missing_reason?: string;
-  movement: number | null;
-  weapon_skill: number | null;
-  ballistic_skill: number | null;
-  strength: number | null;
-  toughness: number | null;
-  wounds: number | null;
-  initiative: number | null;
-  attacks: number | null;
-  leadership: number | null;
-  created_at: string;
-  updated_at: string;
-  available_skills?: HeroSkills | string[] | null;
-  race?: {
-    name: string;
-    movement: number;
-    weapon_skill: number;
-    ballistic_skill: number;
-    strength: number;
-    toughness: number;
-    wounds: number;
-    initiative: number;
-    attacks: number;
-    leadership: number;
+export type WarbandHireling = UnitCompanionFields &
+  PendingPickFields & {
+    id: number;
+    warband_id: number;
+    name: string | null;
+    unit_type: string | null;
+    /** Older payloads leave these out: a hired sword on the henchman table who stays. */
+    kind?: HirelingKind;
+    injury_table?: HirelingInjuryTable;
+    stays?: HirelingStays;
+    payment_note?: string;
+    race_id: number | null;
+    race_name?: string | null;
+    price: number | null;
+    hire_cost_expression?: string | null;
+    upkeep_price?: number | null;
+    upkeep_cost_expression?: string | null;
+    rating?: number | null;
+    xp: number | null;
+    kills?: number | null;
+    level_up?: number | null;
+    level_up_history?: LevelUpHistoryEntry[];
+    deeds?: string | null;
+    armour_save: number | null;
+    large: boolean | null;
+    caster: HeroCaster | null;
+    half_rate: boolean | null;
+    no_level_ups?: boolean | null;
+    blood_pacted?: boolean | null;
+    dead: boolean | null;
+    /** How many more battles it misses, and why (`MissingGamesFields`). */
+    missing_games?: number;
+    missing_reason?: string;
+    movement: number | null;
+    weapon_skill: number | null;
+    ballistic_skill: number | null;
+    strength: number | null;
+    toughness: number | null;
+    wounds: number | null;
+    initiative: number | null;
+    attacks: number | null;
+    leadership: number | null;
+    created_at: string;
+    updated_at: string;
+    available_skills?: HeroSkills | string[] | null;
+    race?: {
+      name: string;
+      movement: number;
+      weapon_skill: number;
+      ballistic_skill: number;
+      strength: number;
+      toughness: number;
+      wounds: number;
+      initiative: number;
+      attacks: number;
+      leadership: number;
+    };
+    items: Item[];
+    skills: Skill[];
+    specials?: Special[];
+    spells?: Spell[];
   };
-  items: Item[];
-  skills: Skill[];
-  specials?: Special[];
-  spells?: Spell[];
-};
 
 export type WarbandHeroPayload = {
   name: string | null;

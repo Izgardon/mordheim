@@ -25,7 +25,6 @@ export default function SkillAccessField({
       skills
         .map((skill) => skill.type?.trim())
         .filter((type): type is string => Boolean(type) && !standardTypes.has(type!))
-        .filter((type) => type !== "Pending")
     ),
   ].sort();
   const toggle = (key: string) => onChange({ ...value, [key]: !value[key] });

@@ -9,8 +9,7 @@ import { useCatalogue } from "@/lib/catalogue-queries";
 import { cn } from "@/lib/utils";
 
 import { parseAvailableSkills, skillAbbrevToType } from "../../utils/warband-utils";
-
-export type PendingList = "skills" | "spells" | "specials";
+import type { PendingList } from "./unit-view";
 
 const CATALOGUE = { skills: "skills", spells: "spells", specials: "specials" } as const;
 const NOUN = { skills: "skill", spells: "spell", specials: "special" } as const;
@@ -25,11 +24,11 @@ function accessTypes(raw: unknown) {
 }
 
 /**
- * A pending "New skill" (or spell, special) from an advance, resolved from the card: search the
- * campaign's list (skills from the unit's skill access when it has any) and pick one to take the
- * placeholder's place. The warband type's special skills come first (the items rebuild: the
- * server's who-can/), whatever the unit's lists; entries outside the campaign's settings come
- * last, greyed out with a warning, and can still be picked.
+ * A pick an advance left for later ("Skill to choose", or a spell, a special), made from the card:
+ * search the campaign's list (skills from the unit's skill access when it has any) and pick one.
+ * The warband type's special skills come first (the items rebuild: the server's who-can/),
+ * whatever the unit's lists; entries outside the campaign's settings come last, greyed out with a
+ * warning, and can still be picked.
  */
 export default function PendingPick({
   campaignId,
@@ -54,7 +53,6 @@ export default function PendingPick({
   const allowed = list === "skills" ? accessTypes(access) : [];
   const query = search.trim().toLowerCase();
   const shown = entries
-    .filter((entry) => (entry as { type?: string }).type !== "Pending")
     .filter(
       (entry) =>
         !allowed.length ||

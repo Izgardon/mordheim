@@ -35,6 +35,11 @@ export default function EditUnitFields({
   const specials = useCatalogue("specials", campaignId).data ?? [];
   const spells = useCatalogue("spells", campaignId).data ?? [];
 
+  // the picks an advance left for later on a list (heroes and hired swords), one fewer with ×
+  const picks = (key: string) =>
+    key in draft
+      ? { pending: Number(draft[key]) || 0, onPendingChange: (next: number) => set(key, next) }
+      : {};
   const field = (label: string, key: string, numeric = false) => (
     <label className="flex flex-col gap-1 text-xs font-bold text-muted-foreground">
       {label}
@@ -122,6 +127,7 @@ export default function EditUnitFields({
         entries={lists.skills}
         options={skills}
         onChange={(next) => setLists((c) => ({ ...c, skills: next }))}
+        {...picks("pending_skills")}
       />
       {kind !== "henchmen_group" ? (
         <EditListPicker
@@ -129,6 +135,7 @@ export default function EditUnitFields({
           entries={lists.spells}
           options={spells}
           onChange={(next) => setLists((c) => ({ ...c, spells: next }))}
+          {...picks("pending_spells")}
         />
       ) : null}
       <EditListPicker
@@ -136,6 +143,7 @@ export default function EditUnitFields({
         entries={lists.specials}
         options={specials}
         onChange={(next) => setLists((c) => ({ ...c, specials: next }))}
+        {...picks("pending_specials")}
       />
       <div className="flex flex-col gap-1.5">
         <span className={SECTION_LABEL}>Traits</span>

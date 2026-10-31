@@ -11,8 +11,7 @@ import type { HenchmenGroup, WarbandHero, WarbandHireling } from "../../types/wa
 import { ROSTER_DIVIDED, ROSTER_HEROES, ROSTER_SECTIONS } from "../page/warband-layout";
 import UnitCard from "./UnitCard";
 import UnitDetails from "./UnitDetails";
-import type { PendingList } from "./PendingPick";
-import { unitKey, type RosterUnit } from "./unit-view";
+import { pickPayload, unitKey, type RosterUnit } from "./unit-view";
 
 type RosterSectionsProps = {
   warbandId: number;
@@ -68,20 +67,6 @@ function Section({
       {children}
     </section>
   );
-}
-
-const ID_FIELD = { skills: "skill_ids", spells: "spell_ids", specials: "special_ids" } as const;
-
-/** The unit's ids for `list` with the first `placeholderId` swapped for `entryId`. */
-function swapPending(entry: RosterUnit, list: PendingList, placeholderId: number, entryId: number) {
-  const unit = entry.unit as Partial<Record<PendingList, { id: number }[]>>;
-  let swapped = false;
-  const ids = (unit[list] ?? []).map(({ id }) => {
-    if (swapped || id !== placeholderId) return id;
-    swapped = true;
-    return entryId;
-  });
-  return { [ID_FIELD[list]]: ids };
 }
 
 /** The roster tab: heroes as cards in a grid, henchmen and hired swords as rows (design E). */
@@ -145,9 +130,7 @@ export default function RosterSections(props: RosterSectionsProps) {
             onAdvance={() => props.onAdvance(entry)}
             campaignId={campaign?.id ?? 0}
             warbandId={warbandId}
-            onResolvePending={(list, placeholderId, entryId) =>
-              actions.patchUnit(entry, swapPending(entry, list, placeholderId, entryId))
-            }
+            onPick={(list, entryId) => actions.patchUnit(entry, pickPayload(entry, list, entryId))}
           />
         ) : null}
       </UnitCard>
