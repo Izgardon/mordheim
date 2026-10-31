@@ -152,6 +152,10 @@ export default function Warband() {
                   heroes={sheet.heroes}
                   henchmenGroups={sheet.henchmenGroups}
                   hirelings={sheet.hirelings}
+                  counts={{
+                    hero_count: warband?.hero_count,
+                    hireling_count: warband?.hireling_count,
+                  }}
                   canEdit={canEdit}
                   onLoadout={setLoadoutFor}
                   onRecruit={(kind) =>

@@ -51,10 +51,8 @@ export default function CustomHireDialog({
         name: name.trim(),
         unit_type: type.trim(),
         price: paid.gold ?? 0,
-        resources: paid.resources.map((line) => ({
-          ...line,
-          resource_id: matchCounter(line, counters)?.id ?? null,
-        })),
+        // no counter named: the server pays each from the resource of its name ("Wyrdstone shards" pays Wyrdstone)
+        resources: paid.resources,
         upkeep_fee: feeFromDraft(upkeep),
       });
       toastServerWarnings(answer.warnings);
@@ -114,14 +112,14 @@ export default function CustomHireDialog({
             <span
               key={line.resource}
               className={
-                counter && counter.amount >= line.amount
+                !counter || counter.amount >= line.amount
                   ? "text-xs text-text2"
                   : "text-xs font-semibold text-danger"
               }
             >
               {counter
                 ? `${line.amount} ${line.resource} from ${counter.name} (holds ${counter.amount})`
-                : `This warband has no ${line.resource}: not paid.`}
+                : `${line.amount} ${line.resource} from your resource of that name, if you have one; the hire says if not.`}
             </span>
           );
         })}

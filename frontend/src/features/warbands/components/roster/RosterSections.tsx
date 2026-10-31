@@ -7,7 +7,12 @@ import type { Item } from "@/features/items/types/item-types";
 import { cn } from "@/lib/utils";
 
 import { useUnitActions } from "../../hooks/units/useUnitActions";
-import type { HenchmenGroup, WarbandHero, WarbandHireling } from "../../types/warband-types";
+import type {
+  HenchmenGroup,
+  WarbandHero,
+  WarbandHireling,
+  WarbandRosterCounts,
+} from "../../types/warband-types";
 import { ROSTER_DIVIDED, ROSTER_HEROES, ROSTER_SECTIONS } from "../page/warband-layout";
 import UnitCard from "./UnitCard";
 import UnitDetails from "./UnitDetails";
@@ -19,6 +24,8 @@ type RosterSectionsProps = {
   heroes: WarbandHero[];
   henchmenGroups: HenchmenGroup[];
   hirelings: WarbandHireling[];
+  /** The server's cap counts: one in a hero's place is a hero, a dramatis persona no hired sword. */
+  counts?: Pick<WarbandRosterCounts, "hero_count" | "hireling_count">;
   canEdit: boolean;
   onLoadout: (entry: RosterUnit) => void;
   onRecruit: (kind: RosterUnit["kind"]) => void;
@@ -145,7 +152,7 @@ export default function RosterSections(props: RosterSectionsProps) {
     <div className={ROSTER_SECTIONS}>
       <Section
         title="Heroes"
-        meta={`${heroes.length}${maxHeroes ? ` of ${maxHeroes}` : ""}`}
+        meta={`${props.counts?.hero_count ?? heroes.length}${maxHeroes ? ` of ${maxHeroes}` : ""}`}
         add={canEdit ? "Add hero" : undefined}
         onAdd={() => props.onRecruit("hero")}
       >
@@ -162,7 +169,7 @@ export default function RosterSections(props: RosterSectionsProps) {
       </Section>
       <Section
         title="Hired swords"
-        meta={`${hired.length}${maxHired ? ` of ${maxHired}` : ""}`}
+        meta={`${props.counts?.hireling_count ?? hired.length}${maxHired ? ` of ${maxHired}` : ""}`}
         add={canEdit ? "Hire" : undefined}
         divided
         onAdd={() => props.onRecruit("hireling")}

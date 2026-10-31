@@ -18,8 +18,8 @@ export type HireWarning = { code: string; message: string; id?: number; source?:
 /** The new hireling, as its detail reads, with the hire's warnings. */
 export type HireAnswer = WarbandHireling & { warnings?: HireWarning[] };
 
-/** A resource line the hire pays: from the counter named (null: not paid). */
-export type HirePaymentLine = { resource: string; amount: number; resource_id: number | null };
+/** A resource line the hire pays: from the counter named (null: not paid; left out: the one of its name). */
+export type HirePaymentLine = { resource: string; amount: number; resource_id?: number | null };
 
 export type HireBody = {
   source: HireSource;

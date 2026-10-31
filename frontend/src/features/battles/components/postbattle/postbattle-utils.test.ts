@@ -503,6 +503,21 @@ describe("postbattle-utils", () => {
 
       expect(Object.keys(draft.upkeep.entries)).toEqual(["hireling:22"]);
     });
+
+    it("drafts no upkeep for a hireling whose upkeep is none (the fees step)", () => {
+      const [johann, shade] = kindsRoster.hirelings;
+      const unpaid = {
+        ...kindsRoster,
+        hirelings: [
+          { ...johann, upkeepFee: { ...blankFee(), kind: "none" as const } },
+          { ...shade, stays: "always" as const },
+        ],
+      };
+
+      const draft = buildPostbattleDraft(kindsParticipant, unpaid, [], kindsSuggestion);
+
+      expect(Object.keys(draft.upkeep.entries)).toEqual(["hireling:22"]);
+    });
   });
 
   it("restores a roll saved with the draft, and calls it settled only once every die is set (BUG-71)", () => {
