@@ -14,9 +14,12 @@ from .hirelings import (
     HirelingSpell,
 )
 from .shared import RosterUnit, not_dismissed, on_roster
+from .types import WarbandGroup, WarbandType
 from .warband import LedgerAction, Warband, WarbandItem, WarbandLog, WarbandResource, WarbandTrade
 
 __all__ = [
+    "WarbandGroup",
+    "WarbandType",
     "LedgerAction",
     "RosterUnit",
     "not_dismissed",

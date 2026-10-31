@@ -8,6 +8,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         seed_commands = [
             "seed_settings",  # first: warband types and the catalogue's rows point at their settings
+            "seed_warband_types",  # the types and their groups
             "seed_races",
             "seed_restrictions",
             "seed_items",
