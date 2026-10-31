@@ -6,6 +6,7 @@ from collections.abc import Collection
 from pathlib import Path
 from typing import Any
 
+from catalogue_import.assignments import AssignmentLog, build_assignments
 from catalogue_import.availability import Context
 from catalogue_import.common import as_list, dump_json, loose_key, slugify
 from catalogue_import.grading import build_settings, collect_evidence
@@ -148,6 +149,8 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     add_notes(everything, overrides.get("item_notes", {}))
     same_names = assign_slugs(everything, overrides.get("whole_names", []))
     _resolve_everything(sources, resolver)
+    assignment_log = AssignmentLog()
+    assignments = build_assignments(sources, assignment_log)
     counts = {
         "settings": len(settings),
         "warband types": len(types),
@@ -173,6 +176,8 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         shared,
         evidence.odd_grades,
         names,
+        assignments,
+        assignment_log,
     )
     return {
         "settings.json": dump_json(settings),
@@ -180,5 +185,6 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         "warband-groups.json": dump_json(groups),
         "item-rules.json": dump_json(shared),
         "items.json": dump_json(everything),
+        "setting-assignments.json": dump_json(assignments),
         "import-report.md": render_report(report),
     }

@@ -24,6 +24,8 @@ class ReportData:
     shared_rules: list[dict[str, Any]]
     odd_grades: list[tuple[str, str, str]]
     names: dict[str, str]
+    assignments: dict[str, list[dict[str, Any]]]
+    assignment_log: Any
 
 
 def _cell(value: object) -> str:
@@ -56,6 +58,7 @@ def _top(data: ReportData) -> list[str]:
         f"3. **Items no one may buy:** {len(nobody)} mordheimer items exclude every warband and permit none, mostly Khemri's. Defaults are in the contradictions table.",
         f"4. **mordheimer's contradictions:** {len(data.conflicts)} places where an item's lists and its own notes disagree, each with the default taken.",
         f'5. **Warband names:** {len(unmatched)} names in mordheimer\'s data match no warband type, or more than one. "Chaos Dwarfs" is mapped to Black Dwarfs and Wolfcloak\'s "Mercenaries" is left out; please check.',
+        f"6. **Settings for our skills and hired swords:** {len(data.assignment_log.ambiguous)} names mordheimer gives more than one setting; check the one taken for each.",
         "",
         "Answers go into `overrides.json`; the next build applies them.",
         "",
@@ -152,6 +155,46 @@ def _grade_conflicts(data: ReportData) -> list[str]:
     return [*lines, *_table(["Warband", "Broheim", "mordheimer"], clashes), ""]
 
 
+def _assignments(data: ReportData) -> list[str]:
+    log = data.assignment_log
+    rows = []
+    for kind, entries in data.assignments.items():
+        how = [entry["how"] for entry in entries]
+        rows.append(
+            [
+                kind.replace("_", " "),
+                len(entries),
+                how.count("mordheimer"),
+                how.count("overrides.json"),
+                how.count("no match"),
+            ]
+        )
+    lines = [
+        "## Settings for the catalogue we have",
+        "",
+        "`out/setting-assignments.json` gives each of our seeded skills, hired swords and dramatis personae the setting"
+        " mordheimer tags its name with; a name mordheimer lacks is Mordheim's (1a). Items get theirs in the items"
+        ' rebuild. A row is fixed in overrides.json "setting_assignments" by kind and by the name shown here.',
+        "",
+        *_table(["Kind", "Ours", "On mordheimer", "Set in overrides.json", "Mordheim by default"], rows),
+        "",
+    ]
+    for kind, names in log.unmatched.items():
+        lines.append(f"Not on mordheimer ({kind}), so Mordheim: {', '.join(names)}.")
+    if log.unmatched:
+        lines.append("")
+    if log.ambiguous:
+        intro = (
+            "Names mordheimer gives more than one setting; the entry for our list's warband was taken, else the one"
+            " of our type, else the lowest:"
+        )
+        table = [[kind, name, taken, ", ".join(others)] for kind, name, taken, others in log.ambiguous]
+        lines += [intro, "", *_table(["Kind", "Ours", "Setting taken", "Also on mordheimer"], table), ""]
+    for kind, name, settings in log.multi_setting:
+        lines.append(f"{name} ({kind}) is in {', '.join(settings)} on mordheimer; it lives in {settings[0]}.")
+    return [*lines, ""] if log.multi_setting else lines
+
+
 def _mim(data: ReportData) -> list[str]:
     names = ", ".join(item["name"] for item in data.mim_items)
     lines = [
@@ -207,6 +250,7 @@ def render_report(data: ReportData) -> str:
         _groups,
         _settings,
         _grade_conflicts,
+        _assignments,
         _mim,
         _dropped,
     ):

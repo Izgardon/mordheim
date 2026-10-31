@@ -16,5 +16,6 @@ Also read, from the repo itself: `apps/items/data/mim-items.json` (the 62 Mutiny
 `apps/items/data/item-properties.json` (the property names those items point at), plus
 `apps/items/data/standard-items.json` only to list what the first pass drops.
 
-Skills, hired swords and dramatis personae are not converted yet. The build reads them only for setting grades
-and as evidence for warband group membership.
+Skills, hired swords and dramatis personae are not converted yet. The build reads them for setting grades, as
+evidence for warband group membership, and to give our own seeded skills, hired swords and dramatis personae
+(`apps/skills/data/skills.json`, `apps/hirelings/data/`) their settings in `out/setting-assignments.json`.

@@ -11,6 +11,8 @@ BACKEND = PACKAGE.parent
 SOURCES = PACKAGE / "sources"
 OUT = PACKAGE / "out"
 ITEM_DATA = BACKEND / "apps" / "items" / "data"
+SKILL_DATA = BACKEND / "apps" / "skills" / "data"
+HIRELING_DATA = BACKEND / "apps" / "hirelings" / "data"
 
 
 @dataclass
@@ -24,6 +26,10 @@ class Sources:
     properties: dict[int, dict[str, Any]]
     seed_names: list[str]
     overrides: dict[str, Any] = field(default_factory=dict)
+    # our seeded catalogue, which out/setting-assignments.json gives a setting (grading phase 1)
+    our_skills: list[dict[str, Any]] = field(default_factory=list)
+    our_hired_swords: list[dict[str, Any]] = field(default_factory=list)
+    our_personae: list[dict[str, Any]] = field(default_factory=list)
 
 
 def _values(data: Json) -> list[dict[str, Any]]:
@@ -45,4 +51,7 @@ def load_sources(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> Source
         properties=properties,
         seed_names=[row["name"] for row in _values(load_json(item_data / "standard-items.json"))],
         overrides=load_json(package / "overrides.json"),
+        our_skills=_values(load_json(SKILL_DATA / "skills.json")),
+        our_hired_swords=_values(load_json(HIRELING_DATA / "hired-swords.json")),
+        our_personae=_values(load_json(HIRELING_DATA / "dramatis-personae.json")),
     )

@@ -1,5 +1,5 @@
 {
-  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too. extra_warband_types: warbands neither Broheim nor mordheimer lists. group_members: add/remove type slugs per group slug. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_warbands: item name -> the only type slugs that may buy it, and why. item_notes: item name -> a soft note added to each of its price rows. whole_names: names matched as a whole on the same-name list, not split at the slash.",
+  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too. extra_warband_types: warbands neither Broheim nor mordheimer lists. group_members: add/remove type slugs per group slug. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_warbands: item name -> the only type slugs that may buy it, and why. item_notes: item name -> a soft note added to each of its price rows. whole_names: names matched as a whole on the same-name list, not split at the slash. setting_assignments: kind (skills, hired_swords, dramatis_personae) -> our row's name as the report shows it (\"Sniper (Hochland Bandits)\") -> setting slug.",
   "warband_aliases": {
     "Stromfels Reavers": ["shallows-beasts"]
   },
@@ -29,5 +29,6 @@
   "item_notes": {
     "Stromfels Heart": "Priest of Stromfels only"
   },
-  "whole_names": ["Harpoon Gun/Crossbow"]
+  "whole_names": ["Harpoon Gun/Crossbow"],
+  "setting_assignments": {}
 }

@@ -1,0 +1,1825 @@
+{
+  "skills": [
+    {
+      "name": "[Animal] Handler",
+      "type": "Animal",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Ride [Animal]",
+      "type": "Animal",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Cavalry Commander",
+      "type": "Cavalry",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Trick Riding",
+      "type": "Cavalry",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Combat Riding",
+      "type": "Cavalry",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Evade",
+      "type": "Cavalry",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Running Dismount",
+      "type": "Cavalry",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Athletic Mount",
+      "type": "Cavalry",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Horse Archer",
+      "type": "Cavalry",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Mounted Combat Master",
+      "type": "Cavalry",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Seismic Toss",
+      "type": "Large Special",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Juggernaut",
+      "type": "Large Special",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Brick Wall",
+      "type": "Large Special",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Frog Splash",
+      "type": "Large Special",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Titanic Grip",
+      "type": "Large Special",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Falconer",
+      "type": "Animal",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Heron Strike",
+      "type": "Battle Monks of Cathay",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Swallow Kick",
+      "type": "Battle Monks of Cathay",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Water Form",
+      "type": "Battle Monks of Cathay",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Inch Punch",
+      "type": "Battle Monks of Cathay",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Shaggy Hide",
+      "type": "Beastmen Raiders",
+      "setting": "empire-in-flames",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Mutant",
+      "type": "Beastmen Raiders",
+      "setting": "empire-in-flames",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Fearless",
+      "type": "Beastmen Raiders",
+      "setting": "empire-in-flames",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Horned One",
+      "type": "Beastmen Raiders",
+      "setting": "empire-in-flames",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Bellowing Roar",
+      "type": "Beastmen Raiders",
+      "setting": "empire-in-flames",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Manhater",
+      "type": "Beastmen Raiders",
+      "setting": "empire-in-flames",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Virtue of Purity",
+      "type": "Bretonnian Knights",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Virtue of Valor",
+      "type": "Bretonnian Knights",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Virtue of Discipline",
+      "type": "Bretonnian Knights",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Virtue of Noble Disdain",
+      "type": "Bretonnian Knights",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Virtue of the Impetuous",
+      "type": "Bretonnian Knights",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Virtue of the Squire",
+      "type": "Bretonnian Knights",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Fury of Khaine",
+      "type": "Dark Elf",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Powerful Build",
+      "type": "Dark Elf",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Fey Quickness",
+      "type": "Dark Elf",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Infiltration",
+      "type": "Dark Elf",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Master of Poisons",
+      "type": "Dark Elf",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Master of Blades",
+      "type": "Dwarves",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Extra Tough",
+      "type": "Dwarves",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Resource Hunter",
+      "type": "Dwarves",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "True Grit",
+      "type": "Dwarves",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Thick Skull",
+      "type": "Dwarves",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Hide in Shadows",
+      "type": "Night Goblins",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "True Grit",
+      "type": "Dwarf Exiled Engineers",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Thick Skull",
+      "type": "Dwarf Exiled Engineers",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Extra Tough",
+      "type": "Dwarf Exiled Engineers",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Tunneler",
+      "type": "Dwarf Exiled Engineers",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Tinkerer",
+      "type": "Dwarf Exiled Engineers",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Quick Thinker",
+      "type": "Dwarf Exiled Engineers",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Animosity",
+      "type": "Forest Goblins",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Darkstalker",
+      "type": "Grave Robber",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Instinctual Violence",
+      "type": "Grave Robber",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "De-animator",
+      "type": "Grave Robber",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Hardy Constitution",
+      "type": "Grave Robber",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Body Dealer",
+      "type": "Grave Robber",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Crude belch",
+      "type": "Halflings",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Stealthy",
+      "type": "Halflings",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Tea-leaf",
+      "type": "Halflings",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Flan-eater",
+      "type": "Halflings",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Looter",
+      "type": "Halflings",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Taunt",
+      "type": "Halflings",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Banditry",
+      "type": "Hochland Bandits",
+      "setting": "nemesis-crown",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Hide in shadows",
+      "type": "Hochland Bandits",
+      "setting": "nemesis-crown",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Jump back",
+      "type": "Hochland Bandits",
+      "setting": "nemesis-crown",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Sniper",
+      "type": "Hochland Bandits",
+      "setting": "nemesis-crown",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Throw voice",
+      "type": "Hochland Bandits",
+      "setting": "nemesis-crown",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Infiltration",
+      "type": "Skink",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Great Hunter",
+      "type": "Skink",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Skills list prohibitions",
+      "type": "Saurus",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Bellowing Battle Roar",
+      "type": "Saurus",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Toughened Hide",
+      "type": "Saurus",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Backstabber",
+      "type": "Low Kings",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Pick Locks",
+      "type": "Low Kings",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Poisoner",
+      "type": "Low Kings",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Slaver",
+      "type": "Low Kings",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Stealthy",
+      "type": "Low Kings",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Cutpurse",
+      "type": "Low Kings",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Chosen of chaos",
+      "type": "Marauders of Chaos",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Tattooed body",
+      "type": "Marauders of Chaos",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Sweeping blow",
+      "type": "Marauders of Chaos",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Mutant",
+      "type": "Marauders of Chaos",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Heart of the warrior",
+      "type": "Marauders of Chaos",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Fungus Farmer",
+      "type": "Night Goblins",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Infiltrate",
+      "type": "Night Goblins",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Netter",
+      "type": "Night Goblins",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Ride Squig",
+      "type": "Night Goblins",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Sneaky Git",
+      "type": "Night Goblins",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Barbarian courage",
+      "type": "Norse",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Berserk charge",
+      "type": "Norse",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Battle tongue",
+      "type": "Norse",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Shield master",
+      "type": "Norse",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Crushing blow",
+      "type": "Norse",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Master of arms",
+      "type": "Ogres",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Crude belch",
+      "type": "Ogres",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Maneater",
+      "type": "Ogres",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Bull charge",
+      "type": "Ogres",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Dog of war",
+      "type": "Ogres",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Bellowing roar",
+      "type": "Ogres",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "’ard ’ead",
+      "type": "Orcs",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Waaagh!",
+      "type": "Orcs",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "’ere we go!",
+      "type": "Orcs",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Da cunnin’ plan",
+      "type": "Orcs",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Well ’ard",
+      "type": "Orcs",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "’eadbasher",
+      "type": "Orcs",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Proven warrior",
+      "type": "Orcs",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Bull Rush",
+      "type": "Ostlanders",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Foul Odour",
+      "type": "Ostlanders",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Taunt",
+      "type": "Ostlanders",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Animal Friendship",
+      "type": "Ostlanders",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Blood Oath",
+      "type": "Ostlanders",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Sea Shanty Singer",
+      "type": "Pirates",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Sea Legs",
+      "type": "Pirates",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Cutlass Master",
+      "type": "Pirates",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Booming Voice",
+      "type": "Pirates",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Hardy Constitution",
+      "type": "Pirates",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Swashbuckler",
+      "type": "Pirates",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Captain Blood",
+      "type": "Pirates (TBMF)",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Sea Legs",
+      "type": "Pirates (TBMF)",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Cutlass Master",
+      "type": "Pirates (TBMF)",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Treasure Hunter",
+      "type": "Pirates (TBMF)",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Swashbuckler",
+      "type": "Pirates (TBMF)",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Bulging Biceps",
+      "type": "Pit Fighters",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Force of Will",
+      "type": "Pit Fighters",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Arms master",
+      "type": "Pit Fighters",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Body Slam",
+      "type": "Pit Fighters",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Grizzled Veteran",
+      "type": "Pit Fighters",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Ferocious Charge",
+      "type": "Dwarf Troll Slayers",
+      "setting": "nemesis-crown",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Monster Slayer",
+      "type": "Dwarf Troll Slayers",
+      "setting": "nemesis-crown",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Berserker",
+      "type": "Dwarf Troll Slayers",
+      "setting": "nemesis-crown",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Master of Blades",
+      "type": "Dwarf Troll Slayers",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Extra Tough",
+      "type": "Dwarf Troll Slayers",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Resource Hunter",
+      "type": "Dwarf Troll Slayers",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "True Grit",
+      "type": "Dwarf Troll Slayers",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Thick Skull",
+      "type": "Dwarf Troll Slayers",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Corpse Bomb",
+      "type": "Restless Dead Lich and Necromancer",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Deathspeaker",
+      "type": "Restless Dead Lich and Necromancer",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Wraith Touch",
+      "type": "Restless Dead Lich and Necromancer",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Forbidden Rite",
+      "type": "Restless Dead Lich and Necromancer",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Summoner",
+      "type": "Restless Dead Lich and Necromancer",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Infiltration",
+      "type": "Sea Ghosts",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Luck",
+      "type": "Sea Ghosts",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "See in Shadows",
+      "type": "Sea Ghosts",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Hide in Shadows",
+      "type": "Sea Ghosts",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Powerful Build",
+      "type": "Sea Ghosts",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Fey",
+      "type": "Sea Ghosts",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "See in Shadows",
+      "type": "Shadow Warriors",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Hide in Shadows",
+      "type": "Shadow Warriors",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Sniper",
+      "type": "Shadow Warriors",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Powerful Build",
+      "type": "Shadow Warriors",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Master of Runes",
+      "type": "Shadow Warriors",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Sign of Sigmar",
+      "type": "Sisters of Sigmar",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Protection of Sigmar",
+      "type": "Sisters of Sigmar",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Utter Determination",
+      "type": "Sisters of Sigmar",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Righteous Fury",
+      "type": "Sisters of Sigmar",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Absolute Faith",
+      "type": "Sisters of Sigmar",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Black Hunger",
+      "type": "Skaven",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Tail Fighting",
+      "type": "Skaven",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Wall Runner",
+      "type": "Skaven",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Infiltration",
+      "type": "Skaven",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Art of Silent Death",
+      "type": "Skaven",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Tail Fighting",
+      "type": "Skaven Metal Mongers",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Infiltration",
+      "type": "Skaven Metal Mongers",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Unblinking Eye",
+      "type": "Skaven Metal Mongers",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Metallic Body",
+      "type": "Skaven Metal Mongers",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Respirator",
+      "type": "Skaven Metal Mongers",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Tinker-Rat",
+      "type": "Skaven Metal Mongers",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Black Hunger",
+      "type": "Skaven Clan Pestilens",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Censer Bearer",
+      "type": "Skaven Clan Pestilens",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Rotten Body",
+      "type": "Skaven Clan Pestilens",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Contagious",
+      "type": "Skaven Clan Pestilens",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Ignore Pain",
+      "type": "Skaven Clan Pestilens",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Knowledge of Myths and Legends",
+      "type": "Strigany",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Bull Rush",
+      "type": "Strigany",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Songster",
+      "type": "Strigany",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Prize-fighter",
+      "type": "Strigany",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Animal Charmer (eg. Dog Charmer)",
+      "type": "Strigany",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Infiltration",
+      "type": "Strigany",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Sand worm",
+      "type": "Tomb Robbers",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Hit and run",
+      "type": "Tomb Robbers",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Weather tolerant",
+      "type": "Tomb Robbers",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Transfixing Glare",
+      "type": "Undead Vampires",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Mist Form",
+      "type": "Undead Vampires",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Ratswarm Form",
+      "type": "Undead Vampires",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Bat Form",
+      "type": "Undead Vampires",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Giant Wolf Form",
+      "type": "Undead Vampires",
+      "setting": "mordheim",
+      "how": "no match"
+    },
+    {
+      "name": "Strike to Injure",
+      "type": "Combat",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Combat Master",
+      "type": "Combat",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Weapons Training",
+      "type": "Combat",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Web of Steel",
+      "type": "Combat",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Expert Swordsman",
+      "type": "Combat",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Step Aside",
+      "type": "Combat",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Quick Shot",
+      "type": "Shooting",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Pistolier",
+      "type": "Shooting",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Eagle Eyes",
+      "type": "Shooting",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Weapons Expert",
+      "type": "Shooting",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Nimble",
+      "type": "Shooting",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Trick Shooter",
+      "type": "Shooting",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Hunter",
+      "type": "Shooting",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Knife-Fighter",
+      "type": "Shooting",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Battle Tongue",
+      "type": "Academic",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Sorcery",
+      "type": "Academic",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Streetwise",
+      "type": "Academic",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Haggle",
+      "type": "Academic",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Arcane Lore",
+      "type": "Academic",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Wyrdstone Hunter",
+      "type": "Academic",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Warrior Wizard",
+      "type": "Academic",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Scribe",
+      "type": "Academic",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Mind Focus",
+      "type": "Academic",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Tactician",
+      "type": "Academic",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Hunch",
+      "type": "Academic",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Magical Aptitude",
+      "type": "Academic",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Trap Expert",
+      "type": "Academic",
+      "setting": "khemri",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Driver",
+      "type": "Academic",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Strategist",
+      "type": "Academic",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Scholar",
+      "type": "Academic",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Mighty Blow",
+      "type": "Strength",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Pit Fighter",
+      "type": "Strength",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Resilient",
+      "type": "Strength",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Fearsome",
+      "type": "Strength",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Strongman",
+      "type": "Strength",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Unstoppable Charge",
+      "type": "Strength",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Handyman",
+      "type": "Strength",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Beastmaster",
+      "type": "Strength",
+      "setting": "mordheim-1c",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Leap",
+      "type": "Speed",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Sprint",
+      "type": "Speed",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Acrobat",
+      "type": "Speed",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Lightning Reflexes",
+      "type": "Speed",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Jump Up",
+      "type": "Speed",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Dodge",
+      "type": "Speed",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Scale Sheer Surfaces",
+      "type": "Speed",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "New Skill",
+      "type": "Pending",
+      "setting": "mordheim",
+      "how": "no match"
+    }
+  ],
+  "hired_swords": [
+    {
+      "name": "Arabian Merchant",
+      "type": "Hired Sword",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Beast Hunter",
+      "type": "Hired Sword",
+      "setting": "empire-in-flames",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Dwarf Troll Slayer",
+      "type": "Hired Sword",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Elf Ranger",
+      "type": "Hired Sword",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Freelancer",
+      "type": "Hired Sword",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Halfling Scout",
+      "type": "Hired Sword",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Highwayman",
+      "type": "Hired Sword",
+      "setting": "empire-in-flames",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Imperial Assassin",
+      "type": "Hired Sword",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Ogre Bodyguard",
+      "type": "Hired Sword",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Pit Fighter",
+      "type": "Hired Sword",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Roadwarden",
+      "type": "Hired Sword",
+      "setting": "empire-in-flames",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Tilean Marksman",
+      "type": "Hired Sword",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Warlock",
+      "type": "Hired Sword",
+      "setting": "mordheim",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Bard",
+      "type": "Hired Sword",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Big Game Hunter",
+      "type": "Hired Sword",
+      "setting": "lustria",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Black Orc Overseer",
+      "type": "Hired Sword",
+      "setting": "nemesis-crown",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Bounty Hunter",
+      "type": "Hired Sword",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Chameleon Skink",
+      "type": "Hired Sword",
+      "setting": "lustria",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Clan Skryre Rat Ogre",
+      "type": "Hired Sword",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Dark Elf Assassin",
+      "type": "Hired Sword",
+      "setting": "lustria",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Duellist",
+      "type": "Hired Sword",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Dwarf Pathfinder",
+      "type": "Hired Sword",
+      "setting": "nemesis-crown",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Dwarf Treasure Hunter",
+      "type": "Hired Sword",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Elf Mage",
+      "type": "Hired Sword",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Gaoler",
+      "type": "Hired Sword",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Halfling Thief",
+      "type": "Hired Sword",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Human Scout",
+      "type": "Hired Sword",
+      "setting": "nemesis-crown",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Kislev Ranger",
+      "type": "Hired Sword",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Mule Skinner",
+      "type": "Hired Sword",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Nomad Scout",
+      "type": "Hired Sword",
+      "setting": "khemri",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Norse Shaman",
+      "type": "Hired Sword",
+      "setting": "lustria",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Old Prospector",
+      "type": "Hired Sword",
+      "setting": "nemesis-crown",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Pathfinder",
+      "type": "Hired Sword",
+      "setting": "lustria",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Priest of Morr",
+      "type": "Hired Sword",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Runesmith Journeyman",
+      "type": "Hired Sword",
+      "setting": "nemesis-crown",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Shadow Warrior",
+      "type": "Hired Sword",
+      "setting": "lustria",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Snake Charmer",
+      "type": "Hired Sword",
+      "setting": "khemri",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Thief",
+      "type": "Hired Sword",
+      "setting": "khemri",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Tomb Robber",
+      "type": "Hired Sword",
+      "setting": "khemri",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Warrior Priest of Sigmar",
+      "type": "Hired Sword",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Witch",
+      "type": "Hired Sword",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Witch Hunter",
+      "type": "Hired Sword",
+      "setting": "nemesis-crown",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Wolf Priest of Ulric",
+      "type": "Hired Sword",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Bone Goliath",
+      "type": "Hired Sword",
+      "setting": "border-town-burning",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Cathayan Merchant",
+      "type": "Hired Sword",
+      "setting": "border-town-burning",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Chaos Centaur",
+      "type": "Hired Sword",
+      "setting": "border-town-burning",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Coachman",
+      "type": "Hired Sword",
+      "setting": "border-town-burning",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Grave Robber",
+      "type": "Hired Sword",
+      "setting": "border-town-burning",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Hobgoblin Scout",
+      "type": "Hired Sword",
+      "setting": "border-town-burning",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Ninja",
+      "type": "Hired Sword",
+      "setting": "border-town-burning",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Pyromaniac",
+      "type": "Hired Sword",
+      "setting": "border-town-burning",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Swordsmith",
+      "type": "Hired Sword",
+      "setting": "border-town-burning",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Beggar",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Chaos Fury",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Cursed Hillman",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Dark Mage",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Dwarf Slayer Pirate",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Emissary of Chaos",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Estalian Diestro",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "The Fallen Sister",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Goblin Lantern Bearer",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Gravesman",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Halfling Knight",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Imperial Tactician",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Knight of the White Wolf",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Ninja Gnoblar",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Ogre Slave Master",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Slaver",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Swashbuckler",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Ungor Trapper",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Weaponsmith",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Wood Elf Hunter",
+      "type": "Hired Sword",
+      "setting": "mordheim-2a",
+      "how": "mordheimer"
+    }
+  ],
+  "dramatis_personae": []
+}
