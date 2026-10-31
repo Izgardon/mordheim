@@ -1,0 +1,42 @@
+<!doctype html>
+{% comment %}
+The emails' frame (design E, light only): the vellum page, a square surface card with a kicker in Space Mono, a
+Fraunces title and Manrope text, each with email-safe fallbacks. Tables and inline styles only, so mail clients that
+drop <style> still show it. The colours are E's light tokens (frontend/src/index.css).
+{% endcomment %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <meta name="supported-color-schemes" content="light">
+    <title>{% block title %}{% endblock %}</title>
+  </head>
+  <body style="margin:0;padding:0;background-color:#f3ece0;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f3ece0;">
+      <tr>
+        <td align="center" style="padding:32px 16px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
+            <tr>
+              <td style="padding:0 0 14px 0;font-family:'Space Mono','Courier New',Courier,monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#9e4520;">
+                Mordheim Chronicler
+              </td>
+            </tr>
+            <tr>
+              <td style="background-color:#fbf8f2;border:1px solid #d9cbb6;padding:28px 28px 30px 28px;">
+                <p style="margin:0 0 8px 0;font-family:'Space Mono','Courier New',Courier,monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#9e4520;">{% block kicker %}{% endblock %}</p>
+                <h1 style="margin:0 0 18px 0;font-family:Fraunces,Georgia,'Times New Roman',serif;font-size:28px;line-height:1.2;font-weight:600;color:#1f1712;">{% block heading %}{% endblock %}</h1>
+                {% block content %}{% endblock %}
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:16px 4px 0 4px;font-family:Manrope,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#75624f;">
+                {% block footer %}{% endblock %}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
