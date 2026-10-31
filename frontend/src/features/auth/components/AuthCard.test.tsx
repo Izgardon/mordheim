@@ -107,7 +107,7 @@ describe("creating an account", () => {
     fakeApi.on("POST /auth/register/", registerAnswer(RAIDER));
     renderCard();
 
-    await user.click(screen.getByRole("button", { name: "Create Account" }));
+    await user.click(screen.getByRole("button", { name: "Create account" }));
 
     expect(screen.getByLabelText("Display name")).toBeRequired();
     expect(screen.getByLabelText("Display name")).toHaveAttribute("maxlength", "40");
@@ -137,7 +137,7 @@ describe("creating an account", () => {
     fakeApi.on("POST /auth/register/", registerAnswer(RAIDER));
     renderCard();
 
-    await user.click(screen.getByRole("button", { name: "Create Account" }));
+    await user.click(screen.getByRole("button", { name: "Create account" }));
     await user.type(screen.getByLabelText("Email"), RAIDER.email);
     await user.type(screen.getByLabelText("Password"), "wyrdstone");
     await user.click(submitButton());
@@ -150,7 +150,7 @@ describe("creating an account", () => {
     const user = setupUser();
     renderCard();
     const signInSwitch = () => screen.getAllByRole("button", { name: "Sign in" })[0];
-    const createSwitch = () => screen.getByRole("button", { name: "Create Account" });
+    const createSwitch = () => screen.getByRole("button", { name: "Create account" });
 
     expect(signInSwitch()).toHaveAttribute("aria-pressed", "true");
     expect(createSwitch()).toHaveAttribute("aria-pressed", "false");
@@ -158,7 +158,7 @@ describe("creating an account", () => {
 
     expect(createSwitch()).toHaveAttribute("aria-pressed", "true");
     expect(signInSwitch()).toHaveAttribute("aria-pressed", "false");
-    expect(submitButton()).toHaveTextContent("Create account");
+    expect(submitButton()).toHaveTextContent("Create my account");
 
     await user.click(signInSwitch());
     await user.click(screen.getByRole("button", { name: "Forgot password?" }));
@@ -174,7 +174,7 @@ describe("the password rules hint (AUTH-TWEAK-07, decision 6)", () => {
     expect(screen.getByLabelText("Password")).not.toHaveAccessibleDescription();
     expect(screen.queryByText(PASSWORD_HINT)).toBeNull();
 
-    await user.click(screen.getByRole("button", { name: "Create Account" }));
+    await user.click(screen.getByRole("button", { name: "Create account" }));
 
     expect(screen.getByLabelText("Password")).toHaveAccessibleDescription(PASSWORD_HINT);
     expect(screen.getByText(PASSWORD_HINT)).toBeInTheDocument();
@@ -190,7 +190,7 @@ describe("the password toggle", () => {
     expect(screen.getByLabelText("Password")).toHaveAttribute("type", "text");
     expect(screen.getByRole("button", { name: "Hide password" })).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Create Account" }));
+    await user.click(screen.getByRole("button", { name: "Create account" }));
     expect(screen.getByLabelText("Password")).toHaveAttribute("type", "password");
     expect(screen.getByRole("button", { name: "Show password" })).toBeInTheDocument();
   });

@@ -15,11 +15,18 @@ class ResourceShortage(ValueError):
 
 
 def change_resource(
-    warband: Warband, resource_id: int, *, amount: int | None = None, delta: int | None = None
+    warband: Warband,
+    resource_id: int,
+    *,
+    amount: int | None = None,
+    delta: int | None = None,
+    name: str | None = None,
 ) -> WarbandResource | None:
     """Set the amount, or add `delta` to the stored amount (a concurrent change isn't lost), stopping at 0 and at
-    the column's limit. None when the warband has no such resource."""
+    the column's limit, and rename it when `name` is given. None when the warband has no such resource."""
     rows = WarbandResource.objects.filter(id=resource_id, warband=warband)
+    if name is not None and not rows.update(name=name):
+        return None
     if delta is not None:
         widened = Cast(F("amount"), output_field=BigIntegerField()) + Value(delta, output_field=BigIntegerField())
         floor = Greatest(widened, Value(0, output_field=BigIntegerField()))

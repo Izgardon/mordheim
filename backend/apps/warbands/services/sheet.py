@@ -13,6 +13,7 @@ from django.db.models import prefetch_related_objects
 from apps.warbands.models import Warband
 from apps.warbands.prefetches import item_detail_prefetches
 from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandSerializer, WarbandSummarySerializer
+from apps.warbands.services.loadouts import group_mount_rating_of
 from apps.warbands.services.summary import WarbandUnits, load_warband_units
 from apps.warbands.units.companions import mount_bonuses
 from apps.warbands.units.kinds import HENCHMEN_GROUP, HERO, HIRELING, KINDS
@@ -44,7 +45,7 @@ def _summary_units(rosters: dict[str, list[Any]]) -> WarbandUnits:
                 "large": g.large,
                 "missing_games": g.missing_games,
                 "henchmen_count": len(g.henchmen.all()),  # the prefetch holds living members only
-                "mount_bonuses": mount_bonuses(g.henchmen_group_items.all()),
+                "mount_rating": group_mount_rating_of(g.henchmen_group_items.all(), list(g.henchmen.all())),
             }
             for g in rosters[HENCHMEN_GROUP.key]
         ],

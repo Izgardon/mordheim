@@ -128,6 +128,7 @@ class ResetRequestTests(AuthTestCase):
             {"from": "no-reply@example.com", "to": ["pia@example.com"], "subject": "Reset your password"},
         )
         self.assertIn("https://m.example.com/reset-password#uid=", sent["json"]["text"])
+        self.assertIn('href="https://m.example.com/reset-password#uid=', sent["json"]["html"])  # design E, beside it
 
 
 class ResetConfirmTests(AuthTestCase):

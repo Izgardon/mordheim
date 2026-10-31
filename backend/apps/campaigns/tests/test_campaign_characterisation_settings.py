@@ -8,7 +8,6 @@ fail part way need committed transactions, so they live in `test_campaign_transa
 from typing import Any
 
 from apps.campaigns.models import Campaign, CampaignSettings
-from apps.restrictions.models import Restriction
 from apps.warbands.models import Hero
 
 from .campaign_support import CampaignTestCase
@@ -92,16 +91,27 @@ class CampaignSettingsTests(CampaignTestCase):
                 self.assertEqual(response.status_code, expected)
         self.assertFalse(CampaignSettings.objects.get(campaign=self.campaign).enable_encampments)
 
-    def test_name_join_code_and_seats_are_not_editable(self):
-        # The PATCH ignores fields it doesn't know: no rename, no new join code (CAMP-NEW-01), no seat change
-        before = (self.campaign.name, self.campaign.join_code)
-        for body in ({"name": "Renamed"}, {"join_code": "NEWONE"}, {"max_players": 12}, {}):
+    def test_join_code_and_seats_are_not_editable(self):
+        # The PATCH ignores fields it doesn't know: no new join code (CAMP-NEW-01), no seat change
+        join_code = self.campaign.join_code
+        for body in ({"join_code": "NEWONE"}, {"max_players": 12}, {}):
             with self.subTest(body=body):
                 response = self.patch_as(self.owner, self.url(), body)
                 self.assertEqual((response.status_code, response.data), (400, {"detail": "No updates provided."}))
         self.campaign.refresh_from_db()
-        self.assertEqual((self.campaign.name, self.campaign.join_code), before)
+        self.assertEqual(self.campaign.join_code, join_code)
         self.assertEqual(CampaignSettings.objects.get(campaign=self.campaign).max_players, 8)
+
+    def test_the_owner_renames_the_campaign(self):
+        # next step 7b: settings' Campaign section renames it; trimmed, never blank, the owner only
+        self.assertEqual(self.patch_as(self.admin, self.url(), {"name": "Renamed"}).status_code, 403)
+        self.assertEqual(self.patch_as(self.owner, self.url(), {"name": "   "}).status_code, 400)
+
+        response = self.patch_as(self.owner, self.url(), {"name": "  Ashes of Mordheim "})
+
+        self.assertEqual((response.status_code, response.data["name"]), (200, "Ashes of Mordheim"))
+        self.campaign.refresh_from_db()
+        self.assertEqual(self.campaign.name, "Ashes of Mordheim")
 
     def test_settings_are_validated_and_normalised(self):
         invalid: list[dict[str, Any]] = [
@@ -119,8 +129,6 @@ class CampaignSettingsTests(CampaignTestCase):
             with self.subTest(body=body):
                 self.assertEqual(self.patch_as(self.owner, self.url(), body).status_code, 400)
 
-        setting = Restriction.objects.create(type="Setting", restriction="Cathay Setting")
-        warband_only = Restriction.objects.create(type="Warband", restriction="Reiklanders")
         response = self.patch_as(
             self.owner,
             self.url(),
@@ -129,7 +137,6 @@ class CampaignSettingsTests(CampaignTestCase):
                 "max_hired_swords": 32767,  # the smallint column's ceiling
                 "hero_level_thresholds": [9, 2, 2, 5],
                 "hero_death_roll": "d100",
-                "item_setting_ids": [setting.id, warband_only.id, 999999],
             },
         )
 
@@ -137,7 +144,6 @@ class CampaignSettingsTests(CampaignTestCase):
         data = response.data
         self.assertEqual((data["max_heroes"], data["max_hired_swords"], data["hero_death_roll"]), (0, 32767, "d100"))
         self.assertEqual(data["hero_level_thresholds"], [2, 5, 9])
-        self.assertEqual([row["restriction"] for row in data["item_settings"]], ["Cathay Setting"])
 
     def test_create_validates_every_number_against_its_column(self):
         # BUG-76, CAMP-TEST-22: only max_players was checked; the others reached the columns unchecked

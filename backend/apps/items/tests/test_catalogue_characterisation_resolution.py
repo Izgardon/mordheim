@@ -37,7 +37,7 @@ class ResolutionTestCase(RosterTestCase):
     def house_item(self, name: str, cost: int, item_type: str = "Melee", **fields: Any) -> Item:
         """A campaign item written directly (`replaces`: a version of that book item)."""
         item = Item.objects.create(name=name, type=item_type, campaign=fields.pop("campaign", self.campaign), **fields)
-        ItemAvailability.objects.create(item=item, cost=cost, rarity=2)
+        ItemAvailability.objects.create(item=item, cost=cost)
         return item
 
 
@@ -45,7 +45,7 @@ class SameNamePriceTests(ResolutionTestCase):
     def test_a_campaign_item_of_another_type_changes_nothing_but_a_version_sets_the_price(self):
         # BUG-18 (was pinned: a same-named campaign item of any type set the book item's price and sale price;
         # flipped in PR C: only a version replacing the Axe counts)
-        self.house_item("Axe", 25, item_type="Miscellaneous")
+        self.house_item("Axe", 25, item_type="Miscellaneous", variant="House")
         WarbandItem.objects.create(warband=self.warband, item=self.axe, quantity=1, cost=5)
 
         [before] = self.stash()
@@ -60,7 +60,7 @@ class SameNamePriceTests(ResolutionTestCase):
 
     def test_a_book_item_is_bought_at_its_versions_availability_and_not_a_same_named_items(self):
         # BUG-18 (was pinned: any same-named campaign item's availability priced the book item; flipped in PR C)
-        house = self.house_item("Axe", 40, item_type="Miscellaneous")
+        house = self.house_item("Axe", 40, item_type="Miscellaneous", variant="House")
         refused = self.buy(400, item_id=self.axe.id, availability_id=house.availabilities.get().id, target_type="stash")
         version = self.house_item("Axe", 35, replaces=self.axe)
 
@@ -120,7 +120,7 @@ class HouseRuleCloneResolutionTests(ResolutionTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.armour = Item.objects.create(name="Heavy Armour", type="Armour", subtype="Armour", save_value="5+")
-        ItemAvailability.objects.create(item=self.armour, cost=50, rarity=2)
+        ItemAvailability.objects.create(item=self.armour, cost=50)
         self.client.force_authenticate(user=self.campaign_owner)
         rule = {"title": "Half price armour", "effect_key": "half_price_armour"}
         self.assertEqual(self.client.post(f"/api/campaigns/{self.campaign.id}/rules/", rule, format="json").status_code, 201)  # fmt: skip

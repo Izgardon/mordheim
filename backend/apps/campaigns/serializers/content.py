@@ -95,10 +95,11 @@ class CampaignLocationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CampaignLocation
-        fields = ("id", "campaign_id", "name", "content", "d6_1", "d6_2", "d6_3", "d6_4", "d6_5", "d6_6")
+        fields = ("id", "campaign_id", "name", "area", "content", "d6_1", "d6_2", "d6_3", "d6_4", "d6_5", "d6_6")
 
 
 class CampaignLocationWriteSerializer(serializers.ModelSerializer):
+    area = serializers.CharField(required=False, allow_blank=True, max_length=80)
     content = serializers.CharField(required=False, allow_blank=True)
     d6_1 = serializers.CharField(required=False, allow_blank=True)
     d6_2 = serializers.CharField(required=False, allow_blank=True)
@@ -109,7 +110,10 @@ class CampaignLocationWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CampaignLocation
-        fields = ("name", "content", "d6_1", "d6_2", "d6_3", "d6_4", "d6_5", "d6_6")
+        fields = ("name", "area", "content", "d6_1", "d6_2", "d6_3", "d6_4", "d6_5", "d6_6")
+
+    def validate_area(self, value):
+        return str(value or "").strip()
 
     def validate_name(self, value):
         cleaned = str(value or "").strip()

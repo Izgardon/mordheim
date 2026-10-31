@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { myParticipant, opponentParticipant } from "@/test/battle-fixtures";
-
-import { battleProgress, participantProgress } from "./participant-progress";
+import { participantProgress } from "./participant-progress";
 
 describe("participant progress", () => {
   it("says who each phase waits for", () => {
@@ -35,29 +33,5 @@ describe("participant progress", () => {
       participantProgress({ status: "confirmed_postbattle", skipped_postbattle: true }, "ended")
         .label
     ).toBe("Skipped");
-  });
-
-  it("leaves out players who declined or left, and gives each one's idle time", () => {
-    const now = Date.parse("2026-10-18T15:00:00Z");
-    const entries = battleProgress(
-      [
-        myParticipant({
-          status: "finished_battle",
-          last_seen_at: "2026-10-18T09:00:00Z",
-          // Their last write counts too, so a recent one isn't idle (BATL-NEW-08).
-          last_activity_at: "2026-10-18T14:30:00Z",
-        }),
-        opponentParticipant({ status: "finished_battle", last_seen_at: "2026-10-18T11:00:00Z" }),
-        opponentParticipant({ id: 23, status: "declined" }),
-      ],
-      "postbattle",
-      now
-    );
-    expect(
-      entries.map((entry) => [entry.participant.id, entry.progress.label, entry.idle])
-    ).toEqual([
-      [21, "In postbattle", null],
-      [22, "In postbattle", "idle 4 hours"],
-    ]);
   });
 });

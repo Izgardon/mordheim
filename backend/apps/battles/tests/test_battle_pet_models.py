@@ -2,12 +2,13 @@
 
 Its battle roster entry carries a unit key, `pet:<owner kind>:<item row id>` (a hero's or hired sword's pet in its
 `pets`, a henchmen group's in the group's own `pets`); a pet without a profile has none and stays a chip. Selected in
-prebattle, it can be taken out of action, record kills and be killed. Postbattle gives it no XP and no injury roll: it
+prebattle, it can be taken out of action and be killed, but never scores a kill: it is a creature (next step 9). Postbattle gives it no XP and no injury roll: it
 follows its owner (Mutiny in Marienburg), so it needs no result and finalise ignores one sent for it.
 """
 
 from typing import Any
 
+from apps.battles.models import BattleKill
 from apps.warbands.models import HenchmenGroupItem, Hero, HeroItem
 from apps.warbands.tests.beast_support import DOG_PROFILE, make_animal, raven
 from apps.warbands.tests.roster_support import HENCHMEN, make_unit
@@ -44,20 +45,21 @@ class PetModelTests(BattleTestCase):
         self.assertEqual([pet["key"] for pet in group["pets"]], [f"pet:henchmen_group:{self.group_hawk.id}"])
         self.assertNotIn("key", group["members"][0]["pets"][0])  # the group's pet is one model, not one each
 
-    def test_selected_it_fights_kills_is_killed_and_goes_out_of_action(self):
+    def test_selected_it_fights_is_killed_and_goes_out_of_action_but_never_scores_a_kill(self):
         battle_id = self.to_active({self.player: [self.a, self.pet], self.viewer: [self.r]})
 
         out = self.post_as(self.player, self.url(battle_id, "unit-ooa"), {"unit_key": self.pet, "out_of_action": True})
         self.ok(self.post_as(self.player, self.url(battle_id, "unit-ooa"), {"unit_key": self.pet, "out_of_action": False}), 201)  # fmt: skip
-        killed = self.ok(self.kill(self.player, battle_id, self.pet, self.r), 201).data["events"][0]["payload_json"]
-        victim = self.ok(self.kill(self.viewer, battle_id, self.r, self.pet), 201).data["events"][0]["payload_json"]
+        refused = self.kill(self.player, battle_id, self.pet, self.r)  # a pet is a creature: no killer (next step 9)
+        victim = self.ok(self.kill(self.viewer, battle_id, self.r, self.pet), 201).data["events"][0]
 
         self.ok(out, 201)
-        killer = killed["killer"]
-        self.assertEqual((killer["unit_key"], killer["unit_type"], killer["name"], killer["type_name"]), (self.pet, "pet", "Hawk", "Pet"))  # fmt: skip
-        self.assertEqual((victim["victim"]["name"], victim["victim"]["warband_id"]), ("Hawk", self.warband.id))
-        info = self.participant(battle_id, self.player).unit_information_json
-        self.assertEqual(info[self.pet]["kill_count"], 1)
+        self.assertEqual((refused.status_code, refused.data["code"]), (400, "not_a_killer"))
+        payload = victim["payload_json"]
+        self.assertEqual((payload["victim"]["name"], payload["victim"]["warband_id"]), ("Hawk", self.warband.id))
+        kill = BattleKill.objects.get(event_id=victim["id"])
+        self.assertEqual((kill.victim_kind, kill.victim_key, kill.victim_warband_id), ("temporary", self.pet, self.warband.id))  # fmt: skip
+        self.assertTrue(self.participant(battle_id, self.player).unit_information_json[self.pet]["out_of_action"])
 
     def test_postbattle_gives_it_no_result_and_finalise_ignores_one(self):
         battle_id = self.to_postbattle({self.player: [self.a, self.pet], self.viewer: [self.r]})

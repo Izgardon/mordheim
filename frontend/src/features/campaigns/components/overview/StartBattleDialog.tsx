@@ -1,149 +1,162 @@
-import TabSwitcher from "@/components/ui/tab-switcher";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Chip } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
-import UnfinishedBattleBanner from "@/features/battles/components/shared/UnfinishedBattleBanner";
+import { ModalSheet } from "@/components/ui/modal-sheet";
+import { cn } from "@/lib/utils";
 
-import { useStartBattleForm } from "../../hooks/overview/useStartBattleForm";
-import BattleParticipantPicker from "./BattleParticipantPicker";
-import ReportResultFields from "./ReportResultFields";
-
+import { useReadyUpBeforeStart } from "../../hooks/overview/useReadyUpBeforeStart";
+import { useStartBattleForm, type BattleDialogMode } from "../../hooks/overview/useStartBattleForm";
 import type { CampaignPlayer } from "../../types/campaign-types";
+import { READINESS_LABEL, readinessOf } from "./overview-data";
 
-type StartBattleDialogProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+const LABEL = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
+
+/**
+ * Start battle and Report a result (design E's header buttons): the scenario, who plays (anyone
+ * still in a battle or a post-game can be invited, with his state shown; never a block), and for
+ * a result the date and the winners or No winner. Starting a battle readies you up: your own open
+ * post-game is applied as saved first.
+ */
+export default function StartBattleDialog({
+  mode,
+  onClose,
+  campaignId,
+  userId,
+  players,
+  onCreated,
+}: {
+  mode: BattleDialogMode | null;
+  onClose: () => void;
   campaignId: number;
-  creatorUserId: number;
+  userId: number;
   players: CampaignPlayer[];
-  onBattleCreated?: () => void;
-};
-
-const MODE_TABS = [
-  { id: "start_battle", label: "Battle" },
-  { id: "report_result", label: "Report" },
-] as const;
-
-const fieldLabel = "text-[0.65rem] uppercase tracking-[0.22em] text-muted-foreground";
-
-/** Start a battle to play, or report one already fought (Report), from the overview. */
-export default function StartBattleDialog(props: StartBattleDialogProps) {
-  const { open, onOpenChange, campaignId, creatorUserId } = props;
-  const form = useStartBattleForm(props);
-  const isBattle = form.mode === "start_battle";
-  const submitLabel = isBattle
-    ? form.isSubmitting
-      ? "Creating..."
-      : "Create battle"
-    : form.isSubmitting
-      ? "Submitting..."
-      : "Submit result";
+  onCreated: () => void;
+}) {
+  const ready = useReadyUpBeforeStart(campaignId, userId);
+  const form = useStartBattleForm({
+    open: mode !== null,
+    onOpenChange: (open) => (open ? null : onClose()),
+    campaignId,
+    creatorUserId: userId,
+    players,
+    initialMode: mode ?? "start_battle",
+    beforeStart: ready.readyUp,
+    onBattleCreated: onCreated,
+  });
+  const report = form.mode === "report_result";
+  const chosen = new Set([...form.selectedUserIds, userId]);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="max-w-[680px]"
-        onInteractOutside={(event) => {
-          event.preventDefault();
-        }}
-      >
-        <DialogHeader>
-          <DialogTitle>{isBattle ? "Start Battle" : "Report Battle Result"}</DialogTitle>
-          <DialogDescription>
-            {isBattle
-              ? "Select participants, then proceed to prebattle setup."
-              : "Select who fought and which warband or warbands won. Everyone else will need to approve it."}
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-4">
-          <UnfinishedBattleBanner campaignId={campaignId} onGo={() => onOpenChange(false)} />
-          <TabSwitcher
-            tabs={MODE_TABS}
-            activeTab={form.mode}
-            onTabChange={form.changeMode}
-            className="mx-auto"
-          />
-
-          <div className="space-y-2">
-            <p className={fieldLabel}>Scenario</p>
-            <Input
-              value={form.scenario}
-              onChange={(event) => form.setScenario(event.target.value)}
-              placeholder={
-                isBattle ? "Breakthrough at the Old Gate..." : "Skirmish at the Market Square..."
-              }
-              maxLength={120}
-            />
-          </div>
-
-          {isBattle ? (
-            <div className="space-y-2">
-              <p className={fieldLabel}>Scenario Link</p>
-              <Input
-                value={form.scenarioLink}
-                onChange={(event) => form.setScenarioLink(event.target.value)}
-                placeholder="https://... or example.com/..."
-                type="url"
-              />
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <p className={fieldLabel}>Battle Date</p>
-              <input
-                type="date"
-                value={form.battleDate}
-                onChange={(event) => form.setBattleDate(event.target.value)}
-                className="flex h-9 w-full rounded-md border border-border/60 bg-background/90 px-4 py-2 text-sm font-medium text-foreground shadow-[0_10px_20px_rgba(12,7,3,0.2)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-50 md:h-11"
-              />
-            </div>
-          )}
-
-          <BattleParticipantPicker
-            campaignId={campaignId}
-            players={form.eligiblePlayers}
-            creatorUserId={creatorUserId}
-            selectedUserIds={form.selectedUserIds}
-            onToggle={form.toggleUser}
-            greyOutBusy={isBattle}
-            busyInvitees={form.busyInvitees}
-          />
-
-          {isBattle ? null : (
-            <ReportResultFields
-              participants={form.selectedParticipants}
-              winners={form.selectableWinners}
-              selectedWinnerIds={form.selectedWinnerWarbandIds}
-              onToggleWinner={form.toggleWinner}
-              noWinner={form.noWinner}
-              onNoWinnerChange={form.chooseNoWinner}
-              battleDate={form.battleDate}
-            />
-          )}
-
-          {form.error ? <p className="text-sm text-red-600">{form.error}</p> : null}
-        </div>
-
-        <DialogFooter className="gap-2">
-          <Button
-            variant="secondary"
-            onClick={() => onOpenChange(false)}
-            disabled={form.isSubmitting}
-          >
+    <ModalSheet
+      open={mode !== null}
+      onOpenChange={(open) => (open ? null : onClose())}
+      kicker={report ? "Played already" : "New battle"}
+      title={report ? "Report a result" : "Start a battle"}
+      footer={
+        <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-2">
+          <Button variant="secondary" className="min-h-12" onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="default" onClick={form.handleSubmit} disabled={form.submitDisabled}>
-            {submitLabel}
+          <Button
+            className="min-h-12 text-[15px]"
+            disabled={form.submitDisabled}
+            onClick={() => void form.handleSubmit()}
+          >
+            {form.isSubmitting ? "Sending…" : report ? "Report result" : "Start battle"}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      }
+    >
+      <div className="flex flex-col gap-4">
+        <label className={LABEL}>
+          Scenario
+          <Input
+            value={form.scenario}
+            placeholder="Street Fight"
+            onChange={(event) => form.setScenario(event.target.value)}
+          />
+        </label>
+        {report ? (
+          <label className={LABEL}>
+            Played on
+            <Input
+              type="date"
+              value={form.battleDate}
+              onChange={(event) => form.setBattleDate(event.target.value)}
+            />
+          </label>
+        ) : (
+          <label className={LABEL}>
+            Scenario link (optional)
+            <Input
+              value={form.scenarioLink}
+              placeholder="https://…"
+              onChange={(event) => form.setScenarioLink(event.target.value)}
+            />
+          </label>
+        )}
+        <fieldset className="m-0 flex flex-col gap-1.5 border-0 p-0">
+          <legend className="pb-1.5 text-xs font-bold text-muted-foreground">Who plays</legend>
+          {form.eligiblePlayers.map((player) => {
+            const state = readinessOf(player);
+            const you = player.id === userId;
+            return (
+              <label
+                key={player.id}
+                className={cn(
+                  "flex min-h-11 items-center gap-3 border px-3",
+                  chosen.has(player.id) ? "border-accent-line bg-accent-soft" : "border-border"
+                )}
+              >
+                <input
+                  type="checkbox"
+                  checked={chosen.has(player.id)}
+                  disabled={you}
+                  onChange={() => form.toggleUser(player.id)}
+                  className="h-4 w-4 accent-[var(--color-accent)]"
+                />
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <span className="truncate text-sm font-bold text-ink">
+                    {you ? "You" : player.name} · {player.warband?.name}
+                  </span>
+                </span>
+                {state === "ready" ? null : (
+                  <span
+                    className={cn("text-xs", state === "post" ? "text-accent-text" : "text-danger")}
+                  >
+                    {READINESS_LABEL[state]}
+                  </span>
+                )}
+              </label>
+            );
+          })}
+        </fieldset>
+        {report ? (
+          <div className="flex flex-col gap-1.5">
+            <span className="text-xs font-bold text-muted-foreground">Winners</span>
+            <div className="flex flex-wrap gap-1.5">
+              {form.selectableWinners.map((warband) => (
+                <Chip
+                  key={warband.id}
+                  pressed={form.selectedWinnerWarbandIds.includes(warband.id)}
+                  onClick={() => form.toggleWinner(warband.id)}
+                >
+                  {warband.name}
+                </Chip>
+              ))}
+              <Chip pressed={form.noWinner} onClick={() => form.chooseNoWinner(!form.noWinner)}>
+                No winner
+              </Chip>
+            </div>
+          </div>
+        ) : ready.openPostgame ? (
+          <p className="m-0 border border-accent-line bg-accent-soft px-3 py-2 text-[13px] text-accent-hi">
+            Starting readies you up: your post-game for {ready.openPostgame.battle.scenario} is
+            applied as you saved it.
+          </p>
+        ) : null}
+        {form.error ? <p className="m-0 text-sm text-danger">{form.error}</p> : null}
+      </div>
+    </ModalSheet>
   );
 }

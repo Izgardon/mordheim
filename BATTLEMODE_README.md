@@ -21,8 +21,8 @@ The table mirrors `pageForStatus` in `frontend/src/features/battles/state/battle
 
 ## Frontend (`frontend/src/features/battles/`)
 
-- `routes/BattleLayout.tsx` renders `BattleShell` (the phone bars) around `BattleProvider`, which owns the battle's two queries (`api/battle-queries.ts`: `['campaign', cid, 'battle', bid, 'state' | 'rosters']`), runs `deriveBattleView` and shares the battle through `BattleContext` (`useBattle()`). The provider stays mounted across phases, so a phase change reads nothing again.
-- Each page composes one hook (`usePrebattlePage`, `useActivePage`, `usePostbattlePage`) and its components; shared hooks cover the shown warband, item uses, temporary units, the creator's cancel and serialised saves (`useSerializedSave`).
+- `routes/BattleLayout.tsx` keeps `BattleProvider` mounted (`components/layout/`), which owns the battle's two queries (`api/battle-queries.ts`: `['campaign', cid, 'battle', bid, 'state' | 'rosters']`), runs `deriveBattleView` and shares the battle through `BattleContext` (`useBattle()`), and sends each player to the page for his status (the bare battle URL only redirects). The provider stays mounted across phases, so a phase change reads nothing again.
+- The pages (design E): `routes/BattlePrebattle.tsx` shows the invitation (`components/prebattle/BattleInvitation`) or the pre-battle (`PrebattleBody`, through `usePrebattlePage`); `routes/BattleActive.tsx` the battle screen (`components/battle/BattleScreen`, through `useBattleScreen`); `routes/Aftermath.tsx` the post-game (`components/aftermath/`, through `usePostgameBattle`), whose camp and Ready live on the warband page. Shared hooks cover item uses, temporary units, the creator's cancel and serialised saves (`useSerializedSave`).
 - `components/postbattle/postbattle-rules.ts` holds the rules the page still works out itself (exploration table, injury tables, suggested XP and dice), so the server's rules can replace one module.
 
 ## Realtime

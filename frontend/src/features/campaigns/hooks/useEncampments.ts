@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 // api
@@ -37,9 +37,9 @@ const EMPTY_FORM: CampaignEncampmentPayload = { name: "", owner_id: null, descri
 const byName = (a: CampaignEncampment, b: CampaignEncampment) => a.name.localeCompare(b.name);
 
 /**
- * The Encampments page (decision 9, CAMP-TWEAK-08): the cached encampments and members' names
+ * The Encampment page (decision 9, CAMP-TWEAK-08): the cached encampments and members' names
  * (read only while the page is on), any member's Add with themselves as the default owner, and
- * each row's Edit and Delete as its `capabilities.edit` says. Answers go into the cached list.
+ * each row's Edit and Remove as its `capabilities.edit` says. Answers go into the cached list.
  */
 export function useEncampments(campaign: CampaignSummary) {
   const campaignId = campaign.id;
@@ -58,7 +58,6 @@ export function useEncampments(campaign: CampaignSummary) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [formError, setFormError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const formRef = useRef<HTMLDivElement>(null);
   const loadError = encampments.error ?? players.error;
 
   const openForm = (encampment: CampaignEncampment | null) => {
@@ -77,9 +76,6 @@ export function useEncampments(campaign: CampaignSummary) {
     );
     setFormError("");
     setIsFormOpen(true);
-    requestAnimationFrame(() => {
-      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
   };
 
   const closeForm = () => {
@@ -188,7 +184,6 @@ export function useEncampments(campaign: CampaignSummary) {
     chooseOwner,
     formError,
     isSubmitting,
-    formRef,
     openCreateForm: () => openForm(null),
     openEditForm: (encampment: CampaignEncampment) => openForm(encampment),
     closeForm,

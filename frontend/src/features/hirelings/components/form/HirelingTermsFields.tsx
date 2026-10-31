@@ -135,7 +135,7 @@ export default function HirelingTermsFields({ form }: { form: HirelingProfileFor
                 type="checkbox"
                 checked={values.available_skill_types.includes(type)}
                 onChange={(event) => form.toggleSkillType(type, event.target.checked)}
-                className="h-4 w-4 rounded border-input"
+                className="h-4 w-4 accent-[var(--color-accent)]"
               />
               {type}
             </label>

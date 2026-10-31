@@ -1,15 +1,28 @@
 from rest_framework import serializers
 
+from apps.warbands.access_lines import AccessLineSerializer
+
 from .models import Skill
 
 
 class SkillSerializer(serializers.ModelSerializer):
     campaign_id = serializers.IntegerField(read_only=True)
-    campaign_type_id = serializers.IntegerField(read_only=True)  # CAT-NEW-04: always null today
+    setting_id = serializers.IntegerField(source="campaign_type_id", read_only=True)  # null: Mordheim (in_play.py)
 
     class Meta:
         model = Skill
-        fields = ("id", "campaign_id", "campaign_type_id", "name", "type", "description")
+        fields = ("id", "campaign_id", "setting_id", "name", "type", "description")
+
+
+class SkillLearnersSerializer(SkillSerializer):
+    """A skill as the catalogue lists it: who may learn it too (`for_everyone`, or the warbands a special skill
+    names). Unit payloads and kits nest the plain skill."""
+
+    warbands = AccessLineSerializer(source="warband_links", many=True, read_only=True)
+
+    class Meta:
+        model = Skill
+        fields = (*SkillSerializer.Meta.fields, "for_everyone", "warbands")
 
 
 class SkillCreateSerializer(serializers.ModelSerializer):

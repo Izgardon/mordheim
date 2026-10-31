@@ -1,12 +1,12 @@
 """The differences between catalogue kinds that are behaviour rather than data (IMP-79), as pass 1 did for units.
 
-The generic views (views.py) call these hooks. `CatalogueHooks` is what skills, spells, specials and restrictions
-need: every row of the model with what its badges read, the list rule (merge.py), a create that saves the serializer
+The generic views (views.py) call these hooks. `CatalogueHooks` is what spells and specials need (skills add who
+may learn them): every row of the model with what its badges read, the list rule (merge.py), a create that saves the serializer
 in the campaign, an edit that saves it, a delete of the entry. Items refuse deleting or reverting a house rule's
 clone and any write of a beast's Animal item, and write through `items/writes.py`; bestiary entries write through
 `bestiary/writes.py` (their Animal item too) and read their rows and details through `bestiary/selectors.py`, hired
 swords and dramatis personae through `hirelings/writes.py` and `hirelings/selectors.py`; a race edit naming another
-campaign is refused (BUG-147); item properties list the book's and the campaign's side by side.
+campaign is refused (BUG-147); shared item rules list the book's and the campaign's side by side.
 """
 
 from typing import TYPE_CHECKING, Any
@@ -24,6 +24,7 @@ from apps.hirelings import writes as hireling_writes
 from apps.hirelings.models import HirelingProfile
 from apps.items import writes as item_writes
 from apps.items.selectors import item_rows
+from apps.skills.selectors import skill_learners
 
 from . import merge
 from .payloads import badge_joins
@@ -61,8 +62,8 @@ class CatalogueHooks:
         self, kind: "CatalogueKindSpec", rows: QuerySet[Any], campaign_id: int | None, params: QueryDict
     ) -> QuerySet[Any]:
         """The filtered rows a list shows, in order: the book's, or the campaign's with the book entries it hasn't
-        replaced or removed, archived and removed ones too with `?archived=1` (merge.py; restrictions, which have no
-        versions, by their text)."""
+        replaced or removed, archived and removed ones too with `?archived=1` (merge.py; a kind without versions,
+        by its name)."""
         if campaign_id is None:
             return merge.book_rows(rows).order_by(*kind.order)
         if kind.versioned:
@@ -160,7 +161,7 @@ class BestiaryHooks(CatalogueHooks):
 
 
 class HirelingProfileHooks(CatalogueHooks):
-    """Hired swords and dramatis personae (apps/hirelings): their race and restrictions with the list, their links
+    """Hired swords and dramatis personae (apps/hirelings): their race and who may hire them with the list, their links
     with the detail, and writes that save their links too."""
 
     def __init__(self, model: type[HirelingProfile]) -> None:
@@ -179,6 +180,16 @@ class HirelingProfileHooks(CatalogueHooks):
         hireling_writes.update_profile(entry, serializer.validated_data)
 
 
+class SkillHooks(CatalogueHooks):
+    """Skills read who may learn them (one query for every row's lines, with their types and groups)."""
+
+    def read(self, rows: QuerySet[Any], params: QueryDict) -> QuerySet[Any]:
+        return rows.prefetch_related(skill_learners())
+
+    def detail_rows(self, kind: "CatalogueKindSpec") -> QuerySet[Any]:
+        return self.rows(kind).prefetch_related(skill_learners())
+
+
 class RaceHooks(CatalogueHooks):
     def check_edit_body(self, request: Request, entry: Any) -> None:
         sent = request.data.get("campaign_id")
@@ -186,11 +197,11 @@ class RaceHooks(CatalogueHooks):
             raise NotFound("Not found")
 
 
-class ItemPropertyHooks(CatalogueHooks):
+class ItemRuleHooks(CatalogueHooks):
     def listed(
         self, kind: "CatalogueKindSpec", rows: QuerySet[Any], campaign_id: int | None, params: QueryDict
     ) -> QuerySet[Any]:
-        """The book's properties and the campaign's side by side: a property overrides nothing."""
+        """The book's shared rules and the campaign's side by side: a campaign's rule overrides nothing."""
         scope = (
             Q(campaign__isnull=True) if campaign_id is None else Q(campaign_id=campaign_id) | Q(campaign__isnull=True)
         )

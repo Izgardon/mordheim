@@ -11,6 +11,7 @@ import {
 vi.mock("sonner", () => ({ toast: { warning: vi.fn() } }));
 import { queryKeys } from "@/lib/query-keys";
 import { createTestQueryClient } from "@/test/query-test-utils";
+import { availability } from "@/test/catalogue-fixtures";
 import { makeItem } from "@/test/warband-fixtures";
 
 import type { AcquireItemMeta } from "../types/acquire-types";
@@ -19,7 +20,7 @@ const rope = makeItem({
   id: 120,
   name: "Rope",
   cost: null,
-  availabilities: [{ id: 7, cost: 5, rarity: 2, restrictions: [] }],
+  availabilities: [availability({ id: 7, cost: 5 })],
 });
 
 const buying: AcquireItemMeta = {
@@ -48,6 +49,32 @@ describe("toastPurchaseWarnings", () => {
 });
 
 describe("purchaseLine", () => {
+  it("sends the price row and its roll, not a price, when the price is the row's", () => {
+    const line = purchaseLine({
+      item: rope,
+      meta: buying,
+      availabilityId: 7,
+      rowPrice: true,
+      diceRoll: 8,
+    });
+    expect(line).toEqual({
+      item_id: 120,
+      quantity: 2,
+      availability_id: 7,
+      dice_roll: 8,
+      is_buying: true,
+    });
+  });
+
+  it("sends the price when it was edited, and for a gift", () => {
+    expect(
+      purchaseLine({ item: rope, meta: buying, availabilityId: 7, rowPrice: false, diceRoll: 8 })
+    ).toMatchObject({
+      price: 6,
+      availability_id: 7,
+    });
+  });
+
   it("prices one copy when buying, with the availability chosen", () => {
     expect(purchaseLine({ item: rope, meta: buying, availabilityId: 7 })).toEqual({
       item_id: 120,
@@ -132,78 +159,39 @@ describe("applyPurchaseAnswer", () => {
     });
   });
 
-  it("gives a group the answer's mounts, each kind it rides, in place of its last read's", () => {
-    // The page lists a group's mount entries from `mounts`: a Pony bought for a group on a
-    // Warhorse showed none of the Pony's until a re-read.
+  it("gives a group the answer's whole payload: its loadout line, mounts and totals", () => {
+    // Henchmen loadouts: a purchase for a group adds one loadout row, which changes its mounts,
+    // warnings, loadout totals and hire cost, so the answer carries the group whole (`unit`).
     const queryClient = createTestQueryClient();
     const warhorse = { item_row_id: 1, item_id: 50, name: "Warhorse", skills: [] };
-    const pony = {
-      item_row_id: 4,
-      item_id: 51,
-      name: "Pony",
-      skills: [{ id: 9, name: "Sure Footed" }],
-    };
+    const pony = { item_row_id: 4, item_id: 51, name: "Pony", skills: [] };
     queryClient.setQueryData(queryKeys.campaign.warbandSheet(7, 9), {
       warband: {},
       summary: { gold: 100 },
       heroes: [],
       henchmen_groups: [
-        { id: 21, name: "Outriders", items: [], mount: warhorse, mounts: [warhorse] },
+        { id: 21, name: "Outriders", items: [], mount: warhorse, mounts: [warhorse], henchmen: [] },
       ],
       hirelings: [],
     });
-
-    applyPurchaseAnswer(
-      queryClient,
-      9,
-      answer({
-        target_type: "henchmen_group",
-        target_id: 21,
-        items: [],
-        mount: warhorse,
-        mounts: [warhorse, pony],
-        pets: [],
-        effective_stats: null,
-      } as never)
-    );
-
-    expect(queryClient.getQueryData(queryKeys.campaign.warbandSheet(7, 9))).toMatchObject({
-      henchmen_groups: [{ id: 21, mount: warhorse, mounts: [warhorse, pony] }],
-    });
-  });
-
-  it("gives a group the answer's mount warnings, so its card says what it lacks", () => {
-    const queryClient = createTestQueryClient();
-    const warning = {
-      code: "group_mounts",
-      message:
-        "Every member of a group carries the same gear, so Outriders can't take the field until each of its 3 members has a Warhorse (it has 2).",
+    const unit = {
+      id: 21,
+      items: [],
+      mounts: [warhorse, pony],
+      loadout_each: 110,
+      loadout_total: 330,
     };
-    queryClient.setQueryData(queryKeys.campaign.warbandSheet(7, 9), {
-      warband: {},
-      summary: { gold: 100 },
-      heroes: [],
-      henchmen_groups: [{ id: 21, name: "Outriders", items: [], mount_warnings: [] }],
-      hirelings: [],
-    });
 
     applyPurchaseAnswer(
       queryClient,
       9,
-      answer({
-        target_type: "henchmen_group",
-        target_id: 21,
-        items: [],
-        mount: null,
-        mounts: [],
-        mount_warnings: [warning],
-        pets: [],
-        effective_stats: null,
-      } as never)
+      answer({ target_type: "henchmen_group", target_id: 21, items: [], unit } as never)
     );
 
     expect(queryClient.getQueryData(queryKeys.campaign.warbandSheet(7, 9))).toMatchObject({
-      henchmen_groups: [{ id: 21, mount_warnings: [warning] }],
+      henchmen_groups: [
+        { id: 21, name: "Outriders", mounts: [warhorse, pony], loadout_total: 330 },
+      ],
     });
   });
 

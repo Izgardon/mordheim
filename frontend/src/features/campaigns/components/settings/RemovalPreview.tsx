@@ -32,27 +32,28 @@ export const ownVoice: Voice = {
   skipped: "you are skipped and the battle goes on without you",
 };
 
-type RemovalPreviewProps = {
-  preview: MemberRemovalPreview;
-  voice: Voice;
-};
-
 /**
  * What a removal or a leave closes, read from the server before anything is confirmed (decision
  * 1, CAMP-NEW-03): the warband is kept, open battles are cancelled or go on without the member,
  * trades close, and their notifications are cleared.
  */
-export default function RemovalPreview({ preview, voice }: RemovalPreviewProps) {
+export default function RemovalPreview({
+  preview,
+  voice,
+}: {
+  preview: MemberRemovalPreview;
+  voice: Voice;
+}) {
   const hasOpenWork = preview.battles.length > 0 || preview.trades.length > 0;
   return (
-    <div className="space-y-2">
-      <p>
+    <div className="flex flex-col gap-2 text-sm text-text2">
+      <p className="m-0">
         {preview.warband
           ? `${voice.possessive} warband, ${preview.warband.name}, is kept: it stays in the campaign's history and comes back if ${voice.name} rejoin${voice.name === "you" ? "" : "s"}.`
           : `${voice.subject} ${voice.has} no warband.`}
       </p>
       {hasOpenWork ? (
-        <ul className="list-disc space-y-1 pl-5" aria-label="What closes">
+        <ul className="m-0 flex list-disc flex-col gap-1 pl-5" aria-label="What closes">
           {preview.battles.map((battle) => {
             const label = `Battle #${battle.id}${battle.scenario ? `, ${battle.scenario}` : ""}`;
             const outcome = battle.outcome === "skipped" ? voice.skipped : "cancelled for everyone";
@@ -67,10 +68,10 @@ export default function RemovalPreview({ preview, voice }: RemovalPreviewProps) 
           ))}
         </ul>
       ) : (
-        <p>{`${voice.subject} ${voice.has} no open battles or trades.`}</p>
+        <p className="m-0">{`${voice.subject} ${voice.has} no open battles or trades.`}</p>
       )}
       {preview.notifications > 0 ? (
-        <p>{`${plural(preview.notifications, "notification")} waiting for ${voice.name} will be cleared.`}</p>
+        <p className="m-0">{`${plural(preview.notifications, "notification")} waiting for ${voice.name} will be cleared.`}</p>
       ) : null}
     </div>
   );

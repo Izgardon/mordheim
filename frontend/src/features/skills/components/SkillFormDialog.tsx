@@ -15,6 +15,8 @@ import SkillFormFields from "./SkillFormFields";
 import type { Skill } from "../types/skill-types";
 
 type SkillFormDialogBaseProps = {
+  /** The campaign: a book skill's edit makes its version. */
+  campaignId: number;
   typeOptions?: string[];
   trigger?: ReactNode | null;
   open?: boolean;
@@ -23,7 +25,6 @@ type SkillFormDialogBaseProps = {
 
 type SkillFormDialogCreateProps = SkillFormDialogBaseProps & {
   mode: "create";
-  campaignId: number;
   onCreated: (skill: Skill) => void;
 };
 
@@ -37,11 +38,11 @@ type SkillFormDialogEditProps = SkillFormDialogBaseProps & {
 
 type SkillFormDialogProps = SkillFormDialogCreateProps | SkillFormDialogEditProps;
 
-/** The warband pages' New skill dialog (and an edit mode, with Delete). */
+/** The Skills page's Add skill dialog, and its edit mode (Delete, Revert). */
 export default function SkillFormDialog(props: SkillFormDialogProps) {
   const { mode, typeOptions = [], trigger } = props;
   const skill = props.mode === "edit" ? props.skill : null;
-  const campaignId = props.mode === "create" ? props.campaignId : (skill?.campaign_id ?? NaN);
+  const { campaignId } = props;
   const dialog = useControllableOpen(props);
   const form = useSkillForm({
     campaignId,

@@ -176,15 +176,15 @@ def unit_name(unit: Any, unknown: str) -> str:
     return str(unit.name or unit.unit_type or unknown)
 
 
-def companion_warnings(name: str, rows: Iterable[Any], riders: int | None, warband_mounts: int) -> list[Warning]:
+def companion_warnings(name: str, rows: Iterable[Any], group: bool, warband_mounts: int) -> list[Warning]:
     """Warnings for a unit's companions and the warband's switched-on mounts. Warn, never block."""
-    return unit_companion_warnings(name, rows, riders) + warband_mount_warnings(warband_mounts)
+    return unit_companion_warnings(name, rows, group) + warband_mount_warnings(warband_mounts)
 
 
-def unit_companion_warnings(name: str, rows: Iterable[Any], riders: int | None) -> list[Warning]:
-    """Two mounts on a hero or hired sword (`riders` None), or a mounted group's warnings (`riders` living members)."""
-    if riders is not None:
-        return group_mount_warnings(name, rows, riders)
+def unit_companion_warnings(name: str, rows: Iterable[Any], group: bool) -> list[Warning]:
+    """Two mounts on a hero or hired sword, or a group riding more than one kind of mount (`group`)."""
+    if group:
+        return group_mount_warnings(name, rows)
     mounts = len(companions(rows).mounts)
     if mounts <= 1:
         return []
@@ -192,40 +192,20 @@ def unit_companion_warnings(name: str, rows: Iterable[Any], riders: int | None) 
     return [{"code": "two_mounts", "message": message, "mounts": mounts}]
 
 
-SAME_GEAR = "Every member of a group carries the same gear"
-
-
-def _a(name: str) -> str:
-    return f"{'an' if name[:1].lower() in 'aeiou' else 'a'} {name}"
-
-
 def _listed(names: list[str]) -> str:
     return names[0] if len(names) == 1 else f"{', '.join(names[:-1])} and {names[-1]}"
 
 
-def group_mount_warnings(name: str, rows: Iterable[Any], riders: int) -> list[Warning]:
-    """A mounted group's warnings, from its item rows and its `riders` living members (warn, never block). Every member
-    of a group carries the same gear, so a group takes the field when each living member rides one mount, all of one
-    kind: its switched-on mounts against its members (`group_mounts`, fewer or left over) and the kinds it rides
-    (`group_mount_kinds`). A group on foot has none."""
-    mounts = companions(rows).mounts
-    if not mounts:
+def group_mount_warnings(name: str, rows: Iterable[Any]) -> list[Warning]:
+    """A mounted group riding more than one kind of mount (`group_mount_kinds`): every member carries the group's
+    loadout (services/loadouts.py), so each rides every kind switched on. A member with a gap on the mount goes on
+    foot, which his gap line says. A group on foot has none."""
+    kinds = [row.item.name for row in mount_kinds(rows)]
+    if len(kinds) <= 1:
         return []
-    count, kinds = len(mounts), [row.item.name for row in mount_kinds(mounts)]
-    warnings: list[Warning] = []
-    if count != riders:
-        if count < riders:
-            needs = _a(kinds[0]) if len(kinds) == 1 else "a mount"
-            until = f"until each of its {riders} members has {needs} (it has {count})"
-            message = f"{SAME_GEAR}, so {name} can't take the field {until}."
-        else:
-            spare = f"({_count(count, 'mount')} for {_count(riders, 'living member')})"
-            message = f"Every member of a group rides one mount, so {name} has {count - riders} left over {spare}."
-        warnings.append({"code": "group_mounts", "message": message, "mounts": count, "members": riders})
-    if len(kinds) > 1:
-        message = f"{SAME_GEAR}, so {name} can't take the field riding {len(kinds)} kinds of mount ({_listed(kinds)})."
-        warnings.append({"code": "group_mount_kinds", "message": message, "kinds": kinds})
-    return warnings
+    message = f"Every member of a group carries the same gear, so {name} can't take the field riding {len(kinds)} kinds"
+    message += f" of mount ({_listed(kinds)})."
+    return [{"code": "group_mount_kinds", "message": message, "kinds": kinds}]
 
 
 def warband_mount_warnings(warband_mounts: int) -> list[Warning]:

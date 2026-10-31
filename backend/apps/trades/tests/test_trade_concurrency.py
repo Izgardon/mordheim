@@ -38,7 +38,7 @@ class TradeConcurrencyTests(TransactionTestCase):
         warbands = []
         for user, name in zip(users, ("Monks", "Rats"), strict=True):
             CampaignMembership.objects.create(campaign=campaign, user=user, role=role)
-            warband = Warband.objects.create(campaign=campaign, user=user, name=name, faction="Any")
+            warband = Warband.objects.create(campaign=campaign, user=user, name=name)
             ledger.record(warband, LedgerAction.REWARD, 50, "Purse")
             warbands.append(warband)
         self.warband, self.rival = warbands
@@ -104,7 +104,7 @@ class TradeConcurrencyTests(TransactionTestCase):
         hero = Hero.objects.create(warband=self.warband, name="Haggler", unit_type="Champion")
         third = get_user_model().objects.create_user(username="c@example.com", email="c@example.com", password=None)
         CampaignMembership.objects.create(campaign=self.campaign, user=third, role=self.role)
-        crows = Warband.objects.create(campaign=self.campaign, user=third, name="Crows", faction="Any")
+        crows = Warband.objects.create(campaign=self.campaign, user=third, name="Crows")
         other = TradeRequest.objects.create(
             campaign=self.campaign,
             from_user=self.player,

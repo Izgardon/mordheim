@@ -6,6 +6,7 @@ import { useQuery, useQueryClient, type QueryClient } from "@tanstack/react-quer
 import { getCampaign, listCampaignPermissions, updateCampaign } from "../api/campaigns-api";
 
 // other
+import { invalidateWhoCan } from "@/features/items/api/who-can-queries";
 import { queryKeys } from "@/lib/query-keys";
 
 // types
@@ -69,6 +70,18 @@ export function writeCampaignAnswer(
     permissions: answer.permissions ?? previous?.permissions,
     capabilities: answer.capabilities ?? previous?.capabilities,
   });
+  // the settings in play changed (grading phase 1): what every list and picker greys out moved
+  if (
+    previous &&
+    answer.setting_ids &&
+    String(previous.setting_ids) !== String(answer.setting_ids)
+  ) {
+    void queryClient.invalidateQueries({
+      queryKey: [...queryKeys.campaign.all(campaignId), "catalogue"],
+    });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.campaign.warbandTypes(campaignId) });
+    void invalidateWhoCan(queryClient, campaignId); // what each warband can usually buy and hire
+  }
   const gatesChanged = CAPABILITY_SETTINGS.some(
     (setting) => Boolean(previous?.[setting]) !== Boolean(answer[setting])
   );

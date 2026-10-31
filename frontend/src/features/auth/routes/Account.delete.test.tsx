@@ -127,8 +127,8 @@ describe("deleting your account (AUTH-NEW-05)", () => {
     const list = await within(dialog).findByRole("list", { name: "Hand over first" });
     const links = within(list).getAllByRole("link");
     expect(links.map((link) => link.getAttribute("href"))).toEqual([
-      "/campaigns/3/settings?tab=campaign",
-      "/campaigns/5/settings?tab=campaign",
+      "/campaigns/3/settings?section=players",
+      "/campaigns/5/settings?section=archive",
     ]);
     expect(list).toHaveTextContent("Ashes: make an admin its owner.");
     expect(list).toHaveTextContent(

@@ -1,8 +1,7 @@
 import { Fragment, useCallback, useState } from "react";
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
-import siteBackground from "@/assets/background/site_background.webp";
 import { cn } from "@/lib/utils";
 import { refreshMobileQueries, reloadMobileLayout } from "../mobile/mobile-refresh";
 import { usePullToRefresh } from "../mobile/use-pull-to-refresh";
@@ -10,67 +9,34 @@ import { usePullToRefresh } from "../mobile/use-pull-to-refresh";
 type AppShellProps = {
   variant: "mobile" | "desktop";
   children: ReactNode;
-  /** Desktop: the side rail. */
-  navbar?: ReactNode;
-  /** Desktop: the top bar. */
-  desktopTopBar?: ReactNode;
+  /** Desktop: the nav rail. */
+  rail?: ReactNode;
+  /** Mobile: the bar above the page. */
+  topBar?: ReactNode;
+  /** Mobile: the bar below the page (the bottom nav, or the battle tools). */
+  bottomNav?: ReactNode;
   /** Mobile: pull-to-refresh refreshes this campaign's data (all data when omitted). */
   campaignId?: number;
-  mobileTopBar?: ReactNode;
-  topBarOffset?: string;
-  bottomNav?: ReactNode;
-  contentClassName?: string;
-};
-
-const backgroundBase = {
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-  backgroundRepeat: "no-repeat",
-  backgroundAttachment: "scroll",
-} satisfies CSSProperties;
-
-const mobileBackground: CSSProperties = {
-  ...backgroundBase,
-  backgroundImage: `radial-gradient(420px 320px at 0% 0%, rgba(57, 255, 77, 0.18), transparent 60%),
-    radial-gradient(520px 380px at 100% 0%, rgba(57, 255, 77, 0.14), transparent 62%),
-    radial-gradient(520px 380px at 0% 100%, rgba(57, 255, 77, 0.12), transparent 62%),
-    radial-gradient(520px 380px at 100% 100%, rgba(57, 255, 77, 0.16), transparent 62%),
-    url(${siteBackground})`,
-};
-
-const desktopBackground: CSSProperties = {
-  ...backgroundBase,
-  backgroundImage: `radial-gradient(560px 400px at 4% 8%, rgba(92, 255, 118, 0.18), transparent 62%),
-    radial-gradient(640px 460px at 96% 10%, rgba(76, 255, 132, 0.14), transparent 64%),
-    radial-gradient(620px 440px at 10% 82%, rgba(70, 255, 124, 0.11), transparent 66%),
-    radial-gradient(700px 500px at 92% 84%, rgba(72, 255, 128, 0.13), transparent 68%),
-    radial-gradient(480px 320px at 50% 38%, rgba(124, 255, 156, 0.06), transparent 70%),
-    radial-gradient(360px 220px at 34% 58%, rgba(92, 255, 118, 0.05), transparent 72%),
-    linear-gradient(rgba(28, 24, 18, 0.08), rgba(16, 13, 10, 0.16)),
-    url(${siteBackground})`,
 };
 
 /**
- * The campaign shell for both breakpoints. Only the chrome changes with `variant`: the page sits
- * at the same position in the tree either way, so crossing 960 px (tablet rotation, window
- * resize) restyles the frame instead of unmounting the page and its unsaved state (BUG-23).
- * Every slot keeps its index, with `null` standing in for chrome the variant doesn't have.
+ * The campaign shell for both breakpoints (design E): the rail beside the page on the web; the top
+ * bar, the page and the bottom nav stacked on a phone. Only the chrome changes with `variant`: the
+ * page sits at the same position in the tree either way, so crossing 960 px restyles the frame
+ * instead of unmounting the page and its unsaved state (BUG-23).
  */
 export default function AppShell({
   variant,
   children,
-  navbar,
-  desktopTopBar,
-  campaignId,
-  mobileTopBar,
-  topBarOffset,
+  rail,
+  topBar,
   bottomNav,
-  contentClassName,
+  campaignId,
 }: AppShellProps) {
   const isMobile = variant === "mobile";
   const queryClient = useQueryClient();
   // Bumped after a pull-to-refresh to remount the page, so screens whose data is not in the
-  // query cache yet (overview tabs, the warband sheet, battle state) reload it.
+  // query cache yet reload it.
   const [contentGeneration, setContentGeneration] = useState(0);
 
   const refreshContent = useCallback(async () => {
@@ -87,31 +53,12 @@ export default function AppShell({
 
   const pull = usePullToRefresh({ enabled: isMobile, onRefresh: refreshContent });
 
-  const hasMobileTopBar = Boolean(mobileTopBar);
-  const mobileScrollStyle: CSSProperties = {
-    paddingBottom: bottomNav
-      ? "calc(env(safe-area-inset-bottom, 0px) + 6.5rem)"
-      : "env(safe-area-inset-bottom, 0px)",
-    ...(hasMobileTopBar
-      ? {}
-      : { paddingTop: topBarOffset ?? "calc(env(safe-area-inset-top, 0px) + 4.75rem)" }),
-  };
-
   return (
     <main
-      className={
-        isMobile ? "fixed inset-0 flex flex-col overflow-hidden bg-transparent" : "desktop-shell"
-      }
-      style={isMobile ? mobileBackground : desktopBackground}
+      className={isMobile ? "fixed inset-0 flex flex-col overflow-hidden bg-page" : "desktop-shell"}
     >
-      {isMobile ? null : <aside className="desktop-shell__rail">{navbar}</aside>}
-      {isMobile ? (
-        hasMobileTopBar ? (
-          <div className="shrink-0">{mobileTopBar}</div>
-        ) : null
-      ) : (
-        <div className="desktop-shell__topbar">{desktopTopBar}</div>
-      )}
+      {isMobile ? null : <aside className="desktop-shell__rail">{rail}</aside>}
+      {isMobile && topBar ? <div className="shrink-0">{topBar}</div> : null}
       <div className={isMobile ? "flex min-h-0 flex-1 flex-col" : "desktop-shell__main"}>
         <div
           ref={pull.scrollRef}
@@ -119,14 +66,9 @@ export default function AppShell({
           data-testid="shell-scroll"
           className={
             isMobile
-              ? cn(
-                  "scrollbar-hidden flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-y-contain px-0 pb-4",
-                  hasMobileTopBar ? "pt-0" : "pt-3",
-                  contentClassName
-                )
+              ? "scrollbar-hidden min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain pb-4"
               : "desktop-shell__content"
           }
-          style={isMobile ? mobileScrollStyle : undefined}
         >
           {isMobile && pull.showRefreshPrompt ? (
             <div
@@ -134,7 +76,7 @@ export default function AppShell({
               role="status"
               aria-live="polite"
             >
-              <div className="rounded-full border border-[#6d573e] bg-[#17110b]/95 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-[#e4d5bb] shadow-[0_10px_24px_rgba(0,0,0,0.28)]">
+              <div className="border border-accent-line bg-panel px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-accent-hi">
                 {pull.refreshLabel}
               </div>
             </div>
@@ -142,7 +84,7 @@ export default function AppShell({
           <div
             className={
               isMobile
-                ? cn("px-1.5", pull.isPulling ? "" : "transition-transform duration-200 ease-out")
+                ? cn("px-3", pull.isPulling ? "" : "transition-transform duration-200 ease-out")
                 : "desktop-shell__content-inner"
             }
             style={
@@ -155,7 +97,9 @@ export default function AppShell({
           </div>
         </div>
       </div>
-      {isMobile ? bottomNav : null}
+      {isMobile && bottomNav ? (
+        <div className="shrink-0 pb-[env(safe-area-inset-bottom,0px)]">{bottomNav}</div>
+      ) : null}
     </main>
   );
 }

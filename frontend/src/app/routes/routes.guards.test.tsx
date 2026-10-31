@@ -21,7 +21,7 @@ vi.mock("@/lib/realtime/client", async () => (await import("@/test/fake-realtime
 vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => false }));
 
 const landing = () => screen.findByRole("heading", { name: "Mordheim Chronicler" });
-const campaignsPage = () => screen.findByRole("heading", { name: "Welcome back, Raider" });
+const campaignsPage = () => screen.findByText("Welcome back, Raider");
 
 const submitButton = () =>
   screen.getAllByRole("button").find((button) => button.getAttribute("type") === "submit")!;
@@ -76,7 +76,7 @@ describe("an unknown URL", () => {
   it("shows NotFound to a signed-out visitor, at the URL they asked for, with a way back (FE-TEST-18, FE-UX-03)", async () => {
     const app = renderApp("/nope");
 
-    expect(await screen.findByRole("heading", { name: "LOST IN THE RUINS" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Lost in the ruins" })).toBeInTheDocument();
     expect(app.location().pathname).toBe("/nope");
     expect(fakeApi.calls()).toEqual([]);
 
@@ -88,7 +88,7 @@ describe("an unknown URL", () => {
   it("includes /forgot-password: the sign-in card's flow is the only one (AUTH-TWEAK-06, decision 6)", async () => {
     const app = renderApp("/forgot-password");
 
-    expect(await screen.findByRole("heading", { name: "LOST IN THE RUINS" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Lost in the ruins" })).toBeInTheDocument();
     expect(app.location().pathname).toBe("/forgot-password");
     expect(screen.queryByText("Recover your account")).toBeNull();
   });
@@ -97,7 +97,7 @@ describe("an unknown URL", () => {
     storeSession();
     const app = renderApp("/campaigns/1/nope/deeper");
 
-    expect(await screen.findByRole("heading", { name: "LOST IN THE RUINS" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Lost in the ruins" })).toBeInTheDocument();
     expect(app.location().pathname).toBe("/campaigns/1/nope/deeper");
 
     await setupUser().click(screen.getByRole("link", { name: "Back to the chronicle" }));

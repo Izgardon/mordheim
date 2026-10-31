@@ -1,4 +1,5 @@
 import uuid
+from typing import Any
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -8,6 +9,16 @@ from apps.warbands.utils.henchmen_level import HENCHMEN_LEVEL_THRESHOLDS
 from apps.warbands.utils.hero_level import HERO_LEVEL_THRESHOLDS
 
 ROLE_SLUGS = ["owner", "admin", "player"]
+# Publication grades, lowest first: a grade's rank is its place here, which every "up to" preset compares
+GRADES = ("1a", "1b", "1c", "2a", "2b", "3")
+GRADE_LABELS = {
+    "1a": "Official",
+    "1b": "Unofficial",
+    "1c": "Experimental",
+    "2a": "Reliable",
+    "2b": "Supplemental",
+    "3": "Draft",
+}
 HERO_DEATH_ROLL_CHOICES = [
     ("d66", "D66"),
     ("d100", "D100"),
@@ -33,7 +44,7 @@ class Campaign(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    # the catalogue add-ons the campaign uses (CAT-NEW-04: schema only, nothing sets or reads them yet)
+    # the settings in play: the ones its owner ticked, and the always-on ones (grading phase 1)
     campaign_types: models.ManyToManyField = models.ManyToManyField(
         "CampaignType", through="CampaignCampaignType", related_name="campaigns", blank=True
     )
@@ -46,16 +57,23 @@ class Campaign(models.Model):
 
 
 class CampaignType(models.Model):
-    """A set of catalogue entries a campaign can add to the book (e.g. Marienburg), tagged by the nullable
-    `campaign_type` of items, skills, spells, specials, races, restrictions and hired-sword profiles (CAT-NEW-04).
-    Schema only for now: no rows, no tagging and no filtering."""
+    """A setting: the world or supplement content belongs to (Mordheim, Khemri, Lustria …), seeded from the
+    catalogue import (`seed_settings`). Only settings carry a grade (grading phase 1): every warband type and
+    catalogue entry belongs to one setting through its `campaign_type`, a null one counting as Mordheim's. Mordheim
+    itself splits by grade into Mordheim (1a, `always_on`), Mordheim 1b, 1c and 2a, and Grade 3. A campaign ticks the
+    settings in play (`Campaign.campaign_types`); picking a grade is a preset that ticks every setting at or below
+    it (`apps/campaigns/in_play.py`)."""
 
     slug = models.SlugField(max_length=40, unique=True)
     name = models.CharField(max_length=80)
+    grade = models.CharField(max_length=2, choices=[(grade, grade) for grade in GRADES], default="1a")
+    sort_order = models.PositiveSmallIntegerField(default=0)  # the order its chip shows in
+    always_on = models.BooleanField(default=False)  # in play in every campaign: Mordheim (1a)
 
     class Meta:
         db_table = "campaign_type"
-        ordering = ["name"]
+        ordering = ["sort_order", "name"]
+        constraints = [models.CheckConstraint(check=models.Q(grade__in=GRADES), name="campaign_type_grade_valid")]
 
     def __str__(self):
         return self.name
@@ -93,11 +111,6 @@ class CampaignSettings(models.Model):
         max_length=10,
         choices=HERO_DEATH_ROLL_CHOICES,
         default="d66",
-    )
-    item_settings = models.ManyToManyField(
-        "restrictions.Restriction",
-        related_name="campaign_settings",
-        blank=True,
     )
 
     class Meta:
@@ -293,6 +306,7 @@ class CampaignEncampment(models.Model):
 class CampaignLocation(models.Model):
     campaign = models.ForeignKey(Campaign, related_name="campaign_locations", on_delete=models.CASCADE)
     name = models.CharField(max_length=160)
+    area = models.CharField(max_length=80, blank=True, default="")  # free text: the panel filters by those in use
     content = models.TextField(blank=True, default="")
     d6_1 = models.TextField(blank=True, default="")
     d6_2 = models.TextField(blank=True, default="")
@@ -300,6 +314,11 @@ class CampaignLocation(models.Model):
     d6_4 = models.TextField(blank=True, default="")
     d6_5 = models.TextField(blank=True, default="")
     d6_6 = models.TextField(blank=True, default="")
+    # soft delete by a manage_locations holder: no longer listed (next step 7b)
+    removed_at = models.DateTimeField(null=True, blank=True)
+    removed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="+", on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     class Meta:
         db_table = "campaign_location"
@@ -309,21 +328,36 @@ class CampaignLocation(models.Model):
         return f"{self.campaign_id}:{self.name}"
 
 
+def _moment_unit(model: str) -> "models.ForeignKey[Any, Any]":
+    return models.ForeignKey(model, related_name="pivotal_moments", on_delete=models.SET_NULL, null=True, blank=True)
+
+
+MOMENT_UNIT_KINDS = ("hero", "henchman", "hireling")
+
+
 class PivotalMoment(models.Model):
+    """A headline the battle's fight left (apps/campaigns/pivotal_moments.py, next step 9). A kill moment carries
+    its kill's round and points at it (`source_kill`); a result moment has neither. The unit it is about, when it
+    is one of a warband's own (a hero, a henchman with his group, a hired sword), is kept as keys like battle_kill's
+    killer, SET_NULL, with its name as it was."""
+
     campaign = models.ForeignKey(Campaign, related_name="pivotal_moments", on_delete=models.CASCADE)
     battle = models.ForeignKey("battles.Battle", related_name="pivotal_moments", on_delete=models.CASCADE)
     warband = models.ForeignKey("warbands.Warband", related_name="pivotal_moments", on_delete=models.CASCADE)
-    source_event = models.ForeignKey(
-        "battles.BattleEvent",
-        related_name="pivotal_moments",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+    source_kill = models.ForeignKey(
+        "battles.BattleKill", related_name="pivotal_moments", on_delete=models.SET_NULL, null=True, blank=True
     )
+    round = models.PositiveSmallIntegerField(null=True, blank=True)
     kind = models.CharField(max_length=64)
     headline = models.CharField(max_length=120)
     detail = models.TextField(blank=True)
-    unit_key = models.CharField(max_length=64, null=True, blank=True)
+    unit_kind = models.CharField(
+        max_length=10, choices=[(kind, kind) for kind in MOMENT_UNIT_KINDS], null=True, blank=True
+    )
+    hero = _moment_unit("warbands.Hero")
+    henchman = _moment_unit("warbands.Henchman")
+    group = _moment_unit("warbands.HenchmenGroup")
+    hireling = _moment_unit("warbands.Hireling")
     unit_name = models.CharField(max_length=120, null=True, blank=True)
     battle_ended_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -336,6 +370,16 @@ class PivotalMoment(models.Model):
             models.Index(fields=["campaign", "battle_ended_at"]),
             models.Index(fields=["battle", "warband"]),
             models.Index(fields=["kind"]),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(unit_kind__isnull=True, hero__isnull=True, henchman__isnull=True, group__isnull=True)
+                & models.Q(hireling__isnull=True)
+                | models.Q(unit_kind="hero", henchman__isnull=True, group__isnull=True, hireling__isnull=True)
+                | models.Q(unit_kind="henchman", hero__isnull=True, hireling__isnull=True)
+                | models.Q(unit_kind="hireling", hero__isnull=True, henchman__isnull=True, group__isnull=True),
+                name="pivotal_moment_unit_keys",
+            ),
         ]
 
     def __str__(self):

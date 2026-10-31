@@ -9,6 +9,24 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Tooltip } from "@components/tooltip";
 
+/**
+ * Outside-interaction handler for anything built on the Radix dialog: a tap inside a portaled
+ * dropdown or select (or anything marked `data-allow-dialog-interaction`) keeps the dialog open.
+ */
+function keepOpenForPortals(event: { target: EventTarget | null; preventDefault: () => void }) {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) {
+    return;
+  }
+  if (
+    target.closest("[data-radix-popper-content-wrapper]") ||
+    target.closest("[data-radix-select-content]") ||
+    target.closest("[data-allow-dialog-interaction]")
+  ) {
+    event.preventDefault();
+  }
+}
+
 const Dialog = DialogPrimitive.Root;
 const DialogTrigger = DialogPrimitive.Trigger;
 const DialogPortal = DialogPrimitive.Portal;
@@ -21,7 +39,7 @@ const DialogOverlay = React.forwardRef<
     <DialogPrimitive.Overlay
       ref={ref}
       className={cn(
-        "fixed inset-0 z-50 bg-black/60 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 min-[960px]:bg-black/55",
+        "fixed inset-0 z-50 bg-scrim data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
         className
       )}
       style={style}
@@ -76,19 +94,7 @@ const DialogContent = React.forwardRef<
       if (event.defaultPrevented) {
         return;
       }
-      const target = event.target;
-      if (!(target instanceof HTMLElement)) {
-        return;
-      }
-      // Prevent close when interacting with any portaled dropdown or select content,
-      // on both mobile and desktop.
-      if (
-        target.closest("[data-radix-popper-content-wrapper]") ||
-        target.closest("[data-radix-select-content]") ||
-        target.closest("[data-allow-dialog-interaction]")
-      ) {
-        event.preventDefault();
-      }
+      keepOpenForPortals(event);
     };
 
     React.useEffect(() => {
@@ -135,8 +141,8 @@ const DialogContent = React.forwardRef<
         <DialogPrimitive.Content
           ref={ref}
           className={cn(
-            "fixed inset-x-0 bottom-0 z-[60] w-full max-h-[85dvh] overflow-hidden overflow-x-hidden overscroll-x-none rounded-t-2xl border-t border-border/70 bg-black shadow-[0_-18px_40px_rgba(0,0,0,0.65)] duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-            "min-[960px]:left-[50%] min-[960px]:top-[50%] min-[960px]:bottom-auto min-[960px]:w-[calc(100%-2rem)] min-[960px]:max-h-[90vh] min-[960px]:-translate-x-1/2 min-[960px]:-translate-y-1/2 min-[960px]:rounded-lg min-[960px]:border min-[960px]:border-border/70 min-[960px]:bg-[color:var(--color-surface-panel-strong)] min-[960px]:shadow-[var(--shadow-modal)] min-[960px]:data-[state=closed]:zoom-out-95 min-[960px]:data-[state=open]:zoom-in-95 min-[960px]:data-[state=closed]:slide-out-to-left-1/2 min-[960px]:data-[state=closed]:slide-out-to-top-[48%] min-[960px]:data-[state=open]:slide-in-from-left-1/2 min-[960px]:data-[state=open]:slide-in-from-top-[48%]",
+            "fixed inset-x-0 bottom-0 z-[60] w-full max-h-[85dvh] overflow-hidden overflow-x-hidden overscroll-x-none border-t border-accent-line bg-panel shadow-[0_-16px_40px_var(--color-shadow)] duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+            "min-[960px]:left-[50%] min-[960px]:top-[50%] min-[960px]:bottom-auto min-[960px]:w-[calc(100%-2rem)] min-[960px]:max-h-[90vh] min-[960px]:-translate-x-1/2 min-[960px]:-translate-y-1/2 min-[960px]:border min-[960px]:border-accent-line min-[960px]:bg-panel min-[960px]:shadow-[0_24px_60px_var(--color-shadow)] min-[960px]:data-[state=closed]:zoom-out-95 min-[960px]:data-[state=open]:zoom-in-95 min-[960px]:data-[state=closed]:slide-out-to-left-1/2 min-[960px]:data-[state=closed]:slide-out-to-top-[48%] min-[960px]:data-[state=open]:slide-in-from-left-1/2 min-[960px]:data-[state=open]:slide-in-from-top-[48%]",
             className,
             "max-[959px]:!max-w-full"
           )}
@@ -150,13 +156,13 @@ const DialogContent = React.forwardRef<
         >
           <div
             className={cn(
-              "pointer-events-auto relative flex max-h-[85dvh] flex-col overflow-x-hidden px-4 pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] pt-4 text-[15px] text-foreground min-[960px]:max-h-[90vh] min-[960px]:px-8 min-[960px]:py-8",
+              "pointer-events-auto relative flex max-h-[85dvh] flex-col overflow-x-hidden px-4 pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] pt-4 text-[15px] text-ink min-[960px]:max-h-[90vh] min-[960px]:px-8 min-[960px]:py-8",
               innerClassName
             )}
             style={mobileMaxHeightStyle}
           >
             <div className="mb-3 flex justify-center min-[960px]:hidden">
-              <span className="h-1 w-12 rounded-full bg-border/70" />
+              <span className="h-1 w-10 bg-strong" />
             </div>
             <div className="scrollbar-hidden-mobile flex min-h-0 flex-1 flex-col gap-6 overflow-x-hidden overflow-y-auto overscroll-x-none">
               {children}
@@ -168,7 +174,7 @@ const DialogContent = React.forwardRef<
                 trigger={
                   <button
                     type="button"
-                    className="icon-button relative flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-background/70 text-muted-foreground transition hover:text-foreground"
+                    className="relative flex h-8 w-8 items-center justify-center border border-border bg-transparent text-faint transition hover:text-head"
                     aria-label="Help"
                   >
                     <CircleHelp className="h-4 w-4" />
@@ -219,11 +225,20 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn("title-glow font-display text-2xl leading-none tracking-[0.02em]", className)}
+    className={cn("font-display text-[26px] font-semibold leading-tight text-head", className)}
     {...props}
   />
 ));
 DialogTitle.displayName = DialogPrimitive.Title.displayName;
+/** The small accent line above a dialog, drawer or sheet title ("Battle 5", "Store"). */
+const DialogKicker = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
+  <span
+    className={cn("text-[11px] font-bold uppercase tracking-[0.14em] text-accent-text", className)}
+    {...props}
+  />
+);
+DialogKicker.displayName = "DialogKicker";
+
 const DialogDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
@@ -241,5 +256,7 @@ export {
   DialogHeader,
   DialogFooter,
   DialogTitle,
+  DialogKicker,
   DialogDescription,
+  keepOpenForPortals,
 };

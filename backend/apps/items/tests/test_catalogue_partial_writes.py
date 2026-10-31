@@ -1,4 +1,4 @@
-"""A PATCH's nested rows are whole rows: an availability, an equipment line or a restriction link takes the same
+"""A PATCH's nested rows are whole rows: an availability, an equipment line or a who-can line takes the same
 defaults in an edit as in a create (DRF skips nested defaults in a partial write). A weapon's strength and range
 take theirs only where nothing is stored."""
 
@@ -14,7 +14,7 @@ class PartialWriteDefaultsTests(CatalogueTestCase):
         sling = make_entry(ITEMS, "Sling", campaign=self.campaign, strength="3", range='18"')
 
         renamed = self.patch_as(self.owner, ITEMS.detail_url(flail.id), {"name": "Morning Star"})
-        described = self.patch_as(self.owner, ITEMS.detail_url(sling.id), {"description": "Stones."})
+        described = self.patch_as(self.owner, ITEMS.detail_url(sling.id), {"flavour": "Stones."})
 
         self.assertEqual((renamed.status_code, renamed.data["strength"], renamed.data["range"]), (200, "+1", "Close combat"))  # fmt: skip
         self.assertEqual((described.data["strength"], described.data["range"]), ("3", '18"'))
@@ -30,14 +30,14 @@ class PartialWriteDefaultsTests(CatalogueTestCase):
         self.assertEqual((retyped.data["strength"], retyped.data["range"]), ("As user", "Close combat"))
         self.assertEqual((blanked.data["strength"], blanked.data["range"]), ("As user", "Close combat"))
 
-    def test_an_edited_availability_without_a_rarity_or_restrictions_takes_the_defaults(self):
+    def test_an_edited_price_row_without_a_rarity_or_who_can_buy_takes_the_defaults(self):
         item = make_entry(ITEMS, "Flail", campaign=self.campaign, cost=15)
 
         response = self.patch_as(self.owner, ITEMS.detail_url(item.id), {"availabilities": [{"cost": 5}, {}]})
 
         self.assertEqual(response.status_code, 200, response.data)
-        rows = [(row["cost"], row["rarity"], row["restrictions"]) for row in response.data["availabilities"]]
-        self.assertEqual(rows, [(0, 2, []), (5, 2, [])])
+        rows = [(row["cost"], row["rarity"], row["for_everyone"], row["warbands"]) for row in response.data["availabilities"]]  # fmt: skip
+        self.assertEqual(rows, [(5, None, True, []), (0, None, True, [])])
 
     def test_edited_equipment_without_a_quantity_carries_one(self):
         entry = make_entry(BESTIARY, "Mule", campaign=self.campaign)
@@ -47,16 +47,16 @@ class PartialWriteDefaultsTests(CatalogueTestCase):
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(list(BestiaryEntryItem.objects.filter(bestiary_entry=entry).values_list("quantity", flat=True)), [1, 1])  # fmt: skip
 
-    def test_an_edited_restriction_given_as_a_bare_id_has_no_note(self):
+    def test_an_edited_who_can_line_without_excluded_includes(self):
         for kind in (HIRED_SWORDS, DRAMATIS_PERSONAE):
             with self.subTest(kind=kind.key):
                 entry = make_entry(kind, "Archer", campaign=self.campaign)
 
-                response = self.patch_as(self.owner, kind.detail_url(entry.id), {"restriction_ids": [self.mercenaries.id]})  # fmt: skip
+                response = self.patch_as(self.owner, kind.detail_url(entry.id), {"warbands": [{"warband_type_id": self.mercenaries.id}]})  # fmt: skip
 
                 self.assertEqual(response.status_code, 200, response.data)
-                links = entry.restriction_links.values_list("restriction_id", "additional_note")
-                self.assertEqual(list(links), [(self.mercenaries.id, "")])
+                links = entry.warband_links.values_list("warband_type_id", "excluded")
+                self.assertEqual(list(links), [(self.mercenaries.id, False)])
 
     def test_hired_sword_equipment_without_a_quantity_carries_one(self):
         archer = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign)

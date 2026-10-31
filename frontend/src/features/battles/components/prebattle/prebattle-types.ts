@@ -47,13 +47,17 @@ export type PrebattleUnit = BattleRosterCompanionFields & {
   key: string;
   id: number | string;
   kind: "hero" | "hireling" | "henchman" | "custom" | "bestiary" | "pet";
-  /** A pet fighting as its own model (step 5): its owner's unit key, or `group:<id>`. */
+  /** A pet fighting as its own model: its owner's unit key, or `group:<id>`. */
   ownerKey?: string;
   displayName: string;
   unitType: string;
   /** How many more games it misses, and why (`BattleRosterMissingFields`). */
   missingGames?: number;
   missingReason?: string;
+  /** A henchman whose kit went to the stash: left out at first, and why (henchmen loadouts). */
+  outReason?: string | null;
+  /** A henchman: the loadout rows he lacks, which he starts without. */
+  gaps?: { rowId: number; itemId: number; name: string; reason: string }[];
   stats: UnitStats;
   upkeepPrice?: number | null;
   upkeepCostExpression?: string | null;

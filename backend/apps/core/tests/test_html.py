@@ -37,7 +37,7 @@ class LocationContentSanitizedOnWriteTests(APITestCase):
         owner = get_user_model().objects.create_user(username="owner@example.com", password="x", first_name="Owner")
         self.client.force_authenticate(user=owner)
         response = self.client.post(
-            "/api/campaigns/", {"name": "Marienburg", "max_players": 4, "campaign_type": "marienburg"}, format="json"
+            "/api/campaigns/", {"name": "Marienburg", "max_players": 4, "enable_locations": True}, format="json"
         )
         self.assertEqual(response.status_code, 201)
         self.locations_url = f"/api/campaigns/{response.data['id']}/locations/"

@@ -14,13 +14,14 @@ import type { NameTakenState } from "../hooks/useNameTakenMatches";
  */
 export type FormLayout = "inline" | "dialog";
 
-const FOCUS_GLOW =
-  "focus-visible:outline-none focus-visible:shadow-[0_12px_20px_rgba(5,20,24,0.25),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]";
+/** A long-text box (description, fluff) on the tokens. */
+export const TEXTAREA =
+  "min-h-[120px] w-full border border-strong bg-page px-3 py-2 text-sm text-ink placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring";
 
 /** A form's long-text box (description, fluff) in each layout. */
 export const TEXTAREA_CLASS: Record<FormLayout, string> = {
-  inline: `min-h-[80px] w-full border border-border/60 bg-background/80 px-4 py-3 text-sm text-foreground shadow-[0_12px_20px_rgba(5,20,24,0.25)] ${FOCUS_GLOW}`,
-  dialog: `min-h-[120px] w-full rounded-2xl border border-input/80 bg-background/60 px-3 py-2 text-sm text-foreground shadow-[0_12px_20px_rgba(5,20,24,0.25)] placeholder:text-muted-foreground/60 placeholder:italic ${FOCUS_GLOW}`,
+  inline: TEXTAREA.replace("min-h-[120px]", "min-h-[80px]"),
+  dialog: TEXTAREA,
 };
 
 /** The grid an inline form lays its short fields out in. */
@@ -49,7 +50,9 @@ export function CatalogueField({
   if (layout === "inline") {
     return (
       <div className={className} {...rest}>
-        <label className="mb-1 block text-xs text-muted-foreground">{label}</label>
+        <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
+          {label}
+        </label>
         {children}
       </div>
     );

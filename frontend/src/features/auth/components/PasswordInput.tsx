@@ -4,7 +4,8 @@ import { useState } from "react";
 // components
 import { Input } from "@components/input";
 import { Eye, EyeOff } from "lucide-react";
-import { AuthField } from "./AuthField";
+import { cn } from "@/lib/utils";
+import { AUTH_INPUT, AuthField } from "./AuthField";
 
 /** The server's password rules in a sentence, under every new password (AUTH-TWEAK-07). */
 export const PASSWORD_HINT =
@@ -20,12 +21,12 @@ export function PasswordInput(props: PasswordInputProps) {
     <div className="relative">
       <Input
         type={isRevealed ? "text" : "password"}
-        className="h-10 max-w-[320px] pr-10"
+        className={cn(AUTH_INPUT, "pr-12")}
         {...props}
       />
       <button
         type="button"
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition hover:text-foreground"
+        className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-faint transition-colors hover:text-head focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
         onClick={() => setIsRevealed((previous) => !previous)}
         aria-label={isRevealed ? "Hide password" : "Show password"}
       >

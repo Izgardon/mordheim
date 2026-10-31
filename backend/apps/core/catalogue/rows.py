@@ -16,7 +16,7 @@ from apps.hirelings.serializers import (
 )
 from apps.items.serializers import ItemSerializer
 from apps.races.serializers import RaceSerializer
-from apps.skills.serializers import SkillSerializer
+from apps.skills.serializers import SkillLearnersSerializer
 from apps.special.serializers import SpecialSerializer
 from apps.spells.serializers import SpellSerializer
 
@@ -24,11 +24,11 @@ from .payloads import STAT_FIELDS, with_badges
 
 ITEM_FIELDS = (
     "name",
+    "variant",
     "type",
     "subtype",
-    "grade",
     "single_use",
-    "description",
+    "flavour",
     "strength",
     "range",
     "save_value",
@@ -51,11 +51,13 @@ HIRELING_FIELDS = (
     "rating",
     "available_skill_types",
     "grade",
+    "for_everyone",
+    "hire_note",
 )
 PERSONA_FIELDS = (*HIRELING_FIELDS, "stays", "payment_note")
 
 ItemRowSerializer = with_badges(ItemSerializer, book_fields=(*ITEM_FIELDS, "statblock"), book_price=True)
-SkillRowSerializer = with_badges(SkillSerializer)
+SkillRowSerializer = with_badges(SkillLearnersSerializer)
 SpellRowSerializer = with_badges(SpellSerializer, book_fields=("name", "type", "description", "dc", "roll"))
 SpecialRowSerializer = with_badges(SpecialSerializer)
 RaceRowSerializer = with_badges(RaceSerializer, book_fields=("name", *STAT_FIELDS))

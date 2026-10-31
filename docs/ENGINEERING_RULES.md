@@ -78,7 +78,7 @@ Rules marked **(proposed)** depend on a decision still open in the review. Confi
 - **Destructive actions** (delete, dismiss, sell, cancel battle) ask for confirmation, or offer undo.
 - Hide or disable actions the user can't perform, based on API capability flags.
 - **Battle screens are mobile-first.** They're used at the table on phones.
-- **Accessibility:** interactive elements are real `<button>` / `<a>` with labels; custom dropdowns and comboboxes use Radix/cmdk primitives so they work by keyboard.
+- **Accessibility:** interactive elements are real `<button>` / `<a>` with labels; custom dropdowns and comboboxes use Radix primitives so they work by keyboard.
 
 ### Types and lint
 

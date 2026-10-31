@@ -3,6 +3,7 @@ import type {
   BattleParticipant,
   BattleUnitInformationEntry,
   BattleUnitStats,
+  BattleUnitStatus,
 } from "@/features/battles/types/battle-types";
 
 /**
@@ -14,6 +15,8 @@ export type UnitInformationPatchEntry = {
   current_wounds?: number | null;
   notes?: string;
   stats_override?: Partial<BattleUnitStats>;
+  /** Knocked down or stunned; null stands the unit up. */
+  status?: BattleUnitStatus | null;
 };
 
 export type UnitInformationPatch = Record<string, UnitInformationPatchEntry>;
@@ -57,7 +60,20 @@ export function applyConfigPatch(
 ): BattleParticipant {
   const unitInformation = { ...participant.unit_information_json };
   for (const [unitKey, entry] of Object.entries(patch.unit_information_patch ?? {})) {
-    unitInformation[unitKey] = { ...EMPTY_ENTRY, ...unitInformation[unitKey], ...entry };
+    const { status, ...rest } = entry;
+    const next: BattleUnitInformationEntry = {
+      ...EMPTY_ENTRY,
+      ...unitInformation[unitKey],
+      ...rest,
+    };
+    if (status !== undefined) {
+      if (status) {
+        next.status = status;
+      } else {
+        delete next.status;
+      }
+    }
+    unitInformation[unitKey] = next;
   }
   return {
     ...participant,

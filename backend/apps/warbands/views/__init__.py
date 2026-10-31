@@ -11,15 +11,19 @@ from .ledger import (
 )
 from .purchases import WarbandPurchaseView, WarbandRarityRollView
 from .sheet import WarbandSheetView
+from .types import CampaignWarbandTypesView
 from .warbands import (
     WarbandDetailView,
     WarbandListCreateView,
-    WarbandRestrictionsView,
     WarbandRosterStatsView,
     WarbandSummaryView,
 )
+from .who_can import WarbandGroupListView, WarbandWhoCanView
 
 __all__ = [
+    "CampaignWarbandTypesView",
+    "WarbandGroupListView",
+    "WarbandWhoCanView",
     "WarbandBeastRecruitView",
     "WarbandDetailView",
     "HeroSpecialDetailView",
@@ -35,7 +39,6 @@ __all__ = [
     "WarbandResourceDetailView",
     "WarbandResourceListCreateView",
     "WarbandResourceSaleView",
-    "WarbandRestrictionsView",
     "WarbandSheetView",
     "WarbandRosterStatsView",
     "WarbandSummaryView",

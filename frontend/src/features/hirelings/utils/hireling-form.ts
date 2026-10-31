@@ -5,6 +5,12 @@ import {
   type BestiaryCoreValues,
 } from "@/features/bestiary/utils/bestiary-form";
 import { statInputs } from "@/features/catalogue/utils/statblock";
+import {
+  draftOf,
+  everyone,
+  linesPayload,
+  type WhoCanDraft,
+} from "@/features/catalogue/utils/who-can-draft";
 
 import type { HirelingCatalogueConfig } from "../hireling-catalogue-kinds";
 import type {
@@ -28,6 +34,9 @@ export type HirelingProfileValues = BestiaryCoreValues & {
   available_skill_types: string[];
   stays: HirelingStays;
   payment_note: string;
+  /** Who may hire him (the items rebuild), and the book's sentence about it. */
+  who: WhoCanDraft;
+  hire_note: string;
 };
 
 const text = (value: number | null | undefined) =>
@@ -48,6 +57,8 @@ export function hirelingValuesOf(entry: HirelingProfileDetail | null): HirelingP
       available_skill_types: [],
       stays: "always",
       payment_note: "",
+      who: everyone(),
+      hire_note: "",
     };
   }
   return {
@@ -77,6 +88,8 @@ export function hirelingValuesOf(entry: HirelingProfileDetail | null): HirelingP
     available_skill_types: entry.available_skill_types ?? [],
     stays: entry.stays ?? "always",
     payment_note: entry.payment_note ?? "",
+    who: draftOf(entry),
+    hire_note: entry.hire_note ?? "",
   };
 }
 
@@ -89,10 +102,7 @@ const armourSave = (value: string) => {
   return Number.isNaN(parsed) ? null : parsed;
 };
 
-type Links = Pick<
-  HirelingProfileWrite,
-  "skill_ids" | "special_ids" | "spell_ids" | "item_entries" | "restriction_ids"
->;
+type Links = Pick<HirelingProfileWrite, "skill_ids" | "special_ids" | "spell_ids" | "item_entries">;
 
 /** The write body: trimmed text, numbers, every link list, and a dramatis persona's terms. */
 export function hirelingPayload(
@@ -111,6 +121,9 @@ export function hirelingPayload(
     upkeep_cost_expression: values.upkeep_cost_expression.trim(),
     rating: cost(values.rating),
     available_skill_types: values.available_skill_types,
+    for_everyone: values.who.forEveryone,
+    warbands: linesPayload(values.who),
+    hire_note: values.hire_note.trim(),
     ...links,
     ...(config.hasPersonaTerms
       ? { stays: values.stays, payment_note: values.payment_note.trim() }

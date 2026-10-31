@@ -22,12 +22,6 @@ module.exports = {
   				'Arial',
   				'sans-serif'
   			],
-  			mordheim: [
-  				'\"Mordheim\"',
-  				'\"Fraunces\"',
-  				'\"Times New Roman\"',
-  				'serif'
-  			],
   			display: [
   				'\"Fraunces\"',
   				'\"Times New Roman\"',
@@ -70,8 +64,37 @@ module.exports = {
   			},
   			accent: {
   				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
+  				foreground: 'hsl(var(--accent-foreground))',
+  				text: 'var(--color-accent-text)',
+  				soft: 'var(--color-accent-soft)',
+  				line: 'var(--color-accent-line)',
+  				hi: 'var(--color-accent-hi)'
   			},
+  			// Design E tokens (src/index.css); each switches with the theme.
+  			page: 'var(--color-page)',
+  			rail: 'var(--color-rail)',
+  			bar: 'var(--color-bar)',
+  			panel: 'var(--color-panel)',
+  			surface: 'var(--color-surface)',
+  			raised: 'var(--color-raised)',
+  			line: 'var(--color-line)',
+  			strong: 'var(--color-strong)',
+  			ink: 'var(--color-ink)',
+  			head: 'var(--color-head)',
+  			text2: 'var(--color-text2)',
+  			faint: 'var(--color-faint)',
+  			'on-accent': 'var(--color-on-accent)',
+  			danger: {
+  				DEFAULT: 'var(--color-danger)',
+  				bg: 'var(--color-danger-bg)',
+  				line: 'var(--color-danger-line)'
+  			},
+  			good: {
+  				DEFAULT: 'var(--color-good)',
+  				bg: 'var(--color-good-bg)',
+  				line: 'var(--color-good-line)'
+  			},
+  			scrim: 'var(--color-scrim)',
   			destructive: {
   				DEFAULT: 'hsl(var(--destructive))',
   				foreground: 'hsl(var(--destructive-foreground))'

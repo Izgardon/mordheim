@@ -21,8 +21,8 @@ def by_listing(value: str) -> Q:
 def item_rows(rows: QuerySet[Item] | None = None) -> QuerySet[Item]:
     """Items with what the catalogue's item payload reads: an animal's entry, the book item a version replaces and the
     last writer joined to the row, the book item's price annotated on it (the badge's "Book: 5 gc"), then one query
-    each for the property links (with their properties), the availabilities, their restriction links (with their
-    restrictions) and, when an item hires an animal, the animal's specials."""
+    each for the rule links (with their shared rules), the price rows, their who-can lines (with their types and
+    groups) and, when an item hires an animal, the animal's specials."""
     rows = Item.objects.all() if rows is None else rows
     rows = rows.select_related("bestiary_entry", "replaces", "updated_by").annotate(
         book_price=own_price_of("replaces_id")

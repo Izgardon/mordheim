@@ -1,6 +1,6 @@
 """The catalogue seeders on the committed data (pass 5; BUG-17, BUG-51, BUG-54, CAT-TEST-12, -13).
 
-`seed_all` runs `seed_races`, `seed_restrictions`, `seed_items`, `seed_skills`, `seed_spells_and_special`,
+`seed_all` runs `seed_settings`, `seed_warband_types`, `seed_races`, `seed_items`, `seed_skills`, `seed_spells_and_special`,
 `seed_bestiary`, `seed_dramatis_personae`, then `seed_hired_swords`, each upserting the book by name (and type) in its
 own transaction, and `seed_catalogue_if_empty` runs it on a wiped production database. It works on an empty database and again later, also once a campaign holds
 an entry of a book entry's name and type (a custom override, a house-rule clone, and every version PR C's
@@ -22,15 +22,15 @@ from rest_framework.test import APIClient
 from apps.bestiary.models import BestiaryEntry
 from apps.campaigns.models import Campaign, CampaignHouseRule, CampaignType
 from apps.hirelings.models import DramatisPersona, HiredSword, HiredSwordItem, HiredSwordSkill
-from apps.items.models import Item, ItemAvailability, ItemProperty
+from apps.items.models import Item, ItemAvailability, ItemRule
 from apps.items.services import sync_half_price_armour_for_campaign
 from apps.races.models import Race
-from apps.restrictions.models import Restriction
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
+from apps.warbands.models import WarbandGroup, WarbandType
 
-BOOK_MODELS = (Race, Restriction, Item, ItemProperty, Skill, Spell, Special, BestiaryEntry, HiredSword, DramatisPersona)
+BOOK_MODELS = (Race, Item, ItemRule, Skill, Spell, Special, BestiaryEntry, HiredSword, DramatisPersona)
 
 
 def seed_all() -> str:
@@ -66,25 +66,33 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 27,
-                "Restriction": 133,
-                "Item": 247,  # 216 + one Animal item per beast (the bestiary rewrite step 3)
-                "ItemProperty": 241,  # "Two Handed" merged into "Two-handed"; "+1 Enemy armour save" and "-1 Save"
+                "Item": 321,  # the import's 290 (its 14 animals are beasts') + one Animal item per beast
+                "ItemRule": 51,  # the import's shared rules
                 "Skill": 255,
                 "Spell": 189,  # 183 + the Dark Mage's six (BUG-54)
-                "Special": 186,
+                "Special": 282,  # 186 + the dramatis personae's own rules (next step 12)
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
-                "DramatisPersona": 0,  # until they are scraped
+                "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
             },
         )
         for model in BOOK_MODELS:
             if hasattr(model, "campaign"):
                 with self.subTest(model=model.__name__):
                     self.assertFalse(model.objects.filter(campaign__isnull=False).exists())
-            if hasattr(model, "campaign_type"):  # CAT-NEW-04: the seeders leave the add-on column null
+            if hasattr(model, "campaign_type"):  # grading phase 1: skills and hired swords get the import's settings
                 with self.subTest(model=model.__name__, column="campaign_type"):
-                    self.assertFalse(model._default_manager.filter(**{"campaign_type__isnull": False}).exists())
-        self.assertFalse(CampaignType.objects.exists())
+                    ungraded = model._default_manager.filter(**{"campaign_type__isnull": True})
+                    if model in (HiredSword, DramatisPersona, Item):  # every book item and hireling has its setting
+                        self.assertFalse(ungraded.exists())
+                    elif model is Skill:  # but the ones a hired sword's seeding makes ("Hired Sword - …")
+                        self.assertFalse(ungraded.exclude(**{"type__startswith": "Hired Sword - "}).exists())
+                    else:  # the rest count as Mordheim's until they get theirs
+                        self.assertFalse(model._default_manager.filter(**{"campaign_type__isnull": False}).exists())
+        # grading phase 1: the settings, and the warband types and groups, from the catalogue import
+        self.assertEqual(CampaignType.objects.count(), 19)
+        self.assertEqual(WarbandType.objects.filter(campaign__isnull=True).count(), 163)
+        self.assertEqual(WarbandGroup.objects.count(), 20)
 
     def test_a_second_run_changes_no_book_row_but_rewrites_every_availability(self):
         items = set(Item.objects.values_list("id", "name", "type"))
@@ -118,20 +126,18 @@ class SeedAllTests(TestCase):
         second = set(Skill.objects.filter(type="Pirates (TBMF)").values_list("name", flat=True))
         self.assertEqual(second, {"Captain Blood", "Sea Legs", "Cutlass Master", "Treasure Hunter", "Swashbuckler"})
 
-    def test_knives_and_cleavers_carry_their_save_modifiers_and_two_handed_is_one_property(self):
-        # the 2026-10-28 data audit against mordheimer: the knives lacked "+1 Enemy armour save", Cleaver and Katar
-        # "-1 Save", and "Two Handed" (212) and "Two-handed" (213) were one rule twice
+    def test_knives_carry_their_save_modifier_and_two_handed_is_one_shared_rule(self):
+        # the 2026-10-28 data audit against mordheimer, kept by the import: the knives carry "+1 Enemy armour save",
+        # and "Two Handed" and "Two-handed" are one shared rule
         def holders(name: str) -> set[str]:
-            items = Item.objects.filter(campaign__isnull=True, property_links__property__name=name)
+            items = Item.objects.filter(campaign__isnull=True, rule_links__rule__name=name)
             return set(items.values_list("name", flat=True))
 
-        knives = {"Dagger", "Disease Dagger", "Hobgoblin Poisoned Daggers", "Kitchen Knife", "Main Gauche"}
+        knives = {"Dagger", "Disease Dagger", "Fist", "Hobgoblin Poisoned Daggers", "Kitchen Knife", "Main Gauche"}
         knives |= {"Misericordia", "Poison Daggers", "Shortsword", "Starblade"}
         self.assertEqual(holders("+1 Enemy armour save"), knives)
-        self.assertEqual(holders("-1 Save"), {"Cleaver", "Katar"})
-        two_handed = ItemProperty.objects.filter(name__iregex=r"^two.handed$")
-        self.assertEqual(list(two_handed.values_list("id", "name")), [(213, "Two-handed")])
-        self.assertLessEqual({"Boat Hook", "Brazier Iron", "Pike", "Flail", "Halberd"}, holders("Two-handed"))
+        self.assertEqual(ItemRule.objects.filter(name__iregex=r"^two.handed$").count(), 1)
+        self.assertLessEqual({"Boat Hook", "Brazier Iron", "Pike (Merchant Caravans)", "Flail", "Halberd"}, holders("Two-handed"))  # fmt: skip
 
     def test_item_values_match_mordheimer(self):
         # the 2026-10-28 data audit: transcription errors in a price, a save and a strength
@@ -199,9 +205,20 @@ class SeedAllTests(TestCase):
         rat_ogre = HiredSword.objects.get(name="Clan Skryre Rat Ogre")
 
         self.assertIn(("Sword", 2), set(ogre.item_links.values_list("item__name", "quantity")))
-        self.assertEqual((ninja.hire_cost, ninja.hire_cost_expression), (70, "70+3D6"))
-        self.assertEqual((rat_ogre.upkeep_cost, rat_ogre.upkeep_cost_expression), (None, "1 piece of Wyrdstone"))
+        # the items rebuild: the fees are mordheimer's, a text one kept beside the gold it charges
+        self.assertEqual((ninja.hire_cost, ninja.hire_cost_expression), (70, "70 + 3D6"))
+        self.assertEqual((rat_ogre.upkeep_cost, rat_ogre.upkeep_cost_expression), (None, "1 wyrdstone"))
         self.assertEqual((ogre.race.name if ogre.race else None, ogre.race_label), ("Ogre", "Ogre"))
+
+    def test_who_may_hire_and_learn_comes_from_the_import(self):
+        # the items rebuild: every hired sword names who may hire him (mordheimer's lists), the general skill lists are
+        # for everyone and a special list's skills name their warbands
+        self.assertFalse(HiredSword.objects.filter(for_everyone=True).exists())
+        self.assertFalse(HiredSword.objects.filter(warband_links__isnull=True).exists())
+        self.assertTrue(Skill.objects.get(name="Sprint", type="Speed").for_everyone)
+        tail = Skill.objects.get(name="Tail Fighting", type="Skaven")
+        self.assertFalse(tail.for_everyone)
+        self.assertTrue(tail.warband_links.exists())
 
     def test_the_dark_mage_knows_his_six_spells(self):
         # BUG-54, CAT-TEST-13: the "1 - " to "6 - " prefixes kept his spells from matching; they are his own spells,
@@ -223,7 +240,7 @@ class SeedAllTests(TestCase):
     def _campaign_with_an_axe_and_half_price_armour(self) -> tuple[Campaign, Item]:
         campaign = Campaign.objects.create(name="Shards", join_code="SHARDS")
         axe = Item.objects.create(name="Axe", type="Weapon", subtype="Melee", campaign=campaign)
-        ItemAvailability.objects.create(item=axe, cost=25, rarity=2)
+        ItemAvailability.objects.create(item=axe, cost=25)
         sync_half_price_armour_for_campaign(campaign.id)
         return campaign, axe
 
@@ -243,11 +260,11 @@ class SeedAllTests(TestCase):
         # BUG-17 (was pinned: the Axe, the first item in standard-items.json, matched the book Axe and the campaign's,
         # so seed_items stopped before writing any item; flipped in PR A)
         campaign, axe = self._campaign_with_an_axe_and_half_price_armour()
-        Item.objects.filter(campaign__isnull=True, name="Axe").update(description="stale")
+        Item.objects.filter(campaign__isnull=True, name="Axe").update(flavour="stale")
 
         seed_all()
 
-        self.assertNotEqual(Item.objects.get(name="Axe", campaign__isnull=True).description, "stale")
+        self.assertNotEqual(Item.objects.get(name="Axe", campaign__isnull=True).flavour, "stale")
         self.assertEqual(Item.objects.get(id=axe.id).campaign_id, campaign.id)
 
     def test_a_reseed_rewrites_every_book_armour_and_leaves_the_clones(self):
@@ -256,12 +273,12 @@ class SeedAllTests(TestCase):
         campaign = Campaign.objects.create(name="Shards", join_code="SHARDS")
         sync_half_price_armour_for_campaign(campaign.id)
         clones = set(Item.objects.filter(campaign=campaign).values_list("id", "replaces_id"))
-        Item.objects.filter(campaign__isnull=True, name__in=["Axe", "Wyrdstone Pendulum"]).update(description="stale")
+        Item.objects.filter(campaign__isnull=True, name__in=["Axe", "Wyrdstone Pendulum"]).update(flavour="stale")
 
         seed_all()
 
-        self.assertNotEqual(Item.objects.get(name="Axe").description, "stale")
-        self.assertNotEqual(Item.objects.get(name="Wyrdstone Pendulum").description, "stale")
+        self.assertNotEqual(Item.objects.get(name="Axe").flavour, "stale")
+        self.assertNotEqual(Item.objects.get(name="Wyrdstone Pendulum").flavour, "stale")
         self.assertEqual(set(Item.objects.filter(campaign=campaign).values_list("id", "replaces_id")), clones)
 
     def test_a_reseed_leaves_the_campaigns_versions_alone_and_a_rule_still_skips_a_hand_made_one(self):
@@ -272,7 +289,7 @@ class SeedAllTests(TestCase):
         book_axe = Item.objects.get(campaign__isnull=True, name="Axe")
         heavy = Item.objects.get(campaign__isnull=True, name="Heavy Armour")
         axe = Item.objects.create(name="Axe", type=book_axe.type, campaign=campaign, replaces=book_axe)
-        ItemAvailability.objects.create(item=axe, cost=25, rarity=2)
+        ItemAvailability.objects.create(item=axe, cost=25)
         mine = Item.objects.create(name="Heavy Armour", type=heavy.type, subtype=heavy.subtype, campaign=campaign, replaces=heavy)  # fmt: skip
         sync_half_price_armour_for_campaign(campaign.id)
         versions = set(Item.objects.filter(campaign=campaign).values_list("id", "replaces_id", "generated_effect_key"))

@@ -122,17 +122,17 @@ class HenchmenMemberSyncCharacterisationTests(RosterTestCase):
         listed = self.client.get(unit_url(HENCHMEN, self.warband.id)).json()
         self.assertEqual([(row["id"], row["henchmen"]) for row in listed], [(self.group.id, [])])
 
-    def test_default_hire_cost_is_one_members_share_of_the_items_and_twice_the_whole_xp(self):
-        # BUG-66, BUG-85 (decision 7): it used to charge every group item and 2 x the decimal XP
+    def test_default_hire_cost_is_the_loadout_and_twice_the_whole_xp(self):
+        # BUG-66, BUG-85 (decision 7): it used to charge 2 x the decimal XP; a row is one copy each (henchmen loadouts)
         self.group.xp = Decimal("20.5")
         self.group.save()
-        for item, cost in ((self.sword, 10), (self.sword, 10), (self.axe, 7), (self.axe, 7)):
+        for item, cost in ((self.sword, 10), (self.axe, 7)):
             self.group.henchmen_group_items.create(item=item, cost=cost)
         members = [{"id": self.alpha.id, "name": "Alpha"}, {"id": self.beta.id, "name": "Beta"}, {"name": "New"}]
 
         self._patch({"henchmen": members})
 
-        # 20 (price) + 17 (one sword and one axe: each member's share) + 40 (2 x 20 whole XP)
+        # 20 (price) + 17 (the loadout: a sword and an axe) + 40 (2 x 20 whole XP)
         self.assertEqual(trade_rows(self.warband), [("Recruit", "New into Zealots", -77, None)])
 
     def test_an_explicit_cost_is_parsed_loosely(self):

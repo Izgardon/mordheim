@@ -88,12 +88,10 @@ class CampaignWriteAtomicityTests(CampaignTransactionTestCase):
         refused = self.client.patch(url, {"in_progress": True, "max_heroes": 40000}, format="json")
         self.assertEqual((refused.status_code, list(refused.data)), (400, ["max_heroes"]))
         self.answer_errors_with_500()
-        failing = mock.patch(
-            "apps.campaigns.services.settings.get_valid_campaign_item_settings", side_effect=DatabaseError("boom")
-        )
+        failing = mock.patch("apps.campaigns.services.settings.set_settings", side_effect=DatabaseError("boom"))
 
         with failing:
-            response = self.client.patch(url, {"in_progress": True, "max_heroes": 4, "item_setting_ids": [1]}, format="json")  # fmt: skip
+            response = self.client.patch(url, {"in_progress": True, "max_heroes": 4, "setting_ids": []}, format="json")  # fmt: skip
 
         self.assertEqual(response.status_code, 500)
         self.campaign.refresh_from_db()

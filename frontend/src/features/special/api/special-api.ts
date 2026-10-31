@@ -40,7 +40,3 @@ export function createSpecial(payload: SpecialCreatePayload) {
     body: payload,
   });
 }
-
-export function getSpecial(specialId: number) {
-  return apiRequest<Special>(`/special/${specialId}/`);
-}

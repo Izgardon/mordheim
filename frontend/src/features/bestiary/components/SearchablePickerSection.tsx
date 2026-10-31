@@ -71,14 +71,14 @@ export default function SearchablePickerSection<T extends Identifiable>({
           {selected.map((s) => (
             <span
               key={s.id}
-              className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-xs"
+              className="inline-flex items-center gap-1 border border-border px-2 py-0.5 text-xs text-ink"
             >
               {s.name}
               {renderSelectedExtra?.(s)}
               <button
                 type="button"
                 onClick={() => onRemove(s.id)}
-                className="text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-head"
                 aria-label={`Remove ${s.name}`}
               >
                 <X className="h-3 w-3" />
@@ -97,12 +97,12 @@ export default function SearchablePickerSection<T extends Identifiable>({
         placeholder={placeholder}
       />
       {expanded ? (
-        <div className="max-h-40 overflow-y-auto rounded-md border border-input bg-popover">
+        <div className="max-h-40 overflow-y-auto border border-strong bg-surface">
           {filtered.map((s) => (
             <button
               key={s.id}
               type="button"
-              className="flex w-full flex-col px-3 py-1.5 text-left text-sm hover:bg-accent"
+              className="flex w-full flex-col px-3 py-1.5 text-left text-sm text-ink hover:bg-raised"
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => handleSelect(s)}
             >
@@ -118,7 +118,7 @@ export default function SearchablePickerSection<T extends Identifiable>({
           {onCreateNew ? (
             <button
               type="button"
-              className="flex w-full items-center gap-1.5 border-t border-border/60 px-3 py-2 text-left text-sm text-muted-foreground hover:bg-accent hover:text-foreground"
+              className="flex w-full items-center gap-1.5 border-t border-line px-3 py-2 text-left text-sm text-muted-foreground hover:bg-raised hover:text-head"
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => {
                 onCreateNew(search.trim());

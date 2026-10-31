@@ -9,7 +9,7 @@ from decimal import Decimal
 from django.utils import timezone
 
 from apps.core.testing import count_get_queries
-from apps.warbands.models import HenchmenGroupItem, HeroItem, HirelingItem
+from apps.warbands.models import HenchmanItemGap, HenchmenGroupItem, HeroItem, HirelingItem
 
 from .beast_support import make_animal, raven, warhorse
 from .roster_support import HENCHMEN, HERO, HIRELING, RosterTestCase, make_unit
@@ -42,15 +42,13 @@ class MountRatingTests(RosterTestCase):
 
         self.assertEqual((self.rating(), self.sheet_rating()), (23, 23))
 
-    def test_a_group_rides_one_mount_per_living_member(self):
+    def test_a_groups_mount_counts_for_each_member_who_carries_it(self):
         group = make_unit(HENCHMEN, self.warband, members=("A", "B", "C"))
-        for _ in range(4):
-            HenchmenGroupItem.objects.create(henchmen_group=group, item=self.horse, companion=True)
+        row = HenchmenGroupItem.objects.create(henchmen_group=group, item=self.horse, companion=True)
 
-        self.assertEqual((self.rating(), self.sheet_rating()), (3 * 5 + 3 * 5, 3 * 5 + 3 * 5))  # the fourth: no rider
-        spare = HenchmenGroupItem.objects.filter(henchmen_group=group).order_by("-id").values_list("id", flat=True)[:2]
-        HenchmenGroupItem.objects.filter(id__in=list(spare)).delete()
-        self.assertEqual(self.rating(), 3 * 5 + 2 * 5)
+        self.assertEqual((self.rating(), self.sheet_rating()), (3 * 5 + 3 * 5, 3 * 5 + 3 * 5))
+        HenchmanItemGap.objects.create(henchman=group.henchmen.order_by("id").first(), group_item=row)  # his died
+        self.assertEqual((self.rating(), self.sheet_rating()), (3 * 5 + 2 * 5, 3 * 5 + 2 * 5))
 
     def test_the_summary_names_the_mounts_part_of_the_rating_a_group_on_mixed_mounts_included(self):
         group = make_unit(HENCHMEN, self.warband, members=("A", "B"))
@@ -61,8 +59,9 @@ class MountRatingTests(RosterTestCase):
         summary = self.client.get(f"/api/warbands/{self.warband.id}/summary/").data
         sheet = self.client.get(f"/api/warbands/{self.warband.id}/sheet/").data["summary"]
 
-        self.assertEqual((summary["mounts_rating"], sheet["mounts_rating"]), (5 + 3 + 3, 5 + 3 + 3))
-        self.assertEqual(float(summary["rating"]), 2 * 5 + 5 + 5 + 3 + 3)
+        # a group riding two kinds (a warning) rates its first: every member carries both
+        self.assertEqual((summary["mounts_rating"], sheet["mounts_rating"]), (2 * 5 + 3, 2 * 5 + 3))
+        self.assertEqual(float(summary["rating"]), 2 * 5 + 5 + 2 * 5 + 3)
 
     def test_a_dead_or_dismissed_riders_mount_adds_nothing(self):
         for fields in ({"dead": True}, {"dismissed_at": timezone.now()}):

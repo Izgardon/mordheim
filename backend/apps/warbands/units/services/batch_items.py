@@ -16,9 +16,9 @@ from apps.items.models import Item
 from apps.warbands.models import RosterUnit, Warband
 from apps.warbands.serializers.purchases import BatchPurchaseSerializer, StashTakeSerializer
 from apps.warbands.services import economy_log
-from apps.warbands.services.purchases import Line, Warning, buy_lines, check_companion, price_line
+from apps.warbands.services.purchases import Line, Warning, buy_lines, check_companion, for_every_member, price_line
 from apps.warbands.services.stash import StashShortage, remove_from_stash
-from apps.warbands.services.unit_items import add_unit_copies
+from apps.warbands.services.unit_items import add_unit_copies, copies_wanted
 from apps.warbands.units.catalogue_scope import shop_items
 from apps.warbands.units.errors import FieldErrors, RosterError, flatten_errors
 
@@ -111,7 +111,7 @@ def _take_from_stash(kind: "UnitKindSpec", warband: Warband, line: ItemLine, uni
     item = line.item
     assert item is not None
     try:
-        take = remove_from_stash(warband.id, item.id, line.data["quantity"])
+        take = remove_from_stash(warband.id, item.id, copies_wanted(kind.key, unit, line.data["quantity"]))
     except StashShortage as shortage:
         message = f"The stash holds {shortage.held} of these."
         raise RosterError(message, "not_enough_in_stash", {f"{line.key}.quantity": [message]}) from None
@@ -131,10 +131,11 @@ def apply_lines(
     units = {unit.pk: unit for unit in kind.objects.filter(id__in=ids).only("id", "name", "unit_type")} if ids else {}
     for line in lines.stash_takes:
         _take_from_stash(kind, warband, line, _unit(line, units, created))
-    purchases = [
-        Line(line.item, kind.key, _unit(line, units, created), line.data, line.price, line.key)
-        for line in lines.purchases
-        if line.item is not None
-    ]
+    purchases = []
+    for line in lines.purchases:
+        unit = _unit(line, units, created)
+        data = for_every_member(unit, line.data) if kind.has_members else line.data  # a group: one loadout row
+        if line.item is not None:
+            purchases.append(Line(line.item, kind.key, unit, data, line.price, line.key))
     _trades, warnings = buy_lines(warband, purchases)
     return warnings

@@ -22,7 +22,7 @@ from django.db.models import (
 from django.db.models.functions import Cast, Coalesce, Concat, Lower, NullIf, Trim
 from django.utils import timezone
 
-from apps.battles.models import Battle, BattleParticipant
+from apps.battles.models import Battle, BattleKill, BattleParticipant
 from apps.battles.services.setup import busy_participations
 from apps.users.names import display_name
 from apps.warbands.models import Henchman, Hero, Hireling, Warband
@@ -35,10 +35,21 @@ def campaigns_for_user(user: Any) -> QuerySet[Campaign]:
     """The user's campaigns with their settings, his `role` and their `player_count` (CampaignSerializer)."""
     return (
         Campaign.objects.select_related("settings")
-        .prefetch_related("settings__item_settings")
+        .prefetch_related("campaign_type_links")  # its settings in play
         .annotate(membership_for_user=FilteredRelation("memberships", condition=Q(memberships__user=user)))
         .filter(membership_for_user__isnull=False)
         .annotate(player_count=Count("memberships", distinct=True), role=F("membership_for_user__role__slug"))
+    )
+
+
+def campaign_list_for_user(user: Any) -> QuerySet[Campaign]:
+    """The campaigns list: `campaigns_for_user` with the user's own warband in each (`my_warband_id`, `_name` and
+    `_type`, its type's name; None without one), read in the same query."""
+    mine = Warband.objects.filter(campaign_id=OuterRef("pk"), user=user)
+    return campaigns_for_user(user).annotate(
+        my_warband_id=Subquery(mine.values("id")[:1]),
+        my_warband_name=Subquery(mine.values("name")[:1]),
+        my_warband_type=Subquery(mine.values("warband_type__name")[:1]),
     )
 
 
@@ -73,11 +84,13 @@ def format_short_date(value: datetime | None) -> str:
 
 
 def _busy_battle_fields(busy: tuple | None) -> dict:
-    battle_id, battle_status, last_activity_at = busy or (None, None, None)
+    battle_id, battle_status, last_activity_at, participant_status = busy or (None, None, None, None)
     return {
         "battle_busy_status": battle_status,
         "battle_busy_battle_id": battle_id,
         "battle_busy_last_activity_at": last_activity_at,
+        # his own place in it (next step 5: the readiness bar tells In battle from Post-game)
+        "battle_busy_participant_status": participant_status,
     }
 
 
@@ -89,14 +102,16 @@ def campaign_memberships(campaign_id: int) -> list[CampaignMembership]:
 
 def _warbands_by_user(campaign_id: int) -> dict[int, dict[str, Any]]:
     warbands = list(
-        Warband.objects.filter(campaign_id=campaign_id).only("id", "name", "faction", "user_id", "wins", "losses")
+        Warband.objects.filter(campaign_id=campaign_id)
+        .select_related("warband_type")
+        .only("id", "name", "warband_type__name", "user_id", "wins", "losses")
     )
     units_by_warband = load_warband_units(warband.id for warband in warbands)
     return {
         warband.user_id: {
             "id": warband.id,
             "name": warband.name,
-            "faction": warband.faction,
+            "type_name": warband.warband_type.name if warband.warband_type else "",
             "wins": warband.wins,
             "losses": warband.losses,
             "rating": units_by_warband[warband.id].rating,
@@ -106,11 +121,11 @@ def _warbands_by_user(campaign_id: int) -> dict[int, dict[str, Any]]:
 
 
 def _busy_by_user(campaign_id: int, user_ids: list[int]) -> dict[int, tuple]:
-    """Each member's most recent unfinished battle: id, status, last activity (BUG-10)."""
+    """Each member's most recent unfinished battle: id, status, last activity (BUG-10) and his own status in it."""
     busy_entries = (
         busy_participations(campaign_id, user_ids)  # the busy rule battles warn with (decision 1)
         .order_by("-battle__created_at")
-        .values_list("user_id", "battle_id", "battle__status", "battle__last_activity_at")
+        .values_list("user_id", "battle_id", "battle__status", "battle__last_activity_at", "status")
     )
     busy_by_user: dict[int, tuple] = {}
     for user_id, *battle in busy_entries:
@@ -190,59 +205,122 @@ def _dice_values(exploration: Any) -> list[int]:
     return values
 
 
-def _history_participant(participant: BattleParticipant) -> dict[str, Any]:
+def _history_participant(participant: BattleParticipant, fought: bool) -> dict[str, Any]:
+    """A participant's totals: his warband's live kills in the battle (battle_kill; none for a reported result,
+    which has no fight), and what his post-game left."""
+    kills = getattr(participant, "live_kill_count", 0) if fought else None
     postbattle_json = participant.postbattle_json if isinstance(participant.postbattle_json, dict) else {}
     unit_results = postbattle_json.get("unit_results", {})
     row: dict[str, Any] = {"warband_id": participant.warband_id, "warband_name": participant.warband.name}
     if not isinstance(unit_results, dict) or not unit_results:
-        return {**row, "kills": None, "ooas": None, "deaths": [], "xp_gain": None, "exploration": []}
+        blank: dict[str, Any] = {"kills": kills, "ooas": None, "deaths": [], "xp_gain": None, "exploration": []}
+        return {**row, **blank, "shards": None, "heroes_lost": 0}
     results = [result for result in unit_results.values() if isinstance(result, dict)]
     deaths = [str(result.get("unit_name", "")).strip() for result in results if bool(result.get("dead", False))]
+    exploration = postbattle_json.get("exploration", {})
     return {
         **row,
-        "kills": sum(_count(result.get("kill_count", 0)) for result in results),
+        "kills": kills,
         "ooas": sum(1 for result in results if bool(result.get("out_of_action", False))),
         "deaths": [name for name in deaths if name],
         "xp_gain": sum(_count(result.get("xp_earned", 0)) for result in results),
-        "exploration": _dice_values(postbattle_json.get("exploration", {})),
+        "exploration": _dice_values(exploration),
+        # the overview's stats line (next step 5): the shards it found, the heroes it lost
+        "shards": _count(exploration.get("amount", 0)) if isinstance(exploration, dict) else 0,
+        "heroes_lost": sum(1 for result in results if result.get("dead") and result.get("unit_kind") == "hero"),
+    }
+
+
+def _live_kill_count() -> Coalesce:
+    """A participant's warband's live kills in his battle, counted in the participants' own query."""
+    kills = BattleKill.objects.filter(
+        battle_id=OuterRef("battle_id"), killer_warband_id=OuterRef("warband_id"), voided_at__isnull=True
+    )
+    counted = kills.order_by().values("killer_warband_id").annotate(count=Count("id")).values("count")
+    return Coalesce(Subquery(counted[:1]), Value(0))
+
+
+UNIT_CARDS = {
+    "hero": ("hero", "hero_id"),
+    "henchman": ("henchmen_group", "group_id"),
+    "hireling": ("hireling", "hireling_id"),
+}
+
+
+def _moment_unit(moment: PivotalMoment) -> dict[str, Any] | None:
+    """The moment's unit as its warband page's card: kind and id for the `?unit=` link (a henchman's group)."""
+    card, field = UNIT_CARDS.get(moment.unit_kind or "", ("", ""))
+    unit_id = getattr(moment, field, None) if field else None
+    return {"kind": card, "id": unit_id, "name": moment.unit_name or ""} if unit_id else None
+
+
+def moment_tag(moment: PivotalMoment) -> str:
+    """ "Round N" for a moment of the fight, "During" for one from a kill logged after it, "Result" for the rest."""
+    if moment.round:
+        return f"Round {moment.round}"
+    return "During" if moment.source_kill_id else "Result"
+
+
+def fight_order(moment: PivotalMoment) -> tuple[bool, int, bool, int, int]:
+    """By round, then the kill it came from; kills logged after the fight next, the result moments last."""
+    no_kill = moment.source_kill_id is None
+    return (moment.round is None, moment.round or 0, no_kill, moment.source_kill_id or 0, moment.id)
+
+
+def _moment(moment: PivotalMoment) -> dict[str, Any]:
+    return {
+        "id": moment.id,
+        "kind": moment.kind,
+        "headline": moment.headline,
+        "detail": moment.detail,
+        "round": moment.round,
+        "tag": moment_tag(moment),
+        "warband_id": moment.warband_id,
+        "warband_name": moment.warband.name,
+        "unit": _moment_unit(moment),
     }
 
 
 def battle_history_payload(campaign_id: int) -> list[dict[str, Any]]:
-    """The campaign's ended battles, newest first, each with its winners and every participant's totals."""
+    """The campaign's ended battles, newest first, each with its winners, every participant's totals and its pivotal
+    moments in fight order (`pivotal_moments.py`): with the membership, four queries."""
     participants = (
         BattleParticipant.objects.select_related("warband")
         .filter(removed_from_record=False)  # without those a battle manager took off the record (BATL-NEW-04)
         .defer(*HISTORY_UNREAD_FIELDS)  # only postbattle_json is read (PERF-45)
+        .annotate(live_kill_count=_live_kill_count())
         .order_by("id")
     )
+    moments = PivotalMoment.objects.select_related("warband")
     battles = (
         Battle.objects.filter(campaign_id=campaign_id, status=Battle.STATUS_ENDED)
-        .prefetch_related(Prefetch("participants", queryset=participants))
+        .prefetch_related(Prefetch("participants", queryset=participants), Prefetch("pivotal_moments", moments))
         .order_by("-ended_at", "-created_at", "-id")
     )
     payload = []
     for battle in battles:
         rows = list(battle.participants.all())
+        on_record = {row.warband_id for row in rows}
         winner_ids = set(battle.winner_warband_ids_json or [])
+        told = sorted(
+            (moment for moment in battle.pivotal_moments.all() if moment.warband_id in on_record), key=fight_order
+        )
         payload.append(
             {
                 "id": battle.id,
                 "scenario": battle.scenario,
                 "winners": [row.warband.name for row in rows if row.warband_id in winner_ids],
                 "date": format_short_date(battle.ended_at or battle.created_at),
-                "participants": [_history_participant(row) for row in rows],
+                "participants": [
+                    _history_participant(row, battle.flow_type == Battle.FLOW_TYPE_NORMAL) for row in rows
+                ],
+                "moments": [_moment(moment) for moment in told],
             }
         )
     return payload
 
 
-# Pivotal moments and top killers
-
-
-def pivotal_moments(campaign_id: int) -> QuerySet[PivotalMoment]:
-    rows = PivotalMoment.objects.filter(campaign_id=campaign_id).select_related("battle", "warband")
-    return rows.order_by("-battle_ended_at", "id")
+# Top killers
 
 
 _EMPTY = Value("", output_field=CharField())

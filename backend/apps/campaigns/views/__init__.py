@@ -36,8 +36,9 @@ from .overview import (
     CampaignActiveBattleCancelView,
     CampaignActiveBattlesView,
     CampaignBattleHistoryView,
-    CampaignPivotalMomentsView,
+    CampaignChronicleView,
     CampaignPlayersView,
+    CampaignSearchView,
     CampaignTopKillersView,
 )
 
@@ -46,6 +47,7 @@ __all__ = [
     "CampaignActiveBattlesView",
     "CampaignArchiveView",
     "CampaignBattleHistoryView",
+    "CampaignChronicleView",
     "CampaignBulletinDetailView",
     "CampaignBulletinView",
     "CampaignChatReadView",
@@ -70,9 +72,9 @@ __all__ = [
     "CampaignMyPermissionsView",
     "CampaignOwnershipView",
     "CampaignPermissionsView",
-    "CampaignPivotalMomentsView",
     "CampaignPlayersView",
     "CampaignRestoreView",
+    "CampaignSearchView",
     "CampaignTopKillersView",
     "JoinCampaignView",
 ]

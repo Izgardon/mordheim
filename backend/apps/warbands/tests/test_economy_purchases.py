@@ -12,7 +12,7 @@ from apps.warbands.services import ledger
 
 from .roster_support import HENCHMEN, HERO, RosterTestCase, log_rows, make_unit, trade_rows, unit_url
 
-ANSWER_KEYS = ["target_type", "target_id", "updated_at", "items", "mount", "pets", "effective_stats", "group"]
+ANSWER_KEYS = ["target_type", "target_id", "updated_at", "items", "mount", "pets", "effective_stats", "unit", "group"]
 ANSWER_KEYS += ["stash_item", "trade", "summary", "warnings"]  # mount to group: the bestiary rewrite step 4
 
 
@@ -137,6 +137,43 @@ class PurchaseTests(PurchaseTestCase):
         return self.foreign_race.campaign
 
 
+class PriceRowPurchaseTests(PurchaseTestCase):
+    """The items rebuild: a purchase takes the chosen price row and, where it has dice, the total rolled."""
+
+    def test_a_row_with_dice_costs_its_cost_plus_the_roll_each_pip_at_its_multiplier(self):
+        wardogs = Item.objects.create(name="Wardogs", type="Misc")
+        dogs = ItemAvailability.objects.create(item=wardogs, cost=25, dice=2, rarity=10)
+        boat = ItemAvailability.objects.create(item=wardogs, label="Kennel", cost=200, dice=1, dice_multiplier=25)
+
+        self.buy(item_id=wardogs.id, availability_id=dogs.id, dice_roll=7, target_type="stash")
+        self.buy(item_id=wardogs.id, availability_id=boat.id, dice_roll=3, target_type="stash")
+        self.buy(item_id=wardogs.id, availability_id=dogs.id, dice_roll=7, price=20, target_type="stash")  # sent: paid
+
+        self.assertEqual([price for *_, price, _ in trade_rows(self.warband)], [-32, -275, -20])
+
+    def test_a_row_with_dice_needs_a_roll_it_could_make(self):
+        wardogs = Item.objects.create(name="Wardogs", type="Misc")
+        dogs = ItemAvailability.objects.create(item=wardogs, cost=25, dice=2)
+
+        missing = self.buy(400, item_id=wardogs.id, availability_id=dogs.id, target_type="stash")
+        too_high = self.buy(400, item_id=wardogs.id, availability_id=dogs.id, dice_roll=13, target_type="stash")
+
+        self.assertEqual(missing["fields"], {"dice_roll": ["This price has 2D6: roll them and send the total."]})
+        self.assertEqual(too_high["fields"], {"dice_roll": ["A roll of 2D6 is 2 to 12."]})
+        self.assertEqual(trade_rows(self.warband), [])
+
+    def test_a_plain_row_costs_its_cost_and_a_row_without_one_needs_a_price(self):
+        charm = Item.objects.create(name="Lucky Charm", type="Misc")
+        plain = ItemAvailability.objects.create(item=charm, cost=10)
+        unpriced = ItemAvailability.objects.create(item=charm, cost=None, cost_note="4 x Price")
+
+        self.buy(item_id=charm.id, availability_id=plain.id, dice_roll=5, target_type="stash")  # no dice: ignored
+        refused = self.buy(400, item_id=charm.id, availability_id=unpriced.id, target_type="stash")
+
+        self.assertEqual(trade_rows(self.warband), [("Buy", "Lucky Charm", -10, None)])
+        self.assertIn("price", refused["fields"])
+
+
 class RarityRollPurchaseTests(PurchaseTestCase):
     """Decision 9: the roll is saved with the purchase and spends the searcher's trading action; warn, never refuse."""
 
@@ -182,6 +219,16 @@ class RarityRollPurchaseTests(PurchaseTestCase):
         )
         self.assertEqual(WarbandItem.objects.get(warband=self.warband).quantity, 1)
 
+    def test_a_roll_with_no_hero_goes_with_the_purchase_and_spends_nobody(self):
+        ana = make_unit(HERO, self.warband, name="Ana")
+
+        self.buy(item_id=self.sword.id, price=0, target_type="stash", rarity_roll={"roll": 10, "success": True})
+
+        ana.refresh_from_db()
+        self.assertTrue(ana.trading_action)
+        roll = {"hero": "No hero", "item": "Sword", "rarity": "", "roll": 10, "modifier": 0, "success": True}
+        self.assertEqual(log_rows(self.warband)[0], ("trading_action", "rarity roll", roll, None))
+
     def test_a_searcher_who_is_not_on_the_roster_is_refused(self):
         dead = make_unit(HERO, self.warband, dead=True)
 
@@ -211,6 +258,20 @@ class RarityRollWithoutPurchaseTests(PurchaseTestCase):
         self.assertEqual(log_rows(self.warband), [("trading_action", "rarity roll", roll, None)])
         self.assertEqual((trade_rows(self.warband), WarbandItem.objects.exists()), ([], False))
 
+    def test_a_search_with_no_hero_is_logged_and_spends_nothing(self):
+        ana = make_unit(HERO, self.warband, name="Ana")
+
+        body = self._post(item_id=self.sword.id, hero_id=None, roll=5, modifier=2, rarity="Rare 8", success=False)
+
+        ana.refresh_from_db()
+        self.assertEqual((body["hero_id"], body["trading_action"], ana.trading_action), (None, None, True))
+        self.assertEqual(
+            body["warnings"],
+            [{"code": "rarity_roll_failed", "message": "The rarity roll for Sword failed.", "hero_id": None}],
+        )
+        roll = {"hero": "No hero", "item": "Sword", "rarity": "Rare 8", "roll": 5, "modifier": 2, "success": False}
+        self.assertEqual(log_rows(self.warband), [("trading_action", "rarity roll", roll, None)])
+
     def test_a_second_search_in_a_round_warns(self):
         ana = make_unit(HERO, self.warband, name="Ana", trading_action=False)
 
@@ -225,7 +286,6 @@ class RarityRollWithoutPurchaseTests(PurchaseTestCase):
             with self.subTest(hero=hero.id):
                 body = self._post(status=status, item_id=self.sword.id, hero_id=hero.id, roll=4, success=True)
                 self.assertEqual(body["fields"], {"hero_id": ["Not a hero on this warband's roster."]})
-        self._post(status=400, item_id=self.sword.id, roll=4, success=True)  # no hero
         self.client.force_authenticate(user=self.viewer)
         self._post(status=403, item_id=self.sword.id, hero_id=dead.id, roll=4, success=True)
         self.assertEqual(log_rows(self.warband), [])

@@ -45,7 +45,7 @@ describe("reaching the account page (AUTH-NEW-01)", () => {
   it("is linked from the campaigns list beside Log out", async () => {
     const user = setupUser();
     const app = renderApp("/campaigns");
-    await screen.findByRole("heading", { name: "Welcome back, Raider" });
+    await screen.findByRole("heading", { name: "Campaigns", level: 1 });
 
     await user.click(screen.getByRole("link", { name: "Account" }));
 

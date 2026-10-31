@@ -16,7 +16,6 @@ import {
   hirelingValuesOf,
   type HirelingProfileValues,
 } from "../utils/hireling-form";
-import { useHirelingRestrictions } from "./useHirelingRestrictions";
 
 import type { HirelingCatalogueConfig } from "../hireling-catalogue-kinds";
 import type { HirelingProfile, HirelingProfileDetail } from "../types/hireling-catalogue-types";
@@ -32,6 +31,7 @@ const SHOWN_FIELDS = [
   "upkeep_cost_expression",
   "rating",
   "item_entries",
+  "warbands",
   "payment_note",
 ];
 
@@ -58,7 +58,7 @@ type UseHirelingProfileFormOptions = {
 
 /**
  * A hired sword's or dramatis persona's Add or Edit form (`use<Kind>Form`): the profile, race, hire
- * terms, skill lists, kit, restrictions and a dramatis persona's terms; the save (a book entry's
+ * terms, skill lists, kit, who may hire him and a dramatis persona's terms; the save (a book entry's
  * first edit makes the campaign's version, written in its place), Delete with its usage check, and
  * Revert. A taken name keeps the form open with its matches.
  */
@@ -86,7 +86,6 @@ export function useHirelingProfileForm({
     specialType: config.specialType,
     maxQuantity: MAX_KIT_QUANTITY,
   });
-  const restrictions = useHirelingRestrictions({ campaignId, enabled: open });
   const nameTaken = useNameTakenMatches({ kind, campaignId, fieldErrors, onEditMatch });
   const deletion = useCatalogueDelete({
     kind,
@@ -115,10 +114,7 @@ export function useHirelingProfileForm({
     }
     setIsSaving(true);
     setFormError("");
-    const payload = hirelingPayload(config, values, {
-      ...links.payload(),
-      restriction_ids: restrictions.payload(),
-    });
+    const payload = hirelingPayload(config, values, links.payload());
     try {
       const saved = entry
         ? await updateHirelingProfile(kind, entry.id, {
@@ -138,18 +134,16 @@ export function useHirelingProfileForm({
   };
 
   const { load: loadLinks } = links;
-  const { load: loadRestrictions } = restrictions;
   const { clear: clearFieldErrors } = fieldErrors;
   /** Back to `next`'s values and links (a blank form for null), with no message. */
   const load = useCallback(
     (next: HirelingProfileDetail | null) => {
       setValues(hirelingValuesOf(next));
       loadLinks(next);
-      loadRestrictions(next?.restrictions ?? null);
       setFormError("");
       clearFieldErrors();
     },
-    [clearFieldErrors, loadLinks, loadRestrictions]
+    [clearFieldErrors, loadLinks]
   );
 
   return {
@@ -166,7 +160,6 @@ export function useHirelingProfileForm({
           : prev.available_skill_types.filter((listed) => listed !== type),
       })),
     links,
-    restrictions,
     fieldErrors: fieldErrors.errors,
     nameTaken,
     isSaving: isSaving || deletion.isDeleting,

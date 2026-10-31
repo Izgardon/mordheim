@@ -1,6 +1,5 @@
 /**
- * The whole app as `main.tsx` mounts it: AppProvider's providers (with TestDiceProvider for the
- * dice and no devtools), AppErrorBoundary, and the app's own `routes` in a memory router, on the
+ * The whole app as `main.tsx` mounts it: AppProvider's providers (no devtools), AppErrorBoundary, and the app's own `routes` in a memory router, on the
  * app's query client. For route guards, redirects and the requests of a cold start.
  * Mock in the test file: `@/lib/api-client` (fake-api), `@/lib/realtime/client`
  * (fake-realtime) and `@/lib/use-media-query`. Call `cleanupApps()` in `afterEach`.
@@ -17,7 +16,6 @@ import { AppToaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/features/auth/stores/auth-store";
 import { createQueryClient } from "@/lib/query-client";
 import { AppStoreProvider } from "@/stores/app-store";
-import { TestDiceProvider } from "./dice";
 
 // The routes load these on demand; importing them here first lets each lazy() resolve at once.
 import "@/app/routes/NotFound";
@@ -40,11 +38,9 @@ export function renderApp(path: string) {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <AppStoreProvider>
-          <TestDiceProvider>
-            <AppErrorBoundary>
-              <RouterProvider router={router} />
-            </AppErrorBoundary>
-          </TestDiceProvider>
+          <AppErrorBoundary>
+            <RouterProvider router={router} />
+          </AppErrorBoundary>
         </AppStoreProvider>
       </AuthProvider>
       <AppToaster />

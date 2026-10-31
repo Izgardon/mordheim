@@ -31,8 +31,10 @@ const SHOWN_FIELDS = [
   "item_entries",
   "item.availabilities",
   "item.availabilities.*.cost",
+  "item.availabilities.*.dice",
+  "item.availabilities.*.dice_multiplier",
   "item.availabilities.*.rarity",
-  "item.availabilities.*.variable_cost",
+  "item.availabilities.*.warbands",
 ];
 
 type UseBestiaryEntryFormOptions = {
@@ -79,7 +81,7 @@ export function useBestiaryEntryForm({
   const [formError, setFormError] = useState("");
   const fieldErrors = useFieldErrors(SHOWN_FIELDS, resetKey);
   const links = useBestiaryLinks({ campaignId, open, specialType: "Animal" });
-  const shop = useShopPrices({ campaignId, enabled: open && values.available_in_shop });
+  const shop = useShopPrices();
   const nameTaken = useNameTakenMatches({ kind: "bestiary", campaignId, fieldErrors, onEditMatch });
   const deletion = useCatalogueDelete({
     kind: "bestiary",

@@ -198,7 +198,7 @@ describe("AppShell (mobile)", () => {
 
   it("keeps the page mounted when switching between the mobile and desktop chrome (BUG-23)", async () => {
     const { rerender } = renderWithQueryClient(
-      <AppShell variant="desktop" navbar={<nav>Rail</nav>} desktopTopBar={<div>Desktop bar</div>}>
+      <AppShell variant="desktop" rail={<nav>Rail</nav>}>
         <CampaignPage campaignId={7} />
       </AppShell>
     );
@@ -206,7 +206,7 @@ describe("AppShell (mobile)", () => {
     expect(screen.getByText("Rail")).toBeInTheDocument();
 
     rerender(
-      <AppShell variant="mobile" bottomNav={<nav>Bottom nav</nav>} navbar={<nav>Rail</nav>}>
+      <AppShell variant="mobile" bottomNav={<nav>Bottom nav</nav>} rail={<nav>Rail</nav>}>
         <CampaignPage campaignId={7} />
       </AppShell>
     );

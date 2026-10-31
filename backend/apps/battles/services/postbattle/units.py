@@ -24,7 +24,7 @@ from apps.warbands.utils.leaders import choose_leader
 from ...validation.coerce import coerce_int
 from ...validation.unit_keys import parse_unit_key
 from ..injuries import InjuryOutcome, apply_stat_and_special, injury_outcome
-from ..items_lost import henchman_takes_his_share, lost_entry
+from ..items_lost import henchman_share, lost_entry
 from ..warnings import Warning, unit_left_warband
 from .context import FinaliseContext
 from .stats import kept_stats
@@ -194,7 +194,7 @@ class UnitResults:
         if result.dead and not henchman.dead:
             henchman.dead = True
             fields.append("dead")
-            self.outcome.items_lost.append(lost_entry(result.name, henchman_takes_his_share(group)))
+            self.outcome.items_lost.append(lost_entry(result.name, henchman_share(henchman)))
         self.changes.mark(henchman, fields, touch=False)
         xp = 0 if group.no_level_ups else result.xp
         if self.group_xp.setdefault(group.id, xp) != xp:

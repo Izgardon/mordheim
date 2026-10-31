@@ -1,17 +1,11 @@
-import { useState } from "react";
+import type { ReactNode } from "react";
 
-import { MessageSquare, Send } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Send } from "lucide-react";
+import { Slot } from "@radix-ui/react-slot";
+
+import { SidePanel } from "@/components/ui/side-panel";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
-import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import { useChatWindow } from "../hooks/useChatWindow";
 
@@ -20,48 +14,35 @@ import ChatMessageItem from "./ChatMessageItem";
 
 type Props = {
   campaignId: number;
-  className?: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  /** The button that opens it, given the unread count (the shell owns the open state). */
+  trigger?: (unread: number) => ReactNode;
 };
 
-export default function CampaignChatMenu({ campaignId, className }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function CampaignChatMenu({ campaignId, open, onOpenChange, trigger }: Props) {
   const { user: currentUser } = useAppStore();
-  const chat = useChatWindow(campaignId, isOpen);
+  const chat = useChatWindow(campaignId, open);
   // Owners and admins remove posts (decision 8); read from the campaign the layout loaded.
   const canRemove = useCampaignCapabilities(campaignId, { read: false }).remove_posts;
   const { messages, isLoading, loadError, unread } = chat;
-  const handleOpenChange = (open: boolean) => {
-    if (open) {
+  const handleOpenChange = (next: boolean) => {
+    if (next) {
       chat.resetHistory();
     }
-    setIsOpen(open);
+    onOpenChange(next);
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <button
-          type="button"
-          className={cn(
-            "icon-button relative flex h-9 w-9 items-center justify-center border-none bg-transparent p-0",
-            className
-          )}
-          aria-label="Campaign chat"
-        >
-          <MessageSquare className="theme-heading-soft h-5 w-5" aria-hidden="true" />
-          {unread > 0 ? (
-            <span className="absolute -right-1 -top-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-1 text-[0.55rem] font-semibold text-primary-foreground">
-              {unread > 9 ? "9+" : unread}
-            </span>
-          ) : null}
-        </button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[28rem]">
-        <DialogHeader>
-          <DialogTitle>Campaign Chat</DialogTitle>
-          <DialogDescription>Messages to everyone in this campaign.</DialogDescription>
-        </DialogHeader>
-
+    <>
+      {trigger ? <Slot onClick={() => handleOpenChange(true)}>{trigger(unread)}</Slot> : null}
+      <SidePanel
+        open={open}
+        onOpenChange={handleOpenChange}
+        kicker="Campaign"
+        title="Chat"
+        description="Messages to everyone in this campaign."
+      >
         {/* Messages list */}
         <div
           ref={chat.listRef}
@@ -74,7 +55,7 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
             </p>
           ) : null}
           {loadError && messages.length > 0 ? (
-            <p role="alert" className="py-1 text-center text-xs text-red-400">
+            <p role="alert" className="py-1 text-center text-xs text-danger">
               {loadError}{" "}
               <button type="button" className="underline" onClick={chat.retryLoad}>
                 Retry
@@ -102,7 +83,7 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
         </div>
 
         {/* Input bar */}
-        <div className="space-y-2 border-t border-border/40 pt-3">
+        <div className="flex flex-col gap-2 border-t border-line pt-3">
           <div className="flex items-center gap-2">
             <label htmlFor="campaign-chat-message" className="sr-only">
               Message the campaign
@@ -110,7 +91,7 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
             <input
               id="campaign-chat-message"
               type="text"
-              className="field-surface flex-1 rounded-xl px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary/60"
+              className="h-11 min-w-0 flex-1 border border-strong bg-page px-3 text-base text-ink outline-none placeholder:text-faint focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring md:text-sm"
               placeholder="Send a message..."
               value={chat.draft}
               onChange={(e) => chat.updateDraft(e.target.value)}
@@ -126,19 +107,19 @@ export default function CampaignChatMenu({ campaignId, className }: Props) {
               type="button"
               onClick={() => void chat.handleSend()}
               disabled={!chat.draft.trim() || chat.isSending}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground disabled:opacity-40"
+              className="flex h-11 w-11 shrink-0 items-center justify-center border border-primary bg-primary text-on-accent transition-colors hover:border-accent-hi hover:bg-accent-hi disabled:opacity-40"
               aria-label="Send message"
             >
               <Send className="h-4 w-4" />
             </button>
           </div>
           {chat.sendError ? (
-            <p role="alert" className="text-xs text-red-400">
+            <p role="alert" className="text-xs text-danger">
               {chat.sendError}
             </p>
           ) : null}
         </div>
-      </DialogContent>
-    </Dialog>
+      </SidePanel>
+    </>
   );
 }

@@ -15,7 +15,6 @@ from apps.items.models import Item
 from apps.items.tests.catalogue_support import STATS
 from apps.items.tests.test_catalogue_characterisation_seeders import data_file, run
 from apps.races.models import Race
-from apps.restrictions.models import Restriction
 from apps.skills.models import Skill
 from apps.special.models import Special
 
@@ -61,7 +60,7 @@ class HirelingSeederTests(TestCase):
         cls.axe = Item.objects.create(name="Axe", type="Weapon")
         cls.sprint = Skill.objects.create(name="Sprint", type="Speed")
 
-    def test_a_hired_sword_is_seeded_with_its_links_kit_formulas_race_and_restrictions(self):
+    def test_a_hired_sword_is_seeded_with_its_links_kit_formulas_race_and_note(self):
         with data_file([OGRE]) as path:
             output = run("seed_hired_swords", json_paths=[path])
 
@@ -77,8 +76,23 @@ class HirelingSeederTests(TestCase):
         self.assertEqual(list(ogre.skill_links.values_list("skill_id", flat=True)), [self.sprint.id])
         fear = Special.objects.get(name="Fear")
         self.assertEqual((fear.type, list(ogre.special_links.values_list("special_id", flat=True))), ("Hired Sword - Ogre Bodyguard", [fear.id]))  # fmt: skip
-        mercenaries = Restriction.objects.get(restriction="Mercenaries")
-        self.assertEqual(list(ogre.restriction_links.values_list("restriction_id", flat=True)), [mercenaries.id])
+        # the warband types aren't seeded: his own fees, everyone may hire him, and his "unique to" is the note
+        self.assertEqual((ogre.for_everyone, ogre.hire_note, ogre.warband_links.count()), (True, "Mercenaries only", 0))
+
+    def test_with_the_warband_types_seeded_the_import_says_who_may_hire_and_what_he_costs(self):
+        # the items rebuild: mordheimer's list for the Ogre Bodyguard through the Resolver, its fees and its sentence
+        run("seed_settings")
+        run("seed_warband_types")
+        with data_file([OGRE]) as path:
+            run("seed_hired_swords", json_paths=[path])
+
+        ogre = HiredSword.objects.get(name="Ogre Bodyguard", campaign__isnull=True)
+        lines = list(ogre.warband_links.select_related("warband_type"))
+        self.assertEqual((ogre.hire_cost, ogre.hire_cost_expression, ogre.upkeep_cost, ogre.upkeep_cost_expression), (80, "", 30, ""))  # fmt: skip
+        self.assertFalse(ogre.for_everyone)
+        self.assertIn("Reiklanders", {line.warband_type.name for line in lines if line.warband_type})
+        self.assertFalse(any(line.excluded for line in lines))
+        self.assertEqual(ogre.hire_note, "Any warband except Skaven may hire an Ogre Bodyguard.")
 
     def test_a_second_run_updates_in_place_and_replaces_the_links(self):
         with data_file([OGRE]) as path:
@@ -114,8 +128,20 @@ class HirelingSeederTests(TestCase):
                     run(command, json_paths=[path])
         self.assertEqual((HiredSword.objects.count(), DramatisPersona.objects.count()), (0, 0))
 
-    def test_the_committed_dramatis_personae_file_is_empty_until_they_are_scraped(self):
+    def test_the_imports_thirty_dramatis_personae_are_seeded_with_who_may_hire_them_and_their_special_fees(self):
+        # next step 12: mordheimer's dramatis personae through the catalogue import (out/dramatis-personae.json)
+        run("seed_settings")
+        run("seed_warband_types")
+
         output = run("seed_dramatis_personae")
 
-        self.assertIn("Created: 0, updated: 0.", output)
-        self.assertFalse(DramatisPersona.objects.exists())
+        self.assertIn("Created: 30, updated: 0.", output)
+        aenur = DramatisPersona.objects.get(name="Aenur, the sword of twilight")
+        self.assertEqual((aenur.hire_cost, aenur.stays, aenur.weapon_skill), (150, "one_battle", 8))
+        self.assertFalse(aenur.for_everyone)
+        self.assertIn("Reiklanders", {line.warband_type.name for line in aenur.warband_links.select_related("warband_type") if line.warband_type})  # fmt: skip
+        self.assertEqual(aenur.hire_note, "Any warband except Skaven, Undead and the Possessed may hire Aenur.")
+        nicodemus = DramatisPersona.objects.get(name="Nicodemus, the cursed pilgrim")
+        fees = (nicodemus.hire_cost, nicodemus.hire_cost_expression, nicodemus.upkeep_cost_expression)
+        self.assertEqual(fees, (None, "1 wyrdstone", "1 wyrdstone"))  # a fee that isn't gold is kept as text
+        self.assertEqual(nicodemus.caster, "Wizard")

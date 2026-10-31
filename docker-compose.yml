@@ -60,8 +60,11 @@ services:
     build:
       context: ./frontend
     environment:
+      # Once a second, not every 100 ms: on a Windows bind mount each check is slow, and checking every
+      # file ten times a second queued every page load and API call behind it (next-perf-report: an
+      # overview reload went from 3.7 s to 0.4 s). An edit still reaches the page in about 0.3 s.
       CHOKIDAR_USEPOLLING: "true"
-      CHOKIDAR_INTERVAL: "100"
+      CHOKIDAR_INTERVAL: "1000"
       # Process env wins over frontend/.env in Vite, so local dev always uses soketi.
       VITE_PUSHER_KEY: mordheim-local-key
       VITE_PUSHER_CLUSTER: local

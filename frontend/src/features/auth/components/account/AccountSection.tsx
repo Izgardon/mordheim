@@ -1,23 +1,43 @@
 import type { ReactNode } from "react";
 
 // components
-import { CardBackground } from "@components/card-background";
+import { Card } from "@components/card";
+import { cn } from "@/lib/utils";
 
 type AccountSectionProps = {
   title: string;
   description: string;
+  /** Deleting the account reads in danger colours. */
+  tone?: "danger";
   children: ReactNode;
 };
 
-/** One section of the account page, in the settings cards' frame. */
-export function AccountSection({ title, description, children }: AccountSectionProps) {
+/** One section of the account page, in the settings cards' frame (design E). */
+export function AccountSection({ title, description, tone, children }: AccountSectionProps) {
   return (
-    <section aria-label={title}>
-      <CardBackground className="space-y-3 bg-[rgba(12,9,6,0.92)] p-3 sm:p-6">
-        <h2 className="text-lg font-semibold text-foreground">{title}</h2>
-        <p className="text-sm text-muted-foreground">{description}</p>
-        {children}
-      </CardBackground>
-    </section>
+    <Card
+      as="section"
+      aria-label={title}
+      className={cn(
+        "flex flex-col items-start gap-4 p-5 max-[960px]:p-4",
+        tone === "danger" && "border-danger-line"
+      )}
+    >
+      <div className="flex flex-col gap-1">
+        <h2
+          className={cn(
+            "m-0 font-display text-xl font-semibold leading-tight",
+            tone === "danger" ? "text-danger" : "text-head"
+          )}
+        >
+          {title}
+        </h2>
+        <p className="m-0 text-sm text-text2">{description}</p>
+      </div>
+      {children}
+    </Card>
   );
 }
+
+/** An account form: its fields at a readable width, then its button. */
+export const ACCOUNT_FORM = "flex w-full max-w-[420px] flex-col items-start gap-4";

@@ -12,7 +12,7 @@ type CampaignLoadErrorProps = {
 /** A campaign that couldn't be read: why, Retry, and the way back to the list (BUG-144). */
 export default function CampaignLoadError({ message, onRetry }: CampaignLoadErrorProps) {
   return (
-    <main className="campaigns max-h-full bg-transparent">
+    <main className="max-h-full bg-page">
       <div className="mx-auto flex max-h-full max-w-6xl items-center justify-center px-6 py-10">
         <ErrorState
           title="Couldn't open this campaign"

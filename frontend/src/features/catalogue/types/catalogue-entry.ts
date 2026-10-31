@@ -23,6 +23,13 @@ export type CatalogueBadgeFields = {
   updated_at?: string | null;
   /** A version's book values, for the badge's tooltip. */
   book?: BookSummary | null;
+  /**
+   * In a campaign's list (grading phase 1): whether it is in play there, its setting ticked or
+   * none. False rows stay listed, greyed out with "Khemri isn't in this campaign".
+   */
+  in_play?: boolean | null;
+  /** Its setting (`GET settings/`); null counts as Mordheim's. The bestiary's rows have none. */
+  setting_id?: number | null;
 };
 
 /** The fields the badges, Edit, Revert and Delete read from any catalogue entry. */

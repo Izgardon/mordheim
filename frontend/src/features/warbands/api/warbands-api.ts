@@ -1,5 +1,4 @@
 export * from "./warbands-core";
-export * from "./warbands-heroes";
 export * from "./warbands-items";
 export * from "./warbands-logs";
 export * from "./warbands-resources";

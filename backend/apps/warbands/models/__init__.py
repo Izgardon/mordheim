@@ -1,5 +1,6 @@
 from .henchmen import (
     Henchman,
+    HenchmanItemGap,
     HenchmenGroup,
     HenchmenGroupItem,
     HenchmenGroupSkill,
@@ -14,9 +15,13 @@ from .hirelings import (
     HirelingSpell,
 )
 from .shared import RosterUnit, not_dismissed, on_roster
+from .types import WarbandAccess, WarbandGroup, WarbandType
 from .warband import LedgerAction, Warband, WarbandItem, WarbandLog, WarbandResource, WarbandTrade
 
 __all__ = [
+    "WarbandAccess",
+    "WarbandGroup",
+    "WarbandType",
     "LedgerAction",
     "RosterUnit",
     "not_dismissed",
@@ -32,6 +37,7 @@ __all__ = [
     "HeroSkill",
     "HeroSpell",
     "Henchman",
+    "HenchmanItemGap",
     "HenchmenGroup",
     "HenchmenGroupItem",
     "HenchmenGroupSpecial",

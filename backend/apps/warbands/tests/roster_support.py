@@ -14,7 +14,7 @@ from typing import Any
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient, APITestCase
 
-from apps.battles.models import Battle, BattleEvent
+from apps.battles.models import Battle, BattleEvent, BattleKill
 from apps.campaigns.models import (
     Campaign,
     CampaignMembership,
@@ -23,13 +23,12 @@ from apps.campaigns.models import (
     CampaignRole,
     CampaignSettings,
 )
-from apps.items.models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemProperty, ItemPropertyLink
+from apps.items.models import Item, ItemAvailability, ItemAvailabilityWarband, ItemRule, ItemRuleLink
 from apps.races.models import Race
-from apps.restrictions.models import Restriction
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
-from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling, Warband, WarbandLog, WarbandTrade
+from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling, Warband, WarbandLog, WarbandTrade, WarbandType
 from apps.warbands.utils.henchmen_level import HENCHMEN_LEVEL_THRESHOLDS
 from apps.warbands.utils.hero_level import HERO_LEVEL_THRESHOLDS
 
@@ -181,11 +180,33 @@ def log_rows(warband: Warband) -> list[tuple[str, str, dict[str, Any], str | Non
     return [(row.feature, row.entry_type, row.payload, row.parent.entry_type if row.parent else None) for row in rows]
 
 
-def record_kill(battle: Battle, killer_type: str, killer_id: int, victim: dict[str, Any]) -> BattleEvent:
-    return BattleEvent.objects.create(
+def record_kill(
+    battle: Battle,
+    killer: Hero | Hireling | Henchman,
+    victim: str = "Rat",
+    warband: Warband | None = None,
+    **columns: Any,
+) -> BattleKill:
+    """A live kill (battle_kill, next step 9) by a hero, hired sword or henchman, with its event: a victim of
+    `warband` (a hero), or someone named by hand without one."""
+    event = BattleEvent.objects.create(battle=battle, type=BattleEvent.TYPE_UNIT_KILL_RECORDED, payload_json={})
+    if isinstance(killer, Henchman):
+        kind, keys, own = "henchman", {"killer_henchman": killer, "killer_group": killer.group}, killer.group.warband
+    else:
+        kind = "hero" if isinstance(killer, Hero) else "hireling"
+        keys, own = {f"killer_{kind}": killer}, killer.warband
+    fields = {"phase": "fight", "round": 1, "killer_name": killer.name, **columns}
+    return BattleKill.objects.create(
         battle=battle,
-        type=BattleEvent.TYPE_UNIT_KILL_RECORDED,
-        payload_json={"killer": {"unit_type": killer_type, "unit_id": killer_id}, "victim": victim},
+        campaign_id=battle.campaign_id,
+        event=event,
+        killer_warband=own,
+        killer_kind=kind,
+        victim_kind="hero" if warband else "someone_else",
+        victim_warband=warband,
+        victim_name=victim,
+        **keys,
+        **fields,
     )
 
 
@@ -193,12 +214,12 @@ def _user(email: str) -> Any:
     return get_user_model().objects.create_user(username=email, email=email, password=None, first_name=email[:5])
 
 
-def _catalogue_item(name: str, costs: list[int], restriction: Restriction, prop: ItemProperty) -> Item:
+def _catalogue_item(name: str, costs: list[int], only: WarbandType, rule: ItemRule) -> Item:
     item = Item.objects.create(name=name, type="Melee", strength="As user", range="Close", save_value="-")
     for cost in costs:
-        availability = ItemAvailability.objects.create(item=item, cost=cost, rarity=2)
-        ItemAvailabilityRestriction.objects.create(item_availability=availability, restriction=restriction)
-    ItemPropertyLink.objects.create(item=item, property=prop)
+        availability = ItemAvailability.objects.create(item=item, cost=cost)
+        ItemAvailabilityWarband.objects.create(availability=availability, warband_type=only)
+    ItemRuleLink.objects.create(item=item, rule=rule)
     return item
 
 
@@ -266,8 +287,8 @@ class RosterTestCase(APITestCase):
                 CampaignMembershipPermission.objects.create(membership=membership, permission=manage)
         CampaignMembership.objects.create(campaign=other_campaign, user=cls.outsider, role=roles["owner"])
 
-        cls.warband = Warband.objects.create(campaign=cls.campaign, user=cls.player, name="Monks", faction="Sisters")
-        cls.rival = Warband.objects.create(campaign=cls.campaign, user=cls.viewer, name="Rats", faction="Skaven")
+        cls.warband = Warband.objects.create(campaign=cls.campaign, user=cls.player, name="Monks")
+        cls.rival = Warband.objects.create(campaign=cls.campaign, user=cls.viewer, name="Rats")
 
         maxima = {"movement": 4, "weapon_skill": 6, "ballistic_skill": 6, "strength": 4, "toughness": 4}
         maxima |= {"wounds": 3, "initiative": 6, "attacks": 4, "leadership": 9}
@@ -275,10 +296,10 @@ class RosterTestCase(APITestCase):
         cls.other_race = Race.objects.create(name="Dwarf", **maxima)
         cls.foreign_race = Race.objects.create(name="Lizard", campaign=other_campaign, **maxima)
 
-        restriction = Restriction.objects.create(type="Warband", restriction="Sisters only")
-        prop = ItemProperty.objects.create(name="Parry", type="Melee")
-        cls.sword = _catalogue_item("Sword", [10], restriction, prop)  # one availability: cost defaults to 10
-        cls.axe = _catalogue_item("Axe", [5, 15], restriction, prop)  # two availabilities: no default cost
+        sisters = WarbandType.objects.create(name="Sisters of Sigmar", slug="sisters-of-sigmar")
+        parry = ItemRule.objects.create(name="Parry", slug="parry")
+        cls.sword = _catalogue_item("Sword", [10], sisters, parry)  # one price row: cost defaults to 10
+        cls.axe = _catalogue_item("Axe", [5, 15], sisters, parry)  # two price rows: no default cost
 
         cls.skills = [Skill.objects.create(name=f"Skill {n}", type="Combat") for n in range(2)]
         cls.specials = [Special.objects.create(name=f"Special {n}", type="Ability") for n in range(2)]
@@ -302,11 +323,14 @@ class RosterTestCase(APITestCase):
             campaign=self.campaign, created_by_user=self.player, scenario=scenario, status=Battle.STATUS_ENDED
         )
 
-    def play_battle(self, xp_by_unit_key: dict[str, int]) -> None:
-        """Play and finalise a battle of `warband` against `rival` through the API.
+    def play_battle(
+        self, xp_by_unit_key: dict[str, int], extra: dict[str, dict[str, Any]] | None = None
+    ) -> dict[str, Any]:
+        """Play and finalise a battle of `warband` against `rival` through the API; our finalise's answer.
 
         `xp_by_unit_key` maps our unit keys ("hero:<id>", "hireling:<id>", "henchman:<id>") to the
-        XP each earns; every member of a henchmen group must earn the same.
+        XP each earns; every member of a henchmen group must earn the same. `extra` adds fields to our
+        units' results (by unit key).
         """
         rival_key = f"hero:{make_unit(HERO, self.rival).id}"
         sides = ((self.player, {**xp_by_unit_key}), (self.viewer, {rival_key: 0}))
@@ -329,16 +353,22 @@ class RosterTestCase(APITestCase):
         self._battle_post(self.player, f"{battle}finish-mine/", {"result": "won"})  # each finishes (decision 4)
         self._battle_post(self.viewer, f"{battle}finish-mine/", {"result": "lost"})
         self._battle_post(self.viewer, f"{battle}results/", {"winners": [self.warband.id]})
+        answers = []
         for user, xp in sides:
-            results = {key: _postbattle_result(key, earned) for key, earned in xp.items()}
+            results = {
+                key: {**_postbattle_result(key, earned), **(extra or {}).get(key, {})} for key, earned in xp.items()
+            }
             postbattle = {"exploration": {"dice_values": [], "resource_id": None}, "unit_results": results}
-            self._battle_post(user, f"{battle}finalize-postbattle/", {"postbattle_json": postbattle})
+            answers.append(self._battle_post(user, f"{battle}finalize-postbattle/", {"postbattle_json": postbattle}))
         self.client.force_authenticate(user=self.player)
+        return answers[0]
 
-    def _battle_post(self, user: Any, url: str, body: dict[str, Any]) -> None:
+    def _battle_post(self, user: Any, url: str, body: dict[str, Any]) -> dict[str, Any]:
         self.client.force_authenticate(user=user)
         response = self.client.post(url, body, format="json")
         self.assertIn(response.status_code, (200, 201), (url, response.data))
+        answer: dict[str, Any] = response.data
+        return answer
 
 
 def _postbattle_result(unit_key: str, xp: int) -> dict[str, Any]:

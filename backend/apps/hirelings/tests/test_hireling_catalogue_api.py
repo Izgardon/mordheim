@@ -1,7 +1,7 @@
 """The hireling catalogue's payloads: `GET /api/hired-swords/` and `/api/dramatis-personae/` (the bestiary rewrite
 step 2).
 
-A list row is the entry with its race (the catalogue's and the source's text) and restrictions; a detail adds its
+A list row is the entry with its race (the catalogue's and the source's text) and who may hire it; a detail adds its
 skills, specials, spells and equipment with quantities. A dramatis persona adds `stays` and `payment_note`. Every
 row ends with the catalogue's badge fields. Both kinds cost the same queries whatever the number of rows or the
 kit's size.
@@ -30,7 +30,7 @@ STATS = [
 ROW = [
     "id",
     "campaign_id",
-    "campaign_type_id",
+    "setting_id",
     "name",
     "description",
     *STATS,
@@ -47,6 +47,8 @@ ROW = [
     "rating",
     "available_skill_types",
     "grade",
+    "for_everyone",
+    "hire_note",
 ]
 KIT = ["skills", "specials", "spells", "equipment"]
 
@@ -54,7 +56,7 @@ KIT = ["skills", "specials", "spells", "equipment"]
 class HirelingPayloadTests(CatalogueTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.ogre.restriction_links.create(restriction=self.mercenaries, additional_note="only")
+        self.ogre.warband_links.create(warband_type=self.mercenaries)
         self.ogre.skill_links.create(skill=self.infiltration[0])
         self.ogre.special_links.create(special=self.large)
         self.ogre.spell_links.create(spell=self.lifestealer[0])
@@ -73,11 +75,11 @@ class HirelingPayloadTests(CatalogueTestCase):
         [row] = [row for row in self.get(HIRED_SWORDS.list_url(self.campaign)) if row["id"] == self.ogre.id]
         detail = self.get(HIRED_SWORDS.detail_url(self.ogre.id))
 
-        self.assertEqual(list(row), [*ROW, "restrictions", *BADGES])
-        self.assertEqual(list(detail), [*ROW, "restrictions", *KIT, *BADGES])
+        self.assertEqual(list(row), [*ROW, "warbands", *BADGES])
+        self.assertEqual(list(detail), [*ROW, "warbands", *KIT, *BADGES])
         self.assertEqual((row["race_id"], row["race_name"], row["race_label"]), (self.human.id, "Human", "Ogre"))
-        restriction = {"id": self.mercenaries.id, "type": "Warband", "restriction": "Mercenaries"}
-        self.assertEqual(row["restrictions"], [{"restriction": restriction, "additional_note": "only"}])
+        line = {"warband_type_id": self.mercenaries.id, "warband_group_id": None, "name": "Mercenaries", "excluded": False}  # fmt: skip
+        self.assertEqual((row["for_everyone"], row["warbands"]), (True, [line]))
         self.assertEqual([entry["name"] for entry in detail["skills"]], ["Infiltration"])
         self.assertEqual(([entry["name"] for entry in detail["specials"]], [entry["name"] for entry in detail["spells"]]), (["Large"], ["Lifestealer"]))  # fmt: skip
         self.assertEqual([(entry["item"]["name"], entry["quantity"]) for entry in detail["equipment"]], [("Sword", 2)])
@@ -87,8 +89,8 @@ class HirelingPayloadTests(CatalogueTestCase):
         [row] = [row for row in self.get(DRAMATIS_PERSONAE.list_url(self.campaign)) if row["name"] == "Bertha"]
 
         self.assertEqual(created.status_code, 201, created.data)
-        self.assertEqual(list(created.data), [*ROW, "stays", "payment_note", "restrictions", *KIT, *BADGES])
-        self.assertEqual(list(row), [*ROW, "stays", "payment_note", "restrictions", *BADGES])
+        self.assertEqual(list(created.data), [*ROW, "stays", "payment_note", "warbands", *KIT, *BADGES])
+        self.assertEqual(list(row), [*ROW, "stays", "payment_note", "warbands", *BADGES])
         self.assertEqual((row["stays"], row["payment_note"], row["campaign_id"]), ("one_battle", "a favour", self.campaign.id))  # fmt: skip
 
     def test_a_hired_sword_is_not_a_bestiary_entry(self):
@@ -113,14 +115,14 @@ class HirelingPayloadTests(CatalogueTestCase):
         before = counts()
         for index in range(3):
             for kind in (HIRED_SWORDS, DRAMATIS_PERSONAE):
-                make_entry(kind, f"More {index}", campaign=self.campaign).restriction_links.create(restriction=self.mercenaries)  # fmt: skip
+                make_entry(kind, f"More {index}", campaign=self.campaign).warband_links.create(warband_type=self.mercenaries)  # fmt: skip
             item = make_entry(ITEMS, f"Gear {index}")
             self.ogre.item_links.create(item=item)
             self.aenur.item_links.create(item=item)
             self.aenur.skill_links.create(skill=self.infiltration[index + 1])
 
         self.assertEqual(counts(), before)
-        self.assertEqual(before, [3, 3, 9, 9])  # membership, rows, restrictions; a book detail reads no membership
+        self.assertEqual(before, [3, 3, 9, 9])  # membership, rows, who may hire; a book detail reads no membership
 
 
 class HirelingWriteBoundsTests(CatalogueTestCase):

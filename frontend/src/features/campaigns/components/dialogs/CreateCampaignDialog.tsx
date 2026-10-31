@@ -1,105 +1,76 @@
 import type { FormEvent } from "react";
-import { useEffect, useMemo, useState } from "react";
-
-import { X } from "lucide-react";
+import { useState } from "react";
 
 // components
 import { Button } from "@components/button";
-import {
-  Dialog,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogContent,
-} from "@components/dialog";
+import { Chip } from "@components/chip";
 import { Input } from "@components/input";
+import { ModalSheet } from "@components/modal-sheet";
 import { NumberInput } from "@components/number-input";
-import { Label } from "@components/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
-import RestrictionPicker from "@/features/warbands/components/shared/RestrictionPicker";
+import { useSettingsList } from "../../api/settings-queries";
+import ContentInPlay from "../settings/ContentInPlay";
+import { DEFAULT_PRESET } from "../settings/content-in-play";
+import { Field, FormError } from "../settings/settings-ui";
 // types
-import type { CampaignCreatePayload, CampaignCreateType } from "../../types/campaign-types";
-import type { Restriction } from "@/features/items/types/item-types";
-import { listRestrictions } from "@/features/items/api/items-api";
+import type { CampaignCreatePayload } from "../../types/campaign-types";
 import { getErrorMessage } from "@/lib/get-error-message";
 
-const TYPE_OPTIONS = [
-  { value: "standard", label: "Standard" },
-  { value: "marienburg", label: "Marienburg (adds locations and encampments)" },
-];
+const PAGES = [
+  { key: "enable_encampments", label: "Encampments", hint: "Camps the players own." },
+  { key: "enable_locations", label: "Locations", hint: "Places heroes visit and roll on." },
+] as const;
+type Pages = Record<(typeof PAGES)[number]["key"], boolean>;
+const NO_PAGES: Pages = { enable_encampments: false, enable_locations: false };
 
-const initialState: CampaignCreatePayload = {
-  name: "",
-  max_players: 6,
-};
+const DEFAULT_SEATS = 6;
 
 type CreateCampaignDialogProps = {
   onCreate: (payload: CampaignCreatePayload) => Promise<void>;
+  /** The trigger's classes (full width on a phone). */
+  className?: string;
 };
 
-export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogProps) {
+/**
+ * Start a campaign (design E): its name, seats, its pages and the content in play (a grade preset,
+ * Up to 1c to begin with, the settings adjustable); a modal on the web, a sheet on a phone.
+ */
+export default function CreateCampaignDialog({ onCreate, className }: CreateCampaignDialogProps) {
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState<CampaignCreatePayload>(initialState);
+  const [name, setName] = useState("");
+  const [seats, setSeats] = useState(DEFAULT_SEATS);
+  const [pages, setPages] = useState<Pages>(NO_PAGES);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [campaignType, setCampaignType] = useState<CampaignCreateType>(
-    TYPE_OPTIONS[0].value as CampaignCreateType
-  );
-  const [availableSettings, setAvailableSettings] = useState<Restriction[]>([]);
-  const [selectedSettings, setSelectedSettings] = useState<Restriction[]>([]);
-  const maxPlayersValue = useMemo(() => String(form.max_players ?? 2), [form.max_players]);
-  const selectedSettingIds = useMemo(
-    () => new Set(selectedSettings.map((restriction) => restriction.id)),
-    [selectedSettings]
-  );
-
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-
-    listRestrictions({ type: "Setting" })
-      .then(setAvailableSettings)
-      .catch(() => setAvailableSettings([]));
-  }, [open]);
-
-  const handleToggleSetting = (restriction: Restriction) => {
-    setSelectedSettings((prev) =>
-      prev.some((entry) => entry.id === restriction.id)
-        ? prev.filter((entry) => entry.id !== restriction.id)
-        : [...prev, restriction]
-    );
-  };
-
-  const handleRemoveSetting = (restrictionId: number) => {
-    setSelectedSettings((prev) => prev.filter((entry) => entry.id !== restrictionId));
-  };
+  const content = useSettingsList({ enabled: open }); // read as the dialog opens
+  // the ticked settings once the player touches them; until then the default preset's
+  const [picked, setPicked] = useState<number[] | null>(null);
+  const preset = content.data?.presets.find((entry) => entry.grade === DEFAULT_PRESET);
+  const settingIds = picked ?? preset?.setting_ids ?? [];
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
     if (!nextOpen) {
-      setForm(initialState);
-      setCampaignType(TYPE_OPTIONS[0].value as CampaignCreateType);
-      setSelectedSettings([]);
+      setName("");
+      setSeats(DEFAULT_SEATS);
+      setPages(NO_PAGES);
+      setPicked(null);
       setError("");
     }
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const submit = async (event?: FormEvent<HTMLFormElement>) => {
+    event?.preventDefault();
     setError("");
     setIsSubmitting(true);
 
     try {
       await onCreate({
-        name: form.name.trim(),
-        campaign_type: campaignType,
-        max_players: Number(form.max_players),
-        item_setting_ids: selectedSettings.map((restriction) => restriction.id),
+        name: name.trim(),
+        max_players: seats,
+        ...pages,
+        ...(picked ? { setting_ids: picked } : { preset: DEFAULT_PRESET }),
       });
-      setOpen(false);
+      handleOpenChange(false);
     } catch (errorResponse) {
       setError(getErrorMessage(errorResponse, "Unable to start campaign"));
     } finally {
@@ -108,110 +79,108 @@ export default function CreateCampaignDialog({ onCreate }: CreateCampaignDialogP
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button>Create</Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-[750px]">
-        <DialogHeader>
-          <DialogTitle className="text-base font-semibold">Start a new campaign</DialogTitle>
-          <DialogDescription className="block text-sm text-muted-foreground">
-            Name it, pick its rules and limits, then share its join code with your players.
-          </DialogDescription>
-        </DialogHeader>
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <div className="space-y-2">
-            <Label htmlFor="campaign-name">Campaign name</Label>
-            <Input
-              id="campaign-name"
-              value={form.name}
-              onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
-              placeholder="Shards of the Comet"
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Campaign type</Label>
-            <Select
-              value={campaignType}
-              onValueChange={(value) => setCampaignType(value as CampaignCreateType)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a type" />
-              </SelectTrigger>
-              <SelectContent>
-                {TYPE_OPTIONS.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="campaign-size">Seats in the campaign</Label>
-            <NumberInput
-              id="campaign-size"
-              min={2}
-              max={16}
-              value={maxPlayersValue}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  max_players: Number(event.target.value),
-                }))
-              }
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Item settings</Label>
-            <p className="text-xs text-muted-foreground">
-              Pick the setting restrictions that apply campaign-wide to item availability.
-            </p>
-            {selectedSettings.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {selectedSettings.map((restriction) => (
-                  <div
-                    key={restriction.id}
-                    className="inline-flex items-center gap-1 rounded-full border border-primary/60 bg-primary/20 px-2.5 py-0.5 text-sm"
-                  >
-                    <span>{restriction.restriction}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveSetting(restriction.id)}
-                      className="text-muted-foreground hover:text-foreground"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ) : null}
-            <div className="rounded-lg border border-border/40 bg-background/40 p-3">
-              <RestrictionPicker
-                restrictions={availableSettings}
-                selected={selectedSettingIds}
-                onToggle={handleToggleSetting}
-              />
-            </div>
-          </div>
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
-          <DialogFooter>
+    <>
+      <Button className={className} onClick={() => handleOpenChange(true)}>
+        Create a campaign
+      </Button>
+      <ModalSheet
+        open={open}
+        onOpenChange={handleOpenChange}
+        kicker="Campaigns"
+        title="Start a new campaign"
+        description="Name it, pick its pages and what is in play, then share its join code with your players."
+        className="max-w-[640px]"
+        footer={
+          <div className="grid w-full grid-cols-[1fr_2fr] gap-2">
             <Button
-              type="button"
               variant="secondary"
+              className="min-h-12"
               onClick={() => handleOpenChange(false)}
               disabled={isSubmitting}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Starting..." : "Start"}
+            <Button
+              className="min-h-12"
+              disabled={isSubmitting || !name.trim()}
+              onClick={() => void submit()}
+            >
+              {isSubmitting ? "Starting..." : "Start campaign"}
             </Button>
-          </DialogFooter>
+          </div>
+        }
+      >
+        <form className="flex flex-col gap-5" onSubmit={(event) => void submit(event)}>
+          <Field label="Campaign name" htmlFor="campaign-name">
+            <Input
+              id="campaign-name"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="Shards of the Comet"
+              maxLength={120}
+              required
+              className="h-11 text-base md:h-11"
+            />
+          </Field>
+          <div className="flex flex-col gap-1.5">
+            <span id="campaign-pages-label" className={CAPTION_CLASS}>
+              Pages
+            </span>
+            <div
+              role="group"
+              aria-labelledby="campaign-pages-label"
+              className="grid grid-cols-2 gap-2"
+            >
+              {PAGES.map((page) => (
+                <Chip
+                  key={page.key}
+                  pressed={pages[page.key]}
+                  onClick={() =>
+                    setPages((current) => ({ ...current, [page.key]: !current[page.key] }))
+                  }
+                  className="flex min-h-[60px] flex-col items-start justify-center gap-0.5 px-3 py-2 text-left"
+                >
+                  <span className="text-sm font-bold">{page.label}</span>
+                  <span className="text-xs font-medium text-text2">{page.hint}</span>
+                </Chip>
+              ))}
+            </div>
+            <span className="text-xs text-muted-foreground">
+              Either can be switched on later in Settings.
+            </span>
+          </div>
+          <Field label="Seats" htmlFor="campaign-size" hint="Players who can join, 2 to 16.">
+            <NumberInput
+              id="campaign-size"
+              min={2}
+              max={16}
+              value={String(seats)}
+              onChange={(event) => setSeats(Number(event.target.value))}
+              containerClassName="max-w-[180px]"
+              required
+            />
+          </Field>
+          <div className="flex flex-col gap-2">
+            <span className={CAPTION_CLASS}>Content in play</span>
+            {content.data ? (
+              <ContentInPlay
+                compact
+                settings={content.data.settings}
+                presets={content.data.presets}
+                value={settingIds}
+                onChange={setPicked}
+              />
+            ) : (
+              <p className="m-0 text-[13px] text-text2">
+                Up to 1c to begin with: every setting at or below it. You can change it in Settings.
+              </p>
+            )}
+          </div>
+          <FormError message={error} />
         </form>
-      </DialogContent>
-    </Dialog>
+      </ModalSheet>
+    </>
   );
 }
+
+const CAPTION_CLASS = "text-[11px] font-bold uppercase tracking-[0.12em] text-faint";

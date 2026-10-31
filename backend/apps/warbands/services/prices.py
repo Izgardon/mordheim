@@ -65,8 +65,8 @@ def annotated_current(row: Any, own: int | None) -> int | None:
 
 
 def own_price(item: Item) -> int | None:
-    """The lowest cost among the item's availabilities (prefetched or read), None without any."""
-    costs = [availability.cost for availability in item.availabilities.all()]
+    """The lowest cost among the item's price rows (prefetched or read), None without one that has a cost."""
+    costs = [availability.cost for availability in item.availabilities.all() if availability.cost is not None]
     return min(costs) if costs else None
 
 
@@ -109,15 +109,13 @@ class CampaignPrices:
             self._own[item.id] = own_price(item)
         return self._own[item.id]
 
-    def availability_price(self, item: Item, availability_id: int) -> int | None:
-        """The cost of one of the item's availabilities (or its campaign version's); None when it isn't one of them."""
+    def availability(self, item: Item, availability_id: int) -> ItemAvailability | None:
+        """One of the item's price rows (or its campaign version's); None when it isn't one of them."""
         scope = Q(item=item)
         if item.campaign_id is None:
             scope |= Q(item__campaign_id=self.campaign_id, item__replaces_id=item.id)
-        cost: int | None = (
-            ItemAvailability.objects.filter(scope, id=availability_id).values_list("cost", flat=True).first()
-        )
-        return cost
+        row: ItemAvailability | None = ItemAvailability.objects.filter(scope, id=availability_id).first()
+        return row
 
     def sale_price(self, item: Item, stored_cost: int | None) -> SalePrice:
         return sale_price(self.current(item), stored_cost)

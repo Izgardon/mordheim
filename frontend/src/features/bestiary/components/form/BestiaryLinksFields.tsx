@@ -7,14 +7,14 @@ import SearchablePickerSection from "../SearchablePickerSection";
 import type { BestiaryLinks, SelectedItem } from "../../hooks/useBestiaryLinks";
 
 const TEXTAREA_CLASS =
-  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+  "min-h-[120px] w-full border border-strong bg-page px-3 py-2 text-sm text-ink placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring";
 
 /** A special rule created on the spot, in place of the special picker. */
 function NewSpecialRule({ links }: { links: BestiaryLinks }) {
   return (
     <div className="flex flex-col gap-1.5">
       <Label>Special Rules</Label>
-      <div className="flex flex-col gap-2 rounded-md border border-input bg-background/60 p-3">
+      <div className="flex flex-col gap-2 border border-border bg-surface p-3">
         <Input
           value={links.newSpecialName}
           onChange={(e) => links.setNewSpecialName(e.target.value)}
@@ -29,7 +29,7 @@ function NewSpecialRule({ links }: { links: BestiaryLinks }) {
           className={TEXTAREA_CLASS}
         />
         {links.specialError ? (
-          <p role="alert" className="text-xs text-red-600">
+          <p role="alert" className="text-xs text-danger">
             {links.specialError}
           </p>
         ) : null}
@@ -42,7 +42,7 @@ function NewSpecialRule({ links }: { links: BestiaryLinks }) {
           >
             {links.isSavingSpecial ? "Saving..." : "Add rule"}
           </Button>
-          <Button type="button" size="sm" variant="outline" onClick={links.closeNewSpecial}>
+          <Button type="button" size="sm" variant="secondary" onClick={links.closeNewSpecial}>
             Cancel
           </Button>
         </div>
@@ -103,7 +103,7 @@ export default function BestiaryLinksFields({ links }: { links: BestiaryLinks })
             value={(item as SelectedItem).quantity}
             onChange={(e) => links.setItemQuantity(item.id, Number(e.target.value) || 1)}
             onClick={(e) => e.stopPropagation()}
-            className="ml-1 h-5 w-10 rounded border border-input bg-background px-1 text-center text-xs"
+            className="ml-1 h-5 w-10 border border-strong bg-page px-1 text-center text-xs text-ink"
             aria-label={`Quantity for ${item.name}`}
           />
         )}

@@ -1,5 +1,5 @@
-"""The campaign overview's reads (players, battle history, pivotal moments, top killers) and Settings > Active
-Battles (the open battles, and cancelling one) for battle managers."""
+"""The campaign overview's reads (players, battle history with its pivotal moments, the chronicle, top killers) and
+Settings > Active Battles (the open battles, and cancelling one) for battle managers."""
 
 from rest_framework import permissions
 from rest_framework.response import Response
@@ -10,16 +10,16 @@ from apps.battles.views.responses import broadcast_response, response_with_snaps
 from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 from apps.users.names import display_name
 
+from ..chronicle import chronicle
 from ..constants import OWNER
+from ..search import campaign_search
 from ..selectors import (
     battle_history_payload,
     campaign_memberships,
-    format_short_date,
-    pivotal_moments,
     players_payload,
     top_killers_payload,
 )
-from ..serializers.history import CampaignTopKillerSerializer, PivotalMomentSerializer
+from ..serializers.history import CampaignTopKillerSerializer
 from ..serializers.members import CampaignPlayerSerializer
 from ..services import active_battles
 from .base import CampaignScopedView
@@ -46,12 +46,18 @@ class CampaignBattleHistoryView(CampaignScopedView):
         return Response(battle_history_payload(campaign_id))
 
 
-class CampaignPivotalMomentsView(CampaignScopedView):
+class CampaignChronicleView(CampaignScopedView):
+    """GET [?kind=kill|death|level|buy|trade]: the campaign's chronicle, newest first (the overview, next step 5)."""
+
     def get(self, request, campaign_id):
-        moments = pivotal_moments(campaign_id)
-        rows = PivotalMomentSerializer(moments, many=True).data
-        dates = (format_short_date(moment.battle_ended_at) for moment in moments)
-        return Response([{**row, "date": date} for row, date in zip(rows, dates, strict=True)])
+        return Response(chronicle(campaign_id, request.query_params.get("kind")))
+
+
+class CampaignSearchView(CampaignScopedView):
+    """GET ?q=: the warbands and units whose names match (Search everything, next step 7a), in four queries."""
+
+    def get(self, request, campaign_id):
+        return Response(campaign_search(campaign_id, request.query_params.get("q")))
 
 
 class CampaignTopKillersView(CampaignScopedView):

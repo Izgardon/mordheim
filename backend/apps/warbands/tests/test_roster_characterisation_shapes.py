@@ -65,6 +65,7 @@ ITEM_DETAIL = {
     "id": "int",
     "campaign_id": None,
     "name": "str",
+    "variant": "str",
     "type": "str",
     "subtype": "str",
     "single_use": "bool",
@@ -75,16 +76,21 @@ ITEM_DETAIL = {
     "row_id": "int",  # the bestiary rewrite step 4: this copy, its companion switch, the beast's kind
     "companion": "bool",
     "beast_kind": None,
-    "properties": [{"id": "int", "name": "str"}],
+    "rules": [
+        {"id": "int", "rule_id": "int", "shared": "bool", "name": "str", "summary": "str", "text": "str", "table": []}
+    ],
     "availabilities": [
         {
             "id": "int",
+            "label": "str",
             "cost": "int",
-            "rarity": "int",
-            "restrictions": [
-                {"restriction": {"id": "int", "type": "str", "restriction": "str"}, "additional_note": "str"}
-            ],
-            "variable_cost": None,
+            "dice": None,
+            "dice_multiplier": None,
+            "cost_note": "str",
+            "rarity": None,
+            "for_everyone": "bool",
+            "warbands": [{"warband_type_id": "int", "warband_group_id": None, "name": "str", "excluded": "bool"}],
+            "note": "str",
         }
     ],
     "cost": "int",
@@ -96,7 +102,7 @@ NAMED = {"id": "int", "name": "str"}
 SKILL_DETAIL = {"id": "int", "name": "str", "type": "str"}
 SPECIAL_DETAIL = {"id": "int", "name": "str", "type": "str", "description": "str"}
 SPELL_DETAIL = {"id": "int", "name": "str", "type": "str", "dc": "str", "description": "str"}
-MEMBER = {"id": "int", "name": "str", "kills": "int", "dead": "bool"}
+MEMBER = {"id": "int", "name": "str", "kills": "int", "dead": "bool", "gaps": []}  # gaps: the loadout rows he lacks
 MISSING = {"missing_games": "int", "missing_reason": "str"}  # missing games: how many and why (edit mode)
 COMPANIONS: dict[str, Any] = {
     "effective_stats": None,
@@ -135,6 +141,8 @@ HERO_DETAIL = {
 HENCHMEN_SUMMARY = {
     **IDENTITY,
     "hire_cost": "int",  # decision 7: what one more member costs
+    "loadout_each": "int",  # henchmen loadouts: one member's loadout, and the group's copies less gaps
+    "loadout_total": "int",
     "max_size": "int",
     "large": "bool",
     "half_rate": "bool",
@@ -146,8 +154,8 @@ HENCHMEN_SUMMARY = {
     **STATS,
     **COMPANIONS,
     "mounts": [],  # each kind of mount the members ride (the step 5 follow-up)
-    "mount_warnings": [],  # a mounted group's mounts against its members and kinds (group mounts)
-    "items": [ITEM_SUMMARY],
+    "mount_warnings": [],  # a group riding more than one kind of mount (group mounts)
+    "items": [{**ITEM_SUMMARY, "carriers": "int"}],  # a row: one copy each for the members who carry it
     "skills": [NAMED],
     "specials": [NAMED],
     "henchmen": [MEMBER],
@@ -157,7 +165,7 @@ HENCHMEN_DETAIL = {
     "updated_at": "str",
     "race": RACE,
     "deeds": "str",
-    "items": [ITEM_DETAIL],
+    "items": [{**ITEM_DETAIL, "carriers": "int"}],
     "skills": [SKILL_DETAIL],
     "specials": [SPECIAL_DETAIL],
 }

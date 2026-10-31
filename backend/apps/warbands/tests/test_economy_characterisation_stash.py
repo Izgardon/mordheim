@@ -227,13 +227,13 @@ class ResourceTests(RosterTestCase):
         self.assertEqual((duplicate.status_code, duplicate.json()), (400, {"detail": "Resource already exists"}))
         self.assertEqual((blank.status_code, list(blank.json())), (400, ["name"]))
 
-    def test_an_update_sets_the_amount_outright(self):
+    def test_an_update_sets_the_amount_outright_and_can_rename(self):
         resource = WarbandResource.objects.create(warband=self.warband, name="Wyrdstone", amount=3)
 
         first = self.client.patch(self._url(resource.id), {"amount": 5}, format="json")
         second = self.client.patch(self._url(resource.id), {"amount": 4, "name": "Renamed"}, format="json")
 
-        self.assertEqual((first.json()["amount"], second.json()["amount"], second.json()["name"]), (5, 4, "Wyrdstone"))
+        self.assertEqual((first.json()["amount"], second.json()["amount"], second.json()["name"]), (5, 4, "Renamed"))
 
     def test_a_negative_amount_is_refused(self):
         # BUG-68: the API used to store a negative amount (only the UI clamped)

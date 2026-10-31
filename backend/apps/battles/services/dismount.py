@@ -2,9 +2,9 @@
 
 `dismounted: true` in the rider's unit information (left out when false) puts his foot Move and save back in the
 battle's display and helpers, and a rider who is dismounted when he is taken out of action doesn't put his mount at
-risk after the battle (services/postbattle/mounts.py). Like `out_of_action` and `kill_count`, it changes only through
-its own endpoint, so a config save never undoes it; it can't change while the rider is out of action, so the state he
-was taken out in is the one postbattle reads.
+risk after the battle (services/postbattle/mounts.py). Like `out_of_action`, it changes only through its own
+endpoint, so a config save never undoes it; it can't change while the rider is out of action, so the state he was
+taken out in is the one postbattle reads.
 """
 
 from ..models import BattleParticipant

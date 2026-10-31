@@ -51,13 +51,14 @@ def _carried_links(warband_id: int, unit_type: str, unit_id: int) -> Any:
         return HeroItem.objects.filter(hero_id=unit_id, hero__warband_id=warband_id)
     if unit_type == "hireling":
         return HirelingItem.objects.filter(hireling_id=unit_id, hireling__warband_id=warband_id)
-    return HenchmenGroupItem.objects.filter(henchmen_group__henchmen__id=unit_id, henchmen_group__warband_id=warband_id)
+    rows = HenchmenGroupItem.objects.filter(henchmen_group__henchmen__id=unit_id, henchmen_group__warband_id=warband_id)
+    return rows.exclude(gaps__henchman_id=unit_id)  # his share of the loadout: none he has a gap on
 
 
 def _carried_item(warband_id: int, unit: tuple[str, int], item_id: int, campaign_id: int) -> tuple[int, str] | None:
     """The id and name of the item the unit (of this warband) carries for `item_id`: that item, or the campaign's
     version of it (a sheet read before the edit, CAT-TWEAK-03), or for a version reverted since, its book item; a
-    henchman carries his group's."""
+    henchman carries his group's loadout less his gaps."""
     links = _carried_links(warband_id, *unit)
     found: tuple[int, str] | None = (
         links.filter(Q(item_id=item_id) | Q(item__replaces_id=item_id, item__campaign_id=campaign_id))

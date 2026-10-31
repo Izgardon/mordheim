@@ -17,11 +17,11 @@ from rest_framework.serializers import BaseSerializer
 
 from apps.bestiary.models import BestiaryEntryItem, BestiaryEntrySkill, BestiaryEntrySpecial
 from apps.core.models import CatalogueRemoval
-from apps.items.models import Item, ItemAvailabilityRestriction, ItemProperty, ItemPropertyLink
-from apps.restrictions.models import Restriction
+from apps.core.testing import book_warband_type
+from apps.items.models import Item, ItemAvailabilityWarband, ItemRule, ItemRuleLink
 from apps.skills.models import Skill
 from apps.special.models import Special
-from apps.warbands.models import WarbandItem
+from apps.warbands.models import WarbandItem, WarbandType
 from apps.warbands.tests.roster_support import HERO, make_unit
 
 from .catalogue_support import (
@@ -38,20 +38,19 @@ from .catalogue_support import (
 )
 
 # list -> (url, budget with book rows only, budget with campaign rows as well). The book rows include a Sword with
-# a property and a restricted availability, and each campaign item has both, so every prefetch runs.
+# a shared rule and a price row for one warband type, and each campaign item has both, so every prefetch runs.
 LIST_BUDGETS: dict[str, tuple[str, int, int]] = {
     # PERF-49 (were 9 and 14: exists(), then each half with its own prefetch chain): membership, the merged rows (an
-    # animal's entry joined), their property links, availabilities and restriction links; + an animal's specials
+    # animal's entry joined), their rule links, price rows and the rows' who-can lines; + an animal's specials
     "items": ("/api/items/?campaign_id={campaign}", 5, 5),
-    "skills": ("/api/skills/?campaign_id={campaign}", 2, 2),  # membership, the merged rows (were 4)
+    "skills": ("/api/skills/?campaign_id={campaign}", 3, 3),  # membership, the merged rows (were 4), who may learn
     "spells": ("/api/spells/?campaign_id={campaign}", 2, 2),
     "specials": ("/api/special/?campaign_id={campaign}", 2, 2),
     "races": ("/api/races/?campaign_id={campaign}", 2, 2),
     "bestiary": ("/api/bestiary/?campaign_id={campaign}", 2, 2),  # + its items' prices once a beast has its item (4)
-    "hired_swords": ("/api/hired-swords/?campaign_id={campaign}", 3, 3),  # + their restrictions (were 5 and 6)
+    "hired_swords": ("/api/hired-swords/?campaign_id={campaign}", 3, 3),  # + who may hire them (were 5 and 6)
     "dramatis_personae": ("/api/dramatis-personae/?campaign_id={campaign}", 3, 3),
-    "restrictions": ("/api/restrictions/?campaign_id={campaign}", 2, 2),
-    "item_properties": ("/api/item-properties/?campaign_id={campaign}", 2, 2),  # one filtered list
+    "item_rules": ("/api/item-rules/?campaign_id={campaign}", 2, 2),  # one filtered list
     "items_book": ("/api/items/", 5, 5),  # no campaign: the book's version (PERF-13), its rows and their chain (was 6)
 }
 
@@ -74,24 +73,25 @@ class CatalogueQueryBudgetTests(CatalogueTestCase):
         return template.format(campaign=self.campaign.id)
 
     def add_campaign_rows(self, label: str, count: int = 1) -> None:
-        """`count` campaign rows of each kind; each item with a restricted availability and a property."""
+        """`count` campaign rows of each kind; each item with a price row for one of the campaign's warband types and
+        a rule of the campaign's."""
         for index in range(count):
             for kind in KINDS:
                 make_entry(kind, f"{label} {kind.key} {index}", campaign=self.campaign)
-            restriction = Restriction.objects.create(restriction=f"{label} {index}", campaign=self.campaign)
-            prop = ItemProperty.objects.create(name=f"{label} {index}", campaign=self.campaign)
+            only = WarbandType.objects.create(name=f"{label} {index}", slug=f"{label}-{index}", campaign=self.campaign)
+            rule = ItemRule.objects.create(name=f"{label} {index}", campaign=self.campaign)
             item = Item.objects.get(name=f"{label} items {index}")
-            ItemAvailabilityRestriction.objects.create(item_availability=item.availabilities.get(), restriction=restriction)  # fmt: skip
-            ItemPropertyLink.objects.create(item=item, property=prop)
+            ItemAvailabilityWarband.objects.create(availability=item.availabilities.get(), warband_type=only)
+            ItemRuleLink.objects.create(item=item, rule=rule)
 
     def add_book_rows(self, label: str, count: int) -> None:
-        restriction = Restriction.objects.create(restriction=f"{label} only")
+        only = book_warband_type(f"{label} type")
         for index in range(count):
             for kind in KINDS:
                 make_entry(kind, f"{label} {kind.key} {index}")
             item = Item.objects.get(name=f"{label} items {index}")
-            ItemAvailabilityRestriction.objects.create(item_availability=item.availabilities.get(), restriction=restriction)  # fmt: skip
-            ItemPropertyLink.objects.create(item=item, property=self.parry)
+            ItemAvailabilityWarband.objects.create(availability=item.availabilities.get(), warband_type=only)
+            ItemRuleLink.objects.create(item=item, rule=self.parry)
 
     def test_lists_stay_within_budget_without_and_with_campaign_rows(self):
         for name, (template, book_only, _) in LIST_BUDGETS.items():
@@ -103,7 +103,7 @@ class CatalogueQueryBudgetTests(CatalogueTestCase):
                 self.assertLessEqual(self.count("get", self.budget_url(template)), with_campaign)
 
     def test_list_queries_do_not_grow_with_rows(self):
-        # CAT-TEST-07: book and campaign rows, each item with a restricted availability and a property
+        # CAT-TEST-07: book and campaign rows, each item with a price row for one warband type and a rule
         self.add_campaign_rows("House")
         self.add_book_rows("Seed", 1)
         before = {name: self.count("get", self.budget_url(template)) for name, (template, _, _) in LIST_BUDGETS.items()}
@@ -168,8 +168,8 @@ class CatalogueQueryBudgetTests(CatalogueTestCase):
             with self.subTest(kind=kind.key):
                 book = make_entry(kind, f"Book {kind.key}")
                 house = make_entry(kind, f"House {kind.key}", campaign=self.campaign)
-                # an item's property links, availabilities and their restrictions (no property or animal links here)
-                prefetches = 3 if kind is ITEMS else 0
+                # an item's rule links, price rows and their who-can lines (no animal here); a skill's who-can lines
+                prefetches = {ITEMS: 3, SKILLS: 1}.get(kind, 0)
                 self.assertLessEqual(self.count("get", kind.detail_url(book.id)), 1 + prefetches)
                 self.assertLessEqual(self.count("get", kind.detail_url(house.id)), 2 + prefetches)
 
@@ -183,7 +183,7 @@ class BestiaryDetailBudgetTests(CatalogueTestCase):
         self.client.force_authenticate(user=self.owner)
         self.entry = make_entry(BESTIARY, "Bounty Hound")
         self.hired_sword = make_entry(HIRED_SWORDS, "Bounty Hunter", hire_cost=40)
-        self.restriction = Restriction.objects.create(restriction="Mordheim only")
+        self.only = book_warband_type("Mordheim")
         for skill in self.infiltration[:2]:
             BestiaryEntrySkill.objects.create(bestiary_entry=self.entry, skill=skill)
             self.hired_sword.skill_links.create(skill=skill)
@@ -197,8 +197,8 @@ class BestiaryDetailBudgetTests(CatalogueTestCase):
         start = BestiaryEntryItem.objects.filter(bestiary_entry=self.entry).count()
         for index in range(start, start + count):
             item = make_entry(ITEMS, f"Gear {index}")
-            ItemPropertyLink.objects.create(item=item, property=self.parry)
-            ItemAvailabilityRestriction.objects.create(item_availability=item.availabilities.get(), restriction=self.restriction)  # fmt: skip
+            ItemRuleLink.objects.create(item=item, rule=self.parry)
+            ItemAvailabilityWarband.objects.create(availability=item.availabilities.get(), warband_type=self.only)
             BestiaryEntryItem.objects.create(bestiary_entry=self.entry, item=item)
             self.hired_sword.item_links.create(item=item)
 
@@ -264,10 +264,10 @@ class CatalogueWriteBudgetTests(CatalogueTestCase):
         return len(captured)
 
     def item_body(self, name: str, links: int) -> dict[str, Any]:
-        restricted = {"restrictions": [{"restriction_id": self.mercenaries.id}]}
-        properties = [ItemProperty.objects.create(name=f"{name} rule {n}", type="Weapon").id for n in range(links)]
-        availabilities = [{"cost": 10 * (n + 1), **restricted} for n in range(links)]
-        return ITEMS.body(name, self.campaign, availabilities=availabilities, property_ids=properties)
+        only = {"for_everyone": False, "warbands": [{"warband_type_id": book_warband_type().id}]}
+        rules = [{"rule_id": ItemRule.objects.create(name=f"{name} rule {n}").id} for n in range(links)]
+        availabilities = [{"cost": 10 * (n + 1), **only} for n in range(links)]
+        return ITEMS.body(name, self.campaign, availabilities=availabilities, rules=rules)
 
     def test_an_item_create_costs_15_queries_however_many_rows_it_links(self):
         # PERF-44, BUG-53 (was pinned at 25: an INSERT and a restriction read per availability, a get_or_create per
@@ -295,11 +295,12 @@ class CatalogueWriteBudgetTests(CatalogueTestCase):
         self.assertEqual(self.count(HIRED_SWORDS.list_url(), sword), 21)
         self.assertEqual(self.count(HIRED_SWORDS.list_url(), small), 21)
 
-    def test_a_skill_create_costs_6_queries(self):
-        # membership, the name check (CAT-TWEAK-02, PR C), the savepoint pair, the INSERT and the campaign's catalogue
-        # version (PERF-13). It was 5 before the name check, 5 with the campaign read by the serializer's campaign field
-        # instead of the version (IMP-79 dropped it), 3 before the duplicate guard's savepoint (BUG-17)
-        self.assertEqual(self.count(SKILLS.list_url(), SKILLS.body("Feint", self.campaign)), 6)
+    def test_a_skill_create_costs_7_queries(self):
+        # membership, the name check (CAT-TWEAK-02, PR C), the savepoint pair, the INSERT, the campaign's catalogue
+        # version (PERF-13) and the answer's who may learn it (the items rebuild). It was 5 before the name check, 5
+        # with the campaign read by the serializer's campaign field instead of the version (IMP-79 dropped it), 3
+        # before the duplicate guard's savepoint (BUG-17)
+        self.assertEqual(self.count(SKILLS.list_url(), SKILLS.body("Feint", self.campaign)), 7)
 
 
 class VersionWriteBudgetTests(CatalogueTestCase):

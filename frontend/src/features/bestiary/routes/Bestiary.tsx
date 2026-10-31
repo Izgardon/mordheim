@@ -1,104 +1,283 @@
-import { useNavigate } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { useOutletContext, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import MobileTabs from "@/components/ui/mobile-tabs";
-import { PageHeader } from "@/components/ui/page-header";
-import { ArchivedToggle } from "@/features/catalogue/components/ArchivedView";
-import { LOADOUT_TABS, type LoadoutTabId } from "@/lib/loadout-tabs";
+import { campaignCapabilities } from "@/features/campaigns/capabilities";
+import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
+import ReferencePage from "@/features/reference/ReferencePage";
+import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
+import {
+  DetailSection,
+  Flavour,
+  ReferenceDetail,
+  RuleBlock,
+  TagList,
+} from "@/features/reference/ReferenceDetail";
+import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
+import {
+  ReferenceList,
+  ReferenceRow,
+  ShowMore,
+  useShownRows,
+} from "@/features/reference/ReferenceList";
+import { ProfileStrip, profileLine } from "@/features/reference/profile";
+import { useReferenceParams } from "@/features/reference/useReferenceParams";
+import { useCatalogue } from "@/lib/catalogue-queries";
+import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { useMediaQuery } from "@/lib/use-media-query";
-import { useAppStore } from "@/stores/app-store";
 
-import BestiaryEntryDetail from "../components/BestiaryEntryDetail";
+import { BEAST_KINDS, beastKindLabel, type BeastKind } from "../bestiary-kinds";
 import BestiaryEntryFormDialog from "../components/BestiaryEntryFormDialog";
-import BestiaryKindFilter from "../components/BestiaryKindFilter";
-import BestiaryList from "../components/BestiaryList";
-import { useBestiaryFavourites } from "../hooks/useBestiaryFavourites";
-import { useBestiaryPage } from "../hooks/useBestiaryPage";
+import { useBestiaryEntryDetail } from "../hooks/useBestiaryEntryDetail";
+import type { BestiaryEntrySummary } from "../types/bestiary-types";
+import { shopLine } from "../utils/beast-shop";
 
-const TITLE = "Bestiary";
-const SUBTITLE = "Mounts, pets and creatures";
+const PLURAL: Record<BeastKind, string> = { mount: "Mounts", pet: "Pets", creature: "Creatures" };
+
+/** "Creature · Large · Wizard": a beast's kind and what marks it out. */
+const kindLine = (entry: BestiaryEntrySummary) =>
+  [
+    beastKindLabel(entry.kind),
+    entry.large ? "Large" : "",
+    entry.caster && entry.caster !== "No" ? entry.caster : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+/** The open beast: its profile, specials, skills, spells and kit (read on opening). */
+function BeastDetail({
+  campaignId,
+  entry,
+  isMobile,
+  onEdit,
+}: {
+  campaignId: number;
+  entry: BestiaryEntrySummary;
+  isMobile: boolean;
+  onEdit?: () => void;
+}) {
+  const detail = useBestiaryEntryDetail(campaignId, entry.id);
+  const full = detail.entry;
+  const rules = full
+    ? [
+        ...full.specials.map((special) => ({ key: `special-${special.id}`, ...special })),
+        ...full.skills.map((skill) => ({ key: `skill-${skill.id}`, ...skill })),
+        ...full.spells.map((spell) => ({
+          key: `spell-${spell.id}`,
+          ...spell,
+          description: spell.description ?? "",
+        })),
+      ]
+    : [];
+  const aside = (
+    <>
+      <DetailSection title="In the store">
+        <span className="text-[13px] text-ink">{shopLine(entry)}</span>
+      </DetailSection>
+      {full?.equipment.length ? (
+        <DetailSection title="Carries">
+          <TagList
+            tags={full.equipment.map(({ item, quantity }) => ({
+              label: quantity > 1 ? `${item.name} ×${quantity}` : item.name,
+            }))}
+          />
+        </DetailSection>
+      ) : null}
+      {entry.kind === "mount" && entry.rating_bonus ? (
+        <DetailSection title="Rating">
+          <span className="text-[13px] text-ink">+{entry.rating_bonus} to its rider</span>
+        </DetailSection>
+      ) : null}
+      {onEdit ? (
+        <Button variant="secondary" className="min-h-10 self-start" onClick={onEdit}>
+          Edit entry
+        </Button>
+      ) : null}
+    </>
+  );
+  return (
+    <ReferenceDetail title={entry.name} kind={kindLine(entry)} isMobile={isMobile} aside={aside}>
+      {entry.description?.trim() ? <Flavour>{entry.description}</Flavour> : null}
+      {entry.has_profile ? (
+        <ProfileStrip profile={entry} />
+      ) : (
+        <span className="text-[13px] text-muted-foreground">No profile.</span>
+      )}
+      {detail.error && !full ? <p className="m-0 text-sm text-danger">{detail.error}</p> : null}
+      {!full && !detail.error ? (
+        <span className="text-[13px] text-muted-foreground">Reading its rules…</span>
+      ) : null}
+      {rules.length ? (
+        <div className="flex flex-col gap-2.5">
+          {rules.map((rule) => (
+            <RuleBlock key={rule.key} name={rule.name}>
+              {rule.description}
+            </RuleBlock>
+          ))}
+        </div>
+      ) : null}
+    </ReferenceDetail>
+  );
+}
 
 /**
- * The Bestiary (pass 5's catalogue on cards, by kind): the Kind filter, search, the Archived list
- * with Restore, Add, and a beast's detail with Edit; the form edits book and custom beasts alike
- * (a book beast's first save makes the campaign's version), with Delete or Revert.
+ * The Bestiary (design E's reference layout): every beast of the campaign, searched by name or
+ * text, a chip per kind (mounts, pets, creatures), rows with the kind, the profile and the store's
+ * price; a row opens to its profile and specials. Beasts are added and edited as today.
  */
 export default function Bestiary() {
-  const page = useBestiaryPage();
-  const navigate = useNavigate();
+  const { id } = useParams();
+  const campaignId = Number(id);
+  const { campaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const { warband } = useAppStore();
-  const favourites = useBestiaryFavourites(warband?.id);
+  const beasts = useCatalogue("bestiary", campaignId);
+  const params = useReferenceParams(!beasts.isLoading);
+  const capabilities = campaignCapabilities(campaign);
+  const kind = params.get("kind", "all");
+  /** The form: closed, adding (null) or editing a beast. */
+  const [editing, setEditing] = useState<{ id: number | null } | null>(null);
 
-  const formDialog = (
-    <BestiaryEntryFormDialog
-      campaignId={page.campaignId}
-      open={page.form.open}
-      onOpenChange={page.form.onOpenChange}
-      editingId={page.form.editingId}
-      defaultKind={page.kind ?? undefined}
-      canDelete={page.canDelete}
-      onSaved={page.form.onSaved}
-      onDeleted={page.form.onDeleted}
-      onReverted={page.form.onReverted}
-      onEditMatch={page.form.onEditMatch}
-    />
+  const sorted = useMemo(
+    () => [...beasts.data].sort((a, b) => a.name.localeCompare(b.name)),
+    [beasts.data]
   );
-
-  if (page.openEntryId !== null) {
-    const entryId = page.openEntryId;
-    return (
-      <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-8">
-        <PageHeader title={TITLE} subtitle={SUBTITLE} />
-        <BestiaryEntryDetail
-          campaignId={page.campaignId}
-          entryId={entryId}
-          onClose={page.closeEntry}
-          onEdit={page.canEdit ? () => page.form.edit(entryId) : undefined}
-        />
-        {formDialog}
-      </div>
-    );
-  }
+  const searched = sorted.filter((entry) =>
+    matchesSearchQuery(params.query, entry.name, entry.description, beastKindLabel(entry.kind))
+  );
+  const rows = sorted.filter(
+    (entry) =>
+      String(entry.id) === params.openId ||
+      (searched.includes(entry) && (kind === "all" || entry.kind === kind))
+  );
+  const shown = useShownRows(
+    rows,
+    rows.findIndex((entry) => String(entry.id) === params.openId)
+  );
+  const chips = [
+    { id: "all", label: "All", count: searched.length },
+    ...BEAST_KINDS.map((entryKind) => ({
+      id: entryKind,
+      label: PLURAL[entryKind],
+      count: searched.filter((entry) => entry.kind === entryKind).length,
+    })),
+  ];
 
   return (
-    <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-8">
-      <PageHeader title={TITLE} subtitle={SUBTITLE} />
-
-      {isMobile ? (
-        <MobileTabs
-          tabs={LOADOUT_TABS}
-          activeTab="bestiary"
-          onTabChange={(tabId: LoadoutTabId) => navigate(`/campaigns/${page.campaignId}/${tabId}`)}
-          className="mt-2"
-          showDivider
-        />
-      ) : null}
-
-      <div className="flex min-h-0 flex-1 flex-col gap-4 p-4 sm:p-7">
-        <div className="flex flex-wrap items-center gap-3">
-          <Input
-            type="search"
-            value={page.searchQuery}
-            onChange={(event) => page.setSearchQuery(event.target.value)}
-            placeholder="Search bestiary..."
-            aria-label="Search bestiary"
-            className="w-full sm:max-w-sm"
+    <ReferencePage
+      title="Bestiary"
+      section="bestiary"
+      archived={{
+        kind: "bestiary",
+        campaignId,
+        canRestore: capabilities.edit_catalogue,
+        noun: "beasts",
+      }}
+      actions={
+        capabilities.edit_catalogue ? (
+          <Button
+            variant="secondary"
+            className={isMobile ? "min-h-10" : undefined}
+            onClick={() => setEditing({ id: null })}
+          >
+            Add beast
+          </Button>
+        ) : null
+      }
+      filters={
+        <>
+          <FilterRow isMobile={isMobile}>
+            <ReferenceSearch
+              value={params.query}
+              onChange={params.setQuery}
+              placeholder="Name or description"
+              label="Search the bestiary"
+              isMobile={isMobile}
+            />
+          </FilterRow>
+          <ReferenceChips
+            label="Kind"
+            options={chips}
+            value={kind}
+            onChange={(next) => params.set({ kind: next === "all" ? null : next })}
+            isMobile={isMobile}
           />
-          <BestiaryKindFilter value={page.kind} onChange={page.setKind} />
-          <ArchivedToggle checked={page.archive.archived} onChange={page.archive.setArchived} />
-          {page.canEdit && !page.archive.archived ? (
-            <Button size="sm" className="ml-auto" onClick={page.form.add}>
-              Add entry
-            </Button>
-          ) : null}
-        </div>
-
-        <BestiaryList page={page} favourites={warband ? favourites : null} />
-      </div>
-
-      {formDialog}
-    </div>
+        </>
+      }
+      summary={
+        isMobile ? undefined : `${rows.length} ${rows.length === 1 ? "beast" : "beasts"} shown`
+      }
+    >
+      {beasts.error ? <p className="m-0 text-sm text-danger">{beasts.error}</p> : null}
+      <ReferenceList
+        nameLabel="Beast"
+        columns={
+          isMobile
+            ? undefined
+            : [
+                { label: "Kind", className: "w-[170px] shrink-0" },
+                { label: "Profile", className: "w-[210px] shrink-0" },
+                { label: "In the store", className: "w-[230px] shrink-0 max-[1180px]:hidden" },
+              ]
+        }
+        isEmpty={!beasts.isLoading && rows.length === 0}
+        empty="No beasts match. Try another word or kind."
+      >
+        {beasts.isLoading ? <ReferenceRowBones /> : null}
+        {shown.rows.map((entry) => {
+          const key = String(entry.id);
+          const profile = entry.has_profile ? profileLine(entry) : "No profile";
+          return (
+            <ReferenceRow
+              key={key}
+              id={key}
+              open={params.isOpen(key)}
+              onToggle={() => params.toggle(key)}
+              name={entry.name}
+              sub={isMobile ? `${kindLine(entry)} · ${profile}` : undefined}
+              cells={
+                isMobile
+                  ? undefined
+                  : [
+                      kindLine(entry),
+                      <span key="profile" className="font-mono text-xs">
+                        {profile}
+                      </span>,
+                      shopLine(entry),
+                    ]
+              }
+            >
+              <BeastDetail
+                campaignId={campaignId}
+                entry={entry}
+                isMobile={isMobile}
+                onEdit={
+                  capabilities.edit_catalogue ? () => setEditing({ id: entry.id }) : undefined
+                }
+              />
+            </ReferenceRow>
+          );
+        })}
+      </ReferenceList>
+      {rows.length > 0 ? (
+        <ShowMore shown={shown.rows.length} total={rows.length} onMore={shown.showMore} />
+      ) : null}
+      <BestiaryEntryFormDialog
+        campaignId={campaignId}
+        open={editing !== null}
+        onOpenChange={(open) => (open ? null : setEditing(null))}
+        editingId={editing?.id ?? null}
+        defaultKind={kind !== "all" ? (kind as BeastKind) : undefined}
+        canDelete={capabilities.delete_catalogue}
+        onSaved={(saved) => {
+          setEditing(null);
+          params.set({ open: String(saved.id) });
+        }}
+        onDeleted={() => {
+          setEditing(null);
+          params.close();
+        }}
+        onEditMatch={(match) => setEditing({ id: match.id })}
+      />
+    </ReferencePage>
   );
 }

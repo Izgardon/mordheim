@@ -1,7 +1,7 @@
 """Single-use items used in battle are used up when the player finalises or skips postbattle (BUG-72).
 
-Each live `item_used` event of the player's removes one copy of the item from the unit that used it (a henchman
-uses his group's); an undone use keeps the item (decision 5). Item rows are locked before they are deleted. An item
+Each live `item_used` event of the player's removes one copy of the item from the unit that used it, or gives a
+henchman a gap on his group's row of it (he used his copy: henchmen loadouts); an undone use keeps the item (decision 5). Item rows are locked before they are deleted. An item
 edited or reverted in the campaign mid-battle is the one the unit carries now (CAT-TWEAK-03).
 """
 
@@ -10,7 +10,7 @@ from collections.abc import Iterable
 
 from apps.core.catalogue.current import resolve
 from apps.items.models import Item
-from apps.warbands.models import Henchman, HenchmenGroupItem, HeroItem, HirelingItem
+from apps.warbands.models import Henchman, HenchmanItemGap, HenchmenGroupItem, HeroItem, HirelingItem
 
 from ...models import Battle, BattleEvent, BattleParticipant
 from ...validation.coerce import coerce_int
@@ -94,8 +94,15 @@ def consume_single_use_items(
         rows = _item_rows(unit_type, unit_id, participant.warband_id, group_ids)
         if rows is None:
             continue
+        if unit_type == "henchman":
+            rows = rows.exclude(gaps__henchman_id=unit_id)  # the rows he still carries
         row_ids = list(
             locked(rows.filter(item_id=single_use[item_id]).order_by("id")).values_list("id", flat=True)[:count]
         )
-        if row_ids:
+        if unit_type == "henchman":
+            gaps = [
+                HenchmanItemGap(henchman_id=unit_id, group_item_id=pk, reason=HenchmanItemGap.USED) for pk in row_ids
+            ]
+            HenchmanItemGap.objects.bulk_create(gaps)
+        elif row_ids:
             rows.model.objects.filter(id__in=row_ids).delete()

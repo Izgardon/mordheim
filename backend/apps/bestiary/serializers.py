@@ -5,13 +5,13 @@ from rest_framework import serializers
 from apps.core.catalogue.scope import CatalogueIdsField, EquipmentInputSerializer, current_equipment
 from apps.items.models import Item
 from apps.items.serializers import AvailabilityInputSerializer, ItemAvailabilitySerializer, ItemSerializer
-from apps.restrictions.serializers import refuse_unknown_restrictions
 from apps.skills.models import Skill
 from apps.skills.serializers import SkillSerializer
 from apps.special.models import Special
 from apps.special.serializers import SpecialSerializer
 from apps.spells.models import Spell
 from apps.spells.serializers import SpellSerializer
+from apps.warbands.access_lines import refuse_unknown_lines
 
 from .models import BestiaryEntry, BestiaryEntryItem
 
@@ -19,25 +19,26 @@ BEAST_FIELDS = ("has_profile", "gains_xp", "rating_bonus", "available_in_shop")
 
 
 class AnimalItemSerializer(serializers.ModelSerializer):
-    """A beast's Animal item as the bestiary shows it: its id (what is bought, moved and traded), grade and prices."""
+    """A beast's Animal item as the bestiary shows it: its id (what is bought, moved and traded), its setting and its
+    price rows."""
 
+    setting_id = serializers.IntegerField(source="campaign_type_id", read_only=True)
     availabilities = ItemAvailabilitySerializer(many=True, read_only=True)
 
     class Meta:
         model = Item
-        fields = ("id", "grade", "availabilities")
+        fields = ("id", "setting_id", "availabilities")
 
 
 class AnimalItemInputSerializer(serializers.Serializer):
-    """A bestiary write's `item`: the beast's item's grade and prices, each replacing the item's when sent. Prices
-    sent while the beast isn't sold are kept for when it is."""
+    """A bestiary write's `item`: the beast's item's price rows, replacing the item's when sent. Prices sent while the
+    beast isn't sold are kept for when it is."""
 
-    grade = serializers.CharField(max_length=20, allow_blank=True, required=False)
     availabilities = AvailabilityInputSerializer(many=True, required=False)
 
     def validate_availabilities(self, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        links = [link for row in rows for link in row.get("restrictions", [])]
-        refuse_unknown_restrictions(links, self.context["campaign_id"])  # the book's or the campaign's (SEC-07)
+        lines = [line for row in rows for line in row["warbands"]]
+        refuse_unknown_lines(lines, self.context["campaign_id"])  # the book's or the campaign's types (SEC-07)
         return rows
 
 

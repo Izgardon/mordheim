@@ -5,8 +5,8 @@ import type { CatalogueUsage } from "@/lib/catalogue-delete";
 import type { CatalogueKind } from "@/lib/query-keys";
 import type { CatalogueEntryLike } from "../types/catalogue-entry";
 
-/** The kinds whose entries are edited, reverted, deleted and restored (not item properties). */
-export type CatalogueEntryKind = Exclude<CatalogueKind, "item-properties">;
+/** The kinds whose entries are edited, reverted, deleted and restored (not the shared item rules). */
+export type CatalogueEntryKind = Exclude<CatalogueKind, "item-rules">;
 
 const PATHS: Record<CatalogueEntryKind, string> = {
   items: "items",

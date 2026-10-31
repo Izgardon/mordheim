@@ -38,10 +38,9 @@ class WarbandsApiTests(APITestCase):
             campaign=self.campaign,
             user=self.owner,
             name="Iron Vultures",
-            faction="Mercenaries",
         )
 
-        self.item = Item.objects.create(name="Sword", type="Weapon", description="")
+        self.item = Item.objects.create(name="Sword", type="Weapon")
         ItemAvailability.objects.create(item=self.item, cost=35, rarity=8)
 
         self.hero = Hero.objects.create(warband=self.warband, name="Captain Wolf", unit_type="Captain")

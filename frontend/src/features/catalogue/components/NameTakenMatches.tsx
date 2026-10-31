@@ -15,7 +15,7 @@ const named = (match: NameMatch) =>
   `${match.source === "book" ? "the book" : "this campaign's"} ${label(match)}`;
 
 const LINK_CLASS =
-  "text-xs text-foreground underline underline-offset-2 hover:text-foreground/80 disabled:opacity-50";
+  "text-xs text-accent-text underline underline-offset-2 hover:text-accent-hi disabled:opacity-50";
 
 /**
  * Under a taken name (CAT-TWEAK-02): every entry it collided with, where it comes from, and
@@ -74,7 +74,7 @@ export function NameTakenMatches({ id, nameTaken }: { id: string; nameTaken: Nam
         ))}
       </ul>
       {error ? (
-        <p role="alert" className="text-xs text-red-600">
+        <p role="alert" className="text-xs text-danger">
           {error}
         </p>
       ) : null}

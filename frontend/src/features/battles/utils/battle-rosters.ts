@@ -14,14 +14,3 @@ export function allRostersSettled(
     !userIds.some((userId) => Boolean(rosterLoading[userId]))
   );
 }
-
-/** True while a participant's roster is loading and none has arrived yet. */
-export function isRosterLoading(
-  participant: BattleParticipant | null,
-  rosters: Record<number, ParticipantRoster>,
-  rosterLoading: Record<number, boolean>
-) {
-  return Boolean(
-    participant && rosterLoading[participant.user.id] && !rosters[participant.user.id]
-  );
-}

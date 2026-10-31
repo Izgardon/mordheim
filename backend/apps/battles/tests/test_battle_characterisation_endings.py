@@ -213,7 +213,7 @@ class BattleCancelTests(BattleTestCase):
 
     def test_a_cancelled_participant_no_longer_blocks_start(self):
         # BUG-45: the cancelled row counted, so start waited for ever; now only those still in must be ready
-        Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows", faction="X")
+        Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows")
         battle_id = self.to_prebattle([self.viewer, self.manager])
         self.ok(self.post_as(self.manager, self.url(battle_id, "cancel")))
         self.assertEqual(

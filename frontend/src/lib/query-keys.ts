@@ -8,7 +8,7 @@
 
 export type CatalogueKind =
   | "items"
-  | "item-properties"
+  | "item-rules"
   | "skills"
   | "spells"
   | "specials"
@@ -18,8 +18,10 @@ export type CatalogueKind =
   | "dramatis-personae";
 
 export const queryKeys = {
-  /** Item restrictions of one type (catalogue data, not campaign-scoped). */
-  restrictions: (type: string) => ["restrictions", type] as const,
+  /** Every setting and the grade presets (book data, not campaign-scoped). */
+  settings: () => ["settings"] as const,
+  /** The races and sides a who-can list may name (book data). */
+  warbandGroups: () => ["warband-groups"] as const,
   /** Your campaigns, as the campaigns page lists them. */
   campaigns: () => ["campaigns"] as const,
   account: {
@@ -38,18 +40,18 @@ export const queryKeys = {
     /** Members' ids and names only (`players/?fields=basic`), for name pickers (PERF-41). */
     playerNames: (campaignId: number) => ["campaign", campaignId, "players", "basic"] as const,
     battleHistory: (campaignId: number) => ["campaign", campaignId, "battle-history"] as const,
-    pivotalMoments: (campaignId: number) => ["campaign", campaignId, "pivotal-moments"] as const,
-    /** The campaign's completed trades (the overview's Trades table). */
-    completedTrades: (campaignId: number) =>
-      ["campaign", campaignId, "trades", "completed"] as const,
-    bulletin: (campaignId: number) => ["campaign", campaignId, "bulletin"] as const,
-    topKillers: (campaignId: number) => ["campaign", campaignId, "top-killers"] as const,
+    chronicle: (campaignId: number, kind: string) =>
+      ["campaign", campaignId, "chronicle", kind] as const,
     /** Members with emails, roles and grants (Settings, for owners and admins). */
     members: (campaignId: number) => ["campaign", campaignId, "members"] as const,
     /** Open battles a battle manager can act on (Settings → Active Battles, manage_battles). */
     activeBattles: (campaignId: number) => ["campaign", campaignId, "battles", "active"] as const,
     encampments: (campaignId: number) => ["campaign", campaignId, "encampments"] as const,
+    /** The campaign's locations (the warband page's panel, settings, Search everything). */
+    locations: (campaignId: number) => ["campaign", campaignId, "locations"] as const,
     houseRules: (campaignId: number) => ["campaign", campaignId, "rules"] as const,
+    /** The warband types it may pick: the book's and its own, each in play or not. */
+    warbandTypes: (campaignId: number) => ["campaign", campaignId, "warband-types"] as const,
     /** The server's list of common house rules (`rules/common/`), the same for every campaign. */
     commonRules: (campaignId: number) => ["campaign", campaignId, "common-rules"] as const,
     /** The campaign chat's history, newest page first (an infinite query). */
@@ -74,8 +76,6 @@ export const queryKeys = {
       ["campaign", campaignId, "catalogue-entry", kind] as const,
     catalogueEntry: (campaignId: number, kind: CatalogueKind, entryId: number) =>
       ["campaign", campaignId, "catalogue-entry", kind, entryId] as const,
-    /** The restrictions the campaign's catalogue entries can name (book and campaign rows). */
-    restrictions: (campaignId: number) => ["campaign", campaignId, "restrictions"] as const,
     /**
      * What holds one entry (read as its delete confirm opens). Outside the catalogue key, so a
      * write to the kind's lists doesn't read it again.
@@ -92,9 +92,6 @@ export const queryKeys = {
     /** One battle's state (battle, participants, events), patched from its socket messages. */
     battleState: (campaignId: number, battleId: number) =>
       ["campaign", campaignId, "battle", battleId, "state"] as const,
-    /** An ended battle's record, as a battle manager edits it (BATL-NEW-04). */
-    battleRecord: (campaignId: number, battleId: number) =>
-      ["campaign", campaignId, "battle", battleId, "record"] as const,
     /** The postbattle rules, the same for every battle of the campaign (broadcasts may omit them). */
     battleRules: (campaignId: number) => ["campaign", campaignId, "battle-rules"] as const,
     /** Every participant's roster for one battle (the start snapshot once it has started). */
@@ -108,9 +105,15 @@ export const queryKeys = {
     /** The warband page in one entry: warband, summary, capabilities and the unit lists. */
     warbandSheet: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "sheet"] as const,
+    /** What the warband can usually buy, hire and learn (the server decides: who-can/). */
+    warbandWhoCan: (campaignId: number, warbandId: number) =>
+      ["campaign", campaignId, "warband", warbandId, "who-can"] as const,
     /** A summary read that refreshes the sheet's summary after a write (never observed). */
     warbandSummary: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "summary"] as const,
+    /** One unit's kills (its open card's Kills list), by its card key ("hero-12"). */
+    unitKills: (campaignId: number, warbandId: number, unitKey: string) =>
+      ["campaign", campaignId, "warband", warbandId, "kills", unitKey] as const,
     warbandStash: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "stash"] as const,
     /** The warband's ledger, as the Treasury tab lists it. */
@@ -119,9 +122,6 @@ export const queryKeys = {
     /** The warband's log entries, as the Logs tab lists them. */
     warbandLogs: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "logs"] as const,
-    /** Every on-roster unit's stat line, as the overview's roster expands it (PERF-42). */
-    warbandRosterStats: (campaignId: number, warbandId: number) =>
-      ["campaign", campaignId, "warband", warbandId, "roster-stats"] as const,
     /** One trade request between two players of the campaign. */
     trade: (campaignId: number, requestId: string) =>
       ["campaign", campaignId, "trade", requestId] as const,

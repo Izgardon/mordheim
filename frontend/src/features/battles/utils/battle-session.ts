@@ -6,16 +6,6 @@ export type CurrentBattleSession = {
   status: BattleStatus;
 };
 
-export function getBattleRouteForStatus(status: BattleStatus) {
-  if (status === "active") {
-    return "active";
-  }
-  if (status === "postbattle") {
-    return "postbattle";
-  }
-  return "prebattle";
-}
-
 export function getResumableBattleForUser(battleStates: BattleState[], userId?: number | null) {
   if (!userId) {
     return null;

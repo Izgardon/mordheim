@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import permissions, status
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -5,10 +6,8 @@ from rest_framework.views import APIView
 
 from apps.campaigns.models import CampaignSettings
 from apps.campaigns.permissions import get_writable_membership, parse_campaign_id
-from apps.restrictions.serializers import RestrictionSerializer
 from apps.warbands.access import check_backstory_change
 from apps.warbands.models import LedgerAction, Warband, WarbandResource
-from apps.warbands.restrictions import get_effective_restrictions_for_warband
 from apps.warbands.serializers import (
     WarbandCreateSerializer,
     WarbandSerializer,
@@ -17,6 +16,7 @@ from apps.warbands.serializers import (
 )
 from apps.warbands.services import ledger
 from apps.warbands.services.roster_stats import roster_stats
+from apps.warbands.services.types import load_types, picked_types
 
 from .base import WarbandScopedView
 
@@ -26,17 +26,14 @@ class WarbandListCreateView(APIView):
 
     def get(self, request):
         campaign_id = parse_campaign_id(request.query_params.get("campaign_id"))  # garbage is a 400 (BUG-152)
-        warbands = (
-            Warband.objects.filter(user=request.user)
-            .select_related("campaign", "campaign__settings")
-            .prefetch_related("campaign__settings__item_settings")
-        )
+        warbands = Warband.objects.filter(user=request.user).select_related("campaign", "campaign__settings")
 
         if campaign_id is not None:
             warbands = warbands.filter(campaign_id=campaign_id)
 
-        serializer = WarbandSerializer(warbands.order_by("created_at"), many=True)
-        return Response(serializer.data)
+        rows = list(warbands.order_by("created_at"))
+        load_types(rows)  # their types, for all of them in one query
+        return Response(WarbandSerializer(rows, many=True).data)
 
     def post(self, request):
         serializer = WarbandCreateSerializer(data=request.data)
@@ -49,14 +46,15 @@ class WarbandListCreateView(APIView):
         if Warband.objects.filter(campaign_id=campaign_id, user=request.user).exists():
             return Response({"detail": "Warband already exists"}, status=400)
 
-        serializer.validated_data.pop("restriction_ids", [])
-        warband = serializer.save(user=request.user)
-        WarbandResource.objects.get_or_create(warband=warband, name="Treasure", defaults={"amount": 0})
-        settings = CampaignSettings.objects.filter(campaign_id=campaign_id).first()
-        starting_gold = settings.starting_gold if settings else 500
-        ledger.record(warband, LedgerAction.STARTING_GOLD, abs(starting_gold), "Starting Gold")
-        response_serializer = WarbandSerializer(warband)
-        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+        counts_as = picked_types(campaign_id, serializer.validated_data) or []  # 400 for a type it may not pick
+        with transaction.atomic():
+            warband = serializer.save(user=request.user)
+            warband.counts_as.set(counts_as)
+            WarbandResource.objects.get_or_create(warband=warband, name="Treasure", defaults={"amount": 0})
+            settings = CampaignSettings.objects.filter(campaign_id=campaign_id).first()
+            starting_gold = settings.starting_gold if settings else 500
+            ledger.record(warband, LedgerAction.STARTING_GOLD, abs(starting_gold), "Starting Gold")
+        return Response(WarbandSerializer(warband).data, status=status.HTTP_201_CREATED)
 
 
 class WarbandDetailView(WarbandScopedView):
@@ -68,9 +66,12 @@ class WarbandDetailView(WarbandScopedView):
     def patch(self, request: Request, warband_id: int) -> Response:
         serializer = WarbandUpdateSerializer(self.warband, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.validated_data.pop("restriction_ids", None)
+        counts_as = picked_types(self.warband.campaign_id, serializer.validated_data)  # a new type, what it counts as
         check_backstory_change(request.user, self.warband, self.membership, serializer.validated_data)
-        serializer.save()
+        with transaction.atomic():
+            serializer.save()
+            if counts_as is not None:
+                self.warband.counts_as.set(counts_as)
         return Response(WarbandSerializer(self.warband).data)
 
     def delete(self, request: Request, warband_id: int) -> Response:
@@ -88,13 +89,3 @@ class WarbandRosterStatsView(WarbandScopedView):
 
     def get(self, request: Request, warband_id: int) -> Response:
         return Response(roster_stats(self.warband.id))
-
-
-# Kept as it is until the frontend stops calling it: PUT changes nothing and answers like GET. (No docstring:
-# DRF serves view docstrings as the OPTIONS description, and that stays as it was.)
-class WarbandRestrictionsView(WarbandScopedView):
-    def get(self, request: Request, warband_id: int) -> Response:
-        return Response(RestrictionSerializer(get_effective_restrictions_for_warband(self.warband), many=True).data)
-
-    def put(self, request: Request, warband_id: int) -> Response:
-        return Response(RestrictionSerializer(get_effective_restrictions_for_warband(self.warband), many=True).data)

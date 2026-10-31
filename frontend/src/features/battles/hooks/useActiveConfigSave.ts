@@ -20,6 +20,7 @@ import {
 import { useCustomUnitDraft } from "@/features/battles/hooks/useCustomUnitDraft";
 import { useSerializedSave } from "@/features/battles/hooks/useSerializedSave";
 import type { BattleContextValue } from "@/features/battles/state/battle-context";
+import type { BattleUnitStatus } from "@/features/battles/types/battle-types";
 import {
   applyConfigPatch,
   mergeConfigPatches,
@@ -164,6 +165,17 @@ export function useActiveConfigSave({
     [ownParticipant, rosters, saveConfig]
   );
 
+  /** Knocked down or stunned, or standing again (null), for everyone to see. */
+  const saveUnitStatus = useCallback(
+    async (unitKey: string, status: BattleUnitStatus | null) => {
+      await saveConfig(
+        { unit_information_patch: { [unitKey]: { status } } },
+        { savingUnitKeys: [unitKey] }
+      );
+    },
+    [saveConfig]
+  );
+
   const saveUnitNotes = useCallback(
     async (unitKey: string, notes: string) => {
       await saveConfig(
@@ -181,14 +193,15 @@ export function useActiveConfigSave({
     [saveConfig]
   );
 
+  /** Saves the drafted temporary unit, selected: whether it was saved. */
   const addCustomUnit = useCallback(async () => {
     const participant = ownParticipant();
     if (!participant) {
-      return;
+      return false;
     }
     const unit = buildUnit();
     if (!unit) {
-      return;
+      return false;
     }
     const nextCustomUnits = [...normalizeCustomUnits(participant.custom_units_json), unit];
     try {
@@ -200,10 +213,12 @@ export function useActiveConfigSave({
       });
       if (next) {
         resetCustomUnitDraft();
+        return true;
       }
     } catch {
-      return;
+      return false;
     }
+    return false;
   }, [buildUnit, ownParticipant, resetCustomUnitDraft, saveConfig]);
 
   return {
@@ -214,6 +229,7 @@ export function useActiveConfigSave({
     customUnitDraft,
     adjustUnitWounds,
     saveUnitOverride,
+    saveUnitStatus,
     saveUnitNotes,
     saveBattleNotes,
     addCustomUnit,

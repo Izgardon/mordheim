@@ -1,13 +1,13 @@
-import { useId, useMemo, useState } from "react";
+import { useId, useState } from "react";
 
 // routing
 import { Link } from "react-router-dom";
 
 // components
-import { Badge } from "@components/badge";
 import { Button } from "@components/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@components/card";
-import { CardBackground } from "@components/card-background";
+import { Card } from "@components/card";
+import { ChipLabel } from "@components/chip";
+import { cn } from "@/lib/utils";
 
 // types
 import type { CampaignSummary } from "../../types/campaign-types";
@@ -15,35 +15,30 @@ import type { CampaignSummary } from "../../types/campaign-types";
 // other
 import CampaignPlayersDialog from "../dialogs/CampaignPlayersDialog";
 
-const roleTone: Record<CampaignSummary["role"], string> = {
-  owner: "campaign-card-badge campaign-card-badge--owner",
-  admin: "campaign-card-badge campaign-card-badge--admin",
-  player: "campaign-card-badge campaign-card-badge--player",
-};
+const CAPTION = "text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
+
+/** Where the campaign stands: archived, under way (started), or not started yet. */
+function campaignState({ archived_at, in_progress }: CampaignSummary) {
+  if (archived_at) return { label: "Archived", tone: "default" } as const;
+  return in_progress
+    ? ({ label: "Under way", tone: "good" } as const)
+    : ({ label: "Not started", tone: "default" } as const);
+}
 
 /**
- * A campaign on the list. The title is the card's real link, stretched over the whole card, and
- * the Roster and Copy buttons sit above it, so no button is nested in a link (CAMP-UX-07).
+ * A campaign on the list (design E): your role and its state, its name (the card's real link,
+ * stretched over the whole card), your warband in it, then the players, the join code with Copy
+ * and the roster. Copy and Roster sit above the stretched link, so no button is nested in a link
+ * (CAMP-UX-07).
  */
-export default function CampaignCard({
-  id,
-  name,
-  player_count,
-  max_players,
-  role,
-  join_code,
-  archived_at,
-}: CampaignSummary) {
+export default function CampaignCard(campaign: CampaignSummary) {
+  const { id, name, player_count, max_players, role, join_code, archived_at, my_warband } =
+    campaign;
   const titleId = useId();
   const [copied, setCopied] = useState(false);
   const [isRosterOpen, setIsRosterOpen] = useState(false);
-
-  const roleLabel = useMemo(() => {
-    if (!role) {
-      return "Player";
-    }
-    return `${role.charAt(0).toUpperCase()}${role.slice(1)}`;
-  }, [role]);
+  const roleLabel = role ? `${role.charAt(0).toUpperCase()}${role.slice(1)}` : "Player";
+  const state = campaignState(campaign);
 
   const handleCopyJoinCode = async () => {
     if (!join_code) {
@@ -59,75 +54,79 @@ export default function CampaignCard({
   };
 
   return (
-    <article aria-labelledby={titleId} className="campaign-ornate-card-link group cursor-pointer">
-      <CardBackground className="campaign-ornate-frame">
-        <Card className="campaign-ornate-card min-w-0">
-          <CardHeader className="pb-3">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div className="space-y-1">
-                <p className="text-[0.58rem] uppercase tracking-[0.28em] text-[#b79a6f]">
-                  Campaign Ledger
-                </p>
-                <CardTitle
-                  id={titleId}
-                  className="theme-heading-soft break-words text-xl font-bold text-[#f0dfbc] transition group-hover:text-[#fff1d6]"
-                >
-                  <Link
-                    to={`/campaigns/${id}`}
-                    className="campaign-card-open outline-none after:absolute after:inset-0 after:z-[1] after:content-['']"
-                  >
-                    {name}
-                  </Link>
-                </CardTitle>
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
-                {archived_at ? (
-                  <Badge variant="outline" className="campaign-card-badge">
-                    Archived
-                  </Badge>
-                ) : null}
-                <Badge variant="outline" className={roleTone[role]}>
-                  {roleLabel}
-                </Badge>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4 pt-0">
-            <div className="campaign-card-meta flex flex-wrap items-center justify-between gap-3 rounded-2xl px-3 py-2.5 text-xs text-[#c8b59a] sm:text-sm">
-              <span>
-                {player_count} / {max_players} players accounted
+    <Card
+      as="article"
+      aria-labelledby={titleId}
+      className={cn(
+        "flex flex-col transition-colors hover:border-accent-line",
+        archived_at && "bg-transparent"
+      )}
+    >
+      <div className="flex flex-col gap-2.5 p-5 max-[960px]:p-4">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <ChipLabel tone={role === "player" || !role ? "default" : "accent"}>
+            {roleLabel}
+          </ChipLabel>
+          <ChipLabel tone={state.tone}>{state.label}</ChipLabel>
+        </div>
+        <h3
+          id={titleId}
+          className="m-0 break-words font-display text-2xl font-semibold leading-tight text-head max-[960px]:text-[22px]"
+        >
+          <Link
+            to={`/campaigns/${id}`}
+            className="outline-none after:absolute after:inset-0 after:z-[1] after:content-[''] hover:text-accent-hi focus-visible:underline"
+          >
+            {name}
+          </Link>
+        </h3>
+        <p className="m-0 min-w-0 text-sm text-text2">
+          {my_warband ? (
+            <>
+              <span className="font-semibold text-ink">{my_warband.name}</span>
+              {my_warband.type_name ? ` · ${my_warband.type_name}` : null}
+            </>
+          ) : (
+            <span className="text-faint">No warband raised yet</span>
+          )}
+        </p>
+      </div>
+      <div className="mt-auto flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-line px-5 py-3 max-[960px]:px-4">
+        <div className="flex flex-col gap-0.5">
+          <span className={CAPTION}>Players</span>
+          <span className="font-mono text-sm font-bold text-head">
+            {player_count} / {max_players}
+          </span>
+        </div>
+        {/* Every member sees the code; owners and admins regenerate it in Settings (1b). */}
+        {join_code ? (
+          <div className="flex items-end gap-2">
+            <div className="flex flex-col gap-0.5">
+              <span className={CAPTION}>Join code</span>
+              <span className="font-mono text-sm font-bold uppercase tracking-[0.08em] text-head">
+                {join_code}
               </span>
-              <div className="relative z-[2]">
-                <CampaignPlayersDialog
-                  campaignId={id}
-                  open={isRosterOpen}
-                  onOpenChange={setIsRosterOpen}
-                />
-              </div>
             </div>
-            {/* Every member sees the code; owners and admins regenerate it in Settings (1b). */}
-            {join_code ? (
-              <div className="campaign-card-meta flex items-center justify-between gap-3 rounded-2xl px-3 py-2.5">
-                <span className="min-w-0 text-xs text-[#c8b59a] sm:text-sm">
-                  Join code:{" "}
-                  <span className="campaign-card-code font-semibold uppercase text-[#f3e3c3]">
-                    {join_code}
-                  </span>
-                </span>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="sm"
-                  className="relative z-[2] h-8 border-[#7c5c37] bg-[#20160d] px-3 text-[0.5rem] text-[#ecd6ad] hover:bg-[#2a1d12] hover:text-[#f6e7c7] sm:h-10 sm:px-5 sm:text-[0.6rem]"
-                  onClick={() => void handleCopyJoinCode()}
-                >
-                  {copied ? "Copied" : "Copy"}
-                </Button>
-              </div>
-            ) : null}
-          </CardContent>
-        </Card>
-      </CardBackground>
-    </article>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="relative z-[2] border-border"
+              onClick={() => void handleCopyJoinCode()}
+            >
+              {copied ? "Copied" : "Copy"}
+            </Button>
+          </div>
+        ) : null}
+        <div className="relative z-[2] ml-auto">
+          <CampaignPlayersDialog
+            campaignId={id}
+            campaignName={name}
+            open={isRosterOpen}
+            onOpenChange={setIsRosterOpen}
+          />
+        </div>
+      </div>
+    </Card>
   );
 }

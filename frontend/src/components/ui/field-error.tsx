@@ -13,7 +13,7 @@ export function FieldError({ message, id, className }: FieldErrorProps) {
     return null;
   }
   return (
-    <p id={id} role="alert" className={cn("mt-1 text-xs text-red-600", className)}>
+    <p id={id} role="alert" className={cn("mt-1 text-xs text-danger", className)}>
       {message}
     </p>
   );

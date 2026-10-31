@@ -54,7 +54,7 @@ async function signIn() {
 async function signUp() {
   const user = setupUser();
   renderCard();
-  await user.click(screen.getByRole("button", { name: "Create Account" }));
+  await user.click(screen.getByRole("button", { name: "Create account" }));
   await user.type(screen.getByLabelText("Display name"), "Raider");
   await user.type(screen.getByLabelText("Email"), RAIDER.email);
   await user.type(screen.getByLabelText("Password"), "password");
@@ -124,7 +124,7 @@ describe("refusals on the sign-in card (AUTH-TEST-26)", () => {
     fakeFetch.on("POST /auth/register/", json(400, { name: ["This field may not be blank."] }));
     renderCard();
 
-    await user.click(screen.getByRole("button", { name: "Create Account" }));
+    await user.click(screen.getByRole("button", { name: "Create account" }));
     await user.type(screen.getByLabelText("Display name"), "   ");
     await user.type(screen.getByLabelText("Email"), RAIDER.email);
     await user.type(screen.getByLabelText("Password"), "wyrdstone");

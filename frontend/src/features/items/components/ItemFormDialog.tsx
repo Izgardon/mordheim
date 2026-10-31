@@ -71,7 +71,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
       canDelete={props.mode === "edit" && props.canDelete}
       onReset={() => load(item)}
     >
-      <ItemFormFields layout="dialog" form={form} idSuffix={`-${mode}`} />
+      <ItemFormFields form={form} idSuffix={`-${mode}`} />
     </CatalogueFormDialog>
   );
 }

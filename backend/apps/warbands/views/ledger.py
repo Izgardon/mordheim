@@ -77,6 +77,13 @@ class WarbandResourceDetailView(WarbandScopedView):
     def patch(self, request: Request, warband_id: int, resource_id: int) -> Response:
         serializer = WarbandResourceUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        name = serializer.validated_data.get("name")
+        if name is not None:
+            if not name:
+                return Response({"detail": "Resource name is required"}, status=400)
+            others = WarbandResource.objects.filter(warband=self.warband).exclude(id=resource_id)
+            if others.filter(name__iexact=name).exists():
+                return Response({"detail": "Resource already exists"}, status=400)
         resource = change_resource(self.warband, resource_id, **serializer.validated_data)
         if not resource:
             return Response(NOT_FOUND, status=404)

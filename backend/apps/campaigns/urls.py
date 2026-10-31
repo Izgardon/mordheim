@@ -8,6 +8,7 @@ from .views import (
     CampaignBulletinDetailView,
     CampaignBulletinView,
     CampaignChatReadView,
+    CampaignChronicleView,
     CampaignCommonRulesView,
     CampaignDetailView,
     CampaignEncampmentDetailView,
@@ -29,9 +30,9 @@ from .views import (
     CampaignMyPermissionsView,
     CampaignOwnershipView,
     CampaignPermissionsView,
-    CampaignPivotalMomentsView,
     CampaignPlayersView,
     CampaignRestoreView,
+    CampaignSearchView,
     CampaignTopKillersView,
     JoinCampaignView,
 )
@@ -55,6 +56,16 @@ urlpatterns = [
         name="campaigns-battle-history",
     ),
     path(
+        "campaigns/<int:campaign_id>/chronicle/",
+        CampaignChronicleView.as_view(),
+        name="campaigns-chronicle",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/search/",
+        CampaignSearchView.as_view(),
+        name="campaigns-search",
+    ),
+    path(
         "campaigns/<int:campaign_id>/active-battles/",
         CampaignActiveBattlesView.as_view(),
         name="campaigns-active-battles",
@@ -63,11 +74,6 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/active-battles/<int:battle_id>/cancel/",
         CampaignActiveBattleCancelView.as_view(),
         name="campaigns-active-battles-cancel",
-    ),
-    path(
-        "campaigns/<int:campaign_id>/pivotal-moments/",
-        CampaignPivotalMomentsView.as_view(),
-        name="campaigns-pivotal-moments",
     ),
     path(
         "campaigns/<int:campaign_id>/top-killers/",

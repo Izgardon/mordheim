@@ -118,3 +118,5 @@ export function usePrebattlePage() {
     notesDialog: { isOpen: isBattleNotesOpen, setIsOpen: setIsBattleNotesOpen },
   };
 }
+
+export type PrebattlePage = ReturnType<typeof usePrebattlePage>;

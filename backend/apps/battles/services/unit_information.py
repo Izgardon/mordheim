@@ -1,11 +1,13 @@
 """A battle participant's live unit information, and what a config save may change in it (BUG-44).
 
 `BattleParticipant.unit_information_json` maps unit keys to `{stats_override, notes, current_wounds,
-out_of_action, kill_count}`, plus `dismounted: true` for a rider who got off his mount (left out otherwise, the
-bestiary rewrite step 5). A config save changes only the first three (the editable fields), merged into what is
-stored under the participant's lock; `out_of_action`, `kill_count` and `dismounted` change only through their own
-endpoints, so a save built before a kill or an out-of-action tap can't undo it, even from an older client sending the
-whole map.
+out_of_action}`, plus `dismounted: true` for a rider who got off his mount (left out otherwise, the bestiary rewrite
+step 5) and `status`, "knocked_down" or "stunned" (left out while he stands, next step 6). A config save changes only
+the editable fields (the first three and `status`), merged into what is stored under the participant's lock;
+`out_of_action` and `dismounted` change only through their own endpoints, so a save built before an out-of-action tap
+can't undo it, even from an older client sending the whole map. Kills aren't stored here: the snapshot adds each
+unit's live `kill_count` from battle_kill (services/kills.py, next step 9), and anything else sent is ignored.
+Taking a unit out of action (or back) clears its status, and each new round stands it up a step (services/rounds.py).
 """
 
 from typing import Any
@@ -87,27 +89,57 @@ def _clean_current_wounds(current_wounds: Any) -> int | None:
 
 _CLEANERS = {"stats_override": _clean_stats_override, "notes": _clean_notes, "current_wounds": _clean_current_wounds}
 
+KNOCKED_DOWN, STUNNED = "knocked_down", "stunned"
+STATUSES = (KNOCKED_DOWN, STUNNED)
+
+
+def clean_status(value: Any) -> str | None:
+    """A unit's status in the fight: "knocked_down" or "stunned", None while he stands ("standing", "" or null)."""
+    if value in (None, "", "standing"):
+        return None
+    if value not in STATUSES:
+        raise ValueError("unit information status must be standing, knocked_down or stunned")
+    return str(value)
+
 
 def clean_editable_fields(info: dict[str, Any], *, only_present: bool = False) -> dict[str, Any]:
     """The editable fields of one unit's entry, validated (ValueError otherwise). Absent fields get their empty
-    value, or are left out with `only_present`."""
-    return {field: clean(info.get(field)) for field, clean in _CLEANERS.items() if not only_present or field in info}
+    value, or are left out with `only_present`. A status is kept only when the unit isn't standing; with
+    `only_present` a standing one is None, which takes it off."""
+    cleaned = {field: clean(info.get(field)) for field, clean in _CLEANERS.items() if not only_present or field in info}
+    if "status" in info:
+        status = clean_status(info.get("status"))
+        if status or only_present:
+            cleaned["status"] = status
+    return cleaned
 
 
 def is_empty(entry: dict[str, Any]) -> bool:
-    """An entry that says nothing: no override, notes or wounds, not out of action or dismounted, and no kills."""
+    """An entry that says nothing: no override, notes, wounds or status, and not out of action or dismounted."""
     return not (
         entry.get("stats_override")
         or entry.get("notes")
         or entry.get("current_wounds") is not None
+        or entry.get("status")
         or entry.get("out_of_action")
-        or entry.get("kill_count")
         or entry.get("dismounted")
     )
 
 
+def stand_up(entry: dict[str, Any]) -> bool:
+    """A new round's step for one unit: knocked down stands up, stunned becomes knocked down. Whether it changed."""
+    status = entry.get("status")
+    if status == KNOCKED_DOWN:
+        entry.pop("status")
+        return True
+    if status == STUNNED:
+        entry["status"] = KNOCKED_DOWN
+        return True
+    return False
+
+
 def _new_entry() -> dict[str, Any]:
-    return {"stats_override": {}, "notes": "", "current_wounds": None, "out_of_action": False, "kill_count": 0}
+    return {"stats_override": {}, "notes": "", "current_wounds": None, "out_of_action": False}
 
 
 def _entries(raw: Any, field_name: str) -> list[tuple[str, dict[str, Any]]]:
@@ -131,18 +163,20 @@ def _without_empty(unit_information: dict[str, dict[str, Any]]) -> dict[str, dic
 
 
 def apply_patch(stored: dict[str, dict[str, Any]], patch: Any) -> dict[str, dict[str, Any]]:
-    """`unit_information_patch` ({unit_key: {current_wounds?, notes?, stats_override?}}) merged into `stored` (a
-    normalised map): each field it names is replaced for that unit; every other field and unit is kept."""
+    """`unit_information_patch` ({unit_key: {current_wounds?, notes?, stats_override?, status?}}) merged into
+    `stored` (a normalised map): each field it names is replaced for that unit; every other field and unit is kept."""
     merged = {key: dict(entry) for key, entry in stored.items()}
     for unit_key, info in _entries(patch, "unit_information_patch"):
         entry = merged.setdefault(unit_key, _new_entry())
         entry.update(clean_editable_fields(info, only_present=True))
+        if entry.get("status") is None:
+            entry.pop("status", None)
     return _without_empty(merged)
 
 
 def apply_whole_map(stored: dict[str, dict[str, Any]], whole: Any) -> dict[str, dict[str, Any]]:
     """An older client's whole `unit_information_json`: it replaces every unit's editable fields (a unit it leaves
-    out loses them), while each unit's stored `out_of_action` and `kill_count` stay as they are."""
+    out loses them), while each unit's stored `out_of_action` stays as it is."""
     merged = {key: {**entry, **clean_editable_fields({})} for key, entry in stored.items()}
     for unit_key, info in _entries(whole, "unit_information_json"):
         entry = merged.setdefault(unit_key, _new_entry())
@@ -151,24 +185,21 @@ def apply_whole_map(stored: dict[str, dict[str, Any]], whole: Any) -> dict[str, 
 
 
 def unit_entry(unit_information: dict[str, dict[str, Any]], unit_key: str) -> dict[str, Any]:
-    """The unit's entry in a normalised map, added (with what was stored for it) when it isn't there yet; a kill
-    or out-of-action tap changes it in place."""
+    """The unit's entry in a normalised map, added (with what was stored for it) when it isn't there yet; an
+    out-of-action tap changes it in place."""
     existing = unit_information.get(unit_key, {})
     if not isinstance(existing, dict):
         existing = {}
-    try:
-        existing_kill_count = int(existing.get("kill_count", 0) or 0)
-    except (TypeError, ValueError):
-        existing_kill_count = 0
     entry = {
         "stats_override": existing.get("stats_override", {}),
         "notes": existing.get("notes", ""),
         "current_wounds": existing.get("current_wounds", None),
         "out_of_action": bool(existing.get("out_of_action", False)),
-        "kill_count": max(0, existing_kill_count),
     }
     if existing.get("dismounted"):
         entry["dismounted"] = True
+    if existing.get("status") in STATUSES:
+        entry["status"] = existing["status"]
     unit_information[unit_key] = entry
     return entry
 

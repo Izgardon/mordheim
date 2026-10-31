@@ -17,7 +17,7 @@ if (!window.matchMedia) {
   });
 }
 
-// jsdom has no layout: cmdk (the race combobox) measures its list and scrolls the active option
+// jsdom has no layout: Radix measures its popups with ResizeObserver, and the pages scroll rows
 // into view.
 if (!("ResizeObserver" in window)) {
   class ResizeObserverStub {

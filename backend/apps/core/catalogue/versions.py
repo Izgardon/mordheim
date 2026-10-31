@@ -118,15 +118,14 @@ def _copy_children(relation: ForeignObjectRel, parents: dict[Any, Any], campaign
 
 
 def _copied(row: Model, link: str | None, campaign_id: int, **changes: Any) -> Model:
-    """An unsaved copy of `row` in the campaign: no add-on (versions keep `campaign_type` null), never archived."""
+    """An unsaved copy of `row` in the campaign, never archived. It keeps the book entry's setting (`campaign_type`):
+    a campaign's version of a Khemri skill is still Khemri's, in play only where Khemri is (grading phase 1)."""
     names = {field.name for field in row._meta.concrete_fields}
     values = {
         field.attname: getattr(row, field.attname) for field in row._meta.concrete_fields if not field.primary_key
     }
     if "campaign" in names:
         values["campaign_id"] = campaign_id
-    if "campaign_type" in names:
-        values["campaign_type_id"] = None
     if isinstance(row, CatalogueEntry):
         values.update(archived_at=None, archived_by_id=None, updated_at=None, updated_by_id=None)
     return type(row)(**{**values, **changes})

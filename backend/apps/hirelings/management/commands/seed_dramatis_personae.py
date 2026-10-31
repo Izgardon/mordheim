@@ -1,5 +1,5 @@
-"""Seed the book's dramatis personae from `apps/hirelings/data/dramatis-personae.json` (empty until they are scraped;
-the shape: apps/hirelings/seeding.py)."""
+"""Seed the book's dramatis personae from the catalogue import's `out/dramatis-personae.json` (mordheimer's 30, made seed
+rows by catalogue_import/personae.py; the shape: apps/hirelings/seeding.py)."""
 
 from apps.hirelings.seeding import DRAMATIS_PERSONAE, SeedCommand
 

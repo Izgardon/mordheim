@@ -6,7 +6,7 @@ import { StatsField } from "./bestiary-core-fields";
 
 import type { BestiaryEntryFormState } from "../../hooks/useBestiaryEntryForm";
 
-const CHECKBOX_CLASS = "h-4 w-4 rounded border-input";
+const CHECKBOX_CLASS = "h-4 w-4 accent-[var(--color-accent)]";
 
 /**
  * The beast's profile and what its kind adds: "Has a profile" (off, the stats hide and are saved

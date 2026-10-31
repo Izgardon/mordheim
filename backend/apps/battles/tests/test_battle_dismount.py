@@ -9,7 +9,8 @@ state he was taken out of action in is the one postbattle reads.
 
 from typing import Any
 
-from apps.warbands.models import HenchmenGroupItem, Hero, HeroItem
+from apps.battles.models import BattleKill
+from apps.warbands.models import HenchmanItemGap, HenchmenGroupItem, Hero, HeroItem
 from apps.warbands.tests.beast_support import warhorse
 from apps.warbands.tests.roster_support import HENCHMEN, make_unit
 
@@ -24,7 +25,8 @@ class DismountTests(BattleTestCase):
         HeroItem.objects.create(hero=self.aldric, item=self.horse, companion=True)
         self.walker = Hero.objects.create(warband=self.warband, name="Walker", unit_type="Youngblood")
         self.riders = make_unit(HENCHMEN, self.warband, name="Outriders", members=("A", "B"))
-        HenchmenGroupItem.objects.create(henchmen_group=self.riders, item=self.horse, companion=True)
+        row = HenchmenGroupItem.objects.create(henchmen_group=self.riders, item=self.horse, companion=True)
+        HenchmanItemGap.objects.create(henchman=self.riders.henchmen.order_by("id").last(), group_item=row)  # no horse
         self.rat = Hero.objects.create(warband=self.rival, name="Rat", unit_type="Assassin")
         self.a, self.w, self.r = f"hero:{self.aldric.id}", f"hero:{self.walker.id}", f"hero:{self.rat.id}"
         first, second = self.riders.henchmen.order_by("id")
@@ -77,7 +79,8 @@ class DismountTests(BattleTestCase):
         self.ok(self.post_as(self.player, self.url(battle_id, "unit-ooa"), {"unit_key": self.a, "out_of_action": True}), 201)  # fmt: skip
 
         entry = self.info(battle_id)[self.a]
-        self.assertEqual((entry["dismounted"], entry["kill_count"], entry["out_of_action"]), (True, 1, True))
+        self.assertEqual((entry["dismounted"], entry["out_of_action"]), (True, True))
+        self.assertEqual(BattleKill.objects.filter(battle_id=battle_id, killer_hero_id=self.aldric.id).count(), 1)
 
     def test_only_a_selected_rider_in_action_dismounts_in_an_active_battle(self):
         battle_id = self.to_prebattle()

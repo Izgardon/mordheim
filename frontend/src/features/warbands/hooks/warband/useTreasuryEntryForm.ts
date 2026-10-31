@@ -125,5 +125,3 @@ export function useTreasuryEntryForm(warbandId: number) {
     handleSubmit,
   };
 }
-
-export type TreasuryEntryForm = ReturnType<typeof useTreasuryEntryForm>;

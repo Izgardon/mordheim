@@ -11,6 +11,7 @@ from django.utils import timezone
 from apps.battles.models import Battle, BattleEvent, BattleParticipant
 from apps.campaigns.errors import ARCHIVED_DETAIL
 from apps.campaigns.models import Campaign
+from apps.core.testing import book_warband_type
 from apps.items.models import Item
 from apps.notifications.models import Notification
 from apps.trades.models import TradeRequest
@@ -171,7 +172,12 @@ class ArchivedEverywhereTests(ArchiveTestCase):
             (self.player, "patch", warband, {"name": "Friars"}),
             (self.player, "delete", warband, None),
             (self.player, "post", f"{warband}purchases/", {"items": []}),
-            (self.admin, "post", "/api/warbands/", {"name": "Late", "faction": "Mercenaries", "campaign_id": campaign}),
+            (
+                self.admin,
+                "post",
+                "/api/warbands/",
+                {"name": "Late", "warband_type_id": book_warband_type().id, "campaign_id": campaign},
+            ),
             (self.player, "post", self.url("battles/"), {}),
             (self.player, "post", self.url("battles/report-result/"), {}),
             (self.player, "post", self.url(f"battles/{battle.id}/decline/"), {}),

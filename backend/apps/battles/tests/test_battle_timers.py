@@ -64,7 +64,7 @@ class BattleDeadlineTests(BattleTestCase):
 class BusyPlayersTests(BattleTestCase):
     def test_players_say_which_battle_keeps_a_player_busy(self):
         # BUG-10, decision 1: the /players/ busy entry carries the battle's id, status and last activity
-        Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows", faction="X")
+        Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows")
         battle_id = self.create_battle()
         BattleParticipant.objects.filter(battle_id=battle_id, user=self.viewer).update(status="invited")
 

@@ -1,16 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Slot } from "@radix-ui/react-slot";
+
+import { SidePanel } from "@/components/ui/side-panel";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { cn } from "@/lib/utils";
-import { Bell } from "lucide-react";
 import {
   BattleInviteCard,
   BattleNudgeCard,
@@ -49,9 +42,10 @@ type NotificationsMenuProps = {
   onGoToNudge?: (notification: BattleNudgeNotification) => NotificationAction;
   onDismissNudge?: (notification: BattleNudgeNotification) => NotificationAction;
   onClear?: () => void;
-  className?: string;
-  iconClassName?: string;
-  label?: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  /** The button that opens it, given the count (the shell owns the open state). */
+  trigger?: (count: number) => ReactNode;
 };
 
 export default function NotificationsMenu({
@@ -68,17 +62,15 @@ export default function NotificationsMenu({
   onGoToNudge,
   onDismissNudge,
   onClear,
-  className,
-  iconClassName,
-  label,
+  open,
+  onOpenChange,
+  trigger,
 }: NotificationsMenuProps) {
-  const [isOpen, setIsOpen] = useState(false);
   const unreadCount =
     tradeRequestNotifications.length +
     battleInviteNotifications.length +
     battleResultRequestNotifications.length +
     battleNudgeNotifications.length;
-  const hasNotifications = unreadCount > 0;
 
   const sortedTradeNotifications = useMemo(
     () => byNewest(tradeRequestNotifications),
@@ -96,8 +88,8 @@ export default function NotificationsMenu({
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [failure, setFailure] = useState<{ id: string; message: string } | null>(null);
 
-  const handleOpenChange = (open: boolean) => {
-    setIsOpen(open);
+  const handleOpenChange = (next: boolean) => {
+    onOpenChange(next);
     setFailure(null);
   };
 
@@ -107,7 +99,7 @@ export default function NotificationsMenu({
     setFailure(null);
     try {
       await action();
-      setIsOpen(false);
+      onOpenChange(false);
     } catch (error) {
       setFailure({
         id,
@@ -125,48 +117,32 @@ export default function NotificationsMenu({
 
   const handleClear = () => {
     onClear?.();
-    setIsOpen(false);
+    onOpenChange(false);
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <button
-          type="button"
-          className={cn(
-            "icon-button relative flex h-9 w-9 items-center justify-center border-none bg-transparent p-0",
-            className
-          )}
-          aria-label={label ?? "Notifications"}
-        >
-          <Bell className={cn("theme-heading-soft h-5 w-5", iconClassName)} aria-hidden="true" />
-          {hasNotifications ? (
-            <span className="absolute -right-1 -top-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-1 text-[0.55rem] font-semibold text-primary-foreground">
-              {unreadCount}
-            </span>
-          ) : null}
-        </button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[32rem]">
-        <DialogHeader className="items-start text-left">
-          <div className="flex w-full items-center justify-between gap-3">
-            <DialogTitle>Notifications</DialogTitle>
-            {onClear ? (
-              <button
-                type="button"
-                onClick={handleClear}
-                disabled={!hasNotifications}
-                className="text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-muted-foreground transition hover:text-foreground disabled:opacity-50"
-              >
-                Clear
-              </button>
-            ) : null}
-          </div>
-          <DialogDescription className="sr-only">
-            Battle invites, battle results waiting for your answer, and trade requests.
-          </DialogDescription>
-        </DialogHeader>
-        {!hasNotifications ? (
+    <>
+      {trigger ? <Slot onClick={() => handleOpenChange(true)}>{trigger(unreadCount)}</Slot> : null}
+      <SidePanel
+        open={open}
+        onOpenChange={handleOpenChange}
+        kicker="Campaign"
+        title="Notifications"
+        description="Battle invites, battle results waiting for your answer, and trade requests."
+        actions={
+          onClear ? (
+            <button
+              type="button"
+              onClick={handleClear}
+              disabled={unreadCount === 0}
+              className="text-xs font-bold text-muted-foreground transition hover:text-head disabled:opacity-50"
+            >
+              Clear
+            </button>
+          ) : null
+        }
+      >
+        {unreadCount === 0 ? (
           <p className="text-sm text-muted-foreground">You are all caught up.</p>
         ) : (
           <div className="space-y-3">
@@ -205,7 +181,7 @@ export default function NotificationsMenu({
                 onDecline={() =>
                   void runAction(notification.id, () => onDeclineBattleInvite(notification))
                 }
-                onNavigate={() => setIsOpen(false)}
+                onNavigate={() => onOpenChange(false)}
               />
             ))}
             {sortedTradeNotifications.map((notification) => (
@@ -221,7 +197,7 @@ export default function NotificationsMenu({
             ))}
           </div>
         )}
-      </DialogContent>
-    </Dialog>
+      </SidePanel>
+    </>
   );
 }

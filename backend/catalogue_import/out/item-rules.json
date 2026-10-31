@@ -1,0 +1,537 @@
+[
+  {
+    "slug": "1-enemy-armour-save",
+    "name": "+1 Enemy armour save",
+    "aliases": [
+      "+1 Enemy Armour Save"
+    ],
+    "summary": "Target gets +1 to armour save",
+    "text": "Daggers are not the best weapons to use for penetrating an enemy model's armour. An enemy wounded by a dagger gains a +1 bonus to his armour save, and a 6+ armour save if he has none normally.",
+    "tables": [],
+    "used_by": 10,
+    "wordings": 7
+  },
+  {
+    "slug": "accuracy",
+    "name": "Accuracy",
+    "aliases": [],
+    "summary": "+1 bonus to hit for all shots and close combat attacks",
+    "text": "A duelling pistol is built for accuracy as a skilled duellist is able to hit a coin from twenty paces. All shots and close combat attacks from a duelling pistol have a +1 bonus to hit.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 1
+  },
+  {
+    "slug": "accurate",
+    "name": "Accurate",
+    "aliases": [],
+    "summary": "No -1 modifier to hit at long range.",
+    "text": "The Sun Gauntlet does not suffer the usual -1 modifier to hit for long range.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 2
+  },
+  {
+    "slug": "avoid-stun",
+    "name": "Avoid Stun",
+    "aliases": [],
+    "summary": "Unmodified 5+ save against being stunned, knocked down if successful.",
+    "text": "A Master Chef equipped with a cooking pot helmet has a special save of 5+ against being stunned. This save is never modified.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 2
+  },
+  {
+    "slug": "awkward-thrown-weapon",
+    "name": "Awkward Thrown Weapon",
+    "aliases": [],
+    "summary": "Thrown after moving causes -1 to hit, no range penalties.",
+    "text": "Models using Belaying Pins do not suffer any penalties for range, but still suffer a -1 to hit penalty if they use them after moving that turn.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 2
+  },
+  {
+    "slug": "battle-schooled",
+    "name": "Battle Schooled",
+    "aliases": [],
+    "summary": "Reroll failed loss of control tests",
+    "text": "The mount has been specially trained to fight on a battlefield. The rider may re-roll any failed loss of control tests. Only one re-roll is allowed per test.",
+    "tables": [],
+    "used_by": 3,
+    "wordings": 3
+  },
+  {
+    "slug": "cannot-be-parried",
+    "name": "Cannot Be Parried",
+    "aliases": [
+      "Cannot be parried"
+    ],
+    "summary": "A model attacked by a barbed whip may not parry.",
+    "text": "A model attacked by a barbed whip may not parry with a sword or buckler.",
+    "tables": [],
+    "used_by": 4,
+    "wordings": 4
+  },
+  {
+    "slug": "cavalry-bonus",
+    "name": "Cavalry bonus",
+    "aliases": [
+      "Cavalry Bonus"
+    ],
+    "summary": "+1 Strength when charging mounted",
+    "text": "If using the optional rules for mounted models, a mounted warrior armed with a spear receives a +1 Strength bonus when he charges. This bonus only applies for that turn.",
+    "tables": [],
+    "used_by": 3,
+    "wordings": 3
+  },
+  {
+    "slug": "combined-save",
+    "name": "Combined Save",
+    "aliases": [],
+    "summary": "Shields combine with armour to give +1 to the save.",
+    "text": "As explained in the Armour section, shields combine with armour to give +1 to the save.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 1
+  },
+  {
+    "slug": "concussion",
+    "name": "Concussion",
+    "aliases": [],
+    "summary": "2-4 on injury table is Stunned",
+    "text": "Hammers and other bludgeoning weapons are excellent to use for striking your enemy senseless. When using a hammer, club or mace, a roll of 2-4 is treated as stunned when rolling to see the extent of a model's injuries.",
+    "tables": [],
+    "used_by": 8,
+    "wordings": 4
+  },
+  {
+    "slug": "cost",
+    "name": "Cost",
+    "aliases": [],
+    "summary": "Cost reduced by 1 gc per Experience point the Hero has.",
+    "text": "The cost for found Chaos armour is decreased by 1 gold crown for each Experience point the Hero has.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 1
+  },
+  {
+    "slug": "cumbersome",
+    "name": "Cumbersome",
+    "aliases": [],
+    "summary": "User suffers -1 M and -1 I; cannot move and fire, or fire twice.",
+    "text": "The user is at –1 Initiative and –1 Movement throughout the battle. Also, Swivel Guns may never be fired twice per turn, or fired if the user moved, no matter what Skills the user may have.",
+    "tables": [],
+    "used_by": 4,
+    "wordings": 4
+  },
+  {
+    "slug": "cutting-edge",
+    "name": "Cutting Edge",
+    "aliases": [],
+    "summary": "An axe has an extra save modifier of -1",
+    "text": "An axe has an extra save modifier of -1, so a model with Strength 4 using an axe has a -2 save modifier when he hits an opponent in hand-to-hand combat.",
+    "tables": [],
+    "used_by": 4,
+    "wordings": 3
+  },
+  {
+    "slug": "difficult-to-use",
+    "name": "Difficult to use",
+    "aliases": [],
+    "summary": "Cannot use second weapon or buckler",
+    "text": "A model with a Broadsword may not use a second weapon or buckler in his other hand because it requires all his skill to wield it. He may carry a shield or a kite shield as normal though.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 2
+  },
+  {
+    "slug": "double-barrelled",
+    "name": "Double-barrelled",
+    "aliases": [],
+    "summary": "Can fire one or both barrels with different effects",
+    "text": "A double-barrelled weapon is a tricky piece of engineering, but it's a wonderful piece for combat. When firing such a weapon, the bearer must declare whether he is firing one or both barrels. If firing a single barrel, treat the shot as you would a normal weapon. However when firing both barrels, the method changes slightly:\n\n- To hit: roll a single dice as you would normally. This allows for a narrow field of fire emanating from the weapon.\n- To wound: roll for each shot individually, as each shot can wound on it's own. Treat each shot that inflicts Critical Hits separately.\n- Reloading: After firing both barrels, place 2 tokens on the model. In your next shooting phase remove 1 token to represent one barrel having been reloaded. Token removal should be the last thing done in your shooting phase and you cannot shoot in the same phase as your reload.\n- Firing a Brace: If you fire both guns and barrels at the same time, place 4 tokens down, 2 each of different colours (one for each pistol in the brace). Remove one token of each colour every turn.",
+    "tables": [],
+    "used_by": 3,
+    "wordings": 2
+  },
+  {
+    "slug": "durability",
+    "name": "Durability",
+    "aliases": [],
+    "summary": "A barded warhorse is only killed on a serious injury roll of ‘1'.",
+    "text": "A barded warhorse is only killed on a serious injury roll of ‘1' if the model goes out of action.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 2
+  },
+  {
+    "slug": "effect",
+    "name": "Effect",
+    "aliases": [],
+    "summary": "+D3 Initiative, +1 Movement and Strength for one game",
+    "text": "A model using Crimson Shade has his Initiative increased by +D3 points, and Movement and Strength by +1 (this effect lasts for one game). Crimson Shade has no effect on Undead such as Vampires and Zombies, or the Possessed.",
+    "tables": [],
+    "used_by": 3,
+    "wordings": 3
+  },
+  {
+    "slug": "experimental",
+    "name": "Experimental",
+    "aliases": [],
+    "summary": "Always uses optional Blackpowder Weapons rules.",
+    "text": "The Hand-held Mortar is always Experimental: subject to the optional Blackpowder Weapons rules from the Mordheim rulebook, even if they are not normally used in your campaign. On any result other than “BOOM!”, the weapon has jammed or run out of loaded barrels and must be reloaded.",
+    "tables": [],
+    "used_by": 3,
+    "wordings": 3
+  },
+  {
+    "slug": "explosive-radius",
+    "name": "Explosive Radius",
+    "aliases": [],
+    "summary": "Target and all models within 1½” take a S4 hit.",
+    "text": "After determining the final landing spot, the explosion created by the bomb will cover a small area. The target and any models within 1 ½” of him each take a single S4 hit from the blast.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 2
+  },
+  {
+    "slug": "fear",
+    "name": "Fear",
+    "aliases": [],
+    "summary": "Causes fear.",
+    "text": "Cold Ones cause fear.",
+    "tables": [],
+    "used_by": 3,
+    "wordings": 3
+  },
+  {
+    "slug": "ferocious-charge",
+    "name": "Ferocious Charge",
+    "aliases": [],
+    "summary": "Attacks with +1 Strength when charging.",
+    "text": "Temple Dogs attack with +1 Strength when charging, due to their bulk.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 2
+  },
+  {
+    "slug": "fire",
+    "name": "Fire",
+    "aliases": [],
+    "summary": "Chance to set target on fire",
+    "text": "The burning brazier of coals atop the staff is deadly, capable of setting an opponent ablaze with even the slightest glancing blow. Whenever you score a successful hit with the brazier staff roll a D6. If you roll a 5+ the victim is set on fire. If the warrior survives the attack they must score a 4+ in the recovery phase or they will suffer a strength 4 hit each turn they are on fire and will be unable to do anything other than move. Other warriors from the same warband may help to put the warrior out if they wish. They must move into base-to-base contact and score a 4+ in the recovery phase.",
+    "tables": [],
+    "used_by": 3,
+    "wordings": 3
+  },
+  {
+    "slug": "fire-thrice",
+    "name": "Fire Thrice",
+    "aliases": [],
+    "summary": "May fire up to 3 shots; -1 to hit on additional shots.",
+    "text": "The Repeater Handgun may fire up to three shots; if more than one shot is made the to hit roll is at -1. Resolve each shot individually, you may choose to shot later shots at a different target, but they must be within 3\" of the previous target. Ordinary targeting restrictions apply to shots as per Mordheim rulebook.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 2
+  },
+  {
+    "slug": "gift-of-chaos",
+    "name": "Gift of Chaos",
+    "aliases": [],
+    "summary": "Cannot be given to another; fuses to the wearer.",
+    "text": "Chaos armour is a gift from the Dark Gods to the worthy warrior. A Hero who has successfully purchased a suit of Chaos armour will never give it away to another warband member but put it on himself immediately. Chaos armour becomes fused to the body of its wearer. It can never be removed.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 1
+  },
+  {
+    "slug": "hand-to-hand",
+    "name": "Hand-to-hand",
+    "aliases": [
+      "Hand-To-Hand"
+    ],
+    "summary": "Can be used in close combat for +1 Attack at S4 with -2 save modifier",
+    "text": "Pistols can be used in hand-to-hand combat as well as for shooting. A model armed with a pistol and another close combat weapon gains +1 Attack, which is resolved at Strength 4 with a -2 save modifier. This bonus attack can be used only once per combat. If you are firing a brace of pistols, your model can fight with 2 Attacks in the first turn of close combat. These attacks are resolved with a model's Weapon Skill like any normal close combat attack and likewise may be parried. Successful hits are resolved at Strength 4 and with a -2 save modifier, regardless of the firer's Strength.",
+    "tables": [],
+    "used_by": 7,
+    "wordings": 5
+  },
+  {
+    "slug": "heavy",
+    "name": "Heavy",
+    "aliases": [],
+    "summary": "+2 Strength only first turn",
+    "text": "The +2 Strength bonus applies only to the first turn of hand to hand combat.",
+    "tables": [],
+    "used_by": 5,
+    "wordings": 5
+  },
+  {
+    "slug": "immune-to-poison",
+    "name": "Immune to Poison",
+    "aliases": [
+      "Immune to poison"
+    ],
+    "summary": "Not affected by poison.",
+    "text": "Nightmares are not affected by poison.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 2
+  },
+  {
+    "slug": "move-or-fire",
+    "name": "Move or fire",
+    "aliases": [
+      "Move or Fire"
+    ],
+    "summary": "Cannot move and fire in the same turn, except pivot or stand up.",
+    "text": "You may not move and fire a handgun in the same turn, other than to pivot on the spot to face your target or stand up.",
+    "tables": [],
+    "used_by": 9,
+    "wordings": 6
+  },
+  {
+    "slug": "movement-penalty",
+    "name": "Movement Penalty",
+    "aliases": [],
+    "summary": "No penalty when worn with a shield.",
+    "text": "There is no Movement penalty for combining Chaos Armour with a Shield.",
+    "tables": [],
+    "used_by": 11,
+    "wordings": 10
+  },
+  {
+    "slug": "no-save",
+    "name": "No Save",
+    "aliases": [
+      "No save"
+    ],
+    "summary": "Wounded models receive no armour save.",
+    "text": "The blade of the Claw can literally cut through anything. A warrior wounded by a Claw receives no armour save whatsoever.",
+    "tables": [],
+    "used_by": 3,
+    "wordings": 3
+  },
+  {
+    "slug": "pair",
+    "name": "Pair",
+    "aliases": [],
+    "summary": "Grants extra Attack when used in pairs",
+    "text": "Brass knuckles are used in pairs and the warrior fighting with them gains an extra Attack. He may not use any other weapons or items in his hands while doing this however. He is free to swap his brass knuckles for other weapons and items during the battle but may not do this if in combat.",
+    "tables": [],
+    "used_by": 4,
+    "wordings": 4
+  },
+  {
+    "slug": "parry",
+    "name": "Parry",
+    "aliases": [],
+    "summary": "Can parry enemy blows",
+    "text": "Can parry enemy blows",
+    "tables": [],
+    "used_by": 18,
+    "wordings": 13
+  },
+  {
+    "slug": "poisoned",
+    "name": "Poisoned",
+    "aliases": [],
+    "summary": "Permanently coated in Black Lotus",
+    "text": "The venom of Poisoned Daggers will enter the blood of the victim and ravage his organs and muscles. The weapons count as being permanently coated in Black Lotus. No additional poison may be applied to Poisoned Daggers.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 2
+  },
+  {
+    "slug": "prepare-shot",
+    "name": "Prepare shot",
+    "aliases": [
+      "Prepare Shot"
+    ],
+    "summary": "May only fire every other turn due to reloading.",
+    "text": "A handgun takes a complete turn to reload, so you may only fire it every other turn.",
+    "tables": [],
+    "used_by": 13,
+    "wordings": 9
+  },
+  {
+    "slug": "rarity",
+    "name": "Rarity",
+    "aliases": [],
+    "summary": "Gain +1 to Rarity roll per model taken out of action last battle.",
+    "text": "When searching for Chaos armour a warrior gains +1 on his Rarity roll for each model he took out of action in the previous battle.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 1
+  },
+  {
+    "slug": "save",
+    "name": "Save",
+    "aliases": [],
+    "summary": "Armour save of 5+ unaffected by strength or modifiers.",
+    "text": "Because of their stone-like skin, Temple Dogs have an Armour save of 5+ that is not modified by the strength of attacks against it (or by other save modifiers).",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 2
+  },
+  {
+    "slug": "save-modifier",
+    "name": "Save Modifier",
+    "aliases": [
+      "Save modifier"
+    ],
+    "summary": "Wounded targets suffer a -2 armour save modifier.",
+    "text": "Handguns are even better at penetrating armour than their Strength 4 suggests. A warrior wounded by a handgun must take its armour save with a -2 modifier.",
+    "tables": [],
+    "used_by": 12,
+    "wordings": 8
+  },
+  {
+    "slug": "shot",
+    "name": "Shot",
+    "aliases": [],
+    "summary": "Automatically hits all models in a 16\" x 1\" line.",
+    "text": "When your model fires the blunderbuss, draw a line 16\" long and 1\" wide in any direction from the firer (the line must be absolutely straight). Any and all models in its path are automatically hit by a Strength 3 hit.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 2
+  },
+  {
+    "slug": "side-effects",
+    "name": "Side effects",
+    "aliases": [],
+    "summary": "2-3: addicted, 12: permanent +1 Initiative",
+    "text": "After the battle, roll 2D6. On a roll of 2-3, the model becomes addicted and you must try to buy him a new batch of Crimson Shade before every battle from now on. If you fail to buy any, he will leave your warband. On a roll of 12 the model's Initiative is increased permanently by +1.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 2
+  },
+  {
+    "slug": "skull-of-iron",
+    "name": "Skull of Iron",
+    "aliases": [],
+    "summary": "It treats a stunned result as knocked down instead.",
+    "text": "This creature’s head is much too thick for normal blows to penetrate. Therefore it treats a stunned result as knocked down instead.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 1
+  },
+  {
+    "slug": "spellcasters",
+    "name": "Spellcasters",
+    "aliases": [],
+    "summary": "Does not hinder spellcasting, but cannot be combined with shield/buckler.",
+    "text": "Chaos armour does not hinder its wearer from casting spells or rituals. It can be worn by spellcasters but they cannot combine it with a shield or buckler without appropriate skills.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 1
+  },
+  {
+    "slug": "staggered-but-not-down",
+    "name": "Staggered, but not down",
+    "aliases": [],
+    "summary": "Any knocked down result the monster receives will instead cause it to lose 1 Attack until it recovers (during the Recovery phase of its next turn). Multiple knocked down results will cause it to lose multiple attacks in this way.",
+    "text": "Mighty blows will rock the monster, but most creatures lack the ability to truly knock it into the dirt. Therefore, any knocked down result the monster receives will instead cause it to lose 1 Attack until it recovers (during the Recovery phase of its next turn). Multiple knocked down results will cause it to lose multiple attacks in this way.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 1
+  },
+  {
+    "slug": "strike-first",
+    "name": "Strike First",
+    "aliases": [
+      "Strike first"
+    ],
+    "summary": "Strikes first when charged",
+    "text": "The model armed with Bec de Corbin strikes in initiative order when charged instead of going last.",
+    "tables": [],
+    "used_by": 7,
+    "wordings": 7
+  },
+  {
+    "slug": "strike-last",
+    "name": "Strike last",
+    "aliases": [],
+    "summary": "Always strikes last",
+    "text": "Broadswords are so heavy that the model using them always strikes last, even when charging. Just like a Double-Handed weapon, learning the skill 'Strongman' negates 'Strike Last'.",
+    "tables": [],
+    "used_by": 3,
+    "wordings": 3
+  },
+  {
+    "slug": "thrown-weapon",
+    "name": "Thrown Weapon",
+    "aliases": [
+      "Thrown weapon"
+    ],
+    "summary": "No penalty for range or moving when throwing.",
+    "text": "A model using Cathayan candles does not suffer penalties for range or moving.",
+    "tables": [],
+    "used_by": 4,
+    "wordings": 4
+  },
+  {
+    "slug": "two-handed",
+    "name": "Two-handed",
+    "aliases": [
+      "Two Handed",
+      "Two handed"
+    ],
+    "summary": "Requires two hands to wield",
+    "text": "Requires two hands to wield",
+    "tables": [],
+    "used_by": 14,
+    "wordings": 13
+  },
+  {
+    "slug": "unwieldy",
+    "name": "Unwieldy",
+    "aliases": [],
+    "summary": "Cannot use second weapon",
+    "text": "A warrior with a spear may only use a shield or a buckler in his other hand. He may not use a second weapon.",
+    "tables": [],
+    "used_by": 4,
+    "wordings": 3
+  },
+  {
+    "slug": "wagon",
+    "name": "Wagon",
+    "aliases": [],
+    "summary": "Follows Wagon rules with exceptions",
+    "text": "The Engine of Chaos follows all rules for Wagons (see Empire in Flames Supplement, p. 30–33) unless specified otherwise here.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 2
+  },
+  {
+    "slug": "warband-rating",
+    "name": "Warband Rating",
+    "aliases": [],
+    "summary": "A Rhinox adds +20 to the warband rating.",
+    "text": "A Rhinox adds +20 to the warband rating.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 2
+  },
+  {
+    "slug": "weak",
+    "name": "Weak",
+    "aliases": [],
+    "summary": "Enemy gets +1 to armour save",
+    "text": "Since they are made of rope and not steel, they give the enemy model a +1 to his armour save (6+ for no armour), like a hit from a fist or dagger.",
+    "tables": [],
+    "used_by": 2,
+    "wordings": 2
+  },
+  {
+    "slug": "whipcrack",
+    "name": "Whipcrack",
+    "aliases": [],
+    "summary": "When the wielder charges, they gain +1 Attack for that turn. When charged, they gain +1 Attack against the charger which strikes first.",
+    "text": "When the wielder charges they gain +1A for that turn. This bonus attack is added after any other modifications. When the wielder is charged they gain +1A that they may only use against the charger. This additional attack will 'strike first'. If the wielder is simultaneously charged by two or more opponents they will still only receive a total of +1A. If the wielder is using two whips at the same time then they get +1A for the additional hand weapon, but only the first whip gets the whipcrack +1A.",
+    "tables": [],
+    "used_by": 4,
+    "wordings": 2
+  }
+]

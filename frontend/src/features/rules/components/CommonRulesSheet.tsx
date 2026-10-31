@@ -8,6 +8,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogKicker,
   DialogTitle,
 } from "@components/dialog";
 
@@ -124,17 +125,18 @@ export default function CommonRulesSheet({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[720px]">
         <DialogHeader>
-          <DialogTitle className="font-bold">Common Rules</DialogTitle>
+          <DialogKicker>House rules</DialogKicker>
+          <DialogTitle>Common rules</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <DialogDescription className="block text-sm text-muted-foreground">
+          <DialogDescription className="block text-sm text-text2">
             Choose from a small list of commonly used campaign house rules.
           </DialogDescription>
           {commonRulesQuery.isPending ? (
             <p className="text-sm text-muted-foreground">Loading common rules...</p>
           ) : null}
           {commonRulesQuery.error ? (
-            <p className="text-sm text-red-600">
+            <p className="text-sm text-danger">
               {getErrorMessage(commonRulesQuery.error, "Couldn't load the common rules.")}
             </p>
           ) : null}
@@ -147,7 +149,7 @@ export default function CommonRulesSheet({
                 <label
                   key={rule.id}
                   className={[
-                    "flex items-start gap-3 rounded-2xl border border-border/60 bg-background/80 p-4 shadow-[0_12px_22px_rgba(5,20,24,0.25)]",
+                    "flex items-start gap-3 border border-border bg-surface p-4",
                     isAlreadyApplied ? "opacity-70" : "cursor-pointer",
                   ].join(" ")}
                 >
@@ -159,14 +161,14 @@ export default function CommonRulesSheet({
                   />
                   <div className="min-w-0 space-y-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-sm font-semibold text-foreground">{rule.title}</p>
+                      <p className="text-sm font-semibold text-ink">{rule.title}</p>
                       {isAlreadyApplied ? (
-                        <span className="rounded bg-background/70 px-2 py-0.5 text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground">
+                        <span className="border border-border px-[7px] py-px text-[11px] font-bold text-muted-foreground">
                           Applied
                         </span>
                       ) : null}
                       {rule.effect_key ? (
-                        <span className="rounded bg-amber-900/30 px-2 py-0.5 text-[0.65rem] uppercase tracking-[0.18em] text-amber-400/80">
+                        <span className="border border-accent-line bg-accent-soft px-[7px] py-px text-[11px] font-bold text-accent-hi">
                           Has game effects
                         </span>
                       ) : null}
@@ -179,14 +181,14 @@ export default function CommonRulesSheet({
               );
             })}
           </div>
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
+          {error ? <p className="text-sm text-danger">{error}</p> : null}
           <p className="text-xs text-muted-foreground">
             More house rule ideas can be found at{" "}
             <a
               href="https://www.mordheimer.net/docs/optional-rules/house-rules/hull"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:text-foreground"
+              className="underline hover:text-head"
             >
               mordheimer.net
             </a>

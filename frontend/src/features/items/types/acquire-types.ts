@@ -1,4 +1,3 @@
-import type { UnitTypeOption } from "@components/unit-selection-section";
 import type { PurchaseLine } from "../api/purchase";
 import type {
   HenchmenGroup,
@@ -6,7 +5,7 @@ import type {
   WarbandHireling,
 } from "@/features/warbands/types/warband-types";
 
-/** What the player chose in the acquire dialog, as the purchase and its callers see it. */
+/** What the player chose for a purchase (the store's basket line), as the purchase sends it. */
 export type AcquireItemMeta = {
   isBuying: boolean;
   quantity: number;
@@ -18,34 +17,9 @@ export type AcquireItemMeta = {
   line?: PurchaseLine;
 };
 
-/** A unit being created in the roster editor, offered as a receiver before it is saved. */
-export type DraftUnit = {
-  unitType: UnitTypeOption;
-  id: string;
-  name?: string | null;
-  unit_type?: string | null;
-};
-
 /** Who receives a purchase: the stash, or a saved unit of the warband (as its list shows it). */
 export type PurchaseTarget =
   | { kind: "stash" }
   | { kind: "heroes"; unit: WarbandHero }
   | { kind: "hirelings"; unit: WarbandHireling }
   | { kind: "henchmen"; unit: HenchmenGroup };
-
-/** A rarity roll as the dialog keeps it for the searching hero. */
-export type HeroRarityRoll = {
-  total: number;
-  modifier: number;
-  finalTotal: number;
-  success: boolean;
-  /** Why the modifier was added, when it was. */
-  reason?: string;
-};
-
-/** A hero offered as the searcher of a rare item. */
-export type HeroOption = {
-  id: number | string;
-  name?: string | null;
-  trading_action?: boolean | null;
-};

@@ -71,7 +71,7 @@ class BattleRecordTests(BattleTestCase):
 
     def test_participants_are_taken_off_kept_added_and_rated(self):
         battle_id = self.ended()
-        crows = Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows", faction="X")
+        crows = Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows")
         body = {"participants": [{"warband_id": self.warband.id, "declared_rating": 150}, {"warband_id": crows.id}]}
 
         data = self.ok(self.patch(self.campaign_owner, battle_id, {**body, "winners": [crows.id]})).data

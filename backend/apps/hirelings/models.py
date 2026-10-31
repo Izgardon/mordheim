@@ -2,12 +2,14 @@
 step 2).
 
 Both carry the same columns (`HirelingProfile`) and the same five link tables: skills, specials, spells, items (with
-a quantity: the Ogre keeps both swords) and restrictions (with a note). A dramatis persona adds how long it stays and
-what it is paid in; it gains no XP and uses the Hero injury table, which come from its kind, not from columns.
-Hiring copies a row onto the warband as a `warbands.Hireling` that keeps no link back.
+a quantity: the Ogre keeps both swords) and who may hire them (the items rebuild: warband types or groups, each
+included or excluded, beside `for_everyone`; `hire_note` keeps the book's sentence, shown and never checked). A
+dramatis persona adds how long it stays and what it is paid in; it gains no XP and uses the Hero injury table, which
+come from its kind, not from columns. Hiring copies a row onto the warband as a `warbands.Hireling` that keeps no
+link back.
 
 The links name the same relations on both kinds (`skill_links`, `special_links`, `spell_links`, `item_links`,
-`restriction_links`), so serializers, writes, seeding and hiring are written once for both. Each link to a skill,
+`warband_links`), so serializers, writes, seeding and hiring are written once for both. Each link to a skill,
 special, spell or item holds it with RESTRICT, as units' copies do (BUG-16): the catalogue archives an entry a hired
 sword still lists instead of deleting it.
 """
@@ -17,6 +19,7 @@ from django.db import models
 from apps.core.models import CatalogueEntry, version_constraints
 from apps.warbands.models.hirelings import STAYS
 from apps.warbands.models.shared import StatBlock, stat_constraints
+from apps.warbands.models.types import WarbandAccess, access_constraints
 
 CASTERS = (("No", "No"), ("Wizard", "Wizard"), ("Priest", "Priest"))
 MAX_KIT_QUANTITY = 20  # of one item in a kit: hiring writes a row per copy
@@ -36,9 +39,10 @@ class HirelingProfile(StatBlock, CatalogueEntry):
     """What a hired sword and a dramatis persona both carry.
 
     `description` is fluff: shown in the catalogue, never copied on hire. `race_label` keeps the source's race text
-    (e.g. "Chameleon Skink") whether or not `race` found a match. The costs keep their formulas beside the numbers
-    ("70+3D6" with 70, "1 piece of wyrdstone" with no number). `grade` is text until the grading plan swaps it for a
-    foreign key.
+    (e.g. "Chameleon Skink") whether or not `race` found a match. A fee or upkeep that isn't a plain number keeps its
+    text in the `*_expression` column, the "special" one ("70 + 3D6" with 70 in gold, "1 wyrdstone" with none).
+    `grade` is text until the grading plan swaps it for a foreign key. Who may hire: `for_everyone` (minus the
+    excluded lines) or the lines it names (`warband_links`), `hire_note` the book's sentence.
     """
 
     name = models.CharField(max_length=160)
@@ -48,19 +52,21 @@ class HirelingProfile(StatBlock, CatalogueEntry):
     caster = models.CharField(max_length=20, default="No", choices=CASTERS)
     race_label = models.CharField(max_length=60, blank=True, default="")
     hire_cost = models.PositiveIntegerField(null=True, blank=True)
-    hire_cost_expression = models.CharField(max_length=120, blank=True, default="")
+    hire_cost_expression = models.CharField(max_length=300, blank=True, default="")  # a fee in words can run long
     upkeep_cost = models.PositiveIntegerField(null=True, blank=True)
-    upkeep_cost_expression = models.CharField(max_length=120, blank=True, default="")
+    upkeep_cost_expression = models.CharField(max_length=300, blank=True, default="")
     rating = models.PositiveIntegerField(null=True, blank=True)
     available_skill_types = models.JSONField(default=list, blank=True)
     grade = models.CharField(max_length=20, blank=True, default="")
+    for_everyone = models.BooleanField(default=True)
+    hire_note = models.TextField(max_length=2000, blank=True, default="")
 
     class Meta:
         abstract = True
 
 
 def profile_constraints(prefix: str) -> list[models.BaseConstraint]:
-    """The stat ranges, one version per book entry in a campaign, and one entry per name in the book, an add-on and a
+    """The stat ranges, one version per book entry in a campaign, and one entry per name in each setting of the book and a
     campaign (NULLs not distinct, as the seeders upsert: BUG-17)."""
     return [
         *stat_constraints(prefix),
@@ -75,8 +81,10 @@ class HiredSword(HirelingProfile):
     campaign = models.ForeignKey(  # null: the book
         "campaigns.Campaign", related_name="hired_swords", null=True, blank=True, on_delete=models.CASCADE
     )
-    campaign_type = models.ForeignKey(  # an add-on's entry (CAT-NEW-04: schema only, always null today)
-        "campaigns.CampaignType", related_name="hired_swords", null=True, blank=True, on_delete=models.RESTRICT
+    campaign_type = (
+        models.ForeignKey(  # its setting, which holds its grade (grading phase 1); null counts as Mordheim's
+            "campaigns.CampaignType", related_name="hired_swords", null=True, blank=True, on_delete=models.RESTRICT
+        )
     )
     race = models.ForeignKey(  # RESTRICT, as units hold theirs (BUG-130)
         "races.Race", related_name="hired_swords", null=True, blank=True, on_delete=models.RESTRICT
@@ -98,8 +106,10 @@ class DramatisPersona(HirelingProfile):
     campaign = models.ForeignKey(  # null: the book
         "campaigns.Campaign", related_name="dramatis_personae", null=True, blank=True, on_delete=models.CASCADE
     )
-    campaign_type = models.ForeignKey(  # an add-on's entry (CAT-NEW-04: schema only, always null today)
-        "campaigns.CampaignType", related_name="dramatis_personae", null=True, blank=True, on_delete=models.RESTRICT
+    campaign_type = (
+        models.ForeignKey(  # its setting, which holds its grade (grading phase 1); null counts as Mordheim's
+            "campaigns.CampaignType", related_name="dramatis_personae", null=True, blank=True, on_delete=models.RESTRICT
+        )
     )
     race = models.ForeignKey(  # RESTRICT, as units hold theirs (BUG-130)
         "races.Race", related_name="dramatis_personae", null=True, blank=True, on_delete=models.RESTRICT
@@ -130,13 +140,6 @@ class Link(models.Model):
 
 class ItemLink(Link):
     quantity = models.PositiveIntegerField(default=1)  # the Ogre's two swords are one link of 2
-
-    class Meta:
-        abstract = True
-
-
-class RestrictionLink(Link):
-    additional_note = models.CharField(max_length=200, blank=True, default="")
 
     class Meta:
         abstract = True
@@ -175,19 +178,18 @@ class HiredSwordItem(ItemLink):
         constraints = [models.UniqueConstraint(fields=["hired_sword", "item"], name="hired_sword_item_once")]
 
 
-class HiredSwordRestriction(RestrictionLink):
-    hired_sword = _owner("HiredSword", "restriction_links")
-    restriction = models.ForeignKey(
-        "restrictions.Restriction", related_name="hired_sword_links", on_delete=models.CASCADE
-    )
+class HiredSwordWarband(WarbandAccess):
+    """Who may (or may not) hire the hired sword: a warband type or group."""
+
+    hired_sword = _owner("HiredSword", "warband_links")
 
     class Meta:
-        db_table = "hired_sword_restriction"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["hired_sword", "restriction", "additional_note"], name="hired_sword_restriction_once"
-            )
-        ]
+        db_table = "hired_sword_warband"
+        ordering = ["id"]
+        constraints = access_constraints("hired_sword_warband")
+
+    def __str__(self):
+        return f"{self.hired_sword_id}:{self.warband_type_id or self.warband_group_id}"
 
 
 class DramatisPersonaSkill(Link):
@@ -223,16 +225,15 @@ class DramatisPersonaItem(ItemLink):
         constraints = [models.UniqueConstraint(fields=["dramatis_persona", "item"], name="dramatis_persona_item_once")]
 
 
-class DramatisPersonaRestriction(RestrictionLink):
-    dramatis_persona = _owner("DramatisPersona", "restriction_links")
-    restriction = models.ForeignKey(
-        "restrictions.Restriction", related_name="dramatis_persona_links", on_delete=models.CASCADE
-    )
+class DramatisPersonaWarband(WarbandAccess):
+    """Who may (or may not) hire the dramatis persona: a warband type or group."""
+
+    dramatis_persona = _owner("DramatisPersona", "warband_links")
 
     class Meta:
-        db_table = "dramatis_persona_restriction"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["dramatis_persona", "restriction", "additional_note"], name="dramatis_persona_restriction_once"
-            )
-        ]
+        db_table = "dramatis_persona_warband"
+        ordering = ["id"]
+        constraints = access_constraints("dramatis_persona_warband")
+
+    def __str__(self):
+        return f"{self.dramatis_persona_id}:{self.warband_type_id or self.warband_group_id}"

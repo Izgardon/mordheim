@@ -46,7 +46,7 @@ export function editEntryTrigger(label: string) {
         <button
           type="button"
           aria-label={label}
-          className="icon-button flex h-9 w-9 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+          className="flex h-9 w-9 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-head"
         >
           <Pencil className="h-5 w-5" aria-hidden="true" />
         </button>
@@ -93,13 +93,11 @@ export function CatalogueFormDialog({
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle className="font-bold" style={{ color: "#a78f79" }}>
-            {title}
-          </DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           {children}
-          {form.formError ? <p className="text-sm text-red-600">{form.formError}</p> : null}
+          {form.formError ? <p className="text-sm text-danger">{form.formError}</p> : null}
           {editing?.generated_effect_key && revert ? (
             <RuleVersionNote
               effectKey={editing.generated_effect_key}

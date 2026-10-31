@@ -71,7 +71,7 @@ export function toParticipantRosters(
         members: group.members.map((member) => ({ ...member })),
       })),
     };
-    // Pets with a profile fight as their own models, built once here (step 5).
+    // Pets with a profile fight as their own models, built once here.
     normalized[userId] = { ...units, petModels: rosterPetModels(units) };
   }
   return normalized;

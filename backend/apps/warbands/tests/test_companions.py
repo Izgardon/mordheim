@@ -160,18 +160,13 @@ class CompanionWarningTests(CompanionTestCase):
         self.assertEqual(self.codes(response), ["two_mounts"])
         self.assertEqual(response.data["unit"]["mount"]["item_row_id"], self.hero.hero_items.order_by("id")[0].id)
 
-    def test_a_group_rides_one_mount_per_living_member(self):
+    def test_a_groups_mount_row_is_one_for_every_member(self):
         group = make_unit(HENCHMEN, self.warband, name="Outriders", members=("A", "B"))
-        first = HenchmenGroupItem.objects.create(henchmen_group=group, item=self.horse)
+        row = HenchmenGroupItem.objects.create(henchmen_group=group, item=self.horse)
 
-        short = self.switch(first, kind=HENCHMEN, unit=group)
-        HenchmenGroupItem.objects.create(henchmen_group=group, item=self.horse)  # bought later, not switched on
-        both = self.switch(first, kind=HENCHMEN, unit=group)  # the group rides every copy (test_group_mounts.py)
+        response = self.switch(row, kind=HENCHMEN, unit=group)  # henchmen loadouts: no copies to count
 
-        self.assertEqual(short.data["warnings"][0]["code"], "group_mounts")
-        self.assertEqual((short.data["warnings"][0]["mounts"], short.data["warnings"][0]["members"]), (1, 2))
-        self.assertIn("until each of its 2 members has a Warhorse (it has 1)", short.data["warnings"][0]["message"])
-        self.assertEqual(self.codes(both), [])
+        self.assertEqual(self.codes(response), [])
 
     def test_more_than_two_mounts_in_the_warband_warn(self):
         for name in ("Brother", "Cousin"):

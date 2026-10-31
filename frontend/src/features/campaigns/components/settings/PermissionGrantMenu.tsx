@@ -13,13 +13,12 @@ type PermissionGrantMenuProps = {
   canManagePermissions: boolean;
   isSaving: boolean;
   onToggle: (code: string) => void;
-  className?: string;
 };
 
 /**
- * A player's grants as a Radix dropdown (CAMP-UX-07): arrow keys move between codes, Space or
- * Enter ticks one, Escape or a click outside closes it. Owners and admins hold every code, so
- * their trigger is disabled. Ticking keeps the menu open for the next code.
+ * A player's grants as a dropdown (CAMP-UX-07): arrow keys move between codes, Space or Enter
+ * ticks one, Escape or a click outside closes it, and ticking keeps it open for the next code.
+ * Owners and admins hold every code, so their button is disabled.
  */
 export default function PermissionGrantMenu({
   member,
@@ -28,19 +27,16 @@ export default function PermissionGrantMenu({
   canManagePermissions,
   isSaving,
   onToggle,
-  className,
 }: PermissionGrantMenuProps) {
-  const isPlayer = member.role === "player";
-  const isDisabled = !isPlayer || !canManagePermissions;
-
+  const disabled = member.role !== "player" || !canManagePermissions;
   return (
     <DropdownMenu.Root modal={false}>
       <DropdownMenu.Trigger
-        disabled={isDisabled}
+        disabled={disabled}
+        aria-label={`Permissions for ${member.name}: ${label}`}
         className={cn(
-          "group flex min-w-0 cursor-pointer items-center justify-between gap-2 rounded-xl border border-border/60 bg-background/70 px-3 py-1 text-xs",
-          isDisabled ? "cursor-not-allowed opacity-70" : "hover:border-primary/50",
-          className
+          "group flex min-h-10 w-[240px] min-w-0 items-center justify-between gap-2 border border-strong bg-page px-3 text-left text-[13px] text-ink max-[960px]:w-full",
+          disabled ? "cursor-not-allowed text-muted-foreground" : "hover:bg-raised"
         )}
       >
         <span className="truncate">{label}</span>
@@ -52,13 +48,11 @@ export default function PermissionGrantMenu({
       <DropdownMenu.Portal>
         <DropdownMenu.Content
           align="start"
-          sideOffset={8}
+          sideOffset={4}
           collisionPadding={8}
-          // Named for whose grants they are, not by the trigger's summary of them.
-          aria-labelledby={undefined}
           aria-label={`Permissions for ${member.name}`}
-          // Eleven codes are taller than the space left on a phone: the list scrolls instead.
-          className="z-[9999] max-h-[var(--radix-dropdown-menu-content-available-height)] w-72 max-w-[calc(100vw-1rem)] space-y-1 overflow-y-auto rounded-2xl border border-border/60 bg-background p-2 shadow-[0_12px_22px_rgba(5,20,24,0.35)]"
+          // Every code is taller than the room left on a phone: the list scrolls instead.
+          className="z-[70] flex max-h-[var(--radix-dropdown-menu-content-available-height)] w-80 max-w-[calc(100vw-1rem)] flex-col gap-0.5 overflow-y-auto border border-accent-line bg-panel p-1 shadow-[0_16px_40px_var(--color-shadow)]"
         >
           {options.map((option) => (
             <DropdownMenu.CheckboxItem
@@ -66,20 +60,17 @@ export default function PermissionGrantMenu({
               checked={member.permissions.includes(option.code)}
               disabled={isSaving}
               onCheckedChange={() => onToggle(option.code)}
-              // Keep the menu open, so several codes can be ticked in a row.
               onSelect={(event) => event.preventDefault()}
-              className="flex cursor-pointer items-start gap-2 rounded-xl px-2 py-1.5 text-xs outline-none data-[disabled]:cursor-not-allowed data-[highlighted]:bg-primary/10 data-[disabled]:opacity-60"
+              className="flex cursor-pointer items-start gap-2.5 px-2.5 py-2 text-sm outline-none data-[disabled]:cursor-not-allowed data-[highlighted]:bg-raised data-[disabled]:opacity-60"
             >
-              <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border border-border/70">
+              <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center border border-strong">
                 <DropdownMenu.ItemIndicator>
-                  <Check className="h-3 w-3 text-primary" aria-hidden="true" />
+                  <Check className="h-3 w-3 text-accent-hi" aria-hidden="true" />
                 </DropdownMenu.ItemIndicator>
               </span>
-              <span>
-                <span className="font-semibold text-foreground">{option.label}</span>
-                <span className="block text-[11px] text-muted-foreground">
-                  {option.description}
-                </span>
+              <span className="flex flex-col gap-0.5">
+                <span className="font-bold text-ink">{option.label}</span>
+                <span className="text-xs text-muted-foreground">{option.description}</span>
               </span>
             </DropdownMenu.CheckboxItem>
           ))}

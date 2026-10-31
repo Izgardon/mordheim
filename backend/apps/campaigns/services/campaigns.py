@@ -7,9 +7,8 @@ from typing import Any
 
 from django.db import transaction
 
-from apps.warbands.restrictions import get_valid_campaign_item_settings
-
 from ..constants import OWNER
+from ..in_play import DEFAULT_PRESET, preset_ids, set_settings
 from ..models import Campaign, CampaignMembership, CampaignSettings
 from . import codes
 
@@ -30,23 +29,25 @@ def unique_join_code() -> str:
 
 
 def create_campaign(owner: Any, validated: dict[str, Any]) -> Campaign:
-    """A new campaign with `owner` as its owner, from CampaignCreateSerializer's data; all or nothing."""
-    campaign_type = validated.get("campaign_type", "standard")
-    item_setting_ids = validated.get("item_setting_ids", [])
+    """A new campaign with `owner` as its owner, from CampaignCreateSerializer's data; all or nothing. Its settings
+    in play are the ones sent, else its preset's (Up to 1c by default, in_play.py)."""
+    picked = validated.get("setting_ids")
+    setting_ids = (
+        [row.pk for row in picked] if picked is not None else preset_ids(validated.get("preset", DEFAULT_PRESET))
+    )
     with transaction.atomic():
         campaign = Campaign.objects.create(name=validated["name"], join_code=unique_join_code())
-        settings = CampaignSettings.objects.create(
+        CampaignSettings.objects.create(
             campaign=campaign,
             max_players=validated.get("max_players", 8),
             max_heroes=validated.get("max_heroes", 6),
             max_hired_swords=validated.get("max_hired_swords", 3),
             max_games=validated.get("max_games", 10),
             starting_gold=validated.get("starting_gold", 500),
-            enable_encampments=campaign_type == "marienburg",
-            enable_locations=campaign_type == "marienburg",
+            enable_encampments=validated.get("enable_encampments", False),
+            enable_locations=validated.get("enable_locations", False),
         )
-        if item_setting_ids:
-            settings.item_settings.set(get_valid_campaign_item_settings(item_setting_ids))
+        set_settings(campaign, setting_ids)
         CampaignMembership.objects.create(campaign=campaign, user=owner, role_id=codes.role_ref(OWNER))
     return campaign
 

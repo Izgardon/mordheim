@@ -49,13 +49,16 @@ export default function UnfinishedBattleBanner({
   return (
     <p
       role="status"
-      className={cn("battle-inline-panel rounded-lg px-3 py-2 text-sm text-amber-300", className)}
+      className={cn(
+        "border border-accent-line bg-accent-soft px-3 py-2 text-sm text-accent-hi",
+        className
+      )}
     >
       You have an unfinished battle: {details}.{" "}
       <Link
         to={`/campaigns/${battle.campaign_id}/battles/${battle.id}/${unfinished.viewer.page}`}
         onClick={onGo}
-        className="font-semibold text-foreground underline underline-offset-2"
+        className="font-semibold text-ink underline underline-offset-2"
       >
         Go to it
       </Link>

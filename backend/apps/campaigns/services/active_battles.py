@@ -19,6 +19,7 @@ from apps.battles.serializers import serialize_battle, serialize_participant
 from apps.battles.services.broadcast import bump_state_version
 from apps.battles.services.capabilities import manager_actions
 from apps.battles.services.expiry import expire_overdue
+from apps.battles.services.kills import with_live_kills
 from apps.battles.services.lifecycle import POSTBATTLE_APPLIED, cancel_battle, someone_finalised
 from apps.battles.services.locks import locked
 
@@ -30,7 +31,7 @@ STUCK_AFTER = timedelta(hours=24)  # idle this long, a battle shows on the overv
 
 def listing(campaign_id: int) -> list[dict[str, Any]]:
     """Each open battle, newest first, with its participants and the manager tools that apply."""
-    participants = BattleParticipant.objects.select_related("user", "warband").order_by("id")
+    participants = with_live_kills(BattleParticipant.objects.select_related("user", "warband")).order_by("id")
     battles = (
         Battle.objects.filter(campaign_id=campaign_id, status__in=OPEN_STATUSES)
         .prefetch_related(Prefetch("participants", queryset=participants))

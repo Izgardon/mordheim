@@ -3,7 +3,6 @@ import type {
   BattleParticipantStatus,
   BattleStatus,
 } from "@/features/battles/types/battle-types";
-import { idleLabel } from "@/features/battles/utils/battle-timing";
 
 /**
  * Where each player is in the battle, for "who's holding up the battle" (BATL-NEW-08):
@@ -62,20 +61,4 @@ export function participantProgress(
     default:
       return { label: participant.status, tone: "done" };
   }
-}
-
-/** Each player still in the battle, with their progress and how long since they were last seen. */
-export function battleProgress(
-  participants: BattleParticipant[],
-  battleStatus: BattleStatus,
-  now = Date.now()
-) {
-  return participants
-    .map((participant) => ({
-      participant,
-      progress: participantProgress(participant, battleStatus),
-      // Their last write or read (BATL-NEW-08); older servers only have the last read.
-      idle: idleLabel(participant.last_activity_at ?? participant.last_seen_at, now),
-    }))
-    .filter((entry) => entry.progress.tone !== "left");
 }

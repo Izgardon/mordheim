@@ -16,6 +16,7 @@ from django.db.models import F, Prefetch
 
 from apps.warbands.models import (
     Henchman,
+    HenchmanItemGap,
     HenchmenGroup,
     HenchmenGroupItem,
     Hero,
@@ -24,6 +25,7 @@ from apps.warbands.models import (
     HirelingItem,
     on_roster,
 )
+from apps.warbands.prefetches import members_with_gaps
 from apps.warbands.units.companions import (
     companions,
     effective_stats,
@@ -91,12 +93,11 @@ def _beast(row, owner: str | None = None) -> dict:
     return entry
 
 
-def _companions(unit, links: list, rider: int = 0, owner: str | None = None) -> dict:
-    """The unit's mount (its first switched on; a group's `rider`-th member rides the `rider`-th, and goes on foot when
-    there are fewer), its pets (keyed as models of an `owner` kind) and what the mount makes it show (the bestiary
+def _companions(unit, links: list, owner: str | None = None) -> dict:
+    """The unit's mount (its first switched on: a henchman's, the group's if he carries it), its pets (keyed as models of an `owner` kind) and what the mount makes it show (the bestiary
     rewrite step 4): snapshotted with the rest at start/, so the battle keeps what the rider rode in on."""
     found = companions(links)
-    mount = found.mounts[rider] if rider < len(found.mounts) else None
+    mount = found.mounts[0] if found.mounts else None
     shown = None
     if mount is not None:
         payload = mount_payload(mount)
@@ -174,30 +175,56 @@ def hireling_entry(hireling: Hireling) -> dict:
     }
 
 
+KIT_TAKEN = HenchmanItemGap.KIT_TAKEN
+
+
+def _gaps(member, links: list) -> list[dict]:
+    """The loadout rows a member lacks, as the battle shows them (henchmen loadouts): he starts without each."""
+    rows = {row.pk: row for row in links}
+    gaps = []
+    for gap in getattr(member, "gap_entries", None) or []:
+        row = rows.get(gap["row_id"])
+        if row is not None:
+            gaps.append({"rowId": row.pk, "itemId": row.item_id, "name": row.item.name, "reason": gap["reason"]})
+    return gaps
+
+
+def _out_reason(gaps: list[dict]) -> str | None:
+    """Why prebattle leaves a member out at first (he may still be brought): his kit went to the stash."""
+    taken = [gap["name"] for gap in gaps if gap["reason"] == KIT_TAKEN]
+    return f"His kit went to the stash ({', '.join(taken)}); re-equip him to bring him back." if taken else None
+
+
+def henchman_entry(group: HenchmenGroup, member, links: list) -> dict:
+    """One member: the group's profile and skills, and the loadout rows he carries (none he has a gap on), so he
+    rides the group's mount only if he carries it."""
+    gaps = _gaps(member, links)
+    lacking = {gap["rowId"] for gap in gaps}
+    carried = [row for row in links if row.pk not in lacking]
+    items = _item_entries(carried)
+    return {
+        "key": f"henchman:{member.id}",
+        "id": member.id,
+        "kind": "henchman",
+        "displayName": member.name or f"Henchman {member.id}",
+        "unitType": group.unit_type or "Henchman",
+        **_missing(group),  # the whole group misses games
+        "stats": _stats(group),
+        **_companions(group, carried),
+        "noLevelUps": bool(group.no_level_ups),
+        "items": items,
+        "singleUseItems": _single_use(items),
+        "gaps": gaps,
+        "outReason": _out_reason(gaps),
+        "skills": _named(group.henchmen_group_skills.all(), "skill"),
+        "spells": [],
+        "specials": _named(group.henchmen_group_specials.all(), "special"),
+    }
+
+
 def henchmen_group_entry(group: HenchmenGroup) -> dict:
     links = list(group.henchmen_group_items.all())
-    items = _item_entries(links)
-    skills = _named(group.henchmen_group_skills.all(), "skill")
-    specials = _named(group.henchmen_group_specials.all(), "special")
-    members = [
-        {
-            "key": f"henchman:{member.id}",
-            "id": member.id,
-            "kind": "henchman",
-            "displayName": member.name or f"Henchman {member.id}",
-            "unitType": group.unit_type or "Henchman",
-            **_missing(group),  # the whole group misses games
-            "stats": _stats(group),
-            **_companions(group, links, rider),  # one mount per member, in order
-            "noLevelUps": bool(group.no_level_ups),
-            "items": items,
-            "singleUseItems": _single_use(items),
-            "skills": skills,
-            "spells": [],
-            "specials": specials,
-        }
-        for rider, member in enumerate(group.henchmen.all())
-    ]
+    members = [henchman_entry(group, member, links) for member in group.henchmen.all()]
     name = group.name or f"Henchmen Group {group.id}"
     return {
         "id": group.id,
@@ -207,7 +234,7 @@ def henchmen_group_entry(group: HenchmenGroup) -> dict:
         "sourceBeastId": group.source_beast_id,  # recruited from a creature: its beast and kind
         "beastKind": getattr(group, "beast_kind", None),
         "pets": [_beast(row, "henchmen_group") for row in companions(links).pets],  # the group's own: one model each
-        "mountWarnings": group_mount_warnings(name, links, len(members)),  # every member carries the same gear
+        "mountWarnings": group_mount_warnings(name, links),  # every member carries the same gear
         "members": members,
     }
 
@@ -234,7 +261,7 @@ def _live_rosters(warband_ids: list[int]) -> tuple[defaultdict, defaultdict, def
         "hireling_specials__special",
         "hireling_spells__spell",
     )
-    living_henchmen = Prefetch("henchmen", queryset=on_roster(Henchman.objects.all()).order_by("id"))
+    living_henchmen = Prefetch("henchmen", queryset=members_with_gaps(on_roster(Henchman.objects.all())))
     groups = on_roster(HenchmenGroup.objects.filter(warband_id__in=warband_ids)).annotate(
         beast_kind=F("source_beast__kind")
     )

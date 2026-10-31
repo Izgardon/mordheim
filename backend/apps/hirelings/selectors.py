@@ -1,9 +1,9 @@
 """How hired swords and dramatis personae are read (PERF-46, PERF-49): a fixed number of queries whatever the list's
 length or the kit's size.
 
-A list reads each row with its race, and the restrictions (with their text) in one query. A detail adds the skills,
-specials and spells (one query each, with the entries), the equipment links with their items, then the items'
-properties, availabilities (with their restrictions) and, for an animal's item, its entry's specials. Lists,
+A list reads each row with its race, and who may hire it (each line with its type or group) in one query. A detail
+adds the skills, specials and spells (one query each, with the entries), the equipment links with their items, then
+the items' rules, price rows (with their who-can lines) and, for an animal's item, its entry's specials. Lists,
 details, a write's answer and a hire read through here.
 """
 
@@ -34,9 +34,15 @@ def links_with(model: type[Model], relation: str, target: str) -> Prefetch:
     return Prefetch(relation, queryset=link_model(model, relation).objects.select_related(target).order_by("id"))
 
 
+def who_can_hire(model: type[Model]) -> Prefetch:
+    """Who may hire an entry: its lines, each with its warband type or group."""
+    lines = link_model(model, "warband_links").objects.select_related("warband_type", "warband_group").order_by("id")
+    return Prefetch("warband_links", queryset=lines)
+
+
 def profile_rows(rows: QuerySet[Any]) -> QuerySet[Any]:
-    """Rows read for the list payload: their race, and their restrictions in one query."""
-    return rows.select_related("race").prefetch_related(links_with(rows.model, "restriction_links", "restriction"))
+    """Rows read for the list payload: their race, and who may hire them in one query."""
+    return rows.select_related("race").prefetch_related(who_can_hire(rows.model))
 
 
 def equipment(model: type[Model]) -> Prefetch:
@@ -54,4 +60,4 @@ def profile_details(model: type[Model]) -> QuerySet[Any]:
     """Rows read for the detail payload: a list row's reads and its skills, specials, spells and equipment."""
     rows: QuerySet[Any] = model._default_manager.select_related("race", *badge_joins())
     kit = [links_with(model, relation, target) for relation, target in LINK_TARGETS]
-    return rows.prefetch_related(links_with(model, "restriction_links", "restriction"), *kit, equipment(model))
+    return rows.prefetch_related(who_can_hire(model), *kit, equipment(model))

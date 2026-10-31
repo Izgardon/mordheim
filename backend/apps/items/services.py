@@ -6,7 +6,7 @@ from django.db import models
 from apps.core.catalogue.cache import bump
 from apps.core.models import CatalogueRemoval
 
-from .models import Item, ItemAvailability, ItemAvailabilityRestriction, ItemPropertyLink
+from .models import Item, ItemAvailability, ItemAvailabilityWarband, ItemRuleLink
 
 HALF_PRICE_ARMOUR_EFFECT_KEY = "half_price_armour"
 IMPROVED_SHIELDS_EFFECT_KEY = "improved_shields"
@@ -22,10 +22,10 @@ def _prefetched_base_items(subtype):
             subtype=subtype,
         )
         .prefetch_related(
-            "property_links",
+            "rule_links",
             models.Prefetch(
                 "availabilities",
-                queryset=ItemAvailability.objects.prefetch_related("restriction_links"),
+                queryset=ItemAvailability.objects.prefetch_related("warband_links"),
             ),
         )
         .order_by("id")
@@ -37,41 +37,62 @@ def _clone_item_fields(source, clone, campaign_id, effect_key, *, save_value=Non
     clone.campaign_id = campaign_id
     clone.replaces = source
     clone.generated_effect_key = effect_key
-    clone.name = source.name
-    clone.type = source.type
-    clone.subtype = source.subtype
-    clone.grade = source.grade
-    clone.single_use = source.single_use
-    clone.description = source.description
-    clone.strength = source.strength
-    clone.range = source.range
+    for field in CLONED_FIELDS:
+        setattr(clone, field, getattr(source, field))
     clone.save_value = source.save_value if save_value is None else save_value
-    clone.statblock = source.statblock
-    clone.bestiary_entry = source.bestiary_entry
 
 
-def _sync_property_links(source, clone):
-    ItemPropertyLink.objects.filter(item=clone).delete()
-    links = [
-        ItemPropertyLink(item=clone, property_id=link.property_id)
-        for link in source.property_links.all()
-        if link.property_id
-    ]
-    if links:
-        ItemPropertyLink.objects.bulk_create(links)
+CLONED_FIELDS = (
+    "campaign_type_id",  # a clone keeps its book item's setting, as a version does
+    "name",
+    "variant",
+    "type",
+    "subtype",
+    "single_use",
+    "flavour",
+    "strength",
+    "range",
+    "statblock",
+    "source",
+    "link_url",
+    "tags",
+    "notes",
+    "bestiary_entry_id",
+)
+
+
+def _sync_rule_links(source, clone):
+    ItemRuleLink.objects.filter(item=clone).delete()
+    ItemRuleLink.objects.bulk_create(
+        [
+            ItemRuleLink(
+                item=clone,
+                position=link.position,
+                rule_id=link.rule_id,
+                name=link.name,
+                summary=link.summary,
+                text=link.text,
+                table=link.table,
+            )
+            for link in source.rule_links.all()
+        ]
+    )
 
 
 def _half_price(availability):
-    return int(math.ceil((availability.cost or 0) / 2))
+    return None if availability.cost is None else int(math.ceil(availability.cost / 2))
 
 
 def _same_price(availability):
     return availability.cost
 
 
+ROW_FIELDS = ("label", "dice", "dice_multiplier", "cost_note", "rarity", "for_everyone", "note")
+
+
 def _sync_availabilities(source, clone, cost_fn):
-    """The clone's availabilities become the source's, each at `cost_fn(availability)`, with their restrictions
-    (IMP-67: one path for every effect; the rows in one INSERT, their restrictions in another)."""
+    """The clone's price rows become the source's, each at `cost_fn(availability)`, with who may buy each (IMP-67: one
+    path for every effect; the rows in one INSERT, their who-can lines in another)."""
     ItemAvailability.objects.filter(item=clone).delete()
     source_availabilities = list(source.availabilities.all())
     cloned = ItemAvailability.objects.bulk_create(
@@ -79,24 +100,23 @@ def _sync_availabilities(source, clone, cost_fn):
             ItemAvailability(
                 item=clone,
                 cost=cost_fn(availability),
-                rarity=availability.rarity,
-                variable_cost=availability.variable_cost,
+                **{field: getattr(availability, field) for field in ROW_FIELDS},
             )
             for availability in source_availabilities
         ]
     )
-    restriction_links = [
-        ItemAvailabilityRestriction(
-            item_availability=cloned_availability,
-            restriction_id=link.restriction_id,
-            additional_note=link.additional_note,
-        )
-        for availability, cloned_availability in zip(source_availabilities, cloned, strict=True)
-        for link in availability.restriction_links.all()
-        if link.restriction_id
-    ]
-    if restriction_links:
-        ItemAvailabilityRestriction.objects.bulk_create(restriction_links)
+    ItemAvailabilityWarband.objects.bulk_create(
+        [
+            ItemAvailabilityWarband(
+                availability=cloned_availability,
+                warband_type_id=line.warband_type_id,
+                warband_group_id=line.warband_group_id,
+                excluded=line.excluded,
+            )
+            for availability, cloned_availability in zip(source_availabilities, cloned, strict=True)
+            for line in availability.warband_links.all()
+        ]
+    )
 
 
 def _retire_clones(campaign_id, clones):
@@ -152,7 +172,7 @@ def sync_half_price_armour_for_campaign(campaign_id):
     def clone_sync_fn(source, clone):
         _clone_item_fields(source, clone, campaign_id, HALF_PRICE_ARMOUR_EFFECT_KEY)
         clone.save()
-        _sync_property_links(source, clone)
+        _sync_rule_links(source, clone)
         _sync_availabilities(source, clone, _half_price)
 
     return _sync_generated_items_for_campaign(
@@ -187,7 +207,7 @@ def sync_improved_shields_for_campaign(campaign_id):
             save_value=_format_improved_shield_save(source.save_value),
         )
         clone.save()
-        _sync_property_links(source, clone)
+        _sync_rule_links(source, clone)
         _sync_availabilities(source, clone, _same_price)
 
     return _sync_generated_items_for_campaign(

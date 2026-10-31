@@ -1,7 +1,7 @@
 import { apiRequest } from "@/lib/api-client";
 
 import type { PurchaseLine, PurchaseWarning } from "@/features/items/api/purchase";
-import type { NamedKillHistory, WarbandUnitsSummary } from "../types/warband-types";
+import type { UnitKillHistory, WarbandUnitsSummary } from "../types/warband-types";
 import type { Unit, UnitKindKey, UnitPayload } from "../types/units";
 
 /** URL segment per kind: `/warbands/<id>/<segment>/...`. */
@@ -41,7 +41,7 @@ export type UnitApi<K extends UnitKindKey> = {
   list(warbandId: number): Promise<Unit<K>[]>;
   listDetails(warbandId: number): Promise<Unit<K>[]>;
   detail(warbandId: number, unitId: number): Promise<Unit<K>>;
-  killHistory(warbandId: number, unitId: number): Promise<NamedKillHistory>;
+  killHistory(warbandId: number, unitId: number): Promise<UnitKillHistory>;
   create(warbandId: number, payload: UnitPayload<K>): Promise<Unit<K>>;
   update(warbandId: number, unitId: number, payload: Partial<UnitPayload<K>>): Promise<Unit<K>>;
   remove(warbandId: number, unitId: number): Promise<void>;
@@ -58,7 +58,7 @@ function createUnitApi<K extends UnitKindKey>(kind: K): UnitApi<K> {
     listDetails: (warbandId) => apiRequest<Unit<K>[]>(`${base(warbandId)}detail/`),
     detail: (warbandId, unitId) => apiRequest<Unit<K>>(one(warbandId, unitId)),
     killHistory: (warbandId, unitId) =>
-      apiRequest<NamedKillHistory>(`${one(warbandId, unitId)}kill-history/`),
+      apiRequest<UnitKillHistory>(`${one(warbandId, unitId)}kill-history/`),
     create: (warbandId, payload) =>
       apiRequest<Unit<K>>(base(warbandId), { method: "POST", body: payload }),
     update: (warbandId, unitId, payload) =>

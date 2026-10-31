@@ -151,8 +151,7 @@ class CompanionPromoteTests(RosterTestCase):
     def test_a_promoted_rider_keeps_riding_his_mount(self):
         horse = warhorse()
         group = make_unit(HENCHMEN, self.warband, members=("Alpha", "Beta"), level_up=1)
-        group.henchmen_group_items.create(item=horse, cost=80)  # a spare
-        group.henchmen_group_items.create(item=horse, cost=80, companion=True)
+        group.henchmen_group_items.create(item=horse, cost=80, companion=True)  # the group rides: a horse each
         alpha = group.henchmen.order_by("id").first()
         body = {"henchman_id": alpha.id, "advance": {"id": "WS", "label": "Weapon Skill"}}
 
@@ -160,4 +159,4 @@ class CompanionPromoteTests(RosterTestCase):
 
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(response.data["hero"]["mount"]["name"], "Warhorse")
-        self.assertEqual(list(group.henchmen_group_items.values_list("companion", flat=True)), [False])
+        self.assertEqual(list(group.henchmen_group_items.values_list("companion", flat=True)), [True])  # Beta rides on

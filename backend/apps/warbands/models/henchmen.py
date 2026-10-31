@@ -63,16 +63,48 @@ class Henchman(models.Model):
 
 
 class HenchmenGroupItem(models.Model):
+    """One line of a group's loadout: what every member carries, one copy each (henchmen loadouts). A member who lacks
+    it has a gap (`HenchmanItemGap`); the copies a row stands for are its living members less those gaps."""
+
     henchmen_group = models.ForeignKey(HenchmenGroup, related_name="henchmen_group_items", on_delete=models.CASCADE)
     item = models.ForeignKey("items.Item", related_name="henchmen_group_items", on_delete=models.RESTRICT)
-    cost = models.PositiveIntegerField(null=True, blank=True)
-    companion = models.BooleanField(default=False)  # a mount or pet switched on for the group (units/companions.py)
+    cost = models.PositiveIntegerField(null=True, blank=True)  # what one copy cost (each)
+    companion = models.BooleanField(
+        default=False
+    )  # a mount the group rides, or a pet switched on (units/companions.py)
 
     class Meta:
         db_table = "henchmen_group_item"
 
     def __str__(self):
         return f"{self.henchmen_group_id}:{self.item_id}"
+
+
+class HenchmanItemGap(models.Model):
+    """A member of a group who lacks one line of its loadout: his horse died, he used it up, his kit went to the stash,
+    or he joined (or the line was equipped) without one. A warning on the member, never a block; in battle he starts
+    without it. `left`: the player chose to leave it so ("Leave it")."""
+
+    SHORT, LOST, USED, KIT_TAKEN = "short", "lost", "used", "kit_taken"
+    REASONS = (
+        (SHORT, "Joined or equipped without it"),
+        (LOST, "Lost after a battle"),
+        (USED, "Used up in a battle"),
+        (KIT_TAKEN, "Kit taken to the stash"),
+    )
+
+    henchman = models.ForeignKey(Henchman, related_name="item_gaps", on_delete=models.CASCADE)
+    group_item = models.ForeignKey(HenchmenGroupItem, related_name="gaps", on_delete=models.CASCADE)
+    reason = models.CharField(max_length=12, choices=REASONS, default=SHORT)
+    left = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "henchman_item_gap"
+        constraints = [models.UniqueConstraint(fields=["henchman", "group_item"], name="unique_henchman_item_gap")]
+
+    def __str__(self):
+        return f"{self.henchman_id} lacks {self.group_item_id}"
 
 
 class HenchmenGroupSkill(models.Model):

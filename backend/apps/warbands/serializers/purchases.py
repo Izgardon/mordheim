@@ -12,9 +12,10 @@ TARGET_TYPES = ("stash", "hero", "hireling", "henchmen_group")
 
 
 class RarityRollSerializer(serializers.Serializer):
-    """The roll that found a rare item: who searched, what they rolled (with any modifier) and whether it worked."""
+    """The roll that found a rare item: who searched (or no hero), what they rolled (with any modifier, the search
+    bonus) and whether it worked."""
 
-    hero_id = serializers.IntegerField()
+    hero_id = serializers.IntegerField(required=False, allow_null=True, default=None)  # null: no hero searched
     roll = serializers.IntegerField(min_value=0, max_value=1000)
     modifier = serializers.IntegerField(required=False, default=0, min_value=-100, max_value=100)
     rarity = serializers.CharField(required=False, allow_blank=True, max_length=40)
@@ -24,12 +25,14 @@ class RarityRollSerializer(serializers.Serializer):
 
 class PurchaseLineSerializer(serializers.Serializer):
     """What is bought (or given, `is_buying: false`) and for how much: `price` per copy, or `availability_id`'s
-    cost, or with neither the item's current campaign price."""
+    cost (plus `dice_roll`, the total rolled, where the row has dice), or with neither the item's current campaign
+    price."""
 
     item_id = serializers.IntegerField()
     quantity = serializers.IntegerField(required=False, default=1, min_value=1, max_value=100)
     price = serializers.IntegerField(required=False, allow_null=True, min_value=0, max_value=MAX_TRADE_PRICE)
     availability_id = serializers.IntegerField(required=False, allow_null=True)
+    dice_roll = serializers.IntegerField(required=False, allow_null=True, min_value=0, max_value=1000)
     is_buying = serializers.BooleanField(required=False, default=True)
     reason = serializers.CharField(required=False, allow_blank=True, max_length=500)
     rarity_roll = RarityRollSerializer(required=False, allow_null=True)

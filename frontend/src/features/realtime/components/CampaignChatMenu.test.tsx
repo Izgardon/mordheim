@@ -1,11 +1,29 @@
 import { fireEvent, screen } from "@testing-library/react";
+import { useState } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { listCampaignMessages, sendCampaignMessage } from "@/features/campaigns/api/campaigns-api";
 import { ApiError } from "@/lib/api-client";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { CampaignChatContext, type CampaignChatValue } from "../hooks/useCampaignChat";
-import CampaignChatMenu from "./CampaignChatMenu";
+import CampaignChatDialog from "./CampaignChatMenu";
+
+/** The chat as the shell uses it: it owns the open state and a trigger showing the unread count. */
+function CampaignChatMenu({ campaignId }: { campaignId: number }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <CampaignChatDialog
+      campaignId={campaignId}
+      open={open}
+      onOpenChange={setOpen}
+      trigger={(unread) => (
+        <button type="button" aria-label="Campaign chat">
+          {unread || null}
+        </button>
+      )}
+    />
+  );
+}
 
 vi.mock("@/features/campaigns/api/campaigns-api", () => ({
   listCampaignMessages: vi.fn(),

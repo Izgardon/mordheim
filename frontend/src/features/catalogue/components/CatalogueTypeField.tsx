@@ -43,11 +43,7 @@ export function CatalogueTypeField({ layout, id, copy, field }: CatalogueTypeFie
         required={layout === "dialog"}
         autoComplete="off"
       >
-        <ActionSearchDropdown
-          open={field.isMenuOpen}
-          onClose={field.closeMenu}
-          className="z-50 rounded-2xl"
-        >
+        <ActionSearchDropdown open={field.isMenuOpen} onClose={field.closeMenu} className="z-50">
           {field.options.length > 0 ? (
             <div className="max-h-40 w-full overflow-y-auto p-2 text-sm">
               <div className="space-y-1">
@@ -56,7 +52,7 @@ export function CatalogueTypeField({ layout, id, copy, field }: CatalogueTypeFie
                     key={option}
                     type="button"
                     onClick={() => field.select(option)}
-                    className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm text-foreground hover:bg-accent/30"
+                    className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-ink hover:bg-raised"
                   >
                     <span className="font-medium">{formatTypeLabel(option)}</span>
                   </button>

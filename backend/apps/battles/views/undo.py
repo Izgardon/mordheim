@@ -25,5 +25,5 @@ class CampaignBattleEventVoidView(BattleWriteView):
         finalised = scope.player.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
         if scope.battle.status not in OPEN_STATUSES or finalised:
             raise Refused("You can undo only until you finalise postbattle", code="already_finalised")
-        events = [void_event(scope.battle, scope.player, event, actor_user=scope.user)]
-        return Written(events, changed=[scope.player.id])
+        undo, others = void_event(scope.battle, scope.player, event, actor_user=scope.user)
+        return Written([undo], changed=[scope.player.id, *others])

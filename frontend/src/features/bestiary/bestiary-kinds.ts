@@ -15,7 +15,3 @@ const LABELS: Record<BeastKind, string> = {
 
 /** "Mount", "Pet", "Creature": what the site calls the kind. */
 export const beastKindLabel = (kind: BeastKind) => LABELS[kind];
-
-/** Whether a URL's `kind` names one of the three. */
-export const isBeastKind = (value: string): value is BeastKind =>
-  (BEAST_KINDS as readonly string[]).includes(value);

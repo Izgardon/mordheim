@@ -364,7 +364,7 @@ export const Tooltip = React.forwardRef<HTMLSpanElement, TooltipProps>(function 
               role="tooltip"
               className={
                 contentClassName ??
-                "tooltip-unfurl fixed z-[60] overflow-y-auto rounded-sm border border-border/70 bg-popover p-4 text-sm text-popover-foreground shadow-lg"
+                "tooltip-unfurl fixed z-[60] overflow-y-auto border border-accent-line bg-panel p-4 text-sm text-ink shadow-[0_16px_40px_var(--color-shadow)]"
               }
               onPointerDown={() => {
                 ignoreBlurRef.current = true;

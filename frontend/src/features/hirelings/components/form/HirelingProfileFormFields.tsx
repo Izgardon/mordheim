@@ -1,9 +1,10 @@
 import { FieldError } from "@/components/ui/field-error";
+import { Input } from "@/components/ui/input";
 import BestiaryLinksFields from "@/features/bestiary/components/form/BestiaryLinksFields";
 import { StatsField } from "@/features/bestiary/components/form/bestiary-core-fields";
+import WhoCanField from "@/features/catalogue/components/WhoCanField";
 
 import HirelingIdentityFields from "./HirelingIdentityFields";
-import HirelingRestrictionsField from "./HirelingRestrictionsField";
 import HirelingTermsFields from "./HirelingTermsFields";
 
 import type { HirelingProfileFormState } from "../../hooks/useHirelingProfileForm";
@@ -29,7 +30,26 @@ export default function HirelingProfileFormFields({
       </div>
       <BestiaryLinksFields links={form.links} />
       <FieldError message={form.fieldErrors.item_entries} />
-      <HirelingRestrictionsField restrictions={form.restrictions} />
+      <WhoCanField
+        campaignId={form.campaignId}
+        id="hireling-who"
+        label="Who can hire"
+        value={form.values.who}
+        onChange={(who) => form.change({ who })}
+      />
+      <FieldError message={form.fieldErrors.warbands} />
+      <label
+        className="flex flex-col gap-1 text-xs font-bold text-muted-foreground"
+        htmlFor="hireling-note"
+      >
+        The book's words on who hires him (shown, never checked)
+        <Input
+          id="hireling-note"
+          value={form.values.hire_note}
+          placeholder="Any warband except Skaven may hire an Ogre Bodyguard."
+          onChange={(event) => form.change({ hire_note: event.target.value })}
+        />
+      </label>
     </div>
   );
 }

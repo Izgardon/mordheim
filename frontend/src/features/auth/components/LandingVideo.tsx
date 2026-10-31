@@ -21,9 +21,10 @@ function usePageLoaded() {
 }
 
 /**
- * The landing page's background video, the desktop half beside the sign-in card (decision 5,
- * AUTH-TWEAK-05): YouTube's no-cookie embed, mounted only after the page has loaded, autoplaying
- * muted from a random start and scaled to cover its half. No other page loads it.
+ * The landing page's background video, the web's picture half beside the sign-in column (decision
+ * 5, AUTH-TWEAK-05): YouTube's no-cookie embed, mounted only after the page has loaded, autoplaying
+ * muted from a random start, scaled to cover its half and fading in over the rail colour. No other
+ * page loads it.
  */
 export function LandingVideo() {
   const containerRef = useRef<HTMLElement | null>(null);
@@ -60,7 +61,7 @@ export function LandingVideo() {
 
   return (
     <section
-      className={`landing-video${isVideoLoaded ? " is-loaded" : ""}`}
+      className={`auth-video${isVideoLoaded ? " is-loaded" : ""}`}
       aria-hidden="true"
       ref={containerRef}
     >

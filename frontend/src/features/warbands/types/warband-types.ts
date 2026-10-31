@@ -1,5 +1,5 @@
 // types
-import type { Item, Restriction, SalePriceBasis } from "../../items/types/item-types";
+import type { Item, SalePriceBasis } from "../../items/types/item-types";
 import type { Skill } from "../../skills/types/skill-types";
 import type { Spell } from "../../spells/types/spell-types";
 import type { Special } from "../../special/types/special-types";
@@ -20,10 +20,40 @@ type RaceStatProfile = {
   leadership: number;
 };
 
+/** A setting as a warband type or a catalogue row names it: its grade is the setting's. */
+export type SettingBrief = { id: number; slug: string; name: string; grade: string };
+
+/**
+ * A warband type (grading phase 1): the book's (`campaign_id` null, in one setting) or a campaign's
+ * own (no setting, always in play there). `groups`: the races and sides it belongs to.
+ */
+export type WarbandTypeBrief = {
+  id: number;
+  name: string;
+  slug: string;
+  campaign_id: number | null;
+  setting: SettingBrief | null;
+  source: string;
+  link_url: string;
+  groups: string[];
+};
+
+/** A row of the warband type picker: the brief, its race and grades, and whether it is in play. */
+export type WarbandTypeRow = WarbandTypeBrief & {
+  race: string;
+  source_code: string;
+  broheim_grade: string;
+  mordheimer_grade: string;
+  in_play: boolean | null;
+};
+
 export type Warband = {
   id: number;
   name: string;
-  faction: string;
+  /** What it is; null only for a warband made outside the API. */
+  warband_type: WarbandTypeBrief | null;
+  /** The types it also counts as (custom warbands, house rules). */
+  counts_as: WarbandTypeBrief[];
   campaign_id: number;
   user_id: number;
   backstory?: string | null;
@@ -31,7 +61,7 @@ export type Warband = {
   wins?: number | null;
   losses?: number | null;
   rating?: number;
-  /** The mounts' part of `rating` (step 5), from the summary. */
+  /** The mounts' part of `rating`, from the summary. */
   mounts_rating?: number;
   gold?: number;
   max_units?: number | null;
@@ -45,7 +75,6 @@ export type Warband = {
   heroes?: WarbandHero[];
   hirelings?: WarbandHireling[];
   henchmen_groups?: HenchmenGroup[];
-  restrictions?: Restriction[];
   dice_color?: string | null;
   show_loadout_on_mobile?: boolean;
   created_at: string;
@@ -70,7 +99,7 @@ export type WarbandRosterCounts = {
 export type WarbandUnitsSummary = WarbandRosterCounts & {
   resources?: WarbandResource[];
   rating?: number;
-  /** The mounts' part of `rating` (step 5), from the summary. */
+  /** The mounts' part of `rating`, from the summary. */
   mounts_rating?: number;
   gold?: number;
   heroes?: WarbandHero[];
@@ -87,14 +116,17 @@ export type WarbandResource = {
 
 export type WarbandCreatePayload = {
   name: string;
-  faction: string;
-  restriction_ids?: number[];
+  warband_type_id: number;
+  counts_as_ids?: number[];
+  warband_link?: string | null;
   max_units?: number;
 };
 
 export type WarbandUpdatePayload = {
   name: string;
-  faction: string;
+  warband_type_id: number;
+  /** Replaces what it counts as. */
+  counts_as_ids: number[];
   dice_color?: string | null;
   backstory?: string | null;
   wins?: number | null;
@@ -108,19 +140,6 @@ export type LevelUpHistoryEntry = {
   code: string;
   label: string;
   timestamp: string;
-};
-
-export type HeroStats = {
-  M?: string;
-  WS?: string;
-  BS?: string;
-  S?: string;
-  T?: string;
-  W?: string;
-  I?: string;
-  A?: string;
-  Ld?: string;
-  [key: string]: string | undefined;
 };
 
 export type HeroSkills = {
@@ -437,10 +456,16 @@ export type NewHenchmenGroupForm = {
   firstHenchmanName: string;
 };
 
-export type HenchmanItemChoice = {
-  itemId: number;
-  action: "buy" | "stash" | "ignore";
-  cost?: number;
+/** Why a member lacks a loadout row: his horse died, he used it, his kit went to the stash, he joined without it. */
+export type GapReason = "short" | "lost" | "used" | "kit_taken";
+
+/** A loadout row a member lacks (henchmen loadouts): `left` when the player chose to leave it so. */
+export type HenchmanGap = {
+  id: number;
+  row_id: number;
+  item_id: number;
+  reason: GapReason;
+  left: boolean;
 };
 
 export type Henchman = {
@@ -449,7 +474,8 @@ export type Henchman = {
   kills: number;
   dead: boolean;
   cost?: number | string;
-  itemChoices?: HenchmanItemChoice[];
+  /** The loadout rows he lacks. */
+  gaps?: HenchmanGap[];
 };
 
 export type HenchmenGroup = UnitCompanionFields &
@@ -462,8 +488,11 @@ export type HenchmenGroup = UnitCompanionFields &
     race_id: number | null;
     race_name?: string | null;
     price: number | null;
-    /** What one more member costs, worked out by the server (decision 7). */
+    /** What one more member costs, worked out by the server (decision 7, with the loadout). */
     hire_cost?: number;
+    /** One member's loadout (each row's cost), and the copies the group holds at their costs. */
+    loadout_each?: number;
+    loadout_total?: number;
     xp: number | null;
     max_size?: number | null;
     level_up?: number | null;
@@ -544,6 +573,11 @@ export type HenchmenGroupPayload = {
     cost?: number | string;
     /** Update only, new henchmen: notes written on their recruit trade row. */
     item_notes?: string;
+    /** Update only, a living member: he leaves, his share of the loadout to the stash or with him. */
+    dismiss?: "stash" | "leaves";
+    /** Update only, new henchmen: loadout rows taken from the stash for him, or that he joins without. */
+    from_stash?: number[];
+    without?: number[];
   }[];
 };
 
@@ -600,16 +634,29 @@ export type WarbandLogCreatePayload = {
   payload: Record<string, unknown>;
 };
 
-export type NamedKillHistoryEntry = {
-  victim_name: string;
-  victim_warband_name: string;
-  scenario_name: string;
+/** One kill a unit scored (`kill-history/`, from the server's kill table): newest first. */
+export type UnitKill = {
+  id: number;
+  /** His name, else "A Youngblood", else "Someone". */
+  victim: string;
+  victim_kind: "hero" | "henchman" | "hireling" | "temporary" | "creature" | "someone_else";
+  victim_warband: string | null;
+  battle_id: number;
+  scenario: string;
+  /** When the battle ended (ISO). */
+  date: string;
+  /** Null for a kill logged after the fight. */
+  round: number | null;
+  phase: "fight" | "after";
+  how: "melee" | "shooting" | "magic" | "other" | null;
+  /** Which model scored it, for a henchmen group; null otherwise. */
+  by: string | null;
 };
 
-export type NamedKillHistory = {
+/** A unit's kills: its kill counter and the kills of its campaign's ended battles. */
+export type UnitKillHistory = {
   total_kills: number;
-  named_kills_count: number;
-  named_kills: NamedKillHistoryEntry[];
+  kills: UnitKill[];
 };
 
 /** How many stash copies of an item have one cost (BUG-117); null: copies of unknown cost. */

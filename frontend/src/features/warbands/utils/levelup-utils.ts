@@ -4,15 +4,7 @@ import type { HenchmenGroup } from "../types/warband-types";
 
 export const HERO_SELECTABLE_STATS = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
 
-export type HeroSelectableStat = (typeof HERO_SELECTABLE_STATS)[number];
-
-export const HERO_SELECTABLE_STAT_SET = new Set<string>(HERO_SELECTABLE_STATS);
-
 export const HENCHMEN_SELECTABLE_STATS = ["WS", "BS", "S", "I", "A", "Ld"] as const;
-
-export type HenchmenSelectableStat = (typeof HENCHMEN_SELECTABLE_STATS)[number];
-
-export const HENCHMEN_SELECTABLE_STAT_SET = new Set<string>(HENCHMEN_SELECTABLE_STATS);
 
 export const OTHER_OPTIONS = [
   { id: "Skill", label: "Skill" },
@@ -168,11 +160,3 @@ export const buildHenchmenOptions = (group: HenchmenGroup) =>
     id: String(henchman.id ?? index),
     label: henchman.name?.trim() || `Henchman ${index + 1}`,
   }));
-
-// ── Type guards ─────────────────────────────────────────────────────────
-
-export const isHeroSelectableStat = (value: string | null): value is HeroSelectableStat =>
-  Boolean(value && HERO_SELECTABLE_STAT_SET.has(value));
-
-export const isHenchmenSelectableStat = (value: string | null): value is HenchmenSelectableStat =>
-  Boolean(value && HENCHMEN_SELECTABLE_STAT_SET.has(value));

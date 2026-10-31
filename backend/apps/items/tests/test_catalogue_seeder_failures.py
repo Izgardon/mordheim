@@ -14,17 +14,14 @@ from apps.items.models import Item
 from apps.races.models import Race
 
 from .catalogue_support import STATS
-from .test_catalogue_characterisation_seeders import SeederTestCase, data_file, run, seed_items
+from .test_catalogue_characterisation_seeders import SeederTestCase, data_file, import_row, run, seed_items
 
 
 class SeederFailureTests(SeederTestCase):
     def test_seed_items_failing_part_way_keeps_nothing(self):
-        rows: list[dict[str, Any]] = [
-            {"name": "Club", "type": "Weapon", "cost": 3},
-            {"name": "Axe", "type": "Weapon", "properties": [999]},
-        ]
+        rows: list[dict[str, Any]] = [import_row("Club", 3), import_row("Axe", 5, rules=[{"rule": "cleave"}])]
 
-        with self.assertRaisesMessage(CommandError, "Unknown property id 999 for item 'Axe'"):
+        with self.assertRaisesMessage(CommandError, "Axe: shared rule 'cleave' isn't in item-rules.json."):
             seed_items(rows)
 
         self.assertFalse(Item.objects.exists())

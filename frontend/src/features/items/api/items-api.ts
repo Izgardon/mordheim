@@ -1,15 +1,7 @@
-// api
 import { apiRequest } from "../../../lib/api-client";
 import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 
-// types
-import type {
-  Item,
-  ItemCreatePayload,
-  ItemProperty,
-  ItemUpdatePayload,
-  Restriction,
-} from "../types/item-types";
+import type { Item, ItemCreatePayload, ItemRule, ItemUpdatePayload } from "../types/item-types";
 
 type ListItemsOptions = {
   type?: string;
@@ -18,20 +10,6 @@ type ListItemsOptions = {
   /** Archived entries and book entries removed for the campaign too (`?archived=1`). */
   archived?: boolean;
   signal?: AbortSignal;
-};
-
-type ListItemPropertiesOptions = {
-  type?: string;
-  search?: string;
-  campaignId?: number;
-  signal?: AbortSignal;
-};
-
-type CreateItemPropertyPayload = {
-  name: string;
-  description: string;
-  type: string;
-  campaign_id: number;
 };
 
 export function getItem(itemId: number) {
@@ -73,44 +51,24 @@ export function updateItem(itemId: number, payload: ItemUpdatePayload) {
   });
 }
 
-export function listItemProperties(options: ListItemPropertiesOptions = {}) {
-  const params = new URLSearchParams();
-  if (options.type) {
-    params.set("type", options.type);
-  }
-  if (options.search) {
-    params.set("search", options.search);
-  }
-  if (options.campaignId) {
-    params.set("campaign_id", String(options.campaignId));
-  }
-  const query = params.toString();
-  const path = query ? `/item-properties/?${query}` : "/item-properties/";
-  return apiRequest<ItemProperty[]>(path, { signal: options.signal });
+/** The shared rules an item can name: the book's and the campaign's own. */
+export function listItemRules(options: { campaignId?: number; signal?: AbortSignal } = {}) {
+  const path = options.campaignId
+    ? `/item-rules/?campaign_id=${options.campaignId}`
+    : "/item-rules/";
+  return apiRequest<ItemRule[]>(path, { signal: options.signal });
 }
 
-export function createItemProperty(payload: CreateItemPropertyPayload) {
-  return apiRequest<ItemProperty>("/item-properties/", {
+/** A shared rule of the campaign's own (rules are added, never edited). */
+export function createItemRule(payload: {
+  name: string;
+  summary: string;
+  text: string;
+  campaign_id: number;
+}) {
+  return apiRequest<ItemRule>("/item-rules/", {
     method: "POST",
     headers: socketIdHeaders(),
     body: payload,
   });
-}
-
-export function listRestrictions(
-  options: { search?: string; campaignId?: number; type?: string } = {}
-) {
-  const params = new URLSearchParams();
-  if (options.search) {
-    params.set("search", options.search);
-  }
-  if (options.type) {
-    params.set("type", options.type);
-  }
-  if (options.campaignId) {
-    params.set("campaign_id", String(options.campaignId));
-  }
-  const query = params.toString();
-  const path = query ? `/restrictions/?${query}` : "/restrictions/";
-  return apiRequest<Restriction[]>(path);
 }

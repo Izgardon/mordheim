@@ -1,23 +1,29 @@
-"""What the catalogue seeders share (BUG-54, IMP-81): reading the JSON, cleaning its values, upserting the book's
-rows and writing an item's prices.
+"""What the catalogue seeders share (BUG-54, IMP-81): reading the JSON, cleaning its values and upserting the book's
+rows.
 
-Every seeder reads and writes the book only (BUG-17): `upsert_global` matches and creates rows with no campaign and
-no add-on, and the restrictions an item's "unique to" text names come from `restrictions.book.BookRestrictions`.
+Every seeder reads and writes the book only (BUG-17): `upsert_global` matches and creates rows with no campaign
+(whatever their setting).
 """
 
 import json
 import re
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Any
 
+from django.conf import settings
 from django.core.management.base import CommandError
 from django.core.management.color import no_style
 from django.db import connection
 from django.db.models import Model
 
-from apps.items.models import Item, ItemAvailability, ItemAvailabilityRestriction
-from apps.restrictions.book import BookRestrictions
+from apps.campaigns.models import CampaignType
+from apps.warbands.models import WarbandGroup, WarbandType
+
+# The catalogue import's generated files (backend/catalogue_import/out/), which the seeders read in place: settings,
+# warband types and groups, items and their shared rules, and the settings and who-can lists of the skills, hired
+# swords and dramatis personae we seed
+IMPORT_OUT = Path(settings.BASE_DIR) / "catalogue_import" / "out"
 
 STAT_FIELDS = (
     "movement",
@@ -54,11 +60,6 @@ def parse_armour_save(value: Any) -> int | None:
     return int(match.group(0)) if match else None
 
 
-def parse_rarity(value: Any) -> int:
-    """A rarity between 2 and 20, as ItemAvailability allows; 2 (common) when the value has none."""
-    return max(2, min(20, parse_int(value, default=2)))
-
-
 def entry_value(entry: Any, aliases: Iterable[str]) -> Any:
     """The value of the first key of `aliases` the entry has, whatever its case or surrounding spaces."""
     if not isinstance(entry, dict):
@@ -86,11 +87,9 @@ def read_json_list(path: Path, what: str = "objects") -> list[Any]:
 def upsert_global[RowT: Model](
     model: type[RowT], lookup: Mapping[str, Any], defaults: Mapping[str, Any]
 ) -> tuple[RowT, bool]:
-    """The book's row matching `lookup` (no campaign, no add-on) with `defaults` written, and whether it is new."""
-    book: dict[str, Any] = {"campaign": None}
-    if any(field.name == "campaign_type" for field in model._meta.get_fields()):
-        book["campaign_type"] = None
-    row, created = model._default_manager.update_or_create(**lookup, **book, defaults=dict(defaults))
+    """The book's row matching `lookup` (no campaign: the book holds every setting's rows, each in its setting) with
+    `defaults` written, and whether it is new."""
+    row, created = model._default_manager.update_or_create(**lookup, campaign=None, defaults=dict(defaults))
     return row, created
 
 
@@ -99,31 +98,6 @@ def reset_sequence(model: type[Model]) -> None:
     with connection.cursor() as cursor:
         for sql in connection.ops.sequence_reset_sql(no_style(), [model]):
             cursor.execute(sql)
-
-
-def sync_availabilities(item: Item, rows: Sequence[Mapping[str, Any]], restrictions: BookRestrictions) -> None:
-    """Replace the item's prices: one ItemAvailability per row (cost, rarity, variable cost), each linked to the
-    restrictions its "unique to" text names. One INSERT for the prices, one for their restrictions."""
-    item.availabilities.all().delete()
-    created = ItemAvailability.objects.bulk_create(
-        [
-            ItemAvailability(
-                item=item,
-                cost=parse_int(row.get("cost"), 0),
-                rarity=parse_rarity(row.get("rarity")),
-                variable_cost=clean(row.get("variable_cost")) or None,
-            )
-            for row in rows
-        ]
-    )
-    ItemAvailabilityRestriction.objects.bulk_create(
-        [
-            ItemAvailabilityRestriction(item_availability=availability, restriction=restriction, additional_note=note)
-            for availability, row in zip(created, rows, strict=True)
-            if clean(row.get("unique_to"))
-            for restriction, note in restrictions.resolve(clean(row.get("unique_to")))
-        ]
-    )
 
 
 def read_stats(values: Mapping[str, Any], label: str) -> dict[str, int]:
@@ -142,3 +116,58 @@ def read_stats(values: Mapping[str, Any], label: str) -> dict[str, int]:
     if problems:
         raise CommandError(f"{label}: {', '.join(problems)}.")
     return stats
+
+
+class SettingAssignments:
+    """The settings the catalogue import gives our seeded skills, hired swords and dramatis personae
+    (`out/setting-assignments.json`, grading phase 1), as setting ids: `of(name, type)`. A row the file doesn't list
+    is Mordheim's; while the settings aren't seeded every row's setting is null (which counts as Mordheim's too)."""
+
+    def __init__(self, kind: str) -> None:
+        settings = dict(CampaignType.objects.values_list("slug", "id"))
+        try:
+            data = json.loads((IMPORT_OUT / "setting-assignments.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            raise CommandError(f"Unable to read the setting assignments: {exc}") from exc
+        self.default = settings.get("mordheim")
+        self.ids = {
+            (clean(row.get("name")).lower(), clean(row.get("type")).lower()): settings.get(row.get("setting"))
+            for row in data.get(kind, [])
+        }
+
+    def of(self, name: str, row_type: str = "") -> int | None:
+        return self.ids.get((name.strip().lower(), row_type.strip().lower()), self.default)
+
+
+class WhoCanLists:
+    """Who may hire or learn each of our seeded skills, hired swords and dramatis personae (`out/who-can.json`, the
+    items rebuild), the warband slugs as ids: `of(name, type)` gives the file's row with `lines` ready for the
+    writes (`warband_type_id` or `warband_group_id`, `excluded`), or None for a row it doesn't list. The lists
+    name warband types and groups, so they apply once seed_warband_types has run (seed_all runs it first); before that
+    every row is for everyone, as an unlisted one is. A slug the database lacks once they are seeded stops the run."""
+
+    def __init__(self, kind: str) -> None:
+        self.types = dict(WarbandType.objects.filter(campaign__isnull=True).values_list("slug", "id"))
+        self.groups = dict(WarbandGroup.objects.values_list("slug", "id"))
+        try:
+            data = json.loads((IMPORT_OUT / "who-can.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            raise CommandError(f"Unable to read who can hire and learn: {exc}") from exc
+        self.rows = {
+            (clean(row.get("name")).lower(), clean(row.get("type")).lower()): row for row in data.get(kind, [])
+        }
+
+    def _line(self, line: Mapping[str, Any], name: str) -> dict[str, Any]:
+        if "type" in line:
+            if line["type"] not in self.types:
+                raise CommandError(f"{name}: warband type '{line['type']}' isn't seeded.")
+            return {"warband_type_id": self.types[line["type"]], "excluded": bool(line.get("excluded"))}
+        if line.get("group") not in self.groups:
+            raise CommandError(f"{name}: warband group '{line.get('group')}' isn't seeded.")
+        return {"warband_group_id": self.groups[line["group"]], "excluded": bool(line.get("excluded"))}
+
+    def of(self, name: str, row_type: str = "") -> dict[str, Any] | None:
+        row = self.rows.get((name.strip().lower(), row_type.strip().lower())) if self.types else None
+        if row is None:
+            return None
+        return {**row, "lines": [self._line(line, name) for line in row.get("warbands", [])]}

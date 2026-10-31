@@ -76,7 +76,7 @@ export function DescriptionField({ values, onChange, id }: CoreFieldProps & { id
         value={values.description}
         onChange={(e) => onChange({ description: e.target.value })}
         rows={3}
-        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="min-h-[120px] w-full border border-strong bg-page px-3 py-2 text-sm text-ink placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
         placeholder="Description..."
       />
     </div>
@@ -127,7 +127,7 @@ export function LargeTargetField({ values, onChange }: CoreFieldProps) {
         type="checkbox"
         checked={values.large}
         onChange={(e) => onChange({ large: e.target.checked })}
-        className="h-4 w-4 rounded border-input"
+        className="h-4 w-4 accent-[var(--color-accent)]"
       />
       Large target
     </label>

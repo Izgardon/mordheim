@@ -1,8 +1,8 @@
 import { useEffect, useMemo, type ReactNode } from "react";
 import { Navigate, useOutletContext, useParams } from "react-router-dom";
 
-import { LoadingScreen } from "@/components/ui/loading-screen";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import BattleSkeleton from "@/features/battles/components/battle/BattleSkeleton";
 import { useBattleCapabilities } from "@/features/battles/hooks/useBattleCapabilities";
 import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
 import { useCampaignBattleRules } from "@/features/battles/hooks/useCampaignBattleRules";
@@ -18,16 +18,16 @@ import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 
 /**
- * Loads the battle once for every phase page (state and rosters), sends the user to the page the
- * battle is on (`deriveBattleView`, with a toast when it ended or was cancelled), and shares the
- * battle with that page through `BattleContext`.
- * `BattleLayout` keeps it mounted across phase changes, so moving on reads nothing again.
+ * Loads the battle once for the invitation, pre-battle and battle pages (state and rosters), sends
+ * the user to the page the battle is on for him (`deriveBattleView`, with a toast when it ended or
+ * was cancelled; `phase` null, the bare battle URL, always redirects), and shares the battle with
+ * that page through `BattleContext`. `BattleLayout` keeps it mounted across phase changes.
  */
 export default function BattleProvider({
   phase,
   children,
 }: {
-  phase: BattlePhase;
+  phase: BattlePhase | null;
   children: ReactNode;
 }) {
   const { id, battleId } = useParams();
@@ -47,7 +47,12 @@ export default function BattleProvider({
     updateBattleState,
     refreshBattleState,
     joinRead,
-  } = useBattleState({ campaignId, battleId: numericBattleId, view: phase, reader });
+  } = useBattleState({
+    campaignId,
+    battleId: numericBattleId,
+    view: phase ?? "prebattle",
+    reader,
+  });
   const { rosters, rosterLoading, rosterErrors } = useBattleRosters(
     campaignId,
     numericBattleId,
@@ -79,7 +84,7 @@ export default function BattleProvider({
         ? {
             campaignId,
             battleId: numericBattleId,
-            phase,
+            phase: phase ?? "prebattle",
             battleState,
             capabilities,
             battleStateRef,
@@ -117,10 +122,10 @@ export default function BattleProvider({
   }, [battleStateRef, closesToOverview, user?.id]);
 
   if (view.kind === "loading") {
-    return <LoadingScreen message={view.message} />;
+    return <BattleSkeleton phase={phase} />;
   }
   if (view.kind === "error") {
-    return <p className="text-sm text-red-600">{view.message}</p>;
+    return <p className="px-4 py-6 text-sm text-danger">{view.message}</p>;
   }
   if (view.kind === "redirect") {
     return <Navigate to={battleViewPath(view.to, campaignId, numericBattleId)} replace />;

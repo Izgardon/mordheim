@@ -36,17 +36,19 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
         "/api/campaigns/{campaign}/players/",
         6,
     ),  # constant in warbands (apps/warbands/tests/test_summary_service.py); the member check is the list (PERF-41)
-    "battle_history": ("/api/campaigns/{campaign}/battle-history/", 3),
-    "pivotal_moments": ("/api/campaigns/{campaign}/pivotal-moments/", 2),
+    "battle_history": ("/api/campaigns/{campaign}/battle-history/", 4),  # + its moments and kill counts (next 9)
     "top_killers": ("/api/campaigns/{campaign}/top-killers/", 2),
     "open_battles": ("/api/campaigns/{campaign}/battles/?open=1", 2),
     "battle_list": ("/api/campaigns/{campaign}/battles/", 3),
     "permissions_me": ("/api/campaigns/{campaign}/permissions/me/", 1),
     "notifications": ("/api/notifications/", 1),
     # Warband sheet
-    "warband_detail": ("/api/warbands/{warband}/", 3),
+    "warband_detail": ("/api/warbands/{warband}/", 4),  # + its type and counts-as with their groups (grading phase 1)
     "warband_summary": ("/api/warbands/{warband}/summary/", 6),  # gold is a stored column (decision 4)
-    "warband_sheet": ("/api/warbands/{warband}/sheet/", 15),  # constant in units (test below); one request for 5
+    "warband_sheet": (
+        "/api/warbands/{warband}/sheet/",
+        16,
+    ),  # constant in units (test below); one request for 5; + types
     "warband_heroes": ("/api/warbands/{warband}/heroes/", 4),  # constant in units
     "warband_henchmen": ("/api/warbands/{warband}/henchmen-groups/", 5),  # constant in units
     "warband_hirelings": ("/api/warbands/{warband}/hirelings/", 4),  # constant in units
@@ -71,10 +73,10 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     "warband_resources": ("/api/warbands/{warband}/resources/", 3),
     # Trades (constant in trades: test below)
     "campaign_trade_requests": ("/api/campaigns/{campaign}/trade-requests/", 2),  # reads no longer expire (BUG-69)
-    # Catalogue (PERF-49): membership and one queryset; items add their property links, availabilities and
-    # restrictions, hired swords their restrictions once a row has some
+    # Catalogue (PERF-49): membership and one queryset; items add their rule links, price rows and who may buy each
+    # (the items rebuild), skills who may learn them, hired swords who may hire them
     "items": ("/api/items/?campaign_id={campaign}", 5),
-    "skills": ("/api/skills/?campaign_id={campaign}", 2),
+    "skills": ("/api/skills/?campaign_id={campaign}", 3),
     "spells": ("/api/spells/?campaign_id={campaign}", 2),
     "specials": ("/api/special/?campaign_id={campaign}", 2),
     "races": ("/api/races/?campaign_id={campaign}", 2),
@@ -160,8 +162,8 @@ class QueryBudgetTests(TestCase):
             "warband_henchmen_detail",
             "warband_hirelings_detail",
         ]
-        # Start from a warband that already has restriction-linked items: the first link adds
-        # one fixed query (restrictions are only fetched when some exist), which isn't growth.
+        # Start from a warband that already has items with who-can lines and rules: the first link adds
+        # one fixed query (lines are only fetched when some exist), which isn't growth.
         add_units_with_items(self.ref.warband, count=1, label="Seed")
         before = {name: count_get_queries(client, self._url(QUERY_BUDGETS[name][0])) for name in endpoints}
 
@@ -235,7 +237,7 @@ class QueryBudgetTests(TestCase):
             HenchmenGroup.objects.get(id=self.unit_ids["group"]),
             Hireling.objects.get(id=self.unit_ids["sword"]),
         )
-        # Seed one restriction-linked item first: the first link adds one fixed query, which isn't growth.
+        # Seed one item with who-can lines first: the first link adds one fixed query, which isn't growth.
         add_items_to_units(*units, count=1, label="Seed")
         before = {name: count(name, xp=1) for name in WRITE_QUERY_BUDGETS}
         add_items_to_units(*units, count=4, label="Extra")

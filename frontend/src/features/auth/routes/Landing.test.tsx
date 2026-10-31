@@ -1,12 +1,11 @@
 /**
  * The landing page as a signed-out visitor sees it: the background video (decision 5, landed in
- * PR C), the card, and the box it all sits in.
+ * PR C), the sign-in column, and the box it all sits in.
  */
 import { act, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import stylesheet from "@/index.css?raw";
 import { AuthProvider } from "@/features/auth/stores/auth-store";
 import { fakeApi } from "@/test/fake-api";
 import { createQueryWrapper } from "@/test/query-test-utils";
@@ -29,12 +28,6 @@ function renderLanding() {
     </AuthProvider>,
     { wrapper: createQueryWrapper() }
   );
-}
-
-/** The declarations of the first `selector { ... }` rule in index.css, after `from`. */
-function cssRule(selector: string, from = 0) {
-  const start = stylesheet.indexOf(`${selector} {`, from);
-  return stylesheet.slice(start, stylesheet.indexOf("}", start));
 }
 
 beforeEach(() => {
@@ -86,11 +79,10 @@ describe("Landing on desktop", () => {
     }
   });
 
-  it("shows the card with the title art and the footage credit, and sends no request", () => {
+  it("shows the heading and the footage credit, and sends no request", () => {
     renderLanding();
 
     expect(screen.getByRole("heading", { name: "Mordheim Chronicler" })).toBeInTheDocument();
-    expect(screen.getByAltText("Mordheim: City of the Damned")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Styggosaurus" })).toHaveAttribute(
       "href",
       "https://www.youtube.com/@Styggosaurus"
@@ -100,61 +92,28 @@ describe("Landing on desktop", () => {
 });
 
 describe("Landing on a phone", () => {
-  it("embeds no video and paints the site background behind the card", () => {
+  it("embeds no video, so credits no footage", () => {
     media.mobile = true;
     const { container } = renderLanding();
 
     expect(container.querySelector("iframe")).toBeNull();
-    const main = container.querySelector("main")!;
-    expect(main).toHaveClass("landing--mobile");
-    expect(main.style.backgroundImage).toMatch(/url\(/);
-    expect(screen.getByRole("link", { name: "Styggosaurus" })).toBeInTheDocument();
+    expect(container.querySelector("main")).toHaveClass("auth-page--phone");
+    expect(screen.queryByRole("link", { name: "Styggosaurus" })).toBeNull();
   });
 });
 
 describe("the landing box", () => {
-  it("is one visible screen tall and scrolls, so a long sign-up on a short screen can be reached (AUTH-UX-07)", () => {
-    // The page itself never scrolls (body is overflow: hidden), so the box must: a fixed
-    // height of the visible viewport (dvh, with a vh fallback) and its own vertical scroll.
+  it("is one visible screen tall and scrolls its form while the picture half stays put (AUTH-UX-07)", () => {
+    // The page itself never scrolls (body is overflow: hidden), so the box must: the visible
+    // viewport's height and its own vertical scroll. The form's column grows with its form
+    // (never shorter than the screen), so a long sign-up is reached by scrolling, not clipped.
     const { container } = renderLanding();
 
-    const main = container.querySelector("main");
-    expect(main).toHaveClass("landing");
+    const main = container.querySelector("main")!;
+    expect(main).toHaveClass("h-[100dvh]", "overflow-y-auto");
     expect(main).not.toHaveClass("h-screen");
     expect(main).not.toHaveClass("min-h-screen");
-    const rule = cssRule(".landing");
-    expect(rule).toMatch(/height: 100vh;\s+height: 100dvh;/);
-    expect(rule).toMatch(/overflow-y: auto;/);
-    expect(rule).not.toMatch(/overflow: hidden;/);
-    const phoneRule = cssRule(".landing", stylesheet.indexOf("@media (max-width: 960px)"));
-    expect(phoneRule).toMatch(/height: 100dvh;/);
-    expect(phoneRule).not.toMatch(/height: 100vh;\s+}/);
-  });
-
-  it("lets the desktop card grow past one screen with its form instead of clipping it (AUTH-UX-07)", () => {
-    const rule = cssRule(".landing-auth .auth-card");
-
-    expect(rule).toMatch(/height: auto;/);
-    expect(rule).toMatch(/min-height: calc\(100% \+ 10px\);/);
-    expect(rule).not.toMatch(/\sheight: calc/);
-  });
-
-  it("sizes the desktop card column to its card, so a short screen scrolls to the sign-up button, and keeps the video in its half (AUTH-UX-07)", () => {
-    // Stretched to the box's one-screen height, the column held the card to it, and the
-    // sign-up button sat out of reach below. The column now follows the card (never shorter
-    // than the screen) and clips the card's 5px hidden edges, so a card that fits scrolls
-    // nothing; the video stays put while the box scrolls.
-    const column = cssRule(".landing-auth");
-    expect(column).toMatch(/align-self: flex-start;/);
-    expect(column).toMatch(/min-height: 100%;/);
-    expect(column).toMatch(/overflow: clip;/);
-    expect(column).not.toMatch(/overflow: visible;/);
-    const video = cssRule(".landing-video");
-    expect(video).toMatch(/position: sticky;/);
-    expect(video).toMatch(/top: 0;/);
-    // The phone's column stays full width and unclipped, so its card's shadow shows.
-    const phoneColumn = cssRule(".landing--mobile .landing-auth");
-    expect(phoneColumn).toMatch(/align-self: stretch;/);
-    expect(phoneColumn).toMatch(/overflow: visible;/);
+    expect(main.querySelector("section")).toHaveClass("min-h-[100dvh]");
+    expect(container.querySelector(".auth-aside")).toHaveClass("sticky", "top-0", "h-[100dvh]");
   });
 });

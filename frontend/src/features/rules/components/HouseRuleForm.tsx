@@ -34,11 +34,9 @@ export default function HouseRuleForm({
   const [isCommonRulesOpen, setIsCommonRulesOpen] = useState(false);
 
   return (
-    <div className="surface-panel-strong space-y-3 rounded-2xl p-4">
+    <div className="space-y-3 border border-accent-line bg-surface p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h4 className="theme-heading-soft text-sm font-semibold uppercase tracking-[0.2em]">
-          New Rule
-        </h4>
+        <h4 className="m-0 text-xs font-bold uppercase tracking-[0.14em] text-faint">New Rule</h4>
         <Button
           size="sm"
           variant="secondary"
@@ -50,7 +48,9 @@ export default function HouseRuleForm({
       </div>
       <div className="space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-foreground">Title</label>
+          <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
+            Title
+          </label>
           <Input
             value={form.title}
             onChange={(event) => onFieldChange("title", event.target.value)}
@@ -58,16 +58,18 @@ export default function HouseRuleForm({
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-foreground">Description</label>
+          <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
+            Description
+          </label>
           <textarea
-            className="field-surface min-h-[140px] w-full rounded-2xl px-3 py-2 text-sm text-foreground shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+            className="min-h-[140px] w-full border border-strong bg-page px-3 py-2 text-sm text-ink placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
             value={form.description}
             onChange={(event) => onFieldChange("description", event.target.value)}
             placeholder="Describe the ruling and any clarifications."
           />
         </div>
       </div>
-      {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
+      {formError ? <p className="text-sm text-danger">{formError}</p> : null}
       <div className="flex flex-wrap justify-end gap-2">
         <Button size="sm" variant="secondary" onClick={onCancel} disabled={isSubmitting}>
           Cancel

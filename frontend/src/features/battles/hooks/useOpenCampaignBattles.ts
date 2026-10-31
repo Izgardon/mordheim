@@ -8,9 +8,6 @@ import { listOpenCampaignBattles } from "../api/battles-api";
 import { isCampaignId } from "@/features/campaigns/hooks/useCampaignQuery";
 import { queryKeys } from "@/lib/query-keys";
 
-// types
-import type { BattleState } from "../types/battle-types";
-
 export const OPEN_BATTLES_STALE_TIME_MS = 30_000;
 
 /**
@@ -35,21 +32,6 @@ export function invalidateOpenBattles(queryClient: QueryClient, campaignId: numb
     return Promise.resolve();
   }
   return queryClient.invalidateQueries({ queryKey: queryKeys.campaign.openBattles(campaignId) });
-}
-
-/** Writes a battle returned by a join/cancel call into the cached open battles. */
-export function useReplaceOpenBattle(campaignId: number) {
-  const queryClient = useQueryClient();
-  return useCallback(
-    (updated: BattleState) => {
-      queryClient.setQueryData(
-        queryKeys.campaign.openBattles(campaignId),
-        (previous: BattleState[] | undefined) =>
-          previous?.map((entry) => (entry.battle.id === updated.battle.id ? updated : entry))
-      );
-    },
-    [campaignId, queryClient]
-  );
 }
 
 /** Refetches the open battles now, e.g. after the caller starts a battle. */

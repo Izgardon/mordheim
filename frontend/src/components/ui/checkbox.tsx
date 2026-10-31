@@ -7,6 +7,7 @@ type CheckboxProps = Omit<React.ComponentProps<"input">, "type"> & {
   checked?: boolean;
 };
 
+/** A square tick box on the tokens: accent fill when ticked. */
 const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
   ({ className, checked, disabled, ...props }, ref) => {
     return (
@@ -28,10 +29,10 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
         <span
           aria-hidden="true"
           className={cn(
-            "pointer-events-none flex h-full w-full items-center justify-center rounded-[0.28rem] border transition-[background-color,border-color,color,box-shadow] duration-150",
+            "pointer-events-none flex h-full w-full items-center justify-center border transition-colors",
             checked
-              ? "border-[#8f7440] bg-[#5f4922] text-[#ead9a8] shadow-[0_0_0_1px_rgba(143,116,64,0.08)]"
-              : "border-border/70 bg-[color:var(--color-surface-inline)] text-transparent"
+              ? "border-primary bg-primary text-on-accent"
+              : "border-strong bg-page text-transparent"
           )}
         >
           <Check className="h-3.5 w-3.5" />

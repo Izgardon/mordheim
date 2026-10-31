@@ -64,9 +64,10 @@ class UnitHooks:
     def after_dismiss(self, warband: Warband) -> None:
         pass
 
-    def kill_tally(self, kind: "UnitKindSpec", unit: Any) -> tuple[str, list[int], int]:
-        """(killer type in kill events, killer ids, total kills) for the unit's kill history."""
-        return kind.key, [unit.id], unit.kills or 0
+    def kill_tally(self, kind: "UnitKindSpec", unit: Any) -> tuple[dict[str, Any], int]:
+        """(the battle_kill filter for its kills, total kills) for the unit's kill history: `killer_hero` or
+        `killer_hireling`."""
+        return {f"killer_{kind.key}": unit}, unit.kills or 0
 
 
 class LeaderHooks(UnitHooks):
@@ -108,16 +109,29 @@ MEMBER_FIELDS = ("name", "kills", "dead")
 
 @dataclass(frozen=True)
 class MemberSync:
-    new_entries: MemberEntries  # the entries that became new members
+    new_members: list[tuple[dict[str, Any], Henchman]]  # each entry that became a new member, and the member
     living_before: int  # the group's living members before the sync
+    shares_to_stash: list[Henchman]  # members dismissed with `"dismiss": "stash"`: their shares go to the stash
+
+
+def _dismissed(members: dict[int | None, Henchman], entries: MemberEntries, sent: Set[int]) -> dict[int, str]:
+    """Living member id -> where his share goes, for each member the save dismisses: one sent with `dismiss` ("stash"
+    or "leaves"), or one left out of the list (his share leaves with him)."""
+    choices = {
+        int(entry["id"]): entry["dismiss"] for entry in entries if entry.get("dismiss") and entry.get("id") in members
+    }
+    living = [member for member in members.values() if not member.dead and member.dismissed_at is None]
+    return {member.id: choices.get(member.id, "leaves") for member in living if member.id not in sent}
 
 
 def sync_members(group: HenchmenGroup, entries: MemberEntries) -> MemberSync:
-    """Apply a PATCH's member list to `group`: the entries that became new members, and the living count before.
+    """Apply a PATCH's member list to `group`: the entries that became new members, the living count before, and the
+    dismissed members whose shares go to the stash.
 
     An entry naming a living member updates only the fields it carries (BUG-94); an entry without a
-    known id is a new member. Living members left out of the list are dismissed: kept as records with
-    their kills (decision 4). Dead and dismissed members are records (BUG-04): this path never edits,
+    known id is a new member. Living members left out of the list, or sent with `dismiss`, are dismissed: kept as
+    records with their kills (decision 4), their share of the loadout to the stash or leaving with them as `dismiss`
+    says (henchmen loadouts). Dead and dismissed members are records (BUG-04): this path never edits,
     duplicates (BUG-92) or deletes them, however the caller loaded the group, so an entry naming one is
     ignored. A fixed number of writes, however many members the group has (PERF-28).
     """
@@ -130,7 +144,7 @@ def sync_members(group: HenchmenGroup, entries: MemberEntries) -> MemberSync:
         if member is None:
             new_entries.append(entry)
             continue
-        if member.dead or member.dismissed_at is not None:
+        if member.dead or member.dismissed_at is not None or entry.get("dismiss"):
             continue
         fields = sent.setdefault(member.id, set())
         for name in MEMBER_FIELDS:
@@ -140,13 +154,9 @@ def sync_members(group: HenchmenGroup, entries: MemberEntries) -> MemberSync:
                     setattr(member, name, entry[name])
                     changed_ids.add(member.id)
 
-    removed_ids = {
-        member.id
-        for member in members.values()
-        if not member.dead and member.dismissed_at is None and member.id not in sent
-    }
-    if removed_ids:
-        on_roster(Henchman.objects.filter(group=group, id__in=removed_ids)).update(dismissed_at=timezone.now())
+    dismissed = _dismissed(members, entries, set(sent))
+    if dismissed:
+        on_roster(Henchman.objects.filter(group=group, id__in=dismissed)).update(dismissed_at=timezone.now())
     # One UPDATE per distinct set of sent fields (the roster form always sends the same ones), writing
     # only the fields the entries carried.
     by_fields: dict[tuple[str, ...], list[Henchman]] = {}
@@ -154,20 +164,17 @@ def sync_members(group: HenchmenGroup, entries: MemberEntries) -> MemberSync:
         by_fields.setdefault(tuple(sorted(sent[member_id])), []).append(members[member_id])
     for field_names, rows in by_fields.items():
         Henchman.objects.bulk_update(rows, list(field_names))
-    if new_entries:
-        Henchman.objects.bulk_create(
-            [
-                Henchman(
-                    group=group,
-                    name=entry.get("name", ""),
-                    kills=entry.get("kills", 0),
-                    dead=entry.get("dead", False),
-                )
-                for entry in new_entries
-            ]
-        )
+    created = Henchman.objects.bulk_create(
+        [
+            Henchman(
+                group=group, name=entry.get("name", ""), kills=entry.get("kills", 0), dead=entry.get("dead", False)
+            )
+            for entry in new_entries
+        ]
+    )
     living_before = sum(1 for member in members.values() if not member.dead and member.dismissed_at is None)
-    return MemberSync(new_entries, living_before)
+    to_stash = [members[member_id] for member_id, share in dismissed.items() if share == "stash"]
+    return MemberSync(list(zip(new_entries, created, strict=True)), living_before, to_stash)
 
 
 def _parse_henchman_cost(value: Any) -> int | None:
@@ -180,14 +187,13 @@ def _parse_henchman_cost(value: Any) -> int | None:
     return max(numeric, 0)
 
 
-def _hire_cost_before_loadout(group: HenchmenGroup, living_members: int) -> int:
-    """Decision 7's cost of one more member, from the items the group carried before this PATCH replaced them.
+def _hire_cost_before_loadout(group: HenchmenGroup) -> int:
+    """Decision 7's cost of one more member, from the loadout the group carried before this PATCH replaced it.
 
-    The PATCH's own item list may already hold the recruits' copies, and items bought in the same save are
-    paid for by their own purchases, so only the earlier items are shared out. Price and XP are as saved.
+    The PATCH's own item list may already hold new rows, and items bought in the same save are paid for by their own
+    purchases, so only the earlier rows count. Price and XP are as saved.
     """
-    rows = group.henchmen_group_items.order_by("id").values_list("item_id", "cost")
-    return henchman_hire_cost(group.price, group.xp, rows, living_members)
+    return henchman_hire_cost(group.price, group.xp, group.henchmen_group_items.values_list("cost", flat=True))
 
 
 def _recruit_headers(warband: Warband, group_name: str, count: int, trade_text: str) -> tuple[Any, Any]:
@@ -217,12 +223,16 @@ class HenchmenHooks(UnitHooks):
     def after_update(self, unit: RosterUnit, fields: Set[str], members: MemberEntries | None) -> list[Recruit]:
         if members is None:
             return []
+        from .services.members import equip_recruits, share_to_stash  # services import the kinds registry
+
         group = cast(HenchmenGroup, unit)
+        default_cost = _hire_cost_before_loadout(group)  # before the sync: the loadout the recruits join
         synced = sync_members(group, members)
-        if not synced.new_entries:
+        share_to_stash(group.warband, group, synced.shares_to_stash)
+        if not synced.new_members:
             return []
-        default_cost = _hire_cost_before_loadout(group, synced.living_before)
-        return [Recruit(entry, default_cost) for entry in synced.new_entries]
+        saved = equip_recruits(group.warband, group, synced.new_members)
+        return [Recruit(entry, default_cost - saved.get(member.pk, 0)) for entry, member in synced.new_members]
 
     def record_recruit(self, kind: "UnitKindSpec", warband: Warband, unit: RosterUnit, sent: Any) -> None:
         """The group's log row, then one log row and one trade at the group price per member."""
@@ -289,7 +299,7 @@ class HenchmenHooks(UnitHooks):
             )
         ledger.record_entries(charges)
 
-    def kill_tally(self, kind: "UnitKindSpec", unit: Any) -> tuple[str, list[int], int]:
-        """Kills are credited to members, dead and dismissed ones included."""
+    def kill_tally(self, kind: "UnitKindSpec", unit: Any) -> tuple[dict[str, Any], int]:
+        """Kills are credited to members, dead and dismissed ones included: the group's kills, and their total."""
         members: Mapping[int, int] = dict(Henchman.objects.filter(group=unit).values_list("id", "kills"))
-        return "henchman", list(members), sum(int(kills or 0) for kills in members.values())
+        return {"killer_group": unit}, sum(int(kills or 0) for kills in members.values())

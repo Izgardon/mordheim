@@ -1,250 +1,130 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
-// routing
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import ReferencePage from "@/features/reference/ReferencePage";
+import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
+import { ReferenceList, ReferenceRow } from "@/features/reference/ReferenceList";
+import { useReferenceParams } from "@/features/reference/useReferenceParams";
 import { useMediaQuery } from "@/lib/use-media-query";
 
-// components
-import { CardTitle } from "@components/card";
-import { Input } from "@components/input";
-import TabbedCard from "@components/tabbed-card";
-import { PageHeader } from "@components/page-header";
-import MobileTabs from "@components/mobile-tabs";
-import { CardBackground } from "@/components/ui/card-background";
-import { getCampaignSectionTabs, type CampaignSectionTabId } from "@/lib/campaign-section-tabs";
-
-// data
 import { rulesTabs } from "../data/rules-content";
-import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
+import { highlightRuleHtml, ruleEntries, ruleMatches, ruleSnippet } from "../rules-index";
 
-type RulesTabId = (typeof rulesTabs)[number]["id"];
+/** An open block of the rulebook, its matches marked; the first one is scrolled to. */
+function RuleBody({ html, query }: { html: string; query: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const marked = useMemo(() => highlightRuleHtml(html, query), [html, query]);
+  useEffect(() => {
+    if (!query.trim()) return;
+    ref.current?.querySelector("mark")?.scrollIntoView({ block: "center" });
+  }, [marked, query]);
+  return <div ref={ref} className="rules-content" dangerouslySetInnerHTML={{ __html: marked }} />;
+}
 
-type HeadingResult = {
-  tabId: RulesTabId;
-  tabLabel: string;
-  id: string;
-  text: string;
-  level: number;
-};
-
+/**
+ * Rules (design E's reference layout): the bundled rulebook's sections as chips and each headed
+ * part as a row. The search looks inside the rules, not just the titles: a row shows the words
+ * around its first match, and opens to the part with every match marked.
+ */
 export default function Rules() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const { campaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
-  const [activeTab, setActiveTab] = useState<RulesTabId>(rulesTabs[0].id);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [pendingTarget, setPendingTarget] = useState<HeadingResult | null>(null);
-  const searchRef = useRef<HTMLDivElement | null>(null);
-  const activeContent = rulesTabs.find((tab) => tab.id === activeTab) ?? rulesTabs[0];
-  // PageHeader reports a plain string id; map it back to a known rules tab.
-  const handleHeaderTabChange = (tabId: string) => {
-    const tab = rulesTabs.find((entry) => entry.id === tabId);
-    if (tab) {
-      setActiveTab(tab.id);
-    }
-  };
-
-  const headingIndex = useMemo<HeadingResult[]>(() => {
-    if (typeof window === "undefined") {
-      return [];
-    }
-
-    const parser = new DOMParser();
-    return rulesTabs.flatMap((tab) => {
-      const doc = parser.parseFromString(tab.content, "text/html");
-      return Array.from(doc.querySelectorAll("h2, h3, h4"))
-        .map((heading) => ({
-          tabId: tab.id,
-          tabLabel: tab.label,
-          id: heading.id,
-          text: (heading.textContent ?? "").replace(/\s+/g, " ").trim(),
-          level: Number(heading.tagName.replace("H", "")),
-        }))
-        .filter((heading) => heading.id && heading.text);
-    });
-  }, []);
-
-  const filteredHeadings = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-    if (!query) {
-      return [];
-    }
-    return headingIndex.filter((heading) => heading.text.toLowerCase().includes(query));
-  }, [headingIndex, searchQuery]);
-
-  const contentSections = useMemo<string[]>(() => {
-    if (typeof window === "undefined") return [];
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(activeContent.content, "text/html");
-    const sections: string[] = [];
-    let buffer = document.createElement("div");
-    for (const child of Array.from(doc.body.children)) {
-      if (child.tagName === "H2" && buffer.children.length > 0) {
-        sections.push(buffer.innerHTML);
-        buffer = document.createElement("div");
-      }
-      buffer.appendChild(child.cloneNode(true));
-    }
-    if (buffer.children.length > 0) {
-      sections.push(buffer.innerHTML);
-    }
-    return sections;
-  }, [activeContent.content]);
-
-  const handleHeadingSelect = (heading: HeadingResult) => {
-    setActiveTab(heading.tabId);
-    setPendingTarget(heading);
-    setIsSearchOpen(false);
-  };
-
-  const campaignSectionTabs = useMemo(() => getCampaignSectionTabs(campaign), [campaign]);
-
-  const handleRulesNavChange = (tabId: CampaignSectionTabId) => {
-    if (!id) {
-      return;
-    }
-    navigate(`/campaigns/${id}/${tabId}`);
-  };
-
-  useEffect(() => {
-    if (!pendingTarget || pendingTarget.tabId !== activeTab) {
-      return;
-    }
-
-    const target = document.getElementById(pendingTarget.id);
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-    setPendingTarget(null);
-  }, [activeTab, pendingTarget]);
-
-  useEffect(() => {
-    const handleClick = (event: MouseEvent) => {
-      if (!searchRef.current) {
-        return;
-      }
-      if (!searchRef.current.contains(event.target as Node)) {
-        setIsSearchOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
-
-  useEffect(() => {
-    if (!searchQuery.trim()) {
-      setIsSearchOpen(false);
-    } else {
-      setIsSearchOpen(true);
-    }
-  }, [searchQuery]);
+  const params = useReferenceParams(true);
+  const section = params.get("section", "all");
+  const entries = useMemo(() => ruleEntries(), []);
+  const searched = entries.filter((entry) => ruleMatches(entry, params.query));
+  const rows = entries.filter(
+    (entry) =>
+      entry.id === params.openId ||
+      (searched.includes(entry) && (section === "all" || entry.sectionId === section))
+  );
+  const chips = [
+    { id: "all", label: "All", count: searched.length },
+    ...rulesTabs.map((tab) => ({
+      id: tab.id as string,
+      label: tab.label,
+      count: searched.filter((entry) => entry.sectionId === tab.id).length,
+    })),
+  ];
+  const searching = Boolean(params.query.trim());
 
   return (
-    <div className="min-h-0 space-y-4 sm:space-y-6">
-      <PageHeader
-        title="Mordheim Rules"
-        subtitle="Core game rules and mechanics"
-        tabs={rulesTabs}
-        activeTab={activeTab}
-        onTabChange={handleHeaderTabChange}
-      />
-      {isMobile ? (
-        <MobileTabs
-          tabs={campaignSectionTabs}
-          activeTab="rules"
-          onTabChange={handleRulesNavChange}
-          className="mt-2"
-          showDivider
-        />
-      ) : null}
-
-      <TabbedCard
-        tabs={rulesTabs}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        tabsClassName="hidden"
-        className="px-2 pb-6 sm:px-0"
-        contentClassName="pt-4 sm:pt-0"
-        header={
-          <div className="space-y-4">
-            <div className="rules-callout text-sm text-muted-foreground mt-4">
-              Rules content is lovingly curated with help from{" "}
-              <a
-                href="https://www.mordheimer.net"
-                target="_blank"
-                rel="noreferrer"
-                className="font-semibold text-foreground underline decoration-dotted underline-offset-2 transition hover:text-foreground/80"
-              >
-                mordheimer.net
-              </a>{" "}
-              - huge thanks to the community for keeping the Mordheim flame alive.
-            </div>
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <CardTitle>{activeContent.label}</CardTitle>
-              <div ref={searchRef} className="relative w-full max-w-sm">
-                <Input
-                  type="search"
-                  value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.target.value)}
-                  onFocus={() => {
-                    if (searchQuery.trim()) {
-                      setIsSearchOpen(true);
-                    }
-                  }}
-                  placeholder="Search headings..."
-                  aria-label="Search rules headings"
-                />
-                {isSearchOpen ? (
-                  <div className="absolute left-0 right-0 top-full z-20 mt-2 max-h-72 overflow-y-auto rounded-2xl border border-border/60 bg-card/95 p-2 shadow-lg">
-                    {filteredHeadings.length ? (
-                      <div className="grid gap-1">
-                        {filteredHeadings.map((heading) => (
-                          <button
-                            key={`${heading.tabId}-${heading.id}`}
-                            type="button"
-                            onClick={() => handleHeadingSelect(heading)}
-                            className="flex flex-wrap items-center justify-between gap-2 rounded-xl px-3 py-2 text-left text-sm text-foreground transition hover:bg-muted/30"
-                          >
-                            <span>{heading.text}</span>
-                            <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
-                              {heading.tabLabel}
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="px-2 py-1 text-sm text-muted-foreground">
-                        No headings match that search yet.
-                      </p>
-                    )}
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          </div>
-        }
-      >
-        {isMobile ? (
-          <div
-            className="rules-content"
-            dangerouslySetInnerHTML={{ __html: activeContent.content }}
+    <ReferencePage
+      title="Rules"
+      section="rules"
+      filters={
+        <>
+          <FilterRow isMobile={isMobile}>
+            <ReferenceSearch
+              value={params.query}
+              onChange={params.setQuery}
+              placeholder="Search the rules: knocked down, cover, parry"
+              label="Search the rules"
+              isMobile={isMobile}
+            />
+          </FilterRow>
+          <ReferenceChips
+            label="Section"
+            options={chips}
+            value={section}
+            onChange={(next) => params.set({ section: next === "all" ? null : next })}
+            isMobile={isMobile}
           />
-        ) : (
-          <div className="space-y-4">
-            {contentSections.map((section, index) => (
-              <CardBackground
-                key={index}
-                className="surface-panel-strong mt-8 rounded-2xl p-5 sm:p-6"
-              >
-                <div className="rules-content" dangerouslySetInnerHTML={{ __html: section }} />
-              </CardBackground>
-            ))}
-          </div>
-        )}
-      </TabbedCard>
-    </div>
+        </>
+      }
+      summary={
+        isMobile
+          ? undefined
+          : searching
+            ? `${rows.length} ${rows.length === 1 ? "part" : "parts"} mention “${params.query.trim()}”`
+            : `${rows.length} parts of the rulebook`
+      }
+    >
+      <ReferenceList
+        nameLabel="Rule"
+        columns={isMobile ? undefined : [{ label: "Section", className: "w-[200px] shrink-0" }]}
+        isEmpty={rows.length === 0}
+        empty="Nothing in the rules says that. Try another word."
+      >
+        {rows.map((entry) => {
+          const snippet = searching ? ruleSnippet(entry.text, params.query) : null;
+          return (
+            <ReferenceRow
+              key={entry.id}
+              id={entry.id}
+              open={params.isOpen(entry.id)}
+              onToggle={() => params.toggle(entry.id)}
+              name={entry.title}
+              sub={
+                snippet ? (
+                  <span className="text-text2">
+                    {snippet.before}
+                    <mark className="bg-accent-soft text-accent-hi">{snippet.match}</mark>
+                    {snippet.after}
+                  </span>
+                ) : isMobile ? (
+                  entry.section
+                ) : undefined
+              }
+              cells={isMobile ? undefined : [entry.section]}
+            >
+              <div className={isMobile ? "pt-1" : "border-t border-accent-line bg-panel px-6 py-5"}>
+                <RuleBody html={entry.html} query={params.query} />
+              </div>
+            </ReferenceRow>
+          );
+        })}
+      </ReferenceList>
+      <p className="m-0 text-xs text-muted-foreground">
+        The rules are curated with help from{" "}
+        <a
+          href="https://www.mordheimer.net"
+          target="_blank"
+          rel="noreferrer"
+          className="font-semibold text-accent-text underline decoration-dotted underline-offset-2"
+        >
+          mordheimer.net
+        </a>
+        , with thanks to the community keeping Mordheim alive.
+      </p>
+    </ReferencePage>
   );
 }

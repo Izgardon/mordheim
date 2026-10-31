@@ -7,7 +7,6 @@ import { useOpenCampaignBattles } from "@/features/battles/hooks/useOpenCampaign
 // other
 import { isCampaignId } from "./useCampaignQuery";
 import {
-  getBattleRouteForStatus,
   getResumableBattleForUser,
   toCurrentBattleSession,
 } from "@/features/battles/utils/battle-session";
@@ -82,10 +81,9 @@ export function useBattleSession(campaignId: number, route: BattleRoute) {
     if (!currentBattleSession) {
       return;
     }
-    const { campaignId: sessionCampaign, battleId: sessionBattle, status } = currentBattleSession;
-    navigate(
-      `/campaigns/${sessionCampaign}/battles/${sessionBattle}/${getBattleRouteForStatus(status)}`
-    );
+    // The bare battle URL sends him to the page for his status.
+    const { campaignId: sessionCampaign, battleId: sessionBattle } = currentBattleSession;
+    navigate(`/campaigns/${sessionCampaign}/battles/${sessionBattle}`);
   }, [currentBattleSession, navigate]);
 
   return {

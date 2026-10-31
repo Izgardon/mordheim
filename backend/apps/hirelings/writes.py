@@ -18,7 +18,8 @@ ID_LINKS = (  # write key -> the relation it fills and the linked entry's column
     ("special_ids", "special_links", "special_id"),
     ("spell_ids", "spell_links", "spell_id"),
 )
-LISTS = ("skill_ids", "special_ids", "spell_ids", "item_entries", "restriction_ids")
+LISTS = ("skill_ids", "special_ids", "spell_ids", "item_entries", "warbands")
+LINE_FIELDS = ("warband_type_id", "warband_group_id", "excluded")
 
 
 def _replace(entry: HirelingProfile, relation: str, rows: list[dict[str, Any]], *, replace: bool) -> None:
@@ -30,17 +31,17 @@ def _replace(entry: HirelingProfile, relation: str, rows: list[dict[str, Any]], 
 
 
 def write_links(entry: HirelingProfile, data: Mapping[str, Any], *, replace: bool) -> None:
-    """Each list `data` holds: skill, special and spell ids, item entries (`item_id`, `quantity`) and restriction
-    notes (`restriction_id`, `additional_note`)."""
+    """Each list `data` holds: skill, special and spell ids, item entries (`item_id`, `quantity`) and who may hire
+    (`warbands`: a warband type or group each, and whether it is excluded)."""
     for key, relation, column in ID_LINKS:
         if key in data:
             _replace(entry, relation, [{column: pk} for pk in data[key]], replace=replace)
     if "item_entries" in data:
         rows = [{"item_id": row["item_id"], "quantity": row["quantity"]} for row in data["item_entries"]]
         _replace(entry, "item_links", rows, replace=replace)
-    if "restriction_ids" in data:
-        notes = [{"restriction_id": note["restriction_id"], "additional_note": note["additional_note"]} for note in data["restriction_ids"]]  # fmt: skip
-        _replace(entry, "restriction_links", notes, replace=replace)
+    if "warbands" in data:
+        lines = [{field: line.get(field) for field in LINE_FIELDS} for line in data["warbands"]]
+        _replace(entry, "warband_links", [{**line, "excluded": bool(line["excluded"])} for line in lines], replace=replace)  # fmt: skip
 
 
 def _fields(data: Mapping[str, Any]) -> dict[str, Any]:

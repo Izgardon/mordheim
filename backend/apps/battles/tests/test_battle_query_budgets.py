@@ -46,7 +46,7 @@ class BattleQueryBudgetTests(BattleTestCase):
         small_count, _ = self.count(self.player, "get", self.url(small, "state"))
         self.ok(self.post_as(self.player, self.url(small, "cancel-battle")))
 
-        Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows", faction="X")
+        Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows")
         big = self.to_active({self.player: self.fixture.keys, self.viewer: [self.r], self.manager: []})
         battle = self.battle(big)
         BattleEvent.objects.bulk_create(
@@ -92,7 +92,12 @@ class BattleQueryBudgetTests(BattleTestCase):
         cases: list[tuple[str, str, dict[str, Any], int]] = [
             ("config", "config", info, 8),
             ("unit_ooa", "unit-ooa", {"unit_key": f"hero:{self.fixture.heroes[2].id}", "out_of_action": True}, 9),
-            ("unit_kill", "unit-kill", {"killer_unit_key": h, "victim_unit_key": self.r}, 12),
+            (
+                "unit_kill",
+                "unit-kill",
+                {"killer_unit_key": h, "victim_unit_key": self.r},
+                14,
+            ),  # + the victim out of action, + its battle_kill row (next step 9)
             (
                 "item_used",
                 "events",

@@ -8,7 +8,6 @@
 :root {
   --font-body: "Manrope", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --font-heading: "Fraunces", "Times New Roman", serif;
-  --font-mordheim: "Mordheim", "Fraunces", "Times New Roman", serif;
   --font-mono: "Space Mono", ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
   --text-2xs: clamp(0.6rem, 0.56rem + 0.2vw, 0.7rem);
@@ -29,7 +28,7 @@ body,
 body {
   margin: 0;
   min-height: 100%;
-  color: var(--color-text);
+  color: var(--color-ink);
   overflow: hidden;
 }
 
@@ -76,308 +75,6 @@ input[type="number"] {
   }
 }
 
-.table-scroll {
-  max-height: 60vh;
-}
-
-.table-scroll--full {
-  height: 100%;
-  overflow: hidden;
-}
-
-.dice-box-surface canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-@layer components {
-  .icon-button {
-    filter: brightness(1.08);
-  }
-
-  .icon-button:hover,
-  .icon-button:focus-visible {
-    filter: brightness(1.15);
-    box-shadow:
-      0 0 10px var(--color-glow-soft),
-      0 0 18px var(--color-glow-faint);
-  }
-
-  .surface-panel {
-    border: 1px solid var(--color-border-soft);
-    background: color-mix(in srgb, var(--color-surface-panel) 92%, transparent);
-    box-shadow: var(--shadow-panel);
-  }
-
-  .surface-panel-strong {
-    border: 1px solid var(--color-border-soft);
-    background: color-mix(in srgb, var(--color-surface-panel-strong) 96%, transparent);
-    box-shadow: var(--shadow-elevated);
-  }
-
-  .surface-inline {
-    border: 1px solid var(--color-border-soft);
-    background: color-mix(in srgb, var(--color-surface-inline) 94%, transparent);
-  }
-
-  .surface-shell {
-    border: 1px solid var(--color-border-soft);
-    background: color-mix(in srgb, var(--color-shell-subnav) 95%, transparent);
-    box-shadow: var(--shadow-panel);
-  }
-
-  .field-surface {
-    border: 1px solid var(--color-border-soft);
-    background: color-mix(in srgb, hsl(var(--input)) 94%, transparent);
-    color: var(--color-text);
-  }
-
-  .shell-topbar {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    background: rgba(0, 0, 0, 0.94);
-    border-bottom: 1px solid var(--color-border-soft);
-    box-shadow:
-      inset 0 -1px 0 rgba(108, 255, 134, 0.22),
-      inset 0 1px 0 rgba(108, 255, 134, 0.08),
-      0 14px 30px rgba(6, 18, 10, 0.18);
-  }
-
-  .subnav-surface {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    background: color-mix(in srgb, var(--color-surface-panel-strong) 96%, transparent);
-    border-bottom: 1px solid var(--color-border-soft);
-    box-shadow: 0 12px 24px rgba(6, 18, 10, 0.1);
-  }
-
-  .shell-topbar::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: -1;
-    background: radial-gradient(340px 96px at 88% 0%, rgba(108, 255, 134, 0.16), transparent 74%),
-      linear-gradient(90deg, transparent 0%, transparent 64%, rgba(57, 255, 77, 0.1) 100%);
-    opacity: 1;
-  }
-
-  .table-shell {
-    overflow: hidden;
-    border: 1px solid var(--color-border-soft);
-    background: color-mix(in srgb, var(--color-surface-panel) 92%, transparent);
-    box-shadow: var(--shadow-panel);
-  }
-
-  .table-head-surface {
-    background: var(--color-table-head);
-  }
-
-  .table-row-even {
-    background: var(--color-table-row-even);
-  }
-
-  .table-row-odd {
-    background: var(--color-table-row-odd);
-  }
-
-  .table-row-hover:hover {
-    background: var(--color-table-row-hover);
-  }
-
-  .table-row-active {
-    background: var(--color-table-row-active);
-  }
-
-  .theme-heading-soft {
-    color: var(--color-heading-soft);
-  }
-
-  .theme-accent {
-    color: var(--color-accent-strong);
-  }
-
-  .theme-icon-soft {
-    color: var(--color-icon-soft);
-  }
-
-  .theme-icon-strong {
-    color: var(--color-icon-strong);
-  }
-
-  .btn-primary {
-    border-color: #6d573e;
-    background: #2f2419;
-    color: #fffaf1;
-    box-shadow: 0 10px 22px rgba(6, 4, 2, 0.24);
-  }
-
-  .btn-primary:hover {
-    background: #392b1e;
-  }
-
-  .btn-secondary {
-    border-color: #4c3a2a;
-    background: #18120d;
-    color: #e7d8c0;
-  }
-
-  .btn-secondary:hover {
-    background: #221912;
-  }
-
-  .btn-subtle {
-    border-color: #3a2c20;
-    background: #120e0a;
-    color: #d9c8ac;
-  }
-
-  .btn-subtle:hover {
-    background: #19120d;
-    color: #d9c8ac;
-  }
-
-  .btn-outline {
-    border-color: #5c4834;
-    background: transparent;
-    color: #f1e5cd;
-  }
-
-  .btn-outline:hover {
-    background: rgba(32, 23, 15, 0.7);
-  }
-
-  .btn-ghost {
-    border-color: transparent;
-    background: transparent;
-    color: #eadfc8;
-  }
-
-  .btn-ghost:hover {
-    background: rgba(32, 23, 15, 0.7);
-    color: #eadfc8;
-  }
-
-  .btn-destructive {
-    border-color: #7c3328;
-    background: #40150f;
-    color: #ffd6cb;
-  }
-
-  .btn-destructive:hover {
-    background: #4b1912;
-  }
-
-  .btn-nav {
-    justify-content: flex-start;
-    border-color: transparent;
-    background: transparent;
-    color: #d9c8ac;
-    box-shadow: none;
-  }
-
-  .btn-nav:hover,
-  .btn-nav:focus-visible {
-    border-color: #3a2c20;
-    background: #18120d;
-    color: #f4ead9;
-  }
-
-  .btn-nav[data-active="true"] {
-    border-color: #4c3a2a;
-    background: #18120d;
-    color: #fff7e8;
-  }
-
-  .btn-toolbar,
-  .btn-icon {
-    border-color: #433226;
-    background: #14100c;
-    color: var(--color-icon-soft);
-  }
-
-  .btn-toolbar:hover,
-  .btn-icon:hover,
-  .btn-toolbar:focus-visible,
-  .btn-icon:focus-visible {
-    background: #1d160f;
-    color: var(--color-icon-strong);
-  }
-
-  .btn-toolbar[data-active="true"],
-  .btn-icon[data-active="true"] {
-    border-color: #6d573e;
-    background: #22180f;
-    color: var(--color-icon-strong);
-  }
-
-  .mobile-tab-chip {
-    border: 1px solid var(--color-border-soft);
-    background: color-mix(in srgb, var(--color-surface-inline) 92%, transparent);
-    color: var(--color-text-soft);
-    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.22);
-  }
-
-  .mobile-tab-chip:hover {
-    background: color-mix(in srgb, var(--color-surface-raised) 92%, transparent);
-    color: var(--color-text);
-  }
-
-  .mobile-tab-chip--active {
-    border-color: color-mix(in srgb, var(--color-accent) 52%, var(--color-border-strong));
-    background: color-mix(in srgb, var(--color-accent-soft) 72%, var(--color-surface-inline));
-    color: hsl(var(--primary-foreground));
-    box-shadow: 0 12px 24px rgba(3, 10, 7, 0.32);
-  }
-
-  /*
-   * Touch targets: on a touch or narrow screen a small control answers a 44 px tap, as the battle
-   * cards' controls do (BATL-UX-05), and keeps its look. `touch-target`: the control's box grows to
-   * 44 x 44 around its visible part (an inner element, or a glyph), so a list of them grows and no
-   * two taps overlap; `touch-target-row` centres a row's text on such a box. `touch-target-y`: a
-   * control whose look is its own box (a segmented filter's button) takes taps above and below it
-   * with a transparent ::after, up to 44 px; what sits above and below must leave that room.
-   */
-  @media (pointer: coarse), (max-width: 960px) {
-    .touch-target {
-      min-width: 2.75rem;
-      min-height: 2.75rem;
-    }
-
-    .touch-target-row {
-      align-items: center;
-    }
-
-    .touch-target-y {
-      position: relative;
-    }
-
-    .touch-target-y::after {
-      content: "";
-      position: absolute;
-      inset-inline: 0;
-      top: 50%;
-      height: max(100%, 2.75rem);
-      transform: translateY(-50%);
-    }
-  }
-}
-
-/* Settings gear button hover brightness */
-.settings-gear-btn {
-  display: inline-flex;
-  position: relative;
-  transition: filter 0.2s ease;
-}
-
-.settings-gear-btn:hover,
-.settings-gear-btn:focus-visible {
-  filter: brightness(1.2);
-}
-
 /* Typography */
 h1,
 h2,
@@ -387,88 +84,35 @@ h5,
 h6 {
   font-family: var(--font-heading);
   letter-spacing: 0.02em;
-  color: var(--color-heading);
+  color: var(--color-head);
 }
 
 ::selection {
-  background: var(--color-selection-bg);
-  color: var(--color-selection-text);
+  background: color-mix(in srgb, var(--color-accent) 35%, transparent);
+  color: var(--color-head);
 }
 
-/* Title glow */
-.title-glow {
-  color: var(--color-icon-strong);
-  text-shadow: 0 2px 4px rgba(6, 4, 2, 0.75);
-}
-
-/* Desktop Shell */
+/* Desktop shell: the 232 px nav rail beside the page, no top bar (design E). */
 .desktop-shell {
-  --desktop-rail-width: 240px;
-  --desktop-rail-collapsed-width: 84px;
-  --desktop-topbar-height: 64px;
-  --desktop-content-gutter: 1.5rem;
   position: fixed;
   inset: 0;
   display: grid;
-  grid-template-columns: var(--desktop-rail-width) minmax(0, 1fr);
-  grid-template-rows: var(--desktop-topbar-height) minmax(0, 1fr);
+  grid-template-columns: 232px minmax(0, 1fr);
   overflow: hidden;
-  background: radial-gradient(420px 320px at 0% 0%, var(--color-glow-soft), transparent 60%),
-    radial-gradient(
-      520px 380px at 100% 0%,
-      color-mix(in srgb, var(--color-glow-faint) 70%, transparent),
-      transparent 62%
-    ),
-    linear-gradient(180deg, hsl(var(--background)) 0%, var(--color-surface-panel-strong) 100%);
+  background: var(--color-page);
 }
 
 .desktop-shell__rail {
-  position: relative;
-  grid-column: 1;
-  grid-row: 1 / span 2;
   min-height: 0;
-  overflow: hidden;
-  background: radial-gradient(240px 180px at 46% 58%, rgba(108, 255, 134, 0.11), transparent 74%),
-    radial-gradient(220px 220px at 50% 108%, rgba(57, 255, 77, 0.08), transparent 72%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.96), rgba(0, 0, 0, 0.97));
-  box-shadow: 16px 0 36px rgba(6, 18, 10, 0.18);
-}
-
-.desktop-shell__rail::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(200px 150px at 40% 82%, rgba(108, 255, 134, 0.08), transparent 72%),
-    radial-gradient(220px 140px at 52% 100%, rgba(92, 255, 118, 0.07), transparent 74%),
-    linear-gradient(90deg, transparent 0%, transparent 78%, rgba(0, 0, 0, 0.28) 100%),
-    linear-gradient(180deg, transparent 0%, transparent 84%, rgba(108, 255, 134, 0.04) 100%);
-}
-
-.desktop-shell__rail::after {
-  content: "";
-  position: absolute;
-  top: var(--desktop-topbar-height);
-  right: 0;
-  bottom: 0;
-  width: 1px;
-  background: hsl(var(--border) / 0.7);
-}
-
-.desktop-shell__topbar {
-  position: relative;
-  grid-column: 2;
-  grid-row: 1;
-  min-width: 0;
-  overflow: hidden;
-  background: radial-gradient(260px 110px at 88% 0%, rgba(108, 255, 134, 0.1), transparent 70%),
-    linear-gradient(90deg, transparent 0%, transparent 70%, rgba(57, 255, 77, 0.06) 100%);
-  box-shadow: inset 0 -1px 0 rgba(108, 255, 134, 0.2);
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: var(--color-rail);
+  border-right: 1px solid var(--color-line);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
 }
 
 .desktop-shell__main {
-  grid-column: 2;
-  grid-row: 2;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
@@ -479,68 +123,40 @@ h6 {
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  /* The page column and its top bands measure against the space beside the rail (cqw). */
+  container-type: inline-size;
 }
 
+/* The page column (design E, polish): centred in the space beside the rail, at most 1520 px of
+   content. Form pages (Settings, Raise a warband) centre a narrower column inside it. */
 .desktop-shell__content-inner {
-  width: min(100%, 1600px);
+  --page-pad-top: 30px;
+  width: 100%;
+  max-width: 1600px;
   min-height: 100%;
-  margin: 0 auto;
-  padding: 0 var(--desktop-content-gutter) 1.5rem;
+  margin-inline: auto;
+  padding: var(--page-pad-top) 40px 56px;
 }
 
-/* Landing Page Split Layout */
-/* The page never scrolls (body is overflow: hidden), so the landing box does: one visible
-   screen tall, scrolling when the sign-up form is taller (AUTH-UX-07). */
-.landing {
-  display: flex;
-  align-items: stretch;
-  justify-content: space-between;
-  gap: 0;
-  padding: 0;
-  height: 100vh;
-  height: 100dvh;
-  width: 100vw;
-  overflow-x: hidden;
-  overflow-y: auto;
+/* A band across the top of a page (the readiness bar, the post-game bar, the Aftermath's header):
+   its ground reaches both edges of the space beside the rail, while its contents keep to the
+   page's column. It must sit directly in the page's full-width column. */
+.page-band {
+  margin-top: calc(-1 * var(--page-pad-top, 30px));
+  margin-inline: calc((100% - 100cqw) / 2);
+  padding-inline: calc((100cqw - 100%) / 2);
 }
 
-/* Not stretched to the box: a stretched column held the card to one screen, so a long form
-   was cut off instead of scrolling. It follows the card, never shorter than the screen, and
-   clips the card's 5px hidden edges, so a card that fits scrolls nothing (AUTH-UX-07). */
-.landing-auth {
-  display: flex;
-  align-self: flex-start;
-  align-items: stretch;
-  justify-content: flex-start;
-  flex: 0 0 min(480px, 42vw);
-  min-height: 100%;
-  padding: 0;
-  overflow: clip;
-}
-
-.landing-auth .auth-card {
-  margin: -5px 0 -5px -5px;
-  padding-left: 10px;
-  height: auto;
-  min-height: calc(100% + 10px);
-  max-height: none;
-}
-
-/* Sticky, so the video keeps filling its half while the box scrolls the card. */
-.landing-video {
-  position: sticky;
-  top: 0;
-  flex: 1 1 auto;
-  min-width: 0;
-  height: 100%;
+/* The landing's background video (design E): it covers the web's picture half, behind the
+   caption card, and fades in over the rail colour once YouTube has loaded it. */
+.auth-video {
+  position: absolute;
+  inset: 0;
   overflow: hidden;
-  border-radius: 0;
-  background-color: #020a0d;
-  box-shadow: none;
   pointer-events: none;
 }
 
-.landing-video iframe {
+.auth-video iframe {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -551,76 +167,25 @@ h6 {
   transition: opacity 0.4s ease;
 }
 
-.landing-video.is-loaded iframe {
+.auth-video.is-loaded iframe {
   opacity: 1;
-}
-
-.landing-video video {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  border: 0;
-  filter: saturate(0.7) contrast(1.1) brightness(0.72);
-}
-
-.landing--mobile {
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-}
-
-.landing--mobile .landing-auth {
-  display: flex;
-  flex: 0 0 auto;
-  align-self: stretch;
-  width: 100%;
-  min-height: 0;
-  align-items: flex-start;
-  padding-top: env(safe-area-inset-top, 0px);
-  overflow: visible;
-}
-
-.landing--mobile .landing-auth .auth-card {
-  margin: 0;
-  height: auto;
-}
-
-@media (max-width: 960px) {
-  .landing {
-    flex-direction: column;
-    padding: 0;
-    height: 100vh;
-    height: 100dvh;
-  }
-
-  .landing-auth {
-    flex: 0 0 auto;
-    width: 100%;
-    padding: 0;
-  }
-
-  .landing-video {
-    height: 45vh;
-    border-radius: 0;
-  }
 }
 
 /* Table sticky header */
 table {
-  border: 1px solid hsl(var(--border) / 0.6);
+  border: 1px solid var(--color-line);
 }
 
 table thead {
   position: sticky;
   top: -1px;
   z-index: 2;
-  border-bottom: 1px solid var(--color-border-soft);
-  background: var(--color-table-head);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-raised);
 }
 
 table thead th {
-  background: var(--color-table-head);
+  background: var(--color-raised);
 }
 
 /* Animations */
@@ -660,58 +225,6 @@ table thead th {
 .tooltip-unfurl {
   animation: tooltip-unfurl 0.2s ease-out forwards;
   transform-origin: top center;
-}
-
-@keyframes level-up-appear {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(var(--level-up-translate-y, -50%)) scale(0.4);
-    filter: brightness(3) drop-shadow(0 0 20px rgba(245, 217, 123, 0.9));
-  }
-  40% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(var(--level-up-translate-y, -50%)) scale(1.15);
-    filter: brightness(2.5) drop-shadow(0 0 24px rgba(245, 217, 123, 1));
-  }
-  60% {
-    transform: translateX(-50%) translateY(var(--level-up-translate-y, -50%)) scale(0.95);
-    filter: brightness(1.8) drop-shadow(0 0 16px rgba(245, 217, 123, 0.7));
-  }
-  80% {
-    transform: translateX(-50%) translateY(var(--level-up-translate-y, -50%)) scale(1.03);
-    filter: brightness(1.3) drop-shadow(0 0 10px rgba(245, 217, 123, 0.4));
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(var(--level-up-translate-y, -50%)) scale(1);
-    filter: brightness(1) drop-shadow(0 0 0 transparent);
-  }
-}
-
-@keyframes level-up-glow-pulse {
-  0%,
-  100% {
-    box-shadow:
-      0 6px 12px rgba(6, 4, 2, 0.5),
-      0 0 8px rgba(245, 217, 123, 0.3);
-  }
-  50% {
-    box-shadow:
-      0 6px 12px rgba(6, 4, 2, 0.5),
-      0 0 16px rgba(245, 217, 123, 0.6);
-  }
-}
-
-.level-up-banner {
-  --level-up-translate-y: -50%;
-  z-index: 8;
-  animation:
-    level-up-appear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
-    level-up-glow-pulse 2s ease-in-out 0.8s infinite;
-}
-
-.level-up-banner--expanded {
-  --level-up-translate-y: 0%;
 }
 
 /* Loading spinner: two swords swing in and clash (replaced the Lottie animation). */
@@ -782,99 +295,130 @@ table thead th {
   }
 }
 
-/* Theme Variables */
+/*
+ * Theme tokens (design E, "Combined"). Dark is the default on :root; data-theme="light" on <html>
+ * swaps the set (public/theme-init.js sets it before the first paint). Every colour in the app
+ * should come from these: the --color-* tokens directly, Tailwind's names for them (rail, raised,
+ * text2, accent-line...), or the shadcn variables below, which are the same tokens as HSL
+ * triplets so `bg-card/70`-style opacity keeps working.
+ *
+ * The grounds step up in both themes: the page recedes most (darkest), the chrome (rail, bar)
+ * sits a step above it, and the cards (panel, surface, raised) above that. Every text token
+ * passes WCAG AA (4.5:1) on every ground.
+ */
 @layer base {
   :root {
-    --background: 26 41% 4%;
-    --foreground: 40 45% 88%;
-    --card: 30 26% 16%;
-    --card-foreground: 40 40% 88%;
-    --popover: 30 26% 16%;
-    --popover-foreground: 40 40% 88%;
-    --primary: 32 42% 32%;
-    --primary-foreground: 40 45% 88%;
-    --secondary: 28 22% 20%;
-    --secondary-foreground: 40 45% 88%;
-    --muted: 26 18% 24%;
-    --muted-foreground: 38 25% 72%;
-    --accent: 32 40% 38%;
-    --accent-foreground: 40 45% 88%;
-    --destructive: 6 55% 45%;
-    --destructive-foreground: 40 45% 88%;
-    --border: 28 20% 26%;
-    --input: 30 22% 18%;
-    --ring: 36 45% 55%;
-    --chart-1: 36 45% 55%;
-    --chart-2: 30 32% 44%;
-    --chart-3: 20 20% 30%;
-    --chart-4: 40 45% 88%;
-    --chart-5: 6 55% 45%;
-    --radius: 0rem;
-    --color-bg: hsl(var(--background));
-    --color-surface-deep: hsl(var(--background));
-    --color-surface: hsl(var(--card));
-    --color-surface-raised: hsl(var(--secondary));
-    --color-surface-panel: hsl(30 22% 14%);
-    --color-surface-panel-strong: hsl(28 22% 5%);
-    --color-surface-inline: hsl(30 18% 10%);
-    --color-surface-overlay: hsla(28, 28%, 5%, 0.96);
-    --color-shell-rail: hsl(28 28% 8%);
-    --color-shell-topbar: hsl(28 28% 8%);
-    --color-shell-subnav: hsl(30 18% 8%);
-    --color-text: hsl(var(--foreground));
-    --color-text-muted: hsl(var(--muted-foreground));
-    --color-text-soft: hsl(38 28% 82%);
-    --color-icon-soft: hsl(38 48% 82%);
-    --color-icon-strong: hsl(37 56% 88%);
-    --color-border: hsl(var(--border));
-    --color-border-strong: hsl(28 20% 30%);
-    --color-border-soft: hsla(28, 20%, 26%, 0.78);
-    --color-accent: hsl(var(--primary));
-    --color-accent-strong: hsl(41 58% 63%);
-    --color-danger: hsl(var(--destructive));
-    --color-heading: hsl(var(--foreground));
-    --color-heading-soft: hsl(24 22% 57%);
-    --color-accent-soft: hsla(32, 42%, 32%, 0.35);
-    --color-accent-faint: hsla(32, 42%, 32%, 0.2);
-    --color-glow-soft: rgba(57, 255, 77, 0.18);
-    --color-glow-faint: rgba(57, 255, 77, 0.12);
-    --color-selection-bg: hsla(36, 45%, 55%, 0.5);
-    --color-selection-text: #2b1b12;
-    --color-table-head: rgba(0, 0, 0, 1);
-    --color-table-row-even: rgba(22, 18, 14, 0.92);
-    --color-table-row-odd: rgba(18, 15, 11, 0.92);
-    --color-table-row-hover: rgba(27, 21, 16, 0.96);
-    --color-table-row-active: rgba(29, 23, 17, 0.96);
-    --shadow-panel: 0 18px 32px rgba(6, 4, 2, 0.28);
-    --shadow-elevated: 0 24px 40px rgba(6, 4, 2, 0.34);
-    --shadow-modal: 0 32px 50px rgba(6, 3, 2, 0.55);
+    color-scheme: dark;
+    --color-page: #0f0c09;
+    --color-rail: #18130e;
+    --color-bar: #1b1610;
+    --color-panel: #201911;
+    --color-surface: #221b14;
+    --color-raised: #2a2118;
+    --color-line: #382d22;
+    --color-border: #3e3226;
+    --color-strong: #594836;
+    --color-ink: #f2e7d2;
+    --color-head: #f8eedb;
+    --color-text2: #ddcdb2;
+    --color-muted: #b3a286;
+    --color-faint: #a8977c;
+    --color-accent: #e49a58;
+    --color-on-accent: #1c1209;
+    --color-accent-text: #f0b47e;
+    --color-accent-soft: rgba(228, 154, 88, 0.14);
+    --color-accent-line: #8c5e36;
+    --color-accent-hi: #f5bf8c;
+    --color-danger-bg: #2c140e;
+    --color-danger-line: #7a3528;
+    --color-danger: #f2a28e;
+    --color-good: #a9e3b0;
+    --color-good-bg: rgba(143, 227, 154, 0.12);
+    --color-good-line: #4f8a57;
+    --color-scrim: rgba(8, 5, 3, 0.72);
+    --color-shadow: rgba(0, 0, 0, 0.5);
+
+    --background: 30 25% 4.7%; /* page */
+    --foreground: 39.4 55.2% 88.6%; /* ink */
+    --card: 30 25.9% 10.6%; /* surface */
+    --card-foreground: 39.4 55.2% 88.6%;
+    --popover: 32 30.6% 9.6%; /* panel */
+    --popover-foreground: 39.4 55.2% 88.6%;
+    --primary: 28.3 72.2% 62%; /* accent */
+    --primary-foreground: 28.4 51.4% 7.3%; /* on-accent */
+    --secondary: 30 27.3% 12.9%; /* raised */
+    --secondary-foreground: 39.4 55.2% 88.6%;
+    --muted: 30 27.3% 12.9%; /* raised */
+    --muted-foreground: 37.3 22.8% 61.4%; /* muted */
+    --accent: 28.4 79.2% 71.8%; /* accent-text */
+    --accent-foreground: 39.3 67.4% 91.6%; /* head */
+    --destructive: 12 79.4% 75.3%; /* danger */
+    --destructive-foreground: 12 51.7% 11.4%; /* danger-bg */
+    --border: 30 24% 19.6%; /* border */
+    --input: 30.9 24.5% 28%; /* strong */
+    --ring: 28.3 72.2% 62%; /* accent */
+    --chart-1: 28.3 72.2% 62%;
+    --chart-2: 28.4 79.2% 71.8%;
+    --chart-3: 37.3 22.8% 61.4%;
+    --chart-4: 39.4 55.2% 88.6%;
+    --chart-5: 12 79.4% 75.3%;
   }
 
-  .dark {
-    --background: 28 28% 5%;
-    --foreground: 40 45% 88%;
-    --card: 28 24% 14%;
-    --card-foreground: 40 45% 88%;
-    --popover: 28 24% 14%;
-    --popover-foreground: 40 45% 88%;
-    --primary: 32 42% 32%;
-    --primary-foreground: 40 45% 88%;
-    --secondary: 28 22% 18%;
-    --secondary-foreground: 40 45% 88%;
-    --muted: 26 18% 22%;
-    --muted-foreground: 38 25% 72%;
-    --accent: 32 40% 38%;
-    --accent-foreground: 40 45% 88%;
-    --destructive: 6 55% 45%;
-    --destructive-foreground: 40 45% 88%;
-    --border: 28 20% 22%;
-    --input: 30 22% 16%;
-    --ring: 36 45% 55%;
-    --chart-1: 36 45% 55%;
-    --chart-2: 30 32% 44%;
-    --chart-3: 20 20% 30%;
-    --chart-4: 40 45% 88%;
-    --chart-5: 6 55% 45%;
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --color-page: #e8dfd0;
+    --color-rail: #f2ece2;
+    --color-bar: #f4eee5;
+    --color-panel: #fbf8f2;
+    --color-surface: #fbf8f2;
+    --color-raised: #ece4d6;
+    --color-line: #d4c5ae;
+    --color-border: #cbb9a0;
+    --color-strong: #a99679;
+    --color-ink: #2b211a;
+    --color-head: #1f1712;
+    --color-text2: #4a3c2f;
+    --color-muted: #665544;
+    --color-faint: #6b5947;
+    --color-accent: #b4532a;
+    --color-on-accent: #ffffff;
+    --color-accent-text: #9e4520;
+    --color-accent-soft: rgba(180, 83, 42, 0.1);
+    --color-accent-line: #d9a88e;
+    --color-accent-hi: #8f3d1b;
+    --color-danger-bg: #f8e3dc;
+    --color-danger-line: #d9a090;
+    --color-danger: #9b2f1c;
+    --color-good: #2e6b3a;
+    --color-good-bg: #e3efe2;
+    --color-good-line: #9cc29f;
+    --color-scrim: rgba(43, 33, 26, 0.45);
+    --color-shadow: rgba(43, 33, 26, 0.18);
+
+    --background: 37.5 34.3% 86.3%;
+    --foreground: 24.7 24.6% 13.5%;
+    --card: 40 52.9% 96.7%;
+    --card-foreground: 24.7 24.6% 13.5%;
+    --popover: 40 52.9% 96.7%;
+    --popover-foreground: 24.7 24.6% 13.5%;
+    --primary: 17.8 62.2% 43.5%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 38.2 36.7% 88.2%;
+    --secondary-foreground: 24.7 24.6% 13.5%;
+    --muted: 38.2 36.7% 88.2%;
+    --muted-foreground: 30 20% 33.3%;
+    --accent: 17.6 66.3% 37.3%;
+    --accent-foreground: 23.1 26.5% 9.6%;
+    --destructive: 9 69.4% 35.9%;
+    --destructive-foreground: 15 66.7% 91.8%;
+    --border: 34.9 29.3% 71.2%;
+    --input: 36.3 21.8% 56.9%;
+    --ring: 17.8 62.2% 43.5%;
+    --chart-1: 17.8 62.2% 43.5%;
+    --chart-2: 17.6 66.3% 37.3%;
+    --chart-3: 30 20% 33.3%;
+    --chart-4: 24.7 24.6% 13.5%;
+    --chart-5: 9 69.4% 35.9%;
   }
 
   * {
@@ -914,6 +458,6 @@ table thead th {
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-page text-ink font-sans;
   }
 }

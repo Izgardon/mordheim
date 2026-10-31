@@ -10,9 +10,10 @@ const byUserId = <T>(userIds: number[], value: T) =>
   Object.fromEntries(userIds.map((userId) => [userId, value])) as Record<number, T>;
 
 /**
- * Every participant's roster (`['campaign', cid, 'battle', bid, 'rosters']`), read once the
- * participants are known and again only when they change; a phase change reads nothing (PERF-38).
- * Loading and errors are reported per participant user id, as the pages show them.
+ * Every participant's roster (`['campaign', cid, 'battle', bid, 'rosters']`), read alongside the
+ * battle's state rather than after it, and again only when the participants change; a phase
+ * change reads nothing (PERF-38). Loading and errors are reported per participant user id, as the
+ * pages show them, once the state has named the participants.
  */
 export function useBattleRosters(
   campaignId: number,
@@ -24,13 +25,14 @@ export function useBattleRosters(
     [participants]
   );
   const participantUserIdsKey = participantUserIds.join(",");
-  const enabled =
-    Number.isFinite(campaignId) && Number.isFinite(battleId) && participantUserIds.length > 0;
+  const isBattle = Number.isFinite(campaignId) && Number.isFinite(battleId);
+  const enabled = isBattle && participantUserIds.length > 0;
 
-  const query = useQuery({ ...battleRostersQuery(campaignId, battleId), enabled });
+  const query = useQuery({ ...battleRostersQuery(campaignId, battleId), enabled: isBattle });
   const { refetch } = query;
 
-  // A different set of participants (someone joined or left) reads the rosters again.
+  // A different set of participants (someone joined or left) reads the rosters again; the first
+  // set the state names is the one the parallel read already covers.
   const fetchedForRef = useRef<string | null>(null);
   useEffect(() => {
     if (!enabled) {

@@ -72,6 +72,14 @@ class Battle(models.Model):
         null=True,
         blank=True,
     )
+    # the fight's round (next step 6, services/rounds.py): 1 when it starts, up by one when everyone still fighting
+    # agrees to the next, or someone starts it anyway
+    round = models.PositiveSmallIntegerField(default=1)
+    # the open request for the next round, {"round", "asked_by", "agreed": [user ids]}; null when there is none
+    round_request = models.JSONField(null=True, blank=True)
+    # creatures nobody plays (services/neutrals.py): [{key, name, creature_type, stats, creatures: [{key, name,
+    # status, wounds}]}]; never rostered, nothing of them reaches the post-game
+    neutral_groups_json = models.JSONField(default=list, blank=True)
 
     class Meta:
         db_table = "battle"

@@ -2,17 +2,17 @@ import { apiRequest } from "@/lib/api-client";
 import { realtimeSocketId } from "@/lib/realtime/client";
 
 import type {
+  BattleCreatureStatus,
   BattleCustomUnit,
   BattleCreatePayload,
   BattleParticipantForView,
   BattlePostbattleState,
-  BattleRecord,
-  BattleRecordPatch,
   ReportBattleResultPayload,
   BattleRosterMap,
   BattleState,
   BattleStateOf,
   BattleStateView,
+  BattleUnitStats,
   FullViewParticipant,
   PendingReportedResult,
 } from "@/features/battles/types/battle-types";
@@ -147,7 +147,7 @@ export function setUnitOutOfAction(
   return battleWrite(campaignId, battleId, "unit-ooa/", payload);
 }
 
-/** A rider off his mount for the rest of the battle, or back on it (step 5). */
+/** A rider off his mount for the rest of the battle, or back on it. */
 export function setUnitDismounted(
   campaignId: number,
   battleId: number,
@@ -162,6 +162,10 @@ export function recordUnitKill(
   payload: {
     killer_unit_key: string;
     victim_unit_key?: string;
+    /** A neutral creature: its stable key in the battle's neutral groups. */
+    victim_neutral_key?: string;
+    /** How it was done, as the kill sheet says. */
+    how?: KillHow;
     victim_name?: string;
     notes?: string;
     earned_xp: boolean;
@@ -170,6 +174,53 @@ export function recordUnitKill(
   }
 ) {
   return battleWrite(campaignId, battleId, "unit-kill/", payload);
+}
+
+export type RoundAction = "ask" | "agree" | "force" | "withdraw";
+
+export type KillHow = "melee" | "shooting" | "magic" | "other";
+
+/**
+ * The next round: ask for it, agree to someone's ask, start it anyway, or take your
+ * ask back. Once everyone still fighting agrees the round goes up and models stand up a step.
+ */
+export function changeRound(campaignId: number, battleId: number, action: RoundAction) {
+  return battleWrite(campaignId, battleId, "round/", { action });
+}
+
+/** A group of creatures nobody plays, numbered when there is more than one. */
+export function addNeutralGroup(
+  campaignId: number,
+  battleId: number,
+  payload: {
+    name: string;
+    creature_type: string;
+    count: number;
+    wounds: number;
+    stats?: Partial<BattleUnitStats>;
+  }
+) {
+  return battleWrite(campaignId, battleId, "neutral-groups/", payload);
+}
+
+/** One more creature in a neutral group (`add`), or the group taken away (`remove`). */
+export function changeNeutralGroup(
+  campaignId: number,
+  battleId: number,
+  groupKey: string,
+  change: { add: true } | { remove: true }
+) {
+  return battleWrite(campaignId, battleId, `neutral-groups/${groupKey}/`, change);
+}
+
+/** A neutral creature's status or wounds, for everyone in the battle. */
+export function changeNeutralCreature(
+  campaignId: number,
+  battleId: number,
+  creatureKey: string,
+  change: { status?: BattleCreatureStatus; wounds?: number }
+) {
+  return battleWrite(campaignId, battleId, `neutral-creatures/${creatureKey}/`, change);
 }
 
 /** Undoes your own kill or item use until you finalise (BUG-11); the event stays, voided. */
@@ -199,19 +250,6 @@ export function confirmBattleResults(
   results: { winners: number[]; losers: number[] }
 ) {
   return battleWrite(campaignId, battleId, "results/", results);
-}
-
-/** An ended battle's record (BATL-NEW-04): battle managers only. */
-export function getBattleRecord(campaignId: number, battleId: number) {
-  return apiRequest<BattleRecord>(battlePath(campaignId, battleId, "record/"));
-}
-
-/** Edits an ended battle's record; nothing else is recalculated (BATL-NEW-04). */
-export function updateBattleRecord(campaignId: number, battleId: number, patch: BattleRecordPatch) {
-  return apiRequest<BattleWriteAnswer & { record: BattleRecord }>(
-    battlePath(campaignId, battleId, "record/"),
-    { method: "PATCH", headers: battleWriteHeaders(), body: patch }
-  );
 }
 
 /** Nudges a player who is holding up the battle (BATL-NEW-08): 429 `retry_after` within 10 min. */
@@ -261,10 +299,11 @@ export function saveBattlePostbattleDraft(
   return battleWrite(campaignId, battleId, "postbattle/", payload);
 }
 
+/** Ready: applies the draft sent, or (no payload: starting a battle readies you up) the saved one. */
 export function finalizeBattlePostbattle(
   campaignId: number,
   battleId: number,
-  payload: { postbattle_json: BattlePostbattleState }
+  payload?: { postbattle_json: BattlePostbattleState }
 ) {
   return battleWrite(campaignId, battleId, "finalize-postbattle/", payload);
 }

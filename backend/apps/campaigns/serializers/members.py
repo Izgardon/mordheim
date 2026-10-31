@@ -11,6 +11,7 @@ class CampaignPlayerSerializer(serializers.Serializer):
     battle_busy_status = serializers.CharField(required=False, allow_null=True)
     battle_busy_battle_id = serializers.IntegerField(required=False, allow_null=True)
     battle_busy_last_activity_at = serializers.DateTimeField(required=False, allow_null=True)
+    battle_busy_participant_status = serializers.CharField(required=False, allow_null=True)
 
     def get_warband(self, obj):
         warband = obj.get("warband")
@@ -19,7 +20,7 @@ class CampaignPlayerSerializer(serializers.Serializer):
         return {
             "id": warband.get("id"),
             "name": warband.get("name"),
-            "faction": warband.get("faction"),
+            "type_name": warband.get("type_name"),
             "wins": warband.get("wins"),
             "losses": warband.get("losses"),
             "rating": warband.get("rating"),

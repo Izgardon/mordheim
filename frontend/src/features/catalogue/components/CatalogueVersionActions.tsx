@@ -57,7 +57,7 @@ export function RevertConfirm({
       description={revertMessage(entry)}
       error={revert.error}
       confirmText={revert.isReverting ? "Reverting..." : "Revert"}
-      confirmVariant="default"
+      confirmVariant="primary"
       isConfirming={revert.isReverting}
       onConfirm={() => void revert.revert(onReverted)}
     />
@@ -80,7 +80,7 @@ export function RuleVersionNote({
       Set by {ruleLabel(effectKey)} (
       <Link
         to={`/campaigns/${campaignId}/house-rules`}
-        className="underline underline-offset-2 hover:text-foreground"
+        className="underline underline-offset-2 hover:text-head"
       >
         House Rules
       </Link>

@@ -7,8 +7,7 @@ the caller isn't in is a 404 (CAT-TEST-01); a campaign id that isn't a whole num
 
 from typing import Any
 
-from apps.items.models import Item, ItemProperty
-from apps.restrictions.models import Restriction
+from apps.items.models import Item, ItemRule
 
 from .catalogue_support import (
     BESTIARY,
@@ -29,8 +28,7 @@ from .catalogue_support import (
 # Every catalogue list that takes ?campaign_id=.
 LIST_URLS = {
     **{kind.key: kind.list_url() for kind in KINDS},
-    "restrictions": "/api/restrictions/",
-    "item_properties": "/api/item-properties/",
+    "item_rules": "/api/item-rules/",
 }
 
 
@@ -59,7 +57,7 @@ class CatalogueListAccessTests(CatalogueTestCase):
 
     def test_a_catalogue_write_naming_a_campaign_that_is_not_a_number_is_a_400(self):
         # BUG-79: the writes read the body's campaign_id the same way
-        writes = [kind.list_url() for kind in KINDS] + ["/api/item-properties/"]
+        writes = [kind.list_url() for kind in KINDS] + ["/api/item-rules/"]
         for url in writes:
             with self.subTest(url=url):
                 response = self.post_as(self.owner, url, {"campaign_id": "abc", "name": "Bad", "type": "Weapon"})
@@ -160,21 +158,11 @@ class CatalogueMergeTests(CatalogueTestCase):
                 self.assertNotIn(book.id, listed)
                 self.assertLessEqual({same_name.id, version.id}, set(listed))
 
-    def test_restrictions_hide_book_rows_by_text(self):
-        Restriction.objects.create(type="Warband Group", restriction="Mercenaries", campaign=self.campaign)
+    def test_shared_item_rules_list_campaign_and_book_rows_side_by_side(self):
+        ItemRule.objects.create(name="Parry", campaign=self.campaign)
+        ItemRule.objects.create(name="Parry", campaign=self.elsewhere)
 
-        rows = self.get_as(self.player, f"/api/restrictions/?campaign_id={self.campaign.id}").json()
-
-        self.assertEqual(
-            [(row["restriction"], row["type"], row["campaign"]) for row in rows],
-            [("Mercenaries", "Warband Group", self.campaign.id)],
-        )
-
-    def test_item_properties_list_campaign_and_book_rows_side_by_side(self):
-        ItemProperty.objects.create(name="Parry", type="Weapon", campaign=self.campaign)
-        ItemProperty.objects.create(name="Parry", type="Weapon", campaign=self.elsewhere)
-
-        rows = self.get_as(self.player, f"/api/item-properties/?campaign_id={self.campaign.id}").json()
+        rows = self.get_as(self.player, f"/api/item-rules/?campaign_id={self.campaign.id}").json()
 
         self.assertCountEqual(
             [(row["name"], row["campaign_id"]) for row in rows], [("Parry", None), ("Parry", self.campaign.id)]
@@ -198,7 +186,7 @@ class CatalogueMergeTests(CatalogueTestCase):
         self.assertNotIn("New Skill", self.listed(self.player, SKILLS))
         self.assertNotIn("New Skill", [row["name"] for row in self.get_as(self.player, SKILLS.list_url()).json()])
 
-    def test_items_list_with_their_prices_restrictions_and_properties(self):
+    def test_items_list_with_their_rules_prices_and_who_can_buy(self):
         sword = next(row for row in self.get_as(self.player, ITEMS.list_url(self.campaign)).json() if row["name"] == "Sword")  # fmt: skip
 
         self.assertEqual(
@@ -211,17 +199,17 @@ class CatalogueMergeTests(CatalogueTestCase):
                 "bestiary_entry": None,
             },  # fmt: skip
         )
-        self.assertEqual(sword["properties"], [{"id": self.parry.id, "name": "Parry", "type": "Weapon"}])
-        [availability] = sword["availabilities"]
-        self.assertEqual((availability["cost"], availability["rarity"], availability["variable_cost"]), (10, 2, None))
+        [rule] = sword["rules"]
         self.assertEqual(
-            availability["restrictions"],
-            [
-                {
-                    "restriction": {"id": self.mercenaries.id, "type": "Warband", "restriction": "Mercenaries"},
-                    "additional_note": "",
-                }
-            ],  # fmt: skip
+            {key: rule[key] for key in ("rule_id", "shared", "name", "text", "table")},
+            {"rule_id": self.parry.id, "shared": True, "name": "Parry", "text": "Parries a blow.", "table": []},
+        )
+        [availability] = sword["availabilities"]
+        self.assertEqual((availability["cost"], availability["rarity"], availability["dice"]), (10, None, None))
+        [line] = availability["warbands"]
+        self.assertEqual(
+            (line["warband_group_id"], line["name"], line["excluded"], availability["for_everyone"]),
+            (None, "Mercenaries", False, False),
         )
 
     def test_type_and_search_filter_before_the_merge(self):

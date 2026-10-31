@@ -89,7 +89,9 @@ class CompanionAbilityTests(RosterTestCase):
         response = self.client.post(f"/api/warbands/{self.warband.id}/purchases/", body, format="json")
 
         self.assertEqual(response.status_code, 201, response.data)
-        mounts = [(mount["name"], [skill["name"] for skill in mount["skills"]]) for mount in response.data["mounts"]]
+        mounts = [
+            (mount["name"], [skill["name"] for skill in mount["skills"]]) for mount in response.data["unit"]["mounts"]
+        ]
         self.assertEqual(mounts, [("Warhorse", ["Thunderous Charge"]), ("Pony", ["Sure Footed"])])
         self.assertEqual(response.data["mount"]["name"], "Warhorse")
 

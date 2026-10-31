@@ -1,28 +1,21 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useOutletContext } from "react-router-dom";
 
 import BattleProvider from "@/features/battles/components/layout/BattleProvider";
-import BattleShell from "@/features/battles/components/layout/BattleShell";
 import { phaseFromPath } from "@/features/battles/state/battle-machine";
+import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 
 /**
- * The battle pages' layout: the chrome (`BattleShell`) around `BattleProvider`, which owns the
- * battle's state and rosters and the phase redirects for whichever page the URL names. The
- * provider stays mounted as the battle moves from prebattle to active to postbattle.
+ * `battles/:battleId/*`: `BattleProvider` loads the battle and sends each player to
+ * the page for his status: the invitation and the pre-battle (`prebattle`), the battle (`active`)
+ * or the Aftermath (`postbattle`, its own route). The bare battle URL only redirects. The
+ * provider stays mounted as the battle moves on, so the next page reads nothing again.
  */
 export default function BattleLayout() {
   const phase = phaseFromPath(useLocation().pathname);
-
+  const context = useOutletContext<CampaignLayoutContext>();
   return (
-    <BattleShell>
-      {(outletContext) =>
-        phase ? (
-          <BattleProvider phase={phase}>
-            <Outlet context={outletContext} />
-          </BattleProvider>
-        ) : (
-          <Outlet context={outletContext} />
-        )
-      }
-    </BattleShell>
+    <BattleProvider phase={phase === "postbattle" ? null : phase}>
+      <Outlet context={context} />
+    </BattleProvider>
   );
 }

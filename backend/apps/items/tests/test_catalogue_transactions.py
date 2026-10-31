@@ -76,9 +76,9 @@ class CatalogueTransactionTests(TransactionTestCase):
         self.assertEqual((item.name, list(item.availabilities.values_list("cost", flat=True))), ("Flail", [15]))
 
     def test_an_item_write_failing_after_validation_keeps_nothing(self):
-        # BUG-53: the item, its availabilities and its properties are one transaction
-        body = ITEMS.body("Halberd", availabilities=[{"cost": 10}], property_ids=[])
-        with mock.patch("apps.items.writes._write_properties", side_effect=RuntimeError("disk full")):
+        # BUG-53: the item, its rules and its price rows are one transaction
+        body = ITEMS.body("Halberd", availabilities=[{"cost": 10}], rules=[])
+        with mock.patch("apps.items.writes.write_availabilities", side_effect=RuntimeError("disk full")):
             response = self.post(ITEMS.list_url(), body)
 
         self.assertEqual(response.status_code, 500)
@@ -113,7 +113,7 @@ class CatalogueTransactionTests(TransactionTestCase):
 
     def test_a_hired_sword_write_failing_after_validation_keeps_nothing(self):
         # BUG-53: the hired sword and its links are one transaction
-        body = HIRED_SWORDS.body("Ghost", restriction_ids=[])
+        body = HIRED_SWORDS.body("Ghost", warbands=[])
         with mock.patch("apps.hirelings.writes.write_links", side_effect=RuntimeError("disk full")):
             response = self.post(HIRED_SWORDS.list_url(), body)
 
@@ -129,7 +129,7 @@ class CatalogueTransactionTests(TransactionTestCase):
         def edit(description: str) -> Any:
             client = APIClient()
             client.force_authenticate(user=self.owner)
-            body = {"campaign_id": self.campaign.id, "description": description}
+            body = {"campaign_id": self.campaign.id, "flavour": description}
             return client.patch(ITEMS.detail_url(book.id), body, format="json")
 
         with mock.patch.object(versions, "editable", side_effect=rendezvous.before(versions.editable)):
@@ -138,4 +138,4 @@ class CatalogueTransactionTests(TransactionTestCase):
         self.assertEqual((first.status_code, second.status_code), (200, 200))
         [version] = Item.objects.filter(campaign=self.campaign, replaces=book)
         self.assertEqual((first.data["id"], second.data["id"]), (version.id, version.id))
-        self.assertIn(version.description, {"Heavy", "Spiked"})
+        self.assertIn(version.flavour, {"Heavy", "Spiked"})

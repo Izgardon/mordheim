@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogKicker,
   DialogTitle,
   DialogTrigger,
 } from "@components/dialog";
@@ -117,7 +118,7 @@ export default function EditHouseRuleDialog({
 
   const triggerNode =
     trigger === undefined ? (
-      <Button variant="outline" size="sm">
+      <Button variant="secondary" size="sm">
         Edit
       </Button>
     ) : (
@@ -129,11 +130,14 @@ export default function EditHouseRuleDialog({
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogTitle className="font-bold">EDIT HOUSE RULE</DialogTitle>
+          <DialogKicker>House rules</DialogKicker>
+          <DialogTitle>Edit the house rule</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-foreground">Title</label>
+            <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
+              Title
+            </label>
             <Input
               value={form.title}
               onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
@@ -141,9 +145,11 @@ export default function EditHouseRuleDialog({
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-foreground">Description</label>
+            <label className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
+              Description
+            </label>
             <textarea
-              className="min-h-[140px] w-full rounded-2xl border border-border/60 bg-background/70 px-3 py-2 text-sm text-foreground shadow-[0_12px_22px_rgba(5,20,24,0.25)] focus-visible:outline-none focus-visible:shadow-[0_12px_22px_rgba(5,20,24,0.25),inset_0_0_0_1px_rgba(57,255,77,0.25),inset_0_0_20px_rgba(57,255,77,0.2)]"
+              className="min-h-[140px] w-full border border-strong bg-page px-3 py-2 text-sm text-ink placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
               value={form.description}
               onChange={(event) =>
                 setForm((prev) => ({ ...prev, description: event.target.value }))
@@ -151,11 +157,15 @@ export default function EditHouseRuleDialog({
               placeholder="Describe the ruling and any clarifications."
             />
           </div>
-          {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
+          {formError ? (
+            <p role="alert" className="text-sm text-danger">
+              {formError}
+            </p>
+          ) : null}
         </div>
         <DialogFooter className="flex flex-wrap items-center justify-between gap-3">
           <Button
-            variant="destructive"
+            variant="danger"
             type="button"
             onClick={() => setIsDeleteOpen(true)}
             disabled={isSaving}
@@ -172,8 +182,8 @@ export default function EditHouseRuleDialog({
         onOpenChange={setIsDeleteOpen}
         description={
           <span>
-            Delete <span className="font-semibold text-foreground">{rule.title}</span>? This action
-            cannot be undone.
+            Delete <span className="font-semibold text-ink">{rule.title}</span>? This action cannot
+            be undone.
           </span>
         }
         confirmText={isSaving ? "Deleting..." : "Delete rule"}

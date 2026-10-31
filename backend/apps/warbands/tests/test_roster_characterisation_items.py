@@ -36,8 +36,11 @@ SWORD_SALE = {
     "beast_kind": None,
 }  # beast_kind: step 4
 AXE_SALE = {"current_price": 5, "suggested_sale_price": 3, "sale_price_basis": "campaign_price", "beast_kind": None}
+# Heroes and hired swords hold one row per copy; a henchmen group holds a loadout, one row for every member, which moves
+# and sells whole (test_henchmen_loadouts.py), so the per-copy tests below leave groups out.
+COPY_KINDS = (HERO, HIRELING)
 # the other kind each kind hands an item to in the cross-kind test
-OTHER_KIND = {HERO.key: HENCHMEN, HENCHMEN.key: HIRELING, HIRELING.key: HERO}
+OTHER_KIND = {HERO.key: HIRELING, HIRELING.key: HERO}
 
 
 class RosterItemTransferCharacterisationTests(ItemMoveHelpers, RosterTestCase):
@@ -45,7 +48,7 @@ class RosterItemTransferCharacterisationTests(ItemMoveHelpers, RosterTestCase):
         return self.client.get(f"/api/warbands/{self.warband.id}/summary/").json()
 
     def test_moving_a_unit_item_to_the_stash_takes_the_newest_copy(self):
-        for kind in KINDS:
+        for kind in COPY_KINDS:
             with self.subTest(kind=kind.key):
                 WarbandItem.objects.all().delete()
                 unit = self._armed(kind, race=self.race)  # without a race, race_name is left out of unit payloads
@@ -94,7 +97,7 @@ class RosterItemTransferCharacterisationTests(ItemMoveHelpers, RosterTestCase):
                 self.assertFalse(WarbandItem.objects.filter(warband=self.warband).exists())
 
     def test_moving_an_item_to_another_kind_of_unit(self):
-        for kind in KINDS:
+        for kind in COPY_KINDS:
             with self.subTest(kind=kind.key):
                 source = self._armed(kind)
                 other = OTHER_KIND[kind.key]
@@ -201,7 +204,7 @@ class RosterItemTransferCharacterisationTests(ItemMoveHelpers, RosterTestCase):
 
     def test_too_few_items_is_a_400_and_changes_nothing(self):
         WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=1, cost=9)
-        for kind in KINDS:
+        for kind in COPY_KINDS:
             with self.subTest(kind=kind.key):
                 unit = self._armed(kind)
                 too_many = self._transfer(
@@ -256,7 +259,7 @@ class RosterItemSaleCharacterisationTests(RosterTestCase):
         return self.client.post(f"/api/warbands/{self.warband.id}/item-sales/", body, format="json")
 
     def test_selling_a_unit_item_writes_a_sold_trade(self):
-        for kind in KINDS:
+        for kind in COPY_KINDS:
             with self.subTest(kind=kind.key):
                 clear_ledger(self.warband)
                 unit = make_unit(kind, self.warband)

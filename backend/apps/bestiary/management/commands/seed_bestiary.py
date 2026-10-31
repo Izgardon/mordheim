@@ -2,8 +2,10 @@
 `mim-bestiary.json`): the beasts, each a mount, a pet or a creature (`kind`), with whether it has a profile
 (`has_profile`: off, its stats are kept at 0 and its save empty), gains XP, what it adds to a rider's rating
 (`rating_bonus`) and whether the shop sells it (`available_in_shop`); their skills, specials, spells and equipment;
-and every beast's Animal item, listed when it is sold, with the grade and prices of its `shop_item`. Hired swords and
-dramatis personae are their own catalogue (seed_hired_swords, seed_dramatis_personae).
+and every beast's Animal item, listed when it is sold. A beast the catalogue import has (`out/items.json`, the items
+rebuild) takes its item's text, rules, setting and price rows from there; any other keeps the prices of its
+`shop_item` (open to everyone, a "unique to" text as the note) and its setting by its file and grade. Hired swords
+and dramatis personae are their own catalogue (seed_hired_swords, seed_dramatis_personae).
 
 Links resolve against the book only (BUG-17), by name with apostrophes straightened. The run is all or nothing: an
 entry without a known kind, or with a rating bonus that isn't a whole number from 0, stops it.
@@ -27,11 +29,13 @@ from apps.bestiary.models import (
 from apps.bestiary.writes import NO_PROFILE
 from apps.core.book_lookups import BookLookups
 from apps.core.catalogue.cache import bump
-from apps.core.seeding import clean, parse_armour_save, read_json_list, read_stats, sync_availabilities, upsert_global
+from apps.core.seeding import clean, parse_armour_save, read_json_list, read_stats, upsert_global
+from apps.items.importing import ImportedItems, legacy_rows, mordheim_part
 from apps.items.models import Item
-from apps.restrictions.book import BookRestrictions
+from apps.items.writes import replace_availabilities
 
 DEFAULT_JSON_PATHS = [Path("apps/bestiary/data/bestiary.json"), Path("apps/bestiary/data/mim-bestiary.json")]
+MIM = "mutiny-in-marienburg"
 
 
 def _kind(data: dict[str, Any], name: str) -> str:
@@ -88,13 +92,38 @@ def _sync_links(entry: BestiaryEntry, data: dict[str, Any], lookups: BookLookups
     )
 
 
-def _sync_item(entry: BestiaryEntry, data: dict[str, Any], lookups: BookLookups, book: BookRestrictions) -> bool:
-    """The beast's Animal item (every beast has one), with its grade and prices; whether it is new."""
-    shop = data.get("shop_item") or {}
+class ItemSource:
+    """Where a seeded beast's Animal item takes its text, setting and prices from: the import's entry of its name, else
+    the beast's own shop data. The import's entries name settings and warband types, so they are used once those are
+    seeded (seed_all seeds them first); a bestiary seeded on its own keeps the shop data."""
+
+    def __init__(self) -> None:
+        self.imported = ImportedItems()
+        seeded = bool(self.imported.settings and self.imported.types)
+        if seeded:
+            self.imported.seed_rules()  # the shared rules the animals name, upserted by slug as seed_items does
+        self.animals = self.imported.animals() if seeded else {}
+
+    def write(self, item: Item, entry: BestiaryEntry, data: dict[str, Any], path: Path) -> None:
+        found = self.animals.get(entry.name.strip().lower())
+        if found is not None:  # the beast keeps its item's name, kind (subtype) and listing
+            self.imported.apply(item, found, keep=("type", "subtype"))
+            return
+        shop = data.get("shop_item") or {}
+        setting = MIM if path.name.startswith("mim-") else mordheim_part(clean(shop.get("grade")) or "1a")
+        fields = {"flavour": entry.description, "campaign_type_id": self.imported.settings.get(setting)}
+        Item.objects.filter(pk=item.pk).update(**fields)
+        replace_availabilities(item, legacy_rows(shop.get("availabilities", [])))
+
+
+def _sync_item(
+    entry: BestiaryEntry, data: dict[str, Any], lookups: BookLookups, source: ItemSource, path: Path
+) -> bool:
+    """The beast's Animal item (every beast has one), with its text, setting and prices; whether it is new."""
     created = not Item.objects.filter(bestiary_entry=entry).exists()
-    item = sync_item(entry, {"grade": clean(shop.get("grade")) or "1a"})
+    item = sync_item(entry, {})
     lookups.remember_item(item)  # a later entry may be equipped with it (the Freelancer's Warhorse, BUG-54)
-    sync_availabilities(item, shop.get("availabilities", []), book)
+    source.write(item, entry, data, path)
     return created
 
 
@@ -120,7 +149,7 @@ class Command(BaseCommand):
 
         lookups = BookLookups()
         with transaction.atomic():
-            counts = self._seed(paths, lookups, BookRestrictions())
+            counts = self._seed(paths, lookups, ItemSource())
             bump(None)  # every cached catalogue list shows the book (PERF-13)
 
         for warning in lookups.warnings:
@@ -133,7 +162,7 @@ class Command(BaseCommand):
             )
         )
 
-    def _seed(self, paths: list[Path], lookups: BookLookups, book: BookRestrictions) -> Counter[str]:
+    def _seed(self, paths: list[Path], lookups: BookLookups, source: ItemSource) -> Counter[str]:
         counts: Counter[str] = Counter()
         for path in paths:
             if not path.exists():
@@ -146,5 +175,5 @@ class Command(BaseCommand):
                 entry, created = _upsert_entry(data, name, _kind(data, name))
                 counts["created" if created else "updated"] += 1
                 _sync_links(entry, data, lookups)
-                counts["items_created" if _sync_item(entry, data, lookups, book) else "items_updated"] += 1
+                counts["items_created" if _sync_item(entry, data, lookups, source, path) else "items_updated"] += 1
         return counts

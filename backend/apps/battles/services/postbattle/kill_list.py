@@ -1,55 +1,52 @@
 """Each unit's kills by who was taken out, for the postbattle page (decision 5, BATL-NEW-06).
 
-The list is the battle's live kill events (services/kills.py), the same ones finalise counts into `kills` and that
-kill history, pivotal moments and the suggested XP read: removing a kill voids its event (`events/:id/void/`), adding
-one records a `source: "postbattle"` kill (`unit-kill/`) with a victim from another roster (`victim_unit_key`) or a
-typed name (`victim_name`).
+The list is the battle's live kills (battle_kill, services/kills.py), the same ones finalise counts into `kills` and
+that kill history, pivotal moments and the suggested XP read: removing a kill voids it (`events/:id/void/`, its
+event's id), adding one records a `source: "postbattle"` kill (`unit-kill/`) with a victim from another roster
+(`victim_unit_key`) or a typed name (`victim_name`).
 """
 
 from collections.abc import Iterable
 
 from apps.users.names import display_name
 
-from ...models import BattleEvent, BattleParticipant
+from ...models import BattleKill, BattleParticipant
+from ...models.kill import AFTER, CREATURE
+
+SOURCES = {AFTER: "postbattle"}  # the page's name for a kill's phase; "battle" for one tapped in the fight
 
 
-def _part(payload: dict, name: str) -> dict:
-    part = payload.get(name)
-    return part if isinstance(part, dict) else {}
-
-
-def _victim(victim: dict, owners: dict[int, BattleParticipant]) -> dict:
-    warband_id = victim.get("warband_id")
-    owner = owners.get(warband_id) if isinstance(warband_id, int) else None
+def _victim(kill: BattleKill, owners: dict[int, BattleParticipant]) -> dict:
+    owner = owners.get(kill.victim_warband_id) if kill.victim_warband_id is not None else None
     return {
-        "unit_key": victim.get("unit_key"),
-        "name": victim.get("name"),
-        "type_name": victim.get("type_name"),
-        "warband_id": victim.get("warband_id"),
+        "unit_key": None if kill.victim_kind == CREATURE else kill.victim_unit_key,
+        "name": kill.victim_name or None,
+        "type_name": kill.victim_type or None,
+        "warband_id": kill.victim_warband_id,
         "warband_name": owner.warband.name if owner else None,
         "player_label": display_name(owner.user) if owner else None,
     }
 
 
 def unit_kills(
-    warband_id: int, events: Iterable[BattleEvent], participants: Iterable[BattleParticipant]
+    warband_id: int, kills: Iterable[BattleKill], participants: Iterable[BattleParticipant]
 ) -> dict[str, list[dict]]:
-    """The live kills of one warband's units, by killer unit key, in the order they were recorded."""
+    """The live kills of one warband's units, by killer unit key, in the order they were recorded (kills read with
+    their events, for the notes)."""
     owners = {entry.warband_id: entry for entry in participants}
-    kills: dict[str, list[dict]] = {}
-    for event in events:
-        payload = event.payload_json if isinstance(event.payload_json, dict) else {}
-        killer = _part(payload, "killer")
-        unit_key = killer.get("unit_key")
-        if killer.get("warband_id") != warband_id or not isinstance(unit_key, str):
+    listed: dict[str, list[dict]] = {}
+    for kill in kills:
+        unit_key = kill.killer_unit_key
+        if kill.killer_warband_id != warband_id or unit_key is None:
             continue
-        kills.setdefault(unit_key, []).append(
+        payload = kill.event.payload_json if isinstance(kill.event.payload_json, dict) else {}
+        listed.setdefault(unit_key, []).append(
             {
-                "event_id": event.id,
-                "victim": _victim(_part(payload, "victim"), owners),
-                "earned_xp": payload.get("earned_xp") is not False,
-                "source": payload.get("source", "battle"),
+                "event_id": kill.event_id,
+                "victim": _victim(kill, owners),
+                "earned_xp": kill.earns_xp,
+                "source": SOURCES.get(kill.phase, "battle"),
                 "notes": payload.get("notes", ""),
             }
         )
-    return kills
+    return listed

@@ -48,13 +48,43 @@ export type BattleCustomUnit = {
   stats: BattleUnitStats;
 };
 
+/** A unit's state in the fight besides out of action (which has its own event). */
+export type BattleUnitStatus = "knocked_down" | "stunned";
+
+/** A neutral creature's state: the four the status button cycles through. */
+export type BattleCreatureStatus = "standing" | "knocked_down" | "stunned" | "out_of_action";
+
+/** One creature nobody plays; `key` is stable, so a kill can name it. */
+export type BattleNeutralCreature = {
+  key: string;
+  name: string;
+  status: BattleCreatureStatus;
+  wounds: number;
+};
+
+/** A group of creatures nobody plays: its name, its bestiary type and profile, its creatures. */
+export type BattleNeutralGroup = {
+  key: string;
+  name: string;
+  creature_type: string;
+  max_wounds?: number;
+  stats?: Partial<BattleUnitStats>;
+  creatures: BattleNeutralCreature[];
+};
+
+/** Someone asked for the next round: the round, who asked, and who has agreed (user ids). */
+export type BattleRoundRequest = { round: number; asked_by: number; agreed: number[] };
+
 export type BattleUnitInformationEntry = {
   stats_override: Partial<BattleUnitStats>;
   notes?: string;
   current_wounds?: number | null;
   out_of_action: boolean;
+  /** The unit's live kills, which the server counts from its kill table (never stored or sent). */
   kill_count: number;
-  /** A rider off his mount for the rest of the battle (step 5); left out otherwise. */
+  /** Knocked down or stunned; left out while the unit stands. */
+  status?: BattleUnitStatus;
+  /** A rider off his mount for the rest of the battle; left out otherwise. */
   dismounted?: boolean;
 };
 
@@ -98,7 +128,16 @@ export type BattlePostbattleUnitResult = {
   keep_stats?: boolean;
   /** Ticked from the last roll's `misses`: set at finalise (heroes and hired swords only). */
   missing_games?: BattlePostbattleMissingGames;
+  /** The advances rolled in the Aftermath, taken at finalise (a group's ride on each member). */
+  advances?: BattlePostbattleAdvance[];
 };
+
+/**
+ * An advance rolled in the Aftermath: the advance id (a stat, Skill, Spell, Special, or LGT for
+ * the lad's got talent, resolved from the card), the threshold it was for and the dice (2D6, then
+ * the D6 that followed).
+ */
+export type BattlePostbattleAdvance = { id: string; label: string; at: number; rolls: number[] };
 
 export type BattlePostbattleExploration = {
   dice_values: number[];
@@ -114,6 +153,8 @@ export type BattlePostbattleUpkeepEntry = {
   cost: number | null;
   /** The suggestion's upkeep formula ("1 piece of wyrdstone"): a reminder, never saved. */
   cost_expression?: string;
+  /** Paid at camp (a tick: upkeep is charged at Ready either way, unless he was let go). */
+  paid?: boolean;
 };
 
 export type BattlePostbattleUpkeep = {
@@ -139,15 +180,24 @@ export type BattlePostbattleState = {
   upkeep: BattlePostbattleUpkeep;
   unit_results: Record<string, BattlePostbattleUnitResult>;
   /**
-   * Each at-risk rider's D6 for his mount and whether it died (step 5): the player's roll and
+   * Each at-risk rider's D6 for his mount and whether it died: the player's roll and
    * result, never automatic; a dead mount leaves him at finalise. Left out when there is none.
    */
   mount_survival?: Record<string, BattlePostbattleMountSurvival>;
+  /** The camp's record: the veterans' XP pool, what was sold and recruited. */
+  camp?: BattlePostgameCamp;
+};
+
+export type BattlePostgameCamp = {
+  /** The 2D6 rolled for the veterans' XP pool and the XP shared out of it so far. */
+  veterans?: { dice: number[]; spent: number };
+  sold?: { name: string; quantity: number; gold: number }[];
+  recruited?: { group: string; count: number; xp: number }[];
 };
 
 export type BattlePostbattleMountSurvival = { roll: number | null; dead: boolean };
 
-/** A rider taken out of action on his mount: what its D6 must beat (step 5). */
+/** A rider taken out of action on his mount: what its D6 must beat. */
 export type BattleMountAtRisk = {
   unit_name: string;
   mount: string;
@@ -183,7 +233,14 @@ export type BattleEventType =
   | "item_used_voided"
   | "battle_results_confirmed"
   | "battle_record_edited"
-  | "participant_nudged";
+  | "participant_nudged"
+  | "round_requested"
+  | "round_agreed"
+  | "round_request_withdrawn"
+  | "round_started"
+  | "neutral_group_added"
+  | "neutral_creature_added"
+  | "neutral_ooa_set";
 
 export type BattleSummary = {
   id: number;
@@ -211,6 +268,12 @@ export type BattleSummary = {
   /** Every player has finished his fight; the results wait for the last one (decision 4). */
   results_pending?: boolean;
   results_confirmer_user_id?: number | null;
+  /** The fight's round, from 1. */
+  round?: number;
+  /** The open ask for the next round: who asked and who has agreed. */
+  round_request?: BattleRoundRequest | null;
+  /** Creatures nobody plays, in every snapshot (never rostered). */
+  neutral_groups?: BattleNeutralGroup[];
 };
 
 /** The fields every participant view has; `?view=active` sends only these (IMP-54). */
@@ -292,7 +355,18 @@ export type BattleParticipant = BattleParticipantCore &
 export type UnitKillPayload = {
   killer?: { unit_key?: string; warband_id?: number; name?: string };
   /** A unit of another warband (its key and warband), or only the name typed for one. */
-  victim?: { unit_key?: string | null; warband_id?: number | null; name?: string | null };
+  victim?: {
+    unit_key?: string | null;
+    warband_id?: number | null;
+    name?: string | null;
+    type_name?: string | null;
+    /** A neutral creature's key. */
+    neutral_key?: string;
+  };
+  /** The round it happened in, for a kill in the fight. */
+  round?: number;
+  /** The kill took its victim out of action; undoing it puts him back. */
+  victim_ooa?: boolean;
   earned_xp?: boolean;
   source?: "battle" | "postbattle";
   [field: string]: unknown;
@@ -514,6 +588,9 @@ export type BattleRosterUnit = BattleRosterCompanionFields & {
   /** How many more games it misses, and why (`BattleRosterMissingFields`). */
   missingGames?: number;
   missingReason?: string;
+  /** A henchman: the loadout rows he lacks (he starts without each), and why he is left out at first. */
+  gaps?: { rowId: number; itemId: number; name: string; reason: string }[];
+  outReason?: string | null;
   stats: BattleUnitStats;
   items: BattleRosterItem[];
   singleUseItems: BattleRosterSingleUseItem[];
@@ -568,37 +645,6 @@ export type ReportBattleResultPayload = {
   participant_user_ids: number[];
   winner_warband_ids: number[];
 };
-
-/** An ended battle's record, as a battle manager edits it (BATL-NEW-04, `record/`). */
-export type BattleRecord = {
-  battle_id: number;
-  flow_type: BattleFlowType;
-  scenario: string;
-  scenario_link: string | null;
-  /** "YYYY-MM-DD" */
-  date: string;
-  participants: {
-    warband_id: number;
-    warband_name: string;
-    user_id: number;
-    user_label: string;
-    declared_rating: number | null;
-    /** Taken off the record (kept, marked removed). */
-    removed: boolean;
-  }[];
-  winner_warband_ids: number[];
-  loser_warband_ids: number[];
-};
-
-/** What `PATCH record/` accepts; a participant left without a rating keeps his. */
-export type BattleRecordPatch = Partial<{
-  scenario: string;
-  scenario_link: string | null;
-  date: string;
-  participants: { warband_id: number; declared_rating?: number | null }[];
-  winners: number[];
-  losers: number[];
-}>;
 
 /** A reported result still waiting for answers, as `pending-results/` lists it (BUG-46). */
 export type PendingReportedResult = {

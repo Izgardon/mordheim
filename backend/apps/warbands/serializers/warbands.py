@@ -2,9 +2,7 @@ from typing import Any
 
 from rest_framework import serializers
 
-from apps.restrictions.serializers import RestrictionSerializer
 from apps.warbands.models import Warband, WarbandResource
-from apps.warbands.restrictions import get_effective_restrictions_for_warband
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.services.prices import sale_price
 from apps.warbands.services.resources import MAX_AMOUNT
@@ -13,21 +11,33 @@ from apps.warbands.units.companions import beast_kind
 from apps.warbands.units.kinds import HERO, HIRELING
 from apps.warbands.units.services.create import cap_limit
 
+from ..services.types import types_of
+from .types import WarbandTypeBriefSerializer
+
 HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
 
 
 class WarbandSerializer(serializers.ModelSerializer):
-    restrictions = serializers.SerializerMethodField()
+    """A warband: what it is (`warband_type` and `counts_as`, with their settings and groups: one query,
+    `services/types.py`), and its record and settings."""
 
-    def get_restrictions(self, obj):
-        return RestrictionSerializer(get_effective_restrictions_for_warband(obj), many=True).data
+    warband_type = serializers.SerializerMethodField()
+    counts_as = serializers.SerializerMethodField()
+
+    def get_warband_type(self, obj: Warband) -> dict[str, Any] | None:
+        own = types_of(obj)[0]
+        return WarbandTypeBriefSerializer(own).data if own is not None else None
+
+    def get_counts_as(self, obj: Warband) -> list[dict[str, Any]]:
+        return list(WarbandTypeBriefSerializer(types_of(obj)[1], many=True).data)
 
     class Meta:
         model = Warband
         fields = (
             "id",
             "name",
-            "faction",
+            "warband_type",
+            "counts_as",
             "campaign_id",
             "user_id",
             "wins",
@@ -37,7 +47,6 @@ class WarbandSerializer(serializers.ModelSerializer):
             "max_units",
             "dice_color",
             "show_loadout_on_mobile",
-            "restrictions",
             "created_at",
             "updated_at",
         )
@@ -140,12 +149,16 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
 
 
 class WarbandCreateSerializer(serializers.ModelSerializer):
+    """Raising a warband: its name and type (one the campaign may pick, services/types.py), and what it counts as and
+    its link (the picker fills it from the type) if sent."""
+
     campaign_id = serializers.IntegerField(write_only=True)
-    restriction_ids = serializers.ListField(child=serializers.IntegerField(), required=False, default=list)
+    warband_type_id = serializers.IntegerField(min_value=1)
+    counts_as_ids = serializers.ListField(child=serializers.IntegerField(min_value=1), required=False)
 
     class Meta:
         model = Warband
-        fields = ("name", "faction", "campaign_id", "max_units", "restriction_ids")
+        fields = ("name", "warband_type_id", "counts_as_ids", "campaign_id", "max_units", "warband_link")
 
     def validate_name(self, value):
         cleaned = str(value).strip()
@@ -153,29 +166,24 @@ class WarbandCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Name is required")
         return cleaned
 
-    def validate_faction(self, value):
-        cleaned = str(value).strip()
-        if not cleaned:
-            raise serializers.ValidationError("Faction is required")
-        return cleaned
-
 
 class WarbandUpdateSerializer(serializers.ModelSerializer):
     dice_color = serializers.RegexField(regex=HEX_COLOR_REGEX, required=False)
-    restriction_ids = serializers.ListField(child=serializers.IntegerField(), required=False)
+    warband_type_id = serializers.IntegerField(min_value=1, required=False)  # never cleared: a warband has a type
+    counts_as_ids = serializers.ListField(child=serializers.IntegerField(min_value=1), required=False)  # replaces
 
     class Meta:
         model = Warband
         fields = (
             "name",
-            "faction",
+            "warband_type_id",
+            "counts_as_ids",
             "wins",
             "losses",
             "backstory",
             "max_units",
             "dice_color",
             "show_loadout_on_mobile",
-            "restriction_ids",
             "warband_link",
         )
 
@@ -183,12 +191,6 @@ class WarbandUpdateSerializer(serializers.ModelSerializer):
         cleaned = str(value).strip()
         if not cleaned:
             raise serializers.ValidationError("Name is required")
-        return cleaned
-
-    def validate_faction(self, value):
-        cleaned = str(value).strip()
-        if not cleaned:
-            raise serializers.ValidationError("Faction is required")
         return cleaned
 
 
@@ -214,10 +216,11 @@ class WarbandResourceCreateSerializer(serializers.ModelSerializer):
 
 class WarbandResourceUpdateSerializer(serializers.Serializer):
     """PATCH resources/<id>/: `delta` adds to the stored amount (stopping at 0); `amount` sets it (0 or more, for
-    clients from before pass 2). Other keys, the name included, are ignored (BUG-68)."""
+    clients from before pass 2); `name` renames it (next step 2). Other keys are ignored (BUG-68)."""
 
     amount = serializers.IntegerField(min_value=0, max_value=MAX_AMOUNT, required=False)
     delta = serializers.IntegerField(min_value=-MAX_AMOUNT, max_value=MAX_AMOUNT, required=False)
+    name = serializers.CharField(max_length=120, required=False, trim_whitespace=True)
 
     def validate(self, attrs):
         if "amount" in attrs and "delta" in attrs:

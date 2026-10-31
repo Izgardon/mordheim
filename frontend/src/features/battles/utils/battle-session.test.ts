@@ -2,11 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { BattleState } from "@/features/battles/types/battle-types";
 
-import {
-  getBattleRouteForStatus,
-  getResumableBattleForUser,
-  toCurrentBattleSession,
-} from "./battle-session";
+import { getResumableBattleForUser, toCurrentBattleSession } from "./battle-session";
 
 function createBattleState({
   battleId,
@@ -74,13 +70,6 @@ function createBattleState({
 }
 
 describe("battle-session", () => {
-  it("maps battle statuses to the correct route segment", () => {
-    expect(getBattleRouteForStatus("inviting")).toBe("prebattle");
-    expect(getBattleRouteForStatus("prebattle")).toBe("prebattle");
-    expect(getBattleRouteForStatus("active")).toBe("active");
-    expect(getBattleRouteForStatus("postbattle")).toBe("postbattle");
-  });
-
   it("returns the first resumable battle for the current user", () => {
     const battle = getResumableBattleForUser(
       [

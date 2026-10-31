@@ -1,8 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
 
 // components
-import { Button } from "@components/button";
+import SitePage from "@/layouts/shell/SitePage";
 import CampaignListSection from "../components/campaigns/CampaignListSection";
 import CampaignsHeader from "../components/campaigns/CampaignsHeader";
 import FeedbackReportCard from "../components/settings/FeedbackReportCard";
@@ -20,14 +19,13 @@ import type {
   CampaignJoinPayload,
   CampaignSummary,
 } from "../types/campaign-types";
-import siteBackground from "@/assets/background/campaign_background.webp";
-import "../styles/campaigns.css";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 const NO_CAMPAIGNS: CampaignSummary[] = [];
 
+/** Your campaigns (design E): join or create one, open one, and send feedback. */
 export default function Campaigns() {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const list = useCampaignList();
   const campaigns = list.data ?? NO_CAMPAIGNS;
@@ -42,36 +40,15 @@ export default function Campaigns() {
   };
 
   return (
-    <main
-      className="campaigns h-screen overflow-x-hidden overflow-y-auto px-4 py-8 sm:px-6 sm:py-12"
-      style={{
-        backgroundImage: `linear-gradient(rgba(6, 5, 4, 0.25), rgba(6, 5, 4, 0.25)), url(${siteBackground})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 sm:gap-10">
-        <div className="flex justify-end gap-2">
-          {/* The account page: display name, password, sessions and deletion (AUTH-NEW-01). */}
-          <Button asChild variant="ghost">
-            <Link to="/account">Account</Link>
-          </Button>
-          <Button
-            variant="ghost"
-            className="text-destructive hover:text-destructive"
-            onClick={signOut}
-          >
-            Log out
-          </Button>
+    <SitePage>
+      <CampaignsHeader user={user} onCreate={handleCreate} onJoin={handleJoin} />
+      <CampaignListSection campaigns={campaigns} isLoading={list.isPending} error={error} />
+      {/* The same card as Settings, without a campaign's fields (CAMP-NEW-08). */}
+      <div className="border-t border-line pt-8">
+        <div className="max-w-[560px]">
+          <FeedbackReportCard />
         </div>
-        <div className="campaign-list-shell campaign-list-shell--flat p-4 sm:p-6">
-          <CampaignsHeader user={user} onCreate={handleCreate} onJoin={handleJoin} />
-        </div>
-        <CampaignListSection campaigns={campaigns} isLoading={list.isPending} error={error} />
-        {/* The same card as Settings, without a campaign's fields (CAMP-NEW-08). */}
-        <FeedbackReportCard />
       </div>
-    </main>
+    </SitePage>
   );
 }

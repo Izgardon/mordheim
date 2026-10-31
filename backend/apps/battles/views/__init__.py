@@ -2,6 +2,10 @@ from .battles import CampaignBattleListCreateView, CampaignBattleRosterView, Cam
 from .closing import CampaignBattleClosePostbattleView
 from .combat import (
     CampaignBattleEventCreateView,
+    CampaignBattleNeutralCreatureView,
+    CampaignBattleNeutralGroupsView,
+    CampaignBattleNeutralGroupView,
+    CampaignBattleRoundView,
     CampaignBattleUnitDismountView,
     CampaignBattleUnitKillView,
     CampaignBattleUnitOoaView,
@@ -54,6 +58,10 @@ __all__ = [
     "CampaignBattleUnitOoaView",
     "CampaignBattleUnitKillView",
     "CampaignBattleUnitDismountView",
+    "CampaignBattleRoundView",
+    "CampaignBattleNeutralGroupsView",
+    "CampaignBattleNeutralGroupView",
+    "CampaignBattleNeutralCreatureView",
     "CampaignBattleFinishView",
     "CampaignBattleFinishMineView",
     "CampaignBattleResultsView",

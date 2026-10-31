@@ -4,8 +4,8 @@ Postbattle suggests a D6 for each selected rider who went out of action on his m
 a 1 or 2, or only on a 1 when the rider carries Barding or, for a horse-type mount, a Farrier is on the warband's battle
 roster (`suggested_postbattle.mount_survival`, left out when nobody rides at risk). Like an injury, the roll and its result are
 the player's (`postbattle_json.mount_survival`: `{unit key: {roll, dead}}`), never automatic. At finalise a dead
-mount's copy leaves the rider (his ridden copy first; a henchman who died already took his), with a log row; one that
-survives stays. Finalise stays constant in units.
+mount's copy leaves the rider (his ridden copy first), or a henchman gets a gap on his group's mount row (one who died
+takes nothing: henchmen loadouts), with a log row; one that survives stays. Finalise stays constant in units.
 """
 
 from typing import Any
@@ -15,7 +15,7 @@ from django.test.utils import CaptureQueriesContext
 
 from apps.bestiary.models import MOUNT
 from apps.special.models import Special
-from apps.warbands.models import HenchmenGroupItem, Hero, HeroItem, HirelingSpecial, WarbandLog
+from apps.warbands.models import HenchmanItemGap, HenchmenGroupItem, Hero, HeroItem, HirelingSpecial, WarbandLog
 from apps.warbands.tests.beast_support import make_animal, warhorse
 from apps.warbands.tests.roster_support import HENCHMEN, make_unit
 
@@ -29,9 +29,9 @@ class MountSurvivalTests(BattleTestCase):
         self.horse = warhorse()
         self.aldric = self.rider("Aldric")
         self.outriders = make_unit(HENCHMEN, self.warband, name="Outriders", members=("A", "B"))
-        for _ in range(2):
-            HenchmenGroupItem.objects.create(henchmen_group=self.outriders, item=self.horse, companion=True)
-        HenchmenGroupItem.objects.create(henchmen_group=self.outriders, item=self.horse)  # a spare
+        self.horse_row = HenchmenGroupItem.objects.create(
+            henchmen_group=self.outriders, item=self.horse, companion=True
+        )
         self.rat = Hero.objects.create(warband=self.rival, name="Rat", unit_type="Assassin")
         self.a, self.r = f"hero:{self.aldric.id}", f"hero:{self.rat.id}"
         self.m1, self.m2 = (f"henchman:{member.id}" for member in self.outriders.henchmen.order_by("id"))
@@ -113,7 +113,9 @@ class MountSurvivalTests(BattleTestCase):
         self.assertEqual(list(HeroItem.objects.filter(hero=self.aldric).values_list("id", "companion")), [(spare.id, False)])  # fmt: skip
         self.assertTrue(HeroItem.objects.filter(hero=other, companion=True).exists())
         group_rows = HenchmenGroupItem.objects.filter(henchmen_group=self.outriders)
-        self.assertEqual(sorted(group_rows.values_list("companion", flat=True)), [False, True])  # one ridden copy gone
+        self.assertEqual(list(group_rows.values_list("companion", flat=True)), [True])  # the group keeps its row
+        gaps = HenchmanItemGap.objects.values_list("henchman__name", "group_item_id", "reason")
+        self.assertEqual(list(gaps), [("A", self.horse_row.id, "lost")])  # and A has no Warhorse
         log = WarbandLog.objects.get(warband=self.warband, entry_type="mounts_lost")
         lost = [(entry["unit_name"], entry["mount"], entry["roll"]) for entry in log.payload["mounts"]]
         self.assertEqual(lost, [("Aldric", "Warhorse", 2), ("A", "Warhorse", 1)])  # as the battle named them
@@ -125,10 +127,12 @@ class MountSurvivalTests(BattleTestCase):
         self.ok(self.finalize(self.player, battle_id, draft(self.results(self.m1, self.m2, dead=(self.m1,)), mount_survival=mounts)))  # fmt: skip
 
         group_rows = HenchmenGroupItem.objects.filter(henchmen_group=self.outriders)
-        self.assertEqual(sorted(group_rows.values_list("companion", flat=True)), [False, True])  # his share only
+        self.assertEqual(list(group_rows.values_list("companion", flat=True)), [True])  # nothing deleted
+        self.assertFalse(HenchmanItemGap.objects.exists())  # a dead rider gets no gap
 
-    def test_a_groups_barding_saves_as_many_riders_as_it_has_copies(self):
-        HenchmenGroupItem.objects.create(henchmen_group=self.outriders, item=catalogue_item("Barding", 30))
+    def test_a_groups_barding_saves_each_rider_who_carries_it(self):
+        barding = HenchmenGroupItem.objects.create(henchmen_group=self.outriders, item=catalogue_item("Barding", 30))
+        HenchmanItemGap.objects.create(henchman=self.outriders.henchmen.order_by("id").last(), group_item=barding)
         battle_id = self.fought(self.m1, self.m2, out=(self.m1, self.m2))
 
         entries = self.suggested(battle_id)["mount_survival"]["entries"]

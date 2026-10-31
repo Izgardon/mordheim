@@ -9,6 +9,7 @@ group's `max_size` only warn: the summary reports what the client needs to say s
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
+from apps.core.testing import book_warband_type
 from apps.warbands.models import Henchman
 
 from .roster_support import (
@@ -130,7 +131,7 @@ class WarbandSizeTests(RosterTestCase):
         self.client.force_authenticate(user=self.admin)
         response = self.client.post(
             "/api/warbands/",
-            {"name": "New", "faction": "Witch Hunters", "campaign_id": self.campaign.id},
+            {"name": "New", "warband_type_id": book_warband_type().id, "campaign_id": self.campaign.id},
             format="json",
         )
         self.assertEqual((response.status_code, response.json()["max_units"]), (201, 15))

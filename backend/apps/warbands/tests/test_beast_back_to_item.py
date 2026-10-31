@@ -59,7 +59,7 @@ class BackToItemTests(RosterTestCase):
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(response.data["group"], None)
         self.assertIsNotNone(HenchmenGroup.objects.get(pk=self.group.pk).dismissed_at)
-        self.assertEqual(self.stash(), [("Sword", 10, 1), ("Wardogs", 30, 3)])
+        self.assertEqual(self.stash(), [("Sword", 10, 3), ("Wardogs", 30, 3)])  # a sword each: their shares
         self.assertEqual([entry["name"] for entry in response.data["stash_items"]], ["Wardogs", "Sword"])
         self.assertIn(("personnel", "remove_henchmen_group"), [(row[0], row[1]) for row in log_rows(self.warband)])
 

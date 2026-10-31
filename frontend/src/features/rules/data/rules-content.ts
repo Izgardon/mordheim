@@ -842,5 +842,3 @@ hit him as normal).</p><p>If a model who fails a Stupidity test is not in hand-t
     `,
   },
 ] as const;
-
-export type RulesTab = (typeof rulesTabs)[number];

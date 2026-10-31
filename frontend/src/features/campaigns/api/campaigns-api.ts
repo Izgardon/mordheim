@@ -5,7 +5,8 @@ import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 // types
 import type {
   CampaignBattleHistoryEntry,
-  CampaignBulletinEntry,
+  CampaignChronicleEntry,
+  CampaignChronicleKind,
   CampaignCreatePayload,
   CampaignEncampment,
   CampaignEncampmentPayload,
@@ -19,9 +20,7 @@ import type {
   MemberRemovalPreview,
   CampaignPlayer,
   CampaignPlayerName,
-  CampaignPivotalMoment,
   CampaignSummary,
-  CampaignTopKiller,
   CampaignUpdatePayload,
 } from "../types/campaign-types";
 import type { TradeRequest } from "@/features/warbands/types/trade-request-types";
@@ -77,6 +76,12 @@ export function listCampaignBattleHistory(campaignId: number) {
   return apiRequest<CampaignBattleHistoryEntry[]>(`/campaigns/${campaignId}/battle-history/`, {});
 }
 
+/** The chronicle: the newest entries of one kind, or of every kind ("all"). */
+export function listCampaignChronicle(campaignId: number, kind: CampaignChronicleKind | "all") {
+  const query = kind === "all" ? "" : `?kind=${kind}`;
+  return apiRequest<CampaignChronicleEntry[]>(`/campaigns/${campaignId}/chronicle/${query}`, {});
+}
+
 export function listCampaignActiveBattles(campaignId: number) {
   return apiRequest<CampaignActiveBattle[]>(`/campaigns/${campaignId}/active-battles/`, {
     method: "GET",
@@ -90,36 +95,6 @@ export function cancelCampaignActiveBattle(campaignId: number, battleId: number)
       method: "POST",
     }
   );
-}
-
-export function listCampaignPivotalMoments(campaignId: number) {
-  return apiRequest<CampaignPivotalMoment[]>(`/campaigns/${campaignId}/pivotal-moments/`, {});
-}
-
-export function listCampaignTopKillers(campaignId: number) {
-  return apiRequest<{ top_killers: CampaignTopKiller[] }>(
-    `/campaigns/${campaignId}/top-killers/`,
-    {}
-  );
-}
-
-export function listCampaignBulletinEntries(campaignId: number) {
-  return apiRequest<CampaignBulletinEntry[]>(`/campaigns/${campaignId}/bulletin/`, {
-    method: "GET",
-  });
-}
-
-export function createCampaignBulletinEntry(campaignId: number, body: string) {
-  return apiRequest<CampaignBulletinEntry>(`/campaigns/${campaignId}/bulletin/`, {
-    method: "POST",
-    body: { body },
-  });
-}
-
-export function deleteCampaignBulletinEntry(campaignId: number, entryId: number) {
-  return apiRequest<void>(`/campaigns/${campaignId}/bulletin/${entryId}/`, {
-    method: "DELETE",
-  });
 }
 
 /** Soft-deletes an encampment (its owner, or manage_encampments); it leaves the list. */
@@ -174,6 +149,13 @@ export function updateCampaignLocation(
   return apiRequest<CampaignLocation>(`/campaigns/${campaignId}/locations/${locationId}/`, {
     method: "PATCH",
     body: payload,
+  });
+}
+
+/** Soft-deletes a location (manage_locations); it leaves the list for everyone. */
+export function deleteCampaignLocation(campaignId: number, locationId: number) {
+  return apiRequest<void>(`/campaigns/${campaignId}/locations/${locationId}/`, {
+    method: "DELETE",
   });
 }
 

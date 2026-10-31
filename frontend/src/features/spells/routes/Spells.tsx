@@ -1,191 +1,216 @@
 import { useMemo } from "react";
+import { useOutletContext, useParams } from "react-router-dom";
 
-// routing
-import { useOutletContext, useParams, useNavigate } from "react-router-dom";
-
-// data
-import { ALL_TYPES, useCatalogueFilters } from "@/features/catalogue/hooks/useCatalogueFilters";
-import { archivedOnly, useArchivedView } from "@/features/catalogue/hooks/useArchivedView";
-import { useCatalogueEditor } from "@/features/catalogue/hooks/useCatalogueEditor";
+import { Button } from "@/components/ui/button";
+import { campaignCapabilities } from "@/features/campaigns/capabilities";
+import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
+import ReferencePage from "@/features/reference/ReferencePage";
+import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
+import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
+import {
+  ReferenceList,
+  ReferenceRow,
+  ShowMore,
+  useShownRows,
+} from "@/features/reference/ReferenceList";
+import { useReferenceParams } from "@/features/reference/useReferenceParams";
+import RulesPanel from "@/features/warbands/components/roster/RulesPanel";
 import { useCatalogue } from "@/lib/catalogue-queries";
+import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { useMediaQuery } from "@/lib/use-media-query";
 
-// components
-import { Button } from "@components/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
-import { TableSkeleton } from "@components/table-skeleton";
-import { PageHeader } from "@components/page-header";
-import MobileTabs from "@components/mobile-tabs";
-import { ArchivedToggle, RestoreButton } from "@/features/catalogue/components/ArchivedView";
-import { EditRowButton } from "@/features/catalogue/components/EditRowButton";
-import AddSpellForm from "../components/AddSpellForm";
-import AttuneSpellDialog from "../components/AttuneSpellDialog";
-import SpellsTable from "../components/SpellsTable";
-import { Input } from "@components/input";
-
-// api
-import { campaignCapabilities } from "@/features/campaigns/capabilities";
-
-// types
+import SpellFormDialog from "../components/SpellFormDialog";
 import type { Spell } from "../types/spell-types";
-import type { CampaignLayoutContext } from "../../campaigns/routes/CampaignLayout";
 
-import { LOADOUT_TABS } from "@/lib/loadout-tabs";
-import type { LoadoutTabId } from "@/lib/loadout-tabs";
+const loreOf = (spell: Spell) => (spell.type ?? "").replace(/_/g, " ") || "No lore";
 
-const formatType = (value: string) => value.replace(/_/g, " ");
+/** "Difficulty 7", or "Auto" for a spell that needs no roll. */
+export function difficultyLabel(spell: Spell) {
+  const dc = spell.dc === null || spell.dc === undefined ? "" : String(spell.dc).trim();
+  if (!dc) return "";
+  return /^\d+$/.test(dc) ? `Difficulty ${dc}` : dc;
+}
 
-const spellHaystack = (spell: Spell) => [spell.name, spell.type, spell.description];
+const compareSpells = (a: Spell, b: Spell) =>
+  loreOf(a).localeCompare(loreOf(b)) ||
+  (a.roll ?? 99) - (b.roll ?? 99) ||
+  a.name.localeCompare(b.name);
 
-/** By class, then by roll (spells with none last), then by name. */
-const compareSpells = (a: Spell, b: Spell) => {
-  const typeCompare = (a.type || "").localeCompare(b.type || "");
-  if (typeCompare !== 0) {
-    return typeCompare;
-  }
-  const rollA = a.roll ?? Number.POSITIVE_INFINITY;
-  const rollB = b.roll ?? Number.POSITIVE_INFINITY;
-  if (rollA !== rollB) {
-    return rollA - rollB;
-  }
-  return a.name.localeCompare(b.name);
-};
-
+/**
+ * Spells (design E's reference layout): every spell by lore, searched by name or rules text, a
+ * chip per lore, rows with the lore, the D6 result and the difficulty; a row opens to its rules in
+ * the warband page's rules panel. Custom spells are added and edited as today.
+ */
 export default function Spells() {
   const { id } = useParams();
-  const { campaign } = useOutletContext<CampaignLayoutContext>();
-  const navigate = useNavigate();
-  const isMobile = useMediaQuery("(max-width: 960px)");
   const campaignId = Number(id);
-  // The Archived view reads its own list and shows only what is archived (CAT-TWEAK-04).
-  const archive = useArchivedView();
-  const {
-    data: allSpells,
-    isLoading,
-    error,
-  } = useCatalogue("spells", campaignId, archive.listOptions);
-  const spells = useMemo(
-    () => archivedOnly(archive.archived, allSpells),
-    [archive.archived, allSpells]
-  );
-  const filters = useCatalogueFilters(spells, { haystack: spellHaystack, compare: compareSpells });
-  // AddSpellForm writes created, edited and deleted spells to the shared cache itself.
-  const editor = useCatalogueEditor<Spell>();
-
+  const { campaign } = useOutletContext<CampaignLayoutContext>();
+  const isMobile = useMediaQuery("(max-width: 960px)");
+  const spells = useCatalogue("spells", campaignId);
+  const params = useReferenceParams(!spells.isLoading);
   const capabilities = campaignCapabilities(campaign);
-  const canEdit = capabilities.edit_catalogue;
+  const lore = params.get("lore", "all");
 
-  const handleLoadoutTabChange = (tabId: LoadoutTabId) => {
-    if (!id) {
-      return;
-    }
-    navigate(`/campaigns/${id}/${tabId}`);
-  };
+  const sorted = useMemo(() => [...spells.data].sort(compareSpells), [spells.data]);
+  const lores = useMemo(() => [...new Set(sorted.map(loreOf))], [sorted]);
+  const types = useMemo(
+    () => [...new Set(sorted.map((spell) => spell.type ?? "").filter(Boolean))],
+    [sorted]
+  );
+  const searched = sorted.filter((spell) =>
+    matchesSearchQuery(params.query, spell.name, spell.type, spell.description)
+  );
+  const rows = sorted.filter(
+    (spell) =>
+      String(spell.id) === params.openId ||
+      (searched.includes(spell) && (lore === "all" || loreOf(spell) === lore))
+  );
+  const shown = useShownRows(
+    rows,
+    rows.findIndex((spell) => String(spell.id) === params.openId)
+  );
+  const chips = [
+    { id: "all", label: lores.length > 8 ? "All lores" : "All", count: searched.length },
+    ...lores.map((name) => ({
+      id: name,
+      label: name,
+      count: searched.filter((spell) => loreOf(spell) === name).length,
+    })),
+  ];
+
+  const addButton = capabilities.edit_catalogue ? (
+    <SpellFormDialog
+      campaignId={campaignId}
+      typeOptions={types}
+      onSaved={(spell) => params.set({ open: String(spell.id), q: null })}
+      trigger={
+        <Button variant="secondary" className={isMobile ? "min-h-10" : undefined}>
+          Add spell
+        </Button>
+      }
+    />
+  ) : null;
 
   return (
-    <div className="min-h-0 flex h-full flex-col gap-4 sm:gap-6">
-      <PageHeader title="Spells" subtitle="Arcane powers and incantations" />
-
-      {isMobile ? (
-        <MobileTabs
-          tabs={LOADOUT_TABS}
-          activeTab="spells"
-          onTabChange={handleLoadoutTabChange}
-          className="mt-2"
-          showDivider
-        />
-      ) : null}
-
-      <div className="flex min-h-0 flex-1 flex-col gap-3 px-2 sm:gap-4 sm:px-0">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
-          <div className="flex flex-col gap-3 sm:flex-row md:min-w-0 md:flex-1 md:flex-nowrap md:items-center">
-            <Input
-              type="search"
-              value={filters.searchQuery}
-              onChange={(event) => filters.setSearchQuery(event.target.value)}
-              placeholder="Search spells..."
-              aria-label="Search spells"
-              className="w-full sm:max-w-sm md:w-full md:max-w-sm md:flex-none"
-            />
-            <Select value={filters.selectedType} onValueChange={filters.setSelectedType}>
-              <SelectTrigger className="w-full sm:w-56 md:shrink-0">
-                <SelectValue placeholder="Filter by type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={ALL_TYPES}>All types</SelectItem>
-                {filters.typeOptions.map((typeOption) => (
-                  <SelectItem key={typeOption} value={typeOption}>
-                    {formatType(typeOption)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <ArchivedToggle
-              checked={archive.archived}
-              onChange={(on) => {
-                editor.close();
-                archive.setArchived(on);
-              }}
-            />
-          </div>
-          <div className="flex items-center justify-end md:shrink-0">
-            {canEdit && !editor.isOpen && !archive.archived ? (
-              <Button size="sm" className="md:h-11" onClick={editor.openNew}>
-                Add spell
-              </Button>
-            ) : null}
-          </div>
-        </div>
-        {editor.isOpen && (
-          <div ref={editor.formRef}>
-            <AddSpellForm
-              campaignId={campaignId}
-              onCreated={editor.close}
-              onUpdated={editor.close}
-              onDeleted={editor.close}
-              onCancel={editor.close}
-              typeOptions={filters.typeOptions}
-              editingSpell={editor.editing}
-              canDelete={capabilities.delete_catalogue}
-              onEditMatch={(match) => {
-                const entry = spells.find((listed) => listed.id === match.id);
-                if (entry) editor.edit(entry);
-              }}
-            />
-          </div>
-        )}
-        <div className="flex flex-1 min-h-0 flex-col">
-          {isLoading ? (
-            <TableSkeleton columns={6} rows={12} />
-          ) : error ? (
-            <p className="text-sm text-red-600">{error}</p>
-          ) : filters.filtered.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              {archive.archived ? "Nothing archived." : "No spells recorded yet."}
-            </p>
-          ) : (
-            <SpellsTable
-              spells={filters.filtered}
+    <ReferencePage
+      title="Spells"
+      section="spells"
+      archived={{
+        kind: "spells",
+        campaignId,
+        canRestore: capabilities.edit_catalogue,
+        noun: "spells",
+      }}
+      actions={addButton}
+      filters={
+        <>
+          <FilterRow isMobile={isMobile}>
+            <ReferenceSearch
+              value={params.query}
+              onChange={params.setQuery}
+              placeholder="Name or rules text"
+              label="Search spells"
               isMobile={isMobile}
-              renderActions={(spell) => (
-                <div className="flex items-center justify-end gap-2">
-                  {archive.archived ? (
-                    canEdit ? (
-                      <RestoreButton kind="spells" campaignId={campaignId} entry={spell} />
-                    ) : null
-                  ) : (
-                    <AttuneSpellDialog spell={spell} unitTypes={["heroes", "hirelings"]} />
-                  )}
-                  {/* A book spell's edit makes the campaign's version (CAT-TWEAK-01). */}
-                  {canEdit && !archive.archived ? (
-                    <EditRowButton label="Edit spell" onClick={() => editor.edit(spell)} />
-                  ) : null}
-                </div>
-              )}
             />
-          )}
-        </div>
-      </div>
-    </div>
+          </FilterRow>
+          <ReferenceChips
+            label="Lore"
+            options={chips}
+            value={lore}
+            onChange={(next) => params.set({ lore: next === "all" ? null : next })}
+            isMobile={isMobile}
+          />
+        </>
+      }
+      summary={
+        isMobile ? undefined : `${rows.length} ${rows.length === 1 ? "spell" : "spells"} shown`
+      }
+    >
+      {spells.error ? <p className="m-0 text-sm text-danger">{spells.error}</p> : null}
+      <ReferenceList
+        nameLabel="Spell"
+        columns={
+          isMobile
+            ? undefined
+            : [
+                { label: "Lore", className: "w-[220px] shrink-0" },
+                { label: "D6", className: "w-[48px] shrink-0" },
+                { label: "Difficulty", className: "w-[120px] shrink-0" },
+              ]
+        }
+        isEmpty={!spells.isLoading && rows.length === 0}
+        empty="No spells match. Try another word or lore."
+      >
+        {spells.isLoading ? <ReferenceRowBones /> : null}
+        {shown.rows.map((spell) => {
+          const key = String(spell.id);
+          const difficulty = difficultyLabel(spell);
+          return (
+            <ReferenceRow
+              key={key}
+              id={key}
+              open={params.isOpen(key)}
+              onToggle={() => params.toggle(key)}
+              name={spell.name}
+              sub={isMobile ? loreOf(spell) : undefined}
+              aside={
+                difficulty ? (
+                  <>
+                    <span className="font-mono text-[13px] font-bold text-ink">
+                      {difficulty.replace("Difficulty ", "")}
+                    </span>
+                    <span className="text-xs text-muted-foreground">difficulty</span>
+                  </>
+                ) : null
+              }
+              cells={
+                isMobile
+                  ? undefined
+                  : [
+                      loreOf(spell),
+                      <span key="roll" className="font-mono">
+                        {spell.roll ?? "–"}
+                      </span>,
+                      <span key="dc" className="font-mono font-bold text-ink">
+                        {difficulty.replace("Difficulty ", "") || "–"}
+                      </span>,
+                    ]
+              }
+            >
+              <div className={isMobile ? "flex flex-col gap-2" : "flex flex-col gap-2 px-4 pb-4"}>
+                <RulesPanel
+                  detail={{
+                    name: spell.name,
+                    kind: [loreOf(spell), spell.roll ? `D6 ${spell.roll}` : "", difficulty]
+                      .filter(Boolean)
+                      .join(" · "),
+                    text: spell.description,
+                  }}
+                  onClose={params.close}
+                />
+                {capabilities.edit_catalogue ? (
+                  <SpellFormDialog
+                    campaignId={campaignId}
+                    spell={spell}
+                    typeOptions={types}
+                    canDelete={capabilities.delete_catalogue}
+                    onSaved={(saved) => params.set({ open: String(saved.id) })}
+                    onDeleted={() => params.close()}
+                    trigger={
+                      <Button variant="secondary" className="min-h-10 self-start">
+                        Edit spell
+                      </Button>
+                    }
+                  />
+                ) : null}
+              </div>
+            </ReferenceRow>
+          );
+        })}
+      </ReferenceList>
+      {rows.length > 0 ? (
+        <ShowMore shown={shown.rows.length} total={rows.length} onMore={shown.showMore} />
+      ) : null}
+    </ReferencePage>
   );
 }

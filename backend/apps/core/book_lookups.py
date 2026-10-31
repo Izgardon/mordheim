@@ -49,7 +49,7 @@ EQUIPMENT_NAME_ALIASES = {
     "scimitar": "sword",
     "longbow": "long bow",
     "shortbow": "short bow",
-    "healing herbs": "healing herb",
+    "healing herb": "healing herbs",  # the catalogue import's name
     "gromril hammer": "gromril weapon",
     "hammer of sigmar": "sigmarite warhammer",
     "holy water": "blessed water",
@@ -114,13 +114,13 @@ class BookLookups:
 
     def __init__(self, own_type: str = "Hired Sword") -> None:
         self.own_type = own_type
-        book = {"campaign__isnull": True, "campaign_type__isnull": True}
+        book = {"campaign__isnull": True}  # the book: every setting's rows
         self.skills = {lookup_key(row.name): row for row in Skill.objects.filter(**book)}
         self.specials = {lookup_key(row.name): row for row in Special.objects.filter(**book)}
         self.spells = {lookup_key(row.name): row for row in Spell.objects.filter(**book)}
         self.items: dict[tuple[str, str], Item] = {}
         self.item_names: dict[str, Item] = {}
-        for item in Item.objects.filter(**book):
+        for item in Item.objects.filter(**book, archived_at__isnull=True):  # not the items the import dropped
             self.remember_item(item)
         self.warnings: list[str] = []
 

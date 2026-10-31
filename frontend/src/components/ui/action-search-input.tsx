@@ -1,14 +1,8 @@
 import * as React from "react";
-
-// components
-import { Button } from "@components/button";
-import { Input } from "@components/input";
-
-// utils
-import { cn } from "@/lib/utils";
-
-// icons
 import { Plus } from "lucide-react";
+
+import { Input } from "@components/input";
+import { cn } from "@/lib/utils";
 
 type ActionSearchInputProps = Omit<React.ComponentPropsWithoutRef<"input">, "type"> & {
   onAction?: () => void;
@@ -28,6 +22,7 @@ type ActionSearchDropdownProps = {
   children: React.ReactNode;
 };
 
+/** The suggestions under an ActionSearchInput; a click outside both closes it. */
 export function ActionSearchDropdown({
   open,
   onClose,
@@ -40,10 +35,8 @@ export function ActionSearchDropdown({
     if (!open || !onClose) {
       return;
     }
-
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        // Check if click is inside the parent container (ActionSearchInput)
         const parent = dropdownRef.current.parentElement;
         if (parent && parent.contains(event.target as Node)) {
           return;
@@ -51,11 +44,8 @@ export function ActionSearchDropdown({
         onClose();
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open, onClose]);
 
   if (!open) {
@@ -65,9 +55,8 @@ export function ActionSearchDropdown({
   return (
     <div
       ref={dropdownRef}
-      data-state="open"
       className={cn(
-        "absolute left-0 right-0 top-full z-20 mt-2 origin-top overflow-hidden rounded-xl border border-[#4a3829]/55 bg-[#120e0a] shadow-[0_18px_32px_rgba(6,4,2,0.32)] data-[state=open]:animate-[select-waterfall-in_360ms_cubic-bezier(0.16,1,0.3,1)]",
+        "absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden border border-strong bg-surface",
         className
       )}
     >
@@ -76,6 +65,7 @@ export function ActionSearchDropdown({
   );
 }
 
+/** A search box with an optional + button beside it (create what was typed). */
 export function ActionSearchInput({
   onAction,
   actionLabel,
@@ -89,34 +79,28 @@ export function ActionSearchInput({
   ...props
 }: ActionSearchInputProps) {
   const hasAction = Boolean(onAction);
-  const paddingClass = hasAction ? "pr-14" : undefined;
 
   return (
     <div className={cn("relative", containerClassName)}>
       <Input
         type="search"
-        className={cn(
-          paddingClass,
-          inputClassName,
-          "!border-border/60 !bg-background/70 text-foreground placeholder:text-muted-foreground focus-visible:!ring-[#9a7a45] min-[960px]:!border-[#4a3829] min-[960px]:!bg-black",
-          className
-        )}
+        className={cn(hasAction ? "pr-14" : undefined, inputClassName, className)}
         {...props}
       />
       {hasAction ? (
-        <Button
+        <button
           type="button"
           onClick={onAction}
           disabled={actionDisabled}
           aria-label={actionAriaLabel ?? actionLabel ?? "Create"}
           className={cn(
-            "absolute right-0 top-0 flex h-full min-w-0 aspect-square items-center justify-center rounded-sm border border-border/60 bg-background/70 p-0 text-[color:var(--color-icon-soft)] shadow-none hover:bg-background/80 hover:translate-y-0 active:translate-y-0 min-[960px]:border-[#4a3829] min-[960px]:bg-black min-[960px]:hover:bg-[#120e0a] [&_svg]:h-4 [&_svg]:w-4",
+            "absolute right-0 top-0 flex aspect-square h-full items-center justify-center border border-strong bg-raised text-text2 hover:text-head disabled:opacity-50 [&_svg]:h-4 [&_svg]:w-4",
             actionClassName
           )}
         >
           <Plus aria-hidden="true" />
           {actionLabel ? <span className="sr-only">{actionLabel}</span> : null}
-        </Button>
+        </button>
       ) : null}
       {children}
     </div>

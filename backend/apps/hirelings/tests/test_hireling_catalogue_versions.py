@@ -26,7 +26,7 @@ class HirelingVersionTests(CatalogueTestCase):
         HiredSword.objects.filter(id=self.ogre.id).update(
             grade="1a", race=self.human, race_label="Ogre", upkeep_cost=15, hire_cost_expression="80+D6"
         )
-        self.ogre.restriction_links.create(restriction=self.mercenaries, additional_note="only")
+        self.ogre.warband_links.create(warband_type=self.mercenaries, excluded=True)
         self.ogre.skill_links.create(skill=self.infiltration[0])
         self.ogre.skill_links.create(skill=self.infiltration[1])
         self.ogre.item_links.create(item=self.book_sword, quantity=2)
@@ -40,14 +40,14 @@ class HirelingVersionTests(CatalogueTestCase):
     def ids(self, kind: CatalogueKind) -> list[int]:
         return [row["id"] for row in self.get_as(self.player, kind.list_url(self.campaign)).json()]
 
-    def test_a_hired_swords_version_keeps_its_profile_kit_and_restrictions(self):
+    def test_a_hired_swords_version_keeps_its_profile_kit_and_who_may_hire(self):
         body = self.edit(HIRED_SWORDS, self.ogre.id, {"hire_cost": 95})
 
         version = HiredSword.objects.get(id=body["id"])
         profile = (version.grade, version.race_id, version.race_label, version.hire_cost, version.upkeep_cost)
         self.assertEqual(profile, ("1a", self.human.id, "Ogre", 95, 15))
         self.assertEqual((version.replaces_id, version.hire_cost_expression), (self.ogre.id, "80+D6"))
-        self.assertEqual(list(version.restriction_links.values_list("restriction_id", "additional_note")), [(self.mercenaries.id, "only")])  # fmt: skip
+        self.assertEqual(list(version.warband_links.values_list("warband_type_id", "excluded")), [(self.mercenaries.id, True)])  # fmt: skip
         skills = set(version.skill_links.values_list("skill_id", flat=True))
         self.assertEqual(skills, {self.sneak.id, self.infiltration[1].id})  # the campaign's version of a linked skill
         self.assertEqual(list(version.item_links.values_list("item_id", "quantity")), [(self.book_sword.id, 2)])

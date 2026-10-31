@@ -14,7 +14,7 @@ type ConfirmDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   description: ReactNode;
-  /** Accessible name for screen readers; defaults to the confirm button's text. */
+  /** Shown as the dialog's title (design E); without one, the confirm button's text names it, unseen. */
   title?: string;
   confirmText?: string;
   cancelText?: string;
@@ -38,7 +38,7 @@ export function ConfirmDialog({
   title,
   confirmText = "Confirm",
   cancelText = "Cancel",
-  confirmVariant = "destructive",
+  confirmVariant = "danger",
   cancelVariant = "secondary",
   confirmDisabled = false,
   isConfirming = false,
@@ -56,13 +56,19 @@ export function ConfirmDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={cn("max-w-[520px]", className)}>
-        <DialogTitle className="sr-only">{title ?? confirmText}</DialogTitle>
-        <DialogDescription asChild className="block text-sm text-muted-foreground">
+        {/* Design E: a named confirm shows its name as the title; without one it is read only. */}
+        <DialogTitle className={title ? "text-[24px]" : "sr-only"}>
+          {title ?? confirmText}
+        </DialogTitle>
+        <DialogDescription asChild className="block text-[15px] leading-relaxed text-text2">
           <div>{description}</div>
         </DialogDescription>
         {children}
         {error ? (
-          <p role="alert" className="text-sm text-red-600">
+          <p
+            role="alert"
+            className="m-0 border border-danger-line bg-danger-bg px-3.5 py-3 text-sm text-danger"
+          >
             {error}
           </p>
         ) : null}

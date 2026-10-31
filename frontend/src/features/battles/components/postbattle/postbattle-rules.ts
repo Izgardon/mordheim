@@ -88,14 +88,6 @@ export function heroDeathRollFor(rules: Rules): CampaignHeroDeathRoll {
  */
 export type InjuryTable = "hero" | "henchman";
 
-/** The dice a serious-injury roll takes: 2D6 (D66) or D100 on the hero table, a D6 otherwise. */
-export function seriousInjuryNotation(table: InjuryTable | null, heroRoll: CampaignHeroDeathRoll) {
-  if (table === "hero") {
-    return heroRoll === "d100" ? "1d100" : "2d6";
-  }
-  return "1d6";
-}
-
 const clamp = (value: number, max: number) => Math.max(1, Math.min(max, Math.trunc(value || 1)));
 
 /** The serious-injury entry for the rolled dice, from the server's table the unit rolls on. */

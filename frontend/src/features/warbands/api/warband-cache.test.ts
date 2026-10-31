@@ -26,7 +26,7 @@ const capabilities = {
 
 const makeSheet = (): WarbandSheet =>
   ({
-    warband: { id: 9, name: "Wolves", faction: "Middenheim" },
+    warband: { id: 9, name: "Wolves", warband_type: null },
     summary: { gold: 100, rating: 90 },
     capabilities,
     heroes: [
@@ -96,10 +96,10 @@ describe("mergeById", () => {
 
 describe("splitWarbandPatch and mergeSheetWarband", () => {
   it("puts summary fields in the summary part and the rest in the warband part", () => {
-    const patch = { name: "Wolves", faction: "Middenheim", gold: 40, rating: 120, resources: [] };
+    const patch = { name: "Wolves", warband_type: null, gold: 40, rating: 120, resources: [] };
 
     expect(splitWarbandPatch(patch as Partial<Warband>)).toEqual({
-      warband: { name: "Wolves", faction: "Middenheim" },
+      warband: { name: "Wolves", warband_type: null },
       summary: { gold: 40, rating: 120, resources: [] },
     });
   });
