@@ -50,10 +50,6 @@ def log_move(
     write(warband, "items", "moved", payload | {"target_type": target[0], "target_name": target[1]})
 
 
-def log_discard(warband: Warband, item: str, quantity: int) -> None:
-    write(warband, "items", "discarded", {"item": item, "quantity": quantity})
-
-
 def _offered(offer: dict[str, Any]) -> dict[str, Any]:
     items = [{"item": entry.get("name"), "quantity": entry.get("quantity")} for entry in offer["items"]]
     return {"gold": offer["gold"], "items": items}

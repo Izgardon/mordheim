@@ -40,7 +40,6 @@ QUERY_BUDGETS: dict[str, tuple[str, int]] = {
     "top_killers": ("/api/campaigns/{campaign}/top-killers/", 2),
     "open_battles": ("/api/campaigns/{campaign}/battles/?open=1", 2),
     "battle_list": ("/api/campaigns/{campaign}/battles/", 3),
-    "permissions_me": ("/api/campaigns/{campaign}/permissions/me/", 1),
     "notifications": ("/api/notifications/", 1),
     # Warband sheet
     "warband_detail": ("/api/warbands/{warband}/", 4),  # + its type and counts-as with their groups (grading phase 1)

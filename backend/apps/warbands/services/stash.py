@@ -5,8 +5,7 @@ copies that cost 10 and 12 are two rows and nothing is re-priced. Copies are add
 `F("quantity") + n` UPDATE; a first insert that races another request's falls back to that increment. Copies
 are taken from the item's rows locked with `select_for_update`, the most recently started row first (or only
 the rows of one cost), by guarded UPDATEs or by deleting a row with its last copy, so two requests can't both
-take the last copy. Call `remove_from_stash` inside a transaction: the locks last until it commits. A discard
-(`discard_from_stash`) locks the same way, in its own transaction with its log entry (ECON-CQ-02).
+take the last copy. Call `remove_from_stash` inside a transaction: the locks last until it commits.
 
 Answers show one entry per item (`StashEntry`): the total, the cost of the copies that would leave first, and
 each cost's count.
@@ -21,7 +20,6 @@ from django.db.models import F, Q, QuerySet
 
 from apps.items.models import Item
 from apps.warbands.models import Warband, WarbandItem
-from apps.warbands.services import economy_log
 from apps.warbands.services.prices import annotated_current, house_rule_prices, own_price_of
 
 ANY_COST = object()  # remove_from_stash takes copies of every cost unless one is named
@@ -123,16 +121,6 @@ def remove_from_stash(
     return StashTake(item, taken, _entry(item, held_rows) if item else None)
 
 
-def discard_from_stash(warband: Warband, item_id: int, quantity: int) -> int:
-    """DELETE items/: take up to `quantity` copies out, newest row first, and log what went; how many copies were
-    discarded (0 when the stash has none)."""
-    with transaction.atomic():
-        take = remove_from_stash(warband.id, item_id, quantity, up_to=True)
-        if take.item is not None and take.costs:
-            economy_log.log_discard(warband, take.item.name, len(take.costs))
-    return len(take.costs)
-
-
 def stash_entry(warband_id: int, item: Item) -> StashEntry | None:
     """The item's stash entry as stored now, for an answer (None without copies)."""
     rows = list(_priced(WarbandItem.objects.filter(warband_id=warband_id, item_id=item.id)).order_by("-id"))
@@ -148,14 +136,3 @@ def stash_entries(warband: Warband) -> list[StashEntry]:
         grouped.setdefault(row.item_id, []).append(row)
     entries = (_entry(group[0].item, group) for group in grouped.values())
     return [entry for entry in entries if entry is not None]
-
-
-def stock_item(warband: Warband, item: Item, quantity: int, cost: int | None) -> StashEntry | None:
-    """POST items/: add copies to the stash; without a cost, an item with one availability costs that. Copies
-    already held keep their cost (BUG-117)."""
-    if cost is None:
-        availabilities = list(item.availabilities.all())
-        if len(availabilities) == 1:
-            cost = availabilities[0].cost
-    add_to_stash(warband.id, item.id, quantity, cost)
-    return stash_entry(warband.id, item)

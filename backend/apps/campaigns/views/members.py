@@ -31,13 +31,6 @@ class CampaignPermissionsView(CampaignScopedView):
         return Response(codes.describe())
 
 
-class CampaignMyPermissionsView(CampaignScopedView):
-    """GET: the codes the caller holds, in the catalogue's order (every code for owners and admins)."""
-
-    def get(self, request, campaign_id):
-        return Response(codes.describe(codes.in_catalogue_order(self.access.codes)))
-
-
 class CampaignMemberPermissionsView(CampaignScopedView):
     """PUT: a player's grants become exactly the codes sent (owners and admins; BUG-15: unknown codes refused)."""
 

@@ -15,7 +15,8 @@ import type {
  * Beasts in the warband (the bestiary rewrite, step 4): the switch that turns a mount or a pet in a
  * unit's items on for that unit, recruiting a creature's copies into henchmen, and members of a
  * creature group going back to the item. No gold moves: the beast was paid for as an item. Each
- * names this browser's socket, so the `warband.changed` it sends the other members skips it.
+ * names this browser's socket, so the `warband.changed` it sends the other members skips it (as every
+ * warband write does since After the passes).
  */
 
 /** The switch's answer: the unit's detail, the summary (rating changes) and its warnings. */

@@ -14,6 +14,7 @@ from .events import append_event
 from .invites import open_prebattle, settle_after_leaving
 from .lifecycle import everyone_accepted, everyone_ready
 from .locks import locked
+from .numbering import battle_number
 from .rosters import battle_rosters_payload
 
 
@@ -107,11 +108,13 @@ def start(battle: Battle, actor_user) -> list[dict]:
     if not everyone_ready(battle.id):
         raise Refused("All participants must be ready before starting")
     now = timezone.now()
+    participants = list(locked(BattleParticipant.objects.filter(battle_id=battle.id)))
+    warbands = [entry.warband_id for entry in participants if entry.status not in BattleParticipant.LEFT_STATUSES]
     battle.status = Battle.STATUS_ACTIVE
     battle.started_at = battle.started_at or now
-    battle.save(update_fields=["status", "started_at", "updated_at"])
+    battle.number = battle_number(warbands, battle_id=battle.id)  # for good now (services/numbering.py)
+    battle.save(update_fields=["status", "started_at", "number", "updated_at"])
     rosters = battle_rosters_payload(battle.id)  # live now; the battle keeps this snapshot (BUG-73)
-    participants = list(locked(BattleParticipant.objects.filter(battle_id=battle.id)))
     for entry in participants:
         if entry.status not in BattleParticipant.LEFT_STATUSES:  # a declined or cancelled row stays out
             entry.status = BattleParticipant.STATUS_IN_BATTLE

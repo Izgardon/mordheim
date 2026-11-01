@@ -69,8 +69,8 @@ def sign_out_others(user: Any) -> dict[str, str]:
 
 
 def rename(user: Any, name: str) -> None:
-    """Change the display name (AUTH-NEW-02, decision 2), and the name stored on the user's chat messages and bulletin
-    notes with it, in one transaction."""
+    """Change the display name (AUTH-NEW-02, decision 2), and the name stored on the user's chat messages with it, in
+    one transaction."""
     with transaction.atomic():
         user.first_name = name
         user.save(update_fields=["first_name"])

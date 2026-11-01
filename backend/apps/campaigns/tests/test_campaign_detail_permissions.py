@@ -41,8 +41,3 @@ class CampaignDetailPermissionsTests(APITestCase):
         )
 
         self.assertEqual(self.player_client.get(url).data["permissions"], ["delete_catalogue", "edit_catalogue"])
-
-    def test_matches_permissions_me(self):
-        detail = self.player_client.get(f"/api/campaigns/{self.campaign_id}/").data["permissions"]
-        mine = self.player_client.get(f"/api/campaigns/{self.campaign_id}/permissions/me/").data
-        self.assertEqual(detail, sorted(entry["code"] for entry in mine))

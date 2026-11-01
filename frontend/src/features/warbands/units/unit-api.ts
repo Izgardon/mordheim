@@ -1,4 +1,5 @@
 import { apiRequest } from "@/lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 
 import type { PurchaseLine, PurchaseWarning } from "@/features/items/api/purchase";
 import type { UnitKillHistory, WarbandUnitsSummary } from "../types/warband-types";
@@ -62,15 +63,24 @@ function createUnitApi<K extends UnitKindKey>(kind: K): UnitApi<K> {
     create: (warbandId, payload) =>
       apiRequest<Unit<K>>(base(warbandId), { method: "POST", body: payload }),
     update: (warbandId, unitId, payload) =>
-      apiRequest<Unit<K>>(one(warbandId, unitId), { method: "PATCH", body: payload }),
+      apiRequest<Unit<K>>(one(warbandId, unitId), {
+        method: "PATCH",
+        headers: socketIdHeaders(),
+        body: payload,
+      }),
     remove: (warbandId, unitId) => apiRequest<void>(one(warbandId, unitId), { method: "DELETE" }),
     levelUp: (warbandId, unitId, payload) =>
       apiRequest<Unit<K>>(`${one(warbandId, unitId)}level-up/`, {
         method: "POST",
+        headers: socketIdHeaders(),
         body: { payload },
       }),
     batch: (warbandId, body) =>
-      apiRequest<UnitBatchResult<K>>(`${base(warbandId)}batch/`, { method: "POST", body }),
+      apiRequest<UnitBatchResult<K>>(`${base(warbandId)}batch/`, {
+        method: "POST",
+        headers: socketIdHeaders(),
+        body,
+      }),
   };
 }
 

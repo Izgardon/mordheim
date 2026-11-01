@@ -22,7 +22,6 @@ from apps.campaigns.access import CAMPAIGN_RULES, CAPABILITIES, load_campaign_ac
 from apps.campaigns.constants import PERMISSION_CODES
 from apps.campaigns.models import (
     Campaign,
-    CampaignBulletinEntry,
     CampaignEncampment,
     CampaignHouseRule,
     CampaignLocation,
@@ -51,9 +50,6 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("GET", "top-killers/", None, OK_ALL),
     ("GET", "active-battles/", None, (403, 200, 200, 200)),
     ("POST", "active-battles/{battle}/cancel/", {}, (403, 200, 200, 200)),
-    ("GET", "bulletin/", None, OK_ALL),
-    ("POST", "bulletin/", {"body": "WTB a horse"}, (201, 201, 201, 201)),
-    ("DELETE", "bulletin/{note}/", None, (403, 403, 204, 204)),  # Rex's note: its author, owners and admins
     ("GET", "encampments/", None, OK_ALL),
     ("POST", "encampments/", {"name": "Camp"}, (201, 201, 201, 201)),  # any member (decision 9)
     ("PATCH", "encampments/{camp}/", {"name": "Camp 2"}, (403, 200, 200, 200)),  # nobody's: manage_encampments
@@ -73,7 +69,6 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("GET", "leave/", None, (200, 200, 200, 400)),  # the owner hands over first
     ("POST", "leave/", {}, (200, 200, 200, 400)),
     ("GET", "permissions/", None, OK_ALL),
-    ("GET", "permissions/me/", None, OK_ALL),
     ("GET", "rules/", None, OK_ALL),
     ("GET", "rules/common/", None, OK_ALL),
     ("POST", "rules/", {"title": "No running"}, (403, 201, 201, 201)),
@@ -132,7 +127,6 @@ class CampaignAccessFixture(CampaignTestCase):
         assert client.post("/api/campaigns/join/", {"join_code": campaign.join_code}, format="json").status_code == 201
         campaign.settings.enable_encampments = campaign.settings.enable_locations = True
         campaign.settings.save()
-        note = CampaignBulletinEntry.objects.create(campaign=campaign, user=cls.rival, username="Rex", body="Mine")
         battle = Battle.objects.create(
             campaign=campaign, created_by_user=cls.player, scenario="Ford", status=Battle.STATUS_INVITING
         )
@@ -142,7 +136,6 @@ class CampaignAccessFixture(CampaignTestCase):
             "admin": cls.admin.id,
             "rival_warband": cls.rival_warband.id,
             "battle": battle.id,
-            "note": note.id,
             "message": CampaignMessage.objects.create(campaign=campaign, user=cls.rival, username="Rex", body="Hi").id,
             "camp": CampaignEncampment.objects.create(campaign=campaign, name="Old Camp").id,
             "place": CampaignLocation.objects.create(campaign=campaign, name="Old Ruin").id,
@@ -196,9 +189,6 @@ class AccessMatrixTests(CampaignAccessFixture):
             for actor in MEMBERS:
                 with self.subTest(route=f"{method} {template}", actor=actor):
                     self.assertEqual(self.status_of(getattr(self, actor), method, template, body), 404)
-
-    def test_a_note_is_deleted_by_its_author(self):
-        self.assertEqual(self.status_of(self.rival, "DELETE", "bulletin/{note}/"), 204)
 
 
 class CapabilityTruthTests(CampaignAccessFixture):

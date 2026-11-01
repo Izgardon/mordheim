@@ -154,7 +154,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     add_notes(everything, overrides.get("item_notes", {}))
     same_names = assign_slugs(everything, overrides.get("whole_names", []))
     names_we_have = Catalogue([item["name"] for item in everything], [row["name"] for row in sources.our_skills])
-    sources.our_personae = build_personae(sources.personae, names_we_have)
+    sources.our_personae = build_personae(sources.personae, names_we_have, overrides.get("fees_in_rules", {}))
     _resolve_everything(sources, resolver)
     assignment_log = AssignmentLog()
     assignments = build_assignments(sources, assignment_log)

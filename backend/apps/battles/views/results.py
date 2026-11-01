@@ -13,6 +13,7 @@ from rest_framework.views import APIView
 
 from apps.campaigns.permissions import get_membership, get_writable_membership
 from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
+from apps.realtime.services import send_warband_changed, sender_socket_id
 from apps.users.names import display_name
 
 from ..models import Battle, BattleParticipant
@@ -67,7 +68,10 @@ class CampaignBattleReportedResultApproveView(BattleWriteView):
     )
 
     def act(self, scope: Scope):
-        approve(scope.battle, scope.player)
+        socket_id = sender_socket_id(scope.request)
+        for warband_id in approve(scope.battle, scope.player):
+            # its end changed each warband (results, missing games counted down): open pages of it follow
+            send_warband_changed(scope.battle.campaign_id, warband_id, socket_id)
         return Written([], changed=ALL, reason="reported_result_approved")
 
 

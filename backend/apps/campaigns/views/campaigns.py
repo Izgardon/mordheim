@@ -53,7 +53,7 @@ def detail_payload(view: CampaignScopedView, campaign_id: int) -> dict:
     """The campaign as its detail answers it to the caller, with his permissions, capabilities and unread chat."""
     campaign = campaign_detail_for_user(campaign_id, view.request.user)
     data = CampaignSerializer(campaign).data
-    # Pages read the caller's permissions from here instead of each fetching /permissions/me/, and gate their
+    # Pages read the caller's permissions from here (there is no separate read of them), and gate their
     # controls on the capabilities (design 0.29): what the server lets him do, from the same read
     data["permissions"] = view.access.codes
     data["capabilities"] = view.capabilities()

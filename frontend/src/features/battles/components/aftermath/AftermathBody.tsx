@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import type { PostgameBattle } from "@/features/battles/hooks/usePostgameBattle";
 import { usePostgameDraft } from "@/features/battles/hooks/usePostgameDraft";
 import type { BattleParticipant, BattleState } from "@/features/battles/types/battle-types";
+import { numberedOr } from "@/features/battles/utils/battle-number";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import LocationsPanel from "@/features/warbands/components/panels/LocationsPanel";
 import { cn } from "@/lib/utils";
@@ -149,7 +150,7 @@ export default function AftermathBody({
     <div className={cn("flex flex-col", isMobile ? "gap-3 pb-24" : "gap-7")}>
       <AftermathHeader
         kicker={`${me.warband.name} · Aftermath`}
-        title="After the battle"
+        title={numberedOr(battleState.battle.number, "After battle", "After the battle")}
         subtitle={subtitle}
         saving={drafting.isSavingDraft}
         error={drafting.draftError}

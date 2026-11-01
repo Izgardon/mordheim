@@ -2,10 +2,11 @@
 
 A player asks for the next round (`round/ {action: "ask"}`), which opens `Battle.round_request` ({"round",
 "asked_by", "agreed"}); the others agree, and once every player still in the fight has (players who finished their
-battle don't count), the round goes up. Anyone in the fight can start it anyway (`force`) or take the request back
-(`withdraw`). Each change is a timeline event broadcast like every shared write. The new round's step happens here,
-on the server: every knocked down model stands up and every stunned one is knocked down, the players' units and the
-neutral creatures alike. Kills and out-of-action events carry the round they happened in.
+battle don't count), the round goes up. Anyone in the fight can take the request back (`withdraw`); only the creator
+or a battle manager can start it anyway (`force`, William; the view refuses the others and the `force_round`
+capability says who may). Each change is a timeline event broadcast like every shared write. The new round's step
+happens here, on the server: every knocked down model stands up and every stunned one is knocked down, the players'
+units and the neutral creatures alike. Kills and out-of-action events carry the round they happened in.
 """
 
 from ..models import Battle, BattleEvent, BattleParticipant

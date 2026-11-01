@@ -123,3 +123,10 @@ def describe(read: ReadFee) -> str:
         parts += [f"{line['amount']} {line['resource']}" for line in fee["resources"]]
         text = " + ".join(parts)
     return f"{text}; note: {fee['note']}" if fee["note"] and not read.unread else text
+
+
+def in_his_rules(read: ReadFee, note: str) -> ReadFee:
+    """A hire fee his hiring sentence governs (overrides.json `fees_in_rules`: Aksho'akhash's summoning ritual): a fee
+    in his rules (`special`), its gold kept, the sentence in full as its note. The app shows it and automates none of
+    it."""
+    return ReadFee({**read.fee, "kind": "special", "note": note}, plain=False, unread=False)

@@ -13,9 +13,11 @@ import {
   isCreature,
   isGroup,
   liveMembers,
+  memberName,
   statValues,
   unitDomId,
   unitName,
+  unitTypeLine,
   xpInfo,
   type RosterUnit,
 } from "./unit-view";
@@ -129,7 +131,7 @@ export default function UnitCard(props: UnitCardProps) {
         ) : null}
       </span>
       <span className="text-[13px] text-muted-foreground">
-        {isGroup(entry) && entry.unit.name ? entry.unit.unit_type : unit.unit_type}
+        {unitTypeLine(entry)}
         {countText ? <span className="ml-1.5 font-mono text-accent-text">{countText}</span> : null}
       </span>
     </button>
@@ -186,7 +188,7 @@ export default function UnitCard(props: UnitCardProps) {
                   key={member.id}
                   className="inline-flex min-h-[30px] items-center gap-1.5 border border-border bg-raised px-2.5 text-xs font-bold text-ink"
                 >
-                  {member.name}
+                  {isGroup(entry) ? memberName(entry.unit, member) : member.name}
                   {member.kills ? (
                     <span className="font-medium text-muted-foreground">{member.kills} kills</span>
                   ) : null}

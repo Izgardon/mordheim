@@ -104,8 +104,7 @@ class UnitDetailView(UnitView):
         context = {"campaign_id": self.warband.campaign_id}
         writer = self.serializers.update(unit, data=request.data, partial=True, context=context)
         writer.is_valid(raise_exception=True)
-        if update_unit(self.kind, self.warband, writer, sent=request.data):
-            self.announce_change()  # missing games: other members' open pages of the warband follow
+        update_unit(self.kind, self.warband, writer, sent=request.data)
         return self.detail_response(unit.id)
 
     def delete(self, request: Request, warband_id: int, **kwargs: Any) -> Response:
@@ -168,8 +167,6 @@ class UnitBatchView(UnitView):
             raise validation_error(shape.errors)
         plan = plan_batch(self.kind, self.serializers, self.warband, shape.validated_data)
         warnings = apply_batch(self.kind, self.warband, plan)
-        if plan.missing_changed:
-            self.announce_change()
         units = self.kind.roster(self.warband, detail=True)
         payload = {
             "units": self.serializers.detail(units, many=True).data,
@@ -214,7 +211,6 @@ class UnitItemCompanionView(UnitView):
         if not body.is_valid():
             raise validation_error(body.errors)
         switch_companion(self.kind, unit, int(kwargs["item_row_id"]), body.validated_data["on"])
-        self.announce_change()
         loaded = self.kind.detail_queryset().get(id=unit.pk)
         payload = {
             "unit": self.serializers.detail(loaded).data,
@@ -235,7 +231,6 @@ class UnitBackToItemView(UnitView):
         if not body.is_valid():
             raise validation_error(body.errors)
         outcome = back_to_item(self.warband, group, body.validated_data)
-        self.announce_change()
         return Response(back_to_item_answer(self.warband, outcome))
 
 
@@ -266,7 +261,6 @@ class UnitGapView(UnitView):
         with transaction.atomic():
             lock_warband(self.warband.id)
             fill_gap(self.warband, group, gap, body.validated_data)
-        self.announce_change()
         stash_touched = [gap.group_item.item_id] if body.validated_data["action"] == "stash" else []
         return Response(_loadout_answer(self, group.pk, stash_touched))
 
@@ -282,5 +276,4 @@ class UnitTakeKitView(UnitView):
         with transaction.atomic():
             lock_warband(self.warband.id)
             moved = take_kit(self.warband, group, member)
-        self.announce_change()
         return Response(_loadout_answer(self, group.pk, moved))

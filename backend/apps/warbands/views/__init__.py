@@ -1,6 +1,5 @@
 from .beasts import WarbandBeastRecruitView
-from .catalogue import HeroSpecialDetailView, HeroSpellDetailView
-from .items import WarbandItemDetailView, WarbandItemListView, WarbandItemSaleView, WarbandItemTransferView
+from .items import WarbandItemListView, WarbandItemSaleView, WarbandItemTransferView
 from .ledger import (
     WarbandLogListView,
     WarbandResourceDetailView,
@@ -15,7 +14,6 @@ from .types import CampaignWarbandTypesView
 from .warbands import (
     WarbandDetailView,
     WarbandListCreateView,
-    WarbandRosterStatsView,
     WarbandSummaryView,
 )
 from .who_can import WarbandGroupListView, WarbandWhoCanView
@@ -26,11 +24,8 @@ __all__ = [
     "WarbandWhoCanView",
     "WarbandBeastRecruitView",
     "WarbandDetailView",
-    "HeroSpecialDetailView",
-    "HeroSpellDetailView",
     "WarbandListCreateView",
     "WarbandItemListView",
-    "WarbandItemDetailView",
     "WarbandItemSaleView",
     "WarbandItemTransferView",
     "WarbandLogListView",
@@ -40,7 +35,6 @@ __all__ = [
     "WarbandResourceListCreateView",
     "WarbandResourceSaleView",
     "WarbandSheetView",
-    "WarbandRosterStatsView",
     "WarbandSummaryView",
     "WarbandTradeDetailView",
     "WarbandTradeListCreateView",

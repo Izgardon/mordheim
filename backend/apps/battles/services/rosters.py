@@ -194,9 +194,10 @@ def _out_reason(gaps: list[dict]) -> str | None:
     return f"His kit went to the stash ({', '.join(taken)}); re-equip him to bring him back." if taken else None
 
 
-def henchman_entry(group: HenchmenGroup, member, links: list) -> dict:
+def henchman_entry(group: HenchmenGroup, member, links: list, number: int = 1) -> dict:
     """One member: the group's profile and skills, and the loadout rows he carries (none he has a gap on), so he
-    rides the group's mount only if he carries it."""
+    rides the group's mount only if he carries it. A member without a name is called by the group's type and his
+    number in it ("Giant Rat 2", a creature group's), never by his row id."""
     gaps = _gaps(member, links)
     lacking = {gap["rowId"] for gap in gaps}
     carried = [row for row in links if row.pk not in lacking]
@@ -205,7 +206,7 @@ def henchman_entry(group: HenchmenGroup, member, links: list) -> dict:
         "key": f"henchman:{member.id}",
         "id": member.id,
         "kind": "henchman",
-        "displayName": member.name or f"Henchman {member.id}",
+        "displayName": member.name or f"{group.unit_type or 'Henchman'} {number}",
         "unitType": group.unit_type or "Henchman",
         **_missing(group),  # the whole group misses games
         "stats": _stats(group),
@@ -223,7 +224,9 @@ def henchman_entry(group: HenchmenGroup, member, links: list) -> dict:
 
 def henchmen_group_entry(group: HenchmenGroup) -> dict:
     links = list(group.henchmen_group_items.all())
-    members = [henchman_entry(group, member, links) for member in group.henchmen.all()]
+    members = [
+        henchman_entry(group, member, links, number) for number, member in enumerate(group.henchmen.all(), start=1)
+    ]
     name = group.name or f"Henchmen Group {group.id}"
     return {
         "id": group.id,

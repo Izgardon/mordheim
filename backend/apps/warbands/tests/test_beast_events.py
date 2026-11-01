@@ -1,4 +1,5 @@
-"""Other members follow a warband's beasts live (the bestiary rewrite's browser check, item 24).
+"""Other members follow a warband live: the beast writes (the bestiary rewrite's browser check, item 24) and, since
+After the passes, every write that succeeds.
 
 A companion switched on or off, creatures recruited into henchmen (from the stash or a unit, or straight from a
 purchase; into a new group or joining one) and members sent back to their creature's item each send
@@ -22,7 +23,9 @@ SOCKET = "123.456"
 
 
 @override_settings(EXTERNAL_DISPATCH_SYNC=True)
-class WarbandChangedEventTests(RosterTestCase):
+class ChangedEventCase(RosterTestCase):
+    """Pusher replaced by a mock that records triggers; `changed()` reads the `warband.changed` sent."""
+
     def setUp(self) -> None:
         super().setUp()
         self.pusher = mock.Mock()
@@ -54,6 +57,9 @@ class WarbandChangedEventTests(RosterTestCase):
     def recruit_url(self) -> str:
         return f"/api/warbands/{self.warband.id}/beasts/recruit/"
 
+
+@override_settings(EXTERNAL_DISPATCH_SYNC=True)
+class WarbandChangedEventTests(ChangedEventCase):
     def test_a_companion_switched_on_or_off_tells_the_other_members(self):
         row = HeroItem.objects.create(hero=self.hero, item=self.horse, cost=80)
         url = unit_url(HERO, self.warband.id, self.hero.id, f"items/{row.id}/companion/")
@@ -105,4 +111,39 @@ class WarbandChangedEventTests(RosterTestCase):
         statuses.append(self.post(unit_url(HERO, self.warband.id, self.hero.id, f"items/{horse.id}/companion/"), {"on": True}))  # fmt: skip
 
         self.assertEqual([response.status_code for response in statuses], [400, 400, 403])
+        self.assertEqual(self.changed(), [])
+
+
+@override_settings(EXTERNAL_DISPATCH_SYNC=True)
+class EveryWriteTellsThemTests(ChangedEventCase):
+    """After the passes: every write that succeeds tells the other members, not only the beast writes (purchases,
+    renames, roster saves, XP, transfers and sales among them); a read tells nobody."""
+
+    def write(self, method: str, url: str, body: dict[str, Any]) -> Any:
+        with self.captureOnCommitCallbacks(execute=True):
+            send = getattr(self.client, method)
+            return send(url, body, format="json", HTTP_X_PUSHER_SOCKET_ID=SOCKET)
+
+    def test_purchases_renames_roster_saves_xp_transfers_and_sales_tell_them(self):
+        base = f"/api/warbands/{self.warband.id}/"
+        other = make_unit(HERO, self.warband, name="Brother")
+        HeroItem.objects.create(hero=self.hero, item=self.sword, cost=10)
+        sale = {"source_type": "hero", "source_id": self.hero.id, "item_id": self.sword.id, "quantity": 1, "price": 5}
+        writes: list[tuple[str, str, dict[str, Any]]] = [
+            ("post", f"{base}purchases/", {"item_id": self.axe.id, "quantity": 1, "price": 7, "target_type": "stash"}),
+            ("patch", base, {"name": "The Renamed"}),
+            ("post", unit_url(HERO, self.warband.id, suffix="batch/"), {"update": [{"id": other.id, "name": "Bro"}]}),
+            ("patch", unit_url(HERO, self.warband.id, self.hero.id), {"xp": 3}),
+            ("post", f"{base}item-transfers/", {"source_type": "stash", "item_id": self.axe.id, "target_type": "hero",
+                                                "target_id": other.id, "quantity": 1}),
+            ("post", f"{base}item-sales/", sale),
+        ]  # fmt: skip
+        for method, url, body in writes:
+            with self.subTest(url=url, method=method):
+                response = self.write(method, url, body)
+                self.assertLess(response.status_code, 300, getattr(response, "data", None))
+                self.assertEqual(self.changed(), self.one_event())
+
+    def test_a_read_tells_nobody(self):
+        self.client.get(f"/api/warbands/{self.warband.id}/sheet/")
         self.assertEqual(self.changed(), [])

@@ -169,12 +169,12 @@ Work William has asked for since passes 5 and 6 (PR A and B) were deployed.
 
 - **The bestiary rewrite: merged to main and deployed 2026-10-28,** with fresh migrations (the production schema was wiped first). The plan is `docs/review/plans/bestiary-hirelings.html`. It replaced pass 5's CAT-NEW-01 (bestiary and hired-sword edit panels). Pass 6's PR C is built on `pass6/pr-c` (its browser check is next); grading (`plans/grades-settings-warbands.html`) follows. Left from its final two-player check:
   - **A question for William:** on the warband page, a group where only some members ride shows the mount's M and save, while the battle screens show foot stats.
-  - **Creature group members** are named "Henchman 6", "Henchman 7" in battle.
+  - ~~**Creature group members** are named "Henchman 6", "Henchman 7" in battle.~~ Done (battle and polish): an unnamed member reads as his group's type and number ("Wardogs 2"), in battle and on the warband page.
   - **At 1280 px:** the Bestiary cards' stat lines scroll sideways, the header tab strips show scrollbars, and two forms clip.
-  - **The dramatis persona card** prints its name twice.
+  - ~~**The dramatis persona card** prints its name twice.~~ Done (battle and polish): the type line says "Dramatis persona" when the type is the name.
   - **The postbattle section picker** has no accessible name.
-  - **Realtime gaps:** only beast writes send `warband.changed`. Purchases, renames, roster saves, XP, transfers and sales don't yet.
-  - **Unchecked:** the Skills and Spells pages may list one row fewer than the database.
+  - ~~**Realtime gaps:** only beast writes send `warband.changed`.~~ Done (battle and polish): every warband write that succeeds sends it, and a completed trade sends it for both warbands.
+  - ~~**Unchecked:** the Skills and Spells pages may list one row fewer than the database.~~ Checked (battle and polish): 253 skills and 189 spells on the pages, as in the database (the Pending placeholders that were left out went in the fees step).
 - **An easier email sender (asked 2026-10-20).** Production sends no email today: `RESEND_API_KEY` isn't set, and Resend only delivers to other people's addresses once a domain is verified, which is why email verification waits for a custom domain. Compare low-effort senders on these points:
   - Can it send to any address without a domain we own (e.g. a verified single sender, or SMTP through a free mailbox)?
   - Free-tier limits.

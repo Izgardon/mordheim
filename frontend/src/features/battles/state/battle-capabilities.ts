@@ -18,7 +18,6 @@ const NONE: BattleCapabilities = {
   end: false,
   cancel: false,
   close_postbattle: false,
-  edit_record: false,
 };
 
 /**

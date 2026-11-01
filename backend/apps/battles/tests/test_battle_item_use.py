@@ -129,7 +129,7 @@ class BattleSkipItemTests(BattleTestCase):
         self.ok(self.use_item(self.player, battle_id, {"unit_key": f"hero:{hero.id}", "item_id": potion.id}), 201)
         self.finish(battle_id, [self.warband])
 
-        data = self.ok(self.post_as(self.player, self.url(battle_id, "confirm"))).data
+        data = self.ok(self.post_as(self.player, self.url(battle_id, "skip-postbattle"))).data
 
         self.assertEqual(HeroItem.objects.filter(hero=hero, item=potion).count(), 1)
         self.assertEqual(

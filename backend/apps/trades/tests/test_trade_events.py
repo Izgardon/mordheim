@@ -67,3 +67,14 @@ class TradeEventTests(TradeTestCase):
         self.assertEqual((body["from_summary"]["gold"], body["to_summary"]["gold"]), (70, 80))
         self.assertEqual(self.trade_events.call_args_list[-1].args, (self.trade.id, "trade.completed", body))
         self.assertNotIn("from_summary", self.trade_events.call_args_list[-2].args[2])  # trade.locked stays as it was
+
+    def test_a_completed_trade_tells_the_members_both_warbands_changed(self):
+        # After the passes: other members' open pages of either warband read it again (gold and items moved)
+        self.offer(self.player, self.trade, gold=30)
+        self.lock(self.player, self.trade)
+
+        with mock.patch("apps.trades.views.send_warband_changed") as changed:
+            self.lock(self.viewer, self.trade)
+
+        warbands = [call.args[:2] for call in changed.call_args_list]
+        self.assertEqual(warbands, [(self.campaign.id, self.warband.id), (self.campaign.id, self.rival.id)])

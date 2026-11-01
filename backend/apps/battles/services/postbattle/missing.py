@@ -2,7 +2,8 @@
 
 Each battle a warband finalises counts one game for every unit of it that is missing (heroes, hired swords and henchmen
 groups, whether or not they fought); at 0 the unit is back and forgets its reason. A cancelled battle, and a postbattle
-skipped or closed (nothing applied), count nothing. Then the serious injuries the player confirmed set a hero's or
+skipped or closed (nothing applied), count nothing; a reported result counts one for each of its warbands when it is
+approved (`count_down`, services/reported.py: William). Then the serious injuries the player confirmed set a hero's or
 hired sword's missing games for the games after this one, replacing any count left. Both run after the unit results,
 upkeep and finds are written (upkeep reads who was missing for this battle), and write the edit mode's log rows.
 """

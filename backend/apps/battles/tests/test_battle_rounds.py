@@ -1,14 +1,15 @@
 """Rounds, shared status, neutral groups and kills that take their victim out of action (next step 6).
 
-`POST round/ {action}` asks for the next round, agrees, forces it or withdraws the request; the round goes up once
-everyone still fighting has agreed, and the new round stands every knocked down model up and knocks every stunned
-one down, on the server. A unit's status rides its unit information (`status`, through config/), so the other
+`POST round/ {action}` asks for the next round, agrees, forces it (the creator or a battle manager: William) or
+withdraws the request; the round goes up once everyone still fighting has agreed, and the new round stands every
+knocked down model up and knocks every stunned one down, on the server. A unit's status rides its unit information (`status`, through config/), so the other
 players see it. `neutral-groups/` adds creatures nobody plays, which `neutral-creatures/<key>/` changes and a kill can
 name as its victim (`victim_neutral_key`). A kill in the fight puts its victim out of action, and undoing it puts him
 back. Kills and out-of-action events carry their round, which the pivotal moments carry (next step 9).
 """
 
-from apps.warbands.models import Hero
+from apps.campaigns.models import CampaignMembership, CampaignMembershipPermission, CampaignPermission
+from apps.warbands.models import Hero, Warband
 
 from .battle_support import BattleTestCase
 
@@ -59,6 +60,29 @@ class RoundTests(FightCase):
         self.assertEqual(forced["battle"]["round"], 2)
         self.assertEqual(forced["events"][-1]["payload_json"], {"round": 2, "forced": True})
         self.ok(self.post_as(self.player, self.url(self.battle_id, "round"), {"action": "skip"}), 400)
+
+    def test_start_anyway_is_the_creators_or_a_battle_managers(self):
+        # William: the creator, campaign admins (and owners) and battle managers; the other players ask and agree
+        self.round(self.player, "ask")
+        refused = self.post_as(self.viewer, self.url(self.battle_id, "round"), {"action": "force"})
+        self.assertEqual((refused.status_code, refused.data["code"]), (403, "force_round_not_allowed"))
+        self.assertEqual(self.battle(self.battle_id).round, 1)
+        state = self.ok(self.get_as(self.viewer, self.url(self.battle_id, "state"))).data
+        self.assertFalse(state["capabilities"]["force_round"])
+        self.round(self.viewer, "agree")  # asking and agreeing are still everyone's
+
+        membership = CampaignMembership.objects.get(campaign=self.campaign, user=self.viewer)
+        permission = CampaignPermission.objects.get(code="manage_battles")
+        CampaignMembershipPermission.objects.create(membership=membership, permission=permission)
+        state = self.ok(self.get_as(self.viewer, self.url(self.battle_id, "state"))).data
+        self.assertTrue(state["capabilities"]["force_round"])
+        self.assertEqual(self.round(self.viewer, "force")["battle"]["round"], 3)
+
+    def test_an_admin_in_the_fight_starts_it_anyway(self):
+        Warband.objects.create(campaign=self.campaign, user=self.admin, name="Crows")
+        battle_id = self.to_active({self.player: [], self.admin: []})
+        forced = self.ok(self.post_as(self.admin, self.url(battle_id, "round"), {"action": "force"})).data
+        self.assertEqual((forced["battle"]["round"], forced["capabilities"]["force_round"]), (2, True))
 
     def test_out_of_action_clears_the_status_and_events_carry_the_round(self):
         self.set_status(self.player, self.a, "stunned")

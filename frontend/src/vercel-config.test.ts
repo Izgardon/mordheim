@@ -12,7 +12,7 @@ type Route = {
 
 const routes = vercel.routes as Route[];
 const securityHeaders = routes[0]?.headers ?? {};
-const csp = securityHeaders["Content-Security-Policy-Report-Only"] ?? "";
+const csp = securityHeaders["Content-Security-Policy"] ?? "";
 const directive = (name: string) =>
   csp
     .split(";")
@@ -32,8 +32,12 @@ describe("vercel.json", () => {
       "X-Content-Type-Options": "nosniff",
       "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
     });
-    // Report-only until it has been watched in production; it must not be enforced yet.
-    expect(securityHeaders).not.toHaveProperty("Content-Security-Policy");
+    // Enforced, after a browser check of every page found no violation (battle and polish).
+    expect(securityHeaders).not.toHaveProperty("Content-Security-Policy-Report-Only");
+    expect(directive("default-src")).toBe("default-src 'self'");
+    expect(directive("script-src")).toBe("script-src 'self'");
+    expect(directive("object-src")).toBe("object-src 'none'");
+    expect(directive("frame-ancestors")).toBe("frame-ancestors 'none'");
   });
 
   it("lets the CSP through for the app's real origins", () => {
@@ -45,8 +49,7 @@ describe("vercel.json", () => {
     expect(directive("img-src")).toContain("data:");
     expect(directive("style-src")).toContain("https://fonts.googleapis.com");
     expect(directive("font-src")).toContain("https://fonts.gstatic.com");
-    // The landing video and warband links embed YouTube's no-cookie player (decision 5). Named, so
-    // `https:` can go once the CSP is enforced.
-    expect(directive("frame-src")).toContain("https://www.youtube-nocookie.com");
+    // The landing video embeds YouTube's no-cookie player (decision 5), the only frame the app has.
+    expect(directive("frame-src")).toBe("frame-src https://www.youtube-nocookie.com");
   });
 });

@@ -712,7 +712,7 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.data, [])
 
         response = self.client.post(
-            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/confirm/",
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/skip-postbattle/",
             format="json",
         )
         self.assertEqual(response.status_code, 200)
@@ -2369,7 +2369,7 @@ class BattleApiTests(APITestCase):
 
         for user in (self.owner, self.player):
             self.client.force_authenticate(user=user)
-            response = self.client.post(f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/confirm/")
+            response = self.client.post(f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/skip-postbattle/")
             self.assertEqual(response.status_code, 200)
 
         self.owner_warband.refresh_from_db()
@@ -2446,7 +2446,7 @@ class BattleApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
 
         response = self.client.post(
-            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/confirm/",
+            f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/skip-postbattle/",
             format="json",
         )
         self.assertEqual(response.status_code, 200)

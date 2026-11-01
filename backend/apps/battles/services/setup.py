@@ -17,6 +17,7 @@ from apps.warbands.models import Warband
 from ..models import Battle, BattleEvent, BattleParticipant
 from .errors import Refused
 from .events import append_event, notify_user
+from .numbering import battle_number
 from .timing import invite_deadline
 from .unfinished import BUSY_BATTLE_STATUSES, BUSY_PARTICIPANT_STATUSES, page_for
 
@@ -200,6 +201,7 @@ def create_battle(campaign_id: int, creator, request: NewBattle) -> tuple[Battle
         scenario_link=request.scenario_link,
         state_version=1,
         closes_at=invite_deadline(),  # 72 hours to answer (decision 2)
+        number=battle_number(warband.id for warband in request.warbands.values()),  # until the start (numbering.py)
     )
     logger.info("Battle row created battle_id=%s campaign_id=%s", battle.id, campaign_id)
     payload = {"participant_user_ids": request.user_ids, "scenario": request.scenario}

@@ -74,7 +74,7 @@ class BattleBroadcastTests(BattleTestCase):
 
     def test_a_write_with_two_events_sends_both_with_one_version_and_the_snapshot_last(self):
         battle_id = self.to_postbattle({self.player: [self.a], self.viewer: [self.r]})
-        self.ok(self.post_as(self.viewer, self.url(battle_id, "confirm")))
+        self.ok(self.post_as(self.viewer, self.url(battle_id, "skip-postbattle")))
         version = self.battle(battle_id).state_version
         sent = len(self.messages())
 

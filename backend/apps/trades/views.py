@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 from apps.core.throttling import TRADE_WRITE_THROTTLE_CLASSES, MethodScopedThrottleMixin
 from apps.notifications.models import Notification
 from apps.notifications.utils import resolve_notification
-from apps.realtime.services import send_trade_event, send_user_notification, sender_socket_id
+from apps.realtime.services import send_trade_event, send_user_notification, send_warband_changed, sender_socket_id
 
 from .actions import run_trade_action
 from .models import TradeRequest
@@ -142,6 +142,8 @@ class CampaignTradeOfferAcceptView(TradeWriteView):
             completed = serialize_completed_trade(trade)
             _broadcast(request, trade, "trade.locked", locked)
             _broadcast(request, trade, "trade.completed", completed)
+            for warband_id in (trade.from_warband_id, trade.to_warband_id):  # gold and items moved: open pages follow
+                send_warband_changed(trade.campaign_id, warband_id, sender_socket_id(request))
             return _answer(completed, warnings)
 
         return run_trade_action(request, campaign_id, request_id, lock, needs_partner=True)

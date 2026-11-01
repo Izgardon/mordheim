@@ -61,7 +61,7 @@ class BattleUndoTests(BattleTestCase):
 
         self.assertEqual(self.ok(self.void(self.player, event_id)).data["events"][0]["type"], "item_used_voided")
         self.finish(self.battle_id, [self.warband])
-        self.ok(self.post_as(self.player, self.url(self.battle_id, "confirm")))
+        self.ok(self.post_as(self.player, self.url(self.battle_id, "skip-postbattle")))
 
         self.assertTrue(HeroItem.objects.filter(hero=self.abbess, item=self.potion).exists())
 

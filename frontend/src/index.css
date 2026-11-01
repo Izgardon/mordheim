@@ -147,6 +147,12 @@ h6 {
   padding-inline: calc((100cqw - 100%) / 2);
 }
 
+/* An archived campaign's banner heads every page: the page's band then sits under it in the flow
+   instead of pulling up over it. */
+.desktop-shell__content-inner:has(> .archived-banner) .page-band {
+  margin-top: 0;
+}
+
 /* The landing's background video (design E): it covers the web's picture half, behind the
    caption card, and fades in over the rail colour once YouTube has loaded it. */
 .auth-video {
@@ -304,7 +310,8 @@ table thead th {
  *
  * The grounds step up in both themes: the page recedes most (darkest), the chrome (rail, bar)
  * sits a step above it, and the cards (panel, surface, raised) above that. Every text token
- * passes WCAG AA (4.5:1) on every ground.
+ * passes WCAG AA (4.5:1) on every ground, and `strong`, the border of inputs and other controls,
+ * stands 3:1 from every card (WCAG 1.4.11; the focus ring, the accent, more).
  */
 @layer base {
   :root {
@@ -317,7 +324,7 @@ table thead th {
     --color-raised: #2a2118;
     --color-line: #382d22;
     --color-border: #3e3226;
-    --color-strong: #594836;
+    --color-strong: #82694f; /* control borders: 3:1 on panel, surface, raised */
     --color-ink: #f2e7d2;
     --color-head: #f8eedb;
     --color-text2: #ddcdb2;
@@ -355,7 +362,7 @@ table thead th {
     --destructive: 12 79.4% 75.3%; /* danger */
     --destructive-foreground: 12 51.7% 11.4%; /* danger-bg */
     --border: 30 24% 19.6%; /* border */
-    --input: 30.9 24.5% 28%; /* strong */
+    --input: 30.9 24.5% 41%; /* strong */
     --ring: 28.3 72.2% 62%; /* accent */
     --chart-1: 28.3 72.2% 62%;
     --chart-2: 28.4 79.2% 71.8%;
@@ -374,7 +381,7 @@ table thead th {
     --color-raised: #ece4d6;
     --color-line: #d4c5ae;
     --color-border: #cbb9a0;
-    --color-strong: #a99679;
+    --color-strong: #958060; /* control borders: 3:1 on panel, surface, raised */
     --color-ink: #2b211a;
     --color-head: #1f1712;
     --color-text2: #4a3c2f;
@@ -412,7 +419,7 @@ table thead th {
     --destructive: 9 69.4% 35.9%;
     --destructive-foreground: 15 66.7% 91.8%;
     --border: 34.9 29.3% 71.2%;
-    --input: 36.3 21.8% 56.9%;
+    --input: 36.3 21.8% 48%;
     --ring: 17.8 62.2% 43.5%;
     --chart-1: 17.8 62.2% 43.5%;
     --chart-2: 17.6 66.3% 37.3%;

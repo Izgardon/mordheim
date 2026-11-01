@@ -77,9 +77,9 @@ class BattleFinishTests(BattleTestCase):
         self.assertEqual((again["events"], again["battle"]["winner_warband_ids_json"]), ([], [self.warband.id]))
         self.ok(self.finalize(self.player, battle_id, draft({})))
         self.assertEqual((self.record(self.warband), self.record(self.rival)), ((None, None), (None, None)))
-        self.ok(self.post_as(self.viewer, self.url(battle_id, "confirm")))  # the last one ends the battle
+        self.ok(self.post_as(self.viewer, self.url(battle_id, "skip-postbattle")))  # the last one ends the battle
         self.assertEqual((self.record(self.warband), self.record(self.rival)), ((1, None), (None, 1)))
-        self.ok(self.post_as(self.viewer, self.url(battle_id, "confirm")))
+        self.ok(self.post_as(self.viewer, self.url(battle_id, "skip-postbattle")))
         self.assertEqual((self.record(self.warband), self.record(self.rival)), ((1, None), (None, 1)))
 
     def test_trading_actions_reset_once_at_end(self):
@@ -261,14 +261,14 @@ class BattleSkipTests(BattleTestCase):
     def test_skip_and_finalise_outside_postbattle(self):
         battle_id = self.to_active()  # decision 4: a player's postbattle opens when he finishes his battle
         for action, detail in (
-            ("confirm", "You must enter postbattle before leaving"),
+            ("skip-postbattle", "You must enter postbattle before leaving"),
             ("finalize-postbattle", "You must enter postbattle before finalizing"),
         ):
             with self.subTest(action=action):
                 response = self.post_as(self.viewer, self.url(battle_id, action))
                 self.assertEqual((response.status_code, response.data), (400, {"detail": detail}))
         Battle.objects.filter(id=battle_id).update(status=Battle.STATUS_CANCELED)
-        for action in ("confirm", "finalize-postbattle"):
+        for action in ("skip-postbattle", "finalize-postbattle"):
             with self.subTest(action=action, status="canceled"):
                 response = self.post_as(self.viewer, self.url(battle_id, action))
                 self.assertEqual(
@@ -277,10 +277,10 @@ class BattleSkipTests(BattleTestCase):
 
     def test_a_skip_or_finalise_after_finishing_changes_nothing(self):
         battle_id = self.to_postbattle()
-        self.ok(self.post_as(self.player, self.url(battle_id, "confirm")))
+        self.ok(self.post_as(self.player, self.url(battle_id, "skip-postbattle")))
         self.assertTrue(self.participant(battle_id, self.player).skipped_postbattle)
         events = self.event_types(battle_id)
-        self.assertEqual(self.ok(self.post_as(self.player, self.url(battle_id, "confirm"))).data["events"], [])
+        self.assertEqual(self.ok(self.post_as(self.player, self.url(battle_id, "skip-postbattle"))).data["events"], [])
         response = self.post_as(self.player, self.url(battle_id, "finalize-postbattle"))  # skipped: too late
         self.assertEqual((response.status_code, response.data["code"]), (400, "postbattle_skipped"))
         self.assertEqual(self.event_types(battle_id), events)

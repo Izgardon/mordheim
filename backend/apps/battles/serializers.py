@@ -45,6 +45,7 @@ def serialize_battle(battle: Battle) -> dict:
         "round": battle.round,
         "round_request": battle.round_request or None,
         "neutral_groups": battle.neutral_groups_json or [],
+        "number": battle.number,  # the campaign battle number (services/numbering.py)
     }
 
 

@@ -181,7 +181,7 @@ export async function purchase(request: PurchaseRequest, queryClient: QueryClien
   const { warbandId, target, recruit } = request;
   const answer = await apiRequest<PurchaseAnswer>(`/warbands/${warbandId}/purchases/`, {
     method: "POST",
-    // A purchase that recruits tells the other members (`warband.changed`), not this browser.
+    // Every warband write tells the other members (`warband.changed`), not this browser.
     headers: socketIdHeaders(),
     body: {
       ...purchaseLine(request),
@@ -206,7 +206,7 @@ export async function saveRarityRoll(
 ) {
   const answer = await apiRequest<{ hero_id: number | null; warnings: PurchaseWarning[] }>(
     `/warbands/${warbandId}/rarity-rolls/`,
-    { method: "POST", body: roll }
+    { method: "POST", headers: socketIdHeaders(), body: roll }
   );
   if (answer.hero_id !== null) setHeroTradingAction(queryClient, warbandId, answer.hero_id, false);
   markLedgerStale(queryClient, warbandId);

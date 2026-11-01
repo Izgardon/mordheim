@@ -6,7 +6,7 @@ catalogue half, CAT-TEST-16): another campaign's id is refused like an unknown o
 in `test_catalogue_transactions.py`; what they tell the other members (BUG-80), in `test_catalogue_events.py`.
 """
 
-from apps.bestiary.models import BestiaryEntry, WarbandBestiaryFavourite
+from apps.bestiary.models import BestiaryEntry
 from apps.core.testing import book_warband_type
 from apps.hirelings.fees import make_fee
 from apps.hirelings.models import HiredSword
@@ -187,35 +187,6 @@ class CampaignScopeOfWriteIdsTests(CatalogueTestCase):
             [("Our warband", False), ("Mercenaries", True)],
         )
         self.assertFalse(hired.data["for_everyone"])
-
-    def test_a_warband_cannot_favourite_another_campaigns_bestiary_entry_or_read_it(self):
-        # SEC-07 (was pinned: favourited, and its stats read back; flipped in PR A: not found, and a favourite left
-        # over from before is no longer listed)
-        theirs = make_entry(BESTIARY, "Their beast", campaign=self.elsewhere, description="Secret stats")
-        WarbandBestiaryFavourite.objects.create(warband=self.warband, bestiary_entry=theirs)
-        url = f"/api/warbands/{self.warband.id}/bestiary-favourites/"
-
-        added = self.post_as(self.player, url, {"bestiary_entry_id": theirs.id})
-        garbage = self.post_as(self.player, url, {"bestiary_entry_id": "abc"})
-        listed = self.get_as(self.player, url).json()
-
-        self.assertEqual((added.status_code, added.data), (404, {"detail": "Bestiary entry not found"}))
-        self.assertEqual(garbage.status_code, 404)
-        self.assertEqual(listed, [])
-
-    def test_favourites_are_the_warband_owners_or_a_manage_warbands_holders(self):
-        url = f"/api/warbands/{self.warband.id}/bestiary-favourites/"
-        body = {"bestiary_entry_id": self.warhound.id}
-
-        self.assertEqual(self.post_as(self.rival, url, body).status_code, 403)
-        self.assertEqual(self.post_as(self.outsider, url, body).status_code, 404)
-        self.assertEqual(self.post_as(self.player, url, {"bestiary_entry_id": 999999}).status_code, 404)
-        self.assertEqual(self.post_as(self.owner, url, body).status_code, 201)  # the campaign owner holds every code
-        self.assertEqual(self.post_as(self.player, url, body).status_code, 201)  # again: still one favourite
-        self.assertEqual(WarbandBestiaryFavourite.objects.filter(warband=self.warband).count(), 1)
-        self.assertEqual(self.delete_as(self.rival, f"{url}{self.warhound.id}/").status_code, 403)
-        self.assertEqual(self.delete_as(self.player, f"{url}{self.warhound.id}/").status_code, 204)
-        self.assertEqual(self.get_as(self.rival, url).json(), [])
 
 
 class RestrictionRouteTests(CatalogueTestCase):

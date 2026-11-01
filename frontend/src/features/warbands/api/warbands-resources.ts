@@ -1,4 +1,5 @@
 import { apiRequest } from "../../../lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 
 import type { WarbandResource, WarbandTrade, WarbandUnitsSummary } from "../types/warband-types";
 
@@ -12,6 +13,7 @@ export type WarbandResourceSale = {
 export function createWarbandResource(warbandId: number, payload: { name: string }) {
   return apiRequest<WarbandResource>(`/warbands/${warbandId}/resources/`, {
     method: "POST",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }
@@ -27,6 +29,7 @@ export function updateWarbandResource(
 ) {
   return apiRequest<WarbandResource>(`/warbands/${warbandId}/resources/${resourceId}/`, {
     method: "PATCH",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }
@@ -39,6 +42,7 @@ export function sellWarbandResource(
 ) {
   return apiRequest<WarbandResourceSale>(`/warbands/${warbandId}/resources/${resourceId}/sell/`, {
     method: "POST",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }
@@ -46,5 +50,6 @@ export function sellWarbandResource(
 export function deleteWarbandResource(warbandId: number, resourceId: number) {
   return apiRequest<void>(`/warbands/${warbandId}/resources/${resourceId}/`, {
     method: "DELETE",
+    headers: socketIdHeaders(),
   });
 }

@@ -89,6 +89,8 @@ export type CampaignPlayer = {
   battle_busy_last_activity_at?: string | null;
   /** His own status in that battle(finished_battle is his post-game). */
   battle_busy_participant_status?: string | null;
+  /** That battle's number ("In battle 6"). */
+  battle_busy_battle_number?: number | null;
   warband?: {
     id: number;
     name: string;
@@ -138,6 +140,8 @@ export type CampaignBattleMoment = {
 
 export type CampaignBattleHistoryEntry = {
   id: number;
+  /** The campaign battle number ("Battle 6"); null for a battle before numbers. */
+  number?: number | null;
   scenario: string;
   winners: string[];
   date: string;
@@ -267,24 +271,6 @@ export type CampaignMessage = {
   created_at: string;
   removed_at?: string | null;
   removed_by?: PostRemovedBy | null;
-};
-
-/** One unit's stat line in the overview's expanded roster row (from `roster-stats/`). */
-export type RosterUnit = {
-  id: string;
-  category: "Heroes" | "Henchmen" | "Hired Swords";
-  name: string | null;
-  unit_type: string | null;
-  movement: number | null;
-  weapon_skill: number | null;
-  ballistic_skill: number | null;
-  strength: number | null;
-  toughness: number | null;
-  wounds: number | null;
-  initiative: number | null;
-  attacks: number | null;
-  leadership: number | null;
-  armour_save: number | null;
 };
 
 /** A setting (grading phase 1): the world or supplement content belongs to, holding its grade. */

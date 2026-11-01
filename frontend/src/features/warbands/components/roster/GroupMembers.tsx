@@ -8,7 +8,7 @@ import { warbandStashQuery } from "../../api/economy-queries";
 import { useGroupLoadout, type ShareChoice } from "../../hooks/units/useGroupLoadout";
 import { gapLine, memberGaps, memberShare, sitsOut, type MemberGap } from "../../units/loadout";
 import type { Henchman, HenchmenGroup } from "../../types/warband-types";
-import { liveMembers } from "./unit-view";
+import { liveMembers, memberName } from "./unit-view";
 
 type GroupMembersProps = {
   group: HenchmenGroup;
@@ -71,13 +71,13 @@ export default function GroupMembers({ group, campaignId, warbandId, canEdit }: 
     return (
       <div
         role="group"
-        aria-label={`Dismiss ${member.name}`}
+        aria-label={`Dismiss ${memberName(group, member)}`}
         className="flex flex-col gap-1.5 bg-raised px-2.5 py-2 text-[13px]"
       >
         <span className="text-ink">
           {share.length
-            ? `Dismiss ${member.name}: his share (${share.map((item) => item.name).join(", ")}) to the stash, or he leaves with it?`
-            : `Dismiss ${member.name}? He carries nothing of the loadout.`}
+            ? `Dismiss ${memberName(group, member)}: his share (${share.map((item) => item.name).join(", ")}) to the stash, or he leaves with it?`
+            : `Dismiss ${memberName(group, member)}? He carries nothing of the loadout.`}
         </span>
         <div className="flex flex-wrap gap-1.5">
           {share.length ? (
@@ -109,7 +109,7 @@ export default function GroupMembers({ group, campaignId, warbandId, canEdit }: 
         return (
           <div key={member.id} className="flex flex-col gap-1.5 border-t border-line pt-2">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="font-bold text-ink">{member.name || "Unnamed"}</span>
+              <span className="font-bold text-ink">{memberName(group, member)}</span>
               {member.kills ? (
                 <span className="text-xs text-muted-foreground">{member.kills} kills</span>
               ) : null}

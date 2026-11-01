@@ -14,7 +14,6 @@ from django.test.utils import CaptureQueriesContext
 
 from apps.battles.models import Battle, BattleParticipant
 from apps.campaigns.models import (
-    CampaignBulletinEntry,
     CampaignEncampment,
     CampaignHouseRule,
     CampaignLocation,
@@ -41,9 +40,7 @@ BUDGETS: dict[str, tuple[str, str, int]] = {
     "top killers": ("player", "top-killers/", 2),
     "members": ("admin", "members/", 4),
     "permissions": ("player", "permissions/", 1),  # served from the constants (BUG-15)
-    "permissions/me (player)": ("player", "permissions/me/", 1),  # the codes come with the membership
     "messages": ("player", "messages/", 2),
-    "bulletin": ("player", "bulletin/", 2),
     "encampments": ("player", "encampments/", 2),  # the feature flag comes with the membership
     "locations": ("player", "locations/", 2),
     "house rules": ("player", "rules/", 2),
@@ -66,7 +63,6 @@ class CampaignQueryBudgetTests(CampaignTestCase):
         campaign.settings.save()
         for user in (cls.player, cls.rival):
             CampaignMessage.objects.create(campaign=campaign, user=user, username=user.first_name, body="Hi")
-            CampaignBulletinEntry.objects.create(campaign=campaign, user=user, username=user.first_name, body="WTB")
             CampaignEncampment.objects.create(campaign=campaign, name=f"Camp {user.first_name}", owner=user)
             CampaignLocation.objects.create(campaign=campaign, name=f"Ruin {user.first_name}")
         CampaignHouseRule.objects.create(campaign=campaign, title="No running")
@@ -112,7 +108,7 @@ class CampaignQueryBudgetTests(CampaignTestCase):
 
     def test_list_pages_do_not_grow_with_rows(self):
         # CAMP-TEST-01: players with 2 vs 8 warbands; the others with a few more rows each
-        names = ("players", "members", "messages", "bulletin", "encampments", "battle history", "active battles")
+        names = ("players", "members", "messages", "encampments", "battle history", "active battles")
         before = {name: self.measure(name) for name in names}
         player_role = CampaignRole.objects.get(slug="player")
         for index in range(6):
@@ -120,7 +116,6 @@ class CampaignQueryBudgetTests(CampaignTestCase):
             CampaignMembership.objects.create(campaign=self.campaign, user=user, role=player_role)
             Warband.objects.create(campaign=self.campaign, user=user, name=f"Band {index}")
             CampaignMessage.objects.create(campaign=self.campaign, user=user, username=user.first_name, body="Hi")
-            CampaignBulletinEntry.objects.create(campaign=self.campaign, user=user, username=user.first_name, body="X")
             CampaignEncampment.objects.create(campaign=self.campaign, name=f"Camp {index}", owner=user)
         self._battle(Battle.STATUS_ENDED)
         self._battle(Battle.STATUS_INVITING)

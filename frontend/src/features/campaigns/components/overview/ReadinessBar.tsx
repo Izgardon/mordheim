@@ -8,6 +8,14 @@ const DOT: Record<Readiness, string> = {
   post: "bg-primary",
   battle: "bg-danger",
 };
+/** "In battle 6", "Post-game · Battle 6", "Ready": the busy battle's number when it has one. */
+const chipLabel = (player: CampaignPlayer, state: Readiness) => {
+  const number = player.battle_busy_battle_number;
+  if (!number || state === "ready") return READINESS_LABEL[state];
+  return state === "battle"
+    ? `In battle ${number}`
+    : `${READINESS_LABEL[state]} · Battle ${number}`;
+};
 const TEXT: Record<Readiness, string> = {
   ready: "text-good",
   post: "text-accent-text",
@@ -52,7 +60,7 @@ export default function ReadinessBar({
           >
             <span aria-hidden="true" className={cn("h-[7px] w-[7px]", DOT[state])} />
             <span className="text-[13px] font-semibold text-ink">{you ? "You" : player.name}</span>
-            <span className={cn("text-xs", TEXT[state])}>{READINESS_LABEL[state]}</span>
+            <span className={cn("text-xs", TEXT[state])}>{chipLabel(player, state)}</span>
           </li>
         );
       })}

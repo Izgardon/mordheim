@@ -1,7 +1,7 @@
 """A user's own payload, and the name other players see (pass 6; SEC-13 leftovers, decision 2).
 
 `/auth/me` and register's `user` are `{id, email, name}`, `name` being the raw `first_name`: the email goes only to
-its owner. Pass 4 moved players, members, chat, bulletin, encampments, battles and trades onto `display_name`
+its owner. Pass 4 moved players, members, chat, encampments, battles and trades onto `display_name`
 ("Player N" when the name is blank); PR A moved the ledger author too.
 """
 

@@ -17,8 +17,8 @@ NONE = {
     "confirm_results": False,
     "cancel": False,
     "close_postbattle": False,
-    "edit_record": False,
     "nudge": False,
+    "force_round": False,
 }
 OPEN = {**NONE, "nudge": True}  # any player still in an open battle can nudge (BATL-NEW-08)
 
@@ -48,8 +48,9 @@ class BattleCapabilityTests(BattleTestCase):
         self.ok(self.post_as(self.viewer, self.url(battle_id, "start")))
 
         # decision 4: each player finishes his own battle; nobody has an End
-        self.assertEqual(self.capabilities(self.player, battle_id), {**OPEN, "finish_mine": True, "cancel": True})
-        self.assertEqual(self.capabilities(self.viewer, battle_id), {**OPEN, "finish_mine": True})
+        fighting = {**OPEN, "finish_mine": True}
+        self.assertEqual(self.capabilities(self.player, battle_id), {**fighting, "cancel": True, "force_round": True})
+        self.assertEqual(self.capabilities(self.viewer, battle_id), fighting)  # Start anyway is the creator's
         self.assertEqual(self.post_as(self.player, self.url(battle_id, "finish"), {"winners": []}).status_code, 403)
         self.ok(self.finish_mine(self.viewer, battle_id, "lost"))
         self.assertEqual(self.capabilities(self.viewer, battle_id), OPEN)
@@ -80,14 +81,14 @@ class BattleCapabilityTests(BattleTestCase):
         self.ok(self.post_as(self.viewer, self.url(battle_id, "close-postbattle")))
 
         self.assertEqual(self.capabilities(self.player, battle_id), NONE)  # ended; the player manages nothing
-        self.assertEqual(self.capabilities(self.viewer, battle_id), {**NONE, "edit_record": True})
+        self.assertEqual(self.capabilities(self.viewer, battle_id), NONE)  # ended: nothing left to do
 
     def test_owners_and_admins_manage_battles_without_a_grant(self):
         Warband.objects.create(campaign=self.campaign, user=self.admin, name="Crows")
         battle_id = self.to_postbattle({self.player: [], self.admin: []})
         self.assertEqual(self.capabilities(self.admin, battle_id), {**OPEN, "close_postbattle": True, "confirm_results": True})  # fmt: skip
         self.ok(self.post_as(self.admin, self.url(battle_id, "close-postbattle")))
-        self.assertEqual(self.capabilities(self.admin, battle_id), {**NONE, "edit_record": True})
+        self.assertEqual(self.capabilities(self.admin, battle_id), NONE)
 
     def test_every_write_answers_the_callers_capabilities_and_broadcasts_everyones(self):
         # A status change costs no read: the answer has the caller's flags, the broadcast every player's and a

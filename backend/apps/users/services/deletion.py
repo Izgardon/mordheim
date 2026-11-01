@@ -8,7 +8,7 @@ notifications for it resolve). `preview` says so first, for the Delete dialog.
 The deletion runs in one transaction, under the row locks of the campaigns you own, so nobody joins one between the
 check and its archiving (joining takes the same lock). The user row stays, so your warbands, battles, ledger and
 encampments keep their owner as retired records. It is anonymised: the name "Former player" (on your chat messages
-and bulletin notes too), the username `deleted-<id>` and no email, so the address can sign up again, an unusable
+too), the username `deleted-<id>` and no email, so the address can sign up again, an unusable
 password, inactive, and a new session key, so every device is signed out. Your own notifications are deleted;
 notifications already sent to others keep your old name. It can't be undone.
 """

@@ -32,6 +32,24 @@ export const unitDomId = (entry: RosterUnit) => `unit-${unitKey(entry)}`;
 export const unitName = (unit: { name: string | null; unit_type: string | null }) =>
   unit.name?.trim() || unit.unit_type?.trim() || "Unnamed";
 
+const KIND_WORD: Record<RosterUnit["kind"], string> = {
+  hero: "Hero",
+  henchmen_group: "Henchmen",
+  hireling: "Hired sword",
+};
+
+/**
+ * The line under a card's name: its type, or what it is when the type is the name already (a
+ * dramatis persona hired as himself, a hero with no name), so the card never prints it twice.
+ */
+export function unitTypeLine(entry: RosterUnit) {
+  const type = entry.unit.unit_type?.trim() ?? "";
+  if (type.toLowerCase() !== unitName(entry.unit).toLowerCase()) return type;
+  if (entry.kind === "hireling" && entry.unit.kind === "dramatis_persona")
+    return "Dramatis persona";
+  return type ? KIND_WORD[entry.kind] : "";
+}
+
 export const isGroup = (
   entry: RosterUnit
 ): entry is { kind: "henchmen_group"; unit: HenchmenGroup } => entry.kind === "henchmen_group";
@@ -40,6 +58,15 @@ export const isCreature = (entry: RosterUnit) => isGroup(entry) && isCreatureGro
 
 export const liveMembers = (group: HenchmenGroup) =>
   group.henchmen.filter((member) => !member.dead);
+
+/**
+ * A henchman's name, else his group's type and his number among its living members ("Wardogs 2"),
+ * as the battle calls him: creature groups' members have no names.
+ */
+export function memberName(group: HenchmenGroup, member: { id: number; name?: string | null }) {
+  const number = liveMembers(group).findIndex((entry) => entry.id === member.id) + 1;
+  return member.name?.trim() || `${group.unit_type?.trim() || "Henchman"} ${number || ""}`.trim();
+}
 
 /** The profile for the stat strip; M and Sv read the ridden mount, which is then highlighted. */
 export function statValues({ unit }: RosterUnit) {

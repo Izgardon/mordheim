@@ -83,7 +83,7 @@ export function canRemoveMember(
 
 /**
  * An archived campaign is read-only for everyone (decision 5): writes no capability names (a new
- * battle, a chat message, a bulletin note, an encampment) hide while it is.
+ * battle, a chat message, an encampment) hide while it is.
  */
 export function isArchived(campaign: Pick<CampaignSummary, "archived_at"> | null | undefined) {
   return Boolean(campaign?.archived_at);

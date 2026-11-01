@@ -11,7 +11,7 @@ import { useDisplayNameForm } from "../../hooks/use-display-name-form";
 // types
 import type { AuthUser } from "../../types/auth-types";
 
-/** Change your display name (AUTH-NEW-02): it shows everywhere at once, chat and bulletin included. */
+/** Change your display name (AUTH-NEW-02): it shows everywhere at once, chat included. */
 export function DisplayNameSection({ user }: { user: AuthUser }) {
   const form = useDisplayNameForm(user.name ?? "", () => toast("Display name saved."));
   const isUnchanged = form.name.trim() === (user.name ?? "").trim();

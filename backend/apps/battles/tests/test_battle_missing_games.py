@@ -5,7 +5,8 @@ reason and the log says "<name> returns". A cancelled battle, and a postbattle s
 count nothing, and another warband's finalise never counts ours. The battle roster says who is missing, so prebattle
 can leave them out; upkeep skips a missing hired sword. A serious injury the player confirms sets a hero's or hired
 sword's missing games at finalise, for the games after this one. Finalise sends `warband.changed`, so other members'
-open pages of the warband follow.
+open pages of the warband follow. An approved reported result counts a game for each of its warbands too (William),
+with the same log rows and `warband.changed`; a declined or withdrawn one counts nothing.
 """
 
 from typing import Any
@@ -131,6 +132,40 @@ class MissingGamesCountdownTests(BattleTestCase):
         channel = f"private-campaign-{self.campaign.id}-events"
         self.assertEqual([(call.args[0], call.args[2], call.kwargs) for call in changed],
                          [(channel, {"warband_id": self.warband.id}, {"socket_id": SOCKET})])  # fmt: skip
+
+    def report(self) -> int:
+        body = {"participant_user_ids": [self.viewer.id], "scenario": "Street Brawl", "battle_date": "2026-10-01"}
+        body |= {"winner_warband_ids": [self.warband.id]}
+        response = self.post_as(self.player, f"{self.battles_url()}report-result/", body)
+        return int(self.ok(response, 201).data["battle"]["id"])
+
+    @override_settings(EXTERNAL_DISPATCH_SYNC=True)
+    def test_an_approved_reported_result_counts_a_game_for_every_warband_in_it(self):
+        # William: a battle reported rather than played counts for the missing units as finalise does
+        battle_id = self.report()
+        self.assertEqual(self.counts(), (2, 1, 3, 2))  # nothing until every player approves it
+
+        pusher = mock.Mock()
+        with mock.patch("apps.realtime.services.get_pusher_client", return_value=pusher):
+            self.client.force_authenticate(user=self.viewer)
+            with self.captureOnCommitCallbacks(execute=True):
+                url = self.url(battle_id, "approve-result")
+                self.ok(self.client.post(url, {}, format="json", HTTP_X_PUSHER_SOCKET_ID=SOCKET))
+
+        self.assertEqual(self.counts(), (1, 0, 2, 1))  # both warbands, whoever fought
+        self.assertEqual(HenchmenGroup.objects.get(id=self.group.id).missing_reason, "")
+        self.assertEqual(missing_logs(self.warband.id), [("unit_returns", {"name": "Swords"})])
+        changed = [call.args[2] for call in pusher.trigger.call_args_list if call.args[1] == "warband.changed"]
+        self.assertEqual(changed, [{"warband_id": self.warband.id}, {"warband_id": self.rival.id}])
+
+    def test_a_declined_or_withdrawn_reported_result_counts_nothing(self):
+        declined = self.report()
+        self.ok(self.post_as(self.viewer, self.url(declined, "decline-result")))
+        withdrawn = self.report()
+        self.ok(self.post_as(self.player, self.url(withdrawn, "withdraw-result")))
+
+        self.assertEqual(self.counts(), (2, 1, 3, 2))
+        self.assertEqual(missing_logs(self.warband.id), [])
 
 
 class MissingGamesFromInjuriesTests(BattleTestCase):

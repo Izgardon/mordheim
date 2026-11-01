@@ -245,10 +245,3 @@ class ItemRulePermissionTests(CataloguePermissionTestCase):
         self.assertEqual((missing.status_code, missing.data), (400, {"detail": "campaign_id is required"}))
         self.revoke(self.player, EDIT)
         self.assertEqual(self.post_as(self.player, url, body).status_code, 403)
-
-    def test_shared_rules_cannot_be_edited_or_deleted(self):
-        url = f"/api/item-rules/{self.parry.id}/"
-
-        self.assertEqual(self.patch_as(self.owner, url, {"name": "Riposte"}).status_code, 405)
-        self.assertEqual(self.delete_as(self.owner, url).status_code, 405)
-        self.assertEqual(self.get_as(self.player, url).data["name"], "Parry")

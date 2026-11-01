@@ -166,28 +166,3 @@ class BestiaryEntryItem(models.Model):
 
     def __str__(self):
         return f"{self.bestiary_entry_id}:{self.item_id} x{self.quantity}"
-
-
-class WarbandBestiaryFavourite(models.Model):
-    warband = models.ForeignKey(
-        "warbands.Warband",
-        related_name="bestiary_favourites",
-        on_delete=models.CASCADE,
-    )
-    bestiary_entry = models.ForeignKey(
-        BestiaryEntry,
-        related_name="warband_favourites",
-        on_delete=models.CASCADE,
-    )
-
-    class Meta:
-        db_table = "warband_bestiary_favourite"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["warband", "bestiary_entry"],
-                name="unique_warband_bestiary_favourite",
-            )
-        ]
-
-    def __str__(self):
-        return f"{self.warband_id}:{self.bestiary_entry_id}"

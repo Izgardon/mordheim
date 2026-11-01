@@ -1,7 +1,7 @@
 """The server logs sales and moves in the same transaction as the change (ECON-CQ-02).
 
-They used to leave no log (a sale wrote only its ledger row). Discards and completed trades are covered with
-their endpoints (test_economy_characterisation_stash, trades' test_trade_characterisation_locks).
+They used to leave no log (a sale wrote only its ledger row). Completed trades are covered with their endpoint
+(trades' test_trade_characterisation_locks).
 """
 
 from apps.warbands.models import WarbandItem

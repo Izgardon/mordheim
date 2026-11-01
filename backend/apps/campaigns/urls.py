@@ -5,8 +5,6 @@ from .views import (
     CampaignActiveBattlesView,
     CampaignArchiveView,
     CampaignBattleHistoryView,
-    CampaignBulletinDetailView,
-    CampaignBulletinView,
     CampaignChatReadView,
     CampaignChronicleView,
     CampaignCommonRulesView,
@@ -27,7 +25,6 @@ from .views import (
     CampaignMembersView,
     CampaignMessageDetailView,
     CampaignMessagesView,
-    CampaignMyPermissionsView,
     CampaignOwnershipView,
     CampaignPermissionsView,
     CampaignPlayersView,
@@ -79,16 +76,6 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/top-killers/",
         CampaignTopKillersView.as_view(),
         name="campaigns-top-killers",
-    ),
-    path(
-        "campaigns/<int:campaign_id>/bulletin/",
-        CampaignBulletinView.as_view(),
-        name="campaigns-bulletin",
-    ),
-    path(
-        "campaigns/<int:campaign_id>/bulletin/<int:entry_id>/",
-        CampaignBulletinDetailView.as_view(),
-        name="campaigns-bulletin-detail",
     ),
     path(
         "campaigns/<int:campaign_id>/encampments/",
@@ -144,11 +131,6 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/permissions/",
         CampaignPermissionsView.as_view(),
         name="campaigns-permissions",
-    ),
-    path(
-        "campaigns/<int:campaign_id>/permissions/me/",
-        CampaignMyPermissionsView.as_view(),
-        name="campaigns-my-permissions",
     ),
     path(
         "campaigns/<int:campaign_id>/rules/",

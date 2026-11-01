@@ -15,7 +15,6 @@ from apps.warbands.serializers import (
     WarbandUpdateSerializer,
 )
 from apps.warbands.services import ledger
-from apps.warbands.services.roster_stats import roster_stats
 from apps.warbands.services.types import load_types, picked_types
 
 from .base import WarbandScopedView
@@ -82,10 +81,3 @@ class WarbandDetailView(WarbandScopedView):
 class WarbandSummaryView(WarbandScopedView):
     def get(self, request: Request, warband_id: int) -> Response:
         return Response(WarbandSummarySerializer(self.warband).data)
-
-
-class WarbandRosterStatsView(WarbandScopedView):
-    """GET: the stat line of each unit on the roster, for the campaign overview's expand (PERF-42; 3 queries)."""
-
-    def get(self, request: Request, warband_id: int) -> Response:
-        return Response(roster_stats(self.warband.id))

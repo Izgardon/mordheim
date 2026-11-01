@@ -13,7 +13,6 @@ from apps.warbands.models import (
     Hireling,
     HirelingItem,
     Warband,
-    WarbandItem,
 )
 
 
@@ -77,41 +76,6 @@ class WarbandsApiTests(APITestCase):
         listed = self.client.get(f"/api/warbands/?campaign_id={self.campaign.id}").json()
         self.assertEqual([row["id"] for row in listed], [self.warband.id])
         self.assertEqual(self.client.get(f"/api/warbands/?campaign_id={self.campaign.id + 1}").json(), [])
-
-    def test_add_warband_item_defaults_cost_from_single_availability(self):
-        response = self.client.post(
-            f"/api/warbands/{self.warband.id}/items/",
-            {
-                "item_id": self.item.id,
-                "quantity": 2,
-            },
-            format="json",
-        )
-
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.data["cost"], 35)
-        self.assertEqual(response.data["quantity"], 2)
-        self.assertEqual(
-            WarbandItem.objects.get(warband=self.warband, item=self.item).cost,
-            35,
-        )
-
-    def test_add_warband_item_keeps_explicit_cost(self):
-        response = self.client.post(
-            f"/api/warbands/{self.warband.id}/items/",
-            {
-                "item_id": self.item.id,
-                "cost": 99,
-            },
-            format="json",
-        )
-
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.data["cost"], 99)
-        self.assertEqual(
-            WarbandItem.objects.get(warband=self.warband, item=self.item).cost,
-            99,
-        )
 
     def test_patch_hero_items_defaults_cost_from_single_availability(self):
         response = self.client.patch(

@@ -1,5 +1,5 @@
 {
-  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too. extra_warband_types: warbands neither Broheim nor mordheimer lists. group_members: add/remove type slugs per group slug. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_warbands: item name -> the only type slugs that may buy it, and why. item_notes: item name -> a soft note added to each of its price rows. whole_names: names matched as a whole on the same-name list, not split at the slash. setting_assignments: kind (skills, hired_swords, dramatis_personae) -> our row's name as the report shows it (\"Sniper (Hochland Bandits)\") -> setting slug. skill_lists: a skill list's name -> who learns the skills of it mordheimer lacks (for_everyone, or warbands as {type} or {group} slugs), large_only (a Large unit's skill) and a note shown when learning. drop_skills: our skill rows left out (label -> why). extra_skills: skill rows our table lacks. skill_descriptions: a skill row's description put right (label -> text).",
+  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too. extra_warband_types: warbands neither Broheim nor mordheimer lists. group_members: add/remove type slugs per group slug. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_warbands: item name -> the only type slugs that may buy it, and why. item_notes: item name -> a soft note added to each of its price rows. whole_names: names matched as a whole on the same-name list, not split at the slash. setting_assignments: kind (skills, hired_swords, dramatis_personae) -> our row's name as the report shows it (\"Sniper (Hochland Bandits)\") -> setting slug. skill_lists: a skill list's name -> who learns the skills of it mordheimer lacks (for_everyone, or warbands as {type} or {group} slugs), large_only (a Large unit's skill) and a note shown when learning. drop_skills: our skill rows left out (label -> why). extra_skills: skill rows our table lacks. skill_descriptions: a skill row's description put right (label -> text). fees_in_rules: a hired sword's or dramatis persona's name -> why its hire fee is in its rules: kind special, its gold kept, its hiring sentence in full as the note.",
   "warband_aliases": {
     "Stromfels Reavers": ["shallows-beasts"]
   },
@@ -54,6 +54,9 @@
   ],
   "skill_descriptions": {
     "Quick Thinker (Dwarf Exiled Engineers)": "The dwarf may add +1 to any roll on the experimental weapons chart. (MiM)"
+  },
+  "fees_in_rules": {
+    "Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne": "his hire is the summoning ritual his hiring sentence describes (William: do what you think is best); shown, never automated"
   },
   "setting_assignments": {
     "skills": { "Master Inventor (Dwarf Exiled Engineers)": "mutiny-in-marienburg" }

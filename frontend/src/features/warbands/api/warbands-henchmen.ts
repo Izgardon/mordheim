@@ -33,6 +33,7 @@ export const promoteWarbandHenchman = (
 ) =>
   apiRequest<PromoteHenchmanResult>(`/warbands/${warbandId}/henchmen-groups/${groupId}/promote/`, {
     method: "POST",
+    headers: socketIdHeaders(),
     body,
   });
 

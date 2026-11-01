@@ -18,6 +18,8 @@ type RoundSheetProps = {
   participants: BattleParticipant[];
   neutralGroups: BattleNeutralGroup[];
   userId: number | undefined;
+  /** Start anyway: the battle's creator or a battle manager only (William). */
+  canForce: boolean;
   onOpenChange: (open: boolean) => void;
   /** "Not yet": hides the popup until the next ask. */
   onNotYet: () => void;
@@ -25,9 +27,10 @@ type RoundSheetProps = {
 };
 
 /**
- * The next round (design E): the asker waits on who has agreed and can Start anyway, or Cancel
- * the ask; everyone else gets "Start round N?" with Not yet and Agree. When everyone agrees, or
- * someone starts it anyway, the round goes up for all players.
+ * The next round (design E): the asker waits on who has agreed, and can Cancel the ask or, as the
+ * battle's creator or a battle manager (William), Start anyway; everyone else gets "Start round
+ * N?" with Not yet and Agree. When everyone agrees, or one of them starts it anyway, the round
+ * goes up for all players.
  */
 export default function RoundSheet({
   mode,
@@ -36,6 +39,7 @@ export default function RoundSheet({
   participants,
   neutralGroups,
   userId,
+  canForce,
   onOpenChange,
   onNotYet,
   onAction,
@@ -96,13 +100,25 @@ export default function RoundSheet({
             >
               Cancel
             </Button>
-            <Button className="min-h-12 text-[15px]" disabled={busy} onClick={run("force")}>
-              Start anyway
-            </Button>
+            {canForce ? (
+              <Button className="min-h-12 text-[15px]" disabled={busy} onClick={run("force")}>
+                Start anyway
+              </Button>
+            ) : (
+              <Button className="min-h-12 text-[15px]" onClick={() => onOpenChange(false)}>
+                Keep waiting
+              </Button>
+            )}
           </div>
         )
       }
     >
+      {mode === "asked" && !canForce ? (
+        <p className="m-0 text-sm text-text2">
+          The round starts once everyone agrees. The battle&rsquo;s creator or a battle manager can
+          start it anyway.
+        </p>
+      ) : null}
       {mode === "incoming" ? (
         <p className="m-0 text-sm text-text2">
           Knocked down models stand up. Stunned models become knocked down.

@@ -260,6 +260,12 @@ export function useBattleScreen() {
       ? capabilities.cancel
       : battleState.battle.created_by_user_id === userId,
     canNudge: capabilities ? Boolean(capabilities.nudge) : false,
+    // Start anyway: the creator or a battle manager still fighting (William); the others ask and agree.
+    canForceRound:
+      canAct &&
+      (capabilities
+        ? Boolean(capabilities.force_round)
+        : battleState.battle.created_by_user_id === userId),
   };
 }
 
