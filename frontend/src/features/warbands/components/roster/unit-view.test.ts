@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import type { UnitKill } from "../../types/warband-types";
-import { killLine, unitTypeLine, type RosterUnit } from "./unit-view";
+import type { HenchmenGroup, UnitKill } from "../../types/warband-types";
+import { killLine, memberName, unitTypeLine, type RosterUnit } from "./unit-view";
 
 const kill = (fields: Partial<UnitKill> = {}): UnitKill => ({
   id: 1,
@@ -52,5 +52,26 @@ describe("unitTypeLine", () => {
     );
     expect(unitTypeLine(hireling({ name: "", unit_type: "Ogre Bodyguard" }))).toBe("Hired sword");
     expect(unitTypeLine(hireling({ name: "", unit_type: "" }))).toBe("");
+  });
+});
+
+describe("memberName", () => {
+  it("calls a member without a name by his group's type and number, as the battle does", () => {
+    const group = {
+      unit_type: "Wardogs",
+      henchmen: [
+        { id: 4, name: "", dead: false },
+        { id: 5, name: "", dead: true },
+        { id: 6, name: " ", dead: false },
+        { id: 7, name: "Fang", dead: false },
+      ],
+    } as unknown as HenchmenGroup;
+
+    expect(group.henchmen.map((member) => memberName(group, member))).toEqual([
+      "Wardogs 1",
+      "Wardogs",
+      "Wardogs 2",
+      "Fang",
+    ]);
   });
 });

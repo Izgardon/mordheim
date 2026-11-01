@@ -59,6 +59,15 @@ export const isCreature = (entry: RosterUnit) => isGroup(entry) && isCreatureGro
 export const liveMembers = (group: HenchmenGroup) =>
   group.henchmen.filter((member) => !member.dead);
 
+/**
+ * A henchman's name, else his group's type and his number among its living members ("Wardogs 2"),
+ * as the battle calls him: creature groups' members have no names.
+ */
+export function memberName(group: HenchmenGroup, member: { id: number; name?: string | null }) {
+  const number = liveMembers(group).findIndex((entry) => entry.id === member.id) + 1;
+  return member.name?.trim() || `${group.unit_type?.trim() || "Henchman"} ${number || ""}`.trim();
+}
+
 /** The profile for the stat strip; M and Sv read the ridden mount, which is then highlighted. */
 export function statValues({ unit }: RosterUnit) {
   const effective = unit.effective_stats;
