@@ -147,6 +147,12 @@ h6 {
   padding-inline: calc((100cqw - 100%) / 2);
 }
 
+/* An archived campaign's banner heads every page: the page's band then sits under it in the flow
+   instead of pulling up over it. */
+.desktop-shell__content-inner:has(> .archived-banner) .page-band {
+  margin-top: 0;
+}
+
 /* The landing's background video (design E): it covers the web's picture half, behind the
    caption card, and fades in over the rail colour once YouTube has loaded it. */
 .auth-video {
