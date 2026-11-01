@@ -12,7 +12,7 @@ import {
 import type { PrebattleConfig } from "@/features/battles/hooks/usePrebattleConfig";
 import { cn } from "@/lib/utils";
 
-import { STAT_SHORT, statValues } from "../battle/battle-units";
+import { STAT_SHORT, statValues, distinctType } from "../battle/battle-units";
 
 const missingLabel = (unit: { missingGames?: number }) =>
   unit.missingGames
@@ -115,7 +115,7 @@ export default function PrebattleUnitRow({
             {unit.displayName}
           </span>
           <span className="truncate text-xs text-muted-foreground">
-            {[unit.unitType, detail].filter(Boolean).join(" · ")}
+            {[distinctType(unit), detail].filter(Boolean).join(" · ")}
           </span>
           {unit.outReason ? <span className="text-xs text-danger">{unit.outReason}</span> : null}
         </span>

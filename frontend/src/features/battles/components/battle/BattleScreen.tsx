@@ -49,6 +49,7 @@ import {
   battleSections,
   canScore,
   nextStatus,
+  distinctType,
   sideId,
   type BattleUnitView,
 } from "./battle-units";
@@ -281,7 +282,7 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
     <UnitCard
       key={view.unit.key}
       view={view}
-      typeLine={[view.unit.unitType, TYPE_SUFFIX[view.unit.kind]].filter(Boolean).join(" · ")}
+      typeLine={[distinctType(view.unit), TYPE_SUFFIX[view.unit.kind]].filter(Boolean).join(" · ")}
       canAct={canAct}
       saving={Boolean(config.savingUnitKeys[view.unit.key])}
       onKill={canScore(view.unit) ? () => killerFor(view.unit.displayName, [view]) : undefined}

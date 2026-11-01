@@ -16,6 +16,7 @@ import {
   statValues,
   unitDomId,
   unitName,
+  unitTypeLine,
   xpInfo,
   type RosterUnit,
 } from "./unit-view";
@@ -126,7 +127,7 @@ export default function UnitCard(props: UnitCardProps) {
         ) : null}
       </span>
       <span className="text-[13px] text-muted-foreground">
-        {isGroup(entry) && entry.unit.name ? entry.unit.unit_type : unit.unit_type}
+        {unitTypeLine(entry)}
         {countText ? <span className="ml-1.5 font-mono text-accent-text">{countText}</span> : null}
       </span>
     </button>

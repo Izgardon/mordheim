@@ -6,6 +6,7 @@ import {
   battleSections,
   nextStatus,
   STATUS_LABEL,
+  distinctType,
   type UnitStatus,
   type WarbandSide,
 } from "./battle-units";
@@ -66,7 +67,7 @@ export function OtherWarband({
         <Row
           key={view.unit.key}
           name={view.unit.displayName}
-          detail={`${view.unit.unitType} · ${kind}${view.kills ? ` · ${view.kills} kills` : ""}`}
+          detail={`${[distinctType(view.unit), kind].filter(Boolean).join(" · ")}${view.kills ? ` · ${view.kills} kills` : ""}`}
           status={view.status}
           wounds={
             view.status === "out_of_action" ? undefined : `W ${view.wounds}/${view.maxWounds}`

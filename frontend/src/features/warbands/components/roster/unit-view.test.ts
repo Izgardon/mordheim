@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { UnitKill } from "../../types/warband-types";
-import { killLine } from "./unit-view";
+import { killLine, unitTypeLine, type RosterUnit } from "./unit-view";
 
 const kill = (fields: Partial<UnitKill> = {}): UnitKill => ({
   id: 1,
@@ -34,5 +34,23 @@ describe("killLine", () => {
       "Magister Halvard · Street Fight · after the fight · other"
     );
     expect(killLine(kill({ scenario: " " }))).toBe("Magister Halvard · 24 Mar · round 2 · melee");
+  });
+});
+
+describe("unitTypeLine", () => {
+  const hireling = (fields: Record<string, unknown>) =>
+    ({ kind: "hireling", unit: { id: 3, ...fields } }) as unknown as RosterUnit;
+
+  it("shows the type, unless it is the name already", () => {
+    expect(unitTypeLine(hireling({ name: "Grukk", unit_type: "Ogre Bodyguard" }))).toBe(
+      "Ogre Bodyguard"
+    );
+    // a dramatis persona hired as himself printed his name twice (After the passes)
+    const persona = { name: "Bertha Bestraufrung", unit_type: "Bertha Bestraufrung" };
+    expect(unitTypeLine(hireling({ ...persona, kind: "dramatis_persona" }))).toBe(
+      "Dramatis persona"
+    );
+    expect(unitTypeLine(hireling({ name: "", unit_type: "Ogre Bodyguard" }))).toBe("Hired sword");
+    expect(unitTypeLine(hireling({ name: "", unit_type: "" }))).toBe("");
   });
 });

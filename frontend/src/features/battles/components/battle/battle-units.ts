@@ -116,6 +116,13 @@ export function unitView(
   };
 }
 
+/** A unit's type for the line under its name, or "" when it is the name already (a dramatis persona
+ * hired as himself), so the name isn't printed twice. */
+export const distinctType = (unit: { unitType?: string | null; displayName: string }) =>
+  unit.unitType && unit.unitType.trim().toLowerCase() !== unit.displayName.trim().toLowerCase()
+    ? unit.unitType
+    : "";
+
 /**
  * Whether a unit can log a kill: always one of the warband's own heroes, henchmen or hired
  * swords, never a temporary unit, a pet or a neutral creature (next step 9).
@@ -271,7 +278,7 @@ export function victimOptions(
   const single = (entry: BattleUnitView, kind: string): VictimOption => ({
     id: entry.unit.key,
     name: entry.unit.displayName,
-    detail: `${entry.unit.unitType} · ${kind}`,
+    detail: [distinctType(entry.unit), kind].filter(Boolean).join(" · "),
     unitKey: entry.unit.key,
   });
   const standing = (entry: BattleUnitView) => entry.status !== "out_of_action";
