@@ -1,7 +1,8 @@
 """Reported results: a battle played away from the app, reported by one player and approved by the others (BUG-46).
 
-It ends when every other player approves it, recording wins and losses (none for "No winner") and each warband's
-battle log, and is cancelled when one declines or the submitter withdraws it.
+It ends when every other player approves it, recording wins and losses (none for "No winner"), each warband's
+battle log and its battle number (services/numbering.py), and is cancelled when one declines or the submitter
+withdraws it.
 """
 
 from dataclasses import dataclass
@@ -20,6 +21,7 @@ from ..models import Battle, BattleEvent, BattleParticipant
 from .errors import Refused, field_error
 from .events import append_event, notify_result_updated, notify_user
 from .lifecycle import battle_result_log, record_wins_and_losses, reset_trading_actions
+from .numbering import battle_number
 from .setup import players_warbands, scenario_name
 
 
@@ -125,6 +127,7 @@ def create_reported_result(campaign_id: int, creator, result: ReportedResult) ->
         ended_at=ended_at,
         winner_warband_ids_json=result.winner_ids,
         state_version=1,
+        number=battle_number(warband.id for warband in result.warbands.values()),  # until it is approved
     )
     payload = {
         "mode": "reported_result",
@@ -167,12 +170,14 @@ def everyone_approved(battle_id: int) -> bool:
 
 
 def commit_reported_result(battle: Battle) -> None:
+    """Wins and losses, each warband's battle log and the battle's number for good."""
     participants = list(
         BattleParticipant.objects.select_related("warband")
         .filter(battle_id=battle.id)
         .exclude(status=BattleParticipant.STATUS_REPORTED_RESULT_DECLINED)
         .order_by("id")
     )
+    battle.number = battle_number([participant.warband_id for participant in participants], battle_id=battle.id)
     record_wins_and_losses(battle)  # none when nobody won (decision 8)
     for participant in participants:
         log_warband_event(participant.warband_id, "battle", "complete", battle_result_log(battle, participant))
@@ -195,7 +200,7 @@ def approve(battle: Battle, participant: BattleParticipant) -> None:
         commit_reported_result(battle)
         battle.status = Battle.STATUS_ENDED
         battle.ended_at = battle.ended_at or now
-        battle.save(update_fields=["status", "ended_at", "updated_at"])
+        battle.save(update_fields=["status", "ended_at", "number", "updated_at"])
         reset_trading_actions(battle, only_if_most_recent=True)
     notify_result_updated(battle, _player_ids(battle))
 

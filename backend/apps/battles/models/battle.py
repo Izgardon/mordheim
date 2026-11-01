@@ -80,6 +80,9 @@ class Battle(models.Model):
     # creatures nobody plays (services/neutrals.py): [{key, name, creature_type, stats, creatures: [{key, name,
     # status, wounds}]}]; never rostered, nothing of them reaches the post-game
     neutral_groups_json = models.JSONField(default=list, blank=True)
+    # the campaign battle number (services/numbering.py): the most games any of its warbands has played, this one
+    # included; set when the battle is made and for good when it starts (a reported result: when it is approved)
+    number = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
         db_table = "battle"

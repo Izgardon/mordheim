@@ -38,6 +38,7 @@ BATTLE_KEYS = [
     "round",
     "round_request",
     "neutral_groups",
+    "number",  # the campaign battle number (test_battle_number.py)
 ]
 PARTICIPANT_KEYS = [
     "id",

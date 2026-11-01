@@ -84,13 +84,14 @@ def format_short_date(value: datetime | None) -> str:
 
 
 def _busy_battle_fields(busy: tuple | None) -> dict:
-    battle_id, battle_status, last_activity_at, participant_status = busy or (None, None, None, None)
+    battle_id, battle_status, last_activity_at, participant_status, number = busy or (None,) * 5
     return {
         "battle_busy_status": battle_status,
         "battle_busy_battle_id": battle_id,
         "battle_busy_last_activity_at": last_activity_at,
         # his own place in it (next step 5: the readiness bar tells In battle from Post-game)
         "battle_busy_participant_status": participant_status,
+        "battle_busy_battle_number": number,  # the readiness bar's "In battle 6"
     }
 
 
@@ -121,11 +122,12 @@ def _warbands_by_user(campaign_id: int) -> dict[int, dict[str, Any]]:
 
 
 def _busy_by_user(campaign_id: int, user_ids: list[int]) -> dict[int, tuple]:
-    """Each member's most recent unfinished battle: id, status, last activity (BUG-10) and his own status in it."""
+    """Each member's most recent unfinished battle: id, status, last activity (BUG-10), his own status in it and
+    its number."""
     busy_entries = (
         busy_participations(campaign_id, user_ids)  # the busy rule battles warn with (decision 1)
         .order_by("-battle__created_at")
-        .values_list("user_id", "battle_id", "battle__status", "battle__last_activity_at", "status")
+        .values_list("user_id", "battle_id", "battle__status", "battle__last_activity_at", "status", "battle__number")
     )
     busy_by_user: dict[int, tuple] = {}
     for user_id, *battle in busy_entries:
@@ -308,6 +310,7 @@ def battle_history_payload(campaign_id: int) -> list[dict[str, Any]]:
         payload.append(
             {
                 "id": battle.id,
+                "number": battle.number,
                 "scenario": battle.scenario,
                 "winners": [row.warband.name for row in rows if row.warband_id in winner_ids],
                 "date": format_short_date(battle.ended_at or battle.created_at),
