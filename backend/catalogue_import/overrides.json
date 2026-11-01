@@ -203,6 +203,37 @@
     "Quick Thinker (Dwarf Exiled Engineers)": "The dwarf may add +1 to any roll on the experimental weapons chart. (MiM)"
   },
   "setting_assignments": {
-    "skills": { "Master Inventor (Dwarf Exiled Engineers)": "mutiny-in-marienburg" }
+    "skills": {
+      "Master Inventor (Dwarf Exiled Engineers)": "mutiny-in-marienburg",
+      "Mutant (Beastmen Raiders)": "empire-in-flames",
+      "Bellowing Roar (Beastmen Raiders)": "empire-in-flames",
+      "Infiltration (Dark Elf)": "mordheim",
+      "Hide in Shadows (Night Goblins)": "mordheim-1c",
+      "Hardy Constitution (Grave Robber)": "mordheim-2a",
+      "Crude belch (Halflings)": "mordheim-2a",
+      "Hide in shadows (Hochland Bandits)": "nemesis-crown",
+      "Sniper (Hochland Bandits)": "nemesis-crown",
+      "Infiltration (Skink)": "mordheim",
+      "Mutant (Marauders of Chaos)": "mordheim-1c",
+      "Netter (Night Goblins)": "mordheim-1c",
+      "Battle tongue (Norse)": "mordheim-1b",
+      "Crude belch (Ogres)": "mordheim-1c",
+      "Maneater (Ogres)": "mordheim-2a",
+      "Bellowing roar (Ogres)": "mordheim-1c",
+      "Foul Odour (Ostlanders)": "mordheim",
+      "Hardy Constitution (Pirates)": "mordheim-1b",
+      "Infiltration (Sea Ghosts)": "mordheim",
+      "Hide in Shadows (Sea Ghosts)": "mordheim-1b",
+      "Hide in Shadows (Shadow Warriors)": "mordheim-1b",
+      "Sniper (Shadow Warriors)": "mordheim-1b",
+      "Protection of Sigmar (Sisters of Sigmar)": "mordheim",
+      "Utter Determination (Sisters of Sigmar)": "mordheim",
+      "Infiltration (Skaven)": "mordheim",
+      "Infiltration (Skaven Metal Mongers)": "mordheim",
+      "Infiltration (Strigany)": "mordheim",
+      "Combat Master (Combat)": "mordheim",
+      "Battle Tongue (Academic)": "mordheim"
+    },
+    "hired_swords": { "Norse Shaman": "border-town-burning" }
   }
 }
