@@ -4,7 +4,7 @@ from django.test import SimpleTestCase
 
 from catalogue_import.items import ItemLog, mordheimer_items
 from catalogue_import.mim import MimReader
-from catalogue_import.pipeline import add_notes, build, same_name_clusters, seed_changes
+from catalogue_import.pipeline import ItemDecisions, add_notes, build, same_name_clusters, seed_changes
 from catalogue_import.sources import OUT
 from catalogue_import.tests.world import world
 from catalogue_import.warbands import Resolver
@@ -44,6 +44,22 @@ class BuildTests(SimpleTestCase):
         self.assertEqual([item["name"] for item in items], ["Sword"])
         self.assertEqual(log.dropped, ["Swivel Gun"])
         self.assertEqual(seed_changes(["Sword", "Swivel Gun", "Ladders"], items, log.dropped), ([], ["Ladders"]))
+
+    def test_item_decisions_name_real_items_and_types(self) -> None:
+        types, _resolver, _groups, _ctx = world()
+        items = [{"name": "Tome of Magic"}]
+        good = {"item_exclusions": {"Tome of Magic": {"warbands": ["witch-hunters"], "why": "its note"}}}
+        self.assertEqual(
+            ItemDecisions(good, types, items).warbands("item_exclusions"),
+            {"Tome of Magic": (["witch-hunters"], "its note")},
+        )
+        kept = ItemDecisions({"item_defaults_kept": {"Tome of Magic": "kept"}}, types, items)
+        self.assertEqual(kept.kept("item_defaults_kept"), {"Tome of Magic": "kept"})
+        no_type = {"item_warbands_add": {"Tome of Magic": {"warbands": ["witch-hunter"], "why": ""}}}
+        with self.assertRaisesRegex(ValueError, "no warband type witch-hunter"):
+            ItemDecisions(no_type, types, items).warbands("item_warbands_add")
+        with self.assertRaisesRegex(ValueError, "no mordheimer item 'Tome'"):
+            ItemDecisions({"item_defaults_kept": {"Tome": "kept"}}, types, items).kept("item_defaults_kept")
 
     def test_a_mim_restriction_follows_a_warband_alias_and_item_notes_are_added(self) -> None:
         types, _resolver, groups, _ctx = world()

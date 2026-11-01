@@ -15,6 +15,7 @@ class ReportData:
     types: list[dict[str, Any]]
     groups: list[dict[str, Any]]
     group_questions: dict[str, list[str]]
+    group_answers: dict[str, dict[str, list[str]]]  # group slug -> how (add, keep_in...) -> type slugs
     name_uses: list[Any]
     conflicts: list[dict[str, str]]
     same_names: list[list[dict[str, Any]]]
@@ -50,19 +51,30 @@ def _not_on_mordheimer(data: ReportData) -> int:
     return sum(1 for row in data.types if not row["mordheimer_url"])
 
 
+def _many(count: int, one: str, many: str) -> str:
+    return f"{count} {one if count == 1 else many}"
+
+
 def _top(data: ReportData) -> list[str]:
     questions = sum(len(items) for items in data.group_questions.values())
+    answered = sum(len(slugs) for answers in data.group_answers.values() for slugs in answers.values())
     nobody = [c for c in data.conflicts if c["issue"].startswith("Its lists let no one buy it")]
+    settled = [c for c in data.conflicts if c["settled"]]
     unmatched = [use for use in data.name_uses if use.how]
+    named = sorted((use for use in unmatched if use.how.startswith("settled")), key=lambda use: use.name.lower())
+    rest = [use for use in unmatched if not use.how.startswith("settled")]
+    rest_text = "each name one type" if all(len(use.slugs) == 1 for use in rest) else "as the table shows"
+    log = data.assignment_log
+    several = [row[-1] for row in log.ambiguous] + [row[-1] for row in log.multi_setting]
     return [
         "## Start here",
         "",
         f"1. **Same-name list:** {len(data.same_names)} names appear more than once across mordheimer and MiM. mordheimer's entry is the main one; the PDF pass settles each MiM twin (below).",
-        f"2. **Warband groups:** {questions} membership questions left, each about types some mordheimer lists name or leave out. Good, Evil and Mercenaries come from mordheimer's hiring lists, so the {_not_on_mordheimer(data)} types mordheimer lacks get their sides in the hired-swords pass.",
-        f"3. **Items no one may buy:** {len(nobody)} mordheimer items exclude every warband and permit none, mostly Khemri's. Defaults are in the contradictions table.",
-        f"4. **mordheimer's contradictions:** {len(data.conflicts)} places where an item's lists and its own notes disagree, each with the default taken.",
-        f'5. **Warband names:** {len(unmatched)} names in mordheimer\'s data match no warband type, or more than one. "Chaos Dwarfs" is mapped to Black Dwarfs and Wolfcloak\'s "Mercenaries" is left out; please check.',
-        f"6. **Settings for our skills and hired swords:** {len(data.assignment_log.ambiguous)} names mordheimer gives more than one setting; check the one taken for each.",
+        f"2. **Warband groups:** {_many(questions, 'membership question', 'membership questions')} left; overrides.json settles where {_many(answered, 'type stands', 'types stand')} (the table below). Good, Evil and Mercenaries come from mordheimer's hiring lists, so the {_not_on_mordheimer(data)} types mordheimer lacks get their sides in the hired-swords pass.",
+        f"3. **Items no one may buy:** {len(nobody)} mordheimer items exclude every warband and permit none, mostly Khemri's; {sum(1 for c in nobody if c['settled'])} of them settled in overrides.json (the contradictions table).",
+        f"4. **mordheimer's contradictions:** {len(data.conflicts)} places where an item's lists and its own notes disagree; {len(settled)} settled in overrides.json, {len(data.conflicts) - len(settled)} left at the default taken.",
+        f"5. **Warband names:** {len(unmatched)} names in mordheimer's data match no warband type, or more than one; {len(named)} settled in overrides.json ({', '.join(use.name for use in named) or 'none'}), the rest {rest_text}.",
+        f"6. **Settings for our skills and hired swords:** {_many(len(log.ambiguous), 'name', 'names')} mordheimer gives more than one setting and {_many(len(log.multi_setting), 'entry', 'entries')} it lists in several; {several.count('overrides.json')} of the {len(several)} settled in overrides.json.",
         f"7. **Who can hire and learn:** {len(data.hiring_log.unplaced)} hired swords, dramatis personae and skills name a warband no type matches; {len(data.hiring_log.fees)} fees aren't plain numbers, {sum(1 for row in data.hiring_log.fees if row[3].unread or row[5].unread)} of them unread.",
         "",
         "Answers go into `overrides.json`; the next build applies them.",
@@ -72,7 +84,8 @@ def _top(data: ReportData) -> list[str]:
 
 def _conflicts(data: ReportData) -> list[str]:
     rows = [[c["item"], c["issue"], c["default"]] for c in data.conflicts]
-    return ["## mordheimer's contradictions", "", *_table(["Item", "What disagrees", "Default taken"], rows), ""]
+    intro = "What each item takes; a row set or kept in overrides.json is settled, the rest stand at the default."
+    return ["## mordheimer's contradictions", "", intro, "", *_table(["Item", "What disagrees", "Taken"], rows), ""]
 
 
 def _names(data: ReportData) -> list[str]:
@@ -81,7 +94,10 @@ def _names(data: ReportData) -> list[str]:
     for use in sorted(data.name_uses, key=lambda use: use.name.lower()):
         mapped = ", ".join(names.get(slug, slug) for slug in use.slugs) or "left out"
         rows.append([use.name, ", ".join(sorted(use.where)), mapped, use.how])
-    intro = "Names in item, skill, hired-sword or dramatis data that match no warband type exactly, or match several."
+    intro = (
+        "Names in item, skill, hired-sword or dramatis data that match no warband type exactly, or match several. A"
+        " mapping kept in overrides.json (`warband_aliases`) is settled."
+    )
     return [
         "## Warband names that need a mapping",
         "",
@@ -105,14 +121,33 @@ def _same_names(data: ReportData) -> list[str]:
     return ["## Same-name list", "", intro, "", *_table(["Name", "Entries", "Main"], rows), ""]
 
 
+GROUP_ANSWERS = {"add": "Added", "remove": "Taken out", "keep_in": "Kept in", "keep_out": "Kept out"}
+
+
 def _groups(data: ReportData) -> list[str]:
-    lines = ["## Warband group questions", ""]
+    lines = ["## Warband groups", ""]
     lines.append(
         f"Good, Evil and Mercenaries come from mordheimer's hiring lists, so the {_not_on_mordheimer(data)} warband types mordheimer lacks are in no side group yet; the hired-swords pass fills them in."
     )
     lines.append("")
-    for group in data.groups:
-        questions = data.group_questions.get(group["slug"], [])
+    hows = [how for how in GROUP_ANSWERS if any(how in answers for answers in data.group_answers.values())]
+    rows = [
+        [group["name"], len(group["members"]), *(", ".join(data.names.get(slug, slug) for slug in answers.get(how, [])) for how in hows)]
+        for group in data.groups
+        if (answers := data.group_answers.get(group["slug"], {}))
+    ]  # fmt: skip
+    if rows:
+        lines += [
+            "Settled in overrides.json (`group_members`): each type named here stays where it is put.",
+            "",
+            *_table(["Group", "Types", *(GROUP_ANSWERS[how] for how in hows)], rows),
+            "",
+        ]
+    asked = [(group, data.group_questions.get(group["slug"], [])) for group in data.groups]
+    if not any(questions for _group, questions in asked):
+        return [*lines, "No membership questions left.", ""]
+    lines += ["Questions left:", ""]
+    for group, questions in asked:
         if questions:
             lines.append(f"**{group['name']}** ({len(group['members'])} types)")
             lines.extend(f"- {question}" for question in questions)
@@ -191,13 +226,18 @@ def _assignments(data: ReportData) -> list[str]:
     if log.ambiguous:
         intro = (
             "Names mordheimer gives more than one setting; the entry for our list's warband was taken, else the one"
-            " of our type, else the lowest:"
+            " of our type, else the lowest. One set in overrides.json is settled:"
         )
-        table = [[kind, name, taken, ", ".join(others)] for kind, name, taken, others in log.ambiguous]
-        lines += [intro, "", *_table(["Kind", "Ours", "Setting taken", "Also on mordheimer"], table), ""]
-    for kind, name, settings in log.multi_setting:
-        lines.append(f"{name} ({kind}) is in {', '.join(settings)} on mordheimer; it lives in {settings[0]}.")
+        table = [[kind, name, taken, ", ".join(others), _settled(how)] for kind, name, taken, others, how in log.ambiguous]  # fmt: skip
+        lines += [intro, "", *_table(["Kind", "Ours", "Setting taken", "Also on mordheimer", "Settled"], table), ""]
+    for kind, name, settings, taken, how in log.multi_setting:
+        where = ", settled in overrides.json" if how == "overrides.json" else ""
+        lines.append(f"{name} ({kind}) is in {', '.join(settings)} on mordheimer; it lives in {taken}{where}.")
     return [*lines, ""] if log.multi_setting else lines
+
+
+def _settled(how: str) -> str:
+    return "overrides.json" if how == "overrides.json" else ""
 
 
 def _fees(fees: list[Any]) -> list[str]:

@@ -93,6 +93,54 @@ class PriceRowTests(SimpleTestCase):
             ["only Skaven, set in overrides.json (on the Skaven list)"],
         )
 
+    def test_types_added_in_overrides_join_the_list_and_settle_the_contradiction(self) -> None:
+        self.ctx.added["Thing"] = (["witch-hunters"], "the list predates them")
+        rows = mordheimer_rows(item(permittedWarbands=["Reiklanders"], caveat="Humans only"), self.ctx)
+        self.assertEqual(
+            rows[0]["warbands"],
+            [{"type": "witch-hunters", "excluded": False}, {"type": "reiklanders", "excluded": False}],
+        )
+        self.assertEqual(
+            [(conflict["default"], conflict["settled"]) for conflict in self.ctx.conflicts],
+            [("the list plus Witch Hunters, set in overrides.json (the list predates them)", "set")],
+        )
+
+    def test_an_exclusion_list_from_overrides_is_the_only_one(self) -> None:
+        self.ctx.exclusions["Thing"] = (["witch-hunters", "sisters-of-sigmar"], "as its note says")
+        tome = item(
+            permittedWarbands="all",
+            excludedWarbands=["Witch Hunters", "Sisters of Sigmar", "Skaven"],
+            caveat="Not available to Witch Hunters or Sisters of Sigmar",
+        )
+        rows = mordheimer_rows(tome, self.ctx)
+        self.assertTrue(rows[0]["for_everyone"])
+        self.assertEqual(rows[0]["warbands"], [{"group": "sigmarite", "excluded": True}])
+        self.assertEqual(
+            self.ctx.conflicts[0]["default"],
+            "everyone except Sisters of Sigmar, Witch Hunters, set in overrides.json (as its note says)",
+        )
+
+    def test_a_kept_default_stands_and_reads_as_settled(self) -> None:
+        self.ctx.kept["Thing"] = "the unarmed attack"
+        self.assertEqual(mordheimer_rows(item(excludedWarbands="all", cost=None, availability=""), self.ctx), [])
+        self.assertEqual(
+            [(conflict["default"], conflict["settled"]) for conflict in self.ctx.conflicts],
+            [
+                (
+                    'no warbands listed ("not usually available" to all), kept in overrides.json (the unarmed attack)',
+                    "kept",
+                )
+            ],
+        )
+
+    def test_a_kept_default_with_nothing_to_keep_is_reported(self) -> None:
+        self.ctx.kept["Thing"] = "stale"
+        mordheimer_rows(item(permittedWarbands="all"), self.ctx)
+        self.assertEqual(
+            [(conflict["issue"], conflict["settled"]) for conflict in self.ctx.conflicts],
+            [("overrides.json keeps its default, but nothing disagrees", "")],
+        )
+
     def test_nothing_to_buy_gives_no_rows(self) -> None:
         self.assertEqual(mordheimer_rows(item(excludedWarbands="all", cost=None, availability=""), self.ctx), [])
 

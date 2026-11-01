@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from catalogue_import.assignments import AssignmentLog, build_assignments
-from catalogue_import.availability import Context
+from catalogue_import.availability import Context, Decisions
 from catalogue_import.common import as_list, dump_json, loose_key, slugify
 from catalogue_import.grading import build_settings, collect_evidence
 from catalogue_import.groups import build_groups
@@ -76,6 +76,37 @@ def assign_slugs(items: list[dict[str, Any]], whole: Collection[str] = ()) -> li
     return [[items[i] for i in members] for members in clusters]
 
 
+class ItemDecisions:
+    """overrides.json's decisions on who may buy mordheimer items, checked against the item names and the warband
+    types: a name or slug that matches nothing stops the build rather than being skipped quietly."""
+
+    def __init__(self, overrides: dict[str, Any], types: list[dict[str, Any]], items: list[dict[str, Any]]) -> None:
+        self.overrides = overrides
+        self.types = {row["slug"] for row in types}
+        self.items = {item["name"] for item in items}
+
+    def _check_item(self, key: str, name: str) -> None:
+        if name not in self.items:
+            raise ValueError(f"overrides.json {key}: no mordheimer item {name!r}")
+
+    def warbands(self, key: str) -> Decisions:
+        """An "item name -> {warbands, why}" key as item name -> (type slugs, why)."""
+        decisions: Decisions = {}
+        for name, entry in self.overrides.get(key, {}).items():
+            self._check_item(key, name)
+            unknown = [slug for slug in entry["warbands"] if slug not in self.types]
+            if unknown:
+                raise ValueError(f"overrides.json {key} {name!r}: no warband type {', '.join(unknown)}")
+            decisions[name] = (list(entry["warbands"]), entry["why"])
+        return decisions
+
+    def kept(self, key: str) -> dict[str, str]:
+        """An "item name -> why" key."""
+        for name in self.overrides.get(key, {}):
+            self._check_item(key, name)
+        return dict(self.overrides.get(key, {}))
+
+
 def add_notes(items: list[dict[str, Any]], notes: dict[str, str]) -> None:
     """overrides.json "item_notes": a soft note on every price row of the named item."""
     for item in items:
@@ -136,14 +167,22 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     resolver = Resolver(types, overrides.get("warband_aliases"))
     evidence = collect_evidence(types, sources)
     settings = build_settings(evidence, overrides.get("setting_grades", {}))
-    groups, group_questions = build_groups(types, sources, resolver)
+    groups, group_questions, group_answers = build_groups(types, sources, resolver)
     skill_lists = SkillLists(overrides, types, groups)
     sources.our_skills = skill_lists.apply(sources.our_skills)  # William's drops, additions and rewordings first
     shared = build_shared_rules(sources.items)
     index = index_rules(shared)
     names = display_names(types)
-    chosen = {name: (entry["warbands"], entry["why"]) for name, entry in overrides.get("item_warbands", {}).items()}
-    ctx = Context(PhraseReader(resolver, groups), groups, names, chosen)
+    decide = ItemDecisions(overrides, types, sources.items)
+    ctx = Context(
+        PhraseReader(resolver, groups),
+        groups,
+        names,
+        chosen=decide.warbands("item_warbands"),
+        added=decide.warbands("item_warbands_add"),
+        exclusions=decide.warbands("item_exclusions"),
+        kept=decide.kept("item_defaults_kept"),
+    )
     item_log, mim_log = ItemLog(), MimLog()
     items = mordheimer_items(
         sources.items, overrides.get("keep_hidden_items", []), overrides.get("drop_items", []), index, ctx, item_log
@@ -175,6 +214,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         types,
         groups,
         group_questions,
+        group_answers,
         list(resolver.uses.values()),
         ctx.conflicts,
         same_names,

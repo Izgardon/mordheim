@@ -161,24 +161,31 @@ def _name_list(slugs: list[str], names: dict[str, str], tally: dict[str, int] | 
     return ", ".join(parts)
 
 
-def _questions(gdef: GroupDef, members: set[str], lists: list[tuple[str, list[str]]], ctx: dict[str, Any]) -> list[str]:
+def _questions(
+    gdef: GroupDef, members: set[str], lists: list[tuple[str, list[str]]], ctx: dict[str, Any], settled: set[str]
+) -> list[str]:
+    """What to ask about the group's members, leaving out the types overrides.json has settled."""
     names, order, known = ctx["names"], ctx["order"], ctx["mordheimer"]
     questions = list(gdef.questions)
     questions += [
-        f"{names[slug]} is in {gdef.name}: {why}. Keep?" for slug, why in gdef.include.items() if why and slug in names
+        f"{names[slug]} is in {gdef.name}: {why}. Keep?"
+        for slug, why in gdef.include.items()
+        if why and slug in names and slug not in settled
     ]
     if not lists:
         return questions
     _chosen, tally = _majority(lists, gdef.exclude)
     seen = ", ".join(name for name, _slugs in lists[:4]) + (", ..." if len(lists) > 4 else "")
-    extra = sorted((slug for slug in tally if slug not in members), key=order.__getitem__)
+    extra = sorted((slug for slug in tally if slug not in members and slug not in settled), key=order.__getitem__)
     if extra:
         questions.append(
             f"Not in {gdef.name}, though some of the {len(lists)} mordheimer lists that mean it ({seen}) name them: "
             + _name_list(extra, names, tally, len(lists))
             + ". Add any?"
         )
-    missing = sorted((slug for slug in members if slug in known and slug not in tally), key=order.__getitem__)
+    missing = sorted(
+        (slug for slug in members if slug in known and slug not in tally and slug not in settled), key=order.__getitem__
+    )
     if missing:
         questions.append(
             f"In {gdef.name}, but none of those lists names them: {_name_list(missing, names)}. Keep them in?"
@@ -186,29 +193,48 @@ def _questions(gdef: GroupDef, members: set[str], lists: list[tuple[str, list[st
     return questions
 
 
+# overrides.json "group_members": how -> group slug -> type slugs. add and remove change the members; keep_in and
+# keep_out settle a question by keeping a type where it is (and hold it there). Each settles its types' questions.
+SETTLING = ("add", "remove", "keep_in", "keep_out")
+
+
 def build_groups(
     types: list[dict[str, Any]], sources: Any, resolver: Resolver
-) -> tuple[list[dict[str, Any]], dict[str, list[str]]]:
-    """The groups with their members, and the questions about each group's membership."""
+) -> tuple[list[dict[str, Any]], dict[str, list[str]], dict[str, dict[str, list[str]]]]:
+    """The groups with their members, the questions about each group's membership, and what overrides.json settled
+    for each group (how -> type slugs)."""
     overrides = sources.overrides.get("group_members", {})
     ctx: dict[str, Any] = {
         "names": {row["slug"]: row["name"] for row in types},
         "order": {row["slug"]: index for index, row in enumerate(types)},
         "mordheimer": {row["slug"] for row in types if row["mordheimer_url"]},
     }
-    groups, questions = [], {}
+    groups, questions, settled = [], {}, {}
     for gdef in GROUP_DEFS:
         lists = _hire_evidence(gdef, sources, resolver) + _item_evidence(gdef, sources, resolver)
         members = _base_members(gdef, types)
         if gdef.by_evidence:
             members |= _majority(lists, gdef.exclude)[0]
-        questions[gdef.slug] = _questions(gdef, members, lists, ctx)
-        added = set(overrides.get("add", {}).get(gdef.slug, []))
-        removed = set(overrides.get("remove", {}).get(gdef.slug, []))
-        members = (members | added) - removed
-        members &= set(ctx["order"])  # a slug in overrides.json that names no type is ignored
+        # a slug in overrides.json that names no type is ignored
+        decided = {
+            how: sorted(
+                (slug for slug in overrides.get(how, {}).get(gdef.slug, []) if slug in ctx["order"]),
+                key=ctx["order"].__getitem__,
+            )
+            for how in SETTLING
+        }
+        questions[gdef.slug] = _questions(
+            gdef, members, lists, ctx, {slug for slugs in decided.values() for slug in slugs}
+        )
+        settled[gdef.slug] = {how: slugs for how, slugs in decided.items() if slugs}
+        built = set(members)
+        members = (
+            (members | set(decided["add"]) | set(decided["keep_in"]))
+            - set(decided["remove"])
+            - set(decided["keep_out"])
+        )
         basis = f"most of {len(lists)} mordheimer hiring lists" if gdef.by_evidence else "race field and named types"
-        if added or removed:
+        if members != built:
             basis += ", adjusted in overrides.json"
         groups.append(
             {
@@ -220,7 +246,7 @@ def build_groups(
                 "members": sorted(members, key=ctx["order"].__getitem__),
             }
         )
-    return groups, questions
+    return groups, questions, settled
 
 
 def collapse(slugs: list[str], groups: list[dict[str, Any]]) -> list[dict[str, str]]:

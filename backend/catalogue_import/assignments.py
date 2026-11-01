@@ -21,10 +21,13 @@ MORDHEIM = "mordheim"
 
 @dataclass
 class AssignmentLog:
-    """What the report lists: names matched more than once (and the one taken), and entries in several settings."""
+    """What the report lists: names matched more than once (and the one taken), and entries in several settings,
+    each with how its setting was decided (mordheimer, or overrides.json, which settles it)."""
 
-    ambiguous: list[tuple[str, str, str, list[str]]] = field(default_factory=list)  # kind, name, taken, others
-    multi_setting: list[tuple[str, str, list[str]]] = field(default_factory=list)  # kind, name, settings
+    # kind, name, taken, others, how
+    ambiguous: list[tuple[str, str, str, list[str], str]] = field(default_factory=list)
+    # kind, name, settings, taken, how
+    multi_setting: list[tuple[str, str, list[str], str, str]] = field(default_factory=list)
     unmatched: dict[str, list[str]] = field(default_factory=dict)  # kind -> our names
 
 
@@ -73,17 +76,21 @@ def best_entry(ours_type: str, found: list[dict[str, Any]]) -> dict[str, Any]:
     return min(found, key=lambda entry: (-_score(ours_type, entry), _order(_home(entry)[0])))
 
 
-def _pick(kind: str, row: dict[str, Any], found: list[dict[str, Any]], log: AssignmentLog) -> str:
-    """The setting of the best-fitting entry among `found` (all of one name)."""
+def _pick(
+    kind: str, row: dict[str, Any], found: list[dict[str, Any]], log: AssignmentLog, chosen: str | None = None
+) -> str:
+    """The setting of the best-fitting entry among `found` (all of one name), or overrides.json's (`chosen`); either
+    way the report hears when mordheimer gives the name more than one."""
     taken = best_entry(str(row.get("type") or ""), found)
     settings = _home(taken)
+    setting, how = (chosen, "overrides.json") if chosen else (settings[0], "mordheimer")
     homes = {_home(entry)[0] for entry in found}
     if len(homes) > 1:
-        others = sorted(homes - {settings[0]}, key=_order)
-        log.ambiguous.append((kind, label(row), settings[0], others))
+        others = sorted(homes - {setting}, key=_order)
+        log.ambiguous.append((kind, label(row), setting, others, how))
     if len(settings) > 1:
-        log.multi_setting.append((kind, row["name"], settings))
-    return settings[0]
+        log.multi_setting.append((kind, row["name"], settings, setting, how))
+    return setting
 
 
 def assign(
@@ -107,10 +114,12 @@ def assign(
         typed = kind == "skills" and "type" in row
         assigned: dict[str, Any] = {"name": name, **({"type": row["type"]} if typed else {})}
         found = by_name.get(norm_name(name), [])
-        if label(assigned) in (chosen or {}):
-            setting, how = (chosen or {})[label(assigned)], "overrides.json"
-        elif found:
-            setting, how = _pick(kind, assigned, found, log), "mordheimer"
+        picked = (chosen or {}).get(label(assigned))
+        if found:
+            setting = _pick(kind, assigned, found, log, picked)
+            how = "overrides.json" if picked else "mordheimer"
+        elif picked:
+            setting, how = picked, "overrides.json"
         else:
             setting, how = MORDHEIM, "no match"
             log.unmatched.setdefault(kind, []).append(name)
