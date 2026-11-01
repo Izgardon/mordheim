@@ -46,6 +46,14 @@ class BattleLoadoutTestCase(BattleTestCase):
 
 
 class InBattleTests(BattleLoadoutTestCase):
+    def test_a_member_without_a_name_is_called_by_his_type_and_number_not_his_row_id(self):
+        # creature groups' members have no names: they read "Giant Rat 1", "Giant Rat 2", not "Henchman 6"
+        self.outriders.unit_type = "Giant Rat"
+        self.outriders.save(update_fields=["unit_type"])
+        self.outriders.henchmen.update(name="")
+
+        self.assertEqual(list(self.members()), ["Giant Rat 1", "Giant Rat 2"])
+
     def test_each_member_shows_his_own_gear_and_a_mount_gap_puts_him_on_foot(self):
         self.gap(self.skritt, self.horse_row)
 
