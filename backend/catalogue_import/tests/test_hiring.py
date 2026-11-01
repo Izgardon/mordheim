@@ -15,6 +15,11 @@ class WhoTests(SimpleTestCase):
         self.assertEqual(access, {"for_everyone": False, "warbands": [{"group": "sigmarite", "excluded": False}]})
         self.assertEqual(left_out, ["Atlanteans"])
 
+    def test_added_types_join_the_list_and_a_full_group_is_stored_as_the_group(self) -> None:
+        _types, resolver, groups, _ctx = world()
+        access, _left_out = who(["Witch Hunters"], [], resolver, groups, "x", ["sisters-of-sigmar"])
+        self.assertEqual(access, {"for_everyone": False, "warbands": [{"group": "sigmarite", "excluded": False}]})
+
     def test_no_list_is_everyone_minus_the_excluded(self) -> None:
         _types, resolver, groups, _ctx = world()
         access, _left_out = who([], ["Skaven"], resolver, groups, "x")
@@ -29,6 +34,12 @@ class WhoCanTests(SimpleTestCase):
         lists = SkillLists(overrides or {}, types, groups)
         namespace = SimpleNamespace(**{**base, "overrides": overrides or {}, **sources})
         return build_who_can(namespace, resolver, groups, log, lists), log
+
+    def test_hire_warbands_add_must_name_a_hireling(self) -> None:
+        sword = {"name": "Ratcatcher", "permittedWarbands": ["Skaven"], "cost": "25", "upkeep": "10"}
+        overrides = {"hire_warbands_add": {"Rat Catcher": {"warbands": ["skaven"], "why": "a typo"}}}
+        with self.assertRaises(ValueError):
+            self.build(overrides, hired_swords=[sword])
 
     def test_hired_swords_carry_their_list_note_and_fees(self) -> None:
         sword = {

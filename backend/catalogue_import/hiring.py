@@ -37,11 +37,18 @@ class HiringLog:
 
 
 def who(
-    names: list[str], excluded: list[str], resolver: Resolver, groups: list[dict[str, Any]], where: str
+    names: list[str],
+    excluded: list[str],
+    resolver: Resolver,
+    groups: list[dict[str, Any]],
+    where: str,
+    added: list[str] | None = None,
 ) -> tuple[dict[str, Any], list[str]]:
-    """The who-can list of a permitted list (none: everyone) and an excluded list, and the names it left out."""
+    """The who-can list of a permitted list (none: everyone) and an excluded list, and the names it left out.
+    `added`: type slugs William adds to the permitted list (overrides.json `hire_warbands_add`)."""
     left_out = [name for name in names + excluded if not resolver.resolve(name, where)]
     included = resolver.resolve_all(names, where)
+    included += [slug for slug in added or [] if slug not in included]
     shut_out = resolver.resolve_all(excluded, where)
     warbands = [{**entry, "excluded": False} for entry in collapse(included, groups)]
     warbands += [{**entry, "excluded": True} for entry in collapse(shut_out, groups)]
@@ -55,10 +62,12 @@ def _hireling(
     groups: list[dict[str, Any]],
     log: HiringLog,
     in_rules: dict[str, str],
+    hire_add: dict[str, dict[str, Any]],
 ) -> dict[str, Any]:
     name = clean_inline(entry.get("name"))
     permitted = as_list(entry.get("permittedWarbands"))
-    access, left_out = who(permitted, as_list(entry.get("excludedWarbands")), resolver, groups, kind)
+    added = list(hire_add.get(name, {}).get("warbands", []))
+    access, left_out = who(permitted, as_list(entry.get("excludedWarbands")), resolver, groups, kind, added)
     if left_out:
         log.unplaced.append((kind, name, left_out))
     if permitted and not access["warbands"]:
@@ -129,13 +138,18 @@ def build_who_can(
     for entry in sources.skills:
         theirs.setdefault(norm_name(str(entry.get("name") or "")), []).append(entry)
     skills = [_skill(row, theirs, resolver, groups, log, lists) for row in sources.our_skills if row.get("name")]
-    in_rules = (getattr(sources, "overrides", None) or {}).get("fees_in_rules", {})
-    return {
-        "skills": skills,
+    overrides = getattr(sources, "overrides", None) or {}
+    in_rules = overrides.get("fees_in_rules", {})
+    hire_add = overrides.get("hire_warbands_add", {})
+    hirelings = {
         "hired_swords": [
-            _hireling("hired swords", row, resolver, groups, log, in_rules) for row in sources.hired_swords
+            _hireling("hired swords", row, resolver, groups, log, in_rules, hire_add) for row in sources.hired_swords
         ],
         "dramatis_personae": [
-            _hireling("dramatis personae", row, resolver, groups, log, in_rules) for row in sources.personae
+            _hireling("dramatis personae", row, resolver, groups, log, in_rules, hire_add) for row in sources.personae
         ],
     }
+    unknown = sorted(set(hire_add) - {row["name"] for rows in hirelings.values() for row in rows})
+    if unknown:
+        raise ValueError(f"overrides.json hire_warbands_add names no hired sword or dramatis persona: {unknown}")
+    return {"skills": skills, **hirelings}
