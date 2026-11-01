@@ -35,13 +35,13 @@ export function ReferenceList({
       <div className="border border-border bg-surface">
         {columns.length ? (
           <div className="flex items-center gap-3 border-b border-border bg-rail px-4">
-            <span className={cn(HEAD, "min-w-0 flex-1 pl-6")}>{nameLabel}</span>
+            {/* pl: a row's chevron (14px) and its gap (12px) */}
+            <span className={cn(HEAD, "min-w-0 flex-1 pl-[26px]")}>{nameLabel}</span>
             {columns.map((column) => (
               <span key={column.label} className={cn(HEAD, column.className)}>
                 {column.label}
               </span>
             ))}
-            <span className="w-4" aria-hidden="true" />
           </div>
         ) : null}
         {isEmpty ? (
