@@ -11,7 +11,7 @@ from typing import Any
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
-from apps.bestiary.models import BestiaryEntryItem, WarbandBestiaryFavourite
+from apps.bestiary.models import BestiaryEntryItem
 from apps.core.testing import book_warband_type
 from apps.items.models import ItemAvailabilityWarband
 from apps.items.tests.catalogue_support import BESTIARY, ITEMS, CatalogueTestCase, make_beast, make_entry
@@ -71,19 +71,6 @@ class BestiaryReadBudgetTests(BestiaryBudgetTestCase):
 
         self.assertEqual((before, self.count(lambda: self.client.get(url))), (10, 10))
 
-    def test_a_warbands_favourites_cost_5_queries_whatever_their_number(self):
-        # the warband, the membership, the favourites with their beasts and items joined, the prices, their
-        # restrictions
-        url = f"/api/warbands/{self.warband.id}/bestiary-favourites/"
-        for beast in self.beasts("Fond", 1):
-            WarbandBestiaryFavourite.objects.create(warband=self.warband, bestiary_entry=beast)
-        before = self.count(lambda: self.client.get(url))
-
-        for beast in self.beasts("Fonder", 4):
-            WarbandBestiaryFavourite.objects.create(warband=self.warband, bestiary_entry=beast)
-
-        self.assertEqual((before, self.count(lambda: self.client.get(url))), (5, 5))
-
 
 class BestiaryWriteBudgetTests(BestiaryBudgetTestCase):
     def body(self, name: str, links: int) -> dict[str, Any]:
@@ -138,16 +125,18 @@ class BestiaryVersionBudgetTests(BestiaryBudgetTestCase):
         edited = self.count(edit)
         return edited, self.count(lambda: self.client.post(f"{BESTIARY.detail_url(version['id'])}revert/"))
 
-    def test_a_first_edit_costs_46_queries_and_its_revert_53_however_many_copies_hold_the_item(self):
+    def test_a_first_edit_costs_45_queries_and_its_revert_51_however_many_copies_hold_the_item(self):
         # first edit: pass 5's beast version (the book row locked, its version looked for, the copy and its four link
-        # tables, the groups recruited from it and the favourites moved), then the item's (the book item found and
-        # locked, its version looked for, the copy pointed at the beast's version, its prices, restrictions and
-        # properties copied, one UPDATE per table of copies), the edit with its item, the catalogue version and the
-        # answer. Revert: the item's version goes first (copies moved back or merged, the reverted id recorded,
-        # Django's reads before its delete), then the beast's (groups and favourites, the reverted id, Django's read
-        # of its groups before its delete), the catalogue version and the answer
+        # tables, the groups recruited from it moved), then the item's (the book item found and locked, its version
+        # looked for, the copy pointed at the beast's version, its prices, restrictions and properties copied, one
+        # UPDATE per table of copies), the edit with its item, the catalogue version and the answer. Revert: the
+        # item's version goes first (copies moved back or merged, the reverted id recorded, Django's reads before its
+        # delete), then the beast's (its groups, the reverted id, Django's read of its groups before its delete), the
+        # catalogue version and the answer. Since the bestiary favourites went (they were 46 and 53) nothing follows
+        # a beast: the first edit no longer moves favourites, and Revert no longer reads them to merge or has Django
+        # delete the version's with it
         few, many = self.beasts("Horse", 2)
         self.hold(few.animal_item, 1)
         self.hold(many.animal_item, 4)
 
-        self.assertEqual((self.first_edit_and_revert(few), self.first_edit_and_revert(many)), ((46, 53), (46, 53)))
+        self.assertEqual((self.first_edit_and_revert(few), self.first_edit_and_revert(many)), ((45, 51), (45, 51)))

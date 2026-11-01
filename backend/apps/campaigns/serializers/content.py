@@ -1,4 +1,4 @@
-"""House rules, encampments, locations, chat messages and bulletin notes."""
+"""House rules, encampments, locations and chat messages."""
 
 from rest_framework import serializers
 
@@ -8,7 +8,6 @@ from apps.users.names import display_name
 from ..access import CAMPAIGN_RULES
 from ..effects import EFFECT_KEYS
 from ..models import (
-    CampaignBulletinEntry,
     CampaignEncampment,
     CampaignHouseRule,
     CampaignLocation,
@@ -127,7 +126,7 @@ class CampaignLocationWriteSerializer(serializers.ModelSerializer):
 
 
 class RemovablePostSerializer(serializers.ModelSerializer):
-    """A chat message or bulletin note: once removed (decision 8) its body is gone and `removed_by` says by whom,
+    """A chat message: once removed (decision 8) its body is gone and `removed_by` says by whom,
     "author" or "admin" (an owner or admin, or a remover whose account is gone)."""
 
     user_id = serializers.IntegerField(source="user.id", read_only=True, allow_null=True)
@@ -147,27 +146,3 @@ class CampaignMessageSerializer(RemovablePostSerializer):
     class Meta:
         model = CampaignMessage
         fields = ("id", "campaign_id", "user_id", "username", "body", "created_at", "removed_at", "removed_by")
-
-
-class CampaignBulletinEntrySerializer(RemovablePostSerializer):
-    campaign_id = serializers.IntegerField(read_only=True)
-
-    class Meta:
-        model = CampaignBulletinEntry
-        fields = ("id", "campaign_id", "user_id", "username", "body", "created_at", "removed_at", "removed_by")
-
-
-class CampaignBulletinEntryCreateSerializer(serializers.ModelSerializer):
-    body = serializers.CharField(allow_blank=True, trim_whitespace=False)
-
-    class Meta:
-        model = CampaignBulletinEntry
-        fields = ("body",)
-
-    def validate_body(self, value):
-        cleaned = str(value or "").strip()
-        if not cleaned:
-            raise serializers.ValidationError("Bulletin body is required.")
-        if len(cleaned) > 280:
-            raise serializers.ValidationError("Bulletin body must be 280 characters or fewer.")
-        return cleaned

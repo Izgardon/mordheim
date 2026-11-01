@@ -8,13 +8,12 @@ Each flag is the server's own rule for that action, in the battle's current phas
 - `cancel`: the creator, before postbattle (postbattle is closed instead, decision 3), and only while nobody has
   applied his postbattle;
 - `close_postbattle`: the creator or a battle manager (`manage_battles`), in postbattle;
-- `edit_record`: a battle manager, once the battle has ended (BATL-NEW-04);
 - `nudge`: a participant still in an open battle (BATL-NEW-08), towards any other who still has something to do
   in it (his status isn't confirmed_postbattle, declined or cancelled);
 - `force_round`: start the next round without waiting for everyone (Start anyway): the creator or a battle manager
   (owners and admins too) still fighting, in an active battle (William); the others ask and agree.
 
-A reported result has only `edit_record`, once it has ended. Computing the flags costs no query: the membership
+A reported result has none. Computing the flags costs no query: the membership
 and the manage_battles grant come with the battle (services/access.py) and the participants with the snapshot. The
 state, every write's answer (the caller's flags) and every broadcast (`everyones_capabilities`) carry them, so a
 status change costs no read.
@@ -78,7 +77,6 @@ def capabilities_from(known: Facts, user_id: int | None, manager: bool) -> dict[
         "confirm_results": normal and (confirmer or manager) and status == Battle.STATUS_POSTBATTLE,
         "cancel": creator and normal and status in before_postbattle and not applied,
         "close_postbattle": (creator or manager) and status == Battle.STATUS_POSTBATTLE,
-        "edit_record": manager and status == Battle.STATUS_ENDED,
         "nudge": still_in and normal and status in BUSY_BATTLE_STATUSES,
         # a manager's flags for a broadcast know no player: the page also needs him fighting (`canAct`)
         "force_round": active and (creator or manager) and (fighting or user_id is None),

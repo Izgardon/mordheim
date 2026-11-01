@@ -1,11 +1,13 @@
-"""Characterisation: the stash (items/) and resources (resources/) (pass 2, step 0)."""
+"""Characterisation: the stash (items/) and resources (resources/) (pass 2, step 0).
 
-from typing import Any
+The stash route only lists: its own add and discard are gone (the rebuilt frontend never called them). Copies come
+in by purchases, transfers and trades, and leave by transfers, sales and trades.
+"""
 
 from apps.items.models import Item
 from apps.warbands.models import WarbandItem, WarbandResource
 
-from .roster_support import HERO, RosterTestCase, log_rows, make_unit, trade_rows
+from .roster_support import HERO, RosterTestCase, make_unit
 
 # decision 3: half the item's current campaign price, rounded up (the Sword lists at 10, the Axe at 5 and 15)
 SWORD_SALE = {
@@ -18,11 +20,8 @@ AXE_SALE = {"current_price": 5, "suggested_sale_price": 3, "sale_price_basis": "
 
 
 class StashTests(RosterTestCase):
-    def _url(self, item_id: int | None = None) -> str:
-        return f"/api/warbands/{self.warband.id}/items/" + (f"{item_id}/" if item_id else "")
-
-    def _add(self, **body: Any) -> Any:
-        return self.client.post(self._url(), body, format="json")
+    def _url(self) -> str:
+        return f"/api/warbands/{self.warband.id}/items/"
 
     def _rows(self) -> list[tuple[str, int, int | None]]:
         rows = WarbandItem.objects.filter(warband=self.warband).select_related("item").order_by("item__name", "cost")
@@ -59,70 +58,10 @@ class StashTests(RosterTestCase):
             ],
         )
 
-    def test_adding_defaults_the_cost_only_for_an_item_with_one_availability(self):
-        sword = self._add(item_id=self.sword.id)
-        axe = self._add(item_id=self.axe.id, quantity=2)
-        priced = self._add(item_id=Item.objects.create(name="Club", type="Melee").id, cost=4)
-
-        sword_entry = {"id": self.sword.id, "name": "Sword", "cost": 10, "quantity": 1}
-        self.assertEqual(
-            (sword.status_code, sword.json()),
-            (201, {**sword_entry, "costs": [{"cost": 10, "quantity": 1}], **SWORD_SALE}),
-        )
-        self.assertEqual(axe.json()["costs"], [{"cost": None, "quantity": 2}])
-        self.assertEqual(priced.json()["cost"], 4)
-        # ECON-CQ-02 / BUG-07: adding to the stash writes no ledger row and no log; the buy dialog posts them
-        self.assertEqual((trade_rows(self.warband), log_rows(self.warband)), ([], []))
-
-    def test_adding_copies_never_re_prices_the_ones_held(self):
-        # BUG-117: an add without a cost used to give the copies held the single availability's cost, and an add
-        # with a cost gave them that cost; each cost now keeps its own row
-        WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=2, cost=4)
-        WarbandItem.objects.create(warband=self.warband, item=self.axe, quantity=1, cost=6)
-
-        sword = self._add(item_id=self.sword.id, quantity=3)  # the single availability's 10, beside the 4s
-        axe = self._add(item_id=self.axe.id)  # two availabilities: no default, an unknown cost
-        explicit = self._add(item_id=self.axe.id, cost=8)
-        again = self._add(item_id=self.axe.id, cost=8)
-
-        self.assertEqual((sword.status_code, sword.json()["quantity"], sword.json()["cost"]), (201, 5, 10))
-        self.assertEqual((axe.json()["quantity"], axe.json()["cost"]), (2, None))  # the newest copies leave first
-        self.assertEqual((explicit.json()["quantity"], again.json()["quantity"]), (3, 4))
-        self.assertEqual(
-            self._rows(), [("Axe", 1, 6), ("Axe", 2, 8), ("Axe", 1, None), ("Sword", 2, 4), ("Sword", 3, 10)]
-        )
-
-    def test_loose_quantities_and_costs_are_coerced(self):
-        for quantity, added in ((0, 1), (-2, 1), ("abc", 1), ("3", 3), (None, 1)):
-            with self.subTest(quantity=quantity):
-                WarbandItem.objects.all().delete()
-                body: dict[str, Any] = (
-                    {"item_id": self.sword.id} if quantity is None else {"item_id": self.sword.id, "quantity": quantity}
-                )
-                self.assertEqual(self._add(**body).json()["quantity"], added)
-        WarbandItem.objects.all().delete()
-        self.assertEqual(self._add(item_id=self.sword.id, cost="cheap").json()["cost"], 10)
-
-    def test_bad_item_ids(self):
-        for body, status_code, detail in (
-            ({}, 400, "Invalid item id"),
-            ({"item_id": "sword"}, 400, "Invalid item id"),
-            ({"item_id": 999999}, 404, "Item not found"),
-        ):
-            with self.subTest(body=body):
-                response = self._add(**body)
-                self.assertEqual((response.status_code, response.json()), (status_code, {"detail": detail}))
-        self.assertEqual(self._rows(), [])
-
     def test_another_campaigns_item_is_not_found(self):
-        # SEC-07 (stash half): POST items/ and transfers used to accept any campaign's item
+        # SEC-07 (stash half): transfers used to accept any campaign's item. A unit already carrying one can't move
+        # it; it can still sell it, and a stash copy of one can be sold too
         foreign = Item.objects.create(name="Lizard Spear", type="Melee", campaign_id=self.foreign_race.campaign_id)
-
-        response = self._add(item_id=foreign.id)
-
-        self.assertEqual((response.status_code, response.json()), (404, {"detail": "Item not found"}))
-        self.assertEqual(self._rows(), [])
-        # ... nor can a unit already carrying one move it; it can still sell it, and a stash copy can be discarded
         hero = make_unit(HERO, self.warband)
         hero.hero_items.create(item=foreign, cost=3)
         base = f"/api/warbands/{self.warband.id}/"
@@ -138,61 +77,16 @@ class StashTests(RosterTestCase):
         sale = {"source_type": "hero", "source_id": hero.id, "item_id": foreign.id, "quantity": 1, "price": 2}
         self.assertEqual(self.client.post(f"{base}item-sales/", sale, format="json").status_code, 200)
         WarbandItem.objects.create(warband=self.warband, item=foreign, quantity=1)
-        self.assertEqual(self.client.delete(self._url(foreign.id)).status_code, 204)
+        sold = {"source_type": "stash", "item_id": foreign.id, "quantity": 1, "price": 2}
+        self.assertEqual(self.client.post(f"{base}item-sales/", sold, format="json").status_code, 200)
         self.assertEqual((self._rows(), list(hero.hero_items.all())), ([], []))
 
-    def test_global_and_own_campaign_items_are_added(self):
-        own = Item.objects.create(name="House Spear", type="Melee", campaign=self.campaign)
-
-        self.assertEqual(self._add(item_id=own.id).status_code, 201)
-        self.assertEqual(self._add(item_id=self.axe.id).status_code, 201)
-        self.assertEqual(self._rows(), [("Axe", 1, None), ("House Spear", 1, None)])
-
-    def test_discarding_removes_copies_and_logs_what_went(self):
-        WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=4, cost=9)
-
-        one = self.client.delete(self._url(self.sword.id))
-        two = self.client.delete(self._url(self.sword.id), {"quantity": 2}, format="json")
-        self.assertEqual((one.status_code, two.status_code), (204, 204))
-        self.assertEqual(self._rows(), [("Sword", 1, 9)])
-
-        zero = self.client.delete(self._url(self.sword.id), {"quantity": 0}, format="json")  # at least one
-        self.assertEqual((zero.status_code, self._rows()), (204, []))
-        missing = self.client.delete(self._url(self.sword.id))
-        self.assertEqual((missing.status_code, missing.json()), (404, {"detail": "Item not found in stash"}))
-        # ECON-CQ-02: discards used to leave no trace; the server logs each one with the copies that went
-        self.assertEqual(trade_rows(self.warband), [])
-        self.assertEqual(
-            log_rows(self.warband),
-            [
-                ("items", "discarded", {"item": "Sword", "quantity": 1}, None),
-                ("items", "discarded", {"item": "Sword", "quantity": 2}, None),
-                ("items", "discarded", {"item": "Sword", "quantity": 1}, None),
-            ],
-        )
-
-    def test_discarding_more_than_the_stash_holds_deletes_the_row(self):
-        WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=2)
-
-        response = self.client.delete(self._url(self.sword.id), {"quantity": 9}, format="json")
-
-        self.assertEqual((response.status_code, self._rows()), (204, []))
-        self.assertEqual(log_rows(self.warband), [("items", "discarded", {"item": "Sword", "quantity": 2}, None)])
-
-    def test_members_read_the_stash_and_editors_change_it(self):
+    def test_members_read_the_stash(self):
         WarbandItem.objects.create(warband=self.warband, item=self.sword, quantity=5)
-        for user, read, write, delete in (
-            (self.viewer, 200, 403, 403),
-            (self.manager, 200, 201, 204),
-            (self.outsider, 404, 404, 404),
-        ):
+        for user, read in ((self.viewer, 200), (self.manager, 200), (self.outsider, 404)):
             with self.subTest(user=user.email):
                 self.client.force_authenticate(user=user)
                 self.assertEqual(self.client.get(self._url()).status_code, read)
-                self.assertEqual(self._add(item_id=self.sword.id).status_code, write)
-                self.assertEqual(self.client.delete(self._url(self.sword.id)).status_code, delete)
-        # the manager added one at 10 (its own row) and discarded the newest
-        self.assertEqual(self._rows(), [("Sword", 5, None)])
 
 
 class ResourceTests(RosterTestCase):

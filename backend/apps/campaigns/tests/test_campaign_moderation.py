@@ -1,7 +1,7 @@
-"""Owners and admins remove chat and bulletin posts (decision 8, CAMP-NEW-06, CAMP-UX-08).
+"""Owners and admins remove chat posts (decision 8, CAMP-NEW-06, CAMP-UX-08).
 
-A soft delete: the post stays listed, without its body, as "removed by admin" (or by its author, for a bulletin
-note its author removed), and a removed chat message reaches every member live through `chat.removed`.
+A soft delete: the post stays listed, without its body, as "removed by admin", and a removed chat message reaches
+every member live through `chat.removed`.
 """
 
 from typing import Any
@@ -9,7 +9,7 @@ from unittest import mock
 
 from django.test import override_settings
 
-from apps.campaigns.models import CampaignBulletinEntry, CampaignMessage
+from apps.campaigns.models import CampaignMessage
 from apps.realtime import services as realtime
 
 from .campaign_support import CampaignTestCase
@@ -73,14 +73,3 @@ class ChatRemovalTests(CampaignTestCase):
             {key: payload[key] for key in ("id", "campaign_id", "removed_by")},
             {"id": message.id, "campaign_id": self.campaign.id, "removed_by": "admin"},
         )
-
-
-class BulletinRemovalTests(CampaignTestCase):
-    def test_owners_and_admins_remove_any_note_and_it_reads_removed_by_admin(self):
-        note = CampaignBulletinEntry.objects.create(campaign=self.campaign, user=self.player, username="Pia", body="x")
-
-        self.assertEqual(self.delete_as(self.owner, self.url(f"bulletin/{note.id}/")).status_code, 204)
-
-        row = self.get_as(self.rival, self.url("bulletin/")).json()[0]
-        self.assertEqual((row["id"], row["body"], row["removed_by"]), (note.id, "", "admin"))
-        self.assertEqual(CampaignBulletinEntry.objects.get(id=note.id).removed_by_id, self.owner.id)

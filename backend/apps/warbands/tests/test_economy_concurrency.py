@@ -56,14 +56,16 @@ class StashConcurrencyTests(TransactionTestCase):
         self.assertFalse(WarbandItem.objects.filter(warband=self.warband).exists())
 
     def test_two_first_additions_of_an_item_both_count(self):
-        # BUG-36: both find no stash row and both insert one; the loser of the insert adds to the winner's row
+        # BUG-36: both find no stash row and both insert one; the loser of the insert adds to the winner's row. The
+        # additions are two gifts to the stash (`is_buying: false`): a paid purchase changes the gold first, which
+        # locks the warband, so two of those take turns instead of racing
         rendezvous = Rendezvous()
         manager = WarbandItem.objects
         real_create = manager.create
-        add = {"item_id": self.sword.id, "quantity": 1, "cost": 10}
+        gift = {"item_id": self.sword.id, "price": 10, "is_buying": False, "target_type": "stash"}
 
         with mock.patch.object(manager, "create", side_effect=rendezvous.before(real_create)):
-            statuses = run_concurrently(self._post("items/", add), self._post("items/", add))
+            statuses = run_concurrently(self._post("purchases/", gift), self._post("purchases/", gift))
 
         self.assertEqual(statuses, [201, 201])
         self.assertEqual(WarbandItem.objects.get(warband=self.warband).quantity, 2)

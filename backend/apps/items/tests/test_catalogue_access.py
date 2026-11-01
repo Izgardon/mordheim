@@ -19,9 +19,6 @@ from apps.campaigns.access import CAMPAIGN_RULES
 from apps.campaigns.models import Campaign
 from apps.core.catalogue.kinds import CATALOGUE_KINDS, LIST_KINDS
 from apps.core.catalogue.views import CatalogueScopedView
-from apps.items.models import ItemRule
-from apps.warbands.access import WARBAND_RULES
-from apps.warbands.views.base import WarbandScopedView
 
 from .catalogue_support import DELETE, KINDS, RACES, CatalogueKind, CatalogueTestCase, make_entry
 
@@ -32,12 +29,11 @@ EDITED: dict[str, dict[str, Any]] = {
     "items": {"flavour": "Edited"},
 }  # the rest: a new description
 CATALOGUE_APPS = ("items", "skills", "spells", "special", "races", "bestiary", "hirelings")
-FAVOURITES = {"warband-bestiary-favourites", "warband-bestiary-favourite-delete"}  # warband routes
 
 
 class CatalogueAccessFixture(CatalogueTestCase):
     """The shared catalogue, one campaign entry of each kind, the campaign's version of a spare book entry of each
-    kind, a campaign shared item rule, and `rival` granted deleting."""
+    kind, and `rival` granted deleting."""
 
     house: dict[str, int]
     version: dict[str, int]
@@ -46,7 +42,6 @@ class CatalogueAccessFixture(CatalogueTestCase):
     def setUpTestData(cls) -> None:
         super().setUpTestData()
         cls.house = {kind.key: make_entry(kind, f"House {kind.key}", campaign=cls.campaign).id for kind in KINDS}
-        cls.house["property"] = ItemRule.objects.create(name="Spiked", campaign=cls.campaign).id
         cls.version = {}
         for kind in KINDS:
             spare = make_entry(kind, f"Spare {kind.key}")
@@ -98,19 +93,12 @@ class CatalogueAccessFixture(CatalogueTestCase):
         ]
 
     def matrix(self) -> list[Row]:
-        campaign, prop = self.campaign.id, self.house["property"]
-        favourites = f"/api/warbands/{self.warband.id}/bestiary-favourites/"
+        campaign = self.campaign.id
         return [
             *(row for kind in KINDS for row in self.kind_rows(kind)),
             ("PUT", RACES.detail_url(self.house["races"]), RACES.body("Gnome"), (200, 200, 200, 200, 404)),
             ("GET", f"/api/item-rules/?campaign_id={campaign}", None, (200, 200, 200, 200, 404)),
             ("POST", "/api/item-rules/", {"campaign_id": campaign, "name": "Cleave"}, (201, 201, 201, 201, 404)),
-            ("GET", f"/api/item-rules/{prop}/", None, (200, 200, 200, 200, 404)),
-            ("GET", f"/api/item-rules/{self.parry.id}/", None, (200,) * 5),
-            ("PATCH", f"/api/item-rules/{prop}/", {"name": "Barbed"}, (405,) * 5),
-            ("GET", favourites, None, (200, 200, 200, 200, 404)),  # Pia's warband
-            ("POST", favourites, {"bestiary_entry_id": self.warhound.id}, (201, 403, 201, 201, 404)),
-            ("DELETE", f"{favourites}{self.warhound.id}/", None, (204, 403, 204, 204, 404)),
         ]
 
     def status_of(self, user: Any, method: str, url: str, body: dict[str, Any] | None = None) -> int:
@@ -144,7 +132,7 @@ class CatalogueAccessMatrixTests(CatalogueAccessFixture):
                         self.assertIn((pattern.name, method.upper()), covered)
 
     def test_an_archived_campaign_refuses_every_catalogue_write_the_owner_could_make(self):
-        # decision 5: item properties and favourites too
+        # decision 5: item properties too
         Campaign.objects.filter(id=self.campaign.id).update(archived_at=timezone.now())
         for method, url, body, expected in self.matrix():
             if method != "GET" and expected[3] < 300:
@@ -159,7 +147,7 @@ def catalogue_patterns() -> list[URLPattern]:
         for entry in get_resolver(f"apps.{app}.urls").url_patterns
         if isinstance(entry, URLPattern)
     ]
-    assert len(patterns) == 44, [pattern.name for pattern in patterns]
+    assert len(patterns) == 41, [pattern.name for pattern in patterns]
     return patterns
 
 
@@ -169,18 +157,16 @@ class CatalogueStructureTests(CatalogueTestCase):
     def test_every_catalogue_route_uses_the_generic_base(self):
         for pattern in catalogue_patterns():
             view = pattern.callback.view_class  # type: ignore[attr-defined]
-            base = WarbandScopedView if pattern.name in FAVOURITES else CatalogueScopedView
             with self.subTest(route=pattern.name):
-                self.assertTrue(issubclass(view, base))
+                self.assertTrue(issubclass(view, CatalogueScopedView))
 
     def test_every_handled_method_names_a_known_rule(self):
         for pattern in catalogue_patterns():
             view = pattern.callback.view_class  # type: ignore[attr-defined]
-            known = WARBAND_RULES if pattern.name in FAVOURITES else CAMPAIGN_RULES
             for method in ("get", "post", "put", "patch", "delete"):
                 if hasattr(view, method):
                     with self.subTest(route=pattern.name, method=method):
-                        self.assertIn(view.rules.get(method.upper()), known)
+                        self.assertIn(view.rules.get(method.upper()), CAMPAIGN_RULES)
 
     def test_each_kinds_holders_are_the_tables_that_reference_it_with_restrict(self):
         for kind in CATALOGUE_KINDS.values():

@@ -4,12 +4,9 @@ from .units.kinds import HENCHMEN_GROUP, HERO, HIRELING
 from .units.urls import unit_urlpatterns
 from .views import (
     CampaignWarbandTypesView,
-    HeroSpecialDetailView,
-    HeroSpellDetailView,
     WarbandBeastRecruitView,
     WarbandDetailView,
     WarbandGroupListView,
-    WarbandItemDetailView,
     WarbandItemListView,
     WarbandItemSaleView,
     WarbandItemTransferView,
@@ -20,7 +17,6 @@ from .views import (
     WarbandResourceDetailView,
     WarbandResourceListCreateView,
     WarbandResourceSaleView,
-    WarbandRosterStatsView,
     WarbandSheetView,
     WarbandSummaryView,
     WarbandTradeDetailView,
@@ -33,7 +29,6 @@ urlpatterns = [
     path("warband-groups/", WarbandGroupListView.as_view(), name="warband-groups"),
     path("warbands/", WarbandListCreateView.as_view(), name="warbands"),
     path("warbands/<int:warband_id>/", WarbandDetailView.as_view(), name="warbands-detail"),
-    path("warbands/<int:warband_id>/roster-stats/", WarbandRosterStatsView.as_view(), name="warbands-roster-stats"),
     path(
         "warbands/<int:warband_id>/summary/",
         WarbandSummaryView.as_view(),
@@ -48,11 +43,6 @@ urlpatterns = [
         "warbands/<int:warband_id>/items/",
         WarbandItemListView.as_view(),
         name="warbands-items",
-    ),
-    path(
-        "warbands/<int:warband_id>/items/<int:item_id>/",
-        WarbandItemDetailView.as_view(),
-        name="warbands-items-detail",
     ),
     path(
         "warbands/<int:warband_id>/item-transfers/",
@@ -81,16 +71,6 @@ urlpatterns = [
         name="warbands-beasts-recruit",
     ),
     *unit_urlpatterns(HERO),
-    path(
-        "warbands/hero-specials/<int:special_id>/",
-        HeroSpecialDetailView.as_view(),
-        name="warbands-hero-special-detail",
-    ),
-    path(
-        "warbands/hero-spells/<int:spell_id>/",
-        HeroSpellDetailView.as_view(),
-        name="warbands-hero-spell-detail",
-    ),
     *unit_urlpatterns(HENCHMEN_GROUP),
     *unit_urlpatterns(HIRELING),
     path(

@@ -49,7 +49,7 @@ class PostbattleDraftTests(BattleTestCase):
         self.ok(self.save(battle_id, draft(self.results(**{self.h: {"rolls": [first]}}))))
         self.ok(self.save(battle_id, draft(self.results(**{self.h: {"rolls": [first, reroll]}}))))
         self.assertEqual(self.injury_logs(), [])
-        self.ok(self.post_as(self.player, self.url(battle_id, "confirm")))
+        self.ok(self.post_as(self.player, self.url(battle_id, "skip-postbattle")))
         self.assertEqual(self.injury_logs(), [])
 
     def test_finalise_logs_each_units_final_roll_once(self):

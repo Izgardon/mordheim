@@ -11,8 +11,6 @@ from .campaigns import (
 )
 from .chat import CampaignChatReadView, CampaignMessageDetailView, CampaignMessagesView
 from .content import (
-    CampaignBulletinDetailView,
-    CampaignBulletinView,
     CampaignCommonRulesView,
     CampaignEncampmentDetailView,
     CampaignEncampmentsView,
@@ -28,7 +26,6 @@ from .members import (
     CampaignMemberRemoveView,
     CampaignMemberRoleView,
     CampaignMembersView,
-    CampaignMyPermissionsView,
     CampaignOwnershipView,
     CampaignPermissionsView,
 )
@@ -48,8 +45,6 @@ __all__ = [
     "CampaignArchiveView",
     "CampaignBattleHistoryView",
     "CampaignChronicleView",
-    "CampaignBulletinDetailView",
-    "CampaignBulletinView",
     "CampaignChatReadView",
     "CampaignCommonRulesView",
     "CampaignDetailView",
@@ -69,7 +64,6 @@ __all__ = [
     "CampaignMembersView",
     "CampaignMessageDetailView",
     "CampaignMessagesView",
-    "CampaignMyPermissionsView",
     "CampaignOwnershipView",
     "CampaignPermissionsView",
     "CampaignPlayersView",

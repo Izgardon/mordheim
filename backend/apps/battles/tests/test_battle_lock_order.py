@@ -87,7 +87,7 @@ class BattleLockOrderTests(BattleTestCase):
                 "postbattle",
                 {"postbattle_json": draft({key: unit_result(key) for key in self.fixture.keys})},
             ),  # fmt: skip
-            (self.viewer, "confirm", {}),
+            (self.viewer, "skip-postbattle", {}),
             (
                 self.player,
                 "finalize-postbattle",

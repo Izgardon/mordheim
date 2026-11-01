@@ -128,22 +128,12 @@ class BattleQueryBudgetTests(BattleTestCase):
         end, _ = self.count(self.campaign_owner, "post", self.url(manager_end, "finish"), {"winners": []})
         self.within("finish_manager", end, 18)
 
-    def test_a_nudge_and_a_record_edit_stay_within_budget(self):
+    def test_a_nudge_stays_within_budget(self):
         # BATL-NEW-08: the battle and his participant locked, the target, his last nudge, the notification's
-        # update_or_create (its own savepoint), the event, the version, the answer's snapshot. BATL-NEW-04: the battle
-        # with membership, the participants with users and warbands locked, the battle's UPDATE and event, the version
-        # and the snapshot; the read is the battle and the participants.
+        # update_or_create (its own savepoint), the event, the version, the answer's snapshot
         battle_id = self.to_active({self.player: [], self.viewer: [self.r]})
         nudge, _ = self.count(self.player, "post", self.url(battle_id, "nudge"), {"user_id": self.viewer.id})
         self.within("nudge", nudge, 16)
-        self.ok(self.post_as(self.campaign_owner, self.url(battle_id, "finish"), {"winners": []}))
-        self.ok(self.post_as(self.campaign_owner, self.url(battle_id, "close-postbattle")))
-        read, _ = self.count(self.campaign_owner, "get", self.url(battle_id, "record"))
-        self.within("record_read", read, 2)
-        self.client.force_authenticate(user=self.campaign_owner)
-        with CaptureQueriesContext(connection) as captured:
-            self.ok(self.client.patch(self.url(battle_id, "record"), {"scenario": "Ford"}, format="json"))
-        self.within("record_edit", len(captured), 9)
 
     def test_writes_leave_presence_alone(self):
         # PERF-35: no write updates the writer's presence (an UPDATE each); only reads do, at most once a minute
@@ -152,7 +142,7 @@ class BattleQueryBudgetTests(BattleTestCase):
         self.ok(self.post_as(self.player, self.url(battle_id, "config"), {"battle_notes": "x"}))
         self.ok(self.kill(self.player, battle_id, f"hero:{self.fixture.heroes[0].id}", self.r), 201)
         self.finish(battle_id, [self.warband])
-        self.ok(self.post_as(self.player, self.url(battle_id, "confirm")))
+        self.ok(self.post_as(self.player, self.url(battle_id, "skip-postbattle")))
 
         rows = BattleParticipant.objects.filter(battle_id=battle_id).values_list("last_seen_at", flat=True)
         self.assertEqual(list(rows.distinct()), [None])
@@ -196,7 +186,7 @@ class BattleQueryBudgetTests(BattleTestCase):
         # the participants already read; decision 3 moved them here from End), every warband's result log in one
         # INSERT (decision 4) and the pivotal moments (the trading reset went to End only, BUG-122). Was 76.
         battle_id, postbattle = self._fixture_postbattle()
-        self.ok(self.post_as(self.viewer, self.url(battle_id, "confirm")))
+        self.ok(self.post_as(self.viewer, self.url(battle_id, "skip-postbattle")))
         body = {"postbattle_json": postbattle}
         queries, _ = self.count(self.player, "post", self.url(battle_id, "finalize-postbattle"), body)
         self.assertEqual(self.battle(battle_id).status, "ended")

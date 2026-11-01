@@ -120,11 +120,6 @@ def with_feature(flag: str, code: str) -> Rule:
     return switched_on_and_holds
 
 
-def author_or_staff(access: CampaignAccess, obj: Any = None) -> bool:
-    """He wrote it (a bulletin note), or he is an owner or admin (decision 8)."""
-    return access.is_staff or (obj is not None and obj.user_id == access.user_id)
-
-
 def encampment_owner_or_manager(access: CampaignAccess, obj: Any = None) -> bool:
     """The encampment is his, or he holds manage_encampments (decision 9; the view has checked its page is on)."""
     return access.has("manage_encampments") or (obj is not None and obj.owner_id == access.user_id)
@@ -142,7 +137,7 @@ ROLE_RULES: Mapping[str, Rule] = {
     "hand_over": owner,  # ownership goes to an admin (decision 4, CAMP-NEW-02)
     "archive": owner,  # decision 5, CAMP-NEW-04
     "restore": owner_of_archived,
-    "remove_posts": staff,  # remove chat and bulletin posts, "removed by admin" (decision 8, CAMP-NEW-06)
+    "remove_posts": staff,  # remove chat posts, "removed by admin" (decision 8, CAMP-NEW-06)
     "leave": not_owner,  # the owner hands over first; alone, leaving archives (decision 4, services/leaving)
 }
 CODE_RULES: Mapping[str, Rule] = {
@@ -154,7 +149,6 @@ CAMPAIGN_RULES: Mapping[str, Rule] = {
     "view": member,
     **ROLE_RULES,
     **CODE_RULES,
-    "delete_bulletin_entry": author_or_staff,  # an object rule: check_rule("delete_bulletin_entry", entry)
     "edit_encampment": encampment_owner_or_manager,  # edit, reassign, remove (object rule)
 }
 CAPABILITIES: tuple[str, ...] = (*ROLE_RULES, *CODE_RULES)  # the flags: every rule but view and object rules

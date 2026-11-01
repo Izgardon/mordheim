@@ -72,9 +72,9 @@ class ClosePostbattleTests(BattleTestCase):
 
 
 class SkipPostbattleTests(BattleTestCase):
-    def test_skip_postbattle_and_its_old_path_confirm_skip_alike(self):
-        # PR B: confirm/ became skip-postbattle/; the old path stays an alias for older clients
-        for action in ("skip-postbattle", "confirm"):
+    def test_skip_postbattle_skips_and_the_old_confirm_path_is_gone(self):
+        # PR B: confirm/ became skip-postbattle/; the alias went once the rebuilt pages called skip-postbattle/
+        for action in ("skip-postbattle",):
             with self.subTest(path=action):
                 battle_id = self.to_postbattle()
                 data = self.ok(self.post_as(self.viewer, self.url(battle_id, action))).data
@@ -84,3 +84,4 @@ class SkipPostbattleTests(BattleTestCase):
                 )
                 self.assertTrue(self.participant(battle_id, self.viewer).skipped_postbattle)
                 self.assertEqual(self.post_as(self.viewer, self.url(battle_id, action)).status_code, 200)  # a repeat
+        self.assertEqual(self.post_as(self.viewer, self.url(self.to_postbattle(), "confirm")).status_code, 404)

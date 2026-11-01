@@ -1,8 +1,8 @@
-"""Campaign chat and the bulletin board (CAMP-TEST-20; decision 8).
+"""Campaign chat (CAMP-TEST-20; decision 8).
 
-Neither has moderation today: chat has no delete at all and a bulletin note can be deleted (for good) only by its
-author. The chat send is dispatched after commit; the test runner turns Pusher off, so the helper the view calls is
-wrapped (still run) and its calls recorded.
+The message list takes no delete: owners and admins remove one message at a time (`test_campaign_moderation.py`).
+The chat send is dispatched after commit; the test runner turns Pusher off, so the helper the view calls is wrapped
+(still run) and its calls recorded.
 """
 
 from datetime import timedelta
@@ -14,7 +14,7 @@ from django.test import override_settings
 from django.test.utils import CaptureQueriesContext
 from django.utils import timezone
 
-from apps.campaigns.models import CampaignBulletinEntry, CampaignMessage
+from apps.campaigns.models import CampaignMessage
 from apps.realtime import services as realtime
 
 from .campaign_support import CampaignTestCase
@@ -132,44 +132,3 @@ class ChatTests(CampaignTestCase):
             client.trigger.call_args.args[:2], (f"private-campaign-{self.campaign.id}-chat", "chat.message")
         )
         self.assertTrue(CampaignMessage.objects.filter(body="Still here").exists())
-
-
-class BulletinTests(CampaignTestCase):
-    def note(self, user: Any, body: str = "WTB wyrdstone") -> Any:
-        response = self.post_as(user, self.url("bulletin/"), {"body": body})
-        self.assertEqual(response.status_code, 201, response.data)
-        return response.data
-
-    def test_notes_list_newest_first_with_the_authors_first_name(self):
-        first = self.note(self.player, "  Looking for a sling.  ")
-        second = self.note(self.rival)
-
-        listed = self.get_as(self.owner, self.url("bulletin/")).data
-
-        self.assertEqual(
-            [(row["id"], row["username"]) for row in listed], [(second["id"], "Rex"), (first["id"], "Pia")]
-        )
-        self.assertEqual(listed[1]["body"], "Looking for a sling.")
-        self.assertEqual(len(self.note(self.player, "x" * 280)["body"]), 280)
-
-    def test_the_author_removes_his_note_and_it_stays_listed_as_removed(self):
-        # CAMP-UX-08, decision 8: the author's delete used to be for good; it is soft now, with one removed shape
-        note = self.note(self.player)
-        url = self.url(f"bulletin/{note['id']}/")
-        for user, expected in ((self.rival, 403), (self.outsider, 404)):
-            with self.subTest(user=user.first_name):
-                self.assertEqual(self.delete_as(user, url).status_code, expected)
-        self.assertIsNone(CampaignBulletinEntry.objects.get(id=note["id"]).removed_at)
-
-        self.assertEqual(self.delete_as(self.player, url).status_code, 204)
-
-        row = self.get_as(self.rival, self.url("bulletin/")).json()[0]
-        self.assertEqual((row["id"], row["body"], row["removed_by"]), (note["id"], "", "author"))
-        self.assertIsNotNone(row["removed_at"])
-        self.assertEqual(self.delete_as(self.player, url).status_code, 204)  # again: nothing changes
-        self.assertEqual(self.delete_as(self.player, self.url("bulletin/999999/")).status_code, 404)
-
-    def test_only_members_read_and_post(self):
-        self.assertEqual(self.get_as(self.outsider, self.url("bulletin/")).status_code, 404)
-        self.assertEqual(self.post_as(self.outsider, self.url("bulletin/"), {"body": "Hi"}).status_code, 404)
-        self.assertFalse(CampaignBulletinEntry.objects.exists())

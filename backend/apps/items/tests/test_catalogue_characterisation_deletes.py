@@ -21,7 +21,6 @@ from apps.bestiary.models import (
     BestiaryEntrySkill,
     BestiaryEntrySpecial,
     BestiaryEntrySpell,
-    WarbandBestiaryFavourite,
 )
 from apps.core.catalogue import kinds as catalogue_kinds
 from apps.core.catalogue.usage import count_usage
@@ -145,14 +144,12 @@ class CustomEntryDeleteTests(CatalogueTestCase):
             [1, 1, 1],
         )
 
-    def test_deleting_a_bestiary_entry_drops_its_favourites_and_takes_its_item(self):
+    def test_deleting_a_bestiary_entry_takes_its_item(self):
         # the bestiary rewrite step 3 (was: the shop item was unlinked and stayed): an Animal item is its beast's
-        WarbandBestiaryFavourite.objects.create(warband=self.warband, bestiary_entry=self.beast)
         boar = make_entry(ITEMS, "War Boar", campaign=self.campaign, type="Animal", bestiary_entry=self.beast)
 
         self.assertEqual(self.delete_as(self.owner, BESTIARY.detail_url(self.beast.id)).status_code, 204)
 
-        self.assertFalse(WarbandBestiaryFavourite.objects.filter(warband=self.warband).exists())
         self.assertFalse(Item.objects.filter(pk=boar.pk).exists())
 
     def test_deleting_a_hired_sword_leaves_the_units_hired_from_it(self):

@@ -1,14 +1,12 @@
-"""Campaign content: the bulletin board, encampments, locations and house rules."""
+"""Campaign content: encampments, locations and house rules."""
 
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from ..effects import common_rules
-from ..models import CampaignBulletinEntry, CampaignHouseRule
+from ..models import CampaignHouseRule
 from ..serializers.content import (
-    CampaignBulletinEntryCreateSerializer,
-    CampaignBulletinEntrySerializer,
     CampaignEncampmentSerializer,
     CampaignEncampmentWriteSerializer,
     CampaignHouseRuleCreateSerializer,
@@ -16,41 +14,12 @@ from ..serializers.content import (
     CampaignLocationSerializer,
     CampaignLocationWriteSerializer,
 )
-from ..services import bulletin, encampments, house_rules, locations
+from ..services import encampments, house_rules, locations
 from .base import CampaignScopedView
 
 
 def not_found() -> Response:
     return Response({"detail": "Not found"}, status=404)
-
-
-class CampaignBulletinView(CampaignScopedView):
-    """GET: the notes, newest first. POST: any member adds one (up to 280 characters)."""
-
-    rules = {"GET": "view", "POST": "view"}
-
-    def get(self, request, campaign_id):
-        return Response(CampaignBulletinEntrySerializer(bulletin.entries(campaign_id), many=True).data)
-
-    def post(self, request, campaign_id):
-        serializer = CampaignBulletinEntryCreateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        entry = bulletin.post(campaign_id, request.user, serializer.validated_data["body"])
-        return Response(CampaignBulletinEntrySerializer(entry).data, status=status.HTTP_201_CREATED)
-
-
-class CampaignBulletinDetailView(CampaignScopedView):
-    """DELETE: a note's author, an owner or an admin removes it; it stays listed as removed (decision 8)."""
-
-    rules = {"DELETE": "view"}  # then the author, once the note is found
-
-    def delete(self, request, campaign_id, entry_id):
-        entry = CampaignBulletinEntry.objects.filter(id=entry_id, campaign_id=campaign_id).first()
-        if not entry:
-            return not_found()
-        self.check_rule("delete_bulletin_entry", entry)
-        bulletin.remove(entry, request.user)
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CampaignEncampmentsView(CampaignScopedView):

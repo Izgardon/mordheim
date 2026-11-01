@@ -106,17 +106,15 @@ class PermissionCatalogueTests(CampaignTestCase):
 
         grants_url = self.url(f"members/{self.player.id}/permissions/")
         granted = self.put_as(self.owner, grants_url, {"permissions": ["manage_rules", EDIT]})
-        mine = self.get_as(self.player, self.url("permissions/me/")).json()
+        held = self.get_as(self.player, self.url()).data["permissions"]
 
         self.assertEqual(granted.json(), [expected[2], expected[0]])  # in the order sent
-        self.assertEqual(mine, [expected[0], expected[2]])  # in the catalogue's order
+        self.assertEqual(held, [EDIT, "manage_rules"])  # the campaign detail's codes, sorted
 
     def test_owners_and_admins_hold_every_code_and_players_their_grants(self):
         for user in (self.owner, self.admin):
             with self.subTest(user=user.first_name):
                 self.assertEqual(self.get_as(user, self.url()).data["permissions"], sorted(PERMISSION_CODES))
-                mine = self.get_as(user, self.url("permissions/me/")).json()
-                self.assertEqual(sorted(row["code"] for row in mine), sorted(PERMISSION_CODES))
         self.assertEqual(self.get_as(self.player, self.url()).data["permissions"], [EDIT])
         self.assertEqual(self.codes(self.admin), [EDIT])  # the admin's join grant is still stored
 

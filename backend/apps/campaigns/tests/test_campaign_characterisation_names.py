@@ -10,7 +10,7 @@ from typing import Any
 from rest_framework.test import APIClient
 
 from apps.battles.models import Battle
-from apps.campaigns.models import CampaignBulletinEntry, CampaignEncampment, CampaignMessage
+from apps.campaigns.models import CampaignEncampment, CampaignMessage
 from apps.realtime.channel_auth import authorize_private_channel
 from apps.warbands.models import Warband
 
@@ -45,14 +45,11 @@ class DisplayNameTests(CampaignTestCase):
         self.assertEqual(players[self.player.id], "Pia")
         self.assertEqual((members[self.nameless.id]["name"], members[self.nameless.id]["email"]), (self.shown, EMAIL))
 
-    def test_chat_and_bulletin_store_player_and_id_as_the_username(self):
+    def test_chat_stores_player_and_id_as_the_username(self):
         message = self.post_as(self.nameless, self.url("messages/"), {"body": "Who goes there?"})
-        note = self.post_as(self.nameless, self.url("bulletin/"), {"body": "WTB rope"})
 
         self.assertEqual(message.json()["username"], self.shown)
         self.assertEqual(CampaignMessage.objects.get(id=message.json()["id"]).username, self.shown)
-        self.assertEqual(note.data["username"], self.shown)
-        self.assertEqual(CampaignBulletinEntry.objects.get(id=note.data["id"]).username, self.shown)
         self.assertEqual(self.get_as(self.rival, self.url("messages/")).json()[0]["username"], self.shown)
 
     def test_an_encampment_owner_is_named_player_and_id(self):

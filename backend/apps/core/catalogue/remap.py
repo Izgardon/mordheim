@@ -2,12 +2,11 @@
 
 A version's first edit moves the campaign's copies onto the version, Revert moves them back, and a house rule's
 sync and revert do the same for its clones. Every row the kind's registry names moves: the holders (units' copies,
-stash rows, bestiary links, units of a race) and the followers (bestiary favourites, the campaign's animals),
-within the one campaign; other campaigns and the book's own links stay. Each copy keeps its stored cost: what the
-warband paid, which sales and values read (BUG-51). Each table is one UPDATE whatever the number of copies; a
-table with a unique key (a stash row per item and cost, one link per bestiary entry and item, one favourite per
-warband and entry) reads the rows it moves and the rows they may meet, then merges: a stash row's copies join the
-row of their cost, a duplicate link or favourite goes.
+stash rows, bestiary links, units of a race) and any followers, within the one campaign; other campaigns and the
+book's own links stay. Each copy keeps its stored cost: what the warband paid, which sales and values read (BUG-51).
+Each table is one UPDATE whatever the number of copies; a table with a unique key (a stash row per item and cost,
+one link per bestiary entry and item) reads the rows it moves and the rows they may meet, then merges: a stash row's
+copies join the row of their cost, a duplicate link goes.
 """
 
 from collections.abc import Mapping

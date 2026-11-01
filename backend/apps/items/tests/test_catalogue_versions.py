@@ -12,7 +12,7 @@ from typing import Any
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
-from apps.bestiary.models import BestiaryEntryItem, BestiaryEntrySkill, WarbandBestiaryFavourite
+from apps.bestiary.models import BestiaryEntryItem, BestiaryEntrySkill
 from apps.core.models import RevertedVersion
 from apps.hirelings.models import HiredSword
 from apps.items.models import Item
@@ -118,18 +118,15 @@ class FirstEditTests(VersionTestCase):
         BestiaryEntrySkill.objects.create(bestiary_entry=self.beast, skill=skill)
         self.hero.race = self.human
         self.hero.save(update_fields=["race"])
-        WarbandBestiaryFavourite.objects.create(warband=self.warband, bestiary_entry=self.warhound)
 
         skill_version = self.edit(SKILLS, skill.id, {"description": "Hides."}).data["id"]
         race_version = self.edit(RACES, self.human.id, {"movement": 5}).data["id"]
-        beast_version = self.edit(BESTIARY, self.warhound.id, {"description": "Hungry."}).data["id"]
 
         self.assertEqual(list(self.hero.hero_skills.values_list("skill_id", flat=True)), [skill_version])
         self.assertEqual(list(self.group.henchmen_group_skills.values_list("skill_id", flat=True)), [skill_version])
         self.assertEqual(list(BestiaryEntrySkill.objects.filter(bestiary_entry=self.beast).values_list("skill_id", flat=True)), [skill_version])  # fmt: skip
         self.hero.refresh_from_db()
         self.assertEqual(self.hero.race_id, race_version)
-        self.assertEqual(list(WarbandBestiaryFavourite.objects.filter(warband=self.warband).values_list("bestiary_entry_id", flat=True)), [beast_version])  # fmt: skip
         self.assertEqual(Skill.objects.filter(name="Infiltration", campaign__isnull=True).count(), 6)
 
     def test_a_hired_swords_version_is_a_copied_row_in_the_campaign(self):

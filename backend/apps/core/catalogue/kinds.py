@@ -4,9 +4,9 @@ Items, skills, spells, specials, races, bestiary entries, hired swords and drama
 item rules. A spec names the kind's model and serializers, how its list is
 filtered, the child rows an entry carries (what a version copies), the tables whose rows hold an entry (`holders`:
 what a delete can't take with it, what `usage/` counts, and what a version's first edit moves onto it and Revert
-moves back), the rows that follow an entry without holding it (`followers`: a warband's bestiary favourites) and the
-entry of another kind that goes everywhere it goes (`twin`: a beast's Animal item). Differences that are behaviour
-are hooks (hooks.py), as pass 1 did for units (`warbands/units/kinds.py`).
+moves back), the rows that follow an entry without holding it (`followers`; none since the bestiary favourites went)
+and the entry of another kind that goes everywhere it goes (`twin`: a beast's Animal item). Differences that are
+behaviour are hooks (hooks.py), as pass 1 did for units (`warbands/units/kinds.py`).
 """
 
 from collections.abc import Callable, Mapping
@@ -22,7 +22,6 @@ from apps.bestiary.models import (
     BestiaryEntrySkill,
     BestiaryEntrySpecial,
     BestiaryEntrySpell,
-    WarbandBestiaryFavourite,
 )
 from apps.bestiary.selectors import by_kind
 from apps.bestiary.serializers import BestiaryEntryWriteSerializer
@@ -315,14 +314,6 @@ BESTIARY = CatalogueKindSpec(
     lists=("bestiary", "items"),  # its Animal item is written with it
     children=("bestiary_entry_skills", "bestiary_entry_specials", "bestiary_entry_spells", "bestiary_entry_items"),
     holders=(BEAST_GROUPS,),  # units copy their profile from it; only a group recruited from it holds it
-    followers=(
-        Move(
-            model=WarbandBestiaryFavourite,
-            field="bestiary_entry",
-            campaign="warband__campaign_id",
-            unique=("warband_id",),
-        ),
-    ),
     twin=Twin(ITEMS, "bestiary_entry"),
     hooks=BestiaryHooks(),
 )

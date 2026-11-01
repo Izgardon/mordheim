@@ -2,7 +2,6 @@
 
 from typing import Any
 
-from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -13,47 +12,15 @@ from apps.warbands.serializers import (
     WarbandItemTransferSerializer,
 )
 from apps.warbands.services.item_moves import Outcome, sell_item, transfer_item
-from apps.warbands.services.stash import discard_from_stash, stash_entries, stock_item
+from apps.warbands.services.stash import stash_entries
 from apps.warbands.units.catalogue_scope import current_entry
 
 from .base import WarbandScopedView
 
 
-def _int_or(value: Any, default: Any) -> Any:
-    try:
-        return int(value)
-    except (TypeError, ValueError):
-        return default
-
-
 class WarbandItemListView(WarbandScopedView):
     def get(self, request: Request, warband_id: int) -> Response:
         return Response(WarbandItemSummarySerializer(stash_entries(self.warband), many=True).data)
-
-    def post(self, request: Request, warband_id: int) -> Response:
-        item_id = _int_or(request.data.get("item_id"), None)
-        if item_id is None:
-            return Response({"detail": "Invalid item id"}, status=400)
-        quantity = max(1, _int_or(request.data.get("quantity", 1), 1))
-        cost = request.data.get("cost")
-        if cost is not None:
-            cost = _int_or(cost, None)
-
-        # another campaign's item answers as one that doesn't exist (SEC-07); a book item the campaign has a version of
-        # is the version (CAT-TWEAK-03)
-        item = current_entry(Item.objects.select_related("bestiary_entry"), item_id, self.warband.campaign_id)
-        if not item:
-            return Response({"detail": "Item not found"}, status=404)
-        warband_item = stock_item(self.warband, item, quantity, cost)
-        return Response(WarbandItemSummarySerializer(warband_item).data, status=status.HTTP_201_CREATED)
-
-
-class WarbandItemDetailView(WarbandScopedView):
-    def delete(self, request: Request, warband_id: int, item_id: int) -> Response:
-        qty = max(1, _int_or(request.data.get("quantity", 1), 1))
-        if not discard_from_stash(self.warband, item_id, qty):  # more copies than held empties the row
-            return Response({"detail": "Item not found in stash"}, status=404)
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 def _item_response(move: Any, warband: Any, data: dict[str, Any], *, scoped: bool) -> Response:
