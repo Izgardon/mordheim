@@ -12,20 +12,12 @@ import BattlesSection from "../components/settings/BattlesSection";
 import CampaignSection from "../components/settings/CampaignSection";
 import FeedbackReportCard from "../components/settings/FeedbackReportCard";
 import JoinCode from "../components/settings/JoinCode";
-import LocationsSection from "../components/settings/LocationsSection";
 import PlayersSection from "../components/settings/PlayersSection";
 import WarbandSection from "../components/settings/WarbandSection";
 import type { CampaignSummary } from "../types/campaign-types";
 import type { CampaignLayoutContext } from "./CampaignLayout";
 
-type SectionId =
-  | "campaign"
-  | "players"
-  | "battles"
-  | "locations"
-  | "warband"
-  | "archive"
-  | "feedback";
+type SectionId = "campaign" | "players" | "battles" | "warband" | "archive" | "feedback";
 
 type Section = {
   id: SectionId;
@@ -54,12 +46,6 @@ const SECTIONS: Section[] = [
     label: "Battles",
     hint: "Open and stuck battles, with the manager's tools",
     shown: (caps) => caps.manage_battles,
-  },
-  {
-    id: "locations",
-    label: "Locations",
-    hint: "Add, edit and remove the campaign's locations",
-    shown: (caps) => caps.manage_locations,
   },
   {
     id: "warband",
@@ -98,8 +84,6 @@ function SectionBody({ id, campaign }: { id: SectionId; campaign: CampaignSummar
       return <PlayersSection campaign={campaign} />;
     case "battles":
       return <BattlesSection campaignId={campaign.id} />;
-    case "locations":
-      return <LocationsSection campaignId={campaign.id} />;
     case "warband":
       return <WarbandSection campaign={campaign} />;
     case "archive":
