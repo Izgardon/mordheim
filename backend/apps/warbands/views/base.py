@@ -15,6 +15,8 @@ from apps.realtime.services import send_warband_changed, sender_socket_id
 from apps.warbands.access import WARBAND_RULES, warband_capabilities
 from apps.warbands.models import Warband
 
+WRITES = ("POST", "PUT", "PATCH", "DELETE")
+
 
 class WarbandScopedView(APIView):
     """Loads the warband and the viewer's membership once and checks the method's rule before the handler.
@@ -55,5 +57,18 @@ class WarbandScopedView(APIView):
 
     def announce_change(self) -> None:
         """`warband.changed` to the campaign's other members once the write commits, so their open page of this
-        warband reads it again (not to the writer's socket, which has the answer)."""
+        warband reads it again (not to the writer's socket, which has the answer). Once per request."""
+        if getattr(self, "_announced", False):
+            return
+        self._announced = True
         send_warband_changed(self.warband.campaign_id, self.warband.id, sender_socket_id(self.request))
+
+    def finalize_response(self, request: Request, response: Any, *args: Any, **kwargs: Any) -> Any:
+        """Every write that succeeds announces itself (`announce_change`): purchases, renames, roster saves, XP,
+        level-ups, transfers, sales, hires, resources and the ledger alike (After the passes: only the beast writes
+        did), so another member with the warband's page open sees it. A refused write tells nobody."""
+        response = super().finalize_response(request, response, *args, **kwargs)
+        succeeded = 200 <= response.status_code < 300
+        if request.method in WRITES and succeeded and hasattr(self, "warband"):
+            self.announce_change()
+        return response

@@ -161,7 +161,7 @@ class MissingGamesRealtimeTests(RosterTestCase):
             send = getattr(self.client, method)
             return send(url, body, format="json", HTTP_X_PUSHER_SOCKET_ID=SOCKET)
 
-    def test_setting_or_clearing_missing_games_tells_the_other_members_and_other_edits_do_not(self):
+    def test_setting_or_clearing_missing_games_tells_the_other_members_as_every_edit_does(self):
         hero = make_unit(HERO, self.warband, name="Aldric")
         url = unit_url(HERO, self.warband.id, hero.id)
         batch = unit_url(HIRELING, self.warband.id, suffix="batch/")
@@ -177,4 +177,4 @@ class MissingGamesRealtimeTests(RosterTestCase):
         self.write("post", batch, {"update": [{"id": sword.id, "missing_games": 1}]})
         batched = self.changed()
 
-        self.assertEqual((set_missing, renamed, batched), (event, [], event))
+        self.assertEqual((set_missing, renamed, batched), (event, event, event))  # a rename too (After the passes)
