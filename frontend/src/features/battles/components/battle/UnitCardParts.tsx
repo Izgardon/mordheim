@@ -1,4 +1,4 @@
-import { Crosshair, Minus, Plus, RotateCw } from "lucide-react";
+import { Crosshair, Minus, NotebookPen, Plus, RotateCw } from "lucide-react";
 
 import type { PrebattleUnit } from "@/features/battles/components/prebattle/prebattle-types";
 import { cn } from "@/lib/utils";
@@ -170,17 +170,43 @@ export function HorseIcon() {
   );
 }
 
+/** A unit's battle note, behind a small button at the end of its card's bottom row. */
+export type CardNote = { text: string; onOpen: () => void };
+
+function NoteButton({ name, note }: { name: string; note: CardNote }) {
+  const has = Boolean(note.text.trim());
+  return (
+    <button
+      type="button"
+      aria-label={has ? `Note for ${name}: ${note.text}` : `Add a note for ${name}`}
+      title={has ? note.text : "Add a note"}
+      onClick={note.onOpen}
+      className={cn(
+        "relative flex min-h-11 w-11 shrink-0 items-center justify-center border",
+        has
+          ? "border-accent-line bg-accent-soft text-accent-hi"
+          : "border-border text-muted-foreground"
+      )}
+    >
+      <NotebookPen className="h-4 w-4" aria-hidden="true" />
+    </button>
+  );
+}
+
 export function QuickRow({
   unit,
   onOpen,
   className,
   hideEmpty,
+  note,
 }: {
   unit: PrebattleUnit;
   onOpen: (tab: GearTab) => void;
   className?: string;
   /** Leave out an empty Skills (a henchmen group shows only its Gear, as the board does). */
   hideEmpty?: boolean;
+  /** Your own unit's battle note (left out for anyone else's). */
+  note?: CardNote;
 }) {
   return (
     <div className={cn("flex gap-1.5", className)}>
@@ -195,6 +221,22 @@ export function QuickRow({
           <span className="font-mono text-accent-text">{entry.count}</span>
         </button>
       ))}
+      {note ? <NoteButton name={unit.displayName} note={note} /> : null}
     </div>
+  );
+}
+
+/** The first line of a unit's battle note under its card's bottom row; a tap opens it. */
+export function NotePreview({ text, onOpen }: { text: string; onOpen: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      aria-hidden="true"
+      tabIndex={-1}
+      className="-mt-1 truncate text-left text-xs italic text-text2"
+    >
+      {text}
+    </button>
   );
 }

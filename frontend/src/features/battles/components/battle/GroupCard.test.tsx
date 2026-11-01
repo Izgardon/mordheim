@@ -12,6 +12,7 @@ function renderGroup(information: Parameters<typeof myParticipant>[0] = {}) {
   const participant = myParticipant(information);
   const [entry] = battleSections(participant, toParticipantRosters(battleRosters())[ME.id]).groups;
   const onWounds = vi.fn();
+  const onNote = vi.fn();
   render(
     <GroupCard
       entry={entry}
@@ -21,15 +22,16 @@ function renderGroup(information: Parameters<typeof myParticipant>[0] = {}) {
       onCycle={vi.fn()}
       onWounds={onWounds}
       onOpen={vi.fn()}
+      onNote={onNote}
     />
   );
-  return onWounds;
+  return { onWounds, onNote };
 }
 
 describe("GroupCard", () => {
   it("gives each henchman wound buttons, as a hero has", async () => {
     const user = setupUser();
-    const onWounds = renderGroup();
+    const { onWounds } = renderGroup();
 
     expect(screen.getByRole("group", { name: "Wounds for Youngblood A" })).toHaveTextContent(
       "W 1/1"
@@ -49,5 +51,21 @@ describe("GroupCard", () => {
     renderGroup({ unit_information_json: { "henchman:2": { out_of_action: true } } });
     const [, out] = screen.getAllByRole("button", { name: "Youngblood A loses a wound" });
     expect(out).toBeDisabled();
+  });
+});
+
+describe("GroupCard notes", () => {
+  it("opens the group's battle note from its small button and shows its first line", async () => {
+    const user = setupUser();
+    const { onNote } = renderGroup({
+      unit_information_json: { "henchman:2": { notes: "Carrying the shard" } },
+    });
+
+    expect(screen.getByText("Carrying the shard")).toBeInTheDocument();
+    await user.click(
+      screen.getByRole("button", { name: "Note for Youngblood A: Carrying the shard" })
+    );
+
+    expect(onNote).toHaveBeenCalledWith("henchman:2");
   });
 });

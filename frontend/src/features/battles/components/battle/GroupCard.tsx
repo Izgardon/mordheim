@@ -2,7 +2,14 @@ import { StatStrip } from "@/components/ui/stat-strip";
 import { cn } from "@/lib/utils";
 
 import { STATUS_LABEL, statValues, type BattleGroupView } from "./battle-units";
-import { KillButton, QuickRow, STATUS_TONE, WoundsControl, type GearTab } from "./UnitCardParts";
+import {
+  KillButton,
+  NotePreview,
+  QuickRow,
+  STATUS_TONE,
+  WoundsControl,
+  type GearTab,
+} from "./UnitCardParts";
 
 type GroupCardProps = {
   entry: BattleGroupView;
@@ -13,6 +20,8 @@ type GroupCardProps = {
   /** A model's wounds, shared like a hero's: one lost (-1) or healed (+1). */
   onWounds: (memberKey: string, delta: number) => void;
   onOpen: (tab: GearTab) => void;
+  /** Opens the group's battle note, kept on one model (the first with a note, else the first). */
+  onNote: (memberKey: string) => void;
 };
 
 /**
@@ -28,11 +37,15 @@ export default function GroupCard({
   onCycle,
   onWounds,
   onOpen,
+  onNote,
 }: GroupCardProps) {
   const { group, members } = entry;
   const kills = members.reduce((sum, member) => sum + member.kills, 0);
   const allOut = members.every((member) => member.status === "out_of_action");
   const first = members.find((member) => member.status !== "out_of_action") ?? members[0];
+  // the group's note, as main's group card kept it: on the first model with a note, else the first
+  const noted = members.find((member) => member.info?.notes?.trim()) ?? members[0];
+  const note = noted?.info?.notes?.trim() ?? "";
   return (
     <article
       aria-label={group.name}
@@ -57,7 +70,15 @@ export default function GroupCard({
       {first && !allOut ? (
         <StatStrip values={statValues(first.stats)} highlighted={first.highlighted} />
       ) : null}
-      {first ? <QuickRow unit={first.unit} onOpen={onOpen} hideEmpty /> : null}
+      {first ? (
+        <QuickRow
+          unit={first.unit}
+          onOpen={onOpen}
+          hideEmpty
+          note={noted ? { text: note, onOpen: () => onNote(noted.unit.key) } : undefined}
+        />
+      ) : null}
+      {note && noted ? <NotePreview text={note} onOpen={() => onNote(noted.unit.key)} /> : null}
       <div className="grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-1.5">
         {members.map((member) => {
           const saving = Boolean(savingKeys[member.unit.key]);

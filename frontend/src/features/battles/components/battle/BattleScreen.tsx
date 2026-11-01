@@ -36,6 +36,7 @@ import RoundSheet from "./RoundSheet";
 import { NeutralGroupUnits, OtherWarband } from "./SideUnits";
 import SideStrip from "./SideStrip";
 import UnitCard from "./UnitCard";
+import UnitNoteSheet, { type NoteTarget } from "./UnitNoteSheet";
 import type { GearTab } from "./UnitCardParts";
 import {
   AddNeutralGroupSheet,
@@ -94,6 +95,9 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
   const [killer, setKiller] = useState<Killer | null>(null);
   const [gear, setGear] = useState<{ unit: PrebattleUnit; tab: GearTab } | null>(null);
   const [combat, setCombat] = useState<"melee" | "ranged" | null>(null);
+  const [noteTarget, setNoteTarget] = useState<NoteTarget | null>(null);
+  const openNote = (view: BattleUnitView, name = view.unit.displayName) =>
+    setNoteTarget({ key: view.unit.key, name, notes: view.info?.notes ?? "" });
   const panelProps = (which: Panel) => ({
     open: panel === which,
     onOpenChange: (open: boolean) => setPanel(open ? which : null),
@@ -285,6 +289,7 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
       onWounds={(delta) => void config.adjustUnitWounds(view.unit, delta)}
       onDismount={(dismounted) => void screen.setDismounted(view.unit.key, dismounted)}
       onOpen={(tab) => setGear({ unit: view.unit, tab })}
+      onNote={() => openNote(view)}
     />
   );
 
@@ -314,6 +319,10 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
             if (member) void config.adjustUnitWounds(member.unit, delta);
           }}
           onOpen={(tab) => setGear({ unit: entry.members[0].unit, tab })}
+          onNote={(key) => {
+            const member = entry.members.find((candidate) => candidate.unit.key === key);
+            if (member) openNote(member, entry.group.name);
+          }}
         />
       ))}
       {sections.temporary.map(card)}
@@ -444,6 +453,12 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
         yours={combatOptions.yours}
         theirs={combatOptions.theirs}
         onOpenChange={(open) => (open ? null : setCombat(null))}
+      />
+      <UnitNoteSheet
+        target={noteTarget}
+        readOnly={!canAct}
+        onOpenChange={(open) => (open ? null : setNoteTarget(null))}
+        onSave={config.saveUnitNotes}
       />
       <BattleDiceSheet {...panelProps("dice")} />
       <BattleRulesSheet

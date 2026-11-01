@@ -5,6 +5,7 @@ import { statValues, type BattleUnitView } from "./battle-units";
 import {
   HorseIcon,
   KillButton,
+  NotePreview,
   QuickRow,
   StatusButton,
   WoundsControl,
@@ -23,12 +24,15 @@ type UnitCardProps = {
   onWounds: (delta: number) => void;
   onDismount: (dismounted: boolean) => void;
   onOpen: (tab: GearTab) => void;
+  /** Opens the unit's battle note (yours only). */
+  onNote: () => void;
 };
 
 /**
  * One of your units in the fight (design E): name and type, the kill button (heroes and hired
  * swords only), the profile (hidden while out of action), the mount line with its Dismounted
- * switch, the status button that cycles beside the wounds, and Gear and Skills or Spells.
+ * switch, the status button that cycles beside the wounds, Gear and Skills or Spells, and the
+ * small Note button for your battle note on it (its first line under the row when it has one).
  */
 export default function UnitCard({
   view,
@@ -40,9 +44,11 @@ export default function UnitCard({
   onWounds,
   onDismount,
   onOpen,
+  onNote,
 }: UnitCardProps) {
   const { unit, status } = view;
   const out = status === "out_of_action";
+  const note = view.info?.notes?.trim() ?? "";
   return (
     <article
       aria-label={unit.displayName}
@@ -116,7 +122,8 @@ export default function UnitCard({
           onChange={onWounds}
         />
       </div>
-      <QuickRow unit={unit} onOpen={onOpen} />
+      <QuickRow unit={unit} onOpen={onOpen} note={{ text: note, onOpen: onNote }} />
+      {note ? <NotePreview text={note} onOpen={onNote} /> : null}
     </article>
   );
 }
