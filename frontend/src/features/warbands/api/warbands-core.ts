@@ -1,4 +1,5 @@
 import { apiRequest } from "../../../lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 import type { WarbandSheet } from "../types/warband-sheet";
 import type {
   Warband,
@@ -35,6 +36,7 @@ export function createWarband(campaignId: number, payload: WarbandCreatePayload)
 export function updateWarband(warbandId: number, payload: Partial<WarbandUpdatePayload>) {
   return apiRequest<Warband>(`/warbands/${warbandId}/`, {
     method: "PATCH",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }
@@ -42,5 +44,6 @@ export function updateWarband(warbandId: number, payload: Partial<WarbandUpdateP
 export function deleteWarband(warbandId: number) {
   return apiRequest<void>(`/warbands/${warbandId}/`, {
     method: "DELETE",
+    headers: socketIdHeaders(),
   });
 }

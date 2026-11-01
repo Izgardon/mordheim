@@ -1,4 +1,5 @@
 import { apiRequest } from "../../../lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 import { pagePath, type CursorPage } from "./cursor-pages";
 
 import type { WarbandTrade, WarbandTradeEdit, WarbandTradePayload } from "../types/warband-types";
@@ -14,6 +15,7 @@ export function listWarbandTradePage(
 export function createWarbandTrade(warbandId: number, payload: WarbandTradePayload) {
   return apiRequest<WarbandTrade>(`/warbands/${warbandId}/trades/`, {
     method: "POST",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }
@@ -22,6 +24,7 @@ export function createWarbandTrade(warbandId: number, payload: WarbandTradePaylo
 export function updateWarbandTrade(warbandId: number, tradeId: number, payload: WarbandTradeEdit) {
   return apiRequest<WarbandTrade>(`/warbands/${warbandId}/trades/${tradeId}/`, {
     method: "PATCH",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }

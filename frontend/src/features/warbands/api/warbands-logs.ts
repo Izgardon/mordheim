@@ -1,4 +1,5 @@
 import { apiRequest } from "../../../lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 import { pagePath, type CursorPage } from "./cursor-pages";
 
 import type { WarbandLog, WarbandLogCreatePayload } from "../types/warband-types";
@@ -18,6 +19,7 @@ export function listWarbandLogPage(
 export function createWarbandLog(warbandId: number, payload: WarbandLogCreatePayload) {
   return apiRequest<WarbandLog>(`/warbands/${warbandId}/logs/`, {
     method: "POST",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }

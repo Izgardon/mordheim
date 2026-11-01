@@ -1,5 +1,6 @@
 import type { Fee } from "@/features/hirelings/fees";
 import { apiRequest } from "@/lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 
 import type { WarbandHireling } from "../types/warband-types";
 
@@ -47,6 +48,7 @@ export type HireBody = {
 export function hireWarbandHireling(warbandId: number, body: HireBody) {
   return apiRequest<HireAnswer>(`/warbands/${warbandId}/hirelings/hire/`, {
     method: "POST",
+    headers: socketIdHeaders(),
     body,
   });
 }

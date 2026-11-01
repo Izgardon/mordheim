@@ -1,4 +1,5 @@
 import { apiRequest } from "../../../lib/api-client";
+import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 
 import type {
   WarbandItemMutationResponse,
@@ -14,6 +15,7 @@ export function listWarbandItems(warbandId: number) {
 export function transferWarbandItem(warbandId: number, payload: WarbandItemTransferPayload) {
   return apiRequest<WarbandItemMutationResponse>(`/warbands/${warbandId}/item-transfers/`, {
     method: "POST",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }
@@ -21,6 +23,7 @@ export function transferWarbandItem(warbandId: number, payload: WarbandItemTrans
 export function sellWarbandItem(warbandId: number, payload: WarbandItemSalePayload) {
   return apiRequest<WarbandItemMutationResponse>(`/warbands/${warbandId}/item-sales/`, {
     method: "POST",
+    headers: socketIdHeaders(),
     body: payload,
   });
 }
