@@ -25,7 +25,8 @@ export type CatalogueBadgeFields = {
   book?: BookSummary | null;
   /**
    * In a campaign's list (grading phase 1): whether it is in play there, its setting ticked or
-   * none. False rows stay listed, greyed out with "Khemri isn't in this campaign".
+   * none. The reference pages leave false rows out (`inPlayOnly`); the store and the pickers grey
+   * them with "Khemri isn't in this campaign".
    */
   in_play?: boolean | null;
   /** Its setting (`GET settings/`); null counts as Mordheim's. The bestiary's rows have none. */

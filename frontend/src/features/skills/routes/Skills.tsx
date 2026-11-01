@@ -2,9 +2,9 @@ import { useMemo } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import { outOfPlay, useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
+import { inPlayOnly } from "@/features/reference/in-play";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import {
@@ -44,10 +44,10 @@ const compareSkills = (a: Skill, b: Skill) =>
   rank(a.type) - rank(b.type) || a.type.localeCompare(b.type) || a.name.localeCompare(b.name);
 
 /**
- * Skills (design E's reference layout): every skill of the campaign by list, searched by name or
- * rules text, with chips for the five common lists and "Other lists" (with a picker for one of
- * them). A row opens to its rules in the warband page's rules panel; custom skills are added and
- * edited as today.
+ * Skills (design E's reference layout): every skill in play in the campaign by list, searched by
+ * name or rules text, with chips for the five common lists and "Other lists" (with a picker for
+ * one of them). A row opens to its rules in the warband page's rules panel; custom skills are
+ * added and edited as today.
  */
 export default function Skills() {
   const { id } = useParams();
@@ -55,13 +55,12 @@ export default function Skills() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const skills = useCatalogue("skills", campaignId);
-  const settings = useSettingsById();
   const params = useReferenceParams(!skills.isLoading);
   const capabilities = campaignCapabilities(campaign);
   const list = params.get("list", "all");
   const otherList = params.get("other");
 
-  const sorted = useMemo(() => [...skills.data].sort(compareSkills), [skills.data]);
+  const sorted = useMemo(() => inPlayOnly(skills.data).sort(compareSkills), [skills.data]);
   const types = useMemo(() => [...new Set(sorted.map((skill) => skill.type))], [sorted]);
   const otherTypes = types.filter((type) => !CORE.includes(type));
   const searched = sorted.filter((skill) =>
@@ -173,7 +172,6 @@ export default function Skills() {
         {skills.isLoading ? <ReferenceRowBones /> : null}
         {shown.rows.map((skill) => {
           const key = String(skill.id);
-          const warning = outOfPlay(skill, settings);
           return (
             <ReferenceRow
               key={key}
@@ -181,8 +179,6 @@ export default function Skills() {
               open={params.isOpen(key)}
               onToggle={() => params.toggle(key)}
               name={skill.name}
-              warn={warning}
-              dim={Boolean(warning)}
               sub={isMobile ? listName(skill.type) : undefined}
               cells={isMobile ? undefined : [listName(skill.type)]}
             >

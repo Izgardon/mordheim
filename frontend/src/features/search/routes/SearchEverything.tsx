@@ -6,6 +6,7 @@ import { Search } from "lucide-react";
 import { useCampaignLocations } from "@/features/campaigns/api/campaign-queries";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogueSearchParams";
+import { inPlayOnly } from "@/features/reference/in-play";
 import { SectionPicker } from "@/features/reference/ReferencePage";
 import { useHouseRules } from "@/features/rules/api/rule-queries";
 import { ruleEntries } from "@/features/rules/rules-index";
@@ -123,12 +124,13 @@ export default function SearchEverything() {
     () =>
       searching
         ? searchEverything(query, {
-            items: items.data,
-            skills: skills.data,
-            spells: spells.data,
-            beasts: beasts.data,
-            hiredSwords: hiredSwords.data,
-            personae: personae.data,
+            // the reference as its pages show it: only what is in play in the campaign
+            items: inPlayOnly(items.data),
+            skills: inPlayOnly(skills.data),
+            spells: inPlayOnly(spells.data),
+            beasts: inPlayOnly(beasts.data),
+            hiredSwords: inPlayOnly(hiredSwords.data),
+            personae: inPlayOnly(personae.data),
             rules,
             houseRules: houseRules.data ?? [],
             locations: withLocations ? (locations.data ?? []) : [],

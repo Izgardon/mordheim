@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
+import { ALL_SETTINGS } from "@/features/reference/in-play";
 import ReferencePage from "@/features/reference/ReferencePage";
 import {
   BuyableToggle,
@@ -25,13 +26,14 @@ import StorePanel, { type StoreOpening } from "../store/StorePanel";
 import type { StoreCategory } from "../store/store-items";
 import WargearDetail from "./WargearDetail";
 import WargearRow, { WARGEAR_COLUMNS } from "./WargearRow";
-import { ALL_SETTINGS, useWargearRows } from "./wargear-rows";
+import { useWargearRows } from "./wargear-rows";
 
 /**
- * Wargear (design E, the items rebuild): every item of the campaign, searched by name, rule or
- * search word, filtered by kind and by setting, "What <your warband> can buy" on by default (the
- * server's who-can/: each item's price row for the warband and why it can't usually buy one; off
- * shows the rest greyed with that reason). An open row is the item's card, with Get this item.
+ * Wargear (design E, the items rebuild): every item in play in the campaign, searched by name,
+ * rule or search word, filtered by kind and by setting (Mordheim's grades as one), "What <your
+ * warband> can buy" on by default (the server's who-can/: each item's price row for the warband
+ * and why it can't usually buy one; off shows the rest greyed with that reason). An open row is
+ * the item's card, with Get this item.
  */
 export default function Wargear() {
   const { id } = useParams();
