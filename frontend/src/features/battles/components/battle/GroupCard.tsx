@@ -2,7 +2,7 @@ import { StatStrip } from "@/components/ui/stat-strip";
 import { cn } from "@/lib/utils";
 
 import { STATUS_LABEL, statValues, type BattleGroupView } from "./battle-units";
-import { KillButton, QuickRow, STATUS_TONE, type GearTab } from "./UnitCardParts";
+import { KillButton, QuickRow, STATUS_TONE, WoundsControl, type GearTab } from "./UnitCardParts";
 
 type GroupCardProps = {
   entry: BattleGroupView;
@@ -10,13 +10,15 @@ type GroupCardProps = {
   savingKeys: Record<string, boolean>;
   onKill: () => void;
   onCycle: (memberKey: string) => void;
+  /** A model's wounds, shared like a hero's: one lost (-1) or healed (+1). */
+  onWounds: (memberKey: string, delta: number) => void;
   onOpen: (tab: GearTab) => void;
 };
 
 /**
  * A henchmen group in the fight (design E): its name and count, one kill button (the sheet asks
  * which model), its profile, Gear, and a tile per model whose status cycles on a tap, with its
- * kills. A kill is logged against the model.
+ * kills and its wounds (− and +, shared like a hero's). A kill is logged against the model.
  */
 export default function GroupCard({
   entry,
@@ -24,6 +26,7 @@ export default function GroupCard({
   savingKeys,
   onKill,
   onCycle,
+  onWounds,
   onOpen,
 }: GroupCardProps) {
   const { group, members } = entry;
@@ -55,33 +58,47 @@ export default function GroupCard({
         <StatStrip values={statValues(first.stats)} highlighted={first.highlighted} />
       ) : null}
       {first ? <QuickRow unit={first.unit} onOpen={onOpen} hideEmpty /> : null}
-      <div className="grid grid-cols-3 gap-1.5">
-        {members.map((member) => (
-          <button
-            key={member.unit.key}
-            type="button"
-            aria-label={`${member.unit.displayName}: ${STATUS_LABEL[member.status]}. Tap for the next`}
-            disabled={!canAct || Boolean(savingKeys[member.unit.key])}
-            onClick={() => onCycle(member.unit.key)}
-            className={cn(
-              "flex min-h-14 flex-col gap-px border px-2 py-1.5 text-left text-ink disabled:opacity-60",
-              STATUS_TONE[member.status]
-            )}
-          >
-            <span className="truncate text-[13px] font-bold text-ink">
-              {member.unit.displayName}
-            </span>
-            <span className="text-[11px]">{STATUS_LABEL[member.status]}</span>
-            <span className="text-[11px] text-muted-foreground">
-              {member.kills === 1 ? "1 kill" : `${member.kills} kills`}
-            </span>
-            {member.unit.gaps?.length ? (
-              <span className="truncate text-[11px] text-danger">
-                No {member.unit.gaps.map((gap) => gap.name).join(", ")}
-              </span>
-            ) : null}
-          </button>
-        ))}
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-1.5">
+        {members.map((member) => {
+          const saving = Boolean(savingKeys[member.unit.key]);
+          return (
+            <div
+              key={member.unit.key}
+              className={cn("flex flex-col border", STATUS_TONE[member.status])}
+            >
+              <button
+                type="button"
+                aria-label={`${member.unit.displayName}: ${STATUS_LABEL[member.status]}. Tap for the next`}
+                disabled={!canAct || saving}
+                onClick={() => onCycle(member.unit.key)}
+                className="flex min-h-14 flex-col gap-px px-2 py-1.5 text-left text-ink disabled:opacity-60"
+              >
+                <span className="truncate text-[13px] font-bold text-ink">
+                  {member.unit.displayName}
+                </span>
+                <span className="text-[11px]">{STATUS_LABEL[member.status]}</span>
+                <span className="text-[11px] text-muted-foreground">
+                  {member.kills === 1 ? "1 kill" : `${member.kills} kills`}
+                </span>
+                {member.unit.gaps?.length ? (
+                  <span className="truncate text-[11px] text-danger">
+                    No {member.unit.gaps.map((gap) => gap.name).join(", ")}
+                  </span>
+                ) : null}
+              </button>
+              <div className="px-1 pb-1">
+                <WoundsControl
+                  compact
+                  name={member.unit.displayName}
+                  wounds={member.wounds}
+                  max={member.maxWounds}
+                  disabled={!canAct || saving || member.status === "out_of_action"}
+                  onChange={(delta) => onWounds(member.unit.key, delta)}
+                />
+              </div>
+            </div>
+          );
+        })}
       </div>
     </article>
   );

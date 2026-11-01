@@ -309,6 +309,10 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
             const member = entry.members.find((candidate) => candidate.unit.key === key);
             if (member) void screen.setStatus(member, nextStatus(member.status));
           }}
+          onWounds={(key, delta) => {
+            const member = entry.members.find((candidate) => candidate.unit.key === key);
+            if (member) void config.adjustUnitWounds(member.unit, delta);
+          }}
           onOpen={(tab) => setGear({ unit: entry.members[0].unit, tab })}
         />
       ))}

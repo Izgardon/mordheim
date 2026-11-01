@@ -99,32 +99,46 @@ export function WoundsControl({
   max,
   disabled,
   onChange,
+  compact = false,
 }: {
   name: string;
   wounds: number;
   max: number;
   disabled?: boolean;
   onChange: (delta: number) => void;
+  /** A henchman's tile: smaller steps either side of the count, across the tile. */
+  compact?: boolean;
 }) {
-  const step =
-    "flex h-10 w-9 items-center justify-center border border-border bg-transparent text-text2 disabled:opacity-40";
+  const step = cn(
+    "flex items-center justify-center border border-border bg-transparent text-text2 disabled:opacity-40",
+    compact ? "h-8 w-8" : "h-10 w-9"
+  );
   return (
-    <div role="group" aria-label={`Wounds for ${name}`} className="flex items-center gap-1">
+    <div
+      role="group"
+      aria-label={`Wounds for ${name}`}
+      className={cn("flex items-center gap-1", compact && "justify-between")}
+    >
       <button
         type="button"
-        aria-label="Lose a wound"
+        aria-label={compact ? `${name} loses a wound` : "Lose a wound"}
         className={step}
         disabled={disabled || wounds <= 0}
         onClick={() => onChange(-1)}
       >
         <Minus className="h-[13px] w-[13px]" strokeWidth={2.25} aria-hidden="true" />
       </button>
-      <span className="min-w-11 text-center font-mono text-[13px] font-bold text-ink">
+      <span
+        className={cn(
+          "text-center font-mono font-bold text-ink",
+          compact ? "text-[11px]" : "min-w-11 text-[13px]"
+        )}
+      >
         W {wounds}/{max}
       </span>
       <button
         type="button"
-        aria-label="Heal a wound"
+        aria-label={compact ? `${name} heals a wound` : "Heal a wound"}
         className={step}
         disabled={disabled || wounds >= max}
         onClick={() => onChange(1)}
