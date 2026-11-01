@@ -19,7 +19,7 @@ export default function CustomUnitFields({ draft }: { draft: CustomUnitDraftStat
           <Input
             value={value.name}
             onChange={(event) => changeDraft({ ...value, name: event.target.value })}
-            placeholder="Brother Grimm"
+            placeholder="Unit name"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs font-bold text-text2">
@@ -27,7 +27,6 @@ export default function CustomUnitFields({ draft }: { draft: CustomUnitDraftStat
           <Input
             value={value.unitType}
             onChange={(event) => changeDraft({ ...value, unitType: event.target.value })}
-            placeholder="Ogre bodyguard"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs font-bold text-text2">

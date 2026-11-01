@@ -62,7 +62,7 @@ export default function FindsCard({
             <input
               type="search"
               aria-label="Search for an item found"
-              placeholder="Search and add an item"
+              placeholder="Search items"
               value={finds.search}
               onFocus={() => finds.setIsOpen(true)}
               onChange={(event) => {

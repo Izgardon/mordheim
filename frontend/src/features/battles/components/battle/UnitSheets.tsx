@@ -332,7 +332,7 @@ export function AddNeutralGroupSheet({
         Creature type
         <Input
           value={type}
-          placeholder="Search the bestiary, or type one"
+          placeholder="Search creatures"
           onChange={(event) => {
             setType(event.target.value);
             setBeastId(null);
@@ -373,7 +373,7 @@ export function AddNeutralGroupSheet({
           Group name
           <Input
             value={name}
-            placeholder={type.trim() ? `${type.trim()}s` : "Zombies"}
+            placeholder={type.trim() ? `${type.trim()}s` : undefined}
             onChange={(event) => setName(event.target.value)}
           />
         </label>

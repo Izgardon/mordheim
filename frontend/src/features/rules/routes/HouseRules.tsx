@@ -61,7 +61,7 @@ export default function HouseRules() {
           <ReferenceSearch
             value={params.query}
             onChange={params.setQuery}
-            placeholder="Title or text"
+            placeholder="Search house rules"
             label="Search the house rules"
             isMobile={isMobile}
           />

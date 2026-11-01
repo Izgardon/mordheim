@@ -180,7 +180,7 @@ export default function SearchEverything() {
           autoFocus={!isMobile}
           value={query}
           onChange={(event) => url.set({ q: event.target.value })}
-          placeholder="Items, skills, spells, beasts, rules, warbands, units, places"
+          placeholder="Search everything"
           aria-label="Search everything"
           className="min-w-0 flex-1 bg-transparent text-base text-ink outline-none placeholder:text-faint"
         />

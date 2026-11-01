@@ -128,7 +128,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
           <ReferenceSearch
             value={params.query}
             onChange={params.setQuery}
-            placeholder="Name, race or text"
+            placeholder={config.labels.search}
             label={config.labels.search}
             isMobile={isMobile}
           />

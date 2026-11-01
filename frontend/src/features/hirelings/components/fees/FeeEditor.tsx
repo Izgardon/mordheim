@@ -33,7 +33,7 @@ export default function FeeEditor({
   const input = (
     key: "gold" | "dice" | "dice_multiplier",
     caption: string,
-    placeholder: string
+    placeholder?: string
   ) => (
     <label className={LABEL}>
       {caption}
@@ -70,8 +70,8 @@ export default function FeeEditor({
         </label>
         {value.kind === "gold" ? (
           <>
-            {input("gold", "Gold", "e.g. 80")}
-            {input("dice", "+ D6", "e.g. 3")}
+            {input("gold", "Gold")}
+            {input("dice", "+ D6")}
             {value.dice ? input("dice_multiplier", "× each", "1") : null}
           </>
         ) : null}
@@ -126,7 +126,6 @@ export default function FeeEditor({
           id={`${idPrefix}-note`}
           inputSize="sm"
           maxLength={500}
-          placeholder="e.g. 15 gc*, or another way to pay"
           value={value.note}
           onChange={(event) => set({ note: event.target.value })}
         />

@@ -116,7 +116,6 @@ export default function CreateCampaignDialog({ onCreate, className }: CreateCamp
               id="campaign-name"
               value={name}
               onChange={(event) => setName(event.target.value)}
-              placeholder="Shards of the Comet"
               maxLength={120}
               required
               className="h-11 text-base md:h-11"

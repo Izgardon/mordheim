@@ -46,7 +46,6 @@ export default function HirelingProfileFormFields({
         <Input
           id="hireling-note"
           value={form.values.hire_note}
-          placeholder="Any warband except Skaven may hire an Ogre Bodyguard."
           onChange={(event) => form.change({ hire_note: event.target.value })}
         />
       </label>

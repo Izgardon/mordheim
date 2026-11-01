@@ -69,7 +69,7 @@ export default function LocationVisit({
       <Input
         inputSize="sm"
         inputMode={numeric ? "numeric" : undefined}
-        placeholder={numeric ? "0" : "None"}
+        placeholder={numeric ? undefined : "None"}
         value={value}
         onChange={(event) => set(event.target.value)}
       />

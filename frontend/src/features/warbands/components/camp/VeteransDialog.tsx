@@ -154,15 +154,11 @@ export default function VeteransDialog({
         <div className="grid grid-cols-2 gap-2.5">
           <label className={fieldLabel}>
             Group name
-            <Input
-              placeholder="The Dock Rats"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            <Input value={name} onChange={(e) => setName(e.target.value)} />
           </label>
           <label className={fieldLabel}>
             Type
-            <Input placeholder="Warriors" value={type} onChange={(e) => setType(e.target.value)} />
+            <Input value={type} onChange={(e) => setType(e.target.value)} />
           </label>
         </div>
       )}

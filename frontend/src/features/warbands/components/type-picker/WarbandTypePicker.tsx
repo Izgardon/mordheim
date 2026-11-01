@@ -120,7 +120,7 @@ export default function WarbandTypePicker(props: WarbandTypePickerProps) {
         autoFocus={Boolean(value)}
         autoComplete="off"
         onChange={(event) => setTyped(event.target.value)}
-        placeholder={props.placeholder ?? "Search: Reiklanders, Skaven, Khemri…"}
+        placeholder={props.placeholder ?? "Search warband types"}
         className="h-11 text-base md:h-11"
       />
       <div className="max-h-72 overflow-y-auto border border-border bg-page">

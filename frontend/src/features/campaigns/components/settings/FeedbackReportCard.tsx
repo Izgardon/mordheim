@@ -30,8 +30,8 @@ type FeedbackReportCardProps = {
 };
 
 const REPORT_TYPE_PLACEHOLDERS = {
-  Bug: "Describe the bug, what you were doing, and what you expected to happen.",
-  Feedback: "Share your feedback, suggestion, or improvement idea.",
+  Bug: "What happened, and what you expected",
+  Feedback: "Your idea",
 } as const;
 
 export default function FeedbackReportCard({

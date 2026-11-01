@@ -88,13 +88,12 @@ export default function JoinCampaignDialog({ onJoin, className }: JoinCampaignDi
               id="join-code"
               value={code}
               onChange={(event) => setCode(event.target.value)}
-              placeholder="WYR123"
               maxLength={6}
               autoComplete="off"
               autoCapitalize="characters"
               spellCheck={false}
               required
-              className="h-12 font-mono text-lg font-bold uppercase tracking-[0.2em] placeholder:tracking-[0.2em] md:h-12"
+              className="h-12 font-mono text-lg font-bold uppercase tracking-[0.2em] md:h-12"
             />
           </Field>
           <FormError message={error} />

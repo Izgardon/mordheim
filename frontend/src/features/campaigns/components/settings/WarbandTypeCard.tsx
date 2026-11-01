@@ -128,7 +128,7 @@ export default function WarbandTypeCard({ warband, canEdit, onSaved }: WarbandTy
               ...countsAs.map((type) => type.id),
             ]}
             onPick={(picked) => void setCountsAs([...countsAs.map((type) => type.id), picked.id])}
-            placeholder="Search for a type it counts as"
+            placeholder="Search warband types"
           />
         ) : null}
         {canEdit ? (

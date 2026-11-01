@@ -48,7 +48,6 @@ export default function BeastProfileFields({ form }: { form: BestiaryEntryFormSt
             value={values.rating_bonus}
             onChange={(event) => change({ rating_bonus: event.target.value })}
             aria-invalid={Boolean(fieldErrors.rating_bonus)}
-            placeholder="e.g. 5"
           />
           <FieldError message={fieldErrors.rating_bonus} />
         </div>

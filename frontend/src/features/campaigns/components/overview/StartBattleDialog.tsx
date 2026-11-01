@@ -70,11 +70,7 @@ export default function StartBattleDialog({
       <div className="flex flex-col gap-4">
         <label className={LABEL}>
           Scenario
-          <Input
-            value={form.scenario}
-            placeholder="Street Fight"
-            onChange={(event) => form.setScenario(event.target.value)}
-          />
+          <Input value={form.scenario} onChange={(event) => form.setScenario(event.target.value)} />
         </label>
         {report ? (
           <label className={LABEL}>

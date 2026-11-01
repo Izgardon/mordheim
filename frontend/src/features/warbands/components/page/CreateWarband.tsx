@@ -80,7 +80,7 @@ export default function CreateWarband({
               id="new-warband-name"
               value={name}
               onChange={(event) => setName(event.target.value)}
-              placeholder="Ashen Crows"
+              placeholder="Warband name"
               maxLength={120}
               required
               className="h-11 text-base md:h-11"

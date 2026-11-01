@@ -119,14 +119,11 @@ describe("FeedbackReportCard", () => {
     fireEvent.click(screen.getByRole("button", { name: "Send report" }));
     expect(screen.getByLabelText("Report")).toHaveAttribute(
       "placeholder",
-      "Describe the bug, what you were doing, and what you expected to happen."
+      "What happened, and what you expected"
     );
 
     fireEvent.change(screen.getByLabelText("Type"), { target: { value: "Feedback" } });
-    expect(screen.getByLabelText("Report")).toHaveAttribute(
-      "placeholder",
-      "Share your feedback, suggestion, or improvement idea."
-    );
+    expect(screen.getByLabelText("Report")).toHaveAttribute("placeholder", "Your idea");
   });
 
   it("submits a report, closes the dialog, and clears the textarea", async () => {

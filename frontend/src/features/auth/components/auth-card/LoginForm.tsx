@@ -21,7 +21,7 @@ export function LoginForm({ form, error, onForgot }: LoginFormProps) {
           <PasswordInput
             value={form.values.password}
             onChange={(event) => form.setField("password", event.target.value)}
-            placeholder="Keep it secret"
+            placeholder="Password"
             autoComplete="current-password"
             required
           />

@@ -56,7 +56,7 @@ export default function Rules() {
             <ReferenceSearch
               value={params.query}
               onChange={params.setQuery}
-              placeholder="Search the rules: knocked down, cover, parry"
+              placeholder="Search the rules"
               label="Search the rules"
               isMobile={isMobile}
             />

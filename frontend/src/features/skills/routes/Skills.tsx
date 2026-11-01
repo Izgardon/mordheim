@@ -127,7 +127,7 @@ export default function Skills() {
             <ReferenceSearch
               value={params.query}
               onChange={params.setQuery}
-              placeholder="Name or rules text"
+              placeholder="Search skills"
               label="Search skills"
               isMobile={isMobile}
             />

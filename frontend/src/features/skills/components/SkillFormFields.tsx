@@ -40,7 +40,7 @@ export default function SkillFormFields({ layout, form, idSuffix = "" }: SkillFo
         onChange={form.setName}
         error={form.fieldErrors.name}
         nameTaken={form.nameTaken}
-        placeholder="Quick Hands"
+        placeholder="Skill name"
         required={isDialog}
       />
       <CatalogueTypeField
@@ -54,7 +54,6 @@ export default function SkillFormFields({ layout, form, idSuffix = "" }: SkillFo
         id={`skill-description${idSuffix}`}
         value={form.values.description}
         onChange={form.setDescription}
-        placeholder="Describe the skill."
         className={isDialog ? undefined : "sm:col-span-2"}
       />
       <CatalogueField
@@ -66,7 +65,6 @@ export default function SkillFormFields({ layout, form, idSuffix = "" }: SkillFo
           id={fieldId(layout, `skill-learn-note${idSuffix}`)}
           value={form.values.learn_note}
           maxLength={200}
-          placeholder="e.g. Vampire only"
           onChange={(event) => form.setLearning({ learn_note: event.target.value })}
         />
       </CatalogueField>

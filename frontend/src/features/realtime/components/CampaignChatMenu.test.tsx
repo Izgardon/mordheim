@@ -61,7 +61,7 @@ const openChat = () => {
 };
 
 const sendDraft = (text: string) => {
-  fireEvent.change(screen.getByPlaceholderText("Send a message..."), { target: { value: text } });
+  fireEvent.change(screen.getByPlaceholderText("Message"), { target: { value: text } });
   fireEvent.click(screen.getByRole("button", { name: "Send message" }));
 };
 
@@ -99,7 +99,7 @@ describe("CampaignChatMenu", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "Too many attempts. Try again in 5 seconds."
     );
-    expect(screen.getByPlaceholderText("Send a message...")).toHaveValue("Charge the left flank");
+    expect(screen.getByPlaceholderText("Message")).toHaveValue("Charge the left flank");
   });
 
   it("clears the input once the message is sent", async () => {
@@ -111,6 +111,6 @@ describe("CampaignChatMenu", () => {
     sendDraft("Hold the bridge");
 
     expect(await screen.findByText("Hold the bridge")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Send a message...")).toHaveValue("");
+    expect(screen.getByPlaceholderText("Message")).toHaveValue("");
   });
 });

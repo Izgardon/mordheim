@@ -92,7 +92,7 @@ export default function CampaignChatMenu({ campaignId, open, onOpenChange, trigg
               id="campaign-chat-message"
               type="text"
               className="h-11 min-w-0 flex-1 border border-strong bg-page px-3 text-base text-ink outline-none placeholder:text-faint focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring md:text-sm"
-              placeholder="Send a message..."
+              placeholder="Message"
               value={chat.draft}
               onChange={(e) => chat.updateDraft(e.target.value)}
               onKeyDown={(e) => {

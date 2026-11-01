@@ -38,7 +38,7 @@ export default function SpellFormFields({ layout, form }: SpellFormFieldsProps) 
       onChange={(value) => form.setValue("name", value)}
       error={form.fieldErrors.name}
       nameTaken={form.nameTaken}
-      placeholder="Fireball"
+      placeholder="Spell name"
       required={isDialog}
     />
   );
@@ -52,7 +52,6 @@ export default function SpellFormFields({ layout, form }: SpellFormFieldsProps) 
         min={0}
         value={form.values.dc}
         onChange={(event) => form.setValue("dc", event.target.value)}
-        placeholder="0"
       />
     </CatalogueField>
   );
@@ -78,7 +77,6 @@ export default function SpellFormFields({ layout, form }: SpellFormFieldsProps) 
       id="spell-description"
       value={form.values.description}
       onChange={(value) => form.setValue("description", value)}
-      placeholder="Describe the spell."
     />
   );
 

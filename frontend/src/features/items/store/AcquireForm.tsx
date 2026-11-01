@@ -151,7 +151,7 @@ export default function AcquireForm(props: AcquireFormProps) {
       {free ? (
         <Input
           aria-label="Why it is free"
-          placeholder="Found, or given by… (optional)"
+          placeholder="Why it is free"
           value={reason}
           maxLength={500}
           onChange={(event) => setReason(event.target.value)}

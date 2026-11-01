@@ -191,7 +191,7 @@ export default function Bestiary() {
             <ReferenceSearch
               value={params.query}
               onChange={params.setQuery}
-              placeholder="Name or description"
+              placeholder="Search the bestiary"
               label="Search the bestiary"
               isMobile={isMobile}
             />

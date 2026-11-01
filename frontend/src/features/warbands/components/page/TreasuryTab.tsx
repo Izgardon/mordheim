@@ -52,7 +52,7 @@ export default function TreasuryTab({ campaignId, warbandId, canEdit }: Treasury
         >
           <Input
             aria-label="Action"
-            placeholder="Buy, Sell, Adjustment"
+            placeholder="Action"
             value={form.formAction}
             onChange={(event) => form.setFormAction(event.target.value)}
           />

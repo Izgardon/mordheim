@@ -104,11 +104,7 @@ export default function RecruitDialog({
           </label>
           <label className="flex flex-col gap-1 text-xs font-bold text-muted-foreground">
             Type
-            <Input
-              value={type}
-              onChange={(event) => setType(event.target.value)}
-              placeholder="Champion, Marksmen"
-            />
+            <Input value={type} onChange={(event) => setType(event.target.value)} />
           </label>
           <label className="flex flex-col gap-1 text-xs font-bold text-muted-foreground">
             {copy.cost}

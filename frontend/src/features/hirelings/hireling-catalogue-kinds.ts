@@ -54,7 +54,7 @@ export const HIRED_SWORDS: HirelingCatalogueConfig = {
     emptyBody: "Hired swords are mercenaries a warband hires for a fee and keeps for an upkeep.",
     emptyAddHint: "Add your campaign's own with Add hired sword.",
     noMatches: "No hired swords match",
-    namePlaceholder: "e.g. Ogre Bodyguard",
+    namePlaceholder: "Hired sword name",
   },
 };
 
@@ -75,7 +75,7 @@ export const DRAMATIS_PERSONAE: HirelingCatalogueConfig = {
       "A dramatis persona is one of a kind: found after a battle, often for one battle only, paid in gold, wyrdstone or a favour, and never gaining experience. None are in the book yet.",
     emptyAddHint: "Add your campaign's own with Add dramatis persona.",
     noMatches: "No dramatis personae match",
-    namePlaceholder: "e.g. Bertha Bestraufrung",
+    namePlaceholder: "Dramatis persona name",
   },
 };
 

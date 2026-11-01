@@ -141,7 +141,6 @@ export default function EditHouseRuleDialog({
             <Input
               value={form.title}
               onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
-              placeholder="Parry changes"
             />
           </div>
           <div className="space-y-2">
@@ -154,7 +153,6 @@ export default function EditHouseRuleDialog({
               onChange={(event) =>
                 setForm((prev) => ({ ...prev, description: event.target.value }))
               }
-              placeholder="Describe the ruling and any clarifications."
             />
           </div>
           {formError ? (

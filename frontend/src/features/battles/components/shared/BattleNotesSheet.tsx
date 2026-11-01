@@ -64,7 +64,7 @@ export default function BattleNotesSheet({
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
         rows={8}
-        placeholder="Scenario, objectives, house rules"
+        placeholder="Battle notes"
         className="w-full border border-strong bg-page p-3 text-sm text-ink placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       />
       {error ? <p className="m-0 text-sm text-danger">{error}</p> : null}

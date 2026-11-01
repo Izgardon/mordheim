@@ -109,7 +109,7 @@ export default function Spells() {
             <ReferenceSearch
               value={params.query}
               onChange={params.setQuery}
-              placeholder="Name or rules text"
+              placeholder="Search spells"
               label="Search spells"
               isMobile={isMobile}
             />

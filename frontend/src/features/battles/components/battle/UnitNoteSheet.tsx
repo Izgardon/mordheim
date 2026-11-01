@@ -37,7 +37,7 @@ function NoteEditor({
         readOnly={readOnly}
         maxLength={UNIT_NOTE_MAX}
         rows={5}
-        placeholder="Anything to remember about this unit in this battle"
+        placeholder="Note"
         onChange={(event) => {
           setDraft(event.target.value);
           change(event.target.value);

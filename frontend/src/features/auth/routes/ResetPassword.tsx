@@ -86,7 +86,6 @@ export default function ResetPassword() {
         value={confirmPassword}
         onChange={setConfirmPassword}
         autoComplete="new-password"
-        placeholder="Repeat it"
       />
       <AuthFormError message={error} />
       <Button

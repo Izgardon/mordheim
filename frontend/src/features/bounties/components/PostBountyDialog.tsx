@@ -145,7 +145,6 @@ export default function PostBountyDialog({
           <Input
             inputMode="numeric"
             value={amount}
-            placeholder="40"
             onChange={(event) => setAmount(event.target.value.replace(/[^0-9]/g, ""))}
           />
         </label>
@@ -156,7 +155,6 @@ export default function PostBountyDialog({
             rows={2}
             maxLength={500}
             value={note}
-            placeholder="Why, or any terms"
             onChange={(event) => setNote(event.target.value)}
           />
         </label>

@@ -98,9 +98,7 @@ export default function Wargear() {
             <ReferenceSearch
               value={params.query}
               onChange={params.setQuery}
-              placeholder={
-                isMobile ? "Name, rule or nickname" : "Name, kind or rule: parry finds Sword"
-              }
+              placeholder="Search items"
               label="Search wargear"
               isMobile={isMobile}
             />

@@ -24,7 +24,7 @@ function NewSpecialRule({ links }: { links: BestiaryLinks }) {
         <textarea
           value={links.newSpecialDescription}
           onChange={(e) => links.setNewSpecialDescription(e.target.value)}
-          placeholder="Description (optional)"
+          placeholder="Description"
           rows={2}
           className={TEXTAREA_CLASS}
         />
@@ -60,7 +60,7 @@ export default function BestiaryLinksFields({ links }: { links: BestiaryLinks })
       ) : (
         <SearchablePickerSection
           label="Special Rules"
-          placeholder="Search special rules..."
+          placeholder="Search special rules"
           items={links.available.specials}
           selected={links.specials}
           onSelect={links.addSpecial}
@@ -72,7 +72,7 @@ export default function BestiaryLinksFields({ links }: { links: BestiaryLinks })
 
       <SearchablePickerSection
         label="Skills"
-        placeholder="Search skills..."
+        placeholder="Search skills"
         items={links.available.skills}
         selected={links.skills}
         onSelect={links.addSkill}
@@ -81,7 +81,7 @@ export default function BestiaryLinksFields({ links }: { links: BestiaryLinks })
 
       <SearchablePickerSection
         label="Spells"
-        placeholder="Search spells..."
+        placeholder="Search spells"
         items={links.available.spells}
         selected={links.spells}
         onSelect={links.addSpell}
@@ -90,7 +90,7 @@ export default function BestiaryLinksFields({ links }: { links: BestiaryLinks })
 
       <SearchablePickerSection
         label="Equipment"
-        placeholder="Search items..."
+        placeholder="Search items"
         items={links.available.items}
         selected={links.items}
         onSelect={links.addItem}

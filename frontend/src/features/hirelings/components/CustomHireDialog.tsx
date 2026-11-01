@@ -97,12 +97,7 @@ export default function CustomHireDialog({
           </label>
           <label className={LABEL}>
             Type
-            <Input
-              value={type}
-              maxLength={80}
-              placeholder="Duellist, Ogre"
-              onChange={(event) => setType(event.target.value)}
-            />
+            <Input value={type} maxLength={80} onChange={(event) => setType(event.target.value)} />
           </label>
         </div>
         <FeeEditor label="Hire fee paid" idPrefix="custom-hire" value={fee} onChange={setFee} />

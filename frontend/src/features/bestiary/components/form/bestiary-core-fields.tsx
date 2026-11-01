@@ -77,7 +77,6 @@ export function DescriptionField({ values, onChange, id }: CoreFieldProps & { id
         onChange={(e) => onChange({ description: e.target.value })}
         rows={3}
         className="min-h-[120px] w-full border border-strong bg-page px-3 py-2 text-sm text-ink placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
-        placeholder="Description..."
       />
     </div>
   );

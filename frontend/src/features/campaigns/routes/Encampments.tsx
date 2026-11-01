@@ -55,7 +55,7 @@ function EncampmentForm({ page }: { page: ReturnType<typeof useEncampments> }) {
         <Input
           id="encampment-name"
           value={page.form.name ?? ""}
-          placeholder="Sailmakers' Row"
+          placeholder="Encampment name"
           onChange={(event) => page.setForm((form) => ({ ...form, name: event.target.value }))}
         />
       </Field>
@@ -82,7 +82,6 @@ function EncampmentForm({ page }: { page: ReturnType<typeof useEncampments> }) {
           id="encampment-description"
           className={TEXTAREA}
           value={page.form.description ?? ""}
-          placeholder="What does this encampment provide, protect or connect to?"
           onChange={(event) =>
             page.setForm((form) => ({ ...form, description: event.target.value }))
           }
