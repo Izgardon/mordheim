@@ -6,23 +6,36 @@ import type { HirelingCatalogueKind } from "../../hireling-catalogue-kinds";
 
 const BOX = "flex flex-col gap-1.5 border border-accent-line bg-accent-soft p-2.5 text-[13px]";
 
-/** A fee in his rules (Bertha, the Truthsayer): his rules, read with his detail, to set the price by. */
+/**
+ * A fee in his rules (Bertha, the Truthsayer, Aksho'akhash's summoning): the fee's own words in
+ * full when it has them (how he is hired, never automated), its listed gold, then his rules, read
+ * with his detail, to set the price by.
+ */
 function HisRules({
   kind,
   campaignId,
   entryId,
+  fee,
 }: {
   kind: HirelingCatalogueKind;
   campaignId: number;
   entryId: number;
+  fee: Fee;
 }) {
   const detail = useHirelingProfileDetail(kind, campaignId, entryId);
   const rules = detail.entry?.specials ?? [];
+  const note = fee.note.trim();
   return (
     <div className={BOX}>
       <span className="font-semibold text-danger">
         His fee is in his rules: hired at what you set below (0 gc unless you change it).
+        {fee.gold !== null ? ` His listed fee is ${fee.gold} gc.` : ""}
       </span>
+      {note ? (
+        <p className="m-0 whitespace-pre-line text-ink">
+          <span className="font-semibold">How he is hired.</span> {note}
+        </p>
+      ) : null}
       {rules.length ? (
         <div className="flex max-h-48 flex-col gap-1.5 overflow-y-auto">
           {rules.map((rule) => (
@@ -65,10 +78,10 @@ export default function HireTerms({
   dismissHeroId: number | null;
   onDismissHero: (heroId: number | null) => void;
 }) {
-  const { kind: feeKind } = feeOf(fee);
-  if (feeKind === "special")
-    return <HisRules kind={kind} campaignId={campaignId} entryId={entryId} />;
-  if (feeKind !== "replaces_hero") return null;
+  const read = feeOf(fee);
+  if (read.kind === "special")
+    return <HisRules kind={kind} campaignId={campaignId} entryId={entryId} fee={read} />;
+  if (read.kind !== "replaces_hero") return null;
   const full = maxHeroes !== null && heroCount >= maxHeroes;
   return (
     <div className={BOX}>
