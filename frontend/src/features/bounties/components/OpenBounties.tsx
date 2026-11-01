@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { SectionHead } from "@/components/ui/section-title";
 import { Bone, SkeletonPage } from "@/components/ui/skeleton";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { getErrorMessage } from "@/lib/get-error-message";
@@ -30,7 +31,7 @@ function BountyBones() {
 }
 
 /**
- * Open bounties (design E): the overview's panel beside the chronicle on the web, its Bounties
+ * Open bounties (design E): the overview's panel under the chronicle on the web, its Bounties
  * tab on a phone. Every open bounty with its claims; Post a bounty for a player with a warband.
  */
 export default function OpenBounties({
@@ -78,14 +79,7 @@ export default function OpenBounties({
       aria-label={heading ? undefined : "Open bounties"}
       className="flex flex-col gap-2.5"
     >
-      {heading ? (
-        <div className="flex items-baseline justify-between gap-3">
-          <h2 id="bounties-h" className="m-0 font-display text-xl font-semibold text-head">
-            Open bounties
-          </h2>
-          {post}
-        </div>
-      ) : null}
+      {heading ? <SectionHead id="bounties-h" title="Open bounties" aside={post} /> : null}
       {query.isPending ? (
         <BountyBones />
       ) : query.error ? (

@@ -44,7 +44,7 @@ function Chips({ count, className }: { count: number; className: string }) {
   );
 }
 
-/** The phone's overview: who is ready, the two buttons, the stats, the tabs, the standings. */
+/** The phone's overview: who is ready, the two buttons, the stats, the four tabs, the standings. */
 function PhoneOverview() {
   return (
     <SkeletonPage label="Loading the overview" className="flex flex-col gap-3 pb-6">
@@ -61,8 +61,8 @@ function PhoneOverview() {
         <Bone className="h-12" />
       </div>
       <SkeletonStats cells={4} />
-      <div className="grid grid-cols-3 border-b border-line">
-        {[0, 1, 2].map((index) => (
+      <div className="grid grid-cols-4 border-b border-line">
+        {[0, 1, 2, 3].map((index) => (
           <span key={index} className="flex min-h-11 items-center justify-center">
             <Bone className={cn("h-3 w-16", index ? null : "bg-strong")} />
           </span>
@@ -75,8 +75,8 @@ function PhoneOverview() {
 
 /**
  * The overview while it loads (design E): the readiness band, the header with Start battle and
- * Report a result, the stats line, then Standings and Battles beside the Chronicle (web), or the
- * three tabs (phone).
+ * Report a result, the stats line, then Standings and Battles beside the Chronicle and Open
+ * bounties (web), or the four tabs (phone).
  */
 export default function OverviewSkeleton() {
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -108,6 +108,10 @@ export default function OverviewSkeleton() {
             <Bone className="my-1 h-5 w-28" />
             <Chips count={6} className="h-8 w-[72px]" />
             <ChronicleBones isMobile={false} />
+          </div>
+          <div className="flex flex-col gap-2.5">
+            <Bone className="my-1 h-5 w-36" />
+            <Bone className="h-[74px] w-full" />
           </div>
         </aside>
       </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { Chip } from "@/components/ui/chip";
+import { SectionTitle } from "@/components/ui/section-title";
 import { SkeletonPage } from "@/components/ui/skeleton";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { cn } from "@/lib/utils";
@@ -29,10 +30,14 @@ const KIND: Record<CampaignChronicleKind, { label: string; text: string; bar: st
   bounty_claimed: { label: "Bounty claimed", text: "text-good", bar: "bg-good-line" },
 };
 
+/** On the web the entries scroll inside this height (about nine), under the fixed filters. */
+const CHRONICLE_SCROLL = "max-h-[720px] overflow-y-auto overscroll-contain border-b border-line";
+
 /**
  * The chronicle (design E): the campaign's latest kills, deaths, level-ups (heroes' and the lad's
  * got talent), purchases, trades and bounties (posted and claimed), filtered by kind on the
- * server.
+ * server. On the web its entries scroll in their own box, so the page stays short; on a phone
+ * (its own tab) the page scrolls.
  */
 export default function Chronicle({
   campaignId,
@@ -54,11 +59,7 @@ export default function Chronicle({
       aria-label={heading ? undefined : "Chronicle"}
       className="flex flex-col gap-2.5"
     >
-      {heading ? (
-        <h2 id="chronicle-h" className="m-0 font-display text-[22px] font-semibold text-head">
-          Chronicle
-        </h2>
-      ) : null}
+      {heading ? <SectionTitle id="chronicle-h">Chronicle</SectionTitle> : null}
       <div
         role="group"
         aria-label="Show"
@@ -84,7 +85,22 @@ export default function Chronicle({
       ) : rows.length === 0 ? (
         <p className="m-0 text-sm text-text2">Nothing to tell yet.</p>
       ) : (
-        <ul className="m-0 flex list-none flex-col p-0">
+        <ul
+          // a new filter starts the box at its top
+          key={filter}
+          aria-label="Chronicle entries"
+          // the box scrolls on the web: focusable, so the keyboard can scroll it too
+          tabIndex={isMobile ? undefined : 0}
+          className={cn(
+            "m-0 flex list-none flex-col p-0",
+            isMobile
+              ? null
+              : cn(
+                  CHRONICLE_SCROLL,
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+                )
+          )}
+        >
           {rows.map((entry, index) => {
             const kind = KIND[entry.kind];
             return (
