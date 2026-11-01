@@ -1,11 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- Design E: an ember shard on the dark ground (favicon.ico and apple-touch-icon.png are this drawing). -->
-  <rect width="32" height="32" fill="#1a1510" />
-  <rect x="0.5" y="0.5" width="31" height="31" fill="none" stroke="#554533" />
-  <polygon points="10,8 18,2 15,14" fill="#f5bf8c" />
-  <polygon points="18,2 26,12 15,14" fill="#f0b47e" />
-  <polygon points="26,12 22,24 15,14" fill="#e49a58" />
-  <polygon points="22,24 13,30 15,14" fill="#8c5e36" />
-  <polygon points="13,30 6,20 15,14" fill="#554533" />
-  <polygon points="6,20 10,8 15,14" fill="#e49a58" />
+  <!-- A green wyrdstone shard on no background (favicon.ico and apple-touch-icon.png are this drawing). -->
+  <polygon points="10,7 19,1 15,15" fill="#c9f5b0" />
+  <polygon points="19,1 27,11 15,15" fill="#8be07a" />
+  <polygon points="27,11 22,25 15,15" fill="#4cb85a" />
+  <polygon points="22,25 12,31 15,15" fill="#2a7d3c" />
+  <polygon points="12,31 5,20 15,15" fill="#1d5a2b" />
+  <polygon points="5,20 10,7 15,15" fill="#5fc96a" />
+  <polygon points="10,7 19,1 27,11 22,25 12,31 5,20" fill="none" stroke="#0f3318" stroke-width="1" stroke-linejoin="round" />
 </svg>
