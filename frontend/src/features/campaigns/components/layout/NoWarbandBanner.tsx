@@ -32,7 +32,7 @@ export default function NoWarbandBanner({
   return (
     <div
       role="status"
-      className="campaign-banner mb-4 flex flex-wrap items-center gap-x-3 gap-y-2 border border-accent-line bg-accent-soft px-4 py-2 text-sm text-ink"
+      className="campaign-banner mb-4 flex flex-wrap items-center gap-x-3 gap-y-2 border border-accent-line bg-accent-soft px-4 py-2 text-sm text-ink max-[960px]:mt-3"
     >
       <Shield className="h-4 w-4 shrink-0 text-accent-text" aria-hidden="true" />
       <span className="min-w-0 grow basis-48">You have no warband in this campaign.</span>
