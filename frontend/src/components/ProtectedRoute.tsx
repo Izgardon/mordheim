@@ -7,7 +7,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../features/auth/hooks/use-auth";
 import { signInRedirectState } from "../features/auth/utils/sign-in-redirect";
 import { ConnectionErrorScreen } from "./ui/connection-error-screen";
-import { LoadingScreen } from "./ui/loading-screen";
+import { BootScreen } from "./ui/loading-screen";
 
 type ProtectedRouteProps = {
   children: ReactNode;
@@ -18,7 +18,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const location = useLocation();
 
   if (!isReady) {
-    return <LoadingScreen />;
+    return <BootScreen />;
   }
 
   if (!token) {

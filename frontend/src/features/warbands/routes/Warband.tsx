@@ -20,6 +20,7 @@ import WarbandSkeleton from "../components/page/WarbandSkeleton";
 import WarbandTabs from "../components/page/WarbandTabs";
 import { WARBAND_INFO } from "../components/page/warband-layout";
 import PostgameSlot from "../components/camp/PostgameSlot";
+import LocationsPanel from "../components/panels/LocationsPanel";
 import AdvanceDialog from "../components/roster/AdvanceDialog";
 import EditUnitForm from "../components/roster/EditUnitForm";
 import RecruitDialog from "../components/roster/RecruitDialog";
@@ -78,7 +79,18 @@ export default function Warband() {
     return warbandParam ? (
       <p className="text-sm text-text2">No record of that warband.</p>
     ) : (
-      <CreateWarband campaignId={campaignId} onCreated={sheet.showCreated} />
+      <>
+        <CreateWarband campaignId={campaignId} onCreated={sheet.showCreated} />
+        {/* the rail's Locations opens here too: the list (and managing it) needs no warband */}
+        <LocationsPanel
+          campaignId={campaignId}
+          warbandId={0}
+          heroes={[]}
+          canEdit={false}
+          open={panel === "locations"}
+          onOpenChange={(next) => setPanel(next ? "locations" : null)}
+        />
+      </>
     );
   }
 

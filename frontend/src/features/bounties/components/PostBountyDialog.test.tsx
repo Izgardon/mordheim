@@ -63,13 +63,12 @@ describe("Post a bounty", () => {
     await waitFor(() =>
       expect(queryClient.getQueryData(queryKeys.campaign.bounties(7))).toBeTruthy()
     );
-    expect(screen.getByText(/Nothing is held now/)).toBeInTheDocument();
     expect(screen.queryByText(/Your open bounties would come to/)).not.toBeInTheDocument();
-    await user.type(screen.getByPlaceholderText("40"), "25");
+    await user.type(screen.getByLabelText("Reward (gc)"), "25");
     expect(screen.getByRole("status")).toHaveTextContent(
       "Your open bounties would come to 25 gc and Crows holds -10 gc."
     );
-    await user.type(screen.getByPlaceholderText("Why, or any terms"), "For the chapel");
+    await user.type(screen.getByLabelText("Note (optional)"), "For the chapel");
     await user.click(screen.getByRole("button", { name: "Post 25 gc" }));
 
     await waitFor(() => expect(onClose).toHaveBeenCalled());

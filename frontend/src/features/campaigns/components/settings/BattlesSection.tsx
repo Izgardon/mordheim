@@ -252,10 +252,7 @@ export default function BattlesSection({ campaignId }: { campaignId: number }) {
     : "This ends the battle now; with no winner, no wins or losses are recorded.";
 
   return (
-    <SettingsCard
-      title="Battles"
-      description="Every open battle and result request. A battle idle for over a day is marked Stuck."
-    >
+    <SettingsCard title="Battles" description="A battle idle for over a day is marked Stuck.">
       <FormError message={section.error} />
       {section.isLoading ? (
         <SettingsRowsLoading label="Loading the open battles" rows={2} />

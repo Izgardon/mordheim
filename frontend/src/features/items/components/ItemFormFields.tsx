@@ -35,7 +35,7 @@ export default function ItemFormFields({ form, idSuffix = "" }: ItemFormFieldsPr
         {option}
       </SelectItem>
     ));
-  const text = (field: ItemTextField, label: string, placeholder: string) => (
+  const text = (field: ItemTextField, label: string, placeholder?: string) => (
     <CatalogueField layout="dialog" label={label} htmlFor={id(field)}>
       <Input
         id={id(field)}
@@ -45,13 +45,12 @@ export default function ItemFormFields({ form, idSuffix = "" }: ItemFormFieldsPr
       />
     </CatalogueField>
   );
-  const longText = (field: "flavour" | "notes", label: string, placeholder: string) => (
+  const longText = (field: "flavour" | "notes", label: string) => (
     <CatalogueField layout="dialog" label={label} htmlFor={id(field)}>
       <textarea
         id={id(field)}
         value={values[field]}
         onChange={(event) => form.setValue(field, event.target.value)}
-        placeholder={placeholder}
         className={TEXTAREA.replace("min-h-[120px]", "min-h-[80px]")}
       />
     </CatalogueField>
@@ -66,7 +65,7 @@ export default function ItemFormFields({ form, idSuffix = "" }: ItemFormFieldsPr
         onChange={(value) => form.setValue("name", value)}
         error={form.fieldErrors.name}
         nameTaken={form.nameTaken}
-        placeholder="Gutterblade"
+        placeholder="Item name"
       />
       <div className="grid gap-4 sm:grid-cols-2">
         <CatalogueField layout="dialog" label="Type" htmlFor={id("type")}>
@@ -90,7 +89,7 @@ export default function ItemFormFields({ form, idSuffix = "" }: ItemFormFieldsPr
             </Select>
           </CatalogueField>
         ) : (
-          text("variant", "Variant (optional)", "Tells two of one name apart")
+          text("variant", "Variant (optional)")
         )}
       </div>
       <div className="grid gap-4 sm:grid-cols-3">
@@ -108,7 +107,7 @@ export default function ItemFormFields({ form, idSuffix = "" }: ItemFormFieldsPr
           <Label htmlFor={`item-single-use${idSuffix}`}>Single use</Label>
         </div>
       ) : null}
-      {longText("flavour", "Flavour", "What it looks like and where it comes from.")}
+      {longText("flavour", "Flavour")}
       <RulesField
         rules={values.rules}
         shared={form.shared}
@@ -125,11 +124,11 @@ export default function ItemFormFields({ form, idSuffix = "" }: ItemFormFieldsPr
         idPrefix={`item-price${idSuffix}`}
       />
       <div className="grid gap-4 sm:grid-cols-2">
-        {text("source", "Source", "Town Cryer #6")}
+        {text("source", "Source")}
         {text("linkUrl", "Link", "https://…")}
       </div>
       {text("tags", "Search words", "scimitar, blade")}
-      {longText("notes", "Notes", "Anything an editor should know.")}
+      {longText("notes", "Notes")}
     </>
   );
 }

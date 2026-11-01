@@ -61,7 +61,6 @@ function RaceFields({ form, open }: { form: HirelingProfileFormState; open: bool
           value={values.race_label}
           onChange={(event) => change({ race_label: event.target.value })}
           aria-invalid={Boolean(form.fieldErrors.race_label)}
-          placeholder="e.g. Chameleon Skink"
         />
         <FieldError message={form.fieldErrors.race_label} />
       </div>

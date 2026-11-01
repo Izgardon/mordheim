@@ -147,9 +147,9 @@ h6 {
   padding-inline: calc((100cqw - 100%) / 2);
 }
 
-/* An archived campaign's banner heads every page: the page's band then sits under it in the flow
-   instead of pulling up over it. */
-.desktop-shell__content-inner:has(> .archived-banner) .page-band {
+/* A campaign banner (archived, no warband yet) heads every page: the page's band then sits under
+   it in the flow instead of pulling up over it. */
+.desktop-shell__content-inner:has(> .campaign-banner) .page-band {
   margin-top: 0;
 }
 
@@ -233,71 +233,81 @@ table thead th {
   transform-origin: top center;
 }
 
-/* Loading spinner: two swords swing in and clash (replaced the Lottie animation). */
+/* The swords (design E): one strike, then they rest crossed. Its length is SWORD_CLASH_MS
+   (components/ui/sword-clash.ts), set on the svg as --sword-clash-ms, which the battle's entrance
+   also waits on. */
 .sword-clash__sword {
   transform-origin: 0 0;
-  transform: rotate(28deg);
-  animation: sword-clash-swing 1.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  transform: rotate(26deg);
+  animation: sword-clash-strike var(--sword-clash-ms) cubic-bezier(0.45, 0, 0.55, 1) both;
 }
 
 .sword-clash__flash {
   transform-origin: 0 0;
   opacity: 0;
-  animation: sword-clash-flash 1.6s ease-out infinite;
+  animation: sword-clash-flash var(--sword-clash-ms) ease-out both;
 }
 
-@keyframes sword-clash-swing {
-  0%,
-  100% {
+@keyframes sword-clash-strike {
+  0% {
     transform: rotate(-40deg);
   }
-  38% {
+  40% {
     transform: rotate(28deg);
   }
-  46% {
-    transform: rotate(16deg);
+  50% {
+    transform: rotate(14deg);
   }
-  56% {
+  62% {
     transform: rotate(28deg);
   }
-  70% {
-    transform: rotate(10deg);
+  72% {
+    transform: rotate(22deg);
+  }
+  82%,
+  100% {
+    transform: rotate(26deg);
   }
 }
 
 @keyframes sword-clash-flash {
   0%,
-  34% {
+  37% {
     opacity: 0;
     transform: scale(0.4);
   }
-  38% {
+  40% {
     opacity: 1;
-    transform: scale(1.15);
+    transform: scale(1.2);
   }
-  46% {
+  50% {
     opacity: 0;
     transform: scale(0.8);
   }
-  52% {
+  59% {
     opacity: 0;
     transform: scale(0.4);
   }
-  56% {
+  62% {
     opacity: 1;
     transform: scale(1);
   }
-  66%,
+  80%,
   100% {
     opacity: 0;
     transform: scale(0.6);
   }
 }
 
+/* Reduced motion: one still frame, the swords crossed on the spark. */
 @media (prefers-reduced-motion: reduce) {
   .sword-clash__sword,
   .sword-clash__flash {
     animation: none;
+  }
+
+  .sword-clash__flash {
+    opacity: 1;
   }
 }
 

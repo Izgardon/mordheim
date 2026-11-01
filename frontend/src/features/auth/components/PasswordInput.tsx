@@ -57,7 +57,7 @@ export function PasswordField({
   autoComplete,
   showRules = false,
   error,
-  placeholder = "Keep it secret",
+  placeholder = "Password",
   className,
 }: PasswordFieldProps) {
   return (

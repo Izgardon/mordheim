@@ -18,19 +18,14 @@ export type HirelingCatalogueConfig = {
   labels: {
     /** Page title and nav: "Hired Swords". */
     title: string;
-    subtitle: string;
     /** "hired sword": in sentences ("Delete hired sword"). */
     noun: string;
     /** "Hired sword": a card's kind line. */
     singular: string;
     add: string;
     search: string;
-    /** The list says this when the catalogue holds none at all ... */
+    /** The list says this when the catalogue holds none at all. */
     emptyTitle: string;
-    /** ... what the kind is ... */
-    emptyBody: string;
-    /** ... and, to someone who may add one, how. */
-    emptyAddHint: string;
     /** A search that matched none: "No hired swords match". */
     noMatches: string;
     /** A form's name placeholder. */
@@ -45,16 +40,13 @@ export const HIRED_SWORDS: HirelingCatalogueConfig = {
   specialType: "Hired Sword",
   labels: {
     title: "Hired Swords",
-    subtitle: "Mercenaries for hire",
     noun: "hired sword",
     singular: "Hired sword",
     add: "Add hired sword",
     search: "Search hired swords",
     emptyTitle: "No hired swords yet",
-    emptyBody: "Hired swords are mercenaries a warband hires for a fee and keeps for an upkeep.",
-    emptyAddHint: "Add your campaign's own with Add hired sword.",
     noMatches: "No hired swords match",
-    namePlaceholder: "e.g. Ogre Bodyguard",
+    namePlaceholder: "Hired sword name",
   },
 };
 
@@ -65,17 +57,13 @@ export const DRAMATIS_PERSONAE: HirelingCatalogueConfig = {
   specialType: "Dramatis Persona",
   labels: {
     title: "Dramatis Personae",
-    subtitle: "Characters met along the way",
     noun: "dramatis persona",
     singular: "Dramatis persona",
     add: "Add dramatis persona",
     search: "Search dramatis personae",
     emptyTitle: "No dramatis personae yet",
-    emptyBody:
-      "A dramatis persona is one of a kind: found after a battle, often for one battle only, paid in gold, wyrdstone or a favour, and never gaining experience. None are in the book yet.",
-    emptyAddHint: "Add your campaign's own with Add dramatis persona.",
     noMatches: "No dramatis personae match",
-    namePlaceholder: "e.g. Bertha Bestraufrung",
+    namePlaceholder: "Dramatis persona name",
   },
 };
 

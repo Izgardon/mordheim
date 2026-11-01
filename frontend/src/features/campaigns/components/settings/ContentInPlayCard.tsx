@@ -6,7 +6,6 @@ import { useSettingsList } from "../../api/settings-queries";
 import type { CampaignSummary } from "../../types/campaign-types";
 import ContentInPlay from "./ContentInPlay";
 import { useCampaignSave } from "./CampaignSection";
-import { presetOf } from "./content-in-play";
 import { FormError, SettingsCard } from "./settings-ui";
 import { SettingsRowsLoading } from "./SettingsSkeleton";
 
@@ -30,17 +29,9 @@ export default function ContentInPlayCard({ campaign }: { campaign: CampaignSumm
 
   // the answer, written over the cached campaign, marks the lists stale (writeCampaignAnswer)
   const submit = () => void save({ setting_ids: picked });
-  const preset = data ? presetOf(current, data.presets, settings) : null;
 
   return (
-    <SettingsCard
-      title="Content in play"
-      description={
-        preset
-          ? `Up to ${preset}. Warband types, skills and hired swords outside these settings stay listed, greyed out with a warning.`
-          : "Warband types, skills and hired swords outside these settings stay listed, greyed out with a warning."
-      }
-    >
+    <SettingsCard title="Content in play">
       {isLoading || !data ? (
         <SettingsRowsLoading label="Loading the settings in play" rows={2} />
       ) : (

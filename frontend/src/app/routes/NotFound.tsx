@@ -16,9 +16,6 @@ export default function NotFound() {
         <h1 className="m-0 font-display text-[34px] font-semibold leading-tight text-head">
           Lost in the ruins
         </h1>
-        <p className="m-0 text-sm text-text2">
-          No street in the city leads here. The page may have moved, or the link was mistyped.
-        </p>
         <Button asChild className="min-h-12">
           <Link to="/">Back to the chronicle</Link>
         </Button>

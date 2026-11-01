@@ -98,7 +98,7 @@ describe("ResetPassword (AUTH-TEST-27)", () => {
     await user.click(resetButton());
 
     expect(await screen.findByText("Password updated")).toBeInTheDocument();
-    expect(screen.getByRole("status")).toHaveTextContent("Sign in with your new password.");
+    expect(screen.getByRole("status")).toHaveTextContent("Password updated.");
     expect(screen.queryByLabelText("New password")).toBeNull();
     expect(screen.queryByRole("button", { name: "Reset password" })).toBeNull();
 

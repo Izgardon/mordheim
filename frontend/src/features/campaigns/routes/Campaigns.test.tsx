@@ -94,6 +94,24 @@ describe("Campaigns list and the join code", () => {
     expect(await screen.findByText("Campaign page")).toBeInTheDocument();
   });
 
+  it("links a campaign you have no warband in to raising one, and only that one", async () => {
+    fakeApi.on("GET /campaigns/", [
+      owned,
+      { ...joined, my_warband: { id: 9, name: "Ashen Crows", type_name: "Skaven" } },
+    ]);
+    renderCampaigns();
+    await screen.findByText("2 campaigns");
+
+    expect(card(owned.name)).toHaveTextContent("No warband raised yet");
+    expect(
+      within(card(owned.name)).getByRole("link", { name: "Raise your warband" })
+    ).toHaveAttribute("href", "/campaigns/1/warband");
+    expect(card(joined.name)).toHaveTextContent("Ashen Crows · Skaven");
+    expect(
+      within(card(joined.name)).queryByRole("link", { name: "Raise your warband" })
+    ).toBeNull();
+  });
+
   it("joins with the code upper-cased and puts the campaign at the top of the list", async () => {
     const user = setupUser();
     fakeApi.on("GET /campaigns/", [owned]);
@@ -111,7 +129,7 @@ describe("Campaigns list and the join code", () => {
     expect(screen.getByText("2 campaigns")).toBeInTheDocument();
     const campaignLinks = screen
       .getAllByRole("link")
-      .filter((link) => link.getAttribute("href")?.startsWith("/campaigns/"));
+      .filter((link) => /^\/campaigns\/\d+$/.test(link.getAttribute("href") ?? ""));
     expect(campaignLinks.map((link) => link.textContent)).toEqual([
       "The Pit Fights",
       "Shards of the Comet",
@@ -181,6 +199,10 @@ describe("Archived campaigns (CAMP-NEW-04)", () => {
     await user.click(screen.getByRole("button", { name: "Archived (1)" }));
 
     expect(card(archived.name)).toHaveTextContent("Archived");
+    // nothing can be raised in an archived campaign
+    expect(
+      within(card(archived.name)).queryByRole("link", { name: "Raise your warband" })
+    ).toBeNull();
     expect(screen.getByRole("button", { name: "Archived (1)" })).toHaveAttribute(
       "aria-expanded",
       "true"

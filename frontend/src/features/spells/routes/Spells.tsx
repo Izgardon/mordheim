@@ -4,6 +4,7 @@ import { useOutletContext, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
+import { inPlayOnly } from "@/features/reference/in-play";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
@@ -37,9 +38,9 @@ const compareSpells = (a: Spell, b: Spell) =>
   a.name.localeCompare(b.name);
 
 /**
- * Spells (design E's reference layout): every spell by lore, searched by name or rules text, a
- * chip per lore, rows with the lore, the D6 result and the difficulty; a row opens to its rules in
- * the warband page's rules panel. Custom spells are added and edited as today.
+ * Spells (design E's reference layout): every spell in play in the campaign by lore, searched by
+ * name or rules text, a chip per lore, rows with the lore, the D6 result and the difficulty; a
+ * row opens to its rules in the warband page's rules panel. Custom spells are added and edited as today.
  */
 export default function Spells() {
   const { id } = useParams();
@@ -51,7 +52,7 @@ export default function Spells() {
   const capabilities = campaignCapabilities(campaign);
   const lore = params.get("lore", "all");
 
-  const sorted = useMemo(() => [...spells.data].sort(compareSpells), [spells.data]);
+  const sorted = useMemo(() => inPlayOnly(spells.data).sort(compareSpells), [spells.data]);
   const lores = useMemo(() => [...new Set(sorted.map(loreOf))], [sorted]);
   const types = useMemo(
     () => [...new Set(sorted.map((spell) => spell.type ?? "").filter(Boolean))],
@@ -108,7 +109,7 @@ export default function Spells() {
             <ReferenceSearch
               value={params.query}
               onChange={params.setQuery}
-              placeholder="Name or rules text"
+              placeholder="Search spells"
               label="Search spells"
               isMobile={isMobile}
             />
@@ -139,7 +140,7 @@ export default function Spells() {
               ]
         }
         isEmpty={!spells.isLoading && rows.length === 0}
-        empty="No spells match. Try another word or lore."
+        empty="No spells match."
       >
         {spells.isLoading ? <ReferenceRowBones /> : null}
         {shown.rows.map((spell) => {

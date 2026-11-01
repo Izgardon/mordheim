@@ -56,7 +56,7 @@ export default function Rules() {
             <ReferenceSearch
               value={params.query}
               onChange={params.setQuery}
-              placeholder="Search the rules: knocked down, cover, parry"
+              placeholder="Search the rules"
               label="Search the rules"
               isMobile={isMobile}
             />
@@ -82,7 +82,7 @@ export default function Rules() {
         nameLabel="Rule"
         columns={isMobile ? undefined : [{ label: "Section", className: "w-[200px] shrink-0" }]}
         isEmpty={rows.length === 0}
-        empty="Nothing in the rules says that. Try another word."
+        empty="Nothing in the rules says that."
       >
         {rows.map((entry) => {
           const snippet = searching ? ruleSnippet(entry.text, params.query) : null;

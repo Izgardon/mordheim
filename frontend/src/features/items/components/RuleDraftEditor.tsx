@@ -60,7 +60,7 @@ export default function RuleDraftEditor({
             inputSize="sm"
             value={rule.name}
             aria-invalid={Boolean(error)}
-            placeholder="Incredible Force"
+            placeholder="Rule name"
             onChange={(event) => onChange({ ...rule, name: event.target.value })}
           />
           <FieldError message={error} />
@@ -72,7 +72,7 @@ export default function RuleDraftEditor({
           id={id("text")}
           className={TEXTAREA.replace("min-h-[120px]", "min-h-[72px]")}
           value={rule.text}
-          placeholder={rule.ruleId ? "Leave blank to use the shared rule's text." : "What it does."}
+          placeholder={rule.ruleId ? "Leave blank to use the shared rule's text." : undefined}
           onChange={(event) => onChange({ ...rule, text: event.target.value })}
         />
       </label>
@@ -92,7 +92,7 @@ export default function RuleDraftEditor({
               <Input
                 inputSize="sm"
                 aria-label={`Result ${at + 1}`}
-                placeholder="What happens"
+                placeholder="Result"
                 value={row.result}
                 onChange={(event) => setRow(at, { result: event.target.value })}
               />

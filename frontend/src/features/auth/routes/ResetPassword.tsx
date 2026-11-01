@@ -86,7 +86,6 @@ export default function ResetPassword() {
         value={confirmPassword}
         onChange={setConfirmPassword}
         autoComplete="new-password"
-        placeholder="Repeat it"
       />
       <AuthFormError message={error} />
       <Button
@@ -109,13 +108,11 @@ export default function ResetPassword() {
         title={isDone ? "Password updated" : "Set a new password"}
       >
         {isDone ? (
-          <p role="status" className="m-0 text-[15px] text-text2">
-            Sign in with your new password.
+          <p role="status" className="sr-only">
+            Password updated.
           </p>
         ) : (
-          <p className="m-0 text-[15px] text-text2">
-            Choose a new password for your account. This link is valid for 1 hour.
-          </p>
+          <p className="m-0 text-[15px] text-text2">This link is valid for 1 hour.</p>
         )}
       </AuthHeading>
       {isDone ? (

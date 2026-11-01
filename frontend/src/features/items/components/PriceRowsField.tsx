@@ -38,7 +38,7 @@ export default function PriceRowsField(props: PriceRowsFieldProps) {
   const { rows, onChange, path, idPrefix } = props;
   const update = (index: number, patch: Partial<PriceRowDraft>) =>
     onChange(rows.map((row, at) => (at === index ? { ...row, ...patch } : row)));
-  const text = (index: number, field: PriceRowField, label: string, placeholder: string) => {
+  const text = (index: number, field: PriceRowField, label: string, placeholder?: string) => {
     const id = `${idPrefix}-${field}-${index}`;
     const serverField =
       field === "multiplier" ? "dice_multiplier" : field === "costNote" ? "cost_note" : field;
@@ -94,15 +94,15 @@ export default function PriceRowsField(props: PriceRowsFieldProps) {
               </button>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {text(index, "cost", "Cost (gc)", "25")}
-              {text(index, "dice", "+ D6s", "2")}
+              {text(index, "cost", "Cost (gc)")}
+              {text(index, "dice", "+ D6s")}
               {text(index, "multiplier", "× each pip", "1")}
               {text(index, "rarity", "Rarity", "Common")}
             </div>
             <div className="grid gap-3 sm:grid-cols-3">
-              {text(index, "label", "Label", "Brace")}
-              {text(index, "note", "Note when buying", "Heroes only")}
-              {text(index, "costNote", "Cost note", "per pair")}
+              {text(index, "label", "Label")}
+              {text(index, "note", "Note when buying")}
+              {text(index, "costNote", "Cost note")}
             </div>
             <WhoCanField
               campaignId={props.campaignId}

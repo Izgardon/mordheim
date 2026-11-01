@@ -173,14 +173,14 @@ describe("a reload (AUTH-TEST-23)", () => {
     expect(localStorage.length).toBe(0);
   });
 
-  it("waits for /auth/me behind LoadingScreen for a session stored without the user, then caches it (PERF-50)", async () => {
+  it("waits for /auth/me behind the boot screen for a session stored without the user, then caches it (PERF-50)", async () => {
     storeSession(RAIDER, { cachedUser: false });
     const me = deferred<typeof RAIDER>();
     fakeApi.on("GET /auth/me/", () => me.promise);
     fakeApi.on("GET /campaigns/", []);
     renderReload();
 
-    expect(screen.getByRole("status")).toHaveTextContent("Loading...");
+    expect(screen.getByRole("status", { name: "Loading" })).toBeInTheDocument();
     await waitFor(() => expect(fakeApi.calls()).toEqual(["GET /auth/me/"]));
     expect(screen.queryByText(/Campaigns page/)).toBeNull();
 
@@ -197,7 +197,7 @@ describe("a reload (AUTH-TEST-23)", () => {
     fakeApi.on("GET /auth/me/", () => new Promise(() => undefined));
     renderReload();
 
-    expect(screen.getByRole("status")).toHaveTextContent("Loading...");
+    expect(screen.getByRole("status", { name: "Loading" })).toBeInTheDocument();
     await waitFor(() => expect(fakeApi.calls()).toEqual(["GET /auth/me/"]));
   });
 

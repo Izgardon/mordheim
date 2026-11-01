@@ -32,8 +32,7 @@ export default function BeastProfileFields({ form }: { form: BestiaryEntryFormSt
         </div>
       ) : (
         <p className="text-xs text-muted-foreground">
-          No profile: its stats are cleared when you save, and the pages say &ldquo;No
-          profile&rdquo;. Tick it again to give it one, starting from empty stats.
+          No profile: its stats are cleared when you save.
         </p>
       )}
 
@@ -48,7 +47,6 @@ export default function BeastProfileFields({ form }: { form: BestiaryEntryFormSt
             value={values.rating_bonus}
             onChange={(event) => change({ rating_bonus: event.target.value })}
             aria-invalid={Boolean(fieldErrors.rating_bonus)}
-            placeholder="e.g. 5"
           />
           <FieldError message={fieldErrors.rating_bonus} />
         </div>

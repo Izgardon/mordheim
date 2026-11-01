@@ -2,8 +2,8 @@ import {
   Bone,
   boneWidth,
   nameWidth,
-  SkeletonCaptionRow,
   SkeletonHeader,
+  SkeletonHeading,
   SkeletonPage,
 } from "@/components/ui/skeleton";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -39,7 +39,7 @@ export function BattleRowsBones({ rows = 5, isMobile }: { rows?: number; isMobil
   );
 }
 
-/** The Battles page while its code loads: the header, the caption over its hairline, the rows. */
+/** The Battles page while its code loads: the header, the section title and its count, the rows. */
 export default function BattlesSkeleton() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   return (
@@ -48,7 +48,7 @@ export default function BattlesSkeleton() {
       className="flex flex-col gap-6 pb-14 max-[960px]:gap-3"
     >
       {isMobile ? null : <SkeletonHeader title="w-48" />}
-      <SkeletonCaptionRow />
+      <SkeletonHeading />
       <BattleRowsBones isMobile={isMobile} />
     </SkeletonPage>
   );

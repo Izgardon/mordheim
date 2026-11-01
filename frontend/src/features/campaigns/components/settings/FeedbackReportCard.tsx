@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { Button } from "@components/button";
 import { Card } from "@components/card";
+import { SECTION_TITLE } from "@components/section-title";
 import {
   Dialog,
   DialogContent,
@@ -29,8 +30,8 @@ type FeedbackReportCardProps = {
 };
 
 const REPORT_TYPE_PLACEHOLDERS = {
-  Bug: "Describe the bug, what you were doing, and what you expected to happen.",
-  Feedback: "Share your feedback, suggestion, or improvement idea.",
+  Bug: "What happened, and what you expected",
+  Feedback: "Your idea",
 } as const;
 
 export default function FeedbackReportCard({
@@ -91,16 +92,7 @@ export default function FeedbackReportCard({
   return (
     <section aria-label="Feedback and bug report">
       <Card className="flex flex-col items-start gap-4 p-5 max-[960px]:p-4">
-        <div className="flex flex-col gap-1">
-          <h3 className="m-0 font-display text-xl font-semibold leading-tight text-head">
-            Feedback/Bug Report
-          </h3>
-          <p className="m-0 text-sm text-text2">
-            {campaignId
-              ? "Send a report with your account and current campaign context so issues are easier to trace."
-              : "Send a report with your account so issues are easier to trace."}
-          </p>
-        </div>
+        <h3 className={SECTION_TITLE}>Feedback/Bug Report</h3>
         <Dialog open={open} onOpenChange={handleOpenChange}>
           <DialogTrigger asChild>
             <Button variant="secondary">Send report</Button>

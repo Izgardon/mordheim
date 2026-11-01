@@ -119,14 +119,11 @@ describe("FeedbackReportCard", () => {
     fireEvent.click(screen.getByRole("button", { name: "Send report" }));
     expect(screen.getByLabelText("Report")).toHaveAttribute(
       "placeholder",
-      "Describe the bug, what you were doing, and what you expected to happen."
+      "What happened, and what you expected"
     );
 
     fireEvent.change(screen.getByLabelText("Type"), { target: { value: "Feedback" } });
-    expect(screen.getByLabelText("Report")).toHaveAttribute(
-      "placeholder",
-      "Share your feedback, suggestion, or improvement idea."
-    );
+    expect(screen.getByLabelText("Report")).toHaveAttribute("placeholder", "Your idea");
   });
 
   it("submits a report, closes the dialog, and clears the textarea", async () => {
@@ -180,14 +177,6 @@ describe("FeedbackReportCard", () => {
     expect(await screen.findByRole("status")).toHaveTextContent("Thanks, report sent");
     fireEvent.click(screen.getByRole("button", { name: "Send report" }));
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
-  });
-
-  it("speaks of your account alone without a campaign (the campaigns page, CAMP-NEW-08)", () => {
-    render(<FeedbackReportCard />);
-
-    expect(screen.getByRole("region", { name: "Feedback and bug report" })).toHaveTextContent(
-      "Send a report with your account so issues are easier to trace."
-    );
   });
 
   it("shows api failures inline", async () => {

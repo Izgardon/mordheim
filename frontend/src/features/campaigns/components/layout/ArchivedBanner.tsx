@@ -16,12 +16,11 @@ export default function ArchivedBanner({ campaign }: { campaign: CampaignSummary
   return (
     <div
       role="status"
-      className="archived-banner mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 border border-accent-line bg-accent-soft px-4 py-3 text-sm text-ink sm:mx-0"
+      className="campaign-banner mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 border border-accent-line bg-accent-soft px-4 py-3 text-sm text-ink sm:mx-0 max-[960px]:mt-3"
     >
       <Archive className="h-4 w-4 shrink-0 text-accent-text" aria-hidden="true" />
       <span className="min-w-0 grow basis-56">
-        This campaign is archived: read-only for everyone. Nothing in it can change until its owner
-        restores it.
+        This campaign is archived: read-only for everyone.
       </span>
       {campaignCapabilities(campaign).restore ? (
         <Link

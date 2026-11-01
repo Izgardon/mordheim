@@ -53,7 +53,7 @@ function CampaignName({ campaign }: { campaign: CampaignSummary }) {
   };
 
   return (
-    <SettingRow label="Name" hint="What every member sees on the campaigns list." error={error}>
+    <SettingRow label="Name" error={error}>
       <Input
         aria-label="Campaign name"
         value={name}
@@ -79,20 +79,18 @@ function CampaignFeatures({ campaign }: { campaign: CampaignSummary }) {
     {
       key: "enable_encampments" as const,
       label: "Encampments",
-      hint: "The Encampment page: camps the players own, with no effect on the game.",
       on: Boolean(campaign.enable_encampments),
     },
     {
       key: "enable_locations" as const,
       label: "Locations",
-      hint: "The warband page's Locations panel, where heroes visit places and roll on them.",
       on: Boolean(campaign.enable_locations),
     },
   ];
   return (
     <>
       {features.map((feature) => (
-        <SettingRow key={feature.key} label={feature.label} hint={feature.hint}>
+        <SettingRow key={feature.key} label={feature.label}>
           <Switch
             checked={feature.on}
             aria-label={feature.label}
@@ -116,7 +114,7 @@ function CampaignFeatures({ campaign }: { campaign: CampaignSummary }) {
 export default function CampaignSection({ campaign }: { campaign: CampaignSummary }) {
   return (
     <>
-      <SettingsCard title="Campaign" description="Its name and its pages.">
+      <SettingsCard title="Campaign">
         <CampaignName campaign={campaign} />
         <CampaignFeatures campaign={campaign} />
       </SettingsCard>

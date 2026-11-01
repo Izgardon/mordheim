@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { Card } from "@/components/ui/card";
+import { SectionTitle } from "@/components/ui/section-title";
 import { cn } from "@/lib/utils";
 
 /** The small uppercase caption above a field or a group (design E). */
@@ -39,14 +40,9 @@ export function SettingsCard({
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <h2
-            className={cn(
-              "m-0 font-display text-xl font-semibold leading-tight",
-              tone === "danger" ? "text-danger" : "text-head"
-            )}
-          >
+          <SectionTitle className={tone === "danger" ? "text-danger" : undefined}>
             {title}
-          </h2>
+          </SectionTitle>
           {description ? <p className="m-0 text-sm text-text2">{description}</p> : null}
         </div>
         {action ? <div className="flex shrink-0 flex-wrap gap-2">{action}</div> : null}

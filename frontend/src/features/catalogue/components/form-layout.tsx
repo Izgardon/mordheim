@@ -120,7 +120,6 @@ type CatalogueDescriptionFieldProps = {
   id: string;
   value: string;
   onChange: (value: string) => void;
-  placeholder: string;
   className?: string;
 };
 
@@ -130,7 +129,6 @@ export function CatalogueDescriptionField({
   id,
   value,
   onChange,
-  placeholder,
   className,
 }: CatalogueDescriptionFieldProps) {
   const isDialog = layout === "dialog";
@@ -140,7 +138,6 @@ export function CatalogueDescriptionField({
         id={fieldId(layout, id)}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
         rows={isDialog ? undefined : 2}
         className={TEXTAREA_CLASS[layout]}
         required={isDialog}

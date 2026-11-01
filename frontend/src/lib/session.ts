@@ -24,7 +24,7 @@ import {
 import type { AuthTokens, AuthUser } from "@/features/auth/types/auth-types";
 
 /**
- * `booting`: a stored session whose user is loading (behind LoadingScreen). `offline`: its user
+ * `booting`: a stored session whose user is loading (behind the boot screen). `offline`: its user
  * couldn't be loaded because the server is unreachable; the session is kept for a retry.
  */
 export type SessionStatus = "booting" | "authenticated" | "anonymous" | "offline";

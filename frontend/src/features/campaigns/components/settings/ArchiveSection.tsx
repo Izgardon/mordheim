@@ -16,7 +16,6 @@ const ARCHIVE_EFFECTS = [
   "Pending and accepted trades close.",
   "Its waiting notifications are cleared.",
   "The campaign becomes read-only for everyone: no settings, warbands, battles, trades or chat.",
-  "You can restore it from Settings at any time.",
 ];
 
 const archivedOn = (iso: string | null | undefined) =>
@@ -102,7 +101,7 @@ export default function ArchiveSection({
     return (
       <SettingsCard
         title="Archived campaign"
-        description={`Archived${date ? ` on ${date}` : ""}. Restoring makes it writable again; the battles and trades that closed when it was archived stay closed.`}
+        description={`Archived${date ? ` on ${date}` : ""}. The battles and trades it closed stay closed.`}
       >
         {lifecycle.error && !deleting ? (
           <p className="m-0 text-sm text-danger">{lifecycle.error}</p>
@@ -139,7 +138,7 @@ export default function ArchiveSection({
     <SettingsCard
       title="Archive campaign"
       tone="danger"
-      description="Done with the campaign? Archiving keeps everything as it is, read-only, until you restore it. Deleting it for good is a separate step, from the archived campaign."
+      description="To delete it for good, archive it first."
       action={
         capabilities.archive ? (
           <Button variant="danger" onClick={() => setArchiving(true)}>

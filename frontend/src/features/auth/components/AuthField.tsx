@@ -68,7 +68,7 @@ export function EmailField({ value, onChange, error }: EmailFieldProps) {
           type="email"
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          placeholder="name@wyrdstone.dev"
+          placeholder="Email"
           autoComplete="email"
           required
           aria-describedby={describedBy}
@@ -95,7 +95,7 @@ export function DisplayNameField({ value, onChange, error, className }: DisplayN
         <Input
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          placeholder="Gravewatch Captain"
+          placeholder="Display name"
           autoComplete="nickname"
           required
           maxLength={40}

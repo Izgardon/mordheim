@@ -66,7 +66,7 @@ export default function RulesField({
         inputSize="sm"
         type="search"
         aria-label="Add a shared rule"
-        placeholder="Add a shared rule: Parry, Concussion…"
+        placeholder="Search shared rules"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
       />

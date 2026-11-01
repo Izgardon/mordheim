@@ -26,7 +26,7 @@ export default function BestiaryEntryFormFields({ form }: { form: BestiaryEntryF
         onChange={(name) => change({ name })}
         error={form.fieldErrors.name}
         nameTaken={form.nameTaken}
-        placeholder="e.g. War Hound"
+        placeholder="Beast name"
         required
       />
       <BeastProfileFields form={form} />

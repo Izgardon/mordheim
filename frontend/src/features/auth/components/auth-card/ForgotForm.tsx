@@ -16,14 +16,9 @@ type ForgotFormProps = {
 export function ForgotForm({ form, error, notice, onBack }: ForgotFormProps) {
   return (
     <form className="flex flex-col gap-5" onSubmit={form.submit}>
-      <div className="flex flex-col gap-1">
-        <h2 className="m-0 font-display text-xl font-semibold leading-tight text-head">
-          Forgot your password?
-        </h2>
-        <p className="m-0 text-sm text-text2">
-          Give the email you signed up with, and we&apos;ll send a link to set a new one.
-        </p>
-      </div>
+      <h2 className="m-0 font-display text-xl font-semibold leading-tight text-head">
+        Forgot your password?
+      </h2>
       <EmailField value={form.email} onChange={form.setEmail} />
       {notice ? (
         <p

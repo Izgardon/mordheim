@@ -61,7 +61,7 @@ const openChat = () => {
 };
 
 const sendDraft = (text: string) => {
-  fireEvent.change(screen.getByPlaceholderText("Send a message..."), { target: { value: text } });
+  fireEvent.change(screen.getByPlaceholderText("Message"), { target: { value: text } });
   fireEvent.click(screen.getByRole("button", { name: "Send message" }));
 };
 
@@ -76,7 +76,7 @@ describe("CampaignChatMenu", () => {
     openChat();
 
     expect(await screen.findByRole("alert")).toHaveTextContent("Can't reach the server");
-    expect(screen.queryByText("No messages yet. Say something!")).not.toBeInTheDocument();
+    expect(screen.queryByText("No messages yet.")).not.toBeInTheDocument();
 
     vi.mocked(listCampaignMessages).mockResolvedValueOnce([message(1, "Ready when you are")]);
     fireEvent.click(screen.getByRole("button", { name: "Retry" }));
@@ -92,25 +92,25 @@ describe("CampaignChatMenu", () => {
       })
     );
     openChat();
-    await screen.findByText("No messages yet. Say something!");
+    await screen.findByText("No messages yet.");
 
     sendDraft("Charge the left flank");
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "Too many attempts. Try again in 5 seconds."
     );
-    expect(screen.getByPlaceholderText("Send a message...")).toHaveValue("Charge the left flank");
+    expect(screen.getByPlaceholderText("Message")).toHaveValue("Charge the left flank");
   });
 
   it("clears the input once the message is sent", async () => {
     vi.mocked(listCampaignMessages).mockResolvedValue([]);
     vi.mocked(sendCampaignMessage).mockResolvedValueOnce(message(5, "Hold the bridge"));
     openChat();
-    await screen.findByText("No messages yet. Say something!");
+    await screen.findByText("No messages yet.");
 
     sendDraft("Hold the bridge");
 
     expect(await screen.findByText("Hold the bridge")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Send a message...")).toHaveValue("");
+    expect(screen.getByPlaceholderText("Message")).toHaveValue("");
   });
 });

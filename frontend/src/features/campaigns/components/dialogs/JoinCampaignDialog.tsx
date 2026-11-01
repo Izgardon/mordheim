@@ -79,22 +79,17 @@ export default function JoinCampaignDialog({ onJoin, className }: JoinCampaignDi
         }
       >
         <form className="flex flex-col gap-4" onSubmit={(event) => void submit(event)}>
-          <Field
-            label="Rally code"
-            htmlFor="join-code"
-            hint="Six letters and numbers, from anyone already in the campaign."
-          >
+          <Field label="Rally code" htmlFor="join-code">
             <Input
               id="join-code"
               value={code}
               onChange={(event) => setCode(event.target.value)}
-              placeholder="WYR123"
               maxLength={6}
               autoComplete="off"
               autoCapitalize="characters"
               spellCheck={false}
               required
-              className="h-12 font-mono text-lg font-bold uppercase tracking-[0.2em] placeholder:tracking-[0.2em] md:h-12"
+              className="h-12 font-mono text-lg font-bold uppercase tracking-[0.2em] md:h-12"
             />
           </Field>
           <FormError message={error} />

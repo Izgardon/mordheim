@@ -25,9 +25,6 @@ export default function CampaignsHeader({ user, onCreate, onJoin }: CampaignsHea
         <h1 className="m-0 font-display text-[40px] font-semibold leading-tight text-head max-[960px]:text-[30px]">
           Campaigns
         </h1>
-        <p className="m-0 text-sm text-text2">
-          Every expedition into the City of the Damned, and who came back from it.
-        </p>
       </div>
       <div className="flex gap-2 max-[960px]:grid max-[960px]:w-full max-[960px]:grid-cols-2">
         <JoinCampaignDialog onJoin={onJoin} className="max-[960px]:min-h-12" />

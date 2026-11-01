@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 // components
-import { Card } from "@components/card";
+import { SectionHead } from "@components/section-title";
 import { cn } from "@/lib/utils";
 
 // types
@@ -63,17 +63,15 @@ export default function CampaignListSection({
   const archived = campaigns.filter((campaign) => campaign.archived_at);
   return (
     <section aria-labelledby="your-campaigns" className="flex flex-col gap-4">
-      <div className="flex items-baseline justify-between gap-3 border-b border-line pb-2.5">
-        <h2
-          id="your-campaigns"
-          className="m-0 font-sans text-[11px] font-bold uppercase tracking-[0.14em] text-faint"
-        >
-          Your campaigns
-        </h2>
-        <span className="font-mono text-xs text-faint">
-          {live.length} {live.length === 1 ? "campaign" : "campaigns"}
-        </span>
-      </div>
+      <SectionHead
+        id="your-campaigns"
+        title="Your campaigns"
+        aside={
+          <span className="text-[13px] text-faint">
+            {live.length} {live.length === 1 ? "campaign" : "campaigns"}
+          </span>
+        }
+      />
 
       {isLoading ? (
         <CampaignCardsSkeleton />
@@ -82,20 +80,10 @@ export default function CampaignListSection({
           {error}
         </p>
       ) : live.length === 0 && archived.length === 0 ? (
-        <Card className="flex flex-col gap-2 p-6 max-[960px]:p-5">
-          <h3 className="m-0 font-display text-xl font-semibold text-head">No campaigns yet</h3>
-          <p className="m-0 max-w-[560px] text-sm text-text2">
-            Create a campaign and share its join code with your group, or join one with the code its
-            owner sent you.
-          </p>
-        </Card>
+        <p className="m-0 text-sm text-text2">No campaigns yet.</p>
       ) : (
         <>
-          {live.length > 0 ? (
-            <CampaignGrid campaigns={live} />
-          ) : (
-            <p className="m-0 text-sm text-text2">Every campaign of yours is archived.</p>
-          )}
+          {live.length > 0 ? <CampaignGrid campaigns={live} /> : null}
           <ArchivedCampaigns campaigns={archived} />
         </>
       )}

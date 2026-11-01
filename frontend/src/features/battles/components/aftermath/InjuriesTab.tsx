@@ -51,7 +51,7 @@ export default function InjuriesTab(props: InjuriesTabProps) {
   if (!rows.length && !mounts.length) {
     return (
       <p className="m-0 border border-dashed border-strong px-3.5 py-3 text-[13px] text-muted-foreground">
-        Nobody was taken out of action, so there is nothing to roll.
+        Nobody was taken out of action.
       </p>
     );
   }

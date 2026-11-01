@@ -6,6 +6,7 @@ import { Search } from "lucide-react";
 import { useCampaignLocations } from "@/features/campaigns/api/campaign-queries";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogueSearchParams";
+import { inPlayOnly } from "@/features/reference/in-play";
 import { SectionPicker } from "@/features/reference/ReferencePage";
 import { useHouseRules } from "@/features/rules/api/rule-queries";
 import { ruleEntries } from "@/features/rules/rules-index";
@@ -123,12 +124,13 @@ export default function SearchEverything() {
     () =>
       searching
         ? searchEverything(query, {
-            items: items.data,
-            skills: skills.data,
-            spells: spells.data,
-            beasts: beasts.data,
-            hiredSwords: hiredSwords.data,
-            personae: personae.data,
+            // the reference as its pages show it: only what is in play in the campaign
+            items: inPlayOnly(items.data),
+            skills: inPlayOnly(skills.data),
+            spells: inPlayOnly(spells.data),
+            beasts: inPlayOnly(beasts.data),
+            hiredSwords: inPlayOnly(hiredSwords.data),
+            personae: inPlayOnly(personae.data),
             rules,
             houseRules: houseRules.data ?? [],
             locations: withLocations ? (locations.data ?? []) : [],
@@ -178,7 +180,7 @@ export default function SearchEverything() {
           autoFocus={!isMobile}
           value={query}
           onChange={(event) => url.set({ q: event.target.value })}
-          placeholder="Items, skills, spells, beasts, rules, warbands, units, places"
+          placeholder="Search everything"
           aria-label="Search everything"
           className="min-w-0 flex-1 bg-transparent text-base text-ink outline-none placeholder:text-faint"
         />
@@ -189,18 +191,14 @@ export default function SearchEverything() {
         )}
       </label>
       {!searching ? (
-        <p className="m-0 text-sm text-text2">
-          Type two letters or more. It looks through wargear, skills, spells, the bestiary, hired
-          swords and dramatis personae, the rules (inside the text, not just the titles), the house
-          rules, and this campaign&apos;s warbands, units{withLocations ? " and locations" : ""}.
-        </p>
+        <p className="m-0 text-sm text-text2">Type two letters or more.</p>
       ) : (
         <p role="status" className="m-0 text-[13px] text-text2">
           {total
             ? `${total} ${total === 1 ? "result" : "results"} for “${query.trim()}”`
             : loading
               ? "Searching…"
-              : `Nothing found for “${query.trim()}”. Try another word.`}
+              : `Nothing found for “${query.trim()}”.`}
           {total && server.isFetching ? " · searching the warbands…" : ""}
         </p>
       )}

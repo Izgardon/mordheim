@@ -57,9 +57,6 @@ function InviteDialog({
         </div>
       }
     >
-      <p className="m-0 text-sm text-text2">
-        Send them this code. They join from All campaigns, with Join a campaign.
-      </p>
       <p className="m-0 select-all border border-accent-line bg-page px-4 py-3 text-center font-mono text-2xl font-bold tracking-[0.2em] text-head">
         {campaign.join_code}
       </p>
@@ -141,7 +138,7 @@ export default function OverviewHeader(props: OverviewHeaderProps) {
           open={starting.isStartOpen}
           onOpenChange={starting.setIsStartOpen}
           title="Start the campaign"
-          description="Start the campaign? Battles count towards it from now on."
+          description="Battles count towards it from now on."
           confirmText={starting.isStarting ? "Starting…" : "Start the campaign"}
           confirmVariant="primary"
           isConfirming={starting.isStarting}

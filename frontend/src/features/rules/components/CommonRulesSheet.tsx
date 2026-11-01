@@ -129,8 +129,8 @@ export default function CommonRulesSheet({
           <DialogTitle>Common rules</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <DialogDescription className="block text-sm text-text2">
-            Choose from a small list of commonly used campaign house rules.
+          <DialogDescription className="sr-only">
+            Commonly used campaign house rules
           </DialogDescription>
           {commonRulesQuery.isPending ? (
             <p className="text-sm text-muted-foreground">Loading common rules...</p>

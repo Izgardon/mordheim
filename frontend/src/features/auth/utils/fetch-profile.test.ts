@@ -1,5 +1,5 @@
 /**
- * Loading the session's profile behind LoadingScreen, when the session moves on before /auth/me
+ * Loading the session's profile behind the boot screen, when the session moves on before /auth/me
  * answers (BUG-170): the late answer, a profile or a refusal, leaves the new session alone.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";

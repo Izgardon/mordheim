@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { Link, useOutletContext, useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 
+import { SectionHead } from "@/components/ui/section-title";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import OpenBounties from "@/features/bounties/components/OpenBounties";
 import { useRefreshOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
@@ -54,10 +55,7 @@ function Section({
 }) {
   return (
     <section aria-label={title} className={cn("flex flex-col gap-3", className)}>
-      <div className="flex items-baseline justify-between">
-        <h2 className="m-0 font-display text-[22px] font-semibold text-head">{title}</h2>
-        {aside}
-      </div>
+      <SectionHead title={title} aside={aside} />
       {children}
     </section>
   );
@@ -207,20 +205,15 @@ export default function Overview() {
       ) : (
         <div className={OVERVIEW_BODY}>
           <div className={OVERVIEW_MAIN}>
-            <Section
-              title="Standings"
-              aside={<span className="text-[13px] text-faint">By warband rating</span>}
-            >
-              {standingsTable}
-            </Section>
+            <Section title="Standings">{standingsTable}</Section>
             <Section title="Battles" aside={allLink} className={OVERVIEW_DIVIDED}>
               {recent}
             </Section>
           </div>
           <aside className={OVERVIEW_ASIDE}>
-            {/* above the chronicle: under its 40 entries the panel was out of sight */}
-            <OpenBounties campaignId={campaignId} isMobile={false} />
+            {/* the chronicle scrolls inside its own box, so the bounties under it stay in reach */}
             <Chronicle campaignId={campaignId} isMobile={false} />
+            <OpenBounties campaignId={campaignId} isMobile={false} />
           </aside>
         </div>
       )}

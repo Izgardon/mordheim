@@ -6,7 +6,7 @@ import { Navigate, Outlet, type RouteObject } from "react-router-dom";
 // components
 import ScrollToTop from "../../components/ScrollToTop";
 import RouteError from "../../components/errors/RouteError";
-import { LoadingScreen } from "../../components/ui/loading-screen";
+import { BootScreen } from "../../components/ui/loading-screen";
 
 // Route modules load on demand, so the entry chunk carries only the shell (PERF-17).
 const ProtectedLayout = lazy(() => import("./ProtectedLayout"));
@@ -38,7 +38,7 @@ function RootLayout() {
   return (
     <>
       <ScrollToTop />
-      <Suspense fallback={<LoadingScreen />}>
+      <Suspense fallback={<BootScreen />}>
         <Outlet />
       </Suspense>
     </>

@@ -54,7 +54,6 @@ export default function HouseRuleForm({
           <Input
             value={form.title}
             onChange={(event) => onFieldChange("title", event.target.value)}
-            placeholder="Parry changes"
           />
         </div>
         <div className="space-y-2">
@@ -65,7 +64,6 @@ export default function HouseRuleForm({
             className="min-h-[140px] w-full border border-strong bg-page px-3 py-2 text-sm text-ink placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
             value={form.description}
             onChange={(event) => onFieldChange("description", event.target.value)}
-            placeholder="Describe the ruling and any clarifications."
           />
         </div>
       </div>

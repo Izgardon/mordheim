@@ -64,11 +64,7 @@ function StartingGold({ campaign }: { campaign: CampaignSummary }) {
   };
 
   return (
-    <SettingRow
-      label="Starting gold"
-      hint="What a new warband starts with."
-      error={confirming ? "" : error}
-    >
+    <SettingRow label="Starting gold" error={confirming ? "" : error}>
       <Input
         type="number"
         min={0}
@@ -157,16 +153,9 @@ function ThresholdField(props: {
 export default function CampaignRules({ campaign }: { campaign: CampaignSummary }) {
   const { limits, deathRoll, levelUps } = useWarbandRulesForm(campaign);
   return (
-    <SettingsCard
-      title="Warband rules"
-      description="Gold, limits, the death roll and the level-ups every warband in the campaign plays by."
-    >
+    <SettingsCard title="Warband rules">
       <StartingGold campaign={campaign} />
-      <SettingRow
-        label="Warband limits"
-        hint="The most heroes and hired swords a warband may have."
-        error={limits.error}
-      >
+      <SettingRow label="Warband limits" error={limits.error}>
         <label className="flex items-center gap-2 text-sm text-text2">
           Heroes
           <Input
@@ -197,11 +186,7 @@ export default function CampaignRules({ campaign }: { campaign: CampaignSummary 
           {limits.isSaving ? "Saving…" : "Save"}
         </Button>
       </SettingRow>
-      <SettingRow
-        label="Hero death roll"
-        hint="The serious injury table a hero taken out of action rolls on."
-        error={deathRoll.error}
-      >
+      <SettingRow label="Hero death roll" error={deathRoll.error}>
         <div role="group" aria-label="Hero death roll" className="flex gap-1.5">
           {DEATH_ROLLS.map((roll) => (
             <Chip
@@ -223,7 +208,6 @@ export default function CampaignRules({ campaign }: { campaign: CampaignSummary 
       </SettingRow>
       <SettingRow
         label="Level-ups"
-        hint={`The XP at which a unit gains an advance: heroes have ${levelUps.heroCount}, henchmen ${levelUps.henchmenCount}.`}
         error={levelUps.errors.save}
         below={
           <div className="grid gap-3 min-[961px]:grid-cols-2">

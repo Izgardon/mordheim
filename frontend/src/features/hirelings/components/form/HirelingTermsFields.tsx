@@ -17,13 +17,11 @@ function TermField({
   form,
   field,
   label,
-  placeholder,
   numeric = false,
 }: {
   form: HirelingProfileFormState;
   field: TextKey;
   label: string;
-  placeholder: string;
   numeric?: boolean;
 }) {
   const id = `hireling-${field.replace(/_/g, "-")}`;
@@ -38,7 +36,6 @@ function TermField({
         value={form.values[field]}
         onChange={(event) => form.change({ [field]: event.target.value })}
         aria-invalid={Boolean(error)}
-        placeholder={placeholder}
       />
       <FieldError message={error} />
     </div>
@@ -64,12 +61,7 @@ function PersonaTerms({ form }: { form: HirelingProfileFormState }) {
         }
         className="flex min-w-[140px] flex-1 flex-col gap-1.5"
       />
-      <TermField
-        form={form}
-        field="payment_note"
-        label="Paid in"
-        placeholder="e.g. 25 gc or 1 shard"
-      />
+      <TermField form={form} field="payment_note" label="Paid in" />
     </div>
   );
 }
@@ -102,7 +94,7 @@ export default function HirelingTermsFields({ form }: { form: HirelingProfileFor
       />
       <FieldError message={form.fieldErrors.upkeep_fee} />
       <div className="flex flex-wrap gap-3">
-        <TermField form={form} field="rating" label="Rating" placeholder="e.g. 25" numeric />
+        <TermField form={form} field="rating" label="Rating" numeric />
       </div>
       {form.config.hasPersonaTerms ? <PersonaTerms form={form} /> : null}
       <fieldset className="flex flex-col gap-1.5">

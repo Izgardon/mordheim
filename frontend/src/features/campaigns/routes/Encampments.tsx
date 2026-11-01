@@ -55,7 +55,7 @@ function EncampmentForm({ page }: { page: ReturnType<typeof useEncampments> }) {
         <Input
           id="encampment-name"
           value={page.form.name ?? ""}
-          placeholder="Sailmakers' Row"
+          placeholder="Encampment name"
           onChange={(event) => page.setForm((form) => ({ ...form, name: event.target.value }))}
         />
       </Field>
@@ -82,7 +82,6 @@ function EncampmentForm({ page }: { page: ReturnType<typeof useEncampments> }) {
           id="encampment-description"
           className={TEXTAREA}
           value={page.form.description ?? ""}
-          placeholder="What does this encampment provide, protect or connect to?"
           onChange={(event) =>
             page.setForm((form) => ({ ...form, description: event.target.value }))
           }
@@ -121,10 +120,6 @@ function EncampmentsPage({ campaign }: { campaign: CampaignSummary }) {
           {addButton}
         </header>
       )}
-      <p className="m-0 text-sm text-text2">
-        Camps the players hold in the city: who owns each and what it is. They have no effect on the
-        game.
-      </p>
       {isMobile ? addButton : null}
       {!page.isEnabled ? (
         <p className="m-0 border border-border bg-surface px-4 py-5 text-sm text-text2">
@@ -169,9 +164,11 @@ function EncampmentsPage({ campaign }: { campaign: CampaignSummary }) {
                       {mine ? "Yours" : ownerName(encampment)}
                     </span>
                   </span>
-                  <p className="m-0 whitespace-pre-line text-[13px] text-text2">
-                    {encampment.description?.trim() || "No description yet."}
-                  </p>
+                  {encampment.description?.trim() ? (
+                    <p className="m-0 whitespace-pre-line text-[13px] text-text2">
+                      {encampment.description}
+                    </p>
+                  ) : null}
                 </div>
                 {canEdit ? (
                   <div className="flex gap-2">

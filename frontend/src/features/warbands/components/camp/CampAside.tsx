@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Check, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { SectionTitle } from "@/components/ui/section-title";
 
 import { aftermathDone } from "./camp-state";
 import type { OpenCamp } from "./camp-types";
@@ -79,9 +80,7 @@ export default function CampAside({ camp }: { camp: OpenCamp }) {
         <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-accent-text">
           After the battle
         </span>
-        <h2 id="camp-heading" className="m-0 font-display text-[22px] font-semibold text-head">
-          Camp
-        </h2>
+        <SectionTitle id="camp-heading">Camp</SectionTitle>
       </div>
       {rows}
       <div className="mt-2.5 flex flex-col">{ready}</div>

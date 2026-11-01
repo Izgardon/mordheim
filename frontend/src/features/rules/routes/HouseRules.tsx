@@ -61,7 +61,7 @@ export default function HouseRules() {
           <ReferenceSearch
             value={params.query}
             onChange={params.setQuery}
-            placeholder="Title or text"
+            placeholder="Search house rules"
             label="Search the house rules"
             isMobile={isMobile}
           />
@@ -89,11 +89,7 @@ export default function HouseRules() {
       ) : null}
       <ReferenceList
         isEmpty={!page.isLoading && rows.length === 0}
-        empty={
-          page.rules.length
-            ? "No house rules match. Try another word."
-            : "No house rules yet: this campaign plays by the book."
-        }
+        empty={page.rules.length ? "No house rules match." : "No house rules yet."}
       >
         {page.isLoading ? <ReferenceRowBones /> : null}
         {rows.map((rule) => {

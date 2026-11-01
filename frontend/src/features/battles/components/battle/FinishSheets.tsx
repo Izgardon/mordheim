@@ -8,9 +8,9 @@ import type { BattleParticipant, BattleState } from "@/features/battles/types/ba
 import { getErrorMessage } from "@/lib/get-error-message";
 import { cn } from "@/lib/utils";
 
-const RESULTS: { id: DeclaredResult; label: string; detail: string }[] = [
-  { id: "won", label: "I won", detail: "Your warband held the field" },
-  { id: "lost", label: "I lost", detail: "You routed or were wiped out" },
+const RESULTS: { id: DeclaredResult; label: string; detail?: string }[] = [
+  { id: "won", label: "I won" },
+  { id: "lost", label: "I lost" },
   { id: "undecided", label: "Decide when it ends", detail: "A draw, or not sure yet" },
 ];
 
@@ -62,7 +62,9 @@ export function FinishSheet({ finishing }: { finishing: FinishMineState }) {
             className={choice(finishing.result === entry.id)}
           >
             <span className="text-[15px] font-bold text-ink">{entry.label}</span>
-            <span className="text-xs text-muted-foreground">{entry.detail}</span>
+            {entry.detail ? (
+              <span className="text-xs text-muted-foreground">{entry.detail}</span>
+            ) : null}
           </button>
         ))}
       </div>

@@ -4,6 +4,7 @@ import { useOutletContext, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
+import { inPlayOnly } from "@/features/reference/in-play";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import {
@@ -121,9 +122,10 @@ function BeastDetail({
 }
 
 /**
- * The Bestiary (design E's reference layout): every beast of the campaign, searched by name or
- * text, a chip per kind (mounts, pets, creatures), rows with the kind, the profile and the store's
- * price; a row opens to its profile and specials. Beasts are added and edited as today.
+ * The Bestiary (design E's reference layout): every beast in play in the campaign, searched by
+ * name or text, a chip per kind (mounts, pets, creatures), rows with the kind, the profile and
+ * the store's price; a row opens to its profile and specials. Beasts are added and edited as
+ * today.
  */
 export default function Bestiary() {
   const { id } = useParams();
@@ -138,7 +140,7 @@ export default function Bestiary() {
   const [editing, setEditing] = useState<{ id: number | null } | null>(null);
 
   const sorted = useMemo(
-    () => [...beasts.data].sort((a, b) => a.name.localeCompare(b.name)),
+    () => inPlayOnly(beasts.data).sort((a, b) => a.name.localeCompare(b.name)),
     [beasts.data]
   );
   const searched = sorted.filter((entry) =>
@@ -189,7 +191,7 @@ export default function Bestiary() {
             <ReferenceSearch
               value={params.query}
               onChange={params.setQuery}
-              placeholder="Name or description"
+              placeholder="Search the bestiary"
               label="Search the bestiary"
               isMobile={isMobile}
             />
@@ -220,7 +222,7 @@ export default function Bestiary() {
               ]
         }
         isEmpty={!beasts.isLoading && rows.length === 0}
-        empty="No beasts match. Try another word or kind."
+        empty="No beasts match."
       >
         {beasts.isLoading ? <ReferenceRowBones /> : null}
         {shown.rows.map((entry) => {

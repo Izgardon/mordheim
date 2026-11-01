@@ -4,8 +4,8 @@ import { useOutletContext, useParams, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
-import { outOfPlay, useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { useWhoCan } from "@/features/items/api/who-can-queries";
+import { inPlayOnly } from "@/features/reference/in-play";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { BuyableToggle, FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
 import { ReferenceList, ShowMore, useShownRows } from "@/features/reference/ReferenceList";
@@ -35,12 +35,12 @@ const SECTION: Record<HirelingCatalogueKind, { path: string; title: string }> = 
 
 /**
  * Hired swords and Dramatis personae (design E's reference layout, one page for both): every
- * entry, searched by name, race or text, rows with race, hire fee, upkeep and rating; a row opens
- * to the profile, the terms, who can hire him and his rules, with Hire from here (today's hire
- * for your warband). It is also the roster's hire picker: Hire opens it for that warband
- * (`?warband=`), with "Hire someone not in the list" for a custom hire. With a warband, "Who it can hire" is on: those it can usually hire first
- * (the server's who-can/), the rest behind Show all with the reason. Entries are added and edited
- * as today.
+ * entry in play in the campaign, searched by name, race or text, rows with race, hire fee, upkeep
+ * and rating; a row opens to the profile, the terms, who can hire him and his rules, with Hire
+ * from here (today's hire for your warband). It is also the roster's hire picker: Hire opens it for that warband
+ * (`?warband=`, every entry, as before), with "Hire someone not in the list" for a custom hire.
+ * With a warband, "Who it can hire" is on: those it can usually hire first (the server's who-can/),
+ * the rest behind Show all with the reason. Entries are added and edited as today.
  */
 export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKind }) {
   const config = HIRELING_CATALOGUES[kind];
@@ -58,13 +58,12 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
   const [editing, setEditing] = useState<{ id: number | null } | null>(null);
   const [hiring, setHiring] = useState<HirelingProfile | null>(null);
   const [hiringOther, setHiringOther] = useState(false);
-  const settings = useSettingsById();
   const whoCan = useWhoCan(campaignId, warband?.id);
   const access = kind === "hired-swords" ? whoCan.hiredSwords : whoCan.dramatisPersonae;
   const [onlyMine, setOnlyMine] = useState(true);
   const canHire = Boolean(warband) && sheet.capabilities.edit;
   const warningOf = (entry: HirelingProfile) => {
-    if (!warband) return outOfPlay(entry, settings);
+    if (!warband) return "";
     const row = access.get(entry.id);
     return row && !row.can_hire ? row.reason : "";
   };
@@ -72,12 +71,13 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
   // Those the warband can usually hire first, then the rest; each part by name.
   const sorted = useMemo(
     () =>
-      [...entries.data].sort(
+      // the hire picker (?warband=) lists everyone, as before; the reference page only those in play
+      (forWarband ? [...entries.data] : inPlayOnly(entries.data)).sort(
         (a, b) =>
           Number(access.get(a.id)?.can_hire === false) -
             Number(access.get(b.id)?.can_hire === false) || a.name.localeCompare(b.name)
       ),
-    [access, entries.data]
+    [access, entries.data, forWarband]
   );
   const rows = sorted.filter(
     (entry) =>
@@ -128,7 +128,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
           <ReferenceSearch
             value={params.query}
             onChange={params.setQuery}
-            placeholder="Name, race or text"
+            placeholder={config.labels.search}
             label={config.labels.search}
             isMobile={isMobile}
           />
@@ -150,11 +150,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
         nameLabel={config.labels.singular}
         columns={isMobile ? undefined : HIRELING_COLUMNS}
         isEmpty={!entries.isLoading && rows.length === 0}
-        empty={
-          sorted.length
-            ? `${config.labels.noMatches}.`
-            : `${config.labels.emptyTitle}. ${config.labels.emptyBody}`
-        }
+        empty={sorted.length ? `${config.labels.noMatches}.` : `${config.labels.emptyTitle}.`}
       >
         {entries.isLoading ? <ReferenceRowBones /> : null}
         {shown.rows.map((entry) => {

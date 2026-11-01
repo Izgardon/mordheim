@@ -92,7 +92,7 @@ describe("a cold start signed in", () => {
     renderApp("/campaigns");
 
     await waitFor(() => expect(fakeApi.calls()).toEqual(["GET /auth/me/"]));
-    expect(screen.getByRole("status")).toHaveTextContent("Loading...");
+    expect(screen.getByRole("status", { name: "Loading" })).toBeInTheDocument();
 
     await act(async () => me.resolve(RAIDER));
 
