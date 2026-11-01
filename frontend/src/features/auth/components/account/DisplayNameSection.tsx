@@ -17,10 +17,7 @@ export function DisplayNameSection({ user }: { user: AuthUser }) {
   const isUnchanged = form.name.trim() === (user.name ?? "").trim();
 
   return (
-    <AccountSection
-      title="Display name"
-      description="The name other players see in your campaigns, chat and battles."
-    >
+    <AccountSection title="Display name">
       <form className={ACCOUNT_FORM} onSubmit={form.save}>
         <DisplayNameField value={form.name} onChange={form.setName} error={form.nameError} />
         <AuthFormError message={form.error} />

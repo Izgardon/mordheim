@@ -11,10 +11,7 @@ export function SignOutOthersSection() {
   const { signOutOthers, isSigningOut, error } = useSignOutOthers();
 
   return (
-    <AccountSection
-      title="Sign out everywhere else"
-      description="Signs you out on every other browser and device. This one stays signed in."
-    >
+    <AccountSection title="Sign out everywhere else" description="This one stays signed in.">
       <AuthFormError message={error} />
       <Button variant="secondary" disabled={isSigningOut} onClick={() => void signOutOthers()}>
         {isSigningOut ? "Signing out..." : "Sign out everywhere else"}

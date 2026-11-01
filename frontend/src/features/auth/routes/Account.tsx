@@ -19,9 +19,6 @@ export default function Account() {
   return (
     <SitePage width="narrow">
       <header className="flex flex-col gap-1.5">
-        <span className="text-xs font-semibold uppercase tracking-[0.08em] text-faint">
-          Your account
-        </span>
         <h1 className="m-0 font-display text-[40px] font-semibold leading-tight text-head max-[960px]:text-[30px]">
           Account
         </h1>
