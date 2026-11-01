@@ -1,26 +1,30 @@
 """The campaign's chronicle (the overview, next step 5): what happened lately, newest first, in plain words.
 
-Five kinds, each from the record it already has, in a fixed number of queries whatever the campaign's size:
+Six kinds, each from the record it already has, in a fixed number of queries whatever the campaign's size:
 
 - `kill`: the live kills of ended battles (battle_kill: undone kills don't count, decision 5);
 - `death`: the units the post-games of ended battles left dead;
 - `level`: heroes' level-ups and the lad's got talent (the warband log's "advance" entries; henchmen's and hired
   swords' other advances are left out);
 - `buy`: items bought (the log's "loadout" entries with a price; gifts are left out);
-- `trade`: completed trades (the log writes one entry per side; the chronicle shows one).
+- `trade`: completed trades (the log writes one entry per side; the chronicle shows one);
+- `bounty`: bounties posted (`bounty_posted`) and paid (`bounty_claimed`), from the bounty table.
 """
 
 from datetime import datetime
 from typing import Any
 
 from django.db.models import Q
+from django.db.models.functions import Coalesce, Greatest
 from django.utils import timezone
 
 from apps.battles.models import Battle, BattleKill, BattleParticipant
 from apps.battles.services.kills import live_kills_in
+from apps.bounties.models import PAID, WITHDRAWN, Bounty
+from apps.users.names import display_name
 from apps.warbands.models import WarbandLog
 
-KINDS = ("kill", "death", "level", "buy", "trade")
+KINDS = ("kill", "death", "level", "buy", "trade", "bounty")
 LIMIT = 40
 PURCHASES = ("hero_item", "henchmen_item", "hireling_item", "stash_item")
 LOG_KINDS = {
@@ -144,6 +148,31 @@ def _logs(campaign_id: int, kinds: list[str]) -> list[dict[str, Any]]:
     return rows
 
 
+def _bounties(campaign_id: int) -> list[dict[str, Any]]:
+    """Each bounty's posting, and its payment once paid: the newest by either, in one query."""
+    latest = Greatest("created_at", Coalesce("closed_at", "created_at"))
+    bounties = (
+        Bounty.objects.filter(campaign_id=campaign_id)
+        .select_related("posted_by_warband", "posted_by_user", "paid_claim__claimant_warband", "paid_claim__battle")
+        .order_by(latest.desc(), "-id")[:LIMIT]
+    )
+    rows = []
+    for bounty in bounties:
+        poster = bounty.posted_by_warband.name
+        on = f"{bounty.target_name} ({bounty.target_warband_name})"
+        posted = f"{poster} put a {bounty.amount} gc bounty on {on}"
+        withdrawn = " · withdrawn" if bounty.status == WITHDRAWN else ""
+        meta = f"Posted by {display_name(bounty.posted_by_user)}{withdrawn}"
+        rows.append(_entry("bounty_posted", posted, meta, bounty.created_at))
+        claim = bounty.paid_claim
+        if bounty.status == PAID and claim is not None:
+            claimant = claim.claimant_warband.name
+            text = f"{claim.unit_name} of {claimant} collected the {bounty.amount} gc bounty on {bounty.target_name}"
+            where = " · ".join(part for part in (claimant, claim.battle.scenario if claim.battle else "") if part)
+            rows.append(_entry("bounty_claimed", text, where, bounty.closed_at))
+    return rows
+
+
 def chronicle(campaign_id: int, kind: str | None = None) -> list[dict[str, Any]]:
     """The newest LIMIT entries of one kind (or of every kind), each `{kind, text, meta, at}`."""
     kinds = [kind] if kind in KINDS else list(KINDS)
@@ -154,5 +183,7 @@ def chronicle(campaign_id: int, kind: str | None = None) -> list[dict[str, Any]]
         entries += _deaths(campaign_id)
     if log_kinds := [entry for entry in kinds if entry in LOG_KINDS]:
         entries += _logs(campaign_id, log_kinds)
+    if "bounty" in kinds:
+        entries += _bounties(campaign_id)
     entries.sort(key=lambda entry: entry["at"], reverse=True)
     return entries[:LIMIT]

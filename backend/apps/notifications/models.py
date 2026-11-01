@@ -7,12 +7,14 @@ class Notification(models.Model):
     TYPE_BATTLE_INVITE = "battle_invite"
     TYPE_BATTLE_RESULT_REQUEST = "battle_result_request"
     TYPE_BATTLE_NUDGE = "battle_nudge"
+    TYPE_BOUNTY_CLAIM = "bounty_claim"  # a claim on your bounty, waiting for your answer
 
     TYPE_CHOICES = [
         (TYPE_TRADE_REQUEST, "Trade request"),
         (TYPE_BATTLE_INVITE, "Battle invite"),
         (TYPE_BATTLE_RESULT_REQUEST, "Battle result request"),
         (TYPE_BATTLE_NUDGE, "Battle nudge"),
+        (TYPE_BOUNTY_CLAIM, "Bounty claim"),
     ]
 
     user = models.ForeignKey(

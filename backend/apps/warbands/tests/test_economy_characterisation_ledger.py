@@ -77,7 +77,7 @@ class TreasuryTests(RosterTestCase):
             {
                 "action": [
                     "Unknown action. Use one of: Buy, Sell, Recruit, Hire, Upkeep, Reward, Exploration, Trade, "
-                    "Adjustment, Starting gold, Group."
+                    "Adjustment, Starting gold, Bounty, Group."
                 ]
             },
         )

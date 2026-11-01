@@ -47,7 +47,7 @@ class CampaignBattleHistoryView(CampaignScopedView):
 
 
 class CampaignChronicleView(CampaignScopedView):
-    """GET [?kind=kill|death|level|buy|trade]: the campaign's chronicle, newest first (the overview, next step 5)."""
+    """GET [?kind=kill|death|level|buy|trade|bounty]: the campaign's chronicle, newest first (the overview, next step 5)."""
 
     def get(self, request, campaign_id):
         return Response(chronicle(campaign_id, request.query_params.get("kind")))

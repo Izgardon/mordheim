@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     "apps.bestiary.apps.BestiaryConfig",
     "apps.hirelings.apps.HirelingsConfig",
     "apps.notifications.apps.NotificationsConfig",
+    "apps.bounties.apps.BountiesConfig",
 ]
 
 MIDDLEWARE = [

@@ -36,7 +36,7 @@ BUDGETS: dict[str, tuple[str, str, int]] = {
     "players (basic)": ("player", "players/?fields=basic", 1),  # names only, for pickers (PERF-41, target <= 2)
     "completed trades": ("player", "trade-requests/?status=completed", 2),
     "battle history": ("player", "battle-history/", 4),  # + each battle's pivotal moments and its kill counts (step 9)
-    "chronicle": ("player", "chronicle/", 4),  # kills (with their warbands), deaths, the log (next steps 5 and 9)
+    "chronicle": ("player", "chronicle/", 5),  # kills (with their warbands), deaths, the log, the bounties (steps 5, 9)
     "search": ("player", "search/?q=se", 5),  # the membership, then warbands, heroes, groups, hired swords (7a)
     "top killers": ("player", "top-killers/", 2),
     "members": ("admin", "members/", 4),
