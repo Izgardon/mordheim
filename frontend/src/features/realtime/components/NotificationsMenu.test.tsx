@@ -63,8 +63,54 @@ describe("NotificationsMenu", () => {
     renderMenu(vi.fn());
 
     expect(screen.getByRole("dialog", { name: "Notifications" })).toHaveAccessibleDescription(
-      "Battle invites, battle results waiting for your answer, and trade requests."
+      "Battle invites, battle results and bounty claims waiting for your answer, and trade requests."
     );
+  });
+
+  it("lists a claim on your bounty, whose tick accepts and pays it and whose X declines it", async () => {
+    const claim = {
+      id: "bounty-claim-4",
+      notificationDbId: 8,
+      campaignId: 7,
+      bountyId: 2,
+      claimId: 4,
+      amount: 40,
+      targetName: "Grey Seer",
+      claimantUserName: "Ada",
+      claimantWarbandName: "Crows",
+      unitName: "Kreech",
+      battleScenario: "Street Fight",
+      createdAt: "2026-11-01T10:00:00Z",
+    };
+    const onAccept = vi.fn(async () => {});
+    const onDecline = vi.fn(async () => {});
+    render(
+      <NotificationsMenu
+        tradeRequestNotifications={[]}
+        battleInviteNotifications={[]}
+        battleResultRequestNotifications={[]}
+        bountyClaimNotifications={[claim]}
+        onAcceptBountyClaim={onAccept}
+        onDeclineBountyClaim={onDecline}
+        onAcceptTrade={vi.fn()}
+        onDeclineTrade={vi.fn()}
+        onAcceptBattleInvite={vi.fn()}
+        onDeclineBattleInvite={vi.fn()}
+        onAcceptBattleResultRequest={vi.fn()}
+        onDeclineBattleResultRequest={vi.fn()}
+      />
+    );
+
+    expect(screen.getByRole("button", { name: "Notifications" })).toHaveTextContent("1");
+    fireEvent.click(screen.getByRole("button", { name: "Notifications" }));
+    expect(
+      screen.getByText("Crows claims your 40 gc bounty on Grey Seer for Kreech in Street Fight.")
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Accept and pay 40 gc" }));
+    await waitFor(() => expect(onAccept).toHaveBeenCalledWith(claim));
+    fireEvent.click(screen.getByRole("button", { name: "Notifications" }));
+    fireEvent.click(screen.getByRole("button", { name: "Decline bounty claim" }));
+    await waitFor(() => expect(onDecline).toHaveBeenCalledWith(claim));
   });
 
   it("stays open and shows why when an action fails", async () => {

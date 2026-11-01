@@ -149,6 +149,25 @@ export function useCampaignWarbandChanges(
   );
 }
 
+/**
+ * `bounty.changed` on the campaign's events channel: a bounty posted, claimed, answered, paid or
+ * withdrawn, as the bounty now stands (nothing of any reader's own in it).
+ */
+export function useCampaignBountyChanges(
+  campaignId: number | null,
+  handler: (bounty: CampaignEventMessage) => void
+) {
+  useChannel<unknown>(
+    campaignId ? `private-campaign-${campaignId}-events` : null,
+    "bounty.changed",
+    (data) => {
+      if (data && typeof data === "object" && (data as { id?: unknown }).id) {
+        handler(data as CampaignEventMessage);
+      }
+    }
+  );
+}
+
 export function useTradeEvents(
   tradeRequestId: string | null,
   handler: (message: TradeEventMessage) => void

@@ -6,16 +6,17 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { cn } from "@/lib/utils";
 
 import { useCampaignChronicle } from "../../api/campaign-queries";
-import type { CampaignChronicleKind } from "../../types/campaign-types";
+import type { CampaignChronicleFilter, CampaignChronicleKind } from "../../types/campaign-types";
 import { ChronicleBones } from "./OverviewSkeleton";
 
-const FILTERS: { id: CampaignChronicleKind | "all"; label: string }[] = [
+const FILTERS: { id: CampaignChronicleFilter | "all"; label: string }[] = [
   { id: "all", label: "All" },
   { id: "kill", label: "Kills" },
   { id: "death", label: "Deaths" },
   { id: "level", label: "Level-ups" },
   { id: "buy", label: "Purchases" },
   { id: "trade", label: "Trades" },
+  { id: "bounty", label: "Bounties" },
 ];
 
 const KIND: Record<CampaignChronicleKind, { label: string; text: string; bar: string }> = {
@@ -24,11 +25,14 @@ const KIND: Record<CampaignChronicleKind, { label: string; text: string; bar: st
   level: { label: "Level-up", text: "text-good", bar: "bg-good-line" },
   buy: { label: "Purchase", text: "text-text2", bar: "bg-strong" },
   trade: { label: "Trade", text: "text-text2", bar: "bg-strong" },
+  bounty_posted: { label: "Bounty posted", text: "text-accent-hi", bar: "bg-accent-line" },
+  bounty_claimed: { label: "Bounty claimed", text: "text-good", bar: "bg-good-line" },
 };
 
 /**
  * The chronicle (design E): the campaign's latest kills, deaths, level-ups (heroes' and the lad's
- * got talent), purchases and trades, filtered by kind on the server.
+ * got talent), purchases, trades and bounties (posted and claimed), filtered by kind on the
+ * server.
  */
 export default function Chronicle({
   campaignId,
@@ -40,7 +44,7 @@ export default function Chronicle({
   /** The section's title (the phone's tab says it already). */
   heading?: boolean;
 }) {
-  const [filter, setFilter] = useState<CampaignChronicleKind | "all">("all");
+  const [filter, setFilter] = useState<CampaignChronicleFilter | "all">("all");
   const entries = useCampaignChronicle(campaignId, filter);
   const rows = entries.data ?? [];
 

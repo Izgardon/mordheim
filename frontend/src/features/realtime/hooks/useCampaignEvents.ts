@@ -1,10 +1,13 @@
 import { useQueryClient } from "@tanstack/react-query";
 
+import { refreshAfterBounty, writeBounty } from "@/features/bounties/api/bounty-queries";
+import type { Bounty } from "@/features/bounties/types";
 import { writeCampaignAnswer } from "@/features/campaigns/hooks/useCampaignQuery";
 import { invalidateWhoCan } from "@/features/items/api/who-can-queries";
 import { WHO_CAN_KINDS, invalidateHeldCopies } from "@/lib/catalogue-queries";
 import { queryKeys, type CatalogueKind } from "@/lib/query-keys";
 import {
+  useCampaignBountyChanges,
   useCampaignCatalogueChanges,
   useCampaignUpdates,
   useCampaignWarbandChanges,
@@ -40,6 +43,7 @@ export const catalogueKindOf = (serverKind: string): CatalogueKind | null =>
  * edit or Revert may have moved or changed their copies. `warband.changed {warband_id}` (another
  * member switched a companion, recruited creatures or sent some back to their item) marks that
  * warband's entries stale: its sheet on screen reads again, its stash, logs and the rest on view.
+ * `bounty.changed` writes the bounty into the open bounties (and its chronicle entries go stale).
  */
 export function useCampaignEvents(campaignId: number | null) {
   const queryClient = useQueryClient();
@@ -67,6 +71,14 @@ export function useCampaignEvents(campaignId: number | null) {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.campaign.warband(campaignId, warband_id),
       });
+    }
+  });
+  // Another member posted, claimed, answered or withdrew a bounty: its row as it now stands.
+  useCampaignBountyChanges(campaignId, (payload) => {
+    const bounty = payload as unknown as Bounty;
+    if (campaignId && bounty.campaign_id === campaignId) {
+      writeBounty(queryClient, bounty);
+      refreshAfterBounty(queryClient, bounty);
     }
   });
 }

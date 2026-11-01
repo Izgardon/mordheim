@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { handleBountyNotification } from "@/features/bounties/notifications";
 import { invalidateOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import { invalidatePendingResults } from "@/features/battles/hooks/usePendingReportedResults";
 import { listNotifications } from "@/features/notifications/api/notifications-api";
@@ -40,6 +41,8 @@ export function useNotificationSubscription() {
     addBattleResultRequestNotification,
     removeBattleResultRequestNotification,
     addBattleNudgeNotification,
+    addBountyClaimNotification,
+    removeBountyClaimNotification,
     setCurrentBattleSession,
     clearCurrentBattleSession,
   } = useAppStore();
@@ -92,6 +95,14 @@ export function useNotificationSubscription() {
       clearCurrentBattleSession,
     };
     if (handleMembershipNotification(message, membershipContext)) {
+      return;
+    }
+    const bountyContext = {
+      queryClient,
+      addBountyClaimNotification,
+      removeBountyClaimNotification,
+    };
+    if (handleBountyNotification(message, bountyContext)) {
       return;
     }
 

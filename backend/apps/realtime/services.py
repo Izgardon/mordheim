@@ -152,3 +152,10 @@ def send_catalogue_changed(campaign_id: int, kind: str, socket_id: str | None = 
     refetches that list now instead of after its stale time (BUG-80). The writer's own socket is skipped: it has
     the answer."""
     return _trigger(get_campaign_events_channel_name(campaign_id), "catalogue.changed", {"kind": kind}, socket_id)
+
+
+def send_bounty_changed(campaign_id: int, bounty: dict, socket_id: str | None = None) -> bool:
+    """`bounty.changed` on the campaign's events channel, after commit: a bounty posted, claimed, answered, paid or
+    withdrawn, as its payload (it has nothing of any reader's own), so every member's list updates in place. The
+    writer's own socket is skipped: it has the answer."""
+    return _trigger(get_campaign_events_channel_name(campaign_id), "bounty.changed", bounty, socket_id)

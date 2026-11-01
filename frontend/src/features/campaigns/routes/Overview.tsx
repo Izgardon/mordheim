@@ -3,6 +3,7 @@ import { Link, useOutletContext, useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import OpenBounties from "@/features/bounties/components/OpenBounties";
 import { useRefreshOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import { invalidatePendingResults } from "@/features/battles/hooks/usePendingReportedResults";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -35,6 +36,7 @@ const TABS = [
   { id: "standings", label: "Standings" },
   { id: "chronicle", label: "Chronicle" },
   { id: "battles", label: "Battles" },
+  { id: "bounties", label: "Bounties" },
 ] as const;
 type Tab = (typeof TABS)[number]["id"];
 const RECENT = 5;
@@ -63,9 +65,9 @@ function Section({
 
 /**
  * The campaign overview (design E): who is ready, Start battle and Report a result, the stats,
- * the standings, the latest battles with their moments, and the chronicle; what waits on you
- * (an unfinished battle, stuck battles, results to answer) above them. On a phone the sections
- * are tabs, Standings first. Open bounties are left out: there are none in the backend yet.
+ * the standings, the latest battles with their moments, the chronicle and the open bounties;
+ * what waits on you (an unfinished battle, stuck battles, results to answer) above them. On a
+ * phone the sections are tabs, Standings first.
  */
 export default function Overview() {
   const { id } = useParams();
@@ -168,7 +170,7 @@ export default function Overview() {
           <div
             role="tablist"
             aria-label="Campaign"
-            className="grid grid-cols-3 border-b border-line"
+            className="grid grid-cols-4 border-b border-line"
           >
             {TABS.map((entry) => (
               <button
@@ -192,6 +194,9 @@ export default function Overview() {
           {tab === "chronicle" ? (
             <Chronicle campaignId={campaignId} isMobile heading={false} />
           ) : null}
+          {tab === "bounties" ? (
+            <OpenBounties campaignId={campaignId} isMobile heading={false} />
+          ) : null}
           {tab === "battles" ? (
             <>
               {recent}
@@ -213,6 +218,8 @@ export default function Overview() {
             </Section>
           </div>
           <aside className={OVERVIEW_ASIDE}>
+            {/* above the chronicle: under its 40 entries the panel was out of sight */}
+            <OpenBounties campaignId={campaignId} isMobile={false} />
             <Chronicle campaignId={campaignId} isMobile={false} />
           </aside>
         </div>

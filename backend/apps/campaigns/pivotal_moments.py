@@ -30,6 +30,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from django.db import transaction
+from django.db.models import QuerySet
 
 from apps.battles.models import Battle, BattleKill, BattleParticipant
 from apps.battles.models.kill import CREATURE, FIGHT, HENCHMAN, HERO, KILLER_KINDS
@@ -54,6 +55,7 @@ HEADLINES = {
     "wiped_out": "Wiped Out",
     "underdog": "Underdog",
 }
+BOUNTY_CLAIMED = "bounty_claimed"  # a bounty paid for a kill in the battle (apps/bounties/services/payment.py)
 UNDERDOG_MARGIN = (11, 10)  # the opponent's declared rating is at least 10% over the winner's
 
 
@@ -332,9 +334,14 @@ def _counts(battle: Battle) -> bool:
     return battle.flow_type == Battle.FLOW_TYPE_NORMAL and battle.status == Battle.STATUS_ENDED
 
 
+def _fight_moments(battle: Battle) -> QuerySet[PivotalMoment]:
+    """The moments the fight left: not a bounty claimed in it, which its payment writes and nothing here rebuilds."""
+    return PivotalMoment.objects.filter(battle_id=battle.id).exclude(kind=BOUNTY_CLAIMED)
+
+
 def generate_pivotal_moments_for_battle(battle: Battle) -> None:
     """When the battle ends: its moments, once."""
-    if not _counts(battle) or PivotalMoment.objects.filter(battle_id=battle.id).exists():
+    if not _counts(battle) or _fight_moments(battle).exists():
         return
     PivotalMoment.objects.bulk_create(_moments_for(battle))
 
@@ -343,7 +350,7 @@ def regenerate_pivotal_moments(battle: Battle) -> int:
     """The battle's moments written again from what it holds now (an ended normal battle; none otherwise): how
     many."""
     with transaction.atomic():
-        PivotalMoment.objects.filter(battle_id=battle.id).delete()
+        _fight_moments(battle).delete()
         rows = _moments_for(battle) if _counts(battle) else []
         PivotalMoment.objects.bulk_create(rows)
     return len(rows)

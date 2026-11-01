@@ -3,6 +3,7 @@ export { useChannel, useRealtimeReconnect } from "./use-channel";
 export {
   useBattleEvents,
   useCampaignChatMessages,
+  useCampaignBountyChanges,
   useCampaignCatalogueChanges,
   useCampaignChatRemovals,
   useCampaignUpdates,

@@ -6,7 +6,7 @@ import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 import type {
   CampaignBattleHistoryEntry,
   CampaignChronicleEntry,
-  CampaignChronicleKind,
+  CampaignChronicleFilter,
   CampaignCreatePayload,
   CampaignEncampment,
   CampaignEncampmentPayload,
@@ -77,7 +77,7 @@ export function listCampaignBattleHistory(campaignId: number) {
 }
 
 /** The chronicle: the newest entries of one kind, or of every kind ("all"). */
-export function listCampaignChronicle(campaignId: number, kind: CampaignChronicleKind | "all") {
+export function listCampaignChronicle(campaignId: number, kind: CampaignChronicleFilter | "all") {
   const query = kind === "all" ? "" : `?kind=${kind}`;
   return apiRequest<CampaignChronicleEntry[]>(`/campaigns/${campaignId}/chronicle/${query}`, {});
 }

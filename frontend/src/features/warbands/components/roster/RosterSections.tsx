@@ -35,6 +35,8 @@ type RosterSectionsProps = {
   onAdvance: (entry: RosterUnit) => void;
   /** Buy again on a carried item: the store for that unit with the item open. */
   onBuyAgain: (entry: RosterUnit, item: Item) => void;
+  /** More for a hero card's header (its bounties, Post a bounty). */
+  heroExtra?: (hero: WarbandHero) => ReactNode;
 };
 
 function Section({
@@ -120,6 +122,7 @@ export default function RosterSections(props: RosterSectionsProps) {
         onEdit={() => setEditKey(key)}
         onLoadout={() => props.onLoadout(entry)}
         onRide={(rowId, on) => actions.rideMount(entry, rowId, on)}
+        extra={entry.kind === "hero" ? props.heroExtra?.(entry.unit) : null}
       >
         {editing ? (
           props.renderEdit(entry, () => setEditKey(null))

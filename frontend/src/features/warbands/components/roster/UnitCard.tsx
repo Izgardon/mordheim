@@ -34,6 +34,8 @@ type UnitCardProps = {
   onLoadout: () => void;
   onEdit: () => void;
   onRide: (rowId: number, on: boolean) => void;
+  /** More for the header beside the chips: a hero's bounties, and Post a bounty. */
+  extra?: ReactNode;
   /** The open body (`UnitDetails`), or the edit form. */
   children?: ReactNode;
 };
@@ -72,6 +74,7 @@ export default function UnitCard(props: UnitCardProps) {
         </ChipLabel>
       ) : null}
       {xp?.advanceReady && !open ? <ChipLabel tone="accent">Advance ready</ChipLabel> : null}
+      {props.extra}
     </>
   );
 
@@ -153,7 +156,7 @@ export default function UnitCard(props: UnitCardProps) {
         )}
       >
         <div className="flex items-start gap-2.5">
-          <div className="min-w-0 flex-1">{title}</div>
+          <div className="min-w-28 flex-1">{title}</div>
           <div className="flex flex-wrap items-center justify-end gap-1.5">
             {badges}
             {buttons}

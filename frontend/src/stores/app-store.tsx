@@ -14,8 +14,9 @@ import type {
   BattleResultRequestNotification,
 } from "@/features/battles/types/battle-types";
 import type { CurrentBattleSession } from "@/features/battles/utils/battle-session";
+import { useBountyClaimSlice, type BountyClaimSlice } from "./bounty-claim-notifications";
 
-type AppStoreValue = {
+type AppStoreValue = BountyClaimSlice & {
   user: AuthUser | null;
   warband: Warband | null;
   warbandLoading: boolean;
@@ -66,6 +67,7 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   const [battleNudgeNotifications, setBattleNudgeNotifications] = useState<
     BattleNudgeNotification[]
   >([]);
+  const bountyClaims = useBountyClaimSlice();
 
   // When the signed-in user changes (sign-out, expiry, another account), drop the previous
   // user's session state before anything renders with it (BUG-22). Done during render, the
@@ -82,6 +84,7 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       setBattleInviteNotifications([]);
       setBattleResultRequestNotifications([]);
       setBattleNudgeNotifications([]);
+      bountyClaims.clearBountyClaimNotifications();
       setCurrentBattleSessionState(null);
     }
   }
@@ -169,6 +172,7 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
 
   const value = useMemo<AppStoreValue>(
     () => ({
+      ...bountyClaims,
       user,
       warband,
       warbandLoading,
@@ -197,6 +201,7 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       clearCurrentBattleSession,
     }),
     [
+      bountyClaims,
       user,
       warband,
       warbandLoading,

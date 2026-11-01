@@ -128,6 +128,7 @@ class LedgerAction(models.TextChoices):
     TRADE = "Trade"
     ADJUSTMENT = "Adjustment"
     STARTING_GOLD = "Starting gold"
+    BOUNTY = "Bounty"  # a bounty paid (by its poster) or collected (by its claimant)
     GROUP = "Group"  # a header the rows of one batch nest under; it moves no gold
 
     @property
@@ -142,7 +143,7 @@ class LedgerAction(models.TextChoices):
 
 
 EXPENSE_ACTIONS = frozenset({LedgerAction.BUY, LedgerAction.RECRUIT, LedgerAction.HIRE, LedgerAction.UPKEEP})
-SIGNED_ACTIONS = frozenset({LedgerAction.TRADE, LedgerAction.ADJUSTMENT})
+SIGNED_ACTIONS = frozenset({LedgerAction.TRADE, LedgerAction.ADJUSTMENT, LedgerAction.BOUNTY})
 
 
 class WarbandTrade(models.Model):

@@ -17,6 +17,10 @@ import type {
   BattleNudgeNotification,
   BattleResultRequestNotification,
 } from "@/features/battles/types/battle-types";
+import { acceptBountyClaim, declineBountyClaim } from "@/features/bounties/api/bounties-api";
+import { settleBountyAnswer } from "@/features/bounties/api/bounty-queries";
+import { dropAnsweredClaims } from "@/features/bounties/notifications";
+import type { BountyClaimNotification } from "@/features/bounties/types";
 import { acceptTradeRequest, declineTradeRequest } from "@/features/campaigns/api/campaigns-api";
 import {
   clearAllNotifications as apiClearAllNotifications,
@@ -54,6 +58,8 @@ export function useNotifications() {
     removeBattleResultRequestNotification,
     battleNudgeNotifications,
     removeBattleNudgeNotification,
+    bountyClaimNotifications,
+    removeBountyClaimNotification,
     currentBattleSession,
     setCurrentBattleSession,
     clearCurrentBattleSession,
@@ -156,6 +162,22 @@ export function useNotifications() {
     [dismissBattleNudge, navigate]
   );
 
+  // A claim on your bounty: the tick accepts it (the gold moves), the X declines it. Either
+  // answer takes every claim of that bounty no longer waiting out of the bell.
+  const answerBountyClaim = useCallback(
+    async (notification: BountyClaimNotification, accept: boolean) => {
+      const answer = accept ? acceptBountyClaim : declineBountyClaim;
+      const bounty = settleBountyAnswer(
+        queryClient,
+        await answer(notification.campaignId, notification.bountyId, notification.claimId)
+      );
+      removeBountyClaimNotification(notification.id);
+      dropAnsweredClaims(bounty, removeBountyClaimNotification);
+      if (accept) toast(`Paid ${notification.claimantWarbandName} for ${notification.targetName}.`);
+    },
+    [queryClient, removeBountyClaimNotification]
+  );
+
   // Clear all resolves only what can no longer be answered and never declines (CAMP-TWEAK-10):
   // the server says how many went and stayed, and the bell lists what stayed.
   const clearNotifications = useCallback(() => {
@@ -182,6 +204,11 @@ export function useNotifications() {
     battleNudgeNotifications,
     goToBattleNudge,
     dismissBattleNudge,
+    bountyClaimNotifications,
+    acceptBountyClaimNotification: (notification: BountyClaimNotification) =>
+      answerBountyClaim(notification, true),
+    declineBountyClaimNotification: (notification: BountyClaimNotification) =>
+      answerBountyClaim(notification, false),
     clearNotifications,
   };
 }
