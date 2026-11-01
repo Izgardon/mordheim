@@ -63,6 +63,31 @@ Update tests that assert removed text. List every cut in the report, grouped by 
 - **Campaigns list:** a campaign card where you have no warband already says so. Make sure it does, with a link to raise one there.
 - **The data:** use whatever the campaign layout already loads (the user's warband in the campaign, from the next-perf change). Add no extra request if it can be avoided.
 
+## 4. The swords loader (William, added during the work)
+
+> "keep swords when entering a battle and manufacture a min load time so we can make it more of a real animation, match the animation time"
+
+- **Entering a battle.** Show the full-screen swords when the player goes into a battle's active screen: from the overview banner, from Rejoin, after Start, or from an invitation that turns into the fight.
+  - A proper one-shot animation (the swords crossing and clashing) with a defined duration of roughly 1.2 to 1.6 s. Respect `prefers-reduced-motion`: a static frame and a short minimum.
+  - The overlay stays up for at least one full animation, even when the data is already there, and until the data has loaded if that takes longer. Then it hands over to the battle screen without a flash.
+  - The minimum time is one constant tied to the animation's CSS duration, so the two can't drift apart.
+- **Elsewhere, no swords.** At app boot, show the plain page background and bring the swords in only if boot passes about 600 ms. Page changes use the in-shell skeletons.
+- Drop the "LOADING..." caption under the swords if it is fluff.
+- Delete anything this leaves unused. Its own commit.
+
+## 5. Reference tables scoped to the campaign (William, added during the work)
+
+> "for the reference tables, can we just have 'mordheim' as an option rather than 1a, 1b etc versions. also these tables should always be scoped to the campaign settings and shouldnt offer in the dropdown or results that arent part of the campaign"
+
+- **Setting filter.** On every reference page with a Setting filter, "Mordheim" is one option. It covers the settings `mordheim`, `mordheim-1b`, `mordheim-1c` and `mordheim-2a`, only those in play. No 1a/1b/1c/2a options. Other settings stay as they are, named without a grade suffix.
+- **Scope.** The reference pages (Wargear, Skills, Spells, Bestiary, Hired swords, Dramatis personae) list only entries whose setting is in play in the campaign (ticked or always on, plus anything the campaign made itself; the server sends `in_play` and `setting_id`).
+  - Out-of-play entries don't show at all: not greyed, no "Show all" for them.
+  - The Setting dropdown lists only in-play settings.
+  - The "What <warband> can buy" switch (warband restrictions) stays, scoped within the in-play entries.
+  - Search everything's reference results take the same scope.
+  - The store, the hire picker and the level-up pickers stay as they are (William is asked separately).
+- **Tests:** a small frontend test for the Mordheim grouping and the scope filter. Its own commit.
+
 ## Rules
 
 - Gate: typecheck, lint, format, build, vitest, and the backend gate if the backend changes (it shouldn't).
