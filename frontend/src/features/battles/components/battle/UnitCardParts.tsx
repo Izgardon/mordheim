@@ -106,12 +106,12 @@ export function WoundsControl({
   max: number;
   disabled?: boolean;
   onChange: (delta: number) => void;
-  /** A henchman's tile: smaller steps either side of the count, across the tile. */
+  /** A henchman's tile: smaller steps either side of the bare count ("1/1"), across the tile. */
   compact?: boolean;
 }) {
   const step = cn(
     "flex items-center justify-center border border-border bg-transparent text-text2 disabled:opacity-40",
-    compact ? "h-8 w-8" : "h-10 w-9"
+    compact ? "h-8 w-7" : "h-10 w-9"
   );
   return (
     <div
@@ -130,11 +130,11 @@ export function WoundsControl({
       </button>
       <span
         className={cn(
-          "text-center font-mono font-bold text-ink",
+          "whitespace-nowrap text-center font-mono font-bold text-ink",
           compact ? "text-[11px]" : "min-w-11 text-[13px]"
         )}
       >
-        W {wounds}/{max}
+        {compact ? `${wounds}/${max}` : `W ${wounds}/${max}`}
       </span>
       <button
         type="button"
