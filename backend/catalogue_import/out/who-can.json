@@ -12938,79 +12938,7 @@
       "for_everyone": false,
       "warbands": [
         {
-          "type": "beastmen-raiders",
-          "excluded": false
-        },
-        {
-          "type": "carnival-of-chaos",
-          "excluded": false
-        },
-        {
-          "type": "cult-of-the-possessed",
-          "excluded": false
-        },
-        {
-          "type": "skaven",
-          "excluded": false
-        },
-        {
-          "type": "undead",
-          "excluded": false
-        },
-        {
-          "type": "dark-elves",
-          "excluded": false
-        },
-        {
-          "type": "forest-goblins-nc",
-          "excluded": false
-        },
-        {
-          "type": "norse-explorers-tc13",
-          "excluded": false
-        },
-        {
-          "type": "skaven-of-clan-pestilens-tc29",
-          "excluded": false
-        },
-        {
-          "type": "tomb-guardians",
-          "excluded": false
-        },
-        {
-          "type": "black-dwarfs",
-          "excluded": false
-        },
-        {
-          "type": "marauders-of-chaos",
-          "excluded": false
-        },
-        {
-          "type": "night-goblins-mic",
-          "excluded": false
-        },
-        {
-          "type": "night-goblins-web",
-          "excluded": false
-        },
-        {
-          "type": "norse-explorers-btb",
-          "excluded": false
-        },
-        {
-          "type": "the-restless-dead",
-          "excluded": false
-        },
-        {
-          "type": "sons-of-hashut",
-          "excluded": false
-        },
-        {
-          "type": "druchii",
-          "excluded": false
-        },
-        {
-          "type": "grave-robbers",
+          "group": "evil",
           "excluded": false
         }
       ],
@@ -15077,7 +15005,75 @@
       "for_everyone": false,
       "warbands": [
         {
-          "group": "evil",
+          "type": "carnival-of-chaos",
+          "excluded": false
+        },
+        {
+          "type": "cult-of-the-possessed",
+          "excluded": false
+        },
+        {
+          "type": "skaven",
+          "excluded": false
+        },
+        {
+          "type": "undead",
+          "excluded": false
+        },
+        {
+          "type": "dark-elves",
+          "excluded": false
+        },
+        {
+          "type": "forest-goblins-nc",
+          "excluded": false
+        },
+        {
+          "type": "norse-explorers-tc13",
+          "excluded": false
+        },
+        {
+          "type": "skaven-of-clan-pestilens-tc29",
+          "excluded": false
+        },
+        {
+          "type": "tomb-guardians",
+          "excluded": false
+        },
+        {
+          "type": "black-dwarfs",
+          "excluded": false
+        },
+        {
+          "type": "marauders-of-chaos",
+          "excluded": false
+        },
+        {
+          "type": "night-goblins-mic",
+          "excluded": false
+        },
+        {
+          "type": "night-goblins-web",
+          "excluded": false
+        },
+        {
+          "type": "norse-explorers-btb",
+          "excluded": false
+        },
+        {
+          "type": "the-restless-dead",
+          "excluded": false
+        },
+        {
+          "type": "sons-of-hashut",
+          "excluded": false
+        },
+        {
+          "type": "druchii",
+          "excluded": false
+        },
+        {
+          "type": "grave-robbers",
           "excluded": false
         }
       ],
@@ -15287,7 +15283,75 @@
       "for_everyone": false,
       "warbands": [
         {
-          "group": "evil",
+          "type": "carnival-of-chaos",
+          "excluded": false
+        },
+        {
+          "type": "cult-of-the-possessed",
+          "excluded": false
+        },
+        {
+          "type": "skaven",
+          "excluded": false
+        },
+        {
+          "type": "undead",
+          "excluded": false
+        },
+        {
+          "type": "dark-elves",
+          "excluded": false
+        },
+        {
+          "type": "forest-goblins-nc",
+          "excluded": false
+        },
+        {
+          "type": "norse-explorers-tc13",
+          "excluded": false
+        },
+        {
+          "type": "skaven-of-clan-pestilens-tc29",
+          "excluded": false
+        },
+        {
+          "type": "tomb-guardians",
+          "excluded": false
+        },
+        {
+          "type": "black-dwarfs",
+          "excluded": false
+        },
+        {
+          "type": "marauders-of-chaos",
+          "excluded": false
+        },
+        {
+          "type": "night-goblins-mic",
+          "excluded": false
+        },
+        {
+          "type": "night-goblins-web",
+          "excluded": false
+        },
+        {
+          "type": "norse-explorers-btb",
+          "excluded": false
+        },
+        {
+          "type": "the-restless-dead",
+          "excluded": false
+        },
+        {
+          "type": "sons-of-hashut",
+          "excluded": false
+        },
+        {
+          "type": "druchii",
+          "excluded": false
+        },
+        {
+          "type": "grave-robbers",
           "excluded": false
         }
       ],

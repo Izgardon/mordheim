@@ -1,17 +1,56 @@
 {
-  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too. extra_warband_types: warbands neither Broheim nor mordheimer lists. group_members: add/remove type slugs per group slug. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_warbands: item name -> the only type slugs that may buy it, and why. item_notes: item name -> a soft note added to each of its price rows. whole_names: names matched as a whole on the same-name list, not split at the slash. setting_assignments: kind (skills, hired_swords, dramatis_personae) -> our row's name as the report shows it (\"Sniper (Hochland Bandits)\") -> setting slug. skill_lists: a skill list's name -> who learns the skills of it mordheimer lacks (for_everyone, or warbands as {type} or {group} slugs), large_only (a Large unit's skill) and a note shown when learning. drop_skills: our skill rows left out (label -> why). extra_skills: skill rows our table lacks. skill_descriptions: a skill row's description put right (label -> text). fees_in_rules: a hired sword's or dramatis persona's name -> why its hire fee is in its rules: kind special, its gold kept, its hiring sentence in full as the note.",
+  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too; one that keeps the mapping the build would make reads as settled in the report. extra_warband_types: warbands neither Broheim nor mordheimer lists. group_members: add/remove type slugs per group slug, and keep_in/keep_out the types William keeps in or out of a group (held there); each settles its types' group questions. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_warbands: item name -> the only type slugs that may buy it, and why. item_warbands_add: item name -> type slugs added to its mordheimer list, and why. item_exclusions: item name -> the only type slugs an item for everyone shuts out, and why. item_defaults_kept: item name -> why the default its contradictions took stands. item_notes: item name -> a soft note added to each of its price rows. whole_names: names matched as a whole on the same-name list, not split at the slash. setting_assignments: kind (skills, hired_swords, dramatis_personae) -> our row's name as the report shows it (\"Sniper (Hochland Bandits)\") -> setting slug (one mordheimer gives several settings is then settled). skill_lists: a skill list's name -> who learns the skills of it mordheimer lacks (for_everyone, or warbands as {type} or {group} slugs), large_only (a Large unit's skill) and a note shown when learning. drop_skills: our skill rows left out (label -> why). extra_skills: skill rows our table lacks. skill_descriptions: a skill row's description put right (label -> text). fees_in_rules: a hired sword's or dramatis persona's name -> why its hire fee is in its rules: kind special, its gold kept, its hiring sentence in full as the note.",
   "warband_aliases": {
-    "Stromfels Reavers": ["shallows-beasts"]
+    "Stromfels Reavers": ["shallows-beasts"],
+    "Amazons": ["amazons-lustria", "amazons-mordheim"],
+    "Chaos Dwarfs": ["black-dwarfs"],
+    "Mercenaries": [],
+    "Night Goblins": ["night-goblins-mic"],
+    "Norse Explorers": ["norse-explorers-tc13", "norse-explorers-btb"]
   },
   "extra_warband_types": [
     { "name": "Albion Commandos", "race": "Human", "setting": "mutiny-in-marienburg", "source": "Mutiny in Marienburg" }
   ],
   "group_members": {
     "add": {
-      "mercenaries": ["ostlanders", "miragleans", "remasens", "tileans", "trantios"],
-      "sigmarite": ["protectorate-of-sigmar"]
+      "humans": ["pit-fighters"],
+      "mercenaries": [
+        "ostlanders",
+        "miragleans",
+        "remasens",
+        "tileans",
+        "trantios",
+        "imperial-outriders",
+        "lustrian-reavers"
+      ],
+      "sigmarite": ["protectorate-of-sigmar"],
+      "good": ["imperial-outriders"],
+      "evil": ["beastmen-raiders"]
     },
-    "remove": {}
+    "remove": {},
+    "keep_in": {
+      "humans": [
+        "court-of-profane-pleasures",
+        "cursed-cavalcade",
+        "order-of-the-mare",
+        "outlaws-of-stirwood-forest-redux",
+        "protectorate-of-sigmar",
+        "sorcerous-society",
+        "vampire-hunters-of-sylvania"
+      ],
+      "elves": ["druchii", "wood-elves-of-athel-loren"],
+      "dwarfs": ["dwarf-slayer-cult"],
+      "skaven": ["underworld-alliance", "skaven-of-clan-moulder"],
+      "goblins": ["underworld-alliance"],
+      "orcs-and-goblins": ["snotlings"]
+    },
+    "keep_out": {
+      "humans": ["undead", "mootlanders", "black-dwarfs"],
+      "skaven": ["nipponese-expedition"],
+      "goblins": ["snotlings"],
+      "orcs-and-goblins": ["sons-of-hashut"],
+      "evil": ["hochland-bandits", "horned-hunters", "lizardmen-tc11", "pirates"]
+    }
   },
   "setting_grades": {},
   "keep_hidden_items": [],
@@ -24,7 +63,125 @@
     "Tufenk": {
       "warbands": ["arabian-tomb-raiders"],
       "why": "on the Arabian Tomb Raiders' Warrior equipment list, not on Khemri's trading chart"
+    },
+    "Spiked Gauntlet": {
+      "warbands": ["pit-fighters", "pit-fighters-old"],
+      "why": "its note says Pit Fighters only, and \"pit fighters is a legitimate warband so that weapon should appear for them\"; William, 1 Nov 2026"
     }
+  },
+  "item_warbands_add": {
+    "Elven Steed": {
+      "warbands": ["druchii", "wood-elves-of-athel-loren"],
+      "why": "its note says Elves only; its list predates these warbands; William, 1 Nov 2026"
+    },
+    "Giant Spider": {
+      "warbands": ["night-goblins-web"],
+      "why": "its note says Goblins only; its list predates these warbands; William, 1 Nov 2026"
+    },
+    "Giant Wolf": {
+      "warbands": ["forest-goblins-nc", "night-goblins-web"],
+      "why": "its note says Goblins only; its list predates these warbands; William, 1 Nov 2026"
+    },
+    "Gnoblar Fighter": {
+      "warbands": ["ogre-hunting-party"],
+      "why": "its note says Ogres and Chaos Dwarfs only, but \"black dwarves dont get gnoblar fighters\"; William, 1 Nov 2026"
+    },
+    "Rhinox": {
+      "warbands": ["ogre-hunting-party"],
+      "why": "its note names the Ogres; its list predates the Ogre Hunting Party; William, 1 Nov 2026"
+    },
+    "Chaos Dwarf Blunderbuss": {
+      "warbands": ["black-dwarfs"],
+      "why": "its note says Chaos Dwarfs only; its list predates the Black Dwarfs; William, 1 Nov 2026"
+    },
+    "Sons of Hashut Obsidian Weapon": {
+      "warbands": ["black-dwarfs"],
+      "why": "its note says Chaos Dwarfs only; its list predates the Black Dwarfs; William, 1 Nov 2026"
+    },
+    "Dwarf Axe": {
+      "warbands": ["dwarf-slayer-cult"],
+      "why": "its note says Dwarfs only; its list predates the Dwarf Slayer Cult; William, 1 Nov 2026"
+    },
+    "Squig Prodder": {
+      "warbands": ["forest-goblins-nc", "night-goblins-mic"],
+      "why": "its note says Goblins only; its list predates these warbands; William, 1 Nov 2026"
+    },
+    "Riding/Draft Horse": {
+      "warbands": [
+        "court-of-profane-pleasures",
+        "cursed-cavalcade",
+        "dreamwalkers-cult-of-morr",
+        "grave-robbers",
+        "mazzalupo",
+        "nipponese-expedition",
+        "order-of-the-mare",
+        "outlaws-of-stirwood-forest-redux",
+        "protectorate-of-sigmar",
+        "sorcerous-society",
+        "vampire-hunters-of-sylvania"
+      ],
+      "why": "its note says Humans only: its list stands, with the human warbands it misses; William, 1 Nov 2026"
+    },
+    "Warhorse": {
+      "warbands": [
+        "court-of-profane-pleasures",
+        "cursed-cavalcade",
+        "dreamwalkers-cult-of-morr",
+        "grave-robbers",
+        "mazzalupo",
+        "nipponese-expedition",
+        "order-of-the-mare",
+        "outlaws-of-stirwood-forest-redux",
+        "protectorate-of-sigmar",
+        "sorcerous-society",
+        "vampire-hunters-of-sylvania"
+      ],
+      "why": "its note says Humans only: its list stands, with the human warbands it misses; William, 1 Nov 2026"
+    },
+    "Rickshaw": {
+      "warbands": [
+        "court-of-profane-pleasures",
+        "cursed-cavalcade",
+        "dreamwalkers-cult-of-morr",
+        "grave-robbers",
+        "mazzalupo",
+        "nipponese-expedition",
+        "order-of-the-mare",
+        "outlaws-of-stirwood-forest-redux",
+        "protectorate-of-sigmar",
+        "sorcerous-society",
+        "vampire-hunters-of-sylvania"
+      ],
+      "why": "its note says Humans only: its list stands, with the human warbands it misses; William, 1 Nov 2026"
+    }
+  },
+  "item_exclusions": {
+    "Tome of Magic": {
+      "warbands": ["witch-hunters", "sisters-of-sigmar"],
+      "why": "as its note says, so Clan Pestilens may buy it: \"why no pestilens, isn't it available to any caster?\"; William, 1 Nov 2026"
+    }
+  },
+  "item_defaults_kept": {
+    "Ball and Chain": "Forest Goblins don't get it; William, 1 Nov 2026",
+    "Dragon Sword": "mordheimer's list stands; William, 1 Nov 2026",
+    "Fighting Claws": "mordheimer's list stands; William, 1 Nov 2026",
+    "Trip Wire": "mordheimer's list stands; William, 1 Nov 2026",
+    "Vial of Pestilens": "mordheimer's list stands; William, 1 Nov 2026",
+    "Wardogs": "not for any Skaven, Clan Pestilens included; William, 1 Nov 2026",
+    "Black Lotus": "the exclusion stands; William, 1 Nov 2026",
+    "Dark Venom": "the exclusion stands; William, 1 Nov 2026",
+    "Blowpipe": "Common only for the Forest Goblins, as now; William, 1 Nov 2026",
+    "Fist": "the unarmed attack, which no one buys; William, 1 Nov 2026",
+    "Bota Bag": "Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026",
+    "Lamp of the Djinn": "Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026",
+    "Magic Carpet": "Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026",
+    "Magic Gourd": "Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026",
+    "Monkey's Paw": "Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026",
+    "Nehekharan Map": "Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026",
+    "Nomad Robes": "Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026",
+    "Scorpion Ring": "Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026",
+    "Snake Charmer's flute": "Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026",
+    "Venom Ring": "Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026"
   },
   "item_notes": {
     "Stromfels Heart": "Priest of Stromfels only"
@@ -59,6 +216,37 @@
     "Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne": "his hire is the summoning ritual his hiring sentence describes (William: do what you think is best); shown, never automated"
   },
   "setting_assignments": {
-    "skills": { "Master Inventor (Dwarf Exiled Engineers)": "mutiny-in-marienburg" }
+    "skills": {
+      "Master Inventor (Dwarf Exiled Engineers)": "mutiny-in-marienburg",
+      "Mutant (Beastmen Raiders)": "empire-in-flames",
+      "Bellowing Roar (Beastmen Raiders)": "empire-in-flames",
+      "Infiltration (Dark Elf)": "mordheim",
+      "Hide in Shadows (Night Goblins)": "mordheim-1c",
+      "Hardy Constitution (Grave Robber)": "mordheim-2a",
+      "Crude belch (Halflings)": "mordheim-2a",
+      "Hide in shadows (Hochland Bandits)": "nemesis-crown",
+      "Sniper (Hochland Bandits)": "nemesis-crown",
+      "Infiltration (Skink)": "mordheim",
+      "Mutant (Marauders of Chaos)": "mordheim-1c",
+      "Netter (Night Goblins)": "mordheim-1c",
+      "Battle tongue (Norse)": "mordheim-1b",
+      "Crude belch (Ogres)": "mordheim-1c",
+      "Maneater (Ogres)": "mordheim-2a",
+      "Bellowing roar (Ogres)": "mordheim-1c",
+      "Foul Odour (Ostlanders)": "mordheim",
+      "Hardy Constitution (Pirates)": "mordheim-1b",
+      "Infiltration (Sea Ghosts)": "mordheim",
+      "Hide in Shadows (Sea Ghosts)": "mordheim-1b",
+      "Hide in Shadows (Shadow Warriors)": "mordheim-1b",
+      "Sniper (Shadow Warriors)": "mordheim-1b",
+      "Protection of Sigmar (Sisters of Sigmar)": "mordheim",
+      "Utter Determination (Sisters of Sigmar)": "mordheim",
+      "Infiltration (Skaven)": "mordheim",
+      "Infiltration (Skaven Metal Mongers)": "mordheim",
+      "Infiltration (Strigany)": "mordheim",
+      "Combat Master (Combat)": "mordheim",
+      "Battle Tongue (Academic)": "mordheim"
+    },
+    "hired_swords": { "Norse Shaman": "border-town-burning" }
   }
 }

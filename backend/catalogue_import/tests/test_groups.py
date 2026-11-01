@@ -43,13 +43,13 @@ class CollapseTests(SimpleTestCase):
 class BuildGroupTests(SimpleTestCase):
     def test_races_come_from_the_race_field(self) -> None:
         types, resolver, _groups, _ctx = world()
-        groups, _questions = build_groups(types, sources(), resolver)
+        groups, _questions, _settled = build_groups(types, sources(), resolver)
         humans = next(group for group in groups if group["slug"] == "humans")
         self.assertEqual(humans["members"], ["witch-hunters", "sisters-of-sigmar", "reiklanders"])
 
     def test_sides_take_the_types_most_lists_name_and_ask_about_the_rest(self) -> None:
         types, resolver, _groups, _ctx = world()
-        groups, questions = build_groups(types, sources(), resolver)
+        groups, questions, _settled = build_groups(types, sources(), resolver)
         good = next(group for group in groups if group["slug"] == "good")
         self.assertEqual(good["members"], ["reiklanders"])
         self.assertTrue(any("Witch Hunters (1/3)" in q and "Lizardmen (1/3)" in q for q in questions["good"]))
@@ -57,10 +57,27 @@ class BuildGroupTests(SimpleTestCase):
     def test_overrides_add_and_remove_members(self) -> None:
         types, resolver, _groups, _ctx = world()
         change = {"add": {"good": ["lizardmen"]}, "remove": {"humans": ["reiklanders"]}}
-        groups, _questions = build_groups(types, sources(group_members=change), resolver)
+        groups, _questions, _settled = build_groups(types, sources(group_members=change), resolver)
         by_slug = {group["slug"]: group["members"] for group in groups}
         self.assertEqual(by_slug["good"], ["lizardmen", "reiklanders"])
         self.assertNotIn("reiklanders", by_slug["humans"])
+
+    def test_overrides_settle_questions_and_keep_types_where_they_are(self) -> None:
+        types, resolver, _groups, _ctx = world()
+        change = {
+            "add": {"good": ["lizardmen"]},
+            "keep_out": {"good": ["witch-hunters"], "humans": ["sisters-of-sigmar"]},
+            "keep_in": {"humans": ["reiklanders"], "nobody": ["skaven"]},
+        }
+        groups, questions, settled = build_groups(types, sources(group_members=change), resolver)
+        by_slug = {group["slug"]: group for group in groups}
+        self.assertEqual(questions["good"], [])
+        self.assertEqual(settled["good"], {"add": ["lizardmen"], "keep_out": ["witch-hunters"]})
+        self.assertEqual(settled["humans"], {"keep_in": ["reiklanders"], "keep_out": ["sisters-of-sigmar"]})
+        self.assertEqual(by_slug["good"]["members"], ["lizardmen", "reiklanders"])
+        self.assertEqual(by_slug["humans"]["members"], ["witch-hunters", "reiklanders"])
+        self.assertTrue(by_slug["humans"]["basis"].endswith("adjusted in overrides.json"))
+        self.assertFalse(by_slug["skaven"]["basis"].endswith("adjusted in overrides.json"))
 
 
 class ResolverTests(SimpleTestCase):
@@ -83,3 +100,12 @@ class ResolverTests(SimpleTestCase):
         self.assertEqual(resolver.resolve("Night Goblins (web)", "items"), ["night-goblins-web"])
         self.assertEqual(resolver.resolve("Nobody Knows", "items"), [])
         self.assertEqual(set(resolver.uses), {"Night Goblins (web)", "Nobody Knows"})
+
+    def test_an_override_keeping_the_built_mapping_reads_as_settled(self) -> None:
+        rows = [warband("Night Goblins", "Night Goblin", "MIC"), warband("Night Goblins", "Night Goblin", "WEB")]
+        types = build_warband_types([*rows, warband("Skaven", "Skaven")])
+        resolver = Resolver(types, {"Night Goblins": ["night-goblins-mic"], "Night Goblins web": ["skaven"]})
+        self.assertEqual(resolver.resolve("Night Goblins", "items"), ["night-goblins-mic"])
+        resolver.resolve("Night Goblins web", "items")
+        self.assertTrue(resolver.uses["Night Goblins"].how.startswith("settled in overrides.json: two types share"))
+        self.assertEqual(resolver.uses["Night Goblins web"].how, "overrides.json")

@@ -1,5 +1,9 @@
 """Price rows for a mordheimer item: who may buy it at which cost and rarity. Where mordheimer's structured fields
-and its own notes disagree, a default is chosen and the disagreement goes into the report."""
+and its own notes disagree, a default is chosen and the disagreement goes into the report.
+
+overrides.json settles an item's contradictions: ``item_warbands`` names the only types that may buy it,
+``item_warbands_add`` adds types to its list, ``item_exclusions`` names the only types an item for everyone shuts out,
+and ``item_defaults_kept`` keeps the default each contradiction took. The report shows each as settled."""
 
 from dataclasses import dataclass, field
 from typing import Any
@@ -9,26 +13,42 @@ from catalogue_import.groups import collapse
 from catalogue_import.prices import Cost, mordheimer_cost, parse_rarity
 from catalogue_import.statements import PhraseReader, Readings, Statements, read_statements
 
+Decisions = dict[str, tuple[list[str], str]]  # item name -> (type slugs, why)
+
 
 @dataclass
 class Context:
     reader: PhraseReader
     groups: list[dict[str, Any]]
     names: dict[str, str]
-    chosen: dict[str, tuple[list[str], str]] = field(default_factory=dict)  # overrides.json "item_warbands"
-    conflicts: list[dict[str, str]] = field(default_factory=list)
+    chosen: Decisions = field(default_factory=dict)  # overrides.json "item_warbands"
+    added: Decisions = field(default_factory=dict)  # "item_warbands_add"
+    exclusions: Decisions = field(default_factory=dict)  # "item_exclusions"
+    kept: dict[str, str] = field(default_factory=dict)  # "item_defaults_kept": item name -> why
+    conflicts: list[dict[str, str]] = field(default_factory=list)  # settled: "" (open), "set" or "kept"
 
     def conflict(self, item: str, issue: str, default: str) -> None:
-        self.conflicts.append({"item": item, "issue": issue, "default": default})
+        self.conflicts.append({"item": item, "issue": issue, "default": default, "settled": ""})
 
-    def settle(self, item: str, slugs: list[str], why: str) -> None:
-        """overrides.json names who may buy the item: that becomes the default of each of its contradictions."""
-        default = f"only {self.label(slugs)}, set in overrides.json ({why})"
+    def settle(self, item: str, taken: str, why: str) -> None:
+        """overrides.json decides who may buy the item: that is what each of its contradictions takes."""
+        default = f"{taken}, set in overrides.json ({why})"
         mine = [row for row in self.conflicts if row["item"] == item]
         for row in mine:
-            row["default"] = default
+            row.update(default=default, settled="set")
         if not mine:
             self.conflict(item, "overrides.json sets who may buy it", default)
+            self.conflicts[-1]["settled"] = "set"
+
+    def keep(self, item: str) -> None:
+        """overrides.json "item_defaults_kept": the default each of the item's contradictions took stands."""
+        if item not in self.kept:
+            return
+        mine = [row for row in self.conflicts if row["item"] == item and not row["settled"]]
+        for row in mine:
+            row.update(default=f"{row['default']}, kept in overrides.json ({self.kept[item]})", settled="kept")
+        if not mine:
+            self.conflict(item, "overrides.json keeps its default, but nothing disagrees", "nothing to keep")
 
     def label(self, slugs: list[str] | set[str]) -> str:
         return ", ".join(sorted(self.names.get(slug, slug) for slug in slugs)) or "no one"
@@ -55,13 +75,23 @@ def _row(
 
 
 def _who(item: dict[str, Any], found: Statements, ctx: Context) -> tuple[bool, list[str], list[str]]:
-    """(for everyone, included types, excluded types), unless overrides.json names who may buy the item."""
-    listed = _listed(item, found, ctx)
-    if item["name"] not in ctx.chosen:
-        return listed
-    slugs, why = ctx.chosen[item["name"]]
-    ctx.settle(item["name"], slugs, why)
-    return False, slugs, []
+    """(for everyone, included types, excluded types) from the lists, with overrides.json's decisions for the item:
+    the only types that may buy it, types added to its list, or the only types shut out."""
+    name, order = item["name"], ctx.reader.resolver.order.__getitem__
+    everyone, included, shut_out = _listed(item, found, ctx)
+    if name in ctx.chosen:
+        slugs, why = ctx.chosen[name]
+        ctx.settle(name, f"only {ctx.label(slugs)}", why)
+        return False, slugs, []
+    if name in ctx.added:
+        slugs, why = ctx.added[name]
+        ctx.settle(name, f"the list plus {ctx.label(slugs)}", why)
+        included = sorted(set(included) | set(slugs), key=order)
+    if name in ctx.exclusions:
+        slugs, why = ctx.exclusions[name]
+        ctx.settle(name, f"everyone except {ctx.label(slugs)}", why)
+        shut_out = sorted(slugs, key=order)
+    return everyone, included, shut_out
 
 
 def _listed(item: dict[str, Any], found: Statements, ctx: Context) -> tuple[bool, list[str], list[str]]:
@@ -150,6 +180,12 @@ def _notes(item: dict[str, Any], found: Statements) -> list[str]:
 
 
 def mordheimer_rows(item: dict[str, Any], ctx: Context) -> list[dict[str, Any]]:
+    rows = _price_rows(item, ctx)
+    ctx.keep(item["name"])  # after every contradiction of the item is recorded
+    return rows
+
+
+def _price_rows(item: dict[str, Any], ctx: Context) -> list[dict[str, Any]]:
     found = read_statements(item, ctx.reader)
     cost = mordheimer_cost(item.get("cost"))
     rarity, rarity_note = parse_rarity(item.get("availability"))

@@ -48,7 +48,15 @@ class AssignmentTests(SimpleTestCase):
         rows = assign("skills", ours, found, log)
         self.assertEqual([row["setting"] for row in rows], ["nemesis-crown", "mordheim-1b", "mordheim"])
         self.assertEqual(
-            log.ambiguous[0], ("skills", "Hide in shadows (Hochland Bandits)", "nemesis-crown", ["mordheim-1b"])
+            log.ambiguous[0],
+            ("skills", "Hide in shadows (Hochland Bandits)", "nemesis-crown", ["mordheim-1b"], "mordheimer"),
+        )
+        settled = AssignmentLog()
+        rows = assign("skills", ours[:1], found, settled, {"Hide in shadows (Hochland Bandits)": "mordheim-1b"})
+        self.assertEqual((rows[0]["setting"], rows[0]["how"]), ("mordheim-1b", "overrides.json"))
+        self.assertEqual(
+            settled.ambiguous,
+            [("skills", "Hide in shadows (Hochland Bandits)", "mordheim-1b", ["nemesis-crown"], "overrides.json")],
         )
 
     def test_a_general_skill_prefers_its_subtype_then_the_lowest_setting(self) -> None:
@@ -71,15 +79,27 @@ class AssignmentTests(SimpleTestCase):
         shaman = theirs("Norse Shaman", "1b", campaignSettings=["lustria", "border-town-burning"])
         rows = assign("hired swords", [{"name": "Norse Shaman"}], [shaman], log)
         self.assertEqual(rows[0]["setting"], "lustria")
-        self.assertEqual(log.multi_setting, [("hired swords", "Norse Shaman", ["lustria", "border-town-burning"])])
+        self.assertEqual(
+            log.multi_setting,
+            [("hired swords", "Norse Shaman", ["lustria", "border-town-burning"], "lustria", "mordheimer")],
+        )
+        settled = AssignmentLog()
         chosen = assign(
-            "hired swords",
-            [{"name": "Norse Shaman"}],
-            [shaman],
-            AssignmentLog(),
-            {"Norse Shaman": "border-town-burning"},
+            "hired swords", [{"name": "Norse Shaman"}], [shaman], settled, {"Norse Shaman": "border-town-burning"}
         )
         self.assertEqual((chosen[0]["setting"], chosen[0]["how"]), ("border-town-burning", "overrides.json"))
+        self.assertEqual(
+            settled.multi_setting,
+            [
+                (
+                    "hired swords",
+                    "Norse Shaman",
+                    ["lustria", "border-town-burning"],
+                    "border-town-burning",
+                    "overrides.json",
+                )
+            ],
+        )
 
     def test_only_a_skill_is_named_with_its_type(self) -> None:
         hired = assign(

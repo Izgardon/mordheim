@@ -100,9 +100,18 @@ class Resolver:
         self.uses: dict[str, NameUse] = {}
 
     def _lookup(self, name: str) -> tuple[list[str], str] | None:
+        """Type slugs for a name and how they were found ("" for a plain match). overrides.json wins; where it keeps
+        the mapping the build would make, the report shows that mapping's reason as settled."""
         key = norm_name(name)
+        built = self._built(key)
         if key in self.overrides:
-            return self.overrides[key], "overrides.json"
+            slugs = self.overrides[key]
+            if built and built[1] and set(built[0]) == set(slugs):
+                return slugs, f"settled in overrides.json: {built[1]}"
+            return slugs, "overrides.json"
+        return built
+
+    def _built(self, key: str) -> tuple[list[str], str] | None:
         if key in ALIASES:
             slugs, why = ALIASES[key]
             return slugs, why
