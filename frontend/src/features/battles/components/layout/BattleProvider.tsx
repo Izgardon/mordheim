@@ -5,6 +5,7 @@ import { useAuth } from "@/features/auth/hooks/use-auth";
 import BattleSkeleton from "@/features/battles/components/battle/BattleSkeleton";
 import { useBattleCapabilities } from "@/features/battles/hooks/useBattleCapabilities";
 import { useBattleRosters } from "@/features/battles/hooks/useBattleRosters";
+import { useBattleEntranceReady } from "@/features/battles/hooks/useBattleEntrance";
 import { useCampaignBattleRules } from "@/features/battles/hooks/useCampaignBattleRules";
 import { useBattleState } from "@/features/battles/hooks/useBattleState";
 import { BattleContext, type BattleContextValue } from "@/features/battles/state/battle-context";
@@ -120,6 +121,8 @@ export default function BattleProvider({
       toastBattleOver(latest, user?.id);
     }
   }, [battleStateRef, closesToOverview, user?.id]);
+  // A battle that fails to load lets the entrance's swords go, so its error shows.
+  useBattleEntranceReady(view.kind === "error");
 
   if (view.kind === "loading") {
     return <BattleSkeleton phase={phase} />;

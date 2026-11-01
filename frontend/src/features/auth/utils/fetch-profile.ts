@@ -37,7 +37,7 @@ export async function revalidateProfile(
 }
 
 /**
- * Loads the session's user while the app waits behind LoadingScreen. A refused session ends; an
+ * Loads the session's user while the app waits behind the boot screen. A refused session ends; an
  * outage keeps the tokens and offers a retry (ConnectionErrorScreen). Once the session has moved
  * on (signed out, or another account), the outcome changes nothing (BUG-170).
  */

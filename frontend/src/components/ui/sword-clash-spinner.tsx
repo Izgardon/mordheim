@@ -1,14 +1,18 @@
+import type { CSSProperties } from "react";
+
 import { cn } from "@/lib/utils";
+
+import { SWORD_CLASH_MS } from "./sword-clash";
 
 type SwordClashSpinnerProps = {
   className?: string;
 };
 
 /**
- * Two swords swinging into a clash: a CSS + SVG stand-in for the old Lottie animation, with no
- * runtime, WASM or third-party requests. Drawn in the design E tokens (steel in the text colours,
- * the guard and the spark in the accent), so it follows the theme. Styles live in index.css
- * (`.sword-clash`).
+ * Two swords swing in, clash and rest crossed: one strike of `SWORD_CLASH_MS`, in CSS and SVG
+ * with no runtime, WASM or third-party requests. Drawn in the design E tokens (steel in the text
+ * colours, the guard and the spark in the accent), so it follows the theme. Styles live in
+ * index.css (`.sword-clash`), which reads the strike's length from `--sword-clash-ms`.
  */
 export function SwordClashSpinner({ className }: SwordClashSpinnerProps) {
   return (
@@ -17,6 +21,7 @@ export function SwordClashSpinner({ className }: SwordClashSpinnerProps) {
       viewBox="0 0 200 120"
       width={260}
       height={156}
+      style={{ "--sword-clash-ms": `${SWORD_CLASH_MS}ms` } as CSSProperties}
       aria-hidden="true"
       focusable="false"
     >

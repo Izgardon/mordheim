@@ -25,7 +25,7 @@ vi.mock("../api/auth-api", () => ({
 }));
 
 vi.mock("../../../components/ui/loading-screen", () => ({
-  LoadingScreen: () => <p>Loading...</p>,
+  BootScreen: () => <p>Loading...</p>,
 }));
 
 const QueryWrapper = createQueryWrapper();
