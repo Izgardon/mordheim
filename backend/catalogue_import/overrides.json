@@ -24,7 +24,115 @@
     "Tufenk": {
       "warbands": ["arabian-tomb-raiders"],
       "why": "on the Arabian Tomb Raiders' Warrior equipment list, not on Khemri's trading chart"
+    },
+    "Spiked Gauntlet": {
+      "warbands": ["pit-fighters", "pit-fighters-old"],
+      "why": "its note says Pit Fighters only, and \"pit fighters is a legitimate warband so that weapon should appear for them\"; William, 1 Nov 2026"
     }
+  },
+  "item_warbands_add": {
+    "Elven Steed": {
+      "warbands": ["druchii", "wood-elves-of-athel-loren"],
+      "why": "its note says Elves only; its list predates these warbands; William, 1 Nov 2026"
+    },
+    "Giant Spider": {
+      "warbands": ["night-goblins-web"],
+      "why": "its note says Goblins only; its list predates these warbands; William, 1 Nov 2026"
+    },
+    "Giant Wolf": {
+      "warbands": ["forest-goblins-nc", "night-goblins-web"],
+      "why": "its note says Goblins only; its list predates these warbands; William, 1 Nov 2026"
+    },
+    "Gnoblar Fighter": {
+      "warbands": ["ogre-hunting-party"],
+      "why": "its note says Ogres and Chaos Dwarfs only, but \"black dwarves dont get gnoblar fighters\"; William, 1 Nov 2026"
+    },
+    "Rhinox": {
+      "warbands": ["ogre-hunting-party"],
+      "why": "its note names the Ogres; its list predates the Ogre Hunting Party; William, 1 Nov 2026"
+    },
+    "Chaos Dwarf Blunderbuss": {
+      "warbands": ["black-dwarfs"],
+      "why": "its note says Chaos Dwarfs only; its list predates the Black Dwarfs; William, 1 Nov 2026"
+    },
+    "Sons of Hashut Obsidian Weapon": {
+      "warbands": ["black-dwarfs"],
+      "why": "its note says Chaos Dwarfs only; its list predates the Black Dwarfs; William, 1 Nov 2026"
+    },
+    "Dwarf Axe": {
+      "warbands": ["dwarf-slayer-cult"],
+      "why": "its note says Dwarfs only; its list predates the Dwarf Slayer Cult; William, 1 Nov 2026"
+    },
+    "Squig Prodder": {
+      "warbands": ["forest-goblins-nc", "night-goblins-mic"],
+      "why": "its note says Goblins only; its list predates these warbands; William, 1 Nov 2026"
+    },
+    "Riding/Draft Horse": {
+      "warbands": [
+        "court-of-profane-pleasures",
+        "cursed-cavalcade",
+        "dreamwalkers-cult-of-morr",
+        "grave-robbers",
+        "mazzalupo",
+        "nipponese-expedition",
+        "order-of-the-mare",
+        "outlaws-of-stirwood-forest-redux",
+        "protectorate-of-sigmar",
+        "sorcerous-society",
+        "vampire-hunters-of-sylvania"
+      ],
+      "why": "its note says Humans only: its list stands, with the human warbands it misses; William, 1 Nov 2026"
+    },
+    "Warhorse": {
+      "warbands": [
+        "court-of-profane-pleasures",
+        "cursed-cavalcade",
+        "dreamwalkers-cult-of-morr",
+        "grave-robbers",
+        "mazzalupo",
+        "nipponese-expedition",
+        "order-of-the-mare",
+        "outlaws-of-stirwood-forest-redux",
+        "protectorate-of-sigmar",
+        "sorcerous-society",
+        "vampire-hunters-of-sylvania"
+      ],
+      "why": "its note says Humans only: its list stands, with the human warbands it misses; William, 1 Nov 2026"
+    },
+    "Rickshaw": {
+      "warbands": [
+        "court-of-profane-pleasures",
+        "cursed-cavalcade",
+        "dreamwalkers-cult-of-morr",
+        "grave-robbers",
+        "mazzalupo",
+        "nipponese-expedition",
+        "order-of-the-mare",
+        "outlaws-of-stirwood-forest-redux",
+        "protectorate-of-sigmar",
+        "sorcerous-society",
+        "vampire-hunters-of-sylvania"
+      ],
+      "why": "its note says Humans only: its list stands, with the human warbands it misses; William, 1 Nov 2026"
+    }
+  },
+  "item_exclusions": {
+    "Tome of Magic": {
+      "warbands": ["witch-hunters", "sisters-of-sigmar"],
+      "why": "as its note says, so Clan Pestilens may buy it: \"why no pestilens, isn't it available to any caster?\"; William, 1 Nov 2026"
+    }
+  },
+  "item_defaults_kept": {
+    "Ball and Chain": "Forest Goblins don't get it; William, 1 Nov 2026",
+    "Dragon Sword": "mordheimer's list stands; William, 1 Nov 2026",
+    "Fighting Claws": "mordheimer's list stands; William, 1 Nov 2026",
+    "Trip Wire": "mordheimer's list stands; William, 1 Nov 2026",
+    "Vial of Pestilens": "mordheimer's list stands; William, 1 Nov 2026",
+    "Wardogs": "not for any Skaven, Clan Pestilens included; William, 1 Nov 2026",
+    "Black Lotus": "the exclusion stands; William, 1 Nov 2026",
+    "Dark Venom": "the exclusion stands; William, 1 Nov 2026",
+    "Blowpipe": "Common only for the Forest Goblins, as now; William, 1 Nov 2026",
+    "Fist": "the unarmed attack, which no one buys; William, 1 Nov 2026"
   },
   "item_notes": {
     "Stromfels Heart": "Priest of Stromfels only"

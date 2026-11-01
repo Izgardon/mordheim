@@ -207,6 +207,14 @@
           {
             "type": "shadow-warriors",
             "excluded": false
+          },
+          {
+            "type": "druchii",
+            "excluded": false
+          },
+          {
+            "type": "wood-elves-of-athel-loren",
+            "excluded": false
           }
         ],
         "note": ""
@@ -282,6 +290,10 @@
           {
             "type": "night-goblins-mic",
             "excluded": false
+          },
+          {
+            "type": "night-goblins-web",
+            "excluded": false
           }
         ],
         "note": ""
@@ -338,7 +350,15 @@
             "excluded": false
           },
           {
+            "type": "forest-goblins-nc",
+            "excluded": false
+          },
+          {
             "type": "night-goblins-mic",
+            "excluded": false
+          },
+          {
+            "type": "night-goblins-web",
             "excluded": false
           }
         ],
@@ -411,7 +431,7 @@
         "for_everyone": false,
         "warbands": [
           {
-            "type": "maneaters",
+            "group": "ogres",
             "excluded": false
           }
         ],
@@ -663,6 +683,10 @@
           {
             "type": "norse-explorers-btb",
             "excluded": false
+          },
+          {
+            "type": "ogre-hunting-party",
+            "excluded": false
           }
         ],
         "note": ""
@@ -841,6 +865,14 @@
             "excluded": false
           },
           {
+            "type": "court-of-profane-pleasures",
+            "excluded": false
+          },
+          {
+            "type": "cursed-cavalcade",
+            "excluded": false
+          },
+          {
             "type": "lustrian-reavers",
             "excluded": false
           },
@@ -854,6 +886,42 @@
           },
           {
             "type": "norse-explorers-btb",
+            "excluded": false
+          },
+          {
+            "type": "dreamwalkers-cult-of-morr",
+            "excluded": false
+          },
+          {
+            "type": "grave-robbers",
+            "excluded": false
+          },
+          {
+            "type": "mazzalupo",
+            "excluded": false
+          },
+          {
+            "type": "nipponese-expedition",
+            "excluded": false
+          },
+          {
+            "type": "order-of-the-mare",
+            "excluded": false
+          },
+          {
+            "type": "outlaws-of-stirwood-forest-redux",
+            "excluded": false
+          },
+          {
+            "type": "protectorate-of-sigmar",
+            "excluded": false
+          },
+          {
+            "type": "sorcerous-society",
+            "excluded": false
+          },
+          {
+            "type": "vampire-hunters-of-sylvania",
             "excluded": false
           }
         ],
@@ -1303,6 +1371,14 @@
             "excluded": false
           },
           {
+            "type": "court-of-profane-pleasures",
+            "excluded": false
+          },
+          {
+            "type": "cursed-cavalcade",
+            "excluded": false
+          },
+          {
             "type": "lustrian-reavers",
             "excluded": false
           },
@@ -1316,6 +1392,42 @@
           },
           {
             "type": "norse-explorers-btb",
+            "excluded": false
+          },
+          {
+            "type": "dreamwalkers-cult-of-morr",
+            "excluded": false
+          },
+          {
+            "type": "grave-robbers",
+            "excluded": false
+          },
+          {
+            "type": "mazzalupo",
+            "excluded": false
+          },
+          {
+            "type": "nipponese-expedition",
+            "excluded": false
+          },
+          {
+            "type": "order-of-the-mare",
+            "excluded": false
+          },
+          {
+            "type": "outlaws-of-stirwood-forest-redux",
+            "excluded": false
+          },
+          {
+            "type": "protectorate-of-sigmar",
+            "excluded": false
+          },
+          {
+            "type": "sorcerous-society",
+            "excluded": false
+          },
+          {
+            "type": "vampire-hunters-of-sylvania",
             "excluded": false
           }
         ],
@@ -2281,7 +2393,7 @@
         "for_everyone": false,
         "warbands": [
           {
-            "type": "sons-of-hashut",
+            "group": "chaos-dwarfs",
             "excluded": false
           }
         ],
@@ -4437,6 +4549,10 @@
           {
             "type": "dwarf-rangers",
             "excluded": false
+          },
+          {
+            "type": "dwarf-slayer-cult",
+            "excluded": false
           }
         ],
         "note": ""
@@ -5980,7 +6096,7 @@
         "for_everyone": false,
         "warbands": [
           {
-            "type": "sons-of-hashut",
+            "group": "chaos-dwarfs",
             "excluded": false
           }
         ],
@@ -6076,6 +6192,10 @@
         "warbands": [
           {
             "type": "pit-fighters",
+            "excluded": false
+          },
+          {
+            "type": "pit-fighters-old",
             "excluded": false
           }
         ],
@@ -10443,6 +10563,14 @@
             "excluded": false
           },
           {
+            "type": "court-of-profane-pleasures",
+            "excluded": false
+          },
+          {
+            "type": "cursed-cavalcade",
+            "excluded": false
+          },
+          {
             "type": "lustrian-reavers",
             "excluded": false
           },
@@ -10456,6 +10584,42 @@
           },
           {
             "type": "norse-explorers-btb",
+            "excluded": false
+          },
+          {
+            "type": "dreamwalkers-cult-of-morr",
+            "excluded": false
+          },
+          {
+            "type": "grave-robbers",
+            "excluded": false
+          },
+          {
+            "type": "mazzalupo",
+            "excluded": false
+          },
+          {
+            "type": "nipponese-expedition",
+            "excluded": false
+          },
+          {
+            "type": "order-of-the-mare",
+            "excluded": false
+          },
+          {
+            "type": "outlaws-of-stirwood-forest-redux",
+            "excluded": false
+          },
+          {
+            "type": "protectorate-of-sigmar",
+            "excluded": false
+          },
+          {
+            "type": "sorcerous-society",
+            "excluded": false
+          },
+          {
+            "type": "vampire-hunters-of-sylvania",
             "excluded": false
           }
         ],
@@ -11186,6 +11350,14 @@
             "excluded": false
           },
           {
+            "type": "forest-goblins-nc",
+            "excluded": false
+          },
+          {
+            "type": "night-goblins-mic",
+            "excluded": false
+          },
+          {
             "type": "night-goblins-web",
             "excluded": false
           }
@@ -11524,10 +11696,6 @@
           },
           {
             "type": "witch-hunters",
-            "excluded": true
-          },
-          {
-            "type": "skaven-of-clan-pestilens-tc29",
             "excluded": true
           }
         ],
