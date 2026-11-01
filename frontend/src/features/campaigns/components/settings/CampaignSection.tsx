@@ -53,7 +53,7 @@ function CampaignName({ campaign }: { campaign: CampaignSummary }) {
   };
 
   return (
-    <SettingRow label="Name" hint="What every member sees on the campaigns list." error={error}>
+    <SettingRow label="Name" error={error}>
       <Input
         aria-label="Campaign name"
         value={name}
