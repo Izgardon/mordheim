@@ -35,7 +35,8 @@ import KillSheet, { type Killer } from "./KillSheet";
 import RoundSheet from "./RoundSheet";
 import { NeutralGroupUnits, OtherWarband } from "./SideUnits";
 import SideStrip from "./SideStrip";
-import UnitCard, { type GearTab } from "./UnitCard";
+import UnitCard from "./UnitCard";
+import type { GearTab } from "./UnitCardParts";
 import {
   AddNeutralGroupSheet,
   AddUnitSheet,

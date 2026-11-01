@@ -7,7 +7,7 @@ import { useCatalogue } from "@/lib/catalogue-queries";
 import { plainRuleText, ruleName } from "@/features/items/utils/item-rules";
 import { cn } from "@/lib/utils";
 
-import type { GearTab } from "./UnitCard";
+import type { GearTab } from "./UnitCardParts";
 
 type GearEntry = {
   key: string;

@@ -2,7 +2,7 @@ import { StatStrip } from "@/components/ui/stat-strip";
 import { cn } from "@/lib/utils";
 
 import { STATUS_LABEL, statValues, type BattleGroupView } from "./battle-units";
-import { KillButton, QuickRow, STATUS_TONE, type GearTab } from "./UnitCard";
+import { KillButton, QuickRow, STATUS_TONE, type GearTab } from "./UnitCardParts";
 
 type GroupCardProps = {
   entry: BattleGroupView;

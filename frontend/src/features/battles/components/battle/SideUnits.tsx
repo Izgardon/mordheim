@@ -9,7 +9,7 @@ import {
   type UnitStatus,
   type WarbandSide,
 } from "./battle-units";
-import { StatusButton, STATUS_TONE, WoundsControl } from "./UnitCard";
+import { StatusButton, STATUS_TONE, WoundsControl } from "./UnitCardParts";
 
 function Row({
   name,
