@@ -46,8 +46,6 @@ describe("content in play", () => {
 
   it("counts the warband types the selection brings in", () => {
     expect(typesInScope([2], SETTINGS)).toBe(25);
-    expect(scopeLine([1, 2, 3], SETTINGS)).toBe(
-      "30 warband types in scope. The rest stay listed, greyed out."
-    );
+    expect(scopeLine([1, 2, 3], SETTINGS)).toBe("30 warband types in scope.");
   });
 });

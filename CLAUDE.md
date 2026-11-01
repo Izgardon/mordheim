@@ -10,6 +10,7 @@ Mordheim Chronicler: a campaign manager for the Mordheim tabletop game. Django +
 - **Soft delete** records (dead and dismissed units, etc.) rather than deleting rows.
 - **Don't preserve old-campaign quirks** when a rule changes, unless William says otherwise.
 - **Lossy actions say so plainly** (e.g. "all carried items are lost; move them to the stash first").
+- **No fluff text** (William, 1 Nov 2026). Don't add helper sentences that explain what the page already shows or how a control works ("The rest stay listed, greyed out", "every setting at or below it"). A line earns its place only if the player would otherwise get something wrong: a warning, a lossy action, a number they need. When in doubt, leave it out.
 
 ## Engineering rules (must follow)
 

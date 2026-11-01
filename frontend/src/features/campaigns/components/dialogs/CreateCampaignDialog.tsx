@@ -171,9 +171,7 @@ export default function CreateCampaignDialog({ onCreate, className }: CreateCamp
                 onChange={setPicked}
               />
             ) : (
-              <p className="m-0 text-[13px] text-text2">
-                Up to 1c to begin with: every setting at or below it. You can change it in Settings.
-              </p>
+              <p className="m-0 text-[13px] text-text2">Up to 1c.</p>
             )}
           </div>
           <FormError message={error} />

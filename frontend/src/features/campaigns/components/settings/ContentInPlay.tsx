@@ -55,8 +55,8 @@ export default function ContentInPlay(props: ContentInPlayProps) {
         </div>
         <span className="text-xs text-muted-foreground">
           {presetInfo
-            ? `Up to ${presetInfo.grade}, ${presetInfo.description}: every setting at or below it.`
-            : "Adjusted by hand. A preset ticks every setting at or below its grade."}
+            ? `Up to ${presetInfo.grade}, ${presetInfo.description}.`
+            : "Adjusted by hand."}
         </span>
       </div>
       {adjusting ? (

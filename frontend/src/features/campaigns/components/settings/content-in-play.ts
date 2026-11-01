@@ -36,8 +36,8 @@ export function typesInScope(ids: number[], settings: Setting[]) {
   );
 }
 
-/** "N warband types in scope. The rest stay listed, greyed out." */
+/** "N warband types in scope." */
 export function scopeLine(ids: number[], settings: Setting[]) {
   const count = typesInScope(ids, settings);
-  return `${count} warband ${count === 1 ? "type" : "types"} in scope. The rest stay listed, greyed out.`;
+  return `${count} warband ${count === 1 ? "type" : "types"} in scope.`;
 }
