@@ -138,7 +138,10 @@ export default function FeePayment(props: FeePaymentProps) {
           </div>
         );
       })}
-      {fee.note ? <span className="text-xs text-muted-foreground">{fee.note}</span> : null}
+      {fee.note && fee.kind !== "special" ? (
+        // a fee in his rules shows its words above, with his rules (HireTerms)
+        <span className="text-xs text-muted-foreground">{fee.note}</span>
+      ) : null}
     </div>
   );
 }
