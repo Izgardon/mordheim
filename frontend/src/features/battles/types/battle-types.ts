@@ -473,13 +473,12 @@ export type BattlePostbattleSuggestion = {
 /**
  * What the reader may do with the battle now, by the server's own rules (`GET state/` only):
  * start (prebattle, everyone ready), end (active), cancel (before postbattle), close postbattle,
- * edit the record of an ended battle.
+ * start the next round anyway.
  */
 export type BattleCapabilities = {
   start: boolean;
   cancel: boolean;
   close_postbattle: boolean;
-  edit_record: boolean;
   /** Finish your own fight (decision 4). */
   finish_mine?: boolean;
   /** Confirm the results: the last player to finish, or a battle manager, in postbattle. */

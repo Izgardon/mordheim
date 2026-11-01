@@ -26,7 +26,7 @@ const kill = (id: number) => battleEvent(id, "unit_kill_recorded", OPPONENT.id);
 const opponentKills = (count: number) =>
   opponentParticipant({ unit_information_json: { "hero:2": { kill_count: count } } });
 
-const FLAGS = { start: false, cancel: false, close_postbattle: false, edit_record: false };
+const FLAGS = { start: false, cancel: false, close_postbattle: false };
 const broadcast = {
   by_user: {
     [String(ME.id)]: { ...FLAGS, finish_mine: true },

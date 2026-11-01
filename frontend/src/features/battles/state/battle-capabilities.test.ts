@@ -10,7 +10,6 @@ const CAN_END = {
   end: true,
   cancel: true,
   close_postbattle: false,
-  edit_record: false,
 };
 
 describe("battle capabilities", () => {
@@ -39,7 +38,6 @@ describe("battle capabilities", () => {
         end: false,
         cancel: false,
         close_postbattle: false,
-        edit_record: false,
       },
       stale: true,
     });

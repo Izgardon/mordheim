@@ -263,24 +263,6 @@ export type CampaignMessage = {
   removed_by?: PostRemovedBy | null;
 };
 
-/** One unit's stat line in the overview's expanded roster row (from `roster-stats/`). */
-export type RosterUnit = {
-  id: string;
-  category: "Heroes" | "Henchmen" | "Hired Swords";
-  name: string | null;
-  unit_type: string | null;
-  movement: number | null;
-  weapon_skill: number | null;
-  ballistic_skill: number | null;
-  strength: number | null;
-  toughness: number | null;
-  wounds: number | null;
-  initiative: number | null;
-  attacks: number | null;
-  leadership: number | null;
-  armour_save: number | null;
-};
-
 /** A setting (grading phase 1): the world or supplement content belongs to, holding its grade. */
 export type Setting = {
   id: number;

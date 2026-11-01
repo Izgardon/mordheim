@@ -27,7 +27,6 @@ export function readerCapabilities(
     start: false,
     cancel: false,
     close_postbattle: false,
-    edit_record: false,
   };
   if (!reader.managesBattles) {
     return mine ?? none;

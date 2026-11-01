@@ -316,7 +316,7 @@ export function closePostbattle(campaignId: number, battleId: number) {
   return battleWrite(campaignId, battleId, "close-postbattle/");
 }
 
-/** Skips your postbattle: nothing from the page is applied (`confirm/`). */
+/** Skips your postbattle: nothing from the page is applied (`skip-postbattle/`; `confirm/` is gone). */
 export function confirmBattlePostbattle(campaignId: number, battleId: number) {
-  return battleWrite(campaignId, battleId, "confirm/");
+  return battleWrite(campaignId, battleId, "skip-postbattle/");
 }

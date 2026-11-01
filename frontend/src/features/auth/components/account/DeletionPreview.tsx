@@ -64,9 +64,8 @@ export function DeletionPreview({ preview }: { preview: AccountDeletionPreview }
         <p className="m-0">{`${plural(preview.trades, "open trade")}: closed.`}</p>
       ) : null}
       <p className="m-0">
-        Everything else of yours stays, shown as Former player: your warbands, battles, ledger, chat
-        messages and bulletin notes. Your notifications are deleted, and your email can sign up
-        again.
+        Everything else of yours stays, shown as Former player: your warbands, battles, ledger and
+        chat messages. Your notifications are deleted, and your email can sign up again.
       </p>
     </div>
   );
