@@ -179,14 +179,6 @@ describe("FeedbackReportCard", () => {
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
 
-  it("speaks of your account alone without a campaign (the campaigns page, CAMP-NEW-08)", () => {
-    render(<FeedbackReportCard />);
-
-    expect(screen.getByRole("region", { name: "Feedback and bug report" })).toHaveTextContent(
-      "Send a report with your account so issues are easier to trace."
-    );
-  });
-
   it("shows api failures inline", async () => {
     sendFeedbackReport.mockRejectedValue(new Error("Too many requests"));
 

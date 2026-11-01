@@ -65,7 +65,6 @@ function WarbandDetails({ warband, canEdit, onSaved }: WarbandProps) {
   return (
     <SettingsCard
       title={warband.name}
-      description="Its name and the most units it keeps (going past it warns, never blocks)."
       action={
         canEdit && !editing ? (
           <Button variant="secondary" onClick={() => setEditing(true)}>
@@ -150,7 +149,6 @@ function WarbandSheetLink({ warband, canEdit, onSaved }: WarbandProps) {
   return (
     <SettingsCard
       title="Warband sheet"
-      description="A link to your roster or sheet anywhere on the web; the warband page's ⋯ menu opens it."
       action={
         canEdit && !editing ? (
           <Button variant="secondary" onClick={() => setEditing(true)}>
@@ -169,8 +167,7 @@ function WarbandSheetLink({ warband, canEdit, onSaved }: WarbandProps) {
             onChange={(event) => setUrl(event.target.value)}
           />
           <p className="m-0 text-xs text-muted-foreground">
-            A Google Drive link needs &ldquo;Anyone with the link can view&rdquo;. Google Docs links
-            don&apos;t read well on a phone.
+            A Google Drive link needs &ldquo;Anyone with the link can view&rdquo;.
           </p>
           <FormError message={error} />
           <div className="flex gap-2">
@@ -230,7 +227,7 @@ function DeleteWarband({ warband, onDeleted }: { warband: Warband; onDeleted: ()
     <SettingsCard
       title="Delete warband"
       tone="danger"
-      description={`${warband.name} and every unit in it go for good. You can raise a new warband afterwards.`}
+      description={`${warband.name} and every unit in it go for good.`}
       action={
         <Button variant="danger" onClick={() => setOpen(true)}>
           Delete warband
@@ -378,7 +375,7 @@ export default function WarbandSection({ campaign }: { campaign: CampaignSummary
       ) : (
         <SettingsCard
           title="Your warband"
-          description="You haven't raised a warband in this campaign yet."
+          description="You have no warband in this campaign."
           action={
             archived ? null : (
               <Button asChild>

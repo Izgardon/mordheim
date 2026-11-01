@@ -66,10 +66,7 @@ export default function WarbandTypeCard({ warband, canEdit, onSaved }: WarbandTy
   };
 
   return (
-    <SettingsCard
-      title="Warband type"
-      description="What your warband is. The store's What I can buy reads it, and what it counts as."
-    >
+    <SettingsCard title="Warband type">
       <div className="flex flex-col gap-1.5">
         <span className={CAPTION}>Type</span>
         {canEdit ? (
@@ -89,9 +86,6 @@ export default function WarbandTypeCard({ warband, canEdit, onSaved }: WarbandTy
       </div>
       <div className="flex flex-col gap-1.5 border-t border-line pt-4">
         <span className={CAPTION}>Counts as</span>
-        <p className="m-0 text-[13px] text-text2">
-          Extra types it buys and hires as: for a custom warband, or a house rule.
-        </p>
         <div className="flex flex-wrap gap-1.5">
           {countsAs.length ? (
             countsAs.map((type) => (

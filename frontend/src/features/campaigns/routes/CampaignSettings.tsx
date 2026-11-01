@@ -22,8 +22,6 @@ type SectionId = "campaign" | "players" | "battles" | "warband" | "archive" | "f
 type Section = {
   id: SectionId;
   label: string;
-  /** The phone's section list says what is inside. */
-  hint: string;
   shown: (capabilities: CampaignCapabilities, campaign: CampaignSummary) => boolean;
 };
 
@@ -32,37 +30,31 @@ const SECTIONS: Section[] = [
   {
     id: "campaign",
     label: "Campaign",
-    hint: "Name, pages, settings in play, gold, limits, level-ups",
     shown: (caps) => caps.edit_settings,
   },
   {
     id: "players",
     label: "Players",
-    hint: "Members, admins, permissions, hand over, remove",
     shown: (caps) => caps.view_members,
   },
   {
     id: "battles",
     label: "Battles",
-    hint: "Open and stuck battles, with the manager's tools",
     shown: (caps) => caps.manage_battles,
   },
   {
     id: "warband",
     label: "Your warband",
-    hint: "Its name, its sheet link, delete it, leave the campaign",
     shown: () => true,
   },
   {
     id: "archive",
     label: "Archive",
-    hint: "Archive the campaign, restore it or delete it for good",
     shown: (caps) => caps.archive || caps.restore || caps.delete,
   },
   {
     id: "feedback",
     label: "Feedback",
-    hint: "Report a bug or send an idea",
     shown: () => true,
   },
 ];
@@ -145,11 +137,10 @@ export default function CampaignSettings() {
                   <button
                     type="button"
                     onClick={() => open(section.id)}
-                    className="flex min-h-[60px] w-full items-center gap-3 px-4 py-2.5 text-left"
+                    className="flex min-h-12 w-full items-center gap-3 px-4 py-2.5 text-left"
                   >
-                    <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                      <span className="text-[15px] font-bold text-head">{section.label}</span>
-                      <span className="text-xs text-muted-foreground">{section.hint}</span>
+                    <span className="min-w-0 flex-1 text-[15px] font-bold text-head">
+                      {section.label}
                     </span>
                     <ChevronRight
                       className="h-4 w-4 shrink-0 text-muted-foreground"

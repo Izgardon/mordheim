@@ -168,7 +168,7 @@ export default function PlayersSection({ campaign }: { campaign: CampaignSummary
   return (
     <SettingsCard
       title="Players"
-      description={`${members.members.length || campaign.player_count} of ${campaign.max_players} places taken. Owners and admins hold every permission; a player holds only what is ticked.`}
+      description={`${members.members.length || campaign.player_count} of ${campaign.max_players} places taken.`}
     >
       <FormError message={members.error} />
       {members.isLoading ? (

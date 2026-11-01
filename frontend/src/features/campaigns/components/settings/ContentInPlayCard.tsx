@@ -33,14 +33,7 @@ export default function ContentInPlayCard({ campaign }: { campaign: CampaignSumm
   const preset = data ? presetOf(current, data.presets, settings) : null;
 
   return (
-    <SettingsCard
-      title="Content in play"
-      description={
-        preset
-          ? `Up to ${preset}. Warband types, skills and hired swords outside these settings stay listed, greyed out with a warning.`
-          : "Warband types, skills and hired swords outside these settings stay listed, greyed out with a warning."
-      }
-    >
+    <SettingsCard title="Content in play" description={preset ? `Up to ${preset}.` : undefined}>
       {isLoading || !data ? (
         <SettingsRowsLoading label="Loading the settings in play" rows={2} />
       ) : (
