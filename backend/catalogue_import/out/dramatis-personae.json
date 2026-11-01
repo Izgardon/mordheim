@@ -191,12 +191,12 @@
     "equipment": [],
     "dramatis_persona": {
       "hire_fee": {
-        "kind": "gold",
+        "kind": "special",
         "gold": 30,
         "dice": null,
         "dice_multiplier": null,
         "resources": [],
-        "note": ""
+        "note": "All warbands devoted to Chaos (such as the Cult of Possessed and Beastmen Raiders) may attempt to hire Aksho'akhash by having a spell-caster in the warband attempt a summoning ritual once after each game. The spell-caster must possess the Macabre Tome from the ‘Flurry of Furies’ scenario (see the previous page), pay the hiring fee*, and pass a Leadership test. If the ritual is successful, the Macabre Tome is destroyed and the Daemon is summoned."
       },
       "upkeep_fee": {
         "kind": "gold",

@@ -14,7 +14,7 @@ from typing import Any
 
 from catalogue_import.assignments import best_entry
 from catalogue_import.common import as_list, norm_name
-from catalogue_import.fees import ReadFee, read_fee
+from catalogue_import.fees import ReadFee, in_his_rules, read_fee
 from catalogue_import.groups import collapse
 from catalogue_import.skill_lists import SkillLists
 from catalogue_import.text import clean_inline
@@ -49,7 +49,12 @@ def who(
 
 
 def _hireling(
-    kind: str, entry: dict[str, Any], resolver: Resolver, groups: list[dict[str, Any]], log: HiringLog
+    kind: str,
+    entry: dict[str, Any],
+    resolver: Resolver,
+    groups: list[dict[str, Any]],
+    log: HiringLog,
+    in_rules: dict[str, str],
 ) -> dict[str, Any]:
     name = clean_inline(entry.get("name"))
     permitted = as_list(entry.get("permittedWarbands"))
@@ -58,13 +63,16 @@ def _hireling(
         log.unplaced.append((kind, name, left_out))
     if permitted and not access["warbands"]:
         log.nobody.append((kind, name))
+    note = clean_inline(entry.get("permissiontext")).strip('"“” ')
     hire, upkeep = read_fee(entry.get("cost"), upkeep=False), read_fee(entry.get("upkeep"), upkeep=True)
+    if name in in_rules:
+        hire = in_his_rules(hire, note)
     if not (hire.plain and upkeep.plain):
         log.fees.append((kind, name, entry.get("cost"), hire, entry.get("upkeep"), upkeep))
     return {
         "name": name,
         **access,
-        "note": clean_inline(entry.get("permissiontext")).strip('"“” '),
+        "note": note,
         "hire_fee": hire.fee,
         "upkeep_fee": upkeep.fee,
     }
@@ -115,13 +123,19 @@ def build_who_can(
     sources: Any, resolver: Resolver, groups: list[dict[str, Any]], log: HiringLog, lists: SkillLists
 ) -> dict[str, list[dict[str, Any]]]:
     """``out/who-can.json``: who may learn each of our skills (with William's list decisions: `lists`), and who may
-    hire each of mordheimer's hired swords and dramatis personae (with their fees)."""
+    hire each of mordheimer's hired swords and dramatis personae (with their fees; a fee overrides.json puts in his
+    rules is `special`, `in_his_rules`)."""
     theirs: dict[str, list[dict[str, Any]]] = {}
     for entry in sources.skills:
         theirs.setdefault(norm_name(str(entry.get("name") or "")), []).append(entry)
     skills = [_skill(row, theirs, resolver, groups, log, lists) for row in sources.our_skills if row.get("name")]
+    in_rules = (getattr(sources, "overrides", None) or {}).get("fees_in_rules", {})
     return {
         "skills": skills,
-        "hired_swords": [_hireling("hired swords", row, resolver, groups, log) for row in sources.hired_swords],
-        "dramatis_personae": [_hireling("dramatis personae", row, resolver, groups, log) for row in sources.personae],
+        "hired_swords": [
+            _hireling("hired swords", row, resolver, groups, log, in_rules) for row in sources.hired_swords
+        ],
+        "dramatis_personae": [
+            _hireling("dramatis personae", row, resolver, groups, log, in_rules) for row in sources.personae
+        ],
     }

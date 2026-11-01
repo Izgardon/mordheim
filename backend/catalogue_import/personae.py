@@ -13,7 +13,7 @@ import re
 from typing import Any
 
 from catalogue_import.common import unique
-from catalogue_import.fees import read_fee
+from catalogue_import.fees import in_his_rules, read_fee
 from catalogue_import.text import clean_inline
 
 STATS = {
@@ -142,8 +142,13 @@ def _unlinked(kit: list[str], skills: list[str]) -> str:
     return "\n".join(lines)
 
 
-def persona_row(entry: dict[str, Any], catalogue: Catalogue) -> dict[str, Any]:
-    """One of mordheimer's dramatis personae as a seed row."""
+def persona_row(entry: dict[str, Any], catalogue: Catalogue, in_rules: dict[str, str] | None = None) -> dict[str, Any]:
+    """One of mordheimer's dramatis personae as a seed row (a hire fee in `in_rules` in his rules: fees.in_his_rules)."""
+    name = clean_inline(entry.get("name"))
+    unique_to = clean_inline(entry.get("permissiontext")).strip('"“” ')
+    hire = read_fee(entry.get("cost"), upkeep=False)
+    if name in (in_rules or {}):
+        hire = in_his_rules(hire, unique_to)
     statblock = _first(entry, "statblock") or {}
     if isinstance(statblock, list):  # several profiles (a horde): the first, its leader
         statblock = next((profile for profile in statblock if isinstance(profile, dict)), {})
@@ -151,7 +156,7 @@ def persona_row(entry: dict[str, Any], catalogue: Catalogue) -> dict[str, Any]:
     kit, other_kit = catalogue.split(catalogue.items, [name for name in named(_first(entry, "equipment")) if name.isprintable() and any(char.isalpha() for char in name)])  # fmt: skip
     skills, other_skills = catalogue.split(catalogue.skills, listed_skills(_first(entry, "skills")))
     return {
-        "name": clean_inline(entry.get("name")),
+        "name": name,
         "description": "\n\n".join(part for part in (_description(entry), _unlinked(other_kit, other_skills)) if part),
         **{field: number(statblock.get(key)) for key, field in STATS.items()},
         "armour_save": None,
@@ -162,19 +167,21 @@ def persona_row(entry: dict[str, Any], catalogue: Catalogue) -> dict[str, Any]:
         "spells": [],
         "equipment": [{"item": item, "quantity": 1} for item in kit],
         "dramatis_persona": {
-            "hire_fee": read_fee(entry.get("cost"), upkeep=False).fee,
+            "hire_fee": hire.fee,
             "upkeep_fee": read_fee(entry.get("upkeep"), upkeep=True).fee,
             "rating": entry.get("rating") if isinstance(entry.get("rating"), int) else None,
             "grade": clean_inline(str(entry.get("grade") or "")),
             "race": clean_inline(str(entry.get("race") or "")).title(),
-            "unique_to": clean_inline(entry.get("permissiontext")).strip('"“” '),
+            "unique_to": unique_to,
             "stays": _stays(rules),
             "payment_note": "",
         },
     }
 
 
-def build_personae(personae: list[dict[str, Any]], catalogue: Catalogue) -> list[dict[str, Any]]:
+def build_personae(
+    personae: list[dict[str, Any]], catalogue: Catalogue, in_rules: dict[str, str] | None = None
+) -> list[dict[str, Any]]:
     """``out/dramatis-personae.json``: every one of mordheimer's dramatis personae, by name."""
-    rows = [persona_row(entry, catalogue) for entry in personae if clean_inline(entry.get("name"))]
+    rows = [persona_row(entry, catalogue, in_rules) for entry in personae if clean_inline(entry.get("name"))]
     return sorted(rows, key=lambda row: row["name"].lower())
