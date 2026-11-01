@@ -27,9 +27,9 @@ function campaignState({ archived_at, in_progress }: CampaignSummary) {
 
 /**
  * A campaign on the list (design E): your role and its state, its name (the card's real link,
- * stretched over the whole card), your warband in it, then the players, the join code with Copy
- * and the roster. Copy and Roster sit above the stretched link, so no button is nested in a link
- * (CAMP-UX-07).
+ * stretched over the whole card), your warband in it (or the way to raise one), then the players,
+ * the join code with Copy and the roster. Raise, Copy and Roster sit above the stretched link, so
+ * no control is nested in a link (CAMP-UX-07).
  */
 export default function CampaignCard(campaign: CampaignSummary) {
   const { id, name, player_count, max_players, role, join_code, archived_at, my_warband } =
@@ -87,7 +87,21 @@ export default function CampaignCard(campaign: CampaignSummary) {
               {my_warband.type_name ? ` · ${my_warband.type_name}` : null}
             </>
           ) : (
-            <span className="text-faint">No warband raised yet</span>
+            <>
+              <span className="text-faint">No warband raised yet</span>
+              {archived_at ? null : (
+                <>
+                  {" · "}
+                  {/* above the stretched link, as Copy and Roster are */}
+                  <Link
+                    to={`/campaigns/${id}/warband`}
+                    className="relative z-[2] font-bold text-accent-text underline-offset-2 hover:underline"
+                  >
+                    Raise your warband
+                  </Link>
+                </>
+              )}
+            </>
           )}
         </p>
       </div>

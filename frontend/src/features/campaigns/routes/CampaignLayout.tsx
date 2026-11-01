@@ -19,6 +19,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 import ArchivedBanner from "../components/layout/ArchivedBanner";
 import CampaignLoadError from "../components/layout/CampaignLoadError";
+import NoWarbandBanner from "../components/layout/NoWarbandBanner";
 import { useArchivedRefusals } from "../hooks/useArchivedRefusals";
 import { useBattleSession } from "../hooks/useBattleSession";
 import { isCampaignId, useCampaignQuery } from "../hooks/useCampaignQuery";
@@ -164,6 +165,7 @@ export default function CampaignLayout() {
       {...(isMobile ? mobileChrome : {})}
     >
       <ArchivedBanner campaign={campaign} />
+      <NoWarbandBanner campaign={campaign} pathname={pathname} />
       <Suspense fallback={<CampaignPageSkeleton pathname={pathname} />}>
         <Outlet context={outletContext} />
       </Suspense>
