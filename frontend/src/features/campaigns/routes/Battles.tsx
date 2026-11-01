@@ -1,6 +1,6 @@
 import { useOutletContext, useParams } from "react-router-dom";
 
-import { SkeletonPage } from "@/components/ui/skeleton";
+import { SkeletonCaptionRow, SkeletonPage } from "@/components/ui/skeleton";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useMediaQuery } from "@/lib/use-media-query";
 
@@ -39,22 +39,28 @@ export default function Battles() {
         campaignId={campaignId}
         managesBattles={campaignCapabilities(campaign).manage_battles}
       />
-      <div className="flex items-baseline justify-between gap-3 border-b border-line pb-2.5">
-        <h2 className="m-0 font-sans text-[11px] font-bold uppercase tracking-[0.14em] text-faint">
-          Every battle
-        </h2>
-        <span className="font-mono text-xs text-faint">
-          {battles.length} {battles.length === 1 ? "battle" : "battles"} fought
-        </span>
-      </div>
       {history.isPending ? (
-        <SkeletonPage label="Loading the battles">
+        // the caption is a skeleton too while the rows load: not "0 battles fought"
+        <SkeletonPage label="Loading the battles" className="flex flex-col gap-6 max-[960px]:gap-3">
+          <SkeletonCaptionRow />
           <BattleRowsBones isMobile={isMobile} />
         </SkeletonPage>
-      ) : history.error ? (
-        <p className="m-0 text-sm text-danger">{getErrorMessage(history.error)}</p>
       ) : (
-        <BattleRows battles={battles} campaignId={campaignId} isMobile={isMobile} />
+        <>
+          <div className="flex items-baseline justify-between gap-3 border-b border-line pb-2.5">
+            <h2 className="m-0 font-sans text-[11px] font-bold uppercase tracking-[0.14em] text-faint">
+              Every battle
+            </h2>
+            <span className="font-mono text-xs text-faint">
+              {battles.length} {battles.length === 1 ? "battle" : "battles"} fought
+            </span>
+          </div>
+          {history.error ? (
+            <p className="m-0 text-sm text-danger">{getErrorMessage(history.error)}</p>
+          ) : (
+            <BattleRows battles={battles} campaignId={campaignId} isMobile={isMobile} />
+          )}
+        </>
       )}
     </div>
   );
