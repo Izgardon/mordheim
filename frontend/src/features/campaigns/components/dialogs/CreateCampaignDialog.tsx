@@ -16,8 +16,8 @@ import type { CampaignCreatePayload } from "../../types/campaign-types";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 const PAGES = [
-  { key: "enable_encampments", label: "Encampments", hint: "Camps the players own." },
-  { key: "enable_locations", label: "Locations", hint: "Places heroes visit and roll on." },
+  { key: "enable_encampments", label: "Encampments" },
+  { key: "enable_locations", label: "Locations" },
 ] as const;
 type Pages = Record<(typeof PAGES)[number]["key"], boolean>;
 const NO_PAGES: Pages = { enable_encampments: false, enable_locations: false };
@@ -137,18 +137,14 @@ export default function CreateCampaignDialog({ onCreate, className }: CreateCamp
                   onClick={() =>
                     setPages((current) => ({ ...current, [page.key]: !current[page.key] }))
                   }
-                  className="flex min-h-[60px] flex-col items-start justify-center gap-0.5 px-3 py-2 text-left"
+                  className="min-h-11 px-3 text-sm font-bold"
                 >
-                  <span className="text-sm font-bold">{page.label}</span>
-                  <span className="text-xs font-medium text-text2">{page.hint}</span>
+                  {page.label}
                 </Chip>
               ))}
             </div>
-            <span className="text-xs text-muted-foreground">
-              Either can be switched on later in Settings.
-            </span>
           </div>
-          <Field label="Seats" htmlFor="campaign-size" hint="Players who can join, 2 to 16.">
+          <Field label="Seats" htmlFor="campaign-size" hint="2 to 16.">
             <NumberInput
               id="campaign-size"
               min={2}

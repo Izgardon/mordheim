@@ -205,12 +205,7 @@ export default function Overview() {
       ) : (
         <div className={OVERVIEW_BODY}>
           <div className={OVERVIEW_MAIN}>
-            <Section
-              title="Standings"
-              aside={<span className="text-[13px] text-faint">By warband rating</span>}
-            >
-              {standingsTable}
-            </Section>
+            <Section title="Standings">{standingsTable}</Section>
             <Section title="Battles" aside={allLink} className={OVERVIEW_DIVIDED}>
               {recent}
             </Section>

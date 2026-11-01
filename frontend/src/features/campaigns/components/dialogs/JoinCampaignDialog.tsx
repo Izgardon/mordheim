@@ -79,11 +79,7 @@ export default function JoinCampaignDialog({ onJoin, className }: JoinCampaignDi
         }
       >
         <form className="flex flex-col gap-4" onSubmit={(event) => void submit(event)}>
-          <Field
-            label="Rally code"
-            htmlFor="join-code"
-            hint="Six letters and numbers, from anyone already in the campaign."
-          >
+          <Field label="Rally code" htmlFor="join-code">
             <Input
               id="join-code"
               value={code}

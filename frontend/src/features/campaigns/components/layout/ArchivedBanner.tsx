@@ -20,8 +20,7 @@ export default function ArchivedBanner({ campaign }: { campaign: CampaignSummary
     >
       <Archive className="h-4 w-4 shrink-0 text-accent-text" aria-hidden="true" />
       <span className="min-w-0 grow basis-56">
-        This campaign is archived: read-only for everyone. Nothing in it can change until its owner
-        restores it.
+        This campaign is archived: read-only for everyone.
       </span>
       {campaignCapabilities(campaign).restore ? (
         <Link
