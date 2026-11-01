@@ -22,14 +22,17 @@ const candidateKey = (candidate: BountyCandidate) =>
  */
 export default function ClaimBountyDialog({
   bounty,
+  open,
   onClose,
   campaignId,
 }: {
+  /** The bounty claimed: kept while the dialog closes, so its words don't change as it goes. */
   bounty: Bounty | null;
+  open: boolean;
   onClose: () => void;
   campaignId: number;
 }) {
-  const found = useBountyCandidates(campaignId, bounty?.id ?? null);
+  const found = useBountyCandidates(campaignId, bounty?.id ?? null, open);
   const actions = useBountyActions(campaignId);
   const [picked, setPicked] = useState<string | null>(null);
   const [unit, setUnit] = useState("");
@@ -46,13 +49,18 @@ export default function ClaimBountyDialog({
   const battleValue = battle || (candidate ? String(candidate.battle.id) : "");
   const poster = bounty?.posted_by.user_name ?? "The poster";
 
-  const close = () => {
-    setPicked(null);
-    setUnit("");
-    setBattle("");
-    setError("");
-    onClose();
-  };
+  // A fresh form each time it opens (not as it closes, which would show while it animates out).
+  const [shown, setShown] = useState(open);
+  if (open !== shown) {
+    setShown(open);
+    if (open) {
+      setPicked(null);
+      setUnit("");
+      setBattle("");
+      setError("");
+    }
+  }
+  const close = onClose;
   const payload = (): ClaimBountyPayload | null => {
     if (fromKill?.kill_id) return { kill_id: fromKill.kill_id };
     const [kind, id] = unitValue.split(":");
@@ -80,7 +88,7 @@ export default function ClaimBountyDialog({
 
   return (
     <ModalSheet
-      open={bounty !== null}
+      open={open}
       onOpenChange={(next) => (next ? null : close())}
       kicker={bounty ? `${goldText(bounty.amount)} · posted by ${poster}` : "Bounty"}
       title={bounty ? `Claim the bounty on ${bounty.target.name}` : "Claim a bounty"}
@@ -144,12 +152,13 @@ export default function ClaimBountyDialog({
           </fieldset>
           {fromKill ? (
             <p className="m-0 text-sm text-text2">
-              {fromKill.unit?.name ?? "Your unit"} took him out in {fromKill.battle.scenario}.
+              {fromKill.unit?.name ?? "Your unit"} took {bounty?.target.name} out in{" "}
+              {fromKill.battle.scenario}.
             </p>
           ) : (
             <>
               <label className={FIELD_LABEL}>
-                Which of your units took him out
+                Which of your units took {bounty?.target.name} out
                 <select
                   className={NATIVE_SELECT}
                   value={unitValue}

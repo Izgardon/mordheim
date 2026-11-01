@@ -92,6 +92,7 @@ describe("the words", () => {
     expect(claimLine(claim())).toBe("Ada claims it for Kreech");
     const inBattle = claim({ battle: { id: 4, scenario: "Street Fight", date: "01/11/26" } });
     expect(claimLine(inBattle)).toBe("Ada claims it for Kreech · Street Fight");
+    expect(claimLine(inBattle, 3)).toBe("You claim it for Kreech · Street Fight");
   });
 });
 

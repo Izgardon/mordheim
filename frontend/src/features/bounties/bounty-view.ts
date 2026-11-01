@@ -43,10 +43,11 @@ export function goneText(bounty: Bounty) {
   return null;
 }
 
-/** "Ada claims it for Kreech · Street Fight": who claims it, for which unit, in which battle. */
-export function claimLine(claim: BountyClaim) {
+/** "Ada claims it for Kreech · Street Fight" ("You claim it ..." for the reader's own). */
+export function claimLine(claim: BountyClaim, readerId: number | null = null) {
   const where = claim.battle ? ` · ${claim.battle.scenario}` : "";
-  return `${claim.user_name} claims it for ${claim.unit_name}${where}`;
+  const who = claim.user_id === readerId ? "You claim" : `${claim.user_name} claims`;
+  return `${who} it for ${claim.unit_name}${where}`;
 }
 
 /** The live bounties on one hero, and their total. */

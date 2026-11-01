@@ -21,7 +21,9 @@ export function useHeroBounties(
   mine: boolean
 ) {
   const list = useCampaignBounties(campaignId).data;
+  // the hero stays the target while the dialog closes, so its title doesn't change as it goes
   const [target, setTarget] = useState<BountyTarget | null>(null);
+  const [open, setOpen] = useState(false);
   const canPost = Boolean(list?.my_warband) && !mine;
 
   const extraFor = (hero: HeroLike) => {
@@ -44,7 +46,10 @@ export function useHeroBounties(
             aria-label={`Post a bounty on ${name}`}
             title="Post a bounty"
             className="h-9 w-9"
-            onClick={() => setTarget({ heroId: hero.id, name, warbandName: warband.name })}
+            onClick={() => {
+              setTarget({ heroId: hero.id, name, warbandName: warband.name });
+              setOpen(true);
+            }}
           >
             <Crosshair aria-hidden="true" />
           </IconButton>
@@ -55,9 +60,9 @@ export function useHeroBounties(
 
   const dialog = (
     <PostBountyDialog
-      open={target !== null}
+      open={open}
       target={target}
-      onClose={() => setTarget(null)}
+      onClose={() => setOpen(false)}
       campaignId={campaignId}
     />
   );

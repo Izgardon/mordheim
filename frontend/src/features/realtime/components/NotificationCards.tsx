@@ -230,7 +230,7 @@ export function BountyClaimCard({
       <p className="text-xs text-muted-foreground">
         {notification.claimantWarbandName} claims your {notification.amount} gc bounty on{" "}
         {notification.targetName}
-        {notification.unitName ? `: ${notification.unitName} took them out` : ""}
+        {notification.unitName ? ` for ${notification.unitName}` : ""}
         {notification.battleScenario ? ` in ${notification.battleScenario}` : ""}.
       </p>
     </NotificationCard>

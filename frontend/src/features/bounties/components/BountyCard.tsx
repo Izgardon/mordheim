@@ -70,7 +70,7 @@ export default function BountyCard({ bounty, reader, actions, onClaim }: BountyC
       {roles.waiting.map((claim) => (
         <div key={claim.id} className="mt-1 flex flex-col gap-1.5 border-t border-line pt-2">
           <span className="text-[13px] text-ink">
-            {claimLine(claim)}
+            {claimLine(claim, reader.userId)}
             {claim === roles.myClaim ? `: waiting for ${bounty.posted_by.user_name}` : ""}
           </span>
           <div className="flex flex-wrap gap-1.5">

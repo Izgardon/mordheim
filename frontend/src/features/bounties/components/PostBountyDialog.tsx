@@ -50,14 +50,19 @@ export default function PostBountyDialog({
   const valid = Number.isInteger(gold) && gold > 0 && pickedHero !== null;
   const owed = owedWith(list, valid ? gold : 0);
 
-  const close = () => {
-    setWarbandId(null);
-    setHeroId(null);
-    setAmount("");
-    setNote("");
-    setError("");
-    onClose();
-  };
+  // A fresh form each time it opens (not as it closes, which would show while it animates out).
+  const [shown, setShown] = useState(open);
+  if (open !== shown) {
+    setShown(open);
+    if (open) {
+      setWarbandId(null);
+      setHeroId(null);
+      setAmount("");
+      setNote("");
+      setError("");
+    }
+  }
+  const close = onClose;
   const submit = async () => {
     if (!valid || pickedHero === null) return;
     setSending(true);
@@ -155,7 +160,7 @@ export default function PostBountyDialog({
             onChange={(event) => setNote(event.target.value)}
           />
         </label>
-        {owed?.short ? (
+        {valid && owed?.short ? (
           <p
             role="status"
             className="m-0 border border-danger-line bg-danger-bg p-2.5 text-xs text-danger"

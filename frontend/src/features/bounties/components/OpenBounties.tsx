@@ -48,6 +48,11 @@ export default function OpenBounties({
   const actions = useBountyActions(campaignId);
   const [posting, setPosting] = useState(false);
   const [claiming, setClaiming] = useState<Bounty | null>(null);
+  const [claimOpen, setClaimOpen] = useState(false);
+  const claim = (bounty: Bounty) => {
+    setClaiming(bounty);
+    setClaimOpen(true);
+  };
   const list = query.data;
   const reader = { userId: user?.id ?? null, warbandId: list?.my_warband?.id ?? null };
   const canPost = Boolean(list?.my_warband);
@@ -93,7 +98,7 @@ export default function OpenBounties({
               bounty={bounty}
               reader={reader}
               actions={actions}
-              onClaim={setClaiming}
+              onClaim={claim}
             />
           ))}
         </ul>
@@ -106,7 +111,8 @@ export default function OpenBounties({
       <PostBountyDialog open={posting} onClose={() => setPosting(false)} campaignId={campaignId} />
       <ClaimBountyDialog
         bounty={claiming}
-        onClose={() => setClaiming(null)}
+        open={claimOpen}
+        onClose={() => setClaimOpen(false)}
         campaignId={campaignId}
       />
     </section>

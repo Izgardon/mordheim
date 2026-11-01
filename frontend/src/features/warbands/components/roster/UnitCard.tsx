@@ -156,7 +156,7 @@ export default function UnitCard(props: UnitCardProps) {
         )}
       >
         <div className="flex items-start gap-2.5">
-          <div className="min-w-0 flex-1">{title}</div>
+          <div className="min-w-28 flex-1">{title}</div>
           <div className="flex flex-wrap items-center justify-end gap-1.5">
             {badges}
             {buttons}

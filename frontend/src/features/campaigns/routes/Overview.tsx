@@ -218,8 +218,9 @@ export default function Overview() {
             </Section>
           </div>
           <aside className={OVERVIEW_ASIDE}>
-            <Chronicle campaignId={campaignId} isMobile={false} />
+            {/* above the chronicle: under its 40 entries the panel was out of sight */}
             <OpenBounties campaignId={campaignId} isMobile={false} />
+            <Chronicle campaignId={campaignId} isMobile={false} />
           </aside>
         </div>
       )}

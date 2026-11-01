@@ -28,13 +28,13 @@ export function useBountyTargets(campaignId: number, enabled: boolean) {
   });
 }
 
-/** What you can put to a claim on the bounty, read each time Claim opens. */
-export function useBountyCandidates(campaignId: number, bountyId: number | null) {
+/** What you can put to a claim on the bounty, read each time Claim opens (kept while it closes). */
+export function useBountyCandidates(campaignId: number, bountyId: number | null, open: boolean) {
   return useQuery({
     queryKey: queryKeys.campaign.bountyCandidates(campaignId, bountyId ?? 0),
     queryFn: () => getBountyCandidates(campaignId, bountyId ?? 0),
     staleTime: 0,
-    enabled: bountyId !== null && campaignId > 0,
+    enabled: open && bountyId !== null && campaignId > 0,
   });
 }
 

@@ -104,9 +104,7 @@ describe("NotificationsMenu", () => {
     expect(screen.getByRole("button", { name: "Notifications" })).toHaveTextContent("1");
     fireEvent.click(screen.getByRole("button", { name: "Notifications" }));
     expect(
-      screen.getByText(
-        "Crows claims your 40 gc bounty on Grey Seer: Kreech took them out in Street Fight."
-      )
+      screen.getByText("Crows claims your 40 gc bounty on Grey Seer for Kreech in Street Fight.")
     ).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Accept and pay 40 gc" }));
     await waitFor(() => expect(onAccept).toHaveBeenCalledWith(claim));
