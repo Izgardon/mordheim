@@ -281,6 +281,9 @@ export type BattleSummary = {
   round_request?: BattleRoundRequest | null;
   /** Creatures nobody plays, in every snapshot (never rostered). */
   neutral_groups?: BattleNeutralGroup[];
+  /** The campaign battle number ("Battle 6"): the most games any of its warbands has played, this one
+   * included; fixed once the battle starts. */
+  number?: number | null;
 };
 
 /** The fields every participant view has; `?view=active` sends only these (IMP-54). */
@@ -482,6 +485,8 @@ export type BattleCapabilities = {
   /** Confirm the results: the last player to finish, or a battle manager, in postbattle. */
   confirm_results?: boolean;
   nudge?: boolean;
+  /** Start the next round anyway: the creator or a battle manager, still fighting (William). */
+  force_round?: boolean;
   /** The creator's End battle, before decision 4 (an older server). */
   end?: boolean;
 };

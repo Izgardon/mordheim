@@ -89,6 +89,8 @@ export type CampaignPlayer = {
   battle_busy_last_activity_at?: string | null;
   /** His own status in that battle(finished_battle is his post-game). */
   battle_busy_participant_status?: string | null;
+  /** That battle's number ("In battle 6"). */
+  battle_busy_battle_number?: number | null;
   warband?: {
     id: number;
     name: string;
@@ -138,6 +140,8 @@ export type CampaignBattleMoment = {
 
 export type CampaignBattleHistoryEntry = {
   id: number;
+  /** The campaign battle number ("Battle 6"); null for a battle before numbers. */
+  number?: number | null;
   scenario: string;
   winners: string[];
   date: string;

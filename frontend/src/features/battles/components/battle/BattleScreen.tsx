@@ -17,6 +17,7 @@ import { IconButton } from "@/components/ui/icon-button";
 import BattleNotesSheet from "@/features/battles/components/shared/BattleNotesSheet";
 import type { PrebattleUnit } from "@/features/battles/components/prebattle/prebattle-types";
 import type { BattleScreen as Screen } from "@/features/battles/hooks/useBattleScreen";
+import { battleNumberLabel } from "@/features/battles/utils/battle-number";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { BottomBar, BottomBarButton } from "@/layouts/mobile/BottomBar";
@@ -347,6 +348,7 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
   );
 
   const scenario = battleState.battle.scenario || `Battle #${battleId}`;
+  const numbered = battleNumberLabel(battleState.battle.number);
   const roundLine = (
     <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
       <span
@@ -356,7 +358,13 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
           battleState.battle.status === "active" ? "bg-good" : "bg-muted-foreground"
         )}
       />
-      Round {round} · {battleState.battle.status === "active" ? "live" : battleState.battle.status}
+      {[
+        isMobile ? numbered : "",
+        `Round ${round}`,
+        battleState.battle.status === "active" ? "live" : battleState.battle.status,
+      ]
+        .filter(Boolean)
+        .join(" · ")}
     </div>
   );
   const nextRoundButton = (
@@ -561,7 +569,7 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
       <header className="flex flex-wrap items-end justify-between gap-3 border-b border-line pb-3">
         <div className="flex min-w-0 flex-col gap-1">
           <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-accent-text">
-            {campaign?.name ?? "Battle"} · battle
+            {campaign?.name ?? "Battle"} · {numbered || "battle"}
           </span>
           <h1 className="m-0 font-display text-[28px] font-semibold text-head">{scenario}</h1>
           {roundLine}

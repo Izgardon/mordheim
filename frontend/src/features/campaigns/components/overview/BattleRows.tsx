@@ -158,6 +158,7 @@ export default function BattleRows({
                 )}
               >
                 <span className="font-mono text-[11px] uppercase tracking-[0.06em] text-muted-foreground">
+                  {battle.number ? `Battle ${battle.number} · ` : ""}
                   {battle.date}
                   {isMobile ? ` · ${battle.scenario}` : ""}
                 </span>

@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { ChipLabel } from "@/components/ui/chip";
 import UnfinishedBattleBanner from "@/features/battles/components/shared/UnfinishedBattleBanner";
 import type { PrebattlePage } from "@/features/battles/hooks/usePrebattlePage";
+import { battleNumberLabel } from "@/features/battles/utils/battle-number";
 import { participantProgress } from "@/features/battles/utils/participant-progress";
 
 const TONE = { waiting: "accent", done: "good", left: "danger" } as const;
@@ -21,6 +22,7 @@ export default function BattleInvitation({ page }: { page: PrebattlePage }) {
   const waitingOn = participants.filter((entry) => entry.status === "invited").length;
   const scenario = battleState.battle.scenario || `Battle #${battleId}`;
   const scenarioLink = battleState.battle.scenario_link;
+  const numbered = battleNumberLabel(battleState.battle.number);
 
   return (
     <div className="mx-auto flex w-full max-w-[640px] flex-col gap-4 py-4">
@@ -28,7 +30,9 @@ export default function BattleInvitation({ page }: { page: PrebattlePage }) {
       <Card as="section" aria-labelledby="invite-title" className="flex flex-col gap-4 p-5">
         <div className="flex flex-col gap-1">
           <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-accent-text">
-            {flags.isBattleCreator ? "Your battle" : "Invitation"}
+            {[flags.isBattleCreator ? "Your battle" : "Invitation", numbered]
+              .filter(Boolean)
+              .join(" · ")}
           </span>
           <h1 id="invite-title" className="m-0 font-display text-[26px] font-semibold text-head">
             {scenario}

@@ -4,6 +4,7 @@ import { ChipLabel } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
 import CustomUnitFields from "@/features/battles/components/shared/CustomUnitFields";
 import type { PrebattlePage } from "@/features/battles/hooks/usePrebattlePage";
+import { numberedOr } from "@/features/battles/utils/battle-number";
 import { participantProgress } from "@/features/battles/utils/participant-progress";
 import { cn } from "@/lib/utils";
 
@@ -137,7 +138,7 @@ export default function PrebattleBody({ page, isMobile, onOpenNotes }: Prebattle
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1">
           <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-accent-text">
-            Before the battle
+            {numberedOr(battleState.battle.number, "Before battle", "Before the battle")}
           </span>
           <h1 className="m-0 font-display text-[26px] font-semibold text-head">
             {battleState.battle.scenario || `Battle #${battleState.battle.id}`}
