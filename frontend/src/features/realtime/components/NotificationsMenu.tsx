@@ -8,6 +8,7 @@ import {
   BattleInviteCard,
   BattleNudgeCard,
   BattleResultRequestCard,
+  BountyClaimCard,
   TradeRequestCard,
 } from "./NotificationCards";
 
@@ -16,6 +17,7 @@ import type {
   BattleNudgeNotification,
   BattleResultRequestNotification,
 } from "@/features/battles/types/battle-types";
+import type { BountyClaimNotification } from "@/features/bounties/types";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 
 type NotificationAction = Promise<void> | void;
@@ -41,6 +43,10 @@ type NotificationsMenuProps = {
   battleNudgeNotifications?: BattleNudgeNotification[];
   onGoToNudge?: (notification: BattleNudgeNotification) => NotificationAction;
   onDismissNudge?: (notification: BattleNudgeNotification) => NotificationAction;
+  /** Claims on your bounties: accept (the gold moves) or decline. */
+  bountyClaimNotifications?: BountyClaimNotification[];
+  onAcceptBountyClaim?: (notification: BountyClaimNotification) => NotificationAction;
+  onDeclineBountyClaim?: (notification: BountyClaimNotification) => NotificationAction;
   onClear?: () => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -61,6 +67,9 @@ export default function NotificationsMenu({
   battleNudgeNotifications = [],
   onGoToNudge,
   onDismissNudge,
+  bountyClaimNotifications = [],
+  onAcceptBountyClaim,
+  onDeclineBountyClaim,
   onClear,
   open,
   onOpenChange,
@@ -70,7 +79,8 @@ export default function NotificationsMenu({
     tradeRequestNotifications.length +
     battleInviteNotifications.length +
     battleResultRequestNotifications.length +
-    battleNudgeNotifications.length;
+    battleNudgeNotifications.length +
+    bountyClaimNotifications.length;
 
   const sortedTradeNotifications = useMemo(
     () => byNewest(tradeRequestNotifications),
@@ -128,7 +138,7 @@ export default function NotificationsMenu({
         onOpenChange={handleOpenChange}
         kicker="Campaign"
         title="Notifications"
-        description="Battle invites, battle results waiting for your answer, and trade requests."
+        description="Battle invites, battle results and bounty claims waiting for your answer, and trade requests."
         actions={
           onClear ? (
             <button
@@ -182,6 +192,19 @@ export default function NotificationsMenu({
                   void runAction(notification.id, () => onDeclineBattleInvite(notification))
                 }
                 onNavigate={() => onOpenChange(false)}
+              />
+            ))}
+            {byNewest(bountyClaimNotifications).map((notification) => (
+              <BountyClaimCard
+                key={notification.id}
+                notification={notification}
+                state={cardState(notification.id)}
+                onAccept={() =>
+                  void runAction(notification.id, () => onAcceptBountyClaim?.(notification))
+                }
+                onDecline={() =>
+                  void runAction(notification.id, () => onDeclineBountyClaim?.(notification))
+                }
               />
             ))}
             {sortedTradeNotifications.map((notification) => (

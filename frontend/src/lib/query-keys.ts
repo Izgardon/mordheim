@@ -42,6 +42,13 @@ export const queryKeys = {
     battleHistory: (campaignId: number) => ["campaign", campaignId, "battle-history"] as const,
     chronicle: (campaignId: number, kind: string) =>
       ["campaign", campaignId, "chronicle", kind] as const,
+    /** The open bounties, with your warband's gold (`bounty.changed` writes each one in). */
+    bounties: (campaignId: number) => ["campaign", campaignId, "bounties"] as const,
+    /** Every other warband's heroes, for Post a bounty (read when the dialog opens). */
+    bountyTargets: (campaignId: number) => ["campaign", campaignId, "bounties", "targets"] as const,
+    /** What you can put to a claim on one bounty (read when Claim opens). */
+    bountyCandidates: (campaignId: number, bountyId: number) =>
+      ["campaign", campaignId, "bounties", bountyId, "candidates"] as const,
     /** Members with emails, roles and grants (Settings, for owners and admins). */
     members: (campaignId: number) => ["campaign", campaignId, "members"] as const,
     /** Open battles a battle manager can act on (Settings → Active Battles, manage_battles). */

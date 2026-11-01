@@ -6,6 +6,7 @@ import type {
   BattleNudgeNotification,
   BattleResultRequestNotification,
 } from "@/features/battles/types/battle-types";
+import type { BountyClaimNotification } from "@/features/bounties/types";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 import { IconButton } from "@/components/ui/icon-button";
 import { cn } from "@/lib/utils";
@@ -208,6 +209,30 @@ export function TradeRequestCard({
       ) : isExpired ? (
         <p className="text-xs text-danger">Request expired.</p>
       ) : null}
+    </NotificationCard>
+  );
+}
+
+/** A claim on your bounty: the tick accepts it and pays, the X declines it. */
+export function BountyClaimCard({
+  notification,
+  state,
+  onAccept,
+  onDecline,
+}: CardProps<BountyClaimNotification>) {
+  return (
+    <NotificationCard
+      title={`Bounty claim from ${notification.claimantUserName}`}
+      {...state}
+      decline={{ label: "Decline bounty claim", onClick: onDecline }}
+      accept={{ label: `Accept and pay ${notification.amount} gc`, onClick: onAccept }}
+    >
+      <p className="text-xs text-muted-foreground">
+        {notification.claimantWarbandName} claims your {notification.amount} gc bounty on{" "}
+        {notification.targetName}
+        {notification.unitName ? `: ${notification.unitName} took them out` : ""}
+        {notification.battleScenario ? ` in ${notification.battleScenario}` : ""}.
+      </p>
     </NotificationCard>
   );
 }

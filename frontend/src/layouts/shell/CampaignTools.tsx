@@ -99,6 +99,9 @@ export default function CampaignTools({
         battleNudgeNotifications={notifications.battleNudgeNotifications}
         onGoToNudge={notifications.goToBattleNudge}
         onDismissNudge={notifications.dismissBattleNudge}
+        bountyClaimNotifications={notifications.bountyClaimNotifications}
+        onAcceptBountyClaim={notifications.acceptBountyClaimNotification}
+        onDeclineBountyClaim={notifications.declineBountyClaimNotification}
         onClear={notifications.clearNotifications}
         open={open === "bell"}
         onOpenChange={change("bell")}

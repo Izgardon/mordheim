@@ -145,7 +145,17 @@ export type CampaignBattleHistoryEntry = {
   moments?: CampaignBattleMoment[];
 };
 
-export type CampaignChronicleKind = "kill" | "death" | "level" | "buy" | "trade";
+export type CampaignChronicleKind =
+  | "kill"
+  | "death"
+  | "level"
+  | "buy"
+  | "trade"
+  | "bounty_posted"
+  | "bounty_claimed";
+
+/** A chronicle filter: one kind, or a bounty's two ("bounty": posted and claimed). */
+export type CampaignChronicleFilter = "kill" | "death" | "level" | "buy" | "trade" | "bounty";
 
 /** One chronicle entry (GET chronicle/): what happened, where, and when. */
 export type CampaignChronicleEntry = {

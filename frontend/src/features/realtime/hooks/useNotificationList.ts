@@ -1,6 +1,10 @@
 import { useCallback } from "react";
 
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import {
+  toBountyClaimNotification,
+  type BountyClaimPayload,
+} from "@/features/bounties/notifications";
 import type {
   BattleInviteNotification,
   BattleResultRequestNotification,
@@ -28,6 +32,8 @@ export function useApplyNotificationList() {
     clearBattleResultRequestNotifications,
     addBattleNudgeNotification,
     clearBattleNudgeNotifications,
+    addBountyClaimNotification,
+    clearBountyClaimNotifications,
     setCurrentBattleSession,
   } = useAppStore();
 
@@ -38,8 +44,14 @@ export function useApplyNotificationList() {
         clearBattleInviteNotifications();
         clearBattleResultRequestNotifications();
         clearBattleNudgeNotifications();
+        clearBountyClaimNotifications();
       }
       for (const n of notifications) {
+        if (n.notification_type === "bounty_claim") {
+          const claim = toBountyClaimNotification(n.payload as BountyClaimPayload, n.id);
+          if (claim) addBountyClaimNotification(claim);
+          continue;
+        }
         if (n.notification_type === "battle_nudge") {
           // A nudge waiting since you were away (BATL-NEW-08).
           const nudge = toBattleNudgeNotification(n.payload as BattleNotificationPayload, n.id);
@@ -66,6 +78,8 @@ export function useApplyNotificationList() {
     [
       addBattleInviteNotification,
       addBattleNudgeNotification,
+      addBountyClaimNotification,
+      clearBountyClaimNotifications,
       addBattleResultRequestNotification,
       addTradeRequestNotification,
       clearBattleInviteNotifications,
