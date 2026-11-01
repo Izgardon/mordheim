@@ -31,12 +31,7 @@ export default function ShopFields({ form }: { form: BestiaryEntryFormState }) {
           idPrefix="bestiary-shop"
           label="Shop prices"
         />
-      ) : (
-        <p className="text-xs text-muted-foreground">
-          Not sold. Its item still exists, so kits, trades and owned ones keep working
-          {shop.rows.length > 0 ? "; its prices are kept for when it is sold again." : "."}
-        </p>
-      )}
+      ) : null}
     </div>
   );
 }

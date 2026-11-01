@@ -140,7 +140,7 @@ export default function Spells() {
               ]
         }
         isEmpty={!spells.isLoading && rows.length === 0}
-        empty="No spells match. Try another word or lore."
+        empty="No spells match."
       >
         {spells.isLoading ? <ReferenceRowBones /> : null}
         {shown.rows.map((spell) => {

@@ -97,9 +97,7 @@ export default function OpenBounties({
           ))}
         </ul>
       ) : (
-        <p className="m-0 text-sm text-text2">
-          No open bounties. Post one here, or from an enemy hero's card.
-        </p>
+        <p className="m-0 text-sm text-text2">No open bounties.</p>
       )}
       {heading ? null : post}
       <PostBountyDialog open={posting} onClose={() => setPosting(false)} campaignId={campaignId} />

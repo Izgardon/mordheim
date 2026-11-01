@@ -191,18 +191,14 @@ export default function SearchEverything() {
         )}
       </label>
       {!searching ? (
-        <p className="m-0 text-sm text-text2">
-          Type two letters or more. It looks through wargear, skills, spells, the bestiary, hired
-          swords and dramatis personae, the rules (inside the text, not just the titles), the house
-          rules, and this campaign&apos;s warbands, units{withLocations ? " and locations" : ""}.
-        </p>
+        <p className="m-0 text-sm text-text2">Type two letters or more.</p>
       ) : (
         <p role="status" className="m-0 text-[13px] text-text2">
           {total
             ? `${total} ${total === 1 ? "result" : "results"} for “${query.trim()}”`
             : loading
               ? "Searching…"
-              : `Nothing found for “${query.trim()}”. Try another word.`}
+              : `Nothing found for “${query.trim()}”.`}
           {total && server.isFetching ? " · searching the warbands…" : ""}
         </p>
       )}

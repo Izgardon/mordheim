@@ -167,7 +167,7 @@ export default function Skills() {
         nameLabel="Skill"
         columns={isMobile ? undefined : [{ label: "List", className: "w-[220px] shrink-0" }]}
         isEmpty={!skills.isLoading && rows.length === 0}
-        empty="No skills match. Try another word or list."
+        empty="No skills match."
       >
         {skills.isLoading ? <ReferenceRowBones /> : null}
         {shown.rows.map((skill) => {

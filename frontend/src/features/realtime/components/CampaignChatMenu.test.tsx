@@ -76,7 +76,7 @@ describe("CampaignChatMenu", () => {
     openChat();
 
     expect(await screen.findByRole("alert")).toHaveTextContent("Can't reach the server");
-    expect(screen.queryByText("No messages yet. Say something!")).not.toBeInTheDocument();
+    expect(screen.queryByText("No messages yet.")).not.toBeInTheDocument();
 
     vi.mocked(listCampaignMessages).mockResolvedValueOnce([message(1, "Ready when you are")]);
     fireEvent.click(screen.getByRole("button", { name: "Retry" }));
@@ -92,7 +92,7 @@ describe("CampaignChatMenu", () => {
       })
     );
     openChat();
-    await screen.findByText("No messages yet. Say something!");
+    await screen.findByText("No messages yet.");
 
     sendDraft("Charge the left flank");
 
@@ -106,7 +106,7 @@ describe("CampaignChatMenu", () => {
     vi.mocked(listCampaignMessages).mockResolvedValue([]);
     vi.mocked(sendCampaignMessage).mockResolvedValueOnce(message(5, "Hold the bridge"));
     openChat();
-    await screen.findByText("No messages yet. Say something!");
+    await screen.findByText("No messages yet.");
 
     sendDraft("Hold the bridge");
 

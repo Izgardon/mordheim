@@ -130,9 +130,7 @@ export default function StoreBasket({
         <span className="text-xs text-muted-foreground">{count(basket.lines.length)}</span>
       </div>
       {empty ? (
-        <p className="m-0 text-[13px] text-muted-foreground">
-          Nothing yet: Get an item and pick who it is for.
-        </p>
+        <p className="m-0 text-[13px] text-muted-foreground">Nothing yet.</p>
       ) : (
         <Lines basket={basket} isMobile={false} />
       )}

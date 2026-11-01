@@ -167,11 +167,7 @@ export default function PostBountyDialog({
             {goldText(owed.gold)}. You can post it anyway: the gold moves only when a claim is
             accepted.
           </p>
-        ) : (
-          <p className="m-0 text-xs text-muted-foreground">
-            Nothing is held now. The gold moves when you accept a claim.
-          </p>
-        )}
+        ) : null}
         {error ? (
           <p role="alert" className="m-0 text-xs text-danger">
             {error}

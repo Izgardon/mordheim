@@ -189,9 +189,6 @@ export default function ClaimBountyDialog({
               </label>
             </>
           )}
-          <p className="m-0 text-xs text-muted-foreground">
-            {poster} decides: the gold moves when the claim is accepted.
-          </p>
           {error ? (
             <p role="alert" className="m-0 text-xs text-danger">
               {error}

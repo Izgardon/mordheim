@@ -137,7 +137,7 @@ export default function Wargear() {
         empty={
           warband && onlyMine
             ? `No items match. Try another word, or turn off What ${warband.name} can buy.`
-            : "No items match. Try another word."
+            : "No items match."
         }
       >
         {loading ? <ReferenceRowBones /> : null}

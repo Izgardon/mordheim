@@ -63,7 +63,6 @@ describe("Post a bounty", () => {
     await waitFor(() =>
       expect(queryClient.getQueryData(queryKeys.campaign.bounties(7))).toBeTruthy()
     );
-    expect(screen.getByText(/Nothing is held now/)).toBeInTheDocument();
     expect(screen.queryByText(/Your open bounties would come to/)).not.toBeInTheDocument();
     await user.type(screen.getByLabelText("Reward (gc)"), "25");
     expect(screen.getByRole("status")).toHaveTextContent(

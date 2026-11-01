@@ -69,7 +69,7 @@ export default function CampaignChatMenu({ campaignId, open, onOpenChange, trigg
             <ErrorState message={loadError} onRetry={chat.retryLoad} />
           ) : null}
           {!isLoading && !loadError && messages.length === 0 ? (
-            <EmptyState>No messages yet. Say something!</EmptyState>
+            <EmptyState>No messages yet.</EmptyState>
           ) : null}
           {messages.map((message) => (
             <ChatMessageItem

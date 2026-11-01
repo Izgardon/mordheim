@@ -145,9 +145,6 @@ export default function AcquireForm(props: AcquireFormProps) {
           Free
         </label>
       </div>
-      {needsRoll ? (
-        <p className="m-0 text-xs text-text2">Roll the dice for its price, or type the price.</p>
-      ) : null}
       {free ? (
         <Input
           aria-label="Why it is free"

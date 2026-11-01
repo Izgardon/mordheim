@@ -32,8 +32,7 @@ export default function BeastProfileFields({ form }: { form: BestiaryEntryFormSt
         </div>
       ) : (
         <p className="text-xs text-muted-foreground">
-          No profile: its stats are cleared when you save, and the pages say &ldquo;No
-          profile&rdquo;. Tick it again to give it one, starting from empty stats.
+          No profile: its stats are cleared when you save.
         </p>
       )}
 

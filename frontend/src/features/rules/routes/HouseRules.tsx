@@ -89,11 +89,7 @@ export default function HouseRules() {
       ) : null}
       <ReferenceList
         isEmpty={!page.isLoading && rows.length === 0}
-        empty={
-          page.rules.length
-            ? "No house rules match. Try another word."
-            : "No house rules yet: this campaign plays by the book."
-        }
+        empty={page.rules.length ? "No house rules match." : "No house rules yet."}
       >
         {page.isLoading ? <ReferenceRowBones /> : null}
         {rows.map((rule) => {

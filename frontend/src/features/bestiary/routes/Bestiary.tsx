@@ -222,7 +222,7 @@ export default function Bestiary() {
               ]
         }
         isEmpty={!beasts.isLoading && rows.length === 0}
-        empty="No beasts match. Try another word or kind."
+        empty="No beasts match."
       >
         {beasts.isLoading ? <ReferenceRowBones /> : null}
         {shown.rows.map((entry) => {

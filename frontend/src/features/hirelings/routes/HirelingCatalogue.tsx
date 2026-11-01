@@ -150,11 +150,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
         nameLabel={config.labels.singular}
         columns={isMobile ? undefined : HIRELING_COLUMNS}
         isEmpty={!entries.isLoading && rows.length === 0}
-        empty={
-          sorted.length
-            ? `${config.labels.noMatches}.`
-            : `${config.labels.emptyTitle}. ${config.labels.emptyBody}`
-        }
+        empty={sorted.length ? `${config.labels.noMatches}.` : `${config.labels.emptyTitle}.`}
       >
         {entries.isLoading ? <ReferenceRowBones /> : null}
         {shown.rows.map((entry) => {
