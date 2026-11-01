@@ -8,7 +8,7 @@ from ..models.kill import HOWS
 from ..services.broadcast import ALL
 from ..services.combat import record_item_use, record_kill, set_out_of_action
 from ..services.dismount import set_dismounted
-from ..services.errors import BattleError, battle_status_changed
+from ..services.errors import BattleError, Refused, battle_status_changed
 from ..services.item_use import check_payload_size
 from ..services.neutrals import (
     add_creature,
@@ -27,6 +27,7 @@ from .rules import only, only_player
 INGAME_EVENT_TYPES = {BattleEvent.TYPE_ITEM_USED}  # kills go through unit-kill/ (the legacy types are gone)
 NOT_ACTIVE = "Battle is not active"
 NOT_IN_BATTLE = "You are not currently in battle"
+FORCE_NOT_ALLOWED = "Only the battle's creator or a battle manager can start the next round anyway."
 KILL_HOWS = HOWS  # how the kill sheet says it was done (melee, shooting, magic or other), optional
 
 
@@ -166,7 +167,9 @@ class CampaignBattleUnitKillView(BattleWriteView):
 
 class CampaignBattleRoundView(BattleWriteView):
     """POST round/ {action}: ask for the next round, agree to it, start it anyway (force) or take the request back
-    (withdraw), services/rounds.py. A new round stands every fighter's units up a step, so it changes them all."""
+    (withdraw), services/rounds.py. A new round stands every fighter's units up a step, so it changes them all.
+    Starting it anyway is the creator's or a battle manager's (William; the `force_round` capability): the other
+    players ask and agree."""
 
     rules = CampaignBattleUnitOoaView.rules
 
@@ -177,6 +180,8 @@ class CampaignBattleRoundView(BattleWriteView):
         return action
 
     def act(self, scope: Scope):
+        if self.input == "force" and not (scope.is_creator or scope.manages_battles):
+            raise Refused(FORCE_NOT_ALLOWED, code="force_round_not_allowed", status=403)
         events, started = change_round(scope.battle, self.input, scope.user)
         if not events:
             return Unchanged()

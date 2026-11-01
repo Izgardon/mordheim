@@ -10,7 +10,9 @@ Each flag is the server's own rule for that action, in the battle's current phas
 - `close_postbattle`: the creator or a battle manager (`manage_battles`), in postbattle;
 - `edit_record`: a battle manager, once the battle has ended (BATL-NEW-04);
 - `nudge`: a participant still in an open battle (BATL-NEW-08), towards any other who still has something to do
-  in it (his status isn't confirmed_postbattle, declined or cancelled).
+  in it (his status isn't confirmed_postbattle, declined or cancelled);
+- `force_round`: start the next round without waiting for everyone (Start anyway): the creator or a battle manager
+  (owners and admins too) still fighting, in an active battle (William); the others ask and agree.
 
 A reported result has only `edit_record`, once it has ended. Computing the flags costs no query: the membership
 and the manage_battles grant come with the battle (services/access.py) and the participants with the snapshot. The
@@ -68,14 +70,18 @@ def capabilities_from(known: Facts, user_id: int | None, manager: bool) -> dict[
     applied = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE in known.statuses.values()
     confirmer = user_id is not None and known.results_confirmer_user_id == user_id
     before_postbattle = (Battle.STATUS_INVITING, Battle.STATUS_PREBATTLE, Battle.STATUS_ACTIVE)
+    fighting = mine == BattleParticipant.STATUS_IN_BATTLE
+    active = normal and status == Battle.STATUS_ACTIVE
     return {
         "start": still_in and normal and status == Battle.STATUS_PREBATTLE and everyone_ready,
-        "finish_mine": normal and mine == BattleParticipant.STATUS_IN_BATTLE and status == Battle.STATUS_ACTIVE,
+        "finish_mine": active and fighting,
         "confirm_results": normal and (confirmer or manager) and status == Battle.STATUS_POSTBATTLE,
         "cancel": creator and normal and status in before_postbattle and not applied,
         "close_postbattle": (creator or manager) and status == Battle.STATUS_POSTBATTLE,
         "edit_record": manager and status == Battle.STATUS_ENDED,
         "nudge": still_in and normal and status in BUSY_BATTLE_STATUSES,
+        # a manager's flags for a broadcast know no player: the page also needs him fighting (`canAct`)
+        "force_round": active and (creator or manager) and (fighting or user_id is None),
     }
 
 

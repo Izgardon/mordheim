@@ -19,6 +19,7 @@ NONE = {
     "close_postbattle": False,
     "edit_record": False,
     "nudge": False,
+    "force_round": False,
 }
 OPEN = {**NONE, "nudge": True}  # any player still in an open battle can nudge (BATL-NEW-08)
 
@@ -48,8 +49,9 @@ class BattleCapabilityTests(BattleTestCase):
         self.ok(self.post_as(self.viewer, self.url(battle_id, "start")))
 
         # decision 4: each player finishes his own battle; nobody has an End
-        self.assertEqual(self.capabilities(self.player, battle_id), {**OPEN, "finish_mine": True, "cancel": True})
-        self.assertEqual(self.capabilities(self.viewer, battle_id), {**OPEN, "finish_mine": True})
+        fighting = {**OPEN, "finish_mine": True}
+        self.assertEqual(self.capabilities(self.player, battle_id), {**fighting, "cancel": True, "force_round": True})
+        self.assertEqual(self.capabilities(self.viewer, battle_id), fighting)  # Start anyway is the creator's
         self.assertEqual(self.post_as(self.player, self.url(battle_id, "finish"), {"winners": []}).status_code, 403)
         self.ok(self.finish_mine(self.viewer, battle_id, "lost"))
         self.assertEqual(self.capabilities(self.viewer, battle_id), OPEN)
