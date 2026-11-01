@@ -88,6 +88,30 @@ Update tests that assert removed text. List every cut in the report, grouped by 
   - The store, the hire picker and the level-up pickers stay as they are (William is asked separately).
 - **Tests:** a small frontend test for the Mordheim grouping and the scope filter. Its own commit.
 
+## 6. Managing locations from the Locations view (William, added during the work)
+
+> "locations doesnt need to be in settings, should be able to add new ones from the page itself"
+
+- Remove the Locations section from campaign settings: the section, its nav entry and any links that land there. Delete the components left unused.
+- The Locations view manages them (the warband page's Locations drawer on the web, the sheet on a phone, and wherever the rail's Locations link opens):
+  - "Add location" opens a form in the view's style: name, area (suggestions from the areas in use), the flags, the D6 results and whatever else the settings form had.
+  - Each location gets Edit and Remove. Remove is today's soft delete, with a confirm.
+  - The button, Edit and Remove are gated on `manage_locations`, as the settings section was. Players without it see the list only.
+  - Reuse the settings form's logic and API hooks; move them, don't duplicate them.
+- No fluff text in the new form. Its own commit; checked in the browser with a player who has the capability and one who doesn't.
+
+## 7. Input placeholders (William, added during the work)
+
+> "lets change the input place holders to be generally more simple, and then for campaign or warband names just explain the input rather than having name ideas like ashen crows"
+
+- Every input and textarea placeholder short and plain:
+  - name fields describe the input, no example names: "Campaign name", "Warband name", "Unit name", "Location name";
+  - sign-in: "Email" and "Password";
+  - search boxes: "Search items", "Search skills" and so on;
+  - number fields: none, or just the unit;
+  - none where a visible label already says the same.
+- Update the tests that assert placeholders; list every change (old → new, by page) with the fluff cuts. Its own commit.
+
 ## Rules
 
 - Gate: typecheck, lint, format, build, vitest, and the backend gate if the backend changes (it shouldn't).
