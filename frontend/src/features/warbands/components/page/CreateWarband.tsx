@@ -48,10 +48,6 @@ export default function CreateWarband({
         <h1 className="m-0 font-display text-[40px] font-semibold leading-tight text-head max-[960px]:text-[30px]">
           Raise a warband
         </h1>
-        <p className="m-0 max-w-[560px] text-sm text-text2">
-          You have no warband in this campaign yet. Name it and say what it is; you hire its heroes
-          and henchmen on the warband page once it stands.
-        </p>
       </header>
       <Card className="p-5 max-[960px]:p-4">
         <form
@@ -86,11 +82,7 @@ export default function CreateWarband({
               className="h-11 text-base md:h-11"
             />
           </Field>
-          <Field
-            label="Warband type"
-            htmlFor="new-warband-type"
-            hint="Types outside this campaign's settings are greyed out; you can still pick one."
-          >
+          <Field label="Warband type" htmlFor="new-warband-type">
             <WarbandTypePicker
               id="new-warband-type"
               campaignId={campaignId}
@@ -106,8 +98,8 @@ export default function CreateWarband({
             htmlFor="new-warband-link"
             hint={
               warbandType?.link_url && link === warbandType.link_url
-                ? `Filled from ${warbandType.name}. Replace it with your own if you like.`
-                : "Its warband list or your own sheet (optional)."
+                ? `Filled from ${warbandType.name}.`
+                : undefined
             }
           >
             <Input

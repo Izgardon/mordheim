@@ -159,7 +159,7 @@ export default function WarbandTypePicker(props: WarbandTypePickerProps) {
           </button>
         ) : null}
         {!isLoading && empty ? (
-          <p className="m-0 px-3 py-3 text-sm text-text2">Type a name to find a warband type.</p>
+          <p className="m-0 px-3 py-3 text-sm text-text2">No warband type matches.</p>
         ) : null}
       </div>
       {value ? (
