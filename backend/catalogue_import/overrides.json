@@ -8,10 +8,44 @@
   ],
   "group_members": {
     "add": {
-      "mercenaries": ["ostlanders", "miragleans", "remasens", "tileans", "trantios"],
-      "sigmarite": ["protectorate-of-sigmar"]
+      "humans": ["pit-fighters"],
+      "mercenaries": [
+        "ostlanders",
+        "miragleans",
+        "remasens",
+        "tileans",
+        "trantios",
+        "imperial-outriders",
+        "lustrian-reavers"
+      ],
+      "sigmarite": ["protectorate-of-sigmar"],
+      "good": ["imperial-outriders"],
+      "evil": ["beastmen-raiders"]
     },
-    "remove": {}
+    "remove": {},
+    "keep_in": {
+      "humans": [
+        "court-of-profane-pleasures",
+        "cursed-cavalcade",
+        "order-of-the-mare",
+        "outlaws-of-stirwood-forest-redux",
+        "protectorate-of-sigmar",
+        "sorcerous-society",
+        "vampire-hunters-of-sylvania"
+      ],
+      "elves": ["druchii", "wood-elves-of-athel-loren"],
+      "dwarfs": ["dwarf-slayer-cult"],
+      "skaven": ["underworld-alliance", "skaven-of-clan-moulder"],
+      "goblins": ["underworld-alliance"],
+      "orcs-and-goblins": ["snotlings"]
+    },
+    "keep_out": {
+      "humans": ["undead", "mootlanders", "black-dwarfs"],
+      "skaven": ["nipponese-expedition"],
+      "goblins": ["snotlings"],
+      "orcs-and-goblins": ["sons-of-hashut"],
+      "evil": ["hochland-bandits", "horned-hunters", "lizardmen-tc11", "pirates"]
+    }
   },
   "setting_grades": {},
   "keep_hidden_items": [],

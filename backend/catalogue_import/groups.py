@@ -56,8 +56,7 @@ GROUP_DEFS = [
         "race",
         {"Skaven", "Skaven/Goblin"},
         hire_pattern=r"only (be hired by )?skaven warbands",
-        item_phrase="skaven",
-        questions=["The Underworld Alliance (Skaven and Goblins) is in both Skaven and Goblins. Keep?"],
+        item_phrase="skaven",  # the Underworld Alliance is in Skaven and Goblins (overrides.json keep_in, 1 Nov 2026)
     ),
     GroupDef(
         "goblins",
@@ -75,8 +74,8 @@ GROUP_DEFS = [
         "Orcs & Goblins",
         "race",
         {"Orcs & Goblins", "Goblin", "Night Goblin", "Skaven/Goblin", "Snotling"},
+        # Snotlings are greenskins, in Orcs & Goblins but not Goblins (overrides.json keep_in, keep_out, 1 Nov 2026)
         hire_pattern=r"greenskin warband",
-        questions=["Snotlings are greenskins, so they are in Orcs & Goblins but not Goblins. Right?"],
     ),
     GroupDef("ogres", "Ogres", "race", {"Ogre", "Ogre/Gnoblar"}),
     GroupDef("lizardmen", "Lizardmen", "race", {"Lizardmen"}, hire_pattern=r"lizardmen warbands only"),
