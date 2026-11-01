@@ -422,6 +422,7 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
         participants={participants}
         neutralGroups={neutralGroups}
         userId={userId}
+        canForce={screen.canForceRound}
         onOpenChange={(open) => {
           if (open) return;
           if (roundMode === "incoming") setDismissed(requestId);
