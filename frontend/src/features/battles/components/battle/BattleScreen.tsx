@@ -194,7 +194,6 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
       ? [
           {
             label: "End my battle",
-            detail: "I won, I lost or decide when it ends",
             onSelect: () => screen.finishing.setIsOpen(true),
           },
         ]
@@ -203,12 +202,10 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
       ? [
           {
             label: "Edit stats",
-            detail: "Temporary changes for this battle",
             onSelect: () => setPanel("edit"),
           },
           {
             label: "Add a unit",
-            detail: "To your warband or a neutral group",
             onSelect: () => {
               setAddGroupKey(undefined);
               setPanel("add");
@@ -216,7 +213,6 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
           },
           {
             label: "Add a neutral group",
-            detail: "Monsters or bystanders nobody plays",
             onSelect: () => setPanel("neutral"),
           },
         ]
@@ -225,26 +221,18 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
       ? [
           {
             label: "Battle notes",
-            detail: "Scenario, objectives, house rules",
             onSelect: () => setPanel("notes"),
           },
         ]
       : []),
-    { label: "Chat", detail: "The campaign chat", onSelect: () => openTool("chat") },
-    {
-      label: "Notifications",
-      detail: "Invites, nudges and the rest",
-      onSelect: () => openTool("bell"),
-    },
+    { label: "Chat", onSelect: () => openTool("chat") },
+    { label: "Notifications", onSelect: () => openTool("bell") },
     ...(screen.canNudge
       ? fightingOthers.map((entry) => {
           const wait = screen.nudging.waitFor(entry.user.id);
           return {
             label: `Nudge ${entry.user.label}`,
-            detail:
-              wait > 0
-                ? `Again in ${Math.ceil(wait / 60000)} min`
-                : "A reminder that the battle waits for him",
+            detail: wait > 0 ? `Again in ${Math.ceil(wait / 60000)} min` : undefined,
             disabled: wait > 0 || screen.nudging.sendingTo === entry.user.id,
             onSelect: () => void screen.nudging.nudge(entry.user.id, entry.user.label),
           };
@@ -254,7 +242,6 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
       ? [
           {
             label: "End the fight for everyone",
-            detail: "Battle manager: for a stuck fight",
             onSelect: () => setPanel("end"),
           },
         ]

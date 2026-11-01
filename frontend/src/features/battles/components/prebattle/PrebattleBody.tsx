@@ -143,11 +143,9 @@ export default function PrebattleBody({ page, isMobile, onOpenNotes }: Prebattle
           <h1 className="m-0 font-display text-[26px] font-semibold text-head">
             {battleState.battle.scenario || `Battle #${battleState.battle.id}`}
           </h1>
-          <p className="m-0 text-sm text-text2">
-            {flags.currentUserReady
-              ? "You're ready. Waiting for the others."
-              : "Pick who you bring, then say you're ready."}
-          </p>
+          {flags.currentUserReady ? (
+            <p className="m-0 text-sm text-text2">You&apos;re ready. Waiting for the others.</p>
+          ) : null}
         </div>
         {isMobile ? null : (
           <div className="flex gap-2">

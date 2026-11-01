@@ -35,10 +35,7 @@ export default function FindsCard({
 
   return (
     <article className="flex flex-col gap-3 border border-border bg-surface p-[18px]">
-      <div className="flex items-baseline justify-between gap-2.5">
-        <h2 className="m-0 font-display text-[19px] font-semibold text-head">Finds</h2>
-        <span className="text-xs text-muted-foreground">Gold and items picked up in the fight</span>
-      </div>
+      <h2 className="m-0 font-display text-[19px] font-semibold text-head">Finds</h2>
       <div className={cn("flex gap-3", isMobile ? "flex-col" : "items-start")}>
         <label className="flex flex-col gap-1 text-xs font-bold text-muted-foreground">
           Gold crowns

@@ -115,8 +115,7 @@ export default function RoundSheet({
     >
       {mode === "asked" && !canForce ? (
         <p className="m-0 text-sm text-text2">
-          The round starts once everyone agrees. The battle&rsquo;s creator or a battle manager can
-          start it anyway.
+          The battle&rsquo;s creator or a battle manager can start it anyway.
         </p>
       ) : null}
       {mode === "incoming" ? (
