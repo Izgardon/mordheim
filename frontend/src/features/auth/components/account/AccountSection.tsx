@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 // components
 import { Card } from "@components/card";
+import { SectionTitle } from "@components/section-title";
 import { cn } from "@/lib/utils";
 
 type AccountSectionProps = {
@@ -24,14 +25,9 @@ export function AccountSection({ title, description, tone, children }: AccountSe
       )}
     >
       <div className="flex flex-col gap-1">
-        <h2
-          className={cn(
-            "m-0 font-display text-xl font-semibold leading-tight",
-            tone === "danger" ? "text-danger" : "text-head"
-          )}
-        >
+        <SectionTitle className={tone === "danger" ? "text-danger" : undefined}>
           {title}
-        </h2>
+        </SectionTitle>
         <p className="m-0 text-sm text-text2">{description}</p>
       </div>
       {children}

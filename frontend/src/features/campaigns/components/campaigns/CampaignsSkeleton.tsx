@@ -1,4 +1,4 @@
-import { Bone, SkeletonCaptionRow, SkeletonHeader, SkeletonPage } from "@/components/ui/skeleton";
+import { Bone, SkeletonHeader, SkeletonHeading, SkeletonPage } from "@/components/ui/skeleton";
 
 /** The campaign cards' grid: as many 380 px cards per row as fit, one on a phone. */
 export const CAMPAIGN_GRID =
@@ -42,14 +42,14 @@ export function CampaignCardsSkeleton({ count = 3 }: { count?: number }) {
 
 /**
  * The campaigns page while its code loads (design E): the header with Join and Create, the
- * "Your campaigns" caption over its hairline, and the cards.
+ * "Your campaigns" title with its count, and the cards.
  */
 export default function CampaignsSkeleton() {
   return (
     <>
       <SkeletonHeader buttons={2} title="w-[min(260px,70%)]" />
       <div className="flex flex-col gap-4">
-        <SkeletonCaptionRow />
+        <SkeletonHeading />
         <CampaignCardsSkeleton />
       </div>
     </>

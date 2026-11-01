@@ -1,6 +1,7 @@
 import { useOutletContext, useParams } from "react-router-dom";
 
-import { SkeletonCaptionRow, SkeletonPage } from "@/components/ui/skeleton";
+import { SectionHead } from "@/components/ui/section-title";
+import { SkeletonHeading, SkeletonPage } from "@/components/ui/skeleton";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useMediaQuery } from "@/lib/use-media-query";
 
@@ -40,21 +41,21 @@ export default function Battles() {
         managesBattles={campaignCapabilities(campaign).manage_battles}
       />
       {history.isPending ? (
-        // the caption is a skeleton too while the rows load: not "0 battles fought"
+        // the title's count is a skeleton too while the rows load: not "0 battles fought"
         <SkeletonPage label="Loading the battles" className="flex flex-col gap-6 max-[960px]:gap-3">
-          <SkeletonCaptionRow />
+          <SkeletonHeading />
           <BattleRowsBones isMobile={isMobile} />
         </SkeletonPage>
       ) : (
         <>
-          <div className="flex items-baseline justify-between gap-3 border-b border-line pb-2.5">
-            <h2 className="m-0 font-sans text-[11px] font-bold uppercase tracking-[0.14em] text-faint">
-              Every battle
-            </h2>
-            <span className="font-mono text-xs text-faint">
-              {battles.length} {battles.length === 1 ? "battle" : "battles"} fought
-            </span>
-          </div>
+          <SectionHead
+            title="Every battle"
+            aside={
+              <span className="text-[13px] text-faint">
+                {battles.length} {battles.length === 1 ? "battle" : "battles"} fought
+              </span>
+            }
+          />
           {history.error ? (
             <p className="m-0 text-sm text-danger">{getErrorMessage(history.error)}</p>
           ) : (

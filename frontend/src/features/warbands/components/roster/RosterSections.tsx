@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Plus } from "lucide-react";
 
+import { SectionTitle } from "@/components/ui/section-title";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import type { Item } from "@/features/items/types/item-types";
 import { cn } from "@/lib/utils";
@@ -59,7 +60,7 @@ function Section({
     <section aria-label={title} className={cn("flex flex-col gap-3", divided && ROSTER_DIVIDED)}>
       <div className="flex items-baseline justify-between gap-3">
         <div className="flex items-baseline gap-2.5">
-          <h2 className="font-display text-[22px] font-semibold text-head">{title}</h2>
+          <SectionTitle>{title}</SectionTitle>
           <span className="text-[13px] text-faint">{meta}</span>
         </div>
         {add ? (
