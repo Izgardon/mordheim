@@ -75,6 +75,10 @@ cd backend
 uv sync --all-extras  # install all deps including dev tools
 ```
 
+### Demo campaign
+
+`docker compose exec backend python manage.py seed_demo_campaign` (re)builds the played demo campaign "The Shattered Crown" (DEBUG and a local database only): sign in as `captain@mordheim.test`, password `password`.
+
 ### Linting & Formatting
 
 Uses **ruff** (config in `pyproject.toml`). Line length: 120.
