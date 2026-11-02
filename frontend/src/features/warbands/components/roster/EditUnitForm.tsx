@@ -42,6 +42,7 @@ export default function EditUnitForm({
     <EditUnitFields
       entry={entry}
       campaignId={campaignId}
+      warbandId={warbandId}
       form={form}
       canCreateRace={canCreateRace}
       onAddItem={onAddItem}

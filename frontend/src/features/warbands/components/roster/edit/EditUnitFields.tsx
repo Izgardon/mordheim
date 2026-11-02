@@ -2,13 +2,21 @@ import { ChipLabel } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
 import { STAT_KEYS } from "@/components/ui/stat-strip";
 import { Switch } from "@/components/ui/switch";
-import { largeWarning } from "@/features/skills/skill-learning";
+import { useSettingsById } from "@/features/campaigns/api/settings-queries";
+import {
+  skillOptions,
+  specialOption,
+  spellOption,
+  warnedLast,
+} from "@/features/catalogue/search-options";
+import { useWhoCan } from "@/features/items/api/who-can-queries";
 import { useCatalogue } from "@/lib/catalogue-queries";
 
 import type { HeroCaster } from "../../../types/warband-types";
+import { buildAvailableSkillsPayload } from "../../../utils/warband-utils";
 import { isGroup, type RosterUnit } from "../unit-view";
 import EditGroupModels from "./EditGroupModels";
-import EditListPicker from "./EditListPicker";
+import EditPickList from "./EditPickList";
 import RaceField from "./RaceField";
 import SkillAccessField from "./SkillAccessField";
 import { STAT_FIELDS, type UnitEditDraft } from "./useUnitEditDraft";
@@ -19,12 +27,14 @@ const SECTION_LABEL = "text-[11px] font-bold uppercase tracking-[0.12em] text-fa
 export default function EditUnitFields({
   entry,
   campaignId,
+  warbandId,
   form,
   canCreateRace,
   onAddItem,
 }: {
   entry: RosterUnit;
   campaignId: number;
+  warbandId: number;
   form: UnitEditDraft;
   canCreateRace: boolean;
   /** Add item: opens the unit's loadout. */
@@ -35,6 +45,18 @@ export default function EditUnitFields({
   const skills = useCatalogue("skills", campaignId).data ?? [];
   const specials = useCatalogue("specials", campaignId).data ?? [];
   const spells = useCatalogue("spells", campaignId).data ?? [];
+  const settings = useSettingsById();
+  const warbandSkills = useWhoCan(campaignId, warbandId).specialSkillIds;
+  const access = draft.available_skills as Record<string, boolean> | undefined;
+  const skillRows = skillOptions(skills, {
+    settings,
+    large: Boolean(draft.large),
+    access: access ? buildAvailableSkillsPayload(access) : [],
+    specials: warbandSkills,
+  });
+  const spellRows = warnedLast(spells.map((spell) => spellOption(spell, settings)));
+  const specialRows = warnedLast(specials.map((special) => specialOption(special, settings)));
+  const heading = (label: string) => <span className={SECTION_LABEL}>{label}</span>;
 
   // the picks an advance left for later on a list (heroes and hired swords), one fewer with ×
   const picks = (key: string) =>
@@ -123,31 +145,29 @@ export default function EditUnitFields({
           </button>
         </div>
       </div>
-      <EditListPicker
-        label="Skills"
+      <EditPickList
+        title={heading("Skills")}
+        noun="skill"
         entries={lists.skills}
-        options={skills}
+        options={skillRows}
         onChange={(next) => setLists((c) => ({ ...c, skills: next }))}
         {...picks("pending_skills")}
-        describe={(entry) => {
-          const skill = skills.find((option) => option.id === entry.id);
-          const warning = skill ? largeWarning(skill, Boolean(draft.large)) : "";
-          return { warning, note: skill?.learn_note ?? "" };
-        }}
       />
       {kind !== "henchmen_group" ? (
-        <EditListPicker
-          label="Spells"
+        <EditPickList
+          title={heading("Spells")}
+          noun="spell"
           entries={lists.spells}
-          options={spells}
+          options={spellRows}
           onChange={(next) => setLists((c) => ({ ...c, spells: next }))}
           {...picks("pending_spells")}
         />
       ) : null}
-      <EditListPicker
-        label="Specials"
+      <EditPickList
+        title={heading("Specials")}
+        noun="special"
         entries={lists.specials}
-        options={specials}
+        options={specialRows}
         onChange={(next) => setLists((c) => ({ ...c, specials: next }))}
         {...picks("pending_specials")}
       />

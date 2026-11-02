@@ -3,6 +3,9 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SearchSelect } from "@/components/ui/search-select";
+import { useSettingsById } from "@/features/campaigns/api/settings-queries";
+import { raceOption, warnedLast } from "@/features/catalogue/search-options";
 import { createRace } from "@/features/races/api/races-api";
 import type { Race, RaceCreatePayload } from "@/features/races/types/race-types";
 import { useCatalogue, useCatalogueCache } from "@/lib/catalogue-queries";
@@ -20,13 +23,11 @@ const MAXIMUMS = [
   ["Ld", "leadership"],
 ] as const;
 const HUMAN = [4, 6, 6, 4, 4, 3, 6, 4, 9];
-const CUSTOM = "custom";
-
-const selectClass = "h-9 w-full border border-strong bg-page px-2 text-sm text-ink";
 
 /**
- * The unit's race (its profile maximums), from the campaign's races, or a custom race made here:
- * a name and its maximums, added to the campaign's races (needs `edit_catalogue`).
+ * The unit's race (its profile maximums) on the searchable select, its maximums as the subtitle,
+ * or a custom race made here from what was typed: a name and its maximums, added to the
+ * campaign's races (needs `edit_catalogue`).
  */
 export default function RaceField({
   campaignId,
@@ -40,6 +41,9 @@ export default function RaceField({
   onChange: (raceId: number | null) => void;
 }) {
   const races = useCatalogue("races", campaignId).data ?? [];
+  const settings = useSettingsById();
+  const options = warnedLast(races.map((race) => raceOption(race, settings)));
+  const current = races.find((race) => race.id === value);
   const cache = useCatalogueCache();
   const [custom, setCustom] = useState<{ name: string; max: number[] } | null>(null);
   const [saving, setSaving] = useState(false);
@@ -66,27 +70,27 @@ export default function RaceField({
 
   return (
     <div className="flex flex-col gap-1 text-xs font-bold text-muted-foreground">
-      <label className="flex flex-col gap-1">
-        Race
-        <select
-          className={selectClass}
-          value={custom ? CUSTOM : String(value ?? "")}
-          onChange={(event) => {
-            const next = event.target.value;
-            if (next === CUSTOM) return setCustom({ name: "", max: [...HUMAN] });
-            setCustom(null);
-            onChange(next ? Number(next) : null);
-          }}
-        >
-          <option value="">No race</option>
-          {races.map((race) => (
-            <option key={race.id} value={race.id}>
-              {race.name}
-            </option>
-          ))}
-          {canCreate ? <option value={CUSTOM}>Custom race…</option> : null}
-        </select>
-      </label>
+      <span>Race</span>
+      <SearchSelect
+        label="Race"
+        placeholder="Search races"
+        emptyText="No race matches."
+        options={options}
+        value={current ? raceOption(current, settings) : null}
+        clearLabel="No race"
+        onChange={(option) => {
+          setCustom(null);
+          onChange(option ? Number(option.id) : null);
+        }}
+        create={
+          canCreate
+            ? {
+                label: (typed) => `Add “${typed}” as a custom race`,
+                onCreate: (typed) => setCustom({ name: typed, max: [...HUMAN] }),
+              }
+            : undefined
+        }
+      />
       {custom ? (
         <div className="flex flex-col gap-2 border border-line bg-raised p-2.5">
           <Input

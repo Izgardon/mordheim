@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { X } from "lucide-react";
 
-import { Input } from "@/components/ui/input";
+import { SearchCombobox } from "@/components/ui/search-select";
 import { Switch } from "@/components/ui/switch";
 import { useWarbandGroups } from "@/features/items/api/who-can-queries";
 import { useWarbandTypes } from "@/features/warbands/api/warband-types-queries";
@@ -24,15 +24,12 @@ type WhoCanFieldProps = {
   id: string;
 };
 
-const MATCHES = 8;
-
 /**
  * A who-can list (the items rebuild): for everyone, or warband types and groups, each may or may
  * not. Lines are found by name among the campaign's types (the book's and its own) and the
  * groups; a line added while the list is for everyone is an exclusion ("Everyone except Skaven").
  */
 export default function WhoCanField({ campaignId, value, onChange, label, id }: WhoCanFieldProps) {
-  const [query, setQuery] = useState("");
   const types = useWarbandTypes(campaignId).data;
   const groups = useWarbandGroups().data;
   const options = useMemo(
@@ -51,12 +48,9 @@ export default function WhoCanField({ campaignId, value, onChange, label, id }: 
     ],
     [groups, types]
   );
-  const needle = query.trim().toLowerCase();
   const taken = (option: Pick<AccessDraft, "kind" | "id">) =>
     value.lines.some((line) => line.kind === option.kind && line.id === option.id);
-  const matches = needle
-    ? options.filter((option) => option.name.toLowerCase().includes(needle) && !taken(option))
-    : [];
+  const key = (option: { kind: string; id: number }) => `${option.kind}-${option.id}`;
 
   return (
     <div className="flex flex-col gap-2">
@@ -100,36 +94,23 @@ export default function WhoCanField({ campaignId, value, onChange, label, id }: 
           ))}
         </ul>
       ) : null}
-      <Input
+      <SearchCombobox
         id={id}
-        inputSize="sm"
-        type="search"
-        aria-label={`${label}: add a warband type or group`}
+        label={`${label}: add a warband type or group`}
         placeholder={value.forEveryone ? "Shut out a warband or group…" : "Add a warband or group…"}
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
+        emptyText="No warband type or group matches."
+        options={options
+          .filter((option) => !taken(option))
+          .map((option) => ({
+            id: key(option),
+            title: option.name,
+            subtitle: option.kind === "group" ? "Group" : option.hint,
+          }))}
+        onPick={(picked) => {
+          const option = options.find((entry) => key(entry) === picked.id);
+          if (option) onChange(addLine(value, option));
+        }}
       />
-      {matches.length ? (
-        <ul className="m-0 flex max-h-48 list-none flex-col overflow-y-auto border border-line p-0">
-          {matches.slice(0, MATCHES).map((option) => (
-            <li key={`${option.kind}-${option.id}`}>
-              <button
-                type="button"
-                onClick={() => {
-                  onChange(addLine(value, option));
-                  setQuery("");
-                }}
-                className="flex w-full items-baseline justify-between gap-3 px-2 py-1.5 text-left text-[13px] hover:bg-raised"
-              >
-                <span className="font-semibold text-ink">{option.name}</span>
-                <span className="text-xs text-muted-foreground">
-                  {option.kind === "group" ? "Group" : "hint" in option ? option.hint : ""}
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : null}
     </div>
   );
 }
