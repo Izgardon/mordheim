@@ -120,6 +120,8 @@ export const routes: RouteObject[] = [
                   },
                   { path: "encampments", element: <Encampments /> },
                   { path: "settings", element: <CampaignSettings /> },
+                  // Account inside the campaign's shell, so the rail or bottom nav stays.
+                  { path: "account", element: <Account inCampaign /> },
                 ],
               },
             ],

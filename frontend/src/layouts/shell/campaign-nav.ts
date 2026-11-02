@@ -51,6 +51,7 @@ const SECTION_TITLES: Record<string, string> = {
   encampments: "Encampment",
   locations: "Locations",
   settings: "Settings",
+  account: "Account",
   battles: "Battle",
   search: "Search everything",
   ...Object.fromEntries(REFERENCE_LINKS.map((link) => [link.path, link.label])),
@@ -86,7 +87,7 @@ export function mobileNavActiveId(pathname: string): MobileNavId {
   if (isAftermathPath(pathname)) return "warband";
   // A battle and the Battles page (where Battle leads with none to rejoin).
   if (current === "battles") return "battle";
-  if (current === "settings") return "me";
+  if (current === "settings" || current === "account") return "me";
   if (["warband", "warbands", "encampments", "locations"].includes(current)) return "warband";
   if (current === SEARCH_LINK.path) return "reference";
   if (REFERENCE_LINKS.some((link) => link.path === current)) return "reference";

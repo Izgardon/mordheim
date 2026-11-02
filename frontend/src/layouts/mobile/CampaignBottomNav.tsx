@@ -119,7 +119,7 @@ export default function CampaignBottomNav({
         ) : null}
         <SheetRows label="You">
           <SheetLinkRow to={`${base}/settings`} label="Settings" onNavigate={close} />
-          <SheetLinkRow to="/account" label="Account" onNavigate={close} />
+          <SheetLinkRow to={`${base}/account`} label="Account" onNavigate={close} />
         </SheetRows>
       </BottomSheet>
     </>
