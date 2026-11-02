@@ -11,6 +11,7 @@ import {
 } from "@/features/catalogue/search-options";
 import { useWhoCan } from "@/features/items/api/who-can-queries";
 import { itemKind } from "@/features/items/item-kind";
+import { inPlayOnly } from "@/features/reference/in-play";
 import { useCatalogue } from "@/lib/catalogue-queries";
 
 import type { HeroCaster } from "../../../types/warband-types";
@@ -50,12 +51,15 @@ export default function EditLists({
   const settings = useSettingsById();
   const warbandSkills = useWhoCan(campaignId, warbandId).specialSkillIds;
   const access = draft.available_skills as Record<string, boolean> | undefined;
-  const skillRows = skillOptions(skills, {
+  const skillContext = {
     settings,
     large: Boolean(draft.large),
     access: access ? buildAvailableSkillsPayload(access) : [],
     specials: warbandSkills,
-  });
+  };
+  // only the campaign's skills are offered; one he has from outside it still shows as his
+  const skillRows = skillOptions(inPlayOnly(skills), skillContext);
+  const heldSkills = skillOptions(skills, skillContext);
   const spellRows = warnedLast(spells.map((spell) => spellOption(spell, settings)));
   const specialRows = (injuries: boolean) =>
     warnedLast(
@@ -121,6 +125,7 @@ export default function EditLists({
         noun="skill"
         entries={lists.skills}
         options={skillRows}
+        known={heldSkills}
         onChange={(next) => setLists((c) => ({ ...c, skills: next }))}
         {...picks("pending_skills")}
       />

@@ -6,6 +6,7 @@ import { SearchCombobox, type SearchOption } from "@/components/ui/search-select
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { skillOptions } from "@/features/catalogue/search-options";
 import { useWhoCan } from "@/features/items/api/who-can-queries";
+import { inPlayOnly } from "@/features/reference/in-play";
 import { skillList } from "@/features/skills/skill-list";
 import type { Skill } from "@/features/skills/types/skill-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
@@ -26,7 +27,8 @@ const clip = (text: string, length = 140) =>
 /**
  * A new skill, guided (William): his skill lists as chips (the warband's own special skills
  * first), that list's skills as rows with their rules, and "Show all" for the rest, greyed with
- * the "not in his lists" warning and still pickable. The pick shows its full rules.
+ * the "not in his lists" warning and still pickable. Only the campaign's skills show (William: "i
+ * also shouldnt see skills that arent part of my campaign"). The pick shows its full rules.
  */
 export default function SkillPicker({
   campaignId,
@@ -44,7 +46,7 @@ export default function SkillPicker({
   value: Skill | null;
   onChange: (skill: Skill | null) => void;
 }) {
-  const skills = useCatalogue("skills", campaignId).data ?? [];
+  const skills = inPlayOnly(useCatalogue("skills", campaignId).data ?? []);
   const settings = useSettingsById();
   const own = useWhoCan(campaignId, warbandId).specialSkillIds;
   const lists = buildAvailableSkillsPayload(parseAvailableSkills(access));

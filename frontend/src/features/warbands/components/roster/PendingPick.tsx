@@ -27,7 +27,8 @@ const spellPick = (choice: SpellChoice): AdvancePick =>
  * A pick an advance left for later ("Skill to choose"), made from the card with the advance's
  * guided pickers: a skill from his lists (the rest behind "Show all", with a warning), a spell
  * rolled on one of his lores (one he knows gets 1 easier) or picked by hand, a boon or bane from
- * the search. The server makes the pick (`pick/`).
+ * the search. The line above Confirm says only what this pick gives. The server makes the pick
+ * (`pick/`).
  */
 export default function PendingPick({
   campaignId,
@@ -96,7 +97,7 @@ export default function PendingPick({
       )}
       {list === "specials" ? null : (
         <div className="flex flex-wrap items-center gap-2">
-          {spell ? (
+          {list === "spells" && spell ? (
             <span className="text-sm font-semibold text-head">
               {spell.known
                 ? `${spell.spell.name} gets easier: Difficulty ${spell.difficulty}`
