@@ -124,7 +124,8 @@ export function xpInfo(entry: RosterUnit, campaign: CampaignSummary | null) {
 export const itemBoxKind = (item: Item): BoxTileKind =>
   item.beast_kind === "mount" ? "mount" : "item";
 
-const isInjury = (special: { type?: string | null }) => /injur/i.test(special.type ?? "");
+/** A special that is a lasting injury (its type says so: the injury tables make them "Injury"). */
+export const isInjury = (special: { type?: string | null }) => /injur/i.test(special.type ?? "");
 
 /**
  * One line of a unit's Kills list: "Magister Halvard · Street Fight · round 2 · melee", with the

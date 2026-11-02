@@ -14,6 +14,7 @@ import type { Named } from "./useUnitEditDraft";
 export default function EditPickList({
   title,
   noun,
+  plural = `${noun}s`,
   entries,
   options,
   onChange,
@@ -24,6 +25,8 @@ export default function EditPickList({
   title: ReactNode;
   /** "skill", "spell", "special". */
   noun: string;
+  /** "injuries": when adding "s" won't do. */
+  plural?: string;
   entries: Named[];
   options: SearchOption[];
   onChange: (next: Named[]) => void;
@@ -43,7 +46,7 @@ export default function EditPickList({
         values={values}
         options={options}
         addLabel={`Add ${noun}`}
-        placeholder={`Search ${noun}s`}
+        placeholder={`Search ${plural}`}
         emptyText={`No ${noun} matches.`}
         onChange={(next) =>
           onChange(
@@ -59,8 +62,7 @@ export default function EditPickList({
       >
         {pending > 0 && onPendingChange ? (
           <ChipLabel className="min-h-[38px] gap-1 pr-1 text-[13px] text-accent-text">
-            {pending} {noun}
-            {pending === 1 ? "" : "s"} to choose
+            {pending} {pending === 1 ? noun : plural} to choose
             <button
               type="button"
               aria-label={`One ${noun} fewer to choose`}

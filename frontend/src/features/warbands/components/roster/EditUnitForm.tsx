@@ -139,7 +139,7 @@ export default function EditUnitForm({
   }
 
   return (
-    <div className="flex flex-col gap-3.5 border-t border-line pt-3">
+    <div className="flex flex-col gap-3.5">
       {body}
       <div className="flex flex-wrap items-center gap-2 border-t border-line pt-3">
         <Button disabled={saving} onClick={() => void form.save().then(done)}>

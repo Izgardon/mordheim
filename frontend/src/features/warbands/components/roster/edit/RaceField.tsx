@@ -70,30 +70,34 @@ export default function RaceField({
   };
 
   return (
-    <div className="flex flex-col gap-1 text-xs font-bold text-muted-foreground">
-      <span>Race</span>
-      <SearchSelect
-        label="Race"
-        placeholder="Search races"
-        emptyText="No race matches."
-        options={options}
-        value={current ? raceOption(current, settings) : null}
-        clearLabel="No race"
-        onChange={(option) => {
-          setCustom(null);
-          onChange(option ? Number(option.id) : null);
-        }}
-        create={
-          canCreate
-            ? {
-                label: (typed) => `Add “${typed}” as a custom race`,
-                onCreate: (typed) => setCustom({ name: typed, max: [...HUMAN] }),
-              }
-            : undefined
-        }
-      />
+    <>
+      <div className="flex flex-col gap-1 text-xs font-bold text-muted-foreground">
+        <span className="flex min-h-5 items-center">Race</span>
+        <SearchSelect
+          label="Race"
+          className="flex-1"
+          placeholder="Search races"
+          emptyText="No race matches."
+          options={options}
+          value={current ? raceOption(current, settings) : null}
+          clearLabel="No race"
+          onChange={(option) => {
+            setCustom(null);
+            onChange(option ? Number(option.id) : null);
+          }}
+          create={
+            canCreate
+              ? {
+                  label: (typed) => `Add “${typed}” as a custom race`,
+                  onCreate: (typed) => setCustom({ name: typed, max: [...HUMAN] }),
+                }
+              : undefined
+          }
+        />
+      </div>
+      {/* a sibling of the field, so it takes its own row in the form's grid */}
       {custom ? (
-        <div className="flex flex-col gap-2 border border-line bg-raised p-2.5">
+        <div className="col-span-full flex flex-col gap-2 border border-line bg-raised p-2.5">
           <Input
             inputSize="sm"
             aria-label="Custom race name"
@@ -136,6 +140,6 @@ export default function RaceField({
           </div>
         </div>
       ) : null}
-    </div>
+    </>
   );
 }
