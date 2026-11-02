@@ -19,7 +19,7 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
 }));
 
 const entries: CampaignChronicleEntry[] = Array.from({ length: 12 }, (_, index) => ({
-  kind: index % 2 ? "kill" : "buy",
+  kind: index % 2 ? "death" : "buy",
   text: `Entry ${index + 1}`,
   meta: "Ashen Crows",
   at: `2026-11-01T10:${String(index).padStart(2, "0")}:00Z`,
@@ -28,7 +28,7 @@ const entries: CampaignChronicleEntry[] = Array.from({ length: 12 }, (_, index) 
 beforeEach(() => {
   fakeApi.reset();
   fakeApi.on("GET /campaigns/7/chronicle/", entries);
-  fakeApi.on("GET /campaigns/7/chronicle/?kind=kill", entries.slice(0, 3));
+  fakeApi.on("GET /campaigns/7/chronicle/?kind=death", entries.slice(0, 3));
 });
 
 describe("Chronicle", () => {
@@ -40,7 +40,7 @@ describe("Chronicle", () => {
     expect(list.className).toMatch(/max-h-\[\d+px\]/);
     // focusable, so the keyboard can scroll it
     expect(list).toHaveAttribute("tabindex", "0");
-    expect(list).not.toContainElement(screen.getByRole("button", { name: "Kills" }));
+    expect(list).not.toContainElement(screen.getByRole("button", { name: "Deaths" }));
     expect(screen.getByRole("heading", { name: "Chronicle" })).toBeInTheDocument();
   });
 
@@ -49,7 +49,7 @@ describe("Chronicle", () => {
     renderWithQueryClient(<Chronicle campaignId={7} isMobile={false} />);
     const before = await screen.findByRole("list", { name: "Chronicle entries" });
 
-    await user.click(screen.getByRole("button", { name: "Kills" }));
+    await user.click(screen.getByRole("button", { name: "Deaths" }));
 
     expect(await screen.findAllByRole("listitem")).toHaveLength(3);
     // a new list element, so its scroll position starts at 0

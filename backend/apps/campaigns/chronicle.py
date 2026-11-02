@@ -1,8 +1,8 @@
 """The campaign's chronicle (the overview, next step 5): what happened lately, newest first, in plain words.
 
-Six kinds, each from the record it already has, in a fixed number of queries whatever the campaign's size:
+Five kinds, each from the record it already has, in a fixed number of queries whatever the campaign's size. Kills
+stay off it (William); they live in the battle rows' moments:
 
-- `kill`: the live kills of ended battles (battle_kill: undone kills don't count, decision 5);
 - `death`: the units the post-games of ended battles left dead;
 - `level`: heroes' level-ups and the lad's got talent (the warband log's "advance" entries; henchmen's and hired
   swords' other advances are left out);
@@ -18,13 +18,12 @@ from django.db.models import Q
 from django.db.models.functions import Coalesce, Greatest
 from django.utils import timezone
 
-from apps.battles.models import Battle, BattleKill, BattleParticipant
-from apps.battles.services.kills import live_kills_in
+from apps.battles.models import Battle, BattleParticipant
 from apps.bounties.models import PAID, WITHDRAWN, Bounty
 from apps.users.names import display_name
 from apps.warbands.models import WarbandLog
 
-KINDS = ("kill", "death", "level", "buy", "trade", "bounty")
+KINDS = ("death", "level", "buy", "trade", "bounty")  # no kills (William: "lets take kills off the chronicle")
 LIMIT = 40
 PURCHASES = ("hero_item", "henchmen_item", "hireling_item", "stash_item")
 LOG_KINDS = {
@@ -36,10 +35,6 @@ LOG_KINDS = {
 
 def _entry(kind: str, text: str, meta: str, at: datetime | None) -> dict[str, Any]:
     return {"kind": kind, "text": text, "meta": meta, "at": at or timezone.now()}
-
-
-def kill_text(kill: BattleKill) -> str:
-    return f"{kill.killer_called(start=True)} took {kill.victim_called()} out of action"
 
 
 def unit_results(postbattle_json: Any) -> dict[str, dict]:
@@ -56,15 +51,6 @@ def death_text(name: str, result: dict[str, Any]) -> str:
     last = rolls[-1] if isinstance(rolls, list) and rolls and isinstance(rolls[-1], dict) else {}
     label = str(last.get("result_label") or "").strip()
     return f"{name} is dead ({label})" if label and label.lower() != "dead" else f"{name} is dead"
-
-
-def _kills(campaign_id: int) -> list[dict[str, Any]]:
-    kills = live_kills_in(campaign_id).select_related("battle", "killer_warband").order_by("-created_at", "-id")[:LIMIT]
-    rows = []
-    for kill in kills:
-        meta = " · ".join(part for part in (kill.killer_warband.name, kill.battle.scenario) if part)
-        rows.append(_entry("kill", kill_text(kill), meta, kill.created_at))
-    return rows
 
 
 def _deaths(campaign_id: int) -> list[dict[str, Any]]:
@@ -177,8 +163,6 @@ def chronicle(campaign_id: int, kind: str | None = None) -> list[dict[str, Any]]
     """The newest LIMIT entries of one kind (or of every kind), each `{kind, text, meta, at}`."""
     kinds = [kind] if kind in KINDS else list(KINDS)
     entries = []
-    if "kill" in kinds:
-        entries += _kills(campaign_id)
     if "death" in kinds:
         entries += _deaths(campaign_id)
     if log_kinds := [entry for entry in kinds if entry in LOG_KINDS]:

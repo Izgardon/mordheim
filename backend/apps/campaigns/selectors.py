@@ -257,9 +257,10 @@ def _moment_unit(moment: PivotalMoment) -> dict[str, Any] | None:
 
 
 def moment_tag(moment: PivotalMoment) -> str:
-    """ "Round N" for a moment of the fight, "During" for one from a kill logged after it, "Result" for the rest."""
+    """ "Turn N" for a moment of the fight (William: battle rows say Turn), "During" for one from a kill logged after it,
+    "Result" for the rest."""
     if moment.round:
-        return f"Round {moment.round}"
+        return f"Turn {moment.round}"
     return "During" if moment.source_kill_id else "Result"
 
 

@@ -124,21 +124,21 @@ class MomentRuleTests(MomentTestCase):
         self.assertEqual(
             [(m["tag"], m["headline"], m["detail"], m["warband_name"], m["unit"]) for m in self.moments(battle)],
             [
-                ("Round 1", "First Blood", "Ana drew first blood against Rat.", "Monks", group),
-                ("Round 1", "Hero Slayer", "Ana took Rat out of action.", "Monks", group),
-                ("Round 1", "I don't believe in fairies", "Ana brought down caster Rat.", "Monks", group),
-                ("Round 1", "Monster Hunter", "Gorg slew Zombie 2.", "Monks", gorg),
-                ("Round 2", "Giant Slayer", "Gorg slew large target Brute.", "Monks", gorg),
-                ("Round 2", "Sharpshooter", "Gorg scored 2 shooting kills.", "Monks", gorg),
-                ("Round 3", "There can be only one", "Abbess slew the enemy leader Skritch.", "Monks", abbess),
+                ("Turn 1", "First Blood", "Ana drew first blood against Rat.", "Monks", group),
+                ("Turn 1", "Hero Slayer", "Ana took Rat out of action.", "Monks", group),
+                ("Turn 1", "I don't believe in fairies", "Ana brought down caster Rat.", "Monks", group),
+                ("Turn 1", "Monster Hunter", "Gorg slew Zombie 2.", "Monks", gorg),
+                ("Turn 2", "Giant Slayer", "Gorg slew large target Brute.", "Monks", gorg),
+                ("Turn 2", "Sharpshooter", "Gorg scored 2 shooting kills.", "Monks", gorg),
+                ("Turn 3", "There can be only one", "Abbess slew the enemy leader Skritch.", "Monks", abbess),
                 (
-                    "Round 3",
+                    "Turn 3",
                     "Bloody Martyr",
                     "Skritch claimed 2 kills before being taken out of action.",
                     "Rats",
                     skritch,
                 ),
-                ("Round 3", "Spellslinger", "Abbess scored 2 magic kills.", "Monks", abbess),
+                ("Turn 3", "Spellslinger", "Abbess scored 2 magic kills.", "Monks", abbess),
                 ("Result", "Underdog", "Monks (rating 120) beat Rats (rating 150).", "Monks", None),
                 ("Result", "Carried the Fight", "Skritch scored 2 of 2 recorded kills.", "Rats", skritch),
                 ("Result", "Wiped Out", "Rats lost 4 of 4 selected units.", "Rats", None),
@@ -176,7 +176,7 @@ class MomentRuleTests(MomentTestCase):
         )
         tags = {moment["headline"]: moment["tag"] for moment in self.moments(battle)}
         self.assertEqual(
-            (tags["Giant Slayer"], tags["Bloody Martyr"], tags["First Blood"]), ("During", "Result", "Round 1")
+            (tags["Giant Slayer"], tags["Bloody Martyr"], tags["First Blood"]), ("During", "Result", "Turn 1")
         )
         lone = next(moment for moment in self.moments(battle) if moment["kind"] == "last_one_standing")
         self.assertEqual(lone["detail"], "Abbess was the last of Monks standing.")

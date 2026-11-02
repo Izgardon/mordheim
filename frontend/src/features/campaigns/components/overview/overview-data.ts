@@ -106,7 +106,7 @@ export function battleLine(battle: CampaignBattleHistoryEntry) {
 
 /**
  * A battle's pivotal moments grouped as its row shows them, in the server's fight order by their
- * tag: "Round 1", "Round 2" and on, "During" for a kill logged after the fight, then "Result".
+ * tag: "Turn 1", "Turn 2" and on, "During" for a kill logged after the fight, then "Result".
  */
 export function momentGroups(moments: CampaignBattleMoment[] = []) {
   const labels = [...new Set(moments.map((moment) => moment.tag))];

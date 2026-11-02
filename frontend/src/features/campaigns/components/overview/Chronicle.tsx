@@ -12,7 +12,6 @@ import { ChronicleBones } from "./OverviewSkeleton";
 
 const FILTERS: { id: CampaignChronicleFilter | "all"; label: string }[] = [
   { id: "all", label: "All" },
-  { id: "kill", label: "Kills" },
   { id: "death", label: "Deaths" },
   { id: "level", label: "Level-ups" },
   { id: "buy", label: "Purchases" },
@@ -21,7 +20,6 @@ const FILTERS: { id: CampaignChronicleFilter | "all"; label: string }[] = [
 ];
 
 const KIND: Record<CampaignChronicleKind, { label: string; text: string; bar: string }> = {
-  kill: { label: "Kill", text: "text-accent-hi", bar: "bg-accent-line" },
   death: { label: "Death", text: "text-danger", bar: "bg-danger-line" },
   level: { label: "Level-up", text: "text-good", bar: "bg-good-line" },
   buy: { label: "Purchase", text: "text-text2", bar: "bg-strong" },
@@ -34,7 +32,7 @@ const KIND: Record<CampaignChronicleKind, { label: string; text: string; bar: st
 const CHRONICLE_SCROLL = "max-h-[720px] overflow-y-auto overscroll-contain border-b border-line";
 
 /**
- * The chronicle (design E): the campaign's latest kills, deaths, level-ups (heroes' and the lad's
+ * The chronicle (design E): the campaign's latest deaths, level-ups (heroes' and the lad's
  * got talent), purchases, trades and bounties (posted and claimed), filtered by kind on the
  * server. On the web its entries scroll in their own box, so the page stays short; on a phone
  * (its own tab) the page scrolls.

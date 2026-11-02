@@ -131,7 +131,7 @@ export type CampaignBattleMoment = {
   /** "Kurt drew first blood against Magister Halvard." */
   detail: string;
   round: number | null;
-  /** "Round 2", "During" (a kill logged after the fight) or "Result". */
+  /** "Turn 2", "During" (a kill logged after the fight) or "Result". */
   tag: string;
   warband_id: number;
   warband_name: string;
@@ -150,7 +150,6 @@ export type CampaignBattleHistoryEntry = {
 };
 
 export type CampaignChronicleKind =
-  | "kill"
   | "death"
   | "level"
   | "buy"
@@ -159,7 +158,7 @@ export type CampaignChronicleKind =
   | "bounty_claimed";
 
 /** A chronicle filter: one kind, or a bounty's two ("bounty": posted and claimed). */
-export type CampaignChronicleFilter = "kill" | "death" | "level" | "buy" | "trade" | "bounty";
+export type CampaignChronicleFilter = "death" | "level" | "buy" | "trade" | "bounty";
 
 /** One chronicle entry (GET chronicle/): what happened, where, and when. */
 export type CampaignChronicleEntry = {

@@ -8,7 +8,7 @@ import type { Standing } from "./overview-data";
 const TH =
   "whitespace-nowrap border-b border-border px-2.5 py-2.5 text-left text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
 const TD = "border-b border-line px-2.5 py-[11px]";
-/** The Type column shows on a wide screen; narrower, the type sits under the warband's name. */
+/** The Warband (type) column shows on a wide screen; narrower, the type sits under the warband's name. */
 const WIDE = "hidden min-[1600px]:table-cell";
 
 /**
@@ -79,13 +79,13 @@ export default function StandingsTable({
               #
             </th>
             <th scope="col" className={TH}>
-              Warband
+              Name
             </th>
             <th scope="col" className={TH}>
               Player
             </th>
             <th scope="col" className={cn(TH, WIDE)}>
-              Type
+              Warband
             </th>
             <th scope="col" className={cn(TH, "text-right")}>
               Rating

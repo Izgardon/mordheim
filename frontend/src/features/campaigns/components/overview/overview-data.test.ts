@@ -9,7 +9,7 @@ const moment = (fields: Partial<CampaignBattleMoment> = {}): CampaignBattleMomen
   headline: "Hero Slayer",
   detail: "Kurt took Magister Halvard out of action.",
   round: 2,
-  tag: "Round 2",
+  tag: "Turn 2",
   warband_id: 3,
   warband_name: "Grey Order",
   unit: { kind: "henchmen_group", id: 7, name: "Kurt" },
@@ -19,15 +19,15 @@ const moment = (fields: Partial<CampaignBattleMoment> = {}): CampaignBattleMomen
 describe("momentGroups", () => {
   it("groups the moments by their tag, in the server's order", () => {
     const moments = [
-      moment({ id: 1, tag: "Round 1" }),
-      moment({ id: 2, tag: "Round 2" }),
-      moment({ id: 3, tag: "Round 2" }),
+      moment({ id: 1, tag: "Turn 1" }),
+      moment({ id: 2, tag: "Turn 2" }),
+      moment({ id: 3, tag: "Turn 2" }),
       moment({ id: 4, tag: "Result", round: null, unit: null }),
     ];
 
     expect(momentGroups(moments).map((group) => [group.label, group.moments.length])).toEqual([
-      ["Round 1", 1],
-      ["Round 2", 2],
+      ["Turn 1", 1],
+      ["Turn 2", 2],
       ["Result", 1],
     ]);
     expect(momentGroups(undefined)).toEqual([]);

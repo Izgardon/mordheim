@@ -91,7 +91,7 @@ class BattleHistoryTests(ChronicleTestCase):
 
         self.assertEqual(
             [(moment["tag"], moment["headline"], moment["detail"]) for moment in entry["moments"]],
-            [("Round 1", "First Blood", "Seer drew first blood against Abbess.")],
+            [("Turn 1", "First Blood", "Seer drew first blood against Abbess.")],
         )
         totals = {
             row["warband_name"]: (row["kills"], row["shards"], row["heroes_lost"]) for row in entry["participants"]
@@ -136,7 +136,6 @@ class ChronicleTests(ChronicleTestCase):
             [
                 ("buy", "Sword for Abbess, 10 gc"),
                 ("death", "Abbess is dead"),
-                ("kill", "Seer took Abbess out of action"),
                 ("level", "Abbess gained +1 WS"),
                 ("level", "Agathe of Novices has got talent and joins the heroes"),
                 ("trade", texts[-1][1]),
@@ -149,8 +148,7 @@ class ChronicleTests(ChronicleTestCase):
                 "Rats traded with Monks: sent nothing, received 5 gc",
             ),
         )
-        kill_entry = next(entry for entry in entries if entry["kind"] == "kill")
-        self.assertEqual(kill_entry["meta"], "Rats · Street Fight")
+        self.assertEqual(self.get("chronicle/?kind=kill"), self.get("chronicle/"))  # kills stay off it (William)
         self.assertEqual([entry["kind"] for entry in self.get("chronicle/?kind=level")], ["level", "level"])
 
 
