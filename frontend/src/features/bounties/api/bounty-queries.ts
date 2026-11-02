@@ -18,7 +18,7 @@ export function useCampaignBounties(campaignId: number) {
   });
 }
 
-/** Every other warband's heroes on its roster, read when Post a bounty opens without one. */
+/** Every other warband's heroes on its roster, read when Post a bounty opens. */
 export function useBountyTargets(campaignId: number, enabled: boolean) {
   return useQuery({
     queryKey: queryKeys.campaign.bountyTargets(campaignId),

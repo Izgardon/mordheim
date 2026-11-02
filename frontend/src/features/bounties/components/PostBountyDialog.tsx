@@ -11,11 +11,9 @@ import { goldText, owedWith } from "../bounty-view";
 import { useBountyActions } from "../hooks/useBountyActions";
 import { FIELD_LABEL, NATIVE_SELECT, TEXTAREA } from "./fields";
 
-/** The hero a card's Post a bounty names; without one the dialog asks for a warband and a hero. */
-export type BountyTarget = { heroId: number; name: string; warbandName: string };
-
 /**
- * Post a bounty (design E): a hero of another warband, the gold and a note. Nothing is held: the
+ * Post a bounty (design E), from the Bounties section only: a hero of another warband (picked here),
+ * the gold and a note. Nothing is held: the
  * dialog warns when your open bounties would come to more than your warband holds, and posts
  * anyway (the gold moves only when a claim is accepted).
  */
@@ -23,15 +21,13 @@ export default function PostBountyDialog({
   open,
   onClose,
   campaignId,
-  target,
 }: {
   open: boolean;
   onClose: () => void;
   campaignId: number;
-  target?: BountyTarget | null;
 }) {
   const list = useCampaignBounties(campaignId).data;
-  const targets = useBountyTargets(campaignId, open && !target);
+  const targets = useBountyTargets(campaignId, open);
   const actions = useBountyActions(campaignId);
   const [warbandId, setWarbandId] = useState<number | null>(null);
   const [heroId, setHeroId] = useState<number | null>(null);
@@ -42,10 +38,8 @@ export default function PostBountyDialog({
 
   const warbands = targets.data ?? [];
   const warband = warbands.find((entry) => entry.warband_id === warbandId) ?? warbands[0];
-  const pickedHero = target ? target.heroId : (heroId ?? warband?.heroes[0]?.id ?? null);
-  const heroName = target
-    ? target.name
-    : warband?.heroes.find((hero) => hero.id === pickedHero)?.name;
+  const pickedHero = heroId ?? warband?.heroes[0]?.id ?? null;
+  const heroName = warband?.heroes.find((hero) => hero.id === pickedHero)?.name;
   const gold = Number(amount);
   const valid = Number.isInteger(gold) && gold > 0 && pickedHero !== null;
   const owed = owedWith(list, valid ? gold : 0);
@@ -82,8 +76,8 @@ export default function PostBountyDialog({
     <ModalSheet
       open={open}
       onOpenChange={(next) => (next ? null : close())}
-      kicker={target ? `${target.warbandName}` : "Bounties"}
-      title={target ? `Post a bounty on ${target.name}` : "Post a bounty"}
+      kicker="Bounties"
+      title="Post a bounty"
       footer={
         <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-2">
           <Button variant="secondary" className="min-h-12" onClick={close}>
@@ -100,7 +94,7 @@ export default function PostBountyDialog({
       }
     >
       <div className="flex flex-col gap-4">
-        {target ? null : targets.isPending ? (
+        {targets.isPending ? (
           <p className="m-0 text-sm text-muted-foreground">Finding the heroes…</p>
         ) : warbands.length === 0 ? (
           <p className="m-0 text-sm text-text2">No other warband has a hero to put a bounty on.</p>

@@ -43,7 +43,7 @@ type UnitCardProps = {
   /** Advance ready's button: the unit's advance. */
   onAdvance?: () => void;
   onTradingAction?: (on: boolean) => void;
-  /** More for the header beside the chips: a hero's bounties, and Post a bounty. */
+  /** More for the header beside the chips: a hero's bounties. */
   extra?: ReactNode;
   /** The open body (`UnitDetails`), or the edit form. */
   children?: ReactNode;
