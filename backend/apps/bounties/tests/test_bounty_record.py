@@ -94,7 +94,7 @@ class MomentTests(BountyTestCase):
                 (moment["tag"], moment["headline"], moment["detail"], moment["warband_name"])
                 for moment in bounty_moments
             ],
-            [("Round 2", "Bounty claimed", "Kreech collected the 40 gc bounty Monks put on Grey Seer.", "Crows")],
+            [("Turn 2", "Bounty claimed", "Kreech collected the 40 gc bounty Monks put on Grey Seer.", "Crows")],
         )
         self.assertEqual(bounty_moments[0]["unit"], {"kind": "hero", "id": self.kreech.id, "name": "Kreech"})
         self.assertTrue(any(moment["kind"] != "bounty_claimed" for moment in row["moments"]))  # the fight's own too
@@ -128,8 +128,8 @@ class ChronicleTests(BountyTestCase):
             ],
         )
         everything = {entry["kind"] for entry in self.get_as(self.player, self.url("chronicle/")).json()}
-        self.assertTrue({"bounty_posted", "bounty_claimed", "kill"} <= everything)
-        self.assertEqual(self.get_as(self.player, self.url("chronicle/?kind=kill")).json()[0]["kind"], "kill")
+        self.assertTrue({"bounty_posted", "bounty_claimed"} <= everything)
+        self.assertNotIn("kill", everything)  # kills stay off the chronicle (William)
 
 
 class BellTests(BountyTestCase):
