@@ -32,7 +32,6 @@ const hero = makeHero({
 const pick = (list: PendingList) => (
   <PendingPick
     campaignId={1}
-    warbandId={9}
     list={list}
     entry={{ kind: "hero", unit: hero }}
     onPick={vi.fn()}

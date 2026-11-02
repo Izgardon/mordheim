@@ -5,7 +5,6 @@ import { SkillListIcon } from "@/components/ui/game-icons";
 import { SearchCombobox, type SearchOption } from "@/components/ui/search-select";
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { skillOptions } from "@/features/catalogue/search-options";
-import { useWhoCan } from "@/features/items/api/who-can-queries";
 import { inPlayOnly } from "@/features/reference/in-play";
 import { skillList } from "@/features/skills/skill-list";
 import type { Skill } from "@/features/skills/types/skill-types";
@@ -18,28 +17,25 @@ import {
 } from "../../../utils/warband-utils";
 
 const ALL = "all";
-const OWN = "own";
 const CORE = Object.values(skillAbbrevToType);
 
 const clip = (text: string, length = 140) =>
   text.length > length ? `${text.slice(0, length).trimEnd()}…` : text;
 
 /**
- * A new skill, guided (William): his skill lists as chips (the warband's own special skills
- * first), that list's skills as rows with their rules, and "Show all" for the rest, greyed with
+ * A new skill, guided (William): his skill lists as chips ("the unit should have the skill lists
+ * already"), that list's skills as rows with their rules, and "Show all" for the rest, greyed with
  * the "not in his lists" warning and still pickable. Only the campaign's skills show (William: "i
  * also shouldnt see skills that arent part of my campaign"). The pick shows its full rules.
  */
 export default function SkillPicker({
   campaignId,
-  warbandId,
   access,
   large,
   value,
   onChange,
 }: {
   campaignId: number;
-  warbandId: number;
   /** The unit's `available_skills`. */
   access: unknown;
   large?: boolean | null;
@@ -48,16 +44,14 @@ export default function SkillPicker({
 }) {
   const skills = inPlayOnly(useCatalogue("skills", campaignId).data ?? []);
   const settings = useSettingsById();
-  const own = useWhoCan(campaignId, warbandId).specialSkillIds;
   const lists = buildAvailableSkillsPayload(parseAvailableSkills(access));
-  const tabs = [...(own.size ? [OWN] : []), ...(lists.length ? lists : CORE)];
+  const tabs = lists.length ? lists : CORE;
   const [tab, setTab] = useState(tabs[0] ?? ALL);
-  const rows = skillOptions(skills, { settings, large, access: lists, specials: own });
+  const rows = skillOptions(skills, { settings, large, access: lists });
   const byId = new Map(skills.map((skill) => [skill.id, skill]));
   const inTab = (option: SearchOption) => {
     const skill = byId.get(Number(option.id));
-    if (!skill || tab === ALL) return true;
-    return tab === OWN ? own.has(skill.id) : skill.type === tab;
+    return !skill || tab === ALL || skill.type === tab;
   };
   const options = rows.filter(inTab).map((option) => ({
     ...option,
@@ -92,8 +86,8 @@ export default function SkillPicker({
       <div role="group" aria-label="Skill lists" className="flex flex-wrap gap-1.5">
         {[...tabs, ALL].map((key) => (
           <Chip key={key} pressed={tab === key} onClick={() => setTab(key)}>
-            {key === ALL ? null : <SkillListIcon list={key === OWN ? "special" : skillList(key)} />}
-            {key === ALL ? "Show all" : key === OWN ? "Your warband's" : key}
+            {key === ALL ? null : <SkillListIcon list={skillList(key)} />}
+            {key === ALL ? "Show all" : key}
           </Chip>
         ))}
       </div>

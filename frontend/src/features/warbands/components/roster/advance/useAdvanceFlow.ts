@@ -2,6 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import type { Skill } from "@/features/skills/types/skill-types";
+import type { Special } from "@/features/special/types/special-types";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 import { useWarbandCacheUpdate, type WarbandUpdate } from "../../../api/warband-cache";
@@ -18,50 +19,50 @@ import {
 } from "./advance-table";
 import type { SpellChoice } from "./SpellPicker";
 
-const PICKED: Record<string, AdvancePick["list"]> = {
+/** What a "New skill" row gives (William: "new skill can also mean new spell or special"). */
+export type PickKind = "Skill" | "Spell" | "Special";
+
+const PICKED: Record<PickKind, AdvancePick["list"]> = {
   Skill: "skills",
   Spell: "spells",
   Special: "specials",
 };
 
-/** The advance code a table row gives once its follow-up is made, or null while it waits. */
-function tableAdvance(
-  row: AdvanceRow | undefined,
-  roll1: number | null,
-  chosen: StatCode | null,
-  takeSpell: boolean
-) {
+/** The advance code a table row gives once its choice is made, or null while it waits. */
+function tableAdvance(row: AdvanceRow | undefined, stat: StatCode | null, kind: PickKind) {
   const outcome = row?.outcome;
   if (!outcome) return null;
-  if (outcome.kind === "skill") return takeSpell ? "Spell" : "Skill";
+  if (outcome.kind === "skill") return kind;
   if (outcome.kind === "stat") return outcome.stat;
-  if (outcome.kind === "choose") return chosen;
-  if (outcome.kind === "d6") return roll1 === null ? null : d6Stat(outcome, roll1);
-  return "LGT";
+  if (outcome.kind === "talent") return "LGT";
+  return stat;
 }
 
 /**
- * The advance's steps (William: "it should be guiding the user"): the 2D6 on the unit's table
- * (or an advance chosen by hand), the follow-up the row asks for, the pick a new skill or spell
- * gives (or "Choose later"), and the save: one level-up with its pick.
+ * The advance's steps (William: "it should be guiding the user"): the 2D6 on the unit's table, rolled,
+ * typed or a row clicked as if the dice had shown it; the stat a row with two outcomes gives (a D6
+ * presets it, and it can always be changed); what a new skill row gives (a skill, a spell or a boon
+ * or bane) and its pick, or "Choose later"; and the save: one level-up with its pick.
  */
 export function useAdvanceFlow(entry: RosterUnit | null, warbandId: number, onDone: () => void) {
   const updateCache = useWarbandCacheUpdate();
   const [roll2, setRoll2Raw] = useState<number | null>(null);
-  const [roll1, setRoll1] = useState<number | null>(null);
-  const [chosen, setChosen] = useState<StatCode | null>(null);
-  const [byHand, setByHandRaw] = useState<string | null>(null);
-  const [takeSpell, setTakeSpell] = useState(false);
+  /** A clicked row with a range ("2–5"): the result without a roll. */
+  const [rowFrom, setRowFrom] = useState<number | null>(null);
+  const [roll1, setRoll1Raw] = useState<number | null>(null);
+  const [stat, setStat] = useState<StatCode | null>(null);
+  const [kind, setKindRaw] = useState<PickKind>("Skill");
   const [skill, setSkill] = useState<Skill | null>(null);
   const [spell, setSpell] = useState<SpellChoice | null>(null);
+  const [special, setSpecial] = useState<Special | null>(null);
   const [later, setLater] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const isGroup = entry?.kind === "henchmen_group";
   const table = isGroup ? HENCHMEN_TABLE : HERO_TABLE;
-  const row = byHand ? undefined : rowFor(table, roll2);
-  const advance = byHand ?? tableAdvance(row, roll1, chosen, takeSpell);
-  const list = advance ? PICKED[advance] : undefined;
+  const row = rowFor(table, roll2) ?? table.find((each) => each.from === rowFrom);
+  const advance = tableAdvance(row, stat, kind);
+  const list = advance && advance in PICKED ? PICKED[advance as PickKind] : undefined;
   const pick: AdvancePick | undefined =
     list === "skills" && skill
       ? { list, id: skill.id }
@@ -69,36 +70,27 @@ export function useAdvanceFlow(entry: RosterUnit | null, warbandId: number, onDo
         ? { list, lore: spell.lore, roll: spell.roll }
         : list === "spells" && spell
           ? { list, id: spell.spell.id }
-          : undefined;
-  // a boon or bane is picked later from the card
-  const deferred = later || list === "specials";
-  const ready = Boolean(advance && advance !== "LGT" && (!list || deferred || pick));
+          : list === "specials" && special
+            ? { list, id: special.id }
+            : undefined;
+  const ready = Boolean(advance && advance !== "LGT" && (!list || later || pick));
 
   const clearPicks = () => {
     setSkill(null);
     setSpell(null);
+    setSpecial(null);
     setLater(false);
   };
-  const reset = () => {
-    setRoll2Raw(null);
-    setRoll1(null);
-    setChosen(null);
-    setByHandRaw(null);
-    setTakeSpell(false);
-    clearPicks();
-  };
-  const setRoll2 = (roll: number | null) => {
+  /** A new row: its follow-ups start afresh. */
+  const toRow = (roll: number | null, from: number | null) => {
     setRoll2Raw(roll);
-    setRoll1(null);
-    setChosen(null);
-    setByHandRaw(null);
-    setTakeSpell(false);
+    setRowFrom(from);
+    setRoll1Raw(null);
+    setStat(null);
+    setKindRaw("Skill");
     clearPicks();
   };
-  const setByHand = (code: string | null) => {
-    setByHandRaw(code);
-    clearPicks();
-  };
+  const reset = () => toRow(null, null);
 
   const confirm = async () => {
     if (!entry || !advance || !ready) return;
@@ -107,17 +99,12 @@ export function useAdvanceFlow(entry: RosterUnit | null, warbandId: number, onDo
       const payload = buildLevelUpPayload({
         unitName: unitName(entry.unit),
         selectedStat: advance,
-        roll2d6Total: byHand ? null : roll2,
-        roll1d6Total: byHand ? null : roll1,
+        roll2d6Total: roll2,
+        roll1d6Total: row?.outcome.kind === "d6" ? roll1 : null,
         nameKey: isGroup ? "group" : "hero",
       });
       const api = unitApi(entry.kind);
-      const unit = await api.levelUp(
-        warbandId,
-        entry.unit.id,
-        payload,
-        deferred ? undefined : pick
-      );
+      const unit = await api.levelUp(warbandId, entry.unit.id, payload, later ? undefined : pick);
       updateCache(warbandId, { [LIST_KEY[entry.kind]]: [unit] } as WarbandUpdate);
       reset();
       onDone();
@@ -132,16 +119,25 @@ export function useAdvanceFlow(entry: RosterUnit | null, warbandId: number, onDo
     table,
     row,
     roll2,
-    setRoll2,
+    /** The 2D6 rolled or typed. */
+    setRoll2: (roll: number | null) => toRow(roll, null),
+    /** A row clicked, as if the dice had shown it: its roll when it has one, else none. */
+    pickRow: (from: number) => {
+      const picked = table.find((each) => each.from === from);
+      if (picked) toRow(picked.from === picked.to ? picked.from : null, picked.from);
+    },
     roll1,
-    setRoll1,
-    chosen,
-    setChosen,
-    byHand,
-    setByHand,
-    takeSpell,
-    setTakeSpell: (on: boolean) => {
-      setTakeSpell(on);
+    /** The D6 a row with two outcomes asks for, which presets the stat. */
+    setRoll1: (roll: number | null) => {
+      setRoll1Raw(roll);
+      const outcome = row?.outcome;
+      if (outcome?.kind === "d6") setStat(roll === null ? null : d6Stat(outcome, roll));
+    },
+    stat,
+    setStat,
+    kind,
+    setKind: (next: PickKind) => {
+      setKindRaw(next);
       clearPicks();
     },
     advance,
@@ -150,7 +146,9 @@ export function useAdvanceFlow(entry: RosterUnit | null, warbandId: number, onDo
     setSkill,
     spell,
     setSpell,
-    later: deferred,
+    special,
+    setSpecial,
+    later,
     setLater,
     pick,
     ready,

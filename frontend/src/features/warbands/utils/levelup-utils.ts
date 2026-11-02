@@ -4,8 +4,6 @@ import type { HenchmenGroup } from "../types/warband-types";
 
 export const HERO_SELECTABLE_STATS = ["M", "WS", "BS", "S", "T", "W", "I", "A", "Ld"] as const;
 
-export const HENCHMEN_SELECTABLE_STATS = ["WS", "BS", "S", "I", "A", "Ld"] as const;
-
 export const OTHER_OPTIONS = [
   { id: "Skill", label: "Skill" },
   { id: "Spell", label: "Spell" },

@@ -32,14 +32,12 @@ const spellPick = (choice: SpellChoice): AdvancePick =>
  */
 export default function PendingPick({
   campaignId,
-  warbandId,
   list,
   entry,
   onPick,
   onClose,
 }: {
   campaignId: number;
-  warbandId: number;
   list: PendingList;
   entry: RosterUnit;
   onPick: (pick: AdvancePick) => void;
@@ -70,7 +68,6 @@ export default function PendingPick({
       {list === "skills" ? (
         <SkillPicker
           campaignId={campaignId}
-          warbandId={warbandId}
           access={"available_skills" in unit ? unit.available_skills : undefined}
           large={unit.large}
           value={skill}
