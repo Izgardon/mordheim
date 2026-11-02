@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { Minus, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 
+import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { IconButton } from "@/components/ui/icon-button";
@@ -242,9 +243,9 @@ export default function VeteransDialog({
         </button>
         <label className="ml-auto flex items-center gap-2 text-xs font-bold text-muted-foreground">
           Each costs
-          <Input
+          <NumberInput
+            compact
             inputSize="sm"
-            inputMode="numeric"
             className="w-[70px] font-mono"
             value={price}
             onChange={(e) => setCost(e.target.value)}

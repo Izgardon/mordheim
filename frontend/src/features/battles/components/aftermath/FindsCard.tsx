@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { Search, X } from "lucide-react";
+import { X } from "lucide-react";
 
+import { NumberInput } from "@/components/ui/number-input";
 import { IconButton } from "@/components/ui/icon-button";
-import { Input } from "@/components/ui/input";
+import { ItemKindIcon } from "@/components/ui/game-icons";
+import { SearchCombobox } from "@/components/ui/search-select";
 import { getItemAvailabilityCostLabel } from "@/features/battles/components/postbattle/find-items";
 import type { PostbattleDraft } from "@/features/battles/hooks/usePostbattleDraft";
 import { useFindItemSearch } from "@/features/battles/hooks/useFindItemSearch";
+import { itemKind, itemKindLine } from "@/features/items/item-kind";
 import { cn } from "@/lib/utils";
 
 /**
@@ -31,7 +34,7 @@ export default function FindsCard({
     finds.commitGold(Math.max(0, Math.trunc(Number(gold) || 0)));
     setGold(null);
   };
-  const showing = finds.isOpen && finds.search.trim() !== "";
+  const items = finds.catalogue.data;
 
   return (
     <article className="flex flex-col gap-3 border border-border bg-surface p-[18px]">
@@ -40,8 +43,8 @@ export default function FindsCard({
         <label className="flex flex-col gap-1 text-xs font-bold text-muted-foreground">
           Gold crowns
           <span className="flex items-center gap-2">
-            <Input
-              inputMode="numeric"
+            <NumberInput
+              compact
               aria-label="Gold crowns found"
               className="w-28 font-mono"
               value={gold ?? String(stored)}
@@ -54,45 +57,24 @@ export default function FindsCard({
         </label>
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <span className="text-xs font-bold text-muted-foreground">Items found</span>
-          <label className="flex min-h-11 items-center gap-2 border border-strong bg-page px-3 text-muted-foreground">
-            <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
-            <input
-              type="search"
-              aria-label="Search for an item found"
+          <div onFocus={() => finds.setIsOpen(true)}>
+            <SearchCombobox
+              label="Search for an item found"
               placeholder="Search items"
-              value={finds.search}
-              onFocus={() => finds.setIsOpen(true)}
-              onChange={(event) => {
-                finds.setSearch(event.target.value);
-                finds.setIsOpen(true);
+              emptyText="No item by that name."
+              loading={finds.catalogue.isLoading}
+              options={items.map((item) => ({
+                id: item.id,
+                title: item.name,
+                subtitle: `${itemKindLine(item)} · ${getItemAvailabilityCostLabel(item)}`,
+                icon: <ItemKindIcon kind={itemKind(item)} className="text-accent-text" />,
+              }))}
+              onPick={(option) => {
+                const item = items.find((entry) => entry.id === option.id);
+                if (item) finds.addItem(item);
               }}
-              className="min-w-0 flex-1 bg-transparent text-sm text-ink outline-none"
             />
-          </label>
-          {showing ? (
-            <ul className="flex max-h-56 flex-col overflow-y-auto border border-border bg-panel">
-              {finds.catalogue.isLoading ? (
-                <li className="px-3 py-2 text-sm text-muted-foreground">Reading the items…</li>
-              ) : finds.results.length === 0 ? (
-                <li className="px-3 py-2 text-sm text-muted-foreground">No item by that name.</li>
-              ) : (
-                finds.results.slice(0, 8).map((item) => (
-                  <li key={item.id} className="border-t border-line first:border-t-0">
-                    <button
-                      type="button"
-                      onClick={() => finds.addItem(item)}
-                      className="flex min-h-10 w-full items-center justify-between gap-3 px-3 text-left text-sm hover:bg-raised"
-                    >
-                      <span className="font-semibold text-ink">{item.name}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {getItemAvailabilityCostLabel(item)}
-                      </span>
-                    </button>
-                  </li>
-                ))
-              )}
-            </ul>
-          ) : null}
+          </div>
           {draft.finds.items.length ? (
             <ul className="flex flex-wrap gap-1.5 pt-1">
               {draft.finds.items.map((item, index) => (

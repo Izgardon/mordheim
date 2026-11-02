@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { NumberInput } from "@/components/ui/number-input";
 import { SearchMultiSelect, type SearchOption } from "@/components/ui/search-select";
 
 import type { BestiaryLinks, SelectedItem } from "../../hooks/useBestiaryLinks";
@@ -152,14 +153,15 @@ export default function BestiaryLinksFields({ links }: { links: BestiaryLinks })
         onSelect={links.addItem}
         onRemove={links.removeItem}
         chipExtra={(item) => (
-          <input
-            type="number"
+          <NumberInput
+            compact
+            inputSize="sm"
             min={1}
             max={links.maxQuantity}
             value={(item as SelectedItem).quantity}
             onChange={(e) => links.setItemQuantity(item.id, Number(e.target.value) || 1)}
-            onClick={(e) => e.stopPropagation()}
-            className="ml-1 h-5 w-10 border border-strong bg-page px-1 text-center text-xs text-ink"
+            containerClassName="ml-1 h-8"
+            className="w-10 text-xs"
             aria-label={`Quantity for ${item.name}`}
           />
         )}

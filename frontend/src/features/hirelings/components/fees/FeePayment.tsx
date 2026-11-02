@@ -1,7 +1,7 @@
 import { Dices } from "lucide-react";
 
+import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { rollDice } from "@/lib/dice";
 import { cn } from "@/lib/utils";
 
@@ -63,11 +63,11 @@ export default function FeePayment(props: FeePaymentProps) {
         <label className="flex flex-col gap-1 text-xs font-bold text-muted-foreground">
           {compact ? null : <span className={LABEL}>Gold</span>}
           <span className="flex items-center gap-1.5">
-            <Input
+            <NumberInput
+              compact
               id={`${idPrefix}-gold`}
               aria-label="Gold paid"
               inputSize="sm"
-              inputMode="numeric"
               className="w-20 font-mono"
               value={payment.gold}
               onChange={(event) => onChange({ ...payment, gold: event.target.value })}
@@ -95,10 +95,10 @@ export default function FeePayment(props: FeePaymentProps) {
         return (
           <div key={`${line.resource}-${index}`} className="flex flex-col gap-1">
             <div className="flex flex-wrap items-center gap-1.5 text-[13px] text-ink">
-              <Input
+              <NumberInput
+                compact
                 aria-label={`${line.resource} paid`}
                 inputSize="sm"
-                inputMode="numeric"
                 className="w-14 font-mono"
                 value={line.amount}
                 onChange={(event) => setLine(index, { amount: event.target.value })}

@@ -1,7 +1,7 @@
+import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChipLabel } from "@/components/ui/chip";
-import { Input } from "@/components/ui/input";
 import CustomUnitFields from "@/features/battles/components/shared/CustomUnitFields";
 import type { PrebattlePage } from "@/features/battles/hooks/usePrebattlePage";
 import { numberedOr } from "@/features/battles/utils/battle-number";
@@ -211,9 +211,8 @@ export default function PrebattleBody({ page, isMobile, onOpenNotes }: Prebattle
               <h2 id="rating-h" className="m-0 font-display text-lg font-semibold text-head">
                 Your rating
               </h2>
-              <Input
+              <NumberInput
                 aria-label="Your rating"
-                inputMode="numeric"
                 value={myRating}
                 disabled={!flags.canEditOwnConfig}
                 onChange={(event) => ratings.setRatingInput(me.user.id, event.target.value)}

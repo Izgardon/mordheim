@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 
+import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { Input } from "@/components/ui/input";
 import { SidePanel } from "@/components/ui/side-panel";
 import { formatCountdown, useCountdown } from "@/features/warbands/hooks/warband/useCountdown";
 import { useTradeLockActions } from "@/features/warbands/hooks/warband/useTradeLockActions";
@@ -147,8 +147,7 @@ export default function TradePanel({
         </div>
         <label className="flex flex-col gap-1 text-xs font-bold text-muted-foreground">
           Gold (you have {maxGold} gc)
-          <Input
-            inputMode="numeric"
+          <NumberInput
             disabled={myAccepted}
             value={String(draft.gold ?? 0)}
             onChange={(event) => edit((prev) => withOfferGold(prev, event.target.value, maxGold))}

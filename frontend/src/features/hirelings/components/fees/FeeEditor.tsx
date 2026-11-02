@@ -1,5 +1,6 @@
 import { Plus, X } from "lucide-react";
 
+import { NumberInput } from "@/components/ui/number-input";
 import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
 
@@ -37,10 +38,10 @@ export default function FeeEditor({
   ) => (
     <label className={LABEL}>
       {caption}
-      <Input
+      <NumberInput
+        compact
         id={`${idPrefix}-${key}`}
         inputSize="sm"
-        inputMode="numeric"
         className="w-24 font-mono"
         placeholder={placeholder}
         value={value[key]}
@@ -80,10 +81,10 @@ export default function FeeEditor({
         <div className="flex flex-col gap-1.5">
           {value.resources.map((line, index) => (
             <div key={index} className="flex items-center gap-1.5">
-              <Input
+              <NumberInput
+                compact
                 aria-label="Amount"
                 inputSize="sm"
-                inputMode="numeric"
                 className="w-16 font-mono"
                 value={line.amount}
                 onChange={(event) => setLine(index, { amount: event.target.value })}

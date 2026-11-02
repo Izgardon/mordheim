@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 import FeeEditor from "@/features/hirelings/components/fees/FeeEditor";
 import { feeFromDraft } from "@/features/hirelings/components/fees/fee-draft";
 import { matchCounter } from "@/features/hirelings/fees";
@@ -66,14 +67,24 @@ export default function RecruitForm({
   const [draft, setDraft] = useState(blankRecruit);
   const { recruit, saving } = useRecruit(kind, warbandId, existingIds);
   const set = (change: Partial<RecruitDraft>) => setDraft((current) => ({ ...current, ...change }));
-  const text = (label: string, key: "name" | "type" | "cost" | "count" | "xp", numeric = false) => (
+  const text = (label: string, key: "name" | "type") => (
     <label className={LABEL}>
       {label}
       <Input
         inputSize="sm"
-        inputMode={numeric ? "numeric" : undefined}
-        className={numeric ? "font-mono" : undefined}
         autoFocus={key === "name"}
+        value={draft[key]}
+        onChange={(event) => set({ [key]: event.target.value })}
+      />
+    </label>
+  );
+  const number = (label: string, key: "cost" | "count" | "xp", min = 0, max?: number) => (
+    <label className={LABEL}>
+      {label}
+      <NumberInput
+        inputSize="sm"
+        min={min}
+        max={max}
         value={draft[key]}
         onChange={(event) => set({ [key]: event.target.value })}
       />
@@ -100,9 +111,9 @@ export default function RecruitForm({
         />
         {kind === "hireling"
           ? null
-          : text(kind === "hero" ? "Cost (gc)" : "Cost each (gc)", "cost", true)}
-        {kind === "henchmen_group" ? text("Models", "count", true) : null}
-        {text("Starting XP", "xp", true)}
+          : number(kind === "hero" ? "Cost (gc)" : "Cost each (gc)", "cost")}
+        {kind === "henchmen_group" ? number("Models", "count", 1, 20) : null}
+        {number("Starting XP", "xp")}
       </div>
       {kind === "hireling" ? (
         <div className="grid gap-3 min-[720px]:grid-cols-2">

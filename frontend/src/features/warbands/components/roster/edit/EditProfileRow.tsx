@@ -1,6 +1,6 @@
 import { useId } from "react";
 
-import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 import { STAT_KEYS } from "@/components/ui/stat-strip";
 import { Switch } from "@/components/ui/switch";
 
@@ -38,29 +38,30 @@ export default function EditProfileRow({
             Half rate
           </Switch>
         </div>
-        <Input
+        <NumberInput
           id={xpId}
           inputSize="sm"
-          inputMode="numeric"
-          className="font-mono"
+          min={0}
           value={String(draft.xp ?? "")}
           onChange={(event) => set("xp", event.target.value)}
         />
       </div>
       <fieldset className="m-0 flex min-w-0 flex-col gap-1 border-0 p-0">
         <legend className={`${LABEL} pb-1`}>Profile</legend>
-        <div className="grid grid-cols-5 gap-1 min-[520px]:flex">
+        <div className="grid grid-cols-5 justify-items-start gap-1 min-[520px]:flex">
           {STAT_KEYS.map((key) => (
             <label
               key={key}
               className="flex flex-col items-center gap-0.5 text-[10px] font-bold text-faint"
             >
               {key}
-              <Input
+              <NumberInput
+                vertical
                 inputSize="sm"
-                inputMode="numeric"
+                min={0}
+                max={10}
                 aria-label={`${key} for ${unitLabel}`}
-                className="h-8 w-full px-0 text-center font-mono text-sm md:h-8 min-[520px]:w-10"
+                className="text-sm"
                 value={String(draft[STAT_FIELDS[key]] ?? "")}
                 onChange={(event) => set(STAT_FIELDS[key], event.target.value)}
               />

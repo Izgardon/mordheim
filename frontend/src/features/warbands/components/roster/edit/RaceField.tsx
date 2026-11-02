@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SearchSelect } from "@/components/ui/search-select";
@@ -108,9 +109,8 @@ export default function RaceField({
                 className="flex flex-col items-center gap-0.5 text-[10px] text-faint"
               >
                 {key}
-                <Input
+                <NumberInput
                   inputSize="sm"
-                  inputMode="numeric"
                   className="px-0.5 text-center font-mono"
                   value={String(custom.max[i])}
                   onChange={(event) => {

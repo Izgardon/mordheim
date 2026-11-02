@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { NumberInput } from "@/components/ui/number-input";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,9 +19,9 @@ function MissingGames({ form, onDone }: { form: UnitEditDraft; onDone: () => voi
     <div className="flex flex-wrap items-end gap-2 border border-border bg-raised p-2.5">
       <label className={LABEL}>
         Missing games
-        <Input
+        <NumberInput
+          compact
           inputSize="sm"
-          inputMode="numeric"
           className="w-24 font-mono"
           value={String(draft.missing_games ?? "")}
           onChange={(event) => set("missing_games", event.target.value)}

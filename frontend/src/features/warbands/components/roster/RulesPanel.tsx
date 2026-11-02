@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 
+import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
-import { Input } from "@/components/ui/input";
 import type { Item } from "@/features/items/types/item-types";
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
@@ -96,10 +96,10 @@ export default function RulesPanel({ detail, onClose, itemActions }: RulesPanelP
           </Button>
           {selling ? (
             <span className="flex items-center gap-1.5">
-              <Input
+              <NumberInput
+                compact
                 aria-label="Sale price"
                 inputSize="sm"
-                inputMode="numeric"
                 className="w-20"
                 value={price}
                 onChange={(event) => setPrice(event.target.value)}

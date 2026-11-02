@@ -1,3 +1,4 @@
+import { NumberInput } from "@/components/ui/number-input";
 import { Input } from "@/components/ui/input";
 import { STAT_FIELDS } from "@/features/battles/components/prebattle/prebattle-types";
 import type { CustomUnitDraftState } from "@/features/battles/hooks/useCustomUnitDraft";
@@ -31,8 +32,7 @@ export default function CustomUnitFields({ draft }: { draft: CustomUnitDraftStat
         </label>
         <label className="flex flex-col gap-1 text-xs font-bold text-text2">
           Rating
-          <Input
-            inputMode="numeric"
+          <NumberInput
             value={value.rating}
             onChange={(event) =>
               changeDraft({ ...value, rating: event.target.value.replace(/[^\d]/g, "") })
@@ -47,9 +47,8 @@ export default function CustomUnitFields({ draft }: { draft: CustomUnitDraftStat
             className="flex flex-col items-center gap-1 text-[10px] font-bold text-faint"
           >
             {label(field.key, field.label)}
-            <Input
+            <NumberInput
               inputSize="sm"
-              inputMode="numeric"
               aria-label={label(field.key, field.label)}
               value={value.stats[field.key]}
               onChange={(event) => changeStat(field.key, event.target.value)}

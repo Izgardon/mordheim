@@ -1,8 +1,8 @@
 import { Check } from "lucide-react";
 
+import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
 import { ChipLabel } from "@/components/ui/chip";
-import { Input } from "@/components/ui/input";
 import { StatStrip } from "@/components/ui/stat-strip";
 import {
   STAT_FIELDS,
@@ -47,9 +47,8 @@ function StatEditor({ unit, config }: { unit: PrebattleUnit; config: PrebattleCo
               className="flex flex-col items-center gap-1 text-[10px] font-bold text-faint"
             >
               {field.key === "armour_save" ? "Sv" : field.label}
-              <Input
+              <NumberInput
                 inputSize="sm"
-                inputMode="numeric"
                 aria-label={`${unit.displayName} ${field.label}`}
                 value={value === null || value === undefined ? "" : String(value)}
                 onChange={(event) => config.updateOverrideStat(unit, field.key, event.target.value)}

@@ -1,5 +1,7 @@
 import { Chip, ChipLabel } from "@/components/ui/chip";
+import { ItemKindIcon, type GameIconName } from "@/components/ui/game-icons";
 import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 import { Switch } from "@/components/ui/switch";
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import {
@@ -9,10 +11,12 @@ import {
   warnedLast,
 } from "@/features/catalogue/search-options";
 import { useWhoCan } from "@/features/items/api/who-can-queries";
+import { itemKind } from "@/features/items/item-kind";
 import { useCatalogue } from "@/lib/catalogue-queries";
 
 import type { HeroCaster } from "../../../types/warband-types";
 import { buildAvailableSkillsPayload } from "../../../utils/warband-utils";
+import UnitSectionLabel from "../UnitSectionLabel";
 import { isGroup, unitName, type RosterUnit } from "../unit-view";
 import EditGroupModels from "./EditGroupModels";
 import EditPickList from "./EditPickList";
@@ -21,7 +25,6 @@ import RaceField from "./RaceField";
 import SkillAccessField from "./SkillAccessField";
 import type { UnitEditDraft } from "./useUnitEditDraft";
 
-const SECTION_LABEL = "text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
 const CASTERS: [HeroCaster, string][] = [
   ["No", "None"],
   ["Wizard", "Wizard"],
@@ -66,7 +69,9 @@ export default function EditUnitFields({
   });
   const spellRows = warnedLast(spells.map((spell) => spellOption(spell, settings)));
   const specialRows = warnedLast(specials.map((special) => specialOption(special, settings)));
-  const heading = (label: string) => <span className={SECTION_LABEL}>{label}</span>;
+  const heading = (label: string, icon: GameIconName) => (
+    <UnitSectionLabel icon={icon}>{label}</UnitSectionLabel>
+  );
   const caster = "caster" in draft ? (String(draft.caster) as HeroCaster) : "No";
   const showSpells = kind !== "henchmen_group" && (caster !== "No" || lists.spells.length > 0);
 
@@ -75,18 +80,20 @@ export default function EditUnitFields({
     key in draft
       ? { pending: Number(draft[key]) || 0, onPendingChange: (next: number) => set(key, next) }
       : {};
-  const field = (label: string, key: string, numeric = false) => (
-    <label className="flex flex-col gap-1 text-xs font-bold text-muted-foreground">
-      {label}
-      <Input
-        inputSize="sm"
-        inputMode={numeric ? "numeric" : undefined}
-        className={numeric ? "font-mono" : undefined}
-        value={String(draft[key] ?? "")}
-        onChange={(event) => set(key, event.target.value)}
-      />
-    </label>
-  );
+  const field = (label: string, key: string, numeric = false) => {
+    const Field = numeric ? NumberInput : Input;
+    return (
+      <label className="flex flex-col gap-1 text-xs font-bold text-muted-foreground">
+        {label}
+        <Field
+          inputSize="sm"
+          {...(numeric ? { min: 0 } : {})}
+          value={String(draft[key] ?? "")}
+          onChange={(event) => set(key, event.target.value)}
+        />
+      </label>
+    );
+  };
   const toggle = (label: string, key: string) =>
     key in draft ? (
       <Switch
@@ -148,7 +155,7 @@ export default function EditUnitFields({
       ) : null}
       <div className="grid gap-3.5 min-[720px]:grid-cols-2">
         <EditPickList
-          title={heading("Skills")}
+          title={heading("Skills", "skills")}
           noun="skill"
           entries={lists.skills}
           options={skillRows}
@@ -156,7 +163,7 @@ export default function EditUnitFields({
           {...picks("pending_skills")}
         />
         <EditPickList
-          title={heading("Specials")}
+          title={heading("Specials", "specials")}
           noun="special"
           entries={lists.specials}
           options={specialRows}
@@ -165,7 +172,7 @@ export default function EditUnitFields({
         />
         {showSpells ? (
           <EditPickList
-            title={heading("Spells")}
+            title={heading("Spells", "spells")}
             noun="spell"
             entries={lists.spells}
             options={spellRows}
@@ -175,10 +182,11 @@ export default function EditUnitFields({
         ) : null}
       </div>
       <div className="flex flex-col gap-1.5">
-        {heading(kind === "henchmen_group" ? "Items · each" : "Items")}
+        {heading(kind === "henchmen_group" ? "Items · each" : "Items", "items")}
         <div className="flex flex-wrap items-center gap-1.5">
           {unit.items.map((item, index) => (
             <ChipLabel key={`${item.id}-${index}`} className="min-h-[34px] text-[13px] text-ink">
+              <ItemKindIcon kind={itemKind(item)} className="text-accent-text" />
               {item.name}
             </ChipLabel>
           ))}

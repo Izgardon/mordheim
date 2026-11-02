@@ -1,3 +1,4 @@
+import { NumberInput } from "@/components/ui/number-input";
 import { useState } from "react";
 import { ChevronUp, X } from "lucide-react";
 
@@ -31,17 +32,16 @@ function Lines({ basket, isMobile }: { basket: Basket; isMobile: boolean }) {
             <span className="text-xs font-semibold text-good">free</span>
           ) : (
             <label className="flex items-center gap-1 text-xs text-muted-foreground">
-              <input
-                inputMode="numeric"
+              <NumberInput
+                compact
+                inputSize="sm"
+                min={0}
                 aria-label={`Price for ${line.item.name}`}
                 value={line.price}
                 onChange={(event) =>
                   basket.setPrice(line.id, Math.max(0, Math.trunc(Number(event.target.value) || 0)))
                 }
-                className={cn(
-                  "box-border border border-strong bg-page px-1.5 font-mono text-[13px] text-ink",
-                  isMobile ? "h-10 w-[68px]" : "h-8 w-[72px]"
-                )}
+                className="w-14 text-[13px]"
               />
               {line.recipient.count > 1 ? "gc each" : "gc"}
             </label>

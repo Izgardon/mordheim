@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ModalSheet } from "@/components/ui/modal-sheet";
 import { getErrorMessage } from "@/lib/get-error-message";
 
@@ -87,8 +87,7 @@ export default function SellDialog({
           </label>
           <label className={fieldLabel}>
             How many
-            <Input
-              inputMode="numeric"
+            <NumberInput
               className="font-mono"
               value={quantity}
               onChange={(event) => setQuantity(event.target.value)}
@@ -96,8 +95,7 @@ export default function SellDialog({
           </label>
           <label className={fieldLabel}>
             For (gc)
-            <Input
-              inputMode="numeric"
+            <NumberInput
               className="font-mono"
               value={price}
               onChange={(event) => setPrice(event.target.value)}

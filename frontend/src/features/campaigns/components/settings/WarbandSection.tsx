@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
@@ -84,9 +85,8 @@ function WarbandDetails({ warband, canEdit, onSaved }: WarbandProps) {
               />
             </Field>
             <Field label="Most units" htmlFor="settings-warband-max">
-              <Input
+              <NumberInput
                 id="settings-warband-max"
-                type="number"
                 min={1}
                 value={limit}
                 onChange={(event) => setLimit(event.target.value)}

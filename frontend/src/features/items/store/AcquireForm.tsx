@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Dices, Minus, Plus } from "lucide-react";
 
+import { NumberInput } from "@/components/ui/number-input";
 import { Chip } from "@/components/ui/chip";
 import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
@@ -105,8 +106,7 @@ export default function AcquireForm(props: AcquireFormProps) {
       <div className="flex flex-wrap items-end gap-x-3.5 gap-y-2.5">
         <label className={LABEL}>
           {props.isMobile ? "Price each" : "Price each (gc)"}
-          <Input
-            inputMode="numeric"
+          <NumberInput
             aria-label={`Price each for ${item.name}`}
             className={cn("font-mono", props.isMobile ? "h-11 w-24" : "w-[110px]")}
             value={price}
