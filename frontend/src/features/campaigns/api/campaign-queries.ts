@@ -33,11 +33,11 @@ const listOptions = (campaignId: number, enabled = true) => ({
   enabled: enabled && isCampaignId(campaignId),
 });
 
-export function useCampaignPlayers(campaignId: number) {
+export function useCampaignPlayers(campaignId: number, { enabled = true }: Toggle = {}) {
   return useQuery({
     queryKey: queryKeys.campaign.players(campaignId),
     queryFn: () => listCampaignPlayers(campaignId),
-    ...listOptions(campaignId),
+    ...listOptions(campaignId, enabled),
   });
 }
 

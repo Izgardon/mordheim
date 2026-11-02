@@ -18,12 +18,14 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import ArchivedBanner from "../components/layout/ArchivedBanner";
+import CampaignBattleDialog from "../components/layout/CampaignBattleDialog";
 import CampaignLoadError from "../components/layout/CampaignLoadError";
 import NoWarbandBanner from "../components/layout/NoWarbandBanner";
 import { useArchivedRefusals } from "../hooks/useArchivedRefusals";
 import { useBattleSession } from "../hooks/useBattleSession";
 import { isCampaignId, useCampaignQuery } from "../hooks/useCampaignQuery";
 
+import type { BattleDialogMode } from "../hooks/overview/useStartBattleForm";
 import type { CampaignSummary } from "../types/campaign-types";
 
 /**
@@ -36,6 +38,8 @@ export type CampaignLayoutContext = {
   campaign: CampaignSummary | null;
   setBattleMenuActions: (actions: BattleMenuAction[]) => void;
   openTool: (tool: CampaignTool) => void;
+  /** Opens Start battle or Report a result (the layout holds the one dialog). */
+  openBattleDialog: (mode: BattleDialogMode) => void;
 };
 
 /** The campaign shell (design E): the nav rail on the web; top bar and bottom nav on a phone. */
@@ -60,6 +64,7 @@ export default function CampaignLayout() {
   });
   const [openTool, setOpenTool] = useState<CampaignTool | null>(null);
   const [battleMenuActions, setBattleMenuActions] = useState<BattleMenuAction[]>([]);
+  const [battleDialog, setBattleDialog] = useState<BattleDialogMode | null>(null);
   useSearchShortcut(campaignId, !isMobile && isCampaignId(campaignId));
 
   // Read alongside the campaign rather than after it: the campaign, your warband and its sheet
@@ -70,7 +75,12 @@ export default function CampaignLayout() {
   // Stable unless a value changes, so the layout re-rendering (store writes, notifications)
   // doesn't re-render the page through its outlet context (PERF-19).
   const outletContext = useMemo<CampaignLayoutContext>(
-    () => ({ campaign, setBattleMenuActions, openTool: setOpenTool }),
+    () => ({
+      campaign,
+      setBattleMenuActions,
+      openTool: setOpenTool,
+      openBattleDialog: setBattleDialog,
+    }),
     [campaign]
   );
 
@@ -169,6 +179,14 @@ export default function CampaignLayout() {
       <Suspense fallback={<CampaignPageSkeleton pathname={pathname} />}>
         <Outlet context={outletContext} />
       </Suspense>
+      {/* not on a battle's own screens, which open neither (and read no open battles) */}
+      {isBattleRoute ? null : (
+        <CampaignBattleDialog
+          campaignId={campaign.id}
+          mode={battleDialog}
+          onClose={() => setBattleDialog(null)}
+        />
+      )}
     </AppShell>
   );
 }
