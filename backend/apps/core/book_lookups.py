@@ -13,7 +13,7 @@ from django.db.models import Model
 from apps.core.seeding import parse_int
 from apps.items.models import Item
 from apps.skills.models import Skill
-from apps.special.kinds import book_kind
+from apps.special.kinds import book_kind, owner_kind_of
 from apps.special.models import Special
 from apps.spells.models import Spell
 from apps.spells.rolls import book_roll_taken
@@ -143,15 +143,18 @@ class BookLookups:
 
     def special(self, item: Any, owner: str) -> Special | None:
         """The book's special of the item's name (made the owner's when the book lacks it), its kind the book's
-        classification gives the name (Boons & Banes, special/kinds.py)."""
+        classification gives the name (Boons & Banes) and its owner kind its type (special/kinds.py), either corrected
+        on a row seeded before."""
         name, description = name_and_description(item)
         if not name:
             return None
         special: Special = self._own(Special, self.specials, name, description, owner, "special")
-        kind = book_kind(special.name, special.kind)
-        if special.kind != kind:
-            special.kind = kind
-            special.save(update_fields=["kind"])
+        fields = {"kind": book_kind(special.name, special.kind), "owner_kind": owner_kind_of(special.type)}
+        changed = [field for field, value in fields.items() if getattr(special, field) != value]
+        for field in changed:
+            setattr(special, field, fields[field])
+        if changed:
+            special.save(update_fields=changed)
         return special
 
     def special_skills(self, items: list[Any], owner: str) -> bool:
