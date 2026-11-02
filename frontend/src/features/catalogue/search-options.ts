@@ -1,8 +1,12 @@
+import { createElement } from "react";
+
+import { SkillListIcon, SpecialKindIcon } from "@/components/ui/game-icons";
 import type { SearchOption } from "@/components/ui/search-select";
 import { outOfPlay } from "@/features/campaigns/api/settings-queries";
 import type { Setting } from "@/features/campaigns/types/campaign-types";
 import type { Race } from "@/features/races/types/race-types";
 import { largeWarning, learningNotes } from "@/features/skills/skill-learning";
+import { skillList } from "@/features/skills/skill-list";
 import type { Skill } from "@/features/skills/types/skill-types";
 import type { Special } from "@/features/special/types/special-types";
 import type { Spell } from "@/features/spells/types/spell-types";
@@ -10,8 +14,9 @@ import type { Spell } from "@/features/spells/types/spell-types";
 /**
  * The searchable select's rows for the catalogue (William: "titles and subtitles with skill
  * category, spell school as subtitles"): a skill's list, a spell's lore and difficulty, a
- * special's type, a race's maximums. Rows outside the campaign or the unit's skill lists carry a
- * warning and stay pickable.
+ * special's type, a race's maximums. Skills carry their list's icon and specials their kind's (Boons
+ * & Banes); spells none. Rows outside the campaign or the unit's skill lists carry a warning and
+ * stay pickable.
  */
 
 type Settings = Map<number, Setting>;
@@ -40,6 +45,10 @@ export function skillOption(skill: Skill, context: SkillContext): SearchOption {
   return {
     id: skill.id,
     title: skill.name,
+    icon: createElement(SkillListIcon, {
+      list: skillList(skill.type),
+      className: "text-kind-skill",
+    }),
     subtitle: joined(skill.type, ...notes),
     warning: outOfPlay(skill, context.settings) || largeWarning(skill, context.large) || outside,
     group: special ? "Your warband's" : undefined,
@@ -69,6 +78,7 @@ export const spellOption = (spell: Spell, settings: Settings): SearchOption => (
 export const specialOption = (special: Special, settings: Settings): SearchOption => ({
   id: special.id,
   title: special.name,
+  icon: createElement(SpecialKindIcon, { kind: special.kind, className: "text-kind-special" }),
   subtitle: special.type ?? undefined,
   warning: outOfPlay(special, settings),
 });

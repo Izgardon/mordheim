@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { SpecialKindIcon, type SpecialKind } from "@/components/ui/game-icons";
 import { cn } from "@/lib/utils";
 
 type ReferenceDetailProps = {
@@ -77,11 +78,23 @@ export function FactLine({ facts }: { facts: { label: string; value: ReactNode }
   );
 }
 
-/** One named rule and its text (a property, a special, a spell's effect). */
-export function RuleBlock({ name, children }: { name: ReactNode; children?: ReactNode }) {
+/** One named rule and its text (a property, a special, a spell's effect); a special shows its kind's icon. */
+export function RuleBlock({
+  name,
+  kind,
+  children,
+}: {
+  name: ReactNode;
+  /** A special's Boons & Banes kind. */
+  kind?: SpecialKind;
+  children?: ReactNode;
+}) {
   return (
     <div className="flex flex-col gap-1 border-t border-line pt-2.5 first:border-t-0 first:pt-0">
-      <h3 className="m-0 text-[15px] font-bold text-head">{name}</h3>
+      <h3 className="m-0 flex items-center gap-1.5 text-[15px] font-bold text-head">
+        {kind ? <SpecialKindIcon kind={kind} className="text-kind-special" /> : null}
+        {name}
+      </h3>
       {children ? (
         <div className="max-w-[72ch] whitespace-pre-line text-sm leading-relaxed text-text2">
           {children}

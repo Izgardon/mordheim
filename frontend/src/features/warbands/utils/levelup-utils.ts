@@ -9,7 +9,7 @@ export const HENCHMEN_SELECTABLE_STATS = ["WS", "BS", "S", "I", "A", "Ld"] as co
 export const OTHER_OPTIONS = [
   { id: "Skill", label: "Skill" },
   { id: "Spell", label: "Spell" },
-  { id: "Special", label: "Special" },
+  { id: "Special", label: "Boon or bane" },
 ] as const;
 
 export const STAT_NAME_MAP: Record<string, string> = {
@@ -24,7 +24,7 @@ export const STAT_NAME_MAP: Record<string, string> = {
   Ld: "Leadership",
   Skill: "Skill",
   Spell: "Spell",
-  Special: "Special",
+  Special: "Boon or bane",
 };
 
 export const resolveAdvanceLabel = (value: string): string => STAT_NAME_MAP[value] ?? value;

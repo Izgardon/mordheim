@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 
-import { BoxTile, type BoxTileKind } from "@/components/ui/box-tile";
-import { ItemKindIcon, GameIcon, type GameIconName } from "@/components/ui/game-icons";
+import { BoxTile } from "@/components/ui/box-tile";
+import { ItemKindIcon } from "@/components/ui/game-icons";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { itemKind, itemStatsLine } from "@/features/items/item-kind";
 import type { Item } from "@/features/items/types/item-types";
@@ -10,15 +10,15 @@ import type { ItemPlace } from "../../hooks/units/useUnitActions";
 import { loadoutLine } from "../../units/loadout";
 import GroupMembers from "./GroupMembers";
 import PendingPick from "./PendingPick";
-import RulesPanel, { type BoxDetail } from "./RulesPanel";
+import RulesPanel from "./RulesPanel";
 import UnitSectionLabel from "./UnitSectionLabel";
 import UnitXp from "./UnitXp";
+import { entryBoxes, type Row } from "./unit-boxes";
 import {
   boxRows,
   isCreature,
   isGroup,
   itemBoxKind,
-  pendingPicks,
   type PendingList,
   type RosterUnit,
 } from "./unit-view";
@@ -43,52 +43,12 @@ type UnitDetailsProps = {
   onPick: (list: PendingList, entryId: number) => void;
 };
 
-type Box = BoxDetail & { boxKind: BoxTileKind; icon: ReactNode; pending?: PendingList };
-type Row = { key: string; label: string; icon: GameIconName; boxes: Box[] };
-
-const NOUN: Record<PendingList, string> = {
-  skills: "Skill",
-  spells: "Spell",
-  specials: "Special",
-};
-
 /** An open card's body (design E's columns on the web): experience, items, skills and the rest. */
 export default function UnitDetails(props: UnitDetailsProps) {
   const { entry, campaign, canEdit, others } = props;
   const { unit, kind } = entry;
   const [open, setOpen] = useState<{ row: string; index: number } | null>(null);
   const lists = boxRows(entry);
-
-  const entryBoxes = (
-    list: PendingList | "injuries",
-    entries: { name: string; type?: string | null; description?: string | null; dc?: unknown }[],
-    icon: GameIconName,
-    boxKind: BoxTileKind
-  ): Box[] => [
-    ...entries.map((entry) => {
-      const difficulty = entry.dc !== null && entry.dc !== undefined && entry.dc !== "";
-      const line = [entry.type, difficulty && `Difficulty ${String(entry.dc)}`]
-        .filter(Boolean)
-        .join(" · ");
-      return {
-        name: entry.name,
-        kind: line,
-        text: entry.description,
-        boxKind,
-        icon: <GameIcon name={icon} />,
-      };
-    }),
-    // the picks an advance left for later, each picked from its box
-    ...(list === "injuries"
-      ? []
-      : Array.from({ length: pendingPicks(entry, list) }, () => ({
-          name: `${NOUN[list]} to choose`,
-          kind: "Pick one",
-          boxKind: "pending" as BoxTileKind,
-          icon: <GameIcon name={icon} />,
-          pending: list,
-        }))),
-  ];
 
   const itemsRow: Row = {
     key: "items",
@@ -109,26 +69,26 @@ export default function UnitDetails(props: UnitDetailsProps) {
       key: "skills",
       label: "Skills",
       icon: "skills" as const,
-      boxes: entryBoxes("skills", lists.skills, "skills", "skill"),
+      boxes: entryBoxes(entry, "skills", lists.skills),
     },
     {
       key: "specials",
-      label: "Specials",
+      label: "Boons & Banes",
       icon: "specials" as const,
-      boxes: entryBoxes("specials", lists.specials, "specials", "special"),
+      boxes: entryBoxes(entry, "specials", lists.specials),
     },
     {
       key: "spells",
       label: "Spells",
       icon: "spells" as const,
-      boxes: entryBoxes("spells", lists.spells, "spells", "spell"),
+      boxes: entryBoxes(entry, "spells", lists.spells),
     },
   ].filter((row) => row.boxes.length > 0);
   const injuries: Row = {
     key: "injuries",
     label: "Injuries",
     icon: "injuries",
-    boxes: entryBoxes("injuries", lists.injuries, "injuries", "injury"),
+    boxes: entryBoxes(entry, "injuries", lists.injuries),
   };
   const all = [itemsRow, ...skillRows, injuries];
   const selectedRow = all.find((row) => row.key === open?.row);

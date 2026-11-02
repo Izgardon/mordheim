@@ -15,10 +15,11 @@ import { useCatalogue } from "@/lib/catalogue-queries";
 import { buildAvailableSkillsPayload, parseAvailableSkills } from "../../utils/warband-utils";
 import type { PendingList } from "./unit-view";
 
-const NOUN = { skills: "skill", spells: "spell", specials: "special" } as const;
+const NOUN = { skills: "skill", spells: "spell", specials: "boon or bane" } as const;
+const PLURAL = { skills: "skills", spells: "spells", specials: "boons and banes" } as const;
 
 /**
- * A pick an advance left for later ("Skill to choose", or a spell, a special), made from the card
+ * A pick an advance left for later ("Skill to choose", or a spell, a boon or bane), made from the card
  * on the searchable select. The warband type's special skills come first (the server's who-can/);
  * skills outside the unit's skill lists and entries outside the campaign's settings carry a
  * warning and can still be picked.
@@ -72,8 +73,8 @@ export default function PendingPick({
       <SearchCombobox
         inline
         autoFocus
-        label={`Search ${list}`}
-        placeholder={`Search ${list}`}
+        label={`Search ${PLURAL[list]}`}
+        placeholder={`Search ${PLURAL[list]}`}
         emptyText={`No ${NOUN[list]} matches.`}
         options={options}
         onPick={(option) => onPick(Number(option.id))}
