@@ -119,6 +119,7 @@ export default function Warband() {
         name={warband.name}
         stashCount={stashCount}
         showLocations={Boolean(campaign?.enable_locations)}
+        showEncampment={isMobile && Boolean(campaign?.enable_encampments)}
         onOpen={(next) => (next === "store" ? openStore({}) : setPanel(next))}
         menu={[
           ...(capabilities.trade

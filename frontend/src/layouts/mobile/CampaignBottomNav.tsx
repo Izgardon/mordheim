@@ -5,12 +5,7 @@ import { Flag, Search, Shield, Swords, UserRound } from "lucide-react";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
-import {
-  REFERENCE_LINKS,
-  SEARCH_LINK,
-  mobileNavActiveId,
-  warbandLinks,
-} from "../shell/campaign-nav";
+import { REFERENCE_LINKS, SEARCH_LINK, mobileNavActiveId } from "../shell/campaign-nav";
 import { BottomBar, BottomBarButton, BottomBarLink } from "./BottomBar";
 import { SheetLinkRow, SheetRows } from "./SheetRows";
 
@@ -24,7 +19,8 @@ type CampaignBottomNavProps = {
 /**
  * The phone's bottom nav (design E): Campaign, Warband, Battle, Reference, Me. Flat; the current
  * item takes the accent and an inset top line. Reference and Me open sheets: the reference pages,
- * and you (settings and your account).
+ * and you (the campaign's settings and your account; William: "just show Settings and account in
+ * the Me modal on mobile, not the my warband stuff").
  */
 export default function CampaignBottomNav({
   campaign,
@@ -36,7 +32,6 @@ export default function CampaignBottomNav({
   const active = mobileNavActiveId(pathname);
   const base = `/campaigns/${campaign.id}`;
   const close = () => setSheet(null);
-  const camp = warbandLinks(campaign).filter((link) => link.path !== "warband");
   const onSheetChange = (which: "reference" | "me") => (open: boolean) =>
     setSheet(open ? which : null);
 
@@ -105,19 +100,7 @@ export default function CampaignBottomNav({
         kicker={userName}
         title="Me"
       >
-        {camp.length > 0 ? (
-          <SheetRows label="My warband">
-            {camp.map((link) => (
-              <SheetLinkRow
-                key={link.path}
-                to={`${base}/${link.path}`}
-                label={link.label}
-                onNavigate={close}
-              />
-            ))}
-          </SheetRows>
-        ) : null}
-        <SheetRows label="You">
+        <SheetRows>
           <SheetLinkRow to={`${base}/settings`} label="Settings" onNavigate={close} />
           <SheetLinkRow to={`${base}/account`} label="Account" onNavigate={close} />
         </SheetRows>
